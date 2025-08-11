@@ -1,172 +1,155 @@
-Return-Path: <linux-kernel+bounces-762099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A318B2021F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1879B20224
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 833EF7A6DDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A78189F063
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88492DC339;
-	Mon, 11 Aug 2025 08:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187AF2DC34F;
+	Mon, 11 Aug 2025 08:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSm9GQ7f"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dbSZf/yP"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFF326B761;
-	Mon, 11 Aug 2025 08:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F551F76A5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754901881; cv=none; b=VehdezR87kP+2RfOJ6YGHGv+pi2lApUnTSm1DunjkH3dKqVYVCpnc4j4SaQ3ca9wHWj0zxuixxjFBtw+r+BaHvQXuffstuxQspPjtgt3Uo680+Wjmg56wwkgYPw0jbkefnC+UPZlgJi3hJXWxCdDBzS/7FXrTXLYLaoBgTNRVXw=
+	t=1754901898; cv=none; b=JHAi772ZE4pHTasRoOM2+JnzbI90BoG9TP+eW1EJkuKtCEyJeuweitjFniTYXhSnlSP/XgZq3OZa6YjQL1At0/ptGhjgLAE25z+dPjrH4risquLn0pwz0O3QZ8vUuGz8P/ImBoRLvdsagKkqnecUVRLHDr5u/8R7fUXJS5zy9js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754901881; c=relaxed/simple;
-	bh=T5avuU9DL3vYnH4Ztt+0TxYl6qTo7v/Dlieof70baBY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=I7pIIzig322tL5wI7xTgv8zTEMyN77y2nykV8Faf97FBgZaAizqtEQP1CnZe70KHtXBQxdDdFCptZeiit66JWGGDICo3dIQDcbzMeiz2ydep1H6T47Mk39+AsYKN6CXuiIPd5s7JkXGmQCBF3FDAa7hNe4qfwDOLHUHrAKdb6+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSm9GQ7f; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-321a5d6d301so689145a91.3;
-        Mon, 11 Aug 2025 01:44:39 -0700 (PDT)
+	s=arc-20240116; t=1754901898; c=relaxed/simple;
+	bh=axV6IrUwDJX16qYfVuK28rUUUeMC+FC9Cbf6mRURXWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOf7Ws41s0DZs4d4hG1QFtwLQLzqO793LhonUUzQsDb6pDD+R9XBSATb3n7kshJ5+4p3cmXSzwQqTuX8woaT7cpu1mZ1wmkPy9Z7JGkvw7uT0m0Be3DUsPTXSqtJ4it6PhpYyt+njTrWDIBBtRkq+lVbynxNkPYJgN2Lef/MRcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dbSZf/yP; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76aea119891so4795143b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 01:44:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754901879; x=1755506679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4xS1+WWkgaSv0c4yG6G8DZIxcOQsp2YpyFMtc/MpXw=;
-        b=jSm9GQ7f6Yd50tygeF/osDDvtY/3EG+5WFotJ08QKVPOhzYapWSWqPO/aTHP8q94jo
-         xbChlfIfAs0/ddcBpydHQG/y68pKeF+tns6WyXUdYENp63fulgF5bwtpZa7b7FRAC9U/
-         dQNEhQFBGMjPFOzl1AU9IMuEuIfsaFWXiM51BvVlp7YSGJN3tCDe7YIVCqnqYfnAVyV9
-         G8ewD0e9ECd9nYm2qdxRWFkkoZU8rPQmt5bjwF1oQ+mWJVJcNbemNWX01t39Pgagogh7
-         4YCIX7Ntkc5z4cFWqcHDGPDH3iLxbFrMnMmdCiO9OxDFwIv2techuX4jcnPZvkMAKxlw
-         s1ZA==
+        d=linaro.org; s=google; t=1754901896; x=1755506696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Cv/RLSsqKmx2C79kAK3hgUWMXi5KhDOAjUstrHLjrU=;
+        b=dbSZf/yPvJ1v+rPJm2Nk8f9GYgcz1iiOsIRdXqtI/XlC9a3s8V4qFtkB7CEPA1+ilU
+         5UNYFTpHwoodfd5zMO5O8zWNf6RfEA00bgroO/onhr97I4EdQGnk3CeenhXrd0wAO7rq
+         AzQ9biJOfadOSfVkeE84+J26GaitQNAo9cnthsQ5bZ3Xj2yqQfIql1fG1r0e8LfNnmOk
+         Gx8J37y3BhLjdNhdu7wKnL7Hgt7W+xrbo9r2jOJ1cooqW/PnYr72j8v4rUkajC6d3myJ
+         ltgc9msYJrzvmzOR+oz5yf+Ga+DRHR6mpKgY/XtOf9YavH7iXnCM2VD8f5xVS+pJufvJ
+         c36Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754901879; x=1755506679;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4xS1+WWkgaSv0c4yG6G8DZIxcOQsp2YpyFMtc/MpXw=;
-        b=C03ZCzoVibvRlwzTPucWYTTsRhfHMI5YpHkLovnYTvY3oDXp0mR0aCBHi2Vivx7gVJ
-         snNdbBzkgwDR1wNaRRGRpRXloSKxZvgnEWTmRQeBfXOLK2OQQIIQ9gx82cjxq8Q47RLw
-         lx9p0n3gAEDwNQZ1AIVU7ocSe76u6EcJODyjWz+v6Wqlrgs+7Tv8GN2PWi08S2nh50zl
-         Yf5eJQlyutEFOv3JQEXpZCssXt5FXKNh6eMobNAwqVOHYpPhdxrDTV6WWVYmyeRd7R4T
-         8UR2UFQXHBU22auGpBuIaRWYzW/OBJfFzmdp3ub5A8t6dSIXq3DW8unMczyyLHspASin
-         9q1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIyIu+6tp/pEkjaqSZOWmj351EVL1G9gdTPXodWLsuVpanG1q6sHxaaJkvuggtSzhhG9d4OfJnB/ZO@vger.kernel.org, AJvYcCVb7hBtjdWCotTC1AImw7wFrCUcRhQbZU/c/JGDzMQ0jy00F/HvAj8A9Xx61bMV3Hotv3ByK9UE@vger.kernel.org, AJvYcCXe8OBXg0C2ToP2m2Ut4UKnQzghw8q5swvhS3p5vR1re11ZuU/tTFeUOltWqnthwJBkAEryiFyp8yHLNTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxOkRvAproYY8X2HqVvm/SLoqyjqPImnvNcrRZF/RCODD4z9ZN
-	NDnGaZIsJOiKlfKY9CLcS88PflftKWPY1Xt8arqL6Y2dQJBGHpwJTmuc
-X-Gm-Gg: ASbGncvoM+r4pD81gPGxdlfBLAfqsXdjn71GOOObVSjgARnCnIME4iWIeEOhRSKkhbO
-	ZkVhXNrTCSLNVC0JtxIUvRQRDfob0Zva3q5y6aCA2F5rOWDMYV6B9qbaFRJfJgTufWlygxgszER
-	hNAGUOnEU2fI/c0af3+NdViRPGs33m2e/ZgTAMbfGjAe3YwrlPg5eDfB8HSQVXCHUiUTBsQDsjR
-	E00e4huyTATiQRzl1OPr6JoYBw8K1VWuBUN/OGEOoAog00qxS/Q/HmXeaEcHXjLL5lERziz5NUf
-	pVSmIN+x91yKd+f18T0+CHLs1pr1hY5nOaLN6ZPtcHOi8WlPZF9KwsIivrKTEIeeVqqKAaEK+Ic
-	f7BgaGLzhiG89og==
-X-Google-Smtp-Source: AGHT+IEnv3ilTHdBlqrw4UTyUaEPlZWCMTpuvsvsgFCL/mRg4TuuMDaAImoGmS4qOoZnHPmlfQsmkA==
-X-Received: by 2002:a17:90b:4a82:b0:31e:4492:af48 with SMTP id 98e67ed59e1d1-32183c46051mr15891178a91.28.1754901878785;
-        Mon, 11 Aug 2025 01:44:38 -0700 (PDT)
-Received: from gmail.com ([223.166.85.91])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da5719sm31087468a91.6.2025.08.11.01.44.33
+        d=1e100.net; s=20230601; t=1754901896; x=1755506696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Cv/RLSsqKmx2C79kAK3hgUWMXi5KhDOAjUstrHLjrU=;
+        b=ZqjJRa9saVAJ4X76l5f8B4L0HXG2wu4ZnP9xrOzqKbrr0rWpwnVv/TxHMa6NOtqCr8
+         ScdVFnAAHsGsddn09tkPngIqfc9+Q5Pf05Xb+GTrBmbKTuNmqqaGTCHajp+ow2mCQnhR
+         UiJHe/UnulGRyjduD5LegDxBqNSgXgvt8Nu+mjqrz2/3qWl3KF93jlOCC+h5yo/nXN1P
+         yGJRNBJCyWLeDUDHJ0eIsj2TeLmPHPrGoTxhHtBn2a51+5ehJZQbo3sQn4+S6NOO/dB4
+         jo3r7SrNF7ZRmOzVwz9ckm0TyAfutAfSTGsZ8rVQQaJQLiqiySqxZpK7w7B30kdoPdCy
+         gaWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBNEZ3tFGEoRTFkrDU2UiEIL2Si1NKmFXDE2gI7Qd/d45gdo4VBLjh2yRqqAqZAoZREJ4qNxg7asGLfkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEAjkZWGI53OiZhpuspXQW1U601ANZDR78JtWLoUJsL1fyk/vR
+	p27RhZUHQfgA1LmE1dGVqBqQRQseADPSLe+bJyqD81ryO8dD5JsD3w/bIjglhXsIhnk=
+X-Gm-Gg: ASbGnctTbKL0hPbw1IUhebn3604AoMyIR/3C8n89gVaiZI5KNrDwo9lL2O53mltGxHp
+	AnXwwiZo1syXsjGhRGsIWU/VbTVoZS1adRAqffpxyjc/jF+0qJiNwezs0hLiyv4laVjPAsiUzC6
+	195SittjWL5cPJvhHEaNVsH1GpydwXXoCm4yMRGmbC6Gl9w38j2FgcZlASHQT/br3tCZbud70+T
+	55YYJAUUEYSeNDmVVhuc7ifatLU6XpJc8gD6sozXLiUeKHz7I2LXGHbt5Xdp0CWZWS+ewwxk0Bb
+	Vc9PuIdfU2671EtPmbKW0A8kOoDUbZrSg2FqzoIFtekkx0MNy31fTUe4A4MDXWAWE7sWGH63Sct
+	8ZJSuNVTMKcEeF+xEpyfk98Yj
+X-Google-Smtp-Source: AGHT+IFy8OLOJxDiWjWxN2vnbqxED9SLo1xlCRWSc/+yGzHbtDgkIgFFmU48b8h75I37s18jKrFjyA==
+X-Received: by 2002:a05:6a20:12c9:b0:238:abe:6363 with SMTP id adf61e73a8af0-240412d3d1bmr28944777637.14.1754901896198;
+        Mon, 11 Aug 2025 01:44:56 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0d6csm22123918a12.38.2025.08.11.01.44.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 01:44:38 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] ppp: fix race conditions in ppp_fill_forward_path
-Date: Mon, 11 Aug 2025 16:44:26 +0800
-Message-ID: <20250811084427.178739-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 11 Aug 2025 01:44:55 -0700 (PDT)
+Date: Mon, 11 Aug 2025 14:14:53 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
+ dynamically
+Message-ID: <20250811084453.ocibslv6kxkib6po@vireshk-i7>
+References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
+ <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
+ <20250801072845.ppxka4ry4dtn6j3m@vireshk-i7>
+ <7bac637b-9483-4341-91c0-e31d5c2f0ea3@oss.qualcomm.com>
+ <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
+ <7f1393ab-5ae2-428a-92f8-3c8a5df02058@oss.qualcomm.com>
+ <20250804111340.t62d4y2zg77rr3rp@vireshk-i7>
+ <6035a961-7c5a-4fde-b4ea-e9ea9d88e6c1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6035a961-7c5a-4fde-b4ea-e9ea9d88e6c1@oss.qualcomm.com>
 
-ppp_fill_forward_path() has two race conditions:
+Sorry for the delay, I was travelling a bit recently.
 
-1. The ppp->channels list can change between list_empty() and
-   list_first_entry(), as ppp_lock() is not held. If the only channel
-   is deleted in ppp_disconnect_channel(), list_first_entry() may
-   access an empty head or a freed entry, and trigger a panic.
+On 06-08-25, 10:35, Krishna Chaitanya Chundru wrote:
+> On 8/4/2025 4:43 PM, Viresh Kumar wrote:
+> > On 01-08-25, 15:05, Krishna Chaitanya Chundru wrote:
+> > > Currently we are fetching the OPP based on the frequency and setting
+> > > that OPP using dev_pm_opp_set_opp().
+> > > 
+> > > As you are suggesting to use dev_pm_opp_set_prop_name() here.
+> > > This what I understood
+> > > 
+> > > First set prop name using dev_pm_opp_set_prop_name then
+> > > set opp dev_pm_opp_set_opp()
+> > > 
+> > > if you want to change above one we need to first clear using
+> > > dev_pm_opp_put_prop_name() then again call dev_pm_opp_set_prop_name
+> > > & dev_pm_opp_set_opp()
+> > 
+> > dev_pm_opp_set_prop_name() should be called only once at boot time and not
+> > again later on. It is there to configure one of the named properties before the
+> > OPP table initializes for a device. Basically it is there to select one of the
+> > available properties for an OPP, like selecting a voltage applicable for an OPP
+> > for a device.
+>
+> Then we can't use this dev_pm_opp_set_prop_name(), there is possibility
+> link width x1, x2, x4 etc can also change at runtime.
 
-2. pch->chan can be NULL. When ppp_unregister_channel() is called,
-   pch->chan is set to NULL before pch is removed from ppp->channels.
+Hmm, looking at the way you have implemented the bw multiplier, you
+are going to call that every time you need to change the OPP
+configuration. That doesn't look nice TBH. Such configurations are
+normally provided via DT or are configured once at boot and not
+touched after that. What you are basically doing is something like,
+adding a single OPP in DT and changing the OPP frequency right before
+setting it at runtime.
 
-Fix these by using a lockless RCU approach:
-- Use list_first_or_null_rcu() to safely test and access the first list
-  entry.
-- Convert list modifications on ppp->channels to their RCU variants and
-  add synchronize_rcu() after removal.
-- Check for a NULL pch->chan before dereferencing it.
+FWIW, you are allowed to add multiple OPPs with same frequency value
+but different bandwidths or levels. I think you should use that and
+correctly describe the hardware first (which is the step in the right
+direction). And then you can find the right OPP at runtime and send a
+request to configure it. That way we can avoid adding hacks in the OPP
+core.
 
-Fixes: f6efc675c9dd ("net: ppp: resolve forwarding path for bridge pppoe devices")
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
- drivers/net/ppp/ppp_generic.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 8c98cbd4b06d..fd3ac75a56e3 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -33,6 +33,7 @@
- #include <linux/ppp_channel.h>
- #include <linux/ppp-comp.h>
- #include <linux/skbuff.h>
-+#include <linux/rculist.h>
- #include <linux/rtnetlink.h>
- #include <linux/if_arp.h>
- #include <linux/ip.h>
-@@ -1598,11 +1599,14 @@ static int ppp_fill_forward_path(struct net_device_path_ctx *ctx,
- 	if (ppp->flags & SC_MULTILINK)
- 		return -EOPNOTSUPP;
- 
--	if (list_empty(&ppp->channels))
-+	pch = list_first_or_null_rcu(&ppp->channels, struct channel, clist);
-+	if (!pch)
- 		return -ENODEV;
- 
--	pch = list_first_entry(&ppp->channels, struct channel, clist);
- 	chan = pch->chan;
-+	if (!chan)
-+		return -ENODEV;
-+
- 	if (!chan->ops->fill_forward_path)
- 		return -EOPNOTSUPP;
- 
-@@ -3515,7 +3519,7 @@ ppp_connect_channel(struct channel *pch, int unit)
- 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
- 	if (hdrlen > ppp->dev->hard_header_len)
- 		ppp->dev->hard_header_len = hdrlen;
--	list_add_tail(&pch->clist, &ppp->channels);
-+	list_add_tail_rcu(&pch->clist, &ppp->channels);
- 	++ppp->n_channels;
- 	pch->ppp = ppp;
- 	refcount_inc(&ppp->file.refcnt);
-@@ -3545,10 +3549,11 @@ ppp_disconnect_channel(struct channel *pch)
- 	if (ppp) {
- 		/* remove it from the ppp unit's list */
- 		ppp_lock(ppp);
--		list_del(&pch->clist);
-+		list_del_rcu(&pch->clist);
- 		if (--ppp->n_channels == 0)
- 			wake_up_interruptible(&ppp->file.rwait);
- 		ppp_unlock(ppp);
-+		synchronize_rcu();
- 		if (refcount_dec_and_test(&ppp->file.refcnt))
- 			ppp_destroy_interface(ppp);
- 		err = 0;
 -- 
-2.43.0
-
+viresh
 
