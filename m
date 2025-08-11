@@ -1,142 +1,128 @@
-Return-Path: <linux-kernel+bounces-763331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE0BB2136A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:39:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C305FB21370
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425946262C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F5C3E4172
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76752D47FF;
-	Mon, 11 Aug 2025 17:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C762D47FD;
+	Mon, 11 Aug 2025 17:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UiH6TrUW"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Phb2A2Rs"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FE629BDB8
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C2A311C16;
+	Mon, 11 Aug 2025 17:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933933; cv=none; b=JGOhRBZN4zCfkWrT1kEkyHcnoCyiLF8r0mjYLVPyDWbJD3hN6sQm0PRv+MBFfXOkhqZqG4QnA3wZ55WUvdvJIn5rKE2+4POaLRy+JphQZuc/7W1eaDr3d04VP/5aaQdrQ+8HObpUHOYgKCDrSdYnjCaTe9XWZHFatgfErpGyKkU=
+	t=1754933974; cv=none; b=UeCSDhC4YEqbqsMC8bAiZWpUSZPI1QQIAqLBuQ8G1fBXWuPoW0vH91WUXHVnkUiGtyRqM0U1DTLg399ULTiNfVEjbF2V63lQ9xuEpWm9hFcAwxoiaDyF6e90M6zox2CBW5hkQSTPH924zP54Fq1OIjpIPaNchyji6r6v93n5sgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933933; c=relaxed/simple;
-	bh=CRRkZPsmc2QQ3XWsdn2Up+MRBm+VzEWKJxGbzgiGX8M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PDCQJ3SOGVfvDzporhdGXWamGVKznLtfVoUQ7wEGtRp6uvL5h/RtYc2fpwLBFWoHHwr5/dyFzzvfuU5KasgBS1sGdSR0p7LwdGYMhfexarfNAv/lvb3UshUI0o/ITKn0CWB7rTEgyac/+GeCVniy2jgdX1QuHcOG0/V+GqDh47k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UiH6TrUW; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f74a64da9so5139938a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:38:51 -0700 (PDT)
+	s=arc-20240116; t=1754933974; c=relaxed/simple;
+	bh=Ey74PDj1a4oyieDGHP//4h4HWui+huax6LAJOHAbiEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzzX9vMe6LdgO5me7zmYFp9FnyP+f04Zz1A3F0UVlRCgxdVg0cXdzjLFC4XMtdh2i0g7c70HWOcTvmy551lIYUHg2k7Hq53uUoiuHcogrjWimKUxooq3cLzPX0imDaxiD7LiFeZQNdH3lPI/S6KJpXvq33BLzb2x8EIMMeNLkEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Phb2A2Rs; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76bd202ef81so5982289b3a.3;
+        Mon, 11 Aug 2025 10:39:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754933931; x=1755538731; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D0qWTDt5Fgc4M6C75ofKduQqjIPupxwL5rgTNSXkxj8=;
-        b=UiH6TrUWNgPUoq11u9safnD3Uf3ThH2vnzBp7tRgK/MmMGLAAkZ2/lX73NyADd6mQN
-         XCgP4tzH+gmHjGrl9lcOFDFIN1xnrPh9RvFCDNqpmp/P/RbGmlzAOWHQ61cpYAL1LBip
-         K6QwQ5XgeXvgDczCEYWiRNdtXaA6KlOaDMefAIUZHohL2ykBwi+lOxU2CirdR3fwZ/nP
-         DdYvhE7Y95MPDXc7RuQKPkYObMMGf1xO+kbcg+EQd2BZpMZ/nvmYsxRq1slrJdQRevER
-         AMi3bNbgZHZ5WTuDNPv+fn1i3VigxQLGoo22NLpc/bPVRkvBlL7nlmXrn/50PpUgDalR
-         baAw==
+        d=gmail.com; s=20230601; t=1754933973; x=1755538773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bzf4Ym+R2wd8N0G8qgb9NnmRvobdF6rE8QkYPUS2xRQ=;
+        b=Phb2A2Rsmn5pCpfMJQl3PK1C99yN0JmeHM4SmYcOzi0u0QvSs8bu9pK3vJVH0tUwxJ
+         oKLL4Kbi0c4NDq6kunqA5hnrVsk6XunA1T67tI/WaV9Vw+4+dalehKD0MxDVFv3KhJVd
+         5iN0o1DwPaHc7LCEalULGeKxVOwyrO/1jJf2BTO6W9uqnymAiqPeAT+EQWt+lM6d7jFt
+         TCF9t/a87mJj61g4MyQ3CvgnD77zSW0YDZzirnxSNyXpv3W3tq0GN4VbHX8pKOG5AdjM
+         BrCqvPSP3TePjcfsCb5uVD3ZuMCmp7ye7AUEyzkfIdhdgXP5r8UesKPHLBAVunLYmKkS
+         XluQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754933931; x=1755538731;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D0qWTDt5Fgc4M6C75ofKduQqjIPupxwL5rgTNSXkxj8=;
-        b=HEWuf/qHBz5AM48IbNn9TzLOvFS0CqneZDDOnI4/F9C4eKKEsE+DOK0XVt+0OXSwFl
-         ayzEDPZJRaa1//uiK08xlcKz43NoYtFO6v6WJlUrTILkXNhlIRYUS8L6W9yEuwM1Fxcf
-         IANXOlXEQfqgD+SrCss0sBYiueMSUDfMeImzsvrCA/iY+ucz1vBA76s6f55WCT2/dodb
-         QsYd0eArZQPDOg+EZ40QBTPg22d+Iz1/monKlis+QbJHZHPfvSdiWCzD59idQhbdslPt
-         Eg7Z4htw2HTlP/Na29mR1lnLWKf/0k4TNolWx0S1R0rZU0iGEUYL8u/OvSjBF/Vd9up3
-         KkdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmVUtok5a2RtAOgPakiPTTmvjBgg8wlGA6vp/VY+iIZP7naofj/WlC7uhaBDRbZYw8nc48Iw3mI+dMsig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygCBpPSDCit2H5NU64e7f+IK5022wiQVABhShOcddhPGBBYIuI
-	j3xd7TZgcj/Zoq+NUPhjeRqCvazD+Epn1ZvDIXymxwH7eap/73RGtoFBZlGanrZjZoATXxv1/cX
-	znszoAA==
-X-Google-Smtp-Source: AGHT+IG/CUcmJn+gftHkvxBOV0Z2pVUCpoCwKpG1Kx2L3xffGF7ZIDvldqUNDPHKpVjYgmN7ORZxaRq74uI=
-X-Received: from pjyt9.prod.google.com ([2002:a17:90a:e509:b0:31c:2fe4:33b7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d44:b0:31a:ab75:6e45
- with SMTP id 98e67ed59e1d1-321c0af20famr512709a91.28.1754933931258; Mon, 11
- Aug 2025 10:38:51 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:38:49 -0700
-In-Reply-To: <20250807201628.1185915-1-sagis@google.com>
+        d=1e100.net; s=20230601; t=1754933973; x=1755538773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bzf4Ym+R2wd8N0G8qgb9NnmRvobdF6rE8QkYPUS2xRQ=;
+        b=ZVRg9CA6wC9yUVqpY1Qfk8dz6zBaRcij4Ai/c0WwhmKgOcB5EYD4bpgjd5iftQrnai
+         SatB6F/I3M6EOyWRgzKyadRUdfAu2rowkaqfAwEQsgMp8RmcDh8nziYaGVo9G65x9esw
+         8b9SFkvS75B7rSwpe7prItXC1TXlpXT40Ku7IYEG2sS8mjZ0XGnFTlMHtK+lDbihJofX
+         l6pmV0LviigswFkWpU+gCp+kUjAKBUEHvxS6hoI3c3YVHWnp0nz+F0Hj7fAFeE3BmoMU
+         tD3THW1OZwMSoTTF5WUMcPBWuPT1ekXt1IuFCJP27T3QVAL3kE4qH3fSnewfwbVKmnCW
+         qFXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZK831IfN1CZfFq3jqOPYGONVsyLiNcHRkZ0X5LzUVbsXNs0Ud7RU3sCJS8ieZf3at+rX8ffy2NPDK@vger.kernel.org, AJvYcCUrYZaqiVbvczek9XwqdiZS6reSjIOyChj3EBaK0FRtHSLANeMKNejcy1NZ9Il2hkb1MJQ4Z46/vojG6Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdyD+5mdcRMji6BYT0B96AOJA8Je24l8KSx/TCtdHuzpskf/We
+	08ydMcXtDy/tsNpaMJJb1jMwxcv0ey8PX4fGiARlRf4DKs6gsQpaYq1/
+X-Gm-Gg: ASbGnctj9dPMfug2rLnG9TQAAWoadP/skz/gaAdXh6kmYTWG0JZ+OUOXZeyo5N0HslG
+	zb5g85ZanZ43o+0X2f5oMzdpG7/FVBMMYj9+pIE4PVHQw/Do0yRzXM9EWKReJYXpnckY9LgUaXz
+	IppAiN1Yq5DDu5gvjTvNp2DTfde/iVUzzJe7kaxe2e/7STp+QfDRFZFv+zpRN4agFKOv8qE92JY
+	mRhck1V1F8hjKogEGgQ3riSLLELCznzOmDs49MJXeqipuLY1/a1cTsOoKeJJLXlCNV+PiirFkZX
+	JvniPBnfd5WtPT0ebXgmJ6qkoVjdCr6ndY4RlsD8xx8zFX1yjj+rzCb980dRe05XKdqK9jTkHNo
+	R3zSEz7HsNr7nAnFnmYZg8lVRI5A8
+X-Google-Smtp-Source: AGHT+IGP9MFRg3G16ocnm1v9gXfBVD54hhZqC3mHKtHo1i3a+5bfqSZEnr2GxfM8P5fULmad4NxAMg==
+X-Received: by 2002:a05:6a00:3cce:b0:74e:ac5b:17ff with SMTP id d2e1a72fcca58-76e0df6cef3mr624654b3a.13.1754933972593;
+        Mon, 11 Aug 2025 10:39:32 -0700 (PDT)
+Received: from localhost ([2600:1700:22f5:908f:1457:7499:d258:358f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bf8f12c95sm20863978b3a.2.2025.08.11.10.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 10:39:32 -0700 (PDT)
+From: Matthew Wood <thepacketgeek@gmail.com>
+To: "Bjorn Helgaas" <bhelgaas@google.com>
+Cc: "Mario Limonciello" <superm1@kernel.org>,
+	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v7 0/1] PCI/sysfs: Expose PCIe device serial number
+Date: Mon, 11 Aug 2025 10:39:29 -0700
+Message-ID: <20250811173931.8068-1-thepacketgeek@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com>
-Message-ID: <aJoqqTM9zdcSx1Fi@google.com>
-Subject: Re: [PATCH v8 00/30] TDX KVM selftests
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> This is v8 of the TDX selftests.
-> 
-> This series is based on v6.16
-> 
-> Aside from a rebase, this version includes a minor bug fix for
-> "KVM: selftests: Update kvm_init_vm_address_properties() for TDX" which
-> was called out in v6 by Ira Weiny.
+Add a single sysfs read-only, admin-only interface for reading PCIe device
+serial numbers from userspace, using the same hexadecimal 1-byte dashed
+formatting as lspci serial number capability output:
 
-Folks, this series is completely unacceptable.  Please read through
-Documentation/process/maintainer-kvm-x86.rst and fix the myriad issues with this
-series.
+    sudo cat /sys/devices/pci0000:c0/0000:c0:01.1/0000:c1:00.0/0000:c2:1f.0/0000:ef:00.0/serial_number
+    00-80-ee-00-00-00-41-80
 
-I will provide detailed feedback on this version to help move things along, but
-if v9 doesn't show a marked improvment, don't expect much more than a formletter
-response.  I have made my expectations for KVM x86 abundantly clear.
+If a device doesn't support the serial number capability, the
+serial_number sysfs attribute will not be visible.
 
-Process violations aside, I am also extremely frustrated that seemingly no effort
-has been made to update and polish this series for upstream inclusion.  As Ira
-pointed out, there are references to terminology that we haven't used in *years*.
+Comparing serial number format to lspci output:
 
- : If guest memory is backed by restricted memfd
- : 
- : + UPM is being used, hence encrypted memory region has to be
- :   registered
- : + Can avoid making a copy of guest memory before getting TDX to
- :   initialize the memory region
+    sudo lspci -vvv -s ef:00.0
+        ef:00.0 Serial Attached SCSI controller: Broadcom / LSI PCIe Switch management endpoint (rev b0)
+            Subsystem: Broadcom / LSI Device 0144
+            ...
+            Capabilities: [100 v1] Device Serial Number 00-80-ee-00-00-00-41-80
+            ...
 
-And then there's code like this
+This PCIe device sysfs attribute eliminates the need for parsing lspci
+output (e.g. regexp) for userspace applications that utilize serial
+numbers.
 
- +#define KVM_MAX_CPUID_ENTRIES 256
- +
- +#define CPUID_EXT_VMX                  BIT(5)
- +#define CPUID_EXT_SMX                  BIT(6)
- +#define CPUID_PSE36                    BIT(17)
- +#define CPUID_7_0_EBX_TSC_ADJUST       BIT(1)
- +#define CPUID_7_0_EBX_SGX              BIT(2)
- +#define CPUID_7_0_EBX_INTEL_PT         BIT(25)
- +#define CPUID_7_0_ECX_SGX_LC           BIT(30)
- +#define CPUID_APM_INVTSC               BIT(8)
- +#define CPUID_8000_0008_EBX_WBNOINVD   BIT(9)
- +#define CPUID_EXT_PDCM                 BIT(15)
+v7:
+  Updated docs to change kernel introduction date to December 2025 (6.18)
 
-which is just... ugh.
+Matthew Wood (1):
+  PCI/sysfs: Expose PCIe device serial number
 
-Please make cleaning up this mess the highest priority for TDX upstreaming.  I
-am _thrilled_ (honestly) at the amount test coverage that has been developed for
-TDX.  But I am equally angry that so much effort is being put into newfangled
-TDX features, and that so little effort is being put into helping review and
-polish this series.  I refuse to believe that I am the only person that could
-look at the above code and come to the conclusion that it's simply unnacceptable.
+ Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
+ drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++---
+ 2 files changed, 33 insertions(+), 3 deletions(-)
 
-Y'all _know_ I am stretched thin, please help distribute the load.
+-- 
+2.50.1
+
 
