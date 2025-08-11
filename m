@@ -1,146 +1,96 @@
-Return-Path: <linux-kernel+bounces-763300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE24B212EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491A5B212ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75733E0C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 440231A20111
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1694F2C21D7;
-	Mon, 11 Aug 2025 17:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E522C21E0;
+	Mon, 11 Aug 2025 17:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HW6UqpBX"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="a2v3cXFy"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF4A29BDB3;
-	Mon, 11 Aug 2025 17:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1094E482FF;
+	Mon, 11 Aug 2025 17:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932257; cv=none; b=iY4MBu5VRiZhhli9Pf7qVjdt93++eyTMTXtDdBiyO9ZbyjyxxzTJ4PZFYtGZs45cSAgOq606psWlSfm45AvYVhk88pI4jS1MrmR9Ri8C4XPfre9QenAh6pBkQLppsjjW9yDZOkSBd2R7q1sQYKzYRyKG6jr5l/23aZrPXLiP99A=
+	t=1754932291; cv=none; b=nAY7nKt7ClbGtU2qJkpeGSFp+rIKUuZ+EbzrYT0JQAUrzNpfhGJn8GsfNZPN9JFa6HuWDIojHTbcdCo7L15s4wTLTrs/970neaDXBp7fcrlYN9sfj72Y7d92ZBAJEHaHFs61716qTpZlVjlIVRI7guErMEAs3UnXPj80m6nJ9Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932257; c=relaxed/simple;
-	bh=NfcpECgqdHNwW4J3rj9k/7ZBMdwz41KP0vR83+uTCm4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NXxjbyrgev7DrpYH+2ETynasN7FWpWShuL/UMn9rMsscOysVHecLVGBeR5vE2QBMp6C6JH7kURLhl3gayRWsX9QLlCtvjQHTiTNMZaPBgXHNzUKxGNnY6iJyB1ppO22hSRWvGEE6ycrGA6Mi2cYDoJ+vRl60bPoCUCr9oO4X4lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HW6UqpBX; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754932248; x=1755537048; i=markus.elfring@web.de;
-	bh=iFEz9eT6F16hlYN806F59ir7VxzWd+QswdLQxOMMfBU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HW6UqpBXMEySXIUGN3fY2IbTR4VZeVs+7Q6pDbx/vSj4r+SnihLyKZ0/+JyRtPp4
-	 CVeI+q98ivxCDFwzB4d/4IU67ur/pxhPIb9Y5jaEGAY49/gN5sutTRhtGKlfr/6xB
-	 Yd5XJy6wQrKLRzaeq2tN4nP6nIAIX8fgYn7R4JrgLPkLzFoB4crf9Gk47kmtpCApD
-	 JZMvx9uW9DUCYCgA2T4DgcCDRdVh6FNcouo3HchfalosZAWbZVcTfoQE5loGo6WIz
-	 BaBdbeDhxu9JXW6EfkIUIMyxPvBhK8Wgi3M0Q1fetJmQAYmkEkI40QjCXfeKdCO1s
-	 GiugdmVq+B77SmMjyQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MN6BN-1v4YV31uQX-00Tt0q; Mon, 11
- Aug 2025 19:10:48 +0200
-Message-ID: <d37e7ccd-1d5d-4237-8a7e-a0eb10ec069d@web.de>
-Date: Mon, 11 Aug 2025 19:10:46 +0200
+	s=arc-20240116; t=1754932291; c=relaxed/simple;
+	bh=hTVD6Yv5gSxHlWI+k67kNRMRhKhkFPSUU4Vf0xaHB+g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KSEFo50Gx3veAcyDPr4q+rlKdvbyxx9bJOzY0g4LIqnlRYXGqedzRHnncpBAN3e8T2vpzty/FsvfZfjZ8Ztu0mr1sB9tCb4snC8sjkCUUuInoylHeINPBSsmmexz1IdT5u3dsvEEq7RKjeR4C+tNJn4q+HGWWTNZLzAsy3wzgGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=a2v3cXFy; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 45F8740AD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1754932289; bh=YFNo1xyto9wdOJgULlvM7UE/tRTC5mQFaKXpD4FSQ8U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=a2v3cXFyUgCSVkeaI/GWh46qt+vos0CEqyd6um61eydLHIN3wC4jOy8b4h0/2oRtF
+	 aJbDyWqk0TBxFuh2FHfWK1EwxDPYI1f04Y2MHEUOWxrFwSbVwKrgQL+keBtlntEN6w
+	 i98F/m5vgRDt8A43koEEldW4o76CLlwkQhIhuzSBFS/xdRZrFsL/C1d61L2a5MhD8q
+	 dPKaa/OaPi8h0ayWCd7JEQ4SYbJrwUAwn2QeXXBehE9MUl/ZbPmj/B/dPHQRj8ouDJ
+	 nxii2tebuRH9uYVw1NtD5KpFPNEE3wQNGIZadTMDwP+GG9e4iloH5Q3BMgun7A9CfE
+	 2GOoYIQBBUuhg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 45F8740AD2;
+	Mon, 11 Aug 2025 17:11:29 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: =?utf-8?B?xaB0xJtww6FuIE7Em21lYw==?= <stepnem@smrk.net>
+Cc: "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?utf-8?B?xaB0xJtww6FuIE7Em21lYw==?=
+ <stepnem@smrk.net>
+Subject: Re: [PATCH v2] docs: admin-guide: update to current minimum pipe
+ size default
+In-Reply-To: <20250729-pipedoc-v2-1-18b8e735a9c6@smrk.net>
+References: <20250729-pipedoc-v2-1-18b8e735a9c6@smrk.net>
+Date: Mon, 11 Aug 2025 11:11:28 -0600
+Message-ID: <878qjpeqbj.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: "Leo L. Schwab" <ewhac@ewhac.org>, linux-input@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Kate Hsuan <hpa@redhat.com>
-References: <20250810225617.1006272-2-ewhac@ewhac.org>
-Subject: Re: [PATCH] HID: lg-g15 - Add support for Logitech G13.
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250810225617.1006272-2-ewhac@ewhac.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bWtxhUXcLy/ImE83BhS+Vieazvy+5acd1YLg7TCqsur3QJK51zV
- eeZcFK7K8XXTNkt/7aCFNAeJFFdpOp00GLDf0oKJCPCmGpSk8KwJIwbCqwMorpGS3gqg/WE
- Rosi8Di4FvyOY9sM0sMSIaQUa7M3m2aBfevZb8sELcD1+5mA7hLmczEhZalDyg5VTO5YzhM
- NIUlPYZciwiq3fM1afRpw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SIdeQWToKv0=;H7Lmjt5s8wBVRuGOjfZ+fZAYbYw
- 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
 
-=E2=80=A6
-> +++ b/drivers/hid/hid-lg-g15.c
-=E2=80=A6
-> +static int lg_g13_kbd_led_set(struct led_classdev *led_cdev, enum led_b=
-rightness brightness)
-> +{
-=E2=80=A6
-> +	mutex_lock(&g15->mutex);
-> +	ret =3D lg_g13_kbd_led_write(g15, g15_led, brightness);
-> +	mutex_unlock(&g15->mutex);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
+=C5=A0t=C4=9Bp=C3=A1n N=C4=9Bmec <stepnem@smrk.net> writes:
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&g15->mutex);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.16/source/include/linux/mutex.h#L225
+> The pipe size limit used when the fs.pipe-user-pages-soft sysctl value
+> is reached was increased from one to two pages in commit 46c4c9d1beb7;
+> update the documentation to match the new reality.
+>
+> Fixes: 46c4c9d1beb7 ("pipe: increase minimum default pipe size to 2 pages=
+")
+> Signed-off-by: =C5=A0t=C4=9Bp=C3=A1n N=C4=9Bmec <stepnem@smrk.net>
+> ---
+> The relevant man page was updated in
+> 7543e84442d7 ("pipe.7: Document change to default pipe size when soft lim=
+it is exceeded")
+> https://lore.kernel.org/linux-man/20240829204448.2027276-2-kstewart@effic=
+ios.com/
+> ---
+> Changes in v2:
+> - Better commit message (addressing Jonathan's feedback)
+> - Link to v1: https://lore.kernel.org/r/20250728-pipedoc-v1-1-2dae082a56f=
+5@smrk.net
+> ---
+>  Documentation/admin-guide/sysctl/fs.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+Applied, thanks.
 
-Regards,
-Markus
+jon
 
