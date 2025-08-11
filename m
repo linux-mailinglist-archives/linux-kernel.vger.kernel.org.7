@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-762490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418D2B20776
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:22:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA709B2077C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF4F3AB688
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCC01755C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB79E2C3761;
-	Mon, 11 Aug 2025 11:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE732D0C7B;
+	Mon, 11 Aug 2025 11:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOvnX+Kr"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QD3mXGAq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B02C2C327F;
-	Mon, 11 Aug 2025 11:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF8F28725E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911335; cv=none; b=kedBPKvg7BgtNTCmRRALuiCIf5bVblyUVSIolHq4P17w37rvR3hRgjhFlblDMaijv7wnowi7u8I+msBBRWfhja6+q+qXdYjgLj6gDb6ZIyN0ksCAsa+bIwCyOTF191jhbSOWl9Zhy8BoFFW9oyilCWn7B5RmB20BAq6HdAWH6eI=
+	t=1754911354; cv=none; b=eKI5a8qt5vTOiJTEG7WrITxLtFBC5R7q13xeHvYrb3IZr2TT4XZ7LYewMVpcKWTWDHl/uTTyWq7iQHssePpWBOL+/PCtAq7rtHT+RXcO5GC8HYSadZLRybCZPOMVrdyvcupV/Lk9KFi3d4Com75s2fursi/rTMQetbsaemXGwKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911335; c=relaxed/simple;
-	bh=mqTVABIauHO9LRTapJL80A3vtc4ZkZVHXgu77CE3mB4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MdIB8HUyhm068iQ+CnRmGeps7RUXeKk2dGGr1HbdoR4mR84DrUu1HUtgBp2VgNzzQsuvHIVu+N9teZTgSMl4z2gFzsMIrjemYpvcwF0rMJNZ45jLqwm81SzauYfHiAgRJojaJXdV+7ygGB3Zh50uYdSYXcPguGczruRaQ4RK0rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOvnX+Kr; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-456127fa3d6so6291685e9.1;
-        Mon, 11 Aug 2025 04:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754911331; x=1755516131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5g5hDi7jeqhhL4tmsyaBdgjOZMXvW3aL4OS/N5PPoYg=;
-        b=gOvnX+Kro/IVPaWvUB9BnB8y2CPs5ZHu9WU/gpRjZtpQu7e9gJblnnTt1xga5lL4uD
-         1q7gnsr/0pv80dpY3lJXaRlnEXXSb0cl2n/1P8U+uLyEckB9ddPuQvrh7HrPfFHowT/b
-         PqGkbhLR4008JS3lLNPYbBSTJiCZ5tzl88/FsNUxDZx5bwpAn2wvsCVa0S3QLopLYrce
-         M2kPGE/vLkreSpwesDYHO165c8ir7IdISsvuQxWoLUX0tWoWdSKkVVEr4inWv91q150i
-         4Lcq9k5dVhscbZHnkduc9FHUMO5kbwGgC1R+K2+2DkARUG+AOhTweGLqbdpr8XYxFQ3b
-         uTdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754911331; x=1755516131;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5g5hDi7jeqhhL4tmsyaBdgjOZMXvW3aL4OS/N5PPoYg=;
-        b=S0fcXn8VFjr6TARpUeB2SmMlc44A1EmGz58WiMM/GP1OOy5BXn1fPU73Ttk0Wj7c9O
-         h8SHsHVlQxqxEnixwBd5tZ739jPXRQPcgt0DZuEuUh94VOsI51YQs3bIGyOtR1X2rk/7
-         8r1vNsw8+Glmy2L40K7ur48Gjh7KhaIBY6MHkdjfwSz/XRmQudyp1/sXMFn6Y0Huy87Z
-         mFdxqDvOjcYg1cezlR8UJzVEWgdgw9RCZR8rK1dUNBamk7sBxXL2ykECKKlXCIByhvNV
-         tnYK6mtr+bLjGMIOexWtO7w6/Nr2dgbgrrcrs40HC1QaoHm3A1hRAXh0Dr5U1w5tm+A8
-         /ZuQ==
-X-Gm-Message-State: AOJu0Yz33YRiRPFY/wOhNjlygOvtp1c7kiM7KkQRUAYbTRUaOSAczzf7
-	DlThcCOgowgQlc26HEbdMXc21etH3hRdaj3cUNeTRih4i1eXrAR+Bt+CpVa4gD/Q984=
-X-Gm-Gg: ASbGncujQH+V/CvGn2awVySLBOCcVHWma+oExmwbsSFZAqzd9tZPf5fMfWznfsqOTRk
-	GGRQd/IpXp/m8Y9PXhdoXfhil4pKHC90ZVUu5TOPBJ1NauLlwaOSiiHA4y2ISAWp2d0wgaLuByI
-	zfCdWO18XrMClMK1SFTxPTscqgNDStsv+r7UaNbw1i8aBSssMOlcOBwU/SjZNI1FxbUrRL1LRxU
-	/nVJMGpCAxAgDGCP+04q8LjEjWCU0e9R+l6W+KD1Ll5qZBxqDuLTUnwSETJOUGXL5oMSTlrrKmY
-	M7wPlT7cVCPGUJUzp6Q7lcmLMiev8BWRsSToHb56N9NCt1WXN3GN89FtBv85PIsII7TxgL9rMLJ
-	7mDL00KneP+Kon1JiINu9oVukEqriF9HaIdnUeggJaeo5NgfJOBBjQjABczrc2BMudfm+7inrSg
-	==
-X-Google-Smtp-Source: AGHT+IGH7TsHfHe4aY4SI1cXo67Gk3CyAYojTMifCQDhVfute1+x1Z+lPV6jjXMKTd2spw6sjIpuhQ==
-X-Received: by 2002:a05:600c:6095:b0:459:d449:a629 with SMTP id 5b1f17b1804b1-459fc1ec115mr32073125e9.8.1754911331131;
-        Mon, 11 Aug 2025 04:22:11 -0700 (PDT)
-Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dbba5210sm322605505e9.2.2025.08.11.04.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 04:22:10 -0700 (PDT)
-From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	willemdebruijn.kernel@gmail.com,
-	jasowang@redhat.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	skhan@linuxfoundation.org,
-	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-Subject: [PATCH] net: tun: replace strcpy with strscpy for ifr_name
-Date: Mon, 11 Aug 2025 13:22:07 +0200
-Message-Id: <20250811112207.97371-1-miguelgarciaroman8@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754911354; c=relaxed/simple;
+	bh=yH9o/+7iQTtEc5jc6WfYbooYmTC+iDCsKE/1zeYeYwQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gZUiDcCRtVnj8e0qIgJ0i1dZdLWyairqPSZ4RfB/yBLm9Uidk+0FzGyR5d60h8R98wZ3RHAN66PBk8TWvY03wjr6q1wd03BfcZKiVNtZ594G9Z16CqvdTAx6gYFAcPHMRbKrI8uyc9hDPEJCy0sm5oa6nVrdbx/46CZus+jV8wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QD3mXGAq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754911351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FwVUSFRZ0F7GHgPHZ+J3/Ax+Q+cwf/vSatx/cEwvjzI=;
+	b=QD3mXGAqBBI/1KrTZe6ZMvDWKdBs9KI0/JJGKfkyfBOeV/PU0NWHYkIUOJPNyoLonFL7yC
+	iT7HPPThPWLmkaGWL4HXu24l7l62esA6IyjRewRu47VhaGsBkZ352zDgPRozKbk0FvnJMZ
+	jC0QHZ7Xid3EHQxkUH4D1iGvO8ghliY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-685-k73NodGxOoSyNSYeShpbMA-1; Mon,
+ 11 Aug 2025 07:22:28 -0400
+X-MC-Unique: k73NodGxOoSyNSYeShpbMA-1
+X-Mimecast-MFC-AGG-ID: k73NodGxOoSyNSYeShpbMA_1754911347
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02A9F1800370;
+	Mon, 11 Aug 2025 11:22:27 +0000 (UTC)
+Received: from [10.22.80.50] (unknown [10.22.80.50])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7812219560B4;
+	Mon, 11 Aug 2025 11:22:24 +0000 (UTC)
+Date: Mon, 11 Aug 2025 13:22:18 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Shubham Sharma <slopixelz@gmail.com>
+cc: agk@redhat.com, snitzer@kernel.org, corbet@lwn.net, msakai@redhat.com, 
+    dm-devel@lists.linux.dev, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: device-mapper :Fix typos in delay.rst and
+ vdo-design.rst
+In-Reply-To: <20250810113008.27381-1-slopixelz@gmail.com>
+Message-ID: <b03394a2-eca7-6c39-6ab8-d3a7ae1c7233@redhat.com>
+References: <20250810113008.27381-1-slopixelz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Replace the strcpy() calls that copy the device name into ifr->ifr_name
-with strscpy() to avoid potential overflows and guarantee NUL termination.
+Applied, thanks.
 
-Destination is ifr->ifr_name (size IFNAMSIZ).
+Mikulas
 
-Tested in QEMU (BusyBox rootfs):
- - Created TUN devices via TUNSETIFF helper
- - Set addresses and brought links up
- - Verified long interface names are safely truncated (IFNAMSIZ-1)
 
-Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
----
- drivers/net/tun.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index f8c5e2fd04df..e4c6c1118acb 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -2800,13 +2800,13 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
- 	if (netif_running(tun->dev))
- 		netif_tx_wake_all_queues(tun->dev);
- 
--	strcpy(ifr->ifr_name, tun->dev->name);
-+	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
- 	return 0;
- }
- 
- static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
- {
--	strcpy(ifr->ifr_name, tun->dev->name);
-+	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
- 
- 	ifr->ifr_flags = tun_flags(tun);
- 
--- 
-2.34.1
+On Sun, 10 Aug 2025, Shubham Sharma wrote:
+
+> Fixed the following typos in device-mapper documentation:
+> - explicitely -> explicitly
+> - approriate -> appropriate
+> 
+> Signed-off-by: Shubham Sharma <slopixelz@gmail.com>
+> ---
+>  Documentation/admin-guide/device-mapper/delay.rst      | 2 +-
+>  Documentation/admin-guide/device-mapper/vdo-design.rst | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/device-mapper/delay.rst b/Documentation/admin-guide/device-mapper/delay.rst
+> index 4d667228e744..982136160d6f 100644
+> --- a/Documentation/admin-guide/device-mapper/delay.rst
+> +++ b/Documentation/admin-guide/device-mapper/delay.rst
+> @@ -18,7 +18,7 @@ Table line has to either have 3, 6 or 9 arguments:
+>     to write and flush operations on optionally different write_device with
+>     optionally different sector offset
+>  
+> -9: same as 6 arguments plus define flush_offset and flush_delay explicitely
+> +9: same as 6 arguments plus define flush_offset and flush_delay explicitly
+>     on/with optionally different flush_device/flush_offset.
+>  
+>  Offsets are specified in sectors.
+> diff --git a/Documentation/admin-guide/device-mapper/vdo-design.rst b/Documentation/admin-guide/device-mapper/vdo-design.rst
+> index 3cd59decbec0..faa0ecd4a5ae 100644
+> --- a/Documentation/admin-guide/device-mapper/vdo-design.rst
+> +++ b/Documentation/admin-guide/device-mapper/vdo-design.rst
+> @@ -600,7 +600,7 @@ lock and return itself to the pool.
+>  All storage within vdo is managed as 4KB blocks, but it can accept writes
+>  as small as 512 bytes. Processing a write that is smaller than 4K requires
+>  a read-modify-write operation that reads the relevant 4K block, copies the
+> -new data over the approriate sectors of the block, and then launches a
+> +new data over the appropriate sectors of the block, and then launches a
+>  write operation for the modified data block. The read and write stages of
+>  this operation are nearly identical to the normal read and write
+>  operations, and a single data_vio is used throughout this operation.
+> -- 
+> 2.43.0
+> 
 
 
