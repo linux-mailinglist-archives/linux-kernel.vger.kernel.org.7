@@ -1,144 +1,159 @@
-Return-Path: <linux-kernel+bounces-762477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B52EB20740
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58B9B2073D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD24427A31
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0731890714
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD272BEC57;
-	Mon, 11 Aug 2025 11:15:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC972BE7D4;
+	Mon, 11 Aug 2025 11:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wLTFxJ4l"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA722BE7AD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14A722154B;
+	Mon, 11 Aug 2025 11:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754910941; cv=none; b=Bel18Ce6rJvXZVX/CzhoQrPV1UINBNh3lAFPOMpKFJ/aSNE/IUJaX1Ji0K4qKtnUbfqmUGObtbr4UyAdjy026+XvXt0n/zLCkzdzcaeg4072Lnd+ADknxTGYoayB2MuxHACCDCh/o6iobeQ8/tpKnzF+am2NUI5IieX+9uo5FBI=
+	t=1754910969; cv=none; b=IC2HNCrFSc81gxMRXktqzek0H9HLAGSWm2yWnCOZdvyS7ScyI9fNlRslsjdcl3WumH4P2zxeVuhdK4uPvZr5J3Uk4UByYYcZz3cQVbTDL3Gskc83+SYDOaeVs840kdWj/P25cTF3LB7N4BqdtVvxvpqELGLcQCUGXPJdx8OwgVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754910941; c=relaxed/simple;
-	bh=d8PN3eGQqXeJW5ezvzcct/ODNQy7RgIfETcyQy+sB5s=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=RzFsCSQIl+VKh5nmxynIFy3Pl9ukhqbcZ9OKORj1yBWf2UgB+90sAPtuLV1lWSODHU4a6TC8sQjzMS+bc8DbVZsOgSJf+AH5hlXRAep8Fk6DARlsO+ZqSvqtdatOB51bOIfgUI0eAYYq044KPj7brWqzqfug54Ddc1abQo+iEjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c0sRB37fQz13Mbt;
-	Mon, 11 Aug 2025 19:12:06 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21EAB1402C7;
-	Mon, 11 Aug 2025 19:15:28 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Aug 2025 19:15:27 +0800
-Subject: Re: [PATCH] ubifs: Remove unnecessary variable assignments
-To: Xichao Zhao <zhao.xichao@vivo.com>, <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250811100949.431764-1-zhao.xichao@vivo.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <b93c0677-f26b-b8da-bd70-7cec43bd8d00@huawei.com>
-Date: Mon, 11 Aug 2025 19:15:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1754910969; c=relaxed/simple;
+	bh=qZKSfx7lKS5o8A/i/O0jJ194e5b90E76li/qjrSBjwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tO2dZRLpFuUDhufyENLLpkBxFCXWbUNuLIWcc6zz6Ii5f3QCOY6sV5h9MKjurgwOg5ZAAmSiH5Zs5JChx/Dnhxku9OChhsh5x//dLxj6SSgvuJKiVwodPDXNdUm+ePXe3XA5exXCBaBObq6rVLcs/NnQiicsdW3TW/MlGuU4/mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wLTFxJ4l; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 503A882A;
+	Mon, 11 Aug 2025 13:15:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754910911;
+	bh=qZKSfx7lKS5o8A/i/O0jJ194e5b90E76li/qjrSBjwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wLTFxJ4l4/be02dukk9caxg38DsmT1fJe9X69ePV0pEMOsiwwZf8wvsVD2r7u8bRf
+	 r40fkfnyO322t0/phGW1K6mbN8weXPAI5+R8JibrzG3rt8ClsGhv81a7gJPprc31Kw
+	 FgTe+VBl1jyq23wOp9iGn0pmr3QC1Vh1TX2AcyGQ=
+Date: Mon, 11 Aug 2025 14:15:46 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Suraj Kandpal <suraj.kandpal@intel.com>, kernel-list@raspberrypi.com,
+	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	ankit.k.nautiyal@intel.com, arun.r.murthy@intel.com,
+	uma.shankar@intel.com, jani.nikula@intel.com,
+	harry.wentland@amd.com, siqueira@igalia.com,
+	alexander.deucher@amd.com, christian.koenig@amd.com,
+	airlied@gmail.com, simona@ffwll.ch, liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev,
+	tzimmermann@suse.de, jessica.zhang@oss.qualcomm.com,
+	sean@poorly.run, marijn.suijten@somainline.org, mcanal@igalia.com,
+	dave.stevenson@raspberrypi.com,
+	tomi.valkeinen+renesas@ideasonboard.com,
+	kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <20250811111546.GA30760@pendragon.ideasonboard.com>
+References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
+ <20250811092707.3986802-2-suraj.kandpal@intel.com>
+ <20250811094429.GE21313@pendragon.ideasonboard.com>
+ <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250811100949.431764-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
 
-ÔÚ 2025/8/11 18:09, Xichao Zhao Ð´µÀ:
-> When an error occurs, ubifs_err is used to directly print the error,
-> and different errors have different formats for printing. Therefore,
-> it's not necessary to use 'err' to locate the error occurrence.
-> Thus, remove the relevant assignments to 'err'.
+On Mon, Aug 11, 2025 at 01:22:30PM +0300, Dmitry Baryshkov wrote:
+> On Mon, Aug 11, 2025 at 12:44:29PM +0300, Laurent Pinchart wrote:
+> > On Mon, Aug 11, 2025 at 02:57:00PM +0530, Suraj Kandpal wrote:
+> > > Some drivers cannot work with the current design where the connector
+> > > is embedded within the drm_writeback_connector such as intel and
+> > > some drivers that can get it working end up adding a lot of checks
+> > > all around the code to check if it's a writeback conenctor or not.
+> > > To solve this we move the drm_writeback_connector within the
+> > > drm_connector and remove the drm_connector base which was in
+> > > drm_writeback_connector. We do all other required
+> > > modifications that come with these changes along with addition
+> > > of new function which returns the drm_connector when
+> > > drm_writeback_connector is present.
+> > > All drivers will be expected to allocate the drm_connector.
+> > > 
+> > > Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_writeback.c | 33 ++++++++++------
+> > >  include/drm/drm_connector.h     | 60 +++++++++++++++++++++++++++++
+> > >  include/drm/drm_writeback.h     | 68 ++++-----------------------------
+> > >  3 files changed, 89 insertions(+), 72 deletions(-)
+> > > 
+> > > @@ -2305,6 +2360,11 @@ struct drm_connector {
+> > >  	 * @cec: CEC-related data.
+> > >  	 */
+> > >  	struct drm_connector_cec cec;
+> > > +
+> > > +	/**
+> > > +	 * @writeback: Writeback related valriables.
+> > > +	 */
+> > > +	struct drm_writeback_connector writeback;
+> > 
+> > No, sorry, that's a bad idea. Most connectors have nothing to do with
+> > writeback, you shouldn't introduce writeback-specific fields here.
+> > drm_writeback_connector happens to be a drm_connector because of
+> > historical reasons (it was decided to reuse the connector API exposed to
+> > userspace instead of exposing a completely separate API in order to
+> > simplify the implementation), but that does not mean that every
+> > connector is related to writeback.
+> > 
+> > I don't know what issues the Intel driver(s) have with
+> > drm_writeback_connector, but you shouldn't make things worse for
+> > everybody due to a driver problem.
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->   fs/ubifs/tnc_misc.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
+> Suraj is trying to solve a problem that in Intel code every drm_connector
+> must be an intel_connector too. His previous attempt resulted in a loose
+> abstraction where drm_writeback_connector.base wasn't initialized in
+> some cases (which is a bad idea IMO).
 > 
+> I know the historical reasons for drm_writeback_connector, but I think
+> we can do better now.
+> 
+> So, I think, a proper approach would be:
+> 
+> struct drm_connector {
+>     // other fields
+> 
+>     union {
+>         struct drm_connector_hdmi hdmi; // we already have it
+>         struct drm_connector_wb wb;  // this is new
+>     };
+> 
+>     // rest of the fields.
+> };
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
-> index d3f8a6aa1f49..10b222dc6a53 100644
-> --- a/fs/ubifs/tnc_misc.c
-> +++ b/fs/ubifs/tnc_misc.c
-> @@ -321,7 +321,6 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   			  c->fanout, znode->child_cnt);
->   		ubifs_err(c, "max levels %d, znode level %d",
->   			  UBIFS_MAX_LEVELS, znode->level);
-> -		err = 1;
->   		goto out_dump;
->   	}
->   
-> @@ -342,7 +341,6 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   		    zbr->lnum >= c->leb_cnt || zbr->offs < 0 ||
->   		    zbr->offs + zbr->len > c->leb_size || zbr->offs & 7) {
->   			ubifs_err(c, "bad branch %d", i);
-> -			err = 2;
->   			goto out_dump;
->   		}
->   
-> @@ -355,7 +353,6 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   		default:
->   			ubifs_err(c, "bad key type at slot %d: %d",
->   				  i, key_type(c, &zbr->key));
-> -			err = 3;
->   			goto out_dump;
->   		}
->   
-> @@ -368,7 +365,6 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   				ubifs_err(c, "bad target node (type %d) length (%d)",
->   					  type, zbr->len);
->   				ubifs_err(c, "have to be %d", c->ranges[type].len);
-> -				err = 4;
->   				goto out_dump;
->   			}
->   		} else if (zbr->len < c->ranges[type].min_len ||
-> @@ -378,7 +374,6 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   			ubifs_err(c, "have to be in range of %d-%d",
->   				  c->ranges[type].min_len,
->   				  c->ranges[type].max_len);
-> -			err = 5;
->   			goto out_dump;
->   		}
->   	}
-> @@ -396,13 +391,11 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   		cmp = keys_cmp(c, key1, key2);
->   		if (cmp > 0) {
->   			ubifs_err(c, "bad key order (keys %d and %d)", i, i + 1);
-> -			err = 6;
->   			goto out_dump;
->   		} else if (cmp == 0 && !is_hash_key(c, key1)) {
->   			/* These can only be keys with colliding hash */
->   			ubifs_err(c, "keys %d and %d are not hashed but equivalent",
->   				  i, i + 1);
-> -			err = 7;
->   			goto out_dump;
->   		}
->   	}
-> @@ -411,7 +404,7 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   	return 0;
->   
->   out_dump:
-> -	ubifs_err(c, "bad indexing node at LEB %d:%d, error %d", lnum, offs, err);
-> +	ubifs_err(c, "bad indexing node at LEB %d:%d", lnum, offs);
->   	ubifs_dump_node(c, idx, c->max_idx_node_sz);
->   	kfree(idx);
->   	return -EINVAL;
-> 
+I still don't like that. This really doesn't belong here. If anything,
+the drm_connector for writeback belongs to drm_crtc.
 
+If the issue is that some drivers need a custom drm_connector subclass,
+then I'd rather turn the connector field of drm_writeback_connector into
+a pointer.
+
+> I plan to add drm_connector_dp in a similar way, covering DP needs
+> (currently WIP).
+
+-- 
+Regards,
+
+Laurent Pinchart
 
