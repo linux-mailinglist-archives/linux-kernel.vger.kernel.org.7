@@ -1,181 +1,256 @@
-Return-Path: <linux-kernel+bounces-761741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D64B1FDEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41059B1FE01
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4171650A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5542E167A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715191B0439;
-	Mon, 11 Aug 2025 02:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD43223F27B;
+	Mon, 11 Aug 2025 02:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lseXBTiG"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J1VJ8NVd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F10BEACD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE1DEACD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754880064; cv=none; b=sujCRTj0ajebgmiEQm9sm4v2qKEo0JDQjCtJ6WCGiWO6ob2RkduH9KwvikJyMDYkPvtn1kodafDkdKVe9r0rj1WT6+2Uqij6CiA+6/E6g7y3Q+/pSqIpOn0TIsEalqFjfrqUliPVHL29GQa7ZFL/l3ErXzFXt3nUVkt37QTVj1g=
+	t=1754880303; cv=none; b=NTuX4mTZS+/RgLHgXM0TnVI35adQNjhmi/NG0iGCX3S7hR3Df2jG1N/8boxVPY9TIaLlRShYGNYXDG5cjYQtbwNBsw4O5dGrD3X4EVoUJSE4ci2ATBkuCVNAj9ndmpYzEMF0WPydmHwZBlbXg0qm/7fbiJPsh09UR9jLLe7hi9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754880064; c=relaxed/simple;
-	bh=cogBvEAt0ueMitb48hqO68W8a94umpG5+fVB0VQ21e8=;
+	s=arc-20240116; t=1754880303; c=relaxed/simple;
+	bh=9ppwh54+HK1qVr+GRbb6FbUhHZWPWKbZ3u0a0GnFclk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mhmsN7cTJYRcorYbyQn/F/4yosA/i50FSwZ/mCZKRZZxDLU1J54B3sILtCYePKEvobXghjQ2QIA5pym5LUms0LGO87AQ9wP+K/zTuGWwdk0WQuSfo71KlY8nOnbsWEIeQ0BkRtkCggv+5Gb6fOHSQoSOO941ORFrHNJbEZyVRBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lseXBTiG; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5393a18c550so1015932e0c.3
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754880062; x=1755484862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEPO79lcAqliTFFVAgSx9X04AvKfXDh6E7nn3ae49xc=;
-        b=lseXBTiG+XX2BN4CPru9yi0WAcm059IYOR2bZjCTRNInS951/hKN0KjC9FUf1H+dN1
-         Wlm3sImGa/DBA1O63YA1D2VYyj+QOBWYM76HN0PBzAb/DaUGSrOAPoSVuYbTkhXiVqob
-         YUz//mc/LxI5Q6iSdf2V/+6sj6hWSa7kdSQb8Q12b7JJavWmePW7DIGAMRC4VaEHkJE+
-         4KDgS8+WKdM8U4YeR7xp5ecHgQmKEdPiwTfxIHZJf3vz+OLZYm/Vg9iFwKH5wdzWcD46
-         8o36OsD4azqIFKt6yomiB++L0DPEg9DW97nQoAn71JoQ3uWQeMHT7agYIPfxx8HKtp6Q
-         DP5Q==
+	 To:Cc:Content-Type; b=p4TFXXkP13P3fRRp8c7WvayKJF2LBKOVYtB28xwFhZGp66oj6PL1UQzbJVq0J1ghMRU+6U7W0nDR/hta8hS5Ez4emrRy4/ugMTtMMlc3FP96r4mast/1SIfchlfX0w7EDjWRNAFNqmAQ2E2+s4XHvAxkd6416QQaT0+UocbRN6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J1VJ8NVd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754880299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e0/sM6aUkX502iExFjanLuFpVfhVyNcMUm7+a6rSkos=;
+	b=J1VJ8NVdhdQtEdMVkWPwNQdSoaGn/KxcOOsT2xKJKP4f24pmWlSAXSJGRAovRdEckO+FQk
+	CVqGWUZhapt8Z+pkrcENRyXS4/WgnWEUVhh5lXxLP29RlAw0X5O36aKzyzJK+4becQLwTc
+	+55jq3sqpKuaC+J1FBVX/mkPZPMVtXo=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-SUMwbdTDOsChfzZiO8HY5A-1; Sun, 10 Aug 2025 22:44:58 -0400
+X-MC-Unique: SUMwbdTDOsChfzZiO8HY5A-1
+X-Mimecast-MFC-AGG-ID: SUMwbdTDOsChfzZiO8HY5A_1754880297
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2400a932e59so66171505ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:44:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754880062; x=1755484862;
+        d=1e100.net; s=20230601; t=1754880297; x=1755485097;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CEPO79lcAqliTFFVAgSx9X04AvKfXDh6E7nn3ae49xc=;
-        b=qIsuKLiZXzv6vTPtfq0r1BZOm91CDCY63LnNM5ryBS+qzAc//2UOgyzCKLD2VRyUKW
-         DMu3ceMW9tJR1bdil98hwYR9wpJrvzbKzQ6wXzmJ4vieLv6szbcM3sGpYEGnHeg0Orfp
-         n51megZh3Vjcj3LvcGNB/w1eCSdu6EpTyN2Uqls/XtNZtMbxCgM0xdxoZbXzW4XSifXa
-         4H1ENj7ojxpkXrWYfi51l+HMsF4y99FE4FR4SbnpMBfTX5isQN2AVWtDQgd0+KSneFNY
-         w52kUBrsJZDQHvYvUuxtmYik5tAFCVs9L3sOBquxdLvgbtkzZNyBfwNesXhY5JobLi6W
-         oitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXbIUUdPGrSgdadczdwGQ+f3rhvrRRXmeABgDL2Yk4hawpCSVqU/3Ihedi+IDV0LspahdGJObMj96T6lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjN9MH2lNgTfNX4VC8zQlLyfYPowmdxD6NTni62ljAR0cla5aF
-	APqzEq4t+NvJGTEUH17UWAkNnO5nZcxNdRlITj2p35wpAJDrzTo1Yt0FffnG3aoYXFwwoQef1rY
-	fpJ+V7GY75Ds/obiZJ2502O94PTHB/x4=
-X-Gm-Gg: ASbGncs3uP6vvyojUv5Cs9rxEZg1qlbqMB/xWWjthTwT/XAOmfPVS4sk9ycf7C9Tbp5
-	GSvirNHzvk4NJDTfVIT2yEbPZ0S5qj1B6NnEFXnL3epjfaGJOCxdxgLr3rPyUGF8glg312yjqQ6
-	f+jW1pQl3IDWXFhE6Q3tSHwvsGZE/iFJvhSlNa1TeuqsUC//byhznwcRdR1Ed2dffWvGxjueOrY
-	OSENUA=
-X-Google-Smtp-Source: AGHT+IG9M12oTQKXjakVvm7O5EdRoYMgP2LrdwPJngQsDTIg4mJl6/p9kPCNEkiFHHbjllCvovPLKhqLUYDr9ffqJEs=
-X-Received: by 2002:a05:6122:134c:b0:539:1142:21a1 with SMTP id
- 71dfb90a1353d-53a4ac10d5amr3628046e0c.0.1754880061889; Sun, 10 Aug 2025
- 19:41:01 -0700 (PDT)
+        bh=e0/sM6aUkX502iExFjanLuFpVfhVyNcMUm7+a6rSkos=;
+        b=Gbd3h9N5/NPZ3KUI4EayUX6ggEklqJe1RUF6CfF9tQKt6lrhdkpyLUIei0HRalAJY+
+         UfV+E1vV1XrZItGcQhJFnZBUj6qbf+x2mm4eE3D+PcRD1atjrkFEyYseJTi+553i9KPW
+         G5iro/8wn9vdxgxtQbF56DojQ40EdFGn4eChAE0mzVi5crFQGlktaZwursvFjriwxmK1
+         jeKm2njAc4K+Nocy2VhJ4NHVJYvn7C7k1FUCXEV11yooN5Z5NmOORaHOT9j/DL2Ivd1g
+         GN0U+SZoBD8TTlAPrPsjByjqOxpiFe3z9YDpeTLrpjviv8Qn3uzfWryE11CnV3iNAU7O
+         7iRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Badc+QK1+FISWV8uS70YsOQ4/u9C+nfEzSeZ0kFZCcnvKbzi2tBpcwtzB4zwb8Qu/Ax6NclmTjFSzNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAUalipXzNGFn3fi78jJabhXQrx5KKqEacWao4H1zMB5BU9eEq
+	77IXKRGvb+k4mKyR0eFZqOC8ErYYKlwX/EaKf8BIl3IL4uMKOwwZc8OdTCqLIIvpkivuhUiZtHB
+	7Sdjl8gHacw8VZDZ+3SQHUsq3p+7js3x6Oq+Hqp8SzLb/EIuGgXPVUE+kVzp95Pyu622+ELdg60
+	hsxH2JBZdPP4W3QStSjzYgTsGH5iAr64h1vGFz1aM7
+X-Gm-Gg: ASbGncvsvnd8xjq+6SmB7+qvYb8SvIAICw3zV8fiGcZdZr/Q2B3mYBqaSeUctsoCqwy
+	d6T3UYQPPaIgzkwW5EeTjGFfyzNbb7SDU5ZfXVN69Ujgq9NoLCxkJw6c2WHYm9iK7VFlfA6xKrC
+	2oDeVncm/yzV0e9tvzMAM=
+X-Received: by 2002:a17:903:22ce:b0:240:a8c8:5f6f with SMTP id d9443c01a7336-242c22a0c4dmr149214465ad.27.1754880297129;
+        Sun, 10 Aug 2025 19:44:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQGmESbcgQnsFMMENqJMFjx9cNlM1noV3xMR7G/xI2RDUr9pzR5lhTfwZsR29D3VOrmuAiSwzBZnYtSI+WvX4=
+X-Received: by 2002:a17:903:22ce:b0:240:a8c8:5f6f with SMTP id
+ d9443c01a7336-242c22a0c4dmr149214205ad.27.1754880296614; Sun, 10 Aug 2025
+ 19:44:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
-In-Reply-To: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 11 Aug 2025 10:40:50 +0800
-X-Gm-Features: Ac12FXxh4BM1Q0JSTNoPZLQDxlAY6NtAXyQ0P5zZ1A7rFzDEZOlSUIymDp7nKis
-Message-ID: <CAGsJ_4zuEcgg7U0yCMu6ayKqRPACtvuzUsC9vUxBk2PgMzaf_Q@mail.gmail.com>
-Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
- mremap folio pte batch
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>
+References: <20250808153721.261334-1-simon.schippers@tu-dortmund.de> <689757e093982_2ad3722945f@willemb.c.googlers.com.notmuch>
+In-Reply-To: <689757e093982_2ad3722945f@willemb.c.googlers.com.notmuch>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 11 Aug 2025 10:44:45 +0800
+X-Gm-Features: Ac12FXzoWIUcI3SjBmgBouN2-NVQtxYqr_Frxhq9JvJ-Ez4KXxfRxpNoKJSZBpc
+Message-ID: <CACGkMEuFXojXZ-tyaY284CXZmx+0nG4-bKB3dzsQvwuxmM9TwQ@mail.gmail.com>
+Subject: Re: [PATCH net] TUN/TAP: Improving throughput and latency by avoiding
+ SKB drops
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Simon Schippers <simon.schippers@tu-dortmund.de>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 8, 2025 at 2:59=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Sat, Aug 9, 2025 at 10:15=E2=80=AFPM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
 >
-> It was discovered in the attached report that commit f822a9a81a31 ("mm:
-> optimize mremap() by PTE batching") introduced a significant performance
-> regression on a number of metrics on x86-64, most notably
-> stress-ng.bigheap.realloc_calls_per_sec - indicating a 37.3% regression i=
-n
-> number of mremap() calls per second.
+> Simon Schippers wrote:
+> > This patch is the result of our paper with the title "The NODROP Patch:
+> > Hardening Secure Networking for Real-time Teleoperation by Preventing
+> > Packet Drops in the Linux TUN Driver" [1].
+> > It deals with the tun_net_xmit function which drops SKB's with the reas=
+on
+> > SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+> > resulting in reduced TCP performance and packet loss for bursty video
+> > streams when used over VPN's.
+> >
+> > The abstract reads as follows:
+> > "Throughput-critical teleoperation requires robust and low-latency
+> > communication to ensure safety and performance. Often, these kinds of
+> > applications are implemented in Linux-based operating systems and trans=
+mit
+> > over virtual private networks, which ensure encryption and ease of use =
+by
+> > providing a dedicated tunneling interface (TUN) to user space
+> > applications. In this work, we identified a specific behavior in the Li=
+nux
+> > TUN driver, which results in significant performance degradation due to
+> > the sender stack silently dropping packets. This design issue drastical=
+ly
+> > impacts real-time video streaming, inducing up to 29 % packet loss with
+> > noticeable video artifacts when the internal queue of the TUN driver is
+> > reduced to 25 packets to minimize latency. Furthermore, a small queue
 >
-> I was able to reproduce this locally on an intel x86-64 raptor lake syste=
-m,
-> noting an average of 143,857 realloc calls/sec (with a stddev of 4,531 or
-> 3.1%) prior to this patch being applied, and 81,503 afterwards (stddev of
-> 2,131 or 2.6%) - a 43.3% regression.
+> This clearly increases dropcount. Does it meaningfully reduce latency?
 >
-> During testing I was able to determine that there was no meaningful
-> difference in efforts to optimise the folio_pte_batch() operation, nor
-> checking folio_test_large().
+> The cause of latency here is scheduling of the process reading from
+> the tun FD.
 >
-> This is within expectation, as a regression this large is likely to
-> indicate we are accessing memory that is not yet in a cache line (and
-> perhaps may even cause a main memory fetch).
+> Task pinning and/or adjusting scheduler priority/algorithm/etc. may
+> be a more effective and robust approach to reducing latency.
 >
-> The expectation by those discussing this from the start was that
-> vm_normal_folio() (invoked by mremap_folio_pte_batch()) would likely be t=
-he
-> culprit due to having to retrieve memory from the vmemmap (which mremap()
-> page table moves does not otherwise do, meaning this is inevitably cold
-> memory).
+> > length also drastically reduces the throughput of TCP traffic due to ma=
+ny
+> > retransmissions. Instead, with our open-source NODROP Patch, we propose
+> > generating backpressure in case of burst traffic or network congestion.
+> > The patch effectively addresses the packet-dropping behavior, hardening
+> > real-time video streaming and improving TCP throughput by 36 % in high
+> > latency scenarios."
+> >
+> > In addition to the mentioned performance and latency improvements for V=
+PN
+> > applications, this patch also allows the proper usage of qdisc's. For
+> > example a fq_codel can not control the queuing delay when packets are
+> > already dropped in the TUN driver. This issue is also described in [2].
+> >
+> > The performance evaluation of the paper (see Fig. 4) showed a 4%
+> > performance hit for a single queue TUN with the default TUN queue size =
+of
+> > 500 packets. However it is important to notice that with the proposed
+> > patch no packet drop ever occurred even with a TUN queue size of 1 pack=
+et.
+> > The utilized validation pipeline is available under [3].
+> >
+> > As the reduction of the TUN queue to a size of down to 5 packets showed=
+ no
+> > further performance hit in the paper, a reduction of the default TUN qu=
+eue
+> > size might be desirable accompanying this patch. A reduction would
+> > obviously reduce buffer bloat and memory requirements.
+> >
+> > Implementation details:
+> > - The netdev queue start/stop flow control is utilized.
+> > - Compatible with multi-queue by only stopping/waking the specific
+> > netdevice subqueue.
+> > - No additional locking is used.
+> >
+> > In the tun_net_xmit function:
+> > - Stopping the subqueue is done when the tx_ring gets full after insert=
+ing
+> > the SKB into the tx_ring.
+> > - In the unlikely case when the insertion with ptr_ring_produce fails, =
+the
+> > old dropping behavior is used for this SKB.
+> > - In the unlikely case when tun_net_xmit is called even though the tx_r=
+ing
+> > is full, the subqueue is stopped once again and NETDEV_TX_BUSY is retur=
+ned.
+> >
+> > In the tun_ring_recv function:
+> > - Waking the subqueue is done after consuming a SKB from the tx_ring wh=
+en
+> > the tx_ring is empty. Waking the subqueue when the tx_ring has any
+> > available space, so when it is not full, showed crashes in our testing.=
+ We
+> > are open to suggestions.
+> > - Especially when the tx_ring is configured to be small, queuing might =
+be
+> > stopped in the tun_net_xmit function while at the same time,
+> > ptr_ring_consume is not able to grab a packet. This prevents tun_net_xm=
+it
+> > from being called again and causes tun_ring_recv to wait indefinitely f=
+or
+> > a packet. Therefore, the queue is woken after grabbing a packet if the
+> > queuing is stopped. The same behavior is applied in the accompanying wa=
+it
+> > queue.
+> > - Because the tun_struct is required to get the tx_queue into the new t=
+xq
+> > pointer, the tun_struct is passed in tun_do_read aswell. This is likely
+> > faster then trying to get it via the tun_file tfile because it utilizes=
+ a
+> > rcu lock.
+> >
+> > We are open to suggestions regarding the implementation :)
+> > Thank you for your work!
+> >
+> > [1] Link:
+> > https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publicatio=
+ns/2
+> > 025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+> > [2] Link:
+> > https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffec=
+tive
+> > -on-tun-device
+> > [3] Link: https://github.com/tudo-cni/nodrop
+> >
+> > Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> > Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> > Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> > ---
+> >  drivers/net/tun.c | 32 ++++++++++++++++++++++++++++----
+> >  1 file changed, 28 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> > index cc6c50180663..e88a312d3c72 100644
+> > --- a/drivers/net/tun.c
+> > +++ b/drivers/net/tun.c
+> > @@ -1023,6 +1023,13 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *=
+skb, struct net_device *dev)
+> >
+> >       netif_info(tun, tx_queued, tun->dev, "%s %d\n", __func__, skb->le=
+n);
+> >
+> > +     if (unlikely(ptr_ring_full(&tfile->tx_ring))) {
+> > +             queue =3D netdev_get_tx_queue(dev, txq);
+> > +             netif_tx_stop_queue(queue);
+> > +             rcu_read_unlock();
+> > +             return NETDEV_TX_BUSY;
+>
+> returning NETDEV_TX_BUSY is discouraged.
+>
+> In principle pausing the "device" queue for TUN, similar to other
+> devices, sounds reasonable, iff the simpler above suggestion is not
+> sufficient.
+>
+> But then preferable to pause before the queue is full, to avoid having
+> to return failure. See for instance virtio_net.
 
-If vm_normal_folio() is so expensive, does that mean it negates the
-benefits that commit f822a9a81a31 (=E2=80=9Cmm: optimize mremap() by PTE
-batching=E2=80=9D) was originally intended to achieve through PTE batching?
-
->
-> I was able to definitively determine that this theory is indeed correct a=
-nd
-> the cause of the issue.
->
-> The solution is to restore part of an approach previously discarded on
-> review, that is to invoke pte_batch_hint() which explicitly determines,
-> through reference to the PTE alone (thus no vmemmap lookup), what the PTE
-> batch size may be.
->
-> On platforms other than arm64 this is currently hardcoded to return 1, so
-> this naturally resolves the issue for x86-64, and for arm64 introduces
-> little to no overhead as the pte cache line will be hot.
->
-> With this patch applied, we move from 81,503 realloc calls/sec to
-> 138,701 (stddev of 496.1 or 0.4%), which is a -3.6% regression, however
-> accounting for the variance in the original result, this is broadly
-> restoring performance to its prior state.
->
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202508071609.4e743d7c-lkp@intel.co=
-m
-> Fixes: f822a9a81a31 ("mm: optimize mremap() by PTE batching")
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Reviewed-by: Barry Song <baohua@kernel.org>
-
-> ---
->  mm/mremap.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 677a4d744df9..9afa8cd524f5 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -179,6 +179,10 @@ static int mremap_folio_pte_batch(struct vm_area_str=
-uct *vma, unsigned long addr
->         if (max_nr =3D=3D 1)
->                 return 1;
->
-> +       /* Avoid expensive folio lookup if we stand no chance of benefit.=
- */
-> +       if (pte_batch_hint(ptep, pte) =3D=3D 1)
-> +               return 1;
-> +
->         folio =3D vm_normal_folio(vma, addr, pte);
->         if (!folio || !folio_test_large(folio))
->                 return 1;
-> --
-> 2.50.1
++1 and we probably need to invent new ptr ring helpers for that.
 
 Thanks
-Barry
+
 
