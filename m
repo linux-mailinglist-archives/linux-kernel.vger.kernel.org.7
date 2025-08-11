@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-762654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232DCB20964
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A514EB20966
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162CA7A63BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7624178B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B272D780D;
-	Mon, 11 Aug 2025 12:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DDE2D3A66;
+	Mon, 11 Aug 2025 12:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4WtsYNr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHnrhHvp"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FE52D6632
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E992356C0
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916827; cv=none; b=PTa1nxGu6w4hofLy9QpDGQqsMiqUGdvudSGSL6Y/4YTtLocfDOxUTZle1jARmjmPIbXxQYRgVcM0S8dqmLC0orvC2KExD0NcudTQd4FxZxYhIOEqYGE56AF+5EKyqtWGAGqIZDPP/Q18+wG7X8Ek2W6EffwHvCXLcT9CaPFC900=
+	t=1754916878; cv=none; b=WTokc3Urb4QF0O3hb1GcxAznGOkkiHDYEWZ9v9j9PhHrOfJGdGGnFFnyiF3AFH11LUMkl+EqZXHF5GtfJeMkZtomWF82UxpaO3ikUDR2lVh9ISVJDTgDwp9yWuEMq1pSDIRHJvyj+EG06JlUnS+vo5rQou3nrnhotVhVofpFEUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916827; c=relaxed/simple;
-	bh=bkLQoeGtLlgbF3eaMiROpTkydiOzkrNMAf6kymynPQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyIoz8Ihk5ON3Lhr05DRqzqHJA8vzkJvT/t8J/0WUqW1dsPNNTBYtPS/g37dQPBKjh70oDaUDkI/AQ0Kg+VjOtreAYUCBGqsEWFYGC6JHw+SPYIOMR3Lk3xNibC8tyk91tEtwmcSlzrWrkc2Hp+Uo39MdioU9zI0QM6GBRhJIgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4WtsYNr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C902EC4CEF4;
-	Mon, 11 Aug 2025 12:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754916826;
-	bh=bkLQoeGtLlgbF3eaMiROpTkydiOzkrNMAf6kymynPQo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d4WtsYNrrnIeTsDJjbD3LVA0HJBpNeKZyTA70cynAGYyyFIl6m29eLWMOalAoXg0K
-	 MwWjVg/lEASbBy01jolc828Ww9gcZ+tcaWhcF/n2V5SoXsDKXGwbLkAagN/083YGpw
-	 dbqmMSxtfHqMhC4XQnAvcuHxJapP9mr4YrYSiDE+zKhNErZA5LOt/OSz7Afgl3/Vtb
-	 u0C+i8vaxNA2QNFhRhCoTyYFHT9/+h+SO6uzEZwygUGNHUAWtibrzyJAUoGx8Kk6+p
-	 kyqFf+Qv7Nk/6TRtK3iRTW4S0aQmJWRBlkHb8RnVFsqdgERWfXLFNOE5ix2LtRjhJE
-	 pV9SYn45A/pcA==
-Message-ID: <55582d2a-5357-457a-b121-ce6be25d6ae3@kernel.org>
-Date: Mon, 11 Aug 2025 14:53:43 +0200
+	s=arc-20240116; t=1754916878; c=relaxed/simple;
+	bh=TFZbRVbWaK42j1oZOTPXuiI+mXfrZOh+cB8SKE4c1nc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MCyMoDnW+1hIWB3KykaRBlFu1tF/HTCskpGhytcXnPXz7VIe5M4fLzS4UcTRAILjqaZWtZYXdpW+jk2HuCBmCGfyMnYrAM/HKAT9XAvDHJZjx3Dr/EQicclBQblsbwKCol+0dcx1U81ZpNHLX1squr9G1mKwuyhKS5vC4Sv5NOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aHnrhHvp; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-617b526d402so620230a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754916875; x=1755521675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lAJkrzYbYXDdUOmXoNrO2X+aQxNISX0LyszDf4L6FM=;
+        b=aHnrhHvpz4U33RfVTQsJdshKIRthCqyK4K1bOIRkIWIqW1FWUq5DJ498qoBC6UEtci
+         dkXC5qFrB9nlnrMfDvph0GCtwRb+poq5ivGHqhPXJrn+2mQ7DcKBzDFK8pgKcfRbM0U9
+         vImjHdDaXP78GN6cG8Rle86zRCEEZ0Ys5M6Gb33k8Kp6I7S3RsoYSjlCHDHErMskXfI5
+         zq4Dxbg8tEX7xw86yktrDNhD31UNKhC1JgMz+WLzeC3vqIzcWUxTul/se0AxFyvUudII
+         xwKjfldqaCxRYrRROLHeRCuC/uVyrMguu/tWD21U2prhB6A8tIDEcDw58tyAFpa/yya6
+         sGuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754916875; x=1755521675;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1lAJkrzYbYXDdUOmXoNrO2X+aQxNISX0LyszDf4L6FM=;
+        b=FBWM60WbCc9ZcSlXRzkngJYDnGUzGFH3XIWGBS/pTqa0CvB5bGDmfuBrKzbcT18o+5
+         tUn4yBsAQ1AvUXTzBkvSZeu62pqy3FdRdVQmq/TYlSlzd9vZplgQWecD88iOX89PqHCf
+         ze0fO3Xhvsx77qhc3JDuq0vIHd36iqZ3bsS9wNzpECqvqBFAycD4Q7aEO/RSe0yL2VGa
+         QY/Q49wAPY7czlchHt+MMx4imYHI6wR8dKDK9yCgMnnhHa5vxqg7sSY34d/3DAapO/kW
+         UUaACcEqLeccOwHSe/NRyUWbvLBYrweXHGH38nDbEwERTfO1uKdpAowVsngMnnPTkxqj
+         hMOg==
+X-Gm-Message-State: AOJu0Yz7nfkm1q8qmYO3de5LuINThp6mnoSOgsdq+QMFPr52AOOSzYpL
+	MM4yBeQsMQ4bfMmIOLitGUc6b8iFYwzfmhTFW7wtUjY8JTgCdeFjLI1F4kNa2qZKRIg=
+X-Gm-Gg: ASbGncsTK4hLdkkbMJ5bV84YeIgRJ8R6w9ZWHjknHuc1xxoztdGdCrDPnJsiewv+8H+
+	9FQnBIdJ+BM4Rcc7Fv6JEggN74l+dznmsYMe7Ho1A4LZM9a4P0VjzFaXAD7mdCru3NjJO1/dVjP
+	HBWRq2Ky9+JBun/fqzd/Bm9sH/TEUrbngz3MWdUu+GZdCevuKvsWpCgId6wsiXdrAiH9LNNQ8Mn
+	ZsvVc93nNqdwRCeEe9r4OrZNeHhqW3W3L0iSbrG/jxtV97ZFXQP5QdZEqiG4q3BEnOpTPIEv8H4
+	YJxPCmqYW5xb8rkRx8dpEI0oJsF4ozevSmME8y/dfFW923cGkzG3EkBN3BVLJu6t0fS/MQ5xeho
+	vKUztvBaPFfFJWm3SFiDi032335VDpYva50KzXek=
+X-Google-Smtp-Source: AGHT+IECY43uJOlj+dSXwBjNh9vS3ub+xUvRPR3BQ9Imlbk17n5tAWIN4VtFPlQp6xo6pwqAMMQMiA==
+X-Received: by 2002:a05:6402:40d1:b0:617:be23:1111 with SMTP id 4fb4d7f45d1cf-6180afb0786mr3247729a12.7.1754916875030;
+        Mon, 11 Aug 2025 05:54:35 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8eff60esm18727470a12.13.2025.08.11.05.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 05:54:34 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Christophe Kerello <christophe.kerello@foss.st.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20250807-upstream_omm_fix_req2ack_test_condition-v2-1-d7df4af2b48b@foss.st.com>
+References: <20250807-upstream_omm_fix_req2ack_test_condition-v2-1-d7df4af2b48b@foss.st.com>
+Subject: Re: [PATCH v2] memory: stm32_omm: Fix req2ack update test
+Message-Id: <175491687378.136727.8468527575102760404.b4-ty@linaro.org>
+Date: Mon, 11 Aug 2025 14:54:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] memory: stm32_omm: Fix req2ack update test
-To: Patrice CHOTARD <patrice.chotard@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christophe Kerello <christophe.kerello@foss.st.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250807-upstream_omm_fix_req2ack_test_condition-v2-1-d7df4af2b48b@foss.st.com>
- <39c67e57-e4e6-46ba-bd61-46afc650381c@kernel.org>
- <a55774bf-1133-48c2-ad20-7a69f340bd78@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <a55774bf-1133-48c2-ad20-7a69f340bd78@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 11/08/2025 14:49, Patrice CHOTARD wrote:
-> 
-> 
-> On 8/11/25 09:09, Krzysztof Kozlowski wrote:
->> On 07/08/2025 09:34, Patrice Chotard wrote:
->>> If "st,omm-req2ack-ns" property is found and its value is not 0,
->>> the current test doesn't allow to compute and set req2ack value,
->>> Fix this test.
->>>
->>> Fixes: 8181d061dcff ("memory: Add STM32 Octo Memory Manager driver")
->>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->>> ---
->>> Changes in v2:
->>> - Add more detail in commit message
->>> - Remove "Cc: <stable@vger.kernel.org>" tag as the fixed patch is not part of a LTS.
->>
->> Why LTS would matter? Which kernel is being fixed here?
-> 
-> Hi Krzysztof,
-> 
-> The fixed kernel is v6.16.
-Then you need Cc stable. Only unreleased kernels are... well, unreleased.
 
-Fixed while applying, but your other patches might have same issue.
+On Thu, 07 Aug 2025 09:34:09 +0200, Patrice Chotard wrote:
+> If "st,omm-req2ack-ns" property is found and its value is not 0,
+> the current test doesn't allow to compute and set req2ack value,
+> Fix this test.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] memory: stm32_omm: Fix req2ack update test
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/d140f3ba76ac98faad7f9b37ef5a3dcbd57f59e2
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
