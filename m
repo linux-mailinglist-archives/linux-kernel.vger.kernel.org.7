@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-761943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B219FB20039
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F219EB2003A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A433BC561
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E52E18971FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FFB2D9798;
-	Mon, 11 Aug 2025 07:24:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3932D94BF;
+	Mon, 11 Aug 2025 07:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4UAMsaU"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604382BB1D;
-	Mon, 11 Aug 2025 07:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC0E1EDA0B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754897052; cv=none; b=elnYyaWlkJtylFZZ9Wro/E8CPs7oX5KlCEQ/b60aKC3auNi/O8U1XtGVlOpiBdR6lVT/H/e868cJcY5Tq0aKdrXfH5pQJGAopYMzbNh2TkPgDBbDZsVc9CLK2ulJ+f6ac1Al3uYUv+e9WhGdRS2+tKQfjaOcfAfwhJdZb+jsCjM=
+	t=1754897104; cv=none; b=WOoiSgNZ4jBZUqYJcnCLRryA73wgC9dOr0wu0V622924OfzHL6BvJHLhZhDZdqD7Plzbex9VKkEiavMbBIuk85A18oTaehcTsYbqXF+iijXZ7r8RLHsY9S9JwdwwwHZ3Hun+QCAXyoHyc5NvauXa+kxWDTMD2Pb85kaNfk/KJL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754897052; c=relaxed/simple;
-	bh=kRP5oP8XQwPONb0qFYCeZrgna/xmATw2HO0oZB3kITU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A6n+r6SwHGn9UnlFtzf/4a7ytd3Gv2O/2Z3b7BHUezgiMj1uIfV+o00UyYDFjX++HgUjW7F/3R4Xs1KvA6WG/fJqVFF7zuD9q3j8M1Ng7N3CgBm7p60CWIW7ay8Mko3M8RiRI9IziHpqrkf+5hzdrN1ghT+Ng3QvrChZPT1UprA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 23587d56768411f0b29709d653e92f7d-20250811
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	CIE_UNKNOWN, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c7240ac8-b254-4a7e-b893-399339aa0807,IP:10,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:10
-X-CID-INFO: VERSION:1.1.45,REQID:c7240ac8-b254-4a7e-b893-399339aa0807,IP:10,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:10
-X-CID-META: VersionHash:6493067,CLOUDID:c9379ebdce43914cacfec9a73b5e9b96,BulkI
-	D:250811152356F2SSOFHD,BulkQuantity:0,Recheck:0,SF:19|23|38|43|66|72|74|78
-	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:ni
-	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
-	0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
-X-UUID: 23587d56768411f0b29709d653e92f7d-20250811
-X-User: tianyaxiong@kylinos.cn
-Received: from localhost.localdomain [(106.16.203.49)] by mailgw.kylinos.cn
-	(envelope-from <tianyaxiong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1750111063; Mon, 11 Aug 2025 15:23:54 +0800
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	lenb@kernel.org,
-	robert.moore@intel.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH 0/2] ACPI: processor: idle: Per-CPU idle driver for hybrid CPUs
-Date: Mon, 11 Aug 2025 15:23:49 +0800
-Message-Id: <20250811072349.753478-1-tianyaxiong@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754897104; c=relaxed/simple;
+	bh=e8CyaEUgWJ4j1JnU5yc37WRJh6h/2cyKWFRw7IVPnNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bp7o7Uc6wdegaPNJDjOJ8xOtPmWQ9aXIVTYnSg3L4JktjW3ZJ9uIyFGhAsXOvQEg1Bs1InXcQElN6ikoPwT4cRAlC8S9lp2snaipnj+vPKhV/pmQUwiXIroSD8ysf4+CUKYZF1RRqw13hV9W3zTtJIgi/Xzt24qxmINv808PxHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m4UAMsaU; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-458baf449cbso39350545e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754897101; x=1755501901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzGb9ZqG3d+8wQpeXYT28daUSGt2U8W7JC3C7syv45w=;
+        b=m4UAMsaULum1vVjIhiI88sEg9sUaepc9CMCsbWYySEAMv+MTiPdDB+BDdHUzZ3tVxv
+         bAa5Jy8TzHtS6SXWrqp3yrhJyLEutXXEtJZLF6O+JXuWuy0516KigZ+5ioOvwwfp5xbG
+         6hQEOex2Im+N8zKY08yNNr+v/BwrHbLKaWs6YIji5hIQ/jcKnkpm9HGvaWeNDLGe03ba
+         3SaR+ODz5XkCbEbWWWBXY0hCttGKYw2b/s4v49qWFfpezd+9+T80Ah8wvtltcAcpbihk
+         9OxA9pLePeZiC6KetfWiCp/m5gCMnFCES7PP9dKVeviwPIkz24AQ6Nv6gOJ4gBmLviK8
+         3NvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754897101; x=1755501901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzGb9ZqG3d+8wQpeXYT28daUSGt2U8W7JC3C7syv45w=;
+        b=nLvunAxbtSOhl3ZwgFn0hrIr8P2KtTV4tPBpjWAUFabEg4GDKnf+a8mnlT8GuO3yAG
+         fQ7DGL21vfuClUh7HBVhFGfZR12DRQLjy9oJpebq8ygj7sxC7Rx/8MGosnWKJ/ABgRrm
+         IFTadN+PPTPiWn88ekbCTay945yrZyHc94kJTtI1CT1j36a7T/acksA7c25mDtntz8Fj
+         1fayB19CfN1Ms7eCDqLDR1r1xsRZuW0AwHj/4BQgXiKSgIv2JLOJDAxRfdr/5qA/qACa
+         VyV7eyvmqFTBAcQwcoImaVFQ//EtP/B3DyE83NRPe38VbdapBQY/Ql2a5Fq/+8e+Jm9u
+         UEqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXH9UNoZBGmm1qby/hG3qoFOp6xImKQczEfD4OeuIRkhHbTvPtuVsskOQG/pa4Pz6SBTdbmKxoA0mdU1Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAMh5IrCtZbidr0evbOjbgcwHVZVLGkGwDH+qBHGO/kk0hvSbq
+	0jv2A9NuFSR81Tn6wMC5mHESkQGU67UE6ahZ5m7o8E606d0zbj4adfH6QHrgHJXBT+4=
+X-Gm-Gg: ASbGncs4+s9YbyzNZkJnJnPddMZ2KMhBQG1RzG9nauZSKxYr2ZfRyYswbpSQlXlIUwz
+	aAuQmK32sYiApo8iBFBklQ8MQKRy8yDj8YkA7EoAGRm7sJuLXP6bOuvFd65w4mvA6T74LlH7Y5m
+	PhQce+FZGU1uuYfgkUxod0G1Z4jSCOJOXPcBjzZB3m0pQGTscLmH2uPS5ieD9KAMFvz1DLdKhyT
+	csAdT37rqG5byIpeD738NW+86tp/pqW9iXkkGgMhiWmvm5ThblZ4rGKatsaBIgDPHRMBuzrGJL1
+	CZavlQYqD5eM3YKHA1FU662JpQT2A5D3SeKibNF7aS0MCM91GFW17MWyum5xWxRw3RpHYs1I/TN
+	AbxR1Y3BvBurnratS4SLFGQsJUKM=
+X-Google-Smtp-Source: AGHT+IFKQOtE0NygsopZPxVqufiOBC50hCPIgtqtyYeSPnhubJA/tyvIr2QT/4Gq+3noUbEjQTVGGA==
+X-Received: by 2002:a05:600c:3508:b0:459:df48:3b19 with SMTP id 5b1f17b1804b1-459f4f9b87dmr108086235e9.18.1754897100694;
+        Mon, 11 Aug 2025 00:25:00 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459eec47306sm180036005e9.28.2025.08.11.00.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 00:25:00 -0700 (PDT)
+Date: Mon, 11 Aug 2025 10:24:57 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yao-Wen Chang <changyaowen19980629@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] staging: rtl8723bs: Rename camelCase variables to
+ snake_case
+Message-ID: <aJmaycoFLHELApC0@stanley.mountain>
+References: <20250811062132.102525-1-changyaowen19980629@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811062132.102525-1-changyaowen19980629@gmail.com>
 
-This series addresses limitations in the current ACPI idle driver model
-for hybrid CPU architectures (e.g., ARM big.LITTLE, Intel Alder Lake),
-where different core types have distinct _LPI-state characteristics.
+On Mon, Aug 11, 2025 at 02:21:24PM +0800, Yao-Wen Chang wrote:
+> @@ -804,14 +804,14 @@ int rtw_check_beacon_data(struct adapter *padapter, u8 *pbuf,  int len)
+>  {
+>  	int ret = _SUCCESS;
+>  	u8 *p;
+> -	u8 *pHT_caps_ie = NULL;
+> -	u8 *pHT_info_ie = NULL;
+> +	u8 *p_HT_caps_ie = NULL;
+> +	u8 *p_HT_info_ie = NULL;
 
-This series introduces:
+The letter "p_" stands for pointer here.  We hate that kind of naming
+scheme.
 
-1. A per-CPU idle driver model to accurately represent idle-state per core type.
-2. A new interface to fetch cpuidle_driver by CPU ID, required for early
-   registration scenarios.
-
-This issue was initially discussed at:
-https://lore.kernel.org/linux-pm/97e8bc72-e44b-487a-91ba-206732094955@arm.com/T/#t
-
-Yaxiong Tian (2):
-  cpuidle: Add interface to get cpuidle_driver by CPU ID
-  ACPI: processor: idle: Replace single idle driver with per-CPU model
-    for better hybrid CPU support
-
- drivers/acpi/Kconfig            |  1 +
- drivers/acpi/processor_driver.c |  3 +-
- drivers/acpi/processor_idle.c   | 60 ++++++++++++++++-----------------
- drivers/cpuidle/driver.c        | 16 +++++++++
- include/acpi/processor.h        |  2 +-
- include/linux/cpuidle.h         |  4 +++
- 6 files changed, 54 insertions(+), 32 deletions(-)
-
--- 
-2.25.1
+regards,
+dan carpenter
 
 
