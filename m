@@ -1,53 +1,90 @@
-Return-Path: <linux-kernel+bounces-762530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3638B20810
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:41:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCF9B20813
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C6E18C4EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:42:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D156C16A004
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7492D239F;
-	Mon, 11 Aug 2025 11:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151012D29C2;
+	Mon, 11 Aug 2025 11:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="at4UkOvh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l05c3Iet"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A46726D4CE
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAEB26D4CE;
+	Mon, 11 Aug 2025 11:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754912497; cv=none; b=nreE0eMIRBDbVWGaUx+hYOTEzWnRtVdFKXqL6vXoOxRsIQ1LkIamfgXm7gphyHkkPZjKpkQpxl/r7kE1xWIOn2+IJvXB+uN+wTJnBECYPARFQmKw/EdUwzvUwjG0v+pfgo4RngKCjpmIgW6A/ma9xrpVlVOX6oc9KCMotRUrHd0=
+	t=1754912551; cv=none; b=uK9xEAswSDxqXLvMbH+ADdogYD7pRnfG0xrOJhHf3v149KoAWwp+Q67scVayh+dO8349zeAUuJkrvnHOYXpcC1ZqVMGEpcmf3sz/VAyz92cSwCKbtTYs1LbzB2mUjSngaJVz39Jtv7aWYSTUZeDqarOv8fxXazMZNNuqw8V6dRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754912497; c=relaxed/simple;
-	bh=51wNWVQOpou5wJgNNVWp3dJSjpKJGs0ljeNl9exowZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YygmecmMgIcLLFXRZc8czPUyNwvB50zKsf7NyvdSvBR21ohY0b10B3SPHbZxG/OZ3TytPPpN1RBvCJhMYUDPVBTtGn62umlnszxB8aIdMEj6WnnI9Eit0jFg8SE1NaDayhI00NG/mK8pXcofHjj7acyJYioj1D0oQYY3iO0boqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=at4UkOvh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D1EC4CEED;
-	Mon, 11 Aug 2025 11:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754912495;
-	bh=51wNWVQOpou5wJgNNVWp3dJSjpKJGs0ljeNl9exowZw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=at4UkOvhu5/i7kf4YTbu5G2eSt2vGZBwHhKkQcF2G3siDcTHHe+4CeujfX1t1SEeD
-	 K5fhszitucY9WZVpI1WMTlRivcDhEcAN3j+Knns6ejx7ZxKqD922Xpaz9FWLLXK0+c
-	 QiWEro5wWqDmOdpCh1dQeU5VQULyGzlArOPfjbi+dpX7RNg/bDD5AT7XQUQuGipdXa
-	 n2Mz/YhTq9CUSrzlnrhFFtlecaEjL4PIJOPZmjY9SPJNHwj1Q8u2NWxFD98fQn6yeL
-	 /uziq4A8HKR7sbUQCDOMt+sbO//okPwM32lLQ3wVYkoaWY0aXiLvyCxWViDZbIKUvh
-	 1Q6pJbsDM2jxQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1754912551; c=relaxed/simple;
+	bh=92pnGTQrz+zO3/oreSjFVvco/JJXH5mTHzloKbZEDDc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mzdGxfbEy3ykIoVGh5elHYukHUPHRf1/BEAK9S9hqfIeWfUZ9MaZPuRS4VsUzfJQD4QbGsbgDR/6Ye3OiTb1Z43vEyj1rq32mDeY92Nyzy0IB6lTgVmTQ+KaZRicWRA8k9OaMYhs8xNPSV65G240UkeFa0D78ANCfUsbyBatMfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l05c3Iet; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76b8d289f73so3810548b3a.1;
+        Mon, 11 Aug 2025 04:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754912549; x=1755517349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FLOXzas+wSBYP/Dbt2E5ZmVdeWbyYZCVVl1/5bGLwyA=;
+        b=l05c3IetCxCkOFP1j0mRs91NrReTdv9PDXl3NYwc1l3f/lzEhrUlJLgLqKhtueXdfL
+         aXeqDbTbcEId0kQIB9DkN1EHjJHjvtBuZwAXPzsmetjTayRIViomS0EZTn5ORiUO5eIS
+         OUS+uhMuMOpGGEdwhiZD5HlxOQMq5CINZzWiqyr7mZSGsM9I3pOKs4OYA+N9hlKMyt22
+         umjNgc8PJV3bWMMQa4fXbHlNeixNVT9yjvU20R86/ZiNm8PMtEQo0ijI14KnEgQ4ewiK
+         SYqOOJs1MgXbwT8A+/J184ROJaIkuZMfMuLXuPjMbioKhIlreTuTRyW9BesVbLqiApeZ
+         BEUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754912549; x=1755517349;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLOXzas+wSBYP/Dbt2E5ZmVdeWbyYZCVVl1/5bGLwyA=;
+        b=ZpiUC11vtnM14zxWCSQ+b2WDgoy8lF5EYt0RwCApZbmFwqPnsAfJRU0jXsXavNWHa5
+         8lP+AYr2MOik/fk4rLaY3eYaNhvAhAnBFuPPPs41N2tzQDWThkqu+Jb8dREOrUIwjwj0
+         4O772dloQ/DqJmkT4kFMfnPl6VnwMATMJEYRO8ML0lHox9Yqu2CaR2KeXGf2hqAxRJCs
+         jRcY1X5tLB510BhOQwxTNEw58CJWuDYA9Ri6D/3c+aBlhafaRzTYAQdEHy79QXZxtEm7
+         euT4X5udOl+yqYEGrknYR3AEI4LBiCcmLnJ/Vk9eNe8TWRchIu1GaEUrWz8c7qrOPimU
+         b3GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqOQitT+Twz0xPH4/w6RVwJHYgspsh63a50O3buwCJeRc/1CD7oqiXeRlH0BkA4OD3AGF2Q83jhs/nkaU=@vger.kernel.org, AJvYcCXDikMIWwQ0H94GPzt1Wfy4oETFz0kNUdBEx7j56ouHbpBndcroQ2z36wGOap08ho0KCIg9z3Ks@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/WbgiT0QuVmH0ohsjt6xXRcWZca85wCK9MGt/Y+gvttpeuA/7
+	ydGzZM3Yka6reW/j8yCAwdEDfGhbHBoulziwFRJN4eNiqN5/sqq/XsHefMom5B2w
+X-Gm-Gg: ASbGnct98I0uxohGOHqxkrQn22IG2QGt2MymRH+cQLI7Ddwo7AKmjkWRAc5JEN5mxYg
+	2CpMDl8TyCoi+CwKsnrFFtrMyFg8RR8pF1GSktoSqliIwZCrk44Hvt2JJvG8BMFpkL0zo+S2BQz
+	TRAmF7ma0qLz0bRP4/hXQ/dquNQR9CEhGvoactwMYcAYT5xORJXJ1FGBePHcv87/DLsIRAn1/Ql
+	iFngVGFCo/rkAmBGZIxeu8CsZ29gglIiwxhIWxhp1Illo2qIGAQfv+13OPezY4qj09C/kzHoBz3
+	hYVPa6WWCDv1HiaDNh22eL0HPLjhW0w6o5e26/5hORzVEihWCcT7LgYV2yWuO0ThVMedrDkHQ1L
+	JXnpk79t03XQe1RHSqzd1Tz9TrLbIM/et6aUwzZ56Ij9kENrFZOMZPkzb2JQH0faIsA==
+X-Google-Smtp-Source: AGHT+IGEGrseVraUSU22uXaupkDe1Je61Gbat39FnhjpWvLrAWx5qR7QPiB6NlCHNXu5roDejR7COw==
+X-Received: by 2002:a05:6a00:3c87:b0:748:33f3:8da3 with SMTP id d2e1a72fcca58-76c461b7e3cmr16458419b3a.19.1754912549391;
+        Mon, 11 Aug 2025 04:42:29 -0700 (PDT)
+Received: from TIANYXU-M-J00K.cisco.com ([2001:420:588c:1300:513:ebe8:5ec0:cab3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd1d8csm26569120b3a.101.2025.08.11.04.42.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 11 Aug 2025 04:42:28 -0700 (PDT)
+From: Tianyu Xu <xtydtc@gmail.com>
+X-Google-Original-From: Tianyu Xu <tianyxu@cisco.com>
+To: anthony.l.nguyen@intel.com
+Cc: przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	kuba@kernel.org,
+	sdf@fomichev.me,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: clean up w/ get_left_section_blocks()
-Date: Mon, 11 Aug 2025 19:41:23 +0800
-Message-ID: <20250811114123.1085143-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+	tianyxu@cisco.com
+Subject: [PATCH] igb: Fix NULL pointer dereference in ethtool loopback test
+Date: Mon, 11 Aug 2025 19:41:53 +0800
+Message-Id: <20250811114153.25460-1-tianyxu@cisco.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,67 +93,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce get_left_section_blocks() for cleanup, no logic changes.
+The igb driver currently causes a NULL pointer dereference
+when executing the ethtool loopback test. This occurs because
+there is no associated q_vector for the test ring when it is
+set up, as interrupts are typically not added to the test rings.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+Since commit 5ef44b3cb43b removed the napi_id assignment in
+__xdp_rxq_info_reg(), there is no longer a need to pass a napi_id.
+Therefore, simply use 0 as the final parameter.
+
+Signed-off-by: Tianyu Xu <tianyxu@cisco.com>
 ---
- fs/f2fs/segment.h | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index fdc2c34daa47..36427fdd6b15 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -600,6 +600,16 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
- 	return GET_SEC_FROM_SEG(sbi, reserved_segments(sbi));
- }
- 
-+static inline unsigned int get_left_section_blocks(struct f2fs_sb_info *sbi,
-+					enum log_type type, unsigned int segno)
-+{
-+	if (f2fs_lfs_mode(sbi) && __is_large_section(sbi))
-+		return CAP_BLKS_PER_SEC(sbi) - SEGS_TO_BLKS(sbi,
-+			(segno - GET_START_SEG_FROM_SEC(sbi, segno))) -
-+			CURSEG_I(sbi, type)->next_blkoff;
-+	return CAP_BLKS_PER_SEC(sbi) - get_ckpt_valid_blocks(sbi, segno, true);
-+}
-+
- static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 			unsigned int node_blocks, unsigned int data_blocks,
- 			unsigned int dent_blocks)
-@@ -614,14 +624,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 		if (unlikely(segno == NULL_SEGNO))
- 			return false;
- 
--		if (f2fs_lfs_mode(sbi) && __is_large_section(sbi)) {
--			left_blocks = CAP_BLKS_PER_SEC(sbi) -
--				SEGS_TO_BLKS(sbi, (segno - GET_START_SEG_FROM_SEC(sbi, segno))) -
--				CURSEG_I(sbi, i)->next_blkoff;
--		} else {
--			left_blocks = CAP_BLKS_PER_SEC(sbi) -
--					get_ckpt_valid_blocks(sbi, segno, true);
--		}
-+		left_blocks = get_left_section_blocks(sbi, i, segno);
- 
- 		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
- 		if (blocks > left_blocks)
-@@ -634,14 +637,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 	if (unlikely(segno == NULL_SEGNO))
- 		return false;
- 
--	if (f2fs_lfs_mode(sbi) && __is_large_section(sbi)) {
--		left_blocks = CAP_BLKS_PER_SEC(sbi) -
--				SEGS_TO_BLKS(sbi, (segno - GET_START_SEG_FROM_SEC(sbi, segno))) -
--				CURSEG_I(sbi, CURSEG_HOT_DATA)->next_blkoff;
--	} else {
--		left_blocks = CAP_BLKS_PER_SEC(sbi) -
--				get_ckpt_valid_blocks(sbi, segno, true);
--	}
-+	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
- 
- 	if (dent_blocks + data_blocks > left_blocks)
- 		return false;
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index a9a7a94ae..453deb6d1 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -4453,8 +4453,7 @@ int igb_setup_rx_resources(struct igb_ring *rx_ring)
+ 	if (xdp_rxq_info_is_reg(&rx_ring->xdp_rxq))
+ 		xdp_rxq_info_unreg(&rx_ring->xdp_rxq);
+ 	res = xdp_rxq_info_reg(&rx_ring->xdp_rxq, rx_ring->netdev,
+-			       rx_ring->queue_index,
+-			       rx_ring->q_vector->napi.napi_id);
++			       rx_ring->queue_index, 0);
+ 	if (res < 0) {
+ 		dev_err(dev, "Failed to register xdp_rxq index %u\n",
+ 			rx_ring->queue_index);
 -- 
-2.49.0
+2.39.5 (Apple Git-154)
 
 
