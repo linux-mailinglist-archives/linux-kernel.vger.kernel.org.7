@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-762956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCC3B20CCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:01:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F0CB20CC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A4A3BF5F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154561900ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF44C2E03FF;
-	Mon, 11 Aug 2025 14:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528B2DEA87;
+	Mon, 11 Aug 2025 14:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KL+QTGJS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ix6gHLtL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7382D3A86;
-	Mon, 11 Aug 2025 14:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D996A2D4B40;
+	Mon, 11 Aug 2025 14:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924249; cv=none; b=cknNNkefEzjjMtcWMBTlI+EJFsVOMNsFRFr6W0yXBa4qB/M4+xRoXUEr3a8trUhvhYDVfZzN4fE+/5U2hzf/Qjy+TYGz8IbZjJmT8uK5E3Za77fSP8ahsb3YvH+NWIaV3SHOGkK79cZ9zb3dv0TgqyhAJZh42tDPdjozSLQBlII=
+	t=1754924297; cv=none; b=cVPQ4HY7S9Xm5WfYToVkIum5sRDBFLFGGi93rfBv9vGJtGHqINbjwenFLgdvzWkNlt2HRbDGKY4TrIdVK+Q3bazWiWMimA+x3UFWm3o1UfQBZ3hJ54JMkI12HJk+sAD+DTgyyhsBBEjrRzQuvKeIqdxmmD91ol0ghJ5omryqgms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924249; c=relaxed/simple;
-	bh=bqqyXefFRQ2sf/Z03Jt8iylLOvHmwcXSHPJvONjF/4E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UlWjam8G4z6nd9irzpz3d6BYDSBgZgnlNdrFBFpqlum5+HeSil4LHwSWhnJ39HrucBQvOx56owmazOu4o51i5AIPqh8yZJvG7IlMnHXFSPpbDWMBAy7YFipT0XHZ2BaExZY5Xbks+PqDcw9M2ttidfBazYySLu8BuTEtWUjGJPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KL+QTGJS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 148D7C4CEF9;
-	Mon, 11 Aug 2025 14:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754924248;
-	bh=bqqyXefFRQ2sf/Z03Jt8iylLOvHmwcXSHPJvONjF/4E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KL+QTGJSyFMLHogaSKqSXMYcVjLh17zk3lHD+6wpxHsHAb6BJqNhZ0jhraDm5xgIv
-	 sPmCGh4dIp9103d2LOFIB5tezNOQgH2eIdEjrFhv6+bRaL4qepc3Ir2TpyeFWtc1ko
-	 BbhlSMCvON8hxxjVDj2qgu7i+AWyx4kxOTy3GS3QfhZCs/WQX5seZxaR8cn4aTf3Jo
-	 sGZm9fL8prA6VQFD22zYUWdh9FgeHXrGDK9afKc+LzGWTeVLQPnyveNwhUtlLjN6D5
-	 mpgaqA0ngQ3JctpBf4wdUvc0+/hydYcfNJPaVHaUmRGAqhwor3NfXJGGHie6KlljFz
-	 3fRgPm649yTXg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	kernel@oss.qualcomm.com
-Subject: Re: [PATCH v2 0/8] arm64: dts: qcom: Lemans platform refactor and EVK support
-Date: Mon, 11 Aug 2025 09:57:22 -0500
-Message-ID: <175492423745.121102.14526686904216945163.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250803110113.401927-1-wasim.nazir@oss.qualcomm.com>
-References: <20250803110113.401927-1-wasim.nazir@oss.qualcomm.com>
+	s=arc-20240116; t=1754924297; c=relaxed/simple;
+	bh=8oL/A4iP9Xx5VUsCUZqLWJ721V213TvFpSlTphoA9s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z87c3ZhqvI/pIeZDcAcVraz5smxnkNaEm2L0sjQgXlhNwvB959yHqwo6rqeGr8IL1d6Z9S9kEs4eK7/kROQKR3AQr0bYgkXKk00ACsjvYAW/h1Cap5Uv77+/zeRyyqiJLyDIp3D4S7z6hBuNoZ3C3pBzokfFHAFT3du42d7sblw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ix6gHLtL; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754924296; x=1786460296;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8oL/A4iP9Xx5VUsCUZqLWJ721V213TvFpSlTphoA9s8=;
+  b=ix6gHLtL740QFdSi85Z/klX9A8i1IS4yyc0AdkXVX2K7v33IaXe4iEyN
+   Rt+Z+SVEGEy4McANBSfBusj4hOzS36vrCm1pyXt4R6hC/z9KBA9hrT/ZO
+   HxmLnWTti1mQIIx6Wk8wrESN3V1TTNADtD+AhfSKoJ47oJyNOlIE/42Lc
+   ed7KkYsJVEUCGl0X19Shilp/phGsOOUHZGuAXMmJ3LKCGwT6uqoVuje4F
+   +R90FIOVj40RDTCX0OxHuxqYn+u8XWswy83rq+zGwCWIS73aDhYW9CoCw
+   Qnswan/D7LdstmsPa3A9uEWxoXqD1zVNvlFBXjrYabU9uHTNQoH3SOGeJ
+   w==;
+X-CSE-ConnectionGUID: 1Dk4gU4lTAizNVLnEBoDNQ==
+X-CSE-MsgGUID: Dict1QgRQ0+wnJAKSMW+QA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68258426"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68258426"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 07:58:15 -0700
+X-CSE-ConnectionGUID: LkFdrqcETv6sIhz+lLLDCA==
+X-CSE-MsgGUID: eJM2J1muSGKY/VueYjTJnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165183053"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa010.jf.intel.com with ESMTP; 11 Aug 2025 07:58:08 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 0132894; Mon, 11 Aug 2025 16:58:06 +0200 (CEST)
+Date: Mon, 11 Aug 2025 16:58:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bhupesh Sharma <bhsharma@igalia.com>
+Cc: kernel test robot <lkp@intel.com>, Bhupesh <bhupesh@igalia.com>,
+	akpm@linux-foundation.org, oe-kbuild-all@lists.linux.dev,
+	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	oliver.sang@intel.com, laoar.shao@gmail.com, pmladek@suse.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com, alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com, mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org, willy@infradead.org, david@redhat.com,
+	viro@zeniv.linux.org.uk, keescook@chromium.org,
+	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+	mgorman@suse.de
+Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
+ 'strscpy_pad()'
+Message-ID: <aJoE_tzAGE4krB5y@black.igk.intel.com>
+References: <20250811064609.918593-4-bhupesh@igalia.com>
+ <202508111835.JFL8DgKY-lkp@intel.com>
+ <6b5c92c4-2170-8ce9-3c9f-45c0e1893e03@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b5c92c4-2170-8ce9-3c9f-45c0e1893e03@igalia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Mon, Aug 11, 2025 at 08:19:08PM +0530, Bhupesh Sharma wrote:
+> On 8/11/25 4:55 PM, kernel test robot wrote:
 
-On Sun, 03 Aug 2025 16:31:04 +0530, Wasim Nazir wrote:
-> This patch series introduces a comprehensive refactor and enhancement of
-> the Qualcomm Lemans platform device tree files, aiming to improve
-> clarity, modularity, and support for emerging IoT use cases. The
-> motivation behind this work stems from the need to unify DTS naming
-> conventions, streamline board support across multiple variants, and
-> to detach from different product names for similar variants.
-> 
-> [...]
+> As mentioned in the accompanying cover letter, this patchset is based on
+> 'linux-next/master' (the exact sha-id used for rebase is:
+> b1549501188cc9eba732c25b033df7a53ccc341f ).
 
-Applied, thanks!
+Instead of getting false positive reports and this rather unneeded reply from
+you, use --base parameter when formatting patch series. It will help all,
+including CIs and bots.
 
-[1/8] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
-      commit: c7724332e0ac88168723f4140cef4c8ba92f87e0
-[2/8] arm64: dts: qcom: lemans: Update memory-map for IoT platforms
-      commit: 24dc241bddcde97f4099b5b8ebb3b211d5e7122c
-[3/8] arm64: dts: qcom: lemans: Separate out ethernet card for ride & ride-r3
-      commit: 4c0c97b95a9b05e3886c3453492a465507d5c09b
-[4/8] arm64: dts: qcom: lemans: Refactor ride/ride-r3 boards based on daughter cards
-      commit: 76326da895b889f7f0b20e5ba5cc47b836521f44
-[5/8] arm64: dts: qcom: lemans: Rename sa8775p-pmics.dtsi to lemans-pmics.dtsi
-      commit: d39e1d737bdb0242e1d70345bb1ecfc8382289ce
-[6/8] arm64: dts: qcom: lemans: Fix dts inclusion for IoT boards and update memory map
-      commit: b4feac9e034fe1a609619cb7feb55217fd5d6583
-[7/8] dt-bindings: arm: qcom: lemans: Add bindings for Lemans Evaluation Kit (EVK)
-      commit: e9d84a1f8bfe85b6c406c4a088e537d4a5f83a87
-[8/8] arm64: dts: qcom: Add lemans evaluation kit (EVK) initial board support
-      commit: 99ea5a0d6bc820b15727cea006561ede7339bb79
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
