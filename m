@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-762296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71081B20493
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F015CB20488
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A053A2047
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8876018A0B6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496851FF1B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E9204C0F;
 	Mon, 11 Aug 2025 09:53:48 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e70RdzFX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33002191493;
-	Mon, 11 Aug 2025 09:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2185E3594B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906027; cv=none; b=ZA7Hr5S7ISVWUlbRplfKqluYr4w8tMBjjtcYOi+k3pRpYJnza5vajZgdvLrsPB/GSUgYV7YgJ98BqG3j9mBRcIMPsmFjBHwfX+mNmGK3NReq36VOyihu7h79+OXDytYWYYCY4qgSYhzelmBTc+WDTirN8iSmNia6cHSL8bALZJg=
+	t=1754906027; cv=none; b=XReYit5h/gvBJEVAPAsnUiwPeNxag8WXl/Mo654vxvECD+p8niot5x2MI/FCUvmFFK5KnoPDnQ9Npvb+ZsZyzR8xM4ocFdgO87uBDu0FzdN/qGrbGdGsfAHNoOpZT01iBmRkqyscPQ5/JAB/poKumUpQBOy8vCeYbrc2Bqjg1DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754906027; c=relaxed/simple;
-	bh=iFrdu35/R/MaVSfCUzqjyElDZoQza0RbyOa+1qTuIXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=k6kEGv7YVTGI5xYtcPj3SUCBCFrVzQ4V1SHwEHmnByD/P9I1p6K2AQSp+KwUdHGhNjnyuD7hSV6SpwtjXmMC/HQqQqL9IeZ/l17G8HlvN0k9ECTpHiuj+2lIoLAuuiI1ZqrrDQzVa9vJznvpcH5HLncIARq24xnbxQZwzTabbEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0e1a4a9a769911f0b29709d653e92f7d-20250811
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_SJ_LANG
-	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
-	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
-	SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP, SA_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
-	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f97a9600-d617-4534-bcce-cbfa62f139da,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-INFO: VERSION:1.1.45,REQID:f97a9600-d617-4534-bcce-cbfa62f139da,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:5
-X-CID-META: VersionHash:6493067,CLOUDID:30ab249d94d8a4dff4a8db77771f4b17,BulkI
-	D:250811175340AC2T3V49,BulkQuantity:0,Recheck:0,SF:19|24|44|66|72|78|81|82
-	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:ni
-	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
-	0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 0e1a4a9a769911f0b29709d653e92f7d-20250811
-X-User: liuqiqi@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <liuqiqi@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1987749795; Mon, 11 Aug 2025 17:53:38 +0800
-From: liuqiqi@kylinos.cn
-To: gregkh@linuxfoundation.org
-Cc: cve@kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuqiqi <liuqiqi@kylinos.cn>
-Subject: mm:fix duplicate accounting of free pages in should_reclaim_retry()
-Date: Mon, 11 Aug 2025 17:53:30 +0800
-Message-Id: <20250811095330.1573939-1-liuqiqi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2025011510-CVE-2024-57884-4cf8@gregkh>
-References: <2025011510-CVE-2024-57884-4cf8@gregkh>
+	bh=X+/wETXg6+t+xV51UEQmour6oMA0R+27wdMYsGkvz+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ivV357/Vz0WqW0viTbORhUJYGDub8I0R6k7Zt0zZtEjsGl9SWSmpsKYHMjbDsbfyFSSEwH/8BIFu8J0LNSfxAazczFsU2CPhadnqZhkkScD+7saAI3aHe6GqGdZ/aiwSDrDP9OVb27dJiKhIIuBu8SiuCv2WCTd7PVQtvfUlqlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e70RdzFX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754906025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHJd90lJt7pKkV7L6fdhKaIxyXCO7FJPwtx28akpSm0=;
+	b=e70RdzFXKzTZOfkPn172HQdxInLj+LSbF6NuLrYF7vq4yK7HyDOfQSfn5t2tVYUxCLoqyw
+	Foyl2YoVn6smT5ZpriZ4HyWLTOy8/kCGP+wfdFf63Ojvsuu9v1zZrPnaoooIJq/CB6aiRJ
+	O/CGlB/r/slIgrlFiYUbIT/j1MzZYw0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-636-N4WinZANMGapd3D2_y-jhg-1; Mon, 11 Aug 2025 05:53:43 -0400
+X-MC-Unique: N4WinZANMGapd3D2_y-jhg-1
+X-Mimecast-MFC-AGG-ID: N4WinZANMGapd3D2_y-jhg_1754906023
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70743a15d33so95113276d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:53:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754906023; x=1755510823;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LHJd90lJt7pKkV7L6fdhKaIxyXCO7FJPwtx28akpSm0=;
+        b=UePP1qr7q9qjVZJUFN/wyP4ngJlDi2msioE5w+24/k3O9jLoEWJM0hlWGNsznUIOX+
+         s0/NPqWfxEap9crI7VQIbreFHsM0ZHRE0Fp/5MsQNXa9/p/fd6p4OKryVB5qnNqMamoB
+         K6htBMEdlFg95n5MbcoDilJn4eQnWKb5rnKrHIAD8F9mcW0sgegGLQJdjczZiBF/NDuc
+         fydUjytPbg6ReYmKp7PJT0UP1/UvbdbPXJ67ircb9k9h0QRYriG9P+jNJjgzLuxHl3aj
+         VhSocfEf33kirT4jj6LoA8SwLaP7/bQjZtmN8sbl8T9Xr1euEEJkKNGd3lZIkY/8yHqI
+         11bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJfWWZXbGeGBZnW/IW/SBjB0A1TqK/Bdets4DJd5ooDf1hvHUGA/KeMy36QADXoyndfloQAn6epqoe7fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCW3Jb/o7jWMm1ZNH0ZMFO6p4i4w/ND2XgY1f/100KpBi9zzqT
+	jDVqgi6FtQVksiBAvdFidIDr3M7rjtVuth2yvCycnehN5wvOkwMecwFpqpg+AHGugzmK2JNywu4
+	rOygJjnfhakHnergzkgMa0zxJrqUb3UCXR/d1PFR6fwO6HI9WXi6KaPWNCbmKPyGuCw==
+X-Gm-Gg: ASbGncuMkNoglRo01MRSIsI4JfhmjnIkp777h9O1hst5kiF4W4nPZsNPfaNbB6qx9r5
+	TdI/7/h6Xz2Yi2WETtK8ZM2MUPQQ1zrigqyKbz6g5OyrCs02rDZhPDN9SLLji1ghauWLILkjKL1
+	UEdpMXvxYuL9M8Cwlt/8YkfD06ZlHGBxpHW3jvfsmAmFKuUAYRqEJYWqo/4+NuCb5prjGKFsvPl
+	S1ooPDumQIlXFxl8uEd9Zaxd601n/tgoe4/fpUHCrTyalQ2eGDdvvCFW0WISaw6JgBXOikFeU59
+	Le3OJHU4h/x0yMLfR3a1UYV6pcCtJHdDoYhMvrOj0mE=
+X-Received: by 2002:a0c:da06:0:b0:709:9b8e:da0c with SMTP id 6a1803df08f44-7099b8edbe5mr112073396d6.44.1754906023060;
+        Mon, 11 Aug 2025 02:53:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhDAMiPhkWP4y81WnT8aCqUZTFa3MossLf3cLQLsxAl0+cuexXhtMxG6I+EVpY/G1M9uEsNA==
+X-Received: by 2002:a0c:da06:0:b0:709:9b8e:da0c with SMTP id 6a1803df08f44-7099b8edbe5mr112073306d6.44.1754906022634;
+        Mon, 11 Aug 2025 02:53:42 -0700 (PDT)
+Received: from [192.168.0.115] ([212.105.149.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077c9dff72sm151703916d6.15.2025.08.11.02.53.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 02:53:42 -0700 (PDT)
+Message-ID: <beada520-564a-481e-9f9d-91cd106aaee3@redhat.com>
+Date: Mon, 11 Aug 2025 11:53:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warnings after merge of the net-next tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
+Cc: Networking <netdev@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250711183129.2cf66d32@canb.auug.org.au>
+ <20250801144222.719c6568@canb.auug.org.au>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250801144222.719c6568@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In the zone_reclaimable_pages() function, if the page counts for NR_ZONE_IN=
-ACTIVE_FILE, =0D
-NR_ZONE_ACTIVE_FILE, NR_ZONE_INACTIVE_ANON, and NR_ZONE_ACTIVE_ANON are all=
- zero, =0D
-the function returns the number of free pages as the result.=0D
-=0D
-In this case, when should_reclaim_retry() calculates reclaimable pages, =0D
-it will inadvertently double-count the free pages in its accounting.=0D
-=0D
-diff --git a/mm/vmscan.c b/mm/vmscan.c=0D
-index 34410d24dc15..a9aaefdba7a2 100644=0D
---- a/mm/vmscan.c=0D
-+++ b/mm/vmscan.c=0D
-@@ -393,14 +393,7 @@ unsigned long zone_reclaimable_pages(struct zone *zone=
-)=0D
-        if (can_reclaim_anon_pages(NULL, zone_to_nid(zone), NULL))=0D
-                nr +=3D zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANO=
-N) +=0D
-                        zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON)=
-;=0D
--       /*=0D
--        * If there are no reclaimable file-backed or anonymous pages,=0D
--        * ensure zones with sufficient free pages are not skipped.=0D
--        * This prevents zones like DMA32 from being ignored in reclaim=0D
--        * scenarios where they can still help alleviate memory pressure.=0D
--        */=0D
--       if (nr =3D=3D 0)=0D
--               nr =3D zone_page_state_snapshot(zone, NR_FREE_PAGES);=0D
-+=0D
-        return nr;=0D
- }=0D
- =0D
-@@ -6417,7 +6410,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)=0D
-                return true;=0D
- =0D
-        for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {=0D
--               if (!zone_reclaimable_pages(zone))=0D
-+               if (!zone_reclaimable_pages(zone) && zone_page_state_snapsh=
-ot(zone, NR_FREE_PAGES))=0D
-                        continue;=0D
- =0D
-signed-off-by: liuqiqi <liuqiqi@kylinos.cn>=0D
+Hi,
+
+On 8/1/25 6:42 AM, Stephen Rothwell wrote:
+> On Fri, 11 Jul 2025 18:31:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the net-next tree, today's linux-next build (htmldocs)
+>> produced these warnings:
+>>
+>> include/linux/virtio.h:172: warning: Excess struct member 'features' description in 'virtio_device'
+>> include/linux/virtio.h:172: warning: Excess struct member 'features_array' description in 'virtio_device'
+>>
+>> Introduced by commit
+>>
+>>   e7d4c1c5a546 ("virtio: introduce extended features")
+> 
+> I am still seeing those warnings.  That commit is now in Linus' tree.
+
+I'm sorry for the latency, I was off-the-grid in the past weeks.
+
+I observed that warnings in an earlier revision of the relevant patch,
+but I thought the previous commit:
+
+eade9f57ca72 ("scripts/kernel_doc.py: properly handle
+VIRTIO_DECLARE_FEATURES")
+
+addressed it. At least I can't see the warnings locally while running:
+
+make V=1 C=1 htmldocs
+
+Perhaps it's sphinx version dependent? I'm using sphinx-build 7.3.7
+Could you please share the exact command line and tools version used?
+
+Thanks,
+
+Paolo
+
 
