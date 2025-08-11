@@ -1,153 +1,253 @@
-Return-Path: <linux-kernel+bounces-761891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC82B1FFAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:54:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFCFB1FFD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC77F17B671
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB455189C04A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4192D8DB0;
-	Mon, 11 Aug 2025 06:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i5/clQyt"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF162D949A;
+	Mon, 11 Aug 2025 07:04:10 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6F2D8798
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A64C92;
+	Mon, 11 Aug 2025 07:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895258; cv=none; b=D7zyFk0cQxrrcOlRwKAJjnxlZhAeQs5zWm5M3ROwiHt5cIL+DnEaxqkalZvhg9wZm72pAXjvJVuowFmh2nsFNGEfe24h1QfHHk5oSs0uFD11xPFi8JqwU2/YkT0vx6xbWsrW2nrrnIkrmT+h0vaQg2MXGr+ieVo6RgDQKU8UPIY=
+	t=1754895850; cv=none; b=iOSbKOz1LeJShy9XgHhzsFVKMDRyBhmGEhD7P3YFkoD6/8XmYlFvrXJ5v38VOoy8tAR2UKSc8peSYfW57u0c2JBCjudG46ObCM8A2Hq0srBj+LnE3JqirrZTOOKCALvZqaUz4Pf6IfYdh/nPUgqqXToqWWutERhftt2vdAsF0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895258; c=relaxed/simple;
-	bh=IMF7oxhWWht5Rfg97jPniIkxBcIiuZXkIEqgJK9FhhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SGWr2t9CZVURwUlyeCyExbO2lZPcteGcEG3oCbsEduBU6+/MVEyImp8m05s8evdYZwg5aH5GGm3TKhhWBV4sW6oSXaNXU8Fn8e7A6XZHvxCps9OU2NDm0F9eJgsMU5fA9O9oma8+SFSX6nZQAie2Q3XJNGTRUahrv62Mj4uqqnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i5/clQyt; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b7961cf660so3277368f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 23:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754895255; x=1755500055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMF7oxhWWht5Rfg97jPniIkxBcIiuZXkIEqgJK9FhhA=;
-        b=i5/clQytAI6aNJ5lAru6FytsDdA1kj8Wj70cqEiMNDyFMW/BSxl2PwfEVO5I93EPeN
-         vicnNtheqhW/40qANqgrfzgf0pt6b5uyYYagDM1VuKpnPjJ39GyS8MvwCbpG0fd/IS/6
-         TUXCT+N5alEKrgzrHsQs+tW8ANbicIO/BUWXB9kLxhRT74ijwOmIM8HO5cNWpeITV2Gh
-         lnL/2h2kqbEIagf9qs9S4ysnD9G5vPfJRfeWGt+bWs0bv0yaWEK1torbz2ihz61Cj1KX
-         SzuG95k+vo+ZyCtyUWPk4SAhQJ+IEZijGY8xG5bWb4aOOwVhlmYskSb3gm1XmFPY1qJq
-         z2ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754895255; x=1755500055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IMF7oxhWWht5Rfg97jPniIkxBcIiuZXkIEqgJK9FhhA=;
-        b=QBWdlSLVzE8odcdVPMegxFLeGcwwxj60wSCej+wlLyQVg6z3HS956BlVkrPZYuNFyT
-         POrsrD7CjtfR1MMrNiLP8GVPymMKTwUh+qqFToV3m2sFvDB25n66EUXLEqA0S92k1VqT
-         h5Z1KV1y1P9iM5BLPySs98yhTkUPtgaiqxg25QEP9GEbrm7FbUd4sOqpH8kek9h86k2Z
-         v5CzODG0mqn58/N4U/VyhunjbBs67hutZpsi97O8XdbyYin4N1bLQ8leOvC2iOFQan18
-         nIGd12gB0HZcLoDTizIOX3DFp3xith9G+LHrL3PxFeBM7MTeGzeAP9rHuE4cqcuLA1FB
-         VEAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUK7zzoqxkILJ0U5AIlER6IKsL/bCW0Y6OhyCkTdqM+4aaf85Jgl2h+6m6IJeig0TACLFBz/uMtxzIr04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymaWlUERLp7opMPAxtHnrUqJDYFLTEOV3Oc42J9wUgZBY1ixcZ
-	7alLTB8vMstmID7HRn38qVLR39iM4sA32ZT94TjrjgeBIXaiwpgU4hc2SES0689+WVEbs6DcKg9
-	NzVEQxkTj9jiVdz6Eymh1MeXH28bsoTKczyMomGgC
-X-Gm-Gg: ASbGncsWHXRKZHOXpRdhRwT8G2h+95GYz8MbgAjougiUP4bCAj4gOd+Rqdevpe+BWDb
-	fAVDWQCAeOMQbQ2ZPIoDImyFToxrGXvmfOsly/eEMmbCFfblh85euwGSRJIC5awRWwyKsKS6ePV
-	TBteShiFa3UWxMr3KDQ3BPCuF8oxuQkbFTiCyFDUKUOtFX1GwN8pz/b0YsBgYlwQvz+pGJStVhz
-	pqmBI3y7D/jiELDcOc=
-X-Google-Smtp-Source: AGHT+IE/b40zkpS05GhNxK8XjZNGAut87hJOzbsMuY++YS8Jo6CClprJ6Pmx87Y6WX+z9WagLq8WqZGJ4Jcedzh3yJU=
-X-Received: by 2002:a05:6000:1ac5:b0:3b7:9715:75f1 with SMTP id
- ffacd0b85a97d-3b900b735c9mr8726917f8f.36.1754895254840; Sun, 10 Aug 2025
- 23:54:14 -0700 (PDT)
+	s=arc-20240116; t=1754895850; c=relaxed/simple;
+	bh=JIPbetEpu3maNjCcPqdYM8ug+A8oaIjLNujTwnE3EL4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qc4hjtwoEIvl6KRzZlRXA1ctD0TiJF20SjpipbavW9ts1hoAf5DuJV8AK0tcSqsHrZ5oz7rdo+JasDTfdpJkugj58quZCul3OStP4WtPwN4/uJBPvVzjesex5M9gXi5BuS9WSY+n1MWG076/cM1SfN7i+ictvc5pPza6CJniv20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c0lx10JDKzKHMYR;
+	Mon, 11 Aug 2025 15:04:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3C6741A018D;
+	Mon, 11 Aug 2025 15:04:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxDhlZloBiszDQ--.47588S4;
+	Mon, 11 Aug 2025 15:04:03 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@lst.de,
+	houtao1@huawei.com,
+	axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3] brd: use page reference to protect page lifetime
+Date: Mon, 11 Aug 2025 14:56:28 +0800
+Message-Id: <20250811065628.1829339-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721-irq-bound-device-v1-1-4fb2af418a63@google.com>
- <DCBBFAC5-A4B4-41BA-8732-32FA96EDE28E@collabora.com> <CAH5fLghRi-QAqGdxOhPPdp6bMyGSuDifnxMFBn3a3NWzN4G4vQ@mail.gmail.com>
- <0303C763-76CC-456D-AB76-215DF253560C@collabora.com>
-In-Reply-To: <0303C763-76CC-456D-AB76-215DF253560C@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 11 Aug 2025 08:54:02 +0200
-X-Gm-Features: Ac12FXzMwuxocaFnrrcDOWSm5kfQ5RQ2kLadCTdi78EU3qPMWKi0IrhJ_Ix6Rug
-Message-ID: <CAH5fLghPz3UF-yKVt5x3JrMZ8f-mgT2gysRhJG8TK2kmF1ejGw@mail.gmail.com>
-Subject: Re: [PATCH] rust: irq: add &Device<Bound> argument to irq callbacks
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Benno Lossin <lossin@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHjxDhlZloBiszDQ--.47588S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr43Cw1DJrW3Aw18Xr4rAFb_yoWrZw13pF
+	WUtF97A3y5GF4akw13Xwn8ur13K34IgayfKa4fJw4Skr4fCr9Fy3Wxt34Fqa15GrW8CrWD
+	AFsxtF18CrsYq3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 11, 2025 at 2:49=E2=80=AFAM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
->
->
-> > On 21 Jul 2025, at 16:33, Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > On Mon, Jul 21, 2025 at 9:14=E2=80=AFPM Daniel Almeida
-> > <daniel.almeida@collabora.com> wrote:
-> >>
-> >> Alice,
-> >>
-> >>> On 21 Jul 2025, at 11:38, Alice Ryhl <aliceryhl@google.com> wrote:
-> >>>
-> >>> When working with a bus device, many operations are only possible whi=
-le
-> >>> the device is still bound. The &Device<Bound> type represents a proof=
- in
-> >>> the type system that you are in a scope where the device is guarantee=
-d
-> >>> to still be bound. Since we deregister irq callbacks when unbinding a
-> >>> device, if an irq callback is running, that implies that the device h=
-as
-> >>> not yet been unbound.
-> >>>
-> >>> To allow drivers to take advantage of that, add an additional argumen=
-t
-> >>> to irq callbacks.
-> >>>
-> >>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> >>> ---
-> >>> This patch is a follow-up to Daniel's irq series [1] that adds a
-> >>> &Device<Bound> argument to all irq callbacks. This allows you to use
-> >>> operations that are only safe on a bound device inside an irq callbac=
-k.
-> >>>
-> >>> The patch is otherwise based on top of driver-core-next.
-> >>>
-> >>> [1]: https://lore.kernel.org/r/20250715-topics-tyr-request_irq2-v7-0-=
-d469c0f37c07@collabora.com
-> >>
-> >> I am having a hard time applying this locally.
-> >
-> > Your irq series currently doesn't apply cleanly on top of
-> > driver-core-next and requires resolving a minor conflict. You can find
-> > the commits here:
-> > https://github.com/Darksonn/linux/commits/sent/20250721-irq-bound-devic=
-e-c9fdbfdd8cd9-v1/
->
-> Ah, we=E2=80=99ve already discussed this, it seems.
+From: Yu Kuai <yukuai3@huawei.com>
 
-My suggestion is that you pull the tag I shared and cherry-pick it from the=
-re.
+As discussed [1], hold rcu for copying data from/to page is too heavy,
+it's better to protect page with rcu around for page lookup and then
+grab a reference to prevent page to be freed by discard.
 
-Alice
+[1] https://lore.kernel.org/all/eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk/
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+Changes from v2:
+ - move xas_reset() to error path;
+ - remove unnecessary checking xa_is_value();
+Changes from v1:
+ - refer to filemap_get_entry(), use xas_load + xas_reload to fix
+ concurrent problems.
+
+ drivers/block/brd.c | 75 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 0c2eabe14af3..9778259b30d4 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -44,45 +44,74 @@ struct brd_device {
+ };
+ 
+ /*
+- * Look up and return a brd's page for a given sector.
++ * Look up and return a brd's page with reference grabbed for a given sector.
+  */
+ static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
+ {
+-	return xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
++	struct page *page;
++	XA_STATE(xas, &brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
++
++	rcu_read_lock();
++repeat:
++	page = xas_load(&xas);
++	if (xas_retry(&xas, page)) {
++		xas_reset(&xas);
++		goto repeat;
++	}
++
++	if (!page)
++		goto out;
++
++	if (!get_page_unless_zero(page)) {
++		xas_reset(&xas);
++		goto repeat;
++	}
++
++	if (unlikely(page != xas_reload(&xas))) {
++		put_page(page);
++		xas_reset(&xas);
++		goto repeat;
++	}
++out:
++	rcu_read_unlock();
++
++	return page;
+ }
+ 
+ /*
+  * Insert a new page for a given sector, if one does not already exist.
++ * The returned page will grab reference.
+  */
+ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
+ 		blk_opf_t opf)
+-	__releases(rcu)
+-	__acquires(rcu)
+ {
+ 	gfp_t gfp = (opf & REQ_NOWAIT) ? GFP_NOWAIT : GFP_NOIO;
+ 	struct page *page, *ret;
+ 
+-	rcu_read_unlock();
+ 	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
+-	if (!page) {
+-		rcu_read_lock();
++	if (!page)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	xa_lock(&brd->brd_pages);
+ 	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
+ 			page, gfp);
+-	rcu_read_lock();
+-	if (ret) {
++	if (!ret) {
++		brd->brd_nr_pages++;
++		get_page(page);
++		xa_unlock(&brd->brd_pages);
++		return page;
++	}
++
++	if (!xa_is_err(ret)) {
++		get_page(ret);
+ 		xa_unlock(&brd->brd_pages);
+-		__free_page(page);
+-		if (xa_is_err(ret))
+-			return ERR_PTR(xa_err(ret));
++		put_page(page);
+ 		return ret;
+ 	}
+-	brd->brd_nr_pages++;
++
+ 	xa_unlock(&brd->brd_pages);
+-	return page;
++	put_page(page);
++	return ERR_PTR(xa_err(ret));
+ }
+ 
+ /*
+@@ -95,7 +124,7 @@ static void brd_free_pages(struct brd_device *brd)
+ 	pgoff_t idx;
+ 
+ 	xa_for_each(&brd->brd_pages, idx, page) {
+-		__free_page(page);
++		put_page(page);
+ 		cond_resched();
+ 	}
+ 
+@@ -117,7 +146,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+ 
+ 	bv.bv_len = min_t(u32, bv.bv_len, PAGE_SIZE - offset);
+ 
+-	rcu_read_lock();
+ 	page = brd_lookup_page(brd, sector);
+ 	if (!page && op_is_write(opf)) {
+ 		page = brd_insert_page(brd, sector, opf);
+@@ -135,13 +163,13 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+ 			memset(kaddr, 0, bv.bv_len);
+ 	}
+ 	kunmap_local(kaddr);
+-	rcu_read_unlock();
+ 
+ 	bio_advance_iter_single(bio, &bio->bi_iter, bv.bv_len);
++	if (page)
++		put_page(page);
+ 	return true;
+ 
+ out_error:
+-	rcu_read_unlock();
+ 	if (PTR_ERR(page) == -ENOMEM && (opf & REQ_NOWAIT))
+ 		bio_wouldblock_error(bio);
+ 	else
+@@ -149,13 +177,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+ 	return false;
+ }
+ 
+-static void brd_free_one_page(struct rcu_head *head)
+-{
+-	struct page *page = container_of(head, struct page, rcu_head);
+-
+-	__free_page(page);
+-}
+-
+ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
+ {
+ 	sector_t aligned_sector = round_up(sector, PAGE_SECTORS);
+@@ -170,7 +191,7 @@ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
+ 	while (aligned_sector < aligned_end && aligned_sector < rd_size * 2) {
+ 		page = __xa_erase(&brd->brd_pages, aligned_sector >> PAGE_SECTORS_SHIFT);
+ 		if (page) {
+-			call_rcu(&page->rcu_head, brd_free_one_page);
++			put_page(page);
+ 			brd->brd_nr_pages--;
+ 		}
+ 		aligned_sector += PAGE_SECTORS;
+-- 
+2.39.2
+
 
