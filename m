@@ -1,142 +1,217 @@
-Return-Path: <linux-kernel+bounces-762293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173C8B20482
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31ADBB2048D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F6D18A0AA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547718C28BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F7123E25B;
-	Mon, 11 Aug 2025 09:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCC3236A8B;
+	Mon, 11 Aug 2025 09:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kpu+vpWV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="II4M1Au5"
+Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E5C222565;
-	Mon, 11 Aug 2025 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75FD1E9915;
+	Mon, 11 Aug 2025 09:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905949; cv=none; b=AtsodZu8sBJ9Fi0Hu0qHscQ8YIB122iL3iWvZabU//qeeQtzxLJsO6v1pePtYrq2Hgs+wlS+YooSVrueMSjhQ0atbiLXtac5jdrHzuk88EdoZhj/qfs8p/J5Au1F0jA+J8C5Ij9tnVjsGtMfaiIip3q1f9coUd0HEsEGYhvgWD0=
+	t=1754906062; cv=none; b=M4aDnwkDWFBN+sLTuUCMc3cQj+XdmYcrszYS6ziIpm0MQy8vWZ2f426ckj+ujAQaZsJe8ANlO6BgNgbnb+4KwXaq/uUrlcoNZsY6jgvwrFQGUt48lKGrGkPmgrHBc9h73DuFcYKD2PaRSoRELqz+bdzful+HpIOxTjypXGznH+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905949; c=relaxed/simple;
-	bh=cTYImwdb22N3LRB1i7bNVNZxRo91+rFmZTcadt+AOys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s7j/YJ3g61/iFCZOEFj7PWVBNMlZ9jbrqzMNt1PzxfuTBSW8v1cDsndkeYSnD8yq2pbE+v1F1XqApvbq4NkwYDKRoe/ag7uCyodxR66CNuibZIf4SHS0OhBJ7ca8j1gu1ZjfUf1mO8/EWThLqJdn6beheJnNcK52LsvwRae42DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kpu+vpWV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEEF9C4CEED;
-	Mon, 11 Aug 2025 09:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754905949;
-	bh=cTYImwdb22N3LRB1i7bNVNZxRo91+rFmZTcadt+AOys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kpu+vpWVnlyt6bS/J5MEPJ3H9T5pkZjDI5rsjUjSMn9VgJ5FQxJWTyvB7yrnCglj4
-	 54k2ep7VZCNCVPp2PsxaD8KeTIlX/UkwQcpoJ6rTqTQ05ATlSi/NB1fDqtiSNzSTBT
-	 Kkma0lswM1hL9z1ug6DFbiKGjmzkGXi2iJUh8yp5WQJyZ4gEETiVNyGfkWLpL5+PAm
-	 ql9LunATf4tVVS9JNUu3qoY8FttsDY2SlMLd4d7gWN8otHhJw4/29lF2TpuTKH9D7H
-	 GB6efb/86lU4r52yYvcs+UTHk5Mzz64UFYwzJq3hVmy1yZkfy2CPU7VUFLHmT+ndn8
-	 VpJoKhlatNI/A==
-Message-ID: <d68f4783-ffdd-4fda-8ae4-65a211f9ffb1@kernel.org>
-Date: Mon, 11 Aug 2025 11:52:23 +0200
+	s=arc-20240116; t=1754906062; c=relaxed/simple;
+	bh=pUd7FJZjb9vD/sMqYt3SK9aUrLM1dmAyN/zx4Hb3z2E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nGt9wqTU3BvgEfKnudNT/pxv/v2rkNreyvQ611/0Oa8uro8mVlO2ZjZJx6GBDKmtkLhTIw06ix21CM9Y7QqOqTJigxDjvgen6XoN2zptfd+Mib/hCICTA4UGhh3NBCoYqzsjQKMsIGRhITltpvikILlBFF3GeEQucIBJJONTEMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=II4M1Au5; arc=none smtp.client-ip=178.249.69.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
+Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
+	by m.syntacore.com (Postfix) with ESMTP id 55E9B1A0002;
+	Mon, 11 Aug 2025 09:54:12 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 55E9B1A0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
+	t=1754906052; bh=yni3jeui56qGM7gspd6IrxvigH7pPMoqhQ6Dvk9afrY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=II4M1Au5GdLYynSnkzM0etPYEfbzel+cAmL5VNpBSPhKia3TEM4hdjcbl50Icmb1u
+	 c1B6I1/sG69NHrP4EcJD9VOQUCTSFLrXy2c1fIwfRLkBHwTK0wt80VCe3L+2wbVLNU
+	 FhAJDzP0DJlSytaVeDs3sRgeMm6NAPNEOiHXCAfbI+AzX/Mf0nEXSrHjIcUJXbIIz5
+	 K14W+d+wJPFWkkaTZyw7ywofojaWv/E58Qz8KMSCEdMlIjQD/c0a68dpTskxJIlO7u
+	 8+J1hh4uH1AxkRTK0x8Gmsv0qcnGwSNGd2oyP4hE0mMafYr7a05tTCExLpP+DvrvDe
+	 Ud3oI+bWPrfdg==
+Received: from S-SC-EXCH-01.corp.syntacore.com (exchange.syntacore.com [10.76.202.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by m.syntacore.com (Postfix) with ESMTPS;
+	Mon, 11 Aug 2025 09:54:10 +0000 (UTC)
+Received: from localhost (10.199.23.86) by S-SC-EXCH-01.corp.syntacore.com
+ (10.76.202.20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 11 Aug
+ 2025 12:53:14 +0300
+From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+To: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<kees@kernel.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+	<svetlana.parfenova@syntacore.com>
+Subject: [RFC RESEND v2] binfmt_elf: preserve original ELF e_flags for core dumps
+Date: Mon, 11 Aug 2025 15:53:28 +0600
+Message-ID: <20250811095328.256869-1-svetlana.parfenova@syntacore.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: iio: Replace bouncing Analog emails
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250724113826.61998-2-krzysztof.kozlowski@linaro.org>
- <20250728144901.3f646a4c@jic23-huawei> <20250809210438.23fb5fd0@jic23-huawei>
- <d6n24lux6pv47mb3z2bfdbtn5olsm46rdbnkwhjurkwh4a27kl@hkcedsvni4il>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <d6n24lux6pv47mb3z2bfdbtn5olsm46rdbnkwhjurkwh4a27kl@hkcedsvni4il>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/11 08:26:00 #27653044
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-On 11/08/2025 11:50, Nuno Sá wrote:
->>>> I don't know who from Analog should maintain these devices, so I chosen
->>>> author from Analog of one of last commits.
->>>>
->>>> Marcelo Schmitt, could you confirm that you are okay (or not) with this?  
->>>
->>> Nuno, Michael, other ADI folk.  Can someone confirm if we are making these Marcelo's
->>> problem?
->>>
->>
->> As amusing as it would be for me, I definitely can't pick this up without
->> some tags from ADI folk and Marcelo in particular!!
-> 
-> Normally in situations like this, it defaults to me but I'm happy if
-> Marcelo is comfortable in assuming maintainership for these.
-> 
-> That said, I do think that for the adis* drivers it makes sense to be me.
+Some architectures, such as RISC-V, use the ELF e_flags field to encode
+ABI-specific information (e.g., ISA extensions, fpu support). Debuggers
+like GDB rely on these flags in core dumps to correctly interpret
+optional register sets. If the flags are missing or incorrect, GDB may
+warn and ignore valid data, for example:
 
+    warning: Unexpected size of section '.reg2/213' in core file.
 
-Do you mean that adis16240.yaml should be for you?
+This can prevent access to fpu or other architecture-specific registers
+even when they were dumped.
 
-Just to be clear: I have no clue who should be maintaining these. For
-sure emails should not bounce...
+Save the e_flags field during ELF binary loading (in load_elf_binary())
+into the mm_struct, and later retrieve it during core dump generation
+(in fill_note_info()). A new macro ELF_CORE_USE_PROCESS_EFLAGS allows
+architectures to enable this behavior - currently just RISC-V.
 
-Best regards,
-Krzysztof
+Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+---
+Changes in v2:
+ - Remove usage of Kconfig option.
+ - Add an architecture-optional macro to set process e_flags. Enabled
+   by defining ELF_CORE_USE_PROCESS_EFLAGS. Defaults to no-op if not
+   used.
+
+ arch/riscv/include/asm/elf.h |  1 +
+ fs/binfmt_elf.c              | 34 ++++++++++++++++++++++++++++------
+ include/linux/mm_types.h     |  3 +++
+ 3 files changed, 32 insertions(+), 6 deletions(-)
+
+diff --git a/arch/riscv/include/asm/elf.h b/arch/riscv/include/asm/elf.h
+index c7aea7886d22..5d9f0ac851ee 100644
+--- a/arch/riscv/include/asm/elf.h
++++ b/arch/riscv/include/asm/elf.h
+@@ -20,6 +20,7 @@
+  * These are used to set parameters in the core dumps.
+  */
+ #define ELF_ARCH	EM_RISCV
++#define ELF_CORE_USE_PROCESS_EFLAGS
+ 
+ #ifndef ELF_CLASS
+ #ifdef CONFIG_64BIT
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index caeddccaa1fe..e52b1e077218 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -66,6 +66,14 @@
+ #define elf_check_fdpic(ex) false
+ #endif
+ 
++#ifdef ELF_CORE_USE_PROCESS_EFLAGS
++#define elf_coredump_get_process_eflags(dump_task, e_flags) \
++	(*(e_flags) = (dump_task)->mm->saved_e_flags)
++#else
++#define elf_coredump_get_process_eflags(dump_task, e_flags) \
++	do { (void)(dump_task); (void)(e_flags); } while (0)
++#endif
++
+ static int load_elf_binary(struct linux_binprm *bprm);
+ 
+ /*
+@@ -1290,6 +1298,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	mm->end_data = end_data;
+ 	mm->start_stack = bprm->p;
+ 
++	/* stash e_flags for use in core dumps */
++	mm->saved_e_flags = elf_ex->e_flags;
++
+ 	/**
+ 	 * DOC: "brk" handling
+ 	 *
+@@ -1804,6 +1815,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 	struct elf_thread_core_info *t;
+ 	struct elf_prpsinfo *psinfo;
+ 	struct core_thread *ct;
++	u16 machine;
++	u32 flags;
+ 
+ 	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
+ 	if (!psinfo)
+@@ -1831,17 +1844,26 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Initialize the ELF file header.
+-	 */
+-	fill_elf_header(elf, phdrs,
+-			view->e_machine, view->e_flags);
++	machine = view->e_machine;
++	flags = view->e_flags;
+ #else
+ 	view = NULL;
+ 	info->thread_notes = 2;
+-	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
++	machine = ELF_ARCH;
++	flags = ELF_CORE_EFLAGS;
+ #endif
+ 
++	/*
++	 * Override ELF e_flags with value taken from process,
++	 * if arch wants to.
++	 */
++	elf_coredump_get_process_eflags(dump_task, &flags);
++
++	/*
++	 * Initialize the ELF file header.
++	 */
++	fill_elf_header(elf, phdrs, machine, flags);
++
+ 	/*
+ 	 * Allocate a structure for each thread.
+ 	 */
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index d6b91e8a66d6..e46f554f8d91 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1098,6 +1098,9 @@ struct mm_struct {
+ 
+ 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+ 
++		/* the ABI-related flags from the ELF header. Used for core dump */
++		unsigned long saved_e_flags;
++
+ 		struct percpu_counter rss_stat[NR_MM_COUNTERS];
+ 
+ 		struct linux_binfmt *binfmt;
+-- 
+2.50.1
+
 
