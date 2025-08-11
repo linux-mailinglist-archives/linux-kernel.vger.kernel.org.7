@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-763702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18137B21910
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:15:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529F1B21913
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B741A213FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69F21A22A9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C947320C494;
-	Mon, 11 Aug 2025 23:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8BC1E5B63;
+	Mon, 11 Aug 2025 23:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aa11slbQ"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUZPBtEV"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3195158DAC;
-	Mon, 11 Aug 2025 23:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428B313AC1;
+	Mon, 11 Aug 2025 23:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754954115; cv=none; b=Dz83hYgxC3N7cYDoYr+PQ5Ilmj/qTZ2J5vxQCxtBpM08enRZOrq7nq5aCC2HpfoqqQiXAttQE/RtsQXmW2nPlfMZ/KSEghs33jY0uikvhhQmAIEQKhy476dAW9Wa3yJUPfbY0uvGHutWJgo0dUKWaHXoP1J6V29K7HHEmdNJ7/0=
+	t=1754954161; cv=none; b=CnxGXUtiR6BwXW2DRC4NPA4Eux4MNJT1nA7BZH1hNfICTGJS5OZftnCTb4Pw+eqZZ6v0cqDOPsjMQLZM+DN1+szOxdpsur22kbgAKXY/iD9kzgsZ0Pu6TmX+NcoeeSgqguKC0ayVYm18KJQOK+2dqz+0yJloCq3vXRUO/4fXk/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754954115; c=relaxed/simple;
-	bh=lqHregKkdWycKOTQnCw5rLyaGSV1Cm2ndgfKxFmsV/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qFKBjcuG4etiz7Ra59zRz3zaBkTfr3Dj9OmgpCU1W0nNWS9ev1lQ4m1/bEkilGKgeK/xhb1FgkLEh+gAQ09fiOyc6komR5k0KXtjHoGLcPLODAcjl5jR6K8yn1+huvSlZNby7tW26FqW0VruWAr6T4QYovs5gvvuutbapVgDpPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aa11slbQ; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1754954161; c=relaxed/simple;
+	bh=h90aWAdN6kmjnGhh/YsBA0AsA2ycY3NyAX0WocPdISE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pXaQsSHv2wDQQxUzeQPYvozqfLrAX78uLkm7JTxZSIqeZ2Y3rHapaHu8bY822zgVhMfUKq/XSOlUZ+PdwnSHx3rqjbNcL88BFtSHhulv+XN0rDf0n679W1lT5lP16B25wnY2LWfAGvWXxBg0md7ib2RhChA6rDvVoNN+Z8Ax5zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUZPBtEV; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76bde897110so3950537b3a.3;
-        Mon, 11 Aug 2025 16:15:13 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2407235722bso48786245ad.1;
+        Mon, 11 Aug 2025 16:16:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754954113; x=1755558913; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+WTkp5HBq7+cYLzP9grKqIkwbrTAXkZVfrq7VgOeO6Y=;
-        b=Aa11slbQOiTTyC5poa09xFoaMNMQ6pAjAO7NGSFz7Eni1OVW3ft9FJIrDdxyI5Scbn
-         bDn0B3cf6hPC0rpn2GEwerBkecNzecx2Ar3vBBaF5MlP1cMMurI6Uyc1NKz5Om1bF2p4
-         ldkPRejhjJHbxKU1fbApNzi0090+MnkUIfngFYxRBPKxajhKPId8dmsM2exS8JCLVJ9n
-         m+OHqKNC+FECvvub+fmOyuVdwmhWSDEtKlccDwOD7IOlZPb6HuEMC+MXd2CzngbeWjUr
-         wbdhym0DthIscwCMJnIkUJJF8HtLgO1ZWzVxw11xUYxW+yrbL/IUSy5fOytFQ15GqCx4
-         P4Ww==
+        d=gmail.com; s=20230601; t=1754954159; x=1755558959; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlitkVcXNHjzG7603fa784xq4aGVvZndeBw1vHOtobs=;
+        b=fUZPBtEVzjzMqN8sINGCXqC9oGWJOQ8yxI44i8SNPAATwM8ASv1JsZWnSuiPgN7sJD
+         jwGCUXJ0kuxWW/juzpFkZ2GJpQ656+fzmj+wdDCJx+5Xqt/qzQaLXiWh6E0/U6bPZSpz
+         5tjNxiZuO83ArzRkCvDEuPjPXEsK4p4YGmo9fpOvJ39t49XEngHGTDADwyql485mSXzy
+         7wRDsGcG/mW+nMddv4biiAvlxcVYp3/nkpH8unLlJyLsG5MjIqxpZze8YncBKWYz1/HA
+         qzFVx+ctnwQOMJGFMfunnE+EtYlJ9A1gHmu8C/SK62YEnWCFlCyCGEdWuwAtS2xGpsfN
+         morQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754954113; x=1755558913;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+WTkp5HBq7+cYLzP9grKqIkwbrTAXkZVfrq7VgOeO6Y=;
-        b=b2LylCvTZ1GUhvBMPOHYsmInjbCPzT9Yr1+kF3IN1ie09CVd75PwKlor1IiM6qcKZI
-         LvZhB8S1U2gyMbd09tvqnWZR6X+SEi75IMdQnFce6ip0ZQGioYvka57TRvteoVcbtJSD
-         CvzV0+06RDYsP3IWJcbYqHqfONxK/tRGST26GCmcNHjq9/xZNXPY3I78BHdJ5lWc7Kn1
-         M5YCzBTmhhtbFxZZ/bKKgMY+7CKZj4RXegZZvMzDTw7zmgAvh0T+B7VHv+nJ+V5FNo3Q
-         BRrSJBc+9LiuuwTlOx25uPpvl70GIQQhBYQ7uuJjQ5rxS5gFMQVzSkbNwVZlrJzSBGtJ
-         6vrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4ZVFEi25FP+n4Xlz3N+4amqXVV7vJHzo8l6olr8ZTeP+/mSGTQTETkBr8MBfEWHwt174tY1EzXqTUqvmKeoPn@vger.kernel.org, AJvYcCVZKmazCpo0gO5cH6E86ws+x3z/tyOvYCyHhb0jocfUYQFfbq4CHxHv8MepscWwDPMjd7UB+MMZB6vZwFGv@vger.kernel.org, AJvYcCW9tZZeABTofqpLUBwaPS/WutZNc5jAcAlN6OgGnhe/FIIsMnxzxwSzKes5RbQ27InP5SlXAS/byTd78k03@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmyjbe3fuNqeRnvhOGw/0M+JwVVRthtyHMarTnM/vUqSPeo9xF
-	dNduo7sDyGL8Y4cH6C8YTe61lX5MP1FUgDyMgPv9KMd7s+9EVuTl+FN5exZU246Tyh7RxJtFK/A
-	PgL1OcCA4gKUMcs+++DZyCqf+/Ai2EHA=
-X-Gm-Gg: ASbGncsNJomm3Q878USV9pitPQREcn7HCxRl1nbftDYJZQeCEsABpPMWLwEb4UhrVef
-	GpUlTeaIu7exoV34eAQYovE4kYBFLnXYjOvxdqqM7MWzLagaIJ0IDk5kpIxo1Rsaf7OIfJt5r+m
-	gWG7Zk3plMi3GaGyJAnOCEz5i2E3J2x/BCQU47pkCxrB3VOZmF69YGXEGPhv+UL3zXdSTfUhDNn
-	wCJXnjbmBAicBLlrHznVOM=
-X-Google-Smtp-Source: AGHT+IHr1K/yJjlq6Ye1Sy8M8F+wQq/Rw7tGlOYrfGgCsGUOTDbj0Iu2trznQNcP3D2ebbnUU2V5lVrfGLyj6GAmXLg=
-X-Received: by 2002:a05:6a20:3944:b0:23f:fbb1:c21b with SMTP id
- adf61e73a8af0-24055046d01mr24530175637.17.1754954113102; Mon, 11 Aug 2025
- 16:15:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754954159; x=1755558959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GlitkVcXNHjzG7603fa784xq4aGVvZndeBw1vHOtobs=;
+        b=e/I7Zu8RB3sDRhH5PxdTOmMzS92PRUjYBSvuDLY2qwrVIH1SbQHY3xLhDmvvKf8JKk
+         INUY9q3rGnEfgtewc/1QXDuQN11ijJN3zLUb0R/oiKGfdLiZJ/gvPTIkhobE41ViyoW6
+         I6P34t//Ui/Vid5oBWZ0KjLPnzNNH0JfGPifJVSf8vuSTD7yzOx4YHb/N33IsTG2EkYo
+         TEM/vkArhrSwOL9i7suifv4mqqC8qBehR+wLIgcgvNhsMefpcMdfXI94SXP+dRZhNyK4
+         DMTxe3fhHT8Gy6L2sGZXrCmbYvoPSgQJ1cAZDpRB+mz9mAmbHP79WDk45JEAQpcmN92L
+         HQ9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXny4nQVOoOHU3UFPZWl/sbY0uonzkj+M8SKXxfP4rSV1pyjJQbFd4M7s51PbBcNfN7ljeFrAJq2WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhyzp6cxWrbh3+dl9328Wq+XFOD2RyPNIuFCvt2nslA8IvjLSY
+	My3WElUEIjpvIv7LXoTdT93Sry3VqFqFlb5p8DBpTqlCi4hWV33pDsF/ALmWvMEzWFs=
+X-Gm-Gg: ASbGncvcCLZkKz6qebN5Pyoa4knM23AHNDeV93IqRJ0qdnrvqsVTA1nZ4FO0x5lKZ5l
+	4zXKA7ZW8/tAYbL9NyIDmRaINPEwbf03FJL9B1hpPm1mZhT0ksdn9CVkld/Tt3dLWWOLbBvJicR
+	4Oy35Hpu9eLzGYL34BokO/O8ym+hJc8cUg3tGtubodKpgt4oXuq1QMxA/i/6D28jmUnlyT0NRuv
+	zvCiLQ+PmFYgrWZjLBs2EixJ10TpF56rLqvRkfQduNnKaa5Ngobh/daxBUUDv7dvNOGRQrgh3aC
+	4OlfgJvtusf5YdS7C0b6TzOlzlKNWyY2JhTq+XnLhXXAfXnx7jfQgsqXK8kNW+ojr+sZvxET98x
+	nZud2sauN0w44ypewNqkiKw==
+X-Google-Smtp-Source: AGHT+IGUqazPIKjPwjnFPJ6FlGGUuqv9MKNPOxv010O/xVi21OdnHwb5rqneZD1omgJ2A8dQEuUPBg==
+X-Received: by 2002:a17:903:2447:b0:242:a0b0:3c39 with SMTP id d9443c01a7336-242fc372b29mr18282745ad.54.1754954159413;
+        Mon, 11 Aug 2025 16:15:59 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e8aa8e0esm285891505ad.151.2025.08.11.16.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 16:15:59 -0700 (PDT)
+Date: Tue, 12 Aug 2025 07:15:10 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, 
+	Inochi Amaoto <inochiama@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Saurabh Sengar <ssengar@linux.microsoft.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>, Nicolin Chen <nicolinc@nvidia.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Chen Wang <unicorn_wang@outlook.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 4/4] irqchip/sg2042-msi: Set MSI_FLAG_MULTI_PCI_MSI flags
+ for SG2044
+Message-ID: <fxwrkdaipw7sgr34wtgrh2m757xiras6bfaaugcgopuaxe2e5n@3ipw3t5hg5i7>
+References: <20250807112326.748740-1-inochiama@gmail.com>
+ <20250807112326.748740-5-inochiama@gmail.com>
+ <87349y7wt9.ffs@tglx>
+ <h6sz4hsvajq5pbcd6m2byctdpg6yhjhwbecsqc4o3npieswxov@u3myntmq2xwa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808152850.2580887-1-surenb@google.com> <20250808152850.2580887-4-surenb@google.com>
-In-Reply-To: <20250808152850.2580887-4-surenb@google.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 11 Aug 2025 16:14:58 -0700
-X-Gm-Features: Ac12FXwQt_eww5uvpy4ERMVpxcDuQGrIx4kEQc7H4eeLVmpPLimhRUNjaij0L4k
-Message-ID: <CAEf4BzaRgFid5WDsNGOzE=ysc6jPcSAmB0MwRHYdtSbm-vLrWQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
- under per-vma locks
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
-	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
-	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, SeongJae Park <sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <h6sz4hsvajq5pbcd6m2byctdpg6yhjhwbecsqc4o3npieswxov@u3myntmq2xwa>
 
-On Fri, Aug 8, 2025 at 8:29=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> Utilize per-vma locks to stabilize vma after lookup without taking
-> mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-> contended, we fall back to mmap_lock but take it only momentarily
-> to lock the vma and release the mmap_lock. In a very unlikely case
-> of vm_refcnt overflow, this fall back path will fail and ioctl is
-> done under mmap_lock protection.
->
-> This change is designed to reduce mmap_lock contention and prevent
-> PROCMAP_QUERY ioctl calls from blocking address space updates.
->
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Acked-by: SeongJae Park <sj@kernel.org>
-> ---
->  fs/proc/task_mmu.c | 103 +++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 85 insertions(+), 18 deletions(-)
->
+On Tue, Aug 12, 2025 at 06:36:20AM +0800, Inochi Amaoto wrote:
+> On Mon, Aug 11, 2025 at 04:33:06PM +0200, Thomas Gleixner wrote:
+> > On Thu, Aug 07 2025 at 19:23, Inochi Amaoto wrote:
+> > 
+> > > The MSI controller on SG2044 has the ability to allocate
+> > > multiple PCI MSI interrupt if the controller supports it.
+> > 
+> > interrupts ...
+> > 
+> > Which controller?
+> > 
+> > if the PCI device supports multi MSI.
+> > 
+> 
+> The PCIe controller, in detail, the Synopsys DesignWare PCIe controller.
+> I will update the comment.
 
-LGTM
+This is still too short, I mean if the PCIe controller also supports 
+this feature, so the MSI controller and the PCIe device driver can
+negotiate and then use this feature.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> > > Add the missing flag so the controller can make full use
+> > > of it.
+> > 
+> > Again, the controller does not make use of it. The controller supports
+> > it and the device driver can use it if both the PCI device and the
+> > underlying MSI controller support it.
+> > 
 
+Yeah, this does thing I want to describe.
 
-[...]
+Regards,
+Inochi
 
