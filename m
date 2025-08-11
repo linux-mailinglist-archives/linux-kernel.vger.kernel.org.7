@@ -1,109 +1,170 @@
-Return-Path: <linux-kernel+bounces-761986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3884EB200C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB70B200C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D423C189E4C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6EF3B135B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A82B2D9EF6;
-	Mon, 11 Aug 2025 07:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1D72D9ECD;
+	Mon, 11 Aug 2025 07:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bjrx988p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OCJVa6Gj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+7gqpAW"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897651EE019;
-	Mon, 11 Aug 2025 07:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106611F76A5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754898609; cv=none; b=fkenH2As0hSJ2f3EwAIhXUqBluQPQDCCVTafX5B4NG4IwkIPXLuDrrOERH4OEj5zDSvHMPhx9RrHTtry+bXIaTmK/PeI+wjk/zPdlRkcFfDZkEozm4edgUC9vA7ccyCDSdiJtUfjw9XzMygS25GGLQiKtdJxuALonHRlcaS9k8w=
+	t=1754898641; cv=none; b=M8Mp+C6FZubdalEXGrv3rkoi/XoYpzh7KkFWOlhLNx9ZMxlOcnVHfjNwj4RnY3VfAzwYfkvy0j5obnIVR/NOaY5UzojS4IkWQHlBl/9hxZio1bgllmzJcKvlLsDkjupwIpr/m5wTmu9XmY3pknbFa97NATfNM175i7je/LBnhD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754898609; c=relaxed/simple;
-	bh=kE11z5r1ndYK8PrNv2TZNcy9WFFJTs7MUXKy+LrT1VM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=M2KHdr147rus3uI0kNu3Dpw1JkXT8QFkoxe25cDNm2HzQIwr1fzti/LQYY/P544DLVbterh+228lL7DXveXwOo0Ci2IJfFUukBuFERl9TDEKSGzNd3ESjMzAwssY4Q+WcZbr6HEWUppTb6wapPykQYOFJIzKbM5wLkM0S9Qq+Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bjrx988p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OCJVa6Gj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754898605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a3YgmVdpOVi+2VbNpwvqRfjXywH6CwTQ7bZnwNobs6g=;
-	b=bjrx988pHbdnv/C2pmUagoE4o8yddHkjQ4ZPH9GexSVDcdq9dD+VF19e7cku9xUiy6PLlU
-	o46Y5Llf0YePB/xJA5QkadUsh/UGgnaCzdeO3J2RjtMEu6hyk2R9TAkdjC2jJQhY0YMRZo
-	QP7jxcEtAm3WlIGgy/5D2MVy7QVc7cZ1j6GWnZV00gk/oikmonCKyXzB531SMQSTsYo8qE
-	L7DZpWDzjSaX5taSA1nTYn5S4ps54PJDxKjM/8Nzb244N7MgL/M4uEPulQixRs0N7gCAPw
-	+ao/lhXearoBSD9YbBYEIT3LbRhqOuQLq4QwOKznv8BlXBvTyMxFjL9aZ2QJLQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754898605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a3YgmVdpOVi+2VbNpwvqRfjXywH6CwTQ7bZnwNobs6g=;
-	b=OCJVa6GjV8MHXwmsT9F7SkpzV63W1rGmBMe0CLgBlJjG9W7CEiptZIuQPYOeWoZx80UNhN
-	vuFLx12QyUb7peAw==
-To: Christian Brauner <brauner@kernel.org>,
-	Nam Cao <namcao@linutronix.de>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/coredump: Remove the read() that fails the test
-Date: Mon, 11 Aug 2025 09:49:57 +0200
-Message-Id: <20250811074957.4079616-1-namcao@linutronix.de>
+	s=arc-20240116; t=1754898641; c=relaxed/simple;
+	bh=he5Ch1XupGR8AHoR7p5gnlMAFx+EZtRc2z2UYWJC5js=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=F7Sz8N0sdv1XFPharK6zag9vY/TJDiGw334lzoEx7dyJBNLPJjiyjlISnL6ka1moYZ7ZpYoDXw/mkxJEOLllY6B0LuCpvBbs1RSg9iLx8oJTx0h9ydnV6SCN436WdtNdRk5Z1qkoAcQfJAx3vqmwgGQ3S7ZJc5eSVCOvZ1dDOZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j+7gqpAW; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b7886bee77so3053302f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754898637; x=1755503437; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=30AZFCe2shBXe+j7aE6yaDtvEpZeVPQgMPYSK8q/tP8=;
+        b=j+7gqpAWELh8xbXcLxrfvny6xFbhZkU0CCgq7moaeeIKNaUXcuGjrNqpKmmASrH3g6
+         ZaDnqj3Kd4tvx0wLprnAAiPt1LRcZKiW0ZfzIbbWIK3JjoUogtkVqAYWxr8GVqh3Qlde
+         bx2FMS0CL2kyvBg0mjhspFvOOx1oCMVLnoOgtjPC4fyIK0cLxuMHH51S1rYVJ2DPFZrz
+         dzD4hgzzHQG3nabMEkV7CNYv+AfcNFUjm00hG9Yjg7gRnbwL8LYOak5br5j/T2xcJ8eK
+         7R2L26e7yboLurRCwuNRfWxtNZDzyOUhdR0uYaGzCInPmTheOS+BnGRh/zVLY1u5KsSL
+         L0eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754898637; x=1755503437;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=30AZFCe2shBXe+j7aE6yaDtvEpZeVPQgMPYSK8q/tP8=;
+        b=e0BizJoO6Tw1Cp1EEdoUCE3X3ha/blA9b5xjOCrMAchn0UKIb+M//MFdiU999frx5L
+         tR5YEGHMdOOy/vIFq/1Dm4PuD2t041AXeZHGOIuPKRc67wOak9GUKNqDxrR+0IUtMFOu
+         COu4Pkyfzn+BSBK4hgF++wa+BkICzuK18rwcYuLllR1FXOlJU32NzvpB3jJWMjjAiEAJ
+         tYdonn0BOnIUiWiYjFmoYBR4b/EMmJ9fcFoT+/uk+fmv+976XdzBYR27OfBzykeLOYSG
+         nIx49J5kQLtw3nTaIFG3E2S8reBwdaM7TVX28lpX/t32fkLFytePMbDNpxilDLXtlfrd
+         ScWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVDrg0IeJdsuULTUrG2rkOJwQZfyYUagAUdSbxbAMS3t2sxkNVuHoPXacgiqohyHA/woft8FpO3QqjmHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxiiJcaEYcDYNHAW3bJvkedmwlcRBLQUTZz8RV2BPIeymnP0Mg
+	+qs448Thz7HTv4fUMZkfh2lGt5zz75B1h6y6Q+WIA+eFHyl2z+QIu9c3MvQjRqVyVQk=
+X-Gm-Gg: ASbGnctHKNoI/wZ70QeN0Z4KwAAUMGyVCdmbJhWLMNKS05vYM1Kg+DpT87lCtaKabeb
+	YA8Xwg3OP6z3E9EhHDxOnFtdGzmVrDrnBG/08iUsdgO/wvzxxHXXHTXGGkmfYIBbyPeIM1yUJFx
+	xieyW1AzMWH5HsBjSjdV57EcQ0dhzcu96Gmbkf8S8h4kxXfgF5m3Dq/o39rG7h19pVzeQ5y0etR
+	UhNSjLNVh52pzBTfd+Bd3OcDpmi0nAnN9DuPVWGoA4d2i9TOncUvYQuH39bNa4dmClkX9efDTYO
+	HNYPJV+BgIojM7TLVhaQfV0AhZGAI9DG9F+otY+qqAEJt19ZbWNRo5vis9WXZ9Sl0ot/aqjk4xO
+	HlgB+IRbtsudKxfiv4sfYkUchCh0yhKyu4dNsM0NkQaFeIvxgvnmsYBJ9YaFFLX4pNtfjUvc3ON
+	A=
+X-Google-Smtp-Source: AGHT+IHagE4Q3TN8RmcEeXIXp4O5y91lmjQYB8Ioobb9YS1YUVs1HCiyWsf+FBuGDHsZpkFt031tag==
+X-Received: by 2002:a05:6000:2dc9:b0:3b7:bedd:d268 with SMTP id ffacd0b85a97d-3b900b8bcc5mr9184769f8f.53.1754898637302;
+        Mon, 11 Aug 2025 00:50:37 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:b0fa:b045:4b82:de09? ([2a01:e0a:3d9:2080:b0fa:b045:4b82:de09])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e009e465sm31082080f8f.43.2025.08.11.00.50.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 00:50:36 -0700 (PDT)
+Message-ID: <09f29ccb-a074-48c4-b017-9d9cf1bc1cb0@linaro.org>
+Date: Mon, 11 Aug 2025 09:50:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 3/8] arm64: dts: qcom: sm8550: Add missing properties for
+ cryptobam
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
+ Anusha Rao <quic_anusha@quicinc.com>, Md Sadre Alam
+ <quic_mdalam@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+References: <20250212-bam-dma-fixes-v1-0-f560889e65d8@linaro.org>
+ <20250212-bam-dma-fixes-v1-3-f560889e65d8@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250212-bam-dma-fixes-v1-3-f560889e65d8@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Resolve a conflict between
-  commit 6a68d28066b6 ("selftests/coredump: Fix "socket_detect_userspace_cl=
-ient" test failure")
-and
-  commit 994dc26302ed ("selftests/coredump: fix build")
+On 12/02/2025 18:03, Stephan Gerhold wrote:
+> num-channels and qcom,num-ees are required for BAM nodes without clock,
+> because the driver cannot ensure the hardware is powered on when trying to
+> obtain the information from the hardware registers. Specifying the node
+> without these properties is unsafe and has caused early boot crashes for
+> other SoCs before [1, 2].
+> 
+> Add the missing information from the hardware registers to ensure the
+> driver can probe successfully without causing crashes.
+> 
+> [1]: https://lore.kernel.org/r/CY01EKQVWE36.B9X5TDXAREPF@fairphone.com/
+> [2]: https://lore.kernel.org/r/20230626145959.646747-1-krzysztof.kozlowski@linaro.org/
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 433477c3bf0b ("arm64: dts: qcom: sm8550: add QCrypto nodes")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index eac8de4005d82f246bc50f64f09515631d895c99..ac3e00ad417719be2885d76d3197f96137848337 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -1957,6 +1957,8 @@ cryptobam: dma-controller@1dc4000 {
+>   			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+>   			#dma-cells = <1>;
+>   			qcom,ee = <0>;
+> +			qcom,num-ees = <4>;
+> +			num-channels = <20>;
+>   			qcom,controlled-remotely;
+>   			iommus = <&apps_smmu 0x480 0x0>,
+>   				 <&apps_smmu 0x481 0x0>;
+> 
 
-The first commit adds a read() to wait for write() from another thread to
-finish. But the second commit removes the write().
-
-Now that the two commits are in the same tree, the read() now gets EOF and
-the test fails.
-
-Remove this read() so that the test passes.
-
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- tools/testing/selftests/coredump/stackdump_test.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/test=
-ing/selftests/coredump/stackdump_test.c
-index 5a5a7a5f7e1d..a4ac80bb1003 100644
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@ -446,9 +446,6 @@ TEST_F(coredump, socket_detect_userspace_client)
- 		if (info.coredump_mask & PIDFD_COREDUMPED)
- 			goto out;
-=20
--		if (read(fd_coredump, &c, 1) < 1)
--			goto out;
--
- 		exit_code =3D EXIT_SUCCESS;
- out:
- 		if (fd_peer_pidfd >=3D 0)
---=20
-2.39.5
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
