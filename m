@@ -1,81 +1,132 @@
-Return-Path: <linux-kernel+bounces-763505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE589B2156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B751EB2156E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9385623BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:36:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9CE1A22624
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42732D8785;
-	Mon, 11 Aug 2025 19:36:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC842296BC3;
+	Mon, 11 Aug 2025 19:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d0p9OB8/"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CFE207A22
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6156926ACB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754940983; cv=none; b=dluVqA/XhUkTdcFiTw7wZ6VJvyf+sgdq5BWLrD5+I0ggZDQTxVnH5ag6F1Ook3RsM/VYmcGLZl8bKnGSmKtxQsKPNMTJ8jdOPB76yyWQ+KVG6LUXF8pJ+cp/tokIVKr8Aziri36tr/GPTF/HmyZP/BeuHKkaOv9EB7XPLjioP4M=
+	t=1754941105; cv=none; b=Kv4hefNYovHhjB/CN2QY1f1oIGGH2bjj61XE+GTVUGfyT4/xP7haTG8HCU3WVKmJSM5HJzSt/kEgSDu7NskzX6u77MSD2wXlPCUPg9OgmPBmYQ2GKBEp5qs6uFNILpLDDxks5Y+M2uxmfd3ouBFk/klPFoJUsynoDs+PWpil6DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754940983; c=relaxed/simple;
-	bh=1TLvhGrEqksH/UsYpqq4yDhYrl1D1YIi1hWb/jIBItA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=mwjP6IJwiWWHjZf4v27T7c0/ZxKLFj+aP2L6/vrTxt9bLmf962UdSokx9ZKgHE04IAjFvGvXrxM3tA5Pus2KRfOqzTO7e+5IfdhYt5mlUUtnpTwBKlKl4lssI7JLacna+zsDIiAVJ0Ylsp8ksPcAUtAjB66zQ9X4Nxj4WktdlKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88193bc4b09so1000465239f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:36:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754940981; x=1755545781;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gwj8H++rTYzvGmBnPIFeuu7bmVUxwOSowdnBwzyw9w4=;
-        b=pVeSbSW7v8n18c3f4QRWrzQ18CfziA6sv8FHwgNBiacoELgjx9QkvgylM6oK8msdZ9
-         c9+huMcI6I/qA/Pd6IsxdLXP9ONhcJsmKu9EBBprtQvvlPbXKvEkcxObb3NgU9dfKblY
-         43WE127o9vh+2HR/NtGAuQ4plfvDzq8Pvx12SuWeY8vbJ/p5NhpYp7mQ+vJN577FQzKx
-         d1ULfxlqA6O5EZr62z2Uij3SXxsuRsfVuYiteTkMIQRYhodlfKMUBlvLIXs5EZUn0Vtd
-         +3muuqnMjPtty27RjIfz6xduQY6fGK+VZgZaWBGtpG/UaHqwfPGn4U3WzZ7XpRP0/KiF
-         nDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6C2daJb+xeLLkMe3Tvi1+0btu67LgawdoVwQlV0jxy22rOFTLW2ZXrbl+/0AAlsLH4q3K9MujRehlob4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuiK5gMhVdqDZr2xppju8HJuVJEScewnagD5UejWEJqlrI2bLs
-	83gvAMClMynfLIEP8VXCGuIKpoMwnf9Q/ToJMB9Hk7M2zJz/1VOnlFpzItto2sPGRk6lksLHYcq
-	XFYrAOlIw2re4k9gd+rBa5V6VeEFWJx9L7Wk0WxvlHJDIwVHfL3ZzBY8tMN8=
-X-Google-Smtp-Source: AGHT+IF2rNoHzYu1qOPjSM4Zo17v2AtJ2LE8d2Y7jKsSO5Ahs9hXZcL0HWIjS1oOtG9ys/aoivl8Zd0UAR1r4M/S6QazhswzMm6u
+	s=arc-20240116; t=1754941105; c=relaxed/simple;
+	bh=uMRmrFkD18qWAyJtGOLN7wd3iJns2aNOyMG0QwQH/tw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=crZOQSLS0wRxf3/vXsqNL8j3Fd4KnB8drVpQsiJeBNmOMoTC/3X5qQEexEBsaRQ09X/okjLRKE5dM6qJJoOFMO5VeaIr5bi7tQgpWsA3ZvJCCo/t2Fginld2gbj1lURmwGu2AKqSJJlsWClf7kizalIo8dlxOZPCs+mUo5X8KSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d0p9OB8/; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f8215e80-ff1b-4911-a5b1-417630f9cdde@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754941091;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BaY5Vbb1I2eJYA+3jPXzVWZjR08Br+mJnxh6Lat3O9c=;
+	b=d0p9OB8/6vu42Z2Dz5f6hFDY3RUKPlujApLIUJxeLW7vU9CC/IRE4G4ufwMHQjQHBttU23
+	TW274dSZ017DaKqKffGKFjtHzzvoHCOb4fkaScqJALGpwPfa1AOeJjlDAvbXjEQ6GngfEM
+	B0MM0ZmfdZjE+Bt60ul5W1S8iw1+55I=
+Date: Mon, 11 Aug 2025 12:38:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:29cf:b0:881:6d77:6d81 with SMTP id
- ca18e2360f4ac-8841be902fbmr169955139f.8.1754940981224; Mon, 11 Aug 2025
- 12:36:21 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:36:21 -0700
-In-Reply-To: <8cdcb529-54a9-427f-afd6-108207bbbe0e@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689a4635.050a0220.7f033.0101.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in vmap_small_pages_range_noflush
-From: syzbot <syzbot+7f04e5b3fea8b6c33d39@syzkaller.appspotmail.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] bpf: fix reuse of DEVMAP
+To: Yureka Lilian <yuka@yuka.dev>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?=
+ <toke@redhat.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811091046.35696-1-yuka@yuka.dev>
+ <20250811093945.41028-1-yuka@yuka.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20250811093945.41028-1-yuka@yuka.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> #syz dup "[syzbot] [io-uring?] WARNING in __vmap_pages_range_noflush"
+On 8/11/25 2:39 AM, Yureka Lilian wrote:
+> Previously, re-using pinned DEVMAP maps would always fail, because
+> get_map_info on a DEVMAP always returns flags with BPF_F_RDONLY_PROG set,
+> it BPF_F_RDONLY_PROG being set on a map being created is invalid.
+> 
+> Thus, match the BPF_F_RDONLY_PROG flag being set on the new map when
+> checking for compatibility with an existing DEVMAP
+> 
+> The same problem is handled in third-party ebpf library:
+> - https://github.com/cilium/ebpf/issues/925
+> - https://github.com/cilium/ebpf/pull/930
+> 
+> Signed-off-by: Yureka Lilian <yuka@yuka.dev>
 
-can't find the dup bug
+This should be a fix for this commit?
 
->
-> This is the same issue reported last week, a fix already went into the
-> current upstream tree (and is in 6.17-rc1).
->
-> -- 
-> Jens Axboe
->
+Fixes: 0cdbb4b09a06 ("devmap: Allow map lookups from eBPF")
+
+> ---
+>   tools/lib/bpf/libbpf.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index fb4d92c5c..a554d7fff 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -5081,6 +5081,7 @@ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
+>   {
+>   	struct bpf_map_info map_info;
+>   	__u32 map_info_len = sizeof(map_info);
+> +	__u32 map_flags_for_check = map->def.map_flags;
+>   	int err;
+>   
+>   	memset(&map_info, 0, map_info_len);
+> @@ -5093,11 +5094,20 @@ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
+>   		return false;
+>   	}
+>   
+> +	/* get_map_info on a DEVMAP will always return flags with
+> +	 * BPF_F_RDONLY_PROG set, but it will never be set on a map
+> +	 * being created.
+> +	 * Thus, match the BPF_F_RDONLY_PROG flag being set on the new
+> +	 * map when checking for compatibility with an existing DEVMAP
+> +	 */
+> +	if (map->def.type == BPF_MAP_TYPE_DEVMAP || map->def.type == BPF_MAP_TYPE_DEVMAP_HASH)
+> +		map_flags_for_check |= BPF_F_RDONLY_PROG;
+
+Does it break older kernels that do not set the RDONLY_PROG bit implicitly by 
+itself?
+
+> +
+>   	return (map_info.type == map->def.type &&
+>   		map_info.key_size == map->def.key_size &&
+>   		map_info.value_size == map->def.value_size &&
+>   		map_info.max_entries == map->def.max_entries &&
+> -		map_info.map_flags == map->def.map_flags &&
+> +		map_info.map_flags == map_flags_for_check &&
+>   		map_info.map_extra == map->map_extra);
+>   }
+>   
+
 
