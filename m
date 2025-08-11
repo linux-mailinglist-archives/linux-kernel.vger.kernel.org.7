@@ -1,315 +1,143 @@
-Return-Path: <linux-kernel+bounces-762867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C04B20BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:21:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78E5B20B98
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350CD3AA192
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81212189F375
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3001B20F070;
-	Mon, 11 Aug 2025 14:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="YFIKL3PX"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6731B21B9E0
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B404214A7B;
+	Mon, 11 Aug 2025 14:17:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3343A1FE461
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921848; cv=none; b=Yyl/jG14JfD+xG96+nBSCwdr4vw2VlNEFYPOFCHW5bP60UebjgXAPZ6ZeEGpz8LlmfmhkU0G7lcgyQqakurSG2JqfTY1s9dU99qbqemVKFonmXpexAfRh+Za+qUQNIQutIfurCl7Ig+jNurCE4vCFd8eaHmDooby+SS2rRAM/7I=
+	t=1754921842; cv=none; b=Mb4mexZI9TpYw1k4Mz9vOZh/MtEPvbivJMbxUPGqcAeX/iFuGGGnPs2DjMpYt0A0Aux+KA7nUlp3DLymQPxfOJTczpauhXbF2+5tEW/f8gH2ItURmOVKAu0FjIJqubnJfYhrreRtAK0z6dNnPmhDbKH2TIXmEnHZ0pKNJu7UzTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921848; c=relaxed/simple;
-	bh=cq3eN/N8maQVg/jZ8Uvaj4tz4pvvqrdpCcOjFhtVw4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k3VMV0WxIvSc20FVZuVdVmw2n30ABffBqxC5FTK4XsEjxBAaLYOVHux5rsIoZmtF/l3drDSU+kbhGzXAWGd66VwvyTT4LNbVxqoOa8U1IaJOalb6HDSrgkceVjPQ717nx1qd+j0whFRMsJK+nl25Z39JF/ijFlYTD3VxkskVvWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=YFIKL3PX; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-71c0ba0bea4so14309197b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1754921845; x=1755526645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=puwxtPHVig0pLcGPa5PtlxSBrKX59zqgWPMSUINI7LM=;
-        b=YFIKL3PXh/lxuQAqDesUSZTzPfbJ2MP9suU/sOMrJ6qcAXZ8WF9pxRkV93iIlVWX9Q
-         0lCMmBHVgdUslUykN/2ghQ9kll9fMbc6Nr6SfEOtepFONWEsIfr//ftNrPxc8U7fkBJA
-         Xy9keGDD3MQiMs8rsqisFMcAnzYWtutAQ8sqbThPB0V9elnV9CIyvezd/mhiWJo6pukQ
-         lG3QXCyi492Wi86RfZwB7iqCVsziTPUIhjy2IZ4qqmE/Jc74SQUGgYlYmQ8F+sUQdItA
-         Vf6lMt1Ff8CfMRD74OTKxxotbhUag27U3/Pujh11qR3J83vIqCzWj8FXWsaq37Xb57Lw
-         AYvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921845; x=1755526645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=puwxtPHVig0pLcGPa5PtlxSBrKX59zqgWPMSUINI7LM=;
-        b=bZXlFA59oLcPjBrJkaNH/a25vpp8egNTrqDgeJ3zdcei4HdDU3IrXBgikgecpE5kqM
-         PFQfmWKIF2vUGMDVLKGzWteWxHe+TTMJ61dX+qmB+7OYIgEBf6SKV1BclkLvIe01KnxU
-         CvOrMInUlhJu8hDzfQNZFEdwLsp1nJL9h+JCxOw2UgzE8HuVlQkwroIt30SEZqL19u3N
-         Y3J7j0tvVcsPY9ZwkqzN6qLZCTZRA61buSsJglf6pgynWLQv0Ig6oGYdd+sJBoMAqzdm
-         ZlZcOgWedsZI/NnulqGqg1XkkoabHLNJZ/HO0dHVavaff8eVD+HSs6P4DHe1tihAMblx
-         LXfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnWMF51D74bWPTJ5P1WQgnQu9KTxnYCsMZ2lil1QIwt6UuYo3vGz3t14xG1QTQvTvTPnImFua8TZ3Dp6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ/buFL4Ofdmuh8AXCUkmEKUXWueDqB7Ez9sRtMdrVS8nHp0XL
-	ziJRw5G2+0u857f/vQ1Gzxu5U+trEN93GCOKW2EVdElYZBNDDcSBvnhLlypYZmbg6UOYe0iWbrF
-	f7Dfr3s2H3i5TwIyenrMttVLU9B7reKzxO5TF56plGw==
-X-Gm-Gg: ASbGncu/QAhESj6szrXFtKvDqYFxZovUL/19isSFQpFB2jpj6j2KGAGz7dFtNX78WDy
-	Mw5O4Zg+Jz8bcj5m9xCx2GykAjIrhOyp7sHAnXQSGVJlmWLqMW5PLCxwt4klpiwi4XDSzRFQ++m
-	XFWTdSeY8bPKMExaLoyDENyKgVCO7x10AI5POPLJXfaF0nzJ33DEiQJuifjoH4rrSIp6a9O2YpF
-	hmjEkNPKZkheCJowAW9aJZ2NNtPJ3Ec+PwxxI3v2STzWdf+Zw==
-X-Google-Smtp-Source: AGHT+IFVaCpRCBxFG1bqxCNzdUSGe+eBkPCYYYPh+0MTbmkvki7WMFlCxRN6Cm4uIxlvBCrJrXYceQw4QvoWX2/rRPw=
-X-Received: by 2002:a05:690c:4512:b0:71a:2093:3558 with SMTP id
- 00721157ae682-71bf0d40397mr149493517b3.10.1754921845142; Mon, 11 Aug 2025
- 07:17:25 -0700 (PDT)
+	s=arc-20240116; t=1754921842; c=relaxed/simple;
+	bh=S1c3LYfs/+fpITKc7jTlB1Bw/VBNJEw9lp5ELrWtRSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b79fsRQl0VAt7SO8PtchkDgc/x5zz2T6JZhdjxDXq8OH1nBnBEZyM2uHjAvs038xYnRHxS5cgWiX2fhcRaUEecjBkyqcxQRomdtGIQwdDaS+Gcy1i1DcGMdFAuAwn51PhpHrXLGlGEiujooMjtpVGQPmaCw1Q9ujz5nu0dnD45E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79D1D1A32;
+	Mon, 11 Aug 2025 07:17:12 -0700 (PDT)
+Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF84F3F738;
+	Mon, 11 Aug 2025 07:17:18 -0700 (PDT)
+Message-ID: <a9c31290-3e21-4fbd-bd72-d445701d15a9@arm.com>
+Date: Mon, 11 Aug 2025 15:17:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810220921.14307-1-will@willwhang.com> <20250810220921.14307-5-will@willwhang.com>
-In-Reply-To: <20250810220921.14307-5-will@willwhang.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 11 Aug 2025 15:17:08 +0100
-X-Gm-Features: Ac12FXyDoyByiEv3fe1CZgzKXSdSvgFu4Jp68WuY3Fc0Vbm1z6eeV1MD3juzIy8
-Message-ID: <CAPY8ntATfq=yqoYkpuD5Ga-7yUb8C-_k=wSZJBpz0p9PLjVk0w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] media: docs: Add userspace-API guide for the
- IMX585 driver
-To: Will Whang <will@willwhang.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 2/2] arm64: Add encrypt/decrypt support for vmalloc
+ regions
+To: Shanker Donthineni <sdonthineni@nvidia.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Steven Price <steven.price@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: Gavin Shan <gshan@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+ Vikram Sethi <vsethi@nvidia.com>, Jason Sequeira <jsequeira@nvidia.com>,
+ Dev Jain <dev.jain@arm.com>, David Rientjes <rientjes@google.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250811005036.714274-1-sdonthineni@nvidia.com>
+ <20250811005036.714274-3-sdonthineni@nvidia.com>
+ <d8048adc-b19a-4d10-83e8-44b9a85c4d48@arm.com>
+ <df91ac56-9240-4ee2-b154-a911c4053dc5@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <df91ac56-9240-4ee2-b154-a911c4053dc5@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Will
+On 11/08/2025 2:05 pm, Shanker Donthineni wrote:
+> Hi Robin,
+> 
+> On 8/11/25 07:31, Robin Murphy wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 2025-08-11 1:50 am, Shanker Donthineni wrote:
+>>> On ARM64 systems with CCA (Confidential Compute Architecture) enabled,
+>>> the kernel may need to change the encryption attributes of memory
+>>> regions. The existing implementation of set_memory_encrypted() and
+>>> set_memory_decrypted() assumes that the input address is part of the
+>>> linear mapping region '__is_lm_address()', and fails with -EINVAL
+>>> otherwise.
+>>>
+>>> This breaks use cases where the memory region resides in the vmalloc
+>>> area, which is mapped in non-linear mapping region.
+>>>
+>>> This patch introduces a new helper, realm_set_memory(), which detects
+>>> whether the given address is from a non-linear mapping. If so, it uses
+>>> vmalloc_to_page() to resolve each page’s physical address and applies
+>>> attribute changes one page at a time. For the linear address regions,
+>>> it maintains the existing fast-path.
+>>>
+>>> This change ensures that encrypted/decrypted memory attribute updates
+>>> correctly for all memory regions, including those allocated via vmap(),
+>>> module allocations, or other vmalloc-backed paths.
+>>>
+>>> Call stack of Realm crash, QEMU hypervisor + NVME device (emulated):
+>>>   ...
+>>>   Freeing unused kernel memory: 6336K
+>>>   Run /sbin/init as init process
+>>>   Internal error: synchronous external abort: 0000000096000250 [#1]  SMP
+>>>   Modules linked in:
+>>>   CPU: 0 UID: 0 PID: 64 Comm: lsblk Not tainted 6.15.5 #2 PREEMPT(undef)
+>>>   Hardware name: linux,dummy-virt (DT)
+>>>   pstate: 43400005 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>>>   pc : __pi_memset_generic+0x16c/0x188
+>>>   lr : dma_alloc_from_pool+0xd0/0x1b8
+>>>   sp : ffff80008335b350
+>>>   x29: ffff80008335b350 x28: ffff800083162000 x27: ffff80008335b3c0
+>>>   x26: ffff80008144f000 x25: ffff8000801a27e8 x24: ffff800081e14000
+>>>   x23: ffffc1ffc0000000 x22: 0000000000001000 x21: ffff800081458310
+>>>   x20: 0000000042a40000 x19: ffff00000232fcc0 x18: 0000000000200000
+>>>   x17: 00000000000120c0 x16: ffff0000795520c0 x15: 0000000000000000
+>>>   x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>>>   x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+>>>   x8 : ffff800083162000 x7 : 0000000000000000 x6 : 000000000000003f
+>>>   x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
+>>>   x2 : 0000000000000fc0 x1 : 0000000000000000 x0 : ffff800083162000
+>>>   Call trace:
+>>>     __pi_memset_generic+0x16c/0x188 (P)
+>>>     dma_direct_alloc_from_pool+0xc4/0x230
+>>
+>> But isn't that exactly the case that patch #1 is supposed to have fixed?
+>>  From a quick scan of set_memory_decrypted() callers I don't see
+>> anything obvious jumping out - can you clarify who you think needs this
+>> for reasons other than papering over bugs in the DMA layer?
+>>
+> 
+> Patch #1 fixes the passing of the correct mapped address (via 
+> vmalloc/vmap),
+> prevent this specific crash. However, Realm boot still fails because
+> __set_memory_enc_dec() returns -EINVAL when the requested address is not
+> part of the linear mapping. Both patches are required to fully resolve the
+> issue. Patch #2 is to support shared (decrypted) pages in vmalloced 
+> regions.
 
-Thanks for the patches.
+Right, sorry for perhaps being unclear - the half-formed idea I was 
+heading towards is that if patch #1 doesn't actually make DMA pools work 
+then I'm not necessarily sure it's the right fix as-is.
 
-On Sun, 10 Aug 2025 at 23:11, Will Whang <will@willwhang.com> wrote:
->
-> The new IMX585 V4L2 sub-device driver introduces several
-> driver-specific controls for configuring Clear-HDR blending,
-> gradation compression thresholds, and HCG enabling.  This patch adds
-> an rst document under Documentation/userspace-api/media/drivers/
-> that details each control, allowed values, and their effects.
->
-> Signed-off-by: Will Whang <will@willwhang.com>
-> ---
->  .../userspace-api/media/drivers/imx585.rst    | 122 ++++++++++++++++++
->  .../userspace-api/media/drivers/index.rst     |   1 +
->  MAINTAINERS                                   |   1 +
->  3 files changed, 124 insertions(+)
->  create mode 100644 Documentation/userspace-api/media/drivers/imx585.rst
->
-> diff --git a/Documentation/userspace-api/media/drivers/imx585.rst b/Docum=
-entation/userspace-api/media/drivers/imx585.rst
-> new file mode 100644
-> index 000000000..9f7c16f30
-> --- /dev/null
-> +++ b/Documentation/userspace-api/media/drivers/imx585.rst
-> @@ -0,0 +1,122 @@
-> +.. SPDX-License-Identifier: GPL-2.0-only
-> +
-> +Sony IMX585 driver
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The IMX585 image-sensor driver provides the following *driver-specific*
-> +V4L2 controls.  They are visible only when the IMX585 driver is loaded
-> +and sit in the sensor-private control class.
-> +
-> +HDR data blending
-> +-----------------
-> +
-> +``V4L2_CID_IMX585_HDR_DATASEL_TH``  (``U16[2]``)
-> +    Lower/upper **thresholds** (0 =E2=80=93 4095) that decide which expo=
-sure is
-> +    chosen=E2=80=94or blended=E2=80=94for each pixel in Clear-HDR mode.
-> +
-> +``V4L2_CID_IMX585_HDR_DATASEL_BK``  (menu)
-> +    **Blending ratio** between the long-gain (LG) and
-> +    high-gain (HG) read-outs.
-> +
-> +    .. flat-table::
-> +       :stub-columns: 0
-> +       :widths: 1 5
-> +
-> +       * - ``0``
-> +         - HG =C2=BD, LG =C2=BD
-> +       * - ``1``
-> +         - HG =C2=BE, LG =C2=BC
-> +       * - ``2``     # duplicate ratio present in the datasheet
-> +         - HG =C2=BD, LG =C2=BD
-> +       * - ``3``
-> +         - HG =E2=85=9E, LG =E2=85=9B
-> +       * - ``4``
-> +         - HG 15=E2=81=8416, LG 1=E2=81=8416
-> +       * - ``5``     # second 50/50 entry as documented
-> +         - **2=E2=81=BF=E1=B5=88** HG =C2=BD, LG =C2=BD
-> +       * - ``6``
-> +         - HG 1=E2=81=8416, LG 15=E2=81=8416
-> +       * - ``7``
-> +         - HG =E2=85=9B, LG =E2=85=9E
-> +       * - ``8``
-> +         - HG =C2=BC, LG =C2=BE
-> +
-> +Gradation compression
-> +---------------------
-> +
-> +``V4L2_CID_IMX585_HDR_GRAD_TH``  (``U32[2]``)
-> +    17-bit **break-points** (0 =E2=80=93 0x1ffff) that shape the 16-bit
-> +    gradation-compression curve.
-> +
-> +``V4L2_CID_IMX585_HDR_GRAD_COMP_L``  (menu)
-> +    See V4L2_CID_IMX585_HDR_GRAD_COMP_H
-> +
-> +``V4L2_CID_IMX585_HDR_GRAD_COMP_H``  (menu)
-> +    **Compression ratios** below the first break-point and between the
-> +    two break-points, respectively.
-> +
-> +    .. flat-table::
-> +        :stub-columns: 0
-> +        :widths: 1 4
-> +
-> +        * - ``0``
-> +          - 1 : 1
-> +        * - ``1``
-> +          - 1 : 2
-> +        * - ``2``
-> +          - 1 : 4   *(default for COMP_L)*
-> +        * - ``3``
-> +          - 1 : 8
-> +        * - ``4``
-> +          - 1 : 16
-> +        * - ``5``
-> +          - 1 : 32
-> +        * - ``6``
-> +          - 1 : 64  *(default for COMP_H)*
-> +        * - ``7``
-> +          - 1 : 128
-> +        * - ``8``
-> +          - 1 : 256
-> +        * - ``9``
-> +          - 1 : 512
-> +        * - ``10``
-> +          - 1 : 1024
-> +        * - ``11``
-> +          - 1 : 2048
-> +
-> +Gain settings
-> +-------------
-> +
-> +``V4L2_CID_IMX585_HDR_GAIN``  (menu)
-> +    **Additional gain** (in dB) applied to the high-gain path when
-> +    Clear-HDR is active.
-> +
-> +    .. flat-table::
-> +        :stub-columns: 0
-> +        :widths: 1 3
-> +
-> +        * - ``0``
-> +          - +0 dB
-> +        * - ``1``
-> +          - +6 dB
-> +        * - ``2``
-> +          - +12 dB *(default)*
-> +        * - ``3``
-> +          - +18 dB
-> +        * - ``4``
-> +          - +24 dB
-> +        * - ``5``
-> +          - +29.1 dB
-> +
-> +``V4L2_CID_IMX585_HCG_GAIN``  (boolean)
+In fact, looking at the code again, I think it probably shouldn't be 
+relying on set_memory at all in the remap case, but instead using 
+pgprot_decrypted(), same as the regular non-pool path in dma_direct_alloc().
 
-HCG stands for High Conversion Gain, so we've got Gain repeated in the name=
-.
-
-Spell it out as V4L2_CID_IMX585_HIGH_CONV_GAIN, or call it
-CONVERSION_GAIN and use an enum control?
-
-> +    Toggle **High-Conversion-Gain** mode.
-> +
-> +    *0 =3D LCG (default), 1 =3D HCG.*
-
-An HCG / LCG control would also be applicable for IMX290 [1], so it
-would be nice if this could be a generic control instead of imx585
-specific.
-
-I never got a good description as to the benefit HCG was meant to
-give. The datasheet for IMX290 says the conversion efficiency ratio
-between HCG and LCG is 2, but not why that is any better than adding
-6dB of analog gain.
-
-Sony's website [2] states
-"Sony=E2=80=99s Super High Conversion Gain technology is designed to amplif=
-y
-electrical signals immediately after the conversion from photons, when
-the noise levels are relatively low. In this way, it reduces the
-overall noise after amplification. As a result, lower-noise images,
-compared to conventional technology, can be captured even in a
-low-illuminance environment. Lower noise levels in images also help to
-enhance the accuracy in visual or AI-assisted image recognition."
-From that one would presume you'd always want it on (lower noise =3D
-good), unless needing the minimum exposure time and the image was
-already over-exposed.
-I'm guessing you have no additional information based on your description t=
-ext.
-
-  Dave
-
-[1] Also IMX327, IMX462, and IMX662 which are in the same family,
-IMX678 (ratio of 2.6), and quite probably most of the Sony Starvis or
-Starvis 2 ranges.
-[2] https://www.sony-semicon.com/en/technology/security/index.html
-
-> +
-> +Notes
-> +-----
-> +
-> +* Controls are writable while streaming; changes take effect from the
-> +  next frame.
-> +* HDR-specific controls are hidden when HDR is disabled.
-> +* Inter-control dependencies are enforced by the driver.
-> diff --git a/Documentation/userspace-api/media/drivers/index.rst b/Docume=
-ntation/userspace-api/media/drivers/index.rst
-> index d706cb47b..87912acfb 100644
-> --- a/Documentation/userspace-api/media/drivers/index.rst
-> +++ b/Documentation/userspace-api/media/drivers/index.rst
-> @@ -32,6 +32,7 @@ For more details see the file COPYING in the source dis=
-tribution of Linux.
->         cx2341x-uapi
->         dw100
->         imx-uapi
-> +       imx585
->         max2175
->         npcm-video
->         omap3isp-uapi
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 175f5236a..42e32b6ba 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23183,6 +23183,7 @@ M:      Will Whang <will@willwhang.com>
->  L:     linux-media@vger.kernel.org
->  S:     Maintained
->  F:     Documentation/devicetree/bindings/media/i2c/sony,imx585.yaml
-> +F:     Documentation/userspace-api/media/drivers/imx585.rst
->  F:     drivers/media/i2c/imx585.c
->  F:     include/uapi/linux/imx585.h
->
-> --
-> 2.39.5
->
->
+Thanks,
+Robin.
 
