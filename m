@@ -1,207 +1,143 @@
-Return-Path: <linux-kernel+bounces-762584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1105B208B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:25:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B937B208BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF09018A219B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:25:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2623218A21B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B470A2D3733;
-	Mon, 11 Aug 2025 12:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A362D3A83;
+	Mon, 11 Aug 2025 12:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y64aryxr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CESkPW/N";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y64aryxr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CESkPW/N"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bmLaxG09"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BFE25D558
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957012D3A74
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915120; cv=none; b=V/Hy6OIkfjYcJNW4v6dhKFUtrgDA9u7qv6s9tut+ScfQHmSwP9Zn/I/R2sREwGrN0PTh5hrSnJvaSHqTPJtc+mIYD1rzGMi5eIacdT1NUWnwfxa2lSwANphCAFNwDqsdUSDpES29LZe0QAzNqgnrZf2x0t2dN93mM9YLuycpuBc=
+	t=1754915125; cv=none; b=csEkWoOCtkFrUX1bIpHLb/sfNOt0QZX3ki2HGlgzkepCFHObYJvGascjrNUebvUarqI8Gvbbz1CJN9HAZrpXESjHnUVa86vhib/2YUB+lkaEAv3G9byDbQOHaP9hhVEr3pe/u3+PWzVocbDhiZUNO1SF1Jgipa1piBxcIUh2FUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915120; c=relaxed/simple;
-	bh=2jfg50HXaRr8zGpsbEYSNizjN7rgUPJiQx7uagTFEyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FG+qIVzilc7rGoQkTCV10cvz1QVLKf5q4HgQfIbUyAF/Onr6QPN3m7MMMtcYqXt+e/nbUtL7CsHozRbHiqVc7s0zA6llIkdvQBaqpByTi4Ilz7iI7BZcQbJixidHvZpfQtuTsb46DavpmSenvoslvIGXyolWV0eDEI9UgkDfPoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y64aryxr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CESkPW/N; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y64aryxr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CESkPW/N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 54B8D1F394;
-	Mon, 11 Aug 2025 12:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754915116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/xz727bLKnxBk+S5wMVGYSxOC92grzf7CfZhE1HKmM=;
-	b=y64aryxrfGUdaSfgdkinkKKhl6wjhuqJcePhuMFM1//K28b69bO5kAEujutkb+bqqNDf0n
-	WNaGDPFMFTPOE49dHY5kbmT5D8Oe/suT1qI2GVkdogFT8EnnNhLV3wCg95j/3rKXKC/+2h
-	L2E0dKt8m8Q8Go+AquzVaLwM/fY4VFY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754915116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/xz727bLKnxBk+S5wMVGYSxOC92grzf7CfZhE1HKmM=;
-	b=CESkPW/No/9mUwQ9kKchjZk7RMalcqU0tYGFZdfF1zEeh+Aa51DCkwdy+3Iy0tUJzByELt
-	VdaHg3CZFV9swvCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754915116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/xz727bLKnxBk+S5wMVGYSxOC92grzf7CfZhE1HKmM=;
-	b=y64aryxrfGUdaSfgdkinkKKhl6wjhuqJcePhuMFM1//K28b69bO5kAEujutkb+bqqNDf0n
-	WNaGDPFMFTPOE49dHY5kbmT5D8Oe/suT1qI2GVkdogFT8EnnNhLV3wCg95j/3rKXKC/+2h
-	L2E0dKt8m8Q8Go+AquzVaLwM/fY4VFY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754915116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G/xz727bLKnxBk+S5wMVGYSxOC92grzf7CfZhE1HKmM=;
-	b=CESkPW/No/9mUwQ9kKchjZk7RMalcqU0tYGFZdfF1zEeh+Aa51DCkwdy+3Iy0tUJzByELt
-	VdaHg3CZFV9swvCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA16B13479;
-	Mon, 11 Aug 2025 12:25:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id v4+4IyvhmWiqMAAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 11 Aug 2025 12:25:15 +0000
-Date: Mon, 11 Aug 2025 09:25:09 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Wang Zhaolong <wangzhaolong@huaweicloud.com>, Stefan Metzmacher <metze@samba.org>, 
-	Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/31] netfs: [WIP] Allow the use of MSG_SPLICE_PAGES
- and use netmem allocator
-Message-ID: <q4ngijgig45tompgxwc7eu2odtjp65lby2lx6bpbvu3sw2inlm@mfpunzg4uaur>
-References: <dseje3czotanrhlafvy6rp7u5qoksqu6aaboyyh4l36wt42ege@huredpkntg2t>
- <nok4rlj33npje4jwyo3cytuqapcffa4jzomibiyspxcrbc6qg6@77axvtbjzbfm>
- <20250806203705.2560493-1-dhowells@redhat.com>
- <2938703.1754673937@warthog.procyon.org.uk>
- <308528.1754868563@warthog.procyon.org.uk>
+	s=arc-20240116; t=1754915125; c=relaxed/simple;
+	bh=qeE2dI95+q9zH7Z4R8xELCu6A2hM+SkBW0ePTpt73m8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HtkCsnHpbO2xu9Q6kqLGvuSd0++rN22laD3A1nuNt+p5r1aDZ4IY4yQuwGtiDM7HkxdGEjKSrTAhLLyVnUXNdXfL1ldxZFUfidNbiD22FfXZeIX5ZkiVhe6j3RwMzvMg2W+fld9WWGJxoE+wnC4OBfmIkjtJ11zhzYKYAw4aLFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bmLaxG09; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459e1338565so40197725e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:25:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754915121; x=1755519921; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCcFsT9f3M4ghzYK/0b8fD+a2C3U1uCoHn6sd59j880=;
+        b=bmLaxG09R5/ZUNVaVBmiAb7K0py/GJAAeggGWtXzi02sH/3ny9bh1IriNOb127k/G5
+         yL1DFBa+DNuAzrjKTd6pxjlzxx07bptGqU27qnQWldkWwfOvbMoAWxzmIE4wqtJHJ4XE
+         5BJofirfflxI+d1fUiGqa5PXxN2CGq6/PlwNuMfSzF46lLmt/ihm0l0NvjxzGZ8ODP8V
+         8pu0HoDAVUmTE2eQQtlokYQ/mh+upl7oLo/nMnFK5fgaI4MBn9TB6gvL5H9vn7A884Vo
+         BlY8PDZkixXfT7ywJ/jOUR+PWCMbTj/b6yMZkbijgEF8uCcyXqCS2hmpB35a+k3xg9/d
+         5iLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754915121; x=1755519921;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OCcFsT9f3M4ghzYK/0b8fD+a2C3U1uCoHn6sd59j880=;
+        b=j+oOgQqddfYYoZRzcggGk/r1BDBw9yCkeR6g4NvPTVISiz5RmpTrszpOsOo6rKh4FY
+         /t+SVYWnZ9amFm6B/Fb0rcX9SNoIZsUM89jLARVXMEEtHlPTHp0DbsUFmOiaQ0s6yrTe
+         Qg1X1pTaCNlos+r3wGSoNzJfzdCAXhEZccQGERe5SA/Y/HhXYx78QplO/SZ35OVcebGW
+         XWT0RCe23R6uoANXzj8YuvIZKWc7PWmytjLFpv+DYmXzg+kntIYpYx7Yl1Qm8YgibX66
+         DQVSo/d4Sgn6UL6Tv9h09A9faNhDe0Y0J8xukWt/BEzcxT3RTfDq4eA6edC1b18JyDZQ
+         /tbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTHOfjH3PU5WcT2FGFBF7QjuadahbIATzfIH03ZGnffCO7NvU3ZK3HUcPsy4aGMYTDQn/D4ShNs4NPhxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt93Ec59wJi7vJVkktI4URRhg9AfRFBQICkFAWxwPyK2ElZqDk
+	oc5EEgFU5bgg0RR9GZc/gRvg9i7ZnOdAMBdZdB/YPBHpcwYnkUHA+qNi3sNP8jtPHEg=
+X-Gm-Gg: ASbGncvau1ZOTCJpvM2Xh4S9yJPEQ1AFabZQeMllW98NGePyDosGN70avo/ykRyI03Z
+	RqdlnZ9QbZpUq4IiVCA6S0yWEG7pvfoeSia1abRtt4bdxOJ6WhQfHcF27Co+K8b4xBkWy6rLKIx
+	BtehYNaZB1cnGkQZL3oOBT6m1gUTLQPj+amaZEd8uK3U/DkCymnhDYw4FLOQ1ZCgH9Gxw5v8bHI
+	cEqINjZPNul6xSLGHDmf4r+BeQ0PB+AxmZlYRHj3Ks7uRODcypFNBo/wxebzUuJvBDa6LUwzwoy
+	pKRKFb8WKZ7ve0QJOT9nv2EBrMyuJNB9/tOaJBIj0fAt9RLVO0wFOTkjS2U+F0AUmTj6NwmFGH4
+	jeBNv/5sR2bik8KULWZxGGrFPdCstxLn5b4VnhdIGgPc=
+X-Google-Smtp-Source: AGHT+IGcQwEyDbe2pXxLn4ow6niZaQ4fttyXdpX3FYOGgvEv7GarX08RB/egP79bBy+6DOZLsGVFhw==
+X-Received: by 2002:a05:600c:1d16:b0:459:d667:1842 with SMTP id 5b1f17b1804b1-459faa96842mr90534955e9.12.1754915120888;
+        Mon, 11 Aug 2025 05:25:20 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5d0b1afsm248013475e9.26.2025.08.11.05.25.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 05:25:20 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 0/2] arm64: dts: qcom: sm8[56]50: flatten the primary
+ usb controller node
+Date: Mon, 11 Aug 2025 14:25:16 +0200
+Message-Id: <20250811-topic-sm8x50-usb-flatten-v2-0-0bbb3ac292e4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <308528.1754868563@warthog.procyon.org.uk>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACzhmWgC/42NTQ6CMBBGr0Jm7Zih/Kkr72FYFJzCJNiSthIM4
+ e5WTuDyveR73waBvXCAW7aB50WCOJtAnTLoR20HRnkmBkWqokZdMbpZegyvy1oRvkOHZtIxskV
+ iKsgoU9QVQZrPno2sR/rRJh4lROc/x9OS/+wf0SVHwrLjptS1uuZFfZ/Eau/Ozg/Q7vv+BYzLL
+ YbBAAAA
+X-Change-ID: 20250729-topic-sm8x50-usb-flatten-0e030f2f3650
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1029;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=qeE2dI95+q9zH7Z4R8xELCu6A2hM+SkBW0ePTpt73m8=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBomeEueTFxOA5lR8u+3Ussf/26QrfxWIork3rWr6iP
+ 554t2lmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaJnhLgAKCRB33NvayMhJ0XDQEA
+ Co21OE+vU7gOPEzarJl0oz9SpSDRQt7TJ8e3TMdNZekT5ejjt/nYWulUw0YgGWfciKnf1XVjTLbYUN
+ a5INwojvXdSZ7vF0lj1UdLe9tI1pCF0MJh95CDc2p2bLArDKEoSXBBpRHk7gCwxN0jCcCK6J0D4EO/
+ 0eWJBGMfFG2/8YIrPJz58nnhz4jKBYC51NStyc0yaPqPbAcFXWLoIQkPygqumlQeLfhvwhOwrNZNiD
+ htHdjdoinjlnU+od6/3quoIYSx2NT722azO/bQwX4ZOnhH+0IZLCCZXI+diFOyzOAd3WrSX7qehY9o
+ VC+RSsYxP5YD9YtjgmbMpq/59IermlJoQPF/ow9zi9dbgjkgXfIVhvR46cvAa9DUgvWnQI8knF75mA
+ JHui3xJJYXS9t8P4Jy2pWIdFp9vjlr/6BJLvLAKD3t85ifxonU38Fw5xIEE/Pzhhg38FXuAYsLoMRS
+ MqCuk6wHseMH7gPkUCJGSqJs9trh2fPfAxaV4GvMOFBe04ToZDI+PKy08qruDanyBbiyzurS+PhhLF
+ A3uz8i0y4n9zojWSvOPJpztIl2zcCft5sy9c1mLWsYlWrrG0/WGjlDtg2WGWxF/ef+qkq/LmsaxPXg
+ xUFCEFnLWrHfnXK12+ZvzfgLlBQIhzeTJuTe58aM1u8b/WBkP/U68bd3rlbw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On 08/11, David Howells wrote:
->Hi Enzo,
->
->I now have encryption, compression and encryption+compression all working :-)
->
->I've pushed my patches here:
->
->	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-experimental
->
->It should work up to "cifs: Don't use corking".
+Flatten USB Controller node on SM8550 & SM8650 to move away from legacy USB
+Qualcomm glue driver and make use of new one.
 
-Great! I'll try it out later.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Fix usb registers size
+- Link to v1: https://lore.kernel.org/r/20250729-topic-sm8x50-usb-flatten-v1-0-4be74a629136@linaro.org
 
->Btw, is is_compressible() actually worth doing?  It seems to copy a lot of
->data (up to 4M) to an extra buffer and then do various analyses on it,
->including doing a sort.
+---
+Neil Armstrong (2):
+      arm64: dts: qcom: sm8550: Flatten the USB nodes
+      arm64: dts: qcom: sm8650: Flatten the USB nodes
 
-Compression, as a whole, is actually only worth doing if one is paying
-more for network traffic than computing.  is_compressible() tries to
-balance that to avoid a "compress/fail/send original" cycle, as it takes
-0-4ms on a 4M payload (on my machine) whereas, without it, a failing
-cycle can take up to 40ms.
+ arch/arm64/boot/dts/qcom/sm8550.dtsi    | 84 ++++++++++++++++----------------
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts |  6 +--
+ arch/arm64/boot/dts/qcom/sm8650-mtp.dts |  6 +--
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts |  6 +--
+ arch/arm64/boot/dts/qcom/sm8650.dtsi    | 86 +++++++++++++++------------------
+ 5 files changed, 88 insertions(+), 100 deletions(-)
+---
+base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
+change-id: 20250729-topic-sm8x50-usb-flatten-0e030f2f3650
 
->I need to extract a fix for collect_sample(), which I can do tomorrow, but it
->should look something like:
->
->/*
-> * Collect some 2K samples with 2K gaps between.
-> */
->static int collect_sample(const struct iov_iter *source, ssize_t max, u8 *sample)
->{
->	struct iov_iter iter = *source;
->	size_t s = 0;
->
->	while (iov_iter_count(&iter) >= SZ_2K) {
->		size_t part = umin(umin(iov_iter_count(&iter), SZ_2K), max);
->		size_t n;
->
->		n = copy_from_iter(sample + s, part, &iter);
->		if (n != part)
->			return -EFAULT;
->
->		s += n;
->		max -= n;
->
->		if (iov_iter_count(&iter) < PAGE_SIZE - SZ_2K)
->			break;
->
->		iov_iter_advance(&iter, SZ_2K);
->	}
->
->	return s;
->}
->
->What's currently upstream won't work and may crash because it assumes that
->ITER_XARRAY is in use - which should now never be true.
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-Yes, compression was merged when that was the only case.
-
->Also, there's a bug in wireshark's LZ77 decoder.  See attached patch.
-
-Good catch :)
-There are several, actually... if you vary the compression parameters
-defined (min len, min/max dist, hash log) within acceptable limits,
-you'll notice that, even though wireshark might show some as malformed
-packets, Windows is able to decode them just fine.
-
-I really need to reserve some time to work on this again :(
-
-
-Cheers,
-
-Enzo
 
