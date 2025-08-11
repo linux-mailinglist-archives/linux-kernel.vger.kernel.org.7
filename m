@@ -1,108 +1,146 @@
-Return-Path: <linux-kernel+bounces-763269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6E1B21294
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D3CB2128E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7487C178D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13E04204EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C39329BDA9;
-	Mon, 11 Aug 2025 16:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4961ADC93;
+	Mon, 11 Aug 2025 16:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b="GOnLP2YI"
-Received: from hope.aquinas.su (hope.aquinas.su [82.148.24.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZCOUCOY"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C232475F7;
-	Mon, 11 Aug 2025 16:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.148.24.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE0E18FC91;
+	Mon, 11 Aug 2025 16:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930937; cv=none; b=r6QMKKJUdXQo5DIG6watXvqotrMOtVKRGykwwz6W0cdMMn73VXumCpJ8QxeaH67zpvGiSl0ZZd2VcHi9f+eNY5EqteecgZ5TYASbwTogSkkXcGIYXLwAfBE/fLzvyJlWl5wZbikCy6ODF7CGOQK1jsZzL5zcvYRix/RKLitHbgY=
+	t=1754930993; cv=none; b=dx4NZ29x7Q17IHmV5sLoIZRpp6Ssx6LJuWesqxPDHIzsvb5wz1NKpUSjsSVtTDgpMhGDdtCp+WrioMMsr5C8+Z10ZF5c+uwrIvHFkFCjukmOlD7+3MkHWI6UaTWVSSIWK5d4hsCYAc8wfUUPW85pSLJM7wn/9u3LbNE5TiUroHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930937; c=relaxed/simple;
-	bh=LGCt325F09xhWzyUVCNeUGVbkFuJRenLZLO7XVdurNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZVNxPPT+HjP9G3+sy7zO/K6tKM2xQmwAWXAtTIsMwhzSqddhR3aEymQmcCT7cOv6KYz94tljrfoj11gz8dsxLOQuyODo/4RJ5yJIJ2q9utO7lsITYpqZ78PhPIv061v7v5uagdqDmSqjXuf58Hskl27z9xlmF+ZVD5+uaxeCsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su; spf=pass smtp.mailfrom=aquinas.su; dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b=GOnLP2YI; arc=none smtp.client-ip=82.148.24.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aquinas.su
-Received: from woolf.localnet (host-46-241-65-133.bbcustomer.zsttk.net [46.241.65.133])
-	(Authenticated sender: admin@aquinas.su)
-	by hope.aquinas.su (Postfix) with ESMTPSA id 88D4E6EBB9;
-	Mon, 11 Aug 2025 19:48:52 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aquinas.su; s=default;
-	t=1754930933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LGCt325F09xhWzyUVCNeUGVbkFuJRenLZLO7XVdurNc=;
-	b=GOnLP2YIHOppkSHTJKhMGU/aDYfgA1iTCXY+uX5kJDRZrm77T8mQ+vRWMIdqLT0J8os3mJ
-	e+1SNQPhO+wZ2CATcVr0BMH41YAgxjR+N93u46P4MNxazjvuubDb7jpIRmKXJyBjcZwhS0
-	evloaRuWGGz6r37ZSV1MlRJCBZTm+7rXwcUAct0L1EL7pqBr0OdgWVUNxKEKXPVDUGuBR3
-	LVCKgT2ULI/lwset+fDQs8DcLNpJA6RL0CeXPJTL6RcneEY63WirwV0FZ8s5cVTT5XzTJf
-	2hKX+ve1LQ18Zw3m+ePI7zHLB+7ORrrG6YLDFsJtUe4VGzeeXLdzGivLux63fQ==
-Authentication-Results: hope.aquinas.su;
-	auth=pass smtp.auth=admin@aquinas.su smtp.mailfrom=admin@aquinas.su
-From: Aquinas Admin <admin@aquinas.su>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Sasha Levin <sashal@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Josef Bacik <josef@toxicpanda.com>,
- Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Mon, 11 Aug 2025 23:48:51 +0700
-Message-ID: <10702976.nUPlyArG6x@woolf>
-In-Reply-To: <aJgaiFS3aAEEd78W@lappy>
-References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
- <aJgaiFS3aAEEd78W@lappy>
+	s=arc-20240116; t=1754930993; c=relaxed/simple;
+	bh=r3SklTF/J28zldzKGFpkhzr6DqkcSyicNNJtCcisZS4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SsUFDg84mk66cgY5FBm+X+69D+c9ZSDcxEq/iDjSpLf56ngJ7Y024Qs4QaxMzaBMWJEEK8P9T4ReCB9wWUJnaW0h/JUoa34+hmnxPcXfFc4jyAIeybfm8izQ/kfOs8xmW0yva4mr3jY+xsgH1tTg4+GlVESTtjxi9lLT85uKgjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZCOUCOY; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bddb92dc1so5776034b3a.0;
+        Mon, 11 Aug 2025 09:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754930991; x=1755535791; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kN7nybJBSUg9GTrQwRnc+qxQzY/TYZwbF8aIFzNGiuc=;
+        b=NZCOUCOYwrfxdykFxk6NAGAG5sy8Fy+lIg58yOB6CYvX+a4T8ENtAEok86HghW4C/p
+         96W33d7PAzzSuvCWlLqeCQiBTAxEm3BoiuBwpX/KHFYt2L1H7His++3PKFsl8GXwCCmk
+         vamg1QqcYcSmN3jaxPtbioPho05H9d2JI1PoJr9Em/ksMzHuHcIP+kwhITw17ILxKHh1
+         2G5aSL9F4CEOEsCryjftVrk1zGsBsPLW487YAozs2TOSLi7UQ0LECI+yQKhsH9aqgSYv
+         YNjTYLpEtscHghSIh6XnBaLFmStNOF5uaCyQElF8g92fgw55aaBvx706GH5I3XHaRmeu
+         FIWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754930991; x=1755535791;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kN7nybJBSUg9GTrQwRnc+qxQzY/TYZwbF8aIFzNGiuc=;
+        b=kD7L+RKTOSfQA5MvYKjMkFN4jI6P5iFlS7oXx0X0JBSYePFepNxmPOhNoDNOhbUS5x
+         e00eke6DiejMMyirwW+l0YmXu5S5H51KdXF76/kOE61x3tiSX9l1lBhnC7smvoJ95hJE
+         cNZSj+iw8h69RreMhq32BgVvDMChxOV3Bh4PGbBpqFDfRYdL+ZgK+oBO1qK0sRgAOIa+
+         WO8Hl/L5R2W47YTJWJnxmpxEnItbkdQujJDIE7/v5fXzJ9vRYKR5dCG9zzZSGfj0+xZd
+         VlsC9nT1hQ0aRVTcFucA9XIj7as2JapJoKaWyHqGsOEEpnBCAX7lGSXQP56oaInicfnJ
+         308A==
+X-Forwarded-Encrypted: i=1; AJvYcCWVkmmHimLPlmI0/eiota6H6QBLT5kmjwpfn+gQfAf9F2/D8tfbPZuk9PKwJLXTagAkR9tYHMk/pijeakI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWNj4lg4vWFvvem6U5e/lAkpsEMaIDgD3eYtQnUx7es6ntpNfH
+	4RxfUDR503BeO+nurPD+aIbQYc2mCOLdJBPFkkvgbLasfmH/vReQfph2
+X-Gm-Gg: ASbGncs2LxThsD2ln4rhzEcce9HoFdRxdBo59NH6b3PT/1l3L8+asaL0Gz6IgGavE2w
+	iepmnUIez2dob04/guBkZif1IdU+4IeWepCYjKNj/iLFPvWXSsLLCc/OxhgBimll5f5dHz14xcx
+	02uniQmLovRaews2KXfrXg6ZMDm4OC7YSfyQhHHTgHlgiruax/raDlVAyFmmCN2AZXaGDCxlprz
+	hb2KCFOyGWiPunNT+oin9mlcbzoyzx+piyZaiDwNgvEB3ADDt58av7n+rF5GQrazY+jJcTAF/EG
+	BJMxgQ/yWlPFpg7lPfC/axdXSxH5cxUKwPx4E/OGm9xPUPd1KVGh9/HhsHVThqbBAHCaeR1YTvK
+	0DAYcB3CyMyIteaK0lHin
+X-Google-Smtp-Source: AGHT+IHX0e/PO4Z3IwmNT2g44cWPgFEvNfHjvzx7OGW61t+9EdTI2FUpffbo9A0LBSYC4/7QS364CA==
+X-Received: by 2002:a05:6a00:2d9d:b0:749:b41:2976 with SMTP id d2e1a72fcca58-76e0de36131mr468710b3a.3.1754930990889;
+        Mon, 11 Aug 2025 09:49:50 -0700 (PDT)
+Received: from localhost ([159.117.70.219])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76c09adf8efsm18808340b3a.68.2025.08.11.09.49.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 09:49:50 -0700 (PDT)
+From: Nai-Chen Cheng <bleach1827@gmail.com>
+Date: Tue, 12 Aug 2025 00:49:46 +0800
+Subject: [PATCH] cxl/region: use str_enabled_disabled() instead of tenary
+ operator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250812-cxl-region-string-choices-v1-1-50200b0bc782@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACofmmgC/x2MQQqAMAzAviI9W9DpRP2KeBizbgWZ0ooI4t8dH
+ gNJHlASJoWxeEDoYuU9ZajLAnx0KRDykhlMZWzV1wb9vaFQyBrqKZwC+rizJ8XVOjf0jWnajiD
+ 3h9DK9/+e5vf9AFmqYxRrAAAA
+To: Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kernel-mentees@lists.linux.dev, Nai-Chen Cheng <bleach1827@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754930986; l=1250;
+ i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
+ bh=r3SklTF/J28zldzKGFpkhzr6DqkcSyicNNJtCcisZS4=;
+ b=RmrHqhWXztlnPYHIiYy0fLMXBeWj3a9h4BobSSZiAzZsOkanJ5yunaC+jR0Rs1ULm2fOlqXDs
+ lfJwZzUvlM3DobMEhFxNVjW9SL4KwYG+ODfoN2qNQHOsf8LrYsoglF4
+X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
+ pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
 
->=20
-> The kernel has thrived for over 30 years not just because of technical
-> excellence, but because it has (mostly) maintained a collaborative
-> environment where developers can work together despite disagreements.
-> That collaborative environment IS doing right by users.
->=20
-Come on? It's been around for 30 years because it's financially beneficial =
-for=20
-some players. Should we forget about the letters and insults that flew arou=
-nd=20
-before 2018? The Code of Conduct wasn't introduced just like that. Well,=20
-that's just a small remark, in general. The fact is, there are no objection=
-s=20
-to the technical quality of Bcachefs. The objections are exclusively about=
-=20
-Kent's personality and how he conducts his affairs. Maybe someone experienc=
-ed=20
-in resolving such issues and handling personnel conflicts could suggest a=20
-solution? Analyze the situation and offer methods for resolution? Especiall=
-y=20
-since the problem is far from being solely about Kent. I suggest that inste=
-ad=20
-of threats, hasty conclusions, and quick decisions, we turn to professional=
-s=20
-with the right expertise, who are surely present in the Linux Foundation. I=
-t=20
-will take time, but it will help everyone become better. I hope everyone=20
-understands that the right solution shouldn't be dictated by someone's=20
-feelings or grudges=E2=80=94regardless of who's involved.
+Replace tenary operator with str_enabled_disabled() helper to enhance
+code readability and consistency.
 
+Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
+---
+ drivers/cxl/core/region.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 71cc42d05248..83d58787b5af 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -10,6 +10,7 @@
+ #include <linux/sort.h>
+ #include <linux/idr.h>
+ #include <linux/memory-tiers.h>
++#include <linux/string_choices.h>
+ #include <cxlmem.h>
+ #include <cxl.h>
+ #include "core.h"
+@@ -1468,9 +1469,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
+ 				dev_name(port->uport_dev), dev_name(&port->dev),
+ 				__func__, cxld->interleave_ways,
+ 				cxld->interleave_granularity,
+-				(cxld->flags & CXL_DECODER_F_ENABLE) ?
+-					"enabled" :
+-					"disabled",
++				str_enabled_disabled(cxld->flags & CXL_DECODER_F_ENABLE),
+ 				cxld->hpa_range.start, cxld->hpa_range.end);
+ 			return -ENXIO;
+ 		}
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250812-cxl-region-string-choices-f5aa9832346e
+
+Best regards,
+-- 
+Nai-Chen Cheng <bleach1827@gmail.com>
 
 
