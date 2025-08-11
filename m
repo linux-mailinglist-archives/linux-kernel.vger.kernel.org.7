@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-762762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91A5B20AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:50:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D6CB20AB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004F83B1F3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:50:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B307B20FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D789D1DF748;
-	Mon, 11 Aug 2025 13:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF2F1E5B7C;
+	Mon, 11 Aug 2025 13:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvTKhn7+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iK6E7X7x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE5192D8A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630D51A5B8F;
 	Mon, 11 Aug 2025 13:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920207; cv=none; b=FMIzsLm3WKF7XLH8xKoAftNBckaenGqtubUYoWWChyTsdFTVMu+Sgv5VpPQzmf8ZyJ6HiBFYATdZCMmdkKQ77ynS03fvlIyI68iLYelVnZMpB5UuXx27dKGFIln9rAKpDumbkM9pHzHoOYTx9sUrDJWoQnk3uimLPEJIUlzwEtQ=
+	t=1754920207; cv=none; b=FTNJYQNwM4iK42P0rAd4e+/Eoj5YcEavdjmrsbk5InkUCMQMlzE+CpRq8DIXMXRDG2zXLBp05irUT7U7tt6d5dKaqoyGpqEeJ5mIA9twkF4o4zgkXPaJD07bNPP6skgPgHFe7X+ZlWM5wWfhMyG7wA6CTQcdF+UJhV6GZU0+y1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754920207; c=relaxed/simple;
-	bh=Q3wRFljT1RqYBoMrZp5hrUr0ZoeqxaR44aa4gXoxX18=;
+	bh=7sNojz96BQK667pfkgnkWwBeqI7F9VBaOh5poBi84jw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASmFbVnRlZP218XwE5Z9Sg9c9/FALaGiLb9xDkPDzhnjgpVhbEcqsqbU0lfS7rQkcfHdARcTRWd7+aTyNdO4BQdX8u/IHGwBnAIKV7tjTQqWXTVVb4NO8BKndIOwO57Cf+uw+98R/DfjYvhzaZvDcVRSPe+YbCo5ioYuGCrFVNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvTKhn7+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE867C4CEED;
-	Mon, 11 Aug 2025 13:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754920206;
-	bh=Q3wRFljT1RqYBoMrZp5hrUr0ZoeqxaR44aa4gXoxX18=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tvTKhn7+/cg26lCF8iufQgaAZVGIt+1RdEg5ca3bkwvmjm/9zzFu+dpLh/NCYBaxq
-	 nB2bTrKZqQ/0OeKeh3VfXOLlguf5zCFD/XBeN0O+Ojx77pzkVbUFdT6sdbXTnxn1bY
-	 zBjBU1oGDe/FhG6AE/y10dKDMSvhEZSkJ9UV29botVq4qVLDZDwUWlCotJfcREW79t
-	 nSHSFqUznSu7YT+x2o0HXBEwiWwXSBodYrWcVrwieTmvPbupRBDfrUn3Nbqv8v7z95
-	 YbYHe4zWfam2qOco0imx51oYaBBJdiBfllh27S16Yt7xZJG6fV+P/IZBI6vUwMumAL
-	 uoX8g4EiAZLaA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=KlziOQlWFMNCa/r5AfEGeFMIzeHMjqrxD5T2GnqPMo/wV6SG1Pt9uVrtUcsHN+YDAvpaDUnaBQ7tFshNSN6fpEBQv34q5hvzCxV96kbdaDgNSO9EyW50ScJxzqI4D5y2JQEGqnyX1K1AQBWJq4niRiueUrFEBsUwSQne5Vh9euw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iK6E7X7x; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754920207; x=1786456207;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7sNojz96BQK667pfkgnkWwBeqI7F9VBaOh5poBi84jw=;
+  b=iK6E7X7xIc09hSU5EMIRANBdwtqKnhgjy3e/jv4f8/i1MMLdJq2xbKCm
+   G2Xs5Cj+0QaYNHt5/zSb1xY5/AQvoGyWzGZJdJ5gg7NGhna2nayQVWvE4
+   mSLTV9DaOoZMIVcCPE3OHtw6rnK7kfE5UEat9QdQ9XIUGcSoI8WUWGiAX
+   4tBW32TkrmajQ9f9jaNWd+y+Oqz1ME36H0ab8F26hA0pOFc/GyKmgU4C0
+   //+OTJA4k6LetboF9/DsDnewdQ4XtoNdjEDoCTrbLlBAtsyp0uakRMU23
+   KtKE4AIjveJsuszkvqF5YHE6u1J+hM5GRnwop3aDeKbWKi2lt03AprMEh
+   Q==;
+X-CSE-ConnectionGUID: BLOSg1q9RS2qJ+VntxYP+w==
+X-CSE-MsgGUID: t3grEuGdSIyY13U/CjqbsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="74758639"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="74758639"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:50:06 -0700
+X-CSE-ConnectionGUID: 0BfnAal2RNqKremhBa1ajQ==
+X-CSE-MsgGUID: nM83XovzTAWEo/MeUOyXCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165919451"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa007.jf.intel.com with ESMTP; 11 Aug 2025 06:50:03 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 4A80B94; Mon, 11 Aug 2025 15:50:02 +0200 (CEST)
 Date: Mon, 11 Aug 2025 15:50:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	ntfs3@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: exclude ntfs3 from file mode validation in
- may_open()
-Message-ID: <20250811-geteilt-sprudeln-f09e6ec25c0c@brauner>
-References: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, broonie@kernel.org,
+	virtio-dev@lists.oasis-open.org, viresh.kumar@linaro.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hdanton@sina.com, qiang4.zhang@linux.intel.com,
+	alex.bennee@linaro.org, quic_ztu@quicinc.com
+Subject: Re: [RFC PATCH v4 2/3] virtio-spi: Add virtio-spi.h
+Message-ID: <aJn1Chsfe5297OTa@black.igk.intel.com>
+References: <20250401033621.1614194-1-quic_haixcui@quicinc.com>
+ <20250401033621.1614194-3-quic_haixcui@quicinc.com>
+ <f6f087f9-83c9-452e-9a0f-f8743b8c71c2@quicinc.com>
+ <ea936063-2a24-406d-a7c6-f832a72d5da5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
+In-Reply-To: <ea936063-2a24-406d-a7c6-f832a72d5da5@quicinc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Aug 11, 2025 at 04:05:51PM +0900, Tetsuo Handa wrote:
-> Since ntfs_read_mft() not only accepts file modes which may_open() accepts
-> but also accepts
-> 
->   (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->    fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)
-> 
-> case when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK, may_open() cannot
-> unconditionally expect IS_ANON_FILE(inode) when the file mode is none of
-> S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK.
-> 
-> Treat as if S_IFREG when the inode is for NTFS3 filesystem.
-> 
-> Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-> Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> Is it possible to handle this problem on the NTFS3 side?
+On Fri, Apr 25, 2025 at 04:24:25PM +0800, Haixu Cui wrote:
 
-Ugh, this is annoying.
-@Konstantin, why do you leave a zero mode for these files?
-Let's just make them regular files?
+...
+1
+> > > +#define VIRTIO_SPI_RX_TX_SUPPORT_DUAL (1 << 0)
+> > > +#define VIRTIO_SPI_RX_TX_SUPPORT_QUAD (1 << 1)
+> > > +#define VIRTIO_SPI_RX_TX_SUPPORT_OCTAL (1 << 2)
+> > Can use BIT(x) ?
+> Will update the code accordingly:
+> #define VIRTIO_SPI_RX_TX_SUPPORT_DUAL    BIT(0)
+> #define VIRTIO_SPI_RX_TX_SUPPORT_QUAD    BIT(1)
 
-> 
->   --- a/fs/ntfs3/inode.c
->   +++ b/fs/ntfs3/inode.c
->   @@ -470,8 +470,9 @@ static struct inode *ntfs_read_mft(struct inode *inode,
->           } else if (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
->                      fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
->                   /* Records in $Extend are not a files or general directories. */
->                   inode->i_op = &ntfs_file_inode_operations;
->   +               mode = S_IFREG;
->           } else {
->                   err = -EINVAL;
->                   goto out;
->           }
-> 
-> I don't know what breaks if we pretend as if S_IFREG...
-> 
->  fs/namei.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..a66599754394 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3471,6 +3471,12 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
->  			return -EACCES;
->  		break;
->  	default:
-> +		/* Special handling for ntfs_read_mft() case. */
-> +		if (inode->i_sb->s_magic == 0x7366746e) {
-> +			if ((acc_mode & MAY_EXEC) && path_noexec(path))
-> +				return -EACCES;
+Please, do not do this.
+I explained more in the previous reply why.
 
-That's really unacceptable. We either need to drop the assert which
-would be a shame because it keeps finding bugs or we fix that in ntfs3
-which is my preferred solution...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> +			break;
-> +		}
->  		VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
->  	}
->  
-> -- 
-> 2.50.1
+
 
