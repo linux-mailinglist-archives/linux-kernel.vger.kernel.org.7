@@ -1,95 +1,76 @@
-Return-Path: <linux-kernel+bounces-761884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46AFB1FF9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:50:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522D0B1FFA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1771E17B505
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:50:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2DD3B019A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783782D8783;
-	Mon, 11 Aug 2025 06:50:44 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A612D878D;
+	Mon, 11 Aug 2025 06:52:53 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8F12D63E5;
-	Mon, 11 Aug 2025 06:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F281E2D63ED
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895044; cv=none; b=CJvHGsamropZCC9Y4zRpX+xXgLTIX3GkNpdQnwy0tpuEXhRDPoivAoz/iD/z9DBRh0JFM6yXbNDqxMZkUVavIVlXk/+5Nvz+MGKqSWu4p+NLTnP+hwSp0R579oTyusPlw9vy52ByVX875SSPIcjizm+t9K+Cp35XO2HSmZoTJ1Y=
+	t=1754895173; cv=none; b=PJNkWqWfCwSeMdCsefjmDgd3o9FVYwF6ZAa3XfcEDygGQNZvFsqiY5LtBzJKgmDihoBcD6+Aac7HQ57Gomtj9lBYxTALuy8SGT3xD0sW3/pxmlMgZKApJXAi8KultPrbBqQhAJeSYWUmK4wlk+kkIxCL4rhEQ4xyxtre84SbVpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895044; c=relaxed/simple;
-	bh=VCyAlTuUnhXaDYpfNxL+t/XJTPx/5KAlsAChG7OYHR8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MVE3VlJC3MVJYWSUw0uEifDwbRBQdRhY5w52kyaB72ciS5D1gdkZI3DES8RjXoXW0jaMj2rmAYdHMd+ID+qkdY1X6LRAmaUFJH4ESA4jjzQtraZXskQ/YoMRkshWJa0byvI5KljZ6+gtxqbh03+rHDTU9gmlAwOCmxOxzAiX5fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57B6oRqp035409;
-	Mon, 11 Aug 2025 15:50:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57B6oRkP035405
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 11 Aug 2025 15:50:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ceaf4021-65cc-422e-9d0e-6afa18dd8276@I-love.SAKURA.ne.jp>
-Date: Mon, 11 Aug 2025 15:50:28 +0900
+	s=arc-20240116; t=1754895173; c=relaxed/simple;
+	bh=A7fiIoRIM2hj0Kk8xKketx+1Pdjs454ZiRMz/trUCpY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KkKYn53xSIQN3q0VAE4XVlMPKHYiMQ6ll2a6AMBKH9Uegvpr8zJR19PUFwGjg6H4isbUKsUC+oEXjt6ymmjUwBA2LAQUoCWcXahIFXgeVu1v7ZJVKf0QPdEw9CF93TA0AbR6Vk+EOcEgcXX2Ir+EffYVzXI4dUfZsH9lz2U4p94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linuxppc-dev@lists.ozlabs.org>
+CC: <frederic@kernel.org>, <christophe.leroy@csgroup.eu>, Fushuai Wang
+	<wangfushuai@baidu.com>
+Subject: [PATCH] soc/fsl/qbman: Use for_each_online_cpu() instead of for_each_cpu()
+Date: Mon, 11 Aug 2025 14:52:16 +0800
+Message-ID: <20250811065216.3320-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] vfs: show filesystem name at dump_inode()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav202.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc8.internal.baidu.com (172.31.50.52) To
+ bjhj-exc17.internal.baidu.com (172.31.4.15)
+X-FEAS-Client-IP: 172.31.4.15
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Commit 8b17e540969a ("vfs: add initial support for CONFIG_DEBUG_VFS") added
-dump_inode(), but dump_inode() currently reports only raw pointer address.
-Comment says that adding a proper inode dumping routine is a TODO.
+Replace the opencoded for_each_cpu(cpu, cpu_online_mask) loop with the
+more readable and equivalent for_each_online_cpu(cpu) macro.
 
-However, syzkaller concurrently tests multiple filesystems, and several
-filesystems started calling dump_inode() due to hitting VFS_BUG_ON_INODE()
-added by commit af153bb63a33 ("vfs: catch invalid modes in may_open()")
-before a proper inode dumping routine is implemented.
-
-Show filesystem name at dump_inode() so that we can find which filesystem
-has passed an invalid mode to may_open() from syzkaller's crash reports.
-
-Link: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 ---
- fs/inode.c | 2 +-
+ drivers/soc/fsl/qbman/qman_test_stash.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 01ebdc40021e..8a60aec94245 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2914,7 +2914,7 @@ EXPORT_SYMBOL(mode_strip_sgid);
-  */
- void dump_inode(struct inode *inode, const char *reason)
+diff --git a/drivers/soc/fsl/qbman/qman_test_stash.c b/drivers/soc/fsl/qbman/qman_test_stash.c
+index f4d3c2146f4f..6f7597950aa3 100644
+--- a/drivers/soc/fsl/qbman/qman_test_stash.c
++++ b/drivers/soc/fsl/qbman/qman_test_stash.c
+@@ -103,7 +103,7 @@ static int on_all_cpus(int (*fn)(void))
  {
--       pr_warn("%s encountered for inode %px", reason, inode);
-+	pr_warn("%s encountered for inode %px (%s)\n", reason, inode, inode->i_sb->s_type->name);
- }
+ 	int cpu;
  
- EXPORT_SYMBOL(dump_inode);
+-	for_each_cpu(cpu, cpu_online_mask) {
++	for_each_online_cpu(cpu) {
+ 		struct bstrap bstrap = {
+ 			.fn = fn,
+ 			.started = ATOMIC_INIT(0)
 -- 
-2.50.1
+2.36.1
+
 
