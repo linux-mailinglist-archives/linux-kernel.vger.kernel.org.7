@@ -1,63 +1,86 @@
-Return-Path: <linux-kernel+bounces-762488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC5B20770
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:21:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B66B2077D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137091892FCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D581C189F4C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F932BF005;
-	Mon, 11 Aug 2025 11:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DF22BEC52;
+	Mon, 11 Aug 2025 11:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A+XqGTl7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAkmPaVk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92422BE7BA;
-	Mon, 11 Aug 2025 11:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FEB2D0298
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911250; cv=none; b=H1TVsyIWQp7jJnxA0jIwkw3mOocErA2gGbRxEbxEZenxujXshguqZ+evqH1JiJsbZnJVf1O6gHmEg1tPdDv1KqagA7pa8f4INK1dBPbsKVj2rJZa236tbiAoRw3crzmPLZ+VpcEmAa83oIS4OBw+aB1yuaJOqrt55CBgQ2NShMQ=
+	t=1754911370; cv=none; b=q9tJojQMlcfv/u5gpaZdMjsde3lN0/fOcEtPuuqkbZoXFZUrTRJXnrLwux2Dacyhu2kohnyaibLzYeh97fWaizzdiVN3wdLGIP9t4zDRmgw1AY819BGvr6yskZEUMSqDmIo0iby3TkJ7gFYNqD5EeaMPUU2Vg6u6xheFw3ZY2J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911250; c=relaxed/simple;
-	bh=pBbxrF/v4p+dPGARecY4kudNE5BRKDJf4leCspsoL70=;
+	s=arc-20240116; t=1754911370; c=relaxed/simple;
+	bh=ZOqfIENZoCDHfFICtEOL8YJoPa60molw2ph21bKNCGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A38kfp/t3b3XNlPLtoA1ua3TUbSe90ntliVPpbu+0RCyKPP2fkJTQYmDDpv97975zQ8RqNHTqsSCepRzsg1zdJTOVyNwA8+xvL6NTO2VJMrZmIXC2NuQZl00VVkMPX3X8myp3eQ9Y4c0WnNk5SKuzaR4XHL/4HMV5MScpjdygeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A+XqGTl7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB942C4CEED;
-	Mon, 11 Aug 2025 11:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754911250;
-	bh=pBbxrF/v4p+dPGARecY4kudNE5BRKDJf4leCspsoL70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A+XqGTl7tBrIfAFiVBnLA1HwIWXtrucrrkz2iFzHTo+6GWeFwdOzWsZUC4qU2ac+t
-	 hu6Sf+sJsRlyUZS7E4dP3zQ3joNEM6z2FROM49wTE0VB1e4dxMkvmnblX4PiUeJ+Ip
-	 U+Bw7B1upueQcdILjC/mAoZ/05Gur1IoHIsdUjts=
-Date: Mon, 11 Aug 2025 13:20:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Shivani Agarwal <shivani.agarwal@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com, linux-scsi@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>, Viswas G <Viswas.G@microchip.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ajish Koshy <Ajish.Koshy@microchip.com>,
-	Jack Wang <jinpu.wang@ionos.com>, stable@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Tapas Kundu <tapas.kundu@broadcom.com>
-Subject: Re: [PATCH v5.10] scsi: pm80xx: Fix memory leak during rmmod
-Message-ID: <2025081141-voltage-tribesman-350d@gregkh>
-References: <20250811052035.145021-1-shivani.agarwal@broadcom.com>
- <7c7aedbf-389d-4e5a-83d0-33c51cda1d8a@web.de>
- <CANTE3ihiPx2GZDcUWcO-YR8h-tNrsCtJ=jH7Kzd08Y8qDxZk9A@mail.gmail.com>
- <7010c6e0-009c-49d7-9621-b20ff5122602@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oij/yWQjbO4gLfahmHKRBEKZW7sw7QHAt0klKkAByDUzdbGpqEj5Vi+RsV8yNQWI96n0R2dPeinJVSvyJqLOU5XkQ6k9t2AlMWiKAOT6nuYhqZ+4jrs4NxWrHF4dI9Y9Y4c0pKWCO9W4apnDt0W6dXgayk/IP6+VAdkD25g9VFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAkmPaVk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754911367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aTv5PwSwqaTOZ1ypCe+ttHkuGMC/kFwpTVvvw1cs3Lw=;
+	b=HAkmPaVkbHSa/acXU+UGDnPPwAAgyX+zGzPNF23tJJGmNO39VM3GiifmMvo2On6sFjyS3F
+	uYce1RiotQQlZh+0BQxvAP8+dt+DHSnpmCeCFC0Vz33V+egeKiJYdI1rpZ8cEPQW/9LwH4
+	z8+mNLCN/wAS7hlpLiJOw4mbovuEyYE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-h1gUKyDaMoC7qTEaY5RMSg-1; Mon,
+ 11 Aug 2025 07:22:44 -0400
+X-MC-Unique: h1gUKyDaMoC7qTEaY5RMSg-1
+X-Mimecast-MFC-AGG-ID: h1gUKyDaMoC7qTEaY5RMSg_1754911362
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDC441800285;
+	Mon, 11 Aug 2025 11:22:41 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 13EBF19560B0;
+	Mon, 11 Aug 2025 11:22:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 11 Aug 2025 13:21:29 +0200 (CEST)
+Date: Mon, 11 Aug 2025 13:21:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
+ for non-rt
+Message-ID: <20250811112119.GC5250@redhat.com>
+References: <aJOwe_ZS5rHXMrsO@uudg.org>
+ <20250811100624.LuYV-ZuF@linutronix.de>
+ <20250811104033.GA5250@redhat.com>
+ <20250811110501.nTDNkPnM@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,45 +89,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7010c6e0-009c-49d7-9621-b20ff5122602@web.de>
+In-Reply-To: <20250811110501.nTDNkPnM@linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Aug 11, 2025 at 12:50:24PM +0200, Markus Elfring wrote:
-> >> May curly brackets be omitted here?
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.16#n197
-> > 
-> > Thanks, Markus. I agree with you and have no objection. However, for
-> > the stable branches, we usually keep the patches unchanged.
-> 
-> I am unsure how many source code adjustments would be supported
-> also according to coding style concerns.
-> 
-> 
-> > I think it would be good to remove these curly braces in the Linux
-> > master branch as well. Should I go ahead and submit a patch for the
-> > master branch too?
-> 
-> Corresponding refinements would be nice.
-> https://elixir.bootlin.com/linux/v6.16/source/drivers/scsi/pm8001/pm8001_init.c#L1311-L1316
+On 08/11, Sebastian Andrzej Siewior wrote:
+>
+> On 2025-08-11 12:40:34 [+0200], Oleg Nesterov wrote:
+> >
+> > What exactly do you think we could do regardless of PREEMPT_RT?
+>
+> Do what we do now and have one free path for task_struct regardless if
+> PREEMPT_RT is enabled or not. The one via RCU which delays the freeing
+> until after the grace period.
 
+Ah, got it. I won't really argue, but...
 
-Hi,
+call_rcu() is not free, it obviously delays free_task/etc. To me this
+!PREEMPT_RT optimization makes sense.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+But lets forget it for the moment. This patch
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+	https://lore.kernel.org/all/aGvTz5VaPFyj0pBV@uudg.org
+	[PATCH v6] sched: do not call __put_task_struct() on rt if pi_blocked_on is set
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+removed that optimization by mistake, this doesn't even match the changelog.
+I think it should be restored, and this is what the new patch from Luis does.
 
-thanks,
+Then we can discuss this all again and possibly remove it, but this
+should be explicitly documented in the changelog.
 
-greg k-h's patch email bot
+Oleg.
+
 
