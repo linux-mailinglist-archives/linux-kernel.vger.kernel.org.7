@@ -1,233 +1,314 @@
-Return-Path: <linux-kernel+bounces-762150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BA1B202B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:09:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A076B202A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5CA818C0B47
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C542A422518
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC582DEA7B;
-	Mon, 11 Aug 2025 09:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644882DCF6A;
+	Mon, 11 Aug 2025 09:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="01lttsQ3"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jHXzYc9b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355992DE1F0;
-	Mon, 11 Aug 2025 09:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754903314; cv=fail; b=HC6VO+E8HxLMHTMGmXf2EuFXCPp0K34NPmoYHmMKI5f+TlfMJV/lQsQ3jlOp6NtIra2MVlexQ1GkUradKCfeXG11+F25OLyMChf93HA/E7k75VkufFcqab+sBg1Us/D6pLZeMlVp/K2t2eMt8uSXpAKQ8kM9qdPa1WQD3jjrhD8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754903314; c=relaxed/simple;
-	bh=XcNfSml2ZrS4kfRGAqbcw8Q+dDji53exfUpTAuc7S3k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oooFqnoXyw80LmpyHTL94esCEHx/AzVydSnSrZVGlRpqhxMCy2FXrfWKPxsIsAXg3iF7JYB4zV5+/0SCH5ShFQWSVNJ0+227oHAEQ0PY7tkYEwp4u/KQEPk20J5vY8FkncKvkBPf77u9Tz9u/t3LSQz9IthsCcPyHHfRVdgZips=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=01lttsQ3; arc=fail smtp.client-ip=40.107.237.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AKRtYUn1o64d9AH0vFP7vF3BSRXZ/H6BmQZ7mh7NMV/BGNEgATjOmaRd2XayZ22A3DFjSwwq6giMiKOOB0ze1U3iLdcVNTiZzgPjTW96sNktU3sDrrsYW6O6qrFX9wScOmEv+gkPp+fOZ123gNcEC6FPqqCiADf+P3UzpmbV7u4BZit7/shVvncGK6/GmClKr6xyZIWvjRoJAWsETLScZsTA914StK0WysHGxnCf+i//vZgeX7fvoy+dRCfq66HX2yo05R0waCwZp/fRv9vt1leJ72bJScFeff7msCBSc89ZSba8e4TNA92jfSOG92RAHHoUQs/jR0RMxKhb5l4vxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4q6fr2snxcPjm67BulbUwFEIA0kxCdNbJpLJKsOATvM=;
- b=q9NxeJoTzDDk7tI/55r5EXCE0yqUZReLooWPCpOjzpIFwE6NLPhRmFvHzzYr4Avw0FaNg1QSeV8gSl9WtF0cuxSNZkasgVHsgPU0qlhOOohaIRRTjsEcPe//GTUC9+44NTySzbQ6/UDAzGW6zsIQO9KnCu/ldCGCZdUYba07ki1IpO3clXzljyRI4Fr//Gx0m7/KT4CfhwU5a02x7ulxKqHUPH0hoGSYErQpkFChi5P6wmNYtFyhWX65Fnpw5i8ykLBI8qe71Zf7HtdgtyYV5dT45VyInfyAwQHS6KVvRA5fCa/H5n6sRnhXA6hx+O09sIsfLFTiDU8Msz+ZAdezpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4q6fr2snxcPjm67BulbUwFEIA0kxCdNbJpLJKsOATvM=;
- b=01lttsQ3oOLQaYfeSx9xiCh1LtIE/5IwuVNwHewH41pCcde/rC2wJ9U3a+8KjkdpSsKzYr6EMqj9vLRP0VzB9buHFUTL5SLIF/xKdsFgJ2AF3rtQ6R48TTOxuN/DxR3Xuh2AXa8yPhMRnS/3DBLkNHm2k6+fmwLQmQiEUycKmQk=
-Received: from BN9PR03CA0379.namprd03.prod.outlook.com (2603:10b6:408:f7::24)
- by SJ1PR12MB6241.namprd12.prod.outlook.com (2603:10b6:a03:458::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 11 Aug
- 2025 09:08:26 +0000
-Received: from BL02EPF00021F69.namprd02.prod.outlook.com
- (2603:10b6:408:f7:cafe::6a) by BN9PR03CA0379.outlook.office365.com
- (2603:10b6:408:f7::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.21 via Frontend Transport; Mon,
- 11 Aug 2025 09:08:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F69.mail.protection.outlook.com (10.167.249.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 09:08:25 +0000
-Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 04:08:08 -0500
-From: Shivank Garg <shivankg@amd.com>
-To: <seanjc@google.com>, <david@redhat.com>, <vbabka@suse.cz>,
-	<willy@infradead.org>, <akpm@linux-foundation.org>, <shuah@kernel.org>,
-	<pbonzini@redhat.com>, <brauner@kernel.org>, <viro@zeniv.linux.org.uk>
-CC: <ackerleytng@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>, <pvorel@suse.cz>, <bfoster@redhat.com>,
-	<tabba@google.com>, <vannapurve@google.com>, <chao.gao@intel.com>,
-	<bharata@amd.com>, <nikunj@amd.com>, <michael.day@amd.com>,
-	<shdhiman@amd.com>, <yan.y.zhao@intel.com>, <Neeraj.Upadhyay@amd.com>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <aik@amd.com>,
-	<jgg@nvidia.com>, <kalyazin@amazon.com>, <peterx@redhat.com>,
-	<shivankg@amd.com>, <jack@suse.cz>, <rppt@kernel.org>, <hch@infradead.org>,
-	<cgzones@googlemail.com>, <ira.weiny@intel.com>, <rientjes@google.com>,
-	<roypat@amazon.co.uk>, <ziy@nvidia.com>, <matthew.brost@intel.com>,
-	<joshua.hahnjy@gmail.com>, <rakie.kim@sk.com>, <byungchul@sk.com>,
-	<gourry@gourry.net>, <kent.overstreet@linux.dev>,
-	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
-	<chao.p.peng@intel.com>, <amit@infradead.org>, <ddutile@redhat.com>,
-	<dan.j.williams@intel.com>, <ashish.kalra@amd.com>, <gshan@redhat.com>,
-	<jgowans@amazon.com>, <pankaj.gupta@amd.com>, <papaluri@amd.com>,
-	<yuzhao@google.com>, <suzuki.poulose@arm.com>, <quic_eberman@quicinc.com>,
-	<aneeshkumar.kizhakeveetil@arm.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-coco@lists.linux.dev>
-Subject: [PATCH RFC V10 3/7] mm/mempolicy: Export memory policy symbols
-Date: Mon, 11 Aug 2025 09:06:04 +0000
-Message-ID: <20250811090605.16057-8-shivankg@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
-References: <20250811090605.16057-2-shivankg@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21312DBF49;
+	Mon, 11 Aug 2025 09:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754903296; cv=none; b=aPEeiGuZ/KYGKAQwTdDpgCj96/+0uE2nQ6KGTGXdJEO1RL6P4SzMHznERFiu1cLpk8LBlWZnN5IHgqfUowrqVVuUNV6A64bKeGYODXeD5k/i2tcuoAGFug9BCyC5+rYX27Qfu5SDoRfbAN7xzSyo2+R8CS5qvfMlyHvSQ0fM6kI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754903296; c=relaxed/simple;
+	bh=/LAo3Wrs3R/TZG8JxTcIf7A8Bo2d3+dAMpJGS7Es46M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q3vsQpZDRIvVw9GAGlKrhIPE4h+0RJhbdYq0gBz3Xzk8pD0ftAaHGLUIBW3r6BZq5jVwNaAYNyGC4sZpF9ZGim0X5OiZISFtjg2d8Mvpm3WGMkxHLTwfq5qen6mBG8GNRWdqByRVdtLhnLNEH/KaCBltCJtnVoahmt28SKjK3wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jHXzYc9b; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754903295; x=1786439295;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/LAo3Wrs3R/TZG8JxTcIf7A8Bo2d3+dAMpJGS7Es46M=;
+  b=jHXzYc9bYsrtFtJiRt0z8olipaUM9fs7I4ISnmEnQf4e5JIGHo+4XDEi
+   ao7lw7FIZId0whfA1/TCqSsIVXq7L2pX+rG3ITPljzDjqvvMfrm82s4dW
+   8v7s77TIuW6ZC6SENOrF4MaUTSgjVgTNZmiYaV+2g6qTRUZuRoUTR8wss
+   bc3sMEkWw28Xd3qiYJGukUvUE+rgHCjVvbTJSUlr/8jjTBRXhrsYQUEsD
+   vuLo5oD9QPoEDMJ9qu0XdI9LjD/KHqPMWJK4woSz6SHB3+7UT65VHlZzP
+   1Wvw/dcUEIIAIl7LxfEsYdVICATvRNtJyiI+g2BKUmgqoIk27Xni2O58d
+   A==;
+X-CSE-ConnectionGUID: I8bYilrYRwSd3GgGJ25qPw==
+X-CSE-MsgGUID: U38jugksShOqRWhHWQM21g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57108569"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57108569"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:14 -0700
+X-CSE-ConnectionGUID: ijb5MrhhQIe58WYQrBZVGQ==
+X-CSE-MsgGUID: XhRX5oVFRBiw7OPvVlo6Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="166222034"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.162])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:08 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v12 0/5] Enable automatic SVN updates for SGX enclaves
+Date: Mon, 11 Aug 2025 12:06:04 +0300
+Message-ID: <20250811090751.683841-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F69:EE_|SJ1PR12MB6241:EE_
-X-MS-Office365-Filtering-Correlation-Id: f382ad3f-e898-4965-0e39-08ddd8b6a144
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KZBZtdxz6XzksrUYsaZpxtDgub6y1fGvn98kJg6vk2BoqXZkm1h/RjLzkOV5?=
- =?us-ascii?Q?PFmOzBwrtMUxcxesRyY/Jbo95snPcjkNWJWZexveWz1DyDE9DmLZ6yIKn5pg?=
- =?us-ascii?Q?2tew8IsSmzV7/P3WRMLznt/Vx5CTp6Q/W28WbxEcL8eb2FwMd9IZyGB7Q7yt?=
- =?us-ascii?Q?qeuSy5+RtjWCfDLNZlLmJgg0DYJZeIBJSoJ7deHdzt9DcrwXzXfLgbTZm5RG?=
- =?us-ascii?Q?yZlDY2ZtxfDnPfPLb+VhCj4tYNk9W7XNnV1RxUVlgkSKLTyooo8I49ro87OH?=
- =?us-ascii?Q?iSqKxaeYjhP+EBl480taKl0iBiQ/NOteUZGW0WOVchbO47UXgWItX7SRJXCM?=
- =?us-ascii?Q?3QyR/YzFUtRHIIGRwFvDkOV0HP/G2KysXcQF23c7d1QLtjofxDgvEaEpzFjU?=
- =?us-ascii?Q?VJL1hmp0Dc6a7zyL14ASDA4+Hdg9idHAD0DwJXslP8bPsrpaIinErQI6/HTw?=
- =?us-ascii?Q?DbxgoWvX2dSbQrqAf04S0d/00FsNUK2i5dBRbl8s/YZZ8Xpj/xdqjiMnCnav?=
- =?us-ascii?Q?14ZwUx8VnwjdlWSUytc0gTD/nCJ680uoQ9Jp26C+/flu9INn+b1XTH6KnliF?=
- =?us-ascii?Q?MFpEslGQBQlKtp/tf67ccCGuSwJpnAuROCgkStv2e/EeQYzIC2hMnWS2Z1uY?=
- =?us-ascii?Q?RBPj6bbJK3hy+c7XlXdtMRWVx/TZkn5d2DbmzyC/6Yk6DIVEHZMHObTVgnoD?=
- =?us-ascii?Q?myQMI9yvtufa5TPGZwVTPPcFmK0MV6lw+NBnB3SA54TIHlskQXDX/UBzjcuw?=
- =?us-ascii?Q?Pkxi3zrWSQ01uKmqsmjiLAoAK9ol3ZbdiStnyKmuYxKCZyjxgCVYNfkXYKTO?=
- =?us-ascii?Q?LfF1EWWptKRoyqXkybDBkhGCC8o58dkdIWD88EGrWdt8Yi6K8i3GwsWQIcbM?=
- =?us-ascii?Q?Xoos5Q9CKuERjLSMM1FdEtV/txfuzk844zLh54JQKqqWhAv9MQzuzgy/Zyg0?=
- =?us-ascii?Q?h4C+cc5eXr4IIhyq5+D0VUS6Updumo6MLo8n92LHbYHUGhe3EXNmqJnrU7v1?=
- =?us-ascii?Q?EHu99klhW5uUk254NxxVTW7ehUygtIlbuRAjXGNH1AAFcNdNq2muMW7xO2qD?=
- =?us-ascii?Q?ieHfwYdTdelb7SQTWYL05hnuyIyNJm+nBwy1gKdDATwvxXn3Ux7Cqr4Qn5Xe?=
- =?us-ascii?Q?lcCnKw2F+pi8NO48MgeqjDAkwE9V5KpEKayI00cTibupOa1FFZBbHiwPFsc9?=
- =?us-ascii?Q?FNZ4v6gn5oslNA4XHW5Q1clrga3vwx5eaSWjsshYvF3nuYLGO5rqweudnUn1?=
- =?us-ascii?Q?dajJlRMhvhuyi1t9aP5JPg3qYCNQld5v1Ej0805IYlJsaVN7z1Tv1/oGiUjs?=
- =?us-ascii?Q?33H8iEN8AmuucwJe/yha4Ul5bAkkUYxgOwI+3DmPzhaTpCjXeu67rjlgTKcN?=
- =?us-ascii?Q?hlwAvS4IpaZaVbyDE7yig0DmjSOaLW3Ow9BZuhW3qOs7lykfj1F4lwG0w3X/?=
- =?us-ascii?Q?w+JpUZP357wdqrEJU6sgl+pO2VvmwptwsBOxEuSgPPES4hQw2HMwwwNCCwAR?=
- =?us-ascii?Q?poBGqqGZYf4ruQ8fPr7+2hM/afeGgHNAbzjV?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 09:08:25.7294
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f382ad3f-e898-4965-0e39-08ddd8b6a144
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F69.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6241
 
-KVM guest_memfd wants to implement support for NUMA policies just like
-shmem already does using the shared policy infrastructure. As
-guest_memfd currently resides in KVM module code, we have to export the
-relevant symbols.
+Changes since v11 following reviews by Kai and Jarkko:
 
-In the future, guest_memfd might be moved to core-mm, at which point the
-symbols no longer would have to be exported. When/if that happens is
-still unclear.
+ - added review-by from Jarkko on the whole series
+ - fixed all format and commit issues pointed out by Kai
 
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
- mm/mempolicy.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes since v10 following reviews by Dave:
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index eb83cff7db8c..d385202306db 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -354,6 +354,7 @@ struct mempolicy *get_task_policy(struct task_struct *p)
+ - merge patch 1 and 2
+ - patch 1: clarify the comment about the function prototype
+ - patch 3: clarify the description of SGX_NO_UPDATE
+  error code, move the definition of EUPDATESVN enum leaf
+  to patch 4
+ - patch 4: clarify commit, adjust sgx_update_svn() function
+  according to feedback
+
+Changes since v9 following reviews by Kai:
+
+ - postpone the definition of sgx_inc_usage_count
+   until patch 6
+ - clarify the commit message in patch 6
+ - minor fixes
+
+Note: I didn't merge patch 1 and 2 since it goes against
+previous suggestion made by Jarkko.
+
+Changes since v8 following reviews by Dave and Jarkko:
+
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
+
+Changes since v7 following reviews by Dave:
+
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
+
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
+
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
  
- 	return &default_policy;
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(get_task_policy, "kvm");
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
  
- static const struct mempolicy_operations {
- 	int (*create)(struct mempolicy *pol, const nodemask_t *nodes);
-@@ -487,6 +488,7 @@ void __mpol_put(struct mempolicy *pol)
- 		return;
- 	kmem_cache_free(policy_cache, pol);
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(__mpol_put, "kvm");
- 
- static void mpol_rebind_default(struct mempolicy *pol, const nodemask_t *nodes)
- {
-@@ -2885,6 +2887,7 @@ struct mempolicy *mpol_shared_policy_lookup(struct shared_policy *sp,
- 	read_unlock(&sp->lock);
- 	return pol;
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_shared_policy_lookup, "kvm");
- 
- static void sp_free(struct sp_node *n)
- {
-@@ -3170,6 +3173,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- 		mpol_put(mpol);	/* drop our incoming ref on sb mpol */
- 	}
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_shared_policy_init, "kvm");
- 
- int mpol_set_shared_policy(struct shared_policy *sp,
- 			struct vm_area_struct *vma, struct mempolicy *pol)
-@@ -3188,6 +3192,7 @@ int mpol_set_shared_policy(struct shared_policy *sp,
- 		sp_free(new);
- 	return err;
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_set_shared_policy, "kvm");
- 
- /* Free a backing policy store on inode delete. */
- void mpol_free_shared_policy(struct shared_policy *sp)
-@@ -3206,6 +3211,7 @@ void mpol_free_shared_policy(struct shared_policy *sp)
- 	}
- 	write_unlock(&sp->lock);
- }
-+EXPORT_SYMBOL_GPL_FOR_MODULES(mpol_free_shared_policy, "kvm");
- 
- #ifdef CONFIG_NUMA_BALANCING
- static int __initdata numabalancing_override;
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
+
+
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
+
+
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel-6.16.0_rc7 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly
+appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (5):
+  x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/sgx.h               | 37 ++++++----
+ arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+ arch/x86/kernel/cpu/scattered.c          |  1 +
+ arch/x86/kernel/cpu/sgx/driver.c         | 19 ++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |  1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |  5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 93 ++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |  3 +
+ arch/x86/kernel/cpu/sgx/virt.c           | 20 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h |  1 +
+ 11 files changed, 165 insertions(+), 17 deletions(-)
+
 -- 
-2.43.0
+2.45.2
 
 
