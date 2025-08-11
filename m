@@ -1,168 +1,87 @@
-Return-Path: <linux-kernel+bounces-762360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E747CB20581
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19275B20568
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C37618A243F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA46818A220F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B9D23A9BD;
-	Mon, 11 Aug 2025 10:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A483022FF2D;
+	Mon, 11 Aug 2025 10:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJVlXne2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z42FQXJZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D82367C5;
-	Mon, 11 Aug 2025 10:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB01F16B;
+	Mon, 11 Aug 2025 10:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908398; cv=none; b=UwFt6JmheaGd1VDQaO0cvlW7YO1DHdsZfrRxkmWYGOhL1aTpkCwTOF/gwYvyCJo70791VI6EJQM7kxbUVOSnsby0mg6ccgxoe53yIr5P4UitKUgHKsVw4jbE75sqpHccMbZnvROmnpLynSRlhC6FVxsx6uQr3vmlpnLVIfbOJBk=
+	t=1754908376; cv=none; b=D0WiBpjv0tpbIajF0FrjGvVxJ7EoUiUEhpURBpX9AyNz6ZXEtqDPxuf3ozsgffhJC5WExkXyQE6KeF3qJM4ZphbfZ3caAE9yQOBMGazv+Hrw4DhTU5mU8DqjcucvPo7GLVNgSg8eQKYsI4TiSpF2ipv396MUNJirF+4KPs1b9q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908398; c=relaxed/simple;
-	bh=Bb+HJJMwXAa9wHZL9KaKBaWkuVtOZHy9HVPQEPFbXGM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j3QOofl95SLq682zr+D27h9k1KtjVBMSemwFuTVnY7FVloRj5BHQSRDryCUOtbxhHckwwZOxsIC60X5c7Ha7ATxAqiOVuQECAcq61AjU6IzJTMO5+m0A1ZhyINTREjEV09NKyYKL+MYMzy33dW1zS7Yo38IajhQXBK+eoERiCTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJVlXne2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C91C4CEED;
-	Mon, 11 Aug 2025 10:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754908397;
-	bh=Bb+HJJMwXAa9wHZL9KaKBaWkuVtOZHy9HVPQEPFbXGM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DJVlXne2ZkiAwJkHm/6RC99HvsVCiZA11kpjiJz5hAN8Jm+mlpndEiNmawPR5soiL
-	 6LHryqS81sO1H9pGeeqKgc5Ug32IdY7UYgBApXPSgBMwY5zrh8lG910CmcVX6xyZHQ
-	 mGmjCO+Y26gOzkUzNhmJ1DpDgkFtuGVYwZymqbHIuJchEqEGx4twTWLdycELpMvS9j
-	 SD8PfFpAnG+FDUYEOQXfoAxD3dA4gNOdoalkO1PYA3sPfsW+jn00S0jgu3cXEfmYSp
-	 bv6yR8eAdBJJWWXzYxT/Vxg49hf8vwNZMS98iedbquWVCKoT/mJh13zf9sDrySjyZw
-	 Wi2wSzMs5CalQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>, FUJITA Tomonori
- <fujita.tomonori@gmail.com>
-Cc: alex.gaynor@gmail.com, ojeda@kernel.org, aliceryhl@google.com,
- anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- frederic@kernel.org, gary@garyguo.net, jstultz@google.com,
- linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com,
- rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
- tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com,
- Fiona Behrens <me@kloenk.dev>
-Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout functions
-In-Reply-To: <DBZIBAUIBYNH.3I8AZG4I8I59E@kernel.org>
-References: <20250811041039.3231548-1-fujita.tomonori@gmail.com>
- <20250811041039.3231548-3-fujita.tomonori@gmail.com>
- <g-GNshC-IMvTiMmll2fadYBIoaUfWmifTVixFSbVa_ezg_KutSYmwQpXnfFnBmUkk7f2_prupGl9g7LONjFhiA==@protonmail.internalid>
- <DBZIBAUIBYNH.3I8AZG4I8I59E@kernel.org>
-Date: Mon, 11 Aug 2025 12:32:51 +0200
-Message-ID: <875xeugncc.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1754908376; c=relaxed/simple;
+	bh=fWZBuhCByaZrfX3gSeAzXz6/RAbJoqfRd3mRk8eamwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqsBm0VpmXwInMJrSzqqOxTQTpjo7EC3cX0ADMYL9QKxuFE7HwPBp/YeVoLOBUW66KttnIN0wp+MUSaLtf3CUvAbfEFrnAk3MZB3oLmUgGLrp7L6YAjhHNq7LKQijzBuql9j8U832htUOQ/1lh+jtIHiWlsKy+fEEZdRAeu5YdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z42FQXJZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0Xj76AAJHUlJ1qkjB5mkm0NmtEe4zDSZlXQMIRpqBrw=; b=Z42FQXJZNHojIEfopDWRSQwSn1
+	YWcFq6LtQBoyn4YBv1yNMRU8CV5mhVaHxMF8llZYDp19rAetu3ouFPecDYY6cGhUtocXDp5ARRIwx
+	4/1edMZvP91kxASaxEZI+UBn7dBDFW/dtinzZqVsSuqkm+3GsNIoaYcXQXWOHXowA2X9WAgLxPdRS
+	41nVrmKoxX9e5dJt1oYy4fYFRYN/GDPhG0eDKRbWJ/rPn1yATYHppizBED9ztazj8S/cFZfHJ4BTH
+	oKXM1mRiDR7d3nvCXOVZlPGe8Ppbi9Sa4bw3PvVEUKaRpKjdRAkmI1Q0Vp9+WsuK0sbzWxqRqQ5i7
+	Sq1ddxIQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulPpk-00000007KQl-3ytD;
+	Mon, 11 Aug 2025 10:32:52 +0000
+Date: Mon, 11 Aug 2025 03:32:52 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
+	dw@davidwei.uk, brauner@kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCHv2 0/7] direct-io: even more flexible io vectors
+Message-ID: <aJnG1H4XXL8AXHcS@infradead.org>
+References: <20250805141123.332298-1-kbusch@meta.com>
+ <aJNr9svJav0DgZ-E@infradead.org>
+ <aJU0scj_dR8_37S8@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJU0scj_dR8_37S8@kbusch-mbp>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-"Danilo Krummrich" <dakr@kernel.org> writes:
+On Thu, Aug 07, 2025 at 05:20:17PM -0600, Keith Busch wrote:
+> Sure. I wrote up some for blktest, and the same test works as-is for
+> filesystems too. Potential question: where do such programs go
+> (xfstests, blktests, both, or some common place)?
 
-> On Mon Aug 11, 2025 at 6:10 AM CEST, FUJITA Tomonori wrote:
->> Add read_poll_timeout functions which poll periodically until a
->> condition is met or a timeout is reached.
->>
->> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
->> macro and a simple wrapper for Rust doesn't work. So this implements
->> the same functionality in Rust.
->>
->> The C version uses usleep_range() while the Rust version uses
->> fsleep(), which uses the best sleep method so it works with spans that
->> usleep_range() doesn't work nicely with.
->>
->> The sleep_before_read argument isn't supported since there is no user
->> for now. It's rarely used in the C version.
->>
->> read_poll_timeout() can only be used in a nonatomic context. This
->> requirement is not checked by these abstractions, but it is intended
->> that klint [1] or a similar tool will be used to check it in the
->> future.
->>
->> Link: https://rust-for-linux.com/klint [1]
->> Reviewed-by: Fiona Behrens <me@kloenk.dev>
->> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
->> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->> ---
->>  rust/kernel/time.rs      |   1 +
->>  rust/kernel/time/poll.rs | 104 +++++++++++++++++++++++++++++++++++++++
->
-> Hm, are we should this should go in the time module? I does use timekeeping
-> stuff, but not every user of timekeeping stuff should go under the time module.
->
-> This is rather I/O stuff and I'd expect it in rust/kernel/io/poll.rs instead.
->
->> +/// Polls periodically until a condition is met or a timeout is reached.
->> +///
->> +/// The function repeatedly executes the given operation `op` closure and
->> +/// checks its result using the condition closure `cond`.
->> +///
->> +/// If `cond` returns `true`, the function returns successfully with the result of `op`.
->> +/// Otherwise, it waits for a duration specified by `sleep_delta`
->> +/// before executing `op` again.
->> +///
->> +/// This process continues until either `cond` returns `true` or the timeout,
->> +/// specified by `timeout_delta`, is reached. If `timeout_delta` is `None`,
->> +/// polling continues indefinitely until `cond` evaluates to `true` or an error occurs.
->> +///
->> +/// This function can only be used in a nonatomic context.
->> +///
->> +/// # Examples
->> +///
->> +/// ```no_run
->> +/// use kernel::io::Io;
->> +/// use kernel::time::{poll::read_poll_timeout, Delta};
->> +///
->> +/// const HW_READY: u16 = 0x01;
->> +///
->> +/// fn wait_for_hardware<const SIZE: usize>(io: &Io<SIZE>) -> Result<()> {
->> +///     // The `op` closure reads the value of a specific status register.
->> +///     let op = || -> Result<u16> { io.try_read16(0x1000) };
->> +///
->> +///     // The `cond` closure takes a reference to the value returned by `op`
->> +///     // and checks whether the hardware is ready.
->> +///     let cond = |val: &u16| *val == HW_READY;
->> +///
->> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), Some(Delta::from_secs(3))) {
->> +///         Ok(_) => {
->> +///             // The hardware is ready. The returned value of the `op`` closure isn't used.
->> +///             Ok(())
->> +///         }
->> +///         Err(e) => Err(e),
->> +///     }
->> +/// }
->> +/// ```
->
-> This is exactly what I had in mind, thanks!
->
->> +/// ```rust
->> +/// use kernel::sync::{SpinLock, new_spinlock};
->> +/// use kernel::time::Delta;
->> +/// use kernel::time::poll::read_poll_timeout;
->> +///
->> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
->> +/// let g = lock.lock();
->> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
->
-> I assume you want to demonstrate misuse from atomic contex here? I'd rather not
-> do so. But if we really want that, there should be a *very* obvious comment
-> about this being wrong somewhere.
+We currently have no good way to share tests between xfstest and
+blktests, so I think it would require duplicating the helper programs.
 
-I think we should just drop this example.
+> I tested on loop, nvme, and virtio-blk, both raw block (blktests) and
+> xfs (fstests). Seems fine.
 
-
-Best regards,
-Andreas Hindborg
-
-
+Cool.  I'd like the hear from the other XFS folks if the possibility
+of easily introducing preallocated space (that's what it looks like on
+disk) for writes failed because of wrong alignment is fine.  Given that
+the same user could introduce them using fallocate it's definitively not
+a security issue, but also rather unusual and unexpected.  And from the
+other file system maintainers if they have similar issues.
 
 
