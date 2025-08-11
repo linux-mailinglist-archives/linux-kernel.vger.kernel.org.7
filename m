@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-763144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369ACB21097
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:00:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFDAB2114B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F01A97B3DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC3F3E7824
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFA62E283A;
-	Mon, 11 Aug 2025 15:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1C62E610E;
+	Mon, 11 Aug 2025 15:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW2ngy4V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jZdJ1Dvr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB8E2E11B9;
-	Mon, 11 Aug 2025 15:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBC52DEA8C;
+	Mon, 11 Aug 2025 15:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927000; cv=none; b=OKun/KkQXSrHQg/lJqvadPyuIsWtVu213qpoturwRRBCKEUm/rWugD4eZHEEIP+arZGJbOEnAhgDvms9u3Nc0Bs/8Sub/txlC31qABj5oy8oLSlMhmwbnbc3cdFhXj3SmVqoGPKPel4g6TE3mVnUKOJlc28Qmst00XhyFaDJxUY=
+	t=1754927141; cv=none; b=V1oiznyRuPGXKyPcQVW3aK0VNdLBAABCOcCTKCjp6hoG4pZpGQZdZx8R1HL8UpXqttr5Bb04vg9Fp95yhFOfySvf/Pdz0eEWmsFpN/5I1/ZnMxCEISzgJuFt2nvmgW0jIJldMnXhJ62ELi+WMrQNrsc6snJW8Lir+FD+ZXGQIB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927000; c=relaxed/simple;
-	bh=RQzvlWFhLJK/TNniy6z4Pz1w9gjP9baEr2ufUIUHESg=;
+	s=arc-20240116; t=1754927141; c=relaxed/simple;
+	bh=ze7iO4CCo+BsXp6xKvvrHdv60Ak7GG+2erHtdx10wo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5X47i0DdJNd/mdJtAIFBVzjj2BTJDk15xKZKKP3UX6vsXXUAG4nTjN1ICwKEVz++2f0/AgVJtiC4ulUHY4yLV5SdYmjl0RYjMd9p+1bGV+Mu/aXXpj6Y4A6EroaWfh5KMEQbzW9Qu/bbAEwkTqtwqKXCJQ67xwHNevjnC3mlZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW2ngy4V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F25C4CEED;
-	Mon, 11 Aug 2025 15:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754926999;
-	bh=RQzvlWFhLJK/TNniy6z4Pz1w9gjP9baEr2ufUIUHESg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KW2ngy4VBIOueyDH7dAowxbvouJ2nK/vzcpd7xl1Kbq18a8M5FOAjlXWSW6iqtHff
-	 Gk7Kp/xI+ayMJwwp37XvDEbgVOjBG1GWTz8HbY0g3XJ4UgTCmTH82cAg+T1uExfvDe
-	 2abd4zCWVOGC8NWD7P2ynqZJegHIDL2sig0qFt743cZuQ2TpOz64hE2fe+jBov63IL
-	 z24dd5ot9Avoie2EUvkp8e4FE8LQI8e1hrCpvi4e5Gn7L82v/T20yra7kdAoW/bN6F
-	 RqSmzdTrG8N2GBGSGDXV/aaRuMVin128RPnH9EF666wsUjH/xfEdxpX3DXAomKi7PX
-	 prG5zMJPDSFDg==
-Date: Mon, 11 Aug 2025 08:43:19 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Luis Henriques <luis@igalia.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ww8OpOSFytT8AJ7yGcRgjn+1cFdW97xT3hXrgAEY7nZgAvUHDBBi/PrkuNszFbulsQS6a3Ve4xJQOhHcTuACBzwG+UC27Np6h44wZF9W2uR+qxbeJoaWitVDgZGS3cg4d4HiTZCUKqLGix7J3elzs5m5KY8X1HxvzSJXML+FjE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jZdJ1Dvr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754927130; x=1786463130;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ze7iO4CCo+BsXp6xKvvrHdv60Ak7GG+2erHtdx10wo4=;
+  b=jZdJ1DvreLLeoZZKWuLbb4zKTeLkbjgLD7ciwPJuK+2tbP1HMbPFOdak
+   cbvMlaYjYtO+ZM2Mq05hDNvdEBB4sQfnVo92SnqkzDfMxyuzaHctcASPE
+   l8nRmhRfnSsBdd12DvgqdVN0I2E2nYAHA6ed4Q3Xki5Ng1yZN+Ik2TDED
+   UlO0mjfYCOiHtLSOYxvVC3s/Y/87tnAo2KED73sEFpQSJp4JtkaDE33UT
+   ynwsKnX621b7hlS8Pka1eNawDmu0cycQhHbNoe+zU7YH8bSRJvWSrEAf3
+   3EdzfWe5BIz9+zb3MCoaD/UpVdtN7Q3mCws/im3U6P+meJfavfl78i4pO
+   Q==;
+X-CSE-ConnectionGUID: u+FdEoNKQGewbGzBU6SHvg==
+X-CSE-MsgGUID: fcFvA0teR/C08ursTkPP8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56896032"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="56896032"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:45:29 -0700
+X-CSE-ConnectionGUID: Ze1Kv4D0SrKJcmvFw3LIEA==
+X-CSE-MsgGUID: 8qCxYcdRSWKPMYdF/zyGaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="166345247"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:45:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulUiB-000000054CZ-2wR5;
+	Mon, 11 Aug 2025 18:45:23 +0300
+Date: Mon, 11 Aug 2025 18:45:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
+	Peter Korsgaard <peter.korsgaard@barco.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250811154319.GA7942@frogsfrogsfrogs>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <20250731130458.GE273706@mit.edu>
- <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com>
+Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
+ gpio-leds/keys
+Message-ID: <aJoQE2CQv3nzaSqc@smile.fi.intel.com>
+References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+ <aJnlnx2qF6P61jJN@smile.fi.intel.com>
+ <7c2d08e3-d1e2-433e-b726-307246ab17e9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734abgxfl.fsf@igalia.com>
+In-Reply-To: <7c2d08e3-d1e2-433e-b726-307246ab17e9@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Aug 01, 2025 at 11:15:26AM +0100, Luis Henriques wrote:
-> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> 
-> > On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
-> >> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
-> >> > 
-> >> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> >> > could restart itself.  It's unclear if doing so will actually enable us
-> >> > to clear the condition that caused the failure in the first place, but I
-> >> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> >> > aren't totally crazy.
-> >> 
-> >> I'm trying to understand what the failure scenario is here.  Is this
-> >> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
-> >> is supposed to happen with respect to open files, metadata and data
-> >> modifications which were in transit, etc.?  Sure, fuse2fs could run
-> >> e2fsck -fy, but if there are dirty inode on the system, that's going
-> >> potentally to be out of sync, right?
-> >> 
-> >> What are the recovery semantics that we hope to be able to provide?
-> >
-> > <echoing what we said on the ext4 call this morning>
-> >
-> > With iomap, most of the dirty state is in the kernel, so I think the new
-> > fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
-> > would initiate GETATTR requests on all the cached inodes to validate
-> > that they still exist; and then resend all the unacknowledged requests
-> > that were pending at the time.  It might be the case that you have to
-> > that in the reverse order; I only know enough about the design of fuse
-> > to suspect that to be true.
-> >
-> > Anyhow once those are complete, I think we can resume operations with
-> > the surviving inodes.  The ones that fail the GETATTR revalidation are
-> > fuse_make_bad'd, which effectively revokes them.
-> 
-> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
-> but probably GETATTR is a better option.
-> 
-> So, are you currently working on any of this?  Are you implementing this
-> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
-> look at fuse2fs too.
+On Mon, Aug 11, 2025 at 04:20:33PM +0200, Hans de Goede wrote:
+> On 11-Aug-25 2:44 PM, Andy Shevchenko wrote:
+> > On Sun, Aug 10, 2025 at 09:31:37PM -0700, Dmitry Torokhov wrote:
 
-Nope, right now I'm concentrating on making sure the fuse/iomap IO path
-works reliably; and converting fuse2fs to be a lowlevel fuse server.
-Eliminating all the path walking stuff that the highlevel fuse library
-does reduces the fstests runtime from 7.9 to 3.5h, and turning on iomap
-cuts that to 2.2h.
+...
 
---D
+> > Otherwise LGTM as here it looks like we establish platform device ourselves and
+> > hence no need some additional magic Hans mentioned in the other series.
+> 
+> Not entirely like with the x86-android-tablets patches this
+> declares a software-node for the gpiochip:
+> 
+> static const struct software_node gpiochip_node = {
+> 	.name = DRIVER_NAME,
+> };
+> 
+> and registers that node, but nowhere does it actually
+> get assigned to the gpiochip.
+> 
+> This is going to need a line like this added to probe():
+> 
+> 	p50->gc.fwnode = software_node_fwnode(&gpiochip_node);
+> 
+> note the software_node_fwnode() call MUST be made after
+> registering the software-nodes (group).
+> 
+> Other then needing this single line things are indeed
+> much easier when the code containing the software
+> properties / nodes is the same code as which is
+> registering the gpiochip.
 
-> Cheers,
-> -- 
-> Luís
-> 
-> > All of this of course relies on fuse2fs maintaining as little volatile
-> > state of its own as possible.  I think that means disabling the block
-> > cache in the unix io manager, and if we ever implemented delalloc then
-> > either we'd have to save the reservations somewhere or I guess you could
-> > immediately syncfs the whole filesystem to try to push all the dirty
-> > data to disk before we start allowing new free space allocations for new
-> > changes.
-> >
-> > --D
-> >
-> >>      	     	      		     	     - Ted
-> >> 
-> 
+Ah, good point!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
