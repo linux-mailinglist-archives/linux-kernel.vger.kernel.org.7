@@ -1,109 +1,113 @@
-Return-Path: <linux-kernel+bounces-763653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B203B21842
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:20:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFA2B21847
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 270BD627D39
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DA97B4767
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713F2E613E;
-	Mon, 11 Aug 2025 22:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEA922425B;
+	Mon, 11 Aug 2025 22:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Rmht/i3c"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="btRRtqFp"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0292E612F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976431DE3CA
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950708; cv=none; b=D3wAWgHtJRFnp4L8qZ56URZRB8g2zj4JmBfdiVkDVTF9uYCh+Qk/AixgzNS5O0sZO3gcmMT8/0WPtL2mUxO8TsjAktE8g1n/ODehmIZ2E2UsPYisEyRSE+puqM4UDdikgazblMfhNEyAiUOExQOxsQ7I24Q2dAuwXyvDSP1gLX0=
+	t=1754950888; cv=none; b=s5Emem8mfBSvvj3wyCLMsfRmnjEjyO75nycMdrin6G+qQrDXDAuHROOgQedJKsiASNbSVsZlJUpDN0FD9T3jbtpNXjPkuaJnuWYr2xQ+2g3VIRkJ17AbLZmr+72I7VTZ3N4wVAEuLskqEUJJC1afOY1sLMA+0//++XotBjmOjrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950708; c=relaxed/simple;
-	bh=hLxhxHaWdMlj76eWqAK6hbgx4pifWeyYfjkuCjOx0Es=;
+	s=arc-20240116; t=1754950888; c=relaxed/simple;
+	bh=qXhanpL+DK2WbdhWgqSJLD1CMqNGLtc5qG4llyV7dp0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ggb0DPKQnXMUXmqeJ7OKIQEjY9/YabF2vwt6aG6xVz2O+iikWMbbVzq2j8jraNCF5IreqKpNu6rfDcksGVU5MAC8EkxNuAQw3wXgZavueUxQH7hmfgV37IJltgn9z8fxcvqoVKap0mXVoNfnnUnJvr6yugRiF1RDM3E3MmVG/rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Rmht/i3c; arc=none smtp.client-ip=209.85.215.182
+	 To:Cc:Content-Type; b=tfMttqc2Nxd7HB5TXd1s5QX3i2isKFtz00e9vF0ULHdehZGDiMQmaI9KUQUILeCHOUtdW8ccQ+qRwewIwAjDdpA9GcB7YTRA5/yjl16Okp1EUh+fxsSj7DzlLTRWzFMYTfsx48ygLuaMAjyAaMK52abL8A8TCtd0ulrN5BcNvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=btRRtqFp; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b42254ea4d5so3182220a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:18:26 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31efc10bb03so4164885a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:21:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754950706; x=1755555506; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1754950887; x=1755555687; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6QPfkB/pIQ/k6u1jMgX4e6F8gib56VfPj24awC4Cu4Y=;
-        b=Rmht/i3canU6ZP7p9kIhAkbC6lhUAOH47msih3fhZtQT6je6MmHtfSl61VE5wWjm2N
-         qJo0qkuvtRc51s3cnyvnNcaLk3XQvWUvObDhjH8A21VEcp6TCF1/BllImHwOko7iEJfQ
-         9bkhQCduUf4IgsxVDvPOkdoFzkX+1OGi74Ip2LLtIg9sFy+GywRnCdYe6yXZv9LN6x2z
-         TRZ65bA6aRpfIppxeuYe0nraaHO8Sju+BRPyTe+5KZc7oMD2eTe7QwBUw/UvQq1VRVQX
-         8eFvVONqQg4RG4lJcZy2x1cMjv40EWTWFqo7kO1kW3wFld40dHwJ1nd22dhp0GJbyw/g
-         BZGg==
+        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
+        b=btRRtqFp9k1+3KHuadN8gK06YGLKpjW0+GWFyE9XG1iqlTQ16dWPQsFMmp51ph97Gj
+         dLwIiXpomEM44yjpyqMmDrEv4P3wjNHXIYW6cGkpDaJt/NKkVf8AqZoieUypJT2i/UIh
+         FriZsMf4aVn6qbLqdrEhohLz1rCS8ggHux2ODerie5ayBFWaS50j/EAqaLZj1aOLqcad
+         XeYbY6PtgZpCRy8xnD0CFzH0MaFNaYaCzvcvkzFmDqQauEGA0Uu7fEj4huf6/5yCOzLA
+         KlJb3aoG3F3DEp7WxAQxAi299lp1OJW51AUAGcvGJ+MdIoVSgb1gIWOzIOge6W2IRrdG
+         xKjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754950706; x=1755555506;
+        d=1e100.net; s=20230601; t=1754950887; x=1755555687;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6QPfkB/pIQ/k6u1jMgX4e6F8gib56VfPj24awC4Cu4Y=;
-        b=uuI3+rHuenSMBlk7NDiijYuD7HZMGnMibHlyc/p3pFwewyxhZe1PPI185qSFk063YB
-         q5kAtZH9V2eUdAS1IY2vtGHFrkzDy8qxibcYYbYEDe5UvQYGlfeDKgn5xV+9S0PAzrIy
-         xaOkkABKy9MpSfZVt2aEkP8BHlHsXFKjk1HSqG21R9V0nrCJp34qVgjM/6Vg3LlBUso1
-         aTz0R6JObwZvgXzCYDN4WLs3q8zwhQwWq9LZiwS0tP8i4rxClqNlJ3pTW3iwPA8zS27t
-         Y6shR+eYVtssKxvykCrSEkO/2HNiXdCUKRfnwnwhV+zIoiOyLVbRDaS495nhCKpSg+5E
-         XgAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWucY/lJx+epvl/ZoOyoVFrZCU0yZg/kgSYDCWIYKEcAoWcv8opJ5dUMga1UZufMVi57W4g2MiO582QSe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3DOcWPLvMxp9Uie43fXevtb7wAjDR4upENc2rEH5ElttAzesQ
-	avNkJOSYHAVjm0bE0742sOrm9WlBT2d556QvokEZsZgANGCDcXYF4vHgSbso8Lug9YuA3dkYBXa
-	10kaK3PaTZLOv8kKkWk/lLVm1ECmIWuIevtjroyiOL1n/UaM1JAs=
-X-Gm-Gg: ASbGncu9CJG9zizfD/0u873kkO63e2e6vkZNGx7UWksxgh4sC/aYk/nYFMXUqDvYKEb
-	5fjU5m4IPy7xMnnm+W5yFDjhVC2Ry+IQPVKq+gOCeDtYK1fTIlByaSiKP6uQiclHz4q1tTJYSCU
-	ibiYGubYE6/2uAGdIzIPmRHl8Sqvl9yZ1OVyUEaIFDxS1048CIvvBTNuNsH3xaJqZ7rUONm0kIS
-	0TSKeM=
-X-Google-Smtp-Source: AGHT+IEos3ybrBp1VeGH5FoNhU0qT67CaE0I68fM7gf/kq+FJ3ArgKD8o+ziY0Jw8Kyj/EY6HpH1lz9vms9IV3m1UW0=
-X-Received: by 2002:a17:90b:4f47:b0:31e:f351:bfec with SMTP id
- 98e67ed59e1d1-321838a61fdmr23110027a91.0.1754950705580; Mon, 11 Aug 2025
- 15:18:25 -0700 (PDT)
+        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
+        b=NffvHlyhWM0mm5yk5UmBHGAS7xqKFGBw3m1R7STqaLvpwFQd/VhYTAzIH96ZYKPxcf
+         L2yvMHFBw1dNSEkXp7xDHUVU3g+iY2OOCNtnhpN0n1KiNpEYV022UY4Ua2LBedO2YmH9
+         nhz+gA1ozKtqDYHmJt2uzAQp75Fwqk3cVlUnQc60NfZ1oCnBKsm+hKnKAIbr23iiX5v9
+         kYnxu5AiEQ98vTqtQvP7drTI1my8j7JCXQLfZ46f+G8YihplxddudyKd0sqAcJa1g0GI
+         MZkBscEHDwEr33SWtbQoVmk/KsMjy77ESGJW77kuMMvWbCrHWgqC7qT6pYEYbbLzEbcd
+         EH0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqtiVu3vxBrWKlH0N3G5gf7gYQUlo2VjDiQyKDU4NjjVRSJQD2flOWLt5R0staFblVowvwLAe8Xy9w2Us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxsI1BZdRcVgUUccNa2Y8cpKF9l/E4H5OmYNPKcaxc7hmMEVvs
+	IBI6/IyX1Bebmruuh1ZnuH55f5Y5IlDIsV5t7oF8zw/OoQJa36mc/SQD9/ukX33CCG+pBvvNFT3
+	SwygYNK3NhrV+jXKCWruSxzB2aGmm2irw6OiCp9Jk
+X-Gm-Gg: ASbGncttE1lY8PF0KLA+Ws4DPcnq3+XEN0Bqj/Otk4yK5PvtH1U9C7Ziwz4+HhhxV2Z
+	84eu4/R6tJutWIExCjo06oWbv5Ss26tWoYOpBxukV0s504egnwbIfFdqJ/x9BYrkBIHlep+SSJ/
+	0XS5Us0x2GBiXJmp4yku0eqIbCswRw4YSuhR/j1E5dAqXAkHsphTkgiknvNQgPIYxoEIBmwekh4
+	+999ZirZbEDBfczWg==
+X-Google-Smtp-Source: AGHT+IEss2X+BEVYoSZIRFPMdBMIECB9EsuPm1/5BEpb7wMtfKbuhIPqkxFcGxZboN3KJZ7oj0OWy4xB2RyQ2dN40eo=
+X-Received: by 2002:a17:90a:dfc4:b0:321:6ac:532b with SMTP id
+ 98e67ed59e1d1-321c0b3493dmr1670945a91.35.1754950886988; Mon, 11 Aug 2025
+ 15:21:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723122304.911130-1-yuehaibing@huawei.com> <55eacb468bb0868fe2552944d46239b7@paul-moore.com>
-In-Reply-To: <55eacb468bb0868fe2552944d46239b7@paul-moore.com>
+References: <20250716212731.31628-5-casey@schaufler-ca.com>
+ <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com> <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
+In-Reply-To: <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 11 Aug 2025 18:18:13 -0400
-X-Gm-Features: Ac12FXw_vY8moP4LN-S0tf8nwPO27G2vxwDbZyYItDQggN-Rk4kruJDtqilzpqg
-Message-ID: <CAHC9VhTgX4beGWOL5eewnk2jQyW64L3iA5g558_WVoPsu-29NQ@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Remove unused function selinux_policycap_netif_wildcard()
-To: Yue Haibing <yuehaibing@huawei.com>, stephen.smalley.work@gmail.com, 
-	omosnace@redhat.com
-Cc: selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 11 Aug 2025 18:21:14 -0400
+X-Gm-Features: Ac12FXyMjcnxuMYwY6jL1gdJPw-g9F2DzMGA2F70iCe8j7vzY4irDpbe-2aJOKM
+Message-ID: <CAHC9VhR-Jd8JGhEETSBLDQA843FtsyN+ocM1XjfA_A6g+tJeng@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] Audit: Fix indentation in audit_log_exit
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: eparis@redhat.com, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 5, 2025 at 5:22=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Jul 23, 2025 Yue Haibing <yuehaibing@huawei.com> wrote:
-> >
-> > This is unused since commit a3d3043ef24a ("selinux: get netif_wildcard
-> > policycap from policy instead of cache").
-> >
-> > Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > ---
-> >  security/selinux/include/security.h | 6 ------
-> >  1 file changed, 6 deletions(-)
+On Tue, Aug 5, 2025 at 7:06=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 8/5/2025 12:39 PM, Paul Moore wrote:
+> > On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Fix two indentation errors in audit_log_exit().
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  kernel/auditsc.c | 7 ++++---
+> >>  1 file changed, 4 insertions(+), 3 deletions(-)
+> > As this is indepdendent of all the other changes in this patchset, I'm
+> > going to merge this into audit/dev-staging now and audit/dev later when
+> > the merge window is closed.
 >
-> Merged into selinux/dev-staging with plans to move it to selinux/dev
-> once the merge window closes.
+> Spiffy. Thank You.
 
-Now merged into selinux/dev, thanks!
+... and now it's in audit/dev, thanks!
 
 --=20
 paul-moore.com
