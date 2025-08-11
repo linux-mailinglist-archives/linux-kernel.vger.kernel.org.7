@@ -1,174 +1,218 @@
-Return-Path: <linux-kernel+bounces-761842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEC4B1FF15
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C477BB1FF17
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3E0D7AC9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CD71897B45
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4C9284694;
-	Mon, 11 Aug 2025 06:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F51284694;
+	Mon, 11 Aug 2025 06:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVYRj0qQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdExNfS8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A9227F198;
-	Mon, 11 Aug 2025 06:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785657C9F;
+	Mon, 11 Aug 2025 06:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754892788; cv=none; b=qL8fxj7ik5zQkBZNn71fwVUOAgDLeKEV4sFBNLdnwH9+NolsCp5/3ITJ7vh/s5qpCuNc13QoDfVnqUgfWVYpeC9Wg3w2pAOTMTmKNDKpmHN6l+MsJRek8gqYVyn1/aNpAlg2hhRdlQXSlnsE5hcBKyu+kPQnNzlQkp97m2FUrUQ=
+	t=1754892826; cv=none; b=VzSc8aRBo9mk5G9zFwnsWdvmLEmbIHmlC2W0fYBg19OiTsW5/GWiGDMh16x1JTiUwEPaoY0bMjIcjfuCTiq5gYtzrW7FoEeB9aNIzfI0EHFNhA9Xx9dSeqkH8yb0MUwbjuTQbE/Smxr5DN29edaqqj2js4iq0qBpk46Gahg0vbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754892788; c=relaxed/simple;
-	bh=y5gFofC4QUclprRrC5gwH9xbLOd7/g1RieFQkQ65L3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdeKUy9tdqeet5dSAoM4JuwVz1JAc9uwBHGu36/9Z/NKuA0oLZUxs3n31hAQGziGo/N9PqHJvirtBslmySmLj6xYoDBAGUWZeTHUCZHuSMgu5lIegUfSug0cjTfFLI73pKaN9msA92Id0CqPBqGlpVSagdifXUgNDKQSts1zKWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVYRj0qQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2804DC4CEED;
-	Mon, 11 Aug 2025 06:13:05 +0000 (UTC)
+	s=arc-20240116; t=1754892826; c=relaxed/simple;
+	bh=LnPCD5wQWfe5ewQuYs5Ji2os16OC0uw92HZs4chNN6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuUEjLy6mCiO0uQSNkNcrBml5eAayAfoZzVT00+fvenC42KgM8shSG1xipg438tL+dsj3bVhYZtpuWchcm71becEt7bzGnzUQ1JvpzSoZrTEnmRE3IpNa/GrQ1TfQ8ws3jUrezs7h4wKMglVHd8qjMo5DXH5MoTLyyekPyxgIWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdExNfS8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB26DC4CEED;
+	Mon, 11 Aug 2025 06:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754892788;
-	bh=y5gFofC4QUclprRrC5gwH9xbLOd7/g1RieFQkQ65L3k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NVYRj0qQJieC5vk1H8c6l+sHRdpaXBz6F9qFd8owxaqMocLlH76po2dzWafdVTIK4
-	 bmItLFMtpUAm4BpmlV9ukgK/56q2wbl9rkwpXCBYTAOMNGvJEybI7HOzkMBdHSBBao
-	 ho2eOCtqHbltz/ZEbOcirTu5v/f082wNasFPtMhLiNcD2j9b7qPhdO2uywKdLLXIas
-	 LFvnof4aoPhJlR1t71ULZkZNR501D/iLRq7I6XguMl/NPCeREZyM4UgjGXMcjIPd9w
-	 SfQ1nnqFwqmcWn2cnbnXiRvCbqS91llVgBAF0s6U7hMjSIfx4MUUb0itrxNzDG38kq
-	 eNbgyeW0rkB1A==
-Message-ID: <9fbc63d4-a12b-420e-8c99-f2f5fca5a9eb@kernel.org>
-Date: Mon, 11 Aug 2025 08:13:04 +0200
+	s=k20201202; t=1754892822;
+	bh=LnPCD5wQWfe5ewQuYs5Ji2os16OC0uw92HZs4chNN6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XdExNfS82bYgbvYkazYD5Uca3vV525KEhs2Ec9BJUVqX9itC+3aNzhRqI0Na5Q+ym
+	 Cna1s1ttn1b/iAFMF5AK8f8uXlPrvEIogzcVxTbyzYY5bNxtYW5u03kY2NHC2QK6Lj
+	 D0ad0rPk5i/9ilAtjvCynVZkD46ucAXWSJQ7krj3/gw1FNPg5ibNqX0fQnKx/vWYWI
+	 skmBqB7HKQMPq0sopiAHlRXbqAyg27nqBkMNc5QXihGtcPpLCI5PiFeZwqelbHxvmp
+	 w97tZxlrXGimx55YtNHf39NI1kKnOLo1qfXeFmuv7zrrbeIoEiJDq5IKDVsXH9+TxF
+	 KS+INLsfOw17w==
+Date: Mon, 11 Aug 2025 11:43:35 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	op-tee@lists.trustedfirmware.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tee: Use SHA-1 library instead of crypto_shash
+Message-ID: <aJmKDyD4weX9bR0U@sumit-X1>
+References: <20250801235541.14050-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/12] media: rkvdec: Add per variant configuration
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
- <20250808200340.156393-6-detlev.casanova@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250808200340.156393-6-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801235541.14050-1-ebiggers@kernel.org>
 
-On 08/08/2025 22:03, Detlev Casanova wrote:
-> This is to prepare for adding different variants of the decoder and
-
-Prepare for...
-
-> support specific formats and ops.
+On Fri, Aug 01, 2025 at 04:55:41PM -0700, Eric Biggers wrote:
+> Use the SHA-1 library functions instead of crypto_shash.  This is
+> simpler and faster.
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> Change uuid_v5() to return void, since it can no longer fail.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 > ---
+> 
+> Note: this patch depends on the SHA-1 library functions that were merged
+> in v6.17-rc1.
+> 
+>  drivers/tee/Kconfig    |  3 +--
+>  drivers/tee/tee_core.c | 55 +++++++-----------------------------------
+>  2 files changed, 10 insertions(+), 48 deletions(-)
 
+Nice cleanup, FWIW:
 
-...
+Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
+-Sumit
 
->  static int rkvdec_init_ctrls(struct rkvdec_ctx *ctx)
+> 
+> diff --git a/drivers/tee/Kconfig b/drivers/tee/Kconfig
+> index 61b507c187801..a84767940fbfc 100644
+> --- a/drivers/tee/Kconfig
+> +++ b/drivers/tee/Kconfig
+> @@ -1,12 +1,11 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  # Generic Trusted Execution Environment Configuration
+>  menuconfig TEE
+>  	tristate "Trusted Execution Environment support"
+>  	depends on HAVE_ARM_SMCCC || COMPILE_TEST || CPU_SUP_AMD
+> -	select CRYPTO
+> -	select CRYPTO_SHA1
+> +	select CRYPTO_LIB_SHA1
+>  	select DMA_SHARED_BUFFER
+>  	select GENERIC_ALLOCATOR
+>  	help
+>  	  This implements a generic interface towards a Trusted Execution
+>  	  Environment (TEE).
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index acc7998758ad8..d079aeee0690a 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -12,11 +12,10 @@
+>  #include <linux/module.h>
+>  #include <linux/overflow.h>
+>  #include <linux/slab.h>
+>  #include <linux/tee_core.h>
+>  #include <linux/uaccess.h>
+> -#include <crypto/hash.h>
+>  #include <crypto/sha1.h>
+>  #include "tee_private.h"
+>  
+>  #define TEE_NUM_DEVICES	32
+>  
+> @@ -140,72 +139,36 @@ static int tee_release(struct inode *inode, struct file *filp)
+>   * UUIDv5 is specific in RFC 4122.
+>   *
+>   * This implements section (for SHA-1):
+>   * 4.3.  Algorithm for Creating a Name-Based UUID
+>   */
+> -static int uuid_v5(uuid_t *uuid, const uuid_t *ns, const void *name,
+> -		   size_t size)
+> +static void uuid_v5(uuid_t *uuid, const uuid_t *ns, const void *name,
+> +		    size_t size)
 >  {
-> +	struct rkvdec_config *cfg = ctx->dev->config;
->  	unsigned int i, nctrls = 0;
->  	int ret;
+>  	unsigned char hash[SHA1_DIGEST_SIZE];
+> -	struct crypto_shash *shash = NULL;
+> -	struct shash_desc *desc = NULL;
+> -	int rc;
+> -
+> -	shash = crypto_alloc_shash("sha1", 0, 0);
+> -	if (IS_ERR(shash)) {
+> -		rc = PTR_ERR(shash);
+> -		pr_err("shash(sha1) allocation failed\n");
+> -		return rc;
+> -	}
+> -
+> -	desc = kzalloc(sizeof(*desc) + crypto_shash_descsize(shash),
+> -		       GFP_KERNEL);
+> -	if (!desc) {
+> -		rc = -ENOMEM;
+> -		goto out_free_shash;
+> -	}
+> -
+> -	desc->tfm = shash;
+> +	struct sha1_ctx ctx;
 >  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++)
-> -		nctrls += rkvdec_coded_fmts[i].ctrls->num_ctrls;
-> +	for (i = 0; i < cfg->coded_fmts_num; i++)
-> +		nctrls += cfg->coded_fmts[i].ctrls->num_ctrls;
+> -	rc = crypto_shash_init(desc);
+> -	if (rc < 0)
+> -		goto out_free_desc;
+> -
+> -	rc = crypto_shash_update(desc, (const u8 *)ns, sizeof(*ns));
+> -	if (rc < 0)
+> -		goto out_free_desc;
+> -
+> -	rc = crypto_shash_update(desc, (const u8 *)name, size);
+> -	if (rc < 0)
+> -		goto out_free_desc;
+> -
+> -	rc = crypto_shash_final(desc, hash);
+> -	if (rc < 0)
+> -		goto out_free_desc;
+> +	sha1_init(&ctx);
+> +	sha1_update(&ctx, (const u8 *)ns, sizeof(*ns));
+> +	sha1_update(&ctx, (const u8 *)name, size);
+> +	sha1_final(&ctx, hash);
 >  
->  	v4l2_ctrl_handler_init(&ctx->ctrl_hdl, nctrls);
+>  	memcpy(uuid->b, hash, UUID_SIZE);
 >  
-> -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
-> -		ret = rkvdec_add_ctrls(ctx, rkvdec_coded_fmts[i].ctrls);
-> +	for (i = 0; i < cfg->coded_fmts_num; i++) {
-> +		ret = rkvdec_add_ctrls(ctx, cfg->coded_fmts[i].ctrls);
->  		if (ret)
->  			goto err_free_handler;
->  	}
-> @@ -1119,8 +1127,13 @@ static void rkvdec_watchdog_func(struct work_struct *work)
->  	}
+>  	/* Tag for version 5 */
+>  	uuid->b[6] = (hash[6] & 0x0F) | 0x50;
+>  	uuid->b[8] = (hash[8] & 0x3F) | 0x80;
+> -
+> -out_free_desc:
+> -	kfree(desc);
+> -
+> -out_free_shash:
+> -	crypto_free_shash(shash);
+> -	return rc;
 >  }
 >  
-> +const struct rkvdec_config config_rkvdec = {
-
-Why isn't this static?
-
-> +	.coded_fmts = (struct rkvdec_coded_fmt_desc *)rkvdec_coded_fmts,
-> +	.coded_fmts_num = ARRAY_SIZE(rkvdec_coded_fmts),
-> +};
-> +
->  static const struct of_device_id of_rkvdec_match[] = {
-> -	{ .compatible = "rockchip,rk3399-vdec" },
-> +	{ .compatible = "rockchip,rk3399-vdec", .data = &config_rkvdec },
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, of_rkvdec_match);
-> @@ -1144,6 +1157,9 @@ static int rkvdec_probe(struct platform_device *pdev)
->  	mutex_init(&rkvdec->vdev_lock);
->  	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
+>  int tee_session_calc_client_uuid(uuid_t *uuid, u32 connection_method,
+>  				 const u8 connection_data[TEE_IOCTL_UUID_LEN])
+>  {
+>  	gid_t ns_grp = (gid_t)-1;
+>  	kgid_t grp = INVALID_GID;
+>  	char *name = NULL;
+>  	int name_len;
+> -	int rc;
+> +	int rc = 0;
 >  
-> +	rkvdec->config =
-> +		(struct rkvdec_config *)of_device_get_match_data(rkvdec->dev);
-
-If you need a cast, your code is wrong.
-
-
-Best regards,
-Krzysztof
+>  	if (connection_method == TEE_IOCTL_LOGIN_PUBLIC ||
+>  	    connection_method == TEE_IOCTL_LOGIN_REE_KERNEL) {
+>  		/* Nil UUID to be passed to TEE environment */
+>  		uuid_copy(uuid, &uuid_null);
+> @@ -258,11 +221,11 @@ int tee_session_calc_client_uuid(uuid_t *uuid, u32 connection_method,
+>  	default:
+>  		rc = -EINVAL;
+>  		goto out_free_name;
+>  	}
+>  
+> -	rc = uuid_v5(uuid, &tee_client_uuid_ns, name, name_len);
+> +	uuid_v5(uuid, &tee_client_uuid_ns, name, name_len);
+>  out_free_name:
+>  	kfree(name);
+>  
+>  	return rc;
+>  }
+> 
+> base-commit: 0905809b38bda1fa0b206986c44d846e46f13c1d
+> -- 
+> 2.50.1
+> 
 
