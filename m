@@ -1,207 +1,156 @@
-Return-Path: <linux-kernel+bounces-763339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2F0B21398
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2014CB2139C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E719D3E3801
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE563AA242
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991E41A9FAA;
-	Mon, 11 Aug 2025 17:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7F32C21E2;
+	Mon, 11 Aug 2025 17:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vi/29GmZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQUhIEGP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBCCB640;
-	Mon, 11 Aug 2025 17:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86BB640;
+	Mon, 11 Aug 2025 17:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754934328; cv=none; b=KRWowBBYqfDGinvv0cAy5hmqY27mpQsElyDAVqLXb4Ue2e3G258o68vHtHaYZudbps9X+tQQINiL2MaG8PSJfyIdIVoMd/nshf/zCDRx9CuNag4TPb1pjrOyn/vxvLJg73WXcnVe1ulmx8Aw1Ihf08zzh17opVJWlSXPg9Gvq60=
+	t=1754934428; cv=none; b=OEDMsPcBd6+ohltspSPPnlJQk2Zqk3BnRKYpFWXImLMp0WFTSNbTBDuPjK2qT6JaPBgLT7vFv/vI++5hqc9hDi34pY1+plAyL3GHDGIZYqdQurWnmovov1nZbZfoNJsW0M94T7fqTBvA8DRtpjOKsQrgxq5dFjPcD0Nfm0c+UNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754934328; c=relaxed/simple;
-	bh=cbNvYyTng8khy6ZQsS8BDQ2O5TXa1kf9EEo6gDZxZ7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XpWViJKpACb3brLHpf8/QFrWVUDhfQZ7DbpJ1XFmF7zRz4PIInMPuM0s3n7pXao7ZS52fvk9TEno8ihA+YNjxz3aKVHb0ZlRXco4YOjx0v6JPO7PVQxYyrtRi129s7eD7+UWOOKLWl2I5Tj8L5KT9vLic9+8LFjldnh2Wh84GXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vi/29GmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B535C4CEED;
-	Mon, 11 Aug 2025 17:45:26 +0000 (UTC)
+	s=arc-20240116; t=1754934428; c=relaxed/simple;
+	bh=mKkMaxD4qpSG42cXfEv3ipOX0l9wTH41ysdWD1UmrT0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VTWm4EUOq/Y+BPliaxDp+Aay7hCGKRGnHtEBACMCC2NFpEGYp8yOWpoL8nY6NTRFb4/Jnh9+n1AHHxr58kPVstXGwwDBJ50w7QL1I8M55+/I3LY88r84AZMZQsX2XNzjiP06Zx9vuqyRvIjmbZJCJWsCA+VIkg9YtthCiaeW144=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQUhIEGP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E84C4CEED;
+	Mon, 11 Aug 2025 17:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754934327;
-	bh=cbNvYyTng8khy6ZQsS8BDQ2O5TXa1kf9EEo6gDZxZ7g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vi/29GmZSO+MDoWxHiTP9d414l4wwQcPomhdW/Iekw5Fvewy8ZQjj/wgf52jQdXSj
-	 s7r5izAGutpQwX8wQN2F78hBxVxWiAxTD19ozOFlYcCRUR6jZkfPHguCb4QreIKOMU
-	 FPOkeAH5BY1ajDYXXGTSRadC3s4tIBEIkYpXWzvhe5FX50vdvRUr/FPpQfM87g+2jO
-	 DB6jFtvSC50fJpzigx6FKOhEDNhzUr5t+C1OLqmCqHDfCoCSkVPcv+H2vLdrZ9WNxL
-	 GwwQKatvggWGRdSTfovlhN+U1I3/y6VcODS6eXYqOVq2WjxWHuNHfCMXyKCuIvnEIo
-	 sfsKk/ES4iUiA==
-Message-ID: <8d754f56-0df3-4d7a-94ce-96d28f4f8003@kernel.org>
-Date: Mon, 11 Aug 2025 19:45:24 +0200
+	s=k20201202; t=1754934427;
+	bh=mKkMaxD4qpSG42cXfEv3ipOX0l9wTH41ysdWD1UmrT0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VQUhIEGPNQISsLZcnMINwUCYKwurxMVFcnnTSSVsMcchwocP/tXl7XzBCvbHJye/L
+	 78fWe94P8TB1QeNbZxSiY4e4e/EsLD2sCTZRSYyzvoB2quOJO9Zn2QW41rK+SOrkVB
+	 1DGsBklzX/0bkNlZvfay1W6Jxs9GQhTtqLw0tqGJd45coWAQV5KpCdhwROCIpy9SqP
+	 iVkKAyUy2ehBGWf7HRfh8XKry1uwTNJX9JYE7bQSSYkvh+5J9yUM+KZSwWXoilId38
+	 NmnTiYuAImqp9HLINsn7xz+6tKgCx7SeXQMepyaW8zDRhD3jnWZJtrkKjamUxzoton
+	 WjmlsY78uNvOg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ulWbh-006Lr3-KO;
+	Mon, 11 Aug 2025 18:46:50 +0100
+Date: Mon, 11 Aug 2025 18:46:48 +0100
+Message-ID: <86sehx92ev.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	anshuman.khandual@arm.com,
+	robh@kernel.org,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	ry111@xry111.site,
+	Dave.Martin@arm.com,
+	ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	mbenes@suse.cz,
+	james.clark@linaro.org,
+	frederic@kernel.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 1/6] arm64: make SCTLR2_EL1 accessible
+In-Reply-To: <20250811163340.1561893-2-yeoreum.yun@arm.com>
+References: <20250811163340.1561893-1-yeoreum.yun@arm.com>
+	<20250811163340.1561893-2-yeoreum.yun@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] platform/x86: x86-android-tablets: convert
- Goodix devices to GPIO references
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com>
- <20250810-x86-andoroid-tablet-v2-1-9c7a1b3c32b2@gmail.com>
- <961582ff-938b-487c-9b86-d2afbfc45304@kernel.org>
- <3ru23uz7mxrjlo77zgkbzdpfzkafzwxt5tvxrbeo3j3h7o2rjx@2ob5m3imsamh>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <3ru23uz7mxrjlo77zgkbzdpfzkafzwxt5tvxrbeo3j3h7o2rjx@2ob5m3imsamh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com, ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com, kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz, james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org, pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi,
-
-On 11-Aug-25 6:01 PM, Dmitry Torokhov wrote:
-> Hi Hans,
+On Mon, 11 Aug 2025 17:33:35 +0100,
+Yeoreum Yun <yeoreum.yun@arm.com> wrote:
 > 
-> On Mon, Aug 11, 2025 at 12:09:18PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 11-Aug-25 4:22 AM, Dmitry Torokhov wrote:
->>> Now that gpiolib supports software nodes to describe GPIOs, switch the
->>> driver away from using GPIO lookup tables for Goodix touchscreens to
->>> using PROPERTY_ENTRY_GPIO() to keep all touchscreen properties together.
->>>
->>> Since the tablets are using either Baytrail or Cherryview GPIO
->>> controllers x86_dev_info structure has been extended to carry gpiochip
->>> type information so that the code can instantiate correct set of
->>> software nodes representing the GPIO chip.
->>>
->>> Because this adds a new point of failure in x86_android_tablet_probe(),
->>> x86_android_tablet_remove() is rearranged to handle cases where battery
->>> swnode has not been registered yet, and registering of GPIO lookup
->>> tables is moved earlier as it can not fail.
->>>
->>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->>
->> Thanks.
->>
->> So I was curious and took a quick peek at the code, mainly at
->> the core changes.
->>
->> ...
->>
->>> diff --git a/drivers/platform/x86/x86-android-tablets/core.c b/drivers/platform/x86/x86-android-tablets/core.c
->>> index 2a9c47178505..b0d63d3c05cd 100644
->>> --- a/drivers/platform/x86/x86-android-tablets/core.c
->>> +++ b/drivers/platform/x86/x86-android-tablets/core.c
->>> @@ -155,6 +155,7 @@ static struct serdev_device **serdevs;
->>>  static struct gpio_keys_button *buttons;
->>>  static struct gpiod_lookup_table * const *gpiod_lookup_tables;
->>>  static const struct software_node *bat_swnode;
->>> +static const struct software_node **gpiochip_node_group;
->>>  static void (*exit_handler)(void);
->>>  
->>>  static __init struct i2c_adapter *
->>> @@ -331,6 +332,34 @@ static __init int x86_instantiate_serdev(const struct x86_dev_info *dev_info, in
->>>  	return ret;
->>>  }
->>>  
->>> +const struct software_node baytrail_gpiochip_nodes[] = {
->>> +	{ .name = "INT33FC:00" },
->>> +	{ .name = "INT33FC:01" },
->>> +	{ .name = "INT33FC:02" },
->>> +};
->>
->> I'm afraid that just setting the names here, and then
->> registering the node group below is not enough, see
->> the comment below.
+> make SCTLR2_EL1 accssible to initilise it.
+
+nit: "accessible", "initialise".
+
+This could deserve a slightly less terse message, so that someone who
+is not very much versed into the boring details of the architecture
+can make sense of this patch. Because, frankly, if you can access
+HCRX_EL2, why can't you access SCTLR2_EL1? You know why, I know why,
+but hardly anyone else does.
+
+I'd suggest something along the lines of:
+
+"When the kernel runs at EL1, and yet is booted at EL2,
+ HCRX_EL2.SCTLR2En must be set to avoid trapping SCTLR2_EL1 accesses
+ from EL1 to EL2.
+
+ Ensure this bit is set at the point of initialising EL2."
+
+which at least explains why we're doing this.
+
 > 
-> Please see explanation below why it actually is enough.
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+>  arch/arm64/include/asm/el2_setup.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
->>
->>
->>> +
->>> +static const struct software_node *baytrail_gpiochip_node_group[] = {
->>> +	&baytrail_gpiochip_nodes[0],
->>> +	&baytrail_gpiochip_nodes[1],
->>> +	&baytrail_gpiochip_nodes[2],
->>> +	NULL
->>> +};
->>
->> ...
->>
->>> @@ -361,10 +390,14 @@ static void x86_android_tablet_remove(struct platform_device *pdev)
->>>  	if (exit_handler)
->>>  		exit_handler();
->>>  
->>> +	if (bat_swnode)
->>> +		software_node_unregister(bat_swnode);
->>> +
->>> +	if (gpiochip_node_group)
->>> +		software_node_unregister_node_group(gpiochip_node_group);
->>> +
->>>  	for (i = 0; gpiod_lookup_tables && gpiod_lookup_tables[i]; i++)
->>>  		gpiod_remove_lookup_table(gpiod_lookup_tables[i]);
->>> -
->>> -	software_node_unregister(bat_swnode);
->>>  }
->>>  
->>>  static __init int x86_android_tablet_probe(struct platform_device *pdev)
->>> @@ -388,16 +421,36 @@ static __init int x86_android_tablet_probe(struct platform_device *pdev)
->>>  	for (i = 0; dev_info->modules && dev_info->modules[i]; i++)
->>>  		request_module(dev_info->modules[i]);
->>>  
->>> -	bat_swnode = dev_info->bat_swnode;
->>> -	if (bat_swnode) {
->>> -		ret = software_node_register(bat_swnode);
->>> +	gpiod_lookup_tables = dev_info->gpiod_lookup_tables;
->>> +	for (i = 0; gpiod_lookup_tables && gpiod_lookup_tables[i]; i++)
->>> +		gpiod_add_lookup_table(gpiod_lookup_tables[i]);
->>> +
->>> +	switch (dev_info->gpiochip_type) {
->>> +	case X86_GPIOCHIP_BAYTRAIL:
->>> +		gpiochip_node_group = baytrail_gpiochip_node_group;
->>> +		break;
->>> +	case X86_GPIOCHIP_CHERRYVIEW:
->>> +		gpiochip_node_group = cherryview_gpiochip_node_group;
->>> +		break;
->>> +	case X86_GPIOCHIP_UNSPECIFIED:
->>> +		gpiochip_node_group = NULL;
->>> +		break;
->>> +	}
->>> +
->>> +	if (gpiochip_node_group) {
->>> +		ret = software_node_register_node_group(gpiochip_node_group);
->>>  		if (ret)
->>>  			return ret;
->>>  	}
->>
->> As mentioned above just registering the node group here is not enough,
->> the nodes need to actually be assigned to the platform-devices which
->> are the parents of the GPIO controller, something like this from
->> a recent patch of mine which is not upstream yet:
-> 
-> No, I'm afraid you misunderstand how software nodes for GPIOs work.
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index 46033027510c..d755b4d46d77 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -57,9 +57,15 @@
+>          /* Enable GCS if supported */
+>  	mrs_s	x1, SYS_ID_AA64PFR1_EL1
+>  	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
+> -	cbz	x1, .Lset_hcrx_\@
+> +	cbz	x1, .Lskip_hcrx_GCSEn_\@
+>  	orr	x0, x0, #HCRX_EL2_GCSEn
+>  
+> +.Lskip_hcrx_GCSEn_\@:
+> +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
+> +	cbz	x1, .Lset_hcrx_\@
+> +	orr	x0, x0, HCRX_EL2_SCTLR2En
+> +
+>  .Lset_hcrx_\@:
+>  	msr_s	SYS_HCRX_EL2, x0
+>  .Lskip_hcrx_\@:
 
-<snip>
+With that fixed,
 
-Ack. I've already replied to the same remark in the
-"[PATCH] platform/x86: barco-p50-gpio: use software nodes for gpio-leds/keys"
-thread.
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
-Lets continue discussing this there.
+	M.
 
-Regards,
-
-Hans
-
-
+-- 
+Without deviation from the norm, progress is not possible.
 
