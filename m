@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-762971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59178B20D09
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:07:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B73BB20CF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44C92A3AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB617424F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12882DFF3F;
-	Mon, 11 Aug 2025 15:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65552DEA86;
+	Mon, 11 Aug 2025 15:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0E29eYqX"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qJzRfZAb"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C786D2DFA46;
-	Mon, 11 Aug 2025 15:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF88F42048
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924572; cv=none; b=CzgJ113AqPDQLnX+VPxvA6DJwv76Z4pcc5RitslY/jmirBl5ZueQFmKl+Hixdr82D2hDhDgpawfQ4MXktGuvoDej4Lo4DUT+BMdygk5vMkc3Rs9kW2G2IvtSbSZ5tcGgtwgwUgt+qXerQwZJmkAzO6K3XTTmxFoCFMBsZzKlUkQ=
+	t=1754924531; cv=none; b=A6jpL/zFojiK3YQD4oagcmifk+S8tSUd/CskxPF6Wh7Q70SJTr9SpMKE7Rak5Or/Vmb4tPc9bEGhywU2remIsHDsExaa/2SBbcKWFkcYpqGEAzXEGcN57uOSVn+5ssg/I37JpnrNwp8uUHPUboUacZCnvtaP7Tx15S2hYL2KsTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924572; c=relaxed/simple;
-	bh=e/p54uWOp+0aPODcNitVWt2JrT9F6fOffEf9xNUvB+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHTinLxphtr+HJ3rIpm7RLXz1b2rtAP9X0jSbQ+us/1ngPdDgCAghMo4KcyMYlA6OBuSw0rrHZrw2lwFMOV3/gCGuYC+fuOCaj3wAkmK9MwOQzaBXM8Ikh3RHjf7II2LBw3FdHzjAgVlNkhdmhneuoU7vrGQlr5lY9P/Dqz4BmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0E29eYqX; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5aOWOcqPqE2rZ4m0l7Xjh7QyXcqH1veSo9zVpsUF7EI=; b=0E29eYqXFLy/QCyEmnThJLyb7x
-	d8aUpLSMu29XmScPpBPSx3BbepO8NRI83ExpWnYiDSVMR3lkBHV1QEsJEvxsjsnARHHwWtC4QC+Bq
-	cOC/7n1eI3df41sZJ5ITH0RQkQBLIpcBR8RopmY/r2iI/PENs+LHe0fZBoC0r7mhHGkBLmWNk24Mn
-	p4Td5w50FT2HNg6WHx7fo//ajoth7bYRILP9O8QU7Uvx/aLIkijU4bKWnx9nJ327Th/vUCwvK5mWZ
-	SzKevRzUPKxiVp26nd161/hjE/HRoFMoizA0p/NL/WYHy6KlLdYBSWlHyGE4CeFKgXJ0YNRAvh/6C
-	S1MgcoDQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45626)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ulU1c-00037H-2N;
-	Mon, 11 Aug 2025 16:01:24 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ulU1V-0003ms-1W;
-	Mon, 11 Aug 2025 16:01:17 +0100
-Date: Mon, 11 Aug 2025 16:01:17 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, horms@kernel.org, Frank.Sae@motor-comm.com,
-	hkallweit1@gmail.com, shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net: phy: motorcomm: Add support for PHY
- LEDs on YT8521
-Message-ID: <aJoFvcICOXhuZ8-q@shell.armlinux.org.uk>
-References: <20250716100041.2833168-1-shaojijie@huawei.com>
- <20250716100041.2833168-2-shaojijie@huawei.com>
- <7978337.lvqk35OSZv@diego>
+	s=arc-20240116; t=1754924531; c=relaxed/simple;
+	bh=o4Eo/zy/CDLQ6xHxEmWPUQyDRccG1SfxWwIAZkyyDsE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jshRRdbpRYP3xoCnfWjlBk2mJmfzwEtfdvBgasUxa+IgRCdlhZj0QENuww6c41VfOvlxFVzkG2MlCH0A4/ysmKRuwMNZG2z78muVGRvT+mEJaEuLTB6OV6aqq4TUs751IGqNZ257k8VBHDgo1G5CKEkk2pUgFyeYZJJ4Lc5bGAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qJzRfZAb; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459d7726ee6so22727765e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754924527; x=1755529327; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zWxxJB41GipbzcLM3187/KnwqQo0+hqj/Nc5bwMNpJE=;
+        b=qJzRfZAbr6JFzjyIZAyoIdjtp85riksQrhWCWvC/U8eB6LlRK6JzCaYSVuc3ChQKAS
+         G3eLHrRmk+K2wGFf72nL0Eoa/1bGBbhtemnIMh7AdnTb9r8nK6Z/kVdXRqaED/Vd2S9G
+         jTwZ4DnLH+mQ9TSTy/NV2eMZJSfWkvfwmWNxIgo01jFoGVXtSeAVlhDx76QBCHecyWtc
+         pz34KngCsZfP8anrfG4jLnNGC8VRiRAUYkcMGcVxc8306LFqMbOgMxyc711GuJLeef16
+         O0Qh32E/b13hGn11kqRSr0UXNfecPcRMKZD+3Li843QmngVPRKJf3L7/FspTue48XAHX
+         LavQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754924527; x=1755529327;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zWxxJB41GipbzcLM3187/KnwqQo0+hqj/Nc5bwMNpJE=;
+        b=GBaDcXxEuv4FVlV/SHRja6aRJHvj0PKBLzYN4QEgeGjdGIQnxsR1Xroql5VtE7JaNs
+         06ll7/HU22HnZzPTpiZHdgJZpVkSovVw9/u14+Y0wyNCBxIPUZpl9I4VJgd4H6u4pFwB
+         z/cO4wpcat2zWUxjSwWX52NdTzp6dSfzYl7WXEev9mYKOOf/WYmRSpRO4nPKVfbhONwL
+         Mad2NajwTZenTCchtsIdIUlaCtEHo4x7FncvVSD0ed+po4NNsg+UQTQr65hJbubesLqR
+         PrIsLbAtdd01cTz77l3WQKUCoH/UY67jJJ6IIPpBi+1EydjOw+KKPcQ+8Jl0nwwfLi8j
+         Os1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWSV35CWsZGL8BTY+BbAt7mt3FaDwZe5GlqnVW94OBmFrjrXEGgyXLQC1mfep76a0qaflbuNByuOmn2yVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvlq28ccg5M/9wIXoeotElgC2ydDQK/MSwIvI7NI/FiA6PXGWK
+	j1j9C8QoHNRFr6lUaRsAnlqYduz12R42zDkeNG9v0+MRUc5zmMTTfNRl/MVcQoqNkjc=
+X-Gm-Gg: ASbGncu9ST1bZV1YGrkCrb5UmOAQWRiQx/RR43ojJTr0feJXM4KOBRpq2igp5KzB77E
+	ozgicHP76d4Rgr/4tVT3egsaQhMJX4cpicbkYnvjMg680f5flr3yXbb9fXic6iePrt9TzFLDevh
+	b+u17tK5OPYQ5zlqTuVZdQTD5gc6YFvYZD7Gt4q2GhPV9aRlw57bcCwNm03pm2Bj3rX20jqG+T/
+	E8IyXzNsn+IkUID2u/vsnkPEsuarK4mFbjxTXPpt82l026bX89mb0AYAFb+hoClsZ2/atk1FBU5
+	TT7cS0XCuzs7UtoeHJ2cRYFs8EbcyVAuWqzPoOl0lJaFiHp+svKFDNwuOq6tqLkclBaEDatJor6
+	Nfvb2AplaQhxe4mJw
+X-Google-Smtp-Source: AGHT+IHYAg5/y7zzobnnTviyWJZ1QSB220ScxMwZP0hCZAAL8BDUWTjluWnaNcHujIv1yztB2rpJiA==
+X-Received: by 2002:a05:600c:4f91:b0:440:6a79:6df0 with SMTP id 5b1f17b1804b1-45a10bef8e5mr117525e9.22.1754924526966;
+        Mon, 11 Aug 2025 08:02:06 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459eff7918csm192649605e9.25.2025.08.11.08.02.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 08:02:06 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/5] pinctrl: replace legacy bgpio_init() with its
+ modernized alternative
+Date: Mon, 11 Aug 2025 17:01:59 +0200
+Message-Id: <20250811-gpio-mmio-pinctrl-conv-v1-0-a84c5da2be20@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7978337.lvqk35OSZv@diego>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOcFmmgC/x2MywqAIBAAfyX23IJJL/qV6CC62kKpaEgQ/XvSZ
+ WAOMw9kSkwZluaBRIUzB1+laxvQu/KOkE11kEIOYpIzusgBz7MistdXOlAHX1AZYe1sRD+Shhr
+ HRJbvf7xu7/sBAPmAOWgAAAA=
+X-Change-ID: 20250728-gpio-mmio-pinctrl-conv-ad0ff8d046ec
+To: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Avi Fishman <avifishman70@gmail.com>, 
+ Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+ Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+ Benjamin Fair <benjaminfair@google.com>, 
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1404;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=o4Eo/zy/CDLQ6xHxEmWPUQyDRccG1SfxWwIAZkyyDsE=;
+ b=kA0DAAoBEacuoBRx13IByyZiAGiaBeig651OieRFfC30/uCVO7y8iI2KgimJW4RKqVTdYrjxp
+ YkCMwQAAQoAHRYhBBad62wLw8RgE9LHnxGnLqAUcddyBQJomgXoAAoJEBGnLqAUcddyU4AQALGs
+ Woi59UlCQe+wBauzsU3IX4K+sRo+vEk2S5EOlNJTfDlw/+bxQrkKLPpVFW2papWzPwvwfKoHmk2
+ o2PkOmUxcL5/zR3kV5czcj+EYf0Mo9Oo9EyP5zNHD42fuOai8TqncXDUpSRiNeWemMBVI/tqXEo
+ S7wG6bfTJQWhZydCqJrktOIPmqp/94FlLd6Gdb/gDJDsbcotGrzqmVbfwCVZpRcEschG+8Cs1l5
+ XupJgXz7MvXDzozY6innrdxmciMCCdR/i+mbWA36pxXLAM54PNTG51/1W7kqh8kAVqki71SKRsn
+ NEjPtM7HRTWaYBq2Nvq0eKiReBwgq4lSlm66feUhPx4X7HhMDWZUJ5+RbWbmFF9OqlioZxGJ7ma
+ kfN8Wkhf+4Bm1txc70R52AD5uceubTlslFxZ6xdRW3ybaNy+eJ9w5qUzgmQVLXh311cIE90D01O
+ gkWr+AkX33bicivR5yTraQDAB03YibkGswLnA6H6z4INNJKKpiwS7KnfPsXsWfGR3+aMSYgEw5p
+ vh83ZU7yXJ2tHsSyEVAxax3riPxInwQ3Md6oWpWgpgvU+GO1eMkVhduz9VfMwCbItzRABIVAViC
+ 7kV1OuH/pn0B25k5kJIslZu2sakYxOM4LY9k25MKF9/BZhmzYohzC0fdFo2TBc2vX6DB4qvOfNt
+ 6okKU
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Thu, Aug 07, 2025 at 11:50:06AM +0200, Heiko Stübner wrote:
-> > +static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
-> > +				     unsigned long *rules)
-> > +{
-> > +	int val;
-> > +
-> > +	if (index >= YT8521_MAX_LEDS)
-> > +		return -EINVAL;
-> > +
-> > +	val = ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
-> > +	if (val < 0)
-> > +		return val;
-> > +
-> > +	if (val & YT8521_LED_TXACT_BLK_EN)
-> > +		set_bit(TRIGGER_NETDEV_TX, rules);
-> > +
-> > +	if (val & YT8521_LED_RXACT_BLK_EN)
-> > +		set_bit(TRIGGER_NETDEV_RX, rules);
-> > +
-> > +	if (val & YT8521_LED_FDX_ON_EN)
-> > +		set_bit(TRIGGER_NETDEV_FULL_DUPLEX, rules);
-> > +
-> > +	if (val & YT8521_LED_HDX_ON_EN)
-> > +		set_bit(TRIGGER_NETDEV_HALF_DUPLEX, rules);
-> > +
-> > +	if (val & YT8521_LED_GT_ON_EN)
-> > +		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-> > +
-> > +	if (val & YT8521_LED_HT_ON_EN)
-> > +		set_bit(TRIGGER_NETDEV_LINK_100, rules);
-> > +
-> > +	if (val & YT8521_LED_BT_ON_EN)
-> > +		set_bit(TRIGGER_NETDEV_LINK_10, rules);
+We are in the process of modernizing the gpio-mmio interface. This
+series converts all pinctrl drivers calling bgpio_init() to using the
+new variant from linux/gpio/generic.h.
 
-Sorry, I don't have the original to hand.
+Linus: Please create an immutable branch containing these commits once
+queued as I'll have some more changes comming on top of them - most
+importantly: removing the old interface. I will need them in my tree.
 
-Please use __set_bit() where the more expensive atomic operation that
-set_bit() gives is not necessary.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (5):
+      pinctrl: stm32: use new generic GPIO chip API
+      pinctrl: equilibrium: use new generic GPIO chip API
+      pinctrl: npcm8xx: use new generic GPIO chip API
+      pinctrl: npcm7xx: use new generic GPIO chip API
+      pinctrl: wpcm450: use new generic GPIO chip API
 
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 181 +++++++++++++++---------------
+ drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 154 ++++++++++++-------------
+ drivers/pinctrl/nuvoton/pinctrl-wpcm450.c |  44 +++++---
+ drivers/pinctrl/pinctrl-equilibrium.c     |  26 +++--
+ drivers/pinctrl/pinctrl-equilibrium.h     |   2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32-hdp.c |  32 +++---
+ 6 files changed, 232 insertions(+), 207 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250728-gpio-mmio-pinctrl-conv-ad0ff8d046ec
+
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
