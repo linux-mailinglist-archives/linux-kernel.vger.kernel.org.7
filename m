@@ -1,68 +1,98 @@
-Return-Path: <linux-kernel+bounces-763298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D2BB212E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:09:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A249B212B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56083620D8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA491907A33
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790E52BEC28;
-	Mon, 11 Aug 2025 17:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC56C2C21EF;
+	Mon, 11 Aug 2025 17:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="T87r1Esh"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhq2hFbH"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663B029BDAA;
-	Mon, 11 Aug 2025 17:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F872C21D7;
+	Mon, 11 Aug 2025 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932148; cv=none; b=BD5qoz9s44xSrY1GPtxRltmNyXe4i22fbCTRZQS0PPMTiNVwRYkMNNuSqhPPbV7NwEUapcn5Zs7gUNedUACC+B2qNGU3maD9Vuu5PY5HnT6342GLssU+Qjs1a3C5W4iht7Di+oxyB+h8Iq+mfdtwqLyW9qBYZITmy1umEUA7hL8=
+	t=1754931612; cv=none; b=a9QElHlVMeDCSgxd5MJA8X/lm9Ux4WlSdfXgEJOemZPxtRG49BsfsgOfEGavl+wOHkfJjJmhUjDZbiRUdrCR/8tUyeT/ufRDAlJcOenQMD3lB5uZTLyUYx3WBXjZZlSn2+NQhk0k/RbmieORpu7pTMy2N1GBhZ/JSiXQCoDusiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932148; c=relaxed/simple;
-	bh=xYofdvRO7j1Ase2qXJ0tdVFtD+PZbY32/7zmF+57inc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J+jnb2HdtPDQ4+qFXmZtxJlwZwQj2zaq1PmabngTVv2chYn6XRdkaIskJrTsbTXrFW/I6w301yhCXUSR7csfq43NKiX9ETJ0MnciDZCn2RXflOc7GKdr68BGw/cApe1Fgo/XqWcXB2mKhbii7pu5wRihGcNm6gsdZw3s3m5GWIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=T87r1Esh; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 37CAAC0005CB;
-	Mon, 11 Aug 2025 09:59:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 37CAAC0005CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1754931594;
-	bh=xYofdvRO7j1Ase2qXJ0tdVFtD+PZbY32/7zmF+57inc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T87r1Eshs7/fCvDSzxx3dSIQSKQ2JWNa63ipEz1BPorQTizrxV0T+b7QhWF4sukHx
-	 oYOf4PIoe6GCI6tqLfZ3YzD9bwdbu9rzh7sFOkMJyJrl9Pd8kLgDdBuWN3CXkj5qIr
-	 FC2t66abBZGHgQyY6p+ElOf0LPuJ24jimlufjLls=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id C1BBD18000A5F;
-	Mon, 11 Aug 2025 09:59:23 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: mdio: mdio-bcm-unimac: Refine incorrect clock message
-Date: Mon, 11 Aug 2025 09:59:21 -0700
-Message-ID: <20250811165921.392030-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754931612; c=relaxed/simple;
+	bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X6nR7sylY+gpfk/0F8IN5tQHLw9/97M9KMYyYbfyxXA04mo3IyVLlkmcwqlZ11C+AZAubFgUdPK/sjxODBl6yixin6HPB2ETW3Bawz9ywdwPr8p43rpeNLfagVtEtx+z7XE2kJ2KS9Z+A5kZtoYzf9s+ttiJ0qtRiiYpEtkj+hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhq2hFbH; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-7075ccb168bso38253296d6.0;
+        Mon, 11 Aug 2025 10:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754931610; x=1755536410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
+        b=nhq2hFbH2VeUxeUqeV8l2aRyrrTP7+TmRIyLnp9euY1874P7lmzjIox1ee1M6d9bXv
+         v+hoAXA8eksoLm1DzIRVTLu6usfI9kh4Kgt9ebhPUNyyE4u+Eqn8Q97F59rT/oNopBHd
+         BZceX97m9neO0BCyUQFDfS0JEp5wn8NwnKBfovQf1WYfDe1fD3HFEAU6ug+0EFSoEsGu
+         obIhYv0I/u/Y1gMnYM+ykjCMpMW0IL7k7tg53zXeqScSawLizlILM+1ynBHe1SovbwA5
+         WO8v+uAJ5JaBCVQaRycr3PDtqpH6J7GJB4Njonq+f4DCT21O1G7fZKQOEhMPheqYdHX2
+         9qEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754931610; x=1755536410;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k9z8ufONhwNETq3bfYfRYPDYJAMQBM2fYTjPqXGH+UM=;
+        b=DB9x3jBVRzBa4YMw0RXDGpq7qU9H1JVbJuWrfcRpL6GJduDlrvJN7vwr+OzpRLFUom
+         PlXlsPwH9oeSppnFg85CAgM7swKBZAyY8w4bHC69uRT4SwEbIwEFV1sDYLDCu8b8Tzkg
+         kD0AxN10t7MPojS0AuzE5PSod+YkBFcNSl3XtLaz6hZ5LlnWM566qjQYcKQOXeLt6S5F
+         ab8B6DN1uFDM57XTJMYSVBpOljj/qxOoLHMcubp2jjbkz66JazOwX+OSovCF4nVpXDVE
+         MSuBRH49uIWE2sjaw8YBYOXtVZztVM0HKf8IADiidqcfbw9CagPkaMxyM2bxLtYhPj3b
+         /nxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+hADaZPj9697p61BLZeX7IBE7LhD+XoazCitQ8xddeveVOV4XauLAdAlizTzCcxL2gqCH77JZFWaAgNFX@vger.kernel.org, AJvYcCWwgOrmoo87HHSSSZYe4kuvhwTmQTzTWa3ooDDaskEg+tAnh+NRtdcH9Otvtt6l1s9zD9zGtPkn5UVFHi1KRQ==@vger.kernel.org, AJvYcCWzeDuZsnFW4D1QalJkmQ7Pk+b2HaN32Bzto0cVP8bitTY9j4OvuwqUaIo/RJONB2WDErplINQH9/+VIju1FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzl5ucIZiaBYh/wNUzkU/uu8PdKx2O5xWyJ1lSYPuDE+GoYGSu
+	sgcNPKTRmGg2KuKMfw4Q2VPlPxTfQg5Y/A1QN3BZTIQGvSzJlh6+eSHi
+X-Gm-Gg: ASbGncsDKSpLl16y56haYQ8psBFl4UODxelmEHy2/ZSxrZazmGMp5FU1U3i1PzglIcl
+	TqYat1oUeP+YvPCYtMh5KCxz29kuMehib+0XdB9yS9EjAQd68Fp13IMq6uG6aPH0LwugL1x/v4U
+	pxGAOerwv5AjtSYwZRhJtYbof6j0eLsaQAAXcoy50obO5a3KN+Eh8fsOBcQ4Ij5fDyoFgU4cSHd
+	x9OmSfDs6cuq65Rfkz8Dtx7/vNSRz6UUfLo9dSoD99Cc806HTV7aygKXirTUk9GUKukovzku1K2
+	k69OPkQODqcIDstw43OyhmF/v+oP3Nu7JEDeJfZS2JETsS+NjoUr5VyvAkKHwOrrsIYQOgygHpS
+	wZQhiwMbK6dE=
+X-Google-Smtp-Source: AGHT+IEbIoEUmPYtQXdoxKp5+7KVr57UYJ4gZAVtnzvswzy3kWILO/2M1Q5p58gXAgLvATXXf6/V4Q==
+X-Received: by 2002:a05:6214:27ef:b0:709:302a:7aad with SMTP id 6a1803df08f44-7099a2dd887mr153816976d6.24.1754931609413;
+        Mon, 11 Aug 2025 10:00:09 -0700 (PDT)
+Received: from mambli.lan ([2600:4040:523f:fb00::254c:3ef2])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-7077cde5a01sm158335396d6.70.2025.08.11.10.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 10:00:08 -0700 (PDT)
+From: James Lawrence <jalexanderlawrence@gmail.com>
+X-Google-Original-From: James Lawrence <james@egdaemon.com>
+To: kent.overstreet@linux.dev
+Cc: admin@aquinas.su,
+	gbcox@bzb.us,
+	jalexanderlawrence@gmail.com,
+	josef@toxicpanda.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	list-bcachefs@carlthompson.net,
+	malte.schroeder@tnxip.de,
+	sashal@kernel.org,
+	torvalds@linux-foundation.org,
+	tytso@mit.edu
+Subject: Peanut gallery 2c
+Date: Mon, 11 Aug 2025 13:00:07 -0400
+Message-ID: <20250811170007.646981-1-james@egdaemon.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <ct5pqur2cwn2gulxuu277uomoknflxae32zzpyf4yqbrxcxj4d@p5j77u6xks4l>
+References: <ct5pqur2cwn2gulxuu277uomoknflxae32zzpyf4yqbrxcxj4d@p5j77u6xks4l>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,33 +101,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In light of a81649a4efd3 ("net: mdio: mdio-bcm-unimac: Correct rate
-fallback logic"), it became clear that the warning should be specific to
-the MDIO controller instance, and there should be further information
-provided to indicate what is wrong, whether the requested clock
-frequency or the rate calculation. Clarify the message accordingly.
+fair enough, I was less explicit about which are which. btrfs has mostly a branding issue at this stage, which is fairly rough to dig out of.
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/net/mdio/mdio-bcm-unimac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+You would know better than I would since you're directly in the weeds. I only have prior experiences and old cases to go off, of most of which are out dated at this point, and im primarily interested in raid 5/6 usecases.
 
-diff --git a/drivers/net/mdio/mdio-bcm-unimac.c b/drivers/net/mdio/mdio-bcm-unimac.c
-index 7baab230008a..37e35f282d9a 100644
---- a/drivers/net/mdio/mdio-bcm-unimac.c
-+++ b/drivers/net/mdio/mdio-bcm-unimac.c
-@@ -215,7 +215,9 @@ static int unimac_mdio_clk_set(struct unimac_mdio_priv *priv)
- 
- 	div = (rate / (2 * priv->clk_freq)) - 1;
- 	if (div & ~MDIO_CLK_DIV_MASK) {
--		pr_warn("Incorrect MDIO clock frequency, ignoring\n");
-+		dev_warn(priv->mii_bus->parent,
-+			 "Ignoring MDIO clock frequency request: %d vs. rate: %ld\n",
-+			 priv->clk_freq, rate);
- 		ret = 0;
- 		goto out;
- 	}
--- 
-2.43.0
+Which is why I've mostly stayed out of the lkml drama until now. But removal doesnt resolve the problems with the linux filesystem ecosystem
+and it'd be a disservice to everyone to lose convienent access to the work you've done.
+
+crossing my fingers your work will remain,
+James Lawrence
+Principal Engineer
+
 
 
