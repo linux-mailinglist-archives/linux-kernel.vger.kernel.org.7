@@ -1,219 +1,191 @@
-Return-Path: <linux-kernel+bounces-763118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7089B21071
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:57:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7043FB21075
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC31B18A20D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065D9685F2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11502DE6FB;
-	Mon, 11 Aug 2025 15:30:42 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5515F1A9F8F;
+	Mon, 11 Aug 2025 15:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AzaYUQv9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A9A19D88F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1F19D88F;
+	Mon, 11 Aug 2025 15:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926242; cv=none; b=Mply0MJVW+d50vBSAiQDIyw49ZMbw/5AkAC+Kbwv5n1+5Ii6KaEUfw0e+2uGY7lM29b8bFWnXX9Py6HDAlARWkihDbYMEXuRD6R2FdNKvAJwMDpnN+QHZQoPEBc+/HdRCBKXN//tJzyDa/0tv9IwbcbyfnIbMcKo9xc8g9amIU0=
+	t=1754926290; cv=none; b=FOAk9YtB6KczmAYfKXFFsob0O5bwZ+u/zO1i1I6jbntIK/0DFEokmlckoc4Jsw5pPMKZkpDlw1deP/wdHtNLsWJqSDC8u8vPAlzS/2TMlEyDjVHCS0StVu67szqTg2+P5CVhzwfj5QLSIQnLkfCCkMzSWsEo/kZbnqewDIrFUog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926242; c=relaxed/simple;
-	bh=n96ILInbe6KRbJiNDJqz4osTgfWE/wgRtnIrk6NbPf4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cp3Hxf7mkz3no2V6j6yPdZ8vAU0c0H9WoZ0Hsbom1hQCR5kw3BWF7RcAadqS+NNUEIhsa7h5MdC7x6/NiK7SQSGb5Kz/gj7lRqkivglJWENXPuzCrC2iOE6eCAbJ2c0VTa+cS6NbFTreqtMUR7ikivl6Dpr8y519jvJzRufSWOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-884132279f5so79838839f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:30:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754926239; x=1755531039;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BpK2Mfie3azzIP2wSJE1M7F76N2Vpu4KQ9l1J89uu5s=;
-        b=PLs2GQDXriTutUON0keGcu3MDwm79UQj/tK2d1h47XgW8g6G1ZCWShsDpibUcEYh+G
-         VE/MZnciSxz3LM7+oAyD3zBIOfr7rkk+ij6gLq/hoWX2f4mB0uZbVXc31PgYzjJOC913
-         YE/JZSBVuLDpt0DgCblAGKyTd2dr+EdQ4UeaOAJcPkeONEc+2J7bqrKx3+s1rfAa2CcH
-         Vh4apMRU8ZTlROY8UP8t3J/3AD43VLI+zQ8SfF7vq3KKtqIqq/pbhlTCCetCFB6uMKJZ
-         9HIBF1ZBElMRZeTMF4jXfLImjLuFieU4QRKk3OVlbllm3f2FoBSnzSFYp5PVeJczHMNq
-         maXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXurDdCmZzRmZzGoFD6bvEQUy3hJz1S9+k1CYdceCDTUEz/F3iFdYG5phs+f7qYUUdd0EHSCXfGBsDjmk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAfCXLfhimeDJ9Md6MuF+dOTvnapMJZRv9H/8+0RmChc+L5PI6
-	qfUd+JTOlVxwXWTvLOm/rhrG4VxJcoRfR3j8kDp2uLjzi8A1u1SdzSAvvmGyDhC+Buep0yhJ42e
-	wFVa1YUzmxMAVHOUkd/QJiW+Z+Bp8b+LSXPXMYT11X4g0GAYVVxJ7FK5akDE=
-X-Google-Smtp-Source: AGHT+IHnbu3g1kq5GjbjGT6tnpKb9V9da99Uo2r4pVKhJvTzDAsK2eI1iTo4fSnLuWrASKUVvYi3tY0SDfLgUiPLbWGdTa/zqtyC
+	s=arc-20240116; t=1754926290; c=relaxed/simple;
+	bh=raizKzqZkJ/zqy40nXnNw1PNJguKb7HDzy4If+mZY/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZxCtwwKZ0wiXOaHjlf8i/lmjcXDkxN92XGocGSL+LRPTWsUpQdp5Zks2DTyNeOUGk9CLWkBHWftjlEh4HgX+EzTJa/6xFAenAyqVtOGo5a5KewNesj2msEJTbhGciDLT1IDabGWuOZ096hZiaHRKbKzJXHcKGz4XRtLXZZUCzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AzaYUQv9; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754926289; x=1786462289;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=raizKzqZkJ/zqy40nXnNw1PNJguKb7HDzy4If+mZY/o=;
+  b=AzaYUQv9FNnJQZKzYh+yy1hJ2UvIFwBfcrIszsrLvMXncTaOvK+bHe9Y
+   aZNYQX6Rk92DbeH3J4yKeGiXbTyham2uvjLLvM4+DT0KVeiq6FDzi5Lg5
+   xPowvdsEJgVyKY/CiQo6yqy19IJpd9NSQC9fLVkIcof8zZY9zNzXq33d/
+   T/PCX7Q0iWIuRuVQ1/HjP8MeX8ccwFVXLupLUDpPKEcEJRKMsvd2hwc2L
+   E04pXszG6XmgEcQpv0S5OoVtoHhNAm5flV3xSJpvOeZ2SnEH1EGcAJeS0
+   7UGGl/5Kq5z6t1TjxKABa6hyttKYBnZYx0QIc2vsZTfdpQF1n6Ys6t3Sm
+   Q==;
+X-CSE-ConnectionGUID: DlWiZMuoSmGfTi7HY0GJGQ==
+X-CSE-MsgGUID: sDyg1F6nRX+gV7Qjhc/6mA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67779879"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="67779879"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:31:28 -0700
+X-CSE-ConnectionGUID: Xb3D/pwbS++scJaE6UICQg==
+X-CSE-MsgGUID: rvHvsOebTOm2Dqlr1vrVLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="166298357"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa009.fm.intel.com with SMTP; 11 Aug 2025 08:31:24 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 11 Aug 2025 18:31:23 +0300
+Date: Mon, 11 Aug 2025 18:31:23 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] usb: typec: Implement automated mode selection
+Message-ID: <aJoMy5hMVhbCN0zQ@kuha.fi.intel.com>
+References: <20250804090340.3062182-1-akuchynski@chromium.org>
+ <20250804090340.3062182-6-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:7401:b0:883:f98c:d346 with SMTP id
- ca18e2360f4ac-8841bd3d30dmr31002239f.8.1754926239700; Mon, 11 Aug 2025
- 08:30:39 -0700 (PDT)
-Date: Mon, 11 Aug 2025 08:30:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689a0c9f.050a0220.51d73.009e.GAE@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_icwalk_ag (3)
-From: syzbot <syzbot+789028412a4af61a2b61@syzkaller.appspotmail.com>
-To: cem@kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804090340.3062182-6-akuchynski@chromium.org>
 
-Hello,
+Hi Andrei,
 
-syzbot found the following issue on:
+On Mon, Aug 04, 2025 at 09:03:34AM +0000, Andrei Kuchynski wrote:
+> This patch introduces new sysfs attributes to enable user control over
+> Type-C automated mode selection and provide negotiation feedback.
+> 
+> `mode_selection` attribute shows a prioritized list of supported modes
+> with the currently entered mode bracketed. Writing boolean 0 or 1 to
+> this attribute starts or stops the mode selection process,
+> respectively.
+> 
+> `entry_result`, `usb4_entry_result` read-only attributes show the
+> result of the last mode selection attempt for a specific mode.
+> 
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> ---
+>  Documentation/ABI/testing/sysfs-class-typec |  39 ++
+>  drivers/usb/typec/class.c                   |  95 ++++-
+>  drivers/usb/typec/class.h                   |  12 +
+>  drivers/usb/typec/mode_selection.c          | 445 ++++++++++++++++++++
+>  drivers/usb/typec/mode_selection.h          |  31 ++
+>  include/linux/usb/pd_vdo.h                  |   2 +
+>  include/linux/usb/typec_altmode.h           |   5 +
+>  7 files changed, 626 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
+> index 575dd94f33ab..ed89b9880085 100644
+> --- a/Documentation/ABI/testing/sysfs-class-typec
+> +++ b/Documentation/ABI/testing/sysfs-class-typec
+> @@ -280,6 +280,45 @@ Description:	The USB Modes that the partner device supports. The active mode
+>  		- usb3 (USB 3.2)
+>  		- usb4 (USB4)
+>  
+> +What:		/sys/class/typec/<port>-partner/mode_selection
+> +Date:		July 2025
+> +Contact:	Andrei Kuchynski <akuchynski@chromium.org>
+> +Description:	Displays a prioritized list of modes that both the port and the
+> +		partner support with the currently entered mode bracketed. Parentheses
+> +		indicates a mode currently in progress. Modes listed before the active
+> +		or in-progress mode have failed.
+> +		Automated mode selection is activated by writing boolean 1 to the
+> +		file. Conversely, writing boolean 0 will cancel any ongoing selection
+> +		process and exit the currently active mode, if any.
+> +		This attribute is only present if the kernel supports AP driven mode
+> +		entry, where the Application Processor manages USB Type-C alt-modes.
+> +
+> +		Example values:
+> +		- "USB4 (TBT) DP": USB4 mode entry failed, Thunderbolt alt-mode is in
+> +			progress, DisplayPort alt-mode is next.
+> +		- "[USB4] TBT DP": USB4 mode is currently active.
 
-HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=170e0ea2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ff0ac94f5fb505cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=789028412a4af61a2b61
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+There seems to be at least two or three different functions for this
+one file (listing of the modes, showing the state and enabling the
+"automated mode selection"), so it's probable not going to work like
+that.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I'm actually not completely sure from that what do you mean by
+"automated mode selection", but is the idea that the "automated mode
+selection" is newer enabled by default?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-6e64f458.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b0d7c92b652/vmlinux-6e64f458.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/541b13915f7e/bzImage-6e64f458.xz
+Perhaps the "automated mode selection" enabling should be handled with
+its own file that that you can write and that also returns 0 or 1.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+789028412a4af61a2b61@syzkaller.appspotmail.com
+> +What:		/sys/class/typec/<port>-partner/<alt-mode>/entry_result
+> +Date:		July 2025
+> +Contact:	Andrei Kuchynski <akuchynski@chromium.org>
+> +Description:	This read-only file represents the status for a specific
+> +		alt-mode after the last mode selection process.
+> +		This attribute is visible only if the kernel supports mode selection.
+> +
+> +		Example values:
+> +		- "none": No mode selection attempt has occurred for this alt-mode.
+> +		- "in progress": The mode entry process is currently underway.
+> +		- "active": The alt-mode is currently active.
+> +		- "cable failed": The connected cable doesn't support the mode.
+> +		- "timeout": Mode entry failed due to a timeout.
+> +		- "failed": The attempt to activate the mode failed.
 
-loop0: detected capacity change from 0 to 32768
-XFS (loop0): DAX unsupported by block device. Turning off DAX.
-XFS (loop0): Mounting V5 Filesystem c496e05e-540d-4c72-b591-04d79d8b4eeb
-XFS (loop0): Ending clean mount
-XFS (loop0): Quotacheck needed: Please wait.
-XFS (loop0): Quotacheck: Done.
-============================================
-WARNING: possible recursive locking detected
-6.16.0-syzkaller-11952-g6e64f4580381 #0 Not tainted
---------------------------------------------
-syz.0.0/5359 is trying to acquire lock:
-ffff88805250f758 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_reclaim_inode fs/xfs/xfs_icache.c:1042 [inline]
-ffff88805250f758 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1734 [inline]
-ffff88805250f758 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_icwalk_ag+0x12c5/0x1ab0 fs/xfs/xfs_icache.c:1816
+That looks like just debugging information. Where are those states
+coming from - they are not defined in any public specification, or are
+they?
 
-but task is already holding lock:
-ffff8880525327d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_bmap_punch_delalloc_range+0x26d/0x7c0 fs/xfs/xfs_bmap_util.c:452
+I'm not sure if you can have a sysfs file for that, but maybe it would
+still be okay to inform the user space about a state like that with an
+uevent (or maybe not)? Somebody else needs to comment on this.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+        char *envp[2] = { };
+        ...
+        envp[0] = kasprintf(GFP_KERNEL, "STATE=%s", entry_state);
+        ...
+        kobject_uevent_env(kobj, KOBJ_CHANGE, envp);
+        kfree(envp[0]);
 
-       CPU0
-       ----
-  lock(&xfs_nondir_ilock_class);
-  lock(&xfs_nondir_ilock_class);
+I think this patch needs to be split into two or more patches in any
+case, but I would suggest that you propose these sysfs files only
+after we the mode priority order for the port figured out and
+accepted.
 
- *** DEADLOCK ***
+thanks,
 
- May be due to missing lock nesting notation
-
-4 locks held by syz.0.0/5359:
- #0: ffff8880525329f0 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: xfs_ilock+0xfe/0x390 fs/xfs/xfs_inode.c:149
- #1: ffff888052532b90 (mapping.invalidate_lock#3){+.+.}-{4:4}, at: filemap_invalidate_lock include/linux/fs.h:924 [inline]
- #1: ffff888052532b90 (mapping.invalidate_lock#3){+.+.}-{4:4}, at: xfs_buffered_write_iomap_end+0x2b6/0x4c0 fs/xfs/xfs_iomap.c:1993
- #2: ffff8880525327d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_bmap_punch_delalloc_range+0x26d/0x7c0 fs/xfs/xfs_bmap_util.c:452
- #3: ffff888043ac40e0 (&type->s_umount_key#50){.+.+}-{4:4}, at: super_trylock_shared fs/super.c:563 [inline]
- #3: ffff888043ac40e0 (&type->s_umount_key#50){.+.+}-{4:4}, at: super_cache_scan+0x91/0x4b0 fs/super.c:197
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5359 Comm: syz.0.0 Not tainted 6.16.0-syzkaller-11952-g6e64f4580381 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
- check_deadlock kernel/locking/lockdep.c:3093 [inline]
- validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1706
- xfs_reclaim_inode fs/xfs/xfs_icache.c:1042 [inline]
- xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1734 [inline]
- xfs_icwalk_ag+0x12c5/0x1ab0 fs/xfs/xfs_icache.c:1816
- xfs_icwalk fs/xfs/xfs_icache.c:1864 [inline]
- xfs_reclaim_inodes_nr+0x1e3/0x260 fs/xfs/xfs_icache.c:1108
- super_cache_scan+0x41b/0x4b0 fs/super.c:228
- do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
- shrink_slab+0xd74/0x10d0 mm/shrinker.c:664
- shrink_one+0x28a/0x7c0 mm/vmscan.c:4954
- shrink_many mm/vmscan.c:5015 [inline]
- lru_gen_shrink_node mm/vmscan.c:5093 [inline]
- shrink_node+0x314e/0x3760 mm/vmscan.c:6078
- shrink_zones mm/vmscan.c:6336 [inline]
- do_try_to_free_pages+0x668/0x1960 mm/vmscan.c:6398
- try_to_free_pages+0x8a2/0xdd0 mm/vmscan.c:6644
- __perform_reclaim mm/page_alloc.c:4310 [inline]
- __alloc_pages_direct_reclaim+0x144/0x300 mm/page_alloc.c:4332
- __alloc_pages_slowpath+0x5ff/0xce0 mm/page_alloc.c:4781
- __alloc_frozen_pages_noprof+0x319/0x370 mm/page_alloc.c:5161
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
- alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
- stack_depot_save_flags+0x777/0x860 lib/stackdepot.c:677
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_save_track+0x4f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4365 [inline]
- __kmalloc_node_track_caller_noprof+0x271/0x4e0 mm/slub.c:4384
- __do_krealloc mm/slub.c:4942 [inline]
- krealloc_noprof+0x124/0x340 mm/slub.c:4995
- xfs_iext_realloc_root fs/xfs/libxfs/xfs_iext_tree.c:613 [inline]
- xfs_iext_insert_raw+0x131/0x3260 fs/xfs/libxfs/xfs_iext_tree.c:647
- xfs_iext_insert+0x36/0x220 fs/xfs/libxfs/xfs_iext_tree.c:684
- xfs_bmap_del_extent_delay+0x105b/0x15b0 fs/xfs/libxfs/xfs_bmap.c:4787
- xfs_bmap_punch_delalloc_range+0x536/0x7c0 fs/xfs/xfs_bmap_util.c:483
- xfs_buffered_write_iomap_end+0x2d2/0x4c0 fs/xfs/xfs_iomap.c:1994
- iomap_iter+0x316/0xde0 fs/iomap/iter.c:79
- iomap_file_buffered_write+0x7fa/0x9b0 fs/iomap/buffered-io.c:1065
- xfs_file_buffered_write+0x209/0x8a0 fs/xfs/xfs_file.c:981
- aio_write+0x535/0x7a0 fs/aio.c:1634
- __io_submit_one fs/aio.c:-1 [inline]
- io_submit_one+0x78b/0x1310 fs/aio.c:2053
- __do_sys_io_submit fs/aio.c:2112 [inline]
- __se_sys_io_submit+0x185/0x2f0 fs/aio.c:2082
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f17f498ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f17f5846038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007f17f4bb5fa0 RCX: 00007f17f498ebe9
-RDX: 0000200000000540 RSI: 0000000000000008 RDI: 00007f17f5804000
-RBP: 00007f17f4a11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f17f4bb6038 R14: 00007f17f4bb5fa0 R15: 00007ffe6a2d5798
- </TASK>
-syz.0.0 (5359) used greatest stack depth: 19048 bytes left
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+heikki
 
