@@ -1,246 +1,269 @@
-Return-Path: <linux-kernel+bounces-762289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E635CB20478
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:53:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC20B2048B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F325C18A0840
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:53:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45EA92A1D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA67275846;
-	Mon, 11 Aug 2025 09:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D491F4297;
+	Mon, 11 Aug 2025 09:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kDkleRp9"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bK3wHAPU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A945C7E0E8;
-	Mon, 11 Aug 2025 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC8C1F1537
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905891; cv=none; b=JIarv8HNAAlPbl8wj9YgIA0NM5rC+5tW4NL0Dze++OB/R0J8ZBrMLDKqCeKGskhLyTy0bgUx9jU0hEkC3yZL58FJz27ot9nltHI1XPVJ34PcHkjSuJNpchfR3UeAhSXBBNebYZUI9tb8c5MIY05jBls4XssWbaPDODnemPLwgFs=
+	t=1754905925; cv=none; b=rTfFpZb68f919ZpQ0kGnBqn54RDTV3Ay7GnJp7stmgpjRmOQo9TBTGNa4BweVqoCbXuU5+SvGwDKcw0zYvse+Z0POBS1HHj1hr2Aubug++z6Kv08cxrheSfeD/WRWjW1PBx01JBKBfiDEGEy+fqrrhkxbUIPmReb6Mh4257OcMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905891; c=relaxed/simple;
-	bh=CIdFgHGKXfMtyq/LSGdi+fapSuHT7uJeKz9JOuKNr3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iWhXKImWSpthNb0XZgiQorOJvCyCObTiPh9MPJhmkidkdDRZxNyoSNui0F6ug1yg8X+W7F9pXZ4CXUfUKczV9MFeUTsKmd3ESefq9Rlsx7rZsSJ1dJCynfTJxUHCxcM/zxsKy2ssATnbDxQE4EC8MmDguMr6/WMLvwLpIy7UlsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kDkleRp9; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5FD9C42EF5;
-	Mon, 11 Aug 2025 09:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754905880;
+	s=arc-20240116; t=1754905925; c=relaxed/simple;
+	bh=axX42gfmuRTzHHY8Rggs7YfjK8wvRrx7qKsMCogre7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FCuFH+mHW07uW2lynLabf6bXmz9le5+YuTRlqsVOwrOKrxgs+r+nQeJQoRJoziq5tnSyN1WbPmtNwM7r3DK6ChOEMbN8JD2ZwZwbHBLD6L3YU2tSMOAXC6n3s0mKlmJaYMKBTDCgUuEqdryUmr/qxvf/UBNFpZATS925YM2vwjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bK3wHAPU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754905922;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ATZgIzZqa81JTLzClnQDVHSuvQlypIxL4qy51wWr8tI=;
-	b=kDkleRp9ulx5espGtq0ahjUY0Ad5IOiRCFdjMEoP9VP3pCgl7KquPE/WQ4r1rB+G0AtT9r
-	VL4ej5WlJ2hQhK5XNpLfBNw39SOpcdzUuchwBaDbU1Ge0u78LEBgrXqS86jXdYXZx+2Zie
-	cr9ScWp9vO14nFlKtJeDrrtm5UcVdamYIMOVo5v4IP9oeS7xY5FcIijyCcAryn6PyJv5c/
-	qrhTJ6odZWWBlCCQMVA9AeKn+N12R+euo1/I23Xin+ZrwkGNpLvZa14nzOB4X1C35jNeES
-	CFySSEXXeKgLZ9CtG55BcQflddldfEh4/yOvtDVrpl7yIoZ4C+8yfSfwtWL+zQ==
-Message-ID: <28e1e51b-759c-4470-aef7-6ccb116e3920@bootlin.com>
-Date: Mon, 11 Aug 2025 11:51:16 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=razzMAqxuDRq/lWoy/+ZlGcAwpJZlfJPFJRW2KQpfjg=;
+	b=bK3wHAPUaKFi0/tObPMGhBIqfpsy3Xowl5OesmlQ1osNdYlw4HhfghNzXOvF8Zur05Tncd
+	BxRhuEzzpRUZ8A5Gcjr+uQ4wgrnsAVXyiChNYumhv6onmyKX0fLPs3RwOw5w5TXbKsixXp
+	h3IoUpFnNkM6aVR+/LzUEULW5u2wIuI=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-90-xmwsBPuSOQuIl6mDCe7vfw-1; Mon, 11 Aug 2025 05:52:01 -0400
+X-MC-Unique: xmwsBPuSOQuIl6mDCe7vfw-1
+X-Mimecast-MFC-AGG-ID: xmwsBPuSOQuIl6mDCe7vfw_1754905921
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-31eec17b5acso4900483a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:52:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754905920; x=1755510720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=razzMAqxuDRq/lWoy/+ZlGcAwpJZlfJPFJRW2KQpfjg=;
+        b=tsfGKcZfaGo6CjylJ9kEtJ6/pDtg/8RlUmmvW4PvjTkuVi62wn2XecTz5+ohJ+4yV+
+         J80+7l0zBcS4DSaLw1P1UoPbACfjiPdhI4iREkn8jHcml52eFC1uGK4sNlObWHAb283J
+         RPoq97xbyvdG5SHa3F+RWv9GvQ3wyMvVXAcIpTiMOk2vLA2zFZplRqFoBVqqKqGX4Yc9
+         jF4I5Q/9Y5TP7kYD+26YbO/sFPORuR5EcseSF/vwFgQBFl3bc0MqglDjw48wq/0SLCYr
+         gzD44eJgfbIVDn047y0dPtJrGLrGRpQvFG0+eIMBhQ6iYHk5bL0Nna0U2SEDRSF40imO
+         uxFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNXb3VXiv2Yb/TtSRfgYIyLrsz5l+wf+g9GZAgCEIlUUcq7I+Ieb+hvXUuVdcc6NPbGt+0Y3qsBbFa9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLuisdHTZfLs2YGHnpjMIOEGM3pAglriMfnbmmHZ/cXj6tVyPV
+	AwV6fb5gjEYT/G3IEwgQC6hzYL3cp55c+NVqNOyUeN5Sah5jMTrpOMsZl1z0iZkOk7ZoI8yKrB5
+	1y/vFNt4/868DVqwbDJSiQVNjhyrj3I1XCMV7X22IBOGRZxnltWS+JB7nG3XrTeGjGKG44t73vO
+	evkxUU+N23yZvTrIyhsNVoliojdXa6nOd2RjLpZ/TzGtM0Mref6O8=
+X-Gm-Gg: ASbGncuG0C8H0WmCSCQOpUIE/AjpFl79cu9yUUWZE/vctv+ttJAg4akGxu6685trXPh
+	ojhlnxhjBoz4SHiZuKccdy1SrfJ1jylI4FOrgkTnm4sNX9u3WvDdWKXmsORFm6yLMxM7/cSy0EA
+	mWlc+ACs2uYoQXbJZwX0nf
+X-Received: by 2002:a17:90b:3e4b:b0:316:3972:b9d0 with SMTP id 98e67ed59e1d1-321838a7672mr19437894a91.0.1754905920388;
+        Mon, 11 Aug 2025 02:52:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGB/yM/8ypLq6xwy/TruMnl9ahp7f+nmV8xLhik2xEvyabJQhr8Z7KY0fGCQQSaiIhFrrAYRZVophIJxdQK/oA=
+X-Received: by 2002:a17:90b:3e4b:b0:316:3972:b9d0 with SMTP id
+ 98e67ed59e1d1-321838a7672mr19437865a91.0.1754905919952; Mon, 11 Aug 2025
+ 02:51:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 6/8] drm/vkms: Adapt vkms writeback to new
- drm_writeback_connector
-To: Suraj Kandpal <suraj.kandpal@intel.com>, kernel-list@raspberrypi.com,
- amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: ankit.k.nautiyal@intel.com, arun.r.murthy@intel.com,
- uma.shankar@intel.com, jani.nikula@intel.com,
- dmitry.baryshkov@oss.qualcomm.com, harry.wentland@amd.com,
- siqueira@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com,
- airlied@gmail.com, simona@ffwll.ch, liviu.dudau@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev, tzimmermann@suse.de,
- jessica.zhang@oss.qualcomm.com, sean@poorly.run,
- marijn.suijten@somainline.org, laurent.pinchart+renesas@ideasonboard.com,
- mcanal@igalia.com, dave.stevenson@raspberrypi.com,
- tomi.valkeinen+renesas@ideasonboard.com,
- kieran.bingham+renesas@ideasonboard.com
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-7-suraj.kandpal@intel.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250811092707.3986802-7-suraj.kandpal@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehpdhhvghloheplgfkrfggieemvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefhedprhgtphhtthhopehsuhhrrghjrdhkrghnughprghlsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhgvrhhnv
- ghlqdhlihhsthesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvggvughrvghnoheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhg
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-3-eperezma@redhat.com>
+ <CACGkMEsMcnBnVPMWD7fxrnXzT+rsUppAxNkoSC4Zy=HiodOvZw@mail.gmail.com>
+In-Reply-To: <CACGkMEsMcnBnVPMWD7fxrnXzT+rsUppAxNkoSC4Zy=HiodOvZw@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 11 Aug 2025 11:51:23 +0200
+X-Gm-Features: Ac12FXwrY-EVjwroQmqKFrxwtn9Y_wEqtBPW6dBCT8tOtZhcmkI7hEVjO2_jb50
+Message-ID: <CAJaqyWfDVioqnprsER2r3yCpgdK4cTO8cxEMndf+-HLUxQtSOA@mail.gmail.com>
+Subject: Re: [RFC v2 2/7] vduse: add vq group support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 11, 2025 at 5:10=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Thu, Aug 7, 2025 at 7:58=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redha=
+t.com> wrote:
+> >
+> > This allows sepparate the different virtqueues in groups that shares th=
+e
+> > same address space.  Asking the VDUSE device for the groups of the vq a=
+t
+> > the beginning as they're needed for the DMA API.
+> >
+> > Allocating 3 vq groups as net is the device that need the most groups:
+> > * Dataplane (guest passthrough)
+> > * CVQ
+> > * Shadowed vrings.
+> >
+> > Future versions of the series can include dynamic allocation of the
+> > groups array so VDUSE can declare more groups.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v2:
+> > * Cache group information in kernel, as we need to provide the vq map
+> >   tokens properly.
+> > * Add descs vq group to optimize SVQ forwarding and support indirect
+> >   descriptors out of the box.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 71 +++++++++++++++++++++++++++++-
+> >  include/uapi/linux/vduse.h         | 19 +++++++-
+> >  2 files changed, 88 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index d858c4389cc1..d1f6d00a9c71 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -46,6 +46,11 @@
+> >  #define VDUSE_IOVA_SIZE (VDUSE_MAX_BOUNCE_SIZE + 128 * 1024 * 1024)
+> >  #define VDUSE_MSG_DEFAULT_TIMEOUT 30
+> >
+> > +/*
+> > + * Let's make it 3 for simplicity.
+> > + */
+> > +#define VDUSE_MAX_VQ_GROUPS 3
+>
+> I think we can release this to something like 64. Otherwise we might
+> bump the version again just to increase the limitation? Or having a
+> sysfs entry like bounce_size?
+>
 
+I think it should not be linked to the version, but it is true there
+is no way for VDUSE devices to check the maximum VQ groups / ASID that
+the kernel supports.
 
-Le 11/08/2025 à 11:27, Suraj Kandpal a écrit :
-> Now that drm_writeback_connector is embedded with the drm_connector
-> adapt the vkms writeback functionality to this changes. This
-> includes changing the drm_writeback_connector to be changed to
-> drm_connector within the vkms_output.
-> Some other changes are done which are a result of the all the above
-> changes mentioned.
-> 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_composer.c  |  2 +-
->   drivers/gpu/drm/vkms/vkms_drv.h       |  2 +-
->   drivers/gpu/drm/vkms/vkms_writeback.c | 15 +++++++++------
->   3 files changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> index fa269d279e25..b5f20637121c 100644
-> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> @@ -543,7 +543,7 @@ void vkms_composer_worker(struct work_struct *work)
->   		return;
->   
->   	if (wb_pending) {
-> -		drm_writeback_signal_completion(&out->wb_connector, 0);
-> +		drm_writeback_signal_completion(&out->connector.writeback, 0);
->   		spin_lock_irq(&out->composer_lock);
->   		crtc_state->wb_pending = false;
->   		spin_unlock_irq(&out->composer_lock);
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 8013c31efe3b..2e58a06c9ad8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -213,7 +213,7 @@ struct vkms_crtc_state {
->    */
->   struct vkms_output {
->   	struct drm_crtc crtc;
-> -	struct drm_writeback_connector wb_connector;
-> +	struct drm_connector connector;
+To handle as bounce_size seems the best option, good point. I'll send
+a new version with that!
 
-Can you keep wb_connector here?
+> > +
+> >  #define IRQ_UNBOUND -1
+> >
+> >  struct vduse_virtqueue {
+> > @@ -58,6 +63,8 @@ struct vduse_virtqueue {
+> >         struct vdpa_vq_state state;
+> >         bool ready;
+> >         bool kicked;
+> > +       u32 vq_group;
+> > +       u32 vq_desc_group;
+> >         spinlock_t kick_lock;
+> >         spinlock_t irq_lock;
+> >         struct eventfd_ctx *kickfd;
+> > @@ -114,6 +121,7 @@ struct vduse_dev {
+> >         u8 status;
+> >         u32 vq_num;
+> >         u32 vq_align;
+> > +       u32 ngroups;
+> >         struct vduse_umem *umem;
+> >         struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> > @@ -592,6 +600,20 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
+ice *vdpa, u16 idx,
+> >         return 0;
+> >  }
+> >
+> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +
+> > +       return dev->vqs[idx]->vq_group;
+> > +}
+> > +
+> > +static u32 vduse_get_vq_desc_group(struct vdpa_device *vdpa, u16 idx)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +
+> > +       return dev->vqs[idx]->vq_desc_group;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -678,13 +700,48 @@ static u8 vduse_vdpa_get_status(struct vdpa_devic=
+e *vdpa)
+> >         return dev->status;
+> >  }
+> >
+> > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
+> > +{
+> > +       if (dev->api_version < VDUSE_API_VERSION_1)
+> > +               return 0;
+> > +
+> > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
+> > +               struct vduse_dev_msg msg =3D { 0 };
+> > +               int ret;
+> > +
+> > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
+> > +               msg.req.vq_group.index =3D i;
+> > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+>
+> I fail to understand why the default group mapping is not done during
+> device creation.
+>
 
->   	struct drm_encoder wb_encoder;
->   	struct hrtimer vblank_hrtimer;
->   	ktime_t period_ns;
-> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-> index 45d69a3b85f6..13c2a5c8f57a 100644
-> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
-> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-> @@ -102,13 +102,16 @@ static int vkms_wb_prepare_job(struct drm_writeback_connector *wb_connector,
->   	return ret;
->   }
->   
-> -static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
-> +static void vkms_wb_cleanup_job(struct drm_writeback_connector *wb_connector,
->   				struct drm_writeback_job *job)
->   {
->   	struct vkms_writeback_job *vkmsjob = job->priv;
-> +	struct drm_connector *connector = container_of(wb_connector,
-> +						       struct drm_connector,
-> +						       writeback);
->   	struct vkms_output *vkms_output = container_of(connector,
->   						       struct vkms_output,
-> -						       wb_connector);
-> +						       connector);
->   
->   	if (!job->fb)
->   		return;
-> @@ -127,8 +130,8 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
->   	struct drm_connector_state *connector_state = drm_atomic_get_new_connector_state(state,
->   											 conn);
->   	struct vkms_output *output = drm_crtc_to_vkms_output(connector_state->crtc);
-> -	struct drm_writeback_connector *wb_conn = &output->wb_connector;
-> -	struct drm_connector_state *conn_state = wb_conn->base.state;
-> +	struct drm_writeback_connector *wb_conn = &output->connector.writeback;
-> +	struct drm_connector_state *conn_state = output->connector.state;
->   	struct vkms_crtc_state *crtc_state = output->composer_state;
->   	struct drm_framebuffer *fb = connector_state->writeback_job->fb;
->   	u16 crtc_height = crtc_state->base.mode.vdisplay;
-> @@ -166,7 +169,7 @@ static const struct drm_connector_helper_funcs vkms_wb_conn_helper_funcs = {
->   int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
->   				    struct vkms_output *vkms_output)
->   {
-> -	struct drm_writeback_connector *wb = &vkms_output->wb_connector;
-> +	struct drm_writeback_connector *wb = &vkms_output->connector.writeback;
->   	int ret;
->   
->   	ret = drmm_encoder_init(&vkmsdev->drm, &vkms_output->wb_encoder,
-> @@ -177,7 +180,7 @@ int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
->   	vkms_output->wb_encoder.possible_clones |=
->   		drm_encoder_mask(&vkms_output->wb_encoder);
->   
-> -	drm_connector_helper_add(&wb->base, &vkms_wb_conn_helper_funcs);
-> +	drm_connector_helper_add(&vkms_output->connector, &vkms_wb_conn_helper_funcs);
->   
->   	return drmm_writeback_connector_init(&vkmsdev->drm, wb,
->   					     &vkms_wb_connector_funcs,
+Because it changes depending on the features.
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+If a new device has 5 virtqueues and the device wants to isolate the
+CVQ, the CVQ position depends on the features that the guest's acks:
+* If MQ is acked the isolated vq is #5
+* If MQ is not acked the isolated vq is #3.
+
+> > +               if (ret)
+> > +                       return ret;
+> > +
+> > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.num;
+> > +
+> > +               msg.req.type =3D VDUSE_GET_VRING_DESC_GROUP;
+> > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+> > +               if (ret)
+> > +                       return ret;
+> > +
+> > +               dev->vqs[i]->vq_desc_group =3D msg.resp.vq_group.num;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 status)
+> >  {
+> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +       u8 previous_status =3D dev->status;
+> >
+> >         if (vduse_dev_set_status(dev, status))
+> >                 return;
+> >
+> > +       if ((dev->status ^ previous_status) &
+> > +            BIT_ULL(VIRTIO_CONFIG_S_FEATURES_OK) &&
+> > +           status & (1ULL << VIRTIO_CONFIG_S_FEATURES_OK))
+> > +               if (vduse_fill_vq_groups(dev))
+>
+> Can we merge the two messages into a single one? Or can we use a
+> shared memory for storing such mapping?
+>
+> For example, if we have 256 queues it would be very slow.
+>
+
+To merge it in the same message is good to me, sure. To make it a
+table in shm seems more complicated, unless we accept a void * in the
+reply and VDUSE uses copy_from_user. If that is ok here, then sure.
 
 
