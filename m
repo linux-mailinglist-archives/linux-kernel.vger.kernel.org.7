@@ -1,146 +1,103 @@
-Return-Path: <linux-kernel+bounces-762544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B631B20841
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 721AAB20844
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2E516D942
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82542168D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E5B2D372F;
-	Mon, 11 Aug 2025 11:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61991E7C23;
+	Mon, 11 Aug 2025 11:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXz4cMbg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="SsFYy8zO"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013242D3220;
-	Mon, 11 Aug 2025 11:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C14213E9F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754913382; cv=none; b=ku6mVu40oeSuiXlINsW3HlMFrZK2mbRXdXkrs7gk3J5HcjFTeyJ3AUM47VHn/lXwXT2sniU/vQZf5TMxvSGdbV9mOrjYdZTbjlFsd5UOdVqlO7wPTV5KW808HhFaYZeZO6bUz004t0ED3QROjNvs4JINQ5kmwXfJGgpkfRftwWc=
+	t=1754913509; cv=none; b=LzFrxtFI1/3FLKtdARfTBV2MPppUanz2oZADRCLBAMkboLsYE7Ih4kctWEW1F25d8Ubi0C+6S4PRgQ6tev9V10H60R/yvhw+r56OvxjMv6V9Ydo8sKN5qR8EB8DQgN3EUXYxo05UuZqrDb5KZ7QQso5eKu/l3cIr1FAMLSqYd/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754913382; c=relaxed/simple;
-	bh=ptIZVCV0JnkrRw4Oj+XH6J0M7tGFvsNA7nDxVqHpq5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jrfH/WgIN2Lj9itWkJjioZiAya4UPHj3v4pe2EiTrzskkDV0SpYXfGC9t8KG/sIerUxJR9oQATKXxJTnQbLyJ3xmi1aw7Jia/jE6o9K7+IjBd5Q0FZlwFiMOzdSdbcpTib5J3IM4G/WNDKgP+algOMqvDrdaYDmCDIKsYjpzQQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXz4cMbg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C2FC4CEED;
-	Mon, 11 Aug 2025 11:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754913381;
-	bh=ptIZVCV0JnkrRw4Oj+XH6J0M7tGFvsNA7nDxVqHpq5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CXz4cMbgKQH9dIgnL8gPJna9caBuc5OxYNwUWkzw62DzS/vWDkXw4lLv4/PQBYT12
-	 1nFkkt/v/miLOhsd8IUAcE4S0DGgz5llIVUqPHUvcvBVXNsCMza7rz7FwiN+iU/r0w
-	 +K66oXJm9FL+garCj2QjSsZ+YlnCVh/emQVPomOVmv5wfJSSj607yuBgAYGukHRXCs
-	 B9fBvrxmd4Y2KOU/a/X0fWhghQtfoxzc0LkIsOGC+d7FgmcVf2IWojs8rkJfNYF776
-	 Xmt5YhMUNe4leAPy85nUe/862uqCQlMT6yiBOFpfHsgmbEvw5Hz8oblhYqhuQKeP6c
-	 1PJshm7mJUfYw==
-Message-ID: <4ccb447f-4995-44b1-822d-1e04e2516416@kernel.org>
-Date: Mon, 11 Aug 2025 13:56:18 +0200
+	s=arc-20240116; t=1754913509; c=relaxed/simple;
+	bh=yvLIgwAGw38VJJkAvUN0mEV+cxHYec3LK9NKk3AQX3g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=X1AGrpiS3Jp+i+N2AevxaahBqB1dh5MIhevpaQW8dND/C/eAW1G5TypVJD2zr6vpPEAZfafcPuo7ZpRoJ7l5GnNAtzRB0Vx4pZZ3y3IsaxaXbOxwGgsmJXP+5Gx9RyDEZP3ezXQJ+sbT5n3MD/h0ZNOEmPbSD/z0ZZN6RSGvTCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=SsFYy8zO; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 16475 invoked from network); 11 Aug 2025 13:58:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1754913500; bh=W/g/Hibh3hvAkdudgvOt5kmtLe3KXD5a8hM66tf97zI=;
+          h=From:To:Subject;
+          b=SsFYy8zOljX65jiFZ7PDLoBoL46f4I58dNu5CrA9u1joCsT4kg4CbwI4Dmj6S/Oed
+           1aUmbs371gxGLnXst7ZLpolWSIX4/rKI/Pxi4NnAi78vgbb5xshBG6QSSf0b3Vp49d
+           5gLCXNvcB6KXPsgctIoGYtPAgj4Z5SYYfQr4Dl92nNdY5Jy2cuzPpgqyqhPJJ1Elqq
+           XDjHbD46yJr3/qHxT3+goGT+KsAUCD1lPIACWZMropyWAwkSFkWidRV4D//5oo/dKu
+           9P7O9FS6F9AQxHGTZkbt5nA/OKln2FBtrYRn9L4N3LKXCotiEyboY5qv1s4Wf7S2pm
+           lRWziKlDmxsnA==
+Received: from 83.24.148.125.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.148.125])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <robh@kernel.org>; 11 Aug 2025 13:58:19 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	olek2@wp.pl,
+	devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mips: lantiq: danube: add missing properties to cpu node
+Date: Mon, 11 Aug 2025 13:58:15 +0200
+Message-ID: <20250811115818.735670-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] dt-bindings: misc: Move amd,sbrmi.yaml from hwmon
- to misc
-To: "Gupta, Akshay" <Akshay.Gupta@amd.com>, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, arnd@arndb.de, linux@roeck-us.net,
- Anand.Umarji@amd.com,
- Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-References: <20250728061033.1604169-1-akshay.gupta@amd.com>
- <20250728061033.1604169-3-akshay.gupta@amd.com>
- <a6103665-466b-421a-8181-5110354bafdf@kernel.org>
- <52fa4c81-9df5-458e-a07c-5d385e6d1631@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <52fa4c81-9df5-458e-a07c-5d385e6d1631@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: f2511a3017b372137fdf91dbd0a40eb9
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [4ZPE]                               
 
-On 11/08/2025 13:54, Gupta, Akshay wrote:
-> 
-> On 7/29/2025 11:59 AM, Krzysztof Kozlowski wrote:
->> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
->>
->>
->> On 28/07/2025 08:10, Akshay Gupta wrote:
->>> - AMD SB-RMI patches are moved from drivers/hwmon to
->>>    drivers/misc to support additional functionality.
->>>    Move the related bindings documentation files to misc.
->>>
->>> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
->> Really? What was reviewed here exactly? Poor style of commit msg or that
->> rename actually does rename?
->>
->>> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
->>> ---
->>>   Documentation/devicetree/bindings/{hwmon => misc}/amd,sbrmi.yaml | 0
->> We don't put bindings into MISC.
-> 
-> We moved the SB-RMI driver from hwmon to misc, and hence moved the 
-> binding documentation.
-> 
-> Referred the newly added yaml file, ti,fpc202.yaml through commit in the 
-> misc bindings.
-> 
-> If Documentation/devicetree/bindings/misc is not right path, can you 
-> please suggest the correct path for bindings for drivers in misc?
+This fixes the following warnings:
+arch/mips/boot/dts/lantiq/danube_easy50712.dtb: cpus: '#address-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+arch/mips/boot/dts/lantiq/danube_easy50712.dtb: cpus: '#size-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+arch/mips/boot/dts/lantiq/danube_easy50712.dtb: cpu@0 (mips,mips24Kc): 'reg' is a required property
+	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
 
-I don't know what this hardware is, but "misc" does not sound like class
-of hardware devices... Don't just dump stuff there.
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+ arch/mips/boot/dts/lantiq/danube.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 7a7ba66aa534..0a942bc09143 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -5,8 +5,12 @@ / {
+ 	compatible = "lantiq,xway", "lantiq,danube";
+ 
+ 	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
+ 		cpu@0 {
+ 			compatible = "mips,mips24Kc";
++			reg = <0>;
+ 		};
+ 	};
+ 
+-- 
+2.47.2
+
 
