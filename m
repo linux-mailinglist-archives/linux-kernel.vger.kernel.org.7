@@ -1,223 +1,165 @@
-Return-Path: <linux-kernel+bounces-762989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B97B20D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A413B20D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B3E3B91A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A5E18884EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5493A2135AD;
-	Mon, 11 Aug 2025 15:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abngW76O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RyrjT9gE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abngW76O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RyrjT9gE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3BC2E03EE;
+	Mon, 11 Aug 2025 15:18:06 +0000 (UTC)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEAC17C220
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70CF2135AD;
+	Mon, 11 Aug 2025 15:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925359; cv=none; b=h8BhpbqXkaKhDKvtS38hsj1X48ZTVoMBFTbEHcA/M6zC5mefF5aD0pejI4d3fUY4gEjvFyK2JYwkFMfcxQPnWLSCqdBQm0hepxJgxhtYe3ywLwuCm5nxhsdhGCYlkOl/WhV52aG+cq0ZUqp3EK/9Z3Y3+KRAPYQQsKXrarKzW6k=
+	t=1754925485; cv=none; b=TWGABNkIRBy+y3zcIukNaed/Ed+tY+gAW3U0nAqteP3rHb2NESnixJ8bZUivuh31SYvyp00kqtCs9iRqFs2emZkZnI8rV7Z/XaGt3h8aWXPWlOL9G4SsSwQl593LtK4wNdiEFzuUslAuZQPFizpwK95IFwQPR91T0UHFlFDDXTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925359; c=relaxed/simple;
-	bh=oqY9Q1sWddXoZxchyOIxDPp0oRB+CDRJvZFIifyHQBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hnhm/HExxaQ8qPD6VEFC8FMHI4287ELWojD5LBsiXNo53S9jy6j9p4HDV4g9Vq9ebTK4/Jts4oppwaoLuAO79LsvRrkz087pRtFWt3wsSfFiMroyE2q34dKVKOuapUx1AdgbhhQAjHCMvWjfDHXCnw/qMQ9XPTU8xv8SqArH8fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abngW76O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RyrjT9gE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abngW76O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RyrjT9gE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC9C633718;
-	Mon, 11 Aug 2025 15:15:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754925355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mkghdF9d0qyQgX/i3cSkmhXA0OmU15xAwLK/GfThnq0=;
-	b=abngW76O/tdPF7Fbj4VI7yXrq/gYuoq9xD49/lvYNXJTQ1q51e+X74ciYpDPsMHH7MiPHT
-	j4ltKE129a0l5MUYmvz34Mot6evuJOmJN6zYmEyfNKia3LdrgheT3lpfTi1AdBNxpwJH8z
-	DX4HXNfCGy1MVigQVmJM8FLpcm5F9Ho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754925355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mkghdF9d0qyQgX/i3cSkmhXA0OmU15xAwLK/GfThnq0=;
-	b=RyrjT9gEgyOcAGW/8GAtAuxtwOMk/2+ZM/OT3M8sV4ADr6lxZ0AOZV/TNRmtr050hulu4C
-	M3+Bqm4Su74AArCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=abngW76O;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RyrjT9gE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754925355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mkghdF9d0qyQgX/i3cSkmhXA0OmU15xAwLK/GfThnq0=;
-	b=abngW76O/tdPF7Fbj4VI7yXrq/gYuoq9xD49/lvYNXJTQ1q51e+X74ciYpDPsMHH7MiPHT
-	j4ltKE129a0l5MUYmvz34Mot6evuJOmJN6zYmEyfNKia3LdrgheT3lpfTi1AdBNxpwJH8z
-	DX4HXNfCGy1MVigQVmJM8FLpcm5F9Ho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754925355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mkghdF9d0qyQgX/i3cSkmhXA0OmU15xAwLK/GfThnq0=;
-	b=RyrjT9gEgyOcAGW/8GAtAuxtwOMk/2+ZM/OT3M8sV4ADr6lxZ0AOZV/TNRmtr050hulu4C
-	M3+Bqm4Su74AArCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77CCB13A55;
-	Mon, 11 Aug 2025 15:15:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ynnGGysJmmhtZAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 11 Aug 2025 15:15:55 +0000
-Message-ID: <6a9b84ad-f2aa-4073-9318-8c2e6b2edb26@suse.de>
-Date: Mon, 11 Aug 2025 17:15:55 +0200
+	s=arc-20240116; t=1754925485; c=relaxed/simple;
+	bh=Hbl3FDqH6hGn48dhqV3p7gZfDs6KUR3kV7tPIbZIlFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RHvlIQmwO0d6c5yqhL+ngikM9Wbbsy/H6wBe08BBi1nDzPwf7zVlwDACER1/1gqlrzMJ9htQzpGO2RBIjLOd5nzp9xkY7KPoFDDpxhv+HfqJw4uVpZx5vLEJ8eKirw8h8o6PwwXFt3DSqLiR7oA8IpEZdqymjWQZdbdmzSFAhqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5393a970209so2928605e0c.0;
+        Mon, 11 Aug 2025 08:18:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754925482; x=1755530282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eRERaapospbD2j/AINuPZJ+DOhG36AvV/ZTDomBbWC8=;
+        b=ClT5xqgcjWwtJ+GQRsIGFDCnZTM9JOgvkllzjN3Ews4wYzPHj6MBJRjLR4jf/qM2Q8
+         8jcC3Tsp/Pigy45UXnmkl4mM4Q78PocueSBgEabkbjNyc9vqPrEtoCcB4xLhNLSmLIEp
+         xd186o2OYNd2VxaQydoVQns9wFFK8KWKz5pYGCot8Opd6ttnDtlvc4qX47pRaTQLz8VW
+         SBcS8W4PjrebofIDWXhYHKSMYFqOnjtPePOBnxqi5DYCpT9WJAsZDKQu0Ep5R+gW+Ywz
+         XM/EKHv+sFtL78M8vW/b7o8/iQt/wO7cmn6O/wIAoeyQ5UYVN8usd1z++p+R6g0FBlx6
+         kXNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBmOnRUus/6znxMt6c2XBsmuPMAmHkDG3L9e4foSzIwQIEZqTBhthKFAZKz/KNPPsvsFtK9jkkkNQnNrnfR/mA5/Q=@vger.kernel.org, AJvYcCWWjvsT554UYKAfmdFjTccdtThP8ek4QcYID4JJhT/jcjxt9BCWZly1LGOI+VT1TxnRPShN9m5uZFp/@vger.kernel.org, AJvYcCWf/bjryCniyNbADON6OTaDpJ/gvyJA7Bx/f7tRjDODubEJjzZ2riDMPkTrB7cHH5h+mG6zxiw14Y1bY9Y6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuaSyY3CCaZq+GhoYEM5QVW3wA9/8kwWsITXRkyBEoFKQxYc2Y
+	3J7NpMC5hOnyzAnU9yozjMe88ml74YGyQpwINTZ8W4f2/wyhJs0T9iPtM1S+kkKz
+X-Gm-Gg: ASbGncvDZORXByzD1ggmovS0bfQ8E+mxJOUyArNWCd5Vj9ue+RohooktMD6rKBflQo0
+	d9evp4y77yS1dz6shpp7/JXtDKeNB6y9bnAlG0weyRyxaU3vt0vvLfNkuj/pz3RBksm9lK4sPZo
+	sd12gChvyqhBIbUoJTV4e3n1r9h3a5DUn7DDxhu8ygrvik1Fr6O5+qxrtMeQ+0pqS4IFsG11VhP
+	IoYLZgkI+BRC9qQmeHaBRiL3McnjRlpWezGhEHF5AQzMjXyTHKXm6ik5u9Eu6Lu1iVNh4I3siRA
+	8pAHRs2HN/RnJCpWkc81vz4lz8WgkM1FrtrSb6oIBVNm0bXsgkk3LVE7Li6WhyQwtTFQtLmAOk5
+	YxqCT0AWGfZ6I66Xuhkj4IQr1TFe1SZpQIGqqq0dfi/w4RivX+lNM3PYoUGNpoQi5Wxq1k8o=
+X-Google-Smtp-Source: AGHT+IFlj+IVhzl3HZq8NMJPa0i3x1JGPsbz18uQ7NXy1mgTBE+nr+ycOOGrvC1ShqKHaqbVO5N1/A==
+X-Received: by 2002:a05:6122:308b:b0:530:2c65:5bb9 with SMTP id 71dfb90a1353d-53a52ee8667mr5061177e0c.8.1754925482478;
+        Mon, 11 Aug 2025 08:18:02 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53adef42d5fsm1215957e0c.0.2025.08.11.08.18.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 08:18:01 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-88dc40608c1so2962086241.2;
+        Mon, 11 Aug 2025 08:18:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV732ze/F0RNuo/lXyVP00Njnz60kaBeVCfOwAazbq2IIHoGvuolVpA8g8e8yJRmweorOX3rDz1outT@vger.kernel.org, AJvYcCW8qTrlFIK4ikeDTRxG98FnxehJp7/iPNeHirRBErWkKx58Mu2Fvgqw6pqtX19z9AxbaLAmFDXIhLJoc7VG@vger.kernel.org, AJvYcCWKLctchTEALjT8Z/VP4Z8pOa8zjxDwIITEl76ZXK6DvfsURH5rxP+957ro5KhP8Z+P45zet8YuNmII4sNpzCTphic=@vger.kernel.org
+X-Received: by 2002:a05:6102:c0c:b0:4e9:963f:2d09 with SMTP id
+ ada2fe7eead31-50cbd7be826mr117273137.10.1754925481152; Mon, 11 Aug 2025
+ 08:18:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/gud: Remove unnecessary logging
-To: Ruben Wauters <rubenru09@aol.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250721232210.12578-1-rubenru09.ref@aol.com>
- <20250721232210.12578-1-rubenru09@aol.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250721232210.12578-1-rubenru09@aol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: AC9C633718
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+References: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250808215209.3692744-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUWo=hYPWPrweoYn5rFC50aV5EV1xqwFHmLp27GRjEADw@mail.gmail.com> <CA+V-a8vW2-YG8=-u3kUcrou+nPVLn2uhE-W+JOHpu9Cahyw2ZQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8vW2-YG8=-u3kUcrou+nPVLn2uhE-W+JOHpu9Cahyw2ZQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Aug 2025 17:17:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVXZPhsKSbC1px9c733O-W74EHNOb9+Ag8hgsM2bPg7SQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxp-lj0MFbvrPvqguz3Y5JPy4aG-7bqG3-CAFKU8C26rnV-BJ2WrZHG93A
+Message-ID: <CAMuHMdVXZPhsKSbC1px9c733O-W74EHNOb9+Ag8hgsM2bPg7SQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and
+ RZ/N2H support
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+Hi Prabhakar,
 
-Am 22.07.25 um 01:22 schrieb Ruben Wauters:
-
-I've been on vacation, hence the delay.
-
-> The debug logging in gud_disconnect() adds zero detail and is
-> unnecessary, as it only prints the function name.
+On Mon, 11 Aug 2025 at 17:08, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Aug 11, 2025 at 2:34=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Fri, 8 Aug 2025 at 23:52, Prabhakar <prabhakar.csengg@gmail.com> wro=
+te:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Document the USB2 PHY controller for the Renesas RZ/T2H (r9a09g077) a=
+nd
+> > > RZ/N2H (r9a09g087) SoCs. These SoCs share the same PHY block, which i=
+s
+> > > similar to the one on RZ/G2L but differs in clocks, resets, and regis=
+ter
+> > > bits. To account for these differences, a new compatible string
+> > > `renesas,usb2-phy-r9a09g077` is introduced.
+> > >
+> > > The RZ/N2H SoC uses the same PHY as RZ/T2H, so it reuses the RZ/T2H
+> > > compatible string as a fallback.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
 >
-> The same functionality can be achieved by using ftrace, and is
-> highlighted by checkpatch, stating the same.
->
-> This patch removes the debug log in the gud_disconnect() function.
->
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+> > > +++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+> >
+> > > @@ -120,6 +126,17 @@ allOf:
+> > >        required:
+> > >          - resets
+> > >
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: renesas,usb2-phy-r9a09g077
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          minItems: 2
+> > > +        resets: false
+> >
+> > By the time this hits upstream, you will probably have reset support
+> > for RZ/T2H and RZ/N2H, so you just add renesas,usb2-phy-r9a09g077
+> > to the conditional section above?
+> >
+> But the above will still be true as MRCTLA/E/I/M register doesn't have
+> any bits to reset USB{PHY} or am I missing something?
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+You are correct. I overlooked that some modules lack reset bits.
 
-Thanks for the patch. I'll add it to drm-misc-next.
+Gr{oetje,eeting}s,
 
-Best regards
-Thomas
+                        Geert
 
-> ---
->   drivers/gpu/drm/gud/gud_drv.c | 2 --
->   1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-> index 5385a2126e45..b52a12cbba3e 100644
-> --- a/drivers/gpu/drm/gud/gud_drv.c
-> +++ b/drivers/gpu/drm/gud/gud_drv.c
-> @@ -620,8 +620,6 @@ static void gud_disconnect(struct usb_interface *interface)
->   	struct gud_device *gdrm = usb_get_intfdata(interface);
->   	struct drm_device *drm = &gdrm->drm;
->   
-> -	drm_dbg(drm, "%s:\n", __func__);
-> -
->   	drm_kms_helper_poll_fini(drm);
->   	drm_dev_unplug(drm);
->   	drm_atomic_helper_shutdown(drm);
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
