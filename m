@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-762847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550ACB20B5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:12:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE8DB20B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851D22A6ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:12:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C193ADFC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7ED61DC9B8;
-	Mon, 11 Aug 2025 14:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F290248F55;
+	Mon, 11 Aug 2025 14:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="c9siHFSz"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KzniqePJ"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E517E21019C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA79149C51
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921454; cv=none; b=r1AOX94g8ka1/3DOFNk9tcvvM3O/gzimhikj8sdITorEbItcws/q6XUewIvMbY8INyecXJ30OvixoluI39H6EI2pflUNvgsHXE5ZY9ZcfsR3Bhe8JTilNHciI4cSU6LAX5UPxIRZUzEh038x3OYeMrTbxaJGxhoyhMgsZdK2YWM=
+	t=1754921455; cv=none; b=WdymxqWMeOEj4U1vMhTFchJDBrJFAM2jDHLqv8HVoPcjWkpmJ75Sa0F7EXudfrAyVS/HqfW32ddTa5+aYqqwT6Rjr/XFF4O+BB3aOdKe4Ufz3ZhARphnzOo4IohJ8Q0NfXMZUlmY23Hbqj7faen4FaFJad2ub05PgABN6PUVw/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921454; c=relaxed/simple;
-	bh=4QCFtRW/MxF9J/+GsGpUTijni3ULMWgMsH+JZsz8La4=;
+	s=arc-20240116; t=1754921455; c=relaxed/simple;
+	bh=YQdnjakWI6X1ZHqFhx7ybyszvQDMdraK7i+ce55DJ9Q=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GlDC1e4iA0yhdSwtKCT2YqkE02p2CBnTS7cXY/NQQNvkuSxwqR8BKC9Shku5r7tzq0wto++X3EMjEz90I1WEgM2YCQfmMRCoT6yTpyQ6C1TbPDFQLhT5GFP6tNLvE3hKv4Gc1IZPOI55KrJ8LsOAU5mo1PbQq3F9TqO4HjZTt8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=c9siHFSz; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=ar7+zQS8OuMoSbPqhkUNYckaEPfh4KLhGGla12sju71uz78VCipkPu7EEJVIv4WvEIL8YC+NQkzm78T7eff6V6IsWvNaZwfs4i4CyUgEW9fA2cu1jW0Zl2AuDxM/9jtwU0EV8q30xlENtCNWgB7jot5F1Efc/J42p+LTXvKYHy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KzniqePJ; arc=none smtp.client-ip=209.85.208.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af98b77d2f0so816644266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-61580eb7995so8929036a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754921450; x=1755526250; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1754921451; x=1755526251; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=63J39CyFqSLdGcoY+lFnsbjnjETWfUjBwWRQVTsQ3ZA=;
-        b=c9siHFSzeTYLdZdarn6XHrmrahFZ+2fzoQ5GVM1QNqaNmqvdVbbpLyOvSlbvSorGCl
-         aeQU2wkMqyK3cDjKcuoFDAnDNEYS3w7KO8v62suzc54O6PvAdDfvl/izbWndowEMp5yH
-         pHGDltoRLF9yEjG3PPbAy7+dJUXImyls+lzkuESrClSFH5dhuU6ABG7j+FnPcjEf3U3D
-         WcyKJM0DEjTU7l2QWihBzKmStm0WqsEQ+Co1pB70MEynRtzTNX9Ia5VjKXeMucQ/Yh8X
-         aYEOUMXxEOKbXA/4Ep/afb9PFxIvVvuW8+YNzXPoHq3gB/X5yDCuKFUJfKB9O5ZMkusi
-         NB4g==
+        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
+        b=KzniqePJ8BhCyIuG/HFbx8JlA4LqYA8hoQ4DW/g1hCknkihDX+ct9RMafEot1gWoKL
+         RBi7t5LHoAslJYNxQicWQA1HsAajiFIy4eQjrOPLBVeLTIZHH3Jwoz47pJyees8MFfcv
+         XUbwCImvfbyGp5JNc8Km7W5v0/FpjkAYorsskyJcpZ8sei2KCdVc7Rp9DZOG+Yd/FAzs
+         ceQrku/WelAwPWMnemBSjYHE78JqWARZcDeN+2ve5e04pB2kGjDoG9RXtW88m9tNwr5Y
+         J77nQI8UpGlH1eB5MlwiGXDOHtjp/s3mlMxaT/d4WcrBZV2o1pUsHLN42KMNG5+4mf3v
+         AY1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921450; x=1755526250;
+        d=1e100.net; s=20230601; t=1754921451; x=1755526251;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=63J39CyFqSLdGcoY+lFnsbjnjETWfUjBwWRQVTsQ3ZA=;
-        b=Na9kqHD7OOd8VHiE7wETdsINyeK6MFzCLtNBuFQAMO2M/da/3XHir6fZFgxOFYy8UX
-         s5W3+kRrE0AvLxebr2vlpcUyCrY4H8efTUzloyLOUOes21530XSVId/RXUk2gOQaR8mn
-         ppxCvGEhqq5smNGmOYiviqqk+Fe0X1P3Gre4DW6aAFrHMUSRjm5mTUdMikmfKQ8pr4xM
-         d/irtvOOYlhkOFdpYqIQCkDGvQMZeQdLbU7GvHRBcnPbquEVGCmKU60qChZdSOsIgywG
-         N83pY3b4ygPVW5MqcMvIkEAMrQACLysN5+9CtjGev0Uix+scugLbNSZZcVsM4TnG00mM
-         EJVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVHEkqu1sC4TWb5qkvRxr2Zpr62lFOXtzUN9Zx7iu+iCq6UVJJ1sZPcQ11s7Wv97qnpqJ2zOSIlBQzk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNlTEfS7naU3QuGPUK5oAXPxm+SONIUKEm9q23rsgACXMy78w4
-	Zsb3r5IgxzgL7Yc3XXkzq5zLQLiPhHIcAp11TjMTpIAZGfy82qHezu1CwCACfO1xHgk=
-X-Gm-Gg: ASbGncvMeLI53xk+lefjMGuM7Rx3G5/LJE9icshktCSOJGa51th+9byQWF/UsFvH+Xe
-	pvB9IftPWFlWWgAhdXwnX5HKLcNlhgKzu91TUMwjj+y1R+5eVLcMZn8f/L/AkL4KOnKzI6z0dx9
-	Vd01U98GDr9R0PUSPnNtzQUyRmpjccWihYHaqP+pjAKpBqjONO6qv2179P8irSdv+uJkERuThGU
-	lcaK1eupLyFclDbim6+8dqyvO4aSkzIYhgEzfS/4G+QXH1SzKI255ybVsSU/G+iSnzF490F9foE
-	rlj5saFxOSa3/QA4AtXbEyVS84egSvUv7QcVhArqIM2Zh6UG5PAuQCFDWphHvwkBOih8NXn2r04
-	/0HejR6crLKnqd6Jt+KG0VViL/KMHnxwcvcOb1jERRWnLT3oBues7+4WBmPPNKvuMzw==
-X-Google-Smtp-Source: AGHT+IG/M8+ibyfZa1rZEJRPdNDgrfy4rJ6HCiKO3wMUuimZDr1wETFmlPT6yaYQrOBYlXmZ2auvCQ==
-X-Received: by 2002:a17:907:3f1b:b0:ae0:a597:2959 with SMTP id a640c23a62f3a-af9c6516d10mr1108890066b.32.1754921450120;
-        Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
+        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
+        b=IJK2eviBssOiwRpfhPslXZcz9+ukNmaF3ao6SQXSyTHA7rv+Oz4ypT47WAgaOAU8ql
+         UOZgre7wIWoxYbtCMisQCzzeDvSEktLRmMEh3siTEivQOTpkqcR/TfML/aUbGyObbE1d
+         J25bRQw1F/qH5O/H2Pl7s4hvjPgYacbVHvUGtrcUk51+vVS+8rmc1HgGrSQwO0XuJlRe
+         9PUd+PdA/IdMAkfxMArsm/ui4yjTam4TJJEyEG2unsqslS+zcIL72wQFoQTxpNQNa2wa
+         L2hZeu/M4FedxrNz3c8MOuyAw/sGkdz13ZrIdkDc2sKLvHmzXSZiTo+1BBY+AB/pKDc8
+         TBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmDVq09vIEbKyItRaAG/5y402t0cyTeiNUoqXePWB0hcic6YQnb+Zfzt/R8hMJ2RBoR3cCAj7MMRKwU3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRQdfy60QRFvtzH17bM3B/NA8cRccoNxxxRsujbDEyrOj42LaX
+	rLWNzanmwJEJ8UFp/3bBY26BT/BlkdTxaorO6Q/jALp/qq4+qLTKAQj0MU23nNIzeec=
+X-Gm-Gg: ASbGncudTfHeTJ7dOS0uY2D8QQkc9J8Xf/w0BsZl37Pf+NuCApOPpL9qWnUu6V9jr3a
+	i9Q45kgANq7prvAQsVvTD/XSO6x/Qr3tAiVPVIB+0T8pCIqcbzZdULZlkGIBJzthJYSrRLKXPXg
+	oCVNKsLcQP/powW8JqsyRDCDfXJDFzvhhvZioP2Uc4gPIgIMu3OZwWPFO/puWdJYttyBMz37bRP
+	iHABR3TMEef8BYiyR8xfuXLzUVsTb2JKkX2fWQCGovuEt0riYemZWdPGJ0OuveLiDXo5IprQeOe
+	KaTXHggzqLNTgB0tX+0aRmUyCR8K/kcX93CiGK1oQQKWDXx58RB4ZIqbjHalQzifclC9bjQSkJ4
+	4KU9EdG7xETftaHukjctWQzFvVU4BmeN7QktHkAevqKZm5EHxUMvdzPNC/pznCQecLg==
+X-Google-Smtp-Source: AGHT+IGSXO0okwpD5kpNnaGjEGTT73fQPhYl2aV7TxCeznx0RSbicpQ7u0NLlVgRRhjgMGZAIA2ZgA==
+X-Received: by 2002:a05:6402:3491:b0:618:4a1b:e311 with SMTP id 4fb4d7f45d1cf-6184a1be33amr433396a12.3.1754921451307;
+        Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
 Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af9383590desm1818429466b.76.2025.08.11.07.10.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm18398979a12.26.2025.08.11.07.10.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 07:10:49 -0700 (PDT)
+        Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -111,9 +111,9 @@ To: Andrea della Porta <andrea.porta@suse.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	iivanov@suse.de,
 	svarbanov@suse.de
-Subject: [PATCH 1/2] arm64: dts: broadcom: delete redundant pcie enablement nodes
-Date: Mon, 11 Aug 2025 16:12:34 +0200
-Message-ID: <2865b787d893fd1dcf816e1c96856711754d612d.1754914766.git.andrea.porta@suse.com>
+Subject: [PATCH 2/2] arm64: dts: broadcom: amend the comment about the role of BCM2712 board DTS
+Date: Mon, 11 Aug 2025 16:12:35 +0200
+Message-ID: <47f6368a77d6bd846c02942d20c07dd48e0ae7df.1754914766.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1754914766.git.andrea.porta@suse.com>
 References: <cover.1754914766.git.andrea.porta@suse.com>
@@ -125,33 +125,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pcie1 and pcie2 override nodes to enable the respective peripherals are
-declared both in bcm2712-rpi-5-b.dts and bcm2712-rpi-5-b-ovl-rp1.dts, which
-makes those declared in the former file redundant.
+Current board DTS for Raspberry Pi5 states that bcm2712-rpi-5-b.dts
+should not be modified and all declarations should go in the overlay
+board DTS instead (bcm2712-rpi-5-b-ovl-rp1.dts).
 
-Drop those redundant nodes from the board devicetree.
+There's a caveat though: there's currently no infrastructure to reliably
+reference nodes that have not been declared yet, as is the case when
+loading those nodes from a runtime overlay. For more details about
+these limitations see [1] and follow-ups.
+
+Change the comment to make it clear which DTS file will host specific
+nodes, especially the RP1 related nodes which should be customized
+outside the overlay DTS.
+
+Link
+[1] - https://lore.kernel.org/all/CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com/
 
 Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 ---
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index a70a9b158df3..adad85e68f1b 100644
+index adad85e68f1b..865f092608a6 100644
 --- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
 +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -15,11 +15,3 @@
- &pcie2 {
- 	#include "rp1-nexus.dtsi"
- };
--
--&pcie1 {
--	status = "okay";
--};
--
--&pcie2 {
--	status = "okay";
--};
+@@ -4,8 +4,14 @@
+  * the RP1 driver to load the RP1 dtb overlay at runtime, while
+  * bcm2712-rpi-5-b.dts (this file) is the fully defined one (i.e. it
+  * already contains RP1 node, so no overlay is loaded nor needed).
+- * This file is not intended to be modified, nodes should be added
+- * to the included bcm2712-rpi-5-b-ovl-rp1.dts.
++ * This file is intended to host the override nodes for the RP1 peripherals,
++ * e.g. to declare the phy of the ethernet interface or the custom pin setup
++ * for several RP1 peripherals.
++ * This in turn is due to the fact that there's no current generic
++ * infrastructure to reference nodes (i.e. the nodes in rp1-common.dtsi) that
++ * are not yet defined in the DT since they are loaded at runtime via overlay.
++ * All other nodes that do not have anything to do with RP1 should be added
++ * to the included bcm2712-rpi-5-b-ovl-rp1.dts instead.
+  */
+ 
+ /dts-v1/;
 -- 
 2.35.3
 
