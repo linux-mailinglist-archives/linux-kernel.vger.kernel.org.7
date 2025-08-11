@@ -1,49 +1,59 @@
-Return-Path: <linux-kernel+bounces-763261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEEBB2127B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413F5B21278
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2D02A6468
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54830189A8A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09C5243968;
-	Mon, 11 Aug 2025 16:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B1296BCD;
+	Mon, 11 Aug 2025 16:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYcF6bZ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="de/EJevO"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678C296BD7;
-	Mon, 11 Aug 2025 16:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B191DFDAB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930395; cv=none; b=CvLS1d9YGqAYK4KAClfAC/IxguYKSwbd+jfBvtyWlZjjFW9EHm4GZmnr+oL1F+SkGR+CTrRznjk7fFsaYM+BEa6aFfgu8SKy27btOXkNzW27+fr+ZOLTo0bFBCQ6TiRVX8dKgwsSxL6MRoMRes+l0pjrq0m6lciV6G4ryiQp6hc=
+	t=1754930458; cv=none; b=QafqyiDT2wiVyEv9HNWCfQuVz16FKEENwKa8oi97q5xCdQKL5mCj5SgHwn2VDmTdyhSXuHW5IV+prbAEYgZlz+FLoWV24K+GjszEjvPNd4oZz6Ct4nGZer/vI6IgrmwebBGRjazfjcA3IpeFp9NzOUOIibaLhrzKExPRkt+Uzmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930395; c=relaxed/simple;
-	bh=YsRPZUyMgNgjr5FjQ7aq+Jv/uWYtdtWjLlrgx+z4knY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=a4ZHVnOPGBBIlgCWk6tcXuzTwcDEO3+TOX1AxR5Me0nVrrm6Su6ONmj4JlSkuh+P4oRZgsLLzFQG/G6oaM6QsZYLv4iKXkVJRI+pMU1fGTAKaKIhicfXdu/R9/uX0ualaCRgcx/rlq+uVwqaPcpP0gqPxuKYJiiRua1EcyVAh18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYcF6bZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618A3C4CEED;
-	Mon, 11 Aug 2025 16:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754930394;
-	bh=YsRPZUyMgNgjr5FjQ7aq+Jv/uWYtdtWjLlrgx+z4knY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fYcF6bZ25DiOwtg92ZN0PwUw5OOYMP/Czx0hLYcsi8MtwIfIbTr1sqHz4FOM5pHxr
-	 CymAwnHhhaNcZU6Lr60hrlh27Su9f/nYIUN7rHCUmzFnS4P6DsGG6RqV7mb4N+1DrU
-	 W/pe5WtwtAENzrwDTmEYcez/9cZeNNxuHX+i0fWdDvsYkT2Xzd+X8KJjmXDmR5eUgj
-	 s1KAU5Zsn3WeBp3cliye9YYRlLJ6fwRxzto3wxqkrKeQUEyQCZ9ZCPBylcRgkGPirw
-	 Zn8EyMS9o5Pnu/hW672zkQdkiPf9NChnwzzVWx7Y3Tt+IrhCPyf0JoMhRTAbK+qqWS
-	 zaRT1GLdL80og==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE60383BF51;
-	Mon, 11 Aug 2025 16:40:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754930458; c=relaxed/simple;
+	bh=lrErPlSj13yeFJFUN8Q+kC49+CUkgmgYn8aKCHsxA4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PGVRs/7CSq5YqT1X45CIMJctRtsE81Ly58kwoz+9n2wg0U7P/xTd1vnEtDtN3qPkXjfXlqbHhnQcwVPCRYrlXrM4dCvGvV+HPlFgaMB88oBKoQdPkYBrRb7+DvNqSELkzqif9Ab+Hod9x52ZRuCKGXz8iQXeOzBeiM3sTlUxTPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=de/EJevO; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754930454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KNDajDqdLKrAEXDEBtkk4JWlF60OExIU365++ZNVha8=;
+	b=de/EJevOJMu6noS+TC2khMQmxZEZYD++D2WCoMRVnIueEVBjT0eZ6IshQFPcxYsTu1XC2h
+	myv7TLHmSR0Q6XtSIwxxAvLiMaHgW0VFUj3HVH20Wc7QOmVYvmWXLXHO0cROKYrFoHkXHf
+	uG7WNFN/xX7JluXTCIUpBo+d901c0ZM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net/sched: Remove redundant memset(0) call in reset_policy()
+Date: Mon, 11 Aug 2025 18:40:38 +0200
+Message-ID: <20250811164039.43250-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +61,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] Bluetooth: btnxpuart: Uses threaded IRQ for host
- wakeup
- handling
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175493040649.1801125.3657849160282054995.git-patchwork-notify@kernel.org>
-Date: Mon, 11 Aug 2025 16:40:06 +0000
-References: <20250804103015.1104289-1-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20250804103015.1104289-1-neeraj.sanjaykale@nxp.com>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- amitkumar.karwar@nxp.com, sherry.sun@nxp.com
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+The call to nla_strscpy() already zero-pads the tail of the destination
+buffer which makes the additional memset(0) call redundant. Remove it.
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/sched/act_simple.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Mon,  4 Aug 2025 16:00:15 +0530 you wrote:
-> This replaces devm_request_irq() with devm_request_threaded_irq().
-> 
-> On iMX93 11x11 EVK platform, the BT chip's BT_WAKE_OUT pin is connected
-> to an I2C GPIO expander instead of directly been connected to iMX GPIO.
-> 
-> When I2C GPIO expander's (PCAL6524) host driver receives an interrupt on
-> it's INTR line, the driver's interrupt handler needs to query the
-> interrupt source with PCAL6524 first, and then call the actual interrupt
-> handler, in this case the IRQ handler in BTNXPUART.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] Bluetooth: btnxpuart: Uses threaded IRQ for host wakeup handling
-    https://git.kernel.org/bluetooth/bluetooth-next/c/3f9a516852b6
-
-You are awesome, thank you!
+diff --git a/net/sched/act_simple.c b/net/sched/act_simple.c
+index f3abe0545989..8e69a919b4fe 100644
+--- a/net/sched/act_simple.c
++++ b/net/sched/act_simple.c
+@@ -72,7 +72,6 @@ static int reset_policy(struct tc_action *a, const struct nlattr *defdata,
+ 	d = to_defact(a);
+ 	spin_lock_bh(&d->tcf_lock);
+ 	goto_ch = tcf_action_set_ctrlact(a, p->action, goto_ch);
+-	memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
+ 	nla_strscpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
+ 	spin_unlock_bh(&d->tcf_lock);
+ 	if (goto_ch)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.50.1
 
 
