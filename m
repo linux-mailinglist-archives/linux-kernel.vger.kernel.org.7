@@ -1,129 +1,240 @@
-Return-Path: <linux-kernel+bounces-762620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A34B2090A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:41:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E173B2090E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E613A43BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C63518829D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9242D3A83;
-	Mon, 11 Aug 2025 12:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E082D372F;
+	Mon, 11 Aug 2025 12:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="gX/CWJyQ"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="QqFifrMh"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ABD145A05;
-	Mon, 11 Aug 2025 12:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD84EDF6C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916085; cv=pass; b=PH053EpkTrMW7Fvicmp9rd8Q6oHs0KKLOsA9+7cCVrfTyTkjKePPWG2zfoOSwAw/Et+uf8zKvCxiNueHgxjUpOxLk6Upm/qn17Kn5lhMuvYxcJe5YWVPhCVqDisxbYRVbJYfa0+XaytIns7plVjtOnqppJ6yIgDdC6IEptARki4=
+	t=1754916181; cv=pass; b=u+aoMnZ3cRq18BIgEOReMtn2W6KhSnCgpzDfvoJrqYMPLJlIv8w1wY5lVVuSCAoJoGyTldyZUzi+aFIhKep4XJhkQT7aVITu9d7FynEd8mB0WyqAhjsUbfwuiha5S5F8ZxQr+IvQboGQZ0bCzGnrPXldKDJ9M+zxXAsRXkw982Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916085; c=relaxed/simple;
-	bh=U2yhdYGqAT6KsjoRuTApTSiNZyds64i5ntP2Ld/cNGU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fuXOBzER9YfI//BZ1wOEsRGeG25NTPoJhlWHi4DEwiD66IwiMGZ1FY6G6QxuiGOQHPiqCHGQ4+SEyYiiw3ajOU4TqlnyGbiNBjeUAmfmExXKWgzuiUEvQ70i62jNU40g8mIeiC1CXqSfCXJCjF6USRCKY46j5l5u9YbwXFM6n74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=gX/CWJyQ; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1754916181; c=relaxed/simple;
+	bh=XYlL/uFKP1jiqy7HabIgJdyqWkrXMgZlapz7/iuOg2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BOXs0g9gIxFxqAImfgdrrdu4/wUxPoNrqupUzkGBImPelQ9SdaH+f6uHVil1Rp2s6OUEhLQNOWtNXS0D68IdHukOtXAdH7mb+n71ea6y+nhYLneU6msHv9FX5Xv/F5ueP6/eU2DWz5tg89Uwxr95iLUA+Euo9hXX55enSMW3wuA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=QqFifrMh; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754916021; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1754916167; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=hteRfCRvkd67/Dx+dfT1KUe3zys+bioiMiINKAoqpiTvtPDlOOPKcNB/4tVKwVwFvHMX+zLzcvvN8ipbV5MQRiobOr64LC+LtReoaHmoo8FIaaicTy36wtcJ3j88Dxzd3G+4Uy6pQ12JiteUW9OgU0u5XMKeMWuH/5ZDs4BwGTA=
+	b=OrxeoxHqn7SbJYoeowFkaXUqiOvowmRdNvDsl6n5Qm5cXa6SWoif00qhR+t/ziPiDUerQAHMUSABpol1cN+IJvmFddHQyE0bTxn/Fkdi50qrTSvotZ4mOetgtTl5Qdlwb4pbGyYjHWYznfaF6/1yGT9knG9plHG7qpa2ApR3Qrs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754916021; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4iGM2ITegptFt/GB57XpVHMLcIR82cp74UJOaNlV0sw=; 
-	b=VcAWintDg6coTqlLrgPMr08CdjQAmkSsel+lKpq6Kh8IF21WYFLkuRKepDSDUD0T9aN9C5rVcu7rKoVqRt7JdTvX3VNtS1etNT5Df0aW3kz0XwsIDOJmw9+H77SZwdWzUjr3CdXD0lmxRPnbCLMGS7dgvUUk4n2dGelta4xYlWU=
+	t=1754916167; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=F3kVqB/vWxEWDbBQ8Q6U07Ve3BBXfdiR4PHBdfR+t98=; 
+	b=Xc8pkdatySKG3E+jygVjyZM2XadU2ZD8moBcmiXMcOLNP7rX8GlJrL1CAlvRFaSLbz0O1y4iBHW/l2DInCWIJO2f0aaUA5w7IUj4xbvxYYa7Cs7cO72WED1jll8NZD/IFn0sfBHx07JlBDP2wYe1CXjbGNlPgz4ywlXQdiqc6DY=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754916021;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=4iGM2ITegptFt/GB57XpVHMLcIR82cp74UJOaNlV0sw=;
-	b=gX/CWJyQm5KR7h1N2KyiPRq8MQNw2pzdjNaWcZe8wF+RXthtgRjx22s8MqNdJdiz
-	bJJPv4dtcLip+KRMuOEv1uYh6uOFoWtkGR9PW9gofTrl+kAMhB4SA0YLWH2lO20DIsW
-	qMX4h73cw6RxpBErFYkaYYQ4PmiEOWRenASXbqns=
-Received: by mx.zohomail.com with SMTPS id 1754916019156141.85896495716338;
-	Mon, 11 Aug 2025 05:40:19 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Link Mauve <linkmauve@linkmauve.fr>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Kever Yang <kever.yang@rock-chips.com>, Shawn Lin <shawn.lin@rock-chips.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Niklas Cassel <cassel@kernel.org>,
- Damon Ding <damon.ding@rock-chips.com>,
- Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
- Alexey Charkov <alchark@gmail.com>, Patrick Wildt <patrick@blueri.se>,
- Chukun Pan <amadeus@jmu.edu.cn>, Diederik de Haas <didi.debian@cknow.org>,
- Chris Morgan <macromorgan@hotmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-Subject:
- Re: [PATCH v2 1/2] arm64: dts: rockchip: Add the vdpu381 Video Decoders on
- RK3588
-Date: Mon, 11 Aug 2025 08:40:16 -0400
-Message-ID: <2793168.mvXUDI8C0e@trenzalore>
-In-Reply-To: <aJjxjgG1gEaKBVwE@desktop>
-References:
- <20250808193602.142527-1-detlev.casanova@collabora.com>
- <20250808193602.142527-2-detlev.casanova@collabora.com>
- <aJjxjgG1gEaKBVwE@desktop>
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754916167;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=F3kVqB/vWxEWDbBQ8Q6U07Ve3BBXfdiR4PHBdfR+t98=;
+	b=QqFifrMhRLMMwbCcyYq1PKus6mj+EDjLl3M1rJrV2PQ6y+7TQXYoaz/igjk7WzAZ
+	lrzaD8Q8hlwJX0CBet3lkQuOJC/LpQkZJqXJKYW4H7C8uc9pwM+p286ExBPccBz6Eo0
+	u4W6r+GfePPzrjWS8uiY3c2EvMgvpO8HpbgiPiyk=
+Received: by mx.zohomail.com with SMTPS id 1754916165966977.3418279049838;
+	Mon, 11 Aug 2025 05:42:45 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:42:41 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/7] drm/panthor: Add panthor perf initialization and
+ termination
+Message-ID: <qrchlyyic3bezb77ai7gfe7yvthlhiftpkcyd5b2eswmcdxivm@ssvlq5hgh437>
+References: <cover.1753449448.git.lukas.zapolskas@arm.com>
+ <7674845a8c23b379c67b5aa279a29b3963489d26.1753449448.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7674845a8c23b379c67b5aa279a29b3963489d26.1753449448.git.lukas.zapolskas@arm.com>
 
-Hi,
+On 25.07.2025 15:57, Lukas Zapolskas wrote:
+> Added the panthor_perf system initialization and unplug code to allow
+> for the handling of userspace sessions to be added in follow-up
+> patches.
+>
+> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
 
-On Sunday, 10 August 2025 15:22:54 EDT Link Mauve wrote:
-> Hi,
-> 
-> On Fri, Aug 08, 2025 at 03:36:01PM -0400, Detlev Casanova wrote:
-> > Add the vdpu381 Video Decoders to the rk3588-base devicetree.
-> > 
-> > The RK3588 based SoCs all embed 2 vdpu381 decoders.
-> > This also adds the dedicated IOMMU controllers.
-> 
-> Back in the VEPU121 enablement series[1] it had been decided to not
-> expose multiple identical cores yet, because there is no infrastructure
-> yet in the kernel to schedule multiple userland processes on multiple
-> cores, or (more relevant for your usecase) to even combine two cores to
-> reach 8K support.
+Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-That's right, but the device tree still defines the hardware as it is. The 
-driver, however, will  make sure that each instance after the first one is 
-ignored (at least for now).
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c |  2 +
+>  drivers/gpu/drm/panthor/panthor_device.h |  5 +-
+>  drivers/gpu/drm/panthor/panthor_perf.c   | 62 +++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_perf.h   |  1 +
+>  4 files changed, 68 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 15ab329722cc..ab3e65cc17bd 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -98,6 +98,7 @@ void panthor_device_unplug(struct panthor_device *ptdev)
+>  	/* Now, try to cleanly shutdown the GPU before the device resources
+>  	 * get reclaimed.
+>  	 */
+> +	panthor_perf_unplug(ptdev);
+>  	panthor_sched_unplug(ptdev);
+>  	panthor_fw_unplug(ptdev);
+>  	panthor_mmu_unplug(ptdev);
+> @@ -282,6 +283,7 @@ int panthor_device_init(struct panthor_device *ptdev)
+>
+>  err_disable_autosuspend:
+>  	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+> +	panthor_perf_unplug(ptdev);
+>
+>  err_unplug_sched:
+>  	panthor_sched_unplug(ptdev);
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 720d39b9e783..a31dbc1919c8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -27,7 +27,7 @@ struct panthor_heap_pool;
+>  struct panthor_job;
+>  struct panthor_mmu;
+>  struct panthor_fw;
+> -struct panthor_perfcnt;
+> +struct panthor_perf;
+>  struct panthor_vm;
+>  struct panthor_vm_pool;
+>
+> @@ -138,6 +138,9 @@ struct panthor_device {
+>  	/** @devfreq: Device frequency scaling management data. */
+>  	struct panthor_devfreq *devfreq;
+>
+> +	/** @perf: Performance counter management data. */
+> +	struct panthor_perf *perf;
+> +
+>  	/** @unplug: Device unplug related fields. */
+>  	struct {
+>  		/** @lock: Lock used to serialize unplug operations. */
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+> index e58a62ad7988..af1c58e70a78 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.c
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+> @@ -10,6 +10,19 @@
+>  #include "panthor_perf.h"
+>  #include "panthor_regs.h"
+>
+> +struct panthor_perf {
+> +	/** @next_session: The ID of the next session. */
+> +	u32 next_session;
+> +
+> +	/** @session_range: The number of sessions supported at a time. */
+> +	struct xa_limit session_range;
+> +
+> +	/**
+> +	 * @sessions: Global map of sessions, accessed by their ID.
+> +	 */
+> +	struct xarray sessions;
+> +};
+> +
+>  struct panthor_perf_counter_block {
+>  	struct drm_panthor_perf_block_header header;
+>  	u64 counters[];
+> @@ -64,14 +77,61 @@ static void panthor_perf_info_init(struct panthor_device *const ptdev)
+>   * panthor_perf_init - Initialize the performance counter subsystem.
+>   * @ptdev: Panthor device
+>   *
+> + * The performance counters require the FW interface to be available to setup the
+> + * sampling ringbuffers, so this must be called only after FW is initialized.
+> + *
+>   * Return: 0 on success, negative error code on failure.
+>   */
+>  int panthor_perf_init(struct panthor_device *ptdev)
+>  {
+> +	struct panthor_perf *perf __free(kfree) = NULL;
+> +	int ret = 0;
+> +
+>  	if (!ptdev)
+>  		return -EINVAL;
+>
+>  	panthor_perf_info_init(ptdev);
+>
+> -	return 0;
+> +	perf = kzalloc(sizeof(*perf), GFP_KERNEL);
+> +	if (ZERO_OR_NULL_PTR(perf))
+> +		return -ENOMEM;
+> +
+> +	xa_init_flags(&perf->sessions, XA_FLAGS_ALLOC);
+> +
+> +	perf->session_range = (struct xa_limit) {
+> +		.min = 0,
+> +		.max = 1,
+> +	};
+> +
+> +	drm_info(&ptdev->base, "Performance counter subsystem initialized");
+> +
+> +	ptdev->perf = no_free_ptr(perf);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * panthor_perf_unplug - Terminate the performance counter subsystem.
+> + * @ptdev: Panthor device.
+> + *
+> + * This function will terminate the performance counter control structures and any remaining
+> + * sessions, after waiting for any pending interrupts.
+> + */
+> +void panthor_perf_unplug(struct panthor_device *ptdev)
+> +{
+> +	struct panthor_perf *perf = ptdev->perf;
+> +
+> +	if (!perf)
+> +		return;
+> +
+> +	if (!xa_empty(&perf->sessions)) {
+> +		drm_err(&ptdev->base,
+> +			"Performance counter sessions active when unplugging the driver!");
+> +	}
+> +
+> +	xa_destroy(&perf->sessions);
+> +
+> +	kfree(ptdev->perf);
+> +
+> +	ptdev->perf = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+> index 3c32c24c164c..e4805727b9e7 100644
+> --- a/drivers/gpu/drm/panthor/panthor_perf.h
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+> @@ -10,6 +10,7 @@
+>  struct panthor_device;
+>
+>  int panthor_perf_init(struct panthor_device *ptdev);
+> +void panthor_perf_unplug(struct panthor_device *ptdev);
+>
+>  #endif /* __PANTHOR_PERF_H__ */
+>
+> --
+> 2.33.0.dirty
 
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 74 +++++++++++++++++++
-> >  1 file changed, 74 insertions(+)
-> 
-> [snip]
-> 
-> Thanks,
-> 
-> [1]
-> https://lore.kernel.org/all/20240618183816.77597-1-sebastian.reichel@collab
-> ora.com/
 
-Detlev.
-
-
-
+Adrian Larumbe
 
