@@ -1,235 +1,197 @@
-Return-Path: <linux-kernel+bounces-762048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AEDB2018F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEABB2019C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9D9189E5E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC66A1895985
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEBC2DAFD8;
-	Mon, 11 Aug 2025 08:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4342DAFC0;
+	Mon, 11 Aug 2025 08:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UI48hWft"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aw+yhrjd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D4D1E834B;
-	Mon, 11 Aug 2025 08:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC3826B2D3
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754900228; cv=none; b=E9ymAyDIZMBxuqTI4mA1y6fTzY+B5fPhS5lIQyxWq+uYsHOx67xNsDqHwdWFw1emJpunFi0PhsAjFXnYj5+ZkuZpoNGnN3RCFQZdbP+3MGIyRBU1r+e6ssL6n0HpFtdG1ULTKa7jfA4I7iY7DCCrdCh3xNzMVk62VD568lirGtc=
+	t=1754900418; cv=none; b=IKHdAij0kq6o6x6qTYtFF8G4L0UiJ0pcBvdN9vtkp5b7kCIvFiCSfa8p8Ua6VNmJkoSDUxVyRFfbEZTGM/cjqI3bdjhrP9oTQLYtHfl1sJmMqas1wpY9RRZEtnPYm1KoJQJmeKZhXrjl8HKWmlifZtKJPzd8uDr1t+D0FK28U9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754900228; c=relaxed/simple;
-	bh=yL/qUikanLs+aGEmFjlLt7vxOWxjOZmEwCqPg0afrV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kngh4iWH4Bh9MTSzLfmY9k05Jr+jM5Bhe/SGoQEX2opK8FvjK2egKNq6q+2LfeDsgBRmM1Ap1OMCpp1ZNKu10ppuuCKu7VpcaFZvBa7nvYXKKfo5YyTRbcefZ9NVaN271zLt+k9H3W6EpUgrXFTCcTm3BpjFoihyTE3/3iF6oEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UI48hWft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15B2AC4CEF6;
-	Mon, 11 Aug 2025 08:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754900227;
-	bh=yL/qUikanLs+aGEmFjlLt7vxOWxjOZmEwCqPg0afrV4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UI48hWft/oTk2ppV8lEBCRugT2YlIFQQaaS2fdZwl/4hq5z6Al8aeBmZhUQy9qDIV
-	 oWE1/rQxs5lZI20al/Kzhp23oW49q6idQJTpxGMBTJz6bxVwxDba0N81Xq6YiLgOve
-	 HFHnOpUA0dQoZmVuax6F7T2awFOoAkaGaFBvemFcrTUvKLapi1qwuEYZpXNK0FZhai
-	 64kXHx9qwq+kZw41mLJRl0kh85GWcdbNxPa71l8Mc3mDTF3DAEFIQT73x7gFUF2Lft
-	 nFuwfc81MeOtQX7BkBVjapukZkBIik1uIiGroU3msCHO0spiMal7f5Y5tK5v1aQ9kt
-	 QplmBTHv/ExQg==
-Date: Mon, 11 Aug 2025 13:46:55 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Palash Kambar <quic_pkambar@quicinc.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_nitirawa@quicinc.com
-Subject: Re: [PATCH v1] ufs: ufs-qcom: Align programming sequence of Shared
- ICE for UFS controller v5
-Message-ID: <edrf3bobjnknwydzeitfwns7lehgf65p5prcohmc7eexhzoami@ywlamyweunmn>
-References: <20250806063409.21206-1-quic_pkambar@quicinc.com>
- <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
- <2e655067-cd7e-4584-aa07-998b517ac314@quicinc.com>
- <pewnau4ltrf2yu3xxdq6rs6xhz45zlo3dt3jnkzhxitmezz2ft@2k7pgpoz5iey>
- <3601cdce-a269-4d29-bc21-b925fcc499e2@quicinc.com>
+	s=arc-20240116; t=1754900418; c=relaxed/simple;
+	bh=ShksK8LFzoYLyrebpTx4xYUWaFAc0Qhb+cPc6re2V4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CREiP3llHNmV3lvRnTi1+JIiMf6ENGcOdMgLRxFeyTIUJ1STQhq62dB4hQhQp/zYgGsIWI2yAqL2cnQldC+6T730jsUuynjiNK4bkmEM5XPrjUF8KPeI7vavdVkpEHcEf/SEnjgoHEHAWASLApl95VI9Tl4eIgr92LrBKgTbVd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aw+yhrjd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754900415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MO0GOEnqsUi00/HJp4tcv3myQ4l9wSODIZAoAGm0jMk=;
+	b=aw+yhrjdISxg3TR7hseRE3oT6Y6+Ov+Ktrzh/u7EcLwc8bcHUKoJ/D6FPz1dD6JTlOVigP
+	eb8iFaTl/+S/TeVhzD6nhM/IIw8M7oZ+QJmXLGo0fMMpYN6WCZnK+Z+zCnxY9hIsTzGxLq
+	nP6vz4+XDmiBa9zxLrndTUx/M6yJlNc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-ayuXsKOQMxy54hdTKihylA-1; Mon, 11 Aug 2025 04:20:14 -0400
+X-MC-Unique: ayuXsKOQMxy54hdTKihylA-1
+X-Mimecast-MFC-AGG-ID: ayuXsKOQMxy54hdTKihylA_1754900413
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so21166185e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 01:20:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754900413; x=1755505213;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MO0GOEnqsUi00/HJp4tcv3myQ4l9wSODIZAoAGm0jMk=;
+        b=BtxTTnXXLbVpP3JQODwToRArt2Z80ig3J+u99iLpwA1zi39wlTMS1X17n/00RdpmeV
+         nwsmv9CO04GMfgmleWFx5VlDWe4FfRE71rzLmWTs41Ssd6M5GKjn/q1zs9e6/dYjiUiP
+         ANTJXOIMBXKBotE9qguf+9Vv0mLl8wYflDomIEKu4XAqygkXJYQiwZ7tb5KwcI0X08uz
+         Vv6WNJEeN4QDKHvR/NQKNyazMfiQqCvWtrGIfe1ZZ+PbvBGUtGJa1Gs4q0naKbGImclu
+         wgwPSmolnocyLtqeYB0+Ok2CnGkpM48x2ANa50K1loRjdL3ntwCFnkzLiWbRlcK9KCzB
+         /Quw==
+X-Gm-Message-State: AOJu0YxaU9Nd1KDDjhQXW2AZySoBnxac7RVvPyUkNqG44mSR1tbEbHBu
+	sC2Ugix1S1/wfGStBHzzvdFyOJABJ02k+B/VoZPRP6Ehu0PhwtmWJ5WYychf6Fuc1rOzD9TuHuT
+	dTxvZSqtirXrXdbx5H/pRANqY1vj6W6kpy0j8a4bwukc8cbHu4HCQp2O8schaPC9UBA==
+X-Gm-Gg: ASbGncsqAUBNLRSsZ+LYbNb0A1VVS2nNI7pqvI8kp2TS6ELrpeB/IahhgqQY56n9bBq
+	q7cZl+rqJ/gnBPZCTYlvldAu4jdvx0svjJyO6rckmt01XwBgQ4OCwb4CfNLeHNbXkMrjM7NDImb
+	XGxEBtIHvs88Elby9Dp5jE5tfMTcrNfQE7DXaf0TIHu0F30G9te3wVci4/PTBm55mOmi8tiiLyv
+	YSGAUCrENwe16wtF0ywJEEOsFoqbLte1TmLKZA5P5EFvJt1FlT8L9HHWG6mr9RAHkIK7dN2VYeH
+	alDIegn48xi4pJZJfEEwPxI/wrAiFSvxEgSia1T99YYZOKhr6bLJbkq27zS2ZN6sjWJ9nj5UoTI
+	zEmXUbr9Heh3NcA+GrKBr5mXW+h2CxObWzrD2WsHiZzh5w4RJbpmRPTQA/hzDt7MLgk4=
+X-Received: by 2002:a05:600c:3589:b0:456:24aa:958e with SMTP id 5b1f17b1804b1-459f4e9e4c9mr108728085e9.0.1754900412908;
+        Mon, 11 Aug 2025 01:20:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhap84eMeBm3c9wHG7W04/VJ3z05W3bAuXpSTfnt7XXnx2D6Q+1WZFV+rDMQrb7QHIlbcnsg==
+X-Received: by 2002:a05:600c:3589:b0:456:24aa:958e with SMTP id 5b1f17b1804b1-459f4e9e4c9mr108727745e9.0.1754900412473;
+        Mon, 11 Aug 2025 01:20:12 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5869cccsm266006715e9.17.2025.08.11.01.20.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 01:20:11 -0700 (PDT)
+Message-ID: <96992842-f576-4e19-afcb-7455452fe506@redhat.com>
+Date: Mon, 11 Aug 2025 10:20:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3601cdce-a269-4d29-bc21-b925fcc499e2@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org,
+ davem@davemloft.net, andreas@gaisler.com
+Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org,
+ ryan.roberts@arm.com, osalvador@suse.de
+References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
+ <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
+ <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
+ <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
+ <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 07, 2025 at 03:50:58PM GMT, Palash Kambar wrote:
+On 09.08.25 08:23, John Paul Adrian Glaubitz wrote:
+> Hi Anthony,
 > 
+> On Sat, 2025-08-09 at 00:37 +0200, John Paul Adrian Glaubitz wrote:
+>>> Maybe try enabling CONFIG_DEBUG_VM_IRQSOFF, CONFIG_DEBUG_VM, and perhaps
+>>> CONFIG_DEBUG_VM_PGFLAGS. That might help detect a problem closer to the
+>>> source. You can also try adding transparent_hugepage=never to the kernel
+>>> boot line to see if compiling in THP support but not using it is okay.
+>>
+>> OK, I will try that. But not today anymore. It's half past midnight now here in Germany
+>> and I was debugging this issue almost all day long. I'm glad to have finally been able
+>> to track this down to THP support being enabled.
+>>
+>> Maybe you can try whether you can reproduce this in QEMU as well.
 > 
-> On 8/6/2025 11:19 PM, Manivannan Sadhasivam wrote:
-> > On Wed, Aug 06, 2025 at 06:11:09PM GMT, Palash Kambar wrote:
-> >>
-> >>
-> >> On 8/6/2025 4:44 PM, Manivannan Sadhasivam wrote:
-> >>> On Wed, Aug 06, 2025 at 12:04:09PM GMT, Palash Kambar wrote:
-> >>>> Disable of AES core in Shared ICE is not supported during power
-> >>>> collapse for UFS Host Controller V5.0.
-> >>>>
-> >>>> Hence follow below steps to reset the ICE upon exiting power collapse
-> >>>> and align with Hw programming guide.
-> >>>>
-> >>>> a. Write 0x18 to UFS_MEM_ICE_CFG
-> >>>> b. Write 0x0 to UFS_MEM_ICE_CFG
-> >>>>
-> >>>> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
-> >>>> ---
-> >>>>  drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++++
-> >>>>  drivers/ufs/host/ufs-qcom.h |  2 ++
-> >>>>  2 files changed, 26 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> >>>> index 444a09265ded..2744614bbc32 100644
-> >>>> --- a/drivers/ufs/host/ufs-qcom.c
-> >>>> +++ b/drivers/ufs/host/ufs-qcom.c
-> >>>> @@ -744,6 +744,8 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
-> >>>>  	if (ufs_qcom_is_link_off(hba) && host->device_reset)
-> >>>>  		ufs_qcom_device_reset_ctrl(hba, true);
-> >>>>  
-> >>>> +	host->vdd_hba_pc = true;
-> >>>
-> >>> What does this variable correspond to?
-> >> Hi Manivannan,
-> >>
-> >> It corresponds to power collapse, will rename it for better readability.
-> >>
-> > 
-> > What is 'power collapse' from UFS perspective?
-> 
-> As part of UFS controller power collapse, UFS controller and PHY enters HIBERNATE_STATE
-> during idle periods .The UFS controller is power-collapsed with essential registers 
-> retained (for ex ICE), while PHY maintains M-PHY compliant signaling. Upon data transfer
-> requests, software restores power and exits HIBERNATE_STATE without requiring re-initialization, 
-> as configurations and ICE encryption keys are preserved.
-> 
+> OK, first data point: Setting CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y causes the backtrace during
+> boot to disappear with CONFIG_TRANSPARENT_HUGEPAGE=y. However, it still disappears later when
+> running "apt update && apt -y upgrade" again:
 
-AFAIK, Hibern8 is a UFS *link* specific feature, not controller specific. In
-other peripherals, power collapse means powering off the controller entirely and
-then relying on the hardware logic to retain the register states. I believe the
-same behavior applies to UFS also.
+Just to give some context: (m)THPs in file systems will get used 
+independently of CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y.
 
-In that case, I would expect you to check for the power collapse in
-ufs_qcom_resume() using some logic and toggle the relevant bits in UFS_MEM_ICE.
+So CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y primarily only controls usage of 
+(m)THPs for anonymous memory, but not in the pagecache.
 
-The current logic you proposed doesn't really make sure that the controller is
-power collapsed. You just assume that ufs_qcom_suspend() would allow the
-controller to enter power collapse state, but it won't. If the user has opted
-for 'spm_lvl' to be '0', then I don't think the controller can enter power
-collapse state.
 
-> > 
-> >>>
-> >>>> +
-> >>>>  	return ufs_qcom_ice_suspend(host);
-> >>>>  }
-> >>>>  
-> >>>> @@ -759,6 +761,27 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
-> >>>>  	return ufs_qcom_ice_resume(host);
-> >>>>  }
-> >>>>  
-> >>>> +static void ufs_qcom_hibern8_notify(struct ufs_hba *hba,
-> >>>> +				    enum uic_cmd_dme uic_cmd,
-> >>>> +				    enum ufs_notify_change_status status)
-> >>>> +{
-> >>>> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> >>>> +
-> >>>> +	/* Apply shared ICE WA */
-> >>>
-> >>> Are you really sure it is *shared ICE*?
-> >>
-> >>  Yes Manivannan, I am.
-> >>
-> > 
-> > Well, there are two kind of registers defined in the internal doc that I can
-> > see: UFS_MEM_ICE and UFS_MEM_SHARED_ICE. And hence the question.
-> > 
-> >>>
-> >>>> +	if (uic_cmd == UIC_CMD_DME_HIBER_EXIT &&
-> >>>> +	    status == POST_CHANGE &&
-> >>>> +	    host->hw_ver.major == 0x5 &&
-> >>>> +	    host->hw_ver.minor == 0x0 &&
-> >>>> +	    host->hw_ver.step == 0x0 &&
-> >>>> +	    host->vdd_hba_pc) {
-> >>>> +		host->vdd_hba_pc = false;
-> >>>> +		ufshcd_writel(hba, 0x18, UFS_MEM_ICE);
-> >>>
-> >>> Define the actual bits instead of writing magic values.
-> >>
-> >> Sure.
-> >>
-> >>>
-> >>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
-> >>>> +		ufshcd_writel(hba, 0x0, UFS_MEM_ICE);
-> >>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
-> >>>
-> >>> Why do you need readl()? Writes to device memory won't get reordered.
-> >>
-> >> Since these are hardware register, there is a potential for reordering.
-> >>
-> > 
-> > Really? Who said that? Please cite the reference.
-> > 
-> >>>
-> >>>> +	}
-> >>>> +}
-> >>>> +
-> >>>>  static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
-> >>>>  {
-> >>>>  	if (host->dev_ref_clk_ctrl_mmio &&
-> >>>> @@ -2258,6 +2281,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
-> >>>>  	.hce_enable_notify      = ufs_qcom_hce_enable_notify,
-> >>>>  	.link_startup_notify    = ufs_qcom_link_startup_notify,
-> >>>>  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
-> >>>> +	.hibern8_notify		= ufs_qcom_hibern8_notify,
-> >>>
-> >>> This callback is not called anywhere. Regardeless of that, why can't you use
-> >>> ufs_qcom_clk_scale_notify()?
-> >>>
-> >>
-> >> According to the HPG guidelines, as part of this workaround, we are required to reset the ICE controller during the Hibern8 exit sequence when the UFS controller resumes from power collapse. Therefore, this reset logic has been added to the H8 exit notifier callback.
-> >>
-> > 
-> > Please wrap the replies to 80 column.
-> > 
-> > Well, we do call ufshcd_uic_hibern8_exit() from these callbacks. So why can't
-> > you reset the ICE after calling ufshcd_uic_hibern8_exit() here?
 > 
-> As per HPG guidance, the ICE Reset workaround is required only after the
-> controller undergoes a power collapse. In the UFS subsystem, power collapse
-> is managed via the GDSC (GCC_UFS_MEM_PHY_GDSC), which is part of GenPD
-> (power domains). Since GenPD is tied to runtime suspend operations, we are
-> setting the power collapse flag during runtime suspend and checking this
-> flag during hibernate exit.
-> 
-> 
-> > 
-> >> The ufs_clk_scale_notify function is invoked whenever clock scaling (up or down) occurs, regardless of whether a power collapse has taken place. Hence, the ICE controller reset was specifically added to the H8 exit notifier to ensure it is executed only in the appropriate context.
-> >>
-> > 
-> > Please define what 'power collapse' mean here. And as I said before, you are
-> > not at all calling this newly introduced callback.
-> 
-> This is not a newly introduced callback, Mani. We are registering for
-> an already existing notifier. You may refer to ufshcd.c, where this
-> notifier is invoked.
-> 
+> [  170.472743] kernel BUG at fs/ext4/inode.c:1174!
+> [  170.532313]               \|/ ____ \|/
+>                               "@'/ .. \`@"
+>                               /_| \__/ |_\
+>                                  \__U_/
 
-Okay, my bad. You could've mentioned something about this callback in the commit
-message to make others aware that you are reusing an existing callback.
+Is this the
 
-- Mani
+BUG_ON(to > folio_size(folio));
+
+?
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Cheers,
+
+David / dhildenb
+
 
