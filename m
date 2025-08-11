@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-762809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3108DB20B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D634B20B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C13D1764E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A396C18C56D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCD72E2EE6;
-	Mon, 11 Aug 2025 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973C01CEEBE;
+	Mon, 11 Aug 2025 14:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GatdO1cG"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gBLXbwKf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22DD2E2664;
-	Mon, 11 Aug 2025 13:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDB335971
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920616; cv=none; b=CqVhtzDX6GJngL5eMKwlsx6tbz2MoZk/L2+wUIq67/ZOxGlk8moIRQqE//OgrmHultzXpkZIv0WKk+607gsU9hyBbWKvrM1pDvCOwyHV+ma/obJxekY4g+R6kCxhsQTtocw7zqbtV3SnDcxRwCtJnb7nBj2aUxD0KvpmAuW3B0g=
+	t=1754920829; cv=none; b=ekD1wnQWB9vdfYgcxyFs5MJ6YCoezkL+afwCyoBtHEG/wIIA8i/IgTEhJLHSEV5x+8+clXNRwi+UvrRoEN7pBZA9a3GdWburDzhgdxkIYvELQzu3WsETGzZXHwVI2yMM8EBC6T03ZMr4ceTFsd4z0wqUG8PDoUK4DFXkzGh8kGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920616; c=relaxed/simple;
-	bh=UsLYUXKEmpDtrxFGnMoWzMED061Pyj3KjzMxEq95bVg=;
+	s=arc-20240116; t=1754920829; c=relaxed/simple;
+	bh=8eRfwJVOXcU255XN6wwyRC5I2yoHv/qNeThXwc0+ZI0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nutQKZvs//nZl2AV71/VVCQaCePvi9blQjvJ6m3GIhXDCaRwuCx4C5/+9mg3TjimQcOc9wTgphDCWo2lUYupkCv5+Hb/b0YGAoMsXCaB6GvtwII1p7TADEqDAuqsl5lwYaxTHgWrl4B1hwWDqKMsNQEazlwjM3NBixxjSHME4n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GatdO1cG; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b0619a353dso34881251cf.3;
-        Mon, 11 Aug 2025 06:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754920614; x=1755525414; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GcKaw7u5cl9yl5NJ5ydxA4qwhPDKsY0xBqWfCdvJ9E8=;
-        b=GatdO1cG6DAVdQPaCIyx0A7dW255NAtU9DqYT87Dy39z9TI+557TKSCHoEW8Eh2Qe8
-         nS4goLE5G8EESbyXuiczXgHhkFdNsWtkJDhenGIWEcMkGb106tNKJBYQus4bXu7Nm6WA
-         iPCkiQhtfu65YTyLfLX0+sqFP6YKs3F/iO7xM1IFYp2+qvkxPEjMVCXcevuSSNw5qqjD
-         Bqkx1MsWww50ZoV36JpR3puoQK0/DcZvGxb41YGGU7UX4ww5EASzfUVZiEacOQ3bSDy7
-         mJppIHANUXYFmf+kVDBud3adQZroGpNf4mUXF1Vl4xs8wZ/IGhv5XW0sH1N2nNC3LvKK
-         3uog==
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBeSRt42RND6Y7JYnHA8y0BMcK6MF9zxpAjQWKiMKkMEOA+NZsybAAdlmBbFcJrKVx2AmGB8hVllAFALd3JpyKN2NhBABXePlVgxIPndM1HtN/CoLmo76si4zMTBS4j2YlK1088PsjNkiWuLoq8JD99aN2ZvmXD55JZGlLhrVps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gBLXbwKf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754920827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/lG6B8pei2eYuQuxEro82WAinqULNxMleyX0BHmMNsk=;
+	b=gBLXbwKfhpQqpIAeF4VH3QUtWNqyoHqiH+nxjsitfZd5zlY7mlPAUC9eVsp/9gNq3dfmlj
+	dYw3LCEz1S2/ZI0R5RgJq4wGAGkYYCNg5nTDSlBkGR6uRYvommXaJlcQWOiHZNc968Q78k
+	QLL7adXhoDUgrv0sYFAQQbRaF+wteAc=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-685-jvjLQmZ2MF-hrDE3ijexHQ-1; Mon, 11 Aug 2025 10:00:24 -0400
+X-MC-Unique: jvjLQmZ2MF-hrDE3ijexHQ-1
+X-Mimecast-MFC-AGG-ID: jvjLQmZ2MF-hrDE3ijexHQ_1754920824
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-70e4bd6510eso69677687b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:00:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920614; x=1755525414;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GcKaw7u5cl9yl5NJ5ydxA4qwhPDKsY0xBqWfCdvJ9E8=;
-        b=eE94y+kdQucFDw0AAnI4WTE5vPSFQNY1q49rcf6o9DXUqtTuM9QTAm0359s49MGLBL
-         hOSuSTPxJGWK2T1WDRqSFD9PZEg20NColdu1RExJAZRsUq02SIWr7sAoFi1+tYDAIlfb
-         zTA0T9nl05F6Ms/Iwal5pQHe7G1MtyXYYVXsV9njO75YyvF9XJOMlHodV7KhtsLmsiYT
-         LFdIRKhnmowujhBxQ2FHn42lMLq9CWs9KivAL8xM91MDLsX3A7QM7+xhnSasjFOobl9E
-         ervGtsE7V9SJDSNccHHYlIqxdYffJQLcbY/9Z+OMLx7aawgHiLI0BC9F9qLnneP0ngEa
-         xLnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/OOFXzrF4Z30f4PqtABhGzqP+kAmyHMh+b2NRpfpxe6il054RKMY54bO3TAONqgwFIZv83zfNychZiKk=@vger.kernel.org, AJvYcCWPU0R3xgXCfsJZe2V8cm10J5Zmu1SHKbe5Bn9RQPjS6kX6D48kdKdsK4Y0ACCWt2XoVO4l2fbePLGm@vger.kernel.org, AJvYcCWcTISLnZliu8cfPyj7gu8p0vPDfGYfGoneWr6l6YZnrtDaf97PiiPkN65leYW6UCSXT+4zXsZU6Z5Imqf4Yl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv3/BA8HfzlAL5RMyGyQHt3odhZl9jjYEBvsHyIo0hS+kl4Yra
-	3Ja/EcwTxas95fKzJ9X7BvBTzrNboemmrCuC+m1rhefp2iCv5FXxwokw
-X-Gm-Gg: ASbGnctsen7ebBUE7IqfbSodQYIv5zhz/eFcZuukEkujoaUrbI1vuwEkXWiRtGSIUk3
-	FZ7Do+SGkNRQPmjkj9hsjwxr9p2TpfJDRTCzhu/Dgs3XpIvSS0h+4wULb0ZTN74BHTWhhXZcyPu
-	jxtDNhn9YUup2wiQklXen5sni1/J5qObAWb3AumKeu+P50mu59UOpCtJX3SPaAvOJYKTJWdKxIt
-	Nia/6ioeHOSNvjFwNMgc8Q6PcEJcjzw17iOue+t3KwvtR5JRlGojwHHQh0VVnAQSXllyBUnM5zC
-	6V1WIi+FyfL6hdcJ7iYRY1AvIOxJPhmPXZ1QP0etgSOf5iKZ9wCetFYqfQPzxocLz5jmnSyH9X9
-	6+9FwaBOVDv/Ub79v717DRP8hMaeHiMblwoYGRTEBdVLor9+rfwhPfw1p0qK4s1juZhn35xp3go
-	i7KF6pKPKcVmmpisMTvmjlaIuBkLv1v8Y4VQ==
-X-Google-Smtp-Source: AGHT+IEpNOny78GtYin3Z9CdQL7mUpJ0txiUwOuBzB1kVUNFsbjYXSkHT3D6Q0kbVYXs3Uqc0OdSsw==
-X-Received: by 2002:a05:622a:a953:20b0:4b0:80c7:ba33 with SMTP id d75a77b69052e-4b0bc71bf16mr101696271cf.23.1754920613508;
-        Mon, 11 Aug 2025 06:56:53 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b069ca56e5sm102676711cf.40.2025.08.11.06.56.52
+        d=1e100.net; s=20230601; t=1754920824; x=1755525624;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lG6B8pei2eYuQuxEro82WAinqULNxMleyX0BHmMNsk=;
+        b=D4CRYqi8ZrXi0fXc5HglEGPsAkUNjyxVB3nVuM3ROkZ34cHCOo1MYHVgrm2JRZx0Km
+         B6k91l5ZXkaZ1Bs9kERatJp0Y+tu8xlLXGE7TBaJDm49FYSxzrFck8lhzarYURlfcbPG
+         jg8PrWd2N+M6CkAIe42ZDwd+9cK625xrhjBEi15/VGwypw0bV4fiXaeLcLmN0WW27Ul1
+         wnYHDRshw09xNOe8cR/k+X4xES8jDH3hCnbl8ypZVz2pz7id6AKutPWx4WGMgD2vTY/m
+         Eh9pVS+yX6YCieB+Z+iYKGXzVuWfoIdYx5k9hNHcLi+P8eclVIiGeBseQIWi4oj3GfEn
+         ZyxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/cO1Uhp4UC/fPiyy28QY6OQTTpZvzUvgEIHkN8c3je65PeBCzjpua4Gi1V7C8ecQ7cWuNVByV0LAPh9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz0KZoaEUeiJ4w4cvA9++H3GIbabS17rZI/Ro5LBuMgv9q1Jfc
+	oX7ZtJnl3+QWzqzmpUMbpdmPZNUl/mQe/J4njX0LdnV21CuiKC2RD/5h2te0ZR7pRZHONBiafvq
+	k6TDrlI2mFmnWNfg7EQfyx3BCmyx+/snTAnwz4KV31cjCIDe9BADJARRA86XfYeZvoQ==
+X-Gm-Gg: ASbGncuG31rM4CNo89iXBcpBv5CqxFSblYvuLH2DL1uGQYc4JplGGLPwEyKKzyZyE5o
+	CiauL+fSFfdZEumM5TeiPMdH59/tzszYGsBV6aJTA1C2BFv6InUtK8+Lnx392S+yngWovA33H7/
+	E5TgXZ7vJbgt34qEs+Fk8ckKN/Cp/H6eIdmlO0OQ+KgUWVWLEi0OaF0Z8ly+u+t7M5PIST/qYdX
+	QhjWxXbheIP98hqOx7cmVwc1kUpHfP7vIyV4G6kysaXOhQeJY7ILsxExbP0rfXzFg5HAv5ieotg
+	tipjPsmVAweMXNT948B1n73xTRVFLkge
+X-Received: by 2002:a05:6902:26ca:b0:e90:33c8:1b2d with SMTP id 3f1490d57ef6-e904b4a29cdmr12331028276.14.1754920823310;
+        Mon, 11 Aug 2025 07:00:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGObVjBZuwdQ+dSw6tzVznx3yYM1y550DASu5Gp1CEzbUS3E9GPq/e/G9AAjaDuhhSGdHdGWA==
+X-Received: by 2002:a05:6902:26ca:b0:e90:33c8:1b2d with SMTP id 3f1490d57ef6-e904b4a29cdmr12330859276.14.1754920821822;
+        Mon, 11 Aug 2025 07:00:21 -0700 (PDT)
+Received: from x1.local ([174.89.135.171])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8fd388478dsm9710327276.31.2025.08.11.07.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:56:53 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 795BEF4006C;
-	Mon, 11 Aug 2025 09:56:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 11 Aug 2025 09:56:52 -0400
-X-ME-Sender: <xms:pPaZaI_h27NZriDfbSVevKKo2y5BoZWzsyAFd_lD4g6_M9InUCGErg>
-    <xme:pPaZaHSNvyjcbXtFaKxFu5x0GZkulUy4kDH9TRGKj_wv0cd5LyCzkOvlVTJOJ_n5B
-    r6J-EDJltFUgxzELA>
-X-ME-Received: <xmr:pPaZaPvPeIYqpUh7wbygKsdcF1KtLRbzTTYNmNzSHSb-XeCI2kyjP7hXiQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvieefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpedvieehgedtudfgueekheeuudethfejfefhhfdvgedtleduvdejveehveetgeet
-    jeenucffohhmrghinhepuggvvhhitggvrdgrshenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
-    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
-    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
-    udelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhhitggvrhihhhhlsehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopegurghnihgvlhdrrghlmhgvihgurgestgholhhl
-    rggsohhrrgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhn
-    fegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsoh
-    hrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdr
-    vgguuhdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgh
-    hrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:pPaZaB5in-MZV8f6vU7DIZRuZMLZYUWCUv5GLcogrHTnrC6MIKyAiA>
-    <xmx:pPaZaOLyYbkhJSEJf9q0cSMIYsCaPCBCjfmxzE_nFzN5JGbTRMQUWg>
-    <xmx:pPaZaLRqou2ICYP8mMCjv8zVoq5BSQda5GBnjqEJlW9sYGzmWkIzVQ>
-    <xmx:pPaZaBr-xgz-mqVj1J1Ko_yzA2D6OS6KS4lePuPeyqBBebGFhxgZ9A>
-    <xmx:pPaZaJbVSTjiJSIzUAV-V0r5svy4tW9LFvJxMyC89w7I8MNGiGXisEK8>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 09:56:51 -0400 (EDT)
-Date: Mon, 11 Aug 2025 06:56:50 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Benno Lossin <lossin@kernel.org>, Dirk Behme <dirk.behme@gmail.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2] rust: irq: add &Device<Bound> argument to irq
- callbacks
-Message-ID: <aJn2ogBSmedhpuCa@Mac.home>
-References: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
+        Mon, 11 Aug 2025 07:00:21 -0700 (PDT)
+Date: Mon, 11 Aug 2025 10:00:07 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+	ngeoffray@google.com, Suren Baghdasaryan <surenb@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Barry Song <v-songbaohua@oppo.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+Message-ID: <aJn3Z3q_kZl4Nob2@x1.local>
+References: <20250807103902.2242717-1-lokeshgidra@google.com>
+ <aJT7qQzEs_p36yfI@x1.local>
+ <CA+EESO64MOZaJHyY_mTy6Gqvaz=CkPLHgc-UZ1rg8FXcPyh0aA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+EESO64MOZaJHyY_mTy6Gqvaz=CkPLHgc-UZ1rg8FXcPyh0aA@mail.gmail.com>
 
-On Mon, Aug 11, 2025 at 12:33:51PM +0000, Alice Ryhl wrote:
-[...]
-> @@ -207,8 +207,8 @@ pub fn new<'a>(
->              inner <- Devres::new(
->                  request.dev,
->                  try_pin_init!(RegistrationInner {
-> -                    // SAFETY: `this` is a valid pointer to the `Registration` instance
-> -                    cookie: unsafe { &raw mut (*this.as_ptr()).handler }.cast(),
-> +                    // INVARIANT: `this` is a valid pointer to the `Registration` instance
-> +                    cookie: this.as_ptr().cast::<c_void>(),
+On Fri, Aug 08, 2025 at 09:29:58AM -0700, Lokesh Gidra wrote:
+> On Thu, Aug 7, 2025 at 12:17 PM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > Hi, Lokesh,
+> >
+> > On Thu, Aug 07, 2025 at 03:39:02AM -0700, Lokesh Gidra wrote:
+> > > MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
+> > > for moving present pages. Mitigate this cost by opportunistically
+> > > batching present contiguous pages for TLB flushing.
+> > >
+> > > Without batching, in our testing on an arm64 Android device with UFFD GC,
+> > > which uses MOVE ioctl for compaction, we observed that out of the total
+> > > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
+> > > ~20% in vm_normal_folio().
+> > >
+> > > With batching, the proportion of vm_normal_folio() increases to over
+> > > 70% of move_pages_pte() without any changes to vm_normal_folio().
+> >
+> > Do you know why vm_normal_folio() could be expensive? I still see quite
+> > some other things this path needs to do.
+> >
+> Let's discuss this in Andrew's reply thread.
 
-At this moment the `Regstration` is not fully initialized...
+Sorry to get back to this late.  Thanks for the link, Andrew!
 
->                      irq: {
->                          // SAFETY:
->                          // - The callbacks are valid for use with request_irq.
-> @@ -221,7 +221,7 @@ pub fn new<'a>(
->                                  Some(handle_irq_callback::<T>),
->                                  flags.into_inner(),
->                                  name.as_char_ptr(),
-> -                                (&raw mut (*this.as_ptr()).handler).cast(),
-> +                                this.as_ptr().cast::<c_void>(),
->                              )
+> 
+> > > Furthermore, time spent within move_pages_pte() is only ~20%, which
+> > > includes TLB-flush overhead.
+> >
+> > Indeed this should already prove the optimization, I'm just curious whether
+> > you've run some benchmark on the GC app to show the real world benefit.
+> >
+> I did! The same benchmark through which I gathered these numbers, when
+> run on cuttlefish (qemu android instance on x86_64), the completion
+> time of the benchmark went down from ~45mins to ~20mins. The benchmark
+> is very GC intensive and the overhead of IPI on vCPUs seems to be
+> enormous leading to this drastic improvement.
+> 
+> In another instance, system_server, one of the most critical system
+> processes on android, saw over 50% reduction in GC compaction time on
+> an arm64 android device.
 
-... and interrupt can happen right after request_irq() ...
+Would you mind add some of these numbers into the commit message when you
+repost?
 
->                          })?;
->                          request.irq
-> @@ -258,9 +258,13 @@ pub fn synchronize(&self, dev: &Device<Bound>) -> Result {
->  ///
->  /// This function should be only used as the callback in `request_irq`.
->  unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mut c_void) -> c_uint {
-> -    // SAFETY: `ptr` is a pointer to T set in `Registration::new`
-> -    let handler = unsafe { &*(ptr as *const T) };
-> -    T::handle(handler) as c_uint
-> +    // SAFETY: `ptr` is a pointer to `Registration<T>` set in `Registration::new`
-> +    let registration = unsafe { &*(ptr as *const Registration<T>) };
+Thanks,
 
-... hence it's not correct to construct a reference to `Registration`
-here, but yes, both `handler` and the `device` part of `inner` has been
-properly initialized. So
+-- 
+Peter Xu
 
-	let registration = ptr.cast::<Registration<T>>();
-
-	// SAFETY: The `data` part of `Devres` is `Opaque` and here we
-	// only access `.device()`, which has been properly initialized
-	// before `request_irq()`.
-	let device = unsafe { (*registration).inner.device() };
-	
-	// SAFETY: The irq callback is removed before the device is
-	// unbound, so the fact that the irq callback is running implies
-	// that the device has not yet been unbound.
-	let device = unsafe { device.as_bound() };
-
-	// SAFETY: `.handler` has been properly initialized before
-	// `request_irq()`.
-	T::handle(unsafe { &(*registration).handler }, device) as c_uint
-
-Thoughts? Similar for the threaded one.
-
-Regards,
-Boqun
-
-> +    // SAFETY: The irq callback is removed before the device is unbound, so the fact that the irq
-> +    // callback is running implies that the device has not yet been unbound.
-> +    let device = unsafe { registration.inner.device().as_bound() };
-> +
-> +    T::handle(&registration.handler, device) as c_uint
->  }
->  
-[...]
 
