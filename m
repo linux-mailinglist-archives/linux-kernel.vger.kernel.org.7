@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-762758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C3FB20AA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D782B20AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4012A4D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484603A8FD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA2B1BCA1C;
-	Mon, 11 Aug 2025 13:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7FF1E1C1A;
+	Mon, 11 Aug 2025 13:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="KxR+jFMl"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lqhaLi57"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19090188713
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3743217A309
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920136; cv=none; b=Yr/aeFiRoiOwabYjzA1WAr11WJqSeKqCSBQsY6zdufxoJ/oTtYuzLdzQ3Bz27HK7eQ0kf8Oa+/FjiZTw/C427V8D7lhwVwGKrApqVAO4p36VhloVlgFBb66wjLBs2nc4WtcbIGEFHWn+9EPxSZxyPAZw14SPOxLB/V09XHuMNKM=
+	t=1754920182; cv=none; b=QRAqESMpn5EwClO9TRDM4+y4XVa7pQee3vf33Lo8WuRMOvdiA6vE7nQZF4KOAhM9bJsJTKzPAA46ExXacvmQ0KNaVK6O0XmQZ/U6ZW+IqCm+HSNMk/6/+XwEOk3h+FYpHkY9tj1KnA/sA04WKZuGaSOP043AzQoTx8Zxqz4Y+C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920136; c=relaxed/simple;
-	bh=UKSmwahiogqW1pXeYgXf8Eygszt2u88JnqRx0xZfhNE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CJvzRVTKgGhK7KkW9EUSf0J5mgTBCtc0umZeZRdPVngPXTnZQIjvhWt/IPM7+7/mGtEyKTMYP0Nh3ukQBJaXsW0vA8Sp+mUsQWn2RF8iGkwL3PGbUob9/e4h3J0WNtlZBmDZsS4VH8bb+bptZGlrc1TKmrFceQtJfI4Zen0x9uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=KxR+jFMl; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-7075bcdbb0fso25443306d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1754920133; x=1755524933; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWV2hjLplr0Slgw9ppK6HuD7SF+ufb5rfXPdExiThcw=;
-        b=KxR+jFMl7g9MOP7OQkT8K39aZxS38oEgAzwBVrLJNvPwl5RvbiOGs3D2XdlcsNyrvo
-         Sa8g5Xo5r3TTYHbzAXqHhb/Pqtb97nTgnS+c4LGQYvg3yf0r88cmVIwDswJhHIviesyo
-         7TGALZ3txQEhwxQbMDwirB3hN9cq0599NfVQ+8oNTWMIjgux+r+2qBOsAphNxZJULfyc
-         yQonSR2JKLgn6OCsznmzfi6QnctjKhjyAfvpXM0Qw+rB5ix+xpHrjO7b5fBvbN46Nwc2
-         ZatVxIap0aatIEmpcrEpRTWmGYZfMls+4mE5otYq6FYzWGbqRFOracjGD9mulyWH0vGs
-         g6CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920133; x=1755524933;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VWV2hjLplr0Slgw9ppK6HuD7SF+ufb5rfXPdExiThcw=;
-        b=XDzyShD6ZZ9rEzpcqHVT5y6gmZqKRbCLXnvEjLE8UvPd0/zA5tIMjYxXzPI2Fc6odi
-         KdkEWB2EKnSBTSbOZETC1xfbS7zKxeypvLFMWwbU+n2+OjH/cmFEUraltBXHdPOxSUdf
-         tHzsSB3TQrImErFMuanQVDGfqutyFzUhKRAh70xI2SDYhr5Vafl+C937Usq/vAza9SiT
-         hyvWM/VkRiBWdQJMtn5eX8tiYtvEq4TRthnq/Dj0fPmWZlTns9ZFCCU2XuXhrIzX664r
-         8biEShhN02eUFq7XZP6MhzuXdvERyVP2/W4xDbCq/FvUL9//Py2w/HnkOiTuQF0KXVvP
-         490w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0LKP5UAP8hG/u+8yzoCBc+v2vi/rfZsPD6/iL4haO6Mm8lH+TvBNEVMYMPNSDgJxQZHurj3AO1lm5Na8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD4t+MqJEiMMr6u5FgbojYM9K+HmKU3l+nQcsgFglz5y2uXqZz
-	ZSDBxVlKGswLjnfVYBlfLYY0fckcacDWsCY5Bqebe/i9JhESk+bDrExqiQnnLZInEtI=
-X-Gm-Gg: ASbGncvSCejJoECI7vWE2nE7OA1dTX12xXzgJG01EDzLYFzM+BrLwRtjnj7ZDhmfpmB
-	kTRcnoTuXJmiv1myRKxGIwoshHQqlRzLFZBlei6hzqlBm6fXle48bvxvdXy92SGXHF7YL1zWoAT
-	Vp7hO/kgEGSHWUIZDLL6hpk27Cfvv929iSFO3j8HgqpyLFIIR0HeNP/n5JKRndOGYulOfjPubc/
-	o+zZFk7ffnNSwN26IQMpvliWDgYvc8awE6Tywu1stujW1AX9dF2wRJ1SayzPjIRi8dpDc3oh3DX
-	AwNYGZqbCjR3PqQE06HWA6XnicdQlhSenrh7rrh62PJdLogCv92JRJRuHtMiJzM2tMvYQlCwn43
-	Y0QjMtlcxalgbBeHlnm+qdIdAr1Y=
-X-Google-Smtp-Source: AGHT+IGWo1UxGtBJWVYSzxpvE5ZF5/dBz2Is5MsjfG1C/pxYl+/rzztidkfAyi1zkWZdsKT8xJCVpw==
-X-Received: by 2002:a05:6214:2466:b0:6fb:1c3:f527 with SMTP id 6a1803df08f44-7099a4833a2mr205043136d6.39.1754920132919;
-        Mon, 11 Aug 2025 06:48:52 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:5a76::c41? ([2606:6d00:11:5a76::c41])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077cd89d8dsm156083316d6.53.2025.08.11.06.48.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:48:51 -0700 (PDT)
-Message-ID: <9b86fb9ac5b9cfdb773fef2db33fc13d011f53f4.camel@ndufresne.ca>
-Subject: Re: [PATCH 64/80] media: rkvdec: Remove redundant
- pm_runtime_mark_last_busy() calls
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Ezequiel Garcia	
- <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 09:48:50 -0400
-In-Reply-To: <20250704075450.3221972-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-	 <20250704075450.3221972-1-sakari.ailus@linux.intel.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
- oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
- oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
- AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
- 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
- TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
- cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-mWE7/NTeJOJLJAFXEhhw"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754920182; c=relaxed/simple;
+	bh=16MYZdwOr2DIwfp0R+6/5ShdPVQOEm0KLR4Yoetd+1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RclVWCrpYUj2GhehbBq8/BmDjzx1QxIECgIgJz757hfeP5pK7w5aOeV8TN8FOziW/qfazt8bi9CwZJR/Ak05MOgfHXZfSpwL2/SI5mYvKEEU+k8vDelvAxSLq6HawPw5KtcYLkLouRiZuyUV8KSfbpvt1gjKeF5TiWdj2F7QcNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lqhaLi57; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2b593684-4409-485b-9edf-e44a402ecf3a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754920174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mH1dwGdtcwcbBs2MNBEYNTdWM+9bK1UZ13Yctjs7vxg=;
+	b=lqhaLi57M/KrANS/X7T7w1BDIPJ5y8GOqLJVARpNB1BkjUNl/s6MXi8Dkmz1B2MBh7Puil
+	fhv7B5eVn7XClsCeNdHT5tLJz5tX5CTiC5NRG90IVm6JLtg/klrxRebwYVg5NUn31fnD76
+	kLp6c4Za0z7bk3Oy8dWCcBDZAGKtgOY=
+Date: Mon, 11 Aug 2025 06:48:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] rdma_rxe: call comp_handler without holding cq->cq_lock
+To: Philipp Reisner <philipp.reisner@linbit.com>,
+ Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
+Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806123921.633410-1-philipp.reisner@linbit.com>
+ <5a31f3ef-358f-4382-8ad1-8050569a2a23@linux.dev>
+ <CADGDV=UgDb51nEtdide7k8==urCdrWcig8kBAY6k0PryR0c7xw@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <CADGDV=UgDb51nEtdide7k8==urCdrWcig8kBAY6k0PryR0c7xw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+在 2025/8/10 22:26, Philipp Reisner 写道:
+> On Thu, Aug 7, 2025 at 3:09 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
+>>
+>> 在 2025/8/6 5:39, Philipp Reisner 写道:
+>>> Allow the comp_handler callback implementation to call ib_poll_cq().
+>>> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
+>>> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+>>>
+>>> The Mellanox and Intel drivers allow a comp_handler callback
+>>> implementation to call ib_poll_cq().
+>>>
+>>> Avoid the deadlock by calling the comp_handler callback without
+>>> holding cq->cw_lock.
+>>>
+>>> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+>>
+>> ERROR: test_resize_cq (tests.test_cq.CQTest.test_resize_cq)
+>> Test resize CQ, start with specific value and then increase and decrease
+>> ----------------------------------------------------------------------
+>> Traceback (most recent call last):
+>>     File "/root/deb/rdma-core/tests/test_cq.py", line 135, in test_resize_cq
+>>       u.poll_cq(self.client.cq)
+>>     File "/root/deb/rdma-core/tests/utils.py", line 687, in poll_cq
+>>       wcs = _poll_cq(cq, count, data)
+>>             ^^^^^^^^^^^^^^^^^^^^^^^^^
+>>     File "/root/deb/rdma-core/tests/utils.py", line 669, in _poll_cq
+>>       raise PyverbsError(f'Got timeout on polling ({count} CQEs remaining)')
+>> pyverbs.pyverbs_error.PyverbsError: Got timeout on polling (1 CQEs
+>> remaining)
+>>
+>> After I applied your patch in kervel v6.16, I got the above errors.
+>>
+>> Zhu Yanjun
+>>
+> 
+> Hello Zhu,
+> 
+> When I run the test_resize_cq test in a loop (100 runs each) on the
+> original code and with my patch, I get about the same failure rate.
 
---=-mWE7/NTeJOJLJAFXEhhw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Add Daisuke Matsuda
 
-Hi Sakari,
+If I remember it correctly, when Daisuke and I discussed ODP patches, we 
+both made tests with rxe, from our tests results, it seems that this 
+test_resize_cq error does not occur.
 
-Le vendredi 04 juillet 2025 =C3=A0 10:54 +0300, Sakari Ailus a =C3=A9crit=
-=C2=A0:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
->=20
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
-> The cover letter of the set can be found here
-> <URL:
-> https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@li=
-nux.i
-> ntel.com>.
->=20
-> In brief, this patch depends on PM runtime patches adding marking the las=
-t
-> busy timestamp in autosuspend related functions. The patches are here, on
-> rc2:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 git://git.kernel.org/pub/scm/l=
-inux/kernel/git/rafael/linux-pm.git \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 pm-runtime-6.17-rc1
->=20
-> =C2=A0drivers/staging/media/rkvdec/rkvdec.c | 1 -
+Yanjun.Zhu
 
-This driver was de-stage during 6.17, I will port it, no action required.
+> 
+> without my patch success=87 failure=13
+> without my patch success=82 failure=18
+> without my patch success=81 failure=19
+> with my patch    success=89 failure=11
+> with my patch    success=90 failure=10
+> with my patch    success=82 failure=18
+> 
+> The patch I am proposing does not change the failure rate of this test.
+> 
+> Best regards,
+>   Philipp
+> 
+> #!/bin/bash
+> 
+> success=0
+> failure=0
+> 
+> for (( i = 0; i < 100; i++ )) do
+>        if rdma-core/build/bin/run_tests.py -k test_resize_cq; then
+>    success=$((success+1))
+>        else
+>    failure=$((failure+1))
+>        fi
+> done
+> echo success=$success failure=$failure
 
-Nicolas
-
-> =C2=A01 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
-> b/drivers/staging/media/rkvdec/rkvdec.c
-> index d707088ec0dc..445f7c92eee3 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec.c
-> @@ -765,7 +765,6 @@ static void rkvdec_job_finish(struct rkvdec_ctx *ctx,
-> =C2=A0{
-> =C2=A0	struct rkvdec_dev *rkvdec =3D ctx->dev;
-> =C2=A0
-> -	pm_runtime_mark_last_busy(rkvdec->dev);
-> =C2=A0	pm_runtime_put_autosuspend(rkvdec->dev);
-> =C2=A0	rkvdec_job_finish_no_pm(ctx, result);
-> =C2=A0}
-
---=-mWE7/NTeJOJLJAFXEhhw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaJn0wgAKCRDZQZRRKWBy
-9DLPAQCqPt0lXZfnbdVvPntu1sqxcp/kkdwbjcqoHkgLxA145AD+NS/iRHqsrNt9
-OFMoxaM4XZImGCGuuAnhiF3H/IWu/AM=
-=SIv5
------END PGP SIGNATURE-----
-
---=-mWE7/NTeJOJLJAFXEhhw--
 
