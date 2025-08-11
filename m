@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-763181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878B5B2114C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3302B21164
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4805618A5D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367B96E1AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817D8311C2F;
-	Mon, 11 Aug 2025 16:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE419311C3A;
+	Mon, 11 Aug 2025 16:03:12 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF43B311C01
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279A3311C02
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928171; cv=none; b=rN47B6nivZc2rEHqbDx8BMZZq3VqUMKMvMpmB37y8zplbU7uDm4/DbMh/75hJ1pUKPE6BB3sqzT1zbe2z2yOI+4wgHL1nKNWtBW8PKzZsybmjwATSeOdc0jBj/Sz5A2LaaHN+9ePx1G2FjGPFWR1C/8mXiDHe9sJ16yVElCgZ9s=
+	t=1754928192; cv=none; b=Yxh0aBPk7p/r0+P5PEtBE2l873qn2+pxkziXGhlRLbeOWk+hoKUxlon1aXHernswlI6fUF2UpHbamPkl6JR2r8PVc8ItYbi4tyMdzMNqMSHE7dTdza9nSgq/40/+UOE77RAlh957g+3zNHafkPXp9kd5sFsUY5XCnEh7PPlf1RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928171; c=relaxed/simple;
-	bh=SheW9JNJ5lhKVMVE2BprGv9VQWuakz8dUzktDH70wXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=GPKF6A6f8x6xh0qQUyXlYq1LkkU16PFa+F1WtkKlm/xP56XMSnUXpaNJR/B62ppL9LImstywMmvNJ7COEimYFQiyuRLpSFjw1auAetPC8PVZ+qjIXGTNtjyVnl4HPbbiTh773sMS2f3en5EqEu4Nx1G+qEW/KSIJVCRwAB9kjLE=
+	s=arc-20240116; t=1754928192; c=relaxed/simple;
+	bh=iK2McGU9OO4eh35vhn+HE9Ge1tIJXywTspirp7UkxHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lBBOFQMTLOsGo8Dm5FepV1FP6vCD2E5Tzy7igmg3HaLUYWAl0IJD3KvcMSZilOby7fCdW5Htx8n/2T+cOuGWaXtYDQp9UaEsJ0MUErA2lrIO+liE/LMlgjkim4rdKa6fndovx3IfLLkxvGfSKyM+FbP84V7j/ZcdVWV7FNyf35E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC053266C;
-	Mon, 11 Aug 2025 09:02:40 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 387D9266C;
+	Mon, 11 Aug 2025 09:03:02 -0700 (PDT)
 Received: from [10.1.28.163] (e137867.arm.com [10.1.28.163])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCB213F738;
-	Mon, 11 Aug 2025 09:02:44 -0700 (PDT)
-Message-ID: <4242ef37-efeb-446f-abbc-0104b805ad12@arm.com>
-Date: Mon, 11 Aug 2025 17:02:42 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CEB73F738;
+	Mon, 11 Aug 2025 09:03:06 -0700 (PDT)
+Message-ID: <a3a8c0b8-e953-4c93-ab4d-0d9a4b3e47b1@arm.com>
+Date: Mon, 11 Aug 2025 17:03:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,12 +41,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v7 5/7] arm64: entry: Refactor
- preempt_schedule_irq() check code
+Subject: Re: [PATCH -next v7 0/7] arm64: entry: Convert to generic irq entry
 To: Jinjie Ruan <ruanjinjie@huawei.com>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-6-ruanjinjie@huawei.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
  sstabellini@kernel.org, mark.rutland@arm.com, puranjay@kernel.org,
  broonie@kernel.org, mbenes@suse.cz, ryan.roberts@arm.com,
@@ -55,82 +51,59 @@ Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
  liaochang1@huawei.com, ardb@kernel.org, leitao@debian.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  xen-devel@lists.xenproject.org, Ada Couprie Diaz <ada.coupriediaz@arm.com>
+References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
+ <6bd09b5b-9830-42b4-ad9e-9ad1e153e564@arm.com>
+ <94757d00-5a8e-ac6b-f832-030f33ccf771@huawei.com>
+From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
 Content-Language: en-US
 Organization: Arm Ltd.
-In-Reply-To: <20250729015456.3411143-6-ruanjinjie@huawei.com>
+In-Reply-To: <94757d00-5a8e-ac6b-f832-030f33ccf771@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 29/07/2025 02:54, Jinjie Ruan wrote:
+On 06/08/2025 09:11, Jinjie Ruan wrote:
 
-> ARM64 requires an additional check whether to reschedule on return
-> from interrupt. So add arch_irqentry_exit_need_resched() as the default
-> NOP implementation and hook it up into the need_resched() condition in
-> raw_irqentry_exit_cond_resched(). This allows ARM64 to implement
-> the architecture specific version for switching over to
-> the generic entry code.
->
-> To align the structure of the code with irqentry_exit_cond_resched()
-> from the generic entry code, hoist the need_irq_preemption()
-> and IS_ENABLED() check earlier. And different preemption check functions
-> are defined based on whether dynamic preemption is enabled.
->
-> Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> Suggested-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
-Unrelated to the other thread : I noticed that compiling this patch
-with `allnoconfig` would fail :
-- `raw_irqentry_exit_cond_resched` has no previous prototype,
-   as it is defined within `#ifdef CONFIG_PREEMPTION`
-- `irqentry_exit_cond_resched()` is not declared, as it is also within
-   `#ifdef CONFIG_PREEMPTION`
+> On 2025/8/5 23:08, Ada Couprie Diaz wrote:
+>> Hi Jinjie,
+>>
+>> On 29/07/2025 02:54, Jinjie Ruan wrote:
+>>
+>>> Since commit a70e9f647f50 ("entry: Split generic entry into generic
+>>> exception and syscall entry") split the generic entry into generic irq
+>>> entry and generic syscall entry, it is time to convert arm64 to use
+>>> the generic irq entry. And ARM64 will be completely converted to generic
+>>> entry in the upcoming patch series.
+>> Note : I had to manually cherry-pick a70e9f647f50 when pulling the series
+>> on top of the Linux Arm Kernel for-next/core branch, but there might be
+>> something I'm missing here.
+> It seems that it is now in mainline v6.16-rc1 and linux-next but not
+> Linux Arm Kernel for-next/core branch.
+You're right, I misinterpreted the `-next` of the subject, thanks for the
+clarification !
+>> I'll spend some time testing the series now, specifically given patch 6's
+>> changes, but other than that everything I saw made sense and didn't look
+>> like it would be of concern to me.
+> Thank you for the test and review.
 
-The patch below fixes the issue, but introduces merge conflicts in
-patches 6 and 7, plus the `#ifdef` needs to be moved accordingly
-in patch 6 and the empty "without preemption" `irq_exit_cond_resched()`
-needs to be removed in patch 7.
+I've spent some time testing the series with a few different configurations,
+including PREEMPT_RT, pNMI, various lockup and hang detection options,
+UBSAN, shadow call stack, and various CONFIG_DEBUG_XYZ (focused on locks
+and IRQs), on both hardware (AMD Seattle) and KVM guests.
 
-I hope this can be useful,
+I tried to generate a diverse set of interrupts (via debug exceptions,
+page faults, perf, kprobes, swapping, OoM) while loading the system with
+different workloads, some generating a lot of context switches : hackbench
+and signaltest from rt-tests[0], and mc-crusher[1], a memcached stress-test.
+
+I did not have any issues, nor any warning reported by the various
+debug features during all my hours of testing, so it looks good !
+
+Tested-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+
+Thank you for the series !
 Ada
 
----
-diff --git a/arch/arm64/include/asm/preempt.h 
-b/arch/arm64/include/asm/preempt.h
-index 0f0ba250efe8..d9aba8b1e466 100644
---- a/arch/arm64/include/asm/preempt.h
-+++ b/arch/arm64/include/asm/preempt.h
-@@ -103,6 +103,8 @@ void dynamic_irqentry_exit_cond_resched(void);
-  #define irqentry_exit_cond_resched() raw_irqentry_exit_cond_resched()
-
-  #endif /* CONFIG_PREEMPT_DYNAMIC */
-+#else /* CONFIG_PREEMPTION */
-+#define irqentry_exit_cond_resched() {}
-  #endif /* CONFIG_PREEMPTION */
-
-  #endif /* __ASM_PREEMPT_H */
-diff --git a/arch/arm64/kernel/entry-common.c 
-b/arch/arm64/kernel/entry-common.c
-index 4f92664fd46c..abd7a315145e 100644
---- a/arch/arm64/kernel/entry-common.c
-+++ b/arch/arm64/kernel/entry-common.c
-@@ -661,6 +661,7 @@ static __always_inline void __el1_pnmi(struct 
-pt_regs *regs,
-         arm64_exit_nmi(regs, state);
-  }
-
-+#ifdef CONFIG_PREEMPTION
-  void raw_irqentry_exit_cond_resched(void)
-  {
-         if (!preempt_count()) {
-@@ -668,6 +669,7 @@ void raw_irqentry_exit_cond_resched(void)
-                         preempt_schedule_irq();
-         }
-  }
-+#endif
-
-  #ifdef CONFIG_PREEMPT_DYNAMIC
-  DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+[0]: https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/
+[1]: https://github.com/memcached/mc-crusher
 
 
