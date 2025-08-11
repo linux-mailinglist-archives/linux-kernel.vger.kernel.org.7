@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-763268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB81B21281
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:48:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6E1B21294
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC2C7A9295
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7487C178D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20DA29BD97;
-	Mon, 11 Aug 2025 16:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C39329BDA9;
+	Mon, 11 Aug 2025 16:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eq9cMaM1"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b="GOnLP2YI"
+Received: from hope.aquinas.su (hope.aquinas.su [82.148.24.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2156D311C23;
-	Mon, 11 Aug 2025 16:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C232475F7;
+	Mon, 11 Aug 2025 16:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.148.24.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930865; cv=none; b=GaSWOga8EykkyCk504hjDAtR2NqKxtBA80TJ6xVuexbMeYPb2Xo0vvEQv32f6u/QC0LwsIb5AsrDALF1ns7O5dzyimOevUwKNnQLHZcvGszFrdskPnzP3+sY7VSP58N1fPf3yaL/8eTNul4McNFq20kq1/kWk1OKZT9T50lxM/0=
+	t=1754930937; cv=none; b=r6QMKKJUdXQo5DIG6watXvqotrMOtVKRGykwwz6W0cdMMn73VXumCpJ8QxeaH67zpvGiSl0ZZd2VcHi9f+eNY5EqteecgZ5TYASbwTogSkkXcGIYXLwAfBE/fLzvyJlWl5wZbikCy6ODF7CGOQK1jsZzL5zcvYRix/RKLitHbgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930865; c=relaxed/simple;
-	bh=9OscKaOEISphy/0bykprhN667piw88GuPtzAhiRy2xo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fs6UqdJPRJIfr8C5VOgDrBS9Q9tGwg9UU3W0aoUAVoqZCgEI+YFnRPP3BrljNdvj/yJqyL1kN5LlkG9xTk0nqLzXzjRdVx/4yBL60YBy4IdXsE1n83OUoNys/QWn+V/6/57hgUptroYrNgW7PeIR7gr+k2qkW6QTAh/cJJ1Dz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eq9cMaM1; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32138e0d9adso3890075a91.2;
-        Mon, 11 Aug 2025 09:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754930863; x=1755535663; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OscKaOEISphy/0bykprhN667piw88GuPtzAhiRy2xo=;
-        b=Eq9cMaM1vVmHslcxIq3r6Ka11ZXpoVDm9184t9Cn3FhVJTS+zE4eAF2SnD22q4eGT4
-         FboEmc+x5mJjPat8G55JBXANwFESZbOtk+ei8iGp2Nl8Lf5jbXWZxzFA19d9OHAUChtD
-         TRYs2fp2XaWu57AURH57lsfmM05781GxwonRW7HgsA9DbMAM45aWQtJdawcAM8jpzYjD
-         +HpevfDbJDDiq/qMZFbSSMdjHukkErm4oiqcFiRkXD1nmJyd44jcCSAv1FJDiEpHZ/5G
-         t5kSLb/XBTUuZPIBlnl5gYfG0Rvlet37yACnpiB9j50LX+hirFwRR9U0j33J+BDeHkkp
-         uthg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754930863; x=1755535663;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9OscKaOEISphy/0bykprhN667piw88GuPtzAhiRy2xo=;
-        b=uvthUXBKq2+PnKTPoA+CcuGIkARfKDpcFnuhFQLJirrZI7YxpmXzSMBlL5S9NiQVPV
-         +iwiPl2I/WI1VF2wfEM6QADe+zZXGpnhBfrmWGoJ756xDILwyiVaSEuQF5xl0OeBZHQ9
-         tJM61KobiijxcS5FW/5WsUN3GyOu/YXvJ22AmxQ4V7F8dxT5qzgFQ+5cvrkfdrrWgzk7
-         rnChY4qXyd3p2DVDgnWUA4M8poWDQGwGWC3HHNDJ2MhFnTbGxTUYrI9BFH7WwjxuzTh6
-         ysvNbTpKyQdXg1C4yDGnc2VqNMRrf3kH6MhQhpcaRHhOhopGKVf4NoLuHP34KPjD1y/L
-         3RRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrkCJq4Gihc3QcqzEudLSq39bT7HLoxYhuDT/wC2gRSsW6r/VB3V6DHy+w9ZzbhXn7/DU=@vger.kernel.org, AJvYcCX2JqdDLPcjlv3E3F8Giee0Otvlwuj5X+vjoHedrweY/sxbxltzvwcPw5UX6I2Z6Sg17o1uoiexQjcwR2+R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw52T4h0vj6gTTxUzs8YsMS65hWcdD0taTPQodDnAtZHfBpIieZ
-	w95PWS+HatZHNmsK6CM9dh4MJARa4y1inWpk/7rln3is1kOhwYg0pKz1
-X-Gm-Gg: ASbGncsZtKu3trjx0QRGoSmh3umVixjHMRnsS6tXeW6saw3u/nCbsCQiiTbflr+2blk
-	r9bL0BIxfhm52+hPoIgdGlobvNY4iHRcHYw0lE6XNAwd/iyFieB4Ffnta4GzUllT8WXadidLCqh
-	mK/nsMLfIIxOGnmYRAZbXKpv6TDcmSlqiV8JtwaEiXzLfiITG5CkJVW6BtaTMJq3dH/9YNpgLEl
-	cAIRl+RsQU2lTq9afaqHejIh57UtkOKt9fZ5IzHlMDcnk+tVsrdXv5bJcANdzAJwILie6bn1jj9
-	Zy6AI5TVLMfynjiHeR+rvzKDYvApwrL1WEB6e9X2fL1AvvMWKgtBkXjK2z24SnD9RCviV+fgxJq
-	KnxkTdCpcqPU8Rc8FDrPa8EG24DUdRm9hJzdp/g==
-X-Google-Smtp-Source: AGHT+IFXmypjhxtcs9a07HJqO/HbOQbPX16Pgd3GjsfSAhgk3vbL/M4/0BuIfNruQvA1r66jZqwCuw==
-X-Received: by 2002:a17:90b:530f:b0:31e:fac5:5d3f with SMTP id 98e67ed59e1d1-32183b3f09cmr20894679a91.16.1754930863325;
-        Mon, 11 Aug 2025 09:47:43 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::17? ([2620:10d:c090:600::1:56e6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63dc1bb7sm32057111a91.10.2025.08.11.09.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 09:47:42 -0700 (PDT)
-Message-ID: <5cdd264d324de1b78f4fc3768cc20a3ee79336d1.camel@gmail.com>
-Subject: Re: [PATCH] bpf: replace kvfree with kfree for kzalloc memory
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko	 <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu	 <song@kernel.org>, Yonghong
- Song <yonghong.song@linux.dev>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, bpf@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 09:47:41 -0700
-In-Reply-To: <d106b3c7-6afb-4e55-b2cc-0354f5db4bde@vivo.com>
-References: <20250811123949.552885-1-rongqianfeng@vivo.com>
-	 <d106b3c7-6afb-4e55-b2cc-0354f5db4bde@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754930937; c=relaxed/simple;
+	bh=LGCt325F09xhWzyUVCNeUGVbkFuJRenLZLO7XVdurNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FZVNxPPT+HjP9G3+sy7zO/K6tKM2xQmwAWXAtTIsMwhzSqddhR3aEymQmcCT7cOv6KYz94tljrfoj11gz8dsxLOQuyODo/4RJ5yJIJ2q9utO7lsITYpqZ78PhPIv061v7v5uagdqDmSqjXuf58Hskl27z9xlmF+ZVD5+uaxeCsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su; spf=pass smtp.mailfrom=aquinas.su; dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b=GOnLP2YI; arc=none smtp.client-ip=82.148.24.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aquinas.su
+Received: from woolf.localnet (host-46-241-65-133.bbcustomer.zsttk.net [46.241.65.133])
+	(Authenticated sender: admin@aquinas.su)
+	by hope.aquinas.su (Postfix) with ESMTPSA id 88D4E6EBB9;
+	Mon, 11 Aug 2025 19:48:52 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aquinas.su; s=default;
+	t=1754930933;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LGCt325F09xhWzyUVCNeUGVbkFuJRenLZLO7XVdurNc=;
+	b=GOnLP2YIHOppkSHTJKhMGU/aDYfgA1iTCXY+uX5kJDRZrm77T8mQ+vRWMIdqLT0J8os3mJ
+	e+1SNQPhO+wZ2CATcVr0BMH41YAgxjR+N93u46P4MNxazjvuubDb7jpIRmKXJyBjcZwhS0
+	evloaRuWGGz6r37ZSV1MlRJCBZTm+7rXwcUAct0L1EL7pqBr0OdgWVUNxKEKXPVDUGuBR3
+	LVCKgT2ULI/lwset+fDQs8DcLNpJA6RL0CeXPJTL6RcneEY63WirwV0FZ8s5cVTT5XzTJf
+	2hKX+ve1LQ18Zw3m+ePI7zHLB+7ORrrG6YLDFsJtUe4VGzeeXLdzGivLux63fQ==
+Authentication-Results: hope.aquinas.su;
+	auth=pass smtp.auth=admin@aquinas.su smtp.mailfrom=admin@aquinas.su
+From: Aquinas Admin <admin@aquinas.su>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Sasha Levin <sashal@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Josef Bacik <josef@toxicpanda.com>,
+ Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Date: Mon, 11 Aug 2025 23:48:51 +0700
+Message-ID: <10702976.nUPlyArG6x@woolf>
+In-Reply-To: <aJgaiFS3aAEEd78W@lappy>
+References:
+ <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
+ <aJgaiFS3aAEEd78W@lappy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 2025-08-11 at 21:15 +0800, Qianfeng Rong wrote:
-> Hi all,
 >=20
-> Sorry, please ignore this patch, because I found that there are still a=
+> The kernel has thrived for over 30 years not just because of technical
+> excellence, but because it has (mostly) maintained a collaborative
+> environment where developers can work together despite disagreements.
+> That collaborative environment IS doing right by users.
+>=20
+Come on? It's been around for 30 years because it's financially beneficial =
+for=20
+some players. Should we forget about the letters and insults that flew arou=
+nd=20
+before 2018? The Code of Conduct wasn't introduced just like that. Well,=20
+that's just a small remark, in general. The fact is, there are no objection=
+s=20
+to the technical quality of Bcachefs. The objections are exclusively about=
 =20
-> lot of mixed uses of kfree and kvfree in kernel/bpf/verifier.c. Best=20
-> regards, Qianfeng
+Kent's personality and how he conducts his affairs. Maybe someone experienc=
+ed=20
+in resolving such issues and handling personnel conflicts could suggest a=20
+solution? Analyze the situation and offer methods for resolution? Especiall=
+y=20
+since the problem is far from being solely about Kent. I suggest that inste=
+ad=20
+of threats, hasty conclusions, and quick decisions, we turn to professional=
+s=20
+with the right expertise, who are surely present in the Linux Foundation. I=
+t=20
+will take time, but it will help everyone become better. I hope everyone=20
+understands that the right solution shouldn't be dictated by someone's=20
+feelings or grudges=E2=80=94regardless of who's involved.
 
-Using kvfree() in this position was sloppy on my side,
-thank you for noticing this.
+
 
