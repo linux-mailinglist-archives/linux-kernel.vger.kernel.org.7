@@ -1,49 +1,55 @@
-Return-Path: <linux-kernel+bounces-763223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04886B211F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:30:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FCAB21215
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E114B190325B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E10561DDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361132D47F0;
-	Mon, 11 Aug 2025 16:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD471A9FAE;
+	Mon, 11 Aug 2025 16:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEPARwde"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mZDIUKGT"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898F029BDA5;
-	Mon, 11 Aug 2025 16:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0D81A9F90
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928959; cv=none; b=VhBMGCOUU/8JagB84LmQK1m2PiMEM+cVUgKyZELSwvHZe3k8HDYgaEjcRb57wQJoqam5hpbpFCmzWzbYu4BAP8aei1iARIreLVklWCZ87/fF00zQnqxtgNyAURXNsAFSOOPx9OGLB+PlQflnTy1Yb8af2l5GNfaNjOIwfmDGN6s=
+	t=1754929074; cv=none; b=QmeyrB1dXl1KSC/VPaYdX+0eUdqLJ94+zbW4AMJo6vCf0r+d8LO4eAi44PRBgUnCf6frnZ+XOSaNm41bl4ENzdWqRs35xLmn9F429kg2YM7XTLQpr7UO5Zz+r4I9gg0E24dQzWBHanIPxFhExCm2OIxeHhphC93cv4RBhZqJNVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928959; c=relaxed/simple;
-	bh=1vEfyoyVXrCAidAKaIIQbVmNtX0PWFu3hsUQxAbmAsw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ShCRMNs6V6VU6OZvGEZoM+D2SebD1AhwPW2jVQPLB51f0dwnAfC/klOVGOiS5gesK5t0rYu6ESXWzu3DOBy5PrkIb43MzjwlKW0VveB9yzeXBrqE0Ue9VL19kjGi+SaCLdtGTEwE6l1R7/y+Q277ZB/st9BPMC0DiRCpAcwyvw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEPARwde; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58DF4C4CEED;
-	Mon, 11 Aug 2025 16:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754928959;
-	bh=1vEfyoyVXrCAidAKaIIQbVmNtX0PWFu3hsUQxAbmAsw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OEPARwdeIRZguQ2AQc/RNl528mBLHTynfGfxvGEuf9AxIhEhEFZj1WUyL/h6Oz2rJ
-	 XNYQvRov1OIXiG/C0QTlJw8IamKbzo9Su5CYvs3z7h2SN1Wd3fyzbW9rH6GpVxo3xW
-	 0ajoPuGZ8C/LVe2u94dU2SNLZ5tywAqm2icO5IeP1RZTTIznPUl3HYQ8eX4J6Os25d
-	 +dTYGSCoq57tuvaohuWn6WEYFoVfpJ3UZB1Luhn12qxaChbzj12wQgxfIzKEFdklQ9
-	 juovPSA1asxz0CyGbLmIk0B2neriDrHnhVJFBd3FjIem2UapmLb4jwogp8Hziavq/z
-	 WZGQxoFliDVXA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB03E383BF51;
-	Mon, 11 Aug 2025 16:16:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754929074; c=relaxed/simple;
+	bh=oDJkOf2OFbbJhHt2UdZksaVjQyH5sfc332YdaM4dfL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2bcUtTkaK3dF2dh5RPXVB6wj/7zztrPzpo3+cpv6nzjINAYdKsM2Dz3lGB/jSKV85vHhvinSARC951ToVA0VUqgjbYgu7y4g+bgoIGUA4iNysd7TC4U7s/U2cvr10ZuSH0SD6Npogqo40tzOjRKVDmTBUB23Dy6kSZ79yPazNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mZDIUKGT; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754929060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mHQ/a0CthfEXl2ijTSBdG30bk5vJh+MoGrFojXiA1Sk=;
+	b=mZDIUKGTPzRri050s5PkMEeiAochcDlsl66j4V5B9jTmW9CrWFom3XGR3mbQN45oZt3U0O
+	nvGuna6YQKo2d8cugyYIgCOybPJKAlQ3kbeu8TRQxalaDju5IeUwQwB8OV/Oeh+14wO82t
+	OS01LPMh8hwHDZd9j91e9YXJAhcFEm8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: nconf: Format and print 'line' without a temporary copy
+Date: Mon, 11 Aug 2025 18:16:48 +0200
+Message-ID: <20250811161650.37428-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +57,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: Annotate struct hci_drv_rp_read_info with
- __counted_by_le()
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175492897149.1716045.2789511846520664235.git-patchwork-notify@kernel.org>
-Date: Mon, 11 Aug 2025 16:16:11 +0000
-References: <20250810215319.2629-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250810215319.2629-2-thorsten.blum@linux.dev>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, kees@kernel.org, gustavoars@kernel.org,
- linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+Use "%.*s" as the format specifier and supply the 'line' length 'len' to
+mvwprintw() to format and print each line without making a temporary
+copy. Remove the temporary buffer.
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ scripts/kconfig/nconf.gui.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-On Sun, 10 Aug 2025 23:53:20 +0200 you wrote:
-> Add the __counted_by_le() compiler attribute to the flexible array
-> member 'supported_commands' to improve access bounds-checking via
-> CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  include/net/bluetooth/hci_drv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - Bluetooth: Annotate struct hci_drv_rp_read_info with __counted_by_le()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/af4ae40b525d
-
-You are awesome, thank you!
+diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
+index 7206437e784a..2d097bc7ef1a 100644
+--- a/scripts/kconfig/nconf.gui.c
++++ b/scripts/kconfig/nconf.gui.c
+@@ -173,12 +173,10 @@ void fill_window(WINDOW *win, const char *text)
+ 	/* do not go over end of line */
+ 	total_lines = min(total_lines, y);
+ 	for (i = 0; i < total_lines; i++) {
+-		char tmp[x+10];
+ 		const char *line = get_line(text, i);
+-		int len = get_line_length(line);
+-		strncpy(tmp, line, min(len, x));
+-		tmp[len] = '\0';
+-		mvwprintw(win, i, 0, "%s", tmp);
++		int len = min(get_line_length(line), x);
++
++		mvwprintw(win, i, 0, "%.*s", len, line);
+ 	}
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.50.1
 
 
