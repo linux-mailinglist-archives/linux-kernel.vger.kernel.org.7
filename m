@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-762075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02975B201E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:31:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC339B201E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111BF189EB36
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E970116850C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9982DC32C;
-	Mon, 11 Aug 2025 08:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548BF2D9EC2;
+	Mon, 11 Aug 2025 08:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cZNO6N2q";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lqsQIrkC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A4E2185A6;
-	Mon, 11 Aug 2025 08:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="GtL+qPC+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E1E1684AC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754901102; cv=none; b=Dd1rADFGCJuTQsIz6LnsmdUb/fp7P57a/6fDy2LWEX88cZdgAb/fPxwxe6J6tiTOT/hL/pTvK9wqD3zWzjXfLWEiTNLgMxbW2s2opQARfWOfhyDOxkUecV8B60zLx12KB2iZZwZzlbrFemzgXJqDUqFgIJnFH+0Qj7R+RLZdWf0=
+	t=1754901162; cv=none; b=rFCIVml/Tcrd6IKvLYyORN2G6Ac590ACeERUWZrJCVRBgnncBDBBcJ1Tgf6X2XzjuizzZK1mnnpeFOWBsppIhD0Tdr85H5cajninDn55xuphEUKWI4D0V6pr7ffBndN8DdVvN4lT3Vm6k78ywWV+SsJaBfYrUkjqQ4oe0XS2Y9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754901102; c=relaxed/simple;
-	bh=S4WuqofBa7Id6+qyAJHjdL5aqwr5DwpyzeUXtsy52u0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B56J2XZ+71Jx1uBpPSLWLHXIONVWpR5FwTZxOQLzaj6gMIFRu7JC3GUlS0QxAWYQgCif6OLbcsOKduMoq2HxPHYd2k44aFgtOuFnxMRp1jqvHstKoey80RJVmzmPi9rXA4VGBcOvEp4NqEVYWlg8QT1rfvlsRbu5SymgCqBVwIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cZNO6N2q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lqsQIrkC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 11 Aug 2025 10:31:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754901096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JeEYEDHr31+P2zVZyryZ2NEbaRwQuOh+nfUwKPEWE1U=;
-	b=cZNO6N2qunmSklZQNVYCQo5IIj9bIBmAgbV7ljn82yCgNMKRsvql6lShJ81ecxTLm3Cea8
-	s3Svi0EEJp2Z0Z1KNm6/DOaQwM74D5fo7OHtBHgOUewLhzgfVW7ElqxhU7QH2+rdFkTz0H
-	5/ogT5fYhQQgIjujBsmwXkk30pSWnTcsXE0qO0BbqPkrTRVIpPrK4xSgLlrMEx23lfuwnm
-	t868ImjD2MHvJmsiQgOhLztDE14D6VZVKfntxVHLvu+MvTj9MckEanpgP5OuuHzuRT2a+9
-	Fk7Qo2knjuhMizdljcbbowfyNlMdH7i1H8LIZ9hMor2fYvRSgGtezMPKLvmRGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754901096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JeEYEDHr31+P2zVZyryZ2NEbaRwQuOh+nfUwKPEWE1U=;
-	b=lqsQIrkCdbT/b7o7yJ8/W5Y9Megw6NnMf5v16x2yzUciE9/VpFNPrhZstXL2XVYloQ5foV
-	lc3jcWA8RlDD2IAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Michelle Jin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
-	kasan-dev@googlegroups.com, syzkaller@googlegroups.com,
-	linux-usb@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Austin Kim <austindh.kim@gmail.com>
-Subject: Re: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on
- PREEMPT_RT
-Message-ID: <20250811083135.xtl2wSQz@linutronix.de>
-References: <20250725201400.1078395-2-ysk@kzalloc.com>
- <20250808163345.PPfA_T3F@linutronix.de>
- <ee26e7b2-80dd-49b1-bca2-61e460f73c2d@kzalloc.com>
+	s=arc-20240116; t=1754901162; c=relaxed/simple;
+	bh=pcrRTFRj7cbA3cpW+akyQcrb2vmEVONwi8WALRjHB+0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=cuF9KTy5P+F7feHONafMxBo3bN9a9b+a8QNebD8xo8CETTW4QzBsBoSbP8ORNsos9WjkYXrEg2nAHBukzT82cJLrjURiK/EdFbhYD1uvoUIcYNb2EkjbMugVvfJtTz8tQ9h9N8L3zhAqkYl3Zr+Rh03QfYiv5IMdYIn9Dq7WKOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=GtL+qPC+ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=l1urE0nBnDldGpR9OuYBitZPOtsyzKvkEwXiA4ekwMM=; b=G
+	tL+qPC+Kg8n+h86joVxD5ZB6slCWg485ACImQ9z5pGDNZYK/M0EQRUdlWmcYIXMI
+	C8GcJD5Wj3NqgR0hi2UQ9ekhpbUQ+thsQ8m33IT0jo7OspJESkbZNmAJ3wSlyK+Y
+	btjwar6go+J71wJeDHfXbd+hLj/y8O+/9U2NRhGFss=
+Received: from fanqincui$163.com ( [124.127.58.139] ) by
+ ajax-webmail-wmsvr-40-122 (Coremail) ; Mon, 11 Aug 2025 16:32:19 +0800
+ (CST)
+Date: Mon, 11 Aug 2025 16:32:19 +0800 (CST)
+From: fanqincui  <fanqincui@163.com>
+To: "Marc Zyngier" <maz@kernel.org>
+Cc: "Will Deacon" <will@kernel.org>, catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Fanqin Cui" <cuifq1@chinatelecom.cn>, hanht2@chinatelecom.cn
+Subject: Re:Re: [PATCH] arm64/module: Support for patching modules during
+ runtime
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <86zfc68exk.wl-maz@kernel.org>
+References: <20250807072700.348514-1-fanqincui@163.com>
+ <aJXlegQfZTdimS3k@willie-the-truck>
+ <3d4011c0.6aaa.198981027d7.Coremail.fanqincui@163.com>
+ <86zfc68exk.wl-maz@kernel.org>
+X-NTES-SC: AL_Qu2eBvWbvkko7ySZYekXk0wWhOw8Xcexv/0h1IBfPZ00qSTB2TA5dm57NHfH3PmCFgymoQmxeTRT5MtCc5tocb9SQY8C8S+4PR1z5JAFrE/O
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ee26e7b2-80dd-49b1-bca2-61e460f73c2d@kzalloc.com>
+Message-ID: <587b3c08.7e85.19898424fdb.Coremail.fanqincui@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eigvCgD3n5+TqploqnoXAA--.18653W
+X-CM-SenderInfo: 5idq1xpqfxxqqrwthudrp/1tbiOhWmpWiZnRfSwwAEsC
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 2025-08-09 02:35:48 [+0900], Yunseong Kim wrote:
-> Hi Sebastian,
-Hi Yunseong,
-
-> > Could someone maybe test this?
-> 
-> As you requested, I have tested your patch on my setup.
-> 
-> I can check that your patch resolves the issue. I have been running
-> the syzkaller for several hours, and the "sleeping function called
-> from invalid context" bug is no longer triggered.
-
-Thank you. I just sent this as a proper patch assuming kcov still does
-what it should. I just don't understand why this triggers after moving
-to workqueues and did not with the tasklet setup. Other that than
-workqueue code has a bit more overhead, it is the same thing.
-
-> I really impressed your "How to Not Break PREEMPT_RT" talk at LPC 22.
-
-Thank you.
-
-> 
-> Tested-by: Yunseong Kim <ysk@kzalloc.com>
-> 
-> 
-> Thanks,
-> 
-> Yunseong Kim
-
-Sebastian
+CkhpIG1hcmMsClRoZSBjYWxsYmFjayBmdW5jdGlvbiBpcyBkZXNpZ25lZCBieSB0aGUgZGV2ZWxv
+cGVyLiBEZXZlbG9wZXJzIG5lZWQKdG8gdXNlIHRoZSBjYWxsYmFjayBmdW5jdGlvbiB0byBwYXRj
+aCB0aGVpciBvd24gbW9kdWxlIGNvZGUuIFVuZGVyCnRoaXMgcHJlbWlzZSwgZGV2ZWxvcGVycyBh
+cmUgcmVzcG9uc2libGUgZm9yIHByb3ZpZGluZyB0aGUgY29ycmVjdApjYWxsYmFjayBmdW5jdGlv
+bi4KQSBjb3JyZWN0IGNhbGxiYWNrIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uIGRvZXMgbm90IHJl
+cXVpcmUgZnVydGhlcgpwYXRjaGluZy4gRnVydGhlcm1vcmUsIHRoZSBjYWxsYmFjayBpdHNlbGYg
+bXVzdCBiZSBleGVjdXRhYmxlLiBJZiB0aGUKY2FsbGJhY2sgZnVuY3Rpb24gaGFzIHByb2JsZW1z
+LCB0aGUgbW9kdWxlJ3MgZnVuY3Rpb25hbGl0eSB3aWxsIGJlIGFmZmVjdGVkLgoKRmFucWluCgoK
+CgoKCgoKCgoKCkF0wqAyMDI1LTA4LTExwqAxNjowMTo0MyzCoCJNYXJjwqBaeW5naWVyIsKgPG1h
+ekBrZXJuZWwub3JnPsKgd3JvdGU6Cj5PbsKgTW9uLMKgMTHCoEF1Z8KgMjAyNcKgMDg6Mzc6MzLC
+oCswMTAwLAo+ZmFucWluY3VpwqA8ZmFucWluY3VpQDE2My5jb20+wqB3cm90ZToKPj7CoAo+PsKg
+SGnCoHdpbGwsCj4+wqBZZXMswqB5b3XCoGFyZcKgcmlnaHQuwqBUaGXCoGFsdGVybmF0aXZlwqBj
+YWxsYmFja8KgZnVuY3Rpb27CoGxpdmVzwqBpbnNpZGXCoHRoZcKgbW9kdWxlLgo+PsKgVGhpc8Kg
+Y2FsbGJhY2vCoGZ1bmN0aW9uwqBpc8KgYWN0dWFsbHnCoHNpbWlsYXLCoHRvwqBrdm1fdXBkYXRl
+X3ZhX21hc2vCoGluwqBLVk07Cj4+wqAKPj7CoFRoZcKgbW9kdWxlJ3PCoGNhbGxiYWNrwqBmdW5j
+dGlvbsKgY2FsY3VsYXRlc8Kgc29tZcKgdmFsdWVzwqBiYXNlZMKgb24KPj7CoHRoZcKgY3VycmVu
+dMKgQ1BVwqBmZWF0dXJlc8KgYW5kwqB0aGVuwqBwZXJmb3Jtc8KgdGhlwqByZXBsYWNlbWVudC4K
+Pj7CoAo+PsKgVGhlwqAudGV4dC5hbHRlcm5hdGl2ZV9jYsKgc2VjdGlvbsKgaXPCoGFjdHVhbGx5
+wqBtYXJrZWTCoGFzwqBTSEZfRVhFQ0lOU1RSwqB8wqBTSEZfQUxMT0MKPj7CoGR1cmluZ8KgY29t
+cGlsYXRpb24swqBzb8KgaW50ZXJzZWN0aW9ucygpwqBpbmNsdWRlc8KgdGhpc8Kgc2VjdGlvbsKg
+YW5kwqBzZXRzwqBpdMKgYXPCoGV4ZWN1dGFibGXCoGxhdGVyLgo+Cj5JJ23CoHdvcnJpZWTCoHRo
+ZXJlwqBpc8KgYcKgY2hpY2tlbi1hbmQtZWdnwqBwcm9ibGVtwqBoZXJlLsKgV2hhdMKgaWbCoHRo
+ZQo+Y2FsbGJhY2vCoGl0c2VsZsKgcmVxdWlyZXPCoHBhdGNoaW5nwqB2aWHCoHNvbWXCoG90aGVy
+wqBhbHRlcm5hdGl2ZT/CoElzwqB0aGVyZQo+YcKgZ3VhcmFudGVlwqB0aGF0wqB0aGlzwqBhbHdh
+eXPCoHBlcmZvcm1lZMKgaW7CoHRoZcKgY29ycmVjdMKgb3JkZXI/Cj4KPglNLgo+Cj4tLcKgCj5X
+aXRob3V0wqBkZXZpYXRpb27CoGZyb23CoHRoZcKgbm9ybSzCoHByb2dyZXNzwqBpc8Kgbm90wqBw
+b3NzaWJsZS4K
 
