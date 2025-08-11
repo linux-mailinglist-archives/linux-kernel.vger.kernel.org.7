@@ -1,129 +1,109 @@
-Return-Path: <linux-kernel+bounces-763487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8FCB21541
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:19:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B0DB21543
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C133BE477
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 512027A98FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307492D4813;
-	Mon, 11 Aug 2025 19:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F42D2D7814;
+	Mon, 11 Aug 2025 19:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1za9Nhe"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7gwDtGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439CF311C2A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005782BCF68;
+	Mon, 11 Aug 2025 19:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754939911; cv=none; b=Lg09MSDgL9SpmhfjAtvm7K2TQrzv3q1I8IONjd+eYVR/tuApz6rZa+wtlRg6fedEcKPUUK0cnj7OLCrt6epF6HU+F4r6IF0eggEyKQ7oVl43H949acbQdlulkPbOts22CtSvGK9UEgpt9wbG4GeWsw6RBsSC4jvKekIz9EelO50=
+	t=1754939960; cv=none; b=p4RA9fdojpyJFc4jNVBzKhsYmIFqgFp/MCj1qzPL8UtX5YPkdEztxxV/Ub4zHmV4RVWs9CiqFNNzwcb05OF9oUf5J4sYMg4MHEga66kS2pF00glG/VV8caDHg2tspZ7rQLBzyzUTGEMwwd1Uf73NBgFIHgh5sExJSy+Cr4Dc61M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754939911; c=relaxed/simple;
-	bh=35T9BEu9i7VLKF6/sBCJQ+Z93TxpqBdcRFj/tGP2fgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PNIvpglFoV3igy1c4Xer6SH5m+Tui9UF/ghAskW9W3rdyCvx7zc7z3NTTEBapnJ5sz7YtRbp20aywib0+1lfgYGKSiYVGbzKHgAQl889WjKEPqI7hieZ0cOYozxqmXLAGa+pI6gecTqx2UsVjwrXP2nh2/b/sAZH/yGHmnYca/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1za9Nhe; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31f4e49dca0so5759030a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754939909; x=1755544709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+y9z0wbb7UZ5PYTp6B+LzKdJrgF2sCfiImrK7E1sdo=;
-        b=O1za9Nhe8Bqm+sJUxFbbYCdDl57fQuWciPDmneJhBFZlk6SW5L4LjDZQoxpqrtLqqj
-         oo4ZHBmZ8clKSFU8GHCeI6IW2Q/a60EcM2Re0Zzi3kCgDe3ue24h9XHqZ8ZtBUpezwBA
-         GfPoMcK1QBpYOxB8AkIqc55A3svWDvhQig0MTG3x7+XAdwZ0BTV+Pv4UBh9cwLKi3lDO
-         dGJ99W6jxSVWuimp1cO6ejBEL1ij+0m/FAycmr07qYl/qqq4wBrG0OuXSzUeFlnmwfwx
-         QqFJLYh8IqJHqLALLAAmTh4pUqjAHs8CoUz3idbuX96U4XUQaP0uIbAqzxlUHWYksXyL
-         gyJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754939909; x=1755544709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C+y9z0wbb7UZ5PYTp6B+LzKdJrgF2sCfiImrK7E1sdo=;
-        b=eSXOgi8GFgyQMnNO/k6TR6AMcu6kS3PPW9sY7Ljui3Pz5YyqOXsEtD3TdEiBvXJqoz
-         CGrXaY+4WJZPlx0s9nZo6YRhc4lYk+DugjpB+kCqyU26knP+hANGVe42QnrQlYEnhWdo
-         SezqwDX1KBEYJf15Bjwym2qv4OpUj/oQbGG5DfQe7j/hqQS0AcLMSaKhpYCJoyUT2T4Y
-         NNqLS79Gf/rZ/paL/ux7W+e/a58QGNEgN1TjdW1+sepJYPf5jde/xvURD1ZAX5DZ0pyX
-         67+g+D/gFk7MKq335Anf9REIbC3qUcrBst+7v7Fc7GdfcAcfA5Y7Nrv9Y08gBPwfc0rq
-         9qHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXg+KqKYmbIqjwZ1zS6HjL1UsjrS6k7YmuAsAXFa8E/gWx9Q247h+0tRND5rMUbfJ2qq1+hetcqNL6OZyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm2yMJeDdhv76jXYO9o6fBmxLugE6uP28Hka1fiRAU8FEqtKHM
-	LTuXHKB8xR9hNxXY/whaRhaJ7DEkWV+dysGZu/Z32r9SRUFlzTaerO35
-X-Gm-Gg: ASbGnctgmyjiV9OrtzsX7Rfu9uGy6gi5NNJKJ6DfjUU2xvJpALzaK3iilFcXqQtow7K
-	nNRlgYEGnvTej7fZhH6IUWbwao2xI2JkcTtCqfKsMQeGfEvl7y+yMRkyJt+ZXlnW/y2+TKRszDp
-	ihWaW2uwZQzHxSjyxm+VJpBFwZkLHtB5IXCQS/Toax/koNDwG6oFC5pL3/ooSOc8Id9ti1qSkir
-	3MDxqzOr+GOTavpse8vkF8MDSE3dw1Wwj/V1sgRl8kAoZuXPxPRbFbjbAX5edenX97v4p8HcKN3
-	9wG0mPxNmCgmvi1xxwLRFgzP3+RPy7r4PjCiz9zlHeDbCBaupnR329sTHfclliTO6Vs4lIIEuzp
-	wM3rY17uhujbw+y2GnlfbvlznkJ/9zyjtaGlyR8MikJwY89LS9ixA1w==
-X-Google-Smtp-Source: AGHT+IGrT3Iq/yNt1IOa/hXKnvcE2sGXzFXA7QFiniXSckk6w3tjG0VIizmC6LR3GRwM0xAh5JgKJw==
-X-Received: by 2002:a17:90b:58cd:b0:312:ea46:3e66 with SMTP id 98e67ed59e1d1-321c0aa6dffmr950367a91.21.1754939909511;
-        Mon, 11 Aug 2025 12:18:29 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bacbb74sm23639347a12.42.2025.08.11.12.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 12:18:28 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:18:25 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: ryabinin.a.a@gmail.com, akpm@linux-foundation.org, glider@google.com,
-	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: remove unnecessary pointer variables
-Message-ID: <aJpCATXWQx1hEyta@fedora>
-References: <20250811034257.154862-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1754939960; c=relaxed/simple;
+	bh=F+Sa4E4K9l7ZyUTYlxEZRSWEF0BA6NaeA97AuWM3NS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aOPsWmOWKcc+tcug70pREA+CAR2qt/qO7FNK9+QJPfB9Y82hdiVaFUcAejjEK1oJwBJQJy0wK5BpEgieSR1/+1LvajAuBubWAM9D6CqmjczgE6Az6Ru9bv+KXKG7jyujR69O+9hW+l9i4eAJM+hmDsS+SaL0ugdaEFBYS4nlPZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7gwDtGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ACAEC4CEF1;
+	Mon, 11 Aug 2025 19:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754939959;
+	bh=F+Sa4E4K9l7ZyUTYlxEZRSWEF0BA6NaeA97AuWM3NS4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=I7gwDtGN8rab14VWaZFX3ZyNvXLyBTv26lRcKpeSkTZzezWEMQSh3vG8RSlsZzMwv
+	 qNcIHNS0DS4pV6pJ7JNJQ55FsrKUXXO8ayuup0xE/2kMX9ip5Wio5wcEFzh32F40Sz
+	 wJ4uYkSuxGY+tHnmslyP/ltALttexfF+aMA2BktWzZc3U9cQMA6OAvlTwJa3qi5Fnf
+	 Y1gFyCGTxL4D0ix6gtU8A74UiepD+I4fjVLaPuT2teqikzk0qYSuy5s27yjFr9LMi4
+	 WPOvldpjEpLN35Rgu2F7YzgjrW6/eteXM60JLz17sZwfHK7JVTWW150FpfvothlkLG
+	 DfwRLhoY/YjKw==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61b43c84905so3318032eaf.3;
+        Mon, 11 Aug 2025 12:19:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbMAgQvVw5XdkvTd2CouVG/1pDa6y3gjN8BG+qkVSoyLcjYytGNATai4bbiddwLWZcErsif7HIvr9dZ5w=@vger.kernel.org, AJvYcCXy6JhNFkL4TBoOW9XfqYLT3uLAd1aihDCwPltI93DE57BgA+ke1SkkU7kDkoGacjsJ3OLZawPeLaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ3slVLrGEL0lIDDy0YUyv2SuCpxBIHXPY9qZxOUHD9+kyKWpV
+	Ykokd6gohn/j6EYPUQiEvHa0HdLL4i8aZ+hqqPWtJvexo/hmasj/E+B5mydTm/y58+0hXqenUdS
+	iot73Jcw70jtGOFC6XUodlXe7ZmYGF1I=
+X-Google-Smtp-Source: AGHT+IFVukX1KrTZ6Yyf5VUjR0OxjtiZK4zWjKVwlwWtei1I3lI5mQbpQzv9OVjqxabgFCTTanCIhfmEprfzY9Mm2Xo=
+X-Received: by 2002:a05:6820:1c88:b0:619:950f:2413 with SMTP id
+ 006d021491bc7-61bb581df2bmr607359eaf.2.1754939958801; Mon, 11 Aug 2025
+ 12:19:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811034257.154862-1-zhao.xichao@vivo.com>
+References: <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+ <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7> <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+ <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
+ <aIso4kLtChiQkBjH@arm.com> <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
+ <aIvQvLL34br6haQi@arm.com> <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+ <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
+ <20250811060551.ylc6uutni4x6jqtg@vireshk-i7> <aJo5vP_mfBn_vxSF@google.com>
+In-Reply-To: <aJo5vP_mfBn_vxSF@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 11 Aug 2025 21:19:06 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com>
+X-Gm-Features: Ac12FXz-ahcyrD5qoZX9IPtX0f9rw_hXpZGNeAy_-IiQw1U4FWq-BH_JYXYvI8s
+Message-ID: <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Prashant Malani <pmalani@google.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Beata Michalska <beata.michalska@arm.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jie Zhan <zhanjie9@hisilicon.com>, 
+	Ionela Voinescu <ionela.voinescu@arm.com>, Ben Segall <bsegall@google.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 11:42:57AM +0800, Xichao Zhao wrote:
-> Simplify the code to enhance readability and maintain a consistent
-> coding style.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  mm/kasan/init.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-> index ced6b29fcf76..e5810134813c 100644
-> --- a/mm/kasan/init.c
-> +++ b/mm/kasan/init.c
-> @@ -266,11 +266,9 @@ int __ref kasan_populate_early_shadow(const void *shadow_start,
->  		}
->  
->  		if (pgd_none(*pgd)) {
-> -			p4d_t *p;
+On Mon, Aug 11, 2025 at 8:43=E2=80=AFPM Prashant Malani <pmalani@google.com=
+> wrote:
 >
+> On Aug 11 11:35, Viresh Kumar wrote:
+> > On 06-08-25, 17:19, Prashant Malani wrote:
+> > > So, do we have consensus that the idle check is acceptable as propose=
+d?
+> > > (Just want to make sure this thread doesn't get lost given another th=
+read
+> > > has forked off in this conversation).
+> >
+> > I don't have any objections to this or a better solution to this.
+>
+> Thanks Viresh! Beata, can we kindly move ahead with the idle
+> optimization (which is this series), while we continue discussions for
+> the "under load" scenarios on the other thread?
 
-Nit - Get rid of the empty line between the if statements.
+I need some more time, please?
 
-Aside from that, LGTM.
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+This problem is similar (if not analogous) to what happens on x86 and
+that is not handled in the cpuidle core.
 
->  			if (slab_is_available()) {
-> -				p = p4d_alloc(&init_mm, pgd, addr);
-> -				if (!p)
-> +				if (!p4d_alloc(&init_mm, pgd, addr))
->  					return -ENOMEM;
->  			} else {
->  				pgd_populate(&init_mm, pgd,
-> -- 
-> 2.34.1
-> 
+Thanks!
 
