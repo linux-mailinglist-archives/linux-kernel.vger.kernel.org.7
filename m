@@ -1,106 +1,156 @@
-Return-Path: <linux-kernel+bounces-763113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37E4B2107A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:58:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53769B20CB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EB2500954
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D0B3A7ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2192E4273;
-	Mon, 11 Aug 2025 15:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66434277CB8;
+	Mon, 11 Aug 2025 14:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="eI3vf8ut"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLbVzq1v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7782DE1FE;
-	Mon, 11 Aug 2025 15:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F9218584
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926013; cv=none; b=cjTKSjYnUeGYVuBazulQMdcYcA8KQsBEMgCv/TuOHMTgfnhEMr/JcgBTwhOEAsHSUYAJtqo6f476aerodJHNvQeEelgFI16G0PZ1U0TZ15R3FGTqe7hXsauj0gtITLMkI29OMmAB05E55OSPzasSSaGCqb71p9epPwcfWAskg04=
+	t=1754924057; cv=none; b=QhNcJkpEa0VEZgI4JVkBH/Q+0O4fAXMCvtVc1oCVrX7Bd6/h4xDinU342AKSI0F6VT4m/P6PSFUgsTMY0I1PeJmoGn77AYGr0actqzppymkkfA+71Syar4isGW7veAD+URWfLfIPx5o9REDd9EbnBLIUCmQbQsUIvAE9PovDu1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926013; c=relaxed/simple;
-	bh=oZjSLsnOXOCW/QNPAEkDEC9Z/y/pdmjgkqli94Ckk2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HOUn4NtLEEU5Sr9yROpLVYRp2/RN5IEsKf3ZuuxAVDwfut0j8a8bjQvOoyIbDoa57faEihUru9afDZi8+0kvACW5MkCKXn8Vamm51eQCX8x2h9WXYmVQE/j/qIGyy5nSqsfs1CRVPTrjNo9YSs00rxpHBXNVbrhkozZjJANxzxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=eI3vf8ut; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=OQusFukqhitT3LSxslVxlfEDgo7kN0aw4meYJgI5oek=; b=eI3vf8utFxTWIarm9k3CG7eO6v
-	ogSovJhoIApfhVgExgULrnzaDoLUxtqammtz2lkSyG6FTTMeRpzymM2UMxfsZQzB5LOR+/8C4HFOy
-	TjUc3IJWPZmlIEngNb9UtE6NEys02ii2OKpbaptSv/ESOKFggy+/OJ+JEw8o64Nd/U+x2BrNPRTu+
-	nuKaUcDgaE09SW1plFh2wP5rtwtlnUn3r4IEU1EGGZfErcHFX9iFMu53YXtQ/lNocWjHVEzOm0/dq
-	2ID1hmKcgk42aMllTNVy3MUU7D76Rl1Tr6sErhuozYOU2y6VHmgak4FvyTSg7IkcVvSP8mu2oSDog
-	HSiBAKGw==;
-Date: Mon, 11 Aug 2025 16:53:58 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
- <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
- <tony@atomide.com>, linux-omap@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] bus: ti-sysc: Fix potential double free in
- sysc_add_named_clock_from_child()
-Message-ID: <20250811165358.79b3128c@akair>
-In-Reply-To: <20250804120403.97959-1-linmq006@gmail.com>
-References: <20250804120403.97959-1-linmq006@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754924057; c=relaxed/simple;
+	bh=DjuTw3m4Kw8YuMFL9kL+Lv8VO7GlaRaNvp2WtFfF/Xg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nkhzKOuglspkEsbzcRKYs6LaIg/BpENlFb1g/OFnXOlt25/Er4y8B1VpblY7yme6JYAASottYhCxl/ZkT9lC3t6TsHjZchl6cG1GpqrAAPupBYJZLflTR/IN6r5Y8YP3GcGpIdR3gAwruOh6VX2UnGigE1aNaflYq9Bwf/yuh0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLbVzq1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5431AC4CEED;
+	Mon, 11 Aug 2025 14:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754924057;
+	bh=DjuTw3m4Kw8YuMFL9kL+Lv8VO7GlaRaNvp2WtFfF/Xg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dLbVzq1vGVAWxU5sBzPPJviAr4jsZpFFVhfQBftOLqLYW+tYqon9CdoUjx7UAT8C9
+	 gasYBenGEMnOLv30qr1kcgFSfUEnYE13ad9HEv1mDa0IPYwKNbZwGN9lZBdRrDJ8uD
+	 ubFOcKyWgwWMTGyUMe2o9Qy/1rjUKAF/rCcwyUWeMd0Z9t6bDm2fHf95dKJwR4Hk8z
+	 vFx21SGDPOm+DIYlmvFXIlBWQcDWw3ljv0Yt611YBRpjdkc65hOvCgmQ5JjgD/o2uc
+	 aWP51YKIE11yJmbTw0rUjtN7T7+xNJ3TwMIKXiBWgf89NZujrgLf3L0iiJDMrJ18P3
+	 COyldOSiNzXtA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ulTuh-006HHZ-3U;
+	Mon, 11 Aug 2025 15:54:15 +0100
+Date: Mon, 11 Aug 2025 15:54:14 +0100
+Message-ID: <86tt2d9aeh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false positives
+In-Reply-To: <20250811135001.1333684-1-lpieralisi@kernel.org>
+References: <20250811135001.1333684-1-lpieralisi@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ruanjinjie@huawei.com, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi,
-
-Am Mon,  4 Aug 2025 20:04:03 +0800
-schrieb Miaoqian Lin <linmq006@gmail.com>:
-
-> The devm_get_clk_from_child() function uses device-managed resources
-> that are automatically cleaned up. The clk_put() call after
-> devm_get_clk_from_child() is redundant and
-> may lead to double-free issues.
+On Mon, 11 Aug 2025 14:50:01 +0100,
+Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
 > 
-> Fixes: a54275f4ab20 ("bus: ti-sysc: Add quirk handling for external optional functional clock")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> L2 IST table entries are allocated with the kmalloc interface
+> and their physical addresses are programmed in the GIC (either
+> IST base address register or L1 IST table entries) but their
+> virtual addresses are not stored in any kernel data structure
+> because they are not needed at runtime - the L2 IST table entries
+> are managed through system instructions but never dereferenced
+> directly by the driver.
+> 
+> This triggers kmemleak false positive reports:
+> 
+> unreferenced object 0xffff00080039a000 (size 4096):
+>   comm "swapper/0", pid 0, jiffies 4294892296
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc 0):
+>     kmemleak_alloc+0x34/0x40
+>     __kmalloc_noprof+0x320/0x464
+>     gicv5_irs_iste_alloc+0x1a4/0x484
+>     gicv5_irq_lpi_domain_alloc+0xe4/0x194
+>     irq_domain_alloc_irqs_parent+0x78/0xd8
+>     gicv5_irq_ipi_domain_alloc+0x180/0x238
+>     irq_domain_alloc_irqs_locked+0x238/0x7d4
+>     __irq_domain_alloc_irqs+0x88/0x114
+>     gicv5_of_init+0x284/0x37c
+>     of_irq_init+0x3b8/0xb18
+>     irqchip_init+0x18/0x40
+>     init_IRQ+0x104/0x164
+>     start_kernel+0x1a4/0x3d4
+>     __primary_switched+0x8c/0x94
+> 
+> Instruct kmemleak to ignore L2 IST table memory allocation
+> virtual addresses to prevent these false positive reports.
+> 
+> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Closes: https://lore.kernel.org/lkml/cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com/
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
 > ---
->  drivers/bus/ti-sysc.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/irqchip/irq-gic-v5-irs.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-> index 9f624e5da991..5441b0739faa 100644
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -362,7 +362,6 @@ static int sysc_add_named_clock_from_child(struct sysc *ddata,
->  	cl->clk = clock;
->  	clkdev_add(cl);
+> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+> index ad1435a858a4..e8a576f66366 100644
+> --- a/drivers/irqchip/irq-gic-v5-irs.c
+> +++ b/drivers/irqchip/irq-gic-v5-irs.c
+> @@ -5,6 +5,7 @@
 >  
-> -	clk_put(clock);
+>  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
+>  
+> +#include <linux/kmemleak.h>
+>  #include <linux/log2.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
+>  		kfree(ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(ist);
 >  
 >  	return 0;
 >  }
-I understand the double-free issue, but I have some questions to make
-sure I understand it correctly what we are doing here. So lets ask the
-possibly stupid questions and check assumptions:
+> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
+>  		kfree(l2ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(l2ist);
+>  
+>  	/*
+>  	 * Make sure we invalidate the cache line pulled before the IRS
 
-- clk_hw hardware still lives after clk_put(), so we do not have
-  problems normally here after that put when we do not remove the
-  device?
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-- With your patch the put is delayed, so things live longer. So why
-we do not use devm_clk_put() or avoid using devres at all here?
+	M.
 
-Regards,
-Andreas
+-- 
+Without deviation from the norm, progress is not possible.
 
