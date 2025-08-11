@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-762738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DECB20A69
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEA3B20A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4C8171385
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6809516B398
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035D02D2390;
-	Mon, 11 Aug 2025 13:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465C91BD035;
+	Mon, 11 Aug 2025 13:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5+TYzps"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wdr4T5UH"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943AB21CA1F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18220278751
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919350; cv=none; b=Ind47+jAShPrwg1BAvlKM/cNLjiIM4rk1gcNPYcbY4IJSMYare4TYfN1c0rK4ipxTyqzpZeGeYwB6L6dW5z+NtVJ573PcN+Z2vwMSs4vlZFasdi2TCB4886zp3ID7TcNEHe3GeMHGfasALLexF9FGtL6C37itonjExghp2ZDqU8=
+	t=1754919388; cv=none; b=eY1lBdsqJby9yGSx6RyrZYkspWV5W7M/B7X6EzaOQmHtUsz/0wTtkbkYWHx/kjz5dCODJU0aYWLg/Y8D205MsnVdn2hR61zLeL3uLZ0DHj4bdENw+RD4HeNDNi6bTiVa1HsHeqQ6cKqxG+9+Mrx8yVek5ioXU01VysI0z6RyV/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919350; c=relaxed/simple;
-	bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bj6iuwpUerIKKmtA739WDQcj0zXQnbCv3MX5YWMZ8lTYwPaWiqRZZcOjy6kETmqGDJwrNX40ONpvD8XjErp6fFt/hWHO43J5rKIlflchJQxcTdttZ/9a3Kh/0q4x+kwaxAj7YLEchiKkQxS/D2RuZw524wbqE0+ajZeOoEOrvbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5+TYzps; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af93381a1d2so701998766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:35:48 -0700 (PDT)
+	s=arc-20240116; t=1754919388; c=relaxed/simple;
+	bh=clEggjtaYLzTP4MRCQeAmK7J1GgjIsiD6H0HbmNpPwA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KhKV3E0ENmu7y1bwTwgm503pBz7Fcw+/0wM/XaDnKucaJfOyb2ZBNAE0YVYtGj4bn8oENF8FuXqqBkQ5x8Id6zg6qzqVG5Ny9OEjm1ABSxH9p+Pbd+vqQGaEkxH44etBjEiG+0As2/5xPKQ6Dpdk79w+4tGl5hHTHsWqyHbu8FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wdr4T5UH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459d40d16bdso29282695e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754919347; x=1755524147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
-        b=V5+TYzpsM83XZNgIaZPoTilrdG9hE+Pogldsx03uxPN+By2WC9IZFyKKifX0/Kzctu
-         ghqxuFxjkbcbN8mr2y780n6l8aOGP6Ju2HDm5H+9Np/v4khZw5N+fzr5TF0LXzkTuVwl
-         pFsqpDJQW2Owb/i50CToe3NI6JJU4o8bZBWWkqRNeRUSvuIPTTFShMm129t1/Lkb2p3J
-         wCXBI/IP1QXl5HxMpcHRgHSdJISboGoe4N+bKO7HU1mGLVd4hMuTMkDVDJGiT5vklQkr
-         IqIWpdmG0llYIcxE3MDrZxfLJaO0+tDrcXGoU63cdqMlRv0AQ9nmCUwj3fNzsA3YHMKv
-         dETA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754919385; x=1755524185; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mgvgu9N2AijRJyk+Sq7xheAGC9tJFkrvX7b0MouEF7s=;
+        b=wdr4T5UHts0li9DvZwvJinCIwc7kcp/npjyaR/0oNCIbiInmXE1lwZ5ZCLu5N3JvF+
+         LCCGM8HRgYpyLIUr+0o9veTzxZGXM0aAzhMZM7KifGkfoQyiJR9CaNAUINYUhZm1tPHh
+         HQAEFl8/a9/dBV6GfGjbbcD894S+ANcKqGFZSh3BxlF+oKjwrX8MY8rrNJRqPDLfPRFx
+         HazeqohJmjWfSQdlcGtfXtS/gl311rjevd8P0hDvxAdCrwQOmostuQYmTRqyuwTtuit3
+         ORxukwEPLxWsfbJzMGkazyUpQhO7wiDZL0mh6Z5QFybc98fJicpOFQtC3jRHyqp0IZDK
+         jZeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754919347; x=1755524147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
-        b=rSZZIepaKhDw/Zm2CsrsCcVHZGbzj8ZbmV7QXHAWle8am7K2wJBVNMjwnFxulVH1+X
-         zTy16BlmNtWu1xRez1xITKuQ95HFWcSbQEkJM8isRcvYxcQLgPEOtH1UFfxkzij1pTpc
-         6QU2Gszi6g20SMYKkHk48fr7EYUs3GwzuxabkI1VPJ6el6BeVmm1P9Y3qj21Ty4GM6uX
-         PvDimlvZ4ABwAkSVxWrqSmaTnFuSROnd8HhP8TOtH7cHQPfHj8A6MXXUU4txNW7uN3mO
-         8OT+wT4CgWodPYmyeSjhBINGGh9i2BBLkeTyuh36pzVSGBvjuf1N7nSoQC3JFa224tzq
-         LVhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5EVYtcfzjZODZROLJNxMr3LWucsJWojTF65cdZcDnjNFqS690WPmWweefE4ESL8d4Z20+9Vc2NzkBBgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5IvviR62HYRaAHMbSFK/1098Bjj/kRr3iR75cYsq+ELoNLPHz
-	eDv0dR9FajmCjZQDxSefw0w7Cm7aev9/l50wT3K1JZf5EaRk6I8EPDaIftk3cXUDgpvCNqRJaTQ
-	SFfkVsgSuTZ3W1TKs5APUlEKuA5kCUGASovzP7Hpx
-X-Gm-Gg: ASbGncsKAJqzuOVoKCiH0TkMirkvM0uabJQ85c6NaN+zBtF8mc624lXkxLjXFe3vDgz
-	a6cYx1Yd8t1g3Jmc2lZSJ4FhF7oG2tG12X/zwws1RjsFrchH3dpAcDWkJ3RT1pFiIpLBd87ZA3Q
-	KOVHY7Wd79r7ufPJzmVUKNJVe5HcSTtXfupU636z1y9VKCGtcxnQeCw3o6mB8emLkrsgRtAqo9V
-	6cyRDt2RB+TwtdGOfkgNOpZy+q10yhS1+gxfA==
-X-Google-Smtp-Source: AGHT+IEMtjza3TqJyxfAJQyh/g//yT0fd/jmtnJvyR6WS2pLIzy4wk0OcH9xcPI9BD7giTYgWv7HB5G+dXSRgt0snm4=
-X-Received: by 2002:a17:906:4787:b0:af9:2002:c18a with SMTP id
- a640c23a62f3a-af9c6373b46mr1283907966b.16.1754919346635; Mon, 11 Aug 2025
- 06:35:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754919385; x=1755524185;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mgvgu9N2AijRJyk+Sq7xheAGC9tJFkrvX7b0MouEF7s=;
+        b=UAVy7j8YtFtTgsy/Lt+MEXcYO3MGVYdFHWd157w5A/SYXk3mZEsBxsLiUr+GTFCbRq
+         fxmbQDlo7BXD1EaVS0v9FW9O0JqBqAJKA8ikCTPNSjCtUTNBSjFCH3/k6qxyPKzegM/n
+         V+2vylho+LV1dxqBM1ADEXEYkMuxCK5n0TyTnzxlMyU/WjEChcFcstAZBNZYPEC8I4/0
+         c0AILRCIPHznauDJHxArZfgNCv6NGfzx/RzBCV7C1z9c/YON2kJaAv621Crl+X4IWGdp
+         h5JQ6Njs1SMmZATGiuZM2OUZzbZ3G4FrlEFEOcKM7AVibl1mxs0Uutw0dAMNdo8wABmj
+         li5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPRFzUZanKzukmsiiI3Z9D94d8An1Lrnih1bMd4oIxToaBr3gVHceMrbUHRTyyOoFwxIqKAzCNDbxgRwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcibIEk1/4RsbUrjwv3ijXLosHclO3EwUGZ+mlPIkmPeKKgyoG
+	k06LqiLIu8Jq7+dF40xhwsZcEcJ4qc+64cVgR2exAX15NxG2JowFpnxrE6XCO5jCzLY=
+X-Gm-Gg: ASbGncvNuODEPHdQK2CLpRZ++93A4kgjLDHt9Pf7XYWruk4SeiJdxd75R8MEfb7Td7X
+	0sE27OK3lUrcpNXCE/POdvErsAcL8/ONpmupMjDGjXG2M2M6ySZlmfszkshYgNokNnPZRGN8eSw
+	2+MUoH37owcPp4RQ5AYWwclGGmtBBx0yCVPud7RucmuCYWHMM2/fzyCtnvD8kxXKDFk7S4O5TZg
+	8H0hZGu12/HdkRpDw5OaqUoeLjtKJ/GbiVc8jc/hELjdlmtXkQztUfQdbewShCw67DCTMjkfqmv
+	knBcAwTOR12d+3RbGim0NdPLK01qXTbHXY9Z6nuyfzWg8oB1q1milP+LDEupDdebnLfThbVNYX6
+	D4yMeqKZnXR62NoQDIA==
+X-Google-Smtp-Source: AGHT+IHDTCjn6dBu5l+OgcVURiM6ym9RYYUAj/uH7kKQAWn+bxm23Sv86Ag1bxA1de9Pe5NZjNwYrg==
+X-Received: by 2002:a05:600c:190b:b0:459:e048:af42 with SMTP id 5b1f17b1804b1-459f4fac94amr103698535e9.24.1754919385351;
+        Mon, 11 Aug 2025 06:36:25 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587d378sm253045105e9.23.2025.08.11.06.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 06:36:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] mfd: vexpress: convert the driver to using the new
+ generic GPIO chip API
+Date: Mon, 11 Aug 2025 15:36:15 +0200
+Message-Id: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808200250.2016584-1-jpiecuch@google.com> <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
-From: Kuba Piecuch <jpiecuch@google.com>
-Date: Mon, 11 Aug 2025 15:35:35 +0200
-X-Gm-Features: Ac12FXxK4ZD6s-7VYdbjoueF6PsaOpuLOwBBRHilnnM34Pojh_ruezo5yGtwTLw
-Message-ID: <CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] sched: add ability to throttle sched_yield()
- calls to reduce contention
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	joshdon@google.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANDxmWgC/x2MMQqAMAwAvyKZDdSAKH5FHDRNNUNbaUEE6d+tL
+ gc33D2QJalkmJoHklyaNYYqXdsAH2vYBdVWBzLUm4FG3E+N6P0HZ5FjuNDSwMRuY3YCNTyTOL3
+ /6byU8gIfB4mwZAAAAA==
+X-Change-ID: 20250728-gpio-mmio-mfd-conv-d27c2cfbccfe
+To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Pawel Moll <pawel.moll@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=903;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=clEggjtaYLzTP4MRCQeAmK7J1GgjIsiD6H0HbmNpPwA=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomfHUYiAnVmpFO/oZDby6G3Nf5/lruJtO9Yl/L
+ PeCjRn8/wCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJnx1AAKCRARpy6gFHHX
+ cjlfEACaOEGk18hRDoKJNflCPY4MfFf4GwET0PRhy5JviWpFMYTrtB5tMVk8F4IfPlR0Z+waq/m
+ HzKLZfJ46OXxlk/w1UaUfZxPh0PXi2WnO7k/O7q0H4PviNcLql6lrVyWCVqcMm0nS6mD0Xr3+m7
+ pGTDTAUMm9EhyW2ANTdFY0NiC0mH0QIE5T488WnHqThXwKZwSPWAmLf/JzuGz35BDu+dxoPAEX+
+ IpZwHudbovr04PrPAa2om/LfIUFGv8r0cLL3oATqcRu1HjdRv+qDX6KKq2eeYtJR4KkFq8w4lPN
+ GaJAmGdIEb2VEyfLHN2aLS2EggsFOiEz0jyMsxh6JN2XYrHOlZHvXVW/u8uzlXgBPg3Fl6vP4hR
+ iPgqd2BtU1puXtWD3ytDPMXkV+UZ1rUT9UhRs9UsbyQAS9uLkEQ7Fl1xtsVF47KS2M2C0vF0mAp
+ FjM4WHe+Z/PbXPs2fR0Xj1gKPLQngJRLNmbJ0ltc6EeXCcWgNqB3CJSMDt0unBFzs5hlF7DFpUT
+ a9tLk7admLgn3uoAriVVTj8WP/0zbYuQSqViufMoF954F0eaGv7wJnGGejuoaX44pkW7Wcy4mQH
+ XFXMn9Odz1ZbuUf9kkFjcxeZytfNhrR9EaTyzQBtLQVG1MLZS0b9Wo6NUWmTnLIYPgRF7Iz66cf
+ RcTiCXEK6wyHc4g==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Mon, Aug 11, 2025 at 10:36=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Fri, Aug 08, 2025 at 08:02:47PM +0000, Kuba Piecuch wrote:
-> > Problem statement
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Calls to sched_yield() can touch data shared with other threads.
-> > Because of this, userspace threads could generate high levels of conten=
-tion
-> > by calling sched_yield() in a tight loop from multiple cores.
-> >
-> > For example, if cputimer is enabled for a process (e.g. through
-> > setitimer(ITIMER_PROF, ...)), all threads of that process
-> > will do an atomic add on the per-process field
-> > p->signal->cputimer->cputime_atomic.sum_exec_runtime inside
-> > account_group_exec_runtime(), which is called inside update_curr().
-> >
-> > Currently, calling sched_yield() will always call update_curr() at leas=
-t
-> > once in schedule(), and potentially one more time in yield_task_fair().
-> > Thus, userspace threads can generate quite a lot of contention for the
-> > cacheline containing cputime_atomic.sum_exec_runtime if multiple thread=
-s of
-> > a process call sched_yield() in a tight loop.
-> >
-> > At Google, we suspect that this contention led to a full machine lockup=
- in
-> > at least one instance, with ~50% of CPU cycles spent in the atomic add
-> > inside account_group_exec_runtime() according to
-> > `perf record -a -e cycles`.
->
-> I've gotta ask, WTH is your userspace calling yield() so much?
+This converts the vexpress-sysreg MFD driver to using the new generic
+GPIO interface but first fixes an issue with an unchecked return value
+of devm_gpiochio_add_data().
 
-The code calling sched_yield() was in the wait loop for a spinlock. It
-would repeatedly yield until the compare-and-swap instruction succeeded
-in acquiring the lock. This code runs in the SIGPROF handler.
+Lee: Please, create an immutable branch containing these commits after
+you pick them up, as I'd like to merge it into the GPIO tree and remove
+the legacy interface in this cycle.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (2):
+      mfd: vexpress-sysreg: check the return value of devm_gpiochip_add_data()
+      mfd: vexpress-sysreg: use new generic GPIO chip API
+
+ drivers/mfd/vexpress-sysreg.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250728-gpio-mmio-mfd-conv-d27c2cfbccfe
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
