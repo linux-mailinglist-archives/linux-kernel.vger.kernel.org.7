@@ -1,118 +1,157 @@
-Return-Path: <linux-kernel+bounces-762527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0E0B20808
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:40:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7412CB2080D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33C817CFE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2BC1887CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22152D29C2;
-	Mon, 11 Aug 2025 11:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CD62D23B5;
+	Mon, 11 Aug 2025 11:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1E8Yn8a"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OA1H4Rgy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1987DDF6C;
-	Mon, 11 Aug 2025 11:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66DE2D239F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754912427; cv=none; b=OfNNPTqAINVkoj422A6+vIAOt/kjebqxAyaSaCltd161pcLEPTC8Obl4LhH+mxXN8b00iyFD0mUhwlCL58NPGQqZ43GMKhWycKw5N/pyPuFSmuLV3thAL+kDVsW4uLCGIZQd1lsJ3kb8zB3vmJJTZtMD0nQJySzri7dcqkRBDeM=
+	t=1754912468; cv=none; b=eLDIGBVUW7DxLMeLY00NRmsxjrnGaY1KbKV8io/Q9U1aA3Dl3+q6eCsudSMtdiiCKiRV3WaJ783fFtLgEYOGZrBvjO5Q4kJF0WThSjpqONrhvL1924iwIhnqTD4y2Sor8LbTyVjVwHfSiHWwS619+pMJy6zU7RCc71WJ04kYg9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754912427; c=relaxed/simple;
-	bh=aY1/v2vYacmu029BEs0gmPRFN4q4+3GQdnp0j66cyQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmBwkLm74mg8QYImyQnRFBMnk+M8QEcg3aFSsUozO7V1+iL4obVTkvN0tHVH5PjOw6ODtAGQROTvSkPAMB7O1BRXFr6qftL3sCutV3bpcsGst4oP4ZBMDY6Kx6Sh8mKpKcgABUHhi1SH76EkDO5ikOMPeVUpwl37A9pMe7b7MSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1E8Yn8a; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76bd202ef81so5416371b3a.3;
-        Mon, 11 Aug 2025 04:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754912425; x=1755517225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tVd+PaoPv29GhtyZaa2oKmb/IOsF7WgMozB6NnJzQ6o=;
-        b=S1E8Yn8aA1ZYPGn8wC/AUkdsu/ardJr/zI8vb2ApOGVa6h1udFplPtLLY+9xNcr6Si
-         j9omnf4WWn/1GDgknw9VAMDhanZb1F63Q3YVxXAahmQ62BfxLoNDIFo1QVVjCC4S2ycA
-         7bLy67bKrqXB36hEnEjTbhwqyoHx+63ymv81EByMhtuKQaA8/7js0tkwz6+Obr0yIlgg
-         MDw+0GIOK8GA/ie0jcOa1RkzRZMcW7uxc/K7Ola8zVwsEXDm7ruDNDRmOM7U+37LtwVC
-         0YuxV+2DU8VXUwPhprb+a7MwTtoqVzw4dl13aamYnSmeMujYCsnCU7z0N83JxDYs4veN
-         spwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754912425; x=1755517225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tVd+PaoPv29GhtyZaa2oKmb/IOsF7WgMozB6NnJzQ6o=;
-        b=Zda5pu3x0ekuwJcn6zbQYGkQ2CnjoNX84/9hdgbUJCTWBH3GYzZp11a5JDG//LrLKC
-         ix0tHYSt0WLi/iso5EREI9n/EaGi7MAozCjees0L3jCHJAiLsEyOE8+mkJSoZ48jrYL1
-         rfwfv/P8aDZgql6jo0RpyJfbjyX98y7S/V51+nrW9FkLCJ9upqPWV/n6K2UQrC8xO4EP
-         UaNdn0n1QIaD0JkutM55qLlY8nxBSF1mnqD8VjcrB0QNIXTgxA9EDdYApjYNbEwWMFeY
-         9S8AE7MbkhLwm0MSC+v1tsVhEmhQPHFCaQVYdRGQ3dKYL/IteerfSXp7STIAWLk/d6UY
-         RGEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2GVjjoNyVv5WOaayOz8PJPZ6ggD6GfMwtTNQ4+IWJc2mLerMsQJh+Tm+tDcI9+Progi+IXAGrg/reeqY=@vger.kernel.org, AJvYcCVVHgCnmCa9wYqCmrMdhUw2uB8klBvOKcMrHj2Y3ILSjnWsnAD9L3Hn36STeuSROiB/E6t2QNLzOww2JpGm2hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2lrwHUByccBKXE15ow6q0e0mJQHiwTaG4vqHivpH0YWRO0Kdf
-	vBU464V6X+A7UtXBIAuHUJyeY1TDu+ycWZQpr5nfTKOjug3+6/j4HJUuvbRolw==
-X-Gm-Gg: ASbGnctPIa24ogc7v+nkX2AcpzvTxbTY0G8aCpU230a5//sx4KmBVmDGOyZlh9jBKOO
-	s3mHM8aZsPPFLCrZ3APy+aVafFL/HiL3ryerP3qGMI7y3FVhVBG0I53dB5gxjVm/TUwbbbDVHRU
-	+hTk15DWSUDc1K9sWX58eoDSD7FFNoIrgdyULcrtPF5c8qk6GNzFyXAq1pHqyj6HvziL1wTfQO/
-	bw2OjKNn8WERTY1n9Y51tbYL4Ke2o/esuckhZ3YopOlWm0NaKSNP1Mof8sGmB57DnnE4mbS6vk3
-	xkJ4FwuHsc9PsH0V9fAa+OTIMW8uwVYYGMqz1rAI2YQuNAh9NU1Fo8+u9IYXe4p33mWC4x75paU
-	E4cLPjtisaIVewHRW6vCrKqGrnQiP3A==
-X-Google-Smtp-Source: AGHT+IEH9vgTlcxdiF6XhfOIZ03uZg7cVj9D2X5Kcvl8l+VjTxJYJ7B4eonG3Ob9wEjzq5TdghQxaw==
-X-Received: by 2002:a05:6a00:2daa:b0:749:b41:2976 with SMTP id d2e1a72fcca58-76c46095e41mr19801888b3a.3.1754912425266;
-        Mon, 11 Aug 2025 04:40:25 -0700 (PDT)
-Received: from fedora ([2405:201:5501:4085:eece:e0ff:6b68:de2e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce89132sm26837930b3a.29.2025.08.11.04.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 04:40:24 -0700 (PDT)
-Date: Mon, 11 Aug 2025 17:10:52 +0530
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4] rust: kernel: introduce `unsafe_precondition_assert!`
- macro
-Message-ID: <aJnWxD7qyOOXz543@fedora>
-References: <20250808192005.209188-1-ritvikfoss@gmail.com>
- <aJm1iWpM_mR7mkMh@google.com>
+	s=arc-20240116; t=1754912468; c=relaxed/simple;
+	bh=se0LPPpyvdXaamX2AlSPQPdigMuM5TEAMp+uNnvVCyg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=c5yXsjOWiP9DTB3ABrU5KUlt5/oav4TJUofuhBETLGZsEueTzaB/iJrOYObBh5ocbgh9pc26gkGN1RrYxaZjvwxe/59L8PQr7wPRlg5/6V7aos5GSDlO7A6RVX0QBbnCz0c6C0cYOS3ftKJm1FAwo0DUZDQWP4zZvqeLAbtWMWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OA1H4Rgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A34C4CEED;
+	Mon, 11 Aug 2025 11:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754912468;
+	bh=se0LPPpyvdXaamX2AlSPQPdigMuM5TEAMp+uNnvVCyg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=OA1H4RgyN2tdzhWdheQAv6OvMSfeervu1u8BNowQlTKKupXq2BnBECnlmb8JnQ24y
+	 cgik0aEOuzz9gXvFH8wmenWcAp5I357hFCUlMJNGb8CABr2Qf92GEczJDwZg8jart9
+	 8lKqwAtG5koeVdvTXBiRx9Hk13fWzLf1fnvTrupAkq0smQFk4O0ArNsNjgBumv5Xhx
+	 Pbxp7nD+VUztoVhrFkiWl59AoKOsE33plxTgv4Hm9uvgDeHM5d2WYUg4GXnIrO+YGO
+	 Lp4XCcRkZaaVxl6ydYSUDcKGiQii4dpLb5YtLB0N468Lg7fEhHG+D8BXC3RUUIYKWG
+	 Nt1VGPS0OjYtw==
+Message-ID: <5a259275-e284-49b5-80d4-929c60b5c1cc@kernel.org>
+Date: Mon, 11 Aug 2025 19:41:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJm1iWpM_mR7mkMh@google.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_write_end_io
+To: syzbot <syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <67ec7e14.050a0220.31979b.0031.GAE@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <67ec7e14.050a0220.31979b.0031.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > +    ($cond:expr, $($arg:tt)+) => {
-> > +        $crate::unsafe_precondition_assert!(@inner $cond, ::core::format_args!($($arg)+))
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/common
+
+On 4/2/25 08:00, syzbot wrote:
+> Hello,
 > 
-> Tamir, taking your fmt series into account, what's the correct
-> replacement for ::core::format_args! here?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4e82c87058f4 Merge tag 'rust-6.15' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17007198580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4253e469c0d32ef6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=803dd716c4310d16ff3a
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/5e6f1c2744e3/disk-4e82c870.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5c1a60744d62/vmlinux-4e82c870.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/228bbd75bd12/bzImage-4e82c870.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/data.c:358!
+> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+> CPU: 1 UID: 0 PID: 23 Comm: ksoftirqd/1 Not tainted 6.14.0-syzkaller-10892-g4e82c87058f4 #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> RIP: 0010:f2fs_write_end_io+0x77a/0x790 fs/f2fs/data.c:357
+> Code: e8 8b 01 f2 fd e9 a2 fa ff ff 89 d9 80 e1 07 38 c1 0f 8c fe fa ff ff 48 89 df e8 11 01 f2 fd e9 f1 fa ff ff e8 87 92 8b fd 90 <0f> 0b e8 8f d4 ed 07 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00
+> RSP: 0018:ffffc900001d79c0 EFLAGS: 00010246
+> RAX: ffffffff8437d9e9 RBX: 0000000000000000 RCX: ffff88801da85a00
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 000000000000000a
+> RBP: ffffc900001d7ac8 R08: ffffffff8437d696 R09: 1ffffd400012b785
+> R10: dffffc0000000000 R11: fffff9400012b786 R12: 0000000000000001
+> R13: dffffc0000000000 R14: 000000000000000a R15: ffffea000095bc00
+> FS:  0000000000000000(0000) GS:ffff8881250e5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fd1b21f9438 CR3: 000000007b684000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  blk_update_request+0x5e5/0x1160 block/blk-mq.c:983
+>  blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1145
+>  blk_complete_reqs block/blk-mq.c:1220 [inline]
+>  blk_done_softirq+0x100/0x150 block/blk-mq.c:1225
+>  handle_softirqs+0x2d6/0x9b0 kernel/softirq.c:579
+>  run_ksoftirqd+0xcf/0x130 kernel/softirq.c:968
+>  smpboot_thread_fn+0x576/0xaa0 kernel/smpboot.c:164
+>  kthread+0x7b7/0x940 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:f2fs_write_end_io+0x77a/0x790 fs/f2fs/data.c:357
+> Code: e8 8b 01 f2 fd e9 a2 fa ff ff 89 d9 80 e1 07 38 c1 0f 8c fe fa ff ff 48 89 df e8 11 01 f2 fd e9 f1 fa ff ff e8 87 92 8b fd 90 <0f> 0b e8 8f d4 ed 07 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00
+> RSP: 0018:ffffc900001d79c0 EFLAGS: 00010246
+> RAX: ffffffff8437d9e9 RBX: 0000000000000000 RCX: ffff88801da85a00
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 000000000000000a
+> RBP: ffffc900001d7ac8 R08: ffffffff8437d696 R09: 1ffffd400012b785
+> R10: dffffc0000000000 R11: fffff9400012b786 R12: 0000000000000001
+> R13: dffffc0000000000 R14: 000000000000000a R15: ffffea000095bc00
+> FS:  0000000000000000(0000) GS:ffff8881250e5000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fd1b21f9438 CR3: 000000007b684000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Whoops! I wasn't aware of the fmt-series! Thanks for mentioning it :)
-
-After a quick search, `kernel::prelude::fmt!` type/macro [1,2] seems to be the relevant replacement.
-So, the line would look like:
-
-	`$crate::unsafe_precondition_assert!(@inner $cond, $crate::prelude::fmt!($($arg)+))`
-
-Does that sound right?
-
-[1]: https://github.com/Rust-for-Linux/linux/blob/8f5ae30d69d7543eee0d70083daf4de8fe15d585/rust/kernel/prelude.rs#L36
-[2]: https://lore.kernel.org/rust-for-linux/20250719-core-cstr-fanout-1-v2-4-1ab5ba189c6e@gmail.com/
 
