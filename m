@@ -1,207 +1,100 @@
-Return-Path: <linux-kernel+bounces-761955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18425B20063
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B8DB2006B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C103AD9A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23C91895CDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929B22D9ED9;
-	Mon, 11 Aug 2025 07:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6sZQrtY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D101827990B
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE612DA77B;
+	Mon, 11 Aug 2025 07:35:34 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D42B23B613;
+	Mon, 11 Aug 2025 07:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754897659; cv=none; b=ST3Gxkby1Yx3ohvxtRl3L3x0aFDzZ8apNMXiYCIdQUP9xdgHOWoYFeCkphSQ9ksTa8G1MennJVipqnMus0JBnWVfp0l3yuYmxf155wc5CfOhJk/i0hjgfnqbsKvHLFEYSSf3EKxA7rnZ65ecW5dhVDumrh9pM1kKwbXnGJ/Et80=
+	t=1754897733; cv=none; b=OX51DPEjNTQNFLtxWuIP/OxFlsmVlv+EgsKs6j7QGtHMeF3E4h2rN+3luuB2kJO2DcO0WdJMpG6NadLPUkZ+byk5fZh4ddO9U8PgFFc/r1nT0lOTf1MFeCL3+dwb1fvHV9ePxU5pjiyHRPQ55cIUozqnb3nsKcnUQM7ylFoS9pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754897659; c=relaxed/simple;
-	bh=dK7SLDDhLK24LOoQxG4hZlXuF4fqefgKWahWen4Gd2I=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=P3fxhg05ud6v3XNjkwjCc39JoXW6BvXHnCI766HnVNCh4pN15NWzhrfDR4WAFcVIttXsbdttKtryaS2Nu6UFvHHuz3ehx+s8jQyKbfiSrEUWhJbsDWEGyua7hC5LRJurv/RpT9A11eTYxZJaauviO1CZgQ2m9XfyoKprcJnOz+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6sZQrtY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754897655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=q9vbhTv66yOj5MFJijPbRoZX2tGXwBihvDtRn9EhSDY=;
-	b=M6sZQrtYKsiI4l7FtykzUoWksL/1AvlKxG36uIgiyJS+G987qmQ2658v/HrEBPRCb/w4pQ
-	cm15f0KWUuybV3u86/6TvxGhXLWlVzkwIvIqgzZ3xpX5lCTsurJov+/Mdsv5vclgOIgm1e
-	+uC2gVe6LgLXRbJaHlPr4tk0+SFCPf0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-KjcMOzISNPWa7lE9yECnSQ-1; Mon,
- 11 Aug 2025 03:34:10 -0400
-X-MC-Unique: KjcMOzISNPWa7lE9yECnSQ-1
-X-Mimecast-MFC-AGG-ID: KjcMOzISNPWa7lE9yECnSQ_1754897649
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99F1D18002C1;
-	Mon, 11 Aug 2025 07:34:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1BDA3180047F;
-	Mon, 11 Aug 2025 07:34:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix collect_sample() to handle any iterator type
+	s=arc-20240116; t=1754897733; c=relaxed/simple;
+	bh=2Q9ZsC1HlA/lA6njVvReFZ0atkiHkIj+V8qk1kbzK/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uol5mFLgWUGzyehopdxuR5MOXE3BDl8/P5G05Ud1SyA5+4AhFf021uFcS5t2yDnjUvZ/WPMecxp981dejQMifWWdMtDSIItIlq5p0YM4v8ynWl/tS7QiWrKhJK9+1wRLm9LYvIWQbGHb8aGaIugUotwpCSetFEGPkl01wDNbbPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxPuM6nZloHFQ+AQ--.17397S3;
+	Mon, 11 Aug 2025 15:35:22 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJCxdOQqnZloCJ9CAA--.53284S2;
+	Mon, 11 Aug 2025 15:35:07 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 0/3] Refine stmmac code
+Date: Mon, 11 Aug 2025 15:35:03 +0800
+Message-ID: <20250811073506.27513-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <324663.1754897644.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 11 Aug 2025 08:34:04 +0100
-Message-ID: <324664.1754897644@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxdOQqnZloCJ9CAA--.53284S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoWruF4UCw4kKF1fuFyxZFyruFX_yoWfKFg_WF
+	W2vr98Xa1UXF4jkFW2grsxu34a9Fs8uw1FgFsrtayF93yrZr98XFn5ury8ZF1rWa4YyFn8
+	JF1xtr1xAw17KosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JF0_JFyl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Gii3UUUUU==
 
-collect_sample() is used to gather samples of the data in a Write op for
-analysis to try and determine if the compression algorithm is likely to
-achieve anything more quickly than actually running the compression
-algorithm.
+Here are three small patches to refine stmmac code when debugging and
+testing the problem "Failed to reset the dma".
 
-However, collect_sample() assumes that the data it is going to be sampling
-is stored in an ITER_XARRAY-type iterator (which it now should never be)
-and doesn't actually check that it is before accessing the underlying
-xarray directly.
+v3:
+  -- Add a new patch to change the first parameter of fix_soc_reset().
+  -- Print an error message which gives a hint the PHY clock is missing.
 
-Fix this by replacing the code with a loop that just uses the standard
-iterator functions to sample every other 2KiB block, skipping the
-intervening ones.  It's not quite the same as the previous algorithm as it
-doesn't necessarily align to the pages within an ordinary write from the
-pagecache.
+v2:
+  -- Update the commit message of patch #1 to explain the background.
+  -- Add Reviewed-by tag for patch #2, no code changes.
 
-Note that the btrfs code from which this was derived samples the inode's
-pagecache directly rather than the iterator - but that doesn't necessarily
-work for network filesystems if O_DIRECT is in operation.
+Tiezhu Yang (3):
+  net: stmmac: Check stmmac_hw_setup() in stmmac_resume()
+  net: stmmac: Change first parameter of fix_soc_reset()
+  net: stmmac: Return early if invalid in loongson_dwmac_fix_reset()
 
-Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanu=
-p")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/compress.c |   71 +++++++++++++----------------------------=
-------
- 1 file changed, 21 insertions(+), 50 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c      | 6 +++---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 7 ++++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c           | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c    | 9 ++++++++-
+ include/linux/stmmac.h                               | 2 +-
+ 5 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
-index 766b4de13da7..db709f5cd2e1 100644
---- a/fs/smb/client/compress.c
-+++ b/fs/smb/client/compress.c
-@@ -155,58 +155,29 @@ static int cmp_bkt(const void *_a, const void *_b)
- }
- =
-
- /*
-- * TODO:
-- * Support other iter types, if required.
-- * Only ITER_XARRAY is supported for now.
-+ * Collect some 2K samples with 2K gaps between.
-  */
--static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *s=
-ample)
-+static int collect_sample(const struct iov_iter *source, ssize_t max, u8 =
-*sample)
- {
--	struct folio *folios[16], *folio;
--	unsigned int nr, i, j, npages;
--	loff_t start =3D iter->xarray_start + iter->iov_offset;
--	pgoff_t last, index =3D start / PAGE_SIZE;
--	size_t len, off, foff;
--	void *p;
--	int s =3D 0;
--
--	last =3D (start + max - 1) / PAGE_SIZE;
--	do {
--		nr =3D xa_extract(iter->xarray, (void **)folios, index, last, ARRAY_SIZ=
-E(folios),
--				XA_PRESENT);
--		if (nr =3D=3D 0)
--			return -EIO;
--
--		for (i =3D 0; i < nr; i++) {
--			folio =3D folios[i];
--			npages =3D folio_nr_pages(folio);
--			foff =3D start - folio_pos(folio);
--			off =3D foff % PAGE_SIZE;
--
--			for (j =3D foff / PAGE_SIZE; j < npages; j++) {
--				size_t len2;
--
--				len =3D min_t(size_t, max, PAGE_SIZE - off);
--				len2 =3D min_t(size_t, len, SZ_2K);
--
--				p =3D kmap_local_page(folio_page(folio, j));
--				memcpy(&sample[s], p, len2);
--				kunmap_local(p);
--
--				s +=3D len2;
--
--				if (len2 < SZ_2K || s >=3D max - SZ_2K)
--					return s;
--
--				max -=3D len;
--				if (max <=3D 0)
--					return s;
--
--				start +=3D len;
--				off =3D 0;
--				index++;
--			}
--		}
--	} while (nr =3D=3D ARRAY_SIZE(folios));
-+	struct iov_iter iter =3D *source;
-+	size_t s =3D 0;
-+
-+	while (iov_iter_count(&iter) >=3D SZ_2K) {
-+		size_t part =3D umin(umin(iov_iter_count(&iter), SZ_2K), max);
-+		size_t n;
-+
-+		n =3D copy_from_iter(sample + s, part, &iter);
-+		if (n !=3D part)
-+			return -EFAULT;
-+
-+		s +=3D n;
-+		max -=3D n;
-+
-+		if (iov_iter_count(&iter) < PAGE_SIZE - SZ_2K)
-+			break;
-+
-+		iov_iter_advance(&iter, SZ_2K);
-+	}
- =
-
- 	return s;
- }
+-- 
+2.42.0
 
 
