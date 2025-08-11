@@ -1,79 +1,91 @@
-Return-Path: <linux-kernel+bounces-763221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EF9B211F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:30:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA69B2119B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2A77501557
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E99477AD055
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C94A29BD9C;
-	Mon, 11 Aug 2025 16:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB12C21E5;
+	Mon, 11 Aug 2025 16:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhMFRURt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSAlGCy7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F5F311C2B;
-	Mon, 11 Aug 2025 16:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8256F29BDA5;
+	Mon, 11 Aug 2025 16:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928942; cv=none; b=U2U3b4Tl15XyfxQhVCy/VXNfuOExSTG2L0pQTof9gduoyjte5Ii5BwT+FgXiWFum0yj7/ctZNAnPov0ZcgNqPrG8a+GVoei0XrNlJdMVf3aZQn/ikErlOWeR1alZp4IroVWfxDiVCPW6LZODS7BcTv4qb2x+TNSLjQ9OhX3ZTGM=
+	t=1754928956; cv=none; b=Kw/frFnHILXFvBX6BN+/aaHLXO5HbdOW2qDj+RKWpbm8HM5HydcVqVjmdYQ5wgg0BuBEkQVsfEJ9qbKfiQj7sCma+A6MRu2iT/J635NV4Fl5kNrt5QsYMEHWflIKiB+Jh9D8PSTIBt8xakrXnHkbFIDkJ1cN+nRQl4PxDhY0Mro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928942; c=relaxed/simple;
-	bh=2sNkub0rzCDFrLMqsijjTc6D2BdtnRb0YA+BhBUHoA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z/xG3lr5QU3vfNQXFIT1JxkJycXlHEfWlnVDdPRi6YpTNEfD7BJZhTsdwMij3iXII6lwGQ2qR/7rSlB4hEMy/bIcOgCBToHbbZ8dA5ujuEA0NXngvZv1bIVgbJroSryvdXYHc+HnwCMVqs2mciulhI6C49RuXUfMdHRjC//uRM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhMFRURt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C7E5C4CEED;
-	Mon, 11 Aug 2025 16:15:41 +0000 (UTC)
+	s=arc-20240116; t=1754928956; c=relaxed/simple;
+	bh=o1gIah4K7Il1XlQ8OgE/fAmwguOP6eQWUa5LNbztNgA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NQECvMZhyXnJVLvwD5ig/SAcr+YoCAO4VeJ/fNZELu3p+Hk+Y29oR2SDAKfaafKFgtb/z9T0ZWxC/AtifqVjYsU0JN1Ec26en/c/Bw+8Y202U4bKcQPGvO0IwLiQoVqiCbN8G7NrROimUx4qeGvJnm7jXUMs6+5KzauCmxjrsUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSAlGCy7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5D5C4CEED;
+	Mon, 11 Aug 2025 16:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754928942;
-	bh=2sNkub0rzCDFrLMqsijjTc6D2BdtnRb0YA+BhBUHoA8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UhMFRURtW47AcwG9fIq7vLE/b/7KOD0bmD2KL4OHFKzfwOdAysm9C0iXLz8nxQ3/D
-	 6leg016ReYBNmXlalpid/AL0/8lGZABoHmyJXEPdistDkiOgqhjK5YeM6qkmA7laPu
-	 zDedfz1QjrHhgsQyqTGYtQA1l3Q7OtSTBREfVxE3r9oPPH9HKiOlnNHhf/0vAqndWp
-	 nztvGLC2ppB/DO4az1AbNZDEhUqzjKlRpVa/xKNAR+MIPRCLutSDO9nqDsSylafqH6
-	 NLG6pN1wsxDqDP9FsHIZloqzmU1u1GZ/nWza9YDGoKmwL2K0KrclFmxbQCXHyYQWxs
-	 3Ph2mFCVQi1nA==
-Date: Mon, 11 Aug 2025 11:15:39 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH RFC v2 0/3] arm64: dts: qcom: sm8750: Add Iris VPU v3.5
-Message-ID: <bs4bgbyrph4xwsianzvkonpmi72muihob2yaip3gz4yhlqon2s@uvbwrhlr2xlr>
-References: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
- <175449112353.639494.1882304081892662235.robh@kernel.org>
+	s=k20201202; t=1754928956;
+	bh=o1gIah4K7Il1XlQ8OgE/fAmwguOP6eQWUa5LNbztNgA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mSAlGCy79AEhzZQGT9BsFM7KQMIuzLAIXlC5APtuEXmkx9Ci0bzcogw/ca5X0LPys
+	 j4ph8Q+wXflsd+B0khC14jnk2fgLd8Yge+desGuOqR1y4UDE5km6uevRvR1IPJqlmF
+	 4/ZUXqrFGWQb3QwQ4oZdGS9lMzhyDtJd/MhPrt2a+SzdlWZbdNVfxHH6FJOdB0seMo
+	 T6JQmq/EyxX8XECDDhfYDDCD+pWnJlO3PP2d0wbNYxJB8PSrRjL+ARtnCoumgOxgul
+	 lA6twXuAinw2+9mIpJtxhFQOKDKtY7Mr8ZaDLV1kCYn9i5xyeTL5JDdyP98DLC2Dvt
+	 2uR3DBmfbtCQA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB070383BF51;
+	Mon, 11 Aug 2025 16:16:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175449112353.639494.1882304081892662235.robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Use strscpy() instead of
+ strscpy_pad()
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175492896874.1716045.7275722865948412355.git-patchwork-notify@kernel.org>
+Date: Mon, 11 Aug 2025 16:16:08 +0000
+References: <20250811091906.4640-1-thorsten.blum@linux.dev>
+In-Reply-To: <20250811091906.4640-1-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 06, 2025 at 09:40:29AM -0500, Rob Herring (Arm) wrote:
-> On Wed, 06 Aug 2025 14:38:29 +0200, Krzysztof Kozlowski wrote:
-[..]
-> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: /soc@0/video-codec@aa00000: failed to match any schema with compatible: ['qcom,sm8750-iris']
-> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: clock-controller@aaf0000 (qcom,sm8750-videocc): 'required-opps' is a required property
-> 	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
+Hello:
 
-Can anyone help me understand why required-opps is a required property
-in the videocc binding?
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-Is there a valid level below "low_svs" that is otherwise selected, but
-insufficient to keep the clock controller ticking?
+On Mon, 11 Aug 2025 11:19:06 +0200 you wrote:
+> kzalloc() already zero-initializes the destination buffer 'data', making
+> strscpy() sufficient for safely copying 'name'. The additional
+> NUL-padding performed by strscpy_pad() is unnecessary.
+> 
+> Add a new local variable to store the length of 'name' and reuse it
+> instead of recalculating the same length.
+> 
+> [...]
 
-Regards,
-Bjorn
+Here is the summary with links:
+  - Bluetooth: btintel_pcie: Use strscpy() instead of strscpy_pad()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/523024537985
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
