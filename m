@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-761667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CBBB1FD2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B59B1FD39
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98ED07A8A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935331895D65
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E74A01;
-	Mon, 11 Aug 2025 00:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EdmzTgpN"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13364D2FB;
+	Mon, 11 Aug 2025 00:10:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B6710E3;
-	Mon, 11 Aug 2025 00:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A994A2D;
+	Mon, 11 Aug 2025 00:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754870803; cv=none; b=PMB7LK7BNzCSM+siIZED+riMsBYaKg2IwEytJkflg5a72xRlsug9IIebiGEtMb01EnlVQ9zz224Ky00S9RGBM6obkJ+Nk10bPXUQZcqChf/5A+pdqo0QFm+cpQlqOPfAw2CPLrh372+ipZv+sZZCFIbyfxt1twsi08N4+dC6wAw=
+	t=1754871021; cv=none; b=pFeOwK0yQOJ8wUYFAnoQ/fYqyYCvvF961CX6VTbohCDI9IVXfBYtGWwFoEYMyy3umE1QlkNV5L1VAS1qjfZgc5ZWyKnz+HSoIpFUnpNAn46yzznW8rPjc3l90PRtLxfhMx2lLi6GhI2itxbdaAgECBhyUP4xkrsrA5OljCipsKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754870803; c=relaxed/simple;
-	bh=Me7BXIULbu1PawKNGprkMGr4nSJpa4jxmK8qND4zjJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QSwP7dEys8GVptr1V4xa6O5RPXkC1dcHdZ5rQTKQVuLNiMwbzc50IXiFTPNHGYGJdIhi29KovQOsmfI4mDkNYuxQVtW6jZP/CC0ziEXUJ3mLBRuTt9IMiRudsKK5Qpy66RP+LWNmSch4rsO8Lsjnac/njjKr9UCMsmuon5ikxFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EdmzTgpN; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=CR3qZ/ks8Hd4Zktc0AhYsQ6iQmLURrornNBY9WHJxvM=; b=EdmzTgpNbfCrrd+IPUy5ZMl8iI
-	gR2w4Mevz/KBzkapvgjfwdswOfgY4OpOxdxq9SG2damYfsx4p7c8jHil8bLBCLkIH4oH21RuD2T4K
-	PPc9h4ohJdMOUC9gWE1jiqyPU2bOhDMW/L9u2PKDyBVAYEr0UhWqgdTDLHhewCtAAk7q0nA6lcFxy
-	zQTSmT8nh3vSvM7Ej/8GVIkF/V7hK1v+EmdknFLKmSC5xevpZr2aufzLF1eHx8OIice8Q2LK+wGm+
-	wEvaR/4pBI9oKF2wGBT072u4SXJtP+NTEtt67ZdmC1bwELUyf0koBT+iW4HvcrlddSzqLfPT6YNNv
-	6IkIkjKQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulG3f-00000006DDA-3Afm;
-	Mon, 11 Aug 2025 00:06:35 +0000
-Message-ID: <ea997753-510e-4d9f-af53-8943dad822c0@infradead.org>
-Date: Sun, 10 Aug 2025 17:06:35 -0700
+	s=arc-20240116; t=1754871021; c=relaxed/simple;
+	bh=8hwwZNPOCYpNxCxer0VxJ1qiElxYhy23+OK7racy2nE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iyX5K9UmhfaxKqiAg26l64SdLi5IDTyX9jqLx0pHMgsWWMxYBTVM5P9aZF3vYJhqwhxmj1T0hOaCCHfrxvXxm9Cf7oKtVV4hYMkZ9SAZLwtCkIXZ03EfufEXeXMWfepa8mTq+DpMHlWfq3T0ryvlMMyqTYoXy3qGxGRFNfgbipM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 2A23FC05A2;
+	Mon, 11 Aug 2025 00:10:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf01.hostedemail.com (Postfix) with ESMTPA id 9B5DD6000F;
+	Mon, 11 Aug 2025 00:10:15 +0000 (UTC)
+Message-ID: <6a9620575d59483b105a35e8c2f53890a5d1f159.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] README: restructure with role-based
+ documentation and guidelines
+From: Joe Perches <joe@perches.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org, 
+	konstantin@linuxfoundation.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org, workflows@vger.kernel.org
+Date: Sun, 10 Aug 2025 17:10:14 -0700
+In-Reply-To: <aJjM1oF8hJJrqDhN@lappy>
+References: <20250809234008.1540324-1-sashal@kernel.org>
+		 <20250809234008.1540324-2-sashal@kernel.org>
+		 <bee3cea19d9fc1c97b1816f516fdd5283cebc1e1.camel@perches.com>
+		 <aJjM1oF8hJJrqDhN@lappy>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] README: restructure with role-based documentation
- and guidelines
-To: Sasha Levin <sashal@kernel.org>
-Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org,
- konstantin@linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rostedt@goodmis.org, workflows@vger.kernel.org
-References: <20250809234008.1540324-1-sashal@kernel.org>
- <20250809234008.1540324-2-sashal@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250809234008.1540324-2-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Stat-Signature: eobbaqiebk7z393ets76zxnbr6xt3z37
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 9B5DD6000F
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19zrOciS4xm3vyDpEqG1tMZN+HqTSsJnCo=
+X-HE-Tag: 1754871015-939760
+X-HE-Meta: U2FsdGVkX183GdC57GyHLKXG38ktqNK5G9QkEVsK/2TROQ+PIDYCZW0+2HOvi9MXr77jcZo4U5dgi2+yx1RbOs/WNEmVxkUNlSj4pPuzVTViV8E4Vi4l8NGEWYfTq/bokFYNB2nlD13i0JmQ+amArgkyXGNzWi69HTIpARwfC4D7cwjlM03jlpDF+rZjbqNcLT9ZqgjS0ZgtMuQl+xLjUol+ZTZwaa5X4igftSOV/mqWRit6GTnI0u3RBXN3SqGdyLko8+o6foztuyxRaXE9qvlXDRXG0FHXr+2wBcomekyIp5BkNQBI7cMtDk2ZX4UB
+
+On Sun, 2025-08-10 at 12:46 -0400, Sasha Levin wrote:
+> On Sun, Aug 10, 2025 at 08:44:58AM -0700, Joe Perches wrote:
+> > On Sat, 2025-08-09 at 19:40 -0400, Sasha Levin wrote:
+> > > Reorganize README to provide targeted documentation paths for differe=
+nt
+> > > user roles including developers, researchers, security experts,
+> > > maintainers, and AI coding assistants. Add quick start section and
+> > > essential docs links.
+> > >=20
+> > > Include proper attribution requirements for AI-assisted contributions
+> > > using Assisted-by tags with agent details and tools used.
+> >=20
+> > Nicely done.
+>=20
+> Thanks Joe!
+>=20
+> > Perhaps the 'Assisted-by:' tag should not be limited to AI
+> > assistance but could also be used when accepted notes were
+> > given on any revised patch submission.
+>=20
+> The suggestions from the previous patches around expanding this to be a
+> list of tools rather than just "AI" made sense, this is the example I
+> gave in the cover letter:
+>=20
+> 	Assisted-by: Claude-claude-3-opus-20240229 checkpatch
+>=20
+> I find something like that useful because it tells me from the get-go
+> that the submitter ran checkpatch on it (without having to spend a line
+> in the commit message saying the same).
+>=20
+> I'm not sure about mixing human feedback into this, it might be
+> difficult to interpert it later.
+>=20
+> It might work more naturally as an extension of Reviewed-by?
+>=20
+> 	Reviewed-by: Developer A <a@b.c> # Improved the XYZ algorithm
+
+Maybe.  Dunno.
+
+Sometimes I just give style suggestions or notes for things I'm
+cc'd on but I don't really review it as a "Reviewed-by:" tag
+seems to imply a more formal process.
+
+> > Oh, and maybe a checkpatch update like this?
+[]
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> > @@ -641,6 +641,7 @@ our $signature_tags =3D qr{(?xi:
+> > 	Reviewed-by:|
+> > 	Reported-by:|
+> > 	Suggested-by:|
+> > +	Assisted-by:|
+> > 	To:|
+> > 	Cc:
+> > )};
+>=20
+> Yup, makes sense! I'll start including checkpatch updates going forward.
+
+If the AI/coding 'Assisted-by:' tag doesn't have an email address,
+then checkpatch is going to complain anyway.
+
+Something in checkpatch's
+
+	# Check signature styles
+
+block starting around line 3040 or so will also need updating.
 
 
 
-On 8/9/25 4:40 PM, Sasha Levin wrote:
-> Reorganize README to provide targeted documentation paths for different
-> user roles including developers, researchers, security experts,
-> maintainers, and AI coding assistants. Add quick start section and
-> essential docs links.
-> 
-> Include proper attribution requirements for AI-assisted contributions
-> using Assisted-by tags with agent details and tools used.
-> 
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  README | 184 +++++++++++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 173 insertions(+), 11 deletions(-)
-> 
-
-I like it. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
 
