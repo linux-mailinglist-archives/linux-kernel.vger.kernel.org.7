@@ -1,155 +1,196 @@
-Return-Path: <linux-kernel+bounces-761846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD521B1FF1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:16:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE881B1FF48
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0AC3AAE27
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:16:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0688165865
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A1285050;
-	Mon, 11 Aug 2025 06:16:14 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059A19C54E;
-	Mon, 11 Aug 2025 06:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5939285050;
+	Mon, 11 Aug 2025 06:17:46 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B09156F45;
+	Mon, 11 Aug 2025 06:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754892973; cv=none; b=aK/3ALoYp9ue0BRZglbxGVm363CwsuVYHpPy1VlxIrbI3a5xVRAz6LDsLtN8bBb2IaVXAuRa0XEqQYY5w5380daP436wf8LDoejlWkrtM94TRS7dwZSlAC7Fo1334ZVC1tB/D1npg2bARfwV4DuX3YKWClAwU/ve7PkOdPr62Hk=
+	t=1754893066; cv=none; b=Kg+hSPZdlG7U7NPYR/T2Zwa7hKwXQQTDVPcP3x5/sON4XdvMqGaT0PTq86FzE6GahBzbiymIsWzjQ+91Jkb77TXXdDdDaOSgasuAehJxjC4OceMHmTEhgs7x3y/2YYeZxTmwiZI7sYvI3onh643TtLVYXQpXJFpHOoKYB+YSse4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754892973; c=relaxed/simple;
-	bh=8yBfRNNj88KYOLzIVbc8KOtL/WKAmqp/cxB42b4ZV6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KY7QILWZQaSgZY87NNxzAF7vylj4RPMt90jIq2VB0j4oiN7InKYNYEJuTofAer949sY9H24ytcZoqm6ZPxaNRZYkDdEAgv9Ci0pMis3xR5Izh+9EBGO2fX2oieZpbHh4CV+pWXkSFrDQOYdDm7u8Hz/MMSFMgS7K9BEYcvTwf2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=207.46.229.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrACnD2dqiploU5gkAA--.35048S2;
-	Mon, 11 Aug 2025 14:15:06 +0800 (CST)
-Received: from [192.168.101.253] (unknown [183.94.132.22])
-	by gateway (Coremail) with SMTP id _____wC3T1Nliplop6jPAQ--.37082S2;
-	Mon, 11 Aug 2025 14:15:03 +0800 (CST)
-Message-ID: <226d6f90-f80b-430d-a30c-db5a2a652e3b@hust.edu.cn>
-Date: Mon, 11 Aug 2025 14:15:01 +0800
+	s=arc-20240116; t=1754893066; c=relaxed/simple;
+	bh=I/Ou4vFUyItVnWXgby4jL7pI++3nsXHr4tEZGjEgEl8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LQVYcT0GgoxTJWzwanzFinfRUB4v92t3IM1s4EsyipyatmiWvd8R14LxFKLzDLNhuz93vOGFQGiKf0BC4RlgWNxaY9exeaf2dghKIsGurYvXeKUS6wZHh00N/6dJbRlP/k/HYJ0xSha3ATHTXXZMBbzrYzwUK7bsQPZ3B3Js+nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c0kvV2ZgwzYQv6D;
+	Mon, 11 Aug 2025 14:17:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F2AFE1A0D25;
+	Mon, 11 Aug 2025 14:17:40 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAHgxMCi5loqHEvDQ--.23486S3;
+	Mon, 11 Aug 2025 14:17:40 +0800 (CST)
+Subject: Re: [PATCH v3 1/5] blk-mq-sched: introduce high level elevator lock
+To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hare@suse.de, jack@suse.cz, bvanassche@acm.org, tj@kernel.org,
+ josef@toxicpanda.com, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250806085720.4040507-1-yukuai1@huaweicloud.com>
+ <20250806085720.4040507-2-yukuai1@huaweicloud.com>
+ <61c62ef0-4dde-4c14-8039-213258d3c6ae@kernel.org>
+ <70789114-81ad-1226-c99c-b35e152b7769@huaweicloud.com>
+ <6a0a203c-c25d-4d01-9295-8d78bb897a07@kernel.org>
+ <f4429faf-65b7-244f-7cf5-18c08ce4964c@huaweicloud.com>
+ <5974ead5-2ef1-4887-91f5-422c87c30273@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <190e08e9-9b18-9f81-9a6c-0a0d3b996398@huaweicloud.com>
+Date: Mon, 11 Aug 2025 14:17:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scripts/checktransupdate.py: add support for scanning
- directory
-To: Haoyang LIU <tttturtleruss@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- dzm91@hust.edu.cn, Yanteng Si <si.yanteng@linux.dev>,
- Alex Shi <alexs@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <20250810161730.6530-1-tttturtleruss@gmail.com>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <20250810161730.6530-1-tttturtleruss@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:HwEQrACnD2dqiploU5gkAA--.35048S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rJrWDGr1rAFWDZFW3Awb_yoW5ZrWrpa
-	y5K3WfJa47Jw13Gw1fGr48urWfGF97J3yYqr1Iqwn5tr4DKw4SgF43tFyY9FWxJryfXFWU
-	XF4FkryjkryDua7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
-	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
-	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
-	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw2
-	8IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0trc3UUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+In-Reply-To: <5974ead5-2ef1-4887-91f5-422c87c30273@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHgxMCi5loqHEvDQ--.23486S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWDZr43GF4UAF4fJF45GFg_yoW5tFWxpr
+	4fGa9rKw4UXF1qq3Z2vw13Xw4UK3s09rnxZry8Jw4xGF9FqryfGF18CFZY9FWjqr1xGFsF
+	qF1UJa93AFWUt3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-+to Yanteng, Dongliang, Alex and Jon
+Hi,
 
-+cc linux-doc mailing list
+在 2025/08/11 12:34, Damien Le Moal 写道:
+> On 8/11/25 13:25, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/08/11 11:53, Damien Le Moal 写道:
+>>> On 8/11/25 10:01, Yu Kuai wrote:
+>>>>>> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+>>>>>> index 55a0fd105147..1a2da5edbe13 100644
+>>>>>> --- a/block/blk-mq-sched.c
+>>>>>> +++ b/block/blk-mq-sched.c
+>>>>>> @@ -113,7 +113,14 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+>>>>>>     		if (budget_token < 0)
+>>>>>>     			break;
+>>>>>>     
+>>>>>> -		rq = e->type->ops.dispatch_request(hctx);
+>>>>>> +		if (blk_queue_sq_sched(q)) {
+>>>>>> +			elevator_lock(e);
+>>>>>> +			rq = e->type->ops.dispatch_request(hctx);
+>>>>>> +			elevator_unlock(e);
+>>>>>
+>>>>> I do not think this is safe for bfq since bfq uses the irqsave/irqrestore spin
+>>>>> lock variant. If it is safe, this needs a big comment block explaining why
+>>>>> and/or the rules regarding the scheduler use of this lock.
+>>>>
+>>>> It's correct, however, this patch doesn't change bfq yet, and it's like:
+>>>>
+>>>> elevator_lock
+>>>> spin_lock_irq(&bfqd->lock)
+>>>> spin_unlock_irq(&bfqd->lock)
+>>>> elevator_unlock
+>>>>
+>>>> Patch 3 remove bfqd->lock and convert this to:
+>>>>
+>>>> elevator_lock_irq
+>>>> elevator_unlock_irq.
+>>>
+>>> I do not understand. Since q->elevator->lock is already taken here, without IRQ
+>>> disabled, how can bfq_dispatch_request method again take this same lock with IRQ
+>>> disabled ? That cannot possibly work.
+>>
+>> Looks like there is still misunderstanding somehow :( After patch 3,
+>> bfq_dispatch_work doesn't grab any lock, elevator lock is held before
+>> calling into dispatch method.
+>>
+>> Before:
+>>
+>> elevator_lock
+>> bfq_dispatch_request
+>>    spin_lock_irq(&bfqd->lock)
+>>    spin_unlock_irq(&bfqd->lock)
+>> elevator_unlock
+>>
+>> After:
+>> elevator_lock_irq
+>> bfq_dispatch_request
+>> elevator_unlock_irq
+> 
+> Ah, yes, I see it now.
+> 
+> But that is a nasty change that affects *all* schedulers, even those that do not
+> need to disable IRQs because they are not using the lock in their completion
+> path, e.g. mq-deadline. So I do not think that is acceptable.
+> 
 
-On 8/11/25 12:17 AM, Haoyang LIU wrote:
-> Origin script can only accept a file as parameter, this commit enables
-> it to scan a directory.
->
-> Usage example:
-> ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
->
-> Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
-> ---
->   scripts/checktransupdate.py | 26 +++++++++++++++++++++++++-
->   1 file changed, 25 insertions(+), 1 deletion(-)
->
-> diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
-> index e39529e46c3d..0d197d036650 100755
-> --- a/scripts/checktransupdate.py
-> +++ b/scripts/checktransupdate.py
-> @@ -13,6 +13,8 @@ The usage is as follows:
->   This will print all the files that need to be updated or translated in the zh_CN locale.
->   - ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
->   This will only print the status of the specified file.
-> +- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
-> +This will print all the files in the specified folder and its subfolders.
->   
->   The output is something like:
->   Documentation/dev-tools/kfence.rst
-> @@ -21,6 +23,17 @@ No translation in the locale of zh_CN
->   Documentation/translations/zh_CN/dev-tools/testing-overview.rst
->   commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
->   1 commits needs resolving in total
-> +
-> +Documentation/translations/zh_CN/dev-tools/index.rst
-> +commit d5af79c05e93 ("Documentation: move dev-tools debugging files to process/debugging/")
-> +commit d5dc95836147 ("kbuild: Add Propeller configuration for kernel build")
-> +commit 315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
-> +3 commits needs resolving in total
-> +
-> +Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> +commit b37221cc861d ("Documentation: kcsan: fix "Plain Accesses and Data Races" URL in kcsan.rst")
-> +commit 72ffee678f6f ("docs: update dev-tools/kcsan.rst url about KTSAN")
-> +2 commits needs resolving in total
->   """
->   
->   import os
-> @@ -131,7 +144,7 @@ def check_per_file(file_path):
->       opath = get_origin_path(file_path)
->   
->       if not os.path.isfile(opath):
-> -        logging.error("Cannot find the origin path for {file_path}")
-> +        logging.error(f"Cannot find the origin path for {file_path}")
->           return
->   
->       o_from_head = get_latest_commit_from(opath, "HEAD")
-> @@ -293,6 +306,17 @@ def main():
->                   if args.print_missing_translations:
->                       logging.info(os.path.relpath(os.path.abspath(file), linux_path))
->                       logging.info("No translation in the locale of %s\n", args.locale)
-> +    else:
-> +        # check if the files are directories or files
-> +        new_files = []
-> +        for file in files:
-> +            if os.path.isfile(file):
-> +                new_files.append(file)
-> +            elif os.path.isdir(file):
-> +                # for directories, list all files in the directory and its subfolders
-> +                new_files.extend(list_files_with_excluding_folders(
-> +                    file, [], "rst"))
-> +        files = new_files
->   
->       files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
->   
+OK, I did some benchmark and didn't found any performance regression, so
+I decided use the irq version for deadline. Perhaps I didn't found such
+test.
+
+I can add a flag in elevator_queue->flags in addition like following to
+fix this:
+
+diff --git a/block/elevator.h b/block/elevator.h
+index 81f7700b0339..f04b9b2ae344 100644
+--- a/block/elevator.h
++++ b/block/elevator.h
+@@ -123,6 +123,7 @@ struct elevator_queue {
+  #define ELEVATOR_FLAG_REGISTERED       0
+  #define ELEVATOR_FLAG_DYING            1
+  #define ELEVATOR_FLAG_ENABLE_WBT_ON_EXIT       2
++#define ELEVATOR_FLAG_LOCK_AT_COMP     3
+
+  #define elevator_lock(e)               spin_lock(&(e)->lock)
+  #define elevator_unlock(e)             spin_unlock(&(e)->lock)
+@@ -134,6 +135,22 @@ struct elevator_queue {
+         spin_unlock_irqrestore(&(e)->lock, flags)
+  #define elevator_lock_assert_held(e)   lockdep_assert_held(&(e)->lock)
+
++static inline void elevator_dispatch_lock(struct elevator_queue *e)
++{
++       if (test_bit(ELEVATOR_FLAG_LOCK_AT_COMP, &e->flags))
++               elevator_lock_irq(e);
++       else
++               elevator_lock(e);
++}
++
++static inline void elevator_dispatch_unlock(struct elevator_queue *e)
++{
++       if (test_bit(ELEVATOR_FLAG_LOCK_AT_COMP, &e->flags))
++               elevator_unlock_irq(e);
++       else
++               elevator_unlock(e);
++}
++
+
+Thanks,
+Kuai
 
 
