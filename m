@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-762870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867FDB20BA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D178B20B9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD2E1902489
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EF61883F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D5D21FF42;
-	Mon, 11 Aug 2025 14:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PiK+5nvm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D093202C3E;
-	Mon, 11 Aug 2025 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921887; cv=none; b=AedQszheuH6njLzirKRsLqklYFopnmQny8zou+M4WEOXJeMITxW5hZJhkgOMfnYwBRg80s9s0WvMFQdqvPrHJATBnxV2zek/T0u5bZ7ZA2jO8IPqAdoMsbysQVQJK0WuYd4iI9Ig5HwZqxoSR/bkj1dXclbI/wbAKz2MLlkXuu8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921887; c=relaxed/simple;
-	bh=FxIeR+XRO+LteQtbn4Y3Z8oxhVBMnjv6foxqAQrwRI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayzhpFjTlexK4ogmW8wpcBqDcHHP473oqs2aENSNjqTwQ4V7NggQdMivaA8gcGHieDQmvXTIy/x1utPjLq7lbQUx0yNoykV3Z7FEDWxZ8rKHMCS2H5B6glF4pzSQEP/rJuNFvQdIv8AGDz3fdfZX4IYeobqK8wPgs/SzxpTU718=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PiK+5nvm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4AA1D40E01FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF84217727;
 	Mon, 11 Aug 2025 14:18:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lacXSiAVNQhH; Mon, 11 Aug 2025 14:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1754921877; bh=qEuNmBwP/sHgYnIfLRgH3+RiF/31tgRFq4tjlmnbQ7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PiK+5nvm7fPXFSGgXGg1YZ5Mdi/swYYeSb/HsRzYqE+3ATfme78wESSO5MN0f8KLI
-	 an9dC2s2es3RocXq2me5yVxW+Lxr5pLFQS99+WkdeZnB92dNU9yAWXwM2/iICN1pnj
-	 J4k6CthtwUWLSHPcBrcEqK5tvgqkSPG2KeakwCDEXdzKaS+P1JecGwvm/05SHlBTEd
-	 Z+Y8URn+IRI3Zez9LvTDVpn1CmLGsvuXvjupYRC965MyXHZDjtLT2hTDqNcEOlNK8J
-	 gGJMoq4FQe5Qf1gno3nqeQJ7ir4B2/LZBZFQ61pawSUPTiY/A1dqTolsaXjIAKAgQi
-	 hwvEic8QGX9NSuISaf5SM685gjGFaVR2kkGpXFfVUT9HJRh97f0ajxjxf3sxitY2m9
-	 384aI3BBTJUODSTWagv6L906RSaCAitKpzLa2Y6+KaLweZC555TcAQtkSUwt5vQsO/
-	 HCPNn4DXFlR6/5vT2e6QDCVourl7LtkbXgxg1ZvSLFFJ87V+rNliWr4CzZP/y0sBbw
-	 9pmx+uLnn067175W+pk0s3fJ00LxBoH6fVu4aeq2y1WTZIZS3IMwP/blwaIJ+9g5fE
-	 5TncsG9BwVSIwq+3fxi7Z10FsqpxEmzWLPeciLn16fn1mYQ4xgTlEUbOSkD9YsfhrP
-	 IDXr4s5JQ8hn7Z0kiuZEYSOI=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jt8qyDoG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zhsYsgsA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jt8qyDoG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zhsYsgsA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4758340E0265;
-	Mon, 11 Aug 2025 14:17:46 +0000 (UTC)
-Date: Mon, 11 Aug 2025 16:17:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v6 00/22] x86: strict separation of startup code
-Message-ID: <20250811141740.GPaJn7hKNmLGV24WTZ@fat_crate.local>
-References: <20250722072708.2079165-24-ardb+git@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8DE202C3E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754921881; cv=none; b=uc3mmB3EQJDKupXbEe+g4vB5Y/NdQQ+ot3I3KXKS911Dw/DgtrchWSHJd2dbdzmHv61PLKY2jCsNf8xW7fPGA1mJgxLBOHRZl3JaFCmTnq7fmbnjijk/dh5tipSt26WXa08eWcSrsMbXPDXGz4lfPPJAgv3f5KReG49nmZvT3Rk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754921881; c=relaxed/simple;
+	bh=7GBRyjgIiU0Rgz/De2jX1kz/0X9cVN3ubMK30rZpMhc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KzhpdOl6Lr7G6aaoBlu7R7UjQwgz66XUpGtfSzMIN92g6O2ub2b4UiN/JZQ3apxsClQNn5MnTa/aXU2bWRxc5x3MggMYibN+UFl4RNgu8mPXj1vuVAwSlBPFmLti8QdR2ybtpBdiM+Mjb2WtPHorxsicuKaJVbaJqyDjLi9wmp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jt8qyDoG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zhsYsgsA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jt8qyDoG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zhsYsgsA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 38AAD220C9;
+	Mon, 11 Aug 2025 14:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754921876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
+	b=Jt8qyDoGCdIVCwjBQmVEatKcxVhS/xJKKKVB3m5h3KL/g7S8AMghhirk51UrZXiuF+U474
+	T1xp8tHEq2mqb9js0hbCgO7SEn/0xd/hFEzCocwMF18TDFuA8kE+zG3ikjR5Zz3H3ZKsMk
+	0iDuj0cCtG4voEiLRcEjFMNA1vpO0so=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754921876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
+	b=zhsYsgsAEZvgKHAeV/j1VTIBqWD0su0rlTFQ9+tcjf4z9f0nQVNC0i+Xu+pxCLevR/0xpR
+	SnZqmKMagMyr89Cg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Jt8qyDoG;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zhsYsgsA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754921876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
+	b=Jt8qyDoGCdIVCwjBQmVEatKcxVhS/xJKKKVB3m5h3KL/g7S8AMghhirk51UrZXiuF+U474
+	T1xp8tHEq2mqb9js0hbCgO7SEn/0xd/hFEzCocwMF18TDFuA8kE+zG3ikjR5Zz3H3ZKsMk
+	0iDuj0cCtG4voEiLRcEjFMNA1vpO0so=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754921876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
+	b=zhsYsgsAEZvgKHAeV/j1VTIBqWD0su0rlTFQ9+tcjf4z9f0nQVNC0i+Xu+pxCLevR/0xpR
+	SnZqmKMagMyr89Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F66C13AB9;
+	Mon, 11 Aug 2025 14:17:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Fwc4ApT7mWhDUwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 11 Aug 2025 14:17:56 +0000
+Date: Mon, 11 Aug 2025 16:17:55 +0200
+Message-ID: <87ikiu0woc.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Vasiliy Kovalev <kovalev@altlinux.org>
+Cc: Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/realtek: Fix headset mic on HONOR BRB-X
+In-Reply-To: <20250811132716.45076-1-kovalev@altlinux.org>
+References: <20250811132716.45076-1-kovalev@altlinux.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250722072708.2079165-24-ardb+git@google.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 38AAD220C9
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Tue, Jul 22, 2025 at 09:27:09AM +0200, Ard Biesheuvel wrote:
-> Changes since v5:
-> - Some cosmetic touchups to patch #1
-> - Fix error spotted by Tom in patch #2
-> - Rejig objtool 'noabs' feature using an arch hook to check for
->   relocations that should be considered absolute, which includes all of
->   R_X86_64_32, R_X86_64_32S and R_X86_64_64 on x86_64
+On Mon, 11 Aug 2025 15:27:16 +0200,
+Vasiliy Kovalev wrote:
+> 
+> Add a PCI quirk to enable microphone input on the headphone jack on
+> the HONOR BRB-X M1010 laptop.
+> 
+> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
 
-Ok, seems to work here.
+Applied now.  Thanks.
 
-You could send a final version with the minor issues addressed so that I can
-queue it and test it more.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Takashi
 
