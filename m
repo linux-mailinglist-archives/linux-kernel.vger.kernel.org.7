@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-761844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884E2B1FF19
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD521B1FF1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6381E189789C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0AC3AAE27
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145028505F;
-	Mon, 11 Aug 2025 06:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRKGd1Yf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB5827F198;
-	Mon, 11 Aug 2025 06:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A1285050;
+	Mon, 11 Aug 2025 06:16:14 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059A19C54E;
+	Mon, 11 Aug 2025 06:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754892826; cv=none; b=Mh1t79IqZSlvAemZD4tW7tnlbk2xfa31cwtdgJ0Eu3lmCIfHW2cr9AwSnXKSkS8poRrD+7jxR3P1ImMntsPPo8D1XmhVqasvsHnaIPc40kLWbjgLUD9+NzHZePy1PEp3bueBDM7armOSojhm00Any2xrykhzAecz+PSLQbOs/Fk=
+	t=1754892973; cv=none; b=aK/3ALoYp9ue0BRZglbxGVm363CwsuVYHpPy1VlxIrbI3a5xVRAz6LDsLtN8bBb2IaVXAuRa0XEqQYY5w5380daP436wf8LDoejlWkrtM94TRS7dwZSlAC7Fo1334ZVC1tB/D1npg2bARfwV4DuX3YKWClAwU/ve7PkOdPr62Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754892826; c=relaxed/simple;
-	bh=5ELLr1VGJj6bpVBWn7xcvf7Y0tmBtRT/+3YCnwhB1TI=;
+	s=arc-20240116; t=1754892973; c=relaxed/simple;
+	bh=8yBfRNNj88KYOLzIVbc8KOtL/WKAmqp/cxB42b4ZV6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CmyFfFnshOd8SocZFq+pHluzypgFJ6SQOAkkBeZdx3JCK8eMdhL7qFPkss8utSpOm9rHSrcm3h2llSQpGgPoOVP4KVzi3txYS6FIw8PsZXHPTlhlWlbvCTiL2HW/vrISng7dw270Vnz6QPoqVp7gLTmiE3KzJwXH2z9gafzn9mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRKGd1Yf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19427C4CEF5;
-	Mon, 11 Aug 2025 06:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754892826;
-	bh=5ELLr1VGJj6bpVBWn7xcvf7Y0tmBtRT/+3YCnwhB1TI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CRKGd1YfV7GBjcJIRNMPRyy/zwvw00Wf4oo+yd0iJZv2TENSbbMzTPjFo06Snow8C
-	 xZ+ceLq5DN8BLUXMrvGxJbv5+lm4T9jmQ50yt2pmeDOc3bF4/uN9njZ6+UqqtE/zFW
-	 887yWqMq/79Cj8xDp0yNXEF4/T8cMEz6GLKipIeI3zTQ/oNEf+g6sCeB7UkKaw+7Fk
-	 tWrtJEQEp3yR0jH2uEWmbBfdCs7cIXhyJFK/OSxzbheiYU9Jezk5JnqgwQF/ZyIx+9
-	 9o4WQzsPoRFzql1LkJLueFBWZKgkTZoArArkbRoy2yb5JNsu3CGf2RsTE1IfbaEgwo
-	 Ke5WWrncErXjA==
-Message-ID: <5c7767d1-1f28-48e0-bf8b-a224151fb007@kernel.org>
-Date: Mon, 11 Aug 2025 08:13:42 +0200
+	 In-Reply-To:Content-Type; b=KY7QILWZQaSgZY87NNxzAF7vylj4RPMt90jIq2VB0j4oiN7InKYNYEJuTofAer949sY9H24ytcZoqm6ZPxaNRZYkDdEAgv9Ci0pMis3xR5Izh+9EBGO2fX2oieZpbHh4CV+pWXkSFrDQOYdDm7u8Hz/MMSFMgS7K9BEYcvTwf2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=207.46.229.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrACnD2dqiploU5gkAA--.35048S2;
+	Mon, 11 Aug 2025 14:15:06 +0800 (CST)
+Received: from [192.168.101.253] (unknown [183.94.132.22])
+	by gateway (Coremail) with SMTP id _____wC3T1Nliplop6jPAQ--.37082S2;
+	Mon, 11 Aug 2025 14:15:03 +0800 (CST)
+Message-ID: <226d6f90-f80b-430d-a30c-db5a2a652e3b@hust.edu.cn>
+Date: Mon, 11 Aug 2025 14:15:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +41,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/12] media: rkvdec: Add RCB and SRAM support
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
- <20250808200340.156393-7-detlev.casanova@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250808200340.156393-7-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] scripts/checktransupdate.py: add support for scanning
+ directory
+To: Haoyang LIU <tttturtleruss@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ dzm91@hust.edu.cn, Yanteng Si <si.yanteng@linux.dev>,
+ Alex Shi <alexs@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+References: <20250810161730.6530-1-tttturtleruss@gmail.com>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <20250810161730.6530-1-tttturtleruss@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:HwEQrACnD2dqiploU5gkAA--.35048S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rJrWDGr1rAFWDZFW3Awb_yoW5ZrWrpa
+	y5K3WfJa47Jw13Gw1fGr48urWfGF97J3yYqr1Iqwn5tr4DKw4SgF43tFyY9FWxJryfXFWU
+	XF4FkryjkryDua7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
+	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw2
+	8IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0trc3UUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On 08/08/2025 22:03, Detlev Casanova wrote:
->  
-> -	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
-> -
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq <= 0)
->  		return -ENXIO;
-> @@ -1204,6 +1217,10 @@ static int rkvdec_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	rkvdec->sram_pool = of_gen_pool_get(pdev->dev.of_node, "sram", 0);
++to Yanteng, Dongliang, Alex and Jon
 
-Didn't you just add new ABI?
++cc linux-doc mailing list
 
-> +	if (!rkvdec->sram_pool && rkvdec->config->rcb_num > 0)
-> +		dev_info(&pdev->dev, "No sram node, RCB will be stored in RAM\n");
+On 8/11/25 12:17 AM, Haoyang LIU wrote:
+> Origin script can only accept a file as parameter, this commit enables
+> it to scan a directory.
+>
+> Usage example:
+> ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
+>
+> Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
+> ---
+>   scripts/checktransupdate.py | 26 +++++++++++++++++++++++++-
+>   1 file changed, 25 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
+> index e39529e46c3d..0d197d036650 100755
+> --- a/scripts/checktransupdate.py
+> +++ b/scripts/checktransupdate.py
+> @@ -13,6 +13,8 @@ The usage is as follows:
+>   This will print all the files that need to be updated or translated in the zh_CN locale.
+>   - ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+>   This will only print the status of the specified file.
+> +- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
+> +This will print all the files in the specified folder and its subfolders.
+>   
+>   The output is something like:
+>   Documentation/dev-tools/kfence.rst
+> @@ -21,6 +23,17 @@ No translation in the locale of zh_CN
+>   Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+>   commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
+>   1 commits needs resolving in total
 > +
+> +Documentation/translations/zh_CN/dev-tools/index.rst
+> +commit d5af79c05e93 ("Documentation: move dev-tools debugging files to process/debugging/")
+> +commit d5dc95836147 ("kbuild: Add Propeller configuration for kernel build")
+> +commit 315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
+> +3 commits needs resolving in total
+> +
+> +Documentation/translations/zh_CN/dev-tools/kcsan.rst
+> +commit b37221cc861d ("Documentation: kcsan: fix "Plain Accesses and Data Races" URL in kcsan.rst")
+> +commit 72ffee678f6f ("docs: update dev-tools/kcsan.rst url about KTSAN")
+> +2 commits needs resolving in total
+>   """
+>   
+>   import os
+> @@ -131,7 +144,7 @@ def check_per_file(file_path):
+>       opath = get_origin_path(file_path)
+>   
+>       if not os.path.isfile(opath):
+> -        logging.error("Cannot find the origin path for {file_path}")
+> +        logging.error(f"Cannot find the origin path for {file_path}")
+>           return
+>   
+>       o_from_head = get_latest_commit_from(opath, "HEAD")
+> @@ -293,6 +306,17 @@ def main():
+>                   if args.print_missing_translations:
+>                       logging.info(os.path.relpath(os.path.abspath(file), linux_path))
+>                       logging.info("No translation in the locale of %s\n", args.locale)
+> +    else:
+> +        # check if the files are directories or files
+> +        new_files = []
+> +        for file in files:
+> +            if os.path.isfile(file):
+> +                new_files.append(file)
+> +            elif os.path.isdir(file):
+> +                # for directories, list all files in the directory and its subfolders
+> +                new_files.extend(list_files_with_excluding_folders(
+> +                    file, [], "rst"))
+> +        files = new_files
+>   
+>       files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
+>   
 
-
-
-Best regards,
-Krzysztof
 
