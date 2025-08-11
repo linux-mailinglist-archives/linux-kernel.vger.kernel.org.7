@@ -1,233 +1,136 @@
-Return-Path: <linux-kernel+bounces-762947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D1AB20CAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:55:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542CFB20CB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E941894962
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED9A169B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8574C2DEA96;
-	Mon, 11 Aug 2025 14:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB61DED5F;
+	Mon, 11 Aug 2025 14:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fFsSvodw"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="JpuPeoch"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A86E555;
-	Mon, 11 Aug 2025 14:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797372EB10
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923772; cv=none; b=HayNjwo1KM750HSAKjyXmzcExFr/q1MiRGp7G7LeaVAF5YAqtKb6ZS4YsyiUz99jZfbatCMb3gOzuhJX8FVNqHFLFTxQuNugyzewnuHOdGBKTHuFnn+Mmwh+dx3s8A+7Kft5ASqvQc4FTbHgkCjGtqobiVWmOVEHaNWN87pNyNI=
+	t=1754923860; cv=none; b=Uz+WvdQo89XquX0wrT8edFEY97L053znh6uxKCrcKrFKGtwfa6jZXZaL9NmikhgXM6jzxnFlufZAUvMBT+ikh10Fe/wAVlaNpcxlZdAl1w18qaFeEUbIDnA7YmFk0mjvhfXlqLJGSPkdtdRDTXFjVD9BQooEr9wduEa6nm6j0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923772; c=relaxed/simple;
-	bh=P3HAzNCi/lnV527V9D2Kvsw3Wjl1CbW7cJ5bgFhE7so=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uhl2fUTUXsQOiBhjTzgaT8jaL/GTI8Q08LCro0yEIgKEXdyLUei9mqB3qLhDYVTffbwhq46YnCyRqMZulIQa36vLQytwP/+EnZxF4MLs1SM5Dfax6U0mGT/eEJPRenwdimvYoT7fLkIi59Jhumd41rQq452TeljKDZ7BxTLWiMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fFsSvodw; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qlFzUxPWHjx5grAM+2JEnhzKMq/lcSztmTKoL3AWCPo=; b=fFsSvodway9dLw4r27bUqyziiM
-	ZFFt0NVoqQRzfTiHDy9Nv5/CwKTYc3aJHBm1s0dLRGK80/rCteCvbAsljVEr50AWbO92XvTLeHgUq
-	I+lgvtPAFEQdyxe4y1n98IaxIJeK+OXEAWVfkS8Ek+4RVAyGD3es2IudckEa8WP12PhNoWl8YDtFh
-	tvuyjWNdYOXZhMucOwRfdnFwbgBeq1D7Hv5y7InFFx9VAPz7KUUaOyxB17HKkzTjTsm2gq8a49tia
-	B2yF+r+kJB/EShwuNwTdDMFcdEVuhq+7ZoaZmXpHNAaBm14PyLNV+5VcwfTNTyz/YtySAcdF6/1iF
-	XQ6F59bg==;
-Received: from [223.233.72.183] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1ulTpt-00CpHZ-13; Mon, 11 Aug 2025 16:49:17 +0200
-Message-ID: <6b5c92c4-2170-8ce9-3c9f-45c0e1893e03@igalia.com>
-Date: Mon, 11 Aug 2025 20:19:08 +0530
+	s=arc-20240116; t=1754923860; c=relaxed/simple;
+	bh=UrfR5n7IhPYKBi/Lqcz5yk1uTlktmzqQ02/Ydq81H3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMukB2wOe5r1RKcA31LznmxDCFnLVk/KKWzk7NGrQwAMbLKCKweGg12JMKX1a/rpmhVXldwAd67rXBFiETIxtFr7IfG/jIjpUwECQMH8pXXHHQNBwg8Qaw/+sQgUcVH5FjXEOm8YwtTMcSlXQFR1YXuZ3LEDvd8lDWEKdFXjh58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=JpuPeoch; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2400f746440so36956595ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1754923859; x=1755528659; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TqaIrXcHxWrL1H6SRe7KL4MjQpJTbyEPe6hM6UsacwI=;
+        b=JpuPeoch2+TxE9As6aoaCEwEBYYUHJdoTLnnX/AkXfYUhYiQaq/SqT9vrjSswyxVpv
+         alenS49pEfo88xGu6oOkC5yfkRkw5xYDiZnUUGm0SLu6RdNnAESA6m/W1Ig1AnE959e1
+         8yUPyYyiMfvrmKfg/8rzf4/iXvGtdbCIn71Ho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754923859; x=1755528659;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TqaIrXcHxWrL1H6SRe7KL4MjQpJTbyEPe6hM6UsacwI=;
+        b=dNmWj/jpwwx+QCnUAVRoSguhWOn0QtRlenK2RQUusRr2+t50Gak+sVIXIUUQMYnNL+
+         iU9bX8xAGOpujVxlKFKXMWB76QbSCUiwUSiJlBbGAU1p/iXri3/1A7FkPQLdqwvSHZO0
+         0Rbjlo66UH053kNX+mB4TIjYXACbgF3i00wLoxgNZjyvvPrVHIMj0VdwQmQ1UuOuXC7D
+         xaIxvs9B+YYRF0v3lQ/F3ZRNcZSnx6l1uHAMrs06A8T0Y5y15a0SYf/19Jw3b4w1EvnJ
+         nONxq+Dhbc8Pm4paZBHmUsKpLHmPlOeXAzkd3o2EdJ6qd+A6aw//b9d7EP6qlEri1xmC
+         VrgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKpWcoKQDtXGx8tp72CC/CubIiPXNEv+njGUTSt8SDi2R4gOoXqRo/B+In3a2aTOF/Skea94/iPwo4rOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6VF6rIdYN5sEpjune+aiG/GL1Fk25/hxTwapZngHkD9v9WFFu
+	Lx5ofM+RtfqlEPwnUsgC2cIHFh8425kxpHLJdt1PZwXJjM1ZY+RQAmDlscyOjP4AtDA=
+X-Gm-Gg: ASbGnctAnCdv3kM7xUUI9sM2Ia8g770GFsnleeSmKUy6bXjmwWTIN8y3G9WCxJmz3Mv
+	L9j37OKZhtQlyCU0qtSGajr3HRk8CBTEffOqGRqVyg46GigQs2pOiTinkkN+XQ/qL6bfHMl2rEn
+	WNwA+/JlWvCUUDo8mJ5QvjBQ2SIC6rntJXbB+QlaAWqHf0Rua+nmF7XIAZgPekoPcfsOI8L9aSu
+	LgkywgxqDUKxk6qwCysyeKxDcxKgYw/Nlt9N+C7+QZqGqF1sBl/Enh3W0jVff5SmO5hr1rUNTQU
+	CzLw4F2HIKDPh6r5vMFfEHeOeCM1qT30cknziCd/7qeV9ad2Ynp4JImDG+OXE93dBXi7f6hm8C5
+	4RcCEUQL2QT6Vme+eY+uSI6/XHSwIEEIAZqKsfBtN3QcB1QKpGpgYFPZz
+X-Google-Smtp-Source: AGHT+IF2BTqUckXG0twZ2kDSE6NTLwtbVM7gMBnyWr2B9RIG1HbA4Y0IKJsLCxz1V0fmyaceJslw7w==
+X-Received: by 2002:a17:902:f70f:b0:240:48f4:40d5 with SMTP id d9443c01a7336-242c22c8876mr213888415ad.39.1754923858843;
+        Mon, 11 Aug 2025 07:50:58 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976cb1sm276618225ad.89.2025.08.11.07.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:50:58 -0700 (PDT)
+Date: Mon, 11 Aug 2025 23:50:52 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Benno Lossin <lossin@kernel.org>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+Message-ID: <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
+References: <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
+ <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
+ <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
+ <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
+ <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
+ <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
+ <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
+ <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
+ <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
+ <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
- 'strscpy_pad()'
-Content-Language: en-US
-To: kernel test robot <lkp@intel.com>, Bhupesh <bhupesh@igalia.com>,
- akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, laoar.shao@gmail.com,
- pmladek@suse.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
- arnaldo.melo@gmail.com, alexei.starovoitov@gmail.com,
- andrii.nakryiko@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org,
- willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk,
- keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org,
- jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
- mgorman@suse.de
-References: <20250811064609.918593-4-bhupesh@igalia.com>
- <202508111835.JFL8DgKY-lkp@intel.com>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <202508111835.JFL8DgKY-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
 
-Hi,
+On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
+> 
+> > 
+> > There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut IoUringCmd>`
+> > would be create in the callback function. But the callback function could be
+> > called repeatedly with same `io_uring_cmd` instance as far as I know.
+> > 
+> > But in c side, there is initialization step `io_uring_cmd_prep()`.
+> > How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign a byte
+> > as flag in pdu for checking initialized also we should provide 31 bytes except
+> > a byte for the flag.
+> > 
+> 
+> That was a follow-up question of mine. Can´t we enforce zero-initialization
+> in C to get rid of this MaybeUninit? Uninitialized data is just bad in general.
+> 
+> Hopefully this can be done as you've described above, but I don't want to over
+> extend my opinion on something I know nothing about.
 
-On 8/11/25 4:55 PM, kernel test robot wrote:
-> Hi Bhupesh,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on next-20250808]
-> [cannot apply to trace/for-next tip/sched/core brauner-vfs/vfs.all linus/master v6.17-rc1 v6.16 v6.16-rc7 v6.17-rc1]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250811-144920
-> base:   next-20250808
-> patch link:    https://lore.kernel.org/r/20250811064609.918593-4-bhupesh%40igalia.com
-> patch subject: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with 'strscpy_pad()'
-> config: sh-randconfig-002-20250811 (https://download.01.org/0day-ci/archive/20250811/202508111835.JFL8DgKY-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250811/202508111835.JFL8DgKY-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202508111835.JFL8DgKY-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->     In file included from include/linux/bitmap.h:13,
->                      from include/linux/cpumask.h:12,
->                      from include/linux/smp.h:13,
->                      from include/linux/lockdep.h:14,
->                      from include/linux/spinlock.h:63,
->                      from include/linux/mmzone.h:8,
->                      from include/linux/gfp.h:7,
->                      from include/linux/umh.h:4,
->                      from include/linux/kmod.h:9,
->                      from include/linux/module.h:18,
->                      from net/netfilter/nf_tables_api.c:8:
->     net/netfilter/nf_tables_api.c: In function 'nf_tables_fill_gen_info':
->>> include/linux/string.h:116:50: error: passing argument 3 of 'nla_put_string' makes pointer from integer without a cast [-Wint-conversion]
->       116 | #define sized_strscpy_pad(dest, src, count)     ({                      \
->           |                                                 ~^~~~~~~~~~~~~~~~~~~~~~~~
->           |                                                  |
->           |                                                  ssize_t {aka int}
->       117 |         char *__dst = (dest);                                           \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       118 |         const char *__src = (src);                                      \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       119 |         const size_t __count = (count);                                 \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       120 |         ssize_t __wrote;                                                \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       121 |                                                                         \
->           |                                                                         ~
->       122 |         __wrote = sized_strscpy(__dst, __src, __count);                 \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       123 |         if (__wrote >= 0 && __wrote < __count)                          \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       124 |                 memset(__dst + __wrote + 1, 0, __count - __wrote - 1);  \
->           |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       125 |         __wrote;                                                        \
->           |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       126 | })
->           | ~~
->     include/linux/string.h:86:9: note: in expansion of macro 'sized_strscpy_pad'
->        86 |         sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +        \
->           |         ^~~~~~~~~~~~~~~~~
->     include/linux/args.h:25:24: note: in expansion of macro '__strscpy_pad0'
->        25 | #define __CONCAT(a, b) a ## b
->           |                        ^
->     include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
->        26 | #define CONCATENATE(a, b) __CONCAT(a, b)
->           |                           ^~~~~~~~
->     include/linux/string.h:149:9: note: in expansion of macro 'CONCATENATE'
->       149 |         CONCATENATE(__strscpy_pad, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
->           |         ^~~~~~~~~~~
->     net/netfilter/nf_tables_api.c:9661:53: note: in expansion of macro 'strscpy_pad'
->      9661 |             nla_put_string(skb, NFTA_GEN_PROC_NAME, strscpy_pad(buf, current->comm)))
->           |                                                     ^~~~~~~~~~~
->     In file included from include/linux/netfilter/nfnetlink.h:7,
->                      from net/netfilter/nf_tables_api.c:17:
->     include/net/netlink.h:1655:46: note: expected 'const char *' but argument is of type 'ssize_t' {aka 'int'}
->      1655 |                                  const char *str)
->           |                                  ~~~~~~~~~~~~^~~
->
->
-> vim +/nla_put_string +116 include/linux/string.h
->
-> e6584c3964f2ff Kees Cook        2023-09-20   74
-> e6584c3964f2ff Kees Cook        2023-09-20   75  /*
-> e6584c3964f2ff Kees Cook        2023-09-20   76   * The 2 argument style can only be used when dst is an array with a
-> e6584c3964f2ff Kees Cook        2023-09-20   77   * known size.
-> e6584c3964f2ff Kees Cook        2023-09-20   78   */
-> e6584c3964f2ff Kees Cook        2023-09-20   79  #define __strscpy0(dst, src, ...)	\
-> 559048d156ff33 Kees Cook        2024-08-05   80  	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-> 559048d156ff33 Kees Cook        2024-08-05   81  				__must_be_cstr(dst) + __must_be_cstr(src))
-> 559048d156ff33 Kees Cook        2024-08-05   82  #define __strscpy1(dst, src, size)	\
-> 559048d156ff33 Kees Cook        2024-08-05   83  	sized_strscpy(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-> e6584c3964f2ff Kees Cook        2023-09-20   84
-> 8366d124ec937c Kees Cook        2024-02-02   85  #define __strscpy_pad0(dst, src, ...)	\
-> 559048d156ff33 Kees Cook        2024-08-05   86  	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-> 559048d156ff33 Kees Cook        2024-08-05   87  				    __must_be_cstr(dst) + __must_be_cstr(src))
-> 559048d156ff33 Kees Cook        2024-08-05   88  #define __strscpy_pad1(dst, src, size)	\
-> 559048d156ff33 Kees Cook        2024-08-05   89  	sized_strscpy_pad(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-> 458a3bf82df4fe Tobin C. Harding 2019-04-05   90
-> e6584c3964f2ff Kees Cook        2023-09-20   91  /**
-> e6584c3964f2ff Kees Cook        2023-09-20   92   * strscpy - Copy a C-string into a sized buffer
-> e6584c3964f2ff Kees Cook        2023-09-20   93   * @dst: Where to copy the string to
-> e6584c3964f2ff Kees Cook        2023-09-20   94   * @src: Where to copy the string from
-> e6584c3964f2ff Kees Cook        2023-09-20   95   * @...: Size of destination buffer (optional)
-> e6584c3964f2ff Kees Cook        2023-09-20   96   *
-> e6584c3964f2ff Kees Cook        2023-09-20   97   * Copy the source string @src, or as much of it as fits, into the
-> e6584c3964f2ff Kees Cook        2023-09-20   98   * destination @dst buffer. The behavior is undefined if the string
-> e6584c3964f2ff Kees Cook        2023-09-20   99   * buffers overlap. The destination @dst buffer is always NUL terminated,
-> e6584c3964f2ff Kees Cook        2023-09-20  100   * unless it's zero-sized.
-> e6584c3964f2ff Kees Cook        2023-09-20  101   *
-> e6584c3964f2ff Kees Cook        2023-09-20  102   * The size argument @... is only required when @dst is not an array, or
-> e6584c3964f2ff Kees Cook        2023-09-20  103   * when the copy needs to be smaller than sizeof(@dst).
-> e6584c3964f2ff Kees Cook        2023-09-20  104   *
-> e6584c3964f2ff Kees Cook        2023-09-20  105   * Preferred to strncpy() since it always returns a valid string, and
-> e6584c3964f2ff Kees Cook        2023-09-20  106   * doesn't unnecessarily force the tail of the destination buffer to be
-> e6584c3964f2ff Kees Cook        2023-09-20  107   * zero padded. If padding is desired please use strscpy_pad().
-> e6584c3964f2ff Kees Cook        2023-09-20  108   *
-> e6584c3964f2ff Kees Cook        2023-09-20  109   * Returns the number of characters copied in @dst (not including the
-> e6584c3964f2ff Kees Cook        2023-09-20  110   * trailing %NUL) or -E2BIG if @size is 0 or the copy from @src was
-> e6584c3964f2ff Kees Cook        2023-09-20  111   * truncated.
-> e6584c3964f2ff Kees Cook        2023-09-20  112   */
-> e6584c3964f2ff Kees Cook        2023-09-20  113  #define strscpy(dst, src, ...)	\
-> e6584c3964f2ff Kees Cook        2023-09-20  114  	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-> 458a3bf82df4fe Tobin C. Harding 2019-04-05  115
-> 8366d124ec937c Kees Cook        2024-02-02 @116  #define sized_strscpy_pad(dest, src, count)	({			\
-> 8366d124ec937c Kees Cook        2024-02-02  117  	char *__dst = (dest);						\
-> 8366d124ec937c Kees Cook        2024-02-02  118  	const char *__src = (src);					\
-> 8366d124ec937c Kees Cook        2024-02-02  119  	const size_t __count = (count);					\
-> 8366d124ec937c Kees Cook        2024-02-02  120  	ssize_t __wrote;						\
-> 8366d124ec937c Kees Cook        2024-02-02  121  									\
-> 8366d124ec937c Kees Cook        2024-02-02  122  	__wrote = sized_strscpy(__dst, __src, __count);			\
-> 8366d124ec937c Kees Cook        2024-02-02  123  	if (__wrote >= 0 && __wrote < __count)				\
-> 8366d124ec937c Kees Cook        2024-02-02  124  		memset(__dst + __wrote + 1, 0, __count - __wrote - 1);	\
-> 8366d124ec937c Kees Cook        2024-02-02  125  	__wrote;							\
-> 8366d124ec937c Kees Cook        2024-02-02  126  })
-> 8366d124ec937c Kees Cook        2024-02-02  127
->
+I need to add a commit that initialize pdu in prep step in next version. 
+I'd like to get a comment from io_uring maintainer Jens. Thanks.
 
-As mentioned in the accompanying cover letter, this patchset is based on 
-'linux-next/master' (the exact sha-id used for rebase is: 
-b1549501188cc9eba732c25b033df7a53ccc341f ).
+If we could initialize (filling zero) in prep step, How about casting issue?
+Driver still needs to cast array to its private struct in unsafe?
 
 Thanks,
-Bhupesh
+Sidong
+
+> 
+> - Daniel
 
