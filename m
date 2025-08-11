@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-763538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17604B2165F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D978B21662
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB043BA181
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E111905EC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF7C2DE1E2;
-	Mon, 11 Aug 2025 20:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5122DC320;
+	Mon, 11 Aug 2025 20:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="fqyrs6yx"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3H4IDnf"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFDD205E25
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11CF311C13;
+	Mon, 11 Aug 2025 20:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754943842; cv=none; b=X8ObWdTnijxSO18NQkGB1roE3l+2rdmR/oUPRKcZSJcDf7B1jq0DrU0mJ23fpFsznQOyHkMBMfl5z9AQh7ySrI4qnXKJRJ3LEaKIRrAjPNW8dD8FKTOq/s4ME3ksedYsQMQzpd5zzH87q6uLP94n3iT//QRV9yctHhwgRAXpqJw=
+	t=1754943925; cv=none; b=WfQQHw3K/diRRxcfzFw/ummVRPi/4UAZzCDhBDjKKRp0+IQFSJ4xWVQOuLQIMgjq4xGIJ0/U+6nhHidpp0XipzbrxdHlMdvxu5pDPZJKAOSLEfVQfqHx/3vQd5qRMfrnlXBEYTQbpwyCXRty5QYF0MlyXA3BqjsAs/reWzxpolE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754943842; c=relaxed/simple;
-	bh=ytmCrsJhXKNtynjO5pJOyeHWMfMT+MpehOB3Fr1tnuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5M0yWLNevfJbFfjLeLVP+Fn/00cb0mqE991UP5JfSHg93iZVw062u0rHZ/jXDa07XzV3bxpQBy1FazZq4fUe83r4z22CySXKvK2bKNsQ2O+Rm5Lk5mf9e1/jKdYTYG9s8GCbUqZDsmD1YLV6mfJosqpxeEM0rVRp3DUvTdRMl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=fqyrs6yx; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4aeb5eb611bso47660341cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:24:00 -0700 (PDT)
+	s=arc-20240116; t=1754943925; c=relaxed/simple;
+	bh=xFsEMZMx71vL7LJWMb0H4gztc03wO1iFZ3A6/tkXmf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IGHbz/b9cwFlZQZGl8vFfezSGPeA0JoLjSSwvJwWxpk21R22YyzYQ2kDnVaGu2t9G9hHATZXDf9IBr3x70h+CuxwmvTRDHEY6v+hgCAiREhu37GYFSNTKo6cae2cZBcLgkywWfnm/zQW6l4FCDaNnbkU2ohXEMGXFgz9bCBtZOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3H4IDnf; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71c06bb7470so24179717b3.3;
+        Mon, 11 Aug 2025 13:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754943839; x=1755548639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2WZt1Ib8Kx2Ps+b49KHWgcA82+e7eLatEPJyDKab0y0=;
-        b=fqyrs6yxB7fHY/bxcILQmpjyXTqU+nRpGDXSu6/NQyohz/ZtVGa6x463qH7xUq+fSi
-         d+x+7kpnebETiRmb+zUlc4RONh6GWjRjtF4fSaMUKhZO6/DlC2olcKkGv3BkPDKIDaQc
-         8uQ9haOw2PcvLEabd/Rwg4IBQuv98RJXIoyyMcaeSSIKgsdb45eH1FEIakePrfU5bgbY
-         6TQ3Ex11kp7DCYCAbnKf66dFliCkEIQM68je4TwW1ZufdOGjtnSY1gcoIMjarS7WXSpl
-         F+4N1RRVQ5EIBvj9XhdjhOKnW6OUcy7ZaX2k2hD9IlOdYWkUng0NiMovVFhronR5hEeT
-         84FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754943839; x=1755548639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754943923; x=1755548723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2WZt1Ib8Kx2Ps+b49KHWgcA82+e7eLatEPJyDKab0y0=;
-        b=fzryTSuL6D5tWOMPu0e75u+4peaDdgLIhX5ljcBXM3t1dtW92+RhRX6WRVQMUZpiSw
-         jG49FPBQGlYoJtqocvKDlq2gJeHO2TCdJh7r367qHTxUZ2deS3uPZ2NRCyTw8fm7CY1E
-         GhSGIjL+7r/hzE7EM9ry2LZz2688hlxU1/zGMBTTssDUqVPSvqujpHN2Nkvo6yVZ4z0e
-         Ypfz4DQwfL/JXrlC8yzrd8HigJ5knM40tZgBWmO3gX3ZQIG1KWpvN3zbmywF9oFHCUUT
-         TryWpiXoCsOJNzabyUgFCsQ+T4oW+NtNNkqS4Y7RV3zBa0E986kdVFLVmKiU7AMI3JIf
-         G6Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWFASJNf1C497u/vZBJRs6fuZ5CSEcb4HvQ+5uGPrWKJJ/pNQ3+C3KMqvltGN4gTqA09EmOnPAm2G13P1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMLun5HSrY3Ol9e1JQCTN9zELnBcaP9w0mxTGKNGXV81woOW0u
-	wrtxmRJxYMAe5ZstIVDvXX4/fWrOKmDSeb8jypsVJI3TsDSRy/NfLe6ye8P9wRsHedk=
-X-Gm-Gg: ASbGncuzDdVajjDoCsI0A/T89sE2wlgf9ov1TdlFEX7ucJMzdk7z3oQc4dxOc3vjejq
-	inI3D1M25/3+c68rFRYcry3Izm1FoLQMFKRmvuL2Pvp96tJ2etcN471exV6ocRfX3t32voFeY02
-	SjAfhJL8kwVvFkIcCh7GYz0i+3S1p+8o9NRN6dzMXHq5GxD6ycFqC/d2gUR2RsUP/ttKIxKBb0i
-	H7sNH74i7DOZxQJe6ViZqesFcqs9bdZbU2rqtzRAORNIqytyqMsTANyK+uBgv/88bNJp1t8+Y1v
-	x7ZcEwJgmNSDOxOQYGKYtDM6WuuWjwbQr8xCiFetsQbFbltiAnVDhyIyIHrpC+N9yU+QfT0mARy
-	BEt+ghAD7mBORT4zEMk6rkFWeR9lffnE2l6ab6/lvmdvXWItiph0BC6WP3VP8drGRJoD0
-X-Google-Smtp-Source: AGHT+IFuPGev3f+n9vOiPxbLr4Mj6VM7xaWfq7HiavRD7rWzgLrjzvvgwISBWuM53so6JWDV67XlCg==
-X-Received: by 2002:ac8:5ad4:0:b0:4b0:8382:cc3e with SMTP id d75a77b69052e-4b0aed3efcfmr219391431cf.43.1754943839101;
-        Mon, 11 Aug 2025 13:23:59 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b07e8ccb6asm93753201cf.24.2025.08.11.13.23.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 13:23:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ulZ3l-00000002Vsm-3knV;
-	Mon, 11 Aug 2025 17:23:57 -0300
-Date: Mon, 11 Aug 2025 17:23:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	eric.auger@redhat.com, clg@redhat.com
-Subject: Re: [PATCH 0/2] vfio: Deprecate fsl-mc, platform, and amba
-Message-ID: <20250811202357.GH377696@ziepe.ca>
-References: <20250806170314.3768750-1-alex.williamson@redhat.com>
+        bh=RBXQBxGfZ1zpntH+TOiqrJLsBk8tkPN10Nu3SVV4di8=;
+        b=l3H4IDnfkbmonpurxXKhOPt4hTwk/M1JeaaH60AS2zZfa4hQcparluYJNN0u0I8otA
+         QA6sILw1YOrXJIAw0EIiGRwUh2PH4IDOk8L0C7qSpMX9+bss10tklLylDPF2XzXKZPE3
+         dOW1kKEyKlXGh4yjnCPK9BanJdmoBv+Q7DXZVoqzpxgYCGrY2Fu8Y7Nv/+ssmsLArB4H
+         yg+JJ67Xi5oUxbar0n5FA/Y5cuRkkxJp+w6l8jntq8ludljeR7mysNaIGkFx4JR3/OEG
+         0dcrmXKS165LeXC7L4xTj2cLyGhjwpo5+7xB3XejhvL1Sv4G2psQJNlZvpK1Nkbny1Ky
+         7AZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754943923; x=1755548723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RBXQBxGfZ1zpntH+TOiqrJLsBk8tkPN10Nu3SVV4di8=;
+        b=v9iEjOiAdeVJ0cs7xzDo6pX4ppvAHlfngZwfiwLG6ImnDYERUWt1UCG0HsQFh0eLhO
+         EgmbKAWppVIlZ3fejICWIBfCfkglISKS++5U3firJSkCMPE6VxjTYOhCpQQSMelCZbFL
+         eXoSOo5XL7/MIRSdmBFgmMrvHQ4gNB5+ec14NW+rp9aRdiNcqdHKyprFi0r1IlxBl6AX
+         zsFXAL7B8/BjjPytMxdjLdWt2Or813kQGMmFPd/hcMZVjzXClOfm8cpz+m9iF+Ve0ViO
+         xuQYax/t1esZjvi2zD41c77Hxm1n+SFOI1wTL/LH+RZihGx0MY6Ji5vwUoNpgNuZxSqP
+         qmDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbSiOIXjsGG5V5RjbB8M8q0QcHSzepCP8xdfZRkEg53JLNIKamkcjbeNbUhtxICuOJ1mRyV2im6TMDtOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6FzHHjHo1dzDGfigW/p4/Gf6/BlVcSnBHe1WGOC4yvqRzb/1x
+	u7b77Ka4GTPsRLMgIDbxU8BXkI4h9Tp10B4Gl/P1Gaif5ojZ07yk3/dY3ctlisuK8YVFPx1nCeD
+	/Ri7MT55CLpIAGgXpo+TlQJo+FOsIW/Y=
+X-Gm-Gg: ASbGncsZbg77JZ2kAHVgyxtVXFkrnyM8K4GRYF/2X5SgFQaO2rGF7wwyvzE4SjCDbLe
+	gkXWHtbgym6SDvRWiCv3pAvLYGc1lpO0JUn5m5r4bSpv7+Trv2yBVajiwkrBdQlGvvpwe8y3IMH
+	ZpoXXWVJsKaXkxE8j6G3KUsmcNhIrTkFH3lApBPzAIlX0Yi2/DcaByJuWLBeHrHr2JQ7X7zWNae
+	sLIOl8li8FAWXhsiYqr
+X-Google-Smtp-Source: AGHT+IGT6zgJrI+bwB8rpn6s+VJg0y2XQvjU11F/NMNvCcXTBbAqPiT0BUy1aINV8dMOssmCRvrZmQOBZRc5rglA2U0=
+X-Received: by 2002:a05:690c:350f:b0:71c:149b:869a with SMTP id
+ 00721157ae682-71c4286f33dmr17279787b3.0.1754943922701; Mon, 11 Aug 2025
+ 13:25:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806170314.3768750-1-alex.williamson@redhat.com>
+References: <20250809031517.5535-1-rosenp@gmail.com> <adf6d126-1f80-4590-a9f6-171b7feaf656@oss.qualcomm.com>
+In-Reply-To: <adf6d126-1f80-4590-a9f6-171b7feaf656@oss.qualcomm.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 11 Aug 2025 13:25:11 -0700
+X-Gm-Features: Ac12FXwdnaim6R97XiHA8gvSEBp7k4c9rBg3M3JXjfO7r7BbFC0AH16IyBnLB64
+Message-ID: <CAKxU2N8=B8JHNppr+RbOBbzBztXs1f2wLVn3ZtwDHSpokCNf0Q@mail.gmail.com>
+Subject: Re: [PATCH ath-next] wifi: ath10k: switch to of_get_mac_address
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, Jeff Johnson <jjohnson@kernel.org>, 
+	"open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER" <ath10k@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 11:03:10AM -0600, Alex Williamson wrote:
-> The vfio-fsl-mc driver has been orphaned since April 2024 after the
-> maintainer became unresponsive.  More than a year later, the driver
-> has only received community maintenance.  Let's take the next step
-> towards removal by marking it obsolete/deprecated.
-> 
-> The vfio-platform and vfio-amba drivers have an active maintainer,
-> but even the maintainer has no ability to test these drivers anymore.
-> The hardware itself has become obsolete and despite Eric's efforts to
-> add support for new devices and presenting on the complexities of
-> trying to manage and support shared resources at KVM Forum 2024, the
-> state of the driver and ability to test it upstream has not advanced.
-> The experiment has been useful, but seems to be reaching a conclusion.
-> QEMU intends to remove vfio-platform support in the 10.2 release.
-> Mark these drivers as obsolete/deprecated in the kernel as well.
-
-It seems fine, but I'd just remove them entirely right now. It is easy
-enough to revert a removal down the road if someone comes with a
-compelling reason.
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+On Mon, Aug 11, 2025 at 12:55=E2=80=AFPM Jeff Johnson
+<jeff.johnson@oss.qualcomm.com> wrote:
+>
+> On 8/8/2025 8:15 PM, Rosen Penev wrote:
+> > In 9d5804662ce1f9bdde0a14c3c40940acbbf09538 , device_get_mac_address wa=
+s
+>
+> see
+> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#de=
+scribe-your-changes
+>
+> specifically: If you want to refer to a specific commit, don=E2=80=99t ju=
+st refer to
+> the SHA-1 ID of the commit. Please also include the oneline summary of th=
+e
+> commit, to make it easier for reviewers to know what it is about.
+>
+> So in this case:
+> 9d5804662ce1 ("ath10k: retrieve MAC address from system firmware if provi=
+ded")
+>
+> > introduced as a generic way to get MAC addresses from anywhere.
+> > Unfortunately since then, the landscape has changed and the OF version
+>
+> when did the landscape change? if using device_get_mac_address() is break=
+ing
+> folks, it would be nice to know which versions of the kernel have the bad
+> behavior so that the patch can be backported to any broken LTS kernels.
+>
+> > is required for NVMEM support. The second problem is that with NVMEM
+> > it's possible that it loads after ath10k. For that reason, check for
+> > deferred errors and exit out of probe in such a case.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/net/wireless/ath/ath10k/core.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wirel=
+ess/ath/ath10k/core.c
+> > index 6f78f1752cd6..76747eb0925b 100644
+> > --- a/drivers/net/wireless/ath/ath10k/core.c
+> > +++ b/drivers/net/wireless/ath/ath10k/core.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/firmware.h>
+> >  #include <linux/of.h>
+> > +#include <linux/of_net.h>
+> >  #include <linux/property.h>
+> >  #include <linux/dmi.h>
+> >  #include <linux/ctype.h>
+> > @@ -3456,7 +3457,9 @@ static int ath10k_core_probe_fw(struct ath10k *ar=
+)
+> >               ath10k_debug_print_board_info(ar);
+> >       }
+> >
+> > -     device_get_mac_address(ar->dev, ar->mac_addr);
+> > +     ret =3D of_get_mac_address(ar->dev->of_node, ar->mac_addr);
+> > +     if (ret =3D=3D -EPROBE_DEFER)
+> > +             goto err_free_firmware_files;
+>
+> Note a similar proposal for ath11k was deferred since it seems to break x=
+86
+> attachment when there isn't a device tree node:
+> https://msgid.link/ec974dc0-962b-f611-7bbb-c07a3872f70f@oss.qualcomm.com
+In response to this, I'll change this patch to only add NVMEM support
+>
+> I'd have the same concerns here.
+> (but I didn't dig into how the fwnode items are set if there isn't a DT)
+I have no idea either. I assume for pcie cards the MAC is set from the EEPR=
+OM.
+>
+> >
+> >       ret =3D ath10k_core_init_firmware_features(ar);
+> >       if (ret) {
+>
 
