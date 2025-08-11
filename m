@@ -1,84 +1,76 @@
-Return-Path: <linux-kernel+bounces-763460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581C3B214D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF15B214D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F88D3B64E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3882D6801F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1621A2E2851;
-	Mon, 11 Aug 2025 18:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11A2E2854;
+	Mon, 11 Aug 2025 18:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b="NBmwLfRp"
-Received: from hope.aquinas.su (hope.aquinas.su [82.148.24.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrMnhbxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B75710F2;
-	Mon, 11 Aug 2025 18:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.148.24.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787651E2858;
+	Mon, 11 Aug 2025 18:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754938116; cv=none; b=rRmrDNSKJ+/q1G4CuNHNGFYq+41qjxckd+FD8exB1zlpwISvvzGknGDnySH6Jt9jl/TVqc2jvq5Qd+WqZLp5TJz4YRN2mtRHEEqHgl6toB7IqPAnoolaspDeUZKUpL27sSPAwmkiSEdTBcklgloAlRvingTDIAl22ur1PGXR2DE=
+	t=1754938134; cv=none; b=nhg/SRI1RsLk94oE49JbFxB/U9HOAVn/0xMxNyIBvmzWMc7h0p4LaN4qRRyoqZyxNHiTlqIOE4DmqADXWqm76DihdZxHMK8tYxqiclFQL6ZLkidza80V+4HgQHOXEkxR/HEiqsjZ5F/6y2Fwlew0pIiRNkDqyD6zhzPi5mroLkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754938116; c=relaxed/simple;
-	bh=hXwG2EnMb6cQPDJ3IceiTT76RKkMbhadBuQU7JGzWPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c2/kdeMZEAr7R49Z+btMiQQiNxR4VXSq1E+n61QjIpXIQ4zVIJ82mj243lI9qtKqUhPyjXyH5jLVvx/zpsv7sQIA+kxW21BSgK8i1w/9CPFF7KDoZYpJE5v5QCxloQAie/jyAC9nUBjqYfzB+hbjGgLxD0Iq+J0fa/w94gWb2Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su; spf=pass smtp.mailfrom=aquinas.su; dkim=pass (2048-bit key) header.d=aquinas.su header.i=@aquinas.su header.b=NBmwLfRp; arc=none smtp.client-ip=82.148.24.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aquinas.su
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aquinas.su
-Received: from woolf.localnet (host-46-241-65-133.bbcustomer.zsttk.net [46.241.65.133])
-	(Authenticated sender: admin@aquinas.su)
-	by hope.aquinas.su (Postfix) with ESMTPSA id E9FE86EBEC;
-	Mon, 11 Aug 2025 21:48:28 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aquinas.su; s=default;
-	t=1754938110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bcnxmAGYKlRkSegiUeAuD2DV7x1h+M7msECCakintXc=;
-	b=NBmwLfRpUfvPAg21oWutjJuwQRieUWzSg8EbCRKXlTl9CY7P5KpgZKT0wcHFZ4HCwjLIUI
-	OXrQJ4e4000EmGZRThaDR9FXGRE0X6yV09sKQtmU1V3zNY5xT+vJ5JVjW2vuc9Pa/AFelv
-	34tU2V5D2t5gaWM0/H3MfhhRaTC4WBbMAQPEEXG23ccgk2Ux7SjHh7fRDgyLlK3/BqontZ
-	MEP7VGriSjfkcMny3hHTuyWOOs0q4RHdnbFJUViZ02aMPI2TGch5spKl6mMRA/vB64ogmH
-	OXiWSTzO2GIJ8eVyZVguzjU9b400vM+uPFJej7jp/5eaoOQWWHE+TQVBTkVz4A==
-Authentication-Results: hope.aquinas.su;
-	auth=pass smtp.auth=admin@aquinas.su smtp.mailfrom=admin@aquinas.su
-From: Aquinas Admin <admin@aquinas.su>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Konstantin Shelekhin <k.shelekhin@ftml.net>,
- "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
- linux-kernel@vger.kernel.org
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Tue, 12 Aug 2025 01:48:28 +0700
-Message-ID: <6181534.lOV4Wx5bFT@woolf>
-In-Reply-To: <514556110.413.1754936038265@mail.carlthompson.net>
-References:
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <514556110.413.1754936038265@mail.carlthompson.net>
+	s=arc-20240116; t=1754938134; c=relaxed/simple;
+	bh=V2ebLN2lCYMtobAQmErA32Kl4k0qm9O7vsyLPUmzKgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UQNDsZgHApGStCDtTE2CmPSV4lAGVazvWwG4a1hFgcvAbMm1zSH5lhYwlyYqdb0p25JpJUTPq6MOGwIvkr1Z7000WvlRsnFAZPFNufBvmH/GQprvN3eZS+Z3pWIdxSERMKNmzvuSpq8viVkJ+SAQd5IqjL1n9KZSeIEbsAL3aCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrMnhbxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C888C4CEED;
+	Mon, 11 Aug 2025 18:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754938134;
+	bh=V2ebLN2lCYMtobAQmErA32Kl4k0qm9O7vsyLPUmzKgc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jrMnhbxEl1/OzFCGhER5TseSfWS4/UePhPbdRD8JAmzZl5ut3BrdvCtKiaIl+Wy2X
+	 L0QLfM88N30w6SLdQu0B36vPukmAenxX5HpXzOsCcv9sW2op2fZ1l/JO1eGosOP2Lz
+	 biq/omrLCTekvQWwA616EI0hrcUZlAE4IbxAQImfGl4Ip/ZCgUjvIRFs0VFCDUOqAZ
+	 snzIOV13mQ4SwH79k21gAT9of8/82Awf6f5i9qLT2vfc0lB4hmVAJW1UYJTOjBJBHG
+	 fT1gDyq/6srNcD+WNFpbSyq+K/QLdHO06zkiJtnluiHApn+c7cov1Ex2TXxF/E9Wz+
+	 GdXy42W0GB6pw==
+Date: Mon, 11 Aug 2025 11:48:49 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nicolas Schier <nsc@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kbuild@vger.kernel.org
+Subject: Updating Kbuild tree and contacts
+Message-ID: <20250811184849.GA1266@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Either he is an unashamed and extremely prolific liar or
-> he is very sick.
+Hi Stephen,
 
-Accusations need to be supported by facts. You don't have any. And you are 
-currently harassing the developer, which is completely unjustified. I think 
-those Kent was talking about can certainly provide arguments if they want to. 
-But this behavior is extremely offensive, at the very least.
+Nicolas and I have taken over Kbuild maintenace from Masahiro as of
+commit 8d6841d5cb20 ("MAINTAINERS: hand over Kbuild maintenance"). Could
+you please update your contacts for the Kbuild tree to both of us and
+the Kbuild tree to
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
 
+and start pulling kbuild-fixes and kbuild-next in at their respective
+places within the -next update cycle? Please let me know if there are
+any issues or questions.
+
+Cheers,
+Nathan
 
