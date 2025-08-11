@@ -1,111 +1,341 @@
-Return-Path: <linux-kernel+bounces-763921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DC2B21B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:23:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FF8B21885
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2738F1A2742C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C893A55B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED42DD5E0;
-	Tue, 12 Aug 2025 03:20:53 +0000 (UTC)
-Received: from sxb1plsmtpa01-08.prod.sxb1.secureserver.net (sxb1plsmtpa01-08.prod.sxb1.secureserver.net [92.204.81.215])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690422D374C;
+	Mon, 11 Aug 2025 22:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tgi76vRO"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CAA240611
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0A721CFF6;
+	Mon, 11 Aug 2025 22:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754968852; cv=none; b=Xa92rXax7iw1B4lZSCOrw5RtTC76NT4n3SyH9XigjH3CUXcG1os5AN2D21/S0+6LcJfq+Am5OdCA8t+1XPjJs+llz9sR66am2rDt7bjMUS8yUVYqXg0dXtmv0kqj22pGWSIIC8j0LrfJQP20yC2I2XBA6j91xCaB47JjPAvt1Ek=
+	t=1754952093; cv=none; b=Hz0T1RjnLPvl/DqszQUxYjQ4hwl/7HJR19z+OP9I9jzV0T6ogWNeXJRwp7sArbUJ6PKX3hP71tXK8WIPDJkuKppWAkvJnLWYBCPvgmZnULPg/Bi0AgKRzGodaMsj6HkzSoJ9YaFVN6Dtf55DOMnZGwZVB0LO4Pv515fdCrugeB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754968852; c=relaxed/simple;
-	bh=67/hAMFAcvNuc3mwgrcA87EPthHTLdvZR4u7iBMjTkM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f7R3+/tD2qwK+gqciGqnh2nO585rB2HqP2YbXXgfs/nN4GUJ+waHpsXDhhFOJuDYg72gsVWKgWa478UmkQWb4erNghX3XnpZfWJeQ/8atsDml4aqijVoi6D5ju7AToCe0jmYYIQfSd4SKjksGOf7lY3JaKUWy3oLiaOHCuVR+nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id lb9Gumnrur677lb9VulKQZ; Mon, 11 Aug 2025 15:38:02 -0700
-X-CMAE-Analysis: v=2.4 cv=No7Rc9dJ c=1 sm=1 tr=0 ts=689a70cb
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=VwQbUJbxAAAA:8
- a=Byx-y9mGAAAA:8 a=GvQkQWPkAAAA:8 a=FXvPX3liAAAA:8 a=Xg-VGseiynj4m8WDMasA:9
- a=UObqyxdv-6Yh2QiB9mM_:22
-Feedback-ID: fb9a3de28582118c1a1768069003e494:squashfs.org.uk:ssnet
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>,
-	Scott GUO <scottzhguo@tencent.com>
-Subject: [PATCH] squashfs: fix memory leak in squashfs_fill_super
-Date: Mon, 11 Aug 2025 23:37:40 +0100
-Message-Id: <20250811223740.110392-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754952093; c=relaxed/simple;
+	bh=xqPJ/VTtLX9Cuigf+Ig3YwMvQkrcP37tZGWCCGyEH5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=b6BmlE0BKF7c7QUbZPGB4n5GbO1OXpjqpvi+Fnr14/Dh9QA/o1BtNv5WV8PpCdmt8/T04+GyylXxNlv/1AYA+x2zgdcAlwLJryNpPYrtNEugnFXo7ZmQOBpyZYc78fJgPPqA2pSEiZrxhCzg+3xKKOkMlcUP4iVEk1zFNIlTB/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tgi76vRO; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3226307787so3893917a12.1;
+        Mon, 11 Aug 2025 15:41:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754952091; x=1755556891; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+n3I1BPAT6MGT096v+1ws6JTJrXEWDdfc2ydYDb0qS0=;
+        b=Tgi76vROur7pc6b0kLmQaP0Nyw8nqs6x+mzwGmdrQiK3olD2u0UB9xknFYuX0DDuRV
+         Mmhq3k/0PPfLYhdZljSJeNG4OQgB/00xrR/YP5ei6AN1xN/WgJudS7YhfD7ItCy79aZl
+         t+H+/P6yH1hZqGPwtIAkN86IsBEhY9nYI0+mBCwLrr6Fl4I4o+AIUOS/YBs5uZpk5sI7
+         2RD/u+iuqB6qfxXmAYJOiwdDRHKg8/mOdzu9Yi9mtU7MQYx74jtIvVdRWya85bPCamJy
+         dAAtxAbuGwUGEB95umT2h2/ozwp94mgme8LxAuezqxzEh1z8pRdIq1ZIlVmJEV9vweHD
+         2COw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754952091; x=1755556891;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+n3I1BPAT6MGT096v+1ws6JTJrXEWDdfc2ydYDb0qS0=;
+        b=JQsrr+qhDAfBil6aBTE8805f8rUAi6N4a/wlTLCipEiig5Sf2Xg8FvwubTrqoSolUI
+         MAP5IOc7C3uudW5l2OyjNdtQdWuqr4MDbitugGN2MqbmprQjH+Ih2mcK8bUTAnXs6vJI
+         PwVAs7OgmcYYnDnc7DxfjegIdsnhG3/8epHFYEtNjyjhinutv5BsNPq3+oOdgQ5TjIrp
+         xLxVlyNL01dupYr6KpAkXorOyu1v0HkS52Zd+owcdoXuwQojI8YAR56lAoiq/eO8vUtv
+         sHz19Q+XY70I8BzBBvAQrSrt3b+HjCtQGM3wbX0Zy9BsmVPzlW1ivk+Nm4EMH9r95L0s
+         x+jA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvb8J8BhkGWgp1kcCvsMvR/fQxv9T1iNhvRGJNz21bx86DtcnLC0TvR9DIgqDzgxVxjQjODgI7YRrj@vger.kernel.org, AJvYcCW9dYsBCi/AS5vhi6Yq/LrJp4YrRZjKAFvtAplqYKlI+urcA4QqJrV86wBdRb40e0QFJg5HgdEQjrj2skge@vger.kernel.org, AJvYcCXftqPsC6S8OldiR9tKF0Z1YwYdPnA1CVexoO1gBpmSVooo5juA1JWHRZsQaBS98ONSW+PAG4ahk7927A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2SzEoq2z6b5ZhMi08QwFxGAJ+kssnkIgkjWaSKObpfhSsSa+g
+	aoBSv/K6a0w5oivn/Osd9/+jL6J4GK/M9swPgTJfBh+0XBu6icUZzWbt
+X-Gm-Gg: ASbGnctrIWPHTTJEE8RKHRY0kIzkYsQo4+p6iAYFhpy+P9IXHSsvOLNwvlsQr0zFq0w
+	eZ0PvMQqqL04qL9RWz8Vgu2C1/R0nzQGKIR5TYV0KGkzttDRBlQ5O9sevKuPcg0kTy87ikY06BT
+	tQbRh3HaxEtlSJ2VqS/c6wACifS5IMC+xf2PzfRzFB9B5Km6oT/0h+KpjSXnxAmyLVDQN5v7xHf
+	EongtYyzEUk+QaxI8srWkoQOIfqdsCLhzzoxSjrmO/oO4KfqdCstTE7Pwg5GVQsFbZCCWAJzx76
+	Dxd7bJSAJhUutYLsNCO1vwSm3Fk/5ZQ4IGZxCTLLsHixXM1dXUGZRLu7VwblalKjchGk4Tqnx9T
+	Gg0WU3pO8cLfiCytIw+DyDGRNCri6+oW3tw==
+X-Google-Smtp-Source: AGHT+IEdW2CPHcM2VOBzTnmRYYsEF4NSG7B7RUD3YiYsLp5VPGW27+jPm08vBlgwORSKB7DWAQ2BnQ==
+X-Received: by 2002:a17:902:ea11:b0:240:3239:21c7 with SMTP id d9443c01a7336-242c21dcd0bmr211487085ad.37.1754952091138;
+        Mon, 11 Aug 2025 15:41:31 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7933:7499:67d8:279a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef8204sm282973375ad.34.2025.08.11.15.41.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 15:41:30 -0700 (PDT)
+Date: Mon, 11 Aug 2025 15:41:28 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] MIPS: alchemy: mtx1: switch to static device properties
+Message-ID: <retzurthfjwc6fqtkta6uhd2xje42vyugryj36yynesvxwygnv@wwmcx2yh4orm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfDZPnqwHEtCi/1hYhIKsiPUxaIqMUSzWj1w+jG+4NbaqmI+qZD9jxxrZJk0DKV9vh81+WbTcPZCb4TPX+r+Pu4R09D2lpAwqlvHZnjuJDL+b99SBuAIC
- YFBo9vN+x4V9L9VnDg1skxY9pWAT/IIQWBQCZ8xRlGdPOOlXJK2qA47G/GIgzu9Hevqrd+UmN5Dfn+XLmT1mYsDc79QLFKycF+PirNiFkcazqjWoYiIKSBWY
- qTre9YV5F4Dab256ZygFFcqqU4IagQho/I4uPaoh6D3OZ9JwhMRcQzh8bq1pyI2Pj5Cn/JEfJPEY2eVJvDtyfw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If sb_min_blocksize returns 0, squashfs_fill_super exits without freeing
-allocated memory (sb->s_fs_info).
+Convert GPIO-connected buttons and LEDs on MTX1 board to software
+nodes/properties, so that support for platform data can be removed
+from gpio-keys driver (which will rely purely on generic device
+properties for configuration).
 
-Fix this by moving the call to sb_min_blocksize to before memory is
-allocated.
-
-Fixes: 734aa85390ea ("Squashfs: check return result of sb_min_blocksize")
-Reported-by: Scott GUO <scottzhguo@tencent.com>
-Closes: https://lore.kernel.org/all/20250811061921.3807353-1-scott_gzh@163.com
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- fs/squashfs/super.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index 992ea0e37257..4465cf05603a 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -187,10 +187,15 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	unsigned short flags;
- 	unsigned int fragments;
- 	u64 lookup_table_start, xattr_id_table_start, next_table;
--	int err;
-+	int err, devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
+This compiles but I have not tried it on real hardware.
+
+ arch/mips/alchemy/board-mtx1.c | 181 ++++++++++++++++++++++-----------
+ 1 file changed, 124 insertions(+), 57 deletions(-)
+
+diff --git a/arch/mips/alchemy/board-mtx1.c b/arch/mips/alchemy/board-mtx1.c
+index 68ea57511629..cb6be58808a0 100644
+--- a/arch/mips/alchemy/board-mtx1.c
++++ b/arch/mips/alchemy/board-mtx1.c
+@@ -9,10 +9,8 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+-#include <linux/leds.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/machine.h>
+-#include <linux/gpio_keys.h>
++#include <linux/gpio/property.h>
+ #include <linux/input.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/mtd/physmap.h>
+@@ -80,64 +78,134 @@ void __init board_setup(void)
  
- 	TRACE("Entered squashfs_fill_superblock\n");
+ /******************************************************************************/
  
-+	if (!devblksize) {
-+		errorf(fc, "squashfs: unable to set blocksize\n");
-+		return -EINVAL;
+-static struct gpio_keys_button mtx1_gpio_button[] = {
+-	{
+-		.gpio = 207,
+-		.code = BTN_0,
+-		.desc = "System button",
+-	}
++static const struct software_node mtx1_gpiochip_node = {
++	.name = "alchemy-gpio2",
+ };
+ 
+-static struct gpio_keys_platform_data mtx1_buttons_data = {
+-	.buttons = mtx1_gpio_button,
+-	.nbuttons = ARRAY_SIZE(mtx1_gpio_button),
++static const struct software_node mtx1_gpio_keys_node = {
++	.name = "mtx1-gpio-keys",
+ };
+ 
+-static struct platform_device mtx1_button = {
+-	.name = "gpio-keys",
+-	.id = -1,
+-	.dev = {
+-		.platform_data = &mtx1_buttons_data,
+-	}
++static const struct property_entry mtx1_button_props[] = {
++	PROPERTY_ENTRY_U32("linux,code", BTN_0),
++	PROPERTY_ENTRY_GPIO("gpios", &mtx1_gpiochip_node, 7, GPIO_ACTIVE_HIGH),
++	PROPERTY_ENTRY_STRING("label", "System button"),
++	{ }
+ };
+ 
+-static struct gpiod_lookup_table mtx1_wdt_gpio_table = {
+-	.dev_id = "mtx1-wdt.0",
+-	.table = {
+-		/* Global number 215 is offset 15 on Alchemy GPIO 2 */
+-		GPIO_LOOKUP("alchemy-gpio2", 15, NULL, GPIO_ACTIVE_HIGH),
+-		{ },
+-	},
++static const struct software_node mtx1_button_node = {
++	.parent = &mtx1_gpio_keys_node,
++	.properties = mtx1_button_props,
++};
++
++static const struct software_node *mtx1_gpio_keys_swnodes[] __initconst = {
++	&mtx1_gpio_keys_node,
++	&mtx1_button_node,
++	NULL
+ };
+ 
+-static struct platform_device mtx1_wdt = {
++static void __init mtx1_keys_init(void)
++{
++	struct platform_device_info keys_info = {
++		.name	= "gpio-keys",
++		.id	= PLATFORM_DEVID_NONE,
++	};
++	struct platform_device *pd;
++	int err;
++
++	err = software_node_register_node_group(mtx1_gpio_keys_swnodes);
++	if (err) {
++		pr_err("failed to register gpio-keys software nodes: %d\n", err);
++		return;
 +	}
 +
- 	sb->s_fs_info = kzalloc(sizeof(*msblk), GFP_KERNEL);
- 	if (sb->s_fs_info == NULL) {
- 		ERROR("Failed to allocate squashfs_sb_info\n");
-@@ -201,12 +206,7 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
++	keys_info.fwnode = software_node_fwnode(&mtx1_gpio_keys_node);
++
++	pd = platform_device_register_full(&keys_info);
++	err = PTR_ERR_OR_ZERO(pd);
++	if (err)
++		pr_err("failed to create gpio-keys device: %d\n", err);
++}
++
++/* Global number 215 is offset 15 on Alchemy GPIO 2 */
++static const struct property_entry mtx1_wdt_props[] = {
++	PROPERTY_ENTRY_GPIO("gpios", &mtx1_gpiochip_node, 15, GPIO_ACTIVE_HIGH),
++	{ }
++};
++
++static struct platform_device_info mtx1_wdt_info __initconst = {
+ 	.name = "mtx1-wdt",
+ 	.id = 0,
++	.properties = mtx1_wdt_props,
+ };
  
- 	msblk->panic_on_errors = (opts->errors == Opt_errors_panic);
+-static const struct gpio_led default_leds[] = {
+-	{
+-		.name	= "mtx1:green",
+-		.gpio = 211,
+-	}, {
+-		.name = "mtx1:red",
+-		.gpio = 212,
+-	},
++static void __init mtx1_wdt_init(void)
++{
++	struct platform_device *pd;
++	int err;
++
++	pd = platform_device_register_full(&mtx1_wdt_info);
++	err = PTR_ERR_OR_ZERO(pd);
++	if (err)
++		pr_err("failed to create gpio-keys device: %d\n", err);
++}
++
++static const struct software_node mtx1_gpio_leds_node = {
++	.name = "mtx1-leds",
+ };
  
--	msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
--	if (!msblk->devblksize) {
--		errorf(fc, "squashfs: unable to set blocksize\n");
--		return -EINVAL;
+-static struct gpio_led_platform_data mtx1_led_data = {
+-	.num_leds = ARRAY_SIZE(default_leds),
+-	.leds = default_leds,
++static const struct property_entry mtx1_green_led_props[] = {
++	PROPERTY_ENTRY_GPIO("gpios", &mtx1_gpiochip_node, 11, GPIO_ACTIVE_HIGH),
++	{ }
+ };
+ 
+-static struct platform_device mtx1_gpio_leds = {
+-	.name = "leds-gpio",
+-	.id = -1,
+-	.dev = {
+-		.platform_data = &mtx1_led_data,
 -	}
--
-+	msblk->devblksize = devblksize;
- 	msblk->devblksize_log2 = ffz(~msblk->devblksize);
++static const struct software_node mtx1_green_led_node = {
++	.name = "mtx1:green",
++	.parent = &mtx1_gpio_leds_node,
++	.properties = mtx1_green_led_props,
+ };
  
- 	mutex_init(&msblk->meta_index_mutex);
++static const struct property_entry mtx1_red_led_props[] = {
++	PROPERTY_ENTRY_GPIO("gpios", &mtx1_gpiochip_node, 12, GPIO_ACTIVE_HIGH),
++	{ }
++};
++
++static const struct software_node mtx1_red_led_node = {
++	.name = "mtx1:red",
++	.parent = &mtx1_gpio_leds_node,
++	.properties = mtx1_red_led_props,
++};
++
++static const struct software_node *mtx1_gpio_leds_swnodes[] = {
++	&mtx1_gpio_leds_node,
++	&mtx1_green_led_node,
++	&mtx1_red_led_node,
++	NULL
++};
++
++static void __init mtx1_leds_init(void)
++{
++	struct platform_device_info led_info = {
++		.name	= "leds-gpio",
++		.id	= PLATFORM_DEVID_NONE,
++	};
++	struct platform_device *led_dev;
++	int err;
++
++	err = software_node_register_node_group(mtx1_gpio_leds_swnodes);
++	if (err) {
++		pr_err("failed to register LED software nodes: %d\n", err);
++		return;
++	}
++
++	led_info.fwnode = software_node_fwnode(&mtx1_gpio_leds_node);
++
++	led_dev = platform_device_register_full(&led_info);
++	err = PTR_ERR_OR_ZERO(led_dev);
++	if (err)
++		pr_err("failed to create LED device: %d\n", err);
++}
++
+ static struct mtd_partition mtx1_mtd_partitions[] = {
+ 	{
+ 		.name	= "filesystem",
+@@ -247,9 +315,6 @@ static struct platform_device mtx1_pci_host = {
+ 
+ static struct platform_device *mtx1_devs[] __initdata = {
+ 	&mtx1_pci_host,
+-	&mtx1_gpio_leds,
+-	&mtx1_wdt,
+-	&mtx1_button,
+ 	&mtx1_mtd,
+ };
+ 
+@@ -270,16 +335,18 @@ static int __init mtx1_register_devices(void)
+ 
+ 	au1xxx_override_eth_cfg(0, &mtx1_au1000_eth0_pdata);
+ 
+-	rc = gpio_request(mtx1_gpio_button[0].gpio,
+-					mtx1_gpio_button[0].desc);
+-	if (rc < 0) {
+-		printk(KERN_INFO "mtx1: failed to request %d\n",
+-					mtx1_gpio_button[0].gpio);
+-		goto out;
+-	}
+-	gpio_direction_input(mtx1_gpio_button[0].gpio);
+-out:
+-	gpiod_add_lookup_table(&mtx1_wdt_gpio_table);
+-	return platform_add_devices(mtx1_devs, ARRAY_SIZE(mtx1_devs));
++	rc = software_node_register(&mtx1_gpiochip_node);
++	if (rc)
++		return rc;
++
++	rc = platform_add_devices(mtx1_devs, ARRAY_SIZE(mtx1_devs));
++	if (rc)
++		return rc;
++
++	mtx1_leds_init();
++	mtx1_wdt_init();
++	mtx1_keys_init();
++
++	return 0;
+ }
+ arch_initcall(mtx1_register_devices);
 -- 
-2.39.2
+2.51.0.rc0.155.g4a0f42376b-goog
 
+
+-- 
+Dmitry
 
