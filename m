@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-761739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8D6B1FDEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D64B1FDEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B554188D015
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4171650A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B469262FC1;
-	Mon, 11 Aug 2025 02:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715191B0439;
+	Mon, 11 Aug 2025 02:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJHyZbli"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lseXBTiG"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEE3594F;
-	Mon, 11 Aug 2025 02:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F10BEACD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754879247; cv=none; b=Lb07IMmnvgU3amGWvd1V+L7sKQwnps9A80OaWJMsH8X4WFu2rOeWTtNRBB+XQ9ZCLhJYujJoSlP9+I6AXCw5Xup40DsYi8oSQs5zcu4ZmbPMj30nFTKMKNk6VBNfWQ5k1hgJS/97PUMdMkPKdVCfNXpWqvI1Z6XMn7p5EBK8Ey8=
+	t=1754880064; cv=none; b=sujCRTj0ajebgmiEQm9sm4v2qKEo0JDQjCtJ6WCGiWO6ob2RkduH9KwvikJyMDYkPvtn1kodafDkdKVe9r0rj1WT6+2Uqij6CiA+6/E6g7y3Q+/pSqIpOn0TIsEalqFjfrqUliPVHL29GQa7ZFL/l3ErXzFXt3nUVkt37QTVj1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754879247; c=relaxed/simple;
-	bh=aMKWzvDtm/8g+NdL6hwVVMiy6H2j95sMRGkquX9m2Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvdOqI5o/9CbnoQvdnpCdJRafnF0HOiPeBpT/HnyD+QpiZ0zkJzKCfkQeX9ZMDOSX3FOA1LtXPNdfSJ+4NYYCLYnmTOST5iY82djn0EJKkozILg95/eEzxydVkHtejQPfC6xmluFO2p5Jl34RZKZpA1Cg8sbmDHoO8UZHoNcQcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJHyZbli; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1754880064; c=relaxed/simple;
+	bh=cogBvEAt0ueMitb48hqO68W8a94umpG5+fVB0VQ21e8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mhmsN7cTJYRcorYbyQn/F/4yosA/i50FSwZ/mCZKRZZxDLU1J54B3sILtCYePKEvobXghjQ2QIA5pym5LUms0LGO87AQ9wP+K/zTuGWwdk0WQuSfo71KlY8nOnbsWEIeQ0BkRtkCggv+5Gb6fOHSQoSOO941ORFrHNJbEZyVRBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lseXBTiG; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24041a39005so24274785ad.2;
-        Sun, 10 Aug 2025 19:27:25 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5393a18c550so1015932e0c.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:41:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754879245; x=1755484045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xslMt/NExvfPIQBfixpVYmv0aftSa67Btq8uVf+dkXs=;
-        b=VJHyZbliHpBBcv1v69AyK4C90cUon7/7/1iQCJIBqlGbTwUxySaVY4sWk2TaotqH7I
-         kxZHEqua/QNT4ul6Y1zR90ABAiGsunOCDtYbR1D1sgKF/CM3Fs64eYC8yKbXVwT2BrMR
-         NESWT/SpuF5Cnck6eCyukWdYTXIv3eHls/pvSZdCZbqRdIMiWbVbGPuSrLQCW5lwKiiz
-         IQL7Z3EFgjEGuuPJCEshKhSx5h4vzT8vud2fHZTPupkB8j0Ny6oPPVzrJZc945vbhQEp
-         l2PWguC4kRRgf/YU3YcrfjE9ahLodQ6K1m6AsEPurAgSFuqqTcwN6bkNIp/Z6P/NFcTu
-         CUoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754879245; x=1755484045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754880062; x=1755484862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xslMt/NExvfPIQBfixpVYmv0aftSa67Btq8uVf+dkXs=;
-        b=MVneasNrfCsdZNoi40A7u/EpjRN8x/AYfg32Rj/KVtrB4nWllYlFB/68aWlmORmbQJ
-         9q+syouKKGaqGw43DjYdrsKU53huO+nctSrXIAHuMvL4jh0KMGs0OEQdTYKeiY701W/y
-         RQK7Jf5dMb9mquH1/Srk8hSlh6bx4oPinIU+/JA03zVbizGH3UFUzTKYK3DlQATO18Sm
-         ODgfbkSXqMMqL0Oaq6g0UEVh+nswAEb0NXwAH5vVlsdeY5zmcmYSVYjbAAhFrT7w9gL2
-         Rg5kJkv5oJIxpsBb4MfrZWwlIi6h07MaoKr4aRQ1HOf3xnH7H9fg8UeTHpyp4F8t+lq7
-         Rf5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuFKKLMR5J+oITqifQYAuw94okvODh6QQEqZr/VGR3Gc1bmv2VaQPgSH8FbV142dRhgXhzPzvJGi8W61JT@vger.kernel.org, AJvYcCVX5LfVI5U3ZL/LeGSG2LILLoAEqbtP6T8SBlsotnTKj9vOLUAYS871V9U9B+4MWo0c5yvK34H6uKxl@vger.kernel.org, AJvYcCXbGY53HN8vOogiTdvph5jD67qZr37R4siuV03uFMQLWiMbezo2QRNSEAKtebuD+u05H0GZtsbVfSX6rII=@vger.kernel.org, AJvYcCXkg7CMN2X734MCPbPCQ4pHjeIGpg2+rhfeo3QE776BwaoH9Xz96p7mpyhxUISlZc1UnRfjA5NN/UZXvTgf2s3dXBZ/HA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeYvAVp10UbsiYGiv4HK3hmktZmnX1xJnEjUR/l7amZv7YA95e
-	9GsCT/iqcWASiHcaKB61L7okOrRkanSli2XiCouoruFcC7P9Ujb1lYEQ6WlmZA==
-X-Gm-Gg: ASbGncv1GhVv6iSILmRiKQex2xaayYkoLUBCpcO8gSFKDS4XYFDFt/me68BRl+NJv9a
-	rOTCJ7IDpXwPFC+HbN5tlW23z+f52mScIZvmkF6/+udr3xtp0l2z6McJCwNNPOcX62eKHi8Ihy4
-	GEexjujrY9C+pwNToZ4MHezpt8F2FFYitQDgnkelR9mzCuh+M0hX8jYgMuNXswRsbjVAKD9Vjfe
-	d1OqGK8E9ttbwj/h/+5dvd+5Wr3lt2Rcd3fkMptUUI6iQ6B6XZoXHJ384JjaVdUoXayDqrZRYIQ
-	/A/MM2Ovhy/1CATxzc4x22wwtTBg+Jin21bUKX0week1sfQAjgL0jro83Abfa9hLS7b6KHhXzSG
-	tryX5hNkTHZdVHF/TQ0ESZR8=
-X-Google-Smtp-Source: AGHT+IF4W3uH1gueWAxmlk3UPjhyyXbryqb+gwcqzXF5ZvDE1+kn1zeMIZFQMxtqyDIKQWXJN2kWpw==
-X-Received: by 2002:a17:902:ebc6:b0:242:9bbc:3644 with SMTP id d9443c01a7336-242c225a177mr151867975ad.54.1754879244961;
-        Sun, 10 Aug 2025 19:27:24 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:69d7:30de:b05e:915b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm233091565ad.16.2025.08.10.19.27.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 19:27:24 -0700 (PDT)
-Date: Sun, 10 Aug 2025 19:27:22 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Lee Jones <lee@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, linux <linux@treblig.org>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 05/21] x86/platform: select legacy gpiolib interfaces
- where used
-Message-ID: <npijagtgyad33xxlq46b7kwzydhcgt5tkgd5ihsjl6t4czbqyf@umovipwh73i2>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-6-arnd@kernel.org>
- <aJccS7fdcx0INYTA@smile.fi.intel.com>
- <3190334c-538d-4e2d-80a4-6e24b255e844@app.fastmail.com>
- <9bc69944-a34e-4a4e-9071-7d2049d12449@kernel.org>
+        bh=CEPO79lcAqliTFFVAgSx9X04AvKfXDh6E7nn3ae49xc=;
+        b=lseXBTiG+XX2BN4CPru9yi0WAcm059IYOR2bZjCTRNInS951/hKN0KjC9FUf1H+dN1
+         Wlm3sImGa/DBA1O63YA1D2VYyj+QOBWYM76HN0PBzAb/DaUGSrOAPoSVuYbTkhXiVqob
+         YUz//mc/LxI5Q6iSdf2V/+6sj6hWSa7kdSQb8Q12b7JJavWmePW7DIGAMRC4VaEHkJE+
+         4KDgS8+WKdM8U4YeR7xp5ecHgQmKEdPiwTfxIHZJf3vz+OLZYm/Vg9iFwKH5wdzWcD46
+         8o36OsD4azqIFKt6yomiB++L0DPEg9DW97nQoAn71JoQ3uWQeMHT7agYIPfxx8HKtp6Q
+         DP5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754880062; x=1755484862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CEPO79lcAqliTFFVAgSx9X04AvKfXDh6E7nn3ae49xc=;
+        b=qIsuKLiZXzv6vTPtfq0r1BZOm91CDCY63LnNM5ryBS+qzAc//2UOgyzCKLD2VRyUKW
+         DMu3ceMW9tJR1bdil98hwYR9wpJrvzbKzQ6wXzmJ4vieLv6szbcM3sGpYEGnHeg0Orfp
+         n51megZh3Vjcj3LvcGNB/w1eCSdu6EpTyN2Uqls/XtNZtMbxCgM0xdxoZbXzW4XSifXa
+         4H1ENj7ojxpkXrWYfi51l+HMsF4y99FE4FR4SbnpMBfTX5isQN2AVWtDQgd0+KSneFNY
+         w52kUBrsJZDQHvYvUuxtmYik5tAFCVs9L3sOBquxdLvgbtkzZNyBfwNesXhY5JobLi6W
+         oitQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXbIUUdPGrSgdadczdwGQ+f3rhvrRRXmeABgDL2Yk4hawpCSVqU/3Ihedi+IDV0LspahdGJObMj96T6lY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjN9MH2lNgTfNX4VC8zQlLyfYPowmdxD6NTni62ljAR0cla5aF
+	APqzEq4t+NvJGTEUH17UWAkNnO5nZcxNdRlITj2p35wpAJDrzTo1Yt0FffnG3aoYXFwwoQef1rY
+	fpJ+V7GY75Ds/obiZJ2502O94PTHB/x4=
+X-Gm-Gg: ASbGncs3uP6vvyojUv5Cs9rxEZg1qlbqMB/xWWjthTwT/XAOmfPVS4sk9ycf7C9Tbp5
+	GSvirNHzvk4NJDTfVIT2yEbPZ0S5qj1B6NnEFXnL3epjfaGJOCxdxgLr3rPyUGF8glg312yjqQ6
+	f+jW1pQl3IDWXFhE6Q3tSHwvsGZE/iFJvhSlNa1TeuqsUC//byhznwcRdR1Ed2dffWvGxjueOrY
+	OSENUA=
+X-Google-Smtp-Source: AGHT+IG9M12oTQKXjakVvm7O5EdRoYMgP2LrdwPJngQsDTIg4mJl6/p9kPCNEkiFHHbjllCvovPLKhqLUYDr9ffqJEs=
+X-Received: by 2002:a05:6122:134c:b0:539:1142:21a1 with SMTP id
+ 71dfb90a1353d-53a4ac10d5amr3628046e0c.0.1754880061889; Sun, 10 Aug 2025
+ 19:41:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bc69944-a34e-4a4e-9071-7d2049d12449@kernel.org>
+References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 11 Aug 2025 10:40:50 +0800
+X-Gm-Features: Ac12FXxh4BM1Q0JSTNoPZLQDxlAY6NtAXyQ0P5zZ1A7rFzDEZOlSUIymDp7nKis
+Message-ID: <CAGsJ_4zuEcgg7U0yCMu6ayKqRPACtvuzUsC9vUxBk2PgMzaf_Q@mail.gmail.com>
+Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
+ mremap folio pte batch
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Fri, Aug 8, 2025 at 2:59=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> It was discovered in the attached report that commit f822a9a81a31 ("mm:
+> optimize mremap() by PTE batching") introduced a significant performance
+> regression on a number of metrics on x86-64, most notably
+> stress-ng.bigheap.realloc_calls_per_sec - indicating a 37.3% regression i=
+n
+> number of mremap() calls per second.
+>
+> I was able to reproduce this locally on an intel x86-64 raptor lake syste=
+m,
+> noting an average of 143,857 realloc calls/sec (with a stddev of 4,531 or
+> 3.1%) prior to this patch being applied, and 81,503 afterwards (stddev of
+> 2,131 or 2.6%) - a 43.3% regression.
+>
+> During testing I was able to determine that there was no meaningful
+> difference in efforts to optimise the folio_pte_batch() operation, nor
+> checking folio_test_large().
+>
+> This is within expectation, as a regression this large is likely to
+> indicate we are accessing memory that is not yet in a cache line (and
+> perhaps may even cause a main memory fetch).
+>
+> The expectation by those discussing this from the start was that
+> vm_normal_folio() (invoked by mremap_folio_pte_batch()) would likely be t=
+he
+> culprit due to having to retrieve memory from the vmemmap (which mremap()
+> page table moves does not otherwise do, meaning this is inevitably cold
+> memory).
 
-On Sun, Aug 10, 2025 at 05:12:46PM +0200, Hans de Goede wrote:
-> Hi Arnd, Andy,
-> 
-> On 9-Aug-25 9:44 PM, Arnd Bergmann wrote:
-> > On Sat, Aug 9, 2025, at 12:00, Andy Shevchenko wrote:
-> >> On Fri, Aug 08, 2025 at 05:17:49PM +0200, Arnd Bergmann wrote:
-> >>> From: Arnd Bergmann <arnd@arndb.de>
-> >>>
-> >>> A few old machines have not been converted away from the old-style
-> >>> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
-> >>> symbol so the code still works where it is needed but can be left
-> >>> out otherwise.
-> >>
-> >>> --- a/drivers/platform/x86/x86-android-tablets/Kconfig
-> >>> +++ b/drivers/platform/x86/x86-android-tablets/Kconfig
-> >>> @@ -8,6 +8,7 @@ config X86_ANDROID_TABLETS
-> >>>  	depends on I2C && SPI && SERIAL_DEV_BUS
-> >>>  	depends on GPIOLIB && PMIC_OPREGION
-> >>>  	depends on ACPI && EFI && PCI
-> >>> +	select GPIOLIB_LEGACY
-> >>>  	select NEW_LEDS
-> >>>  	select LEDS_CLASS
-> >>>  	select POWER_SUPPLY
-> >>
-> >> Hmm... This is a surprising change. But I leave it to Hans.
-> 
-> Yes I was surprised by this myself since I explicitly removed
-> all legacy GPIO use from the x86-android-tablets code a while
-> ago (or so I thought).
-> 
-> > I think the only function that still needs it is
-> > x86_android_tablet_probe() doing
-> > 
-> > static struct gpio_keys_button *buttons;
-> > 
-> >                 for (i = 0; i < dev_info->gpio_button_count; i++) {
-> >                         ret = x86_android_tablet_get_gpiod(dev_info->gpio_button[i].chip,
-> >                                                            dev_info->gpio_button[i].pin,
-> >                                                            dev_info->gpio_button[i].button.desc,
-> >                                                            false, GPIOD_IN, &gpiod);
-> > 
-> >                         buttons[i] = dev_info->gpio_button[i].button;
-> >                         buttons[i].gpio = desc_to_gpio(gpiod);
-> >                         /* Release GPIO descriptor so that gpio-keys can request it */
-> >                         devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
-> >                 }
-> > 
-> > So the driver itself uses gpio descriptors, but it passes
-> > some of them into another driver by number. There is probably
-> > an easy workaround that I did not see.
-> 
-> Ah I see, so this is basically in the same boat as
-> drivers/input/misc/soc_button_array.c which also first
-> gets a gpio_desc and then calls desc_to_gpio() to store
-> the GPIO number in struct gpio_keys_button which is passed
-> as platform_data to drivers/input/keyboard/gpio_keys.c
-> 
-> The gpio_keys driver then converts things back
-> into a gpio_desc in gpio_keys_setup_key()
-> using devm_gpio_request_one() + gpio_to_desc()
-> 
-> So it looks like we need to add a gpiod member to
-> struct gpio_keys_button (include/linux/gpio_keys.h)
-> and modify gpio_keys.c to prefer that over using
-> button->gpio, something like the attached patch
-> basically.
-> 
-> I won't have time to work on this until September,
-> so if someone wants to take the attached patch and run
-> with it go for it.
-> 
-> Note the x86-android-tablets / soc_button_array code
-> will become responsible for requesting / releasing
-> the gpiod when using the new gpio_keys_button.gpiod
-> member.
-> 
-> For the x86-android-tablets code this is easy, just drop
-> these 2 lines:
-> 
->                         /* Release GPIO descriptor so that gpio-keys can request it */
->                         devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
-> 
-> And for soc_button_array.c it is _probably_ just a matter
-> of switching to devm_gpiod_get_index() and drop the
-> gpiod_put().
-> 
-> I have hardware to test both the x86-android-tablets
-> code as well as the soc_button_array code. I might be
-> able to do a quick test on August 22nd or 29th.
+If vm_normal_folio() is so expensive, does that mean it negates the
+benefits that commit f822a9a81a31 (=E2=80=9Cmm: optimize mremap() by PTE
+batching=E2=80=9D) was originally intended to achieve through PTE batching?
 
-I just sent out a v2 of my series from '23 converting
-x86-android-tablets to use PROPERTY_ENTRY_GPIO(), including converting
-buttons and switches:
+>
+> I was able to definitively determine that this theory is indeed correct a=
+nd
+> the cause of the issue.
+>
+> The solution is to restore part of an approach previously discarded on
+> review, that is to invoke pte_batch_hint() which explicitly determines,
+> through reference to the PTE alone (thus no vmemmap lookup), what the PTE
+> batch size may be.
+>
+> On platforms other than arm64 this is currently hardcoded to return 1, so
+> this naturally resolves the issue for x86-64, and for arm64 introduces
+> little to no overhead as the pte cache line will be hot.
+>
+> With this patch applied, we move from 81,503 realloc calls/sec to
+> 138,701 (stddev of 496.1 or 0.4%), which is a -3.6% regression, however
+> accounting for the variance in the original result, this is broadly
+> restoring performance to its prior state.
+>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508071609.4e743d7c-lkp@intel.co=
+m
+> Fixes: f822a9a81a31 ("mm: optimize mremap() by PTE batching")
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-https://lore.kernel.org/all/20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com/
+> ---
+>  mm/mremap.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 677a4d744df9..9afa8cd524f5 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -179,6 +179,10 @@ static int mremap_folio_pte_batch(struct vm_area_str=
+uct *vma, unsigned long addr
+>         if (max_nr =3D=3D 1)
+>                 return 1;
+>
+> +       /* Avoid expensive folio lookup if we stand no chance of benefit.=
+ */
+> +       if (pte_batch_hint(ptep, pte) =3D=3D 1)
+> +               return 1;
+> +
+>         folio =3D vm_normal_folio(vma, addr, pte);
+>         if (!folio || !folio_test_large(folio))
+>                 return 1;
+> --
+> 2.50.1
 
-I do not have hardware so it probably is busted but if you could make it
-work that would be great.
-
-Thanks.
-
--- 
-Dmitry
+Thanks
+Barry
 
