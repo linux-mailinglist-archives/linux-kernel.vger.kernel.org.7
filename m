@@ -1,148 +1,92 @@
-Return-Path: <linux-kernel+bounces-762626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B21B20917
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F43B20915
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FAB2A3219
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C52E3BE1A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6BF2D3EDD;
-	Mon, 11 Aug 2025 12:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73EB2D3A97;
+	Mon, 11 Aug 2025 12:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="McXHSEOX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bgVNxfD1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c85EGQZz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6282722422E;
-	Mon, 11 Aug 2025 12:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9A220F4F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916264; cv=none; b=lAxiBFLR9cbIsDVgzRqlndfu8SKcsCTr6t+ZsQ+VHQDbqHg+3/dWTf52kjyt+DZt2WY+WY3y/3y6jqlIEaa84UITtK/ashEV4UAENgujCBscWs5E92H1WucYgRmSxBmE3c1sSFIligmMLZhgjVO0PjSUpgAfi2flOuAtqlvQP5E=
+	t=1754916263; cv=none; b=gf93PR6PPbcfXJzD5KJU4GrdS0F7pp5/eMB/ehZiDQBEXbhTAW0h3NdfHFvgIcERenA6Y/vuDfqvax8RR1kF5lUPodIqszLX16aIH6THdHIxDm/nwkPIM1IpmtcB2Uw7Co3XMd1kwFDENLnwgPp85P9fy5rFa2KiKAhQBB+wZX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916264; c=relaxed/simple;
-	bh=vQ+vW3bb4SLO8jvImSIJRfB/JR6jIDTFO9Yuv06+5oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvVig6SDuCVmZMmB+INIzQT/o2qLMHviJimrhctoaYLMsikS7gHAX1p78McZUrKCiMJ7w+nLDSLEsiz+tOtktaremtyZkoOo9MP0S9pvShSLC7d8Ar2YSSyiciJuxMvIncTNxfTs6CB3cbrdA7Z2OwbC/ccJrjA/hRE5nWI4LJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=McXHSEOX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754916262; x=1786452262;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vQ+vW3bb4SLO8jvImSIJRfB/JR6jIDTFO9Yuv06+5oQ=;
-  b=McXHSEOXg7VD8JkGaIKWzF4PYwHXFblPm+iFez6ziiVVNZP1oqEL8ZiD
-   d8g7wt5Xb8jx27ZRbvVY8a3twVj1hFEcK88uwqMaQ/mBmphscIRkJUWXJ
-   P6FIETVTwQjbC1So4/IKow+Nau9QPfZJaYUHHqXK6eL/zQcHQ45G5E5x6
-   aHAST1ThsKRtazhdyr8zd6nU5tUKIDUj+NtEaMeTRKOOqDOBAMtvgz2Mt
-   qB0Vt+75vcnlIKgsrRjnrB6CyR+XkWEw/hzXgT8gejyj9D5GRFVgSEG4Z
-   SC42j60QuoOCYmszpbebjpqivMlIuxsrW6XtFM84dLqBQ+BlmHYJuivRB
-   g==;
-X-CSE-ConnectionGUID: 8nLWcKWGRlaUdJZKViPtVQ==
-X-CSE-MsgGUID: 4Jh9jiMZQYaLmHbzap5yzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="59779612"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="59779612"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:44:21 -0700
-X-CSE-ConnectionGUID: pP11mqFeTMO9P+0bNzVPnA==
-X-CSE-MsgGUID: /PMSQW+ORlWWFlHWtCezgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="196903247"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:44:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ulRsu-000000052Y1-0cvd;
-	Mon, 11 Aug 2025 15:44:16 +0300
-Date: Mon, 11 Aug 2025 15:44:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
- gpio-leds/keys
-Message-ID: <aJnlnx2qF6P61jJN@smile.fi.intel.com>
-References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+	s=arc-20240116; t=1754916263; c=relaxed/simple;
+	bh=4bPXvTybTYw3uWFJqMw7jey3ul2mSMuUchxQYHAQ1e4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XV/HSTgoW71CL05nKtbSY+B4RlW895kVvjAj5dCFj3t6oKG0HYMUDBJ1wcELkajejO6l27gXBtY6QLOvAnUlWzHXcsbWYCwjQv2pa+IcFNwQ4x5gVTHCcDq4JnBREXd3nbYgoH3fR52UqoLB2IyQAUwf6DIt/JYOLnnOJ7/SGMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bgVNxfD1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c85EGQZz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754916260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LJqFgM29ffLz4B4qWNr3rGFSEuLN/8lsgvcpqVZRiGg=;
+	b=bgVNxfD1VyaFgzgIQv3JXt1FNrvd3hwqTK05Ct+IbbIYY2YL+R0yrCxCMYK89kPUFP6M5f
+	pte3v9pwuHTIWqtiKEs3K8wj05lFoO5V/2yUfY1V54KovAuuDgk9c2QCl/yKCwJaYJskwQ
+	EsOixpZJCjfRLspSewiUI0aoSp+VdzQhvun5S4v6Mh5JTxGvddLzN3bHOjeor1L4RZPGDH
+	j/CfHzp57zgmdlR9aH6XkTt/CtOiCwE6Yo73jzMUzeTtKNRf+rTLadgf1E6yETLCqh0SK2
+	dlu2mvMquuypKbtgeeyE4Z5+7ywXY8AU7dYqHbxccJJS5rqbqFAnbOEXF+PaLA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754916260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LJqFgM29ffLz4B4qWNr3rGFSEuLN/8lsgvcpqVZRiGg=;
+	b=c85EGQZzGNWQE6Vg+A9UMu7KBYuhDuOweWST4hHVex3LzjDWjhgxGsC8NnQDhLxLJVzQKS
+	ICK8LwbDGf7sk5Ag==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>, Namhyung
+ Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Kees Cook <kees@kernel.org>
+Subject: Re: [patch V2 m@/6] perf/core: Split out AUX buffer allocation
+In-Reply-To: <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
+References: <20250811065859.660930338@linutronix.de>
+ <20250811070620.590421133@linutronix.de>
+ <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
+Date: Mon, 11 Aug 2025 14:44:19 +0200
+Message-ID: <87jz3a81uk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Sun, Aug 10, 2025 at 09:31:37PM -0700, Dmitry Torokhov wrote:
-> In preparation of dropping support for legacy GPIO API from gpio-keys
-> switch the driver to use software nodes/properties to describe
-> GPIO-connected LED and button.
+On Mon, Aug 11 2025 at 12:04, Peter Zijlstra wrote:
+> On Mon, Aug 11, 2025 at 09:06:41AM +0200, Thomas Gleixner wrote:
+>> +	/* If mapped, attach to it */
+>> +	if (rb_has_aux(rb)) {
+>> +		atomic_inc(&rb->aux_mmap_count);
+>> +		return 0;
+>
+> so this was: ret = 0; goto unlock;, which then would've also taken the
+> !ret branch and done perf_mmap_account(), no?
 
-...
+Indeed.
 
->  #include <linux/delay.h>
-> +#include <linux/dev_printk.h>
->  #include <linux/dmi.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
+> These two aux and rb split out patches seem like they're trying to take
+> too big a step. Let me try and do the same with smaller steps.
+>
+> If only to try and find bugs.
 
->  #include <linux/leds.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> -#include <linux/gpio_keys.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/gpio/machine.h>
-> -#include <linux/input.h>
-
-> +#include <linux/gpio/property.h>
-> +#include <linux/input-event-codes.h>
-> +#include <linux/property.h>
-
-The idea of sorting here is to have more generic first and then more specific
-(per subsystem in use) groups of headers. So with your change it should look
-like
-
-#include <linux/delay.h>
-#include <linux/dev_printk.h>
-#include <linux/dmi.h>
-#include <linux/err.h>
-#include <linux/io.h>
-...
-#include <linux/leds.h>
-#include <linux/module.h>
-#include <linux/platform_device.h>
-#include <linux/property.h>
-
-#include <linux/gpio/driver.h>
-#include <linux/gpio/machine.h>
-#include <linux/gpio/property.h>
-
-#include <linux/input-event-codes.h>
-
-(I also added blank lines to make it more explicit)
-
-...
-
-Otherwise LGTM as here it looks like we establish platform device ourselves and
-hence no need some additional magic Hans mentioned in the other series.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+:)
 
