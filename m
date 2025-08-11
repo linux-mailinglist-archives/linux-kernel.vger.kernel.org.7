@@ -1,217 +1,200 @@
-Return-Path: <linux-kernel+bounces-762563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BF4B20875
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636CFB20878
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963584268E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DAD18A12B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1652D3759;
-	Mon, 11 Aug 2025 12:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE872D374B;
+	Mon, 11 Aug 2025 12:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="noN43QHc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oKbN8fDE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gZpmS87a";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3t/Gob/c"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0GZ093D"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E062550DD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C22A2BEFE9
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914298; cv=none; b=UNxY5U/CO/VwigtkHJ3JZ/7QfMeM9vJinEoN+gTf0ip0ofvrwiWkXdA/6PCaOSlA1tvtJ4HNdSDFIyAYFPuhInoR6dxH8LuthlpzeHKxfkT/FYbuLx2kB5JSoXcJ/1I9BsQxeTH9Ak6IPPFr00rfUdO+33OwDtMAG7Rh+7i5nv0=
+	t=1754914301; cv=none; b=BuXg90WlgBv7SeBafDrsPHYHvAPrYkfhqneUhh9PnlVpCBhUYTx/Knt3jVZlkov8Ysu/9NEM+J3AHk1GvAYG7E6jVjdsl9moMYQPb/aEFpCvc+7625UNghu0a4EUcFoaC7y/ul/h2zvcx4UzgYRofqeumkA1XrmAxSpA68BuNaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914298; c=relaxed/simple;
-	bh=oL6ILdov7JgecNJt1c7RZUGDK8os7L/gFWhGXYkCFkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPYAEf8QdVscVuXkK9zgCs5vutx9EVU2Tzb7PEoPjgfZwxZ8LOJdWvgrqFCzdi9kgmogRbFrupwNVykVjeKuXU8wXa6I+PBeITmi2lBQuxaeIfl11mK9kNI7unrDqtV5P/rpN39CFKX3dP0wleBCKASHVqEpKcVUDH2asGdMx+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=noN43QHc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oKbN8fDE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gZpmS87a; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3t/Gob/c; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9C87B220E4;
-	Mon, 11 Aug 2025 12:11:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754914288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0RzpksJzPUUjRTWtZFiWetTZQbbxu1KuZUZps9+0Pj4=;
-	b=noN43QHcT2JpaHhUvf3tJUdhI8mop9UD1TYORL032rVGmGTSkp40EO01/2+PiRXkN+8EUb
-	CPuZDESaDNmKz3Vdp152L+tseRAf7HbkcCiRKM0XVtbixUJ24f+//m8MPeDejtgG5T8AiK
-	PTQh1jxvRK16cfVR8wKNnASpf8QdOw8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754914288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0RzpksJzPUUjRTWtZFiWetTZQbbxu1KuZUZps9+0Pj4=;
-	b=oKbN8fDEROSK587+kCZ05RlOEI+3pkO6Kn90actgRnw6E7GP5gMwDFI/V6M8i/VuJseUbl
-	RJsA+7VU+ed5sHCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gZpmS87a;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="3t/Gob/c"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754914287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0RzpksJzPUUjRTWtZFiWetTZQbbxu1KuZUZps9+0Pj4=;
-	b=gZpmS87avr9uCu13LMlWcOV1MgyI8WvojYb7NAoypFC1fE2D9XMO+7EZ05ooIGkvQ43bVU
-	m19UisZckLDnAUqkuk1t26IaJqqbCeQraxr5FbmTnB1zqO4PSP3xBsJicwyjlNHJXcuOVk
-	EASascA9iu32mmTeHc2W3mO0hyV9EOs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754914287;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0RzpksJzPUUjRTWtZFiWetTZQbbxu1KuZUZps9+0Pj4=;
-	b=3t/Gob/clEKl+IYyT30ChAVcLEgOUDajrqknFCCifbmIPROEitEWiuJ/L/qwg1Hn5gcI9U
-	n/wSAKs3SezlhPAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37E6E13A9B;
-	Mon, 11 Aug 2025 12:11:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7mApDO/dmWinLAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 11 Aug 2025 12:11:27 +0000
-Message-ID: <c76d9e67-4b2b-443d-b173-76476a7a4317@suse.de>
-Date: Mon, 11 Aug 2025 14:10:53 +0200
+	s=arc-20240116; t=1754914301; c=relaxed/simple;
+	bh=FMBflEgyu2zzYW/76/uBzy1KMkgr26r6YycYcOX43po=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QVwgtAxaB/UvpahsG7BK1N29InrptBYiLEWH19I7gg8XVXzFYJR82EtumTPLholNWaiARR0IUd5CcRsU0JglHXWz6691NRba7pDPnXS/D+QwktxcyG5rxeUSIxFzFTYYB9QbykfdP+2xw1/BbmVChUJ6SBXuIkAwiHxjrPe5S4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0GZ093D; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8bbb605530so4342958276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754914298; x=1755519098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzaS0HPLQ+JNoWDWc+qdmiWk51Wkp8ZaIZKSPb/Tu1s=;
+        b=r0GZ093DzH45obxjIGTuS3+ogzAieVZwbrWTWg96/UhTSc5IQYF/kwjOUVm5fPcX59
+         LwFPLn6dqVZwpRDfSeZ3BnfOot3QvEO6zPNnAFnlpLBkzIXrZqcX1/3xt5z3so+JM6jM
+         EMlYOajxZAhuPwkDb4dFU86gOq+XNDutQJC5a0uuy70XkLm2p0NdYP3DpvuRATvGGN2u
+         NaQuN92axv6LVCfmTBhKTHm4SohouGaB2Je2SLMXbgTTT3G533XMj/zJG5FClz9/mXfD
+         Nbyp0YCHm941UCFn9lfrsMdEfIs77qptm6roxgmcAnMZp7eH2BosqOew9hP2gd2LaIEU
+         UaRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754914298; x=1755519098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yzaS0HPLQ+JNoWDWc+qdmiWk51Wkp8ZaIZKSPb/Tu1s=;
+        b=VtEsdHogbPKbGpPVvTllOQFoKfQC2sD8aQXpZWVPGFmJC83rTo2QVKaMWEqh1DqKWc
+         mH/k1nQLJ3qjYqDfEGwUnhFffvdZ5SuLMyNbtTyxj9WjLO2KUz4LiA5KSNV+WvYek6w8
+         ve6timZ+wS0bwr63v6632lWKTZSjJzU3QgH9Q5U0Apef5o9qljcBHTuNqNaEK+jmsqWX
+         1XpWfe+1ZuIvWs6tUL7PEEA1oHCaSEok4vBQl/Ea8crSnooW2BofbR6yjFmWrORnjbqR
+         JCJXMVEAVTs8I9IbLeYWgkXbhcd7vFuQcFSWOEMC/NAjZzOzEFCDw7Pa0SUm8qWAk0Mh
+         w+SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqb5jQGpUI17j0byLpfe+IGZablPup//QnPZFNc4t0La/CTooEovj566aDdkiAWmWJyBZfFoijTLkESvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycmCoqSryJZifyn50fQCeVD+eqzAxsf7I1TWK+GyjAOwhOO4+S
+	cFfKrmoPadyvVZp6tGHVgGOsWgMoO9fcYQuypoYImmyB4tiJlEBMW5MGh0z5bl0Buo+2zO2pAhr
+	HKX8ZRvx0TuTFRRxgBfFRMbB3EDnzllD6bYg9ijlDyQ==
+X-Gm-Gg: ASbGncsIXzd4LexYA4E8+wJq2iBAl7xYYASD++EUc9bBZjfpkghQqkrcobfSEJmKy2V
+	O+5tbSim73Tn+3QEfm6ZPpgE6eVoqhYOlP0ffFA2S3E7oQHkSN3kQZ+jL8dVFV35vqAix0BamTB
+	a7Sok8QZfAtHQ9oTgfed/WNm4g/wGNB9RF6PYHhFvVemj6Iy3+WvkYBHJbCNwhZ9I/ADskswvlk
+	Fe+gvmi+tu4xqkwvL8=
+X-Google-Smtp-Source: AGHT+IFMbaZrjleZ5vGz4D0X/pSaNmB18k653oOaNMk9YxEBIuCeDG7q8giRICX/XDvm2Zo/8TtZ5RzGGv6KOI1cErc=
+X-Received: by 2002:a05:690c:4b89:b0:71b:7126:65a with SMTP id
+ 00721157ae682-71bf1a9c5admr150740997b3.2.1754914298150; Mon, 11 Aug 2025
+ 05:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panfrost: Print RSS for tiler heap BO's in debugfs
- GEMS file
-To: Daniel Stone <daniel@fooishbar.org>,
- =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Christopher Healy <healych@amazon.com>, Daniel Stone
- <daniels@collabora.com>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-References: <20250808010235.2831853-1-adrian.larumbe@collabora.com>
- <CAPj87rNnjvsJ1P89dv+OtawBXTLwfcaS41mzOL9Z1SwtjRcVJg@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAPj87rNnjvsJ1P89dv+OtawBXTLwfcaS41mzOL9Z1SwtjRcVJg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[collabora.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.freedesktop.org,collabora.com,amazon.com,kernel.org,arm.com,linux.intel.com,gmail.com,ffwll.ch];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,collabora.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 9C87B220E4
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-21-ulf.hansson@linaro.org> <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
+In-Reply-To: <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Aug 2025 14:11:02 +0200
+X-Gm-Features: Ac12FXyNISadS8h7_-q3TDdgflMKzfkI6TZV-B6W1wySvd9OmSLdra87f6EZkBk
+Message-ID: <CAPDyKFqSyP3e=JRFYEuFefWVN5SYJWULU8SKzXmrThvyiVGXgg@mail.gmail.com>
+Subject: Re: [PATCH v3 20/24] pmdomain: core: Default to use
+ of_genpd_sync_state() for genpd providers
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Daniel
-
-Am 08.08.25 um 13:06 schrieb Daniel Stone:
-> Hi,
+On Thu, 31 Jul 2025 at 17:07, Jon Hunter <jonathanh@nvidia.com> wrote:
 >
-> On Fri, 8 Aug 2025 at 02:03, Adrián Larumbe
-> <adrian.larumbe@collabora.com> wrote:
->> Otherwise it would display the virtual allocation size, which is often
->> much bigger than the RSS.
-> I've pushed this to drm-misc-next-fixes to land in 6.17 with the
-> original commit as well.
+> Hi Ulf,
+>
+> On 01/07/2025 12:47, Ulf Hansson wrote:
+> > Unless the typical platform driver that act as genpd provider, has its own
+> > ->sync_state() callback implemented let's default to use
+> > of_genpd_sync_state().
+> >
+> > More precisely, while adding a genpd OF provider let's assign the
+> > ->sync_state() callback, in case the fwnode has a device and its driver
+> > doesn't have the ->sync_state() set already. In this way the typical
+> > platform driver doesn't need to assign ->sync_state(), unless it has some
+> > additional things to manage beyond genpds.
+> >
+> > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >   drivers/pmdomain/core.c | 9 +++++++++
+> >   1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > index ca47f91b9e91..5cef6de60c72 100644
+> > --- a/drivers/pmdomain/core.c
+> > +++ b/drivers/pmdomain/core.c
+> > @@ -2600,6 +2600,11 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+> >       return ret;
+> >   }
+> >
+> > +static void genpd_sync_state(struct device *dev)
+> > +{
+> > +     return of_genpd_sync_state(dev->of_node);
+> > +}
+> > +
+> >   /**
+> >    * of_genpd_add_provider_simple() - Register a simple PM domain provider
+> >    * @np: Device node pointer associated with the PM domain provider.
+> > @@ -2628,6 +2633,8 @@ int of_genpd_add_provider_simple(struct device_node *np,
+> >       if (!dev && !genpd_is_no_sync_state(genpd)) {
+> >               genpd->sync_state = GENPD_SYNC_STATE_SIMPLE;
+> >               device_set_node(&genpd->dev, fwnode);
+> > +     } else {
+> > +             dev_set_drv_sync_state(dev, genpd_sync_state);
+> >       }
+> >
+> >       put_device(dev);
+> > @@ -2700,6 +2707,8 @@ int of_genpd_add_provider_onecell(struct device_node *np,
+> >       dev = get_dev_from_fwnode(fwnode);
+> >       if (!dev)
+> >               sync_state = true;
+> > +     else
+> > +             dev_set_drv_sync_state(dev, genpd_sync_state);
+> >
+> >       put_device(dev);
+> >
+>
+> Following this change I am seeing the following warning on our Tegra194
+> devices ...
+>
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 17000000.gpu
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 3960000.cec
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 15380000.nvjpg
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 154c0000.nvenc
+>   WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 15a80000.nvenc
+>
+> Per your change [0], the 'GENPD_FLAG_NO_SYNC_STATE' is set for Tegra
+> and so should Tegra be using of_genpd_sync_state() by default?
 
-I'm going to revert this commit, because of
+This is a different power-domain provider (bpmp) in
+drivers/firmware/tegra/bpmp.c and
+drivers/pmdomain/tegra/powergate-bpmp.c.
 
-dim: 216d6d913861 ("drm/panfrost: Print RSS for tiler heap BO's in 
-debugfs GEMS file"): committer Signed-off-by missing.
-dim: 216d6d913861 ("drm/panfrost: Print RSS for tiler heap BO's in 
-debugfs GEMS file"): Link tag missing.
-dim: WARNING: issues in commits detected, but continuing dry-run
+For the bpmp we don't need GENPD_FLAG_NO_SYNC_STATE, as the
+power-domain provider is described along with the
+"nvidia,tegra186-bpmp" compatible string. In the other case
+(drivers/soc/tegra/pmc.c) the "core-domain" and "powergates" are
+described through child-nodes, while ->sync_state() is managed by the
+parent-device-node.
 
-Shall I reapply or do you want to?
+In the bpmp case there is no ->sync_state() callback assigned, which
+means genpd decides to assign a default one.
 
-Best regards
-Thomas
+The reason for the warnings above is because we are still waiting for
+those devices to be probed, hence the ->sync_state() callback is still
+waiting to be invoked. Enforcing ->sync_state() callback to be invoked
+can be done via user-space if that is needed.
+
+Did that make sense?
 
 >
-> Cheers,
-> Daniel
+> Thanks
+> Jon
+>
+> [0] https://lore.kernel.org/all/20250701114733.636510-10-ulf.hansson@linaro.org/
+> --
+> nvpublic
+>
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Kind regards
+Uffe
 
