@@ -1,307 +1,228 @@
-Return-Path: <linux-kernel+bounces-763629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B9EB217CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:57:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942BFB217E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69711A21331
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA936239BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA9B2E541B;
-	Mon, 11 Aug 2025 21:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05809281369;
+	Mon, 11 Aug 2025 22:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HgzQnRt9"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="M4iS+utp"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5F72E4249
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754949443; cv=fail; b=R1v5OCJstbxfGU0MyjoDlWCMt2sYUhNVBVJ0J5H/sfCWoPU1LuAhdZHDwyP8Ow+TDsAGY7A1Y0vnb6YZiMtgJW+qQtKosbiOXxRxnuUcHsiFumU2+D/nGW9TxJGgim9KLQDJBN+d8h6Hu/VTp73ERlul5ERZ2mfjgnwlpPf/jFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754949443; c=relaxed/simple;
-	bh=lP9+R4iYCEIajdY5FvlEUBWvbY7f6RkFRSdaF7bYyPs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YK3Rpf1zjs+k1bqWnkOamIsVSgpLjBrD5KLjhciVWRzlPhjEIw8jl6w3XBhtC0ugDUyXUWZPeEvzZHidUGS8xKm9jhH5Oe+LRrwwP5OBnY/Xd36zdVn4+Vkhx2zN/vR8aU+xOw/0T+EZmRmGLCEbECNovawoJtNtEjrIjCzeBFs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HgzQnRt9; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v3VRfJ5N/Ucr3XCxzhvqWQKN+T65L002j/fgadejPrjebOC8ZrtytIP8k8dOHDRzFeM/HKHA1ArbkXxJj11fX8oJdIk+mIUvJSds0KoqH1GZpk45FxM4BqL86t7s+iGwhs24g1NWFU88VTkUlLy2YRVcbfpAyldvZWduvY840rLiWJfXw5ZhoUBcuzIz4H0c8jJzp03LQZFWx6d4hnLHLV+5BjsBMfdAVVAX9jq84agP2G9XqVUjMMR75hC0kFiOi8cnaMYq8qVFZj+3xR/nFOgTVPANbeZ0A1GhaEacemZ4V5i29lDojdYqCx1rgxhAlApiXkHCHC6/fWWWbjpN4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P0KnV2xp1HsfYq54AuIE4WEprUYaKC6a3xpsR4ZhJSs=;
- b=sBxI1XgjOc1ztfMTSkbtpkKJthEQlkf3GGQFPCt+srWmasAotHb3hgi7f1LS2AKd0bEaZezQiBBdIh+08vj2JVgsB68PpJ+p/Sd+sQN1LAgHAlV4jkvvNgnh74rST1qNV4Targso34GSJVXeBprKtjIk9UWa6XDc2Y4mxnEnw4W77ph7ApfflBzzutP2xhGQ7QJo/fwxAomCWALYJnLYh17JzqdoYorSOL57HowtduCQ6FZfkx37okjTaWoUkVabNnwCNfGgbahl4l9nrZbQQur069FHr0s/JfFn5GPNjxzlbj3PPhpYBWUTaluBzSfoHPVr2Aq0eBbWN691t9qW/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P0KnV2xp1HsfYq54AuIE4WEprUYaKC6a3xpsR4ZhJSs=;
- b=HgzQnRt99i+2uzpLHCfzDraUcg4FQjeIxm8DMcEu3pLgSPm3qaKLGWMzncjb3e+yk0UGCZRN8A1uZveLelq4zRYaY/WIPaNENq9tS28gMxCFZIST1UAqqEWMgLnNfAATCz2aPe1sqSscx3JkrpLf1YQ8izoJOlYr6vyUq5od3YoRlKR+j9s4+FjIyYtnGFWH4JtP9htoWXRcuWkPqd3NSZSF6x/cZDFGaHKawXEkv0RX7ZsnjLiquHoGqZqrrHgGe+41aDaCWqO1J4b8T/l354zXqbCO6+ayjxGfD/VElfzFrhCsoS37x8Z0wnQypjCBQMqVZTeAB7sX7F1hvWBrZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB6691.namprd12.prod.outlook.com (2603:10b6:806:271::9)
- by MN2PR12MB4207.namprd12.prod.outlook.com (2603:10b6:208:1d9::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
- 2025 21:57:18 +0000
-Received: from SN7PR12MB6691.namprd12.prod.outlook.com
- ([fe80::d15a:729a:9a36:4376]) by SN7PR12MB6691.namprd12.prod.outlook.com
- ([fe80::d15a:729a:9a36:4376%7]) with mapi id 15.20.9009.018; Mon, 11 Aug 2025
- 21:57:18 +0000
-From: James Jones <jajones@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>
-Cc: nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	James Jones <jajones@nvidia.com>
-Subject: [PATCH 3/3] drm/nouveau: Advertise correct modifiers on GB20x
-Date: Mon, 11 Aug 2025 15:00:17 -0700
-Message-ID: <20250811220017.1337-4-jajones@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250811220017.1337-1-jajones@nvidia.com>
-References: <20250811220017.1337-1-jajones@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ2PR07CA0002.namprd07.prod.outlook.com
- (2603:10b6:a03:505::25) To SN7PR12MB6691.namprd12.prod.outlook.com
- (2603:10b6:806:271::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FBB1EF0A6;
+	Mon, 11 Aug 2025 22:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754949889; cv=none; b=iUEDMKYcDSJhYoDCG9MOIu0955ZZbtNtNM5WK4dN2Fz5iyErAlMpHo//7Rbwk7oEDxYTOVrajOacy75QLrxvz+d+H3ej/uKpUTXcJ2IDf25ql1U3PXAvT+6VFbnvsNQ8Zypr/F0MrLWsj7YJHRs4XgoHHmspPR5GjhcMZbksWbc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754949889; c=relaxed/simple;
+	bh=qxH/vUlWNOPD+oS7i4N7nf5PewbWQYYpSRYIIS0+nro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9L4fXWdLC3QYwyM58X43XuPPDxQGMnlapGoUXRwSC/Y6pyzPUWXiGe2Spa+LVkbVfUK1GmeEkkq04MeNnHQp4UmwEx63JQ/w3bgR3ww651pYr0LEEYB4BG6w1ahDxmUzRUhYn/atKoe2i6gS8d2ooPQDyM527sIsNB9MYpyCkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=M4iS+utp; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from simon-Latitude-5450.. (tmo-072-64.customers.d1-online.com [80.187.72.64])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 57BM4dre019850
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 00:04:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1754949881;
+	bh=qxH/vUlWNOPD+oS7i4N7nf5PewbWQYYpSRYIIS0+nro=;
+	h=From:To:Cc:Subject:Date;
+	b=M4iS+utpvMKRprFS897/nIpqmPhimUh5UlmDeWV2cmcxkgMIQdNNfvVo/T8P2iZVv
+	 9SlwnRcaJHb2sd8dlK/EP6MGlt1kVACpzbtR92b8hBuERDTFyOAnP20ajkGlbw5IgE
+	 ah1VsoRgkIve6SIXvEH4coa+U0QLuqIxVtDjvFuw=
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+To: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Simon Schippers <simon.schippers@tu-dortmund.de>,
+        Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Subject: [PATCH net v2] TUN/TAP: Improving throughput and latency by avoiding SKB drops
+Date: Tue, 12 Aug 2025 00:03:48 +0200
+Message-ID: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB6691:EE_|MN2PR12MB4207:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58daf08b-2ff7-445a-ff3e-08ddd9220a40
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Z7RzuHOJydQhT2OX3j9aX08lcXhJZWt50bL3R03GM9aVks4jw6D3ZM7eflEZ?=
- =?us-ascii?Q?j/D8199EtI4e0u1JaIKBEy6ikxqybUX4Ap2VHBxHj34wZifsALLKXxX1KM4C?=
- =?us-ascii?Q?tF0RWs8Dm4E7NORNcaRdInYCGPL2xS4lr+m8caFgcxgkkL3KlIoaeGpSoCbx?=
- =?us-ascii?Q?fJClK4Uc71KAkAzHQECTQQU7TVRMwq3nbCHwEyqgqotjwT5mrWzzIKQHiK+X?=
- =?us-ascii?Q?MH1oHoQKScZVhN1yJUPly5407Ic77wuF5Z6K7cDEHnLTLHcUIw/XD3VS0Wmn?=
- =?us-ascii?Q?Hw1mhHi/1Ku1W7w8gVj+1SG0QdKS81J/Vi3DngGugF6dnEqGs017JHEchKt4?=
- =?us-ascii?Q?aKE4qPVJTfv9xvZsMPhAxRa5LuzlGcokToKjETIDckcuONyw2rgrJuj+XsUn?=
- =?us-ascii?Q?RpOYW1sp075/ltGL7r5frr5KxDGY5WlNGuw/vWqTciRPsATWTt/ii3V4W3Co?=
- =?us-ascii?Q?DyUUFzVmzkmbNDEbiO1Hl85s4/r5vTtreVVUxvv97kLQfv2uAJbUkwyqITgw?=
- =?us-ascii?Q?myyThqvuY5usxrDJWMrABdBvpRLiXJ1uckH5sk7GBpH59g9GFKeNAXv4Xy7A?=
- =?us-ascii?Q?Aa4oxOE+r1fqVBr/CinUOQd9MEHI8cliyeGLjSnkMQlke1bEW26W5q0mqpzK?=
- =?us-ascii?Q?QjnschzVj/rDB6rG5xNxJColJXI7ibKEOBS4wDTXw9Btqif6GKdgknJrftGa?=
- =?us-ascii?Q?sW8TnVB5fc4QQyTicEN0vgt+vnfmhgK3pBMROv1PWmzs3GkN2aJHDh/ynEMw?=
- =?us-ascii?Q?FNy/2ZSCaSQ26oHfGx3mp59MS+sQXXI+qV5aiMPdgBnjMbVYMEwMTpxu35tL?=
- =?us-ascii?Q?6N/oH34jtbcpj4gFp9fSXhQqNqcD2mQLzvy4qsv7dd6DvCbXLhPOb9fdqzaL?=
- =?us-ascii?Q?eyDAOrljSt6QkVd9aP6wsSY8AcZ5DCgUKlLHCurJ4N4lOuq0xaFwSSaPlAfI?=
- =?us-ascii?Q?TSp1L0tNpF/tWJK2CKNwnlELcRd6dGiqjJbhD5tek+PDGQhrnTfvLC0lNd7W?=
- =?us-ascii?Q?LVMSBNNohxK2jkPc+XX89ifYG5Gu0OUczdJH4DvkNdKmX7FVxK6NmPWqSqan?=
- =?us-ascii?Q?vt5Yz9im+RO2pkm1YXxyVlJrXSVPL2rk2FOCP6zZ/EB8VWwCACOhXxmDH6y9?=
- =?us-ascii?Q?Sl7AxfvnlaOljsDHskw6zJ9p72WF0iZNyeVSIm9YiDkGI8jq6qDrHI/Nv2As?=
- =?us-ascii?Q?lCZoTWqn7ZQ1z9F7yD5DQ1UuvZloRer92fItaOkTklj2nMitCZ9OXNYV4Kv0?=
- =?us-ascii?Q?HmcQ1S2Iwlf/rcu0eawAMktKvjYPn8FId7fPI7F8irVui6HlkUI3QTwD8kwx?=
- =?us-ascii?Q?wWWdo6VnRf524xdjxT0uVTZgSbBfeUwnFmxRybmPaZooGHYziPQVRulNXCm3?=
- =?us-ascii?Q?tTECHhj7IoP4wMdixqug6YzMyKD66SCycqEPgJnB70e6I1Y9SQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB6691.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gsG5M3+4tF6J9Kzs7iJK5CYeKqD9GimQ9IIDYHl4y1aN7bKi8A799wRuadb/?=
- =?us-ascii?Q?+jHKKb2WLs0PLKknWOfb6UhkFQQeH4YuouSjhYmopHjFdHeJsXWisb5CLZ/r?=
- =?us-ascii?Q?LCvKvofhh3c4b+AdWfOewFblXFxpAE0l6Jtfv/45etrCCAac845s6X+XLuWJ?=
- =?us-ascii?Q?Bt1/WfKtLCAqUaKclFOCctn76zy9XJnTUOrusEiVCeLJBVvXVfjWViF03/Pv?=
- =?us-ascii?Q?iAmO+C2WvZowluRdp/tNEwr3Dtc587RsQEXrC6j+c3hpfiZtCp5mvqzuoDdl?=
- =?us-ascii?Q?pbHS8sb0dD6bT5Ruz66ElWRXQGh7iGY8HY9QxWklbtxS/MvMcpwn2IJD/T6C?=
- =?us-ascii?Q?YpnZNQJkatt1ie6WXMxp/rDr1O7PWkgMzwpVNuS792A5B+nkeOFu1lyEy8n5?=
- =?us-ascii?Q?HzyNZJRPVwOkasDAuEaSjc+ejvY+ILWB7bQXuePyAl1Ec7ytVaJkQaf21+jl?=
- =?us-ascii?Q?R3rIo34I+Hye1wvcxKYJ2Ai9ZUm5NW6E5hubAFOd8J4+8CRyzlHH642/Qn/8?=
- =?us-ascii?Q?BW7gLNPf7XxmKlH4X7ZTY6IPc7qEhqoVm+Ebbm3+NzQcxJHh4IY+pRDV2Q4z?=
- =?us-ascii?Q?FYBrrfOt34tL4XObh1Qe1seL+IiYKoUuHh+0gDam+BismKPGXwu30JwcuKXb?=
- =?us-ascii?Q?nEPDbnhCmi9AV32D7WVyIwbDeqQ+olYQVnOJdWSgupiYUCT2BdjSoa9t+dIF?=
- =?us-ascii?Q?jCleDVsHx38kD1s06tg2lJDlQxc4l7rzxrivVf4OTRuZz8qY+/WG2BWld8ml?=
- =?us-ascii?Q?cmJ/3WV7MaQUHcrZkN7bd25H+rD/hBWmVI3mM5WpAeahWSXl+iQeQqxyJtyS?=
- =?us-ascii?Q?iNpOT2S23TvuirsD0AmWGvoXwLkA2Op/IkAd/TefT5M9XV/HzBSYLxW2+BNK?=
- =?us-ascii?Q?E8+RHFCmmdx0+9nMKfsTl/4+BTL2OGDsGzkKuiL4oI8IOTxID4Eimdr/3qYB?=
- =?us-ascii?Q?C+qJ3gYUQy78IrGKAxZFjDTG8lTDINd14DhYrz2rz5t3LJHYmsMx+Tjpr6y7?=
- =?us-ascii?Q?Ebvy9mhxqp4N2RIGK/CHYep3Xl9AjLP74ns4QYg600l7uB1ABfKDxXaaNIqy?=
- =?us-ascii?Q?pUrOAUY+VTIytP6xNdKTjO8VWkVP+TFmpyblRG2TVoaNgDrQDQfNceTaW5wL?=
- =?us-ascii?Q?oIEJMa8VaNCmliRbTLtgY4Rt/i/nGOvSFuodok+bQs6cQdQ/poQKxrj/s9hI?=
- =?us-ascii?Q?Pe366H5gE9FJB7h4D37QFli8+q+JyqIk/jIe7P9GUzXq7B93hX2Ajk5G5g3Z?=
- =?us-ascii?Q?TMoDYXJvl+/6NweOWy01IQa2RoOfUR8qWfbkYNDGyP9dUsyr8ZJS5oCk2hFP?=
- =?us-ascii?Q?jEJb+m+VVUUejpBGdlegla4T1Tur725zaR1lX9WbW5T4TmWOLVaWrl33FzRK?=
- =?us-ascii?Q?cdqg7+9QttIwATsl+26sKgWYIjcisLcPeYzSpZI18TuCafssjxc6YvUHwjmc?=
- =?us-ascii?Q?PRbajrmapavokkKkshdHZWIxyfABRaaaXSZJFityak7s1RxXJK56B8IrJJvq?=
- =?us-ascii?Q?7JWiG1xTXjCl4PmNh1oTHm8Z3n1NMAhKcQ9e1J//qUNqMhrFmLGd1Od8XX18?=
- =?us-ascii?Q?sTnmK1yfAsavJPVK4Hc7gjXoftFpLflJw324XMKP?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58daf08b-2ff7-445a-ff3e-08ddd9220a40
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB6691.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 21:57:18.2127
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gqxMHwaPARKYun8mf2oCrOxi4/lcptzExWMuAUUs3bjEtLejVgWaDaHBJ725/ejGTAsWnF0mIbS/zDnHDdRB3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4207
+Content-Transfer-Encoding: 8bit
 
-8 and 16 bit formats use a different layout on
-GB20x than they did on prior chips. Add the
-corresponding DRM format modifiers to the list of
-modifiers supported by the display engine on such
-chips, and filter the supported modifiers for each
-format based on its bytes per pixel in
-nv50_plane_format_mod_supported().
+This patch is the result of our paper with the title "The NODROP Patch:
+Hardening Secure Networking for Real-time Teleoperation by Preventing
+Packet Drops in the Linux TUN Driver" [1].
+It deals with the tun_net_xmit function which drops SKB's with the reason
+SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+resulting in reduced TCP performance and packet loss for bursty video
+streams when used over VPN's.
 
-Note this logic will need to be updated when GB10
-support is added, since it is a GB20x chip that
-uses the pre-GB20x sector layout for all formats.
+The abstract reads as follows:
+"Throughput-critical teleoperation requires robust and low-latency
+communication to ensure safety and performance. Often, these kinds of
+applications are implemented in Linux-based operating systems and transmit
+over virtual private networks, which ensure encryption and ease of use by
+providing a dedicated tunneling interface (TUN) to user space
+applications. In this work, we identified a specific behavior in the Linux
+TUN driver, which results in significant performance degradation due to
+the sender stack silently dropping packets. This design issue drastically
+impacts real-time video streaming, inducing up to 29 % packet loss with
+noticeable video artifacts when the internal queue of the TUN driver is
+reduced to 25 packets to minimize latency. Furthermore, a small queue
+length also drastically reduces the throughput of TCP traffic due to many
+retransmissions. Instead, with our open-source NODROP Patch, we propose
+generating backpressure in case of burst traffic or network congestion.
+The patch effectively addresses the packet-dropping behavior, hardening
+real-time video streaming and improving TCP throughput by 36 % in high
+latency scenarios."
 
-Signed-off-by: James Jones <jajones@nvidia.com>
+In addition to the mentioned performance and latency improvements for VPN
+applications, this patch also allows the proper usage of qdisc's. For
+example a fq_codel can not control the queuing delay when packets are
+already dropped in the TUN driver. This issue is also described in [2].
+
+The performance evaluation of the paper (see Fig. 4) showed a 4%
+performance hit for a single queue TUN with the default TUN queue size of
+500 packets. However it is important to notice that with the proposed
+patch no packet drop ever occurred even with a TUN queue size of 1 packet.
+The utilized validation pipeline is available under [3].
+
+As the reduction of the TUN queue to a size of down to 5 packets showed no
+further performance hit in the paper, a reduction of the default TUN queue
+size might be desirable accompanying this patch. A reduction would
+obviously reduce buffer bloat and memory requirements.
+
+Implementation details:
+- The netdev queue start/stop flow control is utilized.
+- Compatible with multi-queue by only stopping/waking the specific
+netdevice subqueue.
+- No additional locking is used.
+
+In the tun_net_xmit function:
+- Stopping the subqueue is done when the tx_ring gets full after inserting
+the SKB into the tx_ring.
+- In the unlikely case when the insertion with ptr_ring_produce fails, the
+old dropping behavior is used for this SKB.
+
+In the tun_ring_recv function:
+- Waking the subqueue is done after consuming a SKB from the tx_ring when
+the tx_ring is empty. Waking the subqueue when the tx_ring has any
+available space, so when it is not full, showed crashes in our testing. We
+are open to suggestions.
+- When the tx_ring is configured to be small (for example to hold 1 SKB),
+queuing might be stopped in the tun_net_xmit function while at the same
+time, ptr_ring_consume is not able to grab a SKB. This prevents
+tun_net_xmit from being called again and causes tun_ring_recv to wait
+indefinitely for a SKB in the blocking wait queue. Therefore, the netdev
+queue is woken in the wait queue if it has stopped.
+- Because the tun_struct is required to get the tx_queue into the new txq
+pointer, the tun_struct is passed in tun_do_read aswell. This is likely
+faster then trying to get it via the tun_file tfile because it utilizes a
+rcu lock.
+
+We are open to suggestions regarding the implementation :)
+Thank you for your work!
+
+[1] Link:
+https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+[2] Link:
+https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffective-on-tun-device
+[3] Link: https://github.com/tudo-cni/nodrop
+
+Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c     |  4 ++-
- drivers/gpu/drm/nouveau/dispnv50/disp.h     |  1 +
- drivers/gpu/drm/nouveau/dispnv50/wndw.c     | 24 +++++++++++++--
- drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c | 33 +++++++++++++++++++++
- 4 files changed, 59 insertions(+), 3 deletions(-)
+V1 -> V2: Removed NETDEV_TX_BUSY return case in tun_net_xmit and removed 
+unnecessary netif_tx_wake_queue in tun_ring_recv.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index e97e39abf3a2..12b1dba8e05d 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -2867,7 +2867,9 @@ nv50_display_create(struct drm_device *dev)
- 	}
+ drivers/net/tun.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index cc6c50180663..81abdd3f9aca 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1060,13 +1060,16 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
  
- 	/* Assign the correct format modifiers */
--	if (disp->disp->object.oclass >= TU102_DISP)
-+	if (disp->disp->object.oclass >= GB202_DISP)
-+		nouveau_display(dev)->format_modifiers = wndwca7e_modifiers;
-+	else if (disp->disp->object.oclass >= TU102_DISP)
- 		nouveau_display(dev)->format_modifiers = wndwc57e_modifiers;
- 	else
- 	if (drm->client.device.info.family >= NV_DEVICE_INFO_V0_FERMI)
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.h b/drivers/gpu/drm/nouveau/dispnv50/disp.h
-index 15f9242b72ac..5d998f0319dc 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.h
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.h
-@@ -104,4 +104,5 @@ struct nouveau_encoder *nv50_real_outp(struct drm_encoder *encoder);
- extern const u64 disp50xx_modifiers[];
- extern const u64 disp90xx_modifiers[];
- extern const u64 wndwc57e_modifiers[];
-+extern const u64 wndwca7e_modifiers[];
- #endif
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-index e2c55f4b9c5a..ef9e410babbf 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-@@ -786,13 +786,14 @@ nv50_wndw_destroy(struct drm_plane *plane)
+ 	nf_reset_ct(skb);
+ 
+-	if (ptr_ring_produce(&tfile->tx_ring, skb)) {
++	queue = netdev_get_tx_queue(dev, txq);
++	if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
++		netif_tx_stop_queue(queue);
+ 		drop_reason = SKB_DROP_REASON_FULL_RING;
+ 		goto drop;
+ 	}
++	if (ptr_ring_full(&tfile->tx_ring))
++		netif_tx_stop_queue(queue);
+ 
+ 	/* dev->lltx requires to do our own update of trans_start */
+-	queue = netdev_get_tx_queue(dev, txq);
+ 	txq_trans_cond_update(queue);
+ 
+ 	/* Notify and wake up reader process */
+@@ -2110,9 +2113,10 @@ static ssize_t tun_put_user(struct tun_struct *tun,
+ 	return total;
  }
  
- /* This function assumes the format has already been validated against the plane
-- * and the modifier was validated against the device-wides modifier list at FB
-+ * and the modifier was validated against the device-wide modifier list at FB
-  * creation time.
-  */
- static bool nv50_plane_format_mod_supported(struct drm_plane *plane,
- 					    u32 format, u64 modifier)
+-static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
++static void *tun_ring_recv(struct tun_struct *tun, struct tun_file *tfile, int noblock, int *err)
  {
- 	struct nouveau_drm *drm = nouveau_drm(plane->dev);
-+	const struct drm_format_info *info = drm_format_info(format);
- 	uint8_t i;
+ 	DECLARE_WAITQUEUE(wait, current);
++	struct netdev_queue *txq;
+ 	void *ptr = NULL;
+ 	int error = 0;
  
- 	/* All chipsets can display all formats in linear layout */
-@@ -800,13 +801,32 @@ static bool nv50_plane_format_mod_supported(struct drm_plane *plane,
- 		return true;
- 
- 	if (drm->client.device.info.chipset < 0xc0) {
--		const struct drm_format_info *info = drm_format_info(format);
- 		const uint8_t kind = (modifier >> 12) & 0xff;
- 
- 		if (!format) return false;
- 
- 		for (i = 0; i < info->num_planes; i++)
- 			if ((info->cpp[i] != 4) && kind != 0x70) return false;
-+	} else if (drm->client.device.info.chipset >= 0x1b2) {
-+		const uint8_t slayout = ((modifier >> 22) & 0x1) |
-+			((modifier >> 25) & 0x6);
-+
-+		if (!format)
-+			return false;
-+
-+		/*
-+		 * Note in practice this implies only formats where cpp is equal
-+		 * for each plane, or >= 4 for all planes, are supported.
-+		 */
-+		for (i = 0; i < info->num_planes; i++) {
-+			if (((info->cpp[i] == 2) && slayout != 3) ||
-+			    ((info->cpp[i] == 1) && slayout != 2) ||
-+			    ((info->cpp[i] >= 4) && slayout != 1))
-+				return false;
-+
-+			/* 24-bit not supported. It has yet another layout */
-+			WARN_ON(info->cpp[i] == 3);
-+		}
+@@ -2124,6 +2128,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+ 		goto out;
  	}
  
- 	return true;
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c b/drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c
-index 0d8e9a9d1a57..2cec8cfbd546 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c
-@@ -179,6 +179,39 @@ wndwca7e_ntfy_set(struct nv50_wndw *wndw, struct nv50_wndw_atom *asyw)
- 	return 0;
- }
++	txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
+ 	add_wait_queue(&tfile->socket.wq.wait, &wait);
  
-+/****************************************************************
-+ *            Log2(block height) ----------------------------+  *
-+ *            Page Kind ----------------------------------+  |  *
-+ *            Gob Height/Page Kind Generation ------+     |  |  *
-+ *                          Sector layout -------+  |     |  |  *
-+ *                          Compression ------+  |  |     |  |  */
-+const u64 wndwca7e_modifiers[] = { /*         |  |  |     |  |  */
-+	/* 4cpp+ modifiers */
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 0),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 1),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 2),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 3),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 4),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 1, 2, 0x06, 5),
-+	/* 1cpp/8bpp modifiers */
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 0),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 1),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 2),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 3),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 4),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 2, 2, 0x06, 5),
-+	/* 2cpp/16bpp modifiers */
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 0),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 1),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 2),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 3),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 4),
-+	DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D(0, 3, 2, 0x06, 5),
-+	/* All formats support linear */
-+	DRM_FORMAT_MOD_LINEAR,
-+	DRM_FORMAT_MOD_INVALID
-+};
+ 	while (1) {
+@@ -2131,6 +2136,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+ 		ptr = ptr_ring_consume(&tfile->tx_ring);
+ 		if (ptr)
+ 			break;
 +
- static const struct nv50_wndw_func
- wndwca7e = {
- 	.acquire = wndwc37e_acquire,
++		if (unlikely(netif_tx_queue_stopped(txq)))
++			netif_tx_wake_queue(txq);
++
+ 		if (signal_pending(current)) {
+ 			error = -ERESTARTSYS;
+ 			break;
+@@ -2147,6 +2156,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+ 	remove_wait_queue(&tfile->socket.wq.wait, &wait);
+ 
+ out:
++	if (ptr_ring_empty(&tfile->tx_ring)) {
++		txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
++		netif_tx_wake_queue(txq);
++	}
+ 	*err = error;
+ 	return ptr;
+ }
+@@ -2165,7 +2178,7 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
+ 
+ 	if (!ptr) {
+ 		/* Read frames from ring */
+-		ptr = tun_ring_recv(tfile, noblock, &err);
++		ptr = tun_ring_recv(tun, tfile, noblock, &err);
+ 		if (!ptr)
+ 			return err;
+ 	}
 -- 
-2.50.1
+2.43.0
 
 
