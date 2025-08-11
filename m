@@ -1,141 +1,230 @@
-Return-Path: <linux-kernel+bounces-762707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF89B20A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:25:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109C8B20A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD9F7A16A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:24:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C1427A5643
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3536C2DCF58;
-	Mon, 11 Aug 2025 13:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4868E2DEA74;
+	Mon, 11 Aug 2025 13:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="r4tJjMQT"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LnIg0dnQ"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E664419342F;
-	Mon, 11 Aug 2025 13:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9283B23BCFD;
+	Mon, 11 Aug 2025 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918736; cv=none; b=sfqTPuyy9wOTzO1I4O78mwJYIKR1GRHfT/1j5K9m0gdYZu106apyyxiX9lsr9W/yxPY9TsljYD5WngKOR7WZj5B2FT28FI+5N6bRpPpKNKHkq+R6SSaG1dRaj0QI0TRaGU/7xnOpuVhNfC8p3tHYljv6BC43kEw1sjXYww0v+wk=
+	t=1754918762; cv=none; b=YEaWtPOdGAgi7ox/fKFtIctv1DqP3kniD3Y50f9ywtU6YgABjRtQf7HdqmkkM0WeHSJFCp2gZcLEZCX6nPC2/ttj498uQhbe3tGwik0cXeQVnvrIkgT6ozHpwBIU0GIrCO+xH8gu3T0tYfAbS3y2jQ9zTg9u83WTcL5wcD97NGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918736; c=relaxed/simple;
-	bh=GDVBiZYwIFUyxpBUZYd0DLfIKs9PQ9AJ0SA3VYv13dQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=TaA9xqqts/QHExbM3Is20wbtX9Yiuc36Vfbs06+hVtCmsicFtJHOLiUHaO8PVfk/JHnjIZSUSBcMaLgp0lsNliylZ0KP6UFwCuDegJwNgDb4SSWXtRDaDa8AmERwv3IWOrkmrMDpmPiuJSfDCMenRC7QGmCB66k5x28OI13B+YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=r4tJjMQT; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754918716; x=1755523516; i=markus.elfring@web.de;
-	bh=GDVBiZYwIFUyxpBUZYd0DLfIKs9PQ9AJ0SA3VYv13dQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=r4tJjMQTI8Utq8X6gal76bXQ/AjDoz4hEsbMOtqgaeyBW+Yz55NF+30Whv/dvNq0
-	 +cXoQJNs1nhJmLT6N9tEuJ1Gsbj7dZwy6FdxtOkABru3eo4VurQ+N8vCHzsiybRq/
-	 laoneCKxc2ulzp/QlorAgGyI8AbH+CzySa70sjHsD1k+/3EDmHNtMt5adWWtyNBDo
-	 5T8MAJJcqkkuq4zchh0+yMEQvbudMJfTg9yi2KMZrN3Wq2Zr6n5i9EFf3gwM5/n4y
-	 WW15yhBV+Kjra3mqLan8lj4S8xhj6DT6FKgEbQvHylQPnlLdN76YfwksR7eqWFBXF
-	 4uDhZmXpQgR4aR1Ftg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4621-1uc8y52sL3-00wmJg; Mon, 11
- Aug 2025 15:25:16 +0200
-Message-ID: <09db6175-070f-46c9-adb1-05e0355d7183@web.de>
-Date: Mon, 11 Aug 2025 15:25:14 +0200
+	s=arc-20240116; t=1754918762; c=relaxed/simple;
+	bh=/gI2JxfbVbWk7tAn0cbN+JHXIFzyzOVYEhtl3mVOR3w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nP5fzO9ER2BG8HBGOdda2sYWlEAooslO4Vl1q46ghDpEmh9KMNpsthm7P+Y0dNOmaW6cT6Vp4NIMTzfvV1PmOJ8Zz3pWYEb2w3NqDYlaWzWXuWfh10TpgWRR4apf+HYNHaP7yPAqJ6qwYoHj4XGlUIECo1q4PT6sLtKQ8tHiHOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LnIg0dnQ; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ACF0643B28;
+	Mon, 11 Aug 2025 13:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754918751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YtiWCv7MEt6DrdhtkW8sAluwU3+rc+LIxmBXifc7Ess=;
+	b=LnIg0dnQAuMuKHwLqWgtq+Ygs1/ivlPaG+Eyn+LtfX+fTlm/6ohK9C+SFbHRvIXFOjGrgo
+	pApE8H1Ht03ewMiWVhanSewWhYXP/uaLBEYd4lTkJwQGfYbMXXv1/8G5RFAVi6vyIx4KW+
+	Jf8p2bnU451gLmKGBm2YbeOL2gR5OY7oiRColmNQ+YFhFrlciwB7bgC4W2WWjpK0Ts1w7Y
+	KqbehSErTfp7rA8S7kQWu5QE6w/+8JTNN4IK20/a52YVMMynUOAVVR9ipVVKtTcowkyuvv
+	asEbRFODYreV0joz4TF1q6lkBghvVrs2kwDCgSTc7bC7yXvejA1IZSxQB/r6Rw==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v9 00/10] Add pinctrl support for the AAEON UP board FPGA
+Date: Mon, 11 Aug 2025 15:25:43 +0200
+Message-Id: <20250811-aaeon-up-board-pinctrl-support-v9-0-29f0cbbdfb30@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qianfeng Rong <rongqianfeng@vivo.com>, bpf@vger.kernel.org,
- Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250811123949.552885-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] bpf: replace kvfree with kfree for kzalloc memory
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250811123949.552885-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xOp/fIIDAkWrt117YR82TdPVAVyH5qq+vPyRgJ7RdeCxjCwkd23
- ulM6MI4pEViXTcV5TPIy7ZEiIGtv7OnDAsmYy2xiaukq1Fgo4z8o10iOAevn9AU+5WX3NY5
- l8ESAVbyNGTnzcbMOQ0qUvruQW4PyDIIiAzmYeYtYftxCHPrZ5MoST0sMfP3uCVehYy1g3d
- 3yYIzxCUgxeX5UG6lLAyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tGWB1ekECLU=;ZiktIkbGy3ITXGeo3skTpcsX+R4
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFfvmWgC/43SzWrDMAwH8FcpPs9F8mfc095j7GA79mpo49RJw
+ 0bpu89NGS3LIDvKmN9fQrqQIZQUBrLbXEgJUxpS7mphXjbE7233EWhqa00YMAGGA7U25I6ee+q
+ yLS3tU+fHcqDDue9zGalpohUWOAgDpCJ9CTF9zgFv7/e6hNO55oz3R+LsEKjPx2Mad5tJbVHT4
+ pHcPu/TMObyNTc34fz71gcyxLU+JqRAmdBoXGBacXx1OY+H1G1r1IxP7AeUwGvoGsgqyBUyFTh
+ Yq9gS5A9QoFoFeQWjAK2Va0GFsATFE8jMKigq6HiM0SMK1O0SlA9QwnqH8jayASWZ0VK3f4ysn
+ kC2ehyTqmDrHddSucC9WoL6ASpYH1lXEK3TPHjwzjRLsHkC/3E2zbxlwxGlNCb+Wsr1ev0GrUt
+ GljIDAAA=
+X-Change-ID: 20240930-aaeon-up-board-pinctrl-support-98fa4a030490
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+ linux-hardening@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegteeijeduffelvdevuedvieeuvdeugfekgeehjedufefgkedtueduvdffhffggfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgdphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopefirghrhighrghnghesrggrvghonhdrtghomhdrthifpdhrtghpthhtohepffgrnhhivghlvgevlhgvrhhisegrrggvohhnrdgvuhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsr
+ ghssehglhhiuggvrhdrsggvpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-=E2=80=A6
-> Replace kvfree() with kfree() to avoid unnecessary is_vmalloc_addr()
-> check in kvfree().
+This is the nineth version of this series. I rebased it on v6.17-rc1 (the
+only one conflict was in gpio-aggregator due to set() callback migration)
+and added AB from Linus.
 
-Under which circumstances would you become interested to apply the attribu=
-te =E2=80=9C__free=E2=80=9D
-(also in the affected if branch)?
-https://elixir.bootlin.com/linux/v6.16/source/include/linux/slab.h#L476
+Best Regards,
 
-Regards,
-Markus
+Thomas
+
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v9:
+- all: rebase on v6.17-rc1.
+- all: take "Acked-by: Linus Walleij <linus.walleij@linaro.org>".
+- Link to v8: https://lore.kernel.org/r/20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com
+
+Changes in v8:
+- gpio: aggregator: add missing export.h header file.
+- Link to v7: https://lore.kernel.org/r/20250609-aaeon-up-board-pinctrl-support-v7-0-1ab73ec0cb98@bootlin.com
+
+Changes in v7:
+- all: rebase on v6.16-rc1.
+- pinctrl: take Reviewed-by tag
+- pinctrl: handle negative error code returned by
+  upboard_pinctrl_pin_get_mode() in upboard_pinctrl_dbg_show().
+- Link to v6: https://lore.kernel.org/r/20250520-aaeon-up-board-pinctrl-support-v6-0-dcb3756be3c6@bootlin.com
+
+Changes in v6:
+- all: take Reviewed-by tags.
+- all: fix some nitpicks.
+- gpiolib: fix error reported by kernel test robot.
+- gpio: aggregator: handle correctly err_ptr returned by
+  devm_gpiochip_fwd_alloc().
+- gpio: aggregator: rework naming of GPIO fowarder API.
+- gpio: aggregator: all functions of GPIO fowarder API now take a gpiochip_fwd ptr as
+  parameter.
+- gpio: aggregator: fix some typos in kernel-doc and comments.
+- gpio: aggregator: in forwarder.h, remove unused linux/gpio/consumer.h and
+  linux/gpio/driver.h header files.
+- gpio: aggregator: add missing forward declaration in forwarder.h (struct
+  gpio_desc and struct gpio_chip).
+- gpio: aggregator: get_direction() operation now returns -ENODEV if there is no
+  GPIO descriptor for the line.
+- gpio: aggregator: handle correctly ptr returned by devm_gpiochip_fwd_alloc().
+- gpio: aggregator: free GPIO desc array after gpiochip_fwd_create().
+- pinctrl-upboard: remove useless cast in UPBOARD_UP_PIN_MUX() UPBOARD_UP_PIN_FUNC() macros.
+- pinctrl-upboard: rework the pinctrl mapping part (new struct upboard_pinctrl_map).
+- Link to v5: https://lore.kernel.org/r/20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com
+
+Changes in v5:
+- all: improve commit messages, fix some typos and nitpicks.
+- pinctrl: machine.h: add "Suggested-by: Andy Shevchenko <andy@kernel.org>"
+  and "Reviewed-by: Andy Shevchenko <andy@kernel.org>" tags.
+- pinctrl: core: fix kernel doc for devm_pinctrl_register_mappings().
+- pinctrl: core: do not cast pointer in devm_pinctrl_unregister_mappings().
+- gpio: aggregator: remove a useless check in patch 5/12.
+- gpio: aggregator: fix condition to identify if the gpiochip forwarder can
+  sleep or not.
+- gpio: aggregator: add "Reviewed-by: Andy Shevchenko <andy@kernel.org>" tag
+  in patch 10/12
+- string_choices: add "Suggested-by: Andy Shevchenko <andy@kernel.org>" and
+  "Reviewed-by: Andy Shevchenko <andy@kernel.org>" tags.
+- string_choices: add missing parameter for str_output_input() macro.
+- Link to v4: https://lore.kernel.org/r/20250429-aaeon-up-board-pinctrl-support-v4-0-b3fffc11417d@bootlin.com
+
+Changes in v4:
+- gpiolib: use positive conditonal in gpiochip_add_pin_range_with_pins().
+- pinctrl: fix warning reported by kernel robot in
+  include/linux/pinctrl/machine.h.
+- pinctrl: add a patch to remove the extern specifier in machine.h.
+- pinctrl: use devm_add_action_or_reset() in
+  devm_pinctrl_register_mappings().
+- string_choices: add a patch to define str_input_output() and
+  str_output_input() helpers.
+- gpio: aggregator: set gpiochip_fwd as opaque and define getters
+  gpio_fwd_get_gpiochip() and gpio_fwd_get_data().
+- gpio: aggregator: add valid_mask in gpiochip_fwd struct to track already
+  registered gpio descs.
+- gpio: aggregator: add gpio_fwd_gpio_free() helper.
+- gpio: aggregator: add kdoc sections for exported functions.
+- gpio: aggregator: fix some nitpicks.
+- pinctrl-upboard: use str_input_output() helper.
+- pinctrl-upboard: fix some nitpicks.
+- pinctrl-upboard: add missing headers stddef.h and types.h.
+- pinctrl-upboard: add intermediate cast (unsigned long) for dmi_id->driver_data.
+- pinctrl-upboard: use getter gpio_fwd_get_gpiochip() and
+  gpio_fwd_get_data().
+- pinctrl-upboard: fix kernel robot warning 'unmet direct dependencies detected
+  for GPIO_AGGREGATOR when selected by PINCTRL_UPBOARD'.
+- pinctrl-upboard: use gpio_fwd_gpio_free() helper.
+- Link to v3: https://lore.kernel.org/r/20250416-aaeon-up-board-pinctrl-support-v3-0-f40776bd06ee@bootlin.com
+
+Changes in v3:
+- pinctrl: add devm_pinctrl_register_mappings()
+- gpiolib: rename gpiochip_add_pin_range() to
+  gpiochip_add_pin_range_with_pins() and add pins parameter
+- gpiolib: add stubs gpiochip_add_pin_range() and 
+  gpiochip_add_sparse_pin_range()
+- aggregator: split to more simpler patches
+- aggregator: add a namespace for the forwarder library
+- aggregator: rename header file to forwarder.h
+- aggregator: add some missing headers and declaration in forwarder.h
+- aggregator: forwarder.h provides consumer.h and driver.h
+- aggregator: fix error code returned by gpio_fwd_request()
+- pinctrl-upboard: fix order of header files
+- pinctrl-upboard: fix some nitpicks
+- pinctrl-upboard: rework macros to define pin groups
+- pinctrl-upboard: add missing container_of.h and err.h header files
+- pinctrl-upboard: handle correctly pointer returned by dmi_first_match()
+- pinctrl-upboard: use devm_pinctrl_register_mappings()
+- pinctrl-upboard: import GPIO_FORWARDER namespace
+- Link to v2: https://lore.kernel.org/r/20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com
+
+Changes in v2:
+- mfd: removed driver (already merged)
+- led: removed driver (already merged)
+- gpio-aggregator: refactor code to create a gpio-fwd library
+- pinctrl: refactor gpio part to use the gpio-fwd library
+- pinctrl: add pinctrl mappings for each board
+
+---
+Thomas Richard (10):
+      gpiolib: add support to register sparse pin range
+      gpio: aggregator: move GPIO forwarder allocation in a dedicated function
+      gpio: aggregator: refactor the code to add GPIO desc in the forwarder
+      gpio: aggregator: refactor the forwarder registration part
+      gpio: aggregator: update gpiochip_fwd_setup_delay_line() parameters
+      gpio: aggregator: export symbols of the GPIO forwarder library
+      gpio: aggregator: handle runtime registration of gpio_desc in gpiochip_fwd
+      gpio: aggregator: add possibility to attach data to the forwarder
+      lib/string_choices: Add str_input_output() helper
+      pinctrl: Add pin controller driver for AAEON UP boards
+
+ drivers/gpio/gpio-aggregator.c    |  388 ++++++++++++--
+ drivers/gpio/gpiolib.c            |   29 +-
+ drivers/pinctrl/Kconfig           |   19 +
+ drivers/pinctrl/Makefile          |    1 +
+ drivers/pinctrl/pinctrl-upboard.c | 1070 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h       |   51 +-
+ include/linux/gpio/forwarder.h    |   41 ++
+ include/linux/string_choices.h    |    6 +
+ 8 files changed, 1547 insertions(+), 58 deletions(-)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20240930-aaeon-up-board-pinctrl-support-98fa4a030490
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
+
 
