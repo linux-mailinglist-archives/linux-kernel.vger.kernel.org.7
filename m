@@ -1,219 +1,193 @@
-Return-Path: <linux-kernel+bounces-763402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CA1B21423
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E726B21427
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CA63E3432
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16613E355F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532CF2E7645;
-	Mon, 11 Aug 2025 18:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0C82E2644;
+	Mon, 11 Aug 2025 18:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BZUhF0Zn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q+79YMxY"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2084.outbound.protection.outlook.com [40.107.220.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E07F2E6105
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936274; cv=none; b=UVpJ96cCimaWzRkqrufA3P/E5btN1KR6w+Ihv82eJ6aVeSEki7xqhfubnh88SrdZVxGQbVFWv9vT6QzkU2U2cMo+hE+KD1U/tiHob6scOL48GCfrFdLV1gwhGORFvhOYUIFj2wEQcNFU8FBOmWsnI8JCxP7b6w3pFWiUGceD0RM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936274; c=relaxed/simple;
-	bh=gKPqMlcKrpchqfWY2TEm0WmAYj3krKqq8dwDF38mFfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BR6B6vHqIxLPc87DYk73m6muOn1lnwKrBsFkqfJEwhZNEKgu+QfC9Lzs2JrHSLav2cEq4Uqkps5rc7ZNg3oc0lEM4G7xC6WEp2AiOLIt7K+E2HTOeXxP6VIJAZBgfLtY27VhKlCcbNF1GDlrtTraRqrByvM7zTIzoPQ5j3x1PG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BZUhF0Zn; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754936272; x=1786472272;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gKPqMlcKrpchqfWY2TEm0WmAYj3krKqq8dwDF38mFfg=;
-  b=BZUhF0Zn8fsgZbRw8Jf0KyRSg6rfhIQKEbdjsmn4Dmu2+j5x17HS3o+H
-   g/oD5p0xH6NRg3eh0dcbf2ty731Ivqf8HONW7lmVdltyR6lX4/Z/CGg/V
-   ioNYXjvqhrdzfzbJa91FpUQ+aWYemOjyBP2s6ipaaATq3zmnjfTY7jQPF
-   3Ca762UdUZVyhNlaTsmsg8U/LDe+7fKaVGE8Tp+BHnObrUNbucNGMe+Ks
-   phI7T8zviJTYldKCat7Xgl9/ZvcjO0kektv/+ydDisp3RMIb3nS+CDNeA
-   bpDWvFKXqFzog9t/LMcHURAw9V2rGykoxipGPtswT8YY+jjKDovSwLNCv
-   A==;
-X-CSE-ConnectionGUID: xyR7qe7TTSuR7Lab1XIeaw==
-X-CSE-MsgGUID: SR2qB3ZIS/m/xGGTrRdiOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277596"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68277596"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:28 -0700
-X-CSE-ConnectionGUID: vDECg1C4TAu3nfKZyCzbAg==
-X-CSE-MsgGUID: oD4e0b4SSu+OJYiphBdpiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="196825720"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.221.229])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:27 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v8 32/32] x86,fs/resctrl: Update Documentation for package events
-Date: Mon, 11 Aug 2025 11:17:06 -0700
-Message-ID: <20250811181709.6241-33-tony.luck@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250811181709.6241-1-tony.luck@intel.com>
-References: <20250811181709.6241-1-tony.luck@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDA72E1C50;
+	Mon, 11 Aug 2025 18:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754936312; cv=fail; b=iOuWep6xC5jPognsoXvMIQ1Pg4XtrnIIbisjbEVx2C0OS/x97ZyqAsgsJPMlg5zvwmedIhxnHoEwmemsv1hsCtnffypP3gneblgWZymQ4FyHUGPxZVTfPQsyn8k30vZ4jO7j9SI0PLSGr8cJPFiWjdJBdv5ibvRJHpLn1bPp0+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754936312; c=relaxed/simple;
+	bh=s6XJMFVNiB23kdCNinKsSgjsnYRQ+MNeckRf2jrOsRs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QkFguaCJzI6ZqzP/hAr7nmCYiDmOYsOv8n/ciItHU6TutwuxyJfczIJMrFHEu1V/Qmy1H5PhI2LfvlVx8MYW3jK/LzV/NpZ/RynnUkNLxjzx7q9TP7K5Cg8DZAPmkBbbIHKO7UHWfMxYeTadcz9bxnsUlYmX35VhZVRjo2ZbuZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q+79YMxY; arc=fail smtp.client-ip=40.107.220.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ed5bOvcJwxytCZLIU01DnsDxko6QvwkL4EIknq2zLZ1EcMY4d47KjGMadzQul3WL3o/lMSDmKHkmL8jNGErGqUyR+FiAwCJjs9YCb4U1Fimj0Jl0uWUhxgownTtCk7TLnvxuG1nMkmMdFM43jC2yM9CyRab9cAmvUmibaL7X5FQNIskKG26rDVIAHaUCN58+ULYhBNFstwq6m1Cn1MOn8yTIr61hYzLNG/qsxEy9lHBl4XMe2bvsC6GvfvHSmzCL0nm0TyTeDFYUOfGxMSyscn35Kzaof+C/KsdJOS2JJXSAMdbrbeBF5Z1tC7EUo/Sh81mK1jPEuBEgV0W5FUszsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L9gmiu9GdCmNl1PKB8vQ7X/jijLW7P06yyJPrAUqBug=;
+ b=EBtZG1jr6GMRB3T1slZelWD0BnOGxYudEgmC0qjqiaoGwKA6zvAVsw3UrThS8NqkaPMBxSLCrRymrsodSjxdIWy9HvrAWLCZwFDxSr5YCFzyIHCdiobc+wmvnHDYtDfhrhhqJA4zPs1PzLSNB4WD7cHHJAFDPUkAOauJMvILomD1nJnn2lgTrESwIQHfETQeQP59fk0Plqxl+ENzMb50WiYLVk8eFrdJFbehxqTFDouc2mDUdPMCE5W252snVjpwtJhJyLwQbUgET3B6tstfH7hOkjJYY95rnUCbS/8euLODipw6vrCZ7lIhn7HcUfOyqkY/XoofKb85Ptlxibq3Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L9gmiu9GdCmNl1PKB8vQ7X/jijLW7P06yyJPrAUqBug=;
+ b=q+79YMxYrOLSuUTbTI0VKHdGWEbJH9Rv8526EeUeFTe2V7sbVVSwdHp2RObEFM6eMZgrD14cF3EujOoFrakhkUzQLSCsfJyohvNR/er9z7AQJN7JYuT/6URMlCebcMgHQ3bHxuy4XyQut4FmfXTzeb2NFM8Qbc43kXu4y2UfrMeZ8+KfSc2bER0ZETmaHVjSSjMCweYg4XqCPVWQ6A3TwJP+8YdHhKIdj/T3Fj3urx0SbmbiyE8EbMzhViNYII85sBvGJwXFsnP8JssHrKhk7hPBmP2N9A9b4r4inqUa7jpYjrx9HCkDHiNQAXC+ZNK7MVhz4nbL6B9lugx/2Pu5MA==
+Received: from SA9PR13CA0042.namprd13.prod.outlook.com (2603:10b6:806:22::17)
+ by SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 18:18:26 +0000
+Received: from SN1PEPF000397B4.namprd05.prod.outlook.com
+ (2603:10b6:806:22:cafe::33) by SA9PR13CA0042.outlook.office365.com
+ (2603:10b6:806:22::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.12 via Frontend Transport; Mon,
+ 11 Aug 2025 18:18:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF000397B4.mail.protection.outlook.com (10.167.248.58) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 18:18:25 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
+ 2025 11:18:08 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 11 Aug 2025 11:18:08 -0700
+Received: from SDONTHINENI-DESKTOP.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 11 Aug 2025 11:18:07 -0700
+From: Shanker Donthineni <sdonthineni@nvidia.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>, "Mike
+ Rapoport" <rppt@kernel.org>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Jason Sequeira <jsequeira@nvidia.com>, "Dev
+ Jain" <dev.jain@arm.com>, David Rientjes <rientjes@google.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2] dma/pool: Ensure DMA_DIRECT_REMAP allocations are decrypted
+Date: Mon, 11 Aug 2025 13:17:59 -0500
+Message-ID: <20250811181759.998805-1-sdonthineni@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B4:EE_|SN7PR12MB8770:EE_
+X-MS-Office365-Filtering-Correlation-Id: cff6cffb-0de7-49aa-401f-08ddd90376d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Dd3JUamCYBzQY4wzZuwgeXBuACQW04eqO3n67omVXud4YpUFYh/yB5qTNb9Y?=
+ =?us-ascii?Q?7K8H7l7M/f73x0dG023HTA8PzFTYpFCbdcwPlW6jwBypAu25yiwZp/9qhOaS?=
+ =?us-ascii?Q?h/rveAid/S0vC6yjpn9nznq5oSRFoEyOgwtq2P35qpfpGrJfM058/kniQ3Sj?=
+ =?us-ascii?Q?bohJ2qSo7mRN6/VHT2w6KqE2zkGFKRCMRDL66kjRCkqZX3hxZ/k16rqkKFU5?=
+ =?us-ascii?Q?0WHlap8/JV7wy1IkncVN7gOwNjbOJiMUJotVLly4fDCDbBGZQihUOcNzUzQk?=
+ =?us-ascii?Q?LsyBfb081fywzoZf3UPCyk1KC2MbcFsvHL9OEJzdSKQCuJucPHf0nDcgM2xm?=
+ =?us-ascii?Q?iGQF6FzXap2DVcvAGzo51y5nxHJE7tVRIDkDpMJ/IzAddiEaxUThdSlXTddp?=
+ =?us-ascii?Q?QpDTVbtNdyvxYOPtnOcHftU0+JbQa4pMhSKnfsnL8Uvp0VIpXdLCPQmb++tn?=
+ =?us-ascii?Q?OUgDFGKn0pa37YwVs6l0qWCbjNpH7Mdu5FhFNFGaqXgR0ABAHpmElxuUngx2?=
+ =?us-ascii?Q?kqcrubNBd+rPAcVC+57f9MadkORskmmeSIgfEGgcCKkAamcLio8Vp7czYTVe?=
+ =?us-ascii?Q?fjNMQ7iXE7QT0Z8/NiiQVC843OpZ2l1EFkp6g45VPehPKy6wyEb+9pUDCawl?=
+ =?us-ascii?Q?/AlxDKBNFHI6sO7SyrqYMiqB4uU+OcanI1wcqIshmRWpvffFDE7jt+HyXRSa?=
+ =?us-ascii?Q?hByYrlWpl6zLSEUm1o0ECgTP8yeaeegwdXKP/7a3H4oOS6LqS04BU9NO/i45?=
+ =?us-ascii?Q?QRgkJZiMU3Gjz9VhSBpLak95+/GFgCK6nTFLpAgmBf03DfDLWtZl/8wLGq85?=
+ =?us-ascii?Q?C8bSmmYHa02IJY0aSyFT1Nx8/lPLKx/uER5WQ3QsgHSQF82z0pA1mttu/2gx?=
+ =?us-ascii?Q?wnXOKC8gGAISDDMaAemdpe8wK2vj+7spNAlprNDQ+B6fZRiIXe3S+JKaCqRU?=
+ =?us-ascii?Q?G+WW+0QPKT8hi84JZo0x/AvBJzDX2Iiuh2biyBXEqkKfP9zD+BsFgX4v1kQF?=
+ =?us-ascii?Q?MDdn3hMFP8B/iVDIduimxcaxtV0/Nmg7ztNGhcoZzV4NEpN1074CjvU8D8vG?=
+ =?us-ascii?Q?wNUdWzHNK5E+a+h8QjXENdWKYeQOBxYi/KlLscFqdOSQzI8QVgdMF7l0XqBq?=
+ =?us-ascii?Q?N/Qa/23n7sUCTz7IGes7wyfiGh1R7YNeGQlWgEKj8AebP+Gp+Pmmx0n8c6wj?=
+ =?us-ascii?Q?rU0p18GdG/wopt+2+avPwKM7cwn2mbKsOaME6xos3/w8wfvKuSdEl0uTc0Ev?=
+ =?us-ascii?Q?Sdpbjd6DyB1AEgWTxA5/4VsctGwWO9vmsAmk/XhFY38I+gQ1U+F5L8PkXnEy?=
+ =?us-ascii?Q?LIzAnpnIp+xA6D/KJtm/YYPrQm7B5VUES9X1lIaRMyzDhP24e57GPKJ6+BVG?=
+ =?us-ascii?Q?BlROS2JDuTAsfVHWeb2nG2J2twtkSgPnWdgyFM+zQpcu28sauWW63xPW266Q?=
+ =?us-ascii?Q?xHyBenXGeiUvXOPj6irRLswNtLhjJTSJrjQHhukxCXAtgB6ESR5NuNKtTBxR?=
+ =?us-ascii?Q?ToT9gvVJoP2K6xIc/0gpPROCWal/FF193s8e?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 18:18:25.6936
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cff6cffb-0de7-49aa-401f-08ddd90376d7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8770
 
-Each "mon_data" directory is now divided between L3 events and package
-events.
+When CONFIG_DMA_DIRECT_REMAP is enabled, atomic pool pages are
+remapped via dma_common_contiguous_remap() using the supplied
+pgprot. Currently, the mapping uses
+pgprot_dmacoherent(PAGE_KERNEL), which leaves the memory encrypted
+on systems with memory encryption enabled (e.g., ARM CCA Realms).
 
-The "info/PERF_PKG_MON" directory contains parameters for perf events.
+This can cause the DMA layer to fail or crash when accessing the
+memory, as the underlying physical pages are not configured as
+expected.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+Fix this by requesting a decrypted mapping in the vmap() call:
+pgprot_decrypted(pgprot_dmacoherent(PAGE_KERNEL))
+
+This ensures that atomic pool memory is consistently mapped
+unencrypted.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
 ---
- Documentation/filesystems/resctrl.rst | 85 +++++++++++++++++++++++----
- 1 file changed, 75 insertions(+), 10 deletions(-)
+ kernel/dma/pool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index c7949dd44f2f..065f9fdd8f95 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -167,7 +167,7 @@ with respect to allocation:
- 			bandwidth percentages are directly applied to
- 			the threads running on the core
+diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
+index 7b04f7575796b..ee45dee33d491 100644
+--- a/kernel/dma/pool.c
++++ b/kernel/dma/pool.c
+@@ -102,8 +102,8 @@ static int atomic_pool_expand(struct gen_pool *pool, size_t pool_size,
  
--If RDT monitoring is available there will be an "L3_MON" directory
-+If L3 monitoring is available there will be an "L3_MON" directory
- with the following files:
- 
- "num_rmids":
-@@ -261,6 +261,18 @@ with the following files:
- 		bytes) at which a previously used LLC_occupancy
- 		counter can be considered for re-use.
- 
-+If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
-+with the following files:
-+
-+"num_rmids":
-+		The number of telemetry RMIDs supported. If this is different
-+		from the number reported in the L3_MON directory the limit
-+		on the number of "CTRL_MON" + "MON" directories is the
-+		minimum of the values.
-+
-+"mon_features":
-+		Lists the telemetry monitoring events that are enabled on this system.
-+
- Finally, in the top level of the "info" directory there is a file
- named "last_cmd_status". This is reset with every "command" issued
- via the file system (making new directories or writing to any of the
-@@ -366,15 +378,36 @@ When control is enabled all CTRL_MON groups will also contain:
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
--	This contains a set of files organized by L3 domain and by
--	RDT event. E.g. on a system with two L3 domains there will
--	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
--	directories have one file per event (e.g. "llc_occupancy",
--	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
--	files provide a read out of the current value of the event for
--	all tasks in the group. In CTRL_MON groups these files provide
--	the sum for all tasks in the CTRL_MON group and all tasks in
--	MON groups. Please see example section for more details on usage.
-+	This contains a set of directories, one for each instance
-+	of an L3 cache, or of a processor package. The L3 cache
-+	directories are named "mon_L3_00", "mon_L3_01" etc. The
-+	package directories "mon_PERF_PKG_00", "mon_PERF_PKG_01" etc.
-+
-+	Within each directory there is one file per event. In
-+	the L3 directories: "llc_occupancy", "mbm_total_bytes",
-+	and "mbm_local_bytes". In the PERF_PKG directories: "core_energy",
-+	"activity", etc.
-+
-+	"core_energy" reports a floating point number for the energy
-+	(in Joules) used by CPUs for each RMID.
-+
-+	"activity" also reports a floating point value (in Farads).
-+	This provides an estimate of work done independent of the
-+	frequency that the CPUs used for execution.
-+
-+	Note that these two counters only measure energy/activity
-+	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
-+	caches, etc.). They do not include L3 cache, memory, I/O
-+	devices etc.
-+
-+	All other events report decimal integer values.
-+
-+	In a MON group these files provide a read out of the current
-+	value of the event for all tasks in the group. In CTRL_MON groups
-+	these files provide the sum for all tasks in the CTRL_MON group
-+	and all tasks in MON groups. Please see example section for more
-+	details on usage.
-+
- 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
- 	directories for each node (located within the "mon_L3_XX" directory
- 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-@@ -1300,6 +1333,38 @@ Example with C::
-     resctrl_release_lock(fd);
-   }
- 
-+Debugfs
-+=======
-+In addition to the use of debugfs for tracing of pseudo-locking
-+performance, architecture code may create debugfs directories
-+associated with monitoring features for a specific resource.
-+
-+The full pathname for these is in the form:
-+
-+    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
-+
-+The prescence, names, and format of these files will vary
-+between architectures even if the same resource is present.
-+
-+PERF_PKG_MON/x86_64
-+-------------------
-+Three files are present per telemetry aggregator instance
-+that show when and how often the hardware has failed to
-+collect and accumulate data from the CPUs.
-+
-+agg_data_loss_count:
-+	This counts the number of times that this aggregator
-+	failed to accumulate a counter value supplied by a CPU.
-+
-+agg_data_loss_timestamp:
-+	This is a "timestamp" from a free running 25MHz uncore
-+	timer indicating when the most recent data loss occurred.
-+
-+last_update_timestamp:
-+	Another 25MHz timestamp indicating when the
-+	most recent counter update was successfully applied.
-+
-+
- Examples for RDT Monitoring along with allocation usage
- =======================================================
- Reading monitored data
+ #ifdef CONFIG_DMA_DIRECT_REMAP
+ 	addr = dma_common_contiguous_remap(page, pool_size,
+-					   pgprot_dmacoherent(PAGE_KERNEL),
+-					   __builtin_return_address(0));
++			pgprot_decrypted(pgprot_dmacoherent(PAGE_KERNEL)),
++			__builtin_return_address(0));
+ 	if (!addr)
+ 		goto free_page;
+ #else
 -- 
-2.50.1
+2.25.1
 
 
