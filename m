@@ -1,57 +1,74 @@
-Return-Path: <linux-kernel+bounces-762548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E922DB20854
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:06:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA412B20859
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1927218A0196
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D430164DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613D42D3750;
-	Mon, 11 Aug 2025 12:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0280D2D3A6C;
+	Mon, 11 Aug 2025 12:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3LwUshb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="mLsYxGCg"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6B1DE8BE;
-	Mon, 11 Aug 2025 12:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7DA23C515
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754913985; cv=none; b=J13tdZcltaCmSAovvJ18nROlkDeAWyg1DE44awDFKJRnSEHlYyDKVlo9QuNEXyUkAO3XpE60n7MdO9uw1Id8HXQEkj16hG7V9o8x8C3sX2N31QRYJC1cRVdYF03hXCYrr8N5rOiLCLoN2MChCdYP1kt+WBY38nSXbNc6q67xjCc=
+	t=1754914026; cv=none; b=ogZ/m7uY7jvR5pzpeBgamHFZnRjIUGCP3IFlyuz3nZJuq7f/G4nylZlkTg6bRn/WZrW8oJpQgcdGjojxDpk2FoZQkyB09PG90QqhjegB/e20YSerMk1tOIRe+amHK591pcuNXBe0qcWrVZIdB7mWAWhL+lOAyYc2x7L8jFMn4Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754913985; c=relaxed/simple;
-	bh=o2YJG+MeGWtvu1qgNMDBrtl/83Z8YV0DO1VakB5ngI0=;
+	s=arc-20240116; t=1754914026; c=relaxed/simple;
+	bh=eMy45TQUkqvd/t/01pizWUxZhtrUYXIVhVtWJCeDHbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hszTvHI5iSugosEWVlWHDDHdNYnfeWnh8zztmU4TzISTNHfp7gWwhNZ+LSps04r0JmGleSfl5JLxj4S7tHu/FiltdxDn9l3fArwfcoWcjSpw0XhsmiAqf8TmSwgWT51XpUYDfn8EKqN0Nxy5yvAEqN1E/VUs7Kj8FM1qCwxfkg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3LwUshb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57797C4CEED;
-	Mon, 11 Aug 2025 12:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754913985;
-	bh=o2YJG+MeGWtvu1qgNMDBrtl/83Z8YV0DO1VakB5ngI0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSAIoi7P4CZu2+ZFfd4FYquBtEUCu7Cav0eyRXeWD8zsVMMMhnx4NiA5ZcFofReDGqN9CjXZpaVP4bij0L2OXzb9+da7pOQacQkX+6MejhS+o4FxfXXQRwd0izwLIfK9nIXqpONnDCnrsU68PGzPvjZTnUli+Pyw+lTH1ZB0BQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=mLsYxGCg; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 26AB7108024C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:36:57 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 26AB7108024C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1754914017; bh=eMy45TQUkqvd/t/01pizWUxZhtrUYXIVhVtWJCeDHbQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E3LwUshbwWZotC1ig6EK0DIsBqHCyP7qRBuW0JrW3nfiIPb0uodDgMl6I5AEVQ4Fc
-	 X8AuzuftlqADwU3aG6ESsnTVCGqlRTcOt4y7ZOtVRiZd7zvon/E9vB5iiJveUfZequ
-	 8ljZarxt3phIlvW6P4J637tOJAbZGWF6v2pjxO46oCEbTAy+cB7i+AhBmTv3aZ3Yk1
-	 kCrmTQ4XCfs07gD9DqNazsoWPEvwFL0iE+vMOnLeIziB6MfY7MUMHGMuq5M5VLhtCE
-	 3T+90WkKj9hWNbE2jpYI6riW/N3cYBwn7s9XiIqsU5eD4NmQ+Yw/lZXLgO3/KBUeGE
-	 HUq5Jj4IbdSWA==
-Date: Mon, 11 Aug 2025 14:06:19 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: djwong@kernel.org, hch@lst.de, dan.j.williams@intel.com, 
-	willy@infradead.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] xfs and DAX atomic writes changes
-Message-ID: <rnils56yqukku5j5t22ac5zru7esi35beo25nhz2ybhxqks5nf@u2xt7j4biinr>
-References: <20250724081215.3943871-1-john.g.garry@oracle.com>
- <IjNvoQKwdHYKQEFJpk3MZtLta5TfTNXqa5VwODhIR7CCUFwuBNcKIXLDbHTYUlXgFiBE24MFzi8WAeK6AletEA==@protonmail.internalid>
- <32397cf6-6c6a-4091-9100-d7395450ae02@oracle.com>
+	b=mLsYxGCgkGdtYm+sFWiGuSaLnMrwronxeVCCIqJeRBJyc3TRnizUqpX4sJBEZuN7N
+	 /3CYlG8RA74V8GZlU7sY5d5yK0sEMwv6S1qTbth82+hDRk1totM0MlH3KHG6HBirN8
+	 XUHCt51E79dbaZ+7XnqyFbygHtEktZ5geDdo7GS8=
+Received: (qmail 15728 invoked by uid 510); 11 Aug 2025 17:36:57 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.482603 secs; 11 Aug 2025 17:36:57 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 11 Aug 2025 17:36:52 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 2B8CF3414EA;
+	Mon, 11 Aug 2025 17:36:52 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 05D3B1E8135B;
+	Mon, 11 Aug 2025 17:36:52 +0530 (IST)
+Date: Mon, 11 Aug 2025 17:36:47 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] include/linux/rv.h: remove redundant include file
+Message-ID: <aJnc17BSsDOnfNwg@bhairav-test.ee.iitb.ac.in>
+References: <aJbsYkON4V4iFPFG@bhairav-test.ee.iitb.ac.in>
+ <30f0e085-b636-45be-960b-68bf6a136f59@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,48 +77,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32397cf6-6c6a-4091-9100-d7395450ae02@oracle.com>
+In-Reply-To: <30f0e085-b636-45be-960b-68bf6a136f59@redhat.com>
 
-On Wed, Aug 06, 2025 at 10:15:10AM +0100, John Garry wrote:
-> On 24/07/2025 09:12, John Garry wrote:
+On Mon, Aug 11, 2025 at 10:49:00AM +0000, Gabriele Monaco wrote:
+> 2025-08-09T06:36:58Z Akhilesh Patil <akhilesh@ee.iitb.ac.in>:
 > 
-> Hi Carlos,
+> > Remove redundant include <linux/types.h> to clean up the code.
+> > Fix this redundancy introduced by commit [1].
+> >
+> > Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct rv_monitor") [1]
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/r/202507312017.oyD08TL5-lkp@intel.com/
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> > ---
 > 
-> I was expecting you to pick these up.
+> Thanks for the patch!
+> I'm really being picky here, but, since you're touching this, isn't it cleaner to keep all includes inside ifdef CONFIG_RV ?
 
-I did, for -rc1.
+Agree.
 
+> When CONFIG_RV is not enabled, the header only defines constants so it doesn't need other includes.
 > 
-> Shall I resend next week after v6.17-rc1 is released?
-
-No, I already have them queued up for -rc1, no need to send them again
-
-Carlos
-
+> This would mean you could remove the other #include <linux/types.h>, instead, and move the #include <linux/list.h> down.
+> 
+> I think you can keep the Fixes: tag and make clear the reason for cleanup in the commit message.
 > 
 > Thanks,
-> John
+> Gabriele
 > 
-> > This series contains an atomic writes fix for DAX support on xfs and
-> > an improvement to WARN against using IOCB_ATOMIC on the DAX write path.
+
+Thanks for the review.
+I have shared v2 addressing these comments and additional cleanup.
+
+Regards,
+Akhilesh
+
+> > include/linux/rv.h | 1 -
+> > 1 file changed, 1 deletion(-)
 > >
-> > Also included is an xfs atomic writes mount option fix.
+> > diff --git a/include/linux/rv.h b/include/linux/rv.h
+> > index 14410a42faef..8b968b8ed77b 100644
+> > --- a/include/linux/rv.h
+> > +++ b/include/linux/rv.h
+> > @@ -15,7 +15,6 @@
 > >
-> > Based on xfs -next at ("b0494366bd5b Merge branch 'xfs-6.17-merge' into
-> > for-next")
+> > #ifdef CONFIG_RV
+> > #include <linux/bitops.h>
+> > -#include <linux/types.h>
+> > #include <linux/array_size.h>
 > >
-> > John Garry (3):
-> >    fs/dax: Reject IOCB_ATOMIC in dax_iomap_rw()
-> >    xfs: disallow atomic writes on DAX
-> >    xfs: reject max_atomic_write mount option for no reflink
-> >
-> >   fs/dax.c           |  3 +++
-> >   fs/xfs/xfs_file.c  |  6 +++---
-> >   fs/xfs/xfs_inode.h | 11 +++++++++++
-> >   fs/xfs/xfs_iops.c  |  5 +++--
-> >   fs/xfs/xfs_mount.c | 19 +++++++++++++++++++
-> >   5 files changed, 39 insertions(+), 5 deletions(-)
-> >
-> 
+> > /*
+> > --
+> > 2.34.1
 > 
 
