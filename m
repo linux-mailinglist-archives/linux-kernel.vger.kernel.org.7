@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-763328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4DF8B21357
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:36:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9528B2135A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2B21A21D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DF23E4651
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2A52D3A7E;
-	Mon, 11 Aug 2025 17:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1215D2D4819;
+	Mon, 11 Aug 2025 17:36:42 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298C17E4;
-	Mon, 11 Aug 2025 17:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED5F17E4;
+	Mon, 11 Aug 2025 17:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933797; cv=none; b=bw8+zSlDdqUINDQjzvgHa71VokTNagyr0hbd6m6z/K9EhOIR/o9RBSo8bNe3rctVVc121ojnW94R0k26iUCVlBz9O64zl4CenuD/ORGjgy027STPfIKlZ1tDI7jOSeL/KfagHWWqEk5Y2aTmNPzAepVXo8SfDP0+CHyxfOlSEqE=
+	t=1754933801; cv=none; b=A6D5Lc5ZOBsmrczUg3+7eLDxE2A2d+ahuBd4zbGSLpA4pv85LwK1Uekydr6XfkjBLyVl5vn3XcXsDtgAfiLxknr9KgsyGd1kd/F06b7S1w/B6zrCUdoTe8L2SeKyzg4e2iz79FSQtqGEADUXaqP4l9WPvXEP64hVX/ph09Skkx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933797; c=relaxed/simple;
-	bh=5jpmH37c9rPdc4mQOiPE/KktdGLX/2Xf+8kKkVQ9Yvk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XqjgGJ1t8UdKQaA3CjKqrxfhHoXC9I7YMhUkO+1cyvJz9/k/vn+dsnqCV+kFEQoiClaKkGA7/m8tLHpNkeHSocHXB7kUFtC9zyQoiP56eBK+/6TVAM+9yQp7OWfDjdef0uYFEOCPjZYCjD+ams5xR6kM4axT0cIxE+BUGxAVYrc=
+	s=arc-20240116; t=1754933801; c=relaxed/simple;
+	bh=J/Mz729wyx0hOBrLxjENQbguBoNlD5K/2sgq8QIb6kU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=u9Auv+KOQQqpo2NFI+FPh6V+61fZa+50h50PyORhIUwRyzp9UKKiFSHjz8NeIa1R6Es6GMtrA5l+1VVPt/VCVhwKaL/0KfzmMcA7FZbzZXcVHCbkVE51M+G3pSQlFW6HxENXBz4hBEyfFSBw03370A/hFFN/I0n6Gcp7uQWEgyo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96350267F;
-	Mon, 11 Aug 2025 10:36:26 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CDA733F63F;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C99A22680;
 	Mon, 11 Aug 2025 10:36:30 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0E3AD3F63F;
+	Mon, 11 Aug 2025 10:36:34 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: ryabinin.a.a@gmail.com,
 	glider@google.com,
@@ -61,10 +62,12 @@ Cc: kasan-dev@googlegroups.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mm@kvack.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 0/2] introduce kasan stonly-mode in hw-tags
-Date: Mon, 11 Aug 2025 18:36:24 +0100
-Message-Id: <20250811173626.1878783-1-yeoreum.yun@arm.com>
+Subject: [PATCH 1/2] kasan/hw-tags: introduce store only mode
+Date: Mon, 11 Aug 2025 18:36:25 +0100
+Message-Id: <20250811173626.1878783-2-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250811173626.1878783-1-yeoreum.yun@arm.com>
+References: <20250811173626.1878783-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,44 +76,323 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hardware tag based KASAN is implemented using the Memory Tagging Extension
-(MTE) feature.
+Since Armv8.9, FEATURE_MTE_STORE_ONLY feature is introduced to restrict
+raise of tag check fault on store operation only.
+Introcude KASAN store only mode based on this feature.
 
-MTE is built on top of the ARMv8.0 virtual address tagging TBI
-(Top Byte Ignore) feature and allows software to access a 4-bit
-allocation tag for each 16-byte granule in the physical address space.
-A logical tag is derived from bits 59-56 of the virtual
-address used for the memory access. A CPU with MTE enabled will compare
-the logical tag against the allocation tag and potentially raise an
-tag check fault on mismatch, subject to system registers configuration.
+KASAN store only mode restricts KASAN checks operation for store only and
+omits the checks for fetch/read operation when accessing memory.
+So it might be used not only debugging enviroment but also normal
+enviroment to check memory safty.
 
-Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
-check fault on store operation only.
+This features can be controlled with "kasan.stonly" arguments.
+When "kasan.stonly=on", KASAN checks store only mode otherwise
+KASAN checks all operations.
 
-Using this feature (FEAT_MTE_STORE_ONLY), introduce KASAN store-only mode
-which restricts KASAN check store operation only.
-This mode omits KASAN check for fetch/load operation.
-Therefore, it might be used not only debugging purpose but also in
-normal environment.
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ Documentation/dev-tools/kasan.rst  |  3 ++
+ arch/arm64/include/asm/memory.h    |  1 +
+ arch/arm64/include/asm/mte-kasan.h |  6 +++
+ arch/arm64/kernel/cpufeature.c     |  6 +++
+ arch/arm64/kernel/mte.c            | 14 ++++++
+ include/linux/kasan.h              |  2 +
+ mm/kasan/hw_tags.c                 | 76 +++++++++++++++++++++++++++++-
+ mm/kasan/kasan.h                   | 10 ++++
+ 8 files changed, 116 insertions(+), 2 deletions(-)
 
-Yeoreum Yun (2):
-  kasan/hw-tags: introduce store only mode
-  kasan: apply store-only mode in kasan kunit testcases
-
- Documentation/dev-tools/kasan.rst  |   3 +
- arch/arm64/include/asm/memory.h    |   1 +
- arch/arm64/include/asm/mte-kasan.h |   6 +
- arch/arm64/kernel/cpufeature.c     |   6 +
- arch/arm64/kernel/mte.c            |  14 +
- include/linux/kasan.h              |   2 +
- mm/kasan/hw_tags.c                 |  76 +++++-
- mm/kasan/kasan.h                   |  10 +
- mm/kasan/kasan_test_c.c            | 423 +++++++++++++++++++++++------
- 9 files changed, 457 insertions(+), 84 deletions(-)
-
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
---
+diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
+index 0a1418ab72fd..7567a2ca0e39 100644
+--- a/Documentation/dev-tools/kasan.rst
++++ b/Documentation/dev-tools/kasan.rst
+@@ -163,6 +163,9 @@ disabling KASAN altogether or controlling its features:
+   This parameter is intended to allow sampling only large page_alloc
+   allocations, which is the biggest source of the performance overhead.
+ 
++- ``kasan.stonly=off`` or ``kasan.stonly=on`` controls whether KASAN checks
++  store operation only or all operation.
++
+ Error reports
+ ~~~~~~~~~~~~~
+ 
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 5213248e081b..9d8c72c9c91f 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -308,6 +308,7 @@ static inline const void *__tag_set(const void *addr, u8 tag)
+ #define arch_enable_tag_checks_sync()		mte_enable_kernel_sync()
+ #define arch_enable_tag_checks_async()		mte_enable_kernel_async()
+ #define arch_enable_tag_checks_asymm()		mte_enable_kernel_asymm()
++#define arch_enable_tag_checks_stonly()	mte_enable_kernel_stonly()
+ #define arch_suppress_tag_checks_start()	mte_enable_tco()
+ #define arch_suppress_tag_checks_stop()		mte_disable_tco()
+ #define arch_force_async_tag_fault()		mte_check_tfsr_exit()
+diff --git a/arch/arm64/include/asm/mte-kasan.h b/arch/arm64/include/asm/mte-kasan.h
+index 2e98028c1965..d75908ed9d0f 100644
+--- a/arch/arm64/include/asm/mte-kasan.h
++++ b/arch/arm64/include/asm/mte-kasan.h
+@@ -200,6 +200,7 @@ static inline void mte_set_mem_tag_range(void *addr, size_t size, u8 tag,
+ void mte_enable_kernel_sync(void);
+ void mte_enable_kernel_async(void);
+ void mte_enable_kernel_asymm(void);
++int mte_enable_kernel_stonly(void);
+ 
+ #else /* CONFIG_ARM64_MTE */
+ 
+@@ -251,6 +252,11 @@ static inline void mte_enable_kernel_asymm(void)
+ {
+ }
+ 
++static inline int mte_enable_kenrel_stonly(void)
++{
++	return -EINVAL;
++}
++
+ #endif /* CONFIG_ARM64_MTE */
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 9ad065f15f1d..fdc510fe0187 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -2404,6 +2404,11 @@ static void cpu_enable_mte(struct arm64_cpu_capabilities const *cap)
+ 
+ 	kasan_init_hw_tags_cpu();
+ }
++
++static void cpu_enable_mte_stonly(struct arm64_cpu_capabilities const *cap)
++{
++	kasan_late_init_hw_tags_cpu();
++}
+ #endif /* CONFIG_ARM64_MTE */
+ 
+ static void user_feature_fixup(void)
+@@ -2922,6 +2927,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_MTE_STORE_ONLY,
+ 		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+ 		.matches = has_cpuid_feature,
++		.cpu_enable = cpu_enable_mte_stonly,
+ 		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTESTOREONLY, IMP)
+ 	},
+ #endif /* CONFIG_ARM64_MTE */
+diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+index e5e773844889..a1cb2a8a79a1 100644
+--- a/arch/arm64/kernel/mte.c
++++ b/arch/arm64/kernel/mte.c
+@@ -157,6 +157,20 @@ void mte_enable_kernel_asymm(void)
+ 		mte_enable_kernel_sync();
+ 	}
+ }
++
++int mte_enable_kernel_stonly(void)
++{
++	if (!cpus_have_cap(ARM64_MTE_STORE_ONLY))
++		return -EINVAL;
++
++	sysreg_clear_set(sctlr_el1, SCTLR_EL1_TCSO_MASK,
++			 SYS_FIELD_PREP(SCTLR_EL1, TCSO, 1));
++	isb();
++
++	pr_info_once("MTE: enabled stonly mode at EL1\n");
++
++	return 0;
++}
+ #endif
+ 
+ #ifdef CONFIG_KASAN_HW_TAGS
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 890011071f2b..28951b29c593 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -552,9 +552,11 @@ static inline void kasan_init_sw_tags(void) { }
+ #ifdef CONFIG_KASAN_HW_TAGS
+ void kasan_init_hw_tags_cpu(void);
+ void __init kasan_init_hw_tags(void);
++void kasan_late_init_hw_tags_cpu(void);
+ #else
+ static inline void kasan_init_hw_tags_cpu(void) { }
+ static inline void kasan_init_hw_tags(void) { }
++static inline void kasan_late_init_hw_tags_cpu(void) { }
+ #endif
+ 
+ #ifdef CONFIG_KASAN_VMALLOC
+diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+index 9a6927394b54..2caa6fe5ed47 100644
+--- a/mm/kasan/hw_tags.c
++++ b/mm/kasan/hw_tags.c
+@@ -41,9 +41,16 @@ enum kasan_arg_vmalloc {
+ 	KASAN_ARG_VMALLOC_ON,
+ };
+ 
++enum kasan_arg_stonly {
++	KASAN_ARG_STONLY_DEFAULT,
++	KASAN_ARG_STONLY_OFF,
++	KASAN_ARG_STONLY_ON,
++};
++
+ static enum kasan_arg kasan_arg __ro_after_init;
+ static enum kasan_arg_mode kasan_arg_mode __ro_after_init;
+ static enum kasan_arg_vmalloc kasan_arg_vmalloc __initdata;
++static enum kasan_arg_stonly kasan_arg_stonly __ro_after_init;
+ 
+ /*
+  * Whether KASAN is enabled at all.
+@@ -67,6 +74,9 @@ DEFINE_STATIC_KEY_FALSE(kasan_flag_vmalloc);
+ #endif
+ EXPORT_SYMBOL_GPL(kasan_flag_vmalloc);
+ 
++DEFINE_STATIC_KEY_FALSE(kasan_flag_stonly);
++EXPORT_SYMBOL_GPL(kasan_flag_stonly);
++
+ #define PAGE_ALLOC_SAMPLE_DEFAULT	1
+ #define PAGE_ALLOC_SAMPLE_ORDER_DEFAULT	3
+ 
+@@ -141,6 +151,23 @@ static int __init early_kasan_flag_vmalloc(char *arg)
+ }
+ early_param("kasan.vmalloc", early_kasan_flag_vmalloc);
+ 
++/* kasan.stonly=off/on */
++static int __init early_kasan_flag_stonly(char *arg)
++{
++	if (!arg)
++		return -EINVAL;
++
++	if (!strcmp(arg, "off"))
++		kasan_arg_stonly = KASAN_ARG_STONLY_OFF;
++	else if (!strcmp(arg, "on"))
++		kasan_arg_stonly = KASAN_ARG_STONLY_ON;
++	else
++		return -EINVAL;
++
++	return 0;
++}
++early_param("kasan.stonly", early_kasan_flag_stonly);
++
+ static inline const char *kasan_mode_info(void)
+ {
+ 	if (kasan_mode == KASAN_MODE_ASYNC)
+@@ -219,6 +246,20 @@ void kasan_init_hw_tags_cpu(void)
+ 	kasan_enable_hw_tags();
+ }
+ 
++/*
++ * kasan_late_init_hw_tags_cpu_post() is called for each CPU after
++ * all cpus are bring-up at boot.
++ * Not marked as __init as a CPU can be hot-plugged after boot.
++ */
++void kasan_late_init_hw_tags_cpu(void)
++{
++	/*
++	 * Enable stonly mode only when explicitly requested through the command line.
++	 * If system doesn't support, kasan checks all operation.
++	 */
++	kasan_enable_stonly();
++}
++
+ /* kasan_init_hw_tags() is called once on boot CPU. */
+ void __init kasan_init_hw_tags(void)
+ {
+@@ -257,15 +298,28 @@ void __init kasan_init_hw_tags(void)
+ 		break;
+ 	}
+ 
++	switch (kasan_arg_stonly) {
++	case KASAN_ARG_STONLY_DEFAULT:
++		/* Default is specified by kasan_flag_stonly definition. */
++		break;
++	case KASAN_ARG_STONLY_OFF:
++		static_branch_disable(&kasan_flag_stonly);
++		break;
++	case KASAN_ARG_STONLY_ON:
++		static_branch_enable(&kasan_flag_stonly);
++		break;
++	}
++
+ 	kasan_init_tags();
+ 
+ 	/* KASAN is now initialized, enable it. */
+ 	static_branch_enable(&kasan_flag_enabled);
+ 
+-	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s)\n",
++	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s stonly=%s\n",
+ 		kasan_mode_info(),
+ 		str_on_off(kasan_vmalloc_enabled()),
+-		str_on_off(kasan_stack_collection_enabled()));
++		str_on_off(kasan_stack_collection_enabled()),
++		str_on_off(kasan_stonly_enabled()));
+ }
+ 
+ #ifdef CONFIG_KASAN_VMALLOC
+@@ -394,6 +448,22 @@ void kasan_enable_hw_tags(void)
+ 		hw_enable_tag_checks_sync();
+ }
+ 
++void kasan_enable_stonly(void)
++{
++	if (kasan_arg_stonly == KASAN_ARG_STONLY_ON) {
++		if (hw_enable_tag_checks_stonly()) {
++			static_branch_disable(&kasan_flag_stonly);
++			kasan_arg_stonly = KASAN_ARG_STONLY_OFF;
++			pr_warn_once("KernelAddressSanitizer: store only mode isn't supported (hw-tags)\n");
++		}
++	}
++}
++
++bool kasan_stonly_enabled(void)
++{
++	return static_branch_unlikely(&kasan_flag_stonly);
++}
++
+ #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
+ 
+ EXPORT_SYMBOL_IF_KUNIT(kasan_enable_hw_tags);
+@@ -404,4 +474,6 @@ VISIBLE_IF_KUNIT void kasan_force_async_fault(void)
+ }
+ EXPORT_SYMBOL_IF_KUNIT(kasan_force_async_fault);
+ 
++EXPORT_SYMBOL_IF_KUNIT(kasan_stonly_enabled);
++
+ #endif
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index 129178be5e64..cfbcebdbcbec 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -33,6 +33,7 @@ static inline bool kasan_stack_collection_enabled(void)
+ #include "../slab.h"
+ 
+ DECLARE_STATIC_KEY_TRUE(kasan_flag_vmalloc);
++DECLARE_STATIC_KEY_FALSE(kasan_flag_stonly);
+ 
+ enum kasan_mode {
+ 	KASAN_MODE_SYNC,
+@@ -428,6 +429,7 @@ static inline const void *arch_kasan_set_tag(const void *addr, u8 tag)
+ #define hw_enable_tag_checks_sync()		arch_enable_tag_checks_sync()
+ #define hw_enable_tag_checks_async()		arch_enable_tag_checks_async()
+ #define hw_enable_tag_checks_asymm()		arch_enable_tag_checks_asymm()
++#define hw_enable_tag_checks_stonly()		arch_enable_tag_checks_stonly()
+ #define hw_suppress_tag_checks_start()		arch_suppress_tag_checks_start()
+ #define hw_suppress_tag_checks_stop()		arch_suppress_tag_checks_stop()
+ #define hw_force_async_tag_fault()		arch_force_async_tag_fault()
+@@ -437,10 +439,18 @@ static inline const void *arch_kasan_set_tag(const void *addr, u8 tag)
+ 			arch_set_mem_tag_range((addr), (size), (tag), (init))
+ 
+ void kasan_enable_hw_tags(void);
++void kasan_enable_stonly(void);
++bool kasan_stonly_enabled(void);
+ 
+ #else /* CONFIG_KASAN_HW_TAGS */
+ 
+ static inline void kasan_enable_hw_tags(void) { }
++static inline void kasan_enable_stonly(void) { }
++
++static inline bool kasan_stonly_enabled(void)
++{
++	return false;
++}
+ 
+ #endif /* CONFIG_KASAN_HW_TAGS */
+ 
+-- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
