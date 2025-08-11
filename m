@@ -1,147 +1,244 @@
-Return-Path: <linux-kernel+bounces-762517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1696B207E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6344B207E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D06B2A3E81
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2971C189F8F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4792D3746;
-	Mon, 11 Aug 2025 11:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A570E2D29DF;
+	Mon, 11 Aug 2025 11:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WBJYPqC3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uvuYxoaN"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4A62D3725
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF02D239A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911667; cv=none; b=djAlHpUWyWrbDmplLekJrVsZu5k69rfiHxc7SHlasMYsKWKWlcDdDpI0c+g5pOHOBt2EeRoODP1dsb6uJJNHsBpwJfdvu4z7oVy3QY/e+MYVzv0WweuKyeQ7L8wGiTdxw6DpO0+yrgQT2dNQDJDcxyHwVNNIUggMzpckNb1tdvg=
+	t=1754911724; cv=none; b=UfdANabF/EQHY/erbxLcybhkpipJw1/Ojf2zcH8YKG+02rImeldCTIIzhTvn2Ar9n9lp/0X3VwmcJ5NwF1+Nu+Uc7mMA4dXkFbYCMc2WQWhdG55tTJpvb8WpkRBIA4WU/Px1Ux8e2IrfQ4nawLSGIuld2muYmZfVcYL9cuCz7v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911667; c=relaxed/simple;
-	bh=U+J+XLR+6ekPSZrj8pxsuPqEj3REqQNGk7AxDkssPmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qN0yMLUGNcoIQ/NhKZ3aLr8hOVzixAyIApzQHxUMxzWCV/bT0xizpWp8YxW4eZcUYskBmTHf7ODmYrvJ9W0DHVk2Aq9X1x1QcoJw97dEzfGzC3U5zxjNDTbcHioPTzIjTnJV41AWrU/hPOyeAFNjvgwVl/kp1QhqgAbkQGCLU4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WBJYPqC3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9d9vJ007563
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:27:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5fyLS4N2oFmF2UHiHGCjHJxCE38PIq/B8p4f+c32zQI=; b=WBJYPqC37sqXjgTJ
-	zJ2c/zO11jThleKKz5jYA4agRwC/ZU0Tgghvp7SHMuvN7Efc7lulsqxe3VtarRrJ
-	PjBdm3FfZ60ydGoEs647Qa/pFM76G8mebyFEvZYOfOijWb1JrUfQGqPiHw8KjenH
-	/cARw3yK+w5B6PGtHf0d+7RRh0KWLqJl1eMRZvO3p+on49umkL3jPlZLbfVk56UA
-	JmCzkTWcS0BiM2LgpWxDXBRzie1j2ulGdqXb3sEp6/leZNX6+ZnZ0XN3ojFCLTMk
-	kqJDrcl/XNQPL4HBL+yz6mZJDLilsixIQdbmK1RITcUWlKBRcJpVo+unXVUMyMs+
-	JtBFVA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dv1fmct8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:27:44 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b0938f0dabso11615991cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 04:27:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754911663; x=1755516463;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5fyLS4N2oFmF2UHiHGCjHJxCE38PIq/B8p4f+c32zQI=;
-        b=lsYwCIX87E8yO4ILrhMJOe67/6BJu6c61aNC7DH50KUUiBTswtN/l2YCv6b2fgtIgo
-         VuIamx6zycNW6ZM8psE3AnZK4NsXtC6zUXc0xsjOhQHNbKT4DtCSd1h3tgi1cDuzZ5YG
-         GLEF6wqXPEgAAP6TgyLk1T29xrab9qgRf1QUkCz/FoB8kM/it8q3g/50X1HSo7lMgcPX
-         njuILceggugm+uKmQ2hYvyFtRy5aXQt9QLOfUIivWNvqwpKKi1iU+eSwF+FiPXcDtF/a
-         H80CpITFrPpXBRUgildl4Hwhd5HHWdz+R2jpggvxDhsVTRJoGg2p7dgkfDkE4O1a6fWU
-         H5Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCmeao06afIKL0Ymomo1sJljpWk53iCtBW+hNlRZp66O8pfO77E+5rhUfz5q2kY+czklZ5hHH8mkoEmGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47arAoRiuR81LlhtOtxTB1Gr9Tccz/SrCu6ln/YcKmFF8dqTb
-	HUy6MgoJ9i7v5We4eC5TwZrn7S23CKyL/tLW9Xnc5t8B0OB8cEPyAC8GgU63lRC8tigQ/803lla
-	TVWZkgZQx5AK4ipI32MNeu4F8k7n2f8TCnnlGQKmAfTwqLn6gvXTdFaC48P4NIB3qe5M=
-X-Gm-Gg: ASbGncvPZTg65Jxx7s35SPMzutwkV9aX42/+XYLNoLpnDxHJR77QKo36d4lB06QL4Mc
-	PfUgL2NEiPrDYBfZ/i8QVK6sTWCOgrR4bqQipOrmsjSLBKdgwctMWa5VBlx0W9QjBQZlLMHUysE
-	ypcj4RlUQ1v3a0NrwbuZ/T27LIeWDOZ8vDj+mtXfyT7clyhjjK8o8Er5CpBYy5VoU1UEVWuboXw
-	C2WyCFLbqEUTQAo2Z8xW3qudH1oiBoze65cRb/2Z2fg3QpTe6qViMSoOxnNSG1/KFxf94Fuo74x
-	g4nbNx8HsIpf0AdkQS7dx7BqNLIyrpCHd7VbN8sxs4zAd4kuftmwUS9QctDqXBvcD4NkwF/JVSZ
-	4hjT79ovx8r3K9vw3ZA==
-X-Received: by 2002:a05:622a:44e:b0:4ab:6e68:1186 with SMTP id d75a77b69052e-4b0c18ff1b3mr53726811cf.2.1754911663308;
-        Mon, 11 Aug 2025 04:27:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJgFSDOS5fEjCuyG5NolkHlckR1ubFRcXPAOC/JGl654XR7C52OV8G/dlGBHR8wLM6zvgBnw==
-X-Received: by 2002:a05:622a:44e:b0:4ab:6e68:1186 with SMTP id d75a77b69052e-4b0c18ff1b3mr53726531cf.2.1754911662717;
-        Mon, 11 Aug 2025 04:27:42 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af93d62bc97sm1729893366b.80.2025.08.11.04.27.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 04:27:42 -0700 (PDT)
-Message-ID: <bc5c66f5-2f75-4371-bfc0-452d69bc16e9@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 13:27:39 +0200
+	s=arc-20240116; t=1754911724; c=relaxed/simple;
+	bh=KbccFC5X8k+i5EVJH+EK/p6cqM1QSCs1E7070K3qb3o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qjg8HQOjez4rSprUCFF24pN+HLJEuJPrzZ+quYiM017moWRAn+tKcTMr0eCcQaIU3N9AqoBPaQfER2g4cDmUHTr7gWi64bzSSMEuyxJncVklC4Rwat2/DDTke9HzQYosssSUcwqjmfwnmgB82IP3Ib6KvJTK7DCvzR8reyNYUrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uvuYxoaN; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d845425e524ee4c81e0f12553e3ed9daa549ce9a.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754911719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KbccFC5X8k+i5EVJH+EK/p6cqM1QSCs1E7070K3qb3o=;
+	b=uvuYxoaNVDnzEnkrncpNHCSU+g/PO47HDgf09ewQu7PTEeb4xkn7qfsXXIBWG0Z99GeWLW
+	GcvpWrZpGzZSYLi4nP73J6EPvboqTll4MPeSzGIfLnwqRtnC3b7srekazEWZyQ8LM0DX0P
+	mpwCgqXWuDgjZkWa6FZco6cf7bY5UPo=
+Subject: Re: [PATCH bpf-next 1/1] bpf: Allow fall back to interpreter for
+ programs with stack size <= 512
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Jiayuan Chen <mrpre@163.com>, bpf
+ <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Felix Fietkau
+ <nbd@nbd.name>
+Date: Mon, 11 Aug 2025 19:28:26 +0800
+In-Reply-To: <CAADnVQLecBEmQzxOzUwv_2mO9BDrKSp1xiC4WY8-gL2w4OaxaQ@mail.gmail.com>
+References: <20250805115513.4018532-1-kafai.wan@linux.dev>
+	 <CAADnVQLecBEmQzxOzUwv_2mO9BDrKSp1xiC4WY8-gL2w4OaxaQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: sdm632-fairphone-fp3: Enable CCI
- and add EEPROM
-To: Luca Weiss <luca@lucaweiss.eu>,
-        Loic Poulain <loic.poulain@oss.qualcomm.com>,
-        Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
- <20250810-msm8953-cci-v1-7-e83f104cabfc@lucaweiss.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250810-msm8953-cci-v1-7-e83f104cabfc@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: hvWTlKjKSKD5xQL5D_82CUWetNEZpoJV
-X-Authority-Analysis: v=2.4 cv=cLTgskeN c=1 sm=1 tr=0 ts=6899d3b0 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=dlmhaOwlAAAA:8 a=EUspDBNiAAAA:8
- a=RAyH1-HTb1k6rVK9-NMA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=y4cfut4LVr_MrANMpYTh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMyBTYWx0ZWRfX23F4rLOVnTAd
- wzzwHm6/IoF0qddmXnPEVdcM1H+dFbp5daez9fv4HdS6NEVLImwNzYk7DUtscj1nDfXRIBntILC
- 1+PzhMHqlHniTRKKweE40RRwYfDcEf5AHiDHM7I2OrR6UXz89BYzLq1onjLKiGvEe8irtEkRFV9
- rmuoxzbM0xau/dFYJUlhYF0Isu2sJeYA8RgNqRE/hlwrLTR83SFiX1JptkpBohigkGsp/zZR/l4
- ogF16JC/sSiAzuPpnja3hEtXqBNkzJvuy15drsiG6OIEETLo+q5nM49mJqO4mg7wDRy/lQS2VGl
- xSuPcRMR00B6UYjEBj+z5q52L5Bd2teDKpn5l58+EufzjfedZqPzuh77/mEu+jXqm0FTjooZfaD
- Ggrd/Z2Y
-X-Proofpoint-ORIG-GUID: hvWTlKjKSKD5xQL5D_82CUWetNEZpoJV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 suspectscore=0 spamscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090003
+X-Migadu-Flow: FLOW_OUT
 
-On 8/10/25 5:37 PM, Luca Weiss wrote:
-> Enable the CCI where the camera modules are connected to, and add a node
-> for the EEPROM found next to the IMX363 rear camera.
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
+On Thu, 2025-08-07 at 09:50 -0700, Alexei Starovoitov wrote:
+> On Tue, Aug 5, 2025 at 4:55=E2=80=AFAM KaFai Wan <kafai.wan@linux.dev> wr=
+ote:
+> >=20
+> > OpenWRT users reported regression on ARMv6 devices after updating
+> > to latest
+> > HEAD, where tcpdump filter:
+> >=20
+> > tcpdump -i mon1 \
+> > "not wlan addr3 3c37121a2b3c and not wlan addr2 184ecbca2a3a \
+> > and not wlan addr2 14130b4d3f47 and not wlan addr2 f0f61cf440b7 \
+> > and not wlan addr3 a84b4dedf471 and not wlan addr3 d022be17e1d7 \
+> > and not wlan addr3 5c497967208b and not wlan addr2 706655784d5b"
+> >=20
+> > fails with warning: "Kernel filter failed: No error information"
+> > when using config:
+> > =C2=A0# CONFIG_BPF_JIT_ALWAYS_ON is not set
+> > =C2=A0CONFIG_BPF_JIT_DEFAULT_ON=3Dy
+> >=20
+> > The issue arises because commits:
+> > 1. "bpf: Fix array bounds error with may_goto" changed default
+> > runtime to
+> > =C2=A0=C2=A0 __bpf_prog_ret0_warn when jit_requested =3D 1
+> > 2. "bpf: Avoid __bpf_prog_ret0_warn when jit fails" returns error
+> > when
+> > =C2=A0=C2=A0 jit_requested =3D 1 but jit fails
+> >=20
+> > This change restores interpreter fallback capability for BPF
+> > programs with
+> > stack size <=3D 512 bytes when jit fails.
+> >=20
+> > Reported-by: Felix Fietkau <nbd@nbd.name>
+> > Closes:
+> > https://lore.kernel.org/bpf/2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.na=
+me/
+> > Fixes: 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
+>=20
+> This commit looks fine.
+>=20
+> > Fixes: 86bc9c742426 ("bpf: Avoid __bpf_prog_ret0_warn when jit
+> > fails")
+>=20
+> But this one is indeed problematic.
+> But before we revert, please provide a selftest that is causing
+> valid classic bpf prog to fail JITing on arm,
+> because it has to be fixed as well.=20
+>=20
+OK, I'll add a test for it.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Sounds like OpenWRT was suffering performance loss due to the
+> interpreter.
+>=20
+> > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > ---
+> > =C2=A0kernel/bpf/core.c | 12 +++++++-----
+> > =C2=A01 file changed, 7 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > index 5d1650af899d..2d86bd4b0b97 100644
+> > --- a/kernel/bpf/core.c
+> > +++ b/kernel/bpf/core.c
+> > @@ -2366,8 +2366,8 @@ static unsigned int
+> > __bpf_prog_ret0_warn(const void *ctx,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 const struct bpf_insn
+> > *insn)
+> > =C2=A0{
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* If this handler ever gets=
+ executed, then
+> > BPF_JIT_ALWAYS_ON
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is not working properly, =
+or interpreter is being used
+> > when
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * prog->jit_requested is no=
+t 0, so warn about it!
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * or may_goto may cause sta=
+ck size > 512 is not working
+> > properly,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * so warn about it!
+>=20
+> We shouldn't have touched this comment. Let's not do it again.
+>=20
+OK.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON_ONCE(1);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > @@ -2478,10 +2478,10 @@ static void bpf_prog_select_func(struct
+> > bpf_prog *fp)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * But for non-JITed pr=
+ograms, we don't need bpf_func, so
+> > no bounds
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * check needed.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!fp->jit_requested &&
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !WARN_ON_=
+ONCE(idx >=3D ARRAY_SIZE(interpreters))) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (idx < ARRAY_SIZE(interpreters=
+)) {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 fp->bpf_func =3D interpreters[idx];
+>=20
+> this is fine.
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 WARN_ON_ONCE(!fp->jit_requested);
+>=20
+> drop it. Let's not give syzbot more opportunities
+> to spam us again with fault injection -like corner cases.
+>=20
+OK, will drop it.
 
-Konrad
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 fp->bpf_func =3D __bpf_prog_ret0_warn;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > =C2=A0#else
+> > @@ -2505,7 +2505,7 @@ struct bpf_prog
+> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* In case of BPF to BPF cal=
+ls, verifier did all the prep
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * work with regards to=
+ JITing, etc.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool jit_needed =3D fp->jit_reque=
+sted;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool jit_needed =3D false;
+>=20
+> ok
+>=20
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (fp->bpf_func)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 goto finalize;
+> > @@ -2515,6 +2515,8 @@ struct bpf_prog
+> > *bpf_prog_select_runtime(struct bpf_prog *fp, int *err)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 jit_needed =3D true;
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bpf_prog_select_func(fp);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (fp->bpf_func =3D=3D __bpf_pro=
+g_ret0_warn)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 jit_needed =3D true;
+>=20
+> This is too hacky.
+> Change bpf_prog_select_func() to return bool and
+> rename it bpf_prog_select_func/bpf_prog_select_interpreter()
+>=20
+> true on success, false on when interpreter is impossible.
+>=20
+OK, will change it.
+
+> And target bpf tree.
+>=20
+OK.=20
+> --
+> pw-bot: cr
+>=20
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* eBPF JITs can rewrite the=
+ program in case constant
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * blinding is active. =
+However, in case of error during
+> > --
+> > 2.43.0
+> >=20
+
+--=20
+Thanks,
+KaFai
 
