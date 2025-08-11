@@ -1,83 +1,201 @@
-Return-Path: <linux-kernel+bounces-762591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A669CB208C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28430B208CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA763B7863
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2233118A299C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C175E2D3755;
-	Mon, 11 Aug 2025 12:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625C32D131A;
+	Mon, 11 Aug 2025 12:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N44I/Saf"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A5TjlTCW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65C126AE4
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A311017578;
+	Mon, 11 Aug 2025 12:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915310; cv=none; b=etOjUAKWDWd3ew/dY0MghG2EvblHOJN6Y6TFHNnbXdJzUwa+4guBzr0bxCBVPaK4Dfefugt78Wlgb+4IW4GirRXtRURAdrXydHRVWcBMSwGWcnWTSoIAcd3DCfRhMLuEAegFhXesMKBDKGpcs3PEwLcYi/zNJQdbuXXeSHIuRQE=
+	t=1754915484; cv=none; b=fbUT06WHsRVSYMz5SkIHkLO9su2pd5B/jOWZtnRR0Ajk3eJKInSffPSfpnBlMtOTZRacpOJRbnYBS57NvVFKLd9RV3CIzyUoJjrhVs1Q1sneka3cIN+VP8MrWQc68ooSWGHH+cgvMF5sLgcbBF2YDEAfnB29l6yaKU4GLmCR8oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915310; c=relaxed/simple;
-	bh=aCVuUR5wXZ0n7ewiLDmiuAP6HDwwg+BznHR2eV1sIkg=;
+	s=arc-20240116; t=1754915484; c=relaxed/simple;
+	bh=D8uBtwSRhl3sF0B7mOJUUtLl5LI4xWkEGITTeMcDlSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPLjRJH8V/3u430y0JOgHgGzEUG13tdp49aLHd9dMmOFF6cUHyg1oT31aRW9mI+3TReOn+etistumogYZOClVpllb6F1PQNjEbfMxDS3lBzjTn2DKGDO+AhtQmS3H/+ulQ3dNCCyDoy14lcDGwvFmeK3mhoFhIe3D0Sd9IHPwyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N44I/Saf; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=83rd1xnBS14APjqGFTUVJoyb3lrI2gdYoVcvWG2ZOvY=; b=N44I/SafpUO+cNPT39ieeEAeFf
-	E5WvliQy3AgorOZydb3qkjLn3uPy3O3pRVbd7hDoB29POEaJlIqQY+KU+8aENUIX3X0iTUzdllbOI
-	sxzvRkmKyp9Ohe9oKIBoNntsSq9BGNVltk/PauYcH43CiTsg+A/TDREVmgQ4hZpw3L3wK7w4tH4+b
-	STuGRHGsXWINXGGxcu0WNdqBsA8MDkqzviMiB0qalMhk5cUZDgmA5J3gZ7qbna6MQaw06aGuQvdfK
-	4yesif9lD6HhQREkwDJsbSSXKaWYsJk1HihpuXdGzUtCrnWCn1RexMO/CqV+W+MD3JtG+V43uqN0+
-	S2eJjXow==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulRdX-00000005PmI-3lWj;
-	Mon, 11 Aug 2025 12:28:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 19199300310; Mon, 11 Aug 2025 14:28:24 +0200 (CEST)
-Date: Mon, 11 Aug 2025 14:28:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [patch V2 m@/6] perf/core: Split out AUX buffer allocation
-Message-ID: <20250811122824.GA3940894@noisy.programming.kicks-ass.net>
-References: <20250811065859.660930338@linutronix.de>
- <20250811070620.590421133@linutronix.de>
- <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dMXwZFqiJEWSkF2uveTuH7ayGlea1eoKvPOaGu/ivP9W280RYyCLOxvHCHfNgy9LMsYO2/mkw89Rf5kS7oZQiqpe9WNqaewa3HDTcEv2L1HBJgzUAXdayJ5EacODSdijS5kdoJ2AQoUDyunuzmmy2aUpALgCx4z468lXF4j7CMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A5TjlTCW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 845374A4;
+	Mon, 11 Aug 2025 14:30:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754915428;
+	bh=D8uBtwSRhl3sF0B7mOJUUtLl5LI4xWkEGITTeMcDlSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A5TjlTCW4+k0jxTR1BUHwVSo8nso/3uq7KnMDB6S8RJN73GYZK5NHLTv+FoFpSRit
+	 zPIlYCCe/K0ei3mO9A07xuE8FCXQo0OAykNh9Lb1FJx+CrPh1l5L75ZNxmQs0rlolS
+	 yo1q0bZJEFBIQ4IhmSWbBWj9HGwnUE7i8yK1sRO4=
+Date: Mon, 11 Aug 2025 15:31:02 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Du, Bin" <bin.du@amd.com>, mchehab@kernel.org, hverkuil@xs4all.nl,
+	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com
+Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
+Message-ID: <20250811123102.GC30760@pendragon.ideasonboard.com>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <20250618091959.68293-5-Bin.Du@amd.com>
+ <aIclcwRep3F_z7PF@kekkonen.localdomain>
+ <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
+ <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
 
-On Mon, Aug 11, 2025 at 12:04:04PM +0200, Peter Zijlstra wrote:
+On Mon, Aug 11, 2025 at 11:46:27AM +0000, Sakari Ailus wrote:
+> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
+> > On 7/28/2025 3:23 PM, Sakari Ailus wrote:
+> > > On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
+> > > > ISP firmware controls ISP HW pipeline using dedicated embedded processor
+> > > > called ccpu.
+> > > > The communication between ISP FW and driver is using commands and
+> > > > response messages sent through the ring buffer. Command buffers support
+> > > > either global setting that is not specific to the steam and support stream
+> > > > specific parameters. Response buffers contains ISP FW notification
+> > > > information such as frame buffer done and command done. IRQ is used for
+> > > > receiving response buffer from ISP firmware, which is handled in the main
+> > > > isp4 media device. ISP ccpu is booted up through the firmware loading
+> > > > helper function prior to stream start.
+> > > > Memory used for command buffer and response buffer needs to be allocated
+> > > > from amdgpu buffer manager because isp4 is a child device of amdgpu.
+> > > 
+> > > Please rewrap this, some lines above are quite short.
+> > > 
+> > Thanks, the line after the short line is supposed to be a new paragraph?
+> > Should we put all the description in one paragraph?
+> 
+> One or more paragraphs work fine, but a new paragraph is separated from the
+> previous one by another newline.
+> 
+> ...
 
-> These two aux and rb split out patches seem like they're trying to take
-> too big a step. Let me try and do the same with smaller steps.
+Paragraphs are defined as a block of text that convey one idea. They
+should be visually separated by a space. As we can't have fractional
+line spacing in plain text, paragraphs need to be separated by a blank
+line. This is a typography rule that maximizes readability. There should
+be no line break between sentences in a single paragraph.
 
-Find here:
+Whether you write commit messages, formal documentation or comments in
+code, typography is important to give the best experience to readers.
+After all, a block of text that wouldn't focus on the readers would have
+no reason to exist.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
 
-Now, I need a food :-)
+Now compare the above with
+
+
+Paragraphs are defined as a block of text that convey one idea. They
+should be visually separated by a space.
+As we can't have fractional line spacing in plain text, paragraphs need
+to be separated by a blank line.
+This is a typography rule that maximizes readability. There should be no
+line break between sentences in a single paragraph. Whether you write
+commit messages, formal documentation or comments in code, typography is
+important to give the best experience to readers.
+After all, a block of text that wouldn't focus on the readers would have
+no reason to exist.
+
+> > > > +	void *cpu_ptr;
+> > > > +	u64 gpu_addr;
+> > > > +	u32 ret;
+> > > > +
+> > > > +	dev = ispif->dev;
+> > > > +
+> > > > +	if (!mem_size)
+> > > > +		return NULL;
+> > > > +
+> > > > +	mem_info = kzalloc(sizeof(*mem_info), GFP_KERNEL);
+> > > > +	if (!mem_info)
+> > > > +		return NULL;
+> > > > +
+> > > > +	adev = (struct amdgpu_device *)ispif->adev;
+> > > 
+> > > Why the cast?
+> > > 
+> > > adev isn't a great name here as it's usually used for struct acpi_devices.
+> > > 
+> > In the next patch, will use new helper function for this and will no longer
+> > use amdgpu_device
+> 
+> Use correct types when you can; either way this doesn't seem to be changed
+> by the further patches in the set.
+> 
+> ...
+> 
+> > > > +static int isp4if_gpu_mem_free(struct isp4_interface *ispif,
+> > > > +			       struct isp4if_gpu_mem_info *mem_info)
+> > > > +{
+> > > > +	struct device *dev = ispif->dev;
+> > > > +	struct amdgpu_bo *bo;
+> > > > +
+> > > > +	if (!mem_info) {
+> > > > +		dev_err(dev, "invalid mem_info\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	bo = (struct amdgpu_bo *)mem_info->mem_handle;
+> > > 
+> > > Why do you need to cast here?
+> > > 
+> > In the next patch, will use new helper function for this and will no longer
+> > use amdgpu_bo
+> 
+> Not quite, on top of this patch number 6 adds more of the same.
+> 
+> ...
+> 
+> > > > +static struct isp4if_cmd_element *
+> > > > +isp4if_append_cmd_2_cmdq(struct isp4_interface *ispif,
+> > > > +			 struct isp4if_cmd_element *cmd_ele)
+> > > > +{
+> > > > +	struct isp4if_cmd_element *copy_command = NULL;
+> > > > +
+> > > > +	copy_command = kmalloc(sizeof(*copy_command), GFP_KERNEL);
+> > > > +	if (!copy_command)
+> > > > +		return NULL;
+> > > > +
+> > > > +	memcpy(copy_command, cmd_ele, sizeof(*copy_command));
+> > > 
+> > > kmemdup()?
+> > > 
+> > Kmemdup is to allocate memory and copy, can't be used here.
+> 
+> Isn't that what you're doing above?
+> 
+> > > > +
+> > > > +	guard(mutex)(&ispif->cmdq_mutex);
+> > > > +
+> > > > +	list_add_tail(&copy_command->list, &ispif->cmdq);
+> > > > +
+> > > > +	return copy_command;
+> > > > +}
+
+-- 
+Regards,
+
+Laurent Pinchart
 
