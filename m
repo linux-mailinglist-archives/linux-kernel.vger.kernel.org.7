@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel+bounces-762914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78B5B20C46
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3123CB20C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CDDA16BB55
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEA993B60C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED912D3A65;
-	Mon, 11 Aug 2025 14:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282622D3A63;
+	Mon, 11 Aug 2025 14:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CU+/msgj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="erg8R9/+"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8085C2C325B;
-	Mon, 11 Aug 2025 14:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083042D3228;
+	Mon, 11 Aug 2025 14:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923038; cv=none; b=HAovinpL8+q9ZHAriWis7UcnI2nSk6oUm/4+uAYTZM63wonVT7YjhraLgWebq/dUlo5h11nz4yfyociU28s0QnJFLTZnkpsooWRC6k/hHdyCSAGA3u5CGB1RgCygj9FLPZifd5oTvrDjlDSYEa5k8YW0NVdVr/meFReai4QDwMc=
+	t=1754923059; cv=none; b=grhtn0YEjxkbEeaMM1m55RmSkSZozOVt3mux+DY0Vl4GhaEkUaqFzE4Ps1ZJ+bBHNRBvLjZPdn+rEVfJai6+zp50Od3U5EcGPNtdd6iq6nGjBYHABFOhgjMWICtYxepBu9pCkFX7bdxG+ucZmdxkdPTiaTkHgHvQvfc5+zLojXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923038; c=relaxed/simple;
-	bh=qR9vSCPotI30iKaZxd6uDACGqYOSSZxxGzGbK/JS7sw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RiAcdkDNumaOikVn5LN+whKDjgJ36arMdnwXl2xl1ECVAPcfXj/TTQsR4LzLpDRa0uvJdG9uq1JfmglY242uzjpHDGe01ExuuqipAYZmCpfvq3ymRZ+ZrhQWBZrdh9L8lS6tp5B7pi5dRRXzUblooywzexncVc7iXZB4nHnNusg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CU+/msgj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9880CC4CEF8;
-	Mon, 11 Aug 2025 14:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754923038;
-	bh=qR9vSCPotI30iKaZxd6uDACGqYOSSZxxGzGbK/JS7sw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CU+/msgjW6L6PPyuIZbu7gsPz57APWxsWL4XOHMkNCiDUPpieddw+7X+bCSJltuV0
-	 OofLDJuns7vXgKOR69yNemeNk/EMRmYZZmZSRcP4TJ7yOW0lPbLzz7kRimSJur7Yqo
-	 GKC/7sQSnIu2zylfDV50jEJLqKAqkcx1F0WeCxbzWfQK7+oaGVo4PT1dIu6vh7e4FC
-	 fVf+Y1DFROkSZnocEmjmOu/2YQTmB6PbI61jBUqXhZ/gUjz5L/nDtn4ZIhu0jxy+Lz
-	 tp5nhzwMh9AdchgYbCBlqgR0lBXmArBEM43uleiDOkg+OXDlwTXL90IfJULaiZaFtj
-	 JwHFb0Jy7A/LQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 11 Aug 2025 10:37:08 -0400
-Subject: [PATCH 2/2] sunrpc: eliminate return pointer in svc_tcp_sendmsg()
+	s=arc-20240116; t=1754923059; c=relaxed/simple;
+	bh=I/F/dYBajC74Nt2UsFC9R8lYl1X/ITY2zVe1qGmEoxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gkM6X73v/ELcoCWEUCoI3I6aaZGZzRCZFDoyA3X/0/WZ1oS45eIDDUQz9LDT1A7BGOenbMhqMOdyoeN9dOWNL/vWAVDfi/psggXNrBY8sfaSKWhhJXayF6vQhxDmiWUK+GVNj77nqShpD0QfplymwPL1rwq2IB7CkKod1oEmpB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=erg8R9/+; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=NoSRkGb0dSVui2kGtJMRO3df9aT4TuXtCWAU8XI+je0=; b=erg8R9/+VSQSatTiLHhlebP75P
+	U+NhF7oAUdwhPfCtIOo9zP96Ns4yIcNv80x8QnpCQmd3H6PE96YtSC1SZvyNSLCXUK7lLi2U6W5yu
+	zXniKGWtaKm9dUAAejJ7MXv0vJn4OtjekveU4VvOdsJJg0gi5/UyGW9SOyX+XInkgQA/lxI0yJ2jO
+	y25aa/Vi2p+y5pPzz+uV4a1iRPr9af6zlaJhCVlYW91KF3eX8LDeG0A6//kW1T4WZ5y/2FMAQ+nwZ
+	fUl/Q4kU4F9lTPurUJ3hN2PZxgQi8SVln0eVK7xa89KNcL2zarlBmYSbUfnfGuS9CAKRN4whudZIr
+	xQjJOQpA==;
+Received: from i53875a0c.versanet.de ([83.135.90.12] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ulTeS-00021w-Ed; Mon, 11 Aug 2025 16:37:28 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: Re: [PATCH v2] media: rkvdec: Remove redundant
+Date: Mon, 11 Aug 2025 16:37:27 +0200
+Message-ID: <1894144.QZUTf85G27@diego>
+In-Reply-To:
+ <20250811-rkvdec-redundant-pm-rebase-v2-1-90c47213fbbe@collabora.com>
+References:
+ <20250811-rkvdec-redundant-pm-rebase-v2-1-90c47213fbbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-nfsd-testing-v1-2-f9a21bbf238b@kernel.org>
-References: <20250811-nfsd-testing-v1-0-f9a21bbf238b@kernel.org>
-In-Reply-To: <20250811-nfsd-testing-v1-0-f9a21bbf238b@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2779; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=qR9vSCPotI30iKaZxd6uDACGqYOSSZxxGzGbK/JS7sw=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBomgAbO//eV2OR6//8krF8sKSjfC10hgEMvx167
- CavYms5jH6JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaJoAGwAKCRAADmhBGVaC
- FfrmD/wNHBuTP+P0JcS6i8FyZrAWhJeYt8nYYS9t4xgbBiE44tzTjy8LIl2ldW7HBrW3ioniFFX
- CpdTEwTfOSPNdklH8aJnCJ51ZPHRTFYkcFMmitEKvdq/E/4wma/nSGqOfZdnaTbgDlEVluDw32s
- Q8APsNBh0K0c7FWrGQd+AqeBsXYpf94xbl3FVuiwtdrZAgpzYjjLWG2nFtN+iivv56BMtKXF8Lg
- tI0agFqR4rFQQWfhqpYM2jRSyyfwZ5Jw1u/iban8lamGHO8vfkqcWBveIpr0qXXyQrLL+Dn7y6I
- kth6jVaOSkQdQLLFZwc8jnvZBlNR9hkyAsQVlsKDeBb2Dq38KF+hBAR+3ffq1+77auP6+8m6MTi
- Kp+UD/TxW6lQlNMDzEBb9nTj9XF97es9ZHN3Vf15HnYB6BhAjYkqseMIHcfVEVV5VLNxZM/+FEU
- YZZgWhl3CctuJ69/le43OSI7Ew0qgvTi3/9YGJx4ANaJZnqdGYQKMhzRdtpC3LxYTrZsVMLmQyr
- V1c4Ue6STtYiGVTt0BiWUGbFs7Bx8fNTwulrWVmeYnM4KGrhEO1Jt/yVj3g3dj6i89m5n7VkQai
- i5maT1peee05P3DqrS9/IowNfC39R6+JRQl8m2LUMlV26kdAallyMmQcH3U9IFcYBjOmSjVbNiT
- 1fHHr5DEpZyckAQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Return a positive value if something was sent, or a negative error code.
-Eliminate the "err" variable in the only caller as well.
+Am Montag, 11. August 2025, 16:03:45 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Dufresne:
+> From: Sakari Ailus <sakari.ailus@linux.intel.com>
+>=20
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+>=20
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- net/sunrpc/svcsock.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+verif=C3=ADed the (new) definition of  pm_runtime_put_autosuspend()
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 22f59289fdcf17137fcac59e13975281ecf3e380..2b531d6d5edd92b2c2fe3b774f67e5ecaa9fd57f 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -1197,7 +1197,7 @@ static int svc_tcp_recvfrom(struct svc_rqst *rqstp)
-  * that the pages backing @xdr are unchanging.
-  */
- static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
--			   rpc_fraghdr marker, int *sentp)
-+			   rpc_fraghdr marker)
- {
- 	struct msghdr msg = {
- 		.msg_flags	= MSG_SPLICE_PAGES,
-@@ -1206,8 +1206,6 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 	void *buf;
- 	int ret;
- 
--	*sentp = 0;
--
- 	/* The stream record marker is copied into a temporary page
- 	 * fragment buffer so that it can be included in rq_bvec.
- 	 */
-@@ -1225,10 +1223,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 		      1 + count, sizeof(marker) + rqstp->rq_res.len);
- 	ret = sock_sendmsg(svsk->sk_sock, &msg);
- 	page_frag_free(buf);
--	if (ret < 0)
--		return ret;
--	*sentp += ret;
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -1247,7 +1242,7 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
- 	struct xdr_buf *xdr = &rqstp->rq_res;
- 	rpc_fraghdr marker = cpu_to_be32(RPC_LAST_STREAM_FRAGMENT |
- 					 (u32)xdr->len);
--	int sent, err;
-+	int sent;
- 
- 	svc_tcp_release_ctxt(xprt, rqstp->rq_xprt_ctxt);
- 	rqstp->rq_xprt_ctxt = NULL;
-@@ -1255,9 +1250,9 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
- 	mutex_lock(&xprt->xpt_mutex);
- 	if (svc_xprt_is_dead(xprt))
- 		goto out_notconn;
--	err = svc_tcp_sendmsg(svsk, rqstp, marker, &sent);
--	trace_svcsock_tcp_send(xprt, err < 0 ? (long)err : sent);
--	if (err < 0 || sent != (xdr->len + sizeof(marker)))
-+	sent = svc_tcp_sendmsg(svsk, rqstp, marker);
-+	trace_svcsock_tcp_send(xprt, sent);
-+	if (sent < 0 || sent != (xdr->len + sizeof(marker)))
- 		goto out_close;
- 	mutex_unlock(&xprt->xpt_mutex);
- 	return sent;
-@@ -1268,8 +1263,8 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
- out_close:
- 	pr_notice("rpc-srv/tcp: %s: %s %d when sending %zu bytes - shutting down socket\n",
- 		  xprt->xpt_server->sv_name,
--		  (err < 0) ? "got error" : "sent",
--		  (err < 0) ? err : sent, xdr->len + sizeof(marker));
-+		  (sent < 0) ? "got error" : "sent",
-+		  sent, xdr->len + sizeof(marker));
- 	svc_xprt_deferred_close(xprt);
- 	mutex_unlock(&xprt->xpt_mutex);
- 	return -EAGAIN;
+But the subject could use some work, I only got
+	"[PATCH v2] media: rkvdec: Remove redundant"
 
--- 
-2.50.1
+so maybe make that
+"media: rkvdec: Remove redundant pm_runtime_mark_last_busy"
+
+
+Heiko
+
+> ---
+> Changes since V1:
+>   - Re-applied since the driver have been moved out of staging
+> ---
+>  drivers/media/platform/rockchip/rkvdec/rkvdec.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/me=
+dia/platform/rockchip/rkvdec/rkvdec.c
+> index d707088ec0dc1f6a18b2d168ebdf20b443f2240e..445f7c92eee34f7d6f885bb51=
+9d9eb24313da548 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -765,7 +765,6 @@ static void rkvdec_job_finish(struct rkvdec_ctx *ctx,
+>  {
+>  	struct rkvdec_dev *rkvdec =3D ctx->dev;
+> =20
+> -	pm_runtime_mark_last_busy(rkvdec->dev);
+>  	pm_runtime_put_autosuspend(rkvdec->dev);
+>  	rkvdec_job_finish_no_pm(ctx, result);
+>  }
+>=20
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250811-rkvdec-redundant-pm-rebase-ed9b885eeadd
+>=20
+> Best regards,
+>=20
+
+
+
 
 
