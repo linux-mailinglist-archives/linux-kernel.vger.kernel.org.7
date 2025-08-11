@@ -1,124 +1,170 @@
-Return-Path: <linux-kernel+bounces-762552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF8AB20860
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:08:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCB9B20864
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B2F3A8EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AC107A95B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354562D3A65;
-	Mon, 11 Aug 2025 12:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC53B2D375D;
+	Mon, 11 Aug 2025 12:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kMgwJnSY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gYAQxtkv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AczmBA1o"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF952D239F;
-	Mon, 11 Aug 2025 12:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEA522B8A9;
+	Mon, 11 Aug 2025 12:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914089; cv=none; b=VbXUmVZsBAmyAtyODOJmeY/ufTsK4DafF0b6lQPjHZA9KIP0UOPdrAvp1mt8hs8BvU3ujawJvOqhbYn41/0ysCLdiyGN1R1/gywS8mSjaZQcs9eshXJPo7VAqqHpCPUDUNW+s4pIzUJ4AHN5N60RmmdR+9TMgTmd/jNKWJHWus0=
+	t=1754914103; cv=none; b=bmQJgbI8exKqAvhT8PUHPG51u8y9OcfC/gdVCp151vE94DRDT1P7NLmO+G73rfcGCsfOA1KsisaQyqeTm7EWDbDDoDu3+PpcR7HrLlHPFbpy/fDzpEYLRDCQH00JLluaYbjOqCfy+gFpcpk3oXn7bOIo6GeTx2l6hdnlvGtqIwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914089; c=relaxed/simple;
-	bh=qb4k3dnsn4fU7MmAJJzINDed5D1nWSWRCKGv9H8d1CU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fGaRK3A5S2pohTWhzG6r/Z10i/YbmjBFR3jWRMwgBNdSY3VXqkjlBXMrVA69Rg9tVbh7h6kdYwRayDYzOl5I7625yriFs+Cbjhw0NVoED52+I2MfX0jubMcmn4iF2hIDJajcECgZdGlbJVJUpY8NhXFnpDDyNODJqygf90QfkEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kMgwJnSY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gYAQxtkv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754914085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vNU9H7AOGT9UEzwAg1eC99sj3253bWGd+eGOH4Eeg8Y=;
-	b=kMgwJnSY2j8y7Zs6GnadUUESMyUK9j999ipL6Z/X5Ng2Fui6OCO54ZngWJBVVnpJa7GTD2
-	E0/yVNydMsvSbwrYtrASyUeBC32EltdPDkJtrPjGS5w3yN7mdWeAhnscox1sIm6dUYopfF
-	GD7XZ/tVtJJUqxVEC55CvVacqIKHblEzcqN/O++6ESG10+doQDl5oXDd2ZgisIu4PzlpT/
-	aqpeHWcLYfUYpyk1LCbNLN6fc9qHQCXMC53Q6muxJ49RQM7LPf3zl6i4LMhHxRavytQVQK
-	DHcd482WKc0JrRYFRCihx884+sZprT7yhHD4dwaEh1cvGxqmOBS4obbEXHL9+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754914085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vNU9H7AOGT9UEzwAg1eC99sj3253bWGd+eGOH4Eeg8Y=;
-	b=gYAQxtkvnqkJnkeqqlZHd4OT0uO7Jx8Wmn8CKVOEoW5E7fAfo2JAjnvH4QtIR40JW9M1s/
-	BiKnJRYMsWEgzTAA==
-Date: Mon, 11 Aug 2025 14:08:04 +0200
-Subject: [PATCH] bpf: Don't use %pK through printk
+	s=arc-20240116; t=1754914103; c=relaxed/simple;
+	bh=UCwzjjviZPPLz2vXc+YOpbT2IMN+yvSFqZtKqJ3etuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qOixAkT7oDHQzYKIIyFU+W66OHzBaqSxXF1EcWGeaphgoC8pQDExXZAkSdTjQ2132t7AqvMFYVn89SMNbIm+4U2FSIUZofjSl7xXcV3a/eQQMLxbciplCZWb1ONMOgCF17U1ro8++Wkmbd1ra3kPBhkSXOe+Y0xULCO9Qc9Kcy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AczmBA1o; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bfabdbef5so3463211b3a.1;
+        Mon, 11 Aug 2025 05:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754914101; x=1755518901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GP0IekGVQUa8N0bi2aKaM+2v+1kKu1hhy7fkZ6DITVw=;
+        b=AczmBA1oL4Re/zIZeEH1HvIuh8obexRmi3P2gDs/Sia7xTjAHuSWwj1yNdTj+9cg4j
+         nS1jOcLc6Z5RMPKSi64q7UMEXN359+Gdrs49agpmy7f8Y88Bvk93Yv+DB4OV4y8GvIvE
+         Et1ajECehCwpPFntvFWKRqdhvYPckZPhhzuTlcm/7wBlzqxGZIBvxqacy2ff5lOz3q7V
+         ozacfx0k8qqMQMz43BhQ9dO/jhouaKWE2eTk4yJyKLMo7nE9+FHRpwH9EhbI/vlJcC5M
+         sNn07YfuB40uN6qqzbWQIbhbfPmxsjEV2KMNVfrX2+iLVEnIGhjCupsZbqb9Itw6S40M
+         ZZIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754914101; x=1755518901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GP0IekGVQUa8N0bi2aKaM+2v+1kKu1hhy7fkZ6DITVw=;
+        b=L9t1Vheybb5ZvN4Z1p3Inrk5LBfJgABK9z3WastymPDNAdplVFzkQBJKWuHzv28xrz
+         avErR6JMf6mdLcHUgDKb+15zsO79phMAwyeF/WWVKCsFObz702EVQ/jt0BY/BVc06o/G
+         ZDyY8BAMTZbPQtTSg+ZOrO8+3V5OVI0PjhnfLpF/dhPtzm+PLVleWZCJeyReCGrmcZxl
+         hQ8uC+gMy+rfejBIlVNmDUag+3x0rT3Tc6/zNyVttyfZkKvoqz6rCbnD+l2J1S5l3XDe
+         Wem0UbJdVeD1j9cFgkXIhjZiQAjxPUS0kP4DZjneq8iaFX4DQcLuAYNOGZynORVo3R5+
+         LGeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfv4tMTOjlgMszsb3fmi8HuRnDsE+WllyO9WvW8OLSEod5smaSbii5ui9pHlRXpPXM/O59CKKIWDdxoygf@vger.kernel.org, AJvYcCUglsEIdKkSRV/8Zavz0jPQMJ1xPRuOYs/JZMrzU2iT7eI5i4O1pyJT0wfKk9asYLdnLkFdVsP97DY1qtHv@vger.kernel.org, AJvYcCXY2E7p3TdxzmTc6tJ3klOg15YK8BI+x6eO4pgD1IucEZG75WegrvXK0u8gZG0KG/un2PmvpWbyezBh@vger.kernel.org
+X-Gm-Message-State: AOJu0YweVHN7nvqe7WG1Bv3JX+PfYFnB3ORBj298QgPnCGLZtN9kai8C
+	r4DRNWetihfZHNjp78uhxiKAsCeuDdZKT9zqmwkN2MQ1EV+QYUWHyq3daO+54w==
+X-Gm-Gg: ASbGncusw+3hgc3RrE05DxyHXOfZFkQAb6fFNcgxy4bZnLvCDM38Q7OAZUROwhOK9wC
+	htQ5hYTCkNIHfC11Ppao7GUyG71preuzKXpo3aPIvrIG2Gbh5h53AZwsvn5zAhoIYwBnIZvM7cf
+	NPqHAAliohbKpor9GQrBImLUSy50G55JpR8o5JJFra6v6So+4LS8q0Z4HFV3q1ByE2uF9Ip8PBL
+	ThCZi4R9l67nRn6yjVzpRbssUoECF3U2Pw3++X4OL/De26sz0lKO9omhhxHQ3hGM0QFb+oTASTA
+	0CdGjSFHDrsTlCTikyZA6gDihityQ3hAkeMn4h7OzkNTqyygTkLUtGKkVvb3RL/eAbN0oAHge2r
+	4iiVNcjxrAIF2aXEy200tn1Ni4+xjFFuiv3w=
+X-Google-Smtp-Source: AGHT+IGO0N2WzlyFPVmjtOubYJJT3FNBe2WHrsbZh8IuUfVy6/8hjJlLK/SKozCf1Vh2gAGHvNmH5g==
+X-Received: by 2002:a05:6a00:1a94:b0:75f:8239:5c2b with SMTP id d2e1a72fcca58-76c461b0de8mr17513166b3a.23.1754914100898;
+        Mon, 11 Aug 2025 05:08:20 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbcef6sm26836642b3a.85.2025.08.11.05.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 05:08:20 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: hch@infradead.org
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] iomap: allow partial folio write with iomap_folio_state
+Date: Mon, 11 Aug 2025 20:08:19 +0800
+Message-ID: <20250811120819.1022017-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <aJnIGcIcgjVtZqc3@infradead.org>
+References: <aJnIGcIcgjVtZqc3@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250811-restricted-pointers-bpf-v1-1-a1d7cc3cb9e7@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIACPdmWgC/x3MQQrDIBBG4auEWXdAQwrSq5QsjP5pZ2NkRkIhe
- PdIl9/ivYsMKjB6TRcpTjE5yoB/TJS+sXzAkodpdvPTBe9ZYU0lNWSuh5QGNd7qzm7J0S2Ifgu
- RRl0Vu/z+5/fa+w2IRDMkaQAAAA==
-X-Change-ID: 20250811-restricted-pointers-bpf-04da04ea1b8a
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754914084; l=1513;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=qb4k3dnsn4fU7MmAJJzINDed5D1nWSWRCKGv9H8d1CU=;
- b=JHnG4dbctRyTrErXIDufQtwc+eg0rDwsFn9d0ntsGI2564ACO0hydRh7mm65LlYxVXjaSnVu0
- mdmaDGMB5xPD69tsvThlPpHJklxlh1580zz5mT0AcW9qVh9Nl1l2RP6
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Mon, 11 Aug 2025 03:38:17 -0700, Christoph Hellwig wrote:
+> On Sun, Aug 10, 2025 at 06:15:50PM +0800, alexjlzheng@gmail.com wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > 
+> > With iomap_folio_state, we can identify uptodate states at the block
+> > level, and a read_folio reading can correctly handle partially
+> > uptodate folios.
+> > 
+> > Therefore, when a partial write occurs, accept the block-aligned
+> > partial write instead of rejecting the entire write.
+>
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/linux/filter.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 1e7fd3ee759e07534eee7d8b48cffa1dfea056fb..52fecb7a1fe36d233328aabbe5eadcbd7e07cc5a 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -1296,7 +1296,7 @@ void bpf_jit_prog_release_other(struct bpf_prog *fp, struct bpf_prog *fp_other);
- static inline void bpf_jit_dump(unsigned int flen, unsigned int proglen,
- 				u32 pass, void *image)
- {
--	pr_err("flen=%u proglen=%u pass=%u image=%pK from=%s pid=%d\n", flen,
-+	pr_err("flen=%u proglen=%u pass=%u image=%p from=%s pid=%d\n", flen,
- 	       proglen, pass, image, current->comm, task_pid_nr(current));
+Thank you for your reply. :)
  
- 	if (image)
+> We're not rejecting the entire write, but instead moving on to the
+> next loop iteration.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-restricted-pointers-bpf-04da04ea1b8a
+Yes, but the next iteration will need to re-copy from the beginning,
+which means that all copies in this iteration are useless. The purpose
+of this patch set is to reduce the number of bytes that need to be
+re-copied and reduce the number of discarded copies.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+bytes are 2MB-3kB.
 
+Without this patchset, we'd need to recopy 2MB-3kB of bytes in the next
+iteration.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+ |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+                         |<-------- 1MB -------->|  next next time we need copy.
+
+ |<------ 2MB-3kB bytes duplicate copy ---->|
+
+With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+This means we only need to process the remaining 4kB in the next iteration.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+                                         |<-4kB->|  next time we need copy
+
+                                         |<>|
+                              only 1kB bytes duplicate copy
+
+
+> 
+> > This patchset has been tested by xfstests' generic and xfs group, and
+> > there's no new failed cases compared to the lastest upstream version kernel.
+> 
+> What is the motivation for this series?  Do you see performance
+> improvements in a workload you care about?
+
+Paritial writes are inherently a relatively unusual situation and don't account
+for a significant portion of performance testing.
+
+However, in scenarios with numerous memory errors, they can significantly reduce
+the number of bytes copied.
+
+thanks,
+Jinliang Zheng :)
 
