@@ -1,71 +1,69 @@
-Return-Path: <linux-kernel+bounces-762492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA709B2077C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4446AB20786
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCC01755C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497E4176F3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE732D0C7B;
-	Mon, 11 Aug 2025 11:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD132D1301;
+	Mon, 11 Aug 2025 11:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QD3mXGAq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d1bdvuIJ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF8F28725E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4767D2D0C6E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911354; cv=none; b=eKI5a8qt5vTOiJTEG7WrITxLtFBC5R7q13xeHvYrb3IZr2TT4XZ7LYewMVpcKWTWDHl/uTTyWq7iQHssePpWBOL+/PCtAq7rtHT+RXcO5GC8HYSadZLRybCZPOMVrdyvcupV/Lk9KFi3d4Com75s2fursi/rTMQetbsaemXGwKc=
+	t=1754911434; cv=none; b=EW1xORT0valLEIC+1vkqrT186yMoU53MgxDFp5jecjpsxqV9Iq0tBQIlk9baA1a4D5LCpxtKNYDNcM+ZckNPbushKHT3QgBcXgXcoBJg2Ti2qwLOAd7MOHJtUVkdYjxswtxdcSXNgKXGQDLrZrnVoM2czLySvBJj2Zy4VrEO4l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911354; c=relaxed/simple;
-	bh=yH9o/+7iQTtEc5jc6WfYbooYmTC+iDCsKE/1zeYeYwQ=;
+	s=arc-20240116; t=1754911434; c=relaxed/simple;
+	bh=Tr1PDV72f8SxG2vSQOsMJUwUHTueO9mpx6Y10Lr1jlc=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gZUiDcCRtVnj8e0qIgJ0i1dZdLWyairqPSZ4RfB/yBLm9Uidk+0FzGyR5d60h8R98wZ3RHAN66PBk8TWvY03wjr6q1wd03BfcZKiVNtZ594G9Z16CqvdTAx6gYFAcPHMRbKrI8uyc9hDPEJCy0sm5oa6nVrdbx/46CZus+jV8wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QD3mXGAq; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=bm4bvo0e6jYcq3gpTNlEc4mcU3CR2OXdb1jEBnttqHskfN0qa9aGLW09IwBTt1UcRkk1No9JfYFq7c0qPcgjCTqWYJiWlczZrz5fq9IMnyjjUtP40wGHE6hknG8UX0BHj7MfRRzxtiQrx7ZrE/e5yNIadlj7EnHqL+850hrKesA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d1bdvuIJ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754911351;
+	s=mimecast20190719; t=1754911432;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FwVUSFRZ0F7GHgPHZ+J3/Ax+Q+cwf/vSatx/cEwvjzI=;
-	b=QD3mXGAqBBI/1KrTZe6ZMvDWKdBs9KI0/JJGKfkyfBOeV/PU0NWHYkIUOJPNyoLonFL7yC
-	iT7HPPThPWLmkaGWL4HXu24l7l62esA6IyjRewRu47VhaGsBkZ352zDgPRozKbk0FvnJMZ
-	jC0QHZ7Xid3EHQxkUH4D1iGvO8ghliY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=3EcE+Ww1+cUz2ETnyTdPt53gzWYEyrvawI1y/8RN51s=;
+	b=d1bdvuIJ/WZxinaQPTphDQ8WFSAV+vbD+5SeeEAh6ISyTWdAHzey2hL0dTSviVC/rOubPk
+	85svNQWlKILiuHKhkZ4x5Ux5l7L+hkzABxT7OdGG8xAyog4UaxiorKe+bOoMwO17WjCPK0
+	aKSugVxnvY946zzphue/sIF9PTQ1T0I=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-685-k73NodGxOoSyNSYeShpbMA-1; Mon,
- 11 Aug 2025 07:22:28 -0400
-X-MC-Unique: k73NodGxOoSyNSYeShpbMA-1
-X-Mimecast-MFC-AGG-ID: k73NodGxOoSyNSYeShpbMA_1754911347
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-qPIbAS7iNG6dTkql56phhg-1; Mon,
+ 11 Aug 2025 07:23:48 -0400
+X-MC-Unique: qPIbAS7iNG6dTkql56phhg-1
+X-Mimecast-MFC-AGG-ID: qPIbAS7iNG6dTkql56phhg_1754911427
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02A9F1800370;
-	Mon, 11 Aug 2025 11:22:27 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6CFE91956080;
+	Mon, 11 Aug 2025 11:23:46 +0000 (UTC)
 Received: from [10.22.80.50] (unknown [10.22.80.50])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7812219560B4;
-	Mon, 11 Aug 2025 11:22:24 +0000 (UTC)
-Date: Mon, 11 Aug 2025 13:22:18 +0200 (CEST)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1BB651800291;
+	Mon, 11 Aug 2025 11:23:43 +0000 (UTC)
+Date: Mon, 11 Aug 2025 13:23:39 +0200 (CEST)
 From: Mikulas Patocka <mpatocka@redhat.com>
-To: Shubham Sharma <slopixelz@gmail.com>
-cc: agk@redhat.com, snitzer@kernel.org, corbet@lwn.net, msakai@redhat.com, 
-    dm-devel@lists.linux.dev, linux-doc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: device-mapper :Fix typos in delay.rst and
- vdo-design.rst
-In-Reply-To: <20250810113008.27381-1-slopixelz@gmail.com>
-Message-ID: <b03394a2-eca7-6c39-6ab8-d3a7ae1c7233@redhat.com>
-References: <20250810113008.27381-1-slopixelz@gmail.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dm: Use vmalloc_array to simplify code
+In-Reply-To: <20250805091448.124183-1-rongqianfeng@vivo.com>
+Message-ID: <7ed910b3-aac6-8c15-ba65-c81ed267de7a@redhat.com>
+References: <20250805091448.124183-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,54 +71,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Applied, thanks.
+Applied.thanks.
 
 Mikulas
 
 
 
-On Sun, 10 Aug 2025, Shubham Sharma wrote:
+On Tue, 5 Aug 2025, Qianfeng Rong wrote:
 
-> Fixed the following typos in device-mapper documentation:
-> - explicitely -> explicitly
-> - approriate -> appropriate
+> Remove array_size() calls and replace vmalloc() with
+> vmalloc_array() to simplify the code.
 > 
-> Signed-off-by: Shubham Sharma <slopixelz@gmail.com>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 > ---
->  Documentation/admin-guide/device-mapper/delay.rst      | 2 +-
->  Documentation/admin-guide/device-mapper/vdo-design.rst | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  drivers/md/dm-cache-policy-smq.c | 2 +-
+>  drivers/md/dm-region-hash.c      | 2 +-
+>  drivers/md/dm-switch.c           | 4 ++--
+>  drivers/md/dm-thin.c             | 4 ++--
+>  4 files changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/Documentation/admin-guide/device-mapper/delay.rst b/Documentation/admin-guide/device-mapper/delay.rst
-> index 4d667228e744..982136160d6f 100644
-> --- a/Documentation/admin-guide/device-mapper/delay.rst
-> +++ b/Documentation/admin-guide/device-mapper/delay.rst
-> @@ -18,7 +18,7 @@ Table line has to either have 3, 6 or 9 arguments:
->     to write and flush operations on optionally different write_device with
->     optionally different sector offset
+> diff --git a/drivers/md/dm-cache-policy-smq.c b/drivers/md/dm-cache-policy-smq.c
+> index 2ed894155cab..7e1e8cc0e33a 100644
+> --- a/drivers/md/dm-cache-policy-smq.c
+> +++ b/drivers/md/dm-cache-policy-smq.c
+> @@ -590,7 +590,7 @@ static int h_init(struct smq_hash_table *ht, struct entry_space *es, unsigned in
+>  	nr_buckets = roundup_pow_of_two(max(nr_entries / 4u, 16u));
+>  	ht->hash_bits = __ffs(nr_buckets);
 >  
-> -9: same as 6 arguments plus define flush_offset and flush_delay explicitely
-> +9: same as 6 arguments plus define flush_offset and flush_delay explicitly
->     on/with optionally different flush_device/flush_offset.
+> -	ht->buckets = vmalloc(array_size(nr_buckets, sizeof(*ht->buckets)));
+> +	ht->buckets = vmalloc_array(nr_buckets, sizeof(*ht->buckets));
+>  	if (!ht->buckets)
+>  		return -ENOMEM;
 >  
->  Offsets are specified in sectors.
-> diff --git a/Documentation/admin-guide/device-mapper/vdo-design.rst b/Documentation/admin-guide/device-mapper/vdo-design.rst
-> index 3cd59decbec0..faa0ecd4a5ae 100644
-> --- a/Documentation/admin-guide/device-mapper/vdo-design.rst
-> +++ b/Documentation/admin-guide/device-mapper/vdo-design.rst
-> @@ -600,7 +600,7 @@ lock and return itself to the pool.
->  All storage within vdo is managed as 4KB blocks, but it can accept writes
->  as small as 512 bytes. Processing a write that is smaller than 4K requires
->  a read-modify-write operation that reads the relevant 4K block, copies the
-> -new data over the approriate sectors of the block, and then launches a
-> +new data over the appropriate sectors of the block, and then launches a
->  write operation for the modified data block. The read and write stages of
->  this operation are nearly identical to the normal read and write
->  operations, and a single data_vio is used throughout this operation.
+> diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
+> index a4550975c27d..e9b47b659976 100644
+> --- a/drivers/md/dm-region-hash.c
+> +++ b/drivers/md/dm-region-hash.c
+> @@ -206,7 +206,7 @@ struct dm_region_hash *dm_region_hash_create(
+>  	rh->shift = RH_HASH_SHIFT;
+>  	rh->prime = RH_HASH_MULT;
+>  
+> -	rh->buckets = vmalloc(array_size(nr_buckets, sizeof(*rh->buckets)));
+> +	rh->buckets = vmalloc_array(nr_buckets, sizeof(*rh->buckets));
+>  	if (!rh->buckets) {
+>  		DMERR("unable to allocate region hash bucket memory");
+>  		kfree(rh);
+> diff --git a/drivers/md/dm-switch.c b/drivers/md/dm-switch.c
+> index bb1a70b5a215..50a52ca50b34 100644
+> --- a/drivers/md/dm-switch.c
+> +++ b/drivers/md/dm-switch.c
+> @@ -114,8 +114,8 @@ static int alloc_region_table(struct dm_target *ti, unsigned int nr_paths)
+>  		return -EINVAL;
+>  	}
+>  
+> -	sctx->region_table = vmalloc(array_size(nr_slots,
+> -						sizeof(region_table_slot_t)));
+> +	sctx->region_table = vmalloc_array(nr_slots,
+> +					   sizeof(region_table_slot_t));
+>  	if (!sctx->region_table) {
+>  		ti->error = "Cannot allocate region table";
+>  		return -ENOMEM;
+> diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+> index 007bb93e5fca..c84149ba4e38 100644
+> --- a/drivers/md/dm-thin.c
+> +++ b/drivers/md/dm-thin.c
+> @@ -3031,8 +3031,8 @@ static struct pool *pool_create(struct mapped_device *pool_md,
+>  	}
+>  
+>  	pool->cell_sort_array =
+> -		vmalloc(array_size(CELL_SORT_ARRAY_SIZE,
+> -				   sizeof(*pool->cell_sort_array)));
+> +		vmalloc_array(CELL_SORT_ARRAY_SIZE,
+> +			      sizeof(*pool->cell_sort_array));
+>  	if (!pool->cell_sort_array) {
+>  		*error = "Error allocating cell sort array";
+>  		err_p = ERR_PTR(-ENOMEM);
 > -- 
-> 2.43.0
+> 2.34.1
 > 
 
 
