@@ -1,206 +1,82 @@
-Return-Path: <linux-kernel+bounces-761707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB3CB1FD99
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64758B1FD9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2803B478E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:12:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4ECD7A484A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D27C23E35E;
-	Mon, 11 Aug 2025 02:12:49 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045E43D76;
-	Mon, 11 Aug 2025 02:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DC519F111;
+	Mon, 11 Aug 2025 02:13:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60011C07C4;
+	Mon, 11 Aug 2025 02:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754878369; cv=none; b=euAOLexRH9hTEayMB9XKtRqwxSzSoTFM2h9kEWXBwhprVJpyw7k3Ccbj7FbsaJOCbQKjFEiZtN76VZ3rF2HvI/nbtnp40p7qiZb2cwlCN+hje0mttGmxR6ToA+7rRPnu6ABi4w8dS6ldLNV3cixSr2i/kLpvrImYG3sR6Eh2tWU=
+	t=1754878438; cv=none; b=k8kHMv6x81V6XggV/SPsvLnXP/YhYRsD64hZ5TEUgvPO28Tc7SBDeLDuHDzE17nZJoasHEFFFLGS5iBESXHbq0XozVvfce7IAvssFcRjW0VzF0YtJlOcnlggqE1bdTIj18kmV9pAKZQeQeJ5ti6+aQAHSz5+eDv/D51ErrR7Ic8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754878369; c=relaxed/simple;
-	bh=+ehj0RQSQc9PkfBwo3f2W9owJEDgwxSozOoQrdlpYpo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=r8eqq5bZIsk2d3PNRC6JiXQCEwP47N9ur8NFBc56pZuZWEBZ4Pki9YxS/KKq2dx5d6zxdkTmi6tMtjdTi+EVXHbaAOayUYgwjIZareIcT2362JRWiskc2w962nuEC0NzWeZoB1ElnCRMs87xD7+8vnQtLauBR523yFMrpYYdQTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c0dTw4b6Pz2YPms;
-	Mon, 11 Aug 2025 10:13:40 +0800 (CST)
-Received: from kwepemo100013.china.huawei.com (unknown [7.202.195.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03ADE140143;
-	Mon, 11 Aug 2025 10:12:37 +0800 (CST)
-Received: from [10.67.120.83] (10.67.120.83) by kwepemo100013.china.huawei.com
- (7.202.195.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 11 Aug
- 2025 10:12:36 +0800
-Message-ID: <9e3047e5-a6a2-4a56-967b-4dddbd3d1b43@h-partners.com>
-Date: Mon, 11 Aug 2025 10:12:35 +0800
+	s=arc-20240116; t=1754878438; c=relaxed/simple;
+	bh=ZkwqLtuVEwEfj4riMhLdaZMOWzTOEY5QrtIz2t/nj6o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mIB73roC1pZHMkY8Dschv3Or9nI8RjabIrVKiY5ELIFQB9K6sddsJQtnYg4eg4a0n3Z9dO4mxb7jEXijLCYi1FIK9necTgPZgawp7RSljwupCU33GJzXpT03PR1iKHz8cg5ozjtTa/k8h/QSUGcvBUhDMjqCIVnZMSHCqP8NvWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8DxbKzZUZlomBg+AQ--.52699S3;
+	Mon, 11 Aug 2025 10:13:45 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+TYUZloMZtBAA--.48509S2;
+	Mon, 11 Aug 2025 10:13:45 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xianglai Li <lixianglai@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] LoongArch: KVM: Support various access size with pch_pic emulation
+Date: Mon, 11 Aug 2025 10:13:39 +0800
+Message-Id: <20250811021344.3678306-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] sysfs: duplicate resource file creation during PCIe rescan
-From: moubingquan <moubingquan@h-partners.com>
-To: <bhelgaas@google.com>
-CC: <ilpo.jarvinen@linux.intel.com>, <lukas@wunner.de>, linux-arm
-	<linux-arm-kernel@lists.infradead.org>, linux-kernl
-	<linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>,
-	fanghao <fanghao11@huawei.com>, gaozhihao <gaozhihao6@h-partners.com>,
-	lujunhua <lujunhua7@h-partners.com>, shenyang <shenyang39@huawei.com>,
-	wushanping <wushanping@huawei.com>, zengtao <prime.zeng@hisilicon.com>,
-	<jonathan.cameron@huawei.com>
-References: <b51519d6-ce45-4b6d-8135-c70169bd110e@h-partners.com>
-Content-Language: en-US
-In-Reply-To: <b51519d6-ce45-4b6d-8135-c70169bd110e@h-partners.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo100013.china.huawei.com (7.202.195.244)
+X-CM-TRANSID:qMiowJDxQ+TYUZloMZtBAA--.48509S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Hello everyone, does anyone have any ideas on how to approach this problem。
+With PCH PIC interrupt controller emulation driver, its access size is
+hardcoded now. Instead the MMIO register can be accessed with different
+size such 1/2/4/8.
 
-On 7/29/2025 9:13 AM, moubingquan wrote:
-> Hi all,
-> 
-> When uninstalling the driver on the ARM64 platform and invoking `sriov_disable()`,
-> another thread simultaneously performed `echo 1 > /sys/bus/pci/rescan`,
-> which resulted in a call trace error (`sysfs: cannot create duplicate filename`) when subsequently loading the driver.
-> 
-> Under certain multi-threaded scenarios (e.g. VF teardown + PCI rescan triggered in parallel),
-> The following sequence may result in files appearing in sysfs that should not exist:
-> 
-> 1. sriov_disable() uninstalls VFs and removes the corresponding VF files in sysfs.
-> 2.At the same time, when rescan_store() rescan the entire PCI device tree,
-> there is a possibility that VF files that should have been deleted are added back,
-> resulting in VF files in sysfs that should have been removed but were not.
-> 
-> Tested on:
-> - Kernel version: Linux version 6.15.0-rc4+ (phisik3@10-50-163-153-ARM-openEuler22-3)
-> - Platform: ARM64 (Huawei Kunpeng920)
-> - Repro steps:
-> 1.Thread A unloads the driver and VF (requires calling sriov_disable()).
-> 2.Thread B calls `echo 1 > /sys/bus/pci/rescan `
-> 
-> The system will report a call trace as follows:
-> 
-> sysfs: cannot create duplicate filename '/devices/pci0000:3c/0000:3c:01.0/0000:3e:00.2/resource2'
-> CPU: 138 UID: 0 PID: 11067 Comm: sh Kdump: loaded Tainted: G      D W  O        6.15.0-rc4+ #1 PREEMPT
-> Tainted: [D]=DIE, [W]=WARN, [O]=OOT_MODULE
-> Call trace:
->   show_stack+0x20/0x38 (C)
->   dump_stack_lvl+0x80/0xf8
->   dump_stack+0x18/0x28
->   sysfs_warn_dup+0x6c/0x90
->   sysfs_add_bin_file_mode_ns+0x12c/0x178
->   sysfs_create_bin_file+0x7c/0xb8
->   pci_create_attr+0x104/0x1b0
->   pci_create_resource_files.part.0+0x50/0xd0
->   pci_create_sysfs_dev_files+0x30/0x50
->   pci_bus_add_device+0x40/0x120
->   pci_bus_add_devices+0x40/0x98
->   pci_bus_add_devices+0x6c/0x98
->   pci_rescan_bus+0x38/0x58
->   rescan_store+0x80/0xb0
->   bus_attr_store+0x2c/0x48
->   sysfs_kf_write+0x84/0xa8
->   kernfs_fop_write_iter+0x120/0x1b8
->   vfs_write+0x338/0x3f8
->   ksys_write+0x70/0x110
->   __arm64_sys_write+0x24/0x38
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x34/0xf0
->   el0t_64_sync_handler+0xc8/0xd0
->   el0t_64_sync+0x1ac/0x1b0
-> 
-> The general analysis and corresponding code are as follows:
-> 
-> drivers/pci/iov.c
-> 
-> 736 static void sriov_disable(struct pci_dev *dev)
-> 737 {
-> 738         struct pci_sriov *iov = dev->sriov;
-> 739
-> 740         if (!iov->num_VFs)
-> 741                 return;
-> 742
-> 743         sriov_del_vfs(dev);
-> 744         iov->ctrl &= ~(PCI_SRIOV_CTRL_VFE | PCI_SRIOV_CTRL_MSE);
-> 745         pci_cfg_access_lock(dev);
-> 746         pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, iov->ctrl);
-> 747         ssleep(1);
-> 748         pci_cfg_access_unlock(dev);
-> 749
-> 750         pcibios_sriov_disable(dev);
-> 751
-> 752         if (iov->link != dev->devfn)
-> 753                 sysfs_remove_link(&dev->dev.kobj, "dep_link");
-> 754
-> 755         iov->num_VFs = 0;
-> 756         pci_iov_set_numvfs(dev, 0);
-> 757 }
-> 
-> sriov_disable() will unload the VF and remove its files from sysfs.
-> 
-> drivers/pci/pci-sysfs.c
-> 
->   435 static ssize_t rescan_store(const struct bus_type *bus, const char *buf, size_t count)
->   436 {
->   437         unsigned long val;
->   438         struct pci_bus *b = NULL;
->   439
->   440         if (kstrtoul(buf, 0, &val) < 0)
->   441                 return -EINVAL;
->   442
->   443         if (val) {
->   444                 pci_lock_rescan_remove();
->   445                 while ((b = pci_find_next_bus(b)) != NULL)
->   446                         pci_rescan_bus(b);
->   447                 pci_unlock_rescan_remove();
->   448         }
->   449         return count;
->   450 }
->   451 static BUS_ATTR_WO(rescan);
-> 
-> The `rescan_store()` function will scan the entire PCI bus, including the relevant sysfs files for the aforementioned VFs.
-> 
-> Initially, it seemed that directly adding the pci_lock_rescan_remove() lock to sriov_disable() could solve the problem.
-> However, it was later discovered that this might lead to a deadlock issue (because the remove_store() function would call sriov_disable(), causing a deadlock).
-> 
-> drivers/pci/pci-sysfs.c
-> 
->   487 static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
->   488                             const char *buf, size_t count)
->   489 {
->   490         unsigned long val;
->   491
->   492         if (kstrtoul(buf, 0, &val) < 0)
->   493                 return -EINVAL;
->   494
->   495         if (val && device_remove_file_self(dev, attr))
->   496
->          //Subsequently, sriov_disable() will be invoked.
->                  pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
->   497         return count;
->   498 }
->   499 static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
->   500                                   remove_store);
-> 
-> The function `pci_stop_and_remove_bus_device_locked()` acquires the `pci_lock_rescan_remove()` lock and subsequently calls `sriov_disable()`.
-> If the lock is added within `sriov_disable()`, it could lead to a deadlock.
-> 
-> Should we add a new lock to address this issue, or are there any other ideas? I would like to consult and discuss this with everyone.
-> 
-> Thanks,
-> Bingquan Mou <moubingquan@h-partners.com>
+This patchset adds various read/write size support with emulation
+function loongarch_pch_pic_read() and loongarch_pch_pic_write().
+
+Bibo Mao (5):
+  LoongArch: KVM: Set version information at initial stage
+  LoongArch: KVM: Add read length support in loongarch_pch_pic_read()
+  LoongArch: KVM: Add IRR and ISR register read emulation
+  LoongArch: KVM: Add different length support in
+    loongarch_pch_pic_write()
+  LoongArch: KVM: Add address alignment check in pch_pic register access
+
+ arch/loongarch/include/asm/kvm_pch_pic.h |  15 +-
+ arch/loongarch/kvm/intc/pch_pic.c        | 239 ++++++++++-------------
+ 2 files changed, 120 insertions(+), 134 deletions(-)
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.39.3
 
 
