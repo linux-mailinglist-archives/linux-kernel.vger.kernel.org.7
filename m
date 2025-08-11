@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-763299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1FEB212E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE24B212EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B6E190822E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75733E0C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B445A2C21F8;
-	Mon, 11 Aug 2025 17:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1694F2C21D7;
+	Mon, 11 Aug 2025 17:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkShttiE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HW6UqpBX"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA61482FF;
-	Mon, 11 Aug 2025 17:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF4A29BDB3;
+	Mon, 11 Aug 2025 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932244; cv=none; b=pN2XIQeleTXXI/ht2G7cPi9RtG8Y/1af+Cyv35Lq2T/aDX+WKQIZjJAyc82Db7uFdBGEQPmGAyIbIv04DTalaR+wtWVTkPUGExh9k3j7hQPYAPO+TEc8pTVpru3LnEoVO1SK42tFkGZW31TQRgsX57Eao0Fk++WJWkgd/g+9ZRE=
+	t=1754932257; cv=none; b=iY4MBu5VRiZhhli9Pf7qVjdt93++eyTMTXtDdBiyO9ZbyjyxxzTJ4PZFYtGZs45cSAgOq606psWlSfm45AvYVhk88pI4jS1MrmR9Ri8C4XPfre9QenAh6pBkQLppsjjW9yDZOkSBd2R7q1sQYKzYRyKG6jr5l/23aZrPXLiP99A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932244; c=relaxed/simple;
-	bh=KC9TnQ4V7hECSI++sjV1/G972qEpxPOLX4spClO7cDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1OyB63VKNv/7L+9fcvpdfK1CpAQrtmqCkJewQIllKJrKyroWK8hNkzXOY4Z4lDQB/13qa0kPdeGGl037obKzLrbUohuG3BaCYaB2CE2fS6tC/PIk5Sp+Dbg9HyALnPo60YI0+OKAWUIKcIMdhuecRd4uh0eQxMjhMD2OLzmA30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkShttiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB988C4CEED;
-	Mon, 11 Aug 2025 17:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754932243;
-	bh=KC9TnQ4V7hECSI++sjV1/G972qEpxPOLX4spClO7cDM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lkShttiEBGmFzdaynbAoNk7gBnM7RclzAQUOGH55Bt8akcmdhr12SvCXRUo3DSmsK
-	 qzqA7NOewy0wgyPB/AWoQVT3ba8LecPzUgmqAeUcGeCIFz/dY0onrodxFcbBKh70y9
-	 N+1izukN41vxS40VYdQ1x4j+CmHwEUPEg+b6hRB+nzCqRG/KLAAhGR9yZ9YqxMv1FP
-	 bzV6BXxMk2Rysv1+XyFzNG9S/5pqF78LcEcZJaaWir2H2DJHWOjYjG2maGzyULfJet
-	 kV1/Y3P6J9avlTlqtO4xkSYG89WyE1iCru0FO5XU2xHrNZNCHtQ19ZHY2emU8mzxuh
-	 vq537CwT+az7A==
-Message-ID: <8bcc1ee7-2f43-4fa5-898f-7bddfe7b1a10@kernel.org>
-Date: Mon, 11 Aug 2025 19:10:37 +0200
+	s=arc-20240116; t=1754932257; c=relaxed/simple;
+	bh=NfcpECgqdHNwW4J3rj9k/7ZBMdwz41KP0vR83+uTCm4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NXxjbyrgev7DrpYH+2ETynasN7FWpWShuL/UMn9rMsscOysVHecLVGBeR5vE2QBMp6C6JH7kURLhl3gayRWsX9QLlCtvjQHTiTNMZaPBgXHNzUKxGNnY6iJyB1ppO22hSRWvGEE6ycrGA6Mi2cYDoJ+vRl60bPoCUCr9oO4X4lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HW6UqpBX; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754932248; x=1755537048; i=markus.elfring@web.de;
+	bh=iFEz9eT6F16hlYN806F59ir7VxzWd+QswdLQxOMMfBU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HW6UqpBXMEySXIUGN3fY2IbTR4VZeVs+7Q6pDbx/vSj4r+SnihLyKZ0/+JyRtPp4
+	 CVeI+q98ivxCDFwzB4d/4IU67ur/pxhPIb9Y5jaEGAY49/gN5sutTRhtGKlfr/6xB
+	 Yd5XJy6wQrKLRzaeq2tN4nP6nIAIX8fgYn7R4JrgLPkLzFoB4crf9Gk47kmtpCApD
+	 JZMvx9uW9DUCYCgA2T4DgcCDRdVh6FNcouo3HchfalosZAWbZVcTfoQE5loGo6WIz
+	 BaBdbeDhxu9JXW6EfkIUIMyxPvBhK8Wgi3M0Q1fetJmQAYmkEkI40QjCXfeKdCO1s
+	 GiugdmVq+B77SmMjyQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MN6BN-1v4YV31uQX-00Tt0q; Mon, 11
+ Aug 2025 19:10:48 +0200
+Message-ID: <d37e7ccd-1d5d-4237-8a7e-a0eb10ec069d@web.de>
+Date: Mon, 11 Aug 2025 19:10:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +56,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/4] dt-bindings: ufs: qcom: Document MCQ register
- space for UFS
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
- <20250811143139.16422-2-quic_rdwivedi@quicinc.com>
- <f8405e89-9449-4564-82d1-3146d9b75655@kernel.org>
- <adb94e86-38a2-4456-9363-d02c487ff7b8@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <adb94e86-38a2-4456-9363-d02c487ff7b8@quicinc.com>
+To: "Leo L. Schwab" <ewhac@ewhac.org>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Kate Hsuan <hpa@redhat.com>
+References: <20250810225617.1006272-2-ewhac@ewhac.org>
+Subject: Re: [PATCH] HID: lg-g15 - Add support for Logitech G13.
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250810225617.1006272-2-ewhac@ewhac.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bWtxhUXcLy/ImE83BhS+Vieazvy+5acd1YLg7TCqsur3QJK51zV
+ eeZcFK7K8XXTNkt/7aCFNAeJFFdpOp00GLDf0oKJCPCmGpSk8KwJIwbCqwMorpGS3gqg/WE
+ Rosi8Di4FvyOY9sM0sMSIaQUa7M3m2aBfevZb8sELcD1+5mA7hLmczEhZalDyg5VTO5YzhM
+ NIUlPYZciwiq3fM1afRpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SIdeQWToKv0=;H7Lmjt5s8wBVRuGOjfZ+fZAYbYw
+ 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
 
-On 11/08/2025 18:12, Ram Kumar Dwivedi wrote:
->>> +      - items:
->>> +          - const: ufs_mem
->>> +          - const: mcq
->>
->> No. Why are you sending this? You have been Cc-ed here:
->>
->> https://lore.kernel.org/all/20250731-dt-bindings-ufs-qcom-v2-3-53bb634bf95a@linaro.org/
-> 
-> Hi Krzysztof,
-> 
-> I understand I was Cc-ed on the patch thread you linked. However, if I send my patch on top of yours before it’s merged, the kernel bot might flag it due to missing base changes. Please let me know if you're okay with that — I can proceed with pushing my patch on top of yours.
+=E2=80=A6
+> +++ b/drivers/hid/hid-lg-g15.c
+=E2=80=A6
+> +static int lg_g13_kbd_led_set(struct led_classdev *led_cdev, enum led_b=
+rightness brightness)
+> +{
+=E2=80=A6
+> +	mutex_lock(&g15->mutex);
+> +	ret =3D lg_g13_kbd_led_write(g15, g15_led, brightness);
+> +	mutex_unlock(&g15->mutex);
+> +
+> +	return ret;
+> +}
+=E2=80=A6
 
-I don't understand it. We discuss this patch. What is with that
-conditional "if I send"? You already sent it.
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&g15->mutex);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.16/source/include/linux/mutex.h#L225
 
-Please wrap your replies to match mailing list style.
-
-Best regards,
-Krzysztof
+Regards,
+Markus
 
