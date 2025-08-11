@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-763401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A6EB21422
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CA1B21423
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4FC6258F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CA63E3432
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF692E764A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532CF2E7645;
 	Mon, 11 Aug 2025 18:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3jyZmKB"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BZUhF0Zn"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA222E610C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E07F2E6105
 	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936274; cv=none; b=aJsudOSFu6bOaCTpyEZ4d0k/SfcBe9JdR/AhKN+hYB8EhHMGkwTcmrxhyNIW9bJNKucm5mOC3c2MJNGUO0qIhekGvhpje/WcAnsk69WuGjyTGq74kxYQOItdw5DLCa9Fgr2j9bLM986iEWiXBRWKsrtyCT2uH5w2gT+q4hveoiw=
+	t=1754936274; cv=none; b=UVpJ96cCimaWzRkqrufA3P/E5btN1KR6w+Ihv82eJ6aVeSEki7xqhfubnh88SrdZVxGQbVFWv9vT6QzkU2U2cMo+hE+KD1U/tiHob6scOL48GCfrFdLV1gwhGORFvhOYUIFj2wEQcNFU8FBOmWsnI8JCxP7b6w3pFWiUGceD0RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754936274; c=relaxed/simple;
-	bh=47HI7bCkBNvQJ+DtUST6W3uW4FMOR3SyHta8tGZ5LJM=;
+	bh=gKPqMlcKrpchqfWY2TEm0WmAYj3krKqq8dwDF38mFfg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E7vYFyq9bKyrb3yr90coa86kQx1qNX9RsXvOIQl31LpamH6Z7V+BswjbtPgsHbKtela8uL+o2fe5VtUu4YtRsoLqRMGGTdnKn8IH18RCBkWSNwIU4zSd4W0zXO4AKMqmNU38TTRNRMEqwDBQT724CKIsT6Fka18+XNVGoN6yN4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3jyZmKB; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=BR6B6vHqIxLPc87DYk73m6muOn1lnwKrBsFkqfJEwhZNEKgu+QfC9Lzs2JrHSLav2cEq4Uqkps5rc7ZNg3oc0lEM4G7xC6WEp2AiOLIt7K+E2HTOeXxP6VIJAZBgfLtY27VhKlCcbNF1GDlrtTraRqrByvM7zTIzoPQ5j3x1PG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BZUhF0Zn; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1754936272; x=1786472272;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=47HI7bCkBNvQJ+DtUST6W3uW4FMOR3SyHta8tGZ5LJM=;
-  b=Y3jyZmKB2bm6AKQktlzQy3rUU2i1W0rYnNVAYiKhLY+aDgU0lm/H4Ghu
-   graXKkG/ncZqgrq99X3yt0S7iRo5kvHpKj9R3VepK/FwuQj0BmwRtEbXa
-   ekny4R/+AgNQHA4LdgJ5VHkFB0Q0EIhmqq7iFUDh8E4sQ8tTCdA62WQZi
-   vbB0YPOp9OiaTKMx0g4TjxbEhUbSxomIHg/aYwA25vJKgZFuavaZ85Z7e
-   PGYz0MB1JEXcq8rfowDuiW/wZu25xsaOleX/hQgHJDSMUbCDIldRKBi6F
-   PqL2ezVQ97D6L/9HV3v0oKONCxXcXLBHtXHqv7A9cJLk/e5K4AnB/beyZ
-   Q==;
-X-CSE-ConnectionGUID: 72dtMDMGRKGdpH5q1FI9Wg==
-X-CSE-MsgGUID: RcC/XAsITBCnUTofeDBhBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277586"
+  bh=gKPqMlcKrpchqfWY2TEm0WmAYj3krKqq8dwDF38mFfg=;
+  b=BZUhF0Zn8fsgZbRw8Jf0KyRSg6rfhIQKEbdjsmn4Dmu2+j5x17HS3o+H
+   g/oD5p0xH6NRg3eh0dcbf2ty731Ivqf8HONW7lmVdltyR6lX4/Z/CGg/V
+   ioNYXjvqhrdzfzbJa91FpUQ+aWYemOjyBP2s6ipaaATq3zmnjfTY7jQPF
+   3Ca762UdUZVyhNlaTsmsg8U/LDe+7fKaVGE8Tp+BHnObrUNbucNGMe+Ks
+   phI7T8zviJTYldKCat7Xgl9/ZvcjO0kektv/+ydDisp3RMIb3nS+CDNeA
+   bpDWvFKXqFzog9t/LMcHURAw9V2rGykoxipGPtswT8YY+jjKDovSwLNCv
+   A==;
+X-CSE-ConnectionGUID: xyR7qe7TTSuR7Lab1XIeaw==
+X-CSE-MsgGUID: SR2qB3ZIS/m/xGGTrRdiOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277596"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68277586"
+   d="scan'208";a="68277596"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:28 -0700
-X-CSE-ConnectionGUID: VB9MA2rvSBGOEPbA8oYohw==
-X-CSE-MsgGUID: 4+yvT43TR0qx8FG1fov7pA==
+X-CSE-ConnectionGUID: vDECg1C4TAu3nfKZyCzbAg==
+X-CSE-MsgGUID: oD4e0b4SSu+OJYiphBdpiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="196825717"
+   d="scan'208";a="196825720"
 Received: from puneetse-mobl.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.221.229])
   by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:27 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v8 31/32] x86/resctrl: Add debugfs files to show telemetry aggregator status
-Date: Mon, 11 Aug 2025 11:17:05 -0700
-Message-ID: <20250811181709.6241-32-tony.luck@intel.com>
+Subject: [PATCH v8 32/32] x86,fs/resctrl: Update Documentation for package events
+Date: Mon, 11 Aug 2025 11:17:06 -0700
+Message-ID: <20250811181709.6241-33-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250811181709.6241-1-tony.luck@intel.com>
 References: <20250811181709.6241-1-tony.luck@intel.com>
@@ -86,105 +86,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Each telemetry aggregator provides three status registers at the top
-end of MMIO space after all the per-RMID per-event counters:
+Each "mon_data" directory is now divided between L3 events and package
+events.
 
-  agg_data_loss_count: This counts the number of times that this aggregator
-  failed to accumulate a counter value supplied by a CPU core.
-
-  agg_data_loss_timestamp: This is a "timestamp" from a free running
-  25MHz uncore timer indicating when the most recent data loss occurred.
-
-  last_update_timestamp: Another 25MHz timestamp indicating when the
-  most recent counter update was successfully applied.
-
-Create files in /sys/kernel/debug/resctrl/info/PERF_PKG_MON/x86_64/
-to display the value of each of these status registers for each aggregator
-in each enabled event group.
+The "info/PERF_PKG_MON" directory contains parameters for perf events.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/intel_aet.c | 53 +++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ Documentation/filesystems/resctrl.rst | 85 +++++++++++++++++++++++----
+ 1 file changed, 75 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-index 4afc99e74cef..ff70f2b18165 100644
---- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-+++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-@@ -13,6 +13,7 @@
+diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+index c7949dd44f2f..065f9fdd8f95 100644
+--- a/Documentation/filesystems/resctrl.rst
++++ b/Documentation/filesystems/resctrl.rst
+@@ -167,7 +167,7 @@ with respect to allocation:
+ 			bandwidth percentages are directly applied to
+ 			the threads running on the core
  
- #include <linux/cleanup.h>
- #include <linux/cpu.h>
-+#include <linux/debugfs.h>
- #include <linux/intel_vsec.h>
- #include <linux/io.h>
- #include <linux/minmax.h>
-@@ -299,6 +300,55 @@ static bool get_pmt_feature(enum pmt_feature_id feature, struct event_group **ev
- 	return false;
- }
+-If RDT monitoring is available there will be an "L3_MON" directory
++If L3 monitoring is available there will be an "L3_MON" directory
+ with the following files:
  
-+static int status_read(void *priv, u64 *val)
-+{
-+	void __iomem *info = (void __iomem *)priv;
-+
-+	*val = readq(info);
-+
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(status_fops, status_read, NULL, "%llu\n");
-+
-+static void make_status_files(struct dentry *dir, struct event_group *e, int pkg, int instance)
-+{
-+	void *info = (void __force *)e->pkginfo[pkg]->addrs[instance] + e->mmio_size;
-+	char name[64];
-+
-+	sprintf(name, "%s_pkg%d_agg%d_data_loss_count", e->name, pkg, instance);
-+	debugfs_create_file(name, 0400, dir, info - 24, &status_fops);
-+
-+	sprintf(name, "%s_pkg%d_agg%d_data_loss_timestamp", e->name, pkg, instance);
-+	debugfs_create_file(name, 0400, dir, info - 16, &status_fops);
-+
-+	sprintf(name, "%s_pkg%d_agg%d_last_update_timestamp", e->name, pkg, instance);
-+	debugfs_create_file(name, 0400, dir, info - 8, &status_fops);
-+}
-+
-+static void create_debug_event_status_files(struct dentry *dir, struct event_group *e)
-+{
-+	int num_pkgs = topology_max_packages();
-+
-+	for (int i = 0; i < num_pkgs; i++)
-+		for (int j = 0; j < e->pkginfo[i]->num_regions; j++)
-+			make_status_files(dir, e, i, j);
-+}
-+
-+static void create_debugfs_status_file(void)
-+{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_PERF_PKG].r_resctrl;
-+	struct event_group *evg;
-+	struct dentry *infodir;
-+
-+	infodir = resctrl_debugfs_mon_info_arch_mkdir(r);
-+	if (!infodir)
-+		return;
-+
-+	list_for_each_entry(evg, &active_event_groups, list)
-+		create_debug_event_status_files(infodir, evg);
-+}
-+
- /*
-  * Ask OOBMSM discovery driver for all the RMID based telemetry groups
-  * that it supports.
-@@ -314,6 +364,9 @@ bool intel_aet_get_events(void)
- 			       known_perf_event_groups,
- 			       ARRAY_SIZE(known_perf_event_groups));
+ "num_rmids":
+@@ -261,6 +261,18 @@ with the following files:
+ 		bytes) at which a previously used LLC_occupancy
+ 		counter can be considered for re-use.
  
-+	if (ret1 || ret2)
-+		create_debugfs_status_file();
++If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
++with the following files:
 +
- 	return ret1 || ret2;
- }
++"num_rmids":
++		The number of telemetry RMIDs supported. If this is different
++		from the number reported in the L3_MON directory the limit
++		on the number of "CTRL_MON" + "MON" directories is the
++		minimum of the values.
++
++"mon_features":
++		Lists the telemetry monitoring events that are enabled on this system.
++
+ Finally, in the top level of the "info" directory there is a file
+ named "last_cmd_status". This is reset with every "command" issued
+ via the file system (making new directories or writing to any of the
+@@ -366,15 +378,36 @@ When control is enabled all CTRL_MON groups will also contain:
+ When monitoring is enabled all MON groups will also contain:
  
+ "mon_data":
+-	This contains a set of files organized by L3 domain and by
+-	RDT event. E.g. on a system with two L3 domains there will
+-	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
+-	directories have one file per event (e.g. "llc_occupancy",
+-	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
+-	files provide a read out of the current value of the event for
+-	all tasks in the group. In CTRL_MON groups these files provide
+-	the sum for all tasks in the CTRL_MON group and all tasks in
+-	MON groups. Please see example section for more details on usage.
++	This contains a set of directories, one for each instance
++	of an L3 cache, or of a processor package. The L3 cache
++	directories are named "mon_L3_00", "mon_L3_01" etc. The
++	package directories "mon_PERF_PKG_00", "mon_PERF_PKG_01" etc.
++
++	Within each directory there is one file per event. In
++	the L3 directories: "llc_occupancy", "mbm_total_bytes",
++	and "mbm_local_bytes". In the PERF_PKG directories: "core_energy",
++	"activity", etc.
++
++	"core_energy" reports a floating point number for the energy
++	(in Joules) used by CPUs for each RMID.
++
++	"activity" also reports a floating point value (in Farads).
++	This provides an estimate of work done independent of the
++	frequency that the CPUs used for execution.
++
++	Note that these two counters only measure energy/activity
++	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
++	caches, etc.). They do not include L3 cache, memory, I/O
++	devices etc.
++
++	All other events report decimal integer values.
++
++	In a MON group these files provide a read out of the current
++	value of the event for all tasks in the group. In CTRL_MON groups
++	these files provide the sum for all tasks in the CTRL_MON group
++	and all tasks in MON groups. Please see example section for more
++	details on usage.
++
+ 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
+ 	directories for each node (located within the "mon_L3_XX" directory
+ 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
+@@ -1300,6 +1333,38 @@ Example with C::
+     resctrl_release_lock(fd);
+   }
+ 
++Debugfs
++=======
++In addition to the use of debugfs for tracing of pseudo-locking
++performance, architecture code may create debugfs directories
++associated with monitoring features for a specific resource.
++
++The full pathname for these is in the form:
++
++    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
++
++The prescence, names, and format of these files will vary
++between architectures even if the same resource is present.
++
++PERF_PKG_MON/x86_64
++-------------------
++Three files are present per telemetry aggregator instance
++that show when and how often the hardware has failed to
++collect and accumulate data from the CPUs.
++
++agg_data_loss_count:
++	This counts the number of times that this aggregator
++	failed to accumulate a counter value supplied by a CPU.
++
++agg_data_loss_timestamp:
++	This is a "timestamp" from a free running 25MHz uncore
++	timer indicating when the most recent data loss occurred.
++
++last_update_timestamp:
++	Another 25MHz timestamp indicating when the
++	most recent counter update was successfully applied.
++
++
+ Examples for RDT Monitoring along with allocation usage
+ =======================================================
+ Reading monitored data
 -- 
 2.50.1
 
