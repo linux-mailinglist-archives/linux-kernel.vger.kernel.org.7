@@ -1,451 +1,414 @@
-Return-Path: <linux-kernel+bounces-762838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE2BB20B57
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1540DB20B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82D1E3B1A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D6C2A78B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAB3218584;
-	Mon, 11 Aug 2025 14:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHtq1ZCM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F6D213E74;
+	Mon, 11 Aug 2025 14:15:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057E51DC9B8
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8221FE461;
+	Mon, 11 Aug 2025 14:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921283; cv=none; b=b7DaobAuva55cgywWGPjT9NigX1kmICCNK+zamBaMuerLhYBss75kkayeFeMwbLQTwMjWUGBh4iFGf1R8YCjwP1zkX9HObRWGkLl9cdydfq9nZHRiOB16sKw7LSMZpUAT46DHeLAAvEgBbxYezEqGS2mZhr8MBgsnglmbysMow4=
+	t=1754921723; cv=none; b=Z2L2URM+XxY5b1EbOhrUN3d9+WU1H4BnRlSwNr7AIky6S0qMJBbe8l5RNp4ZsSC7zAvylHGMak4gUAtTTJWovS06JKGi5itCxX4Q7aD5yIDsRzFKhWgI2PkLAaZMY4wHXTavGm+s4xFNgUhm2RZJ9eO/rrxOmStHiEWtRvpMO9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921283; c=relaxed/simple;
-	bh=mmglv790KGYDyohM6cmLFFriSeuAx7IxQWdGKZS5/ak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DtTpMCdyeD1Ht/kQsMIop/QrY+2GhU2F4ByTntHBeHwfGwQLWqzWOCHFIpAwup17/cJpjT1P/uwvxov+Y7Iu6Mquq7uDNaAW7rn6BZ+nQlha8LIvm7S+0D1KyC96JhVFhqGlMzno4LNwiQJspC6DW2U4Ok40D2y5I2yNXao805U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHtq1ZCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A524C4CEF9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754921282;
-	bh=mmglv790KGYDyohM6cmLFFriSeuAx7IxQWdGKZS5/ak=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qHtq1ZCMcp5T5QZ2uBm1wwv1TViLXYR7pztOFJVjrALKti2s9Punj4v43dMFmH5Vj
-	 DA5QsNK1so3O2sDR2gOiG5zELJ4VLpXxneUjSYqZwOgyTl0qx4S0X6kEt67HeRtDVd
-	 cvg9RDnB9Xq4owT/WlKfed27GumPejXNgWYlluYvOfm3OOIB2wSSB014FJ7CVbThL2
-	 Ny8FhNJ7GW1XTOy6cyjV65F6X8ZGjFYfocPJQQFr0pUPRDq2kKC89CP2eO+sTwFdjm
-	 o8v2h/uO7VJ1PW3F4ljMqFY8lbbp34tr6SYJea5nve+O+/+001VL/VTPbp0l25qZo0
-	 /TD+OGuyNWRHA==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so7789106a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:08:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5m09LuEvuUJa0uSJWZ+8UxXEDiRhviUAmteX/45mR5lHgqKtSfhKAC2U2f8SqnVZ8ew2PYJTQna0xTX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/98A6NMyo1XgzDdgDoOBztvCxEhAjC0lL+YRElfJlGibnjYr4
-	/BjVwIQu/ZPEUoGrR5iSUnfBpy0x/I8iqJwRsQEXDUAJ1jbKsdYIVwMXFYeA+zp3orOCyjxCMOQ
-	tfxRItSHIpHosgRoQAa9maqOUMKEhYx4=
-X-Google-Smtp-Source: AGHT+IFBi4foYHAxmU5BEbts5BEj/H+5zlsoTVLd0teYehjXCYtNHa7BIsgXrMBiPdLbDdPTjzWQElkO3PR5kW7Zk30=
-X-Received: by 2002:a05:6402:5250:b0:618:b9e:4d46 with SMTP id
- 4fb4d7f45d1cf-6180b9e4f32mr6160019a12.6.1754921280990; Mon, 11 Aug 2025
- 07:08:00 -0700 (PDT)
+	s=arc-20240116; t=1754921723; c=relaxed/simple;
+	bh=AlkAyxu1JrupushGlvmKYTy08dYbf7Sm/lANXNsdYiY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=b4sKrlPiuPjclwDTJ3t6wvabq6KIhsKaytLPuKW2Vqdugd5LX9jLYK7IIZ8M8DBH1QMjQIes1iY9f4g7u943yNzeHupCYo4mGias5yffUBm2Q+CPYTUmg1A0U2n0kCLf0/RdN22htUBcHU7HpdMFGi/+anALOSzt1DE5QiKEEe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c0xVZ2rMwzYQvBs;
+	Mon, 11 Aug 2025 22:15:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 09B1A1A14F2;
+	Mon, 11 Aug 2025 22:15:17 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBHw+plocdNUDQ--.57266S5;
+	Mon, 11 Aug 2025 22:15:14 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	pshilov@microsoft.com
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH V3 1/2] smb: client: fix mid_q_entry memleak leak with per-mid locking
+Date: Mon, 11 Aug 2025 22:07:37 +0800
+Message-Id: <20250811140738.1141817-2-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250811140738.1141817-1-wangzhaolong@huaweicloud.com>
+References: <20250811140738.1141817-1-wangzhaolong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811092659.14903-1-youling.tang@linux.dev> <20250811092659.14903-3-youling.tang@linux.dev>
-In-Reply-To: <20250811092659.14903-3-youling.tang@linux.dev>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 11 Aug 2025 22:07:36 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
-X-Gm-Features: Ac12FXx3wygiT0KUxDdTLKBIqdJd8ge_J4YtkVREbi-861CaXIwjYcJ3xA7tgyU
-Message-ID: <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
-Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
-To: Youling Tang <youling.tang@linux.dev>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Youling Tang <tangyouling@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBHw+plocdNUDQ--.57266S5
+X-Coremail-Antispam: 1UD129KBjvJXoW3uw4DZrWxKw13KFWkJr4rGrg_yoWkZr1kpa
+	n0q343Gr1rXFn7ZwnrJ3WDu3WrArs5u3W3G3yxGr1ayFZrurn8WryDKryq9FW3Crs0g3sI
+	9w4jywsIv3WDX3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+	A2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7qjgUUUUU
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-Hi, Youling,
+This is step 4/4 of a patch series to fix mid_q_entry memory leaks
+caused by race conditions in callback execution.
 
-On Mon, Aug 11, 2025 at 5:28=E2=80=AFPM Youling Tang <youling.tang@linux.de=
-v> wrote:
->
-> From: Youling Tang <tangyouling@kylinos.cn>
->
-> This patch adds support for kexec_file on LoongArch.
->
-> The image_load() as two parts:
-> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
-> - the second part loads other segments (eg: initrd, cmdline)
->
-> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are suppor=
-ted,
-> but ELF format is not supported.
->
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->  arch/loongarch/Kconfig                     |   8 ++
->  arch/loongarch/include/asm/image.h         |  18 ++++
->  arch/loongarch/include/asm/kexec.h         |  12 +++
->  arch/loongarch/kernel/Makefile             |   1 +
->  arch/loongarch/kernel/kexec_image.c        | 112 +++++++++++++++++++++
->  arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
->  arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
->  7 files changed, 219 insertions(+), 11 deletions(-)
->  create mode 100644 arch/loongarch/kernel/kexec_image.c
->  create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
->
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index f0abc38c40ac..fd50c83f7827 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -625,6 +625,14 @@ config CPU_HAS_PREFETCH
->  config ARCH_SUPPORTS_KEXEC
->         def_bool y
->
-> +config ARCH_SUPPORTS_KEXEC_FILE
-> +       def_bool 64BIT
-> +
-> +config ARCH_SELECTS_KEXEC_FILE
-> +       def_bool y
-> +       depends on KEXEC_FILE
-> +       select HAVE_IMA_KEXEC if IMA
-> +
->  config ARCH_SUPPORTS_CRASH_DUMP
->         def_bool y
->
-> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/=
-asm/image.h
-> index 1f090736e71d..829e1ecb1f5d 100644
-> --- a/arch/loongarch/include/asm/image.h
-> +++ b/arch/loongarch/include/asm/image.h
-> @@ -36,5 +36,23 @@ struct loongarch_image_header {
->         uint32_t pe_header;
->  };
->
-> +static const uint8_t loongarch_image_pe_sig[2] =3D {'M', 'Z'};
-> +static const uint8_t loongarch_pe_machtype[6] =3D {'P', 'E', 0x0, 0x0, 0=
-x64, 0x62};
-> +
-> +/**
-> + * loongarch_header_check_pe_sig - Helper to check the loongarch image h=
-eader.
-> + *
-> + * Returns non-zero if 'MZ' signature is found.
-> + */
-> +
-> +static inline int loongarch_header_check_pe_sig(const struct loongarch_i=
-mage_header *h)
-> +{
-> +       if (!h)
-> +               return 0;
-> +
-> +       return (h->pe_sig[0] =3D=3D loongarch_image_pe_sig[0]
-> +               && h->pe_sig[1] =3D=3D loongarch_image_pe_sig[1]);
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_IMAGE_H */
-> diff --git a/arch/loongarch/include/asm/kexec.h b/arch/loongarch/include/=
-asm/kexec.h
-> index cf95cd3eb2de..3ef8517a3670 100644
-> --- a/arch/loongarch/include/asm/kexec.h
-> +++ b/arch/loongarch/include/asm/kexec.h
-> @@ -41,6 +41,18 @@ struct kimage_arch {
->         unsigned long systable_ptr;
->  };
->
-> +#ifdef CONFIG_KEXEC_FILE
-> +extern const struct kexec_file_ops kexec_image_ops;
-> +
-> +int arch_kimage_file_post_load_cleanup(struct kimage *image);
-> +#define arch_kimage_file_post_load_cleanup arch_kimage_file_post_load_cl=
-eanup
-> +
-> +extern int load_other_segments(struct kimage *image,
-> +               unsigned long kernel_load_addr, unsigned long kernel_size=
-,
-> +               char *initrd, unsigned long initrd_len,
-> +               char *cmdline, unsigned long cmdline_len);
-I think the RISC-V naming "load_extra_segments" is better.
+In compound_send_recv(), when wait_for_response() is interrupted by
+signals, the code attempts to cancel pending requests by changing
+their callbacks to cifs_cancelled_callback. However, there's a race
+condition between signal interruption and network response processing
+that causes both mid_q_entry and server buffer leaks:
 
-> +#endif
-> +
->  typedef void (*do_kexec_t)(unsigned long efi_boot,
->                            unsigned long cmdline_ptr,
->                            unsigned long systable_ptr,
-> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makef=
-ile
-> index 6f5a4574a911..bd9405ee3888 100644
-> --- a/arch/loongarch/kernel/Makefile
-> +++ b/arch/loongarch/kernel/Makefile
-> @@ -62,6 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)     +=3D sysrq.o
->  obj-$(CONFIG_RELOCATABLE)      +=3D relocate.o
->
->  obj-$(CONFIG_KEXEC_CORE)       +=3D machine_kexec.o relocate_kernel.o
-> +obj-$(CONFIG_KEXEC_FILE)       +=3D machine_kexec_file.o kexec_image.o
-We only support the efi format, so we don't need to split a
-kexec_image.c like RISC-V, just put everything into
-machine_kexec_file.c is OK.
+```
+User foreground process                    cifsd
+cifs_readdir
+ open_cached_dir
+  cifs_send_recv
+   compound_send_recv
+    smb2_setup_request
+     smb2_mid_entry_alloc
+      smb2_get_mid_entry
+       smb2_mid_entry_alloc
+        mempool_alloc // alloc mid
+        kref_init(&temp->refcount); // refcount = 1
+     mid[0]->callback = cifs_compound_callback;
+     mid[1]->callback = cifs_compound_last_callback;
+     smb_send_rqst
+     rc = wait_for_response
+      wait_event_state TASK_KILLABLE
+                                  cifs_demultiplex_thread
+                                    allocate_buffers
+                                      server->bigbuf = cifs_buf_get()
+                                    standard_receive3
+                                      ->find_mid()
+                                        smb2_find_mid
+                                          __smb2_find_mid
+                                           kref_get(&mid->refcount) // +1
+                                      cifs_handle_standard
+                                        handle_mid
+                                         /* bigbuf will also leak */
+                                         mid->resp_buf = server->bigbuf
+                                         server->bigbuf = NULL;
+                                         dequeue_mid
+                                     /* in for loop */
+                                    mids[0]->callback
+                                      cifs_compound_callback
+    /* Signal interrupts wait: rc = -ERESTARTSYS */
+    /* if (... || midQ[i]->mid_state == MID_RESPONSE_RECEIVED) *?
+    midQ[0]->callback = cifs_cancelled_callback;
+    cancelled_mid[i] = true;
+                                       /* The change comes too late */
+                                       mid->mid_state = MID_RESPONSE_READY
+                                    release_mid  // -1
+    /* cancelled_mid[i] == true causes mid won't be released
+       in compound_send_recv cleanup */
+    /* cifs_cancelled_callback won't executed to release mid */
+```
 
-Huacai
+The root cause is that there's a race between callback assignment and
+execution.
 
->  obj-$(CONFIG_CRASH_DUMP)       +=3D crash_dump.o
->
->  obj-$(CONFIG_UNWINDER_GUESS)   +=3D unwind_guess.o
-> diff --git a/arch/loongarch/kernel/kexec_image.c b/arch/loongarch/kernel/=
-kexec_image.c
-> new file mode 100644
-> index 000000000000..fdd1845b4e2e
-> --- /dev/null
-> +++ b/arch/loongarch/kernel/kexec_image.c
-> @@ -0,0 +1,112 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Kexec image loader for LoongArch
-> +
-> + * Author: Youling Tang <tangyouling@kylinos.cn>
-> + * Copyright (C) 2025 KylinSoft Corporation.
-> + */
-> +
-> +#define pr_fmt(fmt)    "kexec_file(Image): " fmt
-> +
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kexec.h>
-> +#include <linux/pe.h>
-> +#include <linux/string.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/image.h>
-> +
-> +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
-> +{
-> +       const struct loongarch_image_header *h =3D
-> +               (const struct loongarch_image_header *)(kernel_buf);
-> +
-> +       if (!h || (kernel_len < sizeof(*h))) {
-> +               pr_err("No loongarch image header.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (!loongarch_header_check_pe_sig(h)) {
-> +               pr_err("Bad loongarch PE image header.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void *image_load(struct kimage *image,
-> +                               char *kernel, unsigned long kernel_len,
-> +                               char *initrd, unsigned long initrd_len,
-> +                               char *cmdline, unsigned long cmdline_len)
-> +{
-> +       struct loongarch_image_header *h;
-> +       struct kexec_buf kbuf;
-> +       unsigned long text_offset, kernel_segment_number;
-> +       struct kexec_segment *kernel_segment;
-> +       int ret;
-> +
-> +       h =3D (struct loongarch_image_header *)kernel;
-> +       if (!h->image_size)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       /* Load the kernel */
-> +       kbuf.image =3D image;
-> +       kbuf.buf_min =3D 0;
-> +       kbuf.buf_max =3D ULONG_MAX;
-> +       kbuf.top_down =3D false;
-> +
-> +       kbuf.buffer =3D kernel;
-> +       kbuf.bufsz =3D kernel_len;
-> +       kbuf.mem =3D KEXEC_BUF_MEM_UNKNOWN;
-> +       kbuf.memsz =3D le64_to_cpu(h->image_size);
-> +       text_offset =3D le64_to_cpu(h->text_offset);
-> +       kbuf.buf_align =3D SZ_2M;
-> +
-> +       kernel_segment_number =3D image->nr_segments;
-> +
-> +       /*
-> +        * The location of the kernel segment may make it impossible to s=
-atisfy
-> +        * the other segment requirements, so we try repeatedly to find a
-> +        * location that will work.
-> +        */
-> +       while ((ret =3D kexec_add_buffer(&kbuf)) =3D=3D 0) {
-> +               /* Try to load additional data */
-> +               kernel_segment =3D &image->segment[kernel_segment_number]=
-;
-> +               ret =3D load_other_segments(image, kernel_segment->mem,
-> +                                         kernel_segment->memsz, initrd,
-> +                                         initrd_len, cmdline, cmdline_le=
-n);
-> +               if (!ret)
-> +                       break;
-> +
-> +               /*
-> +                * We couldn't find space for the other segments; erase t=
-he
-> +                * kernel segment and try the next available hole.
-> +                */
-> +               image->nr_segments -=3D 1;
-> +               kbuf.buf_min =3D kernel_segment->mem + kernel_segment->me=
-msz;
-> +               kbuf.mem =3D KEXEC_BUF_MEM_UNKNOWN;
-> +       }
-> +
-> +       if (ret) {
-> +               pr_err("Could not find any suitable kernel location!");
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       kernel_segment =3D &image->segment[kernel_segment_number];
-> +
-> +       /* Make sure the second kernel jumps to the correct "kernel_entry=
-". */
-> +       image->start =3D kernel_segment->mem + h->kernel_entry - text_off=
-set;
-> +
-> +       kexec_dprintk("Loaded kernel at 0x%lx bufsz=3D0x%lx memsz=3D0x%lx=
-\n",
-> +                     kernel_segment->mem, kbuf.bufsz,
-> +                     kernel_segment->memsz);
-> +
-> +       return NULL;
-> +}
-> +
-> +const struct kexec_file_ops kexec_image_ops =3D {
-> +       .probe =3D image_probe,
-> +       .load =3D image_load,
-> +};
-> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kerne=
-l/machine_kexec.c
-> index f9381800e291..008f43e26120 100644
-> --- a/arch/loongarch/kernel/machine_kexec.c
-> +++ b/arch/loongarch/kernel/machine_kexec.c
-> @@ -70,18 +70,28 @@ int machine_kexec_prepare(struct kimage *kimage)
->         kimage->arch.efi_boot =3D fw_arg0;
->         kimage->arch.systable_ptr =3D fw_arg2;
->
-> -       /* Find the command line */
-> -       for (i =3D 0; i < kimage->nr_segments; i++) {
-> -               if (!strncmp(bootloader, (char __user *)kimage->segment[i=
-].buf, strlen(bootloader))) {
-> -                       if (!copy_from_user(cmdline_ptr, kimage->segment[=
-i].buf, COMMAND_LINE_SIZE))
-> -                               kimage->arch.cmdline_ptr =3D (unsigned lo=
-ng)cmdline_ptr;
-> -                       break;
-> +       if (kimage->file_mode =3D=3D 1) {
-> +               /*
-> +                * kimage->cmdline_buf will be released in kexec_file_loa=
-d, so copy to
-> +                * the KEXEC_CMDLINE_ADDR safe area.
-> +                */
-> +               memcpy((void *)KEXEC_CMDLINE_ADDR, (void *)kimage->arch.c=
-mdline_ptr,
-> +                                       strlen((char *)kimage->arch.cmdli=
-ne_ptr) + 1);
-> +               kimage->arch.cmdline_ptr =3D (unsigned long)KEXEC_CMDLINE=
-_ADDR;
-> +       } else {
-> +               /* Find the command line */
-> +               for (i =3D 0; i < kimage->nr_segments; i++) {
-> +                       if (!strncmp(bootloader, (char __user *)kimage->s=
-egment[i].buf, strlen(bootloader))) {
-> +                               if (!copy_from_user(cmdline_ptr, kimage->=
-segment[i].buf, COMMAND_LINE_SIZE))
-> +                                       kimage->arch.cmdline_ptr =3D (uns=
-igned long)cmdline_ptr;
-> +                               break;
-> +                       }
->                 }
-> -       }
->
-> -       if (!kimage->arch.cmdline_ptr) {
-> -               pr_err("Command line not included in the provided image\n=
-");
-> -               return -EINVAL;
-> +               if (!kimage->arch.cmdline_ptr) {
-> +                       pr_err("Command line not included in the provided=
- image\n");
-> +                       return -EINVAL;
-> +               }
->         }
->
->         /* kexec/kdump need a safe page to save reboot_code_buffer */
-> @@ -288,7 +298,8 @@ void machine_kexec(struct kimage *image)
->         local_irq_disable();
->
->         pr_notice("EFI boot flag 0x%lx\n", efi_boot);
-> -       pr_notice("Command line at 0x%lx\n", cmdline_ptr);
-> +       pr_notice("Command line addr at 0x%lx\n", cmdline_ptr);
-> +       pr_notice("Command line at %s\n", (char *)cmdline_ptr);
->         pr_notice("System table at 0x%lx\n", systable_ptr);
->         pr_notice("We will call new kernel at 0x%lx\n", start_addr);
->         pr_notice("Bye ...\n");
-> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/=
-kernel/machine_kexec_file.c
-> new file mode 100644
-> index 000000000000..bc91ae0afa4c
-> --- /dev/null
-> +++ b/arch/loongarch/kernel/machine_kexec_file.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * kexec_file for LoongArch
-> + *
-> + * Author: Youling Tang <tangyouling@kylinos.cn>
-> + * Copyright (C) 2025 KylinSoft Corporation.
-> + *
-> + * Most code is derived from LoongArch port of kexec-tools
-> + */
-> +
-> +#define pr_fmt(fmt) "kexec_file: " fmt
-> +
-> +#include <linux/ioport.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kexec.h>
-> +#include <linux/memblock.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +#include <linux/types.h>
-> +#include <linux/vmalloc.h>
-> +#include <asm/bootinfo.h>
-> +
-> +const struct kexec_file_ops * const kexec_file_loaders[] =3D {
-> +       &kexec_image_ops,
-> +       NULL
-> +};
-> +
-> +int arch_kimage_file_post_load_cleanup(struct kimage *image)
-> +{
-> +       vfree(image->elf_headers);
-> +       image->elf_headers =3D NULL;
-> +       image->elf_headers_sz =3D 0;
-> +
-> +       return kexec_image_post_load_cleanup_default(image);
-> +}
-> +
-> +int load_other_segments(struct kimage *image,
-> +                       unsigned long kernel_load_addr,
-> +                       unsigned long kernel_size,
-> +                       char *initrd, unsigned long initrd_len,
-> +                       char *cmdline, unsigned long cmdline_len)
-> +{
-> +       image->arch.cmdline_ptr =3D (unsigned long)cmdline;
-> +
-> +       return 0;
-> +}
-> --
-> 2.34.1
->
+Fix this by introducing per-mid locking:
+
+- Add spinlock_t mid_lock to struct mid_q_entry
+- Add mid_execute_callback() for atomic callback execution
+- Use mid_lock in cancellation paths to ensure atomicity
+
+This ensures that either the original callback or the cancellation
+callback executes atomically, preventing reference count leaks when
+requests are interrupted by signals.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220404
+Fixes: ee258d79159a ("CIFS: Move credit processing to mid callbacks for SMB3")
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+---
+ fs/smb/client/cifsglob.h      | 21 +++++++++++++++++++++
+ fs/smb/client/cifstransport.c | 19 +++++++++----------
+ fs/smb/client/connect.c       |  8 ++++----
+ fs/smb/client/smb2ops.c       |  4 ++--
+ fs/smb/client/smb2transport.c |  1 +
+ fs/smb/client/transport.c     |  7 +++----
+ 6 files changed, 40 insertions(+), 20 deletions(-)
+
+diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+index e6830ab3a546..1e64a4fb6af0 100644
+--- a/fs/smb/client/cifsglob.h
++++ b/fs/smb/client/cifsglob.h
+@@ -1730,10 +1730,11 @@ struct mid_q_entry {
+ 	unsigned int resp_buf_size;
+ 	int mid_state;	/* wish this were enum but can not pass to wait_event */
+ 	int mid_rc;		/* rc for MID_RC */
+ 	__le16 command;		/* smb command code */
+ 	unsigned int optype;	/* operation type */
++	spinlock_t mid_lock;
+ 	bool wait_cancelled:1;  /* Cancelled while waiting for response */
+ 	bool deleted_from_q:1;  /* Whether Mid has been dequeued frem pending_mid_q */
+ 	bool large_buf:1;	/* if valid response, is pointer to large buf */
+ 	bool multiRsp:1;	/* multiple trans2 responses for one request  */
+ 	bool multiEnd:1;	/* both received */
+@@ -2034,10 +2035,13 @@ require use of the stronger protocol */
+  *								init_cached_dir
+  * cifsFileInfo->fh_mutex	cifsFileInfo			cifs_new_fileinfo
+  * cifsFileInfo->file_info_lock	cifsFileInfo->count		cifs_new_fileinfo
+  *				->invalidHandle			initiate_cifs_search
+  *				->oplock_break_cancelled
++ * mid_q_entry->mid_lock	mid_q_entry->callback           alloc_mid
++ *								smb2_mid_entry_alloc
++ *				(Any fields of mid_q_entry that will need protection)
+  ****************************************************************************/
+ 
+ #ifdef DECLARE_GLOBALS_HERE
+ #define GLOBAL_EXTERN
+ #else
+@@ -2373,10 +2377,27 @@ static inline bool cifs_netbios_name(const char *name, size_t namelen)
+ 		}
+ 	}
+ 	return ret;
+ }
+ 
++/*
++ * Execute mid callback atomically - ensures callback runs exactly once
++ * and prevents sleeping in atomic context.
++ */
++static inline void mid_execute_callback(struct mid_q_entry *mid)
++{
++	void (*callback)(struct mid_q_entry *mid);
++
++	spin_lock(&mid->mid_lock);
++	callback = mid->callback;
++	mid->callback = NULL;  /* Mark as executed, */
++	spin_unlock(&mid->mid_lock);
++
++	if (callback)
++		callback(mid);
++}
++
+ #define CIFS_REPARSE_SUPPORT(tcon) \
+ 	((tcon)->posix_extensions || \
+ 	 (le32_to_cpu((tcon)->fsAttrInfo.Attributes) & \
+ 	  FILE_SUPPORTS_REPARSE_POINTS))
+ 
+diff --git a/fs/smb/client/cifstransport.c b/fs/smb/client/cifstransport.c
+index 352dafb888dd..e98b95eff8c9 100644
+--- a/fs/smb/client/cifstransport.c
++++ b/fs/smb/client/cifstransport.c
+@@ -44,10 +44,11 @@ alloc_mid(const struct smb_hdr *smb_buffer, struct TCP_Server_Info *server)
+ 	}
+ 
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
+ 	kref_init(&temp->refcount);
++	spin_lock_init(&temp->mid_lock);
+ 	temp->mid = get_mid(smb_buffer);
+ 	temp->pid = current->pid;
+ 	temp->command = cpu_to_le16(smb_buffer->Command);
+ 	cifs_dbg(FYI, "For smb_command %d\n", smb_buffer->Command);
+ 	/* easier to use jiffies */
+@@ -343,20 +344,19 @@ SendReceive(const unsigned int xid, struct cifs_ses *ses,
+ 		goto out;
+ 
+ 	rc = wait_for_response(server, midQ);
+ 	if (rc != 0) {
+ 		send_cancel(server, &rqst, midQ);
+-		spin_lock(&server->mid_queue_lock);
+-		if (midQ->mid_state == MID_REQUEST_SUBMITTED ||
+-		    midQ->mid_state == MID_RESPONSE_RECEIVED) {
++		spin_lock(&midQ->mid_lock);
++		if (midQ->callback) {
+ 			/* no longer considered to be "in-flight" */
+ 			midQ->callback = release_mid;
+-			spin_unlock(&server->mid_queue_lock);
++			spin_unlock(&midQ->mid_lock);
+ 			add_credits(server, &credits, 0);
+ 			return rc;
+ 		}
+-		spin_unlock(&server->mid_queue_lock);
++		spin_unlock(&midQ->mid_lock);
+ 	}
+ 
+ 	rc = cifs_sync_mid_result(midQ, server);
+ 	if (rc != 0) {
+ 		add_credits(server, &credits, 0);
+@@ -525,19 +525,18 @@ SendReceiveBlockingLock(const unsigned int xid, struct cifs_tcon *tcon,
+ 		}
+ 
+ 		rc = wait_for_response(server, midQ);
+ 		if (rc) {
+ 			send_cancel(server, &rqst, midQ);
+-			spin_lock(&server->mid_queue_lock);
+-			if (midQ->mid_state == MID_REQUEST_SUBMITTED ||
+-			    midQ->mid_state == MID_RESPONSE_RECEIVED) {
++			spin_lock(&midQ->mid_lock);
++			if (midQ->callback) {
+ 				/* no longer considered to be "in-flight" */
+ 				midQ->callback = release_mid;
+-				spin_unlock(&server->mid_queue_lock);
++				spin_unlock(&midQ->mid_lock);
+ 				return rc;
+ 			}
+-			spin_unlock(&server->mid_queue_lock);
++			spin_unlock(&midQ->mid_lock);
+ 		}
+ 
+ 		/* We got the response - restart system call. */
+ 		rstart = 1;
+ 		spin_lock(&server->srv_lock);
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index 587845a2452d..281ccbeea719 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -333,11 +333,11 @@ cifs_abort_connection(struct TCP_Server_Info *server)
+ 	cifs_server_unlock(server);
+ 
+ 	cifs_dbg(FYI, "%s: issuing mid callbacks\n", __func__);
+ 	list_for_each_entry_safe(mid, nmid, &retry_list, qhead) {
+ 		list_del_init(&mid->qhead);
+-		mid->callback(mid);
++		mid_execute_callback(mid);
+ 		release_mid(mid);
+ 	}
+ 
+ 	if (cifs_rdma_enabled(server)) {
+ 		cifs_server_lock(server);
+@@ -917,11 +917,11 @@ is_smb_response(struct TCP_Server_Info *server, unsigned char type)
+ 			 */
+ 			list_for_each_entry_safe(mid, nmid, &dispose_list, qhead) {
+ 				list_del_init(&mid->qhead);
+ 				mid->mid_rc = mid_rc;
+ 				mid->mid_state = MID_RC;
+-				mid->callback(mid);
++				mid_execute_callback(mid);
+ 				release_mid(mid);
+ 			}
+ 
+ 			/*
+ 			 * If reconnect failed then wait two seconds. In most
+@@ -1115,11 +1115,11 @@ clean_demultiplex_info(struct TCP_Server_Info *server)
+ 		/* now walk dispose list and issue callbacks */
+ 		list_for_each_safe(tmp, tmp2, &dispose_list) {
+ 			mid_entry = list_entry(tmp, struct mid_q_entry, qhead);
+ 			cifs_dbg(FYI, "Callback mid %llu\n", mid_entry->mid);
+ 			list_del_init(&mid_entry->qhead);
+-			mid_entry->callback(mid_entry);
++			mid_execute_callback(mid_entry);
+ 			release_mid(mid_entry);
+ 		}
+ 		/* 1/8th of sec is more than enough time for them to exit */
+ 		msleep(125);
+ 	}
+@@ -1392,11 +1392,11 @@ cifs_demultiplex_thread(void *p)
+ 								"Share deleted. Reconnect needed");
+ 					}
+ 				}
+ 
+ 				if (!mids[i]->multiRsp || mids[i]->multiEnd)
+-					mids[i]->callback(mids[i]);
++					mid_execute_callback(mids[i]);
+ 
+ 				release_mid(mids[i]);
+ 			} else if (server->ops->is_oplock_break &&
+ 				   server->ops->is_oplock_break(bufs[i],
+ 								server)) {
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index ad8947434b71..f7a0f1c81b43 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4803,19 +4803,19 @@ static void smb2_decrypt_offload(struct work_struct *work)
+ #endif
+ 			if (dw->server->ops->is_network_name_deleted)
+ 				dw->server->ops->is_network_name_deleted(dw->buf,
+ 									 dw->server);
+ 
+-			mid->callback(mid);
++			mid_execute_callback(mid);
+ 		} else {
+ 			spin_lock(&dw->server->srv_lock);
+ 			if (dw->server->tcpStatus == CifsNeedReconnect) {
+ 				spin_lock(&dw->server->mid_queue_lock);
+ 				mid->mid_state = MID_RETRY_NEEDED;
+ 				spin_unlock(&dw->server->mid_queue_lock);
+ 				spin_unlock(&dw->server->srv_lock);
+-				mid->callback(mid);
++				mid_execute_callback(mid);
+ 			} else {
+ 				spin_lock(&dw->server->mid_queue_lock);
+ 				mid->mid_state = MID_REQUEST_SUBMITTED;
+ 				mid->deleted_from_q = false;
+ 				list_add_tail(&mid->qhead,
+diff --git a/fs/smb/client/smb2transport.c b/fs/smb/client/smb2transport.c
+index ff9ef7fcd010..bc0e92eb2b64 100644
+--- a/fs/smb/client/smb2transport.c
++++ b/fs/smb/client/smb2transport.c
+@@ -769,10 +769,11 @@ smb2_mid_entry_alloc(const struct smb2_hdr *shdr,
+ 	}
+ 
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
+ 	kref_init(&temp->refcount);
++	spin_lock_init(&temp->mid_lock);
+ 	temp->mid = le64_to_cpu(shdr->MessageId);
+ 	temp->credits = credits > 0 ? credits : 1;
+ 	temp->pid = current->pid;
+ 	temp->command = shdr->Command; /* Always LE */
+ 	temp->when_alloc = jiffies;
+diff --git a/fs/smb/client/transport.c b/fs/smb/client/transport.c
+index 32d528b4dd83..a61ba7f3fb86 100644
+--- a/fs/smb/client/transport.c
++++ b/fs/smb/client/transport.c
+@@ -1003,19 +1003,18 @@ compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+ 	if (rc != 0) {
+ 		for (; i < num_rqst; i++) {
+ 			cifs_server_dbg(FYI, "Cancelling wait for mid %llu cmd: %d\n",
+ 				 midQ[i]->mid, le16_to_cpu(midQ[i]->command));
+ 			send_cancel(server, &rqst[i], midQ[i]);
+-			spin_lock(&server->mid_queue_lock);
++			spin_lock(&midQ[i]->mid_lock);
+ 			midQ[i]->wait_cancelled = true;
+-			if (midQ[i]->mid_state == MID_REQUEST_SUBMITTED ||
+-			    midQ[i]->mid_state == MID_RESPONSE_RECEIVED) {
++			if (midQ[i]->callback) {
+ 				midQ[i]->callback = cifs_cancelled_callback;
+ 				cancelled_mid[i] = true;
+ 				credits[i].value = 0;
+ 			}
+-			spin_unlock(&server->mid_queue_lock);
++			spin_unlock(&midQ[i]->mid_lock);
+ 		}
+ 	}
+ 
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (rc < 0)
+-- 
+2.39.2
+
 
