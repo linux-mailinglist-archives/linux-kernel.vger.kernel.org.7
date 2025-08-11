@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-762740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318EFB20A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BBDB20A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83472A4C30
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D6A426DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ABD2DEA74;
-	Mon, 11 Aug 2025 13:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5E2DECA5;
+	Mon, 11 Aug 2025 13:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="06MRoUc3"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f0HEuFmF"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D38421CA1F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8BD2DE1FE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919390; cv=none; b=cL4qhPQMWZgkiBisFcNZBAQEesk/kEFfW8G9FKNbSG+dmLs4sCpnXpJUuKhUFHtifIPFHFR5yxvTBToK+aJSm7q1rKUVzv4tXZExHK0nHGi2DnPuZ+MXIqgkBov3NCYA+tXZCXHjH0S0EPwV3iij2CgSqvZ/+iCMz5x7XNnjMG4=
+	t=1754919391; cv=none; b=o1BMmgNxCRiuHcBtSZUc1TKG9oIme7arWWY/1d94r1/UX57ulDyjNPqCA1/e2CE4unGfg8mKS1r99KKSBmFF7i2JCgc2Sx65CpxIUhosiiZZjfbksC2K5jyL/+rxoqYqHNvxBZEV4pXJqSEm4asij2EgW+FBzgIyA0hFROi3RhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919390; c=relaxed/simple;
-	bh=Cvm3UxwZaIvytNrW2R0gZcHjx1lcF6maKDX+XWI55dE=;
+	s=arc-20240116; t=1754919391; c=relaxed/simple;
+	bh=wcWxI/ORPnWYflybpCO5FCh2FVXOIlQ7jBDtMn0/U3I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OqMWAgXykN7RgLPWC2MYzYglsUv51p/VXzwNdxLFQ418D8m819RVB7Jy7QxL9/WRU/FLbnAc0Y15lOniYFhqh2cByIJYu6zaeSSIT8TxTnYHfN+Sc6EZpqlKsKNdNSpFWJnPn9Kgl9vUmuNBD0lENHONOiPYf9vvrdnZ+uT75TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=06MRoUc3; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=hs4L8yoWQ6AzVebv/LjO7w4XFpNQyQbX8fAhlIZLrnF6DJmsUdY0OcvcBomEHF9vP1oZvBbbcRuwjd/Pa6JGXKtv9td7trrT9o5yx703ZGQRlGM6B65X/gSF1FkMPYACvGPJrXSckDo7SPITp5iKnFSyYI1Z4esZ/7yvuzizoyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f0HEuFmF; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458b49c98a7so27534415e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:36:28 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-459fdc391c6so16945445e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:36:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754919387; x=1755524187; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754919388; x=1755524188; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rPC9QjkdXxMejFY4x5ok5uLAPYyJClZcqMLBbaZ87b0=;
-        b=06MRoUc3RQriqaf5H6kL/Y6jSC33ZYGZp00YIvwqCD3ZGa21dvuigyDEDkUCnUl14O
-         5gyUvRwHgXOoykQjzVoVk8sCJlqzaUSPBer1Mu2EXsSrrE323Lj+jIkNGoJ9WAQuAi86
-         m9Z15/nOTfftBhV1nW7i1Xk5IQF+TaBYLdwwku88NiHTe1NECedG9raEg+jrqu6PCo8V
-         9DpCy8s3CHKdwO71Wtj9UIxYdZS6pZLbGuBr1oQGscfeLMngmgllIN5qubZF4bztp+T0
-         GHJ2bScHYOClmisekLM5Vx18V4rUxQX5JUIeckpS8YXITcfZ3pijrRnE9j7Ysnfai8F5
-         x8AA==
+        bh=EnKcEkqbIMfPFHK4N+PMDGhcrN9nsn9H5PP2EHh6DhY=;
+        b=f0HEuFmFKbOFqIESNeYx3cpuyNfE9QM4axv5/OMDS7XDBWc7El0konC1EewyBQ0LgB
+         O5wwhcRAu2deLq/rzx7nw/fmF8bFbc6WdpaPfDY4REpmHQ3kCGQd+mZ1WaPpSqE6QDvO
+         EJRge0sRPj/MiTpG5r0a7TMoEICl84OV3PTHNCi79dYi9/1eRbcZVaMNtP5uQjmemUPc
+         sK2tsRb/dzwz6cbYwL3GbmWUsSY8iJcELBFcY7plDBVe7+W3pth3O7OaFb6kqRPOrJ4r
+         xciWpbtj18qK/a2/o8SFN8wCZmvjSB+H9enf1dQlYOiI1qH28EZdbhyAhjaJhMEL9jU9
+         LvHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754919387; x=1755524187;
+        d=1e100.net; s=20230601; t=1754919388; x=1755524188;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rPC9QjkdXxMejFY4x5ok5uLAPYyJClZcqMLBbaZ87b0=;
-        b=BBS4ctYZB8ZHGOWt4+ETgrFNLxPwv+mzruMIuBs4V03SZySC2avjKUKBJcGEyFzAoT
-         WXpXqvjdxaj1GGl+YSu1gwteIO4PH7q5EcrYsAOdyUm6/j7VB+Y6Ly0iNxRX6fHijHyu
-         EFhykzgGySRTuB34+MVIr+XqF2H4jmXK7lKH1mbeptYVAOmw7eRHZxS6XvY149V7OLrS
-         uYckfwtXDzRrln7nKAjCavp8vmEHCOr2bDCBZIs/7jnVpyCP+uWbV6gDcXBVcRYfRyaI
-         ZkwmbfmQs/qKGG/kVwVz+cHsnPvgJvBpQTA8XmbC96oeKCFlwXKTQ2bIE6HwXlH87hvb
-         bFWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaX1Kqa0/02U+IgnXUaW+MdZKRVktZiGr/pmbkTG8VaPTkfgiGq4LQXMNSDL7rOWxVjeveZQJVV5SKI64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypkr0viyOcLdjSeAI2M7B1foHjX6eyfkBFDDZGWZbS88GQBDDX
-	kgul0+Gs/ROvNVC9NGlcOLw3STcfb1BLnXpeOt77jfdeCP+ZbesKr78GWA3C83EoS9c=
-X-Gm-Gg: ASbGncvvBxm0UnPesMjDJl8oe4vIbFI22MRrI77qjBL2JPai6uTXjiphgfHjywbYkov
-	MNs2iFKMXgmJfDOGoZ+19qt4/mZYe50DiLjkdsOKEoUtNXdvX6WvqkT8bxG2mK+W5TvnFq5ZqnG
-	rfB8wSqSipYNSO0Wq37MSQDeXV94YHRjUxhW9LmoUGTZMzSBEY+20ZE8Jyoj5ssHKf4v3FOrhPT
-	v0ZOyP6GTJedwDk9UbQipV1pqEUp5b9A1ux4ieFi8FMiWrCPjZ3ZNqom3/HbmewBiAYGifvX2Kx
-	ewZzPznsNuaXFx9W1dQqFsmMKx971IoQjnyYn1J+OBCr0jiM2QZcoSN9hlY8rqJeQ/pv6PWpDv2
-	uV17Q1SUS5JHTQ6lxZg==
-X-Google-Smtp-Source: AGHT+IGO8tGE6CmpRp8d7Dv8oPbrNyboejFtiyDhBBX2/eeF8sA7SMGla8jnfhdxvPUYVbbA5Sca3Q==
-X-Received: by 2002:a05:600c:1c18:b0:459:443e:b180 with SMTP id 5b1f17b1804b1-459f4f3e153mr120440835e9.8.1754919386578;
-        Mon, 11 Aug 2025 06:36:26 -0700 (PDT)
+        bh=EnKcEkqbIMfPFHK4N+PMDGhcrN9nsn9H5PP2EHh6DhY=;
+        b=qRgkqIZM1BwjtTZXa7olDHipusLLOHIuclHNep2ODdwoin7zeLuLfi1bfXdBkRwZf7
+         7JoZxLMOw0ZI+OYzsrKVeAwbqpnBXTR9Z+qmKjMpAIrMiYLghtCe8ms+7EYBSpOdtTbD
+         aUk2DY/jJ5iUQqf1cR4H69zzvlWQ77+81q0OAhNGZgI6SGzS8XfLDLj3tGkMk5NxKd9F
+         4ouMZHS3fXP+L3SvbvFx/nzrYykdCFg4zfKkaEXXU243wd2ynEvWix1DOxKQbuBPLOO+
+         8kgYC6XiQ/J7AHvVFTQWrsHnK49KHqoWtzPlc0hVo9ytEvBUEeU0iDYrZjBBylN+yzk2
+         a12g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhXAca+YMixK8EADprzvhBWZZK5wDkm1USvxI/Sp4JOnZ4XetXTdQa2Iz9EE4wfH8Zged1sPZWeKlJnCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmH7bfP7AZNC3AmRwtf4hOd4FT9VwhwcDPkZYBiNIInjFxa6Ls
+	1yWY0X475pq++a8WxUKeDSSXpgwmNqZdJq9dQCsYeDaQa5+3s4PIjwnPHUj9y6bone0=
+X-Gm-Gg: ASbGncvoz/kucPtMvggOroNp5N8BPCg78g7HHYcKSz8327eLQnacyNuKlCC2j7PCj2k
+	M3FLuX7Lhs45cPDYyr8wIe38VimGYAdvgESvmeHKGd0dgxcLqYHA6hREgQT1NOtLuXnKYILwbQQ
+	R59jRzCsDYQYxYY4EC4mACxl7CAsJK6fOaO8ejX/jucFOz2my7GyW526OSdau1MUK0sTOTSZG3j
+	0+2uHilWVsNOkb+broPym21gMFlr8Utx2+z778gLAJxePER5qsUHl/cqoMfzBT8cQGximT+FFQ+
+	7MhAUtYA5BrSar1tJfT1JOZVgSjdTpKKa/gh2IwC+rHfBMWwJ5SAuSzs4EAiukscyOEnYS+kH61
+	YH/sQDD2W+OnsZYFzlxPNbOWuMEK6
+X-Google-Smtp-Source: AGHT+IEZRe5mubxwzfOZXxCLQyUhvG2u7hesb/LpwWxgwrAcEN/2Kgvpu75YBEWiGSMSpRCy9Y5sQA==
+X-Received: by 2002:a05:600c:4f88:b0:456:1923:7549 with SMTP id 5b1f17b1804b1-459f4faf710mr105194645e9.26.1754919387765;
+        Mon, 11 Aug 2025 06:36:27 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587d378sm253045105e9.23.2025.08.11.06.36.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587d378sm253045105e9.23.2025.08.11.06.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:36:25 -0700 (PDT)
+        Mon, 11 Aug 2025 06:36:27 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 11 Aug 2025 15:36:16 +0200
-Subject: [PATCH 1/2] mfd: vexpress-sysreg: check the return value of
- devm_gpiochip_add_data()
+Date: Mon, 11 Aug 2025 15:36:17 +0200
+Subject: [PATCH 2/2] mfd: vexpress-sysreg: use new generic GPIO chip API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,73 +83,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-gpio-mmio-mfd-conv-v1-1-68c5c958cf80@linaro.org>
+Message-Id: <20250811-gpio-mmio-mfd-conv-v1-2-68c5c958cf80@linaro.org>
 References: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org>
 In-Reply-To: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org>
 To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
  Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
  Lorenzo Pieralisi <lpieralisi@kernel.org>, Pawel Moll <pawel.moll@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- stable@vger.kernel.org
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1563;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1769;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=npVo4x9jWTs/C5oZ+18P177rzmdj25fbWuss0PN0sgc=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomfHY3wi3JBmgBHiBE2qvpEWlJzPK24kglGeUX
- xNZz9M+CuKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJnx2AAKCRARpy6gFHHX
- ck4YD/9c0CqewiZHWF6/YFXoIqPUFIkHmddOhFieqmRdmF/yNc5waGN9erdg30PR/wywPs+kh2M
- PjWfHrs1tOet67Q/bfY9F2IqNibNOE9bxDVK+qs+uQZHj4z5f69AdGlLuAhNym++2ff4zHg0lTV
- ZkaSOLnVLDJVP2sLKAyCYxrViDNfbEhZnY2Uu8i5rbtHewxH+ZFDmxHX1ikemAk5Hi9e2HuUIMo
- rnaN5L9J2P4w1GwQTIDn++ml9Ew/BjhUZm+cQt9A91n22y/lWvdzHhnG4GqVTMBiuh8Yx1tRCZW
- dNQK08q2kM+JphEbuSkwEOwYa+CNIeGQ38q1gQpgTwDEQp9Kx0xs796lFX+xMr1sYretdbFiXaL
- 4HksGf74zJAwsI5xRnkqLdb0QpAs8D78JNoaAtnMFhbMvwwEd/mWUlMhrmgx7YfY31JytU5teTb
- tW/3BdG+yz7M2Oww16f4xylTWevar1CUxrXfpDSYmmQ+fbO9/YcN5uHt9m3RXVnqsvbOxG0ugAM
- h/UUQy1fha5KHs4hANSsR+ezcPEd1uT0EIxDcHh6dGfcLCO9FkA3yktahT0OvJ7c8DNl6kYxD2M
- v/ZwWMfYppyp30Po+U4Tu1OfAuaQRnlcowPcUL9pisVN03koxnAzPyXJcyq/lN1bkWhIuTBquAz
- WYRMxHmxYqDtGQg==
+ bh=9ATs1N+RIqy7HQcsjCsQ/Bu2Dkvoga6N4G9979jNyL8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomfHYrwsag5Tr9+cDH/r8nmh0r7g+C82rk2d56
+ RwUl4GYmmWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJnx2AAKCRARpy6gFHHX
+ coQ6EADdzduKhWY9iLHH/zEsVv5UlqMm1QLwEwn18/scNJbERA+TB1iwReBryX4dGi6GuAbI6LH
+ Yge5RV7vzIy1/QJb+RfmpoG3Z4cluJr8Yk3O3rBVknkCl1WJ3xx85cLwmFPeZSFP/BN97wZeM7F
+ u94Lhm3ijHi2jJsD5I0GIDn6NAAyw8obWQRL037lT8H4dgke3HX1vHAsEutUWJjR//FixdPQ+i1
+ kclU1s21x+DWOtcGer/LILtz4u0LGPrZ2uLy5aRjS5FGhcyY+CmgdKwCoUVWcek5fvtNlzsm6jd
+ 5RxYHHut2AsZJ8EFf+f8f0qbih8jmxtsU5m0+CNVwfthRscP1qsM1rqGc0X97CPz1HdFl0TFocr
+ pUcgMIAr3KQaL7y7kWirFCNEKK25dBC2PK8PRpsBWA1+N5ti7cNR/rqBUG/SRggQVSbwjANCfZO
+ Bq2pPCA1b972kH0c8usvFHuvJduQ9oj6PpMd0KYx4A833EZ9BI/xRRhvwmbch7Xg0uZBq/NsKtu
+ 3YN/YOZHLc9GxQhgcrpiWVAyLaUD0pOtn2QNtwzXMXIiJWZ1UO8u67dZ2sfxIf3rGo81lVbD4/I
+ bhnGIWSIMQdp6caE1hHFbx43LipZfVZZUaMFed6B5UVKKjHJbzSmV72woSXZeVJpIITmNE+JbFf
+ 7CQkN6vC0WXE0Xw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Commit 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
-removed the return value check from the call to gpiochip_add_data() (or
-rather gpiochip_add() back then and later converted to devres) with no
-explanation. This function however can still fail, so check the return
-value and bail-out if it does.
+Convert the driver to using the new generic GPIO chip interfaces from
+linux/gpio/generic.h.
 
-Cc: stable@vger.kernel.org
-Fixes: 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/mfd/vexpress-sysreg.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mfd/vexpress-sysreg.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
-index fc2daffc4352cca763cefbf6e17bdd5242290198..77245c1e5d7df497fda2f6dd8cfb08b5fbcee719 100644
+index 77245c1e5d7df497fda2f6dd8cfb08b5fbcee719..9399eb850ca29b0a9d9be2173bee4bcf6888d10f 100644
 --- a/drivers/mfd/vexpress-sysreg.c
 +++ b/drivers/mfd/vexpress-sysreg.c
-@@ -99,6 +99,7 @@ static int vexpress_sysreg_probe(struct platform_device *pdev)
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/mfd/core.h>
+@@ -96,9 +97,10 @@ static struct mfd_cell vexpress_sysreg_cells[] = {
+ 
+ static int vexpress_sysreg_probe(struct platform_device *pdev)
+ {
++	struct gpio_generic_chip *mmc_gpio_chip;
++	struct gpio_generic_chip_config config;
  	struct resource *mem;
  	void __iomem *base;
- 	struct gpio_chip *mmc_gpio_chip;
-+	int ret;
+-	struct gpio_chip *mmc_gpio_chip;
+ 	int ret;
  
  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!mem)
-@@ -119,7 +120,10 @@ static int vexpress_sysreg_probe(struct platform_device *pdev)
- 	bgpio_init(mmc_gpio_chip, &pdev->dev, 0x4, base + SYS_MCI,
- 			NULL, NULL, NULL, NULL, 0);
- 	mmc_gpio_chip->ngpio = 2;
--	devm_gpiochip_add_data(&pdev->dev, mmc_gpio_chip, NULL);
+@@ -117,11 +119,20 @@ static int vexpress_sysreg_probe(struct platform_device *pdev)
+ 			GFP_KERNEL);
+ 	if (!mmc_gpio_chip)
+ 		return -ENOMEM;
+-	bgpio_init(mmc_gpio_chip, &pdev->dev, 0x4, base + SYS_MCI,
+-			NULL, NULL, NULL, NULL, 0);
+-	mmc_gpio_chip->ngpio = 2;
+ 
+-	ret = devm_gpiochip_add_data(&pdev->dev, mmc_gpio_chip, NULL);
++	config = (typeof(config)){
++		.dev = &pdev->dev,
++		.sz = 4,
++		.dat = base + SYS_MCI,
++	};
 +
-+	ret = devm_gpiochip_add_data(&pdev->dev, mmc_gpio_chip, NULL);
++	ret = gpio_generic_chip_init(mmc_gpio_chip, &config);
 +	if (ret)
 +		return ret;
++
++	mmc_gpio_chip->gc.ngpio = 2;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &mmc_gpio_chip->gc, NULL);
+ 	if (ret)
+ 		return ret;
  
- 	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
- 			vexpress_sysreg_cells,
 
 -- 
 2.48.1
