@@ -1,378 +1,182 @@
-Return-Path: <linux-kernel+bounces-762259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481D6B20423
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:46:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26BCB20438
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9831886B25
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:46:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE17F4E147E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC3E2DECC4;
-	Mon, 11 Aug 2025 09:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D08A22FE10;
+	Mon, 11 Aug 2025 09:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qmUN6l41"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BFH2D9aX"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2049.outbound.protection.outlook.com [40.107.95.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A108224B01;
-	Mon, 11 Aug 2025 09:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905492; cv=none; b=IEPf6GwIXKe36Eba8Yroiwsg8Jv/LATwbgwjQASM1NPjxDiOo9y0UoaFhdOMxnRpyIYtZnpi/2aKA4/X/9t8X2qZFRTgs+GPxdQaBy1bjtiqK5e7RpQDhXp1wgeM4qDvPfgH2sDdhNDHErBTXmsD7DnayUzz7i8iUiiHokI4JLo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905492; c=relaxed/simple;
-	bh=UPWf30ZMlvogYjQ/MI9+xpo9+6mFRrRtQPnIp/bW4SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxq0epgVMwxHq0JxKFq7gAcPW7jmnc5hxp7Vk3jB3i/mvpUmfApnSaz5L9EEUx4emTh1QA9fa7OvA4hJcS5Z9Jsse/eduWNxJpzqaCuNFOPy1jv/cJPgFY92TWm7T7W3Z75wPrNuQQOQb0WBQxJlRyuVZ+yRYut7noYw0BcVZV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qmUN6l41; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AD4A74A4;
-	Mon, 11 Aug 2025 11:43:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754905436;
-	bh=UPWf30ZMlvogYjQ/MI9+xpo9+6mFRrRtQPnIp/bW4SE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qmUN6l41QzLaqgRP8EvPL7HiBYQTQhDj35OzSZSqDxirRD/vdal5O6kvdCkBoe/NA
-	 WuOobkLmX/G5SwiKWSAxg+zWkCzB9Wpfnt3nJAfbPYzAx/bD9dEs0qAeLv7xq/3vk/
-	 MIvFrRCtzCJeDzQLS5Pf7r8FCA0caunSMJHdMVDA=
-Date: Mon, 11 Aug 2025 12:44:29 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Suraj Kandpal <suraj.kandpal@intel.com>
-Cc: kernel-list@raspberrypi.com, amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, ankit.k.nautiyal@intel.com,
-	arun.r.murthy@intel.com, uma.shankar@intel.com,
-	jani.nikula@intel.com, dmitry.baryshkov@oss.qualcomm.com,
-	harry.wentland@amd.com, siqueira@igalia.com,
-	alexander.deucher@amd.com, christian.koenig@amd.com,
-	airlied@gmail.com, simona@ffwll.ch, liviu.dudau@arm.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev,
-	tzimmermann@suse.de, jessica.zhang@oss.qualcomm.com,
-	sean@poorly.run, marijn.suijten@somainline.org, mcanal@igalia.com,
-	dave.stevenson@raspberrypi.com,
-	tomi.valkeinen+renesas@ideasonboard.com,
-	kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <20250811094429.GE21313@pendragon.ideasonboard.com>
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-2-suraj.kandpal@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DA11C3C14;
+	Mon, 11 Aug 2025 09:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754905600; cv=fail; b=R01Og2OLIu76/pxhGbpLSmtGVJI61tiycvi20032YEHcyYlTr6L7ZoiQXelwJuvtgVHG6XkTtqbeUxzIYIzYwUzWePKyeg3dArwcPh0VOkWxsEN4d6us+MSLwyqzlBPDthWLFzSdOF3YbHjzKIDxykai5btVVCMTUFazoyKS3V8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754905600; c=relaxed/simple;
+	bh=JVzoSC2t+wn8suJnGOJOvZyBNQUZREdZGl4MFl1iv5U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Od4Mp2ZGcS8RqzMYl3ebtWKVJUaAKyjnyNfzQjnJPge135OU2Z6Dl0QfKO1Vg28+llSw9WnRi1av+19+hYqA89b8EiTUiUQy09SShTViYfkfiFi59mQocLREQD37mKc0c5QqVuPTFMN8n9sVRy13qOCQ1M1TwoJy1DRP64CMZls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BFH2D9aX; arc=fail smtp.client-ip=40.107.95.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Re4aCvVsE/Qnp9n4uaWacwlhXhgSuIDY0kPk6rba0ULyJbdHyQ6LwSPNFH/sVnEXNRKlxfKwTqNFgw5qPuB7nQOECnpNlybXBMXj3q5A2cMtlxmDH3cqDRfvBiwF2Ra8BoufLFCtSElAAOXIgNB8uPGRPVbpNadUlm8hWQ4LHP3PxX42tNOYETQ1+WsLwYIWIFBeQHZbZzlwRFKPfYE31oHdHeLCON+FoOCBqyG/KcZwpsRG7PhRYcxHz17peudSU6T10yiKRBz5ndGc0uii/BMh4M5PuG8nfKcm8SuqemfIA7NkpabJuOuw9fR0guH/LxbkU3l3ZBwZAOKp1W22YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/UHz7TjjvKaiYPs3YIFTWuPFq3Ky2H+T9CXCLZSjZh8=;
+ b=J7+xxrbiMUq9VPm+03TD8UxnTq/gyGMCBUwxvLIL/Wn3aaA1FfqnWDG6SW98pqAgoEscVJ6i1N4Y9EyYe7ygqKMQOn9hWUF4qaEkMncLJ5Mg5zC14+KRbt583AeugnIdQWpyZVTFPkjHm4OTiYIPVQrrn4gXKyn64VKapqW6AeyMXEq4XnZsi6QWvAaJAKub0rmQFDMkQORXJg9RcctjSWJsZd6jjuhuUy4+TiwLYFeDxLr0jkn6kJND5hU1jvm/lDBTWnn7WFYQevgVtr6cMeCm3k+X6vz1zs7gNSqo3GstkPXgoUnMutLjGZG/lVS3UcHwbGbGGycwtk+qhRvmEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/UHz7TjjvKaiYPs3YIFTWuPFq3Ky2H+T9CXCLZSjZh8=;
+ b=BFH2D9aXpX7S00+lXEl8npzN4nWGlH9sAq8zoqHAnbNDZCVcpB3vF4JpW92OrqTB0vc6y9WCXzPnaPDv4rv+yP99/pDQxUCVAa8/3ro6S6D5n7Z03xK62Mjyl8iajGggLG3G1no5lfmG56aChNgav4sK4poBJ1t/FSeEisqANUE=
+Received: from CH2PR14CA0048.namprd14.prod.outlook.com (2603:10b6:610:56::28)
+ by MW6PR12MB8899.namprd12.prod.outlook.com (2603:10b6:303:248::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 11 Aug
+ 2025 09:46:26 +0000
+Received: from CH2PEPF00000142.namprd02.prod.outlook.com
+ (2603:10b6:610:56:cafe::ae) by CH2PR14CA0048.outlook.office365.com
+ (2603:10b6:610:56::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Mon,
+ 11 Aug 2025 09:46:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000142.mail.protection.outlook.com (10.167.244.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 09:46:25 +0000
+Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
+ 2025 04:46:18 -0500
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
+	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
+	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<kirill.shutemov@linux.intel.com>, <huibo.wang@amd.com>,
+	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
+Subject: [PATCH v9 04/18] x86/apic: Initialize APIC ID for Secure AVIC
+Date: Mon, 11 Aug 2025 15:14:30 +0530
+Message-ID: <20250811094444.203161-5-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811092707.3986802-2-suraj.kandpal@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000142:EE_|MW6PR12MB8899:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e77108c-03b8-4981-0a24-08ddd8bbf039
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ES/GsCK9RlywsSQMc1MRCg8TOwZhDde12HqPot8d0h9fDi3rq+LINvRKv+yy?=
+ =?us-ascii?Q?089hVuULIC3MeQqtiWc++V2wso+Hnvv+sJEgUp7l4jFydY8XbtL0YjoLiq/k?=
+ =?us-ascii?Q?MyHw2ifmlRozKdOol2XMqRItZ6uutbkbFzxZpABTEmJ+HubZfZBmi8vJr+VJ?=
+ =?us-ascii?Q?XbmfMzf6qmE+qEtyy1k1WS/k0xHwQvJt+dgOeCSMHRehDMfp5Y5vaaG0GAOj?=
+ =?us-ascii?Q?UV2wQd8dbUX25HF+LWOXTpL7QNkL18v6pvBWRbSGsk7KtSk7CPqzIQ3ysCrO?=
+ =?us-ascii?Q?mMgO6EXmKv4lBcbpTMbMxSqyJBKUReBnT2AiDyBuFGEbjmK0vuh9+vLMsGKM?=
+ =?us-ascii?Q?cCeut/i1qCVvPf5qBYB0OH03bdc9CkbmsZlUwkVxRw+nD1CScHahzl7qsN45?=
+ =?us-ascii?Q?i+fx5j0DvuhR6wkTHPXxLaal8wZtS3DWtybYRnzKAke4sunCyEyzpn3I4Qey?=
+ =?us-ascii?Q?J0ji48k1PcVfrdnJjnWX2w0EhlL69sCT8efZWzBcCQehOtDlAvqaJoT6T03w?=
+ =?us-ascii?Q?FFZb1I+aivioRA+CZYU0HGoK0FAJCn4p91kKsfv6jp7UlIA5kPs/DMk5SM0g?=
+ =?us-ascii?Q?U24UDW0LLwdxRBpvnk4rLjzvnxB/IOyHPnCJtyBMV8GzrX7pT9/huuR8YjfL?=
+ =?us-ascii?Q?Q05/wWi7cQU1m0+J8bz77v3S5xU3dkiXqOqIHZFYAfRf9+a3GNvAbSwlao4X?=
+ =?us-ascii?Q?lbOu450qwANZB3RTqkk9Lj/xhe+3ydGq6hp7pBQXJPv/btGzl2vUgRVJp2EV?=
+ =?us-ascii?Q?LBpdv3Yj10spZ/6/YgaG5yCyhfd8WfYRBugmqRsowNIBHnJLsyGPkpQRLx7+?=
+ =?us-ascii?Q?GHSaMWKZXogR3QI3p39yEEcCq6ggauGhwW9JQKifHWutE1AW0Z+BWVYVEDvo?=
+ =?us-ascii?Q?uyKrEdYjAMpMcpTvk1lTnb7vm2M0LMbnZi4BPDHLgseH1MY14p2eljkRHO3a?=
+ =?us-ascii?Q?OM9rzQCVKhErGRl4FoTwnhZgsAaQBc74RtH/hTAWR9HYV/Qkh2XaTHT9BMdS?=
+ =?us-ascii?Q?3txEMxvbqMu8GDdYymbuOGQY+GUJg/AtMhgv1al9j59HA3KXMU7Wkb8YpkoM?=
+ =?us-ascii?Q?eu75dRtxM9KVrD2cnfJTEvvaG7rPZDmAUjH4VYfFi8i5ehZCAzmHLcxnJ2xB?=
+ =?us-ascii?Q?fI6C7ogj6eXTpojmqlNZApywXZrbRoa53N/f3LF8cTL/7SaSm2EAGJyAfPyr?=
+ =?us-ascii?Q?3IgotA9MpPHGHT4gN+YQNEjdOzmujWmHmTgaqQgsVThOnTmb9OSJGU0UIaA6?=
+ =?us-ascii?Q?Yt2rQaHtQkDwcsr9tgznqXwlHmWV4ZE1E1IMcXvJ00ww8KVH4fxP00RRXVjZ?=
+ =?us-ascii?Q?9H8dVXZfJupojZ1muXOFS3+lriWu57aceLjOcyihtZ8qGFQPW/r2xMrz3U4u?=
+ =?us-ascii?Q?FUnPYzDNZtRxBlfUmpzzwlGE6K2YpYmL6W5z3NUdaMwAVBR5TPrcGEr855Bn?=
+ =?us-ascii?Q?ON9Ohq8g1YId5sV35SCUa76SAEmiDTocUzUBS4IGA9qnuSuM84V629d8a53N?=
+ =?us-ascii?Q?PxBKcZBZtcDYfHHuL0N1eELu9TCB4zz2A2m6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 09:46:25.6711
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e77108c-03b8-4981-0a24-08ddd8bbf039
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000142.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8899
 
-On Mon, Aug 11, 2025 at 02:57:00PM +0530, Suraj Kandpal wrote:
-> Some drivers cannot work with the current design where the connector
-> is embedded within the drm_writeback_connector such as intel and
-> some drivers that can get it working end up adding a lot of checks
-> all around the code to check if it's a writeback conenctor or not.
-> To solve this we move the drm_writeback_connector within the
-> drm_connector and remove the drm_connector base which was in
-> drm_writeback_connector. We do all other required
-> modifications that come with these changes along with addition
-> of new function which returns the drm_connector when
-> drm_writeback_connector is present.
-> All drivers will be expected to allocate the drm_connector.
-> 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> ---
->  drivers/gpu/drm/drm_writeback.c | 33 ++++++++++------
->  include/drm/drm_connector.h     | 60 +++++++++++++++++++++++++++++
->  include/drm/drm_writeback.h     | 68 ++++-----------------------------
->  3 files changed, 89 insertions(+), 72 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> index ec2575c4c21b..198b8c488056 100644
-> --- a/drivers/gpu/drm/drm_writeback.c
-> +++ b/drivers/gpu/drm/drm_writeback.c
-> @@ -89,8 +89,10 @@ static const char *drm_writeback_fence_get_driver_name(struct dma_fence *fence)
->  {
->  	struct drm_writeback_connector *wb_connector =
->  		fence_to_wb_connector(fence);
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  
-> -	return wb_connector->base.dev->driver->name;
-> +	return connector->dev->driver->name;
->  }
->  
->  static const char *
-> @@ -187,7 +189,8 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
->  					  struct drm_encoder *enc, const u32 *formats,
->  					  int n_formats)
->  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  	struct drm_mode_config *config = &dev->mode_config;
->  	struct drm_property_blob *blob;
->  	int ret = create_writeback_properties(dev);
-> @@ -269,7 +272,8 @@ int drm_writeback_connector_init(struct drm_device *dev,
->  				 struct drm_encoder *enc,
->  				 const u32 *formats, int n_formats)
->  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  	int ret;
->  
->  	ret = drm_connector_init(dev, connector, con_funcs,
-> @@ -339,7 +343,8 @@ int drmm_writeback_connector_init(struct drm_device *dev,
->  				  struct drm_encoder *enc,
->  				  const u32 *formats, int n_formats)
->  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  	int ret;
->  
->  	ret = drmm_connector_init(dev, connector, con_funcs,
-> @@ -382,13 +387,15 @@ int drm_writeback_set_fb(struct drm_connector_state *conn_state,
->  
->  int drm_writeback_prepare_job(struct drm_writeback_job *job)
->  {
-> -	struct drm_writeback_connector *connector = job->connector;
-> +	struct drm_writeback_connector *wb_connector = job->connector;
-> +	struct drm_connector *connector
-> +		= drm_writeback_to_connector(wb_connector);
->  	const struct drm_connector_helper_funcs *funcs =
-> -		connector->base.helper_private;
-> +		connector->helper_private;
->  	int ret;
->  
->  	if (funcs->prepare_writeback_job) {
-> -		ret = funcs->prepare_writeback_job(connector, job);
-> +		ret = funcs->prepare_writeback_job(wb_connector, job);
->  		if (ret < 0)
->  			return ret;
->  	}
-> @@ -434,12 +441,14 @@ EXPORT_SYMBOL(drm_writeback_queue_job);
->  
->  void drm_writeback_cleanup_job(struct drm_writeback_job *job)
->  {
-> -	struct drm_writeback_connector *connector = job->connector;
-> +	struct drm_writeback_connector *wb_connector = job->connector;
-> +	struct drm_connector *connector
-> +		= drm_writeback_to_connector(wb_connector);
->  	const struct drm_connector_helper_funcs *funcs =
-> -		connector->base.helper_private;
-> +		connector->helper_private;
->  
->  	if (job->prepared && funcs->cleanup_writeback_job)
-> -		funcs->cleanup_writeback_job(connector, job);
-> +		funcs->cleanup_writeback_job(wb_connector, job);
->  
->  	if (job->fb)
->  		drm_framebuffer_put(job->fb);
-> @@ -521,8 +530,10 @@ struct dma_fence *
->  drm_writeback_get_out_fence(struct drm_writeback_connector *wb_connector)
->  {
->  	struct dma_fence *fence;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  
-> -	if (WARN_ON(wb_connector->base.connector_type !=
-> +	if (WARN_ON(connector->connector_type !=
->  		    DRM_MODE_CONNECTOR_WRITEBACK))
->  		return NULL;
->  
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 8f34f4b8183d..da63fdafd9f2 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -1882,6 +1882,61 @@ struct drm_connector_cec {
->  	void *data;
->  };
->  
-> +/**
-> + * struct drm_writeback_connector - DRM writeback connector
-> + */
-> +struct drm_writeback_connector {
-> +	/**
-> +	 * @pixel_formats_blob_ptr:
-> +	 *
-> +	 * DRM blob property data for the pixel formats list on writeback
-> +	 * connectors
-> +	 * See also drm_writeback_connector_init()
-> +	 */
-> +	struct drm_property_blob *pixel_formats_blob_ptr;
-> +
-> +	/** @job_lock: Protects job_queue */
-> +	spinlock_t job_lock;
-> +
-> +	/**
-> +	 * @job_queue:
-> +	 *
-> +	 * Holds a list of a connector's writeback jobs; the last item is the
-> +	 * most recent. The first item may be either waiting for the hardware
-> +	 * to begin writing, or currently being written.
-> +	 *
-> +	 * See also: drm_writeback_queue_job() and
-> +	 * drm_writeback_signal_completion()
-> +	 */
-> +	struct list_head job_queue;
-> +
-> +	/**
-> +	 * @fence_context:
-> +	 *
-> +	 * timeline context used for fence operations.
-> +	 */
-> +	unsigned int fence_context;
-> +	/**
-> +	 * @fence_lock:
-> +	 *
-> +	 * spinlock to protect the fences in the fence_context.
-> +	 */
-> +	spinlock_t fence_lock;
-> +	/**
-> +	 * @fence_seqno:
-> +	 *
-> +	 * Seqno variable used as monotonic counter for the fences
-> +	 * created on the connector's timeline.
-> +	 */
-> +	unsigned long fence_seqno;
-> +	/**
-> +	 * @timeline_name:
-> +	 *
-> +	 * The name of the connector's fence timeline.
-> +	 */
-> +	char timeline_name[32];
-> +};
-> +
->  /**
->   * struct drm_connector - central DRM connector control structure
->   *
-> @@ -2305,6 +2360,11 @@ struct drm_connector {
->  	 * @cec: CEC-related data.
->  	 */
->  	struct drm_connector_cec cec;
-> +
-> +	/**
-> +	 * @writeback: Writeback related valriables.
-> +	 */
-> +	struct drm_writeback_connector writeback;
+Initialize the APIC ID in the Secure AVIC APIC backing page with
+the APIC_ID msr value read from Hypervisor. CPU topology evaluation
+later during boot would catch and report any duplicate APIC ID for
+two CPUs.
 
-No, sorry, that's a bad idea. Most connectors have nothing to do with
-writeback, you shouldn't introduce writeback-specific fields here.
-drm_writeback_connector happens to be a drm_connector because of
-historical reasons (it was decided to reuse the connector API exposed to
-userspace instead of exposing a completely separate API in order to
-simplify the implementation), but that does not mean that every
-connector is related to writeback.
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+---
+Changes since v8:
+ - Added Tianyu's Reviewed-by.
+ - Code cleanup.
 
-I don't know what issues the Intel driver(s) have with
-drm_writeback_connector, but you shouldn't make things worse for
-everybody due to a driver problem.
+ arch/x86/kernel/apic/x2apic_savic.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->  };
->  
->  #define obj_to_connector(x) container_of(x, struct drm_connector, base)
-> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-> index 958466a05e60..2a52b6761797 100644
-> --- a/include/drm/drm_writeback.h
-> +++ b/include/drm/drm_writeback.h
-> @@ -15,66 +15,6 @@
->  #include <drm/drm_encoder.h>
->  #include <linux/workqueue.h>
->  
-> -/**
-> - * struct drm_writeback_connector - DRM writeback connector
-> - */
-> -struct drm_writeback_connector {
-> -	/**
-> -	 * @base: base drm_connector object
-> -	 */
-> -	struct drm_connector base;
-> -
-> -	/**
-> -	 * @pixel_formats_blob_ptr:
-> -	 *
-> -	 * DRM blob property data for the pixel formats list on writeback
-> -	 * connectors
-> -	 * See also drm_writeback_connector_init()
-> -	 */
-> -	struct drm_property_blob *pixel_formats_blob_ptr;
-> -
-> -	/** @job_lock: Protects job_queue */
-> -	spinlock_t job_lock;
-> -
-> -	/**
-> -	 * @job_queue:
-> -	 *
-> -	 * Holds a list of a connector's writeback jobs; the last item is the
-> -	 * most recent. The first item may be either waiting for the hardware
-> -	 * to begin writing, or currently being written.
-> -	 *
-> -	 * See also: drm_writeback_queue_job() and
-> -	 * drm_writeback_signal_completion()
-> -	 */
-> -	struct list_head job_queue;
-> -
-> -	/**
-> -	 * @fence_context:
-> -	 *
-> -	 * timeline context used for fence operations.
-> -	 */
-> -	unsigned int fence_context;
-> -	/**
-> -	 * @fence_lock:
-> -	 *
-> -	 * spinlock to protect the fences in the fence_context.
-> -	 */
-> -	spinlock_t fence_lock;
-> -	/**
-> -	 * @fence_seqno:
-> -	 *
-> -	 * Seqno variable used as monotonic counter for the fences
-> -	 * created on the connector's timeline.
-> -	 */
-> -	unsigned long fence_seqno;
-> -	/**
-> -	 * @timeline_name:
-> -	 *
-> -	 * The name of the connector's fence timeline.
-> -	 */
-> -	char timeline_name[32];
-> -};
-> -
->  /**
->   * struct drm_writeback_job - DRM writeback job
->   */
-> @@ -131,10 +71,16 @@ struct drm_writeback_job {
->  	void *priv;
->  };
->  
-> +static inline struct drm_connector *
-> +drm_writeback_to_connector(struct drm_writeback_connector *wb_connector)
-> +{
-> +	return container_of(wb_connector, struct drm_connector, writeback);
-> +}
-> +
->  static inline struct drm_writeback_connector *
->  drm_connector_to_writeback(struct drm_connector *connector)
->  {
-> -	return container_of(connector, struct drm_writeback_connector, base);
-> +	return &connector->writeback;
->  }
->  
->  int drm_writeback_connector_init(struct drm_device *dev,
-
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index 86a522685230..55edc6c30ba4 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -141,6 +141,12 @@ static void savic_setup(void)
+ 	enum es_result res;
+ 	unsigned long gpa;
+ 
++	/*
++	 * Before Secure AVIC is enabled, APIC msr reads are intercepted.
++	 * APIC_ID msr read returns the value from the Hypervisor.
++	 */
++	apic_set_reg(ap, APIC_ID, native_apic_msr_read(APIC_ID));
++
+ 	gpa = __pa(ap);
+ 
+ 	/*
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
 
