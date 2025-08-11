@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-762097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1550B20217
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25156B2021B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC1394E22CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CABA420601
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA612DE6F8;
-	Mon, 11 Aug 2025 08:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62562DC353;
+	Mon, 11 Aug 2025 08:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="rGm1QFmz"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCuCONJc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8682DC355;
-	Mon, 11 Aug 2025 08:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA782DC34F;
+	Mon, 11 Aug 2025 08:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754901738; cv=none; b=BlLmLAsZZOyuJx0KMxRDD1VKY5ZwxRh5xTudGLdOsVHlVlA/GgRmX+zkXoX+VDS9K6uZV2EOh5xlqiE3n5RSqdwu93vsrV6qzDypTpSwMJeOcYQgnqyWAcUQJi2Kwf6J5Vi9pxO2pJ4KuLxcEPbjb1PCiPKx97kkFsKaIdbMb10=
+	t=1754901760; cv=none; b=J37zWMJJBPgTG75hF3o9+EtOcflJICRZpKe01qqnk+C6BRIv7bQC0dvwFjpKtehV3mvMmPUEQeeuoed25kScFUFo4yvDSe2Kc6eA+InDNibBR21OBwosaxg7Nu4nFPkDepahxNEh10rFGFrKHI56/5bPyd7BHMnWC4Mg3bH9eGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754901738; c=relaxed/simple;
-	bh=fFzN46s8fI+jPXzBN2wRyau0XR7zJopdfaevTTLhQwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z1ZSVE2Z/Ls4yYJC3nsnmtvG8w3Wk1QIEP103yMrqC22DNqFmZPH17Nfn8vbco4sLvktqMTCci92tcnAExvXJeSjeTt872zGArGGJkD7lGcZ/i8tUtRKCLagNU2wUfoZ1XIyBofDas+7Y7haYjwgRlUMgC/MMWkf8yafQ8FbP0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=rGm1QFmz; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c0p6F0pJfz9stX;
-	Mon, 11 Aug 2025 10:42:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754901733;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hl5pR6KEXqqmRKm0XQhFRqtMBlaQMUsVvgjCapFINjk=;
-	b=rGm1QFmz51ShKNaeGL34QTmDDcDaTUPtXgDxX299EO84u8rhHXjtzpqUs8/3HQwAYYSULU
-	qCRkrj9m7aIpWSquYSC0fDON72jTE4y6bFSEn7q/yw9Phr6z7w7v0lnAp2SooRC+qsgjiz
-	fqgsO49XTmXAqE8lKgJN7lIY28fMc5kUT68++lKECB1z06gUhZevCMd4lnDW05FrPtaYyC
-	VTk9gpio0Sl47tLZspolgNhZNKeNrk/8xSpMarUOjh7i48wT8+CZTjsMGvdC1WlwvfMU1V
-	fA/uU/YJPVXL+tBbfJRi0yC54rqyc+ICu+I/tHg7P25mCPm6g73/CZl6OtkxIw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nico Pache <npache@redhat.com>,
-	Dev Jain <dev.jain@arm.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v3 5/5] block: use largest_zero_folio in __blkdev_issue_zero_pages()
-Date: Mon, 11 Aug 2025 10:41:13 +0200
-Message-ID: <20250811084113.647267-6-kernel@pankajraghav.com>
-In-Reply-To: <20250811084113.647267-1-kernel@pankajraghav.com>
-References: <20250811084113.647267-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1754901760; c=relaxed/simple;
+	bh=JDNNTD+SRMn0si8y5OWJhsNjo2s9JrTceyqBhranGMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LHT8UaUovdka+bo86GdU+wDqHtI0F8NqJdQZZEAcT+hTZoOm76kutq3dPJB8R4hZHXgMjEYyi+Re2Xkk2AHa5SwP+utCiutNdM0JVFJm8Yz9UUlIjkJ/DOFBHo3uXcOt3abbIEYaSs+sNC5pbOoO8Ha15XejA1lnip0UMtNBbbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCuCONJc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3356C4CEED;
+	Mon, 11 Aug 2025 08:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754901757;
+	bh=JDNNTD+SRMn0si8y5OWJhsNjo2s9JrTceyqBhranGMc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gCuCONJc3Ct8dG4sC7W8BzlcNRGv+wX9YC/eGN2Pb9syJvegCiWF9DSXQbYGOdkya
+	 HYgt9dRKSlwyMU6MjsXOreUUuhSgApbDVlX8xn+CMEwNxzHlAw+L9S2ZdZcCEGgDkc
+	 LW19JxRSdyVM/phVMKeKWJ7xzW5vJIcdRsPEOnsVmKvhLTC441DjZ1v7TS73cF3Zkk
+	 oLikz77oe3u3jBxrOuGd1s5L4RLWmj34HDs7gUtNuC4X5iiEvb0rMLLqoVb3LzK+qf
+	 n3099Uk2Zx3UBQkRX3XlYDWbEIkRjiUwWXi8ZnLRHKHTGnD0iOr6XSmHkRaKJXRqQj
+	 cZp6AJ74xFCyw==
+Date: Mon, 11 Aug 2025 10:42:33 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>
+Cc: maz@kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Issues with OF_DYNAMIC PCI bridge node generation
+ (kmemleak/interrupt-map IC reg property)
+Message-ID: <aJms+YT8TnpzpCY8@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4c0p6F0pJfz9stX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+Hi Lizhi, Rob,
 
-Use largest_zero_folio() in __blkdev_issue_zero_pages().
-On systems with CONFIG_PERSISTENT_HUGE_ZERO_FOLIO enabled, we will end up
-sending larger bvecs instead of multiple small ones.
+while debugging something unrelated I noticed two issues
+(related) caused by the automatic generation of device nodes
+for PCI bridges.
 
-Noticed a 4% increase in performance on a commercial NVMe SSD which does
-not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-gains might be bigger if the device supports bigger MDTS.
+GICv5 interrupt controller DT top level node [1] does not have a "reg"
+property, because it represents the top level node, children (IRSes and ITSs)
+are nested.
 
-Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- block/blk-lib.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+It does provide #address-cells since it has child nodes, so it has to
+have a "ranges" property as well.
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 4c9f20a689f7..3030a772d3aa 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -196,6 +196,8 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
- 		struct bio **biop, unsigned int flags)
- {
-+	struct folio *zero_folio = largest_zero_folio();
-+
- 	while (nr_sects) {
- 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
- 		struct bio *bio;
-@@ -208,15 +210,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 			break;
- 
- 		do {
--			unsigned int len, added;
-+			unsigned int len;
- 
--			len = min_t(sector_t,
--				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
--			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
--			if (added < len)
-+			len = min_t(sector_t, folio_size(zero_folio),
-+				    nr_sects << SECTOR_SHIFT);
-+			if (!bio_add_folio(bio, zero_folio, len, 0))
- 				break;
--			nr_sects -= added >> SECTOR_SHIFT;
--			sector += added >> SECTOR_SHIFT;
-+			nr_sects -= len >> SECTOR_SHIFT;
-+			sector += len >> SECTOR_SHIFT;
- 		} while (nr_sects);
- 
- 		*biop = bio_chain_and_submit(*biop, bio);
--- 
-2.49.0
+You have added code to automatically generate properties for PCI bridges
+and in particular this code [2] creates an interrupt-map property for
+the PCI bridges (other than the host bridge if it has got an OF node
+already).
 
+That code fails on GICv5, because the interrupt controller node does not
+have a "reg" property (and AFAIU it does not have to - as a matter of
+fact, INTx mapping works on GICv5 with the interrupt-map in the
+host bridge node containing zeros in the parent unit interrupt
+specifier #address-cells).
+
+It is not clear to me why, to create an interrupt-map property, we
+are reading the "reg" value of the parent IC node to create the
+interrupt-map unit interrupt specifier address bits (could not we
+just copy the address in the parent unit interrupt specifier reported
+in the host bridge interrupt-map property ?).
+
+- #address-cells of the parent describes the number of address cells of
+  parent's child nodes not the parent itself, again, AFAIK, so parsing "reg"
+  using #address-cells of the parent node is not entirely correct, is it ?
+- It is unclear to me, from an OF spec perspective what the address value
+  in the parent unit interrupt specifier ought to be. I think that, at
+  least for dts including a GICv3 IC, the address values are always 0,
+  regardless of the GICv3 reg property.
+
+I need your feedback on this because the automatic generation must
+work seamlessly for GICv5 as well (as well as all other ICs with no "reg"
+property) and I could not find anything in the OF specs describing
+how the address cells in the unit interrupt specifier must be computed.
+
+I found this [3] link where in section 7 there is an interrupt mapping
+algorithm; I don't understand it fully and I think it is possibly misleading.
+
+Now, the failure in [2] (caused by the lack of a "reg" property in the
+IC node) triggers an interrupt-map property generation failure for PCI
+bridges that are upstream devices that need INTx swizzling.
+
+In turn, that leads to a kmemleak detection:
+
+unreferenced object 0xffff000800368780 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294892824
+  hex dump (first 32 bytes):
+    f0 b8 34 00 08 00 ff ff 04 00 00 00 00 00 00 00  ..4.............
+    70 c2 30 00 08 00 ff ff 00 00 00 00 00 00 00 00  p.0.............
+  backtrace (crc 1652b62a):
+    kmemleak_alloc+0x30/0x3c
+    __kmalloc_cache_noprof+0x1fc/0x360
+    __of_prop_dup+0x68/0x110
+    of_changeset_add_prop_helper+0x28/0xac
+    of_changeset_add_prop_string+0x74/0xa4
+    of_pci_add_properties+0xa0/0x4e0
+    of_pci_make_dev_node+0x198/0x230
+    pci_bus_add_device+0x44/0x13c
+    pci_bus_add_devices+0x40/0x80
+    pci_host_probe+0x138/0x1b0
+    pci_host_common_probe+0x8c/0xb0
+    platform_probe+0x5c/0x9c
+    really_probe+0x134/0x2d8
+    __driver_probe_device+0x98/0xd0
+    driver_probe_device+0x3c/0x1f8
+    __driver_attach+0xd8/0x1a0
+
+I have not grokked it yet but it seems genuine, so whatever we decide
+in relation to "reg" above, this ought to be addressed too, if it
+is indeed a memleak.
+
+Please let me know if something is unclear I can provide further
+details.
+
+Thanks,
+Lorenzo
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml?h=v6.17-rc1
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/of_property.c?h=v6.17-rc1#n283
+[3] https://www.devicetree.org/open-firmware/practice/imap/imap0_9d.html
 
