@@ -1,191 +1,352 @@
-Return-Path: <linux-kernel+bounces-761756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363E8B1FE12
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:24:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D69B1FE18
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83DF3B7989
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:24:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8EC173B57
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D4224888F;
-	Mon, 11 Aug 2025 03:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC41264F81;
+	Mon, 11 Aug 2025 03:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZYjujJcF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="kq3UKuz0"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B5B1991DD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDF7140E34;
+	Mon, 11 Aug 2025 03:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754882662; cv=none; b=T1BjZbgMNZIEy/1MennZu4s8Pt7jTiSoJL6L8ZQbotAP4LmOrUQ9hgUYIIZNCcuokzj/DiA59T0iQoGADG/vptJNVDhygCbcxTxbltXdXGEn11lb5Z5xEffVuUg4DPqW6rPeXOT0CN9eaNIRu61AlkhFF8nd+TXkdXRJht0qbTk=
+	t=1754882791; cv=none; b=Lma6qgFQQW52guxn1NJGnlN1KylqjTn1SIO4ViaGb2vdV8mVT7zmqdjFcuxV0Zt0vtLVcVpupCZ0U+RY7n6WIwMwjeXoingEVJcXNEULAAQ4PDLQh29yf2vCQCi7ebWdfNUlJqS9/jIHrs1IkuUvl2cqtZ4FibipSAXtoo8rICM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754882662; c=relaxed/simple;
-	bh=iP6Z1qUMCiUuRzcznpyqzUNtogdFZvomceWUHIJevIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IBRzecN+0qFB9/Vi+dzyUNW2nnINhbW9e071Cx4fmC+Ea8ydH/v6C7E5OOm/3xmPgDs7RL+L+4Q6LUMMiHFEXpQGdHiNBjL0jmxrp4lX9hg8eMtiynLRL2T9NRzZO5aXJ/gz07JTbrXIlCJAs72QNJJot/AKBusB1O06GBLV1sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZYjujJcF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754882660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zjNPuV7EJaEaUCcJ0gZblwrSNrDlXAI+214HZj1UE/s=;
-	b=ZYjujJcFh57C7WJf3Ejj3jdnP4Dwz0+O13mUzozllVztWUaUpsltaxogcypnwQOxypqcbg
-	Wd1zpBO/QE5JldM5D9/AsSVMtpBJdCeWR/kmUOrnxpJDvaHq7hk2W86CuYp2gZQnPXQK+h
-	tSUSTox5J1TM2imOBu+ZIa4u4uKcuQ8=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-kGB4VxMLOTy3_8gnNp_g5g-1; Sun, 10 Aug 2025 23:24:18 -0400
-X-MC-Unique: kGB4VxMLOTy3_8gnNp_g5g-1
-X-Mimecast-MFC-AGG-ID: kGB4VxMLOTy3_8gnNp_g5g_1754882657
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32147620790so4158819a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 20:24:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754882657; x=1755487457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zjNPuV7EJaEaUCcJ0gZblwrSNrDlXAI+214HZj1UE/s=;
-        b=r003kS2kDR5Krmw6Vyn6ZFJ6mr7HuQpDgZzpceH7uvHd279514Tc83GjqIkwRbSxy1
-         DKdHzCIpszD2LBY6tcwgzY6yDliwUty21hgWYa+y/qSY/sz7gwGh5ci1WxjddpFk7I7A
-         HJO4q7ijOVHXsBJItQWarYz4TolJsUbJYJ1usRo1h6E1xc3GWhmnqZZLe19Mkf2XMriv
-         by2ySsLRUJnGUBqSgUk8fP8FlQth1fRxT9tFBlieZ0eg3XPde8gyW1KLt5oyMI197EeB
-         NhicFhA01Dadbz/WxyswExsrYRFzuCXDjppE65GrpcVzvla3VG6Iz/AqDEE+tzOO1QTo
-         4Kzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSepkddWnhO7avcooCXeEmCPxKAMbpwC2cKGihV0bl6r5Ngnt/he+73Cjhxe0M2WdPmywob3Y69kTxsM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSV8N6NC9iAk/GuNbSaeeUQ9G097K7Ys77/e55Ru2RTrN+IAew
-	Xsjbo0xo5255CbXaLWC0RMdnGVuQgp6PWWxBTa8HFpujJnpOrqYAjeJI04RKK/AzMNzkD8zugbv
-	Utw86AQiOTVsUlCPdfYbt/iiZueAztz4aQNPdVSt6jsWJhR7TnO0J+i1i4c1jpfHyEj8MO6yAgV
-	pZm38hKEvLjmItThoyHn6LEZKGH5CQFn6aRTA0Vkq+
-X-Gm-Gg: ASbGncsMb5NH87KQwJgVY2o5Ltam+C3lfhChvSkPqGd0RsJpLThA1f2ie+YShmzAiWt
-	jfQMckb/EizA9UZwAMyoKIyeSufyZRyDPzGZgzNmZiP5prZEAg0bj1c0oSDvYblEvxTRyVYRvjF
-	cM+oS85EhI13RSP2aSGGY=
-X-Received: by 2002:a17:90b:3510:b0:31e:cdfb:5f1f with SMTP id 98e67ed59e1d1-321839f3e73mr15802491a91.14.1754882657275;
-        Sun, 10 Aug 2025 20:24:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE4ywZjr1sq2uRwQw4EF1VsaPtYYNpQ0buDcJ189M7Cu6CuvDxchAByxIOp6XLWSObXGmDD/ly6N2CbfA8BtU=
-X-Received: by 2002:a17:90b:3510:b0:31e:cdfb:5f1f with SMTP id
- 98e67ed59e1d1-321839f3e73mr15802465a91.14.1754882656818; Sun, 10 Aug 2025
- 20:24:16 -0700 (PDT)
+	s=arc-20240116; t=1754882791; c=relaxed/simple;
+	bh=enGTt9SMwY9c4TuHCqGxqIRS5dEw45DiMVXsaJ4Ho/o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NElCTuvSJTatOTeUQY7QsvJmGH8Ndm+F3VPOYDkjzeWfjRYx+qOWtdjC5n3gHhPFuVaUmpKbhgyoooBsX5pggCXOGN2dAgHzhzhoT4QhHBOzCov1EswjSObrL50VX9J6nltqt41D1+hZynogV9QFuJ+OH9MNP1DmYHV2l0aZ+sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=kq3UKuz0; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f4c39bb8766211f08871991801538c65-20250811
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EcT+f/N6oe7EZKgGMDbwkDouTM31unC2D7Cmt7xG7RI=;
+	b=kq3UKuz0eKxoQAPjMneWAGZ+Y0nSl4ROMhdMPe8zSmpXrEbzsorTsrUn+2Hyd4nYVJ2POXTdPJ8507bQ10Y44/7IhDCLsJltYPKXNUVEu9T/8HPMn7tcC6Cflup6K1KdZrvy9qUXz1Oz8AR7BWonZ7ExURLNnTTsL/K/7Zzwms4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:758a7477-1be5-4b95-b201-2c49baae0187,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:f1326cf,CLOUDID:bda444ce-1ac4-40cd-97d9-e8f32bab97d5,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f4c39bb8766211f08871991801538c65-20250811
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <kyrie.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1671929269; Mon, 11 Aug 2025 11:26:23 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 11 Aug 2025 11:26:16 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 11 Aug 2025 11:26:15 +0800
+From: Kyrie Wu <kyrie.wu@mediatek.com>
+To: Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen
+	<andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Nicolas Dufresne
+	<nicolas.dufresne@collabora.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>, Sebastian Fricke
+	<sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, Arnd
+ Bergmann <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, George Sun
+	<george.sun@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
+	<andrzejtp2010@gmail.com>
+Subject: [PATCH v2 0/8] Enable video decoder & encoder for MT8189
+Date: Mon, 11 Aug 2025 11:26:07 +0800
+Message-ID: <20250811032616.1385-1-kyrie.wu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-7-eperezma@redhat.com>
-In-Reply-To: <20250807115752.1663383-7-eperezma@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 11 Aug 2025 11:24:05 +0800
-X-Gm-Features: Ac12FXzgn3y-tLYzPRHYZyV9LaliqHEqy5NbVa1yW7rw96blCmLRNDtm3gfQeZ8
-Message-ID: <CACGkMEsMi6Axcm_3Uin76mosPjsrwZv2qDvejoK_vLu1c3z6-Q@mail.gmail.com>
-Subject: Re: [RFC v2 6/7] vduse: send update_iotlb_v2 message
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
-	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, Aug 7, 2025 at 7:58=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat.=
-com> wrote:
->
-> This message lets the kernel notify userspace VDUSE backends about
-> updated IOTLB mappings for a specific ASID.
->
-> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+This series have the follow changing:
+Firstly add mt8189 video decoder compatible, profile and level to support
+MT8189 kernel driver.
+Secondly fix some bugs, including vp 4K profile2 and media device node
+number bug.
+Lastly, add mt8189 video encoder compatible.
 
-I guess this could be squashed to the previous patch for logic completeness=
-.
+This series has been tested with MT8189 tast test.
+Encoding and decoding worked for this chip.
 
-Thanks
+Patches 1-2 Add decoder compatible.
+Patches 3 Add profile and level supporting.
+Patches 4 Add core-only VP9 decoding supporting.
+Patches 5-6 fix some bugs.
+Patches 7-8 Adds encoder compatible.
 
+---
+v4l2-compliance test results:
+v4l2-compliance -d /dev/video2
+v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
 
-> ---
->  drivers/vdpa/vdpa_user/vduse_dev.c | 14 ++++++++++----
->  include/uapi/linux/vduse.h         |  7 +++++++
->  2 files changed, 17 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/=
-vduse_dev.c
-> index 145147c49930..ac7897068222 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -326,7 +326,7 @@ static int vduse_dev_set_status(struct vduse_dev *dev=
-, u8 status)
->         return vduse_dev_msg_sync(dev, &msg);
->  }
->
-> -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
-> +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
->                                   u64 start, u64 last)
->  {
->         struct vduse_dev_msg msg =3D { 0 };
-> @@ -335,8 +335,14 @@ static int vduse_dev_update_iotlb(struct vduse_dev *=
-dev,
->                 return -EINVAL;
->
->         msg.req.type =3D VDUSE_UPDATE_IOTLB;
-> -       msg.req.iova.start =3D start;
-> -       msg.req.iova.last =3D last;
-> +       if (dev->api_version < VDUSE_API_VERSION_1) {
-> +               msg.req.iova.start =3D start;
-> +               msg.req.iova.last =3D last;
-> +       } else {
-> +               msg.req.iova_v2.start =3D start;
-> +               msg.req.iova_v2.last =3D last;
-> +               msg.req.iova_v2.asid =3D asid;
-> +       }
->
->         return vduse_dev_msg_sync(dev, &msg);
->  }
-> @@ -882,7 +888,7 @@ static int vduse_vdpa_set_map(struct vdpa_device *vdp=
-a,
->         if (ret)
->                 return ret;
->
-> -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
-> +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
->         if (ret) {
->                 vduse_domain_clear_map(dev->domain[asid], iotlb);
->                 return ret;
-> diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> index d300fd5f867f..a5f7a5edb8e0 100644
-> --- a/include/uapi/linux/vduse.h
-> +++ b/include/uapi/linux/vduse.h
-> @@ -349,6 +349,12 @@ struct vduse_iova_range {
->         __u64 last;
->  };
->
-> +struct vduse_iova_range_v2 {
-> +       __u64 start;
-> +       __u64 last;
-> +       __u32 asid;
-> +};
-> +
->  /**
->   * struct vduse_dev_request - control request
->   * @type: request type
-> @@ -369,6 +375,7 @@ struct vduse_dev_request {
->                 struct vduse_vq_state vq_state;
->                 struct vduse_dev_status s;
->                 struct vduse_iova_range iova;
-> +               struct vduse_iova_range_v2 iova_v2;
->                 struct vduse_vq_group vq_group; /* Only if vduse api vers=
-ion >=3D 1 */
->                 /* Only if vduse api version >=3D 1 */
->                 struct vduse_vq_group_asid vq_group_asid;
-> --
-> 2.50.1
->
+Compliance test for mtk-vcodec-enc device /dev/video2:
+
+Driver Info:
+        Driver name      : mtk-vcodec-enc
+        Card type        : MT8189 video encoder
+        Bus info         : platform:17020000.video-codec
+        Driver version   : 6.6.88
+        Capabilities     : 0x84204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+        Detected Stateful Encoder
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video2 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+                fail: v4l2-test-controls.cpp(1171): node->codec_mask & STATEFUL_ENCODER
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 16 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Total for mtk-vcodec-enc device /dev/video2: 47, Succeeded: 46, Failed: 1, Warnings: 0
+
+v4l2-compliance -d /dev/video3
+v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+
+Compliance test for mtk-vcodec-dec device /dev/video3:
+
+Driver Info:
+        Driver name      : mtk-vcodec-dec
+        Card type        : MT8189 video decoder
+        Bus info         : platform:16000000.video-codec
+        Driver version   : 6.6.88
+        Capabilities     : 0x84204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+        Detected Stateless Decoder
+Media Driver Info:
+        Driver name      : mtk-vcodec-dec
+        Model            : mtk-vcodec-dec
+        Serial           : 
+        Bus info         : platform:16000000.video-codec
+        Media version    : 6.6.88
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 6.6.88
+Interface Info:
+        ID               : 0x0300000c
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000001 (1)
+        Name             : mtk-vcodec-dec-source
+        Function         : V4L2 I/O
+        Pad 0x01000002   : 0: Source
+          Link 0x02000008: to remote pad 0x1000004 of entity 'mtk-vcodec-dec-proc' (Video Decoder): Data, Enabled, Immutable
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video3 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 15 Private Controls: 2
+        Standard Compound Controls: 13 Private Compound Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK
+
+Total for mtk-vcodec-dec device /dev/video3: 48, Succeeded: 48, Failed: 0, Warnings: 0
+
+scp upstream link:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20250811015922.32680-1-huayu.zong@mediatek.com/
+
+Changes compared with v1:
+--add v4l2-compliance test results
+--add scp upstream link
+--add HW difference discriptions for dt-bindings commit messages
+
+This series patches dependent on:
+[1]
+https://patchwork.linuxtv.org/project/linux-media/cover/20250510075357.11761-1-yunfei.dong@mediatek.com/
+[2]
+https://patchwork.linuxtv.org/project/linux-media/cover/20250528063633.14054-1-irui.wang@mediatek.com/
+
+Kyrie Wu (8):
+  dt-bindings: media: mediatek: decoder: Add MT8189
+    mediatek,vcodec-decoder
+  media: mediatek: vcodec: add decoder compatible to support MT8189
+  media: mediatek: vcodec: add profile and level supporting for MT8189
+  media: mediatek: vcodec: Add core-only VP9 decoding support for MT8189
+  media: mediatek: vcodec: fix vp9 4096x2176 fail for profile2
+  media: mediatek: vcodec: fix media device node number
+  dt-bindings: media: Add MT8189 mediatek,vcodec-encoder
+  media: mediatek: encoder: Add MT8189 encoder compatible data
+
+ .../media/mediatek,vcodec-encoder.yaml        |  2 ++
+ .../media/mediatek,vcodec-subdev-decoder.yaml |  1 +
+ .../vcodec/decoder/mtk_vcodec_dec_drv.c       |  9 +++++-
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  1 +
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c |  4 +++
+ .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 32 ++++++++++++-------
+ .../vcodec/encoder/mtk_vcodec_enc_drv.c       | 14 ++++++++
+ 7 files changed, 50 insertions(+), 13 deletions(-)
+
+-- 
+2.46.0
 
 
