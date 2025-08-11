@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-763245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91031B2121D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFB0B21251
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 829544E3647
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 678DE18A002C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102B32D4808;
-	Mon, 11 Aug 2025 16:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D929BD97;
+	Mon, 11 Aug 2025 16:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="TV+lgzfY"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsEskb/x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F09E2C21F7;
-	Mon, 11 Aug 2025 16:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930055; cv=pass; b=jdLNJYcJ3X0EgKt87XSmq5C0g7IzLDyuhVk5kiVAgN3zc7Vn9dSNFT+mNTh2aSLKXbD6bphQiY5bubQhtfPv4l+Tr+LQD1xUqIg9wCBn6I4aRwWla3ro+IgntDJliO+lGIsrVMqUIXLTLNxB+u0gsK9ZQZpIekpOkKXuX/cAVNQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930055; c=relaxed/simple;
-	bh=KkClp7/NTFWJs5sayibWNVcyEVObg21OtFsIQJKSfwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mziRywiBbyfx+t5sDB9a9FQ4LBRXdZFGMSPZ9eo+RKmy73XV2LLJOQ1wmL7/Y8trbVc6vM05ms7pgjsUQ4Nb/STB5MIzyupOHIdh3szfye1hP3BvaQybGzJ3R9MpFpQncGkQI/wAbpnwNmQeRtm+1vvY6jtMRgPJniSUGiyNBTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=TV+lgzfY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754930035; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WALDvJUiY6agdTMVjbOdgsyLM0rooteGQ1Q2+Z0txOcryAUTuTDrS7mM7LxWJM7O7i83n5j7BBH5lSg1sMmcBL+jZytUwk2x7B3aJ+lSexS2OhFQpK2d9cQL7hrr/UiuO/OxE2nQ1huxt241vyQbDwAZ/FSemnay6ZWkE4YWSMU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754930035; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lxrZzkcx2EcLzf1PmmakOYUaazHyNZdo2XN9MJYVzZ4=; 
-	b=RY1IHERjRqTpFmJVzLZqtb7WDX0BgvvM4TkMXtDkdMckef1FY+3qmdcLisKwAAizhPZ9DsTQF8M94z17CGYhnyOV6Wq2aFjVNtpuvO6gqmZdrNCxqIOZaJVumTQxbbWgZCk+hsTcMUFPSvn3LFVVOZoea/HiORk1hPbiKapc+Dg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754930035;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=lxrZzkcx2EcLzf1PmmakOYUaazHyNZdo2XN9MJYVzZ4=;
-	b=TV+lgzfYkfuWIOP8R63YlN16wY89pJ7dNVeThEbfhEOD7qpDzJLA3U0P22xI+Yuj
-	8MBiFiTw//d7JKgK+mQqUngx7dnAK1Lj4uDzx6JbPsmuQtkpm6REFRNU8C/b5qweOCA
-	aUDweGIL5Rx/sjCGVnrMMLi27lnur8BWxoLMqZMQ=
-Received: by mx.zohomail.com with SMTPS id 1754930032659396.3146876115104;
-	Mon, 11 Aug 2025 09:33:52 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-Subject:
- Re: [PATCH v2 00/12] media: rkvdec: Add support for VDPU381 and VDPU383
-Date: Mon, 11 Aug 2025 12:33:51 -0400
-Message-ID: <2377895.ElGaqSPkdT@trenzalore>
-In-Reply-To: <11040209.aFP6jjVeTY@diego>
-References:
- <20250808200340.156393-1-detlev.casanova@collabora.com>
- <11040209.aFP6jjVeTY@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFBA296BB3;
+	Mon, 11 Aug 2025 16:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754930108; cv=none; b=kV0oDP+JKEIi/Sp9LuND8HT+Wf1WxtwJNTGQMeYjpQnNhP48Y3ou8cPTlxGRcbilxA4QNPG5zgYhIgBuouUW62g9o6GxBwFq/mlM4LdNxGMbRkSyzelebHLGbZIrvTvHcRtwBcAhFTZ0VU8AIQ6NoWs9KGzZiXCLSOrEGhLvDPc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754930108; c=relaxed/simple;
+	bh=U3ajoq2JrlMt/JwLVtLkb6ZXEGfnsVViHIOqNoUf92Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DFRoksaLhoKBcDDb1dixIflrCZct0rQIRXdwyFLwTyeQUOwVjKq3bDRyE8ZfZcXDlQbvDQxEUFgvQRmI6NQqVql8JV7lZ5qsQYG9BJRqwuRdVzWBEkH7BjQyk6NCXmjG46641q6L0FOEXaBcgzOF/u8iFCtSV8IZlDxK0anqe7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsEskb/x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D41AC4CEED;
+	Mon, 11 Aug 2025 16:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754930107;
+	bh=U3ajoq2JrlMt/JwLVtLkb6ZXEGfnsVViHIOqNoUf92Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qsEskb/xJAz3GxhKxE0sBOWRebcAIO53TMFP/Yn85IgldEGEVADeuMoXhjJiPSAB4
+	 ye5JPikwIET8n/WchW2Q8XAS5bdZN9ld4i6Y0Le46v7rWK+6APLIudA9Sv93N5dVWf
+	 55SHBcT9dVIRHsY1cx3FeXqF0fW+co2jmNu05J+V15mH3U6Qypk02fS1K894eSmBEq
+	 jaswoGPazb0RApM38bHVXjxBnHLr/ZB+2iYyI9eR0o0vEQpgac3OxRMagD2rMzWWqp
+	 NFJcaa86W4/7B/UQ7Nsp0VkiDKE0RIvn+4jLQ4nyqs05v9lZNeiVZsa5SjIfzFqP6W
+	 yz4kiyxBk+YBA==
+From: SeongJae Park <sj@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	oe-kbuild@lists.linux.dev,
+	Bijan Tabatabai <bijan311@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	corbet@lwn.net,
+	Bijan Tabatabai <bijantabatab@micron.com>
+Subject: Re: [PATCH 2/5] mm/damon/sysfs: Implement a command to only commit scheme dests
+Date: Mon, 11 Aug 2025 09:35:05 -0700
+Message-Id: <20250811163505.62056-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <202508101330.XRQqvfiN-lkp@intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
+On Mon, 11 Aug 2025 10:00:50 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-On Monday, 11 August 2025 05:56:00 EDT Heiko St=C3=BCbner wrote:
-> Hi Detlev,
->=20
-> Am Freitag, 8. August 2025, 22:03:22 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb=20
-Detlev Casanova:
-> > These variants are found respectively in the RK3588 and RK3576 SoCs.
-> > This patch only adds support for H264 and H265 in both variants.
-> >=20
-> > As there is a considerable part of the code that can be shared with the
-> > already supported rkvdec decoder driver, the support for these variants
-> > is added here rather than writing a new driver.
-> >=20
-> > This patch set uses the newly introduced hevc_ext_sps_[ls]t_rps v4l2
-> > controls for HEVC [1].
-> > Therefore, a patched version of userpace tools is needed for HEVC
-> > support (added for GStreamer[2] and in an early stage for FFmpeg[3]).
-> >=20
-> > This patch set also depends on the preparation patch set sent earlier [=
-4]
-> > as well as the iommu restore fix [5] (already merged in linux-media) and
-> > Nicolas Frattaroli's bitmap patch [6] to support setting registers that
-> > uses upper 16 bits as masks.
-> >=20
-> > [1]:
-> > https://lore.kernel.org/all/20250807194327.69900-1-detlev.casanova@coll=
-ab
-> > ora.com/ [2]:
-> > https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9355
-> > [3]: https://gitlab.collabora.com/detlev/ffmpeg
-> > [4]:
-> > https://lore.kernel.org/all/20250623160722.55938-1-detlev.casanova@coll=
-ab
-> > ora.com/ [5]:
-> > https://lore.kernel.org/all/20250508-rkvdec-iommu-reset-v1-1-c46b6efa6e=
-9b
-> > @collabora.com/ [6]:
-> > https://lore.kernel.org/all/20250623-byeword-update-v2-1-cf1fc08a2e1f@c=
-ol
-> > labora.com/>=20
-> > Changes since v1:
-> >  - Add parsing of the short and long term ref frame sets from the new v=
-4l2
-> > =20
-> >    controls
-> > =20
-> >  - Add RPS cache to avoid parsing the same data again
-> >  - Fix HEVC pixel formats selection
-> >  - Fix multiple indentation errors
->=20
-> when applying the series, git was a bit unhappy about some whitespaces:
+> Hi Bijan,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Bijan-Tabatabai/mm-damon-core-Add-damos_destroy_dests/20250806-120845
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20250805162022.4920-3-bijan311%40gmail.com
+> patch subject: [PATCH 2/5] mm/damon/sysfs: Implement a command to only commit scheme dests
+> config: microblaze-randconfig-r072-20250810 (https://download.01.org/0day-ci/archive/20250810/202508101330.XRQqvfiN-lkp@intel.com/config)
+> compiler: microblaze-linux-gcc (GCC) 8.5.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202508101330.XRQqvfiN-lkp@intel.com/
+> 
+> smatch warnings:
+> mm/damon/sysfs-schemes.c:2605 damos_sysfs_set_schemes_dests() warn: iterator 'i' not incremented
 
-Mmh, it looks like some rebase issues. Thanks, I'll fix those !
+Thank you for this report.  Nonetheless, this patch has replaced with another
+one[1].  Hence, we have no plan to make this patch be merged into the mainline,
+and we have no action item for this report.  Please let me know if I'm missing
+something.
 
-> > Detlev Casanova (12):
-> >   media: rkvdec: Switch to using structs instead of writel
-> >   media: rkvdec: Move cabac table to its own source file
->=20
-> Applying: media: rkvdec: Move cabac table to its own source file
-> .git/rebase-apply/patch:535: new blank line at EOF.
-> +
-> Warnung: 1 Zeile f=C3=BCgt Whitespace-Fehler hinzu.
->=20
-> >   media: rkvdec: Use structs to represent the HW RPS
-> >   media: rkvdec: Move h264 functions to common file
->=20
-> Applying: media: rkvdec: Move h264 functions to common file
-> .git/rebase-apply/patch:278: new blank line at EOF.
-> +
-> Warnung: 1 Zeile f=C3=BCgt Whitespace-Fehler hinzu.
->=20
-> >   media: rkvdec: Add per variant configuration
-> >   media: rkvdec: Add RCB and SRAM support
->=20
-> Applying: media: rkvdec: Add RCB and SRAM support
-> .git/rebase-apply/patch:200: new blank line at EOF.
-> +
-> Warnung: 1 Zeile f=C3=BCgt Whitespace-Fehler hinzu.
->=20
-> >   media: rkvdec: Support per-variant interrupt handler
-> >   media: rkvdec: Enable all clocks without naming them
-> >   media: rkvdec: Add H264 support for the VDPU381 variant
-> >   media: rkvdec: Add H264 support for the VDPU383 variant
-> >   media: rkvdec: Add HEVC support for the VDPU381 variant
->=20
-> Applying: media: rkvdec: Add HEVC support for the VDPU381 variant
-> .git/rebase-apply/patch:3483: new blank line at EOF.
-> +
-> .git/rebase-apply/patch:4035: new blank line at EOF.
-> +
-> Warnung: 2 Zeilen f=C3=BCgen Whitespace-Fehler hinzu.
->=20
->=20
-> Heiko
+[1] https://lore.kernel.org/20250806234254.10572-1-bijan311@gmail.com
 
 
+Thanks,
+SJ
 
-
+[...]
 
