@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-762869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D178B20B9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E6AB20BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EF61883F00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1653B3B651E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF84217727;
-	Mon, 11 Aug 2025 14:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEFB220F4B;
+	Mon, 11 Aug 2025 14:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jt8qyDoG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zhsYsgsA";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jt8qyDoG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zhsYsgsA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0UD6s80"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8DE202C3E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98536130E58;
+	Mon, 11 Aug 2025 14:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921881; cv=none; b=uc3mmB3EQJDKupXbEe+g4vB5Y/NdQQ+ot3I3KXKS911Dw/DgtrchWSHJd2dbdzmHv61PLKY2jCsNf8xW7fPGA1mJgxLBOHRZl3JaFCmTnq7fmbnjijk/dh5tipSt26WXa08eWcSrsMbXPDXGz4lfPPJAgv3f5KReG49nmZvT3Rk=
+	t=1754921912; cv=none; b=H9xMuEH9ZN83Sezm9kGbtq1ua5XKL4Xuwp+woVBkmVp66PQizpv4EsDHcRgbub82oY3n4IARyz2ilK7XN13b2ic8YeAE5efEQ1YdC/cEgcABBtqkJsit70+zkW6t3JV1R9LSE8wzZp9fDA/dJsPUiVlKvaNVTqd0shlAFwkuvjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921881; c=relaxed/simple;
-	bh=7GBRyjgIiU0Rgz/De2jX1kz/0X9cVN3ubMK30rZpMhc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KzhpdOl6Lr7G6aaoBlu7R7UjQwgz66XUpGtfSzMIN92g6O2ub2b4UiN/JZQ3apxsClQNn5MnTa/aXU2bWRxc5x3MggMYibN+UFl4RNgu8mPXj1vuVAwSlBPFmLti8QdR2ybtpBdiM+Mjb2WtPHorxsicuKaJVbaJqyDjLi9wmp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jt8qyDoG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zhsYsgsA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jt8qyDoG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zhsYsgsA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38AAD220C9;
-	Mon, 11 Aug 2025 14:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754921876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
-	b=Jt8qyDoGCdIVCwjBQmVEatKcxVhS/xJKKKVB3m5h3KL/g7S8AMghhirk51UrZXiuF+U474
-	T1xp8tHEq2mqb9js0hbCgO7SEn/0xd/hFEzCocwMF18TDFuA8kE+zG3ikjR5Zz3H3ZKsMk
-	0iDuj0cCtG4voEiLRcEjFMNA1vpO0so=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754921876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
-	b=zhsYsgsAEZvgKHAeV/j1VTIBqWD0su0rlTFQ9+tcjf4z9f0nQVNC0i+Xu+pxCLevR/0xpR
-	SnZqmKMagMyr89Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Jt8qyDoG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zhsYsgsA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754921876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
-	b=Jt8qyDoGCdIVCwjBQmVEatKcxVhS/xJKKKVB3m5h3KL/g7S8AMghhirk51UrZXiuF+U474
-	T1xp8tHEq2mqb9js0hbCgO7SEn/0xd/hFEzCocwMF18TDFuA8kE+zG3ikjR5Zz3H3ZKsMk
-	0iDuj0cCtG4voEiLRcEjFMNA1vpO0so=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754921876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NXEP47jzSOqPzBX+sRbxi5+nwG4vhy0tfk8W7RTJTw=;
-	b=zhsYsgsAEZvgKHAeV/j1VTIBqWD0su0rlTFQ9+tcjf4z9f0nQVNC0i+Xu+pxCLevR/0xpR
-	SnZqmKMagMyr89Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F66C13AB9;
-	Mon, 11 Aug 2025 14:17:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Fwc4ApT7mWhDUwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 11 Aug 2025 14:17:56 +0000
-Date: Mon, 11 Aug 2025 16:17:55 +0200
-Message-ID: <87ikiu0woc.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Vasiliy Kovalev <kovalev@altlinux.org>
-Cc: Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Fix headset mic on HONOR BRB-X
-In-Reply-To: <20250811132716.45076-1-kovalev@altlinux.org>
-References: <20250811132716.45076-1-kovalev@altlinux.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1754921912; c=relaxed/simple;
+	bh=BXYbJRElSnllH4SZeeunv/TohKTjoqGqn8JmUZ9gOqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xv5hn5h/sRGC297bPFz5n6zO5YlwyuTwRAcRDIUA4gd5k+gjbg7SaoByEC995Tc+8dxEYoKhRWPxiOXZHoL4N3P7A6mIYb4fU+M0sqeqm6yDWSfOv7fodxu/gef06aere4A2hO9VXSk5YYyLuf//ulSdTFhzDjGH+Msa0N7eaVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0UD6s80; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5469DC4CEED;
+	Mon, 11 Aug 2025 14:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754921911;
+	bh=BXYbJRElSnllH4SZeeunv/TohKTjoqGqn8JmUZ9gOqg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c0UD6s80FoYmxBwCjDv9almaNyqrceO+X4Bw8QZwM4nIFply47rzGIBBpmww8W/Ee
+	 WQXN06VPAZVyVMzWtEKTmzykvBFXBt81ussWjT9T2g4l+oKhNWo8etUMe+Dkz1Gjyk
+	 rwdUfMKAAVIt/wkTg5ihskTmjJ4F+Jw8ixeomdTE9cyhYEyIpvD9wXIhgheGGnH4pM
+	 m9ONunnAd2nAe8SVHc+xE+5+Ue6XMm6lHUAV5qCjHwtFAvgR1gLy0l2npNG7HG0qcu
+	 dVG4uIoSuOP2eNmSMAijMmXDSJ9mXsmtusO+napUVI7MeRJ7u7jYOk1DzuSZ9Nqnxc
+	 HFJpLVdW4OFKw==
+From: Christian Brauner <brauner@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Shivank Garg <shivankg@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthias Maennich <maennich@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES
+Date: Mon, 11 Aug 2025 16:18:22 +0200
+Message-ID: <20250811-wachen-formel-29492e81ee59@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
+References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 38AAD220C9
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1513; i=brauner@kernel.org; h=from:subject:message-id; bh=BXYbJRElSnllH4SZeeunv/TohKTjoqGqn8JmUZ9gOqg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTM/L2+TrDMXUBodvxWa9fSxPQH1i3uex6+ObCQKzbu5 /78D1XpHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZ84GR4fHu+5mHD68pWSCz OIJP46NU19ZTwfn8R74w9vEWpfboZjEydLteLWVZIfj2Qil/89X2nToqUqe5lHYprpZqfPFZ5/A qPgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Aug 2025 15:27:16 +0200,
-Vasiliy Kovalev wrote:
+On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
+> Christoph suggested that the explicit _GPL_ can be dropped from the
+> module namespace export macro, as it's intended for in-tree modules
+> only. It would be possible to restrict it technically, but it was
+> pointed out [2] that some cases of using an out-of-tree build of an
+> in-tree module with the same name are legitimate. But in that case those
+> also have to be GPL anyway so it's unnecessary to spell it out in the
+> macro name.
 > 
-> Add a PCI quirk to enable microphone input on the headphone jack on
-> the HONOR BRB-X M1010 laptop.
-> 
-> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+> [...]
 
-Applied now.  Thanks.
+Ok, so last I remember we said that this is going upstream rather sooner
+than later before we keep piling on users. If that's still the case I'll
+take it via vfs.fixes unless I hear objections.
 
+---
 
-Takashi
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES
+      https://git.kernel.org/vfs/vfs/c/6d3c3ca4c77e
 
