@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-763586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F98B21717
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700AEB2171B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E2E4609E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9958C1907F2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62532E2DEF;
-	Mon, 11 Aug 2025 21:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E683E2E2F01;
+	Mon, 11 Aug 2025 21:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1we82//"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MckaMkDZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FD32E285B;
-	Mon, 11 Aug 2025 21:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393062DBF5E;
+	Mon, 11 Aug 2025 21:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754946676; cv=none; b=fI0Dif0MGCO69scZfOR7ljHDjDo1uUnfMBNun4PSFVv5PboIGxi49p72mh4aE6KbGGUGkJb/AMINiXUj6b2CFoiMzzTRKYccFKDPmuLah1Vw308zQE9S/r2f+Wrnb56HFFFmntpFrhmAae9WRu8NBrG3EJ+s6znTvvKUpxYa58U=
+	t=1754946688; cv=none; b=FqNV6mFyufP8HpNlVUuR9Ru07fgREN268G3imc/eqgEODfD/ZkUnHyDYoEvPj4LjUqdYLEq3htLn8VhLI1ziALC/w3bfs84+DZm03YKx2hRoSJsnBdnk8rpq0ORFLLxqpeo3StQx6Q6GMmNMXzaF+l5h8bvH8PASpIDRUegoDK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754946676; c=relaxed/simple;
-	bh=GiMzNPUdom6LpwJOVXfmdvsrpf5L5vNqPJToueU7gX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVHYsB+cVHFCR11HcKzyBpQRrYka9EOFMS/oJHdeT7kxOj0pg3e3cMqPMI9QINNu9aSnBpxbTpxh8/lMRJ4OGf2v61ekKDQs66TQ+8S5TtdIX21haDMvghJRLx3WcJfg4mWlfcMInbEigoLQI6Hm5VFxcZgMuGWI6/Ug0OI3jVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1we82//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19986C4CEED;
-	Mon, 11 Aug 2025 21:11:14 +0000 (UTC)
+	s=arc-20240116; t=1754946688; c=relaxed/simple;
+	bh=bMFJMg+JfLXKlkC5wAUM3n6+D/HjWIAcPX4kjmfvdYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YI2jWGSS7UdZxOyZW3Uqk9gqs/5YnRsQH/tICewYdpLtcODu+9UybechBa4eFT/4YCdsyQPvwoIGi7iLv70D0LRN6iUe/C0xl3fnwplI41mW0iCsAOPO3WBuuWXrPmOHUbaHN0hX5xwh+mhKmzphQY6ztlO7BFHZ9OZGdgAN+UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MckaMkDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7200C4CEED;
+	Mon, 11 Aug 2025 21:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754946675;
-	bh=GiMzNPUdom6LpwJOVXfmdvsrpf5L5vNqPJToueU7gX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c1we82//iorTlQ/NxDsUJQOYCWVLd2icuiWFD7dyboZjqN6Bn/WxCsw6/Sa4kJOG+
-	 dm+l+nUC/da9E1BpwrAi7puaFAySpluYDfWqiNh4wRhGKRtZXhqUEJC+/maqtuErN1
-	 SjvLnOVl0ZbMxkN8KJZXY6sBxHyfwahy77KA/7jvrf+5eQeEtb1fnPVsqsEvpITxh7
-	 RYo5Yvm+asdmZe3MkBeo7PttLrjIW9TfYQJtNVThsMphNETcyWK9id1UGTMBzbM1T/
-	 uXBNOaAeteITJlQQ7S2HKu4yLaY5zbT+SToH6FbXOUyR1x5f0KeBB/iG3+suJdFrVR
-	 lAIRrQyFX0Q9Q==
-Date: Mon, 11 Aug 2025 23:11:12 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Frank.Li@nxp.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ghennadi.Procopciuc@nxp.com, s32@nxp.com
-Subject: Re: [PATCH v1 2/2] pwm: Add the S32G support in the Freescale FTM
- driver
-Message-ID: <ejua4dgtdtlpr22xio6sywhaiyfjrjwdf744s73fz4zxhxyhrk@ep7o37hzwzvv>
-References: <20250810185221.2767567-1-daniel.lezcano@linaro.org>
- <20250810185221.2767567-3-daniel.lezcano@linaro.org>
- <p5pwwdlrldqdkpqtfvgo3dz2liz46ywy7crjfe4nybxmrhlh55@b6v7lccczczs>
- <47ed1b83-9ace-475b-8279-6c7f394c35f3@linaro.org>
+	s=k20201202; t=1754946687;
+	bh=bMFJMg+JfLXKlkC5wAUM3n6+D/HjWIAcPX4kjmfvdYA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MckaMkDZvm2/GN4sU8l1Jp5BDDLyteoMMrOV5XidYYTvenJuWUVqxd+Gt+E0MeioZ
+	 Ja8PlcRm7/JZ1bjA7up7vZHLLJrnRSZNARpF9uvUQ77l9f+KngpgsTdB0LvpP5hqw5
+	 zZQiiqJuzCt9gG+64qIjqTlabt+u3Tr0Bs2p/klxNKBZTyA1EmYVBvzY3KAjHsB3rI
+	 aYoqc/hWEPFej08/mub/FXhTbqnvGkX4cjMQ79dZNb8uYvcD0eonDtp4NRViKrG1EN
+	 EiQHXKkDAdUTRAkrIoMXrAo0HmR0pc9tKN06jd5SUMYz5s534lRFmhvbFqUpLRFlnq
+	 e5wuiT/ZUxVgQ==
+Message-ID: <642f8456-982f-4cb3-9cd1-8b18232387b2@kernel.org>
+Date: Tue, 12 Aug 2025 00:11:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2tvy32zt7ncrrsxl"
-Content-Disposition: inline
-In-Reply-To: <47ed1b83-9ace-475b-8279-6c7f394c35f3@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Md Sadre Alam <quic_mdalam@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250811090954.2854440-1-quic_varada@quicinc.com>
+ <20250811090954.2854440-2-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20250811090954.2854440-2-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/11/25 12:09 PM, Varadarajan Narayanan wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> The RCG and PLL have a separate register space from the GCC.
+> Also the L3 cache has a separate pll and needs to be scaled along
+> with the CPU.
+> 
+> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> [ Added interconnect related changes ]
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v7: Fix 'Reviewed-by' placement
+> 
+> v6: Add 'Reviewed-by: Krzysztof Kozlowski'
+>      Drop 'clock-names'
+> 
+> v5: Remove previous maintainers
+>      Change clock@fa80000 to clock-controller@fa80000 in example
+>      Have one item per line for clocks and clock-names in example
+> 
+> v4: Add self to 'maintainers'
+>      s/gpll0/clk_ref/ in clock-names
+>      s/apss-clock/clock/ in example's node name
+> 
+> v2: Add #interconnect-cells to help enable L3 pll as ICC clock
+>      Add master/slave ids
+> ---
+>   .../bindings/clock/qcom,ipq5424-apss-clk.yaml | 55 +++++++++++++++++++
+>   include/dt-bindings/clock/qcom,apss-ipq.h     |  6 ++
+>   .../dt-bindings/interconnect/qcom,ipq5424.h   |  3 +
 
---2tvy32zt7ncrrsxl
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 2/2] pwm: Add the S32G support in the Freescale FTM
- driver
-MIME-Version: 1.0
+Acked-by: Georgi Djakov <djakov@kernel.org>
 
-Hello Daniel,
-
-On Mon, Aug 11, 2025 at 11:44:32AM +0200, Daniel Lezcano wrote:
-> On 11/08/2025 07:18, Uwe Kleine-K=F6nig wrote:
-> > All variants (up to now) have .has_fltctrl =3D=3D .has_fltpol. Is there=
- a
-> > good reason that justifies two bools for the register description?
->=20
-> Yeah, I agree it can be folded into a single has_flt_reg boolean. I can o=
-nly
-> guess that was done with the idea of sticking to the reference manual and
-> perhaps having more variant to come with, eg.,  fltctrl=3Dfalse and
-> fltpol=3Dtrue
->=20
-> Do you want me to merge these boolean ?
-
-That's the obvious thing to do if you want the new variant supported :-)
-
-Unless you know that there is such a variant with .has_fltctrl !=3D
-=2Ehas_fltpol to appear soon, I prefer the simplified handling with only
-one bool.
-
-> > Also I wonder about the fuss given that the two registers are not used
-> > in the PWM driver. So this is only to prevent reading these registers
-> > via regmap debug stuff? What happens if the memory locations are read
-> > where the other implementations have these registers?
->=20
-> The problem arises at resume time.
->=20
-> 	/* restore all registers from cache */
->         clk_prepare(fpc->ipg_clk);
-> 	regcache_cache_only(fpc->regmap, false);
->         regcache_sync(fpc->regmap);
->=20
-> Without skipping these registers, the kernel crashes on s32g2/3
-
-That's a useful information for the commit log.
-
-Best regards
-Uwe
-
---2tvy32zt7ncrrsxl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiaXG0ACgkQj4D7WH0S
-/k58Xwf/Zjf1uFWjpbwlJjnQdVYbt/qmlA7RXyNxLa9E/SnQeizlsdpSKquRCqJo
-R/nrnJyJ/GO1oKm91Barl+XpUSr7dyxJ8mgFMtPtNKn/ItZEJDZXrxUn5hSJHzCL
-aETQEkbwucRul6dBnCczX8ObCU44n4Gd7QRPSWP3dmQnPbAUiD9La5QWUhcVKpyI
-vxGk69ROjMWD3XAOUApQlcloa2VNUa+Plrbqh85KPyMThd/a0z9LVSah8yPBSfOF
-8B8EMSpEtpW/Yx0kosqJvEgw5F/IctL80kYxa5HmyQZ/PWyYmmWIR8Y9xhmirLJR
-08JHQJkAupcmMPl8TuXzvVEn6kKV1A==
-=XcLy
------END PGP SIGNATURE-----
-
---2tvy32zt7ncrrsxl--
 
