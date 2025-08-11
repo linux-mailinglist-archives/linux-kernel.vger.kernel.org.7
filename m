@@ -1,231 +1,276 @@
-Return-Path: <linux-kernel+bounces-763473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FC5B21512
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:05:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C100B21518
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AFF17F2FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:05:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962911892CEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253D26CE2A;
-	Mon, 11 Aug 2025 19:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701842E2DEC;
+	Mon, 11 Aug 2025 19:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzTAN3/h"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWbRHNXK"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5B0271443
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7EE26CE2A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754939092; cv=none; b=hIal3QzKxLRs+aXCJ6waA895qrqpOMFWQW9saaxLJDF5kvL4HvCN/8NjJD9Yn1nFL/+IJhbemuZKWWfnNpa5kDD31ZBv/lHiWAwWLTP5GUziiVmqfA6IqfH5Q1BtMZlb9JFf/wRUFKoVnadfn0AUkCO2QhoeH3PxY/FnMyeoFBg=
+	t=1754939189; cv=none; b=JT5dGwyFo87MccORXiWesA5reJGYv7IUlQ1uRVfe7NY4kZtKhF6Se4SuqB1vooW5TgxJofVxvXCXZfLC2kJ6ezk2NNjeiuU6G5PSWOoAIHmSN43HCNdNLxMMzbeeIWLRMEtIuyI+oaP7t/vQJtX0GWv06Ys6QG2Ewic2bK1DMWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754939092; c=relaxed/simple;
-	bh=Jk1VP2qa7l0ygQ3fKCoTy74O9E70rUSr95ymu+ekJxA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c4eSJuoVTUPRF8QI4Ky+ja9QkP5124FWN5iRBqI/DtBnVH+D2jZCq6eF27nNkWKD/9ylXn+KDIFqiGY/prAvi9yiSq2XUYBNhJQjA3SKKPpdxqGjt2iIgXqaWcGOIcGfbqDE/Sfi9wqdmcK1KdL/I2PRav0EKpuni1J2uYd5fNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzTAN3/h; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b7910123a0so4351167f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:04:49 -0700 (PDT)
+	s=arc-20240116; t=1754939189; c=relaxed/simple;
+	bh=W7/ItujornmJw6aD76KkRbr0U1s2KWMkwaMQeXOvmok=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SRE2R4SCbb8S6joVc7leusqPEzKhleR3QZxWJlOZIzTTJ6o9aSrb9aId7JTgCkhj2dDj1vqU7evTLC8SK6dWqM7H8o1PaTCHpZtF+drZ+LbmM+pLHxlmm1PPdjQHvUMGZpHB0FYWtaIMDzWrd4Yr5/VxK/kw3jB0hegnQLfl+fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWbRHNXK; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e6974a290eso443185485a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754939088; x=1755543888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NZZ4dukWfnrzGm5DUtUwAHWHllsDgcftC3XLB9SWVHU=;
-        b=vzTAN3/hdFBHr5Tyc0/D9zd6GuGUjhStJlhRNZ5A6AtsYU9+OXjCA8bN+p08hxDJ79
-         /AkL/MPyzg9dqKhoV90p8n04ZWlX24JBAFrUCZ3tfi4lciGC5CogLgST0+FjTLUXjyw8
-         lnzzkkwBv20v++NtuiM1ZfW8bU4VKFCgrayI7i2KKiS7p6s/+DVowlGO4P/E2OY1a+IF
-         cmUKbQ7NwbqnvOYngYzlNP+E+9ir+RoafelRNiNvEv8p+XUsQS90T9Tu9gaJ0lQjrf21
-         Ug61bkbOnLnIgCFKT0YiQMQEnA33Zr2G3rpYKOc0376PFxLwrld8B2ERqx0SjJJH+p4v
-         sjZA==
+        d=gmail.com; s=20230601; t=1754939187; x=1755543987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nib1am6QF0+yLy7Kix8WvtIMTy4GMtDedFeVAg3u6JY=;
+        b=QWbRHNXKq+AoUfjF5+6QVrDtLcJdBWzihtLENAtMMx4YJS1gjF6D9LkyTAXJafoNEI
+         QGS2MiooTXPTugA+2qnS+WU9HVZgwz7VX4UcHWnbOQ4HkhpvXiizoUK+abd0/wdYIZ4v
+         pWpagumSuxe16jgsdYePx+lLwlm7RDEZCJMZz4dPG8S5LHJ28zXsWtcXJfP4476YNEga
+         cywdWMkHKcmWuYkOzPeSLB0/adVO/FAISyqIv5KAMPn6tbgEuZd9E0DyufvfbKQGGGPa
+         YEJG/Tu5rDtJ83Cwh9PDHZKMwSlALB1+EEpBGzQS7vZk6HUMFUSpAqnmxaCkf5AJReTg
+         AGlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754939088; x=1755543888;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NZZ4dukWfnrzGm5DUtUwAHWHllsDgcftC3XLB9SWVHU=;
-        b=GqkHbg5cR3agy/EVxaRivURgUsRRy67Um/x7cA2WPKgGpcYuqgO8yYiI/AT+XvnJbS
-         gr37aTWHVCk3JexewzxTwWyViwzqBSdeoKephxgaA6p17jKUoiAI9zU1Iz+XWT9SEV50
-         Xh23Vv++I0I/GSL5xcs6OOvLT4bYyNAJ5jT7e7NyVsTSdIcX1DjwWNF2dV7mIPxHiZCu
-         gazfHT2GZdlPmgjAFiZd/U2X9gwl4WRsEt+FR0fn3zaIYTkbJig20wjEG24lczPc+JOd
-         rClonLl63u8uz42uobY3JZrbSEib3o8l1nxES2WHwcdbABT97rs7DfAeMRsj+I5vd+Wh
-         IGOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ZByv3YH/N/estgBvG+Js1lMULQrL8lwKXaUzszSPBxQ2XGXOrFXNICgx7rAg4yvql52m1LNNgWHO0ao=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy51HiwOb3kVZ+Hgn1ueNDQTs7GuR5FijqgUSG6feeznDUZSpEk
-	kdbqL4+YNW7zDUjjSlG1z+WVH0KrvWj1rbj8i+3hKtJFDppTuvjgc1Ai35Asiub3N9o=
-X-Gm-Gg: ASbGncuTe2CMBph3y9n8elTwznKacQD6arzrZWAoEQRT6VC+vls8NntEgeojLjTUdHg
-	tAd8rN8qDIzMo2hNWVZ4UDGEEg7ebgNT4laXmhnqWbzHORNvBrhhLbc6JXzZj7c7gVDl5LOgGXx
-	JjsO6q7jA1S4bhFZT/XS0jtNesLnAbeSNBZQQ67xzi3baKPy2XvNXTRL010itRDy/XOL1QUSELv
-	xZ74dqijDwCYzdfT1GRgTKuz3ZTeFFhcVyv/Em2GC6ny+MfbozJtkWPAHNO5wyTzdQrcR/8jgXz
-	Wa1kspK6BhbyUq6P4YikV4+F6F/yy23dY52tTpevwJkQVoUFmezk/bj/FkUFXtiIC8WIjsWfxK7
-	cyLElTjuSBY5m/Q3MFkFpVgqSvBjOYfblRQi8DdX5AnpepIMzsNQWQTgeF7uu/fIlB5a/Cr9aBY
-	Sy8r4wvupUdA==
-X-Google-Smtp-Source: AGHT+IGNyTELrMm8IxX2rL2JOAtkoqeNSDKaW9RX/7J+QSJpvnGTggjn4BTNIs5nO2xxLGv7gxVaQA==
-X-Received: by 2002:a05:6000:4282:b0:3b7:9c79:3293 with SMTP id ffacd0b85a97d-3b911015717mr614457f8f.58.1754939087798;
-        Mon, 11 Aug 2025 12:04:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:b0fa:b045:4b82:de09? ([2a01:e0a:3d9:2080:b0fa:b045:4b82:de09])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458bb04c612sm384638515e9.0.2025.08.11.12.04.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 12:04:47 -0700 (PDT)
-Message-ID: <1ab2f4f0-94e5-413b-a87b-190b288b5f32@linaro.org>
-Date: Mon, 11 Aug 2025 21:04:46 +0200
+        d=1e100.net; s=20230601; t=1754939187; x=1755543987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nib1am6QF0+yLy7Kix8WvtIMTy4GMtDedFeVAg3u6JY=;
+        b=oY3+JfBbdFLR8YOp39ScX879S4tmho7hjZymeG5E+QW9UAzc9nEQzxvCiHu51bAlSq
+         v6R/ndQA1uqhaEGiy9mcSkyXE2YrT/sQIWTHt5XO1xpfuG1eiwcMbCSMkteamFKCJ4ET
+         xphyXD/rHyGIepv20xoSD9TLf9K3MuiIpFy3si+16TFwEATiwJ9RChoEEDtd6CFcaEl6
+         1ZoLlAtI4d3ClSPVjNXI+QuLq34ZUqKYuJO6/w4RNCSuXmTKhH8NuRdCHSNF/r59Mvlc
+         5/sDjl2OddC9tkHDTkw3dIRGWM9SwdSXAzGtupyAvNOYMoUNp2sF5ZwUfq5M6t+vyFDJ
+         Y+xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkbfoYtC2ZNUEFJlgi27uo5cTaXbeWs4gU52Uz9841gmOebTU/LCex77uLebysFVRjrExVvVmhWMzmafs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgGgkRG4SAat4Dut0PPKVQ+rud9vCu3yJUEo+2V4qNNIrImxtL
+	N/XK954S3c9yDR4Hr24j9uZgJ/WKDz+HOln2GE7TcilDa3/aBL7ZtTgt
+X-Gm-Gg: ASbGncvWjE4ndkGsOM3MzG7gCX7tWDe+DPTl1A5RH+y9L9xj8U0Hd3PCe5PaAjLc6w8
+	5DWq78SExow/Lfcb51Gyd4DWVJeSO4lGrSG909qm3CXaaNa4lqa5ej0L7g6dTKCxzgUse9NwInL
+	XNJI2AC3YzXkX+lpemX0HNVW5GnExVZO149M7ZNqCc2yK1J3AW0Cafln112sKj5nr51ha/6HasT
+	jwbaZ9s+5xRRxBGuZ4rwgYzBO/+7lPncXXm72RHFQs673c7NwqtmTqvddn8DvjsaDDtBpmSmYo0
+	d90SpXZFlz/MT3rjwXu4fNqJv1mQ0nic918VOiSzJGBkeNlyep1rOc4aRfcaUuKOVs99Ju6PA6m
+	HtnyEzdPuif7252dZIWDu96BOC2QWpg/dmPleOQ3+Gd9Nt42+MfW6dm2DcgaBV5jU5anWNX2tT8
+	b6
+X-Google-Smtp-Source: AGHT+IEYSZ2S0C29Lk1HyWJPSBYF7rAZv73+WciDtcAyLcmFQZytQOHAcXqbTgBRFlgZtLq3VV3NaQ==
+X-Received: by 2002:a05:620a:1034:b0:7e8:1f79:67a2 with SMTP id af79cd13be357-7e8588afcacmr90890785a.34.1754939186658;
+        Mon, 11 Aug 2025 12:06:26 -0700 (PDT)
+Received: from stbirv-lnx-1.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b081827cd7sm89418081cf.7.2025.08.11.12.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 12:06:25 -0700 (PDT)
+From: Doug Berger <opendmb@gmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>
+Subject: [PATCH] sched/deadline: only set free_cpus for online runqueues
+Date: Mon, 11 Aug 2025 12:05:36 -0700
+Message-Id: <20250811190536.661884-1-opendmb@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 0/6] arm64: qcom: allow up to 4 lanes for the Type-C
- DisplayPort Altmode
-To: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>
-References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/08/2025 18:33, Konrad Dybcio wrote:
-> Register a typec mux in order to change the PHY mode on the Type-C
-> mux events depending on the mode and the svid when in Altmode setup.
-> 
-> The DisplayPort phy should be left enabled if is still powered on
-> by the DRM DisplayPort controller, so bail out until the DisplayPort
-> PHY is not powered off.
-> 
-> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
-> will be set in between of USB-Only, Combo and DisplayPort Only so
-> this will leave enough time to the DRM DisplayPort controller to
-> turn of the DisplayPort PHY.
-> 
-> The patchset also includes bindings changes and DT changes.
-> 
-> This has been successfully tested on an SM8550 board, but the
-> Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
-> PD USB Hubs and PD Altmode Dongles to make sure the switch works
-> as expected.
-> 
-> The DisplayPort 4 lanes setup can be check with:
-> $ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
-> 	name = msm_dp
-> 	drm_dp_link
-> 		rate = 540000
-> 		num_lanes = 4
-> ...
-> 
-> This patchset depends on [1] to allow broadcasting the type-c mode
-> to the PHY, otherwise the PHY will keep the combo state while the
-> retimer would setup the 4 lanes in DP mode.
-> 
-> [1] https://lore.kernel.org/all/20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org/
-> 
-> Changes in v4:
-> - Default to USB3_ONLY if there's no DP SVID (Dmitry)
-> - Pick up tags, dropped T-bys due to the above change
-> - Add missing submitter's sign-off on some patches
-> - The odd 4-lane-DP + USB2 case remains unhandled for now, but it's
->    not a huge deal, see:
->    <c2f2ba36-1a25-450e-99b9-79aa4fd4913d@linaro.org>
-> - Link to v3: https://lore.kernel.org/r/20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com
-> Changes in v3:
-> - Take the series from Neil
-> - Rebase
-> - Rename many variables
-> - Test on X1E & X13s
-> - Apply a number of small cosmetic/codestyle changes
-> - Remove some unused variables
-> - Some smaller bugfixes
-> - Link to v2: https://lore.kernel.org/lkml/20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org/
-> Changes in v2:
-> - Reference usb-switch.yaml in bindings patch
-> - Fix switch/case indenting
-> - Check svid for USB_TYPEC_DP_SID
-> - Fix X13s patch subject
-> - Update SM8650 patch to enable 4 lanes on HDK aswell
-> - Link to v1: https://lore.kernel.org/r/20240229-topic-sm8x50-upstream-phy-combo-typec-mux-v1-0-07e24a231840@linaro.org
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Konrad Dybcio (1):
->        phy: qcom: qmp-combo: Rename 'mode' to 'phy_mode'
-> 
-> Neil Armstrong (5):
->        dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
->        phy: qcom: qmp-combo: store DP phy power state
->        phy: qcom: qmp-combo: introduce QMPPHY_MODE
->        phy: qcom: qmp-combo: register a typec mux to change the QMPPHY_MODE
->        arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13: Set up 4-lane DP
-> 
->   .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   7 +-
->   .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   6 +-
->   drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 179 +++++++++++++++++++--
->   3 files changed, 170 insertions(+), 22 deletions(-)
-> ---
-> base-commit: 442d93313caebc8ccd6d53f4572c50732a95bc48
-> change-id: 20250527-topic-4ln_dp_respin-c6924a8825ce
-> 
-> Best regards,
+Commit 16b269436b72 ("sched/deadline: Modify cpudl::free_cpus
+to reflect rd->online") introduced the cpudl_set/clear_freecpu
+functions to allow the cpu_dl::free_cpus mask to be manipulated
+by the deadline scheduler class rq_on/offline callbacks so the
+mask would also reflect this state.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Lenovo Thinkpad T14S
+Commit 9659e1eeee28 ("sched/deadline: Remove cpu_active_mask
+from cpudl_find()") removed the check of the cpu_active_mask to
+save some processing on the premise that the cpudl::free_cpus
+mask already reflected the runqueue online state.
 
-Successfully got 4 lanes working with an USB-C to DP adapter with either orientation:
-	dp_link:
-		test_requested = 512
-		num_lanes = 4
-		bw_code = 20
-		lclk = 540000000
-		v_level = 2
-		p_level = 0
+Unfortunately, there are cases where it is possible for the
+cpudl_clear function to set the free_cpus bit for a CPU when the
+deadline runqueue is offline. When this occurs while a CPU is
+connected to the default root domain the flag may retain the bad
+state after the CPU has been unplugged. Later, a different CPU
+that is transitioning through the default root domain may push a
+deadline task to the powered down CPU when cpudl_find sees its
+free_cpus bit is set. If this happens the task will not have the
+opportunity to run.
 
-And 2 lanes is still working.
+One example is outlined here:
+https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
 
-I'll test on SM8550/SM8650 later this week.
+Another occurs when the last deadline task is migrated from a
+CPU that has an offlined runqueue. The dequeue_task member of
+the deadline scheduler class will eventually call cpudl_clear
+and set the free_cpus bit for the CPU.
 
-Thanks,
-Neil
+This commit modifies the cpudl_clear function to be aware of the
+online state of the deadline runqueue so that the free_cpus mask
+can be updated appropriately.
+
+It is no longer necessary to manage the mask outside of the
+cpudl_set/clear functions so the cpudl_set/clear_freecpu
+functions are removed. In addition, since the free_cpus mask is
+now only updated under the cpudl lock the code was changed to
+use the non-atomic __cpumask functions.
+
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+---
+ kernel/sched/cpudeadline.c | 34 +++++++++-------------------------
+ kernel/sched/cpudeadline.h |  4 +---
+ kernel/sched/deadline.c    |  8 ++++----
+ 3 files changed, 14 insertions(+), 32 deletions(-)
+
+diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+index cdd740b3f774..d612d5c6c61a 100644
+--- a/kernel/sched/cpudeadline.c
++++ b/kernel/sched/cpudeadline.c
+@@ -166,12 +166,13 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+  * cpudl_clear - remove a CPU from the cpudl max-heap
+  * @cp: the cpudl max-heap context
+  * @cpu: the target CPU
++ * @online: the online state of the deadline runqueue
+  *
+  * Notes: assumes cpu_rq(cpu)->lock is locked
+  *
+  * Returns: (void)
+  */
+-void cpudl_clear(struct cpudl *cp, int cpu)
++void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+ {
+ 	int old_idx, new_cpu;
+ 	unsigned long flags;
+@@ -184,7 +185,7 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+ 	if (old_idx == IDX_INVALID) {
+ 		/*
+ 		 * Nothing to remove if old_idx was invalid.
+-		 * This could happen if a rq_offline_dl is
++		 * This could happen if rq_online_dl or rq_offline_dl is
+ 		 * called for a CPU without -dl tasks running.
+ 		 */
+ 	} else {
+@@ -195,9 +196,12 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+ 		cp->elements[new_cpu].idx = old_idx;
+ 		cp->elements[cpu].idx = IDX_INVALID;
+ 		cpudl_heapify(cp, old_idx);
+-
+-		cpumask_set_cpu(cpu, cp->free_cpus);
+ 	}
++	if (unlikely(!online))
++		__cpumask_clear_cpu(cpu, cp->free_cpus);
++	else
++		__cpumask_set_cpu(cpu, cp->free_cpus);
++
+ 	raw_spin_unlock_irqrestore(&cp->lock, flags);
+ }
+ 
+@@ -228,7 +232,7 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+ 		cp->elements[new_idx].cpu = cpu;
+ 		cp->elements[cpu].idx = new_idx;
+ 		cpudl_heapify_up(cp, new_idx);
+-		cpumask_clear_cpu(cpu, cp->free_cpus);
++		__cpumask_clear_cpu(cpu, cp->free_cpus);
+ 	} else {
+ 		cp->elements[old_idx].dl = dl;
+ 		cpudl_heapify(cp, old_idx);
+@@ -237,26 +241,6 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+ 	raw_spin_unlock_irqrestore(&cp->lock, flags);
+ }
+ 
+-/*
+- * cpudl_set_freecpu - Set the cpudl.free_cpus
+- * @cp: the cpudl max-heap context
+- * @cpu: rd attached CPU
+- */
+-void cpudl_set_freecpu(struct cpudl *cp, int cpu)
+-{
+-	cpumask_set_cpu(cpu, cp->free_cpus);
+-}
+-
+-/*
+- * cpudl_clear_freecpu - Clear the cpudl.free_cpus
+- * @cp: the cpudl max-heap context
+- * @cpu: rd attached CPU
+- */
+-void cpudl_clear_freecpu(struct cpudl *cp, int cpu)
+-{
+-	cpumask_clear_cpu(cpu, cp->free_cpus);
+-}
+-
+ /*
+  * cpudl_init - initialize the cpudl structure
+  * @cp: the cpudl max-heap context
+diff --git a/kernel/sched/cpudeadline.h b/kernel/sched/cpudeadline.h
+index 11c0f1faa7e1..d7699468eedd 100644
+--- a/kernel/sched/cpudeadline.h
++++ b/kernel/sched/cpudeadline.h
+@@ -19,8 +19,6 @@ struct cpudl {
+ 
+ int  cpudl_find(struct cpudl *cp, struct task_struct *p, struct cpumask *later_mask);
+ void cpudl_set(struct cpudl *cp, int cpu, u64 dl);
+-void cpudl_clear(struct cpudl *cp, int cpu);
++void cpudl_clear(struct cpudl *cp, int cpu, bool online);
+ int  cpudl_init(struct cpudl *cp);
+-void cpudl_set_freecpu(struct cpudl *cp, int cpu);
+-void cpudl_clear_freecpu(struct cpudl *cp, int cpu);
+ void cpudl_cleanup(struct cpudl *cp);
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index e2d51f4306b3..ef91871b14d8 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1832,7 +1832,7 @@ static void dec_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
+ 	if (!dl_rq->dl_nr_running) {
+ 		dl_rq->earliest_dl.curr = 0;
+ 		dl_rq->earliest_dl.next = 0;
+-		cpudl_clear(&rq->rd->cpudl, rq->cpu);
++		cpudl_clear(&rq->rd->cpudl, rq->cpu, rq->online);
+ 		cpupri_set(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
+ 	} else {
+ 		struct rb_node *leftmost = rb_first_cached(&dl_rq->root);
+@@ -2878,9 +2878,10 @@ static void rq_online_dl(struct rq *rq)
+ 	if (rq->dl.overloaded)
+ 		dl_set_overload(rq);
+ 
+-	cpudl_set_freecpu(&rq->rd->cpudl, rq->cpu);
+ 	if (rq->dl.dl_nr_running > 0)
+ 		cpudl_set(&rq->rd->cpudl, rq->cpu, rq->dl.earliest_dl.curr);
++	else
++		cpudl_clear(&rq->rd->cpudl, rq->cpu, true);
+ }
+ 
+ /* Assumes rq->lock is held */
+@@ -2889,8 +2890,7 @@ static void rq_offline_dl(struct rq *rq)
+ 	if (rq->dl.overloaded)
+ 		dl_clear_overload(rq);
+ 
+-	cpudl_clear(&rq->rd->cpudl, rq->cpu);
+-	cpudl_clear_freecpu(&rq->rd->cpudl, rq->cpu);
++	cpudl_clear(&rq->rd->cpudl, rq->cpu, false);
+ }
+ 
+ void __init init_sched_dl_class(void)
+-- 
+2.34.1
+
 
