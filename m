@@ -1,212 +1,227 @@
-Return-Path: <linux-kernel+bounces-762352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6025FB20551
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDB0B20554
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A2F164CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6403B6EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A7B22A4F4;
-	Mon, 11 Aug 2025 10:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6061238145;
+	Mon, 11 Aug 2025 10:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d9sOpvJs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnYbiIpL"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AEB188A0C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F335B2309B5;
+	Mon, 11 Aug 2025 10:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908091; cv=none; b=khHOa+emtof7mOIv8tY9U+MntKavRmwHkzO/vNcVJHyJUgTy35K7T7FyzEuAAr9vPngrSc4xgFSnG7znUHSmOMcSl+iblFQl/lNA9XlkZ3aHFmzGcq5e7kLQAW9A2r9uEDBJQ8HZGKtJq5Q7VHU3HkmpyQmHSUCPCpuWjikiRGA=
+	t=1754908213; cv=none; b=Ecwr4gnBfpNq9OVyF7MgFrit94hL5IryW4nthkezMX7+goWSdvZtEcMbmErnNWpgtlSw6Bm6zKyTdIFgi5cOSB3oArAqk2DBSRqepbzl1CILSyU9R2SDouqLi0z+vaivDDzgZtHWtpydzeNXwbfmHzJ4Y8HZfBcpxB3upquU2E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908091; c=relaxed/simple;
-	bh=XtGwNiccSx/oE8Nnvkf2MQowzzMS1Wn6pPdzqhfwf0k=;
+	s=arc-20240116; t=1754908213; c=relaxed/simple;
+	bh=nOPnsDvXVK+zyc+LpfTNmzChp1SgqZuOCAECeC7rrAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fq5xmHKmnX9YQ9uliYkim5a1zZ1V4yFqJ5dwQW7uQYhjkZ5BnbzBms1Bk1xVT+jvl1ML8z5kavzGm3XjmkU9KHISomLW3RTCsSooSE9w3w8eZvd2SvHTFlJgNPOFlqXb6ylPRXvmI+sDb/a52/ML7oMlgiYqU60KcwkL0YmJ120=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d9sOpvJs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dHS1005283
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=S0wh/vf9/ahF7czkuW2zqdi/
-	QK9zgAaa0tIwnSvWMPo=; b=d9sOpvJshStdAy5fa3QCF2K0LlzG6kYdh0u51C12
-	tq/CY6gep0XLjkozWPaZQAAVnQKqRxdS22XjMpXF9KpTa/xwmJklZcYi58+wVtBz
-	uccjxAgMX3MC0JIAnZBb19FrvZGpx6IfkxOaa+Oaw4McjQGiTFsw+pKUpU8mxJjs
-	7N8dBL8C/OS0coltbGBCZHdG9r++tckpKwCpGwDM/DS10wGnY6qgBbwKEhy1sYxr
-	kOIn4k/qhvBDr23TfRdX3tXIKif+NCPm8UvNEutjTP9aa6ceDjrb26lTlYkSltQp
-	1okPKCG5h7mnm9HBgpDlZUdf7Uhjsf8pf+jXYzOJhqBDmw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhx27rb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:28:09 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06908ccacso100656151cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:28:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlYveiP7NLBtMI4l9gpBJTnoSTRuCZjxZsfADsxaxoBhBzXcveWTcAvJRImqOpFK0t5mOwgfY0HiChQi7FtFA3C/A2sZJOjIKsefmTFAezi3KUNEaf2YnJ2SdCnZtaMbZd3XIZdxN/9h4nuQn3akm1MCoKYUZRXBFJqFWRi1a+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnYbiIpL; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459d7726ee6so21003005e9.2;
+        Mon, 11 Aug 2025 03:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754908209; x=1755513009; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IdgpEQq7xpRcgPsDWPCngExwvMSjTB/xaISALicIjGU=;
+        b=PnYbiIpL+vC+W/8aueNwx7QwINU3NJlwZ20kmewptXncHy3gEyBSQY7EnSzVq4lYYC
+         krL4xCX2xsE9z6NbTUrhY4GIuGsH5jvDHU/xV0XSZeviiryaPrCaL93XBL5/7pm1XYay
+         s2LAeKmy1XYvg6uhKnyGG5+ilhAeWOvUii+Qp5xpVKLbToteftrrnd/j9r1RHMfVY0y5
+         ZrK01Lnev/jcnG5u4HBj2THyonbOrMTFukJptPOdQ4z+6gz4XIWVP+dqAvpX8xj2Eek3
+         5Mr2X775QHimb8YdVAXE/GzFGG3ToPzlndoI0vE6wEhE8OJA7FsmHFtr9PSiSPgBQ4NT
+         2ryA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754908088; x=1755512888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S0wh/vf9/ahF7czkuW2zqdi/QK9zgAaa0tIwnSvWMPo=;
-        b=o3fTY7N/VFQJTf1GPl99OKbL8XR5rgWg1HzDBcZVfb5lP5EscGYdXDVW4/gkHRX3E1
-         yrOOrQQ25ohxEbIQ2cIeabID5WvS2xTO/3+sbw7DtJEJsEJjZG43dNZgjiZxy2f7gcFO
-         dCKhfL5WTMiQ7OBceMKgllzZX/kGFkKDJIOrnsFhPnAKA7WzoDxOfIX8dhmJlqCnWTcX
-         bPS2TFTQENucJeMbrsrJW+ZL+mEBwDipmoPAqBGj2zRMFymfP42++V4yik+8zjwON+Uv
-         uWCXM/4JmJYKENYe68zuhXlQuW3d5EHpx2ZM9Q9/9xRQ7U7L5Ji5ZlusCr9VoggrNfCV
-         9SiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuw/4SfSR1Z84sgQm0LioBRUHBBZu8U4+LCOtua5x7NQemYPQlh8EJ4AQpSnaqE46Gt/wJMlK1UUgrbxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziKUt2KTsHThzgeXojvMn4jdwbR6EyQ0EGPrGQGKmibfQu665K
-	GdzHXOB7owwjA6dXo2CoBruqLJfDZi8mT0deEszIa0V6bdPTXxygct2wZlilCojHgucoH8TTPC2
-	jl2V5HS0nE7T9MfpXQsh+xniUcUX2oUO99bNMkY7lUSwhbY62a1hJUd95hXqKD1PdjSw=
-X-Gm-Gg: ASbGncuBMH0FUdOCPrFCu6P3EfAjRLdmGT8PpUmX2ZG/4g7w1d+ivt2FkInf+plWWJU
-	L4vUKj6mS19c29qrNRV9X5Qix4GH2JkpBA7SkjZ5QolS700TVwqzhITblJhEOghAraa1QQJrfII
-	5fouf5kKh2qZMeUsDreGdqW+ut0PWhSFoQxcE7dofg1pzPffLMGjBxAefcFSmABCfX1eLOfCxH/
-	kj9nnCwLpEhCHeZCJOaun9VjdFP2KLmzl96zVaN9+yWxxZ0aM256apil8CS3RCvAdLDcErS+Cod
-	/3yYwym0yuHfCB1oQHo1bF1kReCHxCaiUn+SMS7HgIjzG7GGQKSqaEE7FlR+N/rNVSlyKYTl6la
-	HHDdUuCgwRmEMRKHesI/NGecT7QDYtHftW9YTsoPP6wAGPTmdK5Ao
-X-Received: by 2002:a05:622a:348:b0:4b0:889b:bc5e with SMTP id d75a77b69052e-4b0ca69c598mr83121231cf.22.1754908088374;
-        Mon, 11 Aug 2025 03:28:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGChlYy+rk1d69F1ULSQJbZUJQYjmNVQhVTyYQ4mc1AGZP7o17UaEkItyvfAe/6wocgG6cF7g==
-X-Received: by 2002:a05:622a:348:b0:4b0:889b:bc5e with SMTP id d75a77b69052e-4b0ca69c598mr83120731cf.22.1754908087789;
-        Mon, 11 Aug 2025 03:28:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88cabb7fsm4247040e87.146.2025.08.11.03.28.06
+        d=1e100.net; s=20230601; t=1754908209; x=1755513009;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdgpEQq7xpRcgPsDWPCngExwvMSjTB/xaISALicIjGU=;
+        b=PPOXsDZeExXGcyy6fx0VMfsHlPLLsA4sheeAYnmLfEhE+atE+FsMl4fw1zJqYOtxAR
+         BCJjyiEjoykjISaBxBnx05E1BefsjpuJ39ywMyfI1gxXa1z4MVi3ZtNCuOQPB4dyiXtR
+         g2rrdMOHsj/PHJAcFMd9PlnnTp3dyz+dl08YtudsXwIgtNArw6IEu+XDuc5vhSnsHHVU
+         TN3IE+qmEvBBINwopGIU/SVlmYLpsReUvInJTDKJm3q3BGUWDferNixCeGX7+pwNQANu
+         s++gziFXTk4tCy/BnlycMk1Q9TiCBLQVdg/reTuKfgu9/zrZyDWI8qS9rQsChZvRiaoB
+         G3NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUea1UiE/arYweVTQz/co90SULH5SKKqYAdpIJXHvYLtFCEeC5bcMvgu3xMtexrhN5PRUsA20QYkR9GLnZc@vger.kernel.org, AJvYcCW059M/HxOHtlYvWcICz9y/8APeQzWN2PDrMPkHf97vR2XwCVGEaTlMufNzQTNL5fGrJfCwj795NXBOAA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8HRKOPEGOqbODKQxTFX76raPbslOJFfwAX2AN7tW+xbUnNYaZ
+	KCvLtSO30RXZvPUOK0fQb7dGq/3uD8/g9gl7Zgkor6r2ZuDrYkGO71RG9ZX3QXOY
+X-Gm-Gg: ASbGncuvgr1PC2OmRvqPD0HY/ASF9vJkk2MmSFbsuAP7qT/OhWWZrwxFmFxwHm3nazw
+	szr+md+NNTdqVCAbcmt7fk99X8urWysx96LnKQX5BtmI2ryMcdg3ovCL21YHQklFbWitFdw5xFo
+	5Bwcz4rEBLH9+GcwngblVuJLJLr49RNG4/ibXxtQ4TACsl9zWQixGPzU+4h+fEk50XDX/RYgsJe
+	t1OCfypbOfFGQMQhxXF0O5Prb3r6uclCQgQSdKaWEgXYzB639QfS+DEucr2O0n/LemFGMtcaJBD
+	z8fZ8ZujWkL6KZAjk7UyNHpPq3ni8zm58vC7l/STPaBxeLYqbv3E/nvRBYLV2xQM1dzOG7xzMu/
+	XeekgSV1SpwHzYoj60gc=
+X-Google-Smtp-Source: AGHT+IELXFujkonvGXDZVcr/FPtjORDZi9uzt13VlHrYlAT8/cNZd3hc5+VU06OYD8310FS8mtFm/w==
+X-Received: by 2002:a05:600c:3b86:b0:459:d9a2:e920 with SMTP id 5b1f17b1804b1-459f4f2e214mr116814035e9.4.1754908208942;
+        Mon, 11 Aug 2025 03:30:08 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9eddsm40147763f8f.22.2025.08.11.03.30.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 03:28:06 -0700 (PDT)
-Date: Mon, 11 Aug 2025 13:28:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Suraj Kandpal <suraj.kandpal@intel.com>
-Cc: kernel-list@raspberrypi.com, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, ankit.k.nautiyal@intel.com,
-        arun.r.murthy@intel.com, uma.shankar@intel.com, jani.nikula@intel.com,
-        harry.wentland@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
-        liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, robin.clark@oss.qualcomm.com,
-        abhinav.kumar@linux.dev, tzimmermann@suse.de,
-        jessica.zhang@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org,
-        laurent.pinchart+renesas@ideasonboard.com, mcanal@igalia.com,
-        dave.stevenson@raspberrypi.com,
-        tomi.valkeinen+renesas@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <g7ny277cnctr3edw53qyutiyv3yxah2m7pulg2u6gud6f2gla6@micq4aliwx3i>
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-2-suraj.kandpal@intel.com>
+        Mon, 11 Aug 2025 03:30:08 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:30:06 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>
+Cc: "jikos@kernel.org" <jikos@kernel.org>,
+	"bentiss@kernel.org" <bentiss@kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>
+Subject: Re: =?utf-8?B?562U5aSNOiBbRXh0ZXJuYWwgTWFp?= =?utf-8?Q?l=5D=5BPATC?=
+ =?utf-8?Q?H?= v2 2/2] HID: input: report battery status changes immediately
+Message-ID: <aJnGLkM-t0aYjzie@fedora>
+References: <20250806073944.5310-1-jose.exposito89@gmail.com>
+ <20250806073944.5310-2-jose.exposito89@gmail.com>
+ <726471d1e4774348bd62ecf289a5a307@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250811092707.3986802-2-suraj.kandpal@intel.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX+pvThhCXhOED
- B/Kkf/aY9f1uC53zKbOquIfLAckimTIMF3Vqx707ncJ2J1WyocDZl4HJ40r+tRoTKw0jP6OmuBd
- P/nK7Jbxl7BOpudFHbrWyROJ53Vy9qrlP2NcKVNmn77APX4y9cROfiAXGLH6Qc7T7jeL4PUi2IJ
- fbK25CM/gLMz+vC4OT8u590VPx0iITi5ciVwg/JU8sKoE19AvH8Yw0SZn968GyWhVn8h/L9bDG8
- KdQFikZWUInE4+kq747qi8oKpUjLC/YNaPLOSjTBmarKw68IN8yXBrqjwCTeYwvZoEO5oAWGBLC
- XL8JgRZ2RjwTRANj6X8iKTVydkt8Y2Ce/KZdXjPxMaTLb1eq+AgsSdKzjYwpRg1ZMiJ1qClEcE9
- ESB/Ia5o
-X-Proofpoint-GUID: -yRMWFppAdso-9296ju4EAbtL0jny8PL
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=6899c5b9 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=QyXUC8HyAAAA:8 a=-zeacxS0QVZa6ZkZsZMA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: -yRMWFppAdso-9296ju4EAbtL0jny8PL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <726471d1e4774348bd62ecf289a5a307@xiaomi.com>
 
-On Mon, Aug 11, 2025 at 02:57:00PM +0530, Suraj Kandpal wrote:
-> Some drivers cannot work with the current design where the connector
-> is embedded within the drm_writeback_connector such as intel and
-> some drivers that can get it working end up adding a lot of checks
-> all around the code to check if it's a writeback conenctor or not.
-> To solve this we move the drm_writeback_connector within the
-> drm_connector and remove the drm_connector base which was in
-> drm_writeback_connector. We do all other required
-> modifications that come with these changes along with addition
-> of new function which returns the drm_connector when
-> drm_writeback_connector is present.
-> All drivers will be expected to allocate the drm_connector.
+Hi 卢国宏,
+
+The mailing list won't accept your emails unless you send them
+in plain text format. Forwarding it for awareness:
+
+On Mon, Aug 11, 2025 at 04:23:55AM +0000, 卢国宏 wrote:
 > 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
+> Hello, José!
+> When I submitted your two changes to Google's Android GKI (The patch I compiled is: https://android-review.googlesource.com/c/kernel/common/+/3723411), they raised two issues:
+> 1. This patch has no functional changes. Why is a cherry-pick needed?
+> 2. FROMGIT patches must cite the source repository, branch, and sha. Please see https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md
+> 
+> From their documentation, I learned that they recommend submitting the changes as follows:
+> Requirements for other backports: FROMGIT:, FROMLIST:,
+> If the patch has been merged into an upstream maintainer tree, but has not yet been merged into Linux mainline
+> tag the patch subject with FROMGIT:
+> add info on where the patch came from as (cherry picked from commit <sha1> <repo> <branch>). This must be a stable maintainer branch (not rebased, so don't use linux-next for example).
+> if changes were required, use BACKPORT: FROMGIT:
+> Example:
+> if the commit message in the maintainer tree is
+>         important patch from upstream
+> 
+>         This is the detailed description of the important patch
+> 
+>         Signed-off-by: Fred Jones <fred.jones@foo.org>
+> then Joe Smith would upload the patch for the common kernel as
+>         FROMGIT: important patch from upstream
+> 
+>         This is the detailed description of the important patch
+> 
+>         Signed-off-by: Fred Jones <fred.jones@foo.org>
+> 
+>         Bug: 135791357
+>         (cherry picked from commit 878a2fd9de10b03d11d2f622250285c7e63deace
+>          https://git.kernel.org/pub/scm/linux/kernel/git/foo/bar.git test-branch)
+>         Change-Id: I4caaaa566ea080fa148c5e768bb1a0b6f7201c01
+>         Signed-off-by: Joe Smith <joe.smith@foo.org>
+> However, I didn't find the information Google mentioned in your email: the source repo, branch, and sha.
+> Have you submitted these two patches to the kernel tree? Could you please provide a patch with the information Google needs? Thank you very much!
+
+The patches are not merged yet, that's why you can not find the commit
+SHA that you need.
+
+A maintainer will send an email to the ML once the patches are reviewed
+and accepted, but they are very busy, so it'll take some time.
+
+Jose
+
+> ________________________________
+> 发件人: José Expósito <jose.exposito89@gmail.com>
+> 发送时间: 2025年8月6日 15:39
+> 收件人: jikos@kernel.org
+> 抄送: bentiss@kernel.org; 卢国宏; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; José Expósito
+> 主题: [External Mail][PATCH v2 2/2] HID: input: report battery status changes immediately
+> 
+> [外部邮件] 此邮件来源于小米公司外部，请谨慎处理。若对邮件安全性存疑，请将邮件转发给misec@xiaomi.com进行反馈
+> 
+> When the battery status changes, report the change immediately to user
+> space.
+> 
+> Fixes: a608dc1c0639 ("HID: input: map battery system charging")
+> Reported-by: 卢国宏 <luguohong@xiaomi.com>
+> Closes: https://lore.kernel.org/linux-input/aI49Im0sGb6fpgc8@fedora/T/
+> Tested-by: 卢国宏 <luguohong@xiaomi.com>
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > ---
->  drivers/gpu/drm/drm_writeback.c | 33 ++++++++++------
->  include/drm/drm_connector.h     | 60 +++++++++++++++++++++++++++++
->  include/drm/drm_writeback.h     | 68 ++++-----------------------------
->  3 files changed, 89 insertions(+), 72 deletions(-)
+>  drivers/hid/hid-input.c | 23 ++++++++++-------------
+>  1 file changed, 10 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> index ec2575c4c21b..198b8c488056 100644
-> --- a/drivers/gpu/drm/drm_writeback.c
-> +++ b/drivers/gpu/drm/drm_writeback.c
-> @@ -89,8 +89,10 @@ static const char *drm_writeback_fence_get_driver_name(struct dma_fence *fence)
->  {
->  	struct drm_writeback_connector *wb_connector =
->  		fence_to_wb_connector(fence);
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  
-> -	return wb_connector->base.dev->driver->name;
-> +	return connector->dev->driver->name;
+> diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+> index 262787e6eb20..f45f856a127f 100644
+> --- a/drivers/hid/hid-input.c
+> +++ b/drivers/hid/hid-input.c
+> @@ -609,13 +609,19 @@ static bool hidinput_update_battery_charge_status(struct hid_device *dev,
+>         return false;
 >  }
->  
->  static const char *
-> @@ -187,7 +189,8 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
->  					  struct drm_encoder *enc, const u32 *formats,
->  					  int n_formats)
+> 
+> -static void hidinput_update_battery(struct hid_device *dev, int value)
+> +static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
+> +                                   int value)
 >  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  	struct drm_mode_config *config = &dev->mode_config;
->  	struct drm_property_blob *blob;
->  	int ret = create_writeback_properties(dev);
-> @@ -269,7 +272,8 @@ int drm_writeback_connector_init(struct drm_device *dev,
->  				 struct drm_encoder *enc,
->  				 const u32 *formats, int n_formats)
+>         int capacity;
+> 
+>         if (!dev->battery)
+>                 return;
+> 
+> +       if (hidinput_update_battery_charge_status(dev, usage, value)) {
+> +               power_supply_changed(dev->battery);
+> +               return;
+> +       }
+> +
+>         if (value == 0 || value < dev->battery_min || value > dev->battery_max)
+>                 return;
+> 
+> @@ -642,13 +648,8 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
 >  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
-
-Please pass drm_connector instead (to all init functions). It would make
-more sense.
-
->  	int ret;
->  
->  	ret = drm_connector_init(dev, connector, con_funcs,
-> @@ -339,7 +343,8 @@ int drmm_writeback_connector_init(struct drm_device *dev,
->  				  struct drm_encoder *enc,
->  				  const u32 *formats, int n_formats)
+>  }
+> 
+> -static bool hidinput_update_battery_charge_status(struct hid_device *dev,
+> -                                                 unsigned int usage, int value)
+> -{
+> -       return false;
+> -}
+> -
+> -static void hidinput_update_battery(struct hid_device *dev, int value)
+> +static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
+> +                                   int value)
 >  {
-> -	struct drm_connector *connector = &wb_connector->base;
-> +	struct drm_connector *connector =
-> +		drm_writeback_to_connector(wb_connector);
->  	int ret;
->  
->  	ret = drmm_connector_init(dev, connector, con_funcs,
-
--- 
-With best wishes
-Dmitry
+>  }
+>  #endif /* CONFIG_HID_BATTERY_STRENGTH */
+> @@ -1515,11 +1516,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
+>                 return;
+> 
+>         if (usage->type == EV_PWR) {
+> -               bool handled = hidinput_update_battery_charge_status(hid, usage->hid, value);
+> -
+> -               if (!handled)
+> -                       hidinput_update_battery(hid, value);
+> -
+> +               hidinput_update_battery(hid, usage->hid, value);
+>                 return;
+>         }
+> 
+> --
+> 2.50.1
+> 
+> #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
 
