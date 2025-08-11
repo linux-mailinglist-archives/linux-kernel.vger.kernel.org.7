@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-763551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B85B21681
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:32:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6273EB21686
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC85F4E3127
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645231A237DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0F32DC34E;
-	Mon, 11 Aug 2025 20:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF92DAFBE;
+	Mon, 11 Aug 2025 20:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmSosz69"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHeqLn32"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C943E311C31;
-	Mon, 11 Aug 2025 20:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D3029BD86;
+	Mon, 11 Aug 2025 20:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944330; cv=none; b=gg6ulMkCEMLi6CO8ungJi3kLB00OYfCieMv5Q5h5kn5TNIZr90HAaWy1BDGg1ZhqygqmSmlvqDNa/rlbhPMzmHNhXTBVMtDPDVP5wf+Ex6PWzYCbUiT7cVu7nS/5wR114Oyem856ICm8QiTTfi/dny/jeRiFxNGDMzJch0N2miM=
+	t=1754944426; cv=none; b=aYQ1iBrg5baA1NzTkpaCBDBcW16Hr74qpzC4rm65Z9yp0+cnAjuw/kjmYjUeHdm764RNsQaPelueA0N0mtEwOVXAHy+xjXLIS0jlL6Jr9Gnh1bxuSSykd98QSgem3/FA0l1Qv4f/gwdoRH28VcHywkKbk+AEEp60nmkDpf9bTl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944330; c=relaxed/simple;
-	bh=ly505YzUJCW+w4zhIqTBgdX8GQwNdFihL6xwl57D2e8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aI8FQOUjIejNHAYcQxR+FoJsb1UZdgMqrbnI4XETU8QzH4Y839YPktmSwHv9he8zxLSc8/PIcI8+/DwHWNMVC3azMnEViGCxoUp+LhrE/hF9yfBnv7uzJEsJ9/hVrjFyCdMUf4n/zctTwhH89RTbKvvMN38Z20KP4DaSgGXKciQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmSosz69; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF9FC4CEED;
-	Mon, 11 Aug 2025 20:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754944330;
-	bh=ly505YzUJCW+w4zhIqTBgdX8GQwNdFihL6xwl57D2e8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DmSosz69RADL61BU8YtrkDonA6FsRPJqOl2gRpOcoJj5nvL4/uwrGydZdT+xpkn2B
-	 mxSYa0jmyzZnDQ5htfR/Nf3x8DCeyTO0/Hsx+HOtlzdnvtLPmH873jwwh37Nsks9Nq
-	 9q0MkssxJNwFUd7n+BHeklO8vAupuhXH9dmMnWD9f7Tho6DTTLBStfWjM5KQ6QIzKq
-	 vvqt2vmRV9215aH9qHQKZxei9bIyH4ivLTLLbAiSUlh1QW1iM9pHJNbfDLOvAhLEz1
-	 KuKKMTNEjSRNeCsfyvWeD6CYTodak4s20fh5xju9uXUz4JlcIOsv3gfy1xFSuWkvIi
-	 T8iaYQixe8XKQ==
-Date: Mon, 11 Aug 2025 21:32:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <20250811213200.2a5da728@jic23-huawei>
-In-Reply-To: <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
-References: <20250807-tlv493d-sensor-v6_16-rc5-v3-0-b80d2cb41232@gmail.com>
-	<20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754944426; c=relaxed/simple;
+	bh=S5lcfUtp71/9il0VG77vgPWtjLtzdwdq8K2rrHgg+mM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uPil29RNWUftQ28JkhdCVwA2snIXZApzIpkrWTZ/WV6JhEsoUNi14KPwYIXAY43J2O8dEl8ZAu9OQXK3VrOCZuNCii7lWiKplJrNiX4MWEg7FdD/8+Y/3ZPhBDGFEyzzeHwnn3+bPVXbHBELXMTOjUhfrxbfxVqktasilvwQKgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHeqLn32; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459ea4f40afso8698635e9.2;
+        Mon, 11 Aug 2025 13:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754944423; x=1755549223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4lYYrjSv6845A5J/SgoFFrJQ1Leg9B3UPlq2+hMK1TE=;
+        b=JHeqLn32x9qZGTYNUi901TEgRQbNewAcX2d7JgjoOsTNDwGZcHqkYcsXX+ZukEethk
+         8SdpjZf8WyTJ32uLWSNeftvaxQccvS7wkeb6lVq1XFwUEWNvpGmyU+2OgXa+CSD5/hMh
+         EUYg/Hp8yqVpbTX0awK0xi7qKOeVnvF55uaUL9maIjYYynPIojwUJLvongsVpociDPFn
+         uusCwgDVbbNeazSyt+uDnnLoF5sunXTgL5McE57Gf9T2Y+vAoi/+AWSumytvLtBcwwW0
+         2FCtaPY6xUgPKCiQSKrDtGcxEKZWLdkVWj3u0KQ3qNvdn9v2fv/vNYgMDWbTYTHed8tv
+         rk2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754944423; x=1755549223;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4lYYrjSv6845A5J/SgoFFrJQ1Leg9B3UPlq2+hMK1TE=;
+        b=ofDr2p6BXC7QJjmcETrO0YoUPFyQG/LUVqEO4m4F9JlDozAqfQ15exHxqWkU734qkf
+         73uY02X7zPRKjNBvrwgKq758gbetRydh03hS3q0ycap4SfUttxuwPQZDpMnI+ffrxUfz
+         CptjMiYxb2JvudNWVTzM/40GG+rlaV61fTvkilFIIgxTKfVXaxsHHvn7Yjkap43mPsJh
+         nTj6kRXC91qWyuz33tvY3tN6XoafMMNZo6IB2Pv7U/5BX3e/cQuBNnZtfByXW96TH8xZ
+         MYyaKeawBXelZ+C6B2xu1itCuXDmHP4UB9QJPE9ODWeOqc2qvOpsTh+GlJu5ivBDnegU
+         qlFQ==
+X-Gm-Message-State: AOJu0Yzsy4ydhCPILaMCRnc93Giq7KTP2Brqs4EmkfE/9lWbs79/wWze
+	jcTIETk6YG/X7q/QJAkSg7cE4mOpvNfCHgaEMb7JanaAMgr4ZY2gD0cv8VCdzQiy7hI=
+X-Gm-Gg: ASbGncu1edkOSRHmnT0hI89gXhPLNP+UryeZdW2YH5eodgSNJs+totzlexdSoo5ZXoE
+	jYk9xy99ToyodlB5ssRELoyGq0PvymmOBGodUbBIVnHciv0LtX3Y0VrkO6RKCTBArTeA85qRqXh
+	lU9n4lLNGAkmewaxukLXO9wwSnuhv1ngHEA0GIXDiloqzQwPI0ipoYpMp5L9TNRgFEm7bWShUs4
+	2yiJdyY780jlFAP/UNuylPMT/BzJcJRApaj2rot9KfBqj9+L2shXeHhHiuV8DWnK66MECDXtGsw
+	M28gkmpRyQbdpHOQ93iIBNOnsRij9cZeYg4kTvRDJ3zG0LSoZoeL7Vvzwb76maAVVQawO/0d7zy
+	OCFspsi2FLFoMEaiHLDbTz0FjgylTP5EyHs8Wb62+Q4SETKutmjOv/mk/GsCeI7fVlfj2YLfEnA
+	==
+X-Google-Smtp-Source: AGHT+IG7Z6zeZBn211/I7M3dkItmnVEODQxBESmS2cvBBAYllidB3CYd7C+MjrADI4Pv1At5iFWIXQ==
+X-Received: by 2002:a05:6000:2f86:b0:3b8:d95b:77a6 with SMTP id ffacd0b85a97d-3b910f8f95cmr312211f8f.0.1754944422521;
+        Mon, 11 Aug 2025 13:33:42 -0700 (PDT)
+Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm364995685e9.22.2025.08.11.13.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 13:33:42 -0700 (PDT)
+From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	skhan@linuxfoundation.org,
+	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+Subject: [PATCH v2] net: tun: replace strcpy with strscpy for ifr_name
+Date: Mon, 11 Aug 2025 22:33:29 +0200
+Message-Id: <20250811203329.854847-1-miguelgarciaroman8@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6899fde3dbfd6_532b129461@willemb.c.googlers.com.notmuch>
+References: <6899fde3dbfd6_532b129461@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Aug 2025 08:26:35 +0530
-Dixit Parmar <dixitparmar19@gmail.com> wrote:
+Replace the strcpy() calls that copy the device name into ifr->ifr_name
+with strscpy() to avoid potential overflows and guarantee NULL termination.
 
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
-> 
-> The Sensor is configured over I2C, and as part of Sensor measurement
-> data it provides 3-Axis magnetic fields and temperature core measurement.
-> 
-> The driver supports raw value read and buffered input via external trigger
-> to allow streaming values with the same sensing timestamp.
-> 
-> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
-> But for bus configurations interrupt(INT) is not recommended, unless timing
-> constraints between I2C data transfers and interrupt pulses are monitored
-> and aligned.
-> 
-> The Sensor's I2C register map and mode information is described in product
-> User Manual [1].
-> 
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf [1]
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+Destination is ifr->ifr_name (size IFNAMSIZ).
 
-Andy did a detailed review, so I only took a quick glance at this version.
-One additional thing I noticed though.
+Tested in QEMU (BusyBox rootfs):
+ - Created TUN devices via TUNSETIFF helper
+ - Set addresses and brought links up
+ - Verified long interface names are safely truncated (IFNAMSIZ-1)
 
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, 500);
-> +	pm_runtime_use_autosuspend(dev);
-> +
-> +	pm_runtime_mark_last_busy(dev);
+v2:
+- Dropped third argument from strscpy(), inferred from field size.
 
-Drop the mark last busy.  That's now always called in pm_runtime_put_autosuspend()
-after a patch that just merged in this merge window.
+Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
+---
+ drivers/net/tun.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Seems you got it for the other cases but maybe just missed this call.
-
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	ret = devm_iio_device_register(dev, indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "iio device register failed\n");
-> +
-> +	return 0;
-> +}
->
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index f8c5e2fd04df..ad33b16224e2 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2800,13 +2800,13 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
+ 	if (netif_running(tun->dev))
+ 		netif_tx_wake_all_queues(tun->dev);
+ 
+-	strcpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name);
+ 	return 0;
+ }
+ 
+ static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
+ {
+-	strcpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name);
+ 
+ 	ifr->ifr_flags = tun_flags(tun);
+ 
+-- 
+2.34.1
 
 
