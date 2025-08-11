@@ -1,179 +1,198 @@
-Return-Path: <linux-kernel+bounces-761685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6173DB1FD5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F27B1FD5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7CD3B2917
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AEE41653F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBE81991DD;
-	Mon, 11 Aug 2025 00:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35A8170A26;
+	Mon, 11 Aug 2025 00:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="D5HLT61f"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ihwvHKux"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E87F5A79B;
-	Mon, 11 Aug 2025 00:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F3229408
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754873393; cv=pass; b=fW6N3pU/beFXT/niRwC3m6/DynQmt4prvltWh9i9eZzJ7bmBwxIXNY9HIQfVWgXt6Z+3EG/GNWc5nvKKeBvz5tDaNFJlBjIxO7j7H8+g92cf1PABz3xdfrgAUxaQGP90rWY0WXZoOh1C99SO/WsK2+QogMl7/xFb/U67GP5SvW4=
+	t=1754873463; cv=fail; b=SBMzCJK/XnQK0KJvAqKUvEVTmtkwxJ1MEJIvhCaBer7EwepgVpXmuAkUWX3g4tQP7TEs7zTolcikIkQdMP1nd3EoqDwOfxwtdhAyUdO3JAGOBzEaNm2LRdiqJ6tU7RO7A9dLrvYRZ4Th6cilW0QjZ92VlihwVDGnvYL3Eke4XGM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754873393; c=relaxed/simple;
-	bh=7tRAxSqqY10mzKrcbVRG8/IZwAS+LDj4oPQ8Z7Ab7ls=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Sjjjyu4c4VNTDdcNE8vbzr4CnypD+JLHdU3awf5IkiDLksPuRVv14MyL/GQdejlYk4/qEOu7aLqwqR02ukai2PwRk6xqH3xYM8CEYfy9xKjE4gPiCoG/Oxy56LYtHFMF6bpywYoBgkxl9IJqdMl9ylvmyHXzE57sjQSfIwJCZIQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=D5HLT61f; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754873372; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z8ofV6Cvt3DO1NJ0TmDOvxxCDpV/UF0IYFuezegzMlrUp8JwigZEab+8PA5y5/waHNemW63SHh7DAux2bxf1ea+iJv70Jf+I1fkHF2F26e00YIPjkzVS+cv4M5vhVuOr1B4oOCNogGI/uUcwk+f+l0ACYkXzd1v0F/2mSoeR2cI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754873372; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0Tb/rAbCLPWTr4mCwUuhZK5oJw4n1wEh7gOYvWxHnOA=; 
-	b=UVzVQNq/rbTbopXXDlP9v04IuZfPdahXU88wQOAcrL6angzDyO7FbNpMT3U/r8d+IoMQ9u4x3PuPBm4dFYry71SZVFvcAI5yYq6iT6roAZzQ80pk13s+i+3HuD/TFi5Gcv+a+bTj2mNtHG2Bvctin3zD2pm7jttnIxsGJOXoOBA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754873372;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=0Tb/rAbCLPWTr4mCwUuhZK5oJw4n1wEh7gOYvWxHnOA=;
-	b=D5HLT61fJQU3k2R2bz9Sn+EPPC5UavsU2azW5hcZcLQp3zwWZL89L7WiiIkF4FwY
-	DBaPtZjWtw3HzMf59AewCkKr9YAlW7y8t5lexxc3TqzxgXVsWxaPY9Qmw+eI7Pq4lAN
-	LhbpOyty2MY0Atns3yogumdm3yfCy4Ttdf3tg3Kw=
-Received: by mx.zohomail.com with SMTPS id 1754873370723666.3021283578192;
-	Sun, 10 Aug 2025 17:49:30 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1754873463; c=relaxed/simple;
+	bh=Kpk1NMBZtia8gsvOJ42Zo0lmu6j58OZ4o+o84h+7aZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lFhY5p/+u7Cf2SCiYKBl6ZtNtXYtCKtStMXt7uOqJgz4ocgXlU1CC/ae8r3SZX4Vp5s1dTB5YXfz24sZbSW7n0sVtBBNKzRdrrJJP1wTMF665MBiM9ChSb8j9wunXmjLEcpgOSj+okG8zD2d1gnzQOAlD9GrZICuriuMG7rgQjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ihwvHKux; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cDuh4IWmA9Sshvzs5/0CedHhlSJ5m/ME70iMXHJzDc+OJhjcqXmsPAQzz7aluTW3IMc4G+exy7n/9hwWbGSZt3CQ+l6tVAbMWp/moTBFU5SPrOE6NCSF5ALwLPs20jeRR1ztWm06/zGME0+4UWG0BBJR6na/t+181S4fVsbWS0bzbZFiyGQ72l+auEqP9TWzOEK8eg+dtvMxnya81HwqHk4+7coLYs0vUfAK17Rfas5T1VhCfEWs84TYNAcCQihd1sWspv2Zivh0NPu4ahLBgSsELVWZv/pCljtrGRuyuV+BUlEEfjkADrTuSa5oDjwplvgwIvmVgc+Zh+8Rxnz3IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Do+T9sT5L19gqSgT+cSz1/KPjWv7o95NkA+MoHjSdFY=;
+ b=hVA5J37olCVCqRi7epOXYPdXxfc5clBkCuSmRf7tA3+KRiMMlw1leRGn2+ovgHTxMtBKwYBnXTfP5qCcOv1KVhi6g/1gkzX2Jf8d4JPQfKggxXsmmyHzgmbWk1nQeS/HD6GsGOOWyXYIXSxN2mFXqZma07ydeyaG/UqLOGBqYVvMAVmZqZ5mGWx8IF+Ilxhn4UTJzIkZoncb0QlzTGNJoFiMgHZ8hyUJvBMA2SiBefNGSgw+nQORbrVbtF/OJYNppyCx9d6MLYt6EIkDmV7X65U3R9JdsXiQMYlkjYB/c4P4xxZ5vVIAOtsLTDylgjLkETJdqhbkOkkA4CBvJRVg+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Do+T9sT5L19gqSgT+cSz1/KPjWv7o95NkA+MoHjSdFY=;
+ b=ihwvHKux/dKKiG6GIi5H7IOrWGi2ebZHj9ZAGydWKYnzcIZ4Xqp41rpWAT4lvhLRBb8VpHWu314ayt+2v+vAqCybZvZwUxR+UVyWNNrojz5IvWQ2uZ/8Th3RpVPii96UN9vBL8tSisZmCn22YOt4r6GlohaCBJcpPGopCvRowGZbEi3Zn+1xLq0qiqV7+ZCe27ZbRaQl4SqNyhqKKXafzz7LYEB164GuCB17BgTNnqBGWHiCTSkeSapjifUQ4HCF77xVDAFu7CJZC8t2b/BzatJTQx6099j9ZGWYdqtg5Et+7ANxBMW5aKbkIsHHlex8WUpDP4FCYe/yCnYLw8EWcA==
+Received: from BN9PR03CA0201.namprd03.prod.outlook.com (2603:10b6:408:f9::26)
+ by SA1PR12MB7126.namprd12.prod.outlook.com (2603:10b6:806:2b0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 11 Aug
+ 2025 00:50:55 +0000
+Received: from BL02EPF0002992E.namprd02.prod.outlook.com
+ (2603:10b6:408:f9:cafe::87) by BN9PR03CA0201.outlook.office365.com
+ (2603:10b6:408:f9::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.21 via Frontend Transport; Mon,
+ 11 Aug 2025 00:50:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 00:50:54 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 10 Aug
+ 2025 17:50:40 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 10 Aug
+ 2025 17:50:39 -0700
+Received: from SDONTHINENI-DESKTOP.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Sun, 10 Aug 2025 17:50:38 -0700
+From: Shanker Donthineni <sdonthineni@nvidia.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>, "Mike
+ Rapoport" <rppt@kernel.org>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Jason Sequeira <jsequeira@nvidia.com>, "Dev
+ Jain" <dev.jain@arm.com>, David Rientjes <rientjes@google.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+Subject: [RESEND PATCH 0/2] Add encrypt/decrypt support for vmalloc regions
+Date: Sun, 10 Aug 2025 19:50:33 -0500
+Message-ID: <20250811005036.714274-1-sdonthineni@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] rust: irq: add &Device<Bound> argument to irq callbacks
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLghRi-QAqGdxOhPPdp6bMyGSuDifnxMFBn3a3NWzN4G4vQ@mail.gmail.com>
-Date: Sun, 10 Aug 2025 21:49:14 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- Dirk Behme <dirk.behme@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0303C763-76CC-456D-AB76-215DF253560C@collabora.com>
-References: <20250721-irq-bound-device-v1-1-4fb2af418a63@google.com>
- <DCBBFAC5-A4B4-41BA-8732-32FA96EDE28E@collabora.com>
- <CAH5fLghRi-QAqGdxOhPPdp6bMyGSuDifnxMFBn3a3NWzN4G4vQ@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|SA1PR12MB7126:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcae2c00-3375-4678-4467-08ddd87120d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QlVNeEQ3d0o4Q1Z5cG1KOXVyR3N2NmNJQzlKRWU3RW54ZUFOakZXUDBuNk4v?=
+ =?utf-8?B?U01wY0FxTWtFOWc1amx6WHdpTEtJVXdpQXh1eGN2aUpEWFhXaDRjNDA3T0Zs?=
+ =?utf-8?B?QVdxb2VuWmZhNnVhOGNrWVVOdGNhZ1J3WU5LZmhCbjZ6dUpNdytOTjRVLytI?=
+ =?utf-8?B?b2o5R1crSFdIWmIwbzhwSXFSQS9BdDNTbE5ocHJQb20zS29XSGdpaUNPN3c0?=
+ =?utf-8?B?bEtxOG5NcExid0tUWWpyMlYxckZOQ1VhcnNKZHcxN0g0QWczZUgwTUQrS3Bn?=
+ =?utf-8?B?aU1heFBySUtDMFp3ZGkwWGUrSVdZWmF2M0tId28yS3ZVNlZmZjE0VWl4a09U?=
+ =?utf-8?B?M3liYSs2cmdnaXQ3UE9raDhyWHIrT3RQc0poMmF5UUVmbUNCMzNDaEtTRmd5?=
+ =?utf-8?B?SSt6VG9uQzNmQ1UwVmFmKytwT2V4S3NEdlpoNTJ0MmlvUzdONkg4aUxIalAy?=
+ =?utf-8?B?QVFtSjhjdVlucnNXM0x5U1AvRHoxYW5DenU3TnNHcHFEekNoZ1RJeGRVbjNq?=
+ =?utf-8?B?a3V2TTRmTG55eWlLZUdVelIxdEI5WEZ1RFBLU2JoR0d1bkpSeEVzUmFiNFA2?=
+ =?utf-8?B?SDl6MDBQYUJwZ2NMZDgyR1hERWxBNy9MWW5PWWR0UmxiaFo0RTdxS2NZWDk4?=
+ =?utf-8?B?YUlqRjN6b3Z5dG1jYzhUWmMzYTVsR05jeUU4dVhoTUFLNjZmZW5wM3dUSUtU?=
+ =?utf-8?B?L0ltNC8wUmpwQThsVzNKditmN3lhV2dvZ2VRcEtCT25vL0hxTWlLRlpxYVY3?=
+ =?utf-8?B?UmJXaTZScjQ1UUlmODlwOVp6dFk4VUl2NUcyNlRySjlKZmwrOFhtMStCY2Yr?=
+ =?utf-8?B?c1JIM0hqVFY2OEIzZGl3ditlNk91NXpUMU1Sa1l1NmZVa29mRG5pZUYyWXFo?=
+ =?utf-8?B?Y1h6ckxXTjVkNE9lZ05QY2hHS3ZjTWFMOEdSUys3bERVaEVmc2t6RCtkTlJL?=
+ =?utf-8?B?VG5USnMxZVk4MEdDTmxvUmo0NGkzZWI3Q3dFT2hMajVKR2FKRGZyc080WDJJ?=
+ =?utf-8?B?NUY2cXcrQTNVTm9WTGxRUm9CYUJIQWI2Mzl3U2VHS3BCSWxLUXB4UXI1U25y?=
+ =?utf-8?B?Tkk1YnpNY0pqOWJoUDFCZGtkdFdXRmtTcHpBeXZ3QlVlczY5eStJRjhnYVZP?=
+ =?utf-8?B?czZ6QVhSenhuSzgyc1NHbjVqSTcwaFk1SHZKTDhaeWR5OWtYTnNwdkNKTmND?=
+ =?utf-8?B?c1BrU29udTJUd3BDU0RDajRwQnNXMWdaNU9MbklnU01WTDNNb011THQ0TzhS?=
+ =?utf-8?B?eUlCeVo1QjFId0R4aDVnSzNLUG9TQjYvU3BMZ2k4OXh0Nm1wQnFHc3lhWmxw?=
+ =?utf-8?B?NXBMWGRVNXNVTysrZnN2S3E0eGh4cUNlaGVDZHBtTW1qSXJFTlNibXpnZkda?=
+ =?utf-8?B?L1ZRQWhFamtvZjBmUzBvbUNFWkJXSEFkdlZLajJ2TVJQYnhHc0pqcEh0TFcy?=
+ =?utf-8?B?blovcDJDOGV1NmdKOTRjN0U0VG42NVkzWUpvZEY2RkVKUXliUmtGalU4NExL?=
+ =?utf-8?B?eDlyMkRTMkZBL0U2RkN4WTNtWDNVcDdLK3FQUFJrL1pQblJDME1FZ3ZTemVv?=
+ =?utf-8?B?SWdQRlNtNTdiZEV2VHVXbUU1V2ZncUNJeVR4VnpkY3QyMGtUaDFENUppb1Vh?=
+ =?utf-8?B?aW1pd0hGNXBQL0ZKZk1CWFFuY0hpRFZjcy9CMHFvcUJBaXpVSGlpMlJ3Rmk4?=
+ =?utf-8?B?WExOTDZYTy94M1JvRkNCOEh2eFBqU3pGeHlPTDlieEdRNnRHR0RNSXEyajdr?=
+ =?utf-8?B?VEVxcnJVUDJsRWs3ZjM1b3h1T2JkMmFrb1pTQVVBVUN4em9ZLzM3V0hSS3VQ?=
+ =?utf-8?B?YWhyTWd1djJhV3prTjZzTWdpNDRXNkJjdUhFSnp3SWV0RHpnaHJIdDB2RnFR?=
+ =?utf-8?B?NEFTNldBZ1lKVUxFU3B2ZS9nWnkyelBONmppK25tOU1oUlphL05aSXo0L3Q5?=
+ =?utf-8?B?Y29IeERXZmFPTFI5YURKN1pOcnZ4c255Nkt1dE5OQk8vcnRJVjR6UUpOeXhI?=
+ =?utf-8?B?Rlc3SktvaDRHNGRGTTVJenpEb2lBaHVGWGdHS0Z1eG1Ecjdsdms1UHEyZExo?=
+ =?utf-8?Q?N7pAVh?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 00:50:54.8248
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcae2c00-3375-4678-4467-08ddd87120d4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0002992E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7126
 
+This series fixes two related issues in the handling of memory encryption
+attributes on ARM64 systems with Confidential Compute Architecture (CCA)
+enabled.
 
+Currently, certain code paths assume that the target address for
+set_memory_encrypted()/set_memory_decrypted() is always part of the
+linear mapping. This assumption breaks on ARM64 when 
+CONFIG_DMA_DIRECT_REMAP=y or when operating on vmalloc-backed memory
+regions, leading to incorrect encryption attribute updates and, in
+some cases, system crashes.
 
-> On 21 Jul 2025, at 16:33, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> On Mon, Jul 21, 2025 at 9:14=E2=80=AFPM Daniel Almeida
-> <daniel.almeida@collabora.com> wrote:
->>=20
->> Alice,
->>=20
->>> On 21 Jul 2025, at 11:38, Alice Ryhl <aliceryhl@google.com> wrote:
->>>=20
->>> When working with a bus device, many operations are only possible =
-while
->>> the device is still bound. The &Device<Bound> type represents a =
-proof in
->>> the type system that you are in a scope where the device is =
-guaranteed
->>> to still be bound. Since we deregister irq callbacks when unbinding =
-a
->>> device, if an irq callback is running, that implies that the device =
-has
->>> not yet been unbound.
->>>=20
->>> To allow drivers to take advantage of that, add an additional =
-argument
->>> to irq callbacks.
->>>=20
->>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>> ---
->>> This patch is a follow-up to Daniel's irq series [1] that adds a
->>> &Device<Bound> argument to all irq callbacks. This allows you to use
->>> operations that are only safe on a bound device inside an irq =
-callback.
->>>=20
->>> The patch is otherwise based on top of driver-core-next.
->>>=20
->>> [1]: =
-https://lore.kernel.org/r/20250715-topics-tyr-request_irq2-v7-0-d469c0f37c=
-07@collabora.com
->>=20
->> I am having a hard time applying this locally.
->=20
-> Your irq series currently doesn't apply cleanly on top of
-> driver-core-next and requires resolving a minor conflict. You can find
-> the commits here:
-> =
-https://github.com/Darksonn/linux/commits/sent/20250721-irq-bound-device-c=
-9fdbfdd8cd9-v1/
+Patch 1 addresses an ARM64-specific bug in the DMA atomic pool expansion
+path, where the wrong virtual address was passed to the memory encryption
+helpers. On CCA-enabled systems, this resulted in corruption or crashes
+during pool expansion.
 
-Ah, we=E2=80=99ve already discussed this, it seems.
+Patch 2 extends the ARM64 memory attribute change functions to handle
+vmalloc and other non-linear mappings correctly. A new helper is introduced
+to detect such mappings, translate them to physical pages, and update
+attributes on a per-page basis. This resolves failures and crashes in
+scenarios such as NVMe device pass-through where vmalloc-backed memory
+is involved CONFIG_DMA_DIRECT_REMAP=y.
 
->=20
->>> ///
->>> /// This function should be only used as the callback in =
-`request_irq`.
->>> unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: =
-*mut c_void) -> c_uint {
->>> -    // SAFETY: `ptr` is a pointer to T set in `Registration::new`
->>> -    let handler =3D unsafe { &*(ptr as *const T) };
->>> -    T::handle(handler) as c_uint
->>> +    // SAFETY: `ptr` is a pointer to `Registration<T>` set in =
-`Registration::new`
->>> +    let registration =3D unsafe { &*(ptr as *const Registration<T>) =
-};
->>> +    // SAFETY: The irq callback is removed before the device is =
-unbound, so the fact that the irq
->>> +    // callback is running implies that the device has not yet been =
-unbound.
->>> +    let device =3D unsafe { registration.inner.device().as_bound() =
-};
->>=20
->> Where was this function introduced? i.e. I am missing the change that =
-brought
->> in RegistrationInner::device(), or maybe some Deref impl that would =
-make this
->> possible?
->=20
-> In this series:
-> https://lore.kernel.org/all/20250713182737.64448-2-dakr@kernel.org/
->=20
->> Also, I wonder if we can't make the scope of this unsafe block =
-smaller?
->=20
-> I guess we could with an extra `let` statement.
->=20
-> Alice
+Both changes have been tested on an ARM64 CCA-enabled environment with
+NVMe pass-through feature.
 
+Shanker Donthineni (2):
+  dma/pool: Use vmap() address for memory encryption helpers on ARM64
+  arm64: Add encrypt/decrypt support for vmalloc regions
+
+ arch/arm64/mm/pageattr.c | 55 +++++++++++++++++++++++++++++++++++-----
+ kernel/dma/pool.c        |  8 +++---
+ 2 files changed, 52 insertions(+), 11 deletions(-)
+
+-- 
+2.25.1
 
 
