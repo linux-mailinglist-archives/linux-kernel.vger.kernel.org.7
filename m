@@ -1,164 +1,187 @@
-Return-Path: <linux-kernel+bounces-763635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933FAB217F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:11:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C5EB2179B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9CE462E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:11:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4807A504F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192912DCF5A;
-	Mon, 11 Aug 2025 22:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5823A2E3AFE;
+	Mon, 11 Aug 2025 21:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="cKYStbuG"
-Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8ROvVv3"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7122D63E5
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A61628505F;
+	Mon, 11 Aug 2025 21:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950309; cv=none; b=IOLXlZkZlH9fUZFCL4gw+BXsO8bhDALPSsFh2yPhrKwk9hZDoEvEaXLZoPHIADZs+xKSFvPw82dic2F70Rb06c9dwBaUSGMiXFBTn6eqC19dfAQvjCLjA9RThkNxbmzsJZsEN0iH3WK/d083lSzgq9AGRmXSWaYjLVOlsLw+RO8=
+	t=1754948636; cv=none; b=Lyxg1dd22X7zNFfq9lglpGoeDqaUh+NVGpbDLtuRzS8ea1n1D1vYuxHoeFGEAsg5jaB78Zx01g9a4zUyb1mGVD8xyI9saMTWJa/7DJokIAq9VTVFpoXTZyLJRd6a7UZZakpBb57gDx+AXHnWzgdcSEoB/TbouZiBgv31xFuMVEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950309; c=relaxed/simple;
-	bh=rD1oz+oWneUwDlPy8t5jpf+s4P4nPMQFdqEZjAHFxoA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qUfzyBOqiI/tBcoFathczVMeTp0+VkGQT0UiraUKamJjgMS2KwM3ajhSLK+WFMQwzpuuKHME6NgLzacguTeOXNaU3RojJgDh+7++rWgRymy5ykaViYr9J4Au2+Gn9Q0qUtdRCCZrUTUdQB0w8DSi6VaSGFvvZRRHjSkj6MzOtnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=cKYStbuG; arc=none smtp.client-ip=148.163.135.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167069.ppops.net [127.0.0.1])
-	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BLOZ1a024646
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:42:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pps01; bh=pEFEFVE08AQwC9Il4xDKhb0NEA
-	k5kZk2zpQmERpJ5cA=; b=cKYStbuGk9wa8cU3NnDlrkZ5oJTh+h34YCx8bK5jnO
-	dl38XqvIDMWrDJBn1w3Kkv/6uJ6udg8Ee0ZRcluFIcThEDzAzeCK8RPgywYaWbVg
-	mjfRyMXR1A8tEm6uYhYbp3kz5uV/bUWN2LbdcmIeQUt7TNu2CSaul2nIHoyDZOGp
-	Vsc7amTYXXtu6oTqeNcdo4P/MQK+p11Gew73ihZhK89CwLHlp1tLwNDGITdP9Q+p
-	1u528zLl/hMaNci4x6xrZUReq8tFTVW0p4dLBih7lNGF3eOe6JQFi85xixyELREX
-	Nc9LPQeH0yED+bwnDXA/oydcAjtpBXKmA6b/+LrCCgcA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 48ejwk2wsg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:42:16 -0400 (EDT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4af199d0facso149639041cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:42:15 -0700 (PDT)
+	s=arc-20240116; t=1754948636; c=relaxed/simple;
+	bh=7OGQk8bopsot7CutcJAcqxqmBdgPuJE0EaLcO0LDgxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BqTEHVk8TP08+bMO3i+8xewnFnBUSMIeSclaNa0APl1FVQGrJq+A+aFs7WoK0UtLuwgp433ky0o1ST2/NQy3WmDP2P9LIYKXsEw5ppQHo4SHZed8kJOKDFB95V5LM/RydOsXIVcBtUSavaB1pf0BeO9VSK3F8LTXBgphwK0jP7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8ROvVv3; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31f255eb191so5003819a91.0;
+        Mon, 11 Aug 2025 14:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754948634; x=1755553434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V6rK+nf0PE/yzZMOCn9QAPItrRWLBQkSNHhJvIS5DoM=;
+        b=M8ROvVv3V1ge8lyv4/8erKw1qjhL1eHf/cjCsnMmA8kdS/z8tjhxLVC4cIXjOOpVCH
+         yBwm4F/pAN5+9FSG2SsmfzVuIn/T4pafUM5jgfl/Ob+Rs0anh7GJZ5p1+qrar5LgWNgp
+         kBlyuLr5wyntsLIvQiH7P5LxU2sUPFzA+lj8FplAVw3lieDnRAFPuJHByzvZ9l97y1OL
+         QDydYwlttIb7e1xQHjw7H2Wf40ZxZH4ut3UVbFzZTIQqmvobWImd5XNk3D3r1QU5UPFj
+         85JljJ96gnCogY6Q4Np5FtNFBTcQkpIgP27Cdb53v67m7ucAGdQTiWPN3glVcbOVO+T3
+         rzOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754948535; x=1755553335;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pEFEFVE08AQwC9Il4xDKhb0NEAk5kZk2zpQmERpJ5cA=;
-        b=sezkkoCV3LHHg+Aarrxs8JjiFMUm9B3Pwrgzl4XYS3te93mue9vH4ZiTruIlEWlUXC
-         3Z7FWWf8BcwgWgWxSI33HuBxBY/VtU4oSucWqIpa8GJRLGMYLPwFxsIER5KwoKmVHb3M
-         zOGB3AZPpSHpIzhyoN8GU/igVu4oSj5i9yNfBkqp+hzwnrYO2utgZ6T7yK+QGhTkSE+r
-         BJXltwY7drFaeOV0qyBmSmIs1Wvx6vW862E5FReQ3IOrzVZKG7nZ7IFgmSdShE5g1Efj
-         mJ5Q1LhvRvOhJi2PFuyrBd90M6YeaxnSO4WUp3bDeUiypkV37B10lwwDJpGya6TZ0fDD
-         L/jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoDTacAvUkS5iugOlL4xFlqityEFld5NCeVnt4g5xxhCrANnZsUXRd0Hc/YiArypxze6JP/y78wjJUHvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW8A8b6fTovbdEjGEe7Mr/FjfpxDYF4Lr5vyzGbwJK0mCEngdz
-	c2uJ334M034mwChxG3YEohv4QicY3qBOLDBZIXNQQtCAvICKbzf7n0et6+pfmx/Apg7kcreyy5g
-	qxgnu6PDjvZNqBCDYlv0CB/BfQkSkZUtUyRFWQN5AG8aMb0ztOkS3rf77b9Z0dA==
-X-Gm-Gg: ASbGncsQ0BreoJOdSgNg2/ucMs57VW7suXXBJv8pv6BnjyE4a8yHseNMTFUynbh6QHw
-	kQlIo8S7alrbZaZLLhR1kneWPwJuXm1BAFz9PB5SttVnafWWPTsh48dGyymmb7en/NNyj2rHyiC
-	6i9YaH5TpS7Jgime4UZkQFP/tay+dHvgXxVoXIpcpzSO7dUzxvo276A+Gh547hFNBd0Wqm2Kc63
-	Fusl5JWGItRhG6Mihdnjt6UV4hmKuuHqWDSelOo6rBzcpFhswbSFeEt/elzXM/kdrFLkR39RgJF
-	38hcJJqzPnsnosu88sOPfIf6XJLtrwyk3qq5m2KebfkXpHx2Ztu9ZktnssgQqzNN09EoXrso3rI
-	Yvf30DCD/zg==
-X-Received: by 2002:a05:622a:1a25:b0:4af:1fd3:4eca with SMTP id d75a77b69052e-4b0eca8cb6dmr15270891cf.25.1754948534746;
-        Mon, 11 Aug 2025 14:42:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFU1AoXh09loZLwU+33OklQYn/p/cwiFAD8eoDZ99ilW/Vtx1hYeKfFQbsgYX7pcVmzGOMVJw==
-X-Received: by 2002:a05:622a:1a25:b0:4af:1fd3:4eca with SMTP id d75a77b69052e-4b0eca8cb6dmr15270501cf.25.1754948534141;
-        Mon, 11 Aug 2025 14:42:14 -0700 (PDT)
-Received: from [127.0.1.1] (bzq-79-183-206-55.red.bezeqint.net. [79.183.206.55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e583f9fcsm263940065e9.4.2025.08.11.14.42.12
+        d=1e100.net; s=20230601; t=1754948634; x=1755553434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6rK+nf0PE/yzZMOCn9QAPItrRWLBQkSNHhJvIS5DoM=;
+        b=j/BbkjfZlzyQXgbWcdFhTGdXmRleupS6ogkX0ajkZRSPdp3fXgRd8J09v/RyEfdXUT
+         AS+h81clun85MhwbUMpr6KCpIW6iQC/9FYuWU+Y3/gECPrWVDYjQK3Yr81qao62jujKv
+         7qB3PLfpd8rfYZDXDtzpM+YanO4Sh9xE88ktnSswbDwJqkbFLGhWJdw80dZuyL9Smh65
+         hxjDc0QWLZaPBlffMP2mErIiIl/riJhU2oXymRWpDAzLgUmXtWdeLS356sITEyRY9yf0
+         KdUDG6jrHplXVRLRZ1tST0k1+L0fPVUUG1yNOEswSnYQ6ti2x6ROFoV2osOf43Hiz6Us
+         dcDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrqEiU0HfXMFlmQMM67awwpK6Acu3MPKLTTFu10b6tpQhdwQtzA+5cjzQvs/JwCIX6xIKYhqwsSS24@vger.kernel.org, AJvYcCVSs839xSisPcVVnA7HUDR5xnUh2S3+vPjzS0PA0wNU2Up9u4YyaShPI2Wp1Ng+Tnyn1V5x/5UEEmxhEdkH@vger.kernel.org, AJvYcCVyDXTvy37zVcxsdcmvEof2nKpefJMasONY16O7IKEsrfbDSvqHXXgYzCsfGeW8m/aLncns+CGr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9m1W7PoT6OoLU6QAufEP2nRi8I4GP4s7rUjZZo3FQvcrJakmD
+	CiMraSaUUTK3hMCNLp2AebEt0Eo5SqmfoXRSzi7aRBWpJH3ggkJFQyAl
+X-Gm-Gg: ASbGncuyrmYPjmnzSa5Z2qraWG2TmZqCtl4tfNKe3/NkNayDqK43ygJzxbLLvT6l1DQ
+	ws4iROro6h2ys5uQz4QSHVuCXm+wGvCsQxU75kaFWKuA+w8yxnLYzyCSnBoPGXmBqohJtoFsUiy
+	4gJ5PZn2s3aA1lE6KmM0qXvMX58IyT7hRl2EINbYb8a12tKN7wuFIvwCotOjRl7uuyBVqHd6xWL
+	6weecq7AeT4MkVpD454+3r3+9sYRonyxMwAH3kgcrBsrepgSN8MkedliE4aWVZR/O28swdkMN3r
+	eWhUxLGIFqy91kowbvcOj/BYohhytHbaeILcSZ8nH73xe/LxUbFDFGzsvTzBry+/h+tE++HdyIP
+	FVFRd1ivfz0AIQuebP0bQXCg8yD+MK1B7eQ==
+X-Google-Smtp-Source: AGHT+IFsi78NN+fBY0LS4y+P8YMijCEFQnCo74evdIk8ObOIJFSgyoxfkygQTtZGUK1jp2bVcfARVQ==
+X-Received: by 2002:a17:90b:3842:b0:311:9c1f:8522 with SMTP id 98e67ed59e1d1-321c09fc527mr1556132a91.10.1754948634369;
+        Mon, 11 Aug 2025 14:43:54 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:69d7:30de:b05e:915b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3218c3c2d58sm8359383a91.16.2025.08.11.14.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 14:42:13 -0700 (PDT)
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Mon, 11 Aug 2025 17:42:00 -0400
-Subject: [PATCH] vboxsf: Convert vboxsf_write_end() to use
- kmap_local_folio()
+        Mon, 11 Aug 2025 14:43:54 -0700 (PDT)
+Date: Mon, 11 Aug 2025 14:43:51 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jakub Kicinski <kuba@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/21] nfc: marvell: convert to gpio descriptors
+Message-ID: <yf5coptfembueds4ozpsphdv7vggyzfezdxv66uuqzjv3gpw62@x4s6iylxahrv>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-18-arnd@kernel.org>
+ <aJcea90siAod5Apw@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
-X-B4-Tracking: v=1; b=H4sIAKdjmmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0ND3bKk/IritPi0/JzMfF1jE+NE8+QUy1TLJCMloJaCotS0zAqwcdG
- xtbUA+D1tQl4AAAA=
-X-Change-ID: 20250811-vboxsf_folio-343a7cd9e9b2
-To: Hans de Goede <hansg@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tal Zussman <tz2294@columbia.edu>
-X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754948532; l=1044;
- i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=rD1oz+oWneUwDlPy8t5jpf+s4P4nPMQFdqEZjAHFxoA=;
- b=oKspY0LE9uo50vutKmomfJ26S118Lvnuhh/I7EdTPFy54kleOmD2HHfdmp8nruHQi2NnR3xIX
- UWtkoEx3wVABpvozIV8ou9q7W9u2PC56HyA2ZpIAQABJ1vK7YC+uFkj
-X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
- pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-ORIG-GUID: ZJF0L3fYQwIWW80jS6dAPQXdIMX0pj2u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDE1MyBTYWx0ZWRfX855W+eEDJvID
- XeYAxdf2ZmNiikT/vavXdhJOnosHZBXLaBKolM3nxRO9JEcqeOiBienqp4vMoXnTQj3yKb+PawK
- Hr0g8ZPB4s6qvDkaU6GkZZ3xwjJw8gPsWKscX6r/AjXQt0aRP+e0dkp+pNWqSWLxdHuDy28gOZt
- PHA0GE2pJQqKSklN/Hcqr9nXw6AJbu/UF2I7F1gEQcW8a4E52tdqRYAxywSGrzQ0pnYWA9NaGZW
- 8SStQUuj7HZ4T/RvBionbC5fISrVt7/cqDtwaftm58txtWoJAmK1Ce8tRfUyWliwRIl7/8l/4k6
- qo0tdM2l6fh0p4ccMcqXcQ+car+ral8J97XBUHj3jEYMLc+mAFwj5A1vtRHSqvuW4zX0/brna5E
- 8F7wLb0Y
-X-Proofpoint-GUID: ZJF0L3fYQwIWW80jS6dAPQXdIMX0pj2u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=10 bulkscore=10 phishscore=0 adultscore=0 priorityscore=1501
- suspectscore=0 clxscore=1015 impostorscore=0 mlxlogscore=768 mlxscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110153
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJcea90siAod5Apw@smile.fi.intel.com>
 
-Now that vboxsf_write_end() takes a folio, convert the kmap() call to
-kmap_local_folio(). This removes two instances of &folio->page as
-well.
+On Sat, Aug 09, 2025 at 01:09:47PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 08, 2025 at 05:18:01PM +0200, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > The only reason this driver seems to still use the legacy gpio
+> > numbers is for the module parameter that lets users pass a different
+> > reset gpio.
+> > 
+> > Since the fixed numbers are on their way out, and none of the platforms
+> > this driver is used on would have them any more, remove the module
+> > parameter and instead just use the reset information from firmware.
+> 
+> This patch is my love in the series, thanks for doing it!
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> But note some comments below.
+> 
+> ...
+> 
+> > -	if (gpio_is_valid(priv->config.reset_n_io)) {
+> > -		rc = gpio_request_one(priv->config.reset_n_io,
+> > -				      GPIOF_OUT_INIT_LOW,
+> > -				      "nfcmrvl_reset_n");
+> > -		if (rc < 0) {
+> > -			priv->config.reset_n_io = -EINVAL;
+> > -			nfc_err(dev, "failed to request reset_n io\n");
+> > -		}
+> > +	priv->reset_n_io = gpiod_get_optional(dev, "reset-n-io", GPIOD_OUT_LOW);
 
-Compile-tested only.
+No, this should be "reset". gpiolib-of.c has a quirk to resolve to naked
+"reset-n-io", otherwise this will resolve to "reset-n-io-gpios" in the
+bowels of gpiolib.
 
-Signed-off-by: Tal Zussman <tz2294@columbia.edu>
----
- fs/vboxsf/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > +	if (IS_ERR(priv->reset_n_io)) {
+> > +		nfc_err(dev, "failed to get reset_n gpio\n");
+> > +		return ERR_CAST(priv->reset_n_io);
+> >  	}
+> 
+> This also needs a call to gpiod_set_consumer_name(), IIRC the API name.
 
-diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-index 4bebd947314a..178fc74e399f 100644
---- a/fs/vboxsf/file.c
-+++ b/fs/vboxsf/file.c
-@@ -316,10 +316,10 @@ static int vboxsf_write_end(const struct kiocb *iocb,
- 	if (!folio_test_uptodate(folio) && copied < len)
- 		folio_zero_range(folio, from + copied, len - copied);
- 
--	buf = kmap(&folio->page);
-+	buf = kmap_local_folio(folio, 0);
- 	err = vboxsf_write(sf_handle->root, sf_handle->handle,
- 			   pos, &nwritten, buf + from);
--	kunmap(&folio->page);
-+	kunmap_local(buf);
- 
- 	if (err) {
- 		nwritten = 0;
+It does not have to... I am not sure who pays attention to names.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-vboxsf_folio-343a7cd9e9b2
+> 
+> ...
+> 
+> > -	if (gpio_is_valid(priv->config.reset_n_io)) {
+> > -		nfc_info(priv->dev, "reset the chip\n");
+> > -		gpio_set_value(priv->config.reset_n_io, 0);
+> > -		usleep_range(5000, 10000);
+> > -		gpio_set_value(priv->config.reset_n_io, 1);
+> > -	} else
+> > -		nfc_info(priv->dev, "no reset available on this interface\n");
+> > +	nfc_info(priv->dev, "reset the chip\n");
+> > +	gpiod_set_value(priv->reset_n_io, 0);
+> > +	usleep_range(5000, 10000);
+> 
+> Side note, this would be nice to use fsleep(), but I see that's just a
+> copy'n'paste of the original piece.
+> 
+> > +	gpiod_set_value(priv->reset_n_io, 1);
 
-Best regards,
+Nope, this is not going to work. See
+Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml, this GPIO is
+active low. We do not have any "live" DTS examples so I am not sure what
+polarity is used in the wild. So either use logical level (my
+preference) or switch to "_raw()" variant.
+
+> 
+> ...
+> 
+> >  void nfcmrvl_chip_halt(struct nfcmrvl_private *priv)
+> >  {
+> > -	if (gpio_is_valid(priv->config.reset_n_io))
+> > -		gpio_set_value(priv->config.reset_n_io, 0);
+> > +	if (priv->reset_n_io)
+> 
+> Not sure why we need this dup check.
+
+I personally feel very uneasy when dealing with optional GPIO and not
+checking if it exists or not, even though gpiod_set_value() handles
+this. I think check makes logic clearer.
+
+> 
+> > +		gpiod_set_value(priv->reset_n_io, 0);
+> >  }
+> 
+
+Thanks.
+
 -- 
-Tal Zussman <tz2294@columbia.edu>
-
+Dmitry
 
