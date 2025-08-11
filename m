@@ -1,197 +1,205 @@
-Return-Path: <linux-kernel+bounces-762632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31FCB20924
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BD8B20928
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E917B2F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B593B7229
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B612550DD;
-	Mon, 11 Aug 2025 12:47:25 +0000 (UTC)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E40923E23C;
+	Mon, 11 Aug 2025 12:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WudLc4hV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uVbpOwBz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WudLc4hV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uVbpOwBz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D8E134CB;
-	Mon, 11 Aug 2025 12:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8274633D8
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916444; cv=none; b=R21+35lyqPDUP6cJaAakWgqgPawgh8XP2V9FMlD3VXfl+NmFUoP0np+++eb1CJtBpP4wa0i6CcoJaYEXlPlq25R+48X57pd8Hobsuubjj2o1UfRZic+oe/l6PchhUsdrq5kTuGFXCEMxP5rTeJ6QhJ8B7nzeIXGp5cYN5Q01Pt8=
+	t=1754916487; cv=none; b=dCw+6EGRKLRboh9AYiVZF1LFfuW4L6lw1ZxB34+IAUVIbiwSsZS2iPqhEcAfNf+A9A01RaeOvDCD0N28MI0P6LxgLs3WlxhjqrhTOf+gkECevWEs3NE60X684zkA+mvuenGNQGvhBTZuk/1g6fN9tiWVYpkp051h7t0jyJANlXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916444; c=relaxed/simple;
-	bh=mJZcymr0DoHOyUMqMHXVnkKtMVmpnri15Ov8Ipo2DZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ae13AIARYUpwSlDc1nPa7LZowbBcZSgYPiTHCfTJl+Ow3zRKGMbNIiZ6eXONVER//yrCmrIfe8loKGFyd5XNEbRjq6wHlEgOLEVyfNGNT6GufbEyVbQSXX8NjJue76KvDkaPAPh1gpO0RoUrQqALjtXLoJjwQwPf2w1qnN9snZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5047bfa77fdso1743824137.1;
-        Mon, 11 Aug 2025 05:47:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754916441; x=1755521241;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xe+CCBQJrxuVCY6WW9MnNCbhinxHYUJgdHlSe87J7VM=;
-        b=i4AaHyCLwWPggwmERXvoZrZ2Cusclt7Fjx96xxjuftzXJ7lAkKRw3myFuWsI4icKIu
-         v6lCDztX6RvNw/d3bJH1e1QX9ufFlzYspNzaRfYddUPHU2yifLODpn5aD87ELaSLceXI
-         gJUR1spKggdFGZkEUpr3wXjgbnLfuzI8a/l95PIHd/k1lRIvozu3bVX2rYkHXhwzaxQv
-         1uWe93f/zeQvVjdkiJXxpqeSxH0geKyOobuLaeCwHgRmYJmTybjoRC5QjHcQ1xd84iFQ
-         6s7zzLoP0+k9WK9hkqSWDMxy28CTGQGntp0KAHb3CsTtEP0mcYLEtsH4P4u4vl9pDqmW
-         3hRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhtPZy6FevJJzlsGQK5rXiuKnicp2woiZT/G2gIrLM7y9ioviHqnf7NlxPKhrIlTIS98Hh7JHMMTHtFA==@vger.kernel.org, AJvYcCV4N3MSAAFkLsxCUmFSA9bVqYe/VG2NbCcQ7g5UEcgTeTVNKuEFjNwTVawCNpIAhrrHiMwuowBZj8l9@vger.kernel.org, AJvYcCWOZhxKdeKP3BfCZtRt353+YiDhHYcTydyTn7aeXJ5BdeShWQvEN65GSbVzLoZ5L06KjQpE7lDacP6/cws2@vger.kernel.org, AJvYcCXWPjTcUHn+wU79aECExH1r/kGFhs5j07SmG1fKayuqRmfyqL02ec5mniliOLU/pI2cKfLf4a3us8nwnOgKOmNGCAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsjrwHF+lJ3ykE/nUIB2vEW1muh6qH7F/F7Zv0cwMWflsneG62
-	mrblnH4a6whInsXGgB+NA0mQcQI9g3YcjQhqMznhN8QK8GUkih3nSD2RFE1r+OIF
-X-Gm-Gg: ASbGnct9fnPsf23iGTJclDkHMqx8CR9ECFRY28gUVPArKnTEByC0T8mTSVXSVsduzLH
-	0etaya4aIx4Qxiwq7na6LPXFvoVcdgAudMHl9VCoYP0qX56I1B8fdM/i6z79o1SNCa+5VTOaKZS
-	+fj87DapmZe2mwnX7bM1DFLDW71HiL8qn7z3aTBHOQ/vdTf7faZrujCs13AqtV7GqdBFx6DXvBt
-	s+zIv5GA81shS/+GKm2c/2YETgCdnPJ3yAaeiWJG0edUxs255oRPc6rr1+Lx3HRz1fFmw650G0z
-	M0sAJ1VXv+qQ10m83UNqDChFVlkiY4DYqxjqQZZu8I/dMxB28M5mfCs+8l8g+TmB/WkQzoXDIDq
-	RsEgRetJp7hl9eivKcouWD06kcjX0RtEtgHjU2T78xi8Om8JNIclGTggMwBqPpvjh
-X-Google-Smtp-Source: AGHT+IFcsgHpkbcoygeA9czKJT0RqobY6h5fkRAStVHKRC6DnFeGdLEzrQHkOdd8sfcgNXdg0bVYmg==
-X-Received: by 2002:a05:6102:800c:b0:4e2:a235:24d1 with SMTP id ada2fe7eead31-50623a02adamr5260363137.4.1754916440935;
-        Mon, 11 Aug 2025 05:47:20 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-50629bde2aesm1712339137.9.2025.08.11.05.47.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 05:47:20 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-539525ec047so4128339e0c.1;
-        Mon, 11 Aug 2025 05:47:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUI4Z6/owSkgHZ8MGv/4qRGjoXlqK1uMIkdUayySBmlm3XT31ETuyaa6QG+tqx9m5YJlthecph75fCDA3Z6HuL1I+M=@vger.kernel.org, AJvYcCUT1NA0CJfVj3yIYNAl6h0y5K/FOtOJ4P+56gasmAiusIxbD8oObpbwnBgcdInGVeBXF3qKUODcEwzZ@vger.kernel.org, AJvYcCUXVmjheAUQKDZoUznyNEcTBoE3ZB3sBmyKE9mf2jImQPRceXKAHkVL09Jn8Aax//RvKO5zmNsZMjqUh30+@vger.kernel.org, AJvYcCXMJZ0yQgwgQYaxNFwP3xxoN18v8mDNMoWSJdews/jGz9pNB6E1ou5BKswlofyyJ2I7lxax75jlQ5TyVg==@vger.kernel.org
-X-Received: by 2002:a05:6122:494a:b0:53a:d808:1ff2 with SMTP id
- 71dfb90a1353d-53ad8082595mr1775407e0c.1.1754916440508; Mon, 11 Aug 2025
- 05:47:20 -0700 (PDT)
+	s=arc-20240116; t=1754916487; c=relaxed/simple;
+	bh=9H/oZXQ/Gi2agQ1XQe5hIzENt9mDcqNzoFZht7dLvrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwPAiniWzYymtimZfPYkvzwnldkQOtLvDdLOXiH0QX20D8MWJobViiTAYgD/A57Id7wDVfciOWLaAMsY1sAk+h98KAqd/l+DI4maUMKeRvjWyFdUbFnEDA2Z66IPJ6Uw9nM1AZtshQOqHnU1dWxdeagn8WBRfrF26kklwdmLc+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WudLc4hV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uVbpOwBz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WudLc4hV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uVbpOwBz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AAFEE1F394;
+	Mon, 11 Aug 2025 12:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754916483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LPsaSA5l9tBi5cmuT8dGQNBkJkOGkKM0UuwzBdNIq1M=;
+	b=WudLc4hVvW4yHnfe9uJuzHKVm/Q3J0hvDDk3XO0vJoK/Uz5YZQ9+3Xt5qXlKEy43QVkxrC
+	evFk3gtTrxqiK+3SfwocJgkrsAUhOCVBfrC5GSIB0EluG/1r40YC4VN5ZuKxLBji2jhVsF
+	ACqSZ/csXflW/nJqSiKAz6Lw7eWFM24=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754916483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LPsaSA5l9tBi5cmuT8dGQNBkJkOGkKM0UuwzBdNIq1M=;
+	b=uVbpOwBzNQtnbrFA2KUQMXeZFawcOqKOpYd+MPIRRmhqSJUJnTd3BgxSoRnODpwNEvVvOu
+	O6C57LQmR5lJgyAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754916483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LPsaSA5l9tBi5cmuT8dGQNBkJkOGkKM0UuwzBdNIq1M=;
+	b=WudLc4hVvW4yHnfe9uJuzHKVm/Q3J0hvDDk3XO0vJoK/Uz5YZQ9+3Xt5qXlKEy43QVkxrC
+	evFk3gtTrxqiK+3SfwocJgkrsAUhOCVBfrC5GSIB0EluG/1r40YC4VN5ZuKxLBji2jhVsF
+	ACqSZ/csXflW/nJqSiKAz6Lw7eWFM24=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754916483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LPsaSA5l9tBi5cmuT8dGQNBkJkOGkKM0UuwzBdNIq1M=;
+	b=uVbpOwBzNQtnbrFA2KUQMXeZFawcOqKOpYd+MPIRRmhqSJUJnTd3BgxSoRnODpwNEvVvOu
+	O6C57LQmR5lJgyAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73AF413479;
+	Mon, 11 Aug 2025 12:48:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5VPaGoPmmWigNwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 11 Aug 2025 12:48:03 +0000
+Message-ID: <d20ea5f0-737e-48a7-8311-fba8474bfd7a@suse.de>
+Date: Mon, 11 Aug 2025 14:48:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808133017.2053637-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250808133017.2053637-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250808133017.2053637-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Aug 2025 14:47:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVexDsBVqgF2Gn4hJAZbyv3wcsa=X=6E_52ufOWmvZd9Q@mail.gmail.com>
-X-Gm-Features: Ac12FXxc4r6WofxL30YmYJi0899llC4OSBPFc5s5IhIOIO_rkqmWozcPyHPqNvs
-Message-ID: <CAMuHMdVexDsBVqgF2Gn4hJAZbyv3wcsa=X=6E_52ufOWmvZd9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H and
- RZ/N2H SoCs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
+To: chuguangqing <chuguangqing@inspur.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250729060728.82402-1-chuguangqing@inspur.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250729060728.82402-1-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[inspur.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Hi Prabhakar,
+Hi
 
-On Fri, 8 Aug 2025 at 15:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Am 29.07.25 um 08:07 schrieb chuguangqing:
+> We encountered the following errors while compiling drm_vram_helper.ko
 >
-> Document the pin and GPIO controller IP for the Renesas RZ/T2H
-> (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
-> header file used by both the bindings and the driver.
+> ERROR: modpost: "drm_gem_ttm_print_info" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
+> ERROR: modpost: "drm_gem_ttm_mmap" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
 >
-> The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
-> Both share the same controller architecture; separate compatible
-> strings are added for each SoC to distinguish them.
+> The functions drm_gem_ttm_mmap and drm_gem_ttm_print_info are defined in drm_gem_ttm_helper.c. This patch adds drm_gem_ttm_helper.o to DRM_VRAM_HELPER to resolve the undefined symbol errors.
+
+You need to select DRM_TTM_HELPER for your driver.
+
+Best regards
+Thomas
+
 >
-> Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: chuguangqing <chuguangqing@inspur.com>
 > ---
-> v3->v4:
-> - Renamed DT binding file from renesas,rzt2h-pinctrl.yaml to
->   renesas,r9a09g077-pinctrl.yaml
-> - Updated the title and description to include RZ/N2H SoC
-> - Updated description, fixing the information about mux functions
-> - Dropped sd0-sd-tmp-pins sub node from sdhi0_sd_pins in the example node
-> - Added reviewed-by tag from Rob
-
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
-> +    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-> +
-> +    pinctrl@802c0000 {
-> +        compatible = "renesas,r9a09g077-pinctrl";
-> +        reg = <0x802c0000 0x2000>,
-> +              <0x812c0000 0x2000>,
-> +              <0x802b0000 0x2000>;
-> +        reg-names = "nsr", "srs", "srn";
-> +        clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        gpio-ranges = <&pinctrl 0 0 288>;
-> +        power-domains = <&cpg>;
-> +
-> +        serial0-pins {
-> +            pinmux = <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
-> +                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
-> +        };
-> +
-> +        sd1-pwr-en-hog {
-> +            gpio-hog;
-> +            gpios = <RZT2H_GPIO(39, 2) 0>;
-> +            output-high;
-> +            line-name = "sd1_pwr_en";
-> +        };
-> +
-> +        i2c0-pins {
-> +            pins = "RIIC0_SDA", "RIIC0_SCL";
-> +            input-enable;
-> +        };
-> +
-> +        sdhi0_sd_pins: sd0-sd-group {
-
-As per my belated comments on v4, I will drop the sdhi0_sd_pins label...
-
-> +            sd0-sd-ctrl-pins {
-> +                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
-> +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
-> +            };
-> +
-> +            sd0-sd-data-pins {
-
-... and the "sd0-sd-" prefixes.
-
-> +                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
-> +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
-> +            };
-> +        };
-> +    };
-
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
-
-> +#endif /* __DT_BINDINGS_PINCTRL_RENESAS_R9A09G057_PINCTRL_H__ */
-
-G077
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.18.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>   drivers/gpu/drm/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index 4dafbdc8f86a..abbe32ddf6d0 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -125,7 +125,7 @@ drm_suballoc_helper-y := drm_suballoc.o
+>   obj-$(CONFIG_DRM_SUBALLOC_HELPER) += drm_suballoc_helper.o
+>   
+>   drm_vram_helper-y := drm_gem_vram_helper.o
+> -obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
+> +obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o drm_gem_ttm_helper.o
+>   
+>   drm_ttm_helper-y := drm_gem_ttm_helper.o
+>   drm_ttm_helper-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fbdev_ttm.o
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
 
