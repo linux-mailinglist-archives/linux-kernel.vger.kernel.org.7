@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-763270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D3CB2128E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:50:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA73B2128F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13E04204EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361ED7ABD22
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4961ADC93;
-	Mon, 11 Aug 2025 16:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A834029BDAA;
+	Mon, 11 Aug 2025 16:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZCOUCOY"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRoRTh2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE0E18FC91;
-	Mon, 11 Aug 2025 16:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF06296BCA;
+	Mon, 11 Aug 2025 16:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930993; cv=none; b=dx4NZ29x7Q17IHmV5sLoIZRpp6Ssx6LJuWesqxPDHIzsvb5wz1NKpUSjsSVtTDgpMhGDdtCp+WrioMMsr5C8+Z10ZF5c+uwrIvHFkFCjukmOlD7+3MkHWI6UaTWVSSIWK5d4hsCYAc8wfUUPW85pSLJM7wn/9u3LbNE5TiUroHI=
+	t=1754931072; cv=none; b=sJjZmk9sJT7hQ+VyqEy7H/D9oYeEizRQrdKLEfYo/nnUwGWxDekcsd797KvXRh0FtqtYTW08eon1pHy/r4aecFOPRcEjz0bDfd3f+l7c1Qigu2wYBrXtqdThmVyy3FPWKD7rPePjdOm3xbtXpN0ayCqiRWWLMwAAGu5mcMqwUo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930993; c=relaxed/simple;
-	bh=r3SklTF/J28zldzKGFpkhzr6DqkcSyicNNJtCcisZS4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SsUFDg84mk66cgY5FBm+X+69D+c9ZSDcxEq/iDjSpLf56ngJ7Y024Qs4QaxMzaBMWJEEK8P9T4ReCB9wWUJnaW0h/JUoa34+hmnxPcXfFc4jyAIeybfm8izQ/kfOs8xmW0yva4mr3jY+xsgH1tTg4+GlVESTtjxi9lLT85uKgjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZCOUCOY; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bddb92dc1so5776034b3a.0;
-        Mon, 11 Aug 2025 09:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754930991; x=1755535791; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN7nybJBSUg9GTrQwRnc+qxQzY/TYZwbF8aIFzNGiuc=;
-        b=NZCOUCOYwrfxdykFxk6NAGAG5sy8Fy+lIg58yOB6CYvX+a4T8ENtAEok86HghW4C/p
-         96W33d7PAzzSuvCWlLqeCQiBTAxEm3BoiuBwpX/KHFYt2L1H7His++3PKFsl8GXwCCmk
-         vamg1QqcYcSmN3jaxPtbioPho05H9d2JI1PoJr9Em/ksMzHuHcIP+kwhITw17ILxKHh1
-         2G5aSL9F4CEOEsCryjftVrk1zGsBsPLW487YAozs2TOSLi7UQ0LECI+yQKhsH9aqgSYv
-         YNjTYLpEtscHghSIh6XnBaLFmStNOF5uaCyQElF8g92fgw55aaBvx706GH5I3XHaRmeu
-         FIWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754930991; x=1755535791;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kN7nybJBSUg9GTrQwRnc+qxQzY/TYZwbF8aIFzNGiuc=;
-        b=kD7L+RKTOSfQA5MvYKjMkFN4jI6P5iFlS7oXx0X0JBSYePFepNxmPOhNoDNOhbUS5x
-         e00eke6DiejMMyirwW+l0YmXu5S5H51KdXF76/kOE61x3tiSX9l1lBhnC7smvoJ95hJE
-         cNZSj+iw8h69RreMhq32BgVvDMChxOV3Bh4PGbBpqFDfRYdL+ZgK+oBO1qK0sRgAOIa+
-         WO8Hl/L5R2W47YTJWJnxmpxEnItbkdQujJDIE7/v5fXzJ9vRYKR5dCG9zzZSGfj0+xZd
-         VlsC9nT1hQ0aRVTcFucA9XIj7as2JapJoKaWyHqGsOEEpnBCAX7lGSXQP56oaInicfnJ
-         308A==
-X-Forwarded-Encrypted: i=1; AJvYcCWVkmmHimLPlmI0/eiota6H6QBLT5kmjwpfn+gQfAf9F2/D8tfbPZuk9PKwJLXTagAkR9tYHMk/pijeakI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWNj4lg4vWFvvem6U5e/lAkpsEMaIDgD3eYtQnUx7es6ntpNfH
-	4RxfUDR503BeO+nurPD+aIbQYc2mCOLdJBPFkkvgbLasfmH/vReQfph2
-X-Gm-Gg: ASbGncs2LxThsD2ln4rhzEcce9HoFdRxdBo59NH6b3PT/1l3L8+asaL0Gz6IgGavE2w
-	iepmnUIez2dob04/guBkZif1IdU+4IeWepCYjKNj/iLFPvWXSsLLCc/OxhgBimll5f5dHz14xcx
-	02uniQmLovRaews2KXfrXg6ZMDm4OC7YSfyQhHHTgHlgiruax/raDlVAyFmmCN2AZXaGDCxlprz
-	hb2KCFOyGWiPunNT+oin9mlcbzoyzx+piyZaiDwNgvEB3ADDt58av7n+rF5GQrazY+jJcTAF/EG
-	BJMxgQ/yWlPFpg7lPfC/axdXSxH5cxUKwPx4E/OGm9xPUPd1KVGh9/HhsHVThqbBAHCaeR1YTvK
-	0DAYcB3CyMyIteaK0lHin
-X-Google-Smtp-Source: AGHT+IHX0e/PO4Z3IwmNT2g44cWPgFEvNfHjvzx7OGW61t+9EdTI2FUpffbo9A0LBSYC4/7QS364CA==
-X-Received: by 2002:a05:6a00:2d9d:b0:749:b41:2976 with SMTP id d2e1a72fcca58-76e0de36131mr468710b3a.3.1754930990889;
-        Mon, 11 Aug 2025 09:49:50 -0700 (PDT)
-Received: from localhost ([159.117.70.219])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76c09adf8efsm18808340b3a.68.2025.08.11.09.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 09:49:50 -0700 (PDT)
-From: Nai-Chen Cheng <bleach1827@gmail.com>
-Date: Tue, 12 Aug 2025 00:49:46 +0800
-Subject: [PATCH] cxl/region: use str_enabled_disabled() instead of tenary
- operator
+	s=arc-20240116; t=1754931072; c=relaxed/simple;
+	bh=ELJRrye4XmgHiNxU4wdyLCtAW++9gjCj4DicN+IUdHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqgOgqR98mH74PBdEdjJ6rmJD7bqOs7UBuPMOTjF+xTNl16p7Til8mjmYTvBo8jMzbHGVZZdFpaqdF0Skcem7Ra9TjZ0MClbrG3DKcwoR/xjjG4S1arsNwWamH05PcnBaVXfqLUlTSRmL7jr4ZhHPwqU5GXqMn92Z2nunEjhtTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRoRTh2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7449CC4CEED;
+	Mon, 11 Aug 2025 16:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754931071;
+	bh=ELJRrye4XmgHiNxU4wdyLCtAW++9gjCj4DicN+IUdHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XRoRTh2u3XlEzucP7N1P+L5fIhmGFEFZwrCD9rBJ/dc5dOsyTttK1hxfyg3otDQSJ
+	 xEMbsUy9UGhhNU2sXV4LpRBh5mTUq856ZFHK+bx8m/auXo7IcqrOCtkay2rb2pbTff
+	 aR5+7ydCpQzfkZ/aDW9u7VFYmIoNdvrncY5VsDA3LmBFXT+0ohhNJb8ug/HzxF5qDR
+	 bR2+VAthnOSQSHP/uNdahZ8x3VOj7Z8T2j6KgzvpJs6eQwMnFwr72n9n1zRTElWhyF
+	 FJLEYYojLgcevZB8BzpAxOOho1pXiV0wnNY1NcLZgzwcTRcvagRsUZd2RSOo+2v7GW
+	 WjITrjErVqbzw==
+Date: Mon, 11 Aug 2025 06:51:10 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jake Hillion <jake@hillion.co.uk>
+Cc: Andrea Righi <arighi@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>, void@manifault.com,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev,
+	changwoo@igalia.com, hodgesd@meta.com, mingo@redhat.com,
+	peterz@infradead.org
+Subject: Re: [PATCH v3 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
+Message-ID: <aJoffsJn0tbJrwcs@slm.duckdns.org>
+References: <20250805111036.130121-1-christian.loehle@arm.com>
+ <20250805111036.130121-4-christian.loehle@arm.com>
+ <aJebkj-neVJNKEJ4@slm.duckdns.org>
+ <aJh6BWX7rYCNrzGu@gpd4>
+ <y23etey3foin5nrxgj6e4g373b3ap6oxqa5rrvuvwyus3umw5s@bgh3d6uuga5t>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-cxl-region-string-choices-v1-1-50200b0bc782@gmail.com>
-X-B4-Tracking: v=1; b=H4sIACofmmgC/x2MQQqAMAzAviI9W9DpRP2KeBizbgWZ0ooI4t8dH
- gNJHlASJoWxeEDoYuU9ZajLAnx0KRDykhlMZWzV1wb9vaFQyBrqKZwC+rizJ8XVOjf0jWnajiD
- 3h9DK9/+e5vf9AFmqYxRrAAAA
-To: Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kernel-mentees@lists.linux.dev, Nai-Chen Cheng <bleach1827@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754930986; l=1250;
- i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
- bh=r3SklTF/J28zldzKGFpkhzr6DqkcSyicNNJtCcisZS4=;
- b=RmrHqhWXztlnPYHIiYy0fLMXBeWj3a9h4BobSSZiAzZsOkanJ5yunaC+jR0Rs1ULm2fOlqXDs
- lfJwZzUvlM3DobMEhFxNVjW9SL4KwYG+ODfoN2qNQHOsf8LrYsoglF4
-X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
- pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <y23etey3foin5nrxgj6e4g373b3ap6oxqa5rrvuvwyus3umw5s@bgh3d6uuga5t>
 
-Replace tenary operator with str_enabled_disabled() helper to enhance
-code readability and consistency.
+On Mon, Aug 11, 2025 at 03:35:05PM +0100, Jake Hillion wrote:
+> On Sun, Aug 10, 2025 at 12:52:53PM +0200, Andrea Righi wrote:
+> > Yeah, this is not nice, but they would be still broken though, in PATCH 1/3
+> > we force schedulers to check for NULL and, if they don't, the verifier
+> > won't be happy, so this already breaks existing binaries.
+> 
+> I ran some testing on the sched_ext for-next branch, and scx_cosmos is
+> breaking in cosmos_init including the latest changes. I believe it kicks
+> off a timer in init, which indirectly calls
+> `scx_bpf_cpu_rq(cpu)->curr->flags & PF_IDLE`. This should be NULL
+> checked, but old binaries breaking is pretty inconvenient for new users.
+> 
+> As Andrea says, this is the already merged patch triggering this.
 
-Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
----
- drivers/cxl/core/region.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Lemme revert that. I don't think we should introduce breaking changes
+without grace period.
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 71cc42d05248..83d58787b5af 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -10,6 +10,7 @@
- #include <linux/sort.h>
- #include <linux/idr.h>
- #include <linux/memory-tiers.h>
-+#include <linux/string_choices.h>
- #include <cxlmem.h>
- #include <cxl.h>
- #include "core.h"
-@@ -1468,9 +1469,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
- 				dev_name(port->uport_dev), dev_name(&port->dev),
- 				__func__, cxld->interleave_ways,
- 				cxld->interleave_granularity,
--				(cxld->flags & CXL_DECODER_F_ENABLE) ?
--					"enabled" :
--					"disabled",
-+				str_enabled_disabled(cxld->flags & CXL_DECODER_F_ENABLE),
- 				cxld->hpa_range.start, cxld->hpa_range.end);
- 			return -ENXIO;
- 		}
+Thanks.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250812-cxl-region-string-choices-f5aa9832346e
-
-Best regards,
 -- 
-Nai-Chen Cheng <bleach1827@gmail.com>
-
+tejun
 
