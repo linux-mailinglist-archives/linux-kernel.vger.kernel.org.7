@@ -1,95 +1,134 @@
-Return-Path: <linux-kernel+bounces-762202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3818EB20359
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69E6B2032A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5973A16E2EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F3618C1CB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9452DCF79;
-	Mon, 11 Aug 2025 09:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285372DCF70;
+	Mon, 11 Aug 2025 09:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="Z3MPyC/y"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oksEQOqM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A092DCF74
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1EC1DED53;
+	Mon, 11 Aug 2025 09:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904458; cv=none; b=Rvnsj5WXmKOexHxi8hJBdcSk2k5rqLcmWnKhQ8QsgWP7FLccxCpvrY6t+2us42O708bi0/bmwVihb7fPxerWumcWvlN6/sF+VZOw0gSNZ6anBftEyvc5rIZSzU5E6CDkHnH3SYS9sEhlRtXvMWDGoJTIXGl7QPfzndfB56q6BLk=
+	t=1754904058; cv=none; b=Vtd7uSue/micMCcFNbnGEdkuc2QJHqWI3JsHyTlGChCSgad6Corh9HvdCTTgE0I0mt/qCe0mVemp14GxGZ9kw0+22R+FM7IeZ5tv/nGU/IEp3hbCGPloeqp2tCRSwyjQFfvd1JLIqNapcdpO5/7pEl2bPr89+3zXpNwUG1+JxjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904458; c=relaxed/simple;
-	bh=B6OgfGWrJTmOPWVma9W95ySOuNbVX75iwTf6/mPCbQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhwUaOYvtguU62+kOzBj+gDNW3Va/jboKGQlxjMFQk7Hni/OHkbJiuTnyv7sN8ySGXYrWMDw2StEamslPOzL3enRXOaV6yak9RQTqWduOwqtHyFPwC+wfGbEQFJQEDUOorQUv+LViu+BtqjANgqOXds/pmBWwxxAE+3IXY1fJQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=Z3MPyC/y; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 36672 invoked from network); 11 Aug 2025 11:20:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1754904053; bh=3umHQDcb0zjHfkJbR08wpJ0dPt9WRkjKc/Qo2lTT0iA=;
-          h=From:To:Cc:Subject;
-          b=Z3MPyC/y3Fqc1WPlf/+le4mK0yu3Etq/U9OFZZfT6GVqk2vgmiOprsdeaPVjVpySJ
-           ml11s/0l90KsBK4TFZD1VIDw7ijqLclFkJyahC7rR0F83ogZoQuBl9aM5gRFT6dQT+
-           M6UE7lzO9Iw9N74yzSjAsZYXZ8adW8CLRJAS6KGNWfuxG9Z2bwz0UMC7gGB4i0LoMI
-           N0O37HdhpgEwClHk11iGQpZaiQwuG/ypc/2lt/TF8cqm6FyNjObv2cZjhQD1EvjnkS
-           myTKjTCUk05rpddlIKqyOjCSCVjO9GrZrxXQYm5mnt4F1NEGGeiCDOiGJDXsTT4oxZ
-           FXCkHc/9Xwh9w==
-Received: from 83.24.148.125.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.148.125])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <tsbogend@alpha.franken.de>; 11 Aug 2025 11:20:53 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: tsbogend@alpha.franken.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	zhouyanjie@wanyeetech.com,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Aleksander Jan Bajkowski <olek2@wp.pl>
-Subject: [PATCH] dt-bindings: mips: cpu: Add MIPS 34Kc Core
-Date: Mon, 11 Aug 2025 11:20:36 +0200
-Message-ID: <20250811092048.497087-1-olek2@wp.pl>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1754904058; c=relaxed/simple;
+	bh=zVWx4ZTneBogMsOlcaZR03vsIq0ezyb2I7LWj7kgLSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrDH/PHrxNNtjyY3SJFChbfpENbLH9fqcp/eAs9u/iFeTUK7M9Ax9NxVkQubkCSCFKL/FsFPEATbs6D8GyVtmqE7ZaIYlFpaNrC6T8O+FCrHnglylALPY8tO2ZRzaJ1NmLfGSfR2WlYBSRMHIZ+AqCGZfV769eBCAdemTmYtYA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oksEQOqM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 953FCC4CEF7;
+	Mon, 11 Aug 2025 09:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754904058;
+	bh=zVWx4ZTneBogMsOlcaZR03vsIq0ezyb2I7LWj7kgLSg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oksEQOqMUdyBxuwfuLKe37pFoOb6VRj3GDQarDMsJbDnBbc/9AwEbBuijT6yE5gjX
+	 Aza7iUY+J8HW+ykZdsXkx1WgmVMRM3m3dIm1IJ+Qj+zZy79pMGLdum9EgqQFdkI/bP
+	 XJLAcgxv74KTK+drCslPeAHb0IhVk41s1KqERWrzDoKJpExThxKw0qaYhINetJr5NG
+	 Rp3xwx0tmN4m+mPzFMQUnIf4y0XLSttdNCMRAPFeU+023/YRULigbX1alYCc2T1wQ5
+	 /KEYWWQk3a8mJiTdEm3cGp9HtqffW7Qa143N0XfozT1jl+1/PvvhfodGx58uFRZgOy
+	 zDYZZPN6DXr7Q==
+Date: Mon, 11 Aug 2025 11:20:48 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] man/man2/mremap.2: describe previously
+ undocumented shrink behaviour
+Message-ID: <ac37lpfte2my6wlrk7omoeaul5spekd4pjzhutlmzanxtshneu@dsxs65meb74r>
+References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
+ <c7ba8ba09b1c0b015134c54824788ef4aa47fd46.1754414738.git.lorenzo.stoakes@oracle.com>
+ <iolucvrp6is43yjulbluchhw5wy6urq2gtwmcelg5atwuv63se@ovzuthfrup26>
+ <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-DKIM-Status: good (id: wp.pl)                                                      
-X-WP-MailID: c31b38db7f8f9720d512873d28b9fe54
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [0WME]                               
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lgj4tlj4klqgw6oe"
+Content-Disposition: inline
+In-Reply-To: <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
 
-Document MIPS 34Kc device tree bindings. It is used in the Realtek
-RTL930x SoC.
 
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
----
- Documentation/devicetree/bindings/mips/cpus.yaml | 1 +
- 1 file changed, 1 insertion(+)
+--lgj4tlj4klqgw6oe
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] man/man2/mremap.2: describe previously
+ undocumented shrink behaviour
+References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
+ <c7ba8ba09b1c0b015134c54824788ef4aa47fd46.1754414738.git.lorenzo.stoakes@oracle.com>
+ <iolucvrp6is43yjulbluchhw5wy6urq2gtwmcelg5atwuv63se@ovzuthfrup26>
+ <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
+MIME-Version: 1.0
+In-Reply-To: <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
 
-diff --git a/Documentation/devicetree/bindings/mips/cpus.yaml b/Documentation/devicetree/bindings/mips/cpus.yaml
-index 471373ad0cfb..d3677f53f142 100644
---- a/Documentation/devicetree/bindings/mips/cpus.yaml
-+++ b/Documentation/devicetree/bindings/mips/cpus.yaml
-@@ -33,6 +33,7 @@ properties:
-       - mips,mips1004Kc
-       - mips,mips24KEc
-       - mips,mips24Kc
-+      - mips,mips34Kc
-       - mips,mips4KEc
-       - mips,mips4Kc
-       - mips,mips74Kc
--- 
-2.47.2
+On Mon, Aug 11, 2025 at 06:31:25AM +0100, Lorenzo Stoakes wrote:
+> > Since this is documenting old behavior, could we have this patch before
+> > the patch documenting new behavior?  Or do you prefer it in this order?
+>=20
+> I think it's fine in this order, it's more convenient for me as it'd be a=
+ pain
+> to re-order otherwise, and we've waited ~20 years (or longer?) to documen=
+t this
+> so a delay in ordering is probably fine :P
+>=20
+> Cheers, Lorenzo
 
+Okay, that's fine.  Thanks!
+
+
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--lgj4tlj4klqgw6oe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiZte8ACgkQ64mZXMKQ
+wqkvnw/+IdbsJsVOUcmRIygS4HeChREWaNfeJQO7+UgsDPRw4CHPhxXhQyBGepCG
+fY6zcpBYX69RhF/1zNj9hDHSY7a4YlXQIVC4qs+AaAucT9IOzTH2hyykYU7O/gfu
+ltdePdwvQ7qs7PSkKgmwbOYEUODi0WmZrTJT4Jt8OW9C2sPGZ01IWE+7DsZYITIv
+awdWYSPkeSe0oeGAsQ33ZyP/kN/jRt+pHFbPE5dcbCxBkOFOCq8z5RcXtebrgq+T
+HBYO4J+OMjwkGqNMTY5DIry731B19BwvmI03NbcMApuMuEx6kK8HtDRfO3000hs3
+kRtR+glT+9RvfgzKcz/gadkFfVlhk/rMzFjQGCRD0FjSAlgbvIzPujM80Lgljk9Y
+FGQ///2DeH+Mf2vk9+WweEj+ciTFCPeok2i6rnNofTjq+cbaijpEny+c4ra4mJeH
++AwxzrWdNjhxUZnr50B/WTT61bXBTVIHQuSnyHGbq/zSU8zuJiY2q7FFprgMnLq1
+pMWdkf1/cladI86zQH3d5QeX8BQN0MazjTNSV+FRECLrJJOSeLn1a5ip5nY+nJs4
+0U9WVtJhQ5MZcwNfPVEZp8aNqO2hTxS7OUYBjmiEWdLD+CKYmFJi8ygDy931sk7Y
+PEFHGbRwkh3vnLgGk/mTFFuCGbxEbTfC2a1lN+7xbdEuiYb2iRI=
+=0pEu
+-----END PGP SIGNATURE-----
+
+--lgj4tlj4klqgw6oe--
 
