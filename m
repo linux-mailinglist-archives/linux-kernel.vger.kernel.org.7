@@ -1,213 +1,145 @@
-Return-Path: <linux-kernel+bounces-762347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F74B2053E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:24:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAD9B2053F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AF524E2F1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895101888DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B838230D1E;
-	Mon, 11 Aug 2025 10:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB22227E97;
+	Mon, 11 Aug 2025 10:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QpAAKqbg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLjCbIcn"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3784022330F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A0C237163
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754907881; cv=none; b=NmYCuUKkKiZWuqt5PmAR130bFy1Kl6z3OciRLqcHz5rlhDC7s9/CJ7aQ7wFlXt6ka6vWFjBpaPfFpWTgMbk469bfbrNMpDbopo6woKvOuOAblS40oBLbLkrbmh/ua+xspb8lfck8cHU0DwykIr6nKg+pUSnHkO18vrz8JAQXPZU=
+	t=1754907887; cv=none; b=h9enUJ7V6VUjxNXO0kZ8OxFhIDL1TgsEfL1BEbnEEddLYjtNTSN79KEVj0lJguVYi74KaK8lQzdaJXsC7/bFyIZqK/S8fl5r1FsRinVfaJPBIAfFQ/9tlEx2M2Mkjj0XEcTyB03H5onM3kVMgB1pyFGhLF8uDpy9iplgXuF2SBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754907881; c=relaxed/simple;
-	bh=Idy4XcMA5LlhLNDuASjp0sZOf5p6aefxiafLsNXwvG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayo2n1kFPHiaqeQcTDRbIk1TPFu3y61tr1S2KErAEJf6H1pvAfrop5jQgJZEri5gn+BK2g9cJ80eJ9Ut1kr6t23vjDcwi1h7nMPOm2he+cvsd4fR5HNz1YwDX/LNmzBRWcMbwDf/gmPVzKRVLb2OqGQy87RzaOTVFt9j9cxvlHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QpAAKqbg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9d9Jn000631
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:24:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4pAGJmR2f7v+hM4FOe0CvotdF0PXmkmvYERDFPHK8F4=; b=QpAAKqbgV8O3w6+H
-	blMt/Dj3BYfL0JrnENL7tQiPikVaeB7D0ZC58sY6z36Dr/49EwD0EwajPLD+34wC
-	kvJ7e+gJON8ZYRZUpv9k2BvGyN2CVlvBOPjkLMsm9QAWFTsPEEv7WspNxaZ6xgf7
-	JCIxU8wyR7LVXKXI53jThbr1LlcwPDzwzH8+oPnb9UJZwWLJQNPH2686OZPlf7L5
-	Iaz/iUlO2oELvlcNUMyd/XlLoi+ISAbWxhFy2R+Y0Qk06zH0S+YdQhUmt9/IrzD+
-	mSZK8T3dz5Bm9L2hiEQ1/wJQyUzxeoBX0EnorCUhZvi9/Wt2Xjkb1jJdb6p9f8gq
-	8evh0A==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxq6uxuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:24:38 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b4310451ae4so5178257a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:24:38 -0700 (PDT)
+	s=arc-20240116; t=1754907887; c=relaxed/simple;
+	bh=6brobFK2NROSc48XBQqk+Be5Gx7yulhT6LVp/hdSAC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUctizigfzPMOnTPT5QIAuHirQsWccRObRXpquSCWjtS7ZU22Mc90Y+YLLWt/fMs4sB4mrQY5vklFUpdMmp4B5M6GlcYYFo0Wxlz8KAwg1k+XhriDl7Fs0YH5MoNSAx1izujXJZmCOqEbqRC9K6DqBjsM4D8QpP+6C/iZwMxwn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLjCbIcn; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a0d5e4c45so2444065e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754907884; x=1755512684; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HBe9czUDzx4VIYaunJNZUgByUfhVqy3wgTZDB39K9Kw=;
+        b=dLjCbIcnvd38Fp9nXLo5yzsMmpG0Dw9qNzDb4l3buTnl92KaizVjNQ5bRbGKqhJaR9
+         FSLJOUCUpmfwtQE52VsIWeL2YHztAR+SoWqwXp4mhTTscKHxIP5eyK28R071Ej3iHLhq
+         tOhXosOSyTyX8boX8092jJHypJ5a0NoSRyYWzlFuygfcUJMKF10BuT4wAypEWt1+Z81l
+         X4WpUGow1/iQtOOZx1TnhrWgn1989T421ZFJA/M1C02DWhY2ylSyrxHbzIt73lR4VnW6
+         9GowzCS20NKTefKSLHjGCDltkw+ULqrRJTo7DTU00blpvikZgZkvzTW8A2iY8aie083f
+         yQEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754907878; x=1755512678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1754907884; x=1755512684;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4pAGJmR2f7v+hM4FOe0CvotdF0PXmkmvYERDFPHK8F4=;
-        b=PhSlvOI+kFZZy1mDNLAi0pqUbV9x4DUSLT++1Qi39F7HgctMlk4KGnSoCEuntqd+gd
-         uecDESJBhJwlvUntvNBHYZgWSmK4YeaS2VMSVd0dl16CU4TbeDtp93orxSnA3px9IrTM
-         VbaOlNZHoiH5UwGZBKfnIEhPe3LnQD0VAMVbcCVeKOQN2cjaQ5YEBiLYd+9uztWijQ7U
-         kDVRivHRu9mLdn1C1Loi88STqVsoai3iG31hfNUTEbwY2cBf2YVdApPq5EuIJ+Llc6hC
-         8pXWtdOELx6wDCrTbtaTAzzq0N3GEe4B19eDP6CDljKMyyrUDGIHirb0thYSYb4aho0X
-         yPNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMYXaBJgUu8stqzfPQip5TjFGPR/j6GUGhSI9Z9BYClzZPV0O2ZNJjnGi8r7W/f5tfGpQ4ZkEUHoQXW3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6SAH3Li3I6sfJ6nKJ4RSYavfrcaKHxu74eDe7OCcaUbCSlNuV
-	cs6jforexpHHLwp2rDfZzm3huj/Jj06rc4rYag2euOb5mZO/68qTKtXilcIRt7yd13ETWh7vYjN
-	UaLh1NJmOVHNwA6fOpE+Gu/QGZFTN1DdMCoqPM8GxVSVx/gfK9C6Rv0ADqGOtMs6Xge0=
-X-Gm-Gg: ASbGncuMRzU4DygUlcFlyZqoeLibYwDI+Jt64fs4V2qNPhr6gpO8SjEuWWe5+gGizrj
-	9LlqDIhrOOaoOTLKkeoX8l2ru9UR+tobyu35FiOgTG1Fyd66ewCQ7xgQ2dIRJecL0ZqlJu4qNoZ
-	ZTvVMoNmWqdXFI194eEcb8IV9jn+fMGwt+fJ8ZjQTCQVTZjCDfCEKsJmDeNnWLRdvSDvp9m2+Er
-	smBhHJrAfpZOpOV9rnQMN8yHOQi4DJztIKSgM4gwqbzrjfAmLMAFNHl5qiGC4/Q50t7SFUPM+1e
-	gKUNWqcRCoMREZBex3GSTfN23fSqB8ew6V8yyjUAOkjjHJ8NVJF/tGu4LuSiJopBIBnSiOSyZQ=
-	=
-X-Received: by 2002:a05:6a20:3c8f:b0:23f:facd:5bc3 with SMTP id adf61e73a8af0-24055131e68mr17744511637.23.1754907877711;
-        Mon, 11 Aug 2025 03:24:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGjZkSDx/8+e1xEj0oO2axJzU+5A8J3EKcthnGd8UJEhVRSCo/y7+q7R8C8QxpEsYuccLMoTQ==
-X-Received: by 2002:a05:6a20:3c8f:b0:23f:facd:5bc3 with SMTP id adf61e73a8af0-24055131e68mr17744473637.23.1754907877306;
-        Mon, 11 Aug 2025 03:24:37 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4248f1d75dsm19304065a12.51.2025.08.11.03.24.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 03:24:36 -0700 (PDT)
-Message-ID: <d73c5beb-fe00-428e-81d2-c67ed394fae9@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 15:54:30 +0530
+        bh=HBe9czUDzx4VIYaunJNZUgByUfhVqy3wgTZDB39K9Kw=;
+        b=snXtrJzFgD/Pjx6he4P84mQ7sSAYdvLUjRcZIRNsTSrKUUg0kXM+GX91n5nbVFr3tK
+         4It9vB5ZP81RFI0AJI04aIDoUZmdYnRFnajwtbS7UEowsFQLzLpm+0BSOovx4nsp+1Ux
+         qd9W5o02C4SyVIXYcA6plnSssXdzfQpTeInuOQKtHu5U0Ku2uTdCpLBWQWDBG4za16/8
+         Xfy2xh1by77kILCT8OobUe+lqkPYgLDhVw68JUMqSO/DwYclBQQk3FuvnMDoZp88art0
+         JGk91tQZVTZEIujff96ApwNia9+uddhmM1adWmldYNRFeYOJMWNcUOx0G6IEV6OLl6X9
+         pEVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWW89SK5IaoaMLYp/iG7GVyiADa79fwF5WtaChh5zv1sMxC45fDk4U6SYcPOua4SDhlCGEWCDBMT0A/xbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8oF2uVEZuSYmN6sSIGkmPNWth//wZIsPj9ml0zmjuXlJzTwNp
+	DWFrkKYNZghIAvzawUMR1AyK5+UCu/HLwAA9uNXefIEN4bNxX3SuG7L0
+X-Gm-Gg: ASbGnctfmXMTWv9vnJZAfX6ze01Qm8rETRQXBUujVWcwb54CPQuZ75muzsPkvUkNkFG
+	TkO7E/YkzeSigekc8Xm0pII9xOhINdqoMFiPfDshJy+HcjiK/yPQsS8IquFSlXZ9XU6WDnQ4a6H
+	VKu3rAd296vQMS8ED6+5KeDfkkOp4wimWyBjfBKh/mBOjr+eI5r4ocwrnA1GNih6hlmnX86RBXF
+	2UQn1qaDewSWRrFtkDy6DWT0dGMUrLKt+t/CwZg6d+koss/QvyWrGhjMUc3wZOpe5W+7H8Zgo4Y
+	E/dXv3Bdi1XDfVPL14w/L+WF55fz+tNQ2ejhIoRIQBjCeQU3OeFWRJadnrBGujRkgMt7leR23zU
+	8O/TOuzV2uCK6OGM5tUo=
+X-Google-Smtp-Source: AGHT+IFUPHEEiAr26JDbR4Tv1T2rbVTYYcdhOCQ0HeIDjGQzbNBbDgyPBzabITYI3btFT1OS8u/kKg==
+X-Received: by 2002:a05:600c:1912:b0:456:18ca:68db with SMTP id 5b1f17b1804b1-459f4eb3ce1mr109619375e9.8.1754907883569;
+        Mon, 11 Aug 2025 03:24:43 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5873c43sm268177675e9.22.2025.08.11.03.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 03:24:43 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:24:41 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org,
+	cristian.ciocaltea@collabora.com, gcarlos@disroot.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/tests: Fix drm_test_fb_xrgb8888_to_xrgb2101010()
+ on big-endian
+Message-ID: <aJnE6Uu_WutFA06X@fedora>
+References: <20250630090054.353246-1-jose.exposito89@gmail.com>
+ <20250630090054.353246-2-jose.exposito89@gmail.com>
+ <9467c5f1-fb70-4698-a611-80f9be499b22@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
- dynamically
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
- <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
- <20250801072845.ppxka4ry4dtn6j3m@vireshk-i7>
- <7bac637b-9483-4341-91c0-e31d5c2f0ea3@oss.qualcomm.com>
- <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
- <7f1393ab-5ae2-428a-92f8-3c8a5df02058@oss.qualcomm.com>
- <20250804111340.t62d4y2zg77rr3rp@vireshk-i7>
- <6035a961-7c5a-4fde-b4ea-e9ea9d88e6c1@oss.qualcomm.com>
- <20250811084453.ocibslv6kxkib6po@vireshk-i7>
- <8e67bfa0-e62c-4060-9ac4-de212ae63570@oss.qualcomm.com>
- <20250811101729.vwrtqg33lusk7h6p@vireshk-i7>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250811101729.vwrtqg33lusk7h6p@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyOCBTYWx0ZWRfX7JUX+uGncOrS
- YltEiXVuxv94yrdoatQKSvfJ7bg/rQM2ZxqKHtBfybP6C5aDoZbu5lYzfkSIKMPVOOtydURlHPB
- PO6zji6n48A1Zj9/SrnlNenlLGngCZPGyvQRiEC2DGqy0AlcVwIVj30SZF8fIMbUqU9Nht2l+V4
- gVub1aH20HxgTvTAGQLmd1qQOCnMLcY7Am2Du9VLr30xhR/hd1MplfaCC5T3/TgXHZsfR6hUU57
- B4kWFQ7VWCsundHI8McAGCqZ0sPk9BcKkMFerWeinyGdTEAOWraPcCCGWyUCWnGb/+Y5PTFjoqQ
- mq6/4JhwLe/gm7c7ASiGrbplcH9vDWllJCWtZL+7mNQPdzCFkOLBDtQFGcgdKhBHXOQLPcji3/T
- KLpPPOWJ
-X-Authority-Analysis: v=2.4 cv=QYhmvtbv c=1 sm=1 tr=0 ts=6899c4e7 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=n_ICUChmHomsGDmDg90A:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-GUID: kLOkwrMmkyOHg1cAgaFyHwjtXQ5qZeDT
-X-Proofpoint-ORIG-GUID: kLOkwrMmkyOHg1cAgaFyHwjtXQ5qZeDT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 spamscore=0 phishscore=0 bulkscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508090028
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9467c5f1-fb70-4698-a611-80f9be499b22@suse.de>
 
+Hi Thomas,
 
+On Mon, Jun 30, 2025 at 01:37:58PM +0200, Thomas Zimmermann wrote:
+> 
+> 
+> Am 30.06.25 um 11:00 schrieb José Expósito:
+> > Fix failures on big-endian architectures on tests cases
+> > single_pixel_source_buffer, single_pixel_clip_rectangle,
+> > well_known_colors and destination_pitch.
+> > 
+> > Fixes: 15bda1f8de5d ("drm/tests: Add calls to drm_fb_blit() on supported format conversion tests")
+> > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> 
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-On 8/11/2025 3:47 PM, Viresh Kumar wrote:
-> On 11-08-25, 15:35, Krishna Chaitanya Chundru wrote:
->> Thanks Viresh for the suggestion. We will try this.
->> Can you confirm this is what you are expecting.
->>
->> dt change
->> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
->> @@ -2214,13 +2214,23 @@ opp-2500000 {
->>                                          opp-hz = /bits/ 64 <2500000>;
->>                                          required-opps =
->> <&rpmhpd_opp_low_svs>;
->>                                          opp-peak-kBps = <250000 1>;
->> +                                       opp-level = <1>;
->>                                  };
->>
->> -                               /* GEN 1 x2 and GEN 2 x1 */
->> +                               /* GEN 1 x2 */
->>                                  opp-5000000 {
->>                                          opp-hz = /bits/ 64 <5000000>;
->>                                          required-opps =
->> <&rpmhpd_opp_low_svs>;
->>                                          opp-peak-kBps = <500000 1>;
->> +                                       opp-level = <1>;
->> +                               };
->> +
->> +                               /* GEN 2 x1 */
->> +                               opp-5000000 {
-> 
-> The node-name has to be different, but freq can be same. Something
-> like opp-5000000-N, where N = 1, 2, 3.
-> 
->> +                                       opp-hz = /bits/ 64 <5000000>;
->> +                                       required-opps =
->> <&rpmhpd_opp_low_svs>;
->> +                                       opp-peak-kBps = <500000 1>;
->> +                                       opp-level = <2>;
->>                                  };
-> 
->> And in the driver I need to have a change in OPP framework which
->> returns OPP based on both frequency and level something like
->> dev_pm_opp_find_level_freq_exact(struct device *dev,
->> unsigned int level, unsigned int freq);
-> 
-> I thought you wanted OPP based on freq and bandwidth ? But yeah, a new
-> OPP API like: dev_pm_opp_find_key_exact(dev, *key);
-> 
-As we have can have same frequency entries we will select the OPP based
-on the level. level will differentiate between different PCIe data rates.
+Just a friendly reminder about this patches. Can I merge them?
+They have been in the ML for a while and it doesn't look like
+there are concerns.
 
-Mani,
-Can you check this once and confirm any issues from PCIe perspective.
-
-- Krishna Chaitanya.
-> where,
+Best wishes,
+Jose
+ 
+> > ---
+> >   drivers/gpu/drm/tests/drm_format_helper_test.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
+> > index 86829e1cb7f0..981dada8f3a8 100644
+> > --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
+> > +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
+> > @@ -1040,6 +1040,7 @@ static void drm_test_fb_xrgb8888_to_xrgb2101010(struct kunit *test)
+> >   	memset(buf, 0, dst_size);
+> >   	drm_fb_xrgb8888_to_xrgb2101010(&dst, dst_pitch, &src, &fb, &params->clip, &fmtcnv_state);
+> > +	buf = le32buf_to_cpu(test, (__force const __le32 *)buf, dst_size / sizeof(u32));
+> >   	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+> >   }
 > 
-> struct dev_pm_opp_key {
->          unsigned long *freq;
->          unsigned int *level;
->          unsigned int *bw;
-> }
-> 
-> and match all non-NULL values only to begin with.
+> -- 
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
 > 
 
