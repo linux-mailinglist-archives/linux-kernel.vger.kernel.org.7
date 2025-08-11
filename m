@@ -1,188 +1,161 @@
-Return-Path: <linux-kernel+bounces-761730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E2EB1FDCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DA8B1FDF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C8967AB661
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD35A189723A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230C73594F;
-	Mon, 11 Aug 2025 02:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0A425A341;
+	Mon, 11 Aug 2025 02:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Ue3W1p/0"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="tNvxIGG1"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD262566F5;
-	Mon, 11 Aug 2025 02:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ECFEACD;
+	Mon, 11 Aug 2025 02:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754879026; cv=none; b=R+oU4WmS+lEhWD93dgQEL+pKYfaKhnj3YcvVqTK7RcmOxPad3rfWN+K9kNUkES4xpzwv/9Rl5gJ4txOzTojAo+Jf4St1lVc38wjr6GTMmgMWiIeETIecvBeK1GtHSHtNRyNztbalCyk2/CtM6LyWUmH3ocqCRtUkCpZ24RmfpGM=
+	t=1754880076; cv=none; b=Ku14AchUZCrnsPj3VbSBs02Qq81Ex2GobJ+17I3/Eso5asDYUDR1K1tp6GVlkNb3grFcRe6bjW5Y0VzgfF+Th++FzM1+t9s6mFHK1N34/D/NCnqIZoWYYheL0ewapnQNo4SQ+HoFXmIwagV8rNymLcOGpMNThZhILhSGWP5dQF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754879026; c=relaxed/simple;
-	bh=vKwdokCSbfarr3tfiBIQ+v8PuIYAWoLWZBdsuWHTjX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjLKXCUIn4yLSkBi309+nwIULe9L/JdGLoLH07TzbCGVldx+t9DnkU9mSjUwjHfdsCvRODk26UqjvhF74OOIrD+kyPTnXDEkA/EtpRONXq2eUYVAbDeDosK5aQQQkSqizncraIAsosLIcMUkdvZ1ESiOCrHMCjtBbsPk3nL7C9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Ue3W1p/0; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id ABE3D2599D;
-	Mon, 11 Aug 2025 04:23:34 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JdiyJLpcUReS; Mon, 11 Aug 2025 04:23:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754879014; bh=vKwdokCSbfarr3tfiBIQ+v8PuIYAWoLWZBdsuWHTjX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ue3W1p/0pXOBeNfkPwdtHjYymOU+XmuRgfcVr/kEmzNY9uYvjLpBkoWLmrYNehL8u
-	 C2xey/68hv5zZCRvqPya6MwxSJ2qCQSrRbpcANklFrS6KSk/bSiecCc1eb3GrS2fNL
-	 vEATL2MyhuptYyHpIBQB5kayIsU0+pvKd7b6WhUpzQlu0zYoGDTXIxKn5DzgkT0jxq
-	 fbLmYYwxKGUCLX6X1vJXHWZQMN8DPXvNwK8bz9K8NpsxwPl+8QC9Q+76wCoUYqe4uv
-	 f6U2hglawgZn0mkLxRJcTcGOTS66gDsmHUhg/C+TghkKXK1btEXZiQeo0E0e/OsxTY
-	 M/VBEsJDPb1eg==
-Date: Mon, 11 Aug 2025 02:23:14 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>
-Subject: Re: [PATCH] reset: thead: Scope TH1520 reset driver to VO subsystem
-Message-ID: <aJlUErajSRZJexYa@pie>
-References: <CGME20250810211419eucas1p173e5fefcfaae437d8b5531d1406ff6a6@eucas1p1.samsung.com>
- <20250810-fix_reset_2-v1-1-b0d1900ba578@samsung.com>
+	s=arc-20240116; t=1754880076; c=relaxed/simple;
+	bh=ZPREXr9e2qzp6Hf0Xjca0L7IsVRTkGn6Zw0fCUQYIsI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T1lVuYxM988TtWvGTzQBXUz5I4z6dhVTN510N6l3dKOpP0msgo7zSlol3FEiyUEGOaIdv1GVTfiBtSoyA43bCr8Aax7hLUOupS3TwMSxE7lqYMnN9u0eNbx57JCsk3OMnf8wFhbx3GpDLyKVbOCAbCR6xfzlW3Vb+IMyp7Fn7MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=tNvxIGG1; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8481a7a8765a11f08871991801538c65-20250811
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:To:From; bh=FG9+9WIgSMbwEC+qjRTOrkn9hFcawHdHO8FWjbbsdAs=;
+	b=tNvxIGG1hbXwHfoKfus51v+baz7IzLn/RuqJpa1+V2XHYEpBvuaBYeUfpdJOM1tT8oe/IICuJdXe/yyaXQzBvPZpM5R+aUm3ahutxZTld7hNpeR2K13aalYkiHZtA/eDdD4AZb36TAMM/1VG/d8SQZiOlzXEuhpW4Inw/Jktses=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:37fe111e-954a-47a4-8251-9f7edefcf2da,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:f1326cf,CLOUDID:0ebecc9d-7ad4-4169-ab95-78e9164f00fe,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:2,IP:n
+	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
+	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 8481a7a8765a11f08871991801538c65-20250811
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <kyrie.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 109527373; Mon, 11 Aug 2025 10:25:59 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 11 Aug 2025 10:25:52 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 11 Aug 2025 10:25:52 +0800
+From: Kyrie Wu <kyrie.wu@mediatek.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+Subject: [PATCH v8 00/12] Enable jpeg enc & dec multi-hardwares for MT8196
+Date: Mon, 11 Aug 2025 10:25:42 +0800
+Message-ID: <20250811022555.1049-1-kyrie.wu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810-fix_reset_2-v1-1-b0d1900ba578@samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Sun, Aug 10, 2025 at 11:14:19PM +0200, Michal Wilczynski wrote:
-> The reset controller driver for the TH1520 was using the generic
-> compatible string "thead,th1520-reset". However, the current
-> implementation only manages the resets for the Video Output (VO)
-> subsystem.
-> 
-> Using a generic compatible is incorrect as it implies control over all
-> reset units on the SoC. This could lead to conflicts if support for
-> other reset controllers on the TH1520 is added in the future like AP.
-> 
-> To ensure correctness and prevent future issues, this patch renames the
-> compatible string to "thead,th1520-reset-vo". The device tree bindings,
-> the th1520.dtsi file, and the driver itself are updated to use this new,
-> more specific compatible. The device tree node label is also renamed
-> from 'rst' to 'rst_vo' for clarity.
-> 
-> Fixes: 30e7573babdc ("dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller")
-> Reported-by: Icenowy Zheng <uwu@icenowy.me>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml | 6 +++---
->  arch/riscv/boot/dts/thead/th1520.dtsi                           | 6 +++---
->  drivers/reset/reset-th1520.c                                    | 2 +-
->  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> index f2e91d0add7a60e12973c216bb5a989857c3c47c..f84c5ae8bc3569cb1d4e8f07999888ea26e175d0 100644
-> --- a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> @@ -16,7 +16,7 @@ maintainers:
->  properties:
->    compatible:
->      enum:
-> -      - thead,th1520-reset
-> +      - thead,th1520-reset-vo
+This series have the follow changing:
+Firstly fix some bugs, including resolution change handleing, stop
+streaming sw flow, fix buffer layout and clock setting to support multi-hw
+jpeg working and others.
+Secondly add mt8196 jpegdec and jpegenc compatible to support MT8196
+kernel driver.
+Lastly, Add smmu setting to support smmu and iommu at the same time.
 
-I think we should mark thead,th1520-reset as deprecated instead of
-removing it completely, to demonstrate the ABI problem and make the
-situation clear.
+This series has been tested with MT8196 tast test.
+Encoding and decoding worked for this chip.
 
->    reg:
->      maxItems: 1
-> @@ -36,8 +36,8 @@ examples:
->      soc {
->        #address-cells = <2>;
->        #size-cells = <2>;
-> -      rst: reset-controller@ffef528000 {
-> -        compatible = "thead,th1520-reset";
-> +      rst_vo: reset-controller@ffef528000 {
-> +        compatible = "thead,th1520-reset-vo";
->          reg = <0xff 0xef528000 0x0 0x1000>;
->          #reset-cells = <1>;
->        };
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index 42724bf7e90e08fac326c464d0f080e3bd2cd59b..9cc2f1adf489ac432b2f3fbb06b655490d9e14b3 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -235,7 +235,7 @@ aon: aon {
->  		compatible = "thead,th1520-aon";
->  		mboxes = <&mbox_910t 1>;
->  		mbox-names = "aon";
-> -		resets = <&rst TH1520_RESET_ID_GPU_CLKGEN>;
-> +		resets = <&rst_vo TH1520_RESET_ID_GPU_CLKGEN>;
->  		reset-names = "gpu-clkgen";
->  		#power-domain-cells = <1>;
->  	};
-> @@ -500,8 +500,8 @@ clk: clock-controller@ffef010000 {
->  			#clock-cells = <1>;
->  		};
->  
-> -		rst: reset-controller@ffef528000 {
-> -			compatible = "thead,th1520-reset";
-> +		rst_vo: reset-controller@ffef528000 {
-> +			compatible = "thead,th1520-reset-vo";
->  			reg = <0xff 0xef528000 0x0 0x4f>;
->  			#reset-cells = <1>;
->  		};
-> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> index 7874f0693e1b427a094a68f2b6d783985e789bf8..05ed11972774618df4512b7c9f9f12e71455e48b 100644
-> --- a/drivers/reset/reset-th1520.c
-> +++ b/drivers/reset/reset-th1520.c
-> @@ -116,7 +116,7 @@ static int th1520_reset_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id th1520_reset_match[] = {
-> -	{ .compatible = "thead,th1520-reset" },
-> +	{ .compatible = "thead,th1520-reset-vo" },
+Patches 1 fix jpeg hw count setting to support different chips.
+Patches 2 fix jpeg buffer payload setting to handle buffer
+size bug while resolution changed.
+Patches 3 fix jpeg dst buffer layout.
+Patches 4 fix multi-core stop streaming flow
+Patches 5 fix multi-core clk suspend/resume setting
+Patches 6 fix decoding buffer number setting timing issue
+Patches 7 fix decoding resolution change operation
+Patches 8 fix remove buffer operation
+Patches 9-11 Adds jpeg encoder and decoder compatible.
+Patches 12 add jpeg smmu sid setting.
 
-And this change actually breaks compatibility with older devicetrees.
-thead,th1520-reset has been part of the ABI, and we should keep the
-compatible string to maintain the compatibility.
+---
+Changes compared with v7:
+--Rebased on top of the latest media tree
 
-With these two changes, I think the changes could be seperated into
-different patches, one for the dt-binding, one for the driver, and one
-for the devicetree, which could make their scope more clear.
+Changes compared with v6:
+--Rebased on top of the latest media tree
 
-Thanks,
-Yao Zi
+Changes compared with v5:
+--reorder the patches set.
+--fix commit message of patch 1-8.
 
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, th1520_reset_match);
-> 
-> ---
-> base-commit: 561c80369df0733ba0574882a1635287b20f9de2
-> change-id: 20250810-fix_reset_2-a618d7426534
-> 
-> Best regards,
-> -- 
-> Michal Wilczynski <m.wilczynski@samsung.com>
-> 
+Changes compared with v4:
+--fix kernel robot build errors for patch 4.
+--add reviewer for patch 1 and patch 2.
+
+Changes compared with v3:
+--change patch subject of jpeg encoder and decoder compatible.
+
+Changes compared with v2:
+--refactor smmu sid setting function interface
+--Some modifications for patch v2's review comments.
+
+Changes compared with v1:
+--refine jpeg dt-bindings for MT8196
+--optimize software code to manage jpeg HW count
+--refactor smmu sid setting function interface
+--Some modifications for patch v1's review comments.
+
+Kyrie Wu (12):
+  media: mediatek: jpeg: fix jpeg hw count setting
+  media: mediatek: jpeg: fix jpeg buffer payload setting
+  media: mediatek: jpeg: fix jpeg buffer layout
+  media: mediatek: jpeg: fix stop streaming flow for multi-core
+  media: mediatek: jpeg: fix multi-core clk suspend and resume setting
+  media: mediatek: jpeg: fix decoding buffer number setting timing issue
+  media: mediatek: jpeg: fix decoding resolution change operation
+  media: mediatek: jpeg: fix remove buffer operation for multi-core
+  media: dt-bindings: mediatek,jpeg: Add mediatek, mt8196-jpgdec
+    compatible
+  media: dt-bindings: mediatek,jpeg: Add mediatek, mt8196-jpgenc
+    compatible
+  media: mediatek: jpeg: add jpeg compatible
+  media: mediatek: jpeg: add jpeg smmu sid setting
+
+ .../media/mediatek,mt8195-jpegdec.yaml        |   8 +-
+ .../media/mediatek,mt8195-jpegenc.yaml        |   8 +-
+ .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 170 +++++++++++++-----
+ .../platform/mediatek/jpeg/mtk_jpeg_core.h    |  21 ++-
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  | 112 +++++++++++-
+ .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  | 112 +++++++++++-
+ 6 files changed, 376 insertions(+), 55 deletions(-)
+
+-- 
+2.46.0
+
 
