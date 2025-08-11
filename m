@@ -1,117 +1,280 @@
-Return-Path: <linux-kernel+bounces-763122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47AFB21090
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BCFB21093
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3ABC18A426C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBBC1892058
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3A2D47F9;
-	Mon, 11 Aug 2025 15:33:53 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FA32E7163;
+	Mon, 11 Aug 2025 15:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dh/LHX1J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCDC2C21E9;
-	Mon, 11 Aug 2025 15:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10702D6E48
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926432; cv=none; b=kYFf/UKuNH3erF7PwO5Ctdgm6wJ7BgyW6aev0IKdCJCSqlAgPgL7JemJ+3JXwwfPEg0bc88wyf4q7V47Yb64BGTRe3FVLMeL3XZySXlwCp4pL2U50XsaEHgLen7HZQkF4eQ6C8aaeQppUAHE0DWw1llcROB6Hz69d32fHAccljI=
+	t=1754926444; cv=none; b=D4RleXIGuQCJbNKkwhwvS8C6OyWOlit9lB2Iqpp6KZ5oTKjpT+d0W0d0y+rANeDX7FOQoFMybr+re+CQ/5kcm/ib1osS0W5tIALix5dB1PIBpGMSP0dYbFMJMWd3WHXvH2px0G9vGNSDes20HN0WQVc6DOwAzM2XCR+flQmbBzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926432; c=relaxed/simple;
-	bh=uaiI/FPefBSxRJ/NPu7WyL26yvTEx++3mEw/3FhpfMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gm43PUg6YCLQl1todF+MmIOjgmDh/dv6K/OjrqehonGi/usRjp0hBHLhC9WOy1v01snO4IBNw5+OOts+v+Zatik/gaQcbncj9NTToHW9PugvNofwRtOpiQ/jD9XQki6R2muuU8YYgtkLbwUQ/upqxMkUpVy5ZJ1MB693K9f9M2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5006f7e71aeso1444151137.1;
-        Mon, 11 Aug 2025 08:33:51 -0700 (PDT)
+	s=arc-20240116; t=1754926444; c=relaxed/simple;
+	bh=x3Gjjg/HNG+YNIf+BJSKZ7zx9EJlyvS9DJ5A8csDFq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rcqTZpq+AAXhkY8mRAZheFILNszKO3cvKLKqek7gsKYLQCFEtAaH8R+LC+Y+RvTSWDefHh4NRl+bxrhcyMqX2NsZ6+5lopYzX8d7VYjf1o+DUk/Mg5F3Ucs1jXj0GZmZTdu9u19U+vkF9RminV29m5GcYs67cQCi8hjRINqNS3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dh/LHX1J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754926441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UlyMvpUnFPwPIrW3E7xZ89HT91V0N5XoNHgGKm394UY=;
+	b=Dh/LHX1JKysEGLodY7EdveyqnDz+HVGARQ4STcNFW8a1ksEhVLXkV1gMPo05MSgE9PQ8b/
+	4dE+I0/db/eKvktUA3QX9hapRgx9VIAJS6RHwRkhD2gnqmkgVcZ3STKDT4j47NL5EjidhF
+	NTckDpn8xrJpBK6grhmGvPiYJPRO8rk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-r0V04V7tNJupzpHUQS5_SQ-1; Mon, 11 Aug 2025 11:34:00 -0400
+X-MC-Unique: r0V04V7tNJupzpHUQS5_SQ-1
+X-Mimecast-MFC-AGG-ID: r0V04V7tNJupzpHUQS5_SQ_1754926439
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-459d7da3647so38262775e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:33:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754926430; x=1755531230;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uZXh/Ja9dZHVZCINX8cXzPM5Z0h7erpOnKMsRLNf0A0=;
-        b=k01Yhg9BOeUdwaRrTvBcYHvGIdJRRbT9gxCYRpo0xyveSUINqqRfEuRROX4gHQtgQM
-         bGCOKGzWfbjRwBi1I3HsuPzIXt6yBsuMyJ9KFAnZaIBzOP+C+QjfA1JtJBTTtEYB3uT+
-         LMFKCPIDGiNVk0OGX2WhK/49LKG4Qj4eC/zIPNIBlpafH3KfAniM0O6IdVGwM9FP2/9k
-         O7F7JmxbE5POA/XKLtKeRFcWZw9eijK834hR1tjbggs8ARiEcTAMZvyGSyfeUE1fRwTK
-         MpfFFtTcGydarYVVf6a1+5iNrlowve2SmOvfXzOw3e/mW5dlQeSUEbRicSWkTZmxc/LA
-         J9rw==
-X-Forwarded-Encrypted: i=1; AJvYcCU06OtbYWxco/Csuc2/O7Ve/HI9Whs8KJrEm6R+mfKW3xVkbi0PqNqcuitg3kDaRf2ZdahbL4IKFbvg@vger.kernel.org, AJvYcCWYUuRM0Q1sR0rp4DdFnT03NfjOs527WAUfxLY2qlagqjNOEeLN/iz8/EKjvqCclgJiAVMP7/aCFaXK3p7cxsnFotE=@vger.kernel.org, AJvYcCXHJXC3twdTDosA/gHJZqrqoLItu7o4ktO0gxmidyWhhk9BCd5tg0BgQLidva2dVt8C6O92NJ3fn056zC6/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc7gVLpqn07K7psec2UX7fl3wylx/0pDAa+Hx6DWoAqgkgd9Bp
-	6XxmG/E00u8rf7yII8YoHedEcjJM+JSArds47mORHt398ZDh7G82vtbi4aNj7OZ3
-X-Gm-Gg: ASbGncsHpSjON1DZdCgLujEa73fzc8VNI3i3UocAach92z/0iizQSRYsO2hgyKoFSte
-	uq4yF4EMeAb2Fn8kEQa2Vhkce3AK1si76a1wy2Wt8H02ZIcFSuNLKRu5Lzq9UL0VSO6mzJJEuWI
-	nYSUZKweT7+9iTSeIR1U7QFEejtZIZTBTK30yqlxZ4PtwsMisbDy52P/1X7HouXia5vCrvBpWuI
-	E+sNJpcsf5kMuZZVEtkt23Yhp2m5k+HozLeVfJXmfEN1LuwzvVOdEwJk7Z83nftT6XR1PhWAC2/
-	sygxkY/Kswym5WD4sqDrSGGa/UR99N/OK4uoHEjbeSegMuu6hTTABFsNVaYKEU05j4SZpn5fq9O
-	BR0j65cf5vxSaD9jBtgNZ9jWNIxOTzi8Jn22uc9bDS/HIkWfSojQ3mIi/x5CNW2dSdW5fSQIcnM
-	g=
-X-Google-Smtp-Source: AGHT+IHzGHu56Ga+8pvXeHapS/8l3EZTca+CDCnbGm+7lhHSGDJcND9gfDwL8kVfW6cKAw6IFq2rlQ==
-X-Received: by 2002:a05:6102:f0c:b0:4ec:c549:161 with SMTP id ada2fe7eead31-5060f0cf776mr4469200137.21.1754926430014;
-        Mon, 11 Aug 2025 08:33:50 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-50629bdd097sm1917052137.7.2025.08.11.08.33.49
+        d=1e100.net; s=20230601; t=1754926439; x=1755531239;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UlyMvpUnFPwPIrW3E7xZ89HT91V0N5XoNHgGKm394UY=;
+        b=eROdnQj1jjIP0YRi/cP0rftDnGDn5KETOPh7Pox8SE+CN92wgMbhsYv1Q47fOnLGlX
+         6eHTxagnOZy1vmEiI1xdRrbwRXFz2gykmUB/1cf1D0j6H3fUZV4HtkOEdWIgSwFOMHOb
+         khVtjy54dAV4E0AJO5Kl7wp1waS1EDPwbJ9kefEvg7HW/uhEv1MoJON0BxkLgEaJ9ZT9
+         vLW9upz8H9Q2hFCaunVUAMJ/a4MHgXa+Mb9Ua5tRoKi/Ua1hLacixd2dAoDpDHHUedeU
+         Fa00PF6oh08arRZU2yJVxOFIgeObXn9ZTulhNP07tKuh4oqpqp70M9nP5oX0DFq4uJH0
+         4R+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWStycJc07VjanrajsTVrZreAwto55VTSTdhAzOoamLhYcB4FMAvdEZrmCFpJfwq41rdSZvekoKyAmqQqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXi600Ii2VbkS/3QqIedx3yoyx0kp/1tYQvczXe8Db094tOdXw
+	1yfcgCB5z1OItgQ80cJhj1MIPzYj0GIGf7r60f2nr89J+4rrIGCEIEv7G9Vs5JH7vKo/3jUxTap
+	NhU/SwVAfHJJ6HNcxOeAjwfBIBrjBQkYhx56flJv0zlqTCidSbUQ2f6AKWqAn6yrHzA==
+X-Gm-Gg: ASbGnctss+s/GbWyAi5XHESm1t9wtHr29raDhsqAd21Gep2tTlP578QDzHRMrIDsvpz
+	WRfOyqmg6VJ0oisDqp7dBImd0e6m+QMZuz1h4TexBWM7Vt98IFKF9F5vajFYlNIX0imGge4mMud
+	XMQLNT9RP7GCGpNAjYIXvhmyosdAZjpsXxpQYe8CORK4OZlZxFp4V24aNZfyWYCtVKxTj7Qc28A
+	aUYSBk59esJdPpHQax7wJ8RpO0PFrk8gw1UajCVy9HummXZeM9jTtadt4ON9eVTPa0BpHWYLgF7
+	QitZ7E7xMmbvHiRrLlsgILFz0lcEfCIkMP3yTpyQhQzV7bU3sOx342K4gAk9BWzOBBbIb8LyLgb
+	1CuEF9ISfsJvk/ulo4twIoCKuYhC9JQbyg44L574IjQ9OSLMroG71xSGqG1JEkGc5D9g=
+X-Received: by 2002:a05:600c:1d02:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-459f4fc25cfmr136879145e9.30.1754926438488;
+        Mon, 11 Aug 2025 08:33:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHINfJIfd1vEQZgbnQNpr4RSjW8SQx0Umc0SOrTSEmk4pWketl28AJxCUWIgT4ujrBbIgNggA==
+X-Received: by 2002:a05:600c:1d02:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-459f4fc25cfmr136878395e9.30.1754926437911;
+        Mon, 11 Aug 2025 08:33:57 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58542f3sm257349755e9.10.2025.08.11.08.33.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 08:33:49 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5392c221192so1666335e0c.2;
-        Mon, 11 Aug 2025 08:33:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3uuRanAL/+7bj4JBItiYO8LRNzfQTKb2fgwIw+wapApaau3D/Wz1eLuJjQTXb7kinOLgLX7+UMLNIIy5c@vger.kernel.org, AJvYcCVolxBucZAo38TFR6UpFDHp4dS/oHCgn/wFDl+h0pzVi0rZLxjkQoKyXtCfj++kGKaR/4vTC3y5S7f5@vger.kernel.org, AJvYcCXgoFBn66ft2Z6gZCWhS6E7oVq2Q/0rQat8NaucVI+xu0e1cfIHNAur4O6ufQ3W1zhLtpfHdJ+s0o5FCIKdjI9yf9I=@vger.kernel.org
-X-Received: by 2002:a05:6102:e11:b0:4e9:b0d4:1133 with SMTP id
- ada2fe7eead31-5060f0cddc8mr4601590137.20.1754926429437; Mon, 11 Aug 2025
- 08:33:49 -0700 (PDT)
+        Mon, 11 Aug 2025 08:33:57 -0700 (PDT)
+Message-ID: <cee2e489-d3c9-46d4-8d34-37c637c7bbd8@redhat.com>
+Date: Mon, 11 Aug 2025 17:33:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707153533.287832-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250707153533.287832-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250707153533.287832-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Aug 2025 17:33:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVt0pqEp8TRr23=RcoH83X-nsOWPX4fb1KTj4UVEr0-MA@mail.gmail.com>
-X-Gm-Features: Ac12FXyU2bCfUQIEmVfLSxQC5drJN85wwapoCqc3j4tUvSUjDNtiVp-cG0MBpcc
-Message-ID: <CAMuHMdVt0pqEp8TRr23=RcoH83X-nsOWPX4fb1KTj4UVEr0-MA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] arm64: dts: renesas: r9a09g087: Add I2C controller nodes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC V10 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250811090605.16057-2-shivankg@amd.com>
+ <20250811090605.16057-10-shivankg@amd.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250811090605.16057-10-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 7 Jul 2025 at 17:35, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The Renesas RZ/N2H ("R9A09G087") SoC includes three I2C (RIIC) channels.
-> Adds the device tree nodes for all three I2C controllers to RZ/N2H
-> SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 11.08.25 11:06, Shivank Garg wrote:
+> From: Ackerley Tng <ackerleytng@google.com>
+> 
+> guest_memfd's inode represents memory the guest_memfd is
+> providing. guest_memfd's file represents a struct kvm's view of that
+> memory.
+> 
+> Using a custom inode allows customization of the inode teardown
+> process via callbacks. For example, ->evict_inode() allows
+> customization of the truncation process on file close, and
+> ->destroy_inode() and ->free_inode() allow customization of the inode
+> freeing process.
+> 
+> Customizing the truncation process allows flexibility in management of
+> guest_memfd memory and customization of the inode freeing process
+> allows proper cleanup of memory metadata stored on the inode.
+> 
+> Memory metadata is more appropriately stored on the inode (as opposed
+> to the file), since the metadata is for the memory and is not unique
+> to a specific binding and struct kvm.
+> 
+> Co-developed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 > ---
-> v1->v2:
-> - Fixed W=1 warnings in the device tree files.
-> - Fixed clock for i2c2.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
+[...]
 
-Gr{oetje,eeting}s,
+>   
+>   static int kvm_gmem_migrate_folio(struct address_space *mapping,
+> @@ -463,11 +503,71 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
+>   	return true;
+>   }
+>   
+> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+> +						      loff_t size, u64 flags)
+> +{
+> +	struct inode *inode;
+> +
+> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +
+> +	inode->i_private = (void *)(unsigned long)flags;
+> +	inode->i_op = &kvm_gmem_iops;
+> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> +	inode->i_mode |= S_IFREG;
+> +	inode->i_size = size;
+> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> +	mapping_set_inaccessible(inode->i_mapping);
+> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
+> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+> +
+> +	return inode;
+> +}
+> +
+> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
+> +						  u64 flags)
+> +{
+> +	static const char *name = "[kvm-gmem]";
+> +	struct inode *inode;
+> +	struct file *file;
+> +	int err;
+> +
+> +	err = -ENOENT;
 
-                        Geert
+Maybe add a comment here when the module reference will get
+dropped. And maybe we should just switch to fops_get() + fops_put?
+
+/* __fput() will take care of fops_put(). */
+if (!fops_get(&kvm_gmem_fops))
+	goto err;
+
+> +
+> +	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		goto err_put_module;
+> +	}
+> +
+> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
+> +				 &kvm_gmem_fops);
+> +	if (IS_ERR(file)) {
+> +		err = PTR_ERR(file);
+> +		goto err_put_inode;
+> +	}
+> +
+> +	file->f_flags |= O_LARGEFILE;
+> +	file->private_data = priv;
+> +
+> +out:
+> +	return file;
+> +
+> +err_put_inode:
+> +	iput(inode);
+> +err_put_module:
+> +	module_put(kvm_gmem_fops.owner);
+
+fops_put(&kvm_gmem_fops);
+
+?
+
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Cheers,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+David / dhildenb
+
 
