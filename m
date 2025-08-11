@@ -1,178 +1,207 @@
-Return-Path: <linux-kernel+bounces-763348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2E0B213B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:54:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91235B213BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9123A1A22C87
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049153A578F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F90A2C21D7;
-	Mon, 11 Aug 2025 17:54:30 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03292D4810;
+	Mon, 11 Aug 2025 17:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="atOtRgW4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE29296BDC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423C296BDC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754934869; cv=none; b=FDIj1nCHnK2RcV0rT848DkYKnNOGWsSVLil8JcovPOKNfgjvytLp56fCIqGLIphmp0d+MxmHb2ILtffMWPuGQbBH+oNYBMbhbZxTVfB+H+++2WVPbyFfE2hIhA5T+sAxTGIlRg2zczrUu7WRq9V9wp3fSQ0MSnnO/TAUl6ZLiDM=
+	t=1754934878; cv=none; b=NDWaldO2UPfc4dwnbmLaOkRA5qDmNg9tf4p3R2QwuMZ9BpqRzfACiAauhBjedixSf9fUm+Tcn6UCFmdYfcuac4BZhkyWvRSpZM3aFA2NKR5rneYJcc98E00yARm60WLHu8YP46WCEUmQceK9ubJXjjioqLKCc6Hptbi39xwpmZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754934869; c=relaxed/simple;
-	bh=K8HK3LeDujyGDPXSW9Aw2DJ+0z4MHcTBgoCieOpNleA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YRZNAm9/7acKxe6M+SwobnimY/JCN+zYN4JVcWTNVuHOp8PNyO2d7DWain1BNPjnJs4ev2vJNaqC0On94xFwZta81Q76Lhfofnu7bFOKfylCABLeuxe2v+14kxkvLCS9uPDkFI1sWXsGvm6q+5teGfqkhMA5jIzDvFIxa/8EeQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-881776a2c22so1165000639f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:54:28 -0700 (PDT)
+	s=arc-20240116; t=1754934878; c=relaxed/simple;
+	bh=MrJ+jFM/qeE56lAaauXKmVUo66ueYOU0FMzuxzqgLLM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=MEWhvTe3dqTopir2dX2jKbMUdw9Ya3JYt2nEPLkbMeRMpGlWKUuXG4/OGVDW2wgDKjYovNIE/mHVwf/zQYrQtez53qOgxi4PXENj/C5BC/pbS16Qek6Itq4pXiIDPtDDdf+AHJ+q3RbqqRKHTFNo+XtYo0AXO9dZop2GhB+zHLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=atOtRgW4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754934875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=9om+qqO8G94oegS4pPBf2LrGuOs9ErV038pUk+vcwMA=;
+	b=atOtRgW4OqjdbamWyBy46J4A2yZ87DZza2MRNmcvh79T/M0dkmr58fQso5sudlNJmSqT5s
+	pfjhvsfGHyWgZDajK+iEOiDxa7WzKeYrWxb4lUdyzo7m3l1Wcl2C0/dkkKCRGy2VMmLMAI
+	dRLcYaWnO2EDodfqMq/j/Nodqh3VF7o=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-5845_O0BNZSv1W3Jf2vYGw-1; Mon, 11 Aug 2025 13:54:33 -0400
+X-MC-Unique: 5845_O0BNZSv1W3Jf2vYGw-1
+X-Mimecast-MFC-AGG-ID: 5845_O0BNZSv1W3Jf2vYGw_1754934872
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7891afb31so3446637f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:54:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754934867; x=1755539667;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kg0sEt9Qd63Uea/fJk77XuMQqlvmjKoGqP4UdO9qWRQ=;
-        b=TjSpiZYqtoL4wY5O7etNdlqnx3RcAb8yeG5s/WPULI4ZI5viBJSY7mep7PiJ0oZ/Zo
-         AuUBCoe9LuDeIaWJzRls73LcV6FMnQBd4zPGYAMEyMCYv3vdJ3CM62KiVQvkb+jE1KON
-         inF0aw3oeLBDDrvzX/2+Z90WriVTcyaSdy+/Xv2HJcDaGuoomwGlKyHCPOzShVG4/0f1
-         TqPPPg0lkqZCbFE7mR7JXBCJQb2pfxgYbYdsG8tTNhXnKhFUtCBw8c4owFgLUYRU9LfU
-         qhdGK5gnYbJtNNATmGkqltAwXALC4rNl8IGwtWiRxx5lhT4Vdy69J8FTHwEL0ZBNspPe
-         WRnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEof1Pmk9YKSOFpTvADJaO/V5wLQBwVsuJd8gOQBE1E0AAh/rEknDcAD/4g+TcbUSl6ldDKzk9tTEDxtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCqePJAvzhMP49IK2W8gh0iUIHES92ctcocNagFne1mVy3RFY2
-	JtaOG5tXnVEeMRO4J65LhPOUZANfE+ke7rn9U9KcnqxvOzXRG2RudZzy1pIs+gLo0m37YZbto+L
-	2ReHdrj00DfFkoFjZYq/j9aoFn2/hEwrS4xyqWI/NN0PnLzBsFKbuJRjuCbs=
-X-Google-Smtp-Source: AGHT+IH1GomdFKNp3ljhaRWRiZBZDvsA9Kjtkb6MmS3GgDX5Q3EjEUQs8fxb+jkQL4uuCK9XT8kjA0/AAgnZJHQ9OH+Ng+eOnXlo
+        d=1e100.net; s=20230601; t=1754934872; x=1755539672;
+        h=content-transfer-encoding:organization:autocrypt:subject:cc:to
+         :content-language:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9om+qqO8G94oegS4pPBf2LrGuOs9ErV038pUk+vcwMA=;
+        b=PLKn1jdZSd2WEeh6qoGAfII1yRJrKPAvTNNspSW9lERx0AV94MW4i9yaG11ANDtGpR
+         WL3ek1/550tc0mWbN4IV68w0+k1ZzbZ5/n1dIn/kk5zhDkkw2QkWjT4BnQuSoZce/9NY
+         q+tElda/4SYkh+ArHyaodqgRoYK3siTX/A25I+E6cSS3psDEGqinXBmb/XUV5W+5N8hD
+         oT+plsrBdNRVAQKYcYmlWdkOctkZxbUtl/oXNred3qlZLkxi4aJGqLLSYXgIaZvAL4x3
+         Zgx1YTR0x12inOZ88twpIUW8ASPKcRcJT8kS8ulJ+jtVpmdaZHulkzgtOTVj99ejPqIE
+         M4nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9OUA+ttGK59HUiGJt2awZ7C2uOlrmU6ulFKGJaf7j8FsCCqNhAB5WFFYef0Neg7UR31BEKXDUq+MZZbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzboZWU3jJ2tg/rywKgPzbkboSTnxi1bPjKXgOsIiLD9k8br/RY
+	2E6DCiT4Si0h2aMAovd70Oz4P4cqTmF0/BTbd/ubWTl2Q/FeKzaSvYOTTKIOQQkcqCziCOZoSyU
+	T+ESgfNWJD8/JTqHv/2uxivUnYq1ZoOqro+AfRS3hshYSZGR9E+Vjs9rs6X7zcTr4M3ywyOgkKG
+	hZ
+X-Gm-Gg: ASbGncuZIo1TtnMaCXllLMg4PGHQF8wrL44eHdF4gG3bbWqLwcepglU+EvO9cWCUw9d
+	HzmAXJbes5BrhC5tQq4zEOP2VcPs2vHpQ9t6a0cDTIj248CBORacEByZhlkMWKSrZkOExSNo4Lz
+	OJ4YMVHise68PenYPRDsl5OM6js4tyE590wphwF+KP8j0Z7prIZdXOt1vbAnCltdyMmRmXMz4Nc
+	IT27HOiDIzpNBpMjSl3O2p+QpPchBU5dFnVa5kjneEeC8pcl+Jl544NCBIcOVD4HnI+HVU0Y4/k
+	Y1BusptJ7dzoNvrSkyIgA8r2UQ3t5wWXd0lizJs+Mtyc/1Zzs145uMsa5Fv2su49GFWNLEX+2Ek
+	51ubcmBcqARdq/neBpQ1bTJ1FEr6Edj75alcQ5EzFkQmFvU3qbA7Uh++QuhbvwPamTzc=
+X-Received: by 2002:a05:6000:40de:b0:3b7:9350:44d4 with SMTP id ffacd0b85a97d-3b900b49960mr11535138f8f.11.1754934872365;
+        Mon, 11 Aug 2025 10:54:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUrZqJM8lPLbvZNhW2crgDKNR3EikOOGR0IxCBJv8fwqNeUnk26Qg7O6HdkMRGrEmcbXp7dg==
+X-Received: by 2002:a05:6000:40de:b0:3b7:9350:44d4 with SMTP id ffacd0b85a97d-3b900b49960mr11535120f8f.11.1754934871895;
+        Mon, 11 Aug 2025 10:54:31 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c4d02sm40242259f8f.33.2025.08.11.10.54.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 10:54:31 -0700 (PDT)
+Message-ID: <284f04e0-6555-4469-93b4-fdfc0dc7b91b@redhat.com>
+Date: Mon, 11 Aug 2025 19:54:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:7198:b0:87c:3d17:6608 with SMTP id
- ca18e2360f4ac-8841bcd5326mr118113139f.0.1754934867552; Mon, 11 Aug 2025
- 10:54:27 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:54:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689a2e53.050a0220.51d73.00a1.GAE@google.com>
-Subject: [syzbot] [io-uring?] WARNING in vmap_small_pages_range_noflush
-From: syzbot <syzbot+7f04e5b3fea8b6c33d39@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+To: "linux-mm@kvack.org" <linux-mm@kvack.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [ANNOUNCE/CFP] LPC 2025 Kernel Memory Management Microconference
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+we will have another instance of the
 
-HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10850ea2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5f2996d42fef6c09
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f04e5b3fea8b6c33d39
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ec9042580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14850ea2580000
+	Kernel Memory Management Microconference [1]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5166c0e1d4f0/disk-6e64f458.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0d6654192cf8/vmlinux-6e64f458.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/239aaa681481/bzImage-6e64f458.xz
+co-lead by Matthew Wilcox and myself at the Linux Plumbers Conference
+(LPC), December 11-13, Tokyo, Japan [2].
 
-The issue was bisected to:
+Due to our past experience with remote presentations, we will only
+accept in-person talks this year, unfortunately.
 
-commit 087f997870a948820ec366701d178f402c6a23a3
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Nov 29 13:34:32 2024 +0000
+Topics we are looking for are pretty much anything that would be of
+interest to the Kernel Memory Management community.
 
-    io_uring/memmap: implement mmap for regions
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=157afea2580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=177afea2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=137afea2580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7f04e5b3fea8b6c33d39@syzkaller.appspotmail.com
-Fixes: 087f997870a9 ("io_uring/memmap: implement mmap for regions")
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5851 at mm/vmalloc.c:542 vmap_pages_pte_range mm/vmalloc.c:542 [inline]
-WARNING: CPU: 1 PID: 5851 at mm/vmalloc.c:542 vmap_pages_pmd_range mm/vmalloc.c:569 [inline]
-WARNING: CPU: 1 PID: 5851 at mm/vmalloc.c:542 vmap_pages_pud_range mm/vmalloc.c:587 [inline]
-WARNING: CPU: 1 PID: 5851 at mm/vmalloc.c:542 vmap_pages_p4d_range mm/vmalloc.c:605 [inline]
-WARNING: CPU: 1 PID: 5851 at mm/vmalloc.c:542 vmap_small_pages_range_noflush+0x984/0xc90 mm/vmalloc.c:627
-Modules linked in:
-CPU: 1 UID: 0 PID: 5851 Comm: syz-executor194 Not tainted 6.16.0-syzkaller-11952-g6e64f4580381 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:vmap_pages_pte_range mm/vmalloc.c:542 [inline]
-RIP: 0010:vmap_pages_pmd_range mm/vmalloc.c:569 [inline]
-RIP: 0010:vmap_pages_pud_range mm/vmalloc.c:587 [inline]
-RIP: 0010:vmap_pages_p4d_range mm/vmalloc.c:605 [inline]
-RIP: 0010:vmap_small_pages_range_noflush+0x984/0xc90 mm/vmalloc.c:627
-Code: 4d 89 f4 4d 21 ec 4c 89 e7 e8 98 6c ab ff 4d 39 ec 75 68 e8 de 71 ab ff 4c 09 eb e9 c8 fd ff ff 4c 8b 34 24 e8 cd 71 ab ff 90 <0f> 0b 90 e9 fc fe ff ff e8 bf 71 ab ff 4c 89 e7 e8 07 00 f7 ff 31
-RSP: 0018:ffffc90002ea7990 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffea0003000000 RCX: ffffffff82101e9f
-RDX: ffff888025be2440 RSI: ffffffff82102153 RDI: 0000000000000005
-RBP: ffff8880505c4508 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 8000000000000163 R14: 1ffff920005d4f47 R15: ffffc900602a1000
-FS:  000055557d51e380(0000) GS:ffff8881247c4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055dad0a404b0 CR3: 0000000071b22000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __vmap_pages_range_noflush mm/vmalloc.c:656 [inline]
- vmap_pages_range_noflush mm/vmalloc.c:681 [inline]
- vmap_pages_range mm/vmalloc.c:701 [inline]
- vmap+0x1aa/0x320 mm/vmalloc.c:3515
- io_region_init_ptr io_uring/memmap.c:125 [inline]
- io_create_region+0x605/0xd40 io_uring/memmap.c:228
- io_create_region_mmap_safe+0xb2/0x170 io_uring/memmap.c:245
- io_register_mem_region io_uring/register.c:616 [inline]
- __io_uring_register+0x59f/0x2440 io_uring/register.c:836
- __do_sys_io_uring_register io_uring/register.c:929 [inline]
- __se_sys_io_uring_register io_uring/register.c:906 [inline]
- __x64_sys_io_uring_register+0x169/0x280 io_uring/register.c:906
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff9c19ee429
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffec21487c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 0000000000000045 RCX: 00007ff9c19ee429
-RDX: 0000200000000200 RSI: 0000000000000022 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 00007ff9c1a66220
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000200000000300
-R13: 0000200000000100 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+In particular, we are are also interested in topic suggestions from
+outside the core-kernel community (user space, drivers, architectures,
+...) that would affect memory management in the kernel.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Example topics that might be worth discussing this year include:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+* Making Transparent Huge Pages more ... transparent (toggles, policies,
+   khugepaged, ...)
+* Making (m)THP/large folios a first-class citizen in MM
+* What other improvements might we see from mTHP?
+* Where to use eBPF in MM, and where not
+* Ongoing challenges with memdescs (e.g., allocation/freeing/walking)
+* How might we make allocations guaranteed to not fail?
+* Which CXL use cases do we want to support, and how far should we go?
+* Challenges with hypervisor live-update, and the integration into other
+   subsystems (MM, drivers, etc)
+* guest_memfd and the interaction with other MM subsystems (hugetlb,
+   GUP, ...)
+* Making hugetlb less weird
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Please submit your proposals at:
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+	https://lpc.events/event/19/abstracts/
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+and select "Kernel Memory Management MC" as the track.
 
-If you want to undo deduplication, reply with:
-#syz undup
+Please submit your proposals by September 30th to allow us for
+planning the schedule on time.
+
+Note that a microconference talk should provide sufficient context to
+have an open discussion about the topic presented. When planning for
+your talk, please absolutely leave sufficient time for such discussions.
+
+
+We are looking forward to your proposals and seeing you in Tokyo!
+
+
+[1] https://lpc.events/event/19/contributions/1995/
+[2] https://lpc.events/
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
