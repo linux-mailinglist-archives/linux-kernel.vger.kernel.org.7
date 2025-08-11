@@ -1,424 +1,157 @@
-Return-Path: <linux-kernel+bounces-761880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4523B1FF94
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C017B1FFF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C3F189BEB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EB1189C29B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEC52D97A3;
-	Mon, 11 Aug 2025 06:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE2C2D97B8;
+	Mon, 11 Aug 2025 07:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="r1W/3gWT"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSgMoSnb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2822D77F1;
-	Mon, 11 Aug 2025 06:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8A32561AB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754894817; cv=none; b=J7JPoO/vAgLcJaO2AmkOKQc0dj8LgdGynwAUortArmcqW3o7dSW88CnF1x9f7wu1gfHQ0zlCWq7ticSKRy/PsZlmkDfOCu2JIyObo6jGeNmRwE5PJFZv/Z6B3srYkNyw2Kn+6ejYSxciazADkTREVbi6bHJn+bI46XLDrG01c08=
+	t=1754896180; cv=none; b=hZ4ChNtL+KB1WaVUJnmVzH54b4SDdqXReZQ9+oCOuWTmHbwJ5osP2wCfHxAoasm6zTWfBETXiWum1RjF3ZXldUIpsD1HzN6ps0xUG+q0cCCP4uENDDzaD6Qy0fbXf8dUoLuogH22KN/hEgJFNLwpT45CUkePfaPB2/ACQCVPYqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754894817; c=relaxed/simple;
-	bh=rc1bITCVNlHfS8AG5qXT+5Kgla+zoPabCKwl8khR1yY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QxG9yKMsmVpqjbwdyCddfp0VqGfbKw6SobR3XnVfGN1qoIOypMSrYsY+bKUTIt2VEoDUclAFU2SGiCBrc1dEyAJrIYj+egl0hMXESvt/Wf2OJTccMmWP4/SQdJSHeXw/h2+egZ2cjCPIjOmVF1yPyA5aufEwkRjYYrdhoPX3sek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=r1W/3gWT; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=YI8nSK3pDhA4y88O+/crLV9isyigf3E4ksFRw5WalPw=; b=r1W/3gWTqyRMMsqIbXnpvu1YTY
-	mNvmj0N2p3h4VAZzTA+RZ19LCE03vksvNVDVp5zcLVVn+H4oB4BZiVliZg/XFrvWv3a+iPSamfQDd
-	RX8xUNIrQeyl4Dwm2A8QLn37dej56rc9LlXJdRuKsafh4EoZOIhuspusfQc8DCHKBLd8KrmTrbUON
-	Ja9kjwDxGbcRpOxvYBYnyuz/yfzfNQn/Y8BomNw7/nekO1khxzIWn+1CZJ+3bHc0F4oDbKQGCPoZT
-	ihzvyiyvGsYPRcgpzrj7nyGrUBXcEzAim0ahM8F8xDEgyr59H0ZloFDe9p3QgbHeNqopYh+RF1uNP
-	3q/3e8qg==;
-Received: from [223.233.69.163] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1ulMJ1-00Cdun-TF; Mon, 11 Aug 2025 08:46:52 +0200
-From: Bhupesh <bhupesh@igalia.com>
-To: akpm@linux-foundation.org
-Cc: bhupesh@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	oliver.sang@intel.com,
-	lkp@intel.com,
-	laoar.shao@gmail.com,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl,
-	peterz@infradead.org,
-	willy@infradead.org,
-	david@redhat.com,
-	viro@zeniv.linux.org.uk,
-	keescook@chromium.org,
-	ebiederm@xmission.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-trace-kernel@vger.kernel.org,
-	kees@kernel.org,
-	torvalds@linux-foundation.org
-Subject: [PATCH v7 4/4] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
-Date: Mon, 11 Aug 2025 12:16:09 +0530
-Message-Id: <20250811064609.918593-5-bhupesh@igalia.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250811064609.918593-1-bhupesh@igalia.com>
-References: <20250811064609.918593-1-bhupesh@igalia.com>
+	s=arc-20240116; t=1754896180; c=relaxed/simple;
+	bh=7z//XUu8T6I5PWiVUYkgzX56lekKtAuXc9LA1vkAIVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldzAAqBK6HIyr3FkfHpR97woa5VdxVHkCWWczb6kve1BHcNidhWqJrjLf95Z7/+6AyJslgHfhlaH8YUsmbxE63TBlhWRhlnH7i4DWRzDGh7UZrhdaYakVPLazHih9hNemw1EPBBfIwrKu69RiWLajAtmz6e8PEvhZRdmKqG17U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSgMoSnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEEBC4AF09;
+	Mon, 11 Aug 2025 07:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754896179;
+	bh=7z//XUu8T6I5PWiVUYkgzX56lekKtAuXc9LA1vkAIVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jSgMoSnbXdeC3hTmMa5rxqnU+TWuL44ft9yhN6jzlYEmA7jwdSGYiQnLF6BFOYKsr
+	 5R/fr9QjyFbzxrlBrIv2gCok7gC8JkgAppw6IXD/F87bUVX5sLc2JR+i0hiKjHB/eg
+	 cfP9T2kKrEeWB53CBUEIYKgIVeFsIdkopEWkV1obWsWDyqrTyQ0SMRBRBszN1XGf6p
+	 a/x4EjKoAuphTOp/i4iZkdRFQSga+eMCJZDAvNlPeoiQXnyWXFuLlWT0mOaSgKnz9o
+	 oU2KCRXlBAKJHbtJRS6w71U3Eb8UeQ9PSpr4qZWggtwXe60/vHe8hYUg6SLwi5/Qqk
+	 j0QU/Hr3uRHzA==
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 61606F40068;
+	Mon, 11 Aug 2025 03:09:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 11 Aug 2025 03:09:37 -0400
+X-ME-Sender: <xms:MZeZaAKhv47jBdQVbZBUzCxovzHYH_0rrP55uhLzR3Dqu-Hy8rtmog>
+    <xme:MZeZaDm4-FA4AmkgD2YQQA1xH-F3sHPexYTS35ALEVFWRqWFjvQXtfar8y28gGpiS
+    cXt0_A1OFnzm3zDBmM>
+X-ME-Received: <xmr:MZeZaM-CyM-RA_V15WzO_HJwVVjXwS5bJQX1q813TA-nJyYUmhcLGBheIsW3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedukeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepkedtpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehhrghrrhihrdihohhosehorhgrtghlvgdrtghomhdprhgtphhtthhopeguvghnnh
+    hisheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhu
+    nhgurghtihhonhdrohhrghdprhgtphhtthhopehrhigrsghinhhinhdrrgdrrgesghhmrg
+    hilhdrtghomhdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvg
+    grugdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepthhglhigsehlihhnuhhtrhhonhhigidruggv
+X-ME-Proxy: <xmx:MZeZaGZbB5w_M42lUmZvSVfIC5VjvScMKskxvkLxG0mVV0m3V7kKAw>
+    <xmx:MZeZaBc00jAWL5dtGe5myKZzMdQ7PLHS6rajsmRqWQuvhtwgycMP1g>
+    <xmx:MZeZaGGN3-BRzRyZ3VTcErLpqp_9MdvkA37zFIuvtc29YHSY7cqBRg>
+    <xmx:MZeZaEPqxrTYCm-gaYlP41qi_-NhCIWpAR2UzkynZnOmQu5E2MBG4Q>
+    <xmx:MZeZaO4ZV2QSxZoQAn7qeAHqpWYLVxkPnxGf8XyRRwOEAG9Iw4NuNkCY>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 03:09:36 -0400 (EDT)
+Date: Mon, 11 Aug 2025 07:46:13 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Dennis Zhou <dennis@kernel.org>,
+ 	Andrew Morton <akpm@linux-foundation.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
+ 	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
+ 	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ 	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ 	Dave Hansen <dave.hansen@linux.intel.com>,
+ Christoph Lameter <cl@gentwo.org>, 	David Hildenbrand <david@redhat.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>,
+ 	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, kasan-dev@googlegroups.com,
+ 	Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-kernel@vger.kernel.org, 	Dmitry Vyukov <dvyukov@google.com>,
+ Alexander Potapenko <glider@google.com>,
+ 	Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, 	Thomas Huth <thuth@redhat.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Michal Hocko <mhocko@suse.com>,
+ 	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
+ Oscar Salvador <osalvador@suse.de>, 	Jane Chu <jane.chu@oracle.com>,
+ Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+ 	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+ Joerg Roedel <joro@8bytes.org>, 	Alistair Popple <apopple@nvidia.com>,
+ Joao Martins <joao.m.martins@oracle.com>, 	linux-arch@vger.kernel.org
+Subject: Re: [PATCH V4 mm-hotfixes 0/3] mm, x86: fix crash due to missing
+ page table sync and make it harder to miss
+Message-ID: <qsprh2qiisldfsielpx6inuiw3rrh5owr3urin7maxvwtlhipz@zbioc6hgqe3r>
+References: <20250811053420.10721-1-harry.yoo@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811053420.10721-1-harry.yoo@oracle.com>
 
-As Linus mentioned in [1], currently we have several memcpy() use-cases
-which use 'current->comm' to copy the task name over to local copies.
-For an example:
+On Mon, Aug 11, 2025 at 02:34:17PM +0900, Harry Yoo wrote:
+> # The solution: Make page table sync more code robust and harder to miss
+> 
+> To address this, Dave Hansen suggested [3] [4] introducing
+> {pgd,p4d}_populate_kernel() for updating kernel portion
+> of the page tables and allow each architecture to explicitly perform
+> synchronization when installing top-level entries. With this approach,
+> we no longer need to worry about missing the sync step, reducing the risk
+> of future regressions.
 
- ...
- char comm[TASK_COMM_LEN];
- memcpy(comm, current->comm, TASK_COMM_LEN);
- ...
+Looks sane:
 
-These should be rather calling a wrappper like "get_task_array()",
-which is implemented as:
+Acked-by: Kiryl Shutsemau <kas@kernel.org>
 
-   static __always_inline void
-       __cstr_array_copy(char *dst,
-            const char *src, __kernel_size_t size)
-   {
-        memcpy(dst, src, size);
-        dst[size] = 0;
-   }
+> The new interface reuses existing ARCH_PAGE_TABLE_SYNC_MASK,
+> PGTBL_P*D_MODIFIED and arch_sync_kernel_mappings() facility used by
+> vmalloc and ioremap to synchronize page tables.
+> 
+> pgd_populate_kernel() looks like this:
+> static inline void pgd_populate_kernel(unsigned long addr, pgd_t *pgd,
+>                                        p4d_t *p4d)
+> {
+>         pgd_populate(&init_mm, pgd, p4d);
+>         if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_PGD_MODIFIED)
+>                 arch_sync_kernel_mappings(addr, addr);
+> }
+> 
+> It is worth noting that vmalloc() and apply_to_range() carefully
+> synchronizes page tables by calling p*d_alloc_track() and
+> arch_sync_kernel_mappings(), and thus they are not affected by
+> this patch series.
 
-   #define get_task_array(dst,src) \
-      __cstr_array_copy(dst, src, __must_be_array(dst))
+Well, except ARCH_PAGE_TABLE_SYNC_MASK is not defined on x86-64 until
+now. So I think it is affected.
 
-The relevant 'memcpy()' users were identified using the following search
-pattern:
- $ git grep 'memcpy.*->comm\>'
-
-[1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
-
-Signed-off-by: Bhupesh <bhupesh@igalia.com>
----
- include/linux/coredump.h                      |  2 +-
- include/linux/sched.h                         | 32 +++++++++++++++++++
- include/linux/tracepoint.h                    |  4 +--
- include/trace/events/block.h                  | 10 +++---
- include/trace/events/oom.h                    |  2 +-
- include/trace/events/osnoise.h                |  2 +-
- include/trace/events/sched.h                  | 13 ++++----
- include/trace/events/signal.h                 |  2 +-
- include/trace/events/task.h                   |  4 +--
- tools/bpf/bpftool/pids.c                      |  6 ++--
- .../bpf/test_kmods/bpf_testmod-events.h       |  2 +-
- 11 files changed, 54 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 68861da4cf7c..bcee0afc5eaf 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -54,7 +54,7 @@ extern void vfs_coredump(const kernel_siginfo_t *siginfo);
- 	do {	\
- 		char comm[TASK_COMM_LEN];	\
- 		/* This will always be NUL terminated. */ \
--		memcpy(comm, current->comm, sizeof(comm)); \
-+		get_task_array(comm, current->comm); \
- 		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
- 			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
- 	} while (0)	\
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 97ea2ac2a97a..6602ec132297 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1960,12 +1960,44 @@ extern void wake_up_new_task(struct task_struct *tsk);
- 
- extern void kick_process(struct task_struct *tsk);
- 
-+/*
-+ * - Why not use task_lock()?
-+ *   User space can randomly change their names anyway, so locking for readers
-+ *   doesn't make sense. For writers, locking is probably necessary, as a race
-+ *   condition could lead to long-term mixed results.
-+ *   The logic inside __set_task_comm() should ensure that the task comm is
-+ *   always NUL-terminated and zero-padded. Therefore the race condition between
-+ *   reader and writer is not an issue.
-+ */
-+
- extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
- #define set_task_comm(tsk, from) ({			\
- 	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
- 	__set_task_comm(tsk, from, false);		\
- })
- 
-+/*
-+ * 'get_task_array' can be 'data-racy' in the destination and
-+ * should not be used for cases where a 'stable NUL at the end'
-+ * is needed. Its better to use strscpy and friends for such
-+ * use-cases.
-+ *
-+ * It is suited mainly for a 'just copy comm to a constant-sized
-+ * array' case - especially in performance sensitive use-cases,
-+ * like tracing.
-+ */
-+
-+static __always_inline void
-+	__cstr_array_copy(char *dst, const char *src,
-+			  __kernel_size_t size)
-+{
-+	memcpy(dst, src, size);
-+	dst[size] = 0;
-+}
-+
-+#define get_task_array(dst, src) \
-+	__cstr_array_copy(dst, src, __must_be_array(dst))
-+
- static __always_inline void scheduler_ipi(void)
- {
- 	/*
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 826ce3f8e1f8..40e04cb660ce 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -570,10 +570,10 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-  *	*
-  *
-  *	TP_fast_assign(
-- *		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-+ *		get_task_array(__entry->next_comm, next->comm);
-  *		__entry->prev_pid	= prev->pid;
-  *		__entry->prev_prio	= prev->prio;
-- *		memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
-+ *		get_task_array(__entry->prev_comm, prev->comm);
-  *		__entry->next_pid	= next->pid;
-  *		__entry->next_prio	= next->prio;
-  *	),
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index 6aa79e2d799c..de1fe35333fc 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -213,7 +213,7 @@ DECLARE_EVENT_CLASS(block_rq,
- 
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, current->comm);
- 	),
- 
- 	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u [%s]",
-@@ -351,7 +351,7 @@ DECLARE_EVENT_CLASS(block_bio,
- 		__entry->sector		= bio->bi_iter.bi_sector;
- 		__entry->nr_sector	= bio_sectors(bio);
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, current->comm);
- 	),
- 
- 	TP_printk("%d,%d %s %llu + %u [%s]",
-@@ -434,7 +434,7 @@ TRACE_EVENT(block_plug,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, current->comm);
- 	),
- 
- 	TP_printk("[%s]", __entry->comm)
-@@ -453,7 +453,7 @@ DECLARE_EVENT_CLASS(block_unplug,
- 
- 	TP_fast_assign(
- 		__entry->nr_rq = depth;
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, current->comm);
- 	),
- 
- 	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
-@@ -504,7 +504,7 @@ TRACE_EVENT(block_split,
- 		__entry->sector		= bio->bi_iter.bi_sector;
- 		__entry->new_sector	= new_sector;
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
--		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, current->comm);
- 	),
- 
- 	TP_printk("%d,%d %s %llu / %llu [%s]",
-diff --git a/include/trace/events/oom.h b/include/trace/events/oom.h
-index 9f0a5d1482c4..31e5b7295188 100644
---- a/include/trace/events/oom.h
-+++ b/include/trace/events/oom.h
-@@ -23,7 +23,7 @@ TRACE_EVENT(oom_score_adj_update,
- 
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, task->comm);
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
- 
-diff --git a/include/trace/events/osnoise.h b/include/trace/events/osnoise.h
-index 3f4273623801..f67f8b5eca75 100644
---- a/include/trace/events/osnoise.h
-+++ b/include/trace/events/osnoise.h
-@@ -116,7 +116,7 @@ TRACE_EVENT(thread_noise,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, t->comm);
- 		__entry->pid = t->pid;
- 		__entry->start = start;
- 		__entry->duration = duration;
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 7b2645b50e78..66fe808f2654 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -152,7 +152,7 @@ DECLARE_EVENT_CLASS(sched_wakeup_template,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, p->comm);
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->target_cpu	= task_cpu(p);
-@@ -237,11 +237,11 @@ TRACE_EVENT(sched_switch,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->prev_comm, prev->comm);
- 		__entry->prev_pid	= prev->pid;
- 		__entry->prev_prio	= prev->prio;
- 		__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
--		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->next_comm, next->comm);
- 		__entry->next_pid	= next->pid;
- 		__entry->next_prio	= next->prio;
- 		/* XXX SCHED_DEADLINE */
-@@ -346,7 +346,7 @@ TRACE_EVENT(sched_process_exit,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, p->comm);
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->group_dead	= group_dead;
-@@ -787,14 +787,13 @@ TRACE_EVENT(sched_skip_cpuset_numa,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, tsk->comm);
- 		__entry->pid		 = task_pid_nr(tsk);
- 		__entry->tgid		 = task_tgid_nr(tsk);
- 		__entry->ngid		 = task_numa_group_id(tsk);
- 		BUILD_BUG_ON(sizeof(nodemask_t) != \
- 			     BITS_TO_LONGS(MAX_NUMNODES) * sizeof(long));
--		memcpy(__entry->mem_allowed, mem_allowed_ptr->bits,
--		       sizeof(__entry->mem_allowed));
-+		get_task_array(__entry->mem_allowed, mem_allowed_ptr->bits);
- 	),
- 
- 	TP_printk("comm=%s pid=%d tgid=%d ngid=%d mem_nodes_allowed=%*pbl",
-diff --git a/include/trace/events/signal.h b/include/trace/events/signal.h
-index 1db7e4b07c01..0681dc5ab1de 100644
---- a/include/trace/events/signal.h
-+++ b/include/trace/events/signal.h
-@@ -67,7 +67,7 @@ TRACE_EVENT(signal_generate,
- 	TP_fast_assign(
- 		__entry->sig	= sig;
- 		TP_STORE_SIGINFO(__entry, info);
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, task->comm);
- 		__entry->pid	= task->pid;
- 		__entry->group	= group;
- 		__entry->result	= result;
-diff --git a/include/trace/events/task.h b/include/trace/events/task.h
-index af535b053033..9553946943a6 100644
---- a/include/trace/events/task.h
-+++ b/include/trace/events/task.h
-@@ -21,7 +21,7 @@ TRACE_EVENT(task_newtask,
- 
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, task->comm);
- 		__entry->clone_flags = clone_flags;
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
-@@ -44,7 +44,7 @@ TRACE_EVENT(task_rename,
- 	),
- 
- 	TP_fast_assign(
--		memcpy(entry->oldcomm, task->comm, TASK_COMM_LEN);
-+		get_task_array(entry->oldcomm, task->comm);
- 		strscpy(entry->newcomm, comm, TASK_COMM_LEN);
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
-diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-index 23f488cf1740..a5d339cb8ca3 100644
---- a/tools/bpf/bpftool/pids.c
-+++ b/tools/bpf/bpftool/pids.c
-@@ -53,8 +53,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
- 		refs->refs = tmp;
- 		ref = &refs->refs[refs->ref_cnt];
- 		ref->pid = e->pid;
--		memcpy(ref->comm, e->comm, sizeof(ref->comm));
--		ref->comm[sizeof(ref->comm) - 1] = '\0';
-+		get_task_array(ref->comm, e->comm);
- 		refs->ref_cnt++;
- 
- 		return;
-@@ -77,8 +76,7 @@ static void add_ref(struct hashmap *map, struct pid_iter_entry *e)
- 	}
- 	ref = &refs->refs[0];
- 	ref->pid = e->pid;
--	memcpy(ref->comm, e->comm, sizeof(ref->comm));
--	ref->comm[sizeof(ref->comm) - 1] = '\0';
-+	get_task_array(ref->comm, e->comm);
- 	refs->ref_cnt = 1;
- 	refs->has_bpf_cookie = e->has_bpf_cookie;
- 	refs->bpf_cookie = e->bpf_cookie;
-diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod-events.h b/tools/testing/selftests/bpf/test_kmods/bpf_testmod-events.h
-index aeef86b3da74..81880748550f 100644
---- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod-events.h
-+++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod-events.h
-@@ -20,7 +20,7 @@ TRACE_EVENT(bpf_testmod_test_read,
- 	),
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
--		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		get_task_array(__entry->comm, task->comm);
- 		__entry->off = ctx->off;
- 		__entry->len = ctx->len;
- 	),
 -- 
-2.38.1
-
+Kiryl Shutsemau / Kirill A. Shutemov
 
