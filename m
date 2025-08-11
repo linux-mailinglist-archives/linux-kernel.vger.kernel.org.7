@@ -1,136 +1,163 @@
-Return-Path: <linux-kernel+bounces-761764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85977B1FE2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:28:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A9EB1FE36
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6291898FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F337AB4B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B08C2D8390;
-	Mon, 11 Aug 2025 03:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1750A2550DD;
+	Mon, 11 Aug 2025 03:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="LPXkXzj+"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WC/qE3sm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBEF2D661D;
-	Mon, 11 Aug 2025 03:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37E3157A72
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754882801; cv=none; b=G2G6ROJUAmGc8+gSpKEAfJJwAmBIWdOx2idDN+hnMQGLMk/O6f+LOzHM87hGMpxowdZYQGk1Tr7FeXfLZ6sn787ish9P/5jHR/cVRTDQCv5mVFrt48yWkG8yXx1eJni21F6XGpPXk9uzLfaWY1TGD+AepFDc5YjPb08wITIIHDs=
+	t=1754883547; cv=none; b=Mln9qrlJ6pWBClQAHxr6utjVdLNWiJh2N7mbE7vUlwQ7JNB9UtXsbyXB8do7LSjcxGOuX8yNZLC7Y3M0iBMQSohjkuaEE/hlI4uKLTdtOhb8Rn9sc3Rq4dGvljA1i98Zg2tVdpdXhtImn3dcSrUVxI5WYOzFfgY8or2BwuvPDZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754882801; c=relaxed/simple;
-	bh=VkvH6Buso6lrWIYra616eiCuQkUS05CN7ivD1UTUDL4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MgDvp92IyEM2Flm/hJR6S0ZVnXgSqCOEBUTxkli3grlRQox6jbyzpkM/t34KTSxFbdF10rPOiyrsRhCJq4toBcYEodDRupUFqFXH4FdQss4hWuCKsQbgDAX3a7X6GT+OtGW/vlBKlVouqIOJHccVAM9mfUx8GoJz+WNYsO7fsa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=LPXkXzj+; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: fb6bd0b6766211f08871991801538c65-20250811
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=cn3htOReln+vOcAcfeE1LgSCT/Ev3OONSHgeMyS579U=;
-	b=LPXkXzj+SYCfBTtp62gA8MVwjVD6P7IPcmD6nCTzmjBnfHCoVFyjgQgcpWJAqtVPhl/5YBLVUsJQbhnxoWN59EibZDuRWkwnKkMacpk0Up11SBqRmSKpFjQyUKSXd3fdabG/sTBNxpp2tyhR1zK+tK8Dl5QKjCP20tJp+FhI7cU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:afdb011c-f104-4450-b10e-522252842a3a,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:f1326cf,CLOUDID:08dd4aa1-1800-4e4f-b665-a3d622db32cf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: fb6bd0b6766211f08871991801538c65-20250811
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 987492242; Mon, 11 Aug 2025 11:26:34 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 11 Aug 2025 11:26:27 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 11 Aug 2025 11:26:26 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen
-	<andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, "Mauro
- Carvalho Chehab" <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Sebastian Fricke
-	<sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, "Arnd
- Bergmann" <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, George Sun
-	<george.sun@mediatek.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
-	<andrzejtp2010@gmail.com>
-Subject: [PATCH v2 8/8] media: mediatek: encoder: Add MT8189 encoder compatible data
-Date: Mon, 11 Aug 2025 11:26:15 +0800
-Message-ID: <20250811032616.1385-9-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250811032616.1385-1-kyrie.wu@mediatek.com>
-References: <20250811032616.1385-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1754883547; c=relaxed/simple;
+	bh=UKXIMrT2Im5is+rCn4dnrZDMosC6fGU2BCT6Wq0lgPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t2k8mmSpRu8WnF4jFPBy6/aCAbWi1YgbpOAqvC5e4mfr9T081BNkxOUfXy1NO5kFzjb53+eGXaUUCj8fiBKcyl8/AJH9tjQmBA5Wsb02puz1EdzT+Jqax6W9a/r+1V+od3qVAqWZS9GAgo59BaEkI0Ljirjk9Z2WBmr0YzWSnTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WC/qE3sm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57ANpG3P001291
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:39:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xDApZTk2nZE28clF+a8J2J6VpLUbqhxAq5BNgHbqkVQ=; b=WC/qE3sm/sFHSjfM
+	Eq1frOQdIz3EYmhZ/Rt+FViEcfWEgdAeMTwPSnPbL/VqwNyR5jhuunseF/GN9Huq
+	GPy79k0grjX9xI1Cdz7+J2tDjgmVxiPasq5QMmkrKOyrF4XwjKaAterf4BUe9fVF
+	VJltC44rz6NCghASUn0WxQHi+uYetcrzDOWwOK0TkVBdfr+dWRy3xy+naMiK67Rd
+	XMWPuPS63gAqfTKpagrsDZNt6fCossLsL0I+uZpgYMoNYI9a+NWT7P3522VB3Ljf
+	qu5gSVAeVzJmZFQHt01QfkbfzCp9HZzehFQ4+qV57AhlKi1q8SvSy0yruPqnSSMP
+	I/LuOA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dv1fk7dr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:39:05 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so8720731a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 20:39:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754883544; x=1755488344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xDApZTk2nZE28clF+a8J2J6VpLUbqhxAq5BNgHbqkVQ=;
+        b=EZq5o/frN4u0Mak2QO95tpV/hyq0You5cqc0MaLeW70DlzZH55FzQvwDWww29LVyHC
+         xFBIi3Hu+0ra+pMXQNe+s5DYgSnFQVFk43b06tB6Ov1DHxviHp4qk54eQhei9/IRCK6r
+         a+oWyVGTJwNk95d00K7P8LtkG4BB4QNKk6SW1cFSJgBy4shXhGGb+Rdfxx3ksVf+ce0N
+         NsV/8VqKudcQMyqinTMlBlZxHT7/TeA+by+/OOOzifIuif35NpwFfRzEikcYuq5yMZfh
+         SPzJ5II6H5WdRze3EC7JjsbDgbOUxI5J54ZaRiYXR20/iwRyHJ2DYxw/B94fzGP1ej1p
+         q3FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUsObU9ft10epqZLfvrNIp3rh2bUtbW75ZshDgaJBaM9EO6kBYmrX8d66J/JPOacaXtReF4fzBMSxqpJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfP4nKXPuTHpxYjS3gfnHeOVh/dmz9D2b1EvLchaZ0yNN5cAwO
+	VuHOLLFQ12MWW/CSJpT9ntNy+2FTj9A42xXv9UedCamcZM6WrhzwA/7BEskiiVJZdhDbajaz5Lv
+	msTxkzZJR8zi0wVXA79aFhaDdZLcxYoGE0Yeb3B0ZN6oA1tn8Grvk6kJOiNr6ZBRwyxs=
+X-Gm-Gg: ASbGncvIbxrdCN7fsfozPYNV4G96KvODIlyjFlpI28AS+Ri38VvZ7qomUNIs16vrY1Q
+	iIokB5DmEDqUxU4jiR9imqcQgGYT1y3dh/ITtKjIgB3Yd+3H8evJf4qiBqzXg5rLemCsuKBYuWV
+	8gIyuZ3xyT4T7ET+fISF/JB0n3/sbjqmBQoegzOwpyMH6ZE/xk3HgTwH9edpJQbhuIV66gWGkQG
+	10J09SjtbqXYRn35fRRXT7AZTFhGL2LbyzkVkS0XxHUniY2oYVN1iko42qQUqHylNhmJyLdlHZg
+	gX+r58YuwTiusc2yCFsjUSHCo9e3n2cfzPHhZjvM7K3Od9hwEyVmJd+rTFSbp5nD9QhYvee3WD8
+	L71gwaQ6Dd1VcCs2s4zD78aQmTWt7FaI=
+X-Received: by 2002:a17:90b:3846:b0:321:a2cf:9da9 with SMTP id 98e67ed59e1d1-321a2cf9f2emr7030251a91.15.1754883544150;
+        Sun, 10 Aug 2025 20:39:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzovdnuZMOGoG7rJstD57pdUxuFXM7ZTxP1dKosD3H+FktIX9xerVzG52tcd1z3eHsTxfakA==
+X-Received: by 2002:a17:90b:3846:b0:321:a2cf:9da9 with SMTP id 98e67ed59e1d1-321a2cf9f2emr7030228a91.15.1754883543728;
+        Sun, 10 Aug 2025 20:39:03 -0700 (PDT)
+Received: from [10.133.33.19] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b43c54fbce4sm3786625a12.55.2025.08.10.20.39.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Aug 2025 20:39:03 -0700 (PDT)
+Message-ID: <d52c8078-7416-45c9-8b5e-e3a80ef6ed1d@oss.qualcomm.com>
+Date: Mon, 11 Aug 2025 11:38:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next 0/2] wifi: ath12k: fix 2 instances of Smatch
+ warnings
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
+ <81440d36-9729-4eb5-aa30-d94d0f85b7a1@oss.qualcomm.com>
+Content-Language: en-US
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+In-Reply-To: <81440d36-9729-4eb5-aa30-d94d0f85b7a1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: yn_S3AMQhqA977tyXEboD8l2CpKb6j4r
+X-Authority-Analysis: v=2.4 cv=cLTgskeN c=1 sm=1 tr=0 ts=689965d9 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=4rEXVySGOu1P5TZAaAMA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMyBTYWx0ZWRfX8x5tyZ7m8TSF
+ 1K39vJOHzdgwc4bkIRlpQLDmrrNOrpJ0ZrOZDC4QX6vA5fs8yVwvgjLjx+60dZu5nkatGZUUEl4
+ Hn0wg7BA6O12R1TNtunzVthVUf0chYO7sVf0SmZE53BWyDqCeryWd1wRikwxuvcepjIxfwS3Q+i
+ PdwGQrYjRwDYDvERFawv1mohLthPTgZbzDMuck6SoVVFGbsdX6D0d99r2pAADM/Btg8WX5aYe+n
+ GD7cZJDzYqjUw0hhXT1Sz2meH7PnDmAVfT1RZmDf9E1QjLetBgx3pylmv8tgwof8PgaTDLR2CuE
+ im6Px8nY9WjKgNIjPfLPR9uOJvdWdzs35W9j47jI/Xz/1BBOduDIXPDfqVR8EdxJvqN/x1M0oqn
+ VwmgSucQ
+X-Proofpoint-ORIG-GUID: yn_S3AMQhqA977tyXEboD8l2CpKb6j4r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-10_06,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 suspectscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090003
 
-add compatible data to support MT8189 encoding.
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
----
- .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-index c869c4245ebc..4f5c2d8d2855 100644
---- a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-+++ b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c
-@@ -468,6 +468,19 @@ static const struct mtk_vcodec_enc_pdata mt8196_pdata = {
- 	.set_dma_bit_mask = true,
- };
- 
-+static const struct mtk_vcodec_enc_pdata mt8189_pdata = {
-+	.venc_model_num = 8189,
-+	.capture_formats = mtk_video_formats_capture_h264,
-+	.num_capture_formats = ARRAY_SIZE(mtk_video_formats_capture_h264),
-+	.output_formats = mtk_video_formats_output,
-+	.num_output_formats = ARRAY_SIZE(mtk_video_formats_output),
-+	.min_bitrate = 64,
-+	.max_bitrate = 100000000,
-+	.core_id = VENC_SYS,
-+	.uses_common_fw_iface = true,
-+	.set_dma_bit_mask = true,
-+};
-+
- static const struct of_device_id mtk_vcodec_enc_match[] = {
- 	{.compatible = "mediatek,mt8173-vcodec-enc",
- 			.data = &mt8173_avc_pdata},
-@@ -478,6 +491,7 @@ static const struct of_device_id mtk_vcodec_enc_match[] = {
- 	{.compatible = "mediatek,mt8192-vcodec-enc", .data = &mt8192_pdata},
- 	{.compatible = "mediatek,mt8195-vcodec-enc", .data = &mt8195_pdata},
- 	{.compatible = "mediatek,mt8196-vcodec-enc", .data = &mt8196_pdata},
-+	{.compatible = "mediatek,mt8189-vcodec-enc", .data = &mt8189_pdata},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_vcodec_enc_match);
--- 
-2.46.0
+On 8/6/2025 10:10 PM, Jeff Johnson wrote:
+> On 8/3/2025 8:03 PM, Baochen Qiang wrote:
+>> Fix below two Smatch warnings:
+>>
+>> 1#
+>> drivers/net/wireless/ath/ath12k/mac.c:10069
+>> ath12k_mac_fill_reg_tpc_info() error: uninitialized symbol 'eirp_power'.
+>>
+>> 2#
+>> drivers/net/wireless/ath/ath12k/mac.c:9812
+>> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'local_non_psd->power' 5 <= 15
+>> drivers/net/wireless/ath/ath12k/mac.c:9812
+>> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'reg_non_psd->power' 5 <= 15
+>>
+>> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+>> ---
+>> Baochen Qiang (2):
+>>       wifi: ath12k: initialize eirp_power before use
+>>       wifi: ath12k: fix overflow warning on num_pwr_levels
+>>
+>>  drivers/net/wireless/ath/ath12k/mac.c | 16 ++++++++++------
+>>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> Since this is fixing smatch issues I plan on taking this through ath-current
+> instead of ath-next.
+
+Sure, fine with me.
+
+> 
+> /jeff
 
 
