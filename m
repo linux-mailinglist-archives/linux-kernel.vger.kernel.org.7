@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-761923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A9DB1FFF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB8AB1FFF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF963A263C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0561882F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9179B182D2;
-	Mon, 11 Aug 2025 07:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9111A2D94A0;
+	Mon, 11 Aug 2025 07:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwBr3LYK"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDNACotH"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719F27F724
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556C929B233
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754896167; cv=none; b=P0SUOPJtm7z+burnR09d5jovDq3hvYCmG20BD8ciVjfWDyLgp5ncAVypPZVo+2oHJGEdLn4GkoXo5Q1p7eZpv7uIS2RXXbneCtVDSd3cNsWPW2gV6OexTu9pyw5bMWgPyPEruDYTsVoAVAzEXw2T1q/GqAd1zVV5RyttVH56mTI=
+	t=1754896167; cv=none; b=Tfsc7X/0q3mWEB5lbNEO+NV6jXHnCtIPs8+rO0OmAPyAI54sScUMgxnecdhMDpSS7cc57QxGN6KzeN+T/fMYwLy/C4ZQj69RhkY+LImyVPd3ZW4GMKUZARFY2pRAcfKkSx/eG3uVjyFV7V6PCnhPn8J3M66AAv1l7we14Gedp1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754896167; c=relaxed/simple;
-	bh=2LEV/rJ2EpdmlK9SWpXccKfrDc9wj/whCvLfKvBSOzY=;
+	bh=Inyo4hDhT9hE8Rthg0fYsgzCsTpltCp36wqWajPmam4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F98cmB87MtTBXKw1NAw4M2wmeAAoiVQVzQDnageEggHERjoLwblLQuNKi0rX3AtG9ffOeTDEwtDFlPY+YPEX5NjK783xcobqR7Zobv8X5Q9k9JoMyCx55KqxvX6kbqVVWplJiFjTcLFGCYrsVMvP6C2Afp7KkP46YGCFUnKhW/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwBr3LYK; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=LjP/Ssc7dMy4YpNvkbD8EsNFPrRo7aJEjHL75i4KWwloJxEGPo7UmEP6Cy7+lHuPqByL+XJA6/CNP4hUI4U6L2HiKytl7QcEqEz/ho0TblnB5dpeNVwEeRDBSyniCAa/N0KDjYMjVtWfVlbtnNz228iWFqFuGiw7WNR3bS0SoEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDNACotH; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-af90fd52147so600421266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:09:24 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af97c0290dcso708349066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:09:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1754896163; x=1755500963; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xtPUIfPE/JF5lmxQvk2lcZwUGw+llT/Y6memSadyYOk=;
-        b=GwBr3LYKNRKmOwn8exldzaPGhzBGGBfSh2vZUFZbFh4bv35HrP4DMKW/xiIA5d10pF
-         2rZ+i6kzqW1OONznGJobci5el17GG21ZlemLhWn/fG4ZzKwCZ4zNkvGaiwRhQRooT2Ah
-         T8PSP+uhNHSSKC7HLygwFakWEi8rpZQ9Pc5xx6ZLUVQhVHpACjNfeu+v1LS9Dbjxy/lH
-         dVQE6eC/XZkFydl3KAhjlm3cY3LkYFY6vO04P3W9mcNhKNr4OCmQ/V0QwKEZITQrjvTn
-         BODYnmYhJoZBIJiW3v8CjT1htAdA7PTQrk/EldcJYPwr4YMvbDoDrhkBKL87LWOj7PIF
-         fdMQ==
+        bh=of8cT+ldczfqUeW3j/N0wm0OcN3GeNJisyos8EJwQ1Y=;
+        b=FDNACotHNxbH6hCmR71V0SNUKx5YgMyGKYVuk+B2NV5pV7keE7QW+C45GkRrft6HwW
+         2RkkTAkcGhUWBcuC50EKtVLf064HppTeqpmZUSFDU57qLrr3qrkDXclpAoXL/ufc+KTN
+         JWpnzsJIz0jorIR/sByiRQGmPnCqupRGJlX6ui94so4zdcCom4hJtPtxtd9sVawQQz+p
+         o5f62wOj8u+bHsGUgQFPQhDAXoptA4G41of4rGDkWac/1JsTniXIjczAjTIb4eG13Yq9
+         rYqu590PUqQMPaLXyoJlj7RkZdEaCQXPpAdl2SKjqP6a2xb/E6eNbXg3xrcIaf8y5wni
+         NveA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1754896163; x=1755500963;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xtPUIfPE/JF5lmxQvk2lcZwUGw+llT/Y6memSadyYOk=;
-        b=ZuABCxytEihGH9bhpS3F1HNESP0JXi3lsWDt5nQoD74lvdt33gS8+PnnuaJIZwB0kf
-         +HBPsicFT03HN4O3hKMLbvUUwl/izCxzj9OulSmpEFX7LM/dBQqbjVq20kRN6axwHXub
-         4SWhRrAYUzu9+W3sFANt+cDQsl5zIQ1KyBHsQNS8lV/LBkr4/QYHJsj+erRN3ZAfvgJw
-         rDiweLgtafSdP4Nkoil/N9+zkrtMwnbhocBjiTVVLI4ClSGp0XMjCqxPpMCZDYJC5Lit
-         D6oyBB/QjsmJW98q7Ajj+gItEpPxaBDZwy/iEg1Y6AubMPphnT+R+CwIciot1s7tkyME
-         10mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxXnYIChUa2C0dJHaysIxbLuvoXmyXq0UZrxQ/SLaWEIg/pTl95HaK11erdpf375jtgvdXu+Oe7jdruxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTJ4eTqfu7poI8mNN3bkOmDfeB7oMpuGKPu+LgnZ/96lu1sI+A
-	TzWfMJBz1xGgoU2fBGGycZM0Mwo1R+KfFTeuIt8z3/IOLmvoXhY3x7yP
-X-Gm-Gg: ASbGnctA4TTVPweO9Kz0480G6jU6p4ZewnDAzySiBjztR9uKy+8Lyg//yI4sAassd+Y
-	v3qhnrZoH9oWnqTFBg+g2JFEo9HqsDzl7WgcULf0sCo/TsXsdD/+sPM2Bwy8dXpML34733n+FtA
-	Q46C8R2U8F9x5Rckasy6xbC1Lutu97FyT3BX+g1EeGoMQY9NjMZ0HL8OfkNdhVByqRg9VGl7962
-	scjn33GY+pYPuA1Smk3vilyedKFvgnkyc52BRgn2grhhKnAxipDnLnneVjYeM4LmWQl50N89xTz
-	joOg3EAWZ9RGDmjkJwDLkuHl0PitRGDgdDuZKi9zMM7qKa5JhZc4rDwR7Bxw+WdRN1CXwPNqRKw
-	WGrkS+cV9OXCyTBpx/QtjSDbl3EUZY5SZRF6Zgma0Dpuf5mC4FhCGSdX9Muxo3Ann56TRr+LEv3
-	GtHU4=
-X-Google-Smtp-Source: AGHT+IEPOlXRGWGo1oXongH5SS8hW59c99+Y0D69n0H0pJPQ/thMH3hAwghRrl5UfxU1cXmatROwQQ==
-X-Received: by 2002:a17:907:96ac:b0:af9:406d:f0a8 with SMTP id a640c23a62f3a-af9c64187c6mr1089954866b.23.1754896162857;
-        Mon, 11 Aug 2025 00:09:22 -0700 (PDT)
+        bh=of8cT+ldczfqUeW3j/N0wm0OcN3GeNJisyos8EJwQ1Y=;
+        b=K/+Sh/vcZ9urYvVaCuUH1/NEWS+uRh3y6NZTH1eg6kGFFQjP1M0XkoVeZ7xYDGbrCQ
+         FagPIabkbSlAhEoD48Jw7ZFjT4yliIHx+wEk55yYTdWZsB0UDdAowc5jKrKbkBMNarCL
+         TYJO073XUBEeLwSCdcY/aqXkzWOEG7es8HAZ8uve56JZ9k7XxLTb4IfZqOl5ntv+O7uy
+         heE5hKk6lAvHX6ysNjNNPDkYAqUowQuhO71EoogpkSPBawyLCwRRMJuMmJLA9hCF+1uU
+         DSIYa7auR1ixsHsPS11mGQ1VDvVNmR81dGrghRpzay++Y5V/tRn/+YZtji7rB/VodGA4
+         Pm4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUT1zM/CM5wWVqMFJFrW+o368yyorOIFdmQr/1yhn45JJaK+I8pycbFbAWIHQXGGxZEXCAOHm8O9LyL7fY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykX7CYOiX5cUM9pfXBlNcDOkmdZoY17YzkPCSton//CGTSqvmX
+	oje3lG+DB1ssUhzBk7iP4mQslqrScdUCZ1KOJdXTSCAt0t3mDvYmE8o8
+X-Gm-Gg: ASbGncuiI7CAyL8RaTZeO/zfbOUTeASx6Qz83meUik0r5/K79sG8Ya/rF9xexhhUjSa
+	Q8S4aldNb9yIf2EXYepkAOrk9vyEyxdBbjRL60ieAhPfLAhg3UQWluGDgNZHu5/MPYVxevnjdm9
+	Iytm0+FGKtNDvuSC6PlB3mKKMOPqintF5o8VyNg6D4WjNT6neaykAEtb9x4M02xVJfFH5ydN421
+	ttFKZdIrDZ8sIUNTgvFlNHWd5niMCR3fIOtoLvZj3HRwQBdxzQf89ML3owJLt9mnAgGgS8+QvK+
+	K79oXm/S3anR+ZI9dvimKIktSkeLkiD2eE0K7a+4SZCZkz3N6GtODsl+Q0y7RjXkvJog0mu+Tho
+	dv8NolCcf9Av5MN9q8B97ushsbMeZ3C1eKtaE076k2E57PznK6HWwym/zMk/q6I+syhrK
+X-Google-Smtp-Source: AGHT+IEBOmgis6moj9QkFX2WJEGdqyxWvnr8+J808OCf86HZnnCqeKlqK9BNLs8UX92YjCpMkCtzdA==
+X-Received: by 2002:a17:907:7f9e:b0:af9:5e9a:b6a with SMTP id a640c23a62f3a-af9c65b04eamr1018317866b.42.1754896163489;
+        Mon, 11 Aug 2025 00:09:23 -0700 (PDT)
 Received: from tumbleweed (ip5f5ab8dc.dynamic.kabel-deutschland.de. [95.90.184.220])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a14a0sm1979188766b.33.2025.08.11.00.09.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 00:09:22 -0700 (PDT)
+        Mon, 11 Aug 2025 00:09:23 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -80,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 1/2] staging: rtl8723bs: use crypto_xor_cpy
-Date: Mon, 11 Aug 2025 09:09:05 +0200
-Message-ID: <20250811070906.27232-2-straube.linux@gmail.com>
+Subject: [PATCH 2/2] staging: rtl8723bs: remove unnecessary forward declarations
+Date: Mon, 11 Aug 2025 09:09:06 +0200
+Message-ID: <20250811070906.27232-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250811070906.27232-1-straube.linux@gmail.com>
 References: <20250811070906.27232-1-straube.linux@gmail.com>
@@ -94,178 +93,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the in-kernel function crypto_xor_cpy instead of the custom function
-bitwise_xor, as using in-kernel functions is preferred over custom
-implementations.
+Remove unnecessary forward declarations of static functions to improve
+readability.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_security.c | 46 +++++++------------
- 1 file changed, 17 insertions(+), 29 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_security.c | 30 -------------------
+ 1 file changed, 30 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index e9f382c280d9..08d179857203 100644
+index 08d179857203..8367fd15c6b1 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_security.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -7,6 +7,7 @@
- #include <linux/crc32.h>
- #include <drv_types.h>
- #include <crypto/aes.h>
-+#include <crypto/utils.h>
+@@ -638,36 +638,6 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, u8 *precvframe)
  
- static const char * const _security_type_str[] = {
- 	"N/A",
-@@ -641,7 +642,6 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, u8 *precvframe)
- /**** Function Prototypes ****/
- /*****************************/
+ #define MAX_MSG_SIZE	2048
  
--static void bitwise_xor(u8 *ina, u8 *inb, u8 *out);
- static void construct_mic_iv(u8 *mic_header1,
- 			     signed int qc_exists,
- 			     signed int a4_exists,
-@@ -849,18 +849,6 @@ static void construct_ctr_preload(u8 *ctr_preload,
- 	ctr_preload[15] =  (unsigned char) (c % 256);
- }
- 
--/************************************/
--/* bitwise_xor()                    */
--/* A 128 bit, bitwise exclusive or  */
--/************************************/
--static void bitwise_xor(u8 *ina, u8 *inb, u8 *out)
--{
--		signed int i;
+-/*****************************/
+-/**** Function Prototypes ****/
+-/*****************************/
 -
--		for (i = 0; i < 16; i++)
--			out[i] = ina[i] ^ inb[i];
--}
+-static void construct_mic_iv(u8 *mic_header1,
+-			     signed int qc_exists,
+-			     signed int a4_exists,
+-			     u8 *mpdu,
+-			     uint payload_length,
+-			     u8 *pn_vector,
+-			     uint frtype); /*  add for CONFIG_IEEE80211W, none 11w also can use */
+-static void construct_mic_header1(u8 *mic_header1,
+-				  signed int header_length,
+-				  u8 *mpdu,
+-				  uint frtype); /* for CONFIG_IEEE80211W, none 11w also can use */
+-static void construct_mic_header2(u8 *mic_header2,
+-				  u8 *mpdu,
+-				  signed int a4_exists,
+-				  signed int qc_exists);
+-static void construct_ctr_preload(u8 *ctr_preload,
+-				  signed int a4_exists,
+-				  signed int qc_exists,
+-				  u8 *mpdu,
+-				  u8 *pn_vector,
+-				  signed int c,
+-				  uint frtype); /* for CONFIG_IEEE80211W, none 11w also can use */
 -
- static signed int aes_cipher(u8 *key, uint	hdrlen,
- 			u8 *pframe, uint plen)
- {
-@@ -941,13 +929,13 @@ static signed int aes_cipher(u8 *key, uint	hdrlen,
- 
- 	/* Calculate MIC */
- 	aes128k128d(key, mic_iv, aes_out);
--	bitwise_xor(aes_out, mic_header1, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, mic_header1, 16);
- 	aes128k128d(key, chain_buffer, aes_out);
--	bitwise_xor(aes_out, mic_header2, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, mic_header2, 16);
- 	aes128k128d(key, chain_buffer, aes_out);
- 
- 	for (i = 0; i < num_blocks; i++) {
--		bitwise_xor(aes_out, &pframe[payload_index], chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, &pframe[payload_index], 16);
- 
- 		payload_index += 16;
- 		aes128k128d(key, chain_buffer, aes_out);
-@@ -960,7 +948,7 @@ static signed int aes_cipher(u8 *key, uint	hdrlen,
- 		for (j = 0; j < payload_remainder; j++)
- 			padded_buffer[j] = pframe[payload_index++];
- 
--		bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 		aes128k128d(key, chain_buffer, aes_out);
- 	}
- 
-@@ -977,7 +965,7 @@ static signed int aes_cipher(u8 *key, uint	hdrlen,
- 				      pn_vector, i+1, frtype);
- 		/*  add for CONFIG_IEEE80211W, none 11w also can use */
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, &pframe[payload_index], chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, &pframe[payload_index], 16);
- 		for (j = 0; j < 16; j++)
- 			pframe[payload_index++] = chain_buffer[j];
- 	}
-@@ -995,7 +983,7 @@ static signed int aes_cipher(u8 *key, uint	hdrlen,
- 			padded_buffer[j] = pframe[payload_index+j];
- 
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 		for (j = 0; j < payload_remainder; j++)
- 			pframe[payload_index++] = chain_buffer[j];
- 	}
-@@ -1011,7 +999,7 @@ static signed int aes_cipher(u8 *key, uint	hdrlen,
- 		padded_buffer[j] = pframe[j+hdrlen+8+plen];
- 
- 	aes128k128d(key, ctr_preload, aes_out);
--	bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 	for (j = 0; j < 8; j++)
- 		pframe[payload_index++] = chain_buffer[j];
- 
-@@ -1137,7 +1125,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 				      frtype); /*  add for CONFIG_IEEE80211W, none 11w also can use */
- 
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, &pframe[payload_index], chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, &pframe[payload_index], 16);
- 
- 		for (j = 0; j < 16; j++)
- 			pframe[payload_index++] = chain_buffer[j];
-@@ -1156,7 +1144,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 			padded_buffer[j] = pframe[payload_index+j];
- 
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 		for (j = 0; j < payload_remainder; j++)
- 			pframe[payload_index++] = chain_buffer[j];
- 	}
-@@ -1187,13 +1175,13 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 
- 	/* Calculate MIC */
- 	aes128k128d(key, mic_iv, aes_out);
--	bitwise_xor(aes_out, mic_header1, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, mic_header1, 16);
- 	aes128k128d(key, chain_buffer, aes_out);
--	bitwise_xor(aes_out, mic_header2, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, mic_header2, 16);
- 	aes128k128d(key, chain_buffer, aes_out);
- 
- 	for (i = 0; i < num_blocks; i++) {
--		bitwise_xor(aes_out, &message[payload_index], chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, &message[payload_index], 16);
- 
- 		payload_index += 16;
- 		aes128k128d(key, chain_buffer, aes_out);
-@@ -1206,7 +1194,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 		for (j = 0; j < payload_remainder; j++)
- 			padded_buffer[j] = message[payload_index++];
- 
--		bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 		aes128k128d(key, chain_buffer, aes_out);
- 	}
- 
-@@ -1223,7 +1211,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 				      frtype);
- 		/*  add for CONFIG_IEEE80211W, none 11w also can use */
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, &message[payload_index], chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, &message[payload_index], 16);
- 		for (j = 0; j < 16; j++)
- 			message[payload_index++] = chain_buffer[j];
- 	}
-@@ -1241,7 +1229,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 			padded_buffer[j] = message[payload_index+j];
- 
- 		aes128k128d(key, ctr_preload, aes_out);
--		bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+		crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 		for (j = 0; j < payload_remainder; j++)
- 			message[payload_index++] = chain_buffer[j];
- 	}
-@@ -1256,7 +1244,7 @@ static signed int aes_decipher(u8 *key, uint	hdrlen,
- 		padded_buffer[j] = message[j+hdrlen+8+plen-8];
- 
- 	aes128k128d(key, ctr_preload, aes_out);
--	bitwise_xor(aes_out, padded_buffer, chain_buffer);
-+	crypto_xor_cpy(chain_buffer, aes_out, padded_buffer, 16);
- 	for (j = 0; j < 8; j++)
- 		message[payload_index++] = chain_buffer[j];
- 
+-static void aes128k128d(u8 *key, u8 *data, u8 *ciphertext);
+-
+-
+ /****************************************/
+ /* aes128k128d()                        */
+ /* Performs a 128 bit AES encrypt with  */
 -- 
 2.50.1
 
