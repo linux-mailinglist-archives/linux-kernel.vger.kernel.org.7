@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-762568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F1EB20887
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 840B3B20888
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C10426282
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC6F4262EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915FB2D3751;
-	Mon, 11 Aug 2025 12:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fY0pHNYS"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BEF2D374A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E0E2D3A83;
+	Mon, 11 Aug 2025 12:14:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42EF2D29D1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914444; cv=none; b=a/+r+mWwSqwoVOMcP8ON/YY3odeCPqXKq2DcU0YtHAz+UJ97MKV9DfTnEaE60obFU5ITOud5XGlUcMdJPkr2jwmmlXX87KG39qmjjAzMf7YIRkHyl/dLUE60+ft3DrO5klTNBoXNlrMRPpToM6dUygdpj4t4twPsnG/DAyfJJa4=
+	t=1754914445; cv=none; b=bCqJq5sy3nHKVrfhsLkCKR1dtaeSUtrjhxp98bAEA3sGIIvw0soVdrOImipHAgDwA3w0+sXI3W/zDzVYHxHSLhVdI0ul+jYLnDwnjmbqCIz6aMFT3aJhE8IfEg6Dt1o1KlPviknCaODuWCCi6EEv1Iw/RdmvytoEgr62R5a7tHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914444; c=relaxed/simple;
-	bh=amponW7DJgmlj4XAt5exzzEGz1Qd4pt2+zsXs6yVGyQ=;
+	s=arc-20240116; t=1754914445; c=relaxed/simple;
+	bh=PfIE5l+N1d6LX3aDn2RThHG42Kxl7lFpoohSZ/I07Hs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2+C3qDZz8KwUOPLf6Bw4iJEhOw3F9C0bx1PVbRtf8hhhvxSKu4W2aaHzCsPXt46pFawqU9tPfUrcuBdiJ0XhtVn9u+BxUYN+vgYwi5ukeYmdKgtNhnyh+QhLKgZU828VLTOzacz8m32qPxeqq6DU6a/EF/ufA4AgZnK+9THF6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fY0pHNYS; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=TRxN
-	csCzqBQF4V1FzxDJHehigkCbHGb5hQfKzzkDwZ4=; b=fY0pHNYSxCGP8nuB4tKB
-	nSOD1Y7afKB6S/SkX5mP7fkz1otFJczFHetIcP8Q+PZLWuzw997bwiYN9Ol09282
-	igGg806Tj+pV9A1IeHHnJ1OwIORyCX3sgxD+B29wXZTFvXHHiHQRShqev5illj0L
-	usk5SvYqtXsuA1v8F9bL7XAwSeneZi4CB6mWkpsxR90zWyqgZohxkjgfu4AGeBXK
-	HblSY+Hbtdd7Z8PjjTtX4m7r+/YMWo9RUGsXb/OVqj7o3o9KxuObEBrIQlFre9t7
-	/jN0FPX9w5d7HVyb73RfRVELaFl39JZ8xlrTWueGYVaOUJc2KT3kfBZhFhPgSyP6
-	4A==
-Received: (qmail 2790037 invoked from network); 11 Aug 2025 14:13:51 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Aug 2025 14:13:51 +0200
-X-UD-Smtp-Session: l3s3148p1@2Z5D2xU8iNBtKLEk
-Date: Mon, 11 Aug 2025 14:13:50 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Luca Weiss <luca@lucaweiss.eu>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] i2c: qcom-cci: Add msm8953 compatible
-Message-ID: <aJnefpETGJm_cuRY@shikoro>
-References: <20250810-msm8953-cci-v1-0-e83f104cabfc@lucaweiss.eu>
- <20250810-msm8953-cci-v1-2-e83f104cabfc@lucaweiss.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rrw9y+FaijFmJcCDCTGEXUpMqm2i1dLP8Mmh2Hw36c2pYMVnZWWTDCQZzsaZcUnv2hZw6iQbcCEWcaxRbHGC768MyOsgnJhRclIiw3ehQYGDte5pi1QspQGjmpPxzNkeF7OCThQZarqNwkmXs2l//RaKLVNAqdc4EPMSWXmxjjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DD112641;
+	Mon, 11 Aug 2025 05:13:54 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 733573F738;
+	Mon, 11 Aug 2025 05:14:01 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:13:52 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, fanqincui <fanqincui@163.com>,
+	catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Fanqin Cui <cuifq1@chinatelecom.cn>,
+	hanht2@chinatelecom.cn
+Subject: Re: [PATCH] arm64/module: Support for patching modules during runtime
+Message-ID: <aJnegL4HcT2evOnR@J2N7QTR9R3>
+References: <20250807072700.348514-1-fanqincui@163.com>
+ <aJXlegQfZTdimS3k@willie-the-truck>
+ <3d4011c0.6aaa.198981027d7.Coremail.fanqincui@163.com>
+ <86zfc68exk.wl-maz@kernel.org>
+ <aJnccgC5E-ui2Oqo@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9dxlZBEI2nsTtP8Z"
-Content-Disposition: inline
-In-Reply-To: <20250810-msm8953-cci-v1-2-e83f104cabfc@lucaweiss.eu>
-
-
---9dxlZBEI2nsTtP8Z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aJnccgC5E-ui2Oqo@willie-the-truck>
 
-On Sun, Aug 10, 2025 at 05:37:53PM +0200, Luca Weiss wrote:
-> Add a config for the v1.2.5 CCI found on msm8953 which has different
+On Mon, Aug 11, 2025 at 01:05:06PM +0100, Will Deacon wrote:
+> On Mon, Aug 11, 2025 at 09:01:43AM +0100, Marc Zyngier wrote:
+> > On Mon, 11 Aug 2025 08:37:32 +0100,
+> > fanqincui <fanqincui@163.com> wrote:
+> > > 
+> > > Hi will,
+> > > Yes, you are right. The alternative callback function lives inside the module.
+> > > This callback function is actually similar to kvm_update_va_mask in KVM;
+> > > 
+> > > The module's callback function calculates some values based on
+> > > the current CPU features and then performs the replacement.
+> > > 
+> > > The .text.alternative_cb section is actually marked as SHF_EXECINSTR | SHF_ALLOC
+> > > during compilation, so intersections() includes this section and sets it as executable later.
+> > 
+> > I'm worried there is a chicken-and-egg problem here. What if the
+> > callback itself requires patching via some other alternative? Is there
+> > a guarantee that this always performed in the correct order?
+> 
+> Maybe we should just reject loading modules that have alternative
+> callbacks that don't reside in the kernel text? 
 
-Given the above version number...
+I think that would be sensible. We never *intended* to support arbitrary
+callbacks in modules, and if that's something people want, they need to
+provide some actual justification.
 
->  static const struct of_device_id cci_dt_match[] = {
->  	{ .compatible = "qcom,msm8226-cci", .data = &cci_v1_data},
-> +	{ .compatible = "qcom,msm8953-cci", .data = &cci_msm8953_data},
+> I _think_ that should cover all the in-tree users, although I didn't
+> get a reply to my question asking which module triggered this bug
+> report.
 
-... why don't we use it here to stay consistent? cci_v1_2_5_data?
+To the best of my knowledge, that covers all in-tree users. From a quick
+grep for 'alternative_cb' and 'ALTERNATIVE_CB' in v6.17-rc1, all of the
+patching functions are non-modular. AFAICT the only one we export is
+alt_cb_patch_nops().
 
->  	{ .compatible = "qcom,msm8974-cci", .data = &cci_v1_5_data},
->  	{ .compatible = "qcom,msm8996-cci", .data = &cci_v2_data},
-
---9dxlZBEI2nsTtP8Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiZ3noACgkQFA3kzBSg
-KbaAaBAArCu6nCG7A/KOAzgEA5qfKFQScxh7zN9wR66HVKX+n7OAazuXMA/9OPR7
-D66/DgdxzPgB7AeK2GOUtfWKttYdtVpQjks6PGEFCkDBzwsWcqyubsB/wLLJvWkP
-B7Zd/aj906kU+unp+yGUl6WCWBNaoreaRblkxC5Du1GPIK1qfPXkCymo0cniTyCI
-lhIj4SQCqsz42rXcUxMTLr3JGbsxCmc3fhD4IhzueAU17+2mm03xFEfSSUtGA2YB
-JaeL4trNM0WIWpM8WmeVucQOLkj2Kslb4sz8H3eXBpFZHXdNl+uNlllwHMIG4OX5
-2mqZzvnkkzXMwsNWwQ+d4FayHfvxSkCNxlFZhld3DyOqTO3fZpQbkZJ3cZWXcudo
-G8l6bv2yHI90ecIt4TZ6W8kcQHIZ0cDNdoUZAf3B8aNwgxn+M2kHMKbypVoDZMD+
-LW+gbzkv0I8Nfpevb9l0hgxC7v5U6awDCAy64afLsQhKwVcw0yDyAZAI73maIRNj
-FwpSzz/txwcXMH1tpqt4s5OcckiPKD/DSf9rGaPnjIuh6nJdE5R/TrlpVrjAUqAz
-pAp+xYFQEfvzdzi0dmJkfCADMLt0Rr2HaaTXXEB6th65pXdB5gkF1AqmCcF0Pl4z
-M1m4PZTYK/2DVgYwv5bfgiEUrtVHn5ZQNuBbkBew104+sr137vs=
-=YyXL
------END PGP SIGNATURE-----
-
---9dxlZBEI2nsTtP8Z--
+Mark.
 
