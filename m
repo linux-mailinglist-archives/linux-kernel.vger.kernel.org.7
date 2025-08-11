@@ -1,137 +1,92 @@
-Return-Path: <linux-kernel+bounces-762235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E5AB203D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F87B203DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8969D423762
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA9D63AE46C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130270808;
-	Mon, 11 Aug 2025 09:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340BC219A9B;
+	Mon, 11 Aug 2025 09:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHFKdinN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QmOrpa72"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA517223DEA
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F27221C9F1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904838; cv=none; b=gUFTXVoRAHcof9a+Zn6xT7l9gKPfNNYSn/SbMbkNvYBMaUVxHsIFwTcKg99poZffVgRsNgWFYYzy3pZP4lXKWAD9a0okTpuLYZl7dJmyHXSslaAkm79V30m++lWI5dJYpHxQFlIXOWRInv78JOWo+oi6QLLfCEk/W5NgIba8Seg=
+	t=1754904924; cv=none; b=JBqYYFxnVmGA+fgo8jUGjBhnPoAn9WdEIB8dIr4brmMMZt+pP7CC9l9z5gJ0isFCFyFyOPaYPOGEBkOTFYs59uPbZNTYYnjRkhrDwaS5t7/wc4TCvm9XBB4mf7VUuoxgDadmjGLy5VzUQbkbQiuz/JP0uOYEhWj3IMrz3OajFJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904838; c=relaxed/simple;
-	bh=J1D/09r3N3DLDHsiA721RlvHu+0kUr0iq+BYE5etANU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9wlujOMijSrrX0jYBc1heMQT5oZoWfAz0qETej8oAof3vZmGpM9M8ObyKnshGv47qFHCVY0Z4n+JOqODOhhizOVI2lParmZVlZS0MYT1XJE8dZvaYp2JgzhfzKdmtZcSdzFBzztx7BA2c0K7V8wJvpJWs27Yo97Zx0LlT1d94I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHFKdinN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754904836;
+	s=arc-20240116; t=1754904924; c=relaxed/simple;
+	bh=N5OBK83I6BMc5+G4FWzZ69mcWguLo+tCMMtgMyyBQuw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fzi9LTgOh10xe25LGhZSIXuMjxIZcuDRHzlI7prJuj4AiP84mtKX1VoU6Gsc9wk45qLS+B6PrHF0wXApJGkBcwDQY0lnIRVxM1gtL9KxOubjr7QNomdFM0nyl6yCs4AcwcV/Z6DlamEz4ULnOA4VDNjbXyO04B1EmOfkfbpKjpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QmOrpa72; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754904918;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HiJMfJlrRsamODe6gnkp4xuGLE6+B0lz0Dbma9PtWd8=;
-	b=GHFKdinNWzlRPYD69GLbOLtgXOD5s+TcO1zrSW6CgRPdkowQTwViluU4gnwZDzcBqmj6uW
-	kza5y+Tmpd/YI5JHU04OFmg9wGkMt69hJ3BWbh8HEjcywNQRB4BC6sXLC1ta/rpSgvSGkK
-	NXEGaSVOaULApVfd/OwWrGlYk1RDCI0=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-567-1rGCXW-fMce3E-ZR8gb95A-1; Mon,
- 11 Aug 2025 05:33:50 -0400
-X-MC-Unique: 1rGCXW-fMce3E-ZR8gb95A-1
-X-Mimecast-MFC-AGG-ID: 1rGCXW-fMce3E-ZR8gb95A_1754904826
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE1DE1800352;
-	Mon, 11 Aug 2025 09:33:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9F6FA19560AD;
-	Mon, 11 Aug 2025 09:33:29 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 11 Aug 2025 11:32:31 +0200 (CEST)
-Date: Mon, 11 Aug 2025 11:32:16 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
- PF_SUSPEND_TASK processes
-Message-ID: <20250811093216.GB11928@redhat.com>
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250807121418.139765-6-zhangzihuan@kylinos.cn>
- <20250808143943.GB21685@redhat.com>
- <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yTqGLRCADO0VrcQ5UXFXw61pDkrPUQFqQTnjcLtaKTE=;
+	b=QmOrpa72t06MF56gnq/SF/qj5ZPu0xxy2ibfwIXBtV3lc2LuNj3MsUciBkfDZJBwoCxflZ
+	ch78fpo8G8pQAk9EorPnsPH+rEWj77qQAcgET+/KHmErmKVtBq6Ik3VFQNCGG70ep7fDq4
+	rJ8WWWVoLe0iz2uvmnPJHAN56LwrxAk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] caif: Replace memset(0) + strscpy() with strscpy_pad()
+Date: Mon, 11 Aug 2025 11:34:40 +0200
+Message-ID: <20250811093442.5075-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Migadu-Flow: FLOW_OUT
 
-On 08/11, Zihuan Zhang wrote:
-> 
-> 在 2025/8/8 22:39, Oleg Nesterov 写道:
-> >On 08/07, Zihuan Zhang wrote:
-> >>--- a/kernel/power/process.c
-> >>+++ b/kernel/power/process.c
-> >>@@ -147,6 +147,7 @@ int freeze_processes(void)
-> >>
-> >>  	pm_wakeup_clear(0);
-> >>  	pm_freezing = true;
-> >>+	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
-> >But why?
-> >
-> >Again, freeze_task() will return false anyway, this process is
-> >PF_SUSPEND_TASK.
->
-> I  think there is resaon put it here. For example, systemd-sleep is a
-> user-space process that executes the suspend flow.
->
->  If we don’t set its freeze priority explicitly, our current code may end up
-> with this user process being the last one that cannot freeze.
+Replace memset(0) followed by strscpy() with strscpy_pad() to improve
+cfctrl_linkup_request(). This avoids zeroing the memory before copying
+the string and ensures the destination buffer is only written to once,
+simplifying the code and improving efficiency.
 
-How so? sorry I don't follow.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/caif/cfctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Oleg.
+diff --git a/net/caif/cfctrl.c b/net/caif/cfctrl.c
+index 06b604cf9d58..2aa1e7d46eb2 100644
+--- a/net/caif/cfctrl.c
++++ b/net/caif/cfctrl.c
+@@ -257,9 +257,7 @@ int cfctrl_linkup_request(struct cflayer *layer,
+ 		cfpkt_add_body(pkt, &tmp16, 2);
+ 		tmp16 = cpu_to_le16(param->u.utility.fifosize_bufs);
+ 		cfpkt_add_body(pkt, &tmp16, 2);
+-		memset(utility_name, 0, sizeof(utility_name));
+-		strscpy(utility_name, param->u.utility.name,
+-			UTILITY_NAME_LENGTH);
++		strscpy_pad(utility_name, param->u.utility.name);
+ 		cfpkt_add_body(pkt, utility_name, UTILITY_NAME_LENGTH);
+ 		tmp8 = param->u.utility.paramlen;
+ 		cfpkt_add_body(pkt, &tmp8, 1);
+-- 
+2.50.1
 
 
