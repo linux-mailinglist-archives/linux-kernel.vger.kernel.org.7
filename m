@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-761905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52410B1FFCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4B7B1FFD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4C77A1848
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4EF189BE2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BE42D94A5;
-	Mon, 11 Aug 2025 07:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B337726C3A2;
+	Mon, 11 Aug 2025 07:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZQz9W81"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DI6aGK1S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6853D1F03DE
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6851990B7;
+	Mon, 11 Aug 2025 07:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895719; cv=none; b=qYielSQsvW0TwiVAqLbxCc48owhlzg48hQM+cFBdCnM85t3W3M9qruF0n4Y5Lj2x+HjD+MMdl/RIkEqaxiX2l6R+HQ72O+AZ0EQoKev66e180BOtnep6cWcxmWb9ZSrFPsY2mEoZ7HLf34ktq1W4RWABOEjhXQ52wMJsJY9WbOM=
+	t=1754895740; cv=none; b=U5ZFpu3A6lZlhyqIMcqsNVATLMT9J94M9Srj159BRpwB5P+bVqeVK+DDahgezdLVd157jNW618bfEeT177SZEUSJQtOGg5nsT01Ydi78EZp7dLo9420RJkefSEETNGsEbaK2FYW02IeGR7ogodExVvvi1zGjvwTAOqDWeApiQ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895719; c=relaxed/simple;
-	bh=i5i+o2f+rrl/OAOkHKuvWRjEKuAxEakK5GVIkg3Co6Y=;
+	s=arc-20240116; t=1754895740; c=relaxed/simple;
+	bh=8vBS4MHzTEGOI7swyoOU8HSSUjTBEjChHSjxrVJLK84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hggxvVCY6feciS6OvESCwpdS7KREFqy6gljJDxU7UYMgPUl8tcpnjoVhlEzOndL1CbEjTtggUH+5fxoVaaohebYrW82FE1WEZZ29ukrzARx55l7YIXuN8q/jENXi4FAiKRMVKiWD8/DqVjgNALlzdPOGZE/M7VzmpmSlPpc1Htc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SZQz9W81; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24014cd385bso43667945ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754895717; x=1755500517; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
-        b=SZQz9W81/mXFsNxJ/m3ywX8jkIBpAonPnoei/q2JpUG5H5shjzuloeEut9f5VOTkSZ
-         8HtUlOLiknpX9bxHSZM4vD61gZ+mrCfdAzka1joWQg0DaZ2Y2DJyoRjzzR1YiSlFnf8c
-         FFPfVHfyjSWC1TWZbhntRW3MvERT286sVK5rNpwSF4qtlaYsVrFE063JIXP5ioKYeInm
-         VvQjWFa8QcGP8pAWKtsn05XqknTOF/UIhkhqsDfxA7JGhgoCWzAJBvXbWmRhX46dR9BD
-         FntrFGOsuiSC3CCgKdZxmM+cud8WuLuzGF/7dqphZQnTAQtyR1nOz7Cnrtsbe8IHdPCE
-         G6Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754895717; x=1755500517;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
-        b=Hqen/yj5Gf96FqJhLgdBGssoJTsv/FJJmXpKlj2k1vJf67Adxop78OzDnyJcyUcQKc
-         +5biLRTrttdppNoqiKPJIHmCqs9HabdQ8aOHb4kbd6NzdN0NrfoeQQPR9bDVKYCENN/a
-         yOAh402+n8omlupyENIFRdzXrHYn82Wn2eyPTGhdazQWZSwPDp1frajzZkIUOZrzmFQF
-         stXHeCwhSc3Chgv2XkTUbe7YWsbEjBfHqdDXDpocEcFs4YnYw1rHHXfMAG4WCK5f4DOe
-         ZsVFJG0sZNGXtIdAPbrZ8MVe+TitXPQzGZ5v0lZn+oQhMr8euUGe3XM1qHmoUOs4K8Wo
-         u7RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqyZmyKnXVWLWRffjYuRWClMJSu6L5q8wrYNfUTvwIc++UGoaV5GwqJDSa6GBRS3kntHkf+IPzAo5QQI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyeUWLDntJcpwMVhImT6J988/Gx/XU1JfmWk6J2ya19GY4ZBgX
-	x4W8Kdh2A4fyWbMb3whu0ov/xhog4I/aqlbDFSF6/bXtvi4hXQHbf59EQK+RCg73k9g=
-X-Gm-Gg: ASbGncsn7+sNiqVzWLez/VmUjwWPs1YIiqpaquPT1ug6HxIi7LFdwjoPw68GgiVT3DO
-	GBhFdlO8bXT/5U1WOmPDErDYa3V/HWeXXdSRYCDq5uPSbTqkSIgcI88jARhHTDdwbbYnTiR0bjJ
-	UDZ6YtHGwmndKVN2+4BSoTV8ywHMm9JMdo9pFQQ3wEg5A4FZyPlXapay6gakRCJj80n2Rr1iFB9
-	0WrNJ0pl1UZT/FcOqsau5n6DJ9BjJ11YwEgYkJb3c1RmXI5JsPIkJpIXDPfBiODulNR4bI9ovos
-	vLaeCiDpFxCpbz/Soiv9dviXyZ98fttLi/hH94uHx8xK0e0G160Ip3ygB+NEke+esz0KSxvfpoT
-	HK6wwv8nO82gWXRiqjrJVZAt8z3wWZvwU9F8=
-X-Google-Smtp-Source: AGHT+IGfBYscmszLcQ4WIVww+p90HeYYLjnd7VEGcPNozcJMTJpfpN4Si84n434k13+c6xYJKAYYSQ==
-X-Received: by 2002:a17:902:fc4e:b0:240:469d:beb0 with SMTP id d9443c01a7336-242c21fc427mr199498845ad.31.1754895716651;
-        Mon, 11 Aug 2025 00:01:56 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899aaecsm265961735ad.119.2025.08.11.00.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 00:01:55 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:31:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	konradybcio@kernel.org, rafael@kernel.org, ilia.lin@kernel.org,
-	djakov@kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v6 3/4] cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
-Message-ID: <20250811070153.5rjj2cudgs7rwiwc@vireshk-i7>
-References: <20250806112807.2726890-1-quic_varada@quicinc.com>
- <20250806112807.2726890-4-quic_varada@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnhQAxFfP+fEPJbfA2k/S22p++BVxWkb+YkfOlU7eWo2pdD/nrnMByBqT5UNwLhCFUaA7kF7RKamIyXoz23lc3KvUYZA5fRN9K2NE5Sxh5iOBkTk6lFJHIPebiBjaf8ivt57b7DYojiztHmCjqsy+o3C6U8V9cQdf+B/CroEdaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DI6aGK1S; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754895739; x=1786431739;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8vBS4MHzTEGOI7swyoOU8HSSUjTBEjChHSjxrVJLK84=;
+  b=DI6aGK1SqP38HoyyYwISiE0WQhX5MiWyfcX9q2L1ArXv9RFvJAJnjVGU
+   EQU5O067GK4BKs9UfiQn7qWwCRWlNfgTMotKXZkwSaLM3MbjmDz01qw06
+   tJ/OIhh0jtTWGmX9czPuLFQl70nqYuaZ0dE9KZbLlIc7KNvCO/2GvFxBk
+   bTRvlpBNhbJwtZR/uywUKP7pR8kMDKMxlSfH2uHEo8C2IijQ9ZlEbeHZ5
+   2d357I0JcpwFAGZQUB43vGdbpZYbtPCqvMEptNxjlddWmmlWuU3L7Cg64
+   mvdh/oAF5PGBen+ZvTxJUlt8qiKyLEoXUk1pucigY7Rcu9sqXNUTPP+gb
+   A==;
+X-CSE-ConnectionGUID: hO+dK5haSmqVA4IMQ3DhzQ==
+X-CSE-MsgGUID: 5L6WN+y6TayuDZgUO5wbhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68220544"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68220544"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 00:02:18 -0700
+X-CSE-ConnectionGUID: PtGethz0Qx2gfMYM0c1QPw==
+X-CSE-MsgGUID: 2hmoJOUAQHevxNgPCR0Sdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165485432"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 11 Aug 2025 00:02:16 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 64AE793; Mon, 11 Aug 2025 09:02:14 +0200 (CEST)
+Date: Mon, 11 Aug 2025 09:02:14 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andreas.noever@gmail.com, michael.jamet@intel.com,
+	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
+	Sanath.S@amd.com
+Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
+ dynamically
+Message-ID: <20250811070214.GT476609@black.igk.intel.com>
+References: <2025080628-viral-untruth-4811@gregkh>
+ <20250807051533.GG476609@black.igk.intel.com>
+ <2025080758-supervise-craftily-9b7f@gregkh>
+ <17ed42fe-9d8d-46da-8434-f508ec5932fa@kernel.org>
+ <20250808044538.GK476609@black.igk.intel.com>
+ <2025080822-cardboard-aloha-3c5d@gregkh>
+ <20250808091313.GN476609@black.igk.intel.com>
+ <2025080832-poker-rectal-0895@gregkh>
+ <20250811045307.GP476609@black.igk.intel.com>
+ <2025081128-cartwheel-grandly-a9be@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250806112807.2726890-4-quic_varada@quicinc.com>
+In-Reply-To: <2025081128-cartwheel-grandly-a9be@gregkh>
 
-On 06-08-25, 16:58, Varadarajan Narayanan wrote:
-> From: Md Sadre Alam <quic_mdalam@quicinc.com>
+On Mon, Aug 11, 2025 at 07:28:21AM +0200, Greg KH wrote:
+> On Mon, Aug 11, 2025 at 06:53:07AM +0200, Mika Westerberg wrote:
+> > On Fri, Aug 08, 2025 at 04:13:28PM +0100, Greg KH wrote:
+> > > > 0004 USB4
+> > > > 
+> > > > sounds good to me. In USB4 there is no "root hub". It's called host router
+> > > > (but we do have device routers that are called USB4 hubs for added
+> > > > confusion ;-).
+> > > > 
+> > > > But I'm fine with other numbers too, does not matter if you want to save it
+> > > > for some future USB variant.
+> > > 
+> > > Ok, use 0004 for this.  But what should I use for the text string here
+> > > in the usb.ids file?
+> > 
+> > Thanks! I'll cook up a patch changing these.
+> > 
+> > I don't think it should be in usb.ids because it is not visible anywhere
+> > except over USB4 link (between hosts). You don't see this through USB 2.x
+> > or 3.x.
 > 
-> IPQ5424 have different OPPs available for the CPU based on
-> SoC variant. This can be determined through use of an eFuse
-> register present in the silicon.
-> 
-> Added support for ipq5424 on nvmem driver which helps to
-> determine OPPs at runtime based on the eFuse register which
-> has the CPU frequency limits. opp-supported-hw dt binding
-> can be used to indicate the available OPPs for each limit.
-> 
-> nvmem driver also creates the "cpufreq-dt" platform_device after
-> passing the version matching data to the OPP framework so that the
-> cpufreq-dt handles the actual cpufreq implementation.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> [ Changed '!=' based check to '==' based check ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v5: Add 'Acked-by: Viresh Kumar'
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 5 +++++
->  2 files changed, 6 insertions(+)
+> It goes in usb.ids as that is what I use to keep track of all of the
+> assigned product ids for this vendor :)
 
-Applied. Thanks.
+Right, got it.
 
--- 
-viresh
+> So, should I use "USB 4.0 host link" or something else?
+
+USB4 Connection Manager
 
