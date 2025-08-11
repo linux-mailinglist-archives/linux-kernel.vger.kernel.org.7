@@ -1,200 +1,159 @@
-Return-Path: <linux-kernel+bounces-762832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4961BB20B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF2BB20B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838907AC69E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:05:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537E61884E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610E8242923;
-	Mon, 11 Aug 2025 14:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9934E22FF2E;
+	Mon, 11 Aug 2025 14:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="PpR8rMpZ"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+fsxgiW"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5466E23BCF5;
-	Mon, 11 Aug 2025 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA50C1F91F6;
+	Mon, 11 Aug 2025 14:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921109; cv=none; b=kZUSGUNroSbgh24SJHiINMdR+3aTLiyiPrkUJ6ytNFAz5UXCBQwm0UNaKwbgUoP0zeYpwfprBUtuWF4vQUsNo5sgKdMEc0aHG16P0xoiysga/fQ0NTx0RzhPc+WLaCOTtcz0fBcPtE9Gnx1yAiVeL26Gv+xkdJ3STfm178zseMQ=
+	t=1754921075; cv=none; b=J9I1AJi7Ti+7wIHg2Ka2xJVAO1tbO7yn9eMJg4e1zdHncIlyp8ITYKErSPK5RCOfdtXsq/wgMGXHNnRAcyHyH/Xzjd/VjnDwGPH6zDhwe2U7ds8os1lv97lDCUyDyfUi7GbYyAKgWw3I5uxLTRc9dgslMFuIxe0nJM0FwdQR/vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921109; c=relaxed/simple;
-	bh=/eP5t1s0TqmJIvJ8sxEMoPxPa8mRQSEXNyaZxgSUlDo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e0NB4bH7v7+MqFHBeuSQvyRLgV8/pVG9uzAbti7oW+jg6/NyBLN4WqLQkjEeb7iz0Ud+smj3mG7Ht6aYJdKl7RDN0AdoqfYXsKNrED4MI/M1pWXscuqZPuEXWmnI57BU/Xmtzf5crOGZ+z2uH62pFpBsA2PFGtBIzfeBa+BBXdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=PpR8rMpZ; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1754921091;
-	bh=oUvLpctbzw/WmMzpaNN8M2oVwo9YJxXCqlSJR/iqBr4=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=PpR8rMpZadtp6AJTmxAaNaejQAbvdZuhyYchCHs9cQVWRiLb0ggFzFqjAFFUblaQo
-	 V/OM16U7ZhMzJIJpudurQZeh8Yo1Q00hPgRlt6mTAdxp1CvH1cLKRSMH2shyAgneut
-	 DAakkYe4btH/T+qnRulXl/4G5XBk48POVAPZc51k=
-X-QQ-mid: zesmtpip3t1754921090t5adf6c6f
-X-QQ-Originating-IP: 77QCtEo+rzaJ27LWZg1zIIO7xOaXq4U7Kmzsi4q9YBI=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Aug 2025 22:04:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11959351235578941372
-EX-QQ-RecipientCnt: 16
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 11 Aug 2025 22:04:30 +0800
-Subject: [PATCH v2 4/4] clk: spacemit: fix i2s clock
+	s=arc-20240116; t=1754921075; c=relaxed/simple;
+	bh=RmgTHIaDhOguz+w7nmvLbH/WpMkuuGx2b8fcu3B0jaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u0SkYf3ASZycbiapy+TgKkRKITz7Ys8FYCKwrlwzXJY/eTI7sGzuKy89/uT24C6o348gLoyibbgXOS+hRWroevFakRshDJaSyAiRF7IquNno6rM/3znVHitjX/4Xes5WokERsMgK5ul/TwnKFiSL2TJHiaseADTKs2s61JXRSd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+fsxgiW; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24041a39005so27711155ad.2;
+        Mon, 11 Aug 2025 07:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754921073; x=1755525873; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUTK53YIspNHhHoCh8vVSDbdxt8XCkmaBRBU4QetOB4=;
+        b=P+fsxgiWWykuFCzbpVTDsn9RyCGrBCIbJqpLhPCeR1pnqRyvRqLbgw4wgiO7qbqfw8
+         kEIHJN87ebhY4HyzXIxju4BS4pci5Q2jr+LZN2OBlt63jSl4815RkOTms/Lh4OuLdjc6
+         kVJBO6rJk/B5UNo4ItHvXpneGLkPpu9L3y6zGIxnrFONCe/JRAaAkNUF9es3clCPoVVe
+         TPeepVzXzbn06krpjNpuyfrEt5+cLxR8hU1lf6a2/gp10wQepjhblLPiSWu3Miow9vvj
+         yyJkOKe75IKcCUNGcj4mBveycmTAbLHh+8HRhqL1EA3vLIr3nn3V2awboy/5CpkwDitr
+         3EWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754921073; x=1755525873;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YUTK53YIspNHhHoCh8vVSDbdxt8XCkmaBRBU4QetOB4=;
+        b=CrfneS7pZL7boFqxgjXgFYWYAiqjt2QwWKvtJ4oqeVrKm17WEtcbezmQZBt2K/ORtK
+         VqgdisLf6oYvoOIf/zh21QpsR4Zw4HRU57SF4MJpbSec4qX2ppOHtuyEXKo6G02JTD5L
+         k3XepELQA2vu3SW13q/P/uXeVxdhy++7uqz0q6lzdZSne9I0GhHFezwAjXFi7L5CBPef
+         tI+6qczODEAQT0OFN+y65CKaD2qWdpAoID51Fby5c5G5RJYDpWfe7cVXOT7ddTrD2ys6
+         VTlIzYQtGUS94H1hR0TKxIvf62VkL4rVAI6CstEwaQ0RTWNnvoV/p3RwJwjyOKlU6r/V
+         sa4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXIazbYs+KMFo3B1dbFAJfZi8VT0AW45E2TGOwLu6XaYtwjDYbzwMKf4eTNBq86AfF3pBx4Ui68+237gW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1galOiuhg9p0vy0cDiD6LwFOhoAaLa5OYz3g0PKNAm/4dE8J3
+	gYAAYPu7WOhWE7oFJmCB0nSRAlbrII7eZAxAWBi8L9imAg5u+mSWygX3
+X-Gm-Gg: ASbGncuZH3qC5uHM2pPOOn/R1NJOkpd/3dnwIlIPBTl2SvAeRFze+ePsw3MswFD46xx
+	HUDYPuINS0lNdb+xxfxsxxYxmf9mrRC1xR24sY77+hoAAfExy7pi1Kt95aNrRyfGA4wPSzao5Tn
+	p01NM3g8EVWuB9f6mNzmvXwim4U9b0zlVyreSNsdlpsw7oTQ8yrstSCfFFSo9g6jNk5ykCdrBrI
+	d5dp6WwKorl+LvBffjzjEwmD/03A0BFR13PZLmpieDxKVD22UHCtEnb0cifbZ8uJ9AQ58dCCfzS
+	3tb+jkLQPL5vxuqIACzW8YaRMMPlcHOd6JZngEzAd3njVXEk+Tncw+Npzs6bIOylEJDOHXqbz1E
+	9BIUPNgJvhkXJpiIHsZ1FJDywVB/3ofNLa1UF6LkigFjkK2qDLCmPCZJ1KdqeoNoT2OrPI4w=
+X-Google-Smtp-Source: AGHT+IHbkYXNAxPAuxg++nImkbnZkg3L+q8zj6FyMyfLfo1rJY0xudYw/DYfXMbWZB2Ek4/URlIJdw==
+X-Received: by 2002:a17:903:3b8c:b0:242:460f:e4a2 with SMTP id d9443c01a7336-242c2004168mr157897575ad.23.1754921072812;
+        Mon, 11 Aug 2025 07:04:32 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899b6casm272694975ad.127.2025.08.11.07.04.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 07:04:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <112dba6a-dc3a-4b6c-b558-e1cc87636dea@roeck-us.net>
+Date: Mon, 11 Aug 2025 07:04:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] hwmon: sbtsi_temp: AMD CPU extended temperature
+ range support
+To: Chuande Chen <chenchuande@gmail.com>, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chuachen@cisco.com, groeck7@gmail.com
+References: <20250810084307.41243-1-chenchuande@gmail.com>
+ <20250811050752.76030-1-chenchuande@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250811050752.76030-1-chenchuande@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-k1-clk-i2s-generation-v2-4-e4d3ec268b7a@linux.spacemit.com>
-References: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
-In-Reply-To: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754921074; l=4205;
- i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=/eP5t1s0TqmJIvJ8sxEMoPxPa8mRQSEXNyaZxgSUlDo=;
- b=p3HEwh3FPsXPkPLayk+Nv8p8KIP+CiyvupGRdd/M1EW0hj4BIzjQBvfOmJJNmHfWUf4zpTd/I
- nJgeuQ4Q9vuDlqsdURTkbApXuDuq6R9iYSatGTdLH23AW4EG0Ve1q42
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NYSbNmQ6i3UflGZQAhExDUD5lezifgMNpg/HQ1y4ZLzfvJpN3ogzQQwc
-	OClc6N7TR4/Mz+5fYUZG0dtigTV+p7cnXhu35WSp28lmhVwoI6RpjYmOv1MiDQwDvxDVGFy
-	VY6kbg3oezvzNIpp170m21rA0V6NOiVFowef0WyXOJtfBsuF4UmvDx+UD56s/8n8UMpDIF7
-	mWZ00dOOJOo3EdUZwXUbloRolVgzEcvhewsYYncpjDVj34207OP7ycRs5hrdVOZf7k/MABt
-	yhf6wXG/p94NgPac5yAV0/yjFL1dgU+P8tMKj047P9noiKJ4TQvJESkax6AupUml7hR23Q6
-	mJbUl3UW2xRUu67eOsE2Yx9PelRIGnyj4ImELM3BPEpH5QeKkpanDN8JVR8zt7RmaatqGcM
-	AouqxkonTeIdPyy4c0cJ8/rsB80QMVF7338X8U6207WQ090WgzZHaFlVJIuRH40RKAr6Sjj
-	CbdhKeKQfIXvOfx5AzTw8kOkbyz0BJf8/cAU8oskaasVWhoTbN47wBF3MMDjCKaafRPmRHQ
-	j+lSNSFdusI7CjQRZM3jBDdYx9tZQf/F9xQXeQrBZ6fXXUfnpm1Uf26ySGTfTEHvXp0MlX2
-	4tVh7g0mEDUca8U0WaZzwCC4ZEPvWnn3YZvgYrw8aOOmAMK3qpwld9JDdJHRaBH958LuJ/S
-	+AkevnVIbnIcrX7DczPgDsC2eqRjlGVZHyag6CqnYCaewUrDQyTKsgh9rLeX6dvjQdQgOIW
-	wrENzLyg1aHOzEYpYLZixq1wsNtSNrxgW+JnT4N+c2X5Ypr3tJwn9YJ82Ho52PR9UWc6a/x
-	n3XWvpqVnxG2zFViht4tFNg3P17sYc4dX1ZIIRxKQNzq0WCcavh2fAb8xLNOx0h8nS1C0PT
-	ws6xnxsHJFjNRTjEHS7jKGRudJsOB0UW4hnOJFfNXd/FhmDQ90PtVYrjZg501peYDBBml2j
-	hNKjM/yx1CwbXgw4S3gCwpqMBb1FDMjsfgSUxE6qsjXDVf82Rqyrn19YqYuHYCDcC3096Pr
-	WJYtH5rYqa9DMxP9ji/s1xIIKpXLTyBQjBYCNKWqH7BpCvjvs9Vh872WBMvgFH+PdhjTj/0
-	8otdT8tiRWD71bdUGBwTmob+NkcUACYbFRsALWFboueB3isN548EDet7w7KnIeGPSvvljK1
-	ktQnHkq6yc4Wm6vIz9gx/qoTSNlz7dZ6fZ7o
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
 
-Defining i2s_bclk and i2s_sysclk as fixed-factor clocks is insufficient
-for real I2S use cases.
+On 8/10/25 22:07, Chuande Chen wrote:
+> From: Chuande Chen <chuachen@cisco.com>
+> 
+> V1 -> V2: addressed review comments, also save READ_ORDER bit into sbtsi_data
+> 
+> Chuande Chen (1):
+>    hwmon: sbtsi_temp: AMD CPU extended temperature range support
+> 
+>   drivers/hwmon/sbtsi_temp.c | 46 +++++++++++++++++++++++++++-----------
+>   1 file changed, 33 insertions(+), 13 deletions(-)
+> 
 
-Moreover, the current I2S clock configuration does not work as expected
-due to missing parent clocks.
+Introductory patches are not needed for individual patches and only add noise.
+Please just send the patch with change log after "---".
 
-This patch adds the missing parent clocks, defines i2s_sysclk as
-a DDN clock, and i2s_bclk as a DIV clock.
-
-The I2S-related clock registers can be found here [1].
-
-Link:
-https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-[1]
-
-Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
- drivers/clk/spacemit/ccu-k1.c    | 28 +++++++++++++++++++++++-----
- include/soc/spacemit/k1-syscon.h |  1 +
- 2 files changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 65e6de030717afa60eefab7bda88f9a13b857650..3a885d64fb09144bb0d40024fea9415d66eba01b 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -136,13 +136,28 @@ CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
- CCU_GATE_DEFINE(pll1_d2_1228p8, CCU_PARENT_HW(pll1_d2), MPMU_ACGR, BIT(16), 0);
- 
- CCU_GATE_DEFINE(slow_uart, CCU_PARENT_NAME(osc), MPMU_ACGR, BIT(1), CLK_IGNORE_UNUSED);
--CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 0);
--CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 0);
-+CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 2, 0);
-+CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
- 
- CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
- 
--CCU_FACTOR_GATE_DEFINE(i2s_sysclk, CCU_PARENT_HW(pll1_d16_153p6), MPMU_ISCCR, BIT(31), 50, 1);
--CCU_FACTOR_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, BIT(29), 1, 1);
-+CCU_FACTOR_DEFINE(i2s_153p6, CCU_PARENT_HW(pll1_d8_307p2), 2, 1);
-+
-+static const struct clk_parent_data i2s_153p6_base_parents[] = {
-+	CCU_PARENT_HW(i2s_153p6),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DEFINE(i2s_153p6_base, i2s_153p6_base_parents, MPMU_FCCR, 29, 1, 0);
-+
-+static const struct clk_parent_data i2s_sysclk_src_parents[] = {
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(i2s_153p6_base)
-+};
-+CCU_MUX_GATE_DEFINE(i2s_sysclk_src, i2s_sysclk_src_parents, MPMU_ISCCR, 30, 1, BIT(31), 0);
-+
-+CCU_DDN_DEFINE(i2s_sysclk, i2s_sysclk_src, MPMU_ISCCR, 0, 15, 15, 12, 1, 0);
-+
-+CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, 27, 2, BIT(29), 2, 0);
- 
- static const struct clk_parent_data apb_parents[] = {
- 	CCU_PARENT_HW(pll1_d96_25p6),
-@@ -639,7 +654,7 @@ static const struct clk_parent_data emmc_parents[] = {
- CCU_MUX_DIV_GATE_FC_DEFINE(emmc_clk, emmc_parents, APMU_PMUA_EM_CLK_RES_CTRL, 8, 3, BIT(11),
- 			   6, 2, BIT(4), 0);
- CCU_DIV_GATE_DEFINE(emmc_x_clk, CCU_PARENT_HW(pll1_d2_1228p8), APMU_PMUA_EM_CLK_RES_CTRL, 12,
--		    3, BIT(15), 0);
-+		    3, BIT(15), 1, 0);
- 
- static const struct clk_parent_data audio_parents[] = {
- 	CCU_PARENT_HW(pll1_aud_245p7),
-@@ -756,6 +771,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
- 	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
- 	[CLK_APB]		= &apb_clk.common.hw,
- 	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
-+	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
-+	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-+	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
- };
- 
- static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..354751562c55523ef8a22be931ddd8aca9651084 100644
---- a/include/soc/spacemit/k1-syscon.h
-+++ b/include/soc/spacemit/k1-syscon.h
-@@ -30,6 +30,7 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
- 
- /* MPMU register offset */
- #define MPMU_POSR			0x0010
-+#define MPMU_FCCR			0x0008
- #define  POSR_PLL1_LOCK			BIT(27)
- #define  POSR_PLL2_LOCK			BIT(28)
- #define  POSR_PLL3_LOCK			BIT(29)
-
--- 
-2.50.1
+Guenter
 
 
