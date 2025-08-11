@@ -1,117 +1,238 @@
-Return-Path: <linux-kernel+bounces-763416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB83B21447
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CF9B2144A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DA41A232B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9DF625D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F162E2833;
-	Mon, 11 Aug 2025 18:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BFC2E172B;
+	Mon, 11 Aug 2025 18:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pu7u48aC"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSzc0o05"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FD72E0B69
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB513A41F;
+	Mon, 11 Aug 2025 18:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936724; cv=none; b=dY8fUzbRAppNtLLrTjYlq1O32Uv0WhHSKjIhVAh3jEpX+rDHUh3w0SOAByFxFxvKsG7c6URYbwBOtOdeV+A0jUCfaaO+Oc7TRtQ0uTT+t0XBrXup5p7A9sqTALoPYnHZ3G/o8yIO+AspaztJgKeEK4CpnJjK5Y5jXEXJml4Yeto=
+	t=1754936782; cv=none; b=r+smmiNjMCis88fP5m6DbMo+UUp57LXm2d2rAS3wng9y3fSIFkPKGLvzuSdsJ5GXewQ0ap9NbFUCZRUt1v1MuiegXHVKQKTQsmFHMBWZbwWnWz+85tHP0aVgJfXGiBdqc1FHVDdY2FvW702h1RdqDi33WaU3wvyDp7li8cEw9TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936724; c=relaxed/simple;
-	bh=+RaoGEfqODQpjds3+pa5hzUvYCotn9nVbr9q7E3jVBQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XclA6YPxXhj2bonUd7bKVWcL2QwA2uehUbMiZMx+0Qi/nGmWK5hwx3vXmu23zKh/j97sktompIUirEW2fJrR9u0XTXbL+ITdoQEbkKmh9VOTsXg6hxqJ0P3fx1n2AnxUgLxLuKJDjEG68lHo7dbTPe9uSoYwsXAVxZ6T8MTWAyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pu7u48aC; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f2a98d91eso4441030a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754936722; x=1755541522; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GkymeW9oJwqBHxAPtMhP6NoKFqSvnGj/TBIK2S4XTUo=;
-        b=Pu7u48aChQ7x3AINRl4vlr1YlUJa3elREij6oAYsxdM3mPq5g4/wZGB9WWgJhbRxi7
-         B+CvxTPfX+xM5e8WeLqQJvNZ48UfZ4kkOQyfdYjSGbX0h+F1hKF12Xt8lWeuY56wxdOD
-         ijelmJC8G9NA+klOXh6Iq74Ww39uk2cpqjM0rc9J4sSgEVVtNkaB0rZ/D1lrA5IVaZGS
-         oKTmavfw7gH2kSarBfkLCjxnnaZwn9C+RFCS5J5FV3Fbrxd5b/Jv4Tm2UvGSFApTztc5
-         U+phlYpAUhgTnHvtO4AEUncwi+qaeVqhdsNrImcKXoAaU3i3Ho2bzyio1dxBT2nnpNuI
-         EAwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754936722; x=1755541522;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GkymeW9oJwqBHxAPtMhP6NoKFqSvnGj/TBIK2S4XTUo=;
-        b=lcIr9uNS/ADDOP+cpsnvTHt5SDukK2lShOXkD9hanKbaj7ohs9oktcQlOBNVQhYBFA
-         1u4OtUKs3iLo+417XKZ4sFtfrxUzOMT4riihKq/mmZV5MH3nPubVjrd1pI4546BTdJwc
-         fh0/Bm/B9l5CNL2cNSClyCiNk3NYhKCSHHGfxWlJ9Jz1632bCqVHZP/Z7Dv1+cbR0/FI
-         mvFPoTnN7IaExCDuqeDJgHMXZd/yaWrESI/0C7db2Ez6hNGuU8f5klAE7gvPrkp2WQq9
-         h5pO5Z6s6Vpu6z5xZ/NagDj80M/xG12LgpoDQMAno0HOoIWTL4BCCDh8TablCpSQyps3
-         AXHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ3rjq/pFAXjS0xRAGEaD0gIYcPfWJGTPyayPQYqRBrK0DFlghmgjBbt/LQ+3mB50OCu9wbGW8qbm2k3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ+s7MB1GoPKvUEyiYeuSIZbhpHidJu7SD0DQhugy0ZyFGfx3q
-	1g8kNm6/2zYF0UuMhvDLFWnF3yXvsXkNPz+QCVUPIniyG1lpfmBkamJ9ITKR5S+i89YEOYtPS0t
-	3b6jgYg==
-X-Google-Smtp-Source: AGHT+IHhf+u8DAgFU8Tb7yj1qaPeuXMKCvgtRgZ1OiwVl9wM0oGpeZSCJHlG1M98vl/B3sySbxtqsUMXd2U=
-X-Received: from pjbsj7.prod.google.com ([2002:a17:90b:2d87:b0:31f:232:1fae])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc4d:b0:312:e6f1:c05d
- with SMTP id 98e67ed59e1d1-321c09df627mr727122a91.2.1754936722399; Mon, 11
- Aug 2025 11:25:22 -0700 (PDT)
-Date: Mon, 11 Aug 2025 11:25:20 -0700
-In-Reply-To: <20250807201628.1185915-5-sagis@google.com>
+	s=arc-20240116; t=1754936782; c=relaxed/simple;
+	bh=yhkmn4Gt30KzruxJTZYjUxCLaZowWIiBxcTh4+xOF/Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T4QDE6ZjXasBXMi3PD1Dj5UUaCLNOtFelUSsuNt9/RENBVWc75bof7Xy61eO8Gfhj4EwaZblc7V5L0CHgADvDwHE/pQeqvfcTvroaYcU+mhZt+qOlg5JKmqTDSRps6R24Yc7nLLZW4fQA8D2ntGNqFycIVko3SpDbNkWOLEeulc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSzc0o05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E5A7C4CEED;
+	Mon, 11 Aug 2025 18:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754936781;
+	bh=yhkmn4Gt30KzruxJTZYjUxCLaZowWIiBxcTh4+xOF/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aSzc0o05DtQFxvPtRdsc8PVJCkwZozAUaR44FQ/7WVk1GhPAWb8ZEKBYWOi15VTdi
+	 yJVc6DDyizvrVwhamyd0/cJsAWDTxXSCBTlFiB4tY7SdyxKAd8b03XEqZzWWkLjIuC
+	 qbPNZdSs33LzkU0nbWmpb5uQusu5hENSsWkp6G3IZ85p/+hUV4G/j+2lJBrrZ6NDF6
+	 TMsKkHeMxaZB1WOim4JBN7B4SMpfsjnavS1QCPHgbzzdHFy7/YPROQBy/t8NCHEJPu
+	 bQvtpeQ7fHwjHZ72zzVE+9nd+B/bvOmJYZAtUhWcN1yOsFF/VsAWVhVSkglzjulu5M
+	 puKuAiy8v4cpw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ulXDt-006Mhm-TE;
+	Mon, 11 Aug 2025 19:26:18 +0100
+Date: Mon, 11 Aug 2025 19:26:17 +0100
+Message-ID: <86pld190l2.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	anshuman.khandual@arm.com,
+	robh@kernel.org,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	Dave.Martin@arm.com,
+	ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	mbenes@suse.cz,
+	james.clark@linaro.org,
+	frederic@kernel.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 2/6] arm64: initialise SCTLR2_ELx register at boot time
+In-Reply-To: <20250811163340.1561893-3-yeoreum.yun@arm.com>
+References: <20250811163340.1561893-1-yeoreum.yun@arm.com>
+	<20250811163340.1561893-3-yeoreum.yun@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-5-sagis@google.com>
-Message-ID: <aJo1kNCUzAe2TFAz@google.com>
-Subject: Re: [PATCH v8 04/30] KVM: selftests: Add vCPU descriptor table
- initialization utility
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com, Dave.Martin@arm.com, ahmed.genidi@arm.com, kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz, james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org, pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
+[dropping ry111@xry111.site, which bounces]
+
+On Mon, 11 Aug 2025 17:33:36 +0100,
+Yeoreum Yun <yeoreum.yun@arm.com> wrote:
 > 
-> Turn vCPU descriptor table initialization into a utility for use by tests
-> needing finer control, for example for TDX TD creation.
+> add initialisation for SCTRL2_ELx register at boot time.
 
-NAK.  "needing finer control" is not a sufficient explanation for why _this_
-patch is necessary.  There's also zero argument made throughout any of these
-patches as to why this pattern:
+Again, please expand.
 
-	vm = td_create();
-	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-	vcpu = td_vcpu_add(vm, 0, guest_io_writes);
-	td_finalize(vm);
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+>  arch/arm64/include/asm/el2_setup.h |  6 ++++++
+>  arch/arm64/include/asm/sysreg.h    | 22 ++++++++++++++++++++++
+>  arch/arm64/kernel/head.S           |  5 ++++-
+>  3 files changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index d755b4d46d77..347ac4cc1283 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -48,6 +48,11 @@
+>  	isb
+>  .endm
+>  
+> +.macro __init_el2_sctlr2
 
-is the best approach.  IMO it is NOT the best approach.  I would much rather we
-structure things so that creating TDs can use APIs like this:
+Writing this as __init_sctlr2_el2 would read vastly better (yes, I
+know most macros in this file are similarly braindead).
 
-static inline struct kvm_vm *td_create_with_vcpus(uint32_t nr_vcpus,
-						  void *guest_code,
-						  struct kvm_vcpu *vcpus[])
-{
-	return __vm_create_with_vcpus(VM_SHAPE_TDX, nr_vcpus, 0, guest_code, vcpus);
-}
+> +	init_sctlr2_elx	2, x0
+> +	isb
+> +.endm
+> +
+>  .macro __init_el2_hcrx
+>  	mrs	x0, id_aa64mmfr1_el1
+>  	ubfx	x0, x0, #ID_AA64MMFR1_EL1_HCX_SHIFT, #4
+> @@ -411,6 +416,7 @@
+>   */
+>  .macro init_el2_state
+>  	__init_el2_sctlr
+> +	__init_el2_sctlr2
+>  	__init_el2_hcrx
+>  	__init_el2_timers
+>  	__init_el2_debug
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index d5b5f2ae1afa..8b82af5be199 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -868,6 +868,8 @@
+>  #define INIT_SCTLR_EL2_MMU_OFF \
+>  	(SCTLR_EL2_RES1 | ENDIAN_SET_EL2)
+>  
+> +#define INIT_SCTLR2_EL2			UL(0)
+> +
+>  /* SCTLR_EL1 specific flags. */
+>  #ifdef CONFIG_CPU_BIG_ENDIAN
+>  #define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
+> @@ -888,6 +890,8 @@
+>  	 SCTLR_EL1_LSMAOE | SCTLR_EL1_nTLSMD | SCTLR_EL1_EIS   | \
+>  	 SCTLR_EL1_TSCXT  | SCTLR_EL1_EOS)
+>  
+> +#define INIT_SCTLR2_EL1			UL(0)
+> +
+>  /* MAIR_ELx memory attributes (used by Linux) */
+>  #define MAIR_ATTR_DEVICE_nGnRnE		UL(0x00)
+>  #define MAIR_ATTR_DEVICE_nGnRE		UL(0x04)
+> @@ -1164,6 +1168,24 @@
+>  	msr	hcr_el2, \reg
+>  #endif
+>  	.endm
+> +
+> +	.macro init_sctlr2_elx, el, tmp
+> +	mrs_s	\tmp, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	\tmp, \tmp, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
+> +	cbz	\tmp, .Lskip_sctlr2_\@
+> +	.if	\el == 2
+> +	mov_q	\tmp, INIT_SCTLR2_EL2
+> +	msr_s	SYS_SCTLR_EL2, \tmp
+> +	.else
+> +	mov_q	\tmp, INIT_SCTLR2_EL1
+> +	.if	\el == 12
+> +	msr_s	SYS_SCTLR_EL12, \tmp
+> +	.else
+> +	msr_s	SYS_SCTLR_EL1, \tmp
+> +	.endif
 
-instead of open coding an entirely different set of APIs for creating TDs, which
-is not maintanable.
+I don't think this is the correct place for this macro.
+asm/assembler.h seems more suitable, and already has that sort of
+things.
+
+> +	.endif
+> +.Lskip_sctlr2_\@:
+> +	.endm
+>  #else
+>  
+>  #include <linux/bitfield.h>
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index ca04b338cb0d..0dff7593e50b 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -276,6 +276,7 @@ SYM_INNER_LABEL(init_el1, SYM_L_LOCAL)
+>  	mov_q	x0, INIT_SCTLR_EL1_MMU_OFF
+>  	pre_disable_mmu_workaround
+>  	msr	sctlr_el1, x0
+> +	init_sctlr2_elx	1, x0
+>  	isb
+>  	mov_q	x0, INIT_PSTATE_EL1
+>  	msr	spsr_el1, x0
+> @@ -298,7 +299,6 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
+>  	msr	sctlr_el2, x0
+>  	isb
+>  0:
+> -
+>  	init_el2_hcr	HCR_HOST_NVHE_FLAGS
+>  	init_el2_state
+>  
+> @@ -315,12 +315,15 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
+>  
+>  	/* Set a sane SCTLR_EL1, the VHE way */
+>  	msr_s	SYS_SCTLR_EL12, x1
+> +	init_sctlr2_elx	12, x2
+>  	mov	x2, #BOOT_CPU_FLAG_E2H
+>  	b	3f
+>  
+>  2:
+>  	msr	sctlr_el1, x1
+> +	init_sctlr2_elx	1, x2
+>  	mov	x2, xzr
+> +
+>  3:
+>  	mov	x0, #INIT_PSTATE_EL1
+>  	msr	spsr_el2, x0
+
+This is missing something: you should resynchronise SCTLR2_EL2 from
+SCTLR2_EL1 in __finalise_el2, rather than relying on whatever you've
+set in __init_el2_sctlr2.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
