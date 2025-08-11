@@ -1,62 +1,67 @@
-Return-Path: <linux-kernel+bounces-761983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7946AB200BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8102B200BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5AE17C299
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD3F189DB34
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D77285078;
-	Mon, 11 Aug 2025 07:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B5D1F428C;
+	Mon, 11 Aug 2025 07:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuRdQsHp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOuKRCCm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC1F2D97B4;
-	Mon, 11 Aug 2025 07:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F791F76A5;
+	Mon, 11 Aug 2025 07:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754898561; cv=none; b=Frk3HmgNDRv59jcDXuapJsMWxsEwSo5hYogTZr7KWsNkXHC96lqgGMGLoMNlZKGMbemTvbXyQx9YwIpxlUxnqk5Rkv4AxfCXhjVOR5YAW2WxB1+3/3epd050xymZpygrihzK0e3PQoOzZX0B3VzV22/wp/A8TCThBMsIKo+sj4o=
+	t=1754898579; cv=none; b=kSH36nwpsbMHhghNoc/DVxfMPqIoyeAC7TLwEc8GdQ4cJjJwHXM+bOGI+tX0+jKN2uxREiPhd0oIwZmAKXqqkVEyQ3xaUv9rShDhct2rsi80qmNlsfkKaY21f+YjS7+iLVEqYy81lqz01Wjaxk1yVw1AdvHeOcFm/l1vKtQTAIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754898561; c=relaxed/simple;
-	bh=wJOiDdjpV92cFWsEgXBRyCwAM5FN5aB8jQmUBXkj4jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISB+H2D5q3nKxCOevkz2Si6kXmIjso0xT/fqGIDeUQ2LMNvTlfxwZTOnRoNNDD5ja+NoY4qvkYlPl3NPZrdKmPXFWitYXlJIwzS75tNPZDXD/nJXF4Oka/3ng2dxqJcD6LCdfdGkY7o0qT/6hsN19wa5LwekcZG645360t9vj3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuRdQsHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2564C4CEED;
-	Mon, 11 Aug 2025 07:49:20 +0000 (UTC)
+	s=arc-20240116; t=1754898579; c=relaxed/simple;
+	bh=obXcfu770nMVidxk73qNra/bKfWCOjeYA+F0vhuy/Iw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ngR2MvK+cTsbak5CfMScvgvHFhx0pEHjGm4iS1R97kiK+Ho2ekitHOwgpNRd04wPKPg+ImJUPYWlG7i3TFa2vooekyYDJFk3KWH5fU6kG606TDNFplxrM7vKrWnTjHiJRpsjuwMH1eo68ey/6DZtL99RmIOCdqBkzdGPPt5Dxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOuKRCCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3C8C4CEED;
+	Mon, 11 Aug 2025 07:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754898561;
-	bh=wJOiDdjpV92cFWsEgXBRyCwAM5FN5aB8jQmUBXkj4jk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SuRdQsHppCCzKTz8G1v+Zj2MCmum7EcEc6lgQWOCiG32wxatxqFjzCls6lr/mdv6H
-	 tMNmou2ayFVOa5KNgqj31IsU45YQmtPoPlFx6cY4uwWZHey/AsIECNWWr3UHXfu19u
-	 RoJHqxtOzmeFibiyXsdhMs7jCWQXzqUDeff7WbOAuubn+REVI9gCJ3tZ0gQm2NOK2Q
-	 Dq95ITr0zo/QZmKrzOn0I7bBrRaO9VUFQr7Zft3a/cj6w2ra5MykBnl9DxIPnRFcle
-	 ayOycVi+BwfsYsdgXsXeeBAEPZJPqb8jtB/o9W93YiOCVWu9fpYGaxYVM3VPyuKtkI
-	 XRbQAZ6Zomcfw==
-Date: Mon, 11 Aug 2025 09:49:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jay Liu <jay.liu@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/6] dt-bindings: display: mediatek: ccorr: Add
- support for MT8196
-Message-ID: <20250811-brainy-impartial-emu-da8b46@kuoka>
-References: <20250808125512.9788-1-jay.liu@mediatek.com>
- <20250808125512.9788-4-jay.liu@mediatek.com>
+	s=k20201202; t=1754898579;
+	bh=obXcfu770nMVidxk73qNra/bKfWCOjeYA+F0vhuy/Iw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EOuKRCCm2LlEvfMg72vKt8Que7zNQvjwjILf7+0Lz3OtPmi+Zw39fOAOBPGWKjhPl
+	 lHI12YSShHuUkFvtZYI29FuEQuCPYujI8z0VRre080ovzo3VTIkNzNluyK0NG7zsfR
+	 NBqmL2nIU+67H+UiJNhDlo3yy1Ca+f3b7o9Kz5y6rsko6ltYSRW0X8PLX9IUc1w9Lu
+	 XvO8NZBVIga0LEe0c7c66bsbER7QieyOHWhERLJ1rNxcaLevD6lUj4q7ZDmbKFLyog
+	 7iI9O3HwnVC/MxoXH+0/iUb02h9aOxypmkTGkEhdzS3NuYrZHrp5Iv3tZuXNXoLejr
+	 fWQkwyFV01qmw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Jens Axboe
+ <axboe@kernel.dk>
+Cc: Shankari Anand <shankari.ak0208@gmail.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+ <dakr@kernel.org>
+Subject: Re: [PATCH 1/7] rust: block: update ARef and AlwaysRefCounted
+ imports from sync::aref
+In-Reply-To: <CANiq72=Yb=APVFiJbdveVD45=fwmAbXR3vUXLTBfqu_n-BpcOA@mail.gmail.com>
+References: <KnSfzGK6OiA0mL5BZ32IZgEYWCuETu6ggzSHiqnzsYBLsUHWR5GcVRzt-FSa8sCXmYXz_jOKWGZ6B_QyeTZS2w==@protonmail.internalid>
+ <20250716090712.809750-1-shankari.ak0208@gmail.com>
+ <87cy965edf.fsf@kernel.org>
+ <iuNf4uKy1tAU76PDHMl0imyutwtKX6ih6M-JYDuYoQFmEx6VPeRH-YmY7Y76fWS6ORuhrquUVGELY7dj0r1MkA==@protonmail.internalid>
+ <CANiq72=Yb=APVFiJbdveVD45=fwmAbXR3vUXLTBfqu_n-BpcOA@mail.gmail.com>
+Date: Mon, 11 Aug 2025 09:49:30 +0200
+Message-ID: <87bjomguwl.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,23 +69,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250808125512.9788-4-jay.liu@mediatek.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 08, 2025 at 08:53:58PM +0800, Jay Liu wrote:
-> Add a compatible string for the CCORR IP found in the MT8196 SoC.
-> Each CCORR IP of this SoC is fully compatible with the ones found
-> in MT8192.
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Jay Liu <jay.liu@mediatek.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,ccorr.yaml     | 1 +
->  1 file changed, 1 insertion(+)
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> On Fri, Aug 8, 2025 at 11:53=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
+>>
+>> Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> I think you can pick this one, i.e. the idea was to allow changes to
+> be picked independently.
+
+Jens is picking the block patches directly from list. I would prefer
+sending a PR, but that is not the way we agreed on doing it.
+
+@Jens, do you still prefer to pick the rust block patches directly?
 
 Best regards,
-Krzysztof
+Andreas Hindborg
+
+
 
 
