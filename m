@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-762014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55DEB2011E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:02:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF0EB2010E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1BC0162E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:01:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BF377AC911
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9022DAFB1;
-	Mon, 11 Aug 2025 08:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6DC2DAFB1;
+	Mon, 11 Aug 2025 08:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aIw++hJL"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BST4RaTp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2F61FE451;
-	Mon, 11 Aug 2025 08:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EDA20B7F9;
+	Mon, 11 Aug 2025 08:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899296; cv=none; b=FErWbJxjmNzVaj0N2meUObvzyvzXekXOEhfnv+iIGKO6waeOVn5qW5Xp3wtBcNWGn6Y3VrPgXIsheEbKVLmlKMd0Ty1zHDrGPniDXMFf9/367Rs1Ln78ntIDeJHd9Av74c0RCLQLCu/71QqnIxV8lWgQpjjhsx23hezhqdYqRUo=
+	t=1754899260; cv=none; b=bXR6mb7d6CWIJ3+VQ1dFwCIGYUdKRFV3Hw0Pt1VjkD18f7QkdLwaaR5vWowQg9DHP6V7jsZhoB9bmiynvNxzXvQmSiaOdynu8J33TOQR9iEsl4joKD94qLqAa2JoPIZ1UO4stm61P/sMGBhHOTwdth2nhEzL3e7kV8nH3qDa3D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899296; c=relaxed/simple;
-	bh=0JyXYXb9KFtCU8BzpWHuC7G+pxNfzDxCizbDh/SkI/o=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=psC3S4j/9KS0eJbWlEDnp2Z+3KHoUVhiMs007vPHhYERaPnsbhAfvg1hO6wPDkht5BgK4ZU6veOcT9QVcyBJpez5oK44J4bmBXVoejthfn8A/LfFubxdHRjApU849hEfBXpng8rgzT2DWkuGQn9yyGPOAIPCyPII4mKBvx3AS0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aIw++hJL; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754899243; x=1755504043; i=markus.elfring@web.de;
-	bh=aKaiW5eywj05zLSL70x4dRdH0RtSj6BDlVRQ1gRnWCM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aIw++hJLAMhEnqTLgo7AK9euO8U59z+wTSwSjju9Cmxi75Hnw9FL1KJ6vqUzU5j7
-	 zbA3+LkSHRrpf5ISuSghOSTiBz8CcJOWLG9Gum9ITbWnmXiDhzLSiCZzv5TknaKNK
-	 94RJKBiYzUbM/AMe41ysb2yhF4AR6DzcMRCO4/FVBs/R8pmai8uVB6gsUAR0pVB5p
-	 Dvc3QlX0m+FoNpZq4w0qd9ghqqXq+wIExp5/DUPvU0ys4mhKlkGhGnXVWnIfefqSW
-	 wTBya+fR8VLuMiqUGaHkBrWmFN8cR5w/lS/z6PfaXN78/7Ro+jhxqY99CoAab2/c8
-	 NETOGxXjjw8iS1JZ/w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xjb-1uckOG0U5r-00tZNM; Mon, 11
- Aug 2025 10:00:43 +0200
-Message-ID: <7c7aedbf-389d-4e5a-83d0-33c51cda1d8a@web.de>
-Date: Mon, 11 Aug 2025 10:00:40 +0200
+	s=arc-20240116; t=1754899260; c=relaxed/simple;
+	bh=srkUTP+YUtpEUUTBY0f0QKZb5Nq7ktoTvVw8gPJrI4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1NS7tiCT6ow5OXelFcyuVNwyGcoIIjWdvu7yECHFhStExnVr+3MYVerm/H3HHmtVOmhkfmHyJSrPCvmLhaAk/hrJJuBAkNgnGu8pdolNygJ2NdPhj1mr/7wRNVxhdpDaOWIrE5B2TQYR08TVz4xNIwixlLDtVZ8Pj6GtkXFQZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BST4RaTp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9DEC4CEED;
+	Mon, 11 Aug 2025 08:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754899259;
+	bh=srkUTP+YUtpEUUTBY0f0QKZb5Nq7ktoTvVw8gPJrI4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BST4RaTpjHP8ItttfIowfKeh0pqkoeEBV4Vnoq4Oz8gDhVzuBRcgJBFGNzis6dgHl
+	 vCfir7NSUpdKq4mzd6cQSwrZGWqE5AaaYDDuHDgnNYOxNDwVXdfNAXTgwv9h4iRfsZ
+	 aekPgle3MI50jEWQDSwU5jkM9WbycrPYMz515EKHUhLn9+wTYlegpIHoo9DqA8uDd+
+	 QiyfZ9cYMweQqLL5ZnMOMM5yvg6bGVaqk3rN4NH/2Es9hBN4wQnEpEM+PMJokbOc65
+	 h3vt3mqHMpp/yt6iwv8cbimBerBEyTPQ4TIvSgeY3szdTCTr13VSuHS0eHmETKi0DW
+	 Z0OAUMX99h0Pw==
+Date: Mon, 11 Aug 2025 10:00:56 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Will Whang <will@willwhang.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: Add Sony IMX585 CMOS image
+ sensor
+Message-ID: <20250811-successful-military-dragon-d72486@kuoka>
+References: <20250810220921.14307-1-will@willwhang.com>
+ <20250810220921.14307-2-will@willwhang.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Shivani Agarwal <shivani.agarwal@broadcom.com>,
- Sasha Levin <sashal@kernel.org>, Viswas G <Viswas.G@microchip.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Ajish Koshy <Ajish.Koshy@microchip.com>, Jack Wang <jinpu.wang@ionos.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-scsi@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com, stable@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>,
- Alexey Makhalov <alexey.makhalov@broadcom.com>,
- Jack Wang <jinpu.wang@cloud.ionos.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Tapas Kundu <tapas.kundu@broadcom.com>
-References: <20250811052035.145021-1-shivani.agarwal@broadcom.com>
-Subject: Re: [PATCH v5.10] scsi: pm80xx: Fix memory leak during rmmod
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250811052035.145021-1-shivani.agarwal@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NNkzAAUaSKDfGikxHGlUy3z99Kpc3+L+T9HTNfok57D+Sbcoqbd
- 7k+ILh7L4/N13ut3HnHtXq7ffkKLo32kQz4esoCsaOCuFheMmF/VK4BQZD1vXXVlpRWBzWE
- s8LkempUdbPAqaH3y/lhLVOboP3HC6KuNm+OYsiccz1f+wMXMTPSaurcY0QCo7BbRCEzEED
- W7DiFhvSaUXpglPEGSADw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xdpwiihKzBQ=;gmk+iyXzkC0v0ETOoAOGAVA2IEO
- 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
+In-Reply-To: <20250810220921.14307-2-will@willwhang.com>
 
-=E2=80=A6
-> +++ b/drivers/scsi/pm8001/pm8001_init.c
-=E2=80=A6
-> @@ -1226,6 +1227,16 @@ static void pm8001_pci_remove(struct pci_dev *pde=
-v)
->  			tasklet_kill(&pm8001_ha->tasklet[j]);
->  #endif
->  	scsi_host_put(pm8001_ha->shost);
+On Sun, Aug 10, 2025 at 11:09:18PM +0100, Will Whang wrote:
+> +description:
+> +  IMX585 sensor is a Sony CMOS sensor with 4K and FHD outputs.
 > +
-> +	for (i =3D 0; i < pm8001_ha->ccb_count; i++) {
-> +		dma_free_coherent(&pm8001_ha->pdev->dev,
-> +			sizeof(struct pm8001_prd) * PM8001_MAX_DMA_SG,
-> +			pm8001_ha->ccb_info[i].buf_prd,
-> +			pm8001_ha->ccb_info[i].ccb_dma_handle);
-> +	}
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sony,imx585
+> +      - sony,imx585-mono
 
-May curly brackets be omitted here?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.16#n197
+I don't understand this second compatible. Is this different hardware?
+Can you point me to "mono" datasheet?
 
-Regards,
-Markus
+Your description should explain this. Commit msg as well, instead of
+speaking about driver (in fact drop all driver related comments).
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  assigned-clocks: true
+> +  assigned-clock-parents: true
+> +  assigned-clock-rates: true
+
+Drop all three.
+
+> +
+> +  clocks:
+> +    description: Clock frequency 74.25MHz, 37.125MHz, 72MHz, 27MHz, 24MHz
+> +    maxItems: 1
+> +
+> +  vana-supply:
+> +    description: Analog power supply (3.3V)
+> +
+> +  vddl-supply:
+> +    description: Interface power supply (1.8V)
+> +
+> +  vdig-supply:
+> +    description: Digital power supply (1.1V)
+> +
+> +  reset-gpios:
+> +    description: Sensor reset (XCLR) GPIO
+> +    maxItems: 1
+> +
+> +  sony,sync-mode:
+> +    description: |
+> +      Select the synchronisation mode of the sensor
+> +        0 =E2=80=93 internal sync, leader (default)
+> +        1 =E2=80=93 internal sync, follower
+> +        2 =E2=80=93 external sync
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [ 0, 1, 2 ]
+
+Previous comments not applied.
+
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            oneOf:
+> +              - items:
+> +                  - const: 1
+> +                  - const: 2
+> +              - items:
+> +                  - const: 1
+> +                  - const: 2
+> +                  - const: 3
+> +                  - const: 4
+> +
+> +          link-frequencies: true
+
+Drop
+
+> +
+> +        required:
+> +          - data-lanes
+> +          - link-frequencies
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - port
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        imx585@1a {
+
+Nothing improved.
+
+You replied that you applied comment, but send the same.
+
+
+Best regards,
+Krzysztof
+
 
