@@ -1,168 +1,85 @@
-Return-Path: <linux-kernel+bounces-762152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F921B202B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:09:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A3FB202B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE92B3B46DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DA3188A11B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B312DCF6B;
-	Mon, 11 Aug 2025 09:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5572DE6F1;
+	Mon, 11 Aug 2025 09:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jKZmapCJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JqBwC5QX"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104A62DCF63;
-	Mon, 11 Aug 2025 09:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A817213248
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754903323; cv=none; b=Pvo9Bsjic6indMZF17a/w/atakC06M7uWv9uzr31gtT3IAuzN16kctURuEBGpsNjmgckr7/63nsHVKlh2fKH2N7Cyr0rOp9Fy42gbHiLV19D7f3S+IgyGVIhJugM31RiL0G9KrcghnSCcH/8DHUgO1Lhv6Jicg4bLO1vyJSzE1A=
+	t=1754903333; cv=none; b=B1I8bWXgeyryfHz6nkWjIC8T9ocUIVa+VfJejhq5zxudPF9eCmMuXYy7Q2XVZP3t5z0N0IfOcIvpLCKoaHNltFqCwpBK4srAMZYal9r2nM29OZ4Ac6yM2bHhoVZ7W5TXprgJ7owro1GASHVk2pcLjvDNBj+Q87TqvilOWHKU00s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754903323; c=relaxed/simple;
-	bh=knS2XNe2DoJ4Ucgl37YdMb6oib3bsWua4BsYxzvdB1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i+8rqflOEGJQwzAAEZ4fLXj4CWuk/VySu5qLLHdV6JjSUtWryqCOaAtJKLpqVoeiXgX0U+WX7p/uCMcbab8/EsHjNmZ4KnP9hci3hxT3cmM4yRE53nuhKq0siP3kz7wKywsoQq8/RgGfffv3zpH2RUxE3vzWH/fmFWSYgTpawp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jKZmapCJ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754903322; x=1786439322;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=knS2XNe2DoJ4Ucgl37YdMb6oib3bsWua4BsYxzvdB1s=;
-  b=jKZmapCJ8lJh+3cBO/7bWOCwdUlIF7VUC4+7ihKcHS3HgHW3e7bjGhgT
-   8lqBbEJmiI6Az3bXywAW3VtTsE4IG/5Ze7n5olf//5o0U6viEi0nT3K9y
-   32LU+9nL3/T3l83nBHUcUmdWS/VME/8ncilOmOH/0kAI6dulkPMBe/oNP
-   o9sQP2jS9CWiscVVVyWhllmVYUwJGeEd5PGcEK/EHTbTUKOkGdI1saQlT
-   +foqTRCwlnzrwpOISRdp8I2evr8aTQ7LU54EnoUZdu6V6FHSlXZxSNOhY
-   JGs44j29rZgab+Xg+pbU1U+IHoxTqPwW+f2RJr91dWZSPq1KFpPf87GLa
-   g==;
-X-CSE-ConnectionGUID: OnN4rmnCSKeGuPDhOgwiVQ==
-X-CSE-MsgGUID: /EsZlY+iR+mf/uAguV9p9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57108599"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57108599"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:42 -0700
-X-CSE-ConnectionGUID: 6fXOJV4YS2KGrzyy2oF1Xg==
-X-CSE-MsgGUID: QDs3/qbvTg2l9xXBYgRGkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166222131"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.162])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:36 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v12 5/5] x86/sgx: Enable automatic SVN updates for SGX enclaves
-Date: Mon, 11 Aug 2025 12:06:09 +0300
-Message-ID: <20250811090751.683841-6-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250811090751.683841-1-elena.reshetova@intel.com>
-References: <20250811090751.683841-1-elena.reshetova@intel.com>
+	s=arc-20240116; t=1754903333; c=relaxed/simple;
+	bh=oPT920yCrMwJ/DrVj+omrDcapGa1haoaopDWUczbotI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=SpVVXA9R+ggtX9Aa7dvhwiwwLsxhTuTZp7MCdyns10Y9GyI54YmyJkDp7AXX/3wjKiXA3BmSfgf7ZMwsTRtOyhZa640f+0SMi9uaOIM87sDT7+ITsZrtnqlkYvSwLHYpT8cYSHEPFoE8ne8H5iSaC55rY0obhBbrKweWVLqgH1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JqBwC5QX; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754903328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7w6hRtswdKKWxQGm/mydBnvkPywUGlFP9d4b6AUpcg=;
+	b=JqBwC5QX7WWfgNhX2rH6o/DYC7q4vsktCoWp574FPmy49v4EZw7RbrwHbdc7IhwjH/X9eX
+	s/2NGyD5tsmSgtcU3TOHLuFdDZKrFJdwHceF4kjWHBOj+LCJMzjvAnm0RcK69ZprPpExVH
+	7CKwOHZrnssG6w05DvrZG0sJm520Glw=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] mm/hugetlb: Use max() to simplify
+ hugetlb_vmemmap_optimizable_size()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <7fb6ce41-a5e7-496f-979b-775b8e30e764@redhat.com>
+Date: Mon, 11 Aug 2025 11:08:34 +0200
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <C6C36750-2C87-4C2B-B683-9789F55D34C2@linux.dev>
+References: <20250810214745.2368-2-thorsten.blum@linux.dev>
+ <aJk2IygsxWKYf17u@casper.infradead.org>
+ <7fb6ce41-a5e7-496f-979b-775b8e30e764@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-== Background ==
+On 11. Aug 2025, at 10:26, David Hildenbrand wrote:
+> On 11.08.25 02:15, Matthew Wilcox wrote:
+>> On Sun, Aug 10, 2025 at 11:47:45PM +0200, Thorsten Blum wrote:
+>>> Use max() to simplify hugetlb_vmemmap_optimizable_size() and improve its
+>>> readability.
+>> That ... isn't clearer.
+> 
+> No, it isn't.
 
-ENCLS[EUPDATESVN] is a new SGX instruction [1] which allows enclave
-attestation to include information about updated microcode SVN without a
-reboot. Before an EUPDATESVN operation can be successful, all SGX memory
-(aka. EPC) must be marked as “unused” in the SGX hardware metadata
-(aka.EPCM). This requirement ensures that no compromised enclave can
-survive the EUPDATESVN procedure and provides an opportunity to generate
-new cryptographic assets.
+I guess it's personal preference. I'd prefer max(0, x) over a ternary
+operator any time.
 
-== Solution ==
-
-Attempt to execute ENCLS[EUPDATESVN] every time the first file descriptor
-is obtained via sgx_(vepc_)open(). In the most common case the microcode
-SVN is already up-to-date, and the operation succeeds without updating SVN.
-
-Note: while in such cases the underlying crypto assets are regenrated, it
-does not affect enclaves' visible keys obtained via EGETKEY instruction.
-
-If it fails with any other error code than SGX_INSUFFICIENT_ENTROPY, this
-is considered unexpected and the *open() returns an error. This should not
-happen in practice.
-
-On contrary, SGX_INSUFFICIENT_ENTROPY might happen due to a pressure on the
-system's DRNG (RDSEED) and therefore the *open() can be safely retried to
-allow normal enclave operation.
-
-[1] Runtime Microcode Updates with Intel Software Guard Extensions,
-https://cdrdv2.intel.com/v1/dl/getContent/648682
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 829bcba77d41..39bff3488350 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -934,7 +934,7 @@ static int sgx_usage_count;
-  *				entropy in RNG
-  * %-EIO:		- Unexpected error, retries are not advisable
-  */
--static int __maybe_unused sgx_update_svn(void)
-+static int sgx_update_svn(void)
- {
- 	int ret;
- 
-@@ -992,14 +992,22 @@ static int __maybe_unused sgx_update_svn(void)
- 	return -EIO;
- }
- 
-+/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
-+static DEFINE_MUTEX(sgx_svn_lock);
-+
- int sgx_inc_usage_count(void)
- {
-+	guard(mutex)(&sgx_svn_lock);
-+
-+	if (sgx_usage_count++ == 0)
-+		return sgx_update_svn();
-+
- 	return 0;
- }
- 
- void sgx_dec_usage_count(void)
- {
--	return;
-+	sgx_usage_count--;
- }
- 
- static int __init sgx_init(void)
--- 
-2.45.2
+Thorsten
 
 
