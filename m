@@ -1,158 +1,101 @@
-Return-Path: <linux-kernel+bounces-762189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84216B2031F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:20:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A332AB20320
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EABF17DAAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00D2C7AFF77
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B42DE706;
-	Mon, 11 Aug 2025 09:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A892DD608;
+	Mon, 11 Aug 2025 09:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us2Nv7Wy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lvqvOb7F"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178E02DE216;
-	Mon, 11 Aug 2025 09:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66961FC109
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904016; cv=none; b=bSg24e15AgMDJ9qmowWzV6gRLqo/r5GlfrUgG1DI4ki76e2WQw5NCQm6nwBgOnfK9ZxxoVRNKz7pq8jj4wxHstMpRqDnGtSyuKogzfkzne2VEAeJWfneu5ByrnTTGFET49hxvwumwzP4dEherQ5QHpS/8YcWkfQv3HyrzpkDGlI=
+	t=1754904017; cv=none; b=CAhFWdVv/yZQeuk6w8b3Grh68enhetpAk0L5UHNpAp2qgFfl2+uaK4bmgURzzxvqOySbfDR5wXP5bhJ9uSKfS8O4U7KAg1eddLOwcJhepZ2i8NmSQxKr9VVyuaBkRM/Wi29lmhlqEU6Gw4mfWSw0Vnh1iLrlntDQmeK1kWpha7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904016; c=relaxed/simple;
-	bh=IisbMyFzOG6KFUHxBroQ9SRvxbYwsiMzA2NJsWQimZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQhv0HPnSF5gNRHtdLTG18m/yZpIWZ1+wptFyLvw2zfbC4vsBTTTBDmtaM+6gnK7I+OlQ0GSLP6xgGHvt51UYrBTaEAxuztzR1GwrFTMWaJQ410zekBM+hFD9exrFEEP/NYX4zO850WJBlT+sYptbqMaedd2jUBa6RcB8gjte5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us2Nv7Wy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8B9C4CEF1;
-	Mon, 11 Aug 2025 09:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754904014;
-	bh=IisbMyFzOG6KFUHxBroQ9SRvxbYwsiMzA2NJsWQimZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=us2Nv7Wy6katcp580pTEPrY1kWZQXR+xMd1P09aJ0eldB//eTqvUA25zKrLOs9L1J
-	 sXvQ6jUhIpG5Mhl2j5F/4Of7ukYmCGbasgKPVxmS4W9mUKXA05r9VzUWobBRc70f/v
-	 ZmmWlDiO4JNPt9RgMFfsdRx7euCE1s9/JJRUDg6TN0cvkKCHnvyrFG2IfFzEytcgI8
-	 yXnJk9E37oBjlsU+gpZoYJJvchHYNtlfYdBwOk8ZjsUK8+Cjxrk2rM85xtpuDO0kB+
-	 oBUVkq6R90jM5XW76uVmZCMdJRPN8hRMKtZyWdNPfumR7m35ZbtRN9Qybmy3p7TqcY
-	 93NdBt4s1PfLA==
-Date: Mon, 11 Aug 2025 11:20:05 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] man/man2/mremap.2: describe multiple mapping move
-Message-ID: <iny6ro5f37vcthqwscklqx73jscahodilug5d6umleyzq6a67k@ecoey5ud3aer>
-References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
- <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
- <ekjakm6zburrawhk34smm3fd43zufzguisfean4hmv7vyjp7fq@uvy6n47qbydl>
- <664b00e3-69a0-498a-a7dd-a3d294c0c188@lucifer.local>
+	s=arc-20240116; t=1754904017; c=relaxed/simple;
+	bh=2Tbtp2fh0dXz5Y7IPl9rPzne47+EFrFsiVlzkhWpqRM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hgZzJZJUmmzdXuSfZqKzhzQrAmHz07bxVtFM8UmAgqYe87N59F3DQKSVOb7zvjHVesTDK7anqLsb7oO26ALDOJ0FyXy1qmHaTV8ArfsmSz+xbWsKzssWoMQJTBuBqESLoNGzN/n7fIldxP06pIvsuhfZKVX9taAcbfeyAt7XtiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lvqvOb7F; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b785aee904so1997762f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754904013; x=1755508813; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=47wjmAatiGqCwNQDs/QFrvMK81xqJJT6Z47iNSo7+Gg=;
+        b=lvqvOb7FqXi3mMc5tleHdOqwTrpVhR9hOQxgmN32UcMj7JUfb1l5RkqO6kM1Z+0JAD
+         YHJeRx69G9CK2jJRMulHcOnIlQgeSPo4FwrFZUa9rLd8efepfG026aLfsfkhtORWi8Lq
+         NLRlIRCNxOTwYOFm6defzzZJvv/ZmsAsGfO3BX6uAP46BHvbXO3MT20v3RXGNyHk2H53
+         XnysCZAUaNPSnxXJK55DWtFcHlqszS78xJy7igbhUeCnD4EykpvTfeLBOZKuOT7rFxTy
+         Xg9EbSZH6WcsyrNo+xuYRm+aCBCNnULOUa+k4TFQJbYa13apPTBhEZEXQS+CK0qpnsfc
+         VxyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754904013; x=1755508813;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=47wjmAatiGqCwNQDs/QFrvMK81xqJJT6Z47iNSo7+Gg=;
+        b=Z5VnYNsdK+99UnkLWCVVd8I5Njk7V31KHSX/DttpLAJ9NHkqpfUNKAiyeDBFHU/SPS
+         O6r3jlCYpxk7CaHWl1wJALiUi9oBVJOCLp2ggjfaZzKSEfVX/+EuSXrB25EXR6Zo1ucV
+         LPDvyO6+en5K4OxaZNZPaIn1chY+7DO2mW4j1MBLEQsm6/gtDGsJXE1aPQAsghyTj4nL
+         GXqkVeO1RyO1dvSTYWWyx9i1DoPkJUrKeqiqKKqUS6eFGQZ2863+hnSiHci4sIIn+0ww
+         xZEwZxD468OR93q6IcOOkJKFwefn5FqMun91Yp3H/2wrf/8kGA/N7vPeIdiPydMqi/sc
+         23xA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7VuGi0pDcFgCvpJpc09q905DWic9xqjmhQ9jhmvrndHAOIg0ovli4717EdbWuHXvf80zB32zZ/ikGN5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8CklP/slTYZgbPWhnZXowgwzfjWvFdRnn0QuJqIrSb1nLBWcw
+	O7Q7ZHTSzrgqrEGIGy1pqsD3dV5o6By1ox8S5tiOIoEYsZoN/7ioXMxOluKOhzF4UVq8403sdxu
+	6HQV8i2UF9EPIPBVc0w==
+X-Google-Smtp-Source: AGHT+IEQetNPhNFVsPBuf7bN0lxlnglFpPkP+Je7L6ay2OslaIr1JymNb0gmu1KXesLGElERGtj2RShsir8WA6M=
+X-Received: from wrmt10.prod.google.com ([2002:adf:e44a:0:b0:3b7:7cba:bd56])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2308:b0:3a4:f70e:abda with SMTP id ffacd0b85a97d-3b90092cb52mr9990147f8f.10.1754904013062;
+ Mon, 11 Aug 2025 02:20:13 -0700 (PDT)
+Date: Mon, 11 Aug 2025 09:20:12 +0000
+In-Reply-To: <20250809073018.1720889-1-carnil@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k342krn5dolsa74h"
-Content-Disposition: inline
-In-Reply-To: <664b00e3-69a0-498a-a7dd-a3d294c0c188@lucifer.local>
+Mime-Version: 1.0
+References: <20250809073018.1720889-1-carnil@debian.org>
+Message-ID: <aJm1zM5TZpeCW2CR@google.com>
+Subject: Re: [PATCH] binder: Add missing module description
+From: Alice Ryhl <aliceryhl@google.com>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <christian@brauner.io>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Ben Hutchings <benh@debian.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
+On Sat, Aug 09, 2025 at 09:30:18AM +0200, Salvatore Bonaccorso wrote:
+> During build modpost issues a warning:
+> 
+>     # MODPOST Module.symvers
+>        ./scripts/mod/modpost -M -m -b        -o Module.symvers -n -T modules.order vmlinux.o
+>     WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/android/binder_linux.o
+> 
+> Fix this by adding the missing module description.
+> 
+> Reported-by: Ben Hutchings <benh@debian.org>
+> Link: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1587
+> Suggested-by: Ben Hutchings <benh@debian.org>
+> Signed-off-by: Salvatore Bonaccorso <carnil@debian.org>
 
---k342krn5dolsa74h
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] man/man2/mremap.2: describe multiple mapping move
-References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
- <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
- <ekjakm6zburrawhk34smm3fd43zufzguisfean4hmv7vyjp7fq@uvy6n47qbydl>
- <664b00e3-69a0-498a-a7dd-a3d294c0c188@lucifer.local>
-MIME-Version: 1.0
-In-Reply-To: <664b00e3-69a0-498a-a7dd-a3d294c0c188@lucifer.local>
-
-Hi Lorenzo,
-
-On Mon, Aug 11, 2025 at 06:30:38AM +0100, Lorenzo Stoakes wrote:
-> > > +Mappings can also simply be moved
-> > > +(without any resizing)
-> > > +by specifying equal
-> > > +.I old_size
-> > > +and
-> > > +.I new_size
-> > > +and using the
-> > > +.B MREMAP_FIXED
-> > > +flag
-> > > +(see below).
-> > > +Since Linux 6.17,
-> > > +while
-> > > +.I old_address
-> > > +must reside within a mapping,
-> >
-> > I don't understand this.  What does it mean that old_address must reside
-> > within a mapping?  It's a point, not a size, so I'm not sure I
-> > understand it.
->=20
-> I think if it were a size it would be more confusing no?
->=20
-> It's an address, the address must be located within an existing memory ma=
-pping.
-
-What I don't understand is: how could you not comply with that?  Could
-you pass some old_address that is in two mappings?  Being a single
-address, that would be impossible, right?
-
-> Will replace with 'located' for clarity.
->=20
-> >
-> > > +.I old_size
-> > > +may span multiple mappings
-> > > +which do not have to be
-> > > +adjacent to one another when
-> > > +performing a move like this.
-
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---k342krn5dolsa74h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiZtb4ACgkQ64mZXMKQ
-wqn49Q/+NB8XLwGQzYhv4WN/bq4ZSt0ZGgTcrkoQ4WoYE7viHa9oedvqtA7Hr+KN
-SCvHXNO2bKEuYfFmrySCT5e+Qjc1G5EwK8ChVJSj0mNuwX9vxEmCHIYW4+OgU05r
-pIqGrg05z5xjZxkDjvXuZgmfjU1q3SgM3GU39vDS64j2jWPhff/tWKPNt+oV+54w
-o75W1lDsQcyPVvAOX7ge74+JUeKBG9x1P1+9Ou67ruZidsXPxOWtB8rvD/3BPGXO
-LiyxA8q0YnM4SeJaHKAfg2xNGFJkv9GLNp2VZE01ZTGjLlWl1znMnOW1uq51dzhj
-XvtL9cZNrVc5r/lRUs2lTF3B5GJ8HnLi6dDZ7nIqB7wscLzSeSMea9rbcyrqLm+o
-BtWg0kxnu1BLG77HH484MA+R04fN9+/eN3D+iiw/5Dj/pTmWVFu4Ht0PyycJywKa
-1SrT3tSfjCe1CPcSAPO8bt8bFNNVO0MsoyYLKdPfXL1g/ePKzDR0kOmzqRyvOulv
-omW3lTp6Dmh3B/cMxZ0gy8LhYLWgWZq2FCpoDHfwgoWJtcJhqpSLJIklfiWoi6Ol
-4SsCBs6odpUlhdnd6QV+BFYWnauU2vLfJtZ3nMZt4MvUudg1FHkee5dPf55DGNk9
-XHrTt5vNlUzrABzJiWwZLBeVDZjyDi3QCmE75IjrUtMxycgFYDw=
-=zIS3
------END PGP SIGNATURE-----
-
---k342krn5dolsa74h--
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
