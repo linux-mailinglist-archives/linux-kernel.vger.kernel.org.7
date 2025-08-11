@@ -1,110 +1,105 @@
-Return-Path: <linux-kernel+bounces-762678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734D7B2099C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80667B2099F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85A3C7AA72B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E207C42015D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8069B2D77FE;
-	Mon, 11 Aug 2025 13:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51542D837F;
+	Mon, 11 Aug 2025 13:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G01nxdCy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ8QqBX6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4D33B29E;
-	Mon, 11 Aug 2025 13:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279882D131A;
+	Mon, 11 Aug 2025 13:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917587; cv=none; b=nhBUp2Y1Kq2Eh84kfP5oruAs9tH3zpZdpRLysS+62LwUIq1ntr7RgIHI1ZbMCj+arCj58kXo//qDTLFn3esZdmkOUJ7ri3K4TIpR/FrMA7Hs7QbV8/QkIUjC5p4rlTmIL7nbity7Vi33TSM8MSi0JvKNv0uuc02BaDlLJDu/hbo=
+	t=1754917665; cv=none; b=TytllTcl7mye1rYSSxVwplXCNsGay+nZ6mYvZIiDdiIX9Iz/quX7emi7cY78WJ6nxhjbjYKqNMI0dAuG7xPReYk49xZNsMp2dwjGYUKZBhRLz2bqeQHKWxYSTWnyY2/XDaMafl+RILd/CfZnYXznNBD1OpjV5qWgnW82F3DCmNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917587; c=relaxed/simple;
-	bh=Z5VyXkJ/irFT7Ip27n3nft/zmxsewW9pPyMBZlzYdZo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UujTjYwi5mddkVgkd/ySrqRlU7DtwcbUTRXQwipbou1sE1LWvTdjq87iCCskoYyYkjxNk4iawuOw7sAqsIBSn2Xhp0PSY4OWkEfCkh0vm9dqrlhf54NCyJoklt8e9+4Kv5d/3ulPyMZI/sc04pQ9vZ28teJVpRgoJ5CsUrBunjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G01nxdCy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1CBC4CEED;
-	Mon, 11 Aug 2025 13:06:25 +0000 (UTC)
+	s=arc-20240116; t=1754917665; c=relaxed/simple;
+	bh=5Z2uz0t2/VXIOmspWJH+xwmPwCRPe8q6/e2tyOBrGCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hPJLey3g4PiBzNgMIDBGCTJ37779ZkuSv8ylOvIYNCGq2W325txejL09n+isZQx9o3GFiHBS6rtCaiIlqqOBZ1CzxCrAOiebx/hmmBegE0jdG9Dcum6G5ZRghfRlIL9UQ215S0lOfXsf27bLDxl2t9an5XF5doS5sRLnaqqXJlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ8QqBX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0031BC4AF09;
+	Mon, 11 Aug 2025 13:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754917586;
-	bh=Z5VyXkJ/irFT7Ip27n3nft/zmxsewW9pPyMBZlzYdZo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=G01nxdCy1p0hp+ZzyOsApBDfdUiWYgSl1kZiY8izi8VQT1zCljK+mn7Doc+vyEtd8
-	 ulz3BfPSTgQtN/gv6XF/1h0UQatUKzj3yjCEabzljGmJgNOTkIP05Hg9bhX9Z4vkjV
-	 F5Xk9ctkG+Brg8ZfvdKQdUpv63LlqXtBAPNrCN7i4IX7d4JROWCc4MlvGedDJf/WxM
-	 jyZ5BTWlCQvTfJBZdQ0QbN0m5/zIJ4lVN9Nr3eWw4AJIQ59+oK+WrOxwaArUeKAAWT
-	 eq01kW6KgWMk2gzOrrT1ww6IxxaV/3pks9rw21dPVI2yeY/4u+2vzFI4PEp6xRHdtj
-	 +/4fPGuxhpOyA==
-Message-ID: <4a2a349225757422f2b0102a2517ba343e32465a.camel@kernel.org>
-Subject: Re: [Question]nfs: never returned delegation
-From: Trond Myklebust <trondmy@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>, "zhangjian (CG)"
- <zhangjian496@huawei.com>, 	anna@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 06:06:25 -0700
-In-Reply-To: <850dcbf562b7eb5848278937092d2d8511eb648f.camel@kernel.org>
-References: <ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com>
-	 <850dcbf562b7eb5848278937092d2d8511eb648f.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=k20201202; t=1754917665;
+	bh=5Z2uz0t2/VXIOmspWJH+xwmPwCRPe8q6/e2tyOBrGCc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nQ8QqBX6RBlLJlVyTOHKLCsUa6C5Aj590bRBaKddHaH9OcEIK0ZmP/xdqzbiD1/3S
+	 FNRig7S7sL55DJwqBAuyKURG4076x7G0CMPiURJZVuJyS2vF0FP3er9tfhSp0w1LLc
+	 q/6q9FGzA0EUx6KXG0NQoMPfPrfQdv8RBUdhdaJ7HX5/VMSBTgQdv1+NWQ/gHO8W8h
+	 IaaYPusabmwxNbzrKx6I64KL/KRDfhWrugwTCGc+58mA+Y9NAr/1dHbzBvBlEQakVC
+	 EN6JT/+EyMbKOkW+fb5O7FTStqH3fDMfCajZHlqZlwkywLqgly2gZzZb+DyWYoyDCM
+	 waHvgI7jRDrmw==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6156463fae9so8417044a12.0;
+        Mon, 11 Aug 2025 06:07:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRgdHtK7BMp/C/x1AP4TKBi4OtB3cvi9AFgrZ9PuqQP2rJKyTnQA0cBFdon/11DCz17vEfYDNURx3k@vger.kernel.org, AJvYcCWv+5gVT/N4BtODWUWmai8ygmXoTewUZlf+mP4tT4ZiestFgNgy5FY206xnnICD0WzESPzY2jGYcNh7@vger.kernel.org, AJvYcCXnB5pRW1+FKCdT4kzEH0yS9SlNfEPAIgLHv6fZp9NEvtJPJIAbCiI/EkJ7plGEkUjY4hE7R8J/12XzIwWA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ2MvFtggmSMZ0zdTfOMOxwWipOif91BY1v4VktmiKVYpBWLLF
+	1Es+f/xdFRudJ4uHvracAwq6e6Emmn4jrk+8GzpUlIxYzXIVD+uLciD4OvJ92L2H3hF9hlYh+bf
+	0u4V2zLRUCYCbMR8mGUiZOw4HNVVXiA==
+X-Google-Smtp-Source: AGHT+IH0Jtu3zpqJ6aT6QeliyExaVNlY8+dlNVIs2rZVOSEssgBRkewOJVjUu8sHKIo9QSGuuYURdxqjt1keqshX6mM=
+X-Received: by 2002:a17:907:9709:b0:af9:383e:45ab with SMTP id
+ a640c23a62f3a-af9c6e254eamr1367138966b.2.1754917663483; Mon, 11 Aug 2025
+ 06:07:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250801200728.3252036-2-robh@kernel.org> <175490917553.10504.5537940155167451079.b4-ty@kernel.org>
+In-Reply-To: <175490917553.10504.5537940155167451079.b4-ty@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 11 Aug 2025 08:07:31 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL_jiOZcydPF6LXVKu6_z6Bp32g+wXWkNgrLocrg-xgrg@mail.gmail.com>
+X-Gm-Features: Ac12FXxZ4YdwCRaVqztVa4prfTmPnxtwEewmpaR37yVm5AHopCS2vYWaGni7MeU
+Message-ID: <CAL_JsqL_jiOZcydPF6LXVKu6_z6Bp32g+wXWkNgrLocrg-xgrg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: PCI: Add missing "#address-cells" to
+ interrupt controllers
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Ray Jui <ray.jui@broadcom.com>, 
+	Scott Branden <scott.branden@broadcom.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-08-11 at 09:03 -0400, Jeff Layton wrote:
-> On Mon, 2025-08-11 at 20:48 +0800, zhangjian (CG) wrote:
-> > Recently, we meet a NFS problem in 5.10. There are so many
-> > test_state_id request after a non-privilaged request in tcpdump
-> > result. There are 40w+ delegations in client (I read the delegation
-> > list from /proc/kcore).
-> > Firstly, I think state manager cost a lot in
-> > nfs_server_reap_expired_delegations. But I see they are all in
-> > NFS_DELEGATION_REVOKED state except 6 in NFS_DELEGATION_REFERENCED
-> > (I read this from /proc/kcore too).=20
-> > I analyze NFS code and find if NFSPROC4_CLNT_DELEGRETURN procedure
-> > meet ETIMEOUT, delegation will be marked as NFS4ERR_DELEG_REVOKED
-> > and never return it again. NFS server will keep the revoked
-> > delegation in clp->cl_revoked forever. This will result in
-> > following sequence response with RECALLABLE_STATE_REVOKED flag.
-> > Client will send test_state_id request for all non-revoked
-> > delegation.
-> > This can only be solved by restarting NFS server.
-> > I think ETIMEOUT in NFSPROC4_CLNT_DELEGRETURN procedure may be not
-> > the only case that cause lots of non-terminable test_state_id
-> > requests after any non-privilaged request.=20
-> > Wish NFS experts give some advices on this problem.
-> >=20
->=20
-> What should happen is that the client should issue a TEST_STATEID and
-> then follow up with a FREE_STATEID once it's clear that it has been
-> revoked. Alternately, if the client expires then the server will
-> purge
-> any state it held at that point. The server is required to keep a
-> record of these objects until one of those events occurs.
->=20
-> v5.10 is pretty old, and there have been a number of fixes in this
-> area
-> in both the client and server over the last several years. You may
-> want
-> to try a newer kernel (or look at doing some backporting).
->=20
-> Cheers,
+On Mon, Aug 11, 2025 at 5:46=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@oss.qualcomm.com> wrote:
+>
+>
+> On Fri, 01 Aug 2025 15:07:27 -0500, Rob Herring (Arm) wrote:
+> > An interrupt-controller node which is the parent provider for
+> > "interrupt-map" needs an "#address-cells" property. This fixes
+> > "interrupt_map" warnings in new dtc.
+> >
+> >
+>
+> Applied, thanks!
+>
+> [1/1] dt-bindings: PCI: Add missing "#address-cells" to interrupt control=
+lers
+>       commit: ddb81c5c911227f0c2ef4cc94a106ebfb3cb2d56
 
-No. If you get an ETIMEDOUT, then it means you are doing soft mounts or
-softerr. The client will not follow up with TEST_STATEID or
-FREE_STATEID.
+Please read the commit message.
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+I've already applied this to my tree.
+
+Rob
 
