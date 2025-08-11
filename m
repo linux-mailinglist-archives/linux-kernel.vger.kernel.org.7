@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-761700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B143B1FD83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:32:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2ABB21AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6584174FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6C5190450A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF242405FD;
-	Mon, 11 Aug 2025 01:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gioo5E/I"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1056E2E2DE7;
+	Tue, 12 Aug 2025 02:24:11 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9BE35971;
-	Mon, 11 Aug 2025 01:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151AE2D8360
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754875947; cv=none; b=fOQcbg1wDTusHiRE6DyWSE1vEU9gBtdGnGV1VgZwittz44ID5JWXzGLc5Co397fgE2cslTI4BT6gioL9PSiwx9NriAit8prnm81GIQ7Xt5+RCN4OOEQ8e8M5c9M1QuFJdynuEG8dpDlWvmGFpKntVloSHYL/gZkKxcvAX8fefok=
+	t=1754965450; cv=none; b=lsjvhGAB1vgSH+0czLNlq2GZ233oelf0JNkdINuUxmgwqEca9e4nhVfHkLHhrAOP4mL5KKVq/eK2E0nr4vC02mghRV93rXn8r0JweYW5ENV7L+h1FfefoQ/K90K+pFKxb6hCWsz26idT3S0S7ARDFGMaQJO1Irpkx7Csg2HZQaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754875947; c=relaxed/simple;
-	bh=ea3MqeO9Ps0j8dDC7AbHgbi3QziiGd9Hvht8UcE3yOo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a5r7ia0zBDtksYSTCRcP6AwgL/Qm1dYl4H9HHEPPy2biZEbcJdKtdxpZFKBkm8hNEgeLdprv3dRB5bdj93uAo0oLxQs//zAuBl2d5fssjZcDa5v1O6Rc8+jcDP9fsnRnTxHxOMqwW7VaF0/tkaYknPCLlCNM+D0BIIR3uacAlGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gioo5E/I; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76b6422756fso5411993b3a.2;
-        Sun, 10 Aug 2025 18:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754875945; x=1755480745; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ea3MqeO9Ps0j8dDC7AbHgbi3QziiGd9Hvht8UcE3yOo=;
-        b=Gioo5E/IL2G8TuPVg9r6jJUqgUruD1HPDoGs2XoZn4k33T0eWW8qbGsmdTpQkIiN2d
-         jeCAEpEavVm/NHZHM5GoMcSZPFv+okd58UdbZCzWzoxB6gkOHjI09TlHOsfExJim6zmi
-         VwO0kxIcvLPn6MHVJUuKZ3ujd94CpJOMy4YJsxYy+16dk6xOPjbGpfXGof7gWycIhq3B
-         Ue/cnKsGUFnrmxzzSK6bYkUsAlErNlo1U65UGzUsecr5aDJCl0kfkJM/0jWtulL2qomr
-         rafm4kHd61qk57c2EDSAuc4/zQOZvCKn8W5zEZnT0YCJiAaDM4ntI4nRXWYk4dDx8NB4
-         RxPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754875945; x=1755480745;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ea3MqeO9Ps0j8dDC7AbHgbi3QziiGd9Hvht8UcE3yOo=;
-        b=MJU/laocREk9xOEXXbUkL5Y5UyVJAkx7Afw8vj3o0CSb+9ISDNmtqmsmnVjNwMhl5f
-         iYKRa6gg0cvz9Qhc6ZFgHBmN72sha+Q8kGDaoCHfxegjzaEcvCT9EvdTiyzkJMqUmxP8
-         CM5yv0dtr2WqRPyKe7PAluEfrV1FTaYV3+pU/1tLlHz4aIxiwNTRge6xpqmwI6jsWd0A
-         YGQHAGz+2EiUzIfJpqvbK07OiM2Gdt/QLKTv/TjGrcmZTwDJKjctOpmtWtIjtZS2nzq7
-         /Ro+qNFOzD6lQlOV6QkAGfeaIsrYOCuvcCCLY1kUUNdi4HFRy8Vhs33CTQBpsA8I3fuj
-         K3LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ/G3lcy7yM7T8Hl6S8i+UP0zcPEryCRFF6+7K6+yYOmbSH6HZeswUK/AewlFL+5OXd4RKrzQ4BdDe66k=@vger.kernel.org, AJvYcCXlL/n7qlji2UleTrWdWPu5hZa1ms2aRK9Cvyx1EIUvIfmaVz5kdMWqsBw5izKwIm+4WDvK5hQ5ebxwmxKfJiis@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1fwrA9WJPMSfNCHoN4ap55/vgZcHH1thoY3HUX7v7XQs+W3PB
-	IXYZcblqjeKBvlZXZ2Vo9B0ggi7F4/ACTlqh3vrPnmvRRbkZ+kvqV42f
-X-Gm-Gg: ASbGncsSv8XWwfva7zRCTrZAYFKvO1NOJxy2CknuHZ+bggvTjb4pEjlOFTkaIJcXzhe
-	60h0/UFt3jjl4Qft8RzrVPDPB0u1U8TuV/kNBW7p39It3Z58AdlKH9cchibVabYkjh7uwztTpav
-	/RQSpiNzSSRe79Q+FTrYfcq/8FksoPYcfK18e0uk52eRWnzGQZa7yLUUS1rOVijnSjc8z6bXJfM
-	+wC1hBWSNKZhF8QQX4jV/AYtEPVLCneBB7IWagiKvDwlWicjVDANSks4TfyMn+Olxg/tism5+Ak
-	Cp8QPb3p08KcrK3Z8M1J/3EO+Zdw9z2JNzbEy8TP37H8NQX67ylS+7R9eqS6GQtkwVEcAAm7vWX
-	fRxaO2WzdxiEfCKV4W9pn453EfFbD0aUopFsKGbsmnyYN
-X-Google-Smtp-Source: AGHT+IGpzJFikA/vM1MNktbjWzEslLwV0wXBaZB9sZ67jwW3oBT3kMRiGhbYbC2PB6j2JdOKoYlF9w==
-X-Received: by 2002:a05:6a00:1a91:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-76c461b8d4emr14929265b3a.21.1754875945173;
-        Sun, 10 Aug 2025 18:32:25 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8900:21f8:86c:416a:76e3:d99:97b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c34d23f01sm10126909b3a.23.2025.08.10.18.32.18
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 10 Aug 2025 18:32:24 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: ziy@nvidia.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	david@redhat.com,
-	dev.jain@arm.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	npache@redhat.com,
-	richard.weiyang@gmail.com,
-	rppt@kernel.org,
-	ryan.roberts@arm.com,
-	shuah@kernel.org,
-	surenb@google.com,
-	vbabka@suse.cz
-Subject: Re: [PATCH v2 1/3] mm/huge_memory: add new_order and offset to split_huge_pages*() pr_debug.
-Date: Mon, 11 Aug 2025 09:32:13 +0800
-Message-Id: <20250811013213.54499-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250808190144.797076-2-ziy@nvidia.com>
-References: <20250808190144.797076-2-ziy@nvidia.com>
+	s=arc-20240116; t=1754965450; c=relaxed/simple;
+	bh=LoZ77/PwopwQcEYQmpRgdlMhFd+st0uM3ty72vN0JUY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q6nsprwwNM0ov+4WgqJmwB7wBzpzYOaaLi2GDIShdseKrLMkwOKmqjdcUaEAbl2aDGUl7YXlx+avkRZtGC5O6nPYC6AjPouBJpvoAWzgT/woafl/lziLMRM8ePhOiFXcU+lmeUm9DKLUcJB7iKKFwD591/di1otfPu3OO0gR99I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1754964569-086e2329571b8d00001-xx1T2L
+Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx1.zhaoxin.com with ESMTP id 0SwBfEufX5o39h3D (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Tue, 12 Aug 2025 10:09:29 +0800 (CST)
+X-Barracuda-Envelope-From: EwanHai-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX3.zhaoxin.com
+ (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Tue, 12 Aug
+ 2025 10:09:28 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
+ ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
+ 15.01.2507.044; Tue, 12 Aug 2025 10:09:28 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from ewan-server.zhaoxin.com (10.28.24.128) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 11 Aug
+ 2025 09:35:58 +0800
+From: Ewan Hai <ewanhai-oc@zhaoxin.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>
+CC: <x86@kernel.org>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <leoliu@zhaoxin.com>,
+	<lyleli@zhaoxin.com>
+Subject: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai" vendor
+Date: Sun, 10 Aug 2025 21:35:58 -0400
+X-ASG-Orig-Subj: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai" vendor
+Message-ID: <20250811013558.332940-1-ewanhai-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
+X-Moderation-Data: 8/12/2025 10:09:28 AM
+X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
+X-Barracuda-Start-Time: 1754964569
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1731
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -1.53
+X-Barracuda-Spam-Status: No, SCORE=-1.53 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=DATE_IN_PAST_24_48, DATE_IN_PAST_24_48_2
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145629
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+	0.01 DATE_IN_PAST_24_48     Date: is 24 to 48 hours before Received: date
+	0.48 DATE_IN_PAST_24_48_2   DATE_IN_PAST_24_48_2
 
-> They are useful information for debugging split huge page tests.
+Both vendor IDs used by Zhaoxin ("  Shanghai  " and "Centaurhauls") rely
+on leaf 0xC000_0000 to advertise the max 0xC000_00xx function. Extend
+KVM so the leaf is returned for either ID and rename the local constant
+CENTAUR_CPUID_SIGNATURE to ZHAOXIN_CPUID_SIGNATURE.  The constant is
+used only inside cpuid.c, so the rename is NFC outside this file.
 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
+Signed-off-by: Ewan Hai <ewanhai-oc@zhaoxin.com>
+---
+ arch/x86/kvm/cpuid.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Yes. LGTM.
-Reviewed-by: wang lian <lianux.mm@gmail.com>
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index e2836a255b16..beb83eaa1868 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -1811,7 +1811,7 @@ static int do_cpuid_func(struct kvm_cpuid_array *arra=
+y, u32 func,
+ 	return __do_cpuid_func(array, func);
+ }
+=20
+-#define CENTAUR_CPUID_SIGNATURE 0xC0000000
++#define ZHAOXIN_CPUID_SIGNATURE 0xC0000000
+=20
+ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+ 			  unsigned int type)
+@@ -1819,8 +1819,9 @@ static int get_cpuid_func(struct kvm_cpuid_array *arr=
+ay, u32 func,
+ 	u32 limit;
+ 	int r;
+=20
+-	if (func =3D=3D CENTAUR_CPUID_SIGNATURE &&
+-	    boot_cpu_data.x86_vendor !=3D X86_VENDOR_CENTAUR)
++	if (func =3D=3D ZHAOXIN_CPUID_SIGNATURE &&
++		boot_cpu_data.x86_vendor !=3D X86_VENDOR_CENTAUR &&
++		boot_cpu_data.x86_vendor !=3D X86_VENDOR_ZHAOXIN)
+ 		return 0;
+=20
+ 	r =3D do_cpuid_func(array, func, type);
+@@ -1869,7 +1870,7 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
+ 			    unsigned int type)
+ {
+ 	static const u32 funcs[] =3D {
+-		0, 0x80000000, CENTAUR_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
++		0, 0x80000000, ZHAOXIN_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
+ 	};
+=20
+ 	struct kvm_cpuid_array array =3D {
+--=20
+2.34.1
 
-Best regards,
-wang lian
 
