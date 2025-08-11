@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-763986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C97AB21C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:03:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134FAB21C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16696828EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE0D1A26F53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972BA2E425D;
-	Tue, 12 Aug 2025 05:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741C02E541D;
+	Tue, 12 Aug 2025 05:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KE4FXCWR"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uSDIDNB4"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310F42E4241
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53B42E4277
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754974938; cv=none; b=Fy8ptw8AE8iFmbqV0qfQA1wiGn/j+thei3bj0su1J2wUWn8N/PmAZF4Um3H7FMdkHEj7i87BVktnoz3l0kFp0BMKHYNyrQgAsaqiG4FuC1vhIGd48XbNZO9FJ7cwpkSaBZ72Wmey4EKxpmNpyiKY9WamtWdPP73PbbZN7PsMd/I=
+	t=1754974941; cv=none; b=E4arFqllMMe67RsmSuALmJM2AcSnr1qiLTxWm9wkBg8G+s2jT12vXciiTDBjCngA6FXhQ3V3v7IiVSMkG+B8RRld7kbwCHK3P+b2qf0fZiIMW/64EGutUIH+1T8hH4XvdJ0cwStElrLeKVD6lQJS+P2hW8j+/4sVSGRVuOE1ajc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754974938; c=relaxed/simple;
-	bh=4E/O2MffaVbZtLs8LTBh1jaRthJzsoiP+MZapckqc4Y=;
+	s=arc-20240116; t=1754974941; c=relaxed/simple;
+	bh=cUcGjhxxv/8aio0Vmd2xsfcect1TVAHENTE/7DA7vrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=HWvXmlF410IbPMyWJ1Z6+wYykHi4ZMKdIE7ITYAX2tbrofaP576kloXF+kCrwvVKuaesJz8WDGQH0d8HjNSrtlOlYCn2T+4c4n8tvyqChHCl3QuEkLMHw0iHMAQgIm9AiLEEMqtV/wfBXf6D+E+zUb0VVUP3L237K2LgrX7472M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KE4FXCWR; arc=none smtp.client-ip=203.254.224.24
+	 Content-Type:References; b=p8bSHvyNIBx3Rl/5cYKxGXVeWOBlTzems/sEeVbzVaJP99HhwxvR6YD3pViAQFIL9tMsc8tNJ+iI21vqEH1bpYrNr3dqhzL2XLx5hjqzv3FuKxtT4w+XLaXa6We0fkbiOBhE5IqhStIts4hpmGCE4Zt4j0nShv6D6g0hM9ur+F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uSDIDNB4; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250812050213epoutp01b6c1df4e505ef0f262f0e585f162a9bf~a7Gdcikk20697106971epoutp01M
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:02:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250812050213epoutp01b6c1df4e505ef0f262f0e585f162a9bf~a7Gdcikk20697106971epoutp01M
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250812050217epoutp02ea2c77f7a41815b67fd9d2b6d858410d~a7Gg0fVcR1139811398epoutp02N
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:02:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250812050217epoutp02ea2c77f7a41815b67fd9d2b6d858410d~a7Gg0fVcR1139811398epoutp02N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754974933;
-	bh=oCjJPMBrsTZ0lEVw44tKYRd0FGCL7YY4EZJtpYnUOU8=;
+	s=mail20170921; t=1754974937;
+	bh=RpVsd6AyneahgdXaOC7X3UcZjG5J5t2hbUCwrp15vCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KE4FXCWRrJgHdYiwdKVwBz39Fsyqj0/NysKyzunVIFyDMmwsTh3phQxu/eOKDKp/9
-	 OCzU8pICk+Mv6GqLj61Ik/JO5c9f3nnW4pVaJg+lyZ9oFkiH/pO52oozghyEiWlPAc
-	 Kw4SEO7fJ7SnVyYPRBrsCy1HWkxktNYHsmYNbZGk=
+	b=uSDIDNB4s8lEtTuy9LwP2Q1Vk3Rtt1blCEVRKUoRJa+35EqoLrCOmsSbrpVa02cxb
+	 7vTPmVGnu2qKFk1ffETqSgLB4zR2xc5U/gzFCwuR+TWJembbjqYoROC5iy8Xee1+eR
+	 0EUUlxAlL87PU79KFyeMbKj6FOtKPBcCUKSD2fVk=
 Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250812050212epcas5p13c4c2fce756f008616d0ee5437a29222~a7Gc0nTQg0589005890epcas5p1d;
-	Tue, 12 Aug 2025 05:02:12 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c1K9v5rK9z3hhTC; Tue, 12 Aug
-	2025 05:02:11 +0000 (GMT)
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250812050216epcas5p21652a6c4ec5401eee3d1115a3d56147a~a7GgKSybv2502425024epcas5p2w;
+	Tue, 12 Aug 2025 05:02:16 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c1K9z19SBz3hhTD; Tue, 12 Aug
+	2025 05:02:15 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250811154711epcas5p1847566b0216447ad0976472dddf096dd~awQTokfzx2229822298epcas5p1J;
-	Mon, 11 Aug 2025 15:47:11 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250811154716epcas5p44980091d5273073b9bf2031572c38376~awQXzzDDb1821518215epcas5p45;
+	Mon, 11 Aug 2025 15:47:16 +0000 (GMT)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250811154708epsmtip1f8ce936834e2899393b7b76e1e7f6c93~awQRA13uZ2560925609epsmtip1L;
-	Mon, 11 Aug 2025 15:47:08 +0000 (GMT)
+	20250811154713epsmtip1541fb87e24feb81701b892c5299371e0~awQVL4KJ72560925609epsmtip1M;
+	Mon, 11 Aug 2025 15:47:13 +0000 (GMT)
 From: Shradha Todi <shradha.t@samsung.com>
 To: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
@@ -66,9 +66,10 @@ Cc: mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
 	vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
 	m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com,
 	Shradha Todi <shradha.t@samsung.com>
-Subject: [PATCH v3 04/12] PCI: exynos: Add platform device private data
-Date: Mon, 11 Aug 2025 21:16:30 +0530
-Message-ID: <20250811154638.95732-5-shradha.t@samsung.com>
+Subject: [PATCH v3 05/12] PCI: exynos: Add resource ops, soc variant and
+ device mode
+Date: Mon, 11 Aug 2025 21:16:31 +0530
+Message-ID: <20250811154638.95732-6-shradha.t@samsung.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250811154638.95732-1-shradha.t@samsung.com>
 Precedence: bulk
@@ -78,120 +79,292 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250811154711epcas5p1847566b0216447ad0976472dddf096dd
+X-CMS-MailID: 20250811154716epcas5p44980091d5273073b9bf2031572c38376
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250811154711epcas5p1847566b0216447ad0976472dddf096dd
+X-CMS-RootMailID: 20250811154716epcas5p44980091d5273073b9bf2031572c38376
 References: <20250811154638.95732-1-shradha.t@samsung.com>
-	<CGME20250811154711epcas5p1847566b0216447ad0976472dddf096dd@epcas5p1.samsung.com>
+	<CGME20250811154716epcas5p44980091d5273073b9bf2031572c38376@epcas5p4.samsung.com>
 
-In order to extend this driver to all Samsung manufactured SoCs having
-DWC PCIe controller, add private data structure which will hold platform
-device specific information. It holds function ops like DWC host ops,
-DWC generic ops, and PCI read/write ops which will be used as driver
-data for different compatibles.
+Some resources might differ based on platforms and we need platform
+specific functions to initialize or alter them. For better code
+re-usability, making a separate res_ops which will hold all such
+function pointers or other resource specific data. Include ops like
+ - init_regulator (initialize the regulator data)
+ - pcie_irq_handler (interrupt handler for PCIe)
+ - set_device_mode (set device mode to EP or RC)
+
+Some operations maybe specific to certain SoCs and not applicable
+to others. For such use cases, adding an SoC variant data field
+which can be used to distinguish between the variants.
+
+Some SoCs may have dual-role PCIe controller which can work as
+RC or EP. Add device_mode to store the role and take decisions
+accordingly.
+
+Make enable/disable of regulator and initialization of IRQ as
+common functions to be used by all Samsung SoCs.
 
 Suggested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 ---
- drivers/pci/controller/dwc/pci-exynos.c | 32 ++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 143 +++++++++++++++++++-----
+ 1 file changed, 116 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index b4ec167b0583..c830b20d54f0 100644
+index c830b20d54f0..ef1f42236575 100644
 --- a/drivers/pci/controller/dwc/pci-exynos.c
 +++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -49,9 +49,16 @@
+@@ -49,10 +49,18 @@
  #define EXYNOS_PCIE_ELBI_SLV_ARMISC		0x120
  #define EXYNOS_PCIE_ELBI_SLV_DBI_ENABLE		BIT(21)
  
-+struct samsung_pcie_pdata {
-+	struct pci_ops				*pci_ops;
-+	const struct dw_pcie_ops		*dwc_ops;
-+	const struct dw_pcie_host_ops		*host_ops;
++/* to store different SoC variants of Samsung */
++enum samsung_pcie_variants {
++	EXYNOS_5433,
 +};
 +
+ struct samsung_pcie_pdata {
+ 	struct pci_ops				*pci_ops;
+ 	const struct dw_pcie_ops		*dwc_ops;
+ 	const struct dw_pcie_host_ops		*host_ops;
++	const struct samsung_res_ops		*res_ops;
++	unsigned int				soc_variant;
++	enum dw_pcie_device_mode		device_mode;
+ };
+ 
  struct exynos_pcie {
- 	struct dw_pcie			pci;
- 	void __iomem			*elbi_base;
-+	const struct samsung_pcie_pdata	*pdata;
+@@ -61,7 +69,14 @@ struct exynos_pcie {
+ 	const struct samsung_pcie_pdata	*pdata;
  	struct clk_bulk_data		*clks;
  	struct phy			*phy;
- 	struct regulator_bulk_data	supplies[2];
-@@ -220,7 +227,7 @@ static int exynos_pcie_host_init(struct dw_pcie_rp *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct exynos_pcie *ep = to_exynos_pcie(pci);
+-	struct regulator_bulk_data	supplies[2];
++	struct regulator_bulk_data	*supplies;
++	int				supplies_cnt;
++};
++
++struct samsung_res_ops {
++	int (*init_regulator)(struct exynos_pcie *ep);
++	irqreturn_t (*pcie_irq_handler)(int irq, void *arg);
++	void (*set_device_mode)(struct exynos_pcie *ep);
+ };
  
--	pp->bridge->ops = &exynos_pci_ops;
-+	pp->bridge->ops = ep->pdata->pci_ops;
+ static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
+@@ -74,6 +89,31 @@ static u32 exynos_pcie_readl(void __iomem *base, u32 reg)
+ 	return readl(base + reg);
+ }
  
- 	exynos_pcie_assert_core_reset(ep);
++static int samsung_regulator_enable(struct exynos_pcie *ep)
++{
++	int ret;
++
++	if (ep->supplies_cnt == 0)
++		return 0;
++
++	ret = regulator_bulk_enable(ep->supplies_cnt, ep->supplies);
++
++	return ret;
++}
++
++static void samsung_regulator_disable(struct exynos_pcie *ep)
++{
++	struct device *dev = ep->pci.dev;
++	int ret;
++
++	if (ep->supplies_cnt == 0)
++		return;
++
++	ret = regulator_bulk_disable(ep->supplies_cnt, ep->supplies);
++	if (ret)
++		dev_warn(dev, "failed to disable regulators: %d\n", ret);
++}
++
+ static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
+ {
+ 	u32 val;
+@@ -244,7 +284,26 @@ static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
+ 	.init = exynos_pcie_host_init,
+ };
  
-@@ -268,7 +275,7 @@ static int exynos_add_pcie_port(struct exynos_pcie *ep,
+-static int exynos_add_pcie_port(struct exynos_pcie *ep,
++static int exynos_init_regulator(struct exynos_pcie *ep)
++{
++	struct device *dev = ep->pci.dev;
++	int ret = 0;
++
++	ep->supplies_cnt = 2;
++
++	ep->supplies = devm_kcalloc(dev, ep->supplies_cnt, sizeof(*ep->supplies), GFP_KERNEL);
++	if (!ep->supplies)
++		return -ENOMEM;
++
++	ep->supplies[0].supply = "vdd18";
++	ep->supplies[1].supply = "vdd10";
++
++	ret = devm_regulator_bulk_get(dev, ep->supplies_cnt, ep->supplies);
++
++	return ret;
++}
++
++static int samsung_irq_init(struct exynos_pcie *ep,
+ 				       struct platform_device *pdev)
+ {
+ 	struct dw_pcie *pci = &ep->pci;
+@@ -256,22 +315,15 @@ static int exynos_add_pcie_port(struct exynos_pcie *ep,
+ 	if (pp->irq < 0)
+ 		return pp->irq;
+ 
+-	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
++	ret = devm_request_irq(dev, pp->irq, ep->pdata->res_ops->pcie_irq_handler,
+ 			       IRQF_SHARED, "exynos-pcie", ep);
+ 	if (ret) {
+ 		dev_err(dev, "failed to request irq\n");
+ 		return ret;
+ 	}
+ 
+-	pp->ops = &exynos_pcie_host_ops;
+ 	pp->msi_irq[0] = -ENODEV;
+ 
+-	ret = dw_pcie_host_init(pp);
+-	if (ret) {
+-		dev_err(dev, "failed to initialize host\n");
+-		return ret;
+-	}
+-
  	return 0;
  }
  
--static const struct dw_pcie_ops dw_pcie_ops = {
-+static const struct dw_pcie_ops exynos_dw_pcie_ops = {
- 	.read_dbi = exynos_pcie_read_dbi,
- 	.write_dbi = exynos_pcie_write_dbi,
- 	.link_up = exynos_pcie_link_up,
-@@ -279,6 +286,7 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct exynos_pcie *ep;
-+	const struct samsung_pcie_pdata *pdata;
- 	struct device_node *np = dev->of_node;
- 	int ret;
- 
-@@ -286,8 +294,11 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- 	if (!ep)
- 		return -ENOMEM;
- 
-+	pdata = of_device_get_match_data(dev);
-+
-+	ep->pdata = pdata;
- 	ep->pci.dev = dev;
--	ep->pci.ops = &dw_pcie_ops;
-+	ep->pci.ops = pdata->dwc_ops;
- 
- 	ep->phy = devm_of_phy_get(dev, np, NULL);
- 	if (IS_ERR(ep->phy))
-@@ -363,9 +374,9 @@ static int exynos_pcie_resume_noirq(struct device *dev)
- 		return ret;
- 
- 	/* exynos_pcie_host_init controls ep->phy */
--	exynos_pcie_host_init(pp);
-+	ep->pdata->host_ops->init(pp);
- 	dw_pcie_setup_rc(pp);
--	exynos_pcie_start_link(pci);
-+	ep->pdata->dwc_ops->start_link(pci);
- 	return dw_pcie_wait_for_link(pci);
- }
- 
-@@ -374,8 +385,17 @@ static const struct dev_pm_ops exynos_pcie_pm_ops = {
- 				  exynos_pcie_resume_noirq)
+@@ -282,6 +334,11 @@ static const struct dw_pcie_ops exynos_dw_pcie_ops = {
+ 	.start_link = exynos_pcie_start_link,
  };
  
-+static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
-+	.dwc_ops		= &exynos_dw_pcie_ops,
-+	.pci_ops		= &exynos_pci_ops,
-+	.host_ops		= &exynos_pcie_host_ops,
++static const struct samsung_res_ops exynos_res_ops_data = {
++	.init_regulator		= exynos_init_regulator,
++	.pcie_irq_handler	= exynos_pcie_irq_handler,
 +};
 +
- static const struct of_device_id exynos_pcie_of_match[] = {
--	{ .compatible = "samsung,exynos5433-pcie", },
-+	{
-+		.compatible = "samsung,exynos5433-pcie",
-+		.data = (void *) &exynos_5433_pcie_rc_pdata,
-+	},
- 	{ },
+ static int exynos_pcie_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -313,28 +370,46 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ep->supplies[0].supply = "vdd18";
+-	ep->supplies[1].supply = "vdd10";
+-	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ep->supplies),
+-				      ep->supplies);
+-	if (ret)
+-		return ret;
++	if (pdata->res_ops && pdata->res_ops->init_regulator) {
++		ret = ep->pdata->res_ops->init_regulator(ep);
++		if (ret)
++			return ret;
++	}
+ 
+-	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
++	ret = samsung_regulator_enable(ep);
+ 	if (ret)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, ep);
+ 
+-	ret = exynos_add_pcie_port(ep, pdev);
+-	if (ret < 0)
+-		goto fail_probe;
++	if (pdata->res_ops && pdata->res_ops->set_device_mode)
++		pdata->res_ops->set_device_mode(ep);
++
++	switch (ep->pdata->device_mode) {
++	case DW_PCIE_RC_TYPE:
++		ret = samsung_irq_init(ep, pdev);
++		if (ret)
++			goto fail_regulator;
++
++		ep->pci.pp.ops = pdata->host_ops;
++
++		ret = dw_pcie_host_init(&ep->pci.pp);
++		if (ret < 0)
++			goto fail_phy_init;
++
++		break;
++	default:
++		dev_err(dev, "invalid device type\n");
++		ret = -EINVAL;
++		goto fail_regulator;
++	}
+ 
+ 	return 0;
+ 
+-fail_probe:
++fail_phy_init:
+ 	phy_exit(ep->phy);
+-	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
++fail_regulator:
++	samsung_regulator_disable(ep);
+ 
+ 	return ret;
+ }
+@@ -343,21 +418,29 @@ static void exynos_pcie_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_pcie *ep = platform_get_drvdata(pdev);
+ 
++	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
++		return;
+ 	dw_pcie_host_deinit(&ep->pci.pp);
+-	exynos_pcie_assert_core_reset(ep);
++	if (ep->pdata->soc_variant == EXYNOS_5433)
++		exynos_pcie_assert_core_reset(ep);
+ 	phy_power_off(ep->phy);
+ 	phy_exit(ep->phy);
+-	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
++	samsung_regulator_disable(ep);
+ }
+ 
+ static int exynos_pcie_suspend_noirq(struct device *dev)
+ {
+ 	struct exynos_pcie *ep = dev_get_drvdata(dev);
++	struct dw_pcie *pci = &ep->pci;
+ 
+-	exynos_pcie_assert_core_reset(ep);
++	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
++		return 0;
++
++	if (ep->pdata->soc_variant == EXYNOS_5433)
++		exynos_pcie_assert_core_reset(ep);
+ 	phy_power_off(ep->phy);
+ 	phy_exit(ep->phy);
+-	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
++	samsung_regulator_disable(ep);
+ 
+ 	return 0;
+ }
+@@ -369,7 +452,10 @@ static int exynos_pcie_resume_noirq(struct device *dev)
+ 	struct dw_pcie_rp *pp = &pci->pp;
+ 	int ret;
+ 
+-	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
++	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
++		return 0;
++
++	ret = samsung_regulator_enable(ep);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -389,6 +475,9 @@ static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
+ 	.dwc_ops		= &exynos_dw_pcie_ops,
+ 	.pci_ops		= &exynos_pci_ops,
+ 	.host_ops		= &exynos_pcie_host_ops,
++	.res_ops		= &exynos_res_ops_data,
++	.soc_variant		= EXYNOS_5433,
++	.device_mode		= DW_PCIE_RC_TYPE,
  };
  
+ static const struct of_device_id exynos_pcie_of_match[] = {
 -- 
 2.49.0
 
