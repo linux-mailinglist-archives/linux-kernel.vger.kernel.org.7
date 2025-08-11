@@ -1,156 +1,153 @@
-Return-Path: <linux-kernel+bounces-762949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53769B20CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D529B20CBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D0B3A7ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0839E3AE506
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66434277CB8;
-	Mon, 11 Aug 2025 14:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4FF2D4B40;
+	Mon, 11 Aug 2025 14:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLbVzq1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJirflKW"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F9218584
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D06E19C560;
+	Mon, 11 Aug 2025 14:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924057; cv=none; b=QhNcJkpEa0VEZgI4JVkBH/Q+0O4fAXMCvtVc1oCVrX7Bd6/h4xDinU342AKSI0F6VT4m/P6PSFUgsTMY0I1PeJmoGn77AYGr0actqzppymkkfA+71Syar4isGW7veAD+URWfLfIPx5o9REDd9EbnBLIUCmQbQsUIvAE9PovDu1o=
+	t=1754924176; cv=none; b=AUlTyWpTzQqXzorS+OqxHHw1dgAJ6Ta29rewmjQYbzUwmECnrlaN8uWvKRLncqUH5I0DR6n6kzEkx8JdtIfWO49yrfldpx8XuaqjpzfGKEB6anhwmePB7N4j5FEqu/d8VFbCojOWae0xiifyx9dbnkqxlG9fFtcOPu3CNWuvh4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924057; c=relaxed/simple;
-	bh=DjuTw3m4Kw8YuMFL9kL+Lv8VO7GlaRaNvp2WtFfF/Xg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkhzKOuglspkEsbzcRKYs6LaIg/BpENlFb1g/OFnXOlt25/Er4y8B1VpblY7yme6JYAASottYhCxl/ZkT9lC3t6TsHjZchl6cG1GpqrAAPupBYJZLflTR/IN6r5Y8YP3GcGpIdR3gAwruOh6VX2UnGigE1aNaflYq9Bwf/yuh0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLbVzq1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5431AC4CEED;
-	Mon, 11 Aug 2025 14:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754924057;
-	bh=DjuTw3m4Kw8YuMFL9kL+Lv8VO7GlaRaNvp2WtFfF/Xg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dLbVzq1vGVAWxU5sBzPPJviAr4jsZpFFVhfQBftOLqLYW+tYqon9CdoUjx7UAT8C9
-	 gasYBenGEMnOLv30qr1kcgFSfUEnYE13ad9HEv1mDa0IPYwKNbZwGN9lZBdRrDJ8uD
-	 ubFOcKyWgwWMTGyUMe2o9Qy/1rjUKAF/rCcwyUWeMd0Z9t6bDm2fHf95dKJwR4Hk8z
-	 vFx21SGDPOm+DIYlmvFXIlBWQcDWw3ljv0Yt611YBRpjdkc65hOvCgmQ5JjgD/o2uc
-	 aWP51YKIE11yJmbTw0rUjtN7T7+xNJ3TwMIKXiBWgf89NZujrgLf3L0iiJDMrJ18P3
-	 COyldOSiNzXtA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ulTuh-006HHZ-3U;
-	Mon, 11 Aug 2025 15:54:15 +0100
-Date: Mon, 11 Aug 2025 15:54:14 +0100
-Message-ID: <86tt2d9aeh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false positives
-In-Reply-To: <20250811135001.1333684-1-lpieralisi@kernel.org>
-References: <20250811135001.1333684-1-lpieralisi@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754924176; c=relaxed/simple;
+	bh=Sr/JZJ5a5nqZ1qW6UeELtW87nb40WYfkNLJCTM59nLs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GA1AaKRMI+aJXj8JK6MnXL9KR5A3jowJnemPhVX4gVTWwWltSvDb/5D9u2rkiyahUbelo8vrvYsC1pSv9HxXr5XmpmdMvP6aicR+JTghUaHDxtd3V3sPsglOaY0yGSx4cYGmcJ86pOYyCpRymu/1ngJIIwSwJ5uTDXDwDjZdc3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJirflKW; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-33243562752so30717221fa.3;
+        Mon, 11 Aug 2025 07:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754924173; x=1755528973; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7MbdwcE6qIc0EwxhkUAtAkkmZpnTQkGEmHg2AGb+L6A=;
+        b=lJirflKWTIxK4GPpHCEUNHtJHjsBsk4WG6T3SHNpbrpOuK1/Nn7ginAxCkNVgH8V1z
+         AXE104dQccPbX+PDEvJM8YAugbnt0iZ0ZwGgDJmgMcurrjORhp5REwhJGa+rUrQTVOln
+         aXcfEllwVT0giNrqu9D1+H3g16VIwS1XIhTo9o5dwhCLyaPDhTMPpE1WuX7f9sD8HFRI
+         kw3yPSSn6sOhW+z0QA6xMBbzwbr8Cn66tfFRbIaOYvPVmYV68FGHleIvZjtSvew/+Bx0
+         sP5MAbHt0LsZFnvPsyj5/V3bh26N1Qxs6/x7BKWyJE3H15dPFm9z4tAb6aWszcGY59QD
+         nKxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754924173; x=1755528973;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7MbdwcE6qIc0EwxhkUAtAkkmZpnTQkGEmHg2AGb+L6A=;
+        b=QybpCq4B0nvYyjqv3vjbbhXeoyjL600R/WwQudcysCOoySd9ZDCn2E4PYV3II2sJ59
+         3At1mKVeZJSvebLGRdJKdNlcXvhK4hk/8+TBqmFuRHXtObUAAJ2caYEpuGjnyjauSp6x
+         efDnLQFwXtUVVGuross6JhMtIi/9lVJ32/+BMQZURvi+WvA0/eR9x2Dx7ShAMrB+Tero
+         clqWA6zPjn44Gz1UWVTF0ji5Shb+DceBUQX1johiWdI/Za3ezEkTLjlPqup5wYFuPeuf
+         pA4qKgx6meqPFpT6A4oauYhVG/op2XQe0/TiCB+w5UXReTrido8IpGQkmaimvvX6jCa8
+         8bTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUz1OC9xj5lTZ461ANL6P6u5bzy+VXXi2CvUXkeEE7SYjTMQwYoUTMedyetC2ffl8WXn/AlWvz@vger.kernel.org, AJvYcCUt0O8SAC2RS0FifAec5+lC4AscLasfeW1CvkoeDxe/hQJGDM/3IbzbTgULPt9snfl+FIP64ZMF/uYOzpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz9/fb/co7nJ8rOicny3E3E2ZceI3LS4k9Krt+ztTZPfhCNHzF
+	1znBMki871fL89v5Rsjgq7txTAXfNlgdbmfsYPrBvVb+OBknUqNdbBr/W+2Oc5tP
+X-Gm-Gg: ASbGncuWRsQOz6Rr0fdgNWNDiddVPdsqVBzWhPZukDcKDFemZ2ofxy7khdkylXY7/8/
+	o1APJwrJGdkprXLa5Fe8jWJUdfLRls6Bh21q2hL0SXnbgfh3L2TRyf8bOVKZcU7S+GyCxHZeyLm
+	p8PqWL9aevsLFcB8dN7b/57PW9CWgs8qCIqQo/tn+evYAfn3jRslfd8BQHY2h5ogpPOwDe/2cUx
+	4IsGi4y8iEfA3zgZjs6VVgdwmLY5MkkJywAj5/1uh8jgik1EvJQjIZ+k3C7Fvx9PaK8ye1d1ElR
+	WEtFEuUaSEcJWeTksFidEfcmrBJ/x9kgmxeGf7blUQb6gJWlYsjgSgOh+DHVK8Zxhl6XrD3QeZB
+	ok0oxrWlI4XVoCAuo7oQUcyoeNVQLaNcEzgjWksvq/racm/2J+Q==
+X-Google-Smtp-Source: AGHT+IGRHHXrSOrCUMkrwKfldelClnCJtFN21p0fHiQD2i+xxAbPXfghsGQVTTI8je1KDeQL54bQWQ==
+X-Received: by 2002:a2e:8a90:0:b0:32b:881e:9723 with SMTP id 38308e7fff4ca-333a2265b8emr22577041fa.30.1754924172216;
+        Mon, 11 Aug 2025 07:56:12 -0700 (PDT)
+Received: from pc636 (host-95-203-26-173.mobileonline.telia.com. [95.203.26.173])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238272a7csm41552511fa.15.2025.08.11.07.56.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:56:11 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 11 Aug 2025 16:56:09 +0200
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Ethan Zhao <etzhao1900@gmail.com>,
+	Baolu Lu <baolu.lu@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+	iommu@lists.linux.dev, security@kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <aJoEiajJwlWuXyax@pc636>
+References: <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
+ <b6defa2a-164e-4c2f-ac55-fef5b4a9ba0f@linux.intel.com>
+ <2611981e-3678-4619-b2ab-d9daace5a68a@gmail.com>
+ <aJm0znaAqBRWqOCT@pc636>
+ <83c47939-7366-4b97-9368-02d432ddc24a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ruanjinjie@huawei.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <83c47939-7366-4b97-9368-02d432ddc24a@intel.com>
 
-On Mon, 11 Aug 2025 14:50:01 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+On Mon, Aug 11, 2025 at 06:55:52AM -0700, Dave Hansen wrote:
+> On 8/11/25 02:15, Uladzislau Rezki wrote:
+> >> kernel_pte_work.list is global shared var, it would make the producer
+> >> pte_free_kernel() and the consumer kernel_pte_work_func() to operate in
+> >> serialized timing. In a large system, I don't think you design this
+> >> deliberately 🙂
+> >>
+> > Sorry for jumping.
+> > 
+> > Agree, unless it is never considered as a hot path or something that can
+> > be really contented. It looks like you can use just a per-cpu llist to drain
+> > thinks.
 > 
-> L2 IST table entries are allocated with the kmalloc interface
-> and their physical addresses are programmed in the GIC (either
-> IST base address register or L1 IST table entries) but their
-> virtual addresses are not stored in any kernel data structure
-> because they are not needed at runtime - the L2 IST table entries
-> are managed through system instructions but never dereferenced
-> directly by the driver.
+> Remember, the code that has to run just before all this sent an IPI to
+> every single CPU on the system to have them do a (on x86 at least)
+> pretty expensive TLB flush.
 > 
-> This triggers kmemleak false positive reports:
+> If this is a hot path, we have bigger problems on our hands: the full
+> TLB flush on every CPU.
 > 
-> unreferenced object 0xffff00080039a000 (size 4096):
->   comm "swapper/0", pid 0, jiffies 4294892296
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace (crc 0):
->     kmemleak_alloc+0x34/0x40
->     __kmalloc_noprof+0x320/0x464
->     gicv5_irs_iste_alloc+0x1a4/0x484
->     gicv5_irq_lpi_domain_alloc+0xe4/0x194
->     irq_domain_alloc_irqs_parent+0x78/0xd8
->     gicv5_irq_ipi_domain_alloc+0x180/0x238
->     irq_domain_alloc_irqs_locked+0x238/0x7d4
->     __irq_domain_alloc_irqs+0x88/0x114
->     gicv5_of_init+0x284/0x37c
->     of_irq_init+0x3b8/0xb18
->     irqchip_init+0x18/0x40
->     init_IRQ+0x104/0x164
->     start_kernel+0x1a4/0x3d4
->     __primary_switched+0x8c/0x94
+> So, sure, there are a million ways to make this deferred freeing more
+> scalable. But the code that's here is dirt simple and self contained. If
+> someone has some ideas for something that's simpler and more scalable,
+> then I'm totally open to it.
 > 
-> Instruct kmemleak to ignore L2 IST table memory allocation
-> virtual addresses to prevent these false positive reports.
-> 
-> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Closes: https://lore.kernel.org/lkml/cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com/
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/irqchip/irq-gic-v5-irs.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-> index ad1435a858a4..e8a576f66366 100644
-> --- a/drivers/irqchip/irq-gic-v5-irs.c
-> +++ b/drivers/irqchip/irq-gic-v5-irs.c
-> @@ -5,6 +5,7 @@
->  
->  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
->  
-> +#include <linux/kmemleak.h>
->  #include <linux/log2.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
->  		kfree(ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(ist);
->  
->  	return 0;
->  }
-> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
->  		kfree(l2ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(l2ist);
->  
->  	/*
->  	 * Make sure we invalidate the cache line pulled before the IRS
+You could also have a look toward removing the &kernel_pte_work.lock.
+Replace it by llist_add() on adding side and llist_for_each_safe(n, t, llist_del_all(&list))
+on removing side. So you do not need guard(spinlock) stuff. 
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+If i do not miss anything.
 
-	M.
+>
+> But this is _not_ the place to add complexity to get scalability.
+>
+OK.
 
--- 
-Without deviation from the norm, progress is not possible.
+--
+Uladzislau Rezki
 
