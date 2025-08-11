@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-762693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD53B209EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6842EB209D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272937B3CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9382218A6EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FFD2DC34A;
-	Mon, 11 Aug 2025 13:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D0B205AB6;
+	Mon, 11 Aug 2025 13:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b="XZl4ihZK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lQCKAswU"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f5oQrLjE"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A1F2D3EDC;
-	Mon, 11 Aug 2025 13:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6AD277CB8
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918064; cv=none; b=hC/9d+Ed4vUPmFxxUFsR0E6VbwqqjfxEPHad3PkXydBGqpeT/VVMxfNO5msYAsX2XOHScXENE8baC2YdzP0AzLT3Y7M+ldswNhLS7BxQjkt0h0P0/2gPydBuum7OPU9EioylPPe2NFhFPlzDDihwPgl2Ez/51M41SmAyWrjdxu8=
+	t=1754918051; cv=none; b=Aav4CCYi+vynrczO5RMtkU6ZD06v2MHUXCUGdDhqFU5nkLO2uxIVWMIR/YT4QZFM/kxOhqqXBdKKxU0gl5kQudbmWodlKvRBx7FhJU3xU8VRqL6cJcLdALWcbeQGF7/wQ0md3+QsRf0UmfS9Rsv35Gn8OA63Zaf1TjebCdTq5nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918064; c=relaxed/simple;
-	bh=DPLqD3GGr96cRV7HKqFLj2qf/dhmL3aEJpnOdLbyf78=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=CWSPlcn+CKd58Uen3WWY+pgJ0mD0JBS6dt9/8u7vHf1jMLWGSEreSoVnSbgOl253CE2x/Xhw6aLv/QRbw//EK6uWtsr3625/ZryPV+jBRncg9JQJEBzK0MM5KVvXENuI7Vrxe3JGmDJRF7HTf1BzhzXoemMpqvEolEL6Ap2vDFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net; spf=pass smtp.mailfrom=bzzt.net; dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b=XZl4ihZK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lQCKAswU; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bzzt.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 593B31D00093;
-	Mon, 11 Aug 2025 09:14:21 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-12.internal (MEProxy); Mon, 11 Aug 2025 09:14:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bzzt.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1754918061;
-	 x=1755004461; bh=RGqZbPWNuOFgVl2x8ZENQQRp+k804OgLKfLNdr8vPUc=; b=
-	XZl4ihZKzGNAn4imgaCNI9lV+gAE+C+n+6xDSi75QFoUph3fymabm6DhFIXeGxO1
-	3UwkLCA2vBQObwwZE6rXxU404D23fJbsTPSbP9yGbDcMhTGLuzpgjFh1jKW12MNU
-	SwMJEGotcXsjSKJHtu90FhvpDJ+7ylANePEqKsCfeEe61DvmRnmNi/ugIFnuQd/P
-	ZLcjmwm2SELbfUcTt11wT5I0tNgLXfYokaWt7CjRm7iPV2uV9p2B2UKLTMsjjc2C
-	gLpQ/Omr61FfVawe7NruHYztXC878Y0hHh4kaiXUSTG3v9N+Ox4N5mAjhLd2Jna+
-	6Fm9PgsVRRdsWBqLzsYzhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754918061; x=
-	1755004461; bh=RGqZbPWNuOFgVl2x8ZENQQRp+k804OgLKfLNdr8vPUc=; b=l
-	QCKAswUPaGiNwxks850xeoFVJbjn0xI46Zyd9HHheohUe5z9I0dgzLEKf7YxhkMo
-	LEKJW3kr+zDo0vpC6uxxmr9wKx5FnErrUUzSLx/SJuyMTLAJhaOsFlqXS+Xq+OOb
-	Dso5MQ39RjlPXfpsBrfn6A26bk1tvjW893/yF2aHAshirwxFEE5fmIWINso7P2Qs
-	HoVB13QYrL9Jxbqn6IKX2HNVw0+xMo8kN1ZByR0ZgkcVbPeWyu6V4mHTftelk9jK
-	BRJz3jsSH9vmnlbcCr/LDV1UEYooopF3t8efHmmpFLcGvT1d/FTuhF2sm0pQXTlD
-	Cblk8qX6XXgykirFWVgbA==
-X-ME-Sender: <xms:rOyZaFQarlfNFgoKw07xdvZT3yqe0tR9w0gfW8HtLKYHM0Kwp0zbiw>
-    <xme:rOyZaOzJLiYqB9OpvW33KeKk-G9OXNjsZ1zYMWPJoWejvHS1fDxtv1-5LVetDAnzn
-    TOVk7BIDt0_wluFP1s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhho
-    uhhtucfgnhhgvghlvghnfdcuoegrrhhnohhuthessgiiiihtrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeefkeffgfekvefhjeettdelueelfffgtdevfeeftdefveejieeuheehheeh
-    vefhveenucffohhmrghinhepvghnghgvlhgvnhdrvghunecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhhouhhtsegsiiiithdrnhgvthdp
-    nhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
-    hmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthhopegtthesfhhlhihi
-    nhhgtghirhgtuhhsrdhiohdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurd
-    horhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprhihrghnsehlrghhfhgrrdighiiipdhrtghpthhtoheprghkphhmsehlihhnuhigqd
-    hfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrgigihhmihhlihgrnhesmhgs
-    ohhstghhrdhmvgdprhgtphhtthhopeguhhhofigvlhhlshesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtoheplhhinhhugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:rOyZaKtBin8L3MIfTfYFtlhNFH2YI58KgNEnlrngOpw3QENt80mZ1A>
-    <xmx:rOyZaM96b9KAZUw_tpXAkeQukwXczQHMqOMDltACQnrTvMe68QnyEg>
-    <xmx:rOyZaIY3ZxjddhXV3JoZ1GapBbwRBi3LOa1Toba1bZfIHG--mnqe3A>
-    <xmx:rOyZaKpV1EoBGVsP5aAhkPmqZ8y4QgAyP8KZAr6V58mLiofcBfu34w>
-    <xmx:reyZaIMdwIDo1nl5FAQnOn3laBWP7fLUMTk6gbmYgR0_FPJvYx-DeF4x>
-Feedback-ID: i8a1146c4:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3F2AA18C0066; Mon, 11 Aug 2025 09:14:20 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1754918051; c=relaxed/simple;
+	bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s79DI0LCy8qXLpwtCsy55wxmA52uUrqf+CcztDuxUaRBU0XJLYRhahmQSL0JYfU/bhCTlhTt0iCUkx53nqA37kVa1orvcCDQ2Vh/BdI2kaULFL/5i4pjm6MDJG2Hb5YVvnjfqZWjw7iIv7v3VuvOKqskOk2uMZSwliXghx22hZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f5oQrLjE; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55b975b459aso3536108e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754918048; x=1755522848; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
+        b=f5oQrLjE4aWrgSA0Jtv/SpOaCuNkrKhR2nX4k31U0mExkM/G1pvEriSiEyXNnn/EKi
+         68++wRPh4kLXduAVsU7csQxfnaQw4Ts/I5x/V0gCeSxL6XmYRTOAlTfa9nwX6SKT/z+I
+         6/NZ+23/45Wj8eey5/aomzzRVf/6Z4W8qb6N0ly2HAnsl/0lmwuNReDnfenIrocFlzzW
+         IonGfKt1xisHyds9bnITOy/xPbYvSQOvouCNyR/xddlwm1y3EN1bZmW7czx7ASoDdX6+
+         3JZlNemv6vpij0FkB0VkYJ7mMDV1lem9mUxYRX+lH2rPjtSOGe3nGvmTaz0bX4BT0p0J
+         PKDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754918048; x=1755522848;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
+        b=E/zTw3+uKyBVQqKFZDkgaa/yW8CeQm5icoB3pDeYuziIG+Bz5WzFpzDdqRsLnTCM61
+         fh9I9nYDnxOlGp63COdvdVQr+GPkSU6u9ybzIYhK08xOSnU26ULmOqC+LW7JEhHOo2Qx
+         O9LQICz844Ng9lBGNtEK+oO9itjLUD0RrF+TfhNFsnealUxi30PO+xdapbgka0Wwlf7r
+         MWoKbzGVj8I4x2t3IPTUMo+d9B+nxMtmxuzzjy3VBaDJ3VZgvJDR3XOTwnksVECZs0jQ
+         8laxCwg/qASQNSnXxUMAeuvqz7lrs9DvPYFJhRPYiS0SNu2ZNVHZvKbgyiC9EJ4HHwFq
+         hyJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnpuWeLodh0OEnTaWPqwI3E53ZU50DKBfWQxEzA0WB+bYKfrWNIe144vhhQYDwiBVPJ/rbHIDA3yyCNug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+8HIdCbO2gYETeIiMvAnpXSP8qJScXD2J57oDwtJsN5BuWHwd
+	+3EOv/9z52shnxwMyUBXqZqi7JHSVeoJqRI6yitwONmbBwNuiHnNVCr3BnrlUuLOfq5TBUWPWtf
+	mxMrRLa1TYW+ugKa3se04xhI7cxYCRoD8FZlkEzIvIw==
+X-Gm-Gg: ASbGncvLkWH051o8QiqRnpDGEusoQNdOfpMME7rxoBWKbSWYmtriHKa3nP2rMWuOVW6
+	RHrSlt2aR8ZLFisIBKncJAxbS4zGFDhMYx86FNcg0BaQRQtCphpqZhXbZA03SViL6MuNZgW/YDN
+	hmDVQQ6YCIPGZcy0XFpFsWT5amPcVGL1aK5O3JwuTMrrVz7D3maj11gELRlVo+flCBsouSRadX8
+	HL4EPRtQZNViRnEYtcuv6+PToeGGl96zv8VYJ0=
+X-Google-Smtp-Source: AGHT+IFGt5Nc5qscJVVYLtl2huw/aQCNMj0ucn+BAnsYObx2dNoeuixSI2C0/qNBtOnndla2Tjm079hTvc/NwKkkRbw=
+X-Received: by 2002:a05:6512:3ca4:b0:55b:8698:6a1d with SMTP id
+ 2adb3069b0e04-55cc00ad9f0mr3805004e87.3.1754918048081; Mon, 11 Aug 2025
+ 06:14:08 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 11 Aug 2025 09:14:06 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 11 Aug 2025 09:14:06 -0400
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20250808151822.536879-8-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ALpogynE4SFc
-Date: Mon, 11 Aug 2025 15:13:59 +0200
-From: "Arnout Engelen" <arnout@bzzt.net>
-To: "Dominique Martinet" <asmadeus@codewreck.org>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "David Howells" <dhowells@redhat.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Andrew Morton" <akpm@linux-foundation.org>
-Cc: "Maximilian Bosch" <maximilian@mbosch.me>, "Ryan Lahfa" <ryan@lahfa.xyz>,
- "Christian Theune" <ct@flyingcircus.io>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-Id: <21fceb38-4c0d-4183-a929-c824a3cb46a9@app.fastmail.com>
-In-Reply-To: <20250811-iot_iter_folio-v1-2-d9c223adf93c@codewreck.org>
-References: <20250811-iot_iter_folio-v1-0-d9c223adf93c@codewreck.org>
- <20250811-iot_iter_folio-v1-2-d9c223adf93c@codewreck.org>
-Subject: Re: [PATCH 2/2] iov_iter: iov_folioq_get_pages: don't leave empty slot behind
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250808151822.536879-1-arnd@kernel.org> <20250808151822.536879-8-arnd@kernel.org>
+Date: Mon, 11 Aug 2025 09:14:06 -0400
+X-Gm-Features: Ac12FXxrP0SlfDebLOcuh07PmX_2s3-W5WKUuJmVyKDnXLV2k8bO61Zh8tXjxhI
+Message-ID: <CAMRc=Mfm_w4R-63eNpzrYQfE9OAhSO2wY3iPVJVnbSqTzq7rjw@mail.gmail.com>
+Subject: Re: [PATCH 07/21] mfd: wm8994: remove dead legacy-gpio code
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, patches@opensource.cirrus.com, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	Lee Jones <lee@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Great! I can confirm this indeed fixes my reproducer, and the iov_iter
-now looks sensible in gdb as far as I can judge.
-
-Tested-by: Arnout Engelen <arnout@bzzt.net>
-
-On Mon, Aug 11, 2025, at 09:39, Dominique Martinet via B4 Relay wrote:
-> From: Dominique Martinet <asmadeus@codewreck.org>
-> 
-> After advancing into a folioq it makes more sense to point to the next
-> slot than at the end of the current slot.
-> This should not be needed for correctness, but this also happens to
-> "fix" the 9p bug with iterate_folioq() not copying properly.
-> 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+On Fri, 8 Aug 2025 17:17:51 +0200, Arnd Bergmann <arnd@kernel.org> said:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The old-style gpio handling in wm8994 came from a commit 7c8844481a1c
+> ("mfd: wm8994: Emulate level triggered interrupts if required") in
+> linux-3.11, but nothing in the kernel ever set the 'irq_gpio' member
+> in the wm8994_pdata structure, so this was always dead code.
+>
+> Remove it now to reduce the dependency on the legacy gpio interfaces.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> lib/iov_iter.c | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index f9193f952f49945297479483755d68a34c6d4ffe..65c05134ab934e1e0bf5d010fff22983bfe9c680 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1032,9 +1032,6 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
-> maxpages--;
-> }
->  
-> - if (maxpages == 0 || extracted >= maxsize)
-> - break;
-> -
-> if (iov_offset >= fsize) {
-> iov_offset = 0;
-> slot++;
-> @@ -1043,6 +1040,9 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
-> slot = 0;
-> }
-> }
-> +
-> + if (maxpages == 0 || extracted >= maxsize)
-> + break;
-> }
->  
-> iter->count = count;
-> 
-> -- 
-> 2.50.1
-> 
-> 
-> 
+>
 
--- 
-Arnout Engelen
-Engelen Open Source
-https://engelen.eu
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
