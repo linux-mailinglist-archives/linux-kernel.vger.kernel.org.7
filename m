@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-761665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5705FB1FD2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:54:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248BDB1FD2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187A73B519E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD313B5B31
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DED22FAC3;
-	Sun, 10 Aug 2025 23:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F46B9443;
+	Mon, 11 Aug 2025 00:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0A4PJI3"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwNhIrTS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917322A4DA;
-	Sun, 10 Aug 2025 23:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F21C4400;
+	Mon, 11 Aug 2025 00:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754870036; cv=none; b=dq5ufGVX8sMUMyIKK6+BkWylVIf4LIjb/uBqc0bwDfcLoClKcQC/UqmGBYJwD2Pe95eW30TlOqCNZiE7svQjwGUdik3xOvuZ4SoJ/eiJ276vxoVMVEZUZ0v/XNFr1FuWqL63W4Db2K4ak2lwkZl8cK8YVuoryhfD9AThPKDY9GA=
+	t=1754870595; cv=none; b=GG391+gTEVveP0gIivd5gS8+TF+M8JP7bPB3RcvokjeMalwszIinT9csCr9NlFiRGJcRmEJfPuOvbeKWiMQXYa0NDCqzHfJZrO5VSxjeQVKGGFK11AlxSzQkqhm61+gN+GnsLB5bMgSHNPfd7VIWi/PS8RVC2ax5H1kPbhfICWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754870036; c=relaxed/simple;
-	bh=YqmHMucSU2DlswN5+QJUfNE73hCMbH/3S1oPKLv7ipw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+6FuN7duoswWEgWGgefwfr4Lz1PW/hBi2qUEIviKp8KLJtiSU11i6fW3FP//6dpVZ5uCQQIlYBJZryozgWmPFRoOc+/9RXoyhvUMQhmhB4SSRCpiS9lcwiC7yK1biNoC6JSM57MqIYg2ch3lFSaao7+a1t4f5f99FeUAa1Sphc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0A4PJI3; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7698e914cd2so4832869b3a.3;
-        Sun, 10 Aug 2025 16:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754870034; x=1755474834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7knVGaGsoWjApLEqvHDjmolbJK36ccHbDacWKxbNqHk=;
-        b=Q0A4PJI3nQo2DJio19OAyRzmuz/Mv799MLCxOwPrJR1m9TEcJ3CYjEkwF/667WHEos
-         /SjPgbut68hdJbiaWXx0NTUPYCAQ9SlU32S51fGoccgD4v67Z+dTUOL1372aWSxL0Jbk
-         eY/K7CVlTEbL+ct32rdBw+ZG0PA7R8rcyPZ7Xq0ieyfdwDNcUzDUdTzqqWyBRsrn6Lhs
-         RcWxN1E8AH5t+yEWxT3wKF4b0JsjWHpANIR9IDnUZ4VUHLoIfxOU7V20CvlXhlYZfMqF
-         PqhqlxFu5N+/E7jExjYTN+rSNRp1IOlmpMV77gBd4hC8zypmgJUvyD+vCWX46oKjnSow
-         uaFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754870034; x=1755474834;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7knVGaGsoWjApLEqvHDjmolbJK36ccHbDacWKxbNqHk=;
-        b=vM4eypv5Ek3YTj/SDvSLtkSIPHCGJG3yAjSOQ2r3j/GG1ISecfiVFeyqb9VRGqVanf
-         hBvI2pVDaHjIu9cyS4R1jmrNE1KUxtOH5/a29UzcsSztEv7NeiA/Mi9LJHVcUc5VkK6G
-         GARlhbn3onqxWWUyuMKr23xjG85UBDZCAJ3wh1H954UpnjPYwEjHemRyvmvJf6FvyJgo
-         D/pl7FsfxQ54yDU9KxRVTAXZS+BVQIsYMPkZVpcIjFvMI8MRkUMtSMHy2txzCXLFEyXa
-         jFb+A+wR9E2xI86+kWDd+SXf+xsGH3mWAWUD5SjQtIG4kZufddcjXMhrCUS9OKdNnyzG
-         wv2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsbH/bZN51P6lb+BwyjnI569WcmP0vuQdYnDc27rrImrQN63h5lxQm3s7cWfTJLkKnxWNpjOaC1cA=@vger.kernel.org, AJvYcCXeujet/7N6kavR7L7DNIKpJlp0hK3nm2wDRc4J9EZq3DbqDAUlmkLrNs8u7+tNerXHvZgPPaiEIZG72wbL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLsvDJKKmAJShTWE6bqSv5JnpPlDGNxRTWC4iaMFsQoRAbv7RR
-	QYijDjOB6z452G1+dUGNTxeWTaZ71jUpeb7qdWyCMdlrzVNZMdG/FnVJFHGeGRSNeAw=
-X-Gm-Gg: ASbGnctwR9ubOgghKG+X/ftQrxmd7UYZYiNs4eZCLkGxQIbQ63aqHoyEaSAjfAJA3ae
-	Z43Qz7yNrwci8QMh1WpJ+NXIrgZRrfAu9fhQTYYujL6RfcHMsM6rQ4PbrSa3yPgkiSp8cZ2FIQf
-	es68v6KI8fxHHLkmgj7ZW8ZroahH+yD8wJN+Sm86Zv66EFJUwPJz3LKDbpEnpghqmJaUrxbGAZ0
-	aTFwOo0Y0UIYOwRkzv2AJnx8yjbnYt1t+OyTLNr7eM3kmwk4sdvbKtnhgFhkQf6V7MwNutOmWP3
-	ivuJP2LQTFele61lv8tEP0Ft5mk4GsSJl40oiv+6KHwSLWLw4ba+/UPIOx0pANiS9TLxlsn5xPc
-	nWxyCISsDqb57az8mdk6eE+AWr6t+F0E/YmGZiKXDB7Y=
-X-Google-Smtp-Source: AGHT+IGhK/OXz3cPQAKcMSk1OwiUpZ9lZPXMvKVLVmgTZXjh3inToIYTH0u80Hutih/F0cszD2duJw==
-X-Received: by 2002:aa7:8887:0:b0:748:e1e4:71d9 with SMTP id d2e1a72fcca58-76c461bdf62mr13304121b3a.22.1754870034249;
-        Sun, 10 Aug 2025 16:53:54 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfc0a2asm25281389b3a.70.2025.08.10.16.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 16:53:53 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: corbet@lwn.net
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	dhowells@redhat.com,
-	brauner@kernel.org,
-	max.kellermann@ionos.com,
-	skhan@linuxfoundation.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] docs: folio_queue: Fix minor typo in folio_queue page
-Date: Mon, 11 Aug 2025 05:23:44 +0530
-Message-ID: <20250810235346.4153-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754870595; c=relaxed/simple;
+	bh=X+BdXFqquj9DQr6IZy+gnd+atvFm1saLgYgTBYGsDcc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RSPldG5gKe5AkcM7Rl9q4AOcKcQBOMU5mwrwcodKm2UO3Sw9Cz8GMy2oIzOItSBmoKnZKjRoP7cB9Fv5XpX9pTG5SOxlvpXD1rv8SgD7rci3bErjzddWfcpt8vuBiZROf3oEAfzutwdk6QpPANEuJnS517e5DgUpQmEqSPJCpLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwNhIrTS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B93CC4CEEB;
+	Mon, 11 Aug 2025 00:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754870594;
+	bh=X+BdXFqquj9DQr6IZy+gnd+atvFm1saLgYgTBYGsDcc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IwNhIrTSncJxWdZ2aY0n/OpWBzLHtdeDdtqD5+L1CFL86UORnALYCcQp0lr46IJmK
+	 QfYpITQOe/3jNfCUoktAuooa3UV0HRXYiD5QT9oe/awIBZjKB1Iha+ntxvt0S8zcUv
+	 +5jNoWOfLSKqHgr9ElMOr3navaHtvZCm+yEZYLHaeETo99A2vnX3O1jN5EUlAUzfaK
+	 zS/tjGE1uUJRXVuEHgXYMIHi5GVWwHBtVLEpqEnCPb4pAPocc1MrIUHLxfK6R3PdO8
+	 Xn9tjuhyZKJCWL3ouaL1S9d4CsrXUm7B3KNegfsW7sl0SHwx/h3Plfvge1bDvhceJG
+	 9dYQaxn6JaY5w==
+Message-ID: <8358d907-0edc-4ff0-a520-9cec3c84a49a@kernel.org>
+Date: Sun, 10 Aug 2025 18:03:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: vrf: don't down the interface when add
+ slave
+Content-Language: en-US
+To: Ido Schimmel <idosch@idosch.org>, Menglong Dong <menglong8.dong@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, sdf@fomichev.me,
+ kuniyu@google.com, ahmed.zaki@intel.com, aleksander.lobakin@intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250807055634.113753-1-dongml2@chinatelecom.cn>
+ <aJhNP_xQyENLSF6d@shredder>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <aJhNP_xQyENLSF6d@shredder>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Specifically, fix typo 'hese'-> 'these'
+On 8/10/25 1:41 AM, Ido Schimmel wrote:
+> On Thu, Aug 07, 2025 at 01:56:34PM +0800, Menglong Dong wrote:
+>> For now, cycle_netdev() will be called to flush the neighbor cache when
+>> add slave by downing and upping the slave netdev. When the slave has
+>> vlan devices, the data transmission can interrupted.
+> 
+> OK, but can you provide more details on the production use case for
+> enslaving the real device to a VRF during runtime? Usually this kind of
+> configuration is performed before data transmission begins. I suspect
+> this is why nobody complained about this behavior despite being present
+> in the VRF driver since its initial submission almost a decade ago.
+> 
+> I'm asking because the potential for regressions from this patch seems
+> quite high to me. For example, before this patch nexthop objects using
+> the enslaved device would get flushed, but now they persist. This can
+> impact offload of nexthop objects and it's possible I'm missing more
+> potential regressions.
+> 
 
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
----
- Documentation/core-api/folio_queue.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++1
 
-diff --git a/Documentation/core-api/folio_queue.rst b/Documentation/core-api/folio_queue.rst
-index 83cfbc157e49..b7628896d2b6 100644
---- a/Documentation/core-api/folio_queue.rst
-+++ b/Documentation/core-api/folio_queue.rst
-@@ -44,7 +44,7 @@ Each segment in the list also stores:
-  * the size of each folio and
-  * three 1-bit marks per folio,
- 
--but hese should not be accessed directly as the underlying data structure may
-+but these should not be accessed directly as the underlying data structure may
- change, but rather the access functions outlined below should be used.
- 
- The facility can be made accessible by::
--- 
-2.43.0
+Thanks for staying on top of this, Ido. I have been very distracted the
+past few months.
 
+The design choices when the VRF code was first written was either
+1) require the devices to be added to a VRF while down, or
+2) cycle the device while adding it to the VRF.
+
+I preferred 2 as the simplest choice for users, and so that is the way
+the feature went in.
 
