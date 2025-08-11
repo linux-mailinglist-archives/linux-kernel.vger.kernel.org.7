@@ -1,61 +1,88 @@
-Return-Path: <linux-kernel+bounces-763713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C0AB2193A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE71B21948
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E5B621D25
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5B4462E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A305227F75F;
-	Mon, 11 Aug 2025 23:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BAF280A5B;
+	Mon, 11 Aug 2025 23:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkVp38Kc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ay9sd5Xo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D7827146A;
-	Mon, 11 Aug 2025 23:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4F20FAA4;
+	Mon, 11 Aug 2025 23:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754954844; cv=none; b=BKpB+qHJLKAZ3Erpcq2kXjmGMZjFRQWJxHJKq6Vbikw3IUKfGChEfeeOpbRlGrNfSHE9wujPevzojtg66d27iLZfXWg5cr9GE/FsLsZ59Mi9lhPYw3uKkO6Ut3uMza6I2MUrRkQxSLsMT6FzgasVqdpk3BSxg2MGvZHRLtYTgcQ=
+	t=1754954851; cv=none; b=UF8/VKaBwNHklgWbxiXsTXgErjCfQvZIiKzyGvG1fLpaSKbc32BNrJzCxWCXxkW7w1Fw9/XTEIxVezFrH6FlaVbrIjT/B540ihayJYt8O93pcdoBGjjZa30XdNm8NWO1e2CNJPLS/xbhrUkd8RzbYcMhFG98jffOyEbYBS407Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754954844; c=relaxed/simple;
-	bh=4twpda1qle+kSEU88TGP7eLiMI7FxT31TKcU8JwV5s8=;
+	s=arc-20240116; t=1754954851; c=relaxed/simple;
+	bh=6yPyPa/6VABXX3mCsisBs6+EkiTsHKndMvRPv8Pn4D8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JXM21t6OSh/FC3NCeWk5Z3m2mQnLMNn6u2dbJPenTs+CPm4Ssv2i70QsXhTJoJbo91In/H5chk/F8FCoxUaZn4OP9gAxFv/RlylEolXSNnprP+cfrjCyZMU6elfX1pKP0UOHkUAkU7Y1OkZP04GkGJ3/CBgh+8WF3plos5B/r3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkVp38Kc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33472C4CEFD;
-	Mon, 11 Aug 2025 23:27:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=g3VsqhZ/Yl0waxJ7ICxA9boIM8an9cNIP1ajECKCYhFzXIKcyaL/bLFf5la2p3OToJkOgaJ1XqGeqj9knFYNOtrwmsg6lGnoMcruaw3JrAAJg2j80KvOnLstvrqzCGFoM5cU1TSfCn/SA7/p1ff4B3+GsUfVVuKfKYx9hafCdT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ay9sd5Xo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29640C4CEF6;
+	Mon, 11 Aug 2025 23:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754954843;
-	bh=4twpda1qle+kSEU88TGP7eLiMI7FxT31TKcU8JwV5s8=;
+	s=k20201202; t=1754954850;
+	bh=6yPyPa/6VABXX3mCsisBs6+EkiTsHKndMvRPv8Pn4D8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CkVp38KcUFdZ/fc+mDNKFE3SLgJC9sCkqB1GFTtUf+YpMjGZJu+B9f+/AXjCdlM+x
-	 2V/b6R6VvNhqLpKzUM0K+ptlIKGTmgUelzUgQ6AsTOjEg9YzTvojQmwuPG2bPxI+gh
-	 uWWEEAjJkGhBq0CP7Fh4JTk2GRrnbSaBGrqf+fSNutySKUBylpdQPW9cc1898VSOh1
-	 vmghjLijHMFyGk8/BveXFBDAJfr9lfPm+CyPzaZIwhX9BYunLC0w4Gk7xWd6k3ZxXO
-	 nSlHuUgRi3AG6tdK7LcMQGw1z3Co0RwQ+aCQ0eCaNw3G1NbnqpVV7lzcmFNgh+V9r8
-	 EnLOjpgkmHmIQ==
+	b=Ay9sd5XoJ+twG1J89m7Xi1nPexzaNbPNHDBcWBDajyjzrirR4kNn9TfiF5/h8rgd2
+	 R3pBcbwMTM/AcF0NPxU5+grulSf5eAr+uBsNit6c8CtUPVbd7Jmt+hkBPzh1OXcLeK
+	 2ZNeLi9yb7zktHcqbOY/0O1GWIF53fzZ7DKfPJtbfoKg0DjnOul51jMKCZxAJepNNz
+	 WSoQUqLoEce1iptTXJw5YdIpF6cU6EL3g2mlfQwnm8hcRspaCwjt89L+rqcjB7+Plh
+	 5/1qwHPdPfl8VbJpVznhK/OQHMs+IKbZ39yYl7kD5IT3cgzTileUMJ3nQCHl0YdAeg
+	 SaAb7KAqY3y6w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Martin Botka <martin.botka@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Robert Marko <robert.markoo@sartura.hr>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	krishna Lanka <quic_vamslank@quicinc.com>,
+	Iskren Chernev <me@iskren.info>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	David Wronek <david@mainlining.org>,
+	Jens Reidel <adrian@travitia.xyz>,
+	Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Luca Weiss <luca.weiss@fairphone.com>
-Subject: Re: [PATCH] dt-bindings: arm: qcom-soc: Document new Milos and Glymur SoCs
-Date: Mon, 11 Aug 2025 18:27:00 -0500
-Message-ID: <175495482450.157244.15814882520059016459.b4-ty@kernel.org>
+	linux-pm@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] Remove double colon from description in dt-bindings
+Date: Mon, 11 Aug 2025 18:27:02 -0500
+Message-ID: <175495482449.157244.9662741916220392763.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250716162412.27471-2-krzysztof.kozlowski@linaro.org>
-References: <20250716162412.27471-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
+References: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,17 +93,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 16 Jul 2025 18:24:13 +0200, Krzysztof Kozlowski wrote:
-> Extend the schema enforcing correct SoC-block naming to cover Milos
-> (compatibles already accepted by some maintainers for next release) and
-> Glymur (posted on mailing lists [1]) SoCs.
+On Thu, 17 Jul 2025 08:54:43 +0200, Luca Weiss wrote:
+> As requested by Rob[0], remove the double colons found in various
+> bindings with "See also:: ".
+> 
+> [0] https://lore.kernel.org/lkml/20250625150458.GA1182597-robh@kernel.org/
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: arm: qcom-soc: Document new Milos and Glymur SoCs
-      commit: 474aa14da0e160f2f3fb002b64b8363ae91f9590
+[3/3] dt-bindings: soc: qcom,rpmh-rsc: Remove double colon from description
+      commit: a6c4d92fcc74b4402d1ecdf6f4a7304a37a69ada
 
 Best regards,
 -- 
