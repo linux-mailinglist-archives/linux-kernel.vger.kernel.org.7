@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-763562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B32B2169E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:39:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0725BB216A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413683BD492
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:39:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F47F2A030A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851592DEA73;
-	Mon, 11 Aug 2025 20:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44D62DFF3F;
+	Mon, 11 Aug 2025 20:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIZzW7+N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a72cdbaK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h2Ar8NoK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB831459F6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13F4EB38;
+	Mon, 11 Aug 2025 20:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944740; cv=none; b=Pap7MkRgi6a3wbHLKXUEEPd3+MbRZKzyWLfW6AwPBSkn5vuh/5ErMPohv81Cll4rTuhpQJF2xr5i8mpYVjxBTiS54bePk8sWKcZ3vEV4IWL9tXHXgKtLcYKgVgtxijWgqDIUm+Y6SJyV0cmxXonhanshmv2DASAv7aCP7cEQV+A=
+	t=1754944825; cv=none; b=bRtAXVSZ3Y/oSUx2pTN8Ab3YeCaPXnNA+8WX8P+w/0LaBpYJQqUg/dQO96puFVVPCTAH1Y5HdHmvmyxhKSELM+DtoBbs8dL8AtZT7gq0G3y3qg7l8R6s5G5LtfIyj+kabI4O+LNJGg/p4ngRHiSKa0Hfh+mO56yM78ClAtXowTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944740; c=relaxed/simple;
-	bh=BeN3m0xadz9YvYUbHvxtp57LYioc/6gT4/yHr3BKzFM=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nuc4leNuIvN/yLY3jWT2XGhwzOt0QTiFu95aBTzhvIrnuNQelR/LcwL9MCWhQ9reZtzlelGjS/yJeou049kBmcNxuI6K0JxeoKdEV9tDCuIZXX1O/9UmYnIcG3n6E9QkeRtuyCN534BmKi0xiq4BOBae81zpmWvethNJaVHZCT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FIZzW7+N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754944737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVTZDqLOIqGDACKJQ4iW2Xgu+XIsc1WR3tvSI8VBgFw=;
-	b=FIZzW7+NpVLKigKFiF6FBY0KwUnaImM0i+bWiTRDtAdLGSHsoxoJbi3wJFhWAm8dGJmSKu
-	G4HYv0y+wBD+H5232B/m/n4oUJHaYcQQ8hyHH1IIslgPi/MD2TK/bv5H+QLhxoKFI5wEtD
-	RGvh98p16u+JmYSM7SWryFOCPuX0Uao=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-MVO15QqCMEmzJ0KlrUCytA-1; Mon, 11 Aug 2025 16:38:56 -0400
-X-MC-Unique: MVO15QqCMEmzJ0KlrUCytA-1
-X-Mimecast-MFC-AGG-ID: MVO15QqCMEmzJ0KlrUCytA_1754944736
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e7fd5f63a0so463423985a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:38:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754944736; x=1755549536;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVTZDqLOIqGDACKJQ4iW2Xgu+XIsc1WR3tvSI8VBgFw=;
-        b=pxTBa96IWd0LIyXR6XZtFJAnCAiwKAKDosXoeR7Zn4iYPGk+qtLM42/VJcnIZNzwA+
-         apuyolhFgHc6sZ5pfpXYhCqmar1qLzH3U8osX6Pdst4yHZoVmYN3CmV56Drr7MszmwmZ
-         6ALVmdU2DMZVsWqwQvAbPdIvBo5C4iRT4/mjE/V/ZVkbPlUADwH6qqDBOXXpMhWMGJ3e
-         RUf9OWeN/J519C3AZnNQc8Kd8bQrOe7vgCArZgMgJziVjfZIjQSZFGehfQcX0ctOllvb
-         jJA1U43z58hKJaaeJKRgKSgBNmYU0OzPXVSdfs5KGYmN8EzGhflKJYCdDWWO+YOMx6E9
-         7Fzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBegixApUuokq5j1XuVYlz8gbF1i6GQ2MlkctR3Q9COYYWzfr+AXDtJ+7MhAg39Gl1kXleQi4dF6lSF7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDleVDne98zmhEu1HJJq1Gp6vyUcS5SHbaM8IMsMKsA3YvJCBo
-	rf28qAP7Ng6lVTOIeJTcqVUh2YGfiSTIS+EO/ATG1I1UXfHgHO79SUgP9LKcyYYfLVFJo+GxWUG
-	fRino5jHQZtiTAHiHDQeqw3uL3Pw4vvgLmWdXkNwPPwBomd5bsYizPhZYb9dFRydQWw==
-X-Gm-Gg: ASbGncvAtrL5dXIltWToKtmrLafnXnV3iF7eQSjGf59CVm6otupDAMEspaTscDqGGOa
-	2Ln4/OEP5BSIZtasChWnzjPruO8pv5dUUzLCZVfGm5hjmx4Jvo/iqGCoLJ+iOzBAAlwkv2Z0vOP
-	CK/5tGNBz+6GtdU/RNl0wPurPwMe9ME8So+zwaNvP3lfRNavI9exG0iXNDIYJfGo0d/yp4IqaM6
-	Rt0mEHtHmC0P3LWKSLlHW1MuA/axv42TA78IxyudFIopXp5DX8ZJn1f4SXDaHaTsDvQXQQQHhdJ
-	l3rzL7TjIyVZK8Gzr2GOGLxdbPU+ZVmbioomz7n6JkyOxXfdZ5O0Xlcui3wHn8vMwLhmUYMSSg1
-	AWIg8Sylk0g==
-X-Received: by 2002:a05:620a:3190:b0:7e8:46ff:a520 with SMTP id af79cd13be357-7e846ffa5f3mr1032836185a.59.1754944735851;
-        Mon, 11 Aug 2025 13:38:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6TJypRwgs9RgO0ZOhG4M9sxvgnyPxPyFGPY0oojF+MNjTWDK6x8l3AWs8blAumYeOx/efOw==
-X-Received: by 2002:a05:620a:3190:b0:7e8:46ff:a520 with SMTP id af79cd13be357-7e846ffa5f3mr1032832285a.59.1754944735406;
-        Mon, 11 Aug 2025 13:38:55 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e856555efbsm102176285a.11.2025.08.11.13.38.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 13:38:54 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <8f357de1-72ba-497f-997a-f9a61aec6190@redhat.com>
-Date: Mon, 11 Aug 2025 16:38:53 -0400
+	s=arc-20240116; t=1754944825; c=relaxed/simple;
+	bh=4yIQRxdr5LK+GyTABnsJhF50za0tC4FBDtqXTzYbio4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=NJIHo+IUZpQR5hJbKh77NSMuS4g5uB9RbokmRkGMYZhDgjjJhL8TTKTHapMjTZkaEuBY6K87LBV1vr2y+uZxf0SBqwMg/eMyPjL9HvFJ4PiTWynKRzE++lXSdkdv0Y1klei6dorLBsuzvaiht59rAcWUBkZFKkGatUlP6xajhhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a72cdbaK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h2Ar8NoK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Aug 2025 20:40:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754944820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=YSaeji+ngrHjZZCopR4Eapy73qXsXyF5LS4tG0kO0Ac=;
+	b=a72cdbaKS0TgTdc9/r9Cs9e/38ABXAt/cqqyrXgO1sRN0IEfKo+x6PntTqNemXydsY8PSZ
+	FJvAlRN0svYMjyjJ3N5kuErzh2pnspHwa0hAbSswT0xd+0owKGi5qHOWY/lZJrSisYnNbz
+	O96Sa5FEYN1rmA4oL4XuHJr6X+IaTA+CDlVnkiNo83Dbf6YxFKB+VT3qYmyu4ntG8u4Z7y
+	K25aeovcn4FHwnXGzOO9iMFbqT4ju8plJY4Nd062H0o4xzsg5i0NojFA4KXhXf6cJPRefu
+	K6xOvg8hkc3gZQoA1HBSsWoqww5dY/BKddwWY3NGTaVHoIXpc4QOIVtI87ozvA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754944820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=YSaeji+ngrHjZZCopR4Eapy73qXsXyF5LS4tG0kO0Ac=;
+	b=h2Ar8NoK+/JA2TVox3ySIZLJfm5NYYcLBgyktvLHL0A5LAvuLa2x8A58ngkKZmbKcxK8xg
+	hJV8UEK/oZ/LeECw==
+From: "tip-bot2 for Fushuai Wang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/fpu: Fix NULL dereference in avx512_status()
+Cc: Sohil Mehta <sohil.mehta@intel.com>, Fushuai Wang <wangfushuai@baidu.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] doc: Add CPU Isolation documentation
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Gabriele Monaco <gmonaco@redhat.com>, Ingo Molnar <mingo@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Marcelo Tosatti <mtosatti@redhat.com>,
- Marco Crivellari <marco.crivellari@suse.com>,
- Michal Hocko <mhocko@kernel.org>, "Paul E . McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
- linux-doc@vger.kernel.org
-References: <20250809094247.8384-1-frederic@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250809094247.8384-1-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <175494481915.1420.11907322564960386974.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/9/25 5:42 AM, Frederic Weisbecker wrote:
-> nohz_full was introduced in v3.10 in 2013, which means this
-> documentation is overdue for 12 years.
->
-> The shoemaker's children always go barefoot. And working on timers
-> hasn't made me arriving on time either.
->
-> Fortunately Paul wrote a part of the needed documentation a while ago,
-> especially concerning nohz_full in Documentation/timers/no_hz.rst and
-> also about per-CPU kthreads in
-> Documentation/admin-guide/kernel-per-CPU-kthreads.rst
->
-> Introduce a new page that gives an overview of CPU isolation in general.
->
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Thanks for working on this document. It will be really useful for those 
-customers that need CPU isolation.
+Commit-ID:     31cd31c9e17ece125aad27259501a2af69ccb020
+Gitweb:        https://git.kernel.org/tip/31cd31c9e17ece125aad27259501a2af69c=
+cb020
+Author:        Fushuai Wang <wangfushuai@baidu.com>
+AuthorDate:    Mon, 11 Aug 2025 11:50:44 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Mon, 11 Aug 2025 13:28:07 -07:00
 
+x86/fpu: Fix NULL dereference in avx512_status()
 
-> ---
->   Documentation/admin-guide/cpu-isolation.rst | 338 ++++++++++++++++++++
->   Documentation/admin-guide/index.rst         |   1 +
->   2 files changed, 339 insertions(+)
->   create mode 100644 Documentation/admin-guide/cpu-isolation.rst
->
-> diff --git a/Documentation/admin-guide/cpu-isolation.rst b/Documentation/admin-guide/cpu-isolation.rst
-> new file mode 100644
-> index 000000000000..250027acf7b2
-> --- /dev/null
-> +++ b/Documentation/admin-guide/cpu-isolation.rst
-> @@ -0,0 +1,338 @@
-> +=============
-> +CPU Isolation
-> +=============
-> +
-> +Introduction
-> +============
-> +
-> +"CPU Isolation" means leaving a CPU exclusive to a given userspace
-> +workload without any undesired code interference from the kernel.
-> +
-> +Those interferences, commonly pointed out as "noise", can be triggered
-> +by asynchronous events (interrupts, timers, scheduler preemption by
-> +workqueues and kthreads, ...) or synchronous events (syscalls and page
-> +faults).
-> +
-> +Such noise usually goes unnoticed. After all synchronous events are a
-> +component of the requested kernel service. And asynchronous events are
-> +either sufficiently well distributed by the scheduler when executed
-> +as tasks or reasonably fast when executed as interrupt. The timer
-> +interrupt can even execute 1024 times per seconds without
-> +significantly measurable impact most of the time.
+Problem
+-------
+With CONFIG_X86_DEBUG_FPU enabled, reading /proc/[kthread]/arch_status
+causes a warning and a NULL pointer dereference.
 
-"significantly measurable" looks odd to me. Maybe "without a significant 
-and measurable impact most of the time".
+This is because the AVX-512 timestamp code uses x86_task_fpu() but
+doesn't check it for NULL. CONFIG_X86_DEBUG_FPU addles that function
+for kernel threads (PF_KTHREAD specifically), making it return NULL.
 
-> +
-> +Tradeoffs
-> +~~~~~~~~~
-> +
-> +In terms of cost, this is the most invasive isolation feature. It is
-> +assumed to be used when the workload spends most of its time in
-> +userspace and doesn't rely on the kernel except for preparatory
-> +work because:
-> +
-> +- RCU is slower due to the locked, offloaded and threaded callbacks
-> +  processing (the same that would be obtained with "rcu_nocb=" boot
-> +  parameter).
-Should be "rcu_nocbs". The '=' is optional.
+The point of the warning was to ensure that kernel threads only access
+task->fpu after going through kernel_fpu_begin()/_end(). Note: all
+kernel tasks exposed in /proc have a valid task->fpu.
 
-Cheers,
-Longman
+Solution
+--------
+One option is to silence the warning and check for NULL from
+x86_task_fpu(). However, that warning is fairly fresh and seems like a
+defense against misuse of the FPU state in kernel threads.
 
+Instead, stop outputting AVX-512_elapsed_ms for kernel threads
+altogether. The data was garbage anyway because avx512_timestamp is
+only updated for user threads, not kernel threads.
+
+If anyone ever wants to track kernel thread AVX-512 use, they can come
+back later and do it properly, separate from this bug fix.
+
+[ dhansen: mostly rewrite changelog ]
+
+Fixes: 22aafe3bcb67 ("x86/fpu: Remove init_task FPU state dependencies, add d=
+ebugging warning for PF_KTHREAD tasks")
+Co-developed-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20250811185044.2227268-1-sohil.mehta%40inte=
+l.com
+---
+ arch/x86/kernel/fpu/xstate.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 12ed75c..28e4fd6 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -1881,19 +1881,20 @@ long fpu_xstate_prctl(int option, unsigned long arg2)
+ #ifdef CONFIG_PROC_PID_ARCH_STATUS
+ /*
+  * Report the amount of time elapsed in millisecond since last AVX512
+- * use in the task.
++ * use in the task. Report -1 if no AVX-512 usage.
+  */
+ static void avx512_status(struct seq_file *m, struct task_struct *task)
+ {
+-	unsigned long timestamp =3D READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
+-	long delta;
++	unsigned long timestamp;
++	long delta =3D -1;
+=20
+-	if (!timestamp) {
+-		/*
+-		 * Report -1 if no AVX512 usage
+-		 */
+-		delta =3D -1;
+-	} else {
++	/* AVX-512 usage is not tracked for kernel threads. Don't report anything. =
+*/
++	if (task->flags & (PF_KTHREAD | PF_USER_WORKER))
++		return;
++
++	timestamp =3D READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
++
++	if (timestamp) {
+ 		delta =3D (long)(jiffies - timestamp);
+ 		/*
+ 		 * Cap to LONG_MAX if time difference > LONG_MAX
 
