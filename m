@@ -1,124 +1,74 @@
-Return-Path: <linux-kernel+bounces-763164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB47B2112E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:12:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D02DB21121
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809223B20AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58571188377C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28B2C21F5;
-	Mon, 11 Aug 2025 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9172D480A;
+	Mon, 11 Aug 2025 15:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZeXNWfO+"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ih7lqkDM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3942C21F0
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21A2C21F1;
+	Mon, 11 Aug 2025 15:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927792; cv=none; b=XgtvnXagpqWAKBdzv30dlU5kOL3Hj1rnnQHRMv4y8RS2ZjvXcGHMysxhvVP5o+i9N24QXDH/1MRRSOyEYvvPA8S28ccdwjT3M497Z5d7eEPe7Eca8hto1drIpcrxrSiC0a7+/wr9mYnkDzDGL3P5DEcNE6Su1x4jtnPiZnAiCSU=
+	t=1754927810; cv=none; b=TMl5heUZGgsgDbeIiUXVCagt9Q3qHgqspwMHRsDYuhllEU09HJMJlQ8D8C9Sak58K2kTw8sXW3181fpXo9jxTXySSw7443KdsbgnhLYWFMRftzE5j14AEgPWrsxlt6V1p8r74DLFMppFbAtjnRJkad2XAm4hm3IHkCs0JZiI0yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927792; c=relaxed/simple;
-	bh=a41FKwvsBmWc/J+JJXLWQ4dhCt6n29839D0Y6dEV2rs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oP9ApYL4FMukJhmo/eP4uGKnbVL+yu+F3/8/M6a+kyWK5eO+uPSYmfp2ySxGkvpjI06WZ1XgMGPc4UXqv5G03tkpluAhNcyKNFLPWGQWQUYzxar+4EJEvmN/DCQbeBG4Bqr3Yf6tsS5lCCE7MU1F7AFccRzAbUP7S/A6/7qbN4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZeXNWfO+; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e8320abfe0so290797385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1754927789; x=1755532589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a41FKwvsBmWc/J+JJXLWQ4dhCt6n29839D0Y6dEV2rs=;
-        b=ZeXNWfO+tdV5iy8hPow4FsKsrXcUpW3zANP+sSmwIHwP13+yJ+ZSGzMXwg8sW20BDq
-         ibPw7SWZ/gPu1tHeDdHT8GJZ2Hp68xO6bJILMv5eugyGeqig8D0TSy0w1gFHVo/u6tgb
-         DS/Ci40xutADpElbedXMg9RBZIgbDf1ZIVlKB/dVx8zmZFUQUdBuWBYFjkMaZon2C3Ea
-         ILD8pVm7Mk4rgtTDRzncDLLMsm0xkLxz45sEH+GxwmfPy6b/3a+pxQhQ4nKfEyEEjG72
-         8KEFrho+yVSU5ng2LEGIynfl3ILlfEvFe5Z2QURqsiU1W9nZ4/mVpmIxnJUjM/NmKD4I
-         xF8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754927789; x=1755532589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a41FKwvsBmWc/J+JJXLWQ4dhCt6n29839D0Y6dEV2rs=;
-        b=J6YgPFXLlP0tuvRfVrHhnFyz+9IvW1gymVXdF6wtRBTx/MKfGfViYirETm2AC2eHff
-         0mnHmuzcfjiSVF6X7D9BA2mZj7D7zZ4PWYXyGloXkz2PtdvKy7PfVrCzq1Meo5yTC2Ld
-         BGMsehdMNtBKgSenixJOGct7rqz1y+MIFjvZX5B8GB80/dKOolC+k8umW48l72LlKlWa
-         2TmwaZ69Y5oPSixWArLiyOn3XYBjpm1puM3spG7/ydJL5aPdbK7yIwX7rYx0pyn6UuOz
-         /TmMkz6iWkur8SwU/0Turtb7I43VGQGw6QySe50n+fho0FEf5huV1J4coJ61950+1YHO
-         yJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBlweyTyoBs5zUJLq7/v2eQ+bHYKW5h+EhiN8WO0d6MWNLKNW2u/fKqg9p/1onXhBEQCctf+uAn73hpVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQqOlkrIs4uM8JvrsoPNjbED0v+Od0FB4STwyk+tn+cQYer2WB
-	1KUK3N1EXm030Uw9KZXXODK5EFkcv1VXdBKNMrglDvtpYOR9HYNPCEHUu7hbDrXNzZXwJL5arH9
-	bYnWFAYJ/6J2kPbkMX31sBK2uUlKGVLGHxmNu7a07KA==
-X-Gm-Gg: ASbGncv1jc+mZw6NUt17fHuHz3cZjW4sCVQLKvcbsAh+GODk5d6t5VOJ6BvpqT6vJT4
-	ex80c8wGBBBDLk2cpHlyjXxnZM0MWQBGBOMOdq2kO3Mnv7RquvtnYZX+c7oP8CmOem1S7S7MrnA
-	XaDQF7cZfZ3sfiC5cY6CYMcogkAqtgy+kv6b2+KINQt/vqXMVIy75g8qdtfRdNiVetgNSzeqYYR
-	GV+w5s=
-X-Google-Smtp-Source: AGHT+IHJ6DLqi3WNGqEnPO7HeedB9JAg2/I96pTu/EofZ9KhmVtvwE6tX0gRtaO8UtmUdEGcL4at8u0aKTObH9/A5WU=
-X-Received: by 2002:a05:620a:ab13:b0:7e6:4fc9:6457 with SMTP id
- af79cd13be357-7e8588e5e29mr39306585a.54.1754927789270; Mon, 11 Aug 2025
- 08:56:29 -0700 (PDT)
+	s=arc-20240116; t=1754927810; c=relaxed/simple;
+	bh=5qdoi84GVHX4Ea94f7sd+zFnFKBjAi1T20bX4KR1Sus=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QT0C33OG3KkoRN1TpNS4CUBRk7WyQECaXjAFxOW8ZVwejv8bKB1umR0D9Frv02AXow2Y5/10TtClw01viSv3XBpscFcuq68ywL5s3toj10pGofn2krQi56AgxKm09F4bWmrJaQ2mF2tXqLAP9LWLavu86rCJM27zWIrEAZSkO0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ih7lqkDM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918A1C4CEED;
+	Mon, 11 Aug 2025 15:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754927810;
+	bh=5qdoi84GVHX4Ea94f7sd+zFnFKBjAi1T20bX4KR1Sus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ih7lqkDMf8GSKoTaeZ61CQQn37cc8+kTMwgqq1ZIXqEMvSrNsN9/6O9hUmtVs8Rst
+	 YxoAeEngUfx7QfZ1ntggcHborHuHqLXhhj/8SBXC1ESe0GL98zOTpoOJUO+5rGBXQX
+	 KToQ0M/uDwyErc8RAb19pU1o9gyBuuej/fuqWPkdhzNwenmUXRIkqzYuEcJGvk3uzD
+	 rl3zZ6axIxm5wVIk+OccG87EAYRvL5K6NGaIu6iaWkr44LgOGTAaqnLJ0rmqnC8AcW
+	 BV+M7fxQnAiQWGE4bRjfhASiQ8LoqRsrx5KnM0OJz2NqHCRfLqzAj20yLE3ZnaQnq1
+	 iXS741w0xA71g==
+Date: Mon, 11 Aug 2025 08:56:48 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: benve@cisco.com, satishkh@cisco.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ neescoba@cisco.com, johndale@cisco.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+ skhan@linuxfoundation.org
+Subject: Re: [PATCH] enic: use string choice helpers to simplify dev_info
+ arguments
+Message-ID: <20250811085648.449a605a@kernel.org>
+In-Reply-To: <aJjzFb6c6OCGib2F@bhairav-test.ee.iitb.ac.in>
+References: <aJjzFb6c6OCGib2F@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808010235.2831853-1-adrian.larumbe@collabora.com>
- <CAPj87rNnjvsJ1P89dv+OtawBXTLwfcaS41mzOL9Z1SwtjRcVJg@mail.gmail.com> <c76d9e67-4b2b-443d-b173-76476a7a4317@suse.de>
-In-Reply-To: <c76d9e67-4b2b-443d-b173-76476a7a4317@suse.de>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Mon, 11 Aug 2025 16:56:17 +0100
-X-Gm-Features: Ac12FXzdo3umrCbRk0dXIe8CG-C632a8q7Qp4RAlcg4rABC40XzgtLqLjA3ECcs
-Message-ID: <CAPj87rPdJS_pZppfc4BnLWLT+BfikzKhpZJkU2uL8V_OHKYk7g@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panfrost: Print RSS for tiler heap BO's in debugfs
- GEMS file
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, 
-	Christopher Healy <healych@amazon.com>, Daniel Stone <daniels@collabora.com>, 
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On Mon, 11 Aug 2025 00:59:25 +0530 Akhilesh Patil wrote:
+> Use standard string choices helper str_yes_no() to simplify
+> arguments of dev_info() in enic_get_vnic_config().
+> Avoid hardcoded multiple use of same string constants by using
+> helper function achieving the same functionality.
 
-On Mon, 11 Aug 2025 at 13:11, Thomas Zimmermann <tzimmermann@suse.de> wrote=
-:
-> Am 08.08.25 um 13:06 schrieb Daniel Stone:
-> > On Fri, 8 Aug 2025 at 02:03, Adri=C3=A1n Larumbe
-> > <adrian.larumbe@collabora.com> wrote:
-> >> Otherwise it would display the virtual allocation size, which is often
-> >> much bigger than the RSS.
-> > I've pushed this to drm-misc-next-fixes to land in 6.17 with the
-> > original commit as well.
->
-> I'm going to revert this commit, because of
->
-> dim: 216d6d913861 ("drm/panfrost: Print RSS for tiler heap BO's in
-> debugfs GEMS file"): committer Signed-off-by missing.
-> dim: 216d6d913861 ("drm/panfrost: Print RSS for tiler heap BO's in
-> debugfs GEMS file"): Link tag missing.
-> dim: WARNING: issues in commits detected, but continuing dry-run
->
-> Shall I reapply or do you want to?
-
-Damn, I'm sorry about that; I got too used to b4 shazam, so forgot to
-dim b4-shazam instead. I'm happy to reapply.
-
-Cheers,
-Daniel
+This is unnecessary noise..
+-- 
+pw-bot: reject
 
