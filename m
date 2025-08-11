@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-762767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B13B20AB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E007B20AD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400E5189D8CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E203BDE36
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1AE1F3BAB;
-	Mon, 11 Aug 2025 13:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD5F1F463F;
+	Mon, 11 Aug 2025 13:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PEZgrkD8"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="M4Xglp6e"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD4E1E501C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920287; cv=none; b=ncdaEEFbp41G3HkWmlQKW/tek3uNeLO9s+s2FbUPi0342mLcEYoQ6zwJ29cYSIQq1AI/jkqpt+nbo1BfTa25e2UhHMOstGXcmMCvfSuwAm1Uonvthw3BmuBrRCSwVN53VbnPfBDMY4MzKOvPtl8A+Xl6re1yZq4EhaMeBQes9Oo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920287; c=relaxed/simple;
-	bh=CT9X4h9G4kjZOvWJPdcMAMFlsua7bmKxmk6w4I0kbuI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JqYlgmyPxoKhiUr/QxCnNepymefRt1wgsnrws7AIzbFI6Y1bjsWoQpP2mlYFQGy6t9AgAfBq1PhZbnKYTckqfSNkDBlZuZV9C+b/F55AaZ4eG1QX6uMr9CEhvd5RB2mJK6MeFAUyMW6gQhuqr4O/MpvfHAWzYE3rK1L9kWVEozw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PEZgrkD8; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b78127c5d1so2882690f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754920284; x=1755525084; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mkHomn73KtcskPUwX6BNDBx/JMbgC4+EHUqJc1nM+WQ=;
-        b=PEZgrkD8JVTVztG6gIZRoe+gwnNNOEGtOO33L5Pe0aqSYwAG5HMlIAWKzK7shD/m+1
-         VCSMI6V67X0xR1LsUE099Om3sMBkcuW/s89XFPlr1Qr4gprDcK+6brMY80A5rvQ9xbid
-         YY5iZg4GN3a63m/NLcqJgihblVPWcBVu+wsEJPtmlYfhjTXKfoZfMQFrCnz8OfzzbGAc
-         3ArGiidmwU5U9hB+7asmD4P4OPSNJd6XodxIBvJgQF/k//8W4CbQFud2O84MnyJP20hU
-         plGingWDnG0+J3sHki71irRcTNebhOsRQkRyeHCcO9EI/t8ue/Y+Kp5Vkr1YW7wRgMGf
-         7Icw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920284; x=1755525084;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mkHomn73KtcskPUwX6BNDBx/JMbgC4+EHUqJc1nM+WQ=;
-        b=ewoLzOMwCkWpxiHWCoEnugqOww19lVVoZ534wn69mrgbYzUKp+oF2irzreivIwlDXa
-         QW1v0083k0xEbKsvsjneU5lvcVV0jZJlJsA0cFT4PS4HBmvcSiX2/I2rp7Ccmf9Ba/qD
-         TqpbFQ7ry/xWzBk5rY3w7zNp8E2KQLXQ5IKuabaePshF3sNHFitZlyw/aKgl59FtQ86p
-         JOMl5udw+ZtUJj0wWkfRzctFuCDWGSUOgQjOFNwy37Y6NnYgbYvu2TVgFFTMIJmsy4ss
-         J7ugsu5sZGRUL+KN/GPRaxkb9GugrV27frubXH5dIX89e/KwE5jqgJxDKaM5g+Jb6aOc
-         Lzow==
-X-Forwarded-Encrypted: i=1; AJvYcCVeVRV9kE7DmD5xoaxRiwoWW/W+7Am16QjaM2nC4kjv5RbS8E7WlDNjV/G3Hl8O6QNUoTsVTG+XKyKqpK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZynux8v2/esy8ezWOf+G3V1/w4elhAD7mIj/yaALJn+yHX5sG
-	hrE9DZc+xeU/R4Nfm6od9PeGoomqtkfdNuaq6EJuZOy2zDJbJRBhvjo+dugkAaxfgjE=
-X-Gm-Gg: ASbGnctoed9ynIrDsmsjFlGLN1q8sotpjSKGG1S2+aCg066sEhv3N7cme/kSjTX00H8
-	4MQ94kyBZ86Em4MznR1qWMywoKFS5ARr64pJjNQsQTR04YVo4OBdgTslb/ncjWyCfFZLmgqPKCP
-	tGhPjTlqa4LE04iRMlNtDJIlgo6pUMuNOoL1PKs6Y/h8gsTdKl41PRdxYoChWz6AXxDR0De/sHz
-	jY8G+rx5DdgMb5n+PPDgTx34iY5b8DH3SQX2Z+oxfKqNUjrCvEmOvNIn4qyr8ecJ4SRf4bRmjf2
-	0DjXN71kjPUKlnYphX3djHXJlSfuBDL+Mvqks4AN3Ou8PczW/RmS4GpAi9BRR7BsGviFU4NzfhI
-	yadDrcVQwpUYfxe7t/Iq38gsa
-X-Google-Smtp-Source: AGHT+IHgJl5hQvjEJ1bGPy/x1A2InalaL8MJldJyT+CZ55qH+gRDG4zVjSseg1WZYvxhnFuqybE2hQ==
-X-Received: by 2002:a05:6000:230f:b0:3b8:f8e6:867b with SMTP id ffacd0b85a97d-3b900b4bb03mr10345585f8f.31.1754920283630;
-        Mon, 11 Aug 2025 06:51:23 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c51e2sm39611747f8f.32.2025.08.11.06.51.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:51:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Richard <thomas.richard@bootlin.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] Immutable branch between the GPIO and pinctrl trees
-Date: Mon, 11 Aug 2025 15:51:14 +0200
-Message-ID: <20250811135114.70119-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4241E25EF;
+	Mon, 11 Aug 2025 13:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754920361; cv=pass; b=UEZy80NfgnHxDrCdc2BbXjxninFKu6n1nh3EDA1xIZFkXsdcvTiEjPywcAVU0CqeyUlsrmb9B3RvPV9cQsG2LI/zoWXOeG/8fJmnHHnID1+m+cESh0HcJ1XScDO7gwsbcoTeu9j/MVDma5kawnh/6VgEos+4rkrL6krA/H+UhIU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754920361; c=relaxed/simple;
+	bh=VKtriKu6+OTxWfXkXPT9YHsIjO6mIr4UX7XCSVbwSUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ogSiwt+4kdEfZwfYP+3XnOejup/AaOWqQleXeUJIv7oT2dsgUrwJPvCvl+mNCrvvXNDEQTO8rWqaSuVjKUyAV5y5nyh3pb9D0a0Ot1TkSO1aH0/xdDyOBc2zf23mL2GJ2aF1XL3pemAuxQib4BC8cy/qCV1+m4pgJ3hOPFMhng0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=M4Xglp6e; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754920340; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CaqPVfLpXcf6B3O12hrTnSBLjueivtQ2cS9H7Od1BEg7ajGWiBFa9Kj4kYSKP9SnBiOJZrTfLe8xsTKVMcRq9a+wrFmAwjROCNmcvq9eQhB1W0M2zbayrVS18vqxb0kiMa9zZe/8jAYfN91vbuMUUsLU/0REhplvyUxv44xGAr4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754920340; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1ekrnY8bS2wg8D8B4NCNKhUtGyKfpA7Tqmni8Tj9DMM=; 
+	b=T/PvQ64xlProZ9xS9pl4ZV2yYQ5nxGLPQqE8JeS1ukafk63rv2FWFT00C7Bt95P92U0TZfTim6zQ2NtzxGlYsnANP0bJhododQ+6bZMv4f9JUfm7rmYzjLFDpJc8eMxYHpdiknTcKUzIiVBaJ0CLo1nFNf789wYOEiQ6qmu6QKs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754920340;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=1ekrnY8bS2wg8D8B4NCNKhUtGyKfpA7Tqmni8Tj9DMM=;
+	b=M4Xglp6eh7wYhZIOFhxuU2u93kfh4IuyjPWi2ovC/ABS/TriM8O4Tx1hjE/DqTsU
+	kMNHmXxE0jC3XliupwVsZ3pxPX/Ho81gAjbyasLtVxdXRhgRjaZ7Pn7ez6g+g9gz3BW
+	LKjw4MlOlUuY4Gf+hMeiGNxFFw3022udiSodcooQ=
+Received: by mx.zohomail.com with SMTPS id 175492033739913.395742187955989;
+	Mon, 11 Aug 2025 06:52:17 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v2 05/12] media: rkvdec: Add per variant configuration
+Date: Mon, 11 Aug 2025 09:52:15 -0400
+Message-ID: <5911981.DvuYhMxLoT@trenzalore>
+In-Reply-To: <9fbc63d4-a12b-420e-8c99-f2f5fca5a9eb@kernel.org>
+References:
+ <20250808200340.156393-1-detlev.casanova@collabora.com>
+ <20250808200340.156393-6-detlev.casanova@collabora.com>
+ <9fbc63d4-a12b-420e-8c99-f2f5fca5a9eb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Krzysztof,
 
-Linus,
+On Monday, 11 August 2025 02:13:04 EDT Krzysztof Kozlowski wrote:
+> On 08/08/2025 22:03, Detlev Casanova wrote:
+> > This is to prepare for adding different variants of the decoder and
+> 
+> Prepare for...
 
-Please pull the following set of gpio-aggregator updates into your tree.
-This will allow you to apply the final patch in this series containing
-the pinctrl driver for AAEON UP boards.
+Sounds better indeed.
 
-Thanks,
-Bartosz
+> > support specific formats and ops.
+> > 
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> 
+> ...
+> 
+> >  static int rkvdec_init_ctrls(struct rkvdec_ctx *ctx)
+> >  {
+> > 
+> > +	struct rkvdec_config *cfg = ctx->dev->config;
+> > 
+> >  	unsigned int i, nctrls = 0;
+> >  	int ret;
+> > 
+> > -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++)
+> > -		nctrls += rkvdec_coded_fmts[i].ctrls->num_ctrls;
+> > +	for (i = 0; i < cfg->coded_fmts_num; i++)
+> > +		nctrls += cfg->coded_fmts[i].ctrls->num_ctrls;
+> > 
+> >  	v4l2_ctrl_handler_init(&ctx->ctrl_hdl, nctrls);
+> > 
+> > -	for (i = 0; i < ARRAY_SIZE(rkvdec_coded_fmts); i++) {
+> > -		ret = rkvdec_add_ctrls(ctx, 
+rkvdec_coded_fmts[i].ctrls);
+> > +	for (i = 0; i < cfg->coded_fmts_num; i++) {
+> > +		ret = rkvdec_add_ctrls(ctx, cfg->coded_fmts[i].ctrls);
+> > 
+> >  		if (ret)
+> >  		
+> >  			goto err_free_handler;
+> >  	
+> >  	}
+> > 
+> > @@ -1119,8 +1127,13 @@ static void rkvdec_watchdog_func(struct work_struct
+> > *work)> 
+> >  	}
+> >  
+> >  }
+> > 
+> > +const struct rkvdec_config config_rkvdec = {
+> 
+> Why isn't this static?
+> 
+> > +	.coded_fmts = (struct rkvdec_coded_fmt_desc *)rkvdec_coded_fmts,
+> > +	.coded_fmts_num = ARRAY_SIZE(rkvdec_coded_fmts),
+> > +};
+> > +
+> > 
+> >  static const struct of_device_id of_rkvdec_match[] = {
+> > 
+> > -	{ .compatible = "rockchip,rk3399-vdec" },
+> > +	{ .compatible = "rockchip,rk3399-vdec", .data = &config_rkvdec },
+> > 
+> >  	{ /* sentinel */ }
+> >  
+> >  };
+> >  MODULE_DEVICE_TABLE(of, of_rkvdec_match);
+> > 
+> > @@ -1144,6 +1157,9 @@ static int rkvdec_probe(struct platform_device
+> > *pdev)
+> > 
+> >  	mutex_init(&rkvdec->vdev_lock);
+> >  	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
+> > 
+> > +	rkvdec->config =
+> > +		(struct rkvdec_config *)of_device_get_match_data(rkvdec-
+>dev);
+> 
+> If you need a cast, your code is wrong.
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Right, some const/static addition is needed. I'll fix that :)
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Detlev.
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-aggregator-refactoring-for-v6.18-rc1
 
-for you to fetch changes up to 53ec9169db1345f04174febb90f88a871fc28d9e:
 
-  lib/string_choices: Add str_input_output() helper (2025-08-11 15:39:31 +0200)
-
-----------------------------------------------------------------
-Immutable branch for the pinctrl tree to pull from
-
-Refactor the gpio-aggregator module as a prerequisite for merging the
-pin controller driver for AAEON UP boards.
-
-----------------------------------------------------------------
-Thomas Richard (9):
-      gpiolib: add support to register sparse pin range
-      gpio: aggregator: move GPIO forwarder allocation in a dedicated function
-      gpio: aggregator: refactor the code to add GPIO desc in the forwarder
-      gpio: aggregator: refactor the forwarder registration part
-      gpio: aggregator: update gpiochip_fwd_setup_delay_line() parameters
-      gpio: aggregator: export symbols of the GPIO forwarder library
-      gpio: aggregator: handle runtime registration of gpio_desc in gpiochip_fwd
-      gpio: aggregator: add possibility to attach data to the forwarder
-      lib/string_choices: Add str_input_output() helper
-
- drivers/gpio/gpio-aggregator.c | 406 +++++++++++++++++++++++++++++++++++------
- drivers/gpio/gpiolib.c         |  29 ++-
- include/linux/gpio/driver.h    |  51 +++++-
- include/linux/gpio/forwarder.h |  41 +++++
- include/linux/string_choices.h |   6 +
- 5 files changed, 466 insertions(+), 67 deletions(-)
- create mode 100644 include/linux/gpio/forwarder.h
 
