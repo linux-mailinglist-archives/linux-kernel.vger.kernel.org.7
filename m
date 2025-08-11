@@ -1,245 +1,260 @@
-Return-Path: <linux-kernel+bounces-762280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBF4B2045E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:51:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBC6B2047D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE321886873
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:51:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9357161AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0FA201032;
-	Mon, 11 Aug 2025 09:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2152222D7;
+	Mon, 11 Aug 2025 09:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5mBz5B7"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Wkrx+IHy"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C5F229B16;
-	Mon, 11 Aug 2025 09:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4315239E9A;
+	Mon, 11 Aug 2025 09:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905791; cv=none; b=O3+Bbm3t9rGRttG+K/rpa8w8eN+ubBGSZbmRD9PgRF8aKJ6kbUQGH0S0KdOiWnmzrlbghgw2tb1YSp28KtVrlc2D3g6DbLpYC3dM7T+Q6yM6v/mYvCzHEcHO0b2w+PnIPQXwzZeUFivrAKxP6CfdjlLscyQWgB9koLeploS5jf8=
+	t=1754905835; cv=none; b=oBP7mMFQd5wsCDU/iNJzNUibSjRifPkZTLD0u9kKUPQjK8lgRS/3u7qbeusZ55dsclxj2AHF8nL+84k0Ok/NNEZw6KpbFCd9+o5HKljRSJHDseDg/LBW8WyoBRK2lhh884o3RRvUMGO39m/1sKfpGwee1t/j0lysB4y0HOa54qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905791; c=relaxed/simple;
-	bh=YcmcwVrntbpJUWvUkS8vL6G2StHtKJEcN6d3vVXoA2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMzHWk5ZIFFqo4Osk7nPqBthj8NfCkyWapUXvDUrwsefmb879SJ7ul0g3AS0Bna1Uj5BfBYH+O+98cHTM7Y0AQ+VYagx3lhkzbRJtvN03w5DE5GPK9ozIMc7jcBuC/LEpnIqmc6GX8MB5sSs7ITkBD2s6SP1mOUTxusslQdJlHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5mBz5B7; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so28152345e9.1;
-        Mon, 11 Aug 2025 02:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754905788; x=1755510588; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xnroKAEBQ+dZK/MQ1N+FPOoMHBUJeVwsvByY/1RrYzA=;
-        b=R5mBz5B7PtdZBp2q4VR9AChPnvNJOg0BRKWIcqmnIadTBieq2CGRv1bD9dfBfdJwoj
-         H5LfekqGy/G2xPC+DCFeR+ygapO2XFbfb85rgJuGEzpsf+nn0+/NrKLFSKde1iy/+uKv
-         gfxPxc34XC6k+3C9I62xIzvZJIdVrLC/YLIZacTQ6wEjt7tFiyOoABm4txoYNJ9EoTLF
-         9RysT+JAdc5TvSliksW4xYPMve6F1/WTIDwWjkRvWGFZPpz2m3Ae3fswtlWVcZVsWahY
-         lJ/SggI/8AM1/Vk10VywJeHSQw0W0gZtZ/ONxMYFj+YMFzJP+rasJ+Ou0JPhrzJUutWz
-         P5sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754905788; x=1755510588;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnroKAEBQ+dZK/MQ1N+FPOoMHBUJeVwsvByY/1RrYzA=;
-        b=NWUs04oz4YBYXhlbe+og4l8VpWByLrO7PA0MKP2nzERBfACz4lLVQABh6yrQUoeDM5
-         4fEi6/ih20C83k4nrV9+TtcQ8BQHPgUZE9Asb7svbKBL9gNdopw2Qm6SVdGOoRiEoGrr
-         N604AjkohqgiSuQxfZO4YtmQKjNtveQI6JeUKRMSS51YmQRRCyV8xUGUF1ZBRah73taS
-         H7Rf9A6VKwL2m99NFLUUOedFCh32g2TfoTlhpZEPMsb7yafR9H6jdzmHF54rIEvVlAZG
-         /CyYQa5s1EQha+SqvAnoJBZSHTGy0sP9ojfRb2hQaBgjdGGGGziU6gk4XqGP4NEhRy6u
-         pFLg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7TYZuZBiCFjGSoEcqqM3Is8eYY5JVeG0ahGWhcXL/14wSOGf4eFJG+48eLSftkCDl3OK6Xs9mUZBZy32a@vger.kernel.org, AJvYcCVwS79zVF7vmHteDKhIRX+Z5g8N+pdFLNgiiRe/LizVEekiTflOiUQrzZTAtFmR+Rw87xMWzDNKtp1u@vger.kernel.org, AJvYcCVy1zliCUuv5s6ox/fro7n+Tvtm5I70eiyYKZd8bBFWU6H2oAT57W4KuQWJYqPWax/MFsp6JfysYws6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHAfw4/OTpXNfqoasJdmYjlyiJHilC+oyd5fqAIhkThIzXVa6z
-	wz785muYSREqlP7fZsW4xptIUAw6j/063P2IW3dZcIMlCnAy0xWufYPQ
-X-Gm-Gg: ASbGncuQDIphtWYhfBD9R/znG5CzmK6dKcB2y2iwu8PxoSB18+eW6hNRBkeoohP/u6+
-	n7sEvbTmtVdGxqR53vmuQV7yDx7Wcu8VHjPAFAP6AmIHYfHvGUjyu22uSjYMnHZZW4XJbgOcjeB
-	CofPoJv4iqie5F47OG2TigHXnQKSGi48aSjHMD96ltGsQahs0O178tSvNLu2X8LWeXdfEEw6ioU
-	DDx5+bQEowT7lKv0hLiZNbpPyhzLbP5SpkqIDzgwqK6rnPARKOD5333elY/sCXq+I7FGFG5U30t
-	RuzVz3VNjm3fzyxPEXNbgfDy0tWpgOzi0IrD3yZ8VdejL6wePeaVBLOuahlIhXBt3pdjTPJdimU
-	Tdtsf2wSBKmc0gQ==
-X-Google-Smtp-Source: AGHT+IGd0A/3HGvlzm42aeigaZGW8IWcsYrCcr1/VFCrAJo8sseeU3JaSPP6i3EQFcqD1YiPx+SDQg==
-X-Received: by 2002:a05:600c:474f:b0:456:1d61:b0f2 with SMTP id 5b1f17b1804b1-459f4fc32fbmr122103575e9.30.1754905787471;
-        Mon, 11 Aug 2025 02:49:47 -0700 (PDT)
-Received: from nsa ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bc12csm40819109f8f.28.2025.08.11.02.49.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 02:49:47 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:50:04 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: Replace bouncing Analog emails
-Message-ID: <d6n24lux6pv47mb3z2bfdbtn5olsm46rdbnkwhjurkwh4a27kl@hkcedsvni4il>
-References: <20250724113826.61998-2-krzysztof.kozlowski@linaro.org>
- <20250728144901.3f646a4c@jic23-huawei>
- <20250809210438.23fb5fd0@jic23-huawei>
+	s=arc-20240116; t=1754905835; c=relaxed/simple;
+	bh=blj/1UKBFapSa7l6nZB5E2Ph710FcbyLPTh2LAdjhtc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f+Cg4ldo6G9HxrhdBOAtW17zJJUE4el1HsGBisUrGXf2vxILYQBrNUV4ueCQH7/nX72aj+huJxNbousywaEAD130t+k2cMpL7z3XWk26F1AGrg68f6DBU3+0LxXbO1h0YG4eJ2ejvNLPezWKYZt4ntQUoGSt5zxy2KcXsfiHogY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Wkrx+IHy; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c0qd1209Mz9snJ;
+	Mon, 11 Aug 2025 11:50:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1754905829; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6iVG8v6eSQ1zc21xzNcw5sM6wDtRT0rY/n/n6Z+C8FE=;
+	b=Wkrx+IHyKbbOJmC8iU8W9ukEvuRhdtur1R9/nZciQk4jzZnE9v6m/rjLcMr/chaQutwRCz
+	J5Zq6THUqQhMIvIQjzFaCIuzByqmqrpr1kVyyQHpBOpg0/+mLg1XiUBnEKwgPiYUMUEbKO
+	OKMXZk52DcDluNgBOCN+lLmua214RMscl8LZxhPT6j5aaD5NeSl4bdtOWmTKp+u/ETYeVf
+	qz7zmGj4rthvYB2Rm57PjLUW88g7uPbmJh5tyiEaz1/P2EsDM3JLJPsPsIFrXmvNlh8DX2
+	+00EG2ojp/hGz+srPydbvotFy3694J1yotjdFNuyvTOT6BnkB4kD5515rttmoQ==
+Message-ID: <90c89caeb8ec3ac0fcae583df722bad20fa72827.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: Extend and update documentation
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
+ Stanner <phasta@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, Matthew
+ Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Mon, 11 Aug 2025 11:50:22 +0200
+In-Reply-To: <9caf8709-91ef-445a-aa4e-aede1899f364@amd.com>
+References: <20250724140121.70873-2-phasta@kernel.org>
+	 <f064a8c305bd2f2c0684251d3cd2470699c28d5e.camel@redhat.com>
+	 <5fb872d0-9b0a-4398-9472-eea3fdf61940@amd.com>
+	 <c1f7c4adaa0ac8d1994046436da8eb64bba5e06e.camel@redhat.com>
+	 <9caf8709-91ef-445a-aa4e-aede1899f364@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250809210438.23fb5fd0@jic23-huawei>
+X-MBO-RS-ID: 523bad2c5c6675e8adc
+X-MBO-RS-META: 6sssz3gmcc77kzux9pogddxatqmafe6o
 
-On Sat, Aug 09, 2025 at 09:04:38PM +0100, Jonathan Cameron wrote:
-> On Mon, 28 Jul 2025 14:49:01 +0100
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Thu, 24 Jul 2025 13:38:27 +0200
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> > 
-> > > Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
-> > > permanently:
-> > > 
-> > >   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
-> > > 
-> > > so replace them with Marcelo Schmitt from Analog where appropriate.
-> > > 
-> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > 
-> > > ---
-> > > 
-> > > I don't know who from Analog should maintain these devices, so I chosen
-> > > author from Analog of one of last commits.
-> > > 
-> > > Marcelo Schmitt, could you confirm that you are okay (or not) with this?  
-> > 
-> > Nuno, Michael, other ADI folk.  Can someone confirm if we are making these Marcelo's
-> > problem?
-> > 
-> 
-> As amusing as it would be for me, I definitely can't pick this up without
-> some tags from ADI folk and Marcelo in particular!!
+On Thu, 2025-08-07 at 16:15 +0200, Christian K=C3=B6nig wrote:
+> On 05.08.25 12:22, Philipp Stanner wrote:
+> > On Tue, 2025-08-05 at 11:05 +0200, Christian K=C3=B6nig wrote:
+> > > On 24.07.25 17:07, Philipp Stanner wrote:
+> > > > > +/**
+> > > > > + * DOC: Scheduler Fence Object
+> > > > > + *
+> > > > > + * The scheduler fence object (&struct drm_sched_fence) encapsul=
+ates the whole
+> > > > > + * time from pushing the job into the scheduler until the hardwa=
+re has finished
+> > > > > + * processing it. It is managed by the scheduler. The implementa=
+tion provides
+> > > > > + * dma_fence interfaces for signaling both scheduling of a comma=
+nd submission
+> > > > > + * as well as finishing of processing.
+> > > > > + *
+> > > > > + * The lifetime of this object also follows normal dma_fence ref=
+counting rules.
+> > > > > + */
+> > > >=20
+> > > > The relict I'm most unsure about is this docu for the scheduler fen=
+ce.
+> > > > I know that some drivers are accessing the s_fence, but I strongly
+> > > > suspect that this is a) unncessary and b) dangerous.
+> > >=20
+> > > Which s_fence member do you mean? The one in the job? That should be =
+harmless as far as I can see.
+> >=20
+> > I'm talking about struct drm_sched_fence.
+>=20
+> Yeah that is necessary for the drivers to know about. We could potentiall=
+y abstract it better but we can't really hide it completely.
+>=20
+> > >=20
+> > > > But the original draft from Christian hinted at that. So, @Christia=
+n,
+> > > > this would be an opportunity to discuss this matter.
+> > > >=20
+> > > > Otherwise I'd drop this docu section in v2. What users don't know, =
+they
+> > > > cannot misuse.
+> > >=20
+> > > I would rather like to keep that to avoid misusing the job as the obj=
+ect for tracking the submission lifetime.
+> >=20
+> > Why would a driver ever want to access struct drm_sched_fence? The
+> > driver knows when it signaled the hardware fence, and it knows when its
+> > callbacks run_job() and free_job() were invoked.
+> >=20
+> > I'm open to learn what amdgpu does there and why.
+>=20
+> The simplest use case is performance optimization. You sometimes have sub=
+missions which ideally run with others at the same time.
+>=20
+> So we have AMDGPU_CHUNK_ID_SCHEDULED_DEPENDENCIES which basically tries t=
+o cast a fence to a scheduler fence and then only waits for the dependency =
+to be pushed to the HW instead of waiting for it to finish (see amdgpu_cs.c=
+).
 
-Normally in situations like this, it defaults to me but I'm happy if
-Marcelo is comfortable in assuming maintainership for these.
+But the driver recognizes that a certain fence got / gets pushed right
+now through backend_ops.run_job(), doesn't it?
 
-That said, I do think that for the adis* drivers it makes sense to be me.
+>=20
+> Another example are gang submissions (where I still have the TODO to actu=
+ally fix the code to not crash in an OOM situation).
+>=20
+> Here we have a gang leader and gang members which are guaranteed to run t=
+ogether on the HW at the same time.
+>=20
+> This works by adding scheduled dependencies to the gang leader so that th=
+e scheduler pushes it to the HW only after all gang members have been pushe=
+d.
+>=20
+> The first gang member pushed now triggers a dependency handling which mak=
+es sure that no other gang can be pushed until gang leader is pushed as wel=
+l.
 
-- Nuno Sá
-> 
-> Jonathan
-> 
-> > Jonathan
-> > 
-> > > ---
-> > >  Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml | 2 +-
-> > >  Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml   | 2 +-
-> > >  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml      | 2 +-
-> > >  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 1 -
-> > >  Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml     | 2 +-
-> > >  Documentation/devicetree/bindings/iio/frequency/adf4371.yaml   | 2 +-
-> > >  Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml   | 2 +-
-> > >  7 files changed, 6 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > > index 3dc973b98f81..40e9a40a7a60 100644
-> > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: ADIS16240 Programmable Impact Sensor and Recorder driver
-> > >  
-> > >  maintainers:
-> > > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  description: |
-> > >    ADIS16240 Programmable Impact Sensor and Recorder driver that supports
-> > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > > index 88aa67bf2280..55e44c9292cf 100644
-> > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer
-> > >  
-> > >  maintainers:
-> > > -  - Stefan Popa <stefan.popa@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  description: |
-> > >    Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer that supports
-> > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > > index 7146a654ae38..958a37def56c 100644
-> > > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > > @@ -8,7 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: Analog Devices AD7124 ADC device driver
-> > >  
-> > >  maintainers:
-> > > -  - Stefan Popa <stefan.popa@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  description: |
-> > >    Bindings for the Analog Devices AD7124 ADC device. Datasheet can be
-> > > diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > > index 5207c919abe0..eac48166fe72 100644
-> > > --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > > @@ -9,7 +9,6 @@ title: Linear Technology / Analog Devices LTC2496 ADC
-> > >  maintainers:
-> > >    - Lars-Peter Clausen <lars@metafoo.de>
-> > >    - Michael Hennerich <Michael.Hennerich@analog.com>
-> > > -  - Stefan Popa <stefan.popa@analog.com>
-> > >  
-> > >  properties:
-> > >    compatible:
-> > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > > index 82b0eed6a7b7..058df4c8ddf8 100644
-> > > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > > @@ -8,7 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: Analog Devices AD5770R DAC device driver
-> > >  
-> > >  maintainers:
-> > > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  description: |
-> > >    Bindings for the Analog Devices AD5770R current DAC device. Datasheet can be
-> > > diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > > index 53d607441612..031b1657cde1 100644
-> > > --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: Analog Devices ADF4371/ADF4372 Wideband Synthesizers
-> > >  
-> > >  maintainers:
-> > > -  - Popa Stefan <stefan.popa@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  description: |
-> > >    Analog Devices ADF4371/ADF4372 SPI Wideband Synthesizers
-> > > diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > > index 7a1a74fec281..e49d5e6fab61 100644
-> > > --- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  title: Analog Devices ADIS16480 and similar IMUs
-> > >  
-> > >  maintainers:
-> > > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > >  
-> > >  properties:
-> > >    compatible:  
-> > 
-> > 
-> 
+You mean amdgpu registers callbacks to drm_sched_fence?
+
+>=20
+> > > > > +/**
+> > > > > + * DOC: Error and Timeout handling
+> > > > > + *
+> > > > > + * Errors are signaled by using dma_fence_set_error() on the har=
+dware fence
+> > > > > + * object before signaling it with dma_fence_signal(). Errors ar=
+e then bubbled
+> > > > > + * up from the hardware fence to the scheduler fence.
+> > > > > + *
+> > > > > + * The entity allows querying errors on the last run submission =
+using the
+> > > > > + * drm_sched_entity_error() function which can be used to cancel=
+ queued
+> > > > > + * submissions in &struct drm_sched_backend_ops.run_job as well =
+as preventing
+> > > > > + * pushing further ones into the entity in the driver's submissi=
+on function.
+> > > > > + *
+> > > > > + * When the hardware fence doesn't signal within a configurable =
+amount of time
+> > > > > + * &struct drm_sched_backend_ops.timedout_job gets invoked. The =
+driver should
+> > > > > + * then follow the procedure described in that callback's docume=
+ntation.
+> > > > > + *
+> > > > > + * (TODO: The timeout handler should probably switch to using th=
+e hardware
+> > > > > + * fence as parameter instead of the job. Otherwise the handling=
+ will always
+> > > > > + * race between timing out and signaling the fence).
+> > > >=20
+> > > > This TODO can probably removed, too. The recently merged
+> > > > DRM_GPU_SCHED_STAT_NO_HANG has solved this issue.
+> > >=20
+> > > No, it only scratched on the surface of problems here.
+> > >=20
+> > > I'm seriously considering sending a RFC patch to cleanup the job life=
+time and implementing this change.
+> > >=20
+> > > Not necessarily giving the HW fence as parameter to the timeout callb=
+ack, but more generally not letting the scheduler depend on driver behavior=
+.
+> >=20
+> > That's rather vague. Regarding this TODO, "racing between timing out
+> > and signaling the fence" can now be corrected by the driver. Are there
+> > more issues? If so, we want to add a new FIXME for them.
+>=20
+> Yeah good point. We basically worked around all those issues now.
+>=20
+> It's just that I still see that we are missing a general concept. E.g. we=
+ applied workaround on top of workaround until it didn't crashed any more i=
+nstead of saying ok that is the design does that work? Is it valid? etc...
+
+Yes, that seems to have been our destiny for a while now :) :(
+
+What I'm afraid of right now is that with the callbacks vs.
+drm_sched_fence we now potentially have several distinct mechanisms for
+doing things. The hardware fence is clearly the relevant
+synchronization object for telling when a job is completed; yet, we
+also have s_fence->finished.
+
+Using it (for what?) is even encouraged by the docu:
+
+        /**
+         * @finished: this fence is what will be signaled by the scheduler
+         * when the job is completed.
+         *
+         * When setting up an out fence for the job, you should use
+         * this, since it's available immediately upon
+         * drm_sched_job_init(), and the fence returned by the driver
+         * from run_job() won't be created until the dependencies have
+         * resolved.
+         */
+
+
+Anyways.
+I think this is a big topic very suitable for our work shop at XDC. I
+also have some ideas about paths forward that I want to present.
+
+
+P.
+
+>=20
+> > That said, such an RFC would obviously be great. We can discuss the
+> > paragraph above there, if you want.
+>=20
+> I will try to hack something together. Not necessarily complete but it sh=
+ould show the direction.
+>=20
+> Christian.
+>=20
+> >=20
+> >=20
+> > Regards
+> > P.
+
 
