@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-763668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2894FB21874
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E3FB21878
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B8342757D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13901884C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8963226CF9;
-	Mon, 11 Aug 2025 22:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F015A26E71F;
+	Mon, 11 Aug 2025 22:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OomxcUfK"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XYZI9dyj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902131C1AB4;
-	Mon, 11 Aug 2025 22:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F6921C19D;
+	Mon, 11 Aug 2025 22:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951632; cv=none; b=UQZ/s8c11ttjbGqejnK/nXfpZcZydNFqleBaeLo4OKPsySTHq/sgdS81qH6kb1eYmXcR/hZAIr8sNn4y1++T+bpHMWTS4KNP0QhvKDEPDOd7/UszGdgjrotAC9YBA8Jsa172X2ZYY0M/mqyCTmE/RTcMxDFC+2dkHD0W/RiqKGw=
+	t=1754951648; cv=none; b=od72bKaAYzDe22M7/ZBMKr/pwkirGkL3KvbD0Vf9TPMHXBJJsDtVOHVtxT2cmiXeHQSBxMY+pbYW7IY98chtKyAD7jd6k2b/1peIS294GQSUFou2VgvtbTfWw1t75WHHhmBpVtygcjVB2oXuCyl4icQrMNMWQYaKSXd86zu0CNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951632; c=relaxed/simple;
-	bh=ekPQOUTGLm1W5r1CZug+kR/2MpUPe3OXrDWHjhckxLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nyBOVkRRAYG4Q+A09pyHjqQ8jWsXTO19r0AJ1flOWpdBk80yBSPgThh+PNwtl+D+qzVyEfpll0sYVffwK3XfaRrgKwbgCXAUZMTBMP+huFO5PSVRlAZ3FT3b3+oqMWxlCl7bvX4OpDBG7lcyokAZDYFwXBBCDVPePE2Ewu0K3QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OomxcUfK; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55b85d01b79so5120033e87.3;
-        Mon, 11 Aug 2025 15:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754951629; x=1755556429; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g3g+wZXFPmNskPkEAXy6Ad546UIsJ+3096p7iAg6LtE=;
-        b=OomxcUfKDXsHNndkrDr31wwf1tvNQhK57R5KOtM/YhkD3URniDGHu89nRGKe0YLwVq
-         3u/9DM5wQWvF9bAJkI4w8t6XsakBNHMW3moorERtAYHbWl8tMp4sHgpGDZa7bhqSp4ng
-         UlEL+8gsDKGq/f1+Pdb/t0yCbfxSGfNOztYh4gJULTPJcW0cjbezc6cY8cFKfuc3A/uk
-         odqbKVwBcU691TEDKUv5Ajlp96F78FKTy1vR1TO/eiXikd/U+EZUq3zG5hcJNYd6zrYY
-         DCLMLkrRNWl/smW92FHAHZLIQA9Og9wGe6EQsLGtvPPwYe0dvQfpIE/wS0SqqQUhthZ9
-         YPdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754951629; x=1755556429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g3g+wZXFPmNskPkEAXy6Ad546UIsJ+3096p7iAg6LtE=;
-        b=VJASKeIteb6GI5rXkJc7E+84X2bk8bFb1aIkfQcSx2+C8loELRk4jsJapzLrUKUryK
-         HNqsU0GKX6RsCdWNKckYzIV/QR/NORJYBMxVmvS+w8uEx6SwvP2qFqMaOFQe2olgeVaY
-         uE9DoHgJYOKj3+AJNqVwwc2RmGGn1ri/boRyJ1HL9e/9VZtSpWhXn1j2I6KLK4f5A/xY
-         WZ2mmVZhNQC5bckJ587KnhJPvlyRjc9HLMptNKtdj7PzRohvB1JVcQ9WLFom1K5NlQ8E
-         Mtc0IIfROAvenb04kYpcdXiIAO/nyNb5BLrBy3JVrKpdPWoXK215C7TeiSi25X/sZBIy
-         hNGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Rr9vK448zY+AUyfCxBDCVkycEP6xDXFs1Iirxdytgl80RjB2T1dyrw36NHmarL/y1w1mD6MZoqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ8Ow39pT3DYKUrjNTomV7XBsZGBdiLP+PVuQHTQNqsspqad1d
-	zfGQvNbfZj4HE2FfPkzaLBMBmd55uZH4CG3Is5qEAWf/l6wP4608lbv0
-X-Gm-Gg: ASbGncuml+suypXFZCxtjycBBmJBFssW90S3i+3wNnY2483t1cW1U6853PVcBFoxs1X
-	v6Xvw10gyzPjLh2GaGsx6grEUL1PjJg8wIpfM2S7NUug4jaN6azkpecokqUMy22FPpPLPxWSjK6
-	+AIQIHbathjVL0xEGaI7Weh4AZ28peSdQmKcz/bq8FAphnp0Izej53rzgHu2PbVgT/oXoKk1CEh
-	scpclDTGY+GteLaujjdlV4qXQreqR3kzFPH0uAivboVaB416z5aj7NT4xpx0Ez9acNqUAZQgh6z
-	scF7U2m7iJ6eWMBCAS8+nGiRNJ9cVNr+pO13sPWqh2Z6LKJD5OsqxheMEzPjbdUkyrCRoUULdbY
-	rrjvzyYdb1YetRkn0Mq24UA==
-X-Google-Smtp-Source: AGHT+IEygDT+H9f2F7NW6piXIApHNiycvYlXlF8MP0wBwKaWi5hiDBriuTTACcQQyurjzRm9IRUj4w==
-X-Received: by 2002:a05:651c:4197:b0:32b:5a32:1849 with SMTP id 38308e7fff4ca-333d7b0b29amr3023001fa.18.1754951628253;
-        Mon, 11 Aug 2025 15:33:48 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-332382be1a3sm41542461fa.34.2025.08.11.15.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 15:33:47 -0700 (PDT)
-Date: Tue, 12 Aug 2025 06:32:59 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Inochi Amaoto <inochiama@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Saurabh Sengar <ssengar@linux.microsoft.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>, Nicolin Chen <nicolinc@nvidia.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 1/4] genirq: Add irq_chip_(startup/shutdown)_parent
-Message-ID: <iebegtfdwlmaj63wmsjnks2nmizgou7ndhqzf3yxrgvxqqibex@seqik3unl544>
-References: <20250807112326.748740-1-inochiama@gmail.com>
- <20250807112326.748740-2-inochiama@gmail.com>
- <87zfc57wlx.ffs@tglx>
+	s=arc-20240116; t=1754951648; c=relaxed/simple;
+	bh=mkiyXdF2n1cF1Jn2rMuBCcE5PZTE98Wg0dFNXa956wY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjoN+fGubYKbpuSbpTH2lbZF7WuPHMr+A63HYbj0DkmNy4eaOkNYiwDklMzWJc++SOo31tNIwj/T3BxhHhf6RvKDssyi/Tsex5zEiaoaerPYMVZGPseGgjkunXjIZi0GvfW9wXEegC0M7quAWPS04lx9GZ/3ryXDBtRDjSlXmWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XYZI9dyj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754951643;
+	bh=Iq48dsdcKsW+mJEn/1rcHJexVmJNAGD2zZfJ0SOoOX8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XYZI9dyjodmyNsbl/vvDimQhB+4AWtUJxhNvfaD6MklKUvYXjXnarqaaMaUrLLIv1
+	 m/LxxRqBPQqstxDYfC/RNefmt3i2gkMVmB1bgENZaUm+eF/X7ZXuCJlocwvzlEtXnn
+	 EUOOgZNk/xJ6krn4JL1ssTdq4JfvZj8bidK4PhKI7UOg8JUkRzCoBWrPoMU5afqPeh
+	 +U9T8sfaD/06OEkKfy0wXtr1hP/BZ4SwSlUAW47Ni9JKlq31IfP6h9S8PZHSLaY1U1
+	 QtgvwVgxDIBvBOkBzON4TOVnq/5Hmc4vOHUaWRCzOxkNDFI4Wpzsd+kojNjKJbpaix
+	 xcMpQA8MkpvRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c18Z30Pqqz4xdg;
+	Tue, 12 Aug 2025 08:34:03 +1000 (AEST)
+Date: Tue, 12 Aug 2025 08:34:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Schier
+ <nsc@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ linux-kbuild@vger.kernel.org
+Subject: Re: Updating Kbuild tree and contacts
+Message-ID: <20250812083402.2a985821@canb.auug.org.au>
+In-Reply-To: <20250811184849.GA1266@ax162>
+References: <20250811184849.GA1266@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zfc57wlx.ffs@tglx>
+Content-Type: multipart/signed; boundary="Sig_/ZMRtbcM6y+NEXjvp3P9=.T8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Aug 11, 2025 at 04:37:30PM +0200, Thomas Gleixner wrote:
-> On Thu, Aug 07 2025 at 19:23, Inochi Amaoto wrote:
-> 
-> Please use 'function()' notation for functions. See
-> 
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
-> 
-> I'm sure I pointed you to this documented at least three times in the
-> past. Do you think this was written for entertainment?
-> 
+--Sig_/ZMRtbcM6y+NEXjvp3P9=.T8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I have remembered to add this brace for the function. It seems
-like I have forgot to fix this when I do the rebase. I apology for it.
+Hi Nathan,
 
-> > Add helper irq_chip_startup_parent and irq_chip_shutdown_parent. The
-> > helper implement the default behavior in case irq_startup or irq_shutdown
-> > is not implemented for the parent interrupt chip, which will fallback
-> > to irq_chip_enable_parent or irq_chip_disable_parent if not available.
-> 
-> Also please use the documented structure for change logs. Starting with
-> 'Add' is just wrong. See Documentation.
-> 
+On Mon, 11 Aug 2025 11:48:49 -0700 Nathan Chancellor <nathan@kernel.org> wr=
+ote:
+>
+> Nicolas and I have taken over Kbuild maintenace from Masahiro as of
+> commit 8d6841d5cb20 ("MAINTAINERS: hand over Kbuild maintenance"). Could
+> you please update your contacts for the Kbuild tree to both of us and
+> the Kbuild tree to
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
+>=20
+> and start pulling kbuild-fixes and kbuild-next in at their respective
+> places within the -next update cycle? Please let me know if there are
+> any issues or questions.
 
-OK, I will structure the changelog.
+Done.
 
-Regards,
-Inochi.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/ZMRtbcM6y+NEXjvp3P9=.T8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiab9oACgkQAVBC80lX
+0Gw6UAf+PK5X+uR3Sv/MPXeoWhHHsljTDBmeFKcuRhxLkM3kOqXH8ttGIqy/fWmK
+TlRXjYlt89FCQ0+wPPjaoNswqx5v0hJm3OlFeQEnFol6Fu2k5VBdfrqDFyNM/+Cp
+9PG72HPYASZdtppn0aaHRVM7Y+Rq0u69vdVJ0Lxp5OptZAKoSvuej6zQq3UgACW2
+qvOA72rpwYYTsg28x1k6sb+JutxsJd3fWk68/K6N1gy6Fa+0rbGRhChe4YtkBo6z
+BVKvuuBQMOiL745oBXFxAEIX2bzP63XGHe7g9pWZVErsy+2byB8FXqKjLbudna7K
+4y32rqY/kjcbUQ/G8tlNzfFTLE5mjw==
+=/fdb
+-----END PGP SIGNATURE-----
+
+--Sig_/ZMRtbcM6y+NEXjvp3P9=.T8--
 
