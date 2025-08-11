@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-762423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777DDB20656
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3108B20657
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C59E17F853
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0463D3ABBB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EECA27A123;
-	Mon, 11 Aug 2025 10:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A327AC34;
+	Mon, 11 Aug 2025 10:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QTtqf853"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="26q3kVXq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lq/81gBD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568B275B0D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDAB27603B;
+	Mon, 11 Aug 2025 10:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909350; cv=none; b=q3ivYKPvZ84h46mStNbZnddhUCPHGeYFTdWNSjPF3hJhNzGC1KW73m68m1N7r7Kn0RVN0V2d4FH0hKHLtdl1lxh/GhkzdvPoxVjO+l8mM5JFX3giWmT00gwAZL+jWhCJnkd8RFcP5BJ9Rn2vTT9MehSTqEKLyFfva+kuUXcKkBk=
+	t=1754909351; cv=none; b=NqzkXu0aEfCxwjJlj+bjKEuvEVczYXOXWRM4fJT7T6mYHcEoC0otJco5PS8ZvLROoOn2NWGoKdE5A3EdJ9JZ+3F+2TtgiW2NGsBOUseimtMntvKJnF1YL7VQpNtKg1Tvkw3O//Vv/K/lcj5Uy99jMnGL1Athz6ZZ0KXcvPICIYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909350; c=relaxed/simple;
-	bh=WKObFWIHeQBicsruWNzn9xqhX0Zs8CeGMF19cPRqKow=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=oSNCYSRAJKz6YY6enWrfTp2nDjb9+dIhksVBTNfggx49m8WVyQqpwgK2B/nZqDVT3u9cKgHGKoZwBja3nnygUG14jswqDnYhkEtZAriSQzmdPLO/Rfsy3xZRE+Q+Syl5QuvRA8yG5mu3Gs+LEtsjVZAzjY3/N37MqzhoE6b51Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QTtqf853; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754909348;
+	s=arc-20240116; t=1754909351; c=relaxed/simple;
+	bh=uujVNNdVW9U8D1UA5bK3BeelcyOCRx9wp/Szp8PjOrs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kdaq7eMUddQB06UV+D99XpFZ5QAmMLrmcgLwSs/LAz6l1h59CSMoLwtYeAzdwo8yTDVvkxKQ9Wwv6dV4GO4eitng57QYiab95WSztCyA1SJx9qXt7OTVls9Kkq4YGDm5hjLZcp+PIZkVTF0VE9gZQ7fr246Vreplmp3NZdE0/+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=26q3kVXq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lq/81gBD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754909347;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WKObFWIHeQBicsruWNzn9xqhX0Zs8CeGMF19cPRqKow=;
-	b=QTtqf853hViejxFS3XZykqNgPlCq4OxxNYRsCLJczfLvCkB2N2rk7hVZWR6vOw9IMPkZM+
-	k8ZToJjJkjxuYPBanyHJElqYLdc+aBkRZpKfc25d3UegFKXfYVrYXm5DB3QJXDDJrXNGyR
-	lOxlZvwHVM6lZGdxovvB+7voaUnuyNg=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-116-pOCUtWi6NOefyzN-Wc71cA-1; Mon, 11 Aug 2025 06:49:06 -0400
-X-MC-Unique: pOCUtWi6NOefyzN-Wc71cA-1
-X-Mimecast-MFC-AGG-ID: pOCUtWi6NOefyzN-Wc71cA_1754909346
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-af91ca00e41so256474866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:49:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754909346; x=1755514146;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WKObFWIHeQBicsruWNzn9xqhX0Zs8CeGMF19cPRqKow=;
-        b=KfepdMyTceNtAHeQA/ryNYP+yPr5lktcmVHQVPjA/Fk4uRA9bCo3xO6HAWrwHAQzFM
-         0WuVv6D2Bk+gYwSyu7CUsl40f8y/H954S96OwnkvSlO+ns1e9oVY47ggaYYUTgINC7tY
-         93iRos8WX2IbNbpwpNbZMoEUKBVvUTSzHBKSh5pOxJtZS9hdDsIzp/31FeHZpz1119Ua
-         wD02/H067sDDbq2S5YbKOhCukEsmk7z5Of5KcLHiPwp1X41s95H9j4JSHLhZUmkM2RYG
-         9VB8FMd190srKY6B10jrZVWtlcudA8r9oNYV/cj6+Fck5mLPi2M3nXeYfXThwkcynJEm
-         40yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUl+cGgZ826nDluKoB512zqD8SGabxDdfeBrHdZ44vLSJlsM1k1AN8LzwYqyYX3QcD5i6Y+KAyUFgYSDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzupdst4SbsVyjOnjG/jz/jPI6l/a7FYcmwEQaXFHx/nAB3lubK
-	Dtz8ARiggGXsNokuo9Xp09xlY/2VYFFM35MM/gCQPZWjAqdp/02OT5YSfpjqjdCnpXjod9dRJeK
-	dBAoupb5JVnQQSXdIZ4ZPmVUu74I6S05AlP42XexUYD0KfpaS1SWTiDST8fidKpV7hQ==
-X-Gm-Gg: ASbGncskpkFv+l1DS+YsYX8I+93keRW//1Z0ipiapeVPRVFMqQ+AzQxL5QVWvTTpmH/
-	H9z0oVNYCvyJkUHEGaJE4kZtW1vI2piaTD78cIO6LEx2Sm0GMugbOsnA3S9/WlAJwKegZipzT0u
-	gmlLun3a+ZcGxEn3muHosdvCzgVNiihZKN4KKntvqmwco1BKKAW0HcphJwX5DhQR2jniGgCXQX+
-	F37THaY7I7yZtM0xDdxnf7ntOKQWGfNhEgTXfi2mHUjfEVIrgXUaMpA7II/QIAdjjT7z785gcXk
-	QxUmiziZWPYf2WdSGfe9xh1/jBUaY7RhT8OnNg==
-X-Received: by 2002:a17:906:4796:b0:ae4:107f:dba2 with SMTP id a640c23a62f3a-af9c645b69bmr1064763166b.13.1754909345655;
-        Mon, 11 Aug 2025 03:49:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZCDWpvyPfHXfxgwBBapGqgujydR1xLydnPbVqezT+c6mpdCVAhjCJgUFH79mw6d7KM9b5yQ==
-X-Received: by 2002:a17:906:4796:b0:ae4:107f:dba2 with SMTP id a640c23a62f3a-af9c645b69bmr1064760066b.13.1754909345163;
-        Mon, 11 Aug 2025 03:49:05 -0700 (PDT)
-Received: from [127.0.0.1] ([195.174.134.174])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a1251sm2006600066b.30.2025.08.11.03.49.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 03:49:04 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:49:00 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Message-ID: <30f0e085-b636-45be-960b-68bf6a136f59@redhat.com>
-In-Reply-To: <aJbsYkON4V4iFPFG@bhairav-test.ee.iitb.ac.in>
-References: <aJbsYkON4V4iFPFG@bhairav-test.ee.iitb.ac.in>
-Subject: Re: [PATCH] include/linux/rv.h: remove redundant include file
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gQ9eh9/zvfBpPdf1yOHxLVFMwlIvEemowzDPpcMhBiw=;
+	b=26q3kVXq+tvWpcx/uph5sYEnfSm8PK4NJLGLfaHmsbuaFK2HKl4QtEyUjPW6lbFaEyQIhA
+	ieKZBp2CIs5LfnpMEuvwlmhIzYolzpEEZpIYv8EedMvLDBTaHiyf4TptK5szgNNbNuycRW
+	Rhwzd6rA7ovLJu46hMGJlwW/LSyRiQa2MI0OLY8JBUWIuAAcN46dwO7j6jhyKzFzx5IJF8
+	5PaBrCc+vJhGdNNYUP1rqikyC5510IY0EMxTWQCXAOmqckWn3q9YjUdyTfZwpoWyq4ND9B
+	huyUEwVUYYOdTwW0Dgd0bT15YAOg0O61hPKO0tLYYaMg8L3QRmPS80+4mB59Ag==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754909347;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gQ9eh9/zvfBpPdf1yOHxLVFMwlIvEemowzDPpcMhBiw=;
+	b=lq/81gBDE3//kJOfgqNcJMGNoOW0xEXf1xPqOgZkVVz/JhV9wMp3sCgakArU9Pg6BDq2Jr
+	RobtYWg2KPI5DaAw==
+Date: Mon, 11 Aug 2025 12:49:01 +0200
+Subject: [PATCH v2] ARM: mm: Don't use %pK through printk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Correlation-ID: <30f0e085-b636-45be-960b-68bf6a136f59@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250811-restricted-pointers-arm-v2-1-74bac42f3699@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAJzKmWgC/4WNQQ6CMBBFr0Jm7ZhO1aCuvIdhUcogk2hLppVgC
+ He3cgGX7yX//QUSq3CCa7WA8iRJYihgdxX4wYUHo3SFwRp7MpZqVE5ZxWfucIwSMmtCpy809fF
+ yaIm86T2U9ajcy7yV703hQVKO+tmOJvrZ/82JkNA5Z/rWWqazvz0lvLPGIPO+Y2jWdf0ClQljZ
+ MIAAAA=
+X-Change-ID: 20250217-restricted-pointers-arm-07493b11c0fc
+To: Russell King <linux@armlinux.org.uk>, Kees Cook <kees@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ linux-hardening@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754909344; l=1462;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=uujVNNdVW9U8D1UA5bK3BeelcyOCRx9wp/Szp8PjOrs=;
+ b=gW95gA8CAxjgBbyt0Lk1m/IVLgeB7Er6bzFTRV+h6PPf3GKicD4VoCDU4d77LX2Paa/BOkOFB
+ X2A9TK2FJYmDTzmXxSWIXj+G9t2gfGNK2pVLpPDB+l0iP+S9/xYWaKa
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-2025-08-09T06:36:58Z Akhilesh Patil <akhilesh@ee.iitb.ac.in>:
+Restricted pointers ("%pK") were never meant to be used
+through printk(). They can acquire sleeping locks in atomic contexts.
 
-> Remove redundant include <linux/types.h> to clean up the code.
-> Fix this redundancy introduced by commit [1].
->
-> Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct rv_monitor") [1]
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202507312017.oyD08TL5-lkp@intel.com/
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> ---
+Switch to %px over the more secure %p as this usage is a debugging aid,
+gated behind CONFIG_DEBUG_VIRTUAL and used by WARN().
 
-Thanks for the patch!
-I'm really being picky here, but, since you're touching this, isn't it cleaner to keep all includes inside ifdef CONFIG_RV ?
-When CONFIG_RV is not enabled, the header only defines constants so it doesn't need other includes.
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Rebase on v6.17-rc1
+- Switch to %px instead
+- Link to v1: https://lore.kernel.org/r/20250217-restricted-pointers-arm-v1-1-aaa0fb22e18c@linutronix.de
+---
+ arch/arm/mm/physaddr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This would mean you could remove the other #include <linux/types.h>, instead, and move the #include <linux/list.h> down.
+diff --git a/arch/arm/mm/physaddr.c b/arch/arm/mm/physaddr.c
+index 3f263c840ebc462e13c34d33be0161e7a473173d..1a37ebfacbba969b9341fe17518cdd81fb2899b6 100644
+--- a/arch/arm/mm/physaddr.c
++++ b/arch/arm/mm/physaddr.c
+@@ -38,7 +38,7 @@ static inline bool __virt_addr_valid(unsigned long x)
+ phys_addr_t __virt_to_phys(unsigned long x)
+ {
+ 	WARN(!__virt_addr_valid(x),
+-	     "virt_to_phys used for non-linear address: %pK (%pS)\n",
++	     "virt_to_phys used for non-linear address: %px (%pS)\n",
+ 	     (void *)x, (void *)x);
+ 
+ 	return __virt_to_phys_nodebug(x);
 
-I think you can keep the Fixes: tag and make clear the reason for cleanup in the commit message.
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250217-restricted-pointers-arm-07493b11c0fc
 
-Thanks,
-Gabriele
-
-> include/linux/rv.h | 1 -
-> 1 file changed, 1 deletion(-)
->
-> diff --git a/include/linux/rv.h b/include/linux/rv.h
-> index 14410a42faef..8b968b8ed77b 100644
-> --- a/include/linux/rv.h
-> +++ b/include/linux/rv.h
-> @@ -15,7 +15,6 @@
->
-> #ifdef CONFIG_RV
-> #include <linux/bitops.h>
-> -#include <linux/types.h>
-> #include <linux/array_size.h>
->
-> /*
-> --
-> 2.34.1
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
