@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-762243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3055B203E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B058B203E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CF1B7A3B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C36189964E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E102248BE;
-	Mon, 11 Aug 2025 09:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654842248BE;
+	Mon, 11 Aug 2025 09:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RKQqgeNc"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b="jxyTIrUs"
+Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C9421D3E6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068DB374EA;
+	Mon, 11 Aug 2025 09:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905180; cv=none; b=lnrwhlh3sITCi7VGEyVnwjCdHvRWlQYHCp0RkW85kmmACcDAiwJf9O/Mx/Ss1FxK0cVi4mNYivjuS5oiHIHY6Xjc0N1pNOyi3JnQb3Rwp/2Y2pG5vtMMLya1nJWvhX8znr0WNGGYy9wkS3pQJ+kfKAfnkuBRNLNV8hD8ZZTthKY=
+	t=1754905211; cv=none; b=u4/3w+bgpWfToCS0e0KrRbwFUQT2dSqQaa07QqitkrnRLKAG2XtcZm6eg0qfT5xsxwtxzx05CE5LNlQ8GGbHCtp/UZWOaoCPeJKGV3SuGsPzt1N6+J6MkuZvGN7foxwMRNCcolXu1QqYqIfZPdOUjwwYkcgJlu6FVYTEVcRKy8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905180; c=relaxed/simple;
-	bh=y4j5CDX+twNfOWnSZDQeS1iNPT/a8KEGUcdjXqfrqzk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kFwI8rOYKxIJ367q4IAk/uBeuE2xKZ5UU719kJzH0dkDQQl2QxaXmzn1MBaEtkzuE+XsIp++MRAGiDn5ENb5PDfNsWN9io0GxzWa663EPB9k+h2jUp2/qCCTjp5VPpk+/RHg/oUhSqLo09q/CDgWnrecx04ukzUF3aOLwXYX6qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RKQqgeNc; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-459d4b5db81so23174565e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754905177; x=1755509977; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMnTZa0hu09hQK4MHqHVVwoEW2DRyBKmSxuuhXJfUcU=;
-        b=RKQqgeNcNmWxbtzOe6OIjavx+iKtD5p6BP6WkcGpDxV3wBTODw7mqTI1C5yO5He+mp
-         dXeDHSp7a1Q3GExl4cU664g/ZYhWVyhQIPwZydCqL4DjgfB3c5fKWUxjAapXWeDzqL88
-         qsfzGUQcVj/H94v13ck+YnF362UftZ2Pn1ilaauQ7xt9hrYCEDf492PlE/11hWouIIgv
-         1Lp3jSY2UZvlNBeCzD0KiBipDvuNsZVgUIbzXCGRnJBulA8mMxQBuAdxkTQ5dmeB5QxK
-         nZQEUMdMHe1XTKY9TY2O9ERoJTWODE0ONFe9ymdxxhR9egzHaMW1eFcUsZ3QJu0ZZKpw
-         70Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754905177; x=1755509977;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMnTZa0hu09hQK4MHqHVVwoEW2DRyBKmSxuuhXJfUcU=;
-        b=afSsm8Q+ICIaJE9Nz3a0OuYnQK+5Vmde2cI22lZuEbQpiNWJDqmlqDRAp7AeP0BIJs
-         21kBt+l2VSGBFnEnS5k9046/fn8MLYMhwgD9fQASNVpVAbYkc0oUUJbofQkQYAQsyYVm
-         ZJ0/Dqr1NvgVpa1I1hHgIv6FLaYMks6ODXdmdAVrCnIvSHf76S27BBi7GLvWOdhWGaGp
-         kpqRKfRh82SU1TYZZlA7Gr6FjiC/Fi83dw6FidcJu24NxDxc/E/i47WdDccWsdH28Dj3
-         mXZ3TdB/UuS2Ye89jv6yENfRhtrsIv8QQGIamtWzrRGFK0HA2tXkibuN8RjFHNFF+t5z
-         CmTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs7PvblyR6XSvTzUmalAGw/qISEipXq3uIX4ev/3OkR+tWnP4ILstX4HAyjw05nHPbYXlsmgr6CTuAkdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGSlaZasg4m21MfEj5D+ZOvuz53Av3OflZ8eQdURTx9zeKx2Ig
-	mC4fvOcBUhf86ExZZ8ptscpOFi1tZRld7yJRqO01ow/QYj9YjaVjSXJMV/6WahUBadC6VndtoPV
-	5eiDuUJKZuwjC+0G0tQ==
-X-Google-Smtp-Source: AGHT+IFT7h27MqE6VDgXteUcy3w8jAS+2Z96fj5nuIKzzs6pQOCqQDyObRy1nNyD3X3uF9z1SCe1X+iCSK04QMo=
-X-Received: from wmrn35.prod.google.com ([2002:a05:600c:5023:b0:459:d3ab:b232])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:b93:b0:459:d408:d890 with SMTP id 5b1f17b1804b1-459f4fc4a95mr102409515e9.33.1754905177426;
- Mon, 11 Aug 2025 02:39:37 -0700 (PDT)
-Date: Mon, 11 Aug 2025 09:39:36 +0000
-In-Reply-To: <20250811041039.3231548-2-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1754905211; c=relaxed/simple;
+	bh=uCJtmPEFzY+QWjgExO8MW8+SvPrYxIduutknzX5sQKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Fqvl0wmY6OOLWZQZnrKfz0if3QUKhVQ3uO5xXBQhyWFD7PYYMPQGvQD5g7YOeWDM6dEBc7xuqYFPfIeJMpVtFBY4nPOlWLJ2Y7ifzDa7ehDTeDAmRMV0WS4JHdohCCmkbPIEO9vxRsHuA9b6kSQw0Fo5PUrstqgeQ6iFIzNtY/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev; spf=pass smtp.mailfrom=yuka.dev; dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b=jxyTIrUs; arc=none smtp.client-ip=195.39.247.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yuka.dev
+From: Yureka Lilian <yuka@yuka.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yuka.dev; s=mail;
+	t=1754905206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FU6aEs8zwpQqV/O36lHWhC0ilYDhDHPiAL8/2sMKVS8=;
+	b=jxyTIrUs7YwDk7yYAQJJiJxjWCtET/D66F5zYINIm0pbLPLyNOyrD7dAKtP7AxQ47czp8y
+	/21Ng0L0GMp38sPHbFyDMVve4G6HEr7jB6uRPNHA5IfAqfNsQanuvGM4RcAfEsY6mleLND
+	lGIUEoV603BcUrsWZlh3O60mR28Wlpc=
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: Yureka Lilian <yuka@yuka.dev>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: fix reuse of DEVMAP
+Date: Mon, 11 Aug 2025 11:39:44 +0200
+Message-ID: <20250811093945.41028-1-yuka@yuka.dev>
+In-Reply-To: <20250811091046.35696-1-yuka@yuka.dev>
+References: <20250811091046.35696-1-yuka@yuka.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250811041039.3231548-1-fujita.tomonori@gmail.com> <20250811041039.3231548-2-fujita.tomonori@gmail.com>
-Message-ID: <aJm6WGaxITeIxtJc@google.com>
-Subject: Re: [PATCH v1 1/2] rust: Add cpu_relax() helper
-From: Alice Ryhl <aliceryhl@google.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
-	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 01:10:37PM +0900, FUJITA Tomonori wrote:
-> Add cpu_relax() helper in preparation for supporting
-> read_poll_timeout().
-> 
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Previously, re-using pinned DEVMAP maps would always fail, because
+get_map_info on a DEVMAP always returns flags with BPF_F_RDONLY_PROG set,
+it BPF_F_RDONLY_PROG being set on a map being created is invalid.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Thus, match the BPF_F_RDONLY_PROG flag being set on the new map when
+checking for compatibility with an existing DEVMAP
 
-> +pub fn cpu_relax() {
-> +    // SAFETY: Always safe to call.
-> +    unsafe { bindings::cpu_relax() }
-> +}
+The same problem is handled in third-party ebpf library:
+- https://github.com/cilium/ebpf/issues/925
+- https://github.com/cilium/ebpf/pull/930
 
-Let's mark this #[inline].
+Signed-off-by: Yureka Lilian <yuka@yuka.dev>
+---
+ tools/lib/bpf/libbpf.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Alice
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index fb4d92c5c..a554d7fff 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -5081,6 +5081,7 @@ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
+ {
+ 	struct bpf_map_info map_info;
+ 	__u32 map_info_len = sizeof(map_info);
++	__u32 map_flags_for_check = map->def.map_flags;
+ 	int err;
+ 
+ 	memset(&map_info, 0, map_info_len);
+@@ -5093,11 +5094,20 @@ static bool map_is_reuse_compat(const struct bpf_map *map, int map_fd)
+ 		return false;
+ 	}
+ 
++	/* get_map_info on a DEVMAP will always return flags with
++	 * BPF_F_RDONLY_PROG set, but it will never be set on a map
++	 * being created.
++	 * Thus, match the BPF_F_RDONLY_PROG flag being set on the new
++	 * map when checking for compatibility with an existing DEVMAP
++	 */
++	if (map->def.type == BPF_MAP_TYPE_DEVMAP || map->def.type == BPF_MAP_TYPE_DEVMAP_HASH)
++		map_flags_for_check |= BPF_F_RDONLY_PROG;
++
+ 	return (map_info.type == map->def.type &&
+ 		map_info.key_size == map->def.key_size &&
+ 		map_info.value_size == map->def.value_size &&
+ 		map_info.max_entries == map->def.max_entries &&
+-		map_info.map_flags == map->def.map_flags &&
++		map_info.map_flags == map_flags_for_check &&
+ 		map_info.map_extra == map->map_extra);
+ }
+ 
+-- 
+2.50.1
+
 
