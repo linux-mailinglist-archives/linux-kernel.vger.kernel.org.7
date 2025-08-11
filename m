@@ -1,186 +1,156 @@
-Return-Path: <linux-kernel+bounces-761930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC25B20005
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:12:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDA8B20023
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C78F27AD38C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2C33A9283
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905A22D9795;
-	Mon, 11 Aug 2025 07:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9358A2D9781;
+	Mon, 11 Aug 2025 07:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cUhlBX6F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kahi17ZI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0E2t0YAg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kahi17ZI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0E2t0YAg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730E2D8799;
-	Mon, 11 Aug 2025 07:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052FA29C32F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754896311; cv=none; b=dm3RSQGRk9gm3J329K8hicPELmJj7sW+Pmb6HUPVAse2yKEnJVVEaGKiSEn2MRN/v+H9Z+Z0QPeGtfc/H5jDFdax8V104RkQiJLSO9hQA6BFVd1g+q0eNlHbiW2XqBZqLnPnrGycutXuJwqL+JiI3kZ6lXIeI6ONoIH+bMtS8S0=
+	t=1754896408; cv=none; b=fIa6CH8mPY5fCpP+lFBNNXonVQH7YMopzIJJBOHWF29uoZw0kbbeesduswfI0vqcxA3vEi8Oqr05TIngzibVzphm6t4AWWV0lfoELHrPV8aKgx+9ieNxhcr5DSp2N3fYiTQ8o1ZrB8cS/u7LajTd0kd5Lqu7ZmEobHXO2Krp2PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754896311; c=relaxed/simple;
-	bh=pMyVvxqXcFkegz0Yb6z5Yhfbe7iR7Vc9rxnAa3TgccQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H6TxPzPa97pdHL6+rSvZZa97Awp1wGg5nxqJ9KSUBZzLhAbKCGBufdTp0W4bN7OjucPWfHOWLLm4h+3+04m6dhacocmQANQXxWGPXjLv5frI6pV0LNU+8/kHzvvA+DNV9t54VSErX5Br6Jt8nnhhJCBH1ZywMj/UKG4x0joyMB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cUhlBX6F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57ANSLPQ031212;
-	Mon, 11 Aug 2025 07:11:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=P7cycLzFxBb
-	cEOFGQtoTvLrSRhApMC/9IHl57YKVPMU=; b=cUhlBX6F0cXYMS/WtDbaaLb2cwX
-	ti1BCVoJ0MWaT1THSVE9iPK2bO+q6rkFPqBxw6KV6NXadpEj2jaihPAW2DXQa3F3
-	MeY1fmk6+SCsT68u+51kTM38hZX9K7Tl2wvKr9xEHZmDeQjuTXEn3dUFnxckBMYF
-	mkYOd2tKTPdA3On59DHNNZUcJN2SV3Hvt+/VzezVIHUbLa+S0Qs8N4pXFZ01Nl3I
-	xF0P1nrRhyWZCc1Bpg0RXO8R85hJHLHktjG4L1xkk7hufFmBKvN0HnoWFSlwu9fP
-	cXfJUhvyFsoVs5tN8mAkJwXSr78PrczvRyhQOHQMIWBwMsrFE7KGbMzahYQ==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmkjca-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 07:11:40 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57B7Bbf9031611;
-	Mon, 11 Aug 2025 07:11:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48dydkwb8s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 07:11:37 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57B7BZpY031560;
-	Mon, 11 Aug 2025 07:11:37 GMT
-Received: from ziyuzhan-gv.ap.qualcomm.com (ziyuzhan-gv.qualcomm.com [10.64.66.102])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57B7BaMC031599
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 07:11:37 +0000
-Received: by ziyuzhan-gv.ap.qualcomm.com (Postfix, from userid 4438065)
-	id B1E9BA60; Mon, 11 Aug 2025 15:11:33 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v10 5/5] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Mon, 11 Aug 2025 15:11:31 +0800
-Message-ID: <20250811071131.982983-6-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1754896408; c=relaxed/simple;
+	bh=xCB0WbttFcfBfSP2OKH09UmQcRPyguBwxuyE0MN9f+8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qyHKjYnZYhF/waeif2k9DVrj4sdo57ysaf+8Fqe3OBRq5scGjt6z4YbrKe+6FRyVZCRXtiLmuMw3bUwXHGxGEqtlqSs3OaSurjRwyXT+XbRxD/UpWgIen2FkuiprORIcmHeIuMf9mXQfe3psJJTJ5zWubtxhjHrrJbxHecaYmZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kahi17ZI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0E2t0YAg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kahi17ZI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0E2t0YAg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 08F135BDE7;
+	Mon, 11 Aug 2025 07:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754896404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exo7gOXMV6ysRdu0W71MW4rowBZS3bLmeSYPWE+GKVA=;
+	b=kahi17ZIxkS9ur86gd12/Rdi8HB4l3wV+5urU49pZqZxNOHn5dmB8TYmfWx7XFbxRfOnxA
+	XbkU+Wgonyi8NJspRDx25Nab0tPEAynooBPw9lr2Rt2ZgdPjlC1bRguWDXgDZK6eaATtON
+	Mwiwzygx2hC5vgYpRTxci0ZjOTLWIK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754896404;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exo7gOXMV6ysRdu0W71MW4rowBZS3bLmeSYPWE+GKVA=;
+	b=0E2t0YAgP1rCi4/SVsAAhZuFsRPx0nCOl9dxiQ+Im4Mpr9TNym4ngf+etMNWaG8soAKqZt
+	qfaYj46OmMPT5CAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kahi17ZI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0E2t0YAg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754896404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exo7gOXMV6ysRdu0W71MW4rowBZS3bLmeSYPWE+GKVA=;
+	b=kahi17ZIxkS9ur86gd12/Rdi8HB4l3wV+5urU49pZqZxNOHn5dmB8TYmfWx7XFbxRfOnxA
+	XbkU+Wgonyi8NJspRDx25Nab0tPEAynooBPw9lr2Rt2ZgdPjlC1bRguWDXgDZK6eaATtON
+	Mwiwzygx2hC5vgYpRTxci0ZjOTLWIK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754896404;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exo7gOXMV6ysRdu0W71MW4rowBZS3bLmeSYPWE+GKVA=;
+	b=0E2t0YAgP1rCi4/SVsAAhZuFsRPx0nCOl9dxiQ+Im4Mpr9TNym4ngf+etMNWaG8soAKqZt
+	qfaYj46OmMPT5CAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBEA213A55;
+	Mon, 11 Aug 2025 07:13:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FZlALBOYmWg7UQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 11 Aug 2025 07:13:23 +0000
+Date: Mon, 11 Aug 2025 09:13:23 +0200
+Message-ID: <871ppixre4.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ALSA: hda: Fix spelling mistake "dismatch" -> "mismatch"
+In-Reply-To: <20250808104621.829448-1-colin.i.king@gmail.com>
+References: <20250808104621.829448-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689997ac cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=0LYZJ8Fh9g_wO_RM1qMA:9
-X-Proofpoint-GUID: _5_jJdDZ7smiwPnrDPiBPvK9rZ8gaDkW
-X-Proofpoint-ORIG-GUID: _5_jJdDZ7smiwPnrDPiBPvK9rZ8gaDkW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfX8vBAGfs+xDHJ
- hQjxYztbmtUllShkDc4IZAygwPS0TP35ak33Oe8NINse02yV1cZe/7nURbcN5Ym/4+CR9+/4PJc
- B4GY0fBHvu70KxeXXzQeRNAUdYqd8YsLDALdRkI+YgTHoisQtxCgVKppbJa0QE68KEtT08n+113
- /v88lF7qD5lZcP9f7rgzfx7oghLqdt58xkYS6m2Jx7zCB9kMewzmtkd0LNm6620PsVWo4q+av4g
- EYvmmEhR7FN0Avmpo3FDxhoq2Sb08KtCDfYuXZvRFO8lklAWwokHjRDxu415U5u8bW3SPuXLtZN
- 1dFfU8y291b42hmGQzkaKYGc2mSbc+plPYV/Pgp6FF4UqdyS0CxO5HEgLhd/DjIQjCmM+qB/ci1
- B0Ok+kxg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090000
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 08F135BDE7
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.95 / 50.00];
+	BAYES_HAM(-2.94)[99.75%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -1.95
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
+On Fri, 08 Aug 2025 12:46:21 +0200,
+Colin Ian King wrote:
+> 
+> There is a spelling mistake (or neologism of dis and match) in a
+> dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Thanks, applied now.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index e8e382db2b99..bec2905c5d8f 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -325,6 +325,23 @@ &pcie0_phy {
- 	status = "okay";
- };
- 
-+&pcie1 {
-+	perst-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -388,6 +405,29 @@ perst-pins {
- 			bias-pull-down;
- 		};
- 	};
-+
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
- };
- 
- &uart7 {
--- 
-2.43.0
 
+Takashi
 
