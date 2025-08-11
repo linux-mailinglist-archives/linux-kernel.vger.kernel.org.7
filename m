@@ -1,214 +1,139 @@
-Return-Path: <linux-kernel+bounces-763566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740B4B216AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D1CB216B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66FB67A4958
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7AE1A245A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8652E336F;
-	Mon, 11 Aug 2025 20:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A95527D771;
+	Mon, 11 Aug 2025 20:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="sicsFSqE"
-Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KMiKgSmr"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D664D2DAFBE;
-	Mon, 11 Aug 2025 20:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88504311C12
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944986; cv=none; b=cjcx4DyZfUZdQwlEgNRhwehPIalgjMnxwSf3Xif5n602E8rpHP2kjl6AyXWmZr6Vjaxibc8rU0qJJyJPXkwn+uZSsCivaXSlsy5Q+qj/wPqmM1C1OoVvFlVU+MSE1+iIcjAnvoka+gp1OmrUWn/DiSaJakLSVsOjFRQaXB3ZIeY=
+	t=1754945149; cv=none; b=sXAPo25jvzNVpFLe5WYgu2ymWqD5AWd5jNVBquDRpmZtqx9Lirmg6OXEViOv+BJRBUsGphAQC6ELgYKdmuy6krNjP/KPY+FVNRk5a320PPwCA4AMgSNkSbB/kup/LKgI6ELYjIe0JFwLyPd1U40NuEZb8lVLA7Z37fZMYd6fT2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944986; c=relaxed/simple;
-	bh=BRo9k3JFejDsK8n/OLS2TXB9BHIncmGfXiHdt5aQZZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d20z9W2DghSmcxqdzdpZsohLCiUhOWqPPghpOaewHhCkTQr2Zbe1ETD9u/fOjlax5qyB/sh/tTSjiESG9tOGt1INqKyon+xP8Zgok4Uo5JnxRhi0tT5KeqiJSs4ZiRd+xzRT+Ac6/+qZlT1UZnutebHK9vtQcVmJFAdbUfVKlMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=sicsFSqE; arc=none smtp.client-ip=199.247.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
-Received: from spock.localnet (unknown [212.20.115.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by prime.voidband.net (Postfix) with ESMTPSA id 1258B635B040;
-	Mon, 11 Aug 2025 22:43:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-	s=dkim-20170712; t=1754944980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=epr51fyacq8S8wo/Irurh0cQPovilFvLcdw3EwV5RAo=;
-	b=sicsFSqEBfPjKKKc8vl3Ha5STHfVdeVdOjrq7qOnr3T1QQmkNB3n1e8eBsbt1c1WlO1ytq
-	oyyJ2Z8WtrTwW3um9OuESyXSx9ja8YqKgXsCsCUTdi5kljoOXE/Lh/o9pYAq1dylWPpQ7y
-	G9Lt76MLVXpCJ0r5qPDI1J7gS/dx0pA=
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: David Rientjes <rientjes@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>,
- John Garry <john.g.garry@oracle.com>, Christoph Hellwig <hch@lst.de>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, linux-mm@kvack.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Michal Hocko <mhocko@kernel.org>, David Hildenbrand <david@redhat.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject:
- Re: [REGRESSION][BISECTED] Unexpected OOM instead of reclaiming inactive file
- pages
-Date: Mon, 11 Aug 2025 22:42:46 +0200
-Message-ID: <15056829.uLZWGnKmhe@natalenko.name>
-In-Reply-To: <199fb020-19ee-89d1-6373-7cc7f5babab8@google.com>
-References:
- <5905724.LvFx2qVVIh@natalenko.name>
- <199fb020-19ee-89d1-6373-7cc7f5babab8@google.com>
+	s=arc-20240116; t=1754945149; c=relaxed/simple;
+	bh=x9w6V7pENJMTOyxSXxtDBfeZ6hHo/blTfXAWZ/CChgw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fZtTA5S9NBGdQ51NJE9t37ZZjakv7ztksvXbI3uRBdrTtw8PJhkI9LS8l7hSlevG9ZKJn/getfJUAjvqw+JsrBPBvZf4jqa90fakM78dm08s0HhVwZQs50uJBoRaAhu2y73W2rymob0VhkKzhAgZ5plOKQooeJHpa8cqUzWOU6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KMiKgSmr; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so4099312a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754945148; x=1755549948; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCzvuaHTksePcyjhE6+vgQKI6eFemBt/7TJj5lqZjhU=;
+        b=KMiKgSmrRCisEMKzu0SqZhJgIqx7Q15Z4FkhmFRe2drVN8kYEUzzgLsDdP012HxL7/
+         ZhybWCUSruu2XSs+fv7MXBpJ3d51kWFCgTAg/PIvEUuaBoFqekC710JPs7idjnsLIvqb
+         bjVg3rTlVFADWSUkZMbrG4GnMS3A0nCXLd/GFB6kAZgSminGnJyB1nZL2S/XO++M9alC
+         1gaA08bk3aFnHekDuA88NU90pOgfcIBmQ932CKqFzVdx2ANxc6ZHrx0l19wyD8Ew2cmk
+         iXygdosvjQEmxUq5e84Drk2pIsMTghK248HBmIKmmlvRrGt39rs7KWBqK2Yx79BN5F0N
+         CkHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754945148; x=1755549948;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCzvuaHTksePcyjhE6+vgQKI6eFemBt/7TJj5lqZjhU=;
+        b=v9/W+yhEzS7T1nNeLdUdaW3Quc3y5/AiT1lElTnWT82sBltshGkpwvDoWWURyuonTC
+         d4pzkH39u2dEgV1bru3dNkK3oimvmdqNoj2/9h4zse456r21XjayY2k6QIFSKJFs1EVp
+         ewBbmgKD5NU4ElkFP69wy5pczs9Q2MzbQVWEhy0FxNJi88+ju6p+4jgB2WH4gbzZ7kae
+         zJsfp5d4DrrNqG58Sh4VF0MEvcpAUCVwEBjpg9b6di/13b037foXog1cjh7Ctvb8/wA5
+         YWuSHtgjY/9rFZEX0mfeiGqVLVMrlJcupxfIg+PAo574UYmXkHvly4aGtBNtmKeGm3bY
+         4JVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdLBNyFYeh9sT23nHaCtWYmw+/JDcJ/pwTLP+9FkJDyJHfUqFFGy13p8wqd5Cw0J82xbGl8oL37vyJims=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq21DWuItR06N9Jmn4sUU729JzyzYQJnI+XjqtESZjamwkHr6X
+	6GrAIkRSULOSGupz2Tmiw0fPc5LsmQjadEtTmC/fkX8aVEkZOLXpPTZO3CAMBGKXyRLHioSqryF
+	HFS8z0g==
+X-Google-Smtp-Source: AGHT+IGbrPTnrEMcQaX9aICrlGhuN/HwbXf/jBn1buIix2r8TwtQnzufznJB8yzLjSRkDiDx2IIc3OUJTF4=
+X-Received: from pjqf22.prod.google.com ([2002:a17:90a:a796:b0:31e:fac4:4723])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebc2:b0:240:86b2:aeb6
+ with SMTP id d9443c01a7336-242fc33d8bdmr13536485ad.26.1754945147830; Mon, 11
+ Aug 2025 13:45:47 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:45:46 -0700
+In-Reply-To: <20250811203041.61622-3-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4238270.e9J7NaK4W3";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Mime-Version: 1.0
+References: <20250811203041.61622-1-yury.norov@gmail.com> <20250811203041.61622-3-yury.norov@gmail.com>
+Message-ID: <aJpWet3USvXLWYEZ@google.com>
+Subject: Re: [PATCH 2/2] KVM: SVM: drop useless cpumask_test_cpu() in pre_sev_run()
+From: Sean Christopherson <seanjc@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zheyun Shen <szy0127@sjtu.edu.cn>
+Content-Type: text/plain; charset="us-ascii"
 
---nextPart4238270.e9J7NaK4W3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: David Rientjes <rientjes@google.com>
-Date: Mon, 11 Aug 2025 22:42:46 +0200
-Message-ID: <15056829.uLZWGnKmhe@natalenko.name>
-In-Reply-To: <199fb020-19ee-89d1-6373-7cc7f5babab8@google.com>
-MIME-Version: 1.0
+On Mon, Aug 11, 2025, Yury Norov wrote:
+> Testing cpumask for a CPU to be cleared just before setting the exact
+> same CPU is useless because the end result is always the same: CPU is
+> set.
 
-Hello.
+No, it is not useless.  Blindly writing to the variable will unnecessarily bounce
+the cacheline, and this is a hot path.
 
-On pond=C4=9Bl=C3=AD 11. srpna 2025 18:06:16, st=C5=99edoevropsk=C3=BD letn=
-=C3=AD =C4=8Das David Rientjes wrote:
-> On Mon, 11 Aug 2025, Oleksandr Natalenko wrote:
->=20
-> > Hello Damien.
-> >=20
-> > I'm fairly confident that the following commit
-> >=20
-> > 459779d04ae8d block: Improve read ahead size for rotational devices
-> >=20
-> > caused a regression in my test bench.
-> >=20
-> > I'm running v6.17-rc1 in a small QEMU VM with virtio-scsi disk. It has =
-got 1 GiB of RAM, so I can saturate it easily causing reclaiming mechanism =
-to kick in.
-> >=20
-> > If MGLRU is enabled:
-> >=20
-> > $ echo 1000 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
-> >=20
-> > then, once page cache builds up, an OOM happens without reclaiming inac=
-tive file pages: [1]. Note that inactive_file:506952kB, I'd expect these to=
- be reclaimed instead, like how it happens with v6.16.
-> >=20
-> > If MGLRU is disabled:
-> >=20
-> > $ echo 0 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
-> >=20
-> > then OOM doesn't occur, and things seem to work as usual.
-> >=20
-> > If MGLRU is enabled, and 459779d04ae8d is reverted on top of v6.17-rc1,=
- the OOM doesn't happen either.
-> >=20
-> > Could you please check this?
-> >=20
->=20
-> This looks to be an MGLRU policy decision rather than a readahead=20
-> regression, correct?
->=20
-> Mem-Info:
-> active_anon:388 inactive_anon:5382 isolated_anon:0
->  active_file:9638 inactive_file:126738 isolated_file:0
->=20
-> Setting min_ttl_ms to 1000 is preserving the working set and triggering=20
-> the oom kill is the only alternative to free memory in that configuration=
-=2E =20
-> The oom kill is being triggered by kswapd for this purpose.
->=20
-> So additional readahead would certainly increase that working set.  This=
-=20
-> looks working as intended.
+> While there, switch CPU setter to a non-atomic version. Atomicity is
+> useless here 
 
-OK, this makes sense indeed, thanks for the explanation. But is inactive_fi=
-le explosion expected and justified?
+No, atomicity isn't useless here either.  Dropping atomicity could result in
+CPU's bit being lost.  I.e. the atomic accesses aren't for the benefit of
+smp_call_function_many_cond(), the writes are atomic so that multiple vCPUs can
+concurrently update the mask without needing additional protection.
 
-Without revert:
+> because sev_writeback_caches() ends up with a plain
+> for_each_cpu() loop in smp_call_function_many_cond(), which is not
+> atomic by nature.
 
-$ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl -kb =
->/dev/null; free -m
-3
-               total        used        free      shared  buff/cache   avai=
-lable
-Mem:             690         179         536           3          57       =
-  510
-Swap:           1379          12        1367
-/* OOM happens here */
-               total        used        free      shared  buff/cache   avai=
-lable
-Mem:             690         177          52           3         561       =
-  513
-Swap:           1379          17        1362=20
+That's fine.  As noted in sev_writeback_caches(), if vCPU could be running, then
+the caller is responsible for ensuring that all vCPUs flush caches before the
+memory being reclaimed is fully freed.  Those guarantees are provided by KVM's
+MMU.
 
-With revert:
+sev_writeback_caches() => smp_call_function_many_cond() could hit false positives,
+i.e. trigger WBINVD on CPUs that couldn't possibly have accessed the memory being
+reclaimed, but such false positives are functionally benign, and are "intended"
+in the sense that we chose to prioritize simplicity over precision.
 
-$ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl -kb =
->/dev/null; free -m
-3
-               total        used        free      shared  buff/cache   avai=
-lable
-Mem:             690         214         498           4          64       =
-  476
-Swap:           1379           0        1379
-/* no OOM */
-               total        used        free      shared  buff/cache   avai=
-lable
-Mem:             690         209         462           4         119       =
-  481
-Swap:           1379           0        1379
-
-The journal folder size is:
-
-$ sudo du -hs /var/log/journal
-575M    /var/log/journal
-
-It looks like this readahead change causes far more data to be read than ac=
-tually needed?
-
-=2D-=20
-Oleksandr Natalenko, MSE
---nextPart4238270.e9J7NaK4W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmiaVcYACgkQil/iNcg8
-M0uaQBAAnLctV0WUNBWBHFrDA2boniapX5Hn2yObdFClyFNDhrC3AUPTQVyeBI7t
-N9m52BCep1W3GuXSP8o/WdxR+6Mh/99J+kad5/gNczVI/XoOxdd6hWv9FNJAtuRQ
-RD3sl0SMHM+vS04837GgBw6bVZvRpHVSWpVZIs/ujiY2RSp4XQDPQEgB96wvGCbc
-rcLTeTdSZCQM2E3B6mw/EpAWg6+YzdZ3Cv4Xy5T7wk6rH3G+EiQA7536nlT9syF4
-/M3+6e5A8I2WbKgV+cvaQYGSujAoXQXnHT/9S8n2XdvQ1rD9oX6PSyuxhOykaUV+
-PldAX9jezn0fgswsooTR3ILUwzubDVGnDDQPW+w7TMritHG6ErJD0AS/DbQvoxVu
-iEsL4wCThFm8N1HEH9IFGmGD3kHx6NAif2zmj61KjJ3Y6vQOHvcpxgHqdfuajKM8
-iA4VvucrvOPlkowmW7cnxxZuZapJBLQSDcRCoU8vngfBC7OdX32EUZthAPw0vvei
-rSw6NyUeJ/fLRPDsRa1RPp5YYEqksTDaqhL0vjFOPEE1c0asC1QOfljqU7wpG5Vh
-bwZDfOtidoVpqXe0pjFUIkigoTPrsOj1boUFOvmg5DTjtWkqYEfmig7JK914PnaM
-PU/2zXHaegKLg1EirXuaC/k2i/LO6WZFwJ9ub9K5YZlVV68LQew=
-=Mz8p
------END PGP SIGNATURE-----
-
---nextPart4238270.e9J7NaK4W3--
-
-
-
+> Fixes: 6f38f8c57464 ("KVM: SVM: Flush cache only on CPUs running SEV guest")
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> ---
+>  arch/x86/kvm/svm/sev.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 49d7557de8bc..8170674d39c1 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3498,8 +3498,7 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
+>  	 * have encrypted, dirty data in the cache, and flush caches only for
+>  	 * CPUs that have entered the guest.
+>  	 */
+> -	if (!cpumask_test_cpu(cpu, to_kvm_sev_info(kvm)->have_run_cpus))
+> -		cpumask_set_cpu(cpu, to_kvm_sev_info(kvm)->have_run_cpus);
+> +	__cpumask_set_cpu(cpu, to_kvm_sev_info(kvm)->have_run_cpus);
+>  
+>  	/* Assign the asid allocated with this SEV guest */
+>  	svm->asid = asid;
+> -- 
+> 2.43.0
+> 
 
