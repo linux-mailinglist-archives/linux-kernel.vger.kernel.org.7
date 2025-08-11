@@ -1,60 +1,80 @@
-Return-Path: <linux-kernel+bounces-762300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4771B204A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BF0B2048F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E153B7889
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA1C188D333
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA21B225A59;
-	Mon, 11 Aug 2025 09:54:52 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AEF222582;
+	Mon, 11 Aug 2025 09:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x26Xvxg4"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B64B21CFF6;
-	Mon, 11 Aug 2025 09:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AEA205AD7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906092; cv=none; b=WzAN4EBwX+CskKcNhlXccVQpNQzaFJsmMKv/ta41xiQSmFw5Frrl/311ZkQJAK2eifqY6SPkNfxIrU32CtYT75LdW/VBe6TGSUfoFVAkpn8+1rbMC9h9POgrUtbLC9NP7VV2AZSzppS2P4CBBb4jzE+vsVnfugZbhDOP1EGPBwQ=
+	t=1754906072; cv=none; b=a8HIsn3iIqK88oqVzBpeAFy6D00bZs8HTFQddZpr3k3vJEiKSgT95Wr/bC9bY+Fg3/AP6+Q2DUDVuKVuuARKMlbcp2dP14gaSvXW3cX561FYSd66NsSpZdHWhp3DtjdjQm6GeoW62O821gDexBhWy624HmV1tD/ftQtNkfpOJ48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906092; c=relaxed/simple;
-	bh=JrNdyX6RHoEyF+dmtK86znKyiqTo8VUOFA2j6T73oQ0=;
+	s=arc-20240116; t=1754906072; c=relaxed/simple;
+	bh=Nr/Zc96NOCXVBYCb5kWDyvXIpmXjObnc67hVK+GSoIE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lp5PClsgRhoL+q21LZyD4XXrVT3E9ypUfqTNo8Lqs574ih0sUSzdNCvZfQaSFoGBykx5rM44feSNpEIAplrSDAASWKBLudr9FbqtN0pyHPNrV47GHYS7Py/lmLhWnEb4hGYcwkyb4SBEdJRN1Ig8iKOxEfZDilA2SCHU/EIUzfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2b9da468769911f0b29709d653e92f7d-20250811
-X-CID-CACHE: Type:Local,Time:202508111725+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:acc68978-f090-491f-984d-775e43d21c34,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:d6456464c6e6748e41fc8f4c855f847f,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2b9da468769911f0b29709d653e92f7d-20250811
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1249145062; Mon, 11 Aug 2025 17:54:28 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 9F9D3E009021;
-	Mon, 11 Aug 2025 17:54:27 +0800 (CST)
-X-ns-mid: postfix-6899BDD3-5075201002
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 81F3EE008FED;
-	Mon, 11 Aug 2025 17:54:24 +0800 (CST)
-Message-ID: <4ceb0e8c-d164-4323-add0-a0770ec2afc6@kylinos.cn>
-Date: Mon, 11 Aug 2025 17:54:23 +0800
+	 In-Reply-To:Content-Type; b=iOafqrL4r/9DC2BFNjdqSnXo80mXQw/Q5cDLaHaC6Ztmt3opITEBoPVqfctKXAl5YglCbIHmdjsUpWMItToEBDrJoYz+relWm2hMgj7kxdzyhhw6PesKS04f9zzvty3iGnhQ1VU2P1rp0pPVXyh4SfLOsUJnVu+EzhHDZVEkLpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x26Xvxg4; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b794a013bcso3559907f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754906069; x=1755510869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SB4vnpXFiG3Tz1CHMP1RECPLWqu2Bxoslj8wFFWj+OA=;
+        b=x26Xvxg4P6SxW8hHlwLOsDuJFxZNhLomHiRoZ0E/rp6JeYNCnRjQAhnbMUJzqdqn7R
+         NgkS14VdPcHr9ZuKEOl5CzRj6JzErxLQ90WGJqNhfsfq2eWwHD56vIHoe2mwthVn0or5
+         p3nXkewtXvXhHTHRnxMJqQrz/9XLwJAsHces9Qay1lbXc378SpCtYSoOqlabxJAq/oRF
+         TjxbV/FV5AfonX3T7BYVB9vQtHX1OsNaK3k+BqqodN9xn3Tibt3fhwg8PYLX4Dnc9aBh
+         AAL05aOQGJuuKfZerm1O/kE6L0gPLApezhpVbK2COxa8ZqajoefzmFroMnllKmXRvDAj
+         F3DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754906069; x=1755510869;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SB4vnpXFiG3Tz1CHMP1RECPLWqu2Bxoslj8wFFWj+OA=;
+        b=nLQUd1vc4yQKMnRksbY+upkV3etFldxFHzxDIRjQF3UdOxOeU8puRwbeWJRTYsq3pr
+         i/M1uh9fEmM0j0bzIDjzQR39TidVf/h2gcAvgi4Uh7Qb6iKoLH/TtJDjnD7GfeuG33n9
+         ZwICBvp3QvAbR0NFmd2+cYETAtYARhFEEM4ZCSneqoBICfYkZl+6fPSi9fjAai96JYpW
+         9aShYoOEcOkbQlDiz9urAV+f3Pl1DOHUmykxRqUGZ75t9V3eJe7TO2WkMNKkwtgQPAzI
+         XlRFx/M/W6SZJQurtx7qttH8enaFxKjKNwXg4D20oEB4dugqqj8mVO4SjH9idpKfyhTC
+         +dvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsT+wn1PZfohIXt24miy3h6ibjPyW7s8aB6P6pXpFVz/3lRXG3WV1VqIhknwEDteKH63VEyVRC9kmLekQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhBT1m/a1fbUPZKTsJ5/cqfnPtfy6vEmSfdF1UCUGUtXa7XXs9
+	KCGW41XRu4gSmvGs7deYUy4tKlmXnt3BBNqodoiRZLXp6f8umJBRl1Zoor9Sk2JrTkw=
+X-Gm-Gg: ASbGnct8u5zUgjBLg4kkwarf7+8JcApzLL5gYuWpUNTmlMHY6+9rdSWJemzaG/H7tHu
+	o6vOKQDVG2vmpJScbQ8bRM+ypxuPBW96aYad1aFr3zSm2gALB0cOfwJ3h2o1a/AltytNbl4LvSV
+	mrUOEGOAwAETsTCm4lUTQ0sU/aMMWQi1HAha/WxgQ+6kLBQHBctmtZgfBUFCHprLk0v7zHKtJJI
+	OEdN1KgkZ1/dri+2Ffbt9RCNFoWH3401CEmX7dNuC6S3vgEA0ZDArd38fe4jCNbEdp1NEKoaPmY
+	rn1bPtV1IKfPHjLq63AZEmHTmjxtm57alePR+JePuNL6Lihhr1Ych7UBS1TWbMtlXk0CG3YADxa
+	p8PvEIxBAdofzzEDbDVJOFAtRqFeMpwuSLskTB5ivS4K6c7gHkF4qrnGvEZAb/GdDW2I4JwSMfQ
+	==
+X-Google-Smtp-Source: AGHT+IFLWaeyYt4QW6TcIL93toOpoOSpJi+FGEvUSeA8yqAuAWz6vKsBb7k0ryhdLbJ41J3PK6Tr+A==
+X-Received: by 2002:a05:6000:420e:b0:3b7:dd87:d741 with SMTP id ffacd0b85a97d-3b900b78c90mr9197547f8f.42.1754906068602;
+        Mon, 11 Aug 2025 02:54:28 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dcb86d6asm298162405e9.5.2025.08.11.02.54.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 02:54:28 -0700 (PDT)
+Message-ID: <06d96ac6-8006-4a46-8f55-e1988c0feb1d@linaro.org>
+Date: Mon, 11 Aug 2025 10:54:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,96 +82,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
- PF_SUSPEND_TASK processes
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+Subject: Re: [PATCH 01/25] media: iris: Fix buffer count reporting in internal
+ buffer check
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250807121418.139765-6-zhangzihuan@kylinos.cn>
- <20250808143943.GB21685@redhat.com>
- <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
- <20250811093216.GB11928@redhat.com>
- <428beb0d-2484-4816-86c3-01e91bd7715a@kylinos.cn>
- <20250811094651.GD11928@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250811094651.GD11928@redhat.com>
+References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
+ <20250704-iris-video-encoder-v1-1-b6ce24e273cf@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250704-iris-video-encoder-v1-1-b6ce24e273cf@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-
-=E5=9C=A8 2025/8/11 17:46, Oleg Nesterov =E5=86=99=E9=81=93:
-> On 08/11, Zihuan Zhang wrote:
->> =E5=9C=A8 2025/8/11 17:32, Oleg Nesterov =E5=86=99=E9=81=93:
->>> On 08/11, Zihuan Zhang wrote:
->>>> =E5=9C=A8 2025/8/8 22:39, Oleg Nesterov =E5=86=99=E9=81=93:
->>>>> On 08/07, Zihuan Zhang wrote:
->>>>>> --- a/kernel/power/process.c
->>>>>> +++ b/kernel/power/process.c
->>>>>> @@ -147,6 +147,7 @@ int freeze_processes(void)
->>>>>>
->>>>>>   	pm_wakeup_clear(0);
->>>>>>   	pm_freezing =3D true;
->>>>>> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
->>>>> But why?
->>>>>
->>>>> Again, freeze_task() will return false anyway, this process is
->>>>> PF_SUSPEND_TASK.
->>>> I=C2=A0 think there is resaon put it here. For example, systemd-slee=
-p is a
->>>> user-space process that executes the suspend flow.
->>>>
->>>>  =C2=A0If we don=E2=80=99t set its freeze priority explicitly, our c=
-urrent code may end up
->>>> with this user process being the last one that cannot freeze.
->>> How so? sorry I don't follow.
->> The problem is in this part:
->>
->> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (user_only && !(p->flags=
- & PF_KTHREAD) && round <
->> p->freeze_priority)
->> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 continue;
->>
->> PF_SUSPEND_TASK is a user process, so it meets the =E2=80=9Cneeds free=
-zing=E2=80=9D
->> condition and todo gets incremented.
->              ^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> No.
-> 	if (p =3D=3D current || !freeze_task(p))
-> 		continue;
->
-> 	todo++;
->
-> Again, again, freeze_task(p) returns false.
->
->> But it actually doesn=E2=80=99t need to freeze,
->> so resulting in an infinite loop
-> I don't think so.
->
-> Oleg.
-Sorry, you=E2=80=99re right =E2=80=94 it=E2=80=99s indeed unnecessary. In=
- an earlier version, I=20
-incremented the counter before the continue, but I later removed that=20
-and forgot about it.
+On 04/07/2025 08:53, Dikshita Agarwal wrote:
+> Initialize the count variable to zero before counting unreleased
+> internal buffers in iris_check_num_queued_internal_buffers().
+> This prevents stale values from previous iterations and ensures accurate
+> error reporting for each buffer type. Without this initialization, the
+> count could accumulate across types, leading to incorrect log messages.
+> 
+> Fixes: d2abb1ff5a3c ("media: iris: Verify internal buffer release on close")
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_vidc.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index c417e8c31f806e03555cd5e2a662a6efe5d58f3e..8285bdaf9466d4bea0f89a3b1943ed7d6c014b7d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -240,6 +240,7 @@ static void iris_check_num_queued_internal_buffers(struct iris_inst *inst, u32 p
+>   
+>   	for (i = 0; i < internal_buffer_count; i++) {
+>   		buffers = &inst->buffers[internal_buf_type[i]];
+> +		count = 0;
+>   		list_for_each_entry_safe(buf, next, &buffers->list, list)
+>   			count++;
+>   		if (count)
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
