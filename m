@@ -1,193 +1,155 @@
-Return-Path: <linux-kernel+bounces-763333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8A3B21373
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E8CB2137A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691EC626C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583FF626D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CDE2D540D;
-	Mon, 11 Aug 2025 17:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE15B2D47F7;
+	Mon, 11 Aug 2025 17:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaPcv+oF"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICIcPitU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E112D47F9;
-	Mon, 11 Aug 2025 17:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A8B21771B;
+	Mon, 11 Aug 2025 17:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933976; cv=none; b=CFQd9+RipyXzTec8slI9liXRou7rjrJI278y+SaBVShVMh94/GjQ/+kYYnhmJvhg6ZmGzsEH0amdxNF0Oh09brgSAdNczIAmGZj67fh/2Hh+lNOzpjgudc8MhOGDXUNVV1w+2uNv6PtUjojMJG0A+dkau6zslrcmpAZVZqiMS2E=
+	t=1754934031; cv=none; b=oGpfrzxYs85d2GJkdOAr0XEedk1awuYNDvrO5W7MTF8NckWllGJesJHlv24o86v0IqMbjYGSXHb3NMjieCaIZN2vRBmjz2Vtr5mDFIofJW1t5YxuvaDQUkjMR2VnVbL9EiZP52OqQohypuq0lIbStTnQIUWbeHuQZT+HtCyqO4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933976; c=relaxed/simple;
-	bh=7TtroRd5pPcTYhSknBDgOtBvlln/rtrSpohsr4YwUvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mz2EsLLJVVazD10ANzdhH2LcqbqviFI/ky8KWM2Pu/u3uuDK7nA3xpFd0r0RSt9vhOfg/HcFrFDiAqtmeRsdzDIk3MKIeBWpQGoNzMHAVQD/MkRiuuOwwXYP8GVxJSomGnOyWxZc1sRufWcXcaD7EwtV4I2m05SsRq1KbEPomJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaPcv+oF; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24049d16515so39009285ad.1;
-        Mon, 11 Aug 2025 10:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754933974; x=1755538774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MzDnONcSpsqvdV7IwgZ4K8ZQ0Lot64n1ajgnKT5KByM=;
-        b=FaPcv+oF/bU9igXEOxbcBw/FUVyq9dJMGIZM9wrkQNAK+V+qf9dp9gIWi9uODzOk7F
-         52vZim2VB7UXAN0EKoSlVSDqM9cawBIFhIg5KllVrSHGQs2zaMHbFIKhYvZeEVhh92Xi
-         yfwrUpIYskcB++OrsWObmsb9fHSOqvjk4+0Ds8WfQkd9TVzddvdKLo7XmRht4SXsmQt9
-         h7AlyyA5Wdw1ipv/WIrQd1RpHLQQKMttonKnKvtFaILwllwZ5gUj+26JeOmhwhZxBhlv
-         SlYLNx0C3inCOrzys4HNpgdT3jM4G/9ENTERcLSA9uNmV0CZ/tDO+Pe7w0olvchTiGeE
-         DFUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754933974; x=1755538774;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzDnONcSpsqvdV7IwgZ4K8ZQ0Lot64n1ajgnKT5KByM=;
-        b=u/PZePTlINUdQe7gbo22r2uHRcTu+zo3ibI4f5w9PBKkI9kjvv+vPbf/MgrHGWOUxo
-         vDVWkUBn9HiK1o879OwDsCTOhkdtOVABeKP6Nm0yZtabmvaF/3Yi4ysoAXIxQgoqQpGd
-         OW5hZb4E8cahq4C4FCAatMyq+v3I9ltmmBcYdyhbP0JYvmgI1z5b8oLphcB9m6qwL757
-         mtBPS+WYtdTykypesR+mEc5h5A4ovIVSNAilzLRmXBIOFS5K49n//bjsrjLONuFE4EPk
-         +79aMbIY3jCAxnPZqLZD9JcMzO/IifunqhMuMcVPbePFe6+XbiBkvhlAq0oWtsHI0lB6
-         ALyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNWAC/4VFqeAI9rtigJKFhkSpceKQomjkEIWz4CuzxTLHVnq37joT7qFBeRoUlvaCaLElJHNhtFrzKd4o=@vger.kernel.org, AJvYcCVeAcJhxNncKIB9if3s6yc4ui8qqEH+6JHBLcqo7rDFzoEwEMuEqAymWGAikJ4qNNcp+S/8gmd+3VNz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+O6TGRioKIJT2E1cuaT4EfmTZNNlIBY0snpPLE5KMyzJpT6r3
-	rZ2X3te5rS8wYkXVu53OUZMhwIcCqT4+gAZDBvGRkfiktAOs3OPv7Qjl
-X-Gm-Gg: ASbGncu9jZ7VAM3vFL3+tXxQEmy5OkXMYua+1rpv5YMhwWhsMlkBeuZgbz/XE22NY7s
-	4brRQKW07/cUxLNa/ROMT59tmbEtfWXaNjv4QPeba1rs/gXqwZkft8pQ8BnAuYpwr7fhSynU4lI
-	XTaSIVK636RLpnPQTE9ZwAvxhCNoGp61Lq9zWIcLbB/eNuUu7+01LBEkcADMOw53vVTFAd2KIFs
-	LplX2L1W590qyo4zdBaZkRFpOKNFFEhi8ogtJw6iG5py9Qe9tY9p0NDnuNaShpF6D+pkMbwfk/U
-	1D6s80uUHCYoiNYoD2Gfh9l5zEcRilxz07XpHQ2NQo9xh8HOJqRjzwi7l2FcxPC1Ao3jcjajHxT
-	l9ijIIO2BFlqoTOplPL87toAUUkr4
-X-Google-Smtp-Source: AGHT+IFcndukAzoSm+gas6DqMTlUp2NVt58tDSCUQF2KhB0ooZtmn7Prgle76JAAbyLJLa/nCdQZVQ==
-X-Received: by 2002:a17:903:3b8c:b0:242:460f:e4a2 with SMTP id d9443c01a7336-242c2004168mr167000765ad.23.1754933974358;
-        Mon, 11 Aug 2025 10:39:34 -0700 (PDT)
-Received: from localhost ([2600:1700:22f5:908f:1457:7499:d258:358f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aa9257sm280460965ad.153.2025.08.11.10.39.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 10:39:34 -0700 (PDT)
-From: Matthew Wood <thepacketgeek@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Mario Limonciello" <superm1@kernel.org>,
-	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
-Date: Mon, 11 Aug 2025 10:39:30 -0700
-Message-ID: <20250811173931.8068-2-thepacketgeek@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250811173931.8068-1-thepacketgeek@gmail.com>
-References: <20250811173931.8068-1-thepacketgeek@gmail.com>
+	s=arc-20240116; t=1754934031; c=relaxed/simple;
+	bh=DR4nzsj2RSJeo1Dqf7XMP3J098TXOv60AI7D/vJomI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMfOVe/7Os7UgBpP5BrF3h5h3mNkwdfMBQYv9kpJZwMAVBH6yZ48l1t6rhyYH+SYRXGIT2BaI05DABxqRChTMwYElqr1sPpnONHjOigyU9+L30Jyj2/A5hlJn/t1eMOn7cXzBee/VoGD20mQ8JQJ62D4Tua7tt6UeWTSv6DHC/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICIcPitU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4B9C4CEED;
+	Mon, 11 Aug 2025 17:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754934031;
+	bh=DR4nzsj2RSJeo1Dqf7XMP3J098TXOv60AI7D/vJomI4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ICIcPitUvvE+Smdr08VW/T0wbBwaCCrgWxjRnugeYNKEXuLNeR+JSbYkG4VsQ5DRe
+	 7yIzBomnbXC3CvW+XcvnjkzDoJTYh0JkarCgDW5P9hTcl2WMyDkKWhz4l9bKVPUJ0a
+	 cuDQl/tmHI1YqCGjcNI6funcs1bfaaU0McQ44XoA5y/OmuBFAYz/IIsZQ/KTBWuwYd
+	 6nS1ft+xWXfENLaDtvzQ9o8B661nt71bebSGTqybfAb7HTcDYC/5Tbq1lmvvq8vHEy
+	 ecLfCuiRrG2hsS2iuTkCTvWSKGLA58N9EWVw5jiKXStJLG3ZJuuj42zE0Jo/Ix9fxk
+	 qiliFgEoTsuEg==
+Message-ID: <c60ccef1-7213-4dd7-8c10-e8ef03675bd8@kernel.org>
+Date: Mon, 11 Aug 2025 19:40:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
+ gpio-leds/keys
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
+ Peter Korsgaard <peter.korsgaard@barco.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+ <aJnlnx2qF6P61jJN@smile.fi.intel.com>
+ <7c2d08e3-d1e2-433e-b726-307246ab17e9@kernel.org>
+ <aJoQE2CQv3nzaSqc@smile.fi.intel.com>
+ <uakyig6sp2sfuwtt2aq7ds5dcbsjrgcijenunefqzc46inpees@xc6bfr4mjnan>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <uakyig6sp2sfuwtt2aq7ds5dcbsjrgcijenunefqzc46inpees@xc6bfr4mjnan>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Add a single sysfs read-only interface for reading PCIe device serial
-numbers from userspace in a programmatic way. This device attribute
-uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-capability output. If a device doesn't support the serial number
-capability, the serial_number sysfs attribute will not be visible.
+Hi,
 
-Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
-Reviewed-by: Mario Limonciello <superm1@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Reviewed-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
- drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++---
- 2 files changed, 33 insertions(+), 3 deletions(-)
+On 11-Aug-25 5:49 PM, Dmitry Torokhov wrote:
+> On Mon, Aug 11, 2025 at 06:45:23PM +0300, Andy Shevchenko wrote:
+>> On Mon, Aug 11, 2025 at 04:20:33PM +0200, Hans de Goede wrote:
+>>> On 11-Aug-25 2:44 PM, Andy Shevchenko wrote:
+>>>> On Sun, Aug 10, 2025 at 09:31:37PM -0700, Dmitry Torokhov wrote:
+>>
+>> ...
+>>
+>>>> Otherwise LGTM as here it looks like we establish platform device ourselves and
+>>>> hence no need some additional magic Hans mentioned in the other series.
+>>>
+>>> Not entirely like with the x86-android-tablets patches this
+>>> declares a software-node for the gpiochip:
+>>>
+>>> static const struct software_node gpiochip_node = {
+>>> 	.name = DRIVER_NAME,
+>>> };
+>>>
+>>> and registers that node, but nowhere does it actually
+>>> get assigned to the gpiochip.
+>>>
+>>> This is going to need a line like this added to probe():
+>>>
+>>> 	p50->gc.fwnode = software_node_fwnode(&gpiochip_node);
+>>>
+>>> note the software_node_fwnode() call MUST be made after
+>>> registering the software-nodes (group).
+>>>
+>>> Other then needing this single line things are indeed
+>>> much easier when the code containing the software
+>>> properties / nodes is the same code as which is
+>>> registering the gpiochip.
+>>
+>> Ah, good point!
+> 
+> This is wrong though, the software node need not be attached to the
+> gpiochip (and I wonder if it is even safe to do so). It simply provides
+> a name by which gpiochip is looked up in swnode_get_gpio_device().
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index 69f952fffec7..d5251f4f3659 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -612,3 +612,12 @@ Description:
- 
- 		  # ls doe_features
- 		  0001:01        0001:02        doe_discovery
-+
-+What:		/sys/bus/pci/devices/.../serial_number
-+Date:		December 2025
-+Contact:	Matthew Wood <thepacketgeek@gmail.com>
-+Description:
-+		This is visible only for PCIe devices that support the serial
-+		number extended capability. The file is read only and due to
-+		the possible sensitivity of accessible serial numbers, admin
-+		only.
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 268c69daa4d5..1d26e4336f1b 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -30,6 +30,7 @@
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/aperture.h>
-+#include <linux/unaligned.h>
- #include "pci.h"
- 
- #ifndef ARCH_PCI_DEV_GROUPS
-@@ -239,6 +240,22 @@ static ssize_t current_link_width_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(current_link_width);
- 
-+static ssize_t serial_number_show(struct device *dev,
-+				  struct device_attribute *attr, char *buf)
-+{
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
-+	u64 dsn;
-+	u8 bytes[8];
-+
-+	dsn = pci_get_dsn(pci_dev);
-+	if (!dsn)
-+		return -EIO;
-+	put_unaligned_be64(dsn, bytes);
-+
-+	return sysfs_emit(buf, "%8phD\n", bytes);
-+}
-+static DEVICE_ATTR_ADMIN_RO(serial_number);
-+
- static ssize_t secondary_bus_number_show(struct device *dev,
- 					 struct device_attribute *attr,
- 					 char *buf)
-@@ -660,6 +677,7 @@ static struct attribute *pcie_dev_attrs[] = {
- 	&dev_attr_current_link_width.attr,
- 	&dev_attr_max_link_width.attr,
- 	&dev_attr_max_link_speed.attr,
-+	&dev_attr_serial_number.attr,
- 	NULL,
- };
- 
-@@ -1749,10 +1767,13 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 
--	if (pci_is_pcie(pdev))
--		return a->mode;
-+	if (!pci_is_pcie(pdev))
-+		return 0;
- 
--	return 0;
-+	if (a == &dev_attr_serial_number.attr && !pci_get_dsn(pdev))
-+		return 0;
-+
-+	return a->mode;
- }
- 
- static const struct attribute_group pci_dev_group = {
--- 
-2.50.1
+Ah interesting. This is very different from how fwnodes generally
+work though. Generally speaking when a PROPERTY_ENTRY_REF() is used
+like PROPERTY_ENTRY_GPIO() does then the lookup is done by matching
+the reference to the fwnode of the type of device to which the
+reference points.
+
+IOW the standard way how this works for most other subsystems
+is that gpiolib-swnode.c: swnode_get_gpio_device() would call
+gpio_device_find() with a compare function which uses
+device_match_fwnode().
+
+I see that instead it uses the swnode name and passes that to
+gpio_device_find_by_label().
+
+I must say that AFAIK this is not how swnodes are supposed to
+be used the swnode name field is supposed to only be there
+for debugging use and may normally be left empty all together.
+
+I guess using the swnode-name + gpio_device_find_by_label()
+works but it goes against the design of how fw-nodes
+and especially fwnode-references are supposed to be used...
+
+Having a fwnode reference pointing to what is in essence
+a dangling (not attached to any device) fwnode is weird.
+
+Are there already any users of PROPERTY_ENTRY_GPIO() in
+the kernel? If not then I think that we should fix things
+up to actually do a reference match and not a name based
+lookup.
+
+Andy IIRC you've done quite a bit of work on software-nodes,
+what is your take on this ?
+
+Note this is likely my last email in this thread for
+a while since I will be traveling without email access.
+
+Regards,
+
+Hans
+
 
 
