@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-762628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45721B2091B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:45:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045B5B20918
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB597B2247
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 300D87B206C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8592D660F;
-	Mon, 11 Aug 2025 12:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110092D3ECB;
+	Mon, 11 Aug 2025 12:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZuuGQRIO"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4SAgSLZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97232550DD;
-	Mon, 11 Aug 2025 12:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916294; cv=pass; b=im3C4ILC+Gy6f0+kiRsxfdRJKA1jw/LkBm14K7zqMHed5+95K+anGfPKhXcMrG2bZskmwp2KSMSNi8RDaVW1EHDNjzIC7iTFxE2J4FxbKTnCRucja9xISzp1hxXkTzNOnUOK4pySQwaPSeqaJuryQ37WLcJFZAg1mcPkemR7nUE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916294; c=relaxed/simple;
-	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Dv85gQwstvT9zo7WbljaQ7tqXLNiqx6QXQG6HqzdNOPuu4M8CKJSajwhw+abJOyd7XPfX0yM6/sorp/NgFbkRUx+246We7ynYoJXh2HHohsQhEMRN4Nqj2SV5OoCTmn5/Ld6OiHP0/W/L1yzOPxaCWZ9zfaZL39/cFaS5dpgzAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZuuGQRIO; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754916280; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bGgTo0/YKQqNOPrytVrA6Np4r6JiWq7Enb2OsfBOnj17lIZsTs0pKhUcHN9kRZmf0LSXp+TBalhgAk5igueU6tOhndIc7Sz6jvWn5xTz2kKlYcxyZYiY4wm+AkuQLiBCa+bVdvzQyKgk1J8ao4y2jA0OmYxj89CHJ3unt5N1NDs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754916280; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=; 
-	b=VnqdKbndosnkWXEOHO+199cZ342LFdhHoLinXTzIi0WMv0jPQkP01vleAHKXKkRwKwFs2CXWY4ASeiSRhkaq9igV7+bmG0/4xJ5RLAMWxKmdjeNr/cQNJoO54wCWMVheSg6PL5JtNbC+6gh7ENA+IBi0Xzdz1E2xOda8Kegeh9E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754916279;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=;
-	b=ZuuGQRIOKxWONQNCGjUWlUVkXRh1aRFuzgzoaB70rbsnocvTXGbMxyvxG6Y3fp8U
-	YmFr7KyMOp21k7x4/5vQ9LbyPAAWROlXRTBFaoHP+gEDVBw1+mDJ2WCVJsVduijWopG
-	9cyMUQ4Y6CX5hfQEvEx1K2nSDXt5LCv0PM7j5/+M=
-Received: by mx.zohomail.com with SMTPS id 1754916277144319.23689616237255;
-	Mon, 11 Aug 2025 05:44:37 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A443A2D3A9B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754916293; cv=none; b=U3Zj3vjsFQHt/mDR6BHoN6epx3ZzLgxfZt+p3M822+4eTPKT2/Rs4hDy2+uzQMh6PVGAvINNWS1NnkpGqxHXNBjpiknv7Nl/faUn3JmpZpTlO/azYWHBbFI91lBE5gvg8Vvl9jChTwJ+R0kO0Pji+j79Vh1FzIoKiUQS8p+/nwo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754916293; c=relaxed/simple;
+	bh=r9PD8c2V1K8UlQjyYWcnwhI1Wbdsemc+Su+YG7mdqqE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ChpaP27JTYTDmNS30eBTzbIvEfZBIuAPR6xfbhrkRD4uf7LjLTj5KE/rXBKVslBmixULQC0r7rbNcdCOajp8L0jQgamxuUfvBDmh0ewOAHFqavU+DpiqCCgvhMv+P6U2otc6m4q5bBUaBipY9d4ne2sgyx+UB8woDPS/30VmHSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4SAgSLZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754916290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GUFx77mFsjO3+sNdMc+P7xX572cUmISh0hQE2zjvXB4=;
+	b=J4SAgSLZrvBSWfEJcot6MnJ2Lx9A943hulImFoHmbNWLrrvMeWQ6ElIuWTXInN882SvVVF
+	Y4vVGSUfkuTRA3zT1EKnppBI03HxYBwoqF+W4LNSoCia/H89Rxznk9dwMtMxunMX1fXOh7
+	rik3dnO3etJxhyrV0V86ShlW1bHxD+Y=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-xerZ-hIiP-GG5T4K7-TLkA-1; Mon,
+ 11 Aug 2025 08:44:47 -0400
+X-MC-Unique: xerZ-hIiP-GG5T4K7-TLkA-1
+X-Mimecast-MFC-AGG-ID: xerZ-hIiP-GG5T4K7-TLkA_1754916286
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D4D019560B7;
+	Mon, 11 Aug 2025 12:44:46 +0000 (UTC)
+Received: from [10.22.80.50] (unknown [10.22.80.50])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F1201955F16;
+	Mon, 11 Aug 2025 12:44:44 +0000 (UTC)
+Date: Mon, 11 Aug 2025 14:44:41 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    "open list:DEVICE-MAPPER  (LVM)" <dm-devel@lists.linux.dev>, 
+    open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dm bufio: remove redundant __GFP_NOWARN
+In-Reply-To: <20250811123638.550822-3-rongqianfeng@vivo.com>
+Message-ID: <649a5bf8-309b-8128-b3f9-971d3a0bb350@redhat.com>
+References: <20250811123638.550822-1-rongqianfeng@vivo.com> <20250811123638.550822-3-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
-Date: Mon, 11 Aug 2025 09:44:22 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
-References: <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
- <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
- <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
- <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
- <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
- <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
- <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
- <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
- <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
- <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
- <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+
+Hi
+
+I think that GFP_NOWAIT already includes __GFP_NORETRY too. So, should we 
+drop __GFP_NORETRY as well?
+
+Mikulas
 
 
->=20
-> There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut =
-IoUringCmd>`
-> would be create in the callback function. But the callback function =
-could be
-> called repeatedly with same `io_uring_cmd` instance as far as I know.
->=20
-> But in c side, there is initialization step `io_uring_cmd_prep()`.
-> How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign =
-a byte
-> as flag in pdu for checking initialized also we should provide 31 =
-bytes except
-> a byte for the flag.
->=20
+On Mon, 11 Aug 2025, Qianfeng Rong wrote:
 
-That was a follow-up question of mine. Can=E2=80=99t we enforce =
-zero-initialization
-in C to get rid of this MaybeUninit? Uninitialized data is just bad in =
-general.
+> GFP_NOWAIT already includes __GFP_NOWARN, so let's remove the redundant
+> __GFP_NOWARN.  Also update comments to clarify the flag semantics.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/md/dm-bufio.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+> index ff7595caf440..4b20854e92f5 100644
+> --- a/drivers/md/dm-bufio.c
+> +++ b/drivers/md/dm-bufio.c
+> @@ -1337,7 +1337,7 @@ static void use_bio(struct dm_buffer *b, enum req_op op, sector_t sector,
+>  	char *ptr;
+>  	unsigned int len;
+>  
+> -	bio = bio_kmalloc(1, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOWARN);
+> +	bio = bio_kmalloc(1, GFP_NOWAIT | __GFP_NORETRY);
+>  	if (!bio) {
+>  		use_dmio(b, op, sector, n_sectors, offset, ioprio);
+>  		return;
+> @@ -1601,18 +1601,18 @@ static struct dm_buffer *__alloc_buffer_wait_no_callback(struct dm_bufio_client
+>  	 * dm-bufio is resistant to allocation failures (it just keeps
+>  	 * one buffer reserved in cases all the allocations fail).
+>  	 * So set flags to not try too hard:
+> -	 *	GFP_NOWAIT: don't wait; if we need to sleep we'll release our
+> -	 *		    mutex and wait ourselves.
+> +	 *	GFP_NOWAIT: don't wait and don't print a warning in case of
+> +	 *		    failure; if we need to sleep we'll release our mutex
+> +	 *		    and wait ourselves.
+>  	 *	__GFP_NORETRY: don't retry and rather return failure
+>  	 *	__GFP_NOMEMALLOC: don't use emergency reserves
+> -	 *	__GFP_NOWARN: don't print a warning in case of failure
+>  	 *
+>  	 * For debugging, if we set the cache size to 1, no new buffers will
+>  	 * be allocated.
+>  	 */
+>  	while (1) {
+>  		if (dm_bufio_cache_size_latch != 1) {
+> -			b = alloc_buffer(c, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
+> +			b = alloc_buffer(c, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOMEMALLOC);
+>  			if (b)
+>  				return b;
+>  		}
+> -- 
+> 2.34.1
+> 
 
-Hopefully this can be done as you've described above, but I don't want =
-to over
-extend my opinion on something I know nothing about.
-
-=E2=80=94 Daniel=
 
