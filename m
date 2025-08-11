@@ -1,107 +1,148 @@
-Return-Path: <linux-kernel+bounces-763155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F10BB2110F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:09:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667A9B210E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08A7684D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:03:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248387B883A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112F72EBBBE;
-	Mon, 11 Aug 2025 15:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9222E339E;
+	Mon, 11 Aug 2025 15:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SjL9DHFQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b="NWmDaOJV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VodR6MHm"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4202E2679;
-	Mon, 11 Aug 2025 15:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7244B2E2846;
+	Mon, 11 Aug 2025 15:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927380; cv=none; b=YZOsv5uy3Pyne2/nzgs5C1GNoU+9zGbPnPs5qmtEcrWqhB/IbhUcAT6vqSs7G6gYuaqUOBfsC98kLgLwWpQLH7TKfrH4zIyiJTAkCldQRJ2xwKd1RWW4709BZRChEazAekXVM+4YOL+2ZaNiCOUkc754cvzi1ZzZ06ZIXfrWSjw=
+	t=1754927457; cv=none; b=GOTJQGZjJ8uTBbTjb92EzpN97uXr4R7Gi4BTqdCEVwfr0xbQca4KZ3jrSwQbCRaOmotsa6KbXZvuPZtuwTrD8A2z/ZI5WzpzbgdkURUMcXZkjN5TCPrkBFChTNMMLiWV7eSNnlQyhQzZg8ttU7dpIYLY67aVVNSrJQGFuP+uAzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927380; c=relaxed/simple;
-	bh=wgMrhgF8BDH/NEt5vs4XIt/Kl09yLdL8h+1ZH+N5j7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/+q3KBvzAuQmOaUx8yOhWN4rGw1d6e+iEB0T7BSXN1Xa7W04v4mSoWN9O5yG1JV5gOvn7LJdqXoaUJWNeQQKWCyjZF3g9sklWcaSsqt6zw5+sAW0V8bYLLpheApAwsoQY92cttIte820S1WY72Ln/DlJvqu6U8ka4X3lq/qU/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SjL9DHFQ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754927379; x=1786463379;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wgMrhgF8BDH/NEt5vs4XIt/Kl09yLdL8h+1ZH+N5j7g=;
-  b=SjL9DHFQ5Nn/KpMxQZMCVrPBrDxDVNMFF9Cg+mx2CsCAMfzBscnc/m2z
-   rGH85NKp15NM2C1PygVUkOeC+K0k/jy5RBkohKkQJ1yXFVAmXMRDi+8QG
-   W7Qs9MIrLfdI+Arrqd6jAjnoZyQ8y3EvxgoksFGqrTKYQ/sgx6DrkSFap
-   0vcfg85wngdeDrt7/N9DnxTfEgS4A7ujH+0B4TDBpR6Vo+UPj4cjYkUhf
-   R0aGmO55dXswr2pCcidFThXQhW3W08xv73c4XoPwdlZSBgzCpip0/PtnQ
-   aVAEREb0bFhkI9x3jcJOUTISZANkq4h8LFDSjecWGi/bPEfFX9dNvCf3p
-   Q==;
-X-CSE-ConnectionGUID: usoJRIk5TLucNCm/1n08YA==
-X-CSE-MsgGUID: nMlnW4h+Sf2BpBHtDxhlyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67892446"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="67892446"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:49:38 -0700
-X-CSE-ConnectionGUID: g9gOJu8DSiif7dMUTVlDwA==
-X-CSE-MsgGUID: CMRXhL6sSy+yB0mIWjutug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="189622007"
-Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.140]) ([10.247.119.140])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:49:33 -0700
-Message-ID: <3eac5580-d618-4905-a982-a34bf11cdedf@intel.com>
-Date: Mon, 11 Aug 2025 08:49:27 -0700
+	s=arc-20240116; t=1754927457; c=relaxed/simple;
+	bh=o9R4/vr5/k219aZvmRaJpL5DkB6VIj3EXy4nFKRXg5I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lOhqxUZfGd/MecGCwC+OquC5MR49uLcgZ5zHfCfy4iyL1C0Y/jxz7K+CmpFRZp1BhfKG/ytWNuL5n1uxmTJzJDPEzJ9ONv1qyIiq2aZpHPc7io5VLfcII69fDgDVbooisRtmTCdAxgLJf5SYtRzu9/oRRLYSKBWc0fWbVjJ824k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com; spf=pass smtp.mailfrom=kylemanna.com; dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b=NWmDaOJV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VodR6MHm; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylemanna.com
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4A42A7A0047;
+	Mon, 11 Aug 2025 11:50:54 -0400 (EDT)
+Received: from phl-imap-16 ([10.202.2.88])
+  by phl-compute-08.internal (MEProxy); Mon, 11 Aug 2025 11:50:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kylemanna.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1754927454; x=1755013854; bh=l+xTtS8t6V054XL1cj8drWSr+lP1EqQh
+	p0KIQIrldDA=; b=NWmDaOJVeCEI7mWfDrHHMkCq0r9QQIp5VxnqLeTnFWvsGKOW
+	8zDC03BTxApW2pse7aGZ5JvyOVNeLr76VQq4WdTbhM3zd0kO3HzxuC5Ooixij4zc
+	gpRtD1GADD/Gszm+LVU6Q/RSXl39JdAouEHQC7qvBV7pKNEc9lTuK/N9wlYvPSqP
+	O0mXyTsnzsq7mfloDX9H+IZyhQ/WK/coiNbs9XJSyy7rl/6uGX7eo4GPQO45CSPG
+	wQzSe9WdNETKesBmLIL7iSTHUSAAPe1w34rfkDpINBFcVFurGwu/leD4tSFkN/6Y
+	2Em5/Zl6dBbhKAUkU/vPkDytnpn4SbK0g2xKdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754927454; x=
+	1755013854; bh=l+xTtS8t6V054XL1cj8drWSr+lP1EqQhp0KIQIrldDA=; b=V
+	odR6MHmKf0XBglpTXx7zlPLz7bcvBH/D+tEixVoFjwCEpAJeh6l0RhM6IMuj40sJ
+	l7ZiTsPeSmcFHup1Qn6XaHu0utgVPQRO1rm7469pu4IVvR18/aoHSr/qc0S7tPAQ
+	p6s1M0J/uUIXG0JWUhOH/AoiMVVvr6RA4Vr01LS9sWFZv1VnqfaAaCRi5pvC+eRc
+	MeGxu8rbn1r4JT3gks9wxs9dQE31yaIn0KqVs5byuwKM0mJPtDAlj6pcTjxHroXf
+	annwLszHBTQq9jGfzwGxghqw+CG4/4FBRIQlzMoWDA+kIRnXV5m/Yg4Jq/5Z5Lk7
+	vPql/KTcr5ZOkd/IJxIFQ==
+X-ME-Sender: <xms:XRGaaBngvhII7Wx9aJFVQTQRxqwk7HWnpXc0VUGwHwjuDmLmWQfjag>
+    <xme:XRGaaM38nQUCnIfLcC0mDpwTX6ps7Ib7gAlH9_wnI-vAhpfplt5ANozNYuWIZHUTl
+    _nvmy1xYVCelOzyqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfmfihlhgv
+    ucforghnnhgrfdcuoehkhihlvgeskhihlhgvmhgrnhhnrgdrtghomheqnecuggftrfgrth
+    htvghrnhepheeigeejffekffegjeeghfetfedtgefhtdfhffeljefghedvueffieeguefg
+    ffetnecuffhomhgrihhnpehinhhtvghlrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepkhihlhgvsehkhihlvghmrghnnhgrrdgtohhm
+    pdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjh
+    gsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdgu
+    vgdprhgtphhtthhopehjrghmvghsrdhmohhrshgvsegrrhhmrdgtohhmpdhrtghpthhtoh
+    epjhgrmhgvshifvghsthhonhhjvghrnhhighgrnhesghhmrghilhdrtghomhdprhgtphht
+    thhopehqihhugihurdiihhhuohesihhnthgvlhdrtghomhdprhgtphhtthhopehtohhnhi
+    drlhhutghksehinhhtvghlrdgtohhmpdhrtghpthhtohephihiuddrlhgrihesihhnthgv
+    lhdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehrrhhitgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:XRGaaA9mmd7csveRy4npn_IuM-ffpS4gY7e_w7ZKt5PScCxKsJ4pXw>
+    <xmx:XRGaaH4JoYBp-A4tf84XEUYeA4UNXEkvhJFbLM3QoE3q0bSfUbhl7w>
+    <xmx:XRGaaIupcTThLfPjsF5XHoMLfqYLSs8d8DhqMHLc3A0MPw7RNUzRRQ>
+    <xmx:XRGaaJ1LLRGyVKHpW4IYb0WXiIfFPoroyqPYlfHp8ktTSA29TljAcA>
+    <xmx:XhGaaFmdInmbSouAknS8QU68sxUJRirOKRFSXJBBftVz-XCN9TI7q9FP>
+Feedback-ID: iac74403c:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 69DFF2CC0083; Mon, 11 Aug 2025 11:50:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/hdm: Use str_plural() to simplify the code
-To: Xichao Zhao <zhao.xichao@vivo.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250811122519.543554-1-zhao.xichao@vivo.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250811122519.543554-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-ThreadId: AqtgtjpCkecB
+Date: Mon, 11 Aug 2025 08:50:14 -0700
+From: "Kyle Manna" <kyle@kylemanna.com>
+To: "Tony Luck" <tony.luck@intel.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Jason Baron" <jbaron@akamai.com>, "Qiuxu Zhuo" <qiuxu.zhuo@intel.com>
+Cc: "James Jernigan" <jameswestonjernigan@gmail.com>,
+ "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, "Yi1 Lai" <yi1.lai@intel.com>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <c2f98618-4197-41c3-9a2b-2c59841dd543@app.fastmail.com>
+In-Reply-To: <20250802060112.363506-1-kyle@kylemanna.com>
+References: <20250802060112.363506-1-kyle@kylemanna.com>
+Subject: Re: [PATCH v2] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC
+ support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 8/11/25 5:25 AM, Xichao Zhao wrote:
-> Use the string choice helper function str_plural() to simplify the code.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+On Fri, Aug 1, 2025, at 23:01, Kyle Manna wrote:
+> Host Device IDs (DID0) correspond to:
+> * Intel Core i7-12700K
+> * Intel Core i5-12600K
+>
+> See documentation:
+> * 12th Generation Intel=C2=AE Core=E2=84=A2 Processors Datasheet
+>     * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
+>     * https://edc.intel.com/output/DownloadPdfDocument?id=3D8297 (PDF)
+>
+> Signed-off-by: Kyle Manna <kyle@kylemanna.com>
+> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 > ---
->  drivers/cxl/core/hdm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index e9e1d555cec6..37176c0a781f 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -197,7 +197,7 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
->  	 */
->  	if (should_emulate_decoders(info)) {
->  		dev_dbg(dev, "Fallback map %d range register%s\n", info->ranges,
-> -			info->ranges > 1 ? "s" : "");
-> +			str_plural(info->ranges));
->  		cxlhdm->decoder_count = info->ranges;
->  	}
->  
+> Changes in v2:
+> - Rebased on top of a6923c06a3b2e2c534ae28c53a7531e76cc95cfa
+> - Added comments to Device ID definitions as requested
+> - Added Reviewed-by tag from Qiuxu Zhuo
+>
+>  drivers/edac/ie31200_edac.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
+Hi Tony, Jason,
+
+Gentle ping on this small EDAC/ie31200 change that adds two more Alder L=
+ake-S device IDs for ECC-capable part.
+
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+
+Could you please pick this up for the EDAC tree (ras edac-for-next)?
+
+Thanks,
+- Kyle
 
