@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-761886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38A6B1FFA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:53:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4DDB1FFA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD26216F777
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE7F1790FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152072D8792;
-	Mon, 11 Aug 2025 06:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009902D8DC3;
+	Mon, 11 Aug 2025 06:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbXWnRXy"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vgfcBgvU"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E142D8789
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FF62D8793
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895185; cv=none; b=KI5XRsImb1TlShLoTlGNzpui11gewJyJXhw5nJYu0EFER5lZwa6T2MRGJAxnWxst20tABb2T8AP1QivO2WycxftxignK3K0VGS/KMPfhSrK+Cy0I+V530Bt1AuPxbKiGRKYeMi2vDfX6Bsqkuo9GJQ/9ix6vgjNwiC/tZa4u0+E=
+	t=1754895192; cv=none; b=uG0jOxWT9z7Z/1nkXWfQ/waoVSFDVFDdiXnsclBpiW6BR00MGp54AiXYLx9pLWJ7y27Vz6aAV3Q50krU0Cn+Abr0BXWCkSaCP9aKy0o60CaJAsmFup3v9MTIpG0KJxDciczUTnhNCMjkEu+OeMVlbFtVGWmwipM3S2HxVdpr5pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895185; c=relaxed/simple;
-	bh=/fVsUY08ipVRtRLpv10uWhZA7wsDSRqCmbwogA870dE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uaM40XPRg8Hw5IZEPqLL11bDPgX3NNad7cmmKheKUfOE2dBbH+TTKahZk3ykWq+mbwGu9wLQb5enpEPYOPtRMLjI0Gc4LAObdPGm+SXYQENX+dK/JB+M91tKbRQjIx/EdJRq7OeSRk8o/PujEITRFgQ8lOABRirh1plkUFlijRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbXWnRXy; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4fe7712bedaso3835742137.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 23:53:03 -0700 (PDT)
+	s=arc-20240116; t=1754895192; c=relaxed/simple;
+	bh=xYbuFuOQE2iRVDFswBjY22aueZfkpLjtRD1jEbIWSZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDe9UfOgXDL2XK+YlfW90vFUEZxG0M2JKLcrEgdsO4VMIOnJbP/16/TG3EZiFIiA77SVzmEcBer4uJ3VtOJAPW6zPdgCBkftyiuqzN0O+EPYHhz9N42sbMgvrudE/loSuOGcN+6WbAdtLekQXDMLU4Dgl7JquL4pmB7V1UgFm5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vgfcBgvU; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3226307787so3122062a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 23:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754895183; x=1755499983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fVsUY08ipVRtRLpv10uWhZA7wsDSRqCmbwogA870dE=;
-        b=nbXWnRXy2WMqzm53doYdOxLbM6tSht8EPalMvwmZVSJ6T/N6hU21fkPBCMsWPdN3wi
-         C4WxS+VFjYd9S9gTuTYrgFvp3H+/qN1Lc7QPiN6a8h3r2PwtoAiVhE9NJcApw6jN5fAH
-         tShHTOxLeTwPCBAT9KTmHPKN5I0N6r+FRKXYkbUbQuOdNI0TGiMa8RrLL/Is4ngBqwi0
-         eXmrUMz4fW6dPLagT1EWceNmEqe+O8N2NMtB6KCSPgfni/g5/ZxqS3AM0ogqyCOB7+aG
-         bwyKH4SBdadWY4/fYwt7c/K7hRZMOeL97A0vhnXoJCpd/iikLtCliW9OpY2d7YTVnXQ/
-         BfPQ==
+        d=linaro.org; s=google; t=1754895190; x=1755499990; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+6IsZOxTo8GJ9RAKnkhWQjXljSbOqRKPbCsXfe50Af8=;
+        b=vgfcBgvUEbX8AhNNIcr+tQQJucIVVv4ckY0xteuDev/qh850buDy8QAzuOrNco6Dbo
+         pMy8BKaKMfNFfmUC17u2ATGylO80QStfYnNP/eKElwvJYI5nBKeCkfxM+x3OQpBU0xjJ
+         gLjcjL2mUdKhG/5EddhaxxOrf39GnAh3zJXQ+2k4G8pfflCt7CssaeJj22msrS8FjVgs
+         DY4kUEadlW+j6obGYwV8V5e4uXxwRtsqarEFv37RbB/Fvn8UEGzTf76/BontntC9A+21
+         /qDqfE4dlEL4iJ5O46/vtXE6yqnwGaB/rIfjNcH3lJES4tPZQb+G1GksFwQn7FqQJU+U
+         Ymxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754895183; x=1755499983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/fVsUY08ipVRtRLpv10uWhZA7wsDSRqCmbwogA870dE=;
-        b=pyHtdlKy5k1+Gdgrgu1IlCixzFJ7sgKQjwDibIXDmuUsdzeEQ2K5Rk2CktD7SihoyO
-         YV33gLU6Glh0KokCsLooSIhhDSHsXBD4UWh9Tc9IxwK4sgx1RgioJKYL+kKHrYPJp0Y5
-         Gk5nMPWrCoqh+/0BZHzCtqQSThLpdrLr3Tc7hoLDo1dYU+U7FjBmWEr/94PKNy96eC/S
-         /33AuwDgWcew1LlOupeULmO1Sg0l4cN2d/rp8ytKo6mdzLKvxIoKH8DwVUh7HEzSXO3q
-         O/WCQuZWLGlDPLunY/hY6gzzaJNa1+UxrOIaiUzZLMeT3Cgp5GVDyR4MDIYUC0BW9TTX
-         OGlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhBxSh2xPiQjCVxd9JtUoqOi0FTR+EKVU4+qLTYuXDw3TA5bMp4Wg8+NxLBCE9Ogc6QjGEPgK6BCrhQZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ2Fl2CdIMBK41WRGFRH/5/cHQRWjEGWAcrahzLr1V/vnf9yrR
-	aZuG/MMMhSuognFvh8VQjMrUvSnt/eaQYXi6WnNlZA6W9TDADNZCXq65PUWbkRp5yaHUNPx5jd/
-	pZ1YUE1wcUZrj/Ovqpvsw2iPxZQuzdZc=
-X-Gm-Gg: ASbGncsGGXS/QR+i6S3ItwTyvYXABWbY8YmBQcL89WsriZygVCwAcC5K/URFfhYZjSr
-	C0Ur/WLmKNVJjSAOoXZr0i3wXGOPxYgryYHshT32TS3VtbCn3AYTQeauH2GvJTJFfBKBJ7NJuQR
-	TOBbAobSnBPZQCQoDWEb5g+1qdj52UwEw741iZfB2+aW5YJAhQFlFr1YtOlVLYrneoBE9pYX1BV
-	t25ZPk=
-X-Google-Smtp-Source: AGHT+IGGDVcXKzHiETBGgnAZpGCC0gWUGYjDWg/fG11MB7bORpn/RJDutDW1kYazG5raVFO+qTH8hQX/k+xxbhGLSxg=
-X-Received: by 2002:a05:6102:c91:b0:4ec:c548:ee2a with SMTP id
- ada2fe7eead31-5060f8b41b7mr4400160137.17.1754895182668; Sun, 10 Aug 2025
- 23:53:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754895190; x=1755499990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+6IsZOxTo8GJ9RAKnkhWQjXljSbOqRKPbCsXfe50Af8=;
+        b=KWdZ+OO28HyhrBWEhAyGgTLaP6KgVyitqMlU6bn3zoUTSmDjVN6PxS4wy2nNyIUI4Y
+         RU8xVnLvogejBfGFLvcW+NcwLfX+FkYiOSeDtWDdq6X2wN6atKAPYmfPdQiokjESoR/D
+         QvS+fQHc+H7Ww3MEPKZncLYhYT10s/XPB/xcKNYJiQ+QNCL8W+IDtA+B7rdZQjP0uELJ
+         EFFvITKFH5DvE1E3nlNm4BkxsX86e+YWPA+YvMykRO3nL3vIRopElM7LUxPHffABa93j
+         ub9CT9pHo+tkk4jVbpRxWqm3GhggpPDD19JOdXVLyWEZfGDxQ5OhcwaTPIcgpxTi/ocf
+         HP2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8FHfXTuZSZsHvInFm1MAzshWI2vqmK1V8iaM9a6UdnOK0qFuXzFeQ1Zqn7/ipUAITIi8nPZ0LYX2JjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoUBgC0qDNM2EDDn6s0dZvAZDci9a+DrRpWNFhIxi4mlTvRf4/
+	CtJxdMoK5ux56K1VYTaMwQ3d6bIK9GMktddQ+jfQKczp5jNu4cQkpZTy6gtXD6fAv4o=
+X-Gm-Gg: ASbGnctItknE3A6GE2anIkw8VO119gXqmgiKEHgWJ5JN5Hc8FxHbemRMnF0uAKvfL9E
+	cvdQnd2Kv8pb2EhJTKelEwZBTuD0zLPdAfzc/eYRT191tKfISdO20vi3OrLwT09SNUWWLx3LAwU
+	y5IPQMe4HysoCy8CbvXw+JUdLx7GcBWffhLs/EpG01YLt6KMdtmsKxXvzsrp6Oe0Jli1qthhctp
+	6p6sKcsqikym2KxDUDaFcklCs7LaWkiE4X6T4EF6Lh3DABqqjGczJlcAOKvZ/heCSzRI4Nky0vF
+	+tgFgEOV6iU65/BVKWxZtgnTaDc4XWO0ajOKxEKE5YTIpQZmlaGyewwM04ujku0XjCAxJLYV0vI
+	VmNseMC2zsWPyB/F74Sb9cysJ
+X-Google-Smtp-Source: AGHT+IG95Z25+MbEXOab8ZAB57TBt6vJ69oSa3ZxghqlYC/meL+6fjmVaH43MbKEjD0vda80hIJ8sw==
+X-Received: by 2002:a17:903:ac7:b0:240:3e40:43b0 with SMTP id d9443c01a7336-242c2225db1mr157984975ad.43.1754895190122;
+        Sun, 10 Aug 2025 23:53:10 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm265507785ad.39.2025.08.10.23.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 23:53:09 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:23:07 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: airoha: Add support for AN7583 SoC
+Message-ID: <20250811065307.2luk632awfrjfx7v@vireshk-i7>
+References: <20250809112832.15830-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
- <CAGsJ_4zuEcgg7U0yCMu6ayKqRPACtvuzUsC9vUxBk2PgMzaf_Q@mail.gmail.com> <47ce3db2-38ad-4a6b-917a-c6300fc39543@lucifer.local>
-In-Reply-To: <47ce3db2-38ad-4a6b-917a-c6300fc39543@lucifer.local>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 11 Aug 2025 14:52:51 +0800
-X-Gm-Features: Ac12FXzg7m8LhV-73jU_CYSdeBumfCC_Ufk6bjZHFOVKRLYHVyElDAX-Y3qBP2Q
-Message-ID: <CAGsJ_4w_c3AY1Nw7EhYH3rf0jjqgZ6AYLdr3xuonF9SNgWckDg@mail.gmail.com>
-Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
- mremap folio pte batch
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250809112832.15830-1-ansuelsmth@gmail.com>
 
-On Mon, Aug 11, 2025 at 12:57=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Aug 11, 2025 at 10:40:50AM +0800, Barry Song wrote:
-> > On Fri, Aug 8, 2025 at 2:59=E2=80=AFAM Lorenzo Stoakes
-> > > The expectation by those discussing this from the start was that
-> > > vm_normal_folio() (invoked by mremap_folio_pte_batch()) would likely =
-be the
-> > > culprit due to having to retrieve memory from the vmemmap (which mrem=
-ap()
-> > > page table moves does not otherwise do, meaning this is inevitably co=
-ld
-> > > memory).
-> >
-> > If vm_normal_folio() is so expensive, does that mean it negates the
-> > benefits that commit f822a9a81a31 (=E2=80=9Cmm: optimize mremap() by PT=
-E
-> > batching=E2=80=9D) was originally intended to achieve through PTE batch=
-ing?
->
-> Not for arm64 apparently. And the hint check introduces here should avoid
-> regressions even there when small folios are in place.
+On 09-08-25, 13:28, Christian Marangi wrote:
+> New Airoha AN7583 SoC use the same exact logic to control the CPU
+> frequency. Add the Device compatible to the block list for
+> cpufreq-dt-plat and to the Airoha CPUFreq driver compatible list.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/cpufreq/airoha-cpufreq.c     | 1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  2 files changed, 2 insertions(+)
 
-I still don=E2=80=99t understand why this is fine on arm64. We do have fast=
-er
-folio_pte_batch(), get_and_clear_ptes(), and set_ptes() with contpte, but
-are those benefits really enough to outweigh the disadvantage of
-vm_normal_folio(), given those PTEs are likely in the same cacheline?
+Applied. Thanks.
 
-Unless the previous contpte_try_unfold() was very costly and removing it yi=
-elded
-a significant improvement, it=E2=80=99s difficult to see how the benefits w=
-ould outweigh
-the drawbacks of vm_normal_folio(). Does this imply that there was already =
-a
-regression in mremap() caused by contpte_try_unfold() before?
-And that Dev=E2=80=99s patch is essentially a fix for this regression on ar=
-m64?
-
-Sorry, maybe I=E2=80=99m talking too much, but I=E2=80=99m curious about th=
-e whole story:-)
-
->
-> In similar series to these in other areas, it appears we need the folio
-> anyway so there is no additional overhead to deal with, in mremap() you'd
-> otherwise just be looking at page tables which makes so this egregious
-> here.
->
-
-Thanks
-Barry
+-- 
+viresh
 
