@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-762985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355F2B20D3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EE5B20D3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D70621ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC12623039
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86E12DF3FD;
-	Mon, 11 Aug 2025 15:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CF62DFA34;
+	Mon, 11 Aug 2025 15:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lj9QAutn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q02aehD2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99932DECB9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED572C17B6;
+	Mon, 11 Aug 2025 15:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925045; cv=none; b=rcLrNX6qI+nKg6/F36t6/kIOiN6He3XpqcTHgXdULqnNU76eSrik6f3qZblVlsYaRHpuoDwsdxdYnksRhntgP/6tniGfnI581Kp88gh3dSxyfZhG2bqRZOFHEMYK3UJ/0WD+svJI3r9CGiIOFmCLz1G7duE5qj6bdAbyT8/cfOg=
+	t=1754925075; cv=none; b=CG9ffVXz+otla2Eer4216Mh7S4AYBB7YjCybkznsiaLve48wfpP0hBG7iO+BvndeuUqF+lyleeF90NAIrhphI4gPD6NMAc6Mqt/29wNfvadueGBh3MlMrzXTBjH4imk/3T6Qnvh7dy2GGyLGcbicEYWo4QCIGjIDURDilg6DB9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925045; c=relaxed/simple;
-	bh=3WKxm72NITbkBR3dIdfO/Kv+ilX6wgZ3vwfq7CUUo2Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=X0UyMPETofos2OajmzJiFvAEz/DDXjTGvvL/0B2/AhMS9Oytd1dmmhJhE1IzfwAoLo0Ie3eXzXlX6bjWeSRHjprnxzwqZFnWXUze9bnol8zI0Bbg/Tn+3+7Cp+kem3fRe0GcID96IPDtHZnFQAJHFOgFqP5SQRwyOy9xCvlCmdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lj9QAutn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754925042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aO9z+XXpX3ErnQZXNBza1RvhYs7AB5y4bts+goxtcPw=;
-	b=Lj9QAutnTgEol+LwZZjWZeNaDvXYULNmKAvy8Clh7WEEczVPWZgc9rt0UJsYfEXw3XQh7y
-	L7ypiF4/LjZ2mh8YWBr2kESxYmWvBJJyU858ZOVe1kFvfeNDu9wM/qYOJKAe2PdKheHs/6
-	ACmQaROasKgUYW2FeE/txT3Xq1RY28Y=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-387-nAQ3sGEiM12ZM1rzu8n60w-1; Mon,
- 11 Aug 2025 11:10:41 -0400
-X-MC-Unique: nAQ3sGEiM12ZM1rzu8n60w-1
-X-Mimecast-MFC-AGG-ID: nAQ3sGEiM12ZM1rzu8n60w_1754925040
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E92B11800357;
-	Mon, 11 Aug 2025 15:10:39 +0000 (UTC)
-Received: from [10.22.80.50] (unknown [10.22.80.50])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D6DD3000199;
-	Mon, 11 Aug 2025 15:10:37 +0000 (UTC)
-Date: Mon, 11 Aug 2025 17:10:29 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    "open list:DEVICE-MAPPER (LVM)" <dm-devel@lists.linux.dev>, 
-    open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] dm bufio: remove redundant __GFP_NOWARN
-In-Reply-To: <bae5bba3-a73e-4a5d-80f8-e1506d0a302e@vivo.com>
-Message-ID: <4fe735d7-736c-7bbb-173a-1bee27bbe92b@redhat.com>
-References: <20250811123638.550822-1-rongqianfeng@vivo.com> <20250811123638.550822-3-rongqianfeng@vivo.com> <649a5bf8-309b-8128-b3f9-971d3a0bb350@redhat.com> <bae5bba3-a73e-4a5d-80f8-e1506d0a302e@vivo.com>
+	s=arc-20240116; t=1754925075; c=relaxed/simple;
+	bh=7HZKE3O+WT6DDNM9/2drqU5rxj0lRkDaLvloQLzT5lM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hR1eRenMhnnuLDWfl0ETAqQm6ENMQq/h8LhVUH/cuZ063HeVrIednz7NK6LUJkdZXKSy0pPWUJsAH9jSeB5wE3S0vbhGVKC9zi225pZXLd3bxQcTkO2A3TyCq4gBAGj4gTdfVmD0V0/OfOQJJcoBrhb76a8m7yZQqTdCoOz4rz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q02aehD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93F6C4CEED;
+	Mon, 11 Aug 2025 15:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754925075;
+	bh=7HZKE3O+WT6DDNM9/2drqU5rxj0lRkDaLvloQLzT5lM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q02aehD2d6ncjMmY+jObE7v0Lyo+L5H3Xxy/XR80vOfJESLoOxs+i536u3aStBoX8
+	 s8RTsDXRej/j4IxSVli8GBBOnZZ2Gq+hmeysLS15mrGtoKiO5H2vt28mYxV3nYdDaJ
+	 48bIwUDFDO4E+3DVh73HPqg9i0mmZX8v/UqCEN8lJhPAFkA+zNWg8yh+WZpsrELdxq
+	 aDn+8+zeaApIbAd94JXx0BWSnup4NdVIbCXd3kpBxIDXHXL4CbWyiA+xSf1/sVP2D4
+	 atvuxZgKLZij9aVIUKwpEF4BY7aJuiMhtYy9Y0tpBz6sD4cSCFql6v4ltj6s7uglaF
+	 HtmFfldHq9bIQ==
+Date: Mon, 11 Aug 2025 10:11:12 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Describe on-SoC USB-adjacent
+ data paths
+Message-ID: <y6b5yqjbaz3sya5jg5fmcgivprtybj43eylpftd6z3mamrb737@kua5xzfonnpt>
+References: <20250808-topic-7180_qmpphy_ports-v1-1-718d7c52921a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811712-898933741-1754925039=:1480606"
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808-topic-7180_qmpphy_ports-v1-1-718d7c52921a@oss.qualcomm.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Aug 08, 2025 at 11:20:45AM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Define ports {} for the DWC controller & the QMPPHY and connect them
+> together for the SS lanes.
 
----1463811712-898933741-1754925039=:1480606
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Sounds quite reasonable to me, but I can only guess why you think it's a
+good idea. Please start with a paragraph documenting which problem
+you're solving.
 
-
-
-On Mon, 11 Aug 2025, Qianfeng Rong wrote:
+Regards,
+Bjorn
 
 > 
-> 在 2025/8/11 20:44, Mikulas Patocka 写道:
-> > Hi
-> > 
-> > I think that GFP_NOWAIT already includes __GFP_NORETRY too. So, should we
-> > drop __GFP_NORETRY as well?
->
-> GFP_NOWAIT does not include __GFP_NORETRY:
-> #define GFP_NOWAIT (__GFP_KSWAPD_RECLAIM | __GFP_NOWARN)
+> Leave the DP endpoint unconnected for now, as both Aspire 1 and the
+> Chromebooks (unmerged, see [1]) seem to have a non-trivial topology.
+> Take the creative liberty to add a newline before its ports' subnodes
+> though.
 > 
-> GFP_NOWAIT tells the memory manager to only wake up kswapd to perform
-> memory reclamation, not to perform direct memory reclaim.  Even if the
-> request fails, no error message is printed.
+> [1] https://lore.kernel.org/linux-arm-msm/20240210070934.2549994-23-swboyd@chromium.org/
+> 
+> Suggested-by: Rob Herring (Arm) <robh@kernel.org>
+> Closes: https://lore.kernel.org/linux-arm-msm/175462129176.394940.16810637795278334342.robh@kernel.org/
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 48 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 8f827f1d8515d6113c85a2ecacf7ac364e195242..a0df10a97c7f8aa5cd468c8983e74256490d1d06 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -2897,6 +2897,31 @@ usb_1_qmpphy: phy@88e8000 {
+>  
+>  			#clock-cells = <1>;
+>  			#phy-cells = <1>;
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usb_1_qmpphy_out: endpoint { };
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					usb_1_qmpphy_usb_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_dwc3_ss>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					usb_1_qmpphy_dp_in: endpoint { };
+> +				};
+> +			};
+>  		};
+>  
+>  		pmu@90b6300 {
+> @@ -3070,6 +3095,26 @@ usb_1_dwc3: usb@a600000 {
+>  				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
+>  				phy-names = "usb2-phy", "usb3-phy";
+>  				maximum-speed = "super-speed";
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +
+> +						usb_1_dwc3_hs: endpoint {
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +
+> +						usb_1_dwc3_ss: endpoint {
+> +							remote-endpoint = <&usb_1_qmpphy_usb_ss_in>;
+> +						};
+> +					};
+> +				};
+>  			};
+>  		};
+>  
+> @@ -3384,8 +3429,10 @@ mdss_dp: displayport-controller@ae90000 {
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> +
+>  					port@0 {
+>  						reg = <0>;
+> +
+>  						dp_in: endpoint {
+>  							remote-endpoint = <&dpu_intf0_out>;
+>  						};
+> @@ -3393,6 +3440,7 @@ dp_in: endpoint {
+>  
+>  					port@1 {
+>  						reg = <1>;
+> +
+>  						mdss_dp_out: endpoint { };
+>  					};
+>  				};
+> 
+> ---
+> base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
+> change-id: 20250808-topic-7180_qmpphy_ports-e63404331685
 > 
 > Best regards,
-> Qianfeng
-
-Yes, but if GFP_NOWAIT allocation can't sleep, it can't retry - thus 
-GFP_NOWAIT should imply __GFP_NORETRY.
-
-Mikulas
----1463811712-898933741-1754925039=:1480606--
-
+> -- 
+> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
 
