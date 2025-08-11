@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-763491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496C1B21549
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB979B2154A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C327AB39D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 744607AB93D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7031D2D8390;
-	Mon, 11 Aug 2025 19:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5827D2D77F1;
+	Mon, 11 Aug 2025 19:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CerY5KrD"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kUlrxxdi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB82311C13;
-	Mon, 11 Aug 2025 19:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455B6149C51
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754940117; cv=none; b=REospKGzssVVTlEM3WRTMEjyugvrJ3t8eBJzSd1pjj7EG4HZQ/7RLvrclf8MjeE5pVqL5NG5+/roJXm0HTi4VRPaozhJ0NSRh5Z58Ma69a3kU2+lQ6DMNQMt9DnkiQkOP+tmjoZ4c47CEkfEcvfI+oqHRQn1TVbVhjULRmcUENU=
+	t=1754940139; cv=none; b=s3y7j0gFAAZtve+N6ITq3DTHyGN2dlkjaYm9hxZ+08MUJKGy4mtjyit57osyq7daqM0/pYlPK3WKblOCfxXRd70vB26zISZb18CPykqXllo5TUXZHbknfrIAMur3zicFTMsuWhywh/tvxV/YOPd/MA0QYg9VPbhWeo5i2Kv4OAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754940117; c=relaxed/simple;
-	bh=q6vUO1LUw1MQiS0jp/g9fLsU/SLKkeJqnk9YMwD57BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+tIouXr4DaIQ6iVkeUm/VWRFNt1IgeqP/efzsnsOTFLTpVQjwU3td+ggR7j8G85bhinvGkk/myAPvwiP5kRQO3zqnLLrQeShmCvJ67kWh6XzU2Z12QQZDNiPdTnFy6j3uXPyOOZi8DKa6hP23JLfMGmDocBixCln6oQf4tvfmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CerY5KrD; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76858e9e48aso4161797b3a.2;
-        Mon, 11 Aug 2025 12:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754940116; x=1755544916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5X+m1D+29cxcS9CDLMiWrMU592qkoFKmt7du6+JeuBk=;
-        b=CerY5KrDgJNCNKtNmdSni20w3UY+cJs1RBQmg7VHuNZLM/Goi4rSsW7U8/fj6w5c6q
-         2kvAhMsG3+IUxkxgpfpH4ByuTf+lska5ygH5xYzcm9KnWj48I7cSuwBeaWw7mdWEaFgU
-         SxdRRACEamYaOEPh4bPIlXDFDuyR+Wo99zoyGWR54kprvXuDigBs+f0sflp1tlvNI+l8
-         H2BpCH7bBCcPxIAYOkdk6VWZbxCAnsPvljoIkVgX4UavmLWyILKKUMZh4vYCKZFbgrsd
-         +kZZme6+xl9b8/fzkLSInUK1RyWVZNuZVttxzvBw18ImgqU8JIunt4oasQM+vSdeHKTz
-         z8EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754940116; x=1755544916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5X+m1D+29cxcS9CDLMiWrMU592qkoFKmt7du6+JeuBk=;
-        b=EKB/ywbawJ1FoqSL5vER/tnqvqv/O6oONCvmh8YkcWiG2pK++snseZ3fCj4kqzIkuS
-         5pe8kF+goj7TawKNcqZBeewCLa9xapVGCJciSBrXsxC6jRbo3ouFNFzjMV05P6qE5Aig
-         X/lJyXlElE99gtVMwpGVB/OeQMte+DS3JSNuWjCzFbc13Zm5sgTxQA0m8Qr86XycfbTs
-         bPrA9B6pfMAOLjC4VNP+f/BHu4p0ABzyWn1sB3a71xt9qLBXU7k09opIkkNeyWhX60j8
-         UVa3Ghu1znpBIJoDSc7QEKtuzjnM5T5Hi+LO/J0S+HTmgInXfqc95x1vL/Uhg06NF+Fe
-         tCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpDdrgEc2QlZ2qTnnAgI8CxNjWzxxc5aQiHx9tkeC5WivUx1WlnlRE20/rRwPNgJPgAtqi6kbfEwb7@vger.kernel.org, AJvYcCVG89wqTJ1JNtdLX2vSuRljfManpCpDA5WoV/6prXNTA7vyE6V9LHx3aMwGjaXQAlCWXF24IYe2ROVMols=@vger.kernel.org, AJvYcCVqZNxNTta1NYB8qkFUbanjAwJZBJwzeg2UCk4yc4y9RTgyU8pCcwtIrMWa6jvg2lrsag6+cXgjUIZzxcWA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAqLNoXHBk9ZiWgjuaiOMyZw9f8DSN/NS4no37HLYFarwEwFEw
-	UB0htbrJRHeW1sXC2JCH+XmgihChvhJZh+FLm1PJFO7Y9pe1Y/aFrlJc
-X-Gm-Gg: ASbGncsM3nPZGe31leH+MttMx5KQrzcIhRWRIRTrflVtwoAw9xIeovyCD5ZiaW3rGUQ
-	Fq+afuW8dxPsiiriSXaeBUJSDhYLArykyBfNfHsUVMlG5bB4G1Kmmtv4ZFo0clP1kbFEpQFokbr
-	OtFh6mRnl3cVEofmYj7eQMh92oO6ySLVx308/sE86/Nw7sCKcOWLjp6ItDCVKSsESZZpqROOPeT
-	D2u6LDjVaPQHeXXXzpt2BEcOUbTEwsObDmUrSIw77UaR1faL8sVa5J5QfUl0VJNb1iKnb3KJs7t
-	aGCX85gZMCTzAfmbnLV+sc8tjuss00/+XO3cDoNun1yIW9ek3dKczQQv/cX8R6m0efna/ah+ENG
-	Dit78AVxNzDFFHR8dBt3AJic=
-X-Google-Smtp-Source: AGHT+IHTBePaeMogrxNHoERLv/u64P5eEMxy3rp0ld4rJBrJHJ1JWgcnxDhX7J/c8Z8e9gplqP2gog==
-X-Received: by 2002:a05:6a00:39a1:b0:76b:f260:8614 with SMTP id d2e1a72fcca58-76e0ddf1eddmr1126933b3a.3.1754940114735;
-        Mon, 11 Aug 2025 12:21:54 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:69d7:30de:b05e:915b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdf61d182sm24617278b3a.119.2025.08.11.12.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 12:21:54 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:21:51 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
-Message-ID: <mrqxggv7vhclnranoc3uacfyzccod6dmc54kip4f7wjdpngjzz@falnsjwnfcjc>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-10-arnd@kernel.org>
- <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
- <aJnng9z9pUTFI49x@smile.fi.intel.com>
+	s=arc-20240116; t=1754940139; c=relaxed/simple;
+	bh=mloEzFvXfxD1hQFOaEPZirqwqW4jnDs/bTxPcrl5bew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gzl8mdjZ34d623mRTtFm32bJcD267Riy73fgUDaZg9Iv7mn2O0p0OxwHGIfMxxrtXkeJMvSBeVnWgld7CZf0FZoR4YKo0OGC+bNlsbKXgMmSXhxVXJ8aoymbj5EFimagaD41FyEdoyLImUSRdXyZ/Wv1Npb0LEd3L6W5qisPudE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kUlrxxdi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754940138; x=1786476138;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mloEzFvXfxD1hQFOaEPZirqwqW4jnDs/bTxPcrl5bew=;
+  b=kUlrxxdiLuoSD7Mlnuo14e3QZPqDNO7+vUAgwMYuq2uR47Yeilawl1ZX
+   Dul3YeInrGa8uSadgq7KcdGtUCfLZJD8hrLwF3AjRr1Lcsuep5+vlSUbl
+   HqxBjcbegOHmiwBDNH5R+PaYHiqmxOjBudnGAesrtBO1a+9aOCvEdI02S
+   PdpKnhRjPxA/464wHinPVLg9oRk52cCFxY4MoehIxdnqDKgL8yAVJ2KXK
+   HyCnedcwu/omXDTBCef+OM7lull8BIuj5OaP9f4+FmBuzyEI9W3a32MG6
+   WR+euvl8LaNQNWLexMmhYmJ4AywdOdjsC7VQ1csen8PBP8Or5gUIrhn3b
+   A==;
+X-CSE-ConnectionGUID: 3reYH7glQqG+E8NRfn9T2Q==
+X-CSE-MsgGUID: Yoj824igR+iMQW/ivV+tvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57073915"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57073915"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 12:22:18 -0700
+X-CSE-ConnectionGUID: 3TjZZKOGTRu6NC2fjdTuPg==
+X-CSE-MsgGUID: BIZDgiATTYSm65bDbgIARw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165998610"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.51]) ([10.125.111.51])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 12:22:18 -0700
+Message-ID: <6f8307dc-c3ab-4270-8215-c441f0e3f4c4@intel.com>
+Date: Mon, 11 Aug 2025 12:22:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJnng9z9pUTFI49x@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] x86/fpu: Fix NULL dereference in avx512_status()
+To: Sohil Mehta <sohil.mehta@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vignesh Balasubramanian <vigbalas@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Oleg Nesterov
+ <oleg@redhat.com>, "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Brian Gerst <brgerst@gmail.com>, Eric Biggers <ebiggers@google.com>,
+ Kees Cook <kees@kernel.org>, Chao Gao <chao.gao@intel.com>,
+ Christoph Hellwig <hch@infradead.org>, Fushuai Wang <wangfushuai@baidu.com>,
+ linux-kernel@vger.kernel.org
+References: <20250811185044.2227268-1-sohil.mehta@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250811185044.2227268-1-sohil.mehta@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 03:52:19PM +0300, Andy Shevchenko wrote:
-> On Mon, Aug 11, 2025 at 01:34:43PM +0300, Matti Vaittinen wrote:
-> > On 08/08/2025 18:17, Arnd Bergmann wrote:
+On 8/11/25 11:50, Sohil Mehta wrote:
+> From: Fushuai Wang <wangfushuai@baidu.com>
 > 
-> ...
-> 
-> > As such, this patch seems Ok to me, you can treat this as an ack :) This,
-> > however made me ponder following - is this the tight way to handle the
-> > power-button IRQ? I don't see any other MFD devices doing this in same way,
-> > although I am pretty sure there are other PMICs with similar power-button
-> > IRQ...
-> > 
-> > I see for example the "drivers/mfd/rt5120.c" to invoke
-> > "drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. This,
-> > however, feels like code duplication to me. I'd rather kept using the
-> > gpio-keys, but seeing:
-> > 
-> > git grep KEY_POWER drivers/mfd/
-> > drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
-> > drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
-> > 
-> > makes me wonder if there is more widely used (better) way?
-> 
-> FWIW, on Intel platforms that use power button by PMIC we add a special driver
-> for each of such cases.
+> Problem
+> -------
+> With CONFIG_X86_DEBUG_FPU enabled, reading /proc/[kthread]/arch_status
+> causes a kernel NULL pointer dereference.
+<snip>
 
-If we can make gpio-keys work for various power buttons that would be
-great IMO. The MFD drivers in question already are using device tree,
-but they do not define/expect nodes for the power buttons. If the nodes
-were there then I think gpio-keys would work out of the box?
+That changelog is getting a bit long-winded and has a lot of extra
+information.
 
-Thanks.
+The changelog also isn't really converging, so I gave it a go to
+rewrite it. Is this missing anything?
 
--- 
-Dmitry
+https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/commit/?h=testme&id=d61828dcbcff4ac80b91f5071ba6d21ef6c97347
 
