@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-762625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F43B20915
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:44:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45721B2091B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C52E3BE1A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:44:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB597B2247
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73EB2D3A97;
-	Mon, 11 Aug 2025 12:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8592D660F;
+	Mon, 11 Aug 2025 12:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bgVNxfD1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c85EGQZz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZuuGQRIO"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9A220F4F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916263; cv=none; b=gf93PR6PPbcfXJzD5KJU4GrdS0F7pp5/eMB/ehZiDQBEXbhTAW0h3NdfHFvgIcERenA6Y/vuDfqvax8RR1kF5lUPodIqszLX16aIH6THdHIxDm/nwkPIM1IpmtcB2Uw7Co3XMd1kwFDENLnwgPp85P9fy5rFa2KiKAhQBB+wZX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916263; c=relaxed/simple;
-	bh=4bPXvTybTYw3uWFJqMw7jey3ul2mSMuUchxQYHAQ1e4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XV/HSTgoW71CL05nKtbSY+B4RlW895kVvjAj5dCFj3t6oKG0HYMUDBJ1wcELkajejO6l27gXBtY6QLOvAnUlWzHXcsbWYCwjQv2pa+IcFNwQ4x5gVTHCcDq4JnBREXd3nbYgoH3fR52UqoLB2IyQAUwf6DIt/JYOLnnOJ7/SGMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bgVNxfD1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c85EGQZz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754916260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJqFgM29ffLz4B4qWNr3rGFSEuLN/8lsgvcpqVZRiGg=;
-	b=bgVNxfD1VyaFgzgIQv3JXt1FNrvd3hwqTK05Ct+IbbIYY2YL+R0yrCxCMYK89kPUFP6M5f
-	pte3v9pwuHTIWqtiKEs3K8wj05lFoO5V/2yUfY1V54KovAuuDgk9c2QCl/yKCwJaYJskwQ
-	EsOixpZJCjfRLspSewiUI0aoSp+VdzQhvun5S4v6Mh5JTxGvddLzN3bHOjeor1L4RZPGDH
-	j/CfHzp57zgmdlR9aH6XkTt/CtOiCwE6Yo73jzMUzeTtKNRf+rTLadgf1E6yETLCqh0SK2
-	dlu2mvMquuypKbtgeeyE4Z5+7ywXY8AU7dYqHbxccJJS5rqbqFAnbOEXF+PaLA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754916260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJqFgM29ffLz4B4qWNr3rGFSEuLN/8lsgvcpqVZRiGg=;
-	b=c85EGQZzGNWQE6Vg+A9UMu7KBYuhDuOweWST4hHVex3LzjDWjhgxGsC8NnQDhLxLJVzQKS
-	ICK8LwbDGf7sk5Ag==
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>, Namhyung
- Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Kees Cook <kees@kernel.org>
-Subject: Re: [patch V2 m@/6] perf/core: Split out AUX buffer allocation
-In-Reply-To: <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
-References: <20250811065859.660930338@linutronix.de>
- <20250811070620.590421133@linutronix.de>
- <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
-Date: Mon, 11 Aug 2025 14:44:19 +0200
-Message-ID: <87jz3a81uk.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97232550DD;
+	Mon, 11 Aug 2025 12:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754916294; cv=pass; b=im3C4ILC+Gy6f0+kiRsxfdRJKA1jw/LkBm14K7zqMHed5+95K+anGfPKhXcMrG2bZskmwp2KSMSNi8RDaVW1EHDNjzIC7iTFxE2J4FxbKTnCRucja9xISzp1hxXkTzNOnUOK4pySQwaPSeqaJuryQ37WLcJFZAg1mcPkemR7nUE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754916294; c=relaxed/simple;
+	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Dv85gQwstvT9zo7WbljaQ7tqXLNiqx6QXQG6HqzdNOPuu4M8CKJSajwhw+abJOyd7XPfX0yM6/sorp/NgFbkRUx+246We7ynYoJXh2HHohsQhEMRN4Nqj2SV5OoCTmn5/Ld6OiHP0/W/L1yzOPxaCWZ9zfaZL39/cFaS5dpgzAg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZuuGQRIO; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754916280; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bGgTo0/YKQqNOPrytVrA6Np4r6JiWq7Enb2OsfBOnj17lIZsTs0pKhUcHN9kRZmf0LSXp+TBalhgAk5igueU6tOhndIc7Sz6jvWn5xTz2kKlYcxyZYiY4wm+AkuQLiBCa+bVdvzQyKgk1J8ao4y2jA0OmYxj89CHJ3unt5N1NDs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754916280; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=; 
+	b=VnqdKbndosnkWXEOHO+199cZ342LFdhHoLinXTzIi0WMv0jPQkP01vleAHKXKkRwKwFs2CXWY4ASeiSRhkaq9igV7+bmG0/4xJ5RLAMWxKmdjeNr/cQNJoO54wCWMVheSg6PL5JtNbC+6gh7ENA+IBi0Xzdz1E2xOda8Kegeh9E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754916279;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ulnko+f7RhYbqw4rJ0GmLKtW69KU7fq6k2US4VAeWA4=;
+	b=ZuuGQRIOKxWONQNCGjUWlUVkXRh1aRFuzgzoaB70rbsnocvTXGbMxyvxG6Y3fp8U
+	YmFr7KyMOp21k7x4/5vQ9LbyPAAWROlXRTBFaoHP+gEDVBw1+mDJ2WCVJsVduijWopG
+	9cyMUQ4Y6CX5hfQEvEx1K2nSDXt5LCv0PM7j5/+M=
+Received: by mx.zohomail.com with SMTPS id 1754916277144319.23689616237255;
+	Mon, 11 Aug 2025 05:44:37 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
+Date: Mon, 11 Aug 2025 09:44:22 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
+References: <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
+ <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
+ <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
+ <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
+ <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
+ <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
+ <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
+ <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
+ <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
+ <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
+ <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, Aug 11 2025 at 12:04, Peter Zijlstra wrote:
-> On Mon, Aug 11, 2025 at 09:06:41AM +0200, Thomas Gleixner wrote:
->> +	/* If mapped, attach to it */
->> +	if (rb_has_aux(rb)) {
->> +		atomic_inc(&rb->aux_mmap_count);
->> +		return 0;
->
-> so this was: ret = 0; goto unlock;, which then would've also taken the
-> !ret branch and done perf_mmap_account(), no?
 
-Indeed.
+>=20
+> There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut =
+IoUringCmd>`
+> would be create in the callback function. But the callback function =
+could be
+> called repeatedly with same `io_uring_cmd` instance as far as I know.
+>=20
+> But in c side, there is initialization step `io_uring_cmd_prep()`.
+> How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign =
+a byte
+> as flag in pdu for checking initialized also we should provide 31 =
+bytes except
+> a byte for the flag.
+>=20
 
-> These two aux and rb split out patches seem like they're trying to take
-> too big a step. Let me try and do the same with smaller steps.
->
-> If only to try and find bugs.
+That was a follow-up question of mine. Can=E2=80=99t we enforce =
+zero-initialization
+in C to get rid of this MaybeUninit? Uninitialized data is just bad in =
+general.
 
-:)
+Hopefully this can be done as you've described above, but I don't want =
+to over
+extend my opinion on something I know nothing about.
+
+=E2=80=94 Daniel=
 
