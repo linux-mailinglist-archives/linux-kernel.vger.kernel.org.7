@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-762724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B07B20A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E09B206E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4272A4D76
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:30:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A63D2A14B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE552DEA69;
-	Mon, 11 Aug 2025 13:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295C12BE7AB;
+	Mon, 11 Aug 2025 11:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k73R8cds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cXkzUFps"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F312D77EF;
-	Mon, 11 Aug 2025 13:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812A02475CB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918984; cv=none; b=rqSUkjsgl57EQPuDRpQSKX0n1i4XZCdaSgrAHfNjM+TOSlmuNlfpRsxaS5gQVZcLudWc9jX/USOjQxUAW6vikxI/YS/Ebu7pNZKWCmeGz4u4yBPLuTbRNH0dJ6Afj1uX8VdeS1Kv3N/LdRc375WVnN2kGlJgX2mGswUzTAHOGDQ=
+	t=1754910465; cv=none; b=mqMatPDF4HH7c7dOo0OSrAtFBKudp8kkK1GT6MJxtBMIGTgnX22SSiP1seaRm1akFkjjqwkimcYbmdcWBA+REd3rS7NhrE8jG/WUiZVNpcJi9a791RmXp4vaWfdk2ZoTSUtGgXeJTtTtnfWztPH5SaVHjQr/hb+masKuNssFM9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918984; c=relaxed/simple;
-	bh=IZ3wvkv63IesEvvPXCEb04QsAfvpGvn64Li4Jd/16Tw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=idfw69HThw9NhKfZumAgKmERnmEvigIzcqzPs1YtBgnRMdIDXGcxTMWvW1Se6fCMxnsPxBmDoNalqFOyko4B0yMscgF/E3znEFpfBtgdh1Ht93h5rChx20f/YohdvAkNkbEp+t7zmfv7M/zY9iG0kLM7MjwXtBkRl6BEMQqfzrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k73R8cds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6043CC4CEF4;
-	Mon, 11 Aug 2025 13:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754918984;
-	bh=IZ3wvkv63IesEvvPXCEb04QsAfvpGvn64Li4Jd/16Tw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=k73R8cds/dBvx3cph4Kg0NCZBBbnknZoxSbx2nq/NI7ojCzvIDSO7V/A/R7OAPRbo
-	 SBX8CwdI96xiePyMRuuhmTKml0PmrSI7u0bNC4J0WLMuABOt8XxvGPC359qU+SgsZn
-	 sufctmnONQmCr55g94CfA5HFynUCR8XKvr4/J99Cwa5W7toHYWqMlDISFlzilRWHmP
-	 NgOG1uKS6PaA8sSkV5mKYHZ/vxFrupDwxAnUDE5nhTsGNJ8f2b3XmtP1h90WVEiYW0
-	 l2KQDQtseCI48OoicKSnYBDYlhjeVRi9L/ALadjmc60pKCHd/gXQO2imUym4G/7qqo
-	 FWCxv9vo5kgbw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Daniel Almeida
- <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Janne
- Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 2/3] rust: xarray: implement Default for AllocKind
-In-Reply-To: <20250713-xarray-insert-reserve-v2-2-b939645808a2@gmail.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <VsBkv88RSMICpG9KPe3i9REC7ElfySwTUyyWRfk9nGea5F7RxX7llxUd-lfFvGvw6fTVIKo8NOfWIt51BFngsA==@protonmail.internalid>
- <20250713-xarray-insert-reserve-v2-2-b939645808a2@gmail.com>
-Date: Mon, 11 Aug 2025 13:07:37 +0200
-Message-ID: <87sehyf75y.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1754910465; c=relaxed/simple;
+	bh=jrPX3asXOVnx4d8V7WmssJwou+YiP/03bbhmghaPMxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=fHTBCh4bd6zwoXBurXTbZ/w8WwUVqZQCzzdy0fvrrBX9MpYMd0acLkE2jLBnjLTGOj4I9BMJGwcPoSwD1NfpeEeZTqoOaL8Juqu79+z/kyqMjHgr9NKJ6bPW5gQtSV7qCTKRPO1XNeSjz4zZcVWVnp48hs3w1XAjhb8PKTp2MB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cXkzUFps; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250811110741euoutp01cb35f7a564e9feafb7fc2b68c8a11c8c~ascRisjjM2626626266euoutp011
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:07:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250811110741euoutp01cb35f7a564e9feafb7fc2b68c8a11c8c~ascRisjjM2626626266euoutp011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754910461;
+	bh=u8h5sOd5ZZUtNfpfhWggmgKeLg0/x2lr+B4GFvhV6yY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=cXkzUFpskzwmCYAS5S0GKje5vrNr80hJseWOOuVwTV/0EE8IlwlenonPQ7l6xjDeq
+	 Af6LNlt2d1wsr5qwJyoXfYqo57pUUjibYloSLxMeowLeF+9rT7L6RympoDWnaXKaST
+	 +CNSZZEGRjmf/BqlqKRIv/73xoY8dbw5C0wW93xc=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250811110741eucas1p1fdd92fcf7b997d5d67d34129c14ea7f5~ascRHgJUF1793917939eucas1p1Y;
+	Mon, 11 Aug 2025 11:07:41 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250811110740eusmtip1c4907f7c2fd3a01b855aa829c7bff5e0~ascQJfIL53218032180eusmtip17;
+	Mon, 11 Aug 2025 11:07:40 +0000 (GMT)
+Message-ID: <416dbaed-a68f-4edb-a20c-94cb4c53c748@samsung.com>
+Date: Mon, 11 Aug 2025 13:07:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4] of: reserved_mem: Restructure call site for
+ dma_contiguous_early_fixup()
+To: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>,
+	robh@kernel.org, robin.murphy@arm.com
+Cc: saravanak@google.com, quic_obabatun@quicinc.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, william.zhang@broadcom.com, kernel@oss.qualcomm.com,
+	will@kernel.org, djakov@kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250806172421.2748302-1-oreoluwa.babatunde@oss.qualcomm.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250811110741eucas1p1fdd92fcf7b997d5d67d34129c14ea7f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250806172503eucas1p264d6731c73592fcc380b0dcc21cdeadf
+X-EPHeader: CA
+X-CMS-RootMailID: 20250806172503eucas1p264d6731c73592fcc380b0dcc21cdeadf
+References: <CGME20250806172503eucas1p264d6731c73592fcc380b0dcc21cdeadf@eucas1p2.samsung.com>
+	<20250806172421.2748302-1-oreoluwa.babatunde@oss.qualcomm.com>
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
-
-> Most users are likely to want 0-indexed arrays. Clean up the
-> documentation test accordingly.
+On 06.08.2025 19:24, Oreoluwa Babatunde wrote:
+> Restructure the call site for dma_contiguous_early_fixup() to
+> where the reserved_mem nodes are being parsed from the DT so that
+> dma_mmu_remap[] is populated before dma_contiguous_remap() is called.
 >
-> Tested-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> Fixes: 8a6e02d0c00e ("of: reserved_mem: Restructure how the reserved memory regions are processed")
+> Signed-off-by: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
+> Tested-by: William Zhang <william.zhang@broadcom.com>
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Thanks, applied to dma-mapping-fixes branch.
 
-
-Best regards,
-Andreas Hindborg
-
-
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
