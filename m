@@ -1,121 +1,147 @@
-Return-Path: <linux-kernel+bounces-761912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491E2B1FFDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C90EB1FFE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799361734B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6513B1B91
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3AB2D877D;
-	Mon, 11 Aug 2025 07:06:18 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E275029C32F;
+	Mon, 11 Aug 2025 07:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2lr18vxh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lh7hasWX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B62571C2;
-	Mon, 11 Aug 2025 07:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD96813AC1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895978; cv=none; b=R+nsdJ3Uu016BchzXF642Fiib7f2XtfPd9bdKOJmD/FLeQzWbL9YIuXlgyavfAVskwjUc/TAefJbbzuqSD28VWpStOod6mvV+LXrtdZ3F54nb9SAMkiLz91oZwtYepe0m1GAo0rdsYX7noYBWT4ILpL6eKFaOPvdeJh+8wP4x60=
+	t=1754895997; cv=none; b=neTQlE4/b6A3Dt4NXoY6fwbeq9kBGVLEfFeQ8ucT5EMRw7nPDhujIh0EJ9SQE2HWfwTbAXoQd6BmkTKxDOL+m+aImXMDiY1qLxZ4cN3+sOC0q3AGUssXrLqY8E/gJ4Ryy7H5drFg+Ykgm+K2WDuJu7STBcg218nKnf/QceEC/Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895978; c=relaxed/simple;
-	bh=g38dvR1K3Fo/LDbNEVuBOvMYI6+/dcIMEIiYKMG4oxA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FNZkcQCDGZuoWIrbHjD7/oXoGW6P2jw7Id4GsyZdh4/xxlZw9q8uE+GvloMR4hEYoYpfD38g7AQY2pOXDpkQ8jS4AMDN/FSn+bTZMuYM7pKBeKCHIDgqkBUCrjE/XvtO6zQZGj6olSnpz0i0cW2p7OBkWyvcVQIkGG+8Fsjzs9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57B75oE0052388;
-	Mon, 11 Aug 2025 16:05:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57B75o4L052385
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 11 Aug 2025 16:05:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <fb3888fb-11b8-481b-86a6-766bbbab5c81@I-love.SAKURA.ne.jp>
-Date: Mon, 11 Aug 2025 16:05:51 +0900
+	s=arc-20240116; t=1754895997; c=relaxed/simple;
+	bh=EGWwMBEULt6QUjiM5RZT8ITe4UEROROzzS6IIV5m4h8=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=Wd2Cy2uoKlFN8fxyw4LOtsvnZz+saKVJd+tUIJOvgdA8QZkAFB7RPqs/hta20qSChDvEm3h3ttwuJwTuhmfQNO/Zsd0ThFJPCwZaDN3J6jeN5Aig1veI1nR0FKTbd1or2mEuff2HiR1x5UowOZsHbd+YkWxELkN/TXlUXHsLxsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2lr18vxh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lh7hasWX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250811065859.660930338@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754895993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=/Z2R8yfEZbsNe21gylpfd7k87iCAWP5GsOA5rJXXrws=;
+	b=2lr18vxheeNjuAcUVigVv9/VX5zvnCvrMGN1bdPRQ0y3HOoF0Q05ztGmfnUMIj27XdiUjT
+	cBu2DhNvK2V3/g7L9iFI9js0rsrcIM7vp+2PD9xtArJVbd05l9WwgWykRQ1q/UGkvF2P34
+	xuNhvvHndCwy511WhCBFtNpDcaRXYAVTiL2H9+dJ8IlMGUlEdkknpKhm+CfzwGqu22Iop0
+	JYUYbgZQwlNopnzA4w331CjbOIMZ+Re8ay8DCQvpwNBw6bu4K68Q3CbM9FY/vy7VtENRpW
+	+GA8uV4BU8uOFzcdHBQybOcQAhHO/pXMnWGCtw2qa/DpfJX8TvBp0DgaJCO98w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754895993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=/Z2R8yfEZbsNe21gylpfd7k87iCAWP5GsOA5rJXXrws=;
+	b=lh7hasWXaXu/1Kivw574YA6vqCyt4Vi42d2vPiKmFhvrj3v+AXCP6+7fs21vlakbp+D1j0
+	v07PgDxXN0IjYwCQ==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Kees Cook <kees@kernel.org>
+Subject: [patch V2 m@/6] perf: Convert mmap() related reference counts to
+ refcount_t
+Date: Mon, 11 Aug 2025 09:06:32 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, ntfs3@lists.linux.dev,
-        LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH] vfs: exclude ntfs3 from file mode validation in
- may_open()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
 
-Since ntfs_read_mft() not only accepts file modes which may_open() accepts
-but also accepts
+This is an update to V1 of this conversion series, which can be found here:
 
-  (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
-   fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)
+  https://lore.kernel.org/all/20250806195624.880096284@linutronix.de
 
-case when the file mode is none of
-S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK, may_open() cannot
-unconditionally expect IS_ANON_FILE(inode) when the file mode is none of
-S_IFDIR/S_IFLNK/S_IFREG/S_IFCHR/S_IFBLK/S_IFIFO/S_IFSOCK.
+The recently fixed reference count leaks could have been detected by using
+refcount_t and refcount_t would have mitigated the potential overflow at
+least.
 
-Treat as if S_IFREG when the inode is for NTFS3 filesystem.
+It turned out that converting the code as is does not work as the
+allocation code ends up doing a refcount_inc() for the first allocation,
+which causes refcount_t sanity checks to emit a UAF warning.
 
-Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+The reason is that the code is sharing functionality at the wrong level and
+ends up being overly complicated for no reason. That's what inevitable led
+to the refcount leak problems.
+
+Address this by splitting the ringbuffer and the AUX buffer mapping and
+allocation parts out into seperate functions, which handle the reference
+counts in a sane way.
+
+That not only simplifies the code and makes it halfways comprehensible, but
+also allows to convert the mmap() related reference counts to refcount_t.
+
+It survives lightweight testing with perf and passes the perf/mmap
+selftest.
+
+Changes vs. V1:
+
+  - Fix the invers condition in the temporary workaround for the AUX buffer
+    split out - Lorenzo
+
+  - Apply writable flags in the AUX buffer allocation - Lorenzo
+
+  - Fix the bogus subject line of the AUX buffer allocation splitout
+
+  - Add a comment about size matching
+
+  - Rebased on v16.17-rc1
+
+  - Picked up Reviewed tags as far as applicable
+
+Delta patch below
+
+The series applies on top of Linus tree and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git perf/refcounts
+
+Thanks,
+
+	tglx
 ---
-Is it possible to handle this problem on the NTFS3 side?
-
-  --- a/fs/ntfs3/inode.c
-  +++ b/fs/ntfs3/inode.c
-  @@ -470,8 +470,9 @@ static struct inode *ntfs_read_mft(struct inode *inode,
-          } else if (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
-                     fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
-                  /* Records in $Extend are not a files or general directories. */
-                  inode->i_op = &ntfs_file_inode_operations;
-  +               mode = S_IFREG;
-          } else {
-                  err = -EINVAL;
-                  goto out;
-          }
-
-I don't know what breaks if we pretend as if S_IFREG...
-
- fs/namei.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index cd43ff89fbaa..a66599754394 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3471,6 +3471,12 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
- 			return -EACCES;
- 		break;
- 	default:
-+		/* Special handling for ntfs_read_mft() case. */
-+		if (inode->i_sb->s_magic == 0x7366746e) {
-+			if ((acc_mode & MAY_EXEC) && path_noexec(path))
-+				return -EACCES;
-+			break;
-+		}
- 		VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
- 	}
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2f061d392cd9..d2de721a7614 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6987,6 +6987,7 @@ static int perf_mmap_rb(struct vm_area_struct *vma, struct perf_event *event,
+        WARN_ON_ONCE(event->ctx->parent_ctx);
  
--- 
-2.50.1
+        if (rb) {
++               /* Must have the same size */
+                if (data_page_nr(rb) != nr_pages)
+                        return -EINVAL;
+ 
+@@ -7084,6 +7085,9 @@ static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
+                return -EPERM;
+        }
+ 
++       if (vma->vm_flags & VM_WRITE)
++               rb_flags |= RING_BUFFER_WRITABLE;
++
+        ret = rb_alloc_aux(rb, event, vma->vm_pgoff, nr_pages,
+                           event->attr.aux_watermark, rb_flags);
+        if (ret) {
+
+---
+ include/linux/perf_event.h  |    2 
+ kernel/events/core.c        |  365 ++++++++++++++++++++++----------------------
+ kernel/events/internal.h    |    4 
+ kernel/events/ring_buffer.c |    2 
+ 4 files changed, 189 insertions(+), 184 deletions(-)
 
