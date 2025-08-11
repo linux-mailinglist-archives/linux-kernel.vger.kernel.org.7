@@ -1,169 +1,113 @@
-Return-Path: <linux-kernel+bounces-761942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2D9B20036
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:23:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B219FB20039
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937833BD07F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A433BC561
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E973C2D979D;
-	Mon, 11 Aug 2025 07:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JpBs2TP+"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FFB2D9798;
+	Mon, 11 Aug 2025 07:24:13 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A597E3FE7
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604382BB1D;
+	Mon, 11 Aug 2025 07:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754896983; cv=none; b=AkCQH3U3eRUwo2OdGUFvN9hJa4CalV4EAG7FSt/18gXl0IOC/4LmDBV5UVdahvUR1NeiDTedeliCxbdu/pEV1vrK5Db53L7i+xm7h8cSujO+V5l1+PMgWvLbCC988AKTrQ2g7txklDyF809FftJhiWB7eIZlN5sovJR/DPxfTiI=
+	t=1754897052; cv=none; b=elnYyaWlkJtylFZZ9Wro/E8CPs7oX5KlCEQ/b60aKC3auNi/O8U1XtGVlOpiBdR6lVT/H/e868cJcY5Tq0aKdrXfH5pQJGAopYMzbNh2TkPgDBbDZsVc9CLK2ulJ+f6ac1Al3uYUv+e9WhGdRS2+tKQfjaOcfAfwhJdZb+jsCjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754896983; c=relaxed/simple;
-	bh=woCVrO6dhn36cDQiOC9fdB3hQgbbHDv9+bAvf2a9r+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=W2W+7r3dPJi20PnEEWCxFc4V7VN5qDK6p57YvQMZXFqlpzN+JDy2H0Ko/ZPU0lNfZBiSRovv3Rzj1oK9KUVweyO8ed6oowpIXV2ZJYNef9/AYQj1fv3b54nKCsBCnA9hhgzCZMCEYbxv5i+uNBFJ+DNbDvFv3F+0zuYTqqbRGWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JpBs2TP+; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459eb4ae596so36175115e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754896979; x=1755501779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+z/+R7oU33VDJzw/HRlzRxAxOu1KhJaIdsYxJlphmE=;
-        b=JpBs2TP+UFVE1FGawBW0EVJe/26I7DbTrp74R3CyyOoom3mAeVotrPdCQR/YoPexba
-         YHNrn+h3YElI1N7wQBvq5OLRKR/NsM5P1uZoecLm8LgGuU3ZJQ7zTFVc2By4Va2AKI1W
-         klb0mAXjHZ83TUe5owE2XR6NjFhugHF+0Y63HsHUycLYVgcIYUczZ9Uuj2rSouACiNwr
-         h0EtcWFYxCuPWISATPP3OvWCoExCBlER2pMtBJXgdjsAdyMXJb48dcD5tDj6gfBb5eLT
-         WgKJ+S9YUWgsOc5lvwg/P6oKDMCxcz/z/26h4D4LBYx/jpRJWXf7ZRXSmr7B4alAAqlp
-         StcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754896979; x=1755501779;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s+z/+R7oU33VDJzw/HRlzRxAxOu1KhJaIdsYxJlphmE=;
-        b=oaynHi9BOTqGPPDXahDWHXqjAOcvZqTWpfGRHs1fttTAjZfkVrQcGb9HJvTGmbBTvB
-         86FpvND5uNqrz+NU58Xu89ESbJ1d5SOd2hs3YJMkeMo1zv96GTnc0YWulbHmZlzWr0ng
-         Gwy1FNDkickTqnxwZ/GV3FjF5+caIgZarOnuWBvSQsmGYAqpgonPfVpqemah+VZmvfVC
-         Z9vIjYOel9888+brGrja7/aBI0oq/+RU9MnmMC8vjn5LTYSppDw+OGyi04oeet9UJ8+c
-         DT/JdN2vakBugqZ6B6Qqi4J8qa24nCkLJcprVyypqxKtpLg3OPc66WoTq6uuiWCyJdvy
-         j/fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKtMktA6lOUetMA2HP4z1BAqVj+nE/j2nyFP14kC9hxBAxhP/LotTmeCe+j6yccfn36Igpw16/X1kjMP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybN9ncDrvOWuPhrHOT4p1qTEy2xhM3Djg8xHPqYAtacFYui4dv
-	NM6DIWEB3J/gsxXO3Gyz1J3xQXlb4VwuE/iagd399WwDf6R5N88GDB9SuE3b+oN0JpM=
-X-Gm-Gg: ASbGncv1pWlEovi+vBcoQ3w2FxGZBqQV0rZ6nYx74CBVwt3cYS69aI90YKNzOBcSZin
-	6t1cbzALiRBqhb3znuhAMZpAg7yfKaRAinzOmlJLJrajy60RgT1b4yUIRJAIdgd/yaGPVtk7BNz
-	rZ2lhYztzspb7FYMv7khQQlwUvbXWv+/m+ntnQsB/+deR+9GLUfg4sLxtnOTIYHO05eyFKZ42Mq
-	Mun99dzEAaYe2MElhuRcCFVQ7emDdMcQH4gRpFXSe2rTHWK7zlvfR72/DGAM7AVNaDpCHYQfXAo
-	Hkzvfn2lEdQaeWi8xJypN58aWWolqOGD+asDoD0FqVohlwz6pd5/RIV/+Dn/J2KCAZJBVjf4tJo
-	VQuufvi/uLPcBvIUW+QT10L1gCTo=
-X-Google-Smtp-Source: AGHT+IGszvzzpERaF/8oDL3FMMeG6zVxZk3f09zF1ZZQb2aBJTeLaPBC4BxqvyU1hoPCSHv7KDXCMg==
-X-Received: by 2002:a05:600c:1e8b:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-459f4faccd5mr99727255e9.27.1754896978920;
-        Mon, 11 Aug 2025 00:22:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e78a35cdsm118970895e9.3.2025.08.11.00.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 00:22:58 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:22:55 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, David Yang <mmyangfl@gmail.com>,
-	netdev@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	David Yang <mmyangfl@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: dsa: yt921x: Add support for Motorcomm YT921x
-Message-ID: <202508110116.NWcO7Fju-lkp@intel.com>
+	s=arc-20240116; t=1754897052; c=relaxed/simple;
+	bh=kRP5oP8XQwPONb0qFYCeZrgna/xmATw2HO0oZB3kITU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A6n+r6SwHGn9UnlFtzf/4a7ytd3Gv2O/2Z3b7BHUezgiMj1uIfV+o00UyYDFjX++HgUjW7F/3R4Xs1KvA6WG/fJqVFF7zuD9q3j8M1Ng7N3CgBm7p60CWIW7ay8Mko3M8RiRI9IziHpqrkf+5hzdrN1ghT+Ng3QvrChZPT1UprA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 23587d56768411f0b29709d653e92f7d-20250811
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	CIE_UNKNOWN, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:c7240ac8-b254-4a7e-b893-399339aa0807,IP:10,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:10
+X-CID-INFO: VERSION:1.1.45,REQID:c7240ac8-b254-4a7e-b893-399339aa0807,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:10
+X-CID-META: VersionHash:6493067,CLOUDID:c9379ebdce43914cacfec9a73b5e9b96,BulkI
+	D:250811152356F2SSOFHD,BulkQuantity:0,Recheck:0,SF:19|23|38|43|66|72|74|78
+	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
+	0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: 23587d56768411f0b29709d653e92f7d-20250811
+X-User: tianyaxiong@kylinos.cn
+Received: from localhost.localdomain [(106.16.203.49)] by mailgw.kylinos.cn
+	(envelope-from <tianyaxiong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1750111063; Mon, 11 Aug 2025 15:23:54 +0800
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	lenb@kernel.org,
+	robert.moore@intel.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH 0/2] ACPI: processor: idle: Per-CPU idle driver for hybrid CPUs
+Date: Mon, 11 Aug 2025 15:23:49 +0800
+Message-Id: <20250811072349.753478-1-tianyaxiong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808173808.273774-3-mmyangfl@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+This series addresses limitations in the current ACPI idle driver model
+for hybrid CPU architectures (e.g., ARM big.LITTLE, Intel Alder Lake),
+where different core types have distinct _LPI-state characteristics.
 
-kernel test robot noticed the following build warnings:
+This series introduces:
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+1. A per-CPU idle driver model to accurately represent idle-state per core type.
+2. A new interface to fetch cpuidle_driver by CPU ID, required for early
+   registration scenarios.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Yang/net-dsa-tag_yt921x-add-support-for-Motorcomm-YT921x-tags/20250809-014351
-base:   net/main
-patch link:    https://lore.kernel.org/r/20250808173808.273774-3-mmyangfl%40gmail.com
-patch subject: [PATCH 2/2] net: dsa: yt921x: Add support for Motorcomm YT921x
-config: um-randconfig-r072-20250810 (https://download.01.org/0day-ci/archive/20250811/202508110116.NWcO7Fju-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+This issue was initially discussed at:
+https://lore.kernel.org/linux-pm/97e8bc72-e44b-487a-91ba-206732094955@arm.com/T/#t
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202508110116.NWcO7Fju-lkp@intel.com/
+Yaxiong Tian (2):
+  cpuidle: Add interface to get cpuidle_driver by CPU ID
+  ACPI: processor: idle: Replace single idle driver with per-CPU model
+    for better hybrid CPU support
 
-smatch warnings:
-drivers/net/dsa/yt921x.c:1090 yt921x_dsa_setup() error: uninitialized symbol 'val'.
-
-vim +/val +1090 drivers/net/dsa/yt921x.c
-
-77de450829a940 David Yang 2025-08-09  1061  static int yt921x_dsa_setup(struct dsa_switch *ds)
-77de450829a940 David Yang 2025-08-09  1062  {
-77de450829a940 David Yang 2025-08-09  1063  	struct yt921x_priv *priv = ds->priv;
-77de450829a940 David Yang 2025-08-09  1064  	struct device *dev = priv->dev;
-77de450829a940 David Yang 2025-08-09  1065  	struct device_node *np = dev->of_node;
-77de450829a940 David Yang 2025-08-09  1066  
-77de450829a940 David Yang 2025-08-09  1067  	struct device_node *child;
-77de450829a940 David Yang 2025-08-09  1068  	int cpu_port;
-77de450829a940 David Yang 2025-08-09  1069  	u32 val;
-77de450829a940 David Yang 2025-08-09  1070  	int res;
-77de450829a940 David Yang 2025-08-09  1071  
-77de450829a940 David Yang 2025-08-09  1072  	res = yt921x_dsa_cpu_port(ds, &cpu_port);
-77de450829a940 David Yang 2025-08-09  1073  	if (unlikely(res != 0))
-77de450829a940 David Yang 2025-08-09  1074  		return res;
-77de450829a940 David Yang 2025-08-09  1075  
-77de450829a940 David Yang 2025-08-09  1076  	res = yt921x_detect(priv);
-77de450829a940 David Yang 2025-08-09  1077  	if (unlikely(res != 0))
-77de450829a940 David Yang 2025-08-09  1078  		return res;
-77de450829a940 David Yang 2025-08-09  1079  
-77de450829a940 David Yang 2025-08-09  1080  	/* Reset */
-77de450829a940 David Yang 2025-08-09  1081  	res = yt921x_smi_write(priv, YT921X_RESETm, YT921X_RESET_HWf);
-77de450829a940 David Yang 2025-08-09  1082  	if (unlikely(res != 0))
-77de450829a940 David Yang 2025-08-09  1083  		return res;
-77de450829a940 David Yang 2025-08-09  1084  
-77de450829a940 David Yang 2025-08-09  1085  	/* YT921X_RESET_HWf is almost same as GPIO hard reset. So we need
-77de450829a940 David Yang 2025-08-09  1086  	 * this delay.
-77de450829a940 David Yang 2025-08-09  1087  	 */
-77de450829a940 David Yang 2025-08-09  1088  	usleep_range(10000, 15000);
-77de450829a940 David Yang 2025-08-09  1089  
-77de450829a940 David Yang 2025-08-09 @1090  	res = read_poll_timeout(yt921x_smi_read, res, val == 0,
-                                                                                              ^^^^^^^^
-yt921x_smi_read() doesn't necessarily initialize *valp.
-
-77de450829a940 David Yang 2025-08-09  1091  				YT921X_MDIO_SLEEP_US, YT921X_RESET_TIMEOUT_US,
-77de450829a940 David Yang 2025-08-09  1092  				false, priv, YT921X_RESETm, &val);
-77de450829a940 David Yang 2025-08-09  1093  	if (unlikely(res != 0)) {
-77de450829a940 David Yang 2025-08-09  1094  		dev_err(dev, "Reset timeout\n");
-77de450829a940 David Yang 2025-08-09  1095  		return res;
-77de450829a940 David Yang 2025-08-09  1096  	}
-77de450829a940 David Yang 2025-08-09  1097  
-77de450829a940 David Yang 2025-08-09  1098  	/* Always register one mdio bus for the internal/default mdio bus. This
-77de450829a940 David Yang 2025-08-09  1099  	 * maybe represented in the device tree, but is optional.
-77de450829a940 David Yang 2025-08-09  1100  	 */
+ drivers/acpi/Kconfig            |  1 +
+ drivers/acpi/processor_driver.c |  3 +-
+ drivers/acpi/processor_idle.c   | 60 ++++++++++++++++-----------------
+ drivers/cpuidle/driver.c        | 16 +++++++++
+ include/acpi/processor.h        |  2 +-
+ include/linux/cpuidle.h         |  4 +++
+ 6 files changed, 54 insertions(+), 32 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
 
 
