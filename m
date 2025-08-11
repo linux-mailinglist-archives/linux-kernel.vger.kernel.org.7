@@ -1,116 +1,109 @@
-Return-Path: <linux-kernel+bounces-761861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81F0B1FF60
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:30:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221B1B1FF62
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E19E3A54C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F1516BDAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B782750FB;
-	Mon, 11 Aug 2025 06:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07B2284694;
+	Mon, 11 Aug 2025 06:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="08oRKhIb"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rb568vA0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96C57A13A;
-	Mon, 11 Aug 2025 06:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A61D4414;
+	Mon, 11 Aug 2025 06:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754893843; cv=none; b=TKGdDA/CfU7vsBKtWk1682p/2i6Ejrrk1JMjr/fNeXhxI5pGwV4HY7BDR34X2XJX1T3pRWt2YnevFCfr/4LLDeZCQf32VPEohQLizp2uvxM0XwCC9wV4g1y83yd942T+1tHZpcu9cpW06wXrPBTvWegQtDXJxjRh7ZyKXh7obvo=
+	t=1754893855; cv=none; b=V8zCUz+rp8S8/SBtiDs8fSRaESMoPMa849AymIVVYAZOLN28OIpyQrIwXfeEN4Yq/DxIeR/8l3B4PaEw8UieO6jaktJWliRuU0RJFm0FLorhD2BKqx2ZUlF3W1e0swUe9+/DEKHPIAYSY1C2/GsMCmhaupL2Qe0Ljjn086HCdOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754893843; c=relaxed/simple;
-	bh=27tLMUvOEGy4QmNScTkSr+2tmFWJPWt+RemyBMXltYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6IJevBxHQatPTgwLknyGqDrn0F2aRFoui7VPmrpUCeuS7A5qR2axWjs/0L8exeIqWxKTCadDU1n6fwnjaqtRO2majAosncjIRixlVlwj2I2t6agaxFkzI0tu8KAR7hUTcUgZ0MVdt/8+HqX/of5+0iQiajl0l08/e4DM+TstZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=08oRKhIb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=jNzVtAsxtGf0lFnJlcfQ3TByjHHmjVeIgw7TiXHmnEM=; b=08oRKhIb1ajpli+TpTvmpRH+tl
-	uEKnt6dZtNTopvuqjd613RK0L1/C0hYvZLIhNJjsKR93y1tgjTSYRQPSp5XUObmHBljtmdjC59nw3
-	IN3ZtZb37VTpoI+kgkG2ucskyqnRCxJLr3i23yOwX2vbIymb2SOaAMpt3vDnoWx927okoBLRIXSUc
-	CMF0m69rvjfBjrIDPSMgYpT8AK9KOinsArvfGZxqL0qlrED7VdOXHRxnniK15BmfWb9OCUto0h4PM
-	jhmvqwZdw+GGuKkk4/hCozET4ujSOKMxXAi4hFT2S2NKAR/XnK9xufGxP78quMKKJsd65E+ots8o+
-	EQ1ZgrTw==;
-Received: from i53875a0c.versanet.de ([83.135.90.12] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ulM33-0006sA-Nx; Mon, 11 Aug 2025 08:30:21 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, FUKAUMI Naoki <naoki@radxa.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject:
- Re: [PATCH 1/3] arm64: dts: rockchip: disable display subsystem for Radxa
- E52C
-Date: Mon, 11 Aug 2025 08:30:19 +0200
-Message-ID: <3125650.687JKscXgg@diego>
-In-Reply-To: <20250810100020.445053-1-amadeus@jmu.edu.cn>
-References: <20250810100020.445053-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1754893855; c=relaxed/simple;
+	bh=FvH0qacdyBwnKpPXSyjzRbVQA9k8xfFUDAHDJF5JS4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2pwWHDx9lp8FWHlNPRnbAwxoEiuegpMybJ5nfKrd1mY7MmveSNHeHN7tm7Pp/VACPYm/ujcN2htE+yho2glnhzKPsydIEzl9vCU75ZYlqzb00GVHCuayD5fHReWpKDBnAzDpQ5BrEwK8s1uyUP89O05r5k5P6Vf0cawNfSVgGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Rb568vA0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 090BE40E01FD;
+	Mon, 11 Aug 2025 06:30:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id C8Eb5m8F1-tY; Mon, 11 Aug 2025 06:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754893845; bh=kc55h+avHH/3omfVpRIdLMfsqJ2PwrVn16E0dPvENJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rb568vA0MLib9ScMpGDReEyH5/3laR4SdcaWTVKIHqXD5IHDVAQiV/3JjtSG6wNfd
+	 HhhmnvCZCgRrCyyuUwzgs59nrX/nZVe/3zrIIArOBI4ZF1Cp7LjF/OXzNwrt2/URaj
+	 QcTpaJMDGpYlrWWzc0pTevdEUFZpeEutJS9JJZ2Qk+yLTT8IfE8XvLfJcFizcjv6gE
+	 vh9WM4Qctmck1bRNnkFAZ/x+gwjl41d7z0ROo68mjM5dQkjipiOFnYatjZC67vn2+Q
+	 8RArQC552XauWzv+fPwkTuVpqkkJJLGn0w+bMxYOm2NxpRn5z6fqT3bgCEnvosUkOU
+	 KQ8MgLi7S1l4Y04ZC8783YhHnXbZ41/WLvczohibuTxJHRTsTn7p+6RI4H0Xd1cjX1
+	 w2J7dT9dz8GCwxdxz04d5Huuo5IxVyedi2FzLQjjxNRx7Th/dqRrir+HD5nWuBIKJB
+	 GpOV/Qe6XsFnOR7unWnw5PE7wtpgNl4QbxzfRA8TtdfggSiFaAqLB+FdUFmro93QM6
+	 Q/c6IdGQVKfxZFJY4pX0K1D6tLeoE4NXnXLb2zirGWDqrnZ0dOzMn46oZhh91UE+gv
+	 B8iqeptTJUbPuUb8kCwCFzwPwD9Xgaf0Jmi8UOlzpSg/kxowxrjxFnaJmqzwGIoT++
+	 Mr4IrRig/sH+CABuGGsfpL+s=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2821C40E023B;
+	Mon, 11 Aug 2025 06:30:34 +0000 (UTC)
+Date: Mon, 11 Aug 2025 08:30:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v6 10/22] x86/boot: Drop redundant RMPADJUST in SEV SVSM
+ presence check
+Message-ID: <20250811063026.GMaJmOAoo-PhdXcLZX@fat_crate.local>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-34-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250722072708.2079165-34-ardb+git@google.com>
 
-Am Sonntag, 10. August 2025, 12:00:18 Mitteleurop=C3=A4ische Sommerzeit sch=
-rieb Chukun Pan:
-> The Radxa E52C SBC do not have HDMI output, so disable
-> the display subsystem.
->=20
-> Fixes: 9be4171219b6 ("arm64: dts: rockchip: Add Radxa E52C")
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+On Tue, Jul 22, 2025 at 09:27:19AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> snp_vmpl will be assigned a non-zero value when executing at a VMPL
+> other than 0, and this is inferred from a call to RMPADJUST, which only
+> works when running at VMPL0.
+> 
+> This means that testing snp_vmpl is sufficient, and there is no need to
+> perform the same check again.
 
-What actual problem does this fix?
+Remind me again pls: the startup code is going to be executed unconditionally,
+even by the decompressor, right?
 
-=46or example we also enable on-soc iommus all the time, because they're on
-the soc and don't need board-level properties.
+Because if it is an alternative path, we can't do the below.
 
-The "display-subsystem" without users looks mostly in the same spot.
+Thx.
 
-So I do expect a description of what proplem gets fixed that this needs
-to be disabled.
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks
-Heiko
-
-> ---
->  arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts b/arch/ar=
-m64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> index e04f21d8c831..3b519be6e1ea 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-> @@ -207,6 +207,10 @@ &cpu_l3 {
->  	cpu-supply =3D <&vdd_cpu_lit_s0>;
->  };
-> =20
-> +&display_subsystem {
-> +	status =3D "disabled";
-> +};
-> +
->  &i2c0 {
->  	pinctrl-names =3D "default";
->  	pinctrl-0 =3D <&i2c0m2_xfer>;
->=20
-
-
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
