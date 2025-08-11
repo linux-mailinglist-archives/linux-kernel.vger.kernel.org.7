@@ -1,68 +1,119 @@
-Return-Path: <linux-kernel+bounces-762837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2711B20B56
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:12:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9BEB20B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BB23B2BBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A851887EA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC54020F07C;
-	Mon, 11 Aug 2025 14:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJcS1rQA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115BF20F088;
+	Mon, 11 Aug 2025 14:15:22 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E041EE7C6;
-	Mon, 11 Aug 2025 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F34A170A26;
+	Mon, 11 Aug 2025 14:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921259; cv=none; b=bLzvZgHFPmWpvwidIk7BapioH1qc/ztCSJnPd3N4A0W+Nm5YnixbCaa7lqc4GKLc4donCrqmp57pmanHr7U0wOWwThbRuk7qOjlu4zwGXKP/FE1GL1vNzrITWA55E6WpOoi/Tfs+xixBJRqY1QPaVd4ly7+eRhAe4zK+bhRY45k=
+	t=1754921721; cv=none; b=Egu9In4EHqpNdD5dhp19YDPalWp2tXOorgow5Zp4oAKNuU8EgwAFpoyeoS4yxUJBJJnMl+EQ1Fmb+zVpJamnun18tymmygoKeHxDwyZg1tSbhSQyJ8cRAcQbLkAG9rBhRkZOgysETapReP3zNekIioGHZ5mMlgfoGlaHLEdY1kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921259; c=relaxed/simple;
-	bh=K7u0H5z3vDfaEXuo51/4K17TiD6LYFYSNJZ33PJEquU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYKjaYa+dxvgbPbfSEwVrh3hO52x+VyaWLDBJ9SY3QPRdZfPs8ECC9ty6or4b74VhCFxwxqXpCvwHb8ndg1lqE57YLskfU5FN29JHQ4vZpr8PTilU3KMK5QDB37Lc2cPSP6Ex/41Jhuk9LtcMMABUhWa4z+rldR068ePgmRCqQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJcS1rQA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D700C4CEED;
-	Mon, 11 Aug 2025 14:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754921257;
-	bh=K7u0H5z3vDfaEXuo51/4K17TiD6LYFYSNJZ33PJEquU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RJcS1rQAlW6dT9Rd688QHivCWZHiBQOAKFRBEHm6hfFbbcP0xytKlrMaL/6x9IZxd
-	 t5lQ5EO2PL8/qHEeaKGvKMmx57UoQBS6Om16yDN54wx3EdONQQo4F5Z7uUFrE2Iwzc
-	 jc4EwF6Oi/1wBtK4yhsy0cHKSKUjbGKHfWgbVl1PKoeIALoNPirpWsNfb1p7OEk5w8
-	 i/NvvKxjfeLQ18r3Jr79xE5SUbM6WBXsrsSbQoC2+wYvNkqC+rdL2yrWemfREOF/5r
-	 aufZHBepgSpuHAEEzM50wsrO0WASTn/TJh1TKmJpcvF4SLDTYWBBywIYcRThY5jVBE
-	 c2jW7rjzEnuPg==
-Date: Mon, 11 Aug 2025 16:07:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: fix incorrect lflags value in the move_mount syscall
-Message-ID: <20250811-petrischalen-rednerpult-9cf14ac266da@brauner>
-References: <20250811052426.129188-1-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1754921721; c=relaxed/simple;
+	bh=jlxefgRH0WVE0rzJVyd/8S1bvpbZvv/m7+Vv0eJO7e8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hOC8OMK8oHBjCA1tL8CfBcNFoWN0XnE65sV6WOjwmkcooEu078LMetOJKQW+DFKFKZezXDrl2oX+Q0y3L8ReLkbkLDAmAxwzFEheCS+aHB9y49uZiRInNRl5cC95XXZGEMWGEnesAczxIfbBzJc/BPWkw18PFJuBUoPTrorOoT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c0xVX08dSzYQv92;
+	Mon, 11 Aug 2025 22:15:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A02FA1A14EF;
+	Mon, 11 Aug 2025 22:15:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBHw+plocdNUDQ--.57266S4;
+	Mon, 11 Aug 2025 22:15:14 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	pshilov@microsoft.com
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH V3 0/2] Fix mid_q_entry memory leaks in SMB client and further cleanup
+Date: Mon, 11 Aug 2025 22:07:36 +0800
+Message-Id: <20250811140738.1141817-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811052426.129188-1-yuntao.wang@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBHw+plocdNUDQ--.57266S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyUZw48JFWrXFykuw1xZrb_yoW8WrWkpF
+	WfCFy3Grn8J34SvwsxJa18X3Z5A3WkGa47XFy7tr1vyFn8ZF18Kr1vyrna9Fy7GrZ5Xa4a
+	gr4qyr4j9F17ua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 11, 2025 at 01:24:26PM +0800, Yuntao Wang wrote:
-> The lflags value used to look up from_path was overwritten by the one used
-> to look up to_path.
-> 
-> In other words, from_path was looked up with the wrong lflags value. Fix it.
+This series contains the remaining patch from my previous mid processing
+fix series, plus an additional cleanup patch. The first three patches of
+my earlier series have already been merged into mainline. 
 
-Right, thanks.
+Patch 1/2: The final patch from that series, which improves the helper
+function for mid cancellation conditions. The previous helper function
+had awkward semantics requiring callers to negate the return value,
+and was inefficient due to the extra negation in wait loops.
+
+Patch 2/2: A cleanup patch that removes unnecessary mid_queue_lock usage
+and standardizes mid_state access with READ_ONCE/WRITE_ONCE. This builds
+on the fixes to make the locking model cleaner and more consistent.
+
+These patches are independent and can be applied separately if needed.
+
+V3:
+ - Use mid_lock to protect the update of mid->callback rather than
+   its execution. 
+
+V2:
+ - Inline the mid_execute_callback() in the smb2ops.c to eliminate
+   the sparse warning.
+
+Wang Zhaolong (2):
+  smb: client: fix mid_q_entry memleak leak with per-mid locking
+  smb: client: Clean up mid_queue_lock usage and standardize mid_state
+    access
+
+ fs/smb/client/cifsglob.h      | 21 +++++++++++
+ fs/smb/client/cifssmb.c       |  8 ++--
+ fs/smb/client/cifstransport.c | 69 +++++++++++++++++++++++------------
+ fs/smb/client/connect.c       | 25 ++++++-------
+ fs/smb/client/smb1ops.c       |  5 ++-
+ fs/smb/client/smb2ops.c       | 26 ++++++-------
+ fs/smb/client/smb2pdu.c       | 10 +++--
+ fs/smb/client/smb2transport.c |  3 +-
+ fs/smb/client/transport.c     | 50 ++++++++++++++-----------
+ 9 files changed, 135 insertions(+), 82 deletions(-)
+
+-- 
+2.39.2
+
 
