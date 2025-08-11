@@ -1,150 +1,214 @@
-Return-Path: <linux-kernel+bounces-763642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEB1B21817
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:17:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6A5B2181F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09356260CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674281A225E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690062E424B;
-	Mon, 11 Aug 2025 22:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E921B1D61B7;
+	Mon, 11 Aug 2025 22:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MoVJWFI6"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DuyyTdrN"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239CB2DE6F1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7859F1D6195
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950636; cv=none; b=B7Kn/rDLcTCJi7LFRqN+nR4DnUkSo8EIdvpqMkSNev3oESdDqk6iIgPv8RAbKsyttgeMCRg0O4oTGrn1gi3jfiRbWf3JBcT4uq1TFmKGUVezUvtvcTUqSg937tzqDQ9j2JSvUxq24bmWJHgvT/j323/p68t+4I8LeNvQA17/dwo=
+	t=1754950666; cv=none; b=WyUbrMS9CohZimRLQw+oOLxm/nhz0XmP5+uWo/01ISbkRIA7yv+5qRi+l3/ZGD2quYIbR615xxNSJeZUHXXmAZypmzb55YpGqtS4jHIGZL7ddG3X6naZ/qmozbPY9+r4gG8HOaYzzEA6EOrA2i7qND7qkjazw+KaRpfs5wv+HFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950636; c=relaxed/simple;
-	bh=6zMbsQeemaLT9qsDKon3L3xPV4wlTm/uDmufkhqLnVY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s0bkm95bUuqtFrsbzkGVCCogwWbwBaTDPnIvf250CbzsG+0yNHc7foUwBLa++t+o+zVNYlr7vi+blpqzA961FLKk3jvDhCLl4sM6IphzAMJkGw1OzjKGN8nhTa5y0LuCI2Ba50RoTidTW2W+QsP4vltZ9T1nMk1gjQy8aQoiDbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MoVJWFI6; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so5322056fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:17:13 -0700 (PDT)
+	s=arc-20240116; t=1754950666; c=relaxed/simple;
+	bh=Ht/UHT3sLBhR0Zk80MTwgw23vViXOFXrlKz0LswUhvU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ERSOZ63f/cwIZSevZBkviIF1Gqh5WzThHRRsi2kpS2ed7mn89pgEHTnFi4cIuswa6nXZrSPOepy359f646010KDzQdIdLNfj1nl8TDj6TKU1HIcMjnUbqNsXZVa9OXDYRml4WDvry/ONSo0km+3JaP8Kf1IED6TTAIMwF4SttXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DuyyTdrN; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7e7ffe84278so991673185a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754950633; x=1755555433; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNjy4x9oFNeCSMPDvjvsMqdoAFBJssytJuYnj0zLwq8=;
-        b=MoVJWFI6IWfPoRMAbLUeAap+YdCPVPWnM5TuFnNwoFCRikUnYS7vzG+g/QpXEOIxtl
-         zh2K/ejltXfx4jTYBI06+uoux8EqUN/nuK4SHJBSsElvBEnhwoy+QVtLGIWhVGJZA7H+
-         ez+tPtBNhEJpOdXh2YoeRpCP5mfno0Y/XsQCLqRz5QwDBd6hCL3TjIj7XO7PMIZ+9Pqg
-         5FWxq+IVhGPhS+Umvnwrs3dNNT0OEqTnbikFecql68nirGl0UeaubFfQQt5LNLw1SM2k
-         eCm8+WfHVOHInQd46hGkg+RMAQ2kZPPviFm4PRN0Tj5NWAg2qx6+xC1bceJgCsh6AKP5
-         V1kg==
+        d=google.com; s=20230601; t=1754950663; x=1755555463; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tsTpiVRLtnpCIisNiGgEETpcDrFcJWiGEHWB60H2Tzc=;
+        b=DuyyTdrNTQYHJr436vX2RDg+2npu+D7a+NLR8SlHifGB+Y5QpAFVB1sX0AjzW7e6sL
+         f22PTmJHIFjUzGYCUkraa//noQ9IFqlHaZeRnlxlbLyXlkSDfO0U2loMJ8Xhr9aBiCA7
+         lvXZjLorHcOPPUZtWHnaDTSx7Rgy3a2LvFpg0TusfJAtfbJ3vqpIM3azq9A9H/tTr7Nd
+         HJjltlP9zs3snfrbiNU8rDL2bMOyLOh4v1tQ0349aYTYzatdbkWSwIo/QVQ79fkyY9K9
+         MUTLscNqNu42lf+AkQWXLJlZoWYC5mi5qdfTprQTl/ghpgJ7P3p7E++P1lpO3ubxr7FF
+         jIrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754950633; x=1755555433;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xNjy4x9oFNeCSMPDvjvsMqdoAFBJssytJuYnj0zLwq8=;
-        b=dmV+4HolNkYNDvQ9bn3hWW2El2b7sXiimEBWx2IBizT2h2SVS2wyNNpVbtML07884k
-         EF0D6LnwBf2JxpH/1Id1Qn3f8Je4OchweClvGRmsnfd1VzcLx9yrvz8/n7qeIotN+DuI
-         16n7MYO+yT8P04BZtub3YQxjPohk6MLYwx9oL3WOKp64x3Wm50NB1dG2bIHB/3eJRFMM
-         L2eAS9vEfy2S2fWJUiY6eHLQIvXTmTU0ulSFhWuZ0q2wwDPp88DRJgRlS6JvRRpntqqa
-         RLsCFg08vVfSHEmkLTOViU6Y3o2WxGeS8VnQflxKz7ZzUNAbbbJMVoRiUHEB62rQipR6
-         shWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwoCFhVj5hPwXie4PmQGlql1HQm1MI5yM6q2oN/h0vaf/BnnlZC6Z1h6qyo7ThjsDaccGtDAbQOeE60RI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG71dEd6Ah15+KffiZ5lIMQrgoGqc+OAYed3ivEyE2Yq72mRfm
-	ZsIYHEjhOSDiax4TQeOl4jvOjRSgEzRkuOelknGzT4Wuihbn8vtIt2KZmV3FcNnHzW4=
-X-Gm-Gg: ASbGncvBJ6Mj+jRjqB4aO7475YSSxiFgmmJDBAp0N9gU2mHuDng3IssZTbglBta1gfk
-	G0UfuEBFYsx8yXmVBu4lL6P2D41B6dr7Pqkei/n8Afp0yop111bhC1Fh5g8qzUgiYjQvjmf1bGn
-	3Nlykq8bdW8/3JWteu3/deYDrtVPVGshDqcK02SHiCvzl2GJwJ1CrDkfL5P3RQ356lCakxzJM+a
-	urWzf60OTMPZ4mHLGjYyefZWunDY3Axm3e/krzRxu32bYArKs0dI20rlAahOPYvwcynBUsoiapF
-	y3Ae9ots/Ensrps7Qjvp/CGJ//P5kP9jNK+/b+684d7k3NOGLSBRbPPZlbRWE8Lx+SQWkYrnqGb
-	m+QTcGJV/LC8Oa7HLrly/AeztHNRs
-X-Google-Smtp-Source: AGHT+IGfPiRvZKy6rxD4u9Cif9ZJqjUmLXidFEtaaqAJKIjiQ75nNSgQ5MRUryvHD4v6+OcsVx68HA==
-X-Received: by 2002:a05:6870:700c:b0:2d4:e8fd:7ffb with SMTP id 586e51a60fabf-30c94e8080fmr798012fac.1.1754950632887;
-        Mon, 11 Aug 2025 15:17:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4a4f:fe55:51b4:b5ba])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30c8cc3b8a9sm475177fac.19.2025.08.11.15.17.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 15:17:11 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 11 Aug 2025 17:17:01 -0500
-Subject: [PATCH] dt-bindings: clock: adi,axi-clkgen: add clock-output-names
- property
+        d=1e100.net; s=20230601; t=1754950663; x=1755555463;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tsTpiVRLtnpCIisNiGgEETpcDrFcJWiGEHWB60H2Tzc=;
+        b=FVi3Xrn+TE4gXpIBvOByWVLvnE5f/z/SCnw2nYnt8YOWc3YPqn0UPMC06Nm7zRYRem
+         9BrvnoKKOrf5d8Y1M2fJRcUWfoWCJOTtFRffnAieEH1PzmcfJU3joYHPKowyR+B9GAU6
+         bXBEQpKEarnR4wwe+be6SgvNv3JkUskxlJ8XKILm4Jg/Ao8fqCGmI9MjhNBo/F7+40w6
+         51hRk2HZJr0njHMOi955EerCLacIVyPyyftDidrt26mXyMgB5teMQY5GxlGyiMpS7BVe
+         MG8iUNnYGJQuGwLQj79K9QUYW8rk640PcIa8L/zCViULyuFvenPQB0L7fc76JYNOZKu5
+         7diw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUctnd1F6dRxQdSKYg/19lG05y51on9eHGUXtFjm3j+NXtmK1Hz+R+lvUwc40pU8VMkrXhy8NX+JxkTXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz91S4pKZr97yLmO3YJEVILkac26sInWEGd2O1BFBL2Z0/M+AnK
+	f/egnjRZ40Hsm8ePgGevS/mWpWkXzo+knm8TzfBXrTH/LWhTNxyXUV9JPWbo6ddRTT/qhQf/gi0
+	zuH427jDJ5nfNvg==
+X-Google-Smtp-Source: AGHT+IGLY1363SKVs1UR+Wi4x98jSfDfthClu1+vmuO4PXrMkif+fZojShhrhTTkXKzMJXFQxdtGp6zu02KtrQ==
+X-Received: from qknwd46.prod.google.com ([2002:a05:620a:72ae:b0:7e6:36d3:ccf2])
+ (user=marievic job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:620a:612a:b0:7e3:35e3:3412 with SMTP id af79cd13be357-7e858897035mr146693485a.34.1754950663342;
+ Mon, 11 Aug 2025 15:17:43 -0700 (PDT)
+Date: Mon, 11 Aug 2025 22:17:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIANxrmmgC/x2NQQqDMBAAvyJ77oJRC+JXSg8x2aSLdhOSKBbx7
- 017mpnTnJApMWWYmhMS7Zw5SA11a8C8tHhCtrWha7t7OyqFtuDMYll8RrMuqA/+0ZOgtrZqMAu
- GrcStoOg3ZYwpRErlg25QvenJjbMboA5iIsfHf/54XtcXikBLnYwAAAA=
-X-Change-ID: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1351; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=6zMbsQeemaLT9qsDKon3L3xPV4wlTm/uDmufkhqLnVY=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBommvguy/LPYy0gdbX3Hcqe+qgkhBDoIbu0U6Po
- vM2msDB/EuJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaJpr4AAKCRDCzCAB/wGP
- wD8qB/9Y81s4hgteVENjJBEJVhH0/XRGa4C4OPOfAhy/rC2BXj5E1ae1MH27tHk2L5OrlyGm0FG
- Cyg83PMwCHuE3QmpOZBAw28shznI5C+GGS0SjIGefq+AefIYqjYBD/rUCbCo/sFmTdIoB+L9YnV
- Sy2Rdh7Ti1HdYRQBinkvnykThfWJ2JRqgBfxa8MBk/43iZl9OocMmEgzea1Q9Yny7v13h1AYwxn
- 1NhbR7ZJl0Fcw6lbaRH+D3X7uk7ObYYMHSd0VJnie6ceFPZS5DEguqDMqoqqaonHsS0Nn/IwEC/
- kCvW6vuRA8ma6gYJnRZ1Mjo0YVTymyhXHTifS0ocBq+hyYgb
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
+Message-ID: <20250811221739.2694336-1-marievic@google.com>
+Subject: [PATCH v2 0/7] kunit: Refactor and extend KUnit's parameterized
+ testing framework
+From: Marie Zhussupova <marievic@google.com>
+To: rmoar@google.com, davidgow@google.com, shuah@kernel.org, 
+	brendan.higgins@linux.dev
+Cc: mark.rutland@arm.com, elver@google.com, dvyukov@google.com, 
+	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
+	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Marie Zhussupova <marievic@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add an optional `clock-output-names` property to the ADI AXI Clock
-Generator binding. This is already being used in the Linux driver and
-real-world dtbs, so we should document it to allow for correct binding
-validation.
+Hello!
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+KUnit offers a parameterized testing framework, where tests can be
+run multiple times with different inputs. However, the current
+implementation uses the same `struct kunit` for each parameter run.
+After each run, the test context gets cleaned up, which creates
+the following limitations:
+
+a. There is no way to store resources that are accessible across
+   the individual parameter runs.
+b. It's not possible to pass additional context, besides the previous
+   parameter (and potentially anything else that is stored in the current
+   test context), to the parameter generator function.
+c. Test users are restricted to using pre-defined static arrays
+   of parameter objects or generate_params() to define their
+   parameters. There is no flexibility to make a custom dynamic
+   array without using generate_params(), which can be complex if
+   generating the next parameter depends on more than just the single
+   previous parameter.
+
+This patch series resolves these limitations by:
+
+1. [P 1] Giving each parameterized run its own `struct kunit`. It will
+   remove the need to manage state, such as resetting the `test->priv`
+   field or the `test->status_comment` after every parameter run.
+
+2. [P 1] Introducing parameterized test context available to all
+   parameter runs through the parent pointer of type `struct kunit`.
+   This context won't be used to execute any test logic, but will
+   instead be used for storing shared resources. Each parameter run
+   context will have a reference to that parent instance and thus,
+   have access to those resources.
+
+3. [P 2] Introducing param_init() and param_exit() functions that can
+   initialize and exit the parameterized test context. They will run once
+   before and after the parameterized test. param_init() can be used to add
+   resources to share between parameter runs, pass parameter arrays, and
+   any other setup logic. While param_exit() can be used to clean up
+   resources that were not managed by the parameterized test, and
+   any other teardown logic.
+
+4. [P 3] Passing the parameterized test context as an additional argument
+   to generate_params(). This provides generate_params() with more context,
+   making parameter generation much more flexible. The generate_params()
+   implementations in the KCSAN and drm/xe tests have been adapted to match
+   the new function pointer signature.
+
+5. [P 4] Introducing a `params_array` field in `struct kunit`.
+   This will allow the parameterized test context to have direct
+   storage of the parameter array, enabling features like using
+   dynamic parameter arrays or using context beyond just the
+   previous parameter. This will also enable outputting the KTAP
+   test plan for a parameterized test when the parameter count is
+   available.
+
+Patches 5 and 6 add examples tests to lib/kunit/kunit-example-test.c to
+showcase the new features and patch 7 updates the KUnit documentation
+to reflect all the framework changes.
+
+Thank you!
+-Marie
+
 ---
- Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-index 2b2041818a0a44456ee986fe29d32346f68835f3..6eea1a41150a7c90153cffcfb5b4862c243b4e0f 100644
---- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-+++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-@@ -42,6 +42,9 @@ properties:
-           - const: clkin2
-           - const: s_axi_aclk
- 
-+  clock-output-names:
-+    maxItems: 1
-+
-   '#clock-cells':
-     const: 0
- 
-@@ -65,4 +68,5 @@ examples:
-       reg = <0xff000000 0x1000>;
-       clocks = <&osc 1>, <&clkc 15>;
-       clock-names = "clkin1", "s_axi_aclk";
-+      clock-output-names = "spi_sclk";
-     };
+Changes in v2:
+
+Link to v1 of this patch series:
+https://lore.kernel.org/all/20250729193647.3410634-1-marievic@google.com/
+
+- Establish parameterized testing terminology:
+   - "parameterized test" will refer to the group of all runs of a single test
+     function with different parameters.
+   - "parameter run" will refer to the execution of the test case function with
+     a single parameter.
+   - "parameterized test context" is the `struct kunit` that holds the context
+     for the entire parameterized test.
+   - "parameter run context" is the `struct kunit` that holds the context of the
+     individual parameter run.
+   - A test is defined to be a parameterized tests if it was registered with a
+     generator function.
+- Make comment edits to reflect the established terminology.
+- Require users to manually pass kunit_array_gen_params() to
+  KUNIT_CASE_PARAM_WITH_INIT() as the generator function, unless they want to
+  provide their own generator function, if the parameter array was registered
+  in param_init(). This is to be consistent with the definition of a
+  parameterized test, i.e. generate_params() is never NULL if it's
+  a parameterized test.
+- Change name of kunit_get_next_param_and_desc() to
+  kunit_array_gen_params().
+- Other minor function name changes such as removing the "__" prefix in front
+  of internal functions.
+- Change signature of get_description() in `struct params_array` to accept
+  the parameterized test context, as well.
+- Output the KTAP test plan for a parameterized test when the parameter count
+  is available.
+- Cover letter was made more concise.
+- Edits to the example tests.
+- Fix bug of parameterized test init/exit logic being done outside of the
+  parameterized test check.
+- Fix bugs identified by the kernel test robot.
 
 ---
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
 
-Best regards,
+Marie Zhussupova (7):
+  kunit: Add parent kunit for parameterized test context
+  kunit: Introduce param_init/exit for parameterized test context
+    management
+  kunit: Pass parameterized test context to generate_params()
+  kunit: Enable direct registration of parameter arrays to a KUnit test
+  kunit: Add example parameterized test with shared resource management
+    using the Resource API
+  kunit: Add example parameterized test with direct dynamic parameter
+    array setup
+  Documentation: kunit: Document new parameterized test features
+
+ Documentation/dev-tools/kunit/usage.rst | 342 +++++++++++++++++++++++-
+ drivers/gpu/drm/xe/tests/xe_pci.c       |   2 +-
+ include/kunit/test.h                    |  95 ++++++-
+ kernel/kcsan/kcsan_test.c               |   2 +-
+ lib/kunit/kunit-example-test.c          | 222 +++++++++++++++
+ lib/kunit/test.c                        |  87 ++++--
+ rust/kernel/kunit.rs                    |   4 +
+ 7 files changed, 726 insertions(+), 28 deletions(-)
+
 -- 
-David Lechner <dlechner@baylibre.com>
+2.51.0.rc0.205.g4a044479a3-goog
 
 
