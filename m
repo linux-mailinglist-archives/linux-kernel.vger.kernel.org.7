@@ -1,207 +1,109 @@
-Return-Path: <linux-kernel+bounces-762680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613B0B209A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C5BB209A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B4A1891DE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E179D3AB621
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9302D8385;
-	Mon, 11 Aug 2025 13:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D752DAFDD;
+	Mon, 11 Aug 2025 13:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lX/QAk+0"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPRtyiMn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1F72D3A69;
-	Mon, 11 Aug 2025 13:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EC82D97BB;
+	Mon, 11 Aug 2025 13:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917699; cv=none; b=FM+0kmOZDLnK1cuyLQvM0LqhDQQayedOQqzgfflIDzkn4ILgdAE5LJOSLnmTPMoCmMD/JEVsDqGB5Evp37ZZnZemY/z0D+p952A+W8Co2F1fT+L1ipkomGO4Sb71hy7ZKWKI0q6NYMmccTEjHIvBX33Es4Ck9cgCBnOhyXNhgmo=
+	t=1754917701; cv=none; b=gUkFdMkdOxc23saMM9ngwWR2KmEZgxBcIVFLZHKAvLNtzlmLEHpCVHc9vWT1CiVTQa3IhEsESORC/ZbAJDqN101Hoga+kG4erxFQJZqOHhatMM74+G8Jyhb5aXRr3H2pfWL72MWk7oGp3441Nxatbz+yjfEEmtpCUJLa1J13Q2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917699; c=relaxed/simple;
-	bh=DPK58L1OvoRC8gFPv+jYnVCoAPKAptX6supP1tIwMSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XsPh/f/1rwW0RDCZbYXYEuCo4ngeQ/ht2R0BnbPKtPvRgpAlbX2tlVXHRwVkjN0NdTlkNkDB9aD8s5WS4AO8nXvZ3dfd99hMx+tnnhxdEfoyh6DIvIJYqI3y8r88HQnRB1NszbPfozD3L+Lqoab4Xx/e78kw2mmw063T/ViBzHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lX/QAk+0; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b78d337dd9so2661213f8f.3;
-        Mon, 11 Aug 2025 06:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754917696; x=1755522496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q0jZqH0YzwVwMNkNf0iJO2HEg98XWKpoKoM3gmGzW0k=;
-        b=lX/QAk+0fotinMtvuzPzMgEhNlut2+2VoijAXSKbn9iFI/WlekBiLPL/f/jrwnSMzm
-         BllrWQDAwz3B9WcLIBqoOQqGg0xdByBQSnBVeffq6aOfs0f8EvXqY3ZTp80ctaLjjuVI
-         tQelX8spHFNR6EWl3A79HHfv2IOTpolErA2QdfPdtLZJ+NTGtFFDwL6/IWcxxho50Ex1
-         PZQnjGXIAJrmtD52nWHeLhYIU0R/7df5Up7hrJllgbF/1ugRRPUrMfIBFEs8iz5h05wZ
-         EzNXxddS2oCLrxjnrNI1jYtjrZivkhoXLfHhaq1nT3VJeF4xVNihM8XJmJts0ub/aQEn
-         EvUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754917696; x=1755522496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q0jZqH0YzwVwMNkNf0iJO2HEg98XWKpoKoM3gmGzW0k=;
-        b=AOGXVfYrullhgnHruQVK1Yzyik1XXPeSzN76LopIcq2hyPPsZtsK1+FNpcr+DrlXjg
-         RKRnlMRFu0k+5ZvsqNQWljGOmE2KraVbsPYce4t+p/gsQcIrJJlwXy1ZANxu3bKxn/w9
-         3ziqUGsVeyfwIqWN8q0aKbCFGA4HTZzzvxPAAuhPDo7KwKjQU0GNfhMDmv5kUkjbX4g7
-         3Boqh0jq0z6nIGpArXeI9EyVI267Pe92R0QYIw+Z5Pfg0SFskKnYVwDV4WRt6tl3i/D5
-         P66E5iUC8TcdekVjTOu6NZ1rm240mE4t6B2NhLhjIPTjW3ZgeVUNBLWhiXPfhdLNgYl1
-         R8sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnT7tfHq97snKrV90jzbn2V3za/v4txM5NAIL8fpt/vHYsuk6vtER2zShgCdycUrra4TBxLeLY/CE@vger.kernel.org, AJvYcCWg1QDQKKJQmfJvfR/9Une0Hs0tS/52OlMQZjVfL8SKuVyVRLqy/gekrqmxy2RcHw6I9CQrQYEXu0hO9A==@vger.kernel.org, AJvYcCWqpC9X04LYEVPsXQDMWMqeEC9LC23wJ2kTNb9zZHLtavNzkLAGMVZd285lwhPETBw1uQ+nQRp+UdTtUhvd@vger.kernel.org, AJvYcCXLhIaKsNOJ38VakG7XjwfL/dhoQBeOAEQIgpV/mvuaGfoHDyq1Zg2KYSiju25j14MGcVRtkbJ+6mBHRk+uE0iECDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHxIu850tOp82azTSBi1C+iCg4JEpqOBkpddSU5kD47oBYPwZr
-	tvXdKQ0DHYRhPa90cj5hVcpLimJDyg7FKNOAko+QKBLwyh7HHqcA2ezIRo5wDcXBgWLQkcuwLNh
-	M/LHnTvxEnEuL9ek0ayKvMkEbtFV45wI=
-X-Gm-Gg: ASbGncvfxMrvrk++v/1YiNuaLAjQ6n8o6JiabP+tOXzn5j9E8bsoAl6ohC4hj3wmyCi
-	Dq84kdk0KIb5+20h1ipxiBQfrumhrQ6dTaWSaysfaQfBwldn/WEiFM5xv1rjTXnbLy6NzCA7Mzm
-	au0bY30sRkyZTPmHnkGScMlC2eddgaTtHdb4GFwWIyFJxDucehCJYOtTTs3ULZSblJqI10tHXdB
-	VZHyRLM
-X-Google-Smtp-Source: AGHT+IHyKbkQ9g5e/EWJeQxSZVY+tEHej+AaEZdP67ntYrRbY1Z5JXFZBYpS1hatwp7Pa+41tU+yc6eBFmTyVOh6pp4=
-X-Received: by 2002:a05:6000:144f:b0:3b7:8362:fed8 with SMTP id
- ffacd0b85a97d-3b90092cc57mr10109826f8f.2.1754917695542; Mon, 11 Aug 2025
- 06:08:15 -0700 (PDT)
+	s=arc-20240116; t=1754917701; c=relaxed/simple;
+	bh=/d1KfM733xo3R+3/FrFqcjdaajI0/o+yoPMVuCUOk6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClUzCgmmaiOG87XOcWNnxrBWN0OpQAVHMAL4JPA7kOgRllRXqklUIykTfy4L4+FauF7RJ8/TkZBpxBaNjUbaCUMlmYfIJPP+X+igCcmPZCjfnWt72+GzY7zgVnoBu8sN7WnVd8so1eA9Klnlf2CQP5hTqZPRrrvHskH4HRQRFFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPRtyiMn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634DEC4CEED;
+	Mon, 11 Aug 2025 13:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754917700;
+	bh=/d1KfM733xo3R+3/FrFqcjdaajI0/o+yoPMVuCUOk6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GPRtyiMn+3F/Jo9S3Zc3bMjLlAPmm6JKZq9yO9a5IHU3W5CJn/fZ5m4o+Ys9UJpqv
+	 CsVa8g3eBqX3KxEbeB7aDeVHM3xWRHnnC2knCTcCJ24rA7k7WzShKoGFV7l/9Cwz4r
+	 Oif5brJ6Oq2MhvsFHT/RWM8223Jo5Bh+z2YqDgvMIJm7wijPaDEdCiK+tu4YjEXN7m
+	 Cv8e40ogPmQD+Ec7U0BS2CQ/Sx1AHkqkQ3y+FyiuX1sjRv4uWFMf+PpTkMAaQBaFXS
+	 T+oQFAyqAXpgwyplQGZtKcHfc2D1yzStOSZICf/oOoaI8JLNMKYBjDeeI26/jssK/7
+	 da/IMSUNrZJ+Q==
+Date: Mon, 11 Aug 2025 14:08:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: jeff_chang@richtek.com
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] regulator: rt5133: Add RT5133 PMIC regulator
+ Support
+Message-ID: <421d5c9c-bf2c-40d4-b8da-cbfc19d60ff5@sirena.org.uk>
+References: <20250731031701.2832994-1-jeff_chang@richtek.com>
+ <20250731031701.2832994-2-jeff_chang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808133017.2053637-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250808133017.2053637-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVexDsBVqgF2Gn4hJAZbyv3wcsa=X=6E_52ufOWmvZd9Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdVexDsBVqgF2Gn4hJAZbyv3wcsa=X=6E_52ufOWmvZd9Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 11 Aug 2025 14:07:49 +0100
-X-Gm-Features: Ac12FXwJ7ps-FoXz7jx5UPbsvs-g2xoZwhuxLmSU3iDHU8gvOb9CKWToZ_bZL5M
-Message-ID: <CA+V-a8s-UAAP157zMRD0aqs+N_a7Avk19QYyzOyqkKq4TKpGBw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H and
- RZ/N2H SoCs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6Jcc0h44nmsTmYGk"
+Content-Disposition: inline
+In-Reply-To: <20250731031701.2832994-2-jeff_chang@richtek.com>
+X-Cookie: I've Been Moved!
+
+
+--6Jcc0h44nmsTmYGk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Thu, Jul 31, 2025 at 11:15:32AM +0800, jeff_chang@richtek.com wrote:
+> From: Jeff Chang <jeff_chang@richtek.com>
+>=20
+> RT5133 is a highly-integrated chip. It includes 8 LDOs and 3 GPOs that can
+> be used to drive output high/low purpose. The dependency of the GPO block=
+ is
+> internally LDO1 Voltage.
 
-On Mon, Aug 11, 2025 at 1:47=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, 8 Aug 2025 at 15:30, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Document the pin and GPIO controller IP for the Renesas RZ/T2H
-> > (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
-> > header file used by both the bindings and the driver.
-> >
-> > The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
-> > Both share the same controller architecture; separate compatible
-> > strings are added for each SoC to distinguish them.
-> >
-> > Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> > v3->v4:
-> > - Renamed DT binding file from renesas,rzt2h-pinctrl.yaml to
-> >   renesas,r9a09g077-pinctrl.yaml
-> > - Updated the title and description to include RZ/N2H SoC
-> > - Updated description, fixing the information about mux functions
-> > - Dropped sd0-sd-tmp-pins sub node from sdhi0_sd_pins in the example no=
-de
-> > - Added reviewed-by tag from Rob
->
-> Thanks for the update!
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinct=
-rl.yaml
->
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
-> > +    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-> > +
-> > +    pinctrl@802c0000 {
-> > +        compatible =3D "renesas,r9a09g077-pinctrl";
-> > +        reg =3D <0x802c0000 0x2000>,
-> > +              <0x812c0000 0x2000>,
-> > +              <0x802b0000 0x2000>;
-> > +        reg-names =3D "nsr", "srs", "srn";
-> > +        clocks =3D <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-> > +        gpio-controller;
-> > +        #gpio-cells =3D <2>;
-> > +        gpio-ranges =3D <&pinctrl 0 0 288>;
-> > +        power-domains =3D <&cpg>;
-> > +
-> > +        serial0-pins {
-> > +            pinmux =3D <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
-> > +                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
-> > +        };
-> > +
-> > +        sd1-pwr-en-hog {
-> > +            gpio-hog;
-> > +            gpios =3D <RZT2H_GPIO(39, 2) 0>;
-> > +            output-high;
-> > +            line-name =3D "sd1_pwr_en";
-> > +        };
-> > +
-> > +        i2c0-pins {
-> > +            pins =3D "RIIC0_SDA", "RIIC0_SCL";
-> > +            input-enable;
-> > +        };
-> > +
-> > +        sdhi0_sd_pins: sd0-sd-group {
->
-> As per my belated comments on v4, I will drop the sdhi0_sd_pins label...
->
-Thank you for taking care of this, I was preparing a v6 for this.
+This breaks an allmodconfig build:
 
-> > +            sd0-sd-ctrl-pins {
-> > +                pinmux =3D <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CL=
-K */
-> > +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD =
-*/
-> > +            };
-> > +
-> > +            sd0-sd-data-pins {
->
-> ... and the "sd0-sd-" prefixes.
->
-> > +                pinmux =3D <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CL=
-K */
-> > +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD =
-*/
-> > +            };
-> > +        };
-> > +    };
->
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
->
-> > +#endif /* __DT_BINDINGS_PINCTRL_RENESAS_R9A09G057_PINCTRL_H__ */
->
-> G077
->
-Ouch.
+/build/stage/linux/drivers/regulator/rt5133-regulator.c:605:15: error: inco=
+mpati
+ble function pointer types assigning to 'int (*)(struct gpio_chip *, unsign=
+ed in
+t, int)' from 'void (struct gpio_chip *, unsigned int, int)' [-Wincompatibl=
+e-fun
+ction-pointer-types]
+  605 |         priv->gc.set =3D rt5133_gpio_set;
+      |                      ^ ~~~~~~~~~~~~~~~
+1 error generated.
 
-Cheers,
-Prabhakar
+--6Jcc0h44nmsTmYGk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiZ6z8ACgkQJNaLcl1U
+h9DNDgf+ONNkMu5C/QmIBqU3avkdCADf9UaCI3COdNjFMnfbqth+im53Y3aMVa7D
+vqYHcuv7smBjrtpSSpxQWo0rStW91PYVSGIqCxl3oSbabebQkfcD+p73LUQzWbJW
+e9rptuu3xK3XCDRCvfTicuWRREJW7UnWf9tqtJcszkOKeL0eFOh1gTnio70KZgle
+t8oSCpsTuV2uCBLa2EbO0NF4j1xLPgJXRTWMObFTUeCBX69eAC7XKyGaKjAk8UTs
+uMrUvcb7PWgP1n/KW/aw5uJay8vaoMIcn0Ffk2xgyeAodVuu1c1oOsqJGZ5RYKOq
+dYlpL6pp7DTTsvN5L7Tph0j6zwKmOQ==
+=cKnQ
+-----END PGP SIGNATURE-----
+
+--6Jcc0h44nmsTmYGk--
 
