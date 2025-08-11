@@ -1,210 +1,335 @@
-Return-Path: <linux-kernel+bounces-762307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A96B204A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:57:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F92B20542
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA0684E2B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A57422BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B871D8DFB;
-	Mon, 11 Aug 2025 09:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2793E22A4DA;
+	Mon, 11 Aug 2025 10:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o6+e0wPq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="KNL4ECDi"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0133E335C7
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3071C1BD035;
+	Mon, 11 Aug 2025 10:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906249; cv=none; b=c3PpR5kduaTUeB1qH16lQn2a1ncEgPVfMr20XmtCNIHiIG41051zKIGfQ0ut9yrdumXFJ5brwfgVd4Vwb7DDKnRi0biIZ+w/M5m/viezIEQhjuDuVqkV4G2Q8vCaIxUUJt83jv28G+sROZ0ST/A3ry5Mcdbr86s5Q61Ot1Yng3E=
+	t=1754907954; cv=none; b=c6Q+psRjsEkaHrdrVjVNzHYcZo3btyoZok852g4j1ismhShLFJHjnQTmGE5SAM4NVQeoBj5xxd5u5mg1Lai2fYdRV8VHrZRcE6mqXOGQRcdnp7YvF5ZpyrehLHW9AQzcMzrM3JmmzVunCn74qNs7NKpnCwTiW6Vu5qcsdKvpDLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906249; c=relaxed/simple;
-	bh=y6+JQicQ8veDn48MKkzx9YTqFfDxKzh1n4MUqXocFNM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kc0HMMI1OCoRpdaWUfT9BhXATW35WNNDwEukrSaLNWq8+unL/9G/3sjQ+NQiNzkJz2w6UE8WfKSvQV6kWPWkBZ8HthTr0TF8ACfzHMC+k0D1fp26fT7eVeUHIGxNtdjcCWp34DxI1jXTSsn5Cmp9iPhDYFHplbD1TXytq3LB5L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o6+e0wPq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dBU0029228
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:57:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hvDa8O9hGACyFWVvO4cHOr
-	7fhxyH5sRWAFv1BUJCgSY=; b=o6+e0wPqLH1ag2mF08TNpUTo9oqgfVn/vZFRxm
-	8pO7d74cl/OSIfqcLD2tUDAoesLM2lPMcusPUzu3MWkZeuapM6FMOtHfFA9HiDou
-	L/mEGu8rwgPFq5LPYMDqaL39cLx7g57JmXPFwE3o90N+7NLBkbpSWFkQPiyKsxZy
-	SJHwavhIRvIAU7mRQvkeq2SU4lGMFoKNHwYXYzdzB1imMq5Kt1Z+rg/HXPhJUvp7
-	eINrdC9Gqy9Ffd5Dp3atOLQc8gtOCowZ1rt6DLnAF6pfow9xI5asurtab+UT2KRH
-	9efkaYo/21LEJO4o2QlgEUkFNWEgY0AZbQxm9HgW4VE55MvQ==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygmbv93-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:57:27 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-76c19d1e510so3949903b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:57:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754906246; x=1755511046;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hvDa8O9hGACyFWVvO4cHOr7fhxyH5sRWAFv1BUJCgSY=;
-        b=C70MjY8aOiKT3ovVqO+KXWagem8Iz8p0VI5aCtn0HTcTpUYs3TCdDRT3tLtEV9iWjJ
-         7+J2527T6G4NKpkL9vmf+GBY14SZ9oYMZ0dCyvb7SG8fSm0hdhVYdDdh9hBHWDrgr//G
-         /SUfWN8i77mcPlL66vnjJMVo1BsWDSuHLNkYiBaaub+zqTNuwPrbkUFOWk46Ub4oHkSj
-         NIoucrt1QskVfKvqqO8W8NPIaAuDOWe7UR8NKmiyro6y6wBF9xxfJuweW3MAs8f3vN6Q
-         FhJxyKfIgj81IKZBJkKGc61kQ3NUfRcHEpbSQCZ/fC5h1K0QGRgUsMH35jRxCVzVN9On
-         FifA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNflf8/2oRW9vch/HsHr/B/LHGpV0pZMMgOy7GpyiAi5FKwSB0KVBx2KBGLPF9cZVk1FRTWMoT4h1f6GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykXHN2f+SEjiD9px5L4GS6qmk5T32Gr9+esEPqSUGsWDLv4Ga1
-	YpptinHewy8nPme21gYZWOZAdvFQ+Gp0SmE0GyCVbuAzgzsXSnxrfCoBG0nupEFHHEQttX0E1hi
-	FF9BRTOGo70QqenKJp2IHCIMNIA7C5di11SSk2/9rKh2YjodNs0bBrsw9FqN+ewqiPz8=
-X-Gm-Gg: ASbGncuAJ8roq0DudICiUkUFxja1NQAwAI0HCkk05rKW++UKtN7a8hyfTblPg4Em+9b
-	rmOLjYeL00XsuthJ9NJes6a2t4aA4NvmjvYyP+/oZqru6vJiXVC0fm0MbyNhaeN9lFDqn1JT5q2
-	l5w08uWH7qJ6+NiEWDa3dwVZipQlI0YPKAp7qtRBHHcOnop0Mm8ADdNEesZpERjO8Q+Ix04PzqT
-	E1VvK9axnU+ar/KViesSfsup9t/7+YgKSXH4fGAnlwWx8egdVGpW9nGWQIA8YPw9KDmbzl6QeU2
-	nBa0Yv8bxoHF+o9N6LOG+HONlMBnNvU3cbutnVi7FxXAz39vCPIJTR0jEcfYournPIlPBEdHmty
-	B1XHPG6Qq7Me7neuoQACc0g==
-X-Received: by 2002:a05:6a00:18a7:b0:76b:8b13:e06a with SMTP id d2e1a72fcca58-76c46177ffcmr18799314b3a.14.1754906246190;
-        Mon, 11 Aug 2025 02:57:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdghApAGzGX3YDSAAQZKY23C1RLAPvbfQ/HBZ35o92nHPYZlaSgEACPUYsZejQeE6Kx3teWg==
-X-Received: by 2002:a05:6a00:18a7:b0:76b:8b13:e06a with SMTP id d2e1a72fcca58-76c46177ffcmr18799285b3a.14.1754906245775;
-        Mon, 11 Aug 2025 02:57:25 -0700 (PDT)
-Received: from hu-yuanfang-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c5f493178sm5787371b3a.49.2025.08.11.02.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 02:57:25 -0700 (PDT)
-From: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 02:57:20 -0700
-Subject: [PATCH] coresight-etm4x: Conditionally access register
- TRCEXTINSELR
+	s=arc-20240116; t=1754907954; c=relaxed/simple;
+	bh=WUFJaClt5A1A0E/z56Bv2phNlvk64lAEZVnpfKHjVH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3clJDCi1sU+u9hzsXK9oAqZ4HUV+UqaRVtVLuK88habv9yN7Ppg9BYFvQtuZwVxrm+1KhIqzwcA6zbmey9a67XJBiX74PnHYvr3yup/dItpS1/U7NtBmVL3mDms3h0etc1K/uM2uZrwE/NnuRGrmjGURPiOPuOmqcpHh5+FyPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=KNL4ECDi; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rUXBcZclaa5p7dx86NOsbKhNhMlRIII02pORjXX5jDo=; b=KNL4ECDin1/0F6RT/nrl7AgsSR
+	OHZ3p/zt/j2QEm+GQQoITnDbnQLiefa1/2LcOO35Bdf92of6FRrto1m2jW3+apLVAG5MWweC3mAbQ
+	83o/RNnxWs6XbiejmtKFjpigBymQA5L008oNW0oh/toxZAeDNeqV94NiAGV2uPlJo/9o=;
+Received: from p5b206816.dip0.t-ipconnect.de ([91.32.104.22] helo=localhost.localdomain)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ulPHb-008fA3-1P;
+	Mon, 11 Aug 2025 11:57:35 +0200
+From: Felix Fietkau <nbd@nbd.name>
+To: netdev@vger.kernel.org,
+	Michal Ostrowski <mostrows@earthlink.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3] net: pppoe: implement GRO/GSO support
+Date: Mon, 11 Aug 2025 11:57:33 +0200
+Message-ID: <20250811095734.71019-1-nbd@nbd.name>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-trcextinselr_issue-v1-1-ed78f3215502@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAH++mWgC/x3MQQqEMBAF0atIrw0kgajMVWSQoD/aIBnpdkQQ7
- 25w+RZVFymEofSpLhIcrPzLBa6uaFxinmF4KiZvfbCdc2aXEefOWbHKwKp/mOSbNqZoETBRCTd
- B4vOd9t/7fgDbFTGfZAAAAA==
-X-Change-ID: 20250811-trcextinselr_issue-f267afa0e5ed
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfXxPv88CylgSXm
- 1DRxgcBRJmTeYORlblS+ANq/7wqYGGSMX+hlffrqO8LOIuOoPy9cuchH9CNSwA3fwJkqi/r7N5Z
- dIuXP5TeddkhbMmrVcf8hOs/BF63qUEgi83UVMGeqSCrBggyu3mIRtliid2DIFLTVrFA+A2RlbD
- F5qdP2W3s7HNjh1rUCzoSF81W2SKC+gQFmIKQ6ZSYkJqfN24FxfneSJnBdjACoUzFzOaF/+3aBL
- S1D085nCCvVwtPFOQs2IcVjXo9RKXaZBWFmhgnaaQTgFD/J5gPkNKdi/Pg+BjDlHGvz3clMAWTr
- n0py5HU7fXyJFqlHaHqyhoa6CPRaNMwb/pJxvXQQpQmz4gKJSeYcmUGRrX3+NCxf/INVrDxqclX
- zb+5o5Pe
-X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=6899be87 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=HcK5dDk5inTH1P41ETwA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: cX73y8njNSIjKaw8QA3hk-SkeVQHZhrq
-X-Proofpoint-ORIG-GUID: cX73y8njNSIjKaw8QA3hk-SkeVQHZhrq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- clxscore=1011 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090035
+Content-Transfer-Encoding: 8bit
 
-The TRCEXTINSELR is only implemented if TRCIDR5.NUMEXTINSEL > 0.
-To avoid invalid accesses, introduce a check on numextinsel
-(derived from TRCIDR5[11:9]) before reading or writing to this register.
+Only handles packets where the pppoe header length field matches the exact
+packet length. Significantly improves rx throughput.
 
-Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+When running NAT traffic through a MediaTek MT7621 devices from a host
+behind PPPoE to a host directly connected via ethernet, the TCP throughput
+that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
+using fraglist GRO.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 ---
- drivers/hwtracing/coresight/coresight-etm4x-core.c | 11 ++++++++---
- drivers/hwtracing/coresight/coresight-etm4x.h      |  2 ++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+v2: fix compile error
+v3:
+  - increase priority value
+  - implement GSO support
+  - use INDIRECT_CALL_INET
+  - update pppoe length field
+  - remove unnecessary network_offsets update
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 42e5d37403addc6ec81f2e3184522d67d1677c04..8a9c4caceff0165e4fce7ac4250f3e16ccc1d34e 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -528,7 +528,8 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
- 		etm4x_relaxed_write32(csa, config->seq_rst, TRCSEQRSTEVR);
- 		etm4x_relaxed_write32(csa, config->seq_state, TRCSEQSTR);
- 	}
--	etm4x_relaxed_write32(csa, config->ext_inp, TRCEXTINSELR);
-+	if (drvdata->numextinsel)
-+		etm4x_relaxed_write32(csa, config->ext_inp, TRCEXTINSELR);
- 	for (i = 0; i < drvdata->nr_cntr; i++) {
- 		etm4x_relaxed_write32(csa, config->cntrldvr[i], TRCCNTRLDVRn(i));
- 		etm4x_relaxed_write32(csa, config->cntr_ctrl[i], TRCCNTCTLRn(i));
-@@ -1423,6 +1424,7 @@ static void etm4_init_arch_data(void *info)
- 	etmidr5 = etm4x_relaxed_read32(csa, TRCIDR5);
- 	/* NUMEXTIN, bits[8:0] number of external inputs implemented */
- 	drvdata->nr_ext_inp = FIELD_GET(TRCIDR5_NUMEXTIN_MASK, etmidr5);
-+	drvdata->numextinsel = FIELD_GET(TRCIDR5_NUMEXTINSEL_MASK, etmidr5);
- 	/* TRACEIDSIZE, bits[21:16] indicates the trace ID width */
- 	drvdata->trcid_size = FIELD_GET(TRCIDR5_TRACEIDSIZE_MASK, etmidr5);
- 	/* ATBTRIG, bit[22] implementation can support ATB triggers? */
-@@ -1852,7 +1854,9 @@ static int __etm4_cpu_save(struct etmv4_drvdata *drvdata)
- 		state->trcseqrstevr = etm4x_read32(csa, TRCSEQRSTEVR);
- 		state->trcseqstr = etm4x_read32(csa, TRCSEQSTR);
- 	}
--	state->trcextinselr = etm4x_read32(csa, TRCEXTINSELR);
+ drivers/net/ppp/pppoe.c | 160 +++++++++++++++++++++++++++++++++++++++-
+ net/ipv4/af_inet.c      |   2 +
+ net/ipv6/ip6_offload.c  |   2 +
+ 3 files changed, 163 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index 410effa42ade..a8d8eb870bce 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -77,6 +77,7 @@
+ #include <net/net_namespace.h>
+ #include <net/netns/generic.h>
+ #include <net/sock.h>
++#include <net/gro.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -435,7 +436,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	if (skb->len < len)
+ 		goto drop;
+ 
+-	if (pskb_trim_rcsum(skb, len))
++	if (!skb_is_gso(skb) && pskb_trim_rcsum(skb, len))
+ 		goto drop;
+ 
+ 	ph = pppoe_hdr(skb);
+@@ -1173,6 +1174,161 @@ static struct pernet_operations pppoe_net_ops = {
+ 	.size = sizeof(struct pppoe_net),
+ };
+ 
++static u16
++compare_pppoe_header(struct pppoe_hdr *phdr, struct pppoe_hdr *phdr2)
++{
++	return (__force __u16)((phdr->sid ^ phdr2->sid) |
++			       (phdr->tag[0].tag_type ^ phdr2->tag[0].tag_type));
++}
 +
-+	if (drvdata->nrseqstate)
-+		state->trcextinselr = etm4x_read32(csa, TRCEXTINSELR);
++static __be16 pppoe_hdr_proto(struct pppoe_hdr *phdr)
++{
++	switch (phdr->tag[0].tag_type) {
++	case cpu_to_be16(PPP_IP):
++		return cpu_to_be16(ETH_P_IP);
++	case cpu_to_be16(PPP_IPV6):
++		return cpu_to_be16(ETH_P_IPV6);
++	default:
++		return 0;
++	}
++
++}
++
++static struct sk_buff *pppoe_gro_receive(struct list_head *head,
++					 struct sk_buff *skb)
++{
++	const struct packet_offload *ptype;
++	unsigned int hlen, off_pppoe;
++	struct sk_buff *pp = NULL;
++	struct pppoe_hdr *phdr;
++	struct sk_buff *p;
++	int flush = 1;
++	__be16 type;
++
++	off_pppoe = skb_gro_offset(skb);
++	hlen = off_pppoe + sizeof(*phdr);
++	phdr = skb_gro_header(skb, hlen + 2, off_pppoe);
++	if (unlikely(!phdr))
++		goto out;
++
++	/* ignore packets with padding or invalid length */
++	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen)
++		goto out;
++
++	type = pppoe_hdr_proto(phdr);
++	if (!type)
++		goto out;
++
++	ptype = gro_find_receive_by_type(type);
++	if (!ptype)
++		goto out;
++
++	flush = 0;
++
++	list_for_each_entry(p, head, list) {
++		struct pppoe_hdr *phdr2;
++
++		if (!NAPI_GRO_CB(p)->same_flow)
++			continue;
++
++		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
++		if (compare_pppoe_header(phdr, phdr2))
++			NAPI_GRO_CB(p)->same_flow = 0;
++	}
++
++	skb_gro_pull(skb, sizeof(*phdr) + 2);
++	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
++
++	pp = indirect_call_gro_receive_inet(ptype->callbacks.gro_receive,
++					    ipv6_gro_receive, inet_gro_receive,
++					    head, skb);
++
++out:
++	skb_gro_flush_final(skb, pp, flush);
++
++	return pp;
++}
++
++static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
++{
++	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
++	__be16 type = pppoe_hdr_proto(phdr);
++	struct packet_offload *ptype;
++	int len, err;
++
++	ptype = gro_find_complete_by_type(type);
++	if (!ptype)
++		return -ENOENT;
++
++	err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
++				 ipv6_gro_complete, inet_gro_complete,
++				 skb, nhoff + sizeof(*phdr) + 2);
++	if (err)
++		return err;
++
++	len = skb->len - (nhoff + sizeof(*phdr));
++	phdr->length = cpu_to_be16(len);
++
++	return 0;
++}
++
++static struct sk_buff *pppoe_gso_segment(struct sk_buff *skb,
++					 netdev_features_t features)
++{
++	unsigned int pppoe_hlen = sizeof(struct pppoe_hdr) + 2;
++	struct sk_buff *segs = ERR_PTR(-EINVAL);
++	u16 mac_offset = skb->mac_header;
++	struct packet_offload *ptype;
++	u16 mac_len = skb->mac_len;
++	struct pppoe_hdr *phdr;
++	__be16 orig_type, type;
++	int len, nhoff;
++
++	skb_reset_network_header(skb);
++	nhoff = skb_network_header(skb) - skb_mac_header(skb);
++
++	if (unlikely(!pskb_may_pull(skb, pppoe_hlen)))
++		goto out;
++
++	phdr = (struct pppoe_hdr *)skb_network_header(skb);
++	type = pppoe_hdr_proto(phdr);
++	ptype = gro_find_complete_by_type(type);
++	if (!ptype)
++		goto out;
++
++	orig_type = skb->protocol;
++	__skb_pull(skb, pppoe_hlen);
++	segs = ptype->callbacks.gso_segment(skb, features);
++	if (IS_ERR_OR_NULL(segs)) {
++		skb_gso_error_unwind(skb, orig_type, pppoe_hlen, mac_offset,
++				     mac_len);
++		goto out;
++	}
++
++	skb = segs;
++	do {
++		phdr = (struct pppoe_hdr *)(skb_mac_header(skb) + nhoff);
++		len = skb->len - (nhoff + sizeof(*phdr));
++		phdr->length = cpu_to_be16(len);
++		skb->network_header = (u8 *)phdr - skb->head;
++		skb->protocol = orig_type;
++		skb_reset_mac_len(skb);
++	} while ((skb = skb->next));
++
++out:
++	return segs;
++}
++
++static struct packet_offload pppoe_packet_offload __read_mostly = {
++	.type = cpu_to_be16(ETH_P_PPP_SES),
++	.priority = 20,
++	.callbacks = {
++		.gro_receive = pppoe_gro_receive,
++		.gro_complete = pppoe_gro_complete,
++		.gso_segment = pppoe_gso_segment,
++	},
++};
++
+ static int __init pppoe_init(void)
+ {
+ 	int err;
+@@ -1189,6 +1345,7 @@ static int __init pppoe_init(void)
+ 	if (err)
+ 		goto out_unregister_pppoe_proto;
  
- 	for (i = 0; i < drvdata->nr_cntr; i++) {
- 		state->trccntrldvr[i] = etm4x_read32(csa, TRCCNTRLDVRn(i));
-@@ -1984,7 +1988,8 @@ static void __etm4_cpu_restore(struct etmv4_drvdata *drvdata)
- 		etm4x_relaxed_write32(csa, state->trcseqrstevr, TRCSEQRSTEVR);
- 		etm4x_relaxed_write32(csa, state->trcseqstr, TRCSEQSTR);
- 	}
--	etm4x_relaxed_write32(csa, state->trcextinselr, TRCEXTINSELR);
-+	if (drvdata->numextinsel)
-+		etm4x_relaxed_write32(csa, state->trcextinselr, TRCEXTINSELR);
++	dev_add_offload(&pppoe_packet_offload);
+ 	dev_add_pack(&pppoes_ptype);
+ 	dev_add_pack(&pppoed_ptype);
+ 	register_netdevice_notifier(&pppoe_notifier);
+@@ -1208,6 +1365,7 @@ static void __exit pppoe_exit(void)
+ 	unregister_netdevice_notifier(&pppoe_notifier);
+ 	dev_remove_pack(&pppoed_ptype);
+ 	dev_remove_pack(&pppoes_ptype);
++	dev_remove_offload(&pppoe_packet_offload);
+ 	unregister_pppox_proto(PX_PROTO_OE);
+ 	proto_unregister(&pppoe_sk_proto);
+ 	unregister_pernet_device(&pppoe_net_ops);
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index 76e38092cd8a..0480a6d4f203 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -1533,6 +1533,7 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
  
- 	for (i = 0; i < drvdata->nr_cntr; i++) {
- 		etm4x_relaxed_write32(csa, state->trccntrldvr[i], TRCCNTRLDVRn(i));
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-index ac649515054d905fa365203bd35f1d839b03292f..823914fefa90a36a328b652b0dc3828b9bddd990 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.h
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-@@ -162,6 +162,7 @@
- #define TRCIDR4_NUMVMIDC_MASK			GENMASK(31, 28)
+ 	return pp;
+ }
++EXPORT_INDIRECT_CALLABLE(inet_gro_receive);
  
- #define TRCIDR5_NUMEXTIN_MASK			GENMASK(8, 0)
-+#define TRCIDR5_NUMEXTINSEL_MASK               GENMASK(11, 9)
- #define TRCIDR5_TRACEIDSIZE_MASK		GENMASK(21, 16)
- #define TRCIDR5_ATBTRIG				BIT(22)
- #define TRCIDR5_LPOVERRIDE			BIT(23)
-@@ -999,6 +1000,7 @@ struct etmv4_drvdata {
- 	u8				nr_cntr;
- 	u8				nr_ext_inp;
- 	u8				numcidc;
-+	u8				numextinsel;
- 	u8				numvmidc;
- 	u8				nrseqstate;
- 	u8				nr_event;
-
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-trcextinselr_issue-f267afa0e5ed
-
-Best regards,
+ static struct sk_buff *ipip_gro_receive(struct list_head *head,
+ 					struct sk_buff *skb)
+@@ -1618,6 +1619,7 @@ int inet_gro_complete(struct sk_buff *skb, int nhoff)
+ out:
+ 	return err;
+ }
++EXPORT_INDIRECT_CALLABLE(inet_gro_complete);
+ 
+ static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
+ {
+diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
+index fce91183797a..9e3640b018a4 100644
+--- a/net/ipv6/ip6_offload.c
++++ b/net/ipv6/ip6_offload.c
+@@ -306,6 +306,7 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
+ 
+ 	return pp;
+ }
++EXPORT_INDIRECT_CALLABLE(ipv6_gro_receive);
+ 
+ static struct sk_buff *sit_ip6ip6_gro_receive(struct list_head *head,
+ 					      struct sk_buff *skb)
+@@ -388,6 +389,7 @@ INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
+ out:
+ 	return err;
+ }
++EXPORT_INDIRECT_CALLABLE(ipv6_gro_complete);
+ 
+ static int sit_gro_complete(struct sk_buff *skb, int nhoff)
+ {
 -- 
-Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+2.50.1
 
 
