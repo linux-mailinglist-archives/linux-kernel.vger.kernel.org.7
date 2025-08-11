@@ -1,260 +1,180 @@
-Return-Path: <linux-kernel+bounces-762284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBC6B2047D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF538B20472
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9357161AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B5B18A0730
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2152222D7;
-	Mon, 11 Aug 2025 09:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E988A22A4DA;
+	Mon, 11 Aug 2025 09:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Wkrx+IHy"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hZD3UnBr"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4315239E9A;
-	Mon, 11 Aug 2025 09:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386E1FBC92
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905835; cv=none; b=oBP7mMFQd5wsCDU/iNJzNUibSjRifPkZTLD0u9kKUPQjK8lgRS/3u7qbeusZ55dsclxj2AHF8nL+84k0Ok/NNEZw6KpbFCd9+o5HKljRSJHDseDg/LBW8WyoBRK2lhh884o3RRvUMGO39m/1sKfpGwee1t/j0lysB4y0HOa54qU=
+	t=1754905864; cv=none; b=pwAGI7PWdP7ERErRXvQ2ebvWQMCJh+A+X//PKxlEan23HPlInxD7grzJ9o3oYUaHb3ahbh81RFzKHV0G9yQdOpUfGjOL59UOk+p5CXQV0g05pL4F4rnt3jbxI/u/cEFRR6IFU9hSmLFgMf3GCSu/rrVPV15KlpCyzCUwaH/dv1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905835; c=relaxed/simple;
-	bh=blj/1UKBFapSa7l6nZB5E2Ph710FcbyLPTh2LAdjhtc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f+Cg4ldo6G9HxrhdBOAtW17zJJUE4el1HsGBisUrGXf2vxILYQBrNUV4ueCQH7/nX72aj+huJxNbousywaEAD130t+k2cMpL7z3XWk26F1AGrg68f6DBU3+0LxXbO1h0YG4eJ2ejvNLPezWKYZt4ntQUoGSt5zxy2KcXsfiHogY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Wkrx+IHy; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c0qd1209Mz9snJ;
-	Mon, 11 Aug 2025 11:50:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1754905829; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6iVG8v6eSQ1zc21xzNcw5sM6wDtRT0rY/n/n6Z+C8FE=;
-	b=Wkrx+IHyKbbOJmC8iU8W9ukEvuRhdtur1R9/nZciQk4jzZnE9v6m/rjLcMr/chaQutwRCz
-	J5Zq6THUqQhMIvIQjzFaCIuzByqmqrpr1kVyyQHpBOpg0/+mLg1XiUBnEKwgPiYUMUEbKO
-	OKMXZk52DcDluNgBOCN+lLmua214RMscl8LZxhPT6j5aaD5NeSl4bdtOWmTKp+u/ETYeVf
-	qz7zmGj4rthvYB2Rm57PjLUW88g7uPbmJh5tyiEaz1/P2EsDM3JLJPsPsIFrXmvNlh8DX2
-	+00EG2ojp/hGz+srPydbvotFy3694J1yotjdFNuyvTOT6BnkB4kD5515rttmoQ==
-Message-ID: <90c89caeb8ec3ac0fcae583df722bad20fa72827.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: Extend and update documentation
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
- Stanner <phasta@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, Matthew
- Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Date: Mon, 11 Aug 2025 11:50:22 +0200
-In-Reply-To: <9caf8709-91ef-445a-aa4e-aede1899f364@amd.com>
-References: <20250724140121.70873-2-phasta@kernel.org>
-	 <f064a8c305bd2f2c0684251d3cd2470699c28d5e.camel@redhat.com>
-	 <5fb872d0-9b0a-4398-9472-eea3fdf61940@amd.com>
-	 <c1f7c4adaa0ac8d1994046436da8eb64bba5e06e.camel@redhat.com>
-	 <9caf8709-91ef-445a-aa4e-aede1899f364@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1754905864; c=relaxed/simple;
+	bh=C5MatfIhs12u8LBN8rcB7OmjjjJR/sQwe8LRRU3PdCE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NQvMSwRS01kwVjV49EYIyj2v6YnMOw3IJ+2kUEdZOLNgk8yaSXTkmLNu6+aoqenNQUXcn4h4dtNNg0aAK1c5MS9i+SP4ZArfwNbhSGvucy/7d5VT8smBgxTFOQ80TUl40t0PPgSTe2PFoelB83lS8gmCxOo9mhJL14Aj0pgKJkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hZD3UnBr; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b793f76a46so2662908f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754905861; x=1755510661; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAE29LBrFArgSyvFQ5lS9xVaxfMO1U9/JaZNL/bK/48=;
+        b=hZD3UnBr8w3DLpIqfXGNFHM8v5vP6OTBzzQE3sZj6lZlAetIFtoeB3NXtUgsGxMBuQ
+         b2csTwsFfPrzs8e7YSGFKI23DaNGhq0TUCkDjwoIQIbbpmFATN6vVV+STbnyxXFOyVnQ
+         IXXO81E4V8rHYdzbkKu4rj3A4jmU8SAbMfOW+UGYw8/EeoppJEHHOvrRE5fnXvbgJH6C
+         Id2B5rfcba/JIAUtyu4P7ufQOkkQDmUsz83uVAOHpNx9n/t2RaeWk2+wRsaulI58FgMp
+         5KwHOkFzNJjP9oIQGllvga7cxWUUrCNnJpU9fdV6drgN4lUu+4y/T95/9LcK0ZMD5iFO
+         ICHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754905861; x=1755510661;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAE29LBrFArgSyvFQ5lS9xVaxfMO1U9/JaZNL/bK/48=;
+        b=ucmuTXOr4LQb06+AYivRUWjXaLuoE+6hEXreMAP/HIM/BHNGpGbl0S0KGL3QtCa19a
+         Ilhirl6czeSFT33PX+i1uY2cfkAtq8yKKvm9uf22ZVbof5gu+XHqigmsP9JU4Ie187c6
+         iYbb4IYbJyjdbuNc1+YZtQ0JUnYomuC5ZLA4M6bDVEYiy1iu8ugQ0ZGuTz5yP69MwT5b
+         40GfPfxcsPooDzeo/w6+XRjd7RCVrROvE+ClhuplJUpK+KJ4HFLeWrFksI2F+g8lRtjE
+         lEs9HHr9Pp9eC5xF7sqX78uJf9x7b+HYOhioJLVUUpEWb2FrmrASESgYLb0klhT+TMNm
+         aKrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6fYb9fyRAILbUUhaNpFniAK6P4AhOEPdlybo17KfCUGT7PTOMD2aOBpANDhPQP1Tw2bqecPWuVzzTwmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTBtQtILP8gkOUlvW6Ig1YhCwwcyp3p21yKDRVzm1jy8kYPbOs
+	6Ptl80xEw2XrEX+iCmb77wCRpgOMrgGjHKOaMHYVZZ0lGq7VP53x0S28qBOYcYn4bNj8LTRrHFd
+	gqWfbEVWujv9Mx12BQQ==
+X-Google-Smtp-Source: AGHT+IGTv1HAGp4uXaV3XH6tL1TykMyBCbs/097zxVSNyRqSXVdMeoikVR/Ak34IFOdwpahSprtW+i8IpUvxOZ8=
+X-Received: from wmtk8.prod.google.com ([2002:a05:600c:c4a8:b0:459:d4a7:967f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:64cd:0:b0:3b7:9c38:e8a5 with SMTP id ffacd0b85a97d-3b900b8bd0emr9524002f8f.56.1754905860749;
+ Mon, 11 Aug 2025 02:51:00 -0700 (PDT)
+Date: Mon, 11 Aug 2025 09:50:59 +0000
+In-Reply-To: <20250811041039.3231548-3-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MBO-RS-ID: 523bad2c5c6675e8adc
-X-MBO-RS-META: 6sssz3gmcc77kzux9pogddxatqmafe6o
+Mime-Version: 1.0
+References: <20250811041039.3231548-1-fujita.tomonori@gmail.com> <20250811041039.3231548-3-fujita.tomonori@gmail.com>
+Message-ID: <aJm9A_D-zlJtbV6X@google.com>
+Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout functions
+From: Alice Ryhl <aliceryhl@google.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com, 
+	Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 2025-08-07 at 16:15 +0200, Christian K=C3=B6nig wrote:
-> On 05.08.25 12:22, Philipp Stanner wrote:
-> > On Tue, 2025-08-05 at 11:05 +0200, Christian K=C3=B6nig wrote:
-> > > On 24.07.25 17:07, Philipp Stanner wrote:
-> > > > > +/**
-> > > > > + * DOC: Scheduler Fence Object
-> > > > > + *
-> > > > > + * The scheduler fence object (&struct drm_sched_fence) encapsul=
-ates the whole
-> > > > > + * time from pushing the job into the scheduler until the hardwa=
-re has finished
-> > > > > + * processing it. It is managed by the scheduler. The implementa=
-tion provides
-> > > > > + * dma_fence interfaces for signaling both scheduling of a comma=
-nd submission
-> > > > > + * as well as finishing of processing.
-> > > > > + *
-> > > > > + * The lifetime of this object also follows normal dma_fence ref=
-counting rules.
-> > > > > + */
-> > > >=20
-> > > > The relict I'm most unsure about is this docu for the scheduler fen=
-ce.
-> > > > I know that some drivers are accessing the s_fence, but I strongly
-> > > > suspect that this is a) unncessary and b) dangerous.
-> > >=20
-> > > Which s_fence member do you mean? The one in the job? That should be =
-harmless as far as I can see.
-> >=20
-> > I'm talking about struct drm_sched_fence.
->=20
-> Yeah that is necessary for the drivers to know about. We could potentiall=
-y abstract it better but we can't really hide it completely.
->=20
-> > >=20
-> > > > But the original draft from Christian hinted at that. So, @Christia=
-n,
-> > > > this would be an opportunity to discuss this matter.
-> > > >=20
-> > > > Otherwise I'd drop this docu section in v2. What users don't know, =
-they
-> > > > cannot misuse.
-> > >=20
-> > > I would rather like to keep that to avoid misusing the job as the obj=
-ect for tracking the submission lifetime.
-> >=20
-> > Why would a driver ever want to access struct drm_sched_fence? The
-> > driver knows when it signaled the hardware fence, and it knows when its
-> > callbacks run_job() and free_job() were invoked.
-> >=20
-> > I'm open to learn what amdgpu does there and why.
->=20
-> The simplest use case is performance optimization. You sometimes have sub=
-missions which ideally run with others at the same time.
->=20
-> So we have AMDGPU_CHUNK_ID_SCHEDULED_DEPENDENCIES which basically tries t=
-o cast a fence to a scheduler fence and then only waits for the dependency =
-to be pushed to the HW instead of waiting for it to finish (see amdgpu_cs.c=
-).
+On Mon, Aug 11, 2025 at 01:10:38PM +0900, FUJITA Tomonori wrote:
+> Add read_poll_timeout functions which poll periodically until a
+> condition is met or a timeout is reached.
+> 
+> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
+> macro and a simple wrapper for Rust doesn't work. So this implements
+> the same functionality in Rust.
+> 
+> The C version uses usleep_range() while the Rust version uses
+> fsleep(), which uses the best sleep method so it works with spans that
+> usleep_range() doesn't work nicely with.
+> 
+> The sleep_before_read argument isn't supported since there is no user
+> for now. It's rarely used in the C version.
+> 
+> read_poll_timeout() can only be used in a nonatomic context. This
+> requirement is not checked by these abstractions, but it is intended
+> that klint [1] or a similar tool will be used to check it in the
+> future.
 
-But the driver recognizes that a certain fence got / gets pushed right
-now through backend_ops.run_job(), doesn't it?
+I would drop this paragraph. You have a call to might_sleep() now.
 
->=20
-> Another example are gang submissions (where I still have the TODO to actu=
-ally fix the code to not crash in an OOM situation).
->=20
-> Here we have a gang leader and gang members which are guaranteed to run t=
-ogether on the HW at the same time.
->=20
-> This works by adding scheduled dependencies to the gang leader so that th=
-e scheduler pushes it to the HW only after all gang members have been pushe=
-d.
->=20
-> The first gang member pushed now triggers a dependency handling which mak=
-es sure that no other gang can be pushed until gang leader is pushed as wel=
-l.
+> +#[track_caller]
+> +pub fn read_poll_timeout<Op, Cond, T>(
+> +    mut op: Op,
+> +    mut cond: Cond,
+> +    sleep_delta: Delta,
+> +    timeout_delta: Option<Delta>,
+> +) -> Result<T>
+> +where
+> +    Op: FnMut() -> Result<T>,
+> +    Cond: FnMut(&T) -> bool,
 
-You mean amdgpu registers callbacks to drm_sched_fence?
+I would consider just writing this as:
 
->=20
-> > > > > +/**
-> > > > > + * DOC: Error and Timeout handling
-> > > > > + *
-> > > > > + * Errors are signaled by using dma_fence_set_error() on the har=
-dware fence
-> > > > > + * object before signaling it with dma_fence_signal(). Errors ar=
-e then bubbled
-> > > > > + * up from the hardware fence to the scheduler fence.
-> > > > > + *
-> > > > > + * The entity allows querying errors on the last run submission =
-using the
-> > > > > + * drm_sched_entity_error() function which can be used to cancel=
- queued
-> > > > > + * submissions in &struct drm_sched_backend_ops.run_job as well =
-as preventing
-> > > > > + * pushing further ones into the entity in the driver's submissi=
-on function.
-> > > > > + *
-> > > > > + * When the hardware fence doesn't signal within a configurable =
-amount of time
-> > > > > + * &struct drm_sched_backend_ops.timedout_job gets invoked. The =
-driver should
-> > > > > + * then follow the procedure described in that callback's docume=
-ntation.
-> > > > > + *
-> > > > > + * (TODO: The timeout handler should probably switch to using th=
-e hardware
-> > > > > + * fence as parameter instead of the job. Otherwise the handling=
- will always
-> > > > > + * race between timing out and signaling the fence).
-> > > >=20
-> > > > This TODO can probably removed, too. The recently merged
-> > > > DRM_GPU_SCHED_STAT_NO_HANG has solved this issue.
-> > >=20
-> > > No, it only scratched on the surface of problems here.
-> > >=20
-> > > I'm seriously considering sending a RFC patch to cleanup the job life=
-time and implementing this change.
-> > >=20
-> > > Not necessarily giving the HW fence as parameter to the timeout callb=
-ack, but more generally not letting the scheduler depend on driver behavior=
-.
-> >=20
-> > That's rather vague. Regarding this TODO, "racing between timing out
-> > and signaling the fence" can now be corrected by the driver. Are there
-> > more issues? If so, we want to add a new FIXME for them.
->=20
-> Yeah good point. We basically worked around all those issues now.
->=20
-> It's just that I still see that we are missing a general concept. E.g. we=
- applied workaround on top of workaround until it didn't crashed any more i=
-nstead of saying ok that is the design does that work? Is it valid? etc...
+pub fn read_poll_timeout<T>(
+    mut op: impl FnMut() -> Result<T>,
+    mut cond: impl FnMut(&T) -> bool,
+    sleep_delta: Delta,
+    timeout_delta: Option<Delta>,
+) -> Result<T>
 
-Yes, that seems to have been our destiny for a while now :) :(
+And I would also consider adding a new error type called TimeoutError
+similar to BadFdError in `rust/kernel/fs/file.rs`. That way, we promise
+to the caller that we never return error codes other than a timeout.
 
-What I'm afraid of right now is that with the callbacks vs.
-drm_sched_fence we now potentially have several distinct mechanisms for
-doing things. The hardware fence is clearly the relevant
-synchronization object for telling when a job is completed; yet, we
-also have s_fence->finished.
+Another thing is the `timeout_delta` option. I would just have written
+it as two methods, one that takes a timeout and one that doesn't. That
+way, callers that don't need a timeout do not need to handle timeout
+errors. (Do we have any users without a timeout? If not, maybe just
+remove the Option.)
 
-Using it (for what?) is even encouraged by the docu:
+> +{
+> +    let start: Instant<Monotonic> = Instant::now();
+> +    let sleep = !sleep_delta.is_zero();
+> +
+> +    // Unlike the C version, we always call `might_sleep()`.
+> +    might_sleep();
+> +
+> +    loop {
+> +        let val = op()?;
+> +        if cond(&val) {
+> +            // Unlike the C version, we immediately return.
+> +            // We know the condition is met so we don't need to check again.
+> +            return Ok(val);
+> +        }
+> +        if let Some(timeout_delta) = timeout_delta {
+> +            if start.elapsed() > timeout_delta {
+> +                // Unlike the C version, we immediately return.
+> +                // We have just called `op()` so we don't need to call it again.
+> +                return Err(ETIMEDOUT);
+> +            }
+> +        }
+> +        if sleep {
+> +            fsleep(sleep_delta);
+> +        }
 
-        /**
-         * @finished: this fence is what will be signaled by the scheduler
-         * when the job is completed.
-         *
-         * When setting up an out fence for the job, you should use
-         * this, since it's available immediately upon
-         * drm_sched_job_init(), and the fence returned by the driver
-         * from run_job() won't be created until the dependencies have
-         * resolved.
-         */
+I would just do:
 
+if !sleep_delta.is_zero() {
+    fsleep(sleep_delta);
+}
 
-Anyways.
-I think this is a big topic very suitable for our work shop at XDC. I
-also have some ideas about paths forward that I want to present.
+instead of the extra variable.
 
-
-P.
-
->=20
-> > That said, such an RFC would obviously be great. We can discuss the
-> > paragraph above there, if you want.
->=20
-> I will try to hack something together. Not necessarily complete but it sh=
-ould show the direction.
->=20
-> Christian.
->=20
-> >=20
-> >=20
-> > Regards
-> > P.
-
+> +        // fsleep() could be busy-wait loop so we always call cpu_relax().
+> +        cpu_relax();
+> +    }
+> +}
+> -- 
+> 2.43.0
+> 
 
