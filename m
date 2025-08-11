@@ -1,142 +1,131 @@
-Return-Path: <linux-kernel+bounces-762972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E667B20CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:04:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7F2B20D05
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 553384E23B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087AE189E2D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C082DECC6;
-	Mon, 11 Aug 2025 15:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DD62DEA7E;
+	Mon, 11 Aug 2025 15:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DH/ynZYC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jL8L+J30"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6F96A8D2;
-	Mon, 11 Aug 2025 15:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411A1DF27F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924601; cv=none; b=mGt2t4kYn/Qg63zJcK78ZAZwy5THafa1xMfRT1lt977cIQRW+93H9iXoKw4IVvxsedfjsQdpMw2lTWbL/pl808DFXAolApMBhtkc7+NxEjdJxjnhKUQIVYd8eG/V7bfooWhEpgDFgxHLSbkx5x1U43OiS1OV3VaRQKGDIA0/tUc=
+	t=1754924654; cv=none; b=LurjxGHzu69HKM+Lpv/WPd50xutvie+AEuP9hBoaEzwZ3+3EaCcjvBxmjOF5h4QXiaAyD1ymtFf+U9C9g9HJ80PO3hZYoj8BSazGhdHRgmc3YRUfTKqnbb3tFbXMH91ypUuKDmyebuoNJWshv+l/oXNELyrsEVQYgiomckqb2Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924601; c=relaxed/simple;
-	bh=zH3Xr4/8gJV2SChW0xUKH3jzlpgJZI6xap1AHoXTOnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MuLtiF3UoX/IGz4/nUC9/Ptvmsi7LDcKHzQt/ZbAURuK2HwiXo5fzHZUTKF5GCgT+jZenbewOAIvTufAdZM3e50f18JnfU5qr3ecGKdw5mgPidk5YkMH7i7+GYeZ14Vq93RqVrDn+5nK50wy0uMVY6XSwlaE3ir5Ws2BtJySVPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DH/ynZYC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE6BC4CEED;
-	Mon, 11 Aug 2025 15:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754924601;
-	bh=zH3Xr4/8gJV2SChW0xUKH3jzlpgJZI6xap1AHoXTOnE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DH/ynZYCs8+d8JPMciiByh6+fpomeBGINIb88dTAM54Rg4feOgpEFufU0KX7o6gZE
-	 W7+IhEnkGBxrt05CBqLVTrW/KTr/IyUoY0NGkbyKQLZbSOAZRVIH96sjhMkACmfynZ
-	 x9zQZtv0HJ0/iCPLcXjNxM2mucbwDMCtwWUR3TG0Z1yrfdZipwF521PTEJ3eCFhLtW
-	 dyHe+euR/48F7x1wYgl2yN0tr2q0z0g7mOzGRZBHq8mOG6rR+n27312OYbyS/by1aI
-	 4E4ukXnJRVC2Kapa6XjuPXKyBErIp4YIAl3sZJxjmPCFYektTvbyo+zGGmhgPeE+uo
-	 kURCTDvNlY2cw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
- Marc Zyngier <maz@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>
-Subject:
- [PATCH v1] cpuidle: governors: menu: Avoid using invalid recent intervals
- data
-Date: Mon, 11 Aug 2025 17:03:11 +0200
-Message-ID: <2793874.mvXUDI8C0e@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1754924654; c=relaxed/simple;
+	bh=go1LK2KwIv9bOBtJoPVqpan3/GxOSDQsRCCrqOTX41I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kavPTCve5fZYGNCpUEaEbSKhOCPTz+K7CkCi5eMWg4tKgaXcKU8cfuXJ2QMWGxnuXRUs8SHseu8dtAmT6mD+lwx0e7NAFYBXiENa2Q+rXcTfX5PJCcKMWvjFuUYHqPXC8cgMxuPTCVTWkzZGOCHxgdId7p1VX9hqycOhLdPH0F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jL8L+J30; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b79bddd604so2597590f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754924652; x=1755529452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5RlVEC+aTLY5+N9Mh6FGBCNE6f9ARS3XfPyHyJ93cc4=;
+        b=jL8L+J30UIefYSD7OQpysfjUoXmu+NW6vsSl4+tQBD+Uz0OLVOmVa1/eYtAQ1ciyc2
+         D/75x5tD4VP4MuRF3gSPtCArjhreVrNkkziUY5iAkHA+66TD6gnpb+UGWdHPCQnJFQWb
+         BvoPDrRFnKU39JhJHA03vRf3TtfMd+6hyF0tiUBEFsBaN+LKpsszf2jF/708/YArooPG
+         u2ce4kYMzXJrhuIQkPdW4bBoXjFjI6vcSkDtXcWvLXmLB4kL4Kl6l+DvwrQqKsMoVK94
+         xmizRMU6r1FNVAbX6fSdfYfOmPtRrf8NGFD+tdzo0Qd0sO+8XFu5Fj6P+Ih76pk6Omez
+         FSfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754924652; x=1755529452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5RlVEC+aTLY5+N9Mh6FGBCNE6f9ARS3XfPyHyJ93cc4=;
+        b=UgWvRDCGJWZWzhmJRgw6BTWizJOMCW2YRZfoec1a4R7PPL0SCDNchmAd4owuQxG4xQ
+         Q9fjycVnnMBz3hONU0Pr1+WFDdehFcUxbFZL7/UGJhvQUdANA+dbD5wBbbhnwYoDjz2r
+         jwuiBYNvLow9jT8HHkpeq5LzDt1+/57Dmsde7mTztjw3h5WH674IEr85tw4mXPbIM+m5
+         kFP6V2tTPoUylBdzNvSy3ME/ClyQ/ePRcgdBwp8T/m09qHR7TLFp9HLJb7Jgv/aaWj2b
+         rlaNTGHI3yOv6S1pWR87zvvSfuZO4sJsk72r1RUt5W0YzyO2UBcq5bdr+ohuJIyYeJSo
+         1wIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgCLPGrz4VWQqYKghqjSNn2L3wkOkWW+u97c9WySLGAPqajcaxccxkufK0ArGAaJFFMG3bWhnvwhxQ6nQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb7qnvlXX9GHXoGplgWqZzbyWeHYVui+eahiZkTkJd6EJo6bfC
+	5XiRAdM0ed3Ec9rVUHewggWLxJi52nYkRVusiO3sqLeCY8Eh26WVjnNn+lwMefOHRi0=
+X-Gm-Gg: ASbGncvkhzEnBmHV/qARIXq1CszhPpjOeFG5kAjE1L8uBaVkgMFjLePCp5UMxzxS65k
+	dY5/k6Lq+7gKnkZq7sR9vRa5Aoznlqqan9UjzcYtCHVUzA2GqVlgVr1CqmBmEd/cQf13Pk0dmC2
+	5pIGntywa4wR5iDMM2UrP0SDMyb8bjfDN/m+coaWXvecZNtExosuwawJHTYF5W/xpC7LIpE8hyn
+	xtftjzgDfcbOw42suOYhk/UPHR1kpwNKlCwPbv4V0mp3awv40/IB65n34dQlymLaOOmKH2CYK5W
+	Ih32wDWPKpO53v8/xwPKScdeCRsNHoNdPyS/PU9Y2xId5KD9PDanzUZS/K3Apx5zMdhFg9Woh4I
+	h/JXjLk+TVt6D50UR9qADRIXO
+X-Google-Smtp-Source: AGHT+IErrHO1m9HgaSb9y76gv3JeAANqPlGpoK5F8aU4R+7lrtTdLrB7aKC4QbEySQ2hh4TjE9oVHw==
+X-Received: by 2002:a05:6000:4312:b0:3b7:97c8:daad with SMTP id ffacd0b85a97d-3b91101718fmr36718f8f.55.1754924651630;
+        Mon, 11 Aug 2025 08:04:11 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bf956sm41850591f8f.24.2025.08.11.08.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 08:04:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Cc: Shuai Zhang <quic_shuaz@quicinc.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [RESEND PATCH] MAINTAINERS: add a sub-entry for the Qualcomm bluetooth driver
+Date: Mon, 11 Aug 2025 17:04:00 +0200
+Message-ID: <20250811150400.86926-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Marc has reported that commit 85975daeaa4d ("cpuidle: menu: Avoid
-discarding useful information") caused the number of wakeup interrupts
-to increase on an idle system [1], which was not expected to happen
-after merely allowing shallower idle states to be selected by the
-governor in some cases.
+Patches modifying drivers/bluetooth/hci_qca.c should be Cc'ed to the
+linux-arm-msm mailing list so that Qualcomm maintainers and reviewers
+can get notified about proposed changes to it. Add a sub-entry that adds
+the mailing list to the list of addresses returned by get_maintainer.pl.
 
-However, on the system in question, all of the idle states deeper than
-WFI are rejected by the driver due to a firmware issue [2].  This causes
-the governor to only consider the recent interval duriation data
-corresponding to attempts to enter WFI that are successful and the
-recent invervals table is filled with values lower than the scheduler
-tick period.  Consequently, the governor predicts an idle duration
-below the scheduler tick period length and avoids stopping the tick
-more often which leads to the observed symptom.
-
-Address it by modifying the governor to update the recent intervals
-table also when entering the previously selected idle state fails, so
-it knows that the short idle intervals might have been the minority
-had the selected idle states been actually entered every time.
-
-Fixes: 85975daeaa4d ("cpuidle: menu: Avoid discarding useful information")
-Link: https://lore.kernel.org/linux-pm/86o6sv6n94.wl-maz@kernel.org/ [1]
-Link: https://lore.kernel.org/linux-pm/7ffcb716-9a1b-48c2-aaa4-469d0df7c792@arm.com/ [2]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Tested-by: Christian Loehle <christian.loehle@arm.com>
-Tested-by: Marc Zyngier <maz@kernel.org>
+Acked-by: Konrad Dybcio <konradybcio@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/cpuidle/governors/menu.c |   21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+Resending as this never went anywhere. Rebased on top of v6.17-rc1.
 
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -97,6 +97,14 @@
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa45..4663146de10a0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20641,6 +20641,13 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
+ F:	drivers/net/wwan/qcom_bam_dmux.c
  
- static DEFINE_PER_CPU(struct menu_device, menu_devices);
- 
-+static void menu_update_intervals(struct menu_device *data, unsigned int interval_us)
-+{
-+	/* Update the repeating-pattern data. */
-+	data->intervals[data->interval_ptr++] = interval_us;
-+	if (data->interval_ptr >= INTERVALS)
-+		data->interval_ptr = 0;
-+}
++QUALCOMM BLUETOOTH DRIVER
++L:	linux-arm-msm@vger.kernel.org
++S:	Maintained
++F:	drivers/bluetooth/btqca.[ch]
++F:	drivers/bluetooth/btqcomsmd.c
++F:	drivers/bluetooth/hci_qca.c
 +
- static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev);
- 
- /*
-@@ -222,6 +230,14 @@
- 	if (data->needs_update) {
- 		menu_update(drv, dev);
- 		data->needs_update = 0;
-+	} else if (!dev->last_residency_ns) {
-+		/*
-+		 * This happens when the driver rejects the previously selected
-+		 * idle state and returns an error, so update the recent
-+		 * intervals table to prevent invalid information from being
-+		 * used going forward.
-+		 */
-+		menu_update_intervals(data, UINT_MAX);
- 	}
- 
- 	/* Find the shortest expected idle interval. */
-@@ -482,10 +498,7 @@
- 
- 	data->correction_factor[data->bucket] = new_factor;
- 
--	/* update the repeating-pattern data */
--	data->intervals[data->interval_ptr++] = ktime_to_us(measured_ns);
--	if (data->interval_ptr >= INTERVALS)
--		data->interval_ptr = 0;
-+	menu_update_intervals(data, ktime_to_us(measured_ns));
- }
- 
- /**
-
-
+ QUALCOMM CAMERA SUBSYSTEM DRIVER
+ M:	Robert Foss <rfoss@kernel.org>
+ M:	Todor Tomov <todor.too@gmail.com>
+-- 
+2.48.1
 
 
