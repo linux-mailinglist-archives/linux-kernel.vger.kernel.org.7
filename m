@@ -1,200 +1,136 @@
-Return-Path: <linux-kernel+bounces-763576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F278B216DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:05:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D3FB216E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF79F4E164F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A36B1A23AFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24442E2DC6;
-	Mon, 11 Aug 2025 21:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978362E2DCD;
+	Mon, 11 Aug 2025 21:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ftml.net header.i=@ftml.net header.b="JhTha1LX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ew2D1WR3"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fv165CvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1B51F875A;
-	Mon, 11 Aug 2025 21:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E402147FB;
+	Mon, 11 Aug 2025 21:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754946304; cv=none; b=Q3FIN0xAdp/Zs1WYlj8bae6z/87a1MsXTeuf3eVlUvtGvZ7F9KIJFxVKHGAqod9UlFPGSA7jcMI4Y3hS5ba5kF3ojCeXEA9KpBJiCizmW6GX+FWTtJZRMyNSBG+0Aie7XfcaxiaFdgu2TnWhtOanrLdtUVCioXu0IpyyBpKVpWE=
+	t=1754946344; cv=none; b=VGZGbLx8/SkJ3GjAkUjzYp5xt+YfyoZfNoqYAS8ekUdhktEKoBwVdUj3gedm9aA2o7MMup10+ojB5ICjF0dM37BMjHBhGVrSVLCEq0nAlcCkWt+YLhoJe41pYrhUcl7+QA2PUfmglfitrnNJHkrgJ6cezOSn8VlTbinx1UP7i6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754946304; c=relaxed/simple;
-	bh=jNHvp3MbY7uZE4NVlRnm7/n0OTvqpb44HoPh3Wvy5W0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwCJ3erKQ2z078miiu+JHXbzH0/Qr2apjuLkHP8t90qXsLogdzr0+CEyHV2yY1sd/a57VAVvgGIEGk4z6WC57FcEC2ChW6GgLz30EhVj4+QAu+CaYZ53iN3i9OVBcxmGWy3IGViV6delDht0cRWITNxYJswv/1bQa7LwyIpGhX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ftml.net; spf=pass smtp.mailfrom=ftml.net; dkim=pass (2048-bit key) header.d=ftml.net header.i=@ftml.net header.b=JhTha1LX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ew2D1WR3; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ftml.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ftml.net
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 98D89EC01AD;
-	Mon, 11 Aug 2025 17:05:00 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Mon, 11 Aug 2025 17:05:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ftml.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1754946300;
-	 x=1755032700; bh=eI+uci7II5o7HIMNDnzqiBnyPIO3lognkiNHaLdRtqI=; b=
-	JhTha1LXJLBJ9syMef5f+gTO0aHwgtXwzu1AUpQb84HWm7ZodLBP4cuE+fni8s25
-	VC1JcXLLe2VG+P+hJ+cEzPfY9kLxwP6JMy/ngjJbwje0DTVj6cCOOKmEM3TWU8MH
-	sXDq7rl01rW8ZDEzktPNilspRBPdXMW7mUGv/ImV0NDdW26RD9dmeXggaNS7OXzI
-	/+yxtm4DkVd4J8OsSTUfzctZY++xNzOUn67Z/6R3APaj6ieohXpEDQ5IeMF9BjyO
-	bKVRcy50Ypc8zvqwK8489xhU/Z/nAM0bjZ1avPQqe5lCuSzBRBOyHn+2Xmid1VoR
-	nCn18TOWbo0zZgeaAyKCbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754946300; x=
-	1755032700; bh=eI+uci7II5o7HIMNDnzqiBnyPIO3lognkiNHaLdRtqI=; b=e
-	w2D1WR3UE7JHcrssXIdnpJKT4ZEMSQskHmwYALCeZYMykVZEUKoVy9zuzhIN4mUo
-	3L2wAh0h2nUC8mZd6iWFHfe8Ym/U6tCS7FkmCujuFrt3iGWnZ2+85DfhsgxbO3/g
-	U0mZx9BGxwbnNZGX7GgTMZ5aui+WHgYlGb47cnF+wOUG+1dEJU8Kt/W927xA03GH
-	DcmM3oDzlfejNK8tFDtMGJIzKVZ6wvn9IyYMftZgccWuW85aeVKkR+dD0ly+EiIj
-	lPQX9Ajjle3W7n+LfaaxPZoMiBQSvsicsWNb9p6wC8JAxsVG5L6WUkCB234Nz6r9
-	nQMlkq2lUg6XriBt/7jWg==
-X-ME-Sender: <xms:-1qaaK7YlgC7cgOx5wtWXpEahwA1hHS0X2ySRpC7WfbfNj6FjTrSBg>
-    <xme:-1qaaKrmEe5iU93iCOFbGplMZQ2oDcSXBEnK3zRyGkFR59Wnrl9Rpm3jzq0C2RBj2
-    e-sJQCedE-VhvDiKiE>
-X-ME-Received: <xmr:-1qaaLPSR7ZefcM-UWaDTd7goyHKMppL9nDeGFSETar0-WdQSUQYNMfnlDSpri8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeefgeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefmohhnshht
-    rghnthhinhcuufhhvghlvghkhhhinhcuoehkrdhshhgvlhgvkhhhihhnsehfthhmlhdrnh
-    gvtheqnecuggftrfgrthhtvghrnhepiedvgeettdfgvedvueeigeetvdejueetudegteff
-    hfejvdehtedvffduleehveegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkrdhshhgvlhgv
-    khhhihhnsehfthhmlhdrnhgvthdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggv
-    vhdprhgtphhtthhopegrughmihhnsegrqhhuihhnrghsrdhsuhdprhgtphhtthhopehlih
-    hnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhishhtqdgstggrtghhvghfshestggrrhhlthhhohhmphhsohhnrdhnvghtpd
-    hrtghpthhtohepmhgrlhhtvgdrshgthhhrohgvuggvrhesthhngihiphdruggvpdhrtghp
-    thhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
-X-ME-Proxy: <xmx:-1qaaC1dAyIz_K-sUIqXcJekYiWdh4NTsc5Gn9jnUhOEd2tH9qdYeg>
-    <xmx:-1qaaKDPLXoZydI-L9saiI5TzXtNX5aXm48YyaWJJrKd7PoLAiMsbw>
-    <xmx:-1qaaPJWC9evBpbXm15uTnkb_e0oaeE18u71zZqdq63565M7fVSItg>
-    <xmx:-1qaaDknq9QDlHcwP37lp2b1KJZKJ5GS9zbNA3Mea5OT_0ufPInWXg>
-    <xmx:_FqaaPKt7TP9bQ93z2zb_s_VCDBZWu6QLsWtAvAaxVZZIjjvnIaT_7jJ>
-Feedback-ID: ib7794740:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 17:04:57 -0400 (EDT)
-Message-ID: <fd55b2ee-c54a-4eca-9406-92302ca61011@ftml.net>
-Date: Tue, 12 Aug 2025 00:04:53 +0300
+	s=arc-20240116; t=1754946344; c=relaxed/simple;
+	bh=rFOh1R9upFEZl0fLBLl4rh7tVbwpqz5lpmvNqlmnwS8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n2rScOd5KCsP8PMhi7xddvFUcgIiWgN8qRPIF7qGl8+FPNGgGVBTPDqL7OlQaC7Fo3OoRVZnNCAxgo0xVkLogWLTZYfRbSNKViQK3ImABh+57eoRYhh698+v4xwTnLNtZSEjVwXhk/DRaQVN7svEleCPfYxyLGcghNn0TfIFUHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fv165CvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0CA4C4CEED;
+	Mon, 11 Aug 2025 21:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754946343;
+	bh=rFOh1R9upFEZl0fLBLl4rh7tVbwpqz5lpmvNqlmnwS8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Fv165CvCKdjr3fJjNoHj9nKdqX5JUW5DGBa1Lt8HBuAUzHXhgei+9TQjTSmOolZ8Z
+	 zEeQVhVwmzd7KgGaF+GGbBOs0Xfr5YVyrwoc3A3TV9mNaYKQFbU6W1FdP6ApBERR5J
+	 m6FHJFErKVhXEr4XPEDQEGIqhXCkdjFq4UUBkLt7ILaF11v07YR4Tnm4Hipfd6AwVM
+	 N+kmoNGxr2qjKVsHBNlZT0jZ6IAkM47Cre8iCIJUjx8AXYNE0yEc7bc0e25u+08/Lt
+	 LdNvN/kbfmJ5AHBK127UlatXRREKhdJ4RgIYVmMdGhM13YePvjHP15VsX7iMvViG8R
+	 TX9s5HGT7jecQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v2 0/2] accel: Add Arm Ethos-U NPU
+Date: Mon, 11 Aug 2025 16:05:24 -0500
+Message-Id: <20250811-ethos-v2-0-a219fc52a95b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- list-bcachefs@carlthompson.net, malte.schroeder@tnxip.de,
- torvalds@linux-foundation.org
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-Content-Language: en-US
-From: Konstantin Shelekhin <k.shelekhin@ftml.net>
-In-Reply-To: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABRbmmgC/y3MQQrDIBCF4auEWdeihrSkq96jZBF1jEOLljFIS
+ /DutSHL//H4NsjIhBlu3QaMhTKl2EKfOrBhjgsKcq1BSz3IqxoEriFl0Xvn+hH9xasR2vfN6Om
+ zO4+pdaC8Jv7ubFH/9RC0PoSihBTWKjvM0hrjzf2JHPF1TrzAVGv9AZwFxDybAAAA
+X-Change-ID: 20250715-ethos-3fdd39ef6f19
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org
+X-Mailer: b4 0.15-dev
 
-On 11/08/2025 17:26, Kent Overstreet wrote:
+The Arm Ethos-U65/85 NPUs are designed for edge AI inference 
+applications[0].
 
-> Konstantin, please tell me what you're basing this on.
+The driver works with Mesa Teflon. A merge request for Ethos support is 
+here[1]. The UAPI should also be compatible with the downstream (open 
+source) driver stack[2] and Vela compiler though that has not been 
+implemented.
 
-This, for example: - 
-https://lore.kernel.org/all/9db17620-4b93-4c01-b7f8-ecab83b12d0f@kernel.dk/ 
-- 
-https://lore.kernel.org/all/20250308155011.1742461-1-kent.overstreet@linux.dev/ 
-I've just lurked around lore for a couple of minutes.
+Testing so far has been on i.MX93 boards with Ethos-U65. Support for U85 
+is still todo. Only minor changes on driver side will be needed for U85 
+support.
 
-> The claims I've been hearing have simply lacked any kind of specifics;
-if there's people I'd pissed off for no reason, I would've been happy to
-apologize, but I'm not aware of the incidences you're claiming - not
-within a year or more; I have made real efforts to tone things down.
+A git tree is here[3].
 
-Both links are four months old.
+Rob
 
-> On the other hand, for the only incidences I can remotely refer to in
-the past year and a half, there has been:
->
-> - the mm developer who started outright swearing at me on IRC in a
-> discussion about assertions
+[0] https://www.arm.com/products/silicon-ip-cpu?families=ethos%20npus
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36699/
+[2] https://gitlab.arm.com/artificial-intelligence/ethos-u/
+[3] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git ethos-v2
 
-That is very unfortunate.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes in v2:
+- Rebase on v6.17-rc1 adapting to scheduler changes
+- scheduler: Drop the reset workqueue. According to the scheduler docs,
+  we don't need it since we have a single h/w queue.
+- scheduler: Rework the timeout handling to continue running if we are
+  making progress. Fixes timeouts on larger jobs.
+- Reset the NPU on resume so it's in a known state
+- Add error handling on clk_get() calls
+- Fix drm_mm splat on module unload. We were missing a put on the
+  cmdstream BO in the scheduler clean-up.
+- Fix 0-day report needing explicit bitfield.h include
+- Link to v1: https://lore.kernel.org/r/20250722-ethos-v1-0-cc1c5a0cbbfb@kernel.org
 
-> - the block layer developer who went on a four email rant where he,
-> charitably, misread the spec or the patchset or both; all this over a
-> patch to simply bring a warning in line with the actual NVME and SCSI
-> specs.
+---
+Rob Herring (Arm) (2):
+      dt-bindings: npu: Add Arm Ethos-U65/U85
+      accel: Add Arm Ethos-U NPU driver
 
-My team has contributed to NVMe and SCSI subsystems, so I have some
-experience working with Jens, Martin and Christoph. Nobody on my team
-had this level of drama, even when we were in disagreement about specs
-or intended behavior.
+ .../devicetree/bindings/npu/arm,ethos.yaml         |  79 +++
+ MAINTAINERS                                        |   9 +
+ drivers/accel/Kconfig                              |   1 +
+ drivers/accel/Makefile                             |   1 +
+ drivers/accel/ethos/Kconfig                        |  10 +
+ drivers/accel/ethos/Makefile                       |   4 +
+ drivers/accel/ethos/ethos_device.h                 | 181 ++++++
+ drivers/accel/ethos/ethos_drv.c                    | 418 ++++++++++++
+ drivers/accel/ethos/ethos_drv.h                    |  15 +
+ drivers/accel/ethos/ethos_gem.c                    | 707 +++++++++++++++++++++
+ drivers/accel/ethos/ethos_gem.h                    |  46 ++
+ drivers/accel/ethos/ethos_job.c                    | 514 +++++++++++++++
+ drivers/accel/ethos/ethos_job.h                    |  41 ++
+ include/uapi/drm/ethos_accel.h                     | 262 ++++++++
+ 14 files changed, 2288 insertions(+)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250715-ethos-3fdd39ef6f19
 
-> - and reference to an incident at LSF, but the only noteworthy event
->  that I can recall at the last LSF (a year and a half ago) was where a
->  filesystem developer chased a Rust developer out of the community.
->
-> So: what am I supposed to make of all this?
-
-That you're trying to excuse your communication issues with other people's
-communication issues?
-
-> To an outsider, I don't think any of this looks like a reasonable or
-> measured response, or professional behaviour. The problems with toxic
-> behaviour have been around long before I was prominent, and they're
-> still in evidence.
-
-Again, "Timmy also did that" is not a very good excuse for a grown up adult.
-
-> It is not reasonable or professional to jump from professional criticism
-> of code and work to personal attacks: it is our job to be critical of
-> our own and each other's code, and while that may bring up strong
-> feelings when we feel our work is attacked, that does not mean that it
-> is appropriate to lash out.
-
-This is _NOT_ about the code. That's the essence of your struggles. Forget
-about the code, the code is not the issue here. Communication is.
-
-> As a reminder, this all stems from a single patch, purely internal to
-> fs/bcachefs/, that was a critical, data integrity hotfix.
-
-But this does not matter. No matter how important your fix is.
-
-> There has been a real pattern of hyper reactive, dramatic responses to
-> bugfixes in the bcachefs pull requests, all the way up to full blown
-> repeated threats of removing it from the kernel, and it's been toxic.
-
-Play stupid games, win stupid prizes. Piss off a maintainer long enough,
-he will refuse to work with you. Who would've thought, eh?
-
-> And it's happening again, complete with full blown rants right off the
-> bat in the private maintainer thread about not trusting my work (and I
-> have provided data and comparisons with btrfs specifically to rebut
-> that), all the way to "everyone hates you and you need therapy". That is
-> not reasonable or constructive.
-
-You seem to ignore what people keep telling you: _COMMUNICATION_ is the
-problem, not the _CODE_. So arguments about how btrfs performs compared
-to bcachefs do not matter.
-
-Your result is not the issue, the journey with you is.
+Best regards,
+--  
+Rob Herring (Arm) <robh@kernel.org>
 
 
