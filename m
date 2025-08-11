@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-762770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0CAB20ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:52:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C457CB20AC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12AC18C146B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:52:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C813318C17A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69B2218599;
-	Mon, 11 Aug 2025 13:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9576A21B9F4;
+	Mon, 11 Aug 2025 13:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrC7r+vf"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsUcrYVb"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0631A1E492D;
-	Mon, 11 Aug 2025 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801C71E492D;
+	Mon, 11 Aug 2025 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920300; cv=none; b=cj8AUTDkwWMH0fIvgNMIAPpe56+/iXi6GOdmXu/lTdCpcMifSC1J8r+wtsZ6uOdzWTxvloaVnQcPecUgt8/BeWhZFqK6sziy1YtbScHPRmdPk08UiYLNM3jkkAHTJlHBOtVqG/yW2pIPnZm+iLQW1Ook/81OCK7F+JImxrRpLnQ=
+	t=1754920304; cv=none; b=mm6LaBH71oKXj7/wroT68YVa7ZzyvvpgBEYzLjjdF2aSgtLhqtIZDQudseCRxW8boTs384N3eYg5Je/jyQ9pAS8Wq7xbHXLe1B51dRA14nrfmoxxElCmcoEG5gH7fGCzaZFnSyf1GRs7ts+wwvEu9Mn339Wl8t13puN+KRte4QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920300; c=relaxed/simple;
-	bh=WsW9yxxkWE67nB6JIFQv5v8viYACQD+qfWrPx8gpdkA=;
+	s=arc-20240116; t=1754920304; c=relaxed/simple;
+	bh=qu53Npl9p1UJIa6YTj/hRvC8zr9mwt5eIRHVXIxtFxQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S0oZpIek9fNZes62J24xo6MDinPhu1oMHnRREmq6A2JKXgMMldWwrrZRwum3zWxxcxnTjUlB73almzdejpHif3Bu6E09cGSnR6q5LQDRTZXi1MejrJzq3iLZPMe/U504MI4v0lt+4Z3LcpPqRDtk5qw9tnLfqukgjcKqABft+SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrC7r+vf; arc=none smtp.client-ip=209.85.215.179
+	 In-Reply-To:To:Cc; b=DzpTIG1BJEBrj/x0c3eYQCzrsqisjCqordizIY3cIW17bFxp4x5E8K57b0uJAlKeCSDosn5pPUW7ac/fmXRtihE3DY2rJQ21WIkrIhEGmi+M3PTFWFgK0BuNK2dwD9JsfrkTlRHgYg4bqyHASG8ret6AwnMegGWIBQyvaLT5yjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsUcrYVb; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4209a0d426so4383240a12.1;
-        Mon, 11 Aug 2025 06:51:37 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bde897110so3441349b3a.3;
+        Mon, 11 Aug 2025 06:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754920297; x=1755525097; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754920303; x=1755525103; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lD/WrxSX1/EFla87ahcJA+QqQVIM1RkgY0PCe9xlzK0=;
-        b=OrC7r+vfkCxT6jkX7Km2bFBxqufO2+DdZriUoMsg01DMzq1He5HRo18hWLnfnATfR/
-         C1WpPVt5IDTYERsvf9PgVuoDCNTzHJimQrZX6yQ7RGkEUhsuLuUN/Vg3h/O0qd3L5dVS
-         G6NP4dbI1m9HCOm8Ba8cBaFPhpzQXx0ytnyQOCZACC1DDaTm0UU6OtaD/tdsqkeObp+v
-         S+Vc8iMcgs68ACWer1bi/tSyq/kBpGMkPyZPzPK1rChrKMIejptr3joaoSPXEwyUoptG
-         qUGHnbPgORUerykm3Louj9KCdObqsF9u9UU/WhSOklJdJF/57kgYGNyAQ9CkUWGZ4x2v
-         ikxQ==
+        bh=+Z8PyP5sKcVvm50Lc4ho4ozdCtTBci5j1M5U5sqHCfE=;
+        b=KsUcrYVbuZ5wS8Qr34175v0eajFFumnOBkFRbdjoJqbWgFbftolo/phwwoAlnerY6u
+         lh6s/wf1JMZr6X8HUHni3xyqhQ0YkMHL4I1v6vSe2QSN0GxoOzHMqk8fU6j07Cpqltw+
+         p3G3sw9z5JWsJEr3/qg7l+Tj4DDWN7IO0WIa3eF91nXs9p93H16oTahPXpgwPg18DS0m
+         AzIFYgZLWKvyqdPcP6hG18G09a9LKqoVJzqU6cEUE0dOdhPuui7T1OWcItwTQr9VVnT+
+         zym9QM+r50ZT9c4UKuxXxhXM3VKdFM1grkwyJoOGxbmb7d+wdZTvq7c/Hi69z4OkrzJ2
+         EIWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920297; x=1755525097;
+        d=1e100.net; s=20230601; t=1754920303; x=1755525103;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lD/WrxSX1/EFla87ahcJA+QqQVIM1RkgY0PCe9xlzK0=;
-        b=ipy5nl04B46nRTPh87UtuhqaAFGf1Dj5DR2RGIIHPyJivEsDDTaDC6yDcQrYMAhXoV
-         ajksegOGV/D+C/6ghrJItM1YUtmD4zB7ujtURDP1SVkPzsGUeQh5kaBrKFI8NDFo3Zgq
-         PDZ5gGx37SKYxGTkYJl1rzF5DNfKKSeSsuSvkDMDlO3/f6XwQ3s6EgVk+2LEwrw0yaeM
-         cR7CvgMbkrgoz6IYBt/9LjxzsXmYayzFjDU/ppa90wSEjYq3lv96MC96ZPEtvxPvkLS/
-         vZKaa84y0Y1d2GnChkERimmvLrnWnxijXOZuaBpmfxgmqA3XYE2EzRglF1YpXdIRHNvx
-         8SAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl0Wa9Xzzhl3mfK31QVX3EuXrnpwZQ3PDwSLAhlpFczzSpP3n6E9J/wJS6T/5F75mkMHbaeHXB4gQJAx3R@vger.kernel.org, AJvYcCXUzUJUFsW9ae986wGHEbhDU0cC81of+K75jzPEX48TYgYbao08iCRyi/coB41EbJSMupuzBgM7Cun+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0Yil3mhDzFE0PrOTvXLyJEp9ngc2K541zfKHrWZBcWPH3pHlo
-	4UXZbX1+imWv29e/KyFnm9H5h3BJDOwqVh9WlxTemPZ8TAdbpGJH0PDI
-X-Gm-Gg: ASbGncuoG39OLL9IC7SeZC8dceP4DKMZNcNc0l4Q+LIr40DDlHmHngdb62oImEvKC0H
-	yoBZ1L7AMdEGMHufbD/XY1hYxWZk0JaoaT/R91G8wvSRmliDufHNQdvqztTsLjd4U98mSzGcWhM
-	K5+QPz/ocOGSWK+TL4QHSHwtmHBEtkdmxlwNbw/ig6gJttg/7IKeOs+/xh/3B5ALhZEfTYE5QqF
-	C67v83KlZY0o64/C+rM7JSgDv/SgaXQlgsQPNlD0VZivXJZFp1kjAbelrpMgwMOqw2rvnyfqibQ
-	voFAdGp14sP4eszUueYahCyiORCBjH9qCm7aYS+vPNoHl7HHHW+DyJswi5jBYtM1aAFWRZrS1jf
-	for1bLhQEsBeXm8DD491bIXV/oGOycZnNjZTyYMHEH3P+ZKA=
-X-Google-Smtp-Source: AGHT+IH9KDpx03ywNJvdLzBAfBlJLI4oeKmVAO5UR+drZaqVUoplxQq1MfoVtn8zvLDNwTwHUy4OvQ==
-X-Received: by 2002:a17:90b:3c49:b0:321:75c1:65b2 with SMTP id 98e67ed59e1d1-32183b45760mr23917637a91.18.1754920297041;
-        Mon, 11 Aug 2025 06:51:37 -0700 (PDT)
+        bh=+Z8PyP5sKcVvm50Lc4ho4ozdCtTBci5j1M5U5sqHCfE=;
+        b=XTIBr0zCLHdHk4uijr3qsNbBwXKhsMfbNlbURt2BukfBAhLE8sretxs7R5tybFaMKg
+         iCF7gmClCBzCEsyppbjq+DNfM9yeqD5Dxtipaz38lINKM+iDroSIW3zS4IIJtC+UaysE
+         zC09kCWB8xQwcdb9ShDLwkcoNyuuAbhepD5/IyqOsfe//GH0wUxOMZP2E+0tBTXMWwTo
+         /x0Xdw8trVfP4v6j3+adZ+u1qRIISz/R+nWdHbbf/bfM3uDDYVKqeeHEFGJ7/k6eUBM4
+         YZEDOt4T4ogNkdEu9H89MIXOqgg0tc7h39TzzWiZ0knuG7imjvTKlFcU3yjMRxFksAKh
+         hd3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUMm8gagJ97hN9OYo5ElOGh8GTWagFE/vHGYCA1J7ZTDFLAl4YF7ZaYnBXx8gHh+ZkvUbHTJlAGoAkV@vger.kernel.org, AJvYcCWXHZGZeZr/K778/DhGP1rgcTFqplK73vlUgziRhgNuumpnko/JPxgAPniprMnQyets9AHl1JKOozRtBnmC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoK9PAeb9/fuwL/xRpxscgIiSlKrGrxvgcfYwFcCR6YCTClKUl
+	TRFw2RK8i5/eqX7ebVAaYSFadh9sY7IEPSJNm8kTdl324QU6qSMPVgEn
+X-Gm-Gg: ASbGncvVvY3vwelm/LfU+vGasSdyCWy1QbPVmB7iHbJVSSiPEjgLRJE1AtUf3LYrgD4
+	jhHz/5IscwXvNr9CCYLwJR86W6EK9iOqQz3lsRSXS6Dk20FPjd5oJrhlEDqq7nolD1Ck5KB7hXt
+	RBfsN78igBycAGve4eoneTXgTXBteLSIoaOme6Dtb9rBkDXkJ1XI2Nhkp4smkH8yVf/rHbJTcrH
+	DWj/NzAq+zYpW9DsLEuxDbO8YuD9HDSW7IJ3i/bZi0f4IRo8M0CJ2UHiMa43TgLokYeXLVtuhwU
+	2uETWyNx+6+GiFJ49pBr3rUyEKrbyYTHIsS6yLBgmmYWmJ9gyT5ytruQUw0F+tA8t8GGh2L+5Mt
+	9uF97koZOfO2Qycj7s6hJFKCQmltTBIXhNkc5CrhDsHCDNG4=
+X-Google-Smtp-Source: AGHT+IHrA+7zJge9i962S6orPzAQDEhO1XUkEFQ5EVyEYNFg3sFEV8xqGFfQsZM23vmED8/k7VCvpw==
+X-Received: by 2002:a05:6a20:3c8f:b0:240:195a:8324 with SMTP id adf61e73a8af0-24055015142mr19729554637.2.1754920302821;
+        Mon, 11 Aug 2025 06:51:42 -0700 (PDT)
 Received: from [127.0.1.1] (061092221177.ctinets.com. [61.92.221.177])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b422b7b2700sm23504993a12.15.2025.08.11.06.51.31
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b422b7b2700sm23504993a12.15.2025.08.11.06.51.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:51:36 -0700 (PDT)
+        Mon, 11 Aug 2025 06:51:42 -0700 (PDT)
 From: Nick Chan <towinchenmi@gmail.com>
-Date: Mon, 11 Aug 2025 21:50:55 +0800
-Subject: [PATCH 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
+Date: Mon, 11 Aug 2025 21:50:56 +0800
+Subject: [PATCH 4/9] soc: apple: sart: Make allow flags SART version
+ dependent
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-t8015-nvme-v1-3-ef9c200e74a7@gmail.com>
+Message-Id: <20250811-t8015-nvme-v1-4-ef9c200e74a7@gmail.com>
 References: <20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com>
 In-Reply-To: <20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com>
 To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
@@ -100,42 +101,94 @@ Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  iommu@lists.linux.dev, linux-nvme@lists.infradead.org, 
  Nick Chan <towinchenmi@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=776; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=WsW9yxxkWE67nB6JIFQv5v8viYACQD+qfWrPx8gpdkA=;
- b=kA0DAAoBAcoIt6bFCCQByyZiAGiZ9VCgpq+sLCPb6h7skrPDQfu6PKhvLP5vmejwncunolc9M
- IkCMwQAAQoAHRYhBEtSeHhcl6z3nDxogwHKCLemxQgkBQJomfVQAAoJEAHKCLemxQgkx/AQAJyL
- UoiKJly1Puh26oQIp/eE1rItZVtYiLLcwoNLwy26TFIVgQpbz6CwutVT7YMNMFjKRGST/KXTVUG
- nNOAq9f+JPjb0vKn35FO3X2RTUudGt5tBsN7gP1WAuHwL50pVLUpwlr5mOmUEnPoxECo3su4Gpl
- u6D2Q+RHjZKv4m8wH223Xlww9RFi7gOYF1LDYJg0Ijn2n6NsoFB8NnSGyN4R3exhrXw3s5ByJBt
- MPiEHWglVMs29eju0clMKjW9fk8/3C/7UP+rJ00B0z7tbymKxWlf7joJREw8NY9k8DMow8DkL6e
- VXRkVr7XloyJiCxp7K3knbiafjV305yNWNHCFKyBPdySFHfSdGdac2y30TXDK2t02z0vQyE3ily
- 7jGglW73k7b+fiU7tn89oiTUbdh9u4JbjrXLYuLejcmBZRpUyY4D4K+HX0mDeGy1NxIMG19xZRn
- 7g8sNiuG4nsROjMUz4hvB6p8FxHhHtT9AFVtEwYn1sbtvrZSiLTKKt4PrVyP4C3OWUlkOFwFAoR
- RhLj/kT8mq0Knaubp168KQbr7/vRLh2CvOu5/HVVjNsR9hRT4u3udves1TxU/nW8kKzsc/YFt0p
- TTYNHDSVKn/R+NaPaAVYFQqZOwMjKMB9LHIgLvQsqLD9rgK8AaxdU7MR0iKg7wjOvLYTGfAXd3H
- cYc+Y
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2725; i=towinchenmi@gmail.com;
+ h=from:subject:message-id; bh=qu53Npl9p1UJIa6YTj/hRvC8zr9mwt5eIRHVXIxtFxQ=;
+ b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBomfVQh6mVaSEh/31vtj9Sp/TjrE7dHgIyGxnSV
+ ZSHXuJG3rSJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaJn1UAAKCRABygi3psUI
+ JMdNEACdXz4QPo+kOUFthywvLIAGegRvepLxUfokbyfdsVmpojMj5j9zId3XrjZaa8HjvdpGKmE
+ rZZGAFvoGvQfoE/WIO2Hn1MS26yqKsXPYsIxtkaQnAuObrk2MhZPxHCcka4i1aokE8sC9lAKL+/
+ WwNhnJr/hD5WTXNy6wC+RBRn4tXEdiOI7/Ix6tts1yudkv7AhcmLE4u6G5QuDs+8t8FHIA9Y+wo
+ AEmSOYgHvNYgA2jvkRzinP0p6ogaX10fBWbfMlN34q/OHGUN6MLsHWhrq/KnOlYnfdPuvWYCXnF
+ j5b6JVgeZB8TJH7fol5y549AWuyPtfVkyrsCoPfRWd2kssvzwjmcYX+eTlpLhK9REMjWTTc0/SD
+ jWQpFkqaYYAUrqGl8WozokSUmyXcVwyzC60zqOpAqPAbFuz3xb6fPkFatm7RB5/9KRQwnNmqQX2
+ EU1RBIF/CxOMBhYAgMaL0GeQT+4xMMc8twKbo8+XNJwuZeY9E0cJfTLhEfJkUzfIpv6rb/iR7gN
+ 0zE3w+661aGxZ+mpWdJYw6kKLSJNdhAzEjrB+8vIGNF7GaAFIIHPBJa1MuafMfvTzAYRVZmJ3UK
+ KzuQzPYuHQhNcKrimU/dsRcNl8OQyzso+9rPKwiTQaKpTuieMMwgj2cTa0fCYOA4Jd95hwZU1lJ
+ OvHb0vAmQYyExsQ==
 X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
  fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
 
-Add bindings for SARTv0 as found on Apple A11 SoC.
+SART versions that uses different allow flags will be added.
 
 Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
- Documentation/devicetree/bindings/iommu/apple,sart.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/apple/sart.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/apple,sart.yaml b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-index e87c1520fea60a2de549aa8a469fcded52e3b6e3..95d55ec688779bd52b8aef316a4c1ba7b7449574 100644
---- a/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-+++ b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-@@ -29,6 +29,7 @@ description:
- properties:
-   compatible:
-     oneOf:
-+      - const: apple,t8015-sart
-       - items:
-           - const: apple,t8112-sart
-           - const: apple,t6000-sart
+diff --git a/drivers/soc/apple/sart.c b/drivers/soc/apple/sart.c
+index afa11173689979f100a63221af03214f4a928a7c..318f6e518a54f6edb8b97e320519df8f77c7f143 100644
+--- a/drivers/soc/apple/sart.c
++++ b/drivers/soc/apple/sart.c
+@@ -25,9 +25,6 @@
+ 
+ #define APPLE_SART_MAX_ENTRIES 16
+ 
+-/* This is probably a bitfield but the exact meaning of each bit is unknown. */
+-#define APPLE_SART_FLAGS_ALLOW 0xff
+-
+ /* SARTv2 registers */
+ #define APPLE_SART2_CONFIG(idx)	      (0x00 + 4 * (idx))
+ #define APPLE_SART2_CONFIG_FLAGS      GENMASK(31, 24)
+@@ -38,6 +35,8 @@
+ #define APPLE_SART2_PADDR(idx)	(0x40 + 4 * (idx))
+ #define APPLE_SART2_PADDR_SHIFT 12
+ 
++#define APPLE_SART2_FLAGS_ALLOW 0xff
++
+ /* SARTv3 registers */
+ #define APPLE_SART3_CONFIG(idx) (0x00 + 4 * (idx))
+ 
+@@ -48,11 +47,15 @@
+ #define APPLE_SART3_SIZE_SHIFT 12
+ #define APPLE_SART3_SIZE_MAX   GENMASK(29, 0)
+ 
++#define APPLE_SART3_FLAGS_ALLOW 0xff
++
+ struct apple_sart_ops {
+ 	void (*get_entry)(struct apple_sart *sart, int index, u8 *flags,
+ 			  phys_addr_t *paddr, size_t *size);
+ 	void (*set_entry)(struct apple_sart *sart, int index, u8 flags,
+ 			  phys_addr_t paddr_shifted, size_t size_shifted);
++	/* This is probably a bitfield but the exact meaning of each bit is unknown. */
++	unsigned int flags_allow;
+ 	unsigned int size_shift;
+ 	unsigned int paddr_shift;
+ 	size_t size_max;
+@@ -95,6 +98,7 @@ static void sart2_set_entry(struct apple_sart *sart, int index, u8 flags,
+ static struct apple_sart_ops sart_ops_v2 = {
+ 	.get_entry = sart2_get_entry,
+ 	.set_entry = sart2_set_entry,
++	.flags_allow = APPLE_SART2_FLAGS_ALLOW,
+ 	.size_shift = APPLE_SART2_CONFIG_SIZE_SHIFT,
+ 	.paddr_shift = APPLE_SART2_PADDR_SHIFT,
+ 	.size_max = APPLE_SART2_CONFIG_SIZE_MAX,
+@@ -122,6 +126,7 @@ static void sart3_set_entry(struct apple_sart *sart, int index, u8 flags,
+ static struct apple_sart_ops sart_ops_v3 = {
+ 	.get_entry = sart3_get_entry,
+ 	.set_entry = sart3_set_entry,
++	.flags_allow = APPLE_SART3_FLAGS_ALLOW,
+ 	.size_shift = APPLE_SART3_SIZE_SHIFT,
+ 	.paddr_shift = APPLE_SART3_PADDR_SHIFT,
+ 	.size_max = APPLE_SART3_SIZE_MAX,
+@@ -233,7 +238,7 @@ int apple_sart_add_allowed_region(struct apple_sart *sart, phys_addr_t paddr,
+ 		if (test_and_set_bit(i, &sart->used_entries))
+ 			continue;
+ 
+-		ret = sart_set_entry(sart, i, APPLE_SART_FLAGS_ALLOW, paddr,
++		ret = sart_set_entry(sart, i, sart->ops->flags_allow, paddr,
+ 				     size);
+ 		if (ret) {
+ 			dev_dbg(sart->dev,
 
 -- 
 2.50.1
