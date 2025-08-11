@@ -1,143 +1,233 @@
-Return-Path: <linux-kernel+bounces-761696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFC3B1FD7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A33D5B1FD7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBE3173D80
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2413173B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD2C1A256E;
-	Mon, 11 Aug 2025 01:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZMGcJND"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C3D1A256E;
+	Mon, 11 Aug 2025 01:20:27 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B7BEEC8;
-	Mon, 11 Aug 2025 01:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C88EEC8;
+	Mon, 11 Aug 2025 01:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754875194; cv=none; b=f/zOWbBZj/hlJJJX+x9dTgsL0mJlGQFe0I72jnTbW8Aea2iVA/nLeAaYC4rNgosEdjsxO5b8diHXBwtrYVfjZpV6EkOHa1GKlR75oh/pQW0SHegiafDzwjTpdHOXpIFqZR5J7F4aCDvmvfM+Z+5frB5OH/PSmEpTZ/UB4r/zjSQ=
+	t=1754875226; cv=none; b=MzEvSOTjw74GflfX5gC5a3ybufUQdXIF04cSGi9z9ZXBzmR8lCNVTgTs0JDwSMzf9TnqBacUKkXtuDu/kaMFypvxXS7imTs/WswIkV2RQLMfs8kGCedldoNFMRGN0fYnHgZYyQAI7O+YUmhCnED2/Cdq8NafolmSjlr97jheV4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754875194; c=relaxed/simple;
-	bh=WrqR1E+lwuj+usOuwVOVEpSZT5+J8H51r/sbYgj0naE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vi5i3byrtq3xW0h3h/u3azrfKB4uIKpdP6bI8P7UiJa5w37UqOg6O13F6cCBJHXKDvOiifqzwhGFas7HXKHcgt7Q8NaWaYS8wUTacPdIDldwvc4449bLAwZeTWGCHZQOpJWbLLDBhUR+vw62Dt9AsotRxiKN/wtPWFiNwCZQLUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZMGcJND; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-615c29fc31eso7325005a12.0;
-        Sun, 10 Aug 2025 18:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754875191; x=1755479991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkeHcyxJkTHYSHNibW8ssztQBo3aMnnMqKla/7jGqlw=;
-        b=UZMGcJND/Q1MvfAJ6JOqix/c1NDg/kkVt3RkhcyQntBTY2eE4BkYtzba2z8O8Ee8N/
-         9WhyTxBsTpOZfRZwbmwOByqJRjGvFeQUcAApsWEk8G3u/qkUqu4D1nJRf+xFx+t8iNWh
-         3OFG6RgegYJuBCrYwri+OqjFbAJnKdl76yxEV38jEJzrGES7l1DOnlPdWV+/t+0MAR4a
-         HsJ6wKcxa97TpxKiH/QbHSpzMgl9vSilYrBs2m6/EpmxU1fHczED+bNm5kO4X5UkUHil
-         tQ0A+kJ/6vzMWvAZclZyhLK45q3LL+ZsxJ5S408PhGWM6aLMPsYGV8UwtBajqaeMGttN
-         Dr+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754875191; x=1755479991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qkeHcyxJkTHYSHNibW8ssztQBo3aMnnMqKla/7jGqlw=;
-        b=ZDBSVMlKHSmJvN0EVd1zaN1OcZEXh8Bi4+3+tfABuFPkjc2CaAnidzqLta1ycFaqsO
-         Dnhu5cW84cEOYl0098+yhgyJM3jURfwmWzRO8MXA0IWbZY443RMw77y+KsD7Ro1iwL82
-         SI6CaOo0cfP6CfDI6ADJzo9zZC1Psy2dCfPAflkeyMtqSgE3pKH42p8pzVqsEsUVAVKL
-         T7zxNaSGUVFBCEm9d31SkHm+wtRkgDGwfSQ0I33JmEpspppak59MJFxqeRwYWhPkR5yT
-         OohH+5u+hgbvJep4M+QfFKD7tskLj472f9m2m8H0tmsKUC/lYaKmree3CMzsMd2b1BnF
-         uSig==
-X-Forwarded-Encrypted: i=1; AJvYcCUrURyjmaO/DWoNztixmKuRcqymNnl3cYiabJcIQDB0ZAJJD3cfn7TQp2DVJ4JW82/KKyd1eZO2YU/qev4Cyvo=@vger.kernel.org, AJvYcCVQyiqkL8KEoy5PB1c6v+Mhq6Vss1s2t5DiSZmvWA7J75+/7ts3h1COeFfcrHVK6rjl+lt1eE3VGvMR0jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu6NKNzyLowstuBlsfjwqz1BYEHrB7fGC4yK0ZPsNgsUG5K98a
-	2oOdVvUSv1vNzkC/yeLp9vyYyV1IBR8vM3AIveMT0po1OCKnXGIIgEv+
-X-Gm-Gg: ASbGnctHtoyxmj+j8CQc0B/caSEwzopu1rghAb6cCqvi0upTeiVyI7RRB9/XvrlLK8d
-	D5z7A3ReZsUskJ7+dylud7ryMVxlElFtzguqJ4lK7BtN1vSKVDsd2XG3jnYuo3mdgVs8431UR3F
-	GgolmV6TgY4cuvFKuTNkQS79NVpIRUlPtlC5t3lOny7HXnzpd3cdOJQNRyj7OS2dyIi1yDl1ctR
-	rDtUgJZpwTk3waMXpFKN46dF5dFkkYc7/WQpC/7es0Poex7I4y+EHfWd5voH8rjDC9m4yT1yEi2
-	NDfG0cJ1wkU3oJzZ57fkJOs5t8Ww5IWiSJ4tRKpGA4fFnAY5RpjydNyeucheXJ19EAQdC7z7lsV
-	iHRLfWn3NHWqJz++/KKP3ZV9siUFfmQCNf1I=
-X-Google-Smtp-Source: AGHT+IGHeFsBy0ZMfEksdIuPmJB8a8RALCdpok1GmhlMEKrmNokPHN8eNrX+hb1xtNNVF84odqNV2A==
-X-Received: by 2002:a05:6402:3483:b0:618:196b:1f8a with SMTP id 4fb4d7f45d1cf-618196b217dmr4253122a12.4.1754875190610;
-        Sun, 10 Aug 2025 18:19:50 -0700 (PDT)
-Received: from fedora ([2405:201:5501:4085:eece:e0ff:6b68:de2e])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f17829sm17381133a12.19.2025.08.10.18.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 18:19:49 -0700 (PDT)
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] rust: kernel: cpu: mark `CpuId::current()` inline
-Date: Mon, 11 Aug 2025 06:49:58 +0530
-Message-ID: <20250811012000.444173-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754875226; c=relaxed/simple;
+	bh=UhQT8nVI8Py8OeW5cye4pFlNMOZbWaWHVBpeWTnpFOw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OimOSq0DYZXrmeTEz+DZvzSoEdP4XZDG3pzmpVBYsj3fKx+bbc9QM1X1rDmOIbyRgC+/Uilg2V2ydtikfmUb22PKo8E7xIhEOBQGO54qHGzYXHnRqhmxPFzL00aSHLpywnSi3rIHvUcjmKwEjEkFxWQMcreKUn7B3Y51XWukP+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c0cJM2QGyzKHMmn;
+	Mon, 11 Aug 2025 09:20:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 875221A1A5A;
+	Mon, 11 Aug 2025 09:20:18 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3QBFQRZlo4OAXDQ--.54961S3;
+	Mon, 11 Aug 2025 09:20:18 +0800 (CST)
+Subject: Re: [PATCH 1/1] loop: sync filesystem cache before getting file size
+ in get_size()
+To: "Mishra, Rajeev" <rajeevm@hpe.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ "axboe@kernel.dk" <axboe@kernel.dk>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250807232522.192898-1-rajeevm@hpe.com>
+ <756e15de-dbbc-4438-80c6-454b2fcc44ac@huaweicloud.com>
+ <PH7PR84MB2079A6A4EFE799BCA7E5738CAA2FA@PH7PR84MB2079.NAMPRD84.PROD.OUTLOOK.COM>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7b4fbe4b-d89d-6037-9ee6-33ced5dc0b64@huaweicloud.com>
+Date: Mon, 11 Aug 2025 09:20:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <PH7PR84MB2079A6A4EFE799BCA7E5738CAA2FA@PH7PR84MB2079.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3QBFQRZlo4OAXDQ--.54961S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFy5CF1kAFW5ZrW7Ar4kXrb_yoW7ZrWxpF
+	W5ta4YkrykGF17GwsrZw47Z3yFg34xury5Wry7Jw4xZF90kr1a9F93KFWYgFWDXr97C3WY
+	q3yDtr929ryUZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-When building the kernel using llvm-20.1.7-rust-1.89.0-x86_64,
-this symbol is generated:
+Hi,
 
-$ llvm-nm --demangle vmlinux | grep CpuId
-ffffffff84c77450 T <kernel::cpu::CpuId>::current
+在 2025/08/09 2:50, Mishra, Rajeev 写道:
+> Thanks, Kuai, for the quick review — I really appreciate it. Please let me know if you have any questions or if I missed addressing anything.
+> My response to queries is inline below.
+> Rajeev
+> 
+> From: Yu Kuai <yukuai1@huaweicloud.com>
+> Date: Thursday, August 7, 2025 at 9:48 PM
+> To: Mishra, Rajeev <rajeevm@hpe.com>, axboe@kernel.dk <axboe@kernel.dk>
+> Cc: linux-block@vger.kernel.org <linux-block@vger.kernel.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>, yukuai (C) <yukuai3@huawei.com>
+> Subject: Re: [PATCH 1/1] loop: sync filesystem cache before getting file size in get_size()
+> Hi,
+> 
+> 在 2025/08/08 7:25, Rajeev Mishra 写道:
+>> The get_size() function now uses vfs_getattr_nosec() with AT_STATX_SYNC_AS_STAT
+> 
+> With a quick code review, I didn't found how can that flag ensure
+> filesystem cache is synchronized, can you explain in detail? Or Do you
+> mean getattr for filesystem like fuse to get latest data from server?
+> Response ---
+>>> Thanks for the quick review. The AT_STATX_SYNC_AS_STAT flag tells
+>>> the VFS layer to synchronize cached metadata before returning file attributes.
+>>> This is particularly important for distributed/network filesystems where
+>>> the local cache may not reflect the current file size on the server.
+> ---
 
-However, this Rust symbol is a trivial wrapper around
-`raw_smp_processor_id` function. It doesn't make sense
-to go through a trivial wrapper for such functions,
-so mark it inline.
+I think this is the default behavior, unless AT_STATX_DONT_SYNC is set.
+So I think you don't need to emphasize the flag AT_STATX_SYNC_AS_STAT,
+otherwise, at least I will think if the flag is not set, cache won't be
+synchronized.
 
-After applying this patch, the above command will produce no output.
+> 
+>> to ensure filesystem cache is synchronized before retrieving file size. This
+>> provides more accurate size information, especially when:
+>>
+>> - The backing file size has been changed by another process
+>> - The file is on a network filesystem (NFS, CIFS, etc.)
+>> - The file is being modified concurrently
+> 
+> I don't think this make sense in real world. If a file is already used
+> by loop device, then user should avoid modifying this file directly. For
+> a file in fuse, I feel it's not good to use it as loop device.
+> Response---
+>>> I encountered this issue specifically with Lustre filesystem during testing
+>>> I did following --
+>>> 1. File was created on Lustre
+>>> 2. dd was done to write data on the file
+>>> 3. ls confirmed the size
+>>> 4. Loop device setup was done on the file immediately
+>>> 5. write was issued with less space
+>>> 6.above happened as file size was not correctly captured by loop device
+> 
+>>> I agree that network/distributed filesystems aren't ideal for loop devices,
+>>> but they are used in practice (container images on shared storage, diskless
+>>> systems, etc.). The fallback to i_size_read() ensures no performance penalty
+>>> for local filesystems while improving reliability for network filesystems.
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/1145
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
----
- rust/kernel/cpu.rs | 1 +
- 1 file changed, 1 insertion(+)
+Ok, I agree with this case, can you please just keep the network
+filesystem, and remove the description about concurrent modifying of
+loop file?
 
-diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-index 5de730c8d817..cb6c0338ef5a 100644
---- a/rust/kernel/cpu.rs
-+++ b/rust/kernel/cpu.rs
-@@ -109,6 +109,7 @@ pub fn as_u32(&self) -> u32 {
-     /// unexpectedly due to preemption or CPU migration. It should only be
-     /// used when the context ensures that the task remains on the same CPU
-     /// or the users could use a stale (yet valid) CPU ID.
-+    #[inline]
-     pub fn current() -> Self {
-         // SAFETY: raw_smp_processor_id() always returns a valid CPU ID.
-         unsafe { Self::from_u32_unchecked(bindings::raw_smp_processor_id()) }
+> ____
+> 
+>> - The most accurate size is needed for loop device setup
+>>> The implementation gracefully falls back to i_size_read() if
+> vfs_getattr_nosec()
+>> fails, maintaining backward compatibility.
+> Response –
+> ___
+>>>> you mean using the flag sync has backward compatibility issue ? or using function itself ?
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.50.1
+Nevermind, this is from your orginal patch, I somehow added a new line
+break.
+> ___
+> 
+>>>
+>> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+>> ---
+>>    drivers/block/loop.c | 31 +++++++++++++++++++++++++++++--
+>>    1 file changed, 29 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+>> index 1b6ee91f8eb9..15d5edbc69ce 100644
+>> --- a/drivers/block/loop.c
+>> +++ b/drivers/block/loop.c
+>> @@ -137,12 +137,39 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+>>    static int max_part;
+>>    static int part_shift;
+>>
+>> +/**
+>> + * get_size - calculate the effective size of a loop device
+>> + * @offset: offset into the backing file
+>> + * @sizelimit: user-specified size limit
+>> + * @file: the backing file
+>> + *
+>> + * Calculate the effective size of the loop device
+>> + *
+>> + * Returns: size in 512-byte sectors, or 0 if invalid
+>> + */
+>>    static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+>>    {
+>> +     struct kstat stat;
+>>         loff_t loopsize;
+>> +     int ret;
+>> +
+>> +     /*
+>> +      * Get file attributes for validation. We use vfs_getattr() to ensure
+>> +      * we have up-to-date file size information.
+>> +      */
+>> +     ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE,
+>> +                             AT_STATX_SYNC_AS_STAT);
+>> +     if (ret) {
+>> +             /*
+>> +              * If we can't get attributes, fall back to i_size_read()
+>> +              * which should work for most cases.
+>> +              */
+>> +             loopsize = i_size_read(file->f_mapping->host);
+>> +     } else {
+>> +             /* Use the size from getattr for consistency */
+>> +             loopsize = stat.size;
+>> +     }
+> 
+> I'm ok switch from i_size_read() to getattr, however, the commit message
+> is confusing for me :(
+> 
+> Response --
+>>> I will make the commit message clear and simple. Just wanted to understand
+>>> if using this will be good “vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);”
+>>> is good I will replace i_size_read() with above code
+>>> do let me know if this will have any backward compatibility issue
+>>> Thanks again for your help
+
+I'm good, and i_size_read() is not needed anymore.
+
+Thanks,
+Kuai
+
+> 
+> 
+> Thanks,
+> Kuai
+>>
+>> -     /* Compute loopsize in bytes */
+>> -     loopsize = i_size_read(file->f_mapping->host);
+>>         if (offset > 0)
+>>                 loopsize -= offset;
+>>         /* offset is beyond i_size, weird but possible */
+>>
 
 
