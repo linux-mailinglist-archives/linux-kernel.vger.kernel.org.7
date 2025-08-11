@@ -1,316 +1,181 @@
-Return-Path: <linux-kernel+bounces-762587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6772FB208BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B647B208C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB83C423A45
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A95C16CE64
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90462D3733;
-	Mon, 11 Aug 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1792D3A89;
+	Mon, 11 Aug 2025 12:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVLQSNaS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ENaGkSBF"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013068.outbound.protection.outlook.com [40.107.44.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8EB2D3A94
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915126; cv=none; b=nBjNJLfejicjhVHYSF6LX2GcsYJHoKnp7jBQBjc/b9s5+IZ0XuK6ZfVYOlxCoutTgMNVITSQQkw3uEAK0Mg66Cc3iSPORe1quh06Z99NWqBELlJ0X6swSOukEh5qHiqVmG7WCrAxIPovvZwCyqRimjf1/GGcGHek8j7Qcc0rMK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915126; c=relaxed/simple;
-	bh=n6T5GhUysgMZGgbWj0uqn+CFLJN1qzaodZC5ot+Vkv0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PHf3t4XMIFvpU8HycjgqraEGHIu7jZq2htUvAXtrPQD/jXkF7vyAbfsqa0svqn/dJFKW7ussE0m8v2nLKhd5bMyHY84KCd2xi/02kom9++WdTdMU2Vvx+cwYHICD3q9VM2JWEN+VSQi0Sqvjs/T6XAY/dG5XEhCbmFcdCfFWreo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVLQSNaS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so21423555e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754915122; x=1755519922; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QLqlhHSdqib3orjcSPHkGKRVwVxunkxH/1/tKc5ugRo=;
-        b=UVLQSNaSrPilO4B1iGxIoK2cQT5/xoR474Za3zKeqNcIVKwpslYWP8Yq4FuyUPkun/
-         HTdjMXY25RJn1XY0XtiNLrQM6W2BnuiDwCmAoxEBVEDT2dkiA73g/bEQtZakt2sA8yTp
-         b7WxfOJoI9zs3qq15ut1lh44BNqepOr3dZzXinfnLIN5NyM/piD2aDeN3jYmviD6gO70
-         Pb1Drd2SjbCnFPK2SHMsLl0A5mnuCBe6r8w85KdujXyRCPfNQgAFh665OVFkMnp1vfIx
-         cScjj2E8An38X75KPU9ua5OFblY/bmlGJGXUMRiy1WGwj2g7Kenqpe3/Y1+zeHKpTJZE
-         nTOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754915122; x=1755519922;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QLqlhHSdqib3orjcSPHkGKRVwVxunkxH/1/tKc5ugRo=;
-        b=hr2YErMsWWoomv7D/pNKYxuhFi96HYG8nbaUeVfSTeknLO9PsI+X0w78X9aTgy5YOM
-         Zx0+lFfDyXQSCLWIWKrnC/2qLq/WLZ1umoTC15TQuLN7DvN+f6H9FHA9XKm77dMoPhlm
-         IeVpoDy/z370RqHjmqRcCfx9kHBwYlTIOhh4ciX2TXWbBjqvqE2+ZPHcvDsoMOJJsAlx
-         rSlXZ/SXbMTPwNYyeO8zD44Eanu+rRpftM0olhoRkJP314LhjPBXrGFNjiz8jEh7fU/d
-         pgQxhfrXXcGShXu1HslkXyYVwvBHWkrRvUMw7KAuetJhUmuiROVYdUQPONRizi5tsbHS
-         lOZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFrrzl7S7W9bVsmom0LaXmB+X0oDk3/WuqczSzg1ErneI1NBs1AMs33jW1+keDkAPGRjm8xtKO4fGZvFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ5bG2rqlamVx3DlljXhcoUX/qeS/QMG7dgFnUPkaA08AV1sK4
-	O3NRB1btTcvRlA5MrreVojJrbeVwrK3BYuP/Al6AVCXd9XhwYHwqLxWMCw+AaI7BgS0=
-X-Gm-Gg: ASbGncvQJzJfHWfyIenm3W+jF6tfDIssWATkrQx9UIUc6tmFTJvgsIwfR+26gvVmqWD
-	UpvIK2N/RhmBw8x7vsLgMjyj+F060eN1Ak1lBmPE+Z8/Buv81PYUp167k3hwIZxraB5AB48k56e
-	qhyRkOK2oPOLVK/ZUeK5KlOvl/Ao/QYdZxi4eUkczB+miRVuO6vH/eGmluLV40gqJSjHIyzlHzt
-	kTA/lflIG17Usu6e+SoW/082FvLfkSyEUTgdmP3FHG5l68vdd0KrbbUaLzrxHB5Zk1EOXUiM3eX
-	5bTtrcVOqhntk+wXRap5fS/3y+G9u9RYT/WkXwqTU3AO5N+lWfOxke8pQ29ylyA351ZYFD5H72p
-	NA/unmZUBC9jVXbi2zpE2Dp4nbL1jFBTyKt6qmsayXaQ=
-X-Google-Smtp-Source: AGHT+IEO/D3Kf0FEExOrijHou096dDtBPWCLjC1WgVsjGIgzijMpCDE2xPmlCCIGCuY8d0Y0NY1PGg==
-X-Received: by 2002:a05:600c:3b9e:b0:456:285b:db3c with SMTP id 5b1f17b1804b1-459ff5a7a67mr70226905e9.3.1754915122311;
-        Mon, 11 Aug 2025 05:25:22 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5d0b1afsm248013475e9.26.2025.08.11.05.25.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 05:25:22 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 11 Aug 2025 14:25:18 +0200
-Subject: [PATCH v2 2/2] arm64: dts: qcom: sm8650: Flatten the USB nodes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1692D3A63;
+	Mon, 11 Aug 2025 12:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754915134; cv=fail; b=iTC2AfTuA1cGc3/UUN08KCn5ieSxPs2snEVySOFxDIc2kNtjN21xVUknAqUINKMNsqti2WJokronWS/wP9lCrG4eD8GoKm4Clf0eoCre1Nj9IbI2CQuCar+58f7AN4UZIXcfO6WYE7wVJ5nfDMxRfEgbic0CS63BQii02pymf9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754915134; c=relaxed/simple;
+	bh=PFC00rWORgInl0rO+i6xaWcBmJRtd/GKUE589vWJbiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D2B6pr0iXvoHkTd/dwE/jYExKi2tqxTlZc+sr0zTsF6YtB4uY37eZQRJwI3DwAL786gIGY+Y6KPG/gh3c3j7E0sfHJOiVUTl2bYhWmGXbXmbdpNxyg37uadpufUU6P9oZy46foBJqvSf2eP68cQpKqGvHGEw9BBIqT1tkf2EFVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ENaGkSBF; arc=fail smtp.client-ip=40.107.44.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GinTWjvCmUqO4mH/4jp6VWj9jM8K+Ex+YYwnz9J+B8RNU9bX9Kd1xpurgERkVgmbEJZC/IcUgynPl7ULpVuQo62GWbTet8IzC1h+FMj7Vv70k0+yLo2D9HykyUEKPO4dqNu9R9bjFG5j6rYcVYGuuUKqWAkizLedUr8K27oB+jFt9PeYFZ3NIpH77l7UfKSgA4ea7L5yObQFembgLAMb53DCT1dHjcRf0iomy8bHTTIkXIb4ryXktO0cNqYbOU2mCW9orxot6353Jx6dhl91uflF3qqRQ2vKHlB3BRH6uwUc0pMlUs0nopQfd+6B6INVDImkOkqdNWgEXWBVwzxFHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VZpkpdyr6PyPmXDQWh+yXGa/bH/ZVjibCsMbWwMCkZU=;
+ b=rOKs97yUwAf7x1EQlY8yt6xEdFKnUEh6bHgt7LZQTHuBxnEhWbRjr/ccnkS0aGvjOP9IXlxJ36bOxWvZ7wWWu6xiOPizC+3cyFXXaD1WfUrPXbAYbbqSsHl2+nVvbpczZqZ7NrMOqKGizGpyTu8MHeo68kx1Y0qKKPyi8sALOI1PXu58or61dNdg/fR+SHTeBiA5CszAjGfkGD46x5J85Q5qQ8AKGoSJmaNGX0S2hxYmL8bBGKlLkNND93JlCp9xOtZlF+zpNe3dCvBxe8q41Q97MAAp7vGS8U+ohau3xcZlPyNlnGSS0tNHDpsmRl7i7gv+s7vSuHryKmyKh3d/0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VZpkpdyr6PyPmXDQWh+yXGa/bH/ZVjibCsMbWwMCkZU=;
+ b=ENaGkSBF+sXyjtFNiuI6WWQPmBN/IhVNT8DstEBj+qwxJUs8KxhqH6R0OvdFrv0KcTxEP01sbgnlF3QuQxrKra6v18FNuIo3UklM6PopphwdGnF6MNWrBoZ7w+gHo9hxjuA9NyItMuuip0YW6BPYicoai7lmsAKsDyEuLz1Jx/wW8YDZmVWzKVSVjoEWnW9wvYdzeBEdxJcRhQX+UQQVjd0Q6tfk2qPVGPL9RJ9nOEGxvNDRCN5ZM4qWgXnKSMaLlJjhxAiZdG+AoXYxOHyQICeiVLPL/djM48g8ZADLLh4Ar7MXiDkq2tkLSd6y7Y79sH7HopgTNb8M6iwxqXRVGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by TYZPR06MB7172.apcprd06.prod.outlook.com (2603:1096:405:b3::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Mon, 11 Aug
+ 2025 12:25:30 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9009.018; Mon, 11 Aug 2025
+ 12:25:30 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] cxl/hdm: Use str_plural() to simplify the code
+Date: Mon, 11 Aug 2025 20:25:19 +0800
+Message-Id: <20250811122519.543554-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0120.jpnprd01.prod.outlook.com
+ (2603:1096:405:4::36) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-topic-sm8x50-usb-flatten-v2-2-0bbb3ac292e4@linaro.org>
-References: <20250811-topic-sm8x50-usb-flatten-v2-0-0bbb3ac292e4@linaro.org>
-In-Reply-To: <20250811-topic-sm8x50-usb-flatten-v2-0-0bbb3ac292e4@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5739;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=n6T5GhUysgMZGgbWj0uqn+CFLJN1qzaodZC5ot+Vkv0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBomeEvWsHn0f5DU/lw77i8DW5ulsIAcomwTc/Vozd6
- aR/PJvmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaJnhLwAKCRB33NvayMhJ0UuuEA
- CCh99wAzxF8LXcnzalK3YrahyKbv6dAkIHdvBXq0KXe9sHglhMt+5sj+wl0ZhchXIDfW7aSxwevdAv
- ruLKqjPSgq5/SABUqQcUrKJ3lvfD6/hLPqxDfpN18cB3QRpaOgetkDRGVta5CmWvwJxROwftwr3kLP
- iBVn0iPdM2AFRMGJ5QktipG9n7WvKHJ/g8eub7uZtPtqYW+C6ia1qhiwg8AVVLq4ZDYdUQbnvhrkvw
- cI856VZjp7imiw4EYnxzxslTAc8V6VsqPAEXa+7YZ5kl5ZY54ZiKR9qD5jOvCnPCK/X7hu3g8hJu2I
- 68TKyRyJxxhenEfT1CrS11KJl2lfhMlLOMW52tKKNtqBwREPxpO0hGGn/V9bc1u65UCfNyiIL4Kprf
- Gydsr7AXPhipTzRFZXlpSEliclmMRh1OvJzHn4y2KmdfLlt1qVb3WT1Oydn5s3ha1CY2CWbj/cCzud
- wf+WLZ3eKAeMzYMP4Lk6jtTQ6NSM8pDhV5UBHgIxq+RNAmU33+E6ICSA70XSM6x21pqDTp6sQ/vAmH
- sE2O7CWftIJ46/d3n45zpcS5o9eYg5CDkBLzTBqi5GAaLr4QyE5/JPKivaRLCPqSbUI9lsPQezCHJN
- aprBbphUzxCjRPXr1Wf/7AAon2MnHiCJN5IT1Iz0mKQ0nvUEmYZPD7cV8boA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYZPR06MB7172:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1baeb316-6be7-4802-8b91-08ddd8d22924
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?o8Z5c3DP23Ftzp/S15I4NtlTyErUnpDHcFZ9+oygj1b80yLwdoh7u8Fu9tEs?=
+ =?us-ascii?Q?5VmsaI8xnNxVDpipeTSWYjMs8OBkvWAcEovqmQbXju3im9p0KQx47mYxPdUF?=
+ =?us-ascii?Q?8x0yDPX4/amdYJ9pxox8Fn9+lfN/VbzNbiCFYOa6YZap2mNHHct9+DwC6tcI?=
+ =?us-ascii?Q?fI42QmNhPv3szTDBeXsexzS/nXQe8Qy331RtAjwDVR+Hdodm/jwCv1u+1Lyz?=
+ =?us-ascii?Q?7swMKLzxKYd7pqvENHbDrVTxzYkMx54re9F+AywwRhC8GLsqT182IGVf98Lb?=
+ =?us-ascii?Q?qUtQEafvb3P8oAf5ZQCanbzwfSQd7kNy7+EvMAEH3e9KAF8x3Ba9r+DP2+wd?=
+ =?us-ascii?Q?bCASQ2ma/Ffat5NpgcXva6TVq3hoUYNz5hqxvQa5MzPsavfxwVEecJbK1QE9?=
+ =?us-ascii?Q?9m9N+LuckTeFgcjbneij8KVVNF+xs0hZcJCAX/DMePsKS9hZi6mryg9exGMj?=
+ =?us-ascii?Q?lgbrj9dGa79gYw51UlH3YZBy3VGXEbrC8lFwb3K/G5lVLFVTfcSuTBec046T?=
+ =?us-ascii?Q?cRqVYbpfJvQmDqiAEqXqr08Cq+SsdKSJunkU0jdz/4K97Ca5sKCaAk15qq+s?=
+ =?us-ascii?Q?u93OFKWbqG9k8/hN3vmMah1Lk9Zgn6Ls8jha3qZoY7ayTiLDr6TGHcFnce69?=
+ =?us-ascii?Q?l4NFQiQ8TgP9TnIHr6ROd3IQpe4+RVvZb/ec7BVcc83NQVEDGsjag92ZF4P0?=
+ =?us-ascii?Q?OOWIFjqyNn9xFsuz+JOM7PKgvPnlUfAmTZw7KsfBj3ky5y0ZqeB0XsSqQimU?=
+ =?us-ascii?Q?pB+NNg1KwJTXkuDxwETMr1Z+VejKI34yKMJgwDALLSQzUyNOth6fuZsjRH6M?=
+ =?us-ascii?Q?/iBaVPySXKislpOy/CD/J7b+wd4pen8g7nG43aG47ZoY6CgIddRDw/LIi2gQ?=
+ =?us-ascii?Q?I/qEC8tZ8JwgavRzQRmyjC3lMObUD9fqFHP6DXS/VHKpzUYEqB0mc3lR0f9p?=
+ =?us-ascii?Q?xN8fwWpPOLGemKbVbgt/bj7LKq9oGg0a2SSN5VNHRgLFAR1oa55FkQKvJ/R+?=
+ =?us-ascii?Q?4bcOhd3lOZpjFIbuVpONu2zMsrS9o9mCBKEWP1bAgKquXixGowbwY9n3D2cv?=
+ =?us-ascii?Q?g+qATd/eNfCUS3tDoie5L5VQrVJtpE8LArLuvXi+0fXB4hG3fMQhWUiBjT+8?=
+ =?us-ascii?Q?PyXjk/zqOe7fiMLpD8Awe2cdGMqSGVD0OH/e2xXU8aPM1RsFzFIS2IoU8T5X?=
+ =?us-ascii?Q?fZulInPHvR+E2wdTWk1j9r0YqrUaGFv9V1pFzIUBFiuygKgS9w/CeloTWlf1?=
+ =?us-ascii?Q?DVDWETHnp42Oaef93DHq2e3MUkDvcSWy22mD9UayOZhURen6pnRZPzHTUY+2?=
+ =?us-ascii?Q?LsNT9yo+1r3s1v/ZE9lc4BAJ49GiIdBJYJ4NiO5sWuTGu1rK3M2Chmh2i6HN?=
+ =?us-ascii?Q?bAjCRUXcatm3YirH3Wls9C/JWmhXmNMtNF7SBw0enIdN/R41RjgrZhSm4HAD?=
+ =?us-ascii?Q?5XPALyIRM63CAVWzriZ0e630ksH3a8rzaDdvebyKeHmfyWWsbqQEww=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3akqx6cvM4/esFf6sBGBp+lBgAsu6gha0+a4z7wEVmUNbDig+Fr601J248ns?=
+ =?us-ascii?Q?i7qAzsJYLhsXQAKjVpGws3bTptITmPSKH1POvBj0fASRUTmVplLOHW3QEF9G?=
+ =?us-ascii?Q?/98dvtMdbOwwEkozPFrqFaoT0dmLH5zgJrrR4O9g7oONF9LoRUqIu25+XiB1?=
+ =?us-ascii?Q?4vj7EZy8NXMcIO6tWa2eoT3S/V19IGt/O2TWw+vuxS4O+OPkDvSGM4uqdCjC?=
+ =?us-ascii?Q?Xvk0YRLoaW6ej26c+9iEf6tQCSvfn1P8x1ERFtRGBZRKfI7k9eOSzI1rTwBp?=
+ =?us-ascii?Q?3rJyIcDQD95bi8RZmoqy/nPjO6+nhc+23Rb4kdyqO0ACBzWfs9Asoi95D8Dw?=
+ =?us-ascii?Q?2bmevvnRAl0ym+xZfAV91SnzWnxQeDmNSJlee67aegAUMhrMKfa+YRLsPrU3?=
+ =?us-ascii?Q?LY5Qn9UgXpck7QHbiO8cVj7cZ0tNz3BmeNsw3mZi41EgO2TYv68groB7F+iR?=
+ =?us-ascii?Q?JYIpBAonFgevgoHA2obkJBMSYIespYAGi3kB1xgpVA/8StBciQilAO/iJhPC?=
+ =?us-ascii?Q?lZ1dy1Uop+7lg254INsZTdsDRO+AIseIdUxLXm4QCoKhl7cDhYAwJvjms9SI?=
+ =?us-ascii?Q?Qr9zgUkbKaJUZPyydkLe8OQd+YjRPF5LgUGTV2Zbw7UmPiQy2C76q8fKmXtT?=
+ =?us-ascii?Q?ZWT84lmsaztIepmwYloCBL+AUSMlno1k2bwVKcXHgpEajKScP8DrzRTwHFFD?=
+ =?us-ascii?Q?Rs+724buT+oNPk4gAJrE+jcBbhJpM9WGHheSQAdk5GCKZ1rTt736OmM7owjX?=
+ =?us-ascii?Q?1WHX3VtE6dVR6UBc9/WqWuNfUxFLKQpRgNIIaYIAuH1BvPX++ztNh/kg2rE9?=
+ =?us-ascii?Q?zFNWRQA8qu81CfMZHS51bYVip03Vt/MaYrajsn5Ofd/esv+KHUFSZqsN3O09?=
+ =?us-ascii?Q?cmKjikWUpM9zjRp9esbH0vSHwTK3l8x5FesfYL+72Wj45SDxjk/Gberc7mM5?=
+ =?us-ascii?Q?Wn9yXXzo4Lcvr7VMxR9qbKzP55zrkWjW8UeisFIrFOUKqBzdeuodKAzLYGxc?=
+ =?us-ascii?Q?wlKiVTuCD0bbRBeIRetzrWLZO1Y7aHhbNpGYdCNKXD0yPg7zbHyPhaJBkpLU?=
+ =?us-ascii?Q?ZibsqKmjfPknYipRgFdxOlBrUkwNOXRke8l0bQBOA4/eFKgyPbPn5dZ5QPSY?=
+ =?us-ascii?Q?aie6xDc6JXEU5DJn5w9JhaGgzjrraIcVHwvLJpqVo0jUevqytvbZs8UVbfk+?=
+ =?us-ascii?Q?KF0etHGMv3h7xYsWqmB0KXQ7b2o8XWD9a7josT/+4WiyRDtOrod+aJKDV2x9?=
+ =?us-ascii?Q?vVrH0Az9mNBNdlglAM4njDDDaEMto5bKd4oObpUZMXDQuOW9zP7vLinCGrKZ?=
+ =?us-ascii?Q?flGGBRJTjbPevVv3F1xzI4pgbqTN23pQD+3CarzpJPGH1migG/s1XbW5oGrx?=
+ =?us-ascii?Q?ATlcsMo84b8zfpgYhM6cqOLpzs6iqjgnJWO/Q0oGJxBAjEQ38Pr9uROQaAty?=
+ =?us-ascii?Q?6+EFek8wSJTmZo/yGz46CcrA2LWPkotQDGURrXXgAF+8qAfJU75b+QY03IWH?=
+ =?us-ascii?Q?DqiaoC29FEd/o8DQr3Q5rTjjUhbVMlDb8IzkwxBkXn1anvqovtLUxWdFwmWT?=
+ =?us-ascii?Q?8ClfqJ7B0q/wfZ3GS+7xv7AJfKNFgZclADhLxNYn?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1baeb316-6be7-4802-8b91-08ddd8d22924
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 12:25:30.4159
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WIMaAhjqV0fslqHR9FRKVcgo8ZTq+aMzh/TGEJN+eLfyXSciEUg7MQwEAZaNEoMKf3weg8FCOBxM32UFUQrmZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7172
 
-Transition the USB controllers found in the SM8650 SoC to the newly
-introduced, flattened representation of the Qualcomm USB block.
+Use the string choice helper function str_plural() to simplify the code.
 
-The reg and interrupts properties from the usb child node are merged
-with their counterpart in the outer node, remaining properties and child
-nodes are simply moved.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- arch/arm64/boot/dts/qcom/sm8650-hdk.dts |  6 +--
- arch/arm64/boot/dts/qcom/sm8650-mtp.dts |  6 +--
- arch/arm64/boot/dts/qcom/sm8650-qrd.dts |  6 +--
- arch/arm64/boot/dts/qcom/sm8650.dtsi    | 86 +++++++++++++++------------------
- 4 files changed, 46 insertions(+), 58 deletions(-)
+ drivers/cxl/core/hdm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-index 259649d7dcd768ecf93c9473adc1738e7d715b6c..a00da76a60620b998973cab189f12eeaa0a448fa 100644
---- a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-@@ -1310,12 +1310,10 @@ &ufs_mem_phy {
-  */
+diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+index e9e1d555cec6..37176c0a781f 100644
+--- a/drivers/cxl/core/hdm.c
++++ b/drivers/cxl/core/hdm.c
+@@ -197,7 +197,7 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+ 	 */
+ 	if (should_emulate_decoders(info)) {
+ 		dev_dbg(dev, "Fallback map %d range register%s\n", info->ranges,
+-			info->ranges > 1 ? "s" : "");
++			str_plural(info->ranges));
+ 		cxlhdm->decoder_count = info->ranges;
+ 	}
  
- &usb_1 {
--	status = "okay";
--};
--
--&usb_1_dwc3 {
- 	dr_mode = "otg";
- 	usb-role-switch;
-+
-+	status = "okay";
- };
- 
- &usb_1_dwc3_hs {
-diff --git a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
-index 8a957adbfb383411153506e46d4c9acfb02e3114..c67bbace27439ad67cfb247a88aec633f93f5a6d 100644
---- a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
-@@ -857,12 +857,10 @@ &ufs_mem_phy {
-  */
- 
- &usb_1 {
--	status = "okay";
--};
--
--&usb_1_dwc3 {
- 	dr_mode = "otg";
- 	usb-role-switch;
-+
-+	status = "okay";
- };
- 
- &usb_1_dwc3_hs {
-diff --git a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
-index 7552d5d3fb4020e61d47242b447c9ecbec5f8d55..081b7e40f5742120a611cbfa57a59dfb1dc19b9f 100644
---- a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
-@@ -1293,12 +1293,10 @@ &ufs_mem_phy {
-  */
- 
- &usb_1 {
--	status = "okay";
--};
--
--&usb_1_dwc3 {
- 	dr_mode = "otg";
- 	usb-role-switch;
-+
-+	status = "okay";
- };
- 
- &usb_1_dwc3_hs {
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index e14d3d778b71bbbd0c8fcc851eebc9df9ac09c31..bcafd9cf3eae6ad10d1ddb681829b1561d57e8f3 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -5651,16 +5651,18 @@ usb_dp_qmpphy_dp_in: endpoint {
- 			};
- 		};
- 
--		usb_1: usb@a6f8800 {
--			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
--			reg = <0 0x0a6f8800 0 0x400>;
-+		usb_1: usb@a600000 {
-+			compatible = "qcom,sm8650-dwc3", "qcom,snps-dwc3";
-+			reg = <0 0x0a600000 0 0xfc100>;
- 
--			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
-+			interrupts-extended = <&intc GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>,
-+					      <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
- 					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
- 					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
- 					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
- 					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "pwr_event",
-+			interrupt-names = "dwc_usb3",
-+					  "pwr_event",
- 					  "hs_phy_irq",
- 					  "dp_hs_phy_irq",
- 					  "dm_hs_phy_irq",
-@@ -5685,6 +5687,11 @@ usb_1: usb@a6f8800 {
- 
- 			resets = <&gcc GCC_USB30_PRIM_BCR>;
- 
-+			phys = <&usb_1_hsphy>,
-+			       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
-+			phy-names = "usb2-phy",
-+				    "usb3-phy";
-+
- 			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
- 					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-@@ -5692,59 +5699,46 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 			interconnect-names = "usb-ddr",
- 					     "apps-usb";
- 
-+			iommus = <&apps_smmu 0x40 0>;
-+
- 			power-domains = <&gcc USB30_PRIM_GDSC>;
- 			required-opps = <&rpmhpd_opp_nom>;
- 
--			#address-cells = <2>;
--			#size-cells = <2>;
--			ranges;
--
--			status = "disabled";
--
--			usb_1_dwc3: usb@a600000 {
--				compatible = "snps,dwc3";
--				reg = <0 0x0a600000 0 0xcd00>;
-+			snps,hird-threshold = /bits/ 8 <0x0>;
-+			snps,usb2-gadget-lpm-disable;
-+			snps,dis_u2_susphy_quirk;
-+			snps,dis_enblslpm_quirk;
-+			snps,dis-u1-entry-quirk;
-+			snps,dis-u2-entry-quirk;
-+			snps,is-utmi-l1-suspend;
-+			snps,usb3_lpm_capable;
-+			snps,usb2-lpm-disable;
-+			snps,has-lpm-erratum;
-+			tx-fifo-resize;
- 
--				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
--
--				iommus = <&apps_smmu 0x40 0>;
--
--				phys = <&usb_1_hsphy>,
--				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
--				phy-names = "usb2-phy",
--					    "usb3-phy";
-+			dma-coherent;
- 
--				snps,hird-threshold = /bits/ 8 <0x0>;
--				snps,usb2-gadget-lpm-disable;
--				snps,dis_u2_susphy_quirk;
--				snps,dis_enblslpm_quirk;
--				snps,dis-u1-entry-quirk;
--				snps,dis-u2-entry-quirk;
--				snps,is-utmi-l1-suspend;
--				snps,usb3_lpm_capable;
--				snps,usb2-lpm-disable;
--				snps,has-lpm-erratum;
--				tx-fifo-resize;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 
--				dma-coherent;
-+			status = "disabled";
- 
--				ports {
--					#address-cells = <1>;
--					#size-cells = <0>;
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 
--					port@0 {
--						reg = <0>;
-+				port@0 {
-+					reg = <0>;
- 
--						usb_1_dwc3_hs: endpoint {
--						};
-+					usb_1_dwc3_hs: endpoint {
- 					};
-+				};
- 
--					port@1 {
--						reg = <1>;
-+				port@1 {
-+					reg = <1>;
- 
--						usb_1_dwc3_ss: endpoint {
--							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
--						};
-+					usb_1_dwc3_ss: endpoint {
-+						remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
- 					};
- 				};
- 			};
-
 -- 
 2.34.1
 
