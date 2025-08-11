@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-762339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838FEB20519
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217C9B2051D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C99918A12BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F9C17B354
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9033D2356C9;
-	Mon, 11 Aug 2025 10:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098B821D5AF;
+	Mon, 11 Aug 2025 10:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZlbN+4Qz"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Hi0dhC98";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OXzzw00G"
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0D226888
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827DF225760;
+	Mon, 11 Aug 2025 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754907454; cv=none; b=CbPPywMD9iqzNCSxphc57gDX2y8Yxb8G7oDCRx94XttKvmveXFL07I4DVR3GUZUzOXHhGyxbF6p5y+I3YVWkpFbN199tYrRFk8zftbvhs7Lm1eVagrTTAMZAzVggO91Q36uX/2JzFACT48VvLKgXRW4GpEGVoIrRqvxbQL5FS18=
+	t=1754907467; cv=none; b=G40F53e6pnrNxzlCYbW1Si+2p0KZ8fncyIxmFFF+zEtG2s7Wxyd9uAyj6XYP+vrmLTpsWRWUG7uSizI9YXybElIB44cAuoxrpzr7LflxGZY2qZVfJhhJulVXhE5tOSNf5SXXHNaN1AWfssvnncMatfO134rpVtzLxiwS0bqvCIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754907454; c=relaxed/simple;
-	bh=mvBDLINp1VPpRWMc3lvEklpu69BFO5OES2Bje9lreR0=;
+	s=arc-20240116; t=1754907467; c=relaxed/simple;
+	bh=FeVSjMu7K6/6+Y2nlBvt72rWSYxyBFytB+EvWxSZnGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ly3w8YB5bl8kmxk8x1uhFjaN+58fzUmbcKwXOFT7VwB3BdwXqMQbF+V+T7S6vtWL+FaX4t7d9bexK54i1P/wnk8Uk37YuiUPCZIdhOcTLp8yd9LtYVIfeZSDlf1aqirX0hqx5fbU3WL5UNkOdqO2pHxKS72yRn6Ewd5hE7r0MfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZlbN+4Qz; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23fe9a5e5e8so27594145ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754907453; x=1755512253; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wbGGcDhVg6bsq7Cl6LWsjPX/u/puNeXFalUsVt74Fg=;
-        b=ZlbN+4Qz+zum4lZ4ULo7KkMWQOptvit+yL7i8RuYnHtRbFJuop2O+Be3q/DmEYaYzI
-         y/drVnnR1yklX+s4Sz0PBffZct2vMY07wRoyZRe/xHHrUwcD3cvu+cXDcvQ6SCM2k3X8
-         xZHHJvYGCO3SMyuZknvOqtOOF2fnX8fMwZvaASbjQ6TvNnDQu993UR9B5YPSG9n36ybB
-         /+6+yY3SIkNGN+aFjPQbnwSbro+RS4xeeJ6nnInhr+cMVt+X9VUBlaODqa5TA9io1a1v
-         su+dS1trVtHedBRtU0I856y3mFqyqq88HN4hIKGY9TvMjDB5Q8jAIrQHcJDT+UeLjahe
-         rxxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754907453; x=1755512253;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wbGGcDhVg6bsq7Cl6LWsjPX/u/puNeXFalUsVt74Fg=;
-        b=ZOTy+4kVXuWvxb5QwScPuvYehR7dOBSiuPgStd+REe3Os0VrQ82fxmiTGXah5tamr8
-         uKh9CPrhlhzIVjVtlpY5r+g9spLG2VSes1Hfwk1UohlZlT6+O/HRcrYAI0EfgsXrtN4+
-         2p1hUd5/KPEgxQIgicJNbuyKF8Vy9hdzGa3grLNZPzXkMUoQOMDoD3ITcj7zUzqsyxXy
-         MDeLgLhzGC5kNOxVLKGNWW9v/bnBEqmF3zoVNGpkpxEEhnHppYuWNtfeRQ+ppF7Cf4i5
-         gZs0niLh24WWKV+ZuKxqBp7oLHjyACxNoYuvss4SvlJpenfJnNadTzt7EaFPOhGGWjv7
-         exhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUam9eH/cA2PYsvj6gHodeBeUqNucYAEy7Qo+RSztyGDBShAKRuhMsne3ope2Md6x8rhVTLi2TQhJANUAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywux9vL7p0JiiCwdwSRpebf4TuJSiD14p/c+y7SVb8DMgEpuiYu
-	Qz9/pR49WhIjglLUaSzYtV6W9NEH/DJZOejZ89UYz3iK5edeABffhK0v6atnT2i3aZs=
-X-Gm-Gg: ASbGncvViQGej2RfW4aR3K1HhbBn7xSLT4Y1D6sbWDKTVYML0BJM5b3wlcTE3bYzEbg
-	QHlXWRS3vJjl4LQOVj7uRk4oWqbWyWJAR/ke0qqqItP2drz/Hn0keWNDA6C+yQ7ZcSoGeoQUAJM
-	dLG5bwFWnAKf5tUQ6DhBTfwnZqqoW+x0nkUXSrJXeFTEzg87fIrDXGA2MAw+M/7ZSzNcsgcf+dr
-	8arEbkwwfkVS8/yAmlzUpzo1T+NfKgbQ7YF1r91eEXG66ZSkn9oDRDW4BzbOEBD+Dh4Vjc1Li3q
-	Q3TUM7G9lk6WyU9u2LZZD/VIWEiqj3keiuH1cePzo8R8Y7//8i2qkJtS1F5K/qWghIFfO5rPKnP
-	x0UHcrLDMdhPjK4TsCrekRPcf
-X-Google-Smtp-Source: AGHT+IGiVNO/lD1AD0GKdCt2tByRFS8ki2OJyvqDGW58Bfs5Cn3qr9r9XSLQed8HgVBMo4CcSPmkjw==
-X-Received: by 2002:a17:903:1b26:b0:240:99f7:6c10 with SMTP id d9443c01a7336-242c1ffb220mr210481245ad.1.1754907452644;
-        Mon, 11 Aug 2025 03:17:32 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaf855sm269912785ad.168.2025.08.11.03.17.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 03:17:31 -0700 (PDT)
-Date: Mon, 11 Aug 2025 15:47:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
- dynamically
-Message-ID: <20250811101729.vwrtqg33lusk7h6p@vireshk-i7>
-References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
- <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
- <20250801072845.ppxka4ry4dtn6j3m@vireshk-i7>
- <7bac637b-9483-4341-91c0-e31d5c2f0ea3@oss.qualcomm.com>
- <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
- <7f1393ab-5ae2-428a-92f8-3c8a5df02058@oss.qualcomm.com>
- <20250804111340.t62d4y2zg77rr3rp@vireshk-i7>
- <6035a961-7c5a-4fde-b4ea-e9ea9d88e6c1@oss.qualcomm.com>
- <20250811084453.ocibslv6kxkib6po@vireshk-i7>
- <8e67bfa0-e62c-4060-9ac4-de212ae63570@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDGxzzJS9f1cHbkoMLSaSlZXVX+jfyKBzpjm/Uivtml6QH7G3zh1dmiHiHqdlrGmoeagD7GWP+NglH0QudGvO3oow6FaX1AL38/pn8iGkA9B4Ft5E/h2e1SMa4hTzeieL403+5iGZXUqhThE8mAyUViNv7U07Otwp0QX/l0625Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Hi0dhC98; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OXzzw00G; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 2E87F1300128;
+	Mon, 11 Aug 2025 06:17:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 11 Aug 2025 06:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1754907463; x=
+	1754914663; bh=JTDYGtuk5YhoXR2bU1gah20zKNI0h74bgwzfLz1JAoU=; b=H
+	i0dhC98oVO0d3EOdB73fn7pi5zw4cHaGLng+8mGA0Xv7Ol5Sdz/cMUSe5T2puuMf
+	57A86juVENc0pa0oKV0GW4WqYsS6nzv+uEChsL4plFBDHEHmDUvC2JRrPblg042o
+	QJJplHpns5klrYhN5IjTfcgxbKQMlAN0qLCLtMQOkzWgFWPqfoAAa5PwIYyKZDrM
+	KpPnO3Tm3rHvlhUScb5NHaR7MNXzKMMTPeXEFnUjb5CbkjWtejdtuBcDxcZkUfmM
+	djlg5kt0DZl4cTkRTBvr1LpJi7yJrCMIlTWpEBFqmoiQvRb4/C7OEqFGjjejEQH7
+	lzyKEqRZ/PADc2jApbDLg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754907463; x=1754914663; bh=JTDYGtuk5YhoXR2bU1gah20zKNI0h74bgwz
+	fLz1JAoU=; b=OXzzw00Gr8lmjyrxVoY0HgZkXBfQM85Or0u7ENfE4as58NkfOM8
+	YO1p/zVogusB5UGiVZgQBKd4Xptv/k3OoCKP2yBwAtLSfWser9eoJIUR2H8QhZl2
+	Jqo9k6TST/it+6/IiampbP7ZJN3OzhtL2cyccFQsP7R9VQyBldQ6vSxJUuO57GTI
+	Sxgu7U4bq77ZfH8GDJ2lCpN+6fJ/RiKbJVRZof0LTgz27DF++XA7nY4Yd4VE608O
+	S1Nrr2crc1gyC3wRbvy4M2Hp2JunTlSV2Tlf4PaUSzUQUUcJgVTClP98WYYQ3BUv
+	4rZE79TUtIntEGx9SqD5DGo3HVYUm2YLUjA==
+X-ME-Sender: <xms:RMOZaGDdbN1XIsEO-hfXw7mPnmjrbF4AYMeno8GnJTFN9r7YQpt9tA>
+    <xme:RMOZaHqz3d0sryzqz3lMU3Cjxa90UWmMCMbKUqJbdAS2vciC2GXW93IIgfyHGR0YO
+    pkmd-RYYrPV8kGLIoA>
+X-ME-Received: <xmr:RMOZaL-D99bzftr3PLC3Xd_-wmfvtn68ioY8u7n7pFQVRGUB1jHEHKQuvZC8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeh
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkh
+    gvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgt
+    ohhmpdhrtghpthhtohepkhgvrhhnvghlsehprghnkhgrjhhrrghghhgrvhdrtghomhdprh
+    gtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhihrghn
+    rdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghngh
+    eslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhu
+    shgvrdgtiidprhgtphhtthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthhope
+    hrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:RMOZaOecNLsDQtmaDXNSQxx-pimxoWG2KoZEzFKOtXWin__9MJjLJA>
+    <xmx:RMOZaBJNBNdaTBfsrZWxYUEiprG5FDP2xTOMf7u5W6mimzFP-m9Gbg>
+    <xmx:RMOZaIQiJ3nY49TvMbfZglXCsbjjJyupmLC-_rUOG5Enp62Tz5llXg>
+    <xmx:RMOZaPFk5jIuXuPrkSxQB_qDoTSDqS6yHBRPf0IJ0tusr6p0_JbcMA>
+    <xmx:R8OZaHnqV6gmf46bwm9FyYh4KV8d9jYAZOmDJsCZGVU5yhXf5V5Rnh2d>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 06:17:40 -0400 (EDT)
+Date: Mon, 11 Aug 2025 11:17:37 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, 
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
+Message-ID: <lkwidnuk5qtb65qz5mjkjln7k3hhc6eiixpjmh3a522drfsquu@tizjis7y467s>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
+ <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
+ <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
+ <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+ <b087814e-8bdf-4503-a6ba-213db4263083@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,64 +118,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e67bfa0-e62c-4060-9ac4-de212ae63570@oss.qualcomm.com>
+In-Reply-To: <b087814e-8bdf-4503-a6ba-213db4263083@lucifer.local>
 
-On 11-08-25, 15:35, Krishna Chaitanya Chundru wrote:
-> Thanks Viresh for the suggestion. We will try this.
-> Can you confirm this is what you are expecting.
+On Mon, Aug 11, 2025 at 11:09:24AM +0100, Lorenzo Stoakes wrote:
+> On Mon, Aug 11, 2025 at 11:07:48AM +0100, Kiryl Shutsemau wrote:
+> >
+> > Well, my worry is that 2M can be a high tax for smaller machines.
+> > Compile-time might be cleaner, but it has downsides.
+> >
+> > It is also not clear if these users actually need physical HZP or virtual
+> > is enough. Virtual is cheap.
 > 
-> dt change
-> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-> @@ -2214,13 +2214,23 @@ opp-2500000 {
->                                         opp-hz = /bits/ 64 <2500000>;
->                                         required-opps =
-> <&rpmhpd_opp_low_svs>;
->                                         opp-peak-kBps = <250000 1>;
-> +                                       opp-level = <1>;
->                                 };
+> The kernel config flag (default =N) literally says don't use unless you
+> have plenty of memory :)
 > 
-> -                               /* GEN 1 x2 and GEN 2 x1 */
-> +                               /* GEN 1 x2 */
->                                 opp-5000000 {
->                                         opp-hz = /bits/ 64 <5000000>;
->                                         required-opps =
-> <&rpmhpd_opp_low_svs>;
->                                         opp-peak-kBps = <500000 1>;
-> +                                       opp-level = <1>;
-> +                               };
-> +
-> +                               /* GEN 2 x1 */
-> +                               opp-5000000 {
+> So this isn't an issue.
 
-The node-name has to be different, but freq can be same. Something
-like opp-5000000-N, where N = 1, 2, 3.
-
-> +                                       opp-hz = /bits/ 64 <5000000>;
-> +                                       required-opps =
-> <&rpmhpd_opp_low_svs>;
-> +                                       opp-peak-kBps = <500000 1>;
-> +                                       opp-level = <2>;
->                                 };
-
-> And in the driver I need to have a change in OPP framework which
-> returns OPP based on both frequency and level something like
-> dev_pm_opp_find_level_freq_exact(struct device *dev,
-> unsigned int level, unsigned int freq);
-
-I thought you wanted OPP based on freq and bandwidth ? But yeah, a new
-OPP API like: dev_pm_opp_find_key_exact(dev, *key);
-
-where,
-
-struct dev_pm_opp_key {
-        unsigned long *freq;
-        unsigned int *level;
-        unsigned int *bw;
-}
-
-and match all non-NULL values only to begin with.
+Distros use one-config-fits-all approach. Default N doesn't help
+anything.
 
 -- 
-viresh
+Kiryl Shutsemau / Kirill A. Shutemov
 
