@@ -1,198 +1,137 @@
-Return-Path: <linux-kernel+bounces-763005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A96B20EDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B5FB20ECD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A90188A437
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E94188261E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FB42EAD13;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2742EA745;
 	Mon, 11 Aug 2025 15:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAcNzR3b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="ChgTAk6L"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB322E3AE1;
-	Mon, 11 Aug 2025 15:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FAE24DCE6
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925507; cv=none; b=HMqQ4wtx7yNokDe5gYJLCDKZbS6D9SVxoSTGC/DQqhoRbdBOn2Nj/xQRxMtVBUu8aLRqu3cxS2I8gwwjQESDSNflQb/LtlSqVnEOGk1BoSiINqcxbZViqXAiIgcHftmZ+BZDU2t2UlCAbBMW1SK9FAgZuRkopfDhHWyKLc46gG8=
+	t=1754925506; cv=none; b=jwzd6TxHsbEKuW8qQ9Metm+xAXgC+DdQWPS3wShqqfYkqSVwH78/3KRktLtPo0QdxITbfI3jlrQiEZDyeYKBEootY7Mmqpvc6PAd5EqvDRmksBbQwE93Ek0pk5iu2EmlyjBXwajZCI//Riu0QOnJfXxVrMtrwbJ7h5wE3vfg3rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925507; c=relaxed/simple;
-	bh=Axu5a5KswPV1EgvIUu5Vc9gPsQIxcpG9Q9QDX+9LwFs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C0+/ioqyyaPnUYsH49K6T8hQ5S58+4S1PdjzhBfCEdr3wS4HBRBOwz4RKM9pi/IUR36hzizM9wkAqHJ5rqQnhpw9j4yMzhEyZ7Js4da1ymn7gQ6fJpzbv/y4BlUHn6EC8WXqPV/kqhX3dc6cIy/eOQi63Yr7o7WMKOfaCI9GSy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAcNzR3b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6A50CC4CEFF;
-	Mon, 11 Aug 2025 15:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925506;
-	bh=Axu5a5KswPV1EgvIUu5Vc9gPsQIxcpG9Q9QDX+9LwFs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aAcNzR3b0y3PPHNgcj5xW4ERfhJYna8pBMksl6IHznxDCDHnejwHs52G39fQS381V
-	 TAswgzvkOKJ+Qs7iivQWB6rMAZnF8kWYoHaVENBpuGyJBNDZh5Xys5t4WWHM3P9iEb
-	 w8EguOMaAwL678Ij3QVh6gFSibucwXjr0QhC0ICuZqrrCUXbYsQgZvwtWdF4+IxxUH
-	 xXBSavLL9fJhTON02UZavdRCaewfiGUk9a2vlea3UXoYAj80Mf+948CbT9+7r5XDfW
-	 I2Ttl5jDzoiaus/wa5dpRl4mkIZuQiJdQqz0YKQUx4IpMOss2op/HCddyn5cpl62ff
-	 mL92aBZpxa4NQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CDFC87FDA;
-	Mon, 11 Aug 2025 15:18:26 +0000 (UTC)
-From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:06 -0400
-Subject: [PATCH 014/114] clk: ep93xx: convert from round_rate() to
- determine_rate()
+	s=arc-20240116; t=1754925506; c=relaxed/simple;
+	bh=lopUpO8AlILP6yQA7eYjzAMv6pOdDrGS1/G4hb0eS2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZrw89nua5XAV9x9eP2PlMuFW2tV6oYB2c3QIMRvQabCTK4WY/+P7wikWF0ioPmmVt1+hUKucsojVP7tVov3WE8uSvQ+ihQtJ6zjf2loX6O783z/QJeHOQrLsBVBSABUrl91eUcd6K0X1m+DLNBVUrY/bqsyundNd1tHMksl8sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=ChgTAk6L; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-88ddbdfc234so3328738241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1754925503; x=1755530303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N3cN83hbz3/wbXvsSgM9D9acZ78Ipe3e/zyObUe8NXs=;
+        b=ChgTAk6Lb5wcA8bZQSglJyGuf52ali+OtyzYa1pOjurJy2G5zcNBj+slkIcZRvPyXK
+         tqEEsL1EjTPteXudPPNnTBOpphx1lWzsgg7OlnzeUrI5XYCkotZ/H3RgQXntRevXMQI/
+         eZcr0rqxopfdwwsaqb5aMb8e62Hz3JpYIWOLNGVS5TwY/xPKW8apCUWjSnMcr6BvT4DR
+         43jXy/UZCtm9bkZeXHzfIpBn3LJFQwpkj3Q50hylvxiF0/vPULBSIecICHDhkE28OF3V
+         0wFOPWRYgeCgYIgyJtL3hGXhsD7Bfye14fZUNl9HbIUX1qLPm3AWXg1fC7KndULXpQC0
+         VRmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754925503; x=1755530303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N3cN83hbz3/wbXvsSgM9D9acZ78Ipe3e/zyObUe8NXs=;
+        b=ZMM7kFgzMlpBmC0Y1D+iGO6eoq2+3uV1T80SDN0yXpId45L41lMBWau+QsgejiEqg+
+         ZiqNEG5O6PbXnvsN1wSWX3MSMezRxRPei6AAIfMxK+O1BrOk9zqTNaxC0fstmXYD+Fzm
+         mMd4TUc4+LbNPd5A4vq1xS/spOMdXV2ntwM6qEzLtBHE6TSryAa8vlhPqOttZBiCNIrI
+         13iuzHdu23nKqE4Nl9/6P+xhUFx4MYML/hg5FPWctHOfg3KVhruI+dzuPAUq4SuxlcT4
+         nR/R7/jBmghMitrQ0JEf7qbQOCMKO876sbZwpL3hDAoctO9zHdrdRYojd09hNOpposYO
+         EcBw==
+X-Gm-Message-State: AOJu0YxU3KsE6L2K1XR4lm6uiPdmUDfuo3mb5NXQK/GsqugqVmIVOjIc
+	zBBaoUdYajGtMp72dIZTx3JpOmXAGa42YbZIeW+CdSZ4NTtA4wLNWyVklfMGz9eSAl5hDJRr/1E
+	GIKUoFCX36ILW5fwNE33OCfKEBdYG/0hSGY15yeC63g==
+X-Gm-Gg: ASbGncuhqkc69KNaYpkmJoa7x8MY2FBxeoNkGaOKRMkF/5+svZdGS26ID1dBqR/M12K
+	ukFBo4azC8okNUsGWjbB45RQYHgvhCoWRdIiOLzBdQV7kEkR5IvqsHKVFLMAR5l3a1pAHWdYzrK
+	wx5tX35NeHiANar83YCK9uTSbjSOP25yGKkzhgizWSJRGBMvztZkXVOVdUpMI6xfHQNZG0fMgDK
+	GLTwRsQ
+X-Google-Smtp-Source: AGHT+IEAyZ8rG3/BvdqEccF5il/zjHHBwHC2+zGGHvDSgxR6itSB9skJJt0JgvxBTy87l0X7786rmTyB8gLzGZDp05I=
+X-Received: by 2002:a05:6102:5108:b0:4fb:dd4b:26cb with SMTP id
+ ada2fe7eead31-5060d49ab6bmr4535085137.8.1754925503023; Mon, 11 Aug 2025
+ 08:18:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-14-b3bf97b038dc@redhat.com>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Keguang Zhang <keguang.zhang@gmail.com>, 
- Taichi Sugaya <sugaya.taichi@socionext.com>, 
- Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
- Steen Hegelund <Steen.Hegelund@microchip.com>, 
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, 
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Max Filippov <jcmvbkbc@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>, 
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Alex Helms <alexander.helms.jy@renesas.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
- linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925497; l=1914;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=3JP7dMYtLoQxtBGjPwMKi6Ir7YT5pdLPUf8GaJMmFa0=;
- b=RRCll3J7L/rjd6JsMM5HD2UsZX1rJmfKm0oTSK0t+2WmkbpOkSN1u9mQMZrVpW2oJoAudterD
- vhIUygylIuMDhqOiTY3Z/K2otVUyyEa9LQb6/eEcV55ZqFLC7ZCetu5
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
-X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
- auth_id=472
-X-Original-From: Brian Masney <bmasney@redhat.com>
-Reply-To: bmasney@redhat.com
+References: <20250811063352.1770-1-wangfushuai@baidu.com>
+In-Reply-To: <20250811063352.1770-1-wangfushuai@baidu.com>
+From: Jesse Taube <jesse@rivosinc.com>
+Date: Mon, 11 Aug 2025 08:18:07 -0700
+X-Gm-Features: Ac12FXxXyEahCu3pp1aY4hKwnpItf8sYWxyu9pOb6rZA0mGYeIFUty9bJ1jWqhw
+Message-ID: <CALSpo=b4dO3B=U5+cfc3P0NnrtMf7_FJv6+vOPHCS_ezZR2XJw@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Use for_each_online_cpu() instead of for_each_cpu()
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, ajones@ventanamicro.com, cleger@rivosinc.com, 
+	charlie@rivosinc.com, evan@rivosinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Brian Masney <bmasney@redhat.com>
+On Sun, Aug 10, 2025 at 11:34=E2=80=AFPM Fushuai Wang <wangfushuai@baidu.co=
+m> wrote:
+>
+> Replace the opencoded for_each_cpu(cpu, cpu_online_mask) loop with the
+> more readable and equivalent for_each_online_cpu(cpu) macro.
+>
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> ---
+>  arch/riscv/kernel/unaligned_access_speed.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kern=
+el/unaligned_access_speed.c
+> index ae2068425fbc..5e11b1bd9b2a 100644
+> --- a/arch/riscv/kernel/unaligned_access_speed.c
+> +++ b/arch/riscv/kernel/unaligned_access_speed.c
+> @@ -150,7 +150,7 @@ static void __init check_unaligned_access_speed_all_c=
+pus(void)
+>          * Allocate separate buffers for each CPU so there's no fighting =
+over
+>          * cache lines.
+>          */
+> -       for_each_cpu(cpu, cpu_online_mask) {
+> +       for_each_online_cpu(cpu) {
+>                 bufs[cpu] =3D alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_O=
+RDER);
+>                 if (!bufs[cpu]) {
+>                         pr_warn("Allocation failure, not measuring misali=
+gned performance\n");
+> @@ -165,7 +165,7 @@ static void __init check_unaligned_access_speed_all_c=
+pus(void)
+>         smp_call_on_cpu(0, check_unaligned_access, bufs[0], true);
+>
+>  out:
+> -       for_each_cpu(cpu, cpu_online_mask) {
+> +       for_each_online_cpu(cpu) {
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+Good find.
+Reviewed-by: Jesse Taube <jesse@rivosinc.com>
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk-ep93xx.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
-index 4bd8d6ecf6a2bde26287e4e949b062a5660139e6..b081ef920e250dd99134af6845c443ee11266da8 100644
---- a/drivers/clk/clk-ep93xx.c
-+++ b/drivers/clk/clk-ep93xx.c
-@@ -389,23 +389,25 @@ static unsigned long ep93xx_div_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_CLOSEST(parent_rate, clk->div[index]);
- }
- 
--static long ep93xx_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long *parent_rate)
-+static int ep93xx_div_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
- {
- 	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
- 	unsigned long best = 0, now;
- 	unsigned int i;
- 
- 	for (i = 0; i < clk->num_div; i++) {
--		if ((rate * clk->div[i]) == *parent_rate)
--			return rate;
-+		if (req->rate * clk->div[i] == req->best_parent_rate)
-+			return 0;
- 
--		now = DIV_ROUND_CLOSEST(*parent_rate, clk->div[i]);
--		if (!best || is_best(rate, now, best))
-+		now = DIV_ROUND_CLOSEST(req->best_parent_rate, clk->div[i]);
-+		if (!best || is_best(req->rate, now, best))
- 			best = now;
- 	}
- 
--	return best;
-+	req->rate = best;
-+
-+	return 0;
- }
- 
- static int ep93xx_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -437,7 +439,7 @@ static const struct clk_ops ep93xx_div_ops = {
- 	.disable = ep93xx_clk_disable,
- 	.is_enabled = ep93xx_clk_is_enabled,
- 	.recalc_rate = ep93xx_div_recalc_rate,
--	.round_rate = ep93xx_div_round_rate,
-+	.determine_rate = ep93xx_div_determine_rate,
- 	.set_rate = ep93xx_div_set_rate,
- };
- 
-
--- 
-2.50.1
-
-
+>                 if (bufs[cpu])
+>                         __free_pages(bufs[cpu], MISALIGNED_BUFFER_ORDER);
+>         }
+> --
+> 2.36.1
+>
 
