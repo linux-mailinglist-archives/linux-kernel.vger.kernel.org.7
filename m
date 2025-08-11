@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-762337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E98B20513
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:17:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93115B2050F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EC63B3689
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:17:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 861AF4E2084
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4612356C9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6272356C6;
 	Mon, 11 Aug 2025 10:17:14 +0000 (UTC)
 Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11397223DFF
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7151821D5AF
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754907434; cv=none; b=XiI3px3JF2XQJwTnsu3cTcbic8dMhw0zanV3405RxSm8jCQER5btRcboFPwc6t8MjdrHJB8TPBOaqZnBlxjHGdtDI2LCDQDzVzZXV6h4PcOn+e+7wzkg+rCrgmKjPdcsqNHLol9+g4NFH6Nh7mw/CQ0MNStVOsfTP9kBBEAQEfE=
+	t=1754907434; cv=none; b=pk9/pfoKnTKw6OLrH9URYS+dt9J9WCxwBc/sRuCq0tSXC1ZZ2x8NenUSDZFKjdkS4pWjfoA1w1/IEm9lXlCak1wi44mRB/F+Ogff7siSYP8DJilPdGZfis9Ss1MvP4+/hAn+5h+ggwU5TAKdy0Ljgo8FflFPX24aAFB7+MwOaso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754907434; c=relaxed/simple;
-	bh=HDwvPzdpHW98oeq7fUUOimJlla8qzlgUCzf5px3FZmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KTf/YI9QMbG37ZJ0JGnAYT1pb36tGSfbfhOGErBAMCxcKNHrHL8WfmlcnZDytHfcV191zrqiZyLDtFpMtuXrwHBeaIPcXiJUaMaZEFLN2x/11f7r/JRjA86W1Qt8vyobbAEPiVi/H3f07DnbVHLY8ZYL3VCaO+tA9attyAI2J28=
+	bh=42Qj2pu6ZD9kXaMu36PwsauvAotNEEUuPapWHeOC1+w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=hz+idd4gL0nkOSYHSfCliE2kpVV7ArVhbFTDlWADmEQWrbKvpN3Z0uaLXgytOeRVqW8jAotTO9dYwp5RGgbigdQpInOkLY3P2ANovDU74xYeTVLJIp5/3wog08FR1QSSQID1hRQFGHkKB3mmpAqiQ/RJGZLX7kMrKYHTRsYIn5I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
 Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-	by 156.147.23.52 with ESMTP; 11 Aug 2025 18:47:08 +0900
+	by 156.147.23.52 with ESMTP; 11 Aug 2025 18:47:10 +0900
 X-Original-SENDERIP: 156.147.1.121
 X-Original-MAILFROM: chanho.min@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
-	by 156.147.1.121 with ESMTP; 11 Aug 2025 18:47:08 +0900
+	by 156.147.1.121 with ESMTP; 11 Aug 2025 18:47:09 +0900
 X-Original-SENDERIP: 10.178.31.96
 X-Original-MAILFROM: chanho.min@lge.com
 From: Chanho Min <chanho.min@lge.com>
@@ -45,11 +45,11 @@ Cc: samba-technical@lists.samba.org,
 	sashal@kernel.org,
 	Paulo Alcantara <pc@manguebit.com>,
 	stable@vger.kernel.org,
-	Steve French <stfrench@microsoft.com>,
-	Chanho Min <chanho.min@lge.com>
-Subject: [PATCH 2/4] smb: client: fix potential UAF in is_valid_oplock_break()
-Date: Mon, 11 Aug 2025 18:46:37 +0900
-Message-Id: <20250811094639.37446-3-chanho.min@lge.com>
+	Chanho Min <chanho.min@lge.com>,
+	Steve French <stfrench@microsoft.com>
+Subject: [PATCH 3/4] smb: client: fix potential UAF in smb2_is_valid_lease_break()
+Date: Mon, 11 Aug 2025 18:46:38 +0900
+Message-Id: <20250811094639.37446-4-chanho.min@lge.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250811094639.37446-1-chanho.min@lge.com>
 References: <20250811094639.37446-1-chanho.min@lge.com>
@@ -61,32 +61,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Paulo Alcantara <pc@manguebit.com>
 
-commit 69ccf040acddf33a3a85ec0f6b45ef84b0f7ec29 upstream.
-
 Skip sessions that are being teared down (status == SES_EXITING) to
 avoid UAF.
 
 Cc: stable@vger.kernel.org # 5.4
 Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[ chanho: Backported to v5.4.y, misc.c was moved from fs/cifs to fs/smb/client ]
+[ chanho: Backported to v5.4.y, smb2misc.c was moved from fs/cifs to fs/smb/client ]
 Signed-off-by: Chanho Min <chanho.min@lge.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 ---
- fs/cifs/misc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/cifs/smb2misc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
-index db1fcdedf289a..4d838d7db7b57 100644
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -473,6 +473,8 @@ is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv)
- 	spin_lock(&cifs_tcp_ses_lock);
- 	list_for_each(tmp, &srv->smb_ses_list) {
- 		ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
-+		if (cifs_ses_exiting(ses))
-+			continue;
- 		list_for_each(tmp1, &ses->tcon_list) {
- 			tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
- 			if (tcon->tid != buf->Tid)
+diff --git a/fs/cifs/smb2misc.c b/fs/cifs/smb2misc.c
+index d7cbf1b07126c..c47927d257635 100644
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -611,7 +611,8 @@ smb2_is_valid_lease_break(char *buffer)
+ 
+ 		list_for_each(tmp1, &server->smb_ses_list) {
+ 			ses = list_entry(tmp1, struct cifs_ses, smb_ses_list);
+-
++			if (cifs_ses_exiting(ses))
++				continue;
+ 			list_for_each(tmp2, &ses->tcon_list) {
+ 				tcon = list_entry(tmp2, struct cifs_tcon,
+ 						  tcon_list);
 
