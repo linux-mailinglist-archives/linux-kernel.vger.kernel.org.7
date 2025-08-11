@@ -1,148 +1,374 @@
-Return-Path: <linux-kernel+bounces-762484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E7EB2075F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:19:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A829EB206DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04B6F3B3FFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D42B3AC2EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E5B2BF00A;
-	Mon, 11 Aug 2025 11:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0642BE7B3;
+	Mon, 11 Aug 2025 11:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BwaX5EH/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="nf0IWysc"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CD72BEC57
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB8D2475CB;
+	Mon, 11 Aug 2025 11:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911134; cv=none; b=S55IqHKqQdgzmowSGO/sC6FypWChnqC74QelwaOviU7WbErTBMuhyuXpyobsW9aNaAkJ7kogz3nRzRxtjdS3BE8/y2wzYNE6eyuhNl5Bw/in/qKnBMk7+kgbQ4v20eKun+qyx6rNBPEk27F6PKQZG2SOcZoIiX5qt3xmIthLVtI=
+	t=1754910425; cv=none; b=TFvK01pfHChsDEpaaYK/e/KO8ORkPypZSml/E2wOdIcBf1NZcQ7R+Ee2IqCn1K5C3VL4MO0Go5Uqn/NG5QE50ZBgBHc/cgJ09FFJwAmEKJoYszwHdn1aIlnCY5YhfT5rkT6xNUHeWBH77BrTHih3cilHZgU5A89X8fKNHBJvcv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911134; c=relaxed/simple;
-	bh=7qGIv2VMmoh53/xPrZ93lE5MyP7wZkaBAOl0Dkqa0Ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cZ3Ufp+qFCq1JmzxYp24NohEEKJNhz8k7D+84psLcvoW9JyARfl6qEUL5oyMtsIJBf3SQR9THwLRJaY8QXQkDwZGu6vvi+l2Ff3nZL+OX94hPcHVaoz5LzesNv5cJ0KtD07oaOjEngFTK/XA8AVTBqf76Ue69husV9iGK2y5WKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BwaX5EH/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dCOm021620
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:18:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zSz6n6RvfTQOfYt/pcVGk94yjTXS1qFmv6HDJ4iF3Wo=; b=BwaX5EH/9h7AZl+H
-	GcfeI6p1RaaUQOd2Vz8pY/6KKqSrkrlUqi7r4va89isjWvnfFzuNvceYy/LaF+He
-	loZ3Xjl0zQQaOPr8DVBiYX34AhS1DT8xiV2nOiM+uMIavrJxJG4hlUs9aqOA7Pud
-	nj65I8ncZb6EsGWwP1N5Lebq0f9AlYLdrK4hQolAa22sbKpzsDrCb3lEIHKfG08e
-	LuBPDDi1VA3zEs5kwm8niClQWvKVEbOAg9oYtQTY5aLdo7AR2LcGkqLhfShjK4x6
-	G5W/Oq9Vip6tQMh3oEU2nlIIIAtDcBQdTM7uqW2G4HhXo7l+1DiPudw3+MdBa/KN
-	Th2ASw==
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxj445ra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:18:52 +0000 (GMT)
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-30c66d2d64dso542406fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 04:18:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754911131; x=1755515931;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zSz6n6RvfTQOfYt/pcVGk94yjTXS1qFmv6HDJ4iF3Wo=;
-        b=vAoqsl3Wlr0ogWvCcqFjpQmLk+iiHqZ0Ycxu9W2UoMbCDAw+5p6tKyPSqoV3NGNyUn
-         zWdqjpFvRg4Kw3RI1XijV+OEFTJV1vzuYN4H+DQxNhF1kZCo0n4H8HwE6aRJp8EmqfA3
-         eRfhhPsE2mKG60AzHDh+Dv/QMqoNytHaeNhqiGLVx4ayHDMwC8gnLa8lFMzpK9HOF2UP
-         FNyQxlRlSJ2nr8Sb0l1nogHNyQeZ58teTLguxAFbBrKU6zW2+CHKyAbLwdvuQrjjQR37
-         DlDlK9QjBXjMNPkamEOW5lo8gTxbZpTEFdSCzq2DqUqhG7WL8hefTqGfYfwfe/wrbY5x
-         Yuwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgTyEtz/HzyDdVQClXojC1aoSNfoy8trehlHgqyKBnUWFvA4WBjSc5ZsGu3IdsG5wZxhaiBnvt4msmj1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy28HCPBmaX/pKMGXEwQ2n2ksR6YdfluKb/8edIgziQE1RFQTIn
-	Imo374D3tLhpE5zio3BjRGu0Ju+nAhHA1uArXR8v0mn82fOaANT34gvf1KFOUWZmgtd6g6XTzga
-	t+wdriv6qXL1UZS6Nsem+AqQ/VjRe+fWw9LY2DlA0OvIIj6LnF+E54AyPxLMbKbYoNxg=
-X-Gm-Gg: ASbGnct5j9oX8GGd9ymy0bVHMo0F8QLMtyoffBj4Lv6dfqowWbIiF8jp+0ZRngd9JOc
-	zz/krSpFdgMKWZi6bv/z6EbaImuSxFxDfoeIbzZOXAGjbXBjosf5oKodADnpoUgL4UVFeSD6nck
-	hSrWzxaJ2jM5r46s0tT9S6RkBP83nVYEfD2jFzZcKXwE1e1b11s5r1P+9M+aUAH+4/QWMhKAWD8
-	t5OnbmQEfHs81FkwMyqv4td3oFVNwedaJ7rO0DdwWWyYwDxIOoeQxBGrAyiQEmU4xAGk7ubxpDQ
-	YvDjvntW0aNAK77sVtPBbZJCKVSsNA7GK5vf99MOYdVQqzEup+cOMQfLxJsYnKkg0xKyrHVP3oU
-	ee1aJ7ceg4Svr7xWMNw==
-X-Received: by 2002:a05:622a:4387:b0:4ab:5ac3:1347 with SMTP id d75a77b69052e-4b0da992a42mr19224051cf.13.1754910418663;
-        Mon, 11 Aug 2025 04:06:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHezk0S2+X+438LvPdPc+q9fDLwWz5D27Izg9g5C7RUB21t8vXyV84fmt0GHdVE3MsjAtpv+w==
-X-Received: by 2002:a05:622a:4387:b0:4ab:5ac3:1347 with SMTP id d75a77b69052e-4b0da992a42mr19223821cf.13.1754910418142;
-        Mon, 11 Aug 2025 04:06:58 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a24370asm2000917966b.128.2025.08.11.04.06.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 04:06:57 -0700 (PDT)
-Message-ID: <53644b36-2eff-4b1c-9886-591afee8b589@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 13:06:55 +0200
+	s=arc-20240116; t=1754910425; c=relaxed/simple;
+	bh=ptGdf5XjUieA1r8kXn1D+vJns3lMZSvAJJytA2JRGeY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YToHVaX7z/F4d7l0lP+0bARyqIVF8jOotDEdg/B1qy9wm9ZZj+Jjli6y06B5tNqL6nHq1jEK5cj+2B7B56qnrK+n+Hs/vrZtgiMaMUrvi01EBBmHH1OYrzfJoXRY10NEwUd8pP1DtHgdKibMXkISDCMjfNDWSfgkrUqCP6Sjbhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=nf0IWysc; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=+YsTTncv4V0O1xQHahs4cPujjeJiDzu/19UW+NDaN3g=; t=1754910422;
+	x=1755515222; b=nf0IWyscjHCbFrdPYihpPzo1cH4VpeTxzQAr1XReaPFFrObxbI2gN/stZl+Gh
+	YGyzxvgGeL+YXJGGs1KEmgF9JPWe8oUxmnF5roA0i6OkeLxJdfHqLT75/+4g1ntyWLcYEqsOdOPpa
+	ipa0imRKzoi/mA611KQijaxf991BC18vw48WwknzNV5/xsOEnpTjbg9/6qwaCSKK3FGeDxJSJ6cnH
+	bAHzu6Mo+WzkgfjSWj+3anlB9llzCNyO3ZkMGNJFVkHsOLu13tPfrA30/VwgchT5IRrScLXEa54xM
+	qfNWhP7wtPvc11MdzVZwki+XSSNwJeXrmoo/sBa7sNSMIo8Lhg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1ulQMl-00000002GYh-1SH8; Mon, 11 Aug 2025 13:06:59 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1ulQMl-00000002eBg-0GIL; Mon, 11 Aug 2025 13:06:59 +0200
+Message-ID: <8c79d3238006df811d80dd007f7e47f7fc207d1c.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org, 
+	davem@davemloft.net, andreas@gaisler.com
+Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org, 
+	ryan.roberts@arm.com, david@redhat.com, Oscar Salvador <osalvador@suse.de>
+Date: Mon, 11 Aug 2025 13:06:57 +0200
+In-Reply-To: <2daaa0648e9bcca42bf7a76d90580725f44fb4bc.camel@physik.fu-berlin.de>
+References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
+								 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
+								 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
+							 <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
+						 <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
+					 <fc1555550f7a9b3c9aa5fb651769cf41ed859c77.camel@physik.fu-berlin.de>
+				 <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
+			 <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
+		 <2bcb018c8b237f7ab2356f4459e14ae81a6fec8b.camel@physik.fu-berlin.de>
+	 <2daaa0648e9bcca42bf7a76d90580725f44fb4bc.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sc7280: Add nsessions property
- for adsp
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Ling Xu <quic_lxu5@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_kuiw@quicinc.com,
-        ekansh.gupta@oss.qualcomm.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250701084905.872519-1-quic_lxu5@quicinc.com>
- <20250701084905.872519-3-quic_lxu5@quicinc.com>
- <nsdj4ytpdn55mn5l2gr23w4whpbt2ogxbaomimqoarvskz3uzs@5mbrq7jvxnp2>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <nsdj4ytpdn55mn5l2gr23w4whpbt2ogxbaomimqoarvskz3uzs@5mbrq7jvxnp2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNyBTYWx0ZWRfX4lFYIRbHIlrL
- UA5JbOijmFxHTd+dWw+n4Vs/+ftpw3TpGEZXh3y8hTBqIrsfvUEL7J4NwZ+VqWrvv9PIA8mBjVI
- 9S2kp77T/bZ9Gec/7VZdC/z1DSJ/0Zg6RXW8rHxyGo+fBJpt4WKZYH6WkmqtAO+09uJzaCO697y
- 2nutOAVyV8SR3uUbINKJBAtrSg/xidSjfRxadCiI8BJg4+KZG5F6tFw8D81EgF/Or8ZYRyRI2om
- ooxG1e2Z8DvXsOaMgVSi+bV38LlfvzJOQr2IdzP0954gRQgUfHxd3g1yFnO8gQ0PdhkQhsXnHfu
- mg5AXwK/ZEQ0Fzw/iZg9fXlBorG7C2Uc3p1Toqz6D7FlX957fxq4jEOnjmAC8iZzqOwXldj0dVU
- DxUapRPg
-X-Authority-Analysis: v=2.4 cv=fvDcZE4f c=1 sm=1 tr=0 ts=6899d19c cx=c_pps
- a=CWtnpBpaoqyeOyNyJ5EW7Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=z0GXuPKBCmORgo7IezoA:9
- a=QEXdDO2ut3YA:10 a=vh23qwtRXIYOdz9xvnmn:22
-X-Proofpoint-ORIG-GUID: ME37UB5uxGmKgdtWcSwwTfJFMAaS7McD
-X-Proofpoint-GUID: ME37UB5uxGmKgdtWcSwwTfJFMAaS7McD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090027
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 8/11/25 12:42 PM, Dmitry Baryshkov wrote:
-> On Tue, Jul 01, 2025 at 02:19:05PM +0530, Ling Xu wrote:
->> Add nsessions property for adsp context bank to make sessions
->> available for ADSP offload.
-> 
-> - Describe the problem, describe _how_ the commit solves it.
+Hi,
 
-This is pure software configuration, the only real limitation is that
-the total amount of sessions per channel can't exceed 14 (because our
-driver says so? I have conflicting information where this number comes
-from), but no more than 5 is recommended for optimal performance
+dropping Meelis Roos from the discussion again as his mail address bounces.
 
-I'd rather waste a couple of bytes and pre-alloc the maximum amount on
-every channel, so that if someone decides they want to use the DSPs ever
-so slightly differently, they don't have to run around changing the DT..
+Adrian
 
-Konrad
+On Mon, 2025-08-11 at 12:44 +0200, John Paul Adrian Glaubitz wrote:
+> Hi,
+>=20
+> On Mon, 2025-08-11 at 00:20 +0200, John Paul Adrian Glaubitz wrote:
+> > Hi,
+> >=20
+> > On Sun, 2025-08-10 at 11:52 +0200, John Paul Adrian Glaubitz wrote:
+> > > On Sat, 2025-08-09 at 08:42 +0200, John Paul Adrian Glaubitz wrote:
+> > > > Let me know if you have more suggestions to test. I can also provid=
+e you with full
+> > > > access to this Netra 240 if you send me your public SSH key in a pr=
+ivate mail.
+> > >=20
+> > > I have narrowed it down to a regression between v6.3 and v6.4 now.
+> > >=20
+> > > The bug can be reproduced with the sparc64_defconfig on a Sun Netra 2=
+40 by setting
+> > > CONFIG_TRANSPARENT_HUGEPAGE=3Dy and CONFIG_TRANSPARENT_HUGEPAGE_ALWAY=
+S=3Dy. When testing
+> > > on a modern systemd-based distribution, it's also necessary to enable=
+ CGroup support
+> > > as well as enable support for Sun partition tables with CONFIG_SUN_PA=
+RTITION=3Dy.
+> > >=20
+> > > Then it should be a matter of bisecting the commits between v6.3 and =
+v6.4.
+> > >=20
+> > > I will do that within the next days as I'm currently a bit busy with =
+other stuff.
+> >=20
+> > OK, it turns out it's reproducible on older kernels (but not as old as =
+4.19) as well.
+> > It's just much harder to trigger. I found a reproducer though and will =
+try to find
+> > the problematic commit next.
+> >=20
+> > [50686.808389] BUG: Bad page map in process sshd-session  pte:00000002 =
+pmd:01448000
+> > [50686.905701] addr:00000100000a0000 vm_flags:00000075 anon_vma:0000000=
+000000000 mapping:fff000003c8ca4f8 index:50
+> > [50687.038425] file:sshd-session fault:filemap_fault mmap:ext4_file_mma=
+p [ext4] read_folio:ext4_read_folio [ext4]
+> > [50687.170246] CPU: 0 PID: 37883 Comm: sshd-session Not tainted 6.3.0-2=
+-sparc64 #1  Debian 6.3.11-1
+> > [50687.285751] Call Trace:
+> > [50687.317771] [<0000000000d660b0>] dump_stack+0x8/0x18
+> > [50687.382976] [<000000000064fd1c>] print_bad_pte+0x15c/0x200
+> > [50687.455024] [<0000000000650f84>] unmap_page_range+0x3e4/0xbe0
+> > [50687.530513] [<0000000000651cd8>] unmap_vmas+0xf8/0x1a0
+> > [50687.597993] [<000000000065e674>] exit_mmap+0xb4/0x360
+> > [50687.664331] [<00000000004647dc>] __mmput+0x3c/0x120
+> > [50687.728380] [<00000000004648f4>] mmput+0x34/0x60
+> > [50687.788999] [<000000000046b510>] do_exit+0x250/0xa00
+> > [50687.854194] [<000000000046bea4>] do_group_exit+0x24/0xa0
+> > [50687.923962] [<000000000046bf3c>] sys_exit_group+0x1c/0x40
+> > [50687.994875] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
+> > [50688.071518] Disabling lock debugging due to kernel taint
+> > [50689.484196] Unable to handle kernel paging request at virtual addres=
+s 000c000002400000
+> > [50689.588368] tsk->{mm,active_mm}->context =3D 00000000001815a6
+> > [50689.661677] tsk->{mm,active_mm}->pgd =3D fff000000ae60000
+> > [50689.730374]               \|/ ____ \|/
+> >                              "@'/ .. \`@"
+> >                              /_| \__/ |_\
+> >                                 \__U_/
+> > [50689.923679] sshd-session(37883): Oops [#1]
+> > [50689.977420] CPU: 0 PID: 37883 Comm: sshd-session Tainted: G    B    =
+          6.3.0-2-sparc64 #1  Debian 6.3.11-1
+> > [50690.112384] TSTATE: 0000008811001607 TPC: 00000000006510cc TNPC: 000=
+00000006510d0 Y: 00000000    Tainted: G    B            =20
+> > [50690.261089] TPC: <unmap_page_range+0x52c/0xbe0>
+> > [50690.320650] g0: 00000000000004a8 g1: 000c000000000000 g2: 0000000000=
+008800 g3: ffffffffffffffff
+> > [50690.435029] g4: fff0000001ef1280 g5: 0000000031200000 g6: fff0000001=
+f04000 g7: ffffffffffffffff
+> > [50690.549403] o0: 000c000002400a20 o1: 00000100000a4000 o2: 0000000100=
+048290 o3: 0000000000000000
+> > [50690.663779] o4: 0000000000000001 o5: 000000000000000d sp: fff0000001=
+f06f61 ret_pc: 0000010000000000
+> > [50690.782728] RPC: <0x10000000000>
+> > [50690.825039] l0: 0000000100048290 l1: 000c000002400a20 l2: 0000010000=
+0a6000 l3: fff0000000950000
+> > [50690.939419] l4: 00000100000fc000 l5: fff000000196dc20 l6: fff0000001=
+f07938 l7: 00000000010f6fd0
+> > [50691.053798] i0: fff0000001f07aa8 i1: 0000000000002000 i2: 0000010000=
+0a4000 i3: fff0000008311b00
+> > [50691.168170] i4: 0000000000100000 i5: fff0000001448290 i6: fff0000001=
+f07081 i7: 0000000000651cd8
+> > [50691.282546] I7: <unmap_vmas+0xf8/0x1a0>
+> > [50691.332867] Call Trace:
+> > [50691.364891] [<0000000000651cd8>] unmap_vmas+0xf8/0x1a0
+> > [50691.432371] [<000000000065e674>] exit_mmap+0xb4/0x360
+> > [50691.498708] [<00000000004647dc>] __mmput+0x3c/0x120
+> > [50691.562759] [<00000000004648f4>] mmput+0x34/0x60
+> > [50691.623376] [<000000000046b510>] do_exit+0x250/0xa00
+> > [50691.688573] [<000000000046bea4>] do_group_exit+0x24/0xa0
+> > [50691.758340] [<000000000046bf3c>] sys_exit_group+0x1c/0x40
+> > [50691.829256] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
+> > [50691.905886] Caller[0000000000651cd8]: unmap_vmas+0xf8/0x1a0
+> > [50691.979085] Caller[000000000065e674]: exit_mmap+0xb4/0x360
+> > [50692.051141] Caller[00000000004647dc]: __mmput+0x3c/0x120
+> > [50692.120911] Caller[00000000004648f4]: mmput+0x34/0x60
+> > [50692.187246] Caller[000000000046b510]: do_exit+0x250/0xa00
+> > [50692.258160] Caller[000000000046bea4]: do_group_exit+0x24/0xa0
+> > [50692.333645] Caller[000000000046bf3c]: sys_exit_group+0x1c/0x40
+> > [50692.410280] Caller[0000000000406174]: linux_sparc_syscall+0x34/0x44
+> > [50692.492629] Caller[fff0000102ad4a74]: 0xfff0000102ad4a74
+> > [50692.562397] Instruction DUMP:
+> > [50692.562399]  ce762010=20
+> > [50692.601281]  02f47fa8=20
+> > [50692.632163]  c4362018=20
+> > [50692.663044] <c45c6008>
+> > [50692.693926]  86100011=20
+> > [50692.724808]  8e08a001=20
+> > [50692.755689]  8400bfff=20
+> > [50692.786569]  8779d402=20
+> > [50692.817451]  c458e018=20
+> >=20
+> > [50692.898656] Fixing recursive fault but reboot is needed!
+>=20
+> So, I was able now to even reproduce it in kernel versions as early as 5.=
+2:
+>=20
+> [  122.085803] Unable to handle kernel NULL pointer dereference
+> [  122.160227] tsk->{mm,active_mm}->context =3D 000000000000009d
+> [  122.233502] tsk->{mm,active_mm}->pgd =3D fff0000231d14000
+> [  122.302118]               \|/ ____ \|/
+> [  122.302118]               "@'/ .. \`@"
+> [  122.302118]               /_| \__/ |_\
+> [  122.302118]                  \__U_/
+> [  122.495420] systemd(1): Oops [#1]
+> [  122.538874] CPU: 0 PID: 1 Comm: systemd Not tainted 5.2.0-3-sparc64 #1=
+ Debian 5.2.17-1
+> [  122.642957] TSTATE: 0000004411001601 TPC: 000000000061cd94 TNPC: 00000=
+0000061cd98 Y: 00000000    Not tainted
+> [  122.772207] TPC: <vfs_getattr_nosec+0x34/0xc0>
+> [  122.830529] g0: 0000000000000000 g1: 00000000000007ff g2: 000000000000=
+0000 g3: 00000000000007df
+> [  122.944902] g4: fff00002381771c0 g5: 0000000000000003 g6: fff000023817=
+8000 g7: 0000000000000000
+> [  123.059275] o0: fff000023817be18 o1: 0000000000000000 o2: 000000000000=
+0000 o3: fff000023817be18
+> [  123.173658] o4: 0000000000000000 o5: 0000000000000000 sp: fff000023817=
+b341 ret_pc: 000000000061cd7c
+> [  123.292611] RPC: <vfs_getattr_nosec+0x1c/0xc0>
+> [  123.350933] l0: 0000010000204010 l1: fff0000101600e28 l2: e4e45b5b8ae4=
+4628 l3: 0000000000000000
+> [  123.465311] l4: 0000000000000000 l5: 0000000000000000 l6: 000000000000=
+0000 l7: fff0000100bff140
+> [  123.579692] i0: fff000023817bd50 i1: fff000023817be18 i2: 000000000000=
+0001 i3: 0000000000000900
+> [  123.694060] i4: 0000000000000000 i5: fff00002320c1210 i6: fff000023817=
+b3f1 i7: 000000000061ce48
+> [  123.808439] I7: <vfs_getattr+0x28/0x40>
+> [  123.858759] Call Trace:
+> [  123.890785]  [000000000061ce48] vfs_getattr+0x28/0x40
+> [  123.957123]  [000000000061cf64] vfs_statx+0x84/0xc0
+> [  124.021173]  [000000000061d918] sys_statx+0x38/0x60
+> [  124.085226]  [0000000000406154] linux_sparc_syscall+0x34/0x44
+> [  124.160708] Disabling lock debugging due to kernel taint
+> [  124.230481] Caller[000000000061ce48]: vfs_getattr+0x28/0x40
+> [  124.303680] Caller[000000000061cf64]: vfs_statx+0x84/0xc0
+> [  124.374593] Caller[000000000061d918]: sys_statx+0x38/0x60
+> [  124.445503] Caller[0000000000406154]: linux_sparc_syscall+0x34/0x44
+> [  124.527857] Caller[fff00001013fde40]: 0xfff00001013fde40
+> [  124.597621] Instruction DUMP:
+> [  124.597623]  c2264000=20
+> [  124.636505]  861027df=20
+> [  124.667386]  c45f6028=20
+> [  124.698267] <c458a050>
+> [  124.729148]  8408a401=20
+> [  124.760031]  83789403=20
+> [  124.790910]  c2264000=20
+> [  124.821801]  c207600c=20
+> [  124.852675]  80886800=20
+> [  124.883556]=20
+> [  124.954015] Kernel panic - not syncing: Attempted to kill init! exitco=
+de=3D0x00000009
+> [  125.054721] Press Stop-A (L1-A) from sun keyboard or send break
+> [  125.054721] twice on console to return to the boot prom
+> [  125.201103] ---[ end Kernel panic - not syncing: Attempted to kill ini=
+t! exitcode=3D0x00000009 ]---
+>=20
+> On v5.6, I'm getting an interesting error mentioning D-cache parity error=
+s:
+>=20
+> [  125.743109] CPU[0]: Cheetah+ D-cache parity error at TPC[000000000056b=
+acc]
+> [  125.833511] TPC<bpf_check+0x18ec/0x3060>
+> [  127.909612] systemd-sysv-generator[1677]: SysV service '/etc/init.d/bu=
+ildd' lacks a native systemd unit file, automatically generating a unit fil=
+e for compatibility.
+> [  128.104239] systemd-sysv-generator[1677]: Please update package to inc=
+lude a native systemd unit file.
+> [  128.227312] systemd-sysv-generator[1677]: =E2=9A=A0 This compatibility=
+ logic is deprecated, expect removal soon. =E2=9A=A0
+> [  129.638144] Unable to handle kernel NULL pointer dereference
+> [  129.712528] tsk->{mm,active_mm}->context =3D 000000000000009e
+> [  129.785808] tsk->{mm,active_mm}->pgd =3D fff0000233d38000
+> [  129.854522]               \|/ ____ \|/
+> [  129.854522]               "@'/ .. \`@"
+> [  129.854522]               /_| \__/ |_\
+> [  129.854522]                  \__U_/
+> [  130.047827] systemd(1): Oops [#1]
+> [  130.091278] CPU: 0 PID: 1 Comm: systemd Tainted: G            E     5.=
+6.0-2-sparc64 #1 Debian 5.6.14-2
+> [  130.213664] TSTATE: 0000009911001604 TPC: 00000000005506d8 TNPC: 00000=
+000005506dc Y: 00000000    Tainted: G            E   =20
+> [  130.361222] TPC: <bpf_prog_realloc+0x38/0xe0>
+> [  130.418486] g0: 0000000002000000 g1: 0000000000000000 g2: 000000000000=
+0000 g3: 0000000000000002
+> [  130.532867] g4: fff000023c178000 g5: 0000000000657300 g6: fff000023c18=
+0000 g7: fff000023423e684
+> [  130.647245] o0: ffffffff00002000 o1: 0000000000000001 o2: fff000023416=
+8fa0 o3: 0000000000000000
+> [  130.761617] o4: fff0000237761f80 o5: 0000000000000001 sp: fff000023c18=
+2fd1 ret_pc: 00000000005f2c84
+> [  130.880576] RPC: <__vfree+0x24/0x80>
+> [  130.927456] l0: ffffffffffffffff l1: 0000000000000001 l2: 000000000000=
+0400 l3: 0000000002000000
+> [  131.041836] l4: 0000000000debc00 l5: 0000000000000100 l6: 000000000000=
+0001 l7: fff000023c005e40
+> [  131.156213] i0: 000000010004e000 i1: 0000000000002000 i2: 000000000010=
+0cc0 i3: fff0000237761300
+> [  131.270589] i4: 0000000000000001 i5: 0000000000000001 i6: fff000023c18=
+3081 i7: 0000000000550a70
+> [  131.384963] I7: <bpf_patch_insn_single+0x70/0x1e0>
+> [  131.447862] Call Trace:
+> [  131.479889]  [0000000000550a70] bpf_patch_insn_single+0x70/0x1e0
+> [  131.558814]  [000000000055fe58] bpf_patch_insn_data+0x18/0x1c0
+> [  131.635442]  [000000000056bed8] bpf_check+0x1cf8/0x3060
+> [  131.704064]  [0000000000559778] bpf_prog_load+0x498/0x8e0
+> [  131.774975]  [0000000000559d10] __do_sys_bpf+0x150/0x1880
+> [  131.845890]  [000000000055b534] sys_bpf+0x14/0x560
+> [  131.908807]  [0000000000406154] linux_sparc_syscall+0x34/0x44
+> [  131.984281] Disabling lock debugging due to kernel taint
+> [  132.054051] Caller[0000000000550a70]: bpf_patch_insn_single+0x70/0x1e0
+> [  132.139832] Caller[000000000055fe58]: bpf_patch_insn_data+0x18/0x1c0
+> [  132.223325] Caller[000000000056bed8]: bpf_check+0x1cf8/0x3060
+> [  132.298811] Caller[0000000000559778]: bpf_prog_load+0x498/0x8e0
+> [  132.376588] Caller[0000000000559d10]: __do_sys_bpf+0x150/0x1880
+> [  132.454361] Caller[000000000055b534]: sys_bpf+0x14/0x560
+> [  132.524132] Caller[0000000000406154]: linux_sparc_syscall+0x34/0x44
+> [  132.606483] Caller[fff0000100995b38]: 0xfff0000100995b38
+> [  132.676247] Instruction DUMP:
+> [  132.676249]  c25e2020=20
+> [  132.715134]  92270009=20
+> [  132.746014]  bb326000=20
+> [  132.776895] <d05860e0>
+> [  132.807776]  400021a1=20
+> [  132.838657]  9210001d=20
+> [  132.869540]  80a22000=20
+> [  132.900422]  12400016=20
+> [  132.931303]  03003480=20
+> [  132.962184]=20
+> [  133.020246] systemd-journald[205]: Time jumped backwards, rotating. (D=
+ropped 1 similar message(s))
+> [  133.138938] Kernel panic - not syncing: Attempted to kill init! exitco=
+de=3D0x00000009
+> [  133.239608] Press Stop-A (L1-A) from sun keyboard or send break
+> [  133.239608] twice on console to return to the boot prom
+> [  133.385997] ---[ end Kernel panic - not syncing: Attempted to kill ini=
+t! exitcode=3D0x00000009 ]---
+>=20
+> Searching for that error in the archives, yielded this report from 2018 [=
+1] which seems to have never
+> been addressed by David Miller.
+>=20
+> @Anthony: Can you see any suspicious in the disassembled code that Meelis=
+ (CC'ed) posted?
+>=20
+> Adrian
+>=20
+> > [1] https://lore.kernel.org/all/a4391645-0c4f-bd99-7371-b0e2cb505542@li=
+nux.ee/
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
