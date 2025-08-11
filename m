@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-761813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51858B1FEBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F3BB1FEC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164B03BBA83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64263A2214
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5510726D4EB;
-	Mon, 11 Aug 2025 05:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A8426E71F;
+	Mon, 11 Aug 2025 05:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5J16kuK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zFHUHJ68";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xSY1wHhP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F381DF98F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7926CE36;
+	Mon, 11 Aug 2025 05:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754890889; cv=none; b=slDHIU/dvWQbzj1lHC5Am2B5eDnW+OPm7k3aIShdYJ8uN6CkIcwqzQ1R50QHvH8gsFf0ugmSmqCMR66EAS6fQ8DCQq1RxRbxliDJj2GKtW/UXjJub5bbo9wfhNIxjCTOb5jeuzOvT2nWmJmZho7WQtvd4Diveg6XVR8pXFfaCrE=
+	t=1754890914; cv=none; b=DAeD78WTmmqAYSdaUDEhAdC6rOtqh0lFyJfXgCJwIcmZkn40Xz6n4vs/Egr5bfJ1B8LkMmrCb83y3NQ42BLpUAUO4ZUMCq6H4nkmgUlnREGyyUArW9RH5Ut4ElAVIlMBwaodh9/C2fnIizVEh+C4qGVBdebwEtd8HuqTruZ3BLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754890889; c=relaxed/simple;
-	bh=AGpSbbO9BlUDuEdBA3XSdDky7H21WLK9dwd7KKSaKY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j31u43QDlZOZ2JNJg4iQRx0TPIvRO0IhzI9VOFU3aTZ+2xWrI3SimTfvF88SkRMRWk53DIjATOyAx9L4holz117+wiBQ87CJvjctzzJyCZOCrRrNDbpN+6jyrNzkgPaUpkbBa/R2i40WIOzq11qQe87Kejz5ILUkQ04652VmAZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5J16kuK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C79C4CEED;
-	Mon, 11 Aug 2025 05:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754890889;
-	bh=AGpSbbO9BlUDuEdBA3XSdDky7H21WLK9dwd7KKSaKY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D5J16kuKWp5ArZw48/USMiJJy1fDJMzKNmM625koO4HBZoXxYOw4B+YjgAl4G0Ctw
-	 rmzjyXzeBDqOcnaRJZu5ssFTeygBd3DaSvntTI0nT6iiHU+ac3qlZjR8yKxxa5lDrP
-	 odKGUC9XNhaaDqpuPE7/yTw4WpuVfWDsDNSTISMtE9HL4tjmlpU5OcR9rAbXvyvCXZ
-	 Xh17VPBqUwxcy4xSuhVX2LxfMTSlv8gGXbm8Fd20zXsM1cMFVEP0HA1I4u3HL8JoYW
-	 biJMEiyrfilhYzVfi7gDonBPbG/mSj6XyLwe+G0jdYsBQHHcHOELNTuUgLTJ0IRQ4i
-	 jGDwDTwamGbHA==
-Date: Mon, 11 Aug 2025 11:11:24 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Sungbae Yoo <sungbaey@nvidia.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tee: optee: ffa: fix a typo of
- "optee_ffa_api_is_compatible"
-Message-ID: <aJmChHa_BxNO74cB@sumit-X1>
-References: <SJ2PR12MB86897F31237163137445D7CAB82DA@SJ2PR12MB8689.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1754890914; c=relaxed/simple;
+	bh=+7vtyp62JykU/tuiOkRN+XiOVt5FcIykRX8YDCXC46U=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=a9IUdpt4FGZ5OrMQ7inGBNprWPzoWe1c7NC2MIYQdpkJtR/T424A1r4fOn48siko9ykGDN4LC7OTiHqKYghvFlNlsN9KNB3odHknzLMVnmEMDYzhK3AWSNRN0r3wlVuRWILxRBw54Q1E8fGZ0ZpSp5+8kirhp8SmUlZ2vabHP4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zFHUHJ68; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xSY1wHhP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754890911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XrMwKX+SRUfTd+laIq2RPXWM2s+IfHFPYhm80O9b7rI=;
+	b=zFHUHJ68aZkzLP2ReY2er1LhB7uYnOiTcBUSd+5Lu/zzPHN5fSskwus4tlj9ahe2YdHtti
+	O1yKND6GvNXIh6cqc4jjI1bicKnUjGT4h9JpmUkvflpS4j+WEpprKkElEfUgcVak5Bu+e7
+	arbJteLD7YfE+fMdIfGM64DXxiNkH5nTRZn5zv8Xgwv1spKVgwdrY9zzb1RitzbN9+uqV3
+	9N9F8cS9cIh+C5vXwl24afW4cAgt0NmITcHAyIX1gippKtjZR0K8nudeiE/8Vnp4AGt5K7
+	+Whawep5w/g7+ivldsTNCqcKOJpN8ng1XkVWA/5TV5Ejd/mwJ652AAvrY4dGHg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754890911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XrMwKX+SRUfTd+laIq2RPXWM2s+IfHFPYhm80O9b7rI=;
+	b=xSY1wHhPYDA11OkH6cQqKXKUMa9VeKo/v7OzWRulLeadzrNrORfLYdYdUFBcjHJUkLwI86
+	8YUJmCyAJ6vkmSDg==
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: xilinx: Fix NULL pointer dereference
+Date: Mon, 11 Aug 2025 07:41:44 +0200
+Message-Id: <20250811054144.4049448-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ2PR12MB86897F31237163137445D7CAB82DA@SJ2PR12MB8689.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 12:47:35PM +0000, Sungbae Yoo wrote:
+Commit f29861aa301c5 ("PCI: xilinx: Switch to
+msi_create_parent_irq_domain()") changed xilinx_pcie::msi_domain from child
+devices' interrupt domain into Xilinx AXI bridge's interrupt domain.
 
-Add some commit description.
+However, xilinx_pcie_intr_handler() wasn't changed and still reads Xilinx
+AXI bridge's interrupt domain from xilinx_pcie::msi_domain->parent. This
+pointer is NULL now.
 
-> Fix: commit 4615e5a34b95 ("optee: add FF-A support")
+Update xilinx_pcie_intr_handler() to read the correct interrupt domain
+pointer.
 
-Correct fixes tag, should be instead:
+Fixes: f29861aa301c5 ("PCI: xilinx: Switch to msi_create_parent_irq_domain(=
+)")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+ drivers/pci/controller/pcie-xilinx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 4615e5a34b95 ("optee: add FF-A support")
+diff --git a/drivers/pci/controller/pcie-xilinx.c b/drivers/pci/controller/=
+pcie-xilinx.c
+index f121836c3cf4..937ea6ae1ac4 100644
+--- a/drivers/pci/controller/pcie-xilinx.c
++++ b/drivers/pci/controller/pcie-xilinx.c
+@@ -400,7 +400,7 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, vo=
+id *data)
+ 		if (val & XILINX_PCIE_RPIFR1_MSI_INTR) {
+ 			val =3D pcie_read(pcie, XILINX_PCIE_REG_RPIFR2) &
+ 				XILINX_PCIE_RPIFR2_MSG_DATA;
+-			domain =3D pcie->msi_domain->parent;
++			domain =3D pcie->msi_domain;
+ 		} else {
+ 			val =3D (val & XILINX_PCIE_RPIFR1_INTR_MASK) >>
+ 				XILINX_PCIE_RPIFR1_INTR_SHIFT;
+--=20
+2.39.5
 
--Sumit
-
-> Signed-off-by: Sungbae Yoo <sungbaey@nvidia.com>
-> 
-> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi.c
-> index f9ef7d94cebd..a963eed70c1d 100644
-> --- a/drivers/tee/optee/ffa_abi.c
-> +++ b/drivers/tee/optee/ffa_abi.c
-> @@ -657,7 +657,7 @@ static int optee_ffa_do_call_with_arg(struct tee_context *ctx,
->   * with a matching configuration.
->   */
-> 
-> -static bool optee_ffa_api_is_compatbile(struct ffa_device *ffa_dev,
-> +static bool optee_ffa_api_is_compatible(struct ffa_device *ffa_dev,
->                                         const struct ffa_ops *ops)
->  {
->         const struct ffa_msg_ops *msg_ops = ops->msg_ops;
-> @@ -908,7 +908,7 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
->         ffa_ops = ffa_dev->ops;
->         notif_ops = ffa_ops->notifier_ops;
-> 
-> -       if (!optee_ffa_api_is_compatbile(ffa_dev, ffa_ops))
-> +       if (!optee_ffa_api_is_compatible(ffa_dev, ffa_ops))
->                 return -EINVAL;
-> 
->         if (!optee_ffa_exchange_caps(ffa_dev, ffa_ops, &sec_caps,
-> --
-> 2.34.1
 
