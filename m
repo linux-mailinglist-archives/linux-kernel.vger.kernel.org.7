@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-762254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD61B2040C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:44:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015D5B2041B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56E318C0777
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73EF33B5471
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3472DEA83;
-	Mon, 11 Aug 2025 09:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1B92DE1E4;
+	Mon, 11 Aug 2025 09:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qxcuOZfB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1iNUsZA0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gY1pxwBp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DD62DD5E0;
-	Mon, 11 Aug 2025 09:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E532927A913
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905411; cv=none; b=MPowzdACSroaqqRmZlJB6iWX7irLE3+V6moXKJqzup3rXEVF7vRllxbiZBUIuHSwXaza2ENKq9T0FH5jZjUTzNsgHmwrvQQYraY/yhflBxXO9LUnKs893nWFOj5/YFDXdbmUaF/gxVrao3i+JvJLNzkvOwX6y8fDys6lvi5gfMM=
+	t=1754905466; cv=none; b=WLEaZTx0P09wldD+FMP6vFGd8aU8GpORbxxJYz9Yy7sx7ZzpGqHlWWRZIk82frMdjb9j5o1K2STIQOVP92Gg0U0kaSr6TJr0tCCugdmNER0j0wzfV4F5jYs+xdW5zYkfneQ/CSoV15MWfeJXKEy0+AxCn/3qONiSb3DHRp3w2o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905411; c=relaxed/simple;
-	bh=R1wk1yI3kHdZ7b3M38TExwDnKAtQ2lEAsVfqoGYAhQc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sNKWW+8pYfPinYZ83x3BV/oSC4cQvBF6oC2MfxoVT9TTQScCSykH/XIJUquRZSmcWo+nYCgyjh98GYuKf6kiL29JG/bjQ+ERjq8PzD8biZGC2mdW548GOzURNxm0pvLOMRfDryl7vuBrgPLnwrIZo0iyt5409MUGDi1krOwx/as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qxcuOZfB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1iNUsZA0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754905408;
+	s=arc-20240116; t=1754905466; c=relaxed/simple;
+	bh=pXgtTY/DhDSULjVl/qXE+c45k2tUzgiWpGDO1dVfK2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T624kjgxTXtpviSyCIc1XGUNpeKYq0oCiZBCzBQLEbzSFa57xis/ZY3mnL2kMQ9bP0U4hEaA8+9Qp4SnsFlGjBELpQEQu+d3K7xaCV9pII0+rc4OPfu11GubjC7R06zzRNCuZt/28ra9yUS4O7Jsqa5zFqXVI3GUomOuoqo2GF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gY1pxwBp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754905463;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l7t/hJpLZL9a29LQoJFY/OvuUjqQAza1kYKvckTHXaI=;
-	b=qxcuOZfBB9DR2m4PBOhYb9x/va1gwxkXs2aGvUlhoO/bUget9N3YS5cNYM5fUmj149LAOe
-	BqFJgTjkjTsvph+FUmKBn6JXynlKxttSgpcFq5C/FWxR9kitke9mquGU1KIUn+WRdGYSZw
-	EvBpU2R6qbD/YqUSfehoRh5I5FEdAY0YOXj0ZqHgczuUdnGlEe3gtM3jFhwVrG0+ZDbyuf
-	kMBjQ49F07+eBeWHNmDM36LCMGoCdCvogqG2dTKxcEetQl2lP/eY0CaryfxygyGmGz19z8
-	gNMgXmHejf8NO5sTrZTjLsOFLPAkmleYTta4ssJZmEuTohgjwKrUEvy9c0yqSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754905408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l7t/hJpLZL9a29LQoJFY/OvuUjqQAza1kYKvckTHXaI=;
-	b=1iNUsZA0Dsv3SCLGiL2lwuq7tlUathk4gu7tAwMuTMWl4QlMFkLim3abWm3T7U7ijhFSGu
-	tCCn9DaKwKwypbDQ==
-Date: Mon, 11 Aug 2025 11:43:19 +0200
-Subject: [PATCH net-next v5 2/2] net/mlx5: Don't use %pK through
- tracepoints
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F18giMtXeSOsJoxjGEWjUq9c9uihGO30W7aY2sZTIr0=;
+	b=gY1pxwBpwPntS49Exa5wFZWyJi+UxOqAdBwa7SlWTWNij0E4OD2uUEW8I/wdawqgZzL5/6
+	DcVYulV/OdKL/y9+K8KXxdyek52+hi2EOtpSVY2mls3DAmuKR59yuN/m/IoaRuQ3h4uZ7H
+	5kEGPjg3OB+PA1R7tFTKtbzPkhK3pZE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-eLszW5sPNleYfmYpxhIndw-1; Mon, 11 Aug 2025 05:44:22 -0400
+X-MC-Unique: eLszW5sPNleYfmYpxhIndw-1
+X-Mimecast-MFC-AGG-ID: eLszW5sPNleYfmYpxhIndw_1754905461
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7931d3d76so2832178f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:44:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754905461; x=1755510261;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F18giMtXeSOsJoxjGEWjUq9c9uihGO30W7aY2sZTIr0=;
+        b=Cx64UxTWZY/b0cZlETHWyZCAvwCAwGaU7ptAD8N6OSHv8s1A8W1RJ/kHOI9PvoUKeA
+         TnVv0J5/Mb8tP4lkPFJGlGYXnHd3nAdNF82IpFXK8BY7gmDYtiXXg8l1SL1o109cDiiv
+         yjuJm2Mm79J2hlPmz/YNELIha2oCVrZSTA6jPE2l/StwMZJFbmelZKUiIAkw80oZfMz/
+         sw9GsFkoVZROWcyhpOr8EgqMmTHuvBcgZuE6qJTbP2DEsFTcG8LEyJbzbwE+N+/W4rtr
+         vu8so+RvXoAoQBMFI/0YaZtJHdwreZOLU12BHAKG6lrTpboVddEhMt8i7ih7h/lRd/uk
+         vVrw==
+X-Gm-Message-State: AOJu0Yw2WmbEIaekHmhzU07vW2RS4QUE9OdrAfpr7wmk8jOkFGqTxBaG
+	/Hok5PZY7iw9op2XbNFkajynYTvV9IIFgrCmnXgWOnWvuv240Vj9pXp2iXrp7wv1nFpdUivvWCD
+	a6ZvBePW/YhBRcEYqtdgPWGsvUVeXg3P205zle38SpFXh4H3SrdwAg9jGvKoWCYGy4Q==
+X-Gm-Gg: ASbGncsW5kCXbV0EnTvDlASDEh8CjTSsk4Y1l9L2fBrI/rhqgLOQFVIWAJiJWFGqcou
+	PtJZUOsNSNJ5/tKQnCKCbTG9mDSx5Oz3jHKxFv0k5guHNjBlL3qFBPcAeyYqX4gm2QHWdKuMMgN
+	vi7KybRBQgLbcIaZ9OSKr7cd/uVkxIwkaiLMu4QIjNl/jQjGQ95SZ6cG4+PqVrCvP119pSpsACi
+	Mwjg78iRIzQS0JVZ4NAI0WwQ00aRKcl8PtiEc6YwxtmfNhAhN1uTu1nUZoSmcnQdRhF601zdNaN
+	XDcoWmvavQIPGoLTprVBrIphgz36K2/G8/EXIgowqqEyYezUtMsLfl9xe0XrmM36E1W9wattw4I
+	eeqpz4Z6GzCUP2URspE205UT1xkSjYei4FC7KRNcm2x+kLUf4Lt/tzYXtVyAzMK6uyPU=
+X-Received: by 2002:a05:6000:310b:b0:3a4:fea6:d49f with SMTP id ffacd0b85a97d-3b900b7a325mr9729236f8f.49.1754905461110;
+        Mon, 11 Aug 2025 02:44:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDnyT7w5uW8Z0cRPw8tOSrEfeGU//7NUygBZUK+G4oAhA4mCMSvoBXSssgH+X+wFwiUycmJw==
+X-Received: by 2002:a05:6000:310b:b0:3a4:fea6:d49f with SMTP id ffacd0b85a97d-3b900b7a325mr9729207f8f.49.1754905460669;
+        Mon, 11 Aug 2025 02:44:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2187sm41328501f8f.70.2025.08.11.02.44.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 02:44:20 -0700 (PDT)
+Message-ID: <f7f9e444-1739-4b5e-85e1-3a9f86b7e50a@redhat.com>
+Date: Mon, 11 Aug 2025 11:44:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250811-restricted-pointers-net-v5-2-2e2fdc7d3f2c@linutronix.de>
-References: <20250811-restricted-pointers-net-v5-0-2e2fdc7d3f2c@linutronix.de>
-In-Reply-To: <20250811-restricted-pointers-net-v5-0-2e2fdc7d3f2c@linutronix.de>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
- Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- Simon Horman <horms@kernel.org>, Paul Menzel <pmenzel@molgen.mpg.de>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754905404; l=1849;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=R1wk1yI3kHdZ7b3M38TExwDnKAtQ2lEAsVfqoGYAhQc=;
- b=6UPHoiJhSPpGmb/061Ob7xHhfAakKowmdb1LmSyBYr3RLzmr3od6wG7u9hxnoYtCryrvigJDU
- lszTqbo35PzA5okI63amZ81CIHpdrMR9lUurslOXwsV4ZQPQLDW3NI+
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] block: use largest_zero_folio in
+ __blkdev_issue_zero_pages()
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ Ritesh Harjani <ritesh.list@gmail.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+ mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de,
+ Pankaj Raghav <p.raghav@samsung.com>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <20250811084113.647267-6-kernel@pankajraghav.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250811084113.647267-6-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through tracepoints. They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On 11.08.25 10:41, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> Use largest_zero_folio() in __blkdev_issue_zero_pages().
+> On systems with CONFIG_PERSISTENT_HUGE_ZERO_FOLIO enabled, we will end up
+> sending larger bvecs instead of multiple small ones.
+> 
+> Noticed a 4% increase in performance on a commercial NVMe SSD which does
+> not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
+> gains might be bigger if the device supports bigger MDTS.
+> 
+> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
----
- drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-index 0537de86f9817dc80bd897688c539135b1ad37ac..9b0f44253f332aa602a84a1f6d7532a500dd4f55 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-@@ -28,7 +28,7 @@ DECLARE_EVENT_CLASS(mlx5_sf_dev_template,
- 				   __entry->hw_fn_id = sfdev->fn_id;
- 				   __entry->sfnum = sfdev->sfnum;
- 		    ),
--		    TP_printk("(%s) sfdev=%pK aux_id=%d hw_id=0x%x sfnum=%u\n",
-+		    TP_printk("(%s) sfdev=%p aux_id=%d hw_id=0x%x sfnum=%u\n",
- 			      __get_str(devname), __entry->sfdev,
- 			      __entry->aux_id, __entry->hw_fn_id,
- 			      __entry->sfnum)
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-2.50.1
+Cheers,
+
+David / dhildenb
 
 
