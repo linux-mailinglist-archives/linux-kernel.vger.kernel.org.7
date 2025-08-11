@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-763618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F06B21796
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA15B2174A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2F419055D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93483A65BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA02E3AEC;
-	Mon, 11 Aug 2025 21:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9A02DCBF1;
+	Mon, 11 Aug 2025 21:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="rrkN+jh3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="HUFp0JB5";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="bESo7f/I"
-Received: from sender8.mail.selcloud.ru (sender8.mail.selcloud.ru [5.8.75.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kpt3/kPZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091CF28505F;
-	Mon, 11 Aug 2025 21:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF282D9EC4;
+	Mon, 11 Aug 2025 21:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754948442; cv=none; b=MbYq112ol275BCgKnEia3ere1sC+igxX4+3zitS0QX0f3Kt9rDgt8DmJBVOkh6uWH7QBjmn9Qsqh10lMix9xJD8XwYxkY05slDq85gBBnhvm1SNzzwnEXmVVeCUCH8+W3RMalK1U2G3Ph9lr/jyDksya7E3amzuXUaKGrw7hZ80=
+	t=1754947492; cv=none; b=i4S4MBwfd4pSUGMI+O+rpRC6CxqMipLw/REbpN+6Ic/ps+gNUqvb/jBYEWlxIPkXvWgPyQ/ksEASaVHyJIB9LfR/UP+oSi7EIYaG1AbtjdGEHP4yjIP6yIzUVObvM8woYVatvG7VoA4iSFREsfut2tn7ElcH8pwido1rIPNA+kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754948442; c=relaxed/simple;
-	bh=INcKSIidEmhooOmWAnHvpbNFQ375p7EmobfY35aDgN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DAkIQyXLIUt4Hk6J2lE5QdI/mUTTifDpLZLOcePkmX/lyLL/u4WP14yM4KwbojQP/lLniw64e1tTnn/ghjvTbSNqiBPUoX72Xx5EuO4/ZJ1NX26MAEBKpfHYS0Ylhfc3xCEDBy3auHvbDsk6LCHxRtZliqVGdG++qLTzNHV3Gig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=rrkN+jh3; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=HUFp0JB5; dkim=fail (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=bESo7f/I reason="signature verification failed"; arc=none smtp.client-ip=5.8.75.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:List-id:
-	List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kPtagQpWqNGYIhY9cPRe9omNLYktbtQe2SAvQBI3k3c=; t=1754948438; x=1755121238;
-	 b=rrkN+jh37O4cPLnRQVba+qQYBvP4BQqX5v37ArVp+wk1w/MzPLvzZXHy9bJn1cSZwAnPPOZoow
-	38o0lPx78DHtk8339YAKMd1gbK5JIYlXRKG2HwF+qB9nODhrQMxNjMIh9hGW5f9feuyv6+HIlOr41
-	qLDsXMhTUww/ZnRkuT4E=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
-	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=kPtagQpWqNGYIhY9cPRe9omNLYktbtQe2SAvQBI3k3c=; t=1754948438; x=1755121238;
-	 b=HUFp0JB5v7Fj3etYI9dZcrdwhNTFa8sz/nldxHo2R0eMQaF3DQsdONFM5HHhJnFbetUeO5K1rW
-	EEB+1EeCaIZjKg8ndAKjUjxlnRIA1CriZ5dIYtpLGESiWuK47eiTialYbahtJaMNbmPSwK2XR/7wh
-	0XO3FM7x0rLUqiuO6vqc=;
-Precedence: bulk
-X-Issuen: 1136024
-X-User: 99111435
-X-Postmaster-Msgtype: 3849
-Feedback-ID: 1136024:15965:3849:samotpravil
-X-From: foxido.dev
-X-from-id: 15965
-X-MSG-TYPE: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-X-blist-id: 3849
-X-Gungo: 20250728.224157
-X-SMTPUID: mlgnr62
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
-	t=1754947462; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GEwHpxe57zRDnKU/ER/Gz01cI639JWwJ3pd6HVxPdXQ=;
-	b=bESo7f/ItUToyDdaynA7h2Z2GXGdA534dvVh/CbEetQjjf5Wofdin50hS7uQ80SM9HIeeb
-	0ZTnV+3IESU8AWvk/WNGAv9em+fD/r1UZbyjMJOIBDm8AVogsg7bQ8ZUQO9xTb7rhsl+Bm
-	jDB1Dkf1o0KlHujw049d1TC/5AkatlDmmT5LV7CuJJvPsMxEwOXfqyfzOlJFbIw87atL/j
-	ybdejJPGMEXrXSSCLAd4BN0o9fE9bMDHi5VB1glGM9h4bUcRTaHLrKsTRGcaJiv9NEBSlC
-	IYG1R3RJnitje+EfOwlM73+kyd05GavDtqQq2wKwqa+FlbNb7qAbvPpQBdwbyQ==
-From: foxidokun <foxido@foxido.dev>
-To: dmitry.torokhov@gmail.com
-Cc: foxido@foxido.dev,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nikita.nikita.krasnov@gmail.com,
-	platform-driver-x86@vger.kernel.org,
-	w_armin@gmx.de
-Subject: Re: [PATCH v2] platform/x86: Add WMI driver for Redmibook keyboard.
-Date: Tue, 12 Aug 2025 00:23:53 +0300
-Message-ID: <20250811212353.4494-1-foxido@foxido.dev>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <5e32uo4suh3mtib4tohtekwvycxgfzqcem3wwc6k6wwdxyjhpc@bt57y7vyvpmz>
-References: <5e32uo4suh3mtib4tohtekwvycxgfzqcem3wwc6k6wwdxyjhpc@bt57y7vyvpmz>
+	s=arc-20240116; t=1754947492; c=relaxed/simple;
+	bh=FBfrc5n//xqcxAB6OfOVXo9cs54q9iIJHxD49Lk0gow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMMpO/KP7C64chtOOBh0Si5h/gW2GXO6GMMfc8B5XAaF3lDgjNnMcCCKQiViQeXX3woMmhdlQ9BlqT+B8K6M6TAKh3XT4jWMmdU0Dp3c/UN8uOfTIQ/Zt0BqLk89SslBoedHtI+65UyGfGEbhkBLf48LyF+b6YsOEq3LyrXLeD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kpt3/kPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2688AC4CEED;
+	Mon, 11 Aug 2025 21:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754947491;
+	bh=FBfrc5n//xqcxAB6OfOVXo9cs54q9iIJHxD49Lk0gow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kpt3/kPZ3wtE9utUf5yDhesS31wBtYRqoy2I2PK+8MdO5TFYKaiG5TMU1TgnqkP8a
+	 pZVE5tmEX8mvj35LERznfQ3r4s76nQT08FHfnU0+GdeEM1WY3u+jyugyFyf5NyP9Cc
+	 qM7p+oticH8DfYkAL4EE8R2iBdc9F+LOOXxGvr72lpa6vpPebC5q52s3GMnd62eM4S
+	 4MZgbfS38q58hO0lOA3jdde1Z/glDUgtznGFYd4PAzEFNRlNzyDg/Ekis9EDbyDl8G
+	 dcSrjQ4vpPgmGSQMBQhwPrDNvZYIXUUCS3cxeNDiLWX7okTXjaXYZ8qpfrY7WY4Sj1
+	 gBWEZa7REnd3w==
+Date: Mon, 11 Aug 2025 14:24:46 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Haoyang LIU <tttturtleruss@gmail.com>, Dongliang Mu <dzm91@hust.edu.cn>,
+	Yanteng Si <si.yanteng@linux.dev>, Alex Shi <alexs@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	hust-os-kernel-patches@googlegroups.com,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH V2] scripts/checktransupdate.py: add support for scanning
+ directory
+Message-ID: <20250811212446.GA924610@ax162>
+References: <20250811170050.94997-1-tttturtleruss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811170050.94997-1-tttturtleruss@gmail.com>
 
-> > +	/* For linearizability */
-> > +	guard(mutex)(&data->key_lock);
->
-> What is the exact purpose of this mutex? What does it protect?=20
+Hi Haoyang,
 
-It protects key sequence, so there wouldn't be race between two press & r=
-elease combinations resuulting into press - press - release - release ord=
-er.
+On Tue, Aug 12, 2025 at 01:00:50AM +0800, Haoyang LIU wrote:
+> Origin script can only accept a file as parameter, this commit enables
+> it to scan a directory.
+> 
+> Usage example:
+> ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
+> 
+> Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
+> ---
+> 
+> V1 -> V2: remove the fix of missing "f" in f-string and make it a new patch
+> 
+>  scripts/checktransupdate.py | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
---
-Gladyshev Ilya
+Thanks for the update. While this seems reasonable to me from a purely
+surface level glance over the actual Python, I have added the
+Documentation folks that Dongliang added from the previous thread, who
+really own and maintain this file (the original patch is at [1]). Please
+include them in future revisions should they be necessary. It would
+probably be good for something like this to be applied?
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..b7e3a8c8832e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7302,6 +7302,7 @@ P:	Documentation/doc-guide/maintainer-profile.rst
+ T:	git git://git.lwn.net/linux.git docs-next
+ F:	Documentation/
+ F:	scripts/check-variable-fonts.sh
++F:	scripts/checktransupdate.py
+ F:	scripts/documentation-file-ref-check
+ F:	scripts/get_abi.py
+ F:	scripts/kernel-doc*
+
+[1]: https://lore.kernel.org/20250811170050.94997-1-tttturtleruss@gmail.com/
+
+Cheers,
+Nathan
 
