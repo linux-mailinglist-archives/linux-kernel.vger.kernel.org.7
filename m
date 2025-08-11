@@ -1,192 +1,118 @@
-Return-Path: <linux-kernel+bounces-763550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE25B2167F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:32:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B85B21681
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 086FC7A9147
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:30:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC85F4E3127
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D70D2E2DF9;
-	Mon, 11 Aug 2025 20:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0F32DC34E;
+	Mon, 11 Aug 2025 20:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dymVH1vS"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmSosz69"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116832D2384
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C943E311C31;
+	Mon, 11 Aug 2025 20:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944309; cv=none; b=kI3jkvhtXGyafXIvkPggV+tfvL+PMt4OTv0r8z374lxcDfHOlZ+AElEt6SAaijBrjjo8h/7T432MRn2RVz3+3c7FEoYVKu+zRzKspm2R9B4z5mmrg66SZ9SzcU8nShH81RLUMJbEH7Z1K3I8sMBkOiz/scfvfqqVJNhga8WuRyo=
+	t=1754944330; cv=none; b=gg6ulMkCEMLi6CO8ungJi3kLB00OYfCieMv5Q5h5kn5TNIZr90HAaWy1BDGg1ZhqygqmSmlvqDNa/rlbhPMzmHNhXTBVMtDPDVP5wf+Ex6PWzYCbUiT7cVu7nS/5wR114Oyem856ICm8QiTTfi/dny/jeRiFxNGDMzJch0N2miM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944309; c=relaxed/simple;
-	bh=Ai9dRBB8d4qu8dpG1ZynZAmHiwFhduIg+msvbg5/33U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JfPBf8+F64YjCWwQZ6iu6ZZdngp9IoCMc83gEBor6Bw6ytQyHe7ZGQXUIVlIIBgB/FfJjec5by4lgxUOOIZn5mLMJT7SWiH6cfvOsYqwmjNoLa7I41nEgOf8YWawPRQgLKel2Djtdye8eGptwyB44u6z+nBCwmXj9DA1Koluyi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dymVH1vS; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f729bf733so8395575a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754944307; x=1755549107; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WPa8tBYD0OIFVoOwEGWHIpLPHlyJLpRoOr4RtfmOy0=;
-        b=dymVH1vSPydD38I+BZRdBHjfy63rJZHdJzhu0YA7SVKS+2uF+jYRT5ndShL8jTQW8W
-         L2JWr3CejJI12HLY9GFs2ZlRa7CQ74Wiq+Fh6hsTk50ppQI5s27A4gYeAC2+Lg6OaING
-         aaGcYf1pNgWKJSIDAsRptw+nicIFJ2IPsXl/e2bnp5JRJ7GCiik9+u3/O7L/+wXTDCwz
-         p+zCirbFAFydin0E7DX+e7v6QhVpHkmX6QzXd8exHmGXTIZ08m8FpBWD3qCXC2Qu+9E6
-         D0Epr3GR7Vb0kJ8qXfyATa7mYeN7gSf+vrOhoKQWMUQa+ngF/kKxPELtqhiwiJYqCkEe
-         0AhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754944307; x=1755549107;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WPa8tBYD0OIFVoOwEGWHIpLPHlyJLpRoOr4RtfmOy0=;
-        b=X4TcbCQ9fmv87t3boD8sAqhLaBN1VBLKUMNIHzEH/4r7mYKNHKUBOw4qqGxRfVV9sP
-         lxDEAwZs94aWaFgN8gspFykVloHqgcGnGkWiSSQVllx36VfEXctLgYlgweCV7za9lmFB
-         37udyB1A3DXKOKpaX1SmwDzS/OFxtgTNaQFjy6jjL00QwJ5DlME2Ho3GVxJETeOG3b6E
-         26FboGlcjK5t6Di9Tq4TOb/+QFAwO6lKLxgyt7A+QbWl6ce06uiMCCiGvq8gGMNCki/V
-         g0sbmA8F49KTw0XH+8hjRbEqo6rbsZjqM3rJ+PtGEvma/Yk89KxDi1xZha08GFi9rP9G
-         8umg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEjIUcdNI/b7G28ndSXyDOeuj6EpV2It4oU5LuqUBHk01UHQ6fHCSoH0Ha9BNS1CekpM6tcf2DHqKbvfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEJVCI5mSwbnJ9h0Zs1vZc8LCyTe8mhS4wBQTbebTDWGtkb6LH
-	HxwhF6n9PP7SeRPNRaVMwL2RwgcqUgpT9P2DJWqErNR7CRu/Zj3yfD3iwGITwgcwoeZMVu2JJDq
-	pFJQPLQ==
-X-Google-Smtp-Source: AGHT+IErurXH4r/vEnE82E5glNmqFN3IjwjAl/TkthZARr9isGFZACAN2fT6DPnkUBWY4U/+Lvqq61eiYl4=
-X-Received: from pjmm7.prod.google.com ([2002:a17:90b:5807:b0:31f:210e:e35d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:534e:b0:313:db0b:75db
- with SMTP id 98e67ed59e1d1-321c0b6ea3bmr1398427a91.33.1754944307421; Mon, 11
- Aug 2025 13:31:47 -0700 (PDT)
-Date: Mon, 11 Aug 2025 13:31:45 -0700
-In-Reply-To: <20250807201628.1185915-9-sagis@google.com>
+	s=arc-20240116; t=1754944330; c=relaxed/simple;
+	bh=ly505YzUJCW+w4zhIqTBgdX8GQwNdFihL6xwl57D2e8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aI8FQOUjIejNHAYcQxR+FoJsb1UZdgMqrbnI4XETU8QzH4Y839YPktmSwHv9he8zxLSc8/PIcI8+/DwHWNMVC3azMnEViGCxoUp+LhrE/hF9yfBnv7uzJEsJ9/hVrjFyCdMUf4n/zctTwhH89RTbKvvMN38Z20KP4DaSgGXKciQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmSosz69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF9FC4CEED;
+	Mon, 11 Aug 2025 20:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754944330;
+	bh=ly505YzUJCW+w4zhIqTBgdX8GQwNdFihL6xwl57D2e8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DmSosz69RADL61BU8YtrkDonA6FsRPJqOl2gRpOcoJj5nvL4/uwrGydZdT+xpkn2B
+	 mxSYa0jmyzZnDQ5htfR/Nf3x8DCeyTO0/Hsx+HOtlzdnvtLPmH873jwwh37Nsks9Nq
+	 9q0MkssxJNwFUd7n+BHeklO8vAupuhXH9dmMnWD9f7Tho6DTTLBStfWjM5KQ6QIzKq
+	 vvqt2vmRV9215aH9qHQKZxei9bIyH4ivLTLLbAiSUlh1QW1iM9pHJNbfDLOvAhLEz1
+	 KuKKMTNEjSRNeCsfyvWeD6CYTodak4s20fh5xju9uXUz4JlcIOsv3gfy1xFSuWkvIi
+	 T8iaYQixe8XKQ==
+Date: Mon, 11 Aug 2025 21:32:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+Message-ID: <20250811213200.2a5da728@jic23-huawei>
+In-Reply-To: <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
+References: <20250807-tlv493d-sensor-v6_16-rc5-v3-0-b80d2cb41232@gmail.com>
+	<20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-9-sagis@google.com>
-Message-ID: <aJpTMVV-F0z8iyb4@google.com>
-Subject: Re: [PATCH v8 08/30] KVM: selftests: TDX: Update load_td_memory_region()
- for VM memory backed by guest memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
+On Thu, 07 Aug 2025 08:26:35 +0530
+Dixit Parmar <dixitparmar19@gmail.com> wrote:
+
+> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
+> applications includes joysticks, control elements (white goods,
+> multifunction knops), or electric meters (anti tampering) and any
+> other application that requires accurate angular measurements at
+> low power consumptions.
 > 
-> If guest memory is backed by restricted memfd
+> The Sensor is configured over I2C, and as part of Sensor measurement
+> data it provides 3-Axis magnetic fields and temperature core measurement.
 > 
-> + UPM is being used, hence encrypted memory region has to be
->   registered
-> + Can avoid making a copy of guest memory before getting TDX to
->   initialize the memory region
+> The driver supports raw value read and buffered input via external trigger
+> to allow streaming values with the same sensing timestamp.
 > 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->  .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 38 +++++++++++++++----
->  1 file changed, 30 insertions(+), 8 deletions(-)
+> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
+> But for bus configurations interrupt(INT) is not recommended, unless timing
+> constraints between I2C data transfers and interrupt pulses are monitored
+> and aligned.
 > 
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> index bb074af4a476..e2bf9766dc03 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> @@ -324,6 +324,21 @@ static void tdx_td_finalize_mr(struct kvm_vm *vm)
->  	tdx_ioctl(vm->fd, KVM_TDX_FINALIZE_VM, 0, NULL);
->  }
->  
-> +/*
-> + * Other ioctls
-> + */
+> The Sensor's I2C register map and mode information is described in product
+> User Manual [1].
+> 
+> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
+> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf [1]
+> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+
+Andy did a detailed review, so I only took a quick glance at this version.
+One additional thing I noticed though.
+
+> +	pm_runtime_get_noresume(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, 500);
+> +	pm_runtime_use_autosuspend(dev);
 > +
-> +/*
-> + * Register a memory region that may contain encrypted data in KVM.
-> + */
+> +	pm_runtime_mark_last_busy(dev);
 
-Drop these comments.
+Drop the mark last busy.  That's now always called in pm_runtime_put_autosuspend()
+after a patch that just merged in this merge window.
 
-> +static void register_encrypted_memory_region(struct kvm_vm *vm,
-> +					     struct userspace_mem_region *region)
+Seems you got it for the other cases but maybe just missed this call.
 
-This is a comically bad helper.  Any person that is at all familiar with KVM's
-CoCo support, or that simply reads KVM's documentation, will expect this to
-invoke KVM_MEMORY_ENCRYPT_REG_REGION.  And this is obviously doing much more than
-"registering" an encrypted region.  Not to mention this helper doesn't need to
-exist; it has _one_ caller, and the code is quite self-explanatory.
-
-> +{
-> +	vm_set_memory_attributes(vm, region->region.guest_phys_addr,
-> +				 region->region.memory_size,
-> +				 KVM_MEMORY_ATTRIBUTE_PRIVATE);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	ret = devm_iio_device_register(dev, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "iio device register failed\n");
+> +
+> +	return 0;
 > +}
-> +
->  /*
->   * TD creation/setup/finalization
->   */
-> @@ -459,28 +474,35 @@ static void load_td_memory_region(struct kvm_vm *vm,
->  	if (!sparsebit_any_set(pages))
->  		return;
->  
-> +	if (region->region.guest_memfd != -1)
-> +		register_encrypted_memory_region(vm, region);
-> +
->  	sparsebit_for_each_set_range(pages, i, j) {
->  		const uint64_t size_to_load = (j - i + 1) * vm->page_size;
->  		const uint64_t offset =
->  			(i - lowest_page_in_region) * vm->page_size;
->  		const uint64_t hva = hva_base + offset;
->  		const uint64_t gpa = gpa_base + offset;
-> -		void *source_addr;
-> +		void *source_addr = (void *)hva;
->  
->  		/*
->  		 * KVM_TDX_INIT_MEM_REGION ioctl cannot encrypt memory in place.
->  		 * Make a copy if there's only one backing memory source.
->  		 */
-> -		source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
-> -				   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-> -		TEST_ASSERT(source_addr,
-> -			    "Could not allocate memory for loading memory region");
-> -
-> -		memcpy(source_addr, (void *)hva, size_to_load);
-> +		if (region->region.guest_memfd == -1) {
+>
 
-Oh, here's the "if".
-
-> +			source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
-> +					   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-> +			TEST_ASSERT(source_addr,
-> +				    "Could not allocate memory for loading memory region");
-> +
-> +			memcpy(source_addr, (void *)hva, size_to_load);
-> +			memset((void *)hva, 0, size_to_load);
-> +		}
->  
->  		tdx_init_mem_region(vm, source_addr, gpa, size_to_load);
->  
-> -		munmap(source_addr, size_to_load);
-> +		if (region->region.guest_memfd == -1)
-> +			munmap(source_addr, size_to_load);
->  	}
->  }
->  
-> -- 
-> 2.51.0.rc0.155.g4a0f42376b-goog
-> 
 
