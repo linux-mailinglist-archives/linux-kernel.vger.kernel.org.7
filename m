@@ -1,85 +1,105 @@
-Return-Path: <linux-kernel+bounces-762151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0725B202B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD66B202C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75311884911
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72FFC18C11BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAB52DEA9D;
-	Mon, 11 Aug 2025 09:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE6E2DF3D9;
+	Mon, 11 Aug 2025 09:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="US/I0n3u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o3xGfD3c"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2041.outbound.protection.outlook.com [40.107.223.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471E2DEA8D;
-	Mon, 11 Aug 2025 09:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754903317; cv=none; b=CKc2+739hzxxEbhvOJSw3rOEfSOZVlqWDGx2iVKQQNDeyHHkEKIRCk8Ldqb45KKylYgaVuU4WHCXw1+WgBx0doItIIIo4ma7TJC7lGg4OaSn4LeMTFJoMovVHgWQldJgl9pr9sbTQxcPb3UAv74w8PHWP4y6MMMOc1RUuhlyu2g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754903317; c=relaxed/simple;
-	bh=SBscTaLw/XQ4Zl0obabR6wHAFoVlVPmN7swHc23agak=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J1Ubj9EAC8i9v7q+UsEYZUP7FduVeNVDgUKBnBUuuqzpoGXz8aSZxnd6S4XYrCoNzeUlwdOmtcoqPCSHPynx747q6LAXty3UVStfKOqvUSZpCnHxLvRzIGe5Lg29O6K2Jz/EhRGcQ8xxT1rlxYfwuC9bsjK9UlNRTOcxs7hEH54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=US/I0n3u; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754903316; x=1786439316;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SBscTaLw/XQ4Zl0obabR6wHAFoVlVPmN7swHc23agak=;
-  b=US/I0n3uS8dpmUGNDxCMgO2dGnxJJM7kFbL8Mg5xd8eFZFLpyIcJjvyU
-   8D8SyPkoWmvGhsAWT+Lv1Rdp2PMqmnVHf+CZb+sob6qZhjkHU/mPEOxex
-   Q0+zmZycpWTf8pMnprkzYvEtPbj+yec5OEzUF+UsxYzK823lPDslJ45QU
-   Qh3VIKypLg5P9SVkHAS/uBKLyDs0wXhwgqkIqhpidtKeyCVKXJM4jBB/d
-   5+ZTH0blVgRWtpCX9n2w+OSyhOBNc7uq6UgG2bokrGu5dOZ94XSEUkxRO
-   2Yl/N/U4uWU14yPox90Exny1lrYQ3gYe1agnekVemI422Q+cvZfR5uuSv
-   A==;
-X-CSE-ConnectionGUID: Nj5Z6DogSNiJ2BZq7PiyDQ==
-X-CSE-MsgGUID: x7XpZHqJQZai/V4FWi9nEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57108595"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57108595"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:36 -0700
-X-CSE-ConnectionGUID: 4tH0z6EmQVmTHcYpuhO2fg==
-X-CSE-MsgGUID: Y8AoWgW6RaCrPgMmR7VfPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166222112"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.162])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:08:30 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v12 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
-Date: Mon, 11 Aug 2025 12:06:08 +0300
-Message-ID: <20250811090751.683841-5-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250811090751.683841-1-elena.reshetova@intel.com>
-References: <20250811090751.683841-1-elena.reshetova@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1F22DEA94;
+	Mon, 11 Aug 2025 09:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754903387; cv=fail; b=o2hR4rw+Nv8nOZ5l0OUR2XH6gcsa95VcssKbOugJvZmFEMBw/2y9/tcO194rHGWB7Ui1XMcWCc6PCRv8HsJNSNQesT+hcA6pyuHpgZ7vk7dP8/rk3z1ldyIzd838LWA92Le11xZrLX8/b7735Jygl/wC3/m4i3WwJVIvkuh5p04=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754903387; c=relaxed/simple;
+	bh=7PQu4u1qsjvQOCpX8Pwv3dRBvWNZtfIMLqmeneXYOOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NhWuqf6lIe3bX+dRZIkjb0GdE+u0clC6w6rQR4ZbBPDTlERLcdVuakPquCpwUNnUfTkciqpci+i8g114+l3HoM0dR0lf1LTWiFKAftSvI/DnprtIdZyHaPwdkROIf7Y07Mn1+giQ+2fIYLcCDMHNnm8OECYRKyZ7VWO+CEaS8Is=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o3xGfD3c; arc=fail smtp.client-ip=40.107.223.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EYyvPkaYpKocTUhaBb33rZJd/NtSafFT7ZFJesoN5LsJnm2jdSsXKJLZ8gEZ46YZFH8Ot92W3E8oBX4i0P0KuM6OOfE0gKxuXN3SF4H8nUeJRS7vmiAkYGjDNxAsmc/e/Cg6gzWHNyICAO0WXrlr80+A+5hENMyjNcKV1f3SSmSRnmciASsI8n24pfjdsakEUtfYeTrziO9V+NNprxmbBLh/uaPlNGdzz/Oxt1jl4cQDolB/JaAy8yZTndcJY1v/ZhCh1GEYeZnn5285Jm9CGab09ZcdpZRgUmquKmEW5krGqSow4O2H3m6isUGUUlHsb34QZ7RQSUrbXmwdX56uTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=99yeTHvEb0G/s0XfJ7JQXUrD11ZNBAqE0QxxPNgjeNc=;
+ b=gJVDPzxbB+yeQ+tCodfJD7IMEDXmixxsR0C9+5u/aNbyvl9zZX6u2v55/4vlHusAH4ZjUYiojVwsral/9A/kFowM/Sy0w1HiaaosjiRAGj/vgRkTA5G93tkiJ5725is5l7qzVGA2RvIkMZG1TewfmEl1uwpzmmgR1VJbJv1uUrpXt9pf/nNlVfa84KyvGqZaVzJaUkqXzem6fRcHZk2sMLh6GZTQdDNYsdQlb6ox1nPpn0Tf0CtdHmGZmRMpPEa/kFcV+UAtK2fI1HFo53iH9BYQcIMPX0t9/Pcpg1+lHdatF+6pGTnwZhT3xpN+5jKzH4Ir/hxWpoJJSSAS/v8rEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=99yeTHvEb0G/s0XfJ7JQXUrD11ZNBAqE0QxxPNgjeNc=;
+ b=o3xGfD3ckCfK8xXwwXOSNygNvGwTvurD4LqkmGNONJ+LdNUXjVpMeeQIkLcMrutCbEmNKq33w0D6dltPFfptS6HyVEgdOJv7l5pmLmTJWm/axJVkIZX3ZyeZgOh6fkR8Ld4j35UmeHZbcD3vlj/7ohi0G9azww1EE9onGOY6eG4=
+Received: from MN2PR12CA0011.namprd12.prod.outlook.com (2603:10b6:208:a8::24)
+ by CH1PPFF9270C127.namprd12.prod.outlook.com (2603:10b6:61f:fc00::62b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.26; Mon, 11 Aug
+ 2025 09:09:41 +0000
+Received: from BL02EPF00021F6A.namprd02.prod.outlook.com
+ (2603:10b6:208:a8:cafe::c9) by MN2PR12CA0011.outlook.office365.com
+ (2603:10b6:208:a8::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.21 via Frontend Transport; Mon,
+ 11 Aug 2025 09:09:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00021F6A.mail.protection.outlook.com (10.167.249.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 09:09:41 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
+ 2025 04:09:25 -0500
+From: Shivank Garg <shivankg@amd.com>
+To: <seanjc@google.com>, <david@redhat.com>, <vbabka@suse.cz>,
+	<willy@infradead.org>, <akpm@linux-foundation.org>, <shuah@kernel.org>,
+	<pbonzini@redhat.com>, <brauner@kernel.org>, <viro@zeniv.linux.org.uk>
+CC: <ackerleytng@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <pvorel@suse.cz>, <bfoster@redhat.com>,
+	<tabba@google.com>, <vannapurve@google.com>, <chao.gao@intel.com>,
+	<bharata@amd.com>, <nikunj@amd.com>, <michael.day@amd.com>,
+	<shdhiman@amd.com>, <yan.y.zhao@intel.com>, <Neeraj.Upadhyay@amd.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <aik@amd.com>,
+	<jgg@nvidia.com>, <kalyazin@amazon.com>, <peterx@redhat.com>,
+	<shivankg@amd.com>, <jack@suse.cz>, <rppt@kernel.org>, <hch@infradead.org>,
+	<cgzones@googlemail.com>, <ira.weiny@intel.com>, <rientjes@google.com>,
+	<roypat@amazon.co.uk>, <ziy@nvidia.com>, <matthew.brost@intel.com>,
+	<joshua.hahnjy@gmail.com>, <rakie.kim@sk.com>, <byungchul@sk.com>,
+	<gourry@gourry.net>, <kent.overstreet@linux.dev>,
+	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
+	<chao.p.peng@intel.com>, <amit@infradead.org>, <ddutile@redhat.com>,
+	<dan.j.williams@intel.com>, <ashish.kalra@amd.com>, <gshan@redhat.com>,
+	<jgowans@amazon.com>, <pankaj.gupta@amd.com>, <papaluri@amd.com>,
+	<yuzhao@google.com>, <suzuki.poulose@arm.com>, <quic_eberman@quicinc.com>,
+	<aneeshkumar.kizhakeveetil@arm.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-coco@lists.linux.dev>
+Subject: [PATCH RFC V10 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
+Date: Mon, 11 Aug 2025 09:06:08 +0000
+Message-ID: <20250811090605.16057-12-shivankg@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
+References: <20250811090605.16057-2-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,179 +107,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6A:EE_|CH1PPFF9270C127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7beeb009-852c-4061-a2e8-08ddd8b6ce2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vXOwtBuVTxIdKK+xhTUp6tagw6+FT1+cd1DFuI3bgzOEc7m78XZKAWo5N26Y?=
+ =?us-ascii?Q?uaWFmryQKjiC8fDVrsgVXddypI0ehkyEHl5pxyV/GQHw+xaxcqw5idjcM/Of?=
+ =?us-ascii?Q?GHfE6gAobxqmt5VyeGB+/U2sZltr4rusoybgkoEjPEZIqEWn8g+D6ZLloYB3?=
+ =?us-ascii?Q?kS697SZR1NPrI6Snh3XRGuO1hKgemPpDe3jQpvMyic9XFoy7pYn5LDqXTOP4?=
+ =?us-ascii?Q?h4XwftTfRFuu6C0otPO5a8wd6hh9BDSr1L9SLAVBrRqFvmqQmVwSP72Z8jon?=
+ =?us-ascii?Q?vW4OrBxTNZzBFJyP5m8fSyV2pmbjYIEXx0jJLBcLvbCGSt5n649AsSgtbdqx?=
+ =?us-ascii?Q?coWHR0Ih4kI6Kl0fNNVU4HtNRAxPxN6hINZR6Cs7IXdrUebu3djFXYqZbjbQ?=
+ =?us-ascii?Q?ZBWiNYoibt3VRNoFZwdX7qco4Zz3Qo6Cv+xPaTbW96P9KqzkMBX+OouO3W/s?=
+ =?us-ascii?Q?QV00I93iPb07DeIj4p9kNlKhvrlXpNunTMNcd+FZej5qBfk5IoTD2VglQz3R?=
+ =?us-ascii?Q?dBgF7Ol051k/3tl+SKNnfQSE7hfW6GjCq5AbK9hoWAMjLIsYdn82W/UWxXpD?=
+ =?us-ascii?Q?qmnApvQ8uxr6OmPMJkVD0tY26oIoURiHh+RbWWZ2FKc6p1NMNJp7qaN+mdwJ?=
+ =?us-ascii?Q?koFBYd2SDiu3gXv9ft1hdi4YpkOlH802nIo7mbuzd+jeV38SgYH1ypCgpkLZ?=
+ =?us-ascii?Q?0gZmwWQRX6CU1e/KLLKSHwtKCmuUf3TlsWt2eHQVVDqKYFV9fomcf7O3XhNN?=
+ =?us-ascii?Q?DCtHMcaiBx7MWf+QeHzykWAgUeGkwbda3PEoy+iiZIlVstB/SaroVuA40r6q?=
+ =?us-ascii?Q?dvPmU9g3Yr9456kf3FCupGdH8URiaSCoa3YXplI65KKK0IqwgmS5VZhFJLV3?=
+ =?us-ascii?Q?tIw/pV/GxfkZJwyco7U3okMnF7ECLyLtnLtWfqVE/pALsruQXQPGATkTH9em?=
+ =?us-ascii?Q?LWGjCQJMgQSeEXdGY03l3BhYDXvgtmPsLql246ranHO9+rHywvS+F1e0CJs0?=
+ =?us-ascii?Q?igfaZs+znFCkxkWMXsHGH+dWVIPYupIY5JMBEhqiL/zvAN0j8zCP0iibPHpg?=
+ =?us-ascii?Q?93piefxXM9lSZPiqCMFU2WGDy26m6Nhl2MqI7RyWjgg1pQyrh8KaZYOpkmOI?=
+ =?us-ascii?Q?+xoaG+BCQNKNWX2Ie5yZ1e7CAqqg+19drQflITJM4xW1ELr6mwNfsPPkvUWP?=
+ =?us-ascii?Q?P7an2udeAPjIJzWkQO4FS5oJY4e4HEDPwlta59TB0gnLdgWa5VCI20DJMqv/?=
+ =?us-ascii?Q?POjkSSNwp1MOeWx2o0iXcR6tRPmMvGdjHHmkpcnZil5trurhL7cZBOLMcUnF?=
+ =?us-ascii?Q?23GW0eolH8hcOUSGitYAd+nQXCRfJY2MBQsH+wZErJwVm/w61A3cStRecMtT?=
+ =?us-ascii?Q?r2Lg7p+o45hG9+IkGV8W/6HnmlClDzhoXztEjA+l0GoJVqOJz2mWIRGw/eFq?=
+ =?us-ascii?Q?lgrvVSZXoDgzgFd7qi8X9Z3JJRBCp2wN3T5QkVlOBULf+uaiEuQ+I2yYwF8q?=
+ =?us-ascii?Q?IH6oSwVxQmaxTWjXCQ2Z1pWYZyKrxPe7IzUI?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 09:09:41.0627
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7beeb009-852c-4061-a2e8-08ddd8b6ce2b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6A.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFF9270C127
 
-All running enclaves and cryptographic assets (such as internal SGX
-encryption keys) are assumed to be compromised whenever an SGX-related
-microcode update occurs. To mitigate this assumed compromise the new
-supervisor SGX instruction ENCLS[EUPDATESVN] can generate fresh
-cryptographic assets.
+Previously, guest-memfd allocations followed local NUMA node id in absence
+of process mempolicy, resulting in arbitrary memory allocation.
+Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
+mapped into userspace when allocation occurred.
 
-Before executing EUPDATESVN, all SGX memory must be marked as unused. This
-requirement ensures that no potentially compromised enclave survives the
-update and allows the system to safely regenerate cryptographic assets.
+Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+operation. This allows the VMM to map the memory and use mbind() to set the
+desired NUMA policy. The policy is stored in the inode structure via
+kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+the specified memory policy.
 
-Add the method to perform ENCLS[EUPDATESVN]. However, until the follow up
-patch that wires calling sgx_update_svn() from sgx_inc_usage_count(), this
-code is not reachable.
+This enables the VMM to control guest memory NUMA placement by calling
+mbind() on the mapped memory regions, providing fine-grained control over
+guest memory allocation across NUMA nodes.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+The policy change only affect future allocations and does not migrate
+existing memory. This matches mbind(2)'s default behavior which affects
+only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+flags, which are not supported for guest_memfd as it is unmovable.
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
- arch/x86/include/asm/sgx.h      | 31 +++++++-------
- arch/x86/kernel/cpu/sgx/encls.h |  5 +++
- arch/x86/kernel/cpu/sgx/main.c  | 75 +++++++++++++++++++++++++++++++++
- 3 files changed, 96 insertions(+), 15 deletions(-)
+ virt/kvm/guest_memfd.c | 67 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 65 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 73348cf4fd78..c2c4c0d22ca4 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -28,21 +28,22 @@
- #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index d9c23401e770..7821c1036e49 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -4,6 +4,7 @@
+ #include <linux/falloc.h>
+ #include <linux/fs.h>
+ #include <linux/kvm_host.h>
++#include <linux/mempolicy.h>
+ #include <linux/pseudo_fs.h>
+ #include <linux/pagemap.h>
  
- enum sgx_encls_function {
--	ECREATE	= 0x00,
--	EADD	= 0x01,
--	EINIT	= 0x02,
--	EREMOVE	= 0x03,
--	EDGBRD	= 0x04,
--	EDGBWR	= 0x05,
--	EEXTEND	= 0x06,
--	ELDU	= 0x08,
--	EBLOCK	= 0x09,
--	EPA	= 0x0A,
--	EWB	= 0x0B,
--	ETRACK	= 0x0C,
--	EAUG	= 0x0D,
--	EMODPR	= 0x0E,
--	EMODT	= 0x0F,
-+	ECREATE		= 0x00,
-+	EADD		= 0x01,
-+	EINIT		= 0x02,
-+	EREMOVE		= 0x03,
-+	EDGBRD		= 0x04,
-+	EDGBWR		= 0x05,
-+	EEXTEND		= 0x06,
-+	ELDU		= 0x08,
-+	EBLOCK		= 0x09,
-+	EPA		= 0x0A,
-+	EWB		= 0x0B,
-+	ETRACK		= 0x0C,
-+	EAUG		= 0x0D,
-+	EMODPR		= 0x0E,
-+	EMODT		= 0x0F,
-+	EUPDATESVN	= 0x18,
+@@ -18,6 +19,7 @@ struct kvm_gmem {
  };
  
+ struct kvm_gmem_inode_info {
++	struct shared_policy policy;
+ 	struct inode vfs_inode;
+ };
+ 
+@@ -26,6 +28,9 @@ static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
+ 	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
+ }
+ 
++static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
++						   pgoff_t index);
++
  /**
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 99004b02e2ed..d9160c89a93d 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -233,4 +233,9 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
- 	return __encls_2(EAUG, pginfo, addr);
- }
- 
-+/* Attempt to update CPUSVN at runtime. */
-+static inline int __eupdatesvn(void)
-+{
-+	return __encls_ret_1(EUPDATESVN, "");
-+}
- #endif /* _X86_ENCLS_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 3a5cbd1c170e..829bcba77d41 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -16,6 +16,7 @@
- #include <linux/vmalloc.h>
- #include <asm/msr.h>
- #include <asm/sgx.h>
-+#include <asm/archrandom.h>
- #include "driver.h"
- #include "encl.h"
- #include "encls.h"
-@@ -917,6 +918,80 @@ int sgx_set_attribute(unsigned long *allowed_attributes,
- }
- EXPORT_SYMBOL_GPL(sgx_set_attribute);
- 
-+/* Counter to count the active SGX users */
-+static int sgx_usage_count;
-+
-+/**
-+ * sgx_update_svn() - Attempt to call ENCLS[EUPDATESVN].
-+ *
-+ * This instruction attempts to update CPUSVN to the
-+ * currently loaded microcode update SVN and generate new
-+ * cryptographic assets.
-+ *
-+ * Return:
-+ * %0:			- Success or not supported
-+ * %-EAGAIN:	- Can be safely retried, failure is due to lack of
-+ *				entropy in RNG
-+ * %-EIO:		- Unexpected error, retries are not advisable
-+ */
-+static int __maybe_unused sgx_update_svn(void)
-+{
-+	int ret;
-+
-+	/*
-+	 * If EUPDATESVN is not available, it is ok to
-+	 * silently skip it to comply with legacy behavior.
-+	 */
-+	if (!cpu_feature_enabled(X86_FEATURE_SGX_EUPDATESVN))
-+		return 0;
-+
-+	/*
-+	 * EPC is guaranteed to be empty when there are no users.
-+	 * Ensure we are on our first user before proceeding further.
-+	 */
-+	WARN(sgx_usage_count != 1, "Elevated usage count when calling EUPDATESVN\n");
-+
-+	for (int i = 0; i < RDRAND_RETRY_LOOPS; i++) {
-+		ret = __eupdatesvn();
-+
-+		/* Stop on success or unexpected errors: */
-+		if (ret != SGX_INSUFFICIENT_ENTROPY)
-+			break;
-+	}
-+
-+	switch (ret) {
-+	case 0:
-+		/*
-+		 * SVN successfully updated.
-+		 * Let users know when the update was successful.
-+		 */
-+		pr_info("SVN updated successfully\n");
-+		return 0;
-+	case SGX_NO_UPDATE:
-+		/*
-+		 * SVN update failed since the current SVN is
-+		 * not newer than CPUSVN. This is the most
-+		 * common case and indicates no harm.
-+		 */
-+		return 0;
-+	case SGX_INSUFFICIENT_ENTROPY:
-+		/*
-+		 * SVN update failed due to lack of entropy in DRNG.
-+		 * Indicate to userspace that it should retry.
-+		 */
-+		return -EAGAIN;
-+	default:
-+		break;
-+	}
-+
-+	/*
-+	 * EUPDATESVN was called when EPC is empty, all other error
-+	 * codes are unexpected.
-+	 */
-+	ENCLS_WARN(ret, "EUPDATESVN");
-+	return -EIO;
-+}
-+
- int sgx_inc_usage_count(void)
+  * folio_file_pfn - like folio_file_page, but return a pfn.
+  * @folio: The folio which contains this index.
+@@ -112,7 +117,25 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
  {
- 	return 0;
+ 	/* TODO: Support huge pages. */
+-	return filemap_grab_folio(inode->i_mapping, index);
++	struct mempolicy *policy;
++	struct folio *folio;
++
++	/*
++	 * Fast-path: See if folio is already present in mapping to avoid
++	 * policy_lookup.
++	 */
++	folio = __filemap_get_folio(inode->i_mapping, index,
++				    FGP_LOCK | FGP_ACCESSED, 0);
++	if (!IS_ERR(folio))
++		return folio;
++
++	policy = kvm_gmem_get_pgoff_policy(KVM_GMEM_I(inode), index);
++	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
++					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
++					 mapping_gfp_mask(inode->i_mapping), policy);
++	mpol_cond_put(policy);
++
++	return folio;
+ }
+ 
+ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+@@ -372,8 +395,45 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_NUMA
++static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
++{
++	struct inode *inode = file_inode(vma->vm_file);
++
++	return mpol_set_shared_policy(&KVM_GMEM_I(inode)->policy, vma, mpol);
++}
++
++static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
++					     unsigned long addr, pgoff_t *pgoff)
++{
++	struct inode *inode = file_inode(vma->vm_file);
++
++	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
++	return mpol_shared_policy_lookup(&KVM_GMEM_I(inode)->policy, *pgoff);
++}
++
++static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
++						   pgoff_t index)
++{
++	struct mempolicy *mpol;
++
++	mpol = mpol_shared_policy_lookup(&info->policy, index);
++	return mpol ? mpol : get_task_policy(current);
++}
++#else
++static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
++						   pgoff_t index)
++{
++	return NULL;
++}
++#endif /* CONFIG_NUMA */
++
+ static const struct vm_operations_struct kvm_gmem_vm_ops = {
+-	.fault = kvm_gmem_fault_user_mapping,
++	.fault		= kvm_gmem_fault_user_mapping,
++#ifdef CONFIG_NUMA
++	.get_policy	= kvm_gmem_get_policy,
++	.set_policy	= kvm_gmem_set_policy,
++#endif
+ };
+ 
+ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -408,11 +468,14 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
+ 	if (!info)
+ 		return NULL;
+ 
++	mpol_shared_policy_init(&info->policy, NULL);
++
+ 	return &info->vfs_inode;
+ }
+ 
+ static void kvm_gmem_destroy_inode(struct inode *inode)
+ {
++	mpol_free_shared_policy(&KVM_GMEM_I(inode)->policy);
+ }
+ 
+ static void kvm_gmem_free_inode(struct inode *inode)
 -- 
-2.45.2
+2.43.0
 
 
