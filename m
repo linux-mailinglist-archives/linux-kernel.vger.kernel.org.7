@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-762820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1561EB20B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17F9B20B2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADA018C5EB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC9318C62E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A886221F37;
-	Mon, 11 Aug 2025 14:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAE723BD0F;
+	Mon, 11 Aug 2025 14:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Umtee+5S"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKz6rPGe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FF422F755
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925F7221F37;
+	Mon, 11 Aug 2025 14:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920940; cv=none; b=AqGXX1G++vz2VBsSb/pvdimyyi+QrBphZRzHjd3eQCJWuXe5MZ7OtpfOvlMX0v06EYMuZNlNzw72BNgNLxCcuz/saHAUuNb25xvD5FPYgK9u1+REcEMxnYyFxqLhE2vW72MNN62l+pGZRFPoBeOtYOZQmuk191oZN8whnKZLkak=
+	t=1754920923; cv=none; b=VgkJwsm6woCMzUkBkN8h7ETxrfBNF9ug9XNfcWx8Cfiwfte25LIJvjndTuGXA+ySYyUdFZ2zywKKDr+wDJrydn9+6qdSf8gDCGFFUf6yNZgKOnS2IUCmG7+O+HCV4rvtGeBINesrvqsH+mu0WmgwRMGT5iq659EaiCnZ83GafZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920940; c=relaxed/simple;
-	bh=06gZDC92OAdkO5dOJ43DVg0d+8bMRn3RRcDU/RZvNxo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hisVMTNH+o0YFBznvWzutLARu1zHGlxm/dRnnEU9v2oMHHphNIQ+xuV4BQIzZQBY1TqvkGR5vMmf0QJo4T1y1d1smSbwQPww1OpNGfZDvnmMXlN4QvQq7yga0W60Xx6MlE02ODNJd5ljHCW5IfKTkYbxG8FTG8aTTvHZXDp8UnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Umtee+5S; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31efefd2655so3451724a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754920938; x=1755525738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HynK3yw74tCVZlnSB+FC55ZKGpBTHS1HxgPxvGEg9ro=;
-        b=Umtee+5S01w19PhAMvQR7Ah47NgQTlYqcqS5wByBsYZg4PJ7Y4nx0Pz/g+C+roXosW
-         7Wj7hIj6mwalOxgiu8hrHyiOy919PgEiiIiJhzLwAEA8+D6eBJvH0yHRHk6OSKZ96KO/
-         3g7m0EKJRXqg1jX1bc+zWJxeINxSTjGmXx3eotJOK8oucPob37zLtu4Pn+RLGgA8aZ8F
-         HOBZLWRYlJ9w4Cyt0mMXnG9/w2z4pZvxjWYxTB6iDvqlGtmJW4ObF/9eBkFbePCVqGqL
-         EVLpZdtiwy7WGRFANRrkdrdi+6xWA5DHvBjvSRleA+bI8YnHXX605yR3RbqImYir+C8W
-         2ZXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920938; x=1755525738;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HynK3yw74tCVZlnSB+FC55ZKGpBTHS1HxgPxvGEg9ro=;
-        b=PY9jbhxzKPMF5GcGDv8J+v5tjiKtv22ZJPDDgFubhnGoBDnywrOwCB4w7v5NtQM9sV
-         k7hY7ZgvIULsqE4DrI3nw84wEBcl+GALn3/a8mZ/fm8HyybgbANtX4c9tO8gcbjmBYP4
-         PtbM154wDLOV0q3unuivicDBHLf1e2US296lq1E2SCF/jz01BxF/BOwXlD3UKsSY+BKI
-         S2+qzbZY56v3shvaIvoJvozQiyQOYI5AagLl5SLOlOUFots9n2mhfi1A8QVcg0Rd5imT
-         udAzk2ktjKiMOV3hHRbih1AjXueBefrBK44wmorFMPpyVmjKv9gWkre17w7IDG5xShiU
-         9BQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0cOI5aCZoJ2e2QvpR5u2Xk+Crw/vasn6ys5t1WxL5uCxplzV2uJu800rLG35mSFPUmxauMLSoNmq9WUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoyQSIXSOALRPTONuy2WsGRGu5HVGBp+pJ3yc+JTKeo9nKCp3a
-	fy1gV+gamHEWvM8c73R8DywPN0DQI26Qa4+oKE80xWLD58hJTITJVaGvXJwgi22UOPk=
-X-Gm-Gg: ASbGnctMkgVm16pZ8rOHCRP3fbxRls3It7ZrW6EAAqO7btV/cmAbw8WbBGNbyJyUGZs
-	kkdfJFme243lTWYL0/jPx3WcPTAy+/AynlYxuRyV1vQ7vb2f4BPwAe/JjaJMPg0DzsYaJI3dygE
-	Fl2M4rzRIcjw6OXfMktDT+3DMeNdyBiD3J8kdlwEkKMuJYhIPrC7RgDgexrXbDBNyC9H1k0keta
-	bZobI9/s/o9oZXN+YZ5g9qEFTexNvSfDvxPEdsrzvLSZKSHnodWgzOrD4bezHmsE12BVmfIQrGy
-	1w2Ybo7XH5H0cHAliJGfqO1bQ4nUGFX3WJH9HeZ2DbcrTFsE8Drk/xfgDJ+VaQhU8PwUSLTUu9x
-	asbRpyA+Cedx0g6Xc41bCg+d2ig==
-X-Google-Smtp-Source: AGHT+IEfmpU0b6S0i3zhLG/7wjKd1mXcWSglcpDeYqSC0LLFira1cW5+wVyEDOnNDDCeYxgaoo2j7A==
-X-Received: by 2002:a17:90b:1c12:b0:31e:b772:dfcb with SMTP id 98e67ed59e1d1-32175611801mr25545062a91.10.1754920912253;
-        Mon, 11 Aug 2025 07:01:52 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161259a48sm14821216a91.18.2025.08.11.07.01.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 07:01:51 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
- houtao1@huawei.com, zhengqixing@huawei.com, lilingfeng3@huawei.com, 
- nilay@linux.ibm.com
-In-Reply-To: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
-References: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
-Subject: Re: [PATCH v2] block: fix kobject double initialization in
- add_disk
-Message-Id: <175492091078.697940.9736842876552825184.b4-ty@kernel.dk>
-Date: Mon, 11 Aug 2025 08:01:50 -0600
+	s=arc-20240116; t=1754920923; c=relaxed/simple;
+	bh=jBu5ET7UWz2lpYAuqzzB+hooN/nBF4oWUeYMv6DVVko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=td4WbZYiJOYqIkln71jkLtJl4vxWZZFdtYyPHPuoKO5cajgUD91QefXJC/hwzT/eESSj5rjHN7/WojqfncsfhCDYfF1iMdFwUWxxemSR4+KFDUiNJOBHsZy/YAewwUhe6LXgLSiS75ZqczN16CAnijrRHzYzIh3dafR84jZNsPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKz6rPGe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F285EC4CEED;
+	Mon, 11 Aug 2025 14:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754920923;
+	bh=jBu5ET7UWz2lpYAuqzzB+hooN/nBF4oWUeYMv6DVVko=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZKz6rPGe9qnQwJm0oLM7K0/IUxEpmtvD9k5M2ZJ7L0guadZ7BDWUJikKhYACbuz+V
+	 iQGoCL/6EBoJz5xbtwy3Svt0qCtrHdmaT9BFNu8eELOtVIZmohCIfNjnjFy2kVOc20
+	 vBShqF1FYndVxYt5j1wkyfYj/AmXdefzme3BVNK8F0HIhjs1rQBQb9mOCEOsiObeLv
+	 qQi37FEDRPb6VMmMRHaj/w/fQ3AznUWZjq9ElkusZPHD3vHiP7EXqn0/WRCzGYGMrs
+	 xllO3dWOJx83We66CFUGYz0ZAmd20y4WEX8E7XcW3OLblV4uND8dmyZhrKnDiJXiKz
+	 lMJyKhJGL/lsA==
+Message-ID: <ae6a9c48-85d5-479f-b230-187a06995553@kernel.org>
+Date: Mon, 11 Aug 2025 16:01:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/12] media: rkvdec: Add RCB and SRAM support
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com
+References: <20250808200340.156393-1-detlev.casanova@collabora.com>
+ <20250808200340.156393-7-detlev.casanova@collabora.com>
+ <5c7767d1-1f28-48e0-bf8b-a224151fb007@kernel.org>
+ <5031584.31r3eYUQgx@trenzalore>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <5031584.31r3eYUQgx@trenzalore>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
 
-
-On Fri, 08 Aug 2025 13:36:09 +0800, Zheng Qixing wrote:
-> Device-mapper can call add_disk() multiple times for the same gendisk
-> due to its two-phase creation process (dm create + dm load). This leads
-> to kobject double initialization errors when the underlying iSCSI devices
-> become temporarily unavailable and then reappear.
+On 11/08/2025 15:54, Detlev Casanova wrote:
+> On Monday, 11 August 2025 02:13:42 EDT Krzysztof Kozlowski wrote:
+>> On 08/08/2025 22:03, Detlev Casanova wrote:
+>>> -	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+>>> -
+>>>
+>>>  	irq = platform_get_irq(pdev, 0);
+>>>  	if (irq <= 0)
+>>>  	
+>>>  		return -ENXIO;
+>>>
+>>> @@ -1204,6 +1217,10 @@ static int rkvdec_probe(struct platform_device
+>>> *pdev)> 
+>>>  		return ret;
+>>>  	
+>>>  	}
+>>>
+>>> +	rkvdec->sram_pool = of_gen_pool_get(pdev->dev.of_node, "sram", 0);
+>>
+>> Didn't you just add new ABI?
 > 
-> However, if the first add_disk() call fails and is retried, the queue_kobj
-> gets initialized twice, causing:
-> 
-> [...]
+> Oh do you mean rkvdec_rcb_buf_count() ? I could indeed use that instead here.
 
-Applied, thanks!
 
-[1/1] block: fix kobject double initialization in add_disk
-      commit: 343dc5423bfe876c12bb80c56f5e44286e442a07
+No, I meant DT/OF ABI for "sram".
+
 
 Best regards,
--- 
-Jens Axboe
-
-
-
+Krzysztof
 
