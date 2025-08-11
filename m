@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-762759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8BFB20AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB4DB20AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420FB18C06CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:49:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6013C188E74E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325E188713;
-	Mon, 11 Aug 2025 13:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B1E1B87F2;
+	Mon, 11 Aug 2025 13:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYyqaWVZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiI9+y4P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0D5192D8A;
-	Mon, 11 Aug 2025 13:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F183C19DF5F;
+	Mon, 11 Aug 2025 13:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920150; cv=none; b=POA0thuBm5Z40GzOdLO8vYxlGLuqr3PO2XxP64V6A1idzQi0aNaGApDLzyc/5syCM7jPjRVBoiD65Ts1IY5aG2HHVX+hqrfClTlC05oagh6Pf7sJ/kTWox13XcBcVttc7XBc6pUVlY3j4zrLYRWFVIAm4vy/Az7LK5Ao3CQ4EjU=
+	t=1754920181; cv=none; b=BhrvnoP2J7CnK1mc8QR2xlDa2ubFhQnZ21LoSp4LVzf3lg2jsYc6QRLGJxUZFUcDg9r3uyZySpcH6Ir+oPyFqKBvoAd5g83ZJPwQEsOyFJVuBVN/puCabbQeHZCuw8/7zGZjw1wnMg5XeB3LFyhH0RPNUoHPj9+agYzUjWqyeBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920150; c=relaxed/simple;
-	bh=hgje/5m7tCFZnecaHF4btLlr7z9uMoHAO2b2GE35ZTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGtA/cGVe6WA9wkd2E3ttA19Yjq1zk4uLYU5Yn7kkhp8cRWaMGIwcGpG1+4A191GarCSfKqb5mOSJ6EAPLfonChAaHdurneRwqCZdTIZr9qd6IywiBUQF0D+ulyky39pK0PStlJYVP6j8OIiYHgzy/BluIgDMP7zCU5aQsKr4BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYyqaWVZ; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1754920181; c=relaxed/simple;
+	bh=89ir4gbyOZrg9hEPgyanPf2svJoQtzXiPEaOmOIYzwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0gFhJzwGIp092c0wEWao4wIigi5DqYY/JOqeZ5WS7MY+JFv67q/5/rG2RQxsWBoYJxk6zjWvgUB6cWpp9O3EyOSfC2EQTr6Efh+5mHtgXgLiuJj+yFcO2YHoE2kvKLvAwBEiJlDQ0tj2SE0IRSy2pjEfxPV+sf0CwfZ3xiG6O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiI9+y4P; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754920148; x=1786456148;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hgje/5m7tCFZnecaHF4btLlr7z9uMoHAO2b2GE35ZTw=;
-  b=bYyqaWVZKyV08jqJAYcjFPBNxqQOj/uQCoLVUdq5HzuYxGVK3PPPQAK/
-   +0dqzm+hLg395ntQT3z/HS1uihTJjPZ8lQ84gNLK4W4+0fwonHEPos+LB
-   dnhkBM48UZDh2Z0rlFpFg/dVL1mE7R/jMJEosor+hpDUIUfB9gofp3tEX
-   WaPhqWovLNqPVIWauVr8fx0YcVKCfOPk6fmMZ06fIKeNkRCovpjuPKVnR
-   q3ojJkJd/eNCpl77CfKT2vSMXAoGaM1za5bXeEWefZZ5V/Ul11/P1umtJ
-   SOLNmPEZ2S1PusAKXS0+Nx7jpsiB/zrPRJvANN16kyoUm3NZi6MXC1O5n
+  t=1754920181; x=1786456181;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=89ir4gbyOZrg9hEPgyanPf2svJoQtzXiPEaOmOIYzwQ=;
+  b=OiI9+y4P0PdFykUcycSp7vUt3rTpmxxqhIBRQRaJGgIC4frdNfOhatUe
+   3MiKC0BZvjWcEmzDbaQHbpv5NasGSUlN45lKttvh7q2vGmxIS+Y+Y2CnO
+   F4Dp7qEn5FiY8IBjkulA7JwwWtjhhZisLzpIewGZSEUp6LKg4zamwMUHA
+   6RR+L0CEg3TAEHlED5aRvYCSYAPsRZohekLewSyqDEXQWA4z+c65JIH9Z
+   VXHMaamIfFaj/t0n7Fsr6/5UDTUUvBrEFHxg+DjI/YRO5xd6+44rnThuQ
+   GUFu0S2p28kEx+99ahyj+5DHU7+PLN1f+b+/f0SMrbK6ITU8GzMeKuS9m
    Q==;
-X-CSE-ConnectionGUID: lUsJ8lIrTqWI1S4bijjspA==
-X-CSE-MsgGUID: X5BfU9VXQn+YWFw1OqZRwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57314368"
+X-CSE-ConnectionGUID: GoPUKobOQVCgINOE7Q35Mg==
+X-CSE-MsgGUID: pVEACYDWQ4O+PP6HrxT7vg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57042506"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57314368"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:49:08 -0700
-X-CSE-ConnectionGUID: CFAAlM5rSaC7yxk5Q2a6Ww==
-X-CSE-MsgGUID: 3PZEryUDQ560ZACN95uUng==
+   d="scan'208";a="57042506"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:49:40 -0700
+X-CSE-ConnectionGUID: UddAGeqfSQqV1r7d/wGDPg==
+X-CSE-MsgGUID: b6jiBsnTQ6eJF3Fh4C++hQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166226665"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa008.jf.intel.com with ESMTP; 11 Aug 2025 06:49:05 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id A112B94; Mon, 11 Aug 2025 15:49:04 +0200 (CEST)
-Date: Mon, 11 Aug 2025 15:49:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: Haixu Cui <quic_haixcui@quicinc.com>, broonie@kernel.org,
-	virtio-dev@lists.oasis-open.org, viresh.kumar@linaro.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hdanton@sina.com, qiang4.zhang@linux.intel.com,
-	alex.bennee@linaro.org, quic_ztu@quicinc.com
-Subject: Re: [RFC PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-Message-ID: <aJn00MKH5lK6Zwsa@black.igk.intel.com>
-References: <20250401033621.1614194-1-quic_haixcui@quicinc.com>
- <20250401033621.1614194-3-quic_haixcui@quicinc.com>
- <f6f087f9-83c9-452e-9a0f-f8743b8c71c2@quicinc.com>
+   d="scan'208";a="165417321"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.51]) ([10.125.111.51])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:49:38 -0700
+Message-ID: <4f2f7e26-561e-483a-bc67-0cc29549b866@intel.com>
+Date: Mon, 11 Aug 2025 06:49:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6f087f9-83c9-452e-9a0f-f8743b8c71c2@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Remove bouncing kprobes maintainer
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ linux-trace-kernel@vger.kernel.org, Naveen N Rao <naveen@kernel.org>
+References: <20250808180124.7DDE2ECD@davehans-spike.ostc.intel.com>
+ <20250811155352.45ee7061226f3e85aeda54b7@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250811155352.45ee7061226f3e85aeda54b7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025 at 11:33:42AM +0530, Mukesh Kumar Savaliya wrote:
-> On 4/1/2025 9:06 AM, Haixu Cui wrote:
+On 8/10/25 23:53, Masami Hiramatsu (Google) wrote:
+>> The kprobes MAINTAINERS entry includes anil.s.keshavamurthy@intel.com.
+>> That address is bouncing. Remove it.
+>>
+>> This still leaves three other listed maintainers.
+> OK, should this be an urgent commit?
 
-[...]
+It's not urgent in that it's obviously not breaking anything.
 
-> > +struct virtio_spi_config {
-> > +	/* # of /dev/spidev<bus_num>.CS with CS=0..chip_select_max_number -1 */
-> > +	__u8 cs_max_number;
-> > +	__u8 cs_change_supported;
-> > +#define VIRTIO_SPI_RX_TX_SUPPORT_DUAL (1 << 0)
-> > +#define VIRTIO_SPI_RX_TX_SUPPORT_QUAD (1 << 1)
-> > +#define VIRTIO_SPI_RX_TX_SUPPORT_OCTAL (1 << 2)
-> Can use BIT(x) ?
-
-No.
-
-> > +	__u8 tx_nbits_supported;
-> > +	__u8 rx_nbits_supported;
-> > +	__le32 bits_per_word_mask;
-> > +#define VIRTIO_SPI_MF_SUPPORT_CPHA_0 (1 << 0)
-> > +#define VIRTIO_SPI_MF_SUPPORT_CPHA_1 (1 << 1)
-> > +#define VIRTIO_SPI_MF_SUPPORT_CPOL_0 (1 << 2)
-> > +#define VIRTIO_SPI_MF_SUPPORT_CPOL_1 (1 << 3)
-> > +#define VIRTIO_SPI_MF_SUPPORT_CS_HIGH (1 << 4)
-> > +#define VIRTIO_SPI_MF_SUPPORT_LSB_FIRST (1 << 5)
-> > +#define VIRTIO_SPI_MF_SUPPORT_LOOPBACK (1 << 6)
-> All with BIT(x) ?
-
-No. There is no such macro in UAPI. There is another one available, though.
-Check the spi.h UAPI header for the details.
-
-> > +	__le32 mode_func_supported;
-> > +	__le32 max_freq_hz;
-> > +	__le32 max_word_delay_ns;
-> > +	__le32 max_cs_setup_ns;
-> > +	__le32 max_cs_hold_ns;
-> > +	__le32 max_cs_inactive_ns;
-> > +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+But if it was in code I maintain, I'd probably send it up to Linus to
+apply in the next -rc kernel instead of waiting for the next merge window.
 
