@@ -1,238 +1,146 @@
-Return-Path: <linux-kernel+bounces-763633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B574AB217F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13151B217F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 744D57A2527
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3818623CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DED12DCF63;
-	Mon, 11 Aug 2025 22:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53B92D94B0;
+	Mon, 11 Aug 2025 22:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wpx4K9bg"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PKr7I6x1"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C361F5619;
-	Mon, 11 Aug 2025 22:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00D41DED7B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950143; cv=none; b=H251hQ/919A9FSVjuE9ZoW063fVqeTqAvoKKZ76GV5kBH/Gg19ND7MIL9DX0fVTlc+5LfizOaWsaMLP4G8bkIadzNtz2dqJHcfJ3g4lGpaHVR2O1/QPmF+2mhmrZpc59EuC+uAPPTz5neb6WvJ9gsstQsE1+iWG/oudk9vCZ1Os=
+	t=1754950216; cv=none; b=JY9OI+uupqONaj6eFHUhT1vfFy0yW8N3xmvx51eqj7U/CAppaQpCqPkvr4VZNUWKS1sRbmk95d2m916eaL/vqM4vn5qSQRPQNPStFw+j3puyVTcrnt4kWSZsyqPGsQ5Ax5VjzEEJVU86NGX/eyrkAoEqXc4AiScgRVhmHWhRvyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950143; c=relaxed/simple;
-	bh=M7cUkVfwO6dwDnPkJ75gnTs0rb6wS07K0cZjufFCAdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEwpFleMg3iWgdN/8JjQqHXqXjsEoBTkxdWD3Znt1+2Ftr9BkR3WmhbKDvRKY4ooWrm1SLIcJOjpy99mAk6oaQMiXXuNLa47HFvTtPDa9nVZDdfn2wUAxrkig+O+a2R+erlZy2AGIsW+fjxkZlINH5Fk7fCcKethrBUbQ2riQR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wpx4K9bg; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4209a0d426so4850190a12.1;
-        Mon, 11 Aug 2025 15:09:01 -0700 (PDT)
+	s=arc-20240116; t=1754950216; c=relaxed/simple;
+	bh=PVgUqPGL6dYO01haslVGBOGEbGvA2UxjksdVK/+E/CU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tBOU5I3DaM2n/W9tcvtZHbRsttI3ewT7wtYx2pnjbMSAr3+HQG1IlZ8bOLtACzGAbP4WWFcnppbNWnFykIharp/U0P2SPc03ZhoyzRRQxgxTqK9AWZ2nvD5qDR7QAZqBcSp313xDEVw0TNHH8RQD0qJGUXBJChT//l8YleRPPLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PKr7I6x1; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24031a3e05cso32230435ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:10:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754950141; x=1755554941; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2S9pg8v7o5mRJiQVZf8V1Ym4Pi/3TRmsQa27GUDL3g=;
-        b=Wpx4K9bgJ04rCtq1YE3Ltv5s0SGyELu2TeNUqrK1pflfJKd79lg6pNuelcaNy5k2pi
-         /9scqSUxoHr3PT0uo2N+qGI/hrqe+tIevMVQMCARN1vXOAWgvrVdEbahmH3TrvdmUPOj
-         xXBBFXO8j0jNKJq+p2k03vrsxElQ6RxFBPeQy4SC0Gy1CeDXkose2rpC4vtVtHzG53Vc
-         irXShyIhIK+ho2tTUT5E6Zo914VqA4N506+qZI0QCcMqAc5JblmrJ1Ti3WarZ0FPDr+6
-         zAjxzq+axEuNPA2W9kSzVamCsYUq4ace4yi+xDraUoJ65/kuqPF/oahbVgp0q7IM+8pP
-         9Snw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754950141; x=1755554941;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1754950209; x=1755555009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V2S9pg8v7o5mRJiQVZf8V1Ym4Pi/3TRmsQa27GUDL3g=;
-        b=Y37txZawRUJfNweKxUCMMOIC0dMjg2jnlsdp7TKIljf/XOF/o6Y8gEcOK2ePEj6azL
-         hXfFc9eEs/TUwkb5yww4bCkbF60Sf6SjzeCwAgRxNCexFY5rLCKOKRsX23mwRuEQc2IH
-         j8kdbu5ZZ0XcXeT258hwQfIpmuV9zdF8bLhnz2eyvKApbhjZFkEnCatEGk3T8hFgc9PN
-         g7Q+Vj8alkaPJJ/24C9IoGyQhTh96kFQWqxXVeajg+MEMmrtw6nzENtTn86nLgf/8LUx
-         o/QadEa0LG1u6rBigmujdyU9ulOYdtZ2GeEg24Iti9bnGSwto3vrnIZngC//Qh9Jx1Z6
-         vnmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdmM1C6/OKbHlKlEePLnhLeyX07mk0QRKs0SogL6cgrfRoWfcUSnHyp010IVxbkWgU+s8R/Y1Itl3OI8sw@vger.kernel.org, AJvYcCW3Wg/GhxFEtbR+XrZya18fiETwxplx15bLxWST92GwzJWVPmx/o/dNWgf9NnFikiV2VBNJtcLEsmvS@vger.kernel.org, AJvYcCWTp0e1G5rnXYvd4iN6WRdPbL6Fy3uheDFk5J+brp2ow/l5zOsvXUKo6CzMN3XtOkKVjgMOERSP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT9filGkl7O5ScZ8h7BTHLvDpKPzp3APLaiM+EzrJ+b39gJoXn
-	7QR61ppcuaGg1e55GYIlydsIph++Wsy9rtCWF0pTGBW0sLJcIEiIrHEo
-X-Gm-Gg: ASbGncuWz7DYsQ94NqjT/mVV8FyvJXF++/L36Yp4QxtiuorgEwAb77tKc/3EJsfdyLL
-	n1EyRKtCKWL5YyaEBC3zcMAYxobow9e44u3jUrQc4fufspten/cFM6TE6qN21AArVjDIyrQwN3U
-	Psq4t1WwJkI5QyJZRTlu22DEOW1VcViGISziB3DH1HiFOkCaoTCTkGA9NdZSlXPg/9xZeTdzA1W
-	XuJOvxVYMj1C4cI0Gte2VK0aOCe/4hha4/Pkgzt/I+FWWSzFQbYhcrZzrhaVaG0qAh3L66yg2wp
-	24cyqeTmh3xKHlyjCdCWT3hQH+YuQNJT7I1xdqgF6tdaqtAm2WMXFDOwVY9+nu7niPithFW0jcR
-	dND/wapsJLpAKR/ZI94uAYAc=
-X-Google-Smtp-Source: AGHT+IGjkztYScAcNXEfSr8JOnz9DlNlrKELtIRHl6YJzC7lSocRypsK4PSlrP90iF5xHUH1+s+GWA==
-X-Received: by 2002:a17:902:e5ce:b0:235:e9fe:83c0 with SMTP id d9443c01a7336-242fc316eb5mr15774605ad.27.1754950141143;
-        Mon, 11 Aug 2025 15:09:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7933:7499:67d8:279a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bd6aacc4fsm26535676b3a.118.2025.08.11.15.09.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 15:09:00 -0700 (PDT)
-Date: Mon, 11 Aug 2025 15:08:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Sumanth Gavini <sumanth.gavini@yahoo.com>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/21] nfc: s3fwrn5: convert to gpio descriptors
-Message-ID: <bkvnzaipmkiz7lkh5p35pqmdtlcwnm5j5snyc7g5umfxm3io6j@dqhetenn2zm2>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-19-arnd@kernel.org>
+        bh=FKoHHjT8yFfyfYeN+QtJgAeYV97GirwWW9p34VHnmmA=;
+        b=PKr7I6x1Wl8KK1Lsa6aIvOaS/U2QeMsuAhbap3ITUl0P4cklLMdapQRhNd2ntObyjX
+         wbKyFliBJzarAswTj84Jx1qC7ReSi19SnGBtkHzX3xziE9dHCBXktQ8xFSfy30WrXbjk
+         JTTYMwYTVliRZWmeUzINM+ZDs70bCKislBwRc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754950209; x=1755555009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKoHHjT8yFfyfYeN+QtJgAeYV97GirwWW9p34VHnmmA=;
+        b=Pq0NRw4GCm5buvag64oxmx4p0d4z9wEl4Rt/XQbj0zRsmKefisEv8cffujtFeE0d4d
+         z8oU2vLRuw3Hi3Pn0ll0Vge/qfARnMGckM0TK2RRf6kjjpjO1aTLZnK86b6vo07sRZLp
+         m02Ss5c1a4vu/FSb+H5tDVnmAXwdETJ7rNI7rgpMtr2BOs7rrEX9uD+QquAcSKelrTbg
+         jWQBWjQbYK6RmkgrljkFtSBDPORwsxZqnLHUcjmLpdt0STOFebI0osdpQoz9VbTfw5vo
+         2ZF1t8ZMBYOmOAogfO4IYbHOdPlB5ED+xzfaP0Sq4ssF3gCtQX+3Jm2XsShVZVlDqFrC
+         6PyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvpLBDVc37tktKcrM5m+HJgJWNwow160H5IU1MVIHkYl9v9OLA/E9KGhnXJHeXtUhkbjSaF7Mq+pr/bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySG3Pu9hBbDatObvnNgBZpuz1UaNqvWJiTaBNxaAsI+Xw415nz
+	bh2w7UbSJVCstjTG1v7q0M3AFxUsV5mz7fgPNS3jeSpXGmIy4vbbRKC6LT6I10UUXujBWMbr1YA
+	3y90=
+X-Gm-Gg: ASbGncu95u2td3kp5zV8S/y4aLW4RHUMK4NQ/FppANsMF7LOOaWjjiaGO9yWtM4BZkH
+	9fSXL4JJ9axec+gfI8CiHTrrPdnvjtpgsEEwVHpv9XoM3FVAe+YAX6KvUmfGagQvGLDihFUF1qP
+	JyhtMHpPTzkmt0U1XL9xTgY/kkwxWiva/IeEjoRJGp72VZc6XAVIN7KGyZNcEA89aVcs0pBjj3t
+	aZDN3sc0k76wvEtZe2RHjbnEhfiNoOiGDgzf9UVIEuAX3IE0p1uP3H0++GwKn7JA1xoD1GqRXdq
+	KyXe7zLkqvogjVF/DJMI0yjVIleKfllOg+umk6L7X6dYRBv2wJ9sfCPYIDAXy8q3uBGB6rZ4AA0
+	sLfOjAvhY/ex9SIQr3tFBCOPW+rltTTXUaGuog284exjWpQkM9RBztmSS7ebMphAXDFF/GdNPqg
+	Ly
+X-Google-Smtp-Source: AGHT+IHxFUl7VqEXQ+E7NTVIuU/6tfoP4+qyrptLLzHPWW9iBfWAGGV4NYgn5dd4fcjT6lh3ZoR+nA==
+X-Received: by 2002:a17:903:947:b0:231:9817:6ec1 with SMTP id d9443c01a7336-242fc36df0dmr17652105ad.17.1754950208438;
+        Mon, 11 Aug 2025 15:10:08 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8975acbsm283746385ad.85.2025.08.11.15.10.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 15:10:07 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23fe2be6061so30726825ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:10:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXeIOHjR7wnmR3wt/P5I2aJlR/bODeCro4Dt7bSZgF0LtXJ/QJmaYa++dpzxEfKSmI6uf7rKDzMR8c2VlE=@vger.kernel.org
+X-Received: by 2002:a17:903:22c1:b0:240:ac96:e054 with SMTP id
+ d9443c01a7336-242fc39c707mr16059165ad.23.1754950206336; Mon, 11 Aug 2025
+ 15:10:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808151822.536879-19-arnd@kernel.org>
+References: <aJKvm3SlhLGHW4qn@jander>
+In-Reply-To: <aJKvm3SlhLGHW4qn@jander>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 11 Aug 2025 15:09:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UGVi0q2Vgp_JALjcBJMzw+C9uOfzfzGGE_YnJOgYVjAg@mail.gmail.com>
+X-Gm-Features: Ac12FXyJsKrTSQ36G9lHnh52Fq9-wqIdM2Q0ZgO3RGoXAGLXCYzUVarebSqfLfA
+Message-ID: <CAD=FV=UGVi0q2Vgp_JALjcBJMzw+C9uOfzfzGGE_YnJOgYVjAg@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add SHP LQ134Z1 panel for Dell XPS 9345
+To: Christopher Orr <chris.orr@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi,
 
-On Fri, Aug 08, 2025 at 05:18:02PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> There is no need for this driver to still use the legacy interfaces,
-> so convert all the legacy calls into their modern equivalents.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Tue, Aug 5, 2025 at 6:28=E2=80=AFPM Christopher Orr <chris.orr@gmail.com=
+> wrote:
+>
+> Introduce high-res OLED panel for the Dell XPS 9345
+>
+> These timings were selected based on Alex Vinarkskis' commit,
+> (6b3815c6815f07acc7eeffa8ae734d1a1c0ee817) for the LQ134N1
+> and seem to work fine for the high-res OLED panel on the 9345.
+>
+> The raw edid for this SHP panel is:
+>
+> 00 ff ff ff ff ff ff 00 4d 10 8f 15 00 00 00 00
+> 2e 21 01 04 b5 1d 12 78 03 0f 95 ae 52 43 b0 26
+> 0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 fd d7 00 a0 a0 40 fc 66 30 20
+> 36 00 20 b4 10 00 00 18 00 00 00 fd 00 1e 78 cc
+> cc 38 01 0a 20 20 20 20 20 20 00 00 00 fe 00 43
+> 37 31 4d 31 81 4c 51 31 33 34 5a 31 00 00 00 00
+> 00 02 41 0c 32 01 01 00 00 0b 41 0a 20 20 01 ea
+>
+> 70 20 79 02 00 20 00 13 8c 52 19 8f 15 00 00 00
+> 00 2e 17 07 4c 51 31 33 34 5a 31 21 00 1d 40 0b
+> 08 07 00 0a 40 06 88 e1 fa 51 3d a4 b0 66 62 0f
+> 02 45 54 d0 5f d0 5f 00 34 13 78 26 00 09 06 00
+> 00 00 00 00 41 00 00 22 00 14 d9 6f 08 05 ff 09
+> 9f 00 2f 00 1f 00 3f 06 5d 00 02 00 05 00 25 01
+> 09 d9 6f 08 d9 6f 08 1e 78 80 81 00 0b e3 05 80
+> 00 e6 06 05 01 6a 6a 39 00 00 00 00 00 00 58 90
+>
+> Signed-off-by: Christopher Orr <chris.orr@gmail.com>
 > ---
->  drivers/nfc/s3fwrn5/i2c.c        | 42 +++++++++-----------------------
->  drivers/nfc/s3fwrn5/phy_common.c | 12 ++++-----
->  drivers/nfc/s3fwrn5/phy_common.h |  4 +--
->  drivers/nfc/s3fwrn5/uart.c       | 30 ++++++-----------------
->  4 files changed, 28 insertions(+), 60 deletions(-)
-> 
-> diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
-> index 110d086cfe5b..411be709b397 100644
-> --- a/drivers/nfc/s3fwrn5/i2c.c
-> +++ b/drivers/nfc/s3fwrn5/i2c.c
-> @@ -8,7 +8,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/i2c.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/delay.h>
->  #include <linux/of_gpio.h>
->  #include <linux/of_irq.h>
-> @@ -149,29 +149,22 @@ static irqreturn_t s3fwrn5_i2c_irq_thread_fn(int irq, void *phy_id)
->  static int s3fwrn5_i2c_parse_dt(struct i2c_client *client)
->  {
->  	struct s3fwrn5_i2c_phy *phy = i2c_get_clientdata(client);
-> -	struct device_node *np = client->dev.of_node;
-> +	struct device *dev = &client->dev;
->  
-> -	if (!np)
-> -		return -ENODEV;
-> -
-> -	phy->common.gpio_en = of_get_named_gpio(np, "en-gpios", 0);
-> -	if (!gpio_is_valid(phy->common.gpio_en)) {
-> +	phy->common.gpio_en = devm_gpiod_get(dev, "en", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(phy->common.gpio_en)) {
->  		/* Support also deprecated property */
-> -		phy->common.gpio_en = of_get_named_gpio(np,
-> -							"s3fwrn5,en-gpios",
-> -							0);
-> -		if (!gpio_is_valid(phy->common.gpio_en))
-> -			return -ENODEV;
-> +		phy->common.gpio_en = devm_gpiod_get(dev, "s3fwrn5,en", GPIOD_OUT_HIGH);
-> +		if (IS_ERR(phy->common.gpio_en))
-> +			return PTR_ERR(phy->common.gpio_en);
->  	}
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Should be GPIOD_OUT_LOW or ASIS.
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
->  
-> -	phy->common.gpio_fw_wake = of_get_named_gpio(np, "wake-gpios", 0);
-> -	if (!gpio_is_valid(phy->common.gpio_fw_wake)) {
-> +	phy->common.gpio_fw_wake = devm_gpiod_get(dev, "wake", GPIOD_OUT_LOW);
-> +	if (IS_ERR(phy->common.gpio_fw_wake)) {
->  		/* Support also deprecated property */
-> -		phy->common.gpio_fw_wake = of_get_named_gpio(np,
-> -							     "s3fwrn5,fw-gpios",
-> -							     0);
-> -		if (!gpio_is_valid(phy->common.gpio_fw_wake))
-> -			return -ENODEV;
-> +		phy->common.gpio_fw_wake = devm_gpiod_get(dev, "s3fwrn5,fw", GPIOD_OUT_LOW);
-> +		if (IS_ERR(phy->common.gpio_fw_wake))
-> +			return PTR_ERR(phy->common.gpio_en);
->  	}
->  
->  	return 0;
-> @@ -197,17 +190,6 @@ static int s3fwrn5_i2c_probe(struct i2c_client *client)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = devm_gpio_request_one(&phy->i2c_dev->dev, phy->common.gpio_en,
-> -				    GPIOF_OUT_INIT_HIGH, "s3fwrn5_en");
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = devm_gpio_request_one(&phy->i2c_dev->dev,
-> -				    phy->common.gpio_fw_wake,
-> -				    GPIOF_OUT_INIT_LOW, "s3fwrn5_fw_wake");
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	/*
->  	 * S3FWRN5 depends on a clock input ("XI" pin) to function properly.
->  	 * Depending on the hardware configuration this could be an always-on
-> diff --git a/drivers/nfc/s3fwrn5/phy_common.c b/drivers/nfc/s3fwrn5/phy_common.c
-> index deb2c039f0fd..e802b4e609c8 100644
-> --- a/drivers/nfc/s3fwrn5/phy_common.c
-> +++ b/drivers/nfc/s3fwrn5/phy_common.c
-> @@ -8,7 +8,7 @@
->   * Bongsu Jeon <bongsu.jeon@samsung.com>
->   */
->  
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
->  
-> @@ -19,7 +19,7 @@ void s3fwrn5_phy_set_wake(void *phy_id, bool wake)
->  	struct phy_common *phy = phy_id;
->  
->  	mutex_lock(&phy->mutex);
-> -	gpio_set_value(phy->gpio_fw_wake, wake);
-> +	gpiod_set_value(phy->gpio_fw_wake, wake);
->  	if (wake)
->  		msleep(S3FWRN5_EN_WAIT_TIME);
->  	mutex_unlock(&phy->mutex);
-> @@ -33,14 +33,14 @@ bool s3fwrn5_phy_power_ctrl(struct phy_common *phy, enum s3fwrn5_mode mode)
->  
->  	phy->mode = mode;
->  
-> -	gpio_set_value(phy->gpio_en, 1);
-> -	gpio_set_value(phy->gpio_fw_wake, 0);
-> +	gpiod_set_value(phy->gpio_en, 1);
-> +	gpiod_set_value(phy->gpio_fw_wake, 0);
->  	if (mode == S3FWRN5_MODE_FW)
-> -		gpio_set_value(phy->gpio_fw_wake, 1);
-> +		gpiod_set_value(phy->gpio_fw_wake, 1);
->  
->  	if (mode != S3FWRN5_MODE_COLD) {
->  		msleep(S3FWRN5_EN_WAIT_TIME);
-> -		gpio_set_value(phy->gpio_en, 0);
-> +		gpiod_set_value(phy->gpio_en, 0);
->  		msleep(S3FWRN5_EN_WAIT_TIME);
+Pushed to drm-misc-next:
 
-The GPIO is describe as "active low" in DTS:
-
-arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-
-So here you are leaving the chip disabled. You need to use logical
-polarity.
-
-Thanks.
-
--- 
-Dmitry
+[1/1] drm/panel-edp: Add SHP LQ134Z1 panel for Dell XPS 9345
+      commit: 754dbf164acd4d22dd7a5241b1880f54546d68f2
 
