@@ -1,141 +1,188 @@
-Return-Path: <linux-kernel+bounces-762320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23E0B204DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:06:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7D9B204E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE48189FD6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72B91651C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64B721CC63;
-	Mon, 11 Aug 2025 10:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C79221CFF6;
+	Mon, 11 Aug 2025 10:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P2WVyVuc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="peQXIuol"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="UlUAzQzL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CNCTDk+m"
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DD01EEA5F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B8813A86C;
+	Mon, 11 Aug 2025 10:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906789; cv=none; b=PA4jWynMWoNdjDzWX4LzR5Wd5mCWlAe46rVG4PCHxBoraAK/DhmkHjAMZ0VIQ24cetowVy+THbYeIkM7llJ0iYmseGmOjQA2eBVgyyoRb9Yr8jGRBTH0udMHGsBB/SbmbIGRQhjX8cR+trwG+tghQx1bD4oa8R1KD2k8ahq8Mzg=
+	t=1754906878; cv=none; b=IVjfcF2D45gdDkIbkPbL8n/z0tE+rC5H9y3jRvkj+EXheYlrdYvTGwgG2isakc/dio/Var01Y58HxHmuS6u6z9lQRxoQRA4XA4mb19uiWqxb3ob9VN7fgKbf2kcZNE7zuXgSs1n9IU/VkjmO9SXtYUJrq9dNIWfrSODpC64csS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906789; c=relaxed/simple;
-	bh=/029OGICgOstJIarIv1HWcrJNV0YszZiteVd1Zck31o=;
+	s=arc-20240116; t=1754906878; c=relaxed/simple;
+	bh=rd9xQztgMcfSzy1cQFOsfKJVqnKSd/C1pT4QiTbzM5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G28PD64n/uqzPzy8s2q3B2wPLLr0XYVCchYmiLY/TGQGww6cK+cPaJR+G58197eDdkjhXi4wNE0OHTQ800gnAgJZKEJXLLDddr4jWG0G5yEH1kpPPgMgXzfgIfHH56+kZ58olRzA2xrR4c1/JGEmUZS5mx5aS8bh/7QN2ebnWls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P2WVyVuc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=peQXIuol; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 11 Aug 2025 12:06:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754906785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XsxDNvVqemD/2wPn8jBzJb7mtx3d7CZLew7y1CcraZA=;
-	b=P2WVyVuc7eR1TjzCeNEhVEoesqMsQvUIJFWEBqZQoM33ja8HjqtDFF+OFsk8D9UTfg/xWA
-	/hdqnFsIp/0Z3UG2GY6B1h7bipvEJ7Am9PnqGls2uxhAxr+mvzQ5rY2G1MqMpkbb2eSG+o
-	X7NUwkPlUscgf4sgbu+xjR9uzp4WRucfcxT3EOEPVp/He5jgQCQOirOKoCIdc3k7Ti3ldi
-	FFpns1+QYJH0O8DwKnQtOr/oFL5NpPAA1QvhC9EC399HGTtEr15CviO/KhTuEa8sXrI973
-	wKSkDYo1uesnLyeqFPL5w1GXgoaUCDhXtw9MiRdJAoW3vwkY9dB2Fiqeug4gUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754906785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XsxDNvVqemD/2wPn8jBzJb7mtx3d7CZLew7y1CcraZA=;
-	b=peQXIuolIaxib6yAruwF+dMwzYLkdVdjtQd4PyhA442knjq3EZ3M7eXdiAlTrewTLs6xgX
-	EWj5q4Qxxokox8Aw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
- for non-rt
-Message-ID: <20250811100624.LuYV-ZuF@linutronix.de>
-References: <aJOwe_ZS5rHXMrsO@uudg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n66K8HWT+qWD1nVPHrLpumPkz5V+eKHS4Y4IX7HdpX/adgMNs7a0MwNa5zVGINc7ouyP4PrLdu0jBMy341xebnQatZqlAZjZBtj7jZXIOuWC+QAmpfujaIQ3ScDpS8FfFn6CsM23U2l5FoXEL1HjAYj9a1ED6DYPN+X5U/0q8og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=UlUAzQzL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CNCTDk+m; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 4A95B1300168;
+	Mon, 11 Aug 2025 06:07:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 11 Aug 2025 06:07:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1754906874; x=
+	1754914074; bh=YMVHbKt84ajobxpDslMW7shZLCihMMdqMX7Bu7K6MQc=; b=U
+	lUAzQzLiTBAPDTVtOK64KS4Yag1rkY3R7Ig8f8E9UtChnbtz5HASBIVq2pl9rPIN
+	swtt2+1lpWIHjNFtkqlMFLD8L9YSYFzC/Wy0LR1UQeZwJX7Kkjh7ltz00WVyflKp
+	IK3L8Qc2HALu/gu45rStzT2u1TnbnKBZ8SBD9j/JqHTaUS5UG5M+rhqQZfPc3DWM
+	vkRh7dQGN1NQTF4klOJsYPQFoTbufs8fd194I7lGGFPHxdtCNHVaJbwuD4DPpAgm
+	FsWTzXmHUXcDpP0JfenrDpDiG9Duiu2z3alsiC4DS/9RwXlQaI9ivq/vr+ha1Suo
+	TS3nkp1Lh0NTjQTdedI0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754906874; x=1754914074; bh=YMVHbKt84ajobxpDslMW7shZLCihMMdqMX7
+	Bu7K6MQc=; b=CNCTDk+m/R8DW2A5rWRfgIuozvJ/fJg4fquLl5cey7hAs4g/0kL
+	F8QlBLVfJRYav7mTNnNf4lHYIi60o9ACQP/q64y2XHedY9VDvILXG+5NNIV3kqWp
+	eRPVx/BPAHasEXVsnoFK32WoE68mnIMCTdKk7hxLVRVS7LyS3JUPQMHS3PZckhBq
+	TTkROi/cC8fPiaUe4TPK8eyXWzKQ2V0bVndfYFAnd93eBvybb+1fg2YP1WVb14k2
+	Liy/M8Fv2d0/rmEmXzzuhsgHaavl/7QljjBY1dZka99D0XejlMZYvgYOuZZPdsmi
+	UaVW2NQ93fwai3J65RtLZCDpUENyuEnUXBw==
+X-ME-Sender: <xms:98CZaG9aKnMFKfDBk16aqYN5V9ARSsbYFCtJkucvVn8zvHCPCASnBQ>
+    <xme:98CZaJrDhNJ5UQOyAV5SaCp6pswEZWT2w1WUvQk-vuDLTSKRYqno6rdYQt6fE_61y
+    LaEtQbIpzxMJNEKwzY>
+X-ME-Received: <xmr:98CZaCzWWjtIjDEIbmyf2PmDXrzPc4yw5ycncCFoqEazPriq1FiJQypuoia->
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeh
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtohepkhgvrhhnvghlsehprghnkhgrjhhrrghghhgrvhdrtghomhdp
+    rhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhihrg
+    hnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghn
+    gheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehvsggrsghkrgessh
+    hushgvrdgtiidprhgtphhtthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthho
+    pehrphhptheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnh
+    eslhhinhhugidrihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:98CZaIk1g2pwnQF0ZCmAGsoZLEWfhdiqeMEMRwt6usFGJ0Z10Eq_3A>
+    <xmx:98CZaOnLoiGDJjCwNk9y_0rIqxSexo1YPGRQCKaef_P_Z-NeIQf8hw>
+    <xmx:98CZaOwcAoRr88sQNj8EsQDLYwPiFrzeoGpcp61tm8q1HdOyhfhrgQ>
+    <xmx:98CZaFZ-7tIQCWXSINvVQZEBCDXAn-WG-vqKTLT35EnFrp5WIzvP9Q>
+    <xmx:-sCZaCvSYdCPW6f41s1J5E9AZKAdplnP3VG2J6p6QFiaKVLC-CLJYKox>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 06:07:51 -0400 (EDT)
+Date: Mon, 11 Aug 2025 11:07:48 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
+Message-ID: <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
+ <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
+ <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJOwe_ZS5rHXMrsO@uudg.org>
+In-Reply-To: <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
 
-On 2025-08-06 16:43:55 [-0300], Luis Claudio R. Goncalves wrote:
-> Commit 8671bad873eb ("sched: Do not call __put_task_struct() on rt
-> if pi_blocked_on is set") changed the behavior of put_task_struct()
-> unconditionally, even when PREEMPT_RT was not enabled, in clear mismatch
-> with the commit description.
+On Mon, Aug 11, 2025 at 11:52:11AM +0200, David Hildenbrand wrote:
+> On 11.08.25 11:49, David Hildenbrand wrote:
+> > On 11.08.25 11:43, Kiryl Shutsemau wrote:
+> > > On Mon, Aug 11, 2025 at 10:41:08AM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > > 
+> > > > Many places in the kernel need to zero out larger chunks, but the
+> > > > maximum segment we can zero out at a time by ZERO_PAGE is limited by
+> > > > PAGE_SIZE.
+> > > > 
+> > > > This concern was raised during the review of adding Large Block Size support
+> > > > to XFS[2][3].
+> > > > 
+> > > > This is especially annoying in block devices and filesystems where
+> > > > multiple ZERO_PAGEs are attached to the bio in different bvecs. With multipage
+> > > > bvec support in block layer, it is much more efficient to send out
+> > > > larger zero pages as a part of single bvec.
+> > > > 
+> > > > Some examples of places in the kernel where this could be useful:
+> > > > - blkdev_issue_zero_pages()
+> > > > - iomap_dio_zero()
+> > > > - vmalloc.c:zero_iter()
+> > > > - rxperf_process_call()
+> > > > - fscrypt_zeroout_range_inline_crypt()
+> > > > - bch2_checksum_update()
+> > > > ...
+> > > > 
+> > > > Usually huge_zero_folio is allocated on demand, and it will be
+> > > > deallocated by the shrinker if there are no users of it left. At the moment,
+> > > > huge_zero_folio infrastructure refcount is tied to the process lifetime
+> > > > that created it. This might not work for bio layer as the completions
+> > > > can be async and the process that created the huge_zero_folio might no
+> > > > longer be alive. And, one of the main point that came during discussion
+> > > > is to have something bigger than zero page as a drop-in replacement.
+> > > > 
+> > > > Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will always allocate
+> > > > the huge_zero_folio, and disable the shrinker so that huge_zero_folio is
+> > > > never freed.
+> > > > This makes using the huge_zero_folio without having to pass any mm struct and does
+> > > > not tie the lifetime of the zero folio to anything, making it a drop-in
+> > > > replacement for ZERO_PAGE.
+> > > > 
+> > > > I have converted blkdev_issue_zero_pages() as an example as a part of
+> > > > this series. I also noticed close to 4% performance improvement just by
+> > > > replacing ZERO_PAGE with persistent huge_zero_folio.
+> > > > 
+> > > > I will send patches to individual subsystems using the huge_zero_folio
+> > > > once this gets upstreamed.
+> > > > 
+> > > > Looking forward to some feedback.
+> > > 
+> > > Why does it need to be compile-time? Maybe whoever needs huge zero page
+> > > would just call get_huge_zero_page()/folio() on initialization to get it
+> > > pinned?
+> > 
+> > That's what v2 did, and this way here is cleaner.
 > 
-> Restore the previous behavior of put_task_struct() for the PREEMPT_RT
-> disabled case.
-> 
-> Fixes: 8671bad873eb ("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
-> Acked-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> ---
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index ea41795a352b..51678a541477 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -130,6 +133,16 @@ static inline void put_task_struct(struct task_struct *t)
->  	if (!refcount_dec_and_test(&t->usage))
->  		return;
->  
-> +	/* In !RT, it is always safe to call __put_task_struct(). */
+> Sorry, RFC v2 I think. It got a bit confusing with series names/versions.
 
-I don't want to drag this but this comment is obvious for anyone who is
-fluent in C. It is just a statement with no explanation.
-An important note would be that the atomic context restriction only
-apply to PREEMPT_RT and therefore we have this context override for
-lockdep below. The other question would be why don't we do this
-unconditionally regardless of PREEMPT_RT. The only reason I could find
-is that releasing the task here from the "exit path" makes the vmap
-stack "earlier" available for reuse.
+Well, my worry is that 2M can be a high tax for smaller machines.
+Compile-time might be cleaner, but it has downsides.
 
-> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> +
-> +		lock_map_acquire_try(&put_task_map);
-> +		__put_task_struct(t);
-> +		lock_map_release(&put_task_map);
-> +		return;
-> +	}
-> +
->  	/*
->  	 * Under PREEMPT_RT, we can't call __put_task_struct
->  	 * in atomic context because it will indirectly
-> @@ -137,10 +150,6 @@ static inline void put_task_struct(struct task_struct *t)
->  	 * current process has a mutex enqueued (blocked on
->  	 * a PI chain).
->  	 *
-> -	 * In !RT, it is always safe to call __put_task_struct().
-> -	 * Though, in order to simplify the code, resort to the
-> -	 * deferred call too.
-> -	 *
->  	 * call_rcu() will schedule __put_task_struct_rcu_cb()
->  	 * to be called in process context.
->  	 *
-> 
+It is also not clear if these users actually need physical HZP or virtual
+is enough. Virtual is cheap.
 
-Sebastian
+-- 
+Kiryl Shutsemau / Kirill A. Shutemov
 
