@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-763554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC485B2168B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0625B2168C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B5B622221
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28DA1A24070
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850642DECA5;
-	Mon, 11 Aug 2025 20:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA28F2DCBFC;
+	Mon, 11 Aug 2025 20:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLrA8t1u"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mG0dpCkO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945E26AA91;
-	Mon, 11 Aug 2025 20:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45542D9EDA;
+	Mon, 11 Aug 2025 20:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944498; cv=none; b=Hrc/gvE4BFz97xwOq8TIWfGT04kzIIKcfhsvbsqfliVoUnL8g6t54fZnoA6odpDh/Unizx3gVNQnhTJxeC03LeThzRBDm4LqRAfIDlAfEKEiT3YSonNtZ3hsB+WEjDyt9yYvj/FzL0kprTuKg9tYehtr4gvGQoqdBWNhYdnJxZQ=
+	t=1754944517; cv=none; b=QFc2eswY8KBXwg0qWuYyaTP2HxLib2qfyJnw43Xi00PsyMInt9k6uR3ymGX7uABIkMMHDZswigKDbP7ELf5DLgC/ntjbDMK2bOQ4DmGfqS074YWi34/lR6QG10bS+40vggWJp9YuAc/VTema3N64ZOA8w7NeAHGzn1X/KOOx8uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944498; c=relaxed/simple;
-	bh=PKuaobGsqr9y6MGExJ9G+xUKI0OFSduvz+0yQEhoz5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SeSesrI8VKewh7qurFp5KoR0E9+DsPIrOWYxs9WjvuQn9TXXw8+kMhQkvgxTOA80g7++KZlZVBiKJG7Sya2hXE/FNe6xBNJZWIkiA7hfDb1atrFfDVVZQukUne0TFo2INGbDmc/chnACLpkJIfnP2LCOtrGlN0gMfDXOAJGIWSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLrA8t1u; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b0c5d57713so29629051cf.0;
-        Mon, 11 Aug 2025 13:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754944495; x=1755549295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGdw+3/eqo8YkV2PsrcnOH6vTKbUsfuUgKSwYeGkCMc=;
-        b=dLrA8t1uoRdF5C6VYr0VMfdyw/Zmfs8jk/oey6gQClQGg2dssbrxu9mFxDLE53C7Gq
-         4SDpE38aA8V8r5JnexMzFDd1eyqwEJj4ABqXGM5LNpKIusOmSLa/RuWPYK1ypYovQOUk
-         tXnKPE2wQ8H+qYiQEpz2/HRJzaKOUV+L9il5htDwVuCtKyr8tkGoPLCvK9pf/RjDmhoL
-         JrAEStjw/7aIwgqHJT1/QWzU2rZiKqBrGsAHnSgzWx5w81LToB4UU39+kAiujTkKjpkE
-         zndgC9VfaTQn1WSGKtarunCmVBKi/2jSz5LakE8b2kAXZBLEgnncpFk31qbNUkdYAuaB
-         aOlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754944495; x=1755549295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XGdw+3/eqo8YkV2PsrcnOH6vTKbUsfuUgKSwYeGkCMc=;
-        b=ZWtNQM82fx870EuRjzMfwKOCFxB5uf16q3/Z0UTTVNYJf2Cekv5vx1IRsO0gIpOJIr
-         IeqJClqttdtlMiBr7ajJgKfuuufmccLPA+0fwwd2ofnqIkX82jAWLsiskj1qKqJXBRd1
-         GO4XKeDftq8SfWUIXiBuPcwHl5/xR7UosvhCBxfVF8fm9G6OiVBhTkLfnuyn1zU5ZAqq
-         D/uwq736DCwilgxVlZvhHcj3ouPP5U8gVG5cRCRJSIdbga9hHsKNVShR6e+Cdq8nABSA
-         0lL6+wP60jNoTx2IAG2AMAdYEiI9JDuwbKv+g2BQPj5jaIf3QTOg5IHWm2yzNn+Ii2Rc
-         xDig==
-X-Forwarded-Encrypted: i=1; AJvYcCVeLEY/Bum5YJIUkCXS5iUhkA2p8XlHXfg938Cc8051d5ZRjAthAIHaMj8oDCQ+FKhMzRjuoQqFruZTfsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRg7tWiRZrvwld7+aJ14uoqxMTZ9YZErqDBQ1VwPr2Pt9H+uYJ
-	6UAV3y+DK67E93169E3soC/exX83LMyETi/tR+Ml3vT+0lCzWK+e2ROoFfEghA==
-X-Gm-Gg: ASbGncvMoXm10swch8+vSRm8qRH5LJCySC2wl/eh0r1kRFMG2iczt2xejfGOy8cIdD5
-	AGS1PZ60HIXmaDansvMdlmF2RMRO1iqwuq9uKrTCNcEt/gygOwEyQOHXRQJaqoHm8qZt2n3DnHs
-	Nkeu0gy8ZG5q084AjbFG2kefM7tv88JxnsjnsI6RHZtsqUZIl/QIXACAGayZb9UXwkXTuOPjOaH
-	DnJYMQf2khIwIjSXOhMBhgFbDFvddVlkCz8z/1Ai3ZrWPC9TkGXxuApBedBX745KspPa5qKrZPe
-	ieA75rNylewAOYm6wZY6GTOmEh4yW8gXngGxWltFJhrEAMMZuyw4M76S1VIogDVsVZtlK0Oo2LH
-	JeSGM5xPug75WLQ==
-X-Google-Smtp-Source: AGHT+IH5oYNZbp6lFLpvzwx/XO/iWNKukKsiHkMjSLleCkQatdFNfPyBQ5+VfWt3odmW31cO1Vz8hA==
-X-Received: by 2002:ac8:7d43:0:b0:4ae:f961:4f57 with SMTP id d75a77b69052e-4b0eccd7751mr14047561cf.55.1754944495184;
-        Mon, 11 Aug 2025 13:34:55 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b09da0eaa2sm72432321cf.49.2025.08.11.13.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 13:34:54 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Jeff Johnson <jjohnson@kernel.org>,
-	miquel.raynal@bootlin.com,
-	ath10k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2 ath-next] wifi: ath10k: add nvmem support for mac address
-Date: Mon, 11 Aug 2025 13:34:51 -0700
-Message-ID: <20250811203451.3763-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754944517; c=relaxed/simple;
+	bh=sFtLHLGOijEOOAsFWANpfblMzQIDntPSvojGAi5k3r4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZ+0oZ972alweJ3A1fgCcQPlbGLALxJlpMAa8K18H04csM1E7xwLFU1TmDYgB48VFIMvC6bF9z9/FnyUlnpNxnAozecuNQw5sbmpYqKlF6RQ7oR9CHpNLebzAhBuo62vMIt7DOW9H87OK1/qXkuM2v2GR2tyC8SFRWDKFYXXX6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mG0dpCkO; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754944516; x=1786480516;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sFtLHLGOijEOOAsFWANpfblMzQIDntPSvojGAi5k3r4=;
+  b=mG0dpCkOpFvwL2NuXdjAVOXPkU7XHp7KM7WzXXUvwSaHYcC0nXE8AO3P
+   KDzTiTtlXayiTdJPdVqlkHOq3DY58akkI9i6fng2ZKg7Xs7Tkpqd1392K
+   BW4kM9IJOMTeM24rFGlQCBocyw8FdxBVPqu5/DZYO8iLaO5xHxgtu87RG
+   ZrOJ0syl2NqagYAN5sXSWTGbrba4esX/nXLNa5dZjcPB0e8PhfwSDpe4i
+   4mSWhE4vSzpL5t5uMmY5GXJLKI5SBdm84faWZnfFS9+Mk5GfZbmDkly2Z
+   twSOrjRHwqSEgKT/h+UlElZogq7mgrDeQ20Y49gyO2iNvN9dkB6Y40JbK
+   g==;
+X-CSE-ConnectionGUID: YRpLtdwGSsCbcrzps3rP1A==
+X-CSE-MsgGUID: VO/1AZY+RxC1ob3bCJgelA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57289046"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="57289046"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:35:16 -0700
+X-CSE-ConnectionGUID: x+zD3fb4RbaIsLj1Pyr8NA==
+X-CSE-MsgGUID: SJ0hAw7CRt2zRuDHN1fJ8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165209244"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:35:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulZEc-000000056iv-3S6t;
+	Mon, 11 Aug 2025 23:35:10 +0300
+Date: Mon, 11 Aug 2025 23:35:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Thompson <davthompson@nvidia.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl,
+	mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] gpio: mlxbf3: use platform_get_irq_optional()
+Message-ID: <aJpT_nS5bDNRVn9a@smile.fi.intel.com>
+References: <cover.1754928650.git.davthompson@nvidia.com>
+ <ce70b98a201ce82b9df9aa80ac7a5eeaa2268e52.1754928650.git.davthompson@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce70b98a201ce82b9df9aa80ac7a5eeaa2268e52.1754928650.git.davthompson@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-device_get_mac_address is a generic way to get the MAC address which
-lacks NVMEM support, which tends to be used on embedded platforms.
+On Mon, Aug 11, 2025 at 01:50:45PM -0400, David Thompson wrote:
+> The gpio-mlxbf3 driver interfaces with two GPIO controllers,
+> device instance 0 and 1. There is a single IRQ resource shared
+> between the two controllers, and it is found in the ACPI table for
+> device instance 0. The driver should not use platform_get_irq(),
+> otherwise this error is logged when probing instance 1:
+>     mlxbf3_gpio MLNXBF33:01: error -ENXIO: IRQ index 0 not found
 
-In case device_get_mac_address fails, try of_get_mac_address_nvmem and
-handle EPROBE_DEFER to wait for the nvmem driver to initialize.
+Missed Cc to stable@.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v2: keep device_get_mac_address and use of_get_mac_address_nvmem
- added Miquel to CC. Maybe he has insight.
- drivers/net/wireless/ath/ath10k/core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index 6f78f1752cd6..8214b0c0ea80 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/firmware.h>
- #include <linux/of.h>
-+#include <linux/of_net.h>
- #include <linux/property.h>
- #include <linux/dmi.h>
- #include <linux/ctype.h>
-@@ -3456,7 +3457,11 @@ static int ath10k_core_probe_fw(struct ath10k *ar)
- 		ath10k_debug_print_board_info(ar);
- 	}
- 
--	device_get_mac_address(ar->dev, ar->mac_addr);
-+	if (device_get_mac_address(ar->dev, ar->mac_addr)) {
-+		ret = of_get_mac_address_nvmem(ar->dev->of_node, ar->mac_addr);
-+		if (ret == -EPROBE_DEFER)
-+			goto err_free_firmware_files;
-+	}
- 
- 	ret = ath10k_core_init_firmware_features(ar);
- 	if (ret) {
 -- 
-2.50.1
+With Best Regards,
+Andy Shevchenko
+
 
 
