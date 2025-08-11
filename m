@@ -1,196 +1,231 @@
-Return-Path: <linux-kernel+bounces-763472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D490AB21510
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:03:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FC5B21512
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8AE1888250
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AFF17F2FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB3288C12;
-	Mon, 11 Aug 2025 19:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253D26CE2A;
+	Mon, 11 Aug 2025 19:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qfjiq5zw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzTAN3/h"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A151F4C87;
-	Mon, 11 Aug 2025 19:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5B0271443
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754939013; cv=none; b=uNvCsfMOqzMop8FnCQffA9ShYMYVaNyxdMw+QydbL9CtRyRmu0DsVYJVcW4UmALwamXhVISQSwBSGVggzoenqCoCXbn0FaI3Nt/OmP3C8drzYwMoml5KfKpuWulvN4U81qBMrD4MToLdeu45upEDO3juhCEDvuAWxLDNwXNtWP8=
+	t=1754939092; cv=none; b=hIal3QzKxLRs+aXCJ6waA895qrqpOMFWQW9saaxLJDF5kvL4HvCN/8NjJD9Yn1nFL/+IJhbemuZKWWfnNpa5kDD31ZBv/lHiWAwWLTP5GUziiVmqfA6IqfH5Q1BtMZlb9JFf/wRUFKoVnadfn0AUkCO2QhoeH3PxY/FnMyeoFBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754939013; c=relaxed/simple;
-	bh=yGOPUJIeFSkxymBShB4lszt3VOaSUZophHZlGKFilbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cq1C/QfwC8k0YU+WOZNAepE8YggU6I9u6fv6P6h1NoabXz8mS1ss+1EIHyPChcBqUyhLD7VNN36N9qMOWSQDwaI2zP/rzVy1mDuoNjGYShjh6TPcVPoGTDTapU0epIK7pex2ECJkWmtt5B1vzyt4kNOBJORQfVJYnarA8rSrO2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qfjiq5zw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5831840E0217;
-	Mon, 11 Aug 2025 19:03:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PkZq-vT323ML; Mon, 11 Aug 2025 19:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1754939005; bh=URh6Vu3vykvoo88ywtGuNMkqzuS1DAGjt+6WPp89YFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qfjiq5zwaw/SvZWIcGVL6fV3kkK45yACPa5l0OG8TnG0gWS6iw8x0Xra8qaATaMZ3
-	 3dM/jApgQ4VnEx82vSJdvPL3EfR7h1nvul6zG/RFwt2QhsWFKK1co67RtDqim7i7G6
-	 7EjQMDQoIked5ylqIpTJ3/d58RW+15EbecQRcWRXW979IQxwPEAxTacr3IOEZeXOlS
-	 hr17b8iY/TOWG2CwQemFw8ztOMsyLkYvwcBLNbtv/Qr90QveTHI1p/TL77LWXhJ+CN
-	 PvOnwbiin4AVKfFjoFhhEOWhdYXInpdkXrtRm3Wk3Jj5axQHfxRn265XbxSuZyLBWo
-	 KkiNLAOHjHvzJHUThOu+4ZlzPsy/7tIAgpFejSxRpXFtR50Lu1wAlutH1s8aSFhpvq
-	 ibBsno4e5xFi/fGRWSkxnPjFTZXRk3vUTyZdWmCV7uBiPeravPVjKEQAa7g8hlFCgq
-	 2WKIpMhbIZck72zR2Hy9n0+3BVIT412RYHpMyj7cbCpxLKWLV984SwSoRVHTS0vAdz
-	 U6NKr6Q0NoLV0H39hfiP64PQ3mP8CySh7YovsAAQKgaEiXD24A8e6bgSZe+wPdtFIn
-	 6LjFBNzJfRRB/RLCAqwhClXv4JBzbZIXgA5gY8Id7wf4sVtq63Lqw1mVZrb6pdxjKb
-	 dD37O+SQrsqYdBQQtJ+USIzc=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D468D40E01FD;
-	Mon, 11 Aug 2025 19:03:12 +0000 (UTC)
-Date: Mon, 11 Aug 2025 21:03:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head
- section
-Message-ID: <20250811190306.GAaJo-ai4M2aVod6_V@fat_crate.local>
-References: <20250722072708.2079165-24-ardb+git@google.com>
- <20250722072708.2079165-45-ardb+git@google.com>
- <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
- <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com>
+	s=arc-20240116; t=1754939092; c=relaxed/simple;
+	bh=Jk1VP2qa7l0ygQ3fKCoTy74O9E70rUSr95ymu+ekJxA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c4eSJuoVTUPRF8QI4Ky+ja9QkP5124FWN5iRBqI/DtBnVH+D2jZCq6eF27nNkWKD/9ylXn+KDIFqiGY/prAvi9yiSq2XUYBNhJQjA3SKKPpdxqGjt2iIgXqaWcGOIcGfbqDE/Sfi9wqdmcK1KdL/I2PRav0EKpuni1J2uYd5fNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzTAN3/h; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b7910123a0so4351167f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754939088; x=1755543888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NZZ4dukWfnrzGm5DUtUwAHWHllsDgcftC3XLB9SWVHU=;
+        b=vzTAN3/hdFBHr5Tyc0/D9zd6GuGUjhStJlhRNZ5A6AtsYU9+OXjCA8bN+p08hxDJ79
+         /AkL/MPyzg9dqKhoV90p8n04ZWlX24JBAFrUCZ3tfi4lciGC5CogLgST0+FjTLUXjyw8
+         lnzzkkwBv20v++NtuiM1ZfW8bU4VKFCgrayI7i2KKiS7p6s/+DVowlGO4P/E2OY1a+IF
+         cmUKbQ7NwbqnvOYngYzlNP+E+9ir+RoafelRNiNvEv8p+XUsQS90T9Tu9gaJ0lQjrf21
+         Ug61bkbOnLnIgCFKT0YiQMQEnA33Zr2G3rpYKOc0376PFxLwrld8B2ERqx0SjJJH+p4v
+         sjZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754939088; x=1755543888;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NZZ4dukWfnrzGm5DUtUwAHWHllsDgcftC3XLB9SWVHU=;
+        b=GqkHbg5cR3agy/EVxaRivURgUsRRy67Um/x7cA2WPKgGpcYuqgO8yYiI/AT+XvnJbS
+         gr37aTWHVCk3JexewzxTwWyViwzqBSdeoKephxgaA6p17jKUoiAI9zU1Iz+XWT9SEV50
+         Xh23Vv++I0I/GSL5xcs6OOvLT4bYyNAJ5jT7e7NyVsTSdIcX1DjwWNF2dV7mIPxHiZCu
+         gazfHT2GZdlPmgjAFiZd/U2X9gwl4WRsEt+FR0fn3zaIYTkbJig20wjEG24lczPc+JOd
+         rClonLl63u8uz42uobY3JZrbSEib3o8l1nxES2WHwcdbABT97rs7DfAeMRsj+I5vd+Wh
+         IGOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ZByv3YH/N/estgBvG+Js1lMULQrL8lwKXaUzszSPBxQ2XGXOrFXNICgx7rAg4yvql52m1LNNgWHO0ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy51HiwOb3kVZ+Hgn1ueNDQTs7GuR5FijqgUSG6feeznDUZSpEk
+	kdbqL4+YNW7zDUjjSlG1z+WVH0KrvWj1rbj8i+3hKtJFDppTuvjgc1Ai35Asiub3N9o=
+X-Gm-Gg: ASbGncuTe2CMBph3y9n8elTwznKacQD6arzrZWAoEQRT6VC+vls8NntEgeojLjTUdHg
+	tAd8rN8qDIzMo2hNWVZ4UDGEEg7ebgNT4laXmhnqWbzHORNvBrhhLbc6JXzZj7c7gVDl5LOgGXx
+	JjsO6q7jA1S4bhFZT/XS0jtNesLnAbeSNBZQQ67xzi3baKPy2XvNXTRL010itRDy/XOL1QUSELv
+	xZ74dqijDwCYzdfT1GRgTKuz3ZTeFFhcVyv/Em2GC6ny+MfbozJtkWPAHNO5wyTzdQrcR/8jgXz
+	Wa1kspK6BhbyUq6P4YikV4+F6F/yy23dY52tTpevwJkQVoUFmezk/bj/FkUFXtiIC8WIjsWfxK7
+	cyLElTjuSBY5m/Q3MFkFpVgqSvBjOYfblRQi8DdX5AnpepIMzsNQWQTgeF7uu/fIlB5a/Cr9aBY
+	Sy8r4wvupUdA==
+X-Google-Smtp-Source: AGHT+IGNyTELrMm8IxX2rL2JOAtkoqeNSDKaW9RX/7J+QSJpvnGTggjn4BTNIs5nO2xxLGv7gxVaQA==
+X-Received: by 2002:a05:6000:4282:b0:3b7:9c79:3293 with SMTP id ffacd0b85a97d-3b911015717mr614457f8f.58.1754939087798;
+        Mon, 11 Aug 2025 12:04:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:b0fa:b045:4b82:de09? ([2a01:e0a:3d9:2080:b0fa:b045:4b82:de09])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458bb04c612sm384638515e9.0.2025.08.11.12.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 12:04:47 -0700 (PDT)
+Message-ID: <1ab2f4f0-94e5-413b-a87b-190b288b5f32@linaro.org>
+Date: Mon, 11 Aug 2025 21:04:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 0/6] arm64: qcom: allow up to 4 lanes for the Type-C
+ DisplayPort Altmode
+To: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>
+References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 01:05:42PM -0500, Tom Lendacky wrote:
-> Yes, that works. Or just get rid of snp_abort() and call
-> sev_es_terminate() directly. Secure AVIC could even use an
-> SEV_TERM_SET_LINUX specific code instead of the generic failure code.
+On 07/08/2025 18:33, Konrad Dybcio wrote:
+> Register a typec mux in order to change the PHY mode on the Type-C
+> mux events depending on the mode and the svid when in Altmode setup.
+> 
+> The DisplayPort phy should be left enabled if is still powered on
+> by the DRM DisplayPort controller, so bail out until the DisplayPort
+> PHY is not powered off.
+> 
+> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
+> will be set in between of USB-Only, Combo and DisplayPort Only so
+> this will leave enough time to the DRM DisplayPort controller to
+> turn of the DisplayPort PHY.
+> 
+> The patchset also includes bindings changes and DT changes.
+> 
+> This has been successfully tested on an SM8550 board, but the
+> Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
+> PD USB Hubs and PD Altmode Dongles to make sure the switch works
+> as expected.
+> 
+> The DisplayPort 4 lanes setup can be check with:
+> $ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
+> 	name = msm_dp
+> 	drm_dp_link
+> 		rate = 540000
+> 		num_lanes = 4
+> ...
+> 
+> This patchset depends on [1] to allow broadcasting the type-c mode
+> to the PHY, otherwise the PHY will keep the combo state while the
+> retimer would setup the 4 lanes in DP mode.
+> 
+> [1] https://lore.kernel.org/all/20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org/
+> 
+> Changes in v4:
+> - Default to USB3_ONLY if there's no DP SVID (Dmitry)
+> - Pick up tags, dropped T-bys due to the above change
+> - Add missing submitter's sign-off on some patches
+> - The odd 4-lane-DP + USB2 case remains unhandled for now, but it's
+>    not a huge deal, see:
+>    <c2f2ba36-1a25-450e-99b9-79aa4fd4913d@linaro.org>
+> - Link to v3: https://lore.kernel.org/r/20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com
+> Changes in v3:
+> - Take the series from Neil
+> - Rebase
+> - Rename many variables
+> - Test on X1E & X13s
+> - Apply a number of small cosmetic/codestyle changes
+> - Remove some unused variables
+> - Some smaller bugfixes
+> - Link to v2: https://lore.kernel.org/lkml/20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org/
+> Changes in v2:
+> - Reference usb-switch.yaml in bindings patch
+> - Fix switch/case indenting
+> - Check svid for USB_TYPEC_DP_SID
+> - Fix X13s patch subject
+> - Update SM8650 patch to enable 4 lanes on HDK aswell
+> - Link to v1: https://lore.kernel.org/r/20240229-topic-sm8x50-upstream-phy-combo-typec-mux-v1-0-07e24a231840@linaro.org
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+> Konrad Dybcio (1):
+>        phy: qcom: qmp-combo: Rename 'mode' to 'phy_mode'
+> 
+> Neil Armstrong (5):
+>        dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
+>        phy: qcom: qmp-combo: store DP phy power state
+>        phy: qcom: qmp-combo: introduce QMPPHY_MODE
+>        phy: qcom: qmp-combo: register a typec mux to change the QMPPHY_MODE
+>        arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13: Set up 4-lane DP
+> 
+>   .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   7 +-
+>   .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   6 +-
+>   drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 179 +++++++++++++++++++--
+>   3 files changed, 170 insertions(+), 22 deletions(-)
+> ---
+> base-commit: 442d93313caebc8ccd6d53f4572c50732a95bc48
+> change-id: 20250527-topic-4ln_dp_respin-c6924a8825ce
+> 
+> Best regards,
 
-I *love* deleting code. Here's something to start the debate:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Lenovo Thinkpad T14S
 
----
-diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
-index 7a8128dc076e..19b23e6d2dbe 100644
---- a/arch/x86/boot/startup/sev-startup.c
-+++ b/arch/x86/boot/startup/sev-startup.c
-@@ -135,7 +135,7 @@ static struct cc_blob_sev_info *__init find_cc_blob(struct boot_params *bp)
- 
- found_cc_info:
- 	if (cc_info->magic != CC_BLOB_SEV_HDR_MAGIC)
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
- 
- 	return cc_info;
- }
-@@ -209,8 +209,3 @@ bool __init snp_init(struct boot_params *bp)
- 
- 	return true;
- }
--
--void __init __noreturn snp_abort(void)
--{
--	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
--}
-diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
-index 39e7e9d18974..e389b39fa2a9 100644
---- a/arch/x86/boot/startup/sme.c
-+++ b/arch/x86/boot/startup/sme.c
-@@ -531,7 +531,7 @@ void __init sme_enable(struct boot_params *bp)
- 	 * enablement abort the guest.
- 	 */
- 	if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
- 
- 	/* Check if memory encryption is enabled */
- 	if (feature_mask == AMD_SME_BIT) {
-diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-index 0020d77a0800..01a6e4dbe423 100644
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@ -208,6 +208,7 @@ struct snp_psc_desc {
- #define GHCB_TERM_SVSM_CAA		9	/* SVSM is present but CAA is not page aligned */
- #define GHCB_TERM_SECURE_TSC		10	/* Secure TSC initialization failed */
- #define GHCB_TERM_SVSM_CA_REMAP_FAIL	11	/* SVSM is present but CA could not be remapped */
-+#define GHCB_TERM_SAVIC_FAIL		12	/* Secure AVIC-specific failure */
- 
- #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
- 
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index 2b8a779f1477..e907646b4e4b 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -512,7 +512,6 @@ void snp_set_memory_shared(unsigned long vaddr, unsigned long npages);
- void snp_set_memory_private(unsigned long vaddr, unsigned long npages);
- void snp_set_wakeup_secondary_cpu(void);
- bool snp_init(struct boot_params *bp);
--void __noreturn snp_abort(void);
- void snp_dmi_setup(void);
- int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input);
- void snp_accept_memory(phys_addr_t start, phys_addr_t end);
-@@ -590,7 +589,6 @@ static inline void snp_set_memory_shared(unsigned long vaddr, unsigned long npag
- static inline void snp_set_memory_private(unsigned long vaddr, unsigned long npages) { }
- static inline void snp_set_wakeup_secondary_cpu(void) { }
- static inline bool snp_init(struct boot_params *bp) { return false; }
--static inline void snp_abort(void) { }
- static inline void snp_dmi_setup(void) { }
- static inline int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input)
- {
-diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
-index bea844f28192..f0270ce16e6c 100644
---- a/arch/x86/kernel/apic/x2apic_savic.c
-+++ b/arch/x86/kernel/apic/x2apic_savic.c
-@@ -26,7 +26,7 @@ static int savic_probe(void)
- 
- 	if (!x2apic_mode) {
- 		pr_err("Secure AVIC enabled in non x2APIC mode\n");
--		snp_abort();
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 		/* unreachable */
- 	}
- 
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index 6a922d046b8e..802895fae3ca 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -45,7 +45,6 @@ NORETURN(rewind_stack_and_make_dead)
- NORETURN(rust_begin_unwind)
- NORETURN(rust_helper_BUG)
- NORETURN(sev_es_terminate)
--NORETURN(snp_abort)
- NORETURN(start_kernel)
- NORETURN(stop_this_cpu)
- NORETURN(usercopy_abort)
+Successfully got 4 lanes working with an USB-C to DP adapter with either orientation:
+	dp_link:
+		test_requested = 512
+		num_lanes = 4
+		bw_code = 20
+		lclk = 540000000
+		v_level = 2
+		p_level = 0
 
--- 
-Regards/Gruss,
-    Boris.
+And 2 lanes is still working.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I'll test on SM8550/SM8650 later this week.
+
+Thanks,
+Neil
 
