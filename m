@@ -1,140 +1,200 @@
-Return-Path: <linux-kernel+bounces-763540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC1CB21664
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:26:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37DFB21669
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB491905DF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA5116BDE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A7311C13;
-	Mon, 11 Aug 2025 20:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABEC2DC34E;
+	Mon, 11 Aug 2025 20:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ob/yIfzH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSO6Kccn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFC12D47F9;
-	Mon, 11 Aug 2025 20:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E227AC3D;
+	Mon, 11 Aug 2025 20:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754943943; cv=none; b=JlYKFsU6qQ4372R60sLjOXmv7oXpJUxXg468OcOGS6JPd7GaLP4Oh2U5IfbLJZFdCGis/RI4z7u91N/a5Er7LxgwH/59gaNL+R9MtjBCGYsRGPXuKla9W4qJMvDuKaTPo48ebius9507yR38F2tr3slihJWNeAFtAghb+7OOKFQ=
+	t=1754944001; cv=none; b=gD9iKz9n5qL8qad+OzFU4+6Of/Poyt20kcxKb9H2JxqjzjkWKNoEbrGdrgAQGNkSoRgBVGTBck3+M+8fcp4hvPU1HWYr8Ur/uDfnRifPEveQU0UOSVx98B6nJJOo6ifUk1wMGt0rtc78DFtpDppETwbSKSUBasghntRqiqYe8Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754943943; c=relaxed/simple;
-	bh=z+N9HKMf43dB8SbHDpAKnQGM462JuzP2hLnzywSwO8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CjGqprOZ6ocbdw2eRN7ccK60j4tO6BNOluWZ1/5inkkT9KNsm9kC+vxmCSkjJrPlVeY8UKuH1bdIAS/of2wrnsT+xjFmqIiJRtJ3hh8CMQMbdjaq6vug1HxEIpqq+tJGv9YLqZLI7dfyt8C3NySLgxWpC2T6h6accVCnxqZ/NyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ob/yIfzH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86ABBC4CEED;
-	Mon, 11 Aug 2025 20:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754943942;
-	bh=z+N9HKMf43dB8SbHDpAKnQGM462JuzP2hLnzywSwO8A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ob/yIfzHWPzoT+uIL2DAMepsicYWZRV0VNecgGFL21mNBP5gC6ZBaXvNCH8922OQ1
-	 pBXKgFGdDeR0n2ulZ7xZ+VQCMm39yt6J2BqlCD6XvJA5kYE9Z9XOtFbX7p9VJYQtci
-	 IoeRPM1iAWInBB/pYtF8yKds1BNM3UNgdOfLaGTM5x9waobDHjcpE6A+0DDqMC1cMx
-	 gCbBJB1sG283BypTNR+kq+c15Z1p1GFTQYSZhHPWoSUsBw2CRbPZAWrQQF6p3BCvZn
-	 QCHeZVEAm8fV8p3bE84/LFjShidVG0WTFF0F0+8C3MiVx5JSfI3nKYu+lpTBKqvIWO
-	 mank+bfqSBEXA==
-Date: Mon, 11 Aug 2025 21:25:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@intel.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, anshulusr@gmail.com, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
- support in device registration
-Message-ID: <20250811212533.341e7c44@jic23-huawei>
-In-Reply-To: <CAE3SzaRZGvOwi0UeBU9Nw2=_jwF9AYLyY0BFG9tHzwbMFv1o7g@mail.gmail.com>
-References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
-	<CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
-	<CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
-	<CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
-	<20250806161801.000061c0@huawei.com>
-	<aJO05BNi2TsYtdwe@smile.fi.intel.com>
-	<20250807140401.00006c85@huawei.com>
-	<aJcapPt8f5YMUBH3@smile.fi.intel.com>
-	<20250809205736.34b75763@jic23-huawei>
-	<CAHp75VffV4Xomb-1zp6_xB=r+PJzsDnj_gjwyWas8cX7dhuhng@mail.gmail.com>
-	<CAE3SzaRZGvOwi0UeBU9Nw2=_jwF9AYLyY0BFG9tHzwbMFv1o7g@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754944001; c=relaxed/simple;
+	bh=fWqfsa10BRT77DGve7cJQjkBsC6AQOTHMUr98zqAhwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cg+yN4n45DBCacrvONtRMEUYRDDGQUUA6c/s9FS8MZFM6aad5YWhyNPLHDHJe6IqyzGV5b6DERp+wzZY3zTnkVli6MU0k0HPmhJgzOAy1PiT/Lstz8FTdE8gvwV2y3os55NXVnmpIYNZbbCKU4ZRFWHuIsgm5t7GYb67kdRCIas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSO6Kccn; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754944000; x=1786480000;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fWqfsa10BRT77DGve7cJQjkBsC6AQOTHMUr98zqAhwY=;
+  b=NSO6Kccnp9lhCS4lN5qFdOxJquE6xqGSjqsJ0Es1X4vhNImSxQxmRClT
+   5Zsx1ztSyiIawLUVM2RB18flWbwgStNerMb9AmgTlofMy6A1wFbMdurIh
+   GQqNlYF4m66hRjtRpyajEqo+c8+73bOhLGnKKtjr59u0u3gYjrha5E6/0
+   wNd1JudHpvXwWPj/84Uk/zQ1FGtkQSd9OeHPsadZaSSdWcEmwiPRa/YUw
+   74wUYOQz9yfTLU7CjFrvdMphe2+DhTBMiDk4Z5R2dsPzKLdjh5s38KXt9
+   lvRZM9jRLNfG3UxVL6En0WjEUXtyqHZAlIRMCvAVeKNL9mmjRQR1OvyKs
+   Q==;
+X-CSE-ConnectionGUID: aruFB+rJSmGmOiSnU7O61A==
+X-CSE-MsgGUID: xjvmTqu3R4qqgBZPYHn7qQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="60833035"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="60833035"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:26:39 -0700
+X-CSE-ConnectionGUID: P2sUgeGjSViYIrl0MnncvQ==
+X-CSE-MsgGUID: zhjH1eHDRpG+WAqlVuOE3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="189682515"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:26:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulZ6F-000000056eI-3lk1;
+	Mon, 11 Aug 2025 23:26:31 +0300
+Date: Mon, 11 Aug 2025 23:26:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] i2c: pxa: prevent calling of the generic recovery
+ init code
+Message-ID: <aJpR96Kkj12BwW-M@smile.fi.intel.com>
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-2-ca42ea818dc9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-i2c-pxa-fix-i2c-communication-v2-2-ca42ea818dc9@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, 11 Aug 2025 02:18:34 +0530
-Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+On Mon, Aug 11, 2025 at 09:49:56PM +0200, Gabor Juhos wrote:
+> The I2C communication is completely broken on the Armada 3700 platform
+> since commit 0b01392c18b9 ("i2c: pxa: move to generic GPIO recovery").
+> 
+> For example, on the Methode uDPU board, probing of the two onboard
+> temperature sensors fails ...
+> 
+>   [    7.271713] i2c i2c-0: using pinctrl states for GPIO recovery
+>   [    7.277503] i2c i2c-0:  PXA I2C adapter
+>   [    7.282199] i2c i2c-1: using pinctrl states for GPIO recovery
+>   [    7.288241] i2c i2c-1:  PXA I2C adapter
+>   [    7.292947] sfp sfp-eth1: Host maximum power 3.0W
+>   [    7.299614] sfp sfp-eth0: Host maximum power 3.0W
+>   [    7.308178] lm75 1-0048: supply vs not found, using dummy regulator
+>   [   32.489631] lm75 1-0048: probe with driver lm75 failed with error -121
+>   [   32.496833] lm75 1-0049: supply vs not found, using dummy regulator
+>   [   82.890614] lm75 1-0049: probe with driver lm75 failed with error -121
+> 
+> ... and accessing the plugged-in SFP modules also does not work:
+> 
+>   [  511.298537] sfp sfp-eth1: please wait, module slow to respond
+>   [  536.488530] sfp sfp-eth0: please wait, module slow to respond
+>   ...
+>   [ 1065.688536] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
+>   [ 1090.888532] sfp sfp-eth0: failed to read EEPROM: -EREMOTEIO
+> 
+> After a discussion [1], there was an attempt to fix the problem by
+> reverting the offending change by commit 7b211c767121 ("Revert "i2c:
+> pxa: move to generic GPIO recovery""), but that only helped to fix
+> the issue in the 6.1.y stable tree. The reason behind the partial succes
+> is that there was another change in commit 20cb3fce4d60 ("i2c: Set i2c
+> pinctrl recovery info from it's device pinctrl") in the 6.3-rc1 cycle
+> which broke things further.
+> 
+> The cause of the problem is the same in case of both offending commits
+> mentioned above. Namely, the I2C core code changes the pinctrl state to
+> GPIO while running the recovery initialization code. Although the PXA
+> specific initialization also does this, but the key difference is that
+> it happens before the conrtoller is getting enabled in i2c_pxa_reset(),
+> whereas in the case of the generic initialization it happens after that.
+> 
+> To resolve the problem, provide an empty init_recovery() callback
+> function thus preventing the I2C core to call the generic recovery
+> initialization code.
+> 
+> As the result this change restores the original behaviour, which in
+> turn makes the I2C communication to work again as it can be seen from
+> the following log:
+> 
+>   [    7.305277] i2c i2c-0:  PXA I2C adapter
+>   [    7.310198] i2c i2c-1:  PXA I2C adapter
+>   [    7.315012] sfp sfp-eth1: Host maximum power 3.0W
+>   [    7.324061] lm75 1-0048: supply vs not found, using dummy regulator
+>   [    7.331738] sfp sfp-eth0: Host maximum power 3.0W
+>   [    7.337000] hwmon hwmon0: temp1_input not attached to any thermal zone
+>   [    7.343593] lm75 1-0048: hwmon0: sensor 'tmp75c'
+>   [    7.348526] lm75 1-0049: supply vs not found, using dummy regulator
+>   [    7.356858] hwmon hwmon1: temp1_input not attached to any thermal zone
+>   [    7.363463] lm75 1-0049: hwmon1: sensor 'tmp75c'
+>   ...
+>   [    7.730315] sfp sfp-eth1: module Mikrotik         S-RJ01           rev 1.0  sn 61B103C55C58     dc 201022
+>   [    7.840318] sfp sfp-eth0: module MENTECHOPTO      POS22-LDCC-KR    rev 1.0  sn MNC208U90009     dc 200828
+>   [    7.850083] mvneta d0030000.ethernet eth0: unsupported SFP module: no common interface modes
+>   [    7.990335] hwmon hwmon2: temp1_input not attached to any thermal zone
 
-> On Sun, Aug 10, 2025 at 2:04=E2=80=AFAM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > On Sat, Aug 9, 2025 at 9:57=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
-rg> wrote: =20
-> > > On Sat, 9 Aug 2025 12:53:40 +0300
-> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote: =20
-> > > > On Thu, Aug 07, 2025 at 02:04:01PM +0100, Jonathan Cameron wrote: =
-=20
-> > > > > On Wed, 6 Aug 2025 23:02:44 +0300
-> > > > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote: =20
-> > > > > > On Wed, Aug 06, 2025 at 04:18:01PM +0100, Jonathan Cameron wrot=
-e: =20
-> > > > > > > On Tue, 5 Aug 2025 14:47:32 +0200
-> > > > > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote: =20
-> > > > > > > > On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <aksha=
-yaj.lkd@gmail.com> wrote: =20
-> > > > > > > > > On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
-> > > > > > > > > <andy.shevchenko@gmail.com> wrote: =20
-> >
-> > ...
-> > =20
-> > > > We can do it, but this sounds to me like a step back. Implementing =
-proper PM
-> > > > runtime callbacks is a step forward. =20
-> > > I entirely agree that runtime PM is good to have and it does a lot mo=
-re
-> > > than just turning the power on and off once per probe / remove cycle.=
- =20
->=20
-> Initially, while working on a patch for this driver(sysfs for data
-> freshness), while testing
-> I needed to suspend the sensor but could not because the driver only supp=
-orts
-> system suspend and resume. At that time, I had made up my mind that I
-> have to add
-> runtime suspend support for this driver because before Andy's
-> comments, I used to consider
-> runtime PM support as a way to give control to users to do on-demand
-> suspension and
-> resuming sensor operations. But now I learnt that it is so much more.
->=20
-> So Irrespective of the acceptance of this patch, my next patch was
-> going to be runtime PM support.
->=20
-> Will it be acceptable, that this driver like many other drivers have
-> support for both remove callback
-> and runtime PM?
-Sounds good. Though you probably don't need an explicit remove callback,
-just one more devm_add_action_or_reset().
+TBH this sounds to me like trying to hack the solution and as you pointed out
+the problem is in pinctrl state changes. I think it may affect not only I2C case.
 
-That stuff just allows you to register the 'undo' immediately after the
-'do' in probe which makes for easy to read code in many cases.
+And I didn't get how recovery code affects the initialisation (enumeration). Do we
+set pin control state back and forth during probe? May be this is a root cause?
 
-Jonathan
+...
 
->=20
-> Thanks,
-> Akshay.
->=20
+> [1] https://lore.kernel.org/r/20230926160255.330417-1-robert.marko@sartura.hr
+> 
+
+Can you make this a Link tag?
+Link: $URL #1
+
+> Cc: stable@vger.kernel.org # 6.3+
+> Fixes: 20cb3fce4d60 ("i2c: Set i2c pinctrl recovery info from it's device pinctrl")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
+
+...
+
+>  static int i2c_pxa_init_recovery(struct pxa_i2c *i2c)
+>  {
+>  	struct i2c_bus_recovery_info *bri = &i2c->recovery;
+
+>  		return 0;
+>  	}
+>  
+> +	bri->init_recovery = i2c_pxa_init_recovery_cb;
+
+This is unfortunate. I would keep the naming schema consistent, i.e. rename
+existing function and use its original name for the new callback.
+
+>  	bri->prepare_recovery = i2c_pxa_prepare_recovery;
+>  	bri->unprepare_recovery = i2c_pxa_unprepare_recovery;
+>  	bri->recover_bus = i2c_generic_scl_recovery;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
