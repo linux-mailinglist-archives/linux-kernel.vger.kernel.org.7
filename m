@@ -1,253 +1,543 @@
-Return-Path: <linux-kernel+bounces-763621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E6DB217A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9E0B217A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1861905962
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E084C19059ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9282E3AEE;
-	Mon, 11 Aug 2025 21:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877112E2DE7;
+	Mon, 11 Aug 2025 21:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RZWg6Fe3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="NMuE/WSp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34582311C2E;
-	Mon, 11 Aug 2025 21:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A539621FF53
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754948762; cv=none; b=n2RUpdahas5Xml84bO0TkCmrYaOw3Yte4qed8wk+la4mBLIFxZaJV5T+ZzT/cUcTBk+mLLToJaLUA7xllZV07vCZyUriTbAEOWgNZaTtAK0Tiwr2PECK3xOWXZzk95eQ98gVPY4LoH675+IuiRTfBXqcP5ZlYbZG+xGJEdCECvs=
+	t=1754948938; cv=none; b=N6VjSFFyoIS8skrHNNBOqlZrM6koIk6ZOF85xWGBDaq5nkhROpI6Y849h8qgROsF1/TQ4InlsEhA34caKQn1C68C7t1Ijy1xvmxm2esX0e0eXlqpzSRqy9lnh83VbwtxSRUVWnmD/RNVQIxoY82+qNsbojLYk1mGhATuxE5u1rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754948762; c=relaxed/simple;
-	bh=2Oe8kgGT21tommz/oAaFAC2kJoN97CNW8KHYWK8PUks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SICJpOpuaHdgFtC6KYEe/sXj/O6MUsYg3EI4YpMksmipcvL5krT3BelnLTyRyCl+I/rFUg6Kk4dnVDMcPGUShDTfjtNp4lbBwPn3Ix7/4fV+ZlpdkV1Ml8cUThGTdOzMEINx1qddAjRI83oRMMdpmYFS/4SU74BYa/o1k5sp2B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RZWg6Fe3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BFBJaR004770;
-	Mon, 11 Aug 2025 21:45:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZIjtyinG9nHtHhZQ8hhADmScgNe+P1our94TkbAJt70=; b=RZWg6Fe3kmL8QMZC
-	kzXSdNrvKitebLi/j5AMsOJz4cYy6ToMm0o3TkDBKFCFXJtBY4nLi/mj4TFvf66H
-	e+PLUtltJHEmKHxJpqs+s2lwiHnV10DTXrleukcmb4llhS1uZBZwSWW4lPItqFBS
-	wxhJs8mDk3sPnHmrjQ6aUjUBPLPsi18EL38ACFcXC9nLt6KFsGYrFk7+r/i9eMMP
-	UQRSlp4j35zOGYO72HuIneFA3ohLafFxJa4ZyucKd8Y39Q7CcZpr6hEjWrOwexB/
-	CqPbL/I1dPxAlTbMpUhBpoK+K7836sn6akSF2WfV1hV9bXhmGM4TTIC/Yt5ztpHp
-	Sy6hHA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxb90n7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 21:45:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BLjmMx008283
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 21:45:48 GMT
-Received: from [10.216.45.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
- 2025 14:45:42 -0700
-Message-ID: <f5b4580c-4e68-405f-95fb-21fa1b105711@quicinc.com>
-Date: Tue, 12 Aug 2025 03:15:38 +0530
+	s=arc-20240116; t=1754948938; c=relaxed/simple;
+	bh=R/68KFmpqzqUFrV0QrvPbE3T5WZjOu7u1SxnOjYC7XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tj+hyBbNBRefJVIu+DAT+grF7vxxOWT/DSZTb4rhS1xv90SEUjNyYfbN8Rhg/TsEU4bcUkAIGDyAyNHXCIZtNZ+fYT+bjXrH6XwsDUADkCVIyn8NwDvfcNLntfCwBr1A9m++XmNHX4WJXvV47ZYQT5Kj/dEAN9GBuFwWC4U+CD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=NMuE/WSp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23ffa7b3b30so44799945ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1754948934; x=1755553734; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mius3G0i6q3rVlR8W38V9iDaXlsZuI/53IyzkFVtnv4=;
+        b=NMuE/WSpBu03NqQaIQLlQ8SDiLbyZuR8+lsmuviJehv8qn0E83MX842Oj/cNHFkvRF
+         EUaYcyR9d1iEEA7l9pYyKdeXiWJ7/5hkMtTqowYpHSXj8ODvT34CymieiOdyFCTYDBVe
+         sA2YiJlO04gETRM+a89tw8HD51PUTornTL5pQzxGZbpPcpiGRzeNJVbsujgqw14pbZBU
+         f/1lJHEyPxmOrVIHMKLlm1hy9AGSMx2eQEYU/ApME46Kb68MJe7CQPKY6cv5TJM7g/Ut
+         hzR0I3rt+pLR8r3pYXwI+L0TUxWDFDzFP5CJBQ8g6CIEQ1pDGe9DzLivdLo8SfBWQK0J
+         R/9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754948934; x=1755553734;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mius3G0i6q3rVlR8W38V9iDaXlsZuI/53IyzkFVtnv4=;
+        b=MFR9wOF3FR/QQPeIYl8ugqdCj4h2duyQwMjoWkPuSd8rD0E3mljGKBeHzG6C8FNBKx
+         iPXiFaCNX2hKUE0tBBLH3PLH/KmHeSVTbnWtFij1rtw4qR61mhx4XBMCgKD4Ye06ZfQF
+         NR7C0lkTK/KvOeLHnbMEkozIgeURoh74jykvxLrS1VxhjN2D5lFHXnwSGuQng0A5Ma3u
+         LBMJxoR0lSZ/V+pqV+2QHk9ZdvBhsGmVebX8jEmToft+6YQ8KWnaAgsRh7RqLqSK53VG
+         2RrGth5MsyfJTj4CUHqzwP6fZpNYHjw4mbVuW0nqIfqSrsxZpOnkXQLAcrLDdEeBaVtG
+         9Ywg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSStKqvdnyjaQo7+zxFM025dyf/BFTfHCeeNf0zH7yfIXffXV7RinMlE6EBsvYDlpJRNmkdNhN3TfZ0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2ISIgATEltkhSRR5iu9fm+8/36QyN3+AfofXZyfiH+RFAW1nQ
+	5vkTm7tJH5IoQMSYXTAWOFS7wYTWJJmxsEsGceq8Y/RDs3hhFssHqvZIZ7Bpj1b6sTZOnyODif5
+	UProEsA==
+X-Gm-Gg: ASbGncsQc96ZqUDCGxyihIXNYDfIX+8wRuglr8rbWm2IQEn2yhwjmLssAcvDeVYFPRl
+	B9BSGaPc1AiSRTezh+jL+odeq48zVliO9Kz6oqGDeUawE9JYlOg0kII/5iqcFPG5DN0h5ymlk5X
+	Gbxi2dvmpDTup0jeo6PIq04xNl31wbhpo3L28Fc+pW9RFtormd21wUthSASkdrlWMOyM+gLc2hF
+	6MwJThO7KBdg99RvpxWYGTDfONQp4TFtLVfevpIXV2BL6f2n6uptoZqm/RozOcKDjIj3aqxr74p
+	VpjFYQ0lQt9WBCFUN8kmo21MnkBLy2axnXzINTRJJVLk+6dDGHXcCxQuy4Cl8QEusMIFpz/h6cd
+	dviIJCle9rVjl1bG0+SBXYTCuKg==
+X-Google-Smtp-Source: AGHT+IGPE92YkxEgLKnGy8DXaJh5okqAnsQ8J8sVIQoWL1A2878FBOHe2iiJ+RmJWE8UY4Jc5faidQ==
+X-Received: by 2002:a17:902:cccc:b0:242:9bc6:63c6 with SMTP id d9443c01a7336-242c22a15a9mr193991315ad.57.1754948933714;
+        Mon, 11 Aug 2025 14:48:53 -0700 (PDT)
+Received: from sultan-box ([142.147.89.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaafefsm283667725ad.160.2025.08.11.14.48.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 14:48:53 -0700 (PDT)
+Date: Mon, 11 Aug 2025 14:48:42 -0700
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: "Du, Bin" <bin.du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+Message-ID: <aJplOgN9BSbElDfi@sultan-box>
+References: <751e9265-889f-4fbf-acf8-7374311a6b6f@amd.com>
+ <aImvvC9JEgQ2xBki@sultan-box>
+ <a3272335-1813-4706-813e-a79a9cabc659@amd.com>
+ <aIq5EyQ_uuO63dJb@sultan-box>
+ <1a9a4beb-97ab-4853-8201-bf08f1a030ab@amd.com>
+ <d8c99b00-e8f2-49bb-8c72-ebc4e783e51d@amd.com>
+ <aJA2S0EY7HhVSSzc@sultan-box>
+ <17464bff-6b3e-4962-8b83-132cd7367d1d@amd.com>
+ <aJmEaXkXDtfkVQiR@sultan-box>
+ <f85fce70-64d6-4d33-9483-c8e6dc8a79bc@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-To: 'Manivannan Sadhasivam' <mani@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>
-CC: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>,
-        'Krzysztof Kozlowski'
-	<krzk@kernel.org>,
-        'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <James.Bottomley@hansenpartnership.com>,
-        <martin.petersen@oracle.com>, <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <06d201dc0689$9f438200$ddca8600$@samsung.com>
- <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
- <06f301dc0695$6bf25690$43d703b0$@samsung.com>
- <CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
- <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
- <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
- <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
- <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
- <xqynlabahvaw4cznbofkkqjr4oh7tf6crlnxoivhpadlymxg5v@a4b5fgf55nqw>
- <10ae01dc08c9$022d8aa0$06889fe0$@samsung.com>
- <o2lnzaxurshoyyxtdcyiyphprumisggd6m2qvcoeptvnkvh4ap@dm2nc4krinja>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <o2lnzaxurshoyyxtdcyiyphprumisggd6m2qvcoeptvnkvh4ap@dm2nc4krinja>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689a648d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=pyoVPm71RKJ-DdxDm9cA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX4hNPXG7rrA/c
- UYoeeeMp5YAhGlGluUEtht4A587+suPjkkkUT+cPI3UeG/mbUdo2aDiRC3QtzR0pm1gtEsyzdid
- Nqu6G5dQ3s6J3ZOONVnVU9GxWELkfgsW+41Qhx3EUeSXLQtGcfxiLtbfJle5fKix1lO97UQ79lu
- mXx2kAeT2xj+OB5sDCxfTy8cCx30SGVMhEzMn4rMG4BV6adScVrCvJETFVAlnMHaz8mctM2fUao
- veA/BXMYkMUAJXzR5J/XQB9HoJcYWuFGqhsb1XaTWEebbS0grVEkrOuHqbgrPCWymwwLSE9d6ub
- qPLgtpfgS+8R78sA3rBw6GkFw1MVeMTwNEJozlIcUPGqfUYnXD5p5PmFKiRBbmc6QfyJ6vvhCyV
- CwoQxpS/
-X-Proofpoint-ORIG-GUID: vfhsHoI_08neQPc0-2oc0GfW9_30P2ni
-X-Proofpoint-GUID: vfhsHoI_08neQPc0-2oc0GfW9_30P2ni
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
+In-Reply-To: <f85fce70-64d6-4d33-9483-c8e6dc8a79bc@amd.com>
 
-
-
-On 8/9/2025 4:43 PM, 'Manivannan Sadhasivam' wrote:
-> On Sat, Aug 09, 2025 at 06:30:29AM GMT, Alim Akhtar wrote:
+On Mon, Aug 11, 2025 at 04:35:10PM +0800, Du, Bin wrote:
+> On 8/11/2025 1:49 PM, Sultan Alsawaf wrote:
+> > On Fri, Aug 08, 2025 at 05:11:39PM +0800, Du, Bin wrote:
+> > > On 8/4/2025 12:25 PM, Sultan Alsawaf wrote:
+> > > > On Mon, Aug 04, 2025 at 11:32:11AM +0800, Du, Bin wrote:
+> > > > > On 7/31/2025 6:04 PM, Du, Bin wrote:
+> > > > > > Thanks Sultan for your test
+> > > > > > 
+> > > > > > On 7/31/2025 8:30 AM, Sultan Alsawaf wrote:
+> > > > > > > On Wed, Jul 30, 2025 at 05:53:58PM +0800, Du, Bin wrote:
+> > > > > > > > On 7/30/2025 1:38 PM, Sultan Alsawaf wrote:
+> > > > > > > > > On Tue, Jul 29, 2025 at 06:13:50PM +0800, Du, Bin wrote:
+> > > > > > > > > > On 7/29/2025 3:45 PM, Sultan Alsawaf wrote:
+> > > > > > > > > > > On Tue, Jul 29, 2025 at 12:42:16AM -0700, Sultan Alsawaf wrote:
+> > > > > > > > > > > > On Tue, Jul 29, 2025 at 11:32:23AM +0800, Du, Bin wrote:
+> > > > > > > > > > > > > Thanks Sultan, please see my comments
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > On 7/27/2025 6:31 AM, Sultan Alsawaf wrote:
+> > > > > > > > > > > > > > On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
+> > > > > > > > > > > > > > > > I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > I cannot for the life of me get
+> > > > > > > > > > > > > > > > the webcam working under Linux.
+> > > > > > > > > > > > > > > > The webcam works
+> > > > > > > > > > > > > > > > under Windows so it's not a hardware issue.
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > With this patchset and all of
+> > > > > > > > > > > > > > > > the patches you link here
+> > > > > > > > > > > > > > > > applied to 6.15, I get
+> > > > > > > > > > > > > > > > the following errors:
+> > > > > > > > > > > > > > > >          [   11.970038]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware: Unknown
+> > > > > > > > > > > > > > > > Synopsys component type:
+> > > > > > > > > > > > > > > > 0xffffffff
+> > > > > > > > > > > > > > > >          [   11.973162]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware: error
+> > > > > > > > > > > > > > > > -19: i2c_dw_probe failed
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > With the old ispkernel code from
+> > > > > > > > > > > > > > > > February [1] applied on 6.15,
+> > > > > > > > > > > > > > > > the webcam
+> > > > > > > > > > > > > > > > indicator LED lights up but
+> > > > > > > > > > > > > > > > there's no image. I see these
+> > > > > > > > > > > > > > > > messages at boot:
+> > > > > > > > > > > > > > > >          [    9.449005]
+> > > > > > > > > > > > > > > > amd_isp_capture
+> > > > > > > > > > > > > > > > amd_isp_capture.1.auto: amdgpu:
+> > > > > > > > > > > > > > > > AMD ISP v4l2 device registered
+> > > > > > > > > > > > > > > >          [    9.489005]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware.2.auto:
+> > > > > > > > > > > > > > > > The OV05 sensor device is added
+> > > > > > > > > > > > > > > > to the ISP I2C bus
+> > > > > > > > > > > > > > > >          [    9.529012]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware.2.auto:
+> > > > > > > > > > > > > > > > timeout while trying to abort
+> > > > > > > > > > > > > > > > current transfer
+> > > > > > > > > > > > > > > >          [    9.554046]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware.2.auto:
+> > > > > > > > > > > > > > > > timeout in disabling adapter
+> > > > > > > > > > > > > > > >          [    9.554174]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware.2.auto:
+> > > > > > > > > > > > > > > > timeout while trying to abort
+> > > > > > > > > > > > > > > > current transfer
+> > > > > > > > > > > > > > > >          [    9.580022]
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware
+> > > > > > > > > > > > > > > > amd_isp_i2c_designware.2.auto:
+> > > > > > > > > > > > > > > > timeout in disabling adapter
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > And then the kernel crashes due
+> > > > > > > > > > > > > > > > to the same use-after-free
+> > > > > > > > > > > > > > > > issues I pointed out
+> > > > > > > > > > > > > > > > in my other email [2].
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > Any idea what's going on?
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > [1]
+> > > > > > > > > > > > > > > > https://github.com/amd/Linux_ISP_Kernel/commit/
+> > > > > > > > > > > > > > > > c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
+> > > > > > > > > > > > > > > > [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
+> > > > > > > > > > > > > > > Hi Sultan,
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > [1] is for kernel 6.8, believe it
+> > > > > > > > > > > > > > > can't be applied to 6.15. We didn't
+> > > > > > > > > > > > > > > verify
+> > > > > > > > > > > > > > > on 6.15 but we are really glad to
+> > > > > > > > > > > > > > > help, would you please provide some
+> > > > > > > > > > > > > > > info,
+> > > > > > > > > > > > > > > 1. Suppose you are using Ubuntu, right? What's the version?
+> > > > > > > > > > > > > > > 2. 6.15, do you mean
+> > > > > > > > > > > > > > > https://github.com/torvalds/linux/tree/
+> > > > > > > > > > > > > > > v6.15 ?
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > After your confirmation, we'll see
+> > > > > > > > > > > > > > > what we can do to enable your camera
+> > > > > > > > > > > > > > > quickly and easily
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > Regards,
+> > > > > > > > > > > > > > > Bin
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > Thank you, Bin!
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > 1. I'm using Arch Linux with the ISP4-patched libcamera [1].
+> > > > > > > > > > > > > > 2. Yes, here is my kernel source [2].
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > I have some more findings:
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > Currently, the first blocking issue is
+> > > > > > > > > > > > > > that the I2C adapter fails to
+> > > > > > > > > > > > > > initialize.
+> > > > > > > > > > > > > > This is because the ISP tile isn't powered on.
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > I noticed that in the old version of
+> > > > > > > > > > > > > > amd_isp_i2c_designware [3], there were
+> > > > > > > > > > > > > > calls to isp_power_set(), which is
+> > > > > > > > > > > > > > available in the old ISP4 sources [4].
+> > > > > > > > > > > > > > Without isp_power_set(), the I2C adapter
+> > > > > > > > > > > > > > always fails to initialize for me.
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > How is the ISP tile supposed to get
+> > > > > > > > > > > > > > powered on in the current ISP4 code?
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > You are correct, yes, i believe the I2C
+> > > > > > > > > > > > > adapter failure is caused by ISP not
+> > > > > > > > > > > > > being powered up. Currently in latest code,
+> > > > > > > > > > > > > isp_power_set is no longer
+> > > > > > > > > > > > > available, instead, we implemented genPD for ISP in amdgpu
+> > > > > > > > > > > > > https://lore.kernel.org/all/20250618221923.3944751-1-
+> > > > > > > > > > > > > pratap.nirujogi@amd.com/
+> > > > > > > > > > > > > Both amd_isp_i2c and amd_isp_capture are in
+> > > > > > > > > > > > > the power domain and use the
+> > > > > > > > > > > > > standard runtime PM API to do the power control
+> > > > > > > > > > > > 
+> > > > > > > > > > > > Thanks for that link, I found it along with
+> > > > > > > > > > > > another patch on the list to make
+> > > > > > > > > > > > the fwnode work ("drm/amd/amdgpu: Initialize
+> > > > > > > > > > > > swnode for ISP MFD device").
+> > > > > > > > > > > > 
+> > > > > > > > > > > > > > Also, I noticed that the driver init
+> > > > > > > > > > > > > > ordering matters between all of the
+> > > > > > > > > > > > > > drivers
+> > > > > > > > > > > > > > needed for the ISP4 camera. In
+> > > > > > > > > > > > > > particular, amd_isp_i2c_designware and
+> > > > > > > > > > > > > > amd_isp4
+> > > > > > > > > > > > > > must be initialized before amd_capture,
+> > > > > > > > > > > > > > otherwise amd_capture will fail to find
+> > > > > > > > > > > > > > the fwnode properties for the OV05C10
+> > > > > > > > > > > > > > device attached to the I2C bus.
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > But there is no driver init ordering
+> > > > > > > > > > > > > > enforced, which also caused some issues
+> > > > > > > > > > > > > > for
+> > > > > > > > > > > > > > me until I figured it out. Maybe probe
+> > > > > > > > > > > > > > deferral (-EPROBE_DEFER) should be used
+> > > > > > > > > > > > > > to ensure each driver waits for its dependencies to init first?
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > amd_isp_capture only has dependency on
+> > > > > > > > > > > > > amd_isp4 which is the ACPI platform
+> > > > > > > > > > > > > driver, it is init before amd_isp_catpure.
+> > > > > > > > > > > > > Do you see in your side the amd_capture
+> > > > > > > > > > > > > probe failure caused by failing to
+> > > > > > > > > > > > > read fwnode properties? If that's the case
+> > > > > > > > > > > > > please help to check if amd_isp4
+> > > > > > > > > > > > > is loaded successfully
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I got much further now: there aren't any driver
+> > > > > > > > > > > > initialization errors, but when
+> > > > > > > > > > > > I open the camera, there's no image. The camera
+> > > > > > > > > > > > LED turns on so it's active.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > And then shortly afterwards, amdgpu dies and the
+> > > > > > > > > > > > entire system freezes.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I've attached my full dmesg, please let me know
+> > > > > > > > > > > > what you think. Thanks!
+> > > > > > > > > > > 
+> > > > > > > > > > > I almost forgot, here is my current kernel tree:
+> > > > > > > > > > > https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.16-
+> > > > > > > > > > > sultan-isp4
+> > > > > > > > > > > 
+> > > > > > > > > > > Sultan
+> > > > > > > > > > 
+> > > > > > > > > > Thanks Sultan, yes, seems much close to the final
+> > > > > > > > > > success. Will have some
+> > > > > > > > > > internal discussion.
+> > > > > > > > > 
+> > > > > > > > > I got the webcam working. The same bug happened when I tried
+> > > > > > > > > Ubuntu's linux-oem
+> > > > > > > > > kernel, which made me think that the issue was firmware.
+> > > > > > > > > 
+> > > > > > > > > And indeed, the culprit was a firmware update from February. I bisected
+> > > > > > > > > linux-firmware and found the commit which broke the webcam for me:
+> > > > > > > > > 
+> > > > > > > > >       commit 1cc8c1bfa11251ce8bfcc97d1f15e312f7fe4df0 (HEAD)
+> > > > > > > > >       Author: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> > > > > > > > >       Date:   Wed Feb 19 12:16:51 2025 -0500
+> > > > > > > > > 
+> > > > > > > > >           amdgpu: Update ISP FW for isp v4.1.1
+> > > > > > > > > 
+> > > > > > > > >           From internal git commit:
+> > > > > > > > >           5058202443e08a673b6772ea6339efb50853be28
+> > > > > > > > > 
+> > > > > > > > >           Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> > > > > > > > > 
+> > > > > > > > >        amdgpu/isp_4_1_1.bin | Bin 4543184 -> 6083536 bytes
+> > > > > > > > >        1 file changed, 0 insertions(+), 0 deletions(-)
+> > > > > > > > > 
+> > > > > > > > > Downgrading firmware to before that commit fixes the webcam.
+> > > > > > > > > Any idea why?
+> > > > > > > > > 
+> > > > > > > > > Thanks,
+> > > > > > > > > Sultan
+> > > > > > > > 
+> > > > > > > > So, can i say the working firmware binary is this one?
+> > > > > > > > 
+> > > > > > > > Commit 8f070131
+> > > > > > > > amdgpu: Update ISP FW for isp v4.1.1
+> > > > > > > > 
+> > > > > > > >    From internal git commit:
+> > > > > > > > 39b007366cc76ef8c65e3bc6220ccb213f4861fb
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> > > > > > > 
+> > > > > > > Correct.
+> > > > > > > 
+> > > > > > > > There are too many changes between them, so i can't tell exactly which
+> > > > > > > > change caused this. So, from my side
+> > > > > > > > 1. Will try these two firmware to see if we have the same issue.
+> > > > > > > > 2. It has been quite a long time since last release, will see if need to
+> > > > > > > > release a latest one.
+> > > > > > > 
+> > > > > > > Thanks. It was a quick bisect for me, so I'm happy to help test if a
+> > > > > > > bisect
+> > > > > > > between those two internal git commits is needed.
+> > > > > > > 
+> > > > > > Really appreciate your test.
+> > > > > > > In case it makes a difference, I have the laptop with the 2.8K OLED
+> > > > > > > display. I'm
+> > > > > > > aware there is one other display variant on other SKUs, which is a
+> > > > > > > WUXGA IPS.
+> > > > > > > 
+> > > > > > Good to know, I believe it won't make any difference for ISP
+> > > > > > 
+> > > > > > > Also, with that old firmware, my camera only works with the old isp4
+> > > > > > > driver from
+> > > > > > > that Linux_ISP_Kernel repo (which is the same isp4 driver used in
+> > > > > > > Ubuntu's
+> > > > > > > linux-oem kernel). Does the new isp4 driver you've submitted here
+> > > > > > > require newer
+> > > > > > > firmware than the old driver located in Linux_ISP_Kernel?
+> > > > > > > 
+> > > > > > > Sultan
+> > > > > > 
+> > > > > > We had a try, yes, both of the old FW can't work on the new ISP4 driver,
+> > > > > > as you know, for the last months, we did lots of driver modifications
+> > > > > > for upstream and cause it incompatible with old FW.
+> > > > > > Now, under internal discussion to upstream a new FW to support the new
+> > > > > > ISP driver
+> > > > > > 
+> > > > > > Regards,
+> > > > > > Bin
+> > > > > > 
+> > > > > > Hi Sultan,
+> > > > > 
+> > > > > This is the conclusion of your test,
+> > > > > Driver: https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
+> > > > > [1] It works on FW      8f070131(ext):39b00736(int)
+> > > > > [2] It can't work on FW 1cc8c1bf(ext):50582024(int)
+> > > > 
+> > > > Correct.
+> > > > 
+> > > > > Would you please help to check if CONFIG_VIDEO_OV05C is defined not in the
+> > > > > .config file when building the kernel? Our assumption is to make [1] work,
+> > > > > CONFIG_VIDEO_OV05C shouldn't be defined. to make [2] work,
+> > > > > CONFIG_VIDEO_OV05C should be defined.
+> > > > 
+> > > > Yes, it is enabled and I have only tested with it enabled:
+> > > > 
+> > > >       $ rg CONFIG_VIDEO_OV05C linux-oem-6.14/.config
+> > > >       CONFIG_VIDEO_OV05C=m
+> > > > 
+> > > > That's the Ubuntu linux-oem-6.14 kernel. You can get the full source and .config
+> > > > I tested by running the following commands:
+> > > > 
+> > > >       git clone https://git.launchpad.net/ubuntu/+source/linux-oem-6.14 -b applied/6.14.0-1006.6
+> > > >       cd linux-oem-6.14
+> > > >       python debian/scripts/misc/annotations -e --arch amd64 > .config
+> > > >       make olddefconfig
+> > > > 
+> > > > Let me know if that works.
+> > > > 
+> > > > Sultan
+> > > 
+> > > Thanks Sultan for the details, yes, we can reproduce the same issue on old
+> > > isp driver 4.0 release on FW 1cc8c1bf(ext):50582024(int), after debug, the
+> > > cause is
+> > >    - ov05c sensor device is added by amd i2c driver
+> > >    - When ov05c sensor driver probes, it will try to get gpio description but
+> > > it will fail because the amd-pinctl driver which creates the gpio resource
+> > > hasn't been loaded yet.
+> > >    - the ov05c sensor driver probe failure will finally make sensor not able
+> > > to work when start streaming
+> > > 
+> > > Add following patch is supposed to fix this issue to make it work on FW
+> > > 1cc8c1bf(ext):50582024(int) when CONFIG_VIDEO_OV05C is defined.
+> > > 
+> > > @@ -1121,6 +1129,7 @@ static struct i2c_driver ov05_i2c_driver = {
+> > > 
+> > > module_i2c_driver(ov05_i2c_driver);
+> > > 
+> > > +MODULE_SOFTDEP("pre: pinctrl-amdisp");
+> > > MODULE_ALIAS("ov05");
+> > > MODULE_DESCRIPTION("OmniVision OV05 sensor driver");
+> > > MODULE_LICENSE("GPL and additional rights");
+> > > 
+> > > Please help to see if it works if you get time.
+> > 
+> > There is no difference I'm afraid. I applied the patch and tested with FW
+> > 1cc8c1bf(ext):50582024(int) and the webcam is still broken on that FW:
+> > 
+> >    [   19.523006] amd_isp_capture amd_isp_capture.1.auto: amdgpu: Preview(fw_run:0)|start_streaming
+> >    [   19.537000] amd_isp_capture amd_isp_capture.1.auto: ISP FW boot suc!
+> >    [   19.537009] amd_isp_capture amd_isp_capture.1.auto: amdgpu: starting Phy
+> >    [   19.537050] PHY register access test success!
+> >    [   19.537901] Termination calibration observability: 0x0
+> >    [   19.539926] Wait for phyReady: 0x0
+> >    [   19.541932] Wait for phyReady: 0x1
+> >    [   20.901654] amd_isp_capture amd_isp_capture.1.auto: -><- fail respid Unknown respid(0x30002)
+> >    [   22.070676] amd_isp_capture amd_isp_capture.1.auto: -><- fail respid Unknown respid(0x30002)
+> >    ...
+> >    [   28.769372] amd_isp_capture amd_isp_capture.1.auto: amdgpu: Preview(fw_run:1)|stop_streaming
+> >    [   28.769388] amd_isp_capture amd_isp_capture.1.auto: amdgpu: stopping Phy
+> >    [   28.769868] amd_isp_capture amd_isp_capture.1.auto: isp_rm_cmd_from_cmdq_by_stream: fail empty cmd q, stream[1]
+> >    [   28.771799] amd_isp_capture amd_isp_capture.1.auto: isp_rm_cmd_from_cmdq_by_stream: fail empty cmd q, stream[0]
+> > 
+> > Sultan
 > 
-> [...]
+> That's really weird, I tested kernel built from
+> https://github.com/amd/Linux_ISP_Kernel/tree/4.0 with CONFIG_VIDEO_OV05C=m
+> and above sensor driver probe failure patch on FW c8c1bf(ext):50582024(int),
+> camera APPs like cheese, qv4l2, Camera all work well.
 > 
->>>>>>>>>> I understand that this is a static configuration, where it
->>>>>>>>>> is already known
->>>>>>>>> that board is broken for higher Gear.
->>>>>>>>>> Can this be achieved by limiting the clock? If not, can we
->>>>>>>>>> add a board
->>>>>>>>> specific _quirk_ and let the _quirk_ to be enabled from
->>>>>>>>> vendor specific hooks?
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> How can we limit the clock without limiting the gears? When
->>>>>>>>> we limit the gear/mode, both clock and power are implicitly
->>> limited.
->>>>>>>>>
->>>>>>>> Possibly someone need to check with designer of the SoC if
->>>>>>>> that is possible
->>>>>>> or not.
->>>>>>>
->>>>>>> It's not just clock. We need to consider reducing regulator,
->>>>>>> interconnect votes also. But as I said above, limiting the
->>>>>>> gear/mode will take care of all these parameters.
->>>>>>>
->>>>>>>> Did we already tried _quirk_? If not, why not?
->>>>>>>> If the board is so poorly designed and can't take care of the
->>>>>>>> channel loses or heat dissipation etc, Then I assumed the gear
->>>>>>>> negotiation between host and device should fail for the higher
->>>>>>>> gear and driver can have
->>>>>>> a re-try logic to re-init / re-try "power mode change" at the
->>>>>>> lower gear. Is that not possible / feasible?
->>>>>>>>
->>>>>>>
->>>>>>> I don't see why we need to add extra logic in the UFS driver if
->>>>>>> we can extract that information from DT.
->>>>>>>
->>>>>> You didnâ€™t answer my question entirely, I am still not able to
->>>>>> visualised how come Linkup is happening in higher gear and then
->>>>>> Suddenly
->>>>> it is failing and we need to reduce the gear to solve that?
->>>>>
->>>>> Oh well, this is the source of confusion here. I didn't (also the
->>>>> patch) claim that the link up will happen with higher speed. It will
->>>>> most likely fail if it couldn't operate at the higher speed and
->>>>> that's why we need to limit it to lower gear/mode *before* bringing the
->>> link up.
->>>>>
->>>> Right, that's why a re-try logic to negotiate a __working__ power mode
->>> change can help, instead of introducing new binding for this case.
->>>
->>> Retry logic is already in place in the ufshcd core, but with this kind of signal
->>> integrity issue, we cannot guarantee that it will gracefully fail and then we
->>> could retry. The link up *may* succeed, then it could blow up later also
->>> (when doing heavy I/O operations etc...). So with this non-deterministic
->>> behavior, we cannot rely on this logic.
->>>
->> I would image in that case , PHY tuning / programming is not proper.
+> Your failure still looks like sensor related, Would you help to add log to
+> sensor driver drivers/media/i2c/ov05c.c to see if its probe function gets
+> called and succeeds? Here is the log in success case,
 > 
-> I don't have the insight into the PHY tuning to avoid this issue. Maybe Nitin or
-> Ram can comment here. But PHY tuning is mostly SoC specific in the PHY driver.
-> We don't have board level tuning sequence AFIAK.
+> amd_isp_capture amd_isp_capture.1.auto: amdgpu: starting Phy
+> PHY register access test success!
+> Termination calibration observability: 0x0
+> Wait for phyReady: 0x0
+> Wait for phyReady: 0x1
+> amd_isp_capture amd_isp_capture.1.auto: amdgpu: starting camera sensor
+> amd_isp_capture amd_isp_capture.1.auto: isp_intf_start_stream,cid:0,sid:0
 
-Hi Alim and Mani,
+Debug log output:
 
-Here's my take:
+$ dmesg | rg SARU
+[    4.565697] amd-isp4 OMNI5C10:00: SARU: amd_isp_probe started...
+[    4.565753] amd-isp4 OMNI5C10:00: SARU: amd_isp_probe completed successfully
+[    6.937077] amd_isp_i2c_designware amd_isp_i2c_designware: SARU: amd_isp_dw_i2c_plat_probe started...
+[    6.937522] amdisp-pinctrl amdisp-pinctrl: SARU: amdisp_pinctrl_probe started...
+[    6.941264] amdisp-pinctrl amdisp-pinctrl: SARU: amdisp_pinctrl_probe completed successfully
+[    6.951967] amd_isp_i2c_designware amd_isp_i2c_designware: SARU: amd_isp_dw_i2c_plat_probe completed successfully
 
-There can be multiple reasons for limiting the gear/rate on a customer 
-board beyond PHY tuning issues:
+Log output when opening cheese:
 
-1. Board-level signal integrity concerns
-2. Channel or reference clock configuration issues
-3. Customer board layout not meeting layout design guidelines
+[   46.957925] amd_isp_capture amd_isp_capture.1.auto: amdgpu: Preview(fw_run:0)|start_streaming
+[   46.979797] amd_isp_capture amd_isp_capture.1.auto: ISP FW boot suc!
+[   46.979812] amd_isp_capture amd_isp_capture.1.auto: amdgpu: starting Phy
+[   46.979860] PHY register access test success!
+[   46.980565] Termination calibration observability: 0x0
+[   46.982598] Wait for phyReady: 0x0
+[   46.984634] Wait for phyReady: 0x1
+[   48.340154] amd_isp_capture amd_isp_capture.1.auto: -><- fail respid Unknown respid(0x30002)
+[   49.509505] amd_isp_capture amd_isp_capture.1.auto: -><- fail respid Unknown respid(0x30002)
+[   51.823498] amd_isp_capture amd_isp_capture.1.auto: amdgpu: Preview(fw_run:1)|stop_streaming
+[   51.823513] amd_isp_capture amd_isp_capture.1.auto: amdgpu: stopping Phy
+[   51.823962] amd_isp_capture amd_isp_capture.1.auto: isp_rm_cmd_from_cmdq_by_stream: fail empty cmd q, stream[1]
+[   51.825358] amd_isp_capture amd_isp_capture.1.auto: isp_rm_cmd_from_cmdq_by_stream: fail empty cmd q, stream[0]
 
-This becomes especially critical in automotive platforms like the 
-SA8155, as mentioned by Ram. In such safety-critical applications, 
-customer prioritize reliability over peak performance, and hence 
-customers are generally comfortable operating at lower gears if 
-stability is ensured.
+Patch applied to tree:
 
-For the current case customer had some issue #1 at their end(though 
-don't have complete details)
+--- a/drivers/i2c/busses/i2c-designware-amdisp.c
++++ b/drivers/i2c/busses/i2c-designware-amdisp.c
+@@ -42,2 +42,3 @@ static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
+ 	pdev->dev.init_name = DRV_NAME;
++	dev_info(&pdev->dev, "SARU: %s started...", __func__);
+ 
+@@ -95,2 +96,3 @@ static int amd_isp_dw_i2c_plat_probe(struct platform_device *pdev)
+ 
++	dev_info(&pdev->dev, "SARU: %s completed successfully", __func__);
+ 	return 0;
+--- a/drivers/media/i2c/ov05c.c
++++ b/drivers/media/i2c/ov05c.c
+@@ -1031,2 +1031,3 @@ static int ov05_probe(struct i2c_client *client)
+ 
++	dev_info(&client->dev, "SARU: %s started...", __func__);
+ 	ov05c = devm_kzalloc(&client->dev, sizeof(*ov05c), GFP_KERNEL);
+@@ -1081,2 +1082,3 @@ static int ov05_probe(struct i2c_client *client)
+ 
++	dev_info(&client->dev, "SARU: %s completed successfully", __func__);
+ 	return 0;
+@@ -1123,2 +1125,3 @@ module_i2c_driver(ov05_i2c_driver);
+ 
++MODULE_SOFTDEP("pre: pinctrl-amdisp");
+ MODULE_ALIAS("ov05");
+--- a/drivers/pinctrl/pinctrl-amdisp.c
++++ b/drivers/pinctrl/pinctrl-amdisp.c
+@@ -183,2 +183,3 @@ static int amdisp_pinctrl_probe(struct platform_device *pdev)
+ 	pdev->dev.init_name = DRV_NAME;
++	dev_info(&pdev->dev, "SARU: %s started...", __func__);
+ 
+@@ -215,2 +216,3 @@ static int amdisp_pinctrl_probe(struct platform_device *pdev)
+ 
++	dev_info(&pdev->dev, "SARU: %s completed successfully", __func__);
+ 	return 0;
+--- a/drivers/platform/x86/amd/amd_isp4.c
++++ b/drivers/platform/x86/amd/amd_isp4.c
+@@ -365,2 +365,3 @@ static int amd_isp_probe(struct platform_device *pdev)
+ 
++	dev_info(&pdev->dev, "SARU: %s started...", __func__);
+ 	pinfo = device_get_match_data(&pdev->dev);
+@@ -388,2 +389,3 @@ static int amd_isp_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, isp4_platform);
++	dev_info(&pdev->dev, "SARU: %s completed successfully", __func__);
+ 	return 0;
 
-As Mani pointed out, issues are more likely to surface under stress 
-conditions rather than during link startup. Therefore, IMHO if any 
-limitations are known, it's advisable to restrict the gear/rate during 
-initialization to avoid potential problems later.
-
-Moreover, introducing quirks for such cases isnâ€™t very effective, as it 
-requires specifying the exact gear/rate to be limitedâ€”which can vary 
-significantly across different targets.
-
-Regards,
-Nitin
-
-> 
->>
->>>> And that approach can be useful for many platforms.
->>>
->>> Other platforms could also reuse the same DT properties to workaround
->>> similar issues.
->>>
->>>> Anyway coming back with the same point again and again is not productive.
->>>> I gave my opinion and suggestions. Rest is on the maintainers.
->>>
->>> Suggestions are always welcomed. It is important to have comments to try
->>> out different things instead of sticking to the proposed solution. But in my
->>> opinion, the retry logic is not reliable in this case. Moreover, we do have
->>> similar properties for other peripherals like PCIe, MMC, where the vendors
->>> would use DT properties to limit the speed to workaround the board issues.
->>> So we are not doing anything insane here.
->>>
->>> If there are better solutions than what is proposed here, we would indeed
->>> like to hear.
->>>
->> For that, more _technical_ things need to be discussed (e.g. Is it the PHY which has problem, or problem is happening at unipro level or somewhere else),
->> I didn't saw any technical backing from the patch Author/Submitter
->> (I assume Author should be knowing a bit more in-depth then what we are assuming and discussing here).
->>
-> 
-> Nitin/Ram, please share more details on what level the customer is facing the
-> issue.
-> 
-> - Mani
-> 
-
+Sultan
 
