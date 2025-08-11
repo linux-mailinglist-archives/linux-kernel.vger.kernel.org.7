@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-762589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FFFB208C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:26:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33889B208C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51F9160D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:26:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0EC57AE5D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362412D9ED6;
-	Mon, 11 Aug 2025 12:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75332D3755;
+	Mon, 11 Aug 2025 12:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="FZOHRrf8"
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HyYMSUYR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oB5B3nKa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B2B2D3A63;
-	Mon, 11 Aug 2025 12:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099C12D29D0
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915141; cv=none; b=tqQzH9GtJNZ9/HNYeBIwfeDp2i1Ffx63YVOn6xpK2Wa0DZe1qneu3hA7hamAfEwnTgz7T6bYbfSCfOtUYAOl+7Ypx1IaDcV495bDLdi7v0XEEtp0aKme8/ECfBDqjpPZ4tH9XnileM2zUua3em7dp7S5H1NTDOVlkGeVk4l++MQ=
+	t=1754915258; cv=none; b=O9Gmh8snnKIGZOttkzxO4CcosKsLbKu12nrQ7PcW6jtYGnMlOWN8b2vexCrulYdXIaT5gEzFXPez/pfVZom3lP3bOHZX/lDLDQgMH73LY4b4LLiaFyihisCIpUaOtOAzFO0YqIYLgSeWndRDlU2V4pdSiIZxeGm2rdGebpOHiAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915141; c=relaxed/simple;
-	bh=fyMJVnzq19HoVjaJWvf7zLPkT0rLDLhUHH3rd92MRNA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=uN4CxbaMzC5vjqFifRIPALow2Gp7MoxncrfZgca0uFZ/tGvRaM2sx+9OQDGYYCkkH5j7TCA1g9uAGNqwfnAEaitU6fV6VqMOSxYVuAaj1so7OC+Es51t8iHOs9tDkYsZlKaFnL7o5gWjw+ezKhp4ZsQxBwB3s09hqW0UHEd+hRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=FZOHRrf8; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HQe9woX2qSiEsy9FbidNroRd+9loJaekn/V3lZ85QLU=; b=FZOHRrf86TSOMsy4/15ub+Z+BD
-	LFbTet6eHpszyszaAIgHBKCELIE6ELVmG9t0q5MtPAXmIDQnu9jk7AaDWU7C4jsRh1EVkP36kjE1C
-	FknDVlbBbi0qjZg36w5NVnF6/nFceObERAjqBq7xb3mJ7fGrtDtIVerLQgUFq8g02YwO6Gc+/9UEb
-	W4ObIv2mkyHZll42KKRpckO6O8vZMEgt3mCe3Nk6eTTV3lw1isaKLX8lgvoHIQ0FOUGaf8i0KVJPL
-	696iQTN4PrVe24KXtS7mR0i28+vlv5ZLEV7MLfvHesRJ6WazuDl6ztgxaBt4ivFhKvAzJ/cJXbP3A
-	fm7trYkw==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1ulRai-000000002Wy-3vkP;
-	Mon, 11 Aug 2025 09:25:28 -0300
-Message-ID: <9ab64c5bd90474a5e57c73cc0c48f612@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
- Enzo Matsumiya <ematsumiya@suse.de>
-Cc: dhowells@redhat.com, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey
- <tom@talpey.com>, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix collect_sample() to handle any iterator type
-In-Reply-To: <324664.1754897644@warthog.procyon.org.uk>
-References: <324664.1754897644@warthog.procyon.org.uk>
-Date: Mon, 11 Aug 2025 09:25:23 -0300
+	s=arc-20240116; t=1754915258; c=relaxed/simple;
+	bh=XsvfqUPtKZ4R5JsYCTQxyoTypXysanL0Qk+TBWV/LGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEKy2OrNunbHF9KQOnLRhHfu4gUTvTKlzoOVudSZPT/ueM4rXdLvtfQxMuhS5SuEGjBKPMQdgPh0m8AP4x54q08BN2C6ulD3nRlyb4cUmKBVDD8wVAbRL+dFY5R2T+sh6iz6BJb4sVPQcZ4tniXjLexkfURnzfwmd6P4J2eALPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HyYMSUYR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oB5B3nKa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Aug 2025 14:27:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754915255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQI5GMXGo+/Qvjb0QyFw6bVuSkOSNieqkY7FKf2HmFE=;
+	b=HyYMSUYRsBGOKzroaOvxudXJBArX0Rr8PCDXFBeiXcnzvi9/sJeATeElZMshHLdT97qwmm
+	RSb6XFXxJ7S9wusFCZk92LJjD/zrznmcpWX4GUqjFmzMHON+N/3h8NQcYwB/PRoOc4Ute/
+	odoweamFyBit1r/MwywcJEweANd62uGvpcbPIohV9Lvfz6B/LWAuo9lFC9DVi8wPsU3OjX
+	nOeA0oboQgduvLl9w3KzQkEZ1Puz1jnNs/VDo4DKhRf46h/+xzA9uZ3Hc4xcTTYmm/gA2s
+	olbVMqM576nb71QiAMaYlaJE+d0Ofn4RLFYkte5lJmpEKqq3PR6ZIUUbDSeKmg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754915255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQI5GMXGo+/Qvjb0QyFw6bVuSkOSNieqkY7FKf2HmFE=;
+	b=oB5B3nKaOAvbytCSJtKjNE4hCvjhTuzvbnUDPZj+xWvBWS9udIV24+2kN6BTBNJi3P5epJ
+	C0oFhKgO05w2jqBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
+ pi_blocked_on is set
+Message-ID: <20250811122733.U8EJGatr@linutronix.de>
+References: <20250728201441.GA4690@redhat.com>
+ <aIh5QajyaVT7MtVp@uudg.org>
+ <20250729114702.GA18541@redhat.com>
+ <aIjCYEkgNvVpMYCS@uudg.org>
+ <20250729130936.GB18541@redhat.com>
+ <20250801102428.GB27835@redhat.com>
+ <20250811105948.OafBprND@linutronix.de>
+ <20250811110617.GB5250@redhat.com>
+ <20250811121607.Z6G889tB@linutronix.de>
+ <20250811121951.GD5250@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250811121951.GD5250@redhat.com>
 
-David Howells <dhowells@redhat.com> writes:
+On 2025-08-11 14:19:51 [+0200], Oleg Nesterov wrote:
+> > > Yes. I'll send the simple patch when this patch from Luis is merged.
+> >
+> > Okay. Let me cover then the other instances.
+> 
+> I was going to update them all, but feel free to do.
 
-> collect_sample() is used to gather samples of the data in a Write op for
-> analysis to try and determine if the compression algorithm is likely to
-> achieve anything more quickly than actually running the compression
-> algorithm.
->
-> However, collect_sample() assumes that the data it is going to be sampling
-> is stored in an ITER_XARRAY-type iterator (which it now should never be)
-> and doesn't actually check that it is before accessing the underlying
-> xarray directly.
->
-> Fix this by replacing the code with a loop that just uses the standard
-> iterator functions to sample every other 2KiB block, skipping the
-> intervening ones.  It's not quite the same as the previous algorithm as it
-> doesn't necessarily align to the pages within an ordinary write from the
-> pagecache.
->
-> Note that the btrfs code from which this was derived samples the inode's
-> pagecache directly rather than the iterator - but that doesn't necessarily
-> work for network filesystems if O_DIRECT is in operation.
->
-> Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanup")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Enzo Matsumiya <ematsumiya@suse.de>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: Shyam Prasad N <sprasad@microsoft.com>
-> cc: Tom Talpey <tom@talpey.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/compress.c |   71 +++++++++++++----------------------------------
->  1 file changed, 21 insertions(+), 50 deletions(-)
+Oh no. Please do cover them all and I review then. I understood that you
+make a single patch for a single instance.
 
-Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+> Oleg.
+
+Sebastian
 
