@@ -1,170 +1,151 @@
-Return-Path: <linux-kernel+bounces-762514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F239CB207DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:30:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987D5B20820
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 258757A7604
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:28:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 963894E310A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654CB2D6625;
-	Mon, 11 Aug 2025 11:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfsFj2CH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD41F2D29C8;
+	Mon, 11 Aug 2025 11:46:50 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837822D640D;
-	Mon, 11 Aug 2025 11:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B18E2BF017
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911627; cv=none; b=ClSIbvhbNJGE3wKatsgqdClIbOPu0WOFEbUZrGrLtA4Cirk0hgTGRVW+gxkBQ5METOzW3Rjpbwpr/1VD0V2W6gXXEBLB5Adb3okiir3XFVd0ywzZH4oWuMB3YtMqKTtNBqoGOz3k1LGV/0ISR3vX2I3sSSup+05jpGuY8z5SwxY=
+	t=1754912810; cv=none; b=uT75ha6BF7Jssu3ISridvE3+LE9YShX2DeT5O0+5y8cbzBqjZjQOjZaUhoitEJ3WOcIfZV1ZWtsYqN34TNhV7Ob0xuh5LflPYoiznI9mR1rsUjarvw5RZLYlg6wt0X2jF0mjue2xc9yG7kJ3/l3ujrCpPWlHT+K9B3Ftx2T2IGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911627; c=relaxed/simple;
-	bh=bdl1TE3wEYNNmMpNx13gcAItLicZx/LsJ5QraJekwKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BIk3fXt795Nrxce9BdyqdHxayZyRrz21miOCLa2CvubnqRDYKVrw4ww0YE5jYDWEyAoOyFyPTCVIcDJr7uhPQbVWNFwoXmtHaAlKm5eq1Si1P6Y8hZiRPf+fdtn40c8YD7ku02zrIeRy+q/7YPgfyr2+KFmmDo9AUWgdJT+XDHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfsFj2CH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709A3C4CEFC;
-	Mon, 11 Aug 2025 11:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754911627;
-	bh=bdl1TE3wEYNNmMpNx13gcAItLicZx/LsJ5QraJekwKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pfsFj2CHlM89z0ZFtuDWWiWZpASfQ+arxzO+KODnqrurzTtbgAzfQmWC2OIa1vpbh
-	 bqe7Om44PlUC7J5obfnA62AIv0d/HP3MnYE9H6gM8hYja7qPYrtDnxqyFbCakKG3qg
-	 JC2RNj/YO4VzR4fPeIOblpNm95j4QQ7e+WzpzBkLyMNvIqI/PrTLtSHxNN0i8sxv9n
-	 A1JykCB1kJOJ5wDh9iMWLOtbb9aLo+xLpmg5v8gRestcNTjO8VNHosJoEQUAggyOEC
-	 iDQ3tEBdPXG1o9TzwpKKjIPMf7hZ1Ud/jLmndzjmtKAnew3HD2fqWsSf8W6xLew/NU
-	 dX2EUMYakuEpA==
-Date: Mon, 11 Aug 2025 13:27:01 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Askar Safin <safinaskar@zohomail.com>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-Message-ID: <5hwvf2iikfly5etcjmjmwvvlwwjx24vcxtcx5ph2tyddjei7ea@wismq7gycqtq>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <1988f5c48ef.e4a6fe4950444.5375980219736330538@zohomail.com>
- <2025-08-09.1754760145-silky-magic-obituary-sting-3OnpC7@cyphar.com>
+	s=arc-20240116; t=1754912810; c=relaxed/simple;
+	bh=GOIeHwDBaAlwbrutr3PO+Prmk0wFxAN2n1PBTfsTmko=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BTt4ztR0xYGrR7UWyO2IaojDuOiNWoJ+o/m5aklpuPvocnagC735uWZ+ynmpxwLg4bfu+9rTafXgOwjdMYbL0JyCIY1bn4Z4DE+GKzTvIgrl7pEeLDXQazLhLe4c3vuqA5FQkIN0716JqNpTkHlMeOKawgzYmc8l88cW15d5zGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c0sgS4cPXzdc8H;
+	Mon, 11 Aug 2025 19:22:44 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9B71E18007F;
+	Mon, 11 Aug 2025 19:27:03 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 11 Aug 2025 19:27:02 +0800
+Subject: Re: [PATCH] ubifs: Simplify the code and remove unnecessary
+ parameters.
+To: Xichao Zhao <zhao.xichao@vivo.com>, <richard@nod.at>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250811101529.436635-1-zhao.xichao@vivo.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <36b86ba2-504a-11b0-ec1b-3b39bd978251@huawei.com>
+Date: Mon, 11 Aug 2025 19:27:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mhkatt56p6lnibbw"
-Content-Disposition: inline
-In-Reply-To: <2025-08-09.1754760145-silky-magic-obituary-sting-3OnpC7@cyphar.com>
+In-Reply-To: <20250811101529.436635-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
+ÔÚ 2025/8/11 18:15, Xichao Zhao Ð´µÀ:
+> Remove the parameter '*c' from the ubifs_crc_node function,
+> and replace part of the code using ubifs_crc_node.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>   fs/ubifs/io.c    | 13 ++++---------
+>   fs/ubifs/ubifs.h |  2 +-
+>   2 files changed, 5 insertions(+), 10 deletions(-)
+> 
 
---mhkatt56p6lnibbw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Askar Safin <safinaskar@zohomail.com>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <1988f5c48ef.e4a6fe4950444.5375980219736330538@zohomail.com>
- <2025-08-09.1754760145-silky-magic-obituary-sting-3OnpC7@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <2025-08-09.1754760145-silky-magic-obituary-sting-3OnpC7@cyphar.com>
+Hi, I think the code of crc calculation in fix_size_in_place() can be 
+replaced too. If not, we could make ubifs_crc_node() be static.
 
-Hi Aleksa,
+> diff --git a/fs/ubifs/io.c b/fs/ubifs/io.c
+> index a79f229df475..6c6d68242779 100644
+> --- a/fs/ubifs/io.c
+> +++ b/fs/ubifs/io.c
+> @@ -327,8 +327,6 @@ int ubifs_check_node(const struct ubifs_info *c, const void *buf, int len,
+>    */
+>   void ubifs_pad(const struct ubifs_info *c, void *buf, int pad)
+>   {
+> -	uint32_t crc;
+> -
+>   	ubifs_assert(c, pad >= 0);
+>   
+>   	if (pad >= UBIFS_PAD_NODE_SZ) {
+> @@ -343,8 +341,7 @@ void ubifs_pad(const struct ubifs_info *c, void *buf, int pad)
+>   		ch->len = cpu_to_le32(UBIFS_PAD_NODE_SZ);
+>   		pad -= UBIFS_PAD_NODE_SZ;
+>   		pad_node->pad_len = cpu_to_le32(pad);
+> -		crc = crc32(UBIFS_CRC32_INIT, buf + 8, UBIFS_PAD_NODE_SZ - 8);
+> -		ch->crc = cpu_to_le32(crc);
+> +		ubifs_crc_node(buf, UBIFS_PAD_NODE_SZ);
+>   		memset(buf + UBIFS_PAD_NODE_SZ, 0, pad);
+>   	} else if (pad > 0)
+>   		/* Too little space, padding node won't fit */
+> @@ -395,7 +392,7 @@ void ubifs_init_node(struct ubifs_info *c, void *node, int len, int pad)
+>   	}
+>   }
+>   
+> -void ubifs_crc_node(struct ubifs_info *c, void *node, int len)
+> +void ubifs_crc_node(void *node, int len)
+>   {
+>   	struct ubifs_ch *ch = node;
+>   	uint32_t crc;
+> @@ -432,7 +429,7 @@ int ubifs_prepare_node_hmac(struct ubifs_info *c, void *node, int len,
+>   			return err;
+>   	}
+>   
+> -	ubifs_crc_node(c, node, len);
+> +	ubifs_crc_node(node, len);
+>   
+>   	return 0;
+>   }
+> @@ -469,7 +466,6 @@ void ubifs_prepare_node(struct ubifs_info *c, void *node, int len, int pad)
+>    */
+>   void ubifs_prep_grp_node(struct ubifs_info *c, void *node, int len, int last)
+>   {
+> -	uint32_t crc;
+>   	struct ubifs_ch *ch = node;
+>   	unsigned long long sqnum = next_sqnum(c);
+>   
+> @@ -483,8 +479,7 @@ void ubifs_prep_grp_node(struct ubifs_info *c, void *node, int len, int last)
+>   		ch->group_type = UBIFS_IN_NODE_GROUP;
+>   	ch->sqnum = cpu_to_le64(sqnum);
+>   	ch->padding[0] = ch->padding[1] = 0;
+> -	crc = crc32(UBIFS_CRC32_INIT, node + 8, len - 8);
+> -	ch->crc = cpu_to_le32(crc);
+> +	ubifs_crc_node(node, len);
+>   }
+>   
+>   /**
+> diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
+> index 5db45c9e26ee..5d172509091a 100644
+> --- a/fs/ubifs/ubifs.h
+> +++ b/fs/ubifs/ubifs.h
+> @@ -1743,7 +1743,7 @@ int ubifs_write_node_hmac(struct ubifs_info *c, void *buf, int len, int lnum,
+>   int ubifs_check_node(const struct ubifs_info *c, const void *buf, int len,
+>   		     int lnum, int offs, int quiet, int must_chk_crc);
+>   void ubifs_init_node(struct ubifs_info *c, void *buf, int len, int pad);
+> -void ubifs_crc_node(struct ubifs_info *c, void *buf, int len);
+> +void ubifs_crc_node(void *buf, int len);
+>   void ubifs_prepare_node(struct ubifs_info *c, void *buf, int len, int pad);
+>   int ubifs_prepare_node_hmac(struct ubifs_info *c, void *node, int len,
+>   			    int hmac_offs, int pad);
+> 
 
-On Sun, Aug 10, 2025 at 03:32:25AM +1000, Aleksa Sarai wrote:
-> On 2025-08-09, Askar Safin <safinaskar@zohomail.com> wrote:
-> > I plan to do a lot of testing of "new" mount API on my computer.
-> > It is quiet possible that I will find some bugs in these manpages durin=
-g testing.
-> > (I already found some, but I'm not sure.)
-> > I think this will take 3-7 days.
-> > So, Alejandro Colomar, please, don't merge this patchset until then.
->=20
-> I don't plan to work on this again for the next week at least (I've
-> already spent over a week on these docs -- writing, rewriting, and then
-> rewriting once more for good measure; I've started seeing groff in my
-> nightmares...), so I will go through review comments after you're done.
->
-> There are some rough edges on these APIs I found while writing these
-> docs, so I plan to fix those this cycle if possible (hopefully those
-> aren't the bugs you said you found in the docs). Two of the fixes have
-> already been merged in the vfs tree for 6.18 (the -ENODATA handling bug,
-> as well as a bug in open_tree_attr() that would've let userspace trigger
-> UAFs). (Once 6.18 is out, I will send a follow-up patchset to document
-> the fixes.)
->=20
-> FYI, I've already fixed the few ".BR \% FOO" typos. (My terminal font
-> doesn't have a bold typeface, so when reviewing the rendered man-pages,
-> mistakes involving .B are hard to spot.)
-
-You can review in PDF if you want.  See the pdfman(1) script under
-src/bin/.  It's quite portable:
-
-	$ cat src/bin/pdfman=20
-	#!/bin/bash
-	#
-	# Copyright, the authors of the Linux man-pages project
-	# SPDX-License-Identifier: GPL-3.0-or-later
-
-	set -Eeuo pipefail;
-	shopt -s lastpipe;
-
-	printf '%s\n' "${!#}.XXXXXX" \
-	| sed 's,.*/,,' \
-	| xargs mktemp -t \
-	| read -r tmp;
-
-	man -Tpdf "$@" >"$tmp";
-	xdg-open "$tmp";
-
-It works essentially like man(1), so you can pass any man(7) file as its
-argument to read it as a PDF.
-
-(You may or may not have it available in your system, if your distro
- packages a recent enough version of the project.)
-
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---mhkatt56p6lnibbw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiZ04UACgkQ64mZXMKQ
-wqn+Rg//cE0D1ACdqwB97w+VJ4X/09FRWYkNzZjdiAxipsgcbWHrt8mugn7T20mt
-BoePq0DkHPiRIA3TX6wnYQzkHBaji4Ncv9R4pe3yxWAoFa6KXbghhmaAePg/xHqi
-f7GlMVsx/8bSgXm+7cE/V+GRcSK9xLIzYCLRaNyZwaejt2GnNuZNpcvqkAsXi8dQ
-MPf4kAQpflai7RRnK3+EDPuqp5W0u76okd5TdXNvnA28Rg5DJOFGNqyK9qM0wjFE
-RGhWe0AlFdagzJB2AYawyyRJ1FpDZgtEs8y1C7v3Bxmt+XcxwdA7WsEpJvotF4Cp
-Dbq3fGNKKf/nCsminEtRj5h/ETdjPGT7Nd5BegwElDSFSAHTrvpt8S+rwlqG3fFM
-TFSqtSCezQkWH0bzdHKLXea5vSJ9bF4yzsS97FnaflZkHgVBKosJVrKA1zAeHfj2
-8JXEHp1wZEaWPDKOPv5wfJCRVuLXORxL/yqa+FOIgbk9u0JeGQKCltdcpMepqPiu
-bo5O2XRBDGf9KlMLjcrieZ3HWWYcmXe1uCM1+N6I1DBYSeOzKdv4e4d2U2AyueXI
-rHR/OT01pVwR6NmulQCjnbwDWsR7h6qJII+BnEyzyiPnvH2TYtRoZA1+cov6Z0Fa
-/w0TNO9CSPh4AKSpB4aTyTiPjfk6r+q+FE34Fun639xFhKT4ZOc=
-=TBCD
------END PGP SIGNATURE-----
-
---mhkatt56p6lnibbw--
 
