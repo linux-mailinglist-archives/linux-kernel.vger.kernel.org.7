@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-762821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C356B20B2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AB6B20B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136A51883DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168C73B0AE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00339244685;
-	Mon, 11 Aug 2025 14:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D929A214204;
+	Mon, 11 Aug 2025 14:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYPDMmnO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giaaLUpK"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D3B23ED76
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D361A20B207
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920946; cv=none; b=RZ6s0yMXiQYtUNgsanQYgcaeQ9GxkBWyyfIUi/+Mpiw0NoxgFbr8DWbPZcDUJXohym1KND3nO4DLKFqmVXymEH3i1LVRuuXMAO1qsTSoaV2yGJL5fC6VyB2BuRNfDHDreDQ3EL8XKR5qTTz+3gnTcBm8Qkf5GGtFG0i2f/r+MEs=
+	t=1754920998; cv=none; b=tx21kaq0SP5IdZ1lO3xupj2kGtGVMYAQyp6SJZ/WAFp0ByOlo24FAlg+yKgOtQ9G2xNqL2fErKes8Bd4R7uwekve+yImrmanENZnYAi0N9t9Uu5BiuO/6sm1hM2Et424s5zsU/AhI3wL2I/7pFxRrq9EhqJjcGJ8RGcM49JU7Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920946; c=relaxed/simple;
-	bh=PBWiY0BOEoP72MaQZ2kz+hXaTBDNh+3RKPnzCU9vDF0=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kIGpVAoNUyRPbE+qkbLKDj21eAD8IDSUIxl7NwiZ7juo9Wbavlts0yVwgkKjvJuekCMCjiKDCFiHqe9/F/09e2/gdiCZE1sk6r9wcxIWY7QJE2YgoGu815e8jsUuU1Sqn+ZmR7Oj6ZBgOkpv4p9e+G1p/coWr3LcnC6V1du2NoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYPDMmnO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754920943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXCVL6y8aPD3KKxEM1gx0c5E0H9w4tmsi8l5+IrKhGs=;
-	b=JYPDMmnO9Z+vk32klgbXZ63GqNhzwI+1XMLdP7Y31Xx7hFNRTA3dfns1ugqVp1TAD9l5/4
-	/FN9IVJqu48rIQjz0QvqdoYD+OLEqrIKpgEHW8lGtSnrrdyID9fk7phNtm8eg7Dq2xc1Pk
-	9o4CsWmDVQ2hpoK3ZXR6u7d1w4nOo+w=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-9-0ZdjjcMrNxCgkzSaGXJk9g-1; Mon, 11 Aug 2025 10:02:17 -0400
-X-MC-Unique: 0ZdjjcMrNxCgkzSaGXJk9g-1
-X-Mimecast-MFC-AGG-ID: 0ZdjjcMrNxCgkzSaGXJk9g_1754920932
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-71839bc5591so64093367b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:02:12 -0700 (PDT)
+	s=arc-20240116; t=1754920998; c=relaxed/simple;
+	bh=w6egrbluYjyH+/2gaPgEShA3w+cVTQr3sSQ2l52QBH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OdS4WoWLjQEJa0jstLH4yfBu9X+6qCfdbTlZ3UYai63C/xuRxW5I1fGDgTkO6NpP2chbVl6gZ5u7HwKduA09gA8wDdp8VZMPsKIclL4VEG81FJYGW1dOJ2H+D+nPcxlmCXxmsHvZEb+kNREZnKap+SXfIb9nqL+ZyS0M//GDKpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=giaaLUpK; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71bd028bb5bso46566187b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:03:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754920994; x=1755525794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5HLJeGvuklMP7ATFsRoiARoYLmPkcqCC9xvrYga8Pl0=;
+        b=giaaLUpKMG03S9W9zcZVIalIStWGC6udaOhPwjImjPVlxVuIMhzXDSEs8rDGh7R2iX
+         gLLJw1lrXOFPi4pK4Zl5dG/DjCxl37fbvzaPwzhhdnYZ3SS/0AUSW1N118MCGQjEDn2z
+         s7txBQFJqSNpFpUNTQQg8pUo3qy5DLII664JHx+pGemG2EKxa54NLGNglihhNqS1kAs/
+         ahADYSaNbDu9kQBRqZ45h07G4Qsgk/A6hddF0qE56PHg1PXgHHGhUHk4DWX0PyrfGdqP
+         2sQJyiLniwqNuVjgUN9oxgtnXMmKVJmZ2KJQjZ0VkSOK3cbXEpoayiB4WEjnbYA/XP+Q
+         IVHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754920932; x=1755525732;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rXCVL6y8aPD3KKxEM1gx0c5E0H9w4tmsi8l5+IrKhGs=;
-        b=B7NxI65sLEHzF5Y/gbeuwxU/ItyroBAS05hDnmCj53ivldNywsXXYg8dtkvAdzfNvH
-         i6ytS6UbH7uPj/hhd0q8fTDDumgVPdpjCOmJI1k8tTenQNcWCr2Bcmc3OmrygisWIUgG
-         24kajyxPCuHjZdyf8x/W+4zz4aLXmbTWwbhsnu4G5o12hdVHaNpHjopx677tqmgnQo5K
-         R3N4fNDK6i1dJZ3VFHyWpl7is6GivIDX7gqIR+GFOtjxsrSvDVj881neJKvcPXrsxU6V
-         lBYHRFQMcquYMkZhgwtiVWHXkXUtsmZgdBhWtkGCCpdVHOrGnLHBhOdTNsz5Qqz+n8N/
-         n+Kw==
-X-Gm-Message-State: AOJu0Yzmq33ZzN0aTkOBPkPK6oBQ7+PKUEMCC9pVUV8AaBYGmc1eD1+z
-	Mtxj4qdV59xbrv8ZozcqzGvxH9ZMLUquddO6CpyMGFKLXuGkbKfo73xIc4pmiY4o7C1C/NhjQpf
-	AwAkfC1dobreoIINPRzYdvm+QZhI0ajYLeUwckdMCH8YoNqKYsbVeeWs6kHnRdidENg==
-X-Gm-Gg: ASbGncsALeuJw+WH4tY1TvO3VI5u6hzXfPdDxE3EhaQD9Dxm+guCRHkauJj3SyVDPoK
-	iDpX2498Ujzp3ZEf6zOMpuLpbEF+Rlm3QoluVAe/Q0+kf2+/ZB09bITP7OHRiATtCTu/P/EkX4G
-	Ri2hss3Xj5nNwUJ0XN756psYXuvT5FS3cwCnji7dWoUBUyM204JpfvvxrzAlzVOCRbg+BXMxSex
-	31HwRCgmwY5ewNymy7L1eVaffRQBCfeelXZu4B+n5amH/5gLQ8B9IYeRgpLIf5ogh+ATxMzidrm
-	zCIykOzxF/uRKA/mIxkwEE9I7pYvDtuOHyxWoPsp+FqsH+KyC1NuKJPqr7kCZ1R782bKQ2GC6mh
-	Bn7fPA/6Nvw==
-X-Received: by 2002:a05:690c:c92:b0:71b:8cc6:6d41 with SMTP id 00721157ae682-71bf0d1032cmr160295377b3.17.1754920931033;
-        Mon, 11 Aug 2025 07:02:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGkmukiGqhNKS9YkeyAI2dphd0kj1shFttrp7nfe9d/BF9URMMJinvskWz+nfybGEa1c1ZHA==
-X-Received: by 2002:a05:690c:c92:b0:71b:8cc6:6d41 with SMTP id 00721157ae682-71bf0d1032cmr160294437b3.17.1754920930255;
-        Mon, 11 Aug 2025 07:02:10 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71bf6c00033sm19811377b3.17.2025.08.11.07.02.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 07:02:08 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <abc42dd6-43fc-4a44-a839-477c693e5dff@redhat.com>
-Date: Mon, 11 Aug 2025 10:02:07 -0400
+        d=1e100.net; s=20230601; t=1754920994; x=1755525794;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5HLJeGvuklMP7ATFsRoiARoYLmPkcqCC9xvrYga8Pl0=;
+        b=qGnADY1qKSqVb11dIEQSXXlPNePnhBJRM0uO4aeR+aJl7q+uhYuMSkbCxUkR9Lm3vU
+         ahWaQC/Ux4cWIyF3XPOU7zrwsRXCm5QthHMX5tIV0ThDfeKnUuf1sBaocEmNQO8m8NNN
+         cs44qAunsFQoiESI7b6Ugje9pa2Gyw1WtwukhvuQzpHNX+80wpIq+gvUVV2gtfEpjwmQ
+         GCLM4ZxqvqQ5+7dSZe0bhWHoFOfNSXzDK3028oGrOUl+KnSNNd90afA9N7n8Dk0KncSW
+         0CG1ytjCyzPf58psPlWnAwJwupyHdxYsD1Ja0254jCOzFW9dJXipA3J+eCm/4zRP+oCf
+         ZxTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsbdamiQsrzZeOPMN1NWVSVbKhebTqYNN37FkAhY3SRnF+pBm7o5tynWsOvYZDvKAbvuZaFbdqSumqThM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw84J8TVGZYpsFXblKu8hRs/Q92RoshJe9KbPEC6s6Aefl9hIX5
+	aHMQnVbuy+A+ZKm+IGBURZGbJsx7qXCbvoXpdcvwnZNS77o5J8LrhHkKCUa+fA==
+X-Gm-Gg: ASbGnctwy9+lpBr0yDaYwpzIFfmfTUg5nZkGNJPGLFKCx6qpHWC2RdaA4cTsOjKqAr9
+	E8LkZbyh9VU62SwoTaderSimLWmmbws2umiemfgmR2UXoCAPG0qd/dAX3evmrnHh/54JYePh07i
+	PIj0QTQM/jtgjzryQdDUNMT0hxyXHKp1oD54WRUqBBqmbRiz0pHexGfdtZgPZjDn7qqSYayzZdd
+	MGGJVCpDbcVkylR5U3QMdXkVXPztgPXQMeWtI6MH78J75r1mZH43KYIsmYxrS2yTyYZoX5/CqNR
+	so4LlAybZgmSEdQ+16Ira8v0XISWpsLBWIDrom3TOzAvAgyr5zX5yBxUcJtWL5vxIgRaBgN0mIP
+	//6GpZTpNSrVxVYTpv345pQ==
+X-Google-Smtp-Source: AGHT+IFewBym46TYf2D5lfnQZS5KaqX6Do7GHSRbX+1k26Bp5AAhyfhZKfKCSKnYzeyr5076YpqTXw==
+X-Received: by 2002:a05:690c:74c8:b0:71c:bf3:afc1 with SMTP id 00721157ae682-71c0bf3b6aamr93824817b3.17.1754920990350;
+        Mon, 11 Aug 2025 07:03:10 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:5b::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a59e9d9sm68953617b3.56.2025.08.11.07.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:03:09 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush.brahma@oss.qualcomm.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/numa_memblks: Use pr_debug instead of printk(KERN_DEBUG)
+Date: Mon, 11 Aug 2025 07:02:45 -0700
+Message-ID: <20250811140246.3264034-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aJmjXABrInqumY1-@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] futex: Use user_write_access_begin() in futex_put_value()
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-References: <20250809212442.240540-1-longman@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250809212442.240540-1-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+On Mon, 11 Aug 2025 11:01:32 +0300 Mike Rapoport <rppt@kernel.org> wrote:
 
-On 8/9/25 5:24 PM, Waiman Long wrote:
-> Commit cec199c5e39b ("futex: Implement FUTEX2_NUMA") introduces a new
-> futex_put_value() helper function to write a value to the given user
-> address. However, it uses user_read_access_begin() before the write.
-> For arches that differentiate between read and write accesses, like
-> powerpc, futex_put_value() fails with a -EFAULT return value.  Fix that
-> by using user_write_access_begin().
->
-> Fixes: cec199c5e39b ("futex: Implement FUTEX2_NUMA")
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->   kernel/futex/futex.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-> index c74eac572acd..2b6ae6a2b2a2 100644
-> --- a/kernel/futex/futex.h
-> +++ b/kernel/futex/futex.h
-> @@ -319,7 +319,7 @@ static __always_inline int futex_put_value(u32 val, u32 __user *to)
->   {
->   	if (can_do_masked_user_access())
->   		to = masked_user_access_begin(to);
-> -	else if (!user_read_access_begin(to, sizeof(*to)))
-> +	else if (!user_write_access_begin(to, sizeof(*to)))
->   		return -EFAULT;
->   	unsafe_put_user(val, to, Efault);
->   	user_read_access_end();
+> On Mon, Aug 11, 2025 at 12:13:54PM +0530, pratyush.brahma@oss.qualcomm.com wrote:
+> > From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+> > 
+> > Replace the direct usage of printk(KERN_DEBUG ...) with pr_debug(...) to
+> > align with the consistent `pr_*` API usage within the file.
+> > 
+> > Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> > Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+> > ---
+> > Changes in v2:
+> > - Removed printk header as suggested by Joshua.
+> > - Link to v1: https://lore.kernel.org/r/20250808-numa-dbg-v1-1-2ddd1ec634aa@oss.qualcomm.com
+> > ---
+> >  mm/numa_memblks.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+> > index 541a99c4071a67e5b0ef66f4136dee268a880003..ed6fcfca057ab4c9a8aa26cd1929551b4ded4a5b 100644
+> > --- a/mm/numa_memblks.c
+> > +++ b/mm/numa_memblks.c
+> > @@ -2,7 +2,6 @@
+> >  
+> >  #include <linux/array_size.h>
+> >  #include <linux/sort.h>
+> > -#include <linux/printk.h>
+> 
+> Please don't, pr_debug is defined there.
 
-Sorry, I forgot to use a matching user_write_access_end(). Will send out 
-a v2.
+Hello Mike, you're totally right, sorry about the incorrect feedback.
+For some reason I completely missed this dependency when reviewing.
+Joshua
 
-Cheers,
-Longman
-
+Sent using hkml (https://github.com/sjp38/hackermail)
 
