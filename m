@@ -1,65 +1,68 @@
-Return-Path: <linux-kernel+bounces-763237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D77B2122E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B646B2125B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74908188E1CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:34:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D9F17CC05
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F66296BA2;
-	Mon, 11 Aug 2025 16:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b="I7locnKZ"
-Received: from mail.w13.tutanota.de (mail.w13.tutanota.de [185.205.69.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3E12522B5
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5720296BD9;
+	Mon, 11 Aug 2025 16:33:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C3247299;
+	Mon, 11 Aug 2025 16:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930020; cv=none; b=W9NAp6iru12O2cw41wQaB8Q0hnectJw4ldPzqfkac0qqESsbaWk1laPFapylCH3PfL4RRO2getbpIv6uX1fnQ+FtQPLGNirj6Rh8tmcSX+zTNP3CK22jiTW2c4mx8rg330GtaxyAzN3f2kBkk5OpZiwteai3+1XBrj+fqEmTMTY=
+	t=1754930028; cv=none; b=UXPB7gCvb8Xb3RLU0ZYcsY+7oJIWLY4ciITmXNETdt4x5Pv2AkD78PXaMYsD0CeCR9yijmcyGQAm54vchTutiDfY18ehcFDsW6Hcv9Adm+pG8EZLwRtDpFgaKN//tg0WgxP8vkzc/RCBlL4c9UFgzLzO9MARPjRUhQUC64Awsr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930020; c=relaxed/simple;
-	bh=ymm3oP923cbaro/PxAHWtqG5LLpNIoSkHuv304fQLxQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ZPyDye5A94QI68L55DCvPdgGNSVWPP6UwvEq5oI2OHccYzhqEpelHu7jEdm28nX4SpsJf8lOMskPQH6dSKd1h/pzfnDntvDZNvgqGq7p2jd6/8A6q1PRpBfHeDhoSlz0le6zy2Qb7AbWFU7+FQfpP7d1SgSzxYkDV4aZ3MZUbPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io; spf=pass smtp.mailfrom=tuta.io; dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b=I7locnKZ; arc=none smtp.client-ip=185.205.69.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuta.io
-Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
-	by mail.w13.tutanota.de (Postfix) with ESMTP id 80498B0E0FDE
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:33:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754930011;
-	s=s1; d=tuta.io;
-	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
-	bh=5jWrnXN4VcbUsSjpG6KLH+gNLG1OTNZRhMF2RWICUsM=;
-	b=I7locnKZYL87oRFlatSSTU6Hdut8B8IVY/zp03IiwW55mKORzyJXYOsvRtFIvqjw
-	My+5TMp2jQlzBzy+nOLLQVU05YtTjM8N9TlPLXGhkg7Nn0/G3Nkf4yR2ZveNtpd99Of
-	6rwMGxI1PHoGbAfZUpqZsRB9aQoEM59YQcV4OSsIdLgt13keNeCnSu7HA7tcby7Vna9
-	5Eu6T/0LiXo7MERhxjkrF8jMd+9a3gyNghVvYj9Ut8qUxCJbL0gMRRV/9pKomzJGCqo
-	NqRvMYHT4UmNPSPRzhRFSQc86QPDKPbz4L3vmP/XvILxmPIz5rktoM5Ziaips5h/bPP
-	AvTOQ6Z/iw==
-Date: Mon, 11 Aug 2025 18:33:31 +0200 (CEST)
-From: howtobserve1@tuta.io
-To: Kyle Manna <kyle@kylemanna.com>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Jason Baron <jbaron@akamai.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	James Jernigan <jameswestonjernigan@gmail.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Yi1 Lai <yi1.lai@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <OXOyh9y--F-9@tuta.io>
-In-Reply-To: <c2f98618-4197-41c3-9a2b-2c59841dd543@app.fastmail.com>
-References: <20250802060112.363506-1-kyle@kylemanna.com> <c2f98618-4197-41c3-9a2b-2c59841dd543@app.fastmail.com>
-Subject: Re: [PATCH v2] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
- for EDAC
- support
+	s=arc-20240116; t=1754930028; c=relaxed/simple;
+	bh=pU2UzEZKy3+2XSauLiBQ5ZkFLpIIsyJ0rjtuhV/PuCA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dO6tQHbsYU3K3RB90BffMcAJ/lryPlZFGzercqmjVsw8cQg9Rjs01P6hJU2N/1Rj1HzcNM++2F6O5he1fXaGv/wymmLT4T8ebUnblTf5NgnxaoaTx42BqWvryLptsclInPRCUJUJpXT7Vy1VPHmc12HQhl/tSrGvAwb+MDLufi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCF56113E;
+	Mon, 11 Aug 2025 09:33:37 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3BFBD3F738;
+	Mon, 11 Aug 2025 09:33:42 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	maz@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	anshuman.khandual@arm.com,
+	robh@kernel.org,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	ry111@xry111.site,
+	Dave.Martin@arm.com,
+	ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	mbenes@suse.cz,
+	james.clark@linaro.org,
+	frederic@kernel.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	ryan.roberts@arm.com,
+	suzuki.poulose@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v2 0/6] initialize SCTRL2_ELx
+Date: Mon, 11 Aug 2025 17:33:34 +0100
+Message-Id: <20250811163340.1561893-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,122 +70,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi All,
+This series introduces initial support for the SCTLR2_ELx registers in Linux.
+The feature is optional starting from ARMv8.8/ARMv9.3,
+and becomes mandatory from ARMv8.9/ARMv9.4.
 
-Confirmation EDAC works on 8P+4E (DID 0x4668) configuration as well, using =
-ECC DDR4 UDIMM sticks. Validated on i7 12700 and Kingston 2666MHz ECC RAM.
+Currently, Linux has no strict need to modify SCTLR2_ELx—
+at least assuming that firmware initializes
+these registers to reasonable defaults.
 
-Raw logs:
-~ > sudo dmesg | grep -i -e edac -e ecc -e ie31200 | grep -v systemd | grep=
- edac
-[=C2=A0=C2=A0=C2=A0 7.834839] caller ie31200_init_one+0x1b5/0x480 [ie31200_=
-edac] mapping multiple BARs
-[=C2=A0=C2=A0=C2=A0 7.839585] EDAC MC0: Giving out device to module ie31200=
-_edac controller IE31200: DEV 0000:00:00.0 (INTERRUPT)
-[=C2=A0=C2=A0=C2=A0 7.843230] EDAC MC1: Giving out device to module ie31200=
-_edac controller IE31200_1: DEV 0000:00:00.0 (INTERRUPT)
+However, several upcoming architectural features will require configuring
+control bits in these registers.
+Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
 
-~ > grep . /sys/devices/system/edac/mc/mc*/*_count
-/sys/devices/system/edac/mc/mc0/ce_count:0
-/sys/devices/system/edac/mc/mc0/ce_noinfo_count:0
-/sys/devices/system/edac/mc/mc0/ue_count:0
-/sys/devices/system/edac/mc/mc0/ue_noinfo_count:0
-/sys/devices/system/edac/mc/mc1/ce_count:0
-/sys/devices/system/edac/mc/mc1/ce_noinfo_count:0
-/sys/devices/system/edac/mc/mc1/ue_count:0
-/sys/devices/system/edac/mc/mc1/ue_noinfo_count:0
+Patch History
+==============
+from v1 to v2:
+  - rebase to v6.17-rc1
+  - https://lore.kernel.org/all/20250804121724.3681531-1-yeoreum.yun@arm.com/
 
-~ > ras-mc-ctl --error-count
-Label=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 UE
-mc#1csrow#1channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0
-mc#1csrow#0channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0
-mc#0csrow#0channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0
-mc#0csrow#1channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0
+Yeoreum Yun (6):
+  arm64: make SCTLR2_EL1 accessible
+  arm64: initialise SCTLR2_ELx register at boot time
+  arm64: save/restore SCTLR2_EL1 when cpu_suspend()/resume()
+  arm64: init SCTLR2_EL1 at cpu_soft_restart()
+  arm64: make the per-task SCTLR2_EL1
+  KVM: arm64: initialise SCTLR2_EL1 at __kvm_host_psci_cpu_entry()
 
-~ > ras-mc-ctl --status
-ras-mc-ctl: drivers are loaded.
+ arch/arm64/include/asm/el2_setup.h   | 14 +++++++++++++-
+ arch/arm64/include/asm/processor.h   |  5 +++++
+ arch/arm64/include/asm/suspend.h     |  2 +-
+ arch/arm64/include/asm/sysreg.h      | 22 ++++++++++++++++++++++
+ arch/arm64/kernel/cpu-reset.S        |  6 ++++++
+ arch/arm64/kernel/head.S             |  5 ++++-
+ arch/arm64/kernel/process.c          |  9 +++++++++
+ arch/arm64/kvm/hyp/nvhe/psci-relay.c |  3 +++
+ arch/arm64/mm/proc.S                 | 26 ++++++++++++++++++--------
+ 9 files changed, 81 insertions(+), 11 deletions(-)
 
-~ > ras-mc-ctl --mainboard
-ras-mc-ctl: mainboard: DFI Inc. model ADS310
 
-~ > lscpu
-Architecture:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 x86_64
-=C2=A0 CPU op-mode(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 32-bit, 64-bit
-=C2=A0 Address sizes:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 46 bits physical, 48 bits virtual
-=C2=A0 Byte Order:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Little Endian
-CPU(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 20
-=C2=A0 On-line CPU(s) list:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0-19
-Vendor ID:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GenuineIntel
-=C2=A0 Model name:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 12th Gen Intel(R) Core(TM) i7-12700
-=C2=A0=C2=A0=C2=A0 CPU family:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6
-=C2=A0=C2=A0=C2=A0 Model:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 151
-=C2=A0=C2=A0=C2=A0 Thread(s) per core:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2
-=C2=A0=C2=A0=C2=A0 Core(s) per socket:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 12
-=C2=A0=C2=A0=C2=A0 Socket(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1
-=C2=A0=C2=A0=C2=A0 Stepping:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2
-=C2=A0=C2=A0=C2=A0 CPU(s) scaling MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 22%
-=C2=A0=C2=A0=C2=A0 CPU max MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4900.0000
-=C2=A0=C2=A0=C2=A0 CPU min MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 800.0000
-=C2=A0=C2=A0=C2=A0 BogoMIPS:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4225.00
-
-Thanks
-Aug 12, 2025, 00:19 by kyle@kylemanna.com:
-
-> On Fri, Aug 1, 2025, at 23:01, Kyle Manna wrote:
->
->> Host Device IDs (DID0) correspond to:
->> * Intel Core i7-12700K
->> * Intel Core i5-12600K
->>
->> See documentation:
->> * 12th Generation Intel=C2=AE Core=E2=84=A2 Processors Datasheet
->>  * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
->>  * https://edc.intel.com/output/DownloadPdfDocument?id=3D8297 (PDF)
->>
->> Signed-off-by: Kyle Manna <kyle@kylemanna.com>
->> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
->> ---
->> Changes in v2:
->> - Rebased on top of a6923c06a3b2e2c534ae28c53a7531e76cc95cfa
->> - Added comments to Device ID definitions as requested
->> - Added Reviewed-by tag from Qiuxu Zhuo
->>
->>  drivers/edac/ie31200_edac.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->
-> Hi Tony, Jason,
->
-> Gentle ping on this small EDAC/ie31200 change that adds two more Alder La=
-ke-S device IDs for ECC-capable part.
->
-> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
->
-> Could you please pick this up for the EDAC tree (ras edac-for-next)?
->
-> Thanks,
-> - Kyle
->
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
