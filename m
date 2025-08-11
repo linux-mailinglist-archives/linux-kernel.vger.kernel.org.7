@@ -1,147 +1,120 @@
-Return-Path: <linux-kernel+bounces-763676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F4CB2188B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D888AB2188D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E6019044D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBC41903722
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607BD2253F9;
-	Mon, 11 Aug 2025 22:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5D01F0995;
+	Mon, 11 Aug 2025 22:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bndVqZO7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KST1rq0/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B722F1F948;
-	Mon, 11 Aug 2025 22:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7061E515;
+	Mon, 11 Aug 2025 22:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754952313; cv=none; b=qsNalOWeofWXWkzl6EF1gFv5JLMSK1seFygmjlxx/tCi5fQzrPb1NPL7iqW2/syejCMCBlV8HYKpsSUR/4DafM3zycDZkiPhKvj5FSLGZ6nW2nMFRVoHNfa39psvQtjp/RjtZoDNTcBBP4+bHMsSbwhssZKQDZ9chFxqRdPqfZA=
+	t=1754952421; cv=none; b=HV5LvdD80J4PBJgIPoupEyI1N62JuA6JZn9KR8te7ppHwWFK1kJ9PrZQEJYGk8655xhbKUXMqjONMbi3izcTF0LmKHWCsayzXkYmvjNeQuJXs8QMlzsfqfY5+udwJTPEXQbYanbRkwo5vJBmfgTAdKsrsF2+GF6FQt6dp+e30lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754952313; c=relaxed/simple;
-	bh=i4h8G1OYpYeLJk6avTosK176BkneaD6DUhNIdsA8UUM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=i8fKW0E6ZIS/eqh5ePWwbHJkPisnxrNO2577pksX/ZnOc/3c+iOBH6ytUou/Sl/+mGFzcKmuG8xoOsx0c380lzQKDZGtzbIs7z7MPcKFOld3MxwvNGOrK7ScWlwnbodhIBBq9dHO7kVivKUZWLhVVBNmoMkBSUtNF1ARy0T5UUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bndVqZO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A64BC4CEED;
-	Mon, 11 Aug 2025 22:45:10 +0000 (UTC)
+	s=arc-20240116; t=1754952421; c=relaxed/simple;
+	bh=f+O5W/S8/rdvyjkv3EVe3Crl1oeO2GsIjPKFm2BH7LA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KgLW3iANBb22ZZL50Js4H7KH3DUB9zBHsmY0HqI3s+W6bjw7Qm3rX+Bys7f59+MS4izopNLBQWa7GOL+U8GuqcmKX4vGdTa3ZdBcKycdC0kfFpRvv0vqZowQoowHeS9T4L3HtIYaWKsPa19bn+7i5mmn0f4E7lWwKseL0i0FxVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KST1rq0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C52BC4CEED;
+	Mon, 11 Aug 2025 22:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754952313;
-	bh=i4h8G1OYpYeLJk6avTosK176BkneaD6DUhNIdsA8UUM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bndVqZO70lO664Lt0MZI6NYsKGzTI6/JLUM7zB8FY4MMoDFDC4obS6j3p4OkJXIti
-	 CKbMQZ7J0nzqtZfCzRS5cHrkTXA+KGhO4OMAu0J0AY3MK+azLGTFl+rkHGgel6yDqi
-	 D8AlREm0/OEMvFSCi5aMLfVIIu58p+4x3nsn6K//5MQMwRdL6qVf6KWB9bKqHb77Ol
-	 /PVePyHfxnpM7rRmhgFvtGoJUqAVxDsngTcUJaDtcNcO4Xsm03rTs4iGk8InxP0QI3
-	 ZXGEgc33QFpTVz489Bw4ujkzDznIFc5/Loj1IjHoguoLeBxvb0KyUd8PXxSn/lo+kO
-	 sq/vNDDe5RDMA==
+	s=k20201202; t=1754952421;
+	bh=f+O5W/S8/rdvyjkv3EVe3Crl1oeO2GsIjPKFm2BH7LA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KST1rq0/HEGi6IK4W8bLHuVN8/vwyFzvkVBaHCRntvyjXmLLrXaVl2g4Bi8jp8opq
+	 LmZOqD8bJJm2Sc+l+oBoK9Ei0cgl+uNaa/FAne8+VFttbnolMQ7Ibk5H+KLtvyQkEn
+	 xF3wG3+l+hPU641s6dBvRANhyfJTLzN8BTKugL21SZ2knEtVaVU95soNgjHKxh5/s/
+	 4etacMu4FJNaAfcyUbOFm76IbfiC+E06GHGErR7AM1zBlav4DFOsuXPI+co+3KAgFt
+	 iYhd8EGaPBrxt8nqvs0ySiWxXK5gxKIOxyTr3OP/G40j2wgkWfDVXNmhcGROfPEsia
+	 Q1JNfU9FSZSgw==
+Date: Mon, 11 Aug 2025 17:46:59 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH] PCI: vmd: Remove MSI-X check on child devices
+Message-ID: <20250811224659.GA168102@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 00:45:08 +0200
-Message-Id: <DBZYO8O9YTO3.10MKWPYN8YEOB@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <stable@vger.kernel.org>
-Subject: Re: [PATCH] rust: devres: fix leaking call to devm_add_action()
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>
-X-Mailer: aerc 0.20.1
-References: <20250811214619.29166-1-dakr@kernel.org>
-In-Reply-To: <20250811214619.29166-1-dakr@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811053935.4049211-1-namcao@linutronix.de>
 
-On Mon Aug 11, 2025 at 11:44 PM CEST, Danilo Krummrich wrote:
-> When the data argument of Devres::new() is Err(), we leak the preceding
-> call to devm_add_action().
->
-> In order to fix this, call devm_add_action() in a unit type initializer i=
-n
-> try_pin_init!() after the initializers of all other fields.
->
-> Cc: stable@vger.kernel.org
-> Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Mon, Aug 11, 2025 at 07:39:35AM +0200, Nam Cao wrote:
+> Commit d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
+> added a WARN_ON sanity check that child devices support MSI-X, because VMD
+> document says [1]:
+> 
+>     "Intel VMD only supports MSIx Interrupts from child devices and
+>     therefore the BIOS must enable PCIe Hot Plug and MSIx interrups [sic]."
+
+Can VMD tell the difference between an incoming MSI MWr transaction
+and an MSI-X MWr?
+
+I wonder if "MSIx" was meant to mean "VMD only supports MSI or MSI-X
+interrupts, not INTx interrupts, from child devices"?
+
+I put this on pci/for-linus for v6.17, but it seems like we might want
+to clarify the commit log.
+
+> However, on Ammar's machine, a PCIe port below VMD does not support MSI-X,
+> triggering this WARN_ON.
+> 
+> This inconsistency between the document and reality should be investigated
+> further. For now, remove the MSI-X check.
+> 
+> Allowing child devices without MSI-X despite what the document says does
+> sound suspicious, but that's what the driver had been doing before the
+> WARN_ON is added.
+> 
+> Fixes: d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
+> Link: https://cdrdv2-public.intel.com/776857/VMD_White_Paper.pdf [1]
+> Reported-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> Closes: https://lore.kernel.org/linux-pci/aJXYhfc%2F6DfcqfqF@linux.gnuweeb.org/
+> Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 > ---
->  rust/kernel/devres.rs | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-> index da18091143a6..bfccf4177644 100644
-> --- a/rust/kernel/devres.rs
-> +++ b/rust/kernel/devres.rs
-> @@ -119,6 +119,7 @@ pub struct Devres<T: Send> {
->      // impls can be removed.
->      #[pin]
->      inner: Opaque<Inner<T>>,
-> +    _add_action: (),
->  }
-> =20
->  impl<T: Send> Devres<T> {
-> @@ -140,7 +141,15 @@ pub fn new<'a, E>(
->              dev: dev.into(),
->              callback,
->              // INVARIANT: `inner` is properly initialized.
-> -            inner <- {
-> +            inner <- Opaque::pin_init(try_pin_init!(Inner {
-> +                    devm <- Completion::new(),
-> +                    revoke <- Completion::new(),
-> +                    data <- Revocable::new(data),
-> +            })),
-> +            // TODO: Replace with "initializer code blocks" [1] once ava=
-ilable.
-> +            //
-> +            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
-> +            _add_action: {
->                  // SAFETY: `this` is a valid pointer to uninitialized me=
-mory.
->                  let inner =3D unsafe { &raw mut (*this.as_ptr()).inner }=
-;
-> =20
-> @@ -153,12 +162,6 @@ pub fn new<'a, E>(
->                  to_result(unsafe {
->                      bindings::devm_add_action(dev.as_raw(), Some(callbac=
-k), inner.cast())
->                  })?;
-
-I have some bad news, I think this is also wrong: if the
-`devm_add_action` fails, we never drop the contents of `inner`, since
-the destructor of `Opaque` does nothing and we never finished
-construction of `Devres`, so its `Drop` will never be called.
-
-One solution would be to use `pin_chain` on the initializer for `Inner`
-(not opaque). Another one would be to not use opaque, `UnsafePinned`
-actually looks like the better fit for this use-case.
-
-This also made me re-think `Opaque::pin_init`. It seems wrong and
-probably shouldn't exist, as `Opaque` violates the drop guarantee
-required by pinned data. So it cannot structurally pin the data inside.
-
----
-Cheers,
-Benno
-
+>  drivers/pci/controller/vmd.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index b679c7f28f51..1bd5bf4a6097 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -306,9 +306,6 @@ static bool vmd_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+>  				  struct irq_domain *real_parent,
+>  				  struct msi_domain_info *info)
+>  {
+> -	if (WARN_ON_ONCE(info->bus_token != DOMAIN_BUS_PCI_DEVICE_MSIX))
+> -		return false;
 > -
-> -                Opaque::pin_init(try_pin_init!(Inner {
-> -                    devm <- Completion::new(),
-> -                    revoke <- Completion::new(),
-> -                    data <- Revocable::new(data),
-> -                }))
->              },
->          })
->      }
->
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-
+>  	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
+>  		return false;
+>  
+> -- 
+> 2.39.5
+> 
 
