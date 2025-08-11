@@ -1,84 +1,134 @@
-Return-Path: <linux-kernel+bounces-762937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA447B20C8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2723B20C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9624229BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:44:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1186188FCBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37B32D948C;
-	Mon, 11 Aug 2025 14:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CDB256C84;
+	Mon, 11 Aug 2025 14:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hillion.co.uk header.i=@hillion.co.uk header.b="J5KoFZEO"
-Received: from mx1.mythic-beasts.com (mx1.mythic-beasts.com [46.235.224.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jneuUllB"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836A02741D1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.224.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96E63B29E;
+	Mon, 11 Aug 2025 14:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923334; cv=none; b=dN5nwBvY2n111y5YMPIBisfeLxXERgHGCDaORhD4mzniM1dGlwnZLZRqYvB9o6CpmPNVlcl6t+dGI25rhJFanIHk7Q2PQg3Fefx6hXvou1CMwCM6+dgnMMg+T34VoEG2Yf12C5ppPJ0Wm62vhQAoyyYPF3N6gHP6p7rJuhQRoJY=
+	t=1754922948; cv=none; b=Eve/IGWB82D44JpgS+WNMZU3/wbFVZSafjG3QRnjZUnzox2Qxlkxa+23J67JZJDtVRI6JBQzpE/uozOAiDs8zCbtYUO7dJrYSywI8RQOqoMuzrsHeCVZGgYqfahvpN+kOQOLpFuU/Nfip4G9AeCFzrSjJyexeMz4NadmX61XoXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923334; c=relaxed/simple;
-	bh=U9o2H+Q0J4k2x52U2kiwTJMstpnIkm8GJPdkKyQaViw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtOl3gTCsMwEq5mhCywS2CnuVnYv5l/qd0JYc+ovBbFYUhLauxBgRUUAfLcJO0+Nu1M8EG208kN7ph8urWfNGGKtB3y9DAF6z9ATJWNT8uKNQw5sm/m/mBfGGTFG89J4uQbssg7HFHOdY0dr6NOii9xTcqlUKzhRb3EUqpcYT54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hillion.co.uk; spf=pass smtp.mailfrom=hillion.co.uk; dkim=pass (2048-bit key) header.d=hillion.co.uk header.i=@hillion.co.uk header.b=J5KoFZEO; arc=none smtp.client-ip=46.235.224.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hillion.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hillion.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=hillion.co.uk; s=mythic-beasts-k1; h=Subject:To:From:Date;
-	bh=U9o2H+Q0J4k2x52U2kiwTJMstpnIkm8GJPdkKyQaViw=; b=J5KoFZEOs5dzJdwzFEJpsKMAVm
-	NeOYuGLdS/4pGTnLVvdLk3Ofo9FfTJxEvNosp6luCyjUuBO51v6G7SSVAieN7PjcncYiozkZg0zRZ
-	xt51/RMVUCQVmoHwKMC4/cjbOGblRyAaKVUYxm/cmTSd7w3E/el3vzvGKi5y8urfhGjM/lUbh/9eY
-	4w7LOBPOQs7yM5LKQ4ETx5MA4SNInASQT3ccrfnGen50iLFlLudgaWpUeP58lNUoDb8y5quqw3pRu
-	0oznmi42UwGpSWVSP34vK04SYtJEohbPY47D4Yf9nB3bZn9r3Xx8PYw1uAS8UKQywTDL0e35rDHS8
-	oUhwo9Vg==;
-Received: by mailhub-cam-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <jake@hillion.co.uk>)
-	id 1ulTcn-004NC3-3B;
-	Mon, 11 Aug 2025 15:35:46 +0100
-Date: Mon, 11 Aug 2025 15:35:05 +0100
-From: Jake Hillion <jake@hillion.co.uk>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, Christian Loehle <christian.loehle@arm.com>, 
-	void@manifault.com, linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, 
-	changwoo@igalia.com, hodgesd@meta.com, mingo@redhat.com, peterz@infradead.org
-Subject: Re: [PATCH v3 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
-Message-ID: <y23etey3foin5nrxgj6e4g373b3ap6oxqa5rrvuvwyus3umw5s@bgh3d6uuga5t>
-References: <20250805111036.130121-1-christian.loehle@arm.com>
- <20250805111036.130121-4-christian.loehle@arm.com>
- <aJebkj-neVJNKEJ4@slm.duckdns.org>
- <aJh6BWX7rYCNrzGu@gpd4>
+	s=arc-20240116; t=1754922948; c=relaxed/simple;
+	bh=KWIbCuU8cGbMCIn9WbjTY8OYm+V2OdvpTY8E5ptxJu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J43R094Y4RaBVzoScsQ9qhgtkWXswc+QK5nJvyGPQ831/zsXTRPqS5fMp0LyREo2ElCVZs4rwEKYQlNpc1PvE1ZwILRFps4sQNMjTvJMT3yUkMZkk3AGI6oaWSM9/nu3GdWAdLodns+QaqXYrzT9dsb8t/D6MG5p8TkE5MmbIi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jneuUllB; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so44249605e9.3;
+        Mon, 11 Aug 2025 07:35:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754922944; x=1755527744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0nABPxGxZ2n8SglCKgOj7GxMsQlTzWa7VjN2t+XuWFQ=;
+        b=jneuUllBnGFQWuQtsxgWYeYa+Wbg5WNYPEBdvTKuThBFnpKJEnOmuV0amDip6s355K
+         JXZzu5YlH/PFeDyPRmNin5v9owYsavBRSeI1VPf7Gd/pF92BoIM4wiwiNXsCmUb36F9k
+         TZNdYJSfft9KyplB7h7EKxp3cZRTPbgbLJxefo65hnqmVZtQhTXZDTipG+81Ovp7F+t6
+         ojK3YGUWIn8OzwUsJDRQrtuidz5fU/ZZNRr4+MylHZq9Zz7sCHKEsHKNVNSEY2NXWnlb
+         LJV7W4bE9RctXcl3zVNz0V5fhEtzN898l2BNtIJjkZHorBYcaFM76I3xNp+ULrVGWiyK
+         agiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754922944; x=1755527744;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0nABPxGxZ2n8SglCKgOj7GxMsQlTzWa7VjN2t+XuWFQ=;
+        b=O7XjQYnJSU4gBldNVtDHnCiz6thWNftviPzIh11yHwHKTy2nB4QBzzKtZu76LMsrr+
+         EKJV/wU7blFldfGwRm5tUWyzFwEcyGWV7HEe0YDEUVfx9Tg5Z5DnLfKFxM6bXd4Y1PQl
+         xL5wVSbGWEQefJclSV8+Nh71VGxDqVEQWRJW4sFa9h5IW7p/Gv8CkaL+4ttZWbFm6NMI
+         DD9DETZPhLkap4A0zVKModVqIZ6x+wK1wmOYks6znYUig4wauh+q/I3jx+5vZ+Llbo0s
+         YO3KUf2XqSe7sZEjjPre3CV8qltHCk8cpcs210A5WmAd7rC4kqmIY0sWt39m5eDMy8KV
+         fLMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYQfJ2gtfp358s2ji4JQ/kNCG+tlxmKYzbkX9ZRRP9R4JH8duHtw1fLiMiRVCu4NXlJd/FM3LErF7KeYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8VV3VlQIZ/Rxr8VMroYbUDpTO0xbOwtLemB1c2nAPs7bU1rjX
+	Y9AqlhJDmjeaQ6qGSUWNTOtEFEe09nrFjV0AnmTsrvww7+x7qkhgbRFk
+X-Gm-Gg: ASbGncsWT366sO1KBdrjj575olAPk89/6q5tNRJWHL3nvJDaSXS9NztHfYN5czs5IeM
+	Xt/XwQj04EnJVvSu0kd2GKHFLKrbzz+ILKrxfXnzU17hrot8wlc9Bq4qjeNr+gLtVJ3LxtFzY2k
+	PDXk9dXQzRggmDt01+4XtzQmwCYlviy7ACbBjw4/m9pYfm5h9P7Vrqu/Fyh18iWD3c7VaV6hBpS
+	Lf/0CQ7W2UES5jRnA0z63xiEvqaXUPC/davf9HpHu74myDtteo7PmPPyXtMa5+a08KbaJc12MS4
+	eOW3Yame7kulubeCfODylbKBmOpgYBnTvNpho4kCQOj+9kai7snsS6ih/KSzkHPvXfcWvjlJQj5
+	xrFnxy0R+pCEewylhCs1rbIon4Hj27jo0NtY=
+X-Google-Smtp-Source: AGHT+IGJp6Gfnt0CIJ+jxI2NYhdeuEM5FnZ+SAi6SOzmoW0cfaGdwEOjOGUo6UIqNkS2Ik5olNBGdg==
+X-Received: by 2002:a05:600c:474f:b0:459:db54:5f34 with SMTP id 5b1f17b1804b1-459f4fc273dmr135170635e9.31.1754922943772;
+        Mon, 11 Aug 2025 07:35:43 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::26f? ([2620:10d:c092:600::1:628b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac158sm41627825f8f.4.2025.08.11.07.35.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 07:35:43 -0700 (PDT)
+Message-ID: <dfe92ca1-fdab-48f3-8410-e4435ab4f2f9@gmail.com>
+Date: Mon, 11 Aug 2025 15:37:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJh6BWX7rYCNrzGu@gpd4>
-X-BlackCat-Spam-Score: 4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC net-next v2] netmem: replace __netmem_clear_lsb() with
+ netmem_to_nmdesc()
+To: Byungchul Park <byungchul@sk.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel_team@skhynix.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ almasrymina@google.com, hawk@kernel.org, toke@redhat.com
+References: <20250729104158.14975-1-byungchul@sk.com>
+ <ef987e32-f7ce-4b5a-82c4-8d89d5034afd@gmail.com>
+ <20250811042306.GA41974@system.software.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250811042306.GA41974@system.software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 10, 2025 at 12:52:53PM +0200, Andrea Righi wrote:
-> Yeah, this is not nice, but they would be still broken though, in PATCH 1/3
-> we force schedulers to check for NULL and, if they don't, the verifier
-> won't be happy, so this already breaks existing binaries.
+On 8/11/25 05:23, Byungchul Park wrote:
+> On Sun, Aug 10, 2025 at 08:39:42PM +0100, Pavel Begunkov wrote:
+>> On 7/29/25 11:41, Byungchul Park wrote:
+>>> Changes from RFC:
+>>>        1. Optimize the implementation of netmem_to_nmdesc to use less
+>>>           instructions (feedbacked by Pavel)
+>>>
+>>> ---8<---
+>>>   From 6a0dbaecbf9a2425afe73565914eaa762c5d15c8 Mon Sep 17 00:00:00 2001
+>>> From: Byungchul Park <byungchul@sk.com>
+>>> Date: Tue, 29 Jul 2025 19:34:12 +0900
+>>> Subject: [RFC net-next v2] netmem: replace __netmem_clear_lsb() with netmem_to_nmdesc()
+>>>
+>>> Now that we have struct netmem_desc, it'd better access the pp fields
+>>> via struct netmem_desc rather than struct net_iov.
+>>>
+>>> Introduce netmem_to_nmdesc() for safely converting netmem_ref to
+>>> netmem_desc regardless of the type underneath e.i. netmem_desc, net_iov.
+>>>
+>>> While at it, remove __netmem_clear_lsb() and make netmem_to_nmdesc()
+>>> used instead.
+>>
+>> I'll ultimately need this in another tree as indicated in the
+>> original diff, so I'll take it into a branch and send it out
+> 
+> Just curious.  What is the original diff?
 
-I ran some testing on the sched_ext for-next branch, and scx_cosmos is
-breaking in cosmos_init including the latest changes. I believe it kicks
-off a timer in init, which indirectly calls
-`scx_bpf_cpu_rq(cpu)->curr->flags & PF_IDLE`. This should be NULL
-checked, but old binaries breaking is pretty inconvenient for new users.
+It was this one:
 
-As Andrea says, this is the already merged patch triggering this.
+https://lore.kernel.org/all/a7bd1e6f-b854-4172-a29a-3f0662c6fd6e@gmail.com/
 
-Thanks,
-Jake.
+-- 
+Pavel Begunkov
+
 
