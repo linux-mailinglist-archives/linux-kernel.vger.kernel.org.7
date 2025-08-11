@@ -1,137 +1,163 @@
-Return-Path: <linux-kernel+bounces-762726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9ACB20A3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:31:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DBBB20A43
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC37189036F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F8C2A2CA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30364228CB8;
-	Mon, 11 Aug 2025 13:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E271BD035;
+	Mon, 11 Aug 2025 13:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5WPhiOz8"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Zv4kHUCX"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF0F2D320E;
-	Mon, 11 Aug 2025 13:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D46149C41;
+	Mon, 11 Aug 2025 13:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919040; cv=none; b=AN4K2C9O2mb+9zkKju48/Oqrilo+NMpfSYccprcmfYppv3j+idewv6tMXaBoh2o+mY2VIj+9CNoeGThjtQ91qUpIpr5P5ztXIAb5/5reLGJfVz0ROsPe7clcXPUAP2tdN7FH3L05voGX4NeIpYI6nbeHvzRzjEIMakVwdOyaZRU=
+	t=1754919201; cv=none; b=HIilbBZQTEHFgmy8ss/xHxMJsJMi85s68lvAECQyH0SjDPswI2lQSg6XblPuabdXf92ebQA5xUt8OVPsKftskZaql2gGRdJF1rW4dBfUC3ZF0Q4RMwQI6tPxMGIEm9aOzU7OnJ6j8RJmaAC2fSmhjG8fAFHsHt0BHIT8hHUpco8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919040; c=relaxed/simple;
-	bh=jCK5Wtf43sYwOhnjBsKmCdwu199RFoIgenO7BIaUZ1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=EMjTIVW6qK3ECfPFzUpdx+KPPSGttqRxLwCOAmr9TVAUpuJqstgj21KTcoWRwnJRku2294l/Lryndm0YzmC6l6duKHYo/TawDWDQ5er9XUlvfGDy4lY8SEWmvmgBY8O05bv4CNGJOqEtcjKQWib9MFZ/kNjYfjL5cQtohmj1+qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5WPhiOz8; arc=none smtp.client-ip=185.132.182.106
+	s=arc-20240116; t=1754919201; c=relaxed/simple;
+	bh=x2Z43D2zhojMQgM06ThDtCQhqvpuE3g3VjKgoKe5c+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kYrFGFUnngLbhlyI2rINWU11bKyN1T5+U59yzCQpOCw/tjkf4tg85rxae9oMpNSw2xXP3nAIgOLvBxfLj6zdKoaBFFKQisAlPnTB6g76NHDlIuukk4Zy4SMNH8avQW1gkb+pCD5yfmUxU30W4MIAjxEqAXQzJfpy30RD4pghyQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Zv4kHUCX; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BCc97o032379;
-	Mon, 11 Aug 2025 15:30:28 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BDNkl9025158;
+	Mon, 11 Aug 2025 15:32:50 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=2jQId8J7hJCUUyc0leXs7a
-	3GHenaf+1ZJSfH2NICKrs=; b=5WPhiOz83OFz+h3h9LpGnHuzXRzWvTfDuQ9gSk
-	lTFPf2PEZOLv7hBu3bcXzMvyYDpXFELxQqD5DFmLUMX6jLPy0nEE7Td7LbnkO26u
-	LSLGaJa70dHEuEqjRixHCFL8QraoltOuUMKWjxeKvBlRwyNsZQuLTPOrUT1ecr6E
-	BgxMxlYoy8vu3hIYrG6/65mc9Qa6B+31r67Wmr8EdH/xJajOUIxAs7w+JzyQinFv
-	576ZurbegUwBMjfS8CyfIdbpcBabgLjw4CfhXEZ5PnVO02z4LlT8izeVVyacb/uu
-	SZECueEu+JJIgB9hmBvVsmwfKfXH7ss1al7+2pH2AzohZXIw==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	aywYyzoixAm3Sjd8epTOZToUh9Gg+kyh1HfqY33n5bw=; b=Zv4kHUCXcILUQIx5
+	iF4WiJiPI9HHvmA+T3RoIcBguAuS3C3kJDOPnxHM0kLu4l/+9SwtqS4cV6SWc5UI
+	wU25e4iXd6rhFt8jyReReMhjqGC3POpMn3Fsvn19vgxAyo5jU/cF5q6co8GkTBAi
+	Y6ZkpKmwjsMMOAufHn1POVfQotIT9MsYheaNWLEwgf03SC9ZweA5EIPWXG57iv43
+	4NsH6+qCCE4kbtBLzwSxUc6wYRfBjVsj4PvD9iEtZhEol8L2Nv878LY6uMrUDmjR
+	o4uMnnnj6GuP8q+wSo0cNWkJQunTzuuQGx8Gf2Yoq7qBpxK+gD4WWO6kpG+ueWv3
+	ajQglg==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48durkxvex-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48dw7g65xf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 15:30:28 +0200 (MEST)
+	Mon, 11 Aug 2025 15:32:49 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1D85F4002D;
-	Mon, 11 Aug 2025 15:29:30 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0449C73D3F6;
-	Mon, 11 Aug 2025 15:28:54 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 036A340044;
+	Mon, 11 Aug 2025 15:31:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0BA2474D375;
+	Mon, 11 Aug 2025 15:30:11 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 15:28:53 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Mon, 11 Aug 2025 15:28:49 +0200
-Subject: [PATCH v3] arm64: dts: st: Add memory-region-names property for
- stm32mp257f-ev1
+ 2025 15:30:10 +0200
+Message-ID: <2c497e75-bdb7-45ee-96ba-e293e33db91b@foss.st.com>
+Date: Mon, 11 Aug 2025 15:30:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/9] PCI: stm32: Add PCIe host support for STM32MP25
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
+        <cassel@kernel.org>, <shradha.t@samsung.com>,
+        <thippeswamy.havalige@amd.com>, <quic_schintav@quicinc.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250808164527.GA92564@bhelgaas>
+From: Christian Bruel <christian.bruel@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <20250808164527.GA92564@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250811-upstream_fix_dts_omm-v3-1-c4186b7667cb@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIABDwmWgC/4XNSw7CIBCA4asY1tIMWLC68h7GNC0Py4LSMEg0T
- e8u7UoXxuU/k/lmJmiiM0jOu5lEkx26MJY47HdEDd14N9Tp0oQDF9CApI8JUzSdb617tjphG7y
- nCkD28gQ1t4yU0ymast7Y66304DCF+Nq+ZLZO/4CZUUaNbBQTRtec64sNiBWmSgVPVjLzD4axH
- wwvDIC1QsBR9lp8M8uyvAEJ7sqLAQEAAA==
-X-Change-ID: 20250806-upstream_fix_dts_omm-c006b69042f1
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-11_02,2025-08-11_01,2025-03-28_01
 
-In order to set the AMCR register, which configures the
-memory-region split between ospi1 and ospi2, we need to
-identify the ospi instance.
 
-By using memory-region-names, it allows to identify the
-ospi instance this memory-region belongs to.
 
-Fixes: cad2492de91c ("arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board")
-Cc: stable@vger.kernel.org
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
-Changes in v3:
-- Set again "Cc: <stable@vger.kernel.org>"
-- Link to v2: https://lore.kernel.org/r/20250811-upstream_fix_dts_omm-v2-1-00ff55076bd5@foss.st.com
+On 8/8/25 18:45, Bjorn Helgaas wrote:
+> On Fri, Aug 08, 2025 at 04:55:52PM +0200, Christian Bruel wrote:
+>> On 8/7/25 20:09, Bjorn Helgaas wrote:
+>>> [+to Linus for pinctrl usage question below]
+>>>
+>>> On Tue, Jun 10, 2025 at 11:07:07AM +0200, Christian Bruel wrote:
+>>>> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
+>>>> controller based on the DesignWare PCIe core.
+> 
+>>>> +	return pinctrl_pm_select_sleep_state(dev);
+>>>
+>>> Isn't there some setup required before we can use
+>>> pinctrl_select_state(), pinctrl_pm_select_sleep_state(),
+>>> pinctrl_pm_select_default_state(), etc?
+>>>
+>>> I expected something like devm_pinctrl_get() in the .probe() path, but
+>>> I don't see anything.  I don't know how pinctrl works, but I don't see
+>>> how dev->pins gets set up.
+>>
+>> Linus knows better, but the dev->pins states are attached to the dev struct
+>> before probe by the pinctrl driver
+>>
+>> /**
+>>   * pinctrl_bind_pins() - called by the device core before probe
+>>   * @dev: the device that is just about to probe
+>>   */
+>> int pinctrl_bind_pins(struct device *dev)
+> 
+> Thanks for the pointer.  Might be worthy of a mention in
+> Documentation/driver-api/pin-control.rst.  Maybe pinctrl/consumer.h
+> could even have a bread crumb to that effect since drivers use all
+> those interfaces that rely in the implicit initialization done before
+> their .probe().
+> 
+> pin-control.rst mentions pinctrl_get_select_default() being called
+> just before the driver probe, but that's now unused and it looks like
+> pinctrl_bind_pins() does something similar:
+> 
+>    really_probe
+>      pinctrl_bind_pins
+>        dev->pins = devm_kzalloc()
+>        devm_pinctrl_get
+>        pinctrl_lookup_state(PINCTRL_STATE_DEFAULT)
+>        pinctrl_lookup_state(PINCTRL_STATE_INIT)
+>        pinctrl_select_state(init)      # if present, else default
+>      call_driver_probe
 
-Changes in v2:
-- Update commit message.
-- Use correct memory-region-names value.
-- Remove "Cc: <stable@vger.kernel.org>" tag as the fixed patch is not part of a LTS.
-- Link to v1: https://lore.kernel.org/r/20250806-upstream_fix_dts_omm-v1-1-e68c15ed422d@foss.st.com
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, and state_init is not mentioned in the documentation even for the 
+'normal probe'. The only doc I see from the original commit 
+ef0eebc05130b0d22b0ea65c0cd014ee16fc89c7
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 2f561ad4066544445e93db78557bc4be1c27095a..7bd8433c1b4344bb5d58193a5e6314f9ae89e0a4 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -197,6 +197,7 @@ &i2c8 {
- 
- &ommanager {
- 	memory-region = <&mm_ospi1>;
-+	memory-region-names = "ospi1";
- 	pinctrl-0 = <&ospi_port1_clk_pins_a
- 		     &ospi_port1_io03_pins_a
- 		     &ospi_port1_cs0_pins_a>;
+" 
 
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250806-upstream_fix_dts_omm-c006b69042f1
+     Let's introudce a new "init" state.  If this is defined we'll set
+     pinctrl to this state before probe and then "default" after probe
+     (unless the driver explicitly changed states already). 
 
-Best regards,
--- 
-Patrice Chotard <patrice.chotard@foss.st.com>
+"
+
+I will propose something in pin-control.rst, with maybe some code-block 
+for the pm part and respin [PATCH 0/2] Add pinctrl_pm_select_init_state 
+helper function...
+
+Christian
+
+> 
+> Bjorn
 
 
