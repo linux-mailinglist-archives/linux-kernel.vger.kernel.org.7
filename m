@@ -1,313 +1,314 @@
-Return-Path: <linux-kernel+bounces-763297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF4BB212DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:09:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C87B212DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2E53E1831
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:09:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1357A4BD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305EE2C21F2;
-	Mon, 11 Aug 2025 17:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627652D320B;
+	Mon, 11 Aug 2025 17:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RxtL5WGr"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="AQcfRg8Q"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6764F296BA2
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72E311C01;
+	Mon, 11 Aug 2025 17:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932148; cv=none; b=ske8acPy3hjf7cfBx4okDbo3uxnNwu9oPkeqxkhvI4+/dVXcqtbZcOI6II05h9d3kJVWBsq21l2YEcLYUOtzGC9j9WsSv3mtXh6abMciShCfvddDWaQb7Lo7pDOqk1CQQnaBauRTYEXe51kzqVjIATeE5/W4mwulBKMGwrQ0Q9Q=
+	t=1754932050; cv=none; b=b4cIvBx5Wd7uY8u9ldd41J0N3RVMxC1rEMVqur3l14hWzHK8gh+u3LzymRidiOh6MCfPsOgmmsT2GsMGDce9ayRGt7QXNjGVxEum+l5fONW2BF1LjEVm3Ws7iJSmTLFO6UN9D8AwCHw/87rkt10DQgI6kTm7PNW9NTClPw0a+Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932148; c=relaxed/simple;
-	bh=fiqNW/iR9qCKHprF3oK6zQCfVI1mPKazrm5svXl7oM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZWUEWnbmCCICtmMVAHxTH4BaZc7ixCLC5AT5gMPpVWgX5WV0w/LOjcK6z5oWVxQekhEr88EFBI0HQzn0nwnxQrhvTApryRt3Iq8fpTlXD1q2yMvSIjnB4Swb54iKJTt1WBK5C4y3iqumcCyNRAdjfx6rHFQwcC+puxyvnQsXpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RxtL5WGr; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1F6E425F79;
-	Mon, 11 Aug 2025 19:09:05 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id q5y_AmtIzRja; Mon, 11 Aug 2025 19:09:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754932000; bh=fiqNW/iR9qCKHprF3oK6zQCfVI1mPKazrm5svXl7oM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=RxtL5WGrHK8P26FbuUNzQfeYUPcsZXpVZpbrmKoSvkz3QSd95+G19A/Gm9H3+v6tg
-	 dRR0PdWp+datoqA+sIrcOAsIGTFJ9204Q+ghyCNcwOqnKnQHf4k55mnqpBHNcqBc4S
-	 oX1gSCZedNDG9xCp1a+slHAjKDZXmAxLsdff2sCHpJ9ktWLKgQg9PQxJYFJJPItPzO
-	 34a+eY6h1AS4YB4jpA6FL2V6EFQOuniTz/7hMs79p3NT7ijsr88KGO3L3iiwr6pAJD
-	 2NCTpHiav6HqR1AYzgteHjFWNpaZj5Ke/tVTbQb+fVXGSLXEHSTC90KMXl0uWh789i
-	 tRcnUmW7mOECA==
-Date: Mon, 11 Aug 2025 17:06:22 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Youling Tang <youling.tang@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
-	kexec@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
-Message-ID: <aJojDiHWi8cgvA2W@pie>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
- <20250811092659.14903-3-youling.tang@linux.dev>
+	s=arc-20240116; t=1754932050; c=relaxed/simple;
+	bh=RVszgM0um3eMUdt3IRVk6zljjfpf0+MIb3XriCiYPwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tLCwufx3khI9W8r7yP2aDtOmGbxJYb4Yy3BgtYpyESVSRI/ZzDxSXDMxrIVCEjVtdrR3dVBu9Ppc2pMNR2XEqv05tEH/HNdmG/xhVdvWzgqIUCgv1HhoneHOP1IoPCkrsVmYQOZ0lXtHT9vM6xYpUmpLpeM+/2o7fORQnPo1Ua0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=AQcfRg8Q; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
+	s=s31663417; t=1754932039; x=1755536839; i=len.bao@gmx.us;
+	bh=yC2S/wEi8KGENwurWbzuHG8Vw4xK4n4Tr7WdMBlsZNY=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AQcfRg8QTRxKmHBWPhU+1wfBC6Hv7yZOLvYwAVieTRhEqpFkeCY/lsOSyjpECLWJ
+	 LGo1yIXIytIvRuVBpYkoqKP/717GmNlpWt9EBO841DtOGR1oVmKNlVh4rXo0u0Ijg
+	 rAkSaKFU+zcl1fFhCN/8mwkyvXhZ77t63O2bCTqj2njC95OCLRnkdbO+ddjZ7sk9G
+	 iaBbN92PuVMcVAKBYEnssu54oKDgW40D6Xg0gzVbAahBuw3X7KMQjCQkPjCyisZH3
+	 d+s9e7BJETRu0zgBEjTNFOJGwYEopdESTECv1mMWKRbhfqRfQm+u6cbzdf5CVDaKH
+	 umZlLNPZPTeBNoSMKA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from ubuntu ([79.159.189.119]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N4hvb-1udiJm3SZL-00zS69; Mon, 11
+ Aug 2025 19:07:19 +0200
+From: Len Bao <len.bao@gmx.us>
+To: Nilesh Javali <njavali@marvell.com>,
+	Manish Rangankar <mrangankar@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Len Bao <len.bao@gmx.us>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: qla4xxx: Replace snprintf() with sysfs_emit()
+Date: Mon, 11 Aug 2025 17:06:32 +0000
+Message-ID: <20250811170639.65597-1-len.bao@gmx.us>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811092659.14903-3-youling.tang@linux.dev>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Gn610vzH3ffqIXqi2c1uPmtHJ6iYhVlU3jBNuc3qxl1uW7N3hwT
+ Jdnh3zIKLGPdz7/vuio87pz5xWS+9C8+eJ/CDPbGGl3vM0Fp8a3tD9s5vJeega1ar+slFie
+ MkO/7USMWO1CbN8z/1NVbUyiao58BxKxonaiY6kyN9Ox2Bw0hY4brf8AQti2PyqL4SNeNuI
+ zII+kN1BkoKGO55jTlb0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VjPdibdsRno=;v7HzDnBSX1aiUyumOQIg/kJtETo
+ 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
+ H1N1F7vUevA==
 
-On Mon, Aug 11, 2025 at 05:26:55PM +0800, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
-> 
-> This patch adds support for kexec_file on LoongArch.
-> 
-> The image_load() as two parts:
-> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
-> - the second part loads other segments (eg: initrd, cmdline)
-> 
-> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
-> but ELF format is not supported.
-> 
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->  arch/loongarch/Kconfig                     |   8 ++
->  arch/loongarch/include/asm/image.h         |  18 ++++
->  arch/loongarch/include/asm/kexec.h         |  12 +++
->  arch/loongarch/kernel/Makefile             |   1 +
->  arch/loongarch/kernel/kexec_image.c        | 112 +++++++++++++++++++++
->  arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
->  arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
->  7 files changed, 219 insertions(+), 11 deletions(-)
->  create mode 100644 arch/loongarch/kernel/kexec_image.c
->  create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+Documentation/filesystems/sysfs.rst mentions that show() should only
+use sysfs_emit() or sysfs_emit_at() when formating the value to be
+returned to user space. So replace snprintf() with sysfs_emit().
 
-...
+Signed-off-by: Len Bao <len.bao@gmx.us>
+=2D--
+ drivers/scsi/qla4xxx/ql4_attr.c | 52 ++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
-> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
-> index 1f090736e71d..829e1ecb1f5d 100644
-> --- a/arch/loongarch/include/asm/image.h
-> +++ b/arch/loongarch/include/asm/image.h
-> @@ -36,5 +36,23 @@ struct loongarch_image_header {
->  	uint32_t pe_header;
->  };
->  
-> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
-> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 0x0, 0x64, 0x62};
+diff --git a/drivers/scsi/qla4xxx/ql4_attr.c b/drivers/scsi/qla4xxx/ql4_at=
+tr.c
+index 84f99ff8e69..a9b75b29c8a 100644
+=2D-- a/drivers/scsi/qla4xxx/ql4_attr.c
++++ b/drivers/scsi/qla4xxx/ql4_attr.c
+@@ -156,13 +156,13 @@ qla4xxx_fw_version_show(struct device *dev,
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+=20
+ 	if (is_qla80XX(ha))
+-		return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d (%x)\n",
+-				ha->fw_info.fw_major, ha->fw_info.fw_minor,
+-				ha->fw_info.fw_patch, ha->fw_info.fw_build);
++		return sysfs_emit(buf, "%d.%02d.%02d (%x)\n",
++				  ha->fw_info.fw_major, ha->fw_info.fw_minor,
++				  ha->fw_info.fw_patch, ha->fw_info.fw_build);
+ 	else
+-		return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d.%02d\n",
+-				ha->fw_info.fw_major, ha->fw_info.fw_minor,
+-				ha->fw_info.fw_patch, ha->fw_info.fw_build);
++		return sysfs_emit(buf, "%d.%02d.%02d.%02d\n",
++				  ha->fw_info.fw_major, ha->fw_info.fw_minor,
++				  ha->fw_info.fw_patch, ha->fw_info.fw_build);
+ }
+=20
+ static ssize_t
+@@ -170,7 +170,7 @@ qla4xxx_serial_num_show(struct device *dev, struct dev=
+ice_attribute *attr,
+ 			char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%s\n", ha->serial_number);
++	return sysfs_emit(buf, "%s\n", ha->serial_number);
+ }
+=20
+ static ssize_t
+@@ -178,8 +178,8 @@ qla4xxx_iscsi_version_show(struct device *dev, struct =
+device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%d.%02d\n", ha->fw_info.iscsi_major,
+-			ha->fw_info.iscsi_minor);
++	return sysfs_emit(buf, "%d.%02d\n", ha->fw_info.iscsi_major,
++			  ha->fw_info.iscsi_minor);
+ }
+=20
+ static ssize_t
+@@ -187,9 +187,9 @@ qla4xxx_optrom_version_show(struct device *dev, struct=
+ device_attribute *attr,
+ 			    char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d.%02d\n",
+-			ha->fw_info.bootload_major, ha->fw_info.bootload_minor,
+-			ha->fw_info.bootload_patch, ha->fw_info.bootload_build);
++	return sysfs_emit(buf, "%d.%02d.%02d.%02d\n",
++			  ha->fw_info.bootload_major, ha->fw_info.bootload_minor,
++			  ha->fw_info.bootload_patch, ha->fw_info.bootload_build);
+ }
+=20
+ static ssize_t
+@@ -197,7 +197,7 @@ qla4xxx_board_id_show(struct device *dev, struct devic=
+e_attribute *attr,
+ 		      char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "0x%08X\n", ha->board_id);
++	return sysfs_emit(buf, "0x%08X\n", ha->board_id);
+ }
+=20
+ static ssize_t
+@@ -207,8 +207,8 @@ qla4xxx_fw_state_show(struct device *dev, struct devic=
+e_attribute *attr,
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+=20
+ 	qla4xxx_get_firmware_state(ha);
+-	return snprintf(buf, PAGE_SIZE, "0x%08X%8X\n", ha->firmware_state,
+-			ha->addl_fw_state);
++	return sysfs_emit(buf, "0x%08X%8X\n", ha->firmware_state,
++			  ha->addl_fw_state);
+ }
+=20
+ static ssize_t
+@@ -220,7 +220,7 @@ qla4xxx_phy_port_cnt_show(struct device *dev, struct d=
+evice_attribute *attr,
+ 	if (is_qla40XX(ha))
+ 		return -ENOSYS;
+=20
+-	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->phy_port_cnt);
++	return sysfs_emit(buf, "0x%04X\n", ha->phy_port_cnt);
+ }
+=20
+ static ssize_t
+@@ -232,7 +232,7 @@ qla4xxx_phy_port_num_show(struct device *dev, struct d=
+evice_attribute *attr,
+ 	if (is_qla40XX(ha))
+ 		return -ENOSYS;
+=20
+-	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->phy_port_num);
++	return sysfs_emit(buf, "0x%04X\n", ha->phy_port_num);
+ }
+=20
+ static ssize_t
+@@ -244,7 +244,7 @@ qla4xxx_iscsi_func_cnt_show(struct device *dev, struct=
+ device_attribute *attr,
+ 	if (is_qla40XX(ha))
+ 		return -ENOSYS;
+=20
+-	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->iscsi_pci_func_cnt);
++	return sysfs_emit(buf, "0x%04X\n", ha->iscsi_pci_func_cnt);
+ }
+=20
+ static ssize_t
+@@ -253,7 +253,7 @@ qla4xxx_hba_model_show(struct device *dev, struct devi=
+ce_attribute *attr,
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+=20
+-	return snprintf(buf, PAGE_SIZE, "%s\n", ha->model_name);
++	return sysfs_emit(buf, "%s\n", ha->model_name);
+ }
+=20
+ static ssize_t
+@@ -261,8 +261,8 @@ qla4xxx_fw_timestamp_show(struct device *dev, struct d=
+evice_attribute *attr,
+ 			  char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%s %s\n", ha->fw_info.fw_build_date,
+-			ha->fw_info.fw_build_time);
++	return sysfs_emit(buf, "%s %s\n", ha->fw_info.fw_build_date,
++			  ha->fw_info.fw_build_time);
+ }
+=20
+ static ssize_t
+@@ -270,7 +270,7 @@ qla4xxx_fw_build_user_show(struct device *dev, struct =
+device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%s\n", ha->fw_info.fw_build_user);
++	return sysfs_emit(buf, "%s\n", ha->fw_info.fw_build_user);
+ }
+=20
+ static ssize_t
+@@ -278,7 +278,7 @@ qla4xxx_fw_ext_timestamp_show(struct device *dev, stru=
+ct device_attribute *attr,
+ 			      char *buf)
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+-	return snprintf(buf, PAGE_SIZE, "%s\n", ha->fw_info.extended_timestamp);
++	return sysfs_emit(buf, "%s\n", ha->fw_info.extended_timestamp);
+ }
+=20
+ static ssize_t
+@@ -300,7 +300,7 @@ qla4xxx_fw_load_src_show(struct device *dev, struct de=
+vice_attribute *attr,
+ 		break;
+ 	}
+=20
+-	return snprintf(buf, PAGE_SIZE, "%s\n", load_src);
++	return sysfs_emit(buf, "%s\n", load_src);
+ }
+=20
+ static ssize_t
+@@ -309,8 +309,8 @@ qla4xxx_fw_uptime_show(struct device *dev, struct devi=
+ce_attribute *attr,
+ {
+ 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
+ 	qla4xxx_about_firmware(ha);
+-	return snprintf(buf, PAGE_SIZE, "%u.%u secs\n", ha->fw_uptime_secs,
+-			ha->fw_uptime_msecs);
++	return sysfs_emit(buf, "%u.%u secs\n", ha->fw_uptime_secs,
++			  ha->fw_uptime_msecs);
+ }
+=20
+ static DEVICE_ATTR(fw_version, S_IRUGO, qla4xxx_fw_version_show, NULL);
+=2D-=20
+2.43.0
 
-loongarch_pe_machtype isn't used at all.
-
-> +
-> +/**
-> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
-> + *
-> + * Returns non-zero if 'MZ' signature is found.
-> + */
-> +
-> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
-> +{
-> +	if (!h)
-> +		return 0;
-> +
-> +	return (h->pe_sig[0] == loongarch_image_pe_sig[0]
-> +		&& h->pe_sig[1] == loongarch_image_pe_sig[1]);
-
-This could be simplified with a memcmp(). Also, this check isn't strict
-enough: PE files for any architectures, and even legacy MS-DOS COM
-executables all start with "MZ".
-
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_IMAGE_H */
-
-...
-
-> diff --git a/arch/loongarch/kernel/kexec_image.c b/arch/loongarch/kernel/kexec_image.c
-> new file mode 100644
-> index 000000000000..fdd1845b4e2e
-> --- /dev/null
-> +++ b/arch/loongarch/kernel/kexec_image.c
-> @@ -0,0 +1,112 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Kexec image loader for LoongArch
-> +
-> + * Author: Youling Tang <tangyouling@kylinos.cn>
-> + * Copyright (C) 2025 KylinSoft Corporation.
-> + */
-> +
-> +#define pr_fmt(fmt)	"kexec_file(Image): " fmt
-> +
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kexec.h>
-> +#include <linux/pe.h>
-> +#include <linux/string.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/image.h>
-> +
-> +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
-> +{
-> +	const struct loongarch_image_header *h =
-> +		(const struct loongarch_image_header *)(kernel_buf);
-
-Parentheses around "kernel_buf" are unnecessary.
-
-> +	if (!h || (kernel_len < sizeof(*h))) {
-
-Comparisons have higher priority than logic operations, so this pair of
-parentheses is redundant, too.
-
-> +		pr_err("No loongarch image header.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!loongarch_header_check_pe_sig(h)) {
-> +		pr_err("Bad loongarch PE image header.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void *image_load(struct kimage *image,
-> +				char *kernel, unsigned long kernel_len,
-> +				char *initrd, unsigned long initrd_len,
-> +				char *cmdline, unsigned long cmdline_len)
-> +{
-> +	struct loongarch_image_header *h;
-> +	struct kexec_buf kbuf;
-> +	unsigned long text_offset, kernel_segment_number;
-> +	struct kexec_segment *kernel_segment;
-> +	int ret;
-> +
-> +	h = (struct loongarch_image_header *)kernel;
-> +	if (!h->image_size)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* Load the kernel */
-> +	kbuf.image = image;
-> +	kbuf.buf_min = 0;
-> +	kbuf.buf_max = ULONG_MAX;
-> +	kbuf.top_down = false;
-> +
-> +	kbuf.buffer = kernel;
-> +	kbuf.bufsz = kernel_len;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
-> +	kbuf.memsz = le64_to_cpu(h->image_size);
-> +	text_offset = le64_to_cpu(h->text_offset);
-> +	kbuf.buf_align = SZ_2M;
-
-I think this aligment is unnecessary for relocatable LoongArch kernels:
-it should be enough to align to the page size. See also my comments
-below.
-
-> +	kernel_segment_number = image->nr_segments;
-> +
-> +	/*
-> +	 * The location of the kernel segment may make it impossible to satisfy
-> +	 * the other segment requirements, so we try repeatedly to find a
-> +	 * location that will work.
-> +	 */
-> +	while ((ret = kexec_add_buffer(&kbuf)) == 0) {
-> +		/* Try to load additional data */
-> +		kernel_segment = &image->segment[kernel_segment_number];
-> +		ret = load_other_segments(image, kernel_segment->mem,
-> +					  kernel_segment->memsz, initrd,
-> +					  initrd_len, cmdline, cmdline_len);
-> +		if (!ret)
-> +			break;
-> +
-> +		/*
-> +		 * We couldn't find space for the other segments; erase the
-> +		 * kernel segment and try the next available hole.
-> +		 */
-> +		image->nr_segments -= 1;
-> +		kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
-> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
-> +	}
-> +
-> +	if (ret) {
-> +		pr_err("Could not find any suitable kernel location!");
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	kernel_segment = &image->segment[kernel_segment_number];
-> +
-> +	/* Make sure the second kernel jumps to the correct "kernel_entry". */
-> +	image->start = kernel_segment->mem + h->kernel_entry - text_offset;
-
-A non-relocatable loongarch kernel cannot be loaded to arbitrary
-address. Thus this loading function seems to only work for relocatable
-kernels, maybe it's better to leave a comment indicating the limitation.
-
-For now, we don't seem to have a way to find out whether the kernel is
-relocatable (for example, a flag in kernel image header), so it's
-impossible to point out whether the loaded kernel boots fine with
-arbitrary loading address...
-
-> +	kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-> +		      kernel_segment->mem, kbuf.bufsz,
-> +		      kernel_segment->memsz);
-> +
-> +	return NULL;
-> +}
-> +
-> +const struct kexec_file_ops kexec_image_ops = {
-> +	.probe = image_probe,
-> +	.load = image_load,
-> +};
-> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kernel/machine_kexec.c
-> index f9381800e291..008f43e26120 100644
-> --- a/arch/loongarch/kernel/machine_kexec.c
-> +++ b/arch/loongarch/kernel/machine_kexec.c
-> @@ -70,18 +70,28 @@ int machine_kexec_prepare(struct kimage *kimage)
-
-...
-
-> -	if (!kimage->arch.cmdline_ptr) {
-> -		pr_err("Command line not included in the provided image\n");
-> -		return -EINVAL;
-> +		if (!kimage->arch.cmdline_ptr) {
-> +			pr_err("Command line not included in the provided image\n");
-> +			return -EINVAL;
-> +		}
->  	}
->  
->  	/* kexec/kdump need a safe page to save reboot_code_buffer */
-> @@ -288,7 +298,8 @@ void machine_kexec(struct kimage *image)
->  	local_irq_disable();
->  
->  	pr_notice("EFI boot flag 0x%lx\n", efi_boot);
-> -	pr_notice("Command line at 0x%lx\n", cmdline_ptr);
-> +	pr_notice("Command line addr at 0x%lx\n", cmdline_ptr);
-> +	pr_notice("Command line at %s\n", (char *)cmdline_ptr);
-
-The printed message doesn't match meaning of the pointer: you're
-printing the content of cmdline_ptr, instead of its address, thus
-"Command line at" sounds confusing to me.
-
-Furthermore, this chunk isn't related to "support for kexec_file", I
-think it's better to separate it into another patch (or even another
-series).
-
->  	pr_notice("System table at 0x%lx\n", systable_ptr);
->  	pr_notice("We will call new kernel at 0x%lx\n", start_addr);
->  	pr_notice("Bye ...\n");
-
-Best regards,
-Yao Zi
 
