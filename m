@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-763526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C43B21603
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:57:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A926CB2156A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3299463852
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB36622EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5372D8DA9;
-	Mon, 11 Aug 2025 19:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD931FAC42;
+	Mon, 11 Aug 2025 19:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PQUSTZCp"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="u2LsIQxp"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF029BDA7;
-	Mon, 11 Aug 2025 19:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BEA26ACB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754942219; cv=none; b=UxoYTL2BT/ALIJR8P36WBPYVSpNzB7DZgSO3vixveAHSTwLwvqdwvFxxlHnvSFi7PuOWDVI9AVt+CVi5i9/9rM8JEZfGVCEbMFt/1peEn7X7W0uv+P/OxlPLw+WsyxdHVmJHc22XtabXCT/TtDAOQaIAV1e4j3m0MYFFbIq+QiI=
+	t=1754940982; cv=none; b=gHECH3qX+u2uayqcJnKDpCZGlLpOgDN8NxbBRHUA17pbHOZy2Blh7LvkvkDcFKndh+KWGeyoMx2yPJuxxNULJRNE4HxIIOG/b6k50OHTMYeNmToAity4pv/kOY+L/cekgF2GndzzDa4AAVTkBVUsaYpyCTPXwSoMNcHkHL1+8+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754942219; c=relaxed/simple;
-	bh=UH866iIoV0BmgwOwOKmrPiamvqbnZJOQBXR1xx6vmt4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JjPcLXIVa59QAL29RAB/4vORz7Yy/TkFUoM3/IBUyoWn/BazagPurzXk4cfSCATrC+xsIns8KmNoKawzR8Eowb08JR09YlU7r/VDT3WEKiKD6DFZ99wjmCvaSbTiNvNkKN2hGvTZ9wERGD/I7XVO9MBDY3xY/4jPFyaBiAfMs2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PQUSTZCp; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57BJXg1s1227857;
-	Mon, 11 Aug 2025 14:33:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754940822;
-	bh=Gqtsu4C7TidETAVnE77OpIDvlXHGXv1Mz6JMhY6rGHo=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=PQUSTZCp5bneAU1Ct823nP1oieJ9HPFezrBrDy5PJQYcEHKWnQHhym+a3JXzM7k5B
-	 Lq/ZSTm2Ai6SxdgUtn38LXIvSnvZFMTFJzzTZPB6PKtvx3fCdizxk4Mq9nwIVgmBRw
-	 O3zN49zwyruOIovEyOZV4kbYyDb3mBhpKrFsW9rY=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57BJXg2l2910990
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 11 Aug 2025 14:33:42 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 11
- Aug 2025 14:33:41 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 11 Aug 2025 14:33:41 -0500
-Received: from santhoshkumark.dhcp.ti.com (santhoshkumark.dhcp.ti.com [172.24.233.254])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57BJWq1x3690681;
-	Mon, 11 Aug 2025 14:33:37 -0500
-From: Santhosh Kumar K <s-k6@ti.com>
-To: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <broonie@kernel.org>, <tudor.ambarus@linaro.org>,
-        <pratyush@kernel.org>, <mwalle@kernel.org>, <p-mantena@ti.com>
-CC: <linux-spi@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <s-k6@ti.com>, <a-dutta@ti.com>,
-        <u-kumar1@ti.com>, <praneeth@ti.com>
-Subject: [RFC PATCH 10/10] spi: cadence-quadspi: Define cqspi_get_tuning_params()
-Date: Tue, 12 Aug 2025 01:02:19 +0530
-Message-ID: <20250811193219.731851-11-s-k6@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250811193219.731851-1-s-k6@ti.com>
-References: <20250811193219.731851-1-s-k6@ti.com>
+	s=arc-20240116; t=1754940982; c=relaxed/simple;
+	bh=8K73JX6zEP6SRAyan6dWes1ext4gzAa3shsQ068bliA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=utnAKlXqtl94RiFJu0+fLCWOJ6hf4M6U4TwcyOR9RzZG4f3GR7IHPH8UpUFGSONQYRzuXZ5pcW8DiVgHBXrrpL67quQWFk+m+1qJZJoHB2K2g088q6iH0lOU3gWv5gJwXlbLwrNnC/TtltxjNqbQrKyP7kbbpgrKt73a8abTQ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=u2LsIQxp; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-881a16741b2so317447339f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754940979; x=1755545779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=72XMIxp5MKX6tXyD3i1bkwM+jKCX1HApq4l+CzM3U/k=;
+        b=u2LsIQxptMtm7cO7TOY82mqNFmpD4eKgKsQ4MAEZlYvfRWzr7MwscoMqq+snDXM1jF
+         9sT34V+hPHj0RWu9hHqh5qmybotjRObIsVLdWxZRVA0g99kBBZvZVjALowKNfmQqkh+/
+         r0meKQ92sv3Xn9dZSC9zZ1/F4N7LqyuEPyuKSr8VfYMcnDe3fahGCzErCfAgtUTP+XcR
+         2EnCDwu74K9CMIyPTLi0fDoXEfeG8gGJp9hn3KViECbIPt9GNuE4Hy8TP3KSFNjwIa0R
+         vLrAmxactOEDNNBtNdHiawwF7Q4LDyGNygKSVySuF/zBpOorUL9e7ojuVR1lAGSfAURi
+         CXtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754940979; x=1755545779;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=72XMIxp5MKX6tXyD3i1bkwM+jKCX1HApq4l+CzM3U/k=;
+        b=eeUACMpx4TFy+bhiDUO9j42EQ62x/thzKdJmrqKRXByvY6m9t0tBiMQwR6Vb9wXaUa
+         ZahjjzNfUP/AXAClawWYW1JDf1B1LcDq6eduZSL45HOwxsPCNa+ZDSxWVCLHMaqpWUWn
+         Wv9vVoOVhbXpMz4dCy19dXGZOSSlkI7JNvt71qYnetkl1i40BHH7mG3L2yCKtbUvZAzx
+         nQ+aa5Ru8qYR5pEz5YREUz12rqeFVWKEm+vuvVLsDWz6HVRMJ3Ff0OR/feFhNxAST0Sx
+         paGY3Sy8TvWXaEkS5hNtV6FgZl+D1UjnvqcPsKue3rKQHOyyD3QclLzQqRWI0yrgejQ3
+         K7yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo2FiDs+4uuwWpOiKjWFBvue4dIR7W3lxpx9M0xtUGbmMkmlbO9epZRIxdsNb5aK/TqLerXUpEFiy8unI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYNG2zooa7FtgmeMFfzATD4UrrBppPChU57//tFOo/dPXwIC6X
+	nBFZkaDvpAARpzX5GPWrrTGzpss3Zz2m/2tF3J2RElAS+uuz39K5tVEh2yCtgGjyGMqeqSFovt6
+	gieyw
+X-Gm-Gg: ASbGncsHYE4GCpwc/uhTUdrFOB42CWrPFGGiAQiYumHF3RjgVIQ75fY+SvlMmAetcN1
+	3Dc5NXD7RNlOsifGdisTe5tyV5l+96wHoyu8qQ7jX3YuNBcS8kNUohM8PWmIMceHXb0NhS8w7e8
+	y50FvTGWlIeOfhE9Qd4YWqzwZe+YidaYWEBSnWGGqkw3LfKG0X+dwI8I/LAqrdR8WICU1uW+y05
+	p7hEH+Z7J0ivxnWkwX2eJzk35qqs/TEiUm32ZrGCDxScOYAuqjpyMmivUh3BGVuCe0NoVS9dfHP
+	lVYQZib/fT01oW2WYVKULskXCSmszOuSXJC1g7QqbMIikntuLZgn2qY+s45vmpakmxKv+HdSMTz
+	5ncTITKF4woxrDIam/Io=
+X-Google-Smtp-Source: AGHT+IFI7bcnv/xozr8FYwjYJ1+aBup0n49ZFQ4pkjS2LiRwJyXw7cO/+sILBX3oZiOsLnPV8ioakg==
+X-Received: by 2002:a05:6e02:12e7:b0:3e5:4a07:e6f with SMTP id e9e14a558f8ab-3e55af460bcmr11076985ab.9.1754940979208;
+        Mon, 11 Aug 2025 12:36:19 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e53e336735sm27720455ab.16.2025.08.11.12.36.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 12:36:18 -0700 (PDT)
+Message-ID: <8cdcb529-54a9-427f-afd6-108207bbbe0e@kernel.dk>
+Date: Mon, 11 Aug 2025 13:36:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] WARNING in vmap_small_pages_range_noflush
+To: syzbot <syzbot+7f04e5b3fea8b6c33d39@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <689a2e53.050a0220.51d73.00a1.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <689a2e53.050a0220.51d73.00a1.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Define cqspi_get_tuning_params() to extract information about the PHY
-tuning pattern and it's size from controller.
+#syz dup "[syzbot] [io-uring?] WARNING in __vmap_pages_range_noflush"
 
-Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
----
- drivers/spi/spi-cadence-quadspi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This is the same issue reported last week, a fix already went into the
+current upstream tree (and is in 6.17-rc1).
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 1626cb9a9700..c9c4341d3275 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -2170,6 +2170,14 @@ static int cqspi_mem_execute_tuning(struct spi_mem *mem,
- 	return ret;
- }
- 
-+static int cqspi_get_tuning_params(struct spi_mem *mem,
-+				   struct spi_mem_tuning_params *tuning_params)
-+{
-+	tuning_params->pattern_ptr = phy_tuning_pattern;
-+	tuning_params->pattern_size = sizeof(phy_tuning_pattern);
-+	return 0;
-+}
-+
- static int cqspi_of_get_flash_pdata(struct platform_device *pdev,
- 				    struct cqspi_flash_pdata *f_pdata,
- 				    struct device_node *np)
-@@ -2345,6 +2353,7 @@ static const struct spi_controller_mem_ops cqspi_mem_ops = {
- 	.get_name = cqspi_get_name,
- 	.supports_op = cqspi_supports_mem_op,
- 	.execute_tuning = cqspi_mem_execute_tuning,
-+	.get_tuning_params = cqspi_get_tuning_params,
- };
- 
- static const struct spi_controller_mem_caps cqspi_mem_caps = {
 -- 
-2.34.1
+Jens Axboe
 
 
