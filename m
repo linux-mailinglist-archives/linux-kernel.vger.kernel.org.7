@@ -1,58 +1,76 @@
-Return-Path: <linux-kernel+bounces-763422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DC0B2145D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD02B2144C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB2F3E546C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1FF624C1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B4C2E2665;
-	Mon, 11 Aug 2025 18:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416392E0B68;
+	Mon, 11 Aug 2025 18:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8o5NsGI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SoSfNRy/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255872E1C53;
-	Mon, 11 Aug 2025 18:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D38421C160;
+	Mon, 11 Aug 2025 18:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936896; cv=none; b=tBdfFz4d7Zi6Brj/wh/D9jYrQuVdPN+WY26mSuSX3oSEUOJAUGiOj5+iodV5xNlgkcl5zFB0HbdOdsy5Sne3jldd3gYMEbm+R/MUwaqU8ki0PFOhfhVDl4tFegqj+/icp2N/0j/p6EBl64A9nLnx6d+zea7qcHU6nw6ACkyLjZg=
+	t=1754936865; cv=none; b=qnOdHf6IOZeq6LhUKZq/P7N5V5cI4z2WnLfuwE4bHiafXO/SJZAJ66/yhjTiiw18rrxW4vGDMk6t0tskWytzREqC0m5km/9r5J3Hm2CgrQtRHig5ecjDX8ETZ0LhNYT4LMC93ZjmB9UFl2+ecLcqoGnu6eBd1FlpaeaseMKFoCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936896; c=relaxed/simple;
-	bh=R/c+sHj58hPXsXZ0wEu7sPVUYOmEp9NF5pVcd2XPhrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I8wh8W67wAV2h++I1IHo9kr9WtesLiMsPjzLoFB+Wyx42GL+PfRbOT9u/hKojxe4QCsmEAJcAZbJ57JHHyEsPI9p/oJVYhNIYw7310RVmL2bYYJgj71vB8vyB/JIlC1uoiherkQAeAqw3q+sjPvGTA5pUVwOHxibxvvQ+nOu2PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8o5NsGI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB150C4CEED;
-	Mon, 11 Aug 2025 18:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754936896;
-	bh=R/c+sHj58hPXsXZ0wEu7sPVUYOmEp9NF5pVcd2XPhrk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W8o5NsGIjnD6Fikc+Kz+w8FS4JVodiTAEjEhMMlpT5RIW6ivG8H5FJh83Nc4tq/Lm
-	 LxfZQn1eF3Q9MssTKldhaiUQv0nBNFWe0mloJIzvF8ha4Im7bvR6AsaHo5OAWcOeU0
-	 mWmxcF745Iorr1HB9ktFabBj8J3+V0cjbarnvOEy6OF4i71tTsy18dDjE9h4PYLUwk
-	 cXUBKCb7GQQc4gY6BBpqgG30ycrK36OWoH6OLx5CnTBEYJ26L7aJlUrxKuWC3yXRv3
-	 mmdLGw52pB6Jq/585O+B3Rl8CDXSXh1IfmsKR4IpSP6qjRga6qTaDLR/poss1wAdSL
-	 0gbdbI0FnhBSQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 3/3] lib/crc: Use underlying functions instead of crypto_simd_usable()
-Date: Mon, 11 Aug 2025 11:26:31 -0700
-Message-ID: <20250811182631.376302-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250811182631.376302-1-ebiggers@kernel.org>
-References: <20250811182631.376302-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1754936865; c=relaxed/simple;
+	bh=Uem05OPqqRcTueaZKqOm5X0mvYPisWsdgByf0rFilY4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cnc6mJcF78TTdhFwo23rkatsybBcvxf79BfqgpaswpZdqaiszB+fnRBUlnkXT7J8XSDZE6yZXmEtV1VTQDsL4Zse3FPTuxy1jCwXCSzkXf0oJGF7jyW94f+ZGU4+FozGB8CwWbvvecNAalVMmutmCS+u4EDCxc5c9CcxZgsxKC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SoSfNRy/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754936864; x=1786472864;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Uem05OPqqRcTueaZKqOm5X0mvYPisWsdgByf0rFilY4=;
+  b=SoSfNRy//NTQbWJyV4cNj3/tAveN+fcvaZ9Hf4BEPEicmFrew9cuyFbB
+   8aWj7oLXH+vVNR5cSTlXdhn2X9DO0Ci0T0s/naN5RH6Qastn2pDiRpxcj
+   /rt1Dc6CKrWqkMwZE8aEMx9FiKaUOjGs5mQ/w++TiLzTLcnzE/MTj3ZxL
+   4HxeeWBBj3msjivR6OlOf/TbzoAyl04Z0u7FkxnjALmx9CkhLRv/hKmWY
+   wauEffJCwMmUo/qLcFHIjo3yqTB1DMLPy/6TQWHzqJUfqgERXW9b90Jgg
+   ZR9BxseJCcGRBXoB64IfCFQhLf58tmwrA2tOFh3h41ckvkvwM5Lypn3Df
+   w==;
+X-CSE-ConnectionGUID: xzWdPOTMRze5h4GlwR9LAA==
+X-CSE-MsgGUID: eNtMGWaYS1GJz7SHZoK3Vw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57279830"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57279830"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:27:44 -0700
+X-CSE-ConnectionGUID: GHFwvyOKQnuOlpTcv+/xeA==
+X-CSE-MsgGUID: 1JQeJa6fSo6JlEu+sksadQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="189658378"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Aug 2025 11:27:42 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>
+Subject: [PATCH] perf: Fix the POLL_HUP delivery breakage
+Date: Mon, 11 Aug 2025 11:26:44 -0700
+Message-Id: <20250811182644.1305952-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,312 +79,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since crc_kunit now tests the fallback code paths without using
-crypto_simd_disabled_for_test, make the CRC code just use the underlying
-may_use_simd() and irq_fpu_usable() functions directly instead of
-crypto_simd_usable().  This eliminates an unnecessary layer.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Take the opportunity to add likely() and unlikely() annotations as well.
+The event_limit can be set by the PERF_EVENT_IOC_REFRESH to limit the
+number of events. When the event_limit reaches 0, the POLL_HUP signal
+should be sent. But it's missed.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+The corresponding counter should be stopped when the event_limit reaches
+0. It was implemented in the ARCH-specific code. However, since the
+commit 9734e25fbf5a ("perf: Fix the throttle logic for a group"), all
+the ARCH-specific code has been moved to the generic code. The code to
+handle the event_limit was lost.
+
+Add the event->pmu->stop(event, 0); back.
+
+Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+Closes: https://lore.kernel.org/lkml/aICYAqM5EQUlTqtX@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com/
+Reported-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- lib/crc/arm/crc-t10dif.h          |  6 ++----
- lib/crc/arm/crc32.h               |  6 ++----
- lib/crc/arm64/crc-t10dif.h        |  6 ++----
- lib/crc/arm64/crc32.h             | 11 ++++++-----
- lib/crc/powerpc/crc-t10dif.h      |  5 +++--
- lib/crc/powerpc/crc32.h           |  5 +++--
- lib/crc/x86/crc-pclmul-template.h |  3 +--
- lib/crc/x86/crc32.h               |  2 +-
- 8 files changed, 20 insertions(+), 24 deletions(-)
+ kernel/events/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
-index 2edf7e9681d05..1a969f4024d47 100644
---- a/lib/crc/arm/crc-t10dif.h
-+++ b/lib/crc/arm/crc-t10dif.h
-@@ -3,12 +3,10 @@
-  * Accelerated CRC-T10DIF using ARM NEON and Crypto Extensions instructions
-  *
-  * Copyright (C) 2016 Linaro Ltd <ard.biesheuvel@linaro.org>
-  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index dd8cf3c7fb7a..ec19c456b66d 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10378,6 +10378,7 @@ static int __perf_event_overflow(struct perf_event *event,
+ 		ret = 1;
+ 		event->pending_kill = POLL_HUP;
+ 		perf_event_disable_inatomic(event);
++		event->pmu->stop(event, 0);
+ 	}
  
--#include <crypto/internal/simd.h>
--
- #include <asm/neon.h>
- #include <asm/simd.h>
- 
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_pmull);
-@@ -21,19 +19,19 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
- 
- static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
- {
- 	if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
- 		if (static_branch_likely(&have_pmull)) {
--			if (crypto_simd_usable()) {
-+			if (likely(may_use_simd())) {
- 				kernel_neon_begin();
- 				crc = crc_t10dif_pmull64(crc, data, length);
- 				kernel_neon_end();
- 				return crc;
- 			}
- 		} else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
- 			   static_branch_likely(&have_neon) &&
--			   crypto_simd_usable()) {
-+			   likely(may_use_simd())) {
- 			u8 buf[16] __aligned(16);
- 
- 			kernel_neon_begin();
- 			crc_t10dif_pmull8(crc, data, length, buf);
- 			kernel_neon_end();
-diff --git a/lib/crc/arm/crc32.h b/lib/crc/arm/crc32.h
-index 018007e162a2b..ae71aa60b7a74 100644
---- a/lib/crc/arm/crc32.h
-+++ b/lib/crc/arm/crc32.h
-@@ -5,12 +5,10 @@
-  * Copyright (C) 2016 Linaro Ltd <ard.biesheuvel@linaro.org>
-  */
- 
- #include <linux/cpufeature.h>
- 
--#include <crypto/internal/simd.h>
--
- #include <asm/hwcap.h>
- #include <asm/neon.h>
- #include <asm/simd.h>
- 
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_crc32);
-@@ -32,11 +30,11 @@ static inline u32 crc32_le_scalar(u32 crc, const u8 *p, size_t len)
- }
- 
- static inline u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
- {
- 	if (len >= PMULL_MIN_LEN + 15 &&
--	    static_branch_likely(&have_pmull) && crypto_simd_usable()) {
-+	    static_branch_likely(&have_pmull) && likely(may_use_simd())) {
- 		size_t n = -(uintptr_t)p & 15;
- 
- 		/* align p to 16-byte boundary */
- 		if (n) {
- 			crc = crc32_le_scalar(crc, p, n);
-@@ -61,11 +59,11 @@ static inline u32 crc32c_scalar(u32 crc, const u8 *p, size_t len)
- }
- 
- static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- {
- 	if (len >= PMULL_MIN_LEN + 15 &&
--	    static_branch_likely(&have_pmull) && crypto_simd_usable()) {
-+	    static_branch_likely(&have_pmull) && likely(may_use_simd())) {
- 		size_t n = -(uintptr_t)p & 15;
- 
- 		/* align p to 16-byte boundary */
- 		if (n) {
- 			crc = crc32c_scalar(crc, p, n);
-diff --git a/lib/crc/arm64/crc-t10dif.h b/lib/crc/arm64/crc-t10dif.h
-index c4521a7f1ee9b..435a990ec43c2 100644
---- a/lib/crc/arm64/crc-t10dif.h
-+++ b/lib/crc/arm64/crc-t10dif.h
-@@ -5,12 +5,10 @@
-  * Copyright (C) 2016 - 2017 Linaro Ltd <ard.biesheuvel@linaro.org>
-  */
- 
- #include <linux/cpufeature.h>
- 
--#include <crypto/internal/simd.h>
--
- #include <asm/neon.h>
- #include <asm/simd.h>
- 
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_asimd);
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_pmull);
-@@ -23,19 +21,19 @@ asmlinkage u16 crc_t10dif_pmull_p64(u16 init_crc, const u8 *buf, size_t len);
- 
- static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
- {
- 	if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
- 		if (static_branch_likely(&have_pmull)) {
--			if (crypto_simd_usable()) {
-+			if (likely(may_use_simd())) {
- 				kernel_neon_begin();
- 				crc = crc_t10dif_pmull_p64(crc, data, length);
- 				kernel_neon_end();
- 				return crc;
- 			}
- 		} else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
- 			   static_branch_likely(&have_asimd) &&
--			   crypto_simd_usable()) {
-+			   likely(may_use_simd())) {
- 			u8 buf[16];
- 
- 			kernel_neon_begin();
- 			crc_t10dif_pmull_p8(crc, data, length, buf);
- 			kernel_neon_end();
-diff --git a/lib/crc/arm64/crc32.h b/lib/crc/arm64/crc32.h
-index 6e5dec45f05d2..31e649cd40a2f 100644
---- a/lib/crc/arm64/crc32.h
-+++ b/lib/crc/arm64/crc32.h
-@@ -3,12 +3,10 @@
- #include <asm/alternative.h>
- #include <asm/cpufeature.h>
- #include <asm/neon.h>
- #include <asm/simd.h>
- 
--#include <crypto/internal/simd.h>
--
- // The minimum input length to consider the 4-way interleaved code path
- static const size_t min_len = 1024;
- 
- asmlinkage u32 crc32_le_arm64(u32 crc, unsigned char const *p, size_t len);
- asmlinkage u32 crc32c_le_arm64(u32 crc, unsigned char const *p, size_t len);
-@@ -21,11 +19,12 @@ asmlinkage u32 crc32_be_arm64_4way(u32 crc, unsigned char const *p, size_t len);
- static inline u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
- {
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return crc32_le_base(crc, p, len);
- 
--	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+	if (len >= min_len && cpu_have_named_feature(PMULL) &&
-+	    likely(may_use_simd())) {
- 		kernel_neon_begin();
- 		crc = crc32_le_arm64_4way(crc, p, len);
- 		kernel_neon_end();
- 
- 		p += round_down(len, 64);
-@@ -41,11 +40,12 @@ static inline u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
- static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- {
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return crc32c_base(crc, p, len);
- 
--	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+	if (len >= min_len && cpu_have_named_feature(PMULL) &&
-+	    likely(may_use_simd())) {
- 		kernel_neon_begin();
- 		crc = crc32c_le_arm64_4way(crc, p, len);
- 		kernel_neon_end();
- 
- 		p += round_down(len, 64);
-@@ -61,11 +61,12 @@ static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- static inline u32 crc32_be_arch(u32 crc, const u8 *p, size_t len)
- {
- 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
- 		return crc32_be_base(crc, p, len);
- 
--	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
-+	if (len >= min_len && cpu_have_named_feature(PMULL) &&
-+	    likely(may_use_simd())) {
- 		kernel_neon_begin();
- 		crc = crc32_be_arm64_4way(crc, p, len);
- 		kernel_neon_end();
- 
- 		p += round_down(len, 64);
-diff --git a/lib/crc/powerpc/crc-t10dif.h b/lib/crc/powerpc/crc-t10dif.h
-index 59e16804a6eae..e033d5f57bae2 100644
---- a/lib/crc/powerpc/crc-t10dif.h
-+++ b/lib/crc/powerpc/crc-t10dif.h
-@@ -4,12 +4,12 @@
-  *
-  * Copyright 2017, Daniel Axtens, IBM Corporation.
-  * [based on crc32c-vpmsum_glue.c]
-  */
- 
-+#include <asm/simd.h>
- #include <asm/switch_to.h>
--#include <crypto/internal/simd.h>
- #include <linux/cpufeature.h>
- #include <linux/jump_label.h>
- #include <linux/preempt.h>
- #include <linux/uaccess.h>
- 
-@@ -27,11 +27,12 @@ static inline u16 crc_t10dif_arch(u16 crci, const u8 *p, size_t len)
- 	unsigned int prealign;
- 	unsigned int tail;
- 	u32 crc = crci;
- 
- 	if (len < (VECTOR_BREAKPOINT + VMX_ALIGN) ||
--	    !static_branch_likely(&have_vec_crypto) || !crypto_simd_usable())
-+	    !static_branch_likely(&have_vec_crypto) ||
-+	    unlikely(!may_use_simd()))
- 		return crc_t10dif_generic(crc, p, len);
- 
- 	if ((unsigned long)p & VMX_ALIGN_MASK) {
- 		prealign = VMX_ALIGN - ((unsigned long)p & VMX_ALIGN_MASK);
- 		crc = crc_t10dif_generic(crc, p, prealign);
-diff --git a/lib/crc/powerpc/crc32.h b/lib/crc/powerpc/crc32.h
-index 811cc2e6ed24d..cc8fa3913d4e0 100644
---- a/lib/crc/powerpc/crc32.h
-+++ b/lib/crc/powerpc/crc32.h
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+#include <asm/simd.h>
- #include <asm/switch_to.h>
--#include <crypto/internal/simd.h>
- #include <linux/cpufeature.h>
- #include <linux/jump_label.h>
- #include <linux/preempt.h>
- #include <linux/uaccess.h>
- 
-@@ -22,11 +22,12 @@ static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- {
- 	unsigned int prealign;
- 	unsigned int tail;
- 
- 	if (len < (VECTOR_BREAKPOINT + VMX_ALIGN) ||
--	    !static_branch_likely(&have_vec_crypto) || !crypto_simd_usable())
-+	    !static_branch_likely(&have_vec_crypto) ||
-+	    unlikely(!may_use_simd()))
- 		return crc32c_base(crc, p, len);
- 
- 	if ((unsigned long)p & VMX_ALIGN_MASK) {
- 		prealign = VMX_ALIGN - ((unsigned long)p & VMX_ALIGN_MASK);
- 		crc = crc32c_base(crc, p, prealign);
-diff --git a/lib/crc/x86/crc-pclmul-template.h b/lib/crc/x86/crc-pclmul-template.h
-index 35c950d7010c2..02744831c6fac 100644
---- a/lib/crc/x86/crc-pclmul-template.h
-+++ b/lib/crc/x86/crc-pclmul-template.h
-@@ -10,11 +10,10 @@
- #ifndef _CRC_PCLMUL_TEMPLATE_H
- #define _CRC_PCLMUL_TEMPLATE_H
- 
- #include <asm/cpufeatures.h>
- #include <asm/simd.h>
--#include <crypto/internal/simd.h>
- #include <linux/static_call.h>
- #include "crc-pclmul-consts.h"
- 
- #define DECLARE_CRC_PCLMUL_FUNCS(prefix, crc_t)				\
- crc_t prefix##_pclmul_sse(crc_t crc, const u8 *p, size_t len,		\
-@@ -55,11 +54,11 @@ static inline bool have_avx512(void)
-  * the dcache than the table-based code is, a 16-byte cutoff seems to work well.
-  */
- #define CRC_PCLMUL(crc, p, len, prefix, consts, have_pclmulqdq)		\
- do {									\
- 	if ((len) >= 16 && static_branch_likely(&(have_pclmulqdq)) &&	\
--	    crypto_simd_usable()) {					\
-+	    likely(irq_fpu_usable())) {					\
- 		const void *consts_ptr;					\
- 									\
- 		consts_ptr = (consts).fold_across_128_bits_consts;	\
- 		kernel_fpu_begin();					\
- 		crc = static_call(prefix##_pclmul)((crc), (p), (len),	\
-diff --git a/lib/crc/x86/crc32.h b/lib/crc/x86/crc32.h
-index cea2c96d08d09..2c4a5976654ad 100644
---- a/lib/crc/x86/crc32.h
-+++ b/lib/crc/x86/crc32.h
-@@ -42,11 +42,11 @@ static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- 
- 	if (!static_branch_likely(&have_crc32))
- 		return crc32c_base(crc, p, len);
- 
- 	if (IS_ENABLED(CONFIG_X86_64) && len >= CRC32C_PCLMUL_BREAKEVEN &&
--	    static_branch_likely(&have_pclmulqdq) && crypto_simd_usable()) {
-+	    static_branch_likely(&have_pclmulqdq) && likely(irq_fpu_usable())) {
- 		/*
- 		 * Long length, the vector registers are usable, and the CPU is
- 		 * 64-bit and supports both CRC32 and PCLMULQDQ instructions.
- 		 * It is worthwhile to divide the data into multiple streams,
- 		 * CRC them independently, and combine them using PCLMULQDQ.
+ 	if (event->attr.sigtrap) {
 -- 
-2.50.1
+2.38.1
 
 
