@@ -1,134 +1,205 @@
-Return-Path: <linux-kernel+bounces-762191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69E6B2032A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F09B2032B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F3618C1CB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97D6162837
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285372DCF70;
-	Mon, 11 Aug 2025 09:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oksEQOqM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C40D2DBF40;
+	Mon, 11 Aug 2025 09:21:30 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1EC1DED53;
-	Mon, 11 Aug 2025 09:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0F12DBF6E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904058; cv=none; b=Vtd7uSue/micMCcFNbnGEdkuc2QJHqWI3JsHyTlGChCSgad6Corh9HvdCTTgE0I0mt/qCe0mVemp14GxGZ9kw0+22R+FM7IeZ5tv/nGU/IEp3hbCGPloeqp2tCRSwyjQFfvd1JLIqNapcdpO5/7pEl2bPr89+3zXpNwUG1+JxjY=
+	t=1754904089; cv=none; b=Mk6F8IeB0W5oOJHj67oXChckRKXHPigK924wtXHQpW9avG9kCn+nbM9cZ8l1tDmMXf7caSr3cfg0v0OKF0bSMoaKIVxgwQEGKIuZ1qnvZaK0druBGvVVca+WsYOOZMlnw6ZIqZxNrkILGh6Q84mHu0SyJ5Eq50clL3Yj6BFb4aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904058; c=relaxed/simple;
-	bh=zVWx4ZTneBogMsOlcaZR03vsIq0ezyb2I7LWj7kgLSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrDH/PHrxNNtjyY3SJFChbfpENbLH9fqcp/eAs9u/iFeTUK7M9Ax9NxVkQubkCSCFKL/FsFPEATbs6D8GyVtmqE7ZaIYlFpaNrC6T8O+FCrHnglylALPY8tO2ZRzaJ1NmLfGSfR2WlYBSRMHIZ+AqCGZfV769eBCAdemTmYtYA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oksEQOqM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 953FCC4CEF7;
-	Mon, 11 Aug 2025 09:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754904058;
-	bh=zVWx4ZTneBogMsOlcaZR03vsIq0ezyb2I7LWj7kgLSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oksEQOqMUdyBxuwfuLKe37pFoOb6VRj3GDQarDMsJbDnBbc/9AwEbBuijT6yE5gjX
-	 Aza7iUY+J8HW+ykZdsXkx1WgmVMRM3m3dIm1IJ+Qj+zZy79pMGLdum9EgqQFdkI/bP
-	 XJLAcgxv74KTK+drCslPeAHb0IhVk41s1KqERWrzDoKJpExThxKw0qaYhINetJr5NG
-	 Rp3xwx0tmN4m+mPzFMQUnIf4y0XLSttdNCMRAPFeU+023/YRULigbX1alYCc2T1wQ5
-	 /KEYWWQk3a8mJiTdEm3cGp9HtqffW7Qa143N0XfozT1jl+1/PvvhfodGx58uFRZgOy
-	 zDYZZPN6DXr7Q==
-Date: Mon, 11 Aug 2025 11:20:48 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] man/man2/mremap.2: describe previously
- undocumented shrink behaviour
-Message-ID: <ac37lpfte2my6wlrk7omoeaul5spekd4pjzhutlmzanxtshneu@dsxs65meb74r>
-References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
- <c7ba8ba09b1c0b015134c54824788ef4aa47fd46.1754414738.git.lorenzo.stoakes@oracle.com>
- <iolucvrp6is43yjulbluchhw5wy6urq2gtwmcelg5atwuv63se@ovzuthfrup26>
- <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
+	s=arc-20240116; t=1754904089; c=relaxed/simple;
+	bh=W76zloFqqtTCXXYeHwACopxIsPS5jpr5hiuh/RqyVfw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WBQAuxzHijBsmJyie7U/gswhQ+i/HDPzZ0VYjHcR2O/mXHDbnPfIB2if4Q24jaH7hSrl8uYEgSa+fkzDku8DGbYQPSBY3swRxrYwAnl4DuwVtYdl0lM829OLzPlhy94LBNrR/xAj3INJFDC5LsV/9smSw11NV2AKmWYZgo9pw6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8816e763309so400844639f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:21:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754904087; x=1755508887;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JFIyLiepyehGnnd/8SdRVdnEJ3aC9IGjzOijBFjt4vM=;
+        b=TTb1DsKmKXEH0fvfwZg6ze0RnnHTSv7QjgCSOk0qqKddLSuuOMgXRf28sHUGXl8kLe
+         OA3STHQ9oeEmcG/GfGc7Il/ZDaoc25UkOkqhrSFxHYF9gEN47xEogNhBIBDQTD62ysdx
+         ORWDslNzjWzYuSTuJI5ZeO9hMHRNV6NHLepkeUNFE2bonprHVU8XhUPCL6PxzMm1JjH/
+         6ZICPiyeiQQ/zklL2Da9ahii0TJFnJl6tfEw8Yb6dXfakqS3QLQDJdiZJVJE8SGiQHZN
+         4lxrdx0L92/z8SVzl0mFiIZzbH6NysnO3jqLTwASYm8ByVLExHqUdoLBH7JhSuz8oTw2
+         +sYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwInIFUy0krvu+3tgpjPFR9XeLhs0pbNo5nY4bRuNF5Gcn5a/8s0iC0UPSwPLpkwqLBgONxWhMZGI3iF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXXt1jm5UFQDh/zygsOuddM3LEyNdJ866X/iahnyDac4nj/SOj
+	ipGmaZNiTlQpcq7DwAxQW0M2uZ31Dq9eYSjf1sH3FGVfJaSWWkZjBlXOn3CerO69ceuo7OwXstO
+	ouZQ4XXI9IvZDJYlu5oaxBCilT1zAZw+me+YPpfL9FDy99CHpFWm6RbKJhnQ=
+X-Google-Smtp-Source: AGHT+IGxwbkP15zBq7Lu8UfEZIf9saKXL7GHHTZAhg7ljtDflStHZmRM1DdI2tLptCu7PLTKnU5mMyhwzL2pPL620iBu2uGVYhiN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lgj4tlj4klqgw6oe"
-Content-Disposition: inline
-In-Reply-To: <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
+X-Received: by 2002:a05:6602:1691:b0:862:fe54:df4e with SMTP id
+ ca18e2360f4ac-883f12051e5mr2003295339f.7.1754904086818; Mon, 11 Aug 2025
+ 02:21:26 -0700 (PDT)
+Date: Mon, 11 Aug 2025 02:21:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6899b616.050a0220.7f033.00f2.GAE@google.com>
+Subject: [syzbot] [rdma?] general protection fault in kobj_kset_leave
+From: syzbot <syzbot+9d2945f0705b91485559@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f46434580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f2996d42fef6c09
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d2945f0705b91485559
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5166c0e1d4f0/disk-6e64f458.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0d6654192cf8/vmlinux-6e64f458.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/239aaa681481/bzImage-6e64f458.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d2945f0705b91485559@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc001fffe005: 0000 [#1] SMP KASAN NOPTI
+KASAN: probably user-memory-access in range [0x00000000ffff0028-0x00000000ffff002f]
+CPU: 1 UID: 0 PID: 19011 Comm: kworker/u8:21 Not tainted 6.16.0-syzkaller-11952-g6e64f4580381 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:kasan_byte_accessible+0x15/0x30 mm/kasan/generic.c:199
+Code: 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ef 03 48 01 c7 <0f> b6 07 3c 07 0f 96 c0 e9 8e c1 73 09 66 66 2e 0f 1f 84 00 00 00
+RSP: 0018:ffffc90003337890 EFLAGS: 00010286
+RAX: dffffc0000000000 RBX: 00000000ffff0028 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8b95536e RDI: dffffc001fffe005
+RBP: 00000000ffff0028 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000002c10 R12: ffffffff8b95536e
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881247c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3011cff8 CR3: 00000000685cb000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000003706
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __kasan_check_byte+0x13/0x50 mm/kasan/common.c:567
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire kernel/locking/lockdep.c:5842 [inline]
+ lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5825
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ kobj_kset_leave+0x50/0x200 lib/kobject.c:191
+ __kobject_del+0x11d/0x1f0 lib/kobject.c:608
+ kobject_del lib/kobject.c:627 [inline]
+ kobject_del+0x3f/0x60 lib/kobject.c:619
+ destroy_gid_attrs drivers/infiniband/core/sysfs.c:1183 [inline]
+ ib_free_port_attrs+0x280/0x490 drivers/infiniband/core/sysfs.c:1407
+ remove_one_compat_dev drivers/infiniband/core/device.c:1038 [inline]
+ rdma_dev_exit_net+0x2b5/0x590 drivers/infiniband/core/device.c:1176
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x2ee/0xab0 net/core/net_namespace.c:251
+ cleanup_net+0x408/0x890 net/core/net_namespace.c:682
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:kasan_byte_accessible+0x15/0x30 mm/kasan/generic.c:199
+Code: 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc ff df 48 c1 ef 03 48 01 c7 <0f> b6 07 3c 07 0f 96 c0 e9 8e c1 73 09 66 66 2e 0f 1f 84 00 00 00
+RSP: 0018:ffffc90003337890 EFLAGS: 00010286
+RAX: dffffc0000000000 RBX: 00000000ffff0028 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8b95536e RDI: dffffc001fffe005
+RBP: 00000000ffff0028 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000002c10 R12: ffffffff8b95536e
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881247c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3011cff8 CR3: 00000000685cb000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000003706
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	0f 1f 00             	nopl   (%rax)
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+  10:	90                   	nop
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	90                   	nop
+  14:	90                   	nop
+  15:	66 0f 1f 00          	nopw   (%rax)
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 c1 ef 03          	shr    $0x3,%rdi
+  27:	48 01 c7             	add    %rax,%rdi
+* 2a:	0f b6 07             	movzbl (%rdi),%eax <-- trapping instruction
+  2d:	3c 07                	cmp    $0x7,%al
+  2f:	0f 96 c0             	setbe  %al
+  32:	e9 8e c1 73 09       	jmp    0x973c1c5
+  37:	66                   	data16
+  38:	66                   	data16
+  39:	2e                   	cs
+  3a:	0f                   	.byte 0xf
+  3b:	1f                   	(bad)
+  3c:	84 00                	test   %al,(%rax)
 
 
---lgj4tlj4klqgw6oe
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] man/man2/mremap.2: describe previously
- undocumented shrink behaviour
-References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
- <c7ba8ba09b1c0b015134c54824788ef4aa47fd46.1754414738.git.lorenzo.stoakes@oracle.com>
- <iolucvrp6is43yjulbluchhw5wy6urq2gtwmcelg5atwuv63se@ovzuthfrup26>
- <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
-MIME-Version: 1.0
-In-Reply-To: <0b0928a3-03b0-4a36-817b-b75c1f5c78f9@lucifer.local>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Mon, Aug 11, 2025 at 06:31:25AM +0100, Lorenzo Stoakes wrote:
-> > Since this is documenting old behavior, could we have this patch before
-> > the patch documenting new behavior?  Or do you prefer it in this order?
->=20
-> I think it's fine in this order, it's more convenient for me as it'd be a=
- pain
-> to re-order otherwise, and we've waited ~20 years (or longer?) to documen=
-t this
-> so a delay in ordering is probably fine :P
->=20
-> Cheers, Lorenzo
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Okay, that's fine.  Thanks!
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Cheers,
-Alex
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---=20
-<https://www.alejandro-colomar.es/>
-
---lgj4tlj4klqgw6oe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiZte8ACgkQ64mZXMKQ
-wqkvnw/+IdbsJsVOUcmRIygS4HeChREWaNfeJQO7+UgsDPRw4CHPhxXhQyBGepCG
-fY6zcpBYX69RhF/1zNj9hDHSY7a4YlXQIVC4qs+AaAucT9IOzTH2hyykYU7O/gfu
-ltdePdwvQ7qs7PSkKgmwbOYEUODi0WmZrTJT4Jt8OW9C2sPGZ01IWE+7DsZYITIv
-awdWYSPkeSe0oeGAsQ33ZyP/kN/jRt+pHFbPE5dcbCxBkOFOCq8z5RcXtebrgq+T
-HBYO4J+OMjwkGqNMTY5DIry731B19BwvmI03NbcMApuMuEx6kK8HtDRfO3000hs3
-kRtR+glT+9RvfgzKcz/gadkFfVlhk/rMzFjQGCRD0FjSAlgbvIzPujM80Lgljk9Y
-FGQ///2DeH+Mf2vk9+WweEj+ciTFCPeok2i6rnNofTjq+cbaijpEny+c4ra4mJeH
-+AwxzrWdNjhxUZnr50B/WTT61bXBTVIHQuSnyHGbq/zSU8zuJiY2q7FFprgMnLq1
-pMWdkf1/cladI86zQH3d5QeX8BQN0MazjTNSV+FRECLrJJOSeLn1a5ip5nY+nJs4
-0U9WVtJhQ5MZcwNfPVEZp8aNqO2hTxS7OUYBjmiEWdLD+CKYmFJi8ygDy931sk7Y
-PEFHGbRwkh3vnLgGk/mTFFuCGbxEbTfC2a1lN+7xbdEuiYb2iRI=
-=0pEu
------END PGP SIGNATURE-----
-
---lgj4tlj4klqgw6oe--
+If you want to undo deduplication, reply with:
+#syz undup
 
