@@ -1,231 +1,141 @@
-Return-Path: <linux-kernel+bounces-763729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD74CB21971
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6504B21974
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8959C681C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C533D3B84C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2173204C07;
-	Mon, 11 Aug 2025 23:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77D22FE0F;
+	Mon, 11 Aug 2025 23:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AYxZ87oZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="Cin9Rvwk"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA981F5851;
-	Mon, 11 Aug 2025 23:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311F1D61BC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 23:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754955174; cv=none; b=JWWcog6K5pQV1RVvEweIOTKkaM8LtHKmk1iq2l7dpr9TJei4FOhLQOKRHxFGqVDzYF1iOOv3iGtBvxuu/qai8P84O1Td9CL8dVNVUOY55LWjnd+s2pxy/AeJytylHXuCn43JR9kpmUxlMSeNZAscTUUD1bspCIyhIljTvxq1cF8=
+	t=1754955440; cv=none; b=jI0u4DHeKWftYpZLwLrPssN5ZHeCbqY4WtV4XPjxWNhD0SCflDdv80uajwPXB4iYHy9Lc3O9G8OWtQWBLHi9CE1xOYHgFfVYY5GnDggCAlnnzfMoOEhHHKzWMuOQ3hMImSEv12WW+VxUqQsVLbFEBBil0h2nYws0kd4MRR5oGhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754955174; c=relaxed/simple;
-	bh=7cLJdH8KF2VZBdJI+NHRPlbrq7ivdih1u7haMen+RKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3stElAtCuT00ICGmb+71S/yek4Wyl3jwdlb0LRgSmtE9jacKyVWhiIzOMsC9kVnzsEAOW8dtWoxj34aA/pUIlijrTZG+m3qWH9cs8JvpkNR/6kT5UbZZTFcfM+Og/Es5RZ7vCjzWOgLgR9EWecVg2FdDHh02+lB2H+GpaWa8hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AYxZ87oZ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754955173; x=1786491173;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7cLJdH8KF2VZBdJI+NHRPlbrq7ivdih1u7haMen+RKU=;
-  b=AYxZ87oZBHwaK5mesHOq6NtXu3pejOGF4PkRFi5mK8SCeTkS8tnxoCur
-   jFcItOnO9Lc/xkasU7SLhgTuiEQaVNaJt0OkCqKWJULtLRROs7dgRDGuE
-   6XhjWon4US9LoYUS/0qHAgIHvLDKo69kjwZ0IEUjS9/VH5TqExJF3htqo
-   S0bSrFeNpR85cfxAciSof6UIc3IsGUfARAEY3oPlCjz5jjUr90YVhm8fX
-   Py1ZATW5+HtYNlKY02X3sIi4T6DtYXicIgHGKZwOljItb0n/6RA9EBP5/
-   WfqbAZi9wMJ9HKw4qwVgMhror6IGIcWwzB95UNmqGYFMa3GgWr/ru0hzd
-   A==;
-X-CSE-ConnectionGUID: xExRFH7mSL2jCIkHq3uaaw==
-X-CSE-MsgGUID: oGJUxb6QSxiM/dRjoU1V6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68673243"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="68673243"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 16:32:52 -0700
-X-CSE-ConnectionGUID: 9vZR6MreSQycM6+KUugAjA==
-X-CSE-MsgGUID: nEoiVLPGRDC0WiG4eVCKqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="171277787"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 16:32:51 -0700
-Received: from [10.124.35.105] (kliang2-mobl1.ccr.corp.intel.com [10.124.35.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 6354020B5720;
-	Mon, 11 Aug 2025 16:32:50 -0700 (PDT)
-Message-ID: <17298e98-1a2d-4cdd-9156-73e77cc4eb5b@linux.intel.com>
-Date: Mon, 11 Aug 2025 16:32:49 -0700
+	s=arc-20240116; t=1754955440; c=relaxed/simple;
+	bh=t+BKRCWZsKqgAOgvdI/IQS5v4/7HhWU8/k4yGH4GnXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZSN23eauNGy3coV9ljJEZg0lU2p1Gr8P2x7wHxZKIb6hU7p+W89DHgBUXlRPtRu3FWRDfSRd5NA+x3/TH7X2D3sMCWZkmOv4S8UdFuC8u5Rvm+cUQSxc88Bbzi6nvm2VE1Cas+tQcW6pNBZ51yYcGatuWdED3gt3IdvXDZav7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=Cin9Rvwk; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31ecd1f0e71so5769086a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1754955437; x=1755560237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VfmfLdS2dFzqX+Fr78BWjugD3hNZ34Ysqu9SesKrFGM=;
+        b=Cin9RvwkrG6S6OfPjBvnjljsQTyOTT2sBlE1XMiP5BISl7Pu8bmZcrjX9zM0lwHuWT
+         PyGQdHvJ7S3T7SFxk/75s0j+YYf39OlKmVa0r5azkdgZWKFSsVVFYIXxjrIzCy8o8+Kj
+         r3yg3up0qws4L0XQwaDhkalLWcV0ZFGoqXFBOqkXOkKvVmIKQlgd7xwlSapvHeyCzH1P
+         yM5I9IxxadMYB131/DuZcUln1gc1rmaQCDM86T6xbBcMDPgac8MWBHwiEicmsUthRTD9
+         UsRr7FETRTTSHhJe2vwXKQ1XlTL1SziBPdlZRI9j6OIibxfgXILA29hlIbYXIVj1oDli
+         rK5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754955437; x=1755560237;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VfmfLdS2dFzqX+Fr78BWjugD3hNZ34Ysqu9SesKrFGM=;
+        b=Pk2m43sBTlIt/G0D9nidE8W2hvtoq02f3T0oYhrUfR6KkeGvFdgMpL5YyJdLTMZrni
+         T+AXqMpD2vYrjCrtTEDpi1GYeocLMgpxzwX0tVDLs1Raew4NaI1zFPA8onL6kTn/WeXS
+         43NwNciHIstt7LN762r6U0Kc8VTwZezH822yBAgyAaub+97g4fYX40Z8cgFitPh/mx9Y
+         vGcQi7kojS1ym0poby+j+Q2Xx9WdT2sfzHxuZecuUjTmedAPQ4Ue9MuUDeitfP3blHwP
+         fQrk2AKB2BPOgU9/O6tFGUal32gaQz0f3FGA4B67FE0NN8lHLq084FYbKzwvUSoG5YLX
+         bi9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWi1qrdQXXGsE7OOVFg3h590dRlcZxrDTDt5PG0wWsiLXJ52PWQ6CSfKd7eWjnI1trplLY8KXQ9GvGKu0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd2WTT69cQR0CHR+EJ3JbaRwKFmTXXlXaOmtUhfF1/FJFEbs/C
+	34kL7CM4ZsFOpWj8KtQw1jafP6BWrEcH82snK9GrhyVWSSRZtEyIAgryT6IIKSDwaEk=
+X-Gm-Gg: ASbGncvu0vQYq62pcV0XELFMVk6Wirrr9a4kZRC9EImra+N3dfRIrgGOnsnO2jA4VF9
+	haqSNu4ixFqBK2DNKO1LMaLSiDurGaFot6Z98hWCCskJt221o8D2konFV43XOvYJb5NqYM0ru+E
+	jY3p890R9OWgcsY1SmRMUhIZwFySzlsGkhClUlRXd85vymDm00UKHsNbq/afzsZV41psf2480fq
+	COBu100qzWupQnylX+iwcdXGaT/Wdbc4Ju98ZnPw4LcgmgnHjYoWShDiFnpX7tK907USf1nBtkI
+	GxrPKcV9s3cGlOYVBhp77lk+NI8BpKhPjJZKedK4puUTjY/dNAfmvgjWLyywH8ZL1uP/HQX9wY3
+	A7rawYNJ/MuBJb/Xq6xIh3vl1stb5jkWTplbeNb9dyo3Xm7KkTh6ALE104tqZkn/8I1o=
+X-Google-Smtp-Source: AGHT+IE+UBYandDx5z87lM/XbpF62WzKz4U6tb9Qgmd4oPQwzpn33MGHYW9itmHr3TzEusfdJbbs5g==
+X-Received: by 2002:a17:90b:54c4:b0:321:156f:5c00 with SMTP id 98e67ed59e1d1-321839d5850mr19572692a91.1.1754955437052;
+        Mon, 11 Aug 2025 16:37:17 -0700 (PDT)
+Received: from MacBook-Air.local (c-73-222-201-58.hsd1.ca.comcast.net. [73.222.201.58])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161282b5esm15905398a91.27.2025.08.11.16.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 16:37:16 -0700 (PDT)
+Date: Mon, 11 Aug 2025 16:37:14 -0700
+From: Joe Damato <joe@dama.to>
+To: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH net] Octeontx2-af: Fix negative array index read warning
+Message-ID: <aJp-qm55O_ka7vSv@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>,
+	Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
+	sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+References: <20250810180339.228231-1-chandramohan.explore@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, kernel test robot <oliver.sang@intel.com>
-References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
- <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810180339.228231-1-chandramohan.explore@gmail.com>
 
-
-
-On 2025-08-11 2:00 a.m., Dapeng Mi wrote:
-> The PMI handler could disable some events as the interrupt throttling
-> and clear the corresponding items in cpuc->events[] array.
+On Sun, Aug 10, 2025 at 11:33:27PM +0530, Chandra Mohan Sundar wrote:
+> The cgx_get_cgxid function may return a negative value.
+> Using this value directly as an array index triggers Coverity warnings.
 > 
-> perf_event_overflow()
->   -> __perf_event_overflow()
->     ->__perf_event_account_interrupt()
->       -> perf_event_throttle_group()
->         -> perf_event_throttle()
->           -> event->pmu->stop()
->             -> x86_pmu_stop()
+> Validate the returned value and handle the case gracefully.
 > 
-> Moreover PMI is NMI on x86 platform and it could interrupt other perf
-> code like setup_pebs_adaptive_sample_data(). 
-
-The PMU is disabled when draining the PEBS records. I don't think a PMI
-can be triggered in the setup_pebs_adaptive_sample_data().
-
-> So once PMI handling
-> finishes and returns into setup_pebs_adaptive_sample_data() and it could
-> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
-> triggers an invalid memory access and leads to kernel crashes eventually.
-
-The commit 9734e25fbf5a stops all events in a group when processing the
-last records of the leader event. For large PEBS, it's possible that
-there are still some records for member events left. It should be the
-root cause of the NULL pointer. If so, we should drain those records as
-well.
-
-Thanks,
-Kan>
-> Thus add NULL check before accessing cpuc->events[*] pointer.
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
-> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Tested-by: kernel test robot <oliver.sang@intel.com>
+> Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
 > ---
->  arch/x86/events/core.c       |  3 +++
->  arch/x86/events/intel/core.c |  6 +++++-
->  arch/x86/events/intel/ds.c   | 13 ++++++-------
->  3 files changed, 14 insertions(+), 8 deletions(-)
+>  drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 7610f26dfbd9..f0a3bc57157d 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
->  			continue;
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> index 8375f18c8e07..b14de93a2481 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> @@ -3005,6 +3005,8 @@ static int cgx_print_fwdata(struct seq_file *s, int lmac_id)
+>  		return -EAGAIN;
 >  
->  		event = cpuc->events[idx];
-> +		if (!event)
-> +			continue;
-> +
->  		last_period = event->hw.last_period;
+>  	cgx_id = cgx_get_cgxid(cgxd);
+> +	if (cgx_id < 0)
+> +		return -EINVAL;
 >  
->  		val = static_call(x86_pmu_update)(event);
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 15da60cf69f2..386717b75a09 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
->  		if (!is_topdown_idx(idx))
->  			continue;
->  		other = cpuc->events[idx];
-> +		if (!other)
-> +			continue;
->  		other->hw.saved_slots = slots;
->  		other->hw.saved_metric = metrics;
->  	}
-> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
->  		if (!is_topdown_idx(idx))
->  			continue;
->  		other = cpuc->events[idx];
-> +		if (!other)
-> +			continue;
->  		__icl_update_topdown_event(other, slots, metrics,
->  					   event ? event->hw.saved_slots : 0,
->  					   event ? event->hw.saved_metric : 0);
-> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
->  
->  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
->  		event = cpuc->events[bit];
-> -		if (!event->attr.precise_ip)
-> +		if (!event || !event->attr.precise_ip)
->  			continue;
->  
->  		perf_sample_data_init(data, 0, event->hw.last_period);
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index c0b7ac1c7594..b23c49e2e06f 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
->  	 */
->  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
->  		event = cpuc->events[bit];
-> +		if (!event)
-> +			continue;
->  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
->  			intel_pmu_save_and_restart_reload(event, 0);
->  	}
-> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->  			continue;
->  
->  		event = cpuc->events[bit];
-> -		if (WARN_ON_ONCE(!event))
-> -			continue;
-> -
-> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
-> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->  			continue;
->  
->  		/* log dropped samples number */
-> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
->  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
->  			event = cpuc->events[bit];
-> -
-> -			if (WARN_ON_ONCE(!event) ||
-> -			    WARN_ON_ONCE(!event->attr.precise_ip))
-> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->  				continue;
->  
->  			if (counts[bit]++) {
-> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->  			continue;
->  
->  		event = cpuc->events[bit];
-> +		if (!event)
-> +			continue;
->  
->  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->  					    counts[bit], setup_pebs_adaptive_sample_data);
+>  	if (rvu->hw->lmac_per_cgx == CGX_LMACS_USX)
+>  		fwdata =  &rvu->fwdata->cgx_fw_data_usx[cgx_id][lmac_id];
 
+A couple pieces of feedback for you:
+
+1. Since this is a fixes it needs a Fixes tag and a commit SHA that it is fixing.
+2. cgx_get_cgxid is called in 3 places, so your patch would probably need to
+   be expanded to fix all uses?
+
+Overall though, did you somehow trigger this issue?
+
+It seems like all cases where cgx_get_cgxid is used it would be extremely
+difficult (maybe impossible?) for cgxd to be NULL and for it to return a
+negative value.
 
