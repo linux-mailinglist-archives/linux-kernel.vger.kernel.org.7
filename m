@@ -1,238 +1,102 @@
-Return-Path: <linux-kernel+bounces-763417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CF9B2144A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472C4B2144F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9DF625D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCBAB1A22F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BFC2E172B;
-	Mon, 11 Aug 2025 18:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBE62E1C56;
+	Mon, 11 Aug 2025 18:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSzc0o05"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0qNMgoB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB513A41F;
-	Mon, 11 Aug 2025 18:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839422E0B64;
+	Mon, 11 Aug 2025 18:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936782; cv=none; b=r+smmiNjMCis88fP5m6DbMo+UUp57LXm2d2rAS3wng9y3fSIFkPKGLvzuSdsJ5GXewQ0ap9NbFUCZRUt1v1MuiegXHVKQKTQsmFHMBWZbwWnWz+85tHP0aVgJfXGiBdqc1FHVDdY2FvW702h1RdqDi33WaU3wvyDp7li8cEw9TQ=
+	t=1754936895; cv=none; b=UjXypbWJB1PXBzhI9ot+yic5IB87kE3NUhO9sQwaJFIuBRHcCwiobXkLsj9j8j5Cc2hHUWDsZzhF/T9O8yMAj1nDmOcKX7tbP8v07khQcTNICQUQ8wY0QRcgP6+FyCSchwYShtmw8YsEhhrMGHBgMHJ2SJjkvxYRjZkCVFaymxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936782; c=relaxed/simple;
-	bh=yhkmn4Gt30KzruxJTZYjUxCLaZowWIiBxcTh4+xOF/Q=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T4QDE6ZjXasBXMi3PD1Dj5UUaCLNOtFelUSsuNt9/RENBVWc75bof7Xy61eO8Gfhj4EwaZblc7V5L0CHgADvDwHE/pQeqvfcTvroaYcU+mhZt+qOlg5JKmqTDSRps6R24Yc7nLLZW4fQA8D2ntGNqFycIVko3SpDbNkWOLEeulc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSzc0o05; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E5A7C4CEED;
-	Mon, 11 Aug 2025 18:26:21 +0000 (UTC)
+	s=arc-20240116; t=1754936895; c=relaxed/simple;
+	bh=IVrFmgYuMdiDJL93cZGS1SPLtlUDB68qHGDJJcuGWDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFf8/OLtsRd1o5OCTSbD7KReDtK3875QIVcS1b3NKDUSSUBUrRK263q3Ffyyj9h9ud0e8dgF5U2bZ4R/EYzAu1QIyGX2NYaogOX7HLcaSBxIEiwGS1h/J95mFYD5f25xcwY7snYYKBoMw41WlppNcTIFeiAuOMfGA3U6GSa9C2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0qNMgoB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF737C4CEED;
+	Mon, 11 Aug 2025 18:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754936781;
-	bh=yhkmn4Gt30KzruxJTZYjUxCLaZowWIiBxcTh4+xOF/Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aSzc0o05DtQFxvPtRdsc8PVJCkwZozAUaR44FQ/7WVk1GhPAWb8ZEKBYWOi15VTdi
-	 yJVc6DDyizvrVwhamyd0/cJsAWDTxXSCBTlFiB4tY7SdyxKAd8b03XEqZzWWkLjIuC
-	 qbPNZdSs33LzkU0nbWmpb5uQusu5hENSsWkp6G3IZ85p/+hUV4G/j+2lJBrrZ6NDF6
-	 TMsKkHeMxaZB1WOim4JBN7B4SMpfsjnavS1QCPHgbzzdHFy7/YPROQBy/t8NCHEJPu
-	 bQvtpeQ7fHwjHZ72zzVE+9nd+B/bvOmJYZAtUhWcN1yOsFF/VsAWVhVSkglzjulu5M
-	 puKuAiy8v4cpw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ulXDt-006Mhm-TE;
-	Mon, 11 Aug 2025 19:26:18 +0100
-Date: Mon, 11 Aug 2025 19:26:17 +0100
-Message-ID: <86pld190l2.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	anshuman.khandual@arm.com,
-	robh@kernel.org,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	Dave.Martin@arm.com,
-	ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	mbenes@suse.cz,
-	james.clark@linaro.org,
-	frederic@kernel.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 2/6] arm64: initialise SCTLR2_ELx register at boot time
-In-Reply-To: <20250811163340.1561893-3-yeoreum.yun@arm.com>
-References: <20250811163340.1561893-1-yeoreum.yun@arm.com>
-	<20250811163340.1561893-3-yeoreum.yun@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1754936895;
+	bh=IVrFmgYuMdiDJL93cZGS1SPLtlUDB68qHGDJJcuGWDs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T0qNMgoBNnGFDwzgTPKdXv+ECGpbdSQBb4DNCA0JyfImiL0rmlNZtWlDv/dU5tICW
+	 QWNMp71VFI9K+mxSp7YSLRBuepSzWWM/og3v4g0f3y9ce7JOGS1pepVwxbrhKjbogH
+	 S/8oM8ZlRu//VZLB1VcWs/6xwvQKG7alewkTMu7wsv8lynXUExtERWm4/uqke7SXIV
+	 mVzH/LBLmy7KJml+tFHJhDJaJJ7pSiNZteY8GFPfsZTJHsM94Tkn7bEN4zuPHiugeB
+	 e/l4ckF2kG/j32Ayp7KmKnmbk3SQ7qC+rCCUmlwsJAgY2a3AtR9XxZRDru+DTRQTwe
+	 xpt5DZ8KU5ghw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/3] Test CRC computation in interrupt contexts
+Date: Mon, 11 Aug 2025 11:26:28 -0700
+Message-ID: <20250811182631.376302-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com, Dave.Martin@arm.com, ahmed.genidi@arm.com, kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz, james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org, pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-[dropping ry111@xry111.site, which bounces]
+This series updates crc_kunit to use the same interrupt context testing
+strategy that I used in the crypto KUnit tests.  I.e., test CRC
+computation in hardirq, softirq, and task context concurrently.  This
+detect issues related to use of the FPU/SIMD/vector registers.
 
-On Mon, 11 Aug 2025 17:33:36 +0100,
-Yeoreum Yun <yeoreum.yun@arm.com> wrote:
-> 
-> add initialisation for SCTRL2_ELx register at boot time.
+To allow lib/crc/tests/ and lib/crypto/tests/ to share code, move the
+needed helper function to include/kunit/run-in-irq-context.h.
+include/kunit/ seems like the most relevant location for this sort of
+thing, but let me know if there is any other preference.
 
-Again, please expand.
+The third patch replaces the calls to crypto_simd_usable() in lib/crc/
+with calls to the underlying functions, now that we have a better
+solution that doesn't rely on the test injecting values.  (Note that
+crc_kunit wasn't actually using the injection solution, anyway.)
 
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/include/asm/el2_setup.h |  6 ++++++
->  arch/arm64/include/asm/sysreg.h    | 22 ++++++++++++++++++++++
->  arch/arm64/kernel/head.S           |  5 ++++-
->  3 files changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index d755b4d46d77..347ac4cc1283 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -48,6 +48,11 @@
->  	isb
->  .endm
->  
-> +.macro __init_el2_sctlr2
+I'd like to take this series via crc-next.
 
-Writing this as __init_sctlr2_el2 would read vastly better (yes, I
-know most macros in this file are similarly braindead).
+Eric Biggers (3):
+  kunit, lib/crypto: Move run_irq_test() to common header
+  lib/crc: crc_kunit: Test CRC computation in interrupt contexts
+  lib/crc: Use underlying functions instead of crypto_simd_usable()
 
-> +	init_sctlr2_elx	2, x0
-> +	isb
-> +.endm
-> +
->  .macro __init_el2_hcrx
->  	mrs	x0, id_aa64mmfr1_el1
->  	ubfx	x0, x0, #ID_AA64MMFR1_EL1_HCX_SHIFT, #4
-> @@ -411,6 +416,7 @@
->   */
->  .macro init_el2_state
->  	__init_el2_sctlr
-> +	__init_el2_sctlr2
->  	__init_el2_hcrx
->  	__init_el2_timers
->  	__init_el2_debug
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index d5b5f2ae1afa..8b82af5be199 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -868,6 +868,8 @@
->  #define INIT_SCTLR_EL2_MMU_OFF \
->  	(SCTLR_EL2_RES1 | ENDIAN_SET_EL2)
->  
-> +#define INIT_SCTLR2_EL2			UL(0)
-> +
->  /* SCTLR_EL1 specific flags. */
->  #ifdef CONFIG_CPU_BIG_ENDIAN
->  #define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
-> @@ -888,6 +890,8 @@
->  	 SCTLR_EL1_LSMAOE | SCTLR_EL1_nTLSMD | SCTLR_EL1_EIS   | \
->  	 SCTLR_EL1_TSCXT  | SCTLR_EL1_EOS)
->  
-> +#define INIT_SCTLR2_EL1			UL(0)
-> +
->  /* MAIR_ELx memory attributes (used by Linux) */
->  #define MAIR_ATTR_DEVICE_nGnRnE		UL(0x00)
->  #define MAIR_ATTR_DEVICE_nGnRE		UL(0x04)
-> @@ -1164,6 +1168,24 @@
->  	msr	hcr_el2, \reg
->  #endif
->  	.endm
-> +
-> +	.macro init_sctlr2_elx, el, tmp
-> +	mrs_s	\tmp, SYS_ID_AA64MMFR3_EL1
-> +	ubfx	\tmp, \tmp, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
-> +	cbz	\tmp, .Lskip_sctlr2_\@
-> +	.if	\el == 2
-> +	mov_q	\tmp, INIT_SCTLR2_EL2
-> +	msr_s	SYS_SCTLR_EL2, \tmp
-> +	.else
-> +	mov_q	\tmp, INIT_SCTLR2_EL1
-> +	.if	\el == 12
-> +	msr_s	SYS_SCTLR_EL12, \tmp
-> +	.else
-> +	msr_s	SYS_SCTLR_EL1, \tmp
-> +	.endif
+ include/kunit/run-in-irq-context.h    | 129 ++++++++++++++++++++++++++
+ lib/crc/arm/crc-t10dif.h              |   6 +-
+ lib/crc/arm/crc32.h                   |   6 +-
+ lib/crc/arm64/crc-t10dif.h            |   6 +-
+ lib/crc/arm64/crc32.h                 |  11 ++-
+ lib/crc/powerpc/crc-t10dif.h          |   5 +-
+ lib/crc/powerpc/crc32.h               |   5 +-
+ lib/crc/tests/crc_kunit.c             |  62 +++++++++++--
+ lib/crc/x86/crc-pclmul-template.h     |   3 +-
+ lib/crc/x86/crc32.h                   |   2 +-
+ lib/crypto/tests/hash-test-template.h | 123 +-----------------------
+ 11 files changed, 206 insertions(+), 152 deletions(-)
+ create mode 100644 include/kunit/run-in-irq-context.h
 
-I don't think this is the correct place for this macro.
-asm/assembler.h seems more suitable, and already has that sort of
-things.
 
-> +	.endif
-> +.Lskip_sctlr2_\@:
-> +	.endm
->  #else
->  
->  #include <linux/bitfield.h>
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index ca04b338cb0d..0dff7593e50b 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -276,6 +276,7 @@ SYM_INNER_LABEL(init_el1, SYM_L_LOCAL)
->  	mov_q	x0, INIT_SCTLR_EL1_MMU_OFF
->  	pre_disable_mmu_workaround
->  	msr	sctlr_el1, x0
-> +	init_sctlr2_elx	1, x0
->  	isb
->  	mov_q	x0, INIT_PSTATE_EL1
->  	msr	spsr_el1, x0
-> @@ -298,7 +299,6 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
->  	msr	sctlr_el2, x0
->  	isb
->  0:
-> -
->  	init_el2_hcr	HCR_HOST_NVHE_FLAGS
->  	init_el2_state
->  
-> @@ -315,12 +315,15 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
->  
->  	/* Set a sane SCTLR_EL1, the VHE way */
->  	msr_s	SYS_SCTLR_EL12, x1
-> +	init_sctlr2_elx	12, x2
->  	mov	x2, #BOOT_CPU_FLAG_E2H
->  	b	3f
->  
->  2:
->  	msr	sctlr_el1, x1
-> +	init_sctlr2_elx	1, x2
->  	mov	x2, xzr
-> +
->  3:
->  	mov	x0, #INIT_PSTATE_EL1
->  	msr	spsr_el2, x0
-
-This is missing something: you should resynchronise SCTLR2_EL2 from
-SCTLR2_EL1 in __finalise_el2, rather than relying on whatever you've
-set in __init_el2_sctlr2.
-
-	M.
-
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 -- 
-Without deviation from the norm, progress is not possible.
+2.50.1
+
 
