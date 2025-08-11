@@ -1,75 +1,123 @@
-Return-Path: <linux-kernel+bounces-763658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60F9B21852
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3611FB21855
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A381A231B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D751A221CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624352E2F09;
-	Mon, 11 Aug 2025 22:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4BE2E2F06;
+	Mon, 11 Aug 2025 22:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V5wMDi/g"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THlpRdVH"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73B1D61B7;
-	Mon, 11 Aug 2025 22:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5761C1AB4;
+	Mon, 11 Aug 2025 22:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951042; cv=none; b=YjO9fdhwn2JWH4TmcaNHzjxGcJ3HnCyjbLvW+ukLES4fKI74rrOy9DM2nAw3tbN3+y5LcY+eYeUjESmZG4BB3GVDh/aAsIq59f1Jeurtuk1JtN3sOmGG42SaTflRGg5V3hvi+dZmSqQEzbbQZn/FI18NzIlmxHqy5B+fjIgxu5g=
+	t=1754951317; cv=none; b=Z8P0SsOJuiw0iLtCZ6wbweWSTVCzP1HPzOyo08RZijR4ggAxympwgvqNGrDphlNIDESTX3QUqlpyc1FS3nRaqQMuJHfz+6ZBpeNme6Vs4sKsScOhSgmYjHVaJW0Ej4mdXaCasTX4wirr1gLC7PK/7agVDWEirXkB+/UU6IAoqls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951042; c=relaxed/simple;
-	bh=98ykCNdNjNFSoyI0ITIiZdyle5+j2R/y/7umcgQAvy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQbciifF70ohsbWyFgBT0EmWxuor2AZB0W+51z+nrk0+wo8uvCANv25UhkWzlMEpTatR8/h++CzyZNA64m1TXPrLxjyuYiNyr8LDKAHgGaJnZKasb0T+gR47U9HE1slZljpDF0lGQF2oJ16ulAeXes9AUcV0N9JtYQCB1hS5/xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V5wMDi/g; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NlAqg/7Oyr3wS5iGZ4uIxYUTz0VW9QeMIoSSCMaE47E=; b=V5wMDi/g0idtCjGqzjARU+zjAH
-	srv3bOvcej/mmYohat69G7az4oakF3m++wuqOaKwBLXCs0ItnZtnzW80gINoDcFuaFFbwI6XkmSbk
-	KKN3IdYiJhc+wO51oWdsMmLNnehAVDKYOFc5X0pNHEZjxhk1PFJhDLlopQgyg6WrD/9Of/GKOF0Ly
-	o/KJ4qpM54eRhtevG8CNdcdzcNUYQ557Q7qMS5fTqd9+mX45yU+LWzRzsoBydFFSjNzYOr703QH7S
-	AO5vu+yh9UXsIH1zrVBLsuQqgXGi0AvWCIF4+zCbgMd6qTAOx+wJ0jd5nuB+LMHKuRDQwK7n/tpJ1
-	w1t8wBhg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulavv-0000000A3EA-0fw7;
-	Mon, 11 Aug 2025 22:23:59 +0000
-Date: Mon, 11 Aug 2025 23:23:58 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Tal Zussman <tz2294@columbia.edu>
-Cc: Hans de Goede <hansg@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vboxsf: Convert vboxsf_write_end() to use
- kmap_local_folio()
-Message-ID: <aJptfu79PV4TaCq3@casper.infradead.org>
-References: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
+	s=arc-20240116; t=1754951317; c=relaxed/simple;
+	bh=UeiQYD9FI7T+PS1LEt5GSSf4bzLO6vMlsYIYRRpNBUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i+RjKAWRGtqqE1cjs8d4pFYzEKcxL1ZKw4L+y4uZ3BRqbJlHsEWTE+0DKe7s0czWhyE+s3mdepWWFWupz8Gc+4FrvBhGwsAdkPFwpdq/In8SQIQkzkNz+q07Uqbtvxt/d/POdf0VQz15N3typHqUvx+MCgrWwB4zxY5WcNo5w1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THlpRdVH; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b0770954faso75858311cf.1;
+        Mon, 11 Aug 2025 15:28:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754951314; x=1755556114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=353yrZyD50K+fK9xUULowRamM8B2L8p10IHM+Je7DnA=;
+        b=THlpRdVHxZdpLNuFlnir/m13OQdqVozx8ZQn/4SWqxo1IK+v2z8+8OQbDxpHBISk15
+         vohZ4adn4ircM8iCy+IceduCo0oKUt2hhdtzS2WVRXjhDQesTRMYEmR0VSy43TUYeoxY
+         0YyClng5PYMC/EzYLu0JtNRt23hcfkzcp8zQNvBE3v79twj5CMXfLGYhY+mE9pq0YO88
+         0qL40111siDlVE3kt0VNscZgLvqvo6YZlV5ZN1zufMz8WFD9HpEUg9SgWW2rtlAu6JTo
+         ucFqqlBsPZzWZnTwVUPCQWfwgZXahJZsmZUKwqKALE/e7gNL5cvewG69EerygGmpNEzZ
+         jBMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754951314; x=1755556114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=353yrZyD50K+fK9xUULowRamM8B2L8p10IHM+Je7DnA=;
+        b=cvlDb8+alZQ2/NRNG+bRoDuYlYl0zK/8U/wJA0Dn3/j8hQeGGmswSrW7uIv2eDLSUa
+         5PHjM3rVea68bUxnoIFIjsn/pxsjqNXEQtJE+pFG9Izequoxp51FIck8ZbpGklS4CRVd
+         5OLvnEXIAVG7N4KjeLKigRWeoZujQ2LJQiaoODO/mHmm5y3Re6p08TE0Ca+ekXo3qzai
+         g2p5C0yLslh5x5Ho1OX2IgRbyiv2FRYecasa7WnsHBZqqW205/uCv5iJaFCa1tpkGJEj
+         JkaBTY3ovTkQArWAsvvYc1ZGCDHwEj2jk5v8jDpPEuhhPOgaCjjtwd4UJ1Dm/2QCkTfu
+         yzDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCglXdNB/Lv0gakRm/pM8GHMTuIUtD1ML/Fs/UwNZVFsfn6zzp7s7dPgy+qDTwDLXCiuNpA+8PJuq/ylk=@vger.kernel.org, AJvYcCXvjKF4J7Wutco4JxRTnGXXGZUyayubVH7l1YR1ZlV2qVcRHRYILa7Cdn9mwj8njrVP9zI2F0r7urI4OQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt//ji3FqfB8upzqL1/QL6PSbpk/LOrM88/AEFa1NmcZGZpBsh
+	G8ZLhNgJZTtu9/C6QMS+sHF+s0Sg852yTgiKtSkyoRiv/huDRE6/hywTJNiJvY3XkMNfYOVRv3G
+	O7hYkWA6EfgNPgoi7LbK6NXrxli282a4AxwbQ
+X-Gm-Gg: ASbGncud8I2RT2DIcME1Vh2c1PZzbv7117BYX4McqVFbNxNN+x54Jklbn5pfakpo4ro
+	MG9A5M5E2hhS6lSymfmU9RLyTpVoIADciWzw65Z1lXNb4JU00dKDbiHmXiCI90HqogLqQtLwNv3
+	eS6wKYagXbY98iYJwoZIaXLYq2NXcnbrdcG0V02E8O6ydy15qJvmzbyQ67ocwKTuoh7K7+HqnjV
+	P3ntZ2CkOiviNPZVw1D6Jk=
+X-Google-Smtp-Source: AGHT+IGVlNCYzlCLF1vxYArLOBIuvrf1Eo6kjHslGp9rOV2jW0bmD4nEBII0QQYF+v3sK1/ECABXK8Gzt0z9ANIDktg=
+X-Received: by 2002:a05:622a:2619:b0:4b0:656c:236e with SMTP id
+ d75a77b69052e-4b0ecba317fmr17603761cf.6.1754951314545; Mon, 11 Aug 2025
+ 15:28:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
+References: <20250812080645.4fa3afaf@canb.auug.org.au>
+In-Reply-To: <20250812080645.4fa3afaf@canb.auug.org.au>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 11 Aug 2025 15:28:22 -0700
+X-Gm-Features: Ac12FXwVXvizQOg_z3hcBA8mjXQ_zlwSB_oU99gohVLJyUsJRN7ocv0jD5pPXVI
+Message-ID: <CAJnrk1ZKUW9MpEGiNSxVdO-G+Hjk48cW7oNpcaua5KLxtp3ywQ@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the vfs-brauner-fixes tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 05:42:00PM -0400, Tal Zussman wrote:
-> Now that vboxsf_write_end() takes a folio, convert the kmap() call to
-> kmap_local_folio(). This removes two instances of &folio->page as
-> well.
+On Mon, Aug 11, 2025 at 3:07=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   542ede096e48 ("fuse: keep inode->i_blkbits constant")
+>
+> Fixes tag
+>
+>   Fixes: ef7e7cbb32 ("fuse: use iomap for writeback")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     This can be fixed for the future by setting core.abbrev to 12 (or
+>     more) or (for git v2.11 or later) just making sure it is not set
+>     (or set to "auto").
+>
 
-Oh; something I should have said.  If you have an interest in vboxsf,
-it looks like there's a communication protocol that lets you pass in a
-physical address and length rather than a virtual address and length.
-Redesigning the Linux driver to use that would be a big win and we could
-drop the kmap calls entirely.
+Ok, sorry about that. The git 12-digit commit id for it is  Fixes:
+ef7e7cbb323f ("fuse: use iomap for writeback").
+
+I'll be more careful about that next time.
+
+
+Thanks,
+Joanne
+> --
+> Cheers,
+> Stephen Rothwell
 
