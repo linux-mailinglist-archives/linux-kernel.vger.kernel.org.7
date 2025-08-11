@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-761893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7842B1FFB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F76B1FFB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5DDA179183
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9903717A9BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BC12853EF;
-	Mon, 11 Aug 2025 06:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524C62D8DC2;
+	Mon, 11 Aug 2025 06:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PN0emzbw"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCyCzhhl"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC161509AB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD931509AB;
+	Mon, 11 Aug 2025 06:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895495; cv=none; b=KrdP53y62d5bPXGwDbIpxuXjunmQYiHIcVTt6K9qguufqbqQEol67sfmiPuHDG3kImStmMl/b/eIzwmoWDp/XYShx/fT5Qu8GKkCxVT1id1POm5jG7Wulq0KdNKqAwAne3sv+rfxOQDIO6MrcpVEmoeHJjl5xcAG/sQiHSPs80E=
+	t=1754895553; cv=none; b=cDs/yHfXiPuvtMphx7vAS0gIcM4/4LHjtYaQgQ8pHCfuj5dMYAcbl3SD1Vqo3BrE8OU6CQrA8LdaDR4NoBME3J8XhOQEIFlIwfKEYFdMu7XLOMHLIoIeRpwT1vcCe5pYh9qIQNzHsgjB0XdBFLGwXqvJmicCiRZD+9+pGUDUrRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895495; c=relaxed/simple;
-	bh=mPEn2tUqV0VDvUBivVCyIGNkt25kHVG5g2vC4oAjlTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4iEDAPfePNKStxvPpdqcsuPt2DRHX/HNrWJCkEqzil0wY3WFvYfgo3gkCtYr1t+/jfArD+fh9wIgfig5Kg7SKu7sCNi+WB15JNmd0vviB90rlP2hH4XikBt/ur03dpojgzFXIf69SLRFTNbytjFEmAjYiII48agaM2aLonEmSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PN0emzbw; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-31f02b6cd37so4147894a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 23:58:13 -0700 (PDT)
+	s=arc-20240116; t=1754895553; c=relaxed/simple;
+	bh=Gjp3WKVioO/jEUNRTxP2ECZne98ObwspxbRyUdnLh+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aaFsn9RfkHS9VUezxoCgY1OYouAx1o4S2gRZ/AzU/k1Q6RWhD/q9MEZ1zrjoVhPx0ISXqU2FQdHpm6LQ3fjJL7pokFk5U1yXmcrdKW66/7HZGGBS5ZWln4ysiyzaWlAxfkCufuCFOhuQd65WlkPguuXZPs67YUH088y5+w8Rxvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCyCzhhl; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71bd394a665so41796607b3.1;
+        Sun, 10 Aug 2025 23:59:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754895493; x=1755500293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qj4hp02pi3+Fvas+cfw51dF8x4V7PPZb3b5a0f26w30=;
-        b=PN0emzbw6uynRdmul2tVtnoZo1+B3SmROmVyVgOAHRyFPts8QCvJnFAIsKyRilQ+Cl
-         n2QpXFi9s9R1DvNw186YfIECMlbBPfNAPcb9kKRq5GMcf+/oU+Niom9JH/UdW2scpaQf
-         HbGOYcGAkWwIXSU6qa1z5L4tS3mMQzH4N1uQf2YTusXisCWhuESsIyI3O/74oU3bihqY
-         wEaFjgq+MpcXM/EE8F74kHhUJcIbqJes5hIJtHuF26vIc3xje2zhW8JSph+ggBSRUi5f
-         wSROj/3yCxS1HfS09TvMI4yxP+oGw1uo4qfRvjLKWWEtbZjSIrsDak4mHFXD6I3Dupnu
-         bprA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754895493; x=1755500293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754895551; x=1755500351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qj4hp02pi3+Fvas+cfw51dF8x4V7PPZb3b5a0f26w30=;
-        b=numD6h2p7V+Pt3G+bpybAlrswDK9fb6UKFY/pNs/igJ+8kZ787m0IJF8II39CBTR3i
-         /2PiyzzFmXHwOmyAakWXCN/+4kFr9HbM/0Iwcoc3C7kw4cUPJOreGuGXh9/zo3zZhc2v
-         hZPFU3pdROkNUQY8mY/uZDADUEnkB1ZIQq1QLvKTqsjVk8R3vyT3njB4a3gwHgxhXMAr
-         oAOPjpX9/B1aaQEJzS0e0BPurv480aDkEnE8XRWVTCLWWLZv5IkTFqU/ogJWj1/hnFcM
-         OGWDQv4LzF6fWMNjcvZSQdNv2VJF118br53zAXBLuEIsi3P7UWRfMF7kNWk3cOQ2J65R
-         I3BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKwsVkvUWXwabS9ikJHIdBzfxb/F7OxTtp2QYlY2j+xnXlTrQV/29cLyK/hj1yKlqiwLiLpXqvjxAWSMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNkAvxz6Z02fWLIohVpJ7fJqkWXg7eByqZ1pf4aDOvH05rlPZj
-	qANrSDPpQ61mah7LXYtejA/KLPOFlw0SEh+2dLYJJ5jYT1atg4YLFols3yV/+Wmsfj4=
-X-Gm-Gg: ASbGncva87AscjKy9/Vn5U/kJXA6whyxw28vtNd700Vj274389PiJLVWVAJG2HrU9V2
-	bMvGWYD8pXLT4n2nlss4eYYk5ECLF+/Om+BJnOmytza0FbffAf9tOj8ZLxc4Hv8aspfvC+/bkth
-	1HTPMnV4Ly6dj1MyfKHtOUxwRklHNyhAmkFq2bUrvfvVUfA4PUqJNo/dsUiHHEdzxAfn+p6AyfS
-	cn/0IfjVFP//0hCyEBkoa55r8cVVEKY9JzM+37CWBJNnDdLd2T5w+vcnu6JqL2BXzozHP9L8Rq4
-	IMERIMoFe1lajS+2zs+mriUt5TZwxNxJlq6Rk39/iTBIDt0ccQbJ+Q0CVldqPDwmjQAg05Pl+5j
-	FMsv688jXZQEZEsRLgYWKEH7ZmhMjykXMHYI=
-X-Google-Smtp-Source: AGHT+IGLtc7a//OfFj6ZG9+B3qw4ntIvd3AReQNNqvydUWUlWk7x6oot8u6tFdHA1E3a4aWom236mQ==
-X-Received: by 2002:a17:90b:4a82:b0:311:a314:c2ca with SMTP id 98e67ed59e1d1-321839d795fmr16326481a91.6.1754895493053;
-        Sun, 10 Aug 2025 23:58:13 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321624ed650sm7427532a91.6.2025.08.10.23.58.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 23:58:12 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:28:09 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: BowenYu <yubowen8@huawei.com>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
-	lihuisong@huawei.com, zhenglifeng1@huawei.com
-Subject: Re: [PATCH] cpufreq: Remove unused parameter in
- cppc_perf_from_fbctrs()
-Message-ID: <20250811065809.nwfdfjwidoacqtca@vireshk-i7>
-References: <20250730030649.151272-1-yubowen8@huawei.com>
+        bh=TuOu3OMLWRZy/GrYfsj1vU+FzwQIbj3WgU0WMDegCto=;
+        b=lCyCzhhllom32/t582NW8tvptYd6uz55iH89GCn6miZ1r69JlHxYuy9sTnhNt7DTw6
+         k0T/jO6YEfJHYcHAgW2xkHlSUMe+O/PV5npnrJ2/5JdS4JeuQmyg5GJeZhJ8yz37a+FL
+         ByzD+udHQEijxfEZzPnmouxL3CImC1+ByXCcRstQPLfiORwUdWTled6DI9LziQowQNCT
+         hD5Jx4VhhD0pdvqkCPZpxDZ3QI84ChyomQkqbV9FwJ0Q4RsIx1VlE1+nwpIQcSmTAwcR
+         9aspj7o6vRnX2CNEVt9xKxLBVHBjfXUh1neoXRNl+NWwzmrl2y5GU96i5tnhzhAxMCpr
+         FvyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754895551; x=1755500351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TuOu3OMLWRZy/GrYfsj1vU+FzwQIbj3WgU0WMDegCto=;
+        b=IlwRQDysg77nlTRcyEy1dgz4D3ThxVKBCvY2lVhbE3lrupgALO1Bw3pgjm6LEONIWQ
+         A1yuXs7czBNJICp/nz7DfSloTIrIQMIg2lOgbUATLqDGvgWthicPGBg8IGSwXcW4Wuhi
+         t5KAMehMXHTlkCy30LzoJxpoghvNCoaH+EHOahe6XCgR0i26F619qUD/6xT68uRvctpG
+         yrQqthFDupJEpkDqAE3+a6ZV5PDfOlyqbhZPEy/pEgaktlzSsUWJA/RsyAwQ4x3ePIfc
+         oEmG6HSMUzbsV/mccWTZpILWfCbJc4ShLb8u4AueDNtzKk7C+m4QLwE6ZB50b0Elmtcv
+         LazA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFAGOCKEyPembEMIu3HsO3K5gL6l+IjbI9yUD+Lz/2taso0FMFOJZsGqqhvYQuI+Pi2BLg4wsuwE6+nmg=@vger.kernel.org, AJvYcCUSzUsJECXJ4QhPUNJbG6a3KZGDlBYZz9qN0z2Du/81WumiB8k/tx1/8HVK07Bko+QgYwJ1w+hCBmx589T3nGzl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0w2Hh2/vQ1W5Msq+TcJzfFzHrCvndEJ1wVEj/JVjTdqY0Ygc0
+	oz7n+OcjS37jMS9IQQ6kwJGKqmbviBxgOfnUvGkS0oFecP13Q/u82ZIUiJSi0IBGM4g4nITQmuZ
+	w29fqMfq+/4AFVTldwI80f1lLgyWLslM=
+X-Gm-Gg: ASbGncu75M1ynd1xFh+mJdNLKiA8yfmiZCd8CBG5CcPghlGyn3fgRt80Dm5onrjsLl5
+	OnD3SbIJ4987ZVFzkGYBev6x2MCQ7C5oFDr2ibDE4Ji2iFfneZjU3hOa7SjUEDWRb/n8J10Wk5B
+	6P1e1PboiA5aZ6F5136Ui0nacVJg0xTrv7kbVybK9Rb1Sn526dCDRhnuBaaZM1hQQqyXgaGKvWa
+	NmZM4c=
+X-Google-Smtp-Source: AGHT+IEbcYjT+506lJ1E8j322xg7JOfAMpd/UJ9FVya57rTPDfeGc0w3hklgL2ebknAB2dJaYt27gaIWwQkN8hNl6h4=
+X-Received: by 2002:a05:690c:868a:10b0:71b:fa04:d16e with SMTP id
+ 00721157ae682-71bfa04dc14mr94083937b3.16.1754895551013; Sun, 10 Aug 2025
+ 23:59:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730030649.151272-1-yubowen8@huawei.com>
+References: <20250808190144.797076-1-ziy@nvidia.com> <20250808190144.797076-2-ziy@nvidia.com>
+In-Reply-To: <20250808190144.797076-2-ziy@nvidia.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 11 Aug 2025 14:58:58 +0800
+X-Gm-Features: Ac12FXxoqfvnZ6zVcvsM3WYdQubEnyeJWwkI1SyNlh9YvtyzjV1u_HW36tSML5E
+Message-ID: <CAGsJ_4y23gxB+P8=WkBe+oU9j+1YDZmBUTdE2=aw40O78DA7Yg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] mm/huge_memory: add new_order and offset to
+ split_huge_pages*() pr_debug.
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30-07-25, 11:06, BowenYu wrote:
-> Remove the unused parameter cppc_cpudata* cpu_data in 
-> cppc_perf_from_fbctrs().
-> 
-> Signed-off-by: BowenYu <yubowen8@huawei.com>
+On Sat, Aug 9, 2025 at 3:02=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> They are useful information for debugging split huge page tests.
+>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+
+LGTM.
+Reviewed-by: Barry Song <baohua@kernel.org>
+
 > ---
->  drivers/cpufreq/cppc_cpufreq.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+>  mm/huge_memory.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 2b4ea5a2ce7d..ebf875928bac 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4327,8 +4327,8 @@ static int split_huge_pages_pid(int pid, unsigned l=
+ong vaddr_start,
+>                 goto out;
+>         }
+>
+> -       pr_debug("Split huge pages in pid: %d, vaddr: [0x%lx - 0x%lx]\n",
+> -                pid, vaddr_start, vaddr_end);
+> +       pr_debug("Split huge pages in pid: %d, vaddr: [0x%lx - 0x%lx], ne=
+w_order: %u, in_folio_offset: %ld\n",
+> +                pid, vaddr_start, vaddr_end, new_order, in_folio_offset)=
+;
+>
+>         mmap_read_lock(mm);
+>         /*
+> @@ -4438,8 +4438,8 @@ static int split_huge_pages_in_file(const char *fil=
+e_path, pgoff_t off_start,
+>         if (IS_ERR(candidate))
+>                 goto out;
+>
+> -       pr_debug("split file-backed THPs in file: %s, page offset: [0x%lx=
+ - 0x%lx]\n",
+> -                file_path, off_start, off_end);
+> +       pr_debug("split file-backed THPs in file: %s, page offset: [0x%lx=
+ - 0x%lx], new_order: %u, in_folio_offset: %ld\n",
+> +                file_path, off_start, off_end, new_order, in_folio_offse=
+t);
+>
+>         mapping =3D candidate->f_mapping;
+>         min_order =3D mapping_min_folio_order(mapping);
+> --
+> 2.47.2
+>
 
-Applied. Thanks.
-
--- 
-viresh
+Thanks
+Barry
 
