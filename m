@@ -1,178 +1,110 @@
-Return-Path: <linux-kernel+bounces-761681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6035B1FD54
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:34:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87A9B1FD57
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB11176A80
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925303B9EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F651EEA47;
-	Mon, 11 Aug 2025 00:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3194D16D9C2;
+	Mon, 11 Aug 2025 00:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dZbh67sa"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuPUK9hD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C297A19CC3E;
-	Mon, 11 Aug 2025 00:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B43429408;
+	Mon, 11 Aug 2025 00:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754872398; cv=none; b=lUklFjywjx1XYQfL1OUiyJYmi+RibF+LhLpV4OtWwm84aU4UItLVhzF3DW7soniIKyCaCx7gG+V8b9xZKgYtW/XvMWvYLdCM2rlJJFhCH8JwSAKHNS668s8f71hddoin+J2qQF0rHJjqqzlrUt+tbij7H8B8YkqnqGUHhM60224=
+	t=1754872755; cv=none; b=bv0xvMT7oCGVBdHjpj/ZoXU52ekZo7CpDO1j8ISLTengSMC6YKYbqmU2A4zRI3dZEoYlWi8Q4d+tonpuPSBoxHiXZaASm3fa3Asv+QJ/R+vGzdk6we3utIsWp1nYfYsCkKoEWQ6rYkdoQ9yU64/7H1hLqv35ZY2dlXvif6MzgUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754872398; c=relaxed/simple;
-	bh=CYOapTVPSDx9GSpWtaaFifCskH311+ECf5s+Y9qoPqg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ip2xxoN+sFUk0Bwgz7paMERtD4j2uCOwAV6dhuhc0dqbi9tJXo/XlYXzdROvnzZ2xzz+s5hmbGA80YCQV32gSLpXymTRIY2grxsCzqE8HN1aAkg0DXWvL9stfeTb5HqdQEkjMIqB6/JK3BsC2hWzPJhHn+QC+Mi/9MT1c4C1sys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dZbh67sa; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754872395;
-	bh=CYOapTVPSDx9GSpWtaaFifCskH311+ECf5s+Y9qoPqg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dZbh67saU8PuWrTKFkVLS6iRHRyuIh0bfFPC4xW2Pfj6tXCZ6AknpNyHA6OYvAuGE
-	 eJgTmC1mtbX7MhFQLm4fwioTRRqc5tIj8rEeTz/z/IBNTEl6Rr5oxQCgtYP7UI7xmE
-	 DKWTJvsVR1jAq6+qPKN1PJsYDkxmVlqOwGYRPh3MTyA1UJTh8KDZxz3l7CtxnYscPd
-	 eMAK/xqBwXAhAoIW4cFtfP7ub6MrKFLBFs7UTUPgmISUy+z0scyB8B8nKljX8vFKH/
-	 JQy6160rjZwKMQ5RW2rUvIoBcdCl53n8MbW3D6FLH6EU6ivL6jBS+7fBJBZSlHdNcC
-	 GqxTlJvWmE79A==
-Received: from [192.168.0.23] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 37A6E17E0B8C;
-	Mon, 11 Aug 2025 02:33:10 +0200 (CEST)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Sun, 10 Aug 2025 21:32:19 -0300
-Subject: [PATCH v8 6/6] rust: pci: add irq accessors
+	s=arc-20240116; t=1754872755; c=relaxed/simple;
+	bh=kPeMuCB6QJFDshLklF3UYJhha1x4oPLphCzKTQrOa4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fndiEU5Asr1hgIz6F8coeikEj2vMi5kHloyI1HRVV0XI4S4EZXYpvE9Jcb8HD37EHBbaHAF1EyxbVP07hJzYmgmylkApV5gE+sSmmafuIquvsLQ5b6YF8BmQjK166rKXb+9lY4Z4WfAefrpmsh8iS5JLk9zfUWrJ4uXSbTLaxbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuPUK9hD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A8FC4CEEB;
+	Mon, 11 Aug 2025 00:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754872754;
+	bh=kPeMuCB6QJFDshLklF3UYJhha1x4oPLphCzKTQrOa4Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YuPUK9hDPxCpKa66dyL/UiyJ+wbhsRiD0E3lieYtSfuDRaGydSxm92u/E5o6ywhF6
+	 tCFlfBifJyVrfJgHUw174xlEz0VYi2INOXZUCqpEKdiP9ntHgSJhCwd3z9cFguMMwy
+	 wTUbUuFTX2YrjPY0U7F+E3TWgammprGWK+7cqFmlsS3MCEyH9vAoMq78XQrQN6AYPS
+	 I0XdGSsIum1u1wgocGgcNwroaWNV9YJovFMpUFdhHa2tAQmw2aySTovEkMPdTRoYSF
+	 Ih1EBAVGdVIyT5j6lapdHz8KkLsbw0++f9g8cn8rgEzOX0ra4He2qbVKCMLyfLY9bw
+	 ddhfo/4cRm1sw==
+Message-ID: <0ea8a29e-550e-4d3e-9e25-e3b6e64e05a0@kernel.org>
+Date: Mon, 11 Aug 2025 09:39:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250810-topics-tyr-request_irq2-v8-6-8163f4c4c3a6@collabora.com>
-References: <20250810-topics-tyr-request_irq2-v8-0-8163f4c4c3a6@collabora.com>
-In-Reply-To: <20250810-topics-tyr-request_irq2-v8-0-8163f4c4c3a6@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-pci@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>, 
- Dirk Behme <dirk.behme@de.bosch.com>, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/2] scsi: sd: Fix build warning in
+ sd_revalidate_disk()
+To: Abinash Singh <abinashsinghlalotra@gmail.com>
+Cc: James.Bottomley@HansenPartnership.com, bvanassche@acm.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ martin.petersen@oracle.com, kernel test robot <lkp@intel.com>
+References: <20250809093507.372430-1-abinashsinghlalotra@gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250809093507.372430-1-abinashsinghlalotra@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-These accessors can be used to retrieve a irq::Registration or a
-irq::ThreadedRegistration from a pci device. Alternatively, drivers can
-retrieve an IrqRequest from a bound PCI device for later use.
+On 8/9/25 18:35, Abinash Singh wrote:
+> This v6 series follows up on v5 of the "scsi: sd: Fix build warning in
+> sd_revalidate_disk()" patches.
+> In v5, the change was split into two
+> patches: the first patch refactors sd_revalidate_disk() to return void,
+> and the second patch addresses excessive stack usage by allocating
+> certain structures dynamically.
+> 
+> Apologies for the oversight in v5 — although I built and tested the
+> kernel locally with the correct changes, I mistakenly sent an older
+> version of patch 2/2 that still had `size(*lim)` instead of
+> `sizeof(*lim)`. This caused a build error reported by the kernel test
+> robot when building with clang.
+> 
+> Changes in v6:
+>  - Replace `size(*lim)` with `sizeof(*lim)` in patch 2/2
+> 
+> 
+> Now there are no build errors.
+> I am very sorry for that .
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508091640.gvFPjI6O-lkp@intel.com/
+> 
+> 
+> Abinash Singh (2):
+>   scsi: sd: make sd_revalidate_disk() return void
+>   scsi: sd: Fix build warning in sd_revalidate_disk()
 
-These accessors ensure that only valid IRQ lines can ever be registered.
+The order of the patches must be reversed because the fix build warning patch
+must be CC-ed to stable with a Fixes tag. The cleanup making
+sd_revalidate_disk() a void function must come after the fix. That will avoid
+the weird placeholder comment and also will allow a more extensive cleanup to
+replace several "goto out" with a simple return.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Tested-by: Joel Fernandes <joelagnelf@nvidia.com>
-Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/helpers/pci.c |  8 ++++++++
- rust/kernel/pci.rs | 45 +++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 51 insertions(+), 2 deletions(-)
+> 
+>  drivers/scsi/sd.c | 54 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 31 insertions(+), 23 deletions(-)
+> 
 
-diff --git a/rust/helpers/pci.c b/rust/helpers/pci.c
-index ef9cb38c81a6a5375f72c3676cd9730aad17757b..5bf56004478c6945dc3e1a394fcd787c656d8b2a 100644
---- a/rust/helpers/pci.c
-+++ b/rust/helpers/pci.c
-@@ -11,3 +11,11 @@ bool rust_helper_dev_is_pci(const struct device *dev)
- {
- 	return dev_is_pci(dev);
- }
-+
-+#ifndef CONFIG_PCI_MSI
-+int rust_helper_pci_irq_vector(struct pci_dev *pdev, unsigned int nvec)
-+{
-+	return pci_irq_vector(pdev, nvec);
-+}
-+
-+#endif
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 887ee611b55310e7edbd512f9017b708ff9d7bd8..d84ebabb8d04a932e68e48d40fef667dcda25ded 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -10,8 +10,8 @@
-     devres::Devres,
-     driver,
-     error::{from_result, to_result, Result},
--    io::Io,
--    io::IoRaw,
-+    io::{Io, IoRaw},
-+    irq::{self, IrqRequest},
-     str::CStr,
-     types::{ARef, Opaque},
-     ThisModule,
-@@ -431,6 +431,47 @@ pub fn iomap_region<'a>(
-     ) -> impl PinInit<Devres<Bar>, Error> + 'a {
-         self.iomap_region_sized::<0>(bar, name)
-     }
-+
-+    /// Returns an [`IrqRequest`] for the IRQ vector at the given index, if any.
-+    pub fn irq_vector(&self, index: u32) -> Result<IrqRequest<'_>> {
-+        // SAFETY: `self.as_raw` returns a valid pointer to a `struct pci_dev`.
-+        let irq = unsafe { crate::bindings::pci_irq_vector(self.as_raw(), index) };
-+        if irq < 0 {
-+            return Err(crate::error::Error::from_errno(irq));
-+        }
-+        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
-+        Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
-+    }
-+
-+    /// Returns a [`kernel::irq::Registration`] for the IRQ vector at the given
-+    /// index.
-+    pub fn request_irq<'a, T: crate::irq::Handler + 'static>(
-+        &'a self,
-+        index: u32,
-+        flags: irq::flags::Flags,
-+        name: &'static CStr,
-+        handler: impl PinInit<T, Error> + 'a,
-+    ) -> Result<impl PinInit<irq::Registration<T>, Error> + 'a> {
-+        let request = self.irq_vector(index)?;
-+
-+        Ok(irq::Registration::<T>::new(request, flags, name, handler))
-+    }
-+
-+    /// Returns a [`kernel::irq::ThreadedRegistration`] for the IRQ vector at
-+    /// the given index.
-+    pub fn request_threaded_irq<'a, T: crate::irq::ThreadedHandler + 'static>(
-+        &'a self,
-+        index: u32,
-+        flags: irq::flags::Flags,
-+        name: &'static CStr,
-+        handler: impl PinInit<T, Error> + 'a,
-+    ) -> Result<impl PinInit<irq::ThreadedRegistration<T>, Error> + 'a> {
-+        let request = self.irq_vector(index)?;
-+
-+        Ok(irq::ThreadedRegistration::<T>::new(
-+            request, flags, name, handler,
-+        ))
-+    }
- }
- 
- impl Device<device::Core> {
 
 -- 
-2.50.1
-
+Damien Le Moal
+Western Digital Research
 
