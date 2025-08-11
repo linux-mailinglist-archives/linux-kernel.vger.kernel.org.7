@@ -1,128 +1,205 @@
-Return-Path: <linux-kernel+bounces-762579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064C9B208A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A20EB208AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C54E16C18F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EA552A12BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7692475C2;
-	Mon, 11 Aug 2025 12:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3A12D3A63;
+	Mon, 11 Aug 2025 12:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dECE+x0w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Gpl0cloj"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285DBF9C1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EB120297C;
+	Mon, 11 Aug 2025 12:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914881; cv=none; b=IQAmr1WMHykJ1vjDueNco9O985vU7uJUEQqU6fsahMw/r6ANi6Qzd8LENB3mtiSLCfuCmiSHOtiMb525PA7pb1wRqmVCHBoA/vSwBd9fxj2FSp4nfh1zRnfoZ/6DBMemEm5fZOT5m7ssh61UqxDwR+83icV7Uqo2wE02mYCBmpI=
+	t=1754914899; cv=none; b=N7yIdtto8H7RttXuXZZG91RZQaPIHvmReq+0B5ywaIb1yw2c1vIEn45aSwWzQyeai2UXUQsxxGyJj16pPR5C+LEAmoikS25D5bIZCqNcjErSRx82Ei3G45NcoVNAYktPqMgjuVdHFQ9ys2JFqUx6cwl6bllG6KQ08mKTrEX4/Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914881; c=relaxed/simple;
-	bh=AKNYhjk8F4kqozljl6nn08Ozij0G9OQ8BESvj5wXYe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4dl/oxQk6kxtbWyxTtwdNlhwLECx70IDUOePY7tQB8A4KB1GJUIIPHTnjS3EbA+BGgUkkgg/dbDaaFnj1kaFr5BHbxev1wZgLqCxdlZIokkxYFWJyWjwQmgx8VKujuI36ytmWJm/wJn3nw7d9i4m3fHa/iq/67014YJJXP50VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dECE+x0w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754914879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/T23uPHlQiI38YqbSBf73HR1UbTiEmf5NBpuoH8k+U=;
-	b=dECE+x0w5jpFCnvqCCeIIYXLrfmi5HkhLsfAUIgyqv0JJQspaeut/UAKsTFRwJ+nWOdvjj
-	aPNrqtnTiWj+NrVME8P5AB82loJpV83dTDWyagm5i5cLbPlDDgGpOd808771e0UHuXoOIN
-	SRz4N7Ung9d606ctEcRRn/jBq/1c5rM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-G5nKtISKOs6hMtQyhXF5wg-1; Mon,
- 11 Aug 2025 08:21:15 -0400
-X-MC-Unique: G5nKtISKOs6hMtQyhXF5wg-1
-X-Mimecast-MFC-AGG-ID: G5nKtISKOs6hMtQyhXF5wg_1754914873
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76B77195609D;
-	Mon, 11 Aug 2025 12:21:13 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 912B518003FC;
-	Mon, 11 Aug 2025 12:21:05 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 11 Aug 2025 14:20:01 +0200 (CEST)
-Date: Mon, 11 Aug 2025 14:19:51 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <20250811121951.GD5250@redhat.com>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
- <20250801102428.GB27835@redhat.com>
- <20250811105948.OafBprND@linutronix.de>
- <20250811110617.GB5250@redhat.com>
- <20250811121607.Z6G889tB@linutronix.de>
+	s=arc-20240116; t=1754914899; c=relaxed/simple;
+	bh=Ql1JCgnCHCe7QLdED93B26Cg21+RnnwnTV77huzWi0s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qs5yb3LZ9T9r1boC0kmChmGGQgCnOnAYtFC4/872CQZE4MAiL3vP3sNNWHqVosQzV6q5oXKWultRfdNEUgN7ZmidAmoFvz0LQcOyhw8gkRDkdDaiCYKukmP06UCTnEq5bvtXODAzHrLAdWZxiDy44bmwhhGNNYXipg67V3XSw9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Gpl0cloj; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1754914898; x=1786450898;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Ql1JCgnCHCe7QLdED93B26Cg21+RnnwnTV77huzWi0s=;
+  b=Gpl0clojgNadKcllAmuS5qeyr7U61wJHDZdoNrUpvQXfyYR/YcdiLIZZ
+   T/jJBrCdcFKKzgbl3tGf/K1pgZlnW+Wc2VVlRfjOgsTxTC0nXKo4JeT24
+   w6mnq55pqVRBeHTtrE7glPy239HLTPGbZokXHQdr1TeRPb5L4wjt9cgTH
+   BItjbrQ7jbkciy1t/uzQKgEoxZuQhBrpLN2wBn/Wz+MJZCOtQh+n47bpU
+   ELZLDE0f7x2RiAzlNQpwJj/qDLJv2+YdqJX7tCm/sRGy3Sbr1qWmGjXa7
+   kvztThpDlB8CDVKa6CkdGzraZDppxs/7+5hxV7+cCLmBt84aUAVnNWAhV
+   w==;
+X-CSE-ConnectionGUID: wyxru+5XTMK+lbiHaXZ4+w==
+X-CSE-MsgGUID: 5Wwrm8/ITrONPZG1z6ylXA==
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="45644208"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Aug 2025 05:21:28 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 11 Aug 2025 05:20:58 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 11 Aug 2025 05:20:53 -0700
+Date: Mon, 11 Aug 2025 12:20:53 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Robert Marko <robert.marko@sartura.hr>
+CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Arnd Bergmann
+	<arnd@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	"Russell King" <linux@armlinux.org.uk>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
+	Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Lee Jones
+	<lee@kernel.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>,
+	<luka.perkov@sartura.hr>, Conor Dooley <Conor.Dooley@microchip.com>, "Lars
+ Povlsen - M31675" <Lars.Povlsen@microchip.com>
+Subject: Re: [PATCH v8 01/10] arm64: Add config for Microchip SoC platforms
+Message-ID: <20250811122053.4bfyoefln7wpz2a4@DEN-DL-M70577>
+References: <20250702183856.1727275-1-robert.marko@sartura.hr>
+ <20250702183856.1727275-2-robert.marko@sartura.hr>
+ <ea353170-6e03-4231-afc2-3dc45253931d@app.fastmail.com>
+ <CA+HBbNHxiU5+xVJTyPQFuCJLyEs5_MpybSBEgxi25bzaGfiVHA@mail.gmail.com>
+ <421d61db-27eb-4ad2-bd98-eb187fd14b1e@microchip.com>
+ <CA+HBbNEiKWS71jtF_jqV9bdX9HVroaZSGMaeD-xFM8sm0kLtCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250811121607.Z6G889tB@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+HBbNEiKWS71jtF_jqV9bdX9HVroaZSGMaeD-xFM8sm0kLtCw@mail.gmail.com>
 
-On 08/11, Sebastian Andrzej Siewior wrote:
->
-> On 2025-08-11 13:06:18 [+0200], Oleg Nesterov wrote:
-> > On 08/11, Sebastian Andrzej Siewior wrote:
+On Fri, Jul 04, 2025 at 07:36:06PM +0200, Robert Marko wrote:
+> 
+> On Thu, Jul 3, 2025 at 3:56 PM Nicolas Ferre
+> <nicolas.ferre@microchip.com> wrote:
+> >
+> > Robert, Arnd,
+> >
+> > On 03/07/2025 at 14:25, Robert Marko wrote:
+> > > On Wed, Jul 2, 2025 at 9:57 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> > >>
+> > >> On Wed, Jul 2, 2025, at 20:35, Robert Marko wrote:
+> > >>> Currently, Microchip SparX-5 SoC is supported and it has its own symbol.
+> > >>>
+> > >>> However, this means that new Microchip platforms that share drivers need
+> > >>> to constantly keep updating depends on various drivers.
+> > >>>
+> > >>> So, to try and reduce this lets add ARCH_MICROCHIP symbol that drivers
+> > >>> could instead depend on.
+> > >>
+> > >> Thanks for updating the series to my suggestion!
+> > >>
+> > >>> @@ -174,6 +160,27 @@ config ARCH_MESON
+> > >>>          This enables support for the arm64 based Amlogic SoCs
+> > >>>          such as the s905, S905X/D, S912, A113X/D or S905X/D2
+> > >>>
+> > >>> +menuconfig ARCH_MICROCHIP
+> > >>> +     bool "Microchip SoC support"
+> > >>> +
+> > >>> +if ARCH_MICROCHIP
+> > >>> +
+> > >>> +config ARCH_SPARX5
+> > >>> +     bool "Microchip Sparx5 SoC family"
+> > >>
+> > >> This part is the one bit I'm not sure about: The user-visible
+> > >> arm64 CONFIG_ARCH_* symbols are usually a little higher-level,
+> > >> so I don't think we want both ARCH_MICROCHIP /and/ ARCH_SPARX5
+> > >> here, or more generally speaking any of the nested ARCH_*
+> > >> symbols.
+> >
+> > Well, having a look at arch/arm64/Kconfig.platforms, I like how NXP is
+> > organized.
+> >
+> > SPARX5, LAN969x or other MPU platforms, even if they share some common
+> > IPs, are fairly different in terms of internal architecture or feature set.
+> > So, to me, different ARCH_SPARX5, ARCH_LAN969X (as Robert proposed) or
+> > future ones make a lot sense.
+> > It will help in selecting not only different device drivers but
+> > different PM architectures, cores or TrustZone implementation...
+> >
+> > >> This version of your patch is going to be slightly annoying
+> > >> to existing sparx5 users because updating an old .config
+> > >> breaks when ARCH_MICROCHIP is not enabled.
+> >
+> > Oh, yeah, indeed. Even if I find Robert's proposal ideal.
+> >
+> > Alexandre, Lars, can you evaluate this level of annoyance?
+> >
+> > >> The two options that I would prefer here are
+> > >>
+> > >> a) make ARCH_SPARX5 a hidden symbol in order to keep the
+> > >>     series bisectable, remove it entirely once all references
+> > >>     are moved over to ARCH_MICROCHIP
+> > >>
+> > >> b) Make ARCH_MICROCHIP a hidden symbol that is selected by
+> > >>     ARCH_SPARX5 but keep the menu unchanged.
 > > >
-> > > On 2025-08-01 12:24:29 [+0200], Oleg Nesterov wrote:
-> > > > s/LD_WAIT_SLEEP/LD_WAIT_CONFIG/ needs another discussion even if I am right,
-> > > > sorry for the confusion.
-> > >
-> > > You are correct Oleg. I've been just verifying it and yes: LD_WAIT_SLEEP
-> > > suppresses also mutex while the intention is to only suppress
-> > > spinlock_t.
-> > 
-> > Good, thanks.
-> > 
-> > > We have four users in tree, based on quick check all four should use
-> > > CONFIG, three of them do use SLEEP.
-> > 
-> > Yes. I'll send the simple patch when this patch from Luis is merged.
->
-> Okay. Let me cover then the other instances.
+> > > Hi Arnd,
+> > > Ok, I see the issue, and I would prefer to go with option b and do
+> > > what I did for
+> > > AT91 with the hidden ARCH_MICROCHIP symbol to avoid breaking current configs.
+> >
+> > Yep, but at the cost of multiple entries for Microchip arm64 SoCs at the
+> > "Platform selection" menu level. Nuvoton or Cavium have this already, so
+> > it's probably fine.
+> 
+> Yes, this is why I went with a menu instead, to me it is much cleaner.
+> 
+> So, how would you guys want me to proceed?
+> 
+> a) Keep the menu-based config symbol
+> or
+> b) Like for AT91, add a hidden symbol and keep the individual SoC-s in
+> the top level
+> platform menu?
+> 
+> Regards,
+> Robert
 
-I was going to update them all, but feel free to do.
+Hi Robert,
 
-Oleg.
+Sorry for the late reply.
+
+I appreciate the effort to make the addition of future symbols easier by using
+a common ARCH_MICROCHIP symbol — that makes sense to me.
+
+Regarding the actual symbols, I’m certainly no expert, but I agree with
+Nicolas, that having more granular control with separate ARCH_SPARX5 and
+ARCH_LAN969X could make sense, as opposed to only having ARCH_MICROCHIP, as
+Arnd mentioned.
+
+As for the goal of using a common symbol for drivers to depend on,  while not
+breaking existing configs (are there any unwritten rules or practices about
+breaking existing configs?), I think option B will work fine. I dont mind the
+symbols being top-level.
+
+/Daniel
+
 
 
