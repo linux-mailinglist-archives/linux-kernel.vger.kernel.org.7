@@ -1,136 +1,137 @@
-Return-Path: <linux-kernel+bounces-762234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C015B203D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E5AB203D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4983B20E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8969D423762
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFD32DF3D1;
-	Mon, 11 Aug 2025 09:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130270808;
+	Mon, 11 Aug 2025 09:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1+Db/9x"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHFKdinN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C932BF3E0
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA517223DEA
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904771; cv=none; b=tnfyJg5FlwuXykatCr5k0ROA33TXJbJQlD/OlBpi84fBCHZIrW3Fxy8V3+zSVhbcf3PiZ8r/uyVlu2xonoaahnOSUAWDTAjPYqiiVege1dpM5fKaQYCWd8z9TATTVUOomAnq8KP+8olbuphQxCKgMPV9DE8GHiIO6CQN455G4Aw=
+	t=1754904838; cv=none; b=gUFTXVoRAHcof9a+Zn6xT7l9gKPfNNYSn/SbMbkNvYBMaUVxHsIFwTcKg99poZffVgRsNgWFYYzy3pZP4lXKWAD9a0okTpuLYZl7dJmyHXSslaAkm79V30m++lWI5dJYpHxQFlIXOWRInv78JOWo+oi6QLLfCEk/W5NgIba8Seg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904771; c=relaxed/simple;
-	bh=o8uIpvdm8rS/o+S1mykUYGGLHkWfPhCsX3cg0yw1X58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OzDIH5ROt8PkSszNiTqmCXwAG11fXiUQjXM/BxVCridGJbsLl7POaUGXV3AN8U8aYj5V+t0G/le2FP0dkD45ArjjullOE3cRdcHZg12nsFACKo0bGzsavnByeSKHl0RTiC/GBtqDSNbgeWu7gJbCQN2kObgKvJ4LurQYsEM3mrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1+Db/9x; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-458b885d6eeso25656855e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754904766; x=1755509566; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S28JNZPWK+3sAmARH83rSsyGla0uTsZRncPjJTp9toA=;
-        b=l1+Db/9xG7MHbrXegbBRTEwdSYzS59sxv21Cik8GWAbImQn4MZ4UAm5FNjQzKdbc2Q
-         1QeFmuEwWLKk7IviqZq3PU63dFt97pahZrznp39RbZvnojyTbFjGarDPsjwreh1cvkEk
-         Fa+Uq9QnMb6RBnXkuN02q83aXgl3KEhzcPWYCDys5p58orENTARKWat9Ux/cbCsEl0Bd
-         tEfcArtd3dQZF0P2dWyY8fQj22t9i6KfSwA4UznMG0F6KPMOvGDaFKEgJ7eLmD8y+5b2
-         uCKPYthgmE2I3mMbcchffRnZRVeYlqzm1g1RP2dzyikgej9S5vj2azpZ6qO96ASL+9LG
-         q9hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754904766; x=1755509566;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S28JNZPWK+3sAmARH83rSsyGla0uTsZRncPjJTp9toA=;
-        b=Kiz7mbzaWn+l6iVXbBOQNHdOSfN3g79P/w/pAClQs9aTGz9jQV4JpwtL0C86cUkmUH
-         0l9bzvK0CVHaQJTKtnD0dMtQeuUzLINhdiAUWSUyVaCn5Pe+/HZebEKS0JlNPFCVZldI
-         jUKAzXSXOzmGhKPJNRA8W8N8mxEzoqSLATCaUBuQfxT66h1ZjjhOMUjVhjQyFExQ/yxA
-         5j8aURAVogBo5/RYKldgRXKVo6x7P6cM4NRsMkeaH6zL5CeKXd6FDB7YOil4+5i91YLu
-         pEdbjnnEcdFLUE1EbDoCy+dTTOKef0lRCxJs21lzWySuB4XKI5Xj1qO8MqMrCDu20q70
-         n6UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIRPC+t9FjKojryUVHzkd3QUNSS4HhUF+ICiLi3yzG01vQngFZeoqkqdZwn1Sg7RWeSo1ePl3/dRo6c9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqKqlQ8JdiG4gpUFKRrq/9T9TtFN2fgypEZZdep4QkmiWKPkEy
-	jk5azWuBtr74WEgOtAsxa78ExLtFJ3MuDQQS5dGbr1zjJtO/cuVjw3w+GBWGqNp/jIe/IKgLILF
-	/9UahrCw=
-X-Gm-Gg: ASbGncv9FH73yJY61R+ipC6Ai2h59IVRdL4F/eEIUAJmB5IS7YGIQ9UlpJvfxdGmKyv
-	6JPjXhv96TYb/DjxPx3/DiFxwuMDhKWoQzt4wwko0BPlHFmaPtzy6xudEIF12/fWPazFDQHj42C
-	HZ6XCUmzH3DMsiEcAeUnbHm/ilUafyS0VSh6AwiFHMyIt6Mj/rHOfucgSk2sLE2mYrq2D93OV1r
-	Vr1yUjOnat7RAXfqXRHczS9rY+k0R+tXg730gFu9snBJ3e1l6TIppo/A3GDq9+V02Wsc9UWWxEl
-	J2lu8th+acCGoqcKB4WtT1GmzmHGq4R3e2gMSGhLGDGa8bKaDU6pHVbSVNqaWPv4syWK6aBonmj
-	w7hnU8g0MIOJfYwyQS5XGNOKwx7FUnmI=
-X-Google-Smtp-Source: AGHT+IFaTuEhnneSdqUPVkp8FKoh0YP1/7nEOnYDv0UVx8tWLL1thpj3XGM6kh71NmUAd49x6WzJSg==
-X-Received: by 2002:a05:600c:4509:b0:456:496:2100 with SMTP id 5b1f17b1804b1-459f4f2bac3mr129344465e9.31.1754904766361;
-        Mon, 11 Aug 2025 02:32:46 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c45346asm39904799f8f.39.2025.08.11.02.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 02:32:45 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Mon, 11 Aug 2025 10:32:11 +0100
-Subject: [PATCH 6/6] coresight: docs: Document etm4x ts_interval
+	s=arc-20240116; t=1754904838; c=relaxed/simple;
+	bh=J1D/09r3N3DLDHsiA721RlvHu+0kUr0iq+BYE5etANU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9wlujOMijSrrX0jYBc1heMQT5oZoWfAz0qETej8oAof3vZmGpM9M8ObyKnshGv47qFHCVY0Z4n+JOqODOhhizOVI2lParmZVlZS0MYT1XJE8dZvaYp2JgzhfzKdmtZcSdzFBzztx7BA2c0K7V8wJvpJWs27Yo97Zx0LlT1d94I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHFKdinN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754904836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HiJMfJlrRsamODe6gnkp4xuGLE6+B0lz0Dbma9PtWd8=;
+	b=GHFKdinNWzlRPYD69GLbOLtgXOD5s+TcO1zrSW6CgRPdkowQTwViluU4gnwZDzcBqmj6uW
+	kza5y+Tmpd/YI5JHU04OFmg9wGkMt69hJ3BWbh8HEjcywNQRB4BC6sXLC1ta/rpSgvSGkK
+	NXEGaSVOaULApVfd/OwWrGlYk1RDCI0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-567-1rGCXW-fMce3E-ZR8gb95A-1; Mon,
+ 11 Aug 2025 05:33:50 -0400
+X-MC-Unique: 1rGCXW-fMce3E-ZR8gb95A-1
+X-Mimecast-MFC-AGG-ID: 1rGCXW-fMce3E-ZR8gb95A_1754904826
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE1DE1800352;
+	Mon, 11 Aug 2025 09:33:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9F6FA19560AD;
+	Mon, 11 Aug 2025 09:33:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 11 Aug 2025 11:32:31 +0200 (CEST)
+Date: Mon, 11 Aug 2025 11:32:16 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
+ PF_SUSPEND_TASK processes
+Message-ID: <20250811093216.GB11928@redhat.com>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <20250807121418.139765-6-zhangzihuan@kylinos.cn>
+ <20250808143943.GB21685@redhat.com>
+ <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-james-cs-syncfreq-v1-6-b001cd6e3404@linaro.org>
-References: <20250811-james-cs-syncfreq-v1-0-b001cd6e3404@linaro.org>
-In-Reply-To: <20250811-james-cs-syncfreq-v1-0-b001cd6e3404@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0754e3e3-9c47-47d5-81d9-4574e5b413bc@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Document how the new field is used, maximum value and the interaction
-with SYNC timestamps.
+On 08/11, Zihuan Zhang wrote:
+> 
+> 在 2025/8/8 22:39, Oleg Nesterov 写道:
+> >On 08/07, Zihuan Zhang wrote:
+> >>--- a/kernel/power/process.c
+> >>+++ b/kernel/power/process.c
+> >>@@ -147,6 +147,7 @@ int freeze_processes(void)
+> >>
+> >>  	pm_wakeup_clear(0);
+> >>  	pm_freezing = true;
+> >>+	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
+> >But why?
+> >
+> >Again, freeze_task() will return false anyway, this process is
+> >PF_SUSPEND_TASK.
+>
+> I  think there is resaon put it here. For example, systemd-sleep is a
+> user-space process that executes the suspend flow.
+>
+>  If we don’t set its freeze priority explicitly, our current code may end up
+> with this user process being the last one that cannot freeze.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- Documentation/trace/coresight/coresight.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+How so? sorry I don't follow.
 
-diff --git a/Documentation/trace/coresight/coresight.rst b/Documentation/trace/coresight/coresight.rst
-index 806699871b80..0cd83119b83f 100644
---- a/Documentation/trace/coresight/coresight.rst
-+++ b/Documentation/trace/coresight/coresight.rst
-@@ -619,6 +619,20 @@ They are also listed in the folder /sys/bus/event_source/devices/cs_etm/format/
-      - Cycle count threshold value. If nothing is provided here or the provided value is 0, then the
-        default value i.e 0x100 will be used. If provided value is less than minimum cycles threshold
-        value, as indicated via TRCIDR3.CCITMIN, then the minimum value will be used instead.
-+   * - ts_level
-+     - Controls frequency of timestamps. The reload value of the
-+       timestamp counter is 2 raised to the power of this value. If the value is
-+       0 then the reload value is 1, if the value is 10 then the reload value is
-+       1024. Maximum allowed value is 15, and setting the maximum disables
-+       generation of timestamps via the counter, freeing the counter resources.
-+       Timestamps will be generated after 2 ^ ts_level cycles.
-+
-+       Separately to this value, timestamps will also be emitted when a SYNC
-+       packet is generated, although this is only for every 4096 bytes of trace.
-+       Therefore it's not possible to generate timestamps less frequently than
-+       that and ts_level timestamps are always in addition to SYNC timestamps.
-+       Timestamps must be enabled for this to have effect.
-+
- 
- How to use the STM module
- -------------------------
-
--- 
-2.34.1
+Oleg.
 
 
