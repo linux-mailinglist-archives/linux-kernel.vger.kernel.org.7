@@ -1,217 +1,124 @@
-Return-Path: <linux-kernel+bounces-762298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31ADBB2048D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71081B20493
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D547718C28BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A053A2047
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCC3236A8B;
-	Mon, 11 Aug 2025 09:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="II4M1Au5"
-Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496851FF1B2;
+	Mon, 11 Aug 2025 09:53:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75FD1E9915;
-	Mon, 11 Aug 2025 09:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33002191493;
+	Mon, 11 Aug 2025 09:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906062; cv=none; b=M4aDnwkDWFBN+sLTuUCMc3cQj+XdmYcrszYS6ziIpm0MQy8vWZ2f426ckj+ujAQaZsJe8ANlO6BgNgbnb+4KwXaq/uUrlcoNZsY6jgvwrFQGUt48lKGrGkPmgrHBc9h73DuFcYKD2PaRSoRELqz+bdzful+HpIOxTjypXGznH+k=
+	t=1754906027; cv=none; b=ZA7Hr5S7ISVWUlbRplfKqluYr4w8tMBjjtcYOi+k3pRpYJnza5vajZgdvLrsPB/GSUgYV7YgJ98BqG3j9mBRcIMPsmFjBHwfX+mNmGK3NReq36VOyihu7h79+OXDytYWYYCY4qgSYhzelmBTc+WDTirN8iSmNia6cHSL8bALZJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906062; c=relaxed/simple;
-	bh=pUd7FJZjb9vD/sMqYt3SK9aUrLM1dmAyN/zx4Hb3z2E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nGt9wqTU3BvgEfKnudNT/pxv/v2rkNreyvQ611/0Oa8uro8mVlO2ZjZJx6GBDKmtkLhTIw06ix21CM9Y7QqOqTJigxDjvgen6XoN2zptfd+Mib/hCICTA4UGhh3NBCoYqzsjQKMsIGRhITltpvikILlBFF3GeEQucIBJJONTEMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=II4M1Au5; arc=none smtp.client-ip=178.249.69.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
-Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
-	by m.syntacore.com (Postfix) with ESMTP id 55E9B1A0002;
-	Mon, 11 Aug 2025 09:54:12 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 55E9B1A0002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
-	t=1754906052; bh=yni3jeui56qGM7gspd6IrxvigH7pPMoqhQ6Dvk9afrY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=II4M1Au5GdLYynSnkzM0etPYEfbzel+cAmL5VNpBSPhKia3TEM4hdjcbl50Icmb1u
-	 c1B6I1/sG69NHrP4EcJD9VOQUCTSFLrXy2c1fIwfRLkBHwTK0wt80VCe3L+2wbVLNU
-	 FhAJDzP0DJlSytaVeDs3sRgeMm6NAPNEOiHXCAfbI+AzX/Mf0nEXSrHjIcUJXbIIz5
-	 K14W+d+wJPFWkkaTZyw7ywofojaWv/E58Qz8KMSCEdMlIjQD/c0a68dpTskxJIlO7u
-	 8+J1hh4uH1AxkRTK0x8Gmsv0qcnGwSNGd2oyP4hE0mMafYr7a05tTCExLpP+DvrvDe
-	 Ud3oI+bWPrfdg==
-Received: from S-SC-EXCH-01.corp.syntacore.com (exchange.syntacore.com [10.76.202.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by m.syntacore.com (Postfix) with ESMTPS;
-	Mon, 11 Aug 2025 09:54:10 +0000 (UTC)
-Received: from localhost (10.199.23.86) by S-SC-EXCH-01.corp.syntacore.com
- (10.76.202.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 11 Aug
- 2025 12:53:14 +0300
-From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-To: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<kees@kernel.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<svetlana.parfenova@syntacore.com>
-Subject: [RFC RESEND v2] binfmt_elf: preserve original ELF e_flags for core dumps
-Date: Mon, 11 Aug 2025 15:53:28 +0600
-Message-ID: <20250811095328.256869-1-svetlana.parfenova@syntacore.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
-References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+	s=arc-20240116; t=1754906027; c=relaxed/simple;
+	bh=iFrdu35/R/MaVSfCUzqjyElDZoQza0RbyOa+1qTuIXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=k6kEGv7YVTGI5xYtcPj3SUCBCFrVzQ4V1SHwEHmnByD/P9I1p6K2AQSp+KwUdHGhNjnyuD7hSV6SpwtjXmMC/HQqQqL9IeZ/l17G8HlvN0k9ECTpHiuj+2lIoLAuuiI1ZqrrDQzVa9vJznvpcH5HLncIARq24xnbxQZwzTabbEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0e1a4a9a769911f0b29709d653e92f7d-20250811
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
+	SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP, SA_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:f97a9600-d617-4534-bcce-cbfa62f139da,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:5
+X-CID-INFO: VERSION:1.1.45,REQID:f97a9600-d617-4534-bcce-cbfa62f139da,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-META: VersionHash:6493067,CLOUDID:30ab249d94d8a4dff4a8db77771f4b17,BulkI
+	D:250811175340AC2T3V49,BulkQuantity:0,Recheck:0,SF:19|24|44|66|72|78|81|82
+	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
+	0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 0e1a4a9a769911f0b29709d653e92f7d-20250811
+X-User: liuqiqi@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <liuqiqi@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1987749795; Mon, 11 Aug 2025 17:53:38 +0800
+From: liuqiqi@kylinos.cn
+To: gregkh@linuxfoundation.org
+Cc: cve@kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liuqiqi <liuqiqi@kylinos.cn>
+Subject: mm:fix duplicate accounting of free pages in should_reclaim_retry()
+Date: Mon, 11 Aug 2025 17:53:30 +0800
+Message-Id: <20250811095330.1573939-1-liuqiqi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2025011510-CVE-2024-57884-4cf8@gregkh>
+References: <2025011510-CVE-2024-57884-4cf8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
- S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/11 08:26:00 #27653044
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+Content-Transfer-Encoding: quoted-printable
 
-Some architectures, such as RISC-V, use the ELF e_flags field to encode
-ABI-specific information (e.g., ISA extensions, fpu support). Debuggers
-like GDB rely on these flags in core dumps to correctly interpret
-optional register sets. If the flags are missing or incorrect, GDB may
-warn and ignore valid data, for example:
-
-    warning: Unexpected size of section '.reg2/213' in core file.
-
-This can prevent access to fpu or other architecture-specific registers
-even when they were dumped.
-
-Save the e_flags field during ELF binary loading (in load_elf_binary())
-into the mm_struct, and later retrieve it during core dump generation
-(in fill_note_info()). A new macro ELF_CORE_USE_PROCESS_EFLAGS allows
-architectures to enable this behavior - currently just RISC-V.
-
-Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
----
-Changes in v2:
- - Remove usage of Kconfig option.
- - Add an architecture-optional macro to set process e_flags. Enabled
-   by defining ELF_CORE_USE_PROCESS_EFLAGS. Defaults to no-op if not
-   used.
-
- arch/riscv/include/asm/elf.h |  1 +
- fs/binfmt_elf.c              | 34 ++++++++++++++++++++++++++++------
- include/linux/mm_types.h     |  3 +++
- 3 files changed, 32 insertions(+), 6 deletions(-)
-
-diff --git a/arch/riscv/include/asm/elf.h b/arch/riscv/include/asm/elf.h
-index c7aea7886d22..5d9f0ac851ee 100644
---- a/arch/riscv/include/asm/elf.h
-+++ b/arch/riscv/include/asm/elf.h
-@@ -20,6 +20,7 @@
-  * These are used to set parameters in the core dumps.
-  */
- #define ELF_ARCH	EM_RISCV
-+#define ELF_CORE_USE_PROCESS_EFLAGS
- 
- #ifndef ELF_CLASS
- #ifdef CONFIG_64BIT
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index caeddccaa1fe..e52b1e077218 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -66,6 +66,14 @@
- #define elf_check_fdpic(ex) false
- #endif
- 
-+#ifdef ELF_CORE_USE_PROCESS_EFLAGS
-+#define elf_coredump_get_process_eflags(dump_task, e_flags) \
-+	(*(e_flags) = (dump_task)->mm->saved_e_flags)
-+#else
-+#define elf_coredump_get_process_eflags(dump_task, e_flags) \
-+	do { (void)(dump_task); (void)(e_flags); } while (0)
-+#endif
-+
- static int load_elf_binary(struct linux_binprm *bprm);
- 
- /*
-@@ -1290,6 +1298,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	mm->end_data = end_data;
- 	mm->start_stack = bprm->p;
- 
-+	/* stash e_flags for use in core dumps */
-+	mm->saved_e_flags = elf_ex->e_flags;
-+
- 	/**
- 	 * DOC: "brk" handling
- 	 *
-@@ -1804,6 +1815,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 	struct elf_thread_core_info *t;
- 	struct elf_prpsinfo *psinfo;
- 	struct core_thread *ct;
-+	u16 machine;
-+	u32 flags;
- 
- 	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
- 	if (!psinfo)
-@@ -1831,17 +1844,26 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 		return 0;
- 	}
- 
--	/*
--	 * Initialize the ELF file header.
--	 */
--	fill_elf_header(elf, phdrs,
--			view->e_machine, view->e_flags);
-+	machine = view->e_machine;
-+	flags = view->e_flags;
- #else
- 	view = NULL;
- 	info->thread_notes = 2;
--	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
-+	machine = ELF_ARCH;
-+	flags = ELF_CORE_EFLAGS;
- #endif
- 
-+	/*
-+	 * Override ELF e_flags with value taken from process,
-+	 * if arch wants to.
-+	 */
-+	elf_coredump_get_process_eflags(dump_task, &flags);
-+
-+	/*
-+	 * Initialize the ELF file header.
-+	 */
-+	fill_elf_header(elf, phdrs, machine, flags);
-+
- 	/*
- 	 * Allocate a structure for each thread.
- 	 */
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index d6b91e8a66d6..e46f554f8d91 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1098,6 +1098,9 @@ struct mm_struct {
- 
- 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
- 
-+		/* the ABI-related flags from the ELF header. Used for core dump */
-+		unsigned long saved_e_flags;
-+
- 		struct percpu_counter rss_stat[NR_MM_COUNTERS];
- 
- 		struct linux_binfmt *binfmt;
--- 
-2.50.1
-
+In the zone_reclaimable_pages() function, if the page counts for NR_ZONE_IN=
+ACTIVE_FILE, =0D
+NR_ZONE_ACTIVE_FILE, NR_ZONE_INACTIVE_ANON, and NR_ZONE_ACTIVE_ANON are all=
+ zero, =0D
+the function returns the number of free pages as the result.=0D
+=0D
+In this case, when should_reclaim_retry() calculates reclaimable pages, =0D
+it will inadvertently double-count the free pages in its accounting.=0D
+=0D
+diff --git a/mm/vmscan.c b/mm/vmscan.c=0D
+index 34410d24dc15..a9aaefdba7a2 100644=0D
+--- a/mm/vmscan.c=0D
++++ b/mm/vmscan.c=0D
+@@ -393,14 +393,7 @@ unsigned long zone_reclaimable_pages(struct zone *zone=
+)=0D
+        if (can_reclaim_anon_pages(NULL, zone_to_nid(zone), NULL))=0D
+                nr +=3D zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANO=
+N) +=0D
+                        zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON)=
+;=0D
+-       /*=0D
+-        * If there are no reclaimable file-backed or anonymous pages,=0D
+-        * ensure zones with sufficient free pages are not skipped.=0D
+-        * This prevents zones like DMA32 from being ignored in reclaim=0D
+-        * scenarios where they can still help alleviate memory pressure.=0D
+-        */=0D
+-       if (nr =3D=3D 0)=0D
+-               nr =3D zone_page_state_snapshot(zone, NR_FREE_PAGES);=0D
++=0D
+        return nr;=0D
+ }=0D
+ =0D
+@@ -6417,7 +6410,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)=0D
+                return true;=0D
+ =0D
+        for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {=0D
+-               if (!zone_reclaimable_pages(zone))=0D
++               if (!zone_reclaimable_pages(zone) && zone_page_state_snapsh=
+ot(zone, NR_FREE_PAGES))=0D
+                        continue;=0D
+ =0D
+signed-off-by: liuqiqi <liuqiqi@kylinos.cn>=0D
 
