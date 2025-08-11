@@ -1,173 +1,235 @@
-Return-Path: <linux-kernel+bounces-762046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE519B20185
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AEDB2018F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3AF3AA294
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9D9189E5E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DBD2D94AD;
-	Mon, 11 Aug 2025 08:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEBC2DAFD8;
+	Mon, 11 Aug 2025 08:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QNZtTEE2"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UI48hWft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A30E17DFE7;
-	Mon, 11 Aug 2025 08:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D4D1E834B;
+	Mon, 11 Aug 2025 08:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754900183; cv=none; b=rzYuHlY8x40ei3uxWACqHC4h3thoUOmpUITv6C0VRcs2IXnWm/kJGRVO5hYAIMFFMPU+JplFyQEvIQIShxUqspNxyXmhA753Hc6kHIpX5frOlMSP9isqz5PoLPmBjZ8HGvSW8hnH4Kyt5nXzYK7rfq3L8BoYfmujbIuKVlCt5EU=
+	t=1754900228; cv=none; b=E9ymAyDIZMBxuqTI4mA1y6fTzY+B5fPhS5lIQyxWq+uYsHOx67xNsDqHwdWFw1emJpunFi0PhsAjFXnYj5+ZkuZpoNGnN3RCFQZdbP+3MGIyRBU1r+e6ssL6n0HpFtdG1ULTKa7jfA4I7iY7DCCrdCh3xNzMVk62VD568lirGtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754900183; c=relaxed/simple;
-	bh=srm3zsoprTKXB85DJvR2KprlSioEN2mDA9xeJVhDzcA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IwkEZ1PRu6KrFeBQveUwB6fkrnONQUY6G7i+ZkCkIM9iBIF/UqgRB6/0CZMM0IU5nijyh4TgIpXiHH4pFRO0bJTaa8nlTy76wfo6j9iQGDshCJbyBjKFT3oJpoK9E5zK04xcJx1pre9g6l1TS8Wjsz5a5/HJIKYsCAOi1ulMsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QNZtTEE2; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 6e046d2c768b11f0b33aeb1e7f16c2b6-20250811
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=x/e5kCslJYDoFpQ6zaF3VOwpJkCoYx1KKrXOFc+oh2Q=;
-	b=QNZtTEE2rzaqZDZGephNySLtzpjwf0mgv++vMoadLqHf8URiYECyPcRluyhC8GiHfC8hSbAZGJ+QmnNvwJ1VzN4OLzkDIAeQNPi0FDcQ8KfZoaVLYn458j/JtTsM0KAHCy0KzhfFOo7AJvL9Gc3hh6p/zBrlviHf4ZEGJFCA+lw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:1b0383d7-e001-4440-8e5f-6a0cb6f59297,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:1335d09d-7ad4-4169-ab95-78e9164f00fe,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 3,DMD|SSN|SDN
-X-CID-BAS: 3,DMD|SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 6e046d2c768b11f0b33aeb1e7f16c2b6-20250811
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <ot_shunxi.zhang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 392357454; Mon, 11 Aug 2025 16:16:06 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 11 Aug 2025 16:16:00 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 11 Aug 2025 16:15:59 +0800
-From: <ot_shunxi.zhang@mediatek.com>
-To: Eddie Huang <eddie.huang@mediatek.com>, Sean Wang
-	<sean.wang@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>, Shunxi
- Zhang <ot_shunxi.zhang@mediatek.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <sirius.wang@mediatek.com>,
-	<vince-wl.liu@mediatek.com>, <jh.hsu@mediatek.com>
-Subject: [PATCH v1 2/2] rtc: mt6397: Add BBPU alarm status reset and shutdown handling
-Date: Mon, 11 Aug 2025 16:15:34 +0800
-Message-ID: <20250811081543.4377-3-ot_shunxi.zhang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250811081543.4377-1-ot_shunxi.zhang@mediatek.com>
-References: <20250811081543.4377-1-ot_shunxi.zhang@mediatek.com>
+	s=arc-20240116; t=1754900228; c=relaxed/simple;
+	bh=yL/qUikanLs+aGEmFjlLt7vxOWxjOZmEwCqPg0afrV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kngh4iWH4Bh9MTSzLfmY9k05Jr+jM5Bhe/SGoQEX2opK8FvjK2egKNq6q+2LfeDsgBRmM1Ap1OMCpp1ZNKu10ppuuCKu7VpcaFZvBa7nvYXKKfo5YyTRbcefZ9NVaN271zLt+k9H3W6EpUgrXFTCcTm3BpjFoihyTE3/3iF6oEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UI48hWft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15B2AC4CEF6;
+	Mon, 11 Aug 2025 08:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754900227;
+	bh=yL/qUikanLs+aGEmFjlLt7vxOWxjOZmEwCqPg0afrV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UI48hWft/oTk2ppV8lEBCRugT2YlIFQQaaS2fdZwl/4hq5z6Al8aeBmZhUQy9qDIV
+	 oWE1/rQxs5lZI20al/Kzhp23oW49q6idQJTpxGMBTJz6bxVwxDba0N81Xq6YiLgOve
+	 HFHnOpUA0dQoZmVuax6F7T2awFOoAkaGaFBvemFcrTUvKLapi1qwuEYZpXNK0FZhai
+	 64kXHx9qwq+kZw41mLJRl0kh85GWcdbNxPa71l8Mc3mDTF3DAEFIQT73x7gFUF2Lft
+	 nFuwfc81MeOtQX7BkBVjapukZkBIik1uIiGroU3msCHO0spiMal7f5Y5tK5v1aQ9kt
+	 QplmBTHv/ExQg==
+Date: Mon, 11 Aug 2025 13:46:55 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH v1] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for UFS controller v5
+Message-ID: <edrf3bobjnknwydzeitfwns7lehgf65p5prcohmc7eexhzoami@ywlamyweunmn>
+References: <20250806063409.21206-1-quic_pkambar@quicinc.com>
+ <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
+ <2e655067-cd7e-4584-aa07-998b517ac314@quicinc.com>
+ <pewnau4ltrf2yu3xxdq6rs6xhz45zlo3dt3jnkzhxitmezz2ft@2k7pgpoz5iey>
+ <3601cdce-a269-4d29-bc21-b925fcc499e2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <3601cdce-a269-4d29-bc21-b925fcc499e2@quicinc.com>
 
-From: Shunxi Zhang <ot_shunxi.zhang@mediatek.com>
+On Thu, Aug 07, 2025 at 03:50:58PM GMT, Palash Kambar wrote:
+> 
+> 
+> On 8/6/2025 11:19 PM, Manivannan Sadhasivam wrote:
+> > On Wed, Aug 06, 2025 at 06:11:09PM GMT, Palash Kambar wrote:
+> >>
+> >>
+> >> On 8/6/2025 4:44 PM, Manivannan Sadhasivam wrote:
+> >>> On Wed, Aug 06, 2025 at 12:04:09PM GMT, Palash Kambar wrote:
+> >>>> Disable of AES core in Shared ICE is not supported during power
+> >>>> collapse for UFS Host Controller V5.0.
+> >>>>
+> >>>> Hence follow below steps to reset the ICE upon exiting power collapse
+> >>>> and align with Hw programming guide.
+> >>>>
+> >>>> a. Write 0x18 to UFS_MEM_ICE_CFG
+> >>>> b. Write 0x0 to UFS_MEM_ICE_CFG
+> >>>>
+> >>>> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+> >>>> ---
+> >>>>  drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++++
+> >>>>  drivers/ufs/host/ufs-qcom.h |  2 ++
+> >>>>  2 files changed, 26 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> >>>> index 444a09265ded..2744614bbc32 100644
+> >>>> --- a/drivers/ufs/host/ufs-qcom.c
+> >>>> +++ b/drivers/ufs/host/ufs-qcom.c
+> >>>> @@ -744,6 +744,8 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+> >>>>  	if (ufs_qcom_is_link_off(hba) && host->device_reset)
+> >>>>  		ufs_qcom_device_reset_ctrl(hba, true);
+> >>>>  
+> >>>> +	host->vdd_hba_pc = true;
+> >>>
+> >>> What does this variable correspond to?
+> >> Hi Manivannan,
+> >>
+> >> It corresponds to power collapse, will rename it for better readability.
+> >>
+> > 
+> > What is 'power collapse' from UFS perspective?
+> 
+> As part of UFS controller power collapse, UFS controller and PHY enters HIBERNATE_STATE
+> during idle periods .The UFS controller is power-collapsed with essential registers 
+> retained (for ex ICE), while PHY maintains M-PHY compliant signaling. Upon data transfer
+> requests, software restores power and exits HIBERNATE_STATE without requiring re-initialization, 
+> as configurations and ICE encryption keys are preserved.
+> 
 
-This patch introduces a new function, mtk_rtc_reset_bbpu_alarm_status,
-to reset the BBPU alarm status in the MT6397 RTC driver. This function
-writes the necessary bits to the RTC_BBPU register to clear the alarm
-status and ensure proper operation.
+AFAIK, Hibern8 is a UFS *link* specific feature, not controller specific. In
+other peripherals, power collapse means powering off the controller entirely and
+then relying on the hardware logic to retain the register states. I believe the
+same behavior applies to UFS also.
 
-Additionally, the mtk_rtc_shutdown function is added to handle RTC
-shutdown events. It resets the BBPU alarm status and updates the
-RTC_IRQ_EN register to disable the one-shot alarm interrupt,
-ensuring a clean shutdown process.
+In that case, I would expect you to check for the power collapse in
+ufs_qcom_resume() using some logic and toggle the relevant bits in UFS_MEM_ICE.
 
-Signed-off-by: Shunxi Zhang <ot_shunxi.zhang@mediatek.com>
----
- drivers/rtc/rtc-mt6397.c | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+The current logic you proposed doesn't really make sure that the controller is
+power collapsed. You just assume that ufs_qcom_suspend() would allow the
+controller to enter power collapse state, but it won't. If the user has opted
+for 'spm_lvl' to be '0', then I don't think the controller can enter power
+collapse state.
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 692c00ff544b..063bd399de8c 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -37,6 +37,21 @@ static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
- 	return ret;
- }
- 
-+static void mtk_rtc_reset_bbpu_alarm_status(struct mt6397_rtc *rtc)
-+{
-+	u32 bbpu = RTC_BBPU_KEY | RTC_BBPU_PWREN | RTC_BBPU_RESET_AL;
-+	int ret;
-+
-+	ret = regmap_write(rtc->regmap, rtc->addr_base + RTC_BBPU, bbpu);
-+	if (ret < 0) {
-+		dev_err(rtc->rtc_dev->dev.parent, "%s: write rtc bbpu error\n",
-+			__func__);
-+		return;
-+	}
-+
-+	mtk_rtc_write_trigger(rtc);
-+}
-+
- static irqreturn_t mtk_rtc_irq_handler_thread(int irq, void *data)
- {
- 	struct mt6397_rtc *rtc = data;
-@@ -51,6 +66,8 @@ static irqreturn_t mtk_rtc_irq_handler_thread(int irq, void *data)
- 		if (regmap_write(rtc->regmap, rtc->addr_base + RTC_IRQ_EN,
- 				 irqen) == 0)
- 			mtk_rtc_write_trigger(rtc);
-+
-+		mtk_rtc_reset_bbpu_alarm_status(rtc);
- 		mutex_unlock(&rtc->lock);
- 
- 		return IRQ_HANDLED;
-@@ -297,6 +314,22 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	return devm_rtc_register_device(rtc->rtc_dev);
- }
- 
-+static void mtk_rtc_shutdown(struct platform_device *pdev)
-+{
-+	struct mt6397_rtc *rtc = platform_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mtk_rtc_reset_bbpu_alarm_status(rtc);
-+
-+	ret = regmap_update_bits(rtc->regmap,
-+				 rtc->addr_base + RTC_IRQ_EN,
-+				 RTC_IRQ_EN_ONESHOT_AL, 0);
-+	if (ret < 0)
-+		return;
-+
-+	mtk_rtc_write_trigger(rtc);
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int mt6397_rtc_suspend(struct device *dev)
- {
-@@ -345,7 +378,8 @@ static struct platform_driver mtk_rtc_driver = {
- 		.of_match_table = mt6397_rtc_of_match,
- 		.pm = &mt6397_pm_ops,
- 	},
--	.probe	= mtk_rtc_probe,
-+	.probe = mtk_rtc_probe,
-+	.shutdown = mtk_rtc_shutdown,
- };
- 
- module_platform_driver(mtk_rtc_driver);
+> > 
+> >>>
+> >>>> +
+> >>>>  	return ufs_qcom_ice_suspend(host);
+> >>>>  }
+> >>>>  
+> >>>> @@ -759,6 +761,27 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> >>>>  	return ufs_qcom_ice_resume(host);
+> >>>>  }
+> >>>>  
+> >>>> +static void ufs_qcom_hibern8_notify(struct ufs_hba *hba,
+> >>>> +				    enum uic_cmd_dme uic_cmd,
+> >>>> +				    enum ufs_notify_change_status status)
+> >>>> +{
+> >>>> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> >>>> +
+> >>>> +	/* Apply shared ICE WA */
+> >>>
+> >>> Are you really sure it is *shared ICE*?
+> >>
+> >>  Yes Manivannan, I am.
+> >>
+> > 
+> > Well, there are two kind of registers defined in the internal doc that I can
+> > see: UFS_MEM_ICE and UFS_MEM_SHARED_ICE. And hence the question.
+> > 
+> >>>
+> >>>> +	if (uic_cmd == UIC_CMD_DME_HIBER_EXIT &&
+> >>>> +	    status == POST_CHANGE &&
+> >>>> +	    host->hw_ver.major == 0x5 &&
+> >>>> +	    host->hw_ver.minor == 0x0 &&
+> >>>> +	    host->hw_ver.step == 0x0 &&
+> >>>> +	    host->vdd_hba_pc) {
+> >>>> +		host->vdd_hba_pc = false;
+> >>>> +		ufshcd_writel(hba, 0x18, UFS_MEM_ICE);
+> >>>
+> >>> Define the actual bits instead of writing magic values.
+> >>
+> >> Sure.
+> >>
+> >>>
+> >>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> >>>> +		ufshcd_writel(hba, 0x0, UFS_MEM_ICE);
+> >>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> >>>
+> >>> Why do you need readl()? Writes to device memory won't get reordered.
+> >>
+> >> Since these are hardware register, there is a potential for reordering.
+> >>
+> > 
+> > Really? Who said that? Please cite the reference.
+> > 
+> >>>
+> >>>> +	}
+> >>>> +}
+> >>>> +
+> >>>>  static void ufs_qcom_dev_ref_clk_ctrl(struct ufs_qcom_host *host, bool enable)
+> >>>>  {
+> >>>>  	if (host->dev_ref_clk_ctrl_mmio &&
+> >>>> @@ -2258,6 +2281,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
+> >>>>  	.hce_enable_notify      = ufs_qcom_hce_enable_notify,
+> >>>>  	.link_startup_notify    = ufs_qcom_link_startup_notify,
+> >>>>  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
+> >>>> +	.hibern8_notify		= ufs_qcom_hibern8_notify,
+> >>>
+> >>> This callback is not called anywhere. Regardeless of that, why can't you use
+> >>> ufs_qcom_clk_scale_notify()?
+> >>>
+> >>
+> >> According to the HPG guidelines, as part of this workaround, we are required to reset the ICE controller during the Hibern8 exit sequence when the UFS controller resumes from power collapse. Therefore, this reset logic has been added to the H8 exit notifier callback.
+> >>
+> > 
+> > Please wrap the replies to 80 column.
+> > 
+> > Well, we do call ufshcd_uic_hibern8_exit() from these callbacks. So why can't
+> > you reset the ICE after calling ufshcd_uic_hibern8_exit() here?
+> 
+> As per HPG guidance, the ICE Reset workaround is required only after the
+> controller undergoes a power collapse. In the UFS subsystem, power collapse
+> is managed via the GDSC (GCC_UFS_MEM_PHY_GDSC), which is part of GenPD
+> (power domains). Since GenPD is tied to runtime suspend operations, we are
+> setting the power collapse flag during runtime suspend and checking this
+> flag during hibernate exit.
+> 
+> 
+> > 
+> >> The ufs_clk_scale_notify function is invoked whenever clock scaling (up or down) occurs, regardless of whether a power collapse has taken place. Hence, the ICE controller reset was specifically added to the H8 exit notifier to ensure it is executed only in the appropriate context.
+> >>
+> > 
+> > Please define what 'power collapse' mean here. And as I said before, you are
+> > not at all calling this newly introduced callback.
+> 
+> This is not a newly introduced callback, Mani. We are registering for
+> an already existing notifier. You may refer to ufshcd.c, where this
+> notifier is invoked.
+> 
+
+Okay, my bad. You could've mentioned something about this callback in the commit
+message to make others aware that you are reusing an existing callback.
+
+- Mani
+
 -- 
-2.46.0
-
+மணிவண்ணன் சதாசிவம்
 
