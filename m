@@ -1,194 +1,122 @@
-Return-Path: <linux-kernel+bounces-761818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F21B1FECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD623B1FEB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326553BB444
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A5B3BA96F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD21227703D;
-	Mon, 11 Aug 2025 05:50:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CDB26E71F;
-	Mon, 11 Aug 2025 05:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D7215990C;
+	Mon, 11 Aug 2025 05:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b9iGjgcf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b6TAgw11"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390621DF98F;
+	Mon, 11 Aug 2025 05:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754891438; cv=none; b=o+hfy+3/eRRHCQc/1a8lEk2H4b8ju/PxnVUVvpqGI2sKBE5dLm74JgCe/woe7sRlr1qLGbGiVM8GI/tJ3Pgm1M87yZ4Kzr5lHdBZUEihKdyG28QOFv2sezZSiizp52JrPDiuFH++z6WRwKWgg9fXTcSHm4udF/Qu9ByZ5xshGlc=
+	t=1754890794; cv=none; b=LaZgVpVqd745mKJnn+APL9WcFGLYs3to+sO6iF2+yc5L+kK4bW0sIN9eKxiKaSdWWjZa075egOeGeP9Ebfx/Km6Yn/JH/6uzf/ssjcaBrK1xhycgmYAv8vfVeklMM5lYM9wYQDkdAdsZLJYS6A3o6VJV4fWVGM9vL8LQA+/xQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754891438; c=relaxed/simple;
-	bh=W8N+9T3GwRiE6nS55sm/L2P+TWEETv7v1ISfhrS0rjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MhsuPi5ei6JnwajX0UhAgkBlbcUl9O+oeXDJ1yOsMtF4UvfFjtt0K8Zr9AMHefrUug7+s2rbMlWfZ4HeUZmS7SlYIfCZBJG4jzz3GDN/cXgzbk0kxHVj6mpMG9dQZ5ztVMlwsc6GDGea5wGhZ3IMLuLkMnu4GA8b9sIbrzOyZlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c0k2w2kRcz9sSL;
-	Mon, 11 Aug 2025 07:39:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3Mxf0H61E1tl; Mon, 11 Aug 2025 07:39:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c0k2w1bMnz9sSK;
-	Mon, 11 Aug 2025 07:39:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 199008B764;
-	Mon, 11 Aug 2025 07:39:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id bIxmuQ19phXS; Mon, 11 Aug 2025 07:39:03 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BAC418B763;
-	Mon, 11 Aug 2025 07:39:03 +0200 (CEST)
-Message-ID: <b8345cfe-0bde-44cd-b9b7-9a946ff8fc36@csgroup.eu>
-Date: Mon, 11 Aug 2025 07:39:03 +0200
+	s=arc-20240116; t=1754890794; c=relaxed/simple;
+	bh=pnbyQwhaH5zwVvUKdyPprRrHHy4L1oKq2FZOE5FNDD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QXd0nB4bc4d6/cnSXyyxOAZZ4K+/1xaRoxLCqu01wVkSsRj2AaRHtNRwEeBORiBJLIe2A50gFPCu3YTbu14AEvqzaggL8fmw9iTBCJSCc3UfhgzctKfUq5Ch/IXDUxPjjAkVSykCYBWmG3UT/ad4znj6MS01ZlaonegqbgG7+hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b9iGjgcf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b6TAgw11; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754890784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MJIhtkGvgAsmM0h4kM8I7PSa6klKjzmZORs6f49BmYA=;
+	b=b9iGjgcfDGPemL2W21lMxlQ0pwOKRMzP6HOZtjtKaJGuj1P+bAZPwqaD8JLrFLcRGfqvE8
+	QbBSWyeSTCO2dRw1E69MPv1amJ4gBapfzM+jXDNemNsiVvgpFVNxJS+6M44HwE92JTR7D5
+	9MKdCgr73WGlqFeLXIYKQgRNqcee/EeWPiljIEaDfFi/IeZBq0rO4FVxgCKXw105z5d7xG
+	7BJmeoMCZlc66ZtB5hXtM3ngtdsA0+jwr7Cq70cJBxsQP2660h6zSCfbOt7HKcK34qWuk3
+	gcLsAIuO0hjzxQdsJUbRh/JDAmePvVN8z9C+KaRGAP2Xk+V2IXkTl4z1KWTbwg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754890784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MJIhtkGvgAsmM0h4kM8I7PSa6klKjzmZORs6f49BmYA=;
+	b=b6TAgw11vXrgWxBP584McGUlXhGR77xJbrjdfKRvFu/GWNKM7Ovmgh3pkvLZ3m0UHcSt7R
+	jFkNqkyBjETbAaDA==
+To: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: [PATCH] PCI: vmd: Remove MSI-X check on child devices
+Date: Mon, 11 Aug 2025 07:39:35 +0200
+Message-Id: <20250811053935.4049211-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] kasan: call kasan_init_generic in kasan_init
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
- bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com,
- akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
- davidgow@google.com, glider@google.com, dvyukov@google.com,
- alexghiti@rivosinc.com
-Cc: alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com,
- elver@google.com, kasan-dev@googlegroups.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250810125746.1105476-1-snovitoll@gmail.com>
- <20250810125746.1105476-3-snovitoll@gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250810125746.1105476-3-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
+Commit d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
+added a WARN_ON sanity check that child devices support MSI-X, because VMD
+document says [1]:
 
+    "Intel VMD only supports MSIx Interrupts from child devices and
+    therefore the BIOS must enable PCIe Hot Plug and MSIx interrups [sic]."
 
-Le 10/08/2025 à 14:57, Sabyrzhan Tasbolatov a écrit :
-> Call kasan_init_generic() which handles Generic KASAN initialization.
-> For architectures that do not select ARCH_DEFER_KASAN,
-> this will be a no-op for the runtime flag but will
-> print the initialization banner.
-> 
-> For SW_TAGS and HW_TAGS modes, their respective init functions will
-> handle the flag enabling, if they are enabled/implemented.
-> 
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
-> Acked-by: Alexander Gordeev <agordeev@linux.ibm.com> # s390
+However, on Ammar's machine, a PCIe port below VMD does not support MSI-X,
+triggering this WARN_ON.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+This inconsistency between the document and reality should be investigated
+further. For now, remove the MSI-X check.
 
-> ---
-> Changes in v6:
-> - Call kasan_init_generic() in arch/riscv _after_ local_flush_tlb_all()
-> ---
->   arch/arm/mm/kasan_init.c    | 2 +-
->   arch/arm64/mm/kasan_init.c  | 4 +---
->   arch/riscv/mm/kasan_init.c  | 1 +
->   arch/s390/kernel/early.c    | 3 ++-
->   arch/x86/mm/kasan_init_64.c | 2 +-
->   arch/xtensa/mm/kasan_init.c | 2 +-
->   6 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
-> index 111d4f703136..c6625e808bf8 100644
-> --- a/arch/arm/mm/kasan_init.c
-> +++ b/arch/arm/mm/kasan_init.c
-> @@ -300,6 +300,6 @@ void __init kasan_init(void)
->   	local_flush_tlb_all();
->   
->   	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
-> -	pr_info("Kernel address sanitizer initialized\n");
->   	init_task.kasan_depth = 0;
-> +	kasan_init_generic();
->   }
-> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-> index d541ce45daeb..abeb81bf6ebd 100644
-> --- a/arch/arm64/mm/kasan_init.c
-> +++ b/arch/arm64/mm/kasan_init.c
-> @@ -399,14 +399,12 @@ void __init kasan_init(void)
->   {
->   	kasan_init_shadow();
->   	kasan_init_depth();
-> -#if defined(CONFIG_KASAN_GENERIC)
-> +	kasan_init_generic();
->   	/*
->   	 * Generic KASAN is now fully initialized.
->   	 * Software and Hardware Tag-Based modes still require
->   	 * kasan_init_sw_tags() and kasan_init_hw_tags() correspondingly.
->   	 */
-> -	pr_info("KernelAddressSanitizer initialized (generic)\n");
-> -#endif
->   }
->   
->   #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
-> diff --git a/arch/riscv/mm/kasan_init.c b/arch/riscv/mm/kasan_init.c
-> index 41c635d6aca4..c4a2a9e5586e 100644
-> --- a/arch/riscv/mm/kasan_init.c
-> +++ b/arch/riscv/mm/kasan_init.c
-> @@ -533,4 +533,5 @@ void __init kasan_init(void)
->   
->   	csr_write(CSR_SATP, PFN_DOWN(__pa(swapper_pg_dir)) | satp_mode);
->   	local_flush_tlb_all();
-> +	kasan_init_generic();
->   }
-> diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
-> index 9adfbdd377dc..544e5403dd91 100644
-> --- a/arch/s390/kernel/early.c
-> +++ b/arch/s390/kernel/early.c
-> @@ -21,6 +21,7 @@
->   #include <linux/kernel.h>
->   #include <asm/asm-extable.h>
->   #include <linux/memblock.h>
-> +#include <linux/kasan.h>
->   #include <asm/access-regs.h>
->   #include <asm/asm-offsets.h>
->   #include <asm/machine.h>
-> @@ -65,7 +66,7 @@ static void __init kasan_early_init(void)
->   {
->   #ifdef CONFIG_KASAN
->   	init_task.kasan_depth = 0;
-> -	pr_info("KernelAddressSanitizer initialized\n");
-> +	kasan_init_generic();
->   #endif
->   }
->   
-> diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-> index 0539efd0d216..998b6010d6d3 100644
-> --- a/arch/x86/mm/kasan_init_64.c
-> +++ b/arch/x86/mm/kasan_init_64.c
-> @@ -451,5 +451,5 @@ void __init kasan_init(void)
->   	__flush_tlb_all();
->   
->   	init_task.kasan_depth = 0;
-> -	pr_info("KernelAddressSanitizer initialized\n");
-> +	kasan_init_generic();
->   }
-> diff --git a/arch/xtensa/mm/kasan_init.c b/arch/xtensa/mm/kasan_init.c
-> index f39c4d83173a..0524b9ed5e63 100644
-> --- a/arch/xtensa/mm/kasan_init.c
-> +++ b/arch/xtensa/mm/kasan_init.c
-> @@ -94,5 +94,5 @@ void __init kasan_init(void)
->   
->   	/* At this point kasan is fully initialized. Enable error messages. */
->   	current->kasan_depth = 0;
-> -	pr_info("KernelAddressSanitizer initialized\n");
-> +	kasan_init_generic();
->   }
+Allowing child devices without MSI-X despite what the document says does
+sound suspicious, but that's what the driver had been doing before the
+WARN_ON is added.
+
+Fixes: d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
+Link: https://cdrdv2-public.intel.com/776857/VMD_White_Paper.pdf [1]
+Reported-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Closes: https://lore.kernel.org/linux-pci/aJXYhfc%2F6DfcqfqF@linux.gnuweeb.=
+org/
+Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+ drivers/pci/controller/vmd.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index b679c7f28f51..1bd5bf4a6097 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -306,9 +306,6 @@ static bool vmd_init_dev_msi_info(struct device *dev, s=
+truct irq_domain *domain,
+ 				  struct irq_domain *real_parent,
+ 				  struct msi_domain_info *info)
+ {
+-	if (WARN_ON_ONCE(info->bus_token !=3D DOMAIN_BUS_PCI_DEVICE_MSIX))
+-		return false;
+-
+ 	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
+ 		return false;
+=20
+--=20
+2.39.5
 
 
