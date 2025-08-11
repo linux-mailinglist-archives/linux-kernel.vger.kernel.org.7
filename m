@@ -1,98 +1,73 @@
-Return-Path: <linux-kernel+bounces-763636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE724B217F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:12:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B6BB217FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5311A21C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67D157B2006
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD71B2D876D;
-	Mon, 11 Aug 2025 22:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17E42D47F3;
+	Mon, 11 Aug 2025 22:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="inKtI2zi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SbK9YZ/f"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C31D2D63E5;
-	Mon, 11 Aug 2025 22:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FAA2D876D;
+	Mon, 11 Aug 2025 22:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950332; cv=none; b=Vt5BYz5sGnvIOEiJP6oMfvy2jMJB4ii+fLrg2vaFIakuNNAX0XtJBuESh7hIuYIJQpM7hlYv5EGLxEcFm1AvKpxfVzswR5lnyTllELLPTqqmMibdHnoYnYZwwUeYlLDZIgbgk389bExiA9LzMZ+g00tYTPVuWZ18ogcx3RWILOg=
+	t=1754950349; cv=none; b=ulUwKQiq7U5eQG15pHYBTOBtafvqbHbgMm4hl3FsTc9Dol14gg3YM0WBjkX3qCz3avdawFXQWm5I+WJ8JX3IWRJCFU9bC6VyhNDFAtgDIign34rSq//hcvfZ5IWR/TOxjkkBlhOiGSl6l7/SgxtOC5Yhyng+d+Q3ux6gEV4n6VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950332; c=relaxed/simple;
-	bh=TpTQLfmPbMktDsXRGnIA1Q4zkCKFQcD/caC8d9JYgkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IWl39JAqRd7/Rt52wJ4gBwNpewD1MEVSwd2cMRF3jhhpcAjUU/aBbOK6s63V6mD+wyfBabn904KBujlalbO2iwQOsvhBsEoItG/RwUcJ3YJis0waNrD3pmldRJ96iErYL3dykeLEvN0/MgyuZlT5u4//52aE4PyOcvzCWzvkqBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=inKtI2zi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754950327;
-	bh=nK4wtJSu7TYzjWFrQIJwKuAcJgt5FOeurmLnC8ORXnA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=inKtI2zilLjhr6JMYkfjjd8fLaytG8tdnqHL9NQT+5h90ttOBSSNCJZPETuJjlJ7Z
-	 42LGUQnO8u/sicuSQybm5G/OThauShc05Y3W5fUCSO1u7wQbSdhg2yRyB5bibUvmEL
-	 9Zv9gLAHvrXzzIx3p8JJdeczCuZdKjx/AX2Kp2SYBCKnIDLw50HAwQhEjVI+NJXqzZ
-	 /gX0m1+axlYPJluWUtUU3a16tNSu4vQTSglKuSddO9SsyNJ3hn9WJBDeYDJz6jT/xR
-	 GP47/8af43sfk8nFSzMBSVvk8huPkyfoXG0rJ1xKHVIFAspnAsThKBqJ36WVSPJu2P
-	 Np3Mw/oa0RiAA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c184l62L9z4x3d;
-	Tue, 12 Aug 2025 08:12:07 +1000 (AEST)
-Date: Tue, 12 Aug 2025 08:12:07 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the qcom tree
-Message-ID: <20250812081207.7ac8d7c4@canb.auug.org.au>
+	s=arc-20240116; t=1754950349; c=relaxed/simple;
+	bh=HQzW0W9hUpp+D07ct3CNrIaVtPJNUUrETiIKOlXVoR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTh8mhSya+/zhc3u1TNwwhFuNpfvO62O0VTCJDRRX/36lZeSoyIs9Z0q+DPtT+BpodK1AlmN8oZ3U2bFbSd6fOkBZHgMAPZpVmoiwibfx0zkDxVLEkn6+XMgOeTLAh+EpJGTznNTnnHwznfuaAKPZ8z6C+OjxgzLS7tv6nd7Dik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SbK9YZ/f; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rXqzGHAwzizgQD53Mjxeb903A2U+44cwCUAeygyiGKM=; b=SbK9YZ/fUv9DCfDjNmheFRS4wS
+	96oZ+qUTvCJk1lHMAo25sHKSescMQ+9sNFYmzQMil9ZI0hVuDtLvuTATGZFZR3p7epAPToeL6E+E9
+	DN83yl3uNYBVCMbBU3fHWjQf0TLD1na8FgRYd29QpkHObCw0k1ETjlgrOaVUF7ViXg3w+LEtyH/3q
+	Zj4p8lH5OC1R1CNzvJJUc4DvLcMI7O5elCS+cqM+YQ4vP0hWcruX3KjnRXiPkPVavkZ4pEcj+qWEX
+	MkrantxBfj5qcN/q8r1+JN7D/T3XHxFqgMcPhgleggxqKZ/P4BWn6luO2AYDJujtVlJg8DbzAiUgI
+	13fYZc5A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulakd-00000009yzg-3pn5;
+	Mon, 11 Aug 2025 22:12:20 +0000
+Date: Mon, 11 Aug 2025 23:12:19 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tal Zussman <tz2294@columbia.edu>
+Cc: Hans de Goede <hansg@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vboxsf: Convert vboxsf_write_end() to use
+ kmap_local_folio()
+Message-ID: <aJpqw4HhLVsXiWvt@casper.infradead.org>
+References: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CGL.4_DwK7BE++=w2gC8qNr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-vboxsf_folio-v1-1-fe31a8b37115@columbia.edu>
 
---Sig_/CGL.4_DwK7BE++=w2gC8qNr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 11, 2025 at 05:42:00PM -0400, Tal Zussman wrote:
+> Now that vboxsf_write_end() takes a folio, convert the kmap() call to
+> kmap_local_folio(). This removes two instances of &folio->page as
+> well.
+> 
+> Compile-tested only.
 
-Hi all,
-
-Commit
-
-  450a80623e3b ("arm64: dts: qcom: ipq5018: Add tsens node")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CGL.4_DwK7BE++=w2gC8qNr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiaarcACgkQAVBC80lX
-0GwDkgf/YSfnv+XVYmTdwV1tSO0Oh6JvKBdZrWPI/mXoJavDGL3ALwhXohSUj4ki
-HvTDa+s1oONIHvUIU2RnIZg0aXLZ/Y0+xLm0wdFW6SEO0dfCxm2pMQakEhxnQ4vO
-DpgX5zaRRYbM93YVsY2+Fp4l4IShe5MLKllsvxVYJzBPM/ocGPEQw+GFVMDM2J8M
-lR5Rbw0NZYJ4zlRCSCv8M8DEUjpZFZ4Emc/UEJTvTsbPJvSEX22PW3y+ngJd3LZx
-BXJsZ6P3TI3yGKpi6du8oxcQUcwl0gf/ufhreexMTSLWfOgltSimRZpVXLw5YbDo
-XvGON/jxtHacLA++QGI0FJsE/Xf54A==
-=IkrL
------END PGP SIGNATURE-----
-
---Sig_/CGL.4_DwK7BE++=w2gC8qNr--
+Yeah ... I don't know if this is safe or not.  Needs actual testing.
 
