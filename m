@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-762988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A2EB20D47
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:14:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7544B20D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9618B1624DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17BAA1884E24
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71232DFA38;
-	Mon, 11 Aug 2025 15:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WeuM+lO7"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8831C4EB38;
-	Mon, 11 Aug 2025 15:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6BF2DFA38;
+	Mon, 11 Aug 2025 15:13:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D72242D78
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925277; cv=none; b=lEHlIsZGapRYVlOsAMqAxEQFLuthHkHo77at7GyYUQf2iERnE7AsIBZBqGFSsdylyn3xYuqvD/pRrmm2V3+GLEFwlN4ZjLQmvPb7b7yKh38MmSXU6ebVge8dVERYLgK5aubkMYAldDltQ1wX7x/A4k9HSjOBRFeRtW0hZAtFz+M=
+	t=1754925205; cv=none; b=ozjT641mdRLWVWJ8vwFa59DUS/J3uDZ2BrPTLcoIxfOzSgMBuch/URls2E8o8xLX4uND53lI57KHS6H9/s23ADYKuxwrYjb/sZEaoDB/F4Ked+mWjYiLd9UvmdOaPAKYQHEH+BqOgOL5oYH5DYDYItaSogosRFu9w49K5XTqKqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925277; c=relaxed/simple;
-	bh=aTsbw2smJ5VIymi9ayK2LE0nzymwzY8VncqZhJ3BXqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aqG551zUfqWNDTQQqDd1J/FxOE6DAgxcmsyVn6vnYTgxIeNdsPs2ohQeoo09WWPC9VB4hILsxCeoT9gXjwLmrZCsmjenGMgilWO0vjOT+Syqy1l4VsoxTawvzMl/iNqlMGVOZRT6qyvdIkMKTGXYLfsxYiVinERtlpwBA4s6GNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WeuM+lO7; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=aT
-	sbw2smJ5VIymi9ayK2LE0nzymwzY8VncqZhJ3BXqI=; b=WeuM+lO7vqO8Cpljb+
-	8ozhdmhynoSpVq9NUOLBe0UyWUQYuQZztKLlFHwlQKwnvfNFGEeoGLhYLERdgrlG
-	g/5O1D3FFNrrOt+MjJ+8W4DGhVYP36mzV70pumCa3D9To5fooESLnsWSCb1nmANH
-	yAA9ux82qbiR3L2KvTPVNi/VY=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDn5+2MCJposuAOAw--.27979S2;
-	Mon, 11 Aug 2025 23:13:17 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	will@kernel.org,
-	boqun.feng@gmail.com,
-	longman@redhat.com,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] sched/cgroup: Lock optimize for cgroup cpu throttle
-Date: Mon, 11 Aug 2025 23:13:16 +0800
-Message-Id: <20250811151316.838707-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754925205; c=relaxed/simple;
+	bh=4W/11+sc8YtcMjDi019XSwNvM1W68tMUjZsPFTj3LTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLftYN6Q9KYz4Ii1oh5efhOM3na3mkIHUDG0XDWG8mrM2FNP1qjhE547l93MLXO3tUsroUmAAHC2hY1qj5HmYOWox0IzbWnVbrCLDgDju1JcdkjymiBJ3VFudPFS22gPgQ+9mcuaOAlkFYmbcNTyXCrWXrLV8tlt1d5j7QGdBfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E58C2661;
+	Mon, 11 Aug 2025 08:13:14 -0700 (PDT)
+Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E7C43F63F;
+	Mon, 11 Aug 2025 08:13:22 -0700 (PDT)
+Message-ID: <e47757c3-6091-43b5-ba28-52e11de7d86a@arm.com>
+Date: Mon, 11 Aug 2025 10:13:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn5+2MCJposuAOAw--.27979S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrW8Kr4xGw4UKFWDJFyDAwb_yoW8XF1xp3
-	90vF43trs5ZF1IqF109w4ftay8Z395J3y5G3Z8GrW5Cr1Yq3WIyrsYgayY9an8Gws3ua1j
-	vr1jq3ZrGayYvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8xhLUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxWmCmiaBhczAwAAsJ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: enable CONFIG_SCHED_CLUSTER
+To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: patches@amperecomputing.com, cl@linux.com,
+ Shubhang@os.amperecomputing.com, krzysztof.kozlowski@linaro.org,
+ bjorn.andersson@oss.qualcomm.com, geert+renesas@glider.be, arnd@arndb.de,
+ nm@ti.com, ebiggers@kernel.org, nfraprado@collabora.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Christoph Lameter <cl@gentwo.org>
+References: <20250808025533.6422-1-shijie@os.amperecomputing.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20250808025533.6422-1-shijie@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-08-11 at 16:36 +0800, Sebastian wrote:
+Hi,
 
-> What about using task_work_add() and throttling the task on its way to
-> userland? The callback will be invoked without any locks held.
+On 8/7/25 9:55 PM, Huang Shijie wrote:
+> In the server, if some workload which will create lot of
+> tasks, and will have many task migrations, we can get better
+> performance when we enable the CONFIG_SCHED_CLUSTER.
+> 
+> For example, the Specjbb may have better performance:
+>      Critical-jops : 26%
+>      Max-jops      : 7%
+> 
+> So enable it by default.
 
-
-Dear Sebastian,
-
-I believe what you mentioned is related to the same issue that Valentin
-brought up later, which is the current solution of "delaying CPU throttling
-through the task_work mechanism until returning to user mode."
-My colleagues and I indeed noticed this from the beginning. However, on our
-6.1.134 RT-Linux system, we have tried new versions of this solution one by
-one, but they have all failed during basic script tests, so none have reached
-the stage of being used in our project. I see that this modification has been
-promoted in the community for more than two years, yet it remains in a state
-that doesn't work well (on our 6.1.134 RT-Linux system). I wonder if the
-changes require too many considerations or if this modification simply isn't
-suitable for running on RT-Linux. Our project cannot afford to wait, and
-there are many performance issues in RT-Linux.
-Therefore, I focused on making minimal changes to a complex and stable
-scheduling system (at least not altering the complex management logic of
-nr_running and related logic) and instead worked on the code of lock module
-and the logic of adjusting priorities, which are relatively easier to
-understand and modify.
-As a result, I implemented a patch that runs stably on 6.1.134 RT-Linux and
-meets the demands.
+ From what I've seen, SCHED_CLUSTER seems to be a bit of give and take 
+depending on benchmark and machine. I'm not sure if it should be default 
+enabled or not, but it would really be nice to have at least a larger 
+sweep of benchmarks/machines in order to be sure of the decision.
 
 
-Thanks
-Xin Zhao
+Thanks,
+
+
+> 
+> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+> ---
+>   arch/arm64/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 58f87d09366c..054c96ea2235 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -82,6 +82,7 @@ CONFIG_ARCH_VISCONTI=y
+>   CONFIG_ARCH_XGENE=y
+>   CONFIG_ARCH_ZYNQMP=y
+>   CONFIG_SCHED_MC=y
+> +CONFIG_SCHED_CLUSTER=y
+>   CONFIG_SCHED_SMT=y
+>   CONFIG_NUMA=y
+>   CONFIG_XEN=y
 
 
