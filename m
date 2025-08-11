@@ -1,176 +1,144 @@
-Return-Path: <linux-kernel+bounces-762725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C583B20A36
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B31B20A31
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF143B13B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320DE3B146F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6433E2DECA7;
-	Mon, 11 Aug 2025 13:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D1D2DCF6B;
+	Mon, 11 Aug 2025 13:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHYQdHSS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="JbPlwjVF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PAxLtR7i"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34C1F5820;
-	Mon, 11 Aug 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95202DE216
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918988; cv=none; b=czlyiJV/3qUQawsJLCD3Bx2qtW+N2GuyZ0nU9rjkszVVXorb6vXL0BY/lVa6vc8238JqauqRm6kDG5zLMubDwYnaDnOKs9vP59ORPWNm/VcC5oJf12LuuDA5cVan0ZPutsDyyx+fnY8QeQNlxYlpPzBMVcTHwnsINZgop6E61Gc=
+	t=1754918908; cv=none; b=TIbXZtc0gRlWz76LUAE9lhd4Gak9NHTexjtphEWLaB6Ymfgt2MVisARZiRMsFy4V44c37W0IG72RQIAgblU9VRZPC4MF2a53w86ck3ygL4dxu5BtZtPu+Gr3ZHRC4b+/nuPhWowVlpuqzPBSKzHKN2xD7dBSmV7MTcf+u64KXcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918988; c=relaxed/simple;
-	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uGCYg/t1TrSkEyHb5cQvnFiyel9UHMRwGZ42v/SJf372XcAKSeXc9WmnCMsvQ4sySfpyp9nSJ14GnlPhsQVsHz5BmZ0FVSpiLV6F42wGJ7dzgU1dG9/Rp105g6STPXga3MJLU3d6vpcN+XY4cd/llx+pDls/RziPubL6sffs5Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHYQdHSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E83C4CEF7;
-	Mon, 11 Aug 2025 13:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754918988;
-	bh=TgjO8kHAVKI3l7CYVMLzptQqzc2/jaFVmi388jyGESY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nHYQdHSSsQwSWCD3WrYy07OaO4m86uNO8iyi3aw6PA55zHLFltaTHVJUygKn6D2GA
-	 Y+UmhsiLOJ3RptaWumnpZZT3EVrIi746eRRBdDKeY1WVcqoZsuatOyykNiQxQFNbGj
-	 5nHPIR4LS3w7UJvKIMLUD8vkAXFafB8oYjzL/KUiL8zEt7xrg+Rn6jh0utGwwReCvZ
-	 nPF5SQ7W2+epSEgJ26xHgkiO3gPZTnBluEWwiv5/YQfkNMv0tpyfPmv0Ra35lLUyK5
-	 kv7xn3kkbcotz4S40rFwfiuHybfIoFUDaUYQL6m9MEoAiZm8Dk2UOzQeN1lk/wk6ap
-	 yNI4p5nOvyF4Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Daniel Almeida
- <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Janne
- Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-In-Reply-To: <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <iPv7ly-33WYOq_9Fait3DBD6dQCAn1WCRGwXjlPgNBmuj5yejzu0D6-qfg3VYyJfwu9uS4rJOu9o3L2ebudROw==@protonmail.internalid>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
-Date: Mon, 11 Aug 2025 15:28:11 +0200
-Message-ID: <87o6smf0no.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1754918908; c=relaxed/simple;
+	bh=1YPiyEop/L3Cwa2Cro6DOJXLQYanNXV6c61DI2Rq1eQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ha4ovHlzkqBdBAcrxy1EKdUwDpBSCH+rooTbyuW/QlIa6zMOoBrfgO/wRazQRHnRmfpx74iv1eiWemSQ5PJiBCIAk5RYsG1IMbf29zxeTdJd/GruoAbq9MYL3gJ5jLhhIGGuVki53awS267Z34SHYnuOoZ0p6LWT7Wr3UFlgUKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=JbPlwjVF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PAxLtR7i; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id A9382EC00C3;
+	Mon, 11 Aug 2025 09:28:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 11 Aug 2025 09:28:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1754918901; x=
+	1755005301; bh=DaKM1MT2vnhDEwshxSnQdmlixM5+zD2EhgIAWWaUiYc=; b=J
+	bPlwjVFkrwY0jLRmL1BsZxkTSSlp2xpTQL3okJqASrhxQZuIpXXj9tBS57LZ6qEV
+	CxQShUmjYzc/KoOPL2quo2qCO3MlPtLu5h0MIQOS+1GDhyMFYjKDRTcoThewIUMQ
+	C/r7dDjUQmpisfvOIva4jZ6jHR4Bu2DjvZuqGYTwba8wMliFlMCsNXngGctw0knQ
+	ijvV/fcwmwgIR6AVCALhYy2F9DgxH86M/68TQTEwc34t9k1EXxH4uo+TFDhSRFl4
+	u+tDp+VhvooDR5ZRcZchlBr/3EAvmvsAiB2p+BBrcIYbu4PuA+V3aLvuzjaozQBt
+	wH6EK7YGTQoL0AW5pmvOA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754918901; x=1755005301; bh=DaKM1MT2vnhDEwshxSnQdmlixM5+zD2EhgI
+	AWWaUiYc=; b=PAxLtR7iZtdTtVduVi1HNR5i/gDmjGAvNH9jq7dHe7eOxoMdnuI
+	Dt4yyv/nhr5U2pzpW7QVAVWQJy06xSRQmpZRMoO0Jv8WVnsmlJL80DlmEc9mU+iF
+	B5bIINz4jgaFChKYUpFgG5k2y2g1A+3udugo9pPjMoSDHI1h3Uh5I2pjwKsKvmPb
+	8cZmhyjFfpWBinkYzzl6ECcy4tVDblHxj7QpjylkFQMTJB2nNAe5i/wi3M8znD3/
+	QTeRhAkPCNytffdpQIY5/ASPleeZGN65vuYefrAlAphgwtkwAD1y9Lu6+kP9RNN+
+	EnDTzkAvjgXIHAiGooXIoQlvu8U5+fsbs0w==
+X-ME-Sender: <xms:9e-ZaMaB5oX0LPoLJq9pR9A3JoTDd_U9QV994Of9cMcSOnfJAAQSjw>
+    <xme:9e-ZaAWjC1yt-qxNLMSNbn_JT5ulGwZBUHNSC8qpZLe1phsopHYfYdoAQy_gXdEh5
+    DFDTrexb0ym7FvvVes>
+X-ME-Received: <xmr:9e-ZaI7SnuE2jv8yxOz3HZDUszFhOFb_ZMANnM0WBVYlWByANNExutfcpWuLnuy0HXBwkvxOxlMbc66AeUoxCFvCnyFD05FgtRM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
+    dttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeevieelhfduke
+    ffheekffduudevvdefudelleefgeeileejheejuedvgefhteevvdenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghr
+    tghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidufe
+    elgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:9e-ZaDjtR9xyaCeYzCuI6BuGQ-ZGp_e0KUmpRMzkBczXwcfY1IbGSg>
+    <xmx:9e-ZaHdIMlscw-FF6eEwSBkEISaBgFV5Q3ppXhZSwQ85hC1zIlLq0w>
+    <xmx:9e-ZaAfNtTVsTB2MC2Rk2q4MYrmmwkeALKDN9-jsWvAj5YM1vijHww>
+    <xmx:9e-ZaJ8Z2zH-85nQfALPkFXOUIJtFcLCcwesHNOdvHbPoz638K_1MA>
+    <xmx:9e-ZaKfTryjU9WI-itiMcE2sr7r6oDaeT74X55JzvTL17_Lb7eZOksoU>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 09:28:20 -0400 (EDT)
+Date: Mon, 11 Aug 2025 22:28:17 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] firewire: core: call address handlers ouside RCU
+ read-side critical section
+Message-ID: <20250811132817.GA267817@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20250803122015.236493-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250803122015.236493-1-o-takashi@sakamocchi.jp>
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+On Sun, Aug 03, 2025 at 09:20:11PM +0900, Takashi Sakamoto wrote:
+> Hi,
+> 
+> This is an updated version of my previous patchset[1].
+> 
+> In the earlier version, XArray was used to collect FCP address handlers.
+> However, in typical system, only a few handlers are registered, and
+> using XArray for this purpose was unnecessarily complex and inefficient.
+> A simpler and faster approach is more appropriate here.
+> 
+> In this v2 patchset, the kernel stack is used initially to store up to 4
+> handlers. If more than 4 handlers are registered in the system, a buffer
+> is dynamically allocated from the kernel heap.
+> 
+> [1] https://lore.kernel.org/lkml/20250728015125.17825-1-o-takashi@sakamocchi.jp/
+> 
+> Takashi Sakamoto (4):
+>   firewire: core: use reference counting to invoke address handlers
+>     safely
+>   firewire: core: call handler for exclusive regions outside RCU
+>     read-side critical section
+>   firewire: core: call FCP address handlers outside RCU read-side
+>     critical section
+>   firewire: core: reallocate buffer for FCP address handlers when more
+>     than 4 are registered
+> 
+>  drivers/firewire/core-transaction.c | 91 +++++++++++++++++++++++++----
+>  include/linux/firewire.h            |  4 ++
+>  2 files changed, 85 insertions(+), 10 deletions(-)
+> 
+> 
+> base-commit: 7061835997daba9e73c723c85bd70bc4c44aef77
 
-> Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, which
-> are akin to `__xa_{alloc,insert}` in C.
->
-> Note that unlike `xa_reserve` which only ensures that memory is
-> allocated, the semantics of `Reservation` are stricter and require
-> precise management of the reservation. Indices which have been reserved
-> can still be overwritten with `Guard::store`, which allows for C-like
-> semantics if desired.
->
-> `__xa_cmpxchg_raw` is exported to facilitate the semantics described
-> above.
->
-> Tested-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-
-<cut>
-
-> +    /// Stores an element somewhere in the given range of indices.
-> +    ///
-> +    /// On success, takes ownership of `ptr`.
-> +    ///
-> +    /// On failure, ownership returns to the caller.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
-> +    unsafe fn alloc(
-
-
-The naming of this method in C is confusing. Could we call it
-insert_limit_raw on the Rust side?
-
-Even though this is private, I think we should also document that the
-effect of inserting NULL is to reserve the entry.
-
-> +        &mut self,
-> +        limit: impl ops::RangeBounds<u32>,
-> +        ptr: *mut T::PointedTo,
-> +        gfp: alloc::Flags,
-> +    ) -> Result<usize> {
-> +        // NB: `xa_limit::{max,min}` are inclusive.
-> +        let limit = bindings::xa_limit {
-> +            max: match limit.end_bound() {
-> +                ops::Bound::Included(&end) => end,
-> +                ops::Bound::Excluded(&end) => end - 1,
-> +                ops::Bound::Unbounded => u32::MAX,
-> +            },
-> +            min: match limit.start_bound() {
-> +                ops::Bound::Included(&start) => start,
-> +                ops::Bound::Excluded(&start) => start + 1,
-> +                ops::Bound::Unbounded => 0,
-> +            },
-> +        };
-> +
-> +        let mut index = u32::MAX;
-> +
-> +        // SAFETY:
-> +        // - `self.xa` is always valid by the type invariant.
-> +        // - `self.xa` was initialized with `XA_FLAGS_ALLOC` or `XA_FLAGS_ALLOC1`.
-> +        //
-> +        // INVARIANT: `ptr` is either `NULL` or came from `T::into_foreign`.
-> +        match unsafe {
-> +            bindings::__xa_alloc(
-> +                self.xa.xa.get(),
-> +                &mut index,
-> +                ptr.cast(),
-> +                limit,
-> +                gfp.as_raw(),
-> +            )
-> +        } {
-> +            0 => Ok(to_usize(index)),
-> +            errno => Err(Error::from_errno(errno)),
-> +        }
-> +    }
-> +
-> +    /// Allocates an entry somewhere in the array.
-
-Should we rephrase this to match `alloc`?
-
-  Stores an entry somewhere in the given range of indices.
-
-<cut>
-
-> +impl<T: ForeignOwnable> Reservation<'_, T> {
-> +    /// Returns the index of the reservation.
-> +    pub fn index(&self) -> usize {
-> +        self.index
-> +    }
-> +
-> +    /// Replaces the reserved entry with the given entry.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must be `NULL` or have come from a previous call to `T::into_foreign`.
-
-We should document the effect of replacing with NULL.
+Applied to for-linus branch.
 
 
-Best regards,
-Andreas Hindborg
+Thanks
 
-
+Takashi Sakamoto
 
