@@ -1,236 +1,110 @@
-Return-Path: <linux-kernel+bounces-762304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75097B2049A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D771B204B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38582188C946
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D6B16AA38
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3AA21B9C1;
-	Mon, 11 Aug 2025 09:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1CB1E3775;
+	Mon, 11 Aug 2025 09:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RYpHF1pd"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s7/pZTKS"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942B6F4FA;
-	Mon, 11 Aug 2025 09:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4D1335C7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906216; cv=none; b=l/jzvTyDhbwvLhdc6GkIZiE7YxGC3Kw9YU4aF1EZK1GmayCvDhmaEWZddgXbu8PlidRDvIYurBAC61nlRK5CUL2Y3kYphHp0ungP+H8DIl2YSNX83cQWsFYRbi3m6gINvqo6OXfGJRzwQ4jSQNwVqAM0IOc3aEpqbqfPXKtE7l4=
+	t=1754906215; cv=none; b=irggMV/eSWSRUqLIEfjFzj/7mNZovKuhdR5GsFonYd13PWJuahpEB5SOs8yxwK9VmmI1vI+Upwak9o8JrYLjwhtMg7KxtDoTVH0X6cSmytF2UNWp8zxzD71zxwhG0lWczVO3sg8qXNSJLLKUCqLzDAbxty6t9E728w8Se5IoxCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906216; c=relaxed/simple;
-	bh=oLxyTCclZz3r/6nGm1z6P2ArP6KTKgEvlw9aEXNTaS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h20zZsWtuk39AHa57x4bLx3PP5IrxRpq2STasjFQU7b9KTQ6MHIr/UVcRK8BxeLeV2l1+sIG96bI67TGcxRRyrTUp1zKwrS/9wXjR2hvBM0Vvn4YuXKJr4t5xHZ+9DJJQwjZTjAH4ceo8j0ipiL7HkW/JYIEUSNGbMgX+APZ52o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RYpHF1pd; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0329243271;
-	Mon, 11 Aug 2025 09:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754906212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GaQ3wKPH5axZOjWwUUOpz2DqIUQ/8BF6oVMaeU+edpo=;
-	b=RYpHF1pdsJE1hKGkD4eG0Gake5zR8flMgUkBLCWwwK2fQBOR+hvg7S4A49u0aAHsIRV1/T
-	YdYu//Rjiubt60X+LTZhvlGlpWgYID0mpjKnLxtJAmA/0nj/z6R+CSE+Y7piT1eieOguw5
-	lclK9kDiHHsFksG6ZZ/eVKk7v0AmQ7+mNPfpngafUexky9dbBGbFWp2uI3SbPTDxL2Y5rw
-	CesgckdHjvPKbRpB/XjoTvs8Xaci1kZq4UalbsU2Yloe1cQOgWTGy0nEid8zyp8561xp0q
-	DxZWBTs+6GAcr0j7Lh9kLg/2pCOUFP/kXD/FjusIcUHak0zg3JLFzahVZLgikA==
-Message-ID: <d7b874d5-a224-4e4c-a18b-6e68480b3349@bootlin.com>
-Date: Mon, 11 Aug 2025 11:56:49 +0200
+	s=arc-20240116; t=1754906215; c=relaxed/simple;
+	bh=oFgFdsAMTf/qCY/7xWsxSAnmK9+zLrC/nC52m7Do2DE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VjWNO9Z77nS0R5R5iUOUT/aiOEK5z1WJOb4ZzdG9qALDrQT21Kzuq3x2aALbJpIHdS5PRpNQ4xkMnM4PmyszQvPvTTn6EosS3VnkIHHniCuAz30bqmS6MH7hJzirsFslHLnNGQo62BPS47CftyBPo7jv+0nJlYOy64Bn5qNzunQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s7/pZTKS; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-458f710f364so27892905e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754906212; x=1755511012; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cl1+NNQeO4OdoNvXCOAgTlcv+G1b3QMdpUJ6J7g2VAM=;
+        b=s7/pZTKSI86bRFWrZ4CJ5x+6k74/Tn0ZXx40d1b/1jxwd0/N2NYYpEtFn2lKqC21UY
+         XgELQDan8uilNyPX+o9DAOKFyWymD+BJw+otemNcXKTWMmbLjjSxedC39eCCt9ePO5T/
+         DD03Qbam+nmQAQYLRcrx0K531ZvMswgTW5UQW09x2YTioEA0fRz0iACNeaMD4RaCE6mr
+         moy/oKeSlL2qvvptUg6/+jBw3dWQZpm7rbSutY3fJ6qyRGJ4SN6BJDuVF2HTHzH4i6sq
+         4a8vwhzmk6eGYmuomBDcoiWxiuQ4OniiepTQiH7HXKpA2hFil8O66rzaCUuBFWX7gtgg
+         pZPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754906212; x=1755511012;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cl1+NNQeO4OdoNvXCOAgTlcv+G1b3QMdpUJ6J7g2VAM=;
+        b=Hxgsw96UoXFl1OGLNlQqfDuDqZr7tyY9djNhBJwAWJPykEs2oLSGWDNi8ORdPJgY3D
+         DskbuySLt5272iCf0pcMu7lfmKzRcddL1hYDF9AYKaCxKNnLIA3QL5yxK3o/oYhz+T+l
+         TZVkUhb54lZrYtJcGAOPEF3i1Hmv7MKppC3kEFv9/NCATAPiB/Hjnnb7UBnKlAuUGhu7
+         HYF1gHllXjGM6ZAVDoh15cHbuiwgVjGO763DM/3MxbdO/Gshl0+exaw04nG6/fh4ZswK
+         tXHiTVDC/0gLrYd/gNHOxsmUFyq8lYDy41MYJh3cOYJqRzpx5P573pPh0HwXYDs+pV02
+         mrEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGtOjYMcNn7R2OEH2ipnVPE9KmEm/oYDHnjADPkMGRwKbi2zM4PCOZy1CL2XIt+9+e3JrBCG5k8sW5QpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydF6ibHpHwpCczEvj2TQnHkn1zemh6v0Pa8Ntc9MBMSCaaq60o
+	bNiQ6AawuAf9TvU97kp5HJVbqPiP/+CCVEylXbDwc2TBCCY4r91SEZGX4qDXVpg7v/Iu+LoV4ZG
+	BvvmdSh9WgmHGuK7p/w==
+X-Google-Smtp-Source: AGHT+IHRBVCM/fJteETaWAs/3isleNIYRq7dqVvVCDKq4GdPu37Nrdb9yhp68WF7Uhd2xtOfaLaHAqeHeno8MUo=
+X-Received: from wrbee12.prod.google.com ([2002:a05:6000:210c:b0:3b3:a665:e00e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2083:b0:3b7:9a01:e52f with SMTP id ffacd0b85a97d-3b900b786f1mr8987086f8f.44.1754906211937;
+ Mon, 11 Aug 2025 02:56:51 -0700 (PDT)
+Date: Mon, 11 Aug 2025 09:56:51 +0000
+In-Reply-To: <20250811012000.444173-1-ritvikfoss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: ti: k3-am62-main: Add tidss clk-ctrl
- property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
- Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, thomas.petazzoni@bootlin.com,
- Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- stable@vger.kernel.org
-References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
- <20250730-fix-edge-handling-v1-3-1bdfb3fe7922@bootlin.com>
- <20250731001725.GA1938112-robh@kernel.org>
- <8a2b1876-d1d4-4523-ae6a-bd14875772cf@bootlin.com>
- <20250805-imperial-bobcat-of-improvement-5cf705@kuoka>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250805-imperial-bobcat-of-improvement-5cf705@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehpdhhvghloheplgfkrfggieemvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdro
- hhrghdprhgtphhtthhopehjhihrihdrshgrrhhhrgesihhkihdrfhhipdhrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhm
-X-GND-Sasl: louis.chauvet@bootlin.com
+Mime-Version: 1.0
+References: <20250811012000.444173-1-ritvikfoss@gmail.com>
+Message-ID: <aJm-Y6oMiWGB5yCQ@google.com>
+Subject: Re: [PATCH] rust: kernel: cpu: mark `CpuId::current()` inline
+From: Alice Ryhl <aliceryhl@google.com>
+To: Ritvik Gupta <ritvikfoss@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, skhan@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-
-
-Le 05/08/2025 à 08:44, Krzysztof Kozlowski a écrit :
-> On Thu, Jul 31, 2025 at 11:50:16AM +0200, Louis Chauvet wrote:
->>
->>
->> Le 31/07/2025 à 02:17, Rob Herring a écrit :
->>> On Wed, Jul 30, 2025 at 07:02:46PM +0200, Louis Chauvet wrote:
->>>> For am62 processors, we need to use the newly created clk-ctrl property to
->>>> properly handle data edge sampling configuration. Add them in the main
->>>> device tree.
->>>>
->>>> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
->>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>>> ---
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> ---
->>>>    arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 6 ++++++
->>>>    1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->>>> index 9e0b6eee9ac77d66869915b2d7bec3e2275c03ea..d3131e6da8e70fde035d3c44716f939e8167795a 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->>>> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->>>> @@ -76,6 +76,11 @@ audio_refclk1: clock-controller@82e4 {
->>>>    			assigned-clock-parents = <&k3_clks 157 18>;
->>>>    			#clock-cells = <0>;
->>>>    		};
->>>> +
->>>> +		dss_clk_ctrl: dss_clk_ctrl@8300 {
->>>> +			compatible = "ti,am625-dss-clk-ctrl", "syscon";
->>>> +			reg = <0x8300 0x4>;
->>>
->>> H/w blocks are rarely only 4 bytes of registers... Does this belong to
->>> some larger block. The problem with bindings defining single registers
->>> like this is they don't get defined until needed and you have a constant
->>> stream of DT updates.
->>
->> In this case, I don't think there is a "larger block". This register exists
->> only because TI had issues in the display controller [1].
->>
->> Here is the extract of MMR registers ([2], page 4311):
->>
->> [...]
->> A2E4h AUDIO_REFCLK1_CTRL_PROXY <unrelated>
+On Mon, Aug 11, 2025 at 06:49:58AM +0530, Ritvik Gupta wrote:
+> When building the kernel using llvm-20.1.7-rust-1.89.0-x86_64,
+> this symbol is generated:
 > 
-> Here is clk ctrl proxy...
-
-(Note: I linked and copied the wrong page in my previous mail, the page 
-is 4309 and register addresses are 0x82e4 (audio_refclk1_ctrl), 0x8300 
-(dpi0_clk_ctrl) and 0x8320 (dss_dispc_clksel1), but the issue remain the 
-same)
-
-The AUDIO_REFCLK1_CTRL is already defined in the simple-bus node, but 
-with a size of 0x4 [1] and as a clock controller.
-
-What is the correct solution in this case? Should I create a big syscon 
-that overlap with audio_refclk0/1 range?
-
-[1]:https://elixir.bootlin.com/linux/v6.16/source/arch/arm64/boot/dts/ti/k3-am62-main.dtsi#L73
-
->> A300h DPI0_CLK_CTRL_PROXY <this register, 32 bits>
+> $ llvm-nm --demangle vmlinux | grep CpuId
+> ffffffff84c77450 T <kernel::cpu::CpuId>::current
 > 
-> and here as well, so pretty related. This looks also close to regular
-> syscon and we do not define individual syscon registers as device nodes.
-
-I agree this one can be included in the syscon device. Clock related 
-registers starts at 0x8000 and ends at 0x8504, should I cover the whole 
-range in the syscon?
-
-I quickly looked at the other register, here is the repartition:
-
-- 0x8000 - "normal" clock (divider + source selection)
-- 0x8040 to 0x8298 - clock source selection
-- 0x82e0 to 0x82e4 - clock control for audio (already implemented as 
-clock driver)
-- 0x8300 - the clock quirk (it seems that this is the only quirk 
-register here)
-- 0x8320 to 0x8500 - clock source selection
-
-Thanks,
-Louis Chauvet
-
-> Best regards,
-> Krzysztof
+> However, this Rust symbol is a trivial wrapper around
+> `raw_smp_processor_id` function. It doesn't make sense
+> to go through a trivial wrapper for such functions,
+> so mark it inline.
 > 
+> After applying this patch, the above command will produce no output.
+> 
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
