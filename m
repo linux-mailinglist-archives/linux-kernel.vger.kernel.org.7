@@ -1,194 +1,177 @@
-Return-Path: <linux-kernel+bounces-761970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3116BB20091
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:45:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5762B200A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DF8C166226
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69B018971D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2962D9EE6;
-	Mon, 11 Aug 2025 07:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00960213E6D;
+	Mon, 11 Aug 2025 07:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D4o5i43M";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2UzyeJfD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C9I6iLjv"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AAB2D97A4;
-	Mon, 11 Aug 2025 07:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754898298; cv=none; b=h/OHzJqM36j/o1yVc6/8NRKZfP3ADVS5a4FrsDV6EAINnTvs5+v6zA8R1+WrkspFbSD+6JCwzNh19LnPdL1HHrkyB8QDnOgIjctfmG6RH0b9RnHPuTjxoK4ATuWQIxvNnFbWLSyyy5rczv/bZGEx2oTloGRiRxCDJoyOklJ4mgI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754898298; c=relaxed/simple;
-	bh=nPAxLK0kdnoLLvkkz8FkxvMkrjhUSfR8Aw0JOl8BcCA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jyAzus6y2cY2sJIVrTF1YrhaN7mHNq/yVUOgKEuIS86dRKHpSoX/OD+kuy/KO3dZk1Z8hgw92VQXgY24xMvjKW460LAb7oweJIlAFaV+HpEe5dUcqeWADuWeEZm32JsGdKlsipY8JDPujbCEjULhrj/Tczye59vGZaRMOcTc3hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D4o5i43M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2UzyeJfD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754898295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3yHhcIXpXP2XUzerFjjEaa8c+o1sXQ3vMEvbz0QEGMA=;
-	b=D4o5i43MOpkRlUOFH7cP60q+0t0OIzVxjjuqcnzgYIhdk3cdLVJxytWY+Vl9poEc/hIUa1
-	HK7FP0olLeTk/UCB2M5LgBgRREWdBdlIkktj1DC51waDvPiT7hfCddFfLf43oIQCRoeJAR
-	PEzIFznwgmNM/r5Bn48DV5/qBj8P0uKH7yEAnOcMaouoA+jI6Puhm5Wasgdk94TlqYAVZP
-	xkbk4YCHlZgWqTxb8vIHyIjXe6DkR54yvMWoNF5qgYrg6aFNcqpyRznrTxMN1nuYg5Qqak
-	vJwrSyuQQB1KbKnIy3psA/ocPPK+QQvM6uVWlpnyVL2sL90V+lKfT4nU4VvVvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754898295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3yHhcIXpXP2XUzerFjjEaa8c+o1sXQ3vMEvbz0QEGMA=;
-	b=2UzyeJfDunSg5QI4TqDV3z2HC0G2CRqfwbdp9m5v/P34EmpCgQGbZU5YheTrCS4SV7cCL3
-	NHc2H7yjPK23h8BA==
-Date: Mon, 11 Aug 2025 09:44:42 +0200
-Subject: [PATCH v3] drm/msm: Don't use %pK through printk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968241DDC1B;
+	Mon, 11 Aug 2025 07:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754898454; cv=fail; b=Zkzqmk042TywAC80okN70A3zFFMPzS+AL4UDhEdYiuaX2NjnQTTOIHNSqYrgzt97yG8qn1nehYdhHUcolP+KEL4qfvzKepeKJqHx8uySmHU1aQwMfkY0xA7/3/T0WxK6r6KUe/J4jnqMoD7BfbkFP2BljQOt+UkmhaWsgY5CoUY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754898454; c=relaxed/simple;
+	bh=0JSLnHLRqlTA4IKd2dqtIzkkYjOPSQwDpMmPEM0C+XE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mc2kpmAD2OKFiEnWPyob5qjUEvUm0B9p/sDIlYvWfaYY0QFxUAA6jCVo9DnBLO+3FEtIzHl1iV4r4b6+9RZ2v4uaYkpyR78pFyKv7zDP35MkUzDSF1flL4AdjUG2u1WFXormaVOWjcBeFHjzTBIJmTj+LPGHf+5bHi6I+3kF35o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C9I6iLjv; arc=fail smtp.client-ip=40.107.236.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r5JldcGWZcMsIIqbxvvcCqD9Mo0jBJu8mev8ZS3W9tq30+4U77JmshQ2QqRCNKDETQjnFqt+xOexLt+mBWn4EeAYpy7LCmr7RveZZpq6oFZwgRJSr8jXheyXAkufMaUMVi2e19hY8ryjcfpkm+gOtH0W5TKvxcd5SVAPZhj5eNk9g2r1WIJUUeaoyjolqrkA/Mm4Y/2h5fpigArUFyaTBh/t2s6/Ng5osNZtCox6aB1xjkTNySckCs6Yz+qNfv6ckgEYu95TL2JULEaQkEVsoKaYV97Q/SrC1u4eDH3ybqNkcOV70V5WQ2BRNOYsZC/H6FotsRSyucCr8FiKtj9vbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aR0o3bxJE/EgEN0oor6nUs6zRzGYRlriYqlEZFydyRk=;
+ b=P60BKANX+PJJBsvo1rTY5kXEQ9ntJUSHlbe3pVHLb/YT57QROj2F4hXjVL2m0TcDoTPxvuGNgXHs/GIbS3Mx5YQUoOyXXo9F+B1sUaIQLRMIrnPFtREn/As/XOlDdXaxnsxuLbDIdKcDHIjvM9tQdbTs7g0w7GTuaOJUYryZvdQaZ1ZD1v/j5zYAIPd4AOr8iP0H+7xY8W3ArPz+8UVKEYVgQ09FNAodSNhYyLSdmaVkcOmNMJul+uMjBNQosY8n0WJHTeXV6gibYh+ZjNrAOf6fW1Zy8n6kL+KXh3tycfO+KkySxAwmTGG/eUlG5Z+j4YX1FH4Dt+UvP7/Kyj3tlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aR0o3bxJE/EgEN0oor6nUs6zRzGYRlriYqlEZFydyRk=;
+ b=C9I6iLjv7hjSzWzCbLMMwUGYhr58DPAXMMqM9pAOVZIUkRIWgx13Sl9JB/JQqFm8jjnIgxSHULzMadAB7PyEFcyf8Jx46DIng3S8i5wLVtxuyHCOqvKF9fJR8refzOfwKG8/cO4sdSLEXvciTC0hblDG9Nved+UMMmsXCb/KJEe0vMgDlJ2RyzYyFD+ZPUazoKY2+I0sK2F45vRujRP3xWBNFishyquHmO72bvgW8UhGx+ZUMkphKFYcMF18QkDlFIS++THTKb+hE/ymOC87E0S9Hy5/naYYieEdx1YzHFNyITfIbtfwublSDQW2FZwDlN4LzHJ0PaUEFtYPNyekqA==
+Received: from SN1PR12CA0052.namprd12.prod.outlook.com (2603:10b6:802:20::23)
+ by SN7PR12MB8025.namprd12.prod.outlook.com (2603:10b6:806:340::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 07:47:28 +0000
+Received: from SA2PEPF000015CC.namprd03.prod.outlook.com
+ (2603:10b6:802:20:cafe::1b) by SN1PR12CA0052.outlook.office365.com
+ (2603:10b6:802:20::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Mon,
+ 11 Aug 2025 07:47:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF000015CC.mail.protection.outlook.com (10.167.241.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 07:47:27 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
+ 2025 00:47:09 -0700
+Received: from 553356c-lcelt.nvidia.com (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 11 Aug 2025 00:47:05 -0700
+From: Haotien Hsu <haotienh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, Mathias Nyman <mathias.nyman@intel.com>,
+	"Brad Griffis" <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+	"Vedant Deshpande" <vedantd@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, <linux-usb@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Haotien Hsu <haotienh@nvidia.com>, Henry Lin <henryl@nvidia.com>, "Jui
+ Chang Kuo" <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>, WK Tsai
+	<wtsai@nvidia.com>
+Subject: [PATCH v3 0/4] Support USB wakeup function for Tegra234
+Date: Mon, 11 Aug 2025 15:45:54 +0800
+Message-ID: <20250811074558.1062048-1-haotienh@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250811-restricted-pointers-drm-v3-1-caadea353b42@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAGmfmWgC/33NTQ6CMBCG4auQrh3Tlp8WV97DuEA6yCRayLQSD
- OHuAi5MTHT5fsk8M4mATBjEIZkE40CBOr9EuktE3Vb+ikBuaaGlzmUmM2AMkamO6KDvyEfkAI7
- vYM3FyLQwZVM5sVz3jA2Nm3w6L91SiB0/t0eDWte3WSj70xwUSDBWoXTW1q7Uxxv5R+TO07h3K
- FZ30B/L/LM0KEhd2di8KJpSm29rnucXhKB7jw4BAAA=
-X-Change-ID: 20250404-restricted-pointers-drm-87b703679fad
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754898289; l=4461;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=nPAxLK0kdnoLLvkkz8FkxvMkrjhUSfR8Aw0JOl8BcCA=;
- b=F9XWlcjzagfHm6pHcUlX/WHfjXUgibbjlJfGVvdhUaHNyxzQAkZaZsmghXKSbIANCepewbySy
- suALB1eHiaPA86Ktl4CKhSsu4Gb2hYH0ONXzNxqdy5AAbIwiPerIWsJ
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CC:EE_|SN7PR12MB8025:EE_
+X-MS-Office365-Filtering-Correlation-Id: a132af42-1a5f-4ad3-6b2d-08ddd8ab5182
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xzbNT2LxfqM9+yyTEBOA+edY9cZpoKK0dLL3pwQCIYMX8vSD5aSBloHLmYxn?=
+ =?us-ascii?Q?wjOsFHkez5/HsllUrQJPuhaxcYrW+46EDzuKLA2+TiwkkhYrDo3lwk0qfJ1E?=
+ =?us-ascii?Q?36hQzSXxJVrYZPlqaTjL92suFF/J1jun6pmTYnox1XgnBZ7wy37IkaF6KSMq?=
+ =?us-ascii?Q?WNnUlLTXXInaUu47mD3Ksm4V1zVlvF36h2Cgt0DPzyLR88/7uriuNYxdNqAr?=
+ =?us-ascii?Q?IP29WGddanpiCdxeWzZMpohCEHkvoH5ZSVMnR+rb3Z4nMENL+YFpDa6hVrkg?=
+ =?us-ascii?Q?A57bf9JdUYeqlxl6iE1nf61LzOFG3jCYFU0FDC5TLK2OwDlNr75FNK9EG1Qf?=
+ =?us-ascii?Q?mGcsO+OoxddRCHbF9DMNy6IiKz7oyXA2pSjkDhv3E18Ogu5eVm8e4LERVSSX?=
+ =?us-ascii?Q?idXbVeWruZltG9WqwULV8pBwbzqRMmLXMPmk9PVPMbMcyAryBtGzuS78E582?=
+ =?us-ascii?Q?sSTx+j6bzkFDENqaYel0CDxfvGTazmEFjaWViRC0ciWThL5X5CcVF+kER0dL?=
+ =?us-ascii?Q?Wmupnbsm8D3lDyjJpfrOguUB+StcaZ4xlHEZ9Ih7WMo6GN84NTGqOTOtZzzW?=
+ =?us-ascii?Q?b5OgMlXaNU7mM54vlRB1jbJmr+PoyRsOY0PwZi/ycq11abmTWIKpnh66gF37?=
+ =?us-ascii?Q?q6cq1quFYRXlNAS9bmi2tOm5jFhemdSc68RhET0sPTTgqrihtXRycB2iSHBz?=
+ =?us-ascii?Q?l7Cw3bZqmsojvdAql+I2D3OMjWUPjNbLPAwgmzY2+m3AGI9ynP7q9O2H8uIY?=
+ =?us-ascii?Q?krJw8mzVqBv/erRLrK/iDsWzRHnA8bXwWAud4GoI4IFzyqOtuavNQOFQTiP9?=
+ =?us-ascii?Q?hJKiAsA8gPkB8/9t0v+ltzLc5MRyEz85NaYb87a4B8nXQdMnZmmEU/MAqug/?=
+ =?us-ascii?Q?sm0aKu7yMtLb1ZdA6wWCQR35cirwTUS1/QtMChr0pbgyRpiGxfpnQOE7LfkU?=
+ =?us-ascii?Q?dNkqvynX/X0iDr62IpwokfvQPwhU7YxCKIPxU8KTlQI0+IJT2LaKJKUZTB2I?=
+ =?us-ascii?Q?VTmeSivk5AiajVVFpSaenzrU5aC7kvSMEPErURiaJrAYWwCSP4MSfb38JMTE?=
+ =?us-ascii?Q?xoHosH674e4Gcs8V0Jvr8/R/kJT2w63g8AdQdBpWWmHQ15AKS6bvKWICn1/S?=
+ =?us-ascii?Q?HD6A56RPvoahrMlAhaWd12CpraSc/lnFKjtgWfcSTKc6eM8u+79NjEB9T9qH?=
+ =?us-ascii?Q?hgKiqj5zMQcqMPHDs/PhOgoB+4lMVKxcq+YqAIuws7g5kGcTEYBFgX+vlJAK?=
+ =?us-ascii?Q?6GbR+b8MHZQwco7R25q7m70OCDuDSTAA+uNDwkPN9HjbCeFurrD+IaU/dYQL?=
+ =?us-ascii?Q?03XITbnUaAlupIoYJUoYuZ9AzBkHD3UmeQE5YcvorTJCg+WetaOJnKKzj7KH?=
+ =?us-ascii?Q?dVVYZj6hIvlda2fSyg8BlHbZLEH4ch/yo3xqTRQSQ0pBm9PcPS24sNhSMUMq?=
+ =?us-ascii?Q?H85PAwMzK8gHFSDAEi++chNC8ZGHRcxWE3o7gxE/PUmwKtSjTOYZZkQmslek?=
+ =?us-ascii?Q?Led9yADi3sFRky+3pC1uXpTTAk8bF9inmIN9bo17znI4HOPOgM3V7F2t1Q?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 07:47:27.3775
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a132af42-1a5f-4ad3-6b2d-08ddd8ab5182
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015CC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8025
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+This patch series enables USB wakeup for Tegra234.
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
+Haotien Hsu (4):
+  dt-bindings: usb: Add wake-up support for Tegra234 XUSB host
+    controller
+  arm64: tegra: Add interrupts for Tegra234 USB wake events
+  soc/tegra: pmc: Add USB wake events for Tegra234
+  usb: xhci: tegra: Support USB wakeup function for Tegra234
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
-Changes in v3:
-- Rebase on v6.17-rc1
-- Add R-b from Dimtry
-- Link to v2: https://lore.kernel.org/r/20250718-restricted-pointers-drm-v2-1-3d9f8566f927@linutronix.de
-
-Changes in v2:
-- Drop already applied patches
-- Link to v1: https://lore.kernel.org/r/20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c | 4 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 4 ++--
- drivers/gpu/drm/msm/msm_mdss.c              | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index d4b545448d74657aafc96e9042c7756654b4f0e7..94912b4708fb5be937f1b3898a5676f7b481bd42 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -596,7 +596,7 @@ static void _dpu_crtc_complete_flip(struct drm_crtc *crtc)
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	if (dpu_crtc->event) {
--		DRM_DEBUG_VBL("%s: send event: %pK\n", dpu_crtc->name,
-+		DRM_DEBUG_VBL("%s: send event: %p\n", dpu_crtc->name,
- 			      dpu_crtc->event);
- 		trace_dpu_crtc_complete_flip(DRMID(crtc));
- 		drm_crtc_send_vblank_event(crtc, dpu_crtc->event);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-index 11fb1bc54fa92a5d9926addb437bc4b8f283723b..54b20faa0b697e3bf8ad81bd806adb49de98f2b5 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-@@ -31,14 +31,14 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
- 	u32 base;
- 
- 	if (!ctx) {
--		DRM_ERROR("invalid ctx %pK\n", ctx);
-+		DRM_ERROR("invalid ctx %p\n", ctx);
- 		return;
- 	}
- 
- 	base = ctx->cap->sblk->pcc.base;
- 
- 	if (!base) {
--		DRM_ERROR("invalid ctx %pK pcc base 0x%x\n", ctx, base);
-+		DRM_ERROR("invalid ctx %p pcc base 0x%x\n", ctx, base);
- 		return;
- 	}
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 12dcb32b472497f9e59619db4e810abfbf610c7c..a306077647c317af9345eeff13082230906b5767 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1345,7 +1345,7 @@ static int dpu_kms_mmap_mdp5(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
- 
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap_mdss(mdss_dev,
- 						  dpu_kms->pdev,
-@@ -1380,7 +1380,7 @@ static int dpu_kms_mmap_dpu(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
- 
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap(pdev, "vbif");
- 	if (IS_ERR(dpu_kms->vbif[VBIF_RT])) {
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 1f5fe7811e016909282087176a42a2349b21c9c4..39885b333910bb7aab7f72b9846f49ab16cfe5cc 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -423,7 +423,7 @@ static struct msm_mdss *msm_mdss_init(struct platform_device *pdev, bool is_mdp5
- 	if (IS_ERR(msm_mdss->mmio))
- 		return ERR_CAST(msm_mdss->mmio);
- 
--	dev_dbg(&pdev->dev, "mapped mdss address space @%pK\n", msm_mdss->mmio);
-+	dev_dbg(&pdev->dev, "mapped mdss address space @%p\n", msm_mdss->mmio);
- 
- 	ret = msm_mdss_parse_data_bus_icc_path(&pdev->dev, msm_mdss);
- 	if (ret)
+ .../bindings/usb/nvidia,tegra234-xusb.yaml    | 31 ++++++-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 11 ++-
+ drivers/soc/tegra/pmc.c                       |  7 ++
+ drivers/usb/host/xhci-tegra.c                 | 82 ++++++++++++++++++-
+ 4 files changed, 125 insertions(+), 6 deletions(-)
 
 ---
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250404-restricted-pointers-drm-87b703679fad
-
-Best regards,
+V1->V2
+- Add the Acked-by tag to the commit message for patch 1.
+- Fix the -Wunused-variable warning in xhci-tegra.c.
+V2->V3
+- Update nvidia,tegra234-xusb.yaml coding style
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.34.1
 
 
