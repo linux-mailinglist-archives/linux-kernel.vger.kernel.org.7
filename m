@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-761867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41EDB1FF71
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:38:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F2DB1FF7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B48893AD6C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:38:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89A3178F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086992BD580;
-	Mon, 11 Aug 2025 06:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935782D6630;
+	Mon, 11 Aug 2025 06:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kR6TbhiA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="iK/zGLLL"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487C957C9F;
-	Mon, 11 Aug 2025 06:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8702D63E5;
+	Mon, 11 Aug 2025 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754894302; cv=none; b=WgntM784+fTOtLV7KyjJ8Jw1nwiVq7e351ha60fqzsW5/p05hUMzY22AwWGIbewZEzV3vha9J+Bb+wuzyRenZFf3XBpJ5UAam6j+Hr3oVnUGutuwXDAEajaOTJ+axF0gHkmnZhj4eWQK1wlfiSmFBJYpeiTV3R/xFRiB0I2ItxU=
+	t=1754894708; cv=none; b=e+5PE24KYNnpNfHr4ONTn/Cka/uFC8T/DI3OIhh4NAUR+kql3s2mi1eEYzLXFvm3k0uzWQ8RR1ymrrhWaWx2s1ZmEGFRIXKZmpDPbRLKvMGyv6nhJBnjYD5KD+a6Yg4fPrfnEGS8McWIfZ+TNMkA4PgPvfdWh3MqUEbaHUxqutY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754894302; c=relaxed/simple;
-	bh=A5HEG7XgJUt4wjPWMnHqs0rS7OShpT65SYqFRjxhiXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWje8NBJL4capxKUlCnd8gUzvuR8MBrlQjJmw+RECCeNde1nZittT2AiPoDYmQniOV9t/m+lnuiIo8TDaPm3sUlqYq+Z7adTxEUuMnSUuzlriZZLcIVEdxMtPSJqMuPPacNsniGwEvHuidIpAFpsGUL6ABB9gpbH4YXbcbjwgwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kR6TbhiA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1041AC4CEED;
-	Mon, 11 Aug 2025 06:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754894301;
-	bh=A5HEG7XgJUt4wjPWMnHqs0rS7OShpT65SYqFRjxhiXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kR6TbhiAqxfztq3KKWeWWvwKDgFDoRrVqhzKHD2Xt3GylgtlYhVNnzTZnoYXWSOLy
-	 y/GqKM8fRiKGOxO+3HdHx69g4aaFJsM7CcprCk6oMtgW/Rh71woZFvNsnL/KSqzDWk
-	 1LG+tTru1MVEyUB7su9OkF/b00C4G8nnk2d/IgWNjiP0g35PGrSDPQUewCif6sU3Xb
-	 K9TYDVTxg7Uli123Onqld3fF3UdorYodRMb3N8cJRSCxJKVLF3Rc/n7YvLjGf/u15Y
-	 mHcBPm0EuR4UHqcvhMy7xXLscsXYo7ci4AjsAq5zLRObbacFVH/qChZYeg+bvfn123
-	 QVOCb8zrMuSzQ==
-Message-ID: <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
-Date: Mon, 11 Aug 2025 08:38:15 +0200
+	s=arc-20240116; t=1754894708; c=relaxed/simple;
+	bh=mD95dRVFmK4BbDr/sN8HqSFcSBgqlctasaYLRzzGoWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iiE9o4oN6NYQXdGArWUnGPvQmDUskKYGQsMj/Oym826GLXfY2216QwTlcYpZ9bxPGw2e4ISXCf/oEZQdF6B1SPrjkEcOMyHdUOx286D/PNTrxZLF1ZFZEn3muJl7e2vRu+znnDpAOLmP76juE6mCiHdvT8FaAIX5X8lY69S9F6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=iK/zGLLL; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 24117148003B;
+	Mon, 11 Aug 2025 08:38:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1754894340; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=EJcwko3c7uyCeYh/tGW6fF+83okM4Hcdm+WEAVIUDSw=;
+	b=iK/zGLLLcQTsPRVVPlSXi2vZprXSiexLaEk1zoq/cLARMbJaH7pt3Fo6l2dlWU4cVkf7xh
+	uD5OgMfZzNpYuW+EjxC4Y5XTs4AVkET+1g6uVem78JkYWjXg5lf0ejTZOvn7vxVWSYsOn6
+	RqcDERKnXYeNnSNIltHtIvxspfIXwU/2ae7Ce4ZA7sM91uWsTjLoVivPUF0nkSoX5smp4M
+	CMQHukpCDDjjSZsEYSDFufXThGL6QWy/VGXTIbS/5eePGG3PTfCTndQNNCxlCA0/9stdjP
+	rZ2bKEj04VpSCGOeMiM4CcJrIaPfGcF4ded9LSabspywR2zCCilvh/BRqgyx5A==
+From: Alexander Dahl <ada@thorsis.com>
+To: devicetree@vger.kernel.org
+Cc: Frank Li <Frank.li@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] arm64: dts: imx8dxl-ss-conn: Disable USB3 nodes
+Date: Mon, 11 Aug 2025 08:38:54 +0200
+Message-Id: <20250811063855.46431-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <20250806-pxa1908-genpd-v1-2-16409309fc72@dujemihanovic.xyz>
- <20250808-portable-expert-turkey-4f8f19@kuoka> <2017616.PYKUYFuaPT@radijator>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <2017616.PYKUYFuaPT@radijator>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 08/08/2025 21:46, Duje Mihanović wrote:
-> On Friday, 8 August 2025 09:34:54 Central European Summer Time Krzysztof Kozlowski wrote:
->> On Wed, Aug 06, 2025 at 07:33:21PM +0200, Duje Mihanović wrote:
->>> +          A number of phandles to clocks that need to be enabled during
->>> domain +          power up.
->>
->> This does not exist in your example, so it is just confusing.
-> 
-> This is because I have not implemented any of the clocks used by the
-> domains at this moment.
-> 
-> Actually, I am not sure anymore whether it is necessary to assign
-> clocks to the domains as I have just yesterday successfully brought up
-> the GPU with some out-of-tree code and that did not require giving the
-> domains any clocks even though the vendor kernel does this. Should I
-> just go with that and drop all clock handling from the power domain
-> driver, at which point there would be no need for the individual domain
-> nodes? If not, how should I in the future assign clocks to the domains?
+The i.MX 8DualXLite/8SoloXLite has a different connectivity memory map
+than the generic i.MX8 has.  One conflicting resource is usb, where the
+imx8dxl has a second usb2 phy @5b110000, while the generic imx8 dtsi has
+one usb2 phy and one usb3 phy, and the usb3otg @5b110000.  When
+including both imx8dxl-ss-conn.dtsi and imx8-ss-conn.dtsi as done in
+imx8dxl.dtsi this leads to a duplicate unit-address warning.
 
-I am asking to see complete binding with complete DTS in example and
-submitted to SoC maintainer.
+The usb3otg node was introduced after the initial imx8dxl support with
+commit a8bd7f155126 ("arm64: dts: imx8qxp: add cadence usb3 support")
+and since then leads to warnings like this (when built with W=2):
 
-I did not comment on drivers. This is not a driver patch.
+      DTC     arch/arm64/boot/dts/freescale/imx8dxl-evk.dtb
+    …/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi:148.24-182.4: Warning (unique_unit_address): /bus@5b000000/usb@5b110000: duplicate unit-address (also used in node /bus@5b000000/usbphy@5b110000)
+      also defined at …/arch/arm64/boot/dts/freescale/imx8dxl-ss-hsio.dtsi:41.23-50.4
+      also defined at …/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts:645.8-653.3
 
-> 
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/power/marvell,pxa1908-power.h>
->>> +
->>> +    clock-controller@d4282800 {
->>> +      compatible = "marvell,pxa1908-apmu", "simple-mfd", "syscon";
->>> +      reg = <0xd4282800 0x400>;
->>> +      #clock-cells = <1>;
->>> +
->>> +      power-controller {
->>> +        compatible = "marvell,pxa1908-power-controller";
->>
->> No address space, so this should be folded into the parent.
-> 
-> By this, do you mean that the clock driver registers the power domain
-> controller through devm_mfd_add_devices()?
+Delete usb3 related nodes at dxl to fix above warning.
 
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
 
-There are multiple ways this is being solved but NONE of them are
-binding ways. You again bring driver into bindings discussion.
+Notes:
+    v3:
+    - reworded commit message (thrown out irrelevant parts)
+    - rebased on v6.17-rc1
+    
+    v2:
+    - reworded commit message (build on mainline with W=2)
+    - rebased on v6.16-rc3
+    - Link: https://lore.kernel.org/linux-devicetree/20250623075440.36660-1-ada@thorsis.com/
+    
+    v1:
+    - Link: https://lore.kernel.org/linux-devicetree/20250610060756.8212-1-ada@thorsis.com/
 
+ arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi b/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
+index 9b114bed084b..a66ba6d0a8c0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
+@@ -5,6 +5,8 @@
+ 
+ /delete-node/ &enet1_lpcg;
+ /delete-node/ &fec2;
++/delete-node/ &usbotg3;
++/delete-node/ &usb3_phy;
+ 
+ / {
+ 	conn_enet0_root_clk: clock-conn-enet0-root {
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.39.5
+
 
