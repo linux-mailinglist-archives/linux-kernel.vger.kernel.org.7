@@ -1,80 +1,71 @@
-Return-Path: <linux-kernel+bounces-763336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7521AB21387
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7ACB21381
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF98626EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE857B3366
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D623C2D47F3;
-	Mon, 11 Aug 2025 17:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C932D4817;
+	Mon, 11 Aug 2025 17:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dzGv4nZJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UstHmftV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C829BDB8;
-	Mon, 11 Aug 2025 17:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B4D21771B;
+	Mon, 11 Aug 2025 17:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754934070; cv=none; b=ARZfnYDKS8jYnOuSKsi6RkyrEIQ3KB5AVw94fvXivYx7VV+CQgXKpZRJNH8OYrDXkyIXAYQl5uHm0oDrBDpp2Y9mrNPb5EjvXl2mDaFhjQFN05gQZAT/XZE8Bf+QF1u91bR1oPso2dYWsMnZ9zqWaQa0UX1iZZ8Pq0Z1B8c8OAs=
+	t=1754934041; cv=none; b=Z/kEvRY2FLBMXdFSKOQb9pwLqmg73sw0p/xatF6UymyirhWB+DMylRvl5yyfOfgdoykYJJ7b1xvzeGfnax26bgJ7/G/n40+GQHbSVdLrFfYuVIFS7x1JNtIQAuXUYmRsYlPBLMG4viv7LaUmgcIm9fvKBqVZdLmzBodifoh24fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754934070; c=relaxed/simple;
-	bh=PNyZIdImmrds073f5nB1fB3oII1aVT3NsL27tbZppTM=;
+	s=arc-20240116; t=1754934041; c=relaxed/simple;
+	bh=vNeEGZtQOxuFBJ03hCHxJ0zqee0UqgJZnTvwQUQSHrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B5zNyJ8EpmqFf9S7LeXu6YKGNMvRoGFOyQFREhSdpXJX/FR6yVJENeq+AYMh7KYH+YGwbnPlV9Dlkf2Uk5Jg+4y2bkemXFUBwNp+Zrc9PqtIVUKxVFx9ta+rk0lc+v2AhsnwBNionaoHCO4ECwIJgeTDyZHHWvF034nzD/PaxDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dzGv4nZJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A025B40E0265;
-	Mon, 11 Aug 2025 17:41:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 9Rk2tVDAzDoP; Mon, 11 Aug 2025 17:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1754934054; bh=vzqZZp4GUIsU8G18PqUEspYBU/y65Fim9IDqH6lG4GI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HzgBvwaPU8AY9k1VOWqt7pOEsq9FYH26Za9bEV5h7PqxsTSIjMqRZlpqdxQoa3QkWhd+V9MNcWRu82upWgUr7Y878K1VB4bRK9eTShMQy755+8IMe11a5aD52fwG0rsezqN/Ka/kwl0onDJ9rYC67NuYOQYVUg9gJFz5ZJvb/y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UstHmftV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853A5C4CEED;
+	Mon, 11 Aug 2025 17:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754934040;
+	bh=vNeEGZtQOxuFBJ03hCHxJ0zqee0UqgJZnTvwQUQSHrQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzGv4nZJob76BP5SVOWCilfK/GOhDtwkxMm+jukWn9ePbM4snhygW/tIXVZNaGpEV
-	 ReJwsiRUYOyfPh3CpMuenUZITPnN73z5ojcQaPyDzeSt90foWwKvkEmJQOCQMituJ3
-	 2XKPhdc6b0XOUuxQLJ/rdpJaFfY77UkELTpu/ddxosRBIipUNOdcio4fBMqbNUIhAu
-	 xARd8wHQZuRtAANFTyt5Fbb485mW8XxCOFYuTyO5wrHPIfTncRoDMVNUAVM9zOLoCo
-	 BzoRPOVy7iVbYev5YPsZRdKmuqzHQpLF9nmPRnSojcI5aK42wKNtG5k4lmM7JmwzJ8
-	 VR3VNaWqb8DPA+jjDJBTkndHR18n0Be4YpYyedtV2aK8355XnjXCTywrRfs0h2rxXc
-	 lfzjlyvXkrw0SaU2PHvWbzlGOqcXzQP7Ts0BfrN0BFdu/0FxG9jcKyKz9UFbVYsGHw
-	 4g/7BFmAnU5dfHsx/TirK+Ktmd/39Lup5bOE+O20ooVnzJQWaL74+Ciqe11kVhC/hm
-	 GOrOaYWG9+gdBB9qpweVGhNa9jQ890Fy5p+2aMzJ0fSaDHskOYZrEodwXK216LtJ0n
-	 9RsMQfDcWJ0IRYqf2YFEOE4U3/H0cn/CxWYX8+D0VGeaB1+r6GSA8Nepv9fSizc8Fl
-	 z3wMReaviJTvDXjHrL9nnP/U=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5DDEA40E0217;
-	Mon, 11 Aug 2025 17:40:42 +0000 (UTC)
-Date: Mon, 11 Aug 2025 19:40:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head
- section
-Message-ID: <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
-References: <20250722072708.2079165-24-ardb+git@google.com>
- <20250722072708.2079165-45-ardb+git@google.com>
+	b=UstHmftVxCQTMDVIZqfzPXOXwi8NsvUVZuh7gnMbMAJO75iNtUapyN9pt3lojXddG
+	 2JFtVrEKDxONVM+YH8C2IvIIA7hW9k5x3y+nGBYfkkHsZivSgcckFrYyrVvKG794QY
+	 d0LyZfmVRfv+7aJfjat6kooL3o32XbPKKfYad6koOc1zZFJ2NmE/n9yhm6hJx68cX6
+	 svvQSl1PR4JA1TF76TO0BNZLm7vS2M/gL0QirKfeX5ZQ5DFqSd15GwcwnI9ZX51jTQ
+	 +gGpSQCL4epXTgu32ZuurDjucscXI+fHhDm4gWOzEAkYGWOdBkaU6vkk42hgZU0bAO
+	 ome+ZBHH2RKAA==
+Date: Mon, 11 Aug 2025 23:10:35 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v6 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
+ support
+Message-ID: <aJorE6bL2d8se6E4@vaman>
+References: <CAO9ioeVuAO6mYpBSpiTW0jhFRPtkubZ5eEskd1yLBHVdR8_YMA@mail.gmail.com>
+ <1b55d9d4-f3ff-4cd9-8906-5f370da55732@quicinc.com>
+ <28d26c70-178f-413b-b7f8-410c508cfdd7@quicinc.com>
+ <CAO9ioeXBwFYL8q7x7_fHvx5YO+qyAXk4wpnfPrku4iY9yBsk0Q@mail.gmail.com>
+ <cac5e84b-fbdb-47a9-860d-16a7fa4dc773@quicinc.com>
+ <4q3vlydi5xgltd3pcez54alxgrehhfn4pppg47ngwp6y5k7n33@d4d4htntj64k>
+ <53dd18ec-9a65-4bf7-8490-ca3eb56ce2a5@quicinc.com>
+ <iang2jpe4s6wmbypmtq5uswcm6n6xntqdulyhekcz5k6zxddu3@re3rrr4dso5p>
+ <aICMDROkyjzBZFHo@vaman>
+ <8a149580-5044-4744-b432-9f0eef0a0d31@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,44 +74,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250722072708.2079165-45-ardb+git@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8a149580-5044-4744-b432-9f0eef0a0d31@quicinc.com>
 
-On Tue, Jul 22, 2025 at 09:27:30AM +0200, Ard Biesheuvel wrote:
-> @@ -210,7 +210,7 @@ bool __head snp_init(struct boot_params *bp)
->  	return true;
->  }
->  
-> -void __head __noreturn snp_abort(void)
-> +void __init __noreturn snp_abort(void)
->  {
->  	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
->  }
+On 25-07-25, 16:20, Jyothi Kumar Seerapu wrote:
+> 
+> 
+> On 7/23/2025 12:45 PM, Vinod Koul wrote:
+> > On 22-07-25, 15:46, Dmitry Baryshkov wrote:
+> > > On Tue, Jul 22, 2025 at 05:50:08PM +0530, Jyothi Kumar Seerapu wrote:
+> > > > On 7/19/2025 3:27 PM, Dmitry Baryshkov wrote:
+> > > > > On Mon, Jul 07, 2025 at 09:58:30PM +0530, Jyothi Kumar Seerapu wrote:
+> > > > > > On 7/4/2025 1:11 AM, Dmitry Baryshkov wrote:
+> > > > > > > On Thu, 3 Jul 2025 at 15:51, Jyothi Kumar Seerapu
+> > 
+> > [Folks, would be nice to trim replies]
+> > 
+> > > > > > Could you please confirm if can go with the similar approach of unmap the
+> > > > > > processed TREs based on a fixed threshold or constant value, instead of
+> > > > > > unmapping them all at once?
+> > > > > 
+> > > > > I'd still say, that's a bad idea. Please stay within the boundaries of
+> > > > > the DMA API.
+> > > > > 
+> > > > I agree with the approach you suggested—it's the GPI's responsibility to
+> > > > manage the available TREs.
+> > > > 
+> > > > However, I'm curious whether can we set a dynamic watermark value perhaps
+> > > > half the available TREs) to trigger unmapping of processed TREs ? This would
+> > > > allow the software to prepare the next set of TREs while the hardware
+> > > > continues processing the remaining ones, enabling better parallelism and
+> > > > throughput.
+> > > 
+> > > Let's land the simple implementation first, which can then be improved.
+> > > However I don't see any way to return 'above the watermark' from the DMA
+> > > controller. You might need to enhance the API.
+> > 
+> > Traditionally, we set the dma transfers for watermark level and we get a
+> > interrupt. So you might want to set the callback for watermark level
+> > and then do mapping/unmapping etc in the callback. This is typical model
+> > for dmaengines, we should follow that well
+> > 
+> > BR
+> 
+> Thanks Dmitry and Vinod, I will work on V7 patch for submitting the I2C
+> messages until they fit and and unmap all processed messages together for
+> now.
+> 
+> Regarding the watermark mechanism, looks GENI SE DMA supports watermark
+> interrupts but it appears that GPI DMA doesn't have such provision of
+> watermark.
 
-So this thing already conflicts with the SAVIC stuff:
-
-ld: vmlinux.o: in function `savic_probe':
-/home/boris/kernel/2nd/linux/arch/x86/kernel/apic/x2apic_savic.c:29:(.text+0x6601f): undefined reference to `snp_abort'
-make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1244: vmlinux] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:248: __sub-make] Error 2
-
-because it calls snp_abort().
-
-I'm thinking since it is a one-liner, we can simply turn it into a macro which
-evaluates to
-
-	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
-
-and problem solved.
-
-Or you folks have a better idea?
-
-Thx.
+What is the mechanism to get interrupts from the GPI? If you submit 10
+txn, can you ask it to interrupt when half of them are done?
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+~Vinod
 
