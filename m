@@ -1,147 +1,179 @@
-Return-Path: <linux-kernel+bounces-763514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA02B215DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:46:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D144FB215DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDFEB624BF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3BD46396B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2994A2D876C;
-	Mon, 11 Aug 2025 19:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50372D876C;
+	Mon, 11 Aug 2025 19:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFzQUh13"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="OneJKKKf"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740D818C322;
-	Mon, 11 Aug 2025 19:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4FE1F875A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754941603; cv=none; b=n/ilHvUyyzkIQGhJ5BU9KxL1CaNXCjjr5XbpVpMernhs6Yu2NCyuGHgRi4Y1WU+sFb2zG4/IwHEWDX3/v8DVNqgg+BQFn39r6vvJy/ep+5FXZwKXFSHIFNLyG6/4wZBYhHT+/pgQPAInZo9DEwpmZ1eRf6njrkpf4YcMjfF7dgM=
+	t=1754941662; cv=none; b=kyN2lb+FvA5YZi6DDbKeYPnq4T7WEdQ63YPcToXxjg5TaIeTw2Vsrnnw+XH8qJQDlJ4MTGN4V+fHV1y9y8tk0RDCAMjS7S5XVMfq6KbbB9b7iBPwgz2I+tpkFbsR3iEq8KbghRJ3NkP2MAp6VUg9zqyCSbK4uK3PaZ5lm2HHOYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754941603; c=relaxed/simple;
-	bh=SEX5Ef6FK0Ar1fnIWup7X2r4T+UMrNydQ7Xq2GpSBw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9MV/QzZs9NfLCu+9j4kuuWzWkn6/dL6FvJEi3Sry4ciqW1gwPIN9Qkd8fJH2bnUinhI1jtgMd6Zptd3GblL4saO057qvhXTKla1OlSG6kwLEoc12Bwo18Bt+D4XwSmgEFWwGiXcipqhj7QQdTzjc9A6R+E0V0Wr/T4k92xCdKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFzQUh13; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A9EC4CEED;
-	Mon, 11 Aug 2025 19:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754941601;
-	bh=SEX5Ef6FK0Ar1fnIWup7X2r4T+UMrNydQ7Xq2GpSBw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WFzQUh13EBr+CSMgNfQw7Rks8jEH3RQj2CR4PZasUwTB71zAPIrY4Ay75/wUv5Szx
-	 Oav29a5x6zO/eCm6oD8YqVHxNTzoMx1lathS+YLE/jzHoIHOXomaf+IGcGHD6KSfrN
-	 JV58vf5+qQLWDwhkfrmlXBsFA1uEdNDFLZBOiGMHc0BtBZ+u5NYSmwBhu1PTAsCgvJ
-	 GSFnuzNwAFlInsg15v++CxYn/GoZRDczzi5K7m114KmImsAHHu4WBPUH7tTsDaF0K8
-	 39vYsadKv70I9RRc2upBnt8H1rhU6FMQxHuRUAVDZZZQJKjVYHZ77Tx+xwZEXp0Y1a
-	 T2qgNRVtah7Lw==
-Date: Mon, 11 Aug 2025 14:46:39 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>, andi.shyti@kernel.org
-Cc: rfoss@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, konradybcio@kernel.org, linux-i2c@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: qcom-cci: Document QCM2290
- compatible
-Message-ID: <4bldj7jjsi4o2wz4wij2ggog4no2nndavk4r7frvd6fv5fjtfn@4unsvlv2mdl7>
-References: <20250519094745.32511-1-loic.poulain@oss.qualcomm.com>
+	s=arc-20240116; t=1754941662; c=relaxed/simple;
+	bh=8VP4+SXuBWDYxMejSZPkzLZued5y6P3qoQt3VsSOjQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RgUCPanCDAMCdjL7UxRLgNFbkMrMoOi8yiIxVd99jV5Srww2CYva4YtE6qfP3Ukv+hKSy35jernG43j0puryk1HLwiGgUhRMY5jNGY792NCT9jMb/q5WT311qXod/7dJ6wac6qiacUfzlVXzpZKFl4iu3sOuA1MelbD13Ds4trE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=OneJKKKf; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1754941658;
+ bh=LbVk/fpTYYUx2D//VVnb557+OAlwMeSeZqu2R2SQyeE=;
+ b=OneJKKKfpWaJ1U45wzdHxGotxPeOQPq5dRHw3cqoU4wLZpFQuuKAlR+3TtNAaBoDIqAQzia+F
+ DLxduQkuBIbm/ta3wh095DNvIOHEpE8TSyY0DGquPXGGbUYT6IQud2XKwNcHs6KhHDE1/Nph1QG
+ acy1JefkdoNBwDgkti8hvxbCuSmk22wBYt+tRKBVORz2q8Peh0QZOAS2cKwsxXz1kpeLgUOilRb
+ 8xbIsmTSHcyI6mpbtbUa/MSh+d6QcI3Kac/loTg26zj7ZQtASJFa9SwychxZ/cZ8hj9+K3c1oc5
+ Cmo5veEwX5cwup3wEGN9Wg4fjLseuj2JCfvoZ1TQycow==
+X-Forward-Email-ID: 689a48a7de615f3104e044ef
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.2.4
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <d0d50da8-f8bb-4a6f-bd44-5199d26b7a86@kwiboo.se>
+Date: Mon, 11 Aug 2025 21:46:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519094745.32511-1-loic.poulain@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] media: rkvdec: Add HEVC backend
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+ <20250810212454.3237486-2-jonas@kwiboo.se>
+ <9c8cb837d10d3cdd54fe34dedfe40c10e848f648.camel@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <9c8cb837d10d3cdd54fe34dedfe40c10e848f648.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 19, 2025 at 11:47:44AM +0200, Loic Poulain wrote:
-> The CCI on QCM2290 is the interface for controlling camera sensor over I2C.
-> It requires only two clocks.
+Hi Nicolas,
+
+On 8/11/2025 9:12 PM, Nicolas Dufresne wrote:
+> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
+>> The Rockchip VDEC supports the HEVC codec with the Main and Main10
+>> Profile up to Level 5.1 High tier: 4096x2304@60 fps.
+>>
+>> Add the backend for HEVC format to the decoder.
+>>
+>> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+>> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>> ---
+>> Changes in v2:
+>> - Use new_value in transpose_and_flatten_matrices()
+>> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
+>> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
+>> ---
+>>  .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
+>>  .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
+>>  .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  817 ++++++++
+>>  .../platform/rockchip/rkvdec/rkvdec-regs.h    |    2 +
+>>  .../media/platform/rockchip/rkvdec/rkvdec.c   |   76 +
+>>  .../media/platform/rockchip/rkvdec/rkvdec.h   |    1 +
+>>  6 files changed, 2745 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/Makefile
+>> b/drivers/media/platform/rockchip/rkvdec/Makefile
+>> index cb86b429cfaa..a77122641d14 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/Makefile
+>> +++ b/drivers/media/platform/rockchip/rkvdec/Makefile
+>> @@ -1,3 +1,3 @@
+>>  obj-$(CONFIG_VIDEO_ROCKCHIP_VDEC) += rockchip-vdec.o
+>>  
+>> -rockchip-vdec-y += rkvdec.o rkvdec-h264.o rkvdec-vp9.o
+>> +rockchip-vdec-y += rkvdec.o rkvdec-h264.o rkvdec-hevc.o rkvdec-vp9.o
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>> b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>> new file mode 100644
+>> index 000000000000..eac4ea604949
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>> @@ -0,0 +1,1848 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Rockchip Video Decoder driver
+>> + *
+>> + * Copyright (C) 2023 Collabora, Ltd.
+>> + *	Sebastian Fricke <sebastian.fricke@collabora.com>
+>> + */
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define RKV_CABAC_TABLE_SIZE		27456
+>> +
+>> +/*
+>> + * This file is #include from rkvdec-hevc.c and not compiled.
+>> + */
+>> +static const u8 rkvdec_hevc_cabac_table[RKV_CABAC_TABLE_SIZE] = {
+>> +	0x07, 0x0f, 0x48, 0x58, 0x58, 0x40, 0x40, 0x40, 0x40, 0x40, 0x0f,
+>> 0x40, 0x40, 0x40, 0x0f,
 > 
-> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Nit, in H.264 case, we managed to fill the CABAC based on the spect with macros,
+> didn't we figure-out this one ? I didn't check in Detlev tree, I'm just asking
+> here.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+As hinted at in the cover letter: in the initial implementation used for
+LibreELEC I just shamelessly copied the cabac data 1:1 from the Rockchip
+mpp library, for this series it was replaced with the cabac table from
+Sebastian Fricke prior series to add a HEVC backend [1]. Sebastian
+mentioned following regarding the cabac table:
 
-Andi, can you please pick this binding, so I can pick the dts change?
+"""
+Notable design decisions:
+- The giant static array of cabac values is moved to a separate c file,
+I did so because a separate .h file would be incorrect as it doesn't
+expose anything of any value for any other file than the rkvdec-hevc.c
+file. Other options were:
+  - Calculating the values instead of storing the results (No clear pattern
+    found for the calculation using the static array and the formulas from the
+    specification)
+  - Supply them via firmware (Adding firmware makes the whole software
+    way more complicated and the usage of the driver less obvious)
+"""
+
+I have not explored any other way to handle the cabac table based on
+these design decisions.
+
+[1] https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-v2-0-fa1897efac14@collabora.com/
 
 Regards,
-Bjorn
+Jonas
 
-> ---
->  v2: Reorder commits and Fix binding testing syntax
->  v3: Add clocks minItems for msm8974 as top-level minItems changed
->  v4: change AHB clock name from camss_top_ahb to ahb
->  v5: No change; Resent with missing recipients
 > 
->  .../devicetree/bindings/i2c/qcom,i2c-cci.yaml | 22 +++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> index 73144473b9b2..83b13370ff6c 100644
-> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
-> @@ -25,6 +25,7 @@ properties:
->  
->        - items:
->            - enum:
-> +              - qcom,qcm2290-cci
->                - qcom,sc7280-cci
->                - qcom,sc8280xp-cci
->                - qcom,sdm670-cci
-> @@ -44,11 +45,11 @@ properties:
->      const: 0
->  
->    clocks:
-> -    minItems: 3
-> +    minItems: 2
->      maxItems: 6
->  
->    clock-names:
-> -    minItems: 3
-> +    minItems: 2
->      maxItems: 6
->  
->    interrupts:
-> @@ -113,6 +114,7 @@ allOf:
->      then:
->        properties:
->          clocks:
-> +          minItems: 3
->            maxItems: 3
->          clock-names:
->            items:
-> @@ -120,6 +122,22 @@ allOf:
->              - const: cci_ahb
->              - const: cci
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,qcm2290-cci
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: ahb
-> +            - const: cci
-> +
->    - if:
->        properties:
->          compatible:
-> -- 
-> 2.34.1
-> 
+> Nicolas
+
+[snip]
 
