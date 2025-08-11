@@ -1,121 +1,98 @@
-Return-Path: <linux-kernel+bounces-763557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A6CCB21695
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:36:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A74B21698
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98A21A24293
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C526233E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4252E0B5A;
-	Mon, 11 Aug 2025 20:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F94A4EB38;
+	Mon, 11 Aug 2025 20:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EL4oCX7r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgTUPWWs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6E54EB38;
-	Mon, 11 Aug 2025 20:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05B92D9EC9;
+	Mon, 11 Aug 2025 20:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944577; cv=none; b=ZSaoZetNdPcq6EbgLZjPYO8J0s0pNZNvxqLqsxrgtDHlmrR9+bvXLhIsEqDy3IEDqse1b3n4XksW1ZCjLrD+3F8VPNZaEQ+otDOXSwsQnZU6IS8DLB6jb+wIas7qzCKmQkZBuXoYniIB4rrYBs5zQ8itEZfo/jB01yC6txQ8Vkg=
+	t=1754944601; cv=none; b=SNteSyvR2upTSjmnUR0WOZolGyU7wY1GrTfd/kdy90xz88CXK9hnH5fwRnCaiSIq5RA5KxrqpEgJ6EoNOUfmEkUyTaC1GOCpo8yXrpJRt8CtTSKT7IHC5PU0GcTo0ssIhU6LFHl8+RDYEFHlbApjcVwlyIh/ydvjGhSb+PaeVeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944577; c=relaxed/simple;
-	bh=MGbXEJllcmiA1o9/olIkysp980KeZrJPHmr5Txjw5k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=REFsE9FYMTt+0En6aSygq/a6DtJNsZSlEudvTQWDYnqyJ9wqQBp9k7oKR3Ajzy7HYtSf9RtnNN5UUKyqGsC3/7zcKrIAGEkT+GnWXmyKd++yjY7KLSgONht+NUXJY5gh5kLXph/99G7lhQOS2KC1eh48ZZTLrnKlrXOQG5jnqes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EL4oCX7r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A05C4CEED;
-	Mon, 11 Aug 2025 20:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754944576;
-	bh=MGbXEJllcmiA1o9/olIkysp980KeZrJPHmr5Txjw5k8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EL4oCX7rtG5UihKG9SQ5sqFlv77mUXIz6Rehh0p3+ZYjCeMdAq+bHS+rxRaGe72Mz
-	 /NVmSHN8CxxPsmvMSv87WcxQO3mChyr3+Me2G+EuePC2odJioPnawuK2hZQ3gy4M7S
-	 QAi6REtuzVzsQVz7JcthYlLgHcGgzDm6PAmP+Z5gmLoMTaNRbFWECmsgLVLyRXSpP3
-	 2m9lzhMMFjpnG7B5ZjUHU1lbJWepJXdXrkuitFlx6EmLwdgXhuwE1WhQreDTY9ZZ52
-	 4bn6lrvKQ8FpjmBJfdj1L4DnLYVLjfEABuJ1PbT0rrZiEcIKbHwfOFrXtp2z9/zVUA
-	 uucV5V4fPmy7Q==
-Date: Mon, 11 Aug 2025 21:36:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: jean-baptiste.maneyrol@tdk.com, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: inv_icm42600: change invalid data error to
- EBUSY
-Message-ID: <20250811213607.7bf4b91c@jic23-huawei>
-In-Reply-To: <CAHp75Vcw5Q_ENzEJvH2+xHmPD-DUPAEaOOD2QoiCXoh7UiQJxQ@mail.gmail.com>
-References: <20250808-inv-icm42600-change-temperature-error-code-v1-1-986fbf63b77d@tdk.com>
-	<CAHp75Vcw5Q_ENzEJvH2+xHmPD-DUPAEaOOD2QoiCXoh7UiQJxQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754944601; c=relaxed/simple;
+	bh=TnYzz1Z2MhsMhecEDaJ2A2XrQKk67TdI7gUywSENJ5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atVWkfyypSt+3OvSadiKPGL2FQOFNnU9DrxbokE8ni6hUHecMt0hoJedyNykDwTmh/waWpFEqYhPgi/ptuShK0ZObReyeSFBV7EnacUoVxs7btgVCUwb0B5pal3OxsS8H/F8l8NPsWRScYMNGtEOG/wTztcqNMOea55oW+Qlti4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgTUPWWs; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754944600; x=1786480600;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TnYzz1Z2MhsMhecEDaJ2A2XrQKk67TdI7gUywSENJ5Y=;
+  b=QgTUPWWsNGmnIt6pg3bs4kGxSr0j4FxBA67ZuVoJNFnauN7LKWDsg49m
+   QcO3F4fVLNl2mXroeZdgNC1iZeM8LMDeaQJWFLCtqK/b7dC3OQrHSdQs/
+   M8h/C8yMlfDOK/DARZkQs3kcrneaPpc0AM2tyErAzjzwOlY/ouwSz5kgK
+   vrJUMx5p7XHo7NjH220KhW4j4NZiPjIt/xWnOiRF7q+lWq+5tGxsfL/4M
+   2GdU9VAlSJcVcZV12z0zZXAkUgkSGulrUvuo14vMmyYq/PQnwGja3ZiwR
+   BYMiddRoz7gFPJG8vMTGEBt0bDZpcWe8uvl2kj+olvPU9pw4pm6jlmF8M
+   g==;
+X-CSE-ConnectionGUID: WknkSnX2TtG1nou/tXjPqA==
+X-CSE-MsgGUID: J+uSz16aQgmjSwxqoRpGvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57289142"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="57289142"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:36:40 -0700
+X-CSE-ConnectionGUID: KxWuz0hYSH6gytcOZn/QTQ==
+X-CSE-MsgGUID: HUX9fp/tRlOCtqx+C2BqlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165633105"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:36:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulZFy-000000056jy-1gvd;
+	Mon, 11 Aug 2025 23:36:34 +0300
+Date: Mon, 11 Aug 2025 23:36:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Thompson <davthompson@nvidia.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl,
+	mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] gpio: mlxbf3: revert device name logic
+Message-ID: <aJpUUhCDLjUgtKXx@smile.fi.intel.com>
+References: <cover.1754928650.git.davthompson@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1754928650.git.davthompson@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, 8 Aug 2025 14:35:00 +0200
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Mon, Aug 11, 2025 at 01:50:43PM -0400, David Thompson wrote:
+> This series reverts the use of device name processing
+> in the BlueField-3 GPIO driver "probe()".  Instead, the
+> kernel API "platform_get_irq_optional()" should be used
+> to prevent errors being logged.
 
-> On Fri, Aug 8, 2025 at 9:40=E2=80=AFAM Jean-Baptiste Maneyrol via B4 Relay
-> <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
-> >
-> > Temperature sensor returns the temperature of the mechanical parts
-> > of the chip. If both accel and gyro are off, temperature sensor is =20
->=20
-> the temperature
->=20
-> > also automatically turned off and return invalid data. =20
->=20
-> returns
->=20
-> > In this case, returning EBUSY error code is better then EINVAL and =20
->=20
-> -EBUSY
-> than
-> -EINVAL
->=20
-> > indicates userspace that it needs to retry reading temperature in
-> > another context. =20
->=20
-> ...
->=20
-> > +       /*
-> > +        * Temperature data is invalid if both accel and gyro are off.
-> > +        * Return EBUSY in this case. =20
->=20
-> -EBUSY
->=20
-> > +        */
-> >         if (*temp =3D=3D INV_ICM42600_DATA_INVALID)
-> > -               ret =3D -EINVAL;
-> > +               ret =3D -EBUSY;
-> >
-> >  exit:
-> >         mutex_unlock(&st->lock); =20
->=20
-> ...
->=20
-> No need to resend just for the above, I hope Jonathan tweaks this
-> whilst applying.
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> (assuming typos and signs are fixed)
->=20
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Tweaked an applied to the fixes-togreg branch of iio.git.
-I've not marked this explicitly for stable as it's a kind of weird
-sort of 'fix'.  If anyone wants is backported, then maybe we can consider
-that once it's upstream
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Jonathan
+
 
