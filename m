@@ -1,147 +1,196 @@
-Return-Path: <linux-kernel+bounces-763481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB0BB2152B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D490AB21510
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE2819032A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8AE1888250
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1984B2E2DDD;
-	Mon, 11 Aug 2025 19:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB3288C12;
+	Mon, 11 Aug 2025 19:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="Kvz//tsq"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qfjiq5zw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE02D47F6;
-	Mon, 11 Aug 2025 19:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A151F4C87;
+	Mon, 11 Aug 2025 19:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754939548; cv=none; b=ZqOgj40fEOP5B5vw6EdL7pMtbp/jg2EhJ7TQCKArz0tpA0MzJpAAcPKG7lOcOfhBQuxNUKRsTLg9kztSP6/70Hfy7sYMp3YiaEHcIM3yO8x+CYgzUI8zDStIe7c+udEWavkRzi+I0CHPLSx5i5Skz0EjDPTqTaIj6lDzW6Xz4kE=
+	t=1754939013; cv=none; b=uNvCsfMOqzMop8FnCQffA9ShYMYVaNyxdMw+QydbL9CtRyRmu0DsVYJVcW4UmALwamXhVISQSwBSGVggzoenqCoCXbn0FaI3Nt/OmP3C8drzYwMoml5KfKpuWulvN4U81qBMrD4MToLdeu45upEDO3juhCEDvuAWxLDNwXNtWP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754939548; c=relaxed/simple;
-	bh=HskehVgjdSLwwTYYXOvinbmzxR4Mrp3ONxhO6Ip+YzA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cVoUVnEqynhKf0CpgMJajK+x748DB+BA4IinWMwIf/6/rUazyZjCHfW09zKYfMICviC4cCZQguujM0666FQubBrJWUzSy+IOS2mFe6zcbu21zUx79tjp7oMqiLL+Mh7pxWiuYlISuhP/Yjz5mlreVlv2CYmiGZSzZhP2yibfrqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=Kvz//tsq; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BH2W3G002363;
-	Mon, 11 Aug 2025 19:12:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=XBvJI1ynONURvoNh6sropnbGepLrGU14xY20c
-	ME2H98=; b=Kvz//tsqn78GqSYVUk2r8INkfHcrR/r3pHaeJojqtfLj6J7X+6H2c
-	kHW8sHOw5JkSdz+a/fXyEIryewNevrZTo0KW9a5eiNeDJSg+wAo7T2AEZa2hfbsm
-	5JLJwj0qos6ZymEK+NzTU7VoEeKS3MiOR8CBrDYHKJkYTY5o55YwRvMuWoVz8BUv
-	049VW7r0P8fqkxyD22tZgFpc2VZ9VyBfCaSqNHO/oMJXTJwdbglyntOd7MeahJuF
-	Cx/DV0S1TxOxbOHOsW99Y4tM620sz/oOkUESeimZx0yhH0MGV0e6Op7IYQ1izudA
-	XseaJwq24kLbT5SlZoBzs7N62PvOjtllA==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48fkw018qp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 19:12:03 +0000 (GMT)
-Received: from test-build-fcntl.hpe.com (unknown [192.58.206.35])
+	s=arc-20240116; t=1754939013; c=relaxed/simple;
+	bh=yGOPUJIeFSkxymBShB4lszt3VOaSUZophHZlGKFilbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cq1C/QfwC8k0YU+WOZNAepE8YggU6I9u6fv6P6h1NoabXz8mS1ss+1EIHyPChcBqUyhLD7VNN36N9qMOWSQDwaI2zP/rzVy1mDuoNjGYShjh6TPcVPoGTDTapU0epIK7pex2ECJkWmtt5B1vzyt4kNOBJORQfVJYnarA8rSrO2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qfjiq5zw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5831840E0217;
+	Mon, 11 Aug 2025 19:03:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PkZq-vT323ML; Mon, 11 Aug 2025 19:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754939005; bh=URh6Vu3vykvoo88ywtGuNMkqzuS1DAGjt+6WPp89YFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qfjiq5zwaw/SvZWIcGVL6fV3kkK45yACPa5l0OG8TnG0gWS6iw8x0Xra8qaATaMZ3
+	 3dM/jApgQ4VnEx82vSJdvPL3EfR7h1nvul6zG/RFwt2QhsWFKK1co67RtDqim7i7G6
+	 7EjQMDQoIked5ylqIpTJ3/d58RW+15EbecQRcWRXW979IQxwPEAxTacr3IOEZeXOlS
+	 hr17b8iY/TOWG2CwQemFw8ztOMsyLkYvwcBLNbtv/Qr90QveTHI1p/TL77LWXhJ+CN
+	 PvOnwbiin4AVKfFjoFhhEOWhdYXInpdkXrtRm3Wk3Jj5axQHfxRn265XbxSuZyLBWo
+	 KkiNLAOHjHvzJHUThOu+4ZlzPsy/7tIAgpFejSxRpXFtR50Lu1wAlutH1s8aSFhpvq
+	 ibBsno4e5xFi/fGRWSkxnPjFTZXRk3vUTyZdWmCV7uBiPeravPVjKEQAa7g8hlFCgq
+	 2WKIpMhbIZck72zR2Hy9n0+3BVIT412RYHpMyj7cbCpxLKWLV984SwSoRVHTS0vAdz
+	 U6NKr6Q0NoLV0H39hfiP64PQ3mP8CySh7YovsAAQKgaEiXD24A8e6bgSZe+wPdtFIn
+	 6LjFBNzJfRRB/RLCAqwhClXv4JBzbZIXgA5gY8Id7wf4sVtq63Lqw1mVZrb6pdxjKb
+	 dD37O+SQrsqYdBQQtJ+USIzc=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 663C213154;
-	Mon, 11 Aug 2025 19:12:02 +0000 (UTC)
-Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
-	id 25CED8800130; Mon, 11 Aug 2025 19:03:06 +0000 (UTC)
-From: Rajeev Mishra <rajeevm@hpe.com>
-To: axboe@kernel.dk, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajeev Mishra <rajeevm@hpe.com>
-Subject: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
-Date: Mon, 11 Aug 2025 19:03:03 +0000
-Message-ID: <20250811190303.222802-1-rajeevm@hpe.com>
-X-Mailer: git-send-email 2.43.7
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D468D40E01FD;
+	Mon, 11 Aug 2025 19:03:12 +0000 (UTC)
+Date: Mon, 11 Aug 2025 21:03:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head
+ section
+Message-ID: <20250811190306.GAaJo-ai4M2aVod6_V@fat_crate.local>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-45-ardb+git@google.com>
+ <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
+ <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=YZu95xRf c=1 sm=1 tr=0 ts=689a4083 cx=c_pps
- a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
- a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=5jyyRg2iGYzsEeqDovkA:9
-X-Proofpoint-GUID: yL4NFB7u7mdqlEjyiGlFvFqSKptdNxI5
-X-Proofpoint-ORIG-GUID: yL4NFB7u7mdqlEjyiGlFvFqSKptdNxI5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEyNyBTYWx0ZWRfX+qdv0drVJRK9
- xMDnNmZHSKAsMo9lnQ1mPfZFhILqCX1Gr9BOpzmvO3u+kLF79SJ6zSTdA15xAbBt60W/EBR+2du
- kG5u3hbeLK47yJv/0R2uV0JG4+m1LluJRPhdXRInejz9hJ84pwmz2qOTjqt3p7MJ4npQVBoJN/o
- nfYUZqRYrZQw5uUROoGRsMKfzeIvqF7hcSmsn3SVMEc7kG666P0lRe0NC6uw7O1L9v+wEPwfwIX
- HiQSHzel9fRdZ3ykxj9Q3ChPJ14N9bgWCeWHBA/JuAcb+M9+csPvHKIMe1hJaRkVTJPj1dN11Ub
- l033yW9YgwEQSEg/cEqr0a37+BZgZh8JHzuQT8KZE1pwV1nAp/fTKWMVOuSk6WVLM5TPXjsKOXf
- Ms1RhtYrFPlSTl5q+aCwH3+jY8rmkkj/OX2oz4wxXEm53K/abLK9KVyztNt+OQuhKAcakDX7
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_03,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508110127
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com>
 
-The get_size() function now uses vfs_getattr_nosec() instead of
-i_size_read() to obtain file size information. This provides more
-accurate results for network filesystems where cached metadata
-may be stale, ensuring the loop device reflects the current file
-size rather than potentially outdated cached values.
+On Mon, Aug 11, 2025 at 01:05:42PM -0500, Tom Lendacky wrote:
+> Yes, that works. Or just get rid of snp_abort() and call
+> sev_es_terminate() directly. Secure AVIC could even use an
+> SEV_TERM_SET_LINUX specific code instead of the generic failure code.
 
-Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+I *love* deleting code. Here's something to start the debate:
+
 ---
- drivers/block/loop.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 1b6ee91f8eb9..c418c47db76e 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -137,12 +137,32 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
- static int max_part;
- static int part_shift;
+diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
+index 7a8128dc076e..19b23e6d2dbe 100644
+--- a/arch/x86/boot/startup/sev-startup.c
++++ b/arch/x86/boot/startup/sev-startup.c
+@@ -135,7 +135,7 @@ static struct cc_blob_sev_info *__init find_cc_blob(struct boot_params *bp)
  
-+/**
-+ * get_size - calculate the effective size of a loop device
-+ * @offset: offset into the backing file
-+ * @sizelimit: user-specified size limit
-+ * @file: the backing file
-+ *
-+ * Calculate the effective size of the loop device
-+ *
-+ * Returns: size in 512-byte sectors, or 0 if invalid
-+ */
- static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+ found_cc_info:
+ 	if (cc_info->magic != CC_BLOB_SEV_HDR_MAGIC)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+ 
+ 	return cc_info;
+ }
+@@ -209,8 +209,3 @@ bool __init snp_init(struct boot_params *bp)
+ 
+ 	return true;
+ }
+-
+-void __init __noreturn snp_abort(void)
+-{
+-	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+-}
+diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+index 39e7e9d18974..e389b39fa2a9 100644
+--- a/arch/x86/boot/startup/sme.c
++++ b/arch/x86/boot/startup/sme.c
+@@ -531,7 +531,7 @@ void __init sme_enable(struct boot_params *bp)
+ 	 * enablement abort the guest.
+ 	 */
+ 	if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+ 
+ 	/* Check if memory encryption is enabled */
+ 	if (feature_mask == AMD_SME_BIT) {
+diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+index 0020d77a0800..01a6e4dbe423 100644
+--- a/arch/x86/include/asm/sev-common.h
++++ b/arch/x86/include/asm/sev-common.h
+@@ -208,6 +208,7 @@ struct snp_psc_desc {
+ #define GHCB_TERM_SVSM_CAA		9	/* SVSM is present but CAA is not page aligned */
+ #define GHCB_TERM_SECURE_TSC		10	/* Secure TSC initialization failed */
+ #define GHCB_TERM_SVSM_CA_REMAP_FAIL	11	/* SVSM is present but CA could not be remapped */
++#define GHCB_TERM_SAVIC_FAIL		12	/* Secure AVIC-specific failure */
+ 
+ #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+ 
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 2b8a779f1477..e907646b4e4b 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -512,7 +512,6 @@ void snp_set_memory_shared(unsigned long vaddr, unsigned long npages);
+ void snp_set_memory_private(unsigned long vaddr, unsigned long npages);
+ void snp_set_wakeup_secondary_cpu(void);
+ bool snp_init(struct boot_params *bp);
+-void __noreturn snp_abort(void);
+ void snp_dmi_setup(void);
+ int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input);
+ void snp_accept_memory(phys_addr_t start, phys_addr_t end);
+@@ -590,7 +589,6 @@ static inline void snp_set_memory_shared(unsigned long vaddr, unsigned long npag
+ static inline void snp_set_memory_private(unsigned long vaddr, unsigned long npages) { }
+ static inline void snp_set_wakeup_secondary_cpu(void) { }
+ static inline bool snp_init(struct boot_params *bp) { return false; }
+-static inline void snp_abort(void) { }
+ static inline void snp_dmi_setup(void) { }
+ static inline int snp_issue_svsm_attest_req(u64 call_id, struct svsm_call *call, struct svsm_attest_call *input)
  {
-+	struct kstat stat;
- 	loff_t loopsize;
-+	int ret;
-+
-+	/*
-+	 * Get the accurate file size. This will prevent caching
-+	 * issue that occurs at filesystem layer.
-+	 */
-+	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
-+	if (ret)
-+		return 0;
-+
-+	loopsize = stat.size;
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index bea844f28192..f0270ce16e6c 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -26,7 +26,7 @@ static int savic_probe(void)
  
--	/* Compute loopsize in bytes */
--	loopsize = i_size_read(file->f_mapping->host);
- 	if (offset > 0)
- 		loopsize -= offset;
- 	/* offset is beyond i_size, weird but possible */
--- 
-2.43.7
+ 	if (!x2apic_mode) {
+ 		pr_err("Secure AVIC enabled in non x2APIC mode\n");
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 		/* unreachable */
+ 	}
+ 
+diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
+index 6a922d046b8e..802895fae3ca 100644
+--- a/tools/objtool/noreturns.h
++++ b/tools/objtool/noreturns.h
+@@ -45,7 +45,6 @@ NORETURN(rewind_stack_and_make_dead)
+ NORETURN(rust_begin_unwind)
+ NORETURN(rust_helper_BUG)
+ NORETURN(sev_es_terminate)
+-NORETURN(snp_abort)
+ NORETURN(start_kernel)
+ NORETURN(stop_this_cpu)
+ NORETURN(usercopy_abort)
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
