@@ -1,129 +1,100 @@
-Return-Path: <linux-kernel+bounces-762652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3C8B2095E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C473B20958
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7541918A4C85
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:53:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9FC16C187
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554E72D3A7E;
-	Mon, 11 Aug 2025 12:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B27E225793;
+	Mon, 11 Aug 2025 12:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLK6GBN8"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P+SwpmTJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6OkO09b5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238492D77E4;
-	Mon, 11 Aug 2025 12:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5959217709;
+	Mon, 11 Aug 2025 12:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916800; cv=none; b=nEC+nryJinKeq5R3ovN8XZq4NHcHxNTyXg9YgSMuIq1ajn6IURpVBnaQyzStTwWZ1lC/2YwcoXMBxdMhyooUheRtQlXI1KCzzwM4cU/e5TuYAuuxOGbPkxzYutMqTvfB4OXfZU+JK5a96+LC9qwMhZwQK0kNyrNtLR9yr6wXNSU=
+	t=1754916772; cv=none; b=cVpMIw/lo3jxBVXbyPdq8QRF7iPMR1RQ47RmWvLUv9sJc7HHZCjgZsWiwXLIjT5jBkVXMAwbv7hNWqDUB0ezon9fCBVCno2FE45Pymaaohc7nK6AJOAs6pIbLHIIGFGral8Lkjfj7J3DeX1s/oK5KKbzpr+JCR2oUXFMg9E0Iok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916800; c=relaxed/simple;
-	bh=zBFiHfemwtyvXXsvAMZhx4anhbqrwOkhIvWvpmO2tLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c8ECH5lCqbX5Y5lm1S/JDFUgU24FbRy7HH87NWxw8wIEa682SqhNBjzzEbVJU7RrOVVeII3XuzPc0sDDuPQrB1dYQ5/zs+qtTxG6ILWl8Wk3ATW9W6J9GqJSw9tMCI1KlGiomcM8R1xfOcZfsQfSQA6570ZjLa7sV5K+kH5LBdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLK6GBN8; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b786421e36so2303205f8f.3;
-        Mon, 11 Aug 2025 05:53:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754916797; x=1755521597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4IR9Tj2ZFkHOVuxQAA7y4iVif6p4KRJfjxccWwOTQQE=;
-        b=gLK6GBN8afe23iZgVMeyT5ywKVQ3otg1wgy9YiPKHfisgRdHzP8fXugRPZ1yAR/1v/
-         CZdSJg4qokpa8p8SEaVXwPlbLYZmjEFuTohO/UD3JmzDoYCdyTa+HULYNw9hRkaEYxPh
-         0uj/04igBfPJo9qPYq82OgBsIGAftr+dinAR2mFRS+ZO/4G7zACLfV/ykoGxfa6ob6EG
-         s2auNv5/SqpR+XhPDflrKKcGg15YiCR6vE5P3ZhZiMgh8lasI2ceQgD/UqMzCOeph0bf
-         RD6m4de+j4I+qnpI3dGFFZW9STMzcSNFSnazUgMq/f/0m2FUD9iRl93qOw+k9uBy1jRL
-         llxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754916797; x=1755521597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4IR9Tj2ZFkHOVuxQAA7y4iVif6p4KRJfjxccWwOTQQE=;
-        b=j7J/7POlgXGYzsgg6VfVeD1NY36SzB9LprbcpgvaNxYGZugkRaT75J5x0ZfdV5s2Ey
-         MGwcl2WQ6L6vRs58fArbSdJYbPh8LqrUBMsAZ3WB4ovAIzqGXVmSEY8Spcp7n2jTtTQI
-         haCSX/GI6Jp3H5X0ZNQa799mu6Gxqi0Pb5lkKMURfXjOz3c2H1xU8fg26xSzTHXrKgKl
-         pUu4MP/AWQ6hm3GQkqta2Gp7/bT0ZSeV/4bfX2qjYwSWG8V2ORqaMCXZHQAnajDDTzPn
-         oeyb45xwA0rxBW52UnLw0PDGCZpQ9tvXwr82eVWjMhArtryHEmiPzMR+MAptRl47458O
-         Qr2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJtiMa6ngu5Tnii6fZ1EDRwOiBX2jpy3u48N6xbBpy3a5fCRNxsAOLMlcZcaxSiOUsKIqF4iTs5/TyW0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP5q+83xpPyeWIM7HM57MkMnNDCj4zYhzSzle2gng6QWZnnh8C
-	qHAdsjYHebkFOvPaiJSohUdNF1E8mLg8he1v0u+v7022w5CtpsLoQqoUT5RNTg==
-X-Gm-Gg: ASbGncvG60dQPpIOeP5gR8NQMe6O1vA/hgPmeK8JXhfd222UoCs0f6h5Jtl0KejkagI
-	OM0HyHxWC+HO3c3+BFcBzTUgnseeZ3wpyrm1f1+jyAfQhI91MbTzyJThGEkCN/YIBYhst4pD9x5
-	dLSVeiyOIOS6pP2FNqDJ7mzGA1eOeVm2shzO30wf+zzyftoGciC4SwWV/guOit+GCTPeQ3/nWFA
-	3z7yrxx5AzCfrdrzz+H4E6Yhhz2ERLM2TrjVsAm0/Y22b7qYypun2z0QSwx6iaL0RxaDBNsVHhF
-	Fb7HBZ5zQPEMow52lnEqzKmvX9XWxZPKmo0MgjP7pwoNIbOce/TTgxa9LYatfeT4GS9SEN/WRJt
-	meGW7W+95gDfpvPJhm2Jf1g==
-X-Google-Smtp-Source: AGHT+IHwd702a+KQNTgQmvdd5bcelZ8AJusFrlVzmIvThx90Mz4CBzwR/92RC2fBAa15d7QtMUdQzw==
-X-Received: by 2002:a05:6000:290b:b0:3b7:8fcc:a1e3 with SMTP id ffacd0b85a97d-3b900b5108cmr9189025f8f.48.1754916796691;
-        Mon, 11 Aug 2025 05:53:16 -0700 (PDT)
-Received: from fedora ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm277093835e9.1.2025.08.11.05.53.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 05:53:16 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs: Use try_cmpxchg() in start_dir_add()
-Date: Mon, 11 Aug 2025 14:52:38 +0200
-Message-ID: <20250811125308.616717-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754916772; c=relaxed/simple;
+	bh=789mkSTOHiZ7pRR4fC3eijxb1s0QPMpnLD0wjVRR360=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AJFLtHKE9QQYphavGWMyIt9m9Y5TXiVFbSmYvIjXqCezZbfiuoiuVpYEdp1OYCHUO3opcv97LZpgwJfgyqCLJwm2jurgHEMmsymktBDZ5yBz8sAysV9iZHWJYPBlv41LSLzCScZxJ4h/em54+Ibkqe9WUnfs24qW+nJP+dkhgzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P+SwpmTJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6OkO09b5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754916768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z8wb/yQcraBD38A6ZGHYoXhCAbkH7/ii4JJPfnbEvOY=;
+	b=P+SwpmTJB1x2jNcuFUAHaluKSlCKiJuebZIYRBo5LFBQ9lEXLBfIq7/iAPPylOYpfx54Jd
+	wdmfSHUjTeri6geIuPz+/5zBEwMWHIBqwaYqAxJdD1dljQKnRY7wCjT+ZLQ88H8ZC+SK7o
+	D9h2upzLrRk6wF+Zbj6pZepPdjDNFoaSqwkkz7P8mT4np5hbRRWwkIxatkjqllQKcf5o3f
+	J0Rk17d5wH1xz3rrO//pKwVaBLEeoa/IX4AJZIbcksQ+DzGcvVNGQf6JcN0mDvxWFcFKXU
+	0Z5ff0DEoHeEFCRluJLduKnPdEDkjVpzGI2QkHaK/9fDXEaHIdo/efSzGi5z0A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754916768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z8wb/yQcraBD38A6ZGHYoXhCAbkH7/ii4JJPfnbEvOY=;
+	b=6OkO09b5uefLLQygsaYrxy4/iIH6iDnvW2eOBtCYNvtDrER4xoq4YKH0PZuEFSXTXXMwMr
+	pPGuAV5UXewH+pDg==
+To: patchwork-bot+linux-riscv@kernel.org, Nam Cao <namcao@linutronix.de>
+Cc: linux-riscv@lists.infradead.org, maz@kernel.org, atenart@kernel.org,
+ andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ chenhuacai@kernel.org, jiaxun.yang@flygoat.com, anup@brainfault.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-mips@vger.kernel.org
+Subject: Re: [PATCH 00/12] irqchip: MSI cleanup and conversion to MSI parent
+ domain
+In-Reply-To: <175486033550.1221929.7725164280675452092.git-patchwork-notify@kernel.org>
+References: <cover.1750860131.git.namcao@linutronix.de>
+ <175486033550.1221929.7725164280675452092.git-patchwork-notify@kernel.org>
+Date: Mon, 11 Aug 2025 14:52:47 +0200
+Message-ID: <87ecti81gg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Use try_cmpxchg() instead of cmpxchg(*ptr, old, new) == old.
+On Sun, Aug 10 2025 at 21:12, patchwork-bot wrote:
 
-The x86 CMPXCHG instruction returns success in the ZF flag,
-so this change saves a compare after CMPXCHG (and related
-move instruction in front of CMPXCHG).
+> Hello:
+>
+> This series was applied to riscv/linux.git (fixes)
+> by Thomas Gleixner <tglx@linutronix.de>:
+...
+> Here is the summary with links:
+>   - [01/12] irqdomain: Add device pointer to irq_domain_info and msi_domain_info
+>     https://git.kernel.org/riscv/c/858e65af9135
+...
+> You are awesome, thank you!
 
-Note that the value from *ptr should be read using READ_ONCE() to
-prevent the compiler from merging, refetching or reordering the read.
+I know that I'm awesome, but this broken patchwork bot is _not_
 
-No functional change intended.
+Why the hell does it waste electrons and inbox space on stuff which is
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
----
- fs/dcache.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+    A) applied on a different tree
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 60046ae23d51..336bdb4c4b1f 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2509,8 +2509,8 @@ static inline unsigned start_dir_add(struct inode *dir)
- {
- 	preempt_disable_nested();
- 	for (;;) {
--		unsigned n = dir->i_dir_seq;
--		if (!(n & 1) && cmpxchg(&dir->i_dir_seq, n, n + 1) == n)
-+		unsigned n = READ_ONCE(dir->i_dir_seq);
-+		if (!(n & 1) && try_cmpxchg(&dir->i_dir_seq, &n, n + 1))
- 			return n;
- 		cpu_relax();
- 	}
--- 
-2.50.1
+    B) already upstream
 
 
