@@ -1,330 +1,147 @@
-Return-Path: <linux-kernel+bounces-762854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946ECB20B7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C816AB20B64
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15A318C77D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B51900BD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C726A21B9E9;
-	Mon, 11 Aug 2025 14:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F4E2459F0;
+	Mon, 11 Aug 2025 14:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNe8zycw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cQoGNuii"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273BD1DC9B8;
-	Mon, 11 Aug 2025 14:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4FB1CD208
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921547; cv=none; b=uF9M0tg7OQ3t1b8FX5JIN9h0Das64OiZrilWtthiizLBhjflsYlIBBJlrVB9Eyfuj4Z50t/FLiX3oVUm6BHpMLiF5vZdwteDqGg/XT7T3O0YJle6sRH0pa8hxq6zu4INgRXFlbKbx1O0wE57Y6TnquKxGL8Na5jdO1I2TuT2YTM=
+	t=1754921454; cv=none; b=ScNNCnAfbjIGyfnmz3xnhNM+R3iUYQwrQRHBZiLX3zadHZHsjz+iwvLJJj49fZTArS37+ZxKzJ+wG9MgXgRadoLinrStpCyO4cDdqVfohIkLxRwyo2gaP6zsu6Uvtufs9xzCTGPBQpHhSBWpn4k8NJLxuBFyeMTFzXxE5oAq5zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921547; c=relaxed/simple;
-	bh=ebmSgAS2CMFkto6/WZb72Q3to9S6Hc9yLPFeDAuubdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUfIMnUiPGAPyeUr2pEndxokHuYYxXC93EUDF+G6bYI1CyCM/s83WISp8Uf6zd2rigJNU027YRXYknhU6iGAB+oIeYJ+aVcqRKOFDggQ0ymeMRDkufHOmjww8dzKTrBBMgzyZle1Gn+Y7uBBj0oVljeQm3xSbrmy2K09jRwiXRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNe8zycw; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754921544; x=1786457544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ebmSgAS2CMFkto6/WZb72Q3to9S6Hc9yLPFeDAuubdg=;
-  b=QNe8zycwsx2QqSX3w/lMalB0M/jr7C7Y5XO/c6tJtFWYO6hwCQXqWrTF
-   u7Hh4X5aIj/2or/TATFuaJjbaN94XTBTGwwapMIP29AkVeN/5z64I7mcr
-   LVeehxenzGRMEuZ8G1c1IK7qZvZWMuQGIagUY52hwiMGaQbWrPH8+6krZ
-   sUB4HMqYQQhiah2/YOJXkyWqU5Pp7gCwiphVQdYXB0azKSEmA0d+FEN1X
-   BzMook/lLg/xmDNDVTDk84zw4o3NHRo0K7ij643Ygg/KLV5yxgAX1PfWk
-   3sQcyIL67empXBCC5FJwweqzR9SgzKGzE8ciMlN+0jgGXD9vrwoGUnqnJ
-   g==;
-X-CSE-ConnectionGUID: LFiIa9hrSZK7NDW3weqUmw==
-X-CSE-MsgGUID: glPXBE+XTc673O8dmJ5lzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="82615180"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="82615180"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 07:12:23 -0700
-X-CSE-ConnectionGUID: PnGsZ9HfQumUGlGt6UUeGQ==
-X-CSE-MsgGUID: txZKqF/USt+SXVZlH0gemQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166723733"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Aug 2025 07:12:21 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id F3F5B94; Mon, 11 Aug 2025 16:12:19 +0200 (CEST)
-Date: Mon, 11 Aug 2025 16:12:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: broonie@kernel.org, virtio-dev@lists.oasis-open.org,
-	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hdanton@sina.com,
-	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
-	quic_ztu@quicinc.com
-Subject: Re: [RFC PATCH v4 3/3] SPI: Add virtio SPI driver
-Message-ID: <aJn6Q3oPX3RyG22L@black.igk.intel.com>
-References: <20250401033621.1614194-1-quic_haixcui@quicinc.com>
- <20250401033621.1614194-4-quic_haixcui@quicinc.com>
+	s=arc-20240116; t=1754921454; c=relaxed/simple;
+	bh=H6l53B4wZkFz+nYR8PTiIJtmbUzH50h27nGG3cRI8Sc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=o050EOaqY/pMHKhk1YDle8HVJg0NPXJNZ8W1/pSzpDKr7RCzDVRkh0DIWNozTrNTzBZWc+7ppzxfAWBESqlJ6s2tN7tlEMtDqBnDXuKfZLFOj+D0nlhtF/DGoSTc32V8M3tCYDENKG6U6RRDfOoPurecXKKoC9f1luIxIDYbg08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cQoGNuii; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so782183466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754921450; x=1755526250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ohexk0G5qQQ/U7tEXowxhsg85cDA9yyayQBpZFpm+6I=;
+        b=cQoGNuii1t3wxQA/BCPJhFhNByfzmG8O3oqUORdG6CM5DLtEz0ls4mlVtpO2EwjHZ8
+         oAKeEXSkZAPNUIV6SnxrBcGxnFvEBZ87PXST5iiIW39DFW8WKMndCpa/a9DVQcqPIY2Y
+         KThSnT8S2f7z0ktfoV6Kmdg8GPLRcuM0M9ziCREypBQU++yAtNa2GYaY/QsR0Od07uiG
+         CWZsyJfgoiJwfeDWwB1kg4kebItExrll3j5rJKduzKdniddtUDVIzbAQRnutwGGzqWsr
+         hgwErzRUtmcX2DB+JF2EKGkyrXUJ1NbVyV8STgKVb1gQXOBRv4tENfBHmQkM9g92E2o8
+         /Zow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754921450; x=1755526250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ohexk0G5qQQ/U7tEXowxhsg85cDA9yyayQBpZFpm+6I=;
+        b=NFox+hdYw9KZ0TW/VgdwIP7nR3Myyv/qEBdCx8m8ErAtoiBkv1Yz4pI0MAFk6QLczY
+         irze8ULBPNt/YlyOL3bHoDS29d1Y/7s6L0Rwp7SD2WYgIznAUPMG+Z8Ss/cqoBwtoUs+
+         7TH4sh1u4RvF0Zb3ZxB7wkSQog2c4+FE3LuO5SfWhSHrvd3LpMkMl5ysZrerTGoGZ+5p
+         tt1bb3VFCKsXuJ5eYsTIormGQDjYk/bsocesxpjb1w2B1sPcLcvmPNTmkHIWe/0CJioo
+         yUqg0aE0LD+xwnayj0CGH6SLzpfje8/7/ssY5D8jfJRvKEz/bNfLLDiKQ2fb67DEkMvp
+         Djvg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5NMglOMe5pIXVEQ0gn5q9Orx1Nnkmoxv0SiZhvQRPkUKKiuOBOr3VELVV9Qkq4dlYxQOwQh5WGg4dMZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnn4yeliWMWtm7XjcVPgXp15EWu67Koxt5wTPz+zVD6OtZjZVl
+	2y5sJ//hdxizm+lQjooTI5tKi0iQ2+RBvch/mbcQCT8pf/2QXmxiyVehTBuOoAOCdWw=
+X-Gm-Gg: ASbGncuws/50X9ANmCwQn4xc0jKdKN+eTsd2tX62tiPEBDXptGxEezSJwAxUGfygBWI
+	GwkLN/ffNxT8jZnDzcNdR/5loI8+P1cVAKKxuFlzbrK7ldyEEBtRHwDk907gctv+KQ8zGqH6nT8
+	GQKqv+IPemn+JfNHuotXy0CP4CMKURSRIIGXlsR1Z3QNgyctW/jvny3uUeI16j1h9buWDIvDYyl
+	j1k3ZFuQkmoaHQMQqifTL78PHn9N5+iRMjlkoVbaqkiIEzLzi3lUXUBqWbnncFkPymgOmcjcQ/z
+	KhhZJy97BS3hb/FeMcDBdu5VtenA9nhgMILx5vM1iKYKabtarlZajCA3iwdV94D4DltQB2cQyL0
+	54kqX7CsDecztoMfAiA+MwOd1cF1KC1blMo0cJHEj+DMDYT2SsK14YuNLxlZ7Yb3+KQ==
+X-Google-Smtp-Source: AGHT+IHdBKFk8Hdz0O5Qrkqv+q1AVcT+ToZrNVbbDng2NMf7Xf+fMHPhcyvkBGiKagZpBw13o0Tyeg==
+X-Received: by 2002:a17:907:c1c:b0:af9:71c2:9c3 with SMTP id a640c23a62f3a-af9c647bce8mr1317574966b.35.1754921448512;
+        Mon, 11 Aug 2025 07:10:48 -0700 (PDT)
+Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23bedcsm2030552266b.120.2025.08.11.07.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:10:48 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>,
+	iivanov@suse.de,
+	svarbanov@suse.de
+Subject: [PATCH 0/2] Establish the roles of board DTSes for Raspberry Pi5
+Date: Mon, 11 Aug 2025 16:12:33 +0200
+Message-ID: <cover.1754914766.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401033621.1614194-4-quic_haixcui@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 01, 2025 at 11:36:21AM +0800, Haixu Cui wrote:
+Hi,
 
-...
+this patchset is composed of the following:
 
-> +VIRTIO SPI DRIVER
-> +M:	Haixu Cui <quic_haixcui@quicinc.com>
-> +S:	Maintained
-> +F:	drivers/spi/spi-virtio.c
-> +F:	include/uapi/linux/virtio_spi.h
+- patch 1: just a cleanup to get rid of duplicated declarations in the
+  board DTS for BCM2712.
 
-This should have been started by the very first patch that brings a new file
-into the kernel. Here I would expect only one line (file) being added. Have you
-run checkpatch?
+- patch 2: explicitly states what BCM2712 board DTS will host the
+  customized nodes that refer to RP1 internal peripherals. This is
+  important so that followup patches add the nodes to the correct
+  DTS file. For more information about why it has to be done, please
+  take a look to the patch comment.
 
-...
+Andrea della Porta (2):
+  arm64: dts: broadcom: delete redundant pcie enablement nodes
+  arm64: dts: broadcom: amend the comment about the role of BCM2712
+    board DTS
 
-> +#include <linux/completion.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-
-> +#include <linux/kernel.h>
-
-Please, no. Try to follow IWYU principle.
-
-> +#include <linux/module.h>
-
-> +#include <linux/of.h>
-
-Why? AFAIK we may avoid this in the new code. If even needed, there are device
-property APIs and software nodes. But I believe the inclusions in this driver is
-just a cargo cult, as I said follow Include What You Use principle.
-
-> +#include <linux/spi/spi.h>
-> +#include <linux/stddef.h>
-> +#include <linux/virtio.h>
-> +#include <linux/virtio_ring.h>
-> +#include <linux/virtio_spi.h>
-
-...
-
-> +struct virtio_spi_req {
-> +	struct completion completion;
-> +	struct spi_transfer_head transfer_head	____cacheline_aligned;
-> +	const uint8_t *tx_buf			____cacheline_aligned;
-
-Why ____cacheline_aligned for the *pointer*?
-
-> +	uint8_t *rx_buf				____cacheline_aligned;
-
-Ditto.
-
-> +	struct spi_transfer_result result	____cacheline_aligned;
-> +};
-
-...
-
-> +	if (cs_word_delay_spi > cs_word_delay_xfer)
-> +		th->word_delay_ns = cpu_to_le32((u32)cs_word_delay_spi);
-> +	else
-> +		th->word_delay_ns = cpu_to_le32((u32)cs_word_delay_xfer);
-
-Why explicit casting? What is the purpose? Same for other cases.
-
-...
-
-> +	BUILD_BUG_ON(VIRTIO_SPI_CPHA != SPI_CPHA);
-> +	BUILD_BUG_ON(VIRTIO_SPI_CPOL != SPI_CPOL);
-> +	BUILD_BUG_ON(VIRTIO_SPI_CS_HIGH != SPI_CS_HIGH);
-> +	BUILD_BUG_ON(VIRTIO_SPI_MODE_LSB_FIRST != SPI_LSB_FIRST);
-
-Make this to be static_assert():s as they give better error message.
-
-...
-
-> +	th->mode = cpu_to_le32(spi->mode & (SPI_LSB_FIRST | SPI_CS_HIGH |
-> +					    SPI_CPOL | SPI_CPHA));
-
-We have _MODE_MASK, use it.
-
-...
-
-> +	if ((spi->mode & SPI_LOOP) != 0)
-
-' != 0' is redundant.
-
-> +		th->mode |= cpu_to_le32(VIRTIO_SPI_MODE_LOOP);
-
-...
-
-> +	/* Read result from message and translate return code */
-> +	switch (priv->spi_req.result.result) {
-> +	case VIRTIO_SPI_TRANS_OK:
-> +		/* ret is 0 */
-
-Why comment? Make it to be a code statement which also makes code robust to
-subtle changes.
-
-> +		break;
-> +	case VIRTIO_SPI_PARAM_ERR:
-> +		ret = -EINVAL;
-> +		break;
-> +	case VIRTIO_SPI_TRANS_ERR:
-> +		ret = -EIO;
-> +		break;
-> +	default: /* Protocol violation */
-> +		ret = -EIO;
-> +		break;
-> +	}
-
-...
-
-> +	if ((priv->mode_func_supported & VIRTIO_SPI_MF_SUPPORT_CPHA_1) != 0)
-> +		ctrl->mode_bits |= VIRTIO_SPI_CPHA;
-> +	if ((priv->mode_func_supported & VIRTIO_SPI_MF_SUPPORT_CPOL_1) != 0)
-> +		ctrl->mode_bits |= VIRTIO_SPI_CPOL;
-> +	if ((priv->mode_func_supported & VIRTIO_SPI_MF_SUPPORT_LSB_FIRST) != 0)
-> +		ctrl->mode_bits |= SPI_LSB_FIRST;
-> +	if ((priv->mode_func_supported & VIRTIO_SPI_MF_SUPPORT_LOOPBACK) != 0)
-> +		ctrl->mode_bits |= SPI_LOOP;
-
-> +	if ((tx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_DUAL) != 0)
-> +		ctrl->mode_bits |= SPI_TX_DUAL;
-> +	if ((tx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_QUAD) != 0)
-> +		ctrl->mode_bits |= SPI_TX_QUAD;
-> +	if ((tx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_OCTAL) != 0)
-> +		ctrl->mode_bits |= SPI_TX_OCTAL;
-
-> +	if ((rx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_DUAL) != 0)
-> +		ctrl->mode_bits |= SPI_RX_DUAL;
-> +	if ((rx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_QUAD) != 0)
-> +		ctrl->mode_bits |= SPI_RX_QUAD;
-> +	if ((rx_nbits_supported & VIRTIO_SPI_RX_TX_SUPPORT_OCTAL) != 0)
-> +		ctrl->mode_bits |= SPI_RX_OCTAL;
-
-' != 0' is redundant in all of the above.
-
-...
-
-> +static int virtio_spi_find_vqs(struct virtio_spi_priv *priv)
-> +{
-> +	struct virtqueue *vq;
-> +
-> +	vq = virtio_find_single_vq(priv->vdev, virtio_spi_msg_done, "spi-rq");
-> +	if (IS_ERR(vq))
-> +		return (int)PTR_ERR(vq);
-
-Why casting?
-
-> +	priv->vq = vq;
-> +	return 0;
-> +}
-
-...
-
-> +	ctrl->dev.of_node = vdev->dev.of_node;
-> +
-> +	/*
-> +	 * Setup ACPI node for controlled devices which will be probed through
-> +	 * ACPI.
-> +	 */
-> +	ACPI_COMPANION_SET(&vdev->dev, ACPI_COMPANION(vdev->dev.parent));
-
-	device_set_node();
-
-(it might require to use dev_fwnode() from property.h)
-
-...
-
-> +	err = device_property_read_u32(&ctrl->dev, "spi,bus-num", &bus_num);
-
-Despite above, use &vdev->dev to read properties as this makes code clearer in
-aspect of the device that provides the properties to begin with.
-
-> +	if (!err && bus_num <= S16_MAX)
-> +		ctrl->bus_num = (s16)bus_num;
-
-Why casting?
-
-> +	else
-> +		ctrl->bus_num = -1;
-
-...
-
-> +static void virtio_spi_remove(struct virtio_device *vdev)
-> +{
-> +	struct spi_controller *ctrl = dev_get_drvdata(&vdev->dev);
-> +
-> +	/* Order: 1.) unregister controller, 2.) remove virtqueue */
-> +	spi_unregister_controller(ctrl);
-> +	virtio_spi_del_vq(vdev);
-
-Wrap this to devm and drop the remove() completely.
-
-> +}
-
-...
-
-> +static struct virtio_device_id virtio_spi_id_table[] = {
-> +	{ VIRTIO_ID_SPI, VIRTIO_DEV_ANY_ID },
-> +	{ 0 },
-
-Remove trailing comma (it's a terminator) and also unneeded 0.
-
-> +};
-> +
-> +static struct virtio_driver virtio_spi_driver = {
-
-> +	.driver.name = KBUILD_MODNAME,
-
-Use standard pattern
-
-	.driver = {
-		.name = ...
-	},
-
-> +	.driver.owner = THIS_MODULE,
-
-This field is set by module_virtio_driver(), isn't it?
-
-> +	.id_table = virtio_spi_id_table,
-> +	.probe = virtio_spi_probe,
-> +	.remove = virtio_spi_remove,
-
-> +	.freeze = pm_sleep_ptr(virtio_spi_freeze),
-> +	.restore = pm_sleep_ptr(virtio_spi_restore),
-
-Why are these not a dev_pm_ops?
-
-> +};
-
-> +
-
-Redundant blank line, remove.
-
-> +module_virtio_driver(virtio_spi_driver);
-
-> +MODULE_DEVICE_TABLE(virtio, virtio_spi_id_table);
-
-Move this up to follow up the ID table initializer.
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts      | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.3
 
 
