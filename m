@@ -1,181 +1,197 @@
-Return-Path: <linux-kernel+bounces-763467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6991EB214FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA94B21501
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25AA23AE9AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D5443AB422
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5EB2E2DE0;
-	Mon, 11 Aug 2025 18:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBC22E2DF2;
+	Mon, 11 Aug 2025 18:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="D3w92lQg"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pnnj7TI2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497862E2DCB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B915C72600;
+	Mon, 11 Aug 2025 18:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754938528; cv=none; b=SBvtcTlE+NloSwuGOljYYmSXNd81Ynu5mBJho/UblgPKQuyjJLleJ3W2ld1WZwgQy4e085app532LtYjgSSyqMt3AhXaisQCKgq0ELT4J9Cxrqpu2LzBRiN+Ktdfp1wn9OMf8b3Hm2TPCSV0IoGCEbpVbVSjsP2krpQguJCumOg=
+	t=1754938620; cv=none; b=kDN58pbFM48wD6WFVXCb9dGfyYX5GTAGWLOGFuO3nBpRPTq5O3hjSgpV8w4VAtKVsEVXGqlzeYHOiI93Ty6gkFtiG67TEcZn8YhAUw68Cylck/weQPS965r17aHVz5Rpx7iMyWrQK35WoKV0O6dEfKGi59xjKB67lh4AORrrrPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754938528; c=relaxed/simple;
-	bh=uQ3fr3pfhXh7AS8ejvnx1d8aiWIIkDyvsDnvhr3mk9k=;
+	s=arc-20240116; t=1754938620; c=relaxed/simple;
+	bh=/1h1FXQ8wlbSgFHXbQzagekP6WBsykBAbMExF88232A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQSgr8MWQZ66iknOjJyaTqumD8OiBgm9ugAsopbExBj9T21sMC+HPcsQifMg2L0/wKkO5bG69zI/t9XcXlX6O1E4XCaIhPeLqbCAONrWz3Hhm2pXswJgfdhydVJNa0N5FG7XZ6ncacjbf8MtVpXITxZmpNn7iNdM+RiqZiITt2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=D3w92lQg; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b07d777d5bso54091351cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754938525; x=1755543325; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+1xezh5zigs0Eh1IHXpsvZxf5v0NNa8iAaWLGnBO56k=;
-        b=D3w92lQgeUY6UadxTmG8ZBA/HYEO2r3gIqBDfsoc4qbpFyZDT6mFAR6m9OY76HZv0u
-         vLlobA0DebE87kPBTsiMjmfBKC5oldK7eHjHIysQPZyr8IHizDk+pt82fBEZAdnxHger
-         WlQOf+NHbPhbGW+GOZkrQSSKsNOBU4+NIpWq0C0kFyzd8l6l4AVQvNIgvemZtgtor21c
-         9LT5w9MXgBj2MbyqdgdJV5/fmPEjGvQrpOAGuV8v2k7BkFLFawQhcjoyZnEdPNxtI9aU
-         pcU0duUKlW/kQAZWNrxMHH/BvDNadTkPw1PxHDfOhXfOio3oq0Lwv1CUgldt4ng6jqT+
-         MnAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754938525; x=1755543325;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1xezh5zigs0Eh1IHXpsvZxf5v0NNa8iAaWLGnBO56k=;
-        b=W8ZYaPYOFg+ovb+sdXQQJNbESZB4aSTwOuTbB1jnu+TJvXYDh2FcOJCT33rAwNfHCl
-         /bfa82rxPd8rIwQoYMW6ojiJH8+bJw+1nDM+O0giLKiIdojU2Ujs5iqy66aql9x60jGn
-         gZ1IgepBQtkpfTv0tmYZ3htFHFV+L7CdDwHXc5olNJ6BfiHw01Tn/m7yv5VbQS180Tj9
-         aFGp8xCPAm0cYDJR2FP0IMHuq8bFhu7fQCVwEOHjSJFJHHSZZadGFBGn33TJTmNXHKmf
-         ct69SY224mBXSzcCwScvjr5d9yoVdv9aLyL6ERqvEj/opUA+sUJ3uxbJW4Y13/PyAeiz
-         4Iyg==
-X-Gm-Message-State: AOJu0Yx46H1wBAeYru0ubAV8RTjp9ZGdSaoYvFVV6wt4t8mYG+yWxz8E
-	pqXWsDemqdBGAMUgtfzCXeoG9FWAhGA6TU3qVDIWVPikM2PpWGrT7QfW530pm0qVc14=
-X-Gm-Gg: ASbGnctHzsH5ZEKn4i/xZfQNlv9z3z9FyC0gGre8tWW6WHeuRlo1HIPglIKy+++JdFl
-	eF7+nlltGOYHT4eqjS7StFS13xLGd9edZVrWD2TsI51hvGPYChTw3GG6SQrstdkRckhlX4VZCv5
-	nJmpDswkU3SzgHFNx9tt7X7DvL9ERF0yxxD6YwVNHzwkcpClPTdp2SUJ+IxdQ6xSVo0ryCLd8R/
-	CA+Ek6TwYEHZinvgWNLtYeC+b6ZtzyFKcDcQkkCXdSmSM6LZC+T95guHv+QoBTWAO28mJTd8VrF
-	CGhMu2j2XZqmHOvlJn1M8vw2uSi7Zrg/bflnrx7e2h5PPH6RC4KaNlw7tq4sHUZJCAQvv8BkMEj
-	GaUDmCQy1oA3SQmurhy+zZLhyRHB6qhjjiWyUW+jHDmHQTM0j4iQtmgqPqxQoBc0iMaSP
-X-Google-Smtp-Source: AGHT+IGgJZJcKTKM3XxOf4YsuboP55lfsrq1eYtf1kTos3YrkSFpLqpnWNoLYcx3tr3obv49p1pGYQ==
-X-Received: by 2002:a05:622a:2507:b0:4b0:7b80:4761 with SMTP id d75a77b69052e-4b0ecc76dbdmr9999781cf.37.1754938524860;
-        Mon, 11 Aug 2025 11:55:24 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b08cfbc7b9sm81757831cf.23.2025.08.11.11.55.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 11:55:24 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ulXg3-00000002V2t-2HW8;
-	Mon, 11 Aug 2025 15:55:23 -0300
-Date: Mon, 11 Aug 2025 15:55:23 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
-Message-ID: <20250811185523.GG377696@ziepe.ca>
-References: <20250730144253.GM26511@ziepe.ca>
- <aIo1ImP7R7VhRpVE@google.com>
- <20250730164752.GO26511@ziepe.ca>
- <aIt67bOzp6XS_yO-@google.com>
- <20250731165757.GZ26511@ziepe.ca>
- <aIurlx5QzEtjpFLd@google.com>
- <20250801185930.GH26511@ziepe.ca>
- <aJDGm02ihZyrBalY@google.com>
- <20250805175753.GY26511@ziepe.ca>
- <aJNiW48DdXIAFz8r@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8kdyZtotZhaNpaVc6UvjFN2dqzgn0PXkO2Z3BOAOSbpE4nXrgGOG3GozpvkaTpV+cXh5FJuVLtbLAAE/zov2I52N4fZ9Rs87HgArJYwCg1/dxgTvpXgTab31W5f7XeywycUWqTzqZN2JmUGkmIABFu7PKpnjQSyRtOnnFdW9/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pnnj7TI2; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754938619; x=1786474619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/1h1FXQ8wlbSgFHXbQzagekP6WBsykBAbMExF88232A=;
+  b=Pnnj7TI22M/wvUQDA78sBsJeug6tdbnzc6tMcoEMXCDeXuZ+/1PX66TL
+   nt95+jNkA1Cpq9bO3VPBo8c6nSHglAJfv9ynUxQ2x0SL+lGfZeH1+ClFZ
+   WH1Y+mJEuF+AVYPA94khQZJSKKDHdj42M+3Z+gHdhHFBYQTLfNYzch+zA
+   lL7GsI2mjIHmk3Gk8ItKBa1ZGF48M5dQt3sNCryzJebeaEC10dYrs9ld9
+   CQNDL6WG0bIY4JQ0pEk+tv69Xwwr4CytfMXEE0gDjbE0KgPAI7fW0WFUU
+   gMSKZ6INDw43vm6bl8Hy8G6GX2Ljik8ejShDnWjNaHGD9yJJPbLzyhhAF
+   Q==;
+X-CSE-ConnectionGUID: Je30W+SHQEu6DShDcy1vkQ==
+X-CSE-MsgGUID: GMyWzhJfQsC7si7eDViI3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57344995"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57344995"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:56:58 -0700
+X-CSE-ConnectionGUID: vpWZx5ZjTIuthikuHuwiLg==
+X-CSE-MsgGUID: gJZTJWVSR5qvoV1h6E7NgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165192786"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 11 Aug 2025 11:56:53 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ulXhL-00069Y-0y;
+	Mon, 11 Aug 2025 18:56:44 +0000
+Date: Tue, 12 Aug 2025 02:55:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Maximilian Bosch <maximilian@mbosch.me>,
+	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
+	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Dominique Martinet <asmadeus@codewreck.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
+ folio size
+Message-ID: <202508120250.Eooq2ydr-lkp@intel.com>
+References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJNiW48DdXIAFz8r@google.com>
+In-Reply-To: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
 
-On Wed, Aug 06, 2025 at 02:10:35PM +0000, Mostafa Saleh wrote:
-> I am not sure I understand, the SMMU driver will register its IOMMU
-> ops to probe the devices
+Hi Dominique,
 
-You couldn't do this. But why do you need the iommu subsystem to help
-you do probing for the pKVM driver? Today SMMU starts all devices in
-ABORT mode except for some it scans manually from the fw tables.
+kernel test robot noticed the following build warnings:
 
-They switch to identity when the iommu subsystem attaches devices, you
-can continue to do that by having the paravirt driver tell pkvm when
-it attaches.
+[auto build test WARNING on 8f5ae30d69d7543eee0d70083daf4de8fe15d585]
 
-What is wrong with this approach?
+url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet-via-B4-Relay/iov_iter-iterate_folioq-fix-handling-of-offset-folio-size/20250811-154319
+base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
+patch link:    https://lore.kernel.org/r/20250811-iot_iter_folio-v1-1-d9c223adf93c%40codewreck.org
+patch subject: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >= folio size
+config: i386-buildonly-randconfig-002-20250811 (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/reproduce)
 
-> > > Also I am not sure how that
-> > > looks from the kernel perspective (do we have 2 struct devices per SMMU?)
-> > 
-> > I think you'd want to have pkvm bound to the physical struct device
-> > and then spawn new faux, aux or something devices for the virtualized
-> > IOMMUs that probes the new paravirt driver. This driver would be fully
-> > self contained.
-> 
-> I think it’s hard to reason about this as 2 devices, from my pov it seems
-> that the pKVM HVCs are a library that can be part of separate common file,
-> then called from drivers. (with common ops)
-> Instead of having extra complexity of 2 drivers (KVM and IOMMU PV).
-> However, I can see the value of that as it totally abstracts the iommu ops
-> outside the device specific code, I will give it more thought.
-> But it feels that might be more suitable for a full fledged PV
-> implementation (as in RFC v1 and v2).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508120250.Eooq2ydr-lkp@intel.com/
 
-Maybe, but I'm feeling sensitive here to not mess up the ARM SMMU
-driver with this stuff that is honestly looking harder and harder to
-understand what it is trying to do...
+All warnings (new ones prefixed by >>):
 
-If you can keep the pkvm enablement to three drivers:
- - A pKVM SMMU driver sharing some header files
- - A the untrusted half of the above driver
- - A para virt IOMMU driver
+   In file included from lib/iov_iter.c:14:
+>> include/linux/iov_iter.h:171:7: warning: variable 'remain' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     171 |                 if (skip >= fsize)
+         |                     ^~~~~~~~~~~~~
+   include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
+     190 |                 if (remain)
+         |                     ^~~~~~
+   include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition is always false
+     171 |                 if (skip >= fsize)
+         |                 ^~~~~~~~~~~~~~~~~~
+     172 |                         goto next;
+         |                         ~~~~~~~~~
+   include/linux/iov_iter.h:163:22: note: initialize the variable 'remain' to silence this warning
+     163 |                 size_t part, remain, consumed;
+         |                                    ^
+         |                                     = 0
+   1 warning generated.
 
-And not further change the smmu driver beyond making some code
-sharable it sure would be nice from a maintenance perspective.
 
-> I had an offline discussion with Will and Robin and they believe it might
-> be better if we get rid of the kernel KVM SMMUv3 driver at all, and just
-> rely on ARM_SMMU_V3 + extra hooks, so there is a single driver managing
-> the SMMUs in the system.
+vim +171 include/linux/iov_iter.h
 
-> This way we don’t need to split current SMMUv3 or have different IOMMU ops,
-> and reduces some of the duplication, also that avoids the need for a fake device.
-> 
-> Then we have an extra file for KVM with some of the hooks (similar to the
-> hooks in arm_smmu_impl_ops we have for tegra)
-> 
-> And that might be more suitable for nesting also, to avoid the bind/unbind flow.
-> 
-> I will investigate that and if feasible I will send v4 (hopefully
-> shortly) based on this idea, otherwise I will see if we can separate
-> KVM code and SMMU bootstrap code.
+   143	
+   144	/*
+   145	 * Handle ITER_FOLIOQ.
+   146	 */
+   147	static __always_inline
+   148	size_t iterate_folioq(struct iov_iter *iter, size_t len, void *priv, void *priv2,
+   149			      iov_step_f step)
+   150	{
+   151		const struct folio_queue *folioq = iter->folioq;
+   152		unsigned int slot = iter->folioq_slot;
+   153		size_t progress = 0, skip = iter->iov_offset;
+   154	
+   155		if (slot == folioq_nr_slots(folioq)) {
+   156			/* The iterator may have been extended. */
+   157			folioq = folioq->next;
+   158			slot = 0;
+   159		}
+   160	
+   161		do {
+   162			struct folio *folio = folioq_folio(folioq, slot);
+   163			size_t part, remain, consumed;
+   164			size_t fsize;
+   165			void *base;
+   166	
+   167			if (!folio)
+   168				break;
+   169	
+   170			fsize = folioq_folio_size(folioq, slot);
+ > 171			if (skip >= fsize)
+   172				goto next;
+   173			base = kmap_local_folio(folio, skip);
+   174			part = umin(len, PAGE_SIZE - skip % PAGE_SIZE);
+   175			remain = step(base, progress, part, priv, priv2);
+   176			kunmap_local(base);
+   177			consumed = part - remain;
+   178			len -= consumed;
+   179			progress += consumed;
+   180			skip += consumed;
+   181			if (skip >= fsize) {
+   182	next:
+   183				skip = 0;
+   184				slot++;
+   185				if (slot == folioq_nr_slots(folioq) && folioq->next) {
+   186					folioq = folioq->next;
+   187					slot = 0;
+   188				}
+   189			}
+   190			if (remain)
+   191				break;
+   192		} while (len);
+   193	
+   194		iter->folioq_slot = slot;
+   195		iter->folioq = folioq;
+   196		iter->iov_offset = skip;
+   197		iter->count -= progress;
+   198		return progress;
+   199	}
+   200	
 
-Maybe, not sure what exactly you imagine here.. You still have your
-para virt driver, yes?
-
-This especially is what bothers me, I don't think you should have a
-para virt driver for pkvm hidden inside the smmu driver at all.
-
-And if we have a smmu driver that optionally doesn't register with the
-iommu subsystem at all - that seems unwise..
-
-Jason
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
