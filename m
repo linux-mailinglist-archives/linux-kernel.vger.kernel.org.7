@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-763197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C07B2118C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4A9B21194
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD40A1A21ECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E6B6874D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC77929BDB5;
-	Mon, 11 Aug 2025 16:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5458F2D2383;
+	Mon, 11 Aug 2025 16:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyaJ67lY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiS1+1t9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3F9311C3B;
-	Mon, 11 Aug 2025 16:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30F9296BAD;
+	Mon, 11 Aug 2025 16:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928658; cv=none; b=KO3GbOgKJpd74saFJMDIsBGVWl5B9kCqm6P/7d4pn1Pa/uEnccZucReoRD3cwLjVY0/Cl5LKH40AaCxqynEnvDcn3GXxBNkb7NzynJ1SiC6m+3FsjvGF+4KXCY1sic0fTaduBxukd6bvDlIBT7lby0dTCWKgTFrLCDSBaruAZqM=
+	t=1754928674; cv=none; b=EyT/l/XkWcIOMZ5j6ghhzdWOYOQiW/b7uqpck2UHiLhpZKEdcfIrELO8f5MzPU80ySzdoQLYK3lSPiTTsuy1c3U583wAIyi5rkbscyYWcxcvTmSATQA0p3gH96wcvkd1F/WVZWopWDdGbt4w16wM0aQu+tJiRmUHXaHzlW/PXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928658; c=relaxed/simple;
-	bh=hHJy35yKZJZVzNggfD6kViB08vigIgMmo5+Qvfy2IBY=;
+	s=arc-20240116; t=1754928674; c=relaxed/simple;
+	bh=xIJ28HxQuqHrb5Mjj7mj7vyWykbmZ8e2tbB/UXJvPZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHAzqYmpZ3x9bYd8oluDFADlGWfeVIC0+txSQ7xHcl45r1N7pAKtkR/7f2xJUArdbVl6oyE+5PnQpx7zXGsUxvKC5EnT0cBhPbB6df9ZdS0svx75MmwY8/RCyYUi02wnXjfj/HY2HC+j8Eogq7M01cprve16HWWtvD/3oA/JeJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyaJ67lY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93BEC4CEED;
-	Mon, 11 Aug 2025 16:10:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSzeXI8z/O2jXgvN4GeP3/muQejK1kROrxAfTeB8+Ck1LfEJ0cxrLyX9ugYwrdVlSIrR8kQpytnphPyZwmczQ2xiGx53wCFFK4QobDPr9HYfI5V09Ha5d1+Ggs+LWZqmat/s+VE4issrvgWWKE9Zld9gDi3zdT1IlPxfaHr3lM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiS1+1t9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C13FC4CEED;
+	Mon, 11 Aug 2025 16:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754928657;
-	bh=hHJy35yKZJZVzNggfD6kViB08vigIgMmo5+Qvfy2IBY=;
+	s=k20201202; t=1754928674;
+	bh=xIJ28HxQuqHrb5Mjj7mj7vyWykbmZ8e2tbB/UXJvPZI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eyaJ67lYujFWIIAzpumQaZs8SozpKagcGxCDLLO7z0kZJgjINW/3FNnW/S4THCEfP
-	 2tKHIvD/iuk5MYgaunn3lLYf5kurTGe+xmG+cyh8hnVFoli/uQWqUpYCcjLC3lIixp
-	 Ts2SQ3kR9b3j6yaFgZS3w9yd3/qE0cZcNJc1K9IDGoemChxJE4AmazMCnoBWiWKQg5
-	 fq8/6m2Ev+7zgFvI0rHSYj8ZuYcKDThoqMRVKTf7tveZSfHwhzky2aKYs7DNQQvDZb
-	 utNtN30x9o06oZlsd8358ioqyLmJt8LOPJtrEAQuDO2ogkPN+Z2wmj5G3eosuXbi/G
-	 ycTZRNjA9uGAg==
-Date: Mon, 11 Aug 2025 11:10:55 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH DO NOT MERGE RFC v2 2/3] arm64: dts: qcom: sm8750-mtp:
- Enable Iris codec
-Message-ID: <f2k2z7tlm23bftjnvtnswwglravbjmiuihv5fpf2g2b6hl6mti@m5ldrmxpbspp>
-References: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
- <20250806-b4-sm8750-iris-dts-v2-2-2ce197525eed@linaro.org>
- <pb3yyyjpffjb5u4oorv2rfo634h6v52gytmevn36k5xeqxhjwn@xj7x3dmaxwv3>
+	b=KiS1+1t9E8yBQzr/SqB3J6BKht75cAEdwd2rlX32JoEJ5M6W6dLLYKXv8WGcgsBMY
+	 PBcyJ0Ve1Jg45AfSNHYtFg8tvewX/MJ6gRSKkrggTMkJjarHRnPkjL9JsVmTghsegK
+	 1mBOoK8q35cyk9Gg2JZFCze8fE8wkTM5j3/ZOiq0aXQ80fbHgge++0+atC+/zKfTIH
+	 ri64wPqlDGnC97fWghAd+xe2nXy3KIASaXltcT1zY9sHcmt/ehsNf6C0InpxBUolnu
+	 LW2K7NATrhmaDAv4wLQCNtHZqFGyJiQppQ0ZQFx256Y/l5mzc0N++GBR7CURm2ka7o
+	 nftdqSPzhvK1g==
+Date: Mon, 11 Aug 2025 17:11:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Mark Greer <mgreer@animalcreek.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] dt-bindings: nfc: ti,trf7970a: Drop 'db' suffix
+ duplicating dtschema
+Message-ID: <20250811-carnivore-snagged-faac10d63881@spud>
+References: <20250811142235.170407-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YKE6XInXu+TRmTNK"
+Content-Disposition: inline
+In-Reply-To: <20250811142235.170407-2-krzysztof.kozlowski@linaro.org>
+
+
+--YKE6XInXu+TRmTNK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <pb3yyyjpffjb5u4oorv2rfo634h6v52gytmevn36k5xeqxhjwn@xj7x3dmaxwv3>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 09, 2025 at 12:42:16PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Aug 06, 2025 at 02:38:31PM +0200, Krzysztof Kozlowski wrote:
-> > Enable on SM8750 MTP the Iris video codec for accelerated video
-> > encoding/decoding.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > ---
-> > 
-> > Do not merge because firmware (hard-coded in the driver) is not released.
-> 
-> I don't think we have been delaying enablement of the hardware for these
-> reasons. The user might have other ways to get the firmware (or to
-> disable the device) in DT.
-> 
+On Mon, Aug 11, 2025 at 04:22:36PM +0200, Krzysztof Kozlowski wrote:
+> A common property unit suffix '-db' was added to dtschema, thus
+> in-kernel bindings should not reference the type.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-At least with the venus driver, missing firmware would result in
-sync_state never happening. I see there's some changes in that behavior
-lately, so perhaps this has changed?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-But I agree with you that it would be preferable to deal with this
-shortcoming in the implementation, rather than holding back the hardware
-description.
+--YKE6XInXu+TRmTNK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Bjorn
+-----BEGIN PGP SIGNATURE-----
 
-> -- 
-> With best wishes
-> Dmitry
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJoWHQAKCRB4tDGHoIJi
+0o90AP9WzTCj8A3vSjlX1/lwKdCwRPrg2mEWXuz9zrnf0olGoQEA9M50nRmCovm2
+qx6tok0s1wbGj2Erz+w9YleIzpSQ2As=
+=SD2R
+-----END PGP SIGNATURE-----
+
+--YKE6XInXu+TRmTNK--
 
