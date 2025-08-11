@@ -1,123 +1,279 @@
-Return-Path: <linux-kernel+bounces-762882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F02B20BD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 424A4B20BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D1B167F91
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F0D2A2A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E9623F419;
-	Mon, 11 Aug 2025 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2372B23D2B5;
+	Mon, 11 Aug 2025 14:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JB4Wm3rC"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEL7zzY4"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433F25FEE6;
-	Mon, 11 Aug 2025 14:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F4523B631;
+	Mon, 11 Aug 2025 14:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922330; cv=none; b=aw4ejKAoiILKfWxQpkDHK1b3IAZaUpMQalX7kGc80LEANtLk6ubG5imkrd0IjDl+myjDhM7v1ak8p/umxfzZ/6IQav76aPKZiw3TtWZqJDqyfWBJ27iGIqCtjFp4vLapJxsPqddQAtCz4Urn0KJb2S28683x9DGgf4NKR4Yfkvg=
+	t=1754922298; cv=none; b=IXiiqcGxN/Jk9NHQmVOq/P0x1UXKRDxkWE/zEARg1FrwFc9vlgOAW0yekCJXc5YalEsRzWYXe4tn41Mh+wjVAY0EpxilJoJzkgub6zp/ERGrZrGoRq2KMe3WNq52JHNH/fvNNzAeFsNUfdHTynffwz8oVZwAYhQvauMHDe3ObTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922330; c=relaxed/simple;
-	bh=iWqnGf/hu1RSzlIIZddfO5a/PW2ZykqHUtyn5u3/88c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ogBynTwDQEpbjX0LCKfagi2yVWVCt04I7nJDOBHMxdlZZPfajupjXq72EPsRuydqXQhCzTC/72IPETUOW7UGgpyJwtoAnd82guBRXB71U1/YulaY9kPCFLUyLrgjaCVk38NQWydyL2QTOuNZzV7Udrboqv+BYx5n8WdeY1/EaD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JB4Wm3rC; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1754922298; c=relaxed/simple;
+	bh=zGmvTwiWNfBwQbEzhwqgA12UVfRQ8wRSvJ5SWnqWwxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ByuKsay1bMGq5GfuRZUoeUP1l/B2bHKBru2n66WEpF6KNKuGAUUJUvXukCuA6dOJxdOmxhVOVN89AR/3DGAJvLcVrBxZnLYwRNpTtZ7yonKQ8c4QZV9KhwjyWYScvSyXjCZnzTeYqla9t/lC7bTJYvqJ2SQkhfboLQsdXhEcod8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEL7zzY4; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6182ea5a6c0so1600731a12.0;
-        Mon, 11 Aug 2025 07:25:29 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e8053d3382so501977285a.0;
+        Mon, 11 Aug 2025 07:24:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754922328; x=1755527128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yLfTfi5NEouKdnEk0ve7RHoemhhaVCQClGf6sNPBYTw=;
-        b=JB4Wm3rCnJQIaXHi7EdpbYHL2eOZ1iryp4T1Sl+SDujD2Xn2AmD0HpG8hzR/1pMixi
-         1V+Srm2BU2O3w58biiF23S6Hm5lTZfg3nk9qKgmevmgVMuBmCAhtTNU73eyKN74jMFe+
-         KG1xFf7BG64Yzk7W3Tv/WP98zV62fL6lhV2KIeCI5oBSMZ6cdDHycL2h1VlucQdLuNeL
-         leWTPyT1DbdmG867bRaPQoxaK5kIiQcb9IIJuhbmfNv+QfuyKjfzZ/uWklHS9eenom0z
-         edHhvo0aouu98C4W6ZdgoD86gTIaFvD5sV8YStKwTlh1nD2vtKoHDmGylrtiHG5qjEHQ
-         r4wQ==
+        d=gmail.com; s=20230601; t=1754922294; x=1755527094; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=RPL+y06jGXmS6D3g5W7n0N/JXOEq9MD4HMv4HAW2uug=;
+        b=IEL7zzY4oj/4hQbYWez5PcDMn2f1GDt/9k2QZD11Puh/oBYABx5u5dw3SBVzp4qOGi
+         9uhU+AmOMSp8srI0hYL/Y7EtUUkkYnEdY43NakFu4jyd1L35yiY2YM3HBunpJrsVyTwr
+         5G0hdUynYSnqzkZ8pHfgSbhOGsCkhXmR8jGi6wnLkjwV46zTbFGyD2ww7o+VZHkCY2vC
+         1PdKnho3b9VD1xGtEoxwys4lPCmzK+6qlp5DwJL70iv6jnEqpTIrPPRJkDBRCpmQB71J
+         iQv/XWI8Tea+cZeFhVObHf9nX73pd1DIRkEcSYPHEDHqzukgCQW28N9MHAqgNhpXB3V3
+         tVpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754922328; x=1755527128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yLfTfi5NEouKdnEk0ve7RHoemhhaVCQClGf6sNPBYTw=;
-        b=ubOvnKjqKEf2LT1ky9Ub3SXrlnCqlZFJOsz+wTY1X3cf6CTquyUorcF3Q3kW+iANL4
-         SdyrRNcMVpvKs2bZ01MMpXW3UCz+QiaU/gbP8hyUFTTXuLFih/GKYo6n/oyFjxL8KuH2
-         JsjAvUf1180epsgd8uRnuKUj6H4O19QZHkb7hOITC/C5a1GZtlSdKJhGfsOWeyLNYCBE
-         8ZV9HokfwijDUlvYfKxM4FuyZcQz9e7OonqS/rIm8asSP1iuzEB8OhXE3MDfPhcPjtry
-         BFyU1hpbnbo/X+mYJ3bDW//SMmYcfQIXNg36WatVDhkfbMHBpW9piPNGAzwGYgv1CFDx
-         3X0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsWzGhgSVkgleBfDaDMzXjp63iqLdXsxW5AjPPiMWEIExoNUxF1eTsKJ+KE3p1yt0iifMoGqSinbk=@vger.kernel.org, AJvYcCWyJ97au2TeWsIvyd0SkzleHst0XFOBA0Qfayg2VhJqEPVp5rJxnxlTglyPfqcWj5WJbMW1hjwxpBN2a/QR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF0wCgrSpvHkc3VBsigyC3R3c/qypP2+gVekvGbl239qdYtH1O
-	HToNrXzG3F7YMHZ/lnLtIJIJqd/iXC2fT7rdYIyC9jTL7ABPbe/pT2wcF9upp4gO1XG/KFy7M7T
-	9QpFwysR6s8TbVvdGKTMDxT76TuS47y4=
-X-Gm-Gg: ASbGncu4COM65GyUHRFu95zDF/7EhgASpmS5wBEGMK7Wg+xCHajBuhTJAIqU3XokHzU
-	FGzULyceaQSHt1YPZmf0s62GbLJ6ndcwHQ7cttPfPNozOSIqSAZYtGEABfbUxJbagh5/hcbXjiJ
-	EFMON+L+fW4HBhem4sk0ZT1j+tCxl8HKtXH+4HQxqoAvkAR5965QvK91KkKA656AIoaPH9uE05i
-	IpIyfLtZA==
-X-Google-Smtp-Source: AGHT+IGdU10NGg29khHjBwddhKjzTQJs2rQO8SQqzjT97HlICwegX0ze2wGY0caE5t0GfFviiUx1pTHyctKVkMMLAjc=
-X-Received: by 2002:a17:907:1c29:b0:ae3:c968:370 with SMTP id
- a640c23a62f3a-af9c6545861mr1085689166b.59.1754922327440; Mon, 11 Aug 2025
- 07:25:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754922294; x=1755527094;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RPL+y06jGXmS6D3g5W7n0N/JXOEq9MD4HMv4HAW2uug=;
+        b=FRgOznfZUWsRy/Rg9aUHNa1m0dyJEpsTE+p3bgD1LZfSyxEm+oKj7/SmTkxZ8unVir
+         k85XOMnqNxT4h44jrIl1Twqa4Ex1/CzjG5CkpPCi1Fv08Uxfwzjk8U94+DNHnu6KFWIz
+         a1krRGlDL8j/fBdCIC2PMD814hdKpbL5CyU2ABgQ0+Ta2Zqo9rPE6/gI96dXreh4GfoQ
+         ei4Fz6JFcbP6RU/CSsNhhbyZNuBUMLyo/om2JW17yvePsUjj5PCMMBCaPTFNFUrn68dH
+         gl59ESV0S+ZmMDaaXPkpjtlldcuWxGP4sG4Qx14mCgTO+hUXuAI3Nj9+gg3V4dpv2QTE
+         wQ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVTw+Gra+rP7jMYeweCFe7YdIftY/CPHlLEsk13Kb4mTfZxM8xQu229PzAQMWwxKVVAMv3Jk/fvPqyiz04=@vger.kernel.org, AJvYcCWaUHg6shMDdjIrdhcfG7guabAMrDj4o/ZhzjA8mHzntKsM4D++ZssbxokI5qwEtJVxyTm4o83cRHXj/laXM6A=@vger.kernel.org, AJvYcCXxM0/qcV8rMmi/ajClOsPlaYmfNuh47pi5Hmv1VchKfRV3FmfHA+T+jPA2D9ZvvHmDhczdjT7Lf51M@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcUwY07/3sUMH76xkJWPUq5kcCE9ylhnCrdhZAR3iFJf16M5yY
+	7MsT2XxPMminjy2HThZBc+sJ8FIVPLNQtb76MNIvhxcGGL1QOvAo6HIL
+X-Gm-Gg: ASbGncvPZnQHwTM7RclPyD/JPh/ajc6T7C5ed5oKs/Uv6lklnq85rR7IL/OClZgPR08
+	ffXx/2H/210MY8THDV0uHG2gh6ysHkxKhpvgdHzzCeW7V5S/ZcF1hMLhdWCIrDxb/G6NdJeivaR
+	nKS1KPSczJEWe0y7T1A6wB5o4W0YUN05r7X/sZD8ksktyBzKer+SjOQPqnWBgb9d99YIqhi08mK
+	PxAwo0Gz79ZY0eRKJRypM8GFlDXx2/4ReBaGVHhS6VucS8ekJMsX1IclTstKmgpAgEKA70zm9+D
+	BD5x7dG0gcBkqt2geWOr9fUuOIQ4d8WZvh8g7hQWKSBRgn9ezdri7HGqYEyRbKwUqv/sZbRmz6c
+	nbnIP7v1ieKc5CZLXyqrqoStoTm/ImZkrBE6P0UllJQH61forJSzuP97xpa56Z+PXxhBtf2So9V
+	ynboW/uw8mLnPkOGNGQJRMxAc=
+X-Google-Smtp-Source: AGHT+IHmxQyEYV0GevC7iiAX4vpnjmzER2E45rwc6AryaO6aVgbm1vcPI83OHaVWAAP4lnak0qIwYQ==
+X-Received: by 2002:a05:620a:199a:b0:7e6:9bc2:6cb8 with SMTP id af79cd13be357-7e8587db674mr8228285a.2.1754922294010;
+        Mon, 11 Aug 2025 07:24:54 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f727eaasm1540554485a.62.2025.08.11.07.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:24:53 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 167BDF40066;
+	Mon, 11 Aug 2025 10:24:53 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 11 Aug 2025 10:24:53 -0400
+X-ME-Sender: <xms:NP2ZaFb18BReMHo82BmA-KS8tkGEvRXtd8BqYfDkY4YqbZHmDIkVjg>
+    <xme:NP2ZaC_D8TsMjhEpt3PDsDIH_RJtb0O9QF3dlJ3BmUkkOxQqmRwaMd1SJzyUw4IB-
+    tUQWvrZIqBeSV8fmw>
+X-ME-Received: <xmr:NP2ZaJqyg4FQHjaa1eZsfT2XHuHMoUwx9lHwni8WtH6Cdz66EZDMIKrUsg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfhgfehgeekkeeigfdukefhgfeg
+    leefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
+    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
+    hmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepug
+    grnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohep
+    ohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgrrhihsehgrghrhihguh
+    hordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgt
+    ohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehtmhhgrhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepuggrkhhrsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurg
+    htihhonhdrohhrgh
+X-ME-Proxy: <xmx:Nf2ZaNG5cFt5c3fLhye1jjmqWwADYyM2AHQOSAVIZUi8LMOayu3wEg>
+    <xmx:Nf2ZaBkcU-WOhi1t8Uje4XAtr9CZvrIf5furkXolbH-VDs2lzDveQw>
+    <xmx:Nf2ZaB9hDP9BGPELJaI_rEg5pCB34buS668GVp-E3Zyqllr496SG4A>
+    <xmx:Nf2ZaKkL7Z7lC95-fJOAftEYrWSeg6XXgb8Z2l9dnr40DlTAakNlhw>
+    <xmx:Nf2ZaHkVgCRCfD65h-r_hBDL5HXzvAuhncCuBgRsjbEXc0ld6yXWYdIw>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Aug 2025 10:24:52 -0400 (EDT)
+Date: Mon, 11 Aug 2025 07:24:51 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
+	Benno Lossin <lossin@kernel.org>, Dirk Behme <dirk.behme@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] rust: irq: add &Device<Bound> argument to irq
+ callbacks
+Message-ID: <aJn9M3WPcI_ZGems@Mac.home>
+References: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
+ <aJn2ogBSmedhpuCa@Mac.home>
+ <CAH5fLghitfmSOByu4ZRmhwdsOadzJOLei_qrAjNM+V15spq44w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com>
- <20250808-icm42pmreg-v2-1-a480279e7721@geanix.com> <CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com>
- <20250809190609.4fef9df7@jic23-huawei> <CAHp75Vc5CxOj77cw85hmioFTG6YJCe3ZJWwJsJW+QL79K8GpWw@mail.gmail.com>
- <yegzkmvizfcxwohvkxtfguylamvlpy3hsabkxydjwhyiy3fonn@mqjqdpkpo375>
-In-Reply-To: <yegzkmvizfcxwohvkxtfguylamvlpy3hsabkxydjwhyiy3fonn@mqjqdpkpo375>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 11 Aug 2025 16:24:50 +0200
-X-Gm-Features: Ac12FXxR_g_-ECRSvcsngPlXK6CwvVYVWvq7G3YjjLZOjzN1FTCGFPqDKcdvpx4
-Message-ID: <CAHp75Vf-WGZ53Hj=QOgeft3oWYnO3kPFXsDSD0gaAqTNdciHfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] iio: imu: inv_icm42600: Simplify pm_runtime setup
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghitfmSOByu4ZRmhwdsOadzJOLei_qrAjNM+V15spq44w@mail.gmail.com>
 
-On Mon, Aug 11, 2025 at 4:21=E2=80=AFPM Sean Nyekjaer <sean@geanix.com> wro=
-te:
-> On Sat, Aug 09, 2025 at 10:27:52PM +0100, Andy Shevchenko wrote:
-> > On Sat, Aug 9, 2025 at 8:06=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> > > On Fri, 8 Aug 2025 23:37:51 +0200
-> > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > > On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix.c=
-om> wrote:
+On Mon, Aug 11, 2025 at 04:05:31PM +0200, Alice Ryhl wrote:
+> On Mon, Aug 11, 2025 at 3:56 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 12:33:51PM +0000, Alice Ryhl wrote:
+> > [...]
+> > > @@ -207,8 +207,8 @@ pub fn new<'a>(
+> > >              inner <- Devres::new(
+> > >                  request.dev,
+> > >                  try_pin_init!(RegistrationInner {
+> > > -                    // SAFETY: `this` is a valid pointer to the `Registration` instance
+> > > -                    cookie: unsafe { &raw mut (*this.as_ptr()).handler }.cast(),
+> > > +                    // INVARIANT: `this` is a valid pointer to the `Registration` instance
+> > > +                    cookie: this.as_ptr().cast::<c_void>(),
+> >
+> > At this moment the `Regstration` is not fully initialized...
+> >
+> > >                      irq: {
+> > >                          // SAFETY:
+> > >                          // - The callbacks are valid for use with request_irq.
+> > > @@ -221,7 +221,7 @@ pub fn new<'a>(
+> > >                                  Some(handle_irq_callback::<T>),
+> > >                                  flags.into_inner(),
+> > >                                  name.as_char_ptr(),
+> > > -                                (&raw mut (*this.as_ptr()).handler).cast(),
+> > > +                                this.as_ptr().cast::<c_void>(),
+> > >                              )
+> >
+> > ... and interrupt can happen right after request_irq() ...
+> >
+> > >                          })?;
+> > >                          request.irq
+> > > @@ -258,9 +258,13 @@ pub fn synchronize(&self, dev: &Device<Bound>) -> Result {
+> > >  ///
+> > >  /// This function should be only used as the callback in `request_irq`.
+> > >  unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mut c_void) -> c_uint {
+> > > -    // SAFETY: `ptr` is a pointer to T set in `Registration::new`
+> > > -    let handler = unsafe { &*(ptr as *const T) };
+> > > -    T::handle(handler) as c_uint
+> > > +    // SAFETY: `ptr` is a pointer to `Registration<T>` set in `Registration::new`
+> > > +    let registration = unsafe { &*(ptr as *const Registration<T>) };
+> >
+> > ... hence it's not correct to construct a reference to `Registration`
+> > here, but yes, both `handler` and the `device` part of `inner` has been
+> > properly initialized. So
+> >
+> >         let registration = ptr.cast::<Registration<T>>();
+> >
+> >         // SAFETY: The `data` part of `Devres` is `Opaque` and here we
+> >         // only access `.device()`, which has been properly initialized
+> >         // before `request_irq()`.
+> >         let device = unsafe { (*registration).inner.device() };
+> >
+> >         // SAFETY: The irq callback is removed before the device is
+> >         // unbound, so the fact that the irq callback is running implies
+> >         // that the device has not yet been unbound.
+> >         let device = unsafe { device.as_bound() };
+> >
+> >         // SAFETY: `.handler` has been properly initialized before
+> >         // `request_irq()`.
+> >         T::handle(unsafe { &(*registration).handler }, device) as c_uint
+> >
+> > Thoughts? Similar for the threaded one.
+> 
+> This code is no different. It creates a reference to `inner` before
+> the `irq` field is written. Of course, it's also no different in that
+> since data of a `Devres` is in `Opaque`, this is not actually UB.
+> 
 
-...
+Well, I think we need at least mentioning that it's safe because we
+don't access .inner.inner here, but..
 
-> > > > > +       struct device *dev =3D regmap_get_device(st->map);
-> > > > >
-> > > > > +       if (!pm_runtime_status_suspended(dev))
-> > > > > +               regulator_disable(st->vddio_supply);
+> What I can offer you is to use the closure form of pin-init to call
+> request_irq after initialization has fully completed.
+> 
+
+.. now you mention this, I think we can just move the `request_irq()`
+to the initializer of `_pin`:
+
+------>8
+diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
+index ae5d967fb9d6..3343964fc1ab 100644
+--- a/rust/kernel/irq/request.rs
++++ b/rust/kernel/irq/request.rs
+@@ -209,26 +209,26 @@ pub fn new<'a>(
+                 try_pin_init!(RegistrationInner {
+                     // INVARIANT: `this` is a valid pointer to the `Registration` instance
+                     cookie: this.as_ptr().cast::<c_void>(),
+-                    irq: {
+-                        // SAFETY:
+-                        // - The callbacks are valid for use with request_irq.
+-                        // - If this succeeds, the slot is guaranteed to be valid until the
+-                        //   destructor of Self runs, which will deregister the callbacks
+-                        //   before the memory location becomes invalid.
+-                        to_result(unsafe {
+-                            bindings::request_irq(
+-                                request.irq,
+-                                Some(handle_irq_callback::<T>),
+-                                flags.into_inner(),
+-                                name.as_char_ptr(),
+-                                this.as_ptr().cast::<c_void>(),
+-                            )
+-                        })?;
+-                        request.irq
+-                    }
++                    irq: request.irq
+                 })
+             ),
+-            _pin: PhantomPinned,
++            _pin: {
++                // SAFETY:
++                // - The callbacks are valid for use with request_irq.
++                // - If this succeeds, the slot is guaranteed to be valid until the
++                //   destructor of Self runs, which will deregister the callbacks
++                //   before the memory location becomes invalid.
++                to_result(unsafe {
++                    bindings::request_irq(
++                        request.irq,
++                        Some(handle_irq_callback::<T>),
++                        flags.into_inner(),
++                        name.as_char_ptr(),
++                        this.as_ptr().cast::<c_void>(),
++                    )
++                })?;
++                PhantomPinned
++            },
+         })
+     }
 
 
-> Andy, when doing reviews please keep the function name, as it's much
-> easier to add the changes.
+Thoughts?
 
-Sure, sorry I missed it, I thought it was obvious, but you are right,
-it's better to keep more context.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Regards,
+Boqun
 
