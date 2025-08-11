@@ -1,197 +1,150 @@
-Return-Path: <linux-kernel+bounces-762049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEABB2019C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580ABB201A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC66A1895985
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767D41895808
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4342DAFC0;
-	Mon, 11 Aug 2025 08:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506462DAFD2;
+	Mon, 11 Aug 2025 08:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aw+yhrjd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g5/dbrMB"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC3826B2D3
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52C91A01C6;
+	Mon, 11 Aug 2025 08:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754900418; cv=none; b=IKHdAij0kq6o6x6qTYtFF8G4L0UiJ0pcBvdN9vtkp5b7kCIvFiCSfa8p8Ua6VNmJkoSDUxVyRFfbEZTGM/cjqI3bdjhrP9oTQLYtHfl1sJmMqas1wpY9RRZEtnPYm1KoJQJmeKZhXrjl8HKWmlifZtKJPzd8uDr1t+D0FK28U9Y=
+	t=1754900456; cv=none; b=gWoMkrT//Lk/2z7C3FjI8HkBScDdsUxTFYG80KpqvlI1r2du+KMa+1MsiTymDmSZ/BVxAGvtxVfjjsqzlW3Wxu5dXq4YwKYiIdqChQk94ETy+QLwDHUzSzGFCFXM45yBZt7FdmvEQpOqL17z9Zc7cpSnVqpd1kinnEziNQosudc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754900418; c=relaxed/simple;
-	bh=ShksK8LFzoYLyrebpTx4xYUWaFAc0Qhb+cPc6re2V4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CREiP3llHNmV3lvRnTi1+JIiMf6ENGcOdMgLRxFeyTIUJ1STQhq62dB4hQhQp/zYgGsIWI2yAqL2cnQldC+6T730jsUuynjiNK4bkmEM5XPrjUF8KPeI7vavdVkpEHcEf/SEnjgoHEHAWASLApl95VI9Tl4eIgr92LrBKgTbVd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aw+yhrjd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754900415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MO0GOEnqsUi00/HJp4tcv3myQ4l9wSODIZAoAGm0jMk=;
-	b=aw+yhrjdISxg3TR7hseRE3oT6Y6+Ov+Ktrzh/u7EcLwc8bcHUKoJ/D6FPz1dD6JTlOVigP
-	eb8iFaTl/+S/TeVhzD6nhM/IIw8M7oZ+QJmXLGo0fMMpYN6WCZnK+Z+zCnxY9hIsTzGxLq
-	nP6vz4+XDmiBa9zxLrndTUx/M6yJlNc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-26-ayuXsKOQMxy54hdTKihylA-1; Mon, 11 Aug 2025 04:20:14 -0400
-X-MC-Unique: ayuXsKOQMxy54hdTKihylA-1
-X-Mimecast-MFC-AGG-ID: ayuXsKOQMxy54hdTKihylA_1754900413
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so21166185e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 01:20:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754900413; x=1755505213;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MO0GOEnqsUi00/HJp4tcv3myQ4l9wSODIZAoAGm0jMk=;
-        b=BtxTTnXXLbVpP3JQODwToRArt2Z80ig3J+u99iLpwA1zi39wlTMS1X17n/00RdpmeV
-         nwsmv9CO04GMfgmleWFx5VlDWe4FfRE71rzLmWTs41Ssd6M5GKjn/q1zs9e6/dYjiUiP
-         ANTJXOIMBXKBotE9qguf+9Vv0mLl8wYflDomIEKu4XAqygkXJYQiwZ7tb5KwcI0X08uz
-         Vv6WNJEeN4QDKHvR/NQKNyazMfiQqCvWtrGIfe1ZZ+PbvBGUtGJa1Gs4q0naKbGImclu
-         wgwPSmolnocyLtqeYB0+Ok2CnGkpM48x2ANa50K1loRjdL3ntwCFnkzLiWbRlcK9KCzB
-         /Quw==
-X-Gm-Message-State: AOJu0YxaU9Nd1KDDjhQXW2AZySoBnxac7RVvPyUkNqG44mSR1tbEbHBu
-	sC2Ugix1S1/wfGStBHzzvdFyOJABJ02k+B/VoZPRP6Ehu0PhwtmWJ5WYychf6Fuc1rOzD9TuHuT
-	dTxvZSqtirXrXdbx5H/pRANqY1vj6W6kpy0j8a4bwukc8cbHu4HCQp2O8schaPC9UBA==
-X-Gm-Gg: ASbGncsqAUBNLRSsZ+LYbNb0A1VVS2nNI7pqvI8kp2TS6ELrpeB/IahhgqQY56n9bBq
-	q7cZl+rqJ/gnBPZCTYlvldAu4jdvx0svjJyO6rckmt01XwBgQ4OCwb4CfNLeHNbXkMrjM7NDImb
-	XGxEBtIHvs88Elby9Dp5jE5tfMTcrNfQE7DXaf0TIHu0F30G9te3wVci4/PTBm55mOmi8tiiLyv
-	YSGAUCrENwe16wtF0ywJEEOsFoqbLte1TmLKZA5P5EFvJt1FlT8L9HHWG6mr9RAHkIK7dN2VYeH
-	alDIegn48xi4pJZJfEEwPxI/wrAiFSvxEgSia1T99YYZOKhr6bLJbkq27zS2ZN6sjWJ9nj5UoTI
-	zEmXUbr9Heh3NcA+GrKBr5mXW+h2CxObWzrD2WsHiZzh5w4RJbpmRPTQA/hzDt7MLgk4=
-X-Received: by 2002:a05:600c:3589:b0:456:24aa:958e with SMTP id 5b1f17b1804b1-459f4e9e4c9mr108728085e9.0.1754900412908;
-        Mon, 11 Aug 2025 01:20:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhap84eMeBm3c9wHG7W04/VJ3z05W3bAuXpSTfnt7XXnx2D6Q+1WZFV+rDMQrb7QHIlbcnsg==
-X-Received: by 2002:a05:600c:3589:b0:456:24aa:958e with SMTP id 5b1f17b1804b1-459f4e9e4c9mr108727745e9.0.1754900412473;
-        Mon, 11 Aug 2025 01:20:12 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5869cccsm266006715e9.17.2025.08.11.01.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 01:20:11 -0700 (PDT)
-Message-ID: <96992842-f576-4e19-afcb-7455452fe506@redhat.com>
-Date: Mon, 11 Aug 2025 10:20:10 +0200
+	s=arc-20240116; t=1754900456; c=relaxed/simple;
+	bh=yjIL0XRdWEBdT7zWvMkd8W6hHWo3xHZSaLlZ6GM5+tw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kD/8lIGrcEoM/oXA4D61M3My0xbtnIq/CvZ4F2v3IQu/AKqgZjGYrlXRJ2cHwykjwOrjQnJWG8aPLJvLEbzQ8GRkb2QzL5cDdqs3t0eY7FemxFcqRDbNFlMi5q6udXDN2JC+BVuTgX/WZnmKL1izl0kbcGHr8OUTpHmqcdwngw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=g5/dbrMB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.81.143])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CBB7582A;
+	Mon, 11 Aug 2025 10:20:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754900401;
+	bh=yjIL0XRdWEBdT7zWvMkd8W6hHWo3xHZSaLlZ6GM5+tw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=g5/dbrMBdC65ALjy1I1mt+x077wrDJArhZEdKL3mIY7RODtLcXh+QzcTI6prKGmIG
+	 /Qc6gczyRAI9wzVfcK7oIfUxKPTLwRKlDD2cdBejptl/GXX5Xg0PxJN3oUqxuoECo0
+	 BTsDeyTYgp7IDbUr0sPjwoYenqcIecrdXnEFIFPc=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v4 0/6] media: ti, cdns: Multiple pixel support and misc
+ fixes
+Date: Mon, 11 Aug 2025 13:50:12 +0530
+Message-Id: <20250811-probe_fixes-v4-0-aae22290f1d0@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org,
- davem@davemloft.net, andreas@gaisler.com
-Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org,
- ryan.roberts@arm.com, osalvador@suse.de
-References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
- <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
- <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
- <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
- <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL2nmWgC/3XM3QqCMBjG8VuRHbfYh87qqPuIiG0+5g5yssUox
+ HtvSiBCHT7vy/83kojgEMmpGElActH5Po9yVxDb6f4O6pq8iWCiYpKXdAje4Na6FyKtwWCltHU
+ LkFwMAcsjB5dr3p2LTx/eC574fP06YuskThmtbFOZI7httT27Bjr63ngdmr31DzJzSaxEydmWE
+ Jk4MG6sAkyu/xByJZRQW0LOhEQtK41SKfwgpmn6APRVJnczAQAA
+X-Change-ID: 20250314-probe_fixes-7e0ec33c7fee
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Hans Verkuil <hverkuil@kernel.org>
+Cc: Devarsh Thakkar <devarsht@ti.com>, 
+ Rishikesh Donadkar <r-donadkar@ti.com>, 
+ Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, stable@vger.kernel.org, 
+ Changhuang Liang <changhuang.liang@starfivetech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2526;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=yjIL0XRdWEBdT7zWvMkd8W6hHWo3xHZSaLlZ6GM5+tw=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBomafL4RCGT9MliMs1MG4pxfr3fU6UD829vj6Hk
+ kruIiKJhYuJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaJmnywAKCRBD3pH5JJpx
+ RX/BEADLogY9Vz2QaXA0uH6x9USJmaRj3QSVwY3GFW7/qjDSFtOBU2pCeXrQEiiT7jR8UPqWrvN
+ U66EHOMRis58Sw72VOi+KJBCf6lNue6Bv5iwJkRbHbIy7gQG4vB0G0KKAHdri+G/3hhtGIeE+qU
+ gfWCtpEfctvs3za21tI0uDapCLcKHcqVPrkIJeF2nzHWQIezbmP69sLD1mWf+8FIXAc28DuUmeO
+ 7y5pyQHDxigwxFXpfIrRUbiOO1jk4apMeLX6NxwsV/IS9rRr9o+2ATbhKsYxHzCBXTrmCRJmMxF
+ vKlKYth+lwnHTADCAsSgls0zWOAJj91qpXlBE7bNdxv0tOfGh/axzSKDM3fEh0ydz+A8a8GmPt2
+ Aahs4cIElsnX7WWVQjhbrjv1C/3FJCgovl5HkwswPM7ZaFR+yLudjXNd2k9Qh5+SAAS1XXf3f8L
+ vJKojdq0734HUjmNp09fNBug006zJD/xpqdAvnfQguzfR/5PHvEGRQWxChrILNCRZ3uoBw9sZUC
+ LrPF+6bg7BadUH9fgO5QKkMT65MkuZrwSNR8+n+bVHFn0xHfOjPzpbSJnjrJzpT1MwJ/qJYgP2G
+ 9tDx8T8unO3RJFhPmcdDQ+QHTZeM5N+IUpg2G/u1ML0JoypP2z5zHY6SX60fAYU9A5YDw6oHFB9
+ guXHiSkuQgwHM9g==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-On 09.08.25 08:23, John Paul Adrian Glaubitz wrote:
-> Hi Anthony,
-> 
-> On Sat, 2025-08-09 at 00:37 +0200, John Paul Adrian Glaubitz wrote:
->>> Maybe try enabling CONFIG_DEBUG_VM_IRQSOFF, CONFIG_DEBUG_VM, and perhaps
->>> CONFIG_DEBUG_VM_PGFLAGS. That might help detect a problem closer to the
->>> source. You can also try adding transparent_hugepage=never to the kernel
->>> boot line to see if compiling in THP support but not using it is okay.
->>
->> OK, I will try that. But not today anymore. It's half past midnight now here in Germany
->> and I was debugging this issue almost all day long. I'm glad to have finally been able
->> to track this down to THP support being enabled.
->>
->> Maybe you can try whether you can reproduce this in QEMU as well.
-> 
-> OK, first data point: Setting CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y causes the backtrace during
-> boot to disappear with CONFIG_TRANSPARENT_HUGEPAGE=y. However, it still disappears later when
-> running "apt update && apt -y upgrade" again:
+Hi,
 
-Just to give some context: (m)THPs in file systems will get used 
-independently of CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y.
+The first four patches in this series are miscellaneous fixes and
+improvements in the Cadence and TI CSI-RX drivers around probing, fwnode
+and link creation.
 
-So CONFIG_TRANSPARENT_HUGEPAGE_NEVER=y primarily only controls usage of 
-(m)THPs for anonymous memory, but not in the pagecache.
+The last two patches add support for transmitting multiple pixels per
+clock on the internal bus between Cadence CSI-RX bridge and TI CSI-RX
+wrapper. As this internal bus is 32-bit wide, the maximum number of
+pixels that can be transmitted per cycle depend upon the format's bit
+width. Secondly, the downstream element must support unpacking of
+multiple pixels.
 
+Thus we export a module function that can be used by the downstream
+driver to negotiate the pixels per cycle on the output pixel stream of
+the Cadence bridge.
 
-> 
-> [  170.472743] kernel BUG at fs/ext4/inode.c:1174!
-> [  170.532313]               \|/ ____ \|/
->                               "@'/ .. \`@"
->                               /_| \__/ |_\
->                                  \__U_/
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Changes in v4:
+- Rebase on top of v6.17-rc1
+- Add missing include for linux/export.h in cdns-csi2rx.c
+- Link to v3: https://lore.kernel.org/r/20250626-probe_fixes-v3-0-83e735ae466e@ideasonboard.com
 
-Is this the
+Changes in v3:
+- Move cdns-csi2rx header to include/media
+- Export symbol from cdns-csi2rx.c to be used only through
+  the j721e-csi2rx.c module namespace
+- Other minor fixes suggested by Sakari
+- Add Abhilash's T-by tags
+- Link to v2: https://lore.kernel.org/r/20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com
 
-BUG_ON(to > folio_size(folio));
+Changes in v2:
+- Rebase on v6.15-rc1
+- Fix lkp warnings in PATCH 5/6 missing header for FIELD_PREP
+- Add R-By tags from Devarsh and Changhuang
+- Link to v1: https://lore.kernel.org/r/20250324-probe_fixes-v1-0-5cd5b9e1cfac@ideasonboard.com
 
-?
+---
+Jai Luthra (6):
+      media: ti: j721e-csi2rx: Use devm_of_platform_populate
+      media: ti: j721e-csi2rx: Use fwnode_get_named_child_node
+      media: ti: j721e-csi2rx: Fix source subdev link creation
+      media: cadence: csi2rx: Implement get_fwnode_pad op
+      media: cadence: cdns-csi2rx: Support multiple pixels per clock cycle
+      media: ti: j721e-csi2rx: Support multiple pixels per clock
 
+ MAINTAINERS                                        |  1 +
+ drivers/media/platform/cadence/cdns-csi2rx.c       | 75 ++++++++++++++++------
+ drivers/media/platform/ti/Kconfig                  |  3 +-
+ .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 65 ++++++++++++++-----
+ include/media/cadence/cdns-csi2rx.h                | 19 ++++++
+ 5 files changed, 128 insertions(+), 35 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250314-probe_fixes-7e0ec33c7fee
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
