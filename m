@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-763530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A760B2161C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:01:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D14B2163D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8CC97B55A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FD81A243BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57057311C0D;
-	Mon, 11 Aug 2025 20:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9612D9EED;
+	Mon, 11 Aug 2025 20:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MiUiKrCA"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n1Z02SCr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709711D52B
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD711FAC34;
+	Mon, 11 Aug 2025 20:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754942501; cv=none; b=Jk1yr4E9ObDT/qw5LQDiTLVBaYOwpVSTsFcKY2QmYJS8pzQI58l/0ZLz1ApWoRpeu2iRqjshmup/8XodT43SdMIdol8A2+TGEA50KS52CcYK/DKjq7X9KL0tqGeHIsNGLbcuy6G3i3hseNpLfiHRJUhNYG/Do7g7WjduRkQb9C8=
+	t=1754943004; cv=none; b=BOHhkU0TuU9yUVgR4bcf+80aX6FdKh6M9YvcCEsMbQgX1M0W/+hHiCY8737qgnv7bZHcNnGKRxsde9e0u9L3Ln0L5n0IKS/E3ySFjsEzKHFRynL+E7d5Jp7vi4Pv0DLZlY+2YsnEhL3ScAS8HGizMUV5Chs7KR6qK0+Z5xrM2mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754942501; c=relaxed/simple;
-	bh=jOX/yi6Sr7HDRcgpvbqyoAghNh0K1oDzjkbmmkbvKD8=;
+	s=arc-20240116; t=1754943004; c=relaxed/simple;
+	bh=JFuwCjEA2XffvzEG1pozhniBvW9lRwHxQYEK7PJwjTM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttjU2DPpB3Tzt7w40xmVSQA47azh128smyZRk8iV7wCYAY+eDENB6HgqJB8wzb2e/Ku7wZxvElSQgMCBkj/XZzveCrSAUB2rsxj6KampCM3Rz26yUrkxZnQ7P8x8CsumSVSgwy4JlJFQYFl5UpsKyzr8XRrKcrDWPFLU8lmfjyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MiUiKrCA; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-242d3be5bdfso6045ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754942500; x=1755547300; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Uxu6bAv2s8t/rSMFonYcPqI4bnsiyjgAqz2CcsGMxA4=;
-        b=MiUiKrCANQdPAbtav94cJYZnrSi6XyNakon3B+XpW1wejbWbqi25wIP1SpU6r8ohKQ
-         BNBozCzlCKyaBM4jlD6oiJMTvCbGFsYgeKFikLi8Vl4PE+cx1+Sy+ZPW1HkFsutZqFpo
-         vOzEoVtWi6PX0YPrL08wolfaaMgTnUQ5kBrAk7ulATakJV2zdJ0H48QXiE5BVFlBeCmk
-         X0laD3zbhUm0DlrpSGi5x72Ej4KfzaMn+sh1Hyd8Klen4lbY4Q42oWbpl1GLNNvb/V8J
-         AkFYxtrn2UklDsRx9asN8o2L7vGgxRSC56yxE/Vudc5QGffapJidWFl81+BnWcKqaibr
-         GzgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754942500; x=1755547300;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uxu6bAv2s8t/rSMFonYcPqI4bnsiyjgAqz2CcsGMxA4=;
-        b=RZ+1gdkrHofgLPO8M+A3dN29fCn3cFpYRc9GE646OlFuGfNtYmlXnQZQ/Dk/EVG8oF
-         FQlhFd+bSe/B40b4ypibKnaOlqteqgQIXI6sDOBaxZm1O2WQfFSanh+YEZqArkmwkzJO
-         ykEOvnwZVBH2r4KXIVq95eHnWLOqoXylABimZZtGoNi5lVcKwt/02Mht1LwvE/h726QI
-         AFVPgrn38GZ8v/JSl/qSa9J2xGLtQkCNPTr9X2DwnLwk5C9AGZn+VAA17UVIPnwldKdv
-         K6exYCqx09xFOpVTH/J+ZLr95g8mHc1/vWkQl9ZzvzNWaAMIpI9yUsAC7Sdby2cnq1Lo
-         hVOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzyT6xQCXG7qLgYYv2sfZ8V1Sf3MQ1I5WhI8E0N6Hf4qnAnCadtS1Zj5GuEIggDsgOtUndZfaug4NFADs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmRQuYP98ehysEW1aFGxQGZ5lzvROeFqYJqHWwhaTjRvM2ybzm
-	sE8TJN6jEIdsV2jBMoV01xAWVylrjECn5FslhoVqtOjG+WlNdmfxgHI+sQJik1EiEg==
-X-Gm-Gg: ASbGnctlWMpbDwHxJcnxA475c4W7dCJX1xvnrNXwg0LUoXDo/s6q4w8tj+rh/1VtLHz
-	qTxv9iUS1sKbWpXCV5TIBoxt5JcAEoqWdYSNMQQz+BFgjs4WaoMUgoK7E8cf7zdiEjW2U2NoW1h
-	O/OyzDTyiv1KZSJyw3HFQNMRNE9agvx2mvog98QZ5r4E1l+/XoZ8oM8UyQYBSCQAv+gm+aTZiWD
-	CIadsdd8p81yH4O7O77NQJE8952l3mNGNghijIPcNFHEVblYgXiEsUtMPQA84t0EN2AFiYvU1m9
-	f8eayFeQ9dwgYkvDczvrclEzECbRTbZZxYLogOeROI5pUmvfhokHfR7qd+98/rkih/2995Oevi2
-	gocjQPmahdZmmB0JF+oiMxO4WVsGPlD9SVFWvQBNx0/kScCW6TBLJ36EO5syYSw==
-X-Google-Smtp-Source: AGHT+IHWVG7hRlBUUjOqMUzLmXjVMwuf4DXMXom2zlwHcibkKbddyA0lvszzB+bNunnpUz4zMDVEPQ==
-X-Received: by 2002:a17:903:234d:b0:23d:eb0f:f49 with SMTP id d9443c01a7336-242fd374f19mr683595ad.14.1754942499222;
-        Mon, 11 Aug 2025 13:01:39 -0700 (PDT)
-Received: from google.com (167.212.233.35.bc.googleusercontent.com. [35.233.212.167])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8f911sm27711067b3a.47.2025.08.11.13.01.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 13:01:38 -0700 (PDT)
-Date: Mon, 11 Aug 2025 20:01:34 +0000
-From: Prashant Malani <pmalani@google.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Jie Zhan <zhanjie9@hisilicon.com>,
-	Ionela Voinescu <ionela.voinescu@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-Message-ID: <aJpMHkrWJIyHtHL5@google.com>
-References: <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
- <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
- <aIso4kLtChiQkBjH@arm.com>
- <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
- <aIvQvLL34br6haQi@arm.com>
- <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
- <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
- <20250811060551.ylc6uutni4x6jqtg@vireshk-i7>
- <aJo5vP_mfBn_vxSF@google.com>
- <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mfwtvJs6rwTgCcX+MN8+jHPCYQ+FDV4cRVWuVpj+SBp3Bh6qWTrezTa85c1AsrNp7b7AONox2au3236Egci7Q2hRO/VXHbWLluL2PKHCXSgRmqi3m2TkJS/pgLYiGEJe2MrtrKG2MGIAf7cS3bvUwSgu91Z0kytgylAR0aMybig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n1Z02SCr; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754943003; x=1786479003;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JFuwCjEA2XffvzEG1pozhniBvW9lRwHxQYEK7PJwjTM=;
+  b=n1Z02SCrtwKiVVYPO00SJZSaiBUnMCvafAXh0Wm4TJbyooZ04s8+i9UF
+   YiRKmwe7bD5ZgGDivXDvmFbeg6XvAjZv8jTO3oiEJWOnJI7GasSRCAm1n
+   PitiwN4PRsem+XwJKSTgmRr9tHR4xIES8iT8+j8sDTqu9uYb3MzaVkJXu
+   tez+BpMCqR4UXbit7UqASSapBDYMH382wRwm8rt81/Mw0ITjkBK7CKCR0
+   4XDrzqasD3+AMb50djRa7LYHyP//iUIx65b13pxrltw2yEb/RctWQFhf0
+   ax4dDYHC6P2q4duBI2sTUi1B/qgIMznpngnXjSLMUYlfA0u/XaiVC7fDw
+   w==;
+X-CSE-ConnectionGUID: PrcwZCAKSvaSzpHJC9IadA==
+X-CSE-MsgGUID: XbUnO7JxSVy/27liiE9SYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56233448"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="56233448"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:10:02 -0700
+X-CSE-ConnectionGUID: RK1gevKTSDGiU2DE77ZMfg==
+X-CSE-MsgGUID: 8cDgNFJVThq1RLGhgEg5wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165629458"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:09:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulYqA-000000056Uk-3HZa;
+	Mon, 11 Aug 2025 23:09:54 +0300
+Date: Mon, 11 Aug 2025 23:09:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
+Message-ID: <aJpOEq_5jqGTUr4x@smile.fi.intel.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-10-arnd@kernel.org>
+ <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
+ <aJnng9z9pUTFI49x@smile.fi.intel.com>
+ <mrqxggv7vhclnranoc3uacfyzccod6dmc54kip4f7wjdpngjzz@falnsjwnfcjc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com>
+In-Reply-To: <mrqxggv7vhclnranoc3uacfyzccod6dmc54kip4f7wjdpngjzz@falnsjwnfcjc>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Aug 11 21:19, Rafael J. Wysocki wrote:
-> On Mon, Aug 11, 2025 at 8:43 PM Prashant Malani <pmalani@google.com> wrote:
-> >
-> > On Aug 11 11:35, Viresh Kumar wrote:
-> > > On 06-08-25, 17:19, Prashant Malani wrote:
-> > > > So, do we have consensus that the idle check is acceptable as proposed?
-> > > > (Just want to make sure this thread doesn't get lost given another thread
-> > > > has forked off in this conversation).
-> > >
-> > > I don't have any objections to this or a better solution to this.
-> >
-> > Thanks Viresh! Beata, can we kindly move ahead with the idle
-> > optimization (which is this series), while we continue discussions for
-> > the "under load" scenarios on the other thread?
+On Mon, Aug 11, 2025 at 12:21:51PM -0700, Dmitry Torokhov wrote:
+> On Mon, Aug 11, 2025 at 03:52:19PM +0300, Andy Shevchenko wrote:
+> > On Mon, Aug 11, 2025 at 01:34:43PM +0300, Matti Vaittinen wrote:
+> > > On 08/08/2025 18:17, Arnd Bergmann wrote:
+
+...
+
+> > > As such, this patch seems Ok to me, you can treat this as an ack :) This,
+> > > however made me ponder following - is this the tight way to handle the
+> > > power-button IRQ? I don't see any other MFD devices doing this in same way,
+> > > although I am pretty sure there are other PMICs with similar power-button
+> > > IRQ...
+> > > 
+> > > I see for example the "drivers/mfd/rt5120.c" to invoke
+> > > "drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. This,
+> > > however, feels like code duplication to me. I'd rather kept using the
+> > > gpio-keys, but seeing:
+> > > 
+> > > git grep KEY_POWER drivers/mfd/
+> > > drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
+> > > drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
+> > > 
+> > > makes me wonder if there is more widely used (better) way?
+> > 
+> > FWIW, on Intel platforms that use power button by PMIC we add a special driver
+> > for each of such cases.
 > 
-> I need some more time, please?
-> 
-> This problem is similar (if not analogous) to what happens on x86 and
-> that is not handled in the cpuidle core.
+> If we can make gpio-keys work for various power buttons that would be
+> great IMO. The MFD drivers in question already are using device tree,
+> but they do not define/expect nodes for the power buttons. If the nodes
+> were there then I think gpio-keys would work out of the box?
 
-My apologies! Didn't mean to rush.
+Looking at the, e.g., https://elixir.bootlin.com/linux/v6.16/source/drivers/platform/x86/intel/mrfld_pwrbtn.c,
+I am not sure it's as simply as it sounds. Basically it's an IRQ, which
+requires IRQ handling and proper acking/masking/etc.
 
-Will stand by for updates.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-BR,
 
--Prashant
 
