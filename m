@@ -1,267 +1,256 @@
-Return-Path: <linux-kernel+bounces-762113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7466B2024B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA9DB2024C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543833A24EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0024D18C00D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2F2DC34E;
-	Mon, 11 Aug 2025 08:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCFD2DCF76;
+	Mon, 11 Aug 2025 08:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8aU3SFF"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbfmldhQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ACC2DCBF2;
-	Mon, 11 Aug 2025 08:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F06B2DCF5A;
+	Mon, 11 Aug 2025 08:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754902296; cv=none; b=k4zT6nTYs30GCuDo8R1jgNgp7yH/uSV2HQad5JjorkmWN7szkfQypUBpij0/aQSl48cLP8i0ygKYfSgbFAXNCgF9yAqf8YXUhyx1OKulNhMtkUwWI6/QSFoEG7rdBIikz9214ygihbvtD5Yy3Z7YrFe21qPyWJES0FCWmac2eHs=
+	t=1754902304; cv=none; b=UvDm5H+DydJQ0JGAyLK4BWT32SNCE1ZG6hWEYFlpwComSDiF2kKYxy0TalElsPf86qHyH6OWdaS0mlYv+g/Fnhx1t1ZkJ2w/3DOfQ5jTHNRMVZ0CgneYdf9xo9YbcFEOp7gFPj1RtZ2K4nWDhUpaVWD2RzC8Gn5/9kFm+jpS/mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754902296; c=relaxed/simple;
-	bh=/Vnky2iqRMx7r7Ax8IGIXak+StDACGUg1XrbsYbfuF4=;
+	s=arc-20240116; t=1754902304; c=relaxed/simple;
+	bh=WflSO903y7ZETiHLGDPSPJxjN0UfaKdaYhjpbSXbXag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zc0Omop3fB86dijdh0c/Wx2lxQPYoKF8KvMN2NFaRcKkrd4YkrZ7nTrC2OWLE6xjazjRNpAtmSIGGW6EGgEnpYSzQC5tqxVtGUHpNaVJh0V2rYp9CjJBHpS7LGiuaP7FmIZ/zFeXCzvc6YbmW365tzv/aKdDieOcbVzSlR5/3cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8aU3SFF; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55b9375d703so3956104e87.3;
-        Mon, 11 Aug 2025 01:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754902293; x=1755507093; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LuWxdzDiaehJlYEQjhVRrrYl9Kyef8+nTjKfvh6jf68=;
-        b=P8aU3SFFGyMRO1a2FNjt+Lkb+PIjqzVerT5CewWO4mR8m0zi5vK8duRvPONhFeubnJ
-         BIySO5jaKFPNtGoOkdkgK5GwXuAXR1KzZ5UXddUfgBePckUouR0rLd0LDPZIwk/pmBzy
-         s4+SmLAaQz7AoioYrXtc+QHOh03aI35BlX6wSB8VoCYjVz544aHwT6wc/NeMrAHzXpNH
-         5b0fmeKlb4qfGGrajCqAjx+DLciK3ihKNmCX0mUspFC5Wg9soe6PM2fSM0tMZciA++uA
-         xDZ4AMreSyR8KAacKduXL1uACtPlN60g2xecyc9GDBPTM19TPNPHfVs/OCyapiDZDI3I
-         Inng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754902293; x=1755507093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LuWxdzDiaehJlYEQjhVRrrYl9Kyef8+nTjKfvh6jf68=;
-        b=gWcZYa6VDohml6QtyTazgue2NeAvcwJendLRd2MWz2rMPWiNMTIEvVpMIdzRhHtuUk
-         w1lvjsPKLbXQX4ncGU2DM9tgL2HG4D8B+eIWsJOfiNDna+TqzvFf89T5yxAVDhcV2SMH
-         PIylK7Cif2MWXYrNk683tstkLVBOfb/zppFStPjUPX1tBB3kVeNB8XHpPC0IE/pSeXD3
-         K+Zrhwk5VoT1uGZMXH2GgiGVefh2AkzJ+hPAWUWCtOC94inOVH5/Hr6sxRjOmGBA+0w0
-         pCu4Wc8YkVKXKTYvQctYQQB3uETf2xFrR+U0CQfeRJiJ87ORuUYnGWAInNrmTnix0iPb
-         PIhw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1KFfhxlGm/2ndkxdJ4ojxIHtJTR2fwphmHlhohfiVTbRfH615oWZPswOliWPVHaP+x2fizbiYN9kRaafw@vger.kernel.org, AJvYcCWqExposjdY5ksQXbhSPVv53zSZay+AgLVvzDf9hrKHRwC2tB8idEaSJbIj0Lb7NHihjKqpuWEmJkUx@vger.kernel.org, AJvYcCXB/hX0MtdQcZrEG4DzGEYH4ZfkRai4tWgfxi+CPYOwSV39JDSqGuzORwQL88HgDX6yOM9OPtEik/yj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4Y3GIuSHfkVHJaOGh8QwgKCQEv5dWfqGUxiSzhCQlh93Cizwh
-	CGgVoxyggqQFScl6slnHJo77beii2dP1W/gLnTrPifv8rBxK7Z0y2C52
-X-Gm-Gg: ASbGncs+LoRZSeS6m73clraSwq21oLhD+4rRwxZUcEFkt7a89fbALWHeqw6ndWubGua
-	OeGTmLcSVhtlSL6HD3bsdRJBUdzRvzgLky6CLXdOyW7rdjA3i8a1cbyMouTgrEQ5QMqt4k4Cv5r
-	uRYypyW1smI85B2byzv13onYexQkGUmZmwKt5WVCK+A2XkzuWV1WbrtenBdEj7nkpGjak7rQNUz
-	F5uomn3Vjx5B0fD8M0n6ZlyFYLJzoJBuDfh2+o98Nx+Qf0ke/IeXLkGN6yq9YdWstAylcCMFt24
-	l+JN5LR6bQA9E5WRiO25AHJLvUNGQHUK4+0K/ZM/CgcuLDrPACjWeVC9os/6gtw9igylEShdzKj
-	lbb+HYMv9iNitFp/wcMnjaexZqUfl
-X-Google-Smtp-Source: AGHT+IHNVyQLH0DilTgBNOFCK9SlfrEy0aR3YzUjpUY0uxGDQP+JsKJIRT1iU0SsfDGwPJNXSGQPuw==
-X-Received: by 2002:a05:6512:10d0:b0:55b:9483:81b with SMTP id 2adb3069b0e04-55cc0123bf3mr3340354e87.34.1754902292823;
-        Mon, 11 Aug 2025 01:51:32 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b887f72f4sm4237349e87.0.2025.08.11.01.51.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 01:51:31 -0700 (PDT)
-Date: Mon, 11 Aug 2025 11:51:28 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 06/11] iio: adc: ad7476: Drop convstart chan_spec
-Message-ID: <cd7c72e3ee00f279d3381873f54e0c5b75b5ad11.1754901948.git.mazziesaccount@gmail.com>
-References: <cover.1754901948.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5s/c/umuWpib1VwQbK0ZQ/5DJmqdSonNcpABCv7KlmgnNUrOf/Ioft7FEsgkkPay98DLddbq9RUbB/Inc7fv3pdFnV4vna2MHXfsv2ze/yE0K2v5Gfeq71+dpfvtlLwCr0zuefVrPxFT8hGA5cj2eSHsH1eaos5ia8Pvo/9+R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbfmldhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFCCC4CEF1;
+	Mon, 11 Aug 2025 08:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754902303;
+	bh=WflSO903y7ZETiHLGDPSPJxjN0UfaKdaYhjpbSXbXag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CbfmldhQDgE0qA0nzncKOn/nHwg2xz2L+4eL22OGsob2fROA5jdJlkeZvvYjgkKzT
+	 3QQHP2OY1qwmDEzGa9w2N1At/TpQ8hmD5FHJnLx4Jbew5YxjUTnfuu+0XQ4iveAI6J
+	 RNDOh4KijMV8bqtWFgFUb8czC0BFGmB9W/JPNwHBJIxXkFqpMQ4/ks+Oc4uQZbi9pI
+	 cCl1aVM/2omiQB7Xhv2X+ojoj9vPXye7McTtwznMpzx5wCdFK0c1pbSSyBDd89Cro5
+	 c2OnxwtQq4H/6LFmwIPztIWwRNRCBUV9hiU67MNIKZs8UdIDr2FQWm5Um5NeTvznkr
+	 wdY0LB2QzY4Fw==
+Date: Mon, 11 Aug 2025 11:51:35 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Shanker Donthineni <sdonthineni@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>,
+	Vikram Sethi <vsethi@nvidia.com>,
+	Jason Sequeira <jsequeira@nvidia.com>, Dev Jain <dev.jain@arm.com>,
+	David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [RESEND PATCH 2/2] arm64: Add encrypt/decrypt support for
+ vmalloc regions
+Message-ID: <aJmvFz-0xlfS2B3p@kernel.org>
+References: <20250811005036.714274-1-sdonthineni@nvidia.com>
+ <20250811005036.714274-3-sdonthineni@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qUzuhLq20cKqadNw"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1754901948.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811005036.714274-3-sdonthineni@nvidia.com>
 
+On Sun, Aug 10, 2025 at 07:50:35PM -0500, Shanker Donthineni wrote:
+> On ARM64 systems with CCA (Confidential Compute Architecture) enabled,
+> the kernel may need to change the encryption attributes of memory
+> regions. The existing implementation of set_memory_encrypted() and
+> set_memory_decrypted() assumes that the input address is part of the
+> linear mapping region '__is_lm_address()', and fails with -EINVAL
+> otherwise.
+> 
+> This breaks use cases where the memory region resides in the vmalloc
+> area, which is mapped in non-linear mapping region.
+> 
+> This patch introduces a new helper, realm_set_memory(), which detects
+> whether the given address is from a non-linear mapping. If so, it uses
+> vmalloc_to_page() to resolve each page’s physical address and applies
+> attribute changes one page at a time. For the linear address regions,
+> it maintains the existing fast-path.
+> 
+> This change ensures that encrypted/decrypted memory attribute updates
+> correctly for all memory regions, including those allocated via vmap(),
+> module allocations, or other vmalloc-backed paths.
+> 
+> Call stack of Realm crash, QEMU hypervisor + NVME device (emulated):
+>  ...
+>  Freeing unused kernel memory: 6336K
+>  Run /sbin/init as init process
+>  Internal error: synchronous external abort: 0000000096000250 [#1]  SMP
+>  Modules linked in:
+>  CPU: 0 UID: 0 PID: 64 Comm: lsblk Not tainted 6.15.5 #2 PREEMPT(undef)
+>  Hardware name: linux,dummy-virt (DT)
+>  pstate: 43400005 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>  pc : __pi_memset_generic+0x16c/0x188
+>  lr : dma_alloc_from_pool+0xd0/0x1b8
+>  sp : ffff80008335b350
+>  x29: ffff80008335b350 x28: ffff800083162000 x27: ffff80008335b3c0
+>  x26: ffff80008144f000 x25: ffff8000801a27e8 x24: ffff800081e14000
+>  x23: ffffc1ffc0000000 x22: 0000000000001000 x21: ffff800081458310
+>  x20: 0000000042a40000 x19: ffff00000232fcc0 x18: 0000000000200000
+>  x17: 00000000000120c0 x16: ffff0000795520c0 x15: 0000000000000000
+>  x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>  x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+>  x8 : ffff800083162000 x7 : 0000000000000000 x6 : 000000000000003f
+>  x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
+>  x2 : 0000000000000fc0 x1 : 0000000000000000 x0 : ffff800083162000
+>  Call trace:
+>    __pi_memset_generic+0x16c/0x188 (P)
+>    dma_direct_alloc_from_pool+0xc4/0x230
+>    dma_direct_alloc+0x80/0x4a0
+>    dma_alloc_attrs+0x94/0x238
+>    dma_pool_alloc+0x128/0x258
+>    nvme_prep_rq.part.0+0x5f0/0x950
+>    nvme_queue_rq+0x78/0x1e8
+>    blk_mq_dispatch_rq_list+0x10c/0x6f0
+>    __blk_mq_sched_dispatch_requests+0x4a0/0x580
+>    blk_mq_sched_dispatch_requests+0x38/0xa0
+>    blk_mq_run_hw_queue+0x288/0x2f8
+>    blk_mq_flush_plug_list+0x134/0x630
+>    __blk_flush_plug+0x100/0x168
+>    blk_finish_plug+0x40/0x60
+>    read_pages+0x1a0/0x2b0
+>    page_cache_ra_unbounded+0x1f8/0x268
+>    force_page_cache_ra+0xa4/0xe0
+>    page_cache_sync_ra+0x48/0x268
+>    filemap_get_pages+0xf4/0x7a0
+>    filemap_read+0xf0/0x448
+>    blkdev_read_iter+0x8c/0x1a8
+>    vfs_read+0x288/0x330
+>    ksys_read+0x78/0x118
+>    __arm64_sys_read+0x24/0x40
+>    invoke_syscall+0x50/0x120
+>    el0_svc_common.constprop.0+0x48/0xf0
+>    do_el0_svc+0x24/0x38
+>    el0_svc+0x34/0xf8
+>    el0t_64_sync_handler+0x10c/0x138
+>    el0t_64_sync+0x1ac/0x1b0
+> 
+> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
+> ---
+>  arch/arm64/mm/pageattr.c | 55 +++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 48 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 04d4a8f676db4..65c3322a86b49 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -202,21 +202,26 @@ int set_direct_map_default_noflush(struct page *page)
+>  				   PAGE_SIZE, change_page_range, &data);
+>  }
+>  
+> +/*
+> + * Common function for setting memory encryption or decryption attributes.
+> + *
+> + * @addr:        Virtual start address of the memory region
+> + * @start:       Corresponding physical start address
+> + * @numpages:    Number of pages to update
+> + * @encrypt:     If true, set memory as encrypted; if false, decrypt
+> + */
+>  static int __set_memory_enc_dec(unsigned long addr,
+> +				phys_addr_t start,
+>  				int numpages,
+>  				bool encrypt)
+>  {
+>  	unsigned long set_prot = 0, clear_prot = 0;
+> -	phys_addr_t start, end;
+> +	phys_addr_t end;
+>  	int ret;
+>  
+>  	if (!is_realm_world())
+>  		return 0;
+>  
+> -	if (!__is_lm_address(addr))
+> -		return -EINVAL;
+> -
+> -	start = __virt_to_phys(addr);
+>  	end = start + numpages * PAGE_SIZE;
+>  
+>  	if (encrypt)
+> @@ -248,9 +253,45 @@ static int __set_memory_enc_dec(unsigned long addr,
+>  				      __pgprot(0));
+>  }
+>  
+> +/*
+> + * Wrapper for __set_memory_enc_dec() that handles both linear-mapped
+> + * and vmalloc/module memory regions.
+> + *
+> + * If the address is in the linear map, we can directly compute the
+> + * physical address. If not (e.g. vmalloc memory), we walk each page
+> + * and call the attribute update individually.
+> + */
+> +static int realm_set_memory(unsigned long addr, int numpages, bool encrypt)
+> +{
+> +	phys_addr_t start;
+> +	struct page *page;
+> +	int ret, i;
+> +
+> +	if (__is_lm_address(addr)) {
+> +		start = __virt_to_phys(addr);
+> +		return __set_memory_enc_dec(addr, start, numpages, encrypt);
+> +	}
+> +
+> +	for (i = 0; i < numpages; i++) {
+> +		page = vmalloc_to_page((void *)addr);
+> +		if (!page)
+> +			return -EINVAL;
 
---qUzuhLq20cKqadNw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It would be faster to get_vm_area(addr) and iterate over its ->pages rather
+than call vmalloc_to_page every time
 
-The ad7476 driver defines separate chan_spec structures for operation
-with and without convstart GPIO. At quick glance this may seem as if the
-driver did provide more than 1 data-channel to users - one for the
-regular data, other for the data obtained with the convstart GPIO.
+> +
+> +		start = page_to_phys(page);
+> +		ret = __set_memory_enc_dec(addr, start, 1, encrypt);
+> +		if (ret)
+> +			return ret;
+> +
+> +		addr += PAGE_SIZE;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int realm_set_memory_encrypted(unsigned long addr, int numpages)
+>  {
+> -	int ret = __set_memory_enc_dec(addr, numpages, true);
+> +	int ret = realm_set_memory(addr, numpages, true);
+> +
+>  
+>  	/*
+>  	 * If the request to change state fails, then the only sensible cause
+> @@ -264,7 +305,7 @@ static int realm_set_memory_encrypted(unsigned long addr, int numpages)
+>  
+>  static int realm_set_memory_decrypted(unsigned long addr, int numpages)
+>  {
+> -	int ret = __set_memory_enc_dec(addr, numpages, false);
+> +	int ret = realm_set_memory(addr, numpages, false);
+>  
+>  	WARN(ret, "Failed to decrypt memory, %d pages will be leaked",
+>  	     numpages);
+> -- 
+> 2.25.1
+> 
 
-The only difference between the 'convstart' and 'non convstart'
--channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
-channel's flags.
-
-We can drop the convstart channel spec, and related convstart macro, by
-allocating a mutable per driver instance channel spec and adding the flag
-in probe if needed. This will simplify the driver with the cost of added
-memory consumption.
-
-Assuming there aren't systems with very many ADCs and very few
-resources, this tradeoff seems worth making.
-
-Simplify the driver by dropping the 'convstart' channel spec and
-allocating the channel spec for each driver instance.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Nuno S=E1 <nuno.sa@analog.com>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
----
-Revision history:
- v3 =3D> :
- - No changes
-
- v2 =3D> v3:
- - Use __set_bit() instead of |=3D
- - Swicth BUILD_BUG_ON to static_assert
- - Clarify a comment
- - Improve commit message
-
- v1 =3D> v2:
- - New patch
----
- drivers/iio/adc/ad7476.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-index 1445f0f599d9..ad9e629f0cbd 100644
---- a/drivers/iio/adc/ad7476.c
-+++ b/drivers/iio/adc/ad7476.c
-@@ -6,6 +6,7 @@
-  * Copyright 2010 Analog Devices Inc.
-  */
-=20
-+#include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
- #include <linux/slab.h>
-@@ -29,8 +30,6 @@ struct ad7476_state;
- struct ad7476_chip_info {
- 	unsigned int			int_vref_mv;
- 	struct iio_chan_spec		channel[2];
--	/* channels used when convst gpio is defined */
--	struct iio_chan_spec		convst_channel[2];
- 	void (*reset)(struct ad7476_state *);
- 	bool				has_vref;
- 	bool				has_vdrive;
-@@ -42,6 +41,7 @@ struct ad7476_state {
- 	struct gpio_desc		*convst_gpio;
- 	struct spi_transfer		xfer;
- 	struct spi_message		msg;
-+	struct iio_chan_spec		channel[2];
- 	int				scale_mv;
- 	/*
- 	 * DMA (thus cache coherency maintenance) may require the
-@@ -154,24 +154,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
- #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
- 		BIT(IIO_CHAN_INFO_RAW))
- #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
--#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
--		BIT(IIO_CHAN_INFO_RAW))
- #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
- 		BIT(IIO_CHAN_INFO_RAW))
-=20
- static const struct ad7476_chip_info ad7091_chip_info =3D {
- 	.channel[0] =3D AD7091R_CHAN(12),
- 	.channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
--	.convst_channel[0] =3D AD7091R_CONVST_CHAN(12),
--	.convst_channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
- 	.reset =3D ad7091_reset,
- };
-=20
- static const struct ad7476_chip_info ad7091r_chip_info =3D {
- 	.channel[0] =3D AD7091R_CHAN(12),
- 	.channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
--	.convst_channel[0] =3D AD7091R_CONVST_CHAN(12),
--	.convst_channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
- 	.int_vref_mv =3D 2500,
- 	.has_vref =3D true,
- 	.reset =3D ad7091_reset,
-@@ -282,6 +276,7 @@ static int ad7476_probe(struct spi_device *spi)
- {
- 	struct ad7476_state *st;
- 	struct iio_dev *indio_dev;
-+	unsigned int i;
- 	int ret;
-=20
- 	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*st));
-@@ -332,16 +327,28 @@ static int ad7476_probe(struct spi_device *spi)
- 	if (IS_ERR(st->convst_gpio))
- 		return PTR_ERR(st->convst_gpio);
-=20
-+	/*
-+	 * This will never happen. Unless someone changes the channel specs
-+	 * in this driver. And if someone does, without changing the loop
-+	 * below, then we'd better immediately produce a big fat error, before
-+	 * the change proceeds from that developer's table.
-+	 */
-+	static_assert(ARRAY_SIZE(st->channel) =3D=3D ARRAY_SIZE(st->chip_info->ch=
-annel));
-+	for (i =3D 0; i < ARRAY_SIZE(st->channel); i++) {
-+		st->channel[i] =3D st->chip_info->channel[i];
-+		if (st->convst_gpio)
-+			__set_bit(IIO_CHAN_INFO_RAW,
-+				  &st->channel[i].info_mask_separate);
-+	}
-+
- 	st->spi =3D spi;
-=20
- 	indio_dev->name =3D spi_get_device_id(spi)->name;
- 	indio_dev->modes =3D INDIO_DIRECT_MODE;
--	indio_dev->channels =3D st->chip_info->channel;
--	indio_dev->num_channels =3D 2;
-+	indio_dev->channels =3D st->channel;
-+	indio_dev->num_channels =3D ARRAY_SIZE(st->channel);
- 	indio_dev->info =3D &ad7476_info;
-=20
--	if (st->convst_gpio)
--		indio_dev->channels =3D st->chip_info->convst_channel;
- 	/* Setup default message */
-=20
- 	st->xfer.rx_buf =3D &st->data;
---=20
-2.50.1
-
-
---qUzuhLq20cKqadNw
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiZrxAACgkQeFA3/03a
-ocVDzAgAmXdxFkwmCGS3i4kD4BBfxI0MVfpwsQucvEu8r0VF3x2T1G2Nm9J8WZCx
-tciL00SL1sY5c+KbFZ6kppfbU6skJCqbLPxYQQ4fSfAmwFRK9i2TI87+S6pdlja5
-FPXhTz5py7X4JaJkOWtIbprC74yuznFLw/M18Mnq3xVHFViUUUjPaicn3B0Dxe7d
-bgCAItpOWn907PZfxg3grUWQ6EYV3ego/Zdb1TomMvijR3JlySv4NY+nRkl7sF87
-rMnPXThbPdG8BUgUajziBvRXKT7bJw2nm3MDWsA/RTC0Psa/tcYZv1rAVDamxI/p
-yef/q0We3rWBkPSdqiwqaZ5JUn9oog==
-=KcP+
------END PGP SIGNATURE-----
-
---qUzuhLq20cKqadNw--
+-- 
+Sincerely yours,
+Mike.
 
