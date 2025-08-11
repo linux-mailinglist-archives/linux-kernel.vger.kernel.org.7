@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-762945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD67B20CA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3418FB20CAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144811889A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F161B423134
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C412DECD2;
-	Mon, 11 Aug 2025 14:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BCE2D5C91;
+	Mon, 11 Aug 2025 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oX4elPmP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnKoAciD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1151624DD;
-	Mon, 11 Aug 2025 14:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5746320013A;
+	Mon, 11 Aug 2025 14:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923733; cv=none; b=KgYSuvhjxtcgnIoShTsVGak2tvhZpkR1MLgQ0Mp/xh6Oslopv862PuI9/lOMsW+r4AUg+lL5c02H//87KOEYHZJWijNXVHiJQdLx83LjulMxmZj9sK6N3U4b6ZKGf65WfyszqkMGb70s28rAq7m2wbFnIjJdXGjpC9qU4Tuspg0=
+	t=1754923751; cv=none; b=E1gwm+ghCQzriuCh4eq2EeC3abKK3sxwe8ud9LtswuycEhLkaTszDtLuzGoGO3QOfNQfbfiLUOUiEoJAU+3AztBKO8VeeVYhDM5rhw586KZaO9vjWmafRCLI8+CUbZlcW7N1ktOO8yEX6qxQNWvm6/TLspXJ5fHoFEWTdkyWZ4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923733; c=relaxed/simple;
-	bh=mQt2w0ZG//S0B9hwWMBwKv6N4PiPTQi9ryZgGoj07es=;
+	s=arc-20240116; t=1754923751; c=relaxed/simple;
+	bh=vCUo3epKDIn/N8ESfA2yXcc6GTKlDp2HtObAy1V8xDY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFSl8bNhZhEoYWc4JMviXX0sFGqaKPBmO4OqNDYhXJS/rmA6OqAqBaQxo5gnC5w8p/nihTdgpj5r7yw/YyWfORLL+yBodKohMLgf0zCvjkTBjjeXmVGg6XDXpEzQDGRzH6DPfxC1bYi4/F+wIMJpf3XCK3LP44/bt4A/tlSI1Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oX4elPmP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45D0C4CEF4;
-	Mon, 11 Aug 2025 14:48:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kq8E8LCQHOV44qzF0kxL+gvwQ9F4rdXXR+565R/LkdS3heUzOpsCDB3xIC8b7xkRvqNTAEvsVnAnfa9TvAW0LHkKI2TonTb0V4cHuZjC9Isw6aDqszb9KIU0a1yjzNeeUu9/r5MsDnZDWM6CrscgMBzoIX2rughWgf4sEDEjplA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnKoAciD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76058C4CEED;
+	Mon, 11 Aug 2025 14:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754923732;
-	bh=mQt2w0ZG//S0B9hwWMBwKv6N4PiPTQi9ryZgGoj07es=;
+	s=k20201202; t=1754923750;
+	bh=vCUo3epKDIn/N8ESfA2yXcc6GTKlDp2HtObAy1V8xDY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oX4elPmPIOpeD2XHzeEW/jupl0j9mCSkrh987KVB6Ut30cFt59YanHU8ZKErzKcnm
-	 0en0nPALWJt6UyraIHambC3cfku8+9AKMnBP9h/b5iRnaeVNuecWViz07qW4MNYmj4
-	 ktRYMMWGIMLQoGTw/RVPKx/RXiPa7PJ4sl19nQE52N2qLNhqN4BDtceir16gR9QMqz
-	 i7SfwFsHY1ypJzkB+Gh3i2dCcjf2kBSztnYE6ROSPk5dtyi8HPE7LGlNtRRjgallQD
-	 ozmQMHzMqojk4U9iDwFHwT4kW/1OxcF7OhIr//oS3zxVI0w6is95bZWz7LoSOIuJv3
-	 Sgn/pGPp8JIMQ==
-Date: Mon, 11 Aug 2025 09:48:51 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-Cc: herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, conor+dt@kernel.org,
-	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>,
-	adityak@vayavyalabs.com, Ruud.Derwig@synopsys.com,
-	manjunath.hadli@vayavyalabs.com
-Subject: Re: [PATCH v4 1/6] dt-bindings: crypto: Document support for SPAcc
-Message-ID: <175492373105.3051979.16817613723067435625.robh@kernel.org>
-References: <20250808122631.697421-1-pavitrakumarm@vayavyalabs.com>
- <20250808122631.697421-2-pavitrakumarm@vayavyalabs.com>
+	b=dnKoAciDpZakRBMUmdVKurYTYJuRBquwDIgq7AFWg/IO4b/vrqkjXo/YvRLWsjBPL
+	 5JkM78OaV1QOslfSOcLEI0texldWfFgz/pDmMqYlV34Xp3NeuEcQJM4fkrGYP4Blbr
+	 LLyL+aT99B2tROI1OVgwHE/UTCF/wt5Evj3Y2S9vgJevupz/FY/pU5ZWuC1LxFokaC
+	 6yyJ3m7zzawJ8ZOE6xqTc0VoDQuDBU/hxPxdLKdjAfda1IkpjzQMoLp1SFYt4QyXje
+	 RThCCST8gu4WkZDzsUL1dHHSlnyDgbLPFqwBsV1IPjyQyAIA6NsGNzJuD30OMW3FGC
+	 foybOIMPaK/rw==
+Date: Mon, 11 Aug 2025 09:49:08 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: Update MAX_NUM_OF_SS to 30
+Message-ID: <obqkobpnuccfsqvytoltspw5wh27zyhyankt6dju2u32y73odj@3gzhuicheqd7>
+References: <20250808164417.4105659-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,24 +56,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808122631.697421-2-pavitrakumarm@vayavyalabs.com>
+In-Reply-To: <20250808164417.4105659-1-mukesh.ojha@oss.qualcomm.com>
 
-
-On Fri, 08 Aug 2025 17:56:26 +0530, Pavitrakumar Managutte wrote:
-> Add DT bindings related to the SPAcc driver for Documentation.
-> DWC Synopsys Security Protocol Accelerator(SPAcc) Hardware Crypto
-> Engine is a crypto IP designed by Synopsys.
+On Fri, Aug 08, 2025 at 10:14:17PM +0530, Mukesh Ojha wrote:
+> In the latest firmware for Qualcomm SoCs, the value of MAX_NUM_OF_SS has
+> been increased to 30 to accumulate more subsystems.
 > 
-> Co-developed-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-> Signed-off-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-> Acked-by: Ruud Derwig <Ruud.Derwig@synopsys.com>
-> Signed-off-by: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+> Let's update so that we should not get array out of bound error when we
+> test minidump on these SoCs.
+> 
+
+But this number is used to size the minidump_global_toc struct, which is
+used to describe the content of the smem item - and this item didn't
+grow on old platforms.
+
+Doesn't this imply that on older platforms you've now told Linux (and
+your debugger) that it's fine to write beyond the smem item?
+
+
+It seems to me that it would be appropriate to check the returned size
+of the qcom_smem_get() call - in particular if the size of the item
+isn't fixed.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
->  .../bindings/crypto/snps,dwc-spacc.yaml       | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
+>  drivers/remoteproc/qcom_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 8c8688f99f0a..dbe3bf852585 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -28,7 +28,7 @@
+>  #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+>  #define to_pdm_subdev(d) container_of(d, struct qcom_rproc_pdm, subdev)
+>  
+> -#define MAX_NUM_OF_SS           10
+> +#define MAX_NUM_OF_SS           30
+>  #define MAX_REGION_NAME_LENGTH  16
+>  #define SBL_MINIDUMP_SMEM_ID	602
+>  #define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+> -- 
+> 2.50.1
+> 
 
