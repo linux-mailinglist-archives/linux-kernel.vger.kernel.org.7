@@ -1,70 +1,49 @@
-Return-Path: <linux-kernel+bounces-763260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D099CB21258
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEEBB2127B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BDF3A9691
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2D02A6468
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D0D29BD84;
-	Mon, 11 Aug 2025 16:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09C5243968;
+	Mon, 11 Aug 2025 16:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="dF/VohVw"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYcF6bZ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FF1296BBB;
-	Mon, 11 Aug 2025 16:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678C296BD7;
+	Mon, 11 Aug 2025 16:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930376; cv=none; b=RQD7kbZmaNAEGpHZOB7Alq9OVrf82OYhbycm0w86pE1JSVL58C9xSOdN3W0MnKvizWRun3F78vaLbfR7a/RYMlB7LOJEvKHUUIJcMsVpVgWQGdhQhNqath3JI2MJ/bBGYvyKiSPJW03metbgsf7nkAkSEuHIdFvIuwsTZaaWHvQ=
+	t=1754930395; cv=none; b=CvLS1d9YGqAYK4KAClfAC/IxguYKSwbd+jfBvtyWlZjjFW9EHm4GZmnr+oL1F+SkGR+CTrRznjk7fFsaYM+BEa6aFfgu8SKy27btOXkNzW27+fr+ZOLTo0bFBCQ6TiRVX8dKgwsSxL6MRoMRes+l0pjrq0m6lciV6G4ryiQp6hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930376; c=relaxed/simple;
-	bh=CImX2ZC8/O9nTsmiCTmo3jTXIWUuTcllD4/cgqtt4O4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cr2TLyn2rAW5gJWdABrQPrj+cFBfwUByOxzXXOkMO27p/bvf02BdS0n64BUojaFsBL6XC2mRKswTAkFprBTbNns10V3obFVGei0fncllYmunXViJKcpCXRjz7l/OmCRJeve43JwDeEm13dGAOOMcsx59SBV4IWYokBEz0SakRdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=dF/VohVw; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 3570725D17;
-	Mon, 11 Aug 2025 18:39:33 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id n-X6d5Lyl1oP; Mon, 11 Aug 2025 18:39:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754930372; bh=CImX2ZC8/O9nTsmiCTmo3jTXIWUuTcllD4/cgqtt4O4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dF/VohVwEOAaJpnwJCQGUkpI32kKHPEXLvENEaO66IUsFCiirmwoBOD1Gx8hU8vOK
-	 RKI70kZ7QX8kA+TTPdEMQ4YOot113K9edUgmAaztQfxQ+T1hleTVex8C0MChv4uVBA
-	 F01kdFjxaSPqUoI30qDUj/PGT75HjEvsIcy6g49gExXweiR8c46V0qccrAA/9FGfID
-	 kqFOgE7U+mcGbRn/41QrQiWR4fhdNRVg+k1DTRLr7VCqmZkdWUPLaXUw43B9u4wbch
-	 jmmnaHtF1T5ZbY3U2kSzfXiPxoXVTJaaNJzwtHW9VFpBFGhwMWgvwayrjwJ/CwcXke
-	 u401OEmB+DZRQ==
-From: Yao Zi <ziyao@disroot.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 3/3] LoongArch: dts: Add pinctrl configuration for Loongson 2K0300
-Date: Mon, 11 Aug 2025 16:37:50 +0000
-Message-ID: <20250811163749.47028-5-ziyao@disroot.org>
-In-Reply-To: <20250811163749.47028-2-ziyao@disroot.org>
-References: <20250811163749.47028-2-ziyao@disroot.org>
+	s=arc-20240116; t=1754930395; c=relaxed/simple;
+	bh=YsRPZUyMgNgjr5FjQ7aq+Jv/uWYtdtWjLlrgx+z4knY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=a4ZHVnOPGBBIlgCWk6tcXuzTwcDEO3+TOX1AxR5Me0nVrrm6Su6ONmj4JlSkuh+P4oRZgsLLzFQG/G6oaM6QsZYLv4iKXkVJRI+pMU1fGTAKaKIhicfXdu/R9/uX0ualaCRgcx/rlq+uVwqaPcpP0gqPxuKYJiiRua1EcyVAh18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYcF6bZ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618A3C4CEED;
+	Mon, 11 Aug 2025 16:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754930394;
+	bh=YsRPZUyMgNgjr5FjQ7aq+Jv/uWYtdtWjLlrgx+z4knY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fYcF6bZ25DiOwtg92ZN0PwUw5OOYMP/Czx0hLYcsi8MtwIfIbTr1sqHz4FOM5pHxr
+	 CymAwnHhhaNcZU6Lr60hrlh27Su9f/nYIUN7rHCUmzFnS4P6DsGG6RqV7mb4N+1DrU
+	 W/pe5WtwtAENzrwDTmEYcez/9cZeNNxuHX+i0fWdDvsYkT2Xzd+X8KJjmXDmR5eUgj
+	 s1KAU5Zsn3WeBp3cliye9YYRlLJ6fwRxzto3wxqkrKeQUEyQCZ9ZCPBylcRgkGPirw
+	 Zn8EyMS9o5Pnu/hW672zkQdkiPf9NChnwzzVWx7Y3Tt+IrhCPyf0JoMhRTAbK+qqWS
+	 zaRT1GLdL80og==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE60383BF51;
+	Mon, 11 Aug 2025 16:40:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,102 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] Bluetooth: btnxpuart: Uses threaded IRQ for host
+ wakeup
+ handling
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175493040649.1801125.3657849160282054995.git-patchwork-notify@kernel.org>
+Date: Mon, 11 Aug 2025 16:40:06 +0000
+References: <20250804103015.1104289-1-neeraj.sanjaykale@nxp.com>
+In-Reply-To: <20250804103015.1104289-1-neeraj.sanjaykale@nxp.com>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, sherry.sun@nxp.com
 
-Describe the pin controller for Loongson 2K0300 SoC. As default settings
-for the existing UARTs, pinctrls are added and multiplexed to pins taken
-corresponding UART as main functionaility.
+Hello:
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/loongarch/boot/dts/loongson-2k0300.dtsi | 39 ++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k0300.dtsi b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-index d909a4eca312..a8ad8bd43f5d 100644
---- a/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k0300.dtsi
-@@ -9,6 +9,8 @@
- #include <dt-bindings/clock/loongson,ls2k0300-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
-+#define PINMUX(pin, func)	(((pin) << 8) | func)
-+
- / {
- 	compatible = "loongson,ls2k0300";
- 	#address-cells = <2>;
-@@ -55,6 +57,35 @@ clk: clock-controller@16000400 {
- 			#clock-cells = <1>;
- 		};
- 
-+		pinctrl: pinctrl@16000490 {
-+			compatible = "loongson,ls2k0300-pinctrl";
-+			reg = <0x0 0x16000490 0x0 0x20>,
-+			      <0x0 0x16000110 0x0 0x4>;
-+			reg-names = "mux", "drive";
-+
-+			func-uart {
-+				uart0_pins: uart0-pins {
-+					pinmux = <PINMUX(40, 0x3)>,
-+						 <PINMUX(41, 0x3)>;
-+				};
-+
-+				uart1_pins: uart1-pins {
-+					pinmux = <PINMUX(42, 0x3)>,
-+						 <PINMUX(43, 0x3)>;
-+				};
-+
-+				uart2_pins: uart2-pins {
-+					pinmux = <PINMUX(44, 0x3)>,
-+						 <PINMUX(45, 0x3)>;
-+				};
-+
-+				uart3_pins: uart3-pins {
-+					pinmux = <PINMUX(46, 0x3)>,
-+						 <PINMUX(47, 0x3)>;
-+				};
-+			};
-+		};
-+
- 		liointc0: interrupt-controller@16001400 {
- 			compatible = "loongson,liointc-2.0";
- 			reg = <0x0 0x16001400 0x0 0x40>,
-@@ -100,6 +131,8 @@ uart0: serial@16100000 {
- 			interrupt-parent = <&liointc0>;
- 			interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
- 			status = "disabled";
- 		};
- 
-@@ -109,6 +142,8 @@ uart1: serial@16100400 {
- 			interrupt-parent = <&liointc0>;
- 			interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
- 			status = "disabled";
- 		};
- 
-@@ -118,6 +153,8 @@ uart2: serial@16100800 {
- 			interrupt-parent = <&liointc0>;
- 			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
- 			status = "disabled";
- 		};
- 
-@@ -127,6 +164,8 @@ uart3: serial@16100c00 {
- 			interrupt-parent = <&liointc0>;
- 			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart3_pins>;
- 			status = "disabled";
- 		};
- 
+On Mon,  4 Aug 2025 16:00:15 +0530 you wrote:
+> This replaces devm_request_irq() with devm_request_threaded_irq().
+> 
+> On iMX93 11x11 EVK platform, the BT chip's BT_WAKE_OUT pin is connected
+> to an I2C GPIO expander instead of directly been connected to iMX GPIO.
+> 
+> When I2C GPIO expander's (PCAL6524) host driver receives an interrupt on
+> it's INTR line, the driver's interrupt handler needs to query the
+> interrupt source with PCAL6524 first, and then call the actual interrupt
+> handler, in this case the IRQ handler in BTNXPUART.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2] Bluetooth: btnxpuart: Uses threaded IRQ for host wakeup handling
+    https://git.kernel.org/bluetooth/bluetooth-next/c/3f9a516852b6
+
+You are awesome, thank you!
 -- 
-2.50.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
