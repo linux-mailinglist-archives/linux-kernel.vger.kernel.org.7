@@ -1,164 +1,437 @@
-Return-Path: <linux-kernel+bounces-763369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C119B213FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96327B21404
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893E8190782C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B936219CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5BC296BAC;
-	Mon, 11 Aug 2025 18:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E362E1C7E;
+	Mon, 11 Aug 2025 18:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uae0afUm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hgccIo2m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBC2405E1;
-	Mon, 11 Aug 2025 18:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A082E0B58
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936121; cv=none; b=LlQWlTO0vlhpY38EfFezuiOLiHCWwGwBXd0/RRrk6jbTY8xJVjt4pbvG4oHeWyAayXmJImCuZ/lzMu5CI0LfMuHpQ4AOcYyvazZebhXcDamNR5IK/I4n7Jw/mCAiqQ9Q2F45ZUN57RT64pbXAmW+Y8pCT6941PcEmzrqisQGZT0=
+	t=1754936256; cv=none; b=t1P+ZFXVHhLCa12WP1DI6LeCvx/X/2tin4ZelqFY7e0CMuOEG1yA4KZoopaTQKYrfygc8ULNOXdvNgZOkgheHADiwdt2WYHGYY1XYq/ELyvfkFcb3t2/30zN8TKWFtko4+DlAzY/7xXuhpDWQu5eWBngsFddDf6z2xQajLiDlmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936121; c=relaxed/simple;
-	bh=i3CFgTgaOVgs6rVHGnHbogoOuom+K3may1STKdsu0mA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sa4EqjQCSdmrcbCnByiRkMs+b8RrdSZqq9gA6JEhijelEd2tvk3e9z751+ukfYM62WfRqv93L+76rViRnE03IJna3GNAC3eCb5xtoZgnn65WgGXE8oxLlmAL0tvOFh3i5ts3OR2wl7h90Zjy3osKklrOvTzM4W5pXd28sKYr0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uae0afUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93CAC4CEED;
-	Mon, 11 Aug 2025 18:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754936121;
-	bh=i3CFgTgaOVgs6rVHGnHbogoOuom+K3may1STKdsu0mA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uae0afUmNoR8KA75DBNbdfNVvW4DcYug6cz7AdolgVFs9SQ+d0rhY+lM+COc+IIf9
-	 Aq95eCDiCKptC8hUhrCrzyh48PdZM78pq9CummJ54DYD+kDiOJ6/HkHfIech24yVG3
-	 nkNX6ADQWuGLnlWxW35pL48f+w8s3kno8qucUUE9cVpXGR2HUgZEff37o/jkoTAV59
-	 3Qqxtjbvt4PEUE9+1pK4Z8PkALZzSam0GyITEycCamBv0hyk/6YeMQ/ovDoHKIoyP+
-	 7vVcJOwu7joQKHnhFli2ZyBQRKMow0D+TrxlECK66pI9AnbaP2ps+atLTs4ZFueivG
-	 Q9dSR6II4JEQw==
-Date: Mon, 11 Aug 2025 08:15:19 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: syzbot <syzbot+ead9101689c4ca30dbe8@syzkaller.appspotmail.com>,
-	anna-maria@linutronix.de, clm@fb.com, dsterba@suse.com,
-	frederic@kernel.org, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-	jiangshanlai@gmail.com
-Subject: Re: [syzbot] [btrfs?] INFO: task hung in __alloc_workqueue (2)
-Message-ID: <aJozN9LVgaPFX9dX@slm.duckdns.org>
-References: <6899154b.050a0220.51d73.0094.GAE@google.com>
- <e3424457-8786-45dd-a0d9-ecc8bfae0829@suse.com>
+	s=arc-20240116; t=1754936256; c=relaxed/simple;
+	bh=ii79c4ISWb/lNs5MQ5mEkn92GMWBsG3qt8NnwCuimjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZQyX2vNV4tMxT2ghDb/5x3y0eI6t+gum7QJC8HYhJvkmNNIIRop89StL9Xdrw6CfNBGKI858QeWWutOrG7lwKdXoESvvWQkIjfRsMopjKbBYQAL8Gg3reinMJq5sbDA8PMLI0ZP3Je/DijLabvZlfEUA/gUDa2CtrHx7eOel2E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hgccIo2m; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754936254; x=1786472254;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ii79c4ISWb/lNs5MQ5mEkn92GMWBsG3qt8NnwCuimjI=;
+  b=hgccIo2mLGb8ZnIpXGhuEG5eq7u6g4IdSWOSg12mwwGfL04lEaB2GQDm
+   DRUFSWHWE3Q2mXDXfXvIngZ4I0szmktlFNiTBGRWvScSLB23G+56g+NHw
+   0s9QGPXl7vbX8gxH+72UGLhgrJAMnHWvJCuVlSunTmkpmiD1pV5F3LEFH
+   N4//kLmJ0zS6hBeIud/xeG1knn/cSooVf+zDJ1VnK8LDNBUatQt0JA6Om
+   72fGeE00EMJgJ3zg4QLtnjwCQpzUXZNCO3B86B9Utxa+F+534vY/5u4KE
+   ukNFfoYR8MU1vuU4oc7b9HwCHvpbOWs5biVO98/C4TDcHXTuHffrE/Ll7
+   w==;
+X-CSE-ConnectionGUID: SI/R241jTIyXU8/5OiL97A==
+X-CSE-MsgGUID: s/f/vy9ySGqpVbB//SYhXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277338"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68277338"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:26 -0700
+X-CSE-ConnectionGUID: CCliOEhiRhquDDoQh5E10g==
+X-CSE-MsgGUID: VmPL7tZKT6GMqmnBHqZPog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="196825609"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.221.229])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:21 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghuay@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v8 00/32] x86,fs/resctrl telemetry monitoring
+Date: Mon, 11 Aug 2025 11:16:34 -0700
+Message-ID: <20250811181709.6241-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3424457-8786-45dd-a0d9-ecc8bfae0829@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The prerequisite patch series to the Intel Telemetry code is
+now in upstream v6.17-rc1. So that's the basis for this series
+with no extra dependencies.
 
-On Mon, Aug 11, 2025 at 08:02:40AM +0930, Qu Wenruo wrote:
+This patch series also available from the rdt-aet-v8 of:
+git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
+
+Changes since v7 was posted here:
+Link: https://lore.kernel.org/all/20250711235341.113933-1-tony.luck@intel.com/
+
+--- cover ---
+Removed references to dependencies, there are none.
+Updated change log.
+
+--- 1 ---
+Added Reinette RB tag
+
+--- 2 ---
+No change
+
+--- 3 ---
+No change
+
+--- 4 ---
+No change
+
+--- 5 ---
+Improved problem/solution descriptions in commit comment.
+
+--- 6 ---
+Added "break" to default case in domain_add_cpu_mon()
+
+Improved commit problem description. Dropped "function"
+when referring to name with "()".
+
+--- 7 ---
+Improve context statement in commit comment.
+Add a problem statement.
+Apply suggestions to fix portion of commit comment.
+
+--- 8 ---
+In domain_remove_cpu_ctrl() s/&d->hdr.list/&hdr->list/
+
+--- 9 ---
+Avoid double WARN_ON_ONCE() in __mon_event_count() and mbm_bw_count().
+Move domain_header_is_valid() in mkdir_mondata_subdir() to where
+it is needed before container_of().
+
+Fix commit comment to use present tense for background information
+and imperative for the changes. Separate problem statement into
+its own paragraph.
+
+--- 10 ---
+Fix commit comment to use present tense for background information.
+Separate problem statement into own paragraph.
+
+--- 11 ---
+Move these renames here from patch 26:
+resctrl_mon_resource_init -> resctrl_mon_l3_resource_init()
+resctrl_mon_resource_exit() -> resctrl_mon_l3_resource_exit()
+
+--- 12 ---
+Clean up commit comment with problem statement in its own
+paragraph, and with better description.
+Keep original kerneldoc for rmid_read::evt
+
+--- 13 ---
+Changed comment for cpu_on_correct_domain() as suggested.
+Move WARN_ON_ONCE() check for L3 resource from __mon_event_count
+to cpu_on_correct_domain().
+Fix commit comments as suggested.
+
+--- 14 ---
+Break long line in declaration of resctrl_enable_mon_event()
+Reformat comments in print_event_value() use more horizontal space.
+s/binary_bit/binary_bits/. s/chosemn/chosen/
+Commit comment cleanups to use present tense for background and
+imperative for solution.
+
+--- 15 ---
+Enumeration of telemetry features is performed by sub-drivers
+of the OOBMSM driver. These are loaded during device_init() time,
+but the probe functions are triggered by deferred_probe_work_func()
+which can happen after resctrl_init().
+Tracing this procedure shows that it completes several seconds before
+the earliest possible mount of the resctrl file system.
+
+Updated Kconfig dependencies to require INTEL_TPMI=y so that all
+drivers needed for enumeration are built in.
+
+Fix commit to use imperative tone.
+
+--- 16 ---
+Drop "core" from Subject line.
+s/these events/telemetry events/
+Merge two solution paragraphs into one.
+
+--- 17 ---
+s/CONFIG_X86_RESCTRL_CPU_INTEL_AET/CONFIG_X86_CPU_RESCTRL_INTEL_AET/
+Make it depend on INTEL_PMT_TELEMETRY instead of INTEL_PMT_DISCOVERY.
+Defer addition of active_event_groups list until patch 19.
+Drop NUM_KNOWN_* macros and open code ARRAY_SIZE() at point of use.
+s/Try to use any with a known matching guid/
+Try to use every telemetry aggregator with a known guid/
+Change type of "ret" in get_pmt_feature() from bool to int.
+Rewrote commit changelog to provide more details on how telemetry
+aggregators are connected to MMIO regions and to event groups.
+
+--- 18 ---
+Move the "Sanity check" description in the commit message to before the
+"Scan the array" and rewrite to describe which regions are usable by
+Linux. s/package_id/package id/
+Pull extra blank line in discover_events() into this patch from patch 19.
+
+--- 19 ---
+s/addresses of the telemetry regions used by each aggregator/
+addresses of the telemetry regions/
+Drop unneeded call to free_pkg_mmio_info((*peg)->pkginfo);
+s/for each aggregator/for each region/
+s/struct mmio_info/struct pkg_mmio_info/
+Change ascii art to note that we can support "M" aggregators in
+one package and "N" in another (which the code can support, but
+likely will not happen in practice).
+Implement active_event_groups list (previously scattered between
+patches 16-20)
+
+
+--- 20 ---
+Moved stray list_add(&e->list, &active_event_groups); into patch 19
+where it belongs.
+Fixed kerneldoc comment for pmt_event::bin_bits to say this is number
+of bits in the fraction part of fixed-point.
+Add closing quote around "energy" in commit comment.
+
+--- 21 ---
+s/passed/passes/ s/rmid/RMID/
+Point out the explicit problem being solved with example of telemetry
+counters needing the offset in MMIO space.
+
+--- 22 ---
+Drop local "eventid" in discover_events(). Use e->evts[i].id directly.
+Change intel_aet_read_event() to return success if ANY aggregator has
+valid data instead on only when ALL are valid. This matches existing
+resctrl behaviour for providing a summed value for a CTRL_MON group
+together with all child MON groups.
+Restructure commit message to include details of how events are enabled
+with an arch_priv pointer to the pmt_event.
+
+--- 23 ---
+Move setup_intel_aet_mon_domain() from arch/x86/kernel/cpu/resctrl/core.c
+to arch/x86/kernel/cpu/resctrl/intel_aet.c. Rename to
+intel_aet_setup_mon_domain() to match pattern of other functions. Add
+a stub to arch/x86/kernel/cpu/resctrl/internal.h for when
+CONFIG_X86_CPU_RESCTRL_INTEL_AET is not set.
+s/Intel-PMT-scoped/package scoped/
+
+--- 24 ---
+"that support is present" -> "that hardware support is present"
+s/option/feature/
+
+--- 25 ---
+In check_rmid_count() change test to "if (tr->num_rmids < e->num_rmids)"
+(i.e. if the number of hardware counters in the aggregator is fewer
+than the number of counter locations in the MMIO region).
+Eliminate the rdt_num_system_rmids variable.
+"features" -> "feature's" (in comment for rdt_set_feature_disabled())
+"h/w" -> "hardware" (three places in commit comment).
+
+--- 26 ---
+Function renames pulled into patch 11.
+Drop the helper functions, just move the code to alloc/free
+closid_num_dirty_rmid[] inline intoresctrl_mon_l3_resource_init()
+and resctrl_mon_l3_resource_exit().
+Fix leak of closid_num_dirty_rmid[] in resctrl_mon_l3_resource_init()
+when dom_data_init() fails.
+Note in commit comment that this change is prep for moving
+the allocation rmid_ptrs[] to mount time.
+
+--- 27 ---
+Split into two parts:
+0027:
+	Update resctrl_arch_system_num_rmid_idx() to compute minimum
+	RMID across resources.
+0028: 
+	Better function names.
+	Rename: dom_data_init() -> setup_rmid_lru_list()
+	Rename: dom_data_exit() -> free_rmid_lru_list()
+	Move calls out of resctrl_mon_l3_resource_{init,exit}() and into
+	rdt_get_tree(), resctrl_exit()
+	Fix comment in setup_rmid_lru_list() about setup of rdtgroup_default.
+
+--- 28 ---
+Add check that RDT_RESOURCE_PERF_PKG resource is mon_capable. Also
+set global rdt_mon_capable (to cover the case where there are no
+enabled L3 monitor events).
+
+--- 29 ---
+Move declaration of debugfs_resctrl_info next to debugfs_resctrl.
+s/debugs/debugfs/
+Separate problem from context in commit comment.
+
+--- 30 ---
+Unchanged
+
+--- 31 ---
+Unchanged
+
+Background
+----------
+On Intel systems that support per-RMID telemetry monitoring each logical
+processor keeps a local count for various events. When the
+IA32_PQR_ASSOC.RMID value for the logical processor changes (or when a
+two millisecond counter expires) these event counts are transmitted to
+an event aggregator on the same package as the processor together with
+the current RMID value. The event counters are reset to zero to begin
+counting again.
+
+Each aggregator takes the incoming event counts and adds them to
+cumulative counts for each event for each RMID. Note that there can be
+multiple aggregators on each package with no architectural association
+between logical processors and an aggregator.
+
+All of these aggregated counters can be read by an operating system from
+the MMIO space of the Out Of Band Management Service Module (OOBMSM)
+device(s) on a system. Any counter can be read from any logical processor.
+
+Intel publishes details for each processor generation showing which
+events are counted by each logical processor and the offsets for each
+accumulated counter value within the MMIO space in XML files here:
+https://github.com/intel/Intel-PMT.
+
+For example there are two energy related telemetry events for the
+Clearwater Forest family of processors and the MMIO space looks like this:
+
+Offset  RMID    Event
+------  ----    -----
+0x0000  0       core_energy
+0x0008  0       activity
+0x0010  1       core_energy
+0x0018  1       activity
 ...
-> > Call Trace:
-> >   <TASK>
-> >   context_switch kernel/sched/core.c:5357 [inline]
-> >   __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
-> >   __schedule_loop kernel/sched/core.c:7043 [inline]
-> >   schedule+0x165/0x360 kernel/sched/core.c:7058
-> >   schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
-> >   do_wait_for_common kernel/sched/completion.c:100 [inline]
-> >   __wait_for_common kernel/sched/completion.c:121 [inline]
-> >   wait_for_common kernel/sched/completion.c:132 [inline]
-> >   wait_for_completion+0x2bf/0x5d0 kernel/sched/completion.c:153
-> >   kthread_flush_worker+0x1c6/0x240 kernel/kthread.c:1563
-> 
-> This is flushing pwq_release_worker during error handling, and I didn't see
-> anything btrfs specific except btrfs is allocating an ordered workqueue
-> which utilizes WQ_UNBOUND flag.
-> 
-> And that WQ_UNBOUND flag is pretty widely used among other filesystems,
-> maybe it's just btrfs have too many workqueues triggering this?
-> 
-> Adding workqueue maintainers.
+0x23F0  575     core_energy
+0x23F8  575     activity
 
-That flush stall likely is a secondary effect of another failure. The
-kthread worker is already spun up and running and the work function
-pwq_release_workfn() grabs several locks. Maybe someone else is stalling on
-those unless the kthread is somehow not allowed to run? Continued below.
+In addition the XML file provides the units (Joules for core_energy,
+Farads for activity) and the type of data (fixed-point binary with
+bit 63 used to indicate the data is valid, and the low 18 bits as a
+binary fraction).
 
-> > Showing all locks held in the system:
-> > 1 lock held by khungtaskd/38:
-> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
-> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
-> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-> > 1 lock held by udevd/5207:
-> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: write_lock_irq include/linux/rwlock_rt.h:104 [inline]
-> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: ep_poll fs/eventpoll.c:2127 [inline]
-> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: do_epoll_wait+0x84d/0xbb0 fs/eventpoll.c:2560
-> > 2 locks held by getty/5598:
-> >   #0: ffff88823bfae8a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
-> >   #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1410 drivers/tty/n_tty.c:2222
-> > 3 locks held by kworker/u8:3/5911:
-> > 3 locks held by kworker/u8:7/5942:
-> > 6 locks held by udevd/6060:
-> > 1 lock held by udevd/6069:
-> > 1 lock held by udevd/6190:
-> > 6 locks held by udevd/6237:
-~~~trimmed~~~
+Finally, each XML file provides a 32-bit unique id (or guid) that is
+used as an index to find the correct XML description file for each
+telemetry implementation.
 
-That's a lot of locks to be held, so something's not going right for sure.
+The INTEL_PMT_DISCOVERY driver provides intel_pmt_get_regions_by_feature()
+to enumerate the aggregator instances (also referred to as "telemetry
+regions" in this series) on a platform. It provides:
 
-> > Sending NMI from CPU 1 to CPUs 0:
-> > NMI backtrace for cpu 0
-> > CPU: 0 UID: 0 PID: 5911 Comm: kworker/u8:3 Tainted: G        W           6.16.0-syzkaller-11852-g479058002c32 #0 PREEMPT_{RT,(full)}
-> > Tainted: [W]=WARN
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> > Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
-> > RIP: 0010:get_timer_this_cpu_base kernel/time/timer.c:939 [inline]
-> > RIP: 0010:__mod_timer+0x81c/0xf60 kernel/time/timer.c:1101
-> > Code: 01 00 00 00 48 8b 5c 24 20 41 0f b6 44 2d 00 84 c0 0f 85 72 06 00 00 8b 2b e8 f0 bb 49 09 41 89 c5 89 c3 bf 08 00 00 00 89 c6 <e8> 0f c1 12 00 41 83 fd 07 44 89 34 24 0f 87 69 06 00 00 e8 4c bc
-> > RSP: 0018:ffffc90004fff680 EFLAGS: 00000082
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: f9fab87ca5ec6a00
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000008
-> > RBP: 0000000000200000 R08: 0000000000000000 R09: 0000000000000000
-> > R10: dffffc0000000000 R11: fffff520009ffeac R12: ffff8880b8825a80
-> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000802
-> > FS:  0000000000000000(0000) GS:ffff8881268cd000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f46b6524000 CR3: 000000003afb2000 CR4: 00000000003526f0
-> > Call Trace:
-> >   <TASK>
-> >   queue_delayed_work_on+0x18b/0x280 kernel/workqueue.c:2559
-> >   queue_delayed_work include/linux/workqueue.h:684 [inline]
-> >   batadv_forw_packet_queue+0x239/0x2a0 net/batman-adv/send.c:691
-> >   batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:842 [inline]
-> >   batadv_iv_ogm_schedule+0x892/0xf00 net/batman-adv/bat_iv_ogm.c:874
-> >   batadv_iv_send_outstanding_bat_ogm_packet+0x6c6/0x7e0 net/batman-adv/bat_iv_ogm.c:1714
-> >   process_one_work kernel/workqueue.c:3236 [inline]
-> >   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
-> >   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
-> >   kthread+0x711/0x8a0 kernel/kthread.c:463
-> >   ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
-> >   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >   </TASK>
+1) guid  - so resctrl can determine which events are supported
+2) MMIO base address of counters
+3) package id
 
-So, task hung watchdog triggered and making all cpus dump their backtraces
-and it's only one CPU. Is this a two CPU setup in a live lockup? I don't see
-anything apparent and these are time based conditions that can be triggered
-by severely overloading the system too. If you can reproduce the conditions,
-seeing how the system is doing in general and whether the system can unwind
-itself after killing the workload may be useful.
+Resctrl accumulates counts from all aggregators on a package in order
+to provide a consistent user interface across processor generations.
 
-Thanks.
+Directory structure for the telemetry events looks like this:
 
+$ tree /sys/fs/resctrl/mon_data/
+/sys/fs/resctrl/mon_data/
+mon_data
+├── mon_PERF_PKG_00
+│   ├── activity
+│   └── core_energy
+└── mon_PERF_PKG_01
+    ├── activity
+    └── core_energy
+
+Reading the "core_energy" file from some resctrl mon_data directory shows
+the cumulative energy (in Joules) used by all tasks that ran with the RMID
+associated with that directory on a given package. Note that "core_energy"
+reports only energy consumed by CPU cores (data processing units,
+L1/L2 caches, etc.). It does not include energy used in the "uncore"
+(L3 cache, on package devices, etc.), or used by memory or I/O devices.
+
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+
+Tony Luck (32):
+  x86,fs/resctrl: Consolidate monitor event descriptions
+  x86,fs/resctrl: Replace architecture event enabled checks
+  x86/resctrl: Remove 'rdt_mon_features' global variable
+  x86,fs/resctrl: Prepare for more monitor events
+  x86,fs/resctrl: Improve domain type checking
+  x86/resctrl: Move L3 initialization into new helper function
+  x86,fs/resctrl: Refactor domain_remove_cpu_mon() ready for new domain
+    types
+  x86/resctrl: Clean up domain_remove_cpu_ctrl()
+  x86,fs/resctrl: Use struct rdt_domain_hdr instead of struct
+    rdt_mon_domain
+  x86,fs/resctrl: Rename struct rdt_mon_domain and rdt_hw_mon_domain
+  x86,fs/resctrl: Rename some L3 specific functions
+  fs/resctrl: Make event details accessible to functions when reading
+    events
+  x86,fs/resctrl: Handle events that can be read from any CPU
+  x86,fs/resctrl: Support binary fixed point event counters
+  x86,fs/resctrl: Add an architectural hook called for each mount
+  x86,fs/resctrl: Add and initialize rdt_resource for package scope
+    monitor
+  x86/resctrl: Discover hardware telemetry events
+  x86/resctrl: Count valid telemetry aggregators per package
+  x86/resctrl: Complete telemetry event enumeration
+  x86,fs/resctrl: Fill in details of events for guid 0x26696143 and
+    0x26557651
+  x86,fs/resctrl: Add architectural event pointer
+  x86/resctrl: Read telemetry events
+  x86/resctrl: Handle domain creation/deletion for RDT_RESOURCE_PERF_PKG
+  x86/resctrl: Add energy/perf choices to rdt boot option
+  x86/resctrl: Handle number of RMIDs supported by telemetry resources
+  fs/resctrl: Move allocation/free of closid_num_dirty_rmid
+  fs,x86/resctrl: Compute number of RMIDs as minimum across resources
+  fs/resctrl: Move RMID initialization to first mount
+  x86/resctrl: Enable RDT_RESOURCE_PERF_PKG
+  fs/resctrl: Provide interface to create architecture specific debugfs
+    area
+  x86/resctrl: Add debugfs files to show telemetry aggregator status
+  x86,fs/resctrl: Update Documentation for package events
+
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ Documentation/filesystems/resctrl.rst         |  85 +++-
+ include/linux/resctrl.h                       |  89 +++-
+ include/linux/resctrl_types.h                 |  26 +-
+ arch/x86/include/asm/resctrl.h                |  16 -
+ arch/x86/kernel/cpu/resctrl/internal.h        |  56 ++-
+ fs/resctrl/internal.h                         |  68 ++-
+ arch/x86/kernel/cpu/resctrl/core.c            | 310 ++++++++----
+ arch/x86/kernel/cpu/resctrl/intel_aet.c       | 448 ++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c         |  76 +--
+ fs/resctrl/ctrlmondata.c                      | 123 ++++-
+ fs/resctrl/monitor.c                          | 310 ++++++------
+ fs/resctrl/rdtgroup.c                         | 272 +++++++----
+ arch/x86/Kconfig                              |  13 +
+ arch/x86/kernel/cpu/resctrl/Makefile          |   1 +
+ 15 files changed, 1442 insertions(+), 453 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/resctrl/intel_aet.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 -- 
-tejun
+2.50.1
+
 
