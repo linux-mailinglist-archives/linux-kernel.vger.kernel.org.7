@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-762011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD79FB2010B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:01:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCCAB2010D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2D53BCC16
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EC0617CFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08152DAFBD;
-	Mon, 11 Aug 2025 08:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14F523507C;
+	Mon, 11 Aug 2025 08:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qEkpcc5y"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NLO+LuoO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73182DAFA9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0901F936
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899221; cv=none; b=mZnFmlFxE7NxJGqm86JC7maJypwaeW0/YoHJiPW8WfhM32dwU8tilSs5d9j9/oJeMyRKh35gVSRrzmV9rz5RmAKxlRByDaLS5lloso4+3OTB/RsgNNRoGU2Um/+NpFkTxoXyBtIXvuKcOSsqsM8Bh5a/88cdVTP7ySeAJtVNJI8=
+	t=1754899251; cv=none; b=rFtEmChe2bV6ChlZ/ONM6oSulm6wZq6luBeZbK0agyYWvtSytT1QERBOYKiI2GyblK7/Ek9Q9J8hzbTA5mvh6hNAGrGLZO8g7D5Hbx+4OvfDTkseAEg05CJ14Ejsh4SgiNkn8bIBXqfJ0xHAwhtds+VyILIJ6oxSaPO8RgN3Gk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899221; c=relaxed/simple;
-	bh=D34kq3r7k+H6q6dNbv0C7/Aqz9VAOIRBun7toR5ws5U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NzujEDqSQa9zPjnjMXDOcBX9HfXltibtdHD+545jRcky1jbOD/2f1qrc2zO0m4oZL32LePy5WxYzBmDyDP+f0E+uTDyRvoKUxOcYVTw1cBy7nc4TJ8HiugWHuKpQSPvRrkyXIK6z3MaSP4rKhkUDL/922xLBmkeIMqNBgmT1qyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qEkpcc5y; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57B7xu411564151;
-	Mon, 11 Aug 2025 02:59:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754899197;
-	bh=7PfiPykHsTbwLkTcmOnffcGjkDy3xo0UuxzokO5rkK8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=qEkpcc5ym9E/+sTPiKbpwNWFx+aOzHKrRuRzH+no/ya1rwhG8FqPuAlJj2Evhhi7B
-	 83Medxk0/dr4xA5ZunsWLQ0wFRWMG0vBBr7DXEuqXNnJPXHS/9+m8WJnQO2IIu5tEn
-	 vBkf2rwR4/jlPAhSC8UbFdh6jQaLLX8cgQa/Mn+M=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57B7xuph2515611
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 11 Aug 2025 02:59:56 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 11
- Aug 2025 02:59:56 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 11 Aug 2025 02:59:56 -0500
-Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57B7x5D02817433;
-	Mon, 11 Aug 2025 02:59:49 -0500
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
-        <lumag@kernel.org>, <dianders@chromium.org>,
-        <dri-devel@lists.freedesktop.org>, <tomi.valkeinen@ideasonboard.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>, <lyude@redhat.com>,
-        <luca.ceresoli@bootlin.com>, <viro@zeniv.linux.org.uk>,
-        <andy.yan@rock-chips.com>, <linux@treblig.org>, <javierm@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
-        <j-choudhary@ti.com>, <u-kumar1@ti.com>, <h-shenoy@ti.com>,
-        <s-jain1@ti.com>
-Subject: [PATCH v5 6/6] drm/bridge: cadence: cdns-mhdp8546-core: Handle HDCP state in bridge atomic check
-Date: Mon, 11 Aug 2025 13:29:04 +0530
-Message-ID: <20250811075904.1613519-7-h-shenoy@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250811075904.1613519-1-h-shenoy@ti.com>
-References: <20250811075904.1613519-1-h-shenoy@ti.com>
+	s=arc-20240116; t=1754899251; c=relaxed/simple;
+	bh=cjZtRu5OXf9JXKnHATVcX5fDwbKbX0uvLSrZsQCQxvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5EIk+xTGwmB4vPYPnSKaGZJPQODWIRZI9LYBE00gt0Kud9may4+rehzYNXv4iobvlrRihGBxCbzh0sC3wnbsEf0K3bic17tfy/90VXV+B/ZXPw4gKn8txHjxlOoH8Z5iPmfFMfDy4FVfollIC4GB2z+52OjKb5Lfmt6ogPRuJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NLO+LuoO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754899248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M05mA5/Cn/fNMaklkCPAr949XgPrcsIP2UFNbyCPgnk=;
+	b=NLO+LuoOBjrj2ABT7qyVnRtUqoiSEHUXxSi0tPJLSWTuEvOumq5ptOcifI4L6rP7Pbqrcl
+	oIe18QGQkK1OWr77i6TETYhgClDvMBQHVJh0COVqAMRSDlsYJv1Kr6sHvNfZgxfp1pNi4s
+	GeXrWqwB2eyfakTqtvyC+9hc1jWdaM4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-h86qnwARO5CHbDkC1CS7QQ-1; Mon,
+ 11 Aug 2025 04:00:43 -0400
+X-MC-Unique: h86qnwARO5CHbDkC1CS7QQ-1
+X-Mimecast-MFC-AGG-ID: h86qnwARO5CHbDkC1CS7QQ_1754899242
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4CC51800451;
+	Mon, 11 Aug 2025 08:00:41 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.98])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC4D019560AD;
+	Mon, 11 Aug 2025 08:00:31 +0000 (UTC)
+Date: Mon, 11 Aug 2025 16:00:19 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+	zhengqixing@huawei.com, lilingfeng3@huawei.com, nilay@linux.ibm.com
+Subject: Re: [PATCH v2] block: fix kobject double initialization in add_disk
+Message-ID: <aJmjE6QvRrVyQwgi@fedora>
+References: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Now that we have DBANC framework and legacy connector functions removed,
-handle the HDCP disabling in bridge atomic check rather than in connector
-atomic check previously.
+On Fri, Aug 08, 2025 at 01:36:09PM +0800, Zheng Qixing wrote:
+> From: Zheng Qixing <zhengqixing@huawei.com>
+> 
+> Device-mapper can call add_disk() multiple times for the same gendisk
+> due to its two-phase creation process (dm create + dm load). This leads
+> to kobject double initialization errors when the underlying iSCSI devices
+> become temporarily unavailable and then reappear.
+> 
+> However, if the first add_disk() call fails and is retried, the queue_kobj
+> gets initialized twice, causing:
+> 
+> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
+> something is seriously wrong.
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x5b/0x80
+>   kobject_init.cold+0x43/0x51
+>   blk_register_queue+0x46/0x280
+>   add_disk_fwnode+0xb5/0x280
+>   dm_setup_md_queue+0x194/0x1c0
+>   table_load+0x297/0x2d0
+>   ctl_ioctl+0x2a2/0x480
+>   dm_ctl_ioctl+0xe/0x20
+>   __x64_sys_ioctl+0xc7/0x110
+>   do_syscall_64+0x72/0x390
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Fix this by separating kobject initialization from sysfs registration:
+>  - Initialize queue_kobj early during gendisk allocation
+>  - add_disk() only adds the already-initialized kobject to sysfs
+>  - del_gendisk() removes from sysfs but doesn't destroy the kobject
+>  - Final cleanup happens when the disk is released
+> 
+> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
+> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
+> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
 
-Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
----
- .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 4fb1db3e030c..af41b2908a74 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -1960,6 +1960,10 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
- {
- 	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
- 	const struct drm_display_mode *mode = &crtc_state->adjusted_mode;
-+	struct drm_connector_state *old_state, *new_state;
-+	struct drm_atomic_state *state = crtc_state->state;
-+	struct drm_connector *conn = mhdp->connector;
-+	u64 old_cp, new_cp;
- 
- 	mutex_lock(&mhdp->link_mutex);
- 
-@@ -1979,6 +1983,25 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
- 	if (mhdp->info)
- 		bridge_state->input_bus_cfg.flags = *mhdp->info->input_bus_flags;
- 
-+	if (conn && mhdp->hdcp_supported) {
-+		old_state = drm_atomic_get_old_connector_state(state, conn);
-+		new_state = drm_atomic_get_new_connector_state(state, conn);
-+		old_cp = old_state->content_protection;
-+		new_cp = new_state->content_protection;
-+
-+		if (old_state->hdcp_content_type != new_state->hdcp_content_type &&
-+		    new_cp != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-+			new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
-+			crtc_state = drm_atomic_get_new_crtc_state(state, new_state->crtc);
-+			crtc_state->mode_changed = true;
-+		}
-+
-+		if (!new_state->crtc) {
-+			if (old_cp == DRM_MODE_CONTENT_PROTECTION_ENABLED)
-+				new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
-+		}
-+	}
-+
- 	mutex_unlock(&mhdp->link_mutex);
- 	return 0;
- }
--- 
-2.34.1
+Thanks,
+Ming
 
 
