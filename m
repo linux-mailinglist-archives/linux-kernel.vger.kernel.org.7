@@ -1,112 +1,94 @@
-Return-Path: <linux-kernel+bounces-761925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C017B1FFF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:11:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBC4B1FF89
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EB1189C29B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BFA16C71F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 06:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE2C2D97B8;
-	Mon, 11 Aug 2025 07:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BF52D879C;
+	Mon, 11 Aug 2025 06:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSgMoSnb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M2O8Jkqq"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8A32561AB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098B82D77E1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754896180; cv=none; b=hZ4ChNtL+KB1WaVUJnmVzH54b4SDdqXReZQ9+oCOuWTmHbwJ5osP2wCfHxAoasm6zTWfBETXiWum1RjF3ZXldUIpsD1HzN6ps0xUG+q0cCCP4uENDDzaD6Qy0fbXf8dUoLuogH22KN/hEgJFNLwpT45CUkePfaPB2/ACQCVPYqQ=
+	t=1754894802; cv=none; b=dtEpLGinf4/pmtQs/Xj+u7jZ3R76LsCxW4Ab5IwXfpjD/U0oCYdL9zmaoFP7h3r+Mrvc7vLjXaRek+mEW5jS17PZxWN1w4WQPCVw+U4oj8fEq9Hnyq+zJaaSi8ES6iImWQRFu739TlZzpjIDk1ctTj2l0HxodMa7AB5GTe4D4SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754896180; c=relaxed/simple;
-	bh=7z//XUu8T6I5PWiVUYkgzX56lekKtAuXc9LA1vkAIVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldzAAqBK6HIyr3FkfHpR97woa5VdxVHkCWWczb6kve1BHcNidhWqJrjLf95Z7/+6AyJslgHfhlaH8YUsmbxE63TBlhWRhlnH7i4DWRzDGh7UZrhdaYakVPLazHih9hNemw1EPBBfIwrKu69RiWLajAtmz6e8PEvhZRdmKqG17U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSgMoSnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEEBC4AF09;
-	Mon, 11 Aug 2025 07:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754896179;
-	bh=7z//XUu8T6I5PWiVUYkgzX56lekKtAuXc9LA1vkAIVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jSgMoSnbXdeC3hTmMa5rxqnU+TWuL44ft9yhN6jzlYEmA7jwdSGYiQnLF6BFOYKsr
-	 5R/fr9QjyFbzxrlBrIv2gCok7gC8JkgAppw6IXD/F87bUVX5sLc2JR+i0hiKjHB/eg
-	 cfP9T2kKrEeWB53CBUEIYKgIVeFsIdkopEWkV1obWsWDyqrTyQ0SMRBRBszN1XGf6p
-	 a/x4EjKoAuphTOp/i4iZkdRFQSga+eMCJZDAvNlPeoiQXnyWXFuLlWT0mOaSgKnz9o
-	 oU2KCRXlBAKJHbtJRS6w71U3Eb8UeQ9PSpr4qZWggtwXe60/vHe8hYUg6SLwi5/Qqk
-	 j0QU/Hr3uRHzA==
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 61606F40068;
-	Mon, 11 Aug 2025 03:09:37 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 11 Aug 2025 03:09:37 -0400
-X-ME-Sender: <xms:MZeZaAKhv47jBdQVbZBUzCxovzHYH_0rrP55uhLzR3Dqu-Hy8rtmog>
-    <xme:MZeZaDm4-FA4AmkgD2YQQA1xH-F3sHPexYTS35ALEVFWRqWFjvQXtfar8y28gGpiS
-    cXt0_A1OFnzm3zDBmM>
-X-ME-Received: <xmr:MZeZaM-CyM-RA_V15WzO_HJwVVjXwS5bJQX1q813TA-nJyYUmhcLGBheIsW3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedukeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
-    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
-    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
-    hnrghmvgdpnhgspghrtghpthhtohepkedtpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehhrghrrhihrdihohhosehorhgrtghlvgdrtghomhdprhgtphhtthhopeguvghnnh
-    hisheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhu
-    nhgurghtihhonhdrohhrghdprhgtphhtthhopehrhigrsghinhhinhdrrgdrrgesghhmrg
-    hilhdrtghomhdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvg
-    grugdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepthhglhigsehlihhnuhhtrhhonhhigidruggv
-X-ME-Proxy: <xmx:MZeZaGZbB5w_M42lUmZvSVfIC5VjvScMKskxvkLxG0mVV0m3V7kKAw>
-    <xmx:MZeZaBc00jAWL5dtGe5myKZzMdQ7PLHS6rajsmRqWQuvhtwgycMP1g>
-    <xmx:MZeZaGGN3-BRzRyZ3VTcErLpqp_9MdvkA37zFIuvtc29YHSY7cqBRg>
-    <xmx:MZeZaEPqxrTYCm-gaYlP41qi_-NhCIWpAR2UzkynZnOmQu5E2MBG4Q>
-    <xmx:MZeZaO4ZV2QSxZoQAn7qeAHqpWYLVxkPnxGf8XyRRwOEAG9Iw4NuNkCY>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 03:09:36 -0400 (EDT)
-Date: Mon, 11 Aug 2025 07:46:13 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Dennis Zhou <dennis@kernel.org>,
- 	Andrew Morton <akpm@linux-foundation.org>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
- 	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
- 	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- 	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- 	Dave Hansen <dave.hansen@linux.intel.com>,
- Christoph Lameter <cl@gentwo.org>, 	David Hildenbrand <david@redhat.com>,
- Andrey Konovalov <andreyknvl@gmail.com>,
- 	Vincenzo Frascino <vincenzo.frascino@arm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, kasan-dev@googlegroups.com,
- 	Mike Rapoport <rppt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org, 	Dmitry Vyukov <dvyukov@google.com>,
- Alexander Potapenko <glider@google.com>,
- 	Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, 	Thomas Huth <thuth@redhat.com>,
- John Hubbard <jhubbard@nvidia.com>,
- 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Michal Hocko <mhocko@suse.com>,
- 	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
- Oscar Salvador <osalvador@suse.de>, 	Jane Chu <jane.chu@oracle.com>,
- Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
- 	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
- Joerg Roedel <joro@8bytes.org>, 	Alistair Popple <apopple@nvidia.com>,
- Joao Martins <joao.m.martins@oracle.com>, 	linux-arch@vger.kernel.org
-Subject: Re: [PATCH V4 mm-hotfixes 0/3] mm, x86: fix crash due to missing
- page table sync and make it harder to miss
-Message-ID: <qsprh2qiisldfsielpx6inuiw3rrh5owr3urin7maxvwtlhipz@zbioc6hgqe3r>
-References: <20250811053420.10721-1-harry.yoo@oracle.com>
+	s=arc-20240116; t=1754894802; c=relaxed/simple;
+	bh=jBo5UANno+XfA29YPINf2MeDmdVe/2QnIWuOgjuDJGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=WTy3VLl/YXEQjjdyb5h9wFCydhJGt6i1sGpmfq0ms0xNFYo2jBL+S1ZmaiWX/k5vp+QJAFbj6TJ8qUULC3fPrsFITNbvo/OSkOSSXaHgI5rDy5zizxVuSbttjjhYI8Pf7zY1frWDmZ04Ct4ukuRwawgYGpYKCzu9hrOWc7RFAWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M2O8Jkqq; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b7823559a5so1783132f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 23:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754894798; x=1755499598; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZI4IZrSEWJ+0JsUHQ5F8RKmssnmQDDF0w+or3Wom0Y=;
+        b=M2O8JkqqDgYT16WrtZ2ZiYx2jJ5dozjhPSTYWSrShlOeWDc9NOEUamv7a+MOCoy4pq
+         O1MiiRVMA8P7Xu61xm+4oAHUDyibt4bmMbrYMLzpYsZ4K0599nkfwSy2Hx826fDafgR1
+         BVVD9ymsJLso3kCIwzoJlfzsNF0Xf6GuKrvRBmdCz5JMQfweTay6cmflGM0Cq+ccNnjC
+         uufNLpbPvUdQwPO69vfN1UrfeZlJ7/OAipI+3AH0sisX8J3KR19lY/E5SdH7W3cG/10B
+         bseSFaijZfetA+MB1Ugawq+td5PXYUthppMqlJU7Rjweu9vzGS75cjeF1wGwh1TABZKR
+         BSlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754894798; x=1755499598;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZI4IZrSEWJ+0JsUHQ5F8RKmssnmQDDF0w+or3Wom0Y=;
+        b=hQDQAkRdJ9zK+ZPiAg0BwWkcKZOBLAE35OmOoN5YnWK/+rhJlOelZWzCsAYFqDSxFv
+         +cFQ5DwaHVhlpjlSjShOo20UBlNEWKkPFtBrG8k5fil6Sz4LCnfDdDiO4FdIeiggYIjd
+         p1YzWc0m3jVY0TDSH1V8snI0obAOHNBgDsIAk0UqgK6r0FF8XufrXiMH/DTZecPwcH68
+         wJBx/KuWMUwNzo0DwR1hxRaSOzAIQDdSB8T4nia1uJ2D+CKgGsorTi988r4iouabBAX8
+         0TZdD0bCsCOFNXlJtrRv9+oNZYDIgrZWiM80DlEw6k5b16JpKZtlDXmEDvJgMawMlgHb
+         C92g==
+X-Forwarded-Encrypted: i=1; AJvYcCUbhMZTWeL/mLglASyEUxqopm3Zj5fOGh+ZLoXQi99rdONKuOIAbuMPQf9u8EoTAuFLrD2TJnvnkPAuWRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb1qXxh7FEOGJcCT/BEJlEgbczLlnIupzxYC5QaUwbmhMfXhqa
+	FjR/qqnG6B419piA1nETbybtjN/2caKamt+eng4xcmpDuZzhOV00JPEmeTPHyX6ge/I=
+X-Gm-Gg: ASbGnctVwXJt21jPLxbelGlml38PpD791LbnpYMA33hV4J/J03zK5orqEV1AIRuwr7A
+	eNSxmZoiL6ASjgaSDzj8tDOEIQvjTBjBUXPUii7b2bOyXijf7tRTjOhzk12wFwQmD+47NCMiI5u
+	ML5NO0fGYHx1s2YnJcGHN3XuilsZf+BOlh9ZNVLxxLHZt8UIudHnPi+aLLdXaPPqkpDSqCiFF8+
+	66rvqwDU2uit5puSK8SewTKeSFHMXk7y7OtGvB3V4+mWLuaWvWQ7+e85jpbse/FyuuhH1BGb8ZM
+	yuk8fAZPa3PtkzN0HXqnI0N+aSTIm68jhv1SzJpLJZV8gVfp9O5YPtenoalmBGsVdJRnvNKwJl/
+	M9Uf7bq0WnkLACsRYi7bq519URBzuIEaRmwj7oOrC6QA=
+X-Google-Smtp-Source: AGHT+IH+a64xEOPVPhERDfj/+owOAQRBVcZN1KIVGv8qfkFFGNlsOI9q9ejBHs8ooi13JqXBcw4o9g==
+X-Received: by 2002:a5d:64c3:0:b0:3b7:8832:fdd5 with SMTP id ffacd0b85a97d-3b900b2c83bmr9256965f8f.16.1754894798292;
+        Sun, 10 Aug 2025 23:46:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3c33fesm40026751f8f.29.2025.08.10.23.46.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 23:46:37 -0700 (PDT)
+Date: Mon, 11 Aug 2025 09:46:18 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Ioana Risteiu <Ioana.Risteiu@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ramona Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Ioana Risteiu <Ioana.Risteiu@analog.com>
+Subject: Re: [PATCH v2 3/3] iio: adc: update ad7779 to use IIO backend
+Message-ID: <202508090909.tqDX7ah1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,43 +97,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811053420.10721-1-harry.yoo@oracle.com>
+In-Reply-To: <20250806192502.10120-4-Ioana.Risteiu@analog.com>
 
-On Mon, Aug 11, 2025 at 02:34:17PM +0900, Harry Yoo wrote:
-> # The solution: Make page table sync more code robust and harder to miss
-> 
-> To address this, Dave Hansen suggested [3] [4] introducing
-> {pgd,p4d}_populate_kernel() for updating kernel portion
-> of the page tables and allow each architecture to explicitly perform
-> synchronization when installing top-level entries. With this approach,
-> we no longer need to worry about missing the sync step, reducing the risk
-> of future regressions.
+Hi Ioana,
 
-Looks sane:
+kernel test robot noticed the following build warnings:
 
-Acked-by: Kiryl Shutsemau <kas@kernel.org>
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> The new interface reuses existing ARCH_PAGE_TABLE_SYNC_MASK,
-> PGTBL_P*D_MODIFIED and arch_sync_kernel_mappings() facility used by
-> vmalloc and ioremap to synchronize page tables.
-> 
-> pgd_populate_kernel() looks like this:
-> static inline void pgd_populate_kernel(unsigned long addr, pgd_t *pgd,
->                                        p4d_t *p4d)
-> {
->         pgd_populate(&init_mm, pgd, p4d);
->         if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_PGD_MODIFIED)
->                 arch_sync_kernel_mappings(addr, addr);
-> }
-> 
-> It is worth noting that vmalloc() and apply_to_range() carefully
-> synchronizes page tables by calling p*d_alloc_track() and
-> arch_sync_kernel_mappings(), and thus they are not affected by
-> this patch series.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ioana-Risteiu/iio-adc-adi-axi-adc-add-axi_adc_num_lanes_set/20250807-032923
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250806192502.10120-4-Ioana.Risteiu%40analog.com
+patch subject: [PATCH v2 3/3] iio: adc: update ad7779 to use IIO backend
+config: x86_64-randconfig-161-20250809 (https://download.01.org/0day-ci/archive/20250809/202508090909.tqDX7ah1-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
 
-Well, except ARCH_PAGE_TABLE_SYNC_MASK is not defined on x86-64 until
-now. So I think it is affected.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202508090909.tqDX7ah1-lkp@intel.com/
+
+smatch warnings:
+drivers/iio/adc/ad7779.c:893 setup_back() warn: passing zero to 'dev_err_probe'
+
+vim +/dev_err_probe +893 drivers/iio/adc/ad7779.c
+
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  879  static int setup_back(struct ad7779_state *st, struct iio_dev *indio_dev)
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  880  {
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  881  	struct device *dev = &st->spi->dev;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  882  	int ret = -EINVAL;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  883  	int num_lanes;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  884  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  885  	indio_dev->info = &ad7779_info_data;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  886  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  887  	ret = ad7779_conf_channels(indio_dev, st);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  888  	if (ret)
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  889  		return ret;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  890  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  891  	st->back = devm_iio_backend_get(dev, NULL);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  892  	if (IS_ERR(st->back)) {
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06 @893  		dev_err_probe(dev, ret, "failed to get iio backend");
+
+s/ret/PTR_ERR(st->back)/
+
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  894  		return PTR_ERR(st->back);
+
+Change this to:
+
+	if (IS_ERR(st->back))
+		return dev_err_probe(dev, PTR_ERR(st->back),
+				     "failed to get iio backend");
+
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  895  	}
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  896  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  897  	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  898  	if (ret)
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  899  		return ret;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  900  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  901  	ret = devm_iio_backend_enable(dev, st->back);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  902  	if (ret)
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  903  		return ret;
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  904  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  905  	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  906  	if (ret < 0)
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  907  		return ad7779_set_data_lines(indio_dev, 4);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  908  
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  909  	return ad7779_set_data_lines(indio_dev, num_lanes);
+1d61d2e4f96ac5 Ioana Risteiu 2025-08-06  910  }
 
 -- 
-Kiryl Shutsemau / Kirill A. Shutemov
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
