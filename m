@@ -1,256 +1,236 @@
-Return-Path: <linux-kernel+bounces-761747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41059B1FE01
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF27DB1FE03
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5542E167A2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A496C3B42A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD43223F27B;
-	Mon, 11 Aug 2025 02:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J1VJ8NVd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848011367;
+	Mon, 11 Aug 2025 02:52:28 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE1DEACD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D7713B7A3
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754880303; cv=none; b=NTuX4mTZS+/RgLHgXM0TnVI35adQNjhmi/NG0iGCX3S7hR3Df2jG1N/8boxVPY9TIaLlRShYGNYXDG5cjYQtbwNBsw4O5dGrD3X4EVoUJSE4ci2ATBkuCVNAj9ndmpYzEMF0WPydmHwZBlbXg0qm/7fbiJPsh09UR9jLLe7hi9E=
+	t=1754880748; cv=none; b=s14szcbazQh8u9/rLn6xFuHXdqVvZwqIKILs7Ubj2gKAkpJedmi8DFcOlIm0Uu0JsKMJsQ6nIdztSEhcUZ9Td4aMul/i58kGn1DfVCY5ZXXK42FErCBClfkmwucNgIJjqPYWNcftIFmd6jN/eePqkAeRECJTAf97uL+o+oxEIo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754880303; c=relaxed/simple;
-	bh=9ppwh54+HK1qVr+GRbb6FbUhHZWPWKbZ3u0a0GnFclk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4TFXXkP13P3fRRp8c7WvayKJF2LBKOVYtB28xwFhZGp66oj6PL1UQzbJVq0J1ghMRU+6U7W0nDR/hta8hS5Ez4emrRy4/ugMTtMMlc3FP96r4mast/1SIfchlfX0w7EDjWRNAFNqmAQ2E2+s4XHvAxkd6416QQaT0+UocbRN6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J1VJ8NVd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754880299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e0/sM6aUkX502iExFjanLuFpVfhVyNcMUm7+a6rSkos=;
-	b=J1VJ8NVdhdQtEdMVkWPwNQdSoaGn/KxcOOsT2xKJKP4f24pmWlSAXSJGRAovRdEckO+FQk
-	CVqGWUZhapt8Z+pkrcENRyXS4/WgnWEUVhh5lXxLP29RlAw0X5O36aKzyzJK+4becQLwTc
-	+55jq3sqpKuaC+J1FBVX/mkPZPMVtXo=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-SUMwbdTDOsChfzZiO8HY5A-1; Sun, 10 Aug 2025 22:44:58 -0400
-X-MC-Unique: SUMwbdTDOsChfzZiO8HY5A-1
-X-Mimecast-MFC-AGG-ID: SUMwbdTDOsChfzZiO8HY5A_1754880297
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2400a932e59so66171505ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:44:58 -0700 (PDT)
+	s=arc-20240116; t=1754880748; c=relaxed/simple;
+	bh=ePVF13VnvcNmbBkuoXsRvHXUiFRbHxBV7a+tjb3RZQA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qu+GeHE6Ub0cdKNlaJxd2lY0Bncb7D402mUtUwXWss2etSvy5l9Df/vqyKX68foDZVjvFTEFk2wxtsIdyj2FJbhGw6faBCrNGG8UvEBa3ZD/1vBLzDRUhM3tBFOVeF7bDfzNBxQGlG12a+T8HvgIzPQGVCUhCyE08mLH5dH/plE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-881878af906so800478039f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:52:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754880297; x=1755485097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e0/sM6aUkX502iExFjanLuFpVfhVyNcMUm7+a6rSkos=;
-        b=Gbd3h9N5/NPZ3KUI4EayUX6ggEklqJe1RUF6CfF9tQKt6lrhdkpyLUIei0HRalAJY+
-         UfV+E1vV1XrZItGcQhJFnZBUj6qbf+x2mm4eE3D+PcRD1atjrkFEyYseJTi+553i9KPW
-         G5iro/8wn9vdxgxtQbF56DojQ40EdFGn4eChAE0mzVi5crFQGlktaZwursvFjriwxmK1
-         jeKm2njAc4K+Nocy2VhJ4NHVJYvn7C7k1FUCXEV11yooN5Z5NmOORaHOT9j/DL2Ivd1g
-         GN0U+SZoBD8TTlAPrPsjByjqOxpiFe3z9YDpeTLrpjviv8Qn3uzfWryE11CnV3iNAU7O
-         7iRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Badc+QK1+FISWV8uS70YsOQ4/u9C+nfEzSeZ0kFZCcnvKbzi2tBpcwtzB4zwb8Qu/Ax6NclmTjFSzNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAUalipXzNGFn3fi78jJabhXQrx5KKqEacWao4H1zMB5BU9eEq
-	77IXKRGvb+k4mKyR0eFZqOC8ErYYKlwX/EaKf8BIl3IL4uMKOwwZc8OdTCqLIIvpkivuhUiZtHB
-	7Sdjl8gHacw8VZDZ+3SQHUsq3p+7js3x6Oq+Hqp8SzLb/EIuGgXPVUE+kVzp95Pyu622+ELdg60
-	hsxH2JBZdPP4W3QStSjzYgTsGH5iAr64h1vGFz1aM7
-X-Gm-Gg: ASbGncvsvnd8xjq+6SmB7+qvYb8SvIAICw3zV8fiGcZdZr/Q2B3mYBqaSeUctsoCqwy
-	d6T3UYQPPaIgzkwW5EeTjGFfyzNbb7SDU5ZfXVN69Ujgq9NoLCxkJw6c2WHYm9iK7VFlfA6xKrC
-	2oDeVncm/yzV0e9tvzMAM=
-X-Received: by 2002:a17:903:22ce:b0:240:a8c8:5f6f with SMTP id d9443c01a7336-242c22a0c4dmr149214465ad.27.1754880297129;
-        Sun, 10 Aug 2025 19:44:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQGmESbcgQnsFMMENqJMFjx9cNlM1noV3xMR7G/xI2RDUr9pzR5lhTfwZsR29D3VOrmuAiSwzBZnYtSI+WvX4=
-X-Received: by 2002:a17:903:22ce:b0:240:a8c8:5f6f with SMTP id
- d9443c01a7336-242c22a0c4dmr149214205ad.27.1754880296614; Sun, 10 Aug 2025
- 19:44:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754880745; x=1755485545;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aLqHtODNg9yZAW29ftWwGBy+UqBt0e1Hwe2aS6qEPK4=;
+        b=kj2BWgrqvlYmDSTuAJzxRtMdjgBFKcs4wQ15jBh7xN2rpX1NI7/RbrbDjXAgHWxoxo
+         5ml+Rqyw+338DZEPaPc1SRNML6JUw6ZGKYpo7GzSpbd8z8/tpQOTnziTpxhUcgIkt51C
+         kCjM53a9CjIMEuv1/t3C+pFBrYd8Y9uCnmgNb6XWlbdVxh2ccAq4DINizJbSsdaNnt4U
+         ouY1l3XUzIFrGGMZRhLZD9osZSLZ1ws8T78RGy64tRFnv7FtJGaciSCVZ2kcPaUNwExc
+         OK1o+G35OmhtHrE3/7ouT6xG8vHbo6il/4k4Oe8KUg5UL8VvlKH4I8nNVgh/vDx/2gMI
+         Czaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTZpmTRhFUxbjmyAna64NdD2ZK+5BNqYj4PnZYoLg0B5l+eln7Qlo4w7XVmj6a321PSsDQBrDnh30nPb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjKMr9M0X7sgB/U21WsZNj9NDbBJby1pTTsCxzksFl554xhGpT
+	BSTF38i+HnpCy4v53m2bIT2eBOzbEMJYKnsTFIAnZe+XS3w3KzgnOrfM8F/zcZTDvB4oVu+Snf8
+	QN5P91+BmP4/ZlYyzz2QYv0LBA/xZx54gxyq3qAHKW4uDEZxuh4YyyJfGWJI=
+X-Google-Smtp-Source: AGHT+IH2qpJz8/ZkW9szGOiYZKy9M2BG/Id14kXvLZkYa3aXWNfNAO0dcF+yZ2M23u3x5DFMRntHyKeOxNXMDo4HdJTB2rNi6MpR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808153721.261334-1-simon.schippers@tu-dortmund.de> <689757e093982_2ad3722945f@willemb.c.googlers.com.notmuch>
-In-Reply-To: <689757e093982_2ad3722945f@willemb.c.googlers.com.notmuch>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 11 Aug 2025 10:44:45 +0800
-X-Gm-Features: Ac12FXzoWIUcI3SjBmgBouN2-NVQtxYqr_Frxhq9JvJ-Ez4KXxfRxpNoKJSZBpc
-Message-ID: <CACGkMEuFXojXZ-tyaY284CXZmx+0nG4-bKB3dzsQvwuxmM9TwQ@mail.gmail.com>
-Subject: Re: [PATCH net] TUN/TAP: Improving throughput and latency by avoiding
- SKB drops
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
+X-Received: by 2002:a05:6602:2dcd:b0:881:7e0c:7a79 with SMTP id
+ ca18e2360f4ac-883f11b58b4mr2271375139f.2.1754880745383; Sun, 10 Aug 2025
+ 19:52:25 -0700 (PDT)
+Date: Sun, 10 Aug 2025 19:52:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68995ae9.050a0220.7f033.00e7.GAE@google.com>
+Subject: [syzbot] [usb?] INFO: task hung in dvb_usbv2_exit
+From: syzbot <syzbot+295c63688014c13a0a59@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 9, 2025 at 10:15=E2=80=AFPM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> Simon Schippers wrote:
-> > This patch is the result of our paper with the title "The NODROP Patch:
-> > Hardening Secure Networking for Real-time Teleoperation by Preventing
-> > Packet Drops in the Linux TUN Driver" [1].
-> > It deals with the tun_net_xmit function which drops SKB's with the reas=
-on
-> > SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
-> > resulting in reduced TCP performance and packet loss for bursty video
-> > streams when used over VPN's.
-> >
-> > The abstract reads as follows:
-> > "Throughput-critical teleoperation requires robust and low-latency
-> > communication to ensure safety and performance. Often, these kinds of
-> > applications are implemented in Linux-based operating systems and trans=
-mit
-> > over virtual private networks, which ensure encryption and ease of use =
-by
-> > providing a dedicated tunneling interface (TUN) to user space
-> > applications. In this work, we identified a specific behavior in the Li=
-nux
-> > TUN driver, which results in significant performance degradation due to
-> > the sender stack silently dropping packets. This design issue drastical=
-ly
-> > impacts real-time video streaming, inducing up to 29 % packet loss with
-> > noticeable video artifacts when the internal queue of the TUN driver is
-> > reduced to 25 packets to minimize latency. Furthermore, a small queue
->
-> This clearly increases dropcount. Does it meaningfully reduce latency?
->
-> The cause of latency here is scheduling of the process reading from
-> the tun FD.
->
-> Task pinning and/or adjusting scheduler priority/algorithm/etc. may
-> be a more effective and robust approach to reducing latency.
->
-> > length also drastically reduces the throughput of TCP traffic due to ma=
-ny
-> > retransmissions. Instead, with our open-source NODROP Patch, we propose
-> > generating backpressure in case of burst traffic or network congestion.
-> > The patch effectively addresses the packet-dropping behavior, hardening
-> > real-time video streaming and improving TCP throughput by 36 % in high
-> > latency scenarios."
-> >
-> > In addition to the mentioned performance and latency improvements for V=
-PN
-> > applications, this patch also allows the proper usage of qdisc's. For
-> > example a fq_codel can not control the queuing delay when packets are
-> > already dropped in the TUN driver. This issue is also described in [2].
-> >
-> > The performance evaluation of the paper (see Fig. 4) showed a 4%
-> > performance hit for a single queue TUN with the default TUN queue size =
-of
-> > 500 packets. However it is important to notice that with the proposed
-> > patch no packet drop ever occurred even with a TUN queue size of 1 pack=
-et.
-> > The utilized validation pipeline is available under [3].
-> >
-> > As the reduction of the TUN queue to a size of down to 5 packets showed=
- no
-> > further performance hit in the paper, a reduction of the default TUN qu=
-eue
-> > size might be desirable accompanying this patch. A reduction would
-> > obviously reduce buffer bloat and memory requirements.
-> >
-> > Implementation details:
-> > - The netdev queue start/stop flow control is utilized.
-> > - Compatible with multi-queue by only stopping/waking the specific
-> > netdevice subqueue.
-> > - No additional locking is used.
-> >
-> > In the tun_net_xmit function:
-> > - Stopping the subqueue is done when the tx_ring gets full after insert=
-ing
-> > the SKB into the tx_ring.
-> > - In the unlikely case when the insertion with ptr_ring_produce fails, =
-the
-> > old dropping behavior is used for this SKB.
-> > - In the unlikely case when tun_net_xmit is called even though the tx_r=
-ing
-> > is full, the subqueue is stopped once again and NETDEV_TX_BUSY is retur=
-ned.
-> >
-> > In the tun_ring_recv function:
-> > - Waking the subqueue is done after consuming a SKB from the tx_ring wh=
-en
-> > the tx_ring is empty. Waking the subqueue when the tx_ring has any
-> > available space, so when it is not full, showed crashes in our testing.=
- We
-> > are open to suggestions.
-> > - Especially when the tx_ring is configured to be small, queuing might =
-be
-> > stopped in the tun_net_xmit function while at the same time,
-> > ptr_ring_consume is not able to grab a packet. This prevents tun_net_xm=
-it
-> > from being called again and causes tun_ring_recv to wait indefinitely f=
-or
-> > a packet. Therefore, the queue is woken after grabbing a packet if the
-> > queuing is stopped. The same behavior is applied in the accompanying wa=
-it
-> > queue.
-> > - Because the tun_struct is required to get the tx_queue into the new t=
-xq
-> > pointer, the tun_struct is passed in tun_do_read aswell. This is likely
-> > faster then trying to get it via the tun_file tfile because it utilizes=
- a
-> > rcu lock.
-> >
-> > We are open to suggestions regarding the implementation :)
-> > Thank you for your work!
-> >
-> > [1] Link:
-> > https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publicatio=
-ns/2
-> > 025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
-> > [2] Link:
-> > https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffec=
-tive
-> > -on-tun-device
-> > [3] Link: https://github.com/tudo-cni/nodrop
-> >
-> > Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> > Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> > Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> > ---
-> >  drivers/net/tun.c | 32 ++++++++++++++++++++++++++++----
-> >  1 file changed, 28 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> > index cc6c50180663..e88a312d3c72 100644
-> > --- a/drivers/net/tun.c
-> > +++ b/drivers/net/tun.c
-> > @@ -1023,6 +1023,13 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *=
-skb, struct net_device *dev)
-> >
-> >       netif_info(tun, tx_queued, tun->dev, "%s %d\n", __func__, skb->le=
-n);
-> >
-> > +     if (unlikely(ptr_ring_full(&tfile->tx_ring))) {
-> > +             queue =3D netdev_get_tx_queue(dev, txq);
-> > +             netif_tx_stop_queue(queue);
-> > +             rcu_read_unlock();
-> > +             return NETDEV_TX_BUSY;
->
-> returning NETDEV_TX_BUSY is discouraged.
->
-> In principle pausing the "device" queue for TUN, similar to other
-> devices, sounds reasonable, iff the simpler above suggestion is not
-> sufficient.
->
-> But then preferable to pause before the queue is full, to avoid having
-> to return failure. See for instance virtio_net.
+Hello,
 
-+1 and we probably need to invent new ptr ring helpers for that.
+syzbot found the following issue on:
 
-Thanks
+HEAD commit:    479058002c32 Merge tag 'ata-6.17-rc1-fixes' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10e34ea2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1bb6a60e53533c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=295c63688014c13a0a59
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b81042580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e34ea2580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d0b41f31d6eb/disk-47905800.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bf9aa4f62fd4/vmlinux-47905800.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a1c94d24385a/bzImage-47905800.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+295c63688014c13a0a59@syzkaller.appspotmail.com
+
+INFO: task kworker/0:1:10 blocked for more than 143 seconds.
+      Not tainted 6.16.0-syzkaller-11852-g479058002c32 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:1     state:D stack:22616 pid:10    tgid:10    ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:7058
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
+ i2c_del_adapter+0x546/0x6f0 drivers/i2c/i2c-core-base.c:1817
+ dvb_usbv2_i2c_exit drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:86 [inline]
+ dvb_usbv2_exit.isra.0+0x45b/0x9f0 drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:844
+ dvb_usbv2_probe+0x1f61/0x3e50 drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:993
+ usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
+ bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1aa0 drivers/base/core.c:3689
+ usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
+ bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1aa0 drivers/base/core.c:3689
+ usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Showing all locks held in the system:
+5 locks held by kworker/0:1/10:
+ #0: ffff8881442d3548 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3211
+ #1: ffffc900000f7d10 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3212
+ #2: ffff888029d20198 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:911 [inline]
+ #2: ffff888029d20198 (&dev->mutex){....}-{4:4}, at: hub_event+0x1c0/0x4fe0 drivers/usb/core/hub.c:5898
+ #3: ffff8880252bc198 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:911 [inline]
+ #3: ffff8880252bc198 (&dev->mutex){....}-{4:4}, at: __device_attach+0x7e/0x4b0 drivers/base/dd.c:1006
+ #4: ffff8880252bf160 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:911 [inline]
+ #4: ffff8880252bf160 (&dev->mutex){....}-{4:4}, at: __device_attach+0x7e/0x4b0 drivers/base/dd.c:1006
+1 lock held by khungtaskd/31:
+ #0: ffffffff8e5c1160 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e5c1160 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e5c1160 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
+2 locks held by getty/5608:
+ #0: ffff88814dfe80a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
+4 locks held by udevd/5873:
+ #0: ffff888078ae8d58 (&p->lock){+.+.}-{4:4}, at: seq_read_iter+0xe1/0x12c0 fs/seq_file.c:182
+ #1: ffff888023aa7888 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
+ #2: ffff888034e142d8 (kn->active#29){.+.+}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
+ #3: ffff8880252bc198 (&dev->mutex){....}-{4:4}, at: device_lock_interruptible include/linux/device.h:916 [inline]
+ #3: ffff8880252bc198 (&dev->mutex){....}-{4:4}, at: manufacturer_show+0x26/0xa0 drivers/usb/core/sysfs.c:142
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-syzkaller-11852-g479058002c32 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf0e/0x1260 kernel/hung_task.c:491
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.16.0-syzkaller-11852-g479058002c32 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 4c 63 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d f3 82 17 00 fb f4 <e9> 4c 0d 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffc90000197df8 EFLAGS: 000002c2
+RAX: 000000000008bab9 RBX: 0000000000000001 RCX: ffffffff8b928c29
+RDX: 0000000000000000 RSI: ffffffff8de4d731 RDI: ffffffff8c161100
+RBP: ffffed1003c5d488 R08: 0000000000000001 R09: ffffed10170a6655
+R10: ffff8880b85332ab R11: 0000000000000000 R12: 0000000000000001
+R13: ffff88801e2ea440 R14: ffffffff90aaf390 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881247c6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000561297f2f660 CR3: 000000000e380000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:757
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:122
+ cpuidle_idle_call kernel/sched/idle.c:190 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:330
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:428
+ start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
+ common_startup_64+0x13e/0x148
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
