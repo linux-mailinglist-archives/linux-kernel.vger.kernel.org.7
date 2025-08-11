@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-763484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D689B2153A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029F7B2153D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 120247A800E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0F119067F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E42D6611;
-	Mon, 11 Aug 2025 19:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EBB2D6611;
+	Mon, 11 Aug 2025 19:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI7YMUgZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFGDbkS/"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B40F20468D;
-	Mon, 11 Aug 2025 19:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E8311C2A;
+	Mon, 11 Aug 2025 19:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754939807; cv=none; b=diP8HJn8b7oM4+lgfHK6zIHgOrW7z9A78iXWE5SgyEI8fvbtlir1LXyG1Od/eWy8iij3zxxs45xvW1+gl1yk1KVOktp3Szx+dRC3PXkjLsCOmCs8qaKEQ2URsXWvo2QLnXWpMuQ+r10Ae6BbCJRs/S9o8AMay9f1LHLov7a3B6U=
+	t=1754939879; cv=none; b=NQFTNTHjVFK+cYPh4bRMgo3ePPqzldHeOjp5L8RdKYkiEtDZra1kgRg1MiNib+cdwHfaqJz3jepEauoskBdjOTutizA0M1l38HHFe5T6EMlAjpQwb8TEWMqgG7ekvM544voCgNPw4XBS4A5OzuSiZcZRp1AS+1B6ITCmDQf/oPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754939807; c=relaxed/simple;
-	bh=EQv5zkwD85rfHIT2oTVnhR5G8BtpZ13906SjohWcIQo=;
+	s=arc-20240116; t=1754939879; c=relaxed/simple;
+	bh=NqCbTnm1d8r8NAcwLbCEavG/3vW5JpCp0c6eGWldrgM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dVtpSi2hQhdAQ9KC8K9iPWNI1miiF5QXH7HXIEXych7Avg+mvd0qN430DqssBj1E48iC2GjwrMMuWwJXGeq/Sabxbx3Xl9v5VuQoI9RfOpCGFcug/BaC65piAmB96mwOpZD7AX8/8xP9PH+nN0bx4rgCCVvSrotLNJyeRNZYbSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI7YMUgZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8467C4AF09;
-	Mon, 11 Aug 2025 19:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754939806;
-	bh=EQv5zkwD85rfHIT2oTVnhR5G8BtpZ13906SjohWcIQo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bI7YMUgZqR61/W5PBWBmQ52CgfEdQSHN4CkOhSDaEhg41bDLkM8YtJ+pDx+SsUZuB
-	 15JeL7ncHaF7tLAhE47WytR3fjOOLcXLlrsDk0tsXOkNeJUl4eDeEw+QZwwT64xE2H
-	 S6WnNCxuAapw40JqwsqdL0ERilWO+boYKumB5vdwHaBBbqo46NBB1ZaWcsstY9QI13
-	 ZYFSruQueIXMnrYZyxnm8MaMdvUEk/ty8MIRPmlgCrNY4vX3KberjGnP2etvWxR9Tv
-	 1sLSHHQruymaohjpOc533Y/mLS0qXQ7/0Oz7JATTyTrO4m8FWE7fVtiKBGwx9UDWWU
-	 we/pnq3Lacahg==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61998205433so1910729eaf.1;
-        Mon, 11 Aug 2025 12:16:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXa6BS1zn7ymN27/6CNOx1cOPR9Ev70ehu/Ia01+f0vozCGCBgsrs6MMiLNCTsaAjKqRKQ8pC5zPbw=@vger.kernel.org, AJvYcCXrafIDCw9Um/rZULb1lmlL4+ZPqUPiHSsy1AV00JCoZczE/u+pSZOfYaKGW7EnBPzo7tu8P1mlsNn7lbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxREAtEBy/YwZ/Eypm1kKCLPIjcfDaGwZW+WTnT/G3A5BQc0Uil
-	w9nBUVtTy/fBViujpo7+2PgZy1sOCiDnoPkybGTn6NuSs2Cu/3rNy2KB8ET1iq2XCHKE5PKkYKp
-	2JP6FXP0iQR3K9mtL//AAX98mTO9KbY0=
-X-Google-Smtp-Source: AGHT+IF2zSZZIosAYExOasl238GMcLY2lYeeBQb+Te5qzYEj3bLhdX5gjZegK0iicd2XMJrZ9K12DE+GNq/+9/5ashU=
-X-Received: by 2002:a05:6820:1607:b0:61b:931a:a9a0 with SMTP id
- 006d021491bc7-61bb5a9f480mr646692eaf.3.1754939806100; Mon, 11 Aug 2025
- 12:16:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=Ixd//zsFGaMYcIY1ADE46pPsmz8nkluHR1z1KCmcyo3IYwEmWa0wB/BVPFo7cCXYS9iHbxMaGVPom3FSNQ/ntUfv83MV0bnuUsdVRCgAo9OkUpyu8R3vX/dZdOD5uxdlWNk4o0FmCF4hdVYNbGzw647O2/tA+N7OG2ffoeqdf1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFGDbkS/; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af66d49daffso791999166b.1;
+        Mon, 11 Aug 2025 12:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754939876; x=1755544676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqCbTnm1d8r8NAcwLbCEavG/3vW5JpCp0c6eGWldrgM=;
+        b=CFGDbkS/xWmFlAEsV824cNPp0kgYasrjdqxbPdty93gWXuy5rtmkPNaFHoCkLlHE/a
+         E3w6M1uT9ZgV/QG/X056b5O9FdPsKcojM3A3cs1FRKqfM8kKAyxQnJNPvS0J0JPaaEpL
+         81ebjXpg3wEyRWbX3yn9vIrFaoYz8KoToIDpT9y2xAR5SfgSESSpXSPfHpmQVyUL6EHI
+         If5x1UvV9sgLhU7i0oXzHZ3kwZrg5GTDQjqXu8K0Ce1Ob6bJRalvzH++CBgr38I6ondI
+         rTRzNnk2EC4RJO4lpENNFC5xhLnsyTYAvmOJcTTOQDkGthlIQHn2xSibQAIbrUnOluXJ
+         /UTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754939876; x=1755544676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NqCbTnm1d8r8NAcwLbCEavG/3vW5JpCp0c6eGWldrgM=;
+        b=E2MCV+4cjRGDVvvtiA90UUjSR+oRKpmIIWICtUHFFUGpbwylGVkXEo/ZACCxcki5eW
+         GJMHxK81KjOwX6HotmsPVRGBeBTWFUhIV2eyLtplmkEG/NvIBCfTrZW7B/k0JHmC4f8G
+         Vhm+7Xx5MQyKteIyLp2ZVjxYZnipI0spj7ZiFso5RRqRUg93mSIwhUm0L9uCEa1pBvis
+         ZimJ6uXeJ8Kh3LjktZmHWFu5sLOrc2ktoKRoHVQMJsAUJfD73cMyqE2X7n+cpO64OEhB
+         nuGoMqFS+Xud6MJDwMvvJDkHKg4ALu56Nap3MzD1IUYs9spBI3lL2QkkP6cikh4bmYNy
+         aX5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU80buTPeA7yjEncAWso9vgvjrgzYOAiub2sZZlzAPG3QBoKtVOuFqkC7LDz7nR7WOC2KNXPgR2hDU=@vger.kernel.org, AJvYcCV5rnQLZCMSiUdsUFaTQo7TSGbXFbBqWXxQ3tqMHq3sJ6CzrUaYGOLzIZKnKCMbuODuO9xTAAtr45URWWeD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZqfY3AFs8LPl8BizwXKJ02rMtP6MCVBolJlG2mMgRnASj0oH4
+	TlXCwwtLcxn8GUH7JrLy/rLiuoli4PtcmfnvdTtT2PjDpjIwiGIp1UY49PyWN5fBiN3f2Pjt8Dj
+	UjRejTwDXE+0Hd63kQ+1csD0wpzKV1xU=
+X-Gm-Gg: ASbGncs8Nbfcr+qZhLianFV6hEqD9Eq78w9Bea+v6PKoJt1GklriXAnDaTer3h2KW9Y
+	TYGiM2Ku8jBklATLAB2vO8O1StZO907F3qOKq1eUxhjTGPvuo664wNGOP7Xe3k9AjtlHTwYvZU/
+	WavZH1nzE4jp3IEsTzp2mgwVyPO34nNIb17kbPx1HFSZXLnMITiQCLG2tUNOSgRFT2T1MCC6+LN
+	l6sq62qlQ==
+X-Google-Smtp-Source: AGHT+IFvg8MC5VPTI0mMDr3ZjgO1hZC1hJecNIRmoxJEiJKBNdvG9BGTH1cso4p7E/UN4aUaP5ETWA5ERS8g7nlGVtk=
+X-Received: by 2002:a17:906:730b:b0:af9:5366:b42c with SMTP id
+ a640c23a62f3a-af9c655d50fmr1072472466b.59.1754939875626; Mon, 11 Aug 2025
+ 12:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com>
-In-Reply-To: <7hldnp6apf.fsf@baylibre.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 11 Aug 2025 21:16:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
-X-Gm-Features: Ac12FXz1mGha12K-Zqq9KAKtqqa9MGzcJH5sFZI3F3YpZw-3ERkcio0DeD1jVK8
-Message-ID: <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
+References: <20250811165641.1214347-1-akbansd@gmail.com>
+In-Reply-To: <20250811165641.1214347-1-akbansd@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 11 Aug 2025 21:17:18 +0200
+X-Gm-Features: Ac12FXzC64AiqIcJl4Ec1rvXpqcZkAusyqNclxgfoE58mv5kghsnOOO9xit8ieE
+Message-ID: <CAHp75Vf7r53wQtGWes9WH1UubEjhAju+tN0OORTrkNxgTQPsWw@mail.gmail.com>
+Subject: Re: [PATCH v4] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
+To: Akshay Bansod <akbansd@gmail.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-kernel-mentees@lists.linuxfoundation.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@baylibre.com>=
- wrote:
+On Mon, Aug 11, 2025 at 6:57=E2=80=AFPM Akshay Bansod <akbansd@gmail.com> w=
+rote:
 >
-> "Rafael J. Wysocki" <rafael@kernel.org> writes:
->
-> > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
-.org> wrote:
-> >>
-> >> Some platforms and devices supports multiple low-power-states than can=
- be
-> >> used for system-wide suspend. Today these states are selected on per
-> >> subsystem basis and in most cases it's the deepest possible state that
-> >> becomes selected.
-> >>
-> >> For some use-cases this is a problem as it isn't suitable or even brea=
-ks
-> >> the system-wakeup latency constraint, when we decide to enter these de=
-eper
-> >> states during system-wide suspend.
-> >>
-> >> Therefore, let's introduce an interface for user-space, allowing us to
-> >> specify the system-wakeup QoS limit. Subsequent changes will start tak=
-ing
-> >> into account the QoS limit.
-> >
-> > Well, this is not really a system-wakeup limit, but a CPU idle state
-> > latency limit for states entered in the last step of suspend-to-idle.
-> >
-> > It looks like the problem is that the existing CPU latency QoS is not
-> > taken into account by suspend-to-idle, so instead of adding an
-> > entirely new interface to overcome this, would it make sense to add an
-> > ioctl() to the existing one that would allow the user of it to
-> > indicate that the given request should also be respected by
-> > suspend-to-idle?
-> >
-> > There are two basic reasons why I think so:
-> > (1) The requests that you want to be respected by suspend-to-idle
-> > should also be respected by the regular "runtime" idle, or at least I
-> > don't see a reason why it wouldn't be the case.
-> > (2) The new interface introduced by this patch basically duplicates
-> > the existing one.
->
-> I also think that just using the existing /dev/cpu_dma_latency is the
-> right approach here, and simply teaching s2idle to respect this value.
->
-> I'm curious about the need for a new ioctl() though.  Under what
-> conditions do you want normal/runtime CPUidle to respect this value and
-> s2idle to not respect this value?
+> Update the sysfs interface for sampling frequency and scale attributes.
+> Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
+> and recommended for use in sysfs.
 
-In a typical PC environment s2idle is a replacement for ACPI S3 which
-does not take any QoS constraints into account, so users may want to
-set QoS limits for run-time and then suspend with the expectation that
-QoS will not affect it.
+LGTM,
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
