@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-762833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9C1B20B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:07:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB49B20B2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181CC2A3DCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:07:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC9494E3668
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D2120CCE5;
-	Mon, 11 Aug 2025 14:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEBB2264DE;
+	Mon, 11 Aug 2025 14:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GjlkA7X8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ar/QfdpG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DEB1DC9B8
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6053221F06;
+	Mon, 11 Aug 2025 14:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921137; cv=none; b=YI9bGpZ90lbWqDKiNZRFGYd2kbV4etPanPlFWTmbH+poBALSJIFKe2HtthvnuVsYHcVYVPL+Uq8C6qTh5VIiT48m8yXidT+mHKlMsTFY8IJUP0Uw/+yPaShQIsVUcqSGXFKS8qTuLZgDvmYOHEh9GhYslwYmX3/Wbgw/zp4MW6Q=
+	t=1754921059; cv=none; b=GOdqRH6+LtDiS0Ib+QRzdaMLUG0QAsY9PilcBjs5jC14XG8ycjTXjhzcuD3N6iARWlj9rfZW1C8/AkB6t6grAHjVBJXtAhiBr/v9U+llYJ7K1aazuo9+cUAJjsXsLodlwhPQpyYJFpjcbSsn22tCaeA6etapveplqPLj2mMW248=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921137; c=relaxed/simple;
-	bh=tY3GvRfU+ZbC5r18UWr26Sk5eER0Z1yHXOrsLc2TgUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DL6Bk1TxozYu45i1h2qHy3X9tj40STz9sTToCWlC3OVGVNK8cryba6wosYNnl2a9+KmpRbXQVlV9ZV3V2oiIfLdXXTnUXejwqH9jH5LQkNJHRl5jEbIacvA8csQ9o2U5E1euDyBJgFSakrxvZSHzcqw4WGYyFlJ347RXmUwWiVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GjlkA7X8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754921133;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xnw1x9It7MHX1ft7a9iEuo8H6z86r7iWayv7jAKJfN4=;
-	b=GjlkA7X87x3nstY7l/ytgc6j7nRcror6RDOEjbukm/gqrtoWt2uLjpRR8f5XH7bxYdRqV5
-	hNMkwiCdduEsQl7xIufClpw47oOFv+3vsKXBxmbxlCzgYQ7u4p1R5UTsXCnl/kdJ350zAT
-	YNuxC2X919lRpJTrTAb8XiY3HxF3l/0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-C_URpHXMMPiN2Bp2WfYQbQ-1; Mon,
- 11 Aug 2025 10:05:27 -0400
-X-MC-Unique: C_URpHXMMPiN2Bp2WfYQbQ-1
-X-Mimecast-MFC-AGG-ID: C_URpHXMMPiN2Bp2WfYQbQ_1754921124
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1754921059; c=relaxed/simple;
+	bh=mObt81GrRK+X8Psfo4s7r7KxlJhLpHXzeRP0v136YbQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AK2UmzUE74u21qrRtq9CBoGi+lQWqviuuE3bHtPX9OCsvzTazd4VWP+3BltML4K4l1JSOpCh3llg65FwBgvN4huoc/MUgslJBDQD/IfcH1Qa4UXaVlaoqpjMgIOEjsPF9npRfVF2nOuhtjbQd0TjkgWHR0SAKgmhzLxZ64BVSBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ar/QfdpG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754921054;
+	bh=mObt81GrRK+X8Psfo4s7r7KxlJhLpHXzeRP0v136YbQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Ar/QfdpGhFIgKMPfBQO6fOB56tqH0MPqFO8JMMXqRnBSNjkwyWOD1Yh1qX/ju19JC
+	 rmdiulGZIjBK/SS0YIVy0DXOlADWSiLaqMsylywhF73t2rFeEUmyVt/rXCLfhccO69
+	 s7bCVd5cRefWnJmNHD/yACf4U0QW2upDYWx0sF00GB+/XoP2KIzQhQG+d4Oauk/Rdf
+	 twEzz35wD9UTw61EqVsV+LPfa4cAuzAWv7UMCmvJ9b/PepGwOfjQ5OyBG+PlzgIQGo
+	 mVrjjcImbfWv5/HMzchdcQTo0QvZrS+k19YmZP9Xkv0L0Trou73S279JOrsvVLZt8/
+	 jcjcwiEP0dMoA==
+Received: from [192.168.13.180] (unknown [IPv6:2606:6d00:11:5a76::c41])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BEEFF1869ADD;
-	Mon, 11 Aug 2025 14:03:35 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.185])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2CBAC19560AB;
-	Mon, 11 Aug 2025 14:03:32 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] futex: Use user_write_access_begin/_end() in futex_put_value()
-Date: Mon, 11 Aug 2025 10:03:24 -0400
-Message-ID: <20250811140324.321751-1-longman@redhat.com>
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2866A17E0FA8;
+	Mon, 11 Aug 2025 16:04:13 +0200 (CEST)
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Date: Mon, 11 Aug 2025 10:03:45 -0400
+Subject: [PATCH v2] media: rkvdec: Remove redundant
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250811-rkvdec-redundant-pm-rebase-v2-1-90c47213fbbe@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAED4mWgC/x3MQQqDMBAF0KvIrDsQA0L0KqWL6Hx1EFOZtFII3
+ r3B5du8QhmmyDQ0hQynZn2nCv9oaFpjWsAq1eSd71xoW7btFExskG+SmD587BVjzGBIP4bQAVG
+ EanAYZv3d+fN1XX81p9RAbAAAAA==
+X-Change-ID: 20250811-rkvdec-redundant-pm-rebase-ed9b885eeadd
+To: Detlev Casanova <detlev.casanova@collabora.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+X-Mailer: b4 0.14.2
 
-Commit cec199c5e39b ("futex: Implement FUTEX2_NUMA") introduces a new
-futex_put_value() helper function to write a value to the given user
-address. However, it uses user_read_access_begin() before the write.
-For arches that differentiate between read and write accesses, like
-powerpc, futex_put_value() fails with a -EFAULT return value.  Fix that
-by using the user_write_access_begin/user_write_access_end() pair.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Fixes: cec199c5e39b ("futex: Implement FUTEX2_NUMA")
-Signed-off-by: Waiman Long <longman@redhat.com>
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 ---
- kernel/futex/futex.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since V1:
+  - Re-applied since the driver have been moved out of staging
+---
+ drivers/media/platform/rockchip/rkvdec/rkvdec.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index c74eac572acd..ebe9e755b3b5 100644
---- a/kernel/futex/futex.h
-+++ b/kernel/futex/futex.h
-@@ -319,10 +319,10 @@ static __always_inline int futex_put_value(u32 val, u32 __user *to)
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc1f6a18b2d168ebdf20b443f2240e..445f7c92eee34f7d6f885bb519d9eb24313da548 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -765,7 +765,6 @@ static void rkvdec_job_finish(struct rkvdec_ctx *ctx,
  {
- 	if (can_do_masked_user_access())
- 		to = masked_user_access_begin(to);
--	else if (!user_read_access_begin(to, sizeof(*to)))
-+	else if (!user_write_access_begin(to, sizeof(*to)))
- 		return -EFAULT;
- 	unsafe_put_user(val, to, Efault);
--	user_read_access_end();
-+	user_write_access_end();
- 	return 0;
- Efault:
- 	user_read_access_end();
+ 	struct rkvdec_dev *rkvdec = ctx->dev;
+ 
+-	pm_runtime_mark_last_busy(rkvdec->dev);
+ 	pm_runtime_put_autosuspend(rkvdec->dev);
+ 	rkvdec_job_finish_no_pm(ctx, result);
+ }
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250811-rkvdec-redundant-pm-rebase-ed9b885eeadd
+
+Best regards,
 -- 
-2.50.1
+Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
 
