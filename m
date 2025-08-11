@@ -1,284 +1,178 @@
-Return-Path: <linux-kernel+bounces-762917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D86B20C3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4820AB20C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB06F1891F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D4E7A4B61
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BBA8248B;
-	Mon, 11 Aug 2025 14:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B92627602D;
+	Mon, 11 Aug 2025 14:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="weEn2iwH"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="ZFskvmVt"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D202D320E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947CA253B64
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923081; cv=none; b=Ca3GspTcS8eL9GiKpBu8YFAart87WuuJnxmOh1yW532egI0MYuVH2+LQFtyLwRgCK2OgoCQghvE8lxBNvP4EzXUVqTbXTpB4rQGGmR07Wd/cSc0IDbi/4MMIrjzqka+e3bILhPl43e0iE6+ngMRsEUeDzwd9UZI+suK0StneHb4=
+	t=1754923110; cv=none; b=ZEPZ9auxQKmDgCiRoCE06E12Rak82IqsH+r+U18jXW69xgW0mSScOQ/oHk7g0wsjoo66TO2YzhXahCsmlPW5AjcMU5SyJ55gT2TfBecuMt8MP/CB8U0Mb+8xOO3wIKC8IUnVHO/mGXr/CZCl4f4VAlxODQZTkevbPtwWmen8aG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923081; c=relaxed/simple;
-	bh=kO1JB1VmeHgW6zo6ygzZHs1c8xvTe+S4IMczMwehw00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U7HT4sChssuRxcC8UeTRpEIaMdvb/aWK+UbgBNKBURT5JE1UokggzyhAOhxCFQwze/CPVpaJJAzmhh9HuoA/3s1AwNgukOEvC7NnILCsCS2rVtP6bJPGegpehIID9rr0I6A5NhY3y6ksDE9ShaFmPLqj5Dhg6Rhf10AA+0L6FdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=weEn2iwH; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b783ea502eso3128569f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:37:58 -0700 (PDT)
+	s=arc-20240116; t=1754923110; c=relaxed/simple;
+	bh=Cce+LPGmDUuM8rZQ9XRU03fgLgtnSDwzOLS9njFMY3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbQKwO5fd9XwjtUOMNeMdSygB9PWiPWmwJhcJmo28QYZAtpIpY7FLKa9gYka8guK0QlzjkoGKQsVIi1rsQspZPZULGlC4UM8x1lGPiWs+WKgO0Ss/ssK/tOZNFlQeOmP8bbSCHBcejVeShSA6u3wx0mCg7g5KCK+Y3viJ3g+icI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=ZFskvmVt; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459fdc391c6so17603745e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754923077; x=1755527877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K+z3k6Ua1tsSSnOHatF9KK1NYrriwb9RYvKnWmfP/Fo=;
-        b=weEn2iwHXmVMOCm/xOXbwW7nQErwXs7Jye7e/mcjS1oHn5ij+pEE6RKIT43IitWCrc
-         123I0llgP/ayBwTJTOD8FVBs4mCwgIOHM9O3vJaEg6MG6yL4vvgIFP0FjaZIFKNkU/XN
-         OtTGFDWRkl3R86TAGQUOrt6CBkZ0Cn3EARRk6WHzEpHD/HVLalLri3WYYf/oP0z9igKn
-         iD5Ue82W/CP7qVxK0QlSKThI22YrbfWwLcoizn8sQd8sdi1FFZNHccHV5/b1tR5jPTZa
-         XIzGSnJ+suyLIY4SXFiBctzjBVobdy8fYHeFKjtEipZk45tS5Gq2G7HgiAjPHGVUpIrO
-         QZVQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1754923107; x=1755527907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDnLj3nHfiTbzAkj8zN3PNTrMnWkU/ikvokuB96PBrc=;
+        b=ZFskvmVt49cCUmJhVzVG+61QFgQircus8JynCID65uk5BUSpTJmBushQ0nXAMTVOuK
+         E2lmpe5ftgVtynOvJluShh+NIezv+d+LsbT90KwDp12AXIsQ6j2+uwfxwiZogOp+IMF+
+         WvWgJdn8qroT0037ADNShCTW2hY4BPTdx3HjR9KLjTyT4JctwEIIbVtocLSbrvwqW+36
+         1ePMVXad1PKU7X0GjL5lshJhGjF2hu9OFyrSvkpn9Da/sKXeOioRP3TtzUngdIrEh26s
+         fr5TzVd0O2jWpNXMc4ZEAm2R5u66DQjtKO0yMItH0mOFwGHVJyY4wDcbnjawuO/FW1I0
+         nrNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754923077; x=1755527877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K+z3k6Ua1tsSSnOHatF9KK1NYrriwb9RYvKnWmfP/Fo=;
-        b=Wop7ZqiC12XIADJtP4OiBuKnNCegRFd6wlR5DKOTCOXZwCOVVohZeMLm3g+FHZ5uJk
-         vNqcNgKvo5oP/uhdLva5ZeX56QMD7f5H2N7gBmGVrM1yMSf+01FkhYAm9dJNToQ39eLb
-         gEm+lnM/lgQF4EHSxI+YgfGeOLhZ8gpSEiJ70G6A/pPjowrzao822t88ocQNQQUjSr0e
-         tS8xxomlT2mcc2jzBZnV1RSfaylFxCewdSCaJgC76MvqH5mQsPS23riEtO5Numzx4SMc
-         0w7bixtSb5qjzLEq0JDp9jJ5VrsjWjz1OdUB3PxyGTvjsNO8HWj7GfowRDfaz1QKk9O0
-         eCkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEg02FJdIFHTuyYttkPWwEwbFh52SprF40Yyf52gOQtf2WPO25YGO8WtlbVpur0WtRB2QjNxx9ucy3K5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6iEFQerZclBHQzJjfichDgieKP3CV2IMyCRaaejlUiK8XrjkP
-	9c64ChohmR4Iililg3JpNkKs9B3lmdsYa0j8vFc45LwAcDjGFurTdR33dYLcQFmvM9J3XqUnzwU
-	kb3piWJeHcRXKUE3AWvB+n9ut0b6EYcpGb1XPsSVL
-X-Gm-Gg: ASbGnctUAAzP8aMZVUxZoa8sX8t9dJZn4Sd54na63ivzUvBRkQ+VsztfJTqlQv9Ln8W
-	7a2tenB9az0eBvP8UdeotDSuI2x/nnrs7yGV1GlorF+xMrmidFom2fPiYuoXhxg4aod3s2oFwva
-	FEkM5VRAS4PrqPS+dvLxKMOxQoZTinfnpmuR+tdV1HIhaFYlzXidtBNHApr8pdtpcaw2RDuiRL7
-	wnKthSS
-X-Google-Smtp-Source: AGHT+IE/Frgb3ZlY2MCzOV2I5cZU+C8DcXR8cxM8f86Ka67fehrhKUAUXkGM5NC5xvbtWIrLzx/eTMLVG4wd/T3IpUE=
-X-Received: by 2002:a05:6000:2481:b0:3a5:5130:1c71 with SMTP id
- ffacd0b85a97d-3b910ecf283mr134206f8f.0.1754923076907; Mon, 11 Aug 2025
- 07:37:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754923107; x=1755527907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UDnLj3nHfiTbzAkj8zN3PNTrMnWkU/ikvokuB96PBrc=;
+        b=qYhMRhZ0ZAZTGeAQg393Y+nG4RLp1CIiyJkkKhuMXpNh7V/4ZKwe3cuZrwpjGXAmEv
+         M/NenoLEqyufl8uRNX0GMgTmF4gDhZKquqGksPVo9e+5OxeqnAXmj6P0k83mkrDJEAT4
+         OtrEuBNFJZ7xa/PKo7qvmKM1SrY5QXYn1FgAiBgFKgs9eEGGOhtTXsEfg2hGuOta74Cp
+         loQZLBSTOCqVOLk8JBHglR+T14DGnyJQedVhf6k9WICVO6EXsuIHWXZOsbu5h4RU0I8y
+         M3yLkpDO129zM+jcNGuCKNt3Vh9T7ZAKD3Mt+hUz8+najOeSDd696AFh40P2ouyVfn2j
+         BjbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8t6jatvceWAkeYOm9FXyspBDV39kbndeWy4mpfifk55q7Rq95SYJkR29CmtVh6uxb2pJvU1iNoWvsE7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDV1ivvHdCnGqnhIrovEzChLiTHh8twQrQjPb7IKcPccyCwJt5
+	Ln3LhLCrdhVYrJ+muCPLf2nffktd+kB47YpN6z3xHqrdVUVWIk9Eut830RsyPP7VyiI=
+X-Gm-Gg: ASbGncs3mOhE4zz9e4ww3J16Cn7yhsJDflp2Z2gtw7m5zelRLX7A+EgaSUVKzSjVqkR
+	IsmQCxzAEFght79xlRyqDlIVbfkgahdRQ1VQQJpiiEgGIochFh8ET4+iqeWaiLRQmGoryLzPZl2
+	KqGbbzgUmBZevvGYVg1Z3SHu3twHqdE6Rm/u5ZaDKeHrNDyqe4wejo0+XJOJHctjgbbcmbZluCA
+	aT4BoaamxHjpfwvwEVPBaJZ93K+ljo8ezVcVaYNb6cip6MdrOzmw35SA5eHe5Csthy0OzYzkzBc
+	brgb0gpvnmIhFasIF4KWwY0M+t/0xKfxGYlkXtm7jGFppCbDD7PU64DAvWFlypXJrKPAXF0NvgB
+	dl0YrLZmodV6USBvK5m+oxhock0kzt/l9GVKFekF4j2wSczgmHfTSPP0LEJUSqC7gvm/Zk0AP15
+	pQqWY46Q==
+X-Google-Smtp-Source: AGHT+IF+la5If0EY7C3TMLMaGLfDZEbIEhN9YbuU+kkFHErmZMrL09SGPul00CwuSlbJhKlCeTJtNQ==
+X-Received: by 2002:a05:600c:3baa:b0:459:e200:67e0 with SMTP id 5b1f17b1804b1-459f4f523e5mr131894845e9.10.1754923106707;
+        Mon, 11 Aug 2025 07:38:26 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b8aab8c0sm392263435e9.19.2025.08.11.07.38.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:38:26 -0700 (PDT)
+Date: Mon, 11 Aug 2025 15:38:24 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v2 3/3] kdb: Adapt kdb_msg_write to work with NBCON
+ consoles
+Message-ID: <aJoAYD_r7ygH9AdS@aspen.lan>
+References: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
+ <20250811-nbcon-kgdboc-v2-3-c7c72bcdeaf6@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
- <aJn2ogBSmedhpuCa@Mac.home> <CAH5fLghitfmSOByu4ZRmhwdsOadzJOLei_qrAjNM+V15spq44w@mail.gmail.com>
- <aJn9M3WPcI_ZGems@Mac.home> <CAH5fLgg+1FtiHkXOzKLHFP-gRrq1Dq8yUO4RmyE7tM4aSDYioA@mail.gmail.com>
- <aJn-q-SebbQoyiyy@Mac.home>
-In-Reply-To: <aJn-q-SebbQoyiyy@Mac.home>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 11 Aug 2025 16:37:44 +0200
-X-Gm-Features: Ac12FXzBwx5G7tLxLwgUz7FQbJ9ALGarXtm0IVz3Ujr5_Yy2TvPeR4j1O5s2IRw
-Message-ID: <CAH5fLgicWki8Z+ne9fMn4KbQYYz340FhpOONU5dCCMwfo0wnhg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: irq: add &Device<Bound> argument to irq callbacks
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>, 
-	Benno Lossin <lossin@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-nbcon-kgdboc-v2-3-c7c72bcdeaf6@suse.com>
 
-On Mon, Aug 11, 2025 at 4:31=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
+Hi Marcos
+
+No objections, but a couple of questions if I may...
+
+
+On Mon, Aug 11, 2025 at 10:32:47AM -0300, Marcos Paulo de Souza wrote:
+> Function kdb_msg_write was calling con->write for any found console,
+> but it won't work on NBCON ones. In this case we should acquire the
+> ownership of the console using NBCON_PRIO_EMERGENCY, since printing
+> kdb messages should only be interrupted by a panic. This is done by the
+> nbcon_kdb_{acquire,release} functions.
+
+Just wanted to check what it means to be "interrupted by a panic"?
+
+kdb is called from the panic handler but, assuming the serial port is run
+syncrhonously when "bad things are happening", the serial port should be
+quiet when we enter kdb meaning we can still acquire ownership of the
+console?
 >
-> On Mon, Aug 11, 2025 at 04:25:50PM +0200, Alice Ryhl wrote:
-> > On Mon, Aug 11, 2025 at 4:24=E2=80=AFPM Boqun Feng <boqun.feng@gmail.co=
-m> wrote:
-> > >
-> > > On Mon, Aug 11, 2025 at 04:05:31PM +0200, Alice Ryhl wrote:
-> > > > On Mon, Aug 11, 2025 at 3:56=E2=80=AFPM Boqun Feng <boqun.feng@gmai=
-l.com> wrote:
-> > > > >
-> > > > > On Mon, Aug 11, 2025 at 12:33:51PM +0000, Alice Ryhl wrote:
-> > > > > [...]
-> > > > > > @@ -207,8 +207,8 @@ pub fn new<'a>(
-> > > > > >              inner <- Devres::new(
-> > > > > >                  request.dev,
-> > > > > >                  try_pin_init!(RegistrationInner {
-> > > > > > -                    // SAFETY: `this` is a valid pointer to th=
-e `Registration` instance
-> > > > > > -                    cookie: unsafe { &raw mut (*this.as_ptr())=
-.handler }.cast(),
-> > > > > > +                    // INVARIANT: `this` is a valid pointer to=
- the `Registration` instance
-> > > > > > +                    cookie: this.as_ptr().cast::<c_void>(),
-> > > > >
-> > > > > At this moment the `Regstration` is not fully initialized...
-> > > > >
-> > > > > >                      irq: {
-> > > > > >                          // SAFETY:
-> > > > > >                          // - The callbacks are valid for use w=
-ith request_irq.
-> > > > > > @@ -221,7 +221,7 @@ pub fn new<'a>(
-> > > > > >                                  Some(handle_irq_callback::<T>)=
-,
-> > > > > >                                  flags.into_inner(),
-> > > > > >                                  name.as_char_ptr(),
-> > > > > > -                                (&raw mut (*this.as_ptr()).han=
-dler).cast(),
-> > > > > > +                                this.as_ptr().cast::<c_void>()=
-,
-> > > > > >                              )
-> > > > >
-> > > > > ... and interrupt can happen right after request_irq() ...
-> > > > >
-> > > > > >                          })?;
-> > > > > >                          request.irq
-> > > > > > @@ -258,9 +258,13 @@ pub fn synchronize(&self, dev: &Device<Bou=
-nd>) -> Result {
-> > > > > >  ///
-> > > > > >  /// This function should be only used as the callback in `requ=
-est_irq`.
-> > > > > >  unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32=
-, ptr: *mut c_void) -> c_uint {
-> > > > > > -    // SAFETY: `ptr` is a pointer to T set in `Registration::n=
-ew`
-> > > > > > -    let handler =3D unsafe { &*(ptr as *const T) };
-> > > > > > -    T::handle(handler) as c_uint
-> > > > > > +    // SAFETY: `ptr` is a pointer to `Registration<T>` set in =
-`Registration::new`
-> > > > > > +    let registration =3D unsafe { &*(ptr as *const Registratio=
-n<T>) };
-> > > > >
-> > > > > ... hence it's not correct to construct a reference to `Registrat=
-ion`
-> > > > > here, but yes, both `handler` and the `device` part of `inner` ha=
-s been
-> > > > > properly initialized. So
-> > > > >
-> > > > >         let registration =3D ptr.cast::<Registration<T>>();
-> > > > >
-> > > > >         // SAFETY: The `data` part of `Devres` is `Opaque` and he=
-re we
-> > > > >         // only access `.device()`, which has been properly initi=
-alized
-> > > > >         // before `request_irq()`.
-> > > > >         let device =3D unsafe { (*registration).inner.device() };
-> > > > >
-> > > > >         // SAFETY: The irq callback is removed before the device =
-is
-> > > > >         // unbound, so the fact that the irq callback is running =
-implies
-> > > > >         // that the device has not yet been unbound.
-> > > > >         let device =3D unsafe { device.as_bound() };
-> > > > >
-> > > > >         // SAFETY: `.handler` has been properly initialized befor=
-e
-> > > > >         // `request_irq()`.
-> > > > >         T::handle(unsafe { &(*registration).handler }, device) as=
- c_uint
-> > > > >
-> > > > > Thoughts? Similar for the threaded one.
-> > > >
-> > > > This code is no different. It creates a reference to `inner` before
-> > > > the `irq` field is written. Of course, it's also no different in th=
-at
-> > > > since data of a `Devres` is in `Opaque`, this is not actually UB.
-> > > >
-> > >
-> > > Well, I think we need at least mentioning that it's safe because we
-> > > don't access .inner.inner here, but..
-> > >
-> > > > What I can offer you is to use the closure form of pin-init to call
-> > > > request_irq after initialization has fully completed.
-> > > >
-> > >
-> > > .. now you mention this, I think we can just move the `request_irq()`
-> > > to the initializer of `_pin`:
-> > >
-> > > ------>8
-> > > diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
-> > > index ae5d967fb9d6..3343964fc1ab 100644
-> > > --- a/rust/kernel/irq/request.rs
-> > > +++ b/rust/kernel/irq/request.rs
-> > > @@ -209,26 +209,26 @@ pub fn new<'a>(
-> > >                  try_pin_init!(RegistrationInner {
-> > >                      // INVARIANT: `this` is a valid pointer to the `=
-Registration` instance
-> > >                      cookie: this.as_ptr().cast::<c_void>(),
-> > > -                    irq: {
-> > > -                        // SAFETY:
-> > > -                        // - The callbacks are valid for use with re=
-quest_irq.
-> > > -                        // - If this succeeds, the slot is guarantee=
-d to be valid until the
-> > > -                        //   destructor of Self runs, which will der=
-egister the callbacks
-> > > -                        //   before the memory location becomes inva=
-lid.
-> > > -                        to_result(unsafe {
-> > > -                            bindings::request_irq(
-> > > -                                request.irq,
-> > > -                                Some(handle_irq_callback::<T>),
-> > > -                                flags.into_inner(),
-> > > -                                name.as_char_ptr(),
-> > > -                                this.as_ptr().cast::<c_void>(),
-> > > -                            )
-> > > -                        })?;
-> > > -                        request.irq
-> > > -                    }
-> > > +                    irq: request.irq
-> > >                  })
-> > >              ),
-> > > -            _pin: PhantomPinned,
-> > > +            _pin: {
-> > > +                // SAFETY:
-> > > +                // - The callbacks are valid for use with request_ir=
-q.
-> > > +                // - If this succeeds, the slot is guaranteed to be =
-valid until the
-> > > +                //   destructor of Self runs, which will deregister =
-the callbacks
-> > > +                //   before the memory location becomes invalid.
-> > > +                to_result(unsafe {
-> > > +                    bindings::request_irq(
-> > > +                        request.irq,
-> > > +                        Some(handle_irq_callback::<T>),
-> > > +                        flags.into_inner(),
-> > > +                        name.as_char_ptr(),
-> > > +                        this.as_ptr().cast::<c_void>(),
-> > > +                    )
-> > > +                })?;
-> > > +                PhantomPinned
-> > > +            },
-> > >          })
-> > >      }
-> > >
-> > >
-> > > Thoughts?
-> >
-> > That calls free_irq if request_irq fails, which is illegal.
-> >
+> At this point, the console is required to use the atomic callback. The
+> console is skipped if the write_atomic callback is not set or if the
+> context could not be acquired. The validation of NBCON is done by the
+> console_is_usable helper. The context is released right after
+> write_atomic finishes.
 >
-> Ah, right. I was missing that. Then back to the "we have to mention that
-> we are not accessing the data of Devres" suggestion, which I think is
-> more appropriate for this case.
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+>  kernel/debug/kdb/kdb_io.c | 26 ++++++++++++++++++++++----
+>  1 file changed, 22 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+> index 9b11b10b120cf07e451a7a4d92ce50f9a6c066b2..74f6d4316bdc9d3c4f6d4252bf425e33cce65a87 100644
+> --- a/kernel/debug/kdb/kdb_io.c
+> +++ b/kernel/debug/kdb/kdb_io.c
+> @@ -589,12 +589,23 @@ static void kdb_msg_write(const char *msg, int msg_len)
+>  	 */
+>  	cookie = console_srcu_read_lock();
+>  	for_each_console_srcu(c) {
+> -		if (!(console_srcu_read_flags(c) & CON_ENABLED))
+> +		struct nbcon_write_context wctxt = { };
+> +		short flags = console_srcu_read_flags(c);
+> +
+> +		if (!console_is_usable(c, flags, true))
+>  			continue;
+>  		if (c == dbg_io_ops->cons)
+>  			continue;
+> -		if (!c->write)
+> -			continue;
+> +
+> +		/*
+> +		 * Do not continue if the console is NBCON and the context
+> +		 * can't be acquired.
+> +		 */
+> +		if (flags & CON_NBCON) {
+> +			if (!nbcon_kdb_try_acquire(c, &wctxt))
+> +				continue;
+> +		}
+> +
+>  		/*
+>  		 * Set oops_in_progress to encourage the console drivers to
+>  		 * disregard their internal spin locks: in the current calling
+> @@ -605,7 +616,14 @@ static void kdb_msg_write(const char *msg, int msg_len)
+>  		 * for this calling context.
+>  		 */
+>  		++oops_in_progress;
 
-I will add:
+Dumb question, but is the oops_in_progress bump still useful with atomic
+consoles? Will the console have any spinlocks to disregard or will the
+console ownership code already handled any mutual exclusion issues meaning
+there should be no spinlocks taking by the atomic write handler?
 
-// - When `request_irq` is called, everything that `handle_irq_callback`
-//   will touch has already been initialized, so it's safe for the callback
-//   to be called immediately.
 
-Will you offer your Reviewed-by ?
+Thanks
 
-Alice
+Daniel.
 
