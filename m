@@ -1,162 +1,116 @@
-Return-Path: <linux-kernel+bounces-762004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136E5B200F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:57:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A461B200F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A41316D12D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B72169147
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6F32D9ED7;
-	Mon, 11 Aug 2025 07:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553E62DA750;
+	Mon, 11 Aug 2025 07:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nPpi8pn4"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sDjh9fFh"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1D12798FA
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286D2D97BC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899032; cv=none; b=ChDsl8eEC5Dx+yZuRMPJsHP5PqvO4Yoi4Cqwd3rBgPi0gOivRC5bp1YUTT0IuhiRmD8SddYkFG0R729Ay/quKx6JSnRRLTcvH+8x8IX+fCGjAjyVkIn92SUuC3SspnSCOB1i6XbbysW9QKsv4BFxpTLeWqlV2/RB0srM6VYBKHE=
+	t=1754898963; cv=none; b=szLRJe+5GNJ5eEXF741O1bdWacffOkaov7o7r9L9NnShvggVlYllMjxVeUYY8TvlK/mOVGmxmLrM7Gv92J0v7MEWNWoAMa8KyPhy8nZk8M8r2VjUlb3Y1QCVw8Ox4ZCF3iMW8Kq77BXatrl43xGRWo8NlxbzztIti3Jw1Jp9fj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899032; c=relaxed/simple;
-	bh=Qdo4ojJNPKgsV72XrkScA6AEe0K8cZSsHAEJhABiejg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzNXw5qXA2Fg+HowuNDoFVSeLsNSZfQ35y19XPju/oeyQuquBPn7xWGRtmlss85FvrVfyq/ofob/AGLmQ7o/Z1SwA6fNfLCi4cuNUKzgq7DD9OUkCSVbLwDrOj6flDpAyHhxcFpY2HIl1oCOFWkWOGwCj5RLmgD1t5gADons3IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nPpi8pn4; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <87c18bb9-b2a7-4326-b163-01641ffff065@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754899017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xGtRyL+J38IPEDlsw/c4flcu7oDXk2oXjvYy0dtAjgY=;
-	b=nPpi8pn4DguGTM479/w/xESMlTuHMwIaLRdULa1+Qs4/TSYXDO8XquKmnKy0sLwyZ2J8Fr
-	R8IOVBy8A/SzTzyjdYVyFTwhcCkYB3aW4f2CN81r0r4GXva6227AhNk5WIZNpoOfO+b7nT
-	NCb4n4ZJOpvtNLo/UqcD/LW3RPyYU/A=
-Date: Mon, 11 Aug 2025 15:55:53 +0800
+	s=arc-20240116; t=1754898963; c=relaxed/simple;
+	bh=pHEHeCvx6mHDiIUFL+6VywN7wHOrPWrKHo+ygnf0eI0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=alQH9k51xuxFr2PQ+r1j0MSn0ZikTrjcjFY6o0iLkaMxrCw8P7jkD7Bxa1pr1IcOuchktPQSC6y5cct8uLro/pZa20oBfrsdxo7Fe4NS2JhQamM0H4QnAfkW6INT94DazOaR4aMsnmXRiaP+8t3E0BuTsA8ZNV+EpUH5bT9KdTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sDjh9fFh; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61563789ab7so492186a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 00:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754898960; x=1755503760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2B+PdwnV07kNbcJNhPLT1/ZZi6u4wFzi0KY+3/EKxhc=;
+        b=sDjh9fFh77a2dJQGXo6ySdV+tJYEJaUYC0I/5Vq5FDKAP/c2LCAKK+xJeA/rVfGGTj
+         HPW5IdYD54SWlYXfMM+sJJ+qphckvEPPra3os6PgDbr5x67tyxoSqyYmsyfHJXgpw0gb
+         jpkW6ZjFs4jxmf+uz4Tcp7RqElaw/RXjSjm3+d9/+q1Oi3hM7Z2c9jr0wzLg1W37t8vQ
+         KpGBPwMA1mCKMuyIUCxkKpXmw3hEVpFDF0NlUrB/wpciYhtnFXQJ7dV+j3g/XOgd0EvI
+         mfe40PLrQf5wouATskqL6nSkcJHmvTYo6+fdhrtb70HOBNqrgkLQKvuSEhMPbIigl+kf
+         jymA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754898960; x=1755503760;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2B+PdwnV07kNbcJNhPLT1/ZZi6u4wFzi0KY+3/EKxhc=;
+        b=M9yMAZ395/iOJqAG5aXLkff+nuy9W9BWxPJEMBYA7UHrp8cmvVUVUzQDDF3IQZgAkq
+         2oVVRsYyOBt03iRbV1Z2+xDBEQj9b8fNFizjHKwRwBaYTjx7k2XHQfNhZkYcERJXebUj
+         jW/NCAcz8VqcZxV77AJ7Z9NsXHb/HQBPdJGYz30qOckBVEbh0m+fs3IefvqStrhMAMoy
+         hcbNbg8Gstp323A70EV7NKLxMs+QRkraS1uVUBpaYcgXrXFqEqEhyCH14O7pqQ6j8Kpg
+         jqAAj/RTo+9SfOv+LSFrPmL8WPaMKOFgEmVGZy+WC/sXYXS1+/X1RqEXu2wYSy5gdM7B
+         K9Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeLDTFiheMObKKbetT041cf6b99YZfim/mI2ZBIqr4V+7PUETascJxkoOkojYdLnmzWgk7YX4w38f8A+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUkQeihv2L4QibhWC7fYxaFQ1aLyJE9j2t/l6dNjhwiQPKsN4d
+	pZPbsZfBakb3TIoTFX8PbK+E1vi7k4n+yV+Qais8vwANVFwYZhRgNbsRtnRdxf/aamR21YjkrMs
+	85v7R
+X-Gm-Gg: ASbGncvvAU4VJDy8WUPHV/K8InVak4aQojv5Iif/TW8MsHq3uBcD2H+9WcILRMoIDrX
+	JvYIlfU9v19j8x94Ii0YV3rXIaSfjrEuhjaDaQibCIptaUtw/lIoPrNxFWBEst1QeZKlnfbsrwP
+	qtvZqP9jfbsDng4QjWJpsFxkP3nOno+b53Slng39PPHNgmh7W4wGP/eDc+2pdyi8AT9YwRe+218
+	K+zFiPIJTGVj8E9SfpB71F/YucvxRkGR0cob5Dc5H27smLk1O34mLVb+grp7xYAIXrtl8dyNkoi
+	DM4Q8YynGicUeA9cb+eaVf/mTQWvUIjhjfkzxR+EEn4uUvH1AhpdIs8ps97EyCFxMjsuTz2R7Bm
+	scWnda227fIB8t6FT+1Q+lUOXOIART4noSL4wwX0=
+X-Google-Smtp-Source: AGHT+IGNmkXLXrR7zQMQNPjPvO6Wbeyt1MjIJrWklNZfntMizipUD1DSUNe0TAxm0XQdiwqXZymfhw==
+X-Received: by 2002:a17:907:720f:b0:af8:fc60:5008 with SMTP id a640c23a62f3a-af9de994749mr316980766b.4.1754898960200;
+        Mon, 11 Aug 2025 00:56:00 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23fec4sm1979741466b.121.2025.08.11.00.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 00:55:59 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250730072730.1882549-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250730072730.1882549-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: soc: samsung: usi: add
+ samsung,exynos2200-usi compatible
+Message-Id: <175489895870.26398.4695794885978749604.b4-ty@linaro.org>
+Date: Mon, 11 Aug 2025 09:55:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] Minor documentation fixes
-Content-Language: en-US
-To: Bojanala Hithashri <bojanalahithashri@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250722191139.7195-1-bojanalahithashri@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <20250722191139.7195-1-bojanalahithashri@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-
-On 2025/7/23 03:11, Bojanala Hithashri wrote:
-> Signed-off-by: Bojanala Hithashri <bojanalahithashri@gmail.com>
-> ---
->   Documentation/block/data-integrity.rst                | 2 +-
->   Documentation/bpf/standardization/instruction-set.rst | 2 +-
->   Documentation/cdrom/cdrom-standard.rst                | 2 +-
->   Documentation/trace/boottime-trace.rst                | 2 +-
->   Documentation/trace/events.rst                        | 2 +-
->   Documentation/trace/fprobe.rst                        | 2 +-
->   6 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/block/data-integrity.rst b/Documentation/block/data-integrity.rst
-> index 99905e880a0e..b7b10c8abbcc 100644
-> --- a/Documentation/block/data-integrity.rst
-> +++ b/Documentation/block/data-integrity.rst
-> @@ -154,7 +154,7 @@ bio_free() will automatically free the bip.
->   ----------------
->   
->   Block devices can set up the integrity information in the integrity
-> -sub-struture of the queue_limits structure.
-> +sub-structure of the queue_limits structure.
->   
->   Layered block devices will need to pick a profile that's appropriate
->   for all subdevices.  queue_limits_stack_integrity() can help with that.  DM
-> diff --git a/Documentation/bpf/standardization/instruction-set.rst b/Documentation/bpf/standardization/instruction-set.rst
-> index fbe975585236..746eb3c421eb 100644
-> --- a/Documentation/bpf/standardization/instruction-set.rst
-> +++ b/Documentation/bpf/standardization/instruction-set.rst
-> @@ -350,7 +350,7 @@ Underflow and overflow are allowed during arithmetic operations, meaning
->   the 64-bit or 32-bit value will wrap. If BPF program execution would
->   result in division by zero, the destination register is instead set to zero.
->   Otherwise, for ``ALU64``, if execution would result in ``LLONG_MIN``
-> -dividing -1, the desination register is instead set to ``LLONG_MIN``. For
-> +dividing -1, the destination register is instead set to ``LLONG_MIN``. For
->   ``ALU``, if execution would result in ``INT_MIN`` dividing -1, the
->   desination register is instead set to ``INT_MIN``.
->   
-> diff --git a/Documentation/cdrom/cdrom-standard.rst b/Documentation/cdrom/cdrom-standard.rst
-> index 6c1303cff159..22dc6db04a14 100644
-> --- a/Documentation/cdrom/cdrom-standard.rst
-> +++ b/Documentation/cdrom/cdrom-standard.rst
-> @@ -89,7 +89,7 @@ CD-ROM devices behave **exactly** the same (insofar as the underlying
->   hardware will allow).
->   
->   The goal of the Uniform CD-ROM Driver is **not** to alienate driver developers
-> -whohave not yet taken steps to support this effort. The goal of Uniform CD-ROM
-> +who have not yet taken steps to support this effort. The goal of Uniform CD-ROM
->   Driver is simply to give people writing application programs for CD-ROM drives
->   **one** Linux CD-ROM interface with consistent behavior for all
->   CD-ROM devices. In addition, this also provides a consistent interface
-> diff --git a/Documentation/trace/boottime-trace.rst b/Documentation/trace/boottime-trace.rst
-> index d594597201fd..62646130e1a2 100644
-> --- a/Documentation/trace/boottime-trace.rst
-> +++ b/Documentation/trace/boottime-trace.rst
-> @@ -198,7 +198,7 @@ Most of the subsystems and architecture dependent drivers will be initialized
->   after that (arch_initcall or subsys_initcall). Thus, you can trace those with
->   boot-time tracing.
->   If you want to trace events before core_initcall, you can use the options
-> -starting with ``kernel``. Some of them will be enabled eariler than the initcall
-> +starting with ``kernel``. Some of them will be enabled earlier than the initcall
->   processing (for example,. ``kernel.ftrace=function`` and ``kernel.trace_event``
->   will start before the initcall.)
->   
-> diff --git a/Documentation/trace/events.rst b/Documentation/trace/events.rst
-> index 2d88a2acacc0..c35f640e1cdc 100644
-> --- a/Documentation/trace/events.rst
-> +++ b/Documentation/trace/events.rst
-> @@ -629,7 +629,7 @@ following:
->     - tracing synthetic events from in-kernel code
->     - the low-level "dynevent_cmd" API
->   
-> -7.1 Dyamically creating synthetic event definitions
-> +7.1 Dynamically creating synthetic event definitions
->   ---------------------------------------------------
->   
->   There are a couple ways to create a new synthetic event from a kernel
-> diff --git a/Documentation/trace/fprobe.rst b/Documentation/trace/fprobe.rst
-> index 71cd40472d36..d632073408d6 100644
-> --- a/Documentation/trace/fprobe.rst
-> +++ b/Documentation/trace/fprobe.rst
-> @@ -118,7 +118,7 @@ will be cancelled.
->   @fregs
->           This is the `ftrace_regs` data structure at the entry and exit. This
->           includes the function parameters, or the return values. So user can
-> -        access thos values via appropriate `ftrace_regs_*` APIs.
-> +        access those values via appropriate `ftrace_regs_*` APIs.
->   
->   @entry_data
->           This is a local storage to share the data between entry and exit handlers.
-
-lgtm
+X-Mailer: b4 0.14.2
 
 
-Reviewed-by: Kunwu Chan <kunwu.chan@linux.dev>
+On Wed, 30 Jul 2025 10:27:30 +0300, Ivaylo Ivanov wrote:
+> Add samsung,exynos2200-usi dedicated compatible for representing the USI
+> of Samsung Exynos 2200 SoC.
+> 
+> 
 
+Applied, thanks!
+
+[1/1] dt-bindings: soc: samsung: usi: add samsung,exynos2200-usi compatible
+      https://git.kernel.org/krzk/linux/c/187a3426a664737381a70a3fca3b8108f2300de9
+
+Best regards,
 -- 
-Thanks,
-        Kunwu Chan.
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
