@@ -1,102 +1,94 @@
-Return-Path: <linux-kernel+bounces-763323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8F2B2132D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A1BB2134C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8691C3E329A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39D33E5319
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC242D3A7B;
-	Mon, 11 Aug 2025 17:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69D72D47E3;
+	Mon, 11 Aug 2025 17:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcgAUVsB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqJYdiQR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C4D15A848;
-	Mon, 11 Aug 2025 17:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113872C21CB;
+	Mon, 11 Aug 2025 17:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933419; cv=none; b=Qfg6mVSs2Wm1iGKnffQG6IFWuwEIE0PO94QSxHTPGR9i1tAdmkwq5h31W1QA4VZWDc7UfRIumlMh96L0GLl17CxgzebSo3BouOsQB+bGM5OTNb0oK3CFizpJj/hvmfxba8W+rnhT/2IQ9U3Lr4StrLzz2y/ORXBnK1KiueKnuiw=
+	t=1754933525; cv=none; b=CQz1es5xC4W0vYr1kcAxHR5HP4PEzzl3r1P4SYiHKwJh/6dNydvf+z8Warhx6BaECwH15XFgfdSuji9GpCI8wr7CusfoceEgPY7B62U/I/tBBAwNL124wm4Yjrr83SjlljRUBsKRuIbpemkV3VgDB2HHcgQgK3hgadJkwd2pPUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933419; c=relaxed/simple;
-	bh=QTUJmNuIA9Y8USJQy0wkUEM7A1icU1YnzbFoTOlFan8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Jh5Ssv8AFT4USTtpuhzyi1hSG35Vx7Cvup/i5uEaNHX5vIELOadQ5pR2vaCXd91c4bKdGNmLf7nTuIIzP6jejVEV1LmEXCL/mLP/yR94LfssP/Vro7MBEowAtPQynwaFo2J0eP/JR+5F6cS9//Ikyyavs14fkngya5ISsGt6JGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcgAUVsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D55C4CEED;
-	Mon, 11 Aug 2025 17:30:13 +0000 (UTC)
+	s=arc-20240116; t=1754933525; c=relaxed/simple;
+	bh=3SXwtl2OtaQFXcCQM1wIwDc4Vz/l1VygIiHIWJrC0bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNaPQx4Ug3oU4WOEzpFqfJl0oF9bPXyo5b54TWa1v6HNKqlnFw1uyzpG+MukLYAo6+mwbzkJicP/feWT5YwcchCzGGl7/AUOhlq7RGzBmigiA+zIqgMOvx2YLvD4+jFi1V6prPBVLYuwkrlVaZ9jn3Qtewn7+jzy01wLU4WLpmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqJYdiQR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667EDC4CEF4;
+	Mon, 11 Aug 2025 17:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754933416;
-	bh=QTUJmNuIA9Y8USJQy0wkUEM7A1icU1YnzbFoTOlFan8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=dcgAUVsBTHF9QfoKmlubmqlHzmn7mZuuwcfbBegOq8vsHU6iyyTPn6vMC2pHuBHGs
-	 U9h9EnNdLO1Y+disDSpYK12itPxHxKawC4n3cWljwg1wlUY45hzeftYigC/sNNvmCb
-	 LyuCaZXrXJM/qrViaYgL0GbX8npsYqv9acLxPBxoKAWfycX/I/2X2aM347twKvQ2ac
-	 HDD/pOPGkfhqgjcTbiYh5m6P07Q5fTE3p9RIQPef8yctRr3bEK7w8oNWb1huBZeRr7
-	 eLOVvAEYqUDEwXhXoGI+6E7Ej4jxiy0qz4cot3wuWE3w+lPrW9opUg8yW+MsRAM+lD
-	 reVk2ZEl9E3Xw==
+	s=k20201202; t=1754933524;
+	bh=3SXwtl2OtaQFXcCQM1wIwDc4Vz/l1VygIiHIWJrC0bI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RqJYdiQRFtKoGiCNGtK4TOcFiHp0KRS4YArjbK/swfNhsg43KcF1AF/hL+KlrTa4W
+	 XBHwqdCN77C2VwTbU5ygOGQDQJnAdAvzS3usxsjXuS5VeaARKSQxUgESIV+MnyVRwZ
+	 uSwlZYSYvLDBKn0JnfDA1rN4xY5gKlXbkn42s6uf18xEXNSmvdUIZDvYySEfL1Lr88
+	 YFrm4mok/PzO6PC6E1UOwUaQEcdRzKFZ599YmwaNYjyhnmywyCOom7BAu8a+RgLK9Q
+	 FFmNx+E8767CcEIgNhholxL0xlqAw6LCJ0nvvCd1f/HXskL3GIuFFLMJoJdLKDeH3j
+	 G3YxOH5M6wAKA==
+Date: Mon, 11 Aug 2025 10:31:03 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	"open list:FSCRYPT: FILE SYSTEM LEVEL ENCRYPTION SUPPORT" <linux-fscrypt@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, willy@infradead.org
+Subject: Re: [PATCH 2/4] fscrypto: Remove redundant __GFP_NOWARN
+Message-ID: <20250811173103.GC1268@sol>
+References: <20250803102243.623705-1-rongqianfeng@vivo.com>
+ <20250803102243.623705-3-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 11 Aug 2025 19:30:11 +0200
-Message-Id: <DBZRZ3LKJQF7.210QIJ4S1EI94@kernel.org>
-Subject: Re: [PATCH v9 7/7] rust: irq: add &Device<Bound> argument to irq
- callbacks
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com> <20250811-topics-tyr-request_irq2-v9-7-0485dcd9bcbf@collabora.com> <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
-In-Reply-To: <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250803102243.623705-3-rongqianfeng@vivo.com>
 
-On Mon Aug 11, 2025 at 7:00 PM CEST, Daniel Almeida wrote:
->
->
->> On 11 Aug 2025, at 13:03, Daniel Almeida <daniel.almeida@collabora.com> =
-wrote:
->>=20
->> From: Alice Ryhl <aliceryhl@google.com>
->>=20
->> When working with a bus device, many operations are only possible while
->> the device is still bound. The &Device<Bound> type represents a proof in
->> the type system that you are in a scope where the device is guaranteed
->> to still be bound. Since we deregister irq callbacks when unbinding a
->> device, if an irq callback is running, that implies that the device has
->> not yet been unbound.
->>=20
->> To allow drivers to take advantage of that, add an additional argument
->> to irq callbacks.
->>=20
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Sorry. I forgot to add my SOB here.
->
->
-> Perhaps this can be added when the patch is being applied in order to cut=
- down on the
-> number of versions, and therefore avoid the extra noise? Otherwise let me=
- know.
->
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+On Sun, Aug 03, 2025 at 06:22:40PM +0800, Qianfeng Rong wrote:
+> GFP_NOWAIT already includes __GFP_NOWARN, so let's remove
+> the redundant __GFP_NOWARN.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  fs/crypto/bio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index 486fcb2ecf13..e92967e20e2a 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -148,7 +148,7 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+>  	 */
+>  	for (i = 0; i < nr_pages; i++) {
+>  		pages[i] = fscrypt_alloc_bounce_page(i == 0 ? GFP_NOFS :
+> -						     GFP_NOWAIT | __GFP_NOWARN);
+> +						     GFP_NOWAIT);
+>  		if (!pages[i])
+>  			break;
+>  	}
+> -- 
+> 2.34.1
+> 
 
-Sure -- no need to resubmit AFAIC.
+Applied to https://git.kernel.org/pub/scm/fs/fscrypt/linux.git/log/?h=for-next
+
+Thanks!
+
+- Eric
 
