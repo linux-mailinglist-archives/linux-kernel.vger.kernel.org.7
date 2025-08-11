@@ -1,144 +1,153 @@
-Return-Path: <linux-kernel+bounces-762727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37BCBB20A3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D89B20A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59795188A1C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F082A4F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E692D320E;
-	Mon, 11 Aug 2025 13:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="DaoG2BtZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l5kV/e4x"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706E52DE6EF;
+	Mon, 11 Aug 2025 13:34:08 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AB414658D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19002DE6E4;
+	Mon, 11 Aug 2025 13:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919188; cv=none; b=WFJwHG0/QBOTuCtXPx/8HUB4Tg/dnRlvThd7jMe9pOchjKFN32K3a38KcPvJctREnZJEcQbK8WZAEjeeeNSLdcTvrmVFJ5qkAjSXDg39eH9gu975pfl4I27lqwzLP0DGzEZQHlPfbZhrCT44dDfLd/PvfYDWI+COMj6pXsaRUWM=
+	t=1754919248; cv=none; b=sTFhrhoes2dyxzuYapK2t8WrOieqfUPYb1uRD5LoIY5KR5abWSt7oOacrH8nfTURaGsSnhHNKisXxr6IJcPJpk9hl1rH5CWkBR6hx5wQNGhc2MQZPtAnO3HeC8PULuQmsU0ETv+UWnutJdafJcek0lYt4PYw7/tije4JP0bDC7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919188; c=relaxed/simple;
-	bh=ZoemS5u5qP25Lthyu8rS7BWn0iX48sbwwjfZ5ILVf9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WeMmj6WhhFJy/EA2cJuDD4vIHOwoO5kg0OtLEvUjIoVx8ubbwwKQox5TPmd98jooMSGIi8vTy9eHhv6SeUYd3SRplRSmw33za4kjjJjK4DPuMlvKI8ueOxwA3oGXDMWkEkTJz1xxyM4NJEc39B0PkAEbURHn2tqJcxfs3nVQh0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=DaoG2BtZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l5kV/e4x; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 60613EC0013;
-	Mon, 11 Aug 2025 09:33:05 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Mon, 11 Aug 2025 09:33:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1754919185; x=
-	1755005585; bh=gctimxa54HqQNQrX29F+qPQpcXdjoL5nPuvFUUnFTC4=; b=D
-	aoG2BtZ/ICU0i4bY2O7xY+utMpleQ6+0Ne1EpD04p7ARiqnTIxTIpLUUuNEMYL4E
-	7SqERMY4L7zepf3ktv3w8AaE3IJocxlpGBhvI0auV4lnm7ikj/hiae7cqaf+GcK6
-	5JnR/8RHWEplr1fZCr460gsS9Ohb1dAJ1LwkSArY7wOVe3xWq+d4SvRk7SKxr5w2
-	G5gH49fnd5lxucgEym4sLsw6srClhp7pvNjnynuVTzeIemDjjSiq7knzwSqH/rg/
-	tkrwRmW8MXGl7+hwmoTVqpsWu9HIHzPtrj2HghQEO0tKr5cZrCK8wmXnG9JPI43o
-	o5MLfEhWh6BUQ5wagr+aQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1754919185; x=1755005585; bh=gctimxa54HqQNQrX29F+qPQpcXdjoL5nPuv
-	FUUnFTC4=; b=l5kV/e4x5bY/nQoZ+5xj8bmP4ioXgMsr0Det//KAAz2bVNpuodj
-	GMsK2a2lp+9JUJPAFQg7kB3icwq/Y8moEfZLDuoSk7/LW7zYp1KsT8/76EGbkGOf
-	5HNfxzjeyyeFGdh0mlIYZ4wGByARxNwQLkYTLpRrZQ3O3O2iHGqs6ARLH0Tev/Ii
-	QMLaCeAnUvNRj9EE7wlnLhDDbaCxBPcg6xoFWehuuX7q77RRXrVrd8z4wZ+lFXSJ
-	AXMvQObRcJvtYxeCWE0wTy05yXorntefgVFaLQvI/yilHF6+pJe1T17eMHI+2wY1
-	+Le+o4HS4CfYQvRt8pdhIBECzMKTc3n1KgQ==
-X-ME-Sender: <xms:EfGZaDrY4q21TojA8ECLFgZKaNPXWKXyrOwMWN5OnpUnsTE3Agjt3Q>
-    <xme:EfGZaEios-NQx1YSMmjX7UZfslqjhxcM3VTFTikFEcUkEcEQOJ1sye1wq-krgCmvA
-    pvo5p-MfnFjoRavDW0>
-X-ME-Received: <xmr:EfGZaNLXoPlb8lD7HZagK7e9vKSFEfDxnbRSiBi-XwoKEG5mMtkdh1XHCTdvJLCm7Is8pD7rLicHKIVFGd1nLjnHCN9dxVyVRaI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
-    dttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeevieelhfduke
-    ffheekffduudevvdefudelleefgeeileejheejuedvgefhteevvdenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghr
-    tghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvggumhhunhgurd
-    hrrghilhgvsehprhhothhonhdrmhgvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidufeelgedqug
-    gvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvth
-X-ME-Proxy: <xmx:EfGZaECazUry70UhWLDFtdCDjfo-hnJpXz4jvDZbo2gpq0Am0DcU8A>
-    <xmx:EfGZaNjtTqgtFTWngQU0EFIs1TQulQHVCMdHKTHpqupiUY6ySiHSFg>
-    <xmx:EfGZaMliVZTV31-wnr4ppumS_VWOENL7EthTntR3YX4uQIvLEvwQWg>
-    <xmx:EfGZaJqzhxdZeYHjMLfvBZJKyDwuFFbr93k7_g5iJZAgKC3j2WtvPw>
-    <xmx:EfGZaK8W80BE9KCTxAFWrOmbwLttLVarzCiPK9nOZUZnn4cJK1o1nJXd>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 09:33:03 -0400 (EDT)
-Date: Mon, 11 Aug 2025 22:33:02 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: "edmund.raile" <edmund.raile@proton.me>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>
-Subject: Re: [GIT PULL] firewire updates for v6.17 kernel
-Message-ID: <20250811133302.GB267817@workstation.local>
-Mail-Followup-To: "edmund.raile" <edmund.raile@proton.me>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>
-References: <20250802054917.GA127374@workstation.local>
- <pTURxXSK4yF5-FlMBbpWLMW5JUC2s1BvSYdYGKBAgEOpI9z4RhnQsLrrRj7E2Iu02sOznG5ysKRVpXR4ZWFp-CSeSebIP1YGQl7gbFLGeEo=@proton.me>
+	s=arc-20240116; t=1754919248; c=relaxed/simple;
+	bh=asXgn3f7q2ix6N10I9+1Wdp/MSmoQq/6YkQqyvGRNS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cOrENoThlbbTWbSlH2B4qTn/AUw4vUhvl8P3GXNo+0icUBSOO1qihNswSVLx3PFqeMb4KLCIygq8VnClwIdLSEg06EA5IdXaLIDgaCpWNcdzc0L0SZuKeHJanoeiZoS4sFio9uput+X13nxbolySIDdINgRNMAlAhBe8040a9Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-500006b3efdso4077232137.1;
+        Mon, 11 Aug 2025 06:34:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754919244; x=1755524044;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RjQkspi4MLubyyjI0/WFDwsqdNcqXCarE9lDU/gnxqA=;
+        b=wfzicitlPIwlyuIYf0PZqvG6BhSV3u0YTaznsYkkBemKqUFfFhNKhsrOIjLPx3LgYw
+         o7n8QYu/+51S6MQjZ+2CnxUpVxFyeJJWf+ehDWIKvSE1t0Dv5lMVzhUnxemcjLDbQ5rT
+         uoHIzoAnIwL2XrtCxO4TkXCx6BKNmBQhz7NJviHTF2PQo2pIUrwAT9d7JdeTsh/WhzL+
+         f76QwdvULU2p37W5RTv97OFzsOW1/c1xT6OFvMFEQhJftyTI18XxF8Dxe9SckNG5u6eg
+         vxUFX05HsbNlm8ovsLwWtGpZMS5UKGNWuUi4w4lWBvg6MiW0DTdCuNm4IuDwzTK9vRKh
+         32IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp8m9/15ijmAr1dn2ilb8T78QxnlTMDii0kcqDMB/ZkQ21DaWI3IouHFZK167rgOWJXoCCLG78NStmF+cT@vger.kernel.org, AJvYcCWs36Yk3ej4OPRceGvpoimCKK2SmJxaqxoui3LD0FGqh/PvT618qStZwzCUxRXBG6vEDIQpG62s7zSg@vger.kernel.org, AJvYcCX/0jyoBn6zolwdOO2QtjRqBp4aRk3LgE/m3ZQcHwCBy3pm3uFi3JMVsQNs7ZRr96bSk6/bH+bxteukNVMy26Pdztc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7s+vLKG6GnWQfRmvQOFVZEEz0nXff592O9cmvOkJAHhpscYHZ
+	wjG2SFpnaadUBoiU/OYb5tK8e07snfm613iqNFjkIHHRlJf8ZZW6AY4jdrzbwGg/
+X-Gm-Gg: ASbGncu5yBbvkFcK/poF9wcBjXzsOuQlpZJOiFs7Wqyal3irDch28O7hneoepa8g/AL
+	bNbanNqC8MBDT9B5PfhG0wisiB40LMexE+JsZAyrUuKuZ/KytcDDUVBZcz3gXcw4/OU2yE0CW57
+	at3kyYfyOCA1CKX2cZPAwjWLDhX0OPH0+kdyeGHfyLoTMLJS149DxMDYMN56AlgtfCTlE2yHuGL
+	AHGlzMFYgjwc4NtnhxQhlkYoN2OKYa5+yLiU1XVYlggwkhKL5iWHsgy5W/94iTk8V114d/aMlbx
+	C5RfCJHPABG3kATrp+Y+ONJJ0gGvW4ds6p+R3Hx8cksf+XRRgXmwvqcqM6nZd1eShzGMCrhfrMS
+	1tDbf42ueXT/NMR8QEN8//f5cn7nusj/UYL6GIkKMO9UBjYp1zGbqo01JkFYf
+X-Google-Smtp-Source: AGHT+IFQ3+nZAnLa7h4sNIKyQ4ihQAZVPwiSZAFySeIYGNo2MFXJ6XPL9h4b9UViE5QOEOy/naB8Ew==
+X-Received: by 2002:a67:e7c8:0:b0:4fb:fa84:2e64 with SMTP id ada2fe7eead31-5060eed12ffmr4970402137.14.1754919244461;
+        Mon, 11 Aug 2025 06:34:04 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0268c86dsm1850713241.1.2025.08.11.06.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 06:34:04 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4fc0716d942so3064638137.3;
+        Mon, 11 Aug 2025 06:34:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1uhV5+VXUzs/oWBoI1E7UzUh9EKFeXeUVZr/uo566xVPZfFJXJCn4+5t7yr4Sr13UR6OX2ezQaQ1/HoQg@vger.kernel.org, AJvYcCXffNY6H0OVaHJ1Mvi8FVSyG8Gu9XNLUWeWYRl/COEGG3JkADBQ/Pj4Sb048z1DggizxY6bup2QffvwbaDgn0Azzug=@vger.kernel.org, AJvYcCXo7/jfQUm701PtUSTvuY7qWRP4L8YIR0g6BrYxrmjtGf7Zi12RCTDGgPDA0cWghuW2nECI0d9ireey@vger.kernel.org
+X-Received: by 2002:a05:6102:5109:b0:4fc:1631:cdd1 with SMTP id
+ ada2fe7eead31-5060eed10aamr4511549137.15.1754919243985; Mon, 11 Aug 2025
+ 06:34:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pTURxXSK4yF5-FlMBbpWLMW5JUC2s1BvSYdYGKBAgEOpI9z4RhnQsLrrRj7E2Iu02sOznG5ysKRVpXR4ZWFp-CSeSebIP1YGQl7gbFLGeEo=@proton.me>
+References: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250808215209.3692744-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250808215209.3692744-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Aug 2025 15:33:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUWo=hYPWPrweoYn5rFC50aV5EV1xqwFHmLp27GRjEADw@mail.gmail.com>
+X-Gm-Features: Ac12FXyaruwz2KkVarRF9RjlDkdsU830kR7SxQSLDrclAsRoH40uxlU_2WKaBv8
+Message-ID: <CAMuHMdUWo=hYPWPrweoYn5rFC50aV5EV1xqwFHmLp27GRjEADw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and
+ RZ/N2H support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Edmund,
+Hi Prabhakar,
 
-On Fri, Aug 08, 2025 at 01:50:44PM +0000, edmund.raile wrote:
-> Dear Mr. Sakamoto,
-> thank you for including me in the pull request, I am honored!
-> 
-> I tested the combination of this pull request and your fix patches [1]
-> on arch 6.16.0-1-mainline (based on "Linux 6.16" 038d61fd6422)
-> with TI XIO2213B and RME FireFace 800.
-> 
-> [1] https://lore.kernel.org/lkml/20250728015125.17825-1-o-takashi@sakamocchi.jp/
-> 
-> So far audio playback seems perfectly stable:
-> days with varying CPU load, compiles, even mprime.
-> Suspend also seems fine, even without first powering down / disconnecting
-> the FireFace.
-> Direct ALSA streaming or pipewire, no issues so far.
-> 
-> Tested-by: Edmund Raile (edmund.raile@proton.me)
-> 
-> Thank you for keeping FireWire alive and even developing it!
+On Fri, 8 Aug 2025 at 23:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Document the USB2 PHY controller for the Renesas RZ/T2H (r9a09g077) and
+> RZ/N2H (r9a09g087) SoCs. These SoCs share the same PHY block, which is
+> similar to the one on RZ/G2L but differs in clocks, resets, and register
+> bits. To account for these differences, a new compatible string
+> `renesas,usb2-phy-r9a09g077` is introduced.
+>
+> The RZ/N2H SoC uses the same PHY as RZ/T2H, so it reuses the RZ/T2H
+> compatible string as a fallback.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks for your test, however it is my previous proposal. The latest one
-is "[PATCH v2 0/4] firewire: core: call address handlers outside RCU
-read-side critical section"[1]. The difference between two proposals is
-just to use kalloc helpers instead of XArray for FCP handlers allocation,
-thus not effects to your device.
+Thanks for your patch!
 
-Anyway, thanks.
+> --- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
 
-[1] https://lore.kernel.org/lkml/20250803122015.236493-1-o-takashi@sakamocchi.jp/
+> @@ -120,6 +126,17 @@ allOf:
+>        required:
+>          - resets
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,usb2-phy-r9a09g077
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +        resets: false
+
+By the time this hits upstream, you will probably have reset support
+for RZ/T2H and RZ/N2H, so you just add renesas,usb2-phy-r9a09g077
+to the conditional section above?
+
+> +
+>  additionalProperties: false
+>
+>  examples:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
-Regards
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Takashi Sakamoto
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
