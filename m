@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-762357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19275B20568
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:33:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD66B2056F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA46818A220F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D63B7A2923
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A483022FF2D;
-	Mon, 11 Aug 2025 10:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB472367DF;
+	Mon, 11 Aug 2025 10:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z42FQXJZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eMdIHOtq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB01F16B;
-	Mon, 11 Aug 2025 10:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DC81DED53
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908376; cv=none; b=D0WiBpjv0tpbIajF0FrjGvVxJ7EoUiUEhpURBpX9AyNz6ZXEtqDPxuf3ozsgffhJC5WExkXyQE6KeF3qJM4ZphbfZ3caAE9yQOBMGazv+Hrw4DhTU5mU8DqjcucvPo7GLVNgSg8eQKYsI4TiSpF2ipv396MUNJirF+4KPs1b9q4=
+	t=1754908382; cv=none; b=E5LGDCYuq0jT5vylvbZ0lePLL4bHRug/FDMxxlyR93VbbRwSSzwvjKPqnn0L8Sp0rEqSz/v0GHBHqkYnN/MchZQOP5tCvSegU32WzRr1CjfKqdLKpAt9JWtFk2OywWvCUdvf+PEJqvGkpOEZ6IAlFFnnqkdy8jXhyDn/g7NOxr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908376; c=relaxed/simple;
-	bh=fWZBuhCByaZrfX3gSeAzXz6/RAbJoqfRd3mRk8eamwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqsBm0VpmXwInMJrSzqqOxTQTpjo7EC3cX0ADMYL9QKxuFE7HwPBp/YeVoLOBUW66KttnIN0wp+MUSaLtf3CUvAbfEFrnAk3MZB3oLmUgGLrp7L6YAjhHNq7LKQijzBuql9j8U832htUOQ/1lh+jtIHiWlsKy+fEEZdRAeu5YdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z42FQXJZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0Xj76AAJHUlJ1qkjB5mkm0NmtEe4zDSZlXQMIRpqBrw=; b=Z42FQXJZNHojIEfopDWRSQwSn1
-	YWcFq6LtQBoyn4YBv1yNMRU8CV5mhVaHxMF8llZYDp19rAetu3ouFPecDYY6cGhUtocXDp5ARRIwx
-	4/1edMZvP91kxASaxEZI+UBn7dBDFW/dtinzZqVsSuqkm+3GsNIoaYcXQXWOHXowA2X9WAgLxPdRS
-	41nVrmKoxX9e5dJt1oYy4fYFRYN/GDPhG0eDKRbWJ/rPn1yATYHppizBED9ztazj8S/cFZfHJ4BTH
-	oKXM1mRiDR7d3nvCXOVZlPGe8Ppbi9Sa4bw3PvVEUKaRpKjdRAkmI1Q0Vp9+WsuK0sbzWxqRqQ5i7
-	Sq1ddxIQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulPpk-00000007KQl-3ytD;
-	Mon, 11 Aug 2025 10:32:52 +0000
-Date: Mon, 11 Aug 2025 03:32:52 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCHv2 0/7] direct-io: even more flexible io vectors
-Message-ID: <aJnG1H4XXL8AXHcS@infradead.org>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <aJNr9svJav0DgZ-E@infradead.org>
- <aJU0scj_dR8_37S8@kbusch-mbp>
+	s=arc-20240116; t=1754908382; c=relaxed/simple;
+	bh=LnEoDpnkoJHU8kW/etIi+d+IHIbHf6VB/4ZcFLdBa/g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OA5iXmjTc7HErnuCzFycg1MVom9cOEnIEEEoeMsPz14GdKb6/nupkX1ad4g38DdO2Ir02dclGBaG31vmuB47Yc2ABcpqnu7LqsmFDDkr17Cyi9xTX62Lurjmf2YVlRDLAMM9vSa37XekVeM9A5Hehrsn6Nrfmefunb7i2J9P3jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eMdIHOtq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dG86029264
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:33:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZnHcb9SoHxXWIKTgE0sy5s0fFPVq4IXyx5zLZaTr1jU=; b=eMdIHOtqd3s4zWYG
+	K5aGT3wQhdg/20NBi2POFtCEeyFJcg28eH4R3n317ZAIdmfl8O0ObfPn4E6LsOfU
+	LxYwsftdF1bziVqY9mqo+XtlEerhowwiy+chsBRVAOgzpumQ112HeyjQROcU785G
+	YKG/Xbl3L+Bes1Q4H+/N5i8046RRVsT8Ewq2/JhJn5rFjSkPHhFgiv9BiEer04ML
+	k0qrBnt5wuIyWT92Qji6DDtXpjggYSf2Y03eOVx3F9JsJSRnFtv43MaSCytzEBkz
+	usUXgNyIY3SaC8xotUsOP6wb4Q+dJqkTFTtl7tGDsfgtZJvkXqggOpYyepkL9DcI
+	2F/V1A==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygmbyde-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:33:00 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2400cbd4241so69372595ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:33:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754908379; x=1755513179;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZnHcb9SoHxXWIKTgE0sy5s0fFPVq4IXyx5zLZaTr1jU=;
+        b=GgdHUhWAACHTQokO4bDih1IobTeYw1u85WrqLNWdbHVae3cmudPFBQVlapm0tqes59
+         uaGvgxLZOfi8QR3U8VSVogCT+Abhw3okFtxy3igztlYticN3BHAmxJ1D8dITGg5Q7Rrn
+         aCgKeiQ0t25+6+JvBcoRChJthPuQzE2MG/6Qz9/s9Qnes8RoGeKTUL7uYs/G3B+2uonv
+         x3ETvArnynSgnaYiig9ShKHeUG9M+uGcQ2SE7n6CQ2NZf/TauEPXfX51Rbi4czM0YFFI
+         i0p3jvazGRKMNBHJYU6hXTK5744lrKapKl2KNG+VGjIJluOEt883iJTYZfKkGoEY7rxw
+         D7jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMXeg40D6rKtp56d2jc8alatrrkQcfURQW4loZNtQoDojUWO4z5HkJvfQq62vNNaSN3mHw2jWUVnMUFH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8TSBRFDVGO9Eods7p2WeqASRWLtVFHFzlg5cUPY/s6BkVEcsy
+	mnIk1mINLWR3WiAQ2Su7ett442L6aTZNf5ejYSnDmMsZwQMjQgMW3o11rantO4AQzA92N3io0fd
+	0pAqOoIBBQU+qY2yBH395X+FQzg4S9RYa8sBVFiehia5Us8/wIwxMdnu1RBSKHYpOa48=
+X-Gm-Gg: ASbGncu5Y6D2laq06tjExsn+gSIAV4SRsMqa5WBOM+mzgSGFuu1PwQEb6xeRDPiDzEd
+	pNZS9hR8WqNl1ti5jMY+5WZ0H2Re8QWO4iqRucs0vPrTldTeGao/i/5uBMs3y87wCQzA+D3swsd
+	VBSGcDLBZEWrPiR5SI7QYCJylXRThGNRho1ki6ELk91rHGPK5YNtp4O3Q/RagDmWvfUvW+EofHu
+	ovJXGc4mC659tgfRotHjvVYIHExeqAELnqaa0eEAJbeRZZQuzmEhJd3Z3cy+YhEHknduQ90Bs87
+	GX6WpaJ4ct4NXpvjkEU3fQETd5wxr71maOs9Ly8+
+X-Received: by 2002:a17:902:da91:b0:234:d292:be7a with SMTP id d9443c01a7336-242c1fdca31mr188037505ad.1.1754908379576;
+        Mon, 11 Aug 2025 03:32:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnL8seQl4qJRIS+l3fx3q0zvEkrAxHVu3+GqAQLTm/24/fC5Ue6MHpNqLIu1E1JNvc543A9Q==
+X-Received: by 2002:a17:902:da91:b0:234:d292:be7a with SMTP id d9443c01a7336-242c1fdca31mr188037065ad.1.1754908379120;
+        Mon, 11 Aug 2025 03:32:59 -0700 (PDT)
+Received: from [192.168.68.106] ([36.255.17.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89771e2sm270188205ad.88.2025.08.11.03.32.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 03:32:58 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+X-Google-Original-From: Manivannan Sadhasivam <mani@kernel.org>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+        bhelgaas@google.com, sfr@canb.auug.org.au, qiang.yu@oss.qualcomm.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, Wenbin Yao <quic_wenbyao@quicinc.com>
+Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com, quic_cang@quicinc.com
+In-Reply-To: <20250722091151.1423332-1-quic_wenbyao@quicinc.com>
+References: <20250722091151.1423332-1-quic_wenbyao@quicinc.com>
+Subject: Re: (subset) [PATCH v5 0/3] arm64: qcom: x1e80100-qcp: Add power
+ supply and sideband signals for PCIe RC
+Message-Id: <175490837428.9171.16946610135898864162.b4-ty@kernel.org>
+Date: Mon, 11 Aug 2025 16:02:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJU0scj_dR8_37S8@kbusch-mbp>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfX/GrYN4TsSH4Y
+ Z1eivnqEwv672WyHWHy+D6G8GfbKxG5UJs12vS0oiXdekSaf37no/l00QnKBOUZTEOm+NB0zCMx
+ j/aNOLlKs9ssrzMUsgH3W5/vZpuJvpjeHipo6jwY1f9uJhGJKOpaN8IlQd6m/LrOTHySa3Py/no
+ W4y0il5CaXZf0Zj7lu2HMzW8LzZavaF6A5wJHz6Zn2hTu+MBh5DzHiu4GgFDPIAq6tHUuUimAUd
+ RhqiksfTQxseUIoG0xVhHI5xI1cxC50Zz6bmcAnS5CHnW+HixGlAJkUZ8NfbL++zQRiuxp+qGj4
+ wO1aRjNFiEGY+qu1iHcZh+DBgDk++zFWfd+I36svZhxUUhEEf3W5n0uCoDY8fdUSp7PINome1uy
+ oWREmk14
+X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=6899c6dc cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=tivzXH558BYE5qsfyb1zSA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=idEpX0rf-HM0R3Am6JYA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: ZtlyZvELzw5UQ7XhrWyRbKtbv9HjrTjV
+X-Proofpoint-ORIG-GUID: ZtlyZvELzw5UQ7XhrWyRbKtbv9HjrTjV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090035
 
-On Thu, Aug 07, 2025 at 05:20:17PM -0600, Keith Busch wrote:
-> Sure. I wrote up some for blktest, and the same test works as-is for
-> filesystems too. Potential question: where do such programs go
-> (xfstests, blktests, both, or some common place)?
 
-We currently have no good way to share tests between xfstest and
-blktests, so I think it would require duplicating the helper programs.
+On Tue, 22 Jul 2025 17:11:48 +0800, Wenbin Yao wrote:
+> The first patch enables the PCI Power Control driver to control the power
+> state of PCI slots. The second patch adds the bus topology of PCIe domain 3
+> on x1e80100 platform. The third patch adds perst, wake and clkreq sideband
+> signals, and describe the regulators powering the rails of the PCI slots in
+> the devicetree for PCIe3 controller and PHY device.
+> 
+> The patchset has been modified based on comments and suggestions.
+> 
+> [...]
 
-> I tested on loop, nvme, and virtio-blk, both raw block (blktests) and
-> xfs (fstests). Seems fine.
+Applied, thanks!
 
-Cool.  I'd like the hear from the other XFS folks if the possibility
-of easily introducing preallocated space (that's what it looks like on
-disk) for writes failed because of wrong alignment is fine.  Given that
-the same user could introduce them using fallocate it's definitively not
-a security issue, but also rather unusual and unexpected.  And from the
-other file system maintainers if they have similar issues.
+[1/3] PCI: dwc: enable PCI Power Control Slot driver for QCOM
+      commit: add7b05aeeb417c86239e6731a168e6c46b83279
+
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
 
 
