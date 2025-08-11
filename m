@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-762333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1627EB20503
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:16:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838FEB20519
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0975B4E1066
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:16:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C99918A12BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1B6223DFF;
-	Mon, 11 Aug 2025 10:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9033D2356C9;
+	Mon, 11 Aug 2025 10:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5dC8xkT"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZlbN+4Qz"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F301E3DD7
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0D226888
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754907385; cv=none; b=hT4bkgC1LnM004nPvKTrxmBUgr30cSdha+9r4yh7YOHWjwxBJkcMzFI0tB2mptLxZaMBjFGbcw45D8jSfVhwefWsJRyTTJ0xua+x3hUJnUPuhy516/JUXzotEUykJ3/+d1fefryKDahDaf1Iknh7YkanZrTzlvH2Q/4CmmXo9TY=
+	t=1754907454; cv=none; b=CbPPywMD9iqzNCSxphc57gDX2y8Yxb8G7oDCRx94XttKvmveXFL07I4DVR3GUZUzOXHhGyxbF6p5y+I3YVWkpFbN199tYrRFk8zftbvhs7Lm1eVagrTTAMZAzVggO91Q36uX/2JzFACT48VvLKgXRW4GpEGVoIrRqvxbQL5FS18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754907385; c=relaxed/simple;
-	bh=lhpccEjV4JvXC3iJXVnLG/g4BG5pKPBfPXPY7b7oLTs=;
+	s=arc-20240116; t=1754907454; c=relaxed/simple;
+	bh=mvBDLINp1VPpRWMc3lvEklpu69BFO5OES2Bje9lreR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrkPFsWJzu4wpUqSV5DHMwqFaP+/pHSL9m8wSQ1q6dyvQ+gxWnu0MJupo0shJ/kFvr4eU5x30Arrf0KPgj+s306p5uUSJ1RQtNTObKsypyZcsHCYja8Z31w5s6AIYKcfoWqvLFnve+riAmaAx1pcABUehh6unltqAHQLzChjDMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5dC8xkT; arc=none smtp.client-ip=209.85.221.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=ly3w8YB5bl8kmxk8x1uhFjaN+58fzUmbcKwXOFT7VwB3BdwXqMQbF+V+T7S6vtWL+FaX4t7d9bexK54i1P/wnk8Uk37YuiUPCZIdhOcTLp8yd9LtYVIfeZSDlf1aqirX0hqx5fbU3WL5UNkOdqO2pHxKS72yRn6Ewd5hE7r0MfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZlbN+4Qz; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b7910123a0so3884409f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:16:23 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23fe9a5e5e8so27594145ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:17:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754907382; x=1755512182; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754907453; x=1755512253; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YSpiiISpNVr4gQnCfkPUN2zjFrHk7VxPQMyKo4/lvmI=;
-        b=D5dC8xkTcp3nFS538JH/hhv3krHlFCGwSBKAPtiByLb0kp+h8+Ll+BSqGkQbb0kEhu
-         N9DpzYFtK94ABxbbbVGGw+jYDO2zgDpZhyA38ocwDE9mqk6PNoC6DOZ8SLnIu8U3MVfq
-         kDb/qP7Y1SiPm581VJypfLvf07WKiqVafH5qjDTh50jZAqo0JGsidTpWi72V58sPlIjv
-         dWUkjqUnQI8dGD2nFNYinpn28TfrvR/QRwlEq2ZQ2dt0ywi/eax/Pe6W1HyyIKYIGGy3
-         crHLykKA6MfN7NCckrcv/M+B/HjsIGOP8nFtDGXqtS37k2o8mhyz2MSjp1C7qoq6tOig
-         d4Wg==
+        bh=4wbGGcDhVg6bsq7Cl6LWsjPX/u/puNeXFalUsVt74Fg=;
+        b=ZlbN+4Qz+zum4lZ4ULo7KkMWQOptvit+yL7i8RuYnHtRbFJuop2O+Be3q/DmEYaYzI
+         y/drVnnR1yklX+s4Sz0PBffZct2vMY07wRoyZRe/xHHrUwcD3cvu+cXDcvQ6SCM2k3X8
+         xZHHJvYGCO3SMyuZknvOqtOOF2fnX8fMwZvaASbjQ6TvNnDQu993UR9B5YPSG9n36ybB
+         /+6+yY3SIkNGN+aFjPQbnwSbro+RS4xeeJ6nnInhr+cMVt+X9VUBlaODqa5TA9io1a1v
+         su+dS1trVtHedBRtU0I856y3mFqyqq88HN4hIKGY9TvMjDB5Q8jAIrQHcJDT+UeLjahe
+         rxxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754907382; x=1755512182;
+        d=1e100.net; s=20230601; t=1754907453; x=1755512253;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YSpiiISpNVr4gQnCfkPUN2zjFrHk7VxPQMyKo4/lvmI=;
-        b=WYpDXWz7O8Djh6jnizSxvmIy8HJs8PT3bUBpuDMzsXnGlcHQUvZOBOC+elKI3Lt0/j
-         EoeGfvgatNbbg4MmPh6AOJ0al5YbEdGJSqIBPoMXajApG8oWQJFR5dIhmQDEasZEOUqG
-         uxjLHGiidpts9/jTQlgc+ZWlQiZS+aLF1hn8a0g2eu8Put+S71FValGqYfNuIO8DKXxu
-         lae+o449K219YIGiPA+CsgvEslKaAEShaBpkIVupIcXOtaWva1d0J/oBVayPtUIAOhxV
-         1L5EjlP+OtJoOE1VW9K/V6TmpdalmGcOzMF540lY90TG/Uw2ukgM+T/Y4tW3/2C8XKAI
-         krLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiXP8/eTeLcDyMMJgQxlWUGrcr8Xpkc37fmaYF8GEJ58xGBonb8csyiBhMcgO0WddGDrFzlti3R6XvHpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvyJDMtCIQgL9X0kNXzfWWopjJVGCBwS80HQwtahPqcOST+ejG
-	FvyNpxrlQssNgv662iaLBxofMaNMMeTvh3K2Dy/zxtXJjbvTFtSC8ClnDgTHEm9QZwY=
-X-Gm-Gg: ASbGncsRFwfzDQnER46/Fr8KsdVMNBYMj8v95zUGMptEvwBpe8fLA+ygwydYf+0CnNp
-	Wpoj1qF0PSvzJ7Y9vKiuY/tk0kiItnB/KdH0aa8s2K99GyoMQWP446i2r8h+p6d39OvS50vj9Es
-	9F6bSqt8Tr69lNE+j2tkiVMrNnjPk3Y8mTSNrKcr9UpJvRc0dbyAkoABHBATQXR9H89Vbcql8ZO
-	N8wtL5InvfLTVJMu7XIqvgZTQqUKNoNorIF6xmbFYtF3dGrRtqt9p+iWD3YDodBItgN8qA//ZV8
-	8Z1h2tul0shEhh9Sdk1/ltko9sWHOn3KWuFRXt+wG4GjfPVpcp72s9O7703o11ZwIDbvXnaVOEe
-	fumrgpzwiuQC+lMLS4XfYZJ6x8YQ4baSg
-X-Google-Smtp-Source: AGHT+IG9ux2smHHV5RyT3jUtDRzIFajNvscvOmDcbzXkqY+4Xp89HRJqljXFsBnzKFxpMyuKABzgxQ==
-X-Received: by 2002:a05:6000:18a9:b0:3b7:e3c3:fbb6 with SMTP id ffacd0b85a97d-3b900b7b012mr9878088f8f.31.1754907381530;
-        Mon, 11 Aug 2025 03:16:21 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458b8aab8c0sm382668595e9.19.2025.08.11.03.16.20
+        bh=4wbGGcDhVg6bsq7Cl6LWsjPX/u/puNeXFalUsVt74Fg=;
+        b=ZOTy+4kVXuWvxb5QwScPuvYehR7dOBSiuPgStd+REe3Os0VrQ82fxmiTGXah5tamr8
+         uKh9CPrhlhzIVjVtlpY5r+g9spLG2VSes1Hfwk1UohlZlT6+O/HRcrYAI0EfgsXrtN4+
+         2p1hUd5/KPEgxQIgicJNbuyKF8Vy9hdzGa3grLNZPzXkMUoQOMDoD3ITcj7zUzqsyxXy
+         MDeLgLhzGC5kNOxVLKGNWW9v/bnBEqmF3zoVNGpkpxEEhnHppYuWNtfeRQ+ppF7Cf4i5
+         gZs0niLh24WWKV+ZuKxqBp7oLHjyACxNoYuvss4SvlJpenfJnNadTzt7EaFPOhGGWjv7
+         exhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUam9eH/cA2PYsvj6gHodeBeUqNucYAEy7Qo+RSztyGDBShAKRuhMsne3ope2Md6x8rhVTLi2TQhJANUAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywux9vL7p0JiiCwdwSRpebf4TuJSiD14p/c+y7SVb8DMgEpuiYu
+	Qz9/pR49WhIjglLUaSzYtV6W9NEH/DJZOejZ89UYz3iK5edeABffhK0v6atnT2i3aZs=
+X-Gm-Gg: ASbGncvViQGej2RfW4aR3K1HhbBn7xSLT4Y1D6sbWDKTVYML0BJM5b3wlcTE3bYzEbg
+	QHlXWRS3vJjl4LQOVj7uRk4oWqbWyWJAR/ke0qqqItP2drz/Hn0keWNDA6C+yQ7ZcSoGeoQUAJM
+	dLG5bwFWnAKf5tUQ6DhBTfwnZqqoW+x0nkUXSrJXeFTEzg87fIrDXGA2MAw+M/7ZSzNcsgcf+dr
+	8arEbkwwfkVS8/yAmlzUpzo1T+NfKgbQ7YF1r91eEXG66ZSkn9oDRDW4BzbOEBD+Dh4Vjc1Li3q
+	Q3TUM7G9lk6WyU9u2LZZD/VIWEiqj3keiuH1cePzo8R8Y7//8i2qkJtS1F5K/qWghIFfO5rPKnP
+	x0UHcrLDMdhPjK4TsCrekRPcf
+X-Google-Smtp-Source: AGHT+IGiVNO/lD1AD0GKdCt2tByRFS8ki2OJyvqDGW58Bfs5Cn3qr9r9XSLQed8HgVBMo4CcSPmkjw==
+X-Received: by 2002:a17:903:1b26:b0:240:99f7:6c10 with SMTP id d9443c01a7336-242c1ffb220mr210481245ad.1.1754907452644;
+        Mon, 11 Aug 2025 03:17:32 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaf855sm269912785ad.168.2025.08.11.03.17.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 03:16:21 -0700 (PDT)
-Date: Mon, 11 Aug 2025 13:16:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	Fenghua Yu <fenghuay@nvidia.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>, dmaengine@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: idxd: Fix dereference on uninitialized
- pointer conf_dev
-Message-ID: <aJnC8CLkQLnY-ZPr@stanley.mountain>
-References: <20250811095836.1642093-1-colin.i.king@gmail.com>
+        Mon, 11 Aug 2025 03:17:31 -0700 (PDT)
+Date: Mon, 11 Aug 2025 15:47:29 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
+ dynamically
+Message-ID: <20250811101729.vwrtqg33lusk7h6p@vireshk-i7>
+References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
+ <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
+ <20250801072845.ppxka4ry4dtn6j3m@vireshk-i7>
+ <7bac637b-9483-4341-91c0-e31d5c2f0ea3@oss.qualcomm.com>
+ <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
+ <7f1393ab-5ae2-428a-92f8-3c8a5df02058@oss.qualcomm.com>
+ <20250804111340.t62d4y2zg77rr3rp@vireshk-i7>
+ <6035a961-7c5a-4fde-b4ea-e9ea9d88e6c1@oss.qualcomm.com>
+ <20250811084453.ocibslv6kxkib6po@vireshk-i7>
+ <8e67bfa0-e62c-4060-9ac4-de212ae63570@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,29 +108,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811095836.1642093-1-colin.i.king@gmail.com>
+In-Reply-To: <8e67bfa0-e62c-4060-9ac4-de212ae63570@oss.qualcomm.com>
 
-On Mon, Aug 11, 2025 at 10:58:36AM +0100, Colin Ian King wrote:
-> Currently if the allocation for wq fails on the initial iteration in
-> the setup loop the error exit path to err will call put_device on
-> an uninitialized pointer conf_dev. Fix this by initializing conf_dev
-> to NULL, note that put_device will ignore a NULL device pointer so no
-> null pointer dereference issues occur on this call.
+On 11-08-25, 15:35, Krishna Chaitanya Chundru wrote:
+> Thanks Viresh for the suggestion. We will try this.
+> Can you confirm this is what you are expecting.
 > 
-> Fixes: 3fd2f4bc010c ("dmaengine: idxd: fix memory leak in error handling path of idxd_setup_wqs")
+> dt change
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -2214,13 +2214,23 @@ opp-2500000 {
+>                                         opp-hz = /bits/ 64 <2500000>;
+>                                         required-opps =
+> <&rpmhpd_opp_low_svs>;
+>                                         opp-peak-kBps = <250000 1>;
+> +                                       opp-level = <1>;
+>                                 };
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+> -                               /* GEN 1 x2 and GEN 2 x1 */
+> +                               /* GEN 1 x2 */
+>                                 opp-5000000 {
+>                                         opp-hz = /bits/ 64 <5000000>;
+>                                         required-opps =
+> <&rpmhpd_opp_low_svs>;
+>                                         opp-peak-kBps = <500000 1>;
+> +                                       opp-level = <1>;
+> +                               };
+> +
+> +                               /* GEN 2 x1 */
+> +                               opp-5000000 {
 
-No.  This isn't the right fix.  I basically wrote out the correct fix
-in my bug report:
-https://lore.kernel.org/all/aDQt3_rZjX-VuHJW@stanley.mountain/
-Shuai Xue sent a fix as well but that patch wasn't right either but I
-didn't review it until now.
+The node-name has to be different, but freq can be same. Something
+like opp-5000000-N, where N = 1, 2, 3.
 
-It's easiest if I send the fix and give you Reported-by credit.
+> +                                       opp-hz = /bits/ 64 <5000000>;
+> +                                       required-opps =
+> <&rpmhpd_opp_low_svs>;
+> +                                       opp-peak-kBps = <500000 1>;
+> +                                       opp-level = <2>;
+>                                 };
 
-regards,
-dan carpenter
+> And in the driver I need to have a change in OPP framework which
+> returns OPP based on both frequency and level something like
+> dev_pm_opp_find_level_freq_exact(struct device *dev,
+> unsigned int level, unsigned int freq);
 
+I thought you wanted OPP based on freq and bandwidth ? But yeah, a new
+OPP API like: dev_pm_opp_find_key_exact(dev, *key);
+
+where,
+
+struct dev_pm_opp_key {
+        unsigned long *freq;
+        unsigned int *level;
+        unsigned int *bw;
+}
+
+and match all non-NULL values only to begin with.
+
+-- 
+viresh
 
