@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-763312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01B8B2130E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:24:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3ACB2131B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C573E2286
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:24:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB3597ACCFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3D42C21E7;
-	Mon, 11 Aug 2025 17:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="V2bEdxkN"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DBC212B05
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E392D3221;
+	Mon, 11 Aug 2025 17:26:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25E529BDB8
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933046; cv=none; b=sY3VdryW4/LULww5Dr7BQ0HHRkkx6cmjUO7KE65p+HwmhnQC90E+YRNvgwcHxuRXgb89R7VzcdlusOrwmB4/eQ9qyst58Lji8jHOOL+1aFZSzZy/BUE+FDB97hSrAjEpOFthmnDmtEwav6sjVx0wNqoakfI8w1At+QcA72xf1lM=
+	t=1754933173; cv=none; b=nGmjhwyyMUF+EZrhCP5xIlU+R79ttQdXns6FlkuKoeymWj6B8PLYYP37ZG+P0RwiLM8tqpZN29JBUwcjVGYvQSfZ83ShjnijglHUlrwVnSXiYcC9WnkX2NbPJ8j6jyfzdoS+vTl0uV8EDTVIfzkRN3W60C3udprc8b9vx/3L3CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933046; c=relaxed/simple;
-	bh=/A+ooc2EbVpb2JwsR0YHFg7w6kTt/ZqxoEkItRvXPzI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FK8FGAod34cqOR+mgxoxwrENl+iapo2hIBhO4SyTUG7lvO3pC1FaQlrgPNcLsVvAmHBdQr6X/9VnSq8+GHjmTPdX8CZISCNbBvr7aX9pWYIzQ2BsgnsaVe97S1zneLwKxYf+R3kS5CeTHWz9hbDNJUTXpXhzu4Y6Ip2luM7l0B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=V2bEdxkN; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6FF4240AD9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1754933043; bh=tOqoxC3kPM+8PGaZoXIkkPafaFMsAV8yEbKKwohhu6Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=V2bEdxkNTn/nsYHRXXBY69vaEf4Npp64Aje/p1Az3y6nOmqpVRnY70UEcNdxrrtzG
-	 t0LfkAOwO95HmrttJlVzc+p6v8gyqmi+HdBtCnB+XGL0FDzcFbBB7j5T1mDKeTiD2r
-	 3VfjrXsilRQgI5q2CrhC4ZIYnhGDncct0IH9Ynr/t6NWywK8O58SuMI3NP/maU2PVC
-	 nLmpdFblTtFENVyYZJR+Oo73+nh2LC89Y/MqD/PCcPFWjNnUHqMMAciuVKpfC4Qr4n
-	 XN49cdv3q/Uoin5HDYsk+4VzuWoZiOH9eKYzSMLrC40NBUbSCty48VGrenIsIwcFNf
-	 pxX/JnG47j3tQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6FF4240AD9;
-	Mon, 11 Aug 2025 17:24:03 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Haoyang LIU <tttturtleruss@gmail.com>, Yanteng Si
- <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, Haoyang LIU
- <tttturtleruss@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/checktransupdate.py: fix missing f prefix in
- f-string
-In-Reply-To: <20250811170704.99420-1-tttturtleruss@gmail.com>
-References: <20250811170704.99420-1-tttturtleruss@gmail.com>
-Date: Mon, 11 Aug 2025 11:24:02 -0600
-Message-ID: <87qzxhdb65.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1754933173; c=relaxed/simple;
+	bh=uICC0HmUS6u193dRdy5ircuYP9/0Oy60iDOHPl7W5Z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWOCftMmKp22LsWcyl+N5aOcdAUnv/r+G4SBHjIj6WfZcdqbywVpeBUcInKeJ/3zpNGSMkLJd64N0btcvN3jVaw8LNQnRTT1W8cGjw2bRBYQO28ru5bZXBHUESQpnhXqyPLKcUONloGUMdkM1Q/YNsUtAWNR/IpBjzSIfeY1Qrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 111EB1A32;
+	Mon, 11 Aug 2025 10:26:02 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFE693F63F;
+	Mon, 11 Aug 2025 10:26:07 -0700 (PDT)
+Date: Mon, 11 Aug 2025 18:26:05 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Shanker Donthineni <sdonthineni@nvidia.com>
+Cc: Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>, Vikram Sethi <vsethi@nvidia.com>,
+	Jason Sequeira <jsequeira@nvidia.com>, Dev Jain <dev.jain@arm.com>,
+	David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [RESEND PATCH 1/2] dma/pool: Use vmap() address for memory
+ encryption helpers on ARM64
+Message-ID: <aJonrTrr6nW7qdLI@arm.com>
+References: <20250811005036.714274-1-sdonthineni@nvidia.com>
+ <20250811005036.714274-2-sdonthineni@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811005036.714274-2-sdonthineni@nvidia.com>
 
-Haoyang LIU <tttturtleruss@gmail.com> writes:
-
-> add a f prefix for f-string
->
-> Fixes: 63e96ce050e5 ("scripts: fix all issues reported by pylint")
-> Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
+On Sun, Aug 10, 2025 at 07:50:34PM -0500, Shanker Donthineni wrote:
+> In atomic_pool_expand(), set_memory_encrypted()/set_memory_decrypted()
+> are currently called with page_to_virt(page). On ARM64 with
+> CONFIG_DMA_DIRECT_REMAP=y, the atomic pool is mapped via vmap(), so
+> page_to_virt(page) does not reference the actual mapped region.
+> 
+> Using this incorrect address can cause encryption attribute updates to
+> be applied to the wrong memory region. On ARM64 systems with memory
+> encryption enabled (e.g. CCA), this can lead to data corruption or
+> crashes.
+> 
+> Fix this by using the vmap() address ('addr') on ARM64 when invoking
+> the memory encryption helpers, while retaining the existing
+> page_to_virt(page) usage for other architectures.
+> 
+> Fixes: 76a19940bd62 ("dma-direct: atomic allocations must come from atomic coherent pools")
+> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
 > ---
->  scripts/checktransupdate.py | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
-> index e39529e46c3d..b57fb9139f5f 100755
-> --- a/scripts/checktransupdate.py
-> +++ b/scripts/checktransupdate.py
-> @@ -131,7 +131,7 @@ def check_per_file(file_path):
->      opath = get_origin_path(file_path)
+>  kernel/dma/pool.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
+> index 7b04f7575796b..ba08a301590fd 100644
+> --- a/kernel/dma/pool.c
+> +++ b/kernel/dma/pool.c
+> @@ -81,6 +81,7 @@ static int atomic_pool_expand(struct gen_pool *pool, size_t pool_size,
+>  {
+>  	unsigned int order;
+>  	struct page *page = NULL;
+> +	void *vaddr;
+>  	void *addr;
+>  	int ret = -ENOMEM;
 >  
->      if not os.path.isfile(opath):
-> -        logging.error("Cannot find the origin path for {file_path}")
-> +        logging.error(f"Cannot find the origin path for {file_path}")
->          return
+> @@ -113,8 +114,8 @@ static int atomic_pool_expand(struct gen_pool *pool, size_t pool_size,
+>  	 * Memory in the atomic DMA pools must be unencrypted, the pools do not
+>  	 * shrink so no re-encryption occurs in dma_direct_free().
+>  	 */
+> -	ret = set_memory_decrypted((unsigned long)page_to_virt(page),
+> -				   1 << order);
+> +	vaddr = IS_ENABLED(CONFIG_ARM64) ? addr : page_to_virt(page);
+> +	ret = set_memory_decrypted((unsigned long)vaddr, 1 << order);
 
-Ouch, good catch; I've applied this.
+At least with arm CCA, there are two aspects to setting the memory
+encrypted/decrypted: an RMM (realm management monitor) call and setting
+of the attributes of the stage 1 mapping. The RMM call doesn't care
+about the virtual address, only the (intermediate) physical address, so
+having page_to_virt(page) here is fine.
 
-Thanks,
+The second part is setting the (fake) attribute for this mapping (top
+bit of the IPA space). Can we not instead just call:
 
-jon
+	addr = dma_common_contiguous_remap(page, pool_size,
+					   pgprot_decrypted(pgprot_dmacoherent(PAGE_KERNEL)),
+					   __builtin_return_address(0));
+
+in the atomic pool code? The advantage is that we keep the
+set_memory_decrypted() call on the linear map so that we change its
+attributes as well.
+
+I want avoid walking the page tables for vmap regions if possible in the
+arm64 set_memory_* implementation. At some point I was proposing a
+GFP_DECRYPTED flag for allocations but never got around to post a patch
+(and implement vmalloc() support):
+
+https://lore.kernel.org/linux-arm-kernel/ZmNJdSxSz-sYpVgI@arm.com/
+
+-- 
+Catalin
 
