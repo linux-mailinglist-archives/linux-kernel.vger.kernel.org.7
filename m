@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-762102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6ADDB20229
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531AEB2022D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5717AC335
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A20189FD3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0792185A6;
-	Mon, 11 Aug 2025 08:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C112DAFC1;
+	Mon, 11 Aug 2025 08:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="osG2UEHS"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0SSgRgm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421521C8633
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7F91DF977;
+	Mon, 11 Aug 2025 08:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754902071; cv=none; b=ISm/b650ZbTbcbhep4bZv5T5ZJUXaK+RVJrVhvlYLjtjJRMlqBMHc5c4whqwkPdIBxQ3hF6NYELwm8sIvL3QjqK16IDJ+QfxVIJAfXNcuaJwI8s4nLTjHeu11fRI+EDvVYXuVmsreIOad6/sfxlx/qHCm7HvEv1sodr2qDSiGnU=
+	t=1754902094; cv=none; b=HQXhDRr8WGj/YyokH7Wdy1ExYKh1Vw3SzXZtvy7IXVrkpYm/xX7ougtdT3kaKaoKg0vUrx3VFXK392eSp+AM/sgorsSUyZu7/N/7ShOW+/JkVVbsCuja1j5D+rQfCHCFAxoRuCFUesDhJAzVVSeiDC7Et95wthIr2T88DW1+RkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754902071; c=relaxed/simple;
-	bh=SSPG/29HLPpTquYEWU6PYBjygo8k+R9iRTUXFr14dhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N5s1l22BO8zJlJQkxHJDtRu9+I8J2wZZjuE+Vb7YhQ6rBoxcalGVVl2PXmTYcQBb0698hGpZHvsR3Aqdx2YMBgKzcTJVohmbWg45LBg5afiz5KJMb9ANLYzvCYO8oLc30zhEHSQbb+cMJzY+rRgOL13sIWQVWmV/RYvvkm+pYMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=osG2UEHS; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32f1df5b089so39444951fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 01:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754902068; x=1755506868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SSPG/29HLPpTquYEWU6PYBjygo8k+R9iRTUXFr14dhg=;
-        b=osG2UEHSvby1bINCMZ6JGoyBRcHzJKpsnqu/bsn95suZ/vLwzHemIpuknXCrHSZ7NX
-         iqJH4FVZWqhz559eEtdBH0CKl2cYBq1VkrdOPt+beOxX4pbrhKFbFMnBnyBrFYyGIgVO
-         tVM/GHtlqEA4dLJDdCdHbf+I0xnwWXPJ0xkGqPXPyJBD6N5Q9MPzvmhCUy1v3pk75sOJ
-         hl0Dz5hv7l73hHtKfm0YiSL7TfycgGbxT6uhB25/xeUyliPPFR55yq7LBumzolKYyFYt
-         +3fKMn26rG3k6R/xqoHAH/aMBr/FAqu6ezPFUYHxtr8mhWCNBryzzPkTK4UIwI87ioHr
-         5ctA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754902068; x=1755506868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SSPG/29HLPpTquYEWU6PYBjygo8k+R9iRTUXFr14dhg=;
-        b=eN/1lkhuEhSrZhXVJmg6iayqeK3m6xOg7p2ddQGnF+H4akMMDtDCuNt+spSgBdTFNg
-         YZh27DDZNmNF1XeImyq7YnKro6mQe8WRarSiEU/c3tJyIvEewDf0ISLRBRcvYGpzXI6W
-         D/pwpULcJTCLVfNzjICiJTP7Uq3sfkH8+lHlP4V6PprBwzD0MIySFD1mOwpHWnJcu0ZL
-         XxQzUKiJio50c3pxlhGnG3yYYwRQJJv8QfeVpOn7c55JntIeBGeE5xilHet48ZJbnss0
-         Jyoe0xIMZeibtzli+vCr5JydlKrMuKl/NuXuWGvRAq0S5mbU55aPf+kdLCHyPZ2kFiFn
-         phcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlIBfOcGvKVVs2vJB+jKOPkXFmi+azvaBLdXyQb0LuZGN7i7fwPumqUtaiRyk0jd+93K85qg2hKMMB64Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxitG45Vh7z/grn45bysuhy9JodF7HxNau7quGtdgxKb4IgkZr6
-	WOWBCDhskj0MBT8QfeidIL9a30hyYdmMlkSHi0zxg629CS30P/1s7rbDs/6yKgge9tPvBYculiF
-	seVlk1IEWON02ssr+mizlHQtcgxD0UjI8szjrmjxiGw==
-X-Gm-Gg: ASbGncuhNddMwydNsvYJ0kMKOFqkpXbVHi/9LiZHJgfnH5IoYRO/nSGYMUb/3476b2a
-	3c9Gd/iP6QTj/Fyn/mxlLItzx0q/IOQb/KNdk72lyl3jteNmHA/7Er4ZBiGXhu5s+hIkE33D32O
-	f1ljma9UolAyCC68Iz4P8cfhkGtpDwkFWz4Loa/mp0zKT8gedinYQOlsMJxaPSunXGX9f9RPK2a
-	Yy5ht2Nxc5X/h7hVqkZnk45f6hMre/DQ1gi+UE=
-X-Google-Smtp-Source: AGHT+IHQZ+Li30LXuVPBZfJzPpG13D46HKjbN25jcZH83z5JqqyWQ0KsRoIqrZmp1XcJkfaY59nLPEzi39QNSDtz0OE=
-X-Received: by 2002:a2e:a581:0:b0:332:612b:6f49 with SMTP id
- 38308e7fff4ca-333a221c4dfmr38476321fa.29.1754902068345; Mon, 11 Aug 2025
- 01:47:48 -0700 (PDT)
+	s=arc-20240116; t=1754902094; c=relaxed/simple;
+	bh=sPjg+h2SttEo8xH0kwTdqtlRqB886+Ii/S4Rj9LXuaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UjG2OMPIjH1PPWfATp2uybVehnajQTt0iCHKhK8ICLE9fTX9gISk/HPl1lDOcWTYy3DhdrG6Rl9wHX5UFakziSKY2yFvtk+TyBs6mgTTSjj23V8zG2dw0j3Is769Ve7Vq20RP/W1kDzZHBvT4w77YTn9nplL5nQ/SKnLTKBddA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0SSgRgm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7109DC4CEED;
+	Mon, 11 Aug 2025 08:48:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754902094;
+	bh=sPjg+h2SttEo8xH0kwTdqtlRqB886+Ii/S4Rj9LXuaQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r0SSgRgmfayjBC3g16i25zRmOLwqI5o5y2+U0IhR7PxnCDkq2X/zcFyZ+RIRbAlGG
+	 7klbbTCaOwT8bNAgoVT77aLanCy/mhSLcqutyBRBvo7t8Jo9kTB2Rd70a+Jr3AN9/F
+	 fVfWckL6luTbzxoSFBmW0++yYzGqVrOwEkCDhBBsilcJHYpfUxyIwusle/zt9487Ps
+	 zMNxJP32/gY5BO/LBUsXRgXuFksZN6UAHlcpgf7Uft9aNR4BGFtmJHM9pz0pt3au25
+	 418V7u44nUvsbjUTqHEznZNkX7GR/2IdddVi10krsuh9O7ZWtz8f+Rdw6HL0GRoAP3
+	 bnAdU7au5UzuQ==
+Message-ID: <91d05d08-e5be-47d1-a18c-bae972d8eb95@kernel.org>
+Date: Mon, 11 Aug 2025 10:48:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730071443.8758-1-brgl@bgdev.pl> <7ff48289-f738-420e-ac69-de544833725b@kernel.org>
-In-Reply-To: <7ff48289-f738-420e-ac69-de544833725b@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 11 Aug 2025 10:47:37 +0200
-X-Gm-Features: Ac12FXyVM43pAwwdhH2UZx7AIEJGJLKbhJiBmr-EDd8zuJ-4n2CsNR4nFxP1rYs
-Message-ID: <CAMRc=MfYdHa_3=2Vv8Memv9_GUKTD7Z9U-aYGHqk4z=3eVoh3g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: s3c/gpio: complete the conversion to new GPIO value setters
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: realtek,alc5623: convert to DT
+ schema
+To: Mahdi Khosravi <mmk1776@gmail.com>, devicetree@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250811080940.7909-1-mmk1776@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811080940.7909-1-mmk1776@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 10:46=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 30/07/2025 09:14, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Commit fb52f3226cab ("ARM: s3c/gpio: use new line value setter
-> > callbacks") correctly changed the assignment of the callback but missed
-> > the check one liner higher. Change it now too to using the recommended
-> > callback as the legacy one is going away soon.
-> >
-> > Fixes: fb52f3226cab ("ARM: s3c/gpio: use new line value setter callback=
-s")
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> > Autobuilders pointed out only now that I missed the other line that
-> > needs changing in my previous patch. I'd like to still queue this for
-> > v6.17. Either through the SoC tree if it's not too late or through the
-> > GPIO tree together with my second PR for this merge window. Please
-> > kindly ack it.
->
-> This does not apply for current RC, so on top of v6.17-rc1.
->
-> Best regards,
-> Krzysztof
+On 11/08/2025 10:09, Mahdi Khosravi wrote:
+> Convert alc5623 audio codec binding to DT schema.
+> 
+> Also add "realtek,alc5621" to the compatible list for
+> existing use in kirkwood-t5325.dts.
+> 
+> Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
 
-This is no longer needed with v6.17-rc1. The callbacks have been
-renamed back globally to the original names.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Bart
+
+Best regards,
+Krzysztof
 
