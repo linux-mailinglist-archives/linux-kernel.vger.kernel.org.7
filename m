@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-762061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5102B201BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E202EB201CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D6716EB4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80BC16E563
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1BF2DC34E;
-	Mon, 11 Aug 2025 08:22:52 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8103D2DC342;
+	Mon, 11 Aug 2025 08:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="o4Dw0TcE"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2262DC345;
-	Mon, 11 Aug 2025 08:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F069C2DC32C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754900571; cv=none; b=bzjmX/oNf8bRYne4M0iz02ch2QjG/DuBmKuMYKkaDimedbHJ3hsdqjcrDyTzyYQ+9FLNZjVZnh9e/HmzYuSkxn3gQVybeWKgMrEEigqBCDUwhVldOWGUgAH54Oa1L+LfI24sISwBdISGY0tKF26ov65TUoPn7DbrVwze2NQbVwo=
+	t=1754900746; cv=none; b=B8U/jNZO7JHh1lce+QAqlgMGq/qFnSxXPm6UfQ2x8H8JRhcbj2ixyBasbNV7SFmoiabWOsoVC7oLE4GbhgPZ4LQfmb47w64xjseTdAmbyyGoL9crf8960HX7AKtgvnenGAiDwdioPOjDqzmhewLKOYePbjthGLkaC7wRYvpwX9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754900571; c=relaxed/simple;
-	bh=13ZSHRJPpFz7R1WvuHXgNGlRZ7vRrMywvXSWi7KcRTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lrgx3SErkGHxD+hbnnxj4LZD6wtHOcdWT1kiosPFKLU0ziCYPA+vDIq1Qso2eST2MhA6tm2ttgMQfxGVev+nTym2E2a3SYphJs2iMWPfLrCmHYo8ZQPo8J5PEGmN/2hGFt7BlJruWjmaTUC8WfsYZI6EED/1OXz3iXoSb6UbOlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4fc1a5e600aso1492338137.1;
-        Mon, 11 Aug 2025 01:22:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754900566; x=1755505366;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AIuRB3iP/akNqCi3078AVLirx7QO0LT0m7U0z4UnuBM=;
-        b=WVmC9QtN5z/l2lHwVXiBmVtiZS366exw/c8j4tNHHsPCfc3fbBWRQityjXvF0WmR3X
-         VXkvbTYEz7cRBHPcwpcluwEi8yKQJSRYqjiln0FGN1G2WEOJvxFArd/9xcdfeqoYSiuS
-         v+m9D8smKHAYCQoLOkwO9jN0zidVNeVR4avsfWcIEid2YuMvEoFITSM0v8UdpU3nfgSz
-         Bhm0yxp0op5XLN/Ily5HI0NPItNzCVfCI+vjIaDVDJYDTiYmikKBy1hDdoSHP0BahNAL
-         8+dJkgAqqPxTsQ8x7pKE7RY2NOCTfUJj0gkMWKs1Fc1UTLgEr1fJCtj9JEpupPeq94wW
-         kvBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOPvJMdgHQ5jVmYZMG3NbJOwk/EKUo1e5ojau8x4n+lqbBgdmTnpx5IgnTHaolknRBxzzftKGaJRFC@vger.kernel.org, AJvYcCVVrmxtWEsZSUlIr3hZ0j18vlZVZWbOGaoaK0VMgvvASLl9QLxlngxE9eHRyLLRXuGrmxb9FniDqn4=@vger.kernel.org, AJvYcCVyEAaC3BFpUW/XDFLqm5vmnwlt28PCT2OSVb3xwMpW9jf1imkDefJDD3W41RRox7V58bMqFNGfqP+Gs2Mb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyafr1gzndhtziRjTROP55jK9zwriZuxvPTkSvRHQyk/5uGX7Re
-	4+4PURc87s/ZDfotB7exX8hOFcbMzBHeRJAq6ctIt8aj163feA5J2WADPTRjrrz8
-X-Gm-Gg: ASbGnctDRFOXEKE2KR/bVbSUl2JOCix/irVNXcaBxQPBdwOJLr7K3DfsJbh5bm7xUfH
-	4ttst9irTnOKJT2OW2xbkTpo1NGFGimBtL3Mr2wrnVTBfTeR+RrVTKZcQk9FahzUQglSH3SLgUH
-	41ycCQEGAJFN2HfkF1hdkN11phWa9SLJtvRQ8KncxZqHU4NIf1TrSY5YZNQ9p6b1DNk2dTfPzES
-	ohdEJ9iSZq/w39MbzkhnvIdjVQw/3At3v8ixsmNtQfPLdtxiSTugg58Gs2wudVyrpkl1k6CnDJf
-	ZnT1fgsZ/EYZ0objSakiUMMtzlLP58edfKEv+kEd6SV+OfQE+C4Q7AHTEfdHn5xBfCstocCbUD/
-	cRpylqV1j4bGdMYgorBdtZpybvSYG4kbTU07gqworBwfCINKxQt8tdthUeVOU
-X-Google-Smtp-Source: AGHT+IFWDcggpQeYc1KDeU2IbOgScnRMvc3QIaZsK3qE0NGh+xCujyzLFlxOx+AIwqk+HDWGdOYJOg==
-X-Received: by 2002:a05:6102:2923:b0:4fa:85f:31b8 with SMTP id ada2fe7eead31-5060eed3adcmr3654261137.14.1754900566153;
-        Mon, 11 Aug 2025 01:22:46 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e029cd3d4sm1801344241.23.2025.08.11.01.22.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 01:22:45 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-88bbfe763ecso861417241.3;
-        Mon, 11 Aug 2025 01:22:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsD9r32yRwrKxEuSyJyHlDAMQKoeO5w7C7uPG12cp5ci24zXvVkVSq0lFCXw2lvQO6YaKqpMQXSR4ieLW+@vger.kernel.org, AJvYcCWUkNmODdkTYj3Rk7ccMiPvt0Mc1XEpwerswM8VHHQnv0QAbNpNa/KTSFgPke9LcixfcoVM2yulHcg=@vger.kernel.org, AJvYcCXQtXrNMlHQEhwMY9gqEjyXoTDanyP/0ZoL7L7ZJ0RSNcs69RERDrC2Ak10PE5Xf85z3QQ0sTliFYy3@vger.kernel.org
-X-Received: by 2002:a05:6102:418d:b0:4e9:94a3:1a34 with SMTP id
- ada2fe7eead31-5060eed4706mr3996515137.16.1754900565091; Mon, 11 Aug 2025
- 01:22:45 -0700 (PDT)
+	s=arc-20240116; t=1754900746; c=relaxed/simple;
+	bh=wSVdEjNhr/Aedo4US0huJwXygfcimDIqqyJPM25g0pg=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=qyeJ5w/jYWP3p5A141dLItW/PNeQac4U/TiZTBosXkhpvcwxmq7V3BCkR+LnTVhMhlvxQlBu8hFZfKwVeq6+aQBJ44x4aT6zqA2cmvnL6rPL25EhHOGnBwlFWikJ9x0ZBkWH+a0fhP6PS/agaR8XoElkObaQUVevZ78DrBfAu5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=o4Dw0TcE; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6001b.ext.cloudfilter.net ([10.0.30.143])
+	by cmsmtp with ESMTPS
+	id kyA8ujTo15wATlNpAu4HN3; Mon, 11 Aug 2025 08:24:08 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id lNp8ubHw2WvdBlNp8uWQ1Y; Mon, 11 Aug 2025 08:24:06 +0000
+X-Authority-Analysis: v=2.4 cv=cZfSrmDM c=1 sm=1 tr=0 ts=6899a8a7
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=R1XpmoYe2GHAZdAE2O7VqQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
+ a=sqjRI6sB8JoUyLQipjQA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Cc:To:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u4JWtZRbyFWsXDHN6TsKnpoMaDgKL7JaCPlC5vu8pVs=; b=o4Dw0TcE5Io821B62qIizWYDLv
+	sACEJzZnKKe7ncoJvafS71caCcKiuTdfn/gfy5wNaoHdlqtH4TBNRk7u0aPx2CCz6M7K95GPIs0U8
+	YyVsBqz7EmchDHOV5luNFrPcFdRdGQvQd+Qx72oP8M/mJlHlusewFUrmn41iKSqMyer+qG4Ab8Ls8
+	lavTtyYwGnR+j+vsWw8ne5fm7YNVunjVegPwWJTfn0l0ccB1j9BpLFdSKVW437t51DmwspfXcd6zP
+	yeB3pTm2uwmzniL7GduC14B86+vN2+b8vsoH4EcqjehshRjKTZpb2RZkVa1DAx1FB+h8k0TWzwrA9
+	TG8W/y+w==;
+Received: from oni-27.109.98-104.oninet.ne.jp ([27.109.98.104]:36622 helo=[10.249.161.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1ulNp8-00000001rgg-0A1C;
+	Mon, 11 Aug 2025 03:24:06 -0500
+Message-ID: <fbc03dee-273a-4c75-a8bb-fbc6ae48d26d@embeddedor.com>
+Date: Mon, 11 Aug 2025 17:23:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250809234008.1540324-1-sashal@kernel.org> <20250809234008.1540324-2-sashal@kernel.org>
-In-Reply-To: <20250809234008.1540324-2-sashal@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Aug 2025 10:22:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWaVvAfm6LMxSpPuz3yZ7FDAexbUTOXrg58TqoWbce5ag@mail.gmail.com>
-X-Gm-Features: Ac12FXy6CXH9U5loAkdXYwlSYPEgP4IQrmSAM4bQTTcVUXvNK5p10n-HqfSt5x8
-Message-ID: <CAMuHMdWaVvAfm6LMxSpPuz3yZ7FDAexbUTOXrg58TqoWbce5ag@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] README: restructure with role-based documentation
- and guidelines
-To: Sasha Levin <sashal@kernel.org>
-Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org, 
-	konstantin@linuxfoundation.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org, workflows@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC] wifi: iwlwifi: mei: Remove unused flexible-array member in
+ struct iwl_sap_hdr?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 27.109.98.104
+X-Source-L: No
+X-Exim-ID: 1ulNp8-00000001rgg-0A1C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: oni-27.109.98-104.oninet.ne.jp ([10.249.161.44]) [27.109.98.104]:36622
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLWWuYaotfeuwVGZdSVsq9JxgYTIPB4f9i6EWxoMSBHTU8AN3ge7cP710Yrb3Kf3G33mL7slb8vvTLHO7gd9cl/T5WTFzHRRl+2udfkhRwcne1qrSyj2
+ E8ghPnL7I44cNzLv5NpW3lw7eV51DbIsYablFBifjVPYxoAuIcswzNKmGzN4IlJvImtpQLAKsIpzRlx+nvuy1UUp3jCzFaAv7lVwz7v8WU1elddV2gX3s9W2
 
-Hi Sasha,
+Hi all,
 
-On Sun, 10 Aug 2025 at 10:09, Sasha Levin <sashal@kernel.org> wrote:
-> Reorganize README to provide targeted documentation paths for different
-> user roles including developers, researchers, security experts,
-> maintainers, and AI coding assistants. Add quick start section and
-> essential docs links.
->
-> Include proper attribution requirements for AI-assisted contributions
-> using Assisted-by tags with agent details and tools used.
->
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+At first sight, it seems that the flexible-array member `payload`
+in the struct below it's not being used:
 
-Thanks for your patch!
+drivers/net/wireless/intel/iwlwifi/mei/sap.h:
+298 /**
+299  * struct iwl_sap_hdr - prefixes any SAP message
+300  * @type: See &enum iwl_sap_msg.
+301  * @len: The length of the message (header not included).
+302  * @seq_num: For debug.
+303  * @payload: The payload of the message.
+304  */
+305 struct iwl_sap_hdr {
+306         __le16 type;
+307         __le16 len;
+308         __le32 seq_num;
+309         u8 payload[];
+310 };
 
-> --- a/README
-> +++ b/README
+If we remove it, we'd get rid of 14 of the following type of warnings:
 
-> +Who Are You?
-> +============
-> +
-> +Find your role below:
-> +
-> +* New Kernel Developer - Getting started with kernel development
-> +* Academic Researcher - Studying kernel internals and architecture
-> +* Security Expert - Hardening and vulnerability analysis
-> +* Backport/Maintenance Engineer - Maintaining stable kernels
-> +* System Administrator - Configuring and troubleshooting
-> +* Maintainer - Leading subsystems and reviewing patches
+drivers/net/wireless/intel/iwlwifi/mei/sap.h:318:28: warning: structure containing a flexible array member is not at the end of another structure 
+[-Wflex-array-member-not-at-end]
 
-Kernel Maintainer?
-Driver/Subsystem Maintainer?
+Is there any case where this array is actually used that I might
+be missing?
 
-> +* Hardware Vendor - Writing drivers for new hardware
-> +* Distribution Maintainer - Packaging kernels for distros
-> +* Agentic Coding - AI assistants working with kernel code
-
-Given the extensive split, what about normal (existing) kernel
-developers?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks!
+-Gustavo
 
