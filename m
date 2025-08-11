@@ -1,176 +1,124 @@
-Return-Path: <linux-kernel+bounces-762031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A84B20152
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B8AB20159
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C16A7A7CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576853A2F04
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64B02DA758;
-	Mon, 11 Aug 2025 08:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E342DA77F;
+	Mon, 11 Aug 2025 08:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyessW4/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J30ojhir"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00D7204863;
-	Mon, 11 Aug 2025 08:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272E51DF977;
+	Mon, 11 Aug 2025 08:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899567; cv=none; b=t3s36gUC4c1MBa7ehPI90ZF/3ykOr7H5FCy8BgFHPdcDPQt6+a0tk5c8/U0+bCOuadCzGPGNaN0LdWQiIm5FuPVD6/fbKii5Tdp3Qp7TSy1ddMLfXLLU2vNx3BuXq4Sh34VaRecEp8409pnuca/Gp4fIcwpIv0WwzYPO7Q4pqMg=
+	t=1754899608; cv=none; b=W32UJ6WHASzWH8jCX8e+8N7Z0+o0RhSFNndcRQBSMyZY4Z+T/Mg2FTbl3Z1Uf8Q5FOhrT7XedOdsnfu6v58ngLSdpxsLCt8v5QO99O6SGg08neeYXeuh/qXSgpt9vRLuQlohgUjXgtipF5pPy9LzvNFB3v/42T32G95JHt55Dec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899567; c=relaxed/simple;
-	bh=yaMU/nHBhn8GkjD+KNfZv140D6dMpYnx9IMLLJNJ3Og=;
+	s=arc-20240116; t=1754899608; c=relaxed/simple;
+	bh=99p1/Hcm7cvOf1qSQuU5BHYtUKVroVdIfTnJnDN3UHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgmF/ovqv0DJZg0KDGrCrZf+vsTwKa+nGAQoY/wcsSfiEY9RRgKyycX9cDz3e37GkuHxurrBbOX42m6OK3DMBttEJf2nHbnVxVmUF61kGeZysRGv3nsPsOXyiiMIOrh+kot8HghlX3KTW3ctyjz7e4+lw7hi7EkIOwxkkQ2EoiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyessW4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C29C4CEED;
-	Mon, 11 Aug 2025 08:05:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGrwXxxZepAXuR9ruv4DCUBk4vrDfFpJviMJ4hjVys5vNWls3ymj6ncI28+bpHe8epdhFX1twG5rD4Lfx5grtyY9hiXIF+q+Oq5I3bc8tRUy7YFEpQiR9C4paCOhIZcHG/ylhK7W7OBTZ/4po4/2yX26FSq/sf/UjxP+XrxEqc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J30ojhir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D93C4CEED;
+	Mon, 11 Aug 2025 08:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754899566;
-	bh=yaMU/nHBhn8GkjD+KNfZv140D6dMpYnx9IMLLJNJ3Og=;
+	s=k20201202; t=1754899607;
+	bh=99p1/Hcm7cvOf1qSQuU5BHYtUKVroVdIfTnJnDN3UHI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyessW4/T3kSKzJjb0PEMUIXS+OI/MSkBPD9t3M4y8bEwRbREqt2QNPQ+kni4nDL6
-	 pzFPvxpE3YkK8MbVjzMMoXWhSKpjhrQZWjSc5pobloPrBebHiwnpclNmoE/ps3dRHf
-	 C/w0LubB5PizyfG2oDgOJtjbrGhhjHyK3CoXDWhHhpQhBeujHmu90X10x0d+Wu/YcX
-	 BFG6tloNNS5RZuBYHIYfPCKjGsPBNmt5i7FYps5o7aHr7ZiF0e4UFdDedTFdByW6mA
-	 Ssv8jadFBOV29pIl5X8xrAkjHAOeYQgfLhQ4wdjRZysgEU5Phahtug5e0BjSDLdnWT
-	 LYNqxq6ljOTiw==
-Date: Mon, 11 Aug 2025 11:05:51 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Dennis Zhou <dennis@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Hildenbrand <david@redhat.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kasan-dev@googlegroups.com,
-	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Huth <thuth@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Oscar Salvador <osalvador@suse.de>, Jane Chu <jane.chu@oracle.com>,
-	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	Joao Martins <joao.m.martins@oracle.com>,
-	linux-arch@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH V4 mm-hotfixes 1/3] mm: move page table sync declarations
- to linux/pgtable.h
-Message-ID: <aJmkX3JBhH3F0PEC@kernel.org>
-References: <20250811053420.10721-1-harry.yoo@oracle.com>
- <20250811053420.10721-2-harry.yoo@oracle.com>
+	b=J30ojhirgavjQuzhrbARZltg/1SE47SpS5zglLWvF2LyypjKcs2xk+skPrZugOM9e
+	 Udkd3g/+P/CXqnMReqwmWBfOLfEXm+3dzzx4IHfDxdb5A5a4BVdj76L9BfsILqxl8A
+	 L0U3mnMYXK18zrDinNrjqelxWo4lN/kztgdA7t+maFyccP69JobA9q17SCFn3mBAI+
+	 O2qWU+b205esXb+X/A2fr/tEh3N9RD1UHyXYRrYxLPhWulD4HMdSrGHIEEtUfEdHJ7
+	 htBtFM6/b08TQWbQuWTzSc+pyG/WjLPMEL5mFKWn4ISFSaA8OVsEXiOUaAydHNPwo6
+	 o+S9W3ofzoCQw==
+Date: Mon, 11 Aug 2025 10:06:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Will Whang <will@willwhang.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/4] media: i2c: imx585: Add Sony IMX585 image-sensor
+ driver
+Message-ID: <20250811-cinnamon-tapir-of-music-0bda96@kuoka>
+References: <20250810220921.14307-1-will@willwhang.com>
+ <20250810220921.14307-4-will@willwhang.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250811053420.10721-2-harry.yoo@oracle.com>
+In-Reply-To: <20250810220921.14307-4-will@willwhang.com>
 
-On Mon, Aug 11, 2025 at 02:34:18PM +0900, Harry Yoo wrote:
-> Move ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings() to
-> linux/pgtable.h so that they can be used outside of vmalloc and ioremap.
-> 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 8d400913c231 ("x86/vmemmap: handle unpopulated sub-pmd ranges")
-> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
-> ---
->  include/linux/pgtable.h | 16 ++++++++++++++++
->  include/linux/vmalloc.h | 16 ----------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 4c035637eeb7..ba699df6ef69 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1467,6 +1467,22 @@ static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned
->  }
->  #endif
->  
-> +/*
-> + * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
-> + * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
-
-If ARCH_PAGE_TABLE_SYNC_MASK can be used outside vmalloc(), the comment
-needs an update, maybe
-
-... and let the generic code that modifies kernel page tables
-
-Other than that
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> + * needs to be called.
-> + */
-> +#ifndef ARCH_PAGE_TABLE_SYNC_MASK
-> +#define ARCH_PAGE_TABLE_SYNC_MASK 0
-> +#endif
+On Sun, Aug 10, 2025 at 11:09:20PM +0100, Will Whang wrote:
 > +
-> +/*
-> + * There is no default implementation for arch_sync_kernel_mappings(). It is
-> + * relied upon the compiler to optimize calls out if ARCH_PAGE_TABLE_SYNC_MASK
-> + * is 0.
+> +/* --------------------------------------------------------------------------
+> + * Power / runtime PM
+> + * --------------------------------------------------------------------------
 > + */
-> +void arch_sync_kernel_mappings(unsigned long start, unsigned long end);
 > +
->  #endif /* CONFIG_MMU */
->  
->  /*
-> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> index fdc9aeb74a44..2759dac6be44 100644
-> --- a/include/linux/vmalloc.h
-> +++ b/include/linux/vmalloc.h
-> @@ -219,22 +219,6 @@ extern int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
->  int vmap_pages_range(unsigned long addr, unsigned long end, pgprot_t prot,
->  		     struct page **pages, unsigned int page_shift);
->  
-> -/*
-> - * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
-> - * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
-> - * needs to be called.
-> - */
-> -#ifndef ARCH_PAGE_TABLE_SYNC_MASK
-> -#define ARCH_PAGE_TABLE_SYNC_MASK 0
-> -#endif
-> -
-> -/*
-> - * There is no default implementation for arch_sync_kernel_mappings(). It is
-> - * relied upon the compiler to optimize calls out if ARCH_PAGE_TABLE_SYNC_MASK
-> - * is 0.
-> - */
-> -void arch_sync_kernel_mappings(unsigned long start, unsigned long end);
-> -
->  /*
->   *	Lowlevel-APIs (not for driver use!)
->   */
-> -- 
-> 2.43.0
-> 
+> +static int imx585_power_on(struct device *dev)
+> +{
+> +	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+> +	struct imx585 *imx585 = to_imx585(sd);
+> +	int ret;
+> +
+> +	dev_dbg(imx585->clientdev, "power_on\n");
+> +
+> +	ret = regulator_bulk_enable(IMX585_NUM_SUPPLIES, imx585->supplies);
+> +	if (ret) {
+> +		dev_err(imx585->clientdev, "Failed to enable regulators\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(imx585->xclk);
+> +	if (ret) {
+> +		dev_err(imx585->clientdev, "Failed to enable clock\n");
+> +		goto reg_off;
+> +	}
+> +
+> +	gpiod_set_value_cansleep(imx585->reset_gpio, 1);
 
--- 
-Sincerely yours,
-Mike.
+You asserted reset gpio causing it to enter reset and you call this
+"power on"?
+
+> +	usleep_range(IMX585_XCLR_MIN_DELAY_US,
+> +		     IMX585_XCLR_MIN_DELAY_US + IMX585_XCLR_DELAY_RANGE_US);
+> +	return 0;
+> +
+> +reg_off:
+> +	regulator_bulk_disable(IMX585_NUM_SUPPLIES, imx585->supplies);
+> +	return ret;
+> +}
+> +
+> +static int imx585_power_off(struct device *dev)
+> +{
+> +	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+> +	struct imx585 *imx585 = to_imx585(sd);
+> +
+> +	dev_dbg(imx585->clientdev, "power_off\n");
+> +
+> +	gpiod_set_value_cansleep(imx585->reset_gpio, 0);
+
+And here device comes up, but you call it power off? Your functions or
+reset gpio code are completely reversed/wrong.
+
+Best regards,
+Krzysztof
+
 
