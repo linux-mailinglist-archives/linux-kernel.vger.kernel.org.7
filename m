@@ -1,62 +1,87 @@
-Return-Path: <linux-kernel+bounces-763525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52327B21600
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:55:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CF5B215FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAC662572C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:55:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E45A1A2351C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C212D6E41;
-	Mon, 11 Aug 2025 19:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60392D949D;
+	Mon, 11 Aug 2025 19:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H1soPVDT"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C0X5jfK9"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB262D979D;
-	Mon, 11 Aug 2025 19:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A6929BDA7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754942131; cv=none; b=F0rrl5S/9J1BcEtNDo5DvtgLaKwPzv9QpYa7lIBxsarG6LXmWEL6TObZBL62xjMy1D1bt5rp2/n/6k/rgDSZMKroyEc2N3SU/40yq5Tdp/5gTnNXhufU88S1V+z5QOPpZPgrCtcqZLyKPPt0QqJ8xK57eBlrcyAa9WJMA5u6QBw=
+	t=1754942128; cv=none; b=COoTTtBNyRBCaFejiKrcuAmF7BWNuuUPkpOaL1gpKNwm2hCMLDm0qgLS1WDJGbYQFRVwxVbww3rwUxCE/UJhJaNTLoe0l8OOGj8jrqyh1lwU/szU3K/jD2IoZ+HQk+8W44eNnQ2GN0YLbyMM0CIihHuOUV+1oJ4oPwGfmLDg4Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754942131; c=relaxed/simple;
-	bh=TPwzfAc9ZFSu8fkTOyKHxECFiETj6VfInU0GO0FKfRw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=P6ugs7wnC0cL4Sk78Y3kj4QdBc5ZpTAu30MjZ4i/PLEm6v3fMJvfLS48mmyhE2diYzpJ8qB7J4Al3/EIvJe8eILmiMOCoFHT9hgiqink6ccpwxeprepzTJT7COOS/u+094InWbOyqBdNXoSxygq+Egw1eD9uW/rglVaxvh+6k9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H1soPVDT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BGK2Rp005401;
-	Mon, 11 Aug 2025 19:55:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1754942128; c=relaxed/simple;
+	bh=T+GB+I4OfLAbw7FJdc0ZrPxn+zmusdPSRN2RBW1r/IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NjhlufF8CEDWqLJcYqUZ+M94+CIQ14Y0uqwpAIyi6OGi+UZoNGLIP2/JLIOB5ztlK7m8eZ0AWRCgAIZlA+kjLEARQOOwwwyESYChb8+x9KZoAIQslCTv3wJhFDQ4AkNg59AGbLbPONoHfEGvWzsWfYarfhH57qU5St3AbfilFa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C0X5jfK9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BHf3tw024342
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:55:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KfHUeSvunMVZXW/0xTJlqcO2cDUnQhLeJQeZc2lgGmw=; b=H1soPVDTG5ZfLDqw
-	4LDHTwnbU8IijG1w1qgMeIij9ZsFxOPXlkr13E0UF/uGw//5r0CZrIA4DwMv1xqV
-	1ii9cTnzWwj++y/k3t+YEMeNx/89sbSrxY7HHc37DExobadRvRrNAyawyebE0Dyl
-	tR6FW4JGXwsiAcl8HTZ7bqm4MCx698PKouSdAz1t2n5Vc+gT+4FeVbHvOwJYU7+x
-	yz8mAQOSWFEwS7MLy/dY1ayxLlmmhXxwFVTHqbS638YCR7xBeviWegEf5JVdce0y
-	CZBrFSfY9AatFO/R8OYWRH8R08W30fmDb9dWLI1N5whs/j9H9bn5LqAzJJUbrn44
-	pWdEMw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhx3vsa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 19:55:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BJtD4p018880
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 19:55:13 GMT
-Received: from [10.216.45.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
- 2025 12:55:06 -0700
-Message-ID: <89ab7e51-f82e-465a-aa22-1ccb8e7a0f6d@quicinc.com>
-Date: Tue, 12 Aug 2025 01:25:02 +0530
+	0LyObyJu5M8r8WD3EJOUXcSgt7esHUFIRa8rhjMc6H8=; b=C0X5jfK9p5DHUYm2
+	jERnPVuiMH8ir+xFmkZAalINrfa0PH+uP7P+Xj5n9d2mTZ+TFG4NvXTQHfoQ0S6t
+	lcNpvo3VpmOOUxIri+LPgWjgkBfgIHckjLXw8f1A2Y+hgoXBU7X1y3HpQa6monZJ
+	IUg57JIhZx0bfmD686tRAO7OTqPOjUrtJYoaeUMdlyvjjcES+BeKPA7fe4DPTUed
+	m+Bb62BcByoyeOLGWtQAC7xj7p6MrmXgtDfPXl06muu15wLsKSTK8Pg5rznLZxdy
+	5e70ce2+E0nW7UsecUOMjHxK+T2khM39RNsdT48aYeQg4efG07dOkFt8lk1thnMA
+	P8fb4g==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem49q0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:55:23 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4274f5e065so4132170a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:55:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754942123; x=1755546923;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LyObyJu5M8r8WD3EJOUXcSgt7esHUFIRa8rhjMc6H8=;
+        b=j8YziYrVBRPuBPSzlbgb/GKHwpX79MYJSaUeYcRGijRmZrSThUS389gE877Cjo3Wli
+         25ploLuwaQUeZWfyUPT9oz2ilO9hTJXyq00Hpu6qUomFb2Y6+AtA5f7qbFMcWvK0LlVP
+         hb96/FaoNElmBCL4KGgN/+mGMkRiZlZyUJaMO9SB+rGaHnmc7aOZ7BvhJKA1Qp0S8wyc
+         MOu7rLBCsYhzZJ5wQTB3fj56hu1+cEF+8UcB7KCw3haUlCMHK7M2XXNhO12QOwheaQz6
+         T+EKJqF/l5K9SjtBiEqm92AeRsNMOrkLV/2UhS9eCCc+tkIsTWi1H1GOM5ndj0WXaHCz
+         0U/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqTq1n/QPoBza4QhAZz+HAUUbRNuDc97pRO2hG3MGv2Ihjq8UTPrsQzqyyueTz4nsa6+/BOmgkUwBEeaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy5hF7dB4fNA+HEp/S+fDIv7G5ZeTXylr2lPITptwwZQ0UjlLb
+	crp2kZcQ1N/Ah4CotAdKxhojejQnOL5PJbX9SY1rz6Xzihu1X9Ei6d8jxViwwDP8cYwPDoVXvpP
+	VU7BAGUIZ8dclpJDsqwjiqpY/Sti3Rn0gY3Ox802lHbsG58qgBHU7x0Y5y9uqfLq36Lo=
+X-Gm-Gg: ASbGncu9+Knzul5XtPAPtZNyzMaAHdMyweGxlROHELB3JkVfKNYwHiGjn1Wa6RB5SCA
+	EKVSLUAGw8T/MQiYArlpQozxtKZHdeILgNH+1VZTSIPrwPSQXYHdsdm99+jYKJyDfFrxlNrqgRG
+	M7+qgUJQto3cDZS2EHi288jczCijZOjS6Fznm7w7cli/bYRRloLGjMH1DERaUC+mqiBDX2BQodp
+	Zn6IsFG2d5Ud1zPMtaA/hzLl+XireGoIpYpR57pMfBOar1NCdUKSbLHWM+ofGlp0gsm4LkW7Cf+
+	GhknZwcDltrSzN/B1y15mYisTGmAStHHo4ZqmLCMPBKEmAoaApKhSyVQq+5TsGavZchdnQYQFCj
+	7lSZCugx6aMb0yLsWd94ZEyA+iLFoWVVp
+X-Received: by 2002:a17:902:ec91:b0:240:4d5b:29b4 with SMTP id d9443c01a7336-242fc1063f7mr12498815ad.0.1754942122710;
+        Mon, 11 Aug 2025 12:55:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3Qx8bYK+rncQZ56MU1IG7eUy3lnzmit6zpPxPUFBpmw94BfCZtlGwBUH68DnPgSdEAGBLeQ==
+X-Received: by 2002:a17:902:ec91:b0:240:4d5b:29b4 with SMTP id d9443c01a7336-242fc1063f7mr12498525ad.0.1754942122260;
+        Mon, 11 Aug 2025 12:55:22 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac12d4sm23720118a12.32.2025.08.11.12.55.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 12:55:21 -0700 (PDT)
+Message-ID: <adf6d126-1f80-4590-a9f6-171b7feaf656@oss.qualcomm.com>
+Date: Mon, 11 Aug 2025 12:55:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,171 +89,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: Re: [PATCH V1 2/4] arm64: dts: qcom: sm8750: add max-microamp for UFS
- PHY and PLL supplies
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <conor+dt@kernel.org>, <bvanassche@acm.org>,
-        <andersson@kernel.org>, <neil.armstrong@linaro.org>,
-        <dmitry.baryshkov@oss.qualcomm.com>, <konradybcio@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-3-quic_nitirawa@quicinc.com>
- <20250808-calm-boa-of-swiftness-a4a7ce@kuoka>
- <9af71063-0629-4ccc-bc76-3fb588677bf4@oss.qualcomm.com>
- <292907f3-25d6-40d9-be6e-b6b83e646d73@kernel.org>
- <5e32be05-0dbd-4d6f-879d-8ce97fb430ba@quicinc.com>
- <rh3qxu2rijpjswfash3rpmmh6sw47l3b6j5p5upti6zffknasz@cywwm3fypghd>
+Subject: Re: [PATCH ath-next] wifi: ath10k: switch to of_get_mac_address
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+        "open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER"
+ <ath10k@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20250809031517.5535-1-rosenp@gmail.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <rh3qxu2rijpjswfash3rpmmh6sw47l3b6j5p5upti6zffknasz@cywwm3fypghd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20250809031517.5535-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX29LYPgOK69j7
- WPYRn8TWyz/QBNXJPO8t6uM/RXeRr22MqKeb019j7nXaACfNfubC3dg0wWwrim54I2XyHO5ExnH
- U+cr7ZdJf0byL13IJHBZ6gB/Vy56gcgk5+QKDpHQO3lxMbGqd9ynp0iHDDN7WDUtAew9F0Hr2E/
- APVvkJJpdTqK1GwORtZOP7XJR5GkLqUmi26ph2eT8mKzG4B29+85YDaMqMdbNkZ0WlOThPBA1Tq
- mkNgAZyovZ4Z5TbkAul21FxjMpbygzIj9F3DC8qP0HeoMXtlTiMiZnJ6Kced/boF9IFeWH8E+cl
- xNB/n17Qtiu0IVfG4gMM6ZbD4Nxw6douJ6tB5rR/AsJkc2q9e/fnfLuV12mSMYSFB5jQk4VBcVe
- 3Z/fEKb+
-X-Proofpoint-GUID: rKsQekp9N15GyyvY17td_m8XJLtGO9gB
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689a4aa5 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=ulfgkXGRXDS8zX5WHX8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: rKsQekp9N15GyyvY17td_m8XJLtGO9gB
+X-Proofpoint-GUID: LxQHY9XKSW57ay7fIe_-VpziqMSzep8h
+X-Proofpoint-ORIG-GUID: LxQHY9XKSW57ay7fIe_-VpziqMSzep8h
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfXx5D5GpU08aK3
+ ftF2n9sIXkSBo90Ww7ixmCF5yVyCEyS8Dh9Ux7z1DVUIMIHxUOMdjmv8azVBS5ndFbWK4bbqvUJ
+ 4WnVbDzzBw4jp3Fm++V54nrh5I2JrABPrFWYniprY0f3bzb7o+LXCLkcK/WyZnVFM+X2GOwACJg
+ 2fk9OflBGloXuFqWqNt1BZzVb1gBtGCB8WRymifydRuRg3Bzn/WBOd12i8N6WDIk6DBhOTZSx+P
+ USOmOOb5qcCzbxTDZqG0HJm7PPH3dgOwGM6co9hhFodRJ/nPDxy8hBGxSRaX0OhpM3f2Nafv1bf
+ GrUsMvr6QgzyORpDiFsp2ugSlk/BjjdP4IeRp97mN5pMhkFXLc2EkjMXd9inu9TB2xWBnRfFAV7
+ GKB95c1s
+X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689a4aac cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=e70TP3dOR9hTogukJ0528Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=bC-a23v3AAAA:8
+ a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=3-rGAEJhA9dDIXXEWvYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=D0TqAXdIGyEA:10 a=xa8LZTUigIcA:10
+ a=bFCP_H2QrGi7Okbo017w:22 a=FO4_E8m0qiDe52t0p3_H:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-11_04,2025-08-11_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
+On 8/8/2025 8:15 PM, Rosen Penev wrote:
+> In 9d5804662ce1f9bdde0a14c3c40940acbbf09538 , device_get_mac_address was
 
+see
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
 
-On 8/9/2025 4:37 PM, Manivannan Sadhasivam wrote:
-> On Fri, Aug 08, 2025 at 08:49:45PM GMT, Nitin Rawat wrote:
->>
->>
->> On 8/8/2025 3:09 PM, Krzysztof Kozlowski wrote:
->>> On 08/08/2025 10:58, Konrad Dybcio wrote:
->>>> On 8/8/25 9:29 AM, Krzysztof Kozlowski wrote:
->>>>> On Wed, Aug 06, 2025 at 09:13:38PM +0530, Nitin Rawat wrote:
->>>>>> Add `vdda-phy-max-microamp` and `vdda-pll-max-microamp` properties to
->>>>>> the UFS PHY node in the device tree.
->>>>>>
->>>>>> These properties define the maximum current (in microamps) expected
->>>>>> from the PHY and PLL regulators. This allows the PHY driver to
->>>>>> configure regulator load accurately and ensure proper regulator
->>>>>> mode based on load requirements.
->>>>>
->>>>> That's not the property of phy, but regulator.
->>>>>
->>>>> Also reasoning is here incomplete - you just post downstream code. :/
->>>>
->>>> The reason for this change is good, but perhaps not explained clearly
->>>>
->>>> All of these values refer to the maximum current draw that needs to be
->>>> allocated on a shared voltage supply for this peripheral (because the
->>>
->>>
->>> It sounds very different than how much it can be drawn. How much can be
->>> drawn is the property of the regulator. The regulator knows how much
->>> current it can support.
->>
->> Consumers are aware of their dynamic load requirements, which can vary at
->> runtime—this awareness is not reciprocal. The power grid is designed based
->> on the collective load requirements of all clients sharing the same power
->> rail.
->>
->> Since regulators can operate in multiple modes for power optimization, each
->> consumer is expected to vote for its runtime power needs. These votes help
->> the regulator framework maintain the regulator in the appropriate mode,
->> ensuring stable and efficient operation across all clients.
->>
->>
->> Stability issues can arise if each consumer does not vote for its own load
->> requirement.
->> For example, consider a scenario where a single regulator is shared by two
->> consumers.
->>
->> If the first client requests low-power mode by voting for zero or a minimal
->> load to regulator framework during its driver's LPM sequence, and the second
->> client (e.g., UFS PHY) has not voted for its own load requirement through
->> the regulator framework, the regulator may transition to low-power mode.
->> This can lead to issues for the second client, which expects a higher power
->> state to operate correctly.
->>
+specifically: If you want to refer to a specific commit, don’t just refer to
+the SHA-1 ID of the commit. Please also include the oneline summary of the
+commit, to make it easier for reviewers to know what it is about.
+
+So in this case:
+9d5804662ce1 ("ath10k: retrieve MAC address from system firmware if provided")
+
+> introduced as a generic way to get MAC addresses from anywhere.
+> Unfortunately since then, the landscape has changed and the OF version
+
+when did the landscape change? if using device_get_mac_address() is breaking
+folks, it would be nice to know which versions of the kernel have the bad
+behavior so that the patch can be backported to any broken LTS kernels.
+
+> is required for NVMEM support. The second problem is that with NVMEM
+> it's possible that it loads after ath10k. For that reason, check for
+> deferred errors and exit out of probe in such a case.
 > 
-> I think we all agree on consumers setting the load for shared regulators, but
-> the naming and description of the DT property is what causing confusion here.
-> There is no way the consumers can set the *max* current draw for a shared
-> regulator. They can only request load as per their requirement. But the max
-> current draw is a regulator constraint.
-
-To avoid confusion with regulator-level constraints, I'm open to 
-renaming the property vdda-phy-max-microamp to something more 
-descriptive, such as vdda-phy-client-peak-load-microamp or 
-vdda-phy-peak-load-microamp. Along with updating the description, this 
-would better reflect the property's actual intent: to specify the 
-maximum current a client may draw during peak operation, rather than 
-implying it defines the regulator’s maximum capability.
-
-
-Having said that, I had a follow-up discussion with the PHY designer to 
-confirm whether this value could vary at the board level. Based on their 
-response, it's a fixed value for the SoC and does not change across 
-different boards(atleast for now). Therefore, I can remove from device 
-tree and replaced with hardcoded, per-compatible data in the driver.
-
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/wireless/ath/ath10k/core.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
->>
->>>
->>>
->>>> supply's capabilities change depending on the maximum potential load
->>>> at any given time, which the regulator driver must be aware of)
->>>>
->>>> This is a property of a regulator *consumer*, i.e. if we had a chain
->>>> of LEDs hanging off of this supply, we'd need to specify NUM_LEDS *
->>>> MAX_CURR under the "led chain" device, to make sure that if the
->>>> aggregated current requirements go over a certain threshold (which is
->>>> unknown to Linux and hidden in RPMh fw), the regulator can be
->>>> reconfigured to allow for a higher current draw (likely at some
->>>> downgrade to efficiency)
->>>
->>>
->>> The problem is that rationale is downstream. Instead I want to see some
->>> reason: e.g. datasheets, spec, type of UFS device (that was the argument
->>> in the driver patch discussion).
->>
->>
->> The PHY load requirements for consumers such as UFS, USB, PCIe are defined
->> by Qualcomm’s PHY IP and are well-documented in Qualcomm’s datasheets and
->> power grid documentation. These values can depending on the process or
->> technology node, board design, and even the chip foundry used.
->>
->> As a result, the load values can differ across SoCs or may be even
->> board(unlikely though) due to variations in any of these parameters.
->>
-> 
-> Okay. This goes into the commit message and possibly some part of it to property
-> description also.
+> diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+> index 6f78f1752cd6..76747eb0925b 100644
+> --- a/drivers/net/wireless/ath/ath10k/core.c
+> +++ b/drivers/net/wireless/ath/ath10k/core.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/firmware.h>
+>  #include <linux/of.h>
+> +#include <linux/of_net.h>
+>  #include <linux/property.h>
+>  #include <linux/dmi.h>
+>  #include <linux/ctype.h>
+> @@ -3456,7 +3457,9 @@ static int ath10k_core_probe_fw(struct ath10k *ar)
+>  		ath10k_debug_print_board_info(ar);
+>  	}
+>  
+> -	device_get_mac_address(ar->dev, ar->mac_addr);
+> +	ret = of_get_mac_address(ar->dev->of_node, ar->mac_addr);
+> +	if (ret == -EPROBE_DEFER)
+> +		goto err_free_firmware_files;
 
+Note a similar proposal for ath11k was deferred since it seems to break x86
+attachment when there isn't a device tree node:
+https://msgid.link/ec974dc0-962b-f611-7bbb-c07a3872f70f@oss.qualcomm.com
 
+I'd have the same concerns here.
+(but I didn't dig into how the fwnode items are set if there isn't a DT)
 
-
-> 
-> - Mani
-> 
+>  
+>  	ret = ath10k_core_init_firmware_features(ar);
+>  	if (ret) {
 
 
