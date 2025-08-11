@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-762424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3108B20657
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92379B20673
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0463D3ABBB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E01577B453D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A327AC34;
-	Mon, 11 Aug 2025 10:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="26q3kVXq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lq/81gBD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDAB27603B;
-	Mon, 11 Aug 2025 10:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272027FD45;
+	Mon, 11 Aug 2025 10:51:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE87270ED7;
+	Mon, 11 Aug 2025 10:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909351; cv=none; b=NqzkXu0aEfCxwjJlj+bjKEuvEVczYXOXWRM4fJT7T6mYHcEoC0otJco5PS8ZvLROoOn2NWGoKdE5A3EdJ9JZ+3F+2TtgiW2NGsBOUseimtMntvKJnF1YL7VQpNtKg1Tvkw3O//Vv/K/lcj5Uy99jMnGL1Athz6ZZ0KXcvPICIYw=
+	t=1754909467; cv=none; b=EJQNZiQIeABcx++9zJmjlLrxYGIx45C8pGg7WyBfXp8OCmaN3Vemf3ZcwzuMmtDd9fvV1iZDychzhv4THEzc6OSf4iy8aOsKYUv1tjosZRq0fgjnb5A22G5flqQ62C8KGkm/IY4AoTbeF5rbmg5mBHADffLppDXXVGAyhWjy5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909351; c=relaxed/simple;
-	bh=uujVNNdVW9U8D1UA5bK3BeelcyOCRx9wp/Szp8PjOrs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kdaq7eMUddQB06UV+D99XpFZ5QAmMLrmcgLwSs/LAz6l1h59CSMoLwtYeAzdwo8yTDVvkxKQ9Wwv6dV4GO4eitng57QYiab95WSztCyA1SJx9qXt7OTVls9Kkq4YGDm5hjLZcp+PIZkVTF0VE9gZQ7fr246Vreplmp3NZdE0/+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=26q3kVXq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lq/81gBD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754909347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gQ9eh9/zvfBpPdf1yOHxLVFMwlIvEemowzDPpcMhBiw=;
-	b=26q3kVXq+tvWpcx/uph5sYEnfSm8PK4NJLGLfaHmsbuaFK2HKl4QtEyUjPW6lbFaEyQIhA
-	ieKZBp2CIs5LfnpMEuvwlmhIzYolzpEEZpIYv8EedMvLDBTaHiyf4TptK5szgNNbNuycRW
-	Rhwzd6rA7ovLJu46hMGJlwW/LSyRiQa2MI0OLY8JBUWIuAAcN46dwO7j6jhyKzFzx5IJF8
-	5PaBrCc+vJhGdNNYUP1rqikyC5510IY0EMxTWQCXAOmqckWn3q9YjUdyTfZwpoWyq4ND9B
-	huyUEwVUYYOdTwW0Dgd0bT15YAOg0O61hPKO0tLYYaMg8L3QRmPS80+4mB59Ag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754909347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gQ9eh9/zvfBpPdf1yOHxLVFMwlIvEemowzDPpcMhBiw=;
-	b=lq/81gBDE3//kJOfgqNcJMGNoOW0xEXf1xPqOgZkVVz/JhV9wMp3sCgakArU9Pg6BDq2Jr
-	RobtYWg2KPI5DaAw==
-Date: Mon, 11 Aug 2025 12:49:01 +0200
-Subject: [PATCH v2] ARM: mm: Don't use %pK through printk
+	s=arc-20240116; t=1754909467; c=relaxed/simple;
+	bh=oCocNIgOu43l9PMMMAdWVG/UZpa3tR5OOkjm0GU2wf4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aFVRTxvI32y73uHJCJOGzP2wvI8ycT+kxnm3RJGtiouAL8x1cix4kOnIgVTCVdJokFYo0I/o59Xnp246MdM5cGFRDYc31g95xYaHbaTIJqT/LR5wr7r3B+d92AcMuyS6cna8YJ3prFTqCADuBxUMc8jHTWpt7khy4sZUd6WDpWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxDGsUy5lo828+AQ--.52946S3;
+	Mon, 11 Aug 2025 18:51:00 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJAxQMIRy5loZzdDAA--.48919S3;
+	Mon, 11 Aug 2025 18:50:59 +0800 (CST)
+Subject: Re: [PATCH] KVM: loongarch: selftests: Remove common tests built by
+ TEST_GEN_PROGS_COMMON
+To: Dong Yang <dayss1224@gmail.com>, pbonzini@redhat.com, shuah@kernel.org
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, chenhaucai@kernel.org,
+ Quan Zhou <zhouquan@iscas.ac.cn>
+References: <20250811082453.1167448-1-dayss1224@gmail.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <11d1992d-baf0-fc2f-19d7-b263d15cf64d@loongson.cn>
+Date: Mon, 11 Aug 2025 18:49:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20250811082453.1167448-1-dayss1224@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250811-restricted-pointers-arm-v2-1-74bac42f3699@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAJzKmWgC/4WNQQ6CMBBFr0Jm7ZhO1aCuvIdhUcogk2hLppVgC
- He3cgGX7yX//QUSq3CCa7WA8iRJYihgdxX4wYUHo3SFwRp7MpZqVE5ZxWfucIwSMmtCpy809fF
- yaIm86T2U9ajcy7yV703hQVKO+tmOJvrZ/82JkNA5Z/rWWqazvz0lvLPGIPO+Y2jWdf0ClQljZ
- MIAAAA=
-X-Change-ID: 20250217-restricted-pointers-arm-07493b11c0fc
-To: Russell King <linux@armlinux.org.uk>, Kees Cook <kees@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- linux-hardening@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754909344; l=1462;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=uujVNNdVW9U8D1UA5bK3BeelcyOCRx9wp/Szp8PjOrs=;
- b=gW95gA8CAxjgBbyt0Lk1m/IVLgeB7Er6bzFTRV+h6PPf3GKicD4VoCDU4d77LX2Paa/BOkOFB
- X2A9TK2FJYmDTzmXxSWIXj+G9t2gfGNK2pVLpPDB+l0iP+S9/xYWaKa
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-CM-TRANSID:qMiowJAxQMIRy5loZzdDAA--.48919S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WF4rKF1rAry7Cr15Xry3KFX_yoW8ZryUpr
+	yS9rsFvFy8Zrs7Grn7Gw1DXan2kryqgF4vgF1xtw48Cry5JF48AF10k3s3KFnYq3y0vr4a
+	v3WfKrnF9ayDJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkU
+	UUUU=
 
-Restricted pointers ("%pK") were never meant to be used
-through printk(). They can acquire sleeping locks in atomic contexts.
+Hi Dong,
 
-Switch to %px over the more secure %p as this usage is a debugging aid,
-gated behind CONFIG_DEBUG_VIRTUAL and used by WARN().
+Thanks for you patch.
 
-Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
-Changes in v2:
-- Rebase on v6.17-rc1
-- Switch to %px instead
-- Link to v1: https://lore.kernel.org/r/20250217-restricted-pointers-arm-v1-1-aaa0fb22e18c@linutronix.de
----
- arch/arm/mm/physaddr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2025/8/11 下午4:24, Dong Yang wrote:
+> Remove the common KVM test cases already added to TEST_GEN_PROGS_COMMON
+>   as following:
+> 
+> 	demand_paging_test
+> 	dirty_log_test
+> 	guest_print_test
+> 	kvm_binary_stats_test
+> 	kvm_create_max_vcpus
+> 	kvm_page_table_test
+> 	set_memory_region_test
+> 
+> Fixes: a867688c8cbb ("KVM: selftests: Add supported test cases for LoongArch")
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> Signed-off-by: Dong Yang <dayss1224@gmail.com>
+> ---
+>   tools/testing/selftests/kvm/Makefile.kvm | 7 -------
+>   1 file changed, 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> index 38b95998e1e6..d2ad85a8839f 100644
+> --- a/tools/testing/selftests/kvm/Makefile.kvm
+> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> @@ -199,17 +199,10 @@ TEST_GEN_PROGS_riscv += get-reg-list
+>   TEST_GEN_PROGS_riscv += steal_time
+>   
+TEST_GEN_PROGS_loongarch = $(TEST_GEN_PROGS_COMMON) is missing.
 
-diff --git a/arch/arm/mm/physaddr.c b/arch/arm/mm/physaddr.c
-index 3f263c840ebc462e13c34d33be0161e7a473173d..1a37ebfacbba969b9341fe17518cdd81fb2899b6 100644
---- a/arch/arm/mm/physaddr.c
-+++ b/arch/arm/mm/physaddr.c
-@@ -38,7 +38,7 @@ static inline bool __virt_addr_valid(unsigned long x)
- phys_addr_t __virt_to_phys(unsigned long x)
- {
- 	WARN(!__virt_addr_valid(x),
--	     "virt_to_phys used for non-linear address: %pK (%pS)\n",
-+	     "virt_to_phys used for non-linear address: %px (%pS)\n",
- 	     (void *)x, (void *)x);
- 
- 	return __virt_to_phys_nodebug(x);
+BTW irqfd_test in TEST_GEN_PROGS_COMMON fails to run on LoongArch, does 
+this test case pass to run on Riscv?
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250217-restricted-pointers-arm-07493b11c0fc
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Regards
+Bibo Mao
+>   TEST_GEN_PROGS_loongarch += coalesced_io_test
+> -TEST_GEN_PROGS_loongarch += demand_paging_test
+>   TEST_GEN_PROGS_loongarch += dirty_log_perf_test
+> -TEST_GEN_PROGS_loongarch += dirty_log_test
+> -TEST_GEN_PROGS_loongarch += guest_print_test
+>   TEST_GEN_PROGS_loongarch += hardware_disable_test
+> -TEST_GEN_PROGS_loongarch += kvm_binary_stats_test
+> -TEST_GEN_PROGS_loongarch += kvm_create_max_vcpus
+> -TEST_GEN_PROGS_loongarch += kvm_page_table_test
+>   TEST_GEN_PROGS_loongarch += memslot_modification_stress_test
+>   TEST_GEN_PROGS_loongarch += memslot_perf_test
+> -TEST_GEN_PROGS_loongarch += set_memory_region_test
+>   
+>   SPLIT_TESTS += arch_timer
+>   SPLIT_TESTS += get-reg-list
+> 
 
 
