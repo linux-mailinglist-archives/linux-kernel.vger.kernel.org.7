@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-762825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF6CB20B7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 932A8B20B45
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA7DD7B935F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57192188ACBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C4B21A435;
-	Mon, 11 Aug 2025 14:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC52B23B626;
+	Mon, 11 Aug 2025 14:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0WT43Fo"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="VPeTNaNv"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F56217F31;
-	Mon, 11 Aug 2025 14:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008B5231825;
+	Mon, 11 Aug 2025 14:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921053; cv=none; b=XG9nchY2fvwWnHs5MFZGrhd1GXj+ioAe6FdD63g1Y0w1oOwLLXkvIV6yp9sjjffZMXaPNNL8CKu3ViaxEstNoabmQvH8ro4XIr7fuopy74NH+gGu4AnFGu3j5yc4ARplb+oOs9I4hEe6Hi0V5hINLfvddBrTfOStgvZjmj/Lrg4=
+	t=1754921107; cv=none; b=RZDFpB5BWHHnauP/LvVce2IM+E/QUefMUafXNTxohB9+MQq4UrGOBexRvvKKBcGyDhxhw1YoZiSuHd6WqCkqS8qS+E+0Y6UgKUtdmUHXkpexhiOj5wFiltsVIEmkbt8S+YNcOYPtM+DLvd7sUys6HH60BdDr2t7rhLPW7bv0Gi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921053; c=relaxed/simple;
-	bh=mXwKUoupJ3wcYimchFtZm4XvN6flNnsEmm9x3gjjKUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sefsdlRSpM9JeJGNh018ROvtOsUtuj5s83gzrOUIsx7ETh3HCZmbVX2xojnrKelamRCgQaptUhaEqr/7+nE7CkhgTojtBIcQuPtkIcmtJ2Vj7KgPOy4lmfNZKvsqRABpi3o98l145vM2csNwqwyUb6F4Gif9598kUMly+Uj2THI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0WT43Fo; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76bd9d723bfso3767483b3a.1;
-        Mon, 11 Aug 2025 07:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754921050; x=1755525850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XFbP9as/6/WzUolljTsSYlDm/m7iC8iIjpoQqE89mJk=;
-        b=X0WT43FoFiBbnzwLnW1XAemz3YaYtcNsZwpGgmT/sIUDLcd+/E8yRdUd9T50+2bA1G
-         a1IWeV6qeZM3VC1OUErmYvExLhuliLKvufTFxNLbZcC61DITwP0L28QG2esla3wbd3fJ
-         azKuPGR2NfiQ0Oeiofmlj0VyAfrCTmlIDIO2ydL8/6rZ10Qu6uDtyXs8zFSLcjdufBsg
-         R7KCjZjBrkcXS7V/6B/Y+mpQxwBGdYu+ZUiCrTEv5wJ2gdjEL6+l/RMDWTrw/O62Pl2L
-         hpcuifw6wbI1dGtHqIVSdbsL9JvIizPPd37LJrob8f9FyDhLdNX9DaVHVCt30jJvB2g6
-         Oq1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921050; x=1755525850;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XFbP9as/6/WzUolljTsSYlDm/m7iC8iIjpoQqE89mJk=;
-        b=ZWJM+h2xjOH7t8cGX+MLuW0rx+SyyLnaR7VujZ7TGqtxMCaQD9eze+b/WQWs152eFF
-         X2n8u+XHYHDhXDuoZ9x6gCIYLzAElaZOHOEaMjonmzdOgvXDM4INogyC+vvaAaYzWNCL
-         pZqOD0twAyas2bEre3JEe/QekqskiqS9NHZi3VgrbrXJRoNO4Z+YdBn/7xPwvD0Z2Wk6
-         ZcEQxcYtI3ACPhvP1VJQOawyQrT7Yu+nw884fE6a8P5Dt+yk3XJHV9my6st/UiTbbR6h
-         Bzj7ZPHiyYvQjzJAs7V5x8vrGTJg/PpybDX3nUiiC56WucWU9YB97Nz+JKD/26a3Yrt3
-         gFsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrjlkybcZrPZpXP9NlRRmF2fdvW9KDstcbLAkbRHyArV+2r+fbpZqXOmt7VcaIr7TO3uw31JMyntvD3hs=@vger.kernel.org, AJvYcCWw3K8aeOOiA8IkYKW52mG4lwNermJqC/BnSvX0+1HHG31aZFwgvaIXFuuoZK06EzQ0nphjKi9H1gEtDSUer2MR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlhGESv1AcYahFlqrUvKNFE+Peds9mUHQQzuTH0P2+J6SdzjmW
-	LyesYV79GYmNM0V3KyR6Or0ZZ1n7V851WpGtewsIghFfqUlLiuPp8VU6GiliFuOx0lo=
-X-Gm-Gg: ASbGncvvi6+XKZW21VrScPF0z+FYywIikGO2Azxfce2poZDz3TjLn3WjtaoHW+7+ujV
-	s/L1ZMCdbG4QGhEZOpAZAJQJ9pqhORlmL6svs6cf3bpCu6xNWO5hcIKAIFGtvJUGmh0aOHpiL25
-	JoFUfwEfC+fo5rrp9bOdPmzvbX2ao36Gu3w64ySCudHXJhD+D51dKoT412m92suAfFtglVLf5b0
-	mKX94FfTB+gEoRsTk7EugEpBYgGz7RPFP/uHYg4XnaGiAfwwwKiGgixqIRqB+8zPGky/wVTJUR/
-	QP6kq9xJ2+6MMgOjM4+8ibgNlrU1s4i+95echz+LKM883I/D6dxUPQ7ZqU5u0vkQ/P+VKq3PcVJ
-	pWvBHOm6403dF4PrABi04UHesmvN+l/3wGG5aTZnFgQ==
-X-Google-Smtp-Source: AGHT+IHtuFLzK5O8ChsHoCofDqSnIDV4TUPr4lHwVLG7WrJcAaZGk76UBFLEIm9ccmQ0+A2/XN7Oqg==
-X-Received: by 2002:a17:903:b45:b0:23f:8d03:c4ac with SMTP id d9443c01a7336-242c1ff44a7mr177794905ad.2.1754921049908;
-        Mon, 11 Aug 2025 07:04:09 -0700 (PDT)
-Received: from fedora.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a8cdsm274795675ad.121.2025.08.11.07.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 07:04:09 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	David Wilder <wilder@us.ibm.com>
-Subject: [PATCH net] bonding: don't set oif to bond dev when getting NS target destination
-Date: Mon, 11 Aug 2025 14:03:58 +0000
-Message-ID: <20250811140358.2024-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754921107; c=relaxed/simple;
+	bh=zplxlX8M8Ix32mf9GhxThytJEQARRj5h3yz1CZH/uYs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sX8gmGrJEZYmsI7MqSELP0GM2lGvE6djnlgC1hBEkvdFARmpAZTArtJyVEuDza7py7J98t4B9ddukkUFhSLlZ8J+OQQuRh6gjpk3yj0GBtDvIZ+vaAfUJGlW/4l07BynZRn7x/8n9WHh7pgnvfB6vH6qTpO2SWEKjhunBNvksyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=VPeTNaNv; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1754921078;
+	bh=6P1D/ZrZD05cWpNUR0xzM5levw6Qt08PvmnlyU17ke8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=VPeTNaNvxnhMBJXlPHubon/N+5ARXqDpP210poe3XlaU3aSLibA/0awKkI2ZjUedd
+	 TIoyPddgnE4g72NwHJ+W0Cx+vT6Ki4lxmzB0dZnJduwWy3C4DcS1BTzMEcuCZcl3bp
+	 9mD5Lq2B2z3w9Qzzid3gxrQkidOkLWYlqPTFA0Zk=
+X-QQ-mid: zesmtpip4t1754921076t7e138ce9
+X-QQ-Originating-IP: eTLoZc3p7oyCNC0JObN64YGwyJoMr/R24ZnHCNREhb8=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 11 Aug 2025 22:04:35 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12834372004282179725
+EX-QQ-RecipientCnt: 16
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH v2 0/4] clk: spacemit: fix i2s clock
+Date: Mon, 11 Aug 2025 22:04:26 +0800
+Message-Id: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGr4mWgC/3WNQQ6CMBQFr0K69pO2llRdeQ/DopYn/IBAWiQYw
+ t2tJC5dzktm3ioiAiOKS7aKgJkjD30CfciEb1xfg7hKLLTUhTxJQ60i37XEOlKNHsFNySAAVpo
+ zoKwTyR0DHrzs3VuZuOE4DeG938zqu/6K9k9xViTJVl4XuBuY6njtuH8teRydx5On3A9PUW7b9
+ gF8hnJZwwAAAA==
+X-Change-ID: 20250804-k1-clk-i2s-generation-eee7049ee17a
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754921074; l=1959;
+ i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
+ bh=zplxlX8M8Ix32mf9GhxThytJEQARRj5h3yz1CZH/uYs=;
+ b=SX+mVoR/mVC5cwNpdmanNecKYAdkxQ5ek+Nhb1qNPL3qB5Z8mofIfNgzg42Bih6vN1QYSbeqi
+ ObP9CxSzyyhCx8jozDp/fnHMXUI2VmGvCeN7UwFFYnzCH0c+cEeEKIA
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OGMw2CL+mwjsKdPCCQALXfVIefO859FOhyDPcn3KYL92gPYJnfLAIcSS
+	6Vw0FECkbELWxyhcnX+Z9nH1zYCNyJXnIG+iO3nWflHHTJ+G8tYBkmeyQfOv6kJcfdx998e
+	MW4sk404o+4OXGJuRAGWQ4ns4IACIMIWV3+e9kvV3eSZcgmmYi9eY2avEwlM+SAoqAyf6uv
+	QIr6NFNvYNamQYzrR8iItZSo3NDBuAfTkUbZCGeVZ2hKtCFPAcc/K1sXZBIqxFqM+BYL5Xo
+	lAiZGfJ+ckzgvoY95qBTunF0L7b82bh6ZeGQU5QcSAo7nvZWIzBCrsDW9T09J1bAoFDCyZB
+	FbW6g7yNxkhj0riduQMc6OPR+C1nPowcnATrqPJX3qtuetzLFA/9KGk8oiijYK7pTTKllJb
+	mxSfNneHRmq+X9w54est+oXgqIeHDOcCta0OOv7J9p/VCbglB2xmx0HL9jYwbZpuy7xa/tc
+	FxyI6P92jdTm2hUCu1zp3sJAIN78QzY7vnLvm2ouCJ7lM2VX49affrdIkwg1QoPc8y7jvBf
+	3Kss75zQc99ZoWx0LU+zLHqlQethcJv66PgQcRdMkxSkVTrv1oGPBpWcAHlolyHBn4BiKLi
+	mnHwXpBmYQ0PGOSLO9zkAytDdVJ4sYluy6Ek/ckMJIvOW2LFr1A/R8/44N8DcJU0th/WSCi
+	SuyYGKyMl7nJ7YUeW07/aDqL0kCxr2RAcXWagcLcemO1EtvX/JwXQPgZZayeYMO2VZ03bA4
+	7W1ImR0lGQ5aQz6qIOMkFy/DXuALOsK0hlpr6n0MRSTc+6C138mj23KjbYpro4l4HyUprrY
+	GHzb+0HseGthI85vVVxDpF46SnUIYtZLyZClptiqHS4Uoohm44Cnq62u6B61VQwNycyqBAR
+	RJFH3zwY6ptmWutX0F/KKGNicn6cylmpCyCIDLSrS7BOFoprTB8C/rzAFhC9tolnH7ibWLR
+	tVhYvMjZYjv37OVGjl0PbzSvOGW/Ne4JdAMPruG0/6y09yBocImPp5ZPkgQRVf0dt4Gzkvw
+	67rGanjIwRTImU3gSjnKB6q5P2jLZZNYTWKL+/H2DgnWTgbelviMFEySuD21pMvnjhGfJQk
+	jOgFbAZ18pkKng0786OMNVYVU+V9vgU4ViWDHLOPDCVBJyipg0XQceMTwO/zRB2qnNi7O9Q
+	HVk8Ws2h7lAQoGUFes+Bot6axVZ/jeCr1bvU
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-Unlike IPv4, IPv6 routing strictly requires the source address to be valid
-on the outgoing interface. If the NS target is set to a remote VLAN interface,
-and the source address is also configured on a VLAN over a bond interface,
-setting the oif to the bond device will fail to retrieve the correct
-destination route.
+Previously, the driver defined two clocks for the I2S controller:
+i2s_bclk and its parent i2s_sysclk.
 
-Fix this by not setting the oif to the bond device when retrieving the NS
-target destination. This allows the correct destination device (the VLAN
-interface) to be determined, so that bond_verify_device_path can return the
-proper VLAN tags for sending NS messages.
+Both i2s_bclk and i2s_sysclk were treated as fixed-factor clocks,
+which clearly does not reflect the practical requirements for I2S operation.
 
-Reported-by: David Wilder <wilder@us.ibm.com>
-Closes: https://lore.kernel.org/netdev/aGOKggdfjv0cApTO@fedora/
-Suggested-by: Jay Vosburgh <jv@jvosburgh.net>
-Fixes: 4e24be018eb9 ("bonding: add new parameter ns_targets")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Additionally, the original driver overlooked some upstream clock sources.
+
+To fix the I2S clock, this series also introduces several new clock definition macros.
+
+The I2S clock hierarchy can be found here [1].
+
+Link:
+https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+[1]
+
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- drivers/net/bonding/bond_main.c               |  1 -
- .../drivers/net/bonding/bond_options.sh       | 59 +++++++++++++++++++
- 2 files changed, 59 insertions(+), 1 deletion(-)
+Changes in v2:
+- change the macro for i2s_sysclk_src to CCU_MUX_GATE_DEFINE
+- introduce factor for div clock
+- modify commit messages
+- remove CCU_DDN_GATE_DEFINE
+- remove CCU_DIV_TABLE_GATE_DEFINE
+- remove reformatting in k1-syscon.h
+- split patch2/2 into separate patches
+- Link to v1: https://lore.kernel.org/r/20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 257333c88710..30cf97f4e814 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3355,7 +3355,6 @@ static void bond_ns_send_all(struct bonding *bond, struct slave *slave)
- 		/* Find out through which dev should the packet go */
- 		memset(&fl6, 0, sizeof(struct flowi6));
- 		fl6.daddr = targets[i];
--		fl6.flowi6_oif = bond->dev->ifindex;
- 
- 		dst = ip6_route_output(dev_net(bond->dev), NULL, &fl6);
- 		if (dst->error) {
-diff --git a/tools/testing/selftests/drivers/net/bonding/bond_options.sh b/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-index 7bc148889ca7..b3eb8a919c71 100755
---- a/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-+++ b/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-@@ -7,6 +7,7 @@ ALL_TESTS="
- 	prio
- 	arp_validate
- 	num_grat_arp
-+	vlan_over_bond
- "
- 
- lib_dir=$(dirname "$0")
-@@ -376,6 +377,64 @@ num_grat_arp()
- 	done
- }
- 
-+vlan_over_bond_arp()
-+{
-+	local mode="$1"
-+	RET=0
-+
-+	bond_reset "mode $mode arp_interval 100 arp_ip_target 192.0.3.10"
-+	ip -n "${s_ns}" link add bond0.3 link bond0 type vlan id 3
-+	ip -n "${s_ns}" link set bond0.3 up
-+	ip -n "${s_ns}" addr add 192.0.3.1/24 dev bond0.3
-+	ip -n "${s_ns}" addr add 2001:db8::3:1/64 dev bond0.3
-+
-+	slowwait_for_counter 5 5 tc_rule_handle_stats_get \
-+		"dev eth0.3 ingress" 101 ".packets" "-n ${c_ns}" || RET=1
-+	log_test "vlan over bond arp" "$mode"
-+}
-+
-+vlan_over_bond_ns()
-+{
-+	local mode="$1"
-+	RET=0
-+
-+	if skip_ns; then
-+		log_test_skip "vlan_over_bond ns" "$mode"
-+		return 0
-+	fi
-+
-+	bond_reset "mode $mode arp_interval 100 ns_ip6_target 2001:db8::3:10"
-+	ip -n "${s_ns}" link add bond0.3 link bond0 type vlan id 3
-+	ip -n "${s_ns}" link set bond0.3 up
-+	ip -n "${s_ns}" addr add 192.0.3.1/24 dev bond0.3
-+	ip -n "${s_ns}" addr add 2001:db8::3:1/64 dev bond0.3
-+
-+	slowwait_for_counter 5 5 tc_rule_handle_stats_get \
-+		"dev eth0.3 ingress" 102 ".packets" "-n ${c_ns}" || RET=1
-+	log_test "vlan over bond ns" "$mode"
-+}
-+
-+vlan_over_bond()
-+{
-+	# add vlan 3 for client
-+	ip -n "${c_ns}" link add eth0.3 link eth0 type vlan id 3
-+	ip -n "${c_ns}" link set eth0.3 up
-+	ip -n "${c_ns}" addr add 192.0.3.10/24 dev eth0.3
-+	ip -n "${c_ns}" addr add 2001:db8::3:10/64 dev eth0.3
-+
-+	# Add tc rule to check the vlan pkts
-+	tc -n "${c_ns}" qdisc add dev eth0.3 clsact
-+	tc -n "${c_ns}" filter add dev eth0.3 ingress protocol arp \
-+		handle 101 flower skip_hw arp_op request \
-+		arp_sip 192.0.3.1 arp_tip 192.0.3.10 action pass
-+	tc -n "${c_ns}" filter add dev eth0.3 ingress protocol ipv6 \
-+		handle 102 flower skip_hw ip_proto icmpv6 \
-+		type 135 src_ip 2001:db8::3:1 action pass
-+
-+	vlan_over_bond_arp "active-backup"
-+	vlan_over_bond_ns "active-backup"
-+}
-+
- trap cleanup EXIT
- 
- setup_prepare
+---
+Troy Mitchell (4):
+      dt-bindings: clock: spacemit: introduce i2s pre-clock to fix i2s clock
+      clk: spacemit: introduce pre-div for ddn clock
+      clk: spacemit: introduce factor for div clock
+      clk: spacemit: fix i2s clock
+
+ drivers/clk/spacemit/ccu-k1.c                  | 28 +++++++++++++++++++++-----
+ drivers/clk/spacemit/ccu_ddn.c                 | 12 +++++------
+ drivers/clk/spacemit/ccu_ddn.h                 |  6 ++++--
+ drivers/clk/spacemit/ccu_mix.c                 |  7 ++++++-
+ drivers/clk/spacemit/ccu_mix.h                 |  4 +++-
+ include/dt-bindings/clock/spacemit,k1-syscon.h |  3 +++
+ include/soc/spacemit/k1-syscon.h               |  1 +
+ 7 files changed, 46 insertions(+), 15 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250804-k1-clk-i2s-generation-eee7049ee17a
+
+Best regards,
 -- 
-2.50.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
