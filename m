@@ -1,101 +1,175 @@
-Return-Path: <linux-kernel+bounces-763555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0625B2168C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E3EB2168F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28DA1A24070
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFAA1A2404B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA28F2DCBFC;
-	Mon, 11 Aug 2025 20:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30542DAFBE;
+	Mon, 11 Aug 2025 20:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mG0dpCkO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="msI8tNLj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45542D9EDA;
-	Mon, 11 Aug 2025 20:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB4B2DCBFC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944517; cv=none; b=QFc2eswY8KBXwg0qWuYyaTP2HxLib2qfyJnw43Xi00PsyMInt9k6uR3ymGX7uABIkMMHDZswigKDbP7ELf5DLgC/ntjbDMK2bOQ4DmGfqS074YWi34/lR6QG10bS+40vggWJp9YuAc/VTema3N64ZOA8w7NeAHGzn1X/KOOx8uY=
+	t=1754944529; cv=none; b=oY9M5i+zV4WuOuDitdR1c8EECi/2Cv8HnmGPzo9v3ZRV9f97GnD36OGwkT7lqoDXE1Tc4IF9y3659km/AmW/OUGGLA4OVMaDzSUVrMk2ijxNUpF0kJo9BIot3w53REe3ft17vez8iIK9/ycZAmejrYR91ekG9jdc0WjRMB2+Xt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944517; c=relaxed/simple;
-	bh=sFtLHLGOijEOOAsFWANpfblMzQIDntPSvojGAi5k3r4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZ+0oZ972alweJ3A1fgCcQPlbGLALxJlpMAa8K18H04csM1E7xwLFU1TmDYgB48VFIMvC6bF9z9/FnyUlnpNxnAozecuNQw5sbmpYqKlF6RQ7oR9CHpNLebzAhBuo62vMIt7DOW9H87OK1/qXkuM2v2GR2tyC8SFRWDKFYXXX6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mG0dpCkO; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754944516; x=1786480516;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sFtLHLGOijEOOAsFWANpfblMzQIDntPSvojGAi5k3r4=;
-  b=mG0dpCkOpFvwL2NuXdjAVOXPkU7XHp7KM7WzXXUvwSaHYcC0nXE8AO3P
-   KDzTiTtlXayiTdJPdVqlkHOq3DY58akkI9i6fng2ZKg7Xs7Tkpqd1392K
-   BW4kM9IJOMTeM24rFGlQCBocyw8FdxBVPqu5/DZYO8iLaO5xHxgtu87RG
-   ZrOJ0syl2NqagYAN5sXSWTGbrba4esX/nXLNa5dZjcPB0e8PhfwSDpe4i
-   4mSWhE4vSzpL5t5uMmY5GXJLKI5SBdm84faWZnfFS9+Mk5GfZbmDkly2Z
-   twSOrjRHwqSEgKT/h+UlElZogq7mgrDeQ20Y49gyO2iNvN9dkB6Y40JbK
-   g==;
-X-CSE-ConnectionGUID: YRpLtdwGSsCbcrzps3rP1A==
-X-CSE-MsgGUID: VO/1AZY+RxC1ob3bCJgelA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57289046"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="57289046"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:35:16 -0700
-X-CSE-ConnectionGUID: x+zD3fb4RbaIsLj1Pyr8NA==
-X-CSE-MsgGUID: SJ0hAw7CRt2zRuDHN1fJ8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="165209244"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 13:35:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ulZEc-000000056iv-3S6t;
-	Mon, 11 Aug 2025 23:35:10 +0300
-Date: Mon, 11 Aug 2025 23:35:10 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Thompson <davthompson@nvidia.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl,
-	mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] gpio: mlxbf3: use platform_get_irq_optional()
-Message-ID: <aJpT_nS5bDNRVn9a@smile.fi.intel.com>
-References: <cover.1754928650.git.davthompson@nvidia.com>
- <ce70b98a201ce82b9df9aa80ac7a5eeaa2268e52.1754928650.git.davthompson@nvidia.com>
+	s=arc-20240116; t=1754944529; c=relaxed/simple;
+	bh=QpDf+elt9M9TKmobx1BaTq9lS4qdM3lH4ej26Ym52hk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lBxTWO06ZrsVsKYNmh97cvCCOXJ+st6i/lsL+Z5ZbBargrPgWpZhj1OpghK+h5o7aRtyYMyY8h5K04rF2RL4ueMo/6fJ+ZWepHFB0AxNwVUvgS9vNp2i2UNOnr3zY5R2vjPOd9lMoGOShHliRj70rCg5VjNbJZG/kmG+6VhZse0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=msI8tNLj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f5f70a07bso7495526a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754944527; x=1755549327; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTpJfMamSKiMcyAgK8UySPyjbjczetycEUO9ZouvYAA=;
+        b=msI8tNLjcyFy4VHG60oFhYnyavOX3RcwRuANNxCrroYviZnOY1WHUvuca+TeVt/fpq
+         4i1G+dxq/Sf30EKKYjSvGN+ctttaf9nNUc82mOXFnO+N1BVYTcEm5Tq5lGStc5ySU+DV
+         sQvKyRXNqfG2RZ6MZuufxOzYvAwCibMNIhYIIuahmbeJyJwjY9Nt9JM5MBxK0TxHXrKi
+         byNL/jwDyownPUwMj0p4D6F7gPjJpUR9nYDZLU2OoiQNV0JmPvbbUWR9N1CAfuq/DXLj
+         c+QQqroiOU/ylxQa1IccPv7zXbBJcPD32fnmislMgTrJa/Q7lzJctgtfUHhZ5puM4Cwb
+         uRpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754944527; x=1755549327;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTpJfMamSKiMcyAgK8UySPyjbjczetycEUO9ZouvYAA=;
+        b=Lf3bgdruggRTrBOlCnIlIWkE2kI2z0K/dEu+BY1rlu17X5/wGw5S7N55+Lbq4EY2H4
+         RgZbcm/5bTThId3VvKE4VpVl0T8iT3TIxFOK5wKlO/6xv5UvD0s7GGgNKGDfF+Hjtb/B
+         liW7zSOjZGwEA82a+MafjLFT1V7xRzkjPGyPKkMCfDwH2Dx1+VoSJt7e4V/uWXn+qu99
+         EeL9p8Bph2MPsB2JQGDFJAp6OW615DHpd4CBNMeIkDXaPqi5RpEbPGPTEnhvcJ1Ze2ii
+         4vG1kGp3x7RHJG4hxzeNpKUwxItwLZJuT7GUTIeIYORJQjM6BYmS7hnK70xB15OYz0zl
+         309w==
+X-Forwarded-Encrypted: i=1; AJvYcCVe3ZdnJ2fxHoHEfnhZxdTer477ynLVPjK2s3lpudefj6/Zq2k9DB9+goDSZEkeC/k+aEOJ1SA/66KwL3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfFnh4bDdCNw1RXSOuu0p7B25dzhObuRvmDN7RgANDHD7nPKY0
+	iwGeOloX2ps5XT5qkokIgyb2IuhUic1gQEE8WpVNLf1o6LHxiOaV3g18ZOb+1Zq/Py3PjUYt2lp
+	hfHDsZg==
+X-Google-Smtp-Source: AGHT+IHyhaALMr5XuJoOSrDVhdZmcQWkFVvTH6tfqb1JQAjECOzXqhG5Gursizm3hnRl2+Uz1FQ4pdr6quY=
+X-Received: from pjbph15.prod.google.com ([2002:a17:90b:3bcf:b0:321:b92a:7a39])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:540d:b0:311:ea13:2e70
+ with SMTP id 98e67ed59e1d1-321839f1159mr19783183a91.14.1754944527061; Mon, 11
+ Aug 2025 13:35:27 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:35:25 -0700
+In-Reply-To: <20250807201628.1185915-22-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce70b98a201ce82b9df9aa80ac7a5eeaa2268e52.1754928650.git.davthompson@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-22-sagis@google.com>
+Message-ID: <aJpUDS4PSgLK8A16@google.com>
+Subject: Re: [PATCH v8 21/30] KVM: selftests: TDX: Verify the behavior when
+ host consumes a TD private memory
+From: Sean Christopherson <seanjc@google.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Aug 11, 2025 at 01:50:45PM -0400, David Thompson wrote:
-> The gpio-mlxbf3 driver interfaces with two GPIO controllers,
-> device instance 0 and 1. There is a single IRQ resource shared
-> between the two controllers, and it is found in the ACPI table for
-> device instance 0. The driver should not use platform_get_irq(),
-> otherwise this error is logged when probing instance 1:
->     mlxbf3_gpio MLNXBF33:01: error -ENXIO: IRQ index 0 not found
+On Thu, Aug 07, 2025, Sagi Shahar wrote:
+> +void verify_host_reading_private_mem(void)
+> +{
+> +	uint64_t second_host_read;
+> +	uint64_t first_host_read;
+> +	struct kvm_vcpu *vcpu;
+> +	vm_vaddr_t test_page;
+> +	uint64_t *host_virt;
+> +	struct kvm_vm *vm;
+> +
+> +	vm = td_create();
+> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> +	vcpu = td_vcpu_add(vm, 0, guest_host_read_priv_mem);
+> +
+> +	test_page = vm_vaddr_alloc_page(vm);
+> +	TEST_ASSERT(test_page < BIT_ULL(32),
+> +		    "Test address should fit in 32 bits so it can be sent to the guest");
+> +
+> +	host_virt = addr_gva2hva(vm, test_page);
+> +	TEST_ASSERT(host_virt,
+> +		    "Guest address not found in guest memory regions\n");
+> +
+> +	tdx_test_host_read_private_mem_addr = test_page;
+> +	sync_global_to_guest(vm, tdx_test_host_read_private_mem_addr);
+> +
+> +	td_finalize(vm);
+> +
+> +	printf("Verifying host's behavior when reading TD private memory:\n");
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_io(vcpu, TDX_HOST_READ_PRIVATE_MEM_PORT_TEST,
+> +			   4, PORT_WRITE);
+> +	printf("\t ... Guest's variable contains 0xABCD\n");
 
-Missed Cc to stable@.
+Don't use bare printf() for what is effectively debug info.
+> +
+> +	/* Host reads guest's variable. */
+> +	first_host_read = *host_virt;
+> +	printf("\t ... Host's read attempt value: %lu\n", first_host_read);
+> +
+> +	/* Guest updates variable and host rereads it. */
+> +	tdx_run(vcpu);
+> +	printf("\t ... Guest's variable updated to 0xFEDC\n");
+> +
+> +	second_host_read = *host_virt;
+> +	printf("\t ... Host's second read attempt value: %lu\n",
+> +	       second_host_read);
+> +
+> +	TEST_ASSERT(first_host_read == second_host_read,
+> +		    "Host did not read a fixed pattern\n");
+> +
+> +	printf("\t ... Fixed pattern was returned to the host\n");
+> +
+> +	kvm_vm_free(vm);
+> +	printf("\t ... PASSED\n");
+> +}
+> +
+>  int main(int argc, char **argv)
+>  {
+>  	ksft_print_header();
+> @@ -966,7 +1045,7 @@ int main(int argc, char **argv)
+>  	if (!is_tdx_enabled())
+>  		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
+>  
+> -	ksft_set_plan(13);
+> +	ksft_set_plan(14);
+>  	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
+>  			 "verify_td_lifecycle\n");
 
--- 
-With Best Regards,
-Andy Shevchenko
+This _really_ feels like it wants to be a first mover for using fixtures and
+test suites: https://lore.kernel.org/all/ZjUwqEXPA5QVItyX@google.com
 
-
+>  	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
+> @@ -993,6 +1072,8 @@ int main(int argc, char **argv)
+>  			 "verify_mmio_writes\n");
+>  	ksft_test_result(!run_in_new_process(&verify_td_cpuid_tdcall),
+>  			 "verify_td_cpuid_tdcall\n");
+> +	ksft_test_result(!run_in_new_process(&verify_host_reading_private_mem),
+> +			 "verify_host_reading_private_mem\n");
+>  
+>  	ksft_finished();
+>  	return 0;
+> -- 
+> 2.51.0.rc0.155.g4a0f42376b-goog
+> 
 
