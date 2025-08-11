@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-762034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196E3B20160
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:08:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDBFB20164
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E073C3AB8C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32ED81640AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CCA2DA767;
-	Mon, 11 Aug 2025 08:08:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D8B2DA778;
+	Mon, 11 Aug 2025 08:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Os/5BV6t"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E511DE8B2;
-	Mon, 11 Aug 2025 08:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01651DF977;
+	Mon, 11 Aug 2025 08:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899681; cv=none; b=LIoqLkep62Pn4+FBqkqBWkIGZT74XVneNmQUp2SO7g+4Cxd5whf6M6wYYvpBBg1h1g2NMXlcEQ83MU9OFiJjV5r7tW8DYLsELLFk12j2zOUoj9FnJnNYpXuMl2mJhZo79mhRj0GnTSNCEMjydQSX7V/p+z/apYVn9oWQ85Owwv4=
+	t=1754899701; cv=none; b=ar1xTndU9X8lQ1OyBTqLs76FgWB5N7pknjQrPtk0wMda0lDneXxrUNFPflu1SXcoP9BL+/oP+SlAl75/bQf+AhmQH9FtpCNoe3BgxW5QWu9MqbObH1hWCMDfoA05eDYK8slLxZFgO+2nmIbHWTs74Aoi+GI9iFlDwkadWvLSsp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899681; c=relaxed/simple;
-	bh=urHKffTCadBnwDtXUJhiGML9U8gJ888C64uM//E9l/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TStM2TM+vq+UU1yucGG1BATaS+k+au6u8WhH+/8oRknoDKmfLIApHfqGG3GGUJd7F5nebWBx/v7RCk+vD4JxXmSioscbMJ3iEiODrI1HOiZFRNrUZRsEwpPrTZ38P+Bur39pG0ZxANdrqJCsvTvoEP97r7YlWjr9pVrzFHf24kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68ADC4CEED;
-	Mon, 11 Aug 2025 08:08:00 +0000 (UTC)
-Date: Mon, 11 Aug 2025 10:07:58 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Kyrie Wu <kyrie.wu@mediatek.com>
-Cc: Tiffany Lin <tiffany.lin@mediatek.com>, 
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, 
-	George Sun <george.sun@mediatek.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-Subject: Re: [PATCH v2 7/8] dt-bindings: media: Add MT8189
- mediatek,vcodec-encoder
-Message-ID: <20250811-determined-truthful-terrier-5ca5eb@kuoka>
-References: <20250811032616.1385-1-kyrie.wu@mediatek.com>
- <20250811032616.1385-8-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1754899701; c=relaxed/simple;
+	bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A8Noy4bD0v71iDev7VodhEj5frNaeYFX2tVBNZ1G44x25uFdJiKGUWwLxG6qojv1NHjLNPlJIpN+e4g2R28Q/vPkdXN4GuBowb0RgWxEGxEurlxovagDX3rW4FF2Qq8RRsN8ESVVsEeaFBRgI4Jb8C3vGW3ywpO3UHm75UA7e4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Os/5BV6t; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso2513504f8f.1;
+        Mon, 11 Aug 2025 01:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754899698; x=1755504498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
+        b=Os/5BV6tl7pdbXbcQvR9Qmqgd9wtWXmaa2lKknOSnKQZ42hS3XQ98bRvwosM2147tr
+         YSqarj8MPyOciXHzJ36HGjMUc0qrG83eG/s8PoauLEHEgWw1gLwNlBbib3X1ImR/5gyC
+         wz3pm4JlslTICT2RdG9ZcMvaR+K3Ieir9MXjiKtM3b+0/cU8ZFPgRJga4WkYsjVuG8Dn
+         jR4HaP2cObuu+oRjns5ae2OQ0AfWgxew2pLxqtihu6Pi9KQJssLlX62YGujy/QK9JAnN
+         udVyYPIAeXY7iOM0p+Y9NoP+JHuTF2BJ3JH750G35/5MF0FEMBqpLbNn3exDCpAMfaHu
+         QxJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754899698; x=1755504498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
+        b=l8exdwSgPJ7qJ7NNPArFGrilPTPhYofLliM66dYF5/2+GeX97pNSCehAm0+lhbw1Mw
+         5AsxRMnTiWq27EWIsyS2PJKv60HMl1zXMK/DS3fIB3nGlwBaQGdYtcY/eVt8wbYpllu0
+         VvGZK3JgiZogXAb5SCNfbgLQEdnSRkLS5MmR6x7wTaAi0dQGi0gv4oNBftP5FW3b1o1b
+         V8pBqiU3Gr0HzcT8Id5N8hEpPr1vQnO/lcFsf81lt2s644yNkih+VvLObX+eT6Lxkwpm
+         ceEw+fH4A9JnfnNYvwvPygsjqfNNuu4MUBUUq//wzUvsFajna94FRvrGuhSaGeisbFHf
+         nIhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW//AMxV6S3w711b9aLSLJP06aMFsEOqfF9dCVYBF3M1KEWSlfU7lzSulTmaS02coesDd2T74Mswf0=@vger.kernel.org, AJvYcCWJkjhg1YceI755cTEi5q0hu8BYjR7iS7VXfUvEL24WluBypl+e6fCIDniy6cmE3uW1wmExRTb4xCno8Eiw@vger.kernel.org, AJvYcCWLd/H0opB342JS1GMbFabtaOFHpF/fgkdpdNNVuWmH1hwITAmvHhnqcBwCW+3tgdW8etCbCrmYcD/PdAM=@vger.kernel.org, AJvYcCWt/IfVrpr3LQHP1iP9tZaOGeeQI2ZIKh7P/Dsyd3jHOcKYvYqr9i6WJ+qgaXt4xh/QH59uDS3iybY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywme7huZrN2d0zQIBl+iEv6Qk3e/dk98nT/BjmIABsxpLNqAPQF
+	dtfVyeLMUvs7GhH6GoP8GjkEskrEDUPh9mZomZnkc7m/A2Qac1nDiKZIku+sLDEQrtM/yuhr99U
+	oku4J39xXVsC5AnmKQDuAcLn7vkG205s=
+X-Gm-Gg: ASbGncsLgGixc/LXIbDzybZq/YHgZtbYYAb0F9CaFNJL1DSva8nZf2Raa19EGbKZ6SH
+	U0UoVGDTK7Vq9AdQMUSnx8oB5a2gIX8RS3JeDHU3i72VYIIVww7spgqWtudnfu1fFBYv4XGsoiP
+	DTdEdEOToqr99kQyveHk9bMlUhaQ1B9G+5+ceKSar4+QbjBFP0j583H4MC2ykKLa8cpsKfNTl19
+	E1z+m2E
+X-Google-Smtp-Source: AGHT+IFQYThriVYkG4l41Pm2m9DFlqkAsl8e3bqSyDSoX90aAt2MINDbXW1290ReIK6ddDx+CRDXeZBfKaC3t21oGiA=
+X-Received: by 2002:adf:f8c6:0:b0:3b9:469:6b3b with SMTP id
+ ffacd0b85a97d-3b904696caemr6356507f8f.6.1754899697803; Mon, 11 Aug 2025
+ 01:08:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811032616.1385-8-kyrie.wu@mediatek.com>
+References: <20250321095556.91425-1-clamor95@gmail.com> <20250321095556.91425-2-clamor95@gmail.com>
+ <svbpvo5cpwonxae46wre7ar2w4yf5j2xbfkb4hek6xgnue3jpl@5v57pp4iz7uv>
+In-Reply-To: <svbpvo5cpwonxae46wre7ar2w4yf5j2xbfkb4hek6xgnue3jpl@5v57pp4iz7uv>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 11 Aug 2025 11:08:06 +0300
+X-Gm-Features: Ac12FXyu7jeVTLZAUsdCRGtClrszgFd-4CORCMHoBadETFSPKYo1vU9UwGhKTwo
+Message-ID: <CAPVz0n18VGrY-dAAUPq4iZMX149hpSWshXPCf32ZxKUwrtHcbg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 11:26:14AM +0800, Kyrie Wu wrote:
-> Add MT8189 encoder compatible string to distinguish former ICs
-> MTK's. Compared with MT8196, the maximum resolution of MT8189
-> encoder is only 4K, and the fps is only 30, which cannot reach
-> the highest parameter of MT8196: level6.2, 8K@60fps.
-> Compared with MT8188, the level can only support 5.1, which is less
-> than 5.2 of MT8188. But the maximum bitrate is 100Mbps, which is twice
-> that of MT8188. And MT8189 could support NBM mode.
-> 
-> Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml      | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> index 7675391d7eb0..faee838d684e 100644
-> --- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> +++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
-> @@ -25,6 +25,7 @@ properties:
->                - mediatek,mt8192-vcodec-enc
->                - mediatek,mt8195-vcodec-enc
->                - mediatek,mt8196-vcodec-enc
-> +              - mediatek,mt8189-vcodec-enc
+=D0=B2=D1=82, 10 =D1=87=D0=B5=D1=80=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 14:0=
+9 Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Fri, Mar 21, 2025 at 11:55:54AM +0200, Svyatoslav Ryhel wrote:
+> > Tegra 4 is fully compatible with existing Tegra K1 cpufreq driver.
+>
+> It might be confusing to refer to this as both Tegra 4 and Tegra114. I
+> think it'd be better to stick with just Tegra114. Otherwise:
+>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Same issue... you got these comments on your v1 of your other patchset,
-didn't you?
-
-Best regards,
-Krzysztof
-
+Your review applies only to this patch to to entire series?
 
