@@ -1,94 +1,76 @@
-Return-Path: <linux-kernel+bounces-761953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12859B2005B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7827B20060
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137CB1898D2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F25189A907
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF222DA763;
-	Mon, 11 Aug 2025 07:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD3C2D9ECB;
+	Mon, 11 Aug 2025 07:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wpktz2VG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d+HBgGny"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620952DA749;
-	Mon, 11 Aug 2025 07:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC16518CC13;
+	Mon, 11 Aug 2025 07:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754897539; cv=none; b=ClIKrmU2LKSqRQoN/p0Bz63v+l7QwuW0t56Vp6FKTs5ydPn8Aj0Ms4XTYDTXvs+kTrI+JwCJEHkYTCOFnY0+jzN3pL1NhNdYkIzICPzf/mfjNoivaJWboVDrxWF61svr4Bwtqsia2kBiYQh1/nCBfUX0oH9FVx0Yme2KrUTdCfk=
+	t=1754897630; cv=none; b=o3Sw2rf3hvUPZy6zdiYjxhz0PcfG6JOWfDcT1j41Q/rKRoo35TGwFBjvsInPK9ytMYHcMRYkMl/V2/RcMQdk6F/W8qdNmxQ9CU4MWYYyfKXq+Miqkhz5zRtUPVt554xxql0pac2WHiBGCyT5EEUua6XpPB/eaUKyNK7yrWv629Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754897539; c=relaxed/simple;
-	bh=oFZ75lZuyiQqjqpbDkCREZvA3cjEzUpuIBH1uakv9io=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UB+VQ7sC65DbZQ51nSDIsUZluS4WNcHI5W6SRbqmhJeEVJVtBJh6gVAz45i/c4AHsK7jEPU+yA9d2owU2QIlrXbmNqPs4b/TLHCRc4Or+quwAczE9zLogssuhpA70l7Ci7jc8+vqOkCTxpxrEaNCgO/aY5DMD0QM5AEo88S1XFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wpktz2VG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-242d3ba2b44so10122585ad.3;
-        Mon, 11 Aug 2025 00:32:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754897538; x=1755502338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bx0HUPagVnZ+U8BFdJ9INMhdQD62bMvRUffwK7m8W24=;
-        b=Wpktz2VGqjlD6nGo2/bX7HG1ED9R25INl+Wl2BmiYP0ixod16hZNIGqEgxvz9O7OO7
-         QtGnUkLrVf4kqs3PJfl9Pj1ObJuJgqS1QApKVBQizcxnTWm+0296alnOuCDp6n4DAzV1
-         R1RW+QaHf5zvmR1WyFkztxOcxd3J96xF0PTrApw6BexJkIUdkzqmR5jihLT8UMonoN0g
-         1DudQzkw1aqNzpKBfqLKIYdcC2cPKDZGw/osndse1y7VnKI6sch35wTcy4RvDbyKHR5W
-         7AAbP6Ac7tAmthX0ILsv+nic3IpOBhE3EcItLCJMEIP0Qi2PP3T2uYu2xtVe9G037CkU
-         rf6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754897538; x=1755502338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bx0HUPagVnZ+U8BFdJ9INMhdQD62bMvRUffwK7m8W24=;
-        b=xBChI4MFdcOBEQ5GP1ktxoJn7to8wal+YkpAKtCNCiWQw1qnol7xiTcQef8fzygvbI
-         S37+EdXwS6eu2GiQLEeFpnDjN/rK96sedkYH33Nc/HSjzP1Jvp7kwJjvQoAkPUvFHnw0
-         amohH6So20CDmrL5E9SuLlaNsZSRrAPZTAaWZMKFHdS0NaGlbq90bFTnAifDxTcVJYLT
-         lEo41Ljg57jzgmBEQbGa/xqvzR2T5l4Zxwn3AreScXOe+SMhCLurCK24Xc7Pdy5ZY513
-         Wc6el0GJTubHdwFZqaH0sqz513pbOr98i+jdqV7UUU7nKpbmbWDd6OrA/lBTPF6dHbpz
-         2hlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKwipm7hEqIQuhIczolvbnHY1hDjFaV560uUOROYy/XiTAOA8twwa94J2u2z1D7zImF6qCOvzUzMln4rnk@vger.kernel.org, AJvYcCX2jNuWlb/JLDkxrlsVZfCmuh7Ndlgkw3S5rWjbcJze6oB8+M90WRp/+r8Fz6E7NyFa6Y7d04ZEbtx0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsmRMkkhFnUkWJQOPIZONnMh9HpfNZsjiO6oRFTZo/riY+Q3Em
-	TCAaVkEpvWh7FG31dzfE4BZ27gTS4B3qQ0c8NYGMnzdUr5/ZpLxrQQ8Nk2Mm+Ybz
-X-Gm-Gg: ASbGncvO9uRLew27k+bwjmncd3aSaRQtsILjjlKhzaKwD1lGOnspWx2LAjT7mIYOirw
-	yJVOSn/zmmkDndJKu483opuIZwTTjJSKmHEFnl7CiQGHmm+yJL+uWnxWp6cQAlk1wKTW5/StVB/
-	MKxu4AE4hDKc2EcDZ30NawM+ejqRYO+JnBvAKUjM2mSSm0CYTXw1sVdHosLHm5hxVu6A740kLh/
-	oHtaodW3vCVJOpsRqkwd+C2/KL9A9mqlSzFX/Z2brZ8z9I/CvL5GhQl1AmJNBMym/uodesxo0Ev
-	XH3ADCZDCbiHtKBmof695SyoljTIeWV5oBxTW1OJ+U+07pbNbJ7LCU2Y0ozJhrHYAo1tWXHr8DR
-	9vZlW5dRI5hKTmCsnz+iJlPdhYqsayLGkwLnPQRqZ6M1B6HyuLdaksNrlJcKqWSCEJDMia+mtue
-	b4JVCrV+19pee0vQ45xqgowOC6kXz4
-X-Google-Smtp-Source: AGHT+IHw5o+Jkau6vl+zzP8wniWy1wnCha+yKhslleKKvxim75ReWEWO0PXV/5b8z7D2bbPKCN7MKw==
-X-Received: by 2002:a17:902:ebc6:b0:242:9bbc:3644 with SMTP id d9443c01a7336-242c225a177mr160057395ad.54.1754897537580;
-        Mon, 11 Aug 2025 00:32:17 -0700 (PDT)
-Received: from peter-bmc.. (2001-b400-e388-d3b1-e90a-ba63-d547-4584.emome-ip6.hinet.net. [2001:b400:e388:d3b1:e90a:ba63:d547:4584])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef59b2sm267624575ad.7.2025.08.11.00.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 00:32:17 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] ARM: dts: aspeed: harma: revise gpio name
-Date: Mon, 11 Aug 2025 15:32:07 +0800
-Message-ID: <20250811073208.787063-3-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250811073208.787063-1-peteryin.openbmc@gmail.com>
-References: <20250811073208.787063-1-peteryin.openbmc@gmail.com>
+	s=arc-20240116; t=1754897630; c=relaxed/simple;
+	bh=+XWE49nZuwMWpG+cBM6ZFAg3ISI+EuwAEezYT4iJHeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=giq4LtoyrbXkjRmrylHyAlPDPxpx4QgqIn720ByBNQKvbtcYkiUUd7fAv33k2Mw7ihG/WfYsG/UBv1xEmhi/9XyXEtb84PF921uTZ4CtY64HnM1/PmHfm8ojZ40KOdK8ag0z+P/IfRSRZrQsZYFuG+b+ZV+thn36hnNhpnFNIeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d+HBgGny; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57AL01I9002174;
+	Mon, 11 Aug 2025 07:33:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=aiAmNZKt9E0YJvypmkacX51fMuTyDiCUFP9
+	6aaE7CEs=; b=d+HBgGny6BhUTvs6/d2sho6E9uoh6EvCdf3wHk7tg1/8BQrUati
+	u9lwwLweilq7Rd4gupyEjqEpB7ONDduUnnlRrTpSf1oEYeXbkLeYpjr1DctOevOs
+	yoWQY393GfuWnvhEqoAtKrCTCv95alkNYYUJKRIa77OBDZk+/wQp1UxjObwE1Zlf
+	YepuMmYto9j+xg82RqgYYN4OlJ4swDyjTGTo24S9+xZ294FzUJE597gU+WhNkHfr
+	9+/D3ySUaFyYA52XHsGJAf3ws+nGDxBdG+B8X5LiCakku6BjYlSoWzFsoS/+DCzo
+	/RNP35gfA/5A31S4gl4x5SFiyqC7KoJHUdQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduuf81-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 07:33:35 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57B7XWol014548;
+	Mon, 11 Aug 2025 07:33:32 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 48dydkk18f-1;
+	Mon, 11 Aug 2025 07:33:32 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57B7XWU6014543;
+	Mon, 11 Aug 2025 07:33:32 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 57B7XWVc014542;
+	Mon, 11 Aug 2025 07:33:32 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 8170F571876; Mon, 11 Aug 2025 13:03:31 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, bvanassche@acm.org,
+        neil.armstrong@linaro.org, konrad.dybcio@oss.qualcomm.com,
+        tglx@linutronix.de
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH V2] ufs: ufs-qcom: Fix ESI null pointer dereference
+Date: Mon, 11 Aug 2025 13:03:30 +0530
+Message-ID: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,90 +78,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=68999cd0 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=bLk-5xynAAAA:8 a=COk6AnOGAAAA:8
+ a=sYN47ipuJMKu5r72jOkA:9 a=cvBusfyB2V15izCimMoJ:22 a=zSyb8xVVt2t83sZkrLMb:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: LvuBhDWOtgT0VijwQWxeMXoNLJ4TfqVS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX3O9LajmnJ3r6
+ nEHp/NpK0CLj7QHB2F2lLEBsTiZiZFnoN+3Y9bWHVTRgXS3g1WzPt1XY4C0rEflXgMAl4Ron5rp
+ VFRQSZ/QMEkx2ibXHmMef/dou2xDjkVfPE2H04WlE3ZYsMPJy+iYOfbxeVLElg5jVuFy9gbkYYb
+ ufQeHtheS917zRegQzPYfvKKToraM8UwOKHfVMKA15lCz8mk//zsjtQEB/Ee8MGAyp1YR7Dg/7+
+ DRu8k/vzU/MULFp6iiIfE2zU9+GTpES+SNHWgtAsceUhDO9pJ/V/cwgG4zjPxyon6E5PCPIOocE
+ 6HZvRjC0kfeWkXcJ+iJwLxwlEY7/ZmSW3H7IOFwOs6Z7tbuosvbdp7YQ5fBKOf0sjMCXfNwqIz2
+ fJMrkRlN
+X-Proofpoint-GUID: LvuBhDWOtgT0VijwQWxeMXoNLJ4TfqVS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090025
 
-Update GPIO label definitions in the device tree to reflect the correct
-power and control signal names. This includes:
+ESI/MSI is a performance optimization feature that provides dedicated
+interrupts per MCQ hardware queue . This is optional feature and
+UFS MCQ should work with and without ESI feature.
 
-- Rename "fcb0-activate" to "fcb1-activate" and "fcb2-activate"
-- Add labels for:
-  - power-p3v3-standby
-  - power-p1v8-good
-  - power-pvdd33-s5
-  - power-pvdd18-s5
-  - power-asic-good
-- Replace unnamed GPIOs with appropriate labels such as:
-  - irq-pvddcore0-ocp-alert
-  - irq-pvddcore1-ocp-alert
-  - smi-control-n, nmi-control-n, etc.
+Commit e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
+brings a regression in ESI (Enhanced System Interrupt) configuration
+that causes a null pointer dereference when Platform MSI allocation
+fails.
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
+The issue occurs in when platform_device_msi_init_and_alloc_irqs()
+in ufs_qcom_config_esi() fails (returns -EINVAL) but the current
+code uses __free() macro for automatic cleanup free MSI resources
+that were never successfully allocated.
+
+Unable to handle kernel NULL pointer dereference at virtual
+address 0000000000000008
+
+  Call trace:
+  mutex_lock+0xc/0x54 (P)
+  platform_device_msi_free_irqs_all+0x1c/0x40
+  ufs_qcom_config_esi+0x1d0/0x220 [ufs_qcom]
+  ufshcd_config_mcq+0x28/0x104
+  ufshcd_init+0xa3c/0xf40
+  ufshcd_pltfrm_init+0x504/0x7d4
+  ufs_qcom_probe+0x20/0x58 [ufs_qcom]
+
+Fix by restructuring the ESI configuration to try MSI allocation
+first, before any other resource allocation and instead use
+explicit cleanup instead of __free() macro to avoid cleanup
+of unallocated resources.
+
+Tested on SM8750 platform with MCQ enabled, both with and without
+Platform ESI support.
+
+Fixes: e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 ---
- .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Changes from v1:
+1. Added correct sha1 of change id which caused regression.
+2. Address Markus comment to add fixes: and Cc: tags.
+---
+ drivers/ufs/host/ufs-qcom.c | 39 ++++++++++++++-----------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index 741d2d9b6d03..2622954d0ce3 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -234,7 +234,7 @@ gpio@12 {
- 		"","",
- 		"","",
- 		"","",
--		"","fcb1-activate",
-+		"","fcb2-activate",
- 		"","";
- 	};
- };
-@@ -308,7 +308,7 @@ gpio@12 {
- 		"","",
- 		"","",
- 		"","",
--		"","fcb0-activate",
-+		"","fcb1-activate",
- 		"","";
- 	};
- };
-@@ -698,14 +698,14 @@ &sgpiom0 {
- 	"","",
- 	/*A4-A7 line 8-15*/
- 	"","power-config-asic-module-enable",
--	"","power-config-asic-power-good",
--	"","power-config-pdb-power-good",
-+	"power-p3v3-standby","power-config-asic-power-good",
-+	"power-p1v8-good","power-config-pdb-power-good",
- 	"presence-cpu","smi-control-n",
- 	/*B0-B3 line 16-23*/
- 	"","nmi-control-n",
--	"","nmi-control-sync-flood-n",
--	"","",
-+	"power-pvdd33-s5","nmi-control-sync-flood-n",
- 	"","",
-+	"power-pvdd18-s5","",
- 	/*B4-B7 line 24-31*/
- 	"","FM_CPU_SP5R1",
- 	"reset-cause-rsmrst","FM_CPU_SP5R2",
-@@ -749,7 +749,7 @@ &sgpiom0 {
- 	/*F4-F7 line 88-95*/
- 	"presence-asic-modules-0","rt-cpu0-p1-force-enable",
- 	"presence-asic-modules-1","bios-debug-msg-disable",
--	"","uart-control-buffer-select",
-+	"power-asic-good","uart-control-buffer-select",
- 	"presence-cmm","ac-control-n",
- 	/*G0-G3 line 96-103*/
- 	"FM_CPU_CORETYPE2","",
-@@ -809,7 +809,10 @@ &sgpiom0 {
- 	/*N4-N7 line 216-223*/
- 	"","","","","","","","",
- 	/*O0-O3 line 224-231*/
--	"","","","","","","","",
-+	"","",
-+	"irq-pvddcore0-ocp-alert","",
-+	"irq-pvddcore1-ocp-alert","",
-+	"","",
- 	/*O4-O7 line 232-239*/
- 	"","","","","","","","",
- 	/*P0-P3 line 240-247*/
--- 
-2.25.1
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 4bbe4de1679b..bef8dc12de20 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -2078,17 +2078,6 @@ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+
+-static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
+-{
+-	for (struct ufs_qcom_irq *q = uqi; q->irq; q++)
+-		devm_free_irq(q->hba->dev, q->irq, q->hba);
+-
+-	platform_device_msi_free_irqs_all(uqi->hba->dev);
+-	devm_kfree(uqi->hba->dev, uqi);
+-}
+-
+-DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T) ufs_qcom_irq_free(_T))
+-
+ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ {
+ 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+@@ -2103,18 +2092,18 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 	 */
+ 	nr_irqs = hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
+
+-	struct ufs_qcom_irq *qi __free(ufs_qcom_irq) =
+-		devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
+-	if (!qi)
+-		return -ENOMEM;
+-	/* Preset so __free() has a pointer to hba in all error paths */
+-	qi[0].hba = hba;
+-
+ 	ret = platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
+ 						      ufs_qcom_write_msi_msg);
+ 	if (ret) {
+-		dev_err(hba->dev, "Failed to request Platform MSI %d\n", ret);
+-		return ret;
++		dev_warn(hba->dev, "Platform MSI not supported or failed, continuing without ESI\n");
++		return ret; /* Continue without ESI */
++	}
++
++	struct ufs_qcom_irq *qi = devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
++
++	if (!qi) {
++		platform_device_msi_free_irqs_all(hba->dev);
++		return -ENOMEM;
+ 	}
+
+ 	for (int idx = 0; idx < nr_irqs; idx++) {
+@@ -2125,15 +2114,17 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 		ret = devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler,
+ 				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
+ 		if (ret) {
+-			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err = %d\n",
++			dev_err(hba->dev, "%s: Failed to request IRQ for %d, err = %d\n",
+ 				__func__, qi[idx].irq, ret);
+-			qi[idx].irq = 0;
++			/* Free previously allocated IRQs */
++			for (int j = 0; j < idx; j++)
++				devm_free_irq(hba->dev, qi[j].irq, qi + j);
++			platform_device_msi_free_irqs_all(hba->dev);
++			devm_kfree(hba->dev, qi);
+ 			return ret;
+ 		}
+ 	}
+
+-	retain_and_null_ptr(qi);
+-
+ 	if (host->hw_ver.major >= 6) {
+ 		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
+ 			    REG_UFS_CFG3);
+--
+2.48.1
 
 
