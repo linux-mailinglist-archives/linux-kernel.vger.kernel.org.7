@@ -1,78 +1,98 @@
-Return-Path: <linux-kernel+bounces-763319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4DE7B21322
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67606B21326
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C39364E3BEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91794626601
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9A32D3EC2;
-	Mon, 11 Aug 2025 17:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4552D4805;
+	Mon, 11 Aug 2025 17:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9bsAZhe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="iaUXdOqB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443E51F3FF8;
-	Mon, 11 Aug 2025 17:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC0B1F3FF8;
+	Mon, 11 Aug 2025 17:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933320; cv=none; b=QGJq6O3xt1rg3BrdzgfuyFHwK68C74FRKhiHY86KXZqYtnyImRr6PfdhUd62Z3jef2t/tXImaEVL++I9/9x84DKiQBp0Xma/qUZG0WVZmNFfXAyy8YUGvLH4DC5WLv0j0wUJ3F9vmMcriK7JmE2nN4xwkd1aN5yaZwM072AZppw=
+	t=1754933329; cv=none; b=dMoRcQQS8bAus4I2skYQ1XvkhqFMzm2kT9a8JYeyqLegDuGGtmKt4YxQOlhhrXruZwXiyVu3IKfUTgZMicnwzgFKK+zKxtVcyeNBAsl/0+MDrIkG4D5hdk/5D6WzSLGOrZTVoLRNdJrZVCkwl0d9+lX96dShow03OgSFzESioxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933320; c=relaxed/simple;
-	bh=ozftjYGg6KRXVk8Tffssj9tV6jZy2Xak99c5Z0Pqxbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ad/gTO9I0tbxF0EhCpyiA3xarNQkJKkZZb+cK5oHaH41EYIqe2ZigOEk3EwkasaQhoG+oeXDppkm6OVzFWOCaIJD9tiUC758GYEyp6TnuYnwiZkCGqZLmaiAFwjodsXiveM6g71/Fru0KBGYxqznG+tlpMqpQMHQOgp1du6Z708=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9bsAZhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A40CC4CEED;
-	Mon, 11 Aug 2025 17:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754933316;
-	bh=ozftjYGg6KRXVk8Tffssj9tV6jZy2Xak99c5Z0Pqxbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y9bsAZheShltLvsuWA16dHtP+DlziyeiWeIAck9cdvqTdF0NXy0NuUKGcKc/7eKPW
-	 k8cBmAZ/OEFXLoFUHLS2XjEv2qEx8TKNlqfLdVmMezc+X46g5uJAOWsD3qrik7mlB4
-	 +C6LsMe8ZImrHF46++fsFioDAA5lrXgS4S03HgkzHq72W0IVJKLOkAkNsQz623MGE6
-	 jNH4hFoyP42GCSpCqxBDjezeIzGRc1hkh/Fdgl8z5b49eAtpo5JgFZ9nK70LFh6pSD
-	 LXD7Omow46foUKFlorkWwyfAMZOw0YobeUuQYIzNl56KcfodcokOPVb9uSYfFrtKHx
-	 csWN9IrDfkEsA==
-Date: Mon, 11 Aug 2025 12:28:35 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Robert Richter <rric@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: arm: Drop obsolete cavium-thunder2.txt
-Message-ID: <175493331520.3842001.17150965831517887163.robh@kernel.org>
-References: <20250806212812.1634740-1-robh@kernel.org>
+	s=arc-20240116; t=1754933329; c=relaxed/simple;
+	bh=RPFcFE4EjC9KYsFIk0oZqJD9FwqQTkyfdIYsheVQ7dI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c6te+xEQdfSCwkhLwjAoLRnzN4MwqTUHnLbK3vlPPGP7JsqQhDwTGWd/hNR/McougjOjeGZLfd+ts9TZEFWBk1JECy7gZpGS1Nnyd8039L2Q1dwv3NRU/pf8FgmlAH8Ry+EH95rv6kgkXwldtJaxCS6LJDwiWCXUtGxC/41YoAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=iaUXdOqB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A8F4C40AD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1754933326; bh=RPFcFE4EjC9KYsFIk0oZqJD9FwqQTkyfdIYsheVQ7dI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=iaUXdOqBX6NARwSaVj/lNohmgcpyQuRPIIc3rKWM9IlCdHDkx4m52x4o3fF/sP8M5
+	 CWgNzopgRSIClfb9ZWyDL8IStghlpX4UnzhAp7WJ9uY0P691gbGVRKX9Aj9RBSkDv7
+	 E8/fa8xBuVMu6uuubmK4yjHIxVf/wunv2tcQVvo3DaAW6Hkjllfs/UWc/xO8G1ppWR
+	 sVwsSl97i+uPvExtCpSjINMuQVMMvYgcqpzbqp33RB966xnWiFP9mw0s/GnJnkQJrt
+	 zU3j4w3JBBKEdoZvjO7wDjiEuvE99kBw4CCM/m/e5Vewh+/+fViUw1xsPs5BM2uJLd
+	 5sw4llWg9H/CQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A8F4C40AD2;
+	Mon, 11 Aug 2025 17:28:46 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, "Message-ID :"
+ <cover.1752076293.git.mchehab+huawei@kernel.org>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Ignacio Encinas Rubio
+ <ignacio@iencinas.com>, Marco Elver <elver@google.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, Donald Hunter <donald.hunter@gmail.com>, Eric
+ Dumazet <edumazet@google.com>, Jan Stancek <jstancek@redhat.com>, Paolo
+ Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
+ joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
+ lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
+ stern@rowland.harvard.edu, Breno Leitao <leitao@debian.org>, Randy Dunlap
+ <rdunlap@infradead.org>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH v10 00/14] Don't generate netlink .rst files inside
+ $(srctree)
+In-Reply-To: <cover.1753718185.git.mchehab+huawei@kernel.org>
+References: <cover.1753718185.git.mchehab+huawei@kernel.org>
+Date: Mon, 11 Aug 2025 11:28:45 -0600
+Message-ID: <87ms85daya.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806212812.1634740-1-robh@kernel.org>
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-On Wed, 06 Aug 2025 16:28:11 -0500, Rob Herring (Arm) wrote:
-> The binding is already converted to schema and is located in
-> Documentation/devicetree/bindings/arm/bcm/brcm,vulcan-soc.yaml.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/cavium-thunder2.txt | 8 --------
->  MAINTAINERS                                               | 2 +-
->  2 files changed, 1 insertion(+), 9 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/cavium-thunder2.txt
-> 
+> Hi Jon,
+>
+> That's the v10 version of the parser-yaml series, addressing a couple of
+> issues raised by Donald.
+>
+> It should apply cleanly on the top of docs-next, as I just rebased on
+> the top of docs/docs-next.
+>
+> Please merge it via your tree, as I have another patch series that will
+> depend on this one.
 
-Applied, thanks!
+I intend to do that shortly unless I hear objections; are the netdev
+folks OK with this work going through docs-next?
 
+Thanks,
+
+jon
 
