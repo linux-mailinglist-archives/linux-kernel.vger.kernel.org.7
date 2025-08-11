@@ -1,241 +1,243 @@
-Return-Path: <linux-kernel+bounces-763127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56773B210D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894AAB210A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D0D5000DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5553A70FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64482E764A;
-	Mon, 11 Aug 2025 15:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DF92E7BAD;
+	Mon, 11 Aug 2025 15:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHll2xB0"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="suAazuzc"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856652D6E5F;
-	Mon, 11 Aug 2025 15:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926573; cv=none; b=Kq1qY7fu7Po2wd86ekrb5mnkZfwJ0+DNlOFtC3kBnGwOcGK4VFnxbQCkxbnr8ooElUWJgBTFTKnxeVXyBQwM5vIJo7ph7uDD6s9X+L8HpNb1pYDoVWODLIULhYJ/LpFkPho045xsiaW1wd9YH8epNIiT4uP4Yg8iV8sgTqiVOIo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926573; c=relaxed/simple;
-	bh=T1pm74Y8n64UsGo8mBccdL4qfA6nDQEImGfWpfW7ggc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DQ6VOG1LdL6OCJk/9GrKSfgcEiX70xOBonrXIAioMfFy7E7Sdk/S53lOZVAFSYeyl2MBrlIBlXp8Unw+Ejsqy1gKkfLOAukMxCu4bRBU1eTqjiX2En84ZHfpKlQ594zqzjdpsEW/HC7Cy1rjkvW+S9eBBkSOW964fLCJQomvXhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHll2xB0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-acb5ec407b1so622311866b.1;
-        Mon, 11 Aug 2025 08:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754926569; x=1755531369; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=o2PLgwzqCzU4aYsyzpQU8Pmm9EwNqnw9dQ2/FdBe/4E=;
-        b=kHll2xB0+V1vF+jQarUvKjCyYP76VHT3qqpj3X8PX0E8KIfdivWoGuytvJeoKneVqe
-         9II+yMb3AYVZyIotAWd2S0tD+cuyFgRZd+mkk0ISWVOJejFWuqpFFXeQF6kDUGyzK70O
-         tDxVRBuQ47mHYbMkFg4dtT39aM3WeAbhkbA2F0Nh5QTX0G8JhvxxgBwICXi9c2M8XT14
-         J0FgsHRwJQK00JCcHNRZxcKUCPDc3ir/41gV2yCFpl+vmwdYMnMyQjMDRwP1nzPq0AT7
-         wASEwobmc+LlvcMa2DbbK86JzKYUBJd6WPemtml804c/ObztCKb5TpA7fgI+Gcc/vCcD
-         q3Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754926569; x=1755531369;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o2PLgwzqCzU4aYsyzpQU8Pmm9EwNqnw9dQ2/FdBe/4E=;
-        b=reg6n3yZi8EPAfeYXlPetJAF5iRXdHZzTiFfjofyQMbBror95DN0zPktG14iPLIGmE
-         Pc7z4HHF54EebFxUGulDo4gUPPcCocnKcdAwztL5c23FC406boFzor7jAZbHVDo6otdm
-         2bOrWeO0hGRhonhtvBeUMy13U+JrgW0fGaXoQS0Wr8yQDS9y1wSQrXlGGTHnZdlrLaoc
-         ZNr8tTwQ9wx1WgmqeMc4qos0FDBOFgH8LzvBNI1ufKsxdisEBc14li58Af9a2QhZ0C8S
-         GapCwRzCZ0mykKoytOywcxuwER+eAss2S0od8bfwqVl4YDlx1GSKX+t370nlhqSWafKK
-         K8aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVApfcc8iTVq8HOtRg5ijp++uIm3Q4F/3jQwtXBf3u8N3UyWBsmQGJT7aqraigJ0urzcsV2N2IOG1s5AXNW296AI98=@vger.kernel.org, AJvYcCVeFKuj3F2W15l/N0Gxj5tMltaV8Q/jRSKSjD6/VCeHjdOY9SnK/O9bBfOhyHD8I2fScuADcJJhybJxXTg8fg==@vger.kernel.org, AJvYcCWAywotOjbcWKyq+pWDp5a7eF5FVOnzN2jPKMx8eEKiOwI3HZvhmW0mwnGYVnIL+/QKhVHg5idiNQ==@vger.kernel.org, AJvYcCXLcr6EVieYwZOeu7zikG8C8jHO6Vo7f/9XaBr2tjzyo8F42avxdKh5VNbQRuo2s4tE0RSX3sCy/zpc1A==@vger.kernel.org, AJvYcCXWWvs0d7msv1XlWcglUxLzje4FhD2xDzAuhYxq2QC90AHCbdrMun9OGyJ3MD5WQt4qNcvzz6Cnxy8hMdqHO8TECMw=@vger.kernel.org, AJvYcCXzi6DsciQMOf46D9APkHpYQAJ+55j2mzu+A19qGTi5IlYKF22FNy5cHqxrR32wgrVTmuaQ5Kvw3carec6/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXI9W7LVnU3ukbhLjxhpQJnfvi/t3YCxsWwMq1w1E+drW+QJEo
-	yh1P1i+W+gARkTVJH3tmQ4OH2VqBSZQuTw9aoXwBRF1NL47e5FPspCot
-X-Gm-Gg: ASbGncvbRAhHBiILz2oV9WxTVzf5PYOSHnV6l0xRq04flb5bgCumUw9QHXrNap09rDr
-	M/Xo7KlBESaSvJir8fD5WjHS7mFRE9b6XT4bO/IgCh7lsL6x+N9/mRq00HPLLsu+/sYZHQ9sSKi
-	5QnUFZHVe+vb+6zEfqo9pTGWV8ocmVKlAQjRMyVtfZWWHW0FecsURB4c4LTCs6UkwzdDZPRLNGE
-	ckX6hsuLyisG96NpzwEWkPYLSkpSXeaO9wPQ9BbTuD6ieK2YGgzm0woHKH8tTCmJpg/cOHXYEJX
-	tZN82WqbfwKWJLlr5xT17yeCeym7BFTORzEAgRZsAOpOBmTT0GuG/TYVAKzPGH8UA8EzZdy6UVs
-	8cB0QL0BqVr3i1AkdDpGYRlv6pDhWf3VQr7e2YlM=
-X-Google-Smtp-Source: AGHT+IEWXGSRjdy4RAu+IcFqNFLSigtkUTeWRQg71jQOmauDsjSiWhFOxk2+KAgssZQX1ci7YH+4nA==
-X-Received: by 2002:a17:907:7fa4:b0:ae3:c767:da11 with SMTP id a640c23a62f3a-af9c65de7eemr1091487766b.50.1754926568473;
-        Mon, 11 Aug 2025 08:36:08 -0700 (PDT)
-Received: from giga-mm.home ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615c57f9fd0sm17432655a12.11.2025.08.11.08.36.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 08:36:08 -0700 (PDT)
-Message-ID: <f6d130cac25b794e0fad1a8f0267d38acf8ee465.camel@gmail.com>
-Subject: Re: [PATCH 113/114] clk: sophgo: sg2042-pll: remove round_rate() in
- favor of determine_rate()
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Cristian
- Marussi	 <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto	 <inochiama@gmail.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>,  Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Paul Cercueil	 <paul@crapouillou.net>, Keguang Zhang
- <keguang.zhang@gmail.com>, Taichi Sugaya	 <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>,  Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team	
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Jacky Huang	
- <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Vladimir
- Zapolskiy	 <vz@mleia.com>, Piotr Wojtaszczyk
- <piotr.wojtaszczyk@timesys.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan	 <dlan@gentoo.org>,
- Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon	
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Orson Zhai	
- <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan
- Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue	 <alexandre.torgue@foss.st.com>, Michal Simek
- <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, Andreas
- =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,  Manivannan Sadhasivam	
- <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau
- <j@jannau.net>,  Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa
- <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,  Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max
- Filippov <jcmvbkbc@gmail.com>, Matthias Brugger	 <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>,
- Daniel Palmer <daniel@thingy.jp>,  Romain Perier <romain.perier@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement	
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth	
- <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner
- <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>,  Krzysztof
- Kozlowski	 <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi	 <cw00.choi@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Qin Jian	 <qinjian@cqplus1.com>, Viresh Kumar
- <vireshk@kernel.org>, Ulf Hansson	 <ulf.hansson@linaro.org>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Alex Helms	 <alexander.helms.jy@renesas.com>,
- Linus Walleij <linus.walleij@linaro.org>,  Liviu Dudau
- <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Nobuhiro
- Iwamatsu	 <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Date: Mon, 11 Aug 2025 17:36:04 +0200
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-113-b3bf97b038dc@redhat.com>
-References: 
-	<20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-	 <20250811-clk-for-stephen-round-rate-v1-113-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92602E7BA6;
+	Mon, 11 Aug 2025 15:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754926593; cv=fail; b=t1KCz5ddc2iK2rgfqDgSnWJ+S4wewG3FuM5O1y/mhBK1NctjxkG6Qs+VV4UcqFZyTv+JFayw0F/C8x9/XUZ1qpr1N/nHcjaBuzRn+WF+xYVhwODdRQ9PenuxCBjS4PIxaxzJc8zEWLTypwPZuHHdrONsnSMNoV8C8c7fGDuZGHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754926593; c=relaxed/simple;
+	bh=3R0URGHwJRCup1tIcQExw4xq6tJHyXcD7dJTBSXAqIk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=D6A55E4Q4YKImyO2qYS9T6jYR4BlWALkcvVQst4aIFUdFKfVagSoiP+fOPAOoz6spWUhuViLS/Uaqea6X4Qq0CWond2tv1NwrO+TXaOKkXzLU10hAfHFsyzI9fM9C13axJ9H9DYehIjnSRa3U8hYkJSYjNYiKXTXfmZq38sA9aU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=suAazuzc; arc=fail smtp.client-ip=40.107.243.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FmPWyg7R0hVEZWkeIiy+mIXkCHcQYEC2bMg3E/AVV8xGJE6PH/6RwHS5xTTu2eBnUQk8SC/x91vE9+QeYehmzvuGixq6pJKL/1C08Rlmxg0dpp5PJggAsM9sl2GhN80i22TK52AyeZDIVpKdUuA6NDQekaMrZe3lOm5MMe++6Mr2b5B4XXSVWDy6pucxmOdLsM/0Ds5hasdZRD9peoMo9/X44BRzJlnqgIpjBjtECF+VzZUI9D2HXumtkvFiH7ovibYh51dMiju2oxhwJIXXAkBhlbbeFhcMpmtK+qLp3YEcIBiO9ivCSOPqmjZojlCLd4K7Ej6dm0T4U3aFiYXj9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+CC7kQ92Jom3bIF51j9palV0u12im+Fub+FLnrDCKBA=;
+ b=GvzbDo892+dZXvBLhrukAu8VrNtb6t5RifXLUcy/rRUZ9r2wcL1CI3IXU8N6rLjlo+XJT3WZ0cgUhYR6U64YCvv7ejV63uDSgiT5p+ZTn42p7L798JCBx10NOr6SAy3I8y2yvgzbRUC64r6UvY1CBG7QHfKlGWE7+4NADRX2IjPqPNLGpAJbyx5ySt2bne6a4EY7Wlt6HcGqaKeOs7HH4bf2nQX4rbSP6CzRTj8yV466Py5C7f4lSJ10CAKxwDm8p82ASjkHbIhQiKWzMjhvzUB0MUbk/YYjSolRqjFJpYe3O5Gg5GiWO3Vvr3X1x/sLkkL9+jWR9UhWND73ZRFZAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+CC7kQ92Jom3bIF51j9palV0u12im+Fub+FLnrDCKBA=;
+ b=suAazuzcuurvWnnoAimfCanLITRapbBFUkWted5Z3ym5Qnv2/KX67yNp/Izi1Ty/PAgFkW6ejCNBPle4kIYpTvIxGls2I2iXCaL9nDbOLor1PKwMokwjDZ6iYGPiGnh8q+45iI7V5AByQsmeH3rfaQ363XTItqKgLkVQX7LdmC4=
+Received: from CH3PR12MB8726.namprd12.prod.outlook.com (2603:10b6:610:17b::15)
+ by SA3PR12MB8045.namprd12.prod.outlook.com (2603:10b6:806:31d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 15:36:28 +0000
+Received: from CH3PR12MB8726.namprd12.prod.outlook.com
+ ([fe80::9532:640e:4b24:7dbe]) by CH3PR12MB8726.namprd12.prod.outlook.com
+ ([fe80::9532:640e:4b24:7dbe%6]) with mapi id 15.20.9009.016; Mon, 11 Aug 2025
+ 15:36:28 +0000
+From: "Chary Chennoju, Srikanth" <srikanth.chary-chennoju@amd.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"Thinh.Nguyen@synopsys.com" <Thinh.Nguyen@synopsys.com>,
+	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+	"Chris.Wulff@biamp.com" <Chris.Wulff@biamp.com>, "tiwai@suse.de"
+	<tiwai@suse.de>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kalluri,
+ Punnaiah Choudary" <punnaiah.choudary.kalluri@amd.com>
+Subject: RE: [PATCH 2/3] usb: gadget: f_sourcesink support for maxburst for
+ bulk transfers
+Thread-Topic: [PATCH 2/3] usb: gadget: f_sourcesink support for maxburst for
+ bulk transfers
+Thread-Index: AQHb7NiJoa/s1NjXRUqSEvUDsPz1zrQh+q0AgASDaHCAADL2gIAAAz+wgDcdOxA=
+Date: Mon, 11 Aug 2025 15:36:28 +0000
+Message-ID:
+ <CH3PR12MB8726A85B8D425323EDDB96D8B128A@CH3PR12MB8726.namprd12.prod.outlook.com>
+References: <20250704114013.3396795-1-srikanth.chary-chennoju@amd.com>
+ <20250704114013.3396795-3-srikanth.chary-chennoju@amd.com>
+ <cf2940e3-5430-4e84-916b-608c33028a7c@rowland.harvard.edu>
+ <CH3PR12MB872633800DDD386DCE8169B6B14FA@CH3PR12MB8726.namprd12.prod.outlook.com>
+ <e5f4942f-4a0d-44a6-a2b2-7d567d4d0ddc@rowland.harvard.edu>
+ <CH3PR12MB8726F8F10AE2094B5E94861AB14FA@CH3PR12MB8726.namprd12.prod.outlook.com>
+In-Reply-To:
+ <CH3PR12MB8726F8F10AE2094B5E94861AB14FA@CH3PR12MB8726.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-07T13:56:52.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR12MB8726:EE_|SA3PR12MB8045:EE_
+x-ms-office365-filtering-correlation-id: ca3bcf5f-5d7e-4f24-c007-08ddd8ecd6b8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ChgomvHQiKZz4tde+7qqyfxE1Jm1Ep7iVHhTzr/ER1mKKegPV54e3flTZLib?=
+ =?us-ascii?Q?RwAJChOv4ipdbqYvkETXn9BhZ2WjdN7fBfTBhzdaxL7pg5N1ZJMtFT4VUv3G?=
+ =?us-ascii?Q?4ZY4S2XpzvfZ51zQS2qpBkro6cStojSjdJYbHTN8axa86YpCcieT1OR4vxzX?=
+ =?us-ascii?Q?EcQbLWTlBdYTwh+ciEHjXFlA1EBGfSx5Q4UFNMJIX4POMEuAhbLurj3DyQN/?=
+ =?us-ascii?Q?su3DnZwkV/grnvaF7B2QqmWLb4tjwNgx7s0fkqXmqS+gCI4CSTb9/wzmiuvF?=
+ =?us-ascii?Q?H4OmqQ9BNwHKVRkDoPEMk36JYSG50hm6pBkbWL/nviV5vvDZLlkTU5mXBaHo?=
+ =?us-ascii?Q?2s0LmSzNgjy7B0CayLQMqAdoznrlbi5FKZQPLaGgN6Lb4+8/E3Ypm8mKS2Hg?=
+ =?us-ascii?Q?zeBxVL5kJoSd0XJZmOoSW7I+AWZfwV/h6/fvQA9lxrHQ/vYhfbs1K3XRzTaA?=
+ =?us-ascii?Q?vPI1tK5E8jCaOXsk2Kxljvhbut1kQw39NrY0M5RYI5NXGq8N/dQwYRu6Uk7x?=
+ =?us-ascii?Q?EOicSQXfNtNrgRJYpgbLl5APHVFYAAYymC04YKytgRQHEokfDI7B/5yxfWxb?=
+ =?us-ascii?Q?1N0140w0/O5Kcm8V5GyMxzqIGBtpdaYk6GzjMTlBkT/C8PDxUk5I4wIxW+gu?=
+ =?us-ascii?Q?sPozfde8cpjSjF1ZqSgoIGbNfLyGNCRCKRDBn2M3I4NjoVcYnVH1RRCGp4Lw?=
+ =?us-ascii?Q?wPhKQsHpxQjcws8fwsE1ZxUVzJsDZL19JAiVCCHOn+MRFSbJrEXPdkugGlMr?=
+ =?us-ascii?Q?+XxNXT0VkMqoT6J+cCMEndshf+UQgZlcN4qe5F5kxMZsFL9EniS5wtvOcX97?=
+ =?us-ascii?Q?mLuYH6+b1noZyDCKvnnggObsPpb/E5Cn1Go6JKXbIFO7NbYslpobS2zIblEa?=
+ =?us-ascii?Q?vIKkiUZQl4aUMNgsqTp8TNQG+qtAC75vPQxGPkpsvSzyjkG/15R/waedE3wU?=
+ =?us-ascii?Q?I2Rl1u9hWdxmBl1RAz0Nuz3Q6KimfAnBVbwhtH6NKbdHeHCuRJRHU5TMTFc4?=
+ =?us-ascii?Q?cnJr2SYe6EjWZT3EKWjzqOp8uqagWS6TrbmVfsGCn4gapCrEVfjsghFZokl/?=
+ =?us-ascii?Q?Jl9m8dkLu5EqinNBcAa47SJItJNxl5AoSjq/QovzfIIBMfQM1GZiP8ZsTTnF?=
+ =?us-ascii?Q?xJl2cB3hOVnGGZEu6EEQu3ZWz0mJ0d3zxkqMgVkN5DHiIeaE4S5GJIEV0c9W?=
+ =?us-ascii?Q?ifaMXndeL8xQS8b4fC+XujUaHCe0XsO2/DFW//YdvOAgysO4n7vQUQBcfkXp?=
+ =?us-ascii?Q?c1RRYdRvhoDSf8c53vQZqmSeg+4EU5AV35jj54F0WDViLQwHEomFMsrq2IJc?=
+ =?us-ascii?Q?/70shOc0tN+FfWLAoY4VOxQ2q+9oFyJ8bKn0ehrK/40NVXUspvg5M+8nkKNZ?=
+ =?us-ascii?Q?fxO5n502TOC7RYlyQkitwk8wZ4TBN99C4WF/gJ5y2ixWF6u67Loxcgrc/KRg?=
+ =?us-ascii?Q?PHBGPkJL2QKDuKZ/QfvARg3KLUbxx99RjxNDCQ770krEzMFl/1p8LQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?HBbu3i/vkO9j5VXKNPcX0si7GK1TYUcGMGfimcfKQImI2f3Xn2a3oi0aEY7G?=
+ =?us-ascii?Q?Dpmtp+G8E6QhEL0ySbWJNGIgb1BVuMmyOLnXOUnTG75zJIYwwTHwkHPM8wL5?=
+ =?us-ascii?Q?Atr+GKsxUhNH4DN5v4bRC6BR2Cq+CMSvYhrx/51TRIAhVnDxsnxoYiqO2A1l?=
+ =?us-ascii?Q?7pxNxC3EKnioGJS2GAAfTCOxpYjFIC06E556iS7Vf3Igp+a3jsFv4irZfq2I?=
+ =?us-ascii?Q?d+39ENyJ627bYAt0XkkpHXoKlDCJ5jTj9ygUSD6J6nsqEqBE3zoyNIULIE5e?=
+ =?us-ascii?Q?XT6AGuvQWMtYI9dJ8f70AP8QF+M8QiGuyBKe1w9O3YTAFYuekYxC8I0JntGt?=
+ =?us-ascii?Q?lxJ8YZfaDrMTiPjjXEl3mtwA2L43AXyUc6ru9kPkAPI25MWgoRn2D0wxLBOl?=
+ =?us-ascii?Q?+aNjQqc5AugxHO6TkCXTtJFOm3XzhOUklyT5FRke8182SDg4uqrG8hT8fNqI?=
+ =?us-ascii?Q?e89+v//xVcjK0tTuzJiWHp1/Vq1mUWs6zwfoNlLLdlI8mGV3xsTiN3TH2nRS?=
+ =?us-ascii?Q?Dq+PSNOLmgZg0lGUidUs8IetACXPSxSpC5tXcCGUXFb3Zc2qD8pv5e/BRxH7?=
+ =?us-ascii?Q?fG2cNtRxv8HZ4iW6X8ie7N9m9ANSXZhNHNRyaEJBK/bFom5GbhJ4DPqQNUux?=
+ =?us-ascii?Q?zsKUnJsZ96B78z95pvIz5DfhPVUNJhCjtZFqqqEhwbeST1EqW9g1V2uMdPOF?=
+ =?us-ascii?Q?KLOOW+C6UzqN+qlpCAGWThDZoj+60h07yeBBIqt5zdGyRuI58rjTtoL2n7kO?=
+ =?us-ascii?Q?1yPkFOoIghI3FOtHDZIOS7eYG142u8LugktB1m+sqzlogd15r4P3xqeLaUK5?=
+ =?us-ascii?Q?XCi5jcg5UBQ0ASQal09KsKfaNQrSpgZBRZ6bI6Pv1BC/RzJ+T9Y4JoCErskj?=
+ =?us-ascii?Q?whECpu3eYp/xdBcKi9aDAkWpzB1Uuo0lBF5BriZjqvTGki3y919f3j27jkDm?=
+ =?us-ascii?Q?RWMtSisHNZE2I/kLQL7lGL6ehFxFyBW/xvCwwuGY+NG2SBSQNLXufiSjoEXu?=
+ =?us-ascii?Q?Q5z1GquGadQf3QkhxbnoQdl35//g5qaVt2zXvDlBp/hMFJw4QpZstO6FVbpO?=
+ =?us-ascii?Q?MN/sZjqqQU5DuyPHPwdGDxCKpmrdQQ5iynIlD6EyVoKuLPPd5Ii3Aedz/mlg?=
+ =?us-ascii?Q?U5/Qeoi7tD6cuApmomV/+OUCpO9lopI8L7adwItdsFnX2Lp5HpqHoSk+M8Uu?=
+ =?us-ascii?Q?ju/AWt7ASzlqRUrDXwemmHUY3VnuzhdgGorEDN7RyB5tLIoFEjTbjuPcfM//?=
+ =?us-ascii?Q?pjYRdS45RzFPA0FRZIl7mRrqNO94ye9UYjb/JQNt8U8DOdag5a8zip4Y5bcc?=
+ =?us-ascii?Q?duMIp522WzCZ3PAcILbvia7KWomB2XtBoSQpMbsIXmp6bUuZUx8tNgrkwzFD?=
+ =?us-ascii?Q?LSxQqna2d1W/1YJ97Yg2IVueQgMXfAv/EwZKvBO8G2Ht2HmokDnaPS8DfLIA?=
+ =?us-ascii?Q?S/3pCnKssBo09X9PpoJac7br1OEoK/WsMcoAbfZE6PDBVFLkdb0H0wWXIt3T?=
+ =?us-ascii?Q?MKJELMLzSrpifQ1FqlF+TsgvJdLrLuAoUoo0JdueixbIF9feCkn6KISNN4lm?=
+ =?us-ascii?Q?IQeREd0y03hDCDi1pP8=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca3bcf5f-5d7e-4f24-c007-08ddd8ecd6b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2025 15:36:28.2599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Xnz7XHXwe1lvzS+AwWfLl3NhArQzF0p0Az+cNV+7mRzhU3GDUtswVXYlW5D9k4IBAbmBZOgHdlVVdatAGOzsWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8045
 
-Hi Brian!
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-On Mon, 2025-08-11 at 11:19 -0400, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
->=20
-> This driver implements both the determine_rate() and round_rate() clk
-> ops, and the round_rate() clk ops is deprecated. When both are defined,
-> clk_core_determine_round_nolock() from the clk core will only use the
-> determine_rate() clk ops, so let's remove the round_rate() clk ops since
-> it's unused.
->=20
-> The implementation of sg2042_clk_pll_determine_rate() calls
-> sg2042_clk_pll_round_rate(), so this folds the two into a single
-> function.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> =C2=A0drivers/clk/sophgo/clk-sg2042-pll.c | 24 ++++++++----------------
-> =C2=A01 file changed, 8 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk=
--sg2042-pll.c
-> index e5fb0bb7ac4f97616f3b472fcab45e5729eb653e..b2cbd50ac73c7538b1acbca51=
-7f4259cba885fcc 100644
-> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
-> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-> @@ -346,37 +346,30 @@ static unsigned long sg2042_clk_pll_recalc_rate(str=
-uct clk_hw *hw,
-> =C2=A0	return rate;
-> =C2=A0}
-> =C2=A0
-> -static long sg2042_clk_pll_round_rate(struct clk_hw *hw,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long req_rate,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *prate)
-> +static int sg2042_clk_pll_determine_rate(struct clk_hw *hw,
-> +					 struct clk_rate_request *req)
-> =C2=A0{
-> =C2=A0	struct sg2042_pll_ctrl pctrl_table;
-> =C2=A0	unsigned int value;
-> =C2=A0	long proper_rate;
-> =C2=A0	int ret;
-> =C2=A0
-> -	ret =3D sg2042_get_pll_ctl_setting(&pctrl_table, req_rate, *prate);
-> +	ret =3D sg2042_get_pll_ctl_setting(&pctrl_table,
-> +					 min(req->rate, req->max_rate),
-> +					 req->best_parent_rate);
-> =C2=A0	if (ret) {
-> =C2=A0		proper_rate =3D 0;
-> =C2=A0		goto out;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	value =3D sg2042_pll_ctrl_encode(&pctrl_table);
-> -	proper_rate =3D (long)sg2042_pll_recalc_rate(value, *prate);
-> +	proper_rate =3D (long)sg2042_pll_recalc_rate(value, req->best_parent_ra=
-te);
-> =C2=A0
-> =C2=A0out:
-> =C2=A0	pr_debug("--> %s: pll_round_rate: val =3D %ld\n",
-                          ^^^^^^^^^^^^^^
-Now that round_rate has gone, should the above become "pll_determine_rate"?
+Hi Stern,
 
-> =C2=A0		 clk_hw_get_name(hw), proper_rate);
-> -	return proper_rate;
-> -}
-> +	req->rate =3D proper_rate;
-> =C2=A0
-> -static int sg2042_clk_pll_determine_rate(struct clk_hw *hw,
-> -					 struct clk_rate_request *req)
-> -{
-> -	req->rate =3D sg2042_clk_pll_round_rate(hw, min(req->rate, req->max_rat=
-e),
-> -					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &req->best_parent_rate);
-> -	pr_debug("--> %s: pll_determine_rate: val =3D %ld\n",
-> -		 clk_hw_get_name(hw), req->rate);
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> @@ -417,14 +410,13 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *h=
-w,
-> =C2=A0
-> =C2=A0static const struct clk_ops sg2042_clk_pll_ops =3D {
-> =C2=A0	.recalc_rate =3D sg2042_clk_pll_recalc_rate,
-> -	.round_rate =3D sg2042_clk_pll_round_rate,
-> =C2=A0	.determine_rate =3D sg2042_clk_pll_determine_rate,
-> =C2=A0	.set_rate =3D sg2042_clk_pll_set_rate,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static const struct clk_ops sg2042_clk_pll_ro_ops =3D {
-> =C2=A0	.recalc_rate =3D sg2042_clk_pll_recalc_rate,
-> -	.round_rate =3D sg2042_clk_pll_round_rate,
-> +	.determine_rate =3D sg2042_clk_pll_determine_rate,
-> =C2=A0};
+Please let me know if there are any further comments for this patch.
 
---=20
-Alexander Sverdlin.
+Thanks & Regards,
+Srikanth
+
+> -----Original Message-----
+> From: Chary Chennoju, Srikanth
+> Sent: Monday, July 7, 2025 7:31 PM
+> To: Alan Stern <stern@rowland.harvard.edu>
+> Cc: gregkh@linuxfoundation.org; Thinh.Nguyen@synopsys.com;
+> m.grzeschik@pengutronix.de; Chris.Wulff@biamp.com; tiwai@suse.de; linux-
+> usb@vger.kernel.org; linux-kernel@vger.kernel.org; Kalluri, Punnaiah
+> Choudary <punnaiah.choudary.kalluri@amd.com>
+> Subject: RE: [PATCH 2/3] usb: gadget: f_sourcesink support for maxburst f=
+or
+> bulk transfers
+>
+> Hi Stern,
+>
+> Agreed. I can remove the comment as I have added the check for the value
+> based on user input.
+>
+> Regards,
+> Srikanth
+>
+> > -----Original Message-----
+> > From: Alan Stern <stern@rowland.harvard.edu>
+> > Sent: Monday, July 7, 2025 7:15 PM
+> > To: Chary Chennoju, Srikanth <srikanth.chary-chennoju@amd.com>
+> > Cc: gregkh@linuxfoundation.org; Thinh.Nguyen@synopsys.com;
+> > m.grzeschik@pengutronix.de; Chris.Wulff@biamp.com; tiwai@suse.de;
+> > linux- usb@vger.kernel.org; linux-kernel@vger.kernel.org; Kalluri,
+> > Punnaiah Choudary <punnaiah.choudary.kalluri@amd.com>
+> > Subject: Re: [PATCH 2/3] usb: gadget: f_sourcesink support for
+> > maxburst for bulk transfers
+> >
+> > Caution: This message originated from an External Source. Use proper
+> > caution when opening attachments, clicking links, or responding.
+> >
+> >
+> > On Mon, Jul 07, 2025 at 10:49:26AM +0000, Chary Chennoju, Srikanth
+> wrote:
+> > > [AMD Official Use Only - AMD Internal Distribution Only]
+> > >
+> > > Hi Stern,
+> > >
+> > > Thanks for your comments. If you are mentioning to have a check for
+> > > the
+> > value which user is providing, then there is a check which is carried
+> > out(#34 to #37 in the patch). It limits to max burst value if user
+> > exceeds the supported value.
+> >
+> > > > > +     /*
+> > > > > +      * Fill in the SS bulk descriptors from the module paramete=
+rs.
+> > > > > +      * We assume that the user knows what they are doing and wo=
+n't
+> > > > > +      * give parameters that their UDC doesn't support.
+> > > > > +      */
+> >
+> > In that case this comment is wrong, isn't it?  You don't assume that
+> > the user knows what they are doing; you do check and limit the value
+> > to maxburst if the user's value is too big.
+> >
+> > Alan Stern
 
