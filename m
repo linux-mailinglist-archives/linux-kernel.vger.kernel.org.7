@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-763277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F566B2129E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:55:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B11B212A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C51907B91
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BE22A05BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0F32C21CE;
-	Mon, 11 Aug 2025 16:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD4B2C21C5;
+	Mon, 11 Aug 2025 16:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fjKkVDbE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewtr+5PJ"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DAE1A9F9D;
-	Mon, 11 Aug 2025 16:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E96296BD7;
+	Mon, 11 Aug 2025 16:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754931294; cv=none; b=ANZ5XYu2ABxEzghqKeVGXyzcxODRqMxcFXNGR5emh/4G0Riyw3uPpLAPHSLtaVZZr2IwgI2tJnw/Yn/0eeY8BUmH9qBP7BXJn4E0mQcWx+IddmoF1ZjVKRLzG7lrof9uj4ENDNpqUkf6bEwnnzy+co78KHf7lFUzre8jfSaNrbE=
+	t=1754931430; cv=none; b=I0yDShs2kopJLrTOa3jB9b7Vd+k0BlCJHuAdvTeJR/bSX2mNCufIg1ucwook0Po18wlIbvfopq5ebP1uwG3Nftn9pOveu5PlDZhPcI/C1MXuBU2MYjMUNvnVkmOLapoMTN24l5+vXrB3RDOI+z3Z8f9XevY5YyfAEun14aZMGdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754931294; c=relaxed/simple;
-	bh=ZGt+p08oHdbLkYuiWh/Tz5VD7GjaLJTOK0rVBJdfwtc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sOWFaFplYtCEikhpALKDeQ2oE7IQJ97g8l141crsJp2aCp9pERUn/Y1rI69Ihy4N+VImADQK483SrPOaXbwXlX8ZEDeOGqaO4PGTcrFvxY4k4ry30IMAfOXRb0Fuz6RlX6VO+zqJ+eS0SqutXLlR2AdURMHgWQkybXUZUePOH24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fjKkVDbE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BFBxwo006181;
-	Mon, 11 Aug 2025 16:54:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SL6BgA+WcBvuMIY77uel/uKLCF3VnOVk87TVduJNN+U=; b=fjKkVDbE1ULONjbc
-	0jQTZMSwO8J08gY1XEUTl+AhwmUgjiVUmhyikv+AzbWZTOcA81ekCbkRy4tgO5v9
-	7RXW+tFxuE9Ucq0DbQTrsWK0Py5ylM6zXwjSCbjMG2jhnI+04v5Vd36KGq7zwUSl
-	OUXOBeRCLCEi2OeeRBiXvA15vq+ZUPnrp+b4zAjvmREDoWnm/krzDLQF9A0p/Km7
-	yLbY1QYOISfdWiHHIrnddnLPEDkvTsAiegKaI9Ii8426fiieDSFF1lq+Q1Cd6WHD
-	89/391ry4attgdxBMtGoUESleq3jpOvMO9FPdsHmazWu9UArp/zGpHBCX/R31nf2
-	gxmFQg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxb89hb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 16:54:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BGscTb020043
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 16:54:38 GMT
-Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
- 2025 09:54:33 -0700
-Message-ID: <9ff100b4-a3a5-4364-8172-1ccb5566e50c@quicinc.com>
-Date: Mon, 11 Aug 2025 22:24:29 +0530
+	s=arc-20240116; t=1754931430; c=relaxed/simple;
+	bh=9zPnPHkgpiU4tEsuYcbnxA/jyHS4x3gGPa24HIh889k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UpLZL4HeYbOQWUFwAK5urKvCFfK6bapigV7kuQ+7HYePxMFGcncrUi6rVQmPMTX/fCYcHw07f7MPYa5qC18AuJ1/xkIAJ/WsqS/JELZLhe9V2GbbDRlVY/7LfCV0r7+iIcSBi1i0kU60dSor9WRgIXLcudgstBfZS+pjjD3XU6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewtr+5PJ; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2406fe901fcso47864745ad.3;
+        Mon, 11 Aug 2025 09:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754931428; x=1755536228; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W1Yi7C8gEQP4bWpuAGELa858nfVqle4iUeljO1dFUIw=;
+        b=ewtr+5PJPdit4yk3D9ruK+QSIWKE1EIXZ+oNwfA76CySGSiyUqF2krwpsnNOpNboLv
+         l3D2vplqkdlM6kwD1Iz6CZr+mjQc84UhmwDSba4qA+MwuO9i3WjVJ5bhDIrkB08WUghL
+         Y1WcnlylZzUKPAcdtIgfj7I/VywIpMH+TN8oIJopR+7g2fN4U1fdnd7GqH0ioXFZ5SGP
+         cphmDqzUpQiXcG1dS2rQ/LCks5h1axbcJJqkqipzB3BSvrv4fhoIAnOske+5f8q23XDb
+         l38bIo1sliaPegrh3ydRjCGISnz2Vh4axXg/GWno63426q+dVfroPt/50OzbpOu66oxN
+         /4Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754931428; x=1755536228;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W1Yi7C8gEQP4bWpuAGELa858nfVqle4iUeljO1dFUIw=;
+        b=JEBPNqppqGHWUGeE6KLWRHJwjoYtCz751vckr9ttuSlaz4L2Ei9VfdcGiFanMvxsPX
+         48yHP6MAs95tuLXCsZCzULu2SjrTCVKdO49sge+FbZiDNweVPyBWz3Anw3OwdE5hGpIA
+         MxTK9osKhjdkZcDsKPCtP7Xpjfx8rQXKoQetBtTfuZwB2jKmFurOrdUXFHBaqP3dS8ep
+         aod6ktVR+MsaIzr1QZ0IQwtiQEvQYmpux48cMl+Ixe0FloCEBv2EOgSmzfhdBjjva/MJ
+         oEL4RympFxg4FsSIasWy/OcUTiyb8cEBvfxrAZaH4jOfX2/o1512G5ssI1+59pe860m8
+         9QUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnLEIXxeH36FFPi29wO2/0qx7dpD+Xo1oTQElxWSpVyfBrhFjK05j4Pax+6HsveSYSy3APPidxVns=@vger.kernel.org, AJvYcCVvLhfFoWUXsTDaPnToC9s0ktkK/ChZP2V9pSSuUvg2C+gtdjXX1JZNdDXSARou43CxuMA3wevII2WLl1l5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyipXIUgBtDkeo+JbxWiqTg/m8D28veFSDHYcJ5thNQC7Pa+oAD
+	F2W4irE9T+/bzyOviMBidxa5ohF7yypQs+Oz2/3jneIHcka76QKz3wMW
+X-Gm-Gg: ASbGncvOIuYtzSBMON097JQ7agEKxRDHL1GcIaZnVk+sinYjdcwvf8hQFTAeD5aHAvW
+	rTyNUCuDCtXzt1KWl/mOst0NZOVrTb00VxkIaSJ8mn9o8ijbdx4wQ7aJ+jn2fUWRaXEevNY31lT
+	HAbOAfbBiVuYsA3ZuzuuklRDEMh4RqkLUkXHel8wWneXau3e07OHFEFQ6KJSLo7iol7U8RVlTFb
+	m7+04N45BfgNjEx4cMvgzcL1904C+yMhCuwQcymtTeFhL7ORe1oXcs6d981gPIqoKzaPcfFi9I/
+	gBW+opcgMoYQj2pPC/AWA9squaIVWW3kAYx7pYV3u5SNBdrw0d7lE16g0xKciq3O79+Eb1mqNJ8
+	U4bx2boUGzhZ/rvjIevCjfRH0jC5qzWF5wVeu
+X-Google-Smtp-Source: AGHT+IEkqrWoNzQeigT/AEoxekcMwPOO3clsp9fVXxpzh+JPN0nMFS0LQhGp/ytq+YFsSTqg1y1bFQ==
+X-Received: by 2002:a17:902:fc8f:b0:242:b42b:1335 with SMTP id d9443c01a7336-242c2059ca6mr223948205ad.22.1754931428119;
+        Mon, 11 Aug 2025 09:57:08 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:1f3a:31cb:81d4:471d:6f8e:380b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89a6ec2sm277124085ad.145.2025.08.11.09.56.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 09:57:07 -0700 (PDT)
+From: Akshay Bansod <akbansd@gmail.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
+Date: Mon, 11 Aug 2025 22:26:40 +0530
+Message-ID: <20250811165641.1214347-1-akbansd@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, <mani@kernel.org>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
- <20250811143139.16422-3-quic_rdwivedi@quicinc.com>
- <67aedb2a-3ccc-4440-b2ff-b3dbedf5e25c@kernel.org>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <67aedb2a-3ccc-4440-b2ff-b3dbedf5e25c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689a204f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=L1kT8yVtU14eprXNtIQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX63E7qFo4pURL
- q/+l4evnNvfVwVp7Gc/xaPVwue8tg3JGq5OlaMqMwYkt+XaNmg2+dlYlP2KMuMja0uDqpL1X4Kg
- Z0xxYGpGiM5pAMVvS5QKazjtaTX0GZVNibNDmVnftaWeRG8vXg/JL7qqvSvsMJXk8wUqTjFsGis
- RS8Q3hljUwXFaYyrMtonuSQPLU4CK7DwZgYD5o5n3vXmoSO0CJfNIUgo2pInt24aadBWLQSkhge
- 2TN13uIkBWVEG1PH/Exm+gcZyDiemIHLX43+JdkZ6s2S4FMgnJTU9E4Vzzpre101CL1XQEoR8ys
- jCN3q+we7cmpyuL82OFhOl6tuz1PseuYqB9RQIz4xa4BK1BvDdmCMUw6ciINS6Ax2nboQbCss+z
- 4qiCw0xz
-X-Proofpoint-ORIG-GUID: u45KLYEv_FIjwBI41TTw4vwFCYGAOrdP
-X-Proofpoint-GUID: u45KLYEv_FIjwBI41TTw4vwFCYGAOrdP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_03,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
+Content-Transfer-Encoding: 8bit
 
+Update the sysfs interface for sampling frequency and scale attributes.
+Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
+and recommended for use in sysfs.
 
+Signed-off-by: Akshay Bansod <akbansd@gmail.com>
+---
 
-On 11-Aug-25 8:13 PM, Krzysztof Kozlowski wrote:
-> On 11/08/2025 16:31, Ram Kumar Dwivedi wrote:
->> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->> on the Qualcomm SM8650 platform by updating the device tree node. This
->> includes adding new register region for MCQ and specifying the MSI parent
->> required for MCQ operation.
->>
->> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> Way you organize your patchset is confusing. Why DTS is in the middle?
-> It suggests dependency and this would be strong objection from me.
+changes in v4:
+- reformatted as per sugessions, used ternary operator
+- Link to v3: https://lore.kernel.org/linux-iio/20250723141359.11723-1-akbansd@gmail.com/
 
-Hi Krzysztof,
+changes in v3:
+- Use `sysfs_emit_at(buf, len - 1, "\n")` instead of directly modifying `buf[len - 1]`
+  for newline termination, aligning with `sysfs_emit_at()` usage.
+- Link to v2: https://lore.kernel.org/linux-iio/20250703053900.36530-1-akbansd@gmail.com/
 
-My current patch submission order is as follows:
+changes in v2:
+- Fixed indentation for line wrap
+- Link to v1: https://lore.kernel.org/linux-iio/20250702135855.59955-1-akbansd@gmail.com/
 
-1.DT binding
-2.Device tree
-3.Driver changes
+Testing:
+- Built the driver (`st_lsm6dsx_i2c`) as a module.
+- Tested using `i2c-stub` to mock the device.
+- Verified that reading sysfs attributes like `sampling_frequency_available`
+  works correctly and shows no change in functionality.
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Please let me know if you'd prefer to rearrange the order and place the driver patch in the middle.
-
-
-Regards,
-Ram
-> 
-> Please read carefully writing bindings, submitting patches in DT and SoC
-> maintainer profile.
-> 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+index c65ad4982..d8cb4b021 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -2035,10 +2035,10 @@ st_lsm6dsx_sysfs_sampling_frequency_avail(struct device *dev,
+ 
+ 	odr_table = &sensor->hw->settings->odr_table[sensor->id];
+ 	for (i = 0; i < odr_table->odr_len; i++)
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%d.%03d ",
+-				 odr_table->odr_avl[i].milli_hz / 1000,
+-				 odr_table->odr_avl[i].milli_hz % 1000);
+-	buf[len - 1] = '\n';
++	     len += sysfs_emit_at(buf, len, "%d.%03d%c",
++				  odr_table->odr_avl[i].milli_hz / 1000,
++				  odr_table->odr_avl[i].milli_hz % 1000,
++				  (i == odr_table->odr_len - 1) ? '\n' : ' ');
+ 
+ 	return len;
+ }
+@@ -2054,9 +2054,9 @@ static ssize_t st_lsm6dsx_sysfs_scale_avail(struct device *dev,
+ 
+ 	fs_table = &hw->settings->fs_table[sensor->id];
+ 	for (i = 0; i < fs_table->fs_len; i++)
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "0.%09u ",
+-				 fs_table->fs_avl[i].gain);
+-	buf[len - 1] = '\n';
++	     len += sysfs_emit_at(buf, len, "0.%09u%c",
++				  fs_table->fs_avl[i].gain,
++				  (i == fs_table->fs_len - 1) ? '\n' : ' ');
+ 
+ 	return len;
+ }
+-- 
+2.49.0
 
 
