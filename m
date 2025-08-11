@@ -1,230 +1,207 @@
-Return-Path: <linux-kernel+bounces-761954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7827B20060
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18425B20063
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F25189A907
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C103AD9A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD3C2D9ECB;
-	Mon, 11 Aug 2025 07:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929B22D9ED9;
+	Mon, 11 Aug 2025 07:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d+HBgGny"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6sZQrtY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC16518CC13;
-	Mon, 11 Aug 2025 07:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D101827990B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754897630; cv=none; b=o3Sw2rf3hvUPZy6zdiYjxhz0PcfG6JOWfDcT1j41Q/rKRoo35TGwFBjvsInPK9ytMYHcMRYkMl/V2/RcMQdk6F/W8qdNmxQ9CU4MWYYyfKXq+Miqkhz5zRtUPVt554xxql0pac2WHiBGCyT5EEUua6XpPB/eaUKyNK7yrWv629Y=
+	t=1754897659; cv=none; b=ST3Gxkby1Yx3ohvxtRl3L3x0aFDzZ8apNMXiYCIdQUP9xdgHOWoYFeCkphSQ9ksTa8G1MennJVipqnMus0JBnWVfp0l3yuYmxf155wc5CfOhJk/i0hjgfnqbsKvHLFEYSSf3EKxA7rnZ65ecW5dhVDumrh9pM1kKwbXnGJ/Et80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754897630; c=relaxed/simple;
-	bh=+XWE49nZuwMWpG+cBM6ZFAg3ISI+EuwAEezYT4iJHeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=giq4LtoyrbXkjRmrylHyAlPDPxpx4QgqIn720ByBNQKvbtcYkiUUd7fAv33k2Mw7ihG/WfYsG/UBv1xEmhi/9XyXEtb84PF921uTZ4CtY64HnM1/PmHfm8ojZ40KOdK8ag0z+P/IfRSRZrQsZYFuG+b+ZV+thn36hnNhpnFNIeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d+HBgGny; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57AL01I9002174;
-	Mon, 11 Aug 2025 07:33:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=aiAmNZKt9E0YJvypmkacX51fMuTyDiCUFP9
-	6aaE7CEs=; b=d+HBgGny6BhUTvs6/d2sho6E9uoh6EvCdf3wHk7tg1/8BQrUati
-	u9lwwLweilq7Rd4gupyEjqEpB7ONDduUnnlRrTpSf1oEYeXbkLeYpjr1DctOevOs
-	yoWQY393GfuWnvhEqoAtKrCTCv95alkNYYUJKRIa77OBDZk+/wQp1UxjObwE1Zlf
-	YepuMmYto9j+xg82RqgYYN4OlJ4swDyjTGTo24S9+xZ294FzUJE597gU+WhNkHfr
-	9+/D3ySUaFyYA52XHsGJAf3ws+nGDxBdG+B8X5LiCakku6BjYlSoWzFsoS/+DCzo
-	/RNP35gfA/5A31S4gl4x5SFiyqC7KoJHUdQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduuf81-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 07:33:35 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57B7XWol014548;
-	Mon, 11 Aug 2025 07:33:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 48dydkk18f-1;
-	Mon, 11 Aug 2025 07:33:32 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57B7XWU6014543;
-	Mon, 11 Aug 2025 07:33:32 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 57B7XWVc014542;
-	Mon, 11 Aug 2025 07:33:32 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id 8170F571876; Mon, 11 Aug 2025 13:03:31 +0530 (+0530)
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com, bvanassche@acm.org,
-        neil.armstrong@linaro.org, konrad.dybcio@oss.qualcomm.com,
-        tglx@linutronix.de
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH V2] ufs: ufs-qcom: Fix ESI null pointer dereference
-Date: Mon, 11 Aug 2025 13:03:30 +0530
-Message-ID: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754897659; c=relaxed/simple;
+	bh=dK7SLDDhLK24LOoQxG4hZlXuF4fqefgKWahWen4Gd2I=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=P3fxhg05ud6v3XNjkwjCc39JoXW6BvXHnCI766HnVNCh4pN15NWzhrfDR4WAFcVIttXsbdttKtryaS2Nu6UFvHHuz3ehx+s8jQyKbfiSrEUWhJbsDWEGyua7hC5LRJurv/RpT9A11eTYxZJaauviO1CZgQ2m9XfyoKprcJnOz+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6sZQrtY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754897655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=q9vbhTv66yOj5MFJijPbRoZX2tGXwBihvDtRn9EhSDY=;
+	b=M6sZQrtYKsiI4l7FtykzUoWksL/1AvlKxG36uIgiyJS+G987qmQ2658v/HrEBPRCb/w4pQ
+	cm15f0KWUuybV3u86/6TvxGhXLWlVzkwIvIqgzZ3xpX5lCTsurJov+/Mdsv5vclgOIgm1e
+	+uC2gVe6LgLXRbJaHlPr4tk0+SFCPf0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-KjcMOzISNPWa7lE9yECnSQ-1; Mon,
+ 11 Aug 2025 03:34:10 -0400
+X-MC-Unique: KjcMOzISNPWa7lE9yECnSQ-1
+X-Mimecast-MFC-AGG-ID: KjcMOzISNPWa7lE9yECnSQ_1754897649
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99F1D18002C1;
+	Mon, 11 Aug 2025 07:34:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1BDA3180047F;
+	Mon, 11 Aug 2025 07:34:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix collect_sample() to handle any iterator type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=68999cd0 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=bLk-5xynAAAA:8 a=COk6AnOGAAAA:8
- a=sYN47ipuJMKu5r72jOkA:9 a=cvBusfyB2V15izCimMoJ:22 a=zSyb8xVVt2t83sZkrLMb:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: LvuBhDWOtgT0VijwQWxeMXoNLJ4TfqVS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX3O9LajmnJ3r6
- nEHp/NpK0CLj7QHB2F2lLEBsTiZiZFnoN+3Y9bWHVTRgXS3g1WzPt1XY4C0rEflXgMAl4Ron5rp
- VFRQSZ/QMEkx2ibXHmMef/dou2xDjkVfPE2H04WlE3ZYsMPJy+iYOfbxeVLElg5jVuFy9gbkYYb
- ufQeHtheS917zRegQzPYfvKKToraM8UwOKHfVMKA15lCz8mk//zsjtQEB/Ee8MGAyp1YR7Dg/7+
- DRu8k/vzU/MULFp6iiIfE2zU9+GTpES+SNHWgtAsceUhDO9pJ/V/cwgG4zjPxyon6E5PCPIOocE
- 6HZvRjC0kfeWkXcJ+iJwLxwlEY7/ZmSW3H7IOFwOs6Z7tbuosvbdp7YQ5fBKOf0sjMCXfNwqIz2
- fJMrkRlN
-X-Proofpoint-GUID: LvuBhDWOtgT0VijwQWxeMXoNLJ4TfqVS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <324663.1754897644.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 11 Aug 2025 08:34:04 +0100
+Message-ID: <324664.1754897644@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-ESI/MSI is a performance optimization feature that provides dedicated
-interrupts per MCQ hardware queue . This is optional feature and
-UFS MCQ should work with and without ESI feature.
+collect_sample() is used to gather samples of the data in a Write op for
+analysis to try and determine if the compression algorithm is likely to
+achieve anything more quickly than actually running the compression
+algorithm.
 
-Commit e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
-brings a regression in ESI (Enhanced System Interrupt) configuration
-that causes a null pointer dereference when Platform MSI allocation
-fails.
+However, collect_sample() assumes that the data it is going to be sampling
+is stored in an ITER_XARRAY-type iterator (which it now should never be)
+and doesn't actually check that it is before accessing the underlying
+xarray directly.
 
-The issue occurs in when platform_device_msi_init_and_alloc_irqs()
-in ufs_qcom_config_esi() fails (returns -EINVAL) but the current
-code uses __free() macro for automatic cleanup free MSI resources
-that were never successfully allocated.
+Fix this by replacing the code with a loop that just uses the standard
+iterator functions to sample every other 2KiB block, skipping the
+intervening ones.  It's not quite the same as the previous algorithm as it
+doesn't necessarily align to the pages within an ordinary write from the
+pagecache.
 
-Unable to handle kernel NULL pointer dereference at virtual
-address 0000000000000008
+Note that the btrfs code from which this was derived samples the inode's
+pagecache directly rather than the iterator - but that doesn't necessarily
+work for network filesystems if O_DIRECT is in operation.
 
-  Call trace:
-  mutex_lock+0xc/0x54 (P)
-  platform_device_msi_free_irqs_all+0x1c/0x40
-  ufs_qcom_config_esi+0x1d0/0x220 [ufs_qcom]
-  ufshcd_config_mcq+0x28/0x104
-  ufshcd_init+0xa3c/0xf40
-  ufshcd_pltfrm_init+0x504/0x7d4
-  ufs_qcom_probe+0x20/0x58 [ufs_qcom]
-
-Fix by restructuring the ESI configuration to try MSI allocation
-first, before any other resource allocation and instead use
-explicit cleanup instead of __free() macro to avoid cleanup
-of unallocated resources.
-
-Tested on SM8750 platform with MCQ enabled, both with and without
-Platform ESI support.
-
-Fixes: e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+Fixes: 94ae8c3fee94 ("smb: client: compress: LZ77 code improvements cleanu=
+p")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Enzo Matsumiya <ematsumiya@suse.de>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: Tom Talpey <tom@talpey.com>
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
 ---
-Changes from v1:
-1. Added correct sha1 of change id which caused regression.
-2. Address Markus comment to add fixes: and Cc: tags.
----
- drivers/ufs/host/ufs-qcom.c | 39 ++++++++++++++-----------------------
- 1 file changed, 15 insertions(+), 24 deletions(-)
+ fs/smb/client/compress.c |   71 +++++++++++++----------------------------=
+------
+ 1 file changed, 21 insertions(+), 50 deletions(-)
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 4bbe4de1679b..bef8dc12de20 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -2078,17 +2078,6 @@ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
- 	return IRQ_HANDLED;
+diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
+index 766b4de13da7..db709f5cd2e1 100644
+--- a/fs/smb/client/compress.c
++++ b/fs/smb/client/compress.c
+@@ -155,58 +155,29 @@ static int cmp_bkt(const void *_a, const void *_b)
  }
+ =
 
--static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
--{
--	for (struct ufs_qcom_irq *q = uqi; q->irq; q++)
--		devm_free_irq(q->hba->dev, q->irq, q->hba);
--
--	platform_device_msi_free_irqs_all(uqi->hba->dev);
--	devm_kfree(uqi->hba->dev, uqi);
--}
--
--DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T) ufs_qcom_irq_free(_T))
--
- static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ /*
+- * TODO:
+- * Support other iter types, if required.
+- * Only ITER_XARRAY is supported for now.
++ * Collect some 2K samples with 2K gaps between.
+  */
+-static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *s=
+ample)
++static int collect_sample(const struct iov_iter *source, ssize_t max, u8 =
+*sample)
  {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-@@ -2103,18 +2092,18 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
- 	 */
- 	nr_irqs = hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
-
--	struct ufs_qcom_irq *qi __free(ufs_qcom_irq) =
--		devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
--	if (!qi)
--		return -ENOMEM;
--	/* Preset so __free() has a pointer to hba in all error paths */
--	qi[0].hba = hba;
+-	struct folio *folios[16], *folio;
+-	unsigned int nr, i, j, npages;
+-	loff_t start =3D iter->xarray_start + iter->iov_offset;
+-	pgoff_t last, index =3D start / PAGE_SIZE;
+-	size_t len, off, foff;
+-	void *p;
+-	int s =3D 0;
 -
- 	ret = platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
- 						      ufs_qcom_write_msi_msg);
- 	if (ret) {
--		dev_err(hba->dev, "Failed to request Platform MSI %d\n", ret);
--		return ret;
-+		dev_warn(hba->dev, "Platform MSI not supported or failed, continuing without ESI\n");
-+		return ret; /* Continue without ESI */
+-	last =3D (start + max - 1) / PAGE_SIZE;
+-	do {
+-		nr =3D xa_extract(iter->xarray, (void **)folios, index, last, ARRAY_SIZ=
+E(folios),
+-				XA_PRESENT);
+-		if (nr =3D=3D 0)
+-			return -EIO;
+-
+-		for (i =3D 0; i < nr; i++) {
+-			folio =3D folios[i];
+-			npages =3D folio_nr_pages(folio);
+-			foff =3D start - folio_pos(folio);
+-			off =3D foff % PAGE_SIZE;
+-
+-			for (j =3D foff / PAGE_SIZE; j < npages; j++) {
+-				size_t len2;
+-
+-				len =3D min_t(size_t, max, PAGE_SIZE - off);
+-				len2 =3D min_t(size_t, len, SZ_2K);
+-
+-				p =3D kmap_local_page(folio_page(folio, j));
+-				memcpy(&sample[s], p, len2);
+-				kunmap_local(p);
+-
+-				s +=3D len2;
+-
+-				if (len2 < SZ_2K || s >=3D max - SZ_2K)
+-					return s;
+-
+-				max -=3D len;
+-				if (max <=3D 0)
+-					return s;
+-
+-				start +=3D len;
+-				off =3D 0;
+-				index++;
+-			}
+-		}
+-	} while (nr =3D=3D ARRAY_SIZE(folios));
++	struct iov_iter iter =3D *source;
++	size_t s =3D 0;
++
++	while (iov_iter_count(&iter) >=3D SZ_2K) {
++		size_t part =3D umin(umin(iov_iter_count(&iter), SZ_2K), max);
++		size_t n;
++
++		n =3D copy_from_iter(sample + s, part, &iter);
++		if (n !=3D part)
++			return -EFAULT;
++
++		s +=3D n;
++		max -=3D n;
++
++		if (iov_iter_count(&iter) < PAGE_SIZE - SZ_2K)
++			break;
++
++		iov_iter_advance(&iter, SZ_2K);
 +	}
-+
-+	struct ufs_qcom_irq *qi = devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
-+
-+	if (!qi) {
-+		platform_device_msi_free_irqs_all(hba->dev);
-+		return -ENOMEM;
- 	}
+ =
 
- 	for (int idx = 0; idx < nr_irqs; idx++) {
-@@ -2125,15 +2114,17 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
- 		ret = devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler,
- 				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
- 		if (ret) {
--			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err = %d\n",
-+			dev_err(hba->dev, "%s: Failed to request IRQ for %d, err = %d\n",
- 				__func__, qi[idx].irq, ret);
--			qi[idx].irq = 0;
-+			/* Free previously allocated IRQs */
-+			for (int j = 0; j < idx; j++)
-+				devm_free_irq(hba->dev, qi[j].irq, qi + j);
-+			platform_device_msi_free_irqs_all(hba->dev);
-+			devm_kfree(hba->dev, qi);
- 			return ret;
- 		}
- 	}
-
--	retain_and_null_ptr(qi);
--
- 	if (host->hw_ver.major >= 6) {
- 		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
- 			    REG_UFS_CFG3);
---
-2.48.1
+ 	return s;
+ }
 
 
