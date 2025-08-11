@@ -1,172 +1,159 @@
-Return-Path: <linux-kernel+bounces-762251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011E1B2040E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AA7B20419
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 491CD7AE15C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B153F18C136F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276C72BF3E0;
-	Mon, 11 Aug 2025 09:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820822D8798;
+	Mon, 11 Aug 2025 09:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="G/WZXrUq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BQK+ypFX"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NDDhxQz4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E9A223DE1;
-	Mon, 11 Aug 2025 09:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA7D23B610
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905399; cv=none; b=uXDrYBpfvfaZS+Lm69HxTWp+X8gl+iVR6IffmQOyFCk/8LBfSUj67sE46u/U9v93l7TUUj2fCDWa5vn4Wl7mA9iBpoWXV87zFNobU9AB0uPx5JcnGvY4js+OOmBeRogYh13uGPXkS5/9yGzjex6/rT11V+SQIG7+cEgQCe2qVwA=
+	t=1754905439; cv=none; b=cvrjC7BnWsDJ17nyMAMM80dDAFuD6oYmPwAVDSSOy0i8iKHLvTDpKW8W2kBsknmt/9ywOZI2aWpwiES/hQLF19nBevRJihRSQWUj4iGIiTUdDPNHqqvaopalnwhb3b82JBKRcr+buQtVoHDz7CCUu/tqPs0Hyvz5cgFehfgyOdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905399; c=relaxed/simple;
-	bh=TpwcyvJqFuTKzpCMzpKrBzm/g5kLEs2GB++CU4VVlHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPNzeYnYDh9HwP2en7wl5JNj2HGtQyhJdQRT7HqeEB1IS79qT6NBsIdvm7iS052fnHKnK6IXwddRMLcL5qOby7naCdAZHDVkrHgEDRamyCGvK7gjtGL7IkWCAe5UhziPVpQtKbvWyBJabvpQyhalqQ1s1sZWL19oNyqr0SqCbuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=G/WZXrUq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BQK+ypFX; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 7566D1300129;
-	Mon, 11 Aug 2025 05:43:12 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Mon, 11 Aug 2025 05:43:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1754905392; x=
-	1754912592; bh=VdjvmWy6iQXvtQ1GiKbzqztULu85VbiyFIL8fPU8btU=; b=G
-	/WZXrUqh9nsKBdFTWEfHdbeqxbH3ManDGS0mzft3EVCv+32+GusH8VCChlayvYlu
-	i8XqMjj5F3ltL81Qex9gLEOj3d56rW8y++gOjxE0unJgEeAmhkYeDELDDnBcwWBm
-	5CxsLfUbCxivxpD3zFKKoCHK9Ln7uwFCMsJ2Lz/h8Be3voXaKW9TcBFm93pQKbI1
-	+kg1aIJ0Sq2hdLswGuyNDbx0RLIIP0CMVUHdTjrVAa+7++QwgseI7tO30h6hS4DY
-	1OWQQWVR5l77vkIvCEu+JKx2Uv+03PngMi69tFvI7iradTMGXcwO5qYKKAmm0ipc
-	l014vUhZ64Ll/lRUqGmqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1754905392; x=1754912592; bh=VdjvmWy6iQXvtQ1GiKbzqztULu85VbiyFIL
-	8fPU8btU=; b=BQK+ypFXPOrbDUTH5B4wnAvNnNtfw78A8OtplJWKdEDwTYtfcm1
-	mdZa/C4afcYNT5RKDSblmk6uwk5WGjqDsNYwMHcnPbVLMHJX+o/wtl39U29RyvcM
-	XdRE08fuGYdiBTlJuN3Zt7M7eYwLn00p8CzsN9ib6pJrehO4FWB9+DulPEz+a3ls
-	1yo8IweN6EgazJraQu10YCBpHHjnBDKk7SZd7XaqHG+w+Iu16/2PwVc5DdmW9876
-	LdAOEr6htEk9SKaRSQ43vGuE2pCcYxpO+n6uJJL39AFuR2Na6lk2j0vydv4uMMae
-	AOn5qR0/fc6UoTExIk4A4unytXMogWFx7sQ==
-X-ME-Sender: <xms:LbuZaBRkxOnx6SpBT0QfT3s9t5SzxR-oPLhvu0ZHJpau-aa066FUUg>
-    <xme:LbuZaNsc4bC5lAEpmlPiVx4gnva2b44-Zmx2uMqNgiSWDLJfMT05Rb_TAOllkLlHU
-    U6y2o3l9yA1bPBTij8>
-X-ME-Received: <xmr:LbuZaNk8yYai-XvLMSRc4gREbiO_Tpta32YgUk1-0sO9HaPDmGS8njyXHK2q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvuddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeh
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgvrhhnvghlsehprghnkhgrjh
-    hrrghghhgrvhdrtghomhdprhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtoh
-    epsggrohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphht
-    thhopehvsggrsghkrgesshhushgvrdgtiidprhgtphhtthhopeiiihihsehnvhhiughirg
-    drtghomhdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    uggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhope
-    hmhhhotghkohesshhushgvrdgtohhm
-X-ME-Proxy: <xmx:LbuZaDJbQGaLdnwev2IPfL5uOUvnRSEIFmb59B-gJ2praKYD8hqgPQ>
-    <xmx:LbuZaN6qzYaDRnyyLkHcnk-r5M3-cwVYLwQvcCCprm4d1frtQsIDug>
-    <xmx:LbuZaD0pbxsjkR-8UrFYtK7ZlsBdpuvJg109DZN61JSFJ6-38xspxg>
-    <xmx:LbuZaNOCGd4ZT8bdu-31kNEme9g00sMKqrISutGRJrxZSGYnZiGMkA>
-    <xmx:MLuZaKRuqoK3mFiJGexCZYWZqsudz8TcN55vbnt4rHxNO9kAFX3Y9LoR>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 05:43:08 -0400 (EDT)
-Date: Mon, 11 Aug 2025 10:43:06 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
-Message-ID: <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
-References: <20250811084113.647267-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1754905439; c=relaxed/simple;
+	bh=Sxnvn1L0u1cdREZGo+HUE8ZUYQoYn3+f4oVXxkukJtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MooxBCTAfWPliyybUbQ+Ab5V6MFAqDAw7M8oL4aRTQ6oF5O5005QFWcjVXGJlDgldKLu7hN3eLfI7RSCBBXmIKuREY42e2xUws7ednuZaYFcI9cm+PrpXNVE7WJraX/0HHu8k9MJRJH2AMGCsBVlkOmI/6dpa54tSM6rENTqqsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NDDhxQz4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9d8xN019036;
+	Mon, 11 Aug 2025 09:43:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lUcwRGg0z+w2vYeXxV6IG+A/Mtt9R+8aJIYLQYOBRnE=; b=NDDhxQz4yIjrPIRx
+	vT2VfVSfXVE5q1OcmkIRvXR/T9+jX3gR2A90tnEGENt6cYK7cKsSr7YgyS4fqM5A
+	NgiVrxmmKQnPy+mtNwsKsaPYW+uq/nrcY4uIObH16qjJ9htEB+Dp+0EOx9jKOs+Y
+	cTziZ5uv6LzQHsg2ge8czRtjkgLUxfGDAwkpFMvVmxdQcNidKL0h0bprjAch67c+
+	aE4/snQ9yvUlU7rQMCvr69MCq37RqgFowt/8NgGbt3MVy1JOFJAWOikpjn7H6OW7
+	TZ380/snhllH6Wbew8B7+pNeV35vz0jC7mKOMPvvhw+qN45wcJcWTbyjRIg6b5GM
+	p/tV5Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduuuj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 09:43:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57B9hL7B007780
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 09:43:21 GMT
+Received: from [10.218.24.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
+ 2025 02:43:17 -0700
+Message-ID: <29e080fd-5f9a-4760-876a-a6ccef33129f@quicinc.com>
+Date: Mon, 11 Aug 2025 15:13:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811084113.647267-1-kernel@pankajraghav.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: swap: check for xa_zero_entry() on vma in swapoff
+ path
+To: David Hildenbrand <david@redhat.com>, <akpm@linux-foundation.org>,
+        <shikemeng@huaweicloud.com>, <kasong@tencent.com>, <nphamcs@gmail.com>,
+        <bhe@redhat.com>, <baohua@kernel.org>, <chrisl@kernel.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        "Liam R. Howlett"
+	<Liam.Howlett@Oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20250808092156.1918973-1-quic_charante@quicinc.com>
+ <dedf7436-9afa-47f6-b676-88f2dd8b638b@redhat.com>
+ <f008107a-2741-476d-9e32-ae9fc0f81838@redhat.com>
+Content-Language: en-US
+From: Charan Teja Kalla <quic_charante@quicinc.com>
+In-Reply-To: <f008107a-2741-476d-9e32-ae9fc0f81838@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=6899bb3a cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=wi6Mpm9A1vgHMwsftUIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: RpP4wT7mu8o0-CCJ6Sq7-VwrHMkEoVEE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX8NmacR4wshHU
+ H9cNnSHTNCJVPU298FG/utUGnx2mKnp6jA0z6GIsa10N2+lKDre9USM5gmEGmWcMU3kjA0HUri5
+ MLsZ+Ytz7iSWV1A7baBkwjDa5Q+5pEQkEYH9GNPVTxDUWJlSSP+fM6BO+Y+qO59xRUNbNwBS3nU
+ nmgyqLQnbj6awPfz91v05UcG4PBDoQzeWNjbib+tMAymOUn01KoGteLamakarWej9n6FpCYaCbP
+ o68OfHyJ7aUf6GaXXNfol9DdVjyiGUpugNiKJE0XCHLKuh20fJS5Wo2tGWgzzr7mPb0w8a6gyNq
+ v0qtkFPzy+dsJTSfDApDU5ik+dEm0dznFsKi2rlj8WzgBqkh5p/ejtO6g4twpgCYW/L04/x8v6f
+ dYNKwNqw
+X-Proofpoint-GUID: RpP4wT7mu8o0-CCJ6Sq7-VwrHMkEoVEE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090025
 
-On Mon, Aug 11, 2025 at 10:41:08AM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+Thanks David, for the reply!!
+On 8/8/2025 5:34 PM, David Hildenbrand wrote:
+>>         if (mpnt) {
+>>             mas_set_range(&vmi.mas, mpnt->vm_start, mpnt->vm_end - 1);
+>>             mas_store(&vmi.mas, XA_ZERO_ENTRY);
+>>             /* Avoid OOM iterating a broken tree */
+>>             set_bit(MMF_OOM_SKIP, &mm->flags);
+>>         }
+>>         /*
+>>          * The mm_struct is going to exit, but the locks will be dropped
+>>          * first.  Set the mm_struct as unstable is advisable as it is
+>>          * not fully initialised.
+>>          */
+>>         set_bit(MMF_UNSTABLE, &mm->flags);
+>>     }
+>>
+>> Shouldn't we just remove anything from the tree here that was not copied
+>> immediately?
 > 
-> Many places in the kernel need to zero out larger chunks, but the
-> maximum segment we can zero out at a time by ZERO_PAGE is limited by
-> PAGE_SIZE.
+> Another fix would be to just check MMF_UNSTABLE in unuse_mm(). But
+> having these MMF_UNSTABLE checks all over the place feels a bit like
+> whack-a-mole.
 > 
-> This concern was raised during the review of adding Large Block Size support
-> to XFS[2][3].
-> 
-> This is especially annoying in block devices and filesystems where
-> multiple ZERO_PAGEs are attached to the bio in different bvecs. With multipage
-> bvec support in block layer, it is much more efficient to send out
-> larger zero pages as a part of single bvec.
-> 
-> Some examples of places in the kernel where this could be useful:
-> - blkdev_issue_zero_pages()
-> - iomap_dio_zero()
-> - vmalloc.c:zero_iter()
-> - rxperf_process_call()
-> - fscrypt_zeroout_range_inline_crypt()
-> - bch2_checksum_update()
-> ...
-> 
-> Usually huge_zero_folio is allocated on demand, and it will be
-> deallocated by the shrinker if there are no users of it left. At the moment,
-> huge_zero_folio infrastructure refcount is tied to the process lifetime
-> that created it. This might not work for bio layer as the completions
-> can be async and the process that created the huge_zero_folio might no
-> longer be alive. And, one of the main point that came during discussion
-> is to have something bigger than zero page as a drop-in replacement.
-> 
-> Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will always allocate
-> the huge_zero_folio, and disable the shrinker so that huge_zero_folio is
-> never freed.
-> This makes using the huge_zero_folio without having to pass any mm struct and does
-> not tie the lifetime of the zero folio to anything, making it a drop-in
-> replacement for ZERO_PAGE.
-> 
-> I have converted blkdev_issue_zero_pages() as an example as a part of
-> this series. I also noticed close to 4% performance improvement just by
-> replacing ZERO_PAGE with persistent huge_zero_folio.
-> 
-> I will send patches to individual subsystems using the huge_zero_folio
-> once this gets upstreamed.
-> 
-> Looking forward to some feedback.
+Seems MMF_UNSTABLE is the expectation per the commit,
+64c37e134b12("kernel: be more careful about dup_mmap() failures and
+uprobe registering"). Excerpt(s) from the commit message:
 
-Why does it need to be compile-time? Maybe whoever needs huge zero page
-would just call get_huge_zero_page()/folio() on initialization to get it
-pinned?
+This patch sets the MMF_OOM_SKIP to avoid the iteration of the vmas on
+the oom side (even though this is extremely unlikely to be selected as
+an oom victim in the race window), and __sets MMF_UNSTABLE to avoid
+other potential users from using a partially initialised mm_struct.
 
--- 
-Kiryl Shutsemau / Kirill A. Shutemov
+When registering vmas for uprobe, skip the vmas in an mm that is marked
+unstable.  Modifying a vma in an unstable mm may cause issues if the mm
+isn't fully initialised.__
+
+> Is there anything preventing us from just leaving a proper tree that
+> reflects reality in place before we drop the write lock?
+
+When you mean proper tree, is this about the your previous question? --
+Shouldn't we just remove anything from the tree here that was not copied
+immediately?
+
+Anyway, would request Liam/Lorenzo to comment on this.
+
+Thanks,
+Charan
+
 
