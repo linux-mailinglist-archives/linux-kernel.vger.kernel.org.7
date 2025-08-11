@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-763386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F052B21412
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B0CB2140E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D82A1902E19
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13ABF62238F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40A2E3AFF;
-	Mon, 11 Aug 2025 18:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D7C2E338D;
+	Mon, 11 Aug 2025 18:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M63EKbeM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I4S6b2Xb"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0252E2DFC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DDE2E2DD5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936264; cv=none; b=G6NE3auQAsBq+MeksylNe2i8Pwo9tNNcXUR+Nc/CUuBCUbF1jD1tRE00XEKbRG0mETlPF7HVGPyoGUuP0cZnykdqreSf3sxvhSR3OeLckG1H6KPY8StyzvixUv2LVmax4nVq84qW8CGJwrbFOmXybzpTy6PQ9LuT7liLq1PCNFU=
+	t=1754936263; cv=none; b=RKnv3eBXYvydiY+RVBUq5fEDFY4RrVDYfynlCp+4u6GEyTkWCYdvOUHPcDVJDGb0LIQR3MN5ClBbOTANueLYB4VnAbMvs/8fUgeO7qcba/JAtX6tvlAFNnRS1ql9bAv7PC55aqOR68XAR1CarBKFuH9PwwVhmQMNZbz9dfcnLsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936264; c=relaxed/simple;
-	bh=tiN+hbV8N2y0qYnYfboP2LM2eI9E8FHvJartB9jdL6E=;
+	s=arc-20240116; t=1754936263; c=relaxed/simple;
+	bh=H/CL40qmwKzhEkdxKODAv/wPY/R63z2nHv7mHfvz3BE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TvBdYQPRKvnRfG82BcM5RvFkRHRL6PQmNdMVLRuOk0oHqjOnmH1r67Rsbnug0aAJpj7ZUUySTGFjM5n6VCTfYxrj2EabBTdCT6qWoq0nNcyPMIlnqWivKI02cDN63FUnmPh9yhtKRo+EaU+S7EgXE4nps+LAgHTYTWxvHIGXPJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M63EKbeM; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=AclWWiX7eChRKuFkV43s3r0x+FkGf4TRp5xi3VbF3LywdWO5blKKlgrWLe6QD80fwNiE1E7opMQ/R4mYjeSwFo5NMfvBxbHldO+GdPunfu7L7hrP/LC1ZZSZiSXyinxphC8CEI+ckV2YT9Tnkxp0CydVPKhXCL+ZyWPNghR8wkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I4S6b2Xb; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754936263; x=1786472263;
+  t=1754936262; x=1786472262;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tiN+hbV8N2y0qYnYfboP2LM2eI9E8FHvJartB9jdL6E=;
-  b=M63EKbeMhYZolHgLT6Cfl4xWvCfLLDSQPZ8rVRFv7maSMI/rLckFV5ZG
-   2lqgm0OOPQHGd/YwnENFrv1xbAJoYmoAQzr4b6ydVm57lBrLscqLxmEpM
-   h4fQDVXga2kk/gpbFMBW7UHZr/Y/sOJh51lg0n8qkpIR84Pr3GaNE3rHy
-   P/xBmaG1qPJOQNpNSerxZ3rguFAzVAXRyj4+bIJ/NGGmyCEHdzL9AP+9X
-   CruAw1VoNcObsrYMc+HqK7POA9yJwOk5OK+n21wNF3KzvXV04RR/ZOwET
-   0JSURc/uolmupPKB5kiOxr1eBElkJloo4kuKpLuS2IHyftz98rqwTvv5s
-   Q==;
-X-CSE-ConnectionGUID: 9mjhvPibTtu+VwTp7vqAlw==
-X-CSE-MsgGUID: NDiGjEuEQB6agu1HRGq8JQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277431"
+  bh=H/CL40qmwKzhEkdxKODAv/wPY/R63z2nHv7mHfvz3BE=;
+  b=I4S6b2XbaPMijEFsZIfQ2PXjAlZKV17A4ZGs/eR2gLn1CJpC0HiXyGbO
+   EHZFj8BjM5rZBdE1ThhvuPKpkgIEfGsWnz0OBK7tSQk6RAe81t/vxApJS
+   leNdsn/menM8De/0cHfYFITPjZ0ZHBGVlGSFXGHAIdfbUugJV6lkZOmYY
+   Zz4sz2oWxLif+1md6TsS2LRFVfYXiOZfHdqfa9xZR7yrhE9lQiNnFuCQf
+   L589YJnG85PAD1roj90tqnWXVFqpl0fd6Tm6nyYNOxqRX0Q7f5EoyO/H0
+   1ymWoaKXJvkQ+sJ41E96zU9AIv4/JIr17w6JU1dskVVgVoqv4HQaiox8j
+   w==;
+X-CSE-ConnectionGUID: LywiYNL/RI6b6UJHqaazOQ==
+X-CSE-MsgGUID: rQ6yctY8TBu0PHTuPOuQlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277436"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68277431"
+   d="scan'208";a="68277436"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:27 -0700
-X-CSE-ConnectionGUID: OoFydq4GRMuuVhIE5KtHQA==
-X-CSE-MsgGUID: hzh363I5Rlm/p216ei15RA==
+X-CSE-ConnectionGUID: KeR5gTGyTWGvigyQw77MXQ==
+X-CSE-MsgGUID: Ru68FjGoRr2iKKgRIeOpbQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="196825661"
+   d="scan'208";a="196825665"
 Received: from puneetse-mobl.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.221.229])
   by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:24 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v8 15/32] x86,fs/resctrl: Add an architectural hook called for each mount
-Date: Mon, 11 Aug 2025 11:16:49 -0700
-Message-ID: <20250811181709.6241-16-tony.luck@intel.com>
+Subject: [PATCH v8 16/32] x86,fs/resctrl: Add and initialize rdt_resource for package scope monitor
+Date: Mon, 11 Aug 2025 11:16:50 -0700
+Message-ID: <20250811181709.6241-17-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250811181709.6241-1-tony.luck@intel.com>
 References: <20250811181709.6241-1-tony.luck@intel.com>
@@ -86,83 +86,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enumeration of Intel telemetry events is an asyncronnous process involving
-several mutually dependent drivers added as auxiliary devices during
-the device_initcall() phase of Linux boot. The process completes after
-the probe functions for these drivers are called. But this happens after
-resctrl_arch_late_init() is executed.
+Add a new PERF_PKG resource and introduce package level scope for
+monitoring telemetry events so that CPU hotplug notifiers can build domains
+at the package granularity.
 
-Tracing the enumeration process shows that it does complete a full seven
-seconds before the earliest possible mount of the resctrl file system
-(when included in /etc/fstab for automatic mount by systemd).
-
-Add a hook at the beginning of the mount code that will be used
-to check for telemetry events and initialize if any are found.
-
-Call the hook on every attempted mount. But expectations are that
-most actions (like enumeration) will only need to be performed
-on the first call.
-
-The call is made with no locks held. Architecture code is responsible
-for any required locking.
+Use the physical package ID available via topology_physical_package_id()
+to identify the monitoring domains with package level scope. This enables
+user space to use:
+ /sys/devices/system/cpu/cpuX/topology/physical_package_id
+to identify the monitoring domain a CPU is associated with.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl.h            | 6 ++++++
- arch/x86/kernel/cpu/resctrl/core.c | 9 +++++++++
- fs/resctrl/rdtgroup.c              | 2 ++
- 3 files changed, 17 insertions(+)
+ include/linux/resctrl.h            |  2 ++
+ fs/resctrl/internal.h              |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c | 10 ++++++++++
+ fs/resctrl/rdtgroup.c              |  2 ++
+ 4 files changed, 16 insertions(+)
 
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 38809c497b44..19409227ccd0 100644
+index 19409227ccd0..61c73772a177 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -461,6 +461,12 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
- void resctrl_online_cpu(unsigned int cpu);
- void resctrl_offline_cpu(unsigned int cpu);
+@@ -53,6 +53,7 @@ enum resctrl_res_level {
+ 	RDT_RESOURCE_L2,
+ 	RDT_RESOURCE_MBA,
+ 	RDT_RESOURCE_SMBA,
++	RDT_RESOURCE_PERF_PKG,
  
-+/*
-+ * Architecture hook called at beginning of each file system mount attempt.
-+ * No locks are held.
-+ */
-+void resctrl_arch_pre_mount(void);
-+
+ 	/* Must be the last */
+ 	RDT_NUM_RESOURCES,
+@@ -252,6 +253,7 @@ enum resctrl_scope {
+ 	RESCTRL_L2_CACHE = 2,
+ 	RESCTRL_L3_CACHE = 3,
+ 	RESCTRL_L3_NODE,
++	RESCTRL_PACKAGE,
+ };
+ 
  /**
-  * resctrl_arch_rmid_read() - Read the eventid counter corresponding to rmid
-  *			      for this resource and domain.
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 00cd93661650..b16e2fc42b3f 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -240,6 +240,8 @@ struct rdtgroup {
+ 
+ #define RFTYPE_DEBUG			BIT(10)
+ 
++#define RFTYPE_RES_PERF_PKG		BIT(11)
++
+ #define RFTYPE_CTRL_INFO		(RFTYPE_INFO | RFTYPE_CTRL)
+ 
+ #define RFTYPE_MON_INFO			(RFTYPE_INFO | RFTYPE_MON)
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index f6fda15da9c1..480e381d416e 100644
+index 480e381d416e..ec29b7f250ab 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -718,6 +718,15 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
- 	return 0;
- }
+@@ -100,6 +100,14 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
+ 			.schema_fmt		= RESCTRL_SCHEMA_RANGE,
+ 		},
+ 	},
++	[RDT_RESOURCE_PERF_PKG] =
++	{
++		.r_resctrl = {
++			.name			= "PERF_PKG",
++			.mon_scope		= RESCTRL_PACKAGE,
++			.mon_domains		= mon_domain_init(RDT_RESOURCE_PERF_PKG),
++		},
++	},
+ };
  
-+void resctrl_arch_pre_mount(void)
-+{
-+	static atomic_t only_once = ATOMIC_INIT(0);
-+	int old = 0;
-+
-+	if (!atomic_try_cmpxchg(&only_once, &old, 1))
-+		return;
-+}
-+
- enum {
- 	RDT_FLAG_CMT,
- 	RDT_FLAG_MBM_TOTAL,
+ u32 resctrl_arch_system_num_rmid_idx(void)
+@@ -433,6 +441,8 @@ static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
+ 		return get_cpu_cacheinfo_id(cpu, scope);
+ 	case RESCTRL_L3_NODE:
+ 		return cpu_to_node(cpu);
++	case RESCTRL_PACKAGE:
++		return topology_physical_package_id(cpu);
+ 	default:
+ 		break;
+ 	}
 diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index b917d48a806a..31f9425783ef 100644
+index 31f9425783ef..26928ad0a35a 100644
 --- a/fs/resctrl/rdtgroup.c
 +++ b/fs/resctrl/rdtgroup.c
-@@ -2585,6 +2585,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 	struct rdt_resource *r;
- 	int ret;
+@@ -2195,6 +2195,8 @@ static unsigned long fflags_from_resource(struct rdt_resource *r)
+ 	case RDT_RESOURCE_MBA:
+ 	case RDT_RESOURCE_SMBA:
+ 		return RFTYPE_RES_MB;
++	case RDT_RESOURCE_PERF_PKG:
++		return RFTYPE_RES_PERF_PKG;
+ 	}
  
-+	resctrl_arch_pre_mount();
-+
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
- 	/*
+ 	return WARN_ON_ONCE(1);
 -- 
 2.50.1
 
