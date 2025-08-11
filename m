@@ -1,79 +1,188 @@
-Return-Path: <linux-kernel+bounces-763236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEE4B21227
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:36:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D77B2122E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092A01886F44
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74908188E1CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2A7296BA7;
-	Mon, 11 Aug 2025 16:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F66296BA2;
+	Mon, 11 Aug 2025 16:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDi+FP9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b="I7locnKZ"
+Received: from mail.w13.tutanota.de (mail.w13.tutanota.de [185.205.69.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9533B1494C3;
-	Mon, 11 Aug 2025 16:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3E12522B5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930009; cv=none; b=ofrpNjVegsXxXzAUCq8BhJe+BGlqf6wCA8GQhO3bcV4GEFL7aLeX7O5XYu9heVj+tBJXAv8eyi7ZJ4evaqw98+B0G9CjabGyGoPLoLExZgaX2b1+oOsZWz6lM9YRYpXlDSrIS4aTxKtZdYsN5mfeH9rDhTdqS80fEeare3vTFb0=
+	t=1754930020; cv=none; b=W9NAp6iru12O2cw41wQaB8Q0hnectJw4ldPzqfkac0qqESsbaWk1laPFapylCH3PfL4RRO2getbpIv6uX1fnQ+FtQPLGNirj6Rh8tmcSX+zTNP3CK22jiTW2c4mx8rg330GtaxyAzN3f2kBkk5OpZiwteai3+1XBrj+fqEmTMTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930009; c=relaxed/simple;
-	bh=DWcUTl2SHn7hqoaVo7YianA9NpidcOYnkPILUtfu+ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f3leEhEoVESsqGfozVlYznm9IpveItxLQyp+3aBGP/eCBJCQcQI7yGWDrW1XEnsIXbnJjRUVtzPm6zr2PTZnjGh68+qFPQ6XMq8+DWFL5+hOd1kJ0eRbbLZlgfnJTjWBZEQb76zVgr55zZjmJZAb5/knq38KpssSbHXYvz8PKYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDi+FP9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F337CC4CEED;
-	Mon, 11 Aug 2025 16:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754930009;
-	bh=DWcUTl2SHn7hqoaVo7YianA9NpidcOYnkPILUtfu+ps=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jDi+FP9fymM59E16Gk9pyLCUSHAzgYoWpj2Ku32MvF/2uINGQ4jeXGTfBcQtU5bpn
-	 lWSS6jO3B9+K9YyPT9OuiJPE1tBgZJz9kHme8+8/Igps0bW0JROgoAoE/tfpfTGTUs
-	 04DlxUoLDx5eJqV8zSqsqWyywL9qSJ3j3QJMcEMooWOIfcBGsjYwGw/DxZTkZrlDvW
-	 odjbdWCMqVDZ2taL1Gow6Jf+Wv7AAx379bRC+q/qA7erFAxFXWjIFewd+TL9O7mMzK
-	 k48GViiV59N3gHlE2bfW1gwLasCooZI7USvS2QiK9EY+a88T561B7N74mK+QVGhZpU
-	 AUrbsc7j5SeHg==
-Date: Mon, 11 Aug 2025 09:33:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jay Vosburgh <jv@jvosburgh.net>
-Cc: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Nikolay
- Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>, Shuah
- Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, David Wilder <wilder@us.ibm.com>
-Subject: Re: [PATCH net] bonding: don't set oif to bond dev when getting NS
- target destination
-Message-ID: <20250811093328.70343754@kernel.org>
-In-Reply-To: <783435.1754922439@famine>
-References: <20250811140358.2024-1-liuhangbin@gmail.com>
-	<783435.1754922439@famine>
+	s=arc-20240116; t=1754930020; c=relaxed/simple;
+	bh=ymm3oP923cbaro/PxAHWtqG5LLpNIoSkHuv304fQLxQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ZPyDye5A94QI68L55DCvPdgGNSVWPP6UwvEq5oI2OHccYzhqEpelHu7jEdm28nX4SpsJf8lOMskPQH6dSKd1h/pzfnDntvDZNvgqGq7p2jd6/8A6q1PRpBfHeDhoSlz0le6zy2Qb7AbWFU7+FQfpP7d1SgSzxYkDV4aZ3MZUbPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io; spf=pass smtp.mailfrom=tuta.io; dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b=I7locnKZ; arc=none smtp.client-ip=185.205.69.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuta.io
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w13.tutanota.de (Postfix) with ESMTP id 80498B0E0FDE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:33:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754930011;
+	s=s1; d=tuta.io;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
+	bh=5jWrnXN4VcbUsSjpG6KLH+gNLG1OTNZRhMF2RWICUsM=;
+	b=I7locnKZYL87oRFlatSSTU6Hdut8B8IVY/zp03IiwW55mKORzyJXYOsvRtFIvqjw
+	My+5TMp2jQlzBzy+nOLLQVU05YtTjM8N9TlPLXGhkg7Nn0/G3Nkf4yR2ZveNtpd99Of
+	6rwMGxI1PHoGbAfZUpqZsRB9aQoEM59YQcV4OSsIdLgt13keNeCnSu7HA7tcby7Vna9
+	5Eu6T/0LiXo7MERhxjkrF8jMd+9a3gyNghVvYj9Ut8qUxCJbL0gMRRV/9pKomzJGCqo
+	NqRvMYHT4UmNPSPRzhRFSQc86QPDKPbz4L3vmP/XvILxmPIz5rktoM5Ziaips5h/bPP
+	AvTOQ6Z/iw==
+Date: Mon, 11 Aug 2025 18:33:31 +0200 (CEST)
+From: howtobserve1@tuta.io
+To: Kyle Manna <kyle@kylemanna.com>
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	Jason Baron <jbaron@akamai.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	James Jernigan <jameswestonjernigan@gmail.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Yi1 Lai <yi1.lai@intel.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <OXOyh9y--F-9@tuta.io>
+In-Reply-To: <c2f98618-4197-41c3-9a2b-2c59841dd543@app.fastmail.com>
+References: <20250802060112.363506-1-kyle@kylemanna.com> <c2f98618-4197-41c3-9a2b-2c59841dd543@app.fastmail.com>
+Subject: Re: [PATCH v2] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
+ for EDAC
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 11 Aug 2025 07:27:19 -0700 Jay Vosburgh wrote:
-> 	Generically, I'm wondering if test updates should be separate
-> patches from the functional changes as a general policy.
+Hi All,
 
-Yes, not sure if we made it a hard requirement, but I think it's our
-preference. It is the reason why we don't require cover letters for
-submissions with 2 patches.
+Confirmation EDAC works on 8P+4E (DID 0x4668) configuration as well, using =
+ECC DDR4 UDIMM sticks. Validated on i7 12700 and Kingston 2666MHz ECC RAM.
 
-Hangbin, please update config for bonding tests, looks like vlans 
-are not enabled there today.
--- 
-pw-bot: cr
+Raw logs:
+~ > sudo dmesg | grep -i -e edac -e ecc -e ie31200 | grep -v systemd | grep=
+ edac
+[=C2=A0=C2=A0=C2=A0 7.834839] caller ie31200_init_one+0x1b5/0x480 [ie31200_=
+edac] mapping multiple BARs
+[=C2=A0=C2=A0=C2=A0 7.839585] EDAC MC0: Giving out device to module ie31200=
+_edac controller IE31200: DEV 0000:00:00.0 (INTERRUPT)
+[=C2=A0=C2=A0=C2=A0 7.843230] EDAC MC1: Giving out device to module ie31200=
+_edac controller IE31200_1: DEV 0000:00:00.0 (INTERRUPT)
+
+~ > grep . /sys/devices/system/edac/mc/mc*/*_count
+/sys/devices/system/edac/mc/mc0/ce_count:0
+/sys/devices/system/edac/mc/mc0/ce_noinfo_count:0
+/sys/devices/system/edac/mc/mc0/ue_count:0
+/sys/devices/system/edac/mc/mc0/ue_noinfo_count:0
+/sys/devices/system/edac/mc/mc1/ce_count:0
+/sys/devices/system/edac/mc/mc1/ce_noinfo_count:0
+/sys/devices/system/edac/mc/mc1/ue_count:0
+/sys/devices/system/edac/mc/mc1/ue_noinfo_count:0
+
+~ > ras-mc-ctl --error-count
+Label=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 UE
+mc#1csrow#1channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 0
+mc#1csrow#0channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 0
+mc#0csrow#0channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 0
+mc#0csrow#1channel#0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 0
+
+~ > ras-mc-ctl --status
+ras-mc-ctl: drivers are loaded.
+
+~ > ras-mc-ctl --mainboard
+ras-mc-ctl: mainboard: DFI Inc. model ADS310
+
+~ > lscpu
+Architecture:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 x86_64
+=C2=A0 CPU op-mode(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 32-bit, 64-bit
+=C2=A0 Address sizes:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 46 bits physical, 48 bits virtual
+=C2=A0 Byte Order:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Little Endian
+CPU(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 20
+=C2=A0 On-line CPU(s) list:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0-19
+Vendor ID:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GenuineIntel
+=C2=A0 Model name:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 12th Gen Intel(R) Core(TM) i7-12700
+=C2=A0=C2=A0=C2=A0 CPU family:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6
+=C2=A0=C2=A0=C2=A0 Model:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 151
+=C2=A0=C2=A0=C2=A0 Thread(s) per core:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2
+=C2=A0=C2=A0=C2=A0 Core(s) per socket:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 12
+=C2=A0=C2=A0=C2=A0 Socket(s):=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1
+=C2=A0=C2=A0=C2=A0 Stepping:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2
+=C2=A0=C2=A0=C2=A0 CPU(s) scaling MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 22%
+=C2=A0=C2=A0=C2=A0 CPU max MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4900.0000
+=C2=A0=C2=A0=C2=A0 CPU min MHz:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 800.0000
+=C2=A0=C2=A0=C2=A0 BogoMIPS:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 4225.00
+
+Thanks
+Aug 12, 2025, 00:19 by kyle@kylemanna.com:
+
+> On Fri, Aug 1, 2025, at 23:01, Kyle Manna wrote:
+>
+>> Host Device IDs (DID0) correspond to:
+>> * Intel Core i7-12700K
+>> * Intel Core i5-12600K
+>>
+>> See documentation:
+>> * 12th Generation Intel=C2=AE Core=E2=84=A2 Processors Datasheet
+>>  * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
+>>  * https://edc.intel.com/output/DownloadPdfDocument?id=3D8297 (PDF)
+>>
+>> Signed-off-by: Kyle Manna <kyle@kylemanna.com>
+>> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+>> ---
+>> Changes in v2:
+>> - Rebased on top of a6923c06a3b2e2c534ae28c53a7531e76cc95cfa
+>> - Added comments to Device ID definitions as requested
+>> - Added Reviewed-by tag from Qiuxu Zhuo
+>>
+>>  drivers/edac/ie31200_edac.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>
+> Hi Tony, Jason,
+>
+> Gentle ping on this small EDAC/ie31200 change that adds two more Alder La=
+ke-S device IDs for ECC-capable part.
+>
+> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+>
+> Could you please pick this up for the EDAC tree (ras edac-for-next)?
+>
+> Thanks,
+> - Kyle
+>
+
 
