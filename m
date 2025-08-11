@@ -1,175 +1,121 @@
-Return-Path: <linux-kernel+bounces-763556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E3EB2168F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6CCB21695
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFAA1A2404B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98A21A24293
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30542DAFBE;
-	Mon, 11 Aug 2025 20:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4252E0B5A;
+	Mon, 11 Aug 2025 20:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="msI8tNLj"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EL4oCX7r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB4B2DCBFC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6E54EB38;
+	Mon, 11 Aug 2025 20:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754944529; cv=none; b=oY9M5i+zV4WuOuDitdR1c8EECi/2Cv8HnmGPzo9v3ZRV9f97GnD36OGwkT7lqoDXE1Tc4IF9y3659km/AmW/OUGGLA4OVMaDzSUVrMk2ijxNUpF0kJo9BIot3w53REe3ft17vez8iIK9/ycZAmejrYR91ekG9jdc0WjRMB2+Xt4=
+	t=1754944577; cv=none; b=ZSaoZetNdPcq6EbgLZjPYO8J0s0pNZNvxqLqsxrgtDHlmrR9+bvXLhIsEqDy3IEDqse1b3n4XksW1ZCjLrD+3F8VPNZaEQ+otDOXSwsQnZU6IS8DLB6jb+wIas7qzCKmQkZBuXoYniIB4rrYBs5zQ8itEZfo/jB01yC6txQ8Vkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754944529; c=relaxed/simple;
-	bh=QpDf+elt9M9TKmobx1BaTq9lS4qdM3lH4ej26Ym52hk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lBxTWO06ZrsVsKYNmh97cvCCOXJ+st6i/lsL+Z5ZbBargrPgWpZhj1OpghK+h5o7aRtyYMyY8h5K04rF2RL4ueMo/6fJ+ZWepHFB0AxNwVUvgS9vNp2i2UNOnr3zY5R2vjPOd9lMoGOShHliRj70rCg5VjNbJZG/kmG+6VhZse0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=msI8tNLj; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f5f70a07bso7495526a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754944527; x=1755549327; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vTpJfMamSKiMcyAgK8UySPyjbjczetycEUO9ZouvYAA=;
-        b=msI8tNLjcyFy4VHG60oFhYnyavOX3RcwRuANNxCrroYviZnOY1WHUvuca+TeVt/fpq
-         4i1G+dxq/Sf30EKKYjSvGN+ctttaf9nNUc82mOXFnO+N1BVYTcEm5Tq5lGStc5ySU+DV
-         sQvKyRXNqfG2RZ6MZuufxOzYvAwCibMNIhYIIuahmbeJyJwjY9Nt9JM5MBxK0TxHXrKi
-         byNL/jwDyownPUwMj0p4D6F7gPjJpUR9nYDZLU2OoiQNV0JmPvbbUWR9N1CAfuq/DXLj
-         c+QQqroiOU/ylxQa1IccPv7zXbBJcPD32fnmislMgTrJa/Q7lzJctgtfUHhZ5puM4Cwb
-         uRpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754944527; x=1755549327;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vTpJfMamSKiMcyAgK8UySPyjbjczetycEUO9ZouvYAA=;
-        b=Lf3bgdruggRTrBOlCnIlIWkE2kI2z0K/dEu+BY1rlu17X5/wGw5S7N55+Lbq4EY2H4
-         RgZbcm/5bTThId3VvKE4VpVl0T8iT3TIxFOK5wKlO/6xv5UvD0s7GGgNKGDfF+Hjtb/B
-         liW7zSOjZGwEA82a+MafjLFT1V7xRzkjPGyPKkMCfDwH2Dx1+VoSJt7e4V/uWXn+qu99
-         EeL9p8Bph2MPsB2JQGDFJAp6OW615DHpd4CBNMeIkDXaPqi5RpEbPGPTEnhvcJ1Ze2ii
-         4vG1kGp3x7RHJG4hxzeNpKUwxItwLZJuT7GUTIeIYORJQjM6BYmS7hnK70xB15OYz0zl
-         309w==
-X-Forwarded-Encrypted: i=1; AJvYcCVe3ZdnJ2fxHoHEfnhZxdTer477ynLVPjK2s3lpudefj6/Zq2k9DB9+goDSZEkeC/k+aEOJ1SA/66KwL3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfFnh4bDdCNw1RXSOuu0p7B25dzhObuRvmDN7RgANDHD7nPKY0
-	iwGeOloX2ps5XT5qkokIgyb2IuhUic1gQEE8WpVNLf1o6LHxiOaV3g18ZOb+1Zq/Py3PjUYt2lp
-	hfHDsZg==
-X-Google-Smtp-Source: AGHT+IHyhaALMr5XuJoOSrDVhdZmcQWkFVvTH6tfqb1JQAjECOzXqhG5Gursizm3hnRl2+Uz1FQ4pdr6quY=
-X-Received: from pjbph15.prod.google.com ([2002:a17:90b:3bcf:b0:321:b92a:7a39])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:540d:b0:311:ea13:2e70
- with SMTP id 98e67ed59e1d1-321839f1159mr19783183a91.14.1754944527061; Mon, 11
- Aug 2025 13:35:27 -0700 (PDT)
-Date: Mon, 11 Aug 2025 13:35:25 -0700
-In-Reply-To: <20250807201628.1185915-22-sagis@google.com>
+	s=arc-20240116; t=1754944577; c=relaxed/simple;
+	bh=MGbXEJllcmiA1o9/olIkysp980KeZrJPHmr5Txjw5k8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=REFsE9FYMTt+0En6aSygq/a6DtJNsZSlEudvTQWDYnqyJ9wqQBp9k7oKR3Ajzy7HYtSf9RtnNN5UUKyqGsC3/7zcKrIAGEkT+GnWXmyKd++yjY7KLSgONht+NUXJY5gh5kLXph/99G7lhQOS2KC1eh48ZZTLrnKlrXOQG5jnqes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EL4oCX7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A05C4CEED;
+	Mon, 11 Aug 2025 20:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754944576;
+	bh=MGbXEJllcmiA1o9/olIkysp980KeZrJPHmr5Txjw5k8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EL4oCX7rtG5UihKG9SQ5sqFlv77mUXIz6Rehh0p3+ZYjCeMdAq+bHS+rxRaGe72Mz
+	 /NVmSHN8CxxPsmvMSv87WcxQO3mChyr3+Me2G+EuePC2odJioPnawuK2hZQ3gy4M7S
+	 QAi6REtuzVzsQVz7JcthYlLgHcGgzDm6PAmP+Z5gmLoMTaNRbFWECmsgLVLyRXSpP3
+	 2m9lzhMMFjpnG7B5ZjUHU1lbJWepJXdXrkuitFlx6EmLwdgXhuwE1WhQreDTY9ZZ52
+	 4bn6lrvKQ8FpjmBJfdj1L4DnLYVLjfEABuJ1PbT0rrZiEcIKbHwfOFrXtp2z9/zVUA
+	 uucV5V4fPmy7Q==
+Date: Mon, 11 Aug 2025 21:36:07 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: jean-baptiste.maneyrol@tdk.com, David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_icm42600: change invalid data error to
+ EBUSY
+Message-ID: <20250811213607.7bf4b91c@jic23-huawei>
+In-Reply-To: <CAHp75Vcw5Q_ENzEJvH2+xHmPD-DUPAEaOOD2QoiCXoh7UiQJxQ@mail.gmail.com>
+References: <20250808-inv-icm42600-change-temperature-error-code-v1-1-986fbf63b77d@tdk.com>
+	<CAHp75Vcw5Q_ENzEJvH2+xHmPD-DUPAEaOOD2QoiCXoh7UiQJxQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-22-sagis@google.com>
-Message-ID: <aJpUDS4PSgLK8A16@google.com>
-Subject: Re: [PATCH v8 21/30] KVM: selftests: TDX: Verify the behavior when
- host consumes a TD private memory
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025, Sagi Shahar wrote:
-> +void verify_host_reading_private_mem(void)
-> +{
-> +	uint64_t second_host_read;
-> +	uint64_t first_host_read;
-> +	struct kvm_vcpu *vcpu;
-> +	vm_vaddr_t test_page;
-> +	uint64_t *host_virt;
-> +	struct kvm_vm *vm;
-> +
-> +	vm = td_create();
-> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-> +	vcpu = td_vcpu_add(vm, 0, guest_host_read_priv_mem);
-> +
-> +	test_page = vm_vaddr_alloc_page(vm);
-> +	TEST_ASSERT(test_page < BIT_ULL(32),
-> +		    "Test address should fit in 32 bits so it can be sent to the guest");
-> +
-> +	host_virt = addr_gva2hva(vm, test_page);
-> +	TEST_ASSERT(host_virt,
-> +		    "Guest address not found in guest memory regions\n");
-> +
-> +	tdx_test_host_read_private_mem_addr = test_page;
-> +	sync_global_to_guest(vm, tdx_test_host_read_private_mem_addr);
-> +
-> +	td_finalize(vm);
-> +
-> +	printf("Verifying host's behavior when reading TD private memory:\n");
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_io(vcpu, TDX_HOST_READ_PRIVATE_MEM_PORT_TEST,
-> +			   4, PORT_WRITE);
-> +	printf("\t ... Guest's variable contains 0xABCD\n");
+On Fri, 8 Aug 2025 14:35:00 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Don't use bare printf() for what is effectively debug info.
-> +
-> +	/* Host reads guest's variable. */
-> +	first_host_read = *host_virt;
-> +	printf("\t ... Host's read attempt value: %lu\n", first_host_read);
-> +
-> +	/* Guest updates variable and host rereads it. */
-> +	tdx_run(vcpu);
-> +	printf("\t ... Guest's variable updated to 0xFEDC\n");
-> +
-> +	second_host_read = *host_virt;
-> +	printf("\t ... Host's second read attempt value: %lu\n",
-> +	       second_host_read);
-> +
-> +	TEST_ASSERT(first_host_read == second_host_read,
-> +		    "Host did not read a fixed pattern\n");
-> +
-> +	printf("\t ... Fixed pattern was returned to the host\n");
-> +
-> +	kvm_vm_free(vm);
-> +	printf("\t ... PASSED\n");
-> +}
-> +
->  int main(int argc, char **argv)
->  {
->  	ksft_print_header();
-> @@ -966,7 +1045,7 @@ int main(int argc, char **argv)
->  	if (!is_tdx_enabled())
->  		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
->  
-> -	ksft_set_plan(13);
-> +	ksft_set_plan(14);
->  	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
->  			 "verify_td_lifecycle\n");
+> On Fri, Aug 8, 2025 at 9:40=E2=80=AFAM Jean-Baptiste Maneyrol via B4 Relay
+> <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
+> >
+> > Temperature sensor returns the temperature of the mechanical parts
+> > of the chip. If both accel and gyro are off, temperature sensor is =20
+>=20
+> the temperature
+>=20
+> > also automatically turned off and return invalid data. =20
+>=20
+> returns
+>=20
+> > In this case, returning EBUSY error code is better then EINVAL and =20
+>=20
+> -EBUSY
+> than
+> -EINVAL
+>=20
+> > indicates userspace that it needs to retry reading temperature in
+> > another context. =20
+>=20
+> ...
+>=20
+> > +       /*
+> > +        * Temperature data is invalid if both accel and gyro are off.
+> > +        * Return EBUSY in this case. =20
+>=20
+> -EBUSY
+>=20
+> > +        */
+> >         if (*temp =3D=3D INV_ICM42600_DATA_INVALID)
+> > -               ret =3D -EINVAL;
+> > +               ret =3D -EBUSY;
+> >
+> >  exit:
+> >         mutex_unlock(&st->lock); =20
+>=20
+> ...
+>=20
+> No need to resend just for the above, I hope Jonathan tweaks this
+> whilst applying.
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> (assuming typos and signs are fixed)
+>=20
 
-This _really_ feels like it wants to be a first mover for using fixtures and
-test suites: https://lore.kernel.org/all/ZjUwqEXPA5QVItyX@google.com
+Tweaked an applied to the fixes-togreg branch of iio.git.
+I've not marked this explicitly for stable as it's a kind of weird
+sort of 'fix'.  If anyone wants is backported, then maybe we can consider
+that once it's upstream
 
->  	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
-> @@ -993,6 +1072,8 @@ int main(int argc, char **argv)
->  			 "verify_mmio_writes\n");
->  	ksft_test_result(!run_in_new_process(&verify_td_cpuid_tdcall),
->  			 "verify_td_cpuid_tdcall\n");
-> +	ksft_test_result(!run_in_new_process(&verify_host_reading_private_mem),
-> +			 "verify_host_reading_private_mem\n");
->  
->  	ksft_finished();
->  	return 0;
-> -- 
-> 2.51.0.rc0.155.g4a0f42376b-goog
-> 
+Jonathan
 
