@@ -1,136 +1,135 @@
-Return-Path: <linux-kernel+bounces-762760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB4DB20AAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE57B20AB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6013C188E74E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E133BE494
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B1E1B87F2;
-	Mon, 11 Aug 2025 13:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12301DF99C;
+	Mon, 11 Aug 2025 13:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiI9+y4P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkFdkxxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F183C19DF5F;
-	Mon, 11 Aug 2025 13:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218C21E3DFE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920181; cv=none; b=BhrvnoP2J7CnK1mc8QR2xlDa2ubFhQnZ21LoSp4LVzf3lg2jsYc6QRLGJxUZFUcDg9r3uyZySpcH6Ir+oPyFqKBvoAd5g83ZJPwQEsOyFJVuBVN/puCabbQeHZCuw8/7zGZjw1wnMg5XeB3LFyhH0RPNUoHPj9+agYzUjWqyeBY=
+	t=1754920210; cv=none; b=u+e2BbuifQ8lbv/QdsBLT/HmU0jx4ZnKIXqLHPKXp1p1G06XPQILx9AIZjnyku0Bg6lXu2D2uVCTRf/ew7pS3P6jJKb05kXvquUTIUol/C1HIWj7VrlO5Ui0/umUjFQLgxD8bnCUz4ecsUTirq3w8AP5zvtrx1tgQpeOcUC+DtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920181; c=relaxed/simple;
-	bh=89ir4gbyOZrg9hEPgyanPf2svJoQtzXiPEaOmOIYzwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C0gFhJzwGIp092c0wEWao4wIigi5DqYY/JOqeZ5WS7MY+JFv67q/5/rG2RQxsWBoYJxk6zjWvgUB6cWpp9O3EyOSfC2EQTr6Efh+5mHtgXgLiuJj+yFcO2YHoE2kvKLvAwBEiJlDQ0tj2SE0IRSy2pjEfxPV+sf0CwfZ3xiG6O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiI9+y4P; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754920181; x=1786456181;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=89ir4gbyOZrg9hEPgyanPf2svJoQtzXiPEaOmOIYzwQ=;
-  b=OiI9+y4P0PdFykUcycSp7vUt3rTpmxxqhIBRQRaJGgIC4frdNfOhatUe
-   3MiKC0BZvjWcEmzDbaQHbpv5NasGSUlN45lKttvh7q2vGmxIS+Y+Y2CnO
-   F4Dp7qEn5FiY8IBjkulA7JwwWtjhhZisLzpIewGZSEUp6LKg4zamwMUHA
-   6RR+L0CEg3TAEHlED5aRvYCSYAPsRZohekLewSyqDEXQWA4z+c65JIH9Z
-   VXHMaamIfFaj/t0n7Fsr6/5UDTUUvBrEFHxg+DjI/YRO5xd6+44rnThuQ
-   GUFu0S2p28kEx+99ahyj+5DHU7+PLN1f+b+/f0SMrbK6ITU8GzMeKuS9m
-   Q==;
-X-CSE-ConnectionGUID: GoPUKobOQVCgINOE7Q35Mg==
-X-CSE-MsgGUID: pVEACYDWQ4O+PP6HrxT7vg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57042506"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57042506"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:49:40 -0700
-X-CSE-ConnectionGUID: UddAGeqfSQqV1r7d/wGDPg==
-X-CSE-MsgGUID: b6jiBsnTQ6eJF3Fh4C++hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165417321"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.51]) ([10.125.111.51])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:49:38 -0700
-Message-ID: <4f2f7e26-561e-483a-bc67-0cc29549b866@intel.com>
-Date: Mon, 11 Aug 2025 06:49:38 -0700
+	s=arc-20240116; t=1754920210; c=relaxed/simple;
+	bh=XnHbj9QBkLJy0W+qbz9eTgXoyKBZkhMdcwnehpypp8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ccDNzXMBM7/K9GO7KSgOcOQsdMCxZ2xOBHvVFaHNigVECmyejF6QiZxTzT6q28UVxe832SInFSvGLNvbX/NSSyn84Wtq4KKa+fgmLv+CTSQaSRZUKRvwIInIZBeKuLYqFBPiOA4/pvTKW1KEUHnfIytqutTYk+/d0AUxyHZFr+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkFdkxxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2091CC4CEF7;
+	Mon, 11 Aug 2025 13:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754920209;
+	bh=XnHbj9QBkLJy0W+qbz9eTgXoyKBZkhMdcwnehpypp8g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NkFdkxxvdgOvS9b8k6rkmHTgLWsUR6rhRZkv//2qpd4fqlfLJpgfwk2YGLGm8pnmt
+	 219WXyHQo8E5Nz0d+pXsffv42ZJR4eOujdM2zrfJgjbKHP6DAYLSsPM45F+XpR4BK8
+	 HmMRuAVbxZnHxMBi1m0prYB7fXWaofvgwVHhyDxMK4PAKwFGylClNHolhrTywOc4SB
+	 m1d6Jxj1+Bx9J58T+fR2lQ0Iu14TCEDho5ZAHw0YrLmDjDErIx3OGT1p/VIbCdeTWg
+	 OfZ9YfK05uAHlqsYW4eP7wZsjb5z7AohAFUX3ZbctH60y5CE7MlpKNKCr+dSSM0sWI
+	 hkKOqCzxX8v7Q==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Marc Zyngier <maz@kernel.org>
+Subject: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false positives
+Date: Mon, 11 Aug 2025 15:50:01 +0200
+Message-ID: <20250811135001.1333684-1-lpieralisi@kernel.org>
+X-Mailer: git-send-email 2.48.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Remove bouncing kprobes maintainer
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- linux-trace-kernel@vger.kernel.org, Naveen N Rao <naveen@kernel.org>
-References: <20250808180124.7DDE2ECD@davehans-spike.ostc.intel.com>
- <20250811155352.45ee7061226f3e85aeda54b7@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250811155352.45ee7061226f3e85aeda54b7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/10/25 23:53, Masami Hiramatsu (Google) wrote:
->> The kprobes MAINTAINERS entry includes anil.s.keshavamurthy@intel.com.
->> That address is bouncing. Remove it.
->>
->> This still leaves three other listed maintainers.
-> OK, should this be an urgent commit?
+L2 IST table entries are allocated with the kmalloc interface
+and their physical addresses are programmed in the GIC (either
+IST base address register or L1 IST table entries) but their
+virtual addresses are not stored in any kernel data structure
+because they are not needed at runtime - the L2 IST table entries
+are managed through system instructions but never dereferenced
+directly by the driver.
 
-It's not urgent in that it's obviously not breaking anything.
+This triggers kmemleak false positive reports:
 
-But if it was in code I maintain, I'd probably send it up to Linus to
-apply in the next -rc kernel instead of waiting for the next merge window.
+unreferenced object 0xffff00080039a000 (size 4096):
+  comm "swapper/0", pid 0, jiffies 4294892296
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 0):
+    kmemleak_alloc+0x34/0x40
+    __kmalloc_noprof+0x320/0x464
+    gicv5_irs_iste_alloc+0x1a4/0x484
+    gicv5_irq_lpi_domain_alloc+0xe4/0x194
+    irq_domain_alloc_irqs_parent+0x78/0xd8
+    gicv5_irq_ipi_domain_alloc+0x180/0x238
+    irq_domain_alloc_irqs_locked+0x238/0x7d4
+    __irq_domain_alloc_irqs+0x88/0x114
+    gicv5_of_init+0x284/0x37c
+    of_irq_init+0x3b8/0xb18
+    irqchip_init+0x18/0x40
+    init_IRQ+0x104/0x164
+    start_kernel+0x1a4/0x3d4
+    __primary_switched+0x8c/0x94
+
+Instruct kmemleak to ignore L2 IST table memory allocation
+virtual addresses to prevent these false positive reports.
+
+Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Closes: https://lore.kernel.org/lkml/cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com/
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v5-irs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+index ad1435a858a4..e8a576f66366 100644
+--- a/drivers/irqchip/irq-gic-v5-irs.c
++++ b/drivers/irqchip/irq-gic-v5-irs.c
+@@ -5,6 +5,7 @@
+ 
+ #define pr_fmt(fmt)	"GICv5 IRS: " fmt
+ 
++#include <linux/kmemleak.h>
+ #include <linux/log2.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
+ 		kfree(ist);
+ 		return ret;
+ 	}
++	kmemleak_ignore(ist);
+ 
+ 	return 0;
+ }
+@@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
+ 		kfree(l2ist);
+ 		return ret;
+ 	}
++	kmemleak_ignore(l2ist);
+ 
+ 	/*
+ 	 * Make sure we invalidate the cache line pulled before the IRS
+-- 
+2.48.0
+
 
