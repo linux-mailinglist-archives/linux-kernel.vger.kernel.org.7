@@ -1,154 +1,97 @@
-Return-Path: <linux-kernel+bounces-761828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E225B1FEDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:58:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CFAB1FEDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06BCB7AC110
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57DDC189AD35
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D406F2D662E;
-	Mon, 11 Aug 2025 05:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD013277009;
+	Mon, 11 Aug 2025 05:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lvJl+dx2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kHwpit0u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73B32BF010;
-	Mon, 11 Aug 2025 05:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C243F26FA77;
+	Mon, 11 Aug 2025 05:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754891832; cv=none; b=msIoAy+jVVd135IMes2vQK9L7aOfSH9Buk5AGZF+VTscph223RtY1Aln4gqUPMQJ/4mCkUwa9m/ahJgEmjEcbPkFcjSlqQhxh4CQtpC0Q6e61CJ/L86W10kChOFxar8gypkdMYQz4EGICva4Z9edcHGl6ehVC354o6NatCjPFns=
+	t=1754891927; cv=none; b=H/5/8++vQguBWpbcteGzjqIO/MwWdtcjRaqQLAoOZJfPx9zhcVB0OQO2rBAneJBq+HQWZCG0NliVWjwY5hxSDuIHxnuQuyFiJ1lpph8MQeKyhmCVWhIBtRMTbwDQO9fcyDUg40BESkbVNQTNxW6jjdnyRfEfCxpwXpi/3bZ8XBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754891832; c=relaxed/simple;
-	bh=6MldIzulSaPRY9KzTb4GmAUEjZN5pjxqmqYwU4caWBI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jxSHYXhY+yxI308znlKJos0ffJFt1lxLJKy2H8kWcRm3Dktf89xGUsqf+UDDPSXrMc9wwO4h9Jet01yj/cAqrvMEJowqL/dJrwxaeTHPLJb5n6MP9whUGwrDJoL/UTdmwBK7nhnnmPx7tEDdn61RVbLJObSEkAuxG9vHhXZCRu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lvJl+dx2; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1754891927; c=relaxed/simple;
+	bh=8iMvpF/6ZCtyrpqM9G7xHRgnKPg2HV2n/Pokozp/QNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbUG1ViIpadUB3FVqvmSNZGQFlJzkKkR7/ig+RHbWvVQ19gy7Zf3VoUR9QKYAj6lSq9ZeNP5XQOmz6bKxZ6JbVRbf6OBOTEDeBfGXqbf8O7tVqr9/TEl/ze9RaaNHEAYjUu9Idty4qDN+nKmJSU2LDfoXjEQQf1FKSmDP37AqOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kHwpit0u; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754891830; x=1786427830;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6MldIzulSaPRY9KzTb4GmAUEjZN5pjxqmqYwU4caWBI=;
-  b=lvJl+dx2xKcG+V1etuKGeyJucA2EEU2F8a3VexMmotT4bzTVl7TViG5u
-   tso60QCAPY7fsRv82q7DQz7fPtH9tXQ6jK36YkMZS3YIp28uKW/2a0A2J
-   ndJ0isptDpch0AQOqNrln0EPVyn7U3OnBn/XCkMXDC3vgy3fjtSgH5opX
-   qISwh3GP36IVNgMXlZSZJudeB2Pj3ILZ4xfRL6Og8ZEMorf9VUoTnnUE6
-   nwza9J/9skgsnANySn2ZLGgqN5InkKWeG7f447i+sbrwJ/hRwy+VZ7F1q
-   XHoeJYtF9Xo5KU1pNRYQb+ZrByI36XMbsqUJFXDAscinVtnrl/ZUVUDgH
+  t=1754891926; x=1786427926;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8iMvpF/6ZCtyrpqM9G7xHRgnKPg2HV2n/Pokozp/QNk=;
+  b=kHwpit0u532/aqcz6GXKiz4wS62B2yx5EKJo8yQkdM3cplBCtiM0bsXK
+   LNxwhQ2UftPho4tARKA3/GsRyvd4bNRdV2AkfzmbnCrGi+PiJOHgZExkh
+   Kz1HXcxhgvIc+gTytXr04Qlnl09+sjXeKw+ewwNUrFEFiiGYqihEpbDyG
+   nqFETZSzaCRLnb0kJwp18/+UEgkTffN9x4rnz/19zLeVoqx6wTaOeqrwm
+   iI0APHDymv4uAN6F4ebibrG+MKQhJeOfKGi25epOokFTK3xmZWt0NJdMx
+   JQYqI3/twpgyfpfCBjo+CcP8BWzCJKFCLXYBDKt0gRoAzuaieQX7Xcenz
    Q==;
-X-CSE-ConnectionGUID: qCNfIq69TqmMn5YIs0baMg==
-X-CSE-MsgGUID: KMYTk3uXS+S2FJTATJKE9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57043634"
+X-CSE-ConnectionGUID: 7psi+W/mSjKzvHriKx08Lg==
+X-CSE-MsgGUID: no5DXc2rSJKFVpuqIlNQ/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="44722634"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57043634"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2025 22:57:10 -0700
-X-CSE-ConnectionGUID: VGQYvMjETtaMCd3OBscLgA==
-X-CSE-MsgGUID: WuLENUXrRKibdQWcJTAcgQ==
+   d="scan'208";a="44722634"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2025 22:58:45 -0700
+X-CSE-ConnectionGUID: 1QrqDLT2TNm0pMRnd1YSiw==
+X-CSE-MsgGUID: 7h0fH+iEQfOAodnLKRosBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="171183774"
-Received: from spr.sh.intel.com ([10.112.230.239])
-  by orviesa005.jf.intel.com with ESMTP; 10 Aug 2025 22:57:08 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v2 6/6] perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
-Date: Mon, 11 Aug 2025 13:55:46 +0800
-Message-Id: <20250811055546.296678-7-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+   d="scan'208";a="169935705"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa003.fm.intel.com with ESMTP; 10 Aug 2025 22:58:43 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id EE91493; Mon, 11 Aug 2025 07:58:41 +0200 (CEST)
+Date: Mon, 11 Aug 2025 07:58:41 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-usb@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] thunderbolt: HMAC fix and cleanup
+Message-ID: <20250811055841.GR476609@black.igk.intel.com>
+References: <20250731192545.29869-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250731192545.29869-1-ebiggers@kernel.org>
 
-As same reason with previous patch, use "cyles" instead of "cycles:P"
-event by default to sample guest for "perf kvm top" command on Intel
-platforms.
+On Thu, Jul 31, 2025 at 12:25:43PM -0700, Eric Biggers wrote:
+> Patch 1 fixes the HMAC comparison in the thunderbolt driver to be
+> constant-time.
+> 
+> Patch 2 simplifies the HMAC computation in the thunderbolt driver by
+> using the library API instead of crypto_shash.  Note that this depends
+> on the HMAC-SHA256 library API that was merged for v6.17-rc1.
+> 
+> Eric Biggers (2):
+>   thunderbolt: Compare HMAC values in constant time
+>   thunderbolt: Use HMAC-SHA256 library instead of crypto_shash
 
-Reported-by: Kevin Tian <kevin.tian@intel.com>
-Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- tools/perf/builtin-kvm.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index c0d62add4996..f0f285763f19 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -2084,6 +2084,38 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
- 	return ret;
- }
- 
-+static int __cmd_top(int argc, const char **argv)
-+{
-+	int rec_argc, i = 0, ret;
-+	const char **rec_argv;
-+
-+	/*
-+	 * kvm_add_default_arch_event() may add 2 extra options, so
-+	 * allocate 2 more pointers in adavance.
-+	 */
-+	rec_argc = argc + 2;
-+	rec_argv = calloc(rec_argc + 1, sizeof(char *));
-+	if (!rec_argv)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < argc; i++)
-+		rec_argv[i] = STRDUP_FAIL_EXIT(argv[i]);
-+
-+	BUG_ON(i != argc);
-+
-+	ret = kvm_add_default_arch_event(&i, rec_argv);
-+	if (ret)
-+		goto EXIT;
-+
-+	ret = cmd_top(i, rec_argv);
-+
-+EXIT:
-+	for (i = 0; i < rec_argc; i++)
-+		free((void *)rec_argv[i]);
-+	free(rec_argv);
-+	return ret;
-+}
-+
- int cmd_kvm(int argc, const char **argv)
- {
- 	const char *file_name = NULL;
-@@ -2144,7 +2176,7 @@ int cmd_kvm(int argc, const char **argv)
- 	else if (strlen(argv[0]) > 2 && strstarts("diff", argv[0]))
- 		return cmd_diff(argc, argv);
- 	else if (!strcmp(argv[0], "top"))
--		return cmd_top(argc, argv);
-+		return __cmd_top(argc, argv);
- 	else if (strlen(argv[0]) > 2 && strstarts("buildid-list", argv[0]))
- 		return __cmd_buildid_list(file_name, argc, argv);
- #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
--- 
-2.34.1
-
+Both applied to thunderbolt.git/next, thanks!
 
