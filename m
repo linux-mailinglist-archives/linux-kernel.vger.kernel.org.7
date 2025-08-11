@@ -1,256 +1,74 @@
-Return-Path: <linux-kernel+bounces-762267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECF8B2043C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AB2B2050A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB7D17FF40
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:48:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF023A4443
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137DE23BCE3;
-	Mon, 11 Aug 2025 09:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WjvEYiRA"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE36F2253E9;
+	Mon, 11 Aug 2025 10:16:59 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8CB22DA0B;
-	Mon, 11 Aug 2025 09:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A6E1DF97F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905603; cv=none; b=J6k9W/qLwsLBSttsx1LdotmHCOEbEFeKEcfh49xuxjUkUgVEBS0ud50SB9UnSecsO1SJl7tVJ40QhVvJaJiDs8GD0SuidM+qCvSMd6A1d2K5XZNHWkq1cqGLEriuE3eUgiXTE8CS6sIeas/gR2XKfp1c3ep6TPJm300s5tA3uFo=
+	t=1754907419; cv=none; b=swF7EKpiVrXABse5cbW84/4VKt4fZcGS2OkvlS1vcBtq5SOkJJuEjGI3Zgq42fW77PyMzQGqwfKE0Nks1YyMLtEMvB5rhWzkDGpZj8w3YJS7FJERACF9DW0hHbJpj/OCEiOQ/ajhIc8aFgTcRZ3Oh5dSUJe+rgR4m2S4+ztEyuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905603; c=relaxed/simple;
-	bh=OLLstMAMRkfwN83y2RbzQ0JJu+NUX4T+Z0mqY9GTV0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eLQ3qlIaQ/EU+PkrTx4/XsVeXAC4jUPPCi8g3v5Bi+mXcigD6RZH/Hc0PBA3DIto6YDCkloEr9rHjMHsj1NkSHtECSzTzM4GwlgBw2RGOgVnKa5q/vojfrn+TleOTckaaeOzrXKJNoGPjC+dhXqrPV3LTzOPZHh324pzuqbVPj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WjvEYiRA; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8AF744327C;
-	Mon, 11 Aug 2025 09:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754905587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CvDR1lz19o0o9cINspVaDb6fr209Fw79mhQXFIrLWGE=;
-	b=WjvEYiRA+G2JvOacAceQjoT1jdvOMCW5Lpwt6OaFKBukLq1rRtWOwRce0Rs3McNK2hmSA1
-	JBDg48/n0au+/X0Mc1X4Jut5L2j8zh9iUDz05lTFpprY+I7RUf2YNgxmHuwJUu9LW5oqX9
-	F93TseV1JY0uWf7ob1+DAlrMNBYq5GWIsMoJ55ZGsNFZ55zPOtf8AZX3vwszs/gfJg2HYR
-	lEoJInd1ZaXsBqiSlVkGOuRtsduQZArw+NQnSY6bLxAj9PkwRWI0s2uxCSGoxgnvQmHc7L
-	+iDxqsqvv7OLWeXbPY44in6s3+8P69Larb6YmLWMy5wXSYSvPDAD7oSWW8K5wQ==
-Message-ID: <d52ac9f1-616b-427b-8742-781c4f5144d5@bootlin.com>
-Date: Mon, 11 Aug 2025 11:46:21 +0200
+	s=arc-20240116; t=1754907419; c=relaxed/simple;
+	bh=LSE9BMAlVcfDDCkIHpx1eHqXTO0CSRsabrkNnNPLaV4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=bYlp1NZSmAc9DfZ+qy/Qg4iDg2mpYCv7T8ATJebfoGecbKrd62FvFHDBad/eQq+f2ax0BUvfr0zae4F/Jk+fUu8zH2xuQSakqEqCWTMZClIwgzSHup4VXm1+ty8qigqmc9kBQ3VECoYikHp9REhpH4rQG6MjpFLGUhjm0Ngig/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+	by 156.147.23.53 with ESMTP; 11 Aug 2025 18:46:53 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.121 with ESMTP; 11 Aug 2025 18:46:53 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Steve French <sfrench@samba.org>,
+	linux-cifs@vger.kernel.org
+Cc: samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	gunho.lee@lge.com,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH 0/4] smb: Backport UAF fixes for v5.4.y
+Date: Mon, 11 Aug 2025 18:46:35 +0900
+Message-Id: <20250811094639.37446-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/8] drm/rcar_du: Adapt vkms writeback to new
- drm_writeback_connector
-To: Suraj Kandpal <suraj.kandpal@intel.com>, kernel-list@raspberrypi.com,
- amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Cc: ankit.k.nautiyal@intel.com, arun.r.murthy@intel.com,
- uma.shankar@intel.com, jani.nikula@intel.com,
- dmitry.baryshkov@oss.qualcomm.com, harry.wentland@amd.com,
- siqueira@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com,
- airlied@gmail.com, simona@ffwll.ch, liviu.dudau@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev, tzimmermann@suse.de,
- jessica.zhang@oss.qualcomm.com, sean@poorly.run,
- marijn.suijten@somainline.org, laurent.pinchart+renesas@ideasonboard.com,
- mcanal@igalia.com, dave.stevenson@raspberrypi.com,
- tomi.valkeinen+renesas@ideasonboard.com,
- kieran.bingham+renesas@ideasonboard.com
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-8-suraj.kandpal@intel.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250811092707.3986802-8-suraj.kandpal@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehpdhhvghloheplgfkrfggieemvddttddumeekiedumeegudegtdemtgekiedtmeehugeiudemieeffeelmeeiiegrieemvgdtjeehngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefhedprhgtphhtthhopehsuhhrrghjrdhkrghnughprghlsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhgvrhhnv
- ghlqdhlihhsthesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvggvughrvghnoheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhg
-X-GND-Sasl: louis.chauvet@bootlin.com
 
-I think the commit title is wrong.
+This patch series backports four fixes from v5.10.y and later to the v5.4.y,
+addressing potential UAF issues in the SMB client implementation.
+The patches have been adapted to account for the directory rename from fs/smb/client/*
+to fs/cifs/* in v5.4.y, ensuring compatibility with the target kernel.
 
-Le 11/08/2025 à 11:27, Suraj Kandpal a écrit :
-> Now that drm_writeback_connector is embedded with the drm_connector
-> adapt the rcar-du writeback functionality to this changes. This
-> includes changing the drm_writeback_connector to be changed to drm_connector
-> within the rcar_du_crtc.
-> Some other changes are done which are a result of the all the above
-> changes mentioned.
-> 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> ---
->   .../gpu/drm/renesas/rcar-du/rcar_du_crtc.h    |  4 ++--
->   .../drm/renesas/rcar-du/rcar_du_writeback.c   | 22 +++++++++++--------
->   2 files changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> index d0f38a8b3561..457c803d75bc 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-> @@ -72,11 +72,11 @@ struct rcar_du_crtc {
->   	const char *const *sources;
->   	unsigned int sources_count;
->   
-> -	struct drm_writeback_connector writeback;
-> +	struct drm_connector connector;
->   };
->   
->   #define to_rcar_crtc(c)		container_of(c, struct rcar_du_crtc, crtc)
-> -#define wb_to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, writeback)
-> +#define connector_to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, connector)
->   
->   /**
->    * struct rcar_du_crtc_state - Driver-specific CRTC state
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> index 9986a10e8114..95e6810612c2 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-> @@ -47,10 +47,12 @@ static int rcar_du_wb_conn_get_modes(struct drm_connector *connector)
->   				    dev->mode_config.max_height);
->   }
->   
-> -static int rcar_du_wb_prepare_job(struct drm_writeback_connector *connector,
-> +static int rcar_du_wb_prepare_job(struct drm_writeback_connector *wb_connector,
->   				  struct drm_writeback_job *job)
->   {
-> -	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(connector);
-> +	struct drm_connector *connector =
-> +		container_of(wb_connector, struct drm_connector, writeback);
-> +	struct rcar_du_crtc *rcrtc = connector_to_rcar_crtc(connector);
->   	struct rcar_du_wb_job *rjob;
->   	int ret;
->   
-> @@ -72,10 +74,12 @@ static int rcar_du_wb_prepare_job(struct drm_writeback_connector *connector,
->   	return 0;
->   }
->   
-> -static void rcar_du_wb_cleanup_job(struct drm_writeback_connector *connector,
-> +static void rcar_du_wb_cleanup_job(struct drm_writeback_connector *wb_connector,
->   				   struct drm_writeback_job *job)
->   {
-> -	struct rcar_du_crtc *rcrtc = wb_to_rcar_crtc(connector);
-> +	struct drm_connector *connector =
-> +		container_of(wb_connector, struct drm_connector, writeback);
-> +	struct rcar_du_crtc *rcrtc = connector_to_rcar_crtc(connector);
->   	struct rcar_du_wb_job *rjob = job->priv;
->   
->   	if (!job->fb)
-> @@ -199,7 +203,7 @@ static const u32 writeback_formats[] = {
->   int rcar_du_writeback_init(struct rcar_du_device *rcdu,
->   			   struct rcar_du_crtc *rcrtc)
->   {
-> -	struct drm_writeback_connector *wb_conn = &rcrtc->writeback;
-> +	struct drm_writeback_connector *wb_conn = &rcrtc->connector.writeback;
->   
->   	struct drm_encoder *encoder;
->   
-> @@ -212,7 +216,7 @@ int rcar_du_writeback_init(struct rcar_du_device *rcdu,
->   
->   	encoder->possible_crtcs = 1 << drm_crtc_index(&rcrtc->crtc);
->   
-> -	drm_connector_helper_add(&wb_conn->base,
-> +	drm_connector_helper_add(&rcrtc->connector,
->   				 &rcar_du_wb_conn_helper_funcs);
->   
->   	return drmm_writeback_connector_init(&rcdu->ddev, wb_conn,
-> @@ -231,7 +235,7 @@ void rcar_du_writeback_setup(struct rcar_du_crtc *rcrtc,
->   	struct drm_framebuffer *fb;
->   	unsigned int i;
->   
-> -	state = rcrtc->writeback.base.state;
-> +	state = rcrtc->connector.state;
->   	if (!state || !state->writeback_job)
->   		return;
->   
-> @@ -246,10 +250,10 @@ void rcar_du_writeback_setup(struct rcar_du_crtc *rcrtc,
->   		cfg->mem[i] = sg_dma_address(rjob->sg_tables[i].sgl)
->   			    + fb->offsets[i];
->   
-> -	drm_writeback_queue_job(&rcrtc->writeback, state);
-> +	drm_writeback_queue_job(&rcrtc->connector.writeback, state);
->   }
->   
->   void rcar_du_writeback_complete(struct rcar_du_crtc *rcrtc)
->   {
-> -	drm_writeback_signal_completion(&rcrtc->writeback, 0);
-> +	drm_writeback_signal_completion(&rcrtc->connector.writeback, 0);
->   }
+Paulo Alcantara (4):
+  smb: client: fix potential UAF in cifs_debug_files_proc_show()
+  smb: client: fix potential UAF in is_valid_oplock_break()
+  smb: client: fix potential UAF in smb2_is_valid_lease_break()
+  smb: client: fix potential UAF in cifs_stats_proc_write()
 
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ fs/cifs/cifs_debug.c | 4 ++++
+ fs/cifs/cifsglob.h   | 8 ++++++++
+ fs/cifs/misc.c       | 2 ++
+ fs/cifs/smb2misc.c   | 3 ++-
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
 
