@@ -1,148 +1,172 @@
-Return-Path: <linux-kernel+bounces-762098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25156B2021B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:44:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A318B2021F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CABA420601
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:43:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 833EF7A6DDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62562DC353;
-	Mon, 11 Aug 2025 08:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88492DC339;
+	Mon, 11 Aug 2025 08:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCuCONJc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSm9GQ7f"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA782DC34F;
-	Mon, 11 Aug 2025 08:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFF326B761;
+	Mon, 11 Aug 2025 08:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754901760; cv=none; b=J37zWMJJBPgTG75hF3o9+EtOcflJICRZpKe01qqnk+C6BRIv7bQC0dvwFjpKtehV3mvMmPUEQeeuoed25kScFUFo4yvDSe2Kc6eA+InDNibBR21OBwosaxg7Nu4nFPkDepahxNEh10rFGFrKHI56/5bPyd7BHMnWC4Mg3bH9eGM=
+	t=1754901881; cv=none; b=VehdezR87kP+2RfOJ6YGHGv+pi2lApUnTSm1DunjkH3dKqVYVCpnc4j4SaQ3ca9wHWj0zxuixxjFBtw+r+BaHvQXuffstuxQspPjtgt3Uo680+Wjmg56wwkgYPw0jbkefnC+UPZlgJi3hJXWxCdDBzS/7FXrTXLYLaoBgTNRVXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754901760; c=relaxed/simple;
-	bh=JDNNTD+SRMn0si8y5OWJhsNjo2s9JrTceyqBhranGMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LHT8UaUovdka+bo86GdU+wDqHtI0F8NqJdQZZEAcT+hTZoOm76kutq3dPJB8R4hZHXgMjEYyi+Re2Xkk2AHa5SwP+utCiutNdM0JVFJm8Yz9UUlIjkJ/DOFBHo3uXcOt3abbIEYaSs+sNC5pbOoO8Ha15XejA1lnip0UMtNBbbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCuCONJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3356C4CEED;
-	Mon, 11 Aug 2025 08:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754901757;
-	bh=JDNNTD+SRMn0si8y5OWJhsNjo2s9JrTceyqBhranGMc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gCuCONJc3Ct8dG4sC7W8BzlcNRGv+wX9YC/eGN2Pb9syJvegCiWF9DSXQbYGOdkya
-	 HYgt9dRKSlwyMU6MjsXOreUUuhSgApbDVlX8xn+CMEwNxzHlAw+L9S2ZdZcCEGgDkc
-	 LW19JxRSdyVM/phVMKeKWJ7xzW5vJIcdRsPEOnsVmKvhLTC441DjZ1v7TS73cF3Zkk
-	 oLikz77oe3u3jBxrOuGd1s5L4RLWmj34HDs7gUtNuC4X5iiEvb0rMLLqoVb3LzK+qf
-	 n3099Uk2Zx3UBQkRX3XlYDWbEIkRjiUwWXi8ZnLRHKHTGnD0iOr6XSmHkRaKJXRqQj
-	 cZp6AJ74xFCyw==
-Date: Mon, 11 Aug 2025 10:42:33 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>
-Cc: maz@kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1754901881; c=relaxed/simple;
+	bh=T5avuU9DL3vYnH4Ztt+0TxYl6qTo7v/Dlieof70baBY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=I7pIIzig322tL5wI7xTgv8zTEMyN77y2nykV8Faf97FBgZaAizqtEQP1CnZe70KHtXBQxdDdFCptZeiit66JWGGDICo3dIQDcbzMeiz2ydep1H6T47Mk39+AsYKN6CXuiIPd5s7JkXGmQCBF3FDAa7hNe4qfwDOLHUHrAKdb6+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSm9GQ7f; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-321a5d6d301so689145a91.3;
+        Mon, 11 Aug 2025 01:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754901879; x=1755506679; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l4xS1+WWkgaSv0c4yG6G8DZIxcOQsp2YpyFMtc/MpXw=;
+        b=jSm9GQ7f6Yd50tygeF/osDDvtY/3EG+5WFotJ08QKVPOhzYapWSWqPO/aTHP8q94jo
+         xbChlfIfAs0/ddcBpydHQG/y68pKeF+tns6WyXUdYENp63fulgF5bwtpZa7b7FRAC9U/
+         dQNEhQFBGMjPFOzl1AU9IMuEuIfsaFWXiM51BvVlp7YSGJN3tCDe7YIVCqnqYfnAVyV9
+         G8ewD0e9ECd9nYm2qdxRWFkkoZU8rPQmt5bjwF1oQ+mWJVJcNbemNWX01t39Pgagogh7
+         4YCIX7Ntkc5z4cFWqcHDGPDH3iLxbFrMnMmdCiO9OxDFwIv2techuX4jcnPZvkMAKxlw
+         s1ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754901879; x=1755506679;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l4xS1+WWkgaSv0c4yG6G8DZIxcOQsp2YpyFMtc/MpXw=;
+        b=C03ZCzoVibvRlwzTPucWYTTsRhfHMI5YpHkLovnYTvY3oDXp0mR0aCBHi2Vivx7gVJ
+         snNdbBzkgwDR1wNaRRGRpRXloSKxZvgnEWTmRQeBfXOLK2OQQIIQ9gx82cjxq8Q47RLw
+         lx9p0n3gAEDwNQZ1AIVU7ocSe76u6EcJODyjWz+v6Wqlrgs+7Tv8GN2PWi08S2nh50zl
+         Yf5eJQlyutEFOv3JQEXpZCssXt5FXKNh6eMobNAwqVOHYpPhdxrDTV6WWVYmyeRd7R4T
+         8UR2UFQXHBU22auGpBuIaRWYzW/OBJfFzmdp3ub5A8t6dSIXq3DW8unMczyyLHspASin
+         9q1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIyIu+6tp/pEkjaqSZOWmj351EVL1G9gdTPXodWLsuVpanG1q6sHxaaJkvuggtSzhhG9d4OfJnB/ZO@vger.kernel.org, AJvYcCVb7hBtjdWCotTC1AImw7wFrCUcRhQbZU/c/JGDzMQ0jy00F/HvAj8A9Xx61bMV3Hotv3ByK9UE@vger.kernel.org, AJvYcCXe8OBXg0C2ToP2m2Ut4UKnQzghw8q5swvhS3p5vR1re11ZuU/tTFeUOltWqnthwJBkAEryiFyp8yHLNTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxOkRvAproYY8X2HqVvm/SLoqyjqPImnvNcrRZF/RCODD4z9ZN
+	NDnGaZIsJOiKlfKY9CLcS88PflftKWPY1Xt8arqL6Y2dQJBGHpwJTmuc
+X-Gm-Gg: ASbGncvoM+r4pD81gPGxdlfBLAfqsXdjn71GOOObVSjgARnCnIME4iWIeEOhRSKkhbO
+	ZkVhXNrTCSLNVC0JtxIUvRQRDfob0Zva3q5y6aCA2F5rOWDMYV6B9qbaFRJfJgTufWlygxgszER
+	hNAGUOnEU2fI/c0af3+NdViRPGs33m2e/ZgTAMbfGjAe3YwrlPg5eDfB8HSQVXCHUiUTBsQDsjR
+	E00e4huyTATiQRzl1OPr6JoYBw8K1VWuBUN/OGEOoAog00qxS/Q/HmXeaEcHXjLL5lERziz5NUf
+	pVSmIN+x91yKd+f18T0+CHLs1pr1hY5nOaLN6ZPtcHOi8WlPZF9KwsIivrKTEIeeVqqKAaEK+Ic
+	f7BgaGLzhiG89og==
+X-Google-Smtp-Source: AGHT+IEnv3ilTHdBlqrw4UTyUaEPlZWCMTpuvsvsgFCL/mRg4TuuMDaAImoGmS4qOoZnHPmlfQsmkA==
+X-Received: by 2002:a17:90b:4a82:b0:31e:4492:af48 with SMTP id 98e67ed59e1d1-32183c46051mr15891178a91.28.1754901878785;
+        Mon, 11 Aug 2025 01:44:38 -0700 (PDT)
+Received: from gmail.com ([223.166.85.91])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da5719sm31087468a91.6.2025.08.11.01.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 01:44:38 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Felix Fietkau <nbd@nbd.name>,
+	linux-ppp@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Issues with OF_DYNAMIC PCI bridge node generation
- (kmemleak/interrupt-map IC reg property)
-Message-ID: <aJms+YT8TnpzpCY8@lpieralisi>
+Subject: [PATCH net] ppp: fix race conditions in ppp_fill_forward_path
+Date: Mon, 11 Aug 2025 16:44:26 +0800
+Message-ID: <20250811084427.178739-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Lizhi, Rob,
+ppp_fill_forward_path() has two race conditions:
 
-while debugging something unrelated I noticed two issues
-(related) caused by the automatic generation of device nodes
-for PCI bridges.
+1. The ppp->channels list can change between list_empty() and
+   list_first_entry(), as ppp_lock() is not held. If the only channel
+   is deleted in ppp_disconnect_channel(), list_first_entry() may
+   access an empty head or a freed entry, and trigger a panic.
 
-GICv5 interrupt controller DT top level node [1] does not have a "reg"
-property, because it represents the top level node, children (IRSes and ITSs)
-are nested.
+2. pch->chan can be NULL. When ppp_unregister_channel() is called,
+   pch->chan is set to NULL before pch is removed from ppp->channels.
 
-It does provide #address-cells since it has child nodes, so it has to
-have a "ranges" property as well.
+Fix these by using a lockless RCU approach:
+- Use list_first_or_null_rcu() to safely test and access the first list
+  entry.
+- Convert list modifications on ppp->channels to their RCU variants and
+  add synchronize_rcu() after removal.
+- Check for a NULL pch->chan before dereferencing it.
 
-You have added code to automatically generate properties for PCI bridges
-and in particular this code [2] creates an interrupt-map property for
-the PCI bridges (other than the host bridge if it has got an OF node
-already).
+Fixes: f6efc675c9dd ("net: ppp: resolve forwarding path for bridge pppoe devices")
+Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+---
+ drivers/net/ppp/ppp_generic.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-That code fails on GICv5, because the interrupt controller node does not
-have a "reg" property (and AFAIU it does not have to - as a matter of
-fact, INTx mapping works on GICv5 with the interrupt-map in the
-host bridge node containing zeros in the parent unit interrupt
-specifier #address-cells).
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index 8c98cbd4b06d..fd3ac75a56e3 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -33,6 +33,7 @@
+ #include <linux/ppp_channel.h>
+ #include <linux/ppp-comp.h>
+ #include <linux/skbuff.h>
++#include <linux/rculist.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/if_arp.h>
+ #include <linux/ip.h>
+@@ -1598,11 +1599,14 @@ static int ppp_fill_forward_path(struct net_device_path_ctx *ctx,
+ 	if (ppp->flags & SC_MULTILINK)
+ 		return -EOPNOTSUPP;
+ 
+-	if (list_empty(&ppp->channels))
++	pch = list_first_or_null_rcu(&ppp->channels, struct channel, clist);
++	if (!pch)
+ 		return -ENODEV;
+ 
+-	pch = list_first_entry(&ppp->channels, struct channel, clist);
+ 	chan = pch->chan;
++	if (!chan)
++		return -ENODEV;
++
+ 	if (!chan->ops->fill_forward_path)
+ 		return -EOPNOTSUPP;
+ 
+@@ -3515,7 +3519,7 @@ ppp_connect_channel(struct channel *pch, int unit)
+ 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
+ 	if (hdrlen > ppp->dev->hard_header_len)
+ 		ppp->dev->hard_header_len = hdrlen;
+-	list_add_tail(&pch->clist, &ppp->channels);
++	list_add_tail_rcu(&pch->clist, &ppp->channels);
+ 	++ppp->n_channels;
+ 	pch->ppp = ppp;
+ 	refcount_inc(&ppp->file.refcnt);
+@@ -3545,10 +3549,11 @@ ppp_disconnect_channel(struct channel *pch)
+ 	if (ppp) {
+ 		/* remove it from the ppp unit's list */
+ 		ppp_lock(ppp);
+-		list_del(&pch->clist);
++		list_del_rcu(&pch->clist);
+ 		if (--ppp->n_channels == 0)
+ 			wake_up_interruptible(&ppp->file.rwait);
+ 		ppp_unlock(ppp);
++		synchronize_rcu();
+ 		if (refcount_dec_and_test(&ppp->file.refcnt))
+ 			ppp_destroy_interface(ppp);
+ 		err = 0;
+-- 
+2.43.0
 
-It is not clear to me why, to create an interrupt-map property, we
-are reading the "reg" value of the parent IC node to create the
-interrupt-map unit interrupt specifier address bits (could not we
-just copy the address in the parent unit interrupt specifier reported
-in the host bridge interrupt-map property ?).
-
-- #address-cells of the parent describes the number of address cells of
-  parent's child nodes not the parent itself, again, AFAIK, so parsing "reg"
-  using #address-cells of the parent node is not entirely correct, is it ?
-- It is unclear to me, from an OF spec perspective what the address value
-  in the parent unit interrupt specifier ought to be. I think that, at
-  least for dts including a GICv3 IC, the address values are always 0,
-  regardless of the GICv3 reg property.
-
-I need your feedback on this because the automatic generation must
-work seamlessly for GICv5 as well (as well as all other ICs with no "reg"
-property) and I could not find anything in the OF specs describing
-how the address cells in the unit interrupt specifier must be computed.
-
-I found this [3] link where in section 7 there is an interrupt mapping
-algorithm; I don't understand it fully and I think it is possibly misleading.
-
-Now, the failure in [2] (caused by the lack of a "reg" property in the
-IC node) triggers an interrupt-map property generation failure for PCI
-bridges that are upstream devices that need INTx swizzling.
-
-In turn, that leads to a kmemleak detection:
-
-unreferenced object 0xffff000800368780 (size 128):
-  comm "swapper/0", pid 1, jiffies 4294892824
-  hex dump (first 32 bytes):
-    f0 b8 34 00 08 00 ff ff 04 00 00 00 00 00 00 00  ..4.............
-    70 c2 30 00 08 00 ff ff 00 00 00 00 00 00 00 00  p.0.............
-  backtrace (crc 1652b62a):
-    kmemleak_alloc+0x30/0x3c
-    __kmalloc_cache_noprof+0x1fc/0x360
-    __of_prop_dup+0x68/0x110
-    of_changeset_add_prop_helper+0x28/0xac
-    of_changeset_add_prop_string+0x74/0xa4
-    of_pci_add_properties+0xa0/0x4e0
-    of_pci_make_dev_node+0x198/0x230
-    pci_bus_add_device+0x44/0x13c
-    pci_bus_add_devices+0x40/0x80
-    pci_host_probe+0x138/0x1b0
-    pci_host_common_probe+0x8c/0xb0
-    platform_probe+0x5c/0x9c
-    really_probe+0x134/0x2d8
-    __driver_probe_device+0x98/0xd0
-    driver_probe_device+0x3c/0x1f8
-    __driver_attach+0xd8/0x1a0
-
-I have not grokked it yet but it seems genuine, so whatever we decide
-in relation to "reg" above, this ought to be addressed too, if it
-is indeed a memleak.
-
-Please let me know if something is unclear I can provide further
-details.
-
-Thanks,
-Lorenzo
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml?h=v6.17-rc1
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/of_property.c?h=v6.17-rc1#n283
-[3] https://www.devicetree.org/open-firmware/practice/imap/imap0_9d.html
 
