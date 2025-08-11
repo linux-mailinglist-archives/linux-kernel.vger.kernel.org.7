@@ -1,422 +1,210 @@
-Return-Path: <linux-kernel+bounces-762029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D52B2014D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:06:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D08EB20155
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3B9189E4F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853C916BB54
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED062DAFAB;
-	Mon, 11 Aug 2025 08:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148822DBF6E;
+	Mon, 11 Aug 2025 08:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW7q1Kgk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFl7uuKH"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F56204863;
-	Mon, 11 Aug 2025 08:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DAB204863;
+	Mon, 11 Aug 2025 08:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899540; cv=none; b=Vyloxy064la1t0KdFZBrS5qDLjVIQ1kRQejoX8AasPpWMP9Trb6v0bJE2TyRkoi3acCCBSvmyB+RkYidNrq1ewfJzN746POK2PZuSNGd0w3gbmKHG0mymlFoJqaf4ftRcXcozsGj45ZPOMfEiEixJQRcr7HL7WUdVeI1x/K81hE=
+	t=1754899549; cv=none; b=MfXbD+reQnxNHM8wECgwIIAcrv3q1ZPl/KPcn6dqDv2hjx1niZbXD8l8nB4zs2sfOFrJvAnOq8tbwsGXQ+3Xah1RteAYsxWV2IawcLUWuG2YhsJa+WYTBvdJ0H+ZCXMdrVJz5O9kn4KGYvjT+wqsuSeVIY/FXI4F30XsUxFoT0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899540; c=relaxed/simple;
-	bh=cbZyQBIfUekS7jZQkNApqR75Ty+vuqQsw7xr77QaQv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNmEstwaRSev7CqzmNM+RJ61uJJeNnSRAPxYGB0V+RqjlsTW0KXQ7jIyGn8AgciMdxry0vS/Xn1dg16uMh78fJUBt/Z/RnROJKArVSsIv/HN/Q7q8e9x6HM9xHm6G1Cd+5d7EWQt7Fjph25o0N5Z/hNSn+9zyqQ3/14bsGAKHOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bW7q1Kgk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E36C4CEED;
-	Mon, 11 Aug 2025 08:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754899539;
-	bh=cbZyQBIfUekS7jZQkNApqR75Ty+vuqQsw7xr77QaQv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bW7q1KgkpSinnNpmxsdmbpqveoNfAr0zE10jbKNoLvN39uMIu8XSIffzjXyi18lgW
-	 0b6DLAOtRCMx4iQcax1G3fCXIYYb80K0JyBX82v32IixY6vQ8Pr6NVM7Y9bLAl52rn
-	 ueHFSyy5YSNn4fM030apzJ4XCr2O6unbLPWKy0SjfNRtwpVRY+ehybTGVKUbZ38Xd/
-	 cBYrho5YAOsHsL92VREu9Q0yFZrLNamtMYDFiTWm2xbC1ms9MeAZQBbAk3Dzl5xjb/
-	 rdSuzDDpzhPgZ7Q3cCV7+46ZPmEYXejAg4hFRXRDrch6jxp3qSX7k27iUrJ/UnISGf
-	 Vzfiw8iXq2ToA==
-Date: Mon, 11 Aug 2025 10:05:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Will Whang <will@willwhang.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/4] media: i2c: imx585: Add Sony IMX585 image-sensor
- driver
-Message-ID: <20250811-cryptic-papaya-bullfrog-adb7f4@kuoka>
-References: <20250810220921.14307-1-will@willwhang.com>
- <20250810220921.14307-4-will@willwhang.com>
+	s=arc-20240116; t=1754899549; c=relaxed/simple;
+	bh=4uTNPfkVS5zLEnq7NQb8aRygOSI+7Ca7zKwbd+fJKS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3UzaeLgGDKzXBrARGuMWpIY0TPBX3V3qnJljw1I5/e3GQ+IlASCgoZknBwf5l0oKenllJvCh4SOlrtm0X85ls16IaTgs62UZBsk1Nt2iM1oXMp9EDHbBamKjZGfVOjcgRkUDML7+8T1HGqc4PVn0rqCeLuVNwqW4xkWu/dGJ34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFl7uuKH; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-332464a08b8so29369131fa.1;
+        Mon, 11 Aug 2025 01:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754899545; x=1755504345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5eW6y+UNOvvAMVQOqHdBQUNKwdtVuFl7txNft8++BOc=;
+        b=JFl7uuKHkRr9dbfQAwP5DWbsiXxbjpgHx+vexXM6pj2yGEWyMm4x3xTGvtR4LARhKm
+         kGBfyfdDRXs10ufyfC+vAz9vFYfswdxt1OOXgz81vIbNToKSCenVKrvAcCw6cf3tssvs
+         +uEl3LiwkdUxMSgWr0dLXi7nQ+UANSec9XpjaJu6ekn8dkboLWTDKNy7zYOKaTXLhKhq
+         Zt11UfzIzynv4mPMS0grvPiz1mxCeHfLnSuJgoh+OhvYgurAZrD6skodQOec+W7AOxnQ
+         ZM06QOBEvrQXwQOIG+/qQ44je7pV/8S1kISsd0hbVpTIFV/vF0A4wdH4zIN7tSyAVRkL
+         6JIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754899545; x=1755504345;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5eW6y+UNOvvAMVQOqHdBQUNKwdtVuFl7txNft8++BOc=;
+        b=CxMf5IBdtKQfM66kMjOO0lsuxrp1Pq4cKaCLNhOcf7IWMZgNtlWIIMV6WMJqEwynw/
+         X+seD+t01TzJZrAMQiIRAPgJAezDMzG8LYmIR5V6k72nIXXv4joRq+a5vYEl6LdgAZjh
+         ZqZR4IkQs8RGluOgmsP52zYXJWelofoROW49clztubagYZigJocSw694vI4FXFVTUtmp
+         mwH7FahKbNEYI4LI+410FFr56k1hxmxZBGvdQ/EUF/7bYxVtI3i7NSkNW1JsMc2crEt7
+         N/XdpQWAB/ZhbzcxCKRQdYERiOnujLcejlB26RZ+gxKyW5If+Z3r/Xm7JyxfMvSSxXXw
+         Aq4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUx5QpgF3qNZc7EUGmTyZXGHGJzTiGg0ZFhcebdtMaochX3ZMeSlC8YW7/eB/2znHm4Zgz0cgZAr9mTfIHa@vger.kernel.org, AJvYcCVoPRpkKaIBu8Omabz6/mNRCEv0ez5iL80GgoYk7kReo+CbzxNtx+qH3ZIqDDdZ1FwLeCB2Vvb2rkA1@vger.kernel.org, AJvYcCWZ7SQSHrzzisJY8urUFiQaJRPr8Zo8qHwk36oKm5++NI/GUqxwUdNndcd/A4QtK6wTS2FVwrtZUj48@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrKQyLBmai3zuxNrl8oArDd1lS3bzfVaP2Ya2KyNz2UwX6nvhV
+	WHbyKXMhQPPoEbYStO+qbJ/KfkeP7uPlP0zIXZUfVALqp5GtTGsEEV/O
+X-Gm-Gg: ASbGnctKDQB2RdgPgiIILA1csBlRJtp0/fdz2HjQTZn1v1C6aqn0P7b7laXqQx7QOvx
+	t2Exxikl5SA7SYFfB0w5L3MljTtdZlYLdutr5hwE/NDOEdRByL85PJnNiJ/xywNmcjU2t2PsP1d
+	GESdqlHypv8Xyn5ynKze2zFbfg6OC1lKuHhrd6XiMuGSdrG2v40ZITBr9rx5SGmXBGzuH8tZsNC
+	izHu5VElb5YCA93wtGj9FjavtoCf6P8qCNx0zOAR+Ek8hv8tZLpSo/ZYlcXgAurEoRok1AiDcQV
+	YiZXy2KHTzRnzXZyMce07x+JyZOyJJEX4pzoxRFUFinayFc5BM51WOI0+8Kur1TI7Ytwo2aoMY4
+	tCyfPpjcRLqXSknTHM4G3Ez2b8pKVfxZq1TYC+EnTdz2G5yhL2yjFTDVdq3IIdIp97jZHhxodqq
+	bz878=
+X-Google-Smtp-Source: AGHT+IE6GDKtjfUoIVAPoxnLJtN4ebZaRytbQ0UJzacmzYh5M9pc71AAFOPgwxe/7pCtFx2fcdrANg==
+X-Received: by 2002:a2e:bea8:0:b0:333:b1c4:4d96 with SMTP id 38308e7fff4ca-333b1c45029mr21468271fa.6.1754899545104;
+        Mon, 11 Aug 2025 01:05:45 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-333a17b4e10sm13245301fa.10.2025.08.11.01.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 01:05:44 -0700 (PDT)
+Message-ID: <c236bb5e-dd46-4caa-81b1-9af1550feef3@gmail.com>
+Date: Mon, 11 Aug 2025 11:05:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250810220921.14307-4-will@willwhang.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/10] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1754641960.git.mazziesaccount@gmail.com>
+ <cc5cfa7540caae4bcb7448a59602421d54353ecc.1754641960.git.mazziesaccount@gmail.com>
+ <20250809202106.59d405c5@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250809202106.59d405c5@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 10, 2025 at 11:09:20PM +0100, Will Whang wrote:
-> +
-> +/* Update analogue gain limits based on mode/HDR/HCG */
-> +static void imx585_update_gain_limits(struct imx585 *imx585)
-> +{
-> +	const bool hcg_on = imx585->hcg;
-> +	const bool clear_hdr = imx585->clear_hdr;
-> +	const u32 min = hcg_on ? IMX585_ANA_GAIN_MIN_HCG : IMX585_ANA_GAIN_MIN_NORMAL;
-> +	const u32 max = clear_hdr ? IMX585_ANA_GAIN_MAX_HDR : IMX585_ANA_GAIN_MAX_NORMAL;
-> +	u32 cur = imx585->gain->val;
-> +
-> +	__v4l2_ctrl_modify_range(imx585->gain, min, max, IMX585_ANA_GAIN_STEP,
-> +				 clamp(cur, min, max));
-> +
-> +	if (cur < min || cur > max)
-> +		__v4l2_ctrl_s_ctrl(imx585->gain, clamp(cur, min, max));
-> +}
-> +
-> +/* Recompute per-mode timing limits (HMAX/VMAX) from link/lanes/HDR */
-> +static void imx585_update_hmax(struct imx585 *imx585)
-> +{
-> +	const u32 base_4lane = HMAX_table_4lane_4K[imx585->link_freq_idx];
-> +	const u32 lane_scale = (imx585->lane_count == 2) ? 2 : 1;
-> +	const u32 factor     = base_4lane * lane_scale;
-> +	const u32 hdr_scale  = imx585->clear_hdr ? 2 : 1;
-> +	unsigned int i;
-> +
-> +	dev_info(imx585->clientdev, "Update minimum HMAX: base=%u lane_scale=%u hdr_scale=%u\n",
-> +		 base_4lane, lane_scale, hdr_scale);
-
-Drop, driver should be silent on success. Could be dev_dbg.
-
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(supported_modes); ++i) {
-> +		u32 h = factor / supported_modes[i].hmax_div;
-> +		u32 v = IMX585_VMAX_DEFAULT * hdr_scale;
-> +
-> +		supported_modes[i].min_hmax = h;
-> +		supported_modes[i].min_vmax = v;
-> +
-> +		dev_info(imx585->clientdev, " mode %ux%u -> VMAX=%u HMAX=%u\n",
-> +			 supported_modes[i].width, supported_modes[i].height, v, h);
-
-How many obvious/standard debugs do you need?
-
-> +	}
-> +}
-> +
-> +static void imx585_set_framing_limits(struct imx585 *imx585,
-> +				      const struct imx585_mode *mode)
-> +{
-> +	u64 pixel_rate;
-> +	u64 max_hblank;
-> +
-> +	imx585_update_hmax(imx585);
-> +
-> +	imx585->vmax = mode->min_vmax;
-> +	imx585->hmax = mode->min_hmax;
-> +
-> +	/* Pixel rate proxy: width * clock / min_hmax */
-> +	pixel_rate = (u64)mode->width * IMX585_PIXEL_RATE;
-> +	do_div(pixel_rate, mode->min_hmax);
-> +	__v4l2_ctrl_modify_range(imx585->pixel_rate, pixel_rate, pixel_rate, 1,
-> +				 pixel_rate);
-> +
-> +	max_hblank = (u64)IMX585_HMAX_MAX * pixel_rate;
-> +	do_div(max_hblank, IMX585_PIXEL_RATE);
-> +	max_hblank -= mode->width;
-> +
-> +	__v4l2_ctrl_modify_range(imx585->hblank, 0, max_hblank, 1, 0);
-> +	__v4l2_ctrl_s_ctrl(imx585->hblank, 0);
-> +
-> +	__v4l2_ctrl_modify_range(imx585->vblank,
-> +				 mode->min_vmax - mode->height,
-> +				 IMX585_VMAX_MAX - mode->height,
-> +				 1, mode->min_vmax - mode->height);
-> +	__v4l2_ctrl_s_ctrl(imx585->vblank, mode->min_vmax - mode->height);
-> +
-> +	__v4l2_ctrl_modify_range(imx585->exposure, IMX585_EXPOSURE_MIN,
-> +				 imx585->vmax - IMX585_SHR_MIN_HDR, 1,
-> +				 IMX585_EXPOSURE_DEFAULT);
-> +
-> +	dev_info(imx585->clientdev, "Framing: VMAX=%u HMAX=%u pixel_rate=%llu\n",
-> +		 imx585->vmax, imx585->hmax, pixel_rate);
-
-Here as well...
-
-> +}
-> +
-> +/* --------------------------------------------------------------------------
-> + * Controls
-> + * --------------------------------------------------------------------------
-> + */
-> +
-> +static int imx585_set_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +	struct imx585 *imx585 = container_of(ctrl->handler, struct imx585, ctrl_handler);
-> +	const struct imx585_mode *mode, *mode_list;
-> +	struct v4l2_subdev_state *state;
-> +	struct v4l2_mbus_framefmt *fmt;
-> +	unsigned int num_modes;
-> +	int ret = 0;
-> +
-> +	state = v4l2_subdev_get_locked_active_state(&imx585->sd);
-> +	fmt = v4l2_subdev_state_get_format(state, 0);
-> +
-> +	get_mode_table(imx585, fmt->code, &mode_list, &num_modes);
-> +	mode = v4l2_find_nearest_size(mode_list, num_modes, width, height,
-> +				      fmt->width, fmt->height);
-> +
-> +	switch (ctrl->id) {
-> +	case V4L2_CID_WIDE_DYNAMIC_RANGE:
-> +		if (imx585->clear_hdr != ctrl->val) {
-> +			u32 code;
-> +
-> +			imx585->clear_hdr = ctrl->val;
-> +
-> +			v4l2_ctrl_activate(imx585->datasel_th_ctrl,  imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->datasel_bk_ctrl,  imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->gdc_th_ctrl,      imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->gdc_exp_ctrl_h,   imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->gdc_exp_ctrl_l,   imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->hdr_gain_ctrl,    imx585->clear_hdr);
-> +			v4l2_ctrl_activate(imx585->hcg_ctrl,        !imx585->clear_hdr);
-> +
-> +			/* Disable HCG in ClearHDR mode */
-> +			imx585->hcg = imx585->clear_hdr ? 0 : imx585->hcg;
-> +			__v4l2_ctrl_s_ctrl(imx585->hcg_ctrl, imx585->hcg);
-> +			imx585_update_gain_limits(imx585);
-> +			dev_info(imx585->clientdev, "HDR=%u, HCG=%u\n", ctrl->val, imx585->hcg);
-
-Drop
-
-> +
-> +			code = imx585->mono ? MEDIA_BUS_FMT_Y12_1X12
-> +					    : MEDIA_BUS_FMT_SRGGB12_1X12;
-> +			get_mode_table(imx585, code, &mode_list, &num_modes);
-> +			mode = v4l2_find_nearest_size(mode_list, num_modes, width, height,
-> +						      fmt->width, fmt->height);
-> +			imx585_set_framing_limits(imx585, mode);
-> +		}
-> +		break;
-> +	case V4L2_CID_IMX585_HCG_GAIN:
-> +		if (!imx585->clear_hdr) {
-> +			imx585->hcg = ctrl->val;
-> +			imx585_update_gain_limits(imx585);
-> +			dev_info(imx585->clientdev, "HCG=%u\n", ctrl->val);
-
-Your driver is way too noisy.
-
-Above comment - drop all dev_info - applies EVERYWHERE, especially to
-standard controls. Printing info message, just because someone set some v4l2
-control is too noisy and does not warrant dev_dbg, imo.
-
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-
-> +
-> +static int imx585_check_module_exists(struct imx585 *imx585)
-> +{
-> +	int ret;
-> +	u64 val;
-> +
-> +	/* No chip-id register; read a known register as a presence test */
-> +	ret = cci_read(imx585->regmap, IMX585_REG_BLKLEVEL, &val, NULL);
-> +	if (ret) {
-> +		dev_err(imx585->clientdev, "register read failed (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(imx585->clientdev, "Sensor detected\n");
-
-Drop. It is obvious (already known) due to lack of error message.
-
-> +	return 0;
-> +}
-> +
-> +static int imx585_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct imx585 *imx585;
-> +	const char *sync_mode;
-> +	int ret, i;
-> +
-> +	imx585 = devm_kzalloc(dev, sizeof(*imx585), GFP_KERNEL);
-> +	if (!imx585)
-> +		return -ENOMEM;
-> +
-> +	v4l2_i2c_subdev_init(&imx585->sd, client, &imx585_subdev_ops);
-> +	imx585->clientdev = dev;
-> +
-> +	imx585->mono = of_device_is_compatible(dev->of_node, "sony,imx585-mono");
-> +	dev_info(dev, "mono=%d\n", imx585->mono);
-
-Heh? So you debug driver matching and probing?
-
-
-> +
-> +	imx585->sync_mode = SYNC_INT_LEADER;
-> +	if (!device_property_read_string(dev, "sony,sync-mode", &sync_mode)) {
-> +		if (!strcmp(sync_mode, "internal-follower"))
-> +			imx585->sync_mode = SYNC_INT_FOLLOWER;
-> +		else if (!strcmp(sync_mode, "external"))
-> +			imx585->sync_mode = SYNC_EXTERNAL;
-> +	}
-> +	dev_info(dev, "sync-mode: %s\n", sync_mode_menu[imx585->sync_mode]);
-
-No, drop. This is STATIC coming from DT. It will be always like that,
-what is the point of debugging DT?
-
-> +
-> +	ret = imx585_check_hwcfg(dev, imx585);
-> +	if (ret)
-> +		return ret;
-> +
-> +	imx585->regmap = devm_cci_regmap_init_i2c(client, 16);
-> +	if (IS_ERR(imx585->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(imx585->regmap), "CCI init failed\n");
-> +
-> +	imx585->xclk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(imx585->xclk))
-> +		return dev_err_probe(dev, PTR_ERR(imx585->xclk), "xclk missing\n");
-> +
-> +	imx585->xclk_freq = clk_get_rate(imx585->xclk);
-> +	for (i = 0; i < ARRAY_SIZE(imx585_inck_table); ++i) {
-> +		if (imx585_inck_table[i].xclk_hz == imx585->xclk_freq) {
-> +			imx585->inck_sel_val = imx585_inck_table[i].inck_sel;
-> +			break;
-> +		}
-> +	}
-> +	if (i == ARRAY_SIZE(imx585_inck_table))
-> +		return dev_err_probe(dev, -EINVAL, "unsupported XCLK %u Hz\n", imx585->xclk_freq);
-> +
-> +	dev_info(dev, "XCLK %u Hz -> INCK_SEL 0x%02x\n",
-> +		 imx585->xclk_freq, imx585->inck_sel_val);
-
-No, drop
-
-> +
-> +	ret = imx585_get_regulators(imx585);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "regulators\n");
-> +
-> +	imx585->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +
-> +	/* Power on to probe the device */
-> +	ret = imx585_power_on(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = imx585_check_module_exists(imx585);
-> +	if (ret)
-> +		goto err_power_off;
-> +
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-> +
-> +	ret = imx585_init_controls(imx585);
-> +	if (ret)
-> +		goto err_pm;
-> +
-> +	imx585->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	imx585->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-> +	imx585->sd.internal_ops = &imx585_internal_ops;
-> +
-> +	imx585->pad.flags = MEDIA_PAD_FL_SOURCE;
-> +
-> +	ret = media_entity_pads_init(&imx585->sd.entity, 1, &imx585->pad);
-> +	if (ret) {
-> +		dev_err(dev, "entity pads init failed: %d\n", ret);
-> +		goto err_ctrls;
-> +	}
-> +
-> +	imx585->sd.state_lock = imx585->ctrl_handler.lock;
-> +	ret = v4l2_subdev_init_finalize(&imx585->sd);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "subdev init\n");
-> +		goto err_entity;
-> +	}
-> +
-> +	ret = v4l2_async_register_subdev_sensor(&imx585->sd);
-> +	if (ret) {
-> +		dev_err(dev, "sensor subdev register failed: %d\n", ret);
-> +		goto err_entity;
-> +	}
-> +
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +	return 0;
-> +
-> +err_entity:
-> +	media_entity_cleanup(&imx585->sd.entity);
-> +err_ctrls:
-> +	imx585_free_controls(imx585);
-> +err_pm:
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_set_suspended(dev);
-> +err_power_off:
-> +	imx585_power_off(dev);
-> +	return ret;
-> +}
-> +
-> +static void imx585_remove(struct i2c_client *client)
-> +{
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct imx585 *imx585 = to_imx585(sd);
-> +
-> +	v4l2_async_unregister_subdev(sd);
-> +	v4l2_subdev_cleanup(sd);
-> +	media_entity_cleanup(&sd->entity);
-> +	imx585_free_controls(imx585);
-> +
-> +	pm_runtime_disable(imx585->clientdev);
-> +	if (!pm_runtime_status_suspended(imx585->clientdev))
-> +		imx585_power_off(imx585->clientdev);
-> +	pm_runtime_set_suspended(imx585->clientdev);
-> +}
-> +
-> +static DEFINE_RUNTIME_DEV_PM_OPS(imx585_pm_ops, imx585_power_off,
-> +				 imx585_power_on, NULL);
-> +
-> +static const struct of_device_id imx585_of_match[] = {
-> +	{ .compatible = "sony,imx585" },
-> +	{ .compatible = "sony,imx585-mono" }, /* monochrome variant */
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, imx585_of_match);
-> +
-> +static struct i2c_driver imx585_i2c_driver = {
-> +	.driver = {
-> +		.name  = "imx585",
-> +		.pm    = pm_ptr(&imx585_pm_ops),
-> +		.of_match_table = imx585_of_match,
-> +	},
-> +	.probe  = imx585_probe,
-> +	.remove = imx585_remove,
-> +};
-> +module_i2c_driver(imx585_i2c_driver);
-> +
-> +MODULE_AUTHOR("Will Whang <will@willwhang.com>");
-> +MODULE_AUTHOR("Tetsuya Nomura <tetsuya.nomura@soho-enterprise.com>");
-> +MODULE_DESCRIPTION("Sony IMX585 sensor driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.39.5
+On 09/08/2025 22:21, Jonathan Cameron wrote:
+> On Fri, 8 Aug 2025 11:54:25 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
+>> The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
+>> pin used to start the ADC conversion. Other than the 'CONVSTART', there
+>> are 3 supply pins (one used as a reference), analog inputs, ground and
+>> communication pins. It's worth noting that the pin somewhat confusingly
+>> labeled as 'DIN', is a pin which should be used as a chip-select. The IC
+>> does not have any writable registers.
+>>
+>> The device is designed so that the output pin can, in addition to
+>> outputting the data, be used as a 'data-ready'-IRQ. This, however, would
+>> require the IRQ to be masked from host side for the duration of the data
+>> reads - and it wouldn't also work when the SPI is shared. (As access to
+>> the other SPI devices would cause data line changes to be detected as
+>> IRQs - and the BD79105 provides no means to detect if it has generated
+>> an IRQ).
+>>
+>> Hence the device-tree does not contain any IRQ properties.
+> 
+> Commit message needs an update as it now allows for IRQ properties.
+
+Ah, true. Thanks :)
+
+> 
+>>
+>> Add a compatible for the bd79105.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> ---
+>> Revision history:
+>>   v2 => :
+>>   - No changes
+>>
+>>   v1 => v2:
+>>   - BD79105 can provide data-ready IRQ (or GPIO) via DOUT-pin.
+>> ---
+>>   .../bindings/iio/adc/adi,ad7476.yaml          | 54 +++++++++++++++++++
+>>   1 file changed, 54 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
+>> index d0cb32f136e5..c411a7467651 100644
+>> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
+>> @@ -41,6 +41,7 @@ properties:
+>>                 - adi,ad7910
+>>                 - adi,ad7920
+>>                 - adi,ad7940
+>> +              - rohm,bd79105
+>>                 - ti,adc081s
+>>                 - ti,adc101s
+>>                 - ti,adc121s
+>> @@ -55,6 +56,11 @@ properties:
+>>     reg:
+>>       maxItems: 1
+>>   
+>> +  interrupts:
+>> +    description:
+>> +      The data-ready interrupt. Provided via DOUT pin.
+>> +    maxItems: 1
+>> +
+>>     vcc-supply:
+>>       description:
+>>         Main powersupply voltage for the chips, sometimes referred to as VDD on
+>> @@ -75,6 +81,10 @@ properties:
+>>       description: A GPIO used to trigger the start of a conversion
+>>       maxItems: 1
+>>   
+>> +  rdy-gpios:
+>> +    description: A GPIO for detecting the data-ready.
+>> +    maxItems: 1
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>> @@ -82,6 +92,20 @@ required:
+>>   allOf:
+>>     - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>   
+>> +# Devices with an IRQ
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - rohm,bd79105
+>> +    then:
+>> +      properties:
+>> +        interrupts: true
+> 
+> It's been a while since I wrote one of these, but do we need
+> the true bit given we have already specified the interrupts
+> property.  I think we only need to do the setting to false
+> on an if: not:
+
+I think you're right. I just used same approach that had already been 
+used throughout this binding. I'll try dropping the 'true'-branches, but 
+then also the other 'true'-branches should be dropped from the binding.
+
+I'll just do that and send v4. Let's see what Rob/Krzk/Conor have to say :)
+
+Yours,
+	-- Matti
 
