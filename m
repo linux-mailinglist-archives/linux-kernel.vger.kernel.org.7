@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-763455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD0BB214CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C53DB214CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41F01A23FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AE71A23868
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B9E2E7F3F;
-	Mon, 11 Aug 2025 18:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB252E2856;
+	Mon, 11 Aug 2025 18:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="do8kYorp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3PvomAh9"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AAC2E7F19;
-	Mon, 11 Aug 2025 18:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AEC2E2854
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754937692; cv=none; b=AATWFjXslCi+xpqXSEiy21KTQ3Jkt0Z1jjT0PicpnmM9Fymod1soiOvJOV/Ltn2Cp4ZPQJ90LqQeDlwaA8osSPpQdCTrF+hiceReJDzkjqkuBNyrl5VArDwsQpUNzfxAmnjgXRs+kxM5TINrtEuydAkYL9LbPQPGj8FkBPxsAuM=
+	t=1754937795; cv=none; b=ifBXZHgYGsQ370Dlcdw38QXVzGh9jtiPq/xv1y6bwsdhrt4T+k7bAvmSzDUktk2qcbcBnc91tzzju11jD1AGrM/v1kdeeci4YItzGSWH3QcUhCOPfoBOhsQmVCpdzLLiYkdxiCPUQhYoiwT5Yoelfp/7iHxT4sfkgLFr9JnYtiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754937692; c=relaxed/simple;
-	bh=COI84o40coP9gqyrgy3EfpXZhcX5MQJ1jz4hmJxZrLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pXZJfNSotvKy52BF8kQp6kh6ThmlSlwFPWsot0GYo12HfKp5R3a5b98ujfNHAhIJqU/ikhRMm0ArpVy1RyrYG3G49USUpXOkFOk1ma0CilM5qoRKknK7SAYJD75MSZOU+T+m9xCIqHdCC1C0r0qrVa097CMJjp7Ve1R9HzdXq0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=do8kYorp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F902C4CEFB;
-	Mon, 11 Aug 2025 18:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754937692;
-	bh=COI84o40coP9gqyrgy3EfpXZhcX5MQJ1jz4hmJxZrLU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=do8kYorp+yE9fXkBH0f34e4Fd1D6nMcKXJYLJFKuv86ZgHGExVC4XQBW5zgIVEg+2
-	 H+/U2K3zGXKs7ga3Da1teaf6rrQ2kdY5gCRy4A0RhF20EMsXsyDceGvaJ0K6jn78eb
-	 9RuuC4sIADlq6psBZHg+Fh4ca89muvxNBUM44huLNa4SfCgRIV2xKW/RCeV5Ybj4Ry
-	 94mR9oT/SQjd2YzRhJDrL+xL8O8wIZjlwH4u/xSMzBPteGJZ4zEYuCAsutpiUT30YZ
-	 tcrL2HVZcGNh0Tn5SCPL2FUHP8My9jy76MZCGVrWXSpOFN1uwIp0mzDsw6Oo1XaazH
-	 L0b5Q6vPN+HAg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jingoohan1@gmail.com,
-	mani@kernel.org,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	johan+linaro@kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	neil.armstrong@linaro.org,
-	abel.vesa@linaro.org,
-	Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	qiang.yu@oss.qualcomm.com,
-	quic_krichai@quicinc.com,
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v9 0/2] pci: qcom: Add QCS615 PCIe support
-Date: Mon, 11 Aug 2025 13:41:10 -0500
-Message-ID: <175493766101.138281.16774900398360513894.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250725112346.614316-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250725112346.614316-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1754937795; c=relaxed/simple;
+	bh=ehBzBrmpO6FFQHQkSJbU+IofYnPjC/m9CjtUMtSr3h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F9HOOPuZJwmk5j5i+XbfJN2ef7X4XVkC1b7P1udIM8V4W/FZwJDaLyXeO9/NB0MsF4n6393/NzOuFlUVZkjgJ2/GeM72YMi3sb/RoUz/2l68eKck8S48AeqqWqsuZC9tQeNW7w8+iNxcpKUZGh2Cbq8hlHv3oVVplwximgBX63o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3PvomAh9; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-242d3be5bdfso20505ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754937793; x=1755542593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NMlOINz7dBI+CDnsCWZItvlMGoxrFbP7xNOE0bRZ508=;
+        b=3PvomAh9dqdQ69rJTOSXAmlfxkqciRrRVQRopG0nhcWtYVTy9df6q57ktQiZBcuVAZ
+         M2EoQuccX/x/jjt+AFz7KY7x0mnDVw1Le0JZptWzUxlj+fnulPN2pLGQLdfmPdwjaSBv
+         D0kvdxkXYVN1eLRG2M+YlY6i4nr8q6In3pYebDYEYQ/jE7GYtjeTVC728cbOhKH5vm2r
+         3obBivJIw4WUCo6O8zwE3E624GwZpvJJ+sNAbAWsZMZhHisshZkmktjlblB7adGIrczv
+         1IY/aUVs9RbQFdlhBEABRHSukgHBvedFHmY8b96jqqWcx25xdTi0Ul/xmkpF+C0df4c+
+         lNYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754937793; x=1755542593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NMlOINz7dBI+CDnsCWZItvlMGoxrFbP7xNOE0bRZ508=;
+        b=cVnJgQIQaEvVb+hWLuBlLWT0ViMqCYTA/DiZfdodGlae+k4NtN3B/YyjGeOWt5GMvg
+         AcJ1YBwjplhkvOrKUCplm+o+QNOo16pJfHweEeCTclJklT6QOwJ2OgSZDNB4jFtzQi9u
+         LKr3D0l7GRVbK63UgqyAyWgtDAKxe5wdqLoV/MmeK7Rz54x7f08FPD3Ux+LahIfPG6tv
+         V6ghqYbgYSHF8eME7cKp27uIyK/IgljkDaQFAvrAH21QjluzCKyzCodLZGqAK5hz6CAS
+         IiC9V5PVBgXehkZL3sFa5JsksGKt++9EC9q4WByqlGdauaQcdjwGxxeYBVM4VwvsE8U9
+         VhIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIZsDDzyyfbIUaNmocevCWIVESruBJdkEOEUdGHnkPIwhR00EglJuHZg/oIDhLQS9BxdaAOo/le3AbMoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQpRDdUyJaCi8IzkT/tqv5rcOi8GEH2IYtzjR/03BiwD1Lcpws
+	xh13UB3L8dEcP4HpdAoK3blTARgp9Y5Ro4kvKUNax6hhfNmhuxqV33BdJ4Sv5hDmWw==
+X-Gm-Gg: ASbGnctguoxXlRHiahZQOmrdmv0SEaMW8B20rOjwwvMB7cqeyPuWIYNvg3TasvSm1bf
+	HkfiViMNzfNffIkuiVjYBWFDfrGwLASisaiYRP7hhCl57SP0b4N7gFKZTfBVOCT9xhc6Jv/rpN9
+	BQAZpcu3O4XiZMmrrWOsypHGiGDsMOKw9ORfTBgmTRCYcTozCcm8cUSrXZvEHXTqYa0u/X3S6tm
+	YbYn0kGRgoDE0xXs5P+h9HQgkxIY/aYYGSqWH6WGPjTkAlsPSmbBt9g9QYNTxN0vabpqOPv6TSR
+	ilwoi9DGZByFoIy/OzIhllG4TlNFpwQzIm2JWiDheVxxloWrURt7n+LQK4Z9gPm9iaaU1gbY2+C
+	8+fk01n8c4h/MnVhKl83UA6nMasVmdYzK43ElGV6qI/n9tKmFDPc2D88WA458QA==
+X-Google-Smtp-Source: AGHT+IFAj4RXchFFM1jNvlG+vT/TTAhPz8TKJKfTAJWiNhb+yc1od3gDo0I+qfsY9ggR5R/DTUlTOg==
+X-Received: by 2002:a17:903:234d:b0:23d:eb0f:f49 with SMTP id d9443c01a7336-242fd374f19mr359875ad.14.1754937792802;
+        Mon, 11 Aug 2025 11:43:12 -0700 (PDT)
+Received: from google.com (167.212.233.35.bc.googleusercontent.com. [35.233.212.167])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321611da39esm15268859a91.2.2025.08.11.11.43.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 11:43:12 -0700 (PDT)
+Date: Mon, 11 Aug 2025 18:43:08 +0000
+From: Prashant Malani <pmalani@google.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Beata Michalska <beata.michalska@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Jie Zhan <zhanjie9@hisilicon.com>,
+	Ionela Voinescu <ionela.voinescu@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+Message-ID: <aJo5vP_mfBn_vxSF@google.com>
+References: <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+ <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7>
+ <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+ <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
+ <aIso4kLtChiQkBjH@arm.com>
+ <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
+ <aIvQvLL34br6haQi@arm.com>
+ <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+ <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
+ <20250811060551.ylc6uutni4x6jqtg@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811060551.ylc6uutni4x6jqtg@vireshk-i7>
 
-
-On Fri, 25 Jul 2025 19:23:44 +0800, Ziyue Zhang wrote:
-> This series adds document, phy, configs support for PCIe in QCS615.
+On Aug 11 11:35, Viresh Kumar wrote:
+> On 06-08-25, 17:19, Prashant Malani wrote:
+> > So, do we have consensus that the idle check is acceptable as proposed?
+> > (Just want to make sure this thread doesn't get lost given another thread
+> > has forked off in this conversation).
 > 
-> This series depend on the dt-bindings change
-> https://lore.kernel.org/all/20250521-topic-8150_pcie_drop_clocks-v1-0-3d42e84f6453@oss.qualcomm.com/
-> 
-> 
+> I don't have any objections to this or a better solution to this.
 
-Applied, thanks!
+Thanks Viresh! Beata, can we kindly move ahead with the idle
+optimization (which is this series), while we continue discussions for
+the "under load" scenarios on the other thread?
 
-[1/2] arm64: dts: qcom: qcs615: enable pcie
-      commit: 718cc7542a000e2911c8d18878ba2eac5f29e744
-[2/2] arm64: dts: qcom: qcs615-ride: Enable PCIe interface
-      commit: 414be2b5a79de8694db1e26a3ea63a2aee5957ad
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+BR,
 
