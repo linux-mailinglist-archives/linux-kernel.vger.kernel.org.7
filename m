@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-763425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8548DB21467
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7D2B21462
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DA63E45AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A4E1885084
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBABE2E0B42;
-	Mon, 11 Aug 2025 18:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C832E2822;
+	Mon, 11 Aug 2025 18:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g2H4KWGH"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY6KtuB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4BD2D6E42
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9072E266E;
+	Mon, 11 Aug 2025 18:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936989; cv=none; b=I6whoH3OrYg3XLFFo7DUbmK2Gu92RT57h08CjiXUo6H3uls20VMSWzvxhcf7o7kGqOwOZVUGVblcxsrP87pistU3DpkF/Doyn1FlMBmzMtdkYsGJZ2dUJt2awbaVRu5eGpMtDBingidK0x8Iiyc94fyIqtcnj9OtmaCIPsh6lps=
+	t=1754937027; cv=none; b=iXfa77IlMhnjQbd1M+kmjNVI7HhUahBzKLve/7TkY2pO9EIl2nR6VCZpDngdYgj7oi1Qz+OTCl/HnmPLx6zTuTMMpe7gMBRCnqnwIwkMVgdwym5TfcC9rt3FZuOMKOjbRSH7/kz10X4AEOBzRcKng6gEGIVV3UkrDO0bOZe/0Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936989; c=relaxed/simple;
-	bh=hrEtBOvQnw6YW8KdGQJzpLlwiXbFkDUtjprkDcg04kk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JtW7swk9cxcwwiODSH/m9L694hX2SOZE5wytl8XICzkzh/3S4gyySz/JQSAmNkSuYm2U8AB4kOrBDBO2wf5OAw/wfof9S5vbGx7iBIyRwxQUNULOWvBjvK1eJTpMC359DL5p0WLOPJn7mW3uAGUyuVoHi+2FnP3HfJfDIXk3CCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g2H4KWGH; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754936984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uKssGbguN0Up7XspWHdWQl8Ps3WGNN+kKJTTLCWt7Vk=;
-	b=g2H4KWGHkB1lIozTBhDP6X72zzPC5+siYNPjSXcfCbZu6h+WO/46eMTc5nl1qZ3wtTtZoc
-	ePHocETjDPJhIt+hFP+dfhq6GUTc75zyQTj55HQbwcz9AM+sea7WLWTdmIJnrC+OAHz6Ag
-	XDjNdx5uWTaufhEKeG9JBeVvr425/qU=
+	s=arc-20240116; t=1754937027; c=relaxed/simple;
+	bh=ToeU378XNa7mcFjM8LmFCjP4twLYSzkkMioVIdczQs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwRPk2pKSmTt6UCfCbh2Nkoe6PLJNWdq/j2Sv97GYFsgQRjIkF0iWk8lWbQ7JOGoEhx0t6JEgs4TQ2RZa9PmkmzFxoTGcd5/lLwUQNHYOvYI5gPMxklCPUhSkQhSuPoLO3jyEREKqyb0Oum/0giu8qF58RrXK56/JAKZhcA5YA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY6KtuB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6AD5C4CEED;
+	Mon, 11 Aug 2025 18:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754937027;
+	bh=ToeU378XNa7mcFjM8LmFCjP4twLYSzkkMioVIdczQs0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AY6KtuB04J369OsmZY5WPLLMHlWxEKtMRYDNHKEnd69l2I5cg7SmoWrcxrGAViOEq
+	 YqI0agLeXYlF3Vmd7NeIr8m7C64aA2w/pNGvA+XRIEeTDGbVZjediEj9D/Ia3tujcf
+	 kMg5sGrj+B2PYD4KDGOVFPWa9PoP283rRMlIf8fu1111PhpuyGPenM2Vaaw/H8F/LD
+	 yX9Vfq2ZY9OPHCmHInwtoJC67o2teJIMv6QBO5ut5FI2i5DTKwNIru8AUKMRki/COv
+	 Y2ZE+WIMCX5yvK0Nq3Sl7ZV7pbEP8fjyWO0Ts2IwtEi2uC+TnVR7GwaVM3gMwLF/1W
+	 jxS6lDg0lU9sg==
+Date: Mon, 11 Aug 2025 13:30:24 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Yongxing Mou <quic_yongmou@quicinc.com>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] soc: qcom: ubwc: Add QCS8300 UBWC cfg
+Message-ID: <aw6epwnox2shu6tb2btsgnewnhs7ifmur2o7fyuz7ucegtzl4u@57r7q35fxh3n>
+References: <20250806-mdssdt_qcs8300-v6-0-dbc17a8b86af@quicinc.com>
+ <20250806-mdssdt_qcs8300-v6-5-dbc17a8b86af@quicinc.com>
+ <xfhxrzrzct6n25jtoaacptf2grd44gazfm7fkiyqlhq5bjqujz@bjvacutguagv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2] perf/core: Replace memset(0) + strscpy() with
- strscpy_pad()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250811181802.72970-2-thorsten.blum@linux.dev>
-Date: Mon, 11 Aug 2025 20:29:30 +0200
-Cc: linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <27A3E6D2-3982-401A-8AEB-8E60DFCC45A9@linux.dev>
-References: <20250811181802.72970-2-thorsten.blum@linux.dev>
-To: Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xfhxrzrzct6n25jtoaacptf2grd44gazfm7fkiyqlhq5bjqujz@bjvacutguagv>
 
-On 11. Aug 2025, at 20:18, Thorsten Blum wrote:
-> Changes in v2:
-> - Keep strlen() as we're not checking the return value of =
-strscpy_pad()
->  for string truncation
-> - Link to v1: =
-https://lore.kernel.org/lkml/20250811091637.4492-2-thorsten.blum@linux.dev=
-/
+On Wed, Aug 06, 2025 at 06:32:20AM +0300, Dmitry Baryshkov wrote:
+> On Wed, Aug 06, 2025 at 11:16:49AM +0800, Yongxing Mou wrote:
+> > The QCS8300 supports UBWC 4.0 and 4 channels LP5 memory interface. Use
+> > the SC8280XP as fallback for QCS8300 according to the specification.
+> > 
+> > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> > ---
+> >  drivers/soc/qcom/ubwc_config.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
+> Bjorn, is there a chance that you'd ack merging this through the msm
+> tree?
 
-Actually v1 was just fine because both source and destination buffers
-have the same size 'TASK_COMM_LEN' and the string won't be truncated.
+Acked-by: Bjorn Andersson <andersson@kernel.org>
 
-Sorry for the noise.
+Regards,
+Bjorn
 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
