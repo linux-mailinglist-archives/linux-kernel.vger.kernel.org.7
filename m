@@ -1,295 +1,181 @@
-Return-Path: <linux-kernel+bounces-762268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751D9B20440
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:48:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59C9B2041F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27D017039C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDE4176F9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047491E1DF1;
-	Mon, 11 Aug 2025 09:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF102DECB0;
+	Mon, 11 Aug 2025 09:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wiL/DCAB"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHa57DjN"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CCC23D28C;
-	Mon, 11 Aug 2025 09:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905612; cv=fail; b=tdAKaQEdENwkVWhQBKKhdjUco8BPGBJg/qRrQ2ZUH61P+SQCDVNPdyLB84FxTpCsnpwrt4kcanjjDsFj7/oHNXokynow77Lc4xZgubNeaeXJIWw7+hvNytFBM9vslo31pB7CahiqnvpW+Kj1Ut3Y4NFHCYT789di+Kd4gylyka0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905612; c=relaxed/simple;
-	bh=F3XiC79rxgbgokerBwht6nYI71YdNS4LhA3mVP4GtK4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q/0lK85gwGRpRs8pRjJZOKinIWgPZHZ176sBoi3jiAx9dOYOUhE4RpACxhqPmYaxapHltBeW+hGoNxXIV+GEUe55nlxNJcR+XQ/fP5247NPkF/EoUrH/9xRCZ5Mw9K56jZEioR1oA7e3ufrkRHvmsTRKVEXh00+ZhZVrBNRQbys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wiL/DCAB; arc=fail smtp.client-ip=40.107.94.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mflPM+dyx78rzqIYY9f3KShipKSizLKJEwkbe4zsamswl4EaEXqEhKSekL2pyt9rd/+bXbLhQ+5d0rTo0veIGmv8ez5yk45NPX2sviA3rEAsbHi//JKwOrICNDJeSBky1Wod+BsWOhJwEWlwQEfheZXx1ijEgy5Fhc6Db0NDkz0JmExzWXGPultgVFMsYCNVGlv1GsZhZMpDkRE89U1lO/byNvtnbC27Tf4xp/e1bIAIhNHk3G0WwRwFmRQ9hZUxhQU4bh/KIAC6Wg8XrcG0HY5fgOcW50iYTOJmChh1ZcuEQLew3mP5x6McAT4TUZ9eMZRLN/+fWCWBOV+fi2zO4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8x5kFyst8GRZWfMt9bAT8/V7H6bDoDmNjP6GfGbCEvA=;
- b=p2thkP1JLoScHJpoMO1ZGDwZvAf6uPjfc3XN15f55qQ8gE3FrhrjazIwyZX1cekOIzttIXj0K2VvMmxVc0xUpUq+sZUJo4nySu1R0/L9sLYFnqv/o/voldSOwKZFw43EsBYC+6k98/elZMbk1OuIjvy6A2PfEXvchHtHdZ0+EA+RV3jr7ws1LiZNYTVJf38TMkvX1C/Kwhp8HXItjzjuEpdpqV4Sun42zAUfsGvlf6zSEFvK2CQpadcBrLxaRRLObv0tFXrIoOolvjF1uhkHFXyopFWDFR29Fd+DOsPMMS2qED1lMZNdMY4w1fNP4LvsiKmm0g16Tbqw9N2nRe+A1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8x5kFyst8GRZWfMt9bAT8/V7H6bDoDmNjP6GfGbCEvA=;
- b=wiL/DCABaWAxmz+iuWfzEkAsj8Tkv7ADQQjZwUKWAvtodJSK9ov37UBjd1KSLiQhXfYwyV3WBpdttj+vTNx6pxXsUHAP49ez7YYyHHKuhdanjbSFtMlrr88ICMuwybTijY8NBt9NJqIjHNNMH4RCfmOjaaM2I/y5sHy8ZNo9i2U=
-Received: from CH5PR03CA0016.namprd03.prod.outlook.com (2603:10b6:610:1f1::28)
- by SJ1PR12MB6027.namprd12.prod.outlook.com (2603:10b6:a03:48a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Mon, 11 Aug
- 2025 09:46:45 +0000
-Received: from CH2PEPF0000013E.namprd02.prod.outlook.com
- (2603:10b6:610:1f1:cafe::eb) by CH5PR03CA0016.outlook.office365.com
- (2603:10b6:610:1f1::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Mon,
- 11 Aug 2025 09:46:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF0000013E.mail.protection.outlook.com (10.167.244.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 09:46:45 +0000
-Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 04:46:38 -0500
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
-	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
-	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<kirill.shutemov@linux.intel.com>, <huibo.wang@amd.com>,
-	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
-Subject: [PATCH v9 05/18] x86/apic: Add update_vector() callback for apic drivers
-Date: Mon, 11 Aug 2025 15:14:31 +0530
-Message-ID: <20250811094444.203161-6-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AB12DE715
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754905480; cv=none; b=qm4sVOFCV3hdw/x8XAtkcomYmlsuRiyOXmp3eWEONJdLbl4oBWsyHuegDWCZguyJd+Ixoyz8NLkfm3SofmEyxLrX4UcwF8LPi8k7fO/xhvrsmzmM+G2H1+8rV7f8yFeF2BZO9CVZH2EnHue1FiUUyJk9L72NZQ+8zVpOzhae/6E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754905480; c=relaxed/simple;
+	bh=u6mPPSp7cA/PRGa2f30vHbLCcQCA5uyudzzgCU/QGt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P90Uf/LzPB+YbT9hEBwCTPobU8j2ZTtT7BxQOVej0M5fNqW1ev4HcccZz50fwi1kyWdlGExjTYBFUOnv+frT1RnKJEqoZ2zbwwUCo2aX9dO6pUJqTaP7eQ8moA7dgxX274SE7o6yHewCJ4UtQ8Ihx6JKiu3o6bNGVc3vXI0gkig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KHa57DjN; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458ba079338so32161625e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754905474; x=1755510274; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W/e8vToSJSCReNRAEx8RxbA8CPAOFtmnWv5RzQRjO+Y=;
+        b=KHa57DjN1802mNVzC8/0C5ONUN9K4SCY5TifsDPH8x2XL0w+N08G5xwIb87SeKQ+0D
+         Gwmwi3mhtDGGdVVfwodK7+cTIZ4xi6GKzxod2w4Zrd58gO1DvFwBmq32iS14Qw0ZRw8B
+         YJ7uNcxcIY3s9zTOSYSzTmvxTvzF0SqgyvgGZdEbqGB33lhoGC/RVErKMamXO33DTKjt
+         rnoImfxOrfzY0ESMqYbrL+ffKUojLweuCQZjHSKKaAE9jtcVAli6iqTF4iJEooB5TrX1
+         eKd1VMuKaURaEcdDjDfQCAUsbN+yUioNdOZ8Gn10BZZTzxQvIWfe1E1/GEqb8ZTMFODr
+         Zt/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754905474; x=1755510274;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W/e8vToSJSCReNRAEx8RxbA8CPAOFtmnWv5RzQRjO+Y=;
+        b=BwljMnrBvLgqzFKbHQaIQ81y2SuunZsQl1ZPHhuaG12Hyh5D3bFDFMKX4IjKhRAaLF
+         OwpC3ZVTm4MXYNE/s2pVdCYfciZm/+/eD2qsqjg7Leg+SZeOukXe2XEjS8qiUqyVrVsf
+         jX46Y9U8rPm8WQ9Yr2POvU3GJsm7DoJPnqq+WgJsVwm+ehU7awot7hF1JpIjAza4LWUe
+         pG+wR0BlMm0xBpMOqIN59WvCpvWLB7Lb8kU6357GUfAhD4FpTHlX/nVArq8TvLF3PRH3
+         t4jZQc8RzJMAGPT2qgRv2N5CUurclLfdguxl7F0yKQL/dDgb9X9iDL3Y3kNPFFHdaA4C
+         yV3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX75cI5MPSSyjpTwBz+TGiozPH3zmE3jZx13eJVomciXlq2OEq2UTtavgldSxXMvBL3zOFiM24hid4QVDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypqFz06gLKcr5iYIWTsJsZbf9aJPd0aeR7vGdktYgG/5PkzxmW
+	EcXy/ga2B4AilWt66hmxXavlJ+mJKuevkGSLaRm10SQS5G6bmcy46nX2uw8csFH8YTM=
+X-Gm-Gg: ASbGnctpepXc58Y1A8oKuXVLDv2NbOrpwRxA6qIgzISGTTpAf7wFrSlNZ6swBzmMpTO
+	TFUCP8ijmZCBsiDlxwQGOjXXV8js5u6zaaScXzJbuCKulboQG65eKcdMuhRW6xlRpGgT+vgphdr
+	vhlnA/z5rNIis0e6v6Wz3T2QLewFJbBVjV2h6y6fQb8LdriVdg4KzK/1wQQ50WLt+gmQOOjXuOd
+	wt+e+cZUIl83p8XurYHytAURg0MqftNK9zXhwGrgNMVNaeMMnhS6N1fzhVt/tb0OO7CgNL1rfZX
+	FRMalh9scyvDCemG/KvRpFbGPTqUxYDePBZoYthuPfjiU/gpcMA7VzrNPpyt/sud7QPsJNaZc9i
+	W0FT5To6jTvdr8z9MWGtiQb97Do31Gnjt/SAqmVSxMbBPdjHW00kb3TcKvNWXrWpjQs/VCMwr
+X-Google-Smtp-Source: AGHT+IG+NEOXjyCznvP7UhqVqao6kNGxrVLq1JKLDQ1iHyYHEwilg3xM4Im8/dlulSQA849qP8Xp/A==
+X-Received: by 2002:a05:600c:c089:b0:43c:ed33:a500 with SMTP id 5b1f17b1804b1-459f3a7ee89mr92100265e9.10.1754905474135;
+        Mon, 11 Aug 2025 02:44:34 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-459e586a011sm266892965e9.19.2025.08.11.02.44.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 02:44:33 -0700 (PDT)
+Message-ID: <47ed1b83-9ace-475b-8279-6c7f394c35f3@linaro.org>
+Date: Mon, 11 Aug 2025 11:44:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] pwm: Add the S32G support in the Freescale FTM
+ driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Frank.Li@nxp.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ghennadi.Procopciuc@nxp.com, s32@nxp.com
+References: <20250810185221.2767567-1-daniel.lezcano@linaro.org>
+ <20250810185221.2767567-3-daniel.lezcano@linaro.org>
+ <p5pwwdlrldqdkpqtfvgo3dz2liz46ywy7crjfe4nybxmrhlh55@b6v7lccczczs>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <p5pwwdlrldqdkpqtfvgo3dz2liz46ywy7crjfe4nybxmrhlh55@b6v7lccczczs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013E:EE_|SJ1PR12MB6027:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27ce8d1f-a7f7-4b55-8aae-08ddd8bbfbd8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SZ/c8IiZV5LdwBFvvIap5XEhNv2T8O8fs0+AEIVUGNnZrcmcflSp35BiTDTy?=
- =?us-ascii?Q?hfC3URrDqcdB1Y607JzbFGqsDa55XuP9hX66VDMakyO6fcGcDFRXap2V27ke?=
- =?us-ascii?Q?IfcO9O1m6gO+7bpCvfcvLG8IP0Oon0/xIFugarr7wLG09EjMrFnylVXbxGUI?=
- =?us-ascii?Q?HvmZXrGdb7wTdUx/kU3IzRB9IIdT0TBmkgkatUoVFX2b8Hjs3cNxzGrTMpp7?=
- =?us-ascii?Q?/ev0myI4FU3CWEaTa6bTSkrfHYaRnIBxnXdszQRDRc56CrB/IZdvDesA7w4S?=
- =?us-ascii?Q?dDrA7RyQoAPGjWAKjJGmzt7I8jat3pZmthjJFxDrfJkJjPKqrjLj2rMr/jIN?=
- =?us-ascii?Q?b+GXcsr6HbzeuF2wo+9bzNJdI1BMlBiyjViOdOIHYECFR3YltP4L7tks2tR+?=
- =?us-ascii?Q?YPpeinUJLe9HSJvZZrTQTE0PT/bHYpnfHnBN9rP/vZNpVvs6kbWw/G/bGkk9?=
- =?us-ascii?Q?1M9TBdX2k0h2JZg3VENmFLjaNHqhajDyVQSlnaQgrh4Er8U/sD0LsIHYXu0S?=
- =?us-ascii?Q?SY7OjMLEMI5jGx33jWcWrfIHFmVW97s7U1L+FyCXhIfZ5gMr4oKSrI/0bPw/?=
- =?us-ascii?Q?Sc7dKd2bOBM97ImIlB0MZ1PE/fk9Vekk/GXUJfR8sXgr8PkpCuvj9btcowVD?=
- =?us-ascii?Q?hhS7XBNSCfB8GyVc5VvXi+BqinL6rR9FQU4Jrt/coj4MVZ06LOrni/4GhbRU?=
- =?us-ascii?Q?Gkn0vQSNRhRroVh+fapbYyX2b0rDyukaiOU21ZfxBjuVkTw5DwOnMnIbySuD?=
- =?us-ascii?Q?d7Yht5XesqgoGGis4XoZhI9PoSNe9n9JWUY/WMhLbLcwe0C7PB54E2q+qgcy?=
- =?us-ascii?Q?H5hdFrivNoi1JtWZmj5UlVlEo1vYJtpAAUSTVgBLnRX0d7cAv3yy6nWxpqd8?=
- =?us-ascii?Q?RzTUQGAPyaHIBg8qr6TTnaXawyDQHmXlWKJpfDFol6HEJV7e/j8UifrP5y5U?=
- =?us-ascii?Q?JRweMHhBOVSB2l4MHdFtooU/u4kaMQh9UwqQIadbWcxD7YWmdmAFyKusfDcl?=
- =?us-ascii?Q?Lst7vJYb3fdVamyguiJBn9tSmWZht8T/8Jorx/hHJB4ktU/C2EhndSaNklkq?=
- =?us-ascii?Q?IPQn3gJrjz1Zq4/9Enkef7TG05thv+lhXX6oEdGagbkmN87H3BJ/fnzrJCi5?=
- =?us-ascii?Q?Z4+fT+nwZ1mVOf+1XJ1YKsAYV6xvcnKE8BRWDE0mc8oXLClCByS0o8mSRkBb?=
- =?us-ascii?Q?3UI7XIjxudZSujK4bRfPzV1ROZ4jOP14ORUX2qz1m6yfwaxpMBTeBbUHWxSg?=
- =?us-ascii?Q?zADW9gcPoTODe8NpDBxwsCBevxQl6g4OwGfI3NYG1RutRycF9fWWag0rzR3c?=
- =?us-ascii?Q?dOk5jQI99mXcDEJqA23XS5/CGiyez+2Thk8rw5VeECQPTZex6YN6rCKod9wT?=
- =?us-ascii?Q?IfhqqmfImwOIOXrSxTrxqjZLqYBjlUETYuia1L2zd8q+4ACpZax/UH94mA89?=
- =?us-ascii?Q?lpFrvxZxnowyruxziF4vUF/wcI+6xyRNgJbHhAUuQg2umIIkwGZi2KG8Jus4?=
- =?us-ascii?Q?df4onNd0fgI240//oXPNxYoR6iV5ZN3mROvo?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 09:46:45.1683
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27ce8d1f-a7f7-4b55-8aae-08ddd8bbfbd8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6027
 
-Add an update_vector() callback to allow APIC drivers to perform
-driver specific operations on external vector allocation/teardown
-on a CPU. This callback will be used in subsequent commits by Secure
-AVIC APIC driver to configure the vectors which a guest vCPU allows
-the hypervisor to send to it.
 
-As system vectors have fixed vector assignments and are not dynamically
-allocated, add apic_update_vector() public api to facilitate
-update_vector() callback invocation for them. This will be used for
-Secure AVIC enabled guests to allow the hypervisor to inject system
-vectors which are emulated by the hypervisor such as APIC timer vector
-and HYPERVISOR_CALLBACK_VECTOR.
+Hi Uwe,
 
-While at it, cleanup line break in apic_update_irq_cfg().
+thanks for reviewing the changes
 
-Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-Changes since v8:
- - No change.
+On 11/08/2025 07:18, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Sun, Aug 10, 2025 at 08:52:18PM +0200, Daniel Lezcano wrote:
+>> From: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+>>
+>> The Automotive S32G2 and S32G3 platforms include two FTM timers for
+>> pwm. Each FTM has 6 PWM channels.
+>>
+>> The current Freescale FTM driver supports the iMX8 and the Vybrid
+>> Family FTM IP. The FTM IP found on the S32G platforms is almost
+>> identical except for the number of channels and the register mapping.
+>>
+>> These changes allow to deal with different number of channels and
+>> support the holes found in the register memory mapping for s32gx for
+>> suspend / resume.
+>>
+>> Tested on a s32g274-rdb2 J5 PWM pin output with signal visualization
+>> on oscilloscope.
+>>
+>> Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+>> Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>   drivers/pwm/pwm-fsl-ftm.c | 42 +++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 40 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c
+>> index c45a5fca4cbb..cdf2e3572c90 100644
+>> --- a/drivers/pwm/pwm-fsl-ftm.c
+>> +++ b/drivers/pwm/pwm-fsl-ftm.c
+>> @@ -3,6 +3,7 @@
+>>    *  Freescale FlexTimer Module (FTM) PWM Driver
+>>    *
+>>    *  Copyright 2012-2013 Freescale Semiconductor, Inc.
+>> + *  Copyright 2020-2025 NXP
+>>    */
+>>   
+>>   #include <linux/clk.h>
+>> @@ -31,6 +32,9 @@ enum fsl_pwm_clk {
+>>   
+>>   struct fsl_ftm_soc {
+>>   	bool has_enable_bits;
+>> +	bool has_fltctrl;
+>> +	bool has_fltpol;
+> 
+> All variants (up to now) have .has_fltctrl == .has_fltpol. Is there a
+> good reason that justifies two bools for the register description?
 
- arch/x86/include/asm/apic.h   |  9 +++++++++
- arch/x86/kernel/apic/vector.c | 29 ++++++++++++++++++-----------
- 2 files changed, 27 insertions(+), 11 deletions(-)
+Yeah, I agree it can be folded into a single has_flt_reg boolean. I can 
+only guess that was done with the idea of sticking to the reference 
+manual and perhaps having more variant to come with, eg.,  fltctrl=false 
+and fltpol=true
 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 44b4080721a6..0683318470be 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -318,6 +318,8 @@ struct apic {
- 	/* wakeup secondary CPU using 64-bit wakeup point */
- 	int	(*wakeup_secondary_cpu_64)(u32 apicid, unsigned long start_eip, unsigned int cpu);
- 
-+	void	(*update_vector)(unsigned int cpu, unsigned int vector, bool set);
-+
- 	char	*name;
- };
- 
-@@ -471,6 +473,12 @@ static __always_inline bool apic_id_valid(u32 apic_id)
- 	return apic_id <= apic->max_apic_id;
- }
- 
-+static __always_inline void apic_update_vector(unsigned int cpu, unsigned int vector, bool set)
-+{
-+	if (apic->update_vector)
-+		apic->update_vector(cpu, vector, set);
-+}
-+
- #else /* CONFIG_X86_LOCAL_APIC */
- 
- static inline u32 apic_read(u32 reg) { return 0; }
-@@ -482,6 +490,7 @@ static inline void apic_wait_icr_idle(void) { }
- static inline u32 safe_apic_wait_icr_idle(void) { return 0; }
- static inline void apic_native_eoi(void) { WARN_ON_ONCE(1); }
- static inline void apic_setup_apic_calls(void) { }
-+static inline void apic_update_vector(unsigned int cpu, unsigned int vector, bool set) { }
- 
- #define apic_update_callback(_callback, _fn) do { } while (0)
- 
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index a947b46a8b64..655eeb808ebc 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -134,13 +134,21 @@ static void apic_update_irq_cfg(struct irq_data *irqd, unsigned int vector,
- 
- 	apicd->hw_irq_cfg.vector = vector;
- 	apicd->hw_irq_cfg.dest_apicid = apic->calc_dest_apicid(cpu);
-+
-+	apic_update_vector(cpu, vector, true);
-+
- 	irq_data_update_effective_affinity(irqd, cpumask_of(cpu));
--	trace_vector_config(irqd->irq, vector, cpu,
--			    apicd->hw_irq_cfg.dest_apicid);
-+	trace_vector_config(irqd->irq, vector, cpu, apicd->hw_irq_cfg.dest_apicid);
- }
- 
--static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
--			       unsigned int newcpu)
-+static void apic_free_vector(unsigned int cpu, unsigned int vector, bool managed)
-+{
-+	apic_update_vector(cpu, vector, false);
-+	irq_matrix_free(vector_matrix, cpu, vector, managed);
-+}
-+
-+static void apic_chipd_update_vector(struct irq_data *irqd, unsigned int newvec,
-+				     unsigned int newcpu)
- {
- 	struct apic_chip_data *apicd = apic_chip_data(irqd);
- 	struct irq_desc *desc = irq_data_to_desc(irqd);
-@@ -174,8 +182,7 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
- 		apicd->prev_cpu = apicd->cpu;
- 		WARN_ON_ONCE(apicd->cpu == newcpu);
- 	} else {
--		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
--				managed);
-+		apic_free_vector(apicd->cpu, apicd->vector, managed);
- 	}
- 
- setnew:
-@@ -261,7 +268,7 @@ assign_vector_locked(struct irq_data *irqd, const struct cpumask *dest)
- 	trace_vector_alloc(irqd->irq, vector, resvd, vector);
- 	if (vector < 0)
- 		return vector;
--	apic_update_vector(irqd, vector, cpu);
-+	apic_chipd_update_vector(irqd, vector, cpu);
- 
- 	return 0;
- }
-@@ -337,7 +344,7 @@ assign_managed_vector(struct irq_data *irqd, const struct cpumask *dest)
- 	trace_vector_alloc_managed(irqd->irq, vector, vector);
- 	if (vector < 0)
- 		return vector;
--	apic_update_vector(irqd, vector, cpu);
-+	apic_chipd_update_vector(irqd, vector, cpu);
- 
- 	return 0;
- }
-@@ -357,7 +364,7 @@ static void clear_irq_vector(struct irq_data *irqd)
- 			   apicd->prev_cpu);
- 
- 	per_cpu(vector_irq, apicd->cpu)[vector] = VECTOR_SHUTDOWN;
--	irq_matrix_free(vector_matrix, apicd->cpu, vector, managed);
-+	apic_free_vector(apicd->cpu, vector, managed);
- 	apicd->vector = 0;
- 
- 	/* Clean up move in progress */
-@@ -366,7 +373,7 @@ static void clear_irq_vector(struct irq_data *irqd)
- 		return;
- 
- 	per_cpu(vector_irq, apicd->prev_cpu)[vector] = VECTOR_SHUTDOWN;
--	irq_matrix_free(vector_matrix, apicd->prev_cpu, vector, managed);
-+	apic_free_vector(apicd->prev_cpu, vector, managed);
- 	apicd->prev_vector = 0;
- 	apicd->move_in_progress = 0;
- 	hlist_del_init(&apicd->clist);
-@@ -905,7 +912,7 @@ static void free_moved_vector(struct apic_chip_data *apicd)
- 	 *    affinity mask comes online.
- 	 */
- 	trace_vector_free_moved(apicd->irq, cpu, vector, managed);
--	irq_matrix_free(vector_matrix, cpu, vector, managed);
-+	apic_free_vector(cpu, vector, managed);
- 	per_cpu(vector_irq, cpu)[vector] = VECTOR_UNUSED;
- 	hlist_del_init(&apicd->clist);
- 	apicd->prev_vector = 0;
+Do you want me to merge these boolean ?
+
+> Also I wonder about the fuss given that the two registers are not used
+> in the PWM driver. So this is only to prevent reading these registers
+> via regmap debug stuff? What happens if the memory locations are read
+> where the other implementations have these registers?
+
+The problem arises at resume time.
+
+	/* restore all registers from cache */
+         clk_prepare(fpc->ipg_clk);
+	regcache_cache_only(fpc->regmap, false);
+         regcache_sync(fpc->regmap);
+
+Without skipping these registers, the kernel crashes on s32g2/3
+
+
 -- 
-2.34.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
