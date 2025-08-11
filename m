@@ -1,175 +1,135 @@
-Return-Path: <linux-kernel+bounces-763603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DECFB21756
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1844AB21760
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46048463B18
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:28:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C3DB1A24C66
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365CC2E3366;
-	Mon, 11 Aug 2025 21:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1982E4274;
+	Mon, 11 Aug 2025 21:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1VqiMs9"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmLvWZDd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034B02E2DCB;
-	Mon, 11 Aug 2025 21:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884762E336F;
+	Mon, 11 Aug 2025 21:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754947687; cv=none; b=V6RT8zrnDegoKkTteiiUudmYjLDiGlHbhtdYXYuND2yHwQ65i/yyh/6g6puUusPFlqfjALfnAe12LrFFHLd/nIWwUdn2VgqsaBae9aeCOeHebv2yznWRpAKCrjvPcHOeS5UlOP+w1VRG69rzcj2lR/Gwk515D5s1Nnp0cb0ktg4=
+	t=1754947703; cv=none; b=rWfSZL47MmX+Is7cXRX+0c5nsNSqcC/zDfWCJE10vroY090ppTIaeGPcmT0Gc1Z3uo2AI+VweaMeaMZ/Pk5E4Lc3npUsjOJ8NA3qv3WdgeMTH/ug26gmtce8U/+G9SN+JJ5TleV0BTyKcWcZGeIhHb4KTC/TIvibnlytRgos6QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754947687; c=relaxed/simple;
-	bh=4jWt+vtaMp5Tdm13CVmodDS1jsKe4d7LMcQKGSs1wIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpKyYHElZRWJZP1ADolAWhuNLTx5ngsfyl7vpxkiUAPqoPq27txRwNihnWmXz6CYb7rD8b0EHFaUifLl+feIBgiiJP/xHUjE3kiD8pJ7T+chQt33sH7VQ02LxbsYedjbZQg2wIr27dAAIVrGMUv38RPOschYw828Qp390Mf6v3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1VqiMs9; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6155e75a9acso7590881a12.0;
-        Mon, 11 Aug 2025 14:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754947683; x=1755552483; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u7emz6ROM15eXVZD/JHmzk6WH3TEb4rlVhorWWEnTJU=;
-        b=V1VqiMs9rhral5NZfF/f6XNs28RuDZ+nbWmhXEpfmCq4/VKYJ4Xx6Gyk8bR6CMOSTt
-         +9OmWjgPrPwFWa6oja8i5wGMOyITalG0qi3ZPq2dopizSjrvV4QLVuE+M/MxXTsWI8Gi
-         2uvqTaYEnS+p12w61/u770wtNaODINSRy1EIQ9UirlQhUh18P1q1QX50w+9ZJBld0yC6
-         eH/xXSkvPnno0n5q4nQuTveDbum2ommpyJxw/KFQoiaaJCrMb13tE7NeC/AZAoWzt8P3
-         MKkBkHoDymW8ECyRevR1S9z2cD0kFjltc6GOAJDe2kWCqBIWRonq7wwvhejXpXV5lKEf
-         Rl0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754947683; x=1755552483;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=u7emz6ROM15eXVZD/JHmzk6WH3TEb4rlVhorWWEnTJU=;
-        b=le1VXJUeEWwQowV5D9Beo1qdi6F7gxvRqpbaUP3ssdwhMpKf0SXzJbmITPQPT1wzk8
-         JxMwJaRRxNCO5SxH2pHHgK7hdjo0B9KIkF3hDuf7nyxinQQvVo8d9040Jxb4pweV+qMs
-         VB/OB6n3W8LhTirdTigdSY2Yi7zaP9NJplzvmoaR5Yj60L5O/s1PRR0PvpTO+QgKlTUF
-         ibPMH8DYG0DKOWbCKUG9AotjjH90rmOyHbiM/jLQAHHa6FyLKU56TRlemN4Sd/yU06eA
-         ifIQqirCto0AGTmUNzZfLgBOF31c+6/mUGKS+ojapvIDUeQFQinY9PUGpqk6GyLB9omg
-         o+Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO3fcpA7FY7EyZm6pUrdFPMyx6Zh2hOTT4e0xU7iggI2IqCWmowJN0bNd+xa4vSXxlAVBi78cCqT3hqsk=@vger.kernel.org, AJvYcCXF0qNwReIj76Mb4lWzYaTquv6FLl9Z3p4lU+S2f4iSq/oLyKHltwv8fbZf47HUHnthjjNPPlAArXM5ogPTc+rJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ/ykWtJC5IfiDz/nEfBeNDLvY2JEt2Rv19X3B+TVx0/NaRyoh
-	pHrgLzKWTjcrQls8aX4FH68uW50IB0hIkUsmfisLpqE1pkj+Y34VilQ6uS+eW5Fb
-X-Gm-Gg: ASbGnctQySX8+nuGk4bdLMDQEzodC8mZ0TdVXkUPEftf7a3OlqykXGjOFJY5hTSetLM
-	ZuYZ0cHCyDVbe+cqGKbC68A4lL5kp3rpEWMlksBxdEAQhOppueiylrA9HJ67PP3gdB0GfHI6dkl
-	JGH+t5y7GQmOSe2K96pQ4yD6Q+isM/kBWPqiHtZWPg+/37H5XxcqqQf8V7I1sWLvVCvbkmj8aSL
-	wCBpXcNkFHmDcjJjH/iTaGaRfjs5fR+JUxAieg20KP0k7pYRWBhUjkO5Vx+yRggztlel5X7mJnS
-	VaNrxDuBylSdd3Yo22Dq+TLj0fKxi8JeMFHbrpBT3X9n4jA0DjkRDitkNpQhS9sU4hD9Jh3RztO
-	8md9aSMlN4xJOMxZyA9gRZw==
-X-Google-Smtp-Source: AGHT+IEJ09ZPMSOGoqTX4r3ubN8xEk05FcZvRutxM05qzde970yiia9Wthp2LHeb/ElEnlKIxxnWBw==
-X-Received: by 2002:a17:906:f5a5:b0:ae3:f903:e41 with SMTP id a640c23a62f3a-afa1e152edamr90815566b.54.1754947682935;
-        Mon, 11 Aug 2025 14:28:02 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3792sm2073582166b.50.2025.08.11.14.28.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Aug 2025 14:28:02 -0700 (PDT)
-Date: Mon, 11 Aug 2025 21:28:02 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] selftests/mm: add check_folio_orders() helper.
-Message-ID: <20250811212802.gsvbeqmo62v4tqly@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250808190144.797076-1-ziy@nvidia.com>
- <20250808190144.797076-3-ziy@nvidia.com>
- <20250809201836.jegaanplfcjak44f@master>
- <B13F65A9-B001-4494-A060-23D95055553F@nvidia.com>
+	s=arc-20240116; t=1754947703; c=relaxed/simple;
+	bh=QN0m5GWtPJp7/qt9pQe5ZfZF+f+JOw2bQNcJ/j477Lc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AwhYgF2A21X2IiRypCSGjMv4n37LPGtpuDbl9fEnFcQi7/7Dpq2082agXzF+r6GQlrkpJbPavX2x3qFmyd9towED6OoYi/qoIKzrp00pJOjKLJiYeOhKPALu0GYoJv7s5z73qfVRVv/D1TVCaBKoOPVGvVCcnDNlhU7OYqlrZOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmLvWZDd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2912DC4CEF1;
+	Mon, 11 Aug 2025 21:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754947703;
+	bh=QN0m5GWtPJp7/qt9pQe5ZfZF+f+JOw2bQNcJ/j477Lc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=jmLvWZDdhKvxJ3ULu0XqJ9ONvu/UlBPARRMeUh2b42oQ/2PO9TmDtvFePbuKlUQle
+	 9HNXl1PX+FOQt8A7bS842GwkWmysrGBO6PqRUJ4CEXZ2/VkZnsQJKXQ07x7D9L6oXz
+	 +/uVUjSKFlo/hVozHwyIsLo4gl2CUD6VE4J7xjd7cFUpzwdA2AxR58Y20Reh92Fr7r
+	 HNNkdw5j86hFXaVWcXm3iwAM1L1W1eC2X7LEGbBMjlWbH4O1LVOf0ds1/+xZBzrbU4
+	 iJ1SmtbypsSZOAK543LzF07hdwAeDtYDPSdyos5tzZ2LHLZg9XpCkGFuYdU63tRqAl
+	 4ZD8Ru5KbA10w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13007CA0EDB;
+	Mon, 11 Aug 2025 21:28:23 +0000 (UTC)
+From: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>
+Date: Tue, 12 Aug 2025 06:28:02 +0900
+Subject: [PATCH v2 2/2] iov_iter: iov_folioq_get_pages: don't leave empty
+ slot behind
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B13F65A9-B001-4494-A060-23D95055553F@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250812-iot_iter_folio-v2-2-f99423309478@codewreck.org>
+References: <20250812-iot_iter_folio-v2-0-f99423309478@codewreck.org>
+In-Reply-To: <20250812-iot_iter_folio-v2-0-f99423309478@codewreck.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Maximilian Bosch <maximilian@mbosch.me>, Ryan Lahfa <ryan@lahfa.xyz>, 
+ Christian Theune <ct@flyingcircus.io>, Arnout Engelen <arnout@bzzt.net>, 
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Dominique Martinet <asmadeus@codewreck.org>
+X-Mailer: b4 0.15-dev-7be4f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1129;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=hWtTUCvGG0PvbE6UasHSB7hwyWcYL54anMdr7Xzd+hY=;
+ b=owEBbQKS/ZANAwAKAatOm+xqmOZwAcsmYgBommB1jlBau7xcwTcqmY8qrpOsUxyecm2YZfnGb
+ RD0o4qZhZmJAjMEAAEKAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCaJpgdQAKCRCrTpvsapjm
+ cEb8D/9an6eblnzeoL0M2VSMUQ7QI7IMsT4MlMEeRG5w+2Lfijjtb+z92PO1JsMMYdLjP2ecPF6
+ gs7b7OLUpbc6WSRODpT713hfswV+Sc+d4AEBGNCna0Tr9caRapg8JSiC1nMvL4TmlBnHlWfRfx8
+ D5X57VtMAsqkaIoY0fs5yu8Ik6W+DXU5MT1TNz4MeI4sRAJc8heC+lXwgcA+gyPJAiW0rYyJVPe
+ qUwFP6iq+udqTBRqiV5BOC7RvEU0onpuxdDz/sZk9h88Tpb7S8ZeJgVfaAehBkjaTTs2E/CcMtx
+ 0xk1QN/JR4W/Xb9gIqB98G+YpdgpAECCH53nmNC0tGD4IzQkO7f35Jjmds6/6NSdzQ9PHmPPf54
+ JOYIHEdepLhQoYj7PM5BgCn/UdVslFjYVRkBAFb+TLRMCKqTxMox3oR5dwSJuKmtSgRLAWL8sU+
+ X4sZs46mogw9PuvFFxlvR6tYNeZp9qC3iXzprDYxaKYFppZxBpLVFXFFw5F5kUoR9/H5gM7jUgQ
+ NRT/KRc1y7a8UkC+uWRzrd4zhT/O1LfM+hCmFOHxLPw3q4XlVoavqlZ1AJO60vLcIActCf+2z/l
+ HS+ecvMMzlx+0FtND9QBIJ6e+WIOCH7XAG88mNVTBKPjAfyzYOkbZ4Mtdo3aHNquSSPjgNS/hba
+ eWKqMemYBhQyNTg==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+X-Endpoint-Received: by B4 Relay for asmadeus@codewreck.org/default with
+ auth_id=435
+X-Original-From: Dominique Martinet <asmadeus@codewreck.org>
+Reply-To: asmadeus@codewreck.org
 
-On Mon, Aug 11, 2025 at 02:39:08PM -0400, Zi Yan wrote:
-[...]
->>> +static int gather_folio_orders(char *vaddr_start, size_t len,
->>> +			       int pagemap_file, int kpageflags_file,
->>> +			       int orders[], int nr_orders)
->>> +{
->>> +	uint64_t page_flags = 0;
->>> +	int cur_order = -1;
->>> +	char *vaddr;
->>> +
->>> +	if (!pagemap_file || !kpageflags_file)
->>> +		return -1;
->>> +	if (nr_orders <= 0)
->>> +		return -1;
->>> +
->>> +	for (vaddr = vaddr_start; vaddr < vaddr_start + len; ) {
->>> +		char *next_folio_vaddr;
->>> +		int status;
->>> +
->>> +		if (get_page_flags(vaddr, pagemap_file, kpageflags_file, &page_flags))
->>> +			return -1;
->>> +
->>> +		/* all order-0 pages with possible false postive (non folio) */
->>> +		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
->>> +			orders[0]++;
->>> +			vaddr += psize();
->>> +			continue;
->>> +		}
->>> +
->>> +		/* skip non thp compound pages */
->>> +		if (!(page_flags & KPF_THP)) {
->>> +			vaddr += psize();
->>> +			continue;
->>> +		}
->>> +
->>> +		/* vpn points to part of a THP at this point */
->>> +		if (page_flags & KPF_COMPOUND_HEAD)
->>> +			cur_order = 1;
->>> +		else {
->>> +			/* not a head nor a tail in a THP? */
->>> +			if (!(page_flags & KPF_COMPOUND_TAIL))
->>> +				return -1;
->>> +			continue;
->>> +		}
->>> +
->>> +		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
->>> +
->>> +		if (next_folio_vaddr >= vaddr_start + len)
->>> +			break;
->>
->> Would we skip order 1 folio at the last position?
->>
->> For example, vaddr_start is 0x2000, len is 0x2000 and the folio at vaddr_start
->> is an order 1 folio, whose size is exactly 0x2000.
->>
->> Then we will get next_folio_vaddr == vaddr_start + len.
->>
->> Could that happen?
->
->No. After the loop, there is code checking cur_order and updating orders[].
->
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-Oh, I missed this.
+After advancing into a folioq it makes more sense to point to the next
+slot than at the end of the current slot.
+This should not be needed for correctness, but this also happens to
+"fix" the 9p bug with iterate_folioq() not copying properly.
+
+Acked-by: David Howells <dhowells@redhat.com>
+Tested-by: Arnout Engelen <arnout@bzzt.net>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+ lib/iov_iter.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f9193f952f49945297479483755d68a34c6d4ffe..65c05134ab934e1e0bf5d010fff22983bfe9c680 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1032,9 +1032,6 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
+ 			maxpages--;
+ 		}
+ 
+-		if (maxpages == 0 || extracted >= maxsize)
+-			break;
+-
+ 		if (iov_offset >= fsize) {
+ 			iov_offset = 0;
+ 			slot++;
+@@ -1043,6 +1040,9 @@ static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
+ 				slot = 0;
+ 			}
+ 		}
++
++		if (maxpages == 0 || extracted >= maxsize)
++			break;
+ 	}
+ 
+ 	iter->count = count;
 
 -- 
-Wei Yang
-Help you, Help me
+2.50.1
+
+
 
