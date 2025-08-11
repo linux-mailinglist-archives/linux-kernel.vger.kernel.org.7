@@ -1,134 +1,268 @@
-Return-Path: <linux-kernel+bounces-763183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8AAB21172
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9131CB2119A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91542505AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6CD3E54E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FCB2E1C55;
-	Mon, 11 Aug 2025 16:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46EA2E264D;
+	Mon, 11 Aug 2025 16:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVyAg4no"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PdD5h+PA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5159311C13;
-	Mon, 11 Aug 2025 16:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932062E0405;
+	Mon, 11 Aug 2025 16:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928223; cv=none; b=GpBox8ATgi3QPNWS6LA0Ky58vCYKY4rDr5sDVtsnnhCbXduN84lwNlbpmL9y8u24eC5RHjjXJjR8VSInLq7FOCd1Fj7hTH9sBAvPMMC3rkAiFS6MzYMYizQQXS0jC1R89cXxKCnQe55bzYBmXxwIZWjeERKv5vbCoqKaJkmbhyI=
+	t=1754928248; cv=none; b=jTNwwMJDBrVky13A/1Zyef17fQnPdDrnOSXWRAEth9K5aw1VBNiMGK1qWbEyCg/NZ0eyn5Nuu3XAs64Ipwa7zA7kzUDPbseT3hxC1/ZZKEl8Ln7C7DJBaZkrzyKZKR38PlH7vTv6uvb2iZonONeGPrei7WTr3MVzTYHA9ZzrBQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928223; c=relaxed/simple;
-	bh=tCbSHfG0k4x+8ufTF/sqzn89sChwCdY0v4VMVziN/GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gh1zvp00j7+0XVIbaCY5+5votc6w2vXgf4Ro9PA2c6hJ/X9gPf8yXy71fAYd1svzLPu1Dvo3ec2wBcffHQV+OudplcqSY3Kh+F/2CCG8Mdt3FYrfPLtDML+pCeNS8mIYWaZvDfqszUfHuHybO65ZMobJ/RwVmk31BsylI1Vzp0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVyAg4no; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7682560a2f2so4653290b3a.1;
-        Mon, 11 Aug 2025 09:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754928221; x=1755533021; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qDz1RX4muqAvSaOXc+HaSr6jSseHdgs+lZushYe0bk=;
-        b=hVyAg4nozeeD+hgRVJfg8sfCTY03HdvNjtBO97WkqIMmXzhhmDw/U7rpp408mfRxqq
-         DkvH+WcbfaEvus4LWpR+79txlbFTVN6Ww+Ng95eIDPUjPTMyA4DPsaR5Bi9jrbCnxdPA
-         wdhCC89HeRFM0L9VtldImZ7NMCzrHk9ATe/XmB0SZ9lfoUUwyppJIjQYHRKVmtz2Lu7a
-         NBMe+DepSbbASmBTYA6z0I76zJwGHVO3hMKR4DX8SMKqP45qRm1iEPn438O34W4zr042
-         aJADA+ta7BoUKhPuJFxbcHaE0qg5hkRr/Qqdgae/d04yUVofyMM5Mq2hK8g9zSwAtp7G
-         OOkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754928221; x=1755533021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/qDz1RX4muqAvSaOXc+HaSr6jSseHdgs+lZushYe0bk=;
-        b=qyNYi1IyIE0/3eIbITLVLIZ0D9stEsXaxHKu/0hzYPCR25EibYHEkiZbOnyC6IuNmM
-         IPjjoe4aKm+dqNf36qoEwEiYWz+RQEgJOw6FhUEXnwbZhNZ2/lPWh74MA1lWpxW0j2sN
-         dI6k3XCfs0D6kui6hvLYjmWmCdulbAOwuVHJDF4Ef7dgvP5e+S7VBeVaasdgM0aYeAXr
-         FZCktjPlJ7CoxYnpN6OTw0S4BYXx+jqkNHYcOu8NBP26FeQ8DSA8x6QChEP5bulPo/TV
-         sY+E2UxqAOnMJfwVEdYD+3cl4xb/6Ox9FGK7X1GNftZPrFk6Z29VBUKGe6ni3IQeLBSi
-         TcHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlKnTkdH83xOucru31VzFV7NlQOt5NFsIRXT3CkVjVzFR+mmNxoxHBfa6SwCod6ma+NFtd8rd4gyICruGjNKGsYk+cDA==@vger.kernel.org, AJvYcCWoEVJVOisOon5Fj/XLIpT1VrepSietQim4hCfLdPNfHom4O84fT82BV7apI8x6gzKJb2TlN4ReaLifekA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOVS4cx8J3UkILaw3ChmjatuOBwLgPJcUNF7Fqd2fTU1n52xAJ
-	T4Cr7G9cDbyLB7bac4L9ZgI15fNndIM60J0rb/JZfaHRNRtXqORFIyX1
-X-Gm-Gg: ASbGncso62H7EI8lZ5k+71ocgeXVI2B7QaZ6Cptddwk8bRnRp1Yl4Uqy/gXF7lOfZ4n
-	K64OVr/ctG7qf5pN2RRJS27OTOT1DO2bRUT1Jzymovct+ko0Mn1s21ysk49SUjOlAdMxIPKO/2f
-	Tsm3xozp1ZAHP60iP/w715Gfp70dqrMDJU14ZLBZZ6VbasBaGgTMBNwEDQ8fUhDULZOnwFZWICO
-	aSLpiB7zEW3QZpFc1puayv9tdjcuz288FAeKYctb3D+rFWEiVyrVyVvsix+Z8HduPheVV0H5gUx
-	yqsVBdOQx3P4I36MoyP+JEDb06ohbpFMXdWIZf0IWWxO9GioaIwwSKWTQVKz9iA46mFwdoi47Fd
-	sYKQVvxvZ/a6kBAJOgd2L93EpbOPC3KCB7g==
-X-Google-Smtp-Source: AGHT+IHRDrwIqLy1jEbtSqSqvN746zSHJoxzTOEvPir9lWxDgi1ES60E1Y+f5intsZOWBgUL6ZZ0Tw==
-X-Received: by 2002:a05:6a00:26e6:b0:76b:3ae7:37a8 with SMTP id d2e1a72fcca58-76e0dfbc448mr114951b3a.7.1754928220402;
-        Mon, 11 Aug 2025 09:03:40 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:69d7:30de:b05e:915b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c46a05464sm8580160b3a.96.2025.08.11.09.03.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 09:03:39 -0700 (PDT)
-Date: Mon, 11 Aug 2025 09:03:36 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Arnd Bergmann <arnd@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] x86-android-tablets: convert to use GPIO
- references
-Message-ID: <4wl35ypnwhklcloiqh6y5ejzhuhg24e5ogzo4flph667ft43pt@3pzl5fbv7lbw>
-References: <20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com>
- <bd6a10ba-d83b-4bb2-8e69-7d985eeb5162@kernel.org>
+	s=arc-20240116; t=1754928248; c=relaxed/simple;
+	bh=EXasBqd9Wi9d1f2YvcHPxhQBUshQ/kCqJ7Yjos04bcI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K6J0zSz8mmNKIkVjKgkZgZhUXu3Y25I2/GBAUE7pf8ppdxOIuV7WxJ/xWwxIFn2sAGMGjgV+/2M3YEKFwZ9YUIJpxshjo+OctKNZcHtOVy84fN2dnyMGdWnO50dAUBWPrfC8XXwrl64efjC3GXBVKiZF9ttoXWXhNS8mm9ICe1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PdD5h+PA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754928243;
+	bh=EXasBqd9Wi9d1f2YvcHPxhQBUshQ/kCqJ7Yjos04bcI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=PdD5h+PAB5iQ8sE9KLY17oUcWJukA/UN2JyM6COawVJxVj/k4sO3IEkuUBuV6rYe2
+	 mmsH4w7f4+jIk8e+IEVqb9G/PPx30lp/AAzWF7aS6xOXiq1Uoyulz64jzDu1MCUZcO
+	 vtbA1urG4CuyFDE5/vmg9Gg7FJrh6Qpdv3m+UnYyV8hoXHbj1/tUejOccCjnl354VP
+	 I7mJv0D9Biig9M6uKlh2uUlaHgpR2h7fXXbw/KP8CN4L2+t/FZinPON2wzXtPtjZgu
+	 lzVKGiAbKP8Z4No7GSRjIdDE8LCz+DVjorr4qVU7IdFv8Sl/b9W3Ns8F1saBvCx9y2
+	 zZHQUVg7e131Q==
+Received: from [192.168.0.23] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dwlsalmeida)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9A97817E00EC;
+	Mon, 11 Aug 2025 18:03:59 +0200 (CEST)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v9 0/7] rust: add support for request_irq
+Date: Mon, 11 Aug 2025 13:03:38 -0300
+Message-Id: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd6a10ba-d83b-4bb2-8e69-7d985eeb5162@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFoUmmgC/3XN0QqDIBTG8VcZXs9hpmm72nuMMcxOS2hZ6mQRv
+ fssGINBl/8Pzu/MyIMz4NH5MCMH0Xhj+xTl8YB0q/oHYFOnRpRQTkRGcbCD0R6HyWEH4wt8uBs
+ 3UqxAAJSV5JIzlK4HB415b/L1lro1Plg3bY+iWNevyXfNKDDBNStKTZpcaCIu2nadqqxTJ22fa
+ HWj/FkyI/uWTJbMirxhmulcFf/WsiwfeA/7ZQ4BAAA=
+X-Change-ID: 20250712-topics-tyr-request_irq2-ae7ee9b85854
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-pci@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>, 
+ Dirk Behme <dirk.behme@de.bosch.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
 
-Hi Hans,
+Changes in v9:
+- Added more tags (thanks, Alice!)
+- Added Alice's patch for &dev: Device<Bound> support
+- Applied a diff to account for the latest review comment on the patch
+  above
+- Added #[pin_data] as applicable to the examples
+- Got rid of the "Handler" type alias in the examples
+- Removed the leading "#" from the imports in the examples so that they show
+  up in the docs
+- Made all inner modules private, removed #[doc(inline)] from the
+  re-exports
+- Link to v8: https://lore.kernel.org/r/20250810-topics-tyr-request_irq2-v8-0-8163f4c4c3a6@collabora.com
 
-On Mon, Aug 11, 2025 at 11:41:46AM +0200, Hans de Goede wrote:
-> Hi Dmitry,
-> 
-> On 11-Aug-25 4:22 AM, Dmitry Torokhov wrote:
-> > This series came about because now software nodes can be used to
-> > describe GPIOs (via PROPERTY_ENTRY_GPIO() macros) and I would like to
-> > eventually get rid of gpio_keys_platform_data structure.
-> > 
-> > So while I was doing the conversions from GPIO_LOOKUP() tables for
-> > gpio_keys devices I decided to convert the rest of them as well. Maybe
-> > some time in the future we can drop support for GPIO_LOOKUP() and rely
-> > on device properties exclusively.
-> > 
-> > This is completely untested.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Reworked on top of the current linux-next
-> > - Link to v1: https://lore.kernel.org/r/20230512001815.591817-1-dmitry.torokhov@gmail.com
-> 
-> Thanks this is an interesting series. I don't know why I missed / dropped
-> the ball on v1.
+Changes in v8:
+- Rebased on top of v6.17-rc1
+- Used Completion instead of Atomics in the examples for non-threaded IRQs
+  (Boqun)
+- Take in "impl PinInit<T, Error>" instead of T in
+  [Threaded]Registration::new() (Boqun)
+- Propagated the changes above to the platform/pci accessors.
+- Used a Mutex instead of Atomics in the examples for threaded IRQs.
+- Added more links in the docs as appropriate (Alice)
+- Re-exported irq::flags::Flags through a "pub use" (Alice).
+- Note: left the above as optional  as it does not hurt to specify the full
+  path anyway. As a result, no modules were made private.
+- Added #[doc(inline)] as appropriate to the re-exports (Boqun).
+- Formatted all the examples using nightly rustfmt +
+  "format_code_in_doc_comments"
+- Fixed a few issues pointed out by make rustdoc
+- Merged imports (Alice)
+- Defaulted ThreadedIrqHandler::handle() to WakeThread (Danilo)
+- Added tags (thanks, Joel & Dirk!)
+- Link to v7: https://lore.kernel.org/r/20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com
 
-It's actually on me: I sent it as you were reworking/adding more devices
-to the driver and I was supposed to update the series but did not have
-time.
+Changes in v7:
+- Rebased on top of driver-core-next
+- Added Flags::new(), which is a const fn. This lets us use build_assert!()
+  to verify the casts (hopefully this is what you meant, Alice?)
+- Changed the Flags inner type to take c_ulong directly, to minimize casts
+  (Thanks, Alice)
+- Moved the flag constants into Impl Flags, instead of using a separate
+  module (Alice)
+- Reverted to using #[repr(u32)] in Threaded/IrqReturn (Thanks Alice,
+  Benno)
+- Fixed all instances where the full path was specified for types in the
+  prelude (Alice)
+- Removed 'static from the CStr used to perform the lookup in the platform
+  accessor (Alice)
+- Renamed the PCI accessors, as asked by Danilo
+- Added more docs to Flags, going into more detail on what they do and how
+  to use them (Miguel)
+- Fixed the indentation in some of the docs (Alice)
+- Added Alice's r-b as appropriate
+- Link to v6: https://lore.kernel.org/rust-for-linux/20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com/
 
-> 
-> It will be a while before I can get around to this due to travel, but
-> I'll take a look and either provide a Tested-by or fixup any issues
-> I encounter and then post a fixed v3 myself.
+Changes in v6:
+- Fixed some typos in the docs (thanks, Dirk!)
+- Reordered the arguments for the accessors in platform.rs (Danilo)
+- Renamed handle_on_thread() to handle_threaded() (Danilo)
+- Changed the documentation for Handler and ThreadedHandler to what
+  Danilo suggested
+- Link to v5: https://lore.kernel.org/r/20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com
 
-Thanks!
+Changes in v5:
 
+Thanks, Danilo {
+  - Removed extra scope in the examples.
+  - Renamed Registration::register() to Registration::new(),
+  - Switched to try_pin_init! in Registration::new() (thanks for the
+    code and the help, Boqun and Benno)
+  - Renamed the trait functions to handle() and handle_on_thread().
+  - Introduced IrqRequest with an unsafe pub(crate) constructor
+  - Made both register() and the accessors that return IrqRequest public
+    the idea is to allow both of these to work:
+	// `irq` is an `irq::Registration`
+	let irq = pdev.threaded_irq_by_name()?
+  and
+	// `req` is an `IrqRequest`.
+	let req = pdev.irq_by_name()?;
+	// `irq` is an `irq::Registration`
+	let irq = irq::ThreadedRegistration::new(req)?;
+
+  - Added another name in the byname variants. There's now one for the
+    request part and the other one to register()
+  - Reworked the examples in request.rs
+  - Implemented the irq accessors in place for pci.rs
+  - Split the platform accessor macros into two
+}
+
+- Added a rust helper for pci_irq_vectors if !CONFIG_PCI_MSI (thanks,
+Intel 0day bot)
+- Link to v4: https://lore.kernel.org/r/20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com
+
+Changes in v4:
+
+Thanks, Benno {
+  - Split series into more patches (see patches 1-4)
+  - Use cast() where possible
+  - Merge pub use statements.
+  - Add {Threaded}IrqReturn::into_inner() instead of #[repr(u32)]
+  - Used AtomicU32 instead of SpinLock to add interior mutability to the
+    handler's data. SpinLockIrq did not land yet.
+  - Mention that `&self` is !Unpin and was initialized using pin_init in
+    drop()
+  - Fix the docs slightly
+}
+
+- Add {try_}synchronize_irq().
+- Use Devres for the irq registration (see RegistrationInner). This idea
+  was suggested by Danilo and Alice.
+- Added PCI accessors (as asked by Joel Fernandez)
+- Fix a major oversight: we were passing in a pointer to Registration
+  in register_{threaded}_irq() but casting it to Handler/ThreadedHandler in
+  the callbacks.
+- Make register() pub(crate) so drivers can only retrieve registrations
+  through device-specific accessors. This forbids drivers from trying to
+  register an invalid irq.
+- I think this will still go through a few rounds, so I'll defer the
+  patch to update MAINTAINERS for now.
+
+- Link to v3: https://lore.kernel.org/r/20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com
+
+Changes in v3:
+- Rebased on driver-core-next
+- Added patch to get the irq numbers from a platform device (thanks,
+  Christian!)
+- Split flags into its own file.
+- Change iff to "if and only if"
+- Implement PartialEq and Eq for Flags
+- Fix some broken docs/markdown
+- Reexport most things so users can elide ::request from the path
+- Add a blanket implementation of ThreadedHandler and Handler for
+  Arc/Box<T: Handler> that just forwards the call to the T. This lets us
+  have Arc<Foo> and Box<Foo> as handlers if Foo: Handler.
+- Rework the examples a bit.
+- Remove "as _" casts in favor of "as u64" for flags. This is needed to
+  cast the individual flags into u64.
+- Use #[repr(u32)] for ThreadedIrqReturn and IrqReturn.
+- Wrapped commit messages to < 75 characters
+
+- Link to v2: https://lore.kernel.org/r/20250122163932.46697-1-daniel.almeida@collabora.com
+
+Changes in v2:
+- Added Co-developed-by tag to account for the work that Alice did in order to
+figure out how to do this without Opaque<T> (Thanks!)
+- Removed Opaque<T> in favor of plain T
+- Fixed the examples
+- Made sure that the invariants sections are the last entry in the docs
+- Switched to slot.cast() where applicable,
+- Mentioned in the safety comments that we require that T: Sync,
+- Removed ThreadedFnReturn in favor of IrqReturn,
+- Improved the commit message
+
+Link to v1: https://lore.kernel.org/rust-for-linux/20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com/
+
+---
+Alice Ryhl (1):
+      rust: irq: add &Device<Bound> argument to irq callbacks
+
+Daniel Almeida (6):
+      rust: irq: add irq module
+      rust: irq: add flags module
+      rust: irq: add support for non-threaded IRQs and handlers
+      rust: irq: add support for threaded IRQs and handlers
+      rust: platform: add irq accessors
+      rust: pci: add irq accessors
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/irq.c              |   9 +
+ rust/helpers/pci.c              |   8 +
+ rust/kernel/irq.rs              |  24 ++
+ rust/kernel/irq/flags.rs        | 124 ++++++++++
+ rust/kernel/irq/request.rs      | 507 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/pci.rs              |  45 +++-
+ rust/kernel/platform.rs         | 142 +++++++++++
+ 10 files changed, 860 insertions(+), 2 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250712-topics-tyr-request_irq2-ae7ee9b85854
+
+Best regards,
 -- 
-Dmitry
+Daniel Almeida <daniel.almeida@collabora.com>
+
 
