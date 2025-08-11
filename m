@@ -1,256 +1,222 @@
-Return-Path: <linux-kernel+bounces-762114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA9DB2024C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879C2B2024F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0024D18C00D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3A718C012D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCFD2DCF76;
-	Mon, 11 Aug 2025 08:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0AD2DCF5A;
+	Mon, 11 Aug 2025 08:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbfmldhQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="By7m2rDx"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F06B2DCF5A;
-	Mon, 11 Aug 2025 08:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922252DD5E0;
+	Mon, 11 Aug 2025 08:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754902304; cv=none; b=UvDm5H+DydJQ0JGAyLK4BWT32SNCE1ZG6hWEYFlpwComSDiF2kKYxy0TalElsPf86qHyH6OWdaS0mlYv+g/Fnhx1t1ZkJ2w/3DOfQ5jTHNRMVZ0CgneYdf9xo9YbcFEOp7gFPj1RtZ2K4nWDhUpaVWD2RzC8Gn5/9kFm+jpS/mU=
+	t=1754902307; cv=none; b=F9O2Osl1haDjcvXgh6+rXDxWlZpQ/B2nx/Dcmu3Wp9CVN8cRgvUtvDvSV2QNXAFgxv+j5VDKQi0sG9Pt9Dw1C6o0Bz2JGB3f0OencmDLsP0Py3/8mG3/R3rcosDW9KUp/iBpZ6pEis/4nxIpFOR63PNM1Ewd4q5cdVKnScYK4yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754902304; c=relaxed/simple;
-	bh=WflSO903y7ZETiHLGDPSPJxjN0UfaKdaYhjpbSXbXag=;
+	s=arc-20240116; t=1754902307; c=relaxed/simple;
+	bh=Fk+3uilsvTXsZ4oTWbIlmyRSY9KBkFoqsH0gBQl2XZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5s/c/umuWpib1VwQbK0ZQ/5DJmqdSonNcpABCv7KlmgnNUrOf/Ioft7FEsgkkPay98DLddbq9RUbB/Inc7fv3pdFnV4vna2MHXfsv2ze/yE0K2v5Gfeq71+dpfvtlLwCr0zuefVrPxFT8hGA5cj2eSHsH1eaos5ia8Pvo/9+R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbfmldhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFCCC4CEF1;
-	Mon, 11 Aug 2025 08:51:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754902303;
-	bh=WflSO903y7ZETiHLGDPSPJxjN0UfaKdaYhjpbSXbXag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CbfmldhQDgE0qA0nzncKOn/nHwg2xz2L+4eL22OGsob2fROA5jdJlkeZvvYjgkKzT
-	 3QQHP2OY1qwmDEzGa9w2N1At/TpQ8hmD5FHJnLx4Jbew5YxjUTnfuu+0XQ4iveAI6J
-	 RNDOh4KijMV8bqtWFgFUb8czC0BFGmB9W/JPNwHBJIxXkFqpMQ4/ks+Oc4uQZbi9pI
-	 cCl1aVM/2omiQB7Xhv2X+ojoj9vPXye7McTtwznMpzx5wCdFK0c1pbSSyBDd89Cro5
-	 c2OnxwtQq4H/6LFmwIPztIWwRNRCBUV9hiU67MNIKZs8UdIDr2FQWm5Um5NeTvznkr
-	 wdY0LB2QzY4Fw==
-Date: Mon, 11 Aug 2025 11:51:35 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Shanker Donthineni <sdonthineni@nvidia.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>,
-	Vikram Sethi <vsethi@nvidia.com>,
-	Jason Sequeira <jsequeira@nvidia.com>, Dev Jain <dev.jain@arm.com>,
-	David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [RESEND PATCH 2/2] arm64: Add encrypt/decrypt support for
- vmalloc regions
-Message-ID: <aJmvFz-0xlfS2B3p@kernel.org>
-References: <20250811005036.714274-1-sdonthineni@nvidia.com>
- <20250811005036.714274-3-sdonthineni@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGiZdfE+73fsTaZy9DQ9R4117DVdcMLr2rC0uXSM3W7xCi5JmhQc3ShVX9yGMOJpBupbCLTLw0G3K3J4N251GgbnNBMbmFm9a9lqoRp8D8urYSNL5jvMMoNS7aztWgJ+2lqWtLrQSidVGaszPfBoxCUkCmurfFGrvp01BjGdaHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=By7m2rDx; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b9375d703so3956286e87.3;
+        Mon, 11 Aug 2025 01:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754902304; x=1755507104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vr3xE3E1ywd/XOxjJYuL9VMaaS8/27KJS7LUx7CgcI0=;
+        b=By7m2rDxfkXXDjy5jYuuZXnQwtiC6fBVnwk3hyehRpsakRq0198DVwJKn0v6hihZgs
+         Etw8DgeVHLxyNWwW4IaReILcuYEVrsR3PtsTVscWpZEgr796j2MWg0HQtbXF5gf+USr5
+         p0dJ56jTSNukwTDvM7mIznaRyiTO0xwBto7TZC9of7YjDO18AsXiCJVCzPR0XBRhAat3
+         i7BWQVcqF3Tx3mpKTsw/lsGqLL/ulscYmclaTeyyiekWCN/hYPGoEcIOQWy+gIub5V30
+         8dXi4P54fo3n9F5vY77dt2nuhdy/pctfQPWX9urbSALtTSk32Ko9aVQdY+HIRKAAzR4U
+         P/Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754902304; x=1755507104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vr3xE3E1ywd/XOxjJYuL9VMaaS8/27KJS7LUx7CgcI0=;
+        b=t2RgNuH4m+nzW8Iq1cySSNpwqJLUwIBTl86ZP+ma1Hg7HN/nDEyYzxkkr4M3fGWsmf
+         SrMOHCu6QTePMgVHrHvDuTal2jPgviC+plTtERfe56/wYklGJA3Ft7IS3Ff+UZwpOhY0
+         5NS2IpgPxYnRcw0a6Cfp3gQ6p9ZCwrrfCFShj31I7VZTHmDYtxDrQiWtfVxBuemN+ZnZ
+         vLQ7mI4XCOqk4HvwpwK7ZBjrP+4Kt5N53jkvfqYQ7QFDOeqI3yAyNvB2S0N87rkBmgwl
+         0QYyuTaYHU4ZEfzojQW6IN/27vCVWKzhREcRVemOLtQHJOeuxKiOkQYK12ynVAOBQgIn
+         qHtA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7F7/O0EPvCp9qfoAD7c84PXcylemGSRyv7iBnP9RWONa1kCqEvIxmnkjkSJ4P/t7RqxgKjjxjIzrV@vger.kernel.org, AJvYcCUQgDY8OGEguCvEw7NhO/km5y7OoGooYybtVxSJ7Z11cV8gr52nQU094oLOJtn4DLhUEbGKf0MnX+n9@vger.kernel.org, AJvYcCUpYGEZ3qe7MLTyAKzi7NKVzh9OUaMouDBRFf0hbLRjcVg5ZBBlGOAamCZ5pOcesptxNsnz4WDRy+Ysbipq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGsa9bPO+mD8uX5wOLZ9MTQ2lQhPsEbw7BsmQ0b8pACDSGhYBk
+	W03Cr3mYb90aYykCnf+zYNbOD0Sgb3DfSKxeLQNLAxSY7hH/qUimnRgf
+X-Gm-Gg: ASbGncsq/rRTIKbYRzL4n/8snWxJ1cRdgk9XJf0mqDnXqkqpROVCx3K/e6MdY+czQab
+	vEk4eUEnEQ4BOphaBHrG3LWLtz6ri18tYZsNEgT/Vc+1vP+WtLEV2ww+A7kyCQ9tNCW0GRIwKKQ
+	dDFHkgE6R81vQDxG5MtlWKZVgQn2zkJtREW7hbNpSUZ6Z4RseZwW9pbw99EWLFLVrDtS2K5CkDI
+	oagKgXhF/AqOncm2DNGYaPBzdLMY5q/wgpxTqOYuoIrgcqHvPaSQWp3NYvt65XjOiIt/dG8hNoN
+	vf+e/ueW8OjHIJVmAGL8Qu5DNqPODUt9fuihKshuCp87cgAHAkScRQlYT8yTO6Ih/ldBEomajf1
+	OzjOnqJiVGalnQdJCZY9Y0HcUwDzeTC9ViQXCjbo=
+X-Google-Smtp-Source: AGHT+IGgBdiV+baojFAyaObCoheXQKCKeuqGTNM+PXMyb0753GRatdjOVxHL44bz8CY9cIFkwuow8w==
+X-Received: by 2002:a05:6512:2348:b0:55b:91b6:446b with SMTP id 2adb3069b0e04-55cc009e883mr2959808e87.2.1754902303561;
+        Mon, 11 Aug 2025 01:51:43 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ad021sm4233661e87.74.2025.08.11.01.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 01:51:42 -0700 (PDT)
+Date: Mon, 11 Aug 2025 11:51:39 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 07/11] iio: adc: ad7476: Conditionally call convstart
+Message-ID: <9760cde888fac7335c17d7ab63d5fb2e7c59ac51.1754901948.git.mazziesaccount@gmail.com>
+References: <cover.1754901948.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sZzpSYC3Ny0Q1aET"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811005036.714274-3-sdonthineni@nvidia.com>
+In-Reply-To: <cover.1754901948.git.mazziesaccount@gmail.com>
 
-On Sun, Aug 10, 2025 at 07:50:35PM -0500, Shanker Donthineni wrote:
-> On ARM64 systems with CCA (Confidential Compute Architecture) enabled,
-> the kernel may need to change the encryption attributes of memory
-> regions. The existing implementation of set_memory_encrypted() and
-> set_memory_decrypted() assumes that the input address is part of the
-> linear mapping region '__is_lm_address()', and fails with -EINVAL
-> otherwise.
-> 
-> This breaks use cases where the memory region resides in the vmalloc
-> area, which is mapped in non-linear mapping region.
-> 
-> This patch introduces a new helper, realm_set_memory(), which detects
-> whether the given address is from a non-linear mapping. If so, it uses
-> vmalloc_to_page() to resolve each page’s physical address and applies
-> attribute changes one page at a time. For the linear address regions,
-> it maintains the existing fast-path.
-> 
-> This change ensures that encrypted/decrypted memory attribute updates
-> correctly for all memory regions, including those allocated via vmap(),
-> module allocations, or other vmalloc-backed paths.
-> 
-> Call stack of Realm crash, QEMU hypervisor + NVME device (emulated):
->  ...
->  Freeing unused kernel memory: 6336K
->  Run /sbin/init as init process
->  Internal error: synchronous external abort: 0000000096000250 [#1]  SMP
->  Modules linked in:
->  CPU: 0 UID: 0 PID: 64 Comm: lsblk Not tainted 6.15.5 #2 PREEMPT(undef)
->  Hardware name: linux,dummy-virt (DT)
->  pstate: 43400005 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
->  pc : __pi_memset_generic+0x16c/0x188
->  lr : dma_alloc_from_pool+0xd0/0x1b8
->  sp : ffff80008335b350
->  x29: ffff80008335b350 x28: ffff800083162000 x27: ffff80008335b3c0
->  x26: ffff80008144f000 x25: ffff8000801a27e8 x24: ffff800081e14000
->  x23: ffffc1ffc0000000 x22: 0000000000001000 x21: ffff800081458310
->  x20: 0000000042a40000 x19: ffff00000232fcc0 x18: 0000000000200000
->  x17: 00000000000120c0 x16: ffff0000795520c0 x15: 0000000000000000
->  x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
->  x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
->  x8 : ffff800083162000 x7 : 0000000000000000 x6 : 000000000000003f
->  x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
->  x2 : 0000000000000fc0 x1 : 0000000000000000 x0 : ffff800083162000
->  Call trace:
->    __pi_memset_generic+0x16c/0x188 (P)
->    dma_direct_alloc_from_pool+0xc4/0x230
->    dma_direct_alloc+0x80/0x4a0
->    dma_alloc_attrs+0x94/0x238
->    dma_pool_alloc+0x128/0x258
->    nvme_prep_rq.part.0+0x5f0/0x950
->    nvme_queue_rq+0x78/0x1e8
->    blk_mq_dispatch_rq_list+0x10c/0x6f0
->    __blk_mq_sched_dispatch_requests+0x4a0/0x580
->    blk_mq_sched_dispatch_requests+0x38/0xa0
->    blk_mq_run_hw_queue+0x288/0x2f8
->    blk_mq_flush_plug_list+0x134/0x630
->    __blk_flush_plug+0x100/0x168
->    blk_finish_plug+0x40/0x60
->    read_pages+0x1a0/0x2b0
->    page_cache_ra_unbounded+0x1f8/0x268
->    force_page_cache_ra+0xa4/0xe0
->    page_cache_sync_ra+0x48/0x268
->    filemap_get_pages+0xf4/0x7a0
->    filemap_read+0xf0/0x448
->    blkdev_read_iter+0x8c/0x1a8
->    vfs_read+0x288/0x330
->    ksys_read+0x78/0x118
->    __arm64_sys_read+0x24/0x40
->    invoke_syscall+0x50/0x120
->    el0_svc_common.constprop.0+0x48/0xf0
->    do_el0_svc+0x24/0x38
->    el0_svc+0x34/0xf8
->    el0t_64_sync_handler+0x10c/0x138
->    el0t_64_sync+0x1ac/0x1b0
-> 
-> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
-> ---
->  arch/arm64/mm/pageattr.c | 55 +++++++++++++++++++++++++++++++++++-----
->  1 file changed, 48 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-> index 04d4a8f676db4..65c3322a86b49 100644
-> --- a/arch/arm64/mm/pageattr.c
-> +++ b/arch/arm64/mm/pageattr.c
-> @@ -202,21 +202,26 @@ int set_direct_map_default_noflush(struct page *page)
->  				   PAGE_SIZE, change_page_range, &data);
->  }
->  
-> +/*
-> + * Common function for setting memory encryption or decryption attributes.
-> + *
-> + * @addr:        Virtual start address of the memory region
-> + * @start:       Corresponding physical start address
-> + * @numpages:    Number of pages to update
-> + * @encrypt:     If true, set memory as encrypted; if false, decrypt
-> + */
->  static int __set_memory_enc_dec(unsigned long addr,
-> +				phys_addr_t start,
->  				int numpages,
->  				bool encrypt)
->  {
->  	unsigned long set_prot = 0, clear_prot = 0;
-> -	phys_addr_t start, end;
-> +	phys_addr_t end;
->  	int ret;
->  
->  	if (!is_realm_world())
->  		return 0;
->  
-> -	if (!__is_lm_address(addr))
-> -		return -EINVAL;
-> -
-> -	start = __virt_to_phys(addr);
->  	end = start + numpages * PAGE_SIZE;
->  
->  	if (encrypt)
-> @@ -248,9 +253,45 @@ static int __set_memory_enc_dec(unsigned long addr,
->  				      __pgprot(0));
->  }
->  
-> +/*
-> + * Wrapper for __set_memory_enc_dec() that handles both linear-mapped
-> + * and vmalloc/module memory regions.
-> + *
-> + * If the address is in the linear map, we can directly compute the
-> + * physical address. If not (e.g. vmalloc memory), we walk each page
-> + * and call the attribute update individually.
-> + */
-> +static int realm_set_memory(unsigned long addr, int numpages, bool encrypt)
-> +{
-> +	phys_addr_t start;
-> +	struct page *page;
-> +	int ret, i;
-> +
-> +	if (__is_lm_address(addr)) {
-> +		start = __virt_to_phys(addr);
-> +		return __set_memory_enc_dec(addr, start, numpages, encrypt);
-> +	}
-> +
-> +	for (i = 0; i < numpages; i++) {
-> +		page = vmalloc_to_page((void *)addr);
-> +		if (!page)
-> +			return -EINVAL;
 
-It would be faster to get_vm_area(addr) and iterate over its ->pages rather
-than call vmalloc_to_page every time
+--sZzpSYC3Ny0Q1aET
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +		start = page_to_phys(page);
-> +		ret = __set_memory_enc_dec(addr, start, 1, encrypt);
-> +		if (ret)
-> +			return ret;
-> +
-> +		addr += PAGE_SIZE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int realm_set_memory_encrypted(unsigned long addr, int numpages)
->  {
-> -	int ret = __set_memory_enc_dec(addr, numpages, true);
-> +	int ret = realm_set_memory(addr, numpages, true);
-> +
->  
->  	/*
->  	 * If the request to change state fails, then the only sensible cause
-> @@ -264,7 +305,7 @@ static int realm_set_memory_encrypted(unsigned long addr, int numpages)
->  
->  static int realm_set_memory_decrypted(unsigned long addr, int numpages)
->  {
-> -	int ret = __set_memory_enc_dec(addr, numpages, false);
-> +	int ret = realm_set_memory(addr, numpages, false);
->  
->  	WARN(ret, "Failed to decrypt memory, %d pages will be leaked",
->  	     numpages);
-> -- 
-> 2.25.1
-> 
+The ad7476 supports two IC variants which may have a 'convstart' -GPIO
+for starting the conversion. Currently the driver calls a function which
+tries to access the GPIO for all of the IC variants, whether they
+support 'convstart' or not. This is not an error because this function
+returns early if GPIO information is not populated.
 
--- 
-Sincerely yours,
-Mike.
+We can do a tad better by calling this function only for the ICs which
+have the 'convstart' by providing a function pointer to the convstart
+function from the chip_info structure, and calling this function only
+for the ICs which have the function pointer set.
+
+This does also allow to support ICs which require different convstart
+handling than the currently supported ICs.
+
+Call convstart function only on the ICs which can support it and allow
+IC-specific convstart functions for the ICs which require different
+handling.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: Nuno S=E1 <nuno.sa@analog.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+---
+Revision history:
+ v3 =3D> :
+ - No changes
+
+ v2 =3D> v3:
+ - Use indirect call to convstart (via function pointer) also from the
+   ad7476_scan_direct().
+ - Adapt to the change which returned the chip_info pointer back to the
+   driver's state structure.
+
+ v1 =3D> v2:
+ - Adapt to the change which removed the chip_info pointer from the
+  driver's state structure.
+
+The follow-up patch adding support for the ROHM BD79105 will bring
+different 'convstart' functions in use. The IC specific pointer will
+also prepare the way for this.
+---
+ drivers/iio/adc/ad7476.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index ad9e629f0cbd..6cb2cbeafbd3 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -31,6 +31,7 @@ struct ad7476_chip_info {
+ 	unsigned int			int_vref_mv;
+ 	struct iio_chan_spec		channel[2];
+ 	void (*reset)(struct ad7476_state *);
++	void (*conversion_pre_op)(struct ad7476_state *st);
+ 	bool				has_vref;
+ 	bool				has_vdrive;
+ };
+@@ -70,7 +71,8 @@ static irqreturn_t ad7476_trigger_handler(int irq, void  =
+*p)
+ 	struct ad7476_state *st =3D iio_priv(indio_dev);
+ 	int b_sent;
+=20
+-	ad7091_convst(st);
++	if (st->chip_info->conversion_pre_op)
++		st->chip_info->conversion_pre_op(st);
+=20
+ 	b_sent =3D spi_sync(st->spi, &st->msg);
+ 	if (b_sent < 0)
+@@ -94,7 +96,8 @@ static int ad7476_scan_direct(struct ad7476_state *st)
+ {
+ 	int ret;
+=20
+-	ad7091_convst(st);
++	if (st->chip_info->conversion_pre_op)
++		st->chip_info->conversion_pre_op(st);
+=20
+ 	ret =3D spi_sync(st->spi, &st->msg);
+ 	if (ret)
+@@ -160,12 +163,14 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+ static const struct ad7476_chip_info ad7091_chip_info =3D {
+ 	.channel[0] =3D AD7091R_CHAN(12),
+ 	.channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
++	.conversion_pre_op =3D ad7091_convst,
+ 	.reset =3D ad7091_reset,
+ };
+=20
+ static const struct ad7476_chip_info ad7091r_chip_info =3D {
+ 	.channel[0] =3D AD7091R_CHAN(12),
+ 	.channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
++	.conversion_pre_op =3D ad7091_convst,
+ 	.int_vref_mv =3D 2500,
+ 	.has_vref =3D true,
+ 	.reset =3D ad7091_reset,
+--=20
+2.50.1
+
+
+--sZzpSYC3Ny0Q1aET
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiZrxsACgkQeFA3/03a
+ocUvSQf+IvW6HdeYk/he3GicwRposZgQSmMXpvu6Brmdy3Qm/VejXDK16dyC6knO
+ttxjiGZ82/HrcoqPFcCLguxS1Pkn+TpYB7kwWVsT5ffpbUNoeRB6jlIorChLRa1U
+b4dcz+FsIYi4vkBX+r3r3zS61exjYE69zopnw2JOunfwIuuh5KgmZVdBDiJh5xga
+w+STlIl13X2rBkKhVrf+lNQ/Nsr+ifR0Vzipk1zN+UXa5XRYMQsyYoX17/pc4fJL
+EzD+9DI8m2aN2gx/YIk9zsZaNM2ual5QwtTw08cRVAe8gpzkk4Axh/wieKS+pei/
+/1fNry1f38o1KzN/iCDJugJdgk4wGg==
+=yApc
+-----END PGP SIGNATURE-----
+
+--sZzpSYC3Ny0Q1aET--
 
