@@ -1,563 +1,195 @@
-Return-Path: <linux-kernel+bounces-763611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0832B21779
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7321FB2177C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D3B189ED76
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF62E3AE6E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15562E425F;
-	Mon, 11 Aug 2025 21:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C372E542D;
+	Mon, 11 Aug 2025 21:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="cRkwjqFi"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbZuVtRy"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758292E336F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB12E5410;
+	Mon, 11 Aug 2025 21:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754947903; cv=none; b=HRX5ms1IZLEO3MJ5isva2AgWESVZVCqpMiUJjtg6Er1R+ObdH3Dd27CRtkDkKWugsiU1MMhhh0wFFF56Xqi4stcUpOeDgm7jLBJ1+FZJ5mTUUAIbttvlX59UNIfQcREMUcucJwDySmPIkkYOAShOTGofZsXdkc8p8K2bB2r7QnM=
+	t=1754947908; cv=none; b=tyIujTDWKDGzOEBzm/ZA7+enfJl5hD6YhjKhv6dVFC/Fb/AzYQeTOQWrBa+Kw69Wag7GwmKR3x17uuDwkkNtfMNpWGi7lgsfceFDBXCGqoNGROrYZz+mQxXjUyR/oGrBOhcrb0zg4CEuej1TTEED3Tuub4mcHoniG1vJaOYirY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754947903; c=relaxed/simple;
-	bh=ffr9SzJa7cXbTumlucNTIkWUH5ssDXBeVH00KWVYk54=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GFZSZx1G9XQxy1DTUJzsJeoJYrG0o9Nf0/8BtjWkESlIsBM0/JzKR1Gk2vvqatPGxZWlHIsGDV18/cMayP4EHWG4J2Iiiw8yk4aCQFqbw2+FvSwoTLbzUJv4ZPUO7qpxvK+lYypdnIOVHvQ5vxryTkRZriDjkokQbF1MZlpgez0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=cRkwjqFi; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b8d0f1fb49so2883632f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:31:41 -0700 (PDT)
+	s=arc-20240116; t=1754947908; c=relaxed/simple;
+	bh=U8gxMiryNtRw7XbzRz2WUWc3yNrPO404wjpPtTYpKys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OgTCBI+5E7eyqDAV1agP4Z8VnY7i+9x0Qs965uhhw5wcEE49iR1sY/t8eh5kt50Ge9j8fNNs3ACne5hG4UgWQEn9TjqCkdFa0bd4DE32sOzbJKp2/Tm+Z1rtc4i2t/mDf6Yz5a5kp3YVWc7R3c3JQYp6+GhNY0IMXUp1WOQ+74s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbZuVtRy; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24063eac495so37258485ad.0;
+        Mon, 11 Aug 2025 14:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1754947900; x=1755552700; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v2fhfRn8Bvae5tiQX9dls8GG8o2lN99or21sd4P+jR4=;
-        b=cRkwjqFiMbPsgKx1L+mNQsie2JBllnbyISsx5q+cBbCWDy3peeeDXyBeGqiCWbJy2h
-         SbMcUBIJUl076AxX23GszliSEGSS27KCsZPU46nhQ9uEklsbsYkKkCg28SPlEccpD6TC
-         zmrPK8f1rMRths6vwera18OACTIPt001m+evHJsSlBCylyMS4gNM/rue7HcbQ7AVvzOa
-         wkpaC6KLZK5uphr/S1/ROLRD7kFX0X6uFSNPzXr1QjR7Aht0rruRgQvPnz3b2Q1ovznk
-         pdLF2HEZKGHHRXd+hgLyrsPyaZyr7ypCz4PeMs2/PfLjNx/vEmLEGUM973TJ7TTMod8O
-         lShg==
+        d=gmail.com; s=20230601; t=1754947906; x=1755552706; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+CBSY7pEcoY7IT6fAW9X86821l0k+h/uSbg7K5TUGX8=;
+        b=UbZuVtRyYkkY3g8dsryoomRXFjuD0byxPhSRzhQ5XO4PrG/yuhIxq5Yr3ucrDbg4YH
+         PXhc30hSkB+0mm3wdqWkvBdOaGsqanI3WcBhkeBEKqvwJ5azhjtOlHIzldUoEILYEX0L
+         Yk7UKeuSMip+M6Fpkgig9zLJ5e8cpIzTDc/IjW582Fidq7ZRKDJZBfXpSjTsr5RLh04J
+         4I5ybf0QyqZE9wFBDZWkAioSZVhAKJGqdbR2ipOiDlNMtA2/gqrSgSI9AdzztOhc6/Bp
+         YHXBS2fp4+grCpJxZoPlVzVkjRn2z/oT45lTSOe11xSeA8ilJJhiiDjGeezDFQsytDMq
+         sjtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754947900; x=1755552700;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2fhfRn8Bvae5tiQX9dls8GG8o2lN99or21sd4P+jR4=;
-        b=jSNV0/gLu5maGXsUWLIAujIptTDOLeg/Ou+R8jIcZuKNis+CBycl+rwVGO8/Wd/4Zf
-         JIzgGB23L/Ouh8x87rEY9JcOrylDraN4BjLo6/4UD6wIyW1lsA5sWwo++59R//4GMfOM
-         Mo5pGjYsV++I3IxeyMM4GfoODtUFnFnXJDmWucbBHgiCbfbNKdXomrGFcz68fL9rVSBi
-         53Z3bbYkqen5UbgNwEge88D+l69RAK6ggRqE2rApIffR6Ls8HWK8Z8IuW+pkfbLmvg3f
-         x+dQiUAVaSAAAiAycBrZ1EAHfBkFdR9i/nXXcGn45OtWcI7zLl9dTxIkxDh9rjijgthg
-         zSGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEb74qx4tTAr9iotZ/tY78Z8fpXzTDhxQQ5cRAA5f8WGXs+cw1L64yPDy/WcFruf4wHyZ6GB6XwrFn8Ak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvS8yBZztxGpRIIjxhcR1rFDhYXAGphQhqylH+mVfT0JdaLYPP
-	gfX9//JjKbAWDKPCo2lOBbWaHuHXAxVIwv0EHmTfgigOX+kmPdOpv53y+Y8vps15KQ8=
-X-Gm-Gg: ASbGncu6RlI5quIK7XGTVpSPq77yLj5e+fgLSpiXwDNbKF9b/rGqCaJAZpv/brEvroR
-	kc1tzkk0vNHgl0xH1mHug0b5iOSV8EWFhIzRkn7GIbccIHvskeDcg41z+BAHurV14zLbgULLNV4
-	DCyiCEqnjIrZcIR3vKJzhsnmykypXX6Y8Q7Ii0yimBARHSEs2z6AenL0fzHdQb/hf7KTRrIMUul
-	DbFBWuLRue3JlyS7mFGF//J6VfMeyAWHtfuiC5bCqRchEg6PqWOGQAPZFQRAAPPnh9hvD98Aa5q
-	ac46MuDufPYYSx6W3Ul5dUjGR8t2hR/B1hGcqa6veO/MxabCn10knEnraNP3L9QwTiwFAoRBQsT
-	vN+VqL3f05UksKUQs0tNKRFGx/AHQdB9f3b8ctnxY72iDz7a9
-X-Google-Smtp-Source: AGHT+IG+iqBMbGzEpeHof0rjboPnFgFM0XgBYxPcKIogUeosDobZmZLrTnnogTdoV+nZLZHtgKFrEA==
-X-Received: by 2002:a05:6000:2911:b0:3b7:8d70:ed05 with SMTP id ffacd0b85a97d-3b910fdb8fcmr1083173f8f.5.1754947899632;
-        Mon, 11 Aug 2025 14:31:39 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:f8cb:3493:2eed:8d11])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c485444sm42397387f8f.66.2025.08.11.14.31.39
+        d=1e100.net; s=20230601; t=1754947906; x=1755552706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+CBSY7pEcoY7IT6fAW9X86821l0k+h/uSbg7K5TUGX8=;
+        b=TG05A8iY9clHtO4fNhsHidjVS/6IPSUmzOOuq9E4rRVPHb3/cdVnLMHVZTEwCemegv
+         J0FtD0kvkqldA8eq3LbKjSXf5U+7vWuABQSqXj21MucQ+AQtB1gCD2KoiozvoJmkbIT/
+         PpQcQsxAqBAN/pj47+4v5qyTrjgmo1tcssvZMm66xk+WT3gU03QgvR5xauaU78gNdfHT
+         SgfNP6ZtB8DGIgM1Prn0Xqj0hVIHdoQpllsZoesVRhvVeTs5dsNspKhmDo/gBySP3MmI
+         qbo7zJ24BzLvbH7f6+7TbHpyuaG0eY+Odx18p70Kve2PhWPIdiUelYwonMZqQXy/sjCX
+         cI3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwpTdhyn8zDKyxcos27FxFqNj0Jiv3RVgE3HcsvhLXfLsY2pZiAl7ucNk8nB1cjIyqMAps7ZxV3Yc8Qgbx@vger.kernel.org, AJvYcCW36NQjN2O7kZ5G8o6LolO4aVWZXqZlpcNyWzWS8vThgMs6WxaRU8HHmIZpsV1ZXEVZBDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCNyDJ+X+SvCjvRpCJrVyPnlD49szLx6IX0jovDjaGlUB4bu/0
+	3iKDh5EXyMXMQ+wkT3oixSTZfaE4Sssykeec9mk7djFaktT05JLBGTg8
+X-Gm-Gg: ASbGncvGRGvb4dGz1A74p1YnLybc7OiqLPP683bPjg7sx7zuI1ILLL/0ZcNghHUqR3e
+	H6c/FmgglTFlk97wdbY8iJd41t/n6GJYNHEbJL0hvnFkcA2LFl6S4r0y2TlYK3LilIjvhCMvk7M
+	QcpIxgYBsiXLObkYAWfBKkjAjZ5GiBKqtIy9lthg7tQk1RMOUkTvMO+tsrwKMFJifOFTZQ8o0vQ
+	AMCDiwItFwcH4cV9ab1OxQK/EhusaqItPlqWpC1iRlFXZ/XLIfZpBQZlIrAjdd4fiVONT7CcFjs
+	23k3jjiX6DZSXvGkfr6sjXp0eLv4CwZ/J3cUvpFjMYb90fGR3FwYlt17bAfP/QXWD3xfVjKZPgy
+	OA8FnLtPVrdNoIudTVQ/Yvw==
+X-Google-Smtp-Source: AGHT+IH/f82qcbcfQL6Obdl01P5hIeRbTnRnm/2Zreema/TlKTCggGjlx0JPBjHtFDcjDFoMdKc3NQ==
+X-Received: by 2002:a17:902:ecc1:b0:23d:fa76:5c3b with SMTP id d9443c01a7336-242c2003cebmr258699075ad.22.1754947905738;
+        Mon, 11 Aug 2025 14:31:45 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89768fcsm282167795ad.82.2025.08.11.14.31.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 14:31:39 -0700 (PDT)
-From: Alexander Smirnov <asmirnou@pinefeat.co.uk>
-X-Google-Original-From: Alexander Smirnov <aliaksandr.smirnou@gmail.com>
-To: mchehab@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aliaksandr Smirnou <support@pinefeat.co.uk>
-Subject: [PATCH v2 2/2] media/i2c: Pinefeat cef168 lens control board driver
-Date: Mon, 11 Aug 2025 22:31:02 +0100
-Message-Id: <20250811213102.15703-3-aliaksandr.smirnou@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250811213102.15703-1-aliaksandr.smirnou@gmail.com>
-References: <20250811213102.15703-1-aliaksandr.smirnou@gmail.com>
+        Mon, 11 Aug 2025 14:31:45 -0700 (PDT)
+Date: Mon, 11 Aug 2025 17:31:43 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zheyun Shen <szy0127@sjtu.edu.cn>
+Subject: Re: [PATCH 1/2] KVM: SVM: don't check have_run_cpus in
+ sev_writeback_caches()
+Message-ID: <aJphP1UPVs9qVe_0@yury>
+References: <20250811203041.61622-1-yury.norov@gmail.com>
+ <20250811203041.61622-2-yury.norov@gmail.com>
+ <aJpXh3dQNZpmUlHL@google.com>
+ <aJpbLX_0WP5jXn7o@yury>
+ <aJpe6GM_3edwJXuX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJpe6GM_3edwJXuX@google.com>
 
-From: Aliaksandr Smirnou <support@pinefeat.co.uk>
+On Mon, Aug 11, 2025 at 02:21:44PM -0700, Sean Christopherson wrote:
+> On Mon, Aug 11, 2025, Yury Norov wrote:
+> > On Mon, Aug 11, 2025 at 01:50:15PM -0700, Sean Christopherson wrote:
+> > > On Mon, Aug 11, 2025, Yury Norov wrote:
+> > > > From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> > > > 
+> > > > Before calling wbnoinvd_on_cpus_mask(), the function checks the cpumask
+> > > > for emptiness. It's useless, as the following wbnoinvd_on_cpus_mask()
+> > > > ends up with smp_call_function_many_cond(), which handles empty cpumask
+> > > > correctly.
+> > > 
+> > > I don't agree that it's useless.  The early check avoids disabling/enabling
+> > > preemption (which is cheap, but still), and IMO it makes the KVM code more obviously
+> > > correct.  E.g. it takes quite a bit of digging to understand that invoking
+> > > wbnoinvd_on_cpus_mask() with an empty mask is ok/fine.
+> > > 
+> > > I'm not completely opposed to this change, but I also don't see the point.
+> > 
+> > So, there's a tradeoff between useless preemption cycling, which is
+> > O(1) and cpumask_empty(), which is O(N).
+> 
+> Oh, that argument I buy.  I had it in my head that the check is going to be O(1)
+> in practice, because never running vCPU0 would be all kinds of bizarre.  But the
+> mask tracks physical CPUs, not virtual CPUs.  E.g. a 2-vCPU VM that's pinned to
+> the last 2 pCPUs in the system could indeed trigger several superfluous loads and
+> checks.
+> 
+> > I have no measurements that can support one vs another. But the
+> > original patch doesn't discuss it anyhow, as well. So, with the
+> > lack of any information on performance impact, I'd stick with the 
+> > version that brings less code.
+> > 
+> > Agree?
+> 
+> Not sure I agree that less code is always better, but I do agree that dropping
+> the check makes sense.  :-)
+> 
+> How about this?  No need for a v2 (unless you disagree on the tweaks), I'll happily
+> fixup when applying.
 
-Add support for the Pinefeat cef168 lens control board that provides
-electronic focus and aperture control for Canon EF & EF-S lenses on
-non-Canon camera bodies.
+Sure deal! Thanks.
 
-Signed-off-by: Aliaksandr Smirnou <support@pinefeat.co.uk>
----
- MAINTAINERS                |   2 +
- drivers/media/i2c/Kconfig  |   8 +
- drivers/media/i2c/Makefile |   1 +
- drivers/media/i2c/cef168.c | 337 +++++++++++++++++++++++++++++++++++++
- drivers/media/i2c/cef168.h |  51 ++++++
- 5 files changed, 399 insertions(+)
- create mode 100644 drivers/media/i2c/cef168.c
- create mode 100644 drivers/media/i2c/cef168.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 811c6a150029..922efc000722 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19990,6 +19990,8 @@ M:	Aliaksandr Smirnou <support@pinefeat.co.uk>
- L:	linux-media@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/media/i2c/pinefeat,cef168.yaml
-+F:	drivers/media/i2c/cef168.c
-+F:	drivers/media/i2c/cef168.h
- 
- PLANTOWER PMS7003 AIR POLLUTION SENSOR DRIVER
- M:	Tomasz Duszynski <tduszyns@gmail.com>
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 6237fe804a5c..c4c3b03a0b98 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -791,6 +791,14 @@ config VIDEO_AK7375
- 	  capability. This is designed for linear control of
- 	  voice coil motors, controlled via I2C serial interface.
- 
-+config VIDEO_CEF168
-+	tristate "CEF168 lens control support"
-+	help
-+	  This is a driver for the CEF168 lens control board.
-+	  The board provides an I2C interface for electronic focus
-+	  and aperture control of EF and EF-S lenses. The driver
-+	  integrates with the V4L2 sub-device API.
-+
- config VIDEO_DW9714
- 	tristate "DW9714 lens voice coil support"
- 	depends on GPIOLIB
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index 5873d29433ee..75a95f850f18 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_VIDEO_BT856) += bt856.o
- obj-$(CONFIG_VIDEO_BT866) += bt866.o
- obj-$(CONFIG_VIDEO_CCS) += ccs/
- obj-$(CONFIG_VIDEO_CCS_PLL) += ccs-pll.o
-+obj-$(CONFIG_VIDEO_CEF168) += cef168.o
- obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
- obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
- obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
-diff --git a/drivers/media/i2c/cef168.c b/drivers/media/i2c/cef168.c
-new file mode 100644
-index 000000000000..db3f97e7e9dc
---- /dev/null
-+++ b/drivers/media/i2c/cef168.c
-@@ -0,0 +1,337 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2025 Pinefeat LLP
-+
-+#include <linux/crc8.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-event.h>
-+#include "cef168.h"
-+
-+/*
-+ * cef168 device structure
-+ */
-+struct cef168_device {
-+	struct v4l2_ctrl_handler ctrls;
-+	struct v4l2_subdev sd;
-+};
-+
-+static inline struct cef168_device *to_cef168(struct v4l2_ctrl *ctrl)
-+{
-+	return container_of(ctrl->handler, struct cef168_device, ctrls);
-+}
-+
-+static inline struct cef168_device *sd_to_cef168(struct v4l2_subdev *subdev)
-+{
-+	return container_of(subdev, struct cef168_device, sd);
-+}
-+
-+static int cef168_i2c_write(struct cef168_device *cef168_dev, u8 cmd, u16 val)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
-+	int retry, ret;
-+
-+	val = cpu_to_le16(val);
-+	char tx_data[4] = { cmd, (val & 0xff), (val >> 8) };
-+
-+	tx_data[3] = crc8(cef168_crc8_table, tx_data, 3, CRC8_INIT_VALUE);
-+
-+	for (retry = 0; retry < 3; retry++) {
-+		ret = i2c_master_send(client, tx_data, sizeof(tx_data));
-+		if (ret == sizeof(tx_data))
-+			return 0;
-+		else if (ret != -EIO && ret != -EREMOTEIO)
-+			break;
-+	}
-+
-+	dev_err(&client->dev, "I2C write fail after %d retries, ret=%d\n",
-+		retry, ret);
-+	return -EIO;
-+}
-+
-+static int cef168_i2c_read(struct cef168_device *cef168_dev,
-+			   struct cef168_data *rx_data)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&cef168_dev->sd);
-+
-+	int ret = i2c_master_recv(client, (char *)rx_data,
-+				  sizeof(struct cef168_data));
-+	if (ret != sizeof(struct cef168_data)) {
-+		dev_err(&client->dev, "I2C read fail, ret=%d\n", ret);
-+		return -EIO;
-+	}
-+
-+	u8 computed_crc = crc8(cef168_crc8_table, (const u8 *)rx_data,
-+			       sizeof(struct cef168_data) - 1, CRC8_INIT_VALUE);
-+	if (computed_crc != rx_data->crc8) {
-+		dev_err(&client->dev,
-+			"CRC mismatch calculated=0x%02X read=0x%02X\n",
-+			computed_crc, rx_data->crc8);
-+		return -EIO;
-+	}
-+
-+	rx_data->moving_time = le16_to_cpu(rx_data->moving_time);
-+	rx_data->focus_position_min = le16_to_cpu(rx_data->focus_position_min);
-+	rx_data->focus_position_max = le16_to_cpu(rx_data->focus_position_max);
-+	rx_data->focus_position_cur = le16_to_cpu(rx_data->focus_position_cur);
-+	rx_data->focus_distance_min = le16_to_cpu(rx_data->focus_distance_min);
-+	rx_data->focus_distance_max = le16_to_cpu(rx_data->focus_distance_max);
-+
-+	return 0;
-+}
-+
-+static int cef168_set_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct cef168_device *dev = to_cef168(ctrl);
-+	u8 cmd;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_FOCUS_ABSOLUTE:
-+		return cef168_i2c_write(dev, INP_SET_FOCUS, ctrl->val);
-+	case V4L2_CID_FOCUS_RELATIVE:
-+		cmd = ctrl->val < 0 ? INP_SET_FOCUS_N : INP_SET_FOCUS_P;
-+		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
-+	case V4L2_CID_IRIS_ABSOLUTE:
-+		return cef168_i2c_write(dev, INP_SET_APERTURE, ctrl->val);
-+	case V4L2_CID_IRIS_RELATIVE:
-+		cmd = ctrl->val < 0 ? INP_SET_APERTURE_N : INP_SET_APERTURE_P;
-+		return cef168_i2c_write(dev, cmd, abs(ctrl->val));
-+	case CEF168_V4L2_CID_CUSTOM(calibrate):
-+		return cef168_i2c_write(dev, INP_CALIBRATE, 0);
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int cef168_get_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct cef168_device *dev = to_cef168(ctrl);
-+	int rval;
-+
-+	if (ctrl->id != V4L2_CID_FOCUS_ABSOLUTE &&
-+	    ctrl->id != CEF168_V4L2_CID_CUSTOM(data) &&
-+	    ctrl->id != CEF168_V4L2_CID_CUSTOM(focus_range) &&
-+	    ctrl->id != CEF168_V4L2_CID_CUSTOM(lens_id))
-+		return -EINVAL;
-+
-+	struct cef168_data data;
-+
-+	rval = cef168_i2c_read(dev, &data);
-+	if (rval < 0)
-+		return rval;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_FOCUS_ABSOLUTE:
-+		ctrl->val = data.focus_position_cur;
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(focus_range):
-+		ctrl->p_new.p_u32[0] =
-+			(u32)le32_to_cpu(((u32)data.focus_position_min << 16) |
-+					 data.focus_position_max);
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(lens_id):
-+		ctrl->p_new.p_u8[0] = data.lens_id;
-+		return 0;
-+	case CEF168_V4L2_CID_CUSTOM(data):
-+		memcpy(ctrl->p_new.p_u8, &data, sizeof(data));
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct v4l2_ctrl_ops cef168_ctrl_ops = {
-+	.g_volatile_ctrl = cef168_get_ctrl,
-+	.s_ctrl = cef168_set_ctrl,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_lens_id_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(lens_id),
-+	.type = V4L2_CTRL_TYPE_U8,
-+	.name = "Lens ID",
-+	.min = 0,
-+	.max = U8_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_focus_range_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(focus_range),
-+	.type = V4L2_CTRL_TYPE_U32,
-+	.name = "Focus Range",
-+	.min = 0,
-+	.max = U32_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_data_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(data),
-+	.type = V4L2_CTRL_TYPE_U8,
-+	.name = "Data",
-+	.min = 0,
-+	.max = U8_MAX,
-+	.step = 1,
-+	.def = 0,
-+	.dims = { sizeof(struct cef168_data) / sizeof(u8) },
-+	.elem_size = sizeof(u8),
-+	.flags = V4L2_CTRL_FLAG_VOLATILE | V4L2_CTRL_FLAG_READ_ONLY,
-+};
-+
-+static const struct v4l2_ctrl_config cef168_calibrate_ctrl = {
-+	.ops = &cef168_ctrl_ops,
-+	.id = CEF168_V4L2_CID_CUSTOM(calibrate),
-+	.type = V4L2_CTRL_TYPE_BUTTON,
-+	.name = "Calibrate",
-+};
-+
-+static int cef168_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	return pm_runtime_resume_and_get(sd->dev);
-+}
-+
-+static int cef168_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	pm_runtime_put(sd->dev);
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_internal_ops cef168_int_ops = {
-+	.open = cef168_open,
-+	.close = cef168_close,
-+};
-+
-+static const struct v4l2_subdev_core_ops cef168_core_ops = {
-+	.log_status = v4l2_ctrl_subdev_log_status,
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
-+};
-+
-+static const struct v4l2_subdev_ops cef168_ops = {
-+	.core = &cef168_core_ops,
-+};
-+
-+static void cef168_subdev_cleanup(struct cef168_device *cef168_dev)
-+{
-+	v4l2_async_unregister_subdev(&cef168_dev->sd);
-+	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
-+	media_entity_cleanup(&cef168_dev->sd.entity);
-+}
-+
-+static int cef168_init_controls(struct cef168_device *dev)
-+{
-+	struct v4l2_ctrl *ctrl;
-+	struct v4l2_ctrl_handler *hdl = &dev->ctrls;
-+	const struct v4l2_ctrl_ops *ops = &cef168_ctrl_ops;
-+
-+	v4l2_ctrl_handler_init(hdl, 8);
-+
-+	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE, 0, S16_MAX,
-+				 1, 0);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE |
-+			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_RELATIVE, S16_MIN, S16_MAX,
-+			  1, 0);
-+	ctrl = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_ABSOLUTE, 0, S16_MAX,
-+				 1, 0);
-+	if (ctrl)
-+		ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY |
-+			       V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_IRIS_RELATIVE, S16_MIN, S16_MAX, 1,
-+			  0);
-+	v4l2_ctrl_new_custom(hdl, &cef168_calibrate_ctrl, NULL);
-+	v4l2_ctrl_new_custom(hdl, &cef168_focus_range_ctrl, NULL);
-+	v4l2_ctrl_new_custom(hdl, &cef168_data_ctrl, NULL);
-+	v4l2_ctrl_new_custom(hdl, &cef168_lens_id_ctrl, NULL);
-+
-+	if (hdl->error)
-+		dev_err(dev->sd.dev, "%s fail error: 0x%x\n", __func__,
-+			hdl->error);
-+	dev->sd.ctrl_handler = hdl;
-+	return hdl->error;
-+}
-+
-+static int cef168_probe(struct i2c_client *client)
-+{
-+	struct cef168_device *cef168_dev;
-+	int rval;
-+
-+	cef168_dev = devm_kzalloc(&client->dev, sizeof(*cef168_dev),
-+				  GFP_KERNEL);
-+	if (cef168_dev == NULL)
-+		return -ENOMEM;
-+
-+	v4l2_i2c_subdev_init(&cef168_dev->sd, client, &cef168_ops);
-+	cef168_dev->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+				V4L2_SUBDEV_FL_HAS_EVENTS;
-+	cef168_dev->sd.internal_ops = &cef168_int_ops;
-+
-+	rval = cef168_init_controls(cef168_dev);
-+	if (rval)
-+		goto err_cleanup;
-+
-+	rval = media_entity_pads_init(&cef168_dev->sd.entity, 0, NULL);
-+	if (rval < 0)
-+		goto err_cleanup;
-+
-+	cef168_dev->sd.entity.function = MEDIA_ENT_F_LENS;
-+
-+	rval = v4l2_async_register_subdev(&cef168_dev->sd);
-+	if (rval < 0)
-+		goto err_cleanup;
-+
-+	crc8_populate_msb(cef168_crc8_table, CEF_CRC8_POLYNOMIAL);
-+
-+	pm_runtime_set_active(&client->dev);
-+	pm_runtime_enable(&client->dev);
-+	pm_runtime_idle(&client->dev);
-+
-+	return 0;
-+
-+err_cleanup:
-+	v4l2_ctrl_handler_free(&cef168_dev->ctrls);
-+	media_entity_cleanup(&cef168_dev->sd.entity);
-+
-+	return rval;
-+}
-+
-+static void cef168_remove(struct i2c_client *client)
-+{
-+	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-+	struct cef168_device *cef168_dev = sd_to_cef168(sd);
-+
-+	pm_runtime_disable(&client->dev);
-+	pm_runtime_set_suspended(&client->dev);
-+	cef168_subdev_cleanup(cef168_dev);
-+}
-+
-+static const struct of_device_id cef168_of_table[] = {
-+	{ .compatible = "pinefeat,cef168" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, cef168_of_table);
-+
-+static struct i2c_driver cef168_i2c_driver = {
-+	.driver = {
-+		.name = CEF168_NAME,
-+		.of_match_table = cef168_of_table,
-+	},
-+	.probe = cef168_probe,
-+	.remove = cef168_remove,
-+};
-+
-+module_i2c_driver(cef168_i2c_driver);
-+
-+MODULE_AUTHOR("support@pinefeat.co.uk>");
-+MODULE_DESCRIPTION("CEF168 lens driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/media/i2c/cef168.h b/drivers/media/i2c/cef168.h
-new file mode 100644
-index 000000000000..cdce1a19bda0
---- /dev/null
-+++ b/drivers/media/i2c/cef168.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Pinefeat cef168 lens driver
-+ *
-+ * Copyright (c) 2025 Pinefeat LLP
-+ */
-+
-+#ifndef CEF168_CEF168_H
-+#define CEF168_CEF168_H
-+
-+#define CEF168_NAME "cef168"
-+
-+#define CEF168_V4L2_CID_CUSTOM(ctrl) \
-+	((V4L2_CID_USER_BASE | 168) + custom_##ctrl)
-+
-+enum { custom_lens_id, custom_data, custom_focus_range, custom_calibrate };
-+
-+/**
-+ * cef168 data structure
-+ */
-+struct cef168_data {
-+	__u8 lens_id;
-+	__u8 moving : 1;
-+	__u8 calibrating : 2;
-+	__u16 moving_time;
-+	__u16 focus_position_min;
-+	__u16 focus_position_max;
-+	__u16 focus_position_cur;
-+	__u16 focus_distance_min;
-+	__u16 focus_distance_max;
-+	__u8 crc8;
-+} __packed;
-+
-+/*
-+ * cef168 I2C protocol commands
-+ */
-+#define INP_CALIBRATE 0x22
-+#define INP_SET_FOCUS 0x80
-+#define INP_SET_FOCUS_P 0x81
-+#define INP_SET_FOCUS_N 0x82
-+#define INP_SET_APERTURE 0x7A
-+#define INP_SET_APERTURE_P 0x7B
-+#define INP_SET_APERTURE_N 0x7C
-+
-+#define CEF_CRC8_POLYNOMIAL 168
-+
-+#ifdef DECLARE_CRC8_TABLE
-+DECLARE_CRC8_TABLE(cef168_crc8_table);
-+#endif
-+
-+#endif //CEF168_CEF168_H
--- 
-2.34.1
-
+> --
+> From: Yury Norov <yury.norov@gmail.com>
+> Date: Mon, 11 Aug 2025 16:30:39 -0400
+> Subject: [PATCH] KVM: SEV: don't check have_run_cpus in sev_writeback_caches()
+> 
+> Drop KVM's check on an empty cpumask when flushing caches when memory is
+> being reclaimed from an SEV VM, as smp_call_function_many_cond() naturally
+> (and correctly) handles and empty cpumask.  This avoids an extra O(n)
+> lookup in the common case where at least one pCPU has enterred the guest,
+> which could be noticeable in some setups, e.g. if a small VM is pinned to
+> the last few pCPUs in the system.
+> 
+> Fixes: 6f38f8c57464 ("KVM: SVM: Flush cache only on CPUs running SEV guest")
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> [sean: rewrite changelog to capture performance angle]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/sev.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 2fbdebf79fbb..0635bd71c10e 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -718,13 +718,6 @@ static void sev_clflush_pages(struct page *pages[], unsigned long npages)
+>  
+>  static void sev_writeback_caches(struct kvm *kvm)
+>  {
+> -	/*
+> -	 * Note, the caller is responsible for ensuring correctness if the mask
+> -	 * can be modified, e.g. if a CPU could be doing VMRUN.
+> -	 */
+> -	if (cpumask_empty(to_kvm_sev_info(kvm)->have_run_cpus))
+> -		return;
+> -
+>  	/*
+>  	 * Ensure that all dirty guest tagged cache entries are written back
+>  	 * before releasing the pages back to the system for use.  CLFLUSH will
+> @@ -739,6 +732,9 @@ static void sev_writeback_caches(struct kvm *kvm)
+>  	 * serializing multiple calls and having responding CPUs (to the IPI)
+>  	 * mark themselves as still running if they are running (or about to
+>  	 * run) a vCPU for the VM.
+> +	 *
+> +	 * Note, the caller is responsible for ensuring correctness if the mask
+> +	 * can be modified, e.g. if a CPU could be doing VMRUN.
+>  	 */
+>  	wbnoinvd_on_cpus_mask(to_kvm_sev_info(kvm)->have_run_cpus);
+>  }
+> 
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> --
 
