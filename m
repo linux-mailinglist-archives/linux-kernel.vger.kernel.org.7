@@ -1,256 +1,131 @@
-Return-Path: <linux-kernel+bounces-763657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D0BB21851
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:23:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0A6B2184E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B723B1244
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DB463151
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBF32DBF47;
-	Mon, 11 Aug 2025 22:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035EC2E2856;
+	Mon, 11 Aug 2025 22:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Qwu8/6nc"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VQmJ9bwJ"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB4823C51D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071E92253FE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951016; cv=none; b=JFhhV2Dc94bBzTMWyEKYZ/R7iclHrZKxiOxugVlKmNGyVYdcDBBU95u7MwAds3uhUDFl7zwFbR65rbGMhMPap5pPGZ0sjU0r5VcVGUnhvPdLpLIcsHChjz8k2LWDwPZD92WiKRhWeKPKf5i3u+ROEALvRsrLS2hB5GzxWEcmDpw=
+	t=1754951005; cv=none; b=VYmZ6WkSRlS/dDN3FqbtBzopW+rZTWCL+fDbTbkiY74Hc3GTftQJ1O7T9fE8r63XQffN7bAhaaxnMqc15UV0ADQD/eFJlVBkpwywsiDtlVR97Y0rULNZzB5ecKjBp+StR2oOtJVHXoNtGkzNZziKfRVZLDb16FpGQ3xVEg3Cvgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951016; c=relaxed/simple;
-	bh=1zNdvvcHZP6R5JJ23etj6t+b+hZpTABX3/TkZ7lxdJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ko/lodY8or8AoGwbWj0qu4z/c4vsoT0+LAfNdGWyN22VBOUGWS8Ivc6xACUge1F+Rg2e1d+qxGcbtwV4UZkcYyc8P0KtaDpC/PY4HCcZX6DKMaTilJLHyspO2iR+3TKM4uTdnWrZfb63vc071+lDBFGtwNXDyhI8H2JraEmXp74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Qwu8/6nc; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1754951008;
- bh=g2RgxYyMc9YCrvR3tGO7/rfnt+jgDsWOgP4l8MdW5ZM=;
- b=Qwu8/6ncUS0+jpQiWzXuU7AHFbDBlunBv8DQ7G/BKN/1xsDf44SQaes0cAjdiARMMAhqMtE48
- bpF7QKSCi9Y78Rsrca+kiTU4dUzr4bl0gr2x6BYVFKMuCXDIhmyafNig1f2O5HhL63rTWzBym/8
- kbgWWWB//Gb0NB39foz/5zQksxXZ3deqTH9MkSP5JB7/qyBdbrsTR65/YtXUmIcYBQfm4w0Skdi
- jttA7LsliIv2ysyx5vzFdYTMly8aa0fUvnSiJUs0/zigyyIu2W0cCukbd/EbfvjHzz+7ywTB7At
- pxYfvwfZHf7P3T33bujqw3qaisgrKykgoTGGY08YC/xA==
-X-Forward-Email-ID: 689a6d18de615f3104e089a6
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.4
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <16b67aec-8675-45a2-b6df-380bd5f3bf4c@kwiboo.se>
-Date: Tue, 12 Aug 2025 00:22:11 +0200
+	s=arc-20240116; t=1754951005; c=relaxed/simple;
+	bh=UkjdFhfkD/5MPGo9lrvJIpAtslR7NzBNQeU9GjEIVS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8bCRZj3HeYIoSNDGmuDuT4wFF56eCmRn3oKHUHhjmY2el1o2ag20oaKasD9yacdsIf1sLn1s/PqwwDF72gbYmtyQjqt383gegpsh5C9VFkBK5kEb5f3VS4UKD+llqolK4zw0oYevFonW/CFs28XNyIoMQ3Jq26tlpkfpjq3syE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VQmJ9bwJ; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2402b5396cdso30259385ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1754951003; x=1755555803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BqRVwbRElxBdPXk8lHsckCVjfIRqkrurOlwpMKEN7BE=;
+        b=VQmJ9bwJjq7NqmL65iNeFkBh+Ge9NCFhKyWZftypmXP+/uAHG7wQm/Zgf6FMKYZS+z
+         +tTMy9gQLYG0PnpKM7PVHR53L2E4L0Gd19THj1TyLej+OoteZXFT5PnJB1o11MSUN//b
+         YgQAvGypyDjdlH2JwcZpita+BDoyBG4siomr9xQnyN90PL2aGnQxGqe9HUO0C0mBJ9Cq
+         tGVOzW/risvTcO3fROub+p7EULiCTtv8dxBOy/AP+H1yBRSaYsZ1y/IysT1MmTtx/SWJ
+         RVq80ogNIMh5xCAbvljTyJNvU8YT+9XzmyOkdvFa/e+86b8TCohnJR6dwhqK+UA/xqUf
+         zTtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754951003; x=1755555803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BqRVwbRElxBdPXk8lHsckCVjfIRqkrurOlwpMKEN7BE=;
+        b=pVGyhVQQ7DE8vLbFS9BF3b7jJ6GR2VS4fzOIfAFPoqBkErKaBYQC4lJUa+RgypkkBw
+         44/hzu4cS5vf4An5S/9jvGb6rkSxrboVC956zsaD7GequB6fUjVgzfa1QsODM4WD8seZ
+         Wc9Nxz1rE67khDiA9AmHh4vA5UMLrIz3wjRzLJ1Hm1n7KkXxrV/jvpAUTmXoh5lPIKew
+         IihJfdzw8Q6pk6Oo8o/QhBRN2r7rubuOFwiCXMLkQtl3UjLXNrvsCxWV2iiI5+289nKK
+         umT7fzJ8LITimTQTP9m+ZKoPMFuV50uAo9Ujz2N/FNeM3Jk59VpP8xFgtOG4iezwWBFd
+         enBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/JkS32fFewMPM3iHabVw3SaBWJdl+cA99VKm6KxpdnmYj4rGws61xrBrdhnR4a6l69juPAJ0XHHL1Z6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzUMKYUlrElz/7VzlEtdsNjeFp9ce1fK5bcHeQ2VEw5X47BvlH
+	UjeskCpVbKMPMk8KHVXNa7GiS3F8mjzusZom4u2zTOIHye8sQsuz1Jv74fHv69+ebHgpPRi7QJb
+	sqGJt6RpKtuR1UyN45uluxxDELpUZdFvqXzVc3mkk
+X-Gm-Gg: ASbGnctM1UbtekkNd552WopBW80WKK1XVXDLXeYS9nLgJfvGiSSS/7QGrjdufe4zqp8
+	lxfyRZz54P//7gcOzYYeNeBCWhyeZ9hCCsTc8QFk0iiDdecwIh7r9j1czl2BPbjvPJ66grSh4m5
+	QpT9HbbFqyQATSpyWunPEWgpcfCMqjwLuIMcuX5fufNRfMgfnfEJ857wyt4WdQeA6JkLputrmUZ
+	p9DrSY=
+X-Google-Smtp-Source: AGHT+IGOFn6nK9TXlaa8CkF00jvK01f6MUwhUi89/qVrrGCFQDmatsrEWgtc5jXmtyHYczNSCnTUlh5awjVGJA2HI2M=
+X-Received: by 2002:a17:902:ea0c:b0:23d:f986:6472 with SMTP id
+ d9443c01a7336-242fc287481mr14184195ad.25.1754951003328; Mon, 11 Aug 2025
+ 15:23:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] media: rkvdec: Disable QoS for HEVC and VP9 on
- RK3328
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <20250810212454.3237486-6-jonas@kwiboo.se>
- <3cf31d3b89a66b1bec57486c54c3df31393335e5.camel@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <3cf31d3b89a66b1bec57486c54c3df31393335e5.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <6a18a0b1af0ccca1fc56a8e82f02d5e4ab36149c.1754063834.git.rgb@redhat.com>
+ <74767dff9834360b2100907df5142ab9@paul-moore.com> <aJSyXpsVfU+PfFzN@madcap2.tricolour.ca>
+In-Reply-To: <aJSyXpsVfU+PfFzN@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 11 Aug 2025 18:23:10 -0400
+X-Gm-Features: Ac12FXzlcanNoS7j2e973OwKiT9rlNsc4IrrFZzGeXXhu4-6krmOTM7sf1LTA6A
+Message-ID: <CAHC9VhQY_0wm_Wz7HD0wv0Xc_Pikv3FNtw4_ppGSYLyyKdFJWA@mail.gmail.com>
+Subject: Re: [PATCH v2] audit: record fanotify event regardless of presence of rules
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>, Eric Paris <eparis@parisplace.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolas,
+On Thu, Aug 7, 2025 at 10:04=E2=80=AFAM Richard Guy Briggs <rgb@redhat.com>=
+ wrote:
+> On 2025-08-06 21:47, Paul Moore wrote:
+> > On Aug  6, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > When no audit rules are in place, fanotify event results are
+> > > unconditionally dropped due to an explicit check for the existence of
+> > > any audit rules.  Given this is a report from another security
+> > > sub-system, allow it to be recorded regardless of the existence of an=
+y
+> > > audit rules.
+> > >
+> > > To test, install and run the fapolicyd daemon with default config.  T=
+hen
+> > > as an unprivileged user, create and run a very simple binary that sho=
+uld
+> > > be denied.  Then check for an event with
+> > >     ausearch -m FANOTIFY -ts recent
+> > >
+> > > Link: https://issues.redhat.com/browse/RHEL-9065
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > > changelog:
+> > > v2
+> > > - re-add audit_enabled check
+> > > ---
+> > >  include/linux/audit.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Merged into audit/dev-staging with the plan being to merge it to
+> > audit/dev once the merge window closes.
+>
+> Thanks Paul.
 
-On 8/11/2025 11:25 PM, Nicolas Dufresne wrote:
-> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
->> From: Alex Bee <knaerzche@gmail.com>
->>
->> The RK3328 VDEC has a HW quirk that require QoS to be disabled when HEVC
->> or VP9 is decoded, otherwise the decoded picture may become corrupted.
->>
->> Add a RK3328 variant with a quirk flag to disable QoS when before
->> decoding is started.
->>
->> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->> Changes in v2:
->> - No change
->> ---
->>  drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c |  9 +++++++++
->>  drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h |  2 ++
->>  drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c  | 10 ++++++++++
->>  drivers/media/platform/rockchip/rkvdec/rkvdec.c      | 12 ++++++++++++
->>  drivers/media/platform/rockchip/rkvdec/rkvdec.h      |  4 ++++
->>  5 files changed, 37 insertions(+)
->>
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->> index 1994ea24f0be..f8bb8c4264f7 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
->> @@ -789,6 +789,15 @@ static int rkvdec_hevc_run(struct rkvdec_ctx *ctx)
->>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_LUMA_CACHE_COMMAND);
->>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
->>  
->> +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
->> +		u32 reg;
->> +
->> +		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->> +		reg |= 0xFFFF;
->> +		reg &= ~BIT(12);
-> 
-> I wonder if there is a better way to express that, if not, a comment for future
-> readers would be nice. If read it will, we keep the upper 16bit, and replaced
-> the lower bits with 0xEFFF (all bits set except 12) ? I'd rather not spend time
-> thinking if I walk by this code again.
-> 
->> +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->> +	}
->> +
->>  	/* Start decoding! */
->>  	reg = (run.pps->flags & V4L2_HEVC_PPS_FLAG_TILES_ENABLED) ?
->>  		0 : RKVDEC_WR_DDR_ALIGN_EN;
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->> index 540c8bdf24e4..c627b6b6f53a 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
->> @@ -219,6 +219,8 @@
->>  #define RKVDEC_REG_H264_ERR_E				0x134
->>  #define RKVDEC_H264_ERR_EN_HIGHBITS(x)			((x) & 0x3fffffff)
->>  
->> +#define RKVDEC_REG_QOS_CTRL				0x18C
->> +
->>  #define RKVDEC_REG_PREF_LUMA_CACHE_COMMAND		0x410
->>  #define RKVDEC_REG_PREF_CHR_CACHE_COMMAND		0x450
->>  
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->> index 0e7e16f20eeb..cadb9d592308 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
->> @@ -824,6 +824,16 @@ static int rkvdec_vp9_run(struct rkvdec_ctx *ctx)
->>  	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
->>  
->>  	writel(0xe, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
->> +
->> +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
->> +		u32 reg;
->> +
->> +		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
->> +		reg |= 0xFFFF;
->> +		reg &= ~BIT(12);
->> +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
-> 
-> Can we deduplicate that ?
-> 
->> +	}
->> +
->>  	/* Start decoding! */
->>  	writel(RKVDEC_INTERRUPT_DEC_E | RKVDEC_CONFIG_DEC_CLK_GATE_E |
->>  	       RKVDEC_TIMEOUT_E | RKVDEC_BUF_EMPTY_E,
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> index c20e046205fe..d61d4c419992 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> @@ -1226,6 +1226,13 @@ static const struct rkvdec_variant
->> rk3288_rkvdec_variant = {
->>  	.capabilities = RKVDEC_CAPABILITY_HEVC,
->>  };
->>  
->> +static const struct rkvdec_variant rk3328_rkvdec_variant = {
->> +	.capabilities = RKVDEC_CAPABILITY_HEVC |
->> +			RKVDEC_CAPABILITY_H264 |
->> +			RKVDEC_CAPABILITY_VP9,
->> +	.quirks = RKVDEC_QUIRK_DISABLE_QOS,
->> +};
->> +
->>  static const struct rkvdec_variant rk3399_rkvdec_variant = {
->>  	.capabilities = RKVDEC_CAPABILITY_HEVC |
->>  			RKVDEC_CAPABILITY_H264 |
->> @@ -1237,6 +1244,10 @@ static const struct of_device_id of_rkvdec_match[] = {
->>  		.compatible = "rockchip,rk3288-vdec",
->>  		.data = &rk3288_rkvdec_variant,
->>  	},
->> +	{
->> +		.compatible = "rockchip,rk3328-vdec",
->> +		.data = &rk3328_rkvdec_variant,
->> +	},
->>  	{
->>  		.compatible = "rockchip,rk3399-vdec",
->>  		.data = &rk3399_rkvdec_variant,
->> @@ -1267,6 +1278,7 @@ static int rkvdec_probe(struct platform_device *pdev)
->>  	platform_set_drvdata(pdev, rkvdec);
->>  	rkvdec->dev = &pdev->dev;
->>  	rkvdec->capabilities = variant->capabilities;
->> +	rkvdec->quirks = variant->quirks;
->>  	mutex_init(&rkvdec->vdev_lock);
->>  	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
->>  
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> index 8e1f8548eae4..e633a879e9bf 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
->> @@ -26,6 +26,8 @@
->>  #define RKVDEC_CAPABILITY_H264		BIT(1)
->>  #define RKVDEC_CAPABILITY_VP9		BIT(2)
->>  
->> +#define RKVDEC_QUIRK_DISABLE_QOS	BIT(0)
-> 
-> Can you go back in the series, get H264 into bit 0, VP9 into bit 1, and set
-> quirks from bit 16 ? Just worried the whole finding can becomes a mess in many
-> years from now.
+Now merged into audit/dev, thanks!
 
-The reason for HEVC in bit 0 is mainly because the first generation was
-HEVC only, this also matches the mode reg values (0=hevc, 1=h264, 2=vp9).
-
-I can start quirk at bit 16 if you like, not really sure I understand
-why? Do you want to combine capabilities and quirks into one?
-
-Regards,
-Jonas
-
-> 
->> +
->>  struct rkvdec_ctx;
->>  
->>  struct rkvdec_ctrl_desc {
->> @@ -69,6 +71,7 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
->>  
->>  struct rkvdec_variant {
->>  	unsigned int capabilities;
->> +	unsigned int quirks;
->>  };
->>  
->>  struct rkvdec_coded_fmt_ops {
->> @@ -121,6 +124,7 @@ struct rkvdec_dev {
->>  	struct delayed_work watchdog_work;
->>  	struct iommu_domain *empty_domain;
->>  	unsigned int capabilities;
->> +	unsigned int quirks;
->>  };
->>  
->>  struct rkvdec_ctx {
-
+--=20
+paul-moore.com
 
