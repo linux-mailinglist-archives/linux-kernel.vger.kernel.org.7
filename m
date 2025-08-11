@@ -1,290 +1,233 @@
-Return-Path: <linux-kernel+bounces-763625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171F2B217AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EBCB217C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0137622965
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E0D460C63
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5CA2E3B03;
-	Mon, 11 Aug 2025 21:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0302E425C;
+	Mon, 11 Aug 2025 21:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZpddCZ9E"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lQ5x6wrb"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2079.outbound.protection.outlook.com [40.107.223.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57D311C2E;
-	Mon, 11 Aug 2025 21:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754949170; cv=none; b=H+Ujz4aYC9jHodiSO3z+MAiRlvSSDXEpY7zr4uv8QuDvU2IOmHjZypJMxi5j2KxjGAo+VTejnj77d1w0UOMGD4iXm64kR709VvQB3F2j0yo3lAMER1xs42kMxOncMlwaTOZz4FNVqa95WLrBsBOBDBh3T15yUcOA11FObOyLLPM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754949170; c=relaxed/simple;
-	bh=SPlaGimm4OduzdBnXC3TkfH6GzXgsNxTdn5PXq/afAI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ntw41PNymN6Ie+UwtAqeH5A5Qf8czrlIjYwkElq6vOnPZ4jEvQIeJ9veEFsVRUEZyjs15o+xNW8kEycRif2gB+WViLwUjTJKZAcExj4uPcuRW2/JR38vSh+UoK6ZhsAQLs2p7CUOe2Dt4bsOy/zE6Ana9bsSKNhhY7DE0Ar3oac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZpddCZ9E; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754949166;
-	bh=SPlaGimm4OduzdBnXC3TkfH6GzXgsNxTdn5PXq/afAI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ZpddCZ9EzgHZdpBs63f/A3PN2rNaLZiUaW3sqW0iKkf6WYmOmbvj3en8buacqhwh3
-	 aprSlmQX5DMQ4UZwHEVEdKfR5J4wNe427zYUjwJn2WGIJVvnp9Eay/cmujg5z6tgDl
-	 PuT2jvj/ZeNQ0J4pPuidlUzxgLQJcrqQP/Eu0NVhO7JyypGCM4oOH7KP8vNJOwGk/J
-	 5vJ/yDnz699pvsNyObUS2Pdj8+40DKLOKg4H3j8ZLIaLXHtL17sM7n5qNdT4RJqN3r
-	 GyyPkUmTPVp2/8QXF4898F2GeSSDADB0uxUfB+LcaF1ynjiwZG47RIa/mCaCDrtRxi
-	 R6JHNq1rmqjbA==
-Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD69717E0286;
-	Mon, 11 Aug 2025 23:52:44 +0200 (CEST)
-Message-ID: <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
-Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Ezequiel Garcia	
- <ezequiel@vanguardiasur.com.ar>, Detlev Casanova
- <detlev.casanova@collabora.com>,  Mauro Carvalho Chehab	
- <mchehab@kernel.org>
-Cc: Alex Bee <knaerzche@gmail.com>, Sebastian Fricke
-	 <sebastian.fricke@collabora.com>, linux-media@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 17:52:42 -0400
-In-Reply-To: <20250810212454.3237486-1-jonas@kwiboo.se>
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-9rHoaNyNACYag69RQWES"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A8C2E3AEF
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754949433; cv=fail; b=eq4975iX8gLW9DZ6L2nUBScsW7kV2F029K0XPWlwT39NY7+i+YgAiCLKS5DiWhITieSHPY9pbHa2mzPo1yfeRnKL5NNV9bF5MSaiYOLev4sWqvz1BvRD8NODzEVd4tLmlW9tFPAvs3+aIOdFKoT3LVmjdcGUeKbEHDmOvA/zDuA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754949433; c=relaxed/simple;
+	bh=EbwZ172iXkjc5xL60u5koX6LvzhZw7lMI02ER+a0o/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HI9UTBWZ0yktd4xD23qvOsJjvh99u/0yq89AnLjKA1ixodc3JTrTOclBc2M5teSPFZ+h10HHRUYnwQIPwjY1NLjW/vmNFo8ze7G1W+bAwx3idWw3rlGUeiER+UEh555U6zMse09093LZxazX7d9Syl4u7pP9GTIdCRXejwi6U5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lQ5x6wrb; arc=fail smtp.client-ip=40.107.223.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dlarNrgR+iD+D23qeiZP8pGjVJ8e5Robtk7DvBByH5P9Y9Wb3HB2l2KGNNCYEWtFuk09av5B7bw0d5qV9GeKpFx3vgi0RSV5x46MUfszACxOWkMAsC8s0Q+aD5qeBBesvhAz0apKb5E8p7egiepPEYhdEgPuj8Pp37T//SiFo/Y7ktPaY8uGw8wd0IBON6LJl/EhlguBlBAco65TSTuHbOuPa6S0fls0T2Fu+b+RjCK4RNQiD5Jp6qnBoCdgyIWlxAuOjumqJdb6bfUWZWOsWpOreP7Irpg3Rt6D9/PLix3bxU1nj+x0oA+dQ8+yD3koG/cZ1v8wrnV2mObovPi6Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c0s1T8Xthf5HcXFxnozQCZ9uT6HMfWI1+YDvBYUf2Bs=;
+ b=mT3SyGrwk1vZOyyS3fnj371ZEmQ7yy9OJttcnh+znKi+kZtyEbv6vgrOSDKwdvK3pdG8Ms4KKJpALFFjeKSulsjHliXlLxBVbWXgautQ44OpiTbQB6B+qQF1Ifjn9A9ZxszgCTwb65gV5T35HFAPu624RJowmN3+C/73Zjern7staFNShog2CK78PZ8pmnkJbNWhFPhLOQJl7VpUe3kWtv3pwYzE+vwdYV8Y6QdNZc3RGfU2lgJ6BpBDqTfMUSOLZce7ajdMEDveqlINJQWXA0ddK6LmK5IUhfpSE5xAddFzg55TsaEVdfZMdcCCjqlEt7h2J+aORxDAeIOdPrZ3xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c0s1T8Xthf5HcXFxnozQCZ9uT6HMfWI1+YDvBYUf2Bs=;
+ b=lQ5x6wrbjbBEHiNMXwQiz4lN+QxzJRRNT8JPSiKanJzAKJgPWyzSCCPbOR/rq2yTdY3eEVTaBoxN3di5tvYxFoFgGlxbVz2b5rhT+SYRNiERJEZLB1XMWL/c0XrLXl9+Fm8rW/EPInvusjNZRtldYpMfldDcD0SClGKXlKtPMgfDPIPADpKNPUqg08dudA9J/TeW8eV0oGBvuYeliNrZzTFvAL7jZUpvGMYfrEI4bdMmPTDp1QwNVs15Tj6FeBv9IdOLm8QmQbXCgfK8bl0w9pdU0CtgIpHS7etImZkXqSMobmzDan2KPSDaRLFV+dHdgcW0OTgOOzfhJN0n8XRG5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB6691.namprd12.prod.outlook.com (2603:10b6:806:271::9)
+ by MN2PR12MB4207.namprd12.prod.outlook.com (2603:10b6:208:1d9::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 21:57:07 +0000
+Received: from SN7PR12MB6691.namprd12.prod.outlook.com
+ ([fe80::d15a:729a:9a36:4376]) by SN7PR12MB6691.namprd12.prod.outlook.com
+ ([fe80::d15a:729a:9a36:4376%7]) with mapi id 15.20.9009.018; Mon, 11 Aug 2025
+ 21:57:06 +0000
+From: James Jones <jajones@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>
+Cc: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	James Jones <jajones@nvidia.com>
+Subject: [PATCH 0/3] drm/nouveau: Advertise correct modifiers on GB20x
+Date: Mon, 11 Aug 2025 15:00:14 -0700
+Message-ID: <20250811220017.1337-1-jajones@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0350.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::25) To SN7PR12MB6691.namprd12.prod.outlook.com
+ (2603:10b6:806:271::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB6691:EE_|MN2PR12MB4207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ade4019-ee34-457a-3535-08ddd9220331
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BEKX+mK3QDJafkR7ga+BdRKmJY2TJxJCKn+o7ABduBctItj0Jj49OoIHrsBb?=
+ =?us-ascii?Q?0/LTidhXmZywHJO4BvV7/KsABqLRS2ZlM2jEwQq3RXkKWeu3zR2OK7w87YDa?=
+ =?us-ascii?Q?AnXECUm7WdupG0Hu1ALsOcYaBQOgzrq3rUw4od3JTw7EGVc8MA8zQDfw1ghV?=
+ =?us-ascii?Q?uyvzshibDCmidwx364buO0Gmcn/HT9ZnCY4Cd4F8VJ4xyG8IRsU0TnIXg29L?=
+ =?us-ascii?Q?QVO8Efy8Xo73uqb+gBJcO14degBU7NZ4Pj+bhSZaA9xFBxvfGgjXhYkrjks7?=
+ =?us-ascii?Q?QWoUQisFnFQarrs6Tz9U95jIBlqYFY5YlWMshPGTfNQ7T4mmAZaz8eKhryCA?=
+ =?us-ascii?Q?wG1rBbBafvgRC5WHLfXfgXho2dtkhh82+Y7+fKKWIx80bcnoQF5KuTANl88n?=
+ =?us-ascii?Q?NCu/TR4+XBv8wiLtBycHfgOJrAdaUxM1MlYovW5XjXjA5wNGDaiHXdS4VvEx?=
+ =?us-ascii?Q?YdkMGJmvJKI6toCq2mq2AwUJWlG8eqNwNwwqV158QyYwm67JYPOwcf6v/fQ6?=
+ =?us-ascii?Q?IaHI6RLdHtdmgS794n8sAsClltDjhOZ1oRS+RGK7CgaBbjMwHJ74hpHLvrOD?=
+ =?us-ascii?Q?W6WL/pJd7kSLt3W/Q6s4bb8M4VBqtbHDEFUY5eAiYjRWJNvpRED9AotWd8pY?=
+ =?us-ascii?Q?iSmruF7rifB/0/vzJhdJyNob7xvkdH+Mnh6XrsVrzk26Qsxi+w11KjaPpwfb?=
+ =?us-ascii?Q?5x5tTeJ28bVdeiDx+S2A9ZoTxKbp5mdJYZImUdwGkgQXQQKD6rZyf6XmigHy?=
+ =?us-ascii?Q?NWxsLqwrjbyENpt751xO1IVOyygFYf/k3MCSDXQGa3kZ8Joxd5Dt2ZV27jfF?=
+ =?us-ascii?Q?dbyXJGNyJRgborlgbYW94USD47BqWSdq0p1ZvwoM+OPulbxv5Jz1Jxl7LV0o?=
+ =?us-ascii?Q?nSjgA2Pl7wucWZ4i9HXuFsvm6vhJP0kNQbX3breahgLtvkkwOtIMeoFh6zDB?=
+ =?us-ascii?Q?q3QMkSXqN4LVVViuHgP7vcrdWLgYdRFr3oqF+LSD6qHeCYIG9BP5Hl6FaXTH?=
+ =?us-ascii?Q?lf04EqukRQ7paUSsdtLwqzO5AjhQ2qJZLe4ivIrX4cWfiEsvwh6FwSnLPpGN?=
+ =?us-ascii?Q?tN0H6SDukYqnoRFpzT13tCSDCtGkYPEP8+Ltj0IByeTkpw8S7Fs8/92dX4xw?=
+ =?us-ascii?Q?1oEoDDCBJExTga+sTcVI8gK1l+9b+4DX7nzmjemfey6ddouMw2C0eI6GEnv1?=
+ =?us-ascii?Q?pv9AHE1weD4v8woEqIjhNJTDwPKhH9tt5MkxcEI9hLw5GBIrJ5HSAWfoe/qa?=
+ =?us-ascii?Q?HSBuS67lWpT9XW33LLBAgZ6klA2adR2IcIS1t4vSkPifVROdMPUVbAhIl0UJ?=
+ =?us-ascii?Q?qTNBvRhqgnnsSJkYRUVk1Cr3vcAM9OicCOu/2TjKHYtkqGiEp94w1fd7Fvxo?=
+ =?us-ascii?Q?oNjDiHxs43BwatUhyqkx6grJ9XIUoSG6DLujEASeHp4VAtgVuiCkQ+rCBbh+?=
+ =?us-ascii?Q?yNF8nmS8ZQY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB6691.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cx/5EKndEd0dSONOUBtUVB1rgCEGWaeO6WsB5LYWa65No+Z6w/YJ8/yAPEbo?=
+ =?us-ascii?Q?wwsbQHfYycZD+LY36mabINDcsINf9/TR0dgq3B1DbIJ7Bl1lURSBjOcUTSIN?=
+ =?us-ascii?Q?4yrP+Gz/WjxRzCYGsBvB7tW7173+17csS8YjefuxFOmHcnGyPrjF+55L8Bkc?=
+ =?us-ascii?Q?ExLjimgVAw0U/H8xwGpZek0O4C2W9yJ7y837ZM2FioM4wFkPJ59HyjQOS3VB?=
+ =?us-ascii?Q?frD5e1wyxbgVp1f/glrtqfoSMLMRzi8fgkN9NaCC5Nw+TG6TprqnX4kXwJB2?=
+ =?us-ascii?Q?GAbWwAlmpoYayafbOvIMstyQhccEzmpgLnDXD+zlk7C4kGI6aMropEd30GNk?=
+ =?us-ascii?Q?Z5Z5unczY8/u0JkKDH5pqTRmuWNZV6bao4Zv4YiZS77rlnWi6g9cyCT9E006?=
+ =?us-ascii?Q?2ozWGMagBt3kYPxNx1cDUNqu27Xx4w5iAtyMdBcOl/05jAmh9Im0N4D3z41E?=
+ =?us-ascii?Q?U3NfaZTjvXRlblvVQc9zX0E0eeFdNp4WhpkxvxPizEHngUGVJLZw7OfwhFCB?=
+ =?us-ascii?Q?97y89TGudknXrmYyfoDeanRa9uSpStYyIZb+m7Na+rmllpPugVJpVYvcDgnF?=
+ =?us-ascii?Q?9i8qqrfsbevUlKghoQTVQlQQRgwme+vlsZh9eLnPBdPHkHpPTGMAyc4mb1cg?=
+ =?us-ascii?Q?xONlMQ4wcHR5DqhBmUS7qnoC6LIC+YZHy677AGFN0srneFJsQMLciVXETSZH?=
+ =?us-ascii?Q?n4j1vSLNV5rssQFonVvx8Gc6nHBTdpaq2oH/WshHwS+UBWEJypSmPKO+MFdT?=
+ =?us-ascii?Q?5Yf6Xen3LvPJK0Nd3qYdSxYHAUbGKc0gbDkBxArJZdxjxMBCxNb3Bq2BFazh?=
+ =?us-ascii?Q?fEv/eUUMDljlQkJXmX2/jQpRW3SPwoxmDPNRgJj07GC9rZ8sKa4Bc9ss6KrT?=
+ =?us-ascii?Q?IatnBgket3TFn8wjjr6APPPZeetn/gqesscqEYBYBcrVsZsetBaKm9BHVy6Y?=
+ =?us-ascii?Q?CHE7P6H+2rIESxRiZPwVhhPOB+jHuN5X/cYSDAsKpyywhRRFee6Al8j5Zh3R?=
+ =?us-ascii?Q?wvUdUmR54a/AEiL7wJovs1wEDPb+JZrbmUQQpYm1YZPNYYc9HUkNRGX9e0Vx?=
+ =?us-ascii?Q?bEJQwNErhyp67OhWDsKDkjAPOQokakEQ3iOsipyyyALM2+bXoFeQU3o0WN7F?=
+ =?us-ascii?Q?1IJwDj2M1JRAOvuyOpFOhN5wik6E+lB+yFhNn7JeyGdFLK4EK8j0P6LJkgnA?=
+ =?us-ascii?Q?kaERqMBA4EGK4OnD2jom0GpI/VD4CChJd4lk4KJf7+1lQI+J4W06J/ZiHw1C?=
+ =?us-ascii?Q?rls95oDMZDyZSgqBLOZLMDKydpybvuXL4V4TzXNAZtT22hhnRDmDNlaj2O3z?=
+ =?us-ascii?Q?gbZXnNMnmPUYw4XJBi5Pm9onjfidAbDtULn5zP9MfMjBtIXq7SjlgSxECGpJ?=
+ =?us-ascii?Q?tKMB3B4goX4ItPJTjf8950NH1+mznOD/8YukD6ZyuyurJ9F01UotmHP3BZuA?=
+ =?us-ascii?Q?QnKd7KMALqxecS35dlYxy0LSfIHNIusGWbeBkMpFQCzJmmk/IGaKVw38l43P?=
+ =?us-ascii?Q?BXUgO0Pj1Mm2mMscwR3p6M3m13Jr1e2h8gYUZreQhc07ijcoU801q/I/fKNq?=
+ =?us-ascii?Q?23FJHj++OC/RZF+7QP+RM4Ki79IZLKa6xPM10gMp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ade4019-ee34-457a-3535-08ddd9220331
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB6691.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 21:57:06.5400
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uZJTdb5AFdicOsBZwaBOJ2+L2RSFdFGUo7P6jxWoiezjOBtdzedwxZXqwJDs5ngXXw9AIOx/UdSe0of3kCQdUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4207
 
+This series adds new format modifiers for 8 and 16-bit formats on GB20x
+GPUs, preventing them from mistakenly sharing block-linear surfaces
+using these formats with prior GPUs that use a different layout.
 
---=-9rHoaNyNACYag69RQWES
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+There are a few ways the parameteric format modifier definition
+could have been altered to handle the new layouts:
 
-Le dimanche 10 ao=C3=BBt 2025 =C3=A0 21:24 +0000, Jonas Karlman a =C3=A9cri=
-t=C2=A0:
-> This series add a HEVC backend to the Rockchip Video Decoder driver.
->=20
-> With the dependent H.264 High 10 and 4:2:2 profile support series
-> finally merged there is finally time to send a v2 with minor changes and
-> a suggested code style fix of this series. v1 of this series has been
-> fully functional up until recent unstaging of the rkvdec driver.
->=20
-> A version of this HEVC backend has been in use by the LibreELEC distro
-> for the past 5+ years [1]. It was initially created based on a copy of
-> the H264 backend, unstable HEVC uAPI controls and a cabac table + scaling
-> matrix functions shamelessly copied 1:1 from the Rockchip mpp library.
->=20
-> It has since then been extended to use the stable HEVC uAPI controls and
-> improved opon e.g. to include support for rk3288 and fix decoding issues
-> by Alex Bee and Nicolas Dufresne.
->=20
-> The version submitted in this series is based on the code currently used
-> by the LibreELEC distro, excluding hard/soft reset, and with cabac table
-> and scaling matrix functions picked from Sebastian Fricke prior series
-> to add a HEVC backend [2].
->=20
-> Big thanks to Alex Bee, Nicolas Dufresne and Sebastian Fricke for making
-> this series possible!
->=20
-> Patch 1 add the new HEVC backend.
-> Patch 2-3 add variants support to the driver.
-> Patch 4 add support for a rk3288 variant.
-> Patch 5 add a rk3328 variant to work around hw quirks.
-> Patch 6-7 add device tree node for rk3288.
->=20
-> This was tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
->=20
-> =C2=A0 v4l2-compliance 1.30.1, 64 bits, 64-bit time_t
-> =C2=A0 ...
-> =C2=A0 Total for rkvdec device /dev/video1: 49, Succeeded: 49, Failed: 0,=
- Warnings:
-> 0
->=20
-> =C2=A0 Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2re=
-quest
-> =C2=A0 ...
-> =C2=A0 Ran 137/147 tests successfully
+-The GOB Height and Page Kind field has a reserved value that could
+ have been used. However, the GOB height and page kind enums did
+ not change relative to prior chips, so this is sort of a lie.
+ However, this is the least-invasive change.
 
-I've also tested RK3399 using Renegade Elite from Libre Computer, though wi=
-th
-GStreamer. My results for this suite is 134/147, with failing tests being:
+-An entirely new field could have been added. This seems
+ inappropriate given the presence of an existing appropriate field.
+ The advantage here is it avoids splitting the sector layout field
+ across two bitfields.
 
-- DBLK_D_VIXS_2
-- DSLICE_A_HHI_5
-- DELTAQP_A_BRCM_4
-- EXT_A_ericsson_4
-- PICSIZE_A_Bossen_1 (expected)
-- PICSIZE_B_Bossen_1 (expected)
-- PICSIZE_C_Bossen_1 (expected)
-- PICSIZE_D_Bossen_1 (expected)
-- SAODBLK_A_MainConcept_4
-- SAODBLK_B_MainConcept_4
-- TSUNEQBD_A_MAIN10_Technicolor_2 (expected)
-- WPP_D_ericsson_MAIN10_2
-- WPP_D_ericsson_MAIN_2
+The chosen approach is the logically consistent one, but has the
+downside of being the most complex, and that it causes the
+DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D() macro to evaluate its 's'
+parameter twice. However, utilizing simple helper functions in
+client code when accessing the parameteric format modifier fields
+easily addresses the complexity, and I have audited the relevant code
+and do not believe the double evaluation should cause any problems in
+practice.
 
-Please share your list, this seems big enough difference to be worth making=
- sure
-we did not diverge somewhere between both interpretation of the V4L2 spec.
-GStreamer has been mostly tested with MTK driver so far. Can you also share=
- a
-link to the latest ffmpeg tree you are using (since its not upstream FFMPEG=
-) ?
+Tested on GB20x and TU10x cards using the following:
 
-Detlev reports 146/147 on newer hardware using GStreamer, failing
-TSUNEQBD_A_MAIN10_Technicolor_2 (9bit chroma) only. On Detlev side, it will=
- we
-important to check why 8K videos (PICSIZE*) passes with a single core, perh=
-aps
-we accidently use both cores ?
+-kmscube w/NVK+Zink built with these patches applied:
 
-Note, also expected, we failt JCT-VC-SCC, JCT-VC-MV-HEVC, and JCT-VC-RExt p=
-asses
-2/49. This last suite is pretty new in fluster.
+   https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36336
 
-regards,
-Nicolas
+ with various manually specified formats
+ and both manually specified and automatically
+ selected modifiers.
 
->=20
-> =C2=A0 Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2re=
-quest
-> =C2=A0 ...
-> =C2=A0 Ran 9/9 tests successfully
->=20
-> And on a TinkerBoard (RK3288):
->=20
-> =C2=A0 v4l2-compliance 1.30.1, 32 bits, 32-bit time_t
-> =C2=A0 ...
-> =C2=A0 Total for rkvdec device /dev/video3: 49, Succeeded: 49, Failed: 0,=
- Warnings:
-> 0
->=20
-> =C2=A0 Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2re=
-quest
-> =C2=A0 ...
-> =C2=A0 Ran 137/147 tests successfully
->=20
-> =C2=A0 Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2re=
-quest
-> =C2=A0 ...
-> =C2=A0 Ran 9/9 tests successfully
->=20
-> The WPP_x_ericsson tests from test suite JCT-VC-HEVC_V1 has been showing
-> a mix of both Success and/or Fail result for FFmpeg-H.265-v4l2request.
->=20
-> Full summary of fluster run can be found at [3].
->=20
-> Please note that there is a known issue with concurrent decoding,
-> decoding errors in one decode session may affect a separate session.
-> The only known mitigation to this is to pause decoding for some time
-> and/or do a full HW reset, something to handle in future series.
->=20
-> Changes in v2:
-> - Rabase after h264 high10/422 merge and unstaging of rkvdec driver
-> - Use new_value in transpose_and_flatten_matrices()
-> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
-> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
-> - Adjust code style in rkvdec_enum_coded_fmt_desc()
-> - Collect a-b tag
-> - Drop merged vdec node reg size patches
-> Link to v1:
-> https://lore.kernel.org/linux-media/20231105233630.3927502-1-jonas@kwiboo=
-.se
->=20
-> [1]
-> https://github.com/LibreELEC/LibreELEC.tv/blob/master/projects/Rockchip/p=
-atches/linux/default/linux-2000-v4l2-wip-rkvdec-hevc.patch
-> [2]
-> https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-v2-0=
--fa1897efac14@collabora.com/
-> [3] https://gist.github.com/Kwiboo/bedf1f447b50921ffbe26cb99579582d
->=20
-> Alex Bee (4):
-> =C2=A0 media: rkvdec: Add variants support
-> =C2=A0 media: rkvdec: Add RK3288 variant
-> =C2=A0 media: rkvdec: Disable QoS for HEVC and VP9 on RK3328
-> =C2=A0 ARM: dts: rockchip: Add vdec node for RK3288
->=20
-> Jonas Karlman (3):
-> =C2=A0 media: rkvdec: Add HEVC backend
-> =C2=A0 media: rkvdec: Implement capability filtering
-> =C2=A0 media: dt-bindings: rockchip,vdec: Add RK3288 compatible
->=20
-> =C2=A0.../bindings/media/rockchip,vdec.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
-> =C2=A0arch/arm/boot/dts/rockchip/rk3288.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 17 +-
-> =C2=A0.../media/platform/rockchip/rkvdec/Makefile=C2=A0=C2=A0 |=C2=A0=C2=
-=A0=C2=A0 2 +-
-> =C2=A0.../rockchip/rkvdec/rkvdec-hevc-data.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 1848 +++++++++++++++++
-> =C2=A0.../platform/rockchip/rkvdec/rkvdec-hevc.c=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 826 ++++++++
-> =C2=A0.../platform/rockchip/rkvdec/rkvdec-regs.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0=C2=A0 4 +
-> =C2=A0.../platform/rockchip/rkvdec/rkvdec-vp9.c=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 10 +
-> =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.c=C2=A0=C2=A0 |=C2=A0 184=
- +-
-> =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.h=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 15 +
-> =C2=A09 files changed, 2886 insertions(+), 21 deletions(-)
-> =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-he=
-vc-data.c
-> =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-he=
-vc.c
+-drmfmtmods, a tiny test program that lists modifiers:
 
---=-9rHoaNyNACYag69RQWES
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+   https://github.com/cubanismo/drmfmtmods
 
------BEGIN PGP SIGNATURE-----
+Changes since the RFC version here:
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJpmKgAKCRBxUwItrAao
-HG8lAJ4602CSHQ1YZnGfNkgIvp7n1cgBQgCfafRmb71rNsF9qjZayYW+wxvbOlg=
-=vlVd
------END PGP SIGNATURE-----
+  https://lore.kernel.org/nouveau/20250703223658.1457-1-jajones@nvidia.com/
 
---=-9rHoaNyNACYag69RQWES--
+-Dropped the helper macros & static inlines in
+ drm_fourcc.h as requested by Faith Ekstrand,
+ who noted these aren't helpful for UMD code,
+ which is all written in rust now. I may re-
+ introduce some of these in a subsequent series,
+ but we both agreed we do not want to delay
+ progress on the modifiers themselves while we
+ debate the details of those cometic details.
+
+-Reserved an extra bit for future sector
+ layouts.
+
+-Fixed handling of linear modifiers on GB20x
+ and NV5x/G8x/G9x/GT2xx chips.
+
+James Jones (3):
+  drm: define NVIDIA DRM format modifiers for GB20x
+  drm/nouveau/disp: Always accept linear modifier
+  drm/nouveau: Advertise correct modifiers on GB20x
+
+ drivers/gpu/drm/nouveau/dispnv50/disp.c     |  3 ++
+ drivers/gpu/drm/nouveau/dispnv50/disp.h     |  1 +
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c     | 25 ++++++++++++++--
+ drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c | 33 +++++++++++++++++++++
+ include/uapi/drm/drm_fourcc.h               | 25 ++++++++++------
+ 5 files changed, 76 insertions(+), 11 deletions(-)
+
+-- 
+2.50.1
+
 
