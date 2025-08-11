@@ -1,146 +1,159 @@
-Return-Path: <linux-kernel+bounces-762886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC48B20BD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29569B20BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B9891883941
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA54116ADE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B740724466E;
-	Mon, 11 Aug 2025 14:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEDE2459F0;
+	Mon, 11 Aug 2025 14:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1FivQUg"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gtjPGBtQ"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2065.outbound.protection.outlook.com [40.107.212.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B757E1A5B86
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922382; cv=none; b=u4SW2SMHOzG+NUcYI7RJhp/W78/zxodLD76Qf+V/vGxTcWGJykLXST9qlU9cVanxUdc+1+9v5rCzeSEOaCZ9TcZ3lUNDax2LOLw8JDmwnEAORi1lT/pjfAU++EEzzVy1V1DwJK9hgLVd5Baz8/jQW6oOHwVQ/3pRL0IkY7NMmgs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922382; c=relaxed/simple;
-	bh=Gpgif4jJQvzanWKJOJ2s9ZDQOWPc1/PQaHnckHjCNmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEH0R4yjJsmTk/htmFWysLOWk5wb2dQAWl49cMaB//Anu08BqwDOuDQxZ2GA3lQ6uTts9bsxxtplepfuJKTj9A71LMKlMBBmgsKwu2tvRD2o+NVyFj67OH0W+eyUQ8EjO25u3TUZ5SgWC7N2Q/iv/Yz6CkCnqe5V7C4JznsZeW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1FivQUg; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 11 Aug 2025 10:26:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754922367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A6rsFHxkQsnak3YFY7+1+x3Sg0pa/9qbnvIjHnk7aBE=;
-	b=B1FivQUgvpvJLB61xJM8hVKYlrmhN3IFbY6GpfOTI0aX5GH/dn8Xpqak7qRBv7S6vSHJFD
-	P9H6f2rhqAxvzDuw9gmXv0oR/HL8oU6JJcs+GckwpX/DveuBvxSw0XQRkJG+H0EG8tZ5X5
-	ZKOJWabEeP+tmcj7qeFeEbO2WZWyb60=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net, 
-	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27B72459D5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754922439; cv=fail; b=mtniIMcwrZqY/OJwAEhbHwVO0g46EzyguKXzFJm0iKYeyTQWehHNwmdaRqWCWnK+UtcmWvK1zt1KiMc6oV5sTgwLDkIiHXZnYl6Yey0HR9hnGcOM5M3tnrc3W0N5TiOgtMuaSoxo/rK+4wVTZsxloNRNpU+A4YvFzFpOhM4uaAw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754922439; c=relaxed/simple;
+	bh=rrHc6oHXzMArmAK1b+/w2mP1MbxLQ5Gg6O+2/fjl7nU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a8N/Ew6aJcLvvVEzAOVhU7LU5Z2c5b0BwqrfuTPQNbs83liWUm0z+5B/YrcUmBnTTPYqe6t2q4APE9yMJeWo+z5MuGqlFzUhQTniaKrCTSZ85c38n1qaT35NUK+QmNmoie1F1rwO83sqjP3OajTpuhakQmvPvJN6iefxg1Pjrkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gtjPGBtQ; arc=fail smtp.client-ip=40.107.212.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z89T+T8ZLdPU9dbMlaZ1X3Xe5SGDrIubcenFusYjp8VorCr/xwraVCgbpAJUrTpk832gfu+Mm4878d7/zXsNSdlw8H7Y5mQadLoj0VPQ7gpc/21jmh2aSJwq1tzp7556jI/t4gfDrBnpLeTiFClu4Oa/iO2T/hfsrMjt6AeNDY4S86cABXvOqglQs7xIys6FYturiY0xJC7dMMjRfvdxqWI7bc0UjpKO0jYvsWISeQWO6C7tinJ3Z9mB2rJkERcogyHp7MNB/6ZiV1oFStZle1Q3pwx3Ep9EQtTy4DYwfGu0/NptECyTtEG6mtdrSBD6al+LEav5CV4I2phBGz2TXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x1uHmLY252ERoCMnCiJEHIlSvCkXpu4CxTjXcGuwP6k=;
+ b=hMftjWe5NzotRMe62Z5KLjgviBxZYrng7wDm6Rps/EN7SdwVV4DTTM2aN7bBm+JQBmkn8jRMdx5SGGs+L7QT4iqxglKNAouC/zU5YKDbDSTJXxnonE2frdsUWq9t406vO6dvAmZGbyzH64S65NQdRv6PMNJFJYnfM+rFrK5DTFf5+vJydqm9/AeooYizbxrpzHEfroX74vcZ4J7qa34qCeopIPbeYnBHdGPcJIYNfpSR4ccYsT20BokYv34roqgF8IE7YmDQQROGx7WV2GiI9K9C2yX501OGDKR9wRaRy7LZLffHmezHiskz1wteWd6Rct/CkPjHs5wyxTtku1aY2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x1uHmLY252ERoCMnCiJEHIlSvCkXpu4CxTjXcGuwP6k=;
+ b=gtjPGBtQIc/Wl/24CCH1wziXfkuW9U/gmFUvADt6qCAV9rcY8lwCyWkf5P3gx84lvx8CuqIzBc+XkGVRgkjDfROZh02QQt3sQCHPq8O9LZ+AnK7sAB/aN2OQvWkDuZ6v8R7avVZ25VO27OiXVIeCf7IgqIrX9+3ubyDYLPufwys=
+Received: from MW3PR05CA0004.namprd05.prod.outlook.com (2603:10b6:303:2b::9)
+ by BL4PR12MB9505.namprd12.prod.outlook.com (2603:10b6:208:591::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Mon, 11 Aug
+ 2025 14:27:11 +0000
+Received: from CY4PEPF0000FCBF.namprd03.prod.outlook.com
+ (2603:10b6:303:2b:cafe::6f) by MW3PR05CA0004.outlook.office365.com
+ (2603:10b6:303:2b::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Mon,
+ 11 Aug 2025 14:27:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCBF.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 14:27:10 +0000
+Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
+ 2025 09:27:08 -0500
+From: David Kaplan <david.kaplan@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] x86/bugs: Cleanup parameter parsing
+Date: Mon, 11 Aug 2025 09:26:56 -0500
+Message-ID: <20250811142659.152248-1-david.kaplan@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBF:EE_|BL4PR12MB9505:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a00a48b-bd1e-4cb6-1a76-08ddd8e32878
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iFLRAz3HQ596GsjLaIcTQc0spoKhI2VsIgF75WCPwjGoxRBIPhKYJnoqVxFc?=
+ =?us-ascii?Q?uIhxUixWUSlvxeajJba8B7+uoGlhyBVu0x1B1gRbP0ztzzb47wJUq0GsQpre?=
+ =?us-ascii?Q?/i3A/0N7x94+ZG9jUs4G0iQPqcLH/8whb+sGfgoNf24ehBj0+8V52M5Y22zs?=
+ =?us-ascii?Q?AxhuSng7kVu5TRKBOkJosV9I5kU5GAIaUsndQDLm6mnwmSZlTswhw03hwjfd?=
+ =?us-ascii?Q?DAa6gLlY7RJFxXK9jCakrYfdePCQ5YDvElz5RizXCbyiSTH1wGoHURHV5ANs?=
+ =?us-ascii?Q?7NocYDdGVX68mYclmjj1zwH7I9VjuHKl1MTWiPwlfPOU4gSzzOuFhKi8mz7g?=
+ =?us-ascii?Q?os6u0dIamOC6Kk9ElTA/VVadZHIJvCZzMpAJu7pFoiJs/AT6sybvkmDY0Mqb?=
+ =?us-ascii?Q?CPYh10cfwhAEZ+QT5RLQOIXESBZZI7dvOZvdhetqWm3O7ZUQvwv8KnhHQJeb?=
+ =?us-ascii?Q?S7RTzNkn1FiQ0ZNI8huF53Zng/uRfo2KzIFRozH6CVAiKxG70hBZYeBzgyfR?=
+ =?us-ascii?Q?MGDUzSd9IyQJpu5W47eh9hDdfDFZXoHrmkbv33GwvK+I8mNPSgS19GyiKZK2?=
+ =?us-ascii?Q?2odHX8EYCU6EIgp2bBJnvnkzBJM0m3qGYcx0VB04Kkap5AuJvR9vbzyQYlIi?=
+ =?us-ascii?Q?uFQYx21O9hOJ2cE4OeIQS41KlRBvEw0oUezcNi+Zk8vUAE4v0lpcUkq46XF7?=
+ =?us-ascii?Q?hH2lhzFxlSZkUdpylemsW2mQaT6WhNkMvJW2OA4y9StLIHCUE527w9FUqQuM?=
+ =?us-ascii?Q?4vjieAEImv/B6EyryWc12x8P8MrTwdsIG2libkSamsAdHtDMFNPY1r0kP6pL?=
+ =?us-ascii?Q?pxL+Do0XAC2O8j9QGFR1Q+9wsFlstLK3D1H5E+7YVZqe7R2nXf+JnOfyzlLk?=
+ =?us-ascii?Q?0wQ0Fv4GJUCquJHT5Pn3vM2yfFb6+hPo7jJOdN66N/MCPt5SdsJ3M6xeuqpo?=
+ =?us-ascii?Q?NlcoByLlaa05jdnTgB2irVTldn6PRNHF8EY0ZZNNR6p/4oNvlsfqgjd3iA4Y?=
+ =?us-ascii?Q?k9B3djq7hf37uSRVJM0cgTkoiXzxQzr7XN04nmY4Q6CGCtCsRrR2Rah4vsku?=
+ =?us-ascii?Q?Gt6Q9u66egbcoTcrVwcN3jZXc4xEhH1iKMYYeuGxCM13vVA9upXuqvrrxNk6?=
+ =?us-ascii?Q?6vX9bgGqOvuDZ1dH2yH7peV27IMJTBXtiAmTvpC83ux5E3XfGNZEWfPT1fhB?=
+ =?us-ascii?Q?ZIgAryPE+rtAbvFXS8SZA/2bi9zNGVnrCgg3zRTe5OGZmYbBe7f7nhc3cANs?=
+ =?us-ascii?Q?EUZtpq5ra3TYVeF5jxIPmyVdiMcU/UmH5hSk9ursKr36LxVf5g3Zxp27NeB6?=
+ =?us-ascii?Q?5V5r5K3Nf8OHR1YhE86jB9ZGTCDnnmZZV8wCiIu+9USC9u0JA/P88nmQN2Of?=
+ =?us-ascii?Q?fd8S0NdFtR7uBsZ7PGVa/hY76uQYLRSLNGrPjK4reYXM5iKchb5tcy8Ghm5s?=
+ =?us-ascii?Q?7kApXLqlYiVD01c7hyFMo9ayc648M6zQjRKKVM/51MM5Ub+cRtOJ6hsV6ie+?=
+ =?us-ascii?Q?BTIMgkLGnFyMc8+2r6sFuU4lqSNrrKMX4Kv2?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:27:10.3727
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a00a48b-bd1e-4cb6-1a76-08ddd8e32878
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCBF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9505
 
-On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
-> >  Yes, this is accurate. I've been getting entirely too many emails from Linus about
-> > how pissed off everyone is, completely absent of details - or anything engineering
-> > related, for that matter.
-> 
-> That's because this is not an engineering problem, it's a communication problem. You just piss
-> people off for no good reason. Then people get tired of dealing with you and now we're here,
-> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
-> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
-> 
-> If you really want to change the way things work go see a therapist. A competent enough doctor
-> probably can fix all that in a couple of months.
+Most mitigations in bugs.c use early_param for parameter parsing.  A few
+older ones do not and look at boot_command_line directly.
 
-Konstantin, please tell me what you're basing this on.
+This series modifies those to be consistent with the newer ones.
 
-The claims I've been hearing have simply lacked any kind of specifics;
-if there's people I'd pissed off for no reason, I would've been happy to
-apologize, but I'm not aware of the incidences you're claiming - not
-within a year or more; I have made real efforts to tone things down.
+David Kaplan (3):
+  x86/bugs: Use early_param for spectre_v2_user
+  x86/bugs: Use early_param for spectre_v2
+  x86/bugs: Simplify SSB cmdline parsing
 
-On the other hand, for the only incidences I can remotely refer to in
-the past year and a half, there has been:
+ arch/x86/kernel/cpu/bugs.c | 331 ++++++++++++++++---------------------
+ 1 file changed, 147 insertions(+), 184 deletions(-)
 
-- the mm developer who started outright swearing at me on IRC in a
-  discussion about assertions
-- the block layer developer who went on a four email rant where he,
-  charitably, misread the spec or the patchset or both; all this over a
-  patch to simply bring a warning in line with the actual NVME and SCSI
-  specs.
-- and reference to an incident at LSF, but the only noteworthy event
-  that I can recall at the last LSF (a year and a half ago) was where a
-  filesystem developer chased a Rust developer out of the community.
 
-So: what am I supposed to make of all this?
+base-commit: 4b6b14d20bc04dcab6dd3ad0d5a50a0f473d1c18
+-- 
+2.34.1
 
-To an outsider, I don't think any of this looks like a reasonable or
-measured response, or professional behaviour. The problems with toxic
-behaviour have been around long before I was prominent, and they're
-still in evidence.
-
-It is not reasonable or professional to jump from professional criticism
-of code and work to personal attacks: it is our job to be critical of
-our own and each other's code, and while that may bring up strong
-feelings when we feel our work is attacked, that does not mean that it
-is appropriate to lash out.
-
-We have to separate the professional criticism from the personal.
-
-It's also not reasonable or professional to always escelate tensions,
-always look for the upper hand, and never de-escalate.
-
-As a reminder, this all stems from a single patch, purely internal to
-fs/bcachefs/, that was a critical, data integrity hotfix.
-
-There has been a real pattern of hyper reactive, dramatic responses to
-bugfixes in the bcachefs pull requests, all the way up to full blown
-repeated threats of removing it from the kernel, and it's been toxic.
-
-And it's happening again, complete with full blown rants right off the
-bat in the private maintainer thread about not trusting my work (and I
-have provided data and comparisons with btrfs specifically to rebut
-that), all the way to "everyone hates you and you need therapy". That is
-not reasonable or constructive.
-
-This specific thread was in response to Linus saying that bcachefs was
-imminently going to be git rm -rf'd, "or else", again with zero details
-on that or else or anything that would make it actionable.
-
-Look, I'm always happy to sit down, have a beer, talk things out, and
-listen.
-
-If there's people I have legitimately pissed off (and I do not include
-anyone who starts swearing at me in a technical discussion) - let me
-know, I'll listen. I'm not unapproachable, I'm not going to bite your
-head off.
-
-I've mended fences with people in the past; there were people I thought
-I'd be odds with forever, but all it really takes is just talking. Say
-what it is that you feel has affected, be willing to listen and turn,
-and it gets better.
 
