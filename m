@@ -1,349 +1,221 @@
-Return-Path: <linux-kernel+bounces-763355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97246B213D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F386B213D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9FB3A70A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410321906A5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39962D6E59;
-	Mon, 11 Aug 2025 18:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C592D6E46;
+	Mon, 11 Aug 2025 18:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kriOUhy9"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YKG+kKTo"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075A32147F5;
-	Mon, 11 Aug 2025 18:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754935421; cv=none; b=Ub8DE+kExASMSQpmfjq3qLgW3Tldq6fiT1FvdgdewhWvZKbmpO+7LCL0kUcIqnFEcl6jei4vI/UTecMb8eNzfecmee4ypLvOxY7lCK+J+16blng5Kt3dQcHvLoG27wv907gkt8zGK6kcP/ieaOWQ11mTqlvH+d90BEIFfVov2Yo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754935421; c=relaxed/simple;
-	bh=7yn1n7Qpf2iPDWVSr/zIL7FWuQMJ307xYh/Er4cR4pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3isEA7P8HprjvqOmPpy8CiIpTwaK/REv35nXfP4WEatqbacSO4yOkyVSMczJsdl4YCOmHKvC9+ehdk7gfYbo+yiC6dl4s3uivdiaqegOXLtJ5DavsqlS5Xt6zTJJr+WeJOZsekpC5wDviI82U5litJqGjqimRfRydRLkjTxJNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kriOUhy9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3324e2e6f54so52010101fa.1;
-        Mon, 11 Aug 2025 11:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754935417; x=1755540217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d///4wuoQangGNst6fYpzsgtPxISb9SbCVVJE+l8aHU=;
-        b=kriOUhy9hlYSlYXeOxpcHC0GFvAM5EX8uEbedhcgy1zrVZD+KWcNZXcNXb6MJsuajT
-         iUSLKinwSbkFxBiHilorRc19R7rnXVNwVNxsRSDFdoGLsIyd51aM2sDzZtXRiFjnSjXv
-         O87owJjefL1lpnvd8JiXxXi55hV7HsSOWLVhHG3uI1PEMr5sVBKzf68qtf765wvcDi4r
-         4h+qjaTbkR1udnOBk6YQXuA9+Pra2CA1OttDEu2FYWs1syfSo9JTa2cc6/fVgBII7z6o
-         O9fnkXXfZEJ9tTVTttD9eF1J/7JqXlpCh084ZMVRP3RqNS7WgMWpvNRJgUT9kXZ3iKNM
-         xEvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754935417; x=1755540217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d///4wuoQangGNst6fYpzsgtPxISb9SbCVVJE+l8aHU=;
-        b=FS0M4vNaZueUpvEbrSEa9tb9Nw+z+Zg5KKJQvOmo37b5vmGljp6/tyh5pbRqlM8L+M
-         qvru+32UX6nJPIATTw/ydBQ0XHrxbA895PJHv0kug4UTCdcTQ63j8jtH91iOTB/Wf0AS
-         XOmEAEEbqSF9nLD+NLxL5fHUvD6i9TMYzdBMMJwWYjYbH/2tx4YTVEvkaE1iM432HZSw
-         zp1lVM4r4xjoQyJNlqSwM0uEl2oTKyR+Er/9Ip+hQp9dnAKD5u8ANCv0FMzgwQlnoUM8
-         vCMBs3Z8cStwQB75UYtuPbHGNbTSKFjTIsBjHAFXL7asVnjWt6uCujdl4r34sXFrwS6e
-         s+Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVRX2DYeGPJH0W+fkIs9NEvTg91kkUlGMRA6dhQFiCKg2aBhS23Wxp773B328bR/9DqGpCiXZ815livdK3x@vger.kernel.org, AJvYcCX109MflOUUma3nI14REKTFUiZLfs/WIpISqQka0UiuTyxdcu/e2JRSldhy93C8ZK14X+4rYnaoMSuzKzCr@vger.kernel.org, AJvYcCXWeZyMMsJzhPPzH688VXSW16xx3ME8MwZv2i17EyvjDSnpHPCcDM2RJfLJRjrKwxZ/fJZMagZLCR92p4rB2Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK9SNatG8XEvy6yqk2UsXMVvrA/D/rnbM4WmRQe33bfaTq6MH3
-	rGGeiQM3X24z7911CS7zzO+xXQRSGP568Vd3gAoAp7nM/wJAtBmCqJOOKYnsoEy1vCnsNfmdLOd
-	hZ9MF8YUr4rBnYgOOA8AekEb1wyuHzAY=
-X-Gm-Gg: ASbGncuzr1WqqCQsrRa/Jh4xP2nqHBuN4rxeehJMf+DEnjwJbDUhSw0j+2xEpbYA4iJ
-	+un74umVFP81rNELnsIYhUOGOkU39qiSRZDyt4NLMEZ9KezATEV8uv6PF2URDsGrW/BTpJKkdch
-	0bo4SpSxnA83CLBDjVtIyJnO7/V6J6YI/OgcVhUBW2F36sFj4REbjWWgA3N4ZM75xohOMan6kjI
-	mESmFIz
-X-Google-Smtp-Source: AGHT+IEBGMWFwPBvVKkHkPwEpE2wMzzGocdD5JdNJj56rt+2ZuB0UWbX44hvIpNbmg6xFrgD/0gijWRDGE/YtO1Eu00=
-X-Received: by 2002:a05:651c:19a0:b0:332:13d4:6f6e with SMTP id
- 38308e7fff4ca-333d7ad9f94mr1663741fa.2.1754935416777; Mon, 11 Aug 2025
- 11:03:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C2E72600;
+	Mon, 11 Aug 2025 18:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754935549; cv=fail; b=r9b8c/+nQBtgeY0bEPRQg+zr14JWQjSADiOTZFrsaG0EoC1S3I5gLX2ikc6zbp9BB/nl5b5Qelifdmm79kF4E3Nh04+hdh2CP8Njrn5+cz/VWfuNHxQ8RC6AbIdBRRpz3BwYi+O5BJMoxcVn/eXGO5OCjnOEL9RfVhJ/YGL0doY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754935549; c=relaxed/simple;
+	bh=JeoXH+UeEAwS5+S4ZXHnCbJdW9hZyP5pxmW6hmoCvRc=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=XU3CzNlDOvCViijPTUCWIWQREMTmb7qxYEQpP0HiU1LdYwuYLfvQ55Z1Pexfj3dNiwabUkgWf2O8k91WRnV1gB1iq40QSg/cqNO2RFLMY5VOJmuequgWAhfjoan6WGOrXtOcweLVK4PwyDIuV0Lw3iE0oJvKJCAddomI6bPxpzI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YKG+kKTo; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zJkZBGo4XEbupmyZfPyYRerzX71DVSI7YDcQhsI/CNjJrQ1dRZdHsMrvBErPr/wVOSHMDz5dUMJLlatSpVQXvzLoNL42WRfPB9ItuBBbdCaUceCY7//g6PEUhSPpVx7jESEQzPjQxXFm5c53iq3RPW6isHJz8RIvhVRXwG2sXvFePa7CGYL6juoMoEy4Vvfv++fHxLhGI3CZ567nBc6w51duj6LdM4YdmxjKHXmxeOnAhoUVqa035yNSUyRcgAR8cR3lfutYDRO9aJtUPtVHbMtZNuFI3hJtHtv94nfg6uBwQIyqskLAipJ4HgQnAt8R0/1yN/jgm3qIryq1yDBN/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hUFDkQ0RzkRs/mUsdBzQqAxC6Xt7Vn2lL3HwID24Pro=;
+ b=Hc1aWL62f8PXISUxH/nVyqSBTkzop9BYgeWpzM38m7Nynw00GJMHETpXP5BO3RTcvCIONWiZiIXBYoYTktPYftbHM+ONxS5RJsu9sJ9YJMrl2if5gZePgAlMZLgGMxPJ7oPjFyyG3XTEdboozYF9eIoslUkxP5sodKLVYXjridVU4DQtUaLVKdI3qj1dTtBfciQzW8Mt1xqS8SdMmZ2QsjpoA9HMUHxO1mOnUVvOBQC+Wd/jrH+s51nUgJNQ7rHGXOeB33U7PycdnuejHpIb4Nhr7S3+12NBSqIOi+J0G8h9tAFwuES3x0vuY82+HMi8/twMrOKzjTOtl1l9XMMP/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hUFDkQ0RzkRs/mUsdBzQqAxC6Xt7Vn2lL3HwID24Pro=;
+ b=YKG+kKToMr65BTECXnVeGK8vOdCYZdb+2jSx2wc2KMKl/2QO0kpwN9WXW641TjD1BA4GdOpa4UFbEAXEWuM2RHJ1X8rIox64u0ISonEmBihJbyx/2ZGIryGjXAE0FJ5IT/df8qCrq6XD7JRy2ogZUVhRKgXkrMrwHeA80BNZ0FE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by IA4PR12MB9810.namprd12.prod.outlook.com (2603:10b6:208:551::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Mon, 11 Aug
+ 2025 18:05:45 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%6]) with mapi id 15.20.9009.017; Mon, 11 Aug 2025
+ 18:05:45 +0000
+Message-ID: <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com>
+Date: Mon, 11 Aug 2025 13:05:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Kevin Loughlin <kevinloughlin@google.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-45-ardb+git@google.com>
+ <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head
+ section
+In-Reply-To: <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR11CA0015.namprd11.prod.outlook.com
+ (2603:10b6:806:6e::20) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
- <aJnojv8AWj2isnit@arm.com> <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
- <aJn_dtWDcoscYpgV@arm.com>
-In-Reply-To: <aJn_dtWDcoscYpgV@arm.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 11 Aug 2025 14:02:59 -0400
-X-Gm-Features: Ac12FXwh33fn1ZAGbWU8KHUjxEVF-ovI5P2-O31Ri2jQBQmGUO28sNFAyHxqAe4
-Message-ID: <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Janne Grunau <j@jannau.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|IA4PR12MB9810:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3e30819-ec71-4c97-d0b0-08ddd901b142
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SXpWSktucXZFbHF1VjU3WkZ6cEw1SWRleW0xWkdhZk92MVFsa01VWCtJbVZr?=
+ =?utf-8?B?NzVTMEpRbjcrUmsyZ0pJdTRwcDZ0UTVhSzFmQk54b1lyZXZiWk11STdJck9l?=
+ =?utf-8?B?VzlpNWd5R1ErSllzc1FkTFJqbGNiSmJTcEFXUE4wd05kRU9BV09DV2k5dnli?=
+ =?utf-8?B?Uk5GT0RLYVhtQUFtMys0WGdtazF6ZkhvUnZBMnViYmV2VHFoV1hrMXZvSVpN?=
+ =?utf-8?B?TzY1OUM5NC9IUzJFTmxyR1ZKaC9SVkFhOGd1bk9hS05GVXV2ZmxvUDlmMmFj?=
+ =?utf-8?B?NEhIS2UvRlhzeHBSRUNqNndrNXpqc0pHTDA0VkxkTEJOZ1l3YXNyaWUxdEp1?=
+ =?utf-8?B?aU5zQUNoUlJXTUJ1eHB5dytUZXVpMGgwUVlXTlJHZG1rR0pzcFpNNWx3bGJU?=
+ =?utf-8?B?RHQ5Z3E1T3cxZEtPRU54NTRUNUllcDRLaHVESEFveUwyZzJDaGNSNVFlcFh5?=
+ =?utf-8?B?aUFRZkI4ZDlJRlJLMk9obmVDZGZsa3pWR2owc2dNV0tBaW9DY013ekdMc1FM?=
+ =?utf-8?B?c0NCNjg0azZDK29GVEttWkt5UkdXNXRqaHh4RlZHdHoyYW9mUzlMeUovUER1?=
+ =?utf-8?B?YTNqb2Z0NGtXUEdBZlZnclgzc2JSaFB2REFLWDcwdVI2UGYrR2kwd1lQaTd3?=
+ =?utf-8?B?eHgzVVpPcGF4WVQ4ajczVlVhUDhjNWQ2WVA0NEJCd0hxUW5uVnZlUEIwbW5Y?=
+ =?utf-8?B?NXk4bVZnOFpjZW5aN056SjlGSTdjWkhveXlWcDREUFZwVVZGN2JDODBMUnlX?=
+ =?utf-8?B?aVkyM25NOGFZdFRZYUhCOXB5ODZEMkVGaU1VZGJWWHZ2NkF0emxneHRvYzR3?=
+ =?utf-8?B?Zmp5NkRHWWovUDY4U3REOE16SENkSGV5OENIUEJBK2hlNE9sUHQrVkkyZ3VD?=
+ =?utf-8?B?d21qbFVGOFk0aStySUFMQVd1ekZ5T0hRTnF1ZmRoNnNSdTA0bWlCUWN0K3hT?=
+ =?utf-8?B?bHdPWHgxVXFZcDY2NzlqRFk1NSswNnppRDBlMGo0bVJsemMzdmpxVlRGeWVO?=
+ =?utf-8?B?UjNmbTc2QVFNUk1HMXcxNllRR0lwSUdPU3gzRHhFRDNDSUxrWVdJRHZLUzE5?=
+ =?utf-8?B?VElVRU9BYUFxeTNnMGpHbTcxZUlxbER0aFcyS3pWc1lTODBSNUtzOS9tWXZp?=
+ =?utf-8?B?c282TklvNm9lRmdLR1ora09TekhoTjBFaGtiS2JqUEx0bFZmZkN0VUJzdXJZ?=
+ =?utf-8?B?Ni92bTB1UVFIKytOUmdibVR0aGc0bTZwekhsakJ6aDBwQzJkRisyZUxGWHJM?=
+ =?utf-8?B?dVB5a090amdzODFCMmtZVXh3dys0d3FpUHlhUy9PZjZpbFgrU2p5ZXpJcjRT?=
+ =?utf-8?B?c294cUUwSnI0dlplT3I3a1l0ZlNySmlscTRBRFR4T3dYdHRLWHVNc2Ivc2Fa?=
+ =?utf-8?B?b1JFcFF1ZEdod0tGNXM1ZFJ1L0hDNytjRFdEMlhYYnhwMm5ONVplWDhwYVFY?=
+ =?utf-8?B?akZuV0dHYlFUY0lNRGlBUGdsR2FLZm1hc0FLR0FUdkg0R25xY1h4Q2pTMGlT?=
+ =?utf-8?B?cEFvVlpTZkRxTGdiMk50TnhXUXR4Uk5OVzUxL0F4dllaZkRvRExWek13ZU1y?=
+ =?utf-8?B?dm0yMnV5azQ3d2lRbFdLSzJ6Z0JOMGtPWk9MVGk3WTM2R1ZwQmxNbzQ1Wlp0?=
+ =?utf-8?B?Z25EQUVJTWlpaXpwTU81UnV0NGVaZ1pqRGhuSldBUmo4MlQ2UFZiR3dTeEs3?=
+ =?utf-8?B?dGNzelc4bHNIeFprdkZ4cEpIVHdCbVZqcjZUNTVQc0h5cTluQ0xkcWJCbnVl?=
+ =?utf-8?B?YkpFdkVKbjVWa3JGOHF4N0cvSk9idk9WNmtCeHF5R2xueWRmbHEyTXRpTXpO?=
+ =?utf-8?B?S29CUkI2QTRqZDIyVHlVRHJqY3lnYk42bGdxZUpkRFJYb1JZclVkZ2hoaWNH?=
+ =?utf-8?B?RCs5VGNKOGpLajl5aUJRbU5lN3lkclJlOG9zQnRCcXNiWHdZbCtDdVJpQlZK?=
+ =?utf-8?Q?rKBtfFEUVAw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?blVGS3dVTlp1TlhXMUpDOVNyRXgwQTBTNUxTRXFYMlo5d1NrRWdZRE1Ydnpn?=
+ =?utf-8?B?dmRNOG1vUG9oSTF4cVhicjMzek9pMU1mekNwWi9lWWN0VUdRMi9yMVJ3alBj?=
+ =?utf-8?B?dTNxekpWMnhvRWowRjFKR1RVVERMdGpGdUE2VDdMU2V0ZzhSUkxDOWFUaEth?=
+ =?utf-8?B?RXp4Y1hYNzk4TDRzcWNld1UrSktIa3ZLRnViUmFrazV4VG0yOUZoeGVQVE9Z?=
+ =?utf-8?B?NzVrMVAxcWViS3p4L09SVDRJT1U2ckwvd3NyTEdmMVF2VVA4QTV5aXFTc3lS?=
+ =?utf-8?B?WkxjNnYzYmEvaG9QVWVveWFEYVVZR2U0azFwWXBDYUlFUnN4TGNocTQ2TWtN?=
+ =?utf-8?B?c1hhUk5XOVR5LzVld05DNE83RWYwWWJ6ZzBOQzl2OFBGOHp1Q21oUU11WW4z?=
+ =?utf-8?B?ejBMWjlPTmhoU2g5dEljS3ZNOTU1aGtYTmFWWThaS3lIZk9vdVFhMXhXTjAx?=
+ =?utf-8?B?VEp0ZGl1OWVMVlpKL3hjUUtMZXVDOE85RUFmRVNlazZXVjZnenVjbFZidG05?=
+ =?utf-8?B?T09yTU1leEFoZ3UrUHUvUForWW05TU1wcTlzVEFxSXg0b1FaZ3FyMWd5aVZt?=
+ =?utf-8?B?OTFsT3NLNXhqQytOMEgxS3VkS2xWck1mckpuSEFINHlkQ0J1TUJLVWVQcFMv?=
+ =?utf-8?B?ZFlQQ05UMUpHeDFwc1RDM1FjK0w0aDBaWEllS1B1VFVBeUFyRHZ5amdPV1Nv?=
+ =?utf-8?B?K2dVRFFKNG1UTDRwOTBKeTl4d2RJa3NpcDA4LzhIR2FsRXY1b0FtdFJ0bDdu?=
+ =?utf-8?B?aXBJdHFYRGlSblBQVklzbGFmcE1mSUhtajFHUU40N1U1Tktmbm5ScjlVL0Fj?=
+ =?utf-8?B?R2Q3SXZpVDNMYU5GVWxwMGdMN0pzRG1GbXZWSmZqNlcxWGVtK2cybGZCMFIx?=
+ =?utf-8?B?UENCV0ZRMVJhaEVCdU9kWHFKQ2Jmc1h2b0V6RjVxUlAxQUEreVhXT0dldkEr?=
+ =?utf-8?B?UUhPNFY0L1NYdjBWNytCUE96b0daSFBEK1lGaTR2aUFxU3JkREE3TGFmZWF4?=
+ =?utf-8?B?cEkvOFkwUG9JR1UxMGIvUERKK3JMWENZeVNEbG5BdnhUbEcrclZtaDBacDR6?=
+ =?utf-8?B?M3FKS1liTUpTR1orNDNzOUkyVktOaFdiUGNKNzhqVGVxQ0YwVnJ3dUpyMmdL?=
+ =?utf-8?B?VVBvMzZTWm02b2JZR080ZnVmSi9HZEZqV2x2VVl5MDVZcnNUdGN5TzlPZnVk?=
+ =?utf-8?B?QnVYSXgzVEdwVU1lN290MWpESUx2enhSYnc2ejFEU25SOWpJOHM3aEJ5S0Y5?=
+ =?utf-8?B?dHRjeEd4bmtNQnQ0MlBsL25kL3dIWU9rNzkzSG05QUtZbDFzb011TEQ5Y2d6?=
+ =?utf-8?B?My9Yd1hrZUx6Sktha1grazF6SDdRV0FEYi9IaXdmUUpWcDBnME9TTVhMcXk1?=
+ =?utf-8?B?RFB6K21RaWRhOVdUbDltTXg0VWRhMERWRTM1V0x6UlVydXZmc0UyalplZmhv?=
+ =?utf-8?B?Q0ZpZHExc0wxc05GVHpGZE1rVjcydnRHWjdxMGd6OEU5aFdra09KVmkxNGVp?=
+ =?utf-8?B?dk5PTjBPRlZIZFBkUGdUWTU0Q3NXakYxQVhTTmZLdzg4OUlLSno0bkY2VHhC?=
+ =?utf-8?B?S2VmOHVudFRobHplRUxOZzc4ZzFFbU5ldlcrTGUxcVoySXo1WWdVSXFpejdy?=
+ =?utf-8?B?NEhuNVYyRFpXdjJFeFcyaXFnK05Bd1B3VDlEMUhDMjJ0RU53eExTeWlrVk5r?=
+ =?utf-8?B?bmEwbjEwK0ZjT3A4d25iYzFNbnMzY0JUenE0WDl2b2kyelVwalpwbm93TkJu?=
+ =?utf-8?B?MEdnTE9qWVVYdFU0Q1A0Z0wxWU5ydW5qdTdWdXhuN2tPWXZ4L3JqZlZrbjIx?=
+ =?utf-8?B?WUFhVGYzVGt4WDk2UkdaOGJiT3Yrc25uTjYzZTE3TDBiR0Q0c3V5b2kwUXBY?=
+ =?utf-8?B?TFdhUFk0TGJRL21KS2I1c0FRMForckt0N3JrRjVZOUh0OEJRMG9YenJTWEEz?=
+ =?utf-8?B?bFpBWk1mYVUwN1hEb3h6K3FuZ3AwTE8vVkZFaTdPQ0pkR1ZOOGxOTXlQYkZp?=
+ =?utf-8?B?bnpPY0IvTzkzREZZdlYrRnN5OTlqL1o2b3hNSmxoVHVNamlpVkdDNUE0emRv?=
+ =?utf-8?B?ZTFjRFkrWmI4VTZ3TU5lQ2xGbHhWQ1V2aVZUNVFxUHNqY1lndUhRUWN5R1N3?=
+ =?utf-8?Q?krfTInfCCkSz4OJYhJk9PHCle?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3e30819-ec71-4c97-d0b0-08ddd901b142
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 18:05:45.1217
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kmf+7fuLNqebgu8P/P8ktXI6Vr5lg8uFCp8BcUtmVkOeEA0bCtv12gui9MLxCRJpXG2c6w/ecw9dS+8Og04eAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9810
 
-On Mon, Aug 11, 2025 at 10:35=E2=80=AFAM Beata Michalska
-<beata.michalska@arm.com> wrote:
->
-> On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
-> > On Mon, Aug 11, 2025 at 8:57=E2=80=AFAM Beata Michalska <beata.michalsk=
-a@arm.com> wrote:
-> > >
-> > > Hi Tamir,
-> > >
-> > > Apologies for such a late drop.
-> >
-> > Hi Beata, no worries, thanks for your review.
-> >
-> > >
-> > > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
-> [snip] ...
-> > > > +/// A reserved slot in an array.
-> > > > +///
-> > > > +/// The slot is released when the reservation goes out of scope.
-> > > > +///
-> > > > +/// Note that the array lock *must not* be held when the reservati=
-on is filled or dropped as this
-> > > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Rese=
-rvation::release_locked`] can be
-> > > > +/// used in context where the array lock is held.
-> > > > +#[must_use =3D "the reservation is released immediately when the r=
-eservation is unused"]
-> > > > +pub struct Reservation<'a, T: ForeignOwnable> {
-> > > > +    xa: &'a XArray<T>,
-> > > > +    index: usize,
-> > > > +}
-> > > > +
-> [snip] ...
-> > > > +
-> > > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
-> > > > +    fn drop(&mut self) {
-> > > > +        // NB: Errors here are possible since `Guard::store` does =
-not honor reservations.
-> > > > +        let _: Result =3D self.release_inner(None);
-> > > This seems bit risky as one can drop the reservation while still hold=
-ing the
-> > > lock?
-> >
-> > Yes, that's true. The only way to avoid it would be to make the
-> > reservation borrowed from the guard, but that would exclude usage
-> > patterns where the caller wants to reserve and fulfill in different
-> > critical sections.
-> >
-> > Do you have a specific suggestion?
-> I guess we could try with locked vs unlocked `Reservation' types, which w=
-ould
-> have different Drop implementations, and providing a way to convert locke=
-d into
-> unlocked. Just thinking out loud, so no, nothing specific here.
-> At very least we could add 'rust_helper_spin_assert_is_held() ?'
+On 8/11/25 12:40, Borislav Petkov wrote:
+> On Tue, Jul 22, 2025 at 09:27:30AM +0200, Ard Biesheuvel wrote:
+>> @@ -210,7 +210,7 @@ bool __head snp_init(struct boot_params *bp)
+>>  	return true;
+>>  }
+>>  
+>> -void __head __noreturn snp_abort(void)
+>> +void __init __noreturn snp_abort(void)
+>>  {
+>>  	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+>>  }
+> 
+> So this thing already conflicts with the SAVIC stuff:
+> 
+> ld: vmlinux.o: in function `savic_probe':
+> /home/boris/kernel/2nd/linux/arch/x86/kernel/apic/x2apic_savic.c:29:(.text+0x6601f): undefined reference to `snp_abort'
+> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+> make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1244: vmlinux] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> because it calls snp_abort().
+> 
+> I'm thinking since it is a one-liner, we can simply turn it into a macro which
+> evaluates to
+> 
+> 	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+> 
+> and problem solved.
 
-I don't see how having two types of reservations would help.
+Yes, that works. Or just get rid of snp_abort() and call
+sev_es_terminate() directly. Secure AVIC could even use an
+SEV_TERM_SET_LINUX specific code instead of the generic failure code.
 
-Can you help me understand how you'd use `rust_helper_spin_assert_is_held` =
-here?
+Thanks,
+Tom
 
-> >
-> > > > +    }
-> > > >  }
-> > > >
-> > > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send`=
- iff `T` is `Send`.
-> > > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send fo=
-r XArray<T> {}
-> > > >  // SAFETY: `XArray<T>` serialises the interior mutability it provi=
-des so it is `Sync` iff `T` is
-> > > >  // `Send`.
-> > > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
-> > > > +
-> > > > +#[macros::kunit_tests(rust_xarray_kunit)]
-> > > > +mod tests {
-> > > > +    use super::*;
-> > > > +    use pin_init::stack_pin_init;
-> > > > +
-> > > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
-> > > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
-> > > I believe this should be GFP_ATOMIC as it is being called while holdi=
-ng the xa
-> > > lock.
-> >
-> > I'm not sure what you mean - this function can be called in any
-> > context, and besides: it is test-only code.
-> Actually it cannot: allocations using GFP_KERNEL can sleep so should not =
-be
-> called from atomic context, which is what is happening in the test cases.
-
-I see. There are no threads involved in these tests, so I think it is
-just fine to sleep with this particular lock held. Can you help me
-understand why this is incorrect?
-
->
-> ---
-> BR
-> Beata
-> >
-> > >
-> > > Otherwise:
-> > >
-> > > Tested-By: Beata Michalska <beata.michalska@arm.com>
-> >
-> > Thanks!
-> > Tamir
-> >
-> > >
-> > > ---
-> > > BR
-> > > Beata
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_alloc_kind_alloc() -> Result {
-> > > > +        test_alloc_kind(AllocKind::Alloc, 0)
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_alloc_kind_alloc1() -> Result {
-> > > > +        test_alloc_kind(AllocKind::Alloc1, 1)
-> > > > +    }
-> > > > +
-> > > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> =
-Result {
-> > > > +        stack_pin_init!(let xa =3D XArray::new(kind));
-> > > > +        let mut guard =3D xa.lock();
-> > > > +
-> > > > +        let reservation =3D guard.reserve_limit(.., GFP_KERNEL)?;
-> > > > +        assert_eq!(reservation.index(), expected_index);
-> > > > +        reservation.release_locked(&mut guard)?;
-> > > > +
-> > > > +        let insertion =3D guard.insert_limit(.., new_kbox(0x1337)?=
-, GFP_KERNEL);
-> > > > +        assert!(insertion.is_ok());
-> > > > +        let insertion_index =3D insertion.unwrap();
-> > > > +        assert_eq!(insertion_index, expected_index);
-> > > > +
-> > > > +        Ok(())
-> > > > +    }
-> > > > +
-> > > > +    #[test]
-> > > > +    fn test_insert_and_reserve_interaction() -> Result {
-> > > > +        const IDX: usize =3D 0x1337;
-> > > > +
-> > > > +        fn insert<T: ForeignOwnable>(
-> > > > +            guard: &mut Guard<'_, T>,
-> > > > +            value: T,
-> > > > +        ) -> Result<(), StoreError<T>> {
-> > > > +            guard.insert(IDX, value, GFP_KERNEL)
-> > > > +        }
-> > > > +
-> > > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>=
-) -> Result<Reservation<'a, T>> {
-> > > > +            guard.reserve(IDX, GFP_KERNEL)
-> > > > +        }
-> > > > +
-> > > > +        #[track_caller]
-> > > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>=
-) -> Result {
-> > > > +            // Insertion fails.
-> > > > +            {
-> > > > +                let beef =3D new_kbox(0xbeef)?;
-> > > > +                let ret =3D insert(guard, beef);
-> > > > +                assert!(ret.is_err());
-> > > > +                let StoreError { error, value } =3D ret.unwrap_err=
-();
-> > > > +                assert_eq!(error, EBUSY);
-> > > > +                assert_eq!(*value, 0xbeef);
-> > > > +            }
-> > > > +
-> > > > +            // Reservation fails.
-> > > > +            {
-> > > > +                let ret =3D reserve(guard);
-> > > > +                assert!(ret.is_err());
-> > > > +                assert_eq!(ret.unwrap_err(), EBUSY);
-> > > > +            }
-> > > > +
-> > > > +            Ok(())
-> > > > +        }
-> > > > +
-> > > > +        stack_pin_init!(let xa =3D XArray::new(Default::default())=
-);
-> > > > +        let mut guard =3D xa.lock();
-> > > > +
-> > > > +        // Vacant.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        // Reservation succeeds.
-> > > > +        let reservation =3D {
-> > > > +            let ret =3D reserve(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            ret.unwrap()
-> > > > +        };
-> > > > +
-> > > > +        // Reserved presents as vacant.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Release reservation.
-> > > > +        {
-> > > > +            let ret =3D reservation.release_locked(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        }
-> > > > +
-> > > > +        // Vacant again.
-> > > > +        assert_eq!(guard.get(IDX), None);
-> > > > +
-> > > > +        // Insert succeeds.
-> > > > +        {
-> > > > +            let dead =3D new_kbox(0xdead)?;
-> > > > +            let ret =3D insert(&mut guard, dead);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        }
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Remove.
-> > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
-> > > > +
-> > > > +        // Reserve and fill.
-> > > > +        {
-> > > > +            let beef =3D new_kbox(0xbeef)?;
-> > > > +            let ret =3D reserve(&mut guard);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let reservation =3D ret.unwrap();
-> > > > +            let ret =3D reservation.fill_locked(&mut guard, beef);
-> > > > +            assert!(ret.is_ok());
-> > > > +            let () =3D ret.unwrap();
-> > > > +        };
-> > > > +
-> > > > +        check_not_vacant(&mut guard)?;
-> > > > +
-> > > > +        // Remove.
-> > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
-> > > > +
-> > > > +        Ok(())
-> > > > +    }
-> > > > +}
-> > > >
-> > > > --
-> > > > 2.50.1
-> > > >
-> > > >
-> >
+> 
+> Or you folks have a better idea?
+> 
+> Thx.
+> 
 
