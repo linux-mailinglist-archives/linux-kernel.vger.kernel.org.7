@@ -1,199 +1,111 @@
-Return-Path: <linux-kernel+bounces-763463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F03B214F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625EFB214E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F52C6806DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE41460BAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BD62E285F;
-	Mon, 11 Aug 2025 18:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A922E2DC8;
+	Mon, 11 Aug 2025 18:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AzAwqgTE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6KUrDNG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61FF2E2841
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DFE238C16;
+	Mon, 11 Aug 2025 18:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754938350; cv=none; b=p7patvH0GuKE23mJXiYika69QlKCZ2DwJhyvwV+KpYjV11AEupXmn65Q5kA6k4KqcT3ZH0g+hfSYY81qWTtVIOijjaaJaMSt3Cq4jywb1PubLrLmXEHO5qUrpjaxJt8bDxJ7DHYpDRkQzmERl58+xPR06KvlFcMAaVhn5pTD91M=
+	t=1754938299; cv=none; b=GV+feA6+bI4djlsnI7DgBSCg3Wpm2MwNqMrfPy2k0Lced4SGk6ZgQDyFFlDHeHoq1E+nelU7uU81rlYS7Llm0Yu5uzrtxPTF0umJK1LXAjAaTgm7SppDiJ7aVjnUIRsQEanqKx8LUxIPG5FPFliYSFtiYEkR24HIlHbuOcX5rwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754938350; c=relaxed/simple;
-	bh=fYaF89ZGxZcA704JguwguapVs66UnX8+2glz1bwifTY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8F5L58o4cvikhksJxaYNO+73CX4Mk6O+yyBBbYgl3FwcTzyadM3YzuCwR65atSFSxAoL6GGyQyKXMNmDQbq+wE864EluenSlivZ8leXOWMmFIrqOhdfWYrP865HYtQGGW1rJhZK85fmbRRx0s1NtovvzOxUNhs4NSOUW5Oxxag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AzAwqgTE; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754938349; x=1786474349;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fYaF89ZGxZcA704JguwguapVs66UnX8+2glz1bwifTY=;
-  b=AzAwqgTElJ8YwSt+5s1Xvejrq6haRnthzXKPGaAxMi1JfsggzERjS5HV
-   JQowAEtWE+LuSYUIo6CkZj4W2Iz4rs5HwDlmV5nDXpBGAatEyHsmLbxEy
-   oTi6PO/PxWmdqLey7g6iuxnKwfDDrZJMmwVifujYdj1nKapFtDG6ngx+l
-   aDmnxoHMN+y5pwvJps8AKwW8v60hB4NzO0/k/cD50SbhUGZEqLbChMej6
-   I0jOweISqxz9f0/jCLEwIbI/bppmP1UtjFQewJ2t9HEoh2yI+nN+vK1JC
-   foA1FAEcKwPJezdkBR1PUa1xXPL0GFXGeo1QyjJj2yGCmZ2qjwQuDpk9o
-   A==;
-X-CSE-ConnectionGUID: 6DQQhSZIQ5SLUhZ0Gnklmw==
-X-CSE-MsgGUID: VDKu0NABQZWcdCVuo0FPCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67801009"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="67801009"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:52:28 -0700
-X-CSE-ConnectionGUID: gACR7yndTsK6svcyE/E9fg==
-X-CSE-MsgGUID: MmSPUGWJS92icAXechi1TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="170439171"
-Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by orviesa004.jf.intel.com with ESMTP; 11 Aug 2025 11:52:28 -0700
-From: Sohil Mehta <sohil.mehta@intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
+	s=arc-20240116; t=1754938299; c=relaxed/simple;
+	bh=TyL5WM4KmK4UEKtUWLjU9qmPO9uX7gp5FgMMIIGkhR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0Kw9u8Ed38g87dWDXyHjS529U0JGiuU3AQx1PKofSN9ZpW3QRzm1ylUS0BAIWJqrnQwmprHpETyZCAd0HoGbqKhw29LViik+ivGnHM+80wJ6X/avoQe3oKnhmfMwr7gqd9iij1zIAorJU/Epqcn1dg1H7Y5mcDlm43SCtlXDI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6KUrDNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A28B0C4CEED;
+	Mon, 11 Aug 2025 18:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754938298;
+	bh=TyL5WM4KmK4UEKtUWLjU9qmPO9uX7gp5FgMMIIGkhR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T6KUrDNGWelM7URVAXZGo04+ZxAi3SALiGcDdo0UxtvFW2rLJeiGYAy+K2tV9jaWp
+	 kp6Ev7FTupGWIEM+tTCcwxLnwwHS6eH677EawQBgpALNsiXKDiBh6+RTU8GNyeVogD
+	 7nXh2/3I5U232t3QATccielwpgjL/QIlLMBu4xR7wmrraJ1E73jQuCQJnDo4xhTr+V
+	 L70+SNO/W7ocYzKR2EVwHxA3lbJh5faP645ADGJS1RWnx2VuMG786Pi7J8d/1u+aR0
+	 wqMB2cJXVNSfupzUCTB+/l+tyySY/oEdR1km468NI4Z05si1HUZGmy2t58wBCEZpYJ
+	 dufb9Mrcityew==
+Date: Mon, 11 Aug 2025 08:51:37 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vignesh Balasubramanian <vigbalas@amd.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Chao Gao <chao.gao@intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Fushuai Wang <wangfushuai@baidu.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] x86/fpu: Fix NULL dereference in avx512_status()
-Date: Mon, 11 Aug 2025 11:50:44 -0700
-Message-ID: <20250811185044.2227268-1-sohil.mehta@intel.com>
-X-Mailer: git-send-email 2.43.0
+	Stephen Boyd <sboyd@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH v3 1/2] cgroup: cgroup.freeze.stat.local time
+ accounting
+Message-ID: <aJo7udUoWJt_jLzK@slm.duckdns.org>
+References: <20250805032940.3587891-4-ynaffit@google.com>
+ <20250805032940.3587891-5-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805032940.3587891-5-ynaffit@google.com>
 
-From: Fushuai Wang <wangfushuai@baidu.com>
+Hello,
 
-Problem
--------
-With CONFIG_X86_DEBUG_FPU enabled, reading /proc/[kthread]/arch_status
-causes a kernel NULL pointer dereference.
+Generally looks good to me. Some comments on cosmetics / interface.
 
-Kernel threads aren't expected to access the FPU state directly. Kernel
-usage of FPU registers is contained within kernel_fpu_begin()/_end()
-sections.
+On Mon, Aug 04, 2025 at 08:29:41PM -0700, Tiffany Yang wrote:
+...
+> +  cgroup.freeze.stat.local
 
-However, to report AVX-512 usage, the avx512_timestamp variable within
-struct fpu needs to be accessed, which triggers a warning in
-x86_task_fpu().
+This was mentioned before and maybe I missed the following discussions but
+given that cgroup.freeze is a part of core cgroup, cgroup.stat.local is
+probably the right place. It's not great that cgroup.stat wouldn't be a
+superset of cgroup.stat.local but we can add the hierarchical counter later
+if necessary.
 
-For Kthreads:
-  proc_pid_arch_status()
-    avx512_status()
-      x86_task_fpu() => Warning and returns NULL
-      x86_task_fpu()->avx512_timestamp => NULL dereference
+> +	A read-only flat-keyed file which exists in non-root cgroups.
+> +	The following entry is defined:
+> +
+> +	  freeze_time_total
 
-The warning is a false alarm since the access isn't intended for
-modifying the FPU state. All kernel threads (except the init_task) have
-a "struct fpu" with an avx512_timestamp variable that is valid to
-access. Also, the init_task (PID 0) never follows this path since it is
-not exposed in /proc.
+How about just frozen_usec? "_usec" is what we used in cpu.stat for time
+stats.
 
-Solution
---------
-One option is to get rid of the warning in x86_task_fpu() for kernel
-threads. However, that warning was recently added and might be useful to
-catch any potential misuse of the FPU state in kernel threads.
+> +		Cumulative time that this cgroup has spent between freezing and
+> +		thawing, regardless of whether by self or ancestor groups.
+> +		NB: (not) reaching "frozen" state is not accounted here.
+> +
+> +		Using the following ASCII representation of a cgroup's freezer
+> +		state, ::
 
-A better option is to avoid the access altogether. The kernel does not
-track AVX-512 usage for kernel threads.
-save_fpregs_to_fpstate()->update_avx_timestamp() is never invoked for
-kernel threads, so avx512_timestamp is always guaranteed to be 0.
+It's a bit odd to include credit in a doc file. Maybe move it to the
+description or add Co-developed-by: tag?
 
-Also, the legacy behavior of reporting "AVX512_elapsed_ms: -1", which
-signifies "no AVX-512 usage", is misleading. The kernel usage just isn't
-tracked.
+Thanks.
 
-For now, update the ABI for kernel threads and do not report AVX-512
-usage for them. Reading /proc/[kthread]/arch_status would display no
-AVX-512 information. This avoids the NULL dereference as well as the
-misleading report.
-
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Fixes: 22aafe3bcb67 ("x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks")
-Cc: <stable@vger.kernel.org> # v6.15+
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
-Co-developed-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
----
-v4:
- - No significant change, minor wording improvements.
-
-v3: https://lore.kernel.org/lkml/20250724013422.307954-1-sohil.mehta@intel.com/
- - Do not report anything for kernel threads. (DaveH)
- - Make the commit message more precise.
-
-v2:
- - Avoid making the fix dependent on CONFIG_X86_DEBUG_FPU.
- - Include PF_USER_WORKER in the kernel thread check.
- - Update commit message for clarity.
----
- arch/x86/kernel/fpu/xstate.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 12ed75c1b567..28e4fd65c9da 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1881,19 +1881,20 @@ long fpu_xstate_prctl(int option, unsigned long arg2)
- #ifdef CONFIG_PROC_PID_ARCH_STATUS
- /*
-  * Report the amount of time elapsed in millisecond since last AVX512
-- * use in the task.
-+ * use in the task. Report -1 if no AVX-512 usage.
-  */
- static void avx512_status(struct seq_file *m, struct task_struct *task)
- {
--	unsigned long timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
--	long delta;
-+	unsigned long timestamp;
-+	long delta = -1;
- 
--	if (!timestamp) {
--		/*
--		 * Report -1 if no AVX512 usage
--		 */
--		delta = -1;
--	} else {
-+	/* AVX-512 usage is not tracked for kernel threads. Don't report anything. */
-+	if (task->flags & (PF_KTHREAD | PF_USER_WORKER))
-+		return;
-+
-+	timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
-+
-+	if (timestamp) {
- 		delta = (long)(jiffies - timestamp);
- 		/*
- 		 * Cap to LONG_MAX if time difference > LONG_MAX
 -- 
-2.43.0
-
+tejun
 
