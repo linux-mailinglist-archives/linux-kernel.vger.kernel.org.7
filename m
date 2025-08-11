@@ -1,262 +1,259 @@
-Return-Path: <linux-kernel+bounces-763427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB2AB2146C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88323B2146D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F33F2A49EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582B13E318A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691252E2859;
-	Mon, 11 Aug 2025 18:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2512E266E;
+	Mon, 11 Aug 2025 18:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFvW6WU3"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C31jR0CB"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FCB224891;
-	Mon, 11 Aug 2025 18:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754937060; cv=none; b=DhKL9mrrIGRC+MpZdpCLPzf4A04Gyv81Rnj2Pzv25m0LVJROuqhbtjnkMIf9+/VWSmpz+R2wOXB+HETTdNIrLtZGrTiJmhUmRU8iaJaZePpfuvOb3heqDo0rDp2gF69rAvurBJS5aGC6K0mG71vFFB70iq9CYWDgUp3b7Y5fBSU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754937060; c=relaxed/simple;
-	bh=xk8qaiErmfTGhxRgj9XAM40WAN3dsm5MjAETZq/bFWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewjhR8RwraQ4vT14sbUrle+yxOGADGPk2CkWzABUchcP19eb1hL+RTv5ScRjq76D+QfdQTLdnxGHvNLrOWteJiUcyj9VvW1V7fmHiWdYe7VS6kyWYjO/kmTkLFB+AEJhYuf1prYOyYpvNGSlNJzENMOWbD5XgzHFxSEjEzzZ4BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFvW6WU3; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30b71d5cc03so2173248fac.3;
-        Mon, 11 Aug 2025 11:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754937057; x=1755541857; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=erUZxz/3YKb6AzciSl87N1qVga0MvtNzwF8QlCkJO6o=;
-        b=QFvW6WU3lgM6P2wijhOmXo0qcXF+io6JNG7854YLpujDhyjrb8dI/Rf6JL3WS82bQP
-         nrP8hKLjATEQk/XqdD2FC92YTCVlkBw4sjxZCxyR/TfWW3seym14kgb6wi9G6oJS37zl
-         cC4RLpKIorsT47uH2SUc9WUhVfWm6LSIzbj9fAl656ybTNuk6bUQ83ZslHdbDinXw1rx
-         RZLQh1TxS1WkHGOLWtk0n5bxdcaHAnvxixIS6o/rlF70pS1Ival5JRNValbBwGaEvdD0
-         mZ7rRgIsf1QpAX2q+OdWRAmZZ169JCvtmaEmiVLM/bZql0GhNIqPNtCjakW7zBaRNBOA
-         y0MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754937057; x=1755541857;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=erUZxz/3YKb6AzciSl87N1qVga0MvtNzwF8QlCkJO6o=;
-        b=oo6IJeJwPqlLqPeprQTVZgpBWEDBoPTUN6OKVA8GRx36Dd21esfl1SNYegwqbtqFaO
-         mz8BLqKhWXTucM467n6k0sxXCJsnuqSXKx7AdD18q1OvB5WYymWEVX4zpB/9JNxGXS3K
-         H+b7kZDMR32eEpvFyP8tbUyLBDLGS3Nw8NaVyg9sft00dcv4BmxU25Hg98g19JmqmdX5
-         ci4eVnQZXvFXva1j26iyquRdxzTx2PtAOw05BA08v9R0rg4Ydu8+BsF+VhhRst2PQqEb
-         A0Mvl5m9pqkmZAZ7zDFqePWXAlBHpcsdadKYfrUAU7NVZLg7Kvh/rdmOQedV+S4Qh6L+
-         E41w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZHfOi5fNuffONqKZLrJUGT1baLrvzlMcAjaVYwQoHRGSM6JWqawwgm1gz+ICu06dRMHo9sdft58i4@vger.kernel.org, AJvYcCVRwA/CZMlZqhj4cG8cIrKd3CLVJWA8EAiAcF/FYTGx/1UhoR2IDm+JOxLUgj7keAjV4Vgy3icIAus=@vger.kernel.org, AJvYcCXZrU08wFR/oKbRmae1uzxCkdHbCuqukcViu43RxYlJJ4GsP7UDzeB2mDkm1yLDVvvUE12WszfnXMiTYA46@vger.kernel.org, AJvYcCXlQ3pfbvaOmTj1IMhsy/f8oWBgRbXrVTtN1xPuNVvqHQhmJmdYeh3mvA2ajiRf15WkBRDwdulYMSQkSRpK1A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBM60ybjEwUU3z8DkupVY5gVO2d6J0Jfvidcn3usdvBjwUUrMl
-	zln49tgCrsPWZT+igMethtXCERAdnzBDMLS67y1CQYUm3aeSXBJwoVLG
-X-Gm-Gg: ASbGnctfgCiDoA8kuHZiLIc1xTiEuMGHUfzAoPdAMCqyUsPHhho9kZnQQZjmTvaw7X6
-	okgxtRn4/b6nXE1SpdCAKU73K51tULJN2zTJid7InkGLsJuLtqSp15bz3fBubw9o+TNQAnYPRCf
-	1a/qLzHQ6MrHuIGnzpJobzO+SPn8eHDeCGtsTks9/13ZMVfTD0LwyxL0KxpSEyIFNW5EQ5H7LxC
-	SmU9nui2E/lSVxYfAI+PchCGHI41aF9VGRfkYn36miXGTg8saoBn7DOnKCPtNe6Bfl3wOBOTmrq
-	8S1QAnqLNe0YCbyuwPBkyIxc8Vs97iRtugPPKqxDu9s9sEnEO5q9zHzFT9izuaC3Ch6gDMaIUZJ
-	qJqKuqr75p9e/toi8PwQ7UrwNFA1h9PnaFgq/
-X-Google-Smtp-Source: AGHT+IFeSQ0skn1obsPdMuUc/I2OxHhwHFM3A2M1joHpdeeawx5gSo3o7y+eUrVN/gXuAHlP6eMhag==
-X-Received: by 2002:a05:6870:479b:b0:307:3d5:713f with SMTP id 586e51a60fabf-30c210da176mr9357342fac.19.1754937056701;
-        Mon, 11 Aug 2025 11:30:56 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:b420:5f86:575e:74a8])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-307a7390b47sm7916818fac.21.2025.08.11.11.30.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 11:30:55 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Mon, 11 Aug 2025 13:30:53 -0500
-From: John Groves <John@groves.net>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
-Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
- famfs
-Message-ID: <z2yuwgzsbbirtfmr2rkgbq3yhjtvihumdxp4bvwgkybikubhgp@lfjfhlvtckmr>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-11-john@groves.net>
- <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
- <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
- <20250707173942.GC2672029@frogsfrogsfrogs>
- <ueepqz3oqeqzwiidk2wlf3f7enxxte4ws27gtxhakfmdiq4t26@cvfmozym5rme>
- <20250709015348.GD2672029@frogsfrogsfrogs>
- <wam2qo5r7tbpf4ork5qcdqnw4olhfpkvlqpnbuqpwfhrymf3dq@hw3frnbadhk7>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79831238C16
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754937092; cv=fail; b=TlGlmpckMFksy3j1+kYn5MsLKf1VrfZaB0fzMWdddUOHXMvZJroPP0YCLjRINMQ+BAvdPfOyMdOoEKRD2G2JnawVqRo3hp+5krrFo8+3SFVmD7+Lfh9AvgIaHtlsVawpkPZtqOOYC/0z+zEonaYWj/csH/IVAyz99ukI+OJeyIk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754937092; c=relaxed/simple;
+	bh=W7y4EH379mwjdGjYKDQKpbAllPbV+zSDnj8n37dZ1Ow=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d+hgPI/BMg/GpM6yUtyPYLlrYTcNEat7RV2YUotff1rAfONOm3uDctslie35Hmag8EANI9fODZC+h2L+SqZVdSq6ghkoysB9e422oqZpSakwuFF3xgjxWULgtiN5YT5A7VW6jmt0hzupmNZxNgsNSh/Jwa5mULsfTUhnZrVcs/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C31jR0CB; arc=fail smtp.client-ip=40.107.220.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MRiDXd6R3rWMbM4e6KNEoLihOqNlc8bhGkZBz8Jsi9gv2doNL11C/yMAwclFV9iJn6XlISJVTxICdrTijdUQQ91cFCLlqqQIFzsZ49GSdbLExK3wctC5xwKJULIFpJ6regwQnsuo4tjoS7xKndGdVOVvUHm33xvOp2KxSMhUeEGOJWS1VBOoLhj8QWXbsbUXW1xeoZXWqWTaOUiYgHyxsiEmqO4X/RGF2GauDCbQiktrh3CiU3ZS7ciOHkjrU559xbKlm4UnoWhlwH8pF034Bx3mRMp/RqkJXi2ohwbRTaUcfx9XWd9214sfhjI4Z6qwPi/05D9HPWWyMoLbfQNmMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q+MFSWZmCwc0BBSyJNPtZ+/ZiiA0idXhbTXgc+jzV7I=;
+ b=iFjv9QLpkWEnpfJS/81c5ayDyeieliGqe3OBoMuNQ54o+XPsqF83OwroWnuirVhOACx0vUQULbdq5CSbP8iCRaFWAIcs0cL7W4CDHTbgn6QfrHZtagBYYW9o/TqMoXSow74hFw+F4orduGZYZrV2Q0/XbRF6O++8hUpnHQRDIWGsvzURnjtV60f9LbZZMsIZZ9P/82cMWtkw5P7ZD+WSUlZ4jgja1QFynO/oXCqI68RufQhYzYu608+e8oOZCJ44vuE/y/2Nj2odD/UYmUdRt4l1i/shBEPAQMhAY9N5WHlUvAgGYdN10bm9fTCzXboqsvQB091Sg5qk8nb7wTCl9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q+MFSWZmCwc0BBSyJNPtZ+/ZiiA0idXhbTXgc+jzV7I=;
+ b=C31jR0CB1AQ1WWOU+ayty9PQkeKKdqrlxsHhfwODk3QYA9lnql5Df/AAnN2vOAg5AVlRSPv/guqZlQfzOKDtl2bBy8F+XA0b8qhgH9abWPd6LGURyKV3Iam8yrbgXQjROuqVmA+kxTH8RWM8i20Zyfoh0zU6I1yQQ+5Y7Wb7tFBWVUVTr0L/welg/k6O6bKtK5ppnQ7qbmRiQ2NvHMn1ROlWFkJYNwVtTtH2B187lCaWRDbwZ6zaOZe8xtk9MPox2ELZ2ogVJzNGxeqdVwJbsT0jnphSY80p6BZVUhzpsT3mNMQPGcuIg9Chbh+6O2Z3ixLpkNzGnPGasc2+trxvXA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB6606.namprd12.prod.outlook.com (2603:10b6:8:d2::20) by
+ SJ0PR12MB6688.namprd12.prod.outlook.com (2603:10b6:a03:47d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 18:31:21 +0000
+Received: from DS0PR12MB6606.namprd12.prod.outlook.com
+ ([fe80::ee84:cbaf:9af1:3f5a]) by DS0PR12MB6606.namprd12.prod.outlook.com
+ ([fe80::ee84:cbaf:9af1:3f5a%6]) with mapi id 15.20.9009.016; Mon, 11 Aug 2025
+ 18:31:20 +0000
+Message-ID: <6cbd85bb-66a5-45b8-aa91-f78958833e4b@nvidia.com>
+Date: Mon, 11 Aug 2025 13:31:06 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 1/2] dma/pool: Use vmap() address for memory
+ encryption helpers on ARM64
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Steven Price <steven.price@arm.com>, linux-arm-kernel@lists.infradead.org,
+ Robin Murphy <robin.murphy@arm.com>, Gavin Shan <gshan@redhat.com>,
+ Mike Rapoport <rppt@kernel.org>, Vikram Sethi <vsethi@nvidia.com>,
+ Jason Sequeira <jsequeira@nvidia.com>, Dev Jain <dev.jain@arm.com>,
+ David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20250811005036.714274-1-sdonthineni@nvidia.com>
+ <20250811005036.714274-2-sdonthineni@nvidia.com> <aJonrTrr6nW7qdLI@arm.com>
+Content-Language: en-US
+From: Shanker Donthineni <sdonthineni@nvidia.com>
+In-Reply-To: <aJonrTrr6nW7qdLI@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0006.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::11) To DS0PR12MB6606.namprd12.prod.outlook.com
+ (2603:10b6:8:d2::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <wam2qo5r7tbpf4ork5qcdqnw4olhfpkvlqpnbuqpwfhrymf3dq@hw3frnbadhk7>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6606:EE_|SJ0PR12MB6688:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a6fb3d6-fb3d-4887-94d7-08ddd905447d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RXFOVlUyOXlwUGlSS3R0cjJmKy9JcTFoaDdmbS9CK2RlVGEveWRVMnhiVERp?=
+ =?utf-8?B?dlNKUjFocHBNcU9GY0Nwc0pqS001WE5YS2w5MHRHbTJjempJUmZwTVNXL0Zo?=
+ =?utf-8?B?d3NqcjhmcVEwdjQ3a2lJd3hieElGRUF2T3Q1NURaK2szMUJPb3pJazN1cGU4?=
+ =?utf-8?B?czMyL0ZPR28xTkk2cDUvYzJXcitReFdISktieEZZREtoTHVSSjZMZTBQVFFo?=
+ =?utf-8?B?MVBvSFJsK3pUcFpxdTNqWll6KzlTQXRWeFYyeHNBMnlrcDY3SzhRdm9GUnRq?=
+ =?utf-8?B?QTFlRjNlSDlhN05tK3FYZFZ5ODIyUUNFM21vQnpnVW9rdk5uMzNXcVhyYkFj?=
+ =?utf-8?B?MFQ2NlIzNDVlYVVKandYay9sSGVBYS8wOTNzU3lEVmxTTjkrT2pvQ1d0VVhi?=
+ =?utf-8?B?WEdUTkZuQWVaWEhCdnFjc2taZklVQnpKL09xU1p4MDloekEzbUhTSENtdklM?=
+ =?utf-8?B?cTBkeklnTzNvQ2JzV010RjBWcFdGRUtTK2ZmMG9qY2xKY2UwbzJCYjNINzFt?=
+ =?utf-8?B?UmtnQTVIRG80dEplc2NQRm85MHJoOVJnVG9vSVQ4OXBJa3NCbkJ1Qi8yWXBP?=
+ =?utf-8?B?b1ZTc1liN29pK1BwQU5scWRDa1psODMxU1RWc0JteWpCMlp4bE9VSmo4SFI5?=
+ =?utf-8?B?WTBCOGlSWmN3VktNa29IT1dnbG1mOE9laHVIcmlNNzZOSnZyais5NFpHT1Zq?=
+ =?utf-8?B?M3FLSGs4V1NsZnFEcXd2OGhUb3JRTmpKOVppMGh1RWlBL2hJZFE2SCtIdjFj?=
+ =?utf-8?B?K0xmUEFaUlpyZTJ5aFdLTFU5YlRsdkVzdjMvL3M5aDZNMEdyaFAydHE0TE5a?=
+ =?utf-8?B?RC96dnBiZER2UUJ0VGdJMFlQVGRlYlNmWDZHRDMzYWZWY3lrcjlvYTNsd09S?=
+ =?utf-8?B?VnYzc2ppSExHem40YnV6eGN5aThrT3JCYnV4eTdFZzRkWDhITDZ4amFydTZm?=
+ =?utf-8?B?eWcvYmZYUWI2aENDTi9UdXVLQXFwOEJLa1h6UGR6d1FPcWZ4cFdzSjRCdlJh?=
+ =?utf-8?B?cGo4RlNxSTMzZFcvUlYxM2RJMGY3VXZDL2FKbms0OXZEOVlCRXV2eVJDTlN5?=
+ =?utf-8?B?S2tSajAxcXY5SUJsZ0U5Y3ljcHdFSndBdXpKOU9wRUpRVndPd1RvUHZic3BD?=
+ =?utf-8?B?MkhJbVljQVBpNFppYlFRbU9ld1EyWUo5QjJLQVNUNlJpdXBtRVFJQWJaWVJR?=
+ =?utf-8?B?a2R1aVVVOUVYVGhncHVuRUpNSWpFSzgxT04vVnBKZFZJbEJkeEVpeHB1d0U4?=
+ =?utf-8?B?MysyU09RS3d2bm9oSDNvRkhaWk5GWDBHTlhJZzRSdEZYajFqVkR1WGMreGVq?=
+ =?utf-8?B?YU9PZ1NLeFI5clNUMDYrSm5Ram51ZjFLUS8wZ1hBS1RQRS9CREpZTWlERE16?=
+ =?utf-8?B?ZmVuVFB1ZFRIdXp1aHFGY3ZZN05ON3ljK0t6SnlSQWZTS2cxbGVPN1VNb2Jj?=
+ =?utf-8?B?RGtoVmRRS2tOaEduVVNlWjZQWlJUY0tXbXRTVldDcVAxR21ISlpLbjlrY1lY?=
+ =?utf-8?B?TTlSMHduSEVlbEpGaGJ4YXBsc1Q3RDdkR0w1eW9qNFFjNVVxVWxFUTR0Y1Z0?=
+ =?utf-8?B?OHlWMmYweE9zQVAvMUlwWUhmWWhITzFJQ0FEMW5WRG9xdnJJc3VTYjdLdG5E?=
+ =?utf-8?B?SVgvMFk4S1YyT1FIeHZZLy9OK3g2bWZadkFZNU1sNnE0RFVUelpzYUZQSGxp?=
+ =?utf-8?B?dDFacXhEVUdKWTg3eGQ5Y3ptWld0UGd6bFF5SGpsZHFpbDNaRlB2ODZ5Q0F0?=
+ =?utf-8?B?eEhmQS9BMkxqa0RHaFVNUFRXK0tiTitiUU1vL3lkcWlsSHRHYmlGS2g3cWd0?=
+ =?utf-8?B?UC9MNWk1OHV5OHBtMlRDeGFCZ3VLZkptcERoU3dPR2pNTEIwam42Si9NQ0dW?=
+ =?utf-8?B?YlIweU56aDE0SVBKVEpoZ2p4blpNb2dmMVpPa3ZhaDQxK0daK2tmanBIRzU4?=
+ =?utf-8?Q?iFyXPkushrw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6606.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qkh3bUVSSEQrMkNGTzFwdjM0b0xvUGZ3RVBpYk9UdlR4RUtHN0tHaUJFOTFq?=
+ =?utf-8?B?b1Rna254NE1JWmNoTEpZTnFzaVQzc2FnRDRKaTBURmJZY1ZGeWU3Tm5TSW14?=
+ =?utf-8?B?cXpNUU5aeDR2ZHdwQjFwcUdHRlRaZ00zYzZweVFESmxOQjNxSzlxSW4wR3Vp?=
+ =?utf-8?B?S21pcVNEbUR1MjB1WWo5YjFYZ3RBTy8wZ0ZucDRqVFJLcjV2MzBTOEtnMStP?=
+ =?utf-8?B?WWJZOVdCUnBKeVM3NElzcUlWaHJ2WWZsSkFZb01SQUZGT1U0clBxWld5TmVF?=
+ =?utf-8?B?enhRWmRVNFhYbkVGQXB5M3h2U2UrQ1N6QzFCVUtneWlzODVTbXZEZGdqbFVI?=
+ =?utf-8?B?UWpPZG1rWGt5eFhOZ0tsN2lxM2thSkVRTmFCZ3U3WC9zcEQvcnhHV0JOa3VI?=
+ =?utf-8?B?K2JqTDdPUUNUUWwzVjJEQzVFcWI3Q0pXUFBRTlliNzl4RnliZ3d3SlBUUWZl?=
+ =?utf-8?B?VXVMUEpBbXJwZGJlY0JweWxuYnlIeFpzNDl5VXl6SnNQSkFXN0FwQThUaUdT?=
+ =?utf-8?B?RHNPb0xhWWlsVkVYR0RwclM5Nlg2OEtUWmdWRWk1c0p1QUhYRDBtc0d6V29H?=
+ =?utf-8?B?OUtpWFN4VjAwUEMrc2xIVlFEQW1BRUR5TGtTYkwyeU95Y0ZzY05qa0xtWXRk?=
+ =?utf-8?B?SWdHUjFUTk94WDJtSmlTOEQxS3B2WGwyUEpnSmRqT3Q3UUt2MU5wK0E3TnJy?=
+ =?utf-8?B?VzNxWFUxM1c3MFpPc1l0cTdGUFpKaVJPaGRmVVBaLzRrOGN2UUt6dFdhcTlm?=
+ =?utf-8?B?MnVpbGNiK01leVJnNjVnaGVMcmgwWEZNS3hlYTVWMWtOVThJU1FkK3RIZmJ6?=
+ =?utf-8?B?ZERmL1REYlFaZERWNHl0ZWg4dVI5MmdSQW1FQ3pvUE5TaVJEUTlka2xMbXp1?=
+ =?utf-8?B?Q1F4YjNDaFIxakVWayt6dEtVaDE4cXRuOENjaFRFTmwxVFVUME1IZFpTcmw2?=
+ =?utf-8?B?SG5qcGV0anA3em8yaDZaUlNjTU4zeXd6aFQ5N2pFK1pQb1l4T3Z0SXhGREla?=
+ =?utf-8?B?UkVvVlZpcm16OVd1K3AxWjRZQVVYakVjTDVWbGhQTG0rcE5yd3BZeDVCR1lD?=
+ =?utf-8?B?V0ZMbDFMbDVqeEdySmpPZit3RlpTazUzcFJVc0t4cVJMZGN1ak9mNVNkNXR3?=
+ =?utf-8?B?Wk5Yc29CWXU0TTAxSHB1TE1YQW9LT0VHTjZ6T3F5b3Q0R2pGTVBIQTBwY092?=
+ =?utf-8?B?VkFCRERpNFAvekducVBTdngwdDF4cWtKdVFwcW5oLytJUTFSNjJlYWFvRE84?=
+ =?utf-8?B?YVBKSDU4a09PL2dVSk5LVlc1NmlxRDFzWFVrajhUQVVWUUZJbE5vbVVnOC9h?=
+ =?utf-8?B?ZnFzN3pOVFZQNlE1VWJXSmFsTmUwNENOL0U2QjhpdjZzOGNpOXdvWEh0SUxN?=
+ =?utf-8?B?VWNvcXpONzB0Mk5ETk4rcmx2SVhRUVQ0a25ML2tacTMzdENORitMUW5acjha?=
+ =?utf-8?B?am84ME9uTEd1UWZ6eXlZcVFLVE1IcGFCNlJMK2dsWXlab1NyNEVZU0F1Q3NF?=
+ =?utf-8?B?MXcreC96dm1Uckh3TmZFT3NPWkwxc3FQS054RTJ0YUtkRm1OdlpjUGlVa0FR?=
+ =?utf-8?B?Vnc0N1hqbFh6Nms0WUJwRE9SRHZGd3c1Q01tSC9QNXR1UWQ0OXBMTUFpTWF1?=
+ =?utf-8?B?Tzc2cnBYTnFZbFB4bHVzRWo4VDR1cUFpZE9DR2NzWFQvZjgvU1lVelJzVlFW?=
+ =?utf-8?B?cS9rcHJJOWhqeEFvRzJnMTgrL2JNOGMwa01VMkJrYko1RzZyU3o3Y2t1VWhC?=
+ =?utf-8?B?UnpuZkhYQUhkSG9NNG9aN20zaWRYd3ljVmh2K01FSndpWEdka1JkQ2VDSTdY?=
+ =?utf-8?B?UnlKU1dpSDQ0S0pzM2NRcGFEUm1JV1M2bk11T0dYcDJwU2NDU1VVQ1hRYXhM?=
+ =?utf-8?B?YzBvc1NDZjcyL2xFL0RSTjBTazdxaWlQZFI4Wk1ielg5ZkFKMHE1ZGkrd1lp?=
+ =?utf-8?B?c3lyS2djeC9JQkFOWnkwS0ZkSjU4b1hGdU1IVjBJSDhDTmZvUU9JMHpKWDFk?=
+ =?utf-8?B?eUhuWHJqbEhFblhqNktwUXo0SS9wWDZaMXhvOERjSkVKZ3dvVEF4dW9aMVJ4?=
+ =?utf-8?B?V20wUUFROE9uNUxRbzhhOTBtUWlqSklOZ0RocS9WOEZueW9ieE9oQ3k2QlNY?=
+ =?utf-8?Q?TDq5O6/rkPkU5CpgoqUecSWoN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a6fb3d6-fb3d-4887-94d7-08ddd905447d
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6606.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 18:31:20.6456
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PXBRTzdvBLuIICcR4QC9Z6OQxgLGQ+7bEYu/kyicICqCafEDs0O0YnbpzaCARnd/f8/+WicbuiEumYg2ZE6vqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6688
 
-On 25/07/10 08:32PM, John Groves wrote:
-> On 25/07/08 06:53PM, Darrick J. Wong wrote:
-> > On Tue, Jul 08, 2025 at 07:02:03AM -0500, John Groves wrote:
-> > > On 25/07/07 10:39AM, Darrick J. Wong wrote:
-> > > > On Fri, Jul 04, 2025 at 08:39:59AM -0500, John Groves wrote:
-> > > > > On 25/07/04 09:54AM, Amir Goldstein wrote:
-> > > > > > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
-> > > > > > >
-> > > > > > > * FUSE_DAX_FMAP flag in INIT request/reply
-> > > > > > >
-> > > > > > > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
-> > > > > > >   famfs-enabled connection
-> > > > > > >
-> > > > > > > Signed-off-by: John Groves <john@groves.net>
-> > > > > > > ---
-> > > > > > >  fs/fuse/fuse_i.h          |  3 +++
-> > > > > > >  fs/fuse/inode.c           | 14 ++++++++++++++
-> > > > > > >  include/uapi/linux/fuse.h |  4 ++++
-> > > > > > >  3 files changed, 21 insertions(+)
-> > > > > > >
-> > > > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > > > > > index 9d87ac48d724..a592c1002861 100644
-> > > > > > > --- a/fs/fuse/fuse_i.h
-> > > > > > > +++ b/fs/fuse/fuse_i.h
-> > > > > > > @@ -873,6 +873,9 @@ struct fuse_conn {
-> > > > > > >         /* Use io_uring for communication */
-> > > > > > >         unsigned int io_uring;
-> > > > > > >
-> > > > > > > +       /* dev_dax_iomap support for famfs */
-> > > > > > > +       unsigned int famfs_iomap:1;
-> > > > > > > +
-> > > > > > 
-> > > > > > pls move up to the bit fields members.
-> > > > > 
-> > > > > Oops, done, thanks.
-> > > > > 
-> > > > > > 
-> > > > > > >         /** Maximum stack depth for passthrough backing files */
-> > > > > > >         int max_stack_depth;
-> > > > > > >
-> > > > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > > > > > index 29147657a99f..e48e11c3f9f3 100644
-> > > > > > > --- a/fs/fuse/inode.c
-> > > > > > > +++ b/fs/fuse/inode.c
-> > > > > > > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
-> > > > > > >                         }
-> > > > > > >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
-> > > > > > >                                 fc->io_uring = 1;
-> > > > > > > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
-> > > > > > > +                           flags & FUSE_DAX_FMAP) {
-> > > > > > > +                               /* XXX: Should also check that fuse server
-> > > > > > > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
-> > > > > > > +                                * since it is directing the kernel to access
-> > > > > > > +                                * dax memory directly - but this function
-> > > > > > > +                                * appears not to be called in fuse server
-> > > > > > > +                                * process context (b/c even if it drops
-> > > > > > > +                                * those capabilities, they are held here).
-> > > > > > > +                                */
-> > > > > > > +                               fc->famfs_iomap = 1;
-> > > > > > > +                       }
-> > > > > > 
-> > > > > > 1. As long as the mapping requests are checking capabilities we should be ok
-> > > > > >     Right?
-> > > > > 
-> > > > > It depends on the definition of "are", or maybe of "mapping requests" ;)
-> > > > > 
-> > > > > Forgive me if this *is* obvious, but the fuse server capabilities are what
-> > > > > I think need to be checked here - not the app that it accessing a file.
-> > > > > 
-> > > > > An app accessing a regular file doesn't need permission to do raw access to
-> > > > > the underlying block dev, but the fuse server does - becuase it is directing
-> > > > > the kernel to access that for apps.
-> > > > > 
-> > > > > > 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
-> > > > > 
-> > > > > I *think* that's checking the capabilities of the app that is accessing the
-> > > > > file, and not the fuse server. But I might be wrong - I have not pulled very
-> > > > > hard on that thread yet.
-> > > > 
-> > > > The init reply should be processed in the context of the fuse server.
-> > > > At that point the kernel hasn't exposed the fs to user programs, so
-> > > > (AFAICT) there won't be any other programs accessing that fuse mount.
-> > > 
-> > > Hmm. It would be good if you're right about that. My fuse server *is* running
-> > > as root, and when I check those capabilities in process_init_reply(), I
-> > > find those capabilities. So far so good.
-> > > 
-> > > Then I added code to my fuse server to drop those capabilities prior to
-> > > starting the fuse session (prctl(PR_CAPBSET_DROP, CAP_SYS_RAWIO) and 
-> > > prctl(PR_CAPBSET_DROP, CAP_SYS_ADMIN). I expected (hoped?) to see those 
-> > > capabilities disappear in process_init_reply() - but they did not disappear.
-> > > 
-> > > I'm all ears if somebody can see a flaw in my logic here. Otherwise, the
-> > > capabilities need to be stashed away before the reply is processsed, when 
-> > > fs/fuse *is* running in fuse server context.
-> > > 
-> > > I'm somewhat surprised if that isn't already happening somewhere...
-> > 
-> > Hrm.  I *thought* that since FUSE_INIT isn't queued as a background
-> > command, it should still execute in the same process context as the fuse
-> > server.
-> > 
-> > OTOH it also occurs to me that I have this code in fuse_send_init:
-> > 
-> > 	if (has_capability_noaudit(current, CAP_SYS_RAWIO))
-> > 		flags |= FUSE_IOMAP | FUSE_IOMAP_DIRECTIO | FUSE_IOMAP_PAGECACHE;
-> > 	...
-> > 	ia->in.flags = flags;
-> > 	ia->in.flags2 = flags >> 32;
-> > 
-> > which means that we only advertise iomap support in FUSE_INIT if the
-> > process running fuse_fill_super (which you hope is the fuse server)
-> > actually has CAP_SYS_RAWIO.  Would that work for you?  Or are you
-> > dropping privileges before you even open /dev/fuse?
+Hi Catalin,
+
+On 8/11/25 12:26, Catalin Marinas wrote:
+> External email: Use caution opening links or attachments
 > 
-> Ah - that might be the answer. I will check if dropped capabilities 
-> disappear in fuse_send_init. If so, I can work with that - not advertising 
-> the famfs capability unless the capability is present at that point looks 
-> like a perfectly good option. Thanks for that idea!
+> 
+> On Sun, Aug 10, 2025 at 07:50:34PM -0500, Shanker Donthineni wrote:
+>> In atomic_pool_expand(), set_memory_encrypted()/set_memory_decrypted()
+>> are currently called with page_to_virt(page). On ARM64 with
+>> CONFIG_DMA_DIRECT_REMAP=y, the atomic pool is mapped via vmap(), so
+>> page_to_virt(page) does not reference the actual mapped region.
+>>
+>> Using this incorrect address can cause encryption attribute updates to
+>> be applied to the wrong memory region. On ARM64 systems with memory
+>> encryption enabled (e.g. CCA), this can lead to data corruption or
+>> crashes.
+>>
+>> Fix this by using the vmap() address ('addr') on ARM64 when invoking
+>> the memory encryption helpers, while retaining the existing
+>> page_to_virt(page) usage for other architectures.
+>>
+>> Fixes: 76a19940bd62 ("dma-direct: atomic allocations must come from atomic coherent pools")
+>> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
+>> ---
+>>   kernel/dma/pool.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
+>> index 7b04f7575796b..ba08a301590fd 100644
+>> --- a/kernel/dma/pool.c
+>> +++ b/kernel/dma/pool.c
+>> @@ -81,6 +81,7 @@ static int atomic_pool_expand(struct gen_pool *pool, size_t pool_size,
+>>   {
+>>        unsigned int order;
+>>        struct page *page = NULL;
+>> +     void *vaddr;
+>>        void *addr;
+>>        int ret = -ENOMEM;
+>>
+>> @@ -113,8 +114,8 @@ static int atomic_pool_expand(struct gen_pool *pool, size_t pool_size,
+>>         * Memory in the atomic DMA pools must be unencrypted, the pools do not
+>>         * shrink so no re-encryption occurs in dma_direct_free().
+>>         */
+>> -     ret = set_memory_decrypted((unsigned long)page_to_virt(page),
+>> -                                1 << order);
+>> +     vaddr = IS_ENABLED(CONFIG_ARM64) ? addr : page_to_virt(page);
+>> +     ret = set_memory_decrypted((unsigned long)vaddr, 1 << order);
+> 
+> At least with arm CCA, there are two aspects to setting the memory
+> encrypted/decrypted: an RMM (realm management monitor) call and setting
+> of the attributes of the stage 1 mapping. The RMM call doesn't care
+> about the virtual address, only the (intermediate) physical address, so
+> having page_to_virt(page) here is fine.
+> 
+> The second part is setting the (fake) attribute for this mapping (top
+> bit of the IPA space). Can we not instead just call:
+> 
+>          addr = dma_common_contiguous_remap(page, pool_size,
+>                                             pgprot_decrypted(pgprot_dmacoherent(PAGE_KERNEL)),
+>                                             __builtin_return_address(0));
+> 
+Thanks for the simple fix, it resolves the crash issue. I’ve
+posted the v2 patch and dropped patch 2/2 which was added to
+support non-linear memory regions in pageattr.c.
 
-Review: the famfs fuse server directs the kernel to provide access to raw
-(memory) devices, so it should should be required to have have the
-CAP_SYS_RAWIO capability. fs/fuse needs to detect this at init time,
-and fail the connection/mount if the capability is missing.
-
-I initially attempted to do this verification in process_init_reply(), but
-that doesn't run in the fuse server process context.
-
-I am now checking the capability in fuse_send_init(), and not advertising
-the FUSE_DAX_FMAP capability (in in_args->flags[2]) unless the server has 
-CAP_SYS_RAWIO.
-
-That requires that process_init_reply() reject FUSE_DAX_FMAP from a server
-if FUSE_DAX_FMAP was not set in in_args->flags[2]. process_init_reply() was
-not previously checking the in_args, but no big deal - this works.
-
-This leads to an apparent dilemma in libfuse. In fuse_lowlevel_ops->init(),
-I should check for (flags & FUSE_DAX_IOMAP), and fail the connection if
-that capability is not on offer. But fuse_lowlevel_ops->init() doesn't
-have an obvious way to fail the connection. 
-
-How should I do that? Hoping Bernd, Amir or the other libfuse people may 
-have "the answer" (tm).
-
-And of course if any of this doesn't sound like the way to go, let me know...
-
-Thanks!
-John
-
+> in the atomic pool code? The advantage is that we keep the
+> set_memory_decrypted() call on the linear map so that we change its
+> attributes as well.
+> 
+> I want avoid walking the page tables for vmap regions if possible in the
+> arm64 set_memory_* implementation. At some point I was proposing a
+> GFP_DECRYPTED flag for allocations but never got around to post a patch
+> (and implement vmalloc() support):
+> 
+> https://lore.kernel.org/linux-arm-kernel/ZmNJdSxSz-sYpVgI@arm.com/
+> 
+> --
+> Catalin
 
