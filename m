@@ -1,228 +1,163 @@
-Return-Path: <linux-kernel+bounces-763630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942BFB217E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44724B217EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA936239BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B7C623B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05809281369;
-	Mon, 11 Aug 2025 22:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947792E4248;
+	Mon, 11 Aug 2025 22:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="M4iS+utp"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LBRwsTLA"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FBB1EF0A6;
-	Mon, 11 Aug 2025 22:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B432E3AFC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754949889; cv=none; b=iUEDMKYcDSJhYoDCG9MOIu0955ZZbtNtNM5WK4dN2Fz5iyErAlMpHo//7Rbwk7oEDxYTOVrajOacy75QLrxvz+d+H3ej/uKpUTXcJ2IDf25ql1U3PXAvT+6VFbnvsNQ8Zypr/F0MrLWsj7YJHRs4XgoHHmspPR5GjhcMZbksWbc=
+	t=1754949894; cv=none; b=JyVJbgPF9wLSGfhkZimbXx2vt0S6LVl4tJPWno0WgxEK1N3W9F6+Lump0ZAwJnZIa96+N1+0WC7ySa4TXQjHZYVxUardrVwk2WSbHMr3R5ZfyyqlnvXKOozVAGlOq52wsTbaQNajnjt7EtoIWP1k2DG6uKn1vfpprsXJ+yek4EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754949889; c=relaxed/simple;
-	bh=qxH/vUlWNOPD+oS7i4N7nf5PewbWQYYpSRYIIS0+nro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9L4fXWdLC3QYwyM58X43XuPPDxQGMnlapGoUXRwSC/Y6pyzPUWXiGe2Spa+LVkbVfUK1GmeEkkq04MeNnHQp4UmwEx63JQ/w3bgR3ww651pYr0LEEYB4BG6w1ahDxmUzRUhYn/atKoe2i6gS8d2ooPQDyM527sIsNB9MYpyCkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=M4iS+utp; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from simon-Latitude-5450.. (tmo-072-64.customers.d1-online.com [80.187.72.64])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 57BM4dre019850
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 00:04:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1754949881;
-	bh=qxH/vUlWNOPD+oS7i4N7nf5PewbWQYYpSRYIIS0+nro=;
-	h=From:To:Cc:Subject:Date;
-	b=M4iS+utpvMKRprFS897/nIpqmPhimUh5UlmDeWV2cmcxkgMIQdNNfvVo/T8P2iZVv
-	 9SlwnRcaJHb2sd8dlK/EP6MGlt1kVACpzbtR92b8hBuERDTFyOAnP20ajkGlbw5IgE
-	 ah1VsoRgkIve6SIXvEH4coa+U0QLuqIxVtDjvFuw=
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-To: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>,
-        Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: [PATCH net v2] TUN/TAP: Improving throughput and latency by avoiding SKB drops
-Date: Tue, 12 Aug 2025 00:03:48 +0200
-Message-ID: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754949894; c=relaxed/simple;
+	bh=HFRMJILUx04e7fKt9LkmjdYNj+zwMID9MEScB+KBfxo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=a+42APS8hFHPpjodD9nN03XCmghzi7+n/fVGubhrDt/e/ODkNOkjVwPOlVK/PplsZ6QtgB/ovHH79V4igiC3+rOup3g42jcLkjtb87rw6j2QlZiuCVZvpdVRnBQ5bf3puZuKEgKCZMm8svbWZu7xsUP4ZsEIx3i+9ucPluNJ+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LBRwsTLA; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3510c0cfc7so3629374a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754949892; x=1755554692; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7vJ1PiJBGG7zEvp25Z73MIEIXUg5MN85U43tAoCiyk=;
+        b=LBRwsTLAnljdvCNZj7JRC3l+jDNczF/qfQgiZEY+Mh3A8hDJOOW2O6zi+HrOv+V4q6
+         Z8YiU/56nZ9OO6tqtp9ju0V9UzUFIloruXMCz105mta/nbdJ73GE1Hd9AL9fFJnKak24
+         6z761PIcqtS3G4S5VwY89LGd7bc1iPDZjA6MJB9ogEe8iJhT9aAu91UxrycxhDPnyd21
+         IorI8wb8mdNLwPXNfrckfna88yZyMIhUmmqkJNa5OUlkXoUqjn57JlKdq53fPpuZgk/7
+         ceTKKUm03fkBYzRyJo67+Fhea7IZHLv7ZOwJlfUw8sMaJ1OciVDB/vHfDx0LBOEW6bIE
+         4Feg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754949892; x=1755554692;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7vJ1PiJBGG7zEvp25Z73MIEIXUg5MN85U43tAoCiyk=;
+        b=gdNW35ZbDU0lBjBduGcBqEEfd+BSCnapXpKfVHATzDWWcnojZ70xxKTTBrO56onlK4
+         4MNGTFtulUxkZqsF9COvxXAQAq2vJSe1mpuRjlz5SjnBIdMShgxSKDbZZQkuJq4iqByP
+         bsE4vrRTwDJYAlvaEDTWvr/H3otjz2joDffpXBzmqp/cIpRFdO5d/H5mNZH4qBdmuz31
+         E3lsljz+ZoiUBdEgeJMODtFokAsvf9AwZ4CPYw51q95hosJA5BnO91VFLytn5Dr7jlod
+         psKW/UQC4celLjY3fq0nF6tK4m4igHV1cNqnwj4DTJ6LuPv9DrbUi5uQrsFoahtdeoCc
+         EMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvCPhe7J5DTrDq4j5lYJ2ZKAWOAYRFfpwscCCOE7kbqh2pvaeDbW4miixnsKuxHNKKBiMQl3hxhmjjq6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9xsQqaZRe2YnMwbROYlJJkrbsgc0Y1yWje1UppI64QjWCEqFD
+	JhDDsGKT+HyMfJztqiwJwjWOx9SiOXjDNKiT675b1YZvQA+1kuzWoBiSoF+MJH+VmneqLZCyTWV
+	BXSlyJQ==
+X-Google-Smtp-Source: AGHT+IHZ635b9SjY7d8RUHZcAjaLQmZND7zjYFIJgLQ6XF1MQuhYWcWzho0k/wPxq5HS3XBXtiNcyc5SDhA=
+X-Received: from pjsa15.prod.google.com ([2002:a17:90a:be0f:b0:31f:26b:cc66])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3842:b0:311:9c1f:8522
+ with SMTP id 98e67ed59e1d1-321c09fc527mr1632717a91.10.1754949891756; Mon, 11
+ Aug 2025 15:04:51 -0700 (PDT)
+Date: Mon, 11 Aug 2025 15:04:50 -0700
+In-Reply-To: <aJpgZeC8SEHfQ0EY@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250811203041.61622-1-yury.norov@gmail.com> <20250811203041.61622-3-yury.norov@gmail.com>
+ <aJpWet3USvXLWYEZ@google.com> <aJpgZeC8SEHfQ0EY@yury>
+Message-ID: <aJppAp5tK7kPv8uj@google.com>
+Subject: Re: [PATCH 2/2] KVM: SVM: drop useless cpumask_test_cpu() in pre_sev_run()
+From: Sean Christopherson <seanjc@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zheyun Shen <szy0127@sjtu.edu.cn>
+Content-Type: text/plain; charset="us-ascii"
 
-This patch is the result of our paper with the title "The NODROP Patch:
-Hardening Secure Networking for Real-time Teleoperation by Preventing
-Packet Drops in the Linux TUN Driver" [1].
-It deals with the tun_net_xmit function which drops SKB's with the reason
-SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
-resulting in reduced TCP performance and packet loss for bursty video
-streams when used over VPN's.
+On Mon, Aug 11, 2025, Yury Norov wrote:
+> On Mon, Aug 11, 2025 at 01:45:46PM -0700, Sean Christopherson wrote:
+> > On Mon, Aug 11, 2025, Yury Norov wrote:
+> > > Testing cpumask for a CPU to be cleared just before setting the exact
+> > > same CPU is useless because the end result is always the same: CPU is
+> > > set.
+> > 
+> > No, it is not useless.  Blindly writing to the variable will unnecessarily bounce
+> > the cacheline, and this is a hot path.
+> 
+> How hot is that path?
 
-The abstract reads as follows:
-"Throughput-critical teleoperation requires robust and low-latency
-communication to ensure safety and performance. Often, these kinds of
-applications are implemented in Linux-based operating systems and transmit
-over virtual private networks, which ensure encryption and ease of use by
-providing a dedicated tunneling interface (TUN) to user space
-applications. In this work, we identified a specific behavior in the Linux
-TUN driver, which results in significant performance degradation due to
-the sender stack silently dropping packets. This design issue drastically
-impacts real-time video streaming, inducing up to 29 % packet loss with
-noticeable video artifacts when the internal queue of the TUN driver is
-reduced to 25 packets to minimize latency. Furthermore, a small queue
-length also drastically reduces the throughput of TCP traffic due to many
-retransmissions. Instead, with our open-source NODROP Patch, we propose
-generating backpressure in case of burst traffic or network congestion.
-The patch effectively addresses the packet-dropping behavior, hardening
-real-time video streaming and improving TCP throughput by 36 % in high
-latency scenarios."
+Very, it gets hit on every VM-Exit => VM-Entry.  For context, putting a single
+printk anywhere in KVM's exit=>entry path can completely prevent forward progress
+in the guest (for some workloads/patterns).
 
-In addition to the mentioned performance and latency improvements for VPN
-applications, this patch also allows the proper usage of qdisc's. For
-example a fq_codel can not control the queuing delay when packets are
-already dropped in the TUN driver. This issue is also described in [2].
+> How bad the cache contention is?
 
-The performance evaluation of the paper (see Fig. 4) showed a 4%
-performance hit for a single queue TUN with the default TUN queue size of
-500 packets. However it is important to notice that with the proposed
-patch no packet drop ever occurred even with a TUN queue size of 1 packet.
-The utilized validation pipeline is available under [3].
+I would expect it to be "fatally" bad for some workloads and setups.  Not literally
+fatal, but bad enough that it would require an urgent fix.
 
-As the reduction of the TUN queue to a size of down to 5 packets showed no
-further performance hit in the paper, a reduction of the default TUN queue
-size might be desirable accompanying this patch. A reduction would
-obviously reduce buffer bloat and memory requirements.
+> Is there any evidence that conditional cpumask_set_cpu() worth the effort?
 
-Implementation details:
-- The netdev queue start/stop flow control is utilized.
-- Compatible with multi-queue by only stopping/waking the specific
-netdevice subqueue.
-- No additional locking is used.
+I don't have evidence for this specific code flow, but there is plenty of evidence
+that shows that generating atomic accesses, especially across sockets, can have a
+significant negative impact on performance.
 
-In the tun_net_xmit function:
-- Stopping the subqueue is done when the tx_ring gets full after inserting
-the SKB into the tx_ring.
-- In the unlikely case when the insertion with ptr_ring_produce fails, the
-old dropping behavior is used for this SKB.
+I didn't ask for performance numbers for optimizing setting the mask because (a)
+I know the VM-Entry path can be extremely hot, (b) I know that dueling atomics
+can be hugely problematic, and (c) I don't see the separate test + set logic as
+being at all notable in terms of effort.
 
-In the tun_ring_recv function:
-- Waking the subqueue is done after consuming a SKB from the tx_ring when
-the tx_ring is empty. Waking the subqueue when the tx_ring has any
-available space, so when it is not full, showed crashes in our testing. We
-are open to suggestions.
-- When the tx_ring is configured to be small (for example to hold 1 SKB),
-queuing might be stopped in the tun_net_xmit function while at the same
-time, ptr_ring_consume is not able to grab a SKB. This prevents
-tun_net_xmit from being called again and causes tun_ring_recv to wait
-indefinitely for a SKB in the blocking wait queue. Therefore, the netdev
-queue is woken in the wait queue if it has stopped.
-- Because the tun_struct is required to get the tx_queue into the new txq
-pointer, the tun_struct is passed in tun_do_read aswell. This is likely
-faster then trying to get it via the tun_file tfile because it utilizes a
-rcu lock.
+> The original patch doesn't discuss that at all, and without any comment the
+> code looks just buggy.
 
-We are open to suggestions regarding the implementation :)
-Thank you for your work!
+FWIW, there was discussion in a previous version of the series, but no hard
+numbers on the perf impact.
 
-[1] Link:
-https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
-[2] Link:
-https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffective-on-tun-device
-[3] Link: https://github.com/tudo-cni/nodrop
+https://lore.kernel.org/all/Z75se_OZQvaeQE-4@google.com
 
-Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
----
-V1 -> V2: Removed NETDEV_TX_BUSY return case in tun_net_xmit and removed 
-unnecessary netif_tx_wake_queue in tun_ring_recv.
+> 
+> > > While there, switch CPU setter to a non-atomic version. Atomicity is
+> > > useless here 
+> > 
+> > No, atomicity isn't useless here either.  Dropping atomicity could result in
+> > CPU's bit being lost.  I.e. the atomic accesses aren't for the benefit of
+> > smp_call_function_many_cond(), the writes are atomic so that multiple vCPUs can
+> > concurrently update the mask without needing additional protection.
+> 
+> OK, I see. Something heavy hit my head before I decided to drop
+> atomicity there.
+> 
+> > > because sev_writeback_caches() ends up with a plain
+> > > for_each_cpu() loop in smp_call_function_many_cond(), which is not
+> > > atomic by nature.
+> > 
+> > That's fine.  As noted in sev_writeback_caches(), if vCPU could be running, then
+> > the caller is responsible for ensuring that all vCPUs flush caches before the
+> > memory being reclaimed is fully freed.  Those guarantees are provided by KVM's
+> > MMU.
+> > 
+> > sev_writeback_caches() => smp_call_function_many_cond() could hit false positives,
+> > i.e. trigger WBINVD on CPUs that couldn't possibly have accessed the memory being
+> > reclaimed, but such false positives are functionally benign, and are "intended"
+> > in the sense that we chose to prioritize simplicity over precision.
+> 
+> So, I don't object to drop the patch, but it would be really nice to
+> have this 
+>                         if (!cpumask_test_cpu())
+>                                 cpumask_set_cpu()
+> 
+> pattern explained, and even better supported with performance numbers.
 
- drivers/net/tun.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index cc6c50180663..81abdd3f9aca 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1060,13 +1060,16 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 
- 	nf_reset_ct(skb);
- 
--	if (ptr_ring_produce(&tfile->tx_ring, skb)) {
-+	queue = netdev_get_tx_queue(dev, txq);
-+	if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
-+		netif_tx_stop_queue(queue);
- 		drop_reason = SKB_DROP_REASON_FULL_RING;
- 		goto drop;
- 	}
-+	if (ptr_ring_full(&tfile->tx_ring))
-+		netif_tx_stop_queue(queue);
- 
- 	/* dev->lltx requires to do our own update of trans_start */
--	queue = netdev_get_tx_queue(dev, txq);
- 	txq_trans_cond_update(queue);
- 
- 	/* Notify and wake up reader process */
-@@ -2110,9 +2113,10 @@ static ssize_t tun_put_user(struct tun_struct *tun,
- 	return total;
- }
- 
--static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-+static void *tun_ring_recv(struct tun_struct *tun, struct tun_file *tfile, int noblock, int *err)
- {
- 	DECLARE_WAITQUEUE(wait, current);
-+	struct netdev_queue *txq;
- 	void *ptr = NULL;
- 	int error = 0;
- 
-@@ -2124,6 +2128,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
- 		goto out;
- 	}
- 
-+	txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
- 	add_wait_queue(&tfile->socket.wq.wait, &wait);
- 
- 	while (1) {
-@@ -2131,6 +2136,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
- 		ptr = ptr_ring_consume(&tfile->tx_ring);
- 		if (ptr)
- 			break;
-+
-+		if (unlikely(netif_tx_queue_stopped(txq)))
-+			netif_tx_wake_queue(txq);
-+
- 		if (signal_pending(current)) {
- 			error = -ERESTARTSYS;
- 			break;
-@@ -2147,6 +2156,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
- 	remove_wait_queue(&tfile->socket.wq.wait, &wait);
- 
- out:
-+	if (ptr_ring_empty(&tfile->tx_ring)) {
-+		txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
-+		netif_tx_wake_queue(txq);
-+	}
- 	*err = error;
- 	return ptr;
- }
-@@ -2165,7 +2178,7 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
- 
- 	if (!ptr) {
- 		/* Read frames from ring */
--		ptr = tun_ring_recv(tfile, noblock, &err);
-+		ptr = tun_ring_recv(tun, tfile, noblock, &err);
- 		if (!ptr)
- 			return err;
- 	}
--- 
-2.43.0
-
+I can definitely add a comment, and I might try to gather numbers out of curiosity,
+but as above, I just don't see this as something that needs to be investigated with
+any urgency.
 
