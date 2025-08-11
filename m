@@ -1,225 +1,119 @@
-Return-Path: <linux-kernel+bounces-763219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9E0B211E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE0BB211A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC8E1900C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15FA6E045B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48B92E7161;
-	Mon, 11 Aug 2025 16:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF10A311C2C;
+	Mon, 11 Aug 2025 16:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HuEhd+hF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WqrYrx2V"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45602E62C3;
-	Mon, 11 Aug 2025 16:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFBC311C02
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928823; cv=none; b=ZEhLf5XllMU6PztpFVs1UxrZnKIkTYASvJTSx/So6oWp/snmOYzWl2l1fH34Dol6BAkiDzpcEfoHungsuGO29NodS2KpPUemLs4M+cVy0zATaTYp8KcKjMMsACfhnvvT1t5QAmik2nv02czt+J10cBu/kn4J2CjEwRbMPec5258=
+	t=1754928655; cv=none; b=pQMJ+ZYaNbz3j66OdZE1WJAUb1av/hQTUtlq8I+9pyEUnpzw7vCIHwzgOHOsXj6O650aiqgtZcf1L5zWmeM+qoaYK1XA+b6qUlPda1Zyzp3vPBAzlnhV5n07uivdeBCqIUbZBXVpp1+oVbqGq/D6uR39PjRMsh2QmXd+PHRMkdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928823; c=relaxed/simple;
-	bh=CjvGV5hPrqqR5jpzUsV/mVpTr+53npZ/zD34Fh+5nM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPhRpixG/RZemMxelYXlpqa+zCj5pfOsS19pqtBl83w13DIDdi+wSKa2sI+RX3xHHK8oVgq218siMNR4TdO+wcI7aUpJG2HXDtjbR3olhhfbVlqlgSHT5lnsndlGkRDiFY2m+TJzxJ6rMvXwh31/UWDt5r+HiCA/5Lxkuz93yx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HuEhd+hF; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754928822; x=1786464822;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CjvGV5hPrqqR5jpzUsV/mVpTr+53npZ/zD34Fh+5nM0=;
-  b=HuEhd+hFhe9kVFmmUMNtbBPXcnmn+Cri8yG9QBRcXwxjK0hb17F+WwKp
-   HPxx/MCPAdihzWPIZU/ZvjWEtUPfAdEIvnSp0ZPOEsKeROe13QcbCKO/D
-   6DYhGmGd09kZde4aLCWq/5fLXZ4ik/2YBgY3C3wQRqL+wXWSUjTkiVKjW
-   Itxk5JJbR2BoFRd8gZH3iMBJ0d6Uak/5wmA4fseJD1WY3h11wRUg8v7MH
-   i/DXBh5C7nYFzbvv3UGx2GiURkP1mINQ6xQ1DV5qvNgYtzP9Mq0qCA/mA
-   0WVUWRcLw2ruq6uH3LjXiZojI0poRZu5ARij2yUfuH+he+WhUStqdkOIs
-   Q==;
-X-CSE-ConnectionGUID: diny5ZeNRkWCqTE+0FKUUw==
-X-CSE-MsgGUID: P6FJWFLnTmuwftP52kF2tw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56899737"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="56899737"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 09:13:41 -0700
-X-CSE-ConnectionGUID: MwvZxrYnQ+eXfLz7etPE7g==
-X-CSE-MsgGUID: lYtQkMqMQ+yHvXWeVGkifA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165163259"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa006.jf.intel.com with ESMTP; 11 Aug 2025 09:13:37 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Simon Horman <horms@kernel.org>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH iwl-next v4 13/13] idpf: add XDP RSS hash hint
-Date: Mon, 11 Aug 2025 18:10:44 +0200
-Message-ID: <20250811161044.32329-14-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250811161044.32329-1-aleksander.lobakin@intel.com>
-References: <20250811161044.32329-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1754928655; c=relaxed/simple;
+	bh=2iQ+zP8IZgZjmzdsrNembThxpAvNcdLs7/zu2LZbl4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhASQG3FVvaa2uTtrJHkovzcznZoSz7w9TJmVrAeoBqKL1xtA4LAPVGJNPhAb8LI+gi7lEEITgwakhKX9Bv2d9UGMBSOges0APOtgY1X+9sZ9Rf6GGRaSsFSoRepr8wfc79I2eZ6ixEsX+AKshETUxP6CiSxJg7WK3ge4ncWm9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WqrYrx2V; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7de159778d4so476280785a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1754928652; x=1755533452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I0vihZvzkYja05da8lt/tsUAEN6GCqwoj0EGOu1+LDI=;
+        b=WqrYrx2V9ZUdoxbQTf8aHkRiAV3GRdx2nxencVEf9QoBAyqwW6+Ebjc5OfjVWnBz/O
+         hWZ9qyq3ZhcH+Gvp+2UA7r+7qiwN7SSfaYHhyTmI0C0SjWG77zkOfUuJe6MOtyED6MPz
+         Pln9tsZXKi7vkyGZ/Tp1kosTs6VJnwjCKPUp+DGRUXzZ98ALAuIxhOecsUSBgpx6ofRb
+         bxnI+HS7qX5xs2h4pu7SevLiHHHqAiNcKNrD3KjLW6Xg6ElK+1Lz1CtU/5+gRuWSNcoF
+         2hknUGRh4jsCU+zw+66xEmWRFvKx9UHhA5LDzgllOCNyX9iLdih2VtfnC9r1jYCfABRP
+         6hIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754928652; x=1755533452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I0vihZvzkYja05da8lt/tsUAEN6GCqwoj0EGOu1+LDI=;
+        b=ZmAG9+y8KmOZeTSuV1p21s5oRs9OqwUD4emkcgQ+QgYsT0rf7l9OcMAe7GJHPWGpeV
+         61kV1saAhGJTW5MvC+qc9rLQh5RWg4quv3R6tek9clbVSZ/EIvZpo+LnTOExp8gxpHfL
+         MGcWtK+KjwQ43ZjX110Ej4CnYc2qTcTf4Ox4EJY9NogcrOvFUAxPS6yIKqxoE6EKxeo5
+         4rjna6EpG4o6zrvDFEaqYeb+0oktcy/GXK88tzzKHniWcs3GiQs+NF7e5aNbe9HxEcIu
+         Ebz1ZsaJXHHRpzGNXN8ghYi5bcbk0Og7IkQH8D+E7pT762EpORJ1wnzpObp441pWajvd
+         aPeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNV90GOfr3nysWhI/lMPBH6B4oTk5HAoATdad7XavS0lrgzTNolUo956dRkM4dlJXbOWPcD+tb5d19FZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+xwxDs4PTTI5YEIVTbC5JVRhi6QjpYUA7B0vVVu4IIm3jMT1N
+	2Ew4oU3nlSKwNYPrBuz7JTZ1XDS/pvxnw6BMj7G8+Z75d5qkqeippDBKxbPAvGkARw==
+X-Gm-Gg: ASbGncuoAVCCT8zd+wPQlUBWn+Ix8AmpnE1qOSw8ypFnIPdZbxXqkKsfQ6Lq04hcgzI
+	R+neM9LsKVNy/zYO2daDNIi8A//V8hjJ95mvj3aBP4LPdkyT4k1LC7CdDzjLk9exczeg8TJYcZi
+	G1jq7ubE/2LQxCOfBa8y17IQ09N1reJj3JgAY9r9XMC56zJZJoWm4KfzpZapLacnHA+IJjaWHg0
+	rLGf/oZNx1c1wwoOBdO1s+gewT1NcI1b7y0pqT7puurLsOw30epxDux2iCZoFo41nyJmqEvGa9I
+	CIlOJwMlHnTZxOnNfXiSryiLFxEpqAPXDIjDy9TSgNRVnd6t89Rz42+aj/e8RB6mkSe5HFhD92b
+	AuG/5z00qoMaEvKbOxyquaHnl8oVuNDvPQsxcx7AgaCDy70fjbZTG9JPGwUMSCTpfoA==
+X-Google-Smtp-Source: AGHT+IEMGn3UNVRv56EfsR1Myj638KVPOu0DkYeFN3iH1PqDN6k0dHdqL9RYiTb1QZnURjFYoBIiHQ==
+X-Received: by 2002:a05:620a:f13:b0:7e8:9f7:da5d with SMTP id af79cd13be357-7e82c61539bmr1956421885a.12.1754928652374;
+        Mon, 11 Aug 2025 09:10:52 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:1011:2006:349c:f507:d5eb:5d9e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e82a12ebf4sm633387085a.54.2025.08.11.09.10.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 09:10:51 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:10:49 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Chary Chennoju, Srikanth" <srikanth.chary-chennoju@amd.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"Thinh.Nguyen@synopsys.com" <Thinh.Nguyen@synopsys.com>,
+	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+	"Chris.Wulff@biamp.com" <Chris.Wulff@biamp.com>,
+	"tiwai@suse.de" <tiwai@suse.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Kalluri, Punnaiah Choudary" <punnaiah.choudary.kalluri@amd.com>
+Subject: Re: [PATCH 2/3] usb: gadget: f_sourcesink support for maxburst for
+ bulk transfers
+Message-ID: <48be8505-947d-4d45-8a4d-785f36f8047f@rowland.harvard.edu>
+References: <20250704114013.3396795-1-srikanth.chary-chennoju@amd.com>
+ <20250704114013.3396795-3-srikanth.chary-chennoju@amd.com>
+ <cf2940e3-5430-4e84-916b-608c33028a7c@rowland.harvard.edu>
+ <CH3PR12MB872633800DDD386DCE8169B6B14FA@CH3PR12MB8726.namprd12.prod.outlook.com>
+ <e5f4942f-4a0d-44a6-a2b2-7d567d4d0ddc@rowland.harvard.edu>
+ <CH3PR12MB8726F8F10AE2094B5E94861AB14FA@CH3PR12MB8726.namprd12.prod.outlook.com>
+ <CH3PR12MB8726A85B8D425323EDDB96D8B128A@CH3PR12MB8726.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CH3PR12MB8726A85B8D425323EDDB96D8B128A@CH3PR12MB8726.namprd12.prod.outlook.com>
 
-Add &xdp_metadata_ops with a callback to get RSS hash hint from the
-descriptor. Declare the splitq 32-byte descriptor as 4 u64s to parse
-them more efficiently when possible.
+On Mon, Aug 11, 2025 at 03:36:28PM +0000, Chary Chennoju, Srikanth wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- drivers/net/ethernet/intel/idpf/xdp.h | 64 +++++++++++++++++++++++++++
- drivers/net/ethernet/intel/idpf/xdp.c | 28 +++++++++++-
- 2 files changed, 91 insertions(+), 1 deletion(-)
+If this message really is for AMD Internal Distribution Only then you 
+should not have sent it to a public mailing list.  Or to me.
 
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.h b/drivers/net/ethernet/intel/idpf/xdp.h
-index db8ecc1843fe..66ad83a0e85e 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.h
-+++ b/drivers/net/ethernet/intel/idpf/xdp.h
-@@ -99,6 +99,70 @@ static inline void idpf_xdp_tx_finalize(void *_xdpsq, bool sent, bool flush)
- 	libeth_xdpsq_unlock(&xdpsq->xdp_lock);
- }
- 
-+struct idpf_xdp_rx_desc {
-+	aligned_u64		qw0;
-+#define IDPF_XDP_RX_BUFQ	BIT_ULL(47)
-+#define IDPF_XDP_RX_GEN		BIT_ULL(46)
-+#define IDPF_XDP_RX_LEN		GENMASK_ULL(45, 32)
-+#define IDPF_XDP_RX_PT		GENMASK_ULL(25, 16)
-+
-+	aligned_u64		qw1;
-+#define IDPF_XDP_RX_BUF		GENMASK_ULL(47, 32)
-+#define IDPF_XDP_RX_EOP		BIT_ULL(1)
-+
-+	aligned_u64		qw2;
-+#define IDPF_XDP_RX_HASH	GENMASK_ULL(31, 0)
-+
-+	aligned_u64		qw3;
-+} __aligned(4 * sizeof(u64));
-+static_assert(sizeof(struct idpf_xdp_rx_desc) ==
-+	      sizeof(struct virtchnl2_rx_flex_desc_adv_nic_3));
-+
-+#define idpf_xdp_rx_bufq(desc)	!!((desc)->qw0 & IDPF_XDP_RX_BUFQ)
-+#define idpf_xdp_rx_gen(desc)	!!((desc)->qw0 & IDPF_XDP_RX_GEN)
-+#define idpf_xdp_rx_len(desc)	FIELD_GET(IDPF_XDP_RX_LEN, (desc)->qw0)
-+#define idpf_xdp_rx_pt(desc)	FIELD_GET(IDPF_XDP_RX_PT, (desc)->qw0)
-+#define idpf_xdp_rx_buf(desc)	FIELD_GET(IDPF_XDP_RX_BUF, (desc)->qw1)
-+#define idpf_xdp_rx_eop(desc)	!!((desc)->qw1 & IDPF_XDP_RX_EOP)
-+#define idpf_xdp_rx_hash(desc)	FIELD_GET(IDPF_XDP_RX_HASH, (desc)->qw2)
-+
-+static inline void
-+idpf_xdp_get_qw0(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw0 = ((const typeof(desc))rxd)->qw0;
-+#else
-+	desc->qw0 = ((u64)le16_to_cpu(rxd->pktlen_gen_bufq_id) << 32) |
-+		    ((u64)le16_to_cpu(rxd->ptype_err_fflags0) << 16);
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw1(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw1 = ((const typeof(desc))rxd)->qw1;
-+#else
-+	desc->qw1 = ((u64)le16_to_cpu(rxd->buf_id) << 32) |
-+		    rxd->status_err0_qw1;
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw2(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw2 = ((const typeof(desc))rxd)->qw2;
-+#else
-+	desc->qw2 = ((u64)rxd->hash3 << 24) |
-+		    ((u64)rxd->ff2_mirrid_hash2.hash2 << 16) |
-+		    le16_to_cpu(rxd->hash1);
-+#endif
-+}
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport);
- 
- int idpf_xdp(struct net_device *dev, struct netdev_bpf *xdp);
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.c b/drivers/net/ethernet/intel/idpf/xdp.c
-index d2549f8b8e24..c143b5dc9e2b 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.c
-+++ b/drivers/net/ethernet/intel/idpf/xdp.c
-@@ -340,12 +340,38 @@ int idpf_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
- 				       idpf_xdp_tx_finalize);
- }
- 
-+static int idpf_xdpmo_rx_hash(const struct xdp_md *ctx, u32 *hash,
-+			      enum xdp_rss_hash_type *rss_type)
-+{
-+	const struct libeth_xdp_buff *xdp = (typeof(xdp))ctx;
-+	struct idpf_xdp_rx_desc desc __uninitialized;
-+	const struct idpf_rx_queue *rxq;
-+	struct libeth_rx_pt pt;
-+
-+	rxq = libeth_xdp_buff_to_rq(xdp, typeof(*rxq), xdp_rxq);
-+
-+	idpf_xdp_get_qw0(&desc, xdp->desc);
-+
-+	pt = rxq->rx_ptype_lkup[idpf_xdp_rx_pt(&desc)];
-+	if (!libeth_rx_pt_has_hash(rxq->xdp_rxq.dev, pt))
-+		return -ENODATA;
-+
-+	idpf_xdp_get_qw2(&desc, xdp->desc);
-+
-+	return libeth_xdpmo_rx_hash(hash, rss_type, idpf_xdp_rx_hash(&desc),
-+				    pt);
-+}
-+
-+static const struct xdp_metadata_ops idpf_xdpmo = {
-+	.xmo_rx_hash		= idpf_xdpmo_rx_hash,
-+};
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport)
- {
- 	if (!idpf_is_queue_model_split(vport->rxq_model))
- 		return;
- 
--	libeth_xdp_set_features_noredir(vport->netdev);
-+	libeth_xdp_set_features_noredir(vport->netdev, &idpf_xdpmo);
- }
- 
- static int idpf_xdp_setup_prog(struct idpf_vport *vport,
--- 
-2.50.1
+> Hi Stern,
+> 
+> Please let me know if there are any further comments for this patch.
 
+No further comments at the moment.  I'm waiting for you to submit a new 
+version of the patch taking the earlier comments into account.
+
+Alan Stern
 
