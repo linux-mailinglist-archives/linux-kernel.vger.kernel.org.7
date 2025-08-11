@@ -1,141 +1,180 @@
-Return-Path: <linux-kernel+bounces-762819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17F9B20B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 711F6B20B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC9318C62E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551521886E17
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAE723BD0F;
-	Mon, 11 Aug 2025 14:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DE2246BAC;
+	Mon, 11 Aug 2025 14:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKz6rPGe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SAu3idjS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925F7221F37;
-	Mon, 11 Aug 2025 14:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F9C23182D;
+	Mon, 11 Aug 2025 14:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754920923; cv=none; b=VgkJwsm6woCMzUkBkN8h7ETxrfBNF9ug9XNfcWx8Cfiwfte25LIJvjndTuGXA+ySYyUdFZ2zywKKDr+wDJrydn9+6qdSf8gDCGFFUf6yNZgKOnS2IUCmG7+O+HCV4rvtGeBINesrvqsH+mu0WmgwRMGT5iq659EaiCnZ83GafZI=
+	t=1754920960; cv=none; b=C9j4OdSmHXvxXmJbbiThzMzBF5hxXWMC2odvMFZy03SvoIGJ6eJgxtsuTW2r92Pz2rZqczV3hrr8eR4+C3il8EoMwuYnLjbB6iGMBeNLk0thXZjMCDYPlN/gp75NUnXdlbG+BPMj61jBn99tgP/liA3d72bLUmLoxukhDKJ0DdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754920923; c=relaxed/simple;
-	bh=jBu5ET7UWz2lpYAuqzzB+hooN/nBF4oWUeYMv6DVVko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=td4WbZYiJOYqIkln71jkLtJl4vxWZZFdtYyPHPuoKO5cajgUD91QefXJC/hwzT/eESSj5rjHN7/WojqfncsfhCDYfF1iMdFwUWxxemSR4+KFDUiNJOBHsZy/YAewwUhe6LXgLSiS75ZqczN16CAnijrRHzYzIh3dafR84jZNsPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKz6rPGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F285EC4CEED;
-	Mon, 11 Aug 2025 14:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754920923;
-	bh=jBu5ET7UWz2lpYAuqzzB+hooN/nBF4oWUeYMv6DVVko=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZKz6rPGe9qnQwJm0oLM7K0/IUxEpmtvD9k5M2ZJ7L0guadZ7BDWUJikKhYACbuz+V
-	 iQGoCL/6EBoJz5xbtwy3Svt0qCtrHdmaT9BFNu8eELOtVIZmohCIfNjnjFy2kVOc20
-	 vBShqF1FYndVxYt5j1wkyfYj/AmXdefzme3BVNK8F0HIhjs1rQBQb9mOCEOsiObeLv
-	 qQi37FEDRPb6VMmMRHaj/w/fQ3AznUWZjq9ElkusZPHD3vHiP7EXqn0/WRCzGYGMrs
-	 xllO3dWOJx83We66CFUGYz0ZAmd20y4WEX8E7XcW3OLblV4uND8dmyZhrKnDiJXiKz
-	 lMJyKhJGL/lsA==
-Message-ID: <ae6a9c48-85d5-479f-b230-187a06995553@kernel.org>
-Date: Mon, 11 Aug 2025 16:01:59 +0200
+	s=arc-20240116; t=1754920960; c=relaxed/simple;
+	bh=zH4I/qWBmTj/UCS245DeqVfocTTnLXpSZXiTreQq9g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbJEGEprNbzfe1AGjU/pY5UrWRPfX88ajVvaCiGG+/R0vfH7hv65nTvJBXMcnO5uF6KK4TQxiqjjLdjWA8qOSpvDvZrnHgTVEX2ke+4R85YqDPYLcOhrPHJe7KSRq5KGMNNWTxU3uID3ucY7+y1F3b9BNEG29Si4drXBd2GtK9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SAu3idjS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BCiDfa016877;
+	Mon, 11 Aug 2025 14:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=xW/YR2CAuGIo8Mv7ueuj2nTaPnSyKu
+	kQ6F9ZPFHFeqo=; b=SAu3idjSRLyc/WoQpbra4n8o9JHNCUMtSteJmaFiVts2EB
+	cpEgvUY8GBuPnwBA9Af9rWiVGuCwVX9Wv7XoKCt+H0eA/oLZ/baB20bHazJxop0B
+	LsVPmOb9auSGAdCmL9J+A6OzCYkiE6xSmr9IrLSaccW42e2zzAjKynxmAdQX9lfK
+	G3w+mgXyuAeER4Ov9w5QzXOuaOL6HGfj+z8v50QI63Cexng3kX8VJlelL7Hygh3p
+	YVRfE0nhrim+jFzcmAVQw5+MAQwt7PnObE4VGFpdTuhMHR60hbKgHG5ewzebP68r
+	5tKz0xK+iz+OI3PbP5o4kMxv6qAq2qLvkR5hSmsw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrnsgmv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 14:02:12 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57BDNlLQ009025;
+	Mon, 11 Aug 2025 14:02:12 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrnsgmm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 14:02:12 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57BBS7dB025623;
+	Mon, 11 Aug 2025 14:02:11 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvm5vvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 14:02:11 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57BE29qD25100900
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Aug 2025 14:02:09 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9647120043;
+	Mon, 11 Aug 2025 14:02:09 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F1AD12004B;
+	Mon, 11 Aug 2025 14:02:08 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.57.149])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 11 Aug 2025 14:02:08 +0000 (GMT)
+Date: Mon, 11 Aug 2025 16:02:07 +0200
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+        irogers@google.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, eranian@google.com,
+        ctshao@google.com, tmricht@linux.ibm.com, leo.yan@arm.com,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH V4 07/16] s390/perf: Remove driver-specific throttle
+ support
+Message-ID: <aJn33wiBoMMToyrY@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <20250520181644.2673067-1-kan.liang@linux.intel.com>
+ <20250520181644.2673067-8-kan.liang@linux.intel.com>
+ <aICYAqM5EQUlTqtX@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <aJMUZTJ7FmB9FW9r@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <575d9c34-5546-47a2-83e4-5f5d12a17cb5@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/12] media: rkvdec: Add RCB and SRAM support
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
- <20250808200340.156393-7-detlev.casanova@collabora.com>
- <5c7767d1-1f28-48e0-bf8b-a224151fb007@kernel.org>
- <5031584.31r3eYUQgx@trenzalore>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5031584.31r3eYUQgx@trenzalore>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <575d9c34-5546-47a2-83e4-5f5d12a17cb5@linux.intel.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA4OCBTYWx0ZWRfX9KkZ5h1wzYpB
+ +o84iHKBDm78BM2ZcUIgvKc+T61Fm+09cZZ/GPrtmkYkWvBuI2lguhD+7B82erXwvwocBBl6SFW
+ 9K0otwQhdgvCtzfOIlAjkuxK7z7aHx4cTmXdZGlVV2Mmhp/33RKxvOAmo0a2xwVje/A42jFvzU7
+ XfymOHuNkMs8vTztjDz8tvMYfNPAxpmjiiKRSRKI7EhI3EOpqI151BBp+oo2aDEGT94WckBp+uz
+ 1GnlnR6geJnpNg34ZpfaOcIe0S26kuSiSbOVAdHtGr0AVgtYosl3BKioXNdIK1kRuhjCAfTfnDy
+ ZZq73wW+ybgkoz0zC2MXS1cFAp9Js3uvO4NRhJvVez+4ixWd6PjBgnEXa7WYZmVyd+mh2foANKQ
+ IlxMnDYC2xTKC6O378HZ6RMnYFzu8JZWf3elz9oPrjSrffefThxB687UCcBVz/LR5Cz24+AS
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=6899f7e4 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=sND-jZSWRntckRgYaTcA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: db5mFvmGPeF4vWle0Rq9UcbMwuIUNW1q
+X-Proofpoint-ORIG-GUID: cILNIj_7ClKRabe8Zx_tmSPM-M1_2DIb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 clxscore=1015 adultscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110088
 
-On 11/08/2025 15:54, Detlev Casanova wrote:
-> On Monday, 11 August 2025 02:13:42 EDT Krzysztof Kozlowski wrote:
->> On 08/08/2025 22:03, Detlev Casanova wrote:
->>> -	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
->>> -
->>>
->>>  	irq = platform_get_irq(pdev, 0);
->>>  	if (irq <= 0)
->>>  	
->>>  		return -ENXIO;
->>>
->>> @@ -1204,6 +1217,10 @@ static int rkvdec_probe(struct platform_device
->>> *pdev)> 
->>>  		return ret;
->>>  	
->>>  	}
->>>
->>> +	rkvdec->sram_pool = of_gen_pool_get(pdev->dev.of_node, "sram", 0);
->>
->> Didn't you just add new ABI?
+> >> Hi all,
+> >>
+> >> This seems to break POLL_HUP delivery to userspace - when event_limit reaches 0
+> >>
+> >> From perf_event_open man page:
+> >> PERF_EVENT_IOC_REFRESH
+> >>               Non-inherited overflow counters can use this to enable a
+> >>               counter for a number of overflows specified by the
+> >>               argument, after which it is disabled.  Subsequent calls of
+> >>               this ioctl add the argument value to the current count.  An
+> >>               overflow notification with POLL_IN set will happen on each
+> >>               overflow until the count reaches 0; when that happens a
+> >>               notification with POLL_HUP set is sent and the event is
+> >>               disabled.
+> >>
+> >> When the event_limit reaches 0, the POLL_HUP signal is expected to be
+> >> sent. Prior to this patch, an explicit call to event->stop() was made,
+> >> which may have contributed to ensuring that the POLL_HUP signal was
+> >> ultimately delivered. However, after  this change, I often did not
+> >> observe the POLL_HUP signal being delivered as expected in the end
 > 
-> Oh do you mean rkvdec_rcb_buf_count() ? I could indeed use that instead here.
+> The event_limit case also returns 1. I missed it when fixing the
+> throttle issue. :(
+> 
+> I didn't use the IOC_REFRESH before. According to the kernel code, it
+> reschedules all the events of the event->pmu, when the ioctl is invoked.
+> So we just need to move the event->pmu->stop() to the generic code as
+> below. It should keep the behavior unchanged.
+> 
+> Could you please try the below fix?
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 14ae43694833..f492cbcd3bb6 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10341,6 +10341,7 @@ static int __perf_event_overflow(struct
+> perf_event *event,
+>  		ret = 1;
+>  		event->pending_kill = POLL_HUP;
+>  		perf_event_disable_inatomic(event);
+> +		event->pmu->stop(event, 0);
+>  	}
+> 
+>  	if (event->attr.sigtrap) {
+> 
+> Thanks,
+> Kan
 
+Hi Kan,
 
-No, I meant DT/OF ABI for "sram".
+The above fix works.
 
+Tested-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
 
-Best regards,
-Krzysztof
+Thank you
 
