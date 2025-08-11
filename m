@@ -1,98 +1,84 @@
-Return-Path: <linux-kernel+bounces-763320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67606B21326
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDADB2132A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91794626601
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A4E3E31AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4552D4805;
-	Mon, 11 Aug 2025 17:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C42D6E44;
+	Mon, 11 Aug 2025 17:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="iaUXdOqB"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTE7tFWc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC0B1F3FF8;
-	Mon, 11 Aug 2025 17:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4EE2D481A;
+	Mon, 11 Aug 2025 17:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933329; cv=none; b=dMoRcQQS8bAus4I2skYQ1XvkhqFMzm2kT9a8JYeyqLegDuGGtmKt4YxQOlhhrXruZwXiyVu3IKfUTgZMicnwzgFKK+zKxtVcyeNBAsl/0+MDrIkG4D5hdk/5D6WzSLGOrZTVoLRNdJrZVCkwl0d9+lX96dShow03OgSFzESioxw=
+	t=1754933331; cv=none; b=LYfQQwcMw/+X7Qae0bLdMyFWPHf5BRBW4lAizEtaY9bvZtWejRggner8eX0o2aHwfmWZYO2tMFJejPg0kLnJt9NE7bal3rT5aXvWXkWD4KFsr0E+hAP930XtH/uAK3NwjX9nXRKodYBCRAHuNSkzgC3vkTVcr5uz2HJC1AvgJK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933329; c=relaxed/simple;
-	bh=RPFcFE4EjC9KYsFIk0oZqJD9FwqQTkyfdIYsheVQ7dI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c6te+xEQdfSCwkhLwjAoLRnzN4MwqTUHnLbK3vlPPGP7JsqQhDwTGWd/hNR/McougjOjeGZLfd+ts9TZEFWBk1JECy7gZpGS1Nnyd8039L2Q1dwv3NRU/pf8FgmlAH8Ry+EH95rv6kgkXwldtJaxCS6LJDwiWCXUtGxC/41YoAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=iaUXdOqB; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A8F4C40AD2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1754933326; bh=RPFcFE4EjC9KYsFIk0oZqJD9FwqQTkyfdIYsheVQ7dI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iaUXdOqBX6NARwSaVj/lNohmgcpyQuRPIIc3rKWM9IlCdHDkx4m52x4o3fF/sP8M5
-	 CWgNzopgRSIClfb9ZWyDL8IStghlpX4UnzhAp7WJ9uY0P691gbGVRKX9Aj9RBSkDv7
-	 E8/fa8xBuVMu6uuubmK4yjHIxVf/wunv2tcQVvo3DaAW6Hkjllfs/UWc/xO8G1ppWR
-	 sVwsSl97i+uPvExtCpSjINMuQVMMvYgcqpzbqp33RB966xnWiFP9mw0s/GnJnkQJrt
-	 zU3j4w3JBBKEdoZvjO7wDjiEuvE99kBw4CCM/m/e5Vewh+/+fViUw1xsPs5BM2uJLd
-	 5sw4llWg9H/CQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A8F4C40AD2;
-	Mon, 11 Aug 2025 17:28:46 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, "Message-ID :"
- <cover.1752076293.git.mchehab+huawei@kernel.org>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>, "David S.
- Miller" <davem@davemloft.net>, Ignacio Encinas Rubio
- <ignacio@iencinas.com>, Marco Elver <elver@google.com>, Shuah Khan
- <skhan@linuxfoundation.org>, Donald Hunter <donald.hunter@gmail.com>, Eric
- Dumazet <edumazet@google.com>, Jan Stancek <jstancek@redhat.com>, Paolo
- Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
- joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
- lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
- stern@rowland.harvard.edu, Breno Leitao <leitao@debian.org>, Randy Dunlap
- <rdunlap@infradead.org>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH v10 00/14] Don't generate netlink .rst files inside
- $(srctree)
-In-Reply-To: <cover.1753718185.git.mchehab+huawei@kernel.org>
-References: <cover.1753718185.git.mchehab+huawei@kernel.org>
-Date: Mon, 11 Aug 2025 11:28:45 -0600
-Message-ID: <87ms85daya.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1754933331; c=relaxed/simple;
+	bh=9XSbHbfFnw3XIaRpvKnt/hioK7AaWjMpyvzXjCeNyEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Th1Vlvzmlo/ztEtCRmBDsGZidCuSI1sleNkLQT2mZeUVEO6ys51X4r3u7KKxnOF2dLBX6QUEdERoKeQDEEAtLUY2USy5dtrVu4ZS1mNqBWpCuR0Jf6jEzl+c+L/HuyJTMCGfZatJnIyZt1YICQnpS0yM0vLuo6OamtKXa5VqiD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTE7tFWc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BD8C4CEED;
+	Mon, 11 Aug 2025 17:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754933330;
+	bh=9XSbHbfFnw3XIaRpvKnt/hioK7AaWjMpyvzXjCeNyEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KTE7tFWchqSfKGfWKXO+oLy2j2snSzC+gwd/SC7Zn2Cffnn18e1k3l9cXgXa/F86h
+	 0cJFMZk4mJMXr0x15gQAo1zB6Im31tDgvtWVKCUh9Oon7vTw9+KqZzHRMX9LaTqfK7
+	 rs9Dn2oqM0/hghOMcIDBEyQS/3WuUhccCs+XevhptWl8mkVCNnRIjYdPqnK1FrKe7H
+	 Ydy8ple9K7VqfKWHQa48s692TrDWf+IbGp3ID2ulJmP9wt1KfuoEHFD58jkUvNrthp
+	 22BT2SVhhpbmYVlODBpBcG/ctqMnx2IIYNVdwFoQ/+KiE/mSkdHIE5Cr6fvH/yLULB
+	 AEVajkqahSRYA==
+Date: Mon, 11 Aug 2025 12:28:49 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Michael Ellerman <mpe@ellerman.id.au>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org, Scott Wood <oss@buserror.net>,
+	linux-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: powerpc: Drop duplicate fsl/mpic.txt
+Message-ID: <175493332847.3843132.2055857937103048620.robh@kernel.org>
+References: <20250807214432.4173273-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807214432.4173273-1-robh@kernel.org>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> Hi Jon,
->
-> That's the v10 version of the parser-yaml series, addressing a couple of
-> issues raised by Donald.
->
-> It should apply cleanly on the top of docs-next, as I just rebased on
-> the top of docs/docs-next.
->
-> Please merge it via your tree, as I have another patch series that will
-> depend on this one.
+On Thu, 07 Aug 2025 16:44:30 -0500, Rob Herring (Arm) wrote:
+> The chrp,open-pic binding schema already supports the "fsl,mpic"
+> compatible. A couple of properties are missing, so add them and remove
+> fsl/mpic.txt.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../interrupt-controller/chrp,open-pic.yaml   |  12 +
+>  .../devicetree/bindings/powerpc/fsl/mpic.txt  | 231 ------------------
+>  2 files changed, 12 insertions(+), 231 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/powerpc/fsl/mpic.txt
+> 
 
-I intend to do that shortly unless I hear objections; are the netdev
-folks OK with this work going through docs-next?
+Applied, thanks!
 
-Thanks,
-
-jon
 
