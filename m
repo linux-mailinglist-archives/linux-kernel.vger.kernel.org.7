@@ -1,97 +1,190 @@
-Return-Path: <linux-kernel+bounces-762933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F2FB20C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEE2B20C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194823B654F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809CE171F49
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F392DEA96;
-	Mon, 11 Aug 2025 14:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823EA2E1C69;
+	Mon, 11 Aug 2025 14:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xn+t3I5C"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Akj0APD0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B72C2DCF7C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD0D2D3729
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754923255; cv=none; b=tdJY4zUIqhIdggF5R8VBSxMia1Aq8+oT55rd/Gxgam/H5F0nBULzztBFaCtjg8/amvyWV2H2kN8P55MK0J4KoFRJ1DsMW/W7lN7gpLXf3dPUNHUFiXaTYdict5/zG0aawE+UvufbXiRoCJmkQwU/I8ANb4Vmfe66/y5hae+Dp2E=
+	t=1754923285; cv=none; b=VPektpCTmGYd6qqrpRfurFuGvxAR1fMnhYKogWnLX7Zk5n4cAAtygiGqh4mmk5T7HbQIrsIUC+k3sP2ZyqaYikbOnGDQvTNOsy+E2qNtNUvOMpAbrcpKV5Mc/vTeaU9GTrr4Y4rZSsXxpkegVeP62xXmgly2We4ShR6GV1ZN8xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754923255; c=relaxed/simple;
-	bh=CiYdPb3CphugUI2pUUw9uiBPRzqErXbI0qY3SC4e3Ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpXLETlnMbdyBp0KLqfTtRk2N4bw9Ajap48i/qccPisOS2wie+ugGWW6T5zplQlwqHtHZWU1lqVGXf7QSmeuwwfWfH4sGSaVRJWdFS/4sR2Qw16I6TPxkeq+EjtNj096XJoep2NyungZTqpb5Vx32tPs6xZDKm6UQcaSQpBupgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xn+t3I5C; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zQCFIUmkRpQb+xwoOkifhrGoou5UFm1gv2WNuwn/9+s=; b=Xn+t3I5ChddUd73OttqY6pKGmA
-	zxR/Dzm09wBPTIL02hV/KB5r76/7V7E6II6ommjMxLfOV9++gIJVoglzNH5rifpD++D/b/W7e2ggu
-	UAv1XnpluJiPU/dgmEhZIrO3NcbW2aVP57xdhAHqhO/0UtACmxpfIMAOVy1L1ZX2VHNhf+1TfjzuS
-	OdW9bzbxupyiZsWV/cQIcUNCtzEJ6Ork6cagCFrCAhGZ3RP8RSPDeH9CfTrdwCxTuv1biEU8RZO/Z
-	2XW31q7TTYU+uHoeEj17IHAGKqnNGxPk2ZET4YHoU9H5I0kiM5ulYMmzh2qt2uiHeV/UwYkaDVfaR
-	Ya3QR2TA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulThh-0000000FQUD-10oH;
-	Mon, 11 Aug 2025 14:40:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1E4C8300310; Mon, 11 Aug 2025 16:40:48 +0200 (CEST)
-Date: Mon, 11 Aug 2025 16:40:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [patch V2 m@/6] perf/core: Split out mlock limit handling
-Message-ID: <20250811144047.GA4067720@noisy.programming.kicks-ass.net>
-References: <20250811065859.660930338@linutronix.de>
- <20250811070620.463634790@linutronix.de>
- <20250811104940.GF1613200@noisy.programming.kicks-ass.net>
- <87o6sm81wt.ffs@tglx>
+	s=arc-20240116; t=1754923285; c=relaxed/simple;
+	bh=kbpPvhNZz6SqWU9uqkbeGc4vIVmkx079K+FGeZ8lOws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t8cP+eYwSN0deh8l9aM0CAD4hXiIOEVYIXqUDToT+7V3nI5HGOBJOah0V1kkpvdrTLy+x0lDE/jp4iFuyuTrxieMp75jNGIo+fD3yAXu51W/XEJb48f5GEUsoMldWwST63S601Q1qCxCk96tLNC58WnJ0/ZJoSnYxTa9o3ESRJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Akj0APD0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754923283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4gbggx2RPFlVO4t++KHmOzrhjwslbE7WXGI1AzTGhb4=;
+	b=Akj0APD0GSx1fo0YPRuV8c1SZeO/LsLutMUxkDafmALw0XwfGhmisiybIOdewPmIoBw822
+	xYVsGDGoX6EtjqbfPqoHgPiZIQN/xLbRu+sBjDzNG7I384Cu4XBF2p5dsOkSMBIobmndLm
+	mVcCDu6uqF77mgcfRZunWuFD1VbzJa0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-TdQw44EzO8q922OdlYR0SA-1; Mon, 11 Aug 2025 10:41:22 -0400
+X-MC-Unique: TdQw44EzO8q922OdlYR0SA-1
+X-Mimecast-MFC-AGG-ID: TdQw44EzO8q922OdlYR0SA_1754923281
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b7892c42b7so3110380f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 07:41:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754923281; x=1755528081;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4gbggx2RPFlVO4t++KHmOzrhjwslbE7WXGI1AzTGhb4=;
+        b=dV9VZq5doo2jGGehMYMloRs4eDZFe+X/Nko785QlKYT+pW1y4BJ5cPhUsABTThGaTq
+         X459vEWvXttllYvIXVujBSvsApnkQsym2TgfI+vtLrr80FwIRAMGT+Kn11TunA9CaPen
+         RsfOG0g83O062NAQg9cp4wNp91vjOegHD26YiIQ3UZ6BRIAc0u1s6gkK6woRdIynhR23
+         gopMdnYG4SJ0tfTu2qFoRBTVBxjypXkjvBpTpAvlf42L7MtABMdpZ4Ki8rn394wXLSUT
+         fFzAqJxaL2sWoNm9ObUsSK+ua+LzbL+0QNQlZoaccrd0yaJj+BqubR0qF8euUyL/3KGx
+         xcsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxW7TjCst1Jto7ntMn+KzjnU2t/yjeSxSKtCT3Ev3Cjo8CUzCYGaI6CK9EgX01bwxHFYnN858MpS/M1ZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysYSpBCraCWetC3jQk4v85W2A4RnO30HQI8O0Hdzxt5SvbR8aL
+	JSaA+pWdewof/olyvCtTJBZaXFBNEuoQ7f4UXpxAC+eAgGvjZ80WcNifwGmm5x7cJZMmYO/Hq6y
+	K5hHW+UVFds6m7YKRFuFlsQUm867EbmybPLxD3alt0StCbmIYjjCihtZYfiYmsLmLOg==
+X-Gm-Gg: ASbGncsZuR+RP8v/dUy+/GyqQJpW4Lj03KnYmVtfolDGhXHbebNEZ7aZkgnhvcDZKER
+	69AbThW76GHwM5To3q3oILlVWQr6MAYnm93YhEfbJ1XnuPd0shJfN5yHNsynqN81iJnCzJLsiZZ
+	LFFrfKj2iIqAaPsZO2s7KdePAm4ho7LCpafDdWAxXLsC6moNsusaFx1q1WD3x7mbWoX7U0WNyGx
+	ilr33Hn7mwZA5+MtcL98dt863ZRUpeuQ9w7sXJw/P3yICHnIRtYC94xoabD8O0eTYTmXFxZbkKu
+	lZWiDeaWy1/AOjVIf5E/y1CiYvsXXpsbnBrug0iPZ9w+JL1LuJvlGWOTEAli8O06U0h3GIWLjon
+	kR/z8sigsb+cFcLmC9K8PUISxZ8TZwq8w5Mu4L/SN1pBlUZ5xKB5J/aBYyZ2y+g+sp48=
+X-Received: by 2002:a05:6000:2408:b0:3b8:d1d9:70ba with SMTP id ffacd0b85a97d-3b900b7517dmr9713504f8f.32.1754923280156;
+        Mon, 11 Aug 2025 07:41:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNmqOKGQy8og6iuYjR3rW+/P+X+6GleHhPef0aGzUOgh7s7rRGq5mXZf9HiFNB9XK8mxgicg==
+X-Received: by 2002:a05:6000:2408:b0:3b8:d1d9:70ba with SMTP id ffacd0b85a97d-3b900b7517dmr9713436f8f.32.1754923279410;
+        Mon, 11 Aug 2025 07:41:19 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f06:a600:a397:de1d:2f8b:b66f? (p200300d82f06a600a397de1d2f8bb66f.dip0.t-ipconnect.de. [2003:d8:2f06:a600:a397:de1d:2f8b:b66f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48105csm41145907f8f.64.2025.08.11.07.41.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 07:41:18 -0700 (PDT)
+Message-ID: <42956218-bda4-4089-8f43-f7352ee73b4f@redhat.com>
+Date: Mon, 11 Aug 2025 16:41:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o6sm81wt.ffs@tglx>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC V10 0/7] Add NUMA mempolicy support for KVM
+ guest-memfd
+To: Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>
+Cc: vbabka@suse.cz, willy@infradead.org, akpm@linux-foundation.org,
+ shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, ackerleytng@google.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+ tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
+ peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
+ ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+ gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+ papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+ quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+References: <20250811090605.16057-2-shivankg@amd.com>
+ <aJn_ZvD2AfZBX4Ox@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aJn_ZvD2AfZBX4Ox@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 02:42:58PM +0200, Thomas Gleixner wrote:
-
-> > Does this not also need this? I found this stray user_extra when I
-> > eventually removed the local user_extra variable.
-> >
-> >
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -6997,8 +6997,6 @@ static int perf_mmap(struct file *file,
-> >  	if (vma_size != PAGE_SIZE * nr_pages)
-> >  		return -EINVAL;
-> >  
-> > -	user_extra = nr_pages;
-> > -
-> >  	mutex_lock(&event->mmap_mutex);
-> >  	ret = -EINVAL;
-> >  
+On 11.08.25 16:34, Sean Christopherson wrote:
+> On Mon, Aug 11, 2025, Shivank Garg wrote:
+>> This series introduces NUMA-aware memory placement support for KVM guests
+>> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+>> that enabled host-mapping for guest_memfd memory [1].
 > 
-> No. That's how user_extra is initialized in the first place.
-> 
-> To remove that nr_pages must become an argument to that function.
+> Is this still actually an RFC?  If so, why?  If not, drop tag on the next version
+> (if one is needed/sent).
 
-Ah, I see. Let me go fix that.
+There was the complaint that !RFC meant that it would be based on a 
+consumable upstream branch.
+
+I think once this series is rebase on top of kvm-next, we can finally 
+drop the tag.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
