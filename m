@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-762973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7F2B20D05
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06878B20D11
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087AE189E2D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36D91884F8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DD62DEA7E;
-	Mon, 11 Aug 2025 15:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F63B2DECA3;
+	Mon, 11 Aug 2025 15:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jL8L+J30"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDoBwKKF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411A1DF27F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE041B041A;
+	Mon, 11 Aug 2025 15:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924654; cv=none; b=LurjxGHzu69HKM+Lpv/WPd50xutvie+AEuP9hBoaEzwZ3+3EaCcjvBxmjOF5h4QXiaAyD1ymtFf+U9C9g9HJ80PO3hZYoj8BSazGhdHRgmc3YRUfTKqnbb3tFbXMH91ypUuKDmyebuoNJWshv+l/oXNELyrsEVQYgiomckqb2Z8=
+	t=1754924748; cv=none; b=K/JSuhBFysyMinjn7svvbO/U2Ep8F6yTI5JiCP5Axb7G5Q+xQtxSJ+jpDDaESvSczbypiXZ2tfC3yQv377uVTd49yYU+XsBM+AVl5hkmEcmze5kU00KX9Yumv2c0jv7uuVEgIe9VjfT43J1L3LJQIvBtaiENiNeBiveCH7FtT80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924654; c=relaxed/simple;
-	bh=go1LK2KwIv9bOBtJoPVqpan3/GxOSDQsRCCrqOTX41I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kavPTCve5fZYGNCpUEaEbSKhOCPTz+K7CkCi5eMWg4tKgaXcKU8cfuXJ2QMWGxnuXRUs8SHseu8dtAmT6mD+lwx0e7NAFYBXiENa2Q+rXcTfX5PJCcKMWvjFuUYHqPXC8cgMxuPTCVTWkzZGOCHxgdId7p1VX9hqycOhLdPH0F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jL8L+J30; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b79bddd604so2597590f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754924652; x=1755529452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5RlVEC+aTLY5+N9Mh6FGBCNE6f9ARS3XfPyHyJ93cc4=;
-        b=jL8L+J30UIefYSD7OQpysfjUoXmu+NW6vsSl4+tQBD+Uz0OLVOmVa1/eYtAQ1ciyc2
-         D/75x5tD4VP4MuRF3gSPtCArjhreVrNkkziUY5iAkHA+66TD6gnpb+UGWdHPCQnJFQWb
-         BvoPDrRFnKU39JhJHA03vRf3TtfMd+6hyF0tiUBEFsBaN+LKpsszf2jF/708/YArooPG
-         u2ce4kYMzXJrhuIQkPdW4bBoXjFjI6vcSkDtXcWvLXmLB4kL4Kl6l+DvwrQqKsMoVK94
-         xmizRMU6r1FNVAbX6fSdfYfOmPtRrf8NGFD+tdzo0Qd0sO+8XFu5Fj6P+Ih76pk6Omez
-         FSfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754924652; x=1755529452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5RlVEC+aTLY5+N9Mh6FGBCNE6f9ARS3XfPyHyJ93cc4=;
-        b=UgWvRDCGJWZWzhmJRgw6BTWizJOMCW2YRZfoec1a4R7PPL0SCDNchmAd4owuQxG4xQ
-         Q9fjycVnnMBz3hONU0Pr1+WFDdehFcUxbFZL7/UGJhvQUdANA+dbD5wBbbhnwYoDjz2r
-         jwuiBYNvLow9jT8HHkpeq5LzDt1+/57Dmsde7mTztjw3h5WH674IEr85tw4mXPbIM+m5
-         kFP6V2tTPoUylBdzNvSy3ME/ClyQ/ePRcgdBwp8T/m09qHR7TLFp9HLJb7Jgv/aaWj2b
-         rlaNTGHI3yOv6S1pWR87zvvSfuZO4sJsk72r1RUt5W0YzyO2UBcq5bdr+ohuJIyYeJSo
-         1wIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgCLPGrz4VWQqYKghqjSNn2L3wkOkWW+u97c9WySLGAPqajcaxccxkufK0ArGAaJFFMG3bWhnvwhxQ6nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb7qnvlXX9GHXoGplgWqZzbyWeHYVui+eahiZkTkJd6EJo6bfC
-	5XiRAdM0ed3Ec9rVUHewggWLxJi52nYkRVusiO3sqLeCY8Eh26WVjnNn+lwMefOHRi0=
-X-Gm-Gg: ASbGncvkhzEnBmHV/qARIXq1CszhPpjOeFG5kAjE1L8uBaVkgMFjLePCp5UMxzxS65k
-	dY5/k6Lq+7gKnkZq7sR9vRa5Aoznlqqan9UjzcYtCHVUzA2GqVlgVr1CqmBmEd/cQf13Pk0dmC2
-	5pIGntywa4wR5iDMM2UrP0SDMyb8bjfDN/m+coaWXvecZNtExosuwawJHTYF5W/xpC7LIpE8hyn
-	xtftjzgDfcbOw42suOYhk/UPHR1kpwNKlCwPbv4V0mp3awv40/IB65n34dQlymLaOOmKH2CYK5W
-	Ih32wDWPKpO53v8/xwPKScdeCRsNHoNdPyS/PU9Y2xId5KD9PDanzUZS/K3Apx5zMdhFg9Woh4I
-	h/JXjLk+TVt6D50UR9qADRIXO
-X-Google-Smtp-Source: AGHT+IErrHO1m9HgaSb9y76gv3JeAANqPlGpoK5F8aU4R+7lrtTdLrB7aKC4QbEySQ2hh4TjE9oVHw==
-X-Received: by 2002:a05:6000:4312:b0:3b7:97c8:daad with SMTP id ffacd0b85a97d-3b91101718fmr36718f8f.55.1754924651630;
-        Mon, 11 Aug 2025 08:04:11 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bf956sm41850591f8f.24.2025.08.11.08.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 08:04:11 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Cc: Shuai Zhang <quic_shuaz@quicinc.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [RESEND PATCH] MAINTAINERS: add a sub-entry for the Qualcomm bluetooth driver
-Date: Mon, 11 Aug 2025 17:04:00 +0200
-Message-ID: <20250811150400.86926-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754924748; c=relaxed/simple;
+	bh=i/ALEUiI1jcKPez1nkMbsZV3bmmUIaCULP31iZ/ovAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSJC7F2h5/kNTDLqKBEsqMd6+19LLTS3sQTEIZNCU+6R+TJb5pu8KlRK8d6rv1PXzJYq6hh8+q6fl6FKpR54mFrtL5GAZE+4LRjYArz9RRxY5cSm+7wg66tbkgz/LIkMEZdpKouaQG2+/OkPlVxVTZZqdwOMbeHmlqdpbU4sbXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDoBwKKF; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754924744; x=1786460744;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i/ALEUiI1jcKPez1nkMbsZV3bmmUIaCULP31iZ/ovAw=;
+  b=eDoBwKKFTOUnjUhPoxEG7MQKe0xagBusWNZY1RVcsffuhRVRsWANru5E
+   N/LypkBnwCODWzQ7uIumVwB3oIQviYxjLZhOef6i0YmP4siCDOsRXIXMJ
+   gIfZaS8ZzG7XQj50nc2/jGzi+bLgaLeqwvArTU1fxwmd4ytN48Y8me9Hl
+   xYTMbE65VKZi88cMLuOyLnk2YuUG0+j1zri3IIVXfI1b3ruy1Xg693Um1
+   1RxYacXyVOaiM3ZrJTt9u5KOfenF21N8+h+8O5paAtoqGO6kiDllMPMHz
+   tEs0QpJk9ujC0BJLfZKKGpGdjl4BVlX3/4DVA0df89VrnY1LmA5+qARGx
+   w==;
+X-CSE-ConnectionGUID: ztqBbe78TYqntgBlkG12bA==
+X-CSE-MsgGUID: 1g6tCo+aTNiKPveI7kHbsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="56208639"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="56208639"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:05:43 -0700
+X-CSE-ConnectionGUID: nOIz8zmnS3q0/SNtukrWfQ==
+X-CSE-MsgGUID: jQdLgscnT9ud1YMXf+61aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165571264"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 11 Aug 2025 08:05:37 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id CAC0494; Mon, 11 Aug 2025 17:05:34 +0200 (CEST)
+Date: Mon, 11 Aug 2025 17:05:34 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org, kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
+ 'strscpy_pad()'
+Message-ID: <aJoGvv5TEfl1liSm@black.igk.intel.com>
+References: <20250811064609.918593-1-bhupesh@igalia.com>
+ <20250811064609.918593-4-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811064609.918593-4-bhupesh@igalia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Aug 11, 2025 at 12:16:08PM +0530, Bhupesh wrote:
+> As Linus mentioned in [1], we should get rid of 'get_task_comm()'
+> entirely and replace it with 'strscpy_pad()' implementation.
+> 
+> 'strscpy_pad()' will already make sure comm is NUL-terminated, so
+> we won't need the explicit final byte termination done in
+> 'get_task_comm()'.
+> 
+> The relevant 'get_task_comm()' users were identified using the
+> following search pattern:
+>  $ git grep 'get_task_comm*'
 
-Patches modifying drivers/bluetooth/hci_qca.c should be Cc'ed to the
-linux-arm-msm mailing list so that Qualcomm maintainers and reviewers
-can get notified about proposed changes to it. Add a sub-entry that adds
-the mailing list to the list of addresses returned by get_maintainer.pl.
+> [1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
+> 
+> Signed-off-by: Bhupesh <bhupesh@igalia.com>
 
-Acked-by: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Resending as this never went anywhere. Rebased on top of v6.17-rc1.
+Make that a Link tag?
 
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+  Link: https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/ #1
+  Signed-off-by: Bhupesh <bhupesh@igalia.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe168477caa45..4663146de10a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20641,6 +20641,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
- F:	drivers/net/wwan/qcom_bam_dmux.c
- 
-+QUALCOMM BLUETOOTH DRIVER
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/bluetooth/btqca.[ch]
-+F:	drivers/bluetooth/btqcomsmd.c
-+F:	drivers/bluetooth/hci_qca.c
-+
- QUALCOMM CAMERA SUBSYSTEM DRIVER
- M:	Robert Foss <rfoss@kernel.org>
- M:	Todor Tomov <todor.too@gmail.com>
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
