@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-762649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA64B20956
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:52:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3C8B2095E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA3C18A4AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7541918A4C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227CA2BDC38;
-	Mon, 11 Aug 2025 12:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554E72D3A7E;
+	Mon, 11 Aug 2025 12:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5XNTjBH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLK6GBN8"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149182E370F;
-	Mon, 11 Aug 2025 12:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238492D77E4;
+	Mon, 11 Aug 2025 12:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916749; cv=none; b=iIJDU6ZgpePnlyO9fvSAHDQo3JxdXodbQ32S7noahDQlY6aYCR95/IN0Vszk3HVw6Bbi8XzXnu5Z/2TLHXRX5dnftdMPoHK/4eg/VxB2vw8hGpIv8LE+V+mw84o9kfMBKuKcnXkJ5NjgyWTY8xWLurf5d0Aq7td3zSXij8TC3r0=
+	t=1754916800; cv=none; b=nEC+nryJinKeq5R3ovN8XZq4NHcHxNTyXg9YgSMuIq1ajn6IURpVBnaQyzStTwWZ1lC/2YwcoXMBxdMhyooUheRtQlXI1KCzzwM4cU/e5TuYAuuxOGbPkxzYutMqTvfB4OXfZU+JK5a96+LC9qwMhZwQK0kNyrNtLR9yr6wXNSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916749; c=relaxed/simple;
-	bh=sKcDxReHvOjMWuRz/JJIjfs2GC55bod9+lD6K9tF16k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEz3z8jrRELXMwdpxVQazfohNrXtoAzOz+CzSuhuI6NrFRz9GBzfP0aI9ZSYcP+Ub5Rq9c/H84EjRUEtjUbWXNZtsAUYpkrWixIJAUvunkgim+v+yDYRy7ptYJgoX5B27N7VXe7bYHTx1bRcDs7YQzQCUcMTIaIccuhXj/ErsgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5XNTjBH; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754916748; x=1786452748;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sKcDxReHvOjMWuRz/JJIjfs2GC55bod9+lD6K9tF16k=;
-  b=S5XNTjBH7Y2WCbXYIKDTjDR5mrAnUZYYcWXcR+pT4v2jMTTZ/nEEbiAy
-   vOA9+9c/eK/lCZzRaPf1Q1SlxG0VVFwzZd0VXCotiRIOmAyk6nuRvKU5I
-   lj8P/VFcgw+ifwgumVxpykW3K69c45WAdzKGItOdB4V+Wlc87XBcL4M6k
-   o6kdHfeWuTfzZuR3nnsiMNxJfQqubjnu6z6HtYulSUOVLv8QhrZBRxYR6
-   XzPJz4ZHUxbX8ce31UPWbOGIm0mLTQTST0/PT51vKbqQdHr14FLEm7UUR
-   YMvKg9EZyxOQGTc1PShbOKL6CaB566gXB2KNGOpXTfVEosj8WoMuYdUdA
-   g==;
-X-CSE-ConnectionGUID: b6lVElART9eyo31z69buCQ==
-X-CSE-MsgGUID: +d13Y+FPSUWis5NArG2mbQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57089243"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57089243"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:52:27 -0700
-X-CSE-ConnectionGUID: xFz4n3B8RWuruOLSnyLmXg==
-X-CSE-MsgGUID: bBnKF4ZXRJqsXLbK/cPS6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166709515"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:52:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ulS0i-000000052c0-0OQj;
-	Mon, 11 Aug 2025 15:52:20 +0300
-Date: Mon, 11 Aug 2025 15:52:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
-Message-ID: <aJnng9z9pUTFI49x@smile.fi.intel.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-10-arnd@kernel.org>
- <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
+	s=arc-20240116; t=1754916800; c=relaxed/simple;
+	bh=zBFiHfemwtyvXXsvAMZhx4anhbqrwOkhIvWvpmO2tLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c8ECH5lCqbX5Y5lm1S/JDFUgU24FbRy7HH87NWxw8wIEa682SqhNBjzzEbVJU7RrOVVeII3XuzPc0sDDuPQrB1dYQ5/zs+qtTxG6ILWl8Wk3ATW9W6J9GqJSw9tMCI1KlGiomcM8R1xfOcZfsQfSQA6570ZjLa7sV5K+kH5LBdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLK6GBN8; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b786421e36so2303205f8f.3;
+        Mon, 11 Aug 2025 05:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754916797; x=1755521597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IR9Tj2ZFkHOVuxQAA7y4iVif6p4KRJfjxccWwOTQQE=;
+        b=gLK6GBN8afe23iZgVMeyT5ywKVQ3otg1wgy9YiPKHfisgRdHzP8fXugRPZ1yAR/1v/
+         CZdSJg4qokpa8p8SEaVXwPlbLYZmjEFuTohO/UD3JmzDoYCdyTa+HULYNw9hRkaEYxPh
+         0uj/04igBfPJo9qPYq82OgBsIGAftr+dinAR2mFRS+ZO/4G7zACLfV/ykoGxfa6ob6EG
+         s2auNv5/SqpR+XhPDflrKKcGg15YiCR6vE5P3ZhZiMgh8lasI2ceQgD/UqMzCOeph0bf
+         RD6m4de+j4I+qnpI3dGFFZW9STMzcSNFSnazUgMq/f/0m2FUD9iRl93qOw+k9uBy1jRL
+         llxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754916797; x=1755521597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4IR9Tj2ZFkHOVuxQAA7y4iVif6p4KRJfjxccWwOTQQE=;
+        b=j7J/7POlgXGYzsgg6VfVeD1NY36SzB9LprbcpgvaNxYGZugkRaT75J5x0ZfdV5s2Ey
+         MGwcl2WQ6L6vRs58fArbSdJYbPh8LqrUBMsAZ3WB4ovAIzqGXVmSEY8Spcp7n2jTtTQI
+         haCSX/GI6Jp3H5X0ZNQa799mu6Gxqi0Pb5lkKMURfXjOz3c2H1xU8fg26xSzTHXrKgKl
+         pUu4MP/AWQ6hm3GQkqta2Gp7/bT0ZSeV/4bfX2qjYwSWG8V2ORqaMCXZHQAnajDDTzPn
+         oeyb45xwA0rxBW52UnLw0PDGCZpQ9tvXwr82eVWjMhArtryHEmiPzMR+MAptRl47458O
+         Qr2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJtiMa6ngu5Tnii6fZ1EDRwOiBX2jpy3u48N6xbBpy3a5fCRNxsAOLMlcZcaxSiOUsKIqF4iTs5/TyW0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP5q+83xpPyeWIM7HM57MkMnNDCj4zYhzSzle2gng6QWZnnh8C
+	qHAdsjYHebkFOvPaiJSohUdNF1E8mLg8he1v0u+v7022w5CtpsLoQqoUT5RNTg==
+X-Gm-Gg: ASbGncvG60dQPpIOeP5gR8NQMe6O1vA/hgPmeK8JXhfd222UoCs0f6h5Jtl0KejkagI
+	OM0HyHxWC+HO3c3+BFcBzTUgnseeZ3wpyrm1f1+jyAfQhI91MbTzyJThGEkCN/YIBYhst4pD9x5
+	dLSVeiyOIOS6pP2FNqDJ7mzGA1eOeVm2shzO30wf+zzyftoGciC4SwWV/guOit+GCTPeQ3/nWFA
+	3z7yrxx5AzCfrdrzz+H4E6Yhhz2ERLM2TrjVsAm0/Y22b7qYypun2z0QSwx6iaL0RxaDBNsVHhF
+	Fb7HBZ5zQPEMow52lnEqzKmvX9XWxZPKmo0MgjP7pwoNIbOce/TTgxa9LYatfeT4GS9SEN/WRJt
+	meGW7W+95gDfpvPJhm2Jf1g==
+X-Google-Smtp-Source: AGHT+IHwd702a+KQNTgQmvdd5bcelZ8AJusFrlVzmIvThx90Mz4CBzwR/92RC2fBAa15d7QtMUdQzw==
+X-Received: by 2002:a05:6000:290b:b0:3b7:8fcc:a1e3 with SMTP id ffacd0b85a97d-3b900b5108cmr9189025f8f.48.1754916796691;
+        Mon, 11 Aug 2025 05:53:16 -0700 (PDT)
+Received: from fedora ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm277093835e9.1.2025.08.11.05.53.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 05:53:16 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] fs: Use try_cmpxchg() in start_dir_add()
+Date: Mon, 11 Aug 2025 14:52:38 +0200
+Message-ID: <20250811125308.616717-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 01:34:43PM +0300, Matti Vaittinen wrote:
-> On 08/08/2025 18:17, Arnd Bergmann wrote:
+Use try_cmpxchg() instead of cmpxchg(*ptr, old, new) == old.
 
-...
+The x86 CMPXCHG instruction returns success in the ZF flag,
+so this change saves a compare after CMPXCHG (and related
+move instruction in front of CMPXCHG).
 
-> As such, this patch seems Ok to me, you can treat this as an ack :) This,
-> however made me ponder following - is this the tight way to handle the
-> power-button IRQ? I don't see any other MFD devices doing this in same way,
-> although I am pretty sure there are other PMICs with similar power-button
-> IRQ...
-> 
-> I see for example the "drivers/mfd/rt5120.c" to invoke
-> "drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. This,
-> however, feels like code duplication to me. I'd rather kept using the
-> gpio-keys, but seeing:
-> 
-> git grep KEY_POWER drivers/mfd/
-> drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
-> drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
-> 
-> makes me wonder if there is more widely used (better) way?
+Note that the value from *ptr should be read using READ_ONCE() to
+prevent the compiler from merging, refetching or reordering the read.
 
-FWIW, on Intel platforms that use power button by PMIC we add a special driver
-for each of such cases.
+No functional change intended.
 
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+---
+ fs/dcache.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 60046ae23d51..336bdb4c4b1f 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2509,8 +2509,8 @@ static inline unsigned start_dir_add(struct inode *dir)
+ {
+ 	preempt_disable_nested();
+ 	for (;;) {
+-		unsigned n = dir->i_dir_seq;
+-		if (!(n & 1) && cmpxchg(&dir->i_dir_seq, n, n + 1) == n)
++		unsigned n = READ_ONCE(dir->i_dir_seq);
++		if (!(n & 1) && try_cmpxchg(&dir->i_dir_seq, &n, n + 1))
+ 			return n;
+ 		cpu_relax();
+ 	}
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.50.1
 
 
