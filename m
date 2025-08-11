@@ -1,161 +1,166 @@
-Return-Path: <linux-kernel+bounces-762119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC36CB2025A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E114B20261
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2993B7A102E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1325242207A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BDD2DC337;
-	Mon, 11 Aug 2025 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAFD2DE719;
+	Mon, 11 Aug 2025 08:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKswWXSD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvQvc5JZ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69942DCBF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483C2DE6FA;
 	Mon, 11 Aug 2025 08:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754902360; cv=none; b=bNazRd80hNxxONAmXfeX3J+YZcxIuzoT1auGPqP3JOAcQKrd0d5eDVAXtm+WNtS9O15l/TuPhxJwB/YVnDIBGqSqF16BPxzkb4T3tstawSeMxCd/Kb+CeiM/yMh/xsy2dzhSE5nMxaiH2q1no2ShHs72qlwDrqP+I+PZ50ybEzY=
+	t=1754902365; cv=none; b=jkqTfw4Jdgdf7QBP18PoXZmcy4lJx/6zR7fC6ZGlK46db/rB7D8gWnfTes1fVDq2YD0Pa+YvhgtdOIMjvnXfGWFygWZ349JHPzgvvYMK86EVtkBkoukVIRYUIYJDf71bRPSAo4wx30zGMOfOuwKcqC72R9PJBbYN2fRqXMpTgU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754902360; c=relaxed/simple;
-	bh=3W7y2DSI+b+/NU/9fMvMcZ7Git3/YhU7rwsTKEuKhak=;
+	s=arc-20240116; t=1754902365; c=relaxed/simple;
+	bh=iA7Q7gsWziuOC/h2qXxxCFYwp++1PdWpffduqs8U0Ss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFukI4w3WbZlRERN/bEWCQdGjt/juAw75D/zUCaqkiyqGZAuNeXShUm+8HOyHwHO9IQ/6oSz3ZdacKZxvtuTxGlkQbU9T7JuWVdnM7zBMe79B8UFMf9hRKpDxeZMAGkODg/0B9J63SX78V6Uqb+zg7ZgvHt4RafO7a4b2DzpmnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKswWXSD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B104C4CEED;
-	Mon, 11 Aug 2025 08:52:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754902360;
-	bh=3W7y2DSI+b+/NU/9fMvMcZ7Git3/YhU7rwsTKEuKhak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fKswWXSDs8HligSv6I7X8TlRBaJTUYhj/n7fHdG1oe59j5so4v1z+qlk8ZCDJb4ud
-	 NCWPA/ImWhMlfbMQ9eRX2/DISkTjV7vnmjihTP9atKiP0wPf4RsGvcszZ5od76OhgO
-	 Scx4BYZWgcbI8ikoVLb5QZsRdd9nz6qRZXO/99WPYxnwgrNgvJMQOb56vJhUE3hCs3
-	 xKaUqK1Ys+FCYEQ9k7jCV9uY1waWLHTRugMVYYKFfeMjbpoJn2j0ARIeWnBEPqDZVS
-	 gXNPey55jmq0CWrZEL3jHhweH3xtUr+QegSdaQZe1gk4lyTS/L1JrEQdHlXOpG/Umn
-	 mQHBS+oPTamRw==
-Date: Mon, 11 Aug 2025 11:52:23 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Dennis Zhou <dennis@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Hildenbrand <david@redhat.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kasan-dev@googlegroups.com,
-	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Huth <thuth@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Oscar Salvador <osalvador@suse.de>, Jane Chu <jane.chu@oracle.com>,
-	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	Joao Martins <joao.m.martins@oracle.com>,
-	linux-arch@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH V4 mm-hotfixes 1/3] mm: move page table sync declarations
- to linux/pgtable.h
-Message-ID: <aJmvR5mRJ2htKoss@kernel.org>
-References: <20250811053420.10721-1-harry.yoo@oracle.com>
- <20250811053420.10721-2-harry.yoo@oracle.com>
- <aJmkX3JBhH3F0PEC@kernel.org>
- <aJmrpaeKKeNCV3G_@hyeyoo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdEL60z6TJ+C3dDS+ZwVTiFMPoWl8HAGVvYr3fsL3C5wQesT8fvlCxlJ6qoh2d9Vnu/Zj//vqIw2lTtTllex2+u1aqvdevLYptEqGp+tYRQOBBERrRDQrNmLGkI/2yL7nzVJN+0iiJR88iHK0lwbvWMZrbMlcj8wQjZVDc7QY2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KvQvc5JZ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-332426c78a2so32372721fa.2;
+        Mon, 11 Aug 2025 01:52:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754902359; x=1755507159; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oliR58RONafJIpMpNgG7NIe6AG/sv5hnF3++Zw8Q8eY=;
+        b=KvQvc5JZCY9zlFppHDC27ATKxRJo0KAbY+uitqxI8v2kDU95GRTzNEMZq2IvgvNZdb
+         iLELCWKHivFYZ0tPdVrSQ/LHwNbtg+Rjm98zcxkH9WoWGPxihaKuXWkUmjcWii/t2jIs
+         xJirS14HU12B4IX0O6ez48jbMjP0oa7oA5yTbWtqp01VecTBFFoxubs73hRzjL5StfvM
+         pu1elFF0VlCNF9QGvvWCSyeJ6Uf+HVnZmxpmqt97ZZ2QkrnHTLBxBf1bYzz9xbeOKwXj
+         UQ5PnuPx4j5l5BMGFYcFp+GAxzfSDsylsH7OAlD9885K0E/xVh+kF8NaQaaYDbKrhKZY
+         oQig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754902359; x=1755507159;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oliR58RONafJIpMpNgG7NIe6AG/sv5hnF3++Zw8Q8eY=;
+        b=kI8NcV7ZC2jTEphXZLGb8aQsJtKslHgLU4Znll6MxNkmkpn1uh8l72/XujiCnC0bhY
+         q2m9QWxSapVJ9e4cU31BnUJ0N+Dhk03RwQsKXtePJPv/LXffb/INJ+FflRpGydyoFWpM
+         03FOVT19sJqLOsrImE8ycvTpJ0TYNTAihhk53xzGQ7LpWbY0kBP11SJ1FTQ9C7Z7wDqg
+         hh5AjkdkrbDwHCK767ClUGFvdWI5kdt4sk5Vn0mNKdVTcCVdG7X9fpXp2BGAT7XPPCf2
+         MnroivH8BfWoetHVmIgGVOQe2oVV4pj2TJ6e1Ql+QSRfZJ20PZVKmeU2rjNoi6YXLlrO
+         831Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUR7QNYPvvwpBFleraVt1HO2ZUCIk4dJOAJpZd5VePt1vc5MNSgBxew7lZj7GS8NU/K8MoQejTU3B9S@vger.kernel.org, AJvYcCV0/DeXON89aXW1hsoiHix+KqSXTbHbwUPrMoJZQQB/oqWY1z89n1bItn0Bbr9bhYcANz5lb90iKG/gTpsE@vger.kernel.org, AJvYcCXP07paaP4WJz0tEezHuN67p0XrwG1/UppA2uGV3jUkSGe3Pi7upKUXOlZIzsB9TU63sOHQUapCM82D@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMFjjsLiKeFoEyuZ84yy0FkRM+3vw59u9gWrA1rquYZ+VPRsuU
+	CpeWEwwswJ0K5uNi/5wXY3o8JRPGYYO90Lv4NKlAFIRcQnLbpd+kcLPb
+X-Gm-Gg: ASbGnctzlRGOo741eubRb9Qf4MM3Ivdd5DOQJg+gRE/zeHcNXhNbHLTrZ8JiZ6t/p/D
+	2NANCLhew3iyCsHkQSrGGii/VXjJ27vtEPZfAxQuwVX+kVhSJjozclKGNEwlwTxKzbQtD+Rponl
+	eyU8rtmFpkGPlqa3KeZmkxVrlH3jVCs9fj+ePLyMkJyx1pZJ10O4vVniVPsLroLvG0uJIN+s6wp
+	y1A/xr3oCkXaBvPXoiUwHnbfDEG2BIZgcEzRHrQMnL7tLDRNBZiaQW1Jb3jbBpwSzFo9FBhBRna
+	JSP4FFT0Rm4mJX8cvRilDFZvdWNh35fVVQSle+Wcu8rNuoKwZHvJlBbEog2vVHLss5YQSK49dqd
+	cbeHz8XwTqhKLv909CNFtc6bKEb5Y
+X-Google-Smtp-Source: AGHT+IHKSFH/v9k7VUPl2eyTuwQzWg93gnsKYNlBAVQDlSlJdU0WQp9lq2SCdTiWZYc4XQSqOFHLxQ==
+X-Received: by 2002:a2e:9b58:0:b0:32a:7750:a0e1 with SMTP id 38308e7fff4ca-333a223b8d5mr23089061fa.26.1754902359040;
+        Mon, 11 Aug 2025 01:52:39 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-333a7a116b2sm13423971fa.82.2025.08.11.01.52.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 01:52:38 -0700 (PDT)
+Date: Mon, 11 Aug 2025 11:52:34 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 11/11] MAINTAINERS: A driver for simple 1-channel SPI ADCs
+Message-ID: <b952b543547523951ca87dcac86ba7a00a1c7673.1754901948.git.mazziesaccount@gmail.com>
+References: <cover.1754901948.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5P4693bN41puOZdB"
+Content-Disposition: inline
+In-Reply-To: <cover.1754901948.git.mazziesaccount@gmail.com>
+
+
+--5P4693bN41puOZdB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJmrpaeKKeNCV3G_@hyeyoo>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 05:36:53PM +0900, Harry Yoo wrote:
-> On Mon, Aug 11, 2025 at 11:05:51AM +0300, Mike Rapoport wrote:
-> > On Mon, Aug 11, 2025 at 02:34:18PM +0900, Harry Yoo wrote:
-> > > Move ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings() to
-> > > linux/pgtable.h so that they can be used outside of vmalloc and ioremap.
-> > > 
-> > > Cc: <stable@vger.kernel.org>
-> > > Fixes: 8d400913c231 ("x86/vmemmap: handle unpopulated sub-pmd ranges")
-> > > Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
-> > > ---
-> > >  include/linux/pgtable.h | 16 ++++++++++++++++
-> > >  include/linux/vmalloc.h | 16 ----------------
-> > >  2 files changed, 16 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> > > index 4c035637eeb7..ba699df6ef69 100644
-> > > --- a/include/linux/pgtable.h
-> > > +++ b/include/linux/pgtable.h
-> > > @@ -1467,6 +1467,22 @@ static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned
-> > >  }
-> > >  #endif
-> > >  
-> > > +/*
-> > > + * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
-> > > + * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
-> > 
-> > If ARCH_PAGE_TABLE_SYNC_MASK can be used outside vmalloc(), the comment
-> > needs an update, maybe
-> > 
-> > ... and let the generic code that modifies kernel page tables
-> 
-> Right, and patch 2 updates the comment as it uses it outside vmalloc():
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index ba699df6ef69..0cf5c6c3e483 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1469,8 +1469,8 @@ static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned
-> 
->  /*
->   * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
-> - * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
-> - * needs to be called.
-> + * and let generic vmalloc, ioremap and page table update code know when
-> + * arch_sync_kernel_mappings() needs to be called.
->   */
->  #ifndef ARCH_PAGE_TABLE_SYNC_MASK
->  #define ARCH_PAGE_TABLE_SYNC_MASK 0
-> 
-> Or if you think "page table update code" is unclear, please let me know.
+Add undersigned as a maintainer for the ad7476.c which supports a few
+simple 1-channel ADC connected to SPI.
 
-It's fine :)
- 
-> > Other than that
-> > 
-> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> 
-> Thanks a lot for all the reviews, Mike!
-> 
-> -- 
-> Cheers,
-> Harry / Hyeonggon
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
--- 
-Sincerely yours,
-Mike.
+---
+Revision history:
+ v1 =3D> :
+ - No changes.
+
+I'll try to keep this on eye.
+
+I only have access to the ROHM BD79105 and BU79100g. I would welcome
+anyone with access to other supported ADCs (and time, energy and the
+knowledge) to join me. :)
+---
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f8c8f682edf6..36fa6333f7b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -455,6 +455,11 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,ad738=
+0.yaml
+ F:	Documentation/iio/ad7380.rst
+ F:	drivers/iio/adc/ad7380.c
+=20
++AD7476 ADC DRIVER FOR VARIOUS SIMPLE 1-CHANNEL SPI ADCs
++M:	Matti Vaittinen <mazziesaccount@gmail.com>
++S:	Maintained
++F:	drivers/iio/adc/ad7476.c
++
+ AD7877 TOUCHSCREEN DRIVER
+ M:	Michael Hennerich <michael.hennerich@analog.com>
+ S:	Supported
+--=20
+2.50.1
+
+
+--5P4693bN41puOZdB
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiZr1IACgkQeFA3/03a
+ocX0IQgAhEfQ8vViRdvmtNKTjHF31C9nQlS8FaI+fCGeOvSoArhGDS2KYJACHpjH
+Y64+HyOZTTvSzNSeediyHRklde3vmKD0ckJ4139xQl+dN1lfifNJHpy9csFbuxR+
+Z/8YsVoHUgdTS+kh3+Ea/RuP/G8w12fNBHpW4I01E8BQFsajlRo4znAqs2F6Tt4P
+HhPJIEDlHauSnfivpqqNfXrZAfa6LHNbP3XBLzT+V60eyKFxsKUZWd5GbMcdEGmz
+Lm/3mjDtxpNh+rBctX2ptPBcFCWu/aUuZqmv8UnZdoJNCbVk3s+y0X4l+mLi4sVf
+VZ2ksuCyhyPmrKOBjxDB6ljxKvlfcg==
+=fTm1
+-----END PGP SIGNATURE-----
+
+--5P4693bN41puOZdB--
 
