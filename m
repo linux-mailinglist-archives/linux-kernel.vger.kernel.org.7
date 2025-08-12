@@ -1,102 +1,86 @@
-Return-Path: <linux-kernel+bounces-763849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D130B21AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5CBB21AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E39190864B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216203AA369
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70742E3B06;
-	Tue, 12 Aug 2025 02:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEDE2E0B5D;
+	Tue, 12 Aug 2025 02:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Eitg4MIl"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2089.outbound.protection.outlook.com [40.107.96.89])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xcrHj/c8"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78E52E264F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E02A311C17;
+	Tue, 12 Aug 2025 02:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.77
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754966486; cv=fail; b=g209SwLVTWFOS336LxwFEfyC5s/N4fVTyF274jH64gUS4Ga3o94V5YvT6GET5c6qznV33A2EfkcCjbsVE4FSDI5C2oUcN10kf4w3npGUE8dmUSKJ9WvR7zUDgl3nOUzwkVDM3M73ac/EYl8nHxZZlHZkjoSK29LoADddy/RQhKA=
+	t=1754966666; cv=fail; b=nqV1Oxg8GM9W0MyS1KQmj1G2HPJkjsVIf/ARckBYrf789jIknz9Qtaq04x4Y74zklj98od1gibgjVV64nLJo2tIPtcqvmTqB4gOBu+74yFVR1+IRAnZXjyoNIonfiXxV+emfTCgiWbsGski33N0jHvnCprwNXP3/BzXa7WcuU3A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754966486; c=relaxed/simple;
-	bh=XqjJuTV5smp/PPPK/lUulIB5P6VnIyUcdcaVaV8rqs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hjT5mdECemvCrfS352e+m0OY7ft79ghtNFpzRle8SK6Jkbu12G4Ux3JoA8ahaCbv3dW5WSG2+zvjoRTWtW2z4t7w5TsKMHhWKS0KZ8OldSsUsvEUvRmdZcPSVhLBp8IeSOUaVXv/QqhJwmDT1OeuqAieFEWkIOCY8fosW/fvLBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Eitg4MIl; arc=fail smtp.client-ip=40.107.96.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1754966666; c=relaxed/simple;
+	bh=o7ZJt+mFuD5om6S7jSvVT24MAwsPOfm3O4HUgfWQzFo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XOM0/WK/PZh8Hmc07OQBNcsvMZjd+xL6yzHYIcUwTGxinBHse9ZmgIdrYRfCbuIlzfk+aAhWFvEWdWF1WCO0vZfHbRQG1Frre0jbBlBQUUkMkBhl50x54ehAC3y9FjxEd+XS/jNT+FhwMaLS3hPVqCBGBpJ4O1EBkrnovQwK23E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xcrHj/c8; arc=fail smtp.client-ip=40.107.236.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FvVVPFxR0pYwQgIRUQMh46L6Lxu3mFeJIGKvGAgtp4BV0gj8wonCNiT8EmavdtQHeLPzChjg7UUt1FidLM3U+4PWUOva46eIgiEzupbxUrB53zr8G5MbYD1LUv7h5APIonhMPTL9AirgLEwBQa1yfHxYAMi5L6iTxHhipXNGY1Tctlf4aMNNrYBYgdTvAaBDzUW1ZkZpmNCZ5/gYa7mAxu29hhvPgAA6hfFEcvGkJuVdIp4nC9rwPafknAa0ozZ8vRCZlBCoba81rekRQSSW5x0936Pm9IGTNSLLI3vWsU1uwmuWXm3QYoI+GDzaD6zr30HsQTWyUX+GEPhjEaRo6w==
+ b=dII1S/CBCu75+gWFeT5ooMyEMMtpkO0Sd10/MUBVVSfPkA4rY8TSi27pjnuioPPZSfN+nAPoPtAtlBNIwWV4s6aV7MGJL/8ytOl3P57bUKtzWhikTkOrMtJZr2vZ3/+J6OPQNZK4yOS3WiDLy56Mh4r14nw4GfTYCv3pFjegulXiL4QaT3qZTkoOAseNIYB0mCSVQ//pRw8SkJC8hM7BdOyO+h3SqIaFVudsY1ji1rR6tOU8vpOuOFvJGBJAHun4u8PkYyTgMC68TrLI1wS28zdV+Av8Mm45qCcOHs9PIZzXCBSkdodbYDO/vwyryQDL2fDYEQE7GBnUw1oO9tSDXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E2VJ5kH+tLdZwlATFAo1+hNpAmKX0dnctUob4DpO984=;
- b=NoeMukxo3cBL2JdaKlorCmfiKpwiZ2DFm5V6hZO1ehndu+LTHsaZyng3rWozot+OoaKCBjXLS8mvkoqLKZlVGp8KPZTYBPAFWczSM1HZ6nBjJ+exR0uw82rDW73+kcO2rKZwFXWkyJG6yelSJzwnc+sSjxvbhAeRolzMxRGG8wDvOYgOE+mZ+aXAMeaWMs59ZMPu59FC22lcDxHJi56ilGFkBmYwydfAARgLsXmZCXV5rXnprTihzIE1S6l8+hky5BKxtL58EoyTubm8GWPlJH+KxWjR7PQEkcMpBcRPtFlCOzGloxo9xawsnVv2wEH4EvYaFsalj29l3WvYHudPiw==
+ bh=Vmh0IuUr4WnHTdQ/vTCQJi0wAZXKnOSn+bmQo6Ir4+c=;
+ b=JHALmCtOCACzme1IzoKwjBYkJlJALWENB/BhRNQc48i/kTGo5e50W/2yXoKsHHDUwdUbHurPqW5ux7Ee5nZt/pItZEADxpeFfz7bLE6gF8Et8kh8ii+e6snonAOHrGX+kIBwmZSLSXgNPvlSgHH7Gli9DOwCA6gKOQMFs2j3Ex+gyVCWsSUrGTaxS+qRAIpS974vI9oJYKF+WwRUmHCY7Yvjm7c4w49jFogouOfD8jWE5BXRfeYooMESruy1AFUBFgeD3Ls54k/apvJE2yYPNTw8WOyx7DK9fC3vnlTc7ZKS8IZigiSV+8DhnhjF+ya237Mwbtd6NlrX2w9jYP2EHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E2VJ5kH+tLdZwlATFAo1+hNpAmKX0dnctUob4DpO984=;
- b=Eitg4MIl4tiXvYc2SI4ekNABh65JB1U8z1RYePuFj2QS6SiU0RHYELw/7ZAFXzslWvHeMTaH0ufJrh9IgMm8iZ6gXdFpV5VLfxCVcDCg4Qn+5AeD5wiG1ZyY/3rW8oO3BaAOJhDnachAhjbWUhXCDaaAFvms5tao/D22Yv2E7WzORQSHfbyACjve65zUwlbtVkuCOob6zVc/BRJ9gUjk6WFAlfrDi+hKSWqB5cZp7ICdl9hHexCnk6PTlZ6IikaHaEmNrarImTK5wY5IBn3YB/7qoKKV4F7McaQ9f7LS+FFyZfDI9tRri43RgHZn/ofc48VCG84rm58st7AxeBOUlw==
+ bh=Vmh0IuUr4WnHTdQ/vTCQJi0wAZXKnOSn+bmQo6Ir4+c=;
+ b=xcrHj/c8PHPNVMsUJj8CNusHqFOSGTbMOscVZCOnojxRXuTi90Oc+3kDiJEXy64ziuKDjIhFyuVn5k/NBoMz9oQu/3WDjHXH8X2GzXm+8cUWc7Xd4mXPqowhtWxpXhooeU+Ryqe5Iz/dCLl1gXGRCOKuORetr8XuumKFLyR3WVw=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by MN0PR12MB6317.namprd12.prod.outlook.com (2603:10b6:208:3c2::12) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by CH8PR12MB9814.namprd12.prod.outlook.com (2603:10b6:610:26b::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Tue, 12 Aug
- 2025 02:41:21 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
- 02:41:21 +0000
-From: Balbir Singh <balbirs@nvidia.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Balbir Singh <balbirs@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Ralph Campbell <rcampbell@nvidia.com>,
-	=?UTF-8?q?Mika=20Penttil=C3=A4?= <mpenttil@redhat.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Francois Dugast <francois.dugast@intel.com>
-Subject: [v3 11/11] selftests/mm/hmm-tests: new throughput tests including THP
-Date: Tue, 12 Aug 2025 12:40:36 +1000
-Message-ID: <20250812024036.690064-12-balbirs@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812024036.690064-1-balbirs@nvidia.com>
-References: <20250812024036.690064-1-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SY5P300CA0024.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:10:1ff::14) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
+ 2025 02:44:22 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9009.016; Tue, 12 Aug 2025
+ 02:44:21 +0000
+Message-ID: <fe92044d-9c6c-4e1a-aeef-2804c50acd09@amd.com>
+Date: Tue, 12 Aug 2025 10:44:13 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+ laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratap.nirujogi@amd.com,
+ benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
+ Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+ Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
+ anson.tsao@amd.com
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <20250618091959.68293-5-Bin.Du@amd.com>
+ <aIclcwRep3F_z7PF@kekkonen.localdomain>
+ <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
+ <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0053.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::8) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,353 +88,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|MN0PR12MB6317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 792e822d-75e2-4134-616d-08ddd949b893
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|CH8PR12MB9814:EE_
+X-MS-Office365-Filtering-Correlation-Id: dfd95dbd-1bf9-42e2-c9bb-08ddd94a2451
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OHVjczFKTkFtbUNZUzVOUVJlZEZHUG9idDZSblNZU1RWNFlmTmF2T2FIaDJ4?=
- =?utf-8?B?ME5PeSsvSjVQTGUrWEJrNkJkMm4vOGsvNWFlQktTdlFYMXdob0ZkRXNiZnNX?=
- =?utf-8?B?bEpvT0dxZlFQUnQ1czdiZXFXUHlWSlRwdDg2NEI0eTZWbHZzWkd2cXVjY3dX?=
- =?utf-8?B?WjZjRnM1VXpIRjBOMGxMWXVUTmoyWWluRk91SkhVRXNqaVBVNnYrdTBuNlJh?=
- =?utf-8?B?b0Y4M0dTWkVYM1l3Rkhvc2IyVDE4cml0ak8yLzJIcThiaUc2N01zU0hwZnNE?=
- =?utf-8?B?eUtXQzdPaFNYTjZpa01QVzY2ZFlmdkJwNlh3S3lXYng2Sk1IVElNamlMTDVn?=
- =?utf-8?B?c0hETlk1aU56REUrOEY4N0dHMUQraEJHUnQwODg2MFY0ZjkzVytpSDhWU3FO?=
- =?utf-8?B?cjRXUWRpWVhhS3p1SVhOQkVuS3BTakZVaWZUWk9EZDQ0eEs1M1NsTXR6aHE3?=
- =?utf-8?B?Y2IzK250TnFuaDU2dFo5a0dhdk82cXNWcWYzdkZHdjdhbkJnbGMyemUwbmpK?=
- =?utf-8?B?Z3lzNGVQdHVEQk01Y2hUUzd0ZTFMZzBRamNwaDlydTdtdVFhQUVlbFlUcmdX?=
- =?utf-8?B?WUEyazRyUllhS3Q3elI1cDNkcmNjbTlSbXA5bCtBRW1tdnl5cXRrMWErNVRE?=
- =?utf-8?B?VHgrN1lIOXJxd1pJSElaRGF0Qyt4dXJrMU9XbWp2YmpyZm9DSlJFYWdLSS9L?=
- =?utf-8?B?NDJSTitjWUkya2hLMFdTRzEzdWllVGlZZ3FYeUUzeXdUa2RibFJCNGd0VDhR?=
- =?utf-8?B?ZTFFOW5OSmFieFBrbmRaV2pXTVpoR3hoNHhscUl4Y3ZUVy9hRklmN0xQRDVQ?=
- =?utf-8?B?TFhUZ04xWVRjUmc0VlZnN2RSNVpURElIdUxTTlhGVnA3Nm1jZUZrSmkvMlB2?=
- =?utf-8?B?dmhremZTa3VHemw5b1ZwemFtV2xKU0VUdWt6d09zSnRtRWFxcE5zai9rUGsr?=
- =?utf-8?B?SlZ1RXJ5T0d4WmI4TnIxU2xkM280TWdENVZueHFEb3JISGpGN3hTQmNSZm5l?=
- =?utf-8?B?Q1JiUDJMSkNMMDg0c1JmZVhzS1hKWkgwdE9DdDJZQnMwRW43d0tHVGQ3OGE5?=
- =?utf-8?B?TmRZYTNCa2pVSmRtOTBYeWEwSm9lVjdoTjR3ZjVNeHB6bE0zVjV4TDYzME1N?=
- =?utf-8?B?VkhESXJBZ1czUHYzRGZIaitNUTRzbVdTUVJIRXhNb3JWMm4xMW5nT3hqcWJJ?=
- =?utf-8?B?YUFiOWwxUURjdGNsZEhKZmpNdmhSUVBVRUVtUzRWUG1HNFJUeHJjZnlqYnI0?=
- =?utf-8?B?WlJlOG5MenVsRzl1S2xnMCtneEczcS9oaWUwQzJNSk4rWVFjRFcxaFA0a0xl?=
- =?utf-8?B?VldpeDRNdGlVWHNjN0RQUjZpYTdmRkZ5Mlptai9iMFBZdFZjZVd0QmsxelpB?=
- =?utf-8?B?NnN2MmhIaTI1Uk9VbUhHZDRSUHNJV29GeEFadkp6T2hMK2Rnd3ZHR3ZyN2Vk?=
- =?utf-8?B?ZEYyQ3IvNlBEY1ppUWxvQnN1NFRrNU1MMFFzZDR1Y0pZUldTYTVVbGlVZ09Q?=
- =?utf-8?B?VVJ6U3NKdTZmeDE2RDMvcnhkRTEwRVE1Y0dmYzNXWDh4ZlRYZmZJQUJTS0Jw?=
- =?utf-8?B?OU5PS21wR2gxdFFlOE5uWmVpbzQ0WW8vNUVVRzBUSUNPNUN5cG0vNHVwaEtZ?=
- =?utf-8?B?YzVPUHBnSzkxZFVUZ1ZQc3dxcTh1ajR6b0tuSnpJQnc0VkFBYStHajhkU0JM?=
- =?utf-8?B?dzRMeE01RCt3WldCTjJIWFVVNCtKL1lTYVV2ZFFFWW1mWFhtYjlJS0RDUVJT?=
- =?utf-8?B?U3JWT0JQMmxnemR6M3NBNHdCZFVJUEJNOEVyYjcvc25sN0FQb2o5NC9SM0w1?=
- =?utf-8?B?ejlBaVdBd1ZJL01qdVduZGlUbTg4RWtKQ3VIUDBjOUUxb0kwWDd5dHZNcm9X?=
- =?utf-8?B?NkVDS3ZLeDh1L3dBTUVpQnFOL284SFBlNWlEcWg5VXBwajZuLzVmSVA5SEEz?=
- =?utf-8?Q?x+cSTy1AtpE=3D?=
+	=?utf-8?B?bFJOWm95NkZDSDBLNEh0YjRLM3RWa0NKR1FxTkhWNGt6UGhtVHJNRnF0YlFV?=
+ =?utf-8?B?Um1SRUVmeFJqZ0lUQXZESFJNdEVydTA4TUl0LzVnOFh0WVkwclJMZTJ1dkh0?=
+ =?utf-8?B?RGtWbHRsT2dKQ0NCMGovUERPUkNZNFB4STZHQTRxL1FPbkNPRzVqSkUzSWt4?=
+ =?utf-8?B?NTVVbFI3VkdnanBQc2d5eFBCaVAyMWZkcTQyalRuR0plZXpJUmJpb0RxYWtO?=
+ =?utf-8?B?WVVQWDhaOWRVWVMwWC8xcW80bHNsM0EwRGU3YlBKRk1TbHNRSEJtMTlVT2tz?=
+ =?utf-8?B?UGdkMDU3RmMrcC9yRUJwWjdpZVk4eDM3dHUwN0h1emwwcGVpZkl6OHo2RlEv?=
+ =?utf-8?B?WjdscTNEQkNxTEt6YjJEUUdmYjZQQkpBcUpVRjAvcTFIcmtLM3k0NVJnaFlH?=
+ =?utf-8?B?R3FrWk5yOWNtUm43SzB3SThhaDYvc0l2WHNnVzI5UU5paE1EdHBRZ3UyUjdu?=
+ =?utf-8?B?bkNUa0sybWNVdmFmVVhTMGErYUhsSDhLdDFvYlE3Q05PbDRETzc4UWdWVnc4?=
+ =?utf-8?B?RG9yeWxndUpPc1h6M3JxTWlJYjA5UmpjbFltV240TlNuL2tnMUVORzZxRVJx?=
+ =?utf-8?B?c01mcTVpcHhwckxEdk9pSHFScERTNkVsSXpXMVV2ZllINm90ZEErMlRUWlpR?=
+ =?utf-8?B?VTV0ZjI0a21DZDB4eStMM0QyaFRZN3ZmRytDS0JpZjFHa0hwUFl2ZkhvcUZL?=
+ =?utf-8?B?TExNaUFkYjkxaVl1MjhGWDhIamdQZ0dXaUFYTzJuQVpuRnp0dkNyek1lb1A5?=
+ =?utf-8?B?SjZOUFk2RDNycGI2WmhVRVo4bGZUSUpKaFFvMHBVNFJEbmY4aHNCSU5PZCtO?=
+ =?utf-8?B?Qnh3cmFjWlozdForZDFsMW5KTTZwUjlKOUFmWlNsbTJudDg0Qi9PTDV2TVJB?=
+ =?utf-8?B?VWFpMG1lUVR3aDZHajlnR0FoM2tiSU1SalN3TGgxN3JJTzRDc3R0cnVKZzRD?=
+ =?utf-8?B?dThPcW1YTHVrSDM0T1dFN2JoeHc3TlNXbTd0VnhOTWtMK0hLTk9naitNN09n?=
+ =?utf-8?B?OCt0Ni9iNHpaV28rQ1lTbkZwSXZNanFXTUV1TlZLQ2pYSDJtZ0pUQnJXeGZ0?=
+ =?utf-8?B?R05TdlUzblRHRGlZUlR4cDZwUzVoK2EvYXNVWElzbTVObnMzeDBIL25RdUtD?=
+ =?utf-8?B?YytLcEVtQmVCOFpsOWlvNDZmdzdBUVNIM0lXZ0swbk9Bdk84N1d6WlE1MXZ1?=
+ =?utf-8?B?aFNiN3Y2TU1rRFNlRHM1VHc3RThrc3VJR0pHMGNlT2h0bGFGQVp5UWRUVmZq?=
+ =?utf-8?B?MUZla004QXVjbUZOaVFEckN2cktyVnB2Znc5S0hUQVpZaGJ5dmhjMjJ3azgw?=
+ =?utf-8?B?VHBTNXdjamhDeitvM21MQ3dyNWhsK1orR1hOVmcrN0l1aHRzeG9VaGs2cnly?=
+ =?utf-8?B?NDJ0ZCtlNHZCRGR6bmRGQ0tySW9aYytTaDY0ampOZDdvejVQTXo1ZGxaNnBz?=
+ =?utf-8?B?R1RrUlpueG9jWnJsVWo5K2N3ZGl3eW1TNTlxVk1hZnArY0w5UWtUZEIvVEw3?=
+ =?utf-8?B?a2w4VE5oZ3pqb3dXTE1RRzR4MnJDQkFoaW1GdFBCalZRbDM2dzJCelE0dURr?=
+ =?utf-8?B?Q0RmZmNUeG5DZmtPbG1FajZUblBiN3RrNW1wT0NwdjM3NGZ4ZjN6UnFSOFN4?=
+ =?utf-8?B?ZVlLaU9qb2srVkY0NXc5QnNIay9mTEVSeUxGdXlxM0ZDeFBtZExnNGxWT3FH?=
+ =?utf-8?B?azRnRzc3WlZ2cVdTNG8vRUw4RTRPYzVqWkc1eTg1akVIbSt6OXlqdWJpbTJJ?=
+ =?utf-8?B?bUpLVnp6b3pZcmhTUi9WeXdmRmgyWXI2VDJUVGNVRnVqUFZoNWk0ZzM0MDB5?=
+ =?utf-8?B?MXZZOElpTWZ4b1plUDl6WFhiV2Z1YUwwRnFzdXpDZlJvVDlRSFNHemxlazA3?=
+ =?utf-8?B?bkZrY0w1SUhmREZlbGlYZFZSbzFReFhyVkxTNFpZZ1RWQ2J4SmJQcU5peUtC?=
+ =?utf-8?Q?tjy4SPOYndk=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eTdMcll6L1l2cHBndlQzTGNjUDJST0tiVEVidmxlTjZaNFhYRUFWN3JOWlI0?=
- =?utf-8?B?SDFWT1hKOUxqYUhJVGEzbTRmTDgrZVdsdE9qdkVpUU1Oa2JFb0tmQ1duQjl4?=
- =?utf-8?B?aU85WXUxS0VVYVF1QzdpcFJ1TWQ4ck90LzcvM0xpdUpYNG1CRXlTeFRYSVhX?=
- =?utf-8?B?QzI3MUVTYVlVd1RTcmhWNHRzM0VxMjNTejNBL3JuMzZ4cVh4OE5CWXZzN0Jz?=
- =?utf-8?B?Y1R2QU5xQnBvSUJhNkszczg5YnN2ZTdvN2k3VnMvMkVtYkt4cjZNemIzU3Fh?=
- =?utf-8?B?MmdPM3U1Qm1wSzZZSm9HcWgzWEY5cEZobTRsTVpQSnR4VmNqZjkvbG5vOG0v?=
- =?utf-8?B?Z3RPNURvaDFFdUcyTmRCVHdLdnl3Z0hwZW9hN3pHNHdjcThhMzkxSytFRks4?=
- =?utf-8?B?K0RaeXBzaStGVjlTT2g4TjI5Z3g5WHl4dmFBeStoSzkrTjZnbnpWT1hQWENh?=
- =?utf-8?B?c1dSQ1N4dVROL0lEWWcvbWhkY3IzejRnemw2alYzakt2emc0ZWtvYlEwSUp5?=
- =?utf-8?B?TmZjQ0ptUWQ1UzNTWVJQR25xbFowQ2VIYThXV1BFQTVra0tHNy9JUkdPU3hQ?=
- =?utf-8?B?MlNYS082NC94Uk9qZUxnL2VwQmpmZXpTdWljMnpGZVZXdlRHTnRKRFZpV2hX?=
- =?utf-8?B?NldqcDBja3FsbDZHNGU1NE1xZVNPeGtKam43Sk0vOGo1WW4zc3pxd20wTnB3?=
- =?utf-8?B?MngreUFUWUwvTU00V01PbEZYb0dsUHN4U1lNT0xnOGJwRDhhblJWL2I1a3la?=
- =?utf-8?B?VHRrcXYwSkhFUll5TUFKSkcwUDV1MHJTYlI4Um1DL3MrZDg3K2NERWNTVmUr?=
- =?utf-8?B?eGxIcTc3RSs5b3U3U1VoRy81dzcxa21XZ0ZPSTZSMUtFZVM5THZRSXZOUWRk?=
- =?utf-8?B?aEw3d2Y5SG41amZwUGFDZ0hTU0EvVjR2NWdNYlNBa1U0ck1ZRWVHRW5PSGd3?=
- =?utf-8?B?VHJWVnlIc0w5WWdDcC9GNFJJWWF4b2ltOGttRXBvK0twVm1yMXAwb3FzcDdl?=
- =?utf-8?B?Z3AyR2JwSVRSd0hNeEN0em8va0FsbUJSWmRDdUhDSmR2TERjRWVEdlRyMHdF?=
- =?utf-8?B?QlIzbXlyMVJXUUdqOFo5YlZBVHdVUXdaUTRXbTZIY2dBTkRTU09Zbm5MNWpl?=
- =?utf-8?B?UG5zRlFnV1hsTUtmUlVXWGl2ZGNYa2twWEpBV3BpSWxjVzZYSUV1cFg0UXFN?=
- =?utf-8?B?Q3R6aStGNy9VdWJDMVN4N2F4V1lwbFhvZVZ1MzJQalF0RlQwTWdkcWF2QlFT?=
- =?utf-8?B?d0xYVS9pNVdQaWZ5L2ZOd0U0dXdabkZNbi9xTWtBbDdpNzExWUpMbWlEN1dz?=
- =?utf-8?B?eFl1MVQ0clJwRm1aMis4QUdPeE1hWFZQdTdnNzJ3ZXB0NmhBNzZybVRYTlAz?=
- =?utf-8?B?T0ZBNnNZbURscW8wMk5RN2ttdG1xczZhQ3RFOVJhSlhJajR5dU8ybkRBRXla?=
- =?utf-8?B?QWdjNWw1b3lmZmMzL0ZDMkswZGFDZWE3ZkhaQ1hlWnYybEZXREdLU2pNcUtN?=
- =?utf-8?B?KytPRDdZanFFTytDTkkyT3QrdmFzdFpOOEhLaVdFV1IwNGRhNnJvN0o4TkYv?=
- =?utf-8?B?dWdSdTdsb2M5OGtkMGZQQldoZlZSV2pOOXR3dDlqUTRUdlltdWwrVDBLb0NF?=
- =?utf-8?B?SEFjcUNSRGR2UC9IYjZmTnk0R2Y3a2NPQ3E3akZ5MGw5alk1M1JuVm1oYXhB?=
- =?utf-8?B?elUrMFcyK3drdklSMkpaZkwyOFk4WkVuTGhXK0ZjbkluNWg0OGNmY2JHM0Rs?=
- =?utf-8?B?YW9MVjlqWjdERkFtZE1vQjN0NVJYVVRTQWxDT3ZPOU5hNm5FbFNpTUtDRnd0?=
- =?utf-8?B?NnRJdVV6dUorNnorWEk3V3c1WHUwVzAxNml1aXgvT3BWaHYyU0lmelQyWFVG?=
- =?utf-8?B?MDNuUTJWOVJudUw2elVSajVCdnpDRGZ1b0tZRmpkQzRKRE95SERSd3VhM0NC?=
- =?utf-8?B?S0tKNHlJYXY3QTJOK2wzTEdLRVhoZGVMRGIwYldkcEx2eGVLTGtVM2UvemI2?=
- =?utf-8?B?QWgwU09TUkJad3YvRlFiMTZ2cy9rYVlsem1OWmt3MStFbzJjN2IyVWM5RjQ1?=
- =?utf-8?B?blBPdFNhZmVxOUQwOHZqVTc5NzdyUTZkd2V4Si9Nb1NrclIxSTh5R1ZBNUpI?=
- =?utf-8?Q?KyAYgdeJ055zO0HA5Z97e4o0L?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 792e822d-75e2-4134-616d-08ddd949b893
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+	=?utf-8?B?ekJFdEkwT1pTUWIzZ2pnd21pMSsrMHhpTG5VKzUzT2t5VVZ2RHM4ZWtVUkoy?=
+ =?utf-8?B?MnNiM3lnNUxraFMvWG11c2gvWkE2elEzVVVydFlTK2VXSFl3bkZ5dXF0Kzh1?=
+ =?utf-8?B?b1ZFTDdVVW5rakd5dm1HTnpqSWNTNzExRGFFaUpBWHVVYWRaZWZaTkhJQVkz?=
+ =?utf-8?B?dGdvMzBHMDNTQ1Y3RWRzU1NscFJFTEtCcm45aW9xN2ZjbEhhOTFOYWNNbjQ5?=
+ =?utf-8?B?bng1K1F5Q3g0RCtYK3VkRGlOZ2t1RmVNSHFoRnVldTc4TkZOQnFja1Vzcmx0?=
+ =?utf-8?B?UVhEcTlVYzFsZ0dsa1kzTU9tZnM1cS9VNzAxZ2VYZEMyVTU0aDJXckF2N3p0?=
+ =?utf-8?B?ZDFqQTV6NWszYzBMUms2S1JCMllNV0dmRFk3TDJrK0JYRHlkcGNzSE05NHlE?=
+ =?utf-8?B?U21GN1JzaFJLUkpJL3JzaGVSZVQ2Sk1QWU9ILy9UVVBHWWhTVUw2U01zZEhR?=
+ =?utf-8?B?cVNaSGVDM2VXV3IwZkZ5SEw2Y09aQ0ZuWDVsTnNMYWYwdDVuYXJqQkwvQ3pl?=
+ =?utf-8?B?anMvWFIyaWZmZjFOM3hudDh6Ujhwek1TLzF4dDFHL0tVSHcvNWtiMmk4VC9p?=
+ =?utf-8?B?RDN2UTlzY2xGWWRkMXB0QUVSbExucURYRDR2anJMYXdUejNONGZSanQrNTdv?=
+ =?utf-8?B?UlZYVEl1NWJRU3dmbGMvN2hMUHlyK3ZraDJWL0dEWlkzUHlieTM3Zk5STXVu?=
+ =?utf-8?B?RUVOVkNBMytydVMyU25qMHhNdXcvMHlXUFdMRnpjbEd2YlRORGxjZnF5UnlN?=
+ =?utf-8?B?Z202K2IwSU1GWU1kVWV6eTgzalJkNjI5R2lGVHNlblA4RUNTYU5waXhIUmRn?=
+ =?utf-8?B?cGVWMFNHU1dydXhGWTZoWTkvaWJHem1KU09xU0tMWkhxcHRUZ2MvZkhsWkV4?=
+ =?utf-8?B?TnJMUGo4ckFWZW9CTE9zWVFGamE4bEdMaGdrMjltVjYxd3A0bW90VVJ1ZTFV?=
+ =?utf-8?B?ZmlmK1A2OHcvY0xvVWJlaFNzdmRzcUYxSWxpTmI5cFlqaTJEbCtYYkFvbzAv?=
+ =?utf-8?B?ZlM5UnhhZ1pMaEM1OGE0Vi8xNy9RVHZOUmFvNVd0eW1ldklveDQrWG1sSWZW?=
+ =?utf-8?B?SnRUU2d2VExtbU9lTkVveGhYV3o1M1ZPaDZXMnd3cVU0UE9MRy9nVEpoQ3U0?=
+ =?utf-8?B?cTBuVUUxMUlHWXZHcFgzV0h1aGVFUHFldnRMT0JsVGNBU1ZxU2p4WlhaODVT?=
+ =?utf-8?B?ZGtkUDRBZ0I2VjEvQXBJeUpTa2pBYTlLc09udG9LZUhObFpMQU5LK1lRS2ox?=
+ =?utf-8?B?WHE2Wm80WFlMZVVheE9EazExbndRK3dvWWliUVphOU5MOUxXU01DZjVFSzFQ?=
+ =?utf-8?B?WWdYbEZlVXJqaWxndlhkWFZzMzIyNWU5RUYxQjhRSU5oRnVzdmlxUzdPYTM2?=
+ =?utf-8?B?MWVhUXZYMVpvcnR3NkNQOE1tNnFoRDVmbHE1SFdoT2Nqd0RJLzRkQmZQTnlW?=
+ =?utf-8?B?R1VUaVRHem5BVWZjSGJpNzgxTFFlcnRyS3ZPUmhhTFJKU0MxMkFYdWMzOExV?=
+ =?utf-8?B?VjdSRVppWGx6STkraFc4MUoxQWJVZHRFUFE5dDhMd0UreGgyNXhobEt6Z2lZ?=
+ =?utf-8?B?NUVQdHUrMDNoY2hKdWJudS83N1BpeitYVDBkUU5abHBCMlN5RlptM0tlWktU?=
+ =?utf-8?B?MTZJQytOSXlFdG9leEJncDgvaldKUU9OSUtkakNEOEFSWkN1ZFU5UDQ1endD?=
+ =?utf-8?B?NzFtaWMrcEhhdnE3NFBsSXhqV3BuRHZrSldOeUlKUWg2STBaZ1l1YVF1TU13?=
+ =?utf-8?B?eElnZHNJQTlZc05OeWdJMWsrelF4TytGSllKWnIvVG5oaFNwMGs0RFRaWktM?=
+ =?utf-8?B?bEVPcHhVb09QcUp4L3RnSkJPcWE1V05DcFM3SzVXbEVFK28vOHJvMG5rV0FX?=
+ =?utf-8?B?UUhTSnpHdTlPSVF5eXp6UGhBbmVzdktOSTNDTmF2dUF3STU3WmFjWkFxd2Iz?=
+ =?utf-8?B?QndVSEVSVEJpQUR2ZUdTb2l4cGlma2dxYm1naXZBZzlFd09jbFVtbGswY3Iw?=
+ =?utf-8?B?aTNzNkxDbFR6eGYrYTZ3Und6Z1FiTDJqN2FFMU5SY3g4d1pEKzBoUnJvOWtw?=
+ =?utf-8?B?czRYcno2TGVMRnBUMmRTNGkzbkJtTGhhRWR4TSsvajB6V1c3eVFpZzJGUEoy?=
+ =?utf-8?Q?G3yE=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfd95dbd-1bf9-42e2-c9bb-08ddd94a2451
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 02:41:21.2144
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 02:44:21.8230
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MY57gPrWH4Gx+gD/bEZ5RNCrhxunz8VYU+sqlyfJTvtIsusvhIYMPGcMqHqgiAd54xTV6CMhzASTTHmhMvT7nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6317
+X-MS-Exchange-CrossTenant-UserPrincipalName: /2DPgQ1Ddc4yeQvnTBVwxAGc/6dpX7yx82y/hTq2xGB/ssj7q9zSYfnTYKKCgqrv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9814
 
-Add new benchmark style support to test transfer bandwidth for
-zone device memory operations.
+Thanks Sakari Ailus for the comments
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Rakie Kim <rakie.kim@sk.com>
-Cc: Byungchul Park <byungchul@sk.com>
-Cc: Gregory Price <gourry@gourry.net>
-Cc: Ying Huang <ying.huang@linux.alibaba.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Nico Pache <npache@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mika Penttilä <mpenttil@redhat.com>
-Cc: Matthew Brost <matthew.brost@intel.com>
-Cc: Francois Dugast <francois.dugast@intel.com>
+On 8/11/2025 7:46 PM, Sakari Ailus wrote:
+> Hi Bin,
+> 
+> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
+>> Many thanks Askari Ailus for your careful review
+>>
+>> On 7/28/2025 3:23 PM, Sakari Ailus wrote:
+>>> Hi Bin,
+>>>
+>>> On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
+>>>> ISP firmware controls ISP HW pipeline using dedicated embedded processor
+>>>> called ccpu.
+>>>> The communication between ISP FW and driver is using commands and
+>>>> response messages sent through the ring buffer. Command buffers support
+>>>> either global setting that is not specific to the steam and support stream
+>>>> specific parameters. Response buffers contains ISP FW notification
+>>>> information such as frame buffer done and command done. IRQ is used for
+>>>> receiving response buffer from ISP firmware, which is handled in the main
+>>>> isp4 media device. ISP ccpu is booted up through the firmware loading
+>>>> helper function prior to stream start.
+>>>> Memory used for command buffer and response buffer needs to be allocated
+>>>> from amdgpu buffer manager because isp4 is a child device of amdgpu.
+>>>
+>>> Please rewrap this, some lines above are quite short.
+>>>
+>> Thanks, the line after the short line is supposed to be a new paragraph?
+>> Should we put all the description in one paragraph?
+> 
+> One or more paragraphs work fine, but a new paragraph is separated from the
+> previous one by another newline.
+> 
+> ...
+> 
 
-Signed-off-by: Balbir Singh <balbirs@nvidia.com>
----
- tools/testing/selftests/mm/hmm-tests.c | 197 ++++++++++++++++++++++++-
- 1 file changed, 196 insertions(+), 1 deletion(-)
+Got it, thanks.
 
-diff --git a/tools/testing/selftests/mm/hmm-tests.c b/tools/testing/selftests/mm/hmm-tests.c
-index da3322a1282c..1325de70f44f 100644
---- a/tools/testing/selftests/mm/hmm-tests.c
-+++ b/tools/testing/selftests/mm/hmm-tests.c
-@@ -25,6 +25,7 @@
- #include <sys/stat.h>
- #include <sys/mman.h>
- #include <sys/ioctl.h>
-+#include <sys/time.h>
- 
- 
- /*
-@@ -207,8 +208,10 @@ static void hmm_buffer_free(struct hmm_buffer *buffer)
- 	if (buffer == NULL)
- 		return;
- 
--	if (buffer->ptr)
-+	if (buffer->ptr) {
- 		munmap(buffer->ptr, buffer->size);
-+		buffer->ptr = NULL;
-+	}
- 	free(buffer->mirror);
- 	free(buffer);
- }
-@@ -2466,4 +2469,196 @@ TEST_F(hmm, migrate_anon_huge_zero_err)
- 	buffer->ptr = old_ptr;
- 	hmm_buffer_free(buffer);
- }
-+
-+struct benchmark_results {
-+	double sys_to_dev_time;
-+	double dev_to_sys_time;
-+	double throughput_s2d;
-+	double throughput_d2s;
-+};
-+
-+static double get_time_ms(void)
-+{
-+	struct timeval tv;
-+
-+	gettimeofday(&tv, NULL);
-+	return (tv.tv_sec * 1000.0) + (tv.tv_usec / 1000.0);
-+}
-+
-+static inline struct hmm_buffer *hmm_buffer_alloc(unsigned long size)
-+{
-+	struct hmm_buffer *buffer;
-+
-+	buffer = malloc(sizeof(*buffer));
-+
-+	buffer->fd = -1;
-+	buffer->size = size;
-+	buffer->mirror = malloc(size);
-+	memset(buffer->mirror, 0xFF, size);
-+	return buffer;
-+}
-+
-+static void print_benchmark_results(const char *test_name, size_t buffer_size,
-+				     struct benchmark_results *thp,
-+				     struct benchmark_results *regular)
-+{
-+	double s2d_improvement = ((regular->sys_to_dev_time - thp->sys_to_dev_time) /
-+				 regular->sys_to_dev_time) * 100.0;
-+	double d2s_improvement = ((regular->dev_to_sys_time - thp->dev_to_sys_time) /
-+				 regular->dev_to_sys_time) * 100.0;
-+	double throughput_s2d_improvement = ((thp->throughput_s2d - regular->throughput_s2d) /
-+					    regular->throughput_s2d) * 100.0;
-+	double throughput_d2s_improvement = ((thp->throughput_d2s - regular->throughput_d2s) /
-+					    regular->throughput_d2s) * 100.0;
-+
-+	printf("\n=== %s (%.1f MB) ===\n", test_name, buffer_size / (1024.0 * 1024.0));
-+	printf("                     | With THP        | Without THP     | Improvement\n");
-+	printf("---------------------------------------------------------------------\n");
-+	printf("Sys->Dev Migration   | %.3f ms        | %.3f ms        | %.1f%%\n",
-+	       thp->sys_to_dev_time, regular->sys_to_dev_time, s2d_improvement);
-+	printf("Dev->Sys Migration   | %.3f ms        | %.3f ms        | %.1f%%\n",
-+	       thp->dev_to_sys_time, regular->dev_to_sys_time, d2s_improvement);
-+	printf("S->D Throughput      | %.2f GB/s      | %.2f GB/s      | %.1f%%\n",
-+	       thp->throughput_s2d, regular->throughput_s2d, throughput_s2d_improvement);
-+	printf("D->S Throughput      | %.2f GB/s      | %.2f GB/s      | %.1f%%\n",
-+	       thp->throughput_d2s, regular->throughput_d2s, throughput_d2s_improvement);
-+}
-+
-+/*
-+ * Run a single migration benchmark
-+ * fd: file descriptor for hmm device
-+ * use_thp: whether to use THP
-+ * buffer_size: size of buffer to allocate
-+ * iterations: number of iterations
-+ * results: where to store results
-+ */
-+static inline int run_migration_benchmark(int fd, int use_thp, size_t buffer_size,
-+					   int iterations, struct benchmark_results *results)
-+{
-+	struct hmm_buffer *buffer;
-+	unsigned long npages = buffer_size / sysconf(_SC_PAGESIZE);
-+	double start, end;
-+	double s2d_total = 0, d2s_total = 0;
-+	int ret, i;
-+	int *ptr;
-+
-+	buffer = hmm_buffer_alloc(buffer_size);
-+
-+	/* Map memory */
-+	buffer->ptr = mmap(NULL, buffer_size, PROT_READ | PROT_WRITE,
-+			  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+
-+	if (!buffer->ptr)
-+		return -1;
-+
-+	/* Apply THP hint if requested */
-+	if (use_thp)
-+		ret = madvise(buffer->ptr, buffer_size, MADV_HUGEPAGE);
-+	else
-+		ret = madvise(buffer->ptr, buffer_size, MADV_NOHUGEPAGE);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Initialize memory to make sure pages are allocated */
-+	ptr = (int *)buffer->ptr;
-+	for (i = 0; i < buffer_size / sizeof(int); i++)
-+		ptr[i] = i & 0xFF;
-+
-+	/* Warmup iteration */
-+	ret = hmm_migrate_sys_to_dev(fd, buffer, npages);
-+	if (ret)
-+		return ret;
-+
-+	ret = hmm_migrate_dev_to_sys(fd, buffer, npages);
-+	if (ret)
-+		return ret;
-+
-+	/* Benchmark iterations */
-+	for (i = 0; i < iterations; i++) {
-+		/* System to device migration */
-+		start = get_time_ms();
-+
-+		ret = hmm_migrate_sys_to_dev(fd, buffer, npages);
-+		if (ret)
-+			return ret;
-+
-+		end = get_time_ms();
-+		s2d_total += (end - start);
-+
-+		/* Device to system migration */
-+		start = get_time_ms();
-+
-+		ret = hmm_migrate_dev_to_sys(fd, buffer, npages);
-+		if (ret)
-+			return ret;
-+
-+		end = get_time_ms();
-+		d2s_total += (end - start);
-+	}
-+
-+	/* Calculate average times and throughput */
-+	results->sys_to_dev_time = s2d_total / iterations;
-+	results->dev_to_sys_time = d2s_total / iterations;
-+	results->throughput_s2d = (buffer_size / (1024.0 * 1024.0 * 1024.0)) /
-+				 (results->sys_to_dev_time / 1000.0);
-+	results->throughput_d2s = (buffer_size / (1024.0 * 1024.0 * 1024.0)) /
-+				 (results->dev_to_sys_time / 1000.0);
-+
-+	/* Cleanup */
-+	hmm_buffer_free(buffer);
-+	return 0;
-+}
-+
-+/*
-+ * Benchmark THP migration with different buffer sizes
-+ */
-+TEST_F_TIMEOUT(hmm, benchmark_thp_migration, 120)
-+{
-+	struct benchmark_results thp_results, regular_results;
-+	size_t thp_size = 2 * 1024 * 1024; /* 2MB - typical THP size */
-+	int iterations = 5;
-+
-+	printf("\nHMM THP Migration Benchmark\n");
-+	printf("---------------------------\n");
-+	printf("System page size: %ld bytes\n", sysconf(_SC_PAGESIZE));
-+
-+	/* Test different buffer sizes */
-+	size_t test_sizes[] = {
-+		thp_size / 4,      /* 512KB - smaller than THP */
-+		thp_size / 2,      /* 1MB - half THP */
-+		thp_size,          /* 2MB - single THP */
-+		thp_size * 2,      /* 4MB - two THPs */
-+		thp_size * 4,      /* 8MB - four THPs */
-+		thp_size * 8,       /* 16MB - eight THPs */
-+		thp_size * 128,       /* 256MB - one twenty eight THPs */
-+	};
-+
-+	static const char *const test_names[] = {
-+		"Small Buffer (512KB)",
-+		"Half THP Size (1MB)",
-+		"Single THP Size (2MB)",
-+		"Two THP Size (4MB)",
-+		"Four THP Size (8MB)",
-+		"Eight THP Size (16MB)",
-+		"One twenty eight THP Size (256MB)"
-+	};
-+
-+	int num_tests = ARRAY_SIZE(test_sizes);
-+
-+	/* Run all tests */
-+	for (int i = 0; i < num_tests; i++) {
-+		/* Test with THP */
-+		ASSERT_EQ(run_migration_benchmark(self->fd, 1, test_sizes[i],
-+					iterations, &thp_results), 0);
-+
-+		/* Test without THP */
-+		ASSERT_EQ(run_migration_benchmark(self->fd, 0, test_sizes[i],
-+					iterations, &regular_results), 0);
-+
-+		/* Print results */
-+		print_benchmark_results(test_names[i], test_sizes[i],
-+					&thp_results, &regular_results);
-+	}
-+}
- TEST_HARNESS_MAIN
--- 
-2.50.1
+>>>> +	void *cpu_ptr;
+>>>> +	u64 gpu_addr;
+>>>> +	u32 ret;
+>>>> +
+>>>> +	dev = ispif->dev;
+>>>> +
+>>>> +	if (!mem_size)
+>>>> +		return NULL;
+>>>> +
+>>>> +	mem_info = kzalloc(sizeof(*mem_info), GFP_KERNEL);
+>>>> +	if (!mem_info)
+>>>> +		return NULL;
+>>>> +
+>>>> +	adev = (struct amdgpu_device *)ispif->adev;
+>>>
+>>> Why the cast?
+>>>
+>>> adev isn't a great name here as it's usually used for struct acpi_devices.
+>>>
+>> In the next patch, will use new helper function for this and will no longer
+>> use amdgpu_device
+> 
+> Use correct types when you can; either way this doesn't seem to be changed
+> by the further patches in the set.
+> 
+> ...
+> 
 
+Yes, totally agree.
+
+>>>> +static int isp4if_gpu_mem_free(struct isp4_interface *ispif,
+>>>> +			       struct isp4if_gpu_mem_info *mem_info)
+>>>> +{
+>>>> +	struct device *dev = ispif->dev;
+>>>> +	struct amdgpu_bo *bo;
+>>>> +
+>>>> +	if (!mem_info) {
+>>>> +		dev_err(dev, "invalid mem_info\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	bo = (struct amdgpu_bo *)mem_info->mem_handle;
+>>>
+>>> Why do you need to cast here?
+>>>
+>> In the next patch, will use new helper function for this and will no longer
+>> use amdgpu_bo
+> 
+> Not quite, on top of this patch number 6 adds more of the same.
+> 
+> ...
+> 
+
+Thanks, will double check all new patches to avoid similar problem.
+
+>>>> +static struct isp4if_cmd_element *
+>>>> +isp4if_append_cmd_2_cmdq(struct isp4_interface *ispif,
+>>>> +			 struct isp4if_cmd_element *cmd_ele)
+>>>> +{
+>>>> +	struct isp4if_cmd_element *copy_command = NULL;
+>>>> +
+>>>> +	copy_command = kmalloc(sizeof(*copy_command), GFP_KERNEL);
+>>>> +	if (!copy_command)
+>>>> +		return NULL;
+>>>> +
+>>>> +	memcpy(copy_command, cmd_ele, sizeof(*copy_command));
+>>>
+>>> kmemdup()?
+>>>
+>> Kmemdup is to allocate memory and copy, can't be used here.
+> 
+> Isn't that what you're doing above?
+> 
+>>
+
+Yes, you are absolutely right. Sorry, missed the kmalloc before the 
+memcpy, will fix in the next patch.
+
+>>>> +
+>>>> +	guard(mutex)(&ispif->cmdq_mutex);
+>>>> +
+>>>> +	list_add_tail(&copy_command->list, &ispif->cmdq);
+>>>> +
+>>>> +	return copy_command;
+>>>> +}
+> 
+
+Regards,
+Bin
 
