@@ -1,288 +1,236 @@
-Return-Path: <linux-kernel+bounces-765132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D17BB22BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFFAB22BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CC8503B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E9503C36
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5E0302CC0;
-	Tue, 12 Aug 2025 15:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3431E835B;
+	Tue, 12 Aug 2025 15:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4QmRXigr"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhqohvny"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B232EB5A7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3B2D3235
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013501; cv=none; b=arqta+1SKnGPC3PpMQED8yw6fcNWHqPZRGHVmtncWi3U5xd88xEUCRnQZCNp3VWsA2XBIva/rLGL46i22VTzL72c3vkS5UiiloLYGOyIHTBWAeQN+5aMatD6C1fx9mzvHcuj6ChpnQ69SpuRWSdw3Wz+ilDp1ZqtTjNJfDj12bc=
+	t=1755013529; cv=none; b=tjjgBXukftjSL1XtGwjvh0Z6upQ8ij4NL+eTtQHAD55xT4jc2aOofhw6UXikS16ERy0vwTWUiUqK9cEfV3rA4hOM67au3Ja2WL3aNmTY0VV1Nm5UJKk0MA41BBLEwf2ISIMGeS2UoQPrYmz3u5UXexPKbuP4GyOWcQKP6GQ8SNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013501; c=relaxed/simple;
-	bh=V4nAfRh5hJEaNgQ0XNa1PZHky2LJQmCg5Kdc9PzaoPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VFPk0MEtGBG4CnwqFv6H+UpX8N89K1DL4UMv6C8u84gJ97UOtBhD22nFW/tHkWRQDHb/jev7rZODj4NFNZUvsTkkl5/DDLSImwuPp8375+GUCTjArtsLwySBk1Ea5LAAa9nf9vqRgjJG4e/ZNs1rOI3JysgjK5POORZZ3v8fUXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4QmRXigr; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-618076f9545so10151a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:44:58 -0700 (PDT)
+	s=arc-20240116; t=1755013529; c=relaxed/simple;
+	bh=5Se+F+1EMlhc69tsHduseJG4sR0ixpFpMm5/AlgsW7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPhjY+602CW9nTy3980Yrfq2mUmUjC9ODbsDEK3Bk9cdjPwHBweKd3jbeJXAulFYNbkRiWl+xU+FjoAGoHU3U7fZCOfX42jG6hMiO9yhr7Y25XzafFCSjQfww5p8TfwGHfUvTWFsBiowQzV4YaqlbnTDe7wSRBXOGUjJK6dpmSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hhqohvny; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so9890251a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755013497; x=1755618297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RsK293MmHf8pse6HN2BuJU8GIQNvtZ8jhqFCWJgRy+I=;
-        b=4QmRXigrsTNTpm0nSlEcaThLh0bxbKrjveh6/lwujgS3wO/XZC+4esBd7ZtshmYZWQ
-         JPrmOwvWCWxcipZKfoC4QDcYFmI/R5+QBfpJDc00CnnMhBr55Tc5trF8iNk+EFQUqM4v
-         F9pEIi3pd7ZhOYin27QOqbFhUec2q6oXkw1480uY/qjfEh/TtJaN5qIS2Tj2UoYNxnaf
-         Z9BCZg44u1WGLyAPwVWi0Xyny07oPIC9VX4GEzbzsOdDat9Ldw2gODyHGbIJ8SbsDlcW
-         +If4nVK2f8ibHB2Y1vLWOUfF2O+gLlJ8sSCv/7uOQNVkFbDxv8iOMwTgi+zZSjzCmjf6
-         Pl7g==
+        d=linaro.org; s=google; t=1755013526; x=1755618326; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w7CnICIdbhtr4UaouZj4YBT6fSBX0mSxz7ag9u7Kuww=;
+        b=hhqohvnyDtrWigVBbztXbpu8l5A/E9ddO7x6hj2u6h+FGbe9xI9Qp93uXswdQ1znG5
+         kaeB1/qlTlHDozUsqHjAYHViBI7Ix6BUepCamdBpWMi029STnXLmLnzOc2BVPOC6+VA9
+         7eJEIr5roYWq8QsEf0fOCHVdoshjMCUpDZNcde0o6HJTNVXoEp/XXdrnvul3YuzmZFxV
+         YQh1EPdScywB1jgCQIC3pVIgcKjKDF6VZ79H27aJUmrzZWcJxUmR+ZX/JY/F9Tbx3ubv
+         JJB5FuJ7V5rFJwkzkUTfPq/4k3EcFuaQsYuCUp2fDGkTk4z4Ulij69ViMvLvrZ1OicdL
+         GCJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013497; x=1755618297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RsK293MmHf8pse6HN2BuJU8GIQNvtZ8jhqFCWJgRy+I=;
-        b=CdPZg1lc910vyJzAUPPn8IGzDg49vk3uzOqMvscvtCygwoWtyy6ubjJe+9SePLZjny
-         Oyi/Yva6BaUVo31NV6y44OYxx3kKp3alsiR4qYik3CwXl9/kY71qz3xdp7RZXtO9mFfZ
-         Q5RSyxLRtV1XGRld2SKYFtow5g29WIsbmsCpsWkbAGo4d0ToyWwQyC7dFYFYsPHY0BWu
-         kmp0WbhG4iruOypkFRSWiQx9tj+JJCDqXCsmxzh4b5pp5g6NUUafrGeAVd5OmX1PcYmd
-         YYZaAgrTxgHKK1AegaKWl9+QRD83R1p+tejwvp0rPphVwnkI6sk3xQtaL2VMa4uT9bq4
-         lsmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+EXFmdmzv43fIW9BXDN/v5QrmAY8XigN8hO1HkSX/ECfUCbi/Afo5bEHBUCJf5yQxbEE5STh615mzN1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0q0kcwyRn70IPcnX0JytIwacZVMWKj2opWHsk61cwgrPHYO0X
-	hckBPBaowxo0GaGqNn2Bbb+9Qr8FaPqY/vc8Y6/QaIUYIzE+YWf61grV9d1wctMbfykP2q5ejAI
-	W6YmSJsPIfr9afl5PRu7xGx/LgZEHneIwE3ql8Xmb
-X-Gm-Gg: ASbGnctIvTKk+egHrz9q5AXzw82rxVXKznbIvSZvtXGR/CeQOBgdvL3gpEhaO009l7u
-	Nbt7gQGwA7P2lr7z+NrRZxqbEH2GF5BhkZLv+gWr76RVgLmd6tr4pISBZASgPVqd8Hh75Wq56Sf
-	ydhBDuiicG0IGWxELTdoyIvtPpbfUGmJeRebnjgINSlpbZDurAE7MbtTFYMog6VC0xnsrxiMk0X
-	PVj+9kCEXq57GT0rWs8868jei9quNbACg62CWsc
-X-Google-Smtp-Source: AGHT+IHmN1t9Ow7j1HNO/tSwEsAAgRPZFDsfEauZe3ao3LGyM8hJQlwtkpJACn0tgu3202KbNvXn1eiPTrCsNP+bcKU=
-X-Received: by 2002:a50:c309:0:b0:618:527d:633d with SMTP id
- 4fb4d7f45d1cf-618527d6397mr70467a12.5.1755013497120; Tue, 12 Aug 2025
- 08:44:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755013526; x=1755618326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w7CnICIdbhtr4UaouZj4YBT6fSBX0mSxz7ag9u7Kuww=;
+        b=Hr0CNam/REhFrmpC6BeQ8lltpiZOPV/Urh+FI8i1+XzlfVENsuclZho477+U6m6ZGr
+         Yk4LZ4bVcpMRm9nMDfL3qchpy3j4QzaQVZkPzOOuVCm78rtkAgKbwjOs9TmJNZrIJAV+
+         DAuT7fuMQVnLuuOP7+wGTtTqv191CmGaDY4G1C4LG41EplLCMr4GNgtCXWwU+Di0u0uS
+         cN7VD6+fVOl/csW718JiVTUNJO2SPz/poZi0GLLhWdv5Py8+mQDTUZ1z0tTfh3b5CHtf
+         /wrNsUA5z+/Qo7oPlyddnCorNbnnf99II7agW6iV9tPxD3Vb/DXNT0U+bMARjhfjmGUN
+         KH0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUR/0cm8tb7WiugpoyQVSCr93E3+SJe6KArGSqyC7FRpNo4FkTVu+KNJ77EdmND8hmUJpXeOXkcpw3sF4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9G7rzI+G8/fdjGlfro/t4gE7lzuX52/OzkbQLcGGsEAPdLPLb
+	q0IihnxdUh4EI2Ro5aJAY/dW2C2id2cT63KF8PJ0gjfZXDcFT+3I4MAncN2FN3gpQlU=
+X-Gm-Gg: ASbGncvVftJpkZ7QnqTqSGQhl6S2ysaCYz/G7ihSIRreib2CVnFRuE9VoYdcFYPRTcx
+	pVYCY4r4Wj+rKDyUCasDcMRt8EfdEZwEqDO5wEOHboRuxr87csrWccBt2u0fKDYlXZ7y2zhRdse
+	GRaf3s1OOfQH+qjotB9ajFuCl1K6NG+Ai4h4y3RYtJJjF7SC7W+OtO5d/qqlBf68qw4i+epwcSa
+	9CWE36dyNBz2t0nquFuchjZfdPijS6PRJkeRKOVX8+zNNR0s21+u6k1ZDUGY2lQXMPfkG7y/Q98
+	bQ3cgKUZ0ICD2iIff7WSe/Co7wcGnHWEHT9gATcRmnXOn0iGb/8065lJXWpTNTQwrbR7e6ZxYDE
+	NEcLPztBFfgJ5SUIlmZIYhxr/H3Nbpt+utR9EAv/Pl1JsEQ==
+X-Google-Smtp-Source: AGHT+IE/DFre7Dkj0Kr639ydBYp88P4MCJv/kcPa8lmuCXkFGm+IEWxy7IQ8BXl02A6K0PyH4aL3dw==
+X-Received: by 2002:a17:907:3ccc:b0:ad8:87a0:62aa with SMTP id a640c23a62f3a-afca3986331mr19664466b.27.1755013525782;
+        Tue, 12 Aug 2025 08:45:25 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:167b:7c8c:a586:8ebd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a750253sm2230386566b.86.2025.08.12.08.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 08:45:25 -0700 (PDT)
+Date: Tue, 12 Aug 2025 17:45:21 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-romulus: Describe PCIe
+ power supplies
+Message-ID: <aJthkXa8BZMoW3CQ@linaro.org>
+References: <20250812-topic-romulus_wifi_pci-v1-0-2adbed1b1f1d@oss.qualcomm.com>
+ <20250812-topic-romulus_wifi_pci-v1-1-2adbed1b1f1d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810062912.1096815-1-lokeshgidra@google.com>
- <CAGsJ_4wbXkfaAn+79g20SfE-0Ak4QACVP+Mw2vAvMnxBCcLAsQ@mail.gmail.com> <aJtTPkenKeFuFFNQ@x1.local>
-In-Reply-To: <aJtTPkenKeFuFFNQ@x1.local>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Tue, 12 Aug 2025 08:44:44 -0700
-X-Gm-Features: Ac12FXyU0NQ9L3LCZ3v7S5pHOgaGIENanOTtEMEbC_428PvXJZ_y6RAyNUzVtBo
-Message-ID: <CA+EESO763JtY3jjmgGGbJjSQcnJJFNpDs2iPaUwjP44VpyyzdQ@mail.gmail.com>
-Subject: Re: [PATCH v4] userfaultfd: opportunistic TLB-flush batching for
- present pages in MOVE
-To: Peter Xu <peterx@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, ngeoffray@google.com, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812-topic-romulus_wifi_pci-v1-1-2adbed1b1f1d@oss.qualcomm.com>
 
-On Tue, Aug 12, 2025 at 7:44=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
->
-> On Mon, Aug 11, 2025 at 11:55:36AM +0800, Barry Song wrote:
-> > Hi Lokesh,
-> >
-> >
-> > On Sun, Aug 10, 2025 at 2:29=E2=80=AFPM Lokesh Gidra <lokeshgidra@googl=
-e.com> wrote:
-> > >
-> > > MOVE ioctl's runtime is dominated by TLB-flush cost, which is require=
-d
-> > > for moving present pages. Mitigate this cost by opportunistically
-> > > batching present contiguous pages for TLB flushing.
-> > >
-> > > Without batching, in our testing on an arm64 Android device with UFFD=
- GC,
-> > > which uses MOVE ioctl for compaction, we observed that out of the tot=
-al
-> > > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), an=
-d
-> > > ~20% in vm_normal_folio().
-> > >
-> > > With batching, the proportion of vm_normal_folio() increases to over
-> > > 70% of move_pages_pte() without any changes to vm_normal_folio().
-> > > Furthermore, time spent within move_pages_pte() is only ~20%, which
-> > > includes TLB-flush overhead.
-> > >
-> > > Cc: Suren Baghdasaryan <surenb@google.com>
-> > > Cc: Kalesh Singh <kaleshsingh@google.com>
-> > > Cc: Barry Song <v-songbaohua@oppo.com>
-> > > Cc: David Hildenbrand <david@redhat.com>
-> > > Cc: Peter Xu <peterx@redhat.com>
-> > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > > ---
-> > > Changes since v3 [1]
-> > > - Fix unintialized 'step_size' warning, per Dan Carpenter
-> > > - Removed pmd_none() from check_ptes_for_batched_move(), per Peter Xu
-> > > - Removed flush_cache_range() in zero-page case, per Peter Xu
-> > > - Added comment to explain why folio reference for batched pages is n=
-ot
-> > >   required, per Peter Xu
-> > > - Use MIN() in calculation of largest extent that can be batched unde=
-r
-> > >   the same src and dst PTLs, per Peter Xu
-> > > - Release first folio's reference in move_present_ptes(), per Peter X=
-u
-> > >
-> > > Changes since v2 [2]
-> > > - Addressed VM_WARN_ON failure, per Lorenzo Stoakes
-> > > - Added check to ensure all batched pages share the same anon_vma
-> > >
-> > > Changes since v1 [3]
-> > > - Removed flush_tlb_batched_pending(), per Barry Song
-> > > - Unified single and multi page case, per Barry Song
-> > >
-> > > [1] https://lore.kernel.org/all/20250807103902.2242717-1-lokeshgidra@=
-google.com/
-> > > [2] https://lore.kernel.org/all/20250805121410.1658418-1-lokeshgidra@=
-google.com/
-> > > [3] https://lore.kernel.org/all/20250731104726.103071-1-lokeshgidra@g=
-oogle.com/
-> > >
-> > >  mm/userfaultfd.c | 178 +++++++++++++++++++++++++++++++++------------=
---
-> > >  1 file changed, 127 insertions(+), 51 deletions(-)
-> > >
-> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > index cbed91b09640..39d81d2972db 100644
-> > > --- a/mm/userfaultfd.c
-> > > +++ b/mm/userfaultfd.c
-> > > @@ -1026,18 +1026,64 @@ static inline bool is_pte_pages_stable(pte_t =
-*dst_pte, pte_t *src_pte,
-> > >                pmd_same(dst_pmdval, pmdp_get_lockless(dst_pmd));
-> > >  }
-> > >
-> > > -static int move_present_pte(struct mm_struct *mm,
-> > > -                           struct vm_area_struct *dst_vma,
-> > > -                           struct vm_area_struct *src_vma,
-> > > -                           unsigned long dst_addr, unsigned long src=
-_addr,
-> > > -                           pte_t *dst_pte, pte_t *src_pte,
-> > > -                           pte_t orig_dst_pte, pte_t orig_src_pte,
-> > > -                           pmd_t *dst_pmd, pmd_t dst_pmdval,
-> > > -                           spinlock_t *dst_ptl, spinlock_t *src_ptl,
-> > > -                           struct folio *src_folio)
-> > > +/*
-> > > + * Checks if the two ptes and the corresponding folio are eligible f=
-or batched
-> > > + * move. If so, then returns pointer to the locked folio. Otherwise,=
- returns NULL.
-> > > + *
-> > > + * NOTE: folio's reference is not required as the whole operation is=
- within
-> > > + * PTL's critical section.
-> > > + */
-> > > +static struct folio *check_ptes_for_batched_move(struct vm_area_stru=
-ct *src_vma,
-> > > +                                                unsigned long src_ad=
-dr,
-> > > +                                                pte_t *src_pte, pte_=
-t *dst_pte,
-> > > +                                                struct anon_vma *src=
-_anon_vma)
-> > > +{
-> > > +       pte_t orig_dst_pte, orig_src_pte;
-> > > +       struct folio *folio;
-> > > +
-> > > +       orig_dst_pte =3D ptep_get(dst_pte);
-> > > +       if (!pte_none(orig_dst_pte))
-> > > +               return NULL;
-> > > +
-> > > +       orig_src_pte =3D ptep_get(src_pte);
-> > > +       if (!pte_present(orig_src_pte) || is_zero_pfn(pte_pfn(orig_sr=
-c_pte)))
-> > > +               return NULL;
-> > > +
-> > > +       folio =3D vm_normal_folio(src_vma, src_addr, orig_src_pte);
-> > > +       if (!folio || !folio_trylock(folio))
-> > > +               return NULL;
-> > > +       if (!PageAnonExclusive(&folio->page) || folio_test_large(foli=
-o) ||
-> > > +           folio_anon_vma(folio) !=3D src_anon_vma) {
-> > > +               folio_unlock(folio);
-> > > +               return NULL;
-> > > +       }
-> > > +       return folio;
-> > > +}
-> > > +
-> >
-> > I=E2=80=99m still quite confused by the code. Before move_present_ptes(=
-), we=E2=80=99ve
-> > already performed all the checks=E2=80=94pte_same(), vm_normal_folio(),
-> > folio_trylock(), folio_test_large(), folio_get_anon_vma(),
-> > and anon_vma_lock_write()=E2=80=94at least for the first PTE. Now we=E2=
-=80=99re
-> > duplicating them again for all PTEs. Does this mean we=E2=80=99re doing=
- those
-> > operations for the first PTE twice? It feels like the old non-batch che=
-ck
-> > code should be removed?
->
-> This function should only start to work on the 2nd (or more) continuous
-> ptes to move within the same pgtable lock held.  We'll still need the
-> original path because that was sleepable, this one isn't, and it's only
-> best-effort fast path only. E.g. if trylock() fails above, it would
-> fallback to the slow path.
->
-Thanks Peter. I was about to give exactly the same reasoning :)
-> >
-> > > +static long move_present_ptes(struct mm_struct *mm,
-> > > +                             struct vm_area_struct *dst_vma,
-> > > +                             struct vm_area_struct *src_vma,
-> > > +                             unsigned long dst_addr, unsigned long s=
-rc_addr,
-> > > +                             pte_t *dst_pte, pte_t *src_pte,
-> > > +                             pte_t orig_dst_pte, pte_t orig_src_pte,
-> > > +                             pmd_t *dst_pmd, pmd_t dst_pmdval,
-> > > +                             spinlock_t *dst_ptl, spinlock_t *src_pt=
-l,
-> > > +                             struct folio **first_src_folio, unsigne=
-d long len,
-> > > +                             struct anon_vma *src_anon_vma)
-> > >  {
-> > >         int err =3D 0;
-> > > +       struct folio *src_folio =3D *first_src_folio;
-> > > +       unsigned long src_start =3D src_addr;
-> > > +       unsigned long addr_end;
-> > > +
-> > > +       if (len > PAGE_SIZE) {
-> > > +               addr_end =3D (dst_addr + PMD_SIZE) & PMD_MASK;
-> > > +               len =3D MIN(addr_end - dst_addr, len);
-> > >
-> > > +               addr_end =3D (src_addr + PMD_SIZE) & PMD_MASK;
-> > > +               len =3D MIN(addr_end - src_addr, len);
-> > > +       }
-> >
-> > We already have a pmd_addr_end() helper=E2=80=94can we reuse it?
->
-> I agree with Barry; I wante to say this version didn't use ALIGN() that I
-> suggested but pmd_addr_end() looks better.
+On Tue, Aug 12, 2025 at 03:47:23PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Describe the power plumbing to allow fully suspending the slot and the
+> connected SD controller.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-ALIGN() couldn't be used as we are calculating "how many bytes to the
-next PMD" and not just align it. Anyways, pmd_addr_end() is definitely
-better. Will do it in the next patch.
->
-> Other than that this version looks good to me (plus the higher level
-> performance results updated to the commit message, per requested in v3),
-> thanks Lokesh.
+Are you sure these supplies really exist on the board? E.g. on the
+x1e001de-devkit, Windows toggles all these GPIOs, but there doesn't seem
+to be anything connected to two of them, the 12V supply is simply always
+on.
 
-Thanks Peter. I'll update the commit message in v5.
->
-> --
-> Peter Xu
->
+Even more importantly, for a laptop I would expect they use some part
+that doesn't need a beefy 12V supply. I don't have the datasheet for
+RTS5261, but e.g. in [1] this chip is explicitly advertised with 3.3V
+power.
+
+I guess it's hard to be sure without schematics and it surely doesn't
+hurt to toggle these GPIOs like on Windows, but perhaps a comment that
+some of these likely don't exist would be good ...
+
+[1]: https://www.sdcard.org/cms/wp-content/uploads/2023/06/SDA_computex2023_Realtek.pdf
+
+> ---
+>  .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> index 0fd8516580b2679ee425438cb73fd4078cb20581..3a4df8f8066ae699eb7d889530f976fce565757e 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> @@ -331,6 +331,54 @@ vph_pwr: regulator-vph-pwr {
+>  		regulator-boot-on;
+>  	};
+>  
+> +	vreg_pcie_12v: regulator-pcie-12v {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "vreg_pcie_12v";
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +
+> +		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&vreg_12v_x8_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_pcie_3v3_aux: regulator-pcie-3v3-aux {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "vreg_pcie_3v3_aux";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&pmc8380_3_gpios 8 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&sde7_aux_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_pcie_3v3_main: regulator-pcie-3v3-main {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "vreg_pcie_3v3_main";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&pmc8380_3_gpios 6 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&sde7_main_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+>  	sound {
+>  		compatible = "qcom,x1e80100-sndcard";
+>  		model = "X1E80100-Romulus";
+> @@ -1022,6 +1070,12 @@ &pcie3_phy {
+>  	status = "okay";
+>  };
+>  
+> +&pcie3_port {
+> +	vpcie12v-supply = <&vreg_pcie_12v>;
+> +	vpcie3v3-supply = <&vreg_pcie_3v3_main>;
+> +	vpcie3v3aux-supply = <&vreg_pcie_3v3_aux>;
+> +};
+> +
+>  &pcie4 {
+>  	status = "okay";
+>  };
+> @@ -1066,6 +1120,13 @@ rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
+>  	};
+>  };
+>  
+> +&pm8550ve_8_gpios {
+> +	vreg_12v_x8_en: 12v-x8-reg-en-state {
+> +		pins = "gpio8";
+> +		function = "normal";
+> +	};
+> +};
+> +
+>  &pm8550ve_9_gpios {
+>  	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
+>  		pins = "gpio8";
+> @@ -1082,6 +1143,16 @@ edp_bl_en: edp-bl-en-state {
+>  		input-disable;
+>  		output-enable;
+>  	};
+> +
+> +	sde7_main_reg_en: sde7-main-reg-en-state {
+> +		pins = "gpio6";
+> +		function = "normal";
+> +	};
+> +
+> +	sde7_aux_reg_en: sde7-aux-reg-en-state {
+> +		pins = "gpio8";
+> +		function = "normal";
+> +	};
+>  };
+
+I think you should either do a full configuration (include power-source
+and everything else essential as well) or omit this entirely, because
+like this you will need the proper configuration from the boot firmware
+anyway.
+
+Thanks,
+Stephan
 
