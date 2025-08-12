@@ -1,263 +1,146 @@
-Return-Path: <linux-kernel+bounces-765406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1524FB232B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:21:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B8AB232D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1983918970CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E902A2512
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884D82F90CC;
-	Tue, 12 Aug 2025 18:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E72FD1DA;
+	Tue, 12 Aug 2025 18:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="br/QkOHF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="fouCeRSm"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CAF2F5E;
-	Tue, 12 Aug 2025 18:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342DC2F5E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022573; cv=none; b=pqBoqtRVHkQhELj4SfYG0BUI/QqNGHPmecwhoiaGRb4CcAEpIr7KbWiZp1R9sxWLCztsc/MJQZI9ZL9s+c74lQgj7f1JVqY3rUjvf82Zq0/TO7UnnG3MTcWaX/41zy7DyX31xo92/ERZPSzjTesCrSCv+OA+fPZH//R/uJdOkUc=
+	t=1755022645; cv=none; b=GQKd5BBpqD9c15OJv5TkrBzgWsd3y1g63/yUH2+xF9hLjE70F2sW/SWnP7H8xoXbb27H6otQE4HSnNR1NGXRwTfexVgKt/b7GCXAR/DQ8Z4yObQEJkl/NKa9XbpLvSmsNOgqf2hqve+I99w4DRVKp4N/+wAmw2m5+oasNM28h6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022573; c=relaxed/simple;
-	bh=fDZnvAA2mnVJbYgQrVoz1txCeHcgWvTyh3WC2pJ5ZKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TCF6tLybOW7ItCBQGuJge/yOLJ1UDrGUxrMRRcqBPq2nxaRxQCXZsp4g42hgVnuBMiEwDmY2SPIZI3hi45mrabioon+EXPxYa/vjvWZ/NqLDpRsx9bD8OGUD6t5xVsx2Okxtx7W1nrcjKfnPnkSjdUQMHKReD8D3nWOQ8MiT1nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=br/QkOHF; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755022572; x=1786558572;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fDZnvAA2mnVJbYgQrVoz1txCeHcgWvTyh3WC2pJ5ZKA=;
-  b=br/QkOHFptXwtfngLOX0vGf4x9uTkPBQxuBNaajX34lWVvdj0fG9L1UT
-   QBXi1+vwW4m+/HMfZlBMUEl5Z3y7ceOoGb7hSGww2Pi8YtiG8hJoisYFu
-   3qdzuoMl+DDkQ1ULHDb4D+tfxzVjOyTOycQEOv++elFbZSwKyMWnOBjmR
-   j7VPU9nffapqFSYAePTJa6hdu7WeraY2Em8DebcF/Zdh1hbuUuB5gqSiC
-   lt8G7+GUGkAtyDahmHX7syBtmHSQFrwqM6IS0EfOUna6+FFKxK3iTUoDk
-   uRx8Pa/ffo4KVPw4jdVdHdtIUqsF5S8XPk+RcHDNIrDv/TBfJta+MKkm2
-   Q==;
-X-CSE-ConnectionGUID: glEaXno0TlizEBhBOXNxJQ==
-X-CSE-MsgGUID: spOEfcCrTmGfh8LnOe1x9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68681375"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="68681375"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 11:16:10 -0700
-X-CSE-ConnectionGUID: oOyv7QUbQBuUQ30pJC/TWw==
-X-CSE-MsgGUID: GpMTKoYPRra8ezrE0AUAtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="203445470"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 11:16:10 -0700
-Received: from [10.246.149.5] (kliang2-mobl1.ccr.corp.intel.com [10.246.149.5])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 49C9320B571C;
-	Tue, 12 Aug 2025 11:16:09 -0700 (PDT)
-Message-ID: <3b3644d5-f1c3-4f4b-94a7-fb12568a909e@linux.intel.com>
-Date: Tue, 12 Aug 2025 11:16:08 -0700
+	s=arc-20240116; t=1755022645; c=relaxed/simple;
+	bh=EMvQd3d1WlKkMgyYl6nmwZf21rQLaUhdMd88yyw2ml8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyY3TD+EvlKpxBz76FbnKmGBB5zyhFqO+yXl3T84ZCkEbrN4gLG1ZC8+XxQ0GHK+E+juYEA0n58nuzjuXvrRPKHU4xehetBr4Y7h2BFZNOsMiPu8UgVW7znrVRq0E3MCAiHcYdSG581+la87wbt7cXlS4Mns9gfnXgfC0kBfKuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=fouCeRSm; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso6325370a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1755022642; x=1755627442; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SMsriY29YvNF5zAGx23oTqCNdYx68Xnkyo51DYe24q0=;
+        b=fouCeRSmU+GOlJn8FNDilWLnfH4F6mxza0lezZWMPGB/kPLWaBpYhnh1u5OMBBnyrC
+         UvMfkIjQ+sgcCT3ekSgl0l7RgQCTCzLV885GoptsH3ObVJq3jlwR3MUdtVuRYuJw3h4T
+         QXFbRSU9OxxnGxM7OT4xpbLvlajZ5rW+n+i6qk2/IbkumwKuoVdfPH5k5JZtrMYsR4N+
+         CWkusqUSJ4xmNedT+Tgx2RrOyFT7KHxXi//2pCV+1MaiFtefF1L3Zv2YBsxNWm1PMZXH
+         YrwAUUdewgs+cGFE99k9uOMZbs8aonzq2uUiGEf9lc5J5vj0FFC1JBWqsW5ozcS/nhgD
+         dHWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755022642; x=1755627442;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SMsriY29YvNF5zAGx23oTqCNdYx68Xnkyo51DYe24q0=;
+        b=M1yb0/bRvo8q8bihGVrQ7kARcviRKuriW3u4paLpmQ2+xN2BGoXb5WksZpk1BACuxc
+         hHJgWEREvETH++9BV6D0BOInNxLmWMxaAmIQAIG5rffpV3VEnnp7VpesfKtmfk+UjCTB
+         mAApEE28IgYh+D/iheyDq2FRPDcO/GCS4eWZF+GSJq+11xPQyiHjBMw/yAlATUC3Nkv4
+         ULaNHB05VXnpVpqmA2BBvXI2ef1trUN2Vp9gaqlB3dXzn1dD5NKebHkV5igCxRuAcqMV
+         ZRpIDYuh9YKdmIv4vzsmN1qA8iJ5OLI24EBcfqy05DKNAtgiFx2L9yc/CV45A4lJ3GIF
+         ox4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOTc/TmHkRhIFrUU804fD2svfQF00i9U0LS5z+xhMjMyxYmCJ0RNtDYv9VWMAHzorq7mFo11KRy2T3E1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQFF1tqo5K4ao97WUhBHRu7A8SuTfOjHLDgTqgZiqRy2uv1JVL
+	qWSG3trT8xCytBKrlkZBOW2dnlWOv7yw18Fm4irnU2j09zRGC5P8jX5otx4p7mtB/c4=
+X-Gm-Gg: ASbGncvIe6i0GML5eiz9kSjbgPWuVDxkjqSiK0kIsxbr/ETZrSG+utSP13LJ7FJiKZn
+	/fqNhi6C0lU4xkuxVG7ZJsgjjBM22/dVHWiQV3N1WiL8jGbb/JKUSpvcmZVBjv1Yjrpupjz9i4v
+	luPZr6IiugMIW66zVJPbSXq4ZgSU8FY76Wkm5I+6QOIx+pAViuPiOIPIn0F54hdjLfhExkQtLPm
+	0suHx2bVSw6uTaecuNYKKYHTZ/DFhCtuExVGIoq1kyhadrMoS6jHWx21YlOqykDFYTuND599sPh
+	QKO7eIuDFW0E3S/gg/5JEnV+oEp9RgDx1IKg0dLFBsUD4uCSxMAtORrhHFOK3JK7PlT7/hG+vHf
+	uL8vWQS2gw2xhA6p6sshoKH9D1qKGkxP8jJ7FtckOzCpAOoqXTMQB31G5wxkwIJVimWuQ5R4f
+X-Google-Smtp-Source: AGHT+IHNhWzWkwRf4t4T8nX0GvXq0IE7nZzVv4i5678hX4iND6uqFIFh5YX2G/IUawi7Y4lWCYrvwA==
+X-Received: by 2002:a17:90b:1a88:b0:31e:ec58:62e2 with SMTP id 98e67ed59e1d1-321d0e6d0famr45436a91.19.1755022642311;
+        Tue, 12 Aug 2025 11:17:22 -0700 (PDT)
+Received: from MacBook-Air.local (c-73-222-201-58.hsd1.ca.comcast.net. [73.222.201.58])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321611dd694sm17922432a91.1.2025.08.12.11.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 11:17:21 -0700 (PDT)
+Date: Tue, 12 Aug 2025 11:17:19 -0700
+From: Joe Damato <joe@dama.to>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@axis.com, imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next v2] net: enetc: Remove error print for
+ devm_add_action_or_reset()
+Message-ID: <aJuFL__jLySvTNIp@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>,
+	Waqar Hameed <waqar.hameed@axis.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@axis.com, imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <pnd1ppghh4p.a.out@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, kernel test robot <oliver.sang@intel.com>
-References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
- <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
- <17298e98-1a2d-4cdd-9156-73e77cc4eb5b@linux.intel.com>
- <0c546386-dde8-4aac-b499-9c18221ad981@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <0c546386-dde8-4aac-b499-9c18221ad981@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pnd1ppghh4p.a.out@axis.com>
 
-
-
-On 2025-08-11 7:33 p.m., Mi, Dapeng wrote:
+On Tue, Aug 12, 2025 at 02:13:58PM +0200, Waqar Hameed wrote:
+> When `devm_add_action_or_reset()` fails, it is due to a failed memory
+> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+> anything when error is `-ENOMEM`. Therefore, remove the useless call to
+> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+> return the value instead.
 > 
-> On 8/12/2025 7:32 AM, Liang, Kan wrote:
->>
->> On 2025-08-11 2:00 a.m., Dapeng Mi wrote:
->>> The PMI handler could disable some events as the interrupt throttling
->>> and clear the corresponding items in cpuc->events[] array.
->>>
->>> perf_event_overflow()
->>>   -> __perf_event_overflow()
->>>     ->__perf_event_account_interrupt()
->>>       -> perf_event_throttle_group()
->>>         -> perf_event_throttle()
->>>           -> event->pmu->stop()
->>>             -> x86_pmu_stop()
->>>
->>> Moreover PMI is NMI on x86 platform and it could interrupt other perf
->>> code like setup_pebs_adaptive_sample_data(). 
->> The PMU is disabled when draining the PEBS records. I don't think a PMI
->> can be triggered in the setup_pebs_adaptive_sample_data().
+> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> ---
+> Changes in v2:
 > 
-> Besides in NMI handler, the drain_pebs helper intel_pmu_drain_pebs_buffer()
-> could be called in many places, like context switch and PEBS event
-> disabling. 
-
-Yes
-
-> All these places could be interrupted by the NMI handler, and
-
-No. Before draining the buffer, the PMU must be stopped. No NMI could be
-triggered.
-
-> then the trigger this NULL pointer access issue.
+> * Split the patch to one seperate patch for each sub-system.
 > 
+> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
 > 
->>
->>> So once PMI handling
->>> finishes and returns into setup_pebs_adaptive_sample_data() and it could
->>> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
->>> triggers an invalid memory access and leads to kernel crashes eventually.
->> The commit 9734e25fbf5a stops all events in a group when processing the
->> last records of the leader event. For large PEBS, it's possible that
->> there are still some records for member events left. It should be the
->> root cause of the NULL pointer. If so, we should drain those records as
->> well.
+>  drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> The left PEBS record would always be cleared by
-> intel_pmu_drain_large_pebs() when disabling PEBS event.
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+> index b3dc1afeefd1..38fb81db48c2 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+> @@ -1016,8 +1016,7 @@ static int enetc4_pf_probe(struct pci_dev *pdev,
+>  
+>  	err = devm_add_action_or_reset(dev, enetc4_pci_remove, pdev);
+>  	if (err)
+> -		return dev_err_probe(dev, err,
+> -				     "Add enetc4_pci_remove() action failed\n");
+> +		return err;
 
-When stopping the event.
+I looked at a couple other drivers that use devm_add_action_or_reset and most
+follow the pattern proposed by this change.
 
-Then you should only need the check in intel_pmu_drain_pebs_icl(), since
-the stop only happens when handling the last event.
-
-Thanks,
-Kan>
-> 
->>
->> Thanks,
->> Kan>
->>> Thus add NULL check before accessing cpuc->events[*] pointer.
->>>
->>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
->>> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
->>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>> Tested-by: kernel test robot <oliver.sang@intel.com>
->>> ---
->>>  arch/x86/events/core.c       |  3 +++
->>>  arch/x86/events/intel/core.c |  6 +++++-
->>>  arch/x86/events/intel/ds.c   | 13 ++++++-------
->>>  3 files changed, 14 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->>> index 7610f26dfbd9..f0a3bc57157d 100644
->>> --- a/arch/x86/events/core.c
->>> +++ b/arch/x86/events/core.c
->>> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
->>>  			continue;
->>>  
->>>  		event = cpuc->events[idx];
->>> +		if (!event)
->>> +			continue;
->>> +
->>>  		last_period = event->hw.last_period;
->>>  
->>>  		val = static_call(x86_pmu_update)(event);
->>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->>> index 15da60cf69f2..386717b75a09 100644
->>> --- a/arch/x86/events/intel/core.c
->>> +++ b/arch/x86/events/intel/core.c
->>> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
->>>  		if (!is_topdown_idx(idx))
->>>  			continue;
->>>  		other = cpuc->events[idx];
->>> +		if (!other)
->>> +			continue;
->>>  		other->hw.saved_slots = slots;
->>>  		other->hw.saved_metric = metrics;
->>>  	}
->>> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
->>>  		if (!is_topdown_idx(idx))
->>>  			continue;
->>>  		other = cpuc->events[idx];
->>> +		if (!other)
->>> +			continue;
->>>  		__icl_update_topdown_event(other, slots, metrics,
->>>  					   event ? event->hw.saved_slots : 0,
->>>  					   event ? event->hw.saved_metric : 0);
->>> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
->>>  
->>>  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
->>>  		event = cpuc->events[bit];
->>> -		if (!event->attr.precise_ip)
->>> +		if (!event || !event->attr.precise_ip)
->>>  			continue;
->>>  
->>>  		perf_sample_data_init(data, 0, event->hw.last_period);
->>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->>> index c0b7ac1c7594..b23c49e2e06f 100644
->>> --- a/arch/x86/events/intel/ds.c
->>> +++ b/arch/x86/events/intel/ds.c
->>> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
->>>  	 */
->>>  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
->>>  		event = cpuc->events[bit];
->>> +		if (!event)
->>> +			continue;
->>>  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
->>>  			intel_pmu_save_and_restart_reload(event, 0);
->>>  	}
->>> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->>>  			continue;
->>>  
->>>  		event = cpuc->events[bit];
->>> -		if (WARN_ON_ONCE(!event))
->>> -			continue;
->>> -
->>> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
->>> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>>  			continue;
->>>  
->>>  		/* log dropped samples number */
->>> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>>  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
->>>  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
->>>  			event = cpuc->events[bit];
->>> -
->>> -			if (WARN_ON_ONCE(!event) ||
->>> -			    WARN_ON_ONCE(!event->attr.precise_ip))
->>> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>>  				continue;
->>>  
->>>  			if (counts[bit]++) {
->>> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>>  			continue;
->>>  
->>>  		event = cpuc->events[bit];
->>> +		if (!event)
->>> +			continue;
->>>  
->>>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->>>  					    counts[bit], setup_pebs_adaptive_sample_data);
-> 
-
+Reviewed-by: Joe Damato <joe@dama.to>
 
