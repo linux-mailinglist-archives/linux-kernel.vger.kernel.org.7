@@ -1,291 +1,241 @@
-Return-Path: <linux-kernel+bounces-765252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86891B22DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12940B22DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAAF91883521
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0420A507447
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A262FA0C4;
-	Tue, 12 Aug 2025 16:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0197C2F8BDE;
+	Tue, 12 Aug 2025 16:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XK5e7/n/"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="StY5fJkR"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011050.outbound.protection.outlook.com [52.101.70.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA1A2F8BFE;
-	Tue, 12 Aug 2025 16:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755015977; cv=none; b=bwWZcpDvbtvqlxf2P8R1sy7a6YvpLAgz3FyTbH01DrohFLEvY9vIxHMut2A+3t1nMARRnSo2lzu3JWKK/ecKrZKU+kBGByCHOh2R4bb4DMBD0xE957rWSg+icj1Rkz/GFSys8G/phoUv6vU9CmxykHU6Kiaq4na1+Lzio4DMY/I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755015977; c=relaxed/simple;
-	bh=mERfh/S4RUDhW5Z1CFSz/aH4PfqzLX4p+kfBZfUrQrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JzSvtRZoK3TqhJ+MSRTlLBYKb9cphmWmyv4S/sAAfhZ3sI02rncL9zq6Fy02ru58xpe7keHtUxULG4SM8hU07URHWYmL49SqbYoJRyEF+1EsosMNuk0T2S2jELd+iASv7qX8T3gzvRa6TJTqKh0tf1xBJ71vCJPqssuXuhyE1TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XK5e7/n/; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57CGPNAj1947279;
-	Tue, 12 Aug 2025 11:25:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755015923;
-	bh=0svE4w2w2DMu3Hngj9bv0Qop7RXmrRjLkTtIJIaYnvQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=XK5e7/n/Sl6c6Y0Jy8DL+HixLNzbUwJ1hXPvzRo6xQ+8olG/dqg25LkKflPBVfN9T
-	 9lzlGxBoX0WI5lbjJJTq/g0RrvAQx6ghhJnsVkBsHnlpTWyPfssCK6F6L2zTe4o1pV
-	 Wfa4ocY4q4f5qlXUrxK48G24bILqV7oauRTFTOwA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57CGPMXw3939979
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 12 Aug 2025 11:25:22 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 12
- Aug 2025 11:25:22 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 12 Aug 2025 11:25:22 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57CGPBC3631375;
-	Tue, 12 Aug 2025 11:25:12 -0500
-Message-ID: <d77189ec-b1ee-4718-9212-c7208da40814@ti.com>
-Date: Tue, 12 Aug 2025 21:55:11 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7792D2393;
+	Tue, 12 Aug 2025 16:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755015955; cv=fail; b=tmGo4qVDP7St1ysTc8YZ6m8nwXOf0HmVJRM1RJloy9FealMI797s4vm5aVZDEO06JXHQw6V1KVm8SW1VxPwww+b0mJk293EE7jZG8TSNpWqTJiXIH+5DeIqAqbBgVs4HEkdHLKQ4gUO0jPFozrB++M0Cci1TfDCMJlgP0Qj9ryc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755015955; c=relaxed/simple;
+	bh=tOwkHMHEuURRMlBmK7DNNtx7oHCjLQSsPXUzST0CqQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=t47Lv9JOHm+sz0f4W03wN9pZGJq8dwsTzoKhxaeNWFs8QcBgUBGTpKSF6fkGXx0Tzoret60ueTf3MRqNZMwZ4CC8ss6+vvUvK37YssZUOQ4fV7nMxTYiXjjQI/qQWrn8kEC8iyFrgjvgDVRIcdwsbHkp5rdMmk9t+Dm/vHiF664=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=StY5fJkR; arc=fail smtp.client-ip=52.101.70.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pKQ5Km8XRGJsp1QHG1VKDxyDQbhmG8eqpY/vpogneF/7ZnkzrtOgx87RIDujcj/lYj7jPg8bvt10OYRm8FG9aoetySOaCYLcKf/hK3wMOreXtkdTmhAsOA0HW5LtXasu3iyg1jr0+HUgKkqsQpfxCMWpCOREao4V4tpe9nkEuiMgc46fYMkyjURZwj4ydFjnBUlmnC8djs3XtEyqwsKkzm6flq6V7nRS7TQEXqCPdHZyER8rNOIVu9JfKpo2faPCFHPXnOvIhih87QKnLRmt7jcAoG7jjQ4lVnA4uuF881Fa7LkFfSkWJudYpFnvor0w/xqd5FlDc1y0Yx2X5inMCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XTsLVBd1jNOX7+tNYMg16ZvduoxVdmFVfV1Fn7p2uw0=;
+ b=mPk+1IfyhROOig9Z3p6jxtslA6NZk5LhTY4zsdZB18ttEvtA+1OWDzNedUhQdmMT7PDxx/9OSzjIxW0VHBHMy6luvY8MRpFJnMV1EeW8ItX6iZI35X3zyTzXQMi5OJyRdKuAHFGwiP4pH4/+mzzP7W3z9OcP73FIsjENXgdXKZOeUcldLRyUcmJ9WMajc6eceppsOnkFrrr/VOXsYvtwMQ3lR8rH46TFYv9ItmwS8n5bqvDujuR/4aou6l7dfoGSmI9rvaM6raWJS0h9JW3Wy+rhtaPh9XU14dvei4Hj9aisdVLK87+0mCXMLD+guavfF9X6NmNmpuSK48cdNoRLMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XTsLVBd1jNOX7+tNYMg16ZvduoxVdmFVfV1Fn7p2uw0=;
+ b=StY5fJkRWCe4qpzIVAVIF5Vh+gamiPkA9Nxyfdc/oV4pjMdJuWRjnCIkLUhXoxkvFSRyD5QGH47MxeBAUmrShnkQGytj0Of4Se8Z8tmLQWgyoiDSwW9wxeNqDIQcqhLMv7RG4NGdSIaZruZDFOqwKOaXIvWE/f01hgZRhWS4CeVVWlikYQBRiIXAZzk+oRTJzmmnXAWi22WKf4p9857tRGpPRHayO/LQDGJ/F85JSpHh2oMCZ9XeidnvTYiz65o9ccfd5uCLe1PWPg4zKWmXcyQFbCYJ0qAJ7u1mp8Rr1ZpMjGJZQE7txsg/txQUt19XMYpCzd8ofGQ9pTL8XRA7nA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB8185.eurprd04.prod.outlook.com (2603:10a6:10:240::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
+ 2025 16:25:50 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9031.011; Tue, 12 Aug 2025
+ 16:25:49 +0000
+Date: Tue, 12 Aug 2025 12:25:40 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Subject: Re: [PATCH 1/5] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
+ i.MX8ULP compatible string
+Message-ID: <aJtrBKD00lj2TzwW@lizhi-Precision-Tower-5810>
+References: <20250812081923.1019345-1-guoniu.zhou@oss.nxp.com>
+ <20250812081923.1019345-2-guoniu.zhou@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812081923.1019345-2-guoniu.zhou@oss.nxp.com>
+X-ClientProxiedBy: PH8PR21CA0007.namprd21.prod.outlook.com
+ (2603:10b6:510:2ce::13) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] net: rnpgbe: Add n500/n210 chip support
-To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
-        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
-        <danishanwar@ti.com>, <lee@trager.us>, <gongfan1@huawei.com>,
-        <lorenzo@kernel.org>, <geert+renesas@glider.be>,
-        <Parthiban.Veerasooran@microchip.com>, <lukas.bulwahn@redhat.com>,
-        <alexanderduyck@fb.com>, <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-3-dong100@mucse.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20250812093937.882045-3-dong100@mucse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB8185:EE_
+X-MS-Office365-Filtering-Correlation-Id: 182c146e-263f-484a-0cca-08ddd9bce5bf
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|366016|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?Q8J3sRplJJruoRqP4kOpKCI07bHeI0hwVTMb3QD3usR0pHGKCWgvj2nGYSbP?=
+ =?us-ascii?Q?3f8C44wzEnSfZi/GMPWwx5rPXAgJtsoLXfRbusxmIitujDWRtqxq/5j369oS?=
+ =?us-ascii?Q?CztMikFiIh1NtEJ/gpifVVDLdP6sGTikvuUpzvR4QDr6vDmMB2w5AwwlTJdC?=
+ =?us-ascii?Q?9JFFdX/txwiGWHiTDC37THva8qSXJBqwdfKMfUZ2myFebM+7Uouy/UDGu00m?=
+ =?us-ascii?Q?lHnujvLYopofOjEthkSP+JWbI1fQGlJ7G/I22E/+h3LLsTgFVbMq3XWBH2D+?=
+ =?us-ascii?Q?yA6nPP2sZ4R30qR9MBTyhrgFStupsdbqV68LygkJdqvpzWSGj6HxBQ10ty6R?=
+ =?us-ascii?Q?s5IRzS3o+0g+C/FSPW7xinccUilAgovXSVxRo0dPWXDm+ikkY1B1+Nsq1yHi?=
+ =?us-ascii?Q?+nP9t+PePcorubIwMbOWcxxPcxhqr9WsHsc+LVJMv9W2b1TgGjiAH+vckjRZ?=
+ =?us-ascii?Q?Pc7jyl5lzsx44EBKgFVRonaxmgTmBeqGU3YQDqVNWALUxSbJR6qVAWxsEhep?=
+ =?us-ascii?Q?Tq7hVEGJ9fQ1qHfz/w3rwLCIqaOoxDZgWGmzY33XlckTAQefElgXUuIR9jqd?=
+ =?us-ascii?Q?Pd3+rIz5Hph+D4CPWK80kM2k8BakHqKjTGASKYbCiaLYsNNcBtmIOVjY5vho?=
+ =?us-ascii?Q?4M5YtGvU4fbj1rwZEwgXydZ7fzBf0FUx8OVydGFtzVgQ5niMRHgtxtZ7mogB?=
+ =?us-ascii?Q?yZEsWnE9eZIdDW+duf5xOG2qjli2JWW8hFwa/o2vgK3VPyz8nrJ0dpy+xS06?=
+ =?us-ascii?Q?oOO+n2AKZIMfyQukRsrFWhB96akkrlZ0tsTiX+k/M77cO2jNPPsNzKVVsbZd?=
+ =?us-ascii?Q?AjHJA0IWHFVheof6aGBzSrPcw05d9LGJRFNhsDc0oWO9D7pG0AG9Br0HykeS?=
+ =?us-ascii?Q?QhSAMcaSRHf5hXv0Q+MiVskLx0ZniftPmeqOhIOghZmJw1+StfJG5IKee5l8?=
+ =?us-ascii?Q?y1DQRMioh7BZm4TbCpJZmxNrwmHfVYJLymGbwV/XpEBthRyUMCFkSev5SGvy?=
+ =?us-ascii?Q?gHJwUEceCFU22+pRfFlqiZ6Bq/kqK4B5HqaPKWCHT30ys3o9H9/LJ8t7Q6T3?=
+ =?us-ascii?Q?qUII4rFz5nyBm+d/3FA+9+SkqlQelYcELVOLSD8E+12gxn7CEzz/Hy/D3ZtQ?=
+ =?us-ascii?Q?THRBua4Z6Mvg6GbF+7natNJFVSNPDbmlacc2kcv/Sqaho2BrIGDxwQddCw9v?=
+ =?us-ascii?Q?oDXZGZuPjoGIkr1bhEOot92bbKL0crhLhXIVFJ3zVdDUKXrKmguojWaw3lSY?=
+ =?us-ascii?Q?6N+ZZaeCjmp94SGUq6bs3ZfN/A3I/GcOeF21OXcRvgc9gtllOiBN6zFYVLts?=
+ =?us-ascii?Q?s4tXk6x8HtyD1z3LpVetM0Oa06fl6pdEKIR2zhXsy82kNd65phlRFn2Bgp79?=
+ =?us-ascii?Q?+EPXVgL6tNO2nztai1JMWmqYmR1H4TSS4+3NMaPjnfuqTjDe9WxStNLI25fe?=
+ =?us-ascii?Q?PbIrzTmgG03qzAyxmYIhd0BVwx56SAuCegGbsjo1lIUwuF5M2EXEYg=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?OUIu1GS11OMVPVH8dAMkNeRv6gGEpbb7j06SJxiKxQYEmFs40TDgrFV1nTdD?=
+ =?us-ascii?Q?pVR62qiBidXnIggs6JKCquyXfcmikX114ste6LPMdosOqKKd6iRIJ+MB0vBm?=
+ =?us-ascii?Q?MSKToPca1wSn2qS0A9JWbmutZHQgKZGispN4VFjF06Pbl4bkPvu8ph0Y8z7U?=
+ =?us-ascii?Q?BcJDMg/KVL6TW0Hf9gYDvIr/t+ymJhdTsEDyjbW8JU6WqALF/1P31Ld8F28N?=
+ =?us-ascii?Q?7yEGcbSbXX44P1rDNDX1V9DfxrHwlCKasY7/IlDuj+Z3/lESrysppznAiXfg?=
+ =?us-ascii?Q?/KULK+0MHR+Z6kNbnGg4ZBcdC18ediuDud0WWqWpOCAoBy6i/kUuXmD4iT3c?=
+ =?us-ascii?Q?PEJ0JJUm1tPnrSeJwH/8tWT/eZNzGs5Bt1uCPDoffjJ7jsyif4utbnGN0gB2?=
+ =?us-ascii?Q?doYG9QFh0WJnsz/HNYIQcfwth8zdt6ZhDCxzqsiPwG9OfhZEx7vE2WHf0zfx?=
+ =?us-ascii?Q?CHKITumVItslPYFIgwM2UZHaZB0HjFgFkFLSywKwtQszNf3wMnTkN5jCDjCa?=
+ =?us-ascii?Q?wsg9hS7cfMws8hPQS9V2lmtiWoC9fLiwe6ymG0n9SauHHuzpT8RMJw5NNCec?=
+ =?us-ascii?Q?juWLf3GpM9NS+UP94NxNAEcnrCmPArQ46gPoZbqkbs4wi7oBJIhc9MHdxXXp?=
+ =?us-ascii?Q?IWvshWxpLOfaGWmKaSW3hKE1tZA/GSLcOhjM85KoJ50pNjgOPBO/RF0XNWXu?=
+ =?us-ascii?Q?Kw+VQ2bjMF0+TG/SEMAacehmoUipZmp9a+rBDWwzUpZd+6MLLkfBNQLvLAHs?=
+ =?us-ascii?Q?UJlmZ4RIJbHCPff3EYMom8oYLM2M14RI6YydgYb9w5f/g25xRVoQ76W1ntNP?=
+ =?us-ascii?Q?NSQ5yGYFeidZmPe9kKjQXV4dpn/V0tqCYYhP5lllMROa4iNnX7J5M4FP+yzK?=
+ =?us-ascii?Q?INYR5zjeH8nDvXs7Wu9KdYtCvg4PTOsIItnoJ1lbpiQrxmnLfVBATIfCzchb?=
+ =?us-ascii?Q?8ZZ+6lRc9P6vbM7xK3cyC9bkcRkKrzXCBRABYTqgUVPd5HoWtVmsKRATSXx4?=
+ =?us-ascii?Q?BSDdNgo1WC0a/j5axozTrwCOicWd3Rtk1quHkWUSfsu9nJPKLTWN0f8hEIJ4?=
+ =?us-ascii?Q?KlWqK5eSMOAX633/MhRWXqApEUJvDbRbhTplDtFlu2mU7irskPcTTiJmEoIx?=
+ =?us-ascii?Q?Lw6xsRjcy9K6Q48JsHuIiLYHO27Gvu89/ygL0i7D9oDAeyMO9AmVbJM5Ivf0?=
+ =?us-ascii?Q?XgUk2biu0r9dMtimQPDiO0vEAJZ59fvyTf8Utz2KzyFjGekTMHXqrLLJTArG?=
+ =?us-ascii?Q?tn55kvQU5FlHJKInNfXDZq4Es+n3Ja1lKHmRu8AaE8pr8VKIFg53GddpoNJS?=
+ =?us-ascii?Q?QFTtUGxy5juVa1VKn/v3uNDO75WFPrlwbIkUz2QrYdSr4KrVwT1enLJRcA+S?=
+ =?us-ascii?Q?ShZ0IC72QvAGOYN2o3Qil9EJA1mHOgpoKzWR0suctcPcayBmnW1u3iMNjUSS?=
+ =?us-ascii?Q?FXEZjgvlPPECuITeVkw+rRhk9zwr7dc3fzeohMNp+9CIMFG+epCBUOlxY0sJ?=
+ =?us-ascii?Q?FJOQRewFGCXdBkMlRS/ggNynuXVJp7tZUAjFBOWEuJ0CwMYpCVdYABwzjxIC?=
+ =?us-ascii?Q?1FqKZmt0PXDqPOWAEnQEUV3BDbITKcpYRVlgu9um?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 182c146e-263f-484a-0cca-08ddd9bce5bf
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 16:25:49.0122
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1bB5tCsQtH76Cl3mkcqonndxwXWXhXm3IGdJ6ViG7ihhhBdKWF5IgpZ0V+hfAl2RWEOeFrg5pulE9PPqHdqVMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8185
 
+On Tue, Aug 12, 2025 at 04:19:21PM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> The CSI-2 receiver in the i.MX8ULP is almost identical to the
+> version present in the i.MX8QXP/QM. But have different reset
+> and clock design, so add a device-specific compatible string
+> for i.MX8ULP to handle the difference.
 
+Nit: wrap at 75 chars.
 
-On 8/12/2025 3:09 PM, Dong Yibo wrote:
-> Initialize n500/n210 chip bar resource map and
-> dma, eth, mbx ... info for future use.
-> 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+Keep the same restriction for other compatible string.
+
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 > ---
->  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  60 +++++++++
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  88 ++++++++++++++
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  12 ++
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 115 ++++++++++++++++++
->  5 files changed, 277 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
->  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> 
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> index 9df536f0d04c..42c359f459d9 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> @@ -5,4 +5,5 @@
->  #
->  
->  obj-$(CONFIG_MGBE) += rnpgbe.o
-> -rnpgbe-objs := rnpgbe_main.o
-> +rnpgbe-objs := rnpgbe_main.o\
-> +	       rnpgbe_chip.o
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> index 23c84454e7c7..0dd3d3cb2a4d 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> @@ -4,18 +4,78 @@
->  #ifndef _RNPGBE_H
->  #define _RNPGBE_H
->  
-> +#include <linux/types.h>
+>  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml  | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> index 3389bab266a9..83fdda2252e5 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - enum:
+>            - fsl,imx8mq-mipi-csi2
+>            - fsl,imx8qxp-mipi-csi2
+> +          - fsl,imx8ulp-mipi-csi2
+>        - items:
+>            - const: fsl,imx8qm-mipi-csi2
+>            - const: fsl,imx8qxp-mipi-csi2
+> @@ -39,12 +40,17 @@ properties:
+>                       clock that the RX DPHY receives.
+>        - description: ui is the pixel clock (phy_ref up to 333Mhz).
+>                       See the reference manual for details.
+> +      - description: pclk is the lpav bus clock of i.MX8ULP.
+> +                     See the reference manual for details.
+> +    minItems: 3
+>
+>    clock-names:
+>      items:
+>        - const: core
+>        - const: esc
+>        - const: ui
+> +      - const: pclk
+> +    minItems: 3
+>
+>    power-domains:
+>      maxItems: 1
+> @@ -137,6 +143,23 @@ allOf:
+>            minItems: 2
+>          resets:
+>            maxItems: 1
 > +
-> +extern const struct rnpgbe_info rnpgbe_n500_info;
-> +extern const struct rnpgbe_info rnpgbe_n210_info;
-> +extern const struct rnpgbe_info rnpgbe_n210L_info;
-> +
->  enum rnpgbe_boards {
->  	board_n500,
->  	board_n210,
->  	board_n210L,
->  };
->  
-> +enum rnpgbe_hw_type {
-> +	rnpgbe_hw_n500 = 0,
-> +	rnpgbe_hw_n210,
-> +	rnpgbe_hw_n210L,
-> +	rnpgbe_hw_unknow
-> +};
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8ulp-mipi-csi2
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +        resets:
+> +          maxItems: 2
 
+need restrict minItems:  also, because top reset: minItems is 1.
 
-The enum value name should be "rnpgbe_hw_unknown" not "rnpgbe_hw_unknow"
-(missing 'n').
-
-> +
-> +struct mucse_dma_info {
-> +	void __iomem *dma_base_addr;
-> +	void __iomem *dma_ring_addr;
-> +	void *back;
-> +	u32 dma_version;
-> +};
-> +
-> +struct mucse_eth_info {
-> +	void __iomem *eth_base_addr;
-> +	void *back;
-> +};
-> +
-> +struct mucse_mac_info {
-> +	void __iomem *mac_addr;
-> +	void *back;
-> +};
-> +
-> +struct mucse_mbx_info {
-> +	/* fw <--> pf mbx */
-> +	u32 fw_pf_shm_base;
-> +	u32 pf2fw_mbox_ctrl;
-> +	u32 pf2fw_mbox_mask;
-> +	u32 fw_pf_mbox_mask;
-> +	u32 fw2pf_mbox_vec;
-> +};
-> +
-> +struct mucse_hw {
-> +	void *back;
-> +	void __iomem *hw_addr;
-> +	void __iomem *ring_msix_base;
-> +	struct pci_dev *pdev;
-> +	enum rnpgbe_hw_type hw_type;
-> +	struct mucse_dma_info dma;
-> +	struct mucse_eth_info eth;
-> +	struct mucse_mac_info mac;
-> +	struct mucse_mbx_info mbx;
-> +	u32 driver_version;
-> +	u16 usecstocount;
-> +};
-> +
->  struct mucse {
->  	struct net_device *netdev;
->  	struct pci_dev *pdev;
-> +	struct mucse_hw hw;
->  	u16 bd_number;
->  };
->  
-> +struct rnpgbe_info {
-> +	int total_queue_pair_cnts;
-> +	enum rnpgbe_hw_type hw_type;
-> +	void (*init)(struct mucse_hw *hw);
-> +};
-> +
->  /* Device IDs */
->  #define PCI_VENDOR_ID_MUCSE 0x8848
->  #define PCI_DEVICE_ID_N500_QUAD_PORT 0x8308
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> new file mode 100644
-> index 000000000000..20ec67c9391e
-> --- /dev/null
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> @@ -0,0 +1,88 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> +
-> +#include "rnpgbe.h"
-> +#include "rnpgbe_hw.h"
-> +
-> +/**
-> + * rnpgbe_init_common - Setup common attribute
-> + * @hw: hw information structure
-> + **/
-> +static void rnpgbe_init_common(struct mucse_hw *hw)
-> +{
-> +	struct mucse_dma_info *dma = &hw->dma;
-> +	struct mucse_eth_info *eth = &hw->eth;
-> +	struct mucse_mac_info *mac = &hw->mac;
-> +
-> +	dma->dma_base_addr = hw->hw_addr;
-> +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
-> +	dma->back = hw;
-> +
-> +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
-> +	eth->back = hw;
-> +
-> +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
-> +	mac->back = hw;
-> +}
-> +
-> +/**
-> + * rnpgbe_init_n500 - Setup n500 hw info
-> + * @hw: hw information structure
-> + *
-> + * rnpgbe_init_n500 initializes all private
-> + * structure, such as dma, eth, mac and mbx base on
-> + * hw->addr for n500
-> + **/
-> +static void rnpgbe_init_n500(struct mucse_hw *hw)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +
-> +	rnpgbe_init_common(hw);
-> +
-> +	mbx->fw2pf_mbox_vec = 0x28b00;
-> +	mbx->fw_pf_shm_base = 0x2d000;
-> +	mbx->pf2fw_mbox_ctrl = 0x2e000;
-> +	mbx->fw_pf_mbox_mask = 0x2e200;
-> +	hw->ring_msix_base = hw->hw_addr + 0x28700;
-> +	hw->usecstocount = 125;
-> +}
-> +
-> +/**
-> + * rnpgbe_init_n210 - Setup n210 hw info
-> + * @hw: hw information structure
-> + *
-> + * rnpgbe_init_n210 initializes all private
-> + * structure, such as dma, eth, mac and mbx base on
-> + * hw->addr for n210
-> + **/
-> +static void rnpgbe_init_n210(struct mucse_hw *hw)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +
-> +	rnpgbe_init_common(hw);
-> +
-> +	mbx->fw2pf_mbox_vec = 0x29400;
-> +	mbx->fw_pf_shm_base = 0x2d900;
-> +	mbx->pf2fw_mbox_ctrl = 0x2e900;
-> +	mbx->fw_pf_mbox_mask = 0x2eb00;
-> +	hw->ring_msix_base = hw->hw_addr + 0x29000;
-> +	hw->usecstocount = 62;
-> +}
-
-I don't see pf2fw_mbox_mask getting initialized anywhere. Is that not
-needed?
-
-> +
-> +const struct rnpgbe_info rnpgbe_n500_info = {
-
-
--- 
-Thanks and Regards,
-Md Danish Anwar
-
+Frank
+> +        clocks:
+> +          minItems: 4
+> +        clock-names:
+> +          minItems: 4
+>      else:
+>        properties:
+>          reg:
+> --
+> 2.34.1
+>
 
