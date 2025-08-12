@@ -1,128 +1,85 @@
-Return-Path: <linux-kernel+bounces-764237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2117CB22049
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5624B22054
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693591AA1C13
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9379A6E1B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B212E1C7B;
-	Tue, 12 Aug 2025 08:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817ED2E11B5;
+	Tue, 12 Aug 2025 08:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QTwTmU1Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efxkhYBx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113522E03EE;
-	Tue, 12 Aug 2025 08:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04EA2D6E6E;
+	Tue, 12 Aug 2025 08:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985944; cv=none; b=HKm6gLg0HD7ghtAcnZBOFrRkutEj1prtA5mN4FjVsxertDNKleTpTxoLeD5r7B48/aS61kXSlvbYNi3eCdAkAVdpEMSNd6hqoG/pEq0wGpkIuDh0xfkbmbpFA8EzU8nIJITNvtk52Hxo83FHZC50MtyFTSj/CGaoCrbXThe/Si0=
+	t=1754985961; cv=none; b=JISHl5r7K6ptwni9zWY9HDsMKPSB0A2W5mPsbTTQR4xi36D3YH42eXJtRpTVmUjE3+h6c18KoQEJI0UXVwxIMEAqenF+WPAYqadtL0WUXdtlq23ciHm5CVP4AUj/gOwH0LyqyyQ1wzbbDJvtoqcu9t84POsN+/GKjuwGJp2tNJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985944; c=relaxed/simple;
-	bh=Joo1vcxbhrfZZJYvlFmJ2lQzVxuvgXO+X/iO5xAtLjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCIDcoAUns+EipyVHUS+rCUqPe17eL1CapWmwPJJUA2zoNg3sSmRtQJwx4J+4gyAmvgkN3XD1cVhjAP+Eee4LaU5SI0SKwAFy2FoZgKOu7Q00oFavGwsiezGm4PEz3N4kEnT2x2dac125blyRclZkZOrzUNtfVnbNQI5R7mqz+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QTwTmU1Z; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754985943; x=1786521943;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Joo1vcxbhrfZZJYvlFmJ2lQzVxuvgXO+X/iO5xAtLjQ=;
-  b=QTwTmU1ZWlFEneamF4Ox8BUBoZodQn9aVQkCJqQe6ePgc/p/MIsnpet4
-   Te0BHlP2fPtJt2m8RP0dgyyU++LkyvUVto361lhE/ZvL0mMwGS6yqYRD4
-   0/zo5gVAXqItId1AEe8CJtl7nYM0zSXQ5mSkCeLXVediEbGo9TH0F/ftE
-   bY+p2khPZNzeGgY+GbpUSwAwS4nAdseU/wIjnOG4JOOdHCjdGilX0GQ00
-   4SHY0FozNX7KihE40fzl3JHWgAXwaNLr/CGknpPSrXX9o6JCFHd9kL5wq
-   0qheM6YbAxV0n/fY8b2ChZBcIe87BE5fRiKaNRjyAWfXNQU1hELUlJlxv
-   w==;
-X-CSE-ConnectionGUID: xBu6+9dtRiKTv7gHvR2Eeg==
-X-CSE-MsgGUID: hAKkZdCLR9OOTmc17e6eLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57331072"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="57331072"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 01:05:41 -0700
-X-CSE-ConnectionGUID: dC253ZcXRoKzxKGthAO62w==
-X-CSE-MsgGUID: 8kly9eP1RwC6m6WBytrYMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="165634786"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 01:05:39 -0700
-Date: Tue, 12 Aug 2025 16:05:36 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Yi Sun <yi.sun@intel.com>
-Cc: vinicius.gomes@intel.com, vkoul@kernel.org, dave.jiang@intel.com,
-	fenghuay@nvidia.com, xueshuai@linux.alibaba.com,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	gordon.jin@intel.com
-Subject: Re: [PATCH RESEND v3 0/2] dmaengine: idxd: Fix refcount and cleanup
- issues on module unload
-Message-ID: <aJr10DimV4k8oxQQ@ly-workstation>
-References: <20250729150313.1934101-1-yi.sun@intel.com>
+	s=arc-20240116; t=1754985961; c=relaxed/simple;
+	bh=5DpB1j/jjDtQv09u4mMfcNessE849li59iNJC0nJX5k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=t2WT2X0skDi11ecjHt49hq6eVogIiiXK+UZB/LvOoij7HOu2WYRtm7Bk7PMXpU13UNTZEDOa4c4y2Tkkt2zQatC02TmlZpfyse2ndLxA1BXKuvrHxuLUKzouR7wEHgi0yxf2N2r1ipemleuEzYerksEL8v1K7mHsIgYHMrCdZ2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efxkhYBx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE3FC4CEF0;
+	Tue, 12 Aug 2025 08:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754985959;
+	bh=5DpB1j/jjDtQv09u4mMfcNessE849li59iNJC0nJX5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=efxkhYBx+bTd0OVA2m5bYYxoikgZjzv1kduRKgsI6EU066GKfQT5pQ+Muv2+/3Y+g
+	 S3KzeO06BLtKYwOJK2CmkirRrfNsB5Nscq6woJ3bJwoAd+6PiIsAhlQ1TM9e1jG7sd
+	 xA5+suaAA4+Yu1/1NdDNCjIDSxn53QpxqXY3X6UnMEA7c04d+jIP8xCS/xOb6FY68q
+	 tneT0Vku0uevWSWPFAunoRxYKz8UQNrzN1P4IVn5j3lJ/KUHlBaKwHecsDBM2UggmT
+	 XoXt4kbGq67UYGbG8nl31qEioWKtEjV30gIHBP7eRiMVVIWKfIgt8HjJ8+wmZn2lLh
+	 M5DMI/tP/U/0A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729150313.1934101-1-yi.sun@intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 10:05:55 +0200
+Message-Id: <DC0ALLZU4B8V.31REA4LHMQ6JL@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>
+Cc: "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] rust: sync: clean up LockClassKey and its docs
+X-Mailer: aerc 0.20.1
+References: <20250728-lock-class-key-cleanup-v2-0-ad02b80c69e1@google.com>
+ <20250728-lock-class-key-cleanup-v2-2-ad02b80c69e1@google.com>
+In-Reply-To: <20250728-lock-class-key-cleanup-v2-2-ad02b80c69e1@google.com>
 
-On Tue, Jul 29, 2025 at 11:03:11PM +0800, Yi Sun wrote:
-> This patch series addresses two issues related to the device reference
-> counting and cleanup path in the idxd driver.
-> 
-> Recent changes introduced improper put_device() calls and duplicated
-> cleanup logic, leading to refcount underflow and potential use-after-free
-> during module unload.
-> 
-> Patch 1 removes an unnecessary call to idxd_free(), which could result in a
-> use-after-free, because the function idxd_conf_device_release already
-> covers everything done in idxd_free. The newly added idxd_free in commit
-> 90022b3 doesn't resolve any memory leaks, but introduces several duplicated
-> cleanup.
-> 
-> Patch 2 refactors the cleanup to avoid redundant put_device() calls
-> introduced in commit a409e919ca3. The existing idxd_unregister_devices()
-> already handles proper device reference release.
-> 
-> Both patches have been verified on hardware platform.
-> 
-> Both patches have been run through `checkpatch.pl`. Patch 2 gets 1 error
-> and 1 warning. But these appear to be limitations in the checkpatch script
-> itself, not reflect issues with the patches.
-> 
-> ---
-> Changes in V3:
-> - Removed function idxd_disable_sva which got removed recently (Vinicius)
-> Changes in v2:
-> - Reworded commit messages supplementing the call traces (Vinicius)
-> - Explain why the put_device are unnecessary. (Vinicius)
-> 
-> Yi Sun (2):
->   dmaengine: idxd: Remove improper idxd_free
->   dmaengine: idxd: Fix refcount underflow on module unload
-> 
->  drivers/dma/idxd/init.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+On Mon Jul 28, 2025 at 11:42 AM CEST, Alice Ryhl wrote:
+> Several aspects of the code and documentation for this type is
+> incomplete. Also several things are hidden from the docs. Thus, clean it
+> up and make it easier to read the rendered html docs.
 >
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Applied patch series on top of v6.17-rc1 kernel. Issue is fixed.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Please help add Tested-by: Yi Lai <yi1.lai@intel.com>
+---
+Cheers,
+Benno
 
-Regards,
-Yi Lai
-> -- 
-> 2.43.0
+> ---
+>  rust/kernel/sync.rs | 55 ++++++++++++++++++++++++++++++++++++++---------=
+------
+>  1 file changed, 40 insertions(+), 15 deletions(-)
 
