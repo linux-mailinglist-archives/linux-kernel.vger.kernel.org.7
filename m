@@ -1,169 +1,148 @@
-Return-Path: <linux-kernel+bounces-764901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7CCB228A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C80B228A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07ACA1A26D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0611AA0DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3597B280339;
-	Tue, 12 Aug 2025 13:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D0E284684;
+	Tue, 12 Aug 2025 13:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEKwZAyz"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TDS8zN6I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218F227FB28;
-	Tue, 12 Aug 2025 13:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2E284674
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005233; cv=none; b=dlzt7zEcrX1C3RtKSqDkYXuSgdaMqLdVxTjj8Wza87JBXN6FuvAHCU29aMcDVGxFvG/nPthVU1Yzl9HEMdZoYDKDJn+rtydeaRQJg5F9Gwu/HNkcIp+W942Isk/LJrzUiRtiCmO2mUGGU64p5668eSOk9y2UTRAk4K6guLgixoU=
+	t=1755005238; cv=none; b=drBByPJkZGTjt5HI7qPjm1KYcGq6ImcOYRnVJLiiwuVUxzBOsr2MbgrYf1cbazusCIUnQ7VG9UI7g3OQJoi2XuUIA3isETvdZ60PJFaTzxw13o+jUSDaitpn4isPfcXcfScuta1q7wKPls7g4b4uEKQ93seviLltoiKZzljqNMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005233; c=relaxed/simple;
-	bh=ie/kJJDkTzro9jVYrFcfQsbZ3JqTIJO1trf4qDlhrdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j3N3csjOChhEv/IHHLGG8uh4T/wPn56qj7YKSSuTBg/HCbZl1wT2LOv6zI7u71A3mgF5Q/I8i9i95VNWa7QgfazSh8HwPnuhkeSuQ6c6evGWCrSJXz9QcWUebTpMkVXk+PmZlERmIJCt+tgqWWJ4OMvYK/k3W1ZCbtwq/JHP3pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEKwZAyz; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2cc89c59cc0so4780559fac.0;
-        Tue, 12 Aug 2025 06:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755005231; x=1755610031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RREPB+k7a/mceQdaxCB2njGP8WW7v6Nzrb7ci/2EA8A=;
-        b=DEKwZAyzEhjhbAX8wED7bFvWZ2noWruwXPaOM7GrazAoIXoilC3SIhCa8YvCQig+Ni
-         BNhRV9HDhUuF8+KCQqIAgnAn5uJ770M6YKXeMJCHoFq/Sg2c21eOWRXU/3U54D1GQq/U
-         IFZVlhCbovL/GKK2PSYbUsHEkEZNUYMDAuiJ5PkQfveV8EY1p+t1GlTzFsI1LWnL/yBu
-         7lxVivgt63aJR7sapVJcWsJ013uUStqftyV+KJcw6txgiKy63svcxeU5OX4ac6vQXsjN
-         ZdoaPOJne2g6UFsp2HEbbwRkgzsZPwwq3DFTfHDayO5lnVMuo8WDEC7ixjCr+r4Es3uR
-         9PTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755005231; x=1755610031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RREPB+k7a/mceQdaxCB2njGP8WW7v6Nzrb7ci/2EA8A=;
-        b=P7rEZ10zMzh3KHVU1lOaQvygk1QfSIngra6ao0yfdwZN7b7mLpQZi+SSDW6VSYyv9E
-         msbzIEUbFh7E63KroBzsEgtSg3Egh8nGF4lCVp1m8ZBG6GjGtAQYz9PIvKPDN8IcRMUT
-         y2BSkvvm8MafWSRLoXgXYtSjSx+Hl787EmCHuO47Nm2+ulW9uTilGEduQqWNivStYVlc
-         cFZb4F8A9hQn98oTHVZlmofcjd5LZUu5OErKQ4wizSkBJ0nZLiIQyO7/YApeUNM27D8v
-         P1VKUr59cdcVoEM25Qmj6Bt3DB+docZ3ksh4exXYuzMHya00K3RHipC1jeamCYcjYbMM
-         ZcMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9uJ7e1gnourbA+vXLGeh2t8BpM7zGzevJLF+23b8EMmzJs3XHKJebn12mWWJiPeL5nGGOJL3vJtEzLWY=@vger.kernel.org, AJvYcCXluSEl+jg+miL/RINHoc/VGpwNEbJ+LmQc6sfmNB0EiUKWyk0G78GcSJ3mNT4PT74n3MRlSUZgQbDTJ97dkoOk@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd+AI4QrdHYTzMYET94R5zIM7s8uqhQy3prY1SlpqPl9NYcf5p
-	HJuOmYAL3nifm/OwJpeiOuWFpJlzkTHib9eua0Hf+iwDx79faUOFeAdjZRBhi7qfDlIr7YWLVuh
-	rtzCSfrbgZCZmpPmx9vwoTlH3KJGZWBA=
-X-Gm-Gg: ASbGncvZOW56pP7djpU5aEVK10D5kEF1t4RsviZW7Yb05xQw51zOVzRnW9umfLc33nC
-	ErlGPbva8NrCSdYI4Q/Iyx0Jdy8C6XH5s7zkZhfoluzX3ECjDVpyjWVEOUIf4RVHzxxJY3d993w
-	pTA1IP9D+VPwbmz/cSpjwvncXedWnkJC00NvQRBjlQnDu6lk+39tW/S3zurZ04WITCBUOGRe8zC
-	bvN
-X-Google-Smtp-Source: AGHT+IGpbMz1DdsWZ1z4GCKL7utzJO8TIQxtkA8SafJyjmZ6lfFuwcFQBFZL2gHHQv89lc/KdDVrhAdvffGsU9WPpY8=
-X-Received: by 2002:a05:6871:6718:b0:2e9:925b:206f with SMTP id
- 586e51a60fabf-30c94f3cf74mr1607259fac.17.1755005231005; Tue, 12 Aug 2025
- 06:27:11 -0700 (PDT)
+	s=arc-20240116; t=1755005238; c=relaxed/simple;
+	bh=+tYwRVYfz39O2qKcfCmjsJE4tB0a5Ttt7ts9UV0Q1kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Onz1iIMND+RhCkYfk++aWSVMfNbWH36nQI/z/uDon3VSqjc3MFdgdoZd5F97WkBadt79z3PHm85vV5Wqd1GuPb9VPOCxDrCHR2zPstCZFEyqhWQP1+nEC4JIXntcjY6su9PMh23syBt19U1EwKBH9acHIro/nI67na815/Kmeww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TDS8zN6I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755005235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ek84SNcPpQCmMHvcqQa3TlILZVgRFvPfl/s5BFwLTA=;
+	b=TDS8zN6ILtDcti5ieUFOGNCGBIn98LI75i0ViiYG7oS/puQgk5l2EGCOkwhPqFp2EPR2Nc
+	k2J6KD3uY83xZiecnFl+YUCFf+jPLkbT2yEgPcV2L9p/krcuunH/DX8E3oA85P0YOFedq/
+	x1senS6YmJO5RYx1V2HahvNpDFez6tA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-l3ZgW3CKOGqqNd4zvWIV_g-1; Tue,
+ 12 Aug 2025 09:27:12 -0400
+X-MC-Unique: l3ZgW3CKOGqqNd4zvWIV_g-1
+X-Mimecast-MFC-AGG-ID: l3ZgW3CKOGqqNd4zvWIV_g_1755005229
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C128018002C8;
+	Tue, 12 Aug 2025 13:27:08 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.156])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9513530001A1;
+	Tue, 12 Aug 2025 13:27:07 +0000 (UTC)
+Date: Tue, 12 Aug 2025 21:27:02 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>, linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 4/4] mm/kasan: make kasan=on|off take effect for all
+ three modes
+Message-ID: <aJtBJgC82CpUkwTi@MiWiFi-R3L-srv>
+References: <20250805062333.121553-5-bhe@redhat.com>
+ <20250806052231.619715-1-sj@kernel.org>
+ <9ca2790c-1214-47a0-abdc-212ee3ea5e18@lucifer.local>
+ <aJX20/iccc/LL42B@MiWiFi-R3L-srv>
+ <b5d313ef-de35-44d3-bcbc-853d94368c87@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-alex-fixes_manual-v1-1-c4e99b1f80e4@rivosinc.com> <CABFDxMGPS6LE=A25VjXEpfKuzVfgxfgu=_uhkWXc3D+xuq-B6w@mail.gmail.com>
-In-Reply-To: <CABFDxMGPS6LE=A25VjXEpfKuzVfgxfgu=_uhkWXc3D+xuq-B6w@mail.gmail.com>
-From: Sang-Heon Jeon <ekffu200098@gmail.com>
-Date: Tue, 12 Aug 2025 22:27:00 +0900
-X-Gm-Features: Ac12FXxoAocnTTpz6traLMo0gPyYiDuR8cKin4JSoMSWQ6SUh-o9iDKVTOiC780
-Message-ID: <CABFDxMEQYx7fdx4T7meUb01FoqJaHcW_2RoYnBwJ8GzmJTexzQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/damon: fix damon selftests by installing _common.sh
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: SeongJae Park <sj@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Enze Li <lienze@kylinos.cn>, damon@lists.linux.dev, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b5d313ef-de35-44d3-bcbc-853d94368c87@lucifer.local>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hello, Alexandre
+On 08/08/25 at 02:24pm, Lorenzo Stoakes wrote:
+> On Fri, Aug 08, 2025 at 09:08:35PM +0800, Baoquan He wrote:
+> > On 08/06/25 at 05:26pm, Lorenzo Stoakes wrote:
+......
+> > > > diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
+> > > > index b5857e15ef14..a53d112b1020 100644
+> > > > --- a/include/linux/kasan-enabled.h
+> > > > +++ b/include/linux/kasan-enabled.h
+> > > > @@ -8,11 +8,22 @@ extern bool kasan_arg_disabled;
+> > > >
+> > > >  DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> > > >
+> > > > +#ifdef CONFIG_KASAN
+> > > > +
+> > >
+> > > Shouldn't we put this above the static key declaration?
+> > >
+> > > Feels like the whole header should be included really.
+> >
+> > You are right, kasan_flag_enabled should be included in CONFIG_KASAN
+> > ifdeffery scope.
+> 
+> Firstly I _LOVE_ the term 'ifdeffery scope'. Fantastic :)
 
-On Tue, Aug 12, 2025 at 9:32=E2=80=AFPM Sang-Heon Jeon <ekffu200098@gmail.c=
-om> wrote:
->
-> Hello, Alexandre
->
-> On Tue, Aug 12, 2025 at 5:13=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosi=
-nc.com> wrote:
-> >
-> > _common.sh was recently introduced but is not installed and then
-> > triggers an error when trying to run the damon selftests:
-> >
-> > selftests: damon: sysfs.sh
-> > ./sysfs.sh: line 4: _common.sh: No such file or directory
-> >
-> > Install this file to avoid this error.
->
-> I tried to reproduce those error with my vm environment but I failed;
-> with my workaround test method, it doesn't exist.
-> If you're okay, could you please tell me line by line how you execute
-> tests in what environment?
-> I'm also struggling with the test environment, as well.
+Learned from upstream people with expertise on both english and kernel, :-)
 
-I succeeded to reproduce and also check that this patch removes those error=
-s.
+> 
+> >
+> > Since CONFIG_KASAN_HW_TAGS depends on CONFIG_KASAN, we may not need
+> > include below CONFIG_KASAN_HW_TAGS ifdeffery into CONFIG_KASAN ifdeffery
+> > scope. Not sure if this is incorrect.
+> 
+> Well I don't think CONFIG_KASAN_HW_TAGS is necessarily implied right? So these
+> should remain I think, just nested in CONFIG_KASAN, should be fine.
 
-> > Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host sha=
-red function")
-> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
+After investigation, I keep the CONFIG_KASAN_HW_TAGS ifdeffery scope out
+of CONFIG_KASAN scope. Otherwise, I need define the dummy
+kasan_hw_tags_enabled() function twice. I am personally not fan of the
+style. While if that is preferred in kernel, I can change it.
 
-Tested-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+#ifdef CONFIG_KASAN
 
-> >  tools/testing/selftests/damon/Makefile | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/tools/testing/selftests/damon/Makefile b/tools/testing/sel=
-ftests/damon/Makefile
-> > index 5b230deb19e8ee6cee56eb8f18c35e12f331e8b7..ddc69e8bde2905ff1c461a0=
-8f2ad008e6b28ac87 100644
-> > --- a/tools/testing/selftests/damon/Makefile
-> > +++ b/tools/testing/selftests/damon/Makefile
-> > @@ -4,6 +4,7 @@
-> >  TEST_GEN_FILES +=3D access_memory access_memory_even
-> >
-> >  TEST_FILES =3D _damon_sysfs.py
-> > +TEST_FILES +=3D _common.sh
-> >
-> >  # functionality tests
-> >  TEST_PROGS +=3D sysfs.sh
-> >
-> > ---
-> > base-commit: 2754d549af31f8f029f02d02cd8e574676229b3d
->
-> Does this commit exist in `mm-new` or `damon-next`?  I failed to setup
-> the same base-commit environment.
+#ifdef CONFIG_KASAN_HW_TAGS
+......
+#ifdef CONFIG_KASAN_HW_TAGS
+static inline bool kasan_hw_tags_enabled(void)
+{
+        return kasan_enabled();
+}
+#else /* CONFIG_KASAN_HW_TAGS */
+static inline bool kasan_hw_tags_enabled(void)
+{
+        return false;
+}
+#endif /* CONFIG_KASAN_HW_TAGS */
+.....
+#else /* CONFIG_KASAN */
+static inline bool kasan_hw_tags_enabled(void)
+{
+        return false;
+}
+#endif
 
-However, I'm still not sure that this patch is in the correct
-baseline. maybe it will not cause any problems with the merge
-though... but I'm not sure. So I didn't add a reviewed-by tag.
-
-> > change-id: 20250812-alex-fixes_manual-aed3ef75dd83
-> >
-> > Best regards,
-> > --
-> > Alexandre Ghiti <alexghiti@rivosinc.com>
-> >
-> >
->
-> Thank you for great work!
->
-> Best Regards.
-> Sang-Heon Jeon
-
-Best Regards.
-Sang-Heon Jeon
 
