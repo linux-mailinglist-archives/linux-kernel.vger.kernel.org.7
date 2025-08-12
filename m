@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-764487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94789B223B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D07FB23C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F47D5003B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C48F1897F4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1EE20C037;
-	Tue, 12 Aug 2025 09:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D57E2DEA99;
+	Tue, 12 Aug 2025 23:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Map2H7XL"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X3WmcE+A"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AA52D59E3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D2E2D0620
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754992201; cv=none; b=ioXU39CyYHY1eLJnM/5oE2hoeD/yV1RAcFUAFPAWLZ0PEfftCzyIxikdE2DYmfdzij0GV05B4S/EoMEvdVM3HaX6a5KAg16SdP8EyufDwxvgReGtkWulvp7tNJnjLF4dcWFtQghSiO6CDNn0lZ+MIKlmjVzaKdcgAAZTdSd1wn8=
+	t=1755040831; cv=none; b=RdMLSBKzz31QPhfjsnS3Z1SKs2Euj4s4QtMzrsaSGwZVDLlVN6SuX+tAW7IziPfxaAuZV+t9X1EBhrV++bTOvRusHHPvds4JdTdOhgT2dcdkH6dspsmBhQAKRd26YHRCnA3llDee8irKn7k3uW4lfsOZUnLO3CfPJk6tdxHUofY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754992201; c=relaxed/simple;
-	bh=0490oyMMcCSA6IAYKsOOlTvkHGvUwxMFO7SMFhwwTEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWg7MSgJ967swRuTWarFI/gcnb0zTxeUWVrRDbuWTYTMW606iR2oCB7i1Ndtd5fTIblUj/Rx0x2TgNymcBAKuKRvyL14xqNoCKUpN9ztjam34RlTCu47E0yoi8/aelmxKLaDLd8Go1LiI2BD4nHb5tRc5bt23wt4hAK9FmN0TGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Map2H7XL; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b42254ea4d5so3441687a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754992199; x=1755596999; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rHx6Lde4qag7Ztq8SOjvT6+8sJ05xOxFR27nxsVwgtA=;
-        b=Map2H7XLyX5tAhnuBljyVK5gOENCd/EFkAAjRUiix4f3fE2IA4HYRcT0FY7MjwuFsH
-         MBcEoUDadpXMRudf01gQo1K9S677BwmIWc4jhirjNZFbjKnVhQVvrw+DL9Xgk9jUcHpY
-         QH3BxUQsu37C3KVsf6d8SI6hysrrryrQ91Zcxudj2jtIF7CORWKR1aV1B/SARjwm76Ek
-         c/mIOtKhQ/DnD0pMOw14GKRLNt/LHoz3mOvae+ZSl5HhPfMIPRx+6vs068NBvVcmAOX4
-         mE8CdDYcSCpskV0pTYUVnwTsCM0qdG5FpGLRJSilNIh2JH+SmAnmRKI4QxirDWGOJ8hZ
-         QbpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754992199; x=1755596999;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHx6Lde4qag7Ztq8SOjvT6+8sJ05xOxFR27nxsVwgtA=;
-        b=GJTN0zqrXySQ8t2+p1Amazt/eZlFoF0ktHKZDRlvMfheei7xe/kcPfHRZztj7Ho72o
-         ijJtXpubQlvpL13DFFoBuXEMCLXb9pJ7cm4rEC/ezX+MjE6quscvczsr2BqrHoLmAeUb
-         x7wS15w6+e1pG/frKBb8/VlFaz+XHsL+GQLeCHQB7xFDAA3V94E4ldE0xf8uv1v2LnHg
-         KANNNEDx12q7GNvNtH1310MWOFZpUgQRu3/N8rYSTnXyf3vEw5AbMMvBbtzlYp3AnxMm
-         eHQjey75Ntd9Ct82F9xLPL5f4m59lfm93JZg0X1ehOd8I2Z7agJSv6aenhAjSi1KjJ6s
-         1vQA==
-X-Gm-Message-State: AOJu0YwRxqZBwK2HjDyzMAfP72WgO3Go9ToiRDZj0hRESEnAhSm7BQzu
-	3N/VozCG54zNsLosngv0rK1jcAlhPkmNIRGU4lT2HougE6pmrOpjW+rdwtdtLn3iTng=
-X-Gm-Gg: ASbGncvpVfNETABz3nB3WWvM4ESSuixYqXKw2lO94KQwrk5YkDqe6Sw+rC0RtKb9hRa
-	nN54WdI/YINXHrnravMRGARhtECxXGB0XJLOMvd2P6CSHXAZfbVzmTJI3Xv3NwLeF4cRq1tU6HC
-	YTUpRhONyxCk6pm++2d5XQiErZTxxtbdd6lroKPR3TkhO2y821r6sSQ9VGOU0FkzwjydWysjTth
-	k3C5/XsqPb2+kr/CEBT55D5MoqO5U8lCu8+CfDjctb3JQMLzzkUG2xLB0yNcXnYqIHTHUQGqYid
-	8PNwjrmQ9kHT5JngD4bas41Ko5lC4e5WROhW1SOXie8Br9PMkqGaYciq2JgXu4oBAAaxSxuXr2T
-	8l7V0KdyGw5ZT5LT/2ldFo8Ys
-X-Google-Smtp-Source: AGHT+IFaE9wVmVALZ0AY3vMXxmm7SesZjwR/ULKy6XjkkdnNRyUoc7TfxGfX3avMzoLT05C0xMUULg==
-X-Received: by 2002:a17:90b:55cd:b0:312:1c83:58e7 with SMTP id 98e67ed59e1d1-321b3e81bb1mr7812400a91.1.1754992199185;
-        Tue, 12 Aug 2025 02:49:59 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7d86f7sm24860991a12.24.2025.08.12.02.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:49:58 -0700 (PDT)
-Date: Tue, 12 Aug 2025 15:19:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Bill Mills <bill.mills@linaro.org>, devicetree@vger.kernel.org,
-	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
-	Bertrand Marquis <bertrand.marquis@arm.com>,
-	"Edgar E . Iglesias" <edgar.iglesias@amd.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RFC PATCH 0/6] virtio: Add support for Virtio message transport
-Message-ID: <20250812094955.fdyil4cbxr3bx4bo@vireshk-i7>
-References: <cover.1753865268.git.viresh.kumar@linaro.org>
- <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
+	s=arc-20240116; t=1755040831; c=relaxed/simple;
+	bh=wle9r2gsnhO7JaaLb1bCPkD7qWWf9Zu+D8DM/DNZTjw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=hNKn86l9Z96+CCGoKM5mH03Sfe7CV+Wyk31pT8Pyhh8eyOfT0poc5wMAKtwI5kXOw+E0d719cMg784o4trGiu0GEMQFixtwOmXLPHuhYeLzPB5o7uUiHUrecI3eGTijwWj++VIka+eDxDWXpeAS98o2xDfI58kNkoWthAca1SgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X3WmcE+A; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250812232026epoutp029b0d820706846c0903e8adda8d7f2661~bKFUqPaZ02603026030epoutp02z
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:20:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250812232026epoutp029b0d820706846c0903e8adda8d7f2661~bKFUqPaZ02603026030epoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755040826;
+	bh=eLnMXqyfqg1qktU4SrlD9F/Y1gqGVc8jfzRmVy/nmCI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=X3WmcE+ALVT0ddLK6NnAClCAj+pEm8KYoJY3fXeIdyJ7dAfQXdjY9GbL7pO0MTvuH
+	 PFO3mfeaEDP7OEHC/oJI2v45xYcDxRqybV1wyK63LXGZEGZm93vdZefwJRNdS46c6/
+	 DM/uK6QBI1sh+zUY96FFUQiDEC4eTSLIoX4hTKLg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250812232025epcas5p14d7f42eedf5b2403536eae76232f848d~bKFTxM57n0474904749epcas5p1D;
+	Tue, 12 Aug 2025 23:20:25 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c1nY42bxGz6B9mF; Tue, 12 Aug
+	2025 23:20:24 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250812095108epcas5p3aebdbf9e790cd259173d54611652a97b~a-CuL4_aG1911819118epcas5p3b;
+	Tue, 12 Aug 2025 09:51:08 +0000 (GMT)
+Received: from asg29.. (unknown [109.105.129.29]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250812095107epsmtip14a9258f84c8573280a6948e6f6ea6767~a-Cs27tkY0384203842epsmtip1B;
+	Tue, 12 Aug 2025 09:51:07 +0000 (GMT)
+From: Ying Gao <ying01.gao@samsung.com>
+To: kraxel@redhat.com, mst@redhat.com, jasowang@redhat.com
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	ying123.xu@samsung.com, lei19.wang@samsung.com, liping.qi@samsung.com,
+	junnan01.wu@samsung.com, Ying Gao <ying01.gao@samsung.com>
+Subject: [PATCH] virtio_input: Improve freeze handling
+Date: Tue, 12 Aug 2025 17:51:18 +0800
+Message-Id: <20250812095118.3622717-1-ying01.gao@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
+X-CMS-MailID: 20250812095108epcas5p3aebdbf9e790cd259173d54611652a97b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250812095108epcas5p3aebdbf9e790cd259173d54611652a97b
+References: <CGME20250812095108epcas5p3aebdbf9e790cd259173d54611652a97b@epcas5p3.samsung.com>
 
-Hi Rob,
+When executing suspend to ram, if lacking the operations
+to reset device and free unused buffers before deleting
+a vq, resource leaks and inconsistent device status will
+appear.
 
-On 30-07-25, 08:39, Rob Herring wrote:
-> On Wed, Jul 30, 2025 at 4:29 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > ### Memory Mapping and Reserved Memory Usage
-> >
-> > The first two patches enhance the reserved-memory subsystem to support attaching
-> > struct device`s that do not originate from DT nodes — essential for virtual or
-> > dynamically discovered devices like the FF-A or loopback buses.
-> 
-> We support creating devices from reserved-memory nodes.
+According to chapter "3.3.1 Driver Requirements: Device Cleanup:"
+of virtio-specification:
+  Driver MUST ensure a virtqueue isn’t live
+  (by device reset) before removing exposed
+  buffers.
 
-I didn't know about this.
+Therefore, modify the virtinput_freeze function to reset the
+device and delete the unused buffers before deleting the
+virtqueue, just like virtinput_remove does.
 
-> Just add a
-> compatible which you should do anyways because node names are not
-> supposed to be that specific or an ABI.
+Co-developed-by: Ying Xu <ying123.xu@samsung.com>
+Signed-off-by: Ying Xu <ying123.xu@samsung.com>
+Co-developed-by: Junnan Wu <junnan01.wu@samsung.com>
+Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
+Signed-off-by: Ying Gao <ying01.gao@samsung.com>
+---
+ drivers/virtio/virtio_input.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Yeah, I already knew that the node-names thing isn't going to fly as
-you and Krzysztof rightly pointed out. I just wanted inputs from you
-guys and so did that as a first implementation to get the discussion
-started.
-
-I tried something like this now:
-
-      reserved-memory {
-        #address-cells = <2>;
-        #size-cells   = <2>;
-        ranges;
-
-        rmem@100000000 {
-          compatible = "restricted-dma-pool", "virtio-msg,loopback";
-          reg = <0x00000001 0x00000000  0x0 0x00400000>; /* 4 MiB */
-        };
-      };
-
-and this works fine. I am adding two compatibles for virtio-msg:
-"virtio-msg,loopback" and "virtio-msg,ffa". Yes I will properly
-document them in the next version.
-
-With this, we don't need the 2nd patch anymore:
-  of: reserved-memory: Add of_reserved_mem_lookup_by_name
-
-but still need the 1st one:
-  of: reserved-memory: Add reserved_mem_device_init()
-
-Thanks.
-
+diff --git a/drivers/virtio/virtio_input.c b/drivers/virtio/virtio_input.c
+index a5d63269f20b..d0728285b6ce 100644
+--- a/drivers/virtio/virtio_input.c
++++ b/drivers/virtio/virtio_input.c
+@@ -360,11 +360,15 @@ static int virtinput_freeze(struct virtio_device *vdev)
+ {
+ 	struct virtio_input *vi = vdev->priv;
+ 	unsigned long flags;
++	void *buf;
+ 
+ 	spin_lock_irqsave(&vi->lock, flags);
+ 	vi->ready = false;
+ 	spin_unlock_irqrestore(&vi->lock, flags);
+ 
++	virtio_reset_device(vdev);
++	while ((buf = virtqueue_detach_unused_buf(vi->sts)) != NULL)
++		kfree(buf);
+ 	vdev->config->del_vqs(vdev);
+ 	return 0;
+ }
 -- 
-viresh
+2.34.1
+
 
