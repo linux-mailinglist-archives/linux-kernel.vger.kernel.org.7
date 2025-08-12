@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-764928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9325CB228A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:35:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B92B22913
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 479D77B2B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41901BC1619
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1D52820DA;
-	Tue, 12 Aug 2025 13:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQKMWJWx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93160288C96;
+	Tue, 12 Aug 2025 13:33:05 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACF8227E83;
-	Tue, 12 Aug 2025 13:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38554283FDB;
+	Tue, 12 Aug 2025 13:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005555; cv=none; b=Q08drw8a7oz9Lo3HMlz+6n5PQpJwRJGIqbYsYF9Ni6X4Tj2cc3XNimjAgy9sIWxae1HvpVHPVgGkmnDJazr4Zkq29amY4BFa7hQ7YFhB4j9rqJv5RKY/L3Ir9FKuEpa5yfdsA4QnjFLFGoLAG1h3G1eCGsNBnnXfZKjeevVrtYA=
+	t=1755005585; cv=none; b=HbeWuz3HSJPGrTIsaTNAYrobfRWrsDX54r+hm3fg85USWT5ILBn/huwK4M+5AtlyrnPCe+YelbT0mAfVZc20/NZdNkKwaJtCSVpinBDUXcLuc388FPnaAnloFNVTq0PfQbNKX9e7fXHoYJ30goGwuoXzjUjNmpS1GEdJuqkyAdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005555; c=relaxed/simple;
-	bh=vqbhFrPVJEtdPlxJ/bQd+A+YpNtID/igOKlPIpgPl1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M4L8fAx7LdCXRxQN8bq8E68OMNN/WdtaSWpzmuncqjN54NsVtGmExXL0i4b1CG2q/KGJLRB3zOZBeSc1pAaiSHKkMR1pD4p2o1kf+Vw1Z7RE9ffPmg2dojsJ+GyfFIy44zGbn8MQvUYNw3ayfTSJkhBVqxR2P2UVoYfu8f6nfO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQKMWJWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2DA6C4CEF5;
-	Tue, 12 Aug 2025 13:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755005554;
-	bh=vqbhFrPVJEtdPlxJ/bQd+A+YpNtID/igOKlPIpgPl1k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dQKMWJWxOyIbMrbj/h+WXWb8bXyAGPwwdyFUqD4z/wqxGAr+kga40q56dHSeWmr1l
-	 pKVMAoTPkp8q94Gy/pjtY6gMiFrLN9Q7Q8k2iQLc4lqyZRdPiqONsFSdwVDBsc3gl8
-	 bTTjefXQllN01Cu0gOmHBmDXO838p5vLbe2MMiB7rP86E1UgLUFXiEnJ435HTiveT/
-	 w65pDOXkbBYIl2E2kzNGpgicldp/x9EwW5Dia9YdSvquSkSEfiv4aejhh8/u0dS+Kh
-	 xut76QxcOpIcS28OMMFAdoaliLBCME/+/s0vw9zV4h1GSYj1MxL2wEKM3zLSvEfAn3
-	 7N+eBTVs/zsUw==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61998205433so2224226eaf.1;
-        Tue, 12 Aug 2025 06:32:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzxN5WoVJLWv+Cl3htYLA+zqBLLVqHBiVVFW5KFXLOfJ1O8gW5P7EWPvgTX4g3oxXYkOYFhRtTrjHG@vger.kernel.org, AJvYcCXOdbpacfEUpllrDKDKW27Aj0eIu519sfGxmpVJVaeAfwkwXG4GS16UFfnfl6O9YphVEbv9wFhCsbnW6UOt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRXGTMi0ZV838Rc+uKoG8VaNEFsj5cFdVpslE2UY8NnmmyIFCy
-	8iYl9Y6Ozr3wR+SV20tv2+x0Xj6P1a07cuzCG+qRVdIr3sKDH/KLDZ9OMDlcbsTyokGP12Yhzxc
-	KNhGeOPJB07aUv2E4J3DWRu1lsJdd0wc=
-X-Google-Smtp-Source: AGHT+IFW5tbsaOloJmufzLITdqlOhOamUzIFQVtlru4InzfEHD2iaysJpoTrn4GuAd1uwMqMhxnvPtr02zj2vhrLS8I=
-X-Received: by 2002:a05:6820:1505:b0:61b:8d64:d07d with SMTP id
- 006d021491bc7-61bb5d6c25emr1962963eaf.8.1755005553943; Tue, 12 Aug 2025
- 06:32:33 -0700 (PDT)
+	s=arc-20240116; t=1755005585; c=relaxed/simple;
+	bh=azJu+fhlrpxcVL8tkf5V9HgKElWVE7T5uf5qkKB30WE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uz8Omgd7aecSbXZEGDY8EtxQf4nN0jywtGwU3PFkJFEM1qYEV66a96xYfrxR/zoSfzknL8ZVs3vfAw5ujV+xiILTk89fcZGcU4LQPenwaI6eheKNWk2RSwSK7tY6KvtMQge3/vr2iYeIi5nI3wZKFFr6+C40tnplhHt8yOPeadc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4febcc4c93dso4290172137.0;
+        Tue, 12 Aug 2025 06:33:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755005582; x=1755610382;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KxUnhAYsbqE1oebUrR3dSoY83+mPkLhSSJqVf05cClM=;
+        b=VwvQYtnjACJfH+KG1Q2yriULKM1rdi9jm7eO/FSeFG4Ofdux9C+qIN6Dc8ziCB91et
+         kCOHN4jpXCUiItJTyN5HLg8EIB/vW1r6SCGByJhRnjNApGADVkld/kjhZDLrabAh4DNa
+         Zy/TXUavOy0ooAjnRAwqsyIB1MdYEP+w88Um00oN7tmpXN66PiqpXCJPnEQeRiMMRBoz
+         2/28y7A4GhWdiNLsUv/wENkSKHUO7GDDUiG2e3NiSPI4dN5qDFoyjV+SIRIqp2VO5yCc
+         en4PL9KEelhC2/QlCd0WTNOCQ/hGt+sVqdlk61zjXIeytR5wTO4FlPiENBazLmhTmCLL
+         qV4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1plLCEOWUlLAghApKCZyMyvG8mao8j4nw748I53mlEGDn1pjriCoVZR+uW0Fj88WtQbWLc+Hm2RjXet0=@vger.kernel.org, AJvYcCV3Cao4opeRFguCnbGIX1u5t51cmg0fnjwazt+pDW1Y6IELXkR97redDnahdO596vAh37hXMI68nuExFw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvoFItrfJPnFwys8woEUgN7HOueicz6RSHgOwIOxjqVJiKelCL
+	3wPmZzRWkZJEN07q3B0cAXLZJZlWs3AGMXnyMDXSBfdIZS5ZbX9B7+NU65rRRb7W
+X-Gm-Gg: ASbGnctS3k//r909/kenuT07ExnS5E1K7S6CjPCa3bq2mBgARIRZzptdZz3co7/Hc2q
+	EGHL5/+EVToOgYFDCJ/3xZACmTiatRpbt1sOEPMTuEhj+2UJK4Ti1fpjWoMRxCyZxiOkxuvP+af
+	WmaRvPMrUtmCgVhof1sL1rgwfboMozuareYMVfp/eayL7mIHpaos9CKZMeQEb7QFVb/ox5vkzSq
+	bDkBgMoYRVNtLSTTl/gqSAOjLlumb0DrbIiUWGnZ1YKrt25aCrrmSTWb0e+3ldFvG/+uIiNpdAu
+	GjBRZoLCR4FdQO2F9mH/QBpAlQKe97aPUd9pDIM6EZxB1uFBNajvx/r6HR5Dy1ELUMnb7ktZLZZ
+	NFjNF246iVKm/Dssm2eJywXeEy3UtMm6cEZ37ngOZYP6pve/o4vi9kFRbNUt0
+X-Google-Smtp-Source: AGHT+IHpFaQBzKhpwKRUtPFSRqRnBV+bspWFoZtjFWHXiNOTw6TGKVXq3GyLo6y8YtkSg1r7GFBeNQ==
+X-Received: by 2002:a05:6102:834f:20b0:4e2:e5ec:fa09 with SMTP id ada2fe7eead31-50cc53677bdmr953888137.6.1755005581104;
+        Tue, 12 Aug 2025 06:33:01 -0700 (PDT)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062b6519fdsm2266776137.10.2025.08.12.06.33.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 06:33:00 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-88e4fb65341so470969241.0;
+        Tue, 12 Aug 2025 06:33:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+06xI2nPzHK2Bq0iVzHaYJDpxpyZRkI3XRO/SaJ1/hRLSHblg9QaBD4/S+zJpTL4V3ArX55Qq/CjE9w==@vger.kernel.org, AJvYcCW/qm0BBItak5M901nuRrmKXHE9oSnAMDMiG2hy+epX265zVgIJQT9Cr2pgmAtI3KG9EmY4zJMZd+GaNGM=@vger.kernel.org
+X-Received: by 2002:a05:6102:621b:20b0:4fa:3f49:a3b4 with SMTP id
+ ada2fe7eead31-50cc46c0294mr978170137.3.1755005579826; Tue, 12 Aug 2025
+ 06:32:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729062038.303734-1-W_Armin@gmx.de> <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
-In-Reply-To: <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Aug 2025 15:32:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
-X-Gm-Features: Ac12FXy6ben6rw9HI9xaSxUO_J6yD1lCoXwLcy_g1ycrz8Yh0ZnZwKjXCwr-d4U
-Message-ID: <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Ilya K <me@0upti.me>
-Cc: Armin Wolf <W_Armin@gmx.de>, rafael@kernel.org, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 12 Aug 2025 15:32:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXSSVMK_ohHrna8DWy7KU697mnsVHhBrzNMzs1d07J=qQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy6WiMOmxcdzGmOeIuAczA6ZfHPkX867HQKbYVDkybGYZR6lDiSm0lMM0Y
+Message-ID: <CAMuHMdXSSVMK_ohHrna8DWy7KU697mnsVHhBrzNMzs1d07J=qQ@mail.gmail.com>
+Subject: Duplicate TI EDMA debugfs registration
+To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Vinod Koul <vkoul@kernel.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: dmaengine <dmaengine@vger.kernel.org>, 
+	"open list:TI ETHERNET SWITCH DRIVER (CPSW)" <linux-omap@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 9:01=E2=80=AFAM Ilya K <me@0upti.me> wrote:
->
-> On 2025-07-29 09:20, Armin Wolf wrote:
-> > It turns out that the ECDT table inside the ThinkBook 14 G7 IML
-> > contains a valid EC description but an invalid ID string
-> > ("_SB.PC00.LPCB.EC0"). Ignoring this ECDT based on the invalid
-> > ID string prevents the kernel from detecting the built-in touchpad,
-> > so relax the sanity check of the ID string and only reject ECDTs
-> > with empty ID strings.
-> >
-> > Compile-tested only.
-> >
-> > Reported-by: Ilya K <me@0upti.me>
-> > Fixes: 7a0d59f6a913 ("ACPI: EC: Ignore ECDT tables with an invalid ID s=
-tring")
-> > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> > ---
-> >  drivers/acpi/ec.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
->
-> Thanks, this works!
->
-> Tested-by: Ilya K <me@0upti.me>
+Hi,
 
-Applied as 6.17-rc material and sorry for the delay (I was offline).
+The TI EDMA driver registers two DMA engines:
+https://elixir.bootlin.com/linux/v6.16/source/drivers/dma/ti/edma.c#L2525
+
+This was fine when support for the second engine was introduced[1],
+as it predated debugfs support for DMA engines[2].
+However, both instances contain a pointer to the same physical device,
+hence when the debugfs directory is created for the second engine at
+https://elixir.bootlin.com/linux/v6.16/source/drivers/dma/dmaengine.c#L71,
+it fails.
+
+E.g. on BeagleBone Black:
+
+    debugfs: '49000000.dma' already exists in 'dmaengine'
+
+Note that this is not really a new problem, but it was brought to my
+attention because the printed error message was changed in v6.17-rc1[3].
+Before, it printed:
+
+    debugfs: Directory '49000000.dma' with parent 'dmaengine' already present!
 
 Thanks!
+
+[1] 1be5336bc7ba050e ("dmaengine: edma: New device tree binding")
+[2] 26cf132de6f79c06 ("dmaengine: Create debug directories for DMA devices")
+[3] 59200f4526748158 ("new helper: simple_start_creating()")
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
