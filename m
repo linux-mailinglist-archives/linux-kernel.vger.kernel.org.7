@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-764785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00CDB22749
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:47:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBA8B2273B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A29C442563F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3846E1AA27A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0474823B612;
-	Tue, 12 Aug 2025 12:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A922F76E;
+	Tue, 12 Aug 2025 12:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="c2HiOD4q"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WTKJMJNG"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141957E792;
-	Tue, 12 Aug 2025 12:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755002806; cv=none; b=LcF8PCAUPjjyHqdYBaE12DL6qTKzl1yQj8oa/8MiNY8A9yKWlrGZn1bdlcVy2SVw3+Inqy1KQHyctHSHoXpiQz4rUfjme6EBZVJmmESJk+GzO4WrA9RGfQk6TAQyDFKYtX3RJRjTO7bmHFcRYprUs/7D9dRyvO5oxx4nXUHyekc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755002806; c=relaxed/simple;
-	bh=lvRoGB489K2AfODPGly/9IpCKfkSjFTL8HjlrnWhjas=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RvZUO52mM8QIQgnFfFJdPXJRSUjWSE21CnMSl/54PHIZS44O9axgQ+S0MmagNUqYRJ/Fp4eOkRCUfNn80imHDaP1fgYcLgobdFRIPJj77+w8aDjsUEs2gOgO65IWZ1qZS4uvMpfFoJRbwsFboElmFjbQoQJVlMiiUc63HfsRWVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=c2HiOD4q; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1755002773;
-	bh=/VFTw3DTFZynnDkAv1wj1bFyH7e2eQWzE2xYe6c/ZOg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=c2HiOD4qcHZqILOp6Z9p9IvUepvyTv1OyKvexTGPQJbYkdkNBCx3kroQTPKxQgiCc
-	 +c93AAIuLZjm9ykjr05Nxcxkmoz98QP40JKTEQM+4d93/tTAOKsw+L0nY7YlxR8TCp
-	 80zH+cCvgpvh+cnsTAL4DDeGqGkEQcSKhBlW4x6w=
-X-QQ-mid: zesmtpsz7t1755002747t24630221
-X-QQ-Originating-IP: Sql1TcudInrYL8zxoK7kUGvu7fQh3mvrnC7BwoV02vs=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 12 Aug 2025 20:45:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5415598875737750958
-EX-QQ-RecipientCnt: 7
-From: Wentao Guan <guanwentao@uniontech.com>
-To: luiz.dentz@gmail.com
-Cc: kiran.k@intel.com,
-	vijay.satija@intel.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Guan <guanwentao@uniontech.com>,
-	Jun Zhan <zhanjun@uniontech.com>
-Subject: [PATCH] Bluetooth: btintel_pcie: Remove duplicate BTINTEL_PCIE_MAGIC_NUM definition
-Date: Tue, 12 Aug 2025 20:43:08 +0800
-Message-Id: <20250812124308.2504833-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737233C2F;
+	Tue, 12 Aug 2025 12:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755002669; cv=pass; b=f86WGSuUYZJ4eP4IdIUE2u+UHxmwmZab/g6jw83WaZtp4wwEFQxPT0XAotn+mbpp8zY9VjqkOOzruQ967tnW9WLsP569rdOi/dX7G5yMJ8USI8lrS+6hKVru+dLX2qQeBMfWN4+yhhhiZT6k2hb6Ply1lJeBN5gOoFdyV71k4X8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755002669; c=relaxed/simple;
+	bh=aovnMvauQF14l6Ev5ezrn3B0Zeb5MSpsT+UmdVvzVno=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=N34LPRXHpjxFbpID+wqfZqDjsQdFw1SFDakyaiVDpJWev2h2XWbUoxv5IvI+0rdu3xDV2oNQmEj7+EyvifndFs+m9GmKdYS2i9omC1SKLlOGd6U80DjiTvMH8wq7GzxGuTboY+yyI6MUxo/rkGtgOjkG4cr6bcfXmOOjfC8PnSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WTKJMJNG; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755002654; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lVQIibjdfhvMYBlR2QpvF1RpUnyaGJfDmIVEFm3xuwbZcYpobtvb/c3y6dMugUmzWCCYGzbietd7im/ZYeZ3a2vCQjrlHYrk7bd4hJ9UQGZ9qm4Gh8xuyJWjiOPaipLeea5+dlAtyIORY21oc7UPnqjTW7v0riPFQsy4FaczsIk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755002654; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NOOoxngxEdcM2kIUlTo4kWzeob+fFsO+rooI1FvSjkE=; 
+	b=nytNkYIIiLDhhjbMrHhe2+Z5MxLiti3Szv3XASp1+vniC+tsQ9mnhozUKxRZk+LXZEJ8YwbebpSABegV7MzIrYY+fkglLUcZxS4AlWnSi4OQvBtAKEk2EgBCIzrJix2x5VRpp6oEGzlKHLTYYMtreDBVRY+Npj4RbEOT/OkZGrc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755002654;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=NOOoxngxEdcM2kIUlTo4kWzeob+fFsO+rooI1FvSjkE=;
+	b=WTKJMJNGyjpvuT+FaweVGWfRNbK7cw18YEFnMqJ+BdA4lIjv4WTx8YVo2+rTxwTw
+	LaR+Dm8z+NfEXiPbDuh5ZlodPnt/uLRFTiLA9HiaHtxN1vVIHmNBHoqTjBomQ3Pq52e
+	GEU7dhMZRGyThkxeepM3njE/+99uTEPNMc7LGz1E=
+Received: by mx.zohomail.com with SMTPS id 1755002651086223.74919088830302;
+	Tue, 12 Aug 2025 05:44:11 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: OYpbVsTx4C81wkYC60aT9wpHcTXPZOqcKEXCh1gXTDExeWiMgd432Y6r
-	ugag9GwLn1qsKWRn7CnFyoMJZzEic4YdX/VOmpfYrcoaQksCAx+BGSMsTVhFGJEWNe5sdN7
-	Znq6uYm/0vGTjSKC5f6nC+9Ein2lxI064dhfjG8gXXoRRVYXjPJ/kCHmbcJlXmQD/TfZw1l
-	MhGFVphi6fODyEIYSASaUPMge0rcX5QBV9LxvTOyUXIpAoPMeZgPjxmbLDO+NDzxe03KAgl
-	HdnLxaWuYj1vRvARHE8LFpzhJyx98GNRpXEGXeBB2h6U7/JnlN5rfvPiApNN1uh+f/bgDa2
-	YOHJKET3X3Ji96qtvXlXNpfXKwb9aoQCE367ZhXJ2aM7cAfGUJ8FGHipKH2mbo+o02ZAdFu
-	gkXXv0XHVCPmgl+0ltO7GFGkV6IuHrUyBQoXBJE63OY1zzlBteCMOpeFlhLWOrD6dnBQbVr
-	RfFRMBqdOXItU8kZfaW+f0ndSwBjddyjzjYdS8uc0FCVaKvvTc60LKBoXXy04yh+1g+VN6B
-	QUbHSSGh38/eKkAZeWLs7z7jbkCfxnxVS8HZsqa4QrL/DhYoXPqmDOHYvGpB+N53eVeHxZn
-	xu3ROB6lPo9Y4MzL4vPSGqnDndHvDj/NrBDeDFPwwTF2ewUP0nDFpQ7rbiLNMVsErLIS26f
-	BUtnJ37tmxH+BDiiVVRCShOqu0ehSeGCo9mFnS38EF8GBgEy35RI8Ybsuzeav4eAzKC734S
-	RbVB4ABsYpQJHqPC6m9PhS+lhtKDb5aePksC37byeYCJphJL9ypqwBUwx+zcJYVWc54WII0
-	7I911RfzC08z0aGwi5LD6ic0mos5AaTl45Cs/sqyNVV9AePedKfVbmcab5ujOO21YT75NQL
-	lag1v/9YfrgM29oCGlUgBkz1sxhe3490nREOCs4AqvQ0l4AEiaumoO4tzKdcJHoBhGrHVrr
-	4cjB4Oqm2Fy0zZ0pGGYXzGrbxMcyfN/4BBltYKO8dZc3i/eMO3G4io/pd3HdKo0cYj5Szo4
-	59az6q4cj+Tlp8F/YMSdhP6N07HFWxXFyj6DrOkbFiMOyYx9CM
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aJsxUpWXu6phEMLR@sidongui-MacBookPro.local>
+Date: Tue, 12 Aug 2025 09:43:56 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9A6E941F-3F40-40C5-A900-4C22B27D1982@collabora.com>
+References: <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
+ <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
+ <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
+ <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
+ <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
+ <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
+ <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
+ <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
+ <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
+ <DC0B7TRVRFMY.29LDRJOU3WJY2@kernel.org>
+ <aJsxUpWXu6phEMLR@sidongui-MacBookPro.local>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Remove the duplicate definition of BTINTEL_PCIE_MAGIC_NUM macro.
-The macro is defined twice with the same value (0xA5A5A5A5) which
-is redundant and should be cleaned up.
 
-Fixes: b9465e6670a2 ("Bluetooth: btintel_pcie: Read hardware exception data")
-Signed-off-by: Jun Zhan <zhanjun@uniontech.com>
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
 
-------
-PS: I don`t know why not show a gcc redefined warning or error?
-------
----
- drivers/bluetooth/btintel_pcie.c | 2 --
- 1 file changed, 2 deletions(-)
+> On 12 Aug 2025, at 09:19, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+>=20
+> On Tue, Aug 12, 2025 at 10:34:56AM +0200, Benno Lossin wrote:
+>> On Mon Aug 11, 2025 at 4:50 PM CEST, Sidong Yang wrote:
+>>> On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
+>>>>> There is `uring_cmd` callback in `file_operation` at c side. =
+`Pin<&mut IoUringCmd>`
+>>>>> would be create in the callback function. But the callback =
+function could be
+>>>>> called repeatedly with same `io_uring_cmd` instance as far as I =
+know.
+>>>>>=20
+>>>>> But in c side, there is initialization step `io_uring_cmd_prep()`.
+>>>>> How about fill zero pdu in `io_uring_cmd_prep()`? And we could =
+assign a byte
+>>>>> as flag in pdu for checking initialized also we should provide 31 =
+bytes except
+>>>>> a byte for the flag.
+>>>>>=20
+>>>>=20
+>>>> That was a follow-up question of mine. Can=C2=B4t we enforce =
+zero-initialization
+>>>> in C to get rid of this MaybeUninit? Uninitialized data is just bad =
+in general.
+>>>>=20
+>>>> Hopefully this can be done as you've described above, but I don't =
+want to over
+>>>> extend my opinion on something I know nothing about.
+>>>=20
+>>> I need to add a commit that initialize pdu in prep step in next =
+version.=20
+>>> I'd like to get a comment from io_uring maintainer Jens. Thanks.
+>>>=20
+>>> If we could initialize (filling zero) in prep step, How about =
+casting issue?
+>>> Driver still needs to cast array to its private struct in unsafe?
+>>=20
+>> We still would have the casting issue.
+>>=20
+>> Can't we do the following:
+>>=20
+>> * Add a new associated type to `MiscDevice` called `IoUringPdu` that
+>>  has to implement `Default` and have a size of at most 32 bytes.
+>> * make `IoUringCmd` generic
+>> * make `MiscDevice::uring_cmd` take `Pin<&mut =
+IoUringCmd<Self::IoUringPdu>>`
+>> * initialize the private data to be `IoUringPdu::default()` when we
+>>  create the `IoUringCmd` object.
+>=20
+> `uring_cmd` could be called multiple times. So we can't initialize
+> in that time. I don't understand that how can we cast [u8; 32] to
+> `IoUringPdu` safely. It seems that casting can't help to use unsafe.
+> I think best way is that just return zerod `&mut [u8; 32]` and
+> each driver implements safe serde logic for its private data.=20
+>=20
 
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index 6e7bbbd35279..758fbf3fb55a 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -65,8 +65,6 @@ struct btintel_pcie_dev_recovery {
- #define BTINTEL_PCIE_SCP_HWEXP_SIZE		4096
- #define BTINTEL_PCIE_SCP_HWEXP_DMP_ADDR		0xB030F800
- 
--#define BTINTEL_PCIE_MAGIC_NUM	0xA5A5A5A5
--
- #define BTINTEL_PCIE_TRIGGER_REASON_USER_TRIGGER	0x17A2
- #define BTINTEL_PCIE_TRIGGER_REASON_FW_ASSERT		0x1E61
- 
--- 
-2.20.1
+Again, can=E2=80=99t we use FromBytes for this?
+
 
 
