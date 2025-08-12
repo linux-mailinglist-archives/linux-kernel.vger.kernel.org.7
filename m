@@ -1,88 +1,47 @@
-Return-Path: <linux-kernel+bounces-765119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0079AB22BB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:29:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE37B22BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B57426757
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:29:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D3757B435D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B732F5486;
-	Tue, 12 Aug 2025 15:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A4D156661;
+	Tue, 12 Aug 2025 15:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYvHJDUD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6s1h4hh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8C12F5482
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893D12AD0D;
+	Tue, 12 Aug 2025 15:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755012589; cv=none; b=A0cL+K9k5j7FIBBqX0rsQfowT/PPIbyFVejaDHLNTg2MChIJFI5gxhG1H4E1zLzmgDUoqJkTqcY+LIUSwxjkjx8NTe3IPvOUjPqwiuOl+qOyZWfClkx/yjfX1NebuQeK7F0JTYY9jX4mOK16hO9xkf9YIc7j/Ws+rrPvq8takX4=
+	t=1755012634; cv=none; b=fIbYejrDZxVw/10fxCMAA/LaRGuFZ+nVOcGL3aRWylng5m2Kzx3lQ/BwPmn2DgLShOXlhgaJbR5IxtncoYatGGWyrKxAhCLmoosThGMgvodz/mBQmslmme3251jouQgNAVuT5yWOfxRThT6B2kebKexV3AcJW3Y/JknZbKKdbMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755012589; c=relaxed/simple;
-	bh=lVpz2r6CUCOdWMmAbGQmvSn5iH8OBffDbbtnM6qk9rM=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=nIrm6Elko+JMWXmFBgC2+yKfXYtLtJ1OQQaZUfAZMafFH2a7sx/pLXGA4/EK4A4opR4iXEG4Ti1nMRnsgd0MkJtPSYxofoffvT3l3/yaj7tOqo7mzEr+F42V2omP4BXYuWX/YY/2ZzxH6r1TgPZMi7SAKw+r+yTgj5ekjvq/8Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYvHJDUD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755012585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4XAxSxKvK72o9I+RHPHnbHosdZghbyJGunP+/xi0nHs=;
-	b=cYvHJDUDSScyOMZp3ijV/Wuajzwjkvz2bLwHll8SxXFEsFw06UawzBkIS8t9SgfzNNJ7jh
-	AwPTfIhD3qJpYweskqPU5PrWnxZBhezgSHbbxPVsiLam81oO6ERfbxsqjskMv19rDkl9s8
-	29+LVUEi3zBwa8MhatZPHo26XH5VnL0=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-520-Wk0OysYlOKCYbwMxClRvVA-1; Tue, 12 Aug 2025 11:29:44 -0400
-X-MC-Unique: Wk0OysYlOKCYbwMxClRvVA-1
-X-Mimecast-MFC-AGG-ID: Wk0OysYlOKCYbwMxClRvVA_1755012584
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4af18aa7af8so149206201cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:29:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755012584; x=1755617384;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XAxSxKvK72o9I+RHPHnbHosdZghbyJGunP+/xi0nHs=;
-        b=rvvq164Ebd5sgdR3HbMydFL/ySbefntHL7dBZVkpjZq/bWY066WAsastTosvCOYblc
-         JndDm09sl2jTk2nWojcSnEAolZ2iwOigaIIHbEiy8J3M7WSNAwkpJMrcwjV1yFKX+Sce
-         b+BL/LHOPGi2bz8we5Wq9JKSO0TD04t/98wVNLZvDl4ks7IzkjTCbXNpahomhBlPlMoq
-         wqNLyHYMwPxVeO9KRVZHNAIxPKYOgIjPcrSbOChE2DVeW90HFYXjNh+tGvj6NwQ6hGYF
-         sVOkIRkBta+pEvaTPhYk8MEMc4N0B1ydvnGyBsyjxQzuE2dsjTJzy+GKEr3BHVIFcCMU
-         M2Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFD1XpGWlVdQUCuvS7lGoPg/XmXvSP1cOj36xGVul0QkxoALhDUamM5uwR+jWNtZSgmAb5Yh02ildS0bM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZrlFJav3UDkU4ai/SNj+SnYc+VpahgANge+RXXj3aJUOSNFCZ
-	2d48chLQr/lPmcmVmbWQcwruFVkZxCbPCVUJTsafI15N0UBcZ7AugOaS4MtA61Ax6nGQq9aJ6lt
-	VNmTBNHokTXEiNJF98W04GUmNfXQnrY83Dhd/am3/fGHTKgEQtoxiDa+F6hPFCE8s3w==
-X-Gm-Gg: ASbGnct7YpVw3PBYge+Nci5WqZHFLponvKLfdLQKs1BSLFht2D2p1+GbfTWJLyKpgSk
-	ElHefYp/KJ15o4CBTQrBOfHXzgsXZTQiK4VrAaZWP3D8domjXoiAn/+BFEPZvVHjD4UFLgTYb9B
-	bWxNfhRnliC7GbxtYNEXc7LhU/ZbeQK9MF29bfIQaI5HGu7hVSf+JXWF6sR2rWfibu26MnKetQp
-	P+cehS4xRFQhXtzmIilXdpCUMVlFqVQBrBgu1UydRR22fbCy1j9266lEo7KlxytXhl3Fmu9+Smq
-	ijaYTNZ7H7vVsCtXCl40xy8d0cLlkcMzETz/FRcBypIaYcOzoQ93duWiEyAicCZn0Fjahu0bhhA
-	oMRXExPl4kQ==
-X-Received: by 2002:ac8:5749:0:b0:4af:199d:107 with SMTP id d75a77b69052e-4b0ecccd7efmr48577111cf.48.1755012583445;
-        Tue, 12 Aug 2025 08:29:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKHe96FuWq6UoRLQxaOujmsaHpIFPq+dhmB6C7g7OxKsj4NSLjaFEnU1qumoMqXVEKaxQPHg==
-X-Received: by 2002:ac8:5749:0:b0:4af:199d:107 with SMTP id d75a77b69052e-4b0ecccd7efmr48575961cf.48.1755012582255;
-        Tue, 12 Aug 2025 08:29:42 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b06787441fsm125279601cf.28.2025.08.12.08.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 08:29:41 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <a4395bac-9c54-4a23-b5e0-2a84db9b4ec7@redhat.com>
-Date: Tue, 12 Aug 2025 11:29:41 -0400
+	s=arc-20240116; t=1755012634; c=relaxed/simple;
+	bh=fSpC7xHCqIbWLnou6SZi6B0P5Vb+1fpce9qaTi/b3gA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iza+I8dpCXT0Gg0CIbU7I38U/UWwVkY47sueZllrxpflDtYW+aCM5WZCvfX4CqdyJQOf0Gu9DsEbxyKDcNU2uK/v39hzlwE/i/SFvHcidOAY/kCXdXwnwxENKixuHzGnbbZRlXxKmZMOXc0GyljiECXaNbDwBJP6QieOFz4uP0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6s1h4hh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DDBC4CEF0;
+	Tue, 12 Aug 2025 15:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755012633;
+	bh=fSpC7xHCqIbWLnou6SZi6B0P5Vb+1fpce9qaTi/b3gA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j6s1h4hhIOSVDqhNeSAI3iCo3Yl4LfJRBM4UYOH7ygRYj+ll1xhynNsETQEDKb/8M
+	 Dth1dKho/DG7cb560HHymVZYFnVOAMW9EPyNeigdcq1v+5uzIeiq6NFPQRbwyY0gtI
+	 eRrbrg1T+TL1cZhkuXhYt8unQoTvjSVE7LfJHjxwuCRQOfPrm7WQ76mvUKtKBbXIu7
+	 Sp7ALBfaCC/BowA1ZsrH5R5jX29v3tjKATyWOkAZ82dKCNeI06st4jx/R/PUad49Kx
+	 hBXoqG5S3tDCH74pTpGYxxkm7BHkwOUrBSxuf5bPbeiyN4EuL+2tnFQCRalv2inXyw
+	 zkA75PhP/BJmA==
+Message-ID: <fd39f667-9153-4c62-9993-2156f2cebf1d@kernel.org>
+Date: Tue, 12 Aug 2025 17:30:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,67 +49,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 6/8] sched/isolation: Force housekeeping if isolcpus
- and nohz_full don't leave any
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250808160142.103852-1-gmonaco@redhat.com>
- <20250808160142.103852-7-gmonaco@redhat.com>
+Subject: Re: [PATCH 3/4] soc: fsl: qe: Add support of IRQ in QE GPIO
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+ <22b3847fd0011024c10aff48f1e5223894ce718a.1754996033.git.christophe.leroy@csgroup.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20250808160142.103852-7-gmonaco@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <22b3847fd0011024c10aff48f1e5223894ce718a.1754996033.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/8/25 12:01 PM, Gabriele Monaco wrote:
-> Currently the user can set up isolcpus and nohz_full in such a way that
-> leaves no housekeeping CPU (i.e. no CPU that is neither domain isolated
-> nor nohz full). This can be a problem for other subsystems (e.g. the
-> timer wheel imgration).
->
-> Prevent this configuration by invalidating the last setting in case the
-> union of isolcpus (domain) and nohz_full covers all CPUs.
->
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->   kernel/sched/isolation.c | 23 +++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
->
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index a4cf17b1fab0..3ad0d6df6a0a 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -167,6 +167,29 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->   			}
->   		}
->   
-> +		/*
-> +		 * Check the combination of nohz_full and isolcpus=domain,
-> +		 * necessary to avoid problems with the timer migration
-> +		 * hierarchy. managed_irq is ignored by this check since it
-> +		 * isn't considered in the timer migration logic.
-> +		 */
-> +		iter_flags = housekeeping.flags & (HK_FLAG_KERNEL_NOISE | HK_FLAG_DOMAIN);
-> +		type = find_first_bit(&iter_flags, HK_TYPE_MAX);
-> +		/*
-> +		 * Pass the check if none of these flags were previously set or
-> +		 * are not in the current selection.
-> +		 */
-> +		iter_flags = flags & (HK_FLAG_KERNEL_NOISE | HK_FLAG_DOMAIN);
-> +		first_cpu = (type == HK_TYPE_MAX || !iter_flags) ? 0 :
-> +			    cpumask_first_and_and(cpu_present_mask,
-> +				    housekeeping_staging, housekeeping.cpumasks[type]);
-> +		if (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
-> +			pr_warn("Housekeeping: must include one present CPU "
-> +				"neither in nohz_full= nor in isolcpus=domain, "
-> +				"ignoring setting %s\n", str);
-> +			goto free_housekeeping_staging;
-> +		}
-> +
->   		iter_flags = flags & ~housekeeping.flags;
->   
->   		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
-Reviewed-by: Waiman Long <longman@redhat.com>
+On 12/08/2025 13:02, Christophe Leroy wrote:
+>  
+>  	qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
+>  	if (!qe_gc) {
+> @@ -313,6 +324,14 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+>  
+>  	spin_lock_init(&qe_gc->lock);
+>  
+> +	if (!of_property_read_u32(np, "fsl,qe-gpio-irq-mask", &mask)) {
 
+Undocumented ABI. You cannot add such stuff and testing your DTS would
+point it out.
+
+
+Best regards,
+Krzysztof
 
