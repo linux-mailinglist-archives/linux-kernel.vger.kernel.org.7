@@ -1,91 +1,61 @@
-Return-Path: <linux-kernel+bounces-765158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123B8B22C51
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:57:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5234B22C9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81DDB624E07
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9EBB7AAFD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985FF307AE6;
-	Tue, 12 Aug 2025 15:52:53 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946DD2FD1D6;
+	Tue, 12 Aug 2025 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpgghlEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AF723D7EE;
-	Tue, 12 Aug 2025 15:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9B72F83AC;
+	Tue, 12 Aug 2025 15:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013973; cv=none; b=oLJ15eF0BXmTuXoO2BLHk6wFT23YGxTMFbsAuLwGEEd4vxIbDuRVGtWR5vsBE6toXtpvStYXSC2lDaZ7k6KVi5a2p7vh0JTGXqOumnBFI2b9G4uQ3nodPwiHoa+QHOVx/Z5Zw1nXi/maE7vSpyKrEnEYkAhR2BNnOpEsfFk/lcg=
+	t=1755013985; cv=none; b=cKpHpc3FSYEB8iKgs4ATh4f1XE8wJXJ+OpnY0ZoZQFPqAa058VyBYyx0f9V6BbE/jCjiDnQM+DTjhGA6UICX8K+wunJw4wNL1H7Z0ZUc5A4Z5koKunKRI3bmdeuEggj4jB2bRj6lpE1XFJmeFXEhwsAoplKk1ns0Q29Nq5Ew13s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013973; c=relaxed/simple;
-	bh=aD8GbCKvKiWaTtzd6D9lq/XvzMzboWn1cL6psXbvr88=;
+	s=arc-20240116; t=1755013985; c=relaxed/simple;
+	bh=WIW4xmrBDrTW4s4+RAhMaPsZsgGw9ZJA1kTCbhssfL0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=srhlZcrF6rdxK1PcZEd83zaZqHS3zB10KO4GT62r3E84gVi2ICi0jbnp58w427bpH3dfnasBhH+cpomyT9h/hIHC6hLkyVk20hmkjM6KfDQYlahYPyxjOhwWXwlYSusA+fAfjrKw+OjXTiIS/WQyEgM0aYqRvfjmzZXB7qLFrpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24099fade34so41283625ad.0;
-        Tue, 12 Aug 2025 08:52:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013970; x=1755618770;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mfa3i9rOipmYMsnw23KZ5Tctd8O9telY4wmzE+SpLWU=;
-        b=wQiB896WanZX2YHbi+fdqunfOsY3vlmDsaa6NAEYgLMyfLwgq7otu+AIHpxFIW4r4+
-         FOErrts/jfIRFFjxSasLIz+hC78ZmXjZNzzuXV6ex2ClKx14lKlVjmvgTXyd8/KfUHlV
-         0GgUs70JUKhlJrqTJTKigLHZG7noxG1COMwAA99Fp0RtJAg7U5HH1+A/EC4G2W/j9sfK
-         vY1Mheri1pfpJ/ua5ZF5Y4YMXASMnvnrDJUBobhuq37P8zcoW/GpwYA6AD6gMbOYISIm
-         D2Wqfritbd4Um95fTLf8nsqsNC0fIafw9TBhJQnnS2ZcaXlYH+GJJRxA6Ew200ccCB4Z
-         TfXA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0OK2AL/EVWv5+zmSZqO+G22ZWkYtghiDt0J8ENFuidLD+AjISjdwTfHvIf8noN+NTZYkZ04dcBiTgg2lIM0Vf@vger.kernel.org, AJvYcCWZQYbyU/zTepGY7cGehcPmQFw5lITNo5C3MhtdU5OlG+xcUqy7q/b5mze6WSOgCXcvwqNavPdgXKvqWxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJI766cflGKtaJlLMt4LKdsPnS7eU4PktcYB+Lo0TsVJevk91f
-	HZnBSeyJQPqaiTgl/beTesWwQrThZP6o73HJ+FdV+XO2AFgxDHlLnYot3CQM
-X-Gm-Gg: ASbGnct7X6KVLMyzrj3eVExS+shC1h2Ba9DlLO39X8BrUEBAjfRV5Yszgi3N8uBr1vY
-	MLi747mXLTeBzdsNlrvK89nQk+UHUMu47PaLimY9PoodnBG59MW2e+dyeMf9aiqLAoae1RyUNIr
-	RhMGEdcXcqHMZb2WSM/IdB4y533+hgUJdiGlZZugRbsONofCyRNWPpwubjWpxQzrX2m1jP1/kOS
-	gyImYNEc5ceZ+ZgHw75PQe4xsyC02NKf1u7sB6JVwty9aSTolAqdfAnczhcUYHKo6KCQ6xMcA42
-	Ae+uv8mlW6ho3sPZd0R9KuZp/ILe7sNUa68oRnOJh3DhIRCrvcNpqIT8NlLzjjO9WmEXss+1BLi
-	QbwWJi6LzTMo2FfMsK46c+jD/e+Ks+eG4vZa9nNDRpgk6aqp/kf4rD2t5bnI=
-X-Google-Smtp-Source: AGHT+IGBGkmr9pZr40H+xsMkIBamZYWaMKPk4BVzM+vCAsfxbVPqNX7XjaIWfAH5MMccHcGWAr36sg==
-X-Received: by 2002:a17:902:f551:b0:240:6766:ac01 with SMTP id d9443c01a7336-2430bfeb488mr3595155ad.2.1755013970508;
-        Tue, 12 Aug 2025 08:52:50 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e8975c94sm303016765ad.93.2025.08.12.08.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 08:52:50 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ayush.sawal@chelsio.com,
-	andrew+netdev@lunn.ch,
-	gregkh@linuxfoundation.org,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	steffen.klassert@secunet.com,
-	sdf@fomichev.me,
-	mhal@rbox.co,
-	abhishektamboli9@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	herbert@gondor.apana.org.au
-Subject: [PATCH net-next 4/7] net: Switch to skb_dst_reset/skb_dst_restore for ip_route_input callers
-Date: Tue, 12 Aug 2025 08:52:42 -0700
-Message-ID: <20250812155245.507012-5-sdf@fomichev.me>
+	 MIME-Version; b=pQIVDEOi4Gct1OREdKni3uZpm0xAhlpHSS3TT2/GnVUn2L7bpO2zbnpXt4O+Q8NHD6VAgpFiR5BP8hSXw51ecRafh8TSAQyyZgkiNb1ef9EEMWRm4ZI1XtoHYEt+5TmBW/XcaYXuGSHzB1Gv1akGxo+nKlx77WPADIoX3WNRbvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpgghlEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06EDC2BC87;
+	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755013985;
+	bh=WIW4xmrBDrTW4s4+RAhMaPsZsgGw9ZJA1kTCbhssfL0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CpgghlEwndxcgRLA+ym40cijs9ihpb5NSiq4AKsyk3H2YDcIEwveVKYre3g4EdjJp
+	 UXqisr+kF71p4iax7hGPNyY07oP0b957VRMWefVgWVr+QI3HYw28INhk45KDjzuY7I
+	 TVWTb8XOV1nCaukaVG42vPkH1DJbu0BLwEtNJcwHOtpT+ugxdlHZQK2fHAyH4FzKC6
+	 CD1HkVJI4ifqfqUyX/KDZwGCGndoNEfoyhONBVGFpc8NVw2cFZxWQC+u7evYcJS6xa
+	 bbyvov5wJDWqH/ZZG1S4RrWAE/ywuhrXaFb64WZBViMGwFnWNBP88Q5AfJ8CDx712C
+	 AUQVCulr/hGfg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ulrJ8-00000006kWo-3KYY;
+	Tue, 12 Aug 2025 17:53:02 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 25/39] scripts: sphinx-pre-install: better handle RHEL-based distros
+Date: Tue, 12 Aug 2025 17:52:42 +0200
+Message-ID: <4d1b27d3a381f011e150bb50176babba83af9e1a.1754992972.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812155245.507012-1-sdf@fomichev.me>
-References: <20250812155245.507012-1-sdf@fomichev.me>
+In-Reply-To: <cover.1754992972.git.mchehab+huawei@kernel.org>
+References: <cover.1754992972.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,65 +63,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Going forward skb_dst_set will assert that skb dst_entry
-is empty during skb_dst_set. skb_dst_reset is added to reset
-existing entry without doing refcnt. skb_dst_restore should
-be used to restore the previous entry. Convert icmp_route_lookup
-and ip_options_rcv_srr to these helpers. Add extra call to
-skb_dst_drop to icmp_route_lookup to clear the ip_route_input
-entry.
+Better implement support for RHEL-based distros. While here,
+get rid of a Fedora 28 support which cause troubles with
+server distros. Also, get rid of yum, as RHEL8 already
+suppords dnf, and this is not the minimal version we may
+still support.
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- net/ipv4/icmp.c       | 7 ++++---
- net/ipv4/ip_options.c | 5 ++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ scripts/sphinx-pre-install.py | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index 2ffe73ea644f..93a166a7ec8d 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -544,14 +544,15 @@ static struct rtable *icmp_route_lookup(struct net *net, struct flowi4 *fl4,
- 			goto relookup_failed;
- 		}
- 		/* Ugh! */
--		orefdst = skb_in->_skb_refdst; /* save old refdst */
--		skb_dst_set(skb_in, NULL);
-+		orefdst = skb_dst_reset(skb_in);
- 		err = ip_route_input(skb_in, fl4_dec.daddr, fl4_dec.saddr,
- 				     dscp, rt2->dst.dev) ? -EINVAL : 0;
+diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
+index 0963da21c27b..592223fa686f 100755
+--- a/scripts/sphinx-pre-install.py
++++ b/scripts/sphinx-pre-install.py
+@@ -536,10 +536,6 @@ class SphinxDependencyChecker:
+             "yaml":             "python3-pyyaml",
+         }
  
- 		dst_release(&rt2->dst);
- 		rt2 = skb_rtable(skb_in);
--		skb_in->_skb_refdst = orefdst; /* restore old refdst */
-+		/* steal dst entry from skb_in, don't drop refcnt */
-+		skb_dst_reset(skb_in);
-+		skb_dst_restore(skb_in, orefdst);
- 	}
+-        fedora26_opt_pkgs = [
+-            "graphviz-gd",  # Fedora 26: needed for PDF support
+-        ]
+-
+         fedora_tex_pkgs = [
+             "dejavu-sans-fonts",
+             "dejavu-sans-mono-fonts",
+@@ -549,9 +545,8 @@ class SphinxDependencyChecker:
+             "texlive-xecjk",
+         ]
  
- 	if (err)
-diff --git a/net/ipv4/ip_options.c b/net/ipv4/ip_options.c
-index e3321932bec0..95f113dc37d8 100644
---- a/net/ipv4/ip_options.c
-+++ b/net/ipv4/ip_options.c
-@@ -615,14 +615,13 @@ int ip_options_rcv_srr(struct sk_buff *skb, struct net_device *dev)
- 		}
- 		memcpy(&nexthop, &optptr[srrptr-1], 4);
+-        old = 0
++        fedora = False
+         rel = None
+-        pkg_manager = "dnf"
  
--		orefdst = skb->_skb_refdst;
--		skb_dst_set(skb, NULL);
-+		orefdst = skb_dst_reset(skb);
- 		err = ip_route_input(skb, nexthop, iph->saddr, ip4h_dscp(iph),
- 				     dev) ? -EINVAL : 0;
- 		rt2 = skb_rtable(skb);
- 		if (err || (rt2->rt_type != RTN_UNICAST && rt2->rt_type != RTN_LOCAL)) {
- 			skb_dst_drop(skb);
--			skb->_skb_refdst = orefdst;
-+			skb_dst_restore(skb, orefdst);
- 			return -EINVAL;
- 		}
- 		refdst_drop(orefdst);
+         match = re.search(r"(release|Linux)\s+(\d+)", self.system_release)
+         if match:
+@@ -559,12 +554,12 @@ class SphinxDependencyChecker:
+ 
+         if not rel:
+             print("Couldn't identify release number")
+-            old = 1
+             self.pdf = False
+         elif re.search("Fedora", self.system_release):
+             # Fedora 38 and upper use this CJK font
+ 
+             noto_sans_redhat = "google-noto-sans-cjk-fonts"
++            fedora = True
+         else:
+             # Almalinux, CentOS, RHEL, ...
+ 
+@@ -574,9 +569,6 @@ class SphinxDependencyChecker:
+             progs["virtualenv"] = "python-virtualenv"
+ 
+             if not rel or rel < 8:
+-                old = 1
+-                self.pdf = False
+-
+                 print("ERROR: Distro not supported. Too old?")
+                 return
+ 
+@@ -607,11 +599,16 @@ class SphinxDependencyChecker:
+ 
+             self.check_missing_file(pdf_pkgs, noto_sans_redhat, DepType.PDF_MANDATORY)
+ 
+-            if not old:
+-                self.check_rpm_missing(fedora26_opt_pkgs, DepType.PDF_MANDATORY)
+-                self.check_rpm_missing(fedora_tex_pkgs, DepType.PDF_MANDATORY)
++            self.check_rpm_missing(fedora_tex_pkgs, DepType.PDF_MANDATORY)
++
++            self.check_missing_tex(DepType.PDF_MANDATORY)
++
++            # There's no texlive-ctex on RHEL 8 repositories. This will
++            # likely affect CJK pdf build only.
++            if not fedora and rel == 8:
++                if "texlive-ctex" in self.missing:
++                    del self.missing["texlive-ctex"]
+ 
+-            self.check_missing_tex()
+ 
+         self.check_missing(progs)
+ 
+@@ -621,11 +618,7 @@ class SphinxDependencyChecker:
+         if self.verbose_warn_install:
+             print("You should run:")
+ 
+-        if old:
+-            # dnf is there since Fedora 18+ and RHEL 8
+-            pkg_manager = "yum"
+-
+-        print(f"\n\tsudo {pkg_manager} install -y {self.install}")
++        print(f"\n\tsudo dnf install -y {self.install}")
+ 
+     def give_opensuse_hints(self):
+         progs = {
 -- 
 2.50.1
 
