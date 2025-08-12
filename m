@@ -1,175 +1,135 @@
-Return-Path: <linux-kernel+bounces-765329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637CAB22EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FDDB22EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C70188C4C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3B4189FA6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF94F2F83D8;
-	Tue, 12 Aug 2025 17:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5182FD1D6;
+	Tue, 12 Aug 2025 17:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cUAA08ZK"
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UINiRLsn"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2375242D74
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F780268C73
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018884; cv=none; b=CDhlJfx+7tObOIGrcSSIZiwL+ZlB2ryLzgSQAHg5h+LKmxUB2lUeXxD26ntq8XbGq5HW7m7dstE4qFnS3/RS/cX+omToINR2Nyfnpobmp/QvlWESx3ETyxAAR7GjmeryEf+lnZ2oWhrCKO6203DzAk/YhIqnDEb5bl3zfFS09l0=
+	t=1755018906; cv=none; b=t6wZbSrRcnZkMIUF+0vtJ6ok+cv0CZ2BvfWgMjgesETZmS4c+nPevxqS7eHmYH3cb8OV0Ys6yWacHX3IT6PRBxlHnaj0aPXsUvc4GNYFoxXklzpJ7TtV+lz/ydIk5pE5cyzd723+YqARKPihqi65vbc5BdY5pElwePxO8vKgp5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018884; c=relaxed/simple;
-	bh=PcjRSmowg+xnVo7SxRi4cwc0+Ee7unBuT7FL46px6hc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OuSecXuq+z7A9u2wbeyF5Liw9k50JidLyoXMAF07sVDu6eaXJkwReNtVPkODp6cbmWDVJ/RhhWuQmaSI9v7BVN6zhUeDpKQYDKKtROo89LvHlIX2rIC8NFP3EX+2QtYb469mDGDl12NZcIkeCQHBRlAg5xmCvhaVV9cvfLBbmRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cUAA08ZK; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-458b885d6eeso37132955e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:14:41 -0700 (PDT)
+	s=arc-20240116; t=1755018906; c=relaxed/simple;
+	bh=emH/9/qIpMML7VwyXCdOqP+butuG+Y1J3ry+obz5qAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fd5LTkWRGXYD+kgnLULLumZ/Ng3PSOnTBtgsxQmgjr5dF8pdkMXokIn9+7mwO7muAlfMmHi/TMGR/oCB/L3XWpXrAfVLb2IcMlgmB0g5x8rkdDb4m/XYm6I0AY59oduQeeIPsLimjjlPjFbGeG08k4860IxEQVwWki+Xz2S5zlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UINiRLsn; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458b49c98a7so37414775e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755018880; x=1755623680; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PcjRSmowg+xnVo7SxRi4cwc0+Ee7unBuT7FL46px6hc=;
-        b=cUAA08ZK8NiyNlUVgND/Gj9QM6Uea44p/e67Z7wfiNI0y1BVgjy4FG2bTrFDedoKPe
-         hhvQhlHZEA1QIMb0wL7dSeIw2AQkCjQkws03HsplIjzUwZtNx+JWktoFJqpTsrU2gb24
-         N2fjN/N/GQ5C/NR/J3GiDLKqa0Mnsr/KewDAbIC2M/cvvA2D0ZwJn6G8jBCuZ/Qg74BN
-         gGJ7+QIz0k0HtMd3Jxkc2EDFln36xoQCzby4hdX6Lwe2U7ZE8WNlwLnJDOUHLVIUTCVo
-         ga4y7e2vKRTakhsi0vmS+2RLT8fmxRMMp8zp8V5GuD/JzQ1RNKtaSZDKHdsUceg8efu6
-         9HvQ==
+        d=gmail.com; s=20230601; t=1755018903; x=1755623703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=emH/9/qIpMML7VwyXCdOqP+butuG+Y1J3ry+obz5qAU=;
+        b=UINiRLsno3oDyC1X36/sR51O+B1XPVQ8wP9dgrT3z0HacxrZdDkV9PzhhDwR09Japm
+         STk0dMZqQ76sdXARO+FkVZ69S71s4AR2XYzNPgc0HRJLwsOLAi1i1Z/OcdwOPGGWA1oa
+         7A77vie+p8oEZI1m8a2VOrCxOJGued1rGsoFgZcz3kEE2LrByUfthWw+mh5hDG/zPCmC
+         gpFN8elQ5NQFK/YUkmfck8hlKCC/+LdNxbgL8r2ytacK/bV201WfKZLmvVuTF+2owRsk
+         6fd1OSlPOJh51wj9kyaWz7IQYt4LV6n2lQ9umvQGCuCKlvTKggH7qplvByK8frCqusqv
+         rjoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755018880; x=1755623680;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PcjRSmowg+xnVo7SxRi4cwc0+Ee7unBuT7FL46px6hc=;
-        b=LacD/bljA+7cDWaBgJASzcYV9zp+Jdrgi57OlEGKALdsGZj8Lh9esmny5JVptLUiIw
-         zTx43V84gHe4/MLdNsqfKDVMcbgt/ST8Q7yJ1ueDoob1faOB/uxb6VMuyJPSB5m0Wqio
-         MLQBErl5roqXnCXCtL6NySvrFZcN8eNorX2sfyubK+pFJ0qMQBCPR0nhO16lPf0Qah/a
-         2d30ZEHTNakVeuoApuB4McacDT9HFZ9oHQUqZDMNyibBwZd+rS3odyLxBh3egVoAetvB
-         8TuBNlyNn3RRa5eNdUJau3w0kLMGgqhuJTZJJD/bihOc129kfWTPuOE4Bh0vrtmD72P0
-         hdrw==
-X-Gm-Message-State: AOJu0YxqUmfgpCxI+tnEpZupUsul0Bujb+QsLiJ/btjN+mQBqrDWze/7
-	+HQ75JPkaZLwvoz/Hr1PnoQ+koFyq6ukSVy3/dPITXz5Bh7qZkW8jWrR+ovrB49hQgk=
-X-Gm-Gg: ASbGncuJSdW0eHwFvpBAu+KzX9lLfAAhqLMDib4KcQmuDz1EJhDu8JB6XcbKmmPUZZh
-	qVAogjYOCkcM5eJki4cqhpcHLfnAiRi5p0Mbsmk+FrmhkPhLoPFir8vEAKeXpznGzCUNyHQ8IY6
-	tT0bH/7CTnR/Y2DDITr9MbZJonxY8K+0Xx+oTIBYgcwEF/3IZABRQNroevkLJk1AjdTm9u1xYE9
-	BnA8AaeMTuOMdoYuCfuQyJZoH11R1XPVozjhMxB/8ddAtoqr5BU8sskVygkRSMXWupOnl4jBiCD
-	xEfqjjC4MRvK5nX200tmX8tWI4YPNk14g132gInxtzFchCcwKuevkpVytqA5exfQK0uCghurPRf
-	GxBVC1EsJZNDgYtQypjK9K75S21CkUZBGp+nZ3iyCxv/pSn2wcgsl
-X-Google-Smtp-Source: AGHT+IE+/j+rEEIZd/63by1IWW0prgq8WeeqliYFo8/XwBxphioSWmbGq68Ck2+0UXtemH0kUDsMwg==
-X-Received: by 2002:a05:6000:2383:b0:3a6:c923:bc5f with SMTP id ffacd0b85a97d-3b91724f246mr176279f8f.17.1755018879936;
-        Tue, 12 Aug 2025 10:14:39 -0700 (PDT)
-Received: from [192.168.3.33] (210.37.160.45.gramnet.com.br. [45.160.37.210])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd0e78sm29735001b3a.99.2025.08.12.10.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 10:14:39 -0700 (PDT)
-Message-ID: <3444595a705960b1f38a34368c22d637a92ffa4d.camel@suse.com>
-Subject: Re: [PATCH v2 0/3] Handle NBCON consoles on KDB
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek	
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness	
- <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-  Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson
- <danielt@kernel.org>, Douglas Anderson	 <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Date: Tue, 12 Aug 2025 14:14:28 -0300
-In-Reply-To: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
-References: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
-Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
- keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
- Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
- gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
- GO8seNG8sYiP6JfRjl7Hyqca6YsE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+        d=1e100.net; s=20230601; t=1755018903; x=1755623703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=emH/9/qIpMML7VwyXCdOqP+butuG+Y1J3ry+obz5qAU=;
+        b=TkRQc6SRHJR1yfQmVrLF0UKFbdsCn+btTg8RdvULnGa8gQl75OpU/iTcxYgS5wX+k4
+         8SbR19HTV/klDV9vR0xQ4TnReMmM+DHUPtfXoYYzSoYpoQnNVuVt2aao2ZM2ExEmVny2
+         w83TnYG69xzCZdZrqbMRIvIeuocrAqcPhIwWUVhvTXXF4UJX0ChdRnGviDj5gxh8NdK8
+         C6SQW2JXQab0TrB9uUvn8VZMwyQ8XXVbudbEhIlXD7+Y0oNC0AzuybgC1+zaF4/4qncs
+         /aIJl53njgjZGn9856cSbJsXKA94SobjekitZg/6SYbHsLWNS6UC/FKkqVOGUouyFJ6O
+         6PFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDKKmz+i+iQY5b/jFIImxkVPIkFJ5PK+6/EBkk/WiJx8PpeB8ZQ5eS6Re09DeaUM3gsbIHn8yyJKu+Njo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOTJ2IGrm5gjplFEPeelYAsNoQ7aSiGC+D3Os13svZuYTUrA9W
+	F0T9HO66lL639yCc3Cd1VwrsS1gpqlBziKWpMX/9Wvr+8oV9JtJfADHOFX7OgIzAtfw0KrEKvYO
+	kjsQP7KZBMTv1zKaS8jl7+qXmjCfaJlE=
+X-Gm-Gg: ASbGncsMJHaqvlRN4CKrPye0V4xa02xE4TJ/j4Y30fAqWmoTABpMW5pos+aEoDh1fed
+	GBZ4Lee+2XTg+/yLsvCiP3DJD91KOQiAacAKJ3Ml8EcxNJojMaNyLFOdC4Pq9AVveRJ/KkjysOg
+	s3Codq6e5OSWDrqfbWNzBPC/skEvfMSLocx5jU3C4IOy8jo5nq3V4N5KlfUr5xj1Izzem7xNFC2
+	kYudWJaMg==
+X-Google-Smtp-Source: AGHT+IGscrYxQbMP7OG5PufoX/l5kbYx6BXGvLE32aEZsthI+SSXhiJax8zZreBUwk0pOZEPsu00PUEuLZoC4WM5glQ=
+X-Received: by 2002:a05:6000:2386:b0:3b7:7489:3ddb with SMTP id
+ ffacd0b85a97d-3b91730553amr137411f8f.34.1755018903312; Tue, 12 Aug 2025
+ 10:15:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250812124941.69508-1-bhe@redhat.com> <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+In-Reply-To: <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Tue, 12 Aug 2025 19:14:52 +0200
+X-Gm-Features: Ac12FXxbfIp4CjdMiDbk99JZKDZitEGnh3AeOJx4PqX8F5dQQ1jZuZRm61N9EdU
+Message-ID: <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] mm/kasan: make kasan=on|off work for all three modes
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	kexec@lists.infradead.org, sj@kernel.org, lorenzo.stoakes@oracle.com, 
+	elver@google.com, snovitoll@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-08-11 at 10:32 -0300, Marcos Paulo de Souza wrote:
-> After the proposed patches [1], it was suggested to start using
-> console_is_usable instead of checking if a console is enabled. It was
-> noticed that KDB was always calling con->write method, but this
-> callback is not set for NBCON consoles.
->=20
-> To fix this usecase, export console_is_usable and add new nbcon code
-> to
-> acquire a context that KDB needs in order to call ->write_atomic.
-> After
-> these patches are accepted I'm planning to go back to [1] again to
-> use
-> the function expected here.
->=20
-> I did the tests using qemu and reapplying commit f79b163c4231
-> ('Revert "serial: 8250: Switch to nbcon console"') created originally
-> by
-> John, just to exercise the common 8250 serial from qemu. The commit
-> can
-> be checked on [2]. I had to solve some conflicts since the code has
-> been
-> reworked after the commit was reverted.
->=20
-> Without these patches, NBCON consoles won't receive the kgdb
-> messages. I
-> tested using [2], and it works after this patchset.
->=20
-> Thanks to all reviewers of the patches posted on [1]! I hope this is
-> the
-> first step into implementing all the changes suggested in that
-> patchset.
->=20
-> [1]:
-> https://lore.kernel.org/lkml/20250606-printk-cleanup-part2-v1-0-f427c743d=
-da0@suse.com/
-> [2]:
-> https://github.com/marcosps/linux/commit/bea249773c9caf56821f9ec06c7f9649=
-e4966c61
->=20
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1:
-> https://lore.kernel.org/r/20250713-nbcon-kgdboc-v1-0-51eccd9247a8@suse.co=
-m
+On Tue, Aug 12, 2025 at 6:57=E2=80=AFPM Andrey Konovalov <andreyknvl@gmail.=
+com> wrote:
+>
+> On Tue, Aug 12, 2025 at 2:49=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote=
+:
+> >
+> > Currently only hw_tags mode of kasan can be enabled or disabled with
+> > kernel parameter kasan=3Don|off for built kernel. For kasan generic and
+> > sw_tags mode, there's no way to disable them once kernel is built.
+> > This is not convenient sometime, e.g in system kdump is configured.
+> > When the 1st kernel has KASAN enabled and crash triggered to switch to
+> > kdump kernel, the generic or sw_tags mode will cost much extra memory
+> > for kasan shadow while in fact it's meaningless to have kasan in kdump
+> > kernel.
+> >
+> > So this patchset moves the kasan=3Don|off out of hw_tags scope and into
+> > common code to make it visible in generic and sw_tags mode too. Then we
+> > can add kasan=3Doff in kdump kernel to reduce the unneeded meomry cost =
+for
+> > kasan.
+>
+> Hi Baoquan,
+>
+> Could you clarify what are you trying to achieve by disabling
+> Generic/SW_TAGS KASAN via command-line? Do you want not to see any
+> KASAN reports produced? Or gain back the performance?
+>
+> Because for the no reports goal, it would be much easier to add a
+> command-line parameter to silent the reports.
+>
+> And the performance goal can only be partially achieved, as you cannot
+> remove the compiler instrumentation without rebuilding the kernel.
+> (What are the boot times for KASAN_GENERIC=3Dn vs KASAN_GENERIC=3Dy +
+> kasan=3Doff vs KASAN_GENERIC=3Dy btw?)
+>
+> Thank you!
 
-This patchset wasn't thought as a v2 of [1], but somehow I messed up
-with my b4 setup, and it's like this... ignore the v2 mark :)
+Ah, you don't want the shadow memory for kdump, sorry, I somehow missed tha=
+t.
 
->=20
-> ---
-> Marcos Paulo de Souza (3):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk: nbcon: Export console_is_usable
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk: nbcon: Introduce KDB helpers
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kdb: Adapt kdb_msg_write to work with NBCO=
-N consoles
->=20
-> =C2=A0include/linux/console.h=C2=A0=C2=A0 | 50
-> +++++++++++++++++++++++++++++++++++++++++++++++
-> =C2=A0kernel/debug/kdb/kdb_io.c | 26 ++++++++++++++++++++----
-> =C2=A0kernel/printk/internal.h=C2=A0 | 41 -------------------------------=
-------
-> -
-> =C2=A0kernel/printk/nbcon.c=C2=A0=C2=A0=C2=A0=C2=A0 | 26 ++++++++++++++++=
-++++++++
-> =C2=A04 files changed, 98 insertions(+), 45 deletions(-)
-> ---
-> base-commit: bea249773c9caf56821f9ec06c7f9649e4966c61
-> change-id: 20250713-nbcon-kgdboc-efcfc37fde46
->=20
-> Best regards,
+I'm not familiar with the internals of kdump, but would it be
+possible/reasonable to teach kdump to ignore the KASAN shadow region?
 
