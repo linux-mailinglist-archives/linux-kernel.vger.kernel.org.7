@@ -1,91 +1,158 @@
-Return-Path: <linux-kernel+bounces-764486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D13B223A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94789B223B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0749D7B2F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F47D5003B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2002EA177;
-	Tue, 12 Aug 2025 09:48:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1EE20C037;
+	Tue, 12 Aug 2025 09:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Map2H7XL"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E345C2EA162
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AA52D59E3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754992088; cv=none; b=W9TXEf7gEahKrjbFBRJkLaUYhCR7MylhaWlxr1eZzPcDmmQF31xEDKPb2uIS2371QG61meO9QiIxevfZFp/33uzqv6FthPd9oYxP6gY4UT8ra7AywbtAP0Tx2b/NLm0UjhAmC1KNrrCbne+CAKPi4vXD+QBTNWfOU5/0/JDvDL4=
+	t=1754992201; cv=none; b=ioXU39CyYHY1eLJnM/5oE2hoeD/yV1RAcFUAFPAWLZ0PEfftCzyIxikdE2DYmfdzij0GV05B4S/EoMEvdVM3HaX6a5KAg16SdP8EyufDwxvgReGtkWulvp7tNJnjLF4dcWFtQghSiO6CDNn0lZ+MIKlmjVzaKdcgAAZTdSd1wn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754992088; c=relaxed/simple;
-	bh=tgMF8HuU+iL/6Y55dy6ba5v8RvxSKr6oTJYUTWCzqHs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kIz5OBWoIEyR7ABhy4MRM855flKGMRvdFoUGEW0z0rGdvD3qkvJvJiAQ8v+63dBNKbXsj+pWpwls49O/dBn0Q+fKHleFfQBoRO72mr/momOUBHDyTsrKOY7FZSWOU2kDT4g7Eu3t/ukh8XVNi3rgbwP/RA0qU6rZGrRatv61CLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8819fa2d87fso485915539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:48:06 -0700 (PDT)
+	s=arc-20240116; t=1754992201; c=relaxed/simple;
+	bh=0490oyMMcCSA6IAYKsOOlTvkHGvUwxMFO7SMFhwwTEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWg7MSgJ967swRuTWarFI/gcnb0zTxeUWVrRDbuWTYTMW606iR2oCB7i1Ndtd5fTIblUj/Rx0x2TgNymcBAKuKRvyL14xqNoCKUpN9ztjam34RlTCu47E0yoi8/aelmxKLaDLd8Go1LiI2BD4nHb5tRc5bt23wt4hAK9FmN0TGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Map2H7XL; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b42254ea4d5so3441687a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754992199; x=1755596999; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rHx6Lde4qag7Ztq8SOjvT6+8sJ05xOxFR27nxsVwgtA=;
+        b=Map2H7XLyX5tAhnuBljyVK5gOENCd/EFkAAjRUiix4f3fE2IA4HYRcT0FY7MjwuFsH
+         MBcEoUDadpXMRudf01gQo1K9S677BwmIWc4jhirjNZFbjKnVhQVvrw+DL9Xgk9jUcHpY
+         QH3BxUQsu37C3KVsf6d8SI6hysrrryrQ91Zcxudj2jtIF7CORWKR1aV1B/SARjwm76Ek
+         c/mIOtKhQ/DnD0pMOw14GKRLNt/LHoz3mOvae+ZSl5HhPfMIPRx+6vs068NBvVcmAOX4
+         mE8CdDYcSCpskV0pTYUVnwTsCM0qdG5FpGLRJSilNIh2JH+SmAnmRKI4QxirDWGOJ8hZ
+         QbpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754992086; x=1755596886;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1754992199; x=1755596999;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=23s4cMMxaWk/6h2mIsslFjC/yj0rjYz/dHBx5jBiKdk=;
-        b=otDtS7aooMlTPy5Peb2QFrbwzy9VgN9fWm2hZDMpP77gEgnKo0pMJXGSDuAAVG74v9
-         FEGQgMgbQrl2s7gTMiayUpkq0OyCcxGl24IPX4IaEcNQv6sTSLPCLZMZF7zqzPIN4TQc
-         E5jy00hZNRkpERpznzKksfbBPqbj1dkBvmFziMoMbtdnJXs8lvggc/f8FeJ0Da1X8jim
-         rBcycNy4djKyswjfbZJHke0au46IxzcVK/459D2NJksa8udnao813ndKXdFhC4+vyW/E
-         pL5t4KxqauFojFe3QMeUu8IKFE0pSn1Fss9B/zkaytUeQdpQispn8hLqgF41cGRffhje
-         9reQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKCpurvQ49+gk6MKkNKWpok6Hs0HR72SEqjzE0MNj70ujlX4Us1OAJmtK3oDBtXG+nN/+O/BDfe8ITMIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVPUUzWtuvQd4Fft874F2L8h3vjAP37wGTjRB43hGvTAKka0Oq
-	0TxVHy20YnuEZqBWJcvPhIJ4RnKyySyB5trxbMjIgFYLgKQPEMn+B7moQ4sKSMx1SH6+gule1+M
-	XcQ/K2xCpsJcbLU4bFXyCSRxifocYBqYTagBRWBFy3bVJ4s1ec6MkdYSZkKc=
-X-Google-Smtp-Source: AGHT+IG3SLQLj7KxZZEj1GNTliTbrGRu9ikWa+/cuwM6xZfm+k+wklil9CcAWSa+9Q7XgA8ywVi7c7dtP5+lK+hEKORoB3z1DYwc
+        bh=rHx6Lde4qag7Ztq8SOjvT6+8sJ05xOxFR27nxsVwgtA=;
+        b=GJTN0zqrXySQ8t2+p1Amazt/eZlFoF0ktHKZDRlvMfheei7xe/kcPfHRZztj7Ho72o
+         ijJtXpubQlvpL13DFFoBuXEMCLXb9pJ7cm4rEC/ezX+MjE6quscvczsr2BqrHoLmAeUb
+         x7wS15w6+e1pG/frKBb8/VlFaz+XHsL+GQLeCHQB7xFDAA3V94E4ldE0xf8uv1v2LnHg
+         KANNNEDx12q7GNvNtH1310MWOFZpUgQRu3/N8rYSTnXyf3vEw5AbMMvBbtzlYp3AnxMm
+         eHQjey75Ntd9Ct82F9xLPL5f4m59lfm93JZg0X1ehOd8I2Z7agJSv6aenhAjSi1KjJ6s
+         1vQA==
+X-Gm-Message-State: AOJu0YwRxqZBwK2HjDyzMAfP72WgO3Go9ToiRDZj0hRESEnAhSm7BQzu
+	3N/VozCG54zNsLosngv0rK1jcAlhPkmNIRGU4lT2HougE6pmrOpjW+rdwtdtLn3iTng=
+X-Gm-Gg: ASbGncvpVfNETABz3nB3WWvM4ESSuixYqXKw2lO94KQwrk5YkDqe6Sw+rC0RtKb9hRa
+	nN54WdI/YINXHrnravMRGARhtECxXGB0XJLOMvd2P6CSHXAZfbVzmTJI3Xv3NwLeF4cRq1tU6HC
+	YTUpRhONyxCk6pm++2d5XQiErZTxxtbdd6lroKPR3TkhO2y821r6sSQ9VGOU0FkzwjydWysjTth
+	k3C5/XsqPb2+kr/CEBT55D5MoqO5U8lCu8+CfDjctb3JQMLzzkUG2xLB0yNcXnYqIHTHUQGqYid
+	8PNwjrmQ9kHT5JngD4bas41Ko5lC4e5WROhW1SOXie8Br9PMkqGaYciq2JgXu4oBAAaxSxuXr2T
+	8l7V0KdyGw5ZT5LT/2ldFo8Ys
+X-Google-Smtp-Source: AGHT+IFaE9wVmVALZ0AY3vMXxmm7SesZjwR/ULKy6XjkkdnNRyUoc7TfxGfX3avMzoLT05C0xMUULg==
+X-Received: by 2002:a17:90b:55cd:b0:312:1c83:58e7 with SMTP id 98e67ed59e1d1-321b3e81bb1mr7812400a91.1.1754992199185;
+        Tue, 12 Aug 2025 02:49:59 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7d86f7sm24860991a12.24.2025.08.12.02.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:49:58 -0700 (PDT)
+Date: Tue, 12 Aug 2025 15:19:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Bill Mills <bill.mills@linaro.org>, devicetree@vger.kernel.org,
+	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
+	Bertrand Marquis <bertrand.marquis@arm.com>,
+	"Edgar E . Iglesias" <edgar.iglesias@amd.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [RFC PATCH 0/6] virtio: Add support for Virtio message transport
+Message-ID: <20250812094955.fdyil4cbxr3bx4bo@vireshk-i7>
+References: <cover.1753865268.git.viresh.kumar@linaro.org>
+ <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1546:b0:881:8979:93f4 with SMTP id
- ca18e2360f4ac-883f127fca5mr3181687939f.14.1754992085862; Tue, 12 Aug 2025
- 02:48:05 -0700 (PDT)
-Date: Tue, 12 Aug 2025 02:48:05 -0700
-In-Reply-To: <20250812052537-mutt-send-email-mst@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689b0dd5.050a0220.7f033.0119.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com, 
-	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mst@redhat.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sgarzare@redhat.com, stefanha@redhat.com, 
-	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
 
-Hello,
+Hi Rob,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 30-07-25, 08:39, Rob Herring wrote:
+> On Wed, Jul 30, 2025 at 4:29 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > ### Memory Mapping and Reserved Memory Usage
+> >
+> > The first two patches enhance the reserved-memory subsystem to support attaching
+> > struct device`s that do not originate from DT nodes — essential for virtual or
+> > dynamically discovered devices like the FF-A or loopback buses.
+> 
+> We support creating devices from reserved-memory nodes.
 
-Reported-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
-Tested-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
+I didn't know about this.
 
-Tested on:
+> Just add a
+> compatible which you should do anyways because node names are not
+> supposed to be that specific or an ABI.
 
-commit:         8ca76151 vsock/virtio: Rename virtio_vsock_skb_rx_put()
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d54af0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84141250092a114f
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+Yeah, I already knew that the node-names thing isn't going to fly as
+you and Krzysztof rightly pointed out. I just wanted inputs from you
+guys and so did that as a first implementation to get the discussion
+started.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+I tried something like this now:
+
+      reserved-memory {
+        #address-cells = <2>;
+        #size-cells   = <2>;
+        ranges;
+
+        rmem@100000000 {
+          compatible = "restricted-dma-pool", "virtio-msg,loopback";
+          reg = <0x00000001 0x00000000  0x0 0x00400000>; /* 4 MiB */
+        };
+      };
+
+and this works fine. I am adding two compatibles for virtio-msg:
+"virtio-msg,loopback" and "virtio-msg,ffa". Yes I will properly
+document them in the next version.
+
+With this, we don't need the 2nd patch anymore:
+  of: reserved-memory: Add of_reserved_mem_lookup_by_name
+
+but still need the 1st one:
+  of: reserved-memory: Add reserved_mem_device_init()
+
+Thanks.
+
+-- 
+viresh
 
