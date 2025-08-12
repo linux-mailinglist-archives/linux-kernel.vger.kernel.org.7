@@ -1,194 +1,151 @@
-Return-Path: <linux-kernel+bounces-764479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80ADDB22391
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BD7B2239B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E2D1AA2D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8B65008A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BCA2E975B;
-	Tue, 12 Aug 2025 09:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E282E9752;
+	Tue, 12 Aug 2025 09:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="c2tx00vQ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dLhZToN+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E0E2E973B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F802E9742
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991811; cv=none; b=k3cLO7Y6sXQoNbXXMSloM8OZEYnVKmbCb+uFMmPbd5ahH4CZO3yziBpAQSORNnxH6l2a41ebmfhJqcDO8tz04uU243B762wnZ8vRJHUSO1ga0NHlbnGj/81pvQpccY1guUEWXGo67VvoxVHKfo+5cHxj+hUPq/l/TZyzwBDv7vU=
+	t=1754991868; cv=none; b=TG5dZ+DQRK9MviOT5SRma0QuMuFlmaj+hz65bRjAuuPQ7xfvv4LDC4gObyOTp8gtbt4a64mFecJ+etC3N6EVMeaM6GQd0LoAh2ik48KuVYPSvUjGNeYivAE24g7APd1BHF/80xQ+5WESw1rrUXzugi4LhMdbsUFquJeFZPvCWBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991811; c=relaxed/simple;
-	bh=VoQtnN8TVNFZ35OF82gYJyQyCQWCWSyi54UG/5Pr244=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJkPyj9E1DO35jA0b/f06EpBuGLukMxiDc5C156vbHoS4Z4QGefpN6ke/4eQbbkBqP1/zhAonwPn1DEtneSuuAtPGTvs8URmCEQOAaQHkOGC8PpHGxfYhSZCnB7QrcK7S77JxTypl8hfSaCDvG54zeS5iv8puNoHEAizIpZjZwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=c2tx00vQ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 31DAF2588F;
-	Tue, 12 Aug 2025 11:43:26 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JUhdKEmfHZPA; Tue, 12 Aug 2025 11:43:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754991805; bh=VoQtnN8TVNFZ35OF82gYJyQyCQWCWSyi54UG/5Pr244=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=c2tx00vQAKJGnzvzuLEMjpjeoaNpI1Lx0c3Y8cYCtqN4lEKdCwFGNrqXbwho96cDr
-	 De1FkMyLuefVDZ+EHP+/XKNmUy4XwSfPWGEiUj93BWfM8qh+seZfrg7OLRBKdPtyho
-	 4xOzvuxmCq4q8r348zHFgM9DXNb1lhhU+ALeaggJj6kTqFkH06UOrLRRFxk6VbWsCj
-	 DUqEitM07Olvng7ttQyjj6AkbsX8m+F+Oc/nN0EuOqWpP+mKScI++CAojssp9JPQli
-	 bbNjTsLkTOQd6peyhyYtg9f+LfX6Uczqd3MoJV8BVGu3raF2pAoBrESbufbZwQR9ey
-	 qHp4TQ/TBwk3g==
-Date: Tue, 12 Aug 2025 09:43:13 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Youling Tang <youling.tang@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
-	kexec@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
-Message-ID: <aJsGg8__ppyBrkfL@pie>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
- <20250811092659.14903-3-youling.tang@linux.dev>
- <aJojDiHWi8cgvA2W@pie>
- <6de97571-7ef0-4bbd-b55f-5ad41898a6ec@linux.dev>
- <af866071-81c1-44d5-ae02-273d6e9c04d4@linux.dev>
+	s=arc-20240116; t=1754991868; c=relaxed/simple;
+	bh=NsDGUZqdxL4NnUZEx9v/dqkyeE0qj80lpP6HtlabIcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ppJ664P7tKgLaqJ3SME/Cm3w7VGDhz/65liNHGSBi1fhllC4zuwoqU/HrlSHuc2UvQiiAdFSFol32uDIWJrlHDPf5FZb47dCw37tPKjtdYUpiZfR9EntNhyzJsVVzhk9G6AFGYfFEvrke1tukptn9H8YmagI4wbJ371cg7VfhCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dLhZToN+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5XLud018323
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:44:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uVjk2bmpZceirDyJ5lxPbhkNfa1iK7XMzWGsFKMIYyI=; b=dLhZToN+ZMidVA/h
+	gBMZDgcc2b7zbnX0BAbXgnMiQupk9yUh/7UiN422qSlI50qcnhhcVdU2TT7xFp1S
+	2hgi4RJJHnBkhukUQDCdOcBnkuWXhdY+ikpsd79SeyzG11rY6O+N4un+HCvLtZBD
+	Tr2nd7uvjoQdfm9NHdVqVu+PgpPpx1taRB/fkmwevmkDmBbs0XEy82lIlJTYwZA+
+	jFEZBM6L+vvSPesOayKFU5ilMusBe6vIAsizZxbLvPNAEnBJI469vURZUCMR3xl1
+	wL2ivSfukJ1ve6c0jrzusBxhe9l0aLDLBs82vBgZGaTjypC2jSvP9DslkazCrru6
+	Gq+i1Q==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g7k9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:44:25 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70730da0f40so5168266d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:44:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754991865; x=1755596665;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uVjk2bmpZceirDyJ5lxPbhkNfa1iK7XMzWGsFKMIYyI=;
+        b=FhGNxEPT7SGHMjiw2LdbbCHpE0yZcoosvFRSYcEmXfQLM/ZV9oghGCX/dklXzppmE2
+         /P72fiAhcTVePhHLMCvE24n5f8QTW+RK6g5tKtXp70hnKKpqa7JL/YL+NEfg7CzqUHV1
+         6RKwGmRPs8osGBeGcrm4nGq/102+7dCzQEOpf2GG9zdkuTXZn4IB6q1cND73VlZbf71d
+         aY7L3jM+4/9Hfky2qqsEOAtTyP5gi1j1E9PUb854I5RyNiCojwSz8NVco6xfnKHzvR8h
+         +nZUMNUQqDJs4r6dvKDxVRd/9n3Xk5a2IEhOmOv8ht/4BBWZu68TVOpv3QNSYvwDQ2ab
+         yAbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQrDFCs41zL9VOmGKoWH2OHaMPYyi7GY5g2s7MmkVbdF6EkmWmOU+QKu7/DEbBoZZT/cK4vcHd7qt1qYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlUxLikHDPIo84rhpGk87F/LxyNgH5Q6z4zmVdNcO7g2FuZlb+
+	PxMgTC6aIvhUZV+VI5BFn0K85C7DYTptP0DCh9c160JyFXOwqrQ0jNxv6eseRm586x3ZtJOMsXS
+	XcM0/9PJ0Y67MCOqTd7XO5eUY+o4yEopKBkXDE/Iq3WI49fTYkBJ4WHMrtYs+zx3O9jE=
+X-Gm-Gg: ASbGncsdDOnE5VwuAdZ29suVfvZVEFtz8YmYd3b4Gqt7wzpy2uF+6q2diVaGTYqqxZQ
+	L7WGYZnTULwzbXwKsgnHrTS/sxdHWJgO1/FLiCH04XOzWwpSUfh3/53qTYNVccKUGw4/6gmtpCH
+	9KiXrGcGUgRBcqfpa2RlafLP3G9qXW+8fg3Whm10EPEM6zQQcSs6V+RQizl1f1Mp7XcyK4MEnqk
+	AkVGuq9XopQr1c8Z9MJDTZZn+H0tJ81KBvdQB5q+3Oq1xnIK8O662YciqF0mvT+YQZwX9+gYXsW
+	abs2FRk1YYF1G+iBswSRR4txLMu3Weo80vqP2Bofm5RFcu/rmFSDXipipzh4fv80pTVFucqaJx6
+	wJ2qNFA7Pq5HDmURe3A==
+X-Received: by 2002:a05:6214:dc6:b0:707:48a3:f833 with SMTP id 6a1803df08f44-709e223c2b7mr2670146d6.1.1754991864651;
+        Tue, 12 Aug 2025 02:44:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqy9dVMC9gipxsspsY3jwJKyi3zLMV0FmTDf11Oprz2Uiwnp4y7BuUhf8pqW1skK9briuFUg==
+X-Received: by 2002:a05:6214:dc6:b0:707:48a3:f833 with SMTP id 6a1803df08f44-709e223c2b7mr2669976d6.1.1754991864055;
+        Tue, 12 Aug 2025 02:44:24 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a9113e40sm19914549a12.57.2025.08.12.02.44.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 02:44:23 -0700 (PDT)
+Message-ID: <c3d192d4-934b-4fe3-9b1a-8405cddbc668@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 11:44:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <af866071-81c1-44d5-ae02-273d6e9c04d4@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: qualcomm: phy-qcom-eusb2-repeater: fix override
+ properties
+To: Pengyu Luo <mitltlatltl@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+Cc: Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250812093957.32235-1-mitltlatltl@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250812093957.32235-1-mitltlatltl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689b0cfa cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=v5-_rWYg7EQBkViMn-cA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX6sUk5XpDZvHC
+ IfbJH51Bu1ZhOf27xThun1ecPR2eCPd5k7H07mXr6pqIix970IQzWRCn+rLH2l4tJtJc+imKeVN
+ Jinb6izWiYhpNc/MyjI5S+T1Gm5ySDzLqwCGrAYA0nGo6cZaRRDAjFnAFySaRg2FAU9OVsVZMKf
+ AO46HaCyj50zPSIIE8Hl0wyOE6CPATM3c0f0Yi4h053qKk4DrqdZMPhhuwPZ18R8M6bMOx6Gc4d
+ Qkc/W8i8Txw1e/bodSyO5vZ5Y6rTa+FHHUQySSuqjcUt8u+CNlCrFeOxyUoC82eGvpPHQkPmqVL
+ UquXTswStrRqvoYAv7Db+b8dV2u7yu4rRveP1UKC1RylmRAbqqnG2yufAnEaYH6X9rtiS9UsrUy
+ jdO+Ybl+
+X-Proofpoint-GUID: OrBUWp8s5SZZ9ySI8aUlNRtdifLUI4K5
+X-Proofpoint-ORIG-GUID: OrBUWp8s5SZZ9ySI8aUlNRtdifLUI4K5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090031
 
-On Tue, Aug 12, 2025 at 03:06:23PM +0800, Youling Tang wrote:
-> On 2025/8/12 14:15, Youling Tang wrote:
-> > Hi, Yao
-> > On 2025/8/12 01:06, Yao Zi wrote:
-> > > On Mon, Aug 11, 2025 at 05:26:55PM +0800, Youling Tang wrote:
-> > > > From: Youling Tang <tangyouling@kylinos.cn>
-> > > > 
-> > > > This patch adds support for kexec_file on LoongArch.
-> > > > 
-> > > > The image_load() as two parts:
-> > > > - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
-> > > > - the second part loads other segments (eg: initrd, cmdline)
-> > > > 
-> > > > Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images
-> > > > are supported,
-> > > > but ELF format is not supported.
-> > > > 
-> > > > Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> > > > ---
-> > > >   arch/loongarch/Kconfig                     |   8 ++
-> > > >   arch/loongarch/include/asm/image.h         |  18 ++++
-> > > >   arch/loongarch/include/asm/kexec.h         |  12 +++
-> > > >   arch/loongarch/kernel/Makefile             |   1 +
-> > > >   arch/loongarch/kernel/kexec_image.c        | 112
-> > > > +++++++++++++++++++++
-> > > >   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
-> > > >   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
-> > > >   7 files changed, 219 insertions(+), 11 deletions(-)
-> > > >   create mode 100644 arch/loongarch/kernel/kexec_image.c
-> > > >   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+On 8/12/25 11:39 AM, Pengyu Luo wrote:
+> property "qcom,tune-usb2-preem" is for EUSB2_TUNE_USB2_PREEM
+> property "qcom,tune-usb2-amplitude" is for EUSB2_TUNE_IUSB2
+> 
+> The downstream correspondence is as follows:
+> EUSB2_TUNE_USB2_PREEM: Tx pre-emphasis tuning
+> EUSB2_TUNE_IUSB2: HS trasmit amplitude
+> EUSB2_TUNE_SQUELCH_U: Squelch detection threshold
+> EUSB2_TUNE_HSDISC: HS disconnect threshold
+> EUSB2_TUNE_EUSB_SLEW: slew rate
 
-...
+The commit message is a bit.. dry.. but I suppose it conveys what
+the problem is
+> 
+> Fixes: 31bc94de7602 ("phy: qualcomm: phy-qcom-eusb2-repeater: Don't zero-out registers")
+> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> ---
 
-> > > > diff --git a/arch/loongarch/kernel/kexec_image.c
-> > > > b/arch/loongarch/kernel/kexec_image.c
-> > > > new file mode 100644
-> > > > index 000000000000..fdd1845b4e2e
-> > > > --- /dev/null
-> > > > +++ b/arch/loongarch/kernel/kexec_image.c
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-...
+Konrad
 
-> > > > +    /*
-> > > > +     * The location of the kernel segment may make it
-> > > > impossible to satisfy
-> > > > +     * the other segment requirements, so we try repeatedly to find a
-> > > > +     * location that will work.
-> > > > +     */
-> > > > +    while ((ret = kexec_add_buffer(&kbuf)) == 0) {
-> > > > +        /* Try to load additional data */
-> > > > +        kernel_segment = &image->segment[kernel_segment_number];
-> > > > +        ret = load_other_segments(image, kernel_segment->mem,
-> > > > +                      kernel_segment->memsz, initrd,
-> > > > +                      initrd_len, cmdline, cmdline_len);
-> > > > +        if (!ret)
-> > > > +            break;
-> > > > +
-> > > > +        /*
-> > > > +         * We couldn't find space for the other segments; erase the
-> > > > +         * kernel segment and try the next available hole.
-> > > > +         */
-> > > > +        image->nr_segments -= 1;
-> > > > +        kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
-> > > > +        kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
-> > > > +    }
-> > > > +
-> > > > +    if (ret) {
-> > > > +        pr_err("Could not find any suitable kernel location!");
-> > > > +        return ERR_PTR(ret);
-> > > > +    }
-> > > > +
-> > > > +    kernel_segment = &image->segment[kernel_segment_number];
-> > > > +
-> > > > +    /* Make sure the second kernel jumps to the correct
-> > > > "kernel_entry". */
-> > > > +    image->start = kernel_segment->mem + h->kernel_entry -
-> > > > text_offset;
-> > > A non-relocatable loongarch kernel cannot be loaded to arbitrary
-> > > address. Thus this loading function seems to only work for relocatable
-> > > kernels, maybe it's better to leave a comment indicating the limitation.
-> > > 
-> > > For now, we don't seem to have a way to find out whether the kernel is
-> > > relocatable (for example, a flag in kernel image header), so it's
-> > > impossible to point out whether the loaded kernel boots fine with
-> > > arbitrary loading address...
-> > LoongArch enables the relocation of the kernel when the kdump
-> > feature is enabled.
-> > 
-> > config ARCH_SELECTS_CRASH_DUMP
-> >         def_bool y
-> >         depends on CRASH_DUMP
-> >         select RELOCATABLE
-> > 
-
-This only means the currently-running kernel is relocatable, not the one
-being exec'ed, right?
-
-> When enabling KEXEC_FILE, the RELOCATABLE configuration should
-> also be enabled. Both kexec and kdump require this.
-
-I'm not sure whether you're talking about the running kernel or the one
-that is going to be exec'ed. This method of kernel loading requires the
-exec'ed kernel being relocatable, not the currently running one.
-
-And I think it's totally reasonable to use KEXEC_FILE for non-crash-dump
-purpose, for example, linuxboot. It'll be confusing to the user if the
-system just hangs after booting a non-relocatable kernel, which is hard
-to debug.
-
-Thus IMHO we should ideally refuse to load non-relocatable kernels, or
-add a FIXME comment to indicate the situation that it's impossible to
-determine whether the exec'ed image is relocatable.
-
-> Youling.
-> > After enabling the relocation, LoongArch is the PIE kernel. For
-> > more details, please refer to commit d8da19fbdedd ("LoongArch:
-> > Add support for kernel relocation")
-
-Best regards.
-Yao Zi
 
