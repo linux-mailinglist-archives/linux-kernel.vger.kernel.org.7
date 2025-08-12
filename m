@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-765024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B13DB22A4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E95B22A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94461587DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5CD3A70A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260B4302CC7;
-	Tue, 12 Aug 2025 14:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C372ED179;
+	Tue, 12 Aug 2025 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XqE1sexr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UoiYFUtL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E8A2EA721;
-	Tue, 12 Aug 2025 14:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F82ED167;
+	Tue, 12 Aug 2025 14:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755007934; cv=none; b=tXwEOP4ZbyVHtdn0CXKd3kSUpppt6ufIrl7Qo4VHGgvY5E0Q01JWpnl/appx7QuLmS7Yc9vML6qzASnl7j09Bup1c3gl5ILh8hHVFZkt2LLXy4UMWCpC4czYPD3QYJ2QC0NpiOCXFczMUftQiosutMKO40WKiuwhNM5nYkmgofs=
+	t=1755007885; cv=none; b=MwIz0VBjRoH4A/d+veV/vBbrVzaiNUFqap/si7MkZrXUtA45u+WQaGinsjmsSqPZD4C862luNEQ50CGyUeNgiCipU4GQBpav5UvaPFRwIG+IR6Hl54M3XDqqEiLJYsK0uek7g7n5AzXeitOOjuNfTpmGFuXPbn6z776LA9/DiNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755007934; c=relaxed/simple;
-	bh=PJRh77BlqVsEpKRGUextThdX92CPAbJt12XhrYigNZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=jubENxFZSnwfEHkTTKcDeCc7oO+n/sEJBPntD/d3Vsax5L8++EoQJqqKuuBI3WyZFUYyayMGHAyHhyQVDflP/8T7Tr7v1J1Ua5AATuK7eXCCkhelct3Dj8LwmLvAb0Ip8DOPt7N/UWgXmbS41TwaE6VsWt2sZ4CtT0u1tB6tobY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XqE1sexr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAwi8E025631;
-	Tue, 12 Aug 2025 14:11:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dMh9F/zW3ltk/+W9kfI6XSfIFxsE1lXA2GRM0pTwl34=; b=XqE1sexrZQEHCWtt
-	TtdEAR//dSyvEl4PGQOxxxvK8QdVyl9n//axIEN4i2CLiXMHsu/dd5/w3LJAv+fm
-	/b9XU3mj5gRSUehPmdu+IeUPOIuQ0IY2VfLXW6QDRfcNrYC/eOiRI6djphYcJap4
-	wyJla+bvl9PmKXE3kh01jIyGtcIEp6n0usBqSP/pkjLY2vG6hA5yN2H6yE+7D02Q
-	r6ZDt78UhysrN/uJaStQ86aAB1It4vRfvLCb3HBw3mW97SWSxkG7VyQwL/Ty2h6y
-	XTJw66gJXfyYdAP1/8Eh8ZdP0tOFmS9CE5EbuWcy+IjX2u3mWDMnf79yn8NYqeYV
-	TbHtsg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9srka7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 14:11:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57CEBvbn029825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 14:11:57 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 12 Aug 2025 07:11:52 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 12 Aug 2025 22:10:38 +0800
-Subject: [PATCH net-next v7 14/14] MAINTAINERS: Add maintainer for Qualcomm
- PPE driver
+	s=arc-20240116; t=1755007885; c=relaxed/simple;
+	bh=kRbNEAZybW8bsdsYVLZsjN5ixwMs7RSBCCzBfeTNXJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8riCmxOIvsJzXs9xz7eOSh/0IglYDI6Bm0IHUTV7oYMZ5HJ3gfkgwjIOJY5ykEPPXJEzjCrRxxsbvOOC2XVD3LvT0nFbKpOPxP0JIvVCZ3zYnyTRLwToiA1iMg2nc88NuDdD2cZpeXwueL3Ed5+p6JOpe8BSeIRqJxzWkarB9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UoiYFUtL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEBBC4CEF0;
+	Tue, 12 Aug 2025 14:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755007885;
+	bh=kRbNEAZybW8bsdsYVLZsjN5ixwMs7RSBCCzBfeTNXJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UoiYFUtLjyQmEIhc+Wa/8+XncbxuAtrLvKU7RDhBHVEpfeTQEQvKN/Wnr9xR+vWBN
+	 eUnNSqmi1edCVH5VjfH3bBQC2jQ/JKaAbsj/ZUY3E+apdlmuhCE83DWykNixe9NKjf
+	 P4gP79OVSzC2yFI/l41Pd3HAyo5Ca6EhCTPpJpxg=
+Date: Tue, 12 Aug 2025 16:11:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Baptiste Lepers <baptiste.lepers@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
+Message-ID: <2025081205-bagel-radio-1c94@gregkh>
+References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250812-qcom_ipq_ppe-v7-14-789404bdbc9a@quicinc.com>
-References: <20250812-qcom_ipq_ppe-v7-0-789404bdbc9a@quicinc.com>
-In-Reply-To: <20250812-qcom_ipq_ppe-v7-0-789404bdbc9a@quicinc.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
-        Suruchi Agarwal
-	<quic_suruchia@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Simon
- Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook
-	<kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>
-CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755007841; l=898;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=PJRh77BlqVsEpKRGUextThdX92CPAbJt12XhrYigNZc=;
- b=KfHO01pLn3Yb/4AY90A9qSPRVYZGnXYwTQ+VXn+LrPflqznhIG3aL9ZyQoA5iZTO+yVmsS8le
- W8XLgjIEP17DOO2zeyiWexoSerNoy8yybF9KsUIvKnatlpKOHJfn2hT
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689b4bae cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=-_PooAnB-Ua2z9syxaEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ifEkOtMyIBd0Sbtl52OoNEFz26zP2EOh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX/FUod6/49Bh+
- NknTj+COarb+8/JUHSokfDXveTag+4TmETaj/qTYMhXv3S07msJQi+DNXG+hfWOg93RClk6mXOK
- 51Gzm+kI5Cqd1BgZJq19BIU6DRtZ+FoAVRAz23MSoQwdKcNkPJuiUki97d3z4CYir+BUr3XUmkw
- vLXHRto0Mwms9R8XZhe5nIkHtpDolBcAv5iZlf8o6DSPexzv3N3NjD9e8lwks4pGzLbaaqI55C7
- lcq318ZswPjtwOyRsyiEmdvkq1cgGJh/1J90XqHyt+JKwfe2rGo3Dyj+JKtQCCZaBiABAHMfi6M
- wu5N/QQaHE5l0SdLYiHmNmxz3Ocmxf9dJpOvDN0RJhrkeeUo7MirtFhugUTt9idx/S6fTxCtaSj
- YsGiubPG
-X-Proofpoint-GUID: ifEkOtMyIBd0Sbtl52OoNEFz26zP2EOh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812132712.61007-1-baptiste.lepers@gmail.com>
 
-Add maintainer entry for PPE (Packet Process Engine) driver supported
-for Qualcomm IPQ SoCs.
+On Tue, Aug 12, 2025 at 03:26:56PM +0200, Baptiste Lepers wrote:
+> Unsafe code in VmaNew's methods assumes that the type has the same
+> layout as the inner `bindings::vm_area_struct`. This is not guaranteed by
+> the default struct representation in Rust, but requires specifying the
+> `transparent` representation.
+> 
+> Fixes: dcb81aeab406e ("mm: rust: add VmaNew for f_ops->mmap()")
+> Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
+> ---
+>  rust/kernel/mm/virt.rs | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+> index 6086ca981b06..a1bfa4e19293 100644
+> --- a/rust/kernel/mm/virt.rs
+> +++ b/rust/kernel/mm/virt.rs
+> @@ -209,6 +209,7 @@ pub fn vm_insert_page(&self, address: usize, page: &Page) -> Result {
+>  ///
+>  /// For the duration of 'a, the referenced vma must be undergoing initialization in an
+>  /// `f_ops->mmap()` hook.
+> +#[repr(transparent)]
+>  pub struct VmaNew {
+>      vma: VmaRef,
+>  }
+> -- 
+> 2.43.0
+> 
+> 
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd62ad58a47f..bcab0192f39b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20837,6 +20837,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
- F:	drivers/power/supply/qcom_smbx.c
- 
-+QUALCOMM PPE DRIVER
-+M:	Luo Jie <quic_luoj@quicinc.com>
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml
-+F:	Documentation/networking/device_drivers/ethernet/qualcomm/ppe/ppe.rst
-+F:	drivers/net/ethernet/qualcomm/ppe/
-+
- QUALCOMM QSEECOM DRIVER
- M:	Maximilian Luz <luzmaximilian@gmail.com>
- L:	linux-arm-msm@vger.kernel.org
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
--- 
-2.34.1
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
