@@ -1,165 +1,179 @@
-Return-Path: <linux-kernel+bounces-763934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D847B21BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D68EB21BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E3442A860E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409C22A8490
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F8835948;
-	Tue, 12 Aug 2025 03:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E6F2DAFA2;
+	Tue, 12 Aug 2025 03:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pr1PX3M/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfc3lvRX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC741B2186;
-	Tue, 12 Aug 2025 03:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD91C2C9;
+	Tue, 12 Aug 2025 03:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754970327; cv=none; b=sPb/E0rkhohi0Yah2Q9ttmUaM1JMheynewcL6e+KC+2XXA3y5Dwj+4oeQMWq4UZdLFpvfKTkEMJyQXaUly7LVXsBj3WvWKeS//oXH3cPIKbrT84yiYZjFpYB56GDeJqaz96ERSawh7kM2YGvVPxnpe+ghrSQgtDDR/zjXTnkGW0=
+	t=1754970314; cv=none; b=ZppgR8OY1Xl/S3sMzcB7I5RjRhPYC3G8RN1IFWFGUXykIJ5QcJq5Kqt/GvT1Tu0K3iDiRD4W4M4sWYp2wAJAhlD4iu2hO3M2grIRsV89XLwA9my1tHsN5/4KzunapQI/l1nXXxd9nQMYl8E6FarOI7igxMHccMR+C0Vz+QcTjHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754970327; c=relaxed/simple;
-	bh=EtYefwQ06isDcxpPWHrzmmhgCcOPPIUkE/bef4RlpgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n3sRNOs1BrWMMJb6/5LfdGKXYlIq0875M/cm3fTXDoPfsAT7mtLtPaHDeazzzwl4tgT0x1FR3ZkP0d7vV11G0325DqBfxHkdPIeirpAk+943lq8ZTuVinaKJTkNAQiyHyBlE7jomgBfbJ65nJpDtdsVs9J4oHidJxPuP+K0voqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pr1PX3M/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AEEDC4CEED;
-	Tue, 12 Aug 2025 03:45:26 +0000 (UTC)
+	s=arc-20240116; t=1754970314; c=relaxed/simple;
+	bh=fGznMj5kGw675RyQXLV/XCgKKgQRypn/BRq5eHB0/kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osgfGFUc6WEnfWbKPKhib13zpyYH2mtA0OI9KnHCejmqfGisd/KT3fD9fIuZwIqmFJiWgpD6P8m9Z02AlEN/NQX1V5LYuyuuDMQ9XUWidOiNKdy14jdSotH5hyvP+h1osycyeWiYH0wvkWW7sKsvdsWEWlv8EDCZBz+MEpaEQ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfc3lvRX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD96C4CEED;
+	Tue, 12 Aug 2025 03:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754970327;
-	bh=EtYefwQ06isDcxpPWHrzmmhgCcOPPIUkE/bef4RlpgU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pr1PX3M/oxu3qVfPZdrKBYKkNrHO2BPr6+nYP3587IR7Mru81WnKV9vX8xIUoY3Az
-	 XDZ9r7Gu0meJCQ20WkqmPbaEgxWrAT+zyNtf1IjThgAnyspryIrnkiPBRtqO0X8uLg
-	 gZH8ACAO32b19vtqX7Y+l0YU/4ZMyIEV/ZciriBcWnIWQZ3p9sxUTz9u6CJVpeO/eo
-	 kGEAO0sm5rGjT7FwMoOnkp8aStCkse2nHzrQIc1AAKK/ae3BNX1bCDGc1Ooki9oOtk
-	 1CNam8eBjlU459lMZk0/lOWGoSOovv86KL9TvW6/ZV87Gzgi92mnL4jfK4AfEuhVgx
-	 JZiuMP+qnaOlQ==
-Message-ID: <34624336-331d-4047-822f-8091098eeebc@kernel.org>
-Date: Tue, 12 Aug 2025 12:42:44 +0900
+	s=k20201202; t=1754970314;
+	bh=fGznMj5kGw675RyQXLV/XCgKKgQRypn/BRq5eHB0/kI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qfc3lvRXmXf6zGDIm14OqBO4VLeZdKKDk/mjmFvoK0s7AMfLlrVsd/1HcV9GFH9vf
+	 D2EvqrmRLqGE4yY/+rQ5YB6LRcRhakivxuWnfxo3M7GBBrbRVficiowQGdcyjehAWo
+	 aGS35G48y/wMPe87HRumxLceA1IKv14zdTye5SbqsA7VYfr1eYoB3wTF61D8bLQ/a3
+	 CNSm2Ky8p3jBvxl0EDN0HY1jfbPBQFRhFr3ec5XE9/97Qk7ZW5wzgJrpjzxAfBMQ+A
+	 pWOfugmOL8erNNUHnbdUU+8Fdgbj0KgVaJrM9WnEqQhePefk60GyFjGcvrFRrX1opE
+	 EQQQ2kSSaimLA==
+Date: Mon, 11 Aug 2025 22:45:11 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v5 2/3] arm64: dts: qcom: qcs615: Add clock nodes for
+ multimedia clock
+Message-ID: <vxeadjzwywqjjqm7elg5pltq3jtnv7fprquhdoydhxnjihpsw7@tlqoq5wpgcr3>
+References: <20250702-qcs615-mm-cpu-dt-v4-v5-0-df24896cbb26@quicinc.com>
+ <20250702-qcs615-mm-cpu-dt-v4-v5-2-df24896cbb26@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
-To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
- <20250812033201.225425-1-rajeevm@hpe.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250812033201.225425-1-rajeevm@hpe.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-qcs615-mm-cpu-dt-v4-v5-2-df24896cbb26@quicinc.com>
 
-On 8/12/25 12:32 PM, Rajeev Mishra wrote:
-> Hi Kuai,
+On Wed, Jul 02, 2025 at 02:43:10PM +0530, Taniya Das wrote:
+> Add support for video, camera, display and gpu clock controller nodes
+> for QCS615 platform.
 > 
-> Thank you for the feedback on the v2 patch regarding error handling.
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+
+  DTC [C] arch/arm64/boot/dts/qcom/qcs615-ride.dtb
+/home/bjorn/sandbox/kernel/db845c/arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@100000: 'clock-names' is a required property
+        from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gcc.yaml#
+/home/bjorn/sandbox/kernel/db845c/arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@5090000: clocks: [[43, 0], [45, 2]] is too short
+        from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gpucc.yaml#
+/home/bjorn/sandbox/kernel/db845c/arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@5090000: Unevaluated properties are not allowed ('clocks' was unexpected)
+        from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-gpucc.yaml#
+/home/bjorn/sandbox/kernel/db845c/arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@af00000: clocks: [[43, 0], [45, 29]] is too short
+        from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-dispcc.yaml#
+/home/bjorn/sandbox/kernel/db845c/arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@af00000: Unevaluated properties are not allowed ('clocks' was unexpected)
+        from schema $id: http://devicetree.org/schemas/clock/qcom,qcs615-dispcc.yaml#
+
+
+The missing clock-names in clock-controller@100000 predates this series.
+Sorry for merging broken patches in the past, please fix that as well.
+
+Regards,
+Bjorn
+
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 51 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 > 
-> Yu mentioned:
->> return 0 here is odd. Why not "return ret;" to propagate the error if any ?
-> 
-> I understand the concern about proper error propagation. However, there's a 
-> type compatibility issue I'd like to discuss before implementing v3:
-> 
-> 1. Current function signature: `static loff_t get_size(...)` 
->    - Returns size as positive loff_t (unsigned 64-bit)  
->    - All callers expect non-negative size values
-> 
-> 2. vfs_getattr_nosec() error codes are negative integers (-ENOENT, -EIO, etc.)
->    - Returning `ret` would cast negative errors to huge positive numbers
->    - This could cause loop devices to appear as exabyte-sized
-> 
-> 3. Current callers like loop_set_size() don't handle error checking
-> 
-> Would you prefer for v3:
-> a) Change function signature to `int get_size(..., loff_t *size)` and update all callers  
-> b) Different approach?
-> 
-> diff with ret approach
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index c418c47db76e..15117630c6c1 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -142,12 +142,13 @@ static int part_shift;
->   * @offset: offset into the backing file
->   * @sizelimit: user-specified size limit
->   * @file: the backing file
-> + * @size: pointer to store the calculated size
->   *
->   * Calculate the effective size of the loop device
->   *
-> - * Returns: size in 512-byte sectors, or 0 if invalid
-> + * Returns: 0 on success, negative error code on failure
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index bfbb210354922766a03fe05e6d117ea21d118081..5adf409d7ce7226042c759cc83ceca331097ae37 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -3,7 +3,11 @@
+>   * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
 >   */
-> -static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
-
-Since loff_t is "long long", so a signed type, I would keep this interface and
-add a negative error check in the 2 call sites for get_size(). That is simpler.
-
-> +static int get_size(loff_t offset, loff_t sizelimit, struct file *file, loff_t *size)
->  {
->         struct kstat stat;
->         loff_t loopsize;
-> @@ -159,7 +160,7 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
->          */
->         ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
->         if (ret)
-> -               return 0;
-> +               return ret;
-> 
->         loopsize = stat.size;
-> 
-> @@ -167,7 +168,7 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
->                 loopsize -= offset;
->         /* offset is beyond i_size, weird but possible */
->         if (loopsize < 0)
-> -               return 0;
-> +               return -EINVAL;
-> 
->         if (sizelimit > 0 && sizelimit < loopsize)
->                 loopsize = sizelimit;
-> @@ -175,12 +176,20 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
->          * Unfortunately, if we want to do I/O on the device,
->          * the number of 512-byte sectors has to fit into a sector_t.
->          */
-> -       return loopsize >> 9;
-> +       *size = loopsize >> 9;
-> +       return 0;
->  }
-> 
->  static loff_t get_loop_size(struct loop_device *lo, struct file *file)
->  {
-> -       return get_size(lo->lo_offset, lo->lo_sizelimit, file);
-> +       loff_t size;
-> +       int ret;
+>  
+> +#include <dt-bindings/clock/qcom,qcs615-camcc.h>
+> +#include <dt-bindings/clock/qcom,qcs615-dispcc.h>
+>  #include <dt-bindings/clock/qcom,qcs615-gcc.h>
+> +#include <dt-bindings/clock/qcom,qcs615-gpucc.h>
+> +#include <dt-bindings/clock/qcom,qcs615-videocc.h>
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+>  #include <dt-bindings/interconnect/qcom,icc.h>
+> @@ -1506,6 +1510,18 @@ data-pins {
+>  			};
+>  		};
+>  
+> +		gpucc: clock-controller@5090000 {
+> +			compatible = "qcom,qcs615-gpucc";
+> +			reg = <0 0x05090000 0 0x9000>;
 > +
-> +       ret = get_size(lo->lo_offset, lo->lo_sizelimit, file, &size);
-> +       if (ret)
-> +               return 0;  /* Fallback to 0 on error for backward compatibility */
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GPLL0>;
 > +
-> +       return size;
->  }
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>  		stm@6002000 {
+>  			compatible = "arm,coresight-stm", "arm,primecell";
+>  			reg = <0x0 0x06002000 0x0 0x1000>,
+> @@ -3317,6 +3333,41 @@ gem_noc: interconnect@9680000 {
+>  			qcom,bcm-voters = <&apps_bcm_voter>;
+>  		};
+>  
+> +		videocc: clock-controller@ab00000 {
+> +			compatible = "qcom,qcs615-videocc";
+> +			reg = <0 0x0ab00000 0 0x10000>;
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&sleep_clk>;
+> +
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+> +		camcc: clock-controller@ad00000 {
+> +			compatible = "qcom,qcs615-camcc";
+> +			reg = <0 0x0ad00000 0 0x10000>;
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+> +		dispcc: clock-controller@af00000 {
+> +			compatible = "qcom,qcs615-dispcc";
+> +			reg = <0 0x0af00000 0 0x20000>;
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>;
+> +
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>  		pdc: interrupt-controller@b220000 {
+>  			compatible = "qcom,qcs615-pdc", "qcom,pdc";
+>  			reg = <0x0 0x0b220000 0x0 0x30000>,
 > 
+> -- 
+> 2.34.1
 > 
-> I am happy to implement whichever direction you think is best.
-> 
-> Thanks,
-> Rajeev
-
-
--- 
-Damien Le Moal
-Western Digital Research
 
