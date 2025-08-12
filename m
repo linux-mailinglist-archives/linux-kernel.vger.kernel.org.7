@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-764874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912AFB2283F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:21:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339D1B2283B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7B417B6A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876B51AA257F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D6825F796;
-	Tue, 12 Aug 2025 13:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFD6wlqr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F275D274FE8;
+	Tue, 12 Aug 2025 13:13:41 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8339263C8E;
-	Tue, 12 Aug 2025 13:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555F925F796;
+	Tue, 12 Aug 2025 13:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004365; cv=none; b=P5UpCXOi+3vtS/B99a2mXdGop5okfaMPvLikzmxJafKcNZOofBaKilf1xnLRUHb1duhi7HFt/yv+WTm7koSw9eTqhU7Pp0cVIyNJOjufK9E7/UDeKjpFWPiVmL0X4zF8RZf3euG7fYJJ7WvoGF+CHQkamxJzU2opB8iXvUmwzyk=
+	t=1755004421; cv=none; b=lXhVPC1dlReGS/dsFLT+08enPcz/0b1i9g5t0ovhPED1S+IKabaB71H3p/IqvokoANN00mnivSASGwDD9SQ3/4Fe/yvK1k0FIMBsqqzpY+YkBT39tGRU826AnJc7P1mUnEvPv303Og+CGLK4qkwwZkRrftQCuY6u13r2SjRxqPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004365; c=relaxed/simple;
-	bh=u1y83lzylh/onoHVhjG9k4+Kl2BBhLWMnEb7+R0ZrFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bdmlyHQf5hmtrMtw9foJ69AtjyaN/7dk5n3HPozsqdCEytr/eJ5GnB5woVh213zj5P4g6GXQ748Li+Dir1XJCH+sIfpIOBHRtUAT1bhnXj7syiV4ZxDogVhX4YTpyutFEBtdOjjYA36hyIQbOokWq9gntzloOmW9Hu2Nmo+wt/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFD6wlqr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94142C4CEF0;
-	Tue, 12 Aug 2025 13:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755004364;
-	bh=u1y83lzylh/onoHVhjG9k4+Kl2BBhLWMnEb7+R0ZrFg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aFD6wlqrzCS9QMpRbUoeQM6LQYA3uK2MTpTCZaYMfAxzKErdaYFV73GoViFQ19/QN
-	 fRmlwXG9IQc5F17b7GdK7te+/8Uz6amRnr2aEKjBlXL63yn49nag7vqlhnp6jvk0p5
-	 Xnjnrj9urTI/B2WGyYXOvH28wnF6xlPF84nw2uh0mBzFuh1PePkCOAA3uM3hDaBXm9
-	 AeYfwA+oNI8bHHY6bU8KLa0qc/vFBDpK68jFzImsvT67hfn74YX2bqPPLBtmHEbkKN
-	 O9zRK7Nw/lZBIWEW6FT2A0+vvr734Y1uncOlYNC5bZ3yQ4Eb+8xsQTRWLY1HKhMQrj
-	 h61Cb7Mz7NoaQ==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-619a915c65fso2942443eaf.3;
-        Tue, 12 Aug 2025 06:12:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVWfLfUs1F+2VBQktKIunwDEmF3bXTXh4KrQqZzbX61Yw3Cb+rS6HPUXBITiVwC2jlAnwl5GGOnPNM4Vlug@vger.kernel.org, AJvYcCX6bA1sAByvcZC2zBHMDtGgY/vVJ2xdlEbLHo0spXHmGGP+pLac7uUG97eXbF0dySwP6zu2RihSBeRX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaA6KMF+aJPQ9S86KKcdVJvmjYQUvlbZXRrZPj716mUYDu9VY2
-	PmEVJsWoSaqVXlNwanKnMhV5WyAwbJghI/TtXbyR9+Ucb/NpLdB/V0RT+Z0JFXSTF2E93dZcWgE
-	pSvQTmZ4PlYSL+S70Emwplk0CnrEoKkY=
-X-Google-Smtp-Source: AGHT+IFnx2cMQ/xfCiNnv3WMRxLUHvCguIfYsfLVwwQNY/p63PZKGTDj5RgzE9c/IH7rX+sjYt79+8mN8y6JXDjf35c=
-X-Received: by 2002:a05:6820:811:b0:61b:756e:b0ae with SMTP id
- 006d021491bc7-61b7c305455mr8077339eaf.2.1755004363905; Tue, 12 Aug 2025
- 06:12:43 -0700 (PDT)
+	s=arc-20240116; t=1755004421; c=relaxed/simple;
+	bh=rELXGmjflE8L3p+Badd/4TCPAi/HVFvdh3j8iNXmqyw=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=c7i++W7fyj2WuNc2Z2xjnubdwVuYnVebAqgAGgkUhbl2B+DMy0VEunDSzCWIlCF2Jg0gRuZ7O6gGewTCvt54iC1bh4iy56oHbsgWJYQdJnzapNKgiJivMO4iGywGLQ2CcaOwzEJWrQk2vkXMKbRjXs973fI58yGT62J6n72Ouj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c1X1n5s7hz23jg6;
+	Tue, 12 Aug 2025 21:10:53 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B2DC1800B2;
+	Tue, 12 Aug 2025 21:13:32 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Aug 2025 21:13:31 +0800
+Message-ID: <c0fa9fe2-7a98-4682-9ecf-aab36ec8e9ed@huawei.com>
+Date: Tue, 12 Aug 2025 21:13:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806123821.381002-1-liaoyuanhong@vivo.com>
-In-Reply-To: <20250806123821.381002-1-liaoyuanhong@vivo.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Aug 2025 15:12:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hhVBEvFq6ggxbV421J_+w+d7bhbaJ=15W9oLvEDiXpsg@mail.gmail.com>
-X-Gm-Features: Ac12FXwYz_QsR6m1wAtUCdQPhKAGi5wZ7oPxRe-4LTaiY-5MO1XTuOuDrIwNwfA
-Message-ID: <CAJZ5v0hhVBEvFq6ggxbV421J_+w+d7bhbaJ=15W9oLvEDiXpsg@mail.gmail.com>
-Subject: Re: [PATCH] acpi: Use swap() to simplify code
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	Len Brown <lenb@kernel.org>, 
-	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <linux-acpi@vger.kernel.org>, 
-	"open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <acpica-devel@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<Frank.Sae@motor-comm.com>, <hkallweit1@gmail.com>, <shenjian15@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 1/2] net: phy: motorcomm: Add support for PHY
+ LEDs on YT8521
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+References: <20250716100041.2833168-1-shaojijie@huawei.com>
+ <20250716100041.2833168-2-shaojijie@huawei.com> <7978337.lvqk35OSZv@diego>
+ <aJoFvcICOXhuZ8-q@shell.armlinux.org.uk>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <aJoFvcICOXhuZ8-q@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Wed, Aug 6, 2025 at 2:38=E2=80=AFPM Liao Yuanhong <liaoyuanhong@vivo.com=
-> wrote:
->
-> Replace the original swapping logic with swap() to improve readability an=
-d
-> remove temporary variables
->
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/acpi/acpica/nsrepair2.c | 8 ++------
 
-ACPICA changes need to be submitted as pull requests to the upstream
-ACPICA project on GitHub.  Corresponding Linux patches can only be
-applied after those changes have been accepted upstream (and those
-patches need to point to the corresponding upstream ACPICA commits via
-Link: tags).
+on 2025/8/11 23:01, Russell King (Oracle) wrote:
+> On Thu, Aug 07, 2025 at 11:50:06AM +0200, Heiko Stübner wrote:
+>>> +static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
+>>> +				     unsigned long *rules)
+>>> +{
+>>> +	int val;
+>>> +
+>>> +	if (index >= YT8521_MAX_LEDS)
+>>> +		return -EINVAL;
+>>> +
+>>> +	val = ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
+>>> +	if (val < 0)
+>>> +		return val;
+>>> +
+>>> +	if (val & YT8521_LED_TXACT_BLK_EN)
+>>> +		set_bit(TRIGGER_NETDEV_TX, rules);
+>>> +
+>>> +	if (val & YT8521_LED_RXACT_BLK_EN)
+>>> +		set_bit(TRIGGER_NETDEV_RX, rules);
+>>> +
+>>> +	if (val & YT8521_LED_FDX_ON_EN)
+>>> +		set_bit(TRIGGER_NETDEV_FULL_DUPLEX, rules);
+>>> +
+>>> +	if (val & YT8521_LED_HDX_ON_EN)
+>>> +		set_bit(TRIGGER_NETDEV_HALF_DUPLEX, rules);
+>>> +
+>>> +	if (val & YT8521_LED_GT_ON_EN)
+>>> +		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
+>>> +
+>>> +	if (val & YT8521_LED_HT_ON_EN)
+>>> +		set_bit(TRIGGER_NETDEV_LINK_100, rules);
+>>> +
+>>> +	if (val & YT8521_LED_BT_ON_EN)
+>>> +		set_bit(TRIGGER_NETDEV_LINK_10, rules);
+> Sorry, I don't have the original to hand.
+>
+> Please use __set_bit() where the more expensive atomic operation that
+> set_bit() gives is not necessary.
 
-Thanks!
+Okay, got it.
 
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/acpi/acpica/nsrepair2.c b/drivers/acpi/acpica/nsrepa=
-ir2.c
-> index 8dbb870f40d2..e3df5968165b 100644
-> --- a/drivers/acpi/acpica/nsrepair2.c
-> +++ b/drivers/acpi/acpica/nsrepair2.c
-> @@ -875,7 +875,6 @@ acpi_ns_sort_list(union acpi_operand_object **element=
-s,
->  {
->         union acpi_operand_object *obj_desc1;
->         union acpi_operand_object *obj_desc2;
-> -       union acpi_operand_object *temp_obj;
->         u32 i;
->         u32 j;
->
-> @@ -891,11 +890,8 @@ acpi_ns_sort_list(union acpi_operand_object **elemen=
-ts,
->                               obj_desc2->integer.value))
->                             || ((sort_direction =3D=3D ACPI_SORT_DESCENDI=
-NG)
->                                 && (obj_desc1->integer.value <
-> -                                   obj_desc2->integer.value))) {
-> -                               temp_obj =3D elements[j - 1];
-> -                               elements[j - 1] =3D elements[j];
-> -                               elements[j] =3D temp_obj;
-> -                       }
-> +                                   obj_desc2->integer.value)))
-> +                               swap(elements[j], elements[j - 1]);
->                 }
->         }
->  }
-> --
-> 2.34.1
->
->
 
