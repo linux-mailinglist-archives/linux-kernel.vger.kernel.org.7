@@ -1,217 +1,140 @@
-Return-Path: <linux-kernel+bounces-764656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915B9B225A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:17:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B88B225D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BA1BC0B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:14:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B44F505F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D127D2ECE8F;
-	Tue, 12 Aug 2025 11:13:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB2D2EAD15
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A94A2EE5F4;
+	Tue, 12 Aug 2025 11:21:19 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12212EE5F6;
+	Tue, 12 Aug 2025 11:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997231; cv=none; b=g02dheFecOQ+M+DB9V0gxjeYpAQSLitZoEBtJ8yVFlaDzR0YQvRoIK1GkpElN6TtV+k2oa68FV5W1T+T7lT8vQlqiIkqZ+jn2h78+qsQe8xYvBS0m42NvGEFCTveNnebG1Y9vD57ctnmhfcg5W66Cwm4L/hplG1BXESFojjvqPA=
+	t=1754997679; cv=none; b=WxPKNLgcqAPrMVMmFHinPBzgWHz83xE/jbH8p+jG9X3Yvww/mYnEs9B0g4bSXjNSnaOXluvfp4lz/Srqp4WfbijzKgddLTzeqcBtLWbjA/VgqzkWMdFFLfZDXNRq2kiOin+rk2izEWBtfib0hfGyl1VHruFY1hw2WCxixC+clUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997231; c=relaxed/simple;
-	bh=bfXl0lc5VxsqL8BU5w0/n8jAkLmKrV0vNFAkL7sU7q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+bCO3+dnw+dBM4htNxgw4ACkIw5irGShiy6oW1PkjmqeocQXJzD5ZJ9tcahDNoaFQf+pGN2v+yBAy4fjnOI6mL+dYmuh4QGE6EUyr/dtLZcuAzD0Hrky68ksdfmFKrGoBh78Dn3aIKIO6IN1wf9LB0QyYvcSRQyQyYKb7sRDqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FE5225E1;
-	Tue, 12 Aug 2025 04:13:41 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BB453F63F;
-	Tue, 12 Aug 2025 04:13:45 -0700 (PDT)
-Date: Tue, 12 Aug 2025 12:13:42 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
-	sstabellini@kernel.org, puranjay@kernel.org, broonie@kernel.org,
-	mbenes@suse.cz, ryan.roberts@arm.com, akpm@linux-foundation.org,
-	chenl311@chinatelecom.cn, ada.coupriediaz@arm.com,
-	anshuman.khandual@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, ardb@kernel.org, leitao@debian.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -next v7 5/7] arm64: entry: Refactor
- preempt_schedule_irq() check code
-Message-ID: <aJsh5oM3CoUELkvY@J2N7QTR9R3>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-6-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1754997679; c=relaxed/simple;
+	bh=r6IYALBSeAaNHtYjYDWidZ6/UEOCi800e0E0vkKVhXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ihiRke75G4oVSiKejsDe7Dsf+nERzwHh0E71t8+zqPH0OcaAJhS3P9wBk5f3NmOCn3rqj5ogx+nQB9sc+WFkCs1w2jBXvs0amMsLEw+0emx9EeWH3tq5O9IURMqRN/4cwJKCh/vQ4RVPAunNcztCKSSdWyqgGU3tsO5wR3DAEVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c1TRs1VQtz9sTD;
+	Tue, 12 Aug 2025 13:14:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id DTzy6W8y_UWe; Tue, 12 Aug 2025 13:14:49 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1TRs0Hb9z9sT8;
+	Tue, 12 Aug 2025 13:14:49 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E8BFE8B764;
+	Tue, 12 Aug 2025 13:14:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id aDvaGGSKzC36; Tue, 12 Aug 2025 13:14:48 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 47B258B763;
+	Tue, 12 Aug 2025 13:14:48 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	Peter Xu <peterx@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm: Remove pud_user() from asm-generic/pgtable-nopmd.h
+Date: Tue, 12 Aug 2025 13:14:19 +0200
+Message-ID: <c7f99612ecfa04054b37518df661d04f88f7c9af.1754997083.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729015456.3411143-6-ruanjinjie@huawei.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754997261; l=2502; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=r6IYALBSeAaNHtYjYDWidZ6/UEOCi800e0E0vkKVhXQ=; b=466+/Yll0FE2OOxX7pDe1DSWs6dRdpVNGh6d0m1M8DFv+SE6f95KjZD+1G1fkIXTHHkwZVaXn S8LTupzahjXA3L/dGJsoUuT48x1zCGoslcRYL6VTk4DeKlGSALhnV+L
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 09:54:54AM +0800, Jinjie Ruan wrote:
-> ARM64 requires an additional check whether to reschedule on return
-> from interrupt. So add arch_irqentry_exit_need_resched() as the default
-> NOP implementation and hook it up into the need_resched() condition in
-> raw_irqentry_exit_cond_resched(). This allows ARM64 to implement
-> the architecture specific version for switching over to
-> the generic entry code.
-> 
-> To align the structure of the code with irqentry_exit_cond_resched()
-> from the generic entry code, hoist the need_irq_preemption()
-> and IS_ENABLED() check earlier. And different preemption check functions
-> are defined based on whether dynamic preemption is enabled.
-> 
-> Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> Suggested-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  arch/arm64/include/asm/preempt.h |  4 ++++
->  arch/arm64/kernel/entry-common.c | 35 ++++++++++++++++++--------------
->  kernel/entry/common.c            | 16 ++++++++++++++-
->  3 files changed, 39 insertions(+), 16 deletions(-)
+Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
 
-Can you please split the change to kernel/entry/common.c into a separate
-patch? That doesn't depend on the arm64-specific changes, and it'll make
-it easier to handle any conflcits when merging this.
+But pud_user() only exists on ARM64 and RISCV and is not expected
+by any part of MM.
 
-Mark.
+Add the missing definition in arch/riscv/include/asm/pgtable-32.h
+and remove it from asm-generic/pgtable-nopmd.h
 
-> 
-> diff --git a/arch/arm64/include/asm/preempt.h b/arch/arm64/include/asm/preempt.h
-> index 0159b625cc7f..0f0ba250efe8 100644
-> --- a/arch/arm64/include/asm/preempt.h
-> +++ b/arch/arm64/include/asm/preempt.h
-> @@ -85,6 +85,7 @@ static inline bool should_resched(int preempt_offset)
->  void preempt_schedule(void);
->  void preempt_schedule_notrace(void);
->  
-> +void raw_irqentry_exit_cond_resched(void);
->  #ifdef CONFIG_PREEMPT_DYNAMIC
->  
->  DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> @@ -92,11 +93,14 @@ void dynamic_preempt_schedule(void);
->  #define __preempt_schedule()		dynamic_preempt_schedule()
->  void dynamic_preempt_schedule_notrace(void);
->  #define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
-> +void dynamic_irqentry_exit_cond_resched(void);
-> +#define irqentry_exit_cond_resched()	dynamic_irqentry_exit_cond_resched()
->  
->  #else /* CONFIG_PREEMPT_DYNAMIC */
->  
->  #define __preempt_schedule()		preempt_schedule()
->  #define __preempt_schedule_notrace()	preempt_schedule_notrace()
-> +#define irqentry_exit_cond_resched()	raw_irqentry_exit_cond_resched()
->  
->  #endif /* CONFIG_PREEMPT_DYNAMIC */
->  #endif /* CONFIG_PREEMPTION */
-> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-> index 7c2299c1ba79..4f92664fd46c 100644
-> --- a/arch/arm64/kernel/entry-common.c
-> +++ b/arch/arm64/kernel/entry-common.c
-> @@ -285,19 +285,8 @@ static void noinstr arm64_exit_el1_dbg(struct pt_regs *regs,
->  		lockdep_hardirqs_on(CALLER_ADDR0);
->  }
->  
-> -#ifdef CONFIG_PREEMPT_DYNAMIC
-> -DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> -#define need_irq_preemption() \
-> -	(static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
-> -#else
-> -#define need_irq_preemption()	(IS_ENABLED(CONFIG_PREEMPTION))
-> -#endif
-> -
->  static inline bool arm64_preempt_schedule_irq(void)
->  {
-> -	if (!need_irq_preemption())
-> -		return false;
-> -
->  	/*
->  	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
->  	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
-> @@ -672,6 +661,24 @@ static __always_inline void __el1_pnmi(struct pt_regs *regs,
->  	arm64_exit_nmi(regs, state);
->  }
->  
-> +void raw_irqentry_exit_cond_resched(void)
-> +{
-> +	if (!preempt_count()) {
-> +		if (need_resched() && arm64_preempt_schedule_irq())
-> +			preempt_schedule_irq();
-> +	}
-> +}
-> +
-> +#ifdef CONFIG_PREEMPT_DYNAMIC
-> +DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> +void dynamic_irqentry_exit_cond_resched(void)
-> +{
-> +	if (!static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
-> +		return;
-> +	raw_irqentry_exit_cond_resched();
-> +}
-> +#endif
-> +
->  static __always_inline void __el1_irq(struct pt_regs *regs,
->  				      void (*handler)(struct pt_regs *))
->  {
-> @@ -681,10 +688,8 @@ static __always_inline void __el1_irq(struct pt_regs *regs,
->  	do_interrupt_handler(regs, handler);
->  	irq_exit_rcu();
->  
-> -	if (!preempt_count() && need_resched()) {
-> -		if (arm64_preempt_schedule_irq())
-> -			preempt_schedule_irq();
-> -	}
-> +	if (IS_ENABLED(CONFIG_PREEMPTION))
-> +		irqentry_exit_cond_resched();
->  
->  	exit_to_kernel_mode(regs, state);
->  }
-> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-> index b82032777310..4aa9656fa1b4 100644
-> --- a/kernel/entry/common.c
-> +++ b/kernel/entry/common.c
-> @@ -142,6 +142,20 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
->  	return ret;
->  }
->  
-> +/**
-> + * arch_irqentry_exit_need_resched - Architecture specific need resched function
-> + *
-> + * Invoked from raw_irqentry_exit_cond_resched() to check if need resched.
-> + * Defaults return true.
-> + *
-> + * The main purpose is to permit arch to skip preempt a task from an IRQ.
-> + */
-> +static inline bool arch_irqentry_exit_need_resched(void);
-> +
-> +#ifndef arch_irqentry_exit_need_resched
-> +static inline bool arch_irqentry_exit_need_resched(void) { return true; }
-> +#endif
-> +
->  void raw_irqentry_exit_cond_resched(void)
->  {
->  	if (!preempt_count()) {
-> @@ -149,7 +163,7 @@ void raw_irqentry_exit_cond_resched(void)
->  		rcu_irq_exit_check_preempt();
->  		if (IS_ENABLED(CONFIG_DEBUG_ENTRY))
->  			WARN_ON_ONCE(!on_thread_stack());
-> -		if (need_resched())
-> +		if (need_resched() && arch_irqentry_exit_need_resched())
->  			preempt_schedule_irq();
->  	}
->  }
-> -- 
-> 2.34.1
-> 
+A stub pud_user() is also required for ARM64 after
+commit ed928a3402d8 ("arm64/mm: fix page table check compile
+error for CONFIG_PGTABLE_LEVELS=2")
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+---
+ arch/arm64/include/asm/pgtable.h    | 1 +
+ arch/riscv/include/asm/pgtable-32.h | 5 +++++
+ include/asm-generic/pgtable-nopmd.h | 1 -
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index abd2dee416b3b..fef7cc7a340d8 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -955,6 +955,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
+ 
+ #define pud_valid(pud)		false
+ #define pud_page_paddr(pud)	({ BUILD_BUG(); 0; })
++#define pud_user		false /* Always 0 with folding */
+ #define pud_user_exec(pud)	pud_user(pud) /* Always 0 with folding */
+ 
+ /* Match pmd_offset folding in <asm/generic/pgtable-nopmd.h> */
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index 00f3369570a83..37878ef374668 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -36,4 +36,9 @@
+ static const __maybe_unused int pgtable_l4_enabled;
+ static const __maybe_unused int pgtable_l5_enabled;
+ 
++static inline int pud_user(pud_t pud)
++{
++	return 0;
++}
++
+ #endif /* _ASM_RISCV_PGTABLE_32_H */
+diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
+index 8ffd64e7a24cb..b01349a312fa7 100644
+--- a/include/asm-generic/pgtable-nopmd.h
++++ b/include/asm-generic/pgtable-nopmd.h
+@@ -30,7 +30,6 @@ typedef struct { pud_t pud; } pmd_t;
+ static inline int pud_none(pud_t pud)		{ return 0; }
+ static inline int pud_bad(pud_t pud)		{ return 0; }
+ static inline int pud_present(pud_t pud)	{ return 1; }
+-static inline int pud_user(pud_t pud)		{ return 0; }
+ static inline int pud_leaf(pud_t pud)		{ return 0; }
+ static inline void pud_clear(pud_t *pud)	{ }
+ #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
+-- 
+2.49.0
+
 
