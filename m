@@ -1,241 +1,148 @@
-Return-Path: <linux-kernel+bounces-764816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5763EB2279B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D666B227A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F66E1647EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961CC175EE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0357F2798FA;
-	Tue, 12 Aug 2025 12:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA1D27466E;
+	Tue, 12 Aug 2025 12:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hztRoS/K"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EtSD+vaS"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A187E26738D;
-	Tue, 12 Aug 2025 12:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940A26980F;
+	Tue, 12 Aug 2025 12:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003321; cv=none; b=H6M+hD9jYnPivFaGB4iqVLtfSrXqdtK3SKCHnTJUex/HjKsoJF574LIH9HRSe4NUOxecXGnSw+xHJSvXHDcmtJWqxrBSfCCiDKAl1pZMB04vMcpqMnANVpPQfygv9MXlsRzk1hb8r3ibk0stQzXevPMF0xIFmkvznC9HI+2T2Jk=
+	t=1755003335; cv=none; b=BYLACB69jpW0rS/HBzgFNnZlEitLzSabnB6OHvQrQcI5WCmaRGFArQj9DzkyvTuHiTzykb34Kq5gZIPhKaDcQnxBCkMTRo8PkTQXjnNR9zfGcQwK4l739UrB3xx6DhpGUxMo/0oUc0XmY90g4xyz1eJcRCQ9IWOowqr/Sdyn6cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003321; c=relaxed/simple;
-	bh=F1m89ry/932/GXV1ZQZ8/nR59jJyQtByFH2rMV28C+U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f24oPTR7Y7tFtzDpUiqpq4XuLELRLtb7LGNAWuxSE/hmlp6HDwZpKdMbvvSbRPEJLwSKm5QiL/4b5faCz85284JgPVyCOM4lfdGvOcOzCrEEq1ooP98C0XFF/Abw/3SoBWJRzHBdkhylx2QIml+GjXt/BpFGn46iEpUHEefH930=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hztRoS/K; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=F1m89ry/932/GXV1ZQZ8/nR59jJyQtByFH2rMV28C+U=; b=hztRoS/KQXXT67ZnNHvz/u9Gay
-	R5xl9B+lLPBwMFWqDU/UYBQq1f+Ya1hEll/QdGopTNEAXtHV91NewuHyT42xzortGpC2/aMytSRTM
-	uL5GgRMfKf9iD0bSGejJhPrcZqc17vJcKKacixVP69aLMC8z9K9eDBqhLTnzwbYu9O08guVd2qOlN
-	2AST9sxuXqYYRiMs+bznunuHrBtWGf79E2kVKAWbxfvVftZ5SVsK7iU6+wDCcIMTq5/ZmfVoFMNt0
-	7BpPaN3Rd6ENyWCXGnbHA8DC/BKriHw9sKrOu/iLjS5w39umFl33u0b2wFFAN7qciuWu25FNEEbnh
-	26aSb4HQ==;
-Received: from [54.239.6.185] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uloWj-0000000GDua-4But;
-	Tue, 12 Aug 2025 12:54:55 +0000
-Message-ID: <e35732dfe5531e4a933cbca37f0d0b7bbaedf515.camel@infradead.org>
-Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when
- irqchip=split
-From: David Woodhouse <dwmw2@infradead.org>
-To: hugo lee <cs.hugolee@gmail.com>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, 
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com,  hpa@zytor.com, x86@kernel.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,  Yuguo Li
- <hugoolli@tencent.com>
-Date: Tue, 12 Aug 2025 14:54:53 +0200
-In-Reply-To: <CAAdeq_LmqKymD8J9tgEG5AXCXsJTQ1Z1XQan5nD-1qqUXv976w@mail.gmail.com>
-References: <20250806081051.3533470-1-hugoolli@tencent.com>
-	 <aJOc8vIkds_t3e8C@google.com>
-	 <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
-	 <aJTytueCqmZXtbUk@google.com>
-	 <CAAdeq_+wLaze3TVY5To8_DhE_S9jocKn4+M9KvHp0Jg8pT99KQ@mail.gmail.com>
-	 <aJobIRQ7Z4Ou1hz0@google.com>
-	 <CAAdeq_KK_eChRpPUOrw3XaKXJj+abg63rYfNc4A+dTdKKN1M6A@mail.gmail.com>
-	 <d3e44057beb8db40d90e838265df7f4a2752361a.camel@infradead.org>
-	 <CAAdeq_LmqKymD8J9tgEG5AXCXsJTQ1Z1XQan5nD-1qqUXv976w@mail.gmail.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-Pil4kZ6r9y3vKXHIIcyk"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1755003335; c=relaxed/simple;
+	bh=TCnHBgiKfR2bV9FECNhKtqDNsmwR0H700W+72c48uEE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=A9A+iVUOd3aRn/JfTHrG/gTpM1HC0CV7Mv3eKMIYELsOj9kYqY0KWTmXegQD8CA67kE0eJEaoQGLAwTOQ1d821yD9z9H2adOG9ckp7uC5av2RztMavsDOSEa1hByGOFj6H0RolCcsPL4XBSzF4z3nGk420bQpmnAoLMGXZvREW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EtSD+vaS; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755003324; x=1755608124; i=markus.elfring@web.de;
+	bh=wZgG4WM7TQCFX2yR3+Vt7rXgHAUFRqCpjQ8RHGWVr/Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EtSD+vaSpDAeVx13tJjZQSuPRSHMAJVC81KPfjY2p8p+QmIrSOZYV/TaeNVV5qLm
+	 +dQkIK3usRsV9yA4BYoQzCQi0+mUvCZjRmNDi+NqM1LiieTLc9FgwDT6PQpCExBt4
+	 ckmwur2F+0XlVI2x5F+e/cPMVSpKBDjSmIVdNxAiI8ii75npiJ1kLZrYct+ufeSTj
+	 tW9eJq7FNMuAvqUIYsMjREGIkVbXIax1GdxpQgC3FkauUl0iOmeMfXCOoRLx99Y0g
+	 pOcPrddqKZHsxLyiqHQk09omh8XxD8d9LZVGPgnK1CWWiuLS4LbK4I8RPjP/Yn7Sw
+	 80yXdCpis7U8dmJfaQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9ZZo-1uiV8y28bE-003WTH; Tue, 12
+ Aug 2025 14:55:24 +0200
+Message-ID: <3bc0b091-b23a-4245-81b0-da7e561cbc81@web.de>
+Date: Tue, 12 Aug 2025 14:55:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-Pil4kZ6r9y3vKXHIIcyk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: "Leo L. Schwab" <ewhac@ewhac.org>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Kate Hsuan <hpa@redhat.com>
+References: <20250812065327.515098-2-ewhac@ewhac.org>
+Subject: Re: [PATCH v2] HID: lg-g15 - Add support for Logitech G13.
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250812065327.515098-2-ewhac@ewhac.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UqXKl+VRYELIWKRB7+bBP1MjZXlb/3wEbxIG4oYkTi6xwEkTD35
+ 6mE2F1Y61NXi9e14Cx+HiggEYREj5RZIoLIKfIId5DEYNegfhbAY9AYQL6kdwppfuCWvJH/
+ YLx1xOMvcc3XxSXUdTWRVPZHvwmbZwV8FiI3o4PsYiNzUcWAnnsTZJcDAzbest6KWULn7+E
+ c/qujThNx8KH98xjikfvQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JlEeAZZg9do=;Ryb21o3VpxzAwV9f7CV4nWF93v1
+ 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
+ dDKt08pbOiDoxl6gf8cYLxkdZ2pIWYgg=
 
-On Tue, 2025-08-12 at 19:50 +0800, hugo lee wrote:
-> On Tue, Aug 12, David Woodhouse <dwmw2@infradead.org> wrote:
-> >=20
-> > On Tue, 2025-08-12 at 18:08 +0800, hugo lee wrote:
-> > >=20
-> > > On some legacy bios images using guests, they may disable PIT
-> > > after booting.
-> >=20
-> > Do you mean they may *not* disable the PIT after booting? Linux had
-> > that problem for a long time, until I fixed it with
-> > https://git.kernel.org/torvalds/c/70e6b7d9ae3
-> >=20
->=20
-> True, they disabled LINT0 and left PIT unaware.
->=20
-> > > When irqchip=3Dsplit is on, qemu will keep kicking the guest and try =
-to
-> > > get the Big QEMU Lock.
-> >=20
-> > If it's the PIT, surely QEMU will keep stealing time pointlessly unless
-> > we actually disable the PIT itself? Not just the IRQ delivery? Or do
-> > you use this to realise that the IRQ output from the PIT isn't going
-> > anywhere and thus disable the event in QEMU completely?
-> >=20
->=20
-> I'm using this to disable the PIT event in QEMU.
->=20
-> I'm aiming to solve the desynchronization caused by
-> irqchip=3Dsplit, so the VM will behave more like the
-> physical one.
+=E2=80=A6
+> +++ b/drivers/hid/hid-lg-g15.c
+=E2=80=A6
+> +static int lg_g13_get_leds_state(struct lg_g15_data *g15)
+> +{
+=E2=80=A6
+> +	for (int i =3D LG_G15_MACRO_PRESET1;  i < LG_G15_LED_MAX;  ++i)
+=E2=80=A6
++static int lg_g13_mkey_led_set(struct led_classdev *led_cdev, enum led_br=
+ightness brightness)
++{
+=E2=80=A6
+> +	for (i =3D LG_G15_MACRO_PRESET1;  i < LG_G15_LED_MAX;  ++i) {
+=E2=80=A6
 
-I suspect I'm going to hate your QEMU patch when I see it.
+Please reconsider the usage of double space characters at some source code=
+ places.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.17-rc1#n234
 
-KVM has a callback when the IRQ is acked, which it uses to retrigger
-the next interrupt in reinject mode.
-
-Even in !reinject mode, the kvm_pit_ack_irq() callback could just as
-easily be used to allow the hrtimer to stop completely until the
-interrupt gets acked. Which I understand is basically what you want to
-do in QEMU?
-
-There shouldn't be any reason to special-case it on the LINT0 setup; if
-the interrupt just remains pending in the PIC and is never serviced,
-that should *also* mean we stop wasting steal time on it, right?
-
-So ideally, QEMU would have the same infrastructure to 'resample' an
-IRQ when it gets acked. And then it would know when the guest is
-ignoring the PIT and it needn't bother to generate any more interrupts.
-
-Except QEMU's interrupt controllers don't yet support that. So for VFIO
-INTx interrupts, for example, QEMU unmaps the MMIO BARs of the device
-while an interrupt is outstanding, then sends an event to the kernel's
-resample irqfd when the guest touches a register therein!
-
-I'd love to see you fix this in QEMU by hooking up that 'resample'
-signal when the interrupt is acked in the interrupt controller, and
-then wouldn't the kernel side of this and the special case for LINT0 be
-unneeded?
-
-
---=-Pil4kZ6r9y3vKXHIIcyk
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgxMjEyNTQ1
-M1owLwYJKoZIhvcNAQkEMSIEIBzcnKpPScdZ2uQjn1fclRZX7WJHaG6sEZ0hPSbxoseUMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAfLpIKTxEQzqu
-W4xOgQkTGLPemGKWDn52lyehLrBhAa8WC1WAiUPcr5JpZWj/P4vbefruKa3yfT9qGxevYKa3ZX/V
-5q4WoPrHJH2m5UWtrBTg4Qn+kj0RGGH2IIUwxUk0yMUZuTNoA1bQmaV3onbXu31xPX29Olh7/KcV
-WNpDAbmcrVrEULBYCH08gmvi/H9/0GgbsJk39cl+oTdJ9y+FWVEWl/wUKRR/EiPMsBcEZYuhOJO3
-qTECUrvSDj0uWhoCnQT0xMk9U8WZXo8QArWFcHzweziU7wEDiGfTA8cfezcKwPXjxBWQyLr7wxjZ
-LlurFsIPo8rMihNLTYxJuiJFMduWGwlrSWAmpWYi5fra0fSHzrQwL0UwZCl3PqyYLXTXGZErUc1d
-6fOGjQt2BA9Vjc0q2Z5s76at20Q9OanlT36HG+FKO+JNLYYPBJmz+kUmlTt5pVixtcCeUHAZUCup
-ig3/JNU+pAmNqB6+N8K0wC3weAYljjcIVM2Po8/r+kiQ/t1XokrkoqaEUyrDoXoq7DJwUY3JrQ9D
-ft/J5Gf9LNzsDXvMjw77YJ9Vb6X0MfsfSdEj33ILfnMLyU3t7eigYkk4AKnrKYx9Qc6dQcBn4VRn
-tO91V4dDx7meocpPr0bOSgV69IPThf/bqAOkkb6jZDMjfoElZluwuzhaw8bbS14AAAAAAAA=
-
-
---=-Pil4kZ6r9y3vKXHIIcyk--
+Regards,
+Markus
 
