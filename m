@@ -1,179 +1,101 @@
-Return-Path: <linux-kernel+bounces-765316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F42BB22E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDC9B22E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6151C188A1ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF21188A7D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DA62FABFF;
-	Tue, 12 Aug 2025 17:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA012F83DE;
+	Tue, 12 Aug 2025 17:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQAyHCxw"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="h1kA7+0I"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1D2EFD9B;
-	Tue, 12 Aug 2025 17:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018461; cv=none; b=mKur/XSf1VgMdFSUQfQF8w+S8n+vmDLZNT77Vegn5spOiC1gdr6O8QPb2mjH6IF7Rj04E/+TcAhhycrFo4ddQBEAAWK09gg6ltuAhXPlScGdh1ogjTaC6TbQ/ZLumnqTVQOYefV/zkWeCafvnZgGBCBErgUb0Mm/z0988we0qJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018461; c=relaxed/simple;
-	bh=5I5T6NT3xvIjT27mRfFta1+b4feAhQzOdh4KrrC6clY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y0QuJMqkpSHzUzb4XjHyM+322LZfKGqu0BgrMLYhlJYRz060wCL6dXaWvsHxpFDZVx5cw5fX38BhrBBwyXRmbOjgBFlFLrOwglz0wU0eqwhkdmahJKDO5e+lePkIc/mN0ndn+ZhUtpYFjsR/5z36Mb1gq3cPGbPM+wr/LNkxADg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQAyHCxw; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76b8d289f73so5418362b3a.1;
-        Tue, 12 Aug 2025 10:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755018459; x=1755623259; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JiI5qaPggnwl6KII4CiCwm2S44IlH9sez1L/qTHY7Bk=;
-        b=HQAyHCxwhGnWUVjmw7pBAS8vT9tIh+XDIaVAjBm9LNC4BXxnE+Dm3PORD6HvSaU7NI
-         iIHHzWC04qtkFplZH2Eova6BCTAqqHfXAfrgnxrLyRpq2R1T5Izzuk7yshrFXdgYng+6
-         HkCtpXBzFggNgJqYOwmD53sbvIZqFhJDbWbTNufuwgP0fgb6eladzjXjt7NLJBU5JtwD
-         gL9JTvgVkpZXiXiPcA4jmDLbri1XSIZwxyYtM0lRKaSk13fdyGxJwt551ZExMmqXfmRt
-         8kp+nsSDDQesi2jBOtLKNWuIeEG1eSqr7PixrEYnucLtJoTa4cIXlldNLOJH+THz2SXJ
-         Qr7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755018459; x=1755623259;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JiI5qaPggnwl6KII4CiCwm2S44IlH9sez1L/qTHY7Bk=;
-        b=cIOGrtv0IFm8pIUzpvpFKVtsvsheETkkI2W92zGk1fjPd2N2AlYQWRXfg2aEQecjWW
-         TBu3Rf9MI0owp7D6k+nGaF3OSj/Ut38Vi7sUt7sfobxfWrE4bSQQIkliKUtyxauNRnNl
-         rbFLofi3/YCfYLo5dgH4kz+NCjd+dBxTbDz1Y2jBgA85NG4KCGItCPZAQw+QZtJrZ5mv
-         7rFtzNe8D13W1K/zO3Ijkli3SAin23w6H164N+HLoHSl9JcGNPcbQhMH8eWdNgJZqz52
-         qCpYqAAF/KHAK5NHZ5u84gON2aWLFpItdgRKSmCDjo0jVSAHUuERcSsGe9oDbYcf3zx4
-         aTbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvb8gQfmiqHXnfhm8zZ4XRW6/+3K4Mg5ml/vI2FPJ0Ts53/znBPUIiCIR1p3lnZ14wnT5jBfFHGyg=@vger.kernel.org, AJvYcCWNlOKA+C05i0F/VBPamwoZ61LXDpmLSSi3y0KWbQnj4dijhdQncMiLuu1tK/28kT+JMHhJ0GtQx/JTgz8U@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwSqKfXksDypOHC/KoA/3qZ50cyhkkO23axZy6lLGqqBLP913a
-	vRdFdfbgUUNxAgOXf98TdH9gsKQn/roRP3SbM5Slst+kbcu/DDWxxbgU05YALg==
-X-Gm-Gg: ASbGncuAl/HxjBZ19u9A5XKaRex7cOcnAW9SkIFLq4pV2eGlfxLnfrVORPlhtNlB0bd
-	hyZgotYQbuvHfJDPe1f1BxzXxDtXZpwlolyZbyW1ikzBIbcBfd/wAmG3IYJA/NEWSjgMFjKF02j
-	F7rjvow2ifazwMLOdUW5fGDc2ltYL5ZaXksp5ldiMV4qAjjjt0iI3XLf04LorHJu0FW868OSiTm
-	EccL3W7YGAlVqyHL5Lx/EAH2U42XHgXSv0sa66g4zPS46dLeL6Mf2M4xCSBQsVPectDIAhpwBIr
-	AHenN3AUQqgpG3bOrdn80FnpLJat33/cSXb18JqW+xTKI6IG1bT7UHXS5nl0XNGyy8RFNAvhOZX
-	mWN4zDt5WPa8AZ0LP6LCFv2LgPj6nAEnhUw==
-X-Google-Smtp-Source: AGHT+IGzdLhcexuTkOIjNGn8PdUy4hc49e+TVEXl7hecisnA3tBwFdDE74KWRW72IXKttCn/H4lH6w==
-X-Received: by 2002:a05:6a20:3d83:b0:240:167:9c3f with SMTP id adf61e73a8af0-240a8a424c1mr6540637.14.1755018459067;
-        Tue, 12 Aug 2025 10:07:39 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([223.233.77.228])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b428e6244a5sm11788035a12.23.2025.08.12.10.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 10:07:38 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: anshulusr@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio: light: ltr390: Add device powerdown functionality via devm api
-Date: Tue, 12 Aug 2025 22:37:18 +0530
-Message-ID: <20250812170723.51639-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBED1A9FB7;
+	Tue, 12 Aug 2025 17:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755018504; cv=pass; b=KV+6q8b3sHuuwWU+iFQlb48XAGQUetbde2kc3UAyxGbx1J97M61t489Z6X5MQC4NoJ5i0FUCz/K2d0s0ySM0FQ1STU3ODK2tmCf5o1pIJJg3TpqXIAbOpzB/EQ5sxvT3fOFSR/OLIejHUxUbcd0+LX+4gh3JWJ+iUQ1dZSj6Xwk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755018504; c=relaxed/simple;
+	bh=nQ/ztbq3yjkUYINidoautnSKxc9fr9+WkgQ0va3g8XE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dn6P9AMi6QC15cEbX7nC1LTcG+l/AQyd04/PHitdjak/+nUHXNwpHl4/y5n1PYdK2uERKEFz9w1uzbzsvYClBJ7Pr8Gkxq8lbddRgV1CFTyg6dpPOvT4f/QUCeRetaFg2uVmh4yjrI3vBXtmk3PyElGmDnSM/SzJ7UwCIv+Q1WU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=h1kA7+0I; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755018476; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X2+6LwOk6qAv9zrq6LA5lWJtwOuVWCKOYnHqz+/wya1EJ7ZFLuBXrXwPuSE5Y09kXg9IW+ufBGm+8my9JZ0G0NaK1Hr2RaQ+Lq1IzsVM1UWAfnj97rhqerSSWRLjTS9w/iwPgsVhn/k1cBgfLVyE8tYPGyAA+XYPDvo7fd6AcJ4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755018476; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sw4HIiGpcTlEANcKneYpvYEeePB5QhOBB0MDbHc9D3c=; 
+	b=DydPo1JcWKdDn1l5azr8mzuF8AMH/N0ACJ6fHZBdW0i14ZqlJgQZW4PNP9C4UusAHku6ZQlbSF/gokc+99CObc2Ly4q1H6BwSuh8AVIX0mylFmQtsu56RhlToq3RcFL5ihY8ZcI30T4AWIPJp6IS1ccfLHdxzdiX+KPFIFb1kdM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755018476;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=sw4HIiGpcTlEANcKneYpvYEeePB5QhOBB0MDbHc9D3c=;
+	b=h1kA7+0Ixsm5zg0SIUI3cJXY0kA3JL2n/i4eyh20FfZKM4fe0xcNwT6EgM15ZOqz
+	clya8QxUyjydBdtY+7ZYDY2PeYd/sEVspUvj9ic1w/Q92BqmykR2RIn2LA/ReGuqQel
+	Te6aYj3DP5kBM8m4Nf55CcEnK8QafOaPGGNob5Os=
+Received: by mx.zohomail.com with SMTPS id 1755018474668548.5768361747636;
+	Tue, 12 Aug 2025 10:07:54 -0700 (PDT)
+Message-ID: <f3b7414c-8182-4018-951b-b6c64653c38d@collabora.com>
+Date: Tue, 12 Aug 2025 20:07:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/12] media: rkvdec: Add H264 support for the VDPU381
+ variant
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com
+References: <20250808200340.156393-1-detlev.casanova@collabora.com>
+ <20250808200340.156393-10-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20250808200340.156393-10-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Use devm_add_action_or_reset to do cleanup when the device is removed.
-Set client data with i2c_set_clientdata() to ensure indio_dev is accessible
-in powerdown function.
+On 8/8/25 23:03, Detlev Casanova wrote:
+> +static struct rcb_size_info vdpu381_rcb_sizes[] = {
+> +	{6,	PIC_WIDTH},	// intrar
+> +	{1,	PIC_WIDTH},	// transdr (Is actually 0.4*pic_width)
+> +	{1,	PIC_HEIGHT},	// transdc (Is actually 0.1*pic_height)
+> +	{3,	PIC_WIDTH},	// streamdr
+> +	{6,	PIC_WIDTH},	// interr
+> +	{3,	PIC_HEIGHT},	// interc
+> +	{22,	PIC_WIDTH},	// dblkr
+> +	{6,	PIC_WIDTH},	// saor
+> +	{11,	PIC_WIDTH},	// fbcr
+> +	{67,	PIC_HEIGHT},	// filtc col
+> +};
+> +
+> +const struct rkvdec_config config_vdpu381 = {
 
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
+Nit: config_vdpu381 should be declared as "static", same for
+config_vdpu383 in the next patch
 
-Testing details:
-================
--> Tested on Raspberrypi 4B. Following tests were performed.
-
-1. Sensor and interrupts should be disabled after module unload.
--> Before unload
-akshayaj@raspberrypi:~ $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
-1
-akshayaj@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
-1
-akshayaj@raspberrypi:~ $ i2cget -f -y 1 0x53 0x19
-0x14
-akshayaj@raspberrypi:~ $ i2cget -f -y 1 0x53 0x0
-0x02
-
--> After unload
-akshayaj@raspberrypi:~ $ sudo rmmod ltr390
-akshayaj@raspberrypi:~ $ i2cget -f -y 1 0x53 0x0
-0x00
-akshayaj@raspberrypi:~ $ i2cget -f -y 1 0x53 0x19
-0x10
-
- drivers/iio/light/ltr390.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index 7733830dca67..f9c8e7fc57fd 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -680,6 +680,24 @@ static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
- 	return IRQ_HANDLED;
- }
- 
-+static void ltr390_powerdown(void *client)
-+{
-+	struct i2c_client *i2c_clnt = client;
-+	struct iio_dev *indio_dev = i2c_get_clientdata(i2c_clnt);
-+	struct ltr390_data *data = iio_priv(indio_dev);
-+
-+	guard(mutex)(&data->lock);
-+
-+	/* Ensure that power off and interrupts are disabled */
-+	if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-+				LTR390_LS_INT_EN) < 0)
-+		dev_err(&i2c_clnt->dev, "failed to disable interrupts\n");
-+
-+	if (regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
-+			LTR390_SENSOR_ENABLE) < 0)
-+		dev_err(&i2c_clnt->dev, "failed to disable sensor\n");
-+}
-+
- static int ltr390_probe(struct i2c_client *client)
- {
- 	struct ltr390_data *data;
-@@ -693,7 +711,7 @@ static int ltr390_probe(struct i2c_client *client)
- 		return -ENOMEM;
- 
- 	data = iio_priv(indio_dev);
--
-+	i2c_set_clientdata(client, indio_dev);
- 	data->regmap = devm_regmap_init_i2c(client, &ltr390_regmap_config);
- 	if (IS_ERR(data->regmap))
- 		return dev_err_probe(dev, PTR_ERR(data->regmap),
-@@ -733,6 +751,10 @@ static int ltr390_probe(struct i2c_client *client)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to enable the sensor\n");
- 
-+	ret = devm_add_action_or_reset(dev, ltr390_powerdown, client);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add action or reset\n");
-+
- 	if (client->irq) {
- 		ret = devm_request_threaded_irq(dev, client->irq,
- 						NULL, ltr390_interrupt_handler,
 -- 
-2.43.0
-
+Best regards,
+Dmitry
 
