@@ -1,259 +1,224 @@
-Return-Path: <linux-kernel+bounces-763902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6B6B21B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78678B21B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA99424353
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F4B3AAE15
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8719D2D29C2;
-	Tue, 12 Aug 2025 03:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18872D97BF;
+	Tue, 12 Aug 2025 03:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="NwjMiD8B"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DNsbB17h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1A01F4188;
-	Tue, 12 Aug 2025 03:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349023B610
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754968130; cv=none; b=sMNOvn6G/seveM2rZbxV/+kOgzY1/KKrZESI9Jb0ivwze8uWYpmJcIXgD6y8Q5eheMM0VKLuYGG8ta7HrtgkztIJN0oK+Pn0K2tK7eQAGhpFocmJZ9eBZiquoiBBG8X0C+kcL7XFEhNJ7N4Qp1rWFoEYkSYI3m0q4fZrbPO1fWQ=
+	t=1754968226; cv=none; b=PZGVajiZ++sL1m9cO2+OmG6kkVsYq/2XdFo5Z6cGmaLVKBUVzBhcQVOb1CFG9AIC/EYSLRx7xARXdz5ppGrXK9FbCEFxwNyXwXMYSBSSYkdrrqfnYxobo7DbwU/QkVeG8Yw9+QXadnaMgK4Z691ktYiCfw/LlYZo1g0mrR67mU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754968130; c=relaxed/simple;
-	bh=2qOKlLu7SdjlpOaW6hRBK2Y/qYvr+RUTCG6PZ2V4NB8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XgqRJZY8ebrjZVclOSKqMx356lRuc9qpbHJQuo2WwYz8oYCz+5Yd7Dow4wNMErYf1Z1xJ/4136pp3D1cY3AiDVkBXM7PROCN6NTMRfC5JFYyXPYE8XRTFzhnnRzLDsRgvNSwGrMOOCp0fUTW4RoOYjKNzoJgv4QPMXQRtlKqZFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=NwjMiD8B; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57C38DiT41748066, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1754968094; bh=h1VUCn5VyK1MMOP0lfFQVYdsjTXMj4fBvSR/AFKqB+o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=NwjMiD8BAndtOMht9yPF56ZceUmdTNXqMrmgYuDzzLlph2+qtJuiUrPoYhNpTMgJH
-	 6/tgbhgKhtEuh3iEL7+viuS0HNiAgMKqItkmd2HHRCvnRuz/sqLvHRDqOnGrZ/Kqzv
-	 VlGFBZJCY9mfloMXuiz78F1Xy3qvfm/U1UA6eaJcY7pLEkOOgSj+zORaQoC03704Zv
-	 Q2k9bWNTAA4YZcpNKMIxcvieV9TfxcarPVCvBtk+Faos8Jjop4ZccC8c4OrNDNnm4L
-	 n5ZFOsA4h2qbaECMGMGUSTicMfW/58TjUkOMSknHVTVaiQs5+uVC8DZAtQZ6GzP0N2
-	 5L5rbTkzJpvQA==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57C38DiT41748066
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Aug 2025 11:08:14 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Aug 2025 11:08:13 +0800
-Received: from RTEXH36505.realtek.com.tw (172.21.6.25) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Aug 2025 11:08:12 +0800
-Received: from localhost (172.22.144.1) by RTEXH36505.realtek.com.tw
- (172.21.6.25) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 12 Aug 2025 11:08:12 +0800
-From: Ricky Wu <ricky_wu@realtek.com>
-To: <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <chenhuacai@kernel.org>,
-        <ricky_wu@realtek.com>, <ulf.hansson@linaro.org>,
-        <maximlevitsky@gmail.com>
-CC: kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] misc: rtsx: usb card reader: add OCP support
-Date: Tue, 12 Aug 2025 11:08:11 +0800
-Message-ID: <20250812030811.2426112-1-ricky_wu@realtek.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754968226; c=relaxed/simple;
+	bh=7v/0s5nP+fKPlg4zCbD/5YBz3mI28umU2OkTVOkQDcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xc2xxmZmnWGEX2Wi0LWQ9z9e3ehcY/493UuLblVUlaXwmfqdXc2gauyq1Q8x6qQzzobMhwZB2jw1zt7q70kDjSJzjujkAlogEJQH1Is/WoDZ93x4ba9PCbomDgjdzxCRbWiAHB0Szvk3uShrD+LuobE4KKwhY4y9b600ugjUkrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DNsbB17h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754968223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DjDQ3z0BybAxITep+baEmHqyj5w4q7PIhLn/0gC8BA=;
+	b=DNsbB17hsHUDe+p608zm3mwITsa0N+VuX67bOGgfhWtK9FtCo1FpBfu20wMv5HlXO8Cfew
+	YP20APratY2o4ua066TIQixTeUEywPHTgJiW5uIEER2Q1YoeFs2zV0Kve0njjWvHK7dSHe
+	VVQl9KMaihk82oUpn4InTE5snaZmNk4=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-EgXdqnxiNC6H45s1q-3ZMQ-1; Mon, 11 Aug 2025 23:10:20 -0400
+X-MC-Unique: EgXdqnxiNC6H45s1q-3ZMQ-1
+X-Mimecast-MFC-AGG-ID: EgXdqnxiNC6H45s1q-3ZMQ_1754968219
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b3f38d3cabeso3941075a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:10:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754968218; x=1755573018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+DjDQ3z0BybAxITep+baEmHqyj5w4q7PIhLn/0gC8BA=;
+        b=c0msJIgtfOQUqng2JZcyAyaIkVMR1hRI8ZXtt7OA2pfxtYBHyLDuHy7ymbgZiWeaxI
+         JAPVGElHOH87+LCQUXOZa6YqqikLJNEU0i21+TGwXoW0jmJxe9KVHDACP6Sti1Qey8De
+         guv4fPMQHtJZiU9SMXJpNaylcDpmGB6n8mOLZy2+/ClDQkn2yhHUO1UpWaKU+IC3vqfW
+         Gam/A6rCGQ49farMXNfhhQpoUKGx3mMRPJ/hOqez9q92gn4LQqQ5OYtYC7alOyjNPmiv
+         Z8b4o53gA8U7fnl4XUIi3y9rJZk/4qFQXrcKpL1/OyOk5qnX9uBasmlzUXtnTgoxnZ08
+         6XSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/glx5Mm6Tken7DpFyC1umFhwW/8WQq+uu5Ss6jLpPEDqedfB+t8d88t+kGbzMaJTxvAZGv+j8kbv6LhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEBoSFEH2I0Fu4d4Asa0q0WnRkdQm5no2MwuLpMpejoJUwmE83
+	TaWjyANoZT8tVulSax2FHEKaZzl/VTsMEJhfnLULQLU2lMnQZiTFaUa1WSCecS88JmQNXBjGsSb
+	1/RvXfAHUXCI8+jSzbM6uQDWUxzsKHHZOektMaeEYp7rjwxKMsPW/UZ8FqLs8KcavIaGhVrqcT4
+	OwrnBW8q2d+97PVxjeaDNrvKZmoCf+0A52VotD6zNP6Cwu9GtTcQZkSQ==
+X-Gm-Gg: ASbGncsE55EWl5fOMzzscaUV08vp1ngitAyTdUIRn6e+TBcsMPLlGMAfttYdRhg6htF
+	tLLzplU7rncw6pMfYtePMJdi84vRtjj3VO8VC/YFmkDnjphsyLKikGID8wtWcojfGLP1Vgq/wx2
+	dKebJjalkSOz1giLy/nhMdlTw=
+X-Received: by 2002:a17:902:ef47:b0:240:2e93:8a9a with SMTP id d9443c01a7336-242fc36fdbfmr26869795ad.42.1754968218496;
+        Mon, 11 Aug 2025 20:10:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9qfM+3IY0AQWX0EvER9xl1Xdt/a7UxQFsq1gxRDMxeyfx9rCgxsUq4A5DuznfzS/HH0zz25IkIDYFKlUIVs4=
+X-Received: by 2002:a17:902:ef47:b0:240:2e93:8a9a with SMTP id
+ d9443c01a7336-242fc36fdbfmr26869535ad.42.1754968217949; Mon, 11 Aug 2025
+ 20:10:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+In-Reply-To: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 12 Aug 2025 11:10:06 +0800
+X-Gm-Features: Ac12FXw5kIUBogpDSpAswI2HzkUiTSu_KD1ROlTkjSnt_fp94queeq5ZE5CWHmQ
+Message-ID: <CACGkMEvqYWH-dcG4ei8dERy_OXvyF3cgrzQ2_YO-imEsPoYSbQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] TUN/TAP: Improving throughput and latency by
+ avoiding SKB drops
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds support for Over Current Protection (OCP) to the Realtek
-USB card reader driver.
+On Tue, Aug 12, 2025 at 6:04=E2=80=AFAM Simon Schippers
+<simon.schippers@tu-dortmund.de> wrote:
+>
+> This patch is the result of our paper with the title "The NODROP Patch:
+> Hardening Secure Networking for Real-time Teleoperation by Preventing
+> Packet Drops in the Linux TUN Driver" [1].
+> It deals with the tun_net_xmit function which drops SKB's with the reason
+> SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+> resulting in reduced TCP performance and packet loss for bursty video
+> streams when used over VPN's.
+>
+> The abstract reads as follows:
+> "Throughput-critical teleoperation requires robust and low-latency
+> communication to ensure safety and performance. Often, these kinds of
+> applications are implemented in Linux-based operating systems and transmi=
+t
+> over virtual private networks, which ensure encryption and ease of use by
+> providing a dedicated tunneling interface (TUN) to user space
+> applications. In this work, we identified a specific behavior in the Linu=
+x
+> TUN driver, which results in significant performance degradation due to
+> the sender stack silently dropping packets. This design issue drastically
+> impacts real-time video streaming, inducing up to 29 % packet loss with
+> noticeable video artifacts when the internal queue of the TUN driver is
+> reduced to 25 packets to minimize latency. Furthermore, a small queue
+> length also drastically reduces the throughput of TCP traffic due to many
+> retransmissions. Instead, with our open-source NODROP Patch, we propose
+> generating backpressure in case of burst traffic or network congestion.
+> The patch effectively addresses the packet-dropping behavior, hardening
+> real-time video streaming and improving TCP throughput by 36 % in high
+> latency scenarios."
+>
+> In addition to the mentioned performance and latency improvements for VPN
+> applications, this patch also allows the proper usage of qdisc's. For
+> example a fq_codel can not control the queuing delay when packets are
+> already dropped in the TUN driver. This issue is also described in [2].
+>
+> The performance evaluation of the paper (see Fig. 4) showed a 4%
+> performance hit for a single queue TUN with the default TUN queue size of
+> 500 packets. However it is important to notice that with the proposed
+> patch no packet drop ever occurred even with a TUN queue size of 1 packet=
+.
+> The utilized validation pipeline is available under [3].
+>
+> As the reduction of the TUN queue to a size of down to 5 packets showed n=
+o
+> further performance hit in the paper, a reduction of the default TUN queu=
+e
+> size might be desirable accompanying this patch. A reduction would
+> obviously reduce buffer bloat and memory requirements.
+>
+> Implementation details:
+> - The netdev queue start/stop flow control is utilized.
+> - Compatible with multi-queue by only stopping/waking the specific
+> netdevice subqueue.
+> - No additional locking is used.
+>
+> In the tun_net_xmit function:
+> - Stopping the subqueue is done when the tx_ring gets full after insertin=
+g
+> the SKB into the tx_ring.
+> - In the unlikely case when the insertion with ptr_ring_produce fails, th=
+e
+> old dropping behavior is used for this SKB.
+>
+> In the tun_ring_recv function:
+> - Waking the subqueue is done after consuming a SKB from the tx_ring when
+> the tx_ring is empty. Waking the subqueue when the tx_ring has any
+> available space, so when it is not full, showed crashes in our testing. W=
+e
+> are open to suggestions.
+> - When the tx_ring is configured to be small (for example to hold 1 SKB),
+> queuing might be stopped in the tun_net_xmit function while at the same
+> time, ptr_ring_consume is not able to grab a SKB. This prevents
+> tun_net_xmit from being called again and causes tun_ring_recv to wait
+> indefinitely for a SKB in the blocking wait queue. Therefore, the netdev
+> queue is woken in the wait queue if it has stopped.
+> - Because the tun_struct is required to get the tx_queue into the new txq
+> pointer, the tun_struct is passed in tun_do_read aswell. This is likely
+> faster then trying to get it via the tun_file tfile because it utilizes a
+> rcu lock.
+>
+> We are open to suggestions regarding the implementation :)
+> Thank you for your work!
+>
 
-The OCP mechanism protects the hardware by detecting and handling current
-overload conditions.
-This implementation includes:
+I would like to see some benchmark results. Not only VPN but also a
+classical VM setup that is using vhost-net + TAP.
 
-- Register configurations to enable OCP monitoring.
-- Handling of OCP interrupt events and associated error reporting.
-- Card power management changes in response to OCP triggers.
+> [1] Link:
+> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications=
+/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+> [2] Link:
+> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffecti=
+ve-on-tun-device
+> [3] Link: https://github.com/tudo-cni/nodrop
+>
+> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> ---
+> V1 -> V2: Removed NETDEV_TX_BUSY return case in tun_net_xmit and removed
+> unnecessary netif_tx_wake_queue in tun_ring_recv.
+>
+>  drivers/net/tun.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index cc6c50180663..81abdd3f9aca 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1060,13 +1060,16 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *s=
+kb, struct net_device *dev)
+>
+>         nf_reset_ct(skb);
+>
+> -       if (ptr_ring_produce(&tfile->tx_ring, skb)) {
+> +       queue =3D netdev_get_tx_queue(dev, txq);
+> +       if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
+> +               netif_tx_stop_queue(queue);
+>                 drop_reason =3D SKB_DROP_REASON_FULL_RING;
 
-This enhancement improves the robustness of the driver when operating in
-environments where electrical anomalies may occur, particularly with SD
-and MS card interfaces.
+This would still drop the packet. Should we detect if the ring is
+about to be full and stop then like a virtio-net?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202508061704.hwI8epAJ-lkp@intel.com/
-Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
-...
-
-v2: move ocp check in power_on flow
----
- drivers/memstick/host/rtsx_usb_ms.c |  5 ++++-
- drivers/misc/cardreader/rtsx_usb.c  |  7 ++++++
- drivers/mmc/host/rtsx_usb_sdmmc.c   | 33 ++++++++++++++++++++++++++---
- include/linux/rtsx_usb.h            | 11 ++++++++++
- 4 files changed, 52 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index 3878136227e4..9389e9643c24 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -216,7 +216,10 @@ static int ms_power_off(struct rtsx_usb_ms *host)
- 
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_EN, MS_CLK_EN, 0);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_OE, MS_OUTPUT_EN, 0);
--
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
-+			POWER_MASK, POWER_OFF);
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
-+			POWER_MASK | LDO3318_PWR_MASK, POWER_OFF | LDO_SUSPEND);
- 	err = rtsx_usb_send_cmd(ucr, MODE_C, 100);
- 	if (err < 0)
- 		return err;
-diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardreader/rtsx_usb.c
-index d007a4455ce5..1830e9ed2521 100644
---- a/drivers/misc/cardreader/rtsx_usb.c
-+++ b/drivers/misc/cardreader/rtsx_usb.c
-@@ -552,6 +552,10 @@ static int rtsx_usb_reset_chip(struct rtsx_ucr *ucr)
- 	ret = rtsx_usb_send_cmd(ucr, MODE_C, 100);
- 	if (ret)
- 		return ret;
-+	/* config OCP */
-+	rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_DETECT_EN, MS_OCP_DETECT_EN);
-+	rtsx_usb_write_register(ucr, OCPPARA1, 0xF0, 0x50);
-+	rtsx_usb_write_register(ucr, OCPPARA2, 0x7, 0x3);
- 
- 	/* config non-crystal mode */
- 	rtsx_usb_read_register(ucr, CFG_MODE, &val);
-@@ -722,6 +726,9 @@ static int rtsx_usb_suspend(struct usb_interface *intf, pm_message_t message)
- 			if (val & (SD_CD | MS_CD)) {
- 				device_for_each_child(&intf->dev, NULL, rtsx_usb_resume_child);
- 				return -EAGAIN;
-+			} else {
-+				/* if the card does not exists, clear OCP status */
-+				rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_CLEAR, MS_OCP_CLEAR);
- 			}
- 		} else {
- 			/* There is an ongoing operation*/
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index c5f6b9df066b..e1ed39c657c3 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -48,7 +48,7 @@ struct rtsx_usb_sdmmc {
- 	bool			ddr_mode;
- 
- 	unsigned char		power_mode;
--
-+	u16			ocp_stat;
- #ifdef RTSX_USB_USE_LEDS_CLASS
- 	struct led_classdev	led;
- 	char			led_name[32];
-@@ -785,6 +785,9 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
- 
- 	mutex_unlock(&ucr->dev_mutex);
- 
-+	/* get OCP status */
-+	host->ocp_stat = (val >> 4) & 0x03;
-+
- 	/* Treat failed detection as non-exist */
- 	if (err)
- 		goto no_card;
-@@ -795,6 +798,11 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
- 	}
- 
- no_card:
-+	/* clear OCP status */
-+	if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+		rtsx_usb_write_register(ucr, OCPCTL, MS_OCP_CLEAR, MS_OCP_CLEAR);
-+		host->ocp_stat = 0;
-+	}
- 	host->card_exist = false;
- 	return 0;
- }
-@@ -818,7 +826,11 @@ static void sdmmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		cmd->error = -ENOMEDIUM;
- 		goto finish_detect_card;
- 	}
--
-+	/* check OCP stat */
-+	if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+		cmd->error = -ENOMEDIUM;
-+		goto finish_detect_card;
-+	}
- 	mutex_lock(&ucr->dev_mutex);
- 
- 	mutex_lock(&host->host_mutex);
-@@ -952,6 +964,10 @@ static int sd_power_on(struct rtsx_usb_sdmmc *host)
- 	struct rtsx_ucr *ucr = host->ucr;
- 	int err;
- 
-+	if (host->ocp_stat & (MS_OCP_NOW | MS_OCP_EVER)) {
-+		dev_dbg(sdmmc_dev(host), "over current\n");
-+		return -EIO;
-+	}
- 	dev_dbg(sdmmc_dev(host), "%s\n", __func__);
- 	rtsx_usb_init_cmd(ucr);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_SELECT, 0x07, SD_MOD_SEL);
-@@ -977,9 +993,19 @@ static int sd_power_on(struct rtsx_usb_sdmmc *host)
- 
- 	usleep_range(800, 1000);
- 
-+	rtsx_usb_init_cmd(ucr);
-+	/* WA OCP issue: after OCP, there were problems with reopen card power */
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL, POWER_MASK, POWER_ON);
-+	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, FPDCTL, SSC_POWER_MASK, SSC_POWER_DOWN);
-+	err = rtsx_usb_send_cmd(ucr, MODE_C, 100);
-+	if (err)
-+		return err;
-+	msleep(20);
-+	rtsx_usb_write_register(ucr, FPDCTL, SSC_POWER_MASK, SSC_POWER_ON);
-+	usleep_range(180, 200);
- 	rtsx_usb_init_cmd(ucr);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_PWR_CTL,
--			POWER_MASK|LDO3318_PWR_MASK, POWER_ON|LDO_ON);
-+			LDO3318_PWR_MASK, LDO_ON);
- 	rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_OE,
- 			SD_OUTPUT_EN, SD_OUTPUT_EN);
- 
-@@ -1332,6 +1358,7 @@ static void rtsx_usb_init_host(struct rtsx_usb_sdmmc *host)
- 	mmc->max_req_size = 524288;
- 
- 	host->power_mode = MMC_POWER_OFF;
-+	host->ocp_stat = 0;
- }
- 
- static int rtsx_usb_sdmmc_drv_probe(struct platform_device *pdev)
-diff --git a/include/linux/rtsx_usb.h b/include/linux/rtsx_usb.h
-index f267a06c6b1e..276b509c03e3 100644
---- a/include/linux/rtsx_usb.h
-+++ b/include/linux/rtsx_usb.h
-@@ -99,6 +99,17 @@ extern int rtsx_usb_card_exclusive_check(struct rtsx_ucr *ucr, int card);
- #define CD_MASK		(SD_CD | MS_CD | XD_CD)
- #define SD_WP		0x08
- 
-+/* OCPCTL */
-+#define MS_OCP_DETECT_EN		0x08
-+#define	MS_OCP_INT_EN			0x04
-+#define	MS_OCP_INT_CLR			0x02
-+#define	MS_OCP_CLEAR			0x01
-+
-+/* OCPSTAT */
-+#define MS_OCP_DETECT			0x80
-+#define MS_OCP_NOW			0x02
-+#define MS_OCP_EVER			0x01
-+
- /* reader command field offset & parameters */
- #define READ_REG_CMD		0
- #define WRITE_REG_CMD		1
--- 
-2.25.1
+Thanks
 
 
