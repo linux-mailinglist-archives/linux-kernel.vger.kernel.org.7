@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-764187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC03B21F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:28:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D98BB21F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8EF50257F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61A26503DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276762DCF45;
-	Tue, 12 Aug 2025 07:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD722E0915;
+	Tue, 12 Aug 2025 07:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADi5A/zb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZIPxJktF"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9901EA6F;
-	Tue, 12 Aug 2025 07:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0E21E5B7A;
+	Tue, 12 Aug 2025 07:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983678; cv=none; b=SlR6vQrvpcS3OGPEwp5j+XrhsdGl7DI8SEG7iWuwIqy+sFTzFFAuun2icrkm79e6zKH2rNB6f7/VXtna0BndvZ/CEHCWm95x23IvFmPT9YSkWk/zjDgXzQYEODIzSZC/ouectP7t90qcw0tgbmOnGb8SHwAxHJw3G25iZ014q3Q=
+	t=1754983950; cv=none; b=Y46kN9zASsJAu9U/Yw7FyBE2L29T5aLwm2AOuDCo1HhDWA7ROzIyXW2xuVsKlJqPZEfxIdOVbPETdbbf1mnHhy6G+8M/UMLVYKxR2WwQveIX0KeAgjlxF5+TOyxbpJlS7jk3E1lzf/6uJOjuAUJtr5FgulqCxECm6T1bgQiZL4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983678; c=relaxed/simple;
-	bh=3e0EXaa+An4prh17FZN5+ByIUcZFPT//X78WqBkRjrY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=qBrnSd7u4ORnj93QHCk6RejjDudb0+ae2agRxy6iyvSbC1x/wF72ho03XjfzA5vMFccKCrARPp/TFHbxIRYEyj/5iydhFrtGU+dwfFp9bPYd64GAwQI24NxJSgCc6nH0SaEpZIfXoDZ52L+JkKXCuSVN8EVh4R3I6pt2Z0B4Nvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADi5A/zb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438C0C4CEF0;
-	Tue, 12 Aug 2025 07:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754983677;
-	bh=3e0EXaa+An4prh17FZN5+ByIUcZFPT//X78WqBkRjrY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ADi5A/zbstIaLYuBH0MTxYxne9ur5CQ2iequZ+CAXyFnCcb/2ic9J6DnI1XC4vWex
-	 v/gv+N/UdkEmGTu9fCmOkmkb/XUifU4YWi+MT/Bwf3N66P3h6WAGzFkUHKyvuOGbh3
-	 Logyl9qcydOUXpnql7kE7GlSIeUNP3CI9XPm961PipTEGXQeNZep5CaQmn4QY9kiYZ
-	 eNLBA+WqrKvr1kh/mKjosvOESVoHAOc30J66z9Nwq9UEJgO5YERbKUH6RkxalZY5SU
-	 Sp4W/qU24KkmNvm8arjN3ntDqtXkR6kTWxPSTWJqTeVssecbs8K30accLFTZBS2cfX
-	 F5NglqnIC/yeg==
+	s=arc-20240116; t=1754983950; c=relaxed/simple;
+	bh=im4P2kTlmt6PLY8QYFkY1ii1Y7TpEnk9g7eONr8XoKM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ELLDKsvE98NH1TY+F29PLKxXU6oVatcOxn9nXmUVT0tZIfKXKbv0Z6jBUn4KhKIze0oI8cNCWRBPQAtlMAwz2gOJfuPUgn4iOGcSYbAVDd5DGvhq2Wdw0tDrhKWMbxiQLt36BGLcpPhGdj/2IcIxXq5tjqHOl8BhXrwjbL7lYEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZIPxJktF; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C7IRVx020079;
+	Tue, 12 Aug 2025 09:32:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=kKzblfJnewqfnHkkVYa4YD
+	iRnQ2gHOTdHxuje0MFec4=; b=ZIPxJktFdjnmzaFfOUtkQ7bXbmPJI+TSc4mliP
+	fb1SHOp4O/wHTp2l1szOCsiUlGlh0GDvjDxxoLXfCQU1o5U3BRKJRwlG6J0gA1hZ
+	66iL25umfyUziZDgki2XAKb8uRymIolCbS8hqGD8a434ykGWOzMKwSEu4Q4BLo1e
+	ExGk4veL7N1ziUqhIwse/NfA/o5JZF7v7adQrDVwUXJXcZqAEi1ScGcVhguRxMiT
+	s8t9bI/7iqn/uRRizk9Ex5225v3rW1TKv1wl9/+78KJR09xJDnBbHtF2+JWH4/Qj
+	ghP0Srs+8YYhviDuMSpZWTzF9P3CyLHmCAZUi64yQYb1K8Nw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48efw4q6pm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 09:32:06 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5462240044;
+	Tue, 12 Aug 2025 09:30:53 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E005D747A8E;
+	Tue, 12 Aug 2025 09:30:13 +0200 (CEST)
+Received: from localhost (10.48.87.65) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
+ 2025 09:30:13 +0200
+From: Christophe Kerello <christophe.kerello@foss.st.com>
+Date: Tue, 12 Aug 2025 09:30:08 +0200
+Subject: [PATCH] mtd: rawnand: stm32_fmc2: fix ECC overwrite
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 09:27:50 +0200
-Message-Id: <DC09SG6IXEOG.3Q8DMJF5E7QBO@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <llvm@lists.linux.dev>
-Subject: Re: [PATCH v14 2/3] rust: support formatting of foreign types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
- <russ.weight@linux.dev>, "Peter Zijlstra" <peterz@infradead.org>, "Ingo
- Molnar" <mingo@redhat.com>, "Will Deacon" <will@kernel.org>, "Waiman Long"
- <longman@redhat.com>, "Nathan Chancellor" <nathan@kernel.org>, "Nick
- Desaulniers" <nick.desaulniers+lkml@gmail.com>, "Bill Wendling"
- <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>, "Christian
- Brauner" <brauner@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com>
- <20250710-cstr-core-v14-2-ca7e0ca82c82@gmail.com>
-In-Reply-To: <20250710-cstr-core-v14-2-ca7e0ca82c82@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250812-fix-ecc-overwrite-v1-1-6585c55c88b0@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAH/tmmgC/x2MQQ5AMBAAvyJ7tknb0KqviAO12AuylZKIv2scJ
+ 5mZByIJU4S2eEAoceR9y6DLAsI6bAshT5nBKFOrRmuc+UYKAfdEcgmfhN5bMzrnnass5O4QytL
+ /7Pr3/QDFtYbCYwAAAA==
+X-Change-ID: 20250811-fix-ecc-overwrite-9962b7797746
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger
+	<richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Kerello <christophe.kerello@st.com>,
+        Boris Brezillon
+	<bbrezillon@kernel.org>
+CC: <linux-mtd@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        <stable@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
 
-On Thu Jul 10, 2025 at 4:53 PM CEST, Tamir Duberstein wrote:
-> Introduce a `fmt!` macro which wraps all arguments in
-> `kernel::fmt::Adapter` and a `kernel::fmt::Display` trait. This enables
-> formatting of foreign types (like `core::ffi::CStr`) that do not
-> implement `core::fmt::Display` due to concerns around lossy conversions
-> which do not apply in the kernel.
->
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General=
-/topic/Custom.20formatting/with/516476467
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+In case OOB write is requested during a data write, ECC is currently
+lost. Avoid this issue by only writing in the free spare area.
+This issue has been seen with a YAFFS2 file system.
 
-I'm not 100% sure we need to always use `first_span`, but it's probably
-fine.
+Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
+Cc: stable@vger.kernel.org
+Fixes: 2cd457f328c1 ("mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash controller driver")
+---
+ drivers/mtd/nand/raw/stm32_fmc2_nand.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
+index a960403081f11091837b73b8610231fe421d0c05..f84f23392fa441327bec90ba12a2a57d825d9330 100644
+--- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
++++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
+@@ -996,9 +996,21 @@ static int stm32_fmc2_nfc_seq_write(struct nand_chip *chip, const u8 *buf,
+ 
+ 	/* Write oob */
+ 	if (oob_required) {
+-		ret = nand_change_write_column_op(chip, mtd->writesize,
+-						  chip->oob_poi, mtd->oobsize,
+-						  false);
++		unsigned int offset_in_page = mtd->writesize;
++		const void *buf = chip->oob_poi;
++		unsigned int len = mtd->oobsize;
++
++		if (!raw) {
++			struct mtd_oob_region oob_free;
++
++			mtd_ooblayout_free(mtd, 0, &oob_free);
++			offset_in_page += oob_free.offset;
++			buf += oob_free.offset;
++			len = oob_free.length;
++		}
++
++		ret = nand_change_write_column_op(chip, offset_in_page,
++						  buf, len, false);
+ 		if (ret)
+ 			return ret;
+ 	}
 
 ---
-Cheers,
-Benno
+base-commit: fb2fae70e7e985c4acb1ad96110d8b98bb64a87c
+change-id: 20250811-fix-ecc-overwrite-9962b7797746
 
-> ---
->  rust/kernel/fmt.rs     | 87 ++++++++++++++++++++++++++++++++++++++++++++=
-+-
->  rust/kernel/prelude.rs |  3 +-
->  rust/macros/fmt.rs     | 94 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  rust/macros/lib.rs     | 19 ++++++++++
->  rust/macros/quote.rs   |  7 ++++
->  5 files changed, 207 insertions(+), 3 deletions(-)
+Best regards,
+-- 
+Christophe Kerello <christophe.kerello@foss.st.com>
+
 
