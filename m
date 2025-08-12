@@ -1,130 +1,219 @@
-Return-Path: <linux-kernel+bounces-764460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C707B22346
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFAA6B2234C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF924189FD90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02BF1AA049A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81302E92DC;
-	Tue, 12 Aug 2025 09:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAC22E7BB1;
+	Tue, 12 Aug 2025 09:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nvMhGNTV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E/7GW/RO"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA48264A65;
-	Tue, 12 Aug 2025 09:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DA12E88A2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991099; cv=none; b=WXQTaGH6VnTg239gVtA4wlvp+nbJGqAqnLi4oeZn5yuhvwJA6X1zvP0GbJruAEQAdy+pi843HryJqNTv1IQKqPELQXzsByhbrd7aNJqFc/zCgcl6FW3ZYv/fyAJQvD1qPO7fW5Gc883RZLDrCI68+LIJLDL2VgMG/tETPjHNFzc=
+	t=1754991194; cv=none; b=c+GcgSMGqjsBZMWvUvNfZtCwzXjDEQ+z0aBVhfGHKHCStEXH5hx9fvVJDXfDTmz5HBCMbY9BETFLEFvHqHfoVc/PyW5N4oEEiWyhix56HO2eTwp2ffsyuMsUzovM+4nn6urzr81P6Qh5Pox6/EE5ewx6CG3Fx1pclr6uslpFEWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991099; c=relaxed/simple;
-	bh=sJ5MOYsbVvXcfUru1v+6akiaiwJFwmwFW+apI8kMoYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EFiX2UsN9zCuSQz4wDlZx19m5M2PZ39KUiuyWDgb+jfEpPG2KV3SOklfAP/H/elrj42hpaXOHRftD1SkZqquvIn94WKm5xY1ybS7WyRnME16knT2cjnVxaCeVDaOBSE8vsemFfjzeGx/xLeOhmfjk+Z+jzMOP/Am8bjRD2TaV3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nvMhGNTV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4sV4F029557;
-	Tue, 12 Aug 2025 09:31:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CVjLTPr0l8lbc3fyzXOY5rzsnz4K1n6HtBap6hEctFw=; b=nvMhGNTVUzPFL3UE
-	gQ76/qEUnwyE117QOoTENsPhgBB/eXLTVODcAbB7/jKrwnsJ5bs35+Yfea5xIdvs
-	ALffUnKmoSd8lcRBwiB4DHLzyP7suAzbVwojq2WwTs42Qy6bkjC3mJZo+qEDki6F
-	CKxk3DI+1MpqkWpBzAPU8KtOjSb2TGN76vaqN4JHmNR11U462I8hSgiyltn3uQ4t
-	rLcoLWX7rBkChQErT7yKwRCoK1pBWSyI0Il7jwFu7VqddCbHJ2X8q7ObY987d/lU
-	cmnNlo9hHt1lj7KYToJPvxb4rlbrmK8NsTwgj9qjoOJENjxCR+pcE0QU0RaRRx8C
-	QYHJag==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9sqruv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:31:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C9VQso005466
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:31:26 GMT
-Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
- 2025 02:31:22 -0700
-Message-ID: <0ed803d1-ad7f-8a1b-b704-a3a38bdf4878@quicinc.com>
-Date: Tue, 12 Aug 2025 15:01:19 +0530
+	s=arc-20240116; t=1754991194; c=relaxed/simple;
+	bh=45UEym4ypBzRwCttExpHYuZEvNg4l/GdXxzZbyZJX3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nlp2e6+11Vwfb58laTtei4jhfrdjrkuiDPmcYXZoF2cUqSYLhEFIoqEEMHRWNa97cIuVZk8wpHEcc95SgSH8yL+dL7q5vjPkhQVRujJbu4GmG9Iw8bUNzHvTtKA/xNto/g66S/eoedTTEu9tY11e6c2Yf7w3bS2rkmYTptPYwWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E/7GW/RO; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ef249b61-f37e-4b72-9610-7f114564988a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754991175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UB0EMZuXYKOyyxldrdbQ63aHyFJ+9vuYs0ibMI6aTWo=;
+	b=E/7GW/RORpntKNSzjue4zCvcXnS3P+iV9m+YlyMAyxJYVmthvQH5CSENyWcj+IciXmG/d8
+	Fl2CnYA7F7MrOurBihPqvmoUaPJbWhXzUKEDAoRKFDxHOAP8piIvc5AHVNfPuQlEQPHA7G
+	9ZfTya60lIenlfgcBWsgcrnQzAHsqlo=
+Date: Tue, 12 Aug 2025 17:32:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] media: iris: vpu3x: Add MNoC low power handshake during
- hardware power-off
+Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
+To: Yanteng Si <si.yanteng@linux.dev>, Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-3-youling.tang@linux.dev>
+ <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
+ <9760e574-3eb0-46b2-bccd-916f73b9c39e@linux.dev>
+ <ce63aa14-11a5-4b2c-bfbc-8465b7065197@linux.dev>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Mauro
- Carvalho Chehab" <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com>
- <af4cd1f0-9f3a-4eb9-8cd4-ad20506c7a9b@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <af4cd1f0-9f3a-4eb9-8cd4-ad20506c7a9b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689b09ee cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=j1xqlkoCr8ei4rV8Vy8A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-ORIG-GUID: k1ptaVE41BMKs2979_SlT8tmzLOByinq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX8MPVfV0qGk0/
- qFG9Zm9D+Nzfvmjwy0ZZ7Gfv2Sq6T/6AHwBxMt1mDeBF/2vu+MajxV9AeH0K6qQo24culgrbGUF
- o7OC+t8oEooWeXO4cMwEVsqsT64gCtLTdY5Yw9EGRJ1YMdQ5D2GDoFnFuhj0Tjtu2EsJ2oeEvsi
- 3z6v91nQ/s2nGS7M6ZcYAXN5IXX+bqh81bDO8nJLRaj+W+vb+lBsDbyty6E7bLPZ9TK9nxi1Cp5
- UJHbg5cG7EXPWtdWMvegHThD59MTzPEmGFM/o/vDaYOoeh/Inxxj5TkP2mwjFMBLusUHC3FmuZX
- opScTGJBD2L3jQnWxnmK2129xocpGRVGQsyHBjASrZPMHTBlb4i85tbrtETklH7Dp7obpj+T4kr
- BUIk7XyG
-X-Proofpoint-GUID: k1ptaVE41BMKs2979_SlT8tmzLOByinq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <ce63aa14-11a5-4b2c-bfbc-8465b7065197@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 8/12/2025 2:30 PM, Bryan O'Donoghue wrote:
-> On 12/08/2025 08:48, Dikshita Agarwal wrote:
->> Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
->> reading the LPI status register. Introduce a handshake loop to ensure
->> MNoC enters low power mode reliably during VPU3 hardware power-off with
->> timeout handling.
-> 
-> Can you confirm this is the sequence you want for sm8750 also ?
-
-Yes, I have already mentioned in the SM8750 patches.
+Hi, Yanteng
+On 2025/8/12 09:53, Yanteng Si wrote:
+> 在 8/12/25 9:21 AM, Youling Tang 写道:
+>> Hi, Huacai
+>> On 2025/8/11 22:07, Huacai Chen wrote:
+>>> Hi, Youling,
+>>>
+>>> On Mon, Aug 11, 2025 at 5:28 PM Youling Tang 
+>>> <youling.tang@linux.dev> wrote:
+>>>> From: Youling Tang <tangyouling@kylinos.cn>
+>>>>
+>>>> This patch adds support for kexec_file on LoongArch.
+>>>>
+>>>> The image_load() as two parts:
+>>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+>>>> - the second part loads other segments (eg: initrd, cmdline)
+>>>>
+>>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are 
+>>>> supported,
+>>>> but ELF format is not supported.
+>>>>
+>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>>>> ---
+>>>>   arch/loongarch/Kconfig                     |   8 ++
+>>>>   arch/loongarch/include/asm/image.h         |  18 ++++
+>>>>   arch/loongarch/include/asm/kexec.h         |  12 +++
+>>>>   arch/loongarch/kernel/Makefile             |   1 +
+>>>>   arch/loongarch/kernel/kexec_image.c        | 112 
+>>>> +++++++++++++++++++++
+>>>>   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>>>>   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
+>>>>   7 files changed, 219 insertions(+), 11 deletions(-)
+>>>>   create mode 100644 arch/loongarch/kernel/kexec_image.c
+>>>>   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+>>>>
+>>>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+>>>> index f0abc38c40ac..fd50c83f7827 100644
+>>>> --- a/arch/loongarch/Kconfig
+>>>> +++ b/arch/loongarch/Kconfig
+>>>> @@ -625,6 +625,14 @@ config CPU_HAS_PREFETCH
+>>>>   config ARCH_SUPPORTS_KEXEC
+>>>>          def_bool y
+>>>>
+>>>> +config ARCH_SUPPORTS_KEXEC_FILE
+>>>> +       def_bool 64BIT
+>>>> +
+>>>> +config ARCH_SELECTS_KEXEC_FILE
+>>>> +       def_bool y
+>>>> +       depends on KEXEC_FILE
+>>>> +       select HAVE_IMA_KEXEC if IMA
+>>>> +
+>>>>   config ARCH_SUPPORTS_CRASH_DUMP
+>>>>          def_bool y
+>>>>
+>>>> diff --git a/arch/loongarch/include/asm/image.h 
+>>>> b/arch/loongarch/include/asm/image.h
+>>>> index 1f090736e71d..829e1ecb1f5d 100644
+>>>> --- a/arch/loongarch/include/asm/image.h
+>>>> +++ b/arch/loongarch/include/asm/image.h
+>>>> @@ -36,5 +36,23 @@ struct loongarch_image_header {
+>>>>          uint32_t pe_header;
+>>>>   };
+>>>>
+>>>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+>>>> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 
+>>>> 0x0, 0x64, 0x62};
+>>>> +
+>>>> +/**
+>>>> + * loongarch_header_check_pe_sig - Helper to check the loongarch 
+>>>> image header.
+>>>> + *
+>>>> + * Returns non-zero if 'MZ' signature is found.
+>>>> + */
+>>>> +
+>>>> +static inline int loongarch_header_check_pe_sig(const struct 
+>>>> loongarch_image_header *h)
+>>>> +{
+>>>> +       if (!h)
+>>>> +               return 0;
+>>>> +
+>>>> +       return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+>>>> +               && h->pe_sig[1] == loongarch_image_pe_sig[1]);
+>>>> +}
+>>>> +
+>>>>   #endif /* __ASSEMBLY__ */
+>>>>   #endif /* __ASM_IMAGE_H */
+>>>> diff --git a/arch/loongarch/include/asm/kexec.h 
+>>>> b/arch/loongarch/include/asm/kexec.h
+>>>> index cf95cd3eb2de..3ef8517a3670 100644
+>>>> --- a/arch/loongarch/include/asm/kexec.h
+>>>> +++ b/arch/loongarch/include/asm/kexec.h
+>>>> @@ -41,6 +41,18 @@ struct kimage_arch {
+>>>>          unsigned long systable_ptr;
+>>>>   };
+>>>>
+>>>> +#ifdef CONFIG_KEXEC_FILE
+>>>> +extern const struct kexec_file_ops kexec_image_ops;
+>>>> +
+>>>> +int arch_kimage_file_post_load_cleanup(struct kimage *image);
+>>>> +#define arch_kimage_file_post_load_cleanup 
+>>>> arch_kimage_file_post_load_cleanup
+>>>> +
+>>>> +extern int load_other_segments(struct kimage *image,
+>>>> +               unsigned long kernel_load_addr, unsigned long 
+>>>> kernel_size,
+>>>> +               char *initrd, unsigned long initrd_len,
+>>>> +               char *cmdline, unsigned long cmdline_len);
+>>> I think the RISC-V naming "load_extra_segments" is better.
+>> This name is also fine, but I prefer it to be consistent with
+>> that in kexec-tools.
+> I have looked at the code of kexec-tools, and it seems that you 
+> referenced a great deal of ARM code when implementing the LoongArch part.
+>
+>
+>>>
+>>>> +#endif
+>>>> +
+>>>>   typedef void (*do_kexec_t)(unsigned long efi_boot,
+>>>>                             unsigned long cmdline_ptr,
+>>>>                             unsigned long systable_ptr,
+>>>> diff --git a/arch/loongarch/kernel/Makefile 
+>>>> b/arch/loongarch/kernel/Makefile
+>>>> index 6f5a4574a911..bd9405ee3888 100644
+>>>> --- a/arch/loongarch/kernel/Makefile
+>>>> +++ b/arch/loongarch/kernel/Makefile
+>>>> @@ -62,6 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)     += sysrq.o
+>>>>   obj-$(CONFIG_RELOCATABLE)      += relocate.o
+>>>>
+>>>>   obj-$(CONFIG_KEXEC_CORE)       += machine_kexec.o relocate_kernel.o
+>>>> +obj-$(CONFIG_KEXEC_FILE)       += machine_kexec_file.o kexec_image.o
+>>> We only support the efi format, so we don't need to split a
+>>> kexec_image.c like RISC-V, just put everything into
+>>> machine_kexec_file.c is OK.
+>> I hope it is separated and consistent with other architectures.
+>> For instance, arm64 only supports one type.
+> The ARM64 architecture has a long history, and we shouldn't be 
+> constrained by it.
+Support for kexec_elf.c in ELF format may be considered for
+addition in the future.
 
 Thanks,
-Dikshita
-> 
-> ---
-> bod
+Youling.
+>
+>
+> Thanks,
+> Yanteng
+>>
+>> Youling.
+>>>
+>>> Huacai
 
