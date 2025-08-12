@@ -1,81 +1,92 @@
-Return-Path: <linux-kernel+bounces-765577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B00B23A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01711B23A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25FB6E0B3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7023189EE6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11B22D3EE1;
-	Tue, 12 Aug 2025 20:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145712D47EB;
+	Tue, 12 Aug 2025 20:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry0arDUx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvQ+xnbK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262C41E5B7A;
-	Tue, 12 Aug 2025 20:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708B923182D;
+	Tue, 12 Aug 2025 20:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755031754; cv=none; b=p6iTk4sCQsK/cWjZkB4CrlgV8MUBH0DZLs5I8WASwm/utQYFHoxijcqJyX0Xx6+EwBaLkF8kSdl6IH0ZP1qXeipZwslsjNTCU10CjvDxqc8P66GzbbYv0jikWEK1dc86D9UruzA95kX2ZiLQ2K6aTinME7NoYGkN8moACdxrzro=
+	t=1755032064; cv=none; b=ueTmEc9nCAEnC3LSVT7kyK2DuzBSomaK2LTjsfJj1c0hat9C4q0KwzRV/WYbo0MPU/Tpp2BaDlK2DVXoyqdojL4jqJv8XmPmKUuVW5lmX1QpX4FasNniV90onI23TNZqXrznxOMDr9l+az1sEnVIbL/HbKP/kBNXWUba9GmJhPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755031754; c=relaxed/simple;
-	bh=7CF1FVLpGJHb03LymcmzOUUnSoGfzaAyfdlsBPYu54E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=erYOrmhI+Nry7CMaWmFufgf0fS1h+ILWoZ20DDp6ONWkHrwkwOhXt6rPo3huKBnaMC1VtdGpuVkGCeLYrgLaiZghEmoztCn3Ny9yWM0vo8Mw3ehj6d8L2nJ2svetGjmtZzaFH3w2b5E7OCaC2eYoWU0HACRt8iWfuB+tRyDuTIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry0arDUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFBEC4CEF0;
-	Tue, 12 Aug 2025 20:49:13 +0000 (UTC)
+	s=arc-20240116; t=1755032064; c=relaxed/simple;
+	bh=KgNWZ+pw8XzII7439MzptZB2qb8BPXZsxQzFoG3Hwus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=epwjbzN4kzkkOF1gfG2K1NWAdphhWSasiKCP/CrSdPu5owQlyIvisnH2GlMyA2AILCLQm7apf8WxpGIVqm/0MVAQnivKVqDbRJsFm1UYMjZwoellTN3B17Mkq1T7L6eP4jX42xnYF15LkKMDbM6+elex8mMtQ1YJZ0vOKgZG1aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvQ+xnbK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 828C1C4CEF0;
+	Tue, 12 Aug 2025 20:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755031753;
-	bh=7CF1FVLpGJHb03LymcmzOUUnSoGfzaAyfdlsBPYu54E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ry0arDUxmBTdQhp2BXXKIDsVRH3AI1VMVM8FqryNb8cST8NutZZ1mVNlVxdq393qW
-	 FSn8LP0IylTi7ZO1qoE8FQJcrjla9p+BSKC3FdZLzIJXUWx2Q5oE6AsR2qbT+bGANN
-	 pS+u3ZkzRrnCsppjxDSWyzn9L9gLNkZbdkwDPQboBkX2cB2AAq0FhWtsSkg051tegL
-	 KwUJ4+9ZR+/tSx5+NDQadkWKVlWtdigFhCMqaok8KrjSnvX4QWrit2m2f5gdYmCCcy
-	 KHU9lI+81jM+TyizkqAPbj27dZHJLFvHvMAemnCAqHf8/CBnmOHfaQA9mo8PxHSR9U
-	 a3JwDx4HLXVjQ==
-Date: Tue, 12 Aug 2025 13:49:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev
- <sdf@fomichev.me>, intel-wired-lan@lists.osuosl.org (moderated list:INTEL
- ETHERNET DRIVERS), netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
- linux-kernel@vger.kernel.org (open list), bpf@vger.kernel.org (open
- list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
-Subject: Re: [PATCH 1/5] ethtool: use vmalloc_array() to simplify code
-Message-ID: <20250812134912.6c79845e@kernel.org>
-In-Reply-To: <20250812133226.258318-2-rongqianfeng@vivo.com>
-References: <20250812133226.258318-1-rongqianfeng@vivo.com>
-	<20250812133226.258318-2-rongqianfeng@vivo.com>
+	s=k20201202; t=1755032064;
+	bh=KgNWZ+pw8XzII7439MzptZB2qb8BPXZsxQzFoG3Hwus=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PvQ+xnbK+/qTrGhW7tJOpYLcoFJOhEtLPTkH/58f++IrXyUGb1S3oRrRZMDBKS5Eo
+	 HfVaBJjnMs873NWs4srhubUdq3V6hvLHl5EL8yIjjwiZm00R0p6S3lv+tNzUAGe7UF
+	 U6FnflJ4BXNkI2arHti0ZzqrUxI5qHNZ2SCQKIXRHGRZjE7VI4Rwb45TXwUfpFoaVU
+	 EXjDbcotaGl9n4ndlnYaTgALed+OecKLNCR5ufucQ+igxX29KjyajLimUzFkH1JobE
+	 G2emw8rLyc9LZqYqgQsZ95gXMO9un9CnNWF5TSwiUrM2ZPTJPP7/comJ1FeApAOBEE
+	 Ljzhqfl0KJ5XA==
+Date: Tue, 12 Aug 2025 14:54:21 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net,
+	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <aJup_fo6b6gNrGF0@kbusch-mbp>
+References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+ <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+ <aJuXnOmDgnb_9ZPc@kbusch-mbp>
+ <htfkbxsxhdmojyr736qqsofghprpewentqzpatrvy4pytwublc@32aqisx4dlwj>
+ <aJukdHj1CSzo6PmX@kbusch-mbp>
+ <46cndpjyrg3ygqyjpg4oaxzodte7uu7uclbubw4jtrzcsfnzgs@sornyndalbvb>
+ <aJumQp0Vwst6eVxK@kbusch-mbp>
+ <ib4xuwrvye7niwgubxpsjyz7jqe2qnvg2kqn7ojossoby2klex@kuy5yxuqnjdf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ib4xuwrvye7niwgubxpsjyz7jqe2qnvg2kqn7ojossoby2klex@kuy5yxuqnjdf>
 
-On Tue, 12 Aug 2025 21:32:14 +0800 Qianfeng Rong wrote:
-> Subject: [PATCH 1/5] ethtool: use vmalloc_array() to simplify code
+On Tue, Aug 12, 2025 at 04:45:48PM -0400, Kent Overstreet wrote:
+> On Tue, Aug 12, 2025 at 02:38:26PM -0600, Keith Busch wrote:
+> > On Tue, Aug 12, 2025 at 04:31:53PM -0400, Kent Overstreet wrote:
+> > > If you're interested, is it time to do some spec quoting and language
+> > > lawyering?
+> > 
+> > If you want to start or restart a thread on the block list specificaly
+> > for that topic, then sure, happy to spec talk with you. But I don't want
+> > to chat on this one. I just wanted to know what you were talking about
+> > because the description seemed underhanded.
+> 
+> Not underhanded, just straightforward - I've seen the test data, and the
+> spec seemed pretty clear to me...
 
-ethtool:
+  "the block layer developer who went on a four email rant where he,
+   charitably, misread the spec or the patchset or both"
 
-would make sense for patches which touch net/ethtool.
-Please use 
-
-	eth: intel:
-
-as the subject prefix.
+Please revisit the thread and let me know me if you still stand by that
+description. I've no idea if you're talking about me or one of the other
+block developers on it, but I frankly don't see anything resembling what
+you're describing.
 
