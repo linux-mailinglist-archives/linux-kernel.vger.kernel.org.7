@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-764812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D8BB22792
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C232BB227A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A29565DD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1381B68071
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1D7263C8E;
-	Tue, 12 Aug 2025 12:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A92F27466E;
+	Tue, 12 Aug 2025 12:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIY+lz+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="cKKw9t76"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECC9218827;
-	Tue, 12 Aug 2025 12:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52228265CA2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003233; cv=none; b=pcH5FVZYd5AtQIVQIYQ9DQfrfnT5ZMsedGmV+/0Qda2kZenb+v8JygP7AMjl5JSu0rKpbwWmSBb5wNmNXvcKyPHbKs6/EtgQavVj7RwAI9hvKpV+MrsAe/89kw+AnqdMsbZ3eO5WBRFFuSf5xTKDzPdqRRJYSU9+lWf4DlWBwiI=
+	t=1755003251; cv=none; b=o+StAsjGTvcNSQyUPGIHi4p6HPZaYzIN2RlxEpinVRCivs0prwPP+zFnSaZ7ouZMG5n707GbqvuoGtnTpErl4TY2QSy3MVbNp1SNZbz7btvvjxuGwPdsH9F1lcpMrusk4V+iEsOJpb2+e46fwi2KHTtYgEykPDNV7+iVfQhQb08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003233; c=relaxed/simple;
-	bh=666ZXj4AcCGhbJLahDGjx1GCcakbB28RNTMrqfv6E4A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=T+4M+RPjrdVwV3kODgNPKxkoUjQ7i7266BdRBCntsrxLlyGhZyeUF4kNa88Pt+jl4mButCq+JptYTklY5uP0C5ZlIoXfYWeGXRSci3RwFz2GHuJT/beCadPJN2Y/tYQjcqLFZo3/0F7Hel6Ws7Lg0+Y+ECSA5jX53wW8KKWHtOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIY+lz+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA18C4CEF0;
-	Tue, 12 Aug 2025 12:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755003232;
-	bh=666ZXj4AcCGhbJLahDGjx1GCcakbB28RNTMrqfv6E4A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=TIY+lz+ET3rAnLo6IC2MSXSkyN40+y5baa98nZ4mi8hqGfVOmvx6ctMH0Zd2zzFJC
-	 V714BBgc9tXAt6G3uRGjF2ypx17i50VgvT0o1szzHhJmU+KjWPeWf/JEQWH08Ds+DN
-	 doY38n3tDWyZSOV7vavq0iwxxJL8gN0uUmt3CCUgB43L9bXyBk8X7eqke6pWArvG6G
-	 rNa2qDensbtOKY+ppdRMyYMjWM6vfImXKlKRebHuqf4JiY5hS3+f3VAKILt5cTQUA5
-	 L0LZAvWkG+ibNC4tM8ITMYiCqw2qfnA6dtSuDq/CkHNUlYWuSgJcBzo4mJPOHc80f+
-	 pslRSOpSk7/lA==
-Date: Tue, 12 Aug 2025 14:53:50 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Qasim Ijaz <qasdev00@gmail.com>
-cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-    Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 RESEND] HID: multitouch: fix slab out-of-bounds access
- in mt_report_fixup()
-In-Reply-To: <20250810180924.44582-1-qasdev00@gmail.com>
-Message-ID: <6o42n3q5-sq57-q7nq-rpn6-50np33r5ssqp@xreary.bet>
-References: <20250810180924.44582-1-qasdev00@gmail.com>
+	s=arc-20240116; t=1755003251; c=relaxed/simple;
+	bh=kuFMJmU+9JWcojUuJvsQuwkddP22POkgDm8BHLJTRh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eRbb/lWHp/FcaqeM+UZG3oSw5pAcZxiMSycLOjc+XF5zecvG8wrTYD/VDfB7BQDeQapjfQV6jvtk+Dw/mQ/29/JFHIsqxDQnIxA4MhHOjDqwHoDyoQVbC22BgahlZz209PbZK7i/D9eiTNxyDLZSgo2ov3adm8vtvrvzd0ue19k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=cKKw9t76; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7de159778d4so565236185a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1755003248; x=1755608048; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2WtksxPDLT/0y+3eZjc8hEFOkmY30/S+XOZ4ZbmRdMw=;
+        b=cKKw9t76vyDgJtFR+gCN5oEIOubX0QbmYB0n5PpLKNfKSp/bQznq4vRXQLLxZmTKTI
+         YpfBqKnO2OnQMTTQuMA7+fspjwam8MHCz1DMcoq9g0Zcew3KfXGtPSx9OKdi77E0aHqR
+         c3oPD6rQuf61C6etXR3yt9i2olVmC1gF7ZuFUmOQP3U76xKplICA0JdIj+35RavNwBCf
+         QVLusNQiijzlX5xVqKoHt2kSKKgIOqPajRwCJlWWoG+naxhljbZihUktkeZIMn/P/s4v
+         AyD2d7S8iLCjuf26NWyKxjHtZmFkWbBUk2Biw5cVWJYOZfhbZo9LcybzUmjidNiZZ/sd
+         4TZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755003248; x=1755608048;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2WtksxPDLT/0y+3eZjc8hEFOkmY30/S+XOZ4ZbmRdMw=;
+        b=a8/kTjwk2mdTUGeIUTYiDEs1IiurJ2GkOqh/C+XXJDivC/MmGRlqa1RazE9jM4GfO9
+         u0+wEbq+W/UKTcar5oOz/IkUcNMMtx/InQ/A73iZ3PsWEUhpn6ihjNdw+e9BJ0BVhhDz
+         VjbFjqcPHuWbzFgbAa4RqlHt8WnLU+2iD6m378R0ELLoT+zKk16wRJH30gxQG/RMIa8M
+         csbbpJWxgTFjL+KiRAZRQzy+AzWTmVsnvj0K8i6tuuzPkvXodhA02flgBMfP4UdON4qV
+         2VdnKx/g2zrowuNRj6HJGpoXI+coSUiScJH7xnsdyPiWfREMk1Has6z4wbAD0yKTx86c
+         wKfw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8x2SV59Ml564DZNai7uOpT/rFT+57GfFJoydaefa0THoV8ybMpyaj9hhpppQUiY2JO/BCVeepNw4VGsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyln0Q9CcYNVUArZiUvqcZ5yH92J4Y9JkZL9OYjy57o1cmDdhM8
+	DtarEOJVbYfzap4s5G0U0gOdkD3wD4rcEWn8iDrUa/2jcMvevQwLYhXHaX+cKB1tjS2KJYgzLvz
+	QmhYRNmTY58B8dMra/ar+kTyxf+v9NYXtMR4F6SP4bw==
+X-Gm-Gg: ASbGnct1yRo1RgfvQ+iGI0ZrLhCZ9ABtqAHS+7rN6m7a+iXBf9WiGtH5khvaZR5iYfN
+	ndQiHapO/9LvQTvarnzhE1gNNAG/vTfkg+zQ9ReaZoj9Fsm1pRCVpyY6zga0e8hRSVw6Y6VYGCR
+	dfj+v5S5+TDdfHHuT+XOIMaqfPfHtx8zUY2Bx7UQeOBq0TC6dO/6uiOs+LG6Wz6H8xOFq7VfIr8
+	Lx2PhXLAeb0DrGSnwtQmU+IxDafeH3NMdi0hOBxWw==
+X-Google-Smtp-Source: AGHT+IEigi3eT3slvsaqaQxfpzA5/X/BpBps7n3zcMZvnFhGp0J3xR5YD/W1WjO/6HkGh5ZjKB8p2S+Mbi6DGKsspO8=
+X-Received: by 2002:a05:620a:a117:b0:7e6:50f2:d62d with SMTP id
+ af79cd13be357-7e82c616e28mr2406978785a.5.1755003248102; Tue, 12 Aug 2025
+ 05:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org> <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
+In-Reply-To: <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Tue, 12 Aug 2025 13:53:56 +0100
+X-Gm-Features: Ac12FXy89rNxCKeR5zfeZeSe2T50SLXSk1IHDgjCBDBFp3HnioWFlDD6e2e-kGA
+Message-ID: <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 10 Aug 2025, Qasim Ijaz wrote:
+Hi Rob,
 
-> A malicious HID device can trigger a slab out-of-bounds during
-> mt_report_fixup() by passing in report descriptor smaller than
-> 607 bytes. mt_report_fixup() attempts to patch byte offset 607
-> of the descriptor with 0x25 by first checking if byte offset
-> 607 is 0x15 however it lacks bounds checks to verify if the
-> descriptor is big enough before conducting this check. Fix
-> this bug by ensuring the descriptor size is at least 608
-> bytes before accessing it.
-> 
-> Below is the KASAN splat after the out of bounds access happens:
-> 
-> [   13.671954] ==================================================================
-> [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
-> [   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
-> [   13.673297]
-> [   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
-> [   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
-> [   13.673297] Call Trace:
-> [   13.673297]  <TASK>
-> [   13.673297]  dump_stack_lvl+0x5f/0x80
-> [   13.673297]  print_report+0xd1/0x660
-> [   13.673297]  kasan_report+0xe5/0x120
-> [   13.673297]  __asan_report_load1_noabort+0x18/0x20
-> [   13.673297]  mt_report_fixup+0x103/0x110
-> [   13.673297]  hid_open_report+0x1ef/0x810
-> [   13.673297]  mt_probe+0x422/0x960
-> [   13.673297]  hid_device_probe+0x2e2/0x6f0
-> [   13.673297]  really_probe+0x1c6/0x6b0
-> [   13.673297]  __driver_probe_device+0x24f/0x310
-> [   13.673297]  driver_probe_device+0x4e/0x220
-> [   13.673297]  __device_attach_driver+0x169/0x320
-> [   13.673297]  bus_for_each_drv+0x11d/0x1b0
-> [   13.673297]  __device_attach+0x1b8/0x3e0
-> [   13.673297]  device_initial_probe+0x12/0x20
-> [   13.673297]  bus_probe_device+0x13d/0x180
-> [   13.673297]  device_add+0xe3a/0x1670
-> [   13.673297]  hid_add_device+0x31d/0xa40
-> [...]
-> 
-> Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> ---
-> v2:
-> - Simplify fix with a if-size check after discussion with Jiri Slaby
-> - Change explanation of bug to reflect inclusion of a if-size check
+On Mon, 11 Aug 2025 at 22:05, Rob Herring (Arm) <robh@kernel.org> wrote:
+> +static int ethos_ioctl_submit_job(struct drm_device *dev, struct drm_file *file,
+> +                                  struct drm_ethos_job *job)
+> +{
+> +       [...]
+> +       ejob->cmd_bo = drm_gem_object_lookup(file, job->cmd_bo);
+> +       cmd_info = to_ethos_bo(ejob->cmd_bo)->info;
+> +       if (!ejob->cmd_bo)
+> +               goto out_cleanup_job;
 
-Applied to hid.git#for-6.17/upstream-fixes, thanks.
+NULL deref here if this points to a non-command BO. Which is better
+than wild DMA, but hey.
 
--- 
-Jiri Kosina
-SUSE Labs
+> +       for (int i = 0; i < NPU_BASEP_REGION_MAX; i++) {
+> +               struct drm_gem_object *gem;
+> +
+> +               if (job->region_bo_handles[i] == 0)
+> +                       continue;
+> +
+> +               /* Don't allow a region to point to the cmd BO */
+> +               if (job->region_bo_handles[i] == job->cmd_bo) {
+> +                       ret = -EINVAL;
+> +                       goto out_cleanup_job;
+> +               }
 
+And here I suppose you want to check if the BO's info pointer is
+non-NULL, i.e. disallow use of _any_ command BO instead of only
+disallowing this job's own command BO.
+
+(There's also a NULL deref if an invalid GEM handle is specified.)
+
+Cheers,
+Daniel
 
