@@ -1,128 +1,155 @@
-Return-Path: <linux-kernel+bounces-765048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51B1B22ABF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:37:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1155B22A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DE51894CF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:33:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375EC7A4287
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE3F2EBB89;
-	Tue, 12 Aug 2025 14:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5D72EBBA7;
+	Tue, 12 Aug 2025 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aknfxh3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hEGmOT2F"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258B02D8377;
-	Tue, 12 Aug 2025 14:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEB2EACE2;
+	Tue, 12 Aug 2025 14:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755009166; cv=none; b=miBaOovlro0T9eLyKoFL68zR/UszfNU8gGuBzzZRmu9FbfeTJF6cGOLHEzNvW9YwlNhoccLo8+6pSsn1AhgjkOlRFQrcmkDh8+qm51LN0Evq9DjcZmGKrS5SPW6t0SVnG0iHnetLY0uFiG/I0/qzgzEwxHWKZIU6H661vHbnvZo=
+	t=1755009205; cv=none; b=RtMJ0TJTu1xcRf+aSNjcHNHvGZEH7YJXiytuXuCzkJ8uNuXBsEFhsSa6849i75mDc5e+n9DfPemvt5342hDWEJC/i0dekIUSjeCkbaJ/868tj+RUfj8mnbHWVwfZE+WG/WMdvlqMfgFB3MisVbSeKXdIl3eIq7CTI8Kd/fEWrHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755009166; c=relaxed/simple;
-	bh=fy2/TnxpQCa912cSSfOH0Jy+C/EZqNdGuJwRBGssE/M=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=aqrMh2vZ8/UWdGhJ+Chd2/CYCqpMHn5d2pkdcow5ogSr3AfhV5QaP36YcPJt/sZ/MHcFYn+6LGZtUtKaNZv7+gi+7n/7mWO+vz5fcDWW5Tc9PR9qYjN0uvksFkaHjpSOta/3eK0S7/WdOxzp1Xcjwi/JV0vJ0PVo/kOtUNXdDHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aknfxh3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8632BC4CEF0;
-	Tue, 12 Aug 2025 14:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755009165;
-	bh=fy2/TnxpQCa912cSSfOH0Jy+C/EZqNdGuJwRBGssE/M=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Aknfxh3m9XKnn6/bFwYil95p5Oh1ky5mRX2z9Y7vzkTKQ/AHKRCTvEQMHpmkXm+Tj
-	 RVlRERrOzBPUqwUL+dGLwUyyrGgZbd9w4UcJkBgfk5a49SLvrgo4H0XliowoCGFGC6
-	 DqFwhS0ArYrsVlaU+Q7LKT1LZIe9SqxuzePXerFg39PBZxbaxUayacfXEt2YotHuvP
-	 zyUNCJ7tnCProE7MW2ExXNDMFfk/Wk33sz1iJ9srNdOuspXxEHc/XEZVMZfvInlCn4
-	 Xzna/m5QVKMOsKJkfvT5T8PidCMkD8f/LXZaVBtG4cMl4TnVXcUbl+BSJ5LHxC7/EM
-	 gnsNMKui+Xhew==
-Date: Tue, 12 Aug 2025 09:32:44 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1755009205; c=relaxed/simple;
+	bh=Z4YpjWDFsTisTYRrs6dwdNxnd1Rfd901xv2zPPVlSzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xw967hWEcJ63ngk8JW8hyZ+aV3sM6/2c796MqUlFdiyUkJB5ADBO3kqKFjgy6b/tBJWJPPdYwUV6coS3mNxmeXGpuhWwXI7DkXmpOvDzd1uryeh1wHFY5k4ATIZOQBRtGsegJ/Ov6Cd8QJluvfV6F2EDcRuGZ/5+fCah2COETUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hEGmOT2F; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c1Yrt6cZ5z9t89;
+	Tue, 12 Aug 2025 16:33:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755009199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G85S6yN/jpAxYJYn22nLde2onQJqpGZG2EjZVAKSCR0=;
+	b=hEGmOT2FM06uSJI210uoGwYT8ijebX66XoYQNfd/oNGtB/w9zAZAxcoOnwZMmcBUrUtSAu
+	ZK4YCfAPOX/nML2b3iCyiEJhrXE+MVtaUN/VW8vnpQlqfTte4bts9Gzixp8VJqI9BqxLVe
+	MNfaTgwl1ApZXQrQowjWIy9eLjD61dFs4J4zYZwPxmAs1E2u1t1bKtYJaHemd+FcmtpWtd
+	PRxqo5sHx527p8Kl4mA+Hfue5WIBEucH7Nf/Tfhf0Gz+AVmKMvs31uU8h3K11EFEOumR5E
+	BD1ZipHmbK4jOrC9k0s22kri0Uq2hUNYaGVUpATd7VIz8tWEBANMJF7LmtlIRA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 13 Aug 2025 00:33:04 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+Message-ID: <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+ <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
- Qiang Zhao <qiang.zhao@nxp.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
-References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
- <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
-Message-Id: <175500916432.3488674.1706766155168772227.robh@kernel.org>
-Subject: Re: [PATCH 4/4] dt-bindings: soc: fsl: qe: Add an interrupt
- controller for QUICC Engine Ports
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b2zuzbzu2rwnxtze"
+Content-Disposition: inline
+In-Reply-To: <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
+X-Rspamd-Queue-Id: 4c1Yrt6cZ5z9t89
 
 
-On Tue, 12 Aug 2025 13:02:54 +0200, Christophe Leroy wrote:
-> The QUICC Engine provides interrupts for a few I/O ports. This is
-> handled via a separate interrupt ID and managed via a triplet of
-> dedicated registers hosted by the SoC.
-> 
-> Implement an interrupt driver for it for that those IRQs can then
-> be linked to the related GPIOs.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
->  .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
-> 
+--b2zuzbzu2rwnxtze
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+MIME-Version: 1.0
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On 2025-08-12, Askar Safin <safinaskar@zohomail.com> wrote:
+> fsmount:
+> > Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called =
+once in the lifetime of a filesystem instance to produce a mount object.
+>
+> I don't understand what you meant here. This phrase in its current form i=
+s wrong.
+> Consider this scenario: we did this:
+> fsopen(...)
+> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+> fsmount(...)
+> fsopen(...)
+> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+> fsmount(...)
+>=20
+> We used FSCONFIG_CMD_CREATE here as opposed to FSCONFIG_CMD_CREATE_EXCL, =
+thus
+> it is possible that second fsmount will return mount for the same superbl=
+ock.
+> Thus that statement "fsmount() can only be called once in the lifetime of=
+ a filesystem instance to produce a mount object"
+> is not true.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml:3:1: [error] missing document start "---" (document-start)
+Yeah, the superblock reuse behaviour makes this description less
+coherent than what I was going for. My thinking was that a reused
+superblock is (to userspace) conceptually a new filesystem instance
+because they create it the same way as any other filesystem instance.
+(In fact, the rest of the VFS treats them the same way too -- only
+sget_fc() knows about superblock reuse.)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml: ignoring, error parsing file
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-doc-validate", line 8, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/usr/local/lib/python3.11/dist-packages/dtschema/doc_validate.py", line 66, in main
-    ret |= check_doc(f)
-           ^^^^^^^^^^^^
-  File "/usr/local/lib/python3.11/dist-packages/dtschema/doc_validate.py", line 22, in check_doc
-    dtsch = dtschema.DTSchema(filename, line_numbers=line_number)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.11/dist-packages/dtschema/schema.py", line 83, in __init__
-    id = schema['$id'].rstrip('#')
-         ~~~~~~^^^^^^^
-KeyError: '$id'
-Error: Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.example.dts:34.3-35.1 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1527: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+But yeah, "filesystem context" is more accurate here, so probably just:
 
-doc reference errors (make refcheckdocs):
+  Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called
+  once in the lifetime of a filesystem context.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu
+Though maybe we should mention that it's fsopen(2)-only (even though
+it's mentioned earlier in the DESCRIPTION)? If you read the sentence in
+isolation you might get the wrong impression. Do you have any
+alternative suggestions?
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+FWIW, superblock reuse is one of those things that is a fairly hairy
+implementation detail of the VFS, and as such it has quite odd
+semantics. I probably wouldn't have documented it as heavily if it
+wasn't for the addition of FSCONFIG_CMD_CREATE_EXCL (maybe an entry in
+BUGS or CAVEATS at most -- this behaviour has an even worse impact on
+mount(2) but it's completely undocumented there).
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
 
-pip3 install dtschema --upgrade
+--b2zuzbzu2rwnxtze
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-----BEGIN PGP SIGNATURE-----
 
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJtQmRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/UwAD+MwnSuB2nUpF6VN+lG6Sk
+ahtWU9Ut5x9w1cljgw+oql0BAPzwUVFsh5FWVEt9gyvDxhFsVMHokKdK4FubSZ9L
+TmEO
+=CcEX
+-----END PGP SIGNATURE-----
+
+--b2zuzbzu2rwnxtze--
 
