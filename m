@@ -1,174 +1,204 @@
-Return-Path: <linux-kernel+bounces-764390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331C1B22260
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD5BB22279
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016437A743D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652D73B5F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AC22E7BB6;
-	Tue, 12 Aug 2025 09:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E1D2E7BC5;
+	Tue, 12 Aug 2025 09:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YQoExukR"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="iJhy5PFk"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013027.outbound.protection.outlook.com [52.101.72.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3238E2E7BA5
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754989711; cv=none; b=ukxrrtzLtdNHeA4QU6WN2LXNyb2qoS1Ye0Wlb5aJoGVAwfj48hcNM0eMhZSiA5MO0sdnvmPq1ucRngD41oHrsIa0yaCNjWOCN29ztxfMuR7/aHOIRcxXj2e5XS54+ZhAIQuW6QESzUaGVVpskOnHRNavKolOqVqEqXqNZdUcVxc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754989711; c=relaxed/simple;
-	bh=XFOPORjq8GcREkHwBlxSYHtm0NpOHASGisBz2Dt78UQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=Ir/BY+erMBAW5fgDpu5om2BfC3fPaFq2bfPzMpSRFteBp4t91qBctxsHwIT0TGUdzP7KbfQIKg/OCPvLvieS448rL6wnIoicSA7+SUGwllzMBlqgEpJmy4Dp/9HatVCH4O69pnaN0O2JuQH7eAvl4YTSEjEgSZ665i5Yd5syBII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YQoExukR; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250812090827epoutp013b7c41f5071410e6dc803409e85de11a~a_dcnl-eT0870708707epoutp01r
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:08:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250812090827epoutp013b7c41f5071410e6dc803409e85de11a~a_dcnl-eT0870708707epoutp01r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754989707;
-	bh=8xEd4SUUha0bAbY0XzlCiDYrRhqQiem5yvi1bXt6EQ0=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=YQoExukRTbEqryD0ozd4DGOJFAgr77RVRQZa9r8qi38alGCzUMPDsS3pbo+XeSZqD
-	 1vS0MgeFixfY6eXtcI9dZdCQR2+Oax/KewTSPpaMuByKm42hSy3DDnaxJaMsDbxzY8
-	 IaTq1hDCZgVreh/HC4o88572+Mf5P/iCVNiK2gfg=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250812090825epcas5p2da0ef83e97d363373011084787aecf0d~a_dbXvRMy2934229342epcas5p29;
-	Tue, 12 Aug 2025 09:08:25 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c1Qf06zQvz3hhTT; Tue, 12 Aug
-	2025 09:08:24 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5~a_dIDowPa1993619936epcas5p21;
-	Tue, 12 Aug 2025 09:08:05 +0000 (GMT)
-Received: from asg29.. (unknown [109.105.129.29]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250812090803epsmtip2d22a0d6f203ef7877ab182f5c7ef7b83~a_dGj1rlf2788827888epsmtip2E;
-	Tue, 12 Aug 2025 09:08:03 +0000 (GMT)
-From: Junnan Wu <junnan01.wu@samsung.com>
-To: mst@redhat.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ying123.xu@samsung.com,
-	lei19.wang@samsung.com, q1.huang@samsung.com, Junnan Wu
-	<junnan01.wu@samsung.com>
-Subject: [PATCH net] virtio_net: adjust the execution order of function
- `virtnet_close` during freeze
-Date: Tue, 12 Aug 2025 17:08:17 +0800
-Message-Id: <20250812090817.3463403-1-junnan01.wu@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6282E7641;
+	Tue, 12 Aug 2025 09:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754989758; cv=fail; b=O90QkG3PYfMWotn+wYxf6OJGX8KpuP2dKceb9Vh5sQxqsWsw5HqoDWPRHbS6SfMnWc1yVTzqzQ2yfp1QF5+QGuJeXEyLLmz32lKYJQu9EnDhOhojPVyMVf4Eq6cfAfGB/sUa/uvCeAiAzeCgLxVAFYphYXgJ2VZz8SnQZuxXqTo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754989758; c=relaxed/simple;
+	bh=sdRuOn34ta9541SitXEVhzzMaOTm5yjxxRa/+8F1GzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HrC4RCKB2bQGkX+VsAhSdVkEl3DQo6is9fPo5h/guuyFAHDsFwbCoWsiDv205+ffGui8qj8G7np/Za4XIjSFCL5tUe4cnR2Xuu6uX0jBiiMWEWto+cuqPIvSz3dumLHPCXn6UBGncVDLyfc/dRJCi1uwH0si0gyd90hHa4BLWxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=iJhy5PFk; arc=fail smtp.client-ip=52.101.72.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ghEekmhUNKNfNcRjb9ooNUio7MAxDDT9n8vy5xshlSppUDjBT9SwOk+9Ph/tHHvl0JPRE4nTAJynOCuBampb3JB0UFxdTBtrKJO5CsoVnxkFN487qnohPsrXk1pes8VE9gTNhLvArv685gR7FsEntysTvZHDPmKnGMcYnmm5WP2Ssry9luKKNv723u0/I7qyJ4gloRV5+GPyPj7Yq+66B2qVFu5MXJ3UyO/1NqSQSNQZboHm/4LL6qdAZTp20mJYZO1kFIt60hDTli8LxjG0vgSTN+B8b6+HEKwJQBgaqj0Hq1YvGFlXhRWFtJFw/3u42/e7/6K73ECItA5fSuA7IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+sZj1bYhKjACuubWLzXl01alOqWiQ947yJkOOYxbmP4=;
+ b=I+NwkQL5YWXmb+74tWABpfvRcvQIlXYEbSb1FZewcvr9sqkL767AV9E4JqsC3sz8kfY/7VvrPG/PVIEoFPtnDTTaLJYAtayd2OE1O9HZWI4X6R7wTLnEfSUnOqKYrX3WCd+J4qbiTx+7A80bkDeEC0t4Z7txT009b7Y1CH9jva4vmudP1O8vTGI67dwcZbWauVl6Ar8eF/DwoORGsBgfqA1zIGgafrEsfS4agCcaCbKogkPA1H8S4pNyVq7/DCRHkatHssxlgCNZl39dANl0GGgc1qmBBUruAScuu0Gcbt9BeyFCDdCvbqZd2wa70pN6wwbOYGYsytSOhyunHbbkIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+sZj1bYhKjACuubWLzXl01alOqWiQ947yJkOOYxbmP4=;
+ b=iJhy5PFkoF++7hnQKaJg5089Z/W30Q0HtdZsvcvQTFUQhfUpeDdp+rI5X/WvAnSuju/NYb5BvsMPJWQ8CTLAWI79ieJ3/mcj2b6g5lecYb+CHGOUkHjFdXKzJjM3nVTuW5qSeq6LQtmddRndEMXhK3Egkd+LB3OwF9AGRlMLIjMw/YxrMaRdl9C1lFvuQV3ugALy7EI/aiQXtWJNQqfvMBbBoSHTLfaDUVaupZqGV3GldxMrrv408lK03rFMSeHesotuchQoZeb6bZl11If73yncsrknD3/0tFYsmBGNX2sJK+5RpeBQuRpbWJi2xQ90p5rbdaMl0QMj2OgfYIOjJw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
+ by DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.12; Tue, 12 Aug
+ 2025 09:09:12 +0000
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::93bd:316b:682f:5e59]) by AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::93bd:316b:682f:5e59%6]) with mapi id 15.20.9031.012; Tue, 12 Aug 2025
+ 09:09:12 +0000
+From: guoniu.zhou@oss.nxp.com
+To: linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	martink@posteo.de,
+	kernel@puri.sm,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	frank.li@nxp.com
+Subject: [PATCH v2 0/3] media: imx8mq-mipi-csi2: Enhance the driver to meet more usage case
+Date: Tue, 12 Aug 2025 17:08:40 +0800
+Message-Id: <20250812090843.1035800-1-guoniu.zhou@oss.nxp.com>
 X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0117.apcprd02.prod.outlook.com
+ (2603:1096:4:92::33) To AS8PR04MB9080.eurprd04.prod.outlook.com
+ (2603:10a6:20b:447::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5
-References: <CGME20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5@epcas5p2.samsung.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|DU0PR04MB9251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a17a24f-a115-4b9d-0854-08ddd97fe6f3
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?UnlVd0lZWmZ6QmVSeEZhYU1YeTZaMHJ2dmc2NXozMVNtMEpPR2owcFBRelFz?=
+ =?utf-8?B?Ykh6QkE1RVpPS2NHVXo4b1BsYWFJOEhMM3pRaWwzdCtLOHpudU1ucWNhLzd4?=
+ =?utf-8?B?N2oyZmUzYVhwVTAxeUdVUzd1RGVadER3TUQvZ0o3V1ptOGNHazdsaXNvNFpz?=
+ =?utf-8?B?MC94VWhxQW5aNlpUYmwyeDhYcVZBejduN2d3K01zdjhFdXdjWitLRHFlWkRq?=
+ =?utf-8?B?SFFtdFVGWlozbTRVcGk4cmJXbVRqK0QvKzJSQnZITDVva2M1RmY5elpid09a?=
+ =?utf-8?B?ZCt3cGt2YWtkdm9XMUZnZ0N0UUxITEV1OG8vUTJuV1k3dll3S0VBRTZ2VUdF?=
+ =?utf-8?B?aWhkTkk4ckdxZDJMTnBxTlNlQzJ0eURhS21temhjRU91azNVM3V0MlJLRmVQ?=
+ =?utf-8?B?ZHpxRmxwYkJTYjAxQ3pXbnZyTDEwM3N4bDdsb0NBM01wMzd5RlhUU2lRUDBB?=
+ =?utf-8?B?cUc5OGlDenBhc3JkMVFzSmR1VmRtbFlwLzU4aWdCWldUeWxPc2xiMitaME1n?=
+ =?utf-8?B?NjRhZEMwVnJwamhHbnllZS9CdkJSM0JzQ2NKY2krTEp1UkliMUZkQzlzUVVM?=
+ =?utf-8?B?b0Z4SjJsNFZNVHExVkx6dVBMeHU2VlZUdE1GWW83ZEV3blBWbStOS28yTWcx?=
+ =?utf-8?B?TXRDZWg0SVVRd1lWZjNlVjJya3N2Vkttb0Y4Y29vc3JCaERITG1FZ1NHYjNw?=
+ =?utf-8?B?K0pxN0NNcTRPNFVBcHhHVzVEUzUvYXM5RDJzL081cVFsSW9HQ2V2MEFSOEdD?=
+ =?utf-8?B?TkI1bFB4b1E2ZVZxN2pmWHdnam5SL0ZUVkJiUlRUdmhVRTg0Nks5R1o4dVFZ?=
+ =?utf-8?B?ZzNlQTZwS1lrZmh5M1BITytJT3h5QVVxR3J4VXpmaWJUcVQwQUFibXd3cXJD?=
+ =?utf-8?B?SUp4NklyMDdwQ3l1QlpyRVBTMTczejRrTDNxY3ZRODJDZ1pBbi8rcGtWM0JN?=
+ =?utf-8?B?ZmNmTzFTeGwwc3ZKdXpZQ1YxZm1XUGJaMngxNFNBTElzaUZXY2pjQis0aXNv?=
+ =?utf-8?B?RjBSR3VaYjY0TWxHc1hkbzNndjBWS25JOWo5V0E1SWp2OUNTUmMxRnBFcDI4?=
+ =?utf-8?B?b0hDM0tkaFVZVllmakVuaE5kRXNXdG4zUnZhMWhXL0Nuc3FaeFl2Y0IyZDJ0?=
+ =?utf-8?B?Und3UW5Bc0pPUFk0RUZvVERvZjRKem1ESmFRMTg3dk1MWnVXaThGc2xUcmp1?=
+ =?utf-8?B?aGhNVE1hV3VpcEcvMkw2UkVkZ253TVBWU3E3TVJORjJzS3NIbzFWSU1tdjVW?=
+ =?utf-8?B?WWMwRko0TFM5ZEMrMjhpMW9oSE42bjJQNTU3QTQ1cjZhYlo1cWtxTWgrMkJP?=
+ =?utf-8?B?V04xVVhwRStUUndwY05wdlJLUkhNZGVDSW5kNEZ4bDkwSUtPNk1GODVHNVBN?=
+ =?utf-8?B?TFJXMCsrOTFpSGQrQVFQd1pyOGpOeGhlUjMxNldxRUFQaytQcWRXaXAvTVhS?=
+ =?utf-8?B?SVllR1lSWityby9uOS93dVRxMDdUQkp3b1JYMm1CaXlKK2JhaW5ROU5VbU1E?=
+ =?utf-8?B?RzA3Yy9UNVpMdE5WelBVVjl3R2NFYXQwTUhrNVJWcDU2aXpHTE9mNWUxdlVN?=
+ =?utf-8?B?NkF0WWFzUWsyRjJYVVEwZG56MndaYTM0dVhQNjV5RTFwUVVxL1hQeGtGcHNK?=
+ =?utf-8?B?TDh0VkdwSFQvd08zdmJzdlRXeEo4VEFaR3N6YnBleHFJamZSckhhVUVZNVpp?=
+ =?utf-8?B?bFFSVS9ZaXdXb0tkVWo5VmNPNzk4eWppemZlNDBuUTM5ZnFzczdsVFFIYlVp?=
+ =?utf-8?B?RjFyc1h5a1FZUzhESFJsb2t5WWlPZkYvTHZqZmpCNkgzNFduY1U0aXJtWEE1?=
+ =?utf-8?B?b1JSbC9jaHowNmlpMUNNY0V0ckt2b0JxZU43bjU0Z1pyRUxuTS8vb09pdGxH?=
+ =?utf-8?B?RDFTUXhORmtDc2xPbGVaYmVVaURLZEdRakU0TFRkTlNXRjVhMGdkWnU2WTZF?=
+ =?utf-8?B?VGgrTVdnemJqem1OK2F6anIxOTVORDkxYllFek5zK3k0RDF0ZXo2VHJ1Vkpw?=
+ =?utf-8?B?Y1hrTkJkZXFnPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?dytySlFtY3ZkZDB4UDhFV3lRZTBPciticmFMdGtRREoxSkVseDJrOTNidzNk?=
+ =?utf-8?B?UHFCZGk1MHZXaEhSbzdleVZSVXhYamladExsc1gvamJzZXNWQVZYTlBsUmlT?=
+ =?utf-8?B?TXJiaWJDYkdLSXpHN0MzMjc2NU5tanNDL0ozby9rWHNXQWtlYWYvdEZ4Mi9a?=
+ =?utf-8?B?czdBSEp6ZXlyc2VGWC83aGkyc21VMHNWMStLTE9RSFVIcEdWMmJBNFNzckI3?=
+ =?utf-8?B?TmRrMWtjcS9jU2h5U3RRM0pXZEpQOFVCby94WTZFVXZDejhyZTZCQVdhcnpp?=
+ =?utf-8?B?V3hOMDd3ZXhVWTZPNWlqelhXS09VbXdEWDlMVEZtdmxKMlNxVlh4YWU1ZnVv?=
+ =?utf-8?B?RlVFZ1RvNmRuSWZ4RXlxWmcyWXZVTjNtblRHNDl1ajE3NS9GUzJtcTlsUlhG?=
+ =?utf-8?B?dHA1N29DMm9KTXJnQ1RtT3p4VmZCRmVDQXV3bE1MbUt3ZFpLOWtYQ3dTZld5?=
+ =?utf-8?B?alE4ajR4VWtHYXRYb2ZDT3VkeG9sakZrWUZHNHB1UmRCaExONGZ1QmZtTE5I?=
+ =?utf-8?B?ZjVqalR4VDZiN3R0YkVEdzEybEZkazJGUFh5cmNUQWVFKzNWbitSb2NhVzRR?=
+ =?utf-8?B?Q2lHWWlodlpzaGU2YWtSWFVhdjQwNzNYbmlINlpvRGI2N2tBcVBxSzZCWjFx?=
+ =?utf-8?B?WVNsYllHSXYzdjhNT0ttdUZqQ2t6Vk5MeTM0dndkK1FLcHZtOWNPaXhlLzBF?=
+ =?utf-8?B?LzFBNmQ1MHlRYnZwUGNuQkVyaGkyQk0xNmdJTDAvemdyVTFJckhCWUs2VE9U?=
+ =?utf-8?B?SnRiZDVBZHpqZzk4SzBtMHRZMHV3Y2EwY3lyUDkxRTRRWGVyYVRrbXM1cEd1?=
+ =?utf-8?B?c09ZYW5ya3RGbHFCUGpWak5yQ3Z0YWFyTVFCR1Y0dUg0ajJ1TmhablBCdkha?=
+ =?utf-8?B?cllUOWpwdGVxQXFkNlM0TGxUUVV4RWlRSnpHdlF5UkhhZzZoT0MvWEdORmQz?=
+ =?utf-8?B?alpGUFlCOXRqd0kwZURDQXJOUnNRMXQyTUU5MmNiMG5qaW4xNlYvM1dlalU3?=
+ =?utf-8?B?VStBazB1U0hXM3pIdzlrZnZycjN6Qk9UMWtPQ0gxRjJwZDZidk9rSXNqbXNz?=
+ =?utf-8?B?SFFJKzBGMGlhbVNDaU5hTnFCTXNHdW1XQzB0dzNVN3d1YmdSNDUzR0NNbzk0?=
+ =?utf-8?B?WmxZSHBLeFNxb08wODhyR09HeGxtUzQramhnbnVObWk5RllqTkZ2cWlJdmFY?=
+ =?utf-8?B?R21qNVNCTmdFU1VrREhpRzJORTBJcWJoL2NkZDJsbEhjWXNuK2I3VEdncFdL?=
+ =?utf-8?B?dFZKTE0vZHBrTlFXMmhyTVg1WjcwVDZSaHpXOWxoZHMrQUdxL0ZkMjg2Qzkz?=
+ =?utf-8?B?SnhqdzIvWmlMSm1RV2xSRExLMFVzVkx2RmZEdENUMmlPMGJ5VytkTkd4U1Vj?=
+ =?utf-8?B?M2NkU05LalcvU09ac04yWXBoK25qcFZ1WE1FSFloN21mUmFTT0dxZSt6cWN3?=
+ =?utf-8?B?dXU1UjhPMGFEMk9OR1VMNG83U0tabEg0SGtJOUJEc2FHVG5IRDh1N0RyUElj?=
+ =?utf-8?B?cjQ0WXFWaG9MbHdSdVlKTE1aWUJGVnFNMlBzRXRVd2dTWWlLaHdHSVJQVTd3?=
+ =?utf-8?B?dmo1REpCYlFBRHFTV3hhSWtXLzcwNlNLMVJJalBxRGtiVWJ2TXNoT0t1d1FC?=
+ =?utf-8?B?bmhTM05TWFRtUURaMFlyZHlCWjRwZXBaTlVmUFo1dHcwWHhyZjN5WEZpa0Y1?=
+ =?utf-8?B?c3hoSXZlNUwxNFNuNHZoN2NSeVF0UHB6K1NzZzRlRFg1dFA1OU5kZXpEU2ht?=
+ =?utf-8?B?WVF4RDZFaEp2VEVVVVVsNEd3Qld3dnlsUVNRR0cvd0pQT2h2aHpEcmp5cVN2?=
+ =?utf-8?B?VkpKU09mU0w3ZXhxSHIzdnVpb1JKREwreW5CUGZ0VVFWUlpIaWppLzBUWUFm?=
+ =?utf-8?B?SlNnRXZTc1NwRUhjeS9NZ1NvUVdrTWt3SVhXSEdsL2hXeHlMUGtjdEtOOURu?=
+ =?utf-8?B?K3RUNnU5TlB6cFZzVjVxMTJhMFRtZXhCaGFtM1RNYkZCVGlGV2xBNjV4VElO?=
+ =?utf-8?B?amFqUjhLV05nclBXUUJNakRJNVgraXB6SEIrcFVDRUg2Uy9PUE9KOFl1M2Fy?=
+ =?utf-8?B?TUlyUlJiK1BvVmViaGhSWjQ1ZlpWRzBGTlRIUDE3MkZ4bnNBMkMyWW1LUnVy?=
+ =?utf-8?Q?rzNCanch2S3MOhKRezxp3SkPm?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a17a24f-a115-4b9d-0854-08ddd97fe6f3
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 09:09:12.2865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wgh8aBTt8BHvcMsDVdxEGDasOPPuN2dej39RieLVg65HcwOBuQ2sNe4QAOUyOlip3ec9y/7MbqEfcAqRiU7Brw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9251
 
-"Use after free" issue appears in suspend once race occurs when
-napi poll scheduls after `netif_device_detach` and before napi disables.
+From: Guoniu Zhou <guoniu.zhou@nxp.com>
 
-For details, during suspend flow of virtio-net,
-the tx queue state is set to "__QUEUE_STATE_DRV_XOFF" by CPU-A.
+The bellow miscellaneous patches enhance the driver to meet more
+usage case, such as i.MX8ULP.
 
-And at some coincidental times, if a TCP connection is still working,
-CPU-B does `virtnet_poll` before napi disable.
-In this flow, the state "__QUEUE_STATE_DRV_XOFF"
-of tx queue will be cleared. This is not the normal process it expects.
+Guoniu Zhou (3):
+  media: imx8mq-mipi-csi2: Add data type field in pixel format
+  media: imx8mq-mipi-csi2: Add RGB format support
+  media: imx8mq-mipi-csi2: Implement .get_frame_desc subdev callback
 
-After that, CPU-A continues to close driver then virtqueue is removed.
+ drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-Sequence likes below:
---------------------------------------------------------------------------
-              CPU-A                            CPU-B
-              -----                            -----
-         suspend is called                  A TCP based on
-                                        virtio-net still work
- virtnet_freeze
- |- virtnet_freeze_down
- | |- netif_device_detach
- | | |- netif_tx_stop_all_queues
- | |  |- netif_tx_stop_queue
- | |   |- set_bit
- | |     (__QUEUE_STATE_DRV_XOFF,...)
- | |                                     softirq rasied
- | |                                    |- net_rx_action
- | |                                     |- napi_poll
- | |                                      |- virtnet_poll
- | |                                       |- virtnet_poll_cleantx
- | |                                        |- netif_tx_wake_queue
- | |                                         |- test_and_clear_bit
- | |                                          (__QUEUE_STATE_DRV_XOFF,...)
- | |- virtnet_close
- |  |- virtnet_disable_queue_pair
- |   |- virtnet_napi_tx_disable
- |- remove_vq_common
---------------------------------------------------------------------------
-
-When TCP delayack timer is up, a cpu gets softirq and irq handler
-`tcp_delack_timer_handler` will be called, which will finally call
-`start_xmit` in virtio net driver.
-Then the access to tx virtq will cause panic.
-
-The root cause of this issue is that napi tx
-is not disable before `netif_tx_stop_queue`,
-once `virnet_poll` schedules in such coincidental time,
-the tx queue state will be cleared.
-
-To solve this issue, adjusts the order of
-function `virtnet_close` in `virtnet_freeze_down`.
-
-Co-developed-by: Ying Xu <ying123.xu@samsung.com>
-Signed-off-by: Ying Xu <ying123.xu@samsung.com>
-Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
----
- drivers/net/virtio_net.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index d14e6d602273..975bdc5dab84 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -5758,14 +5758,15 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
- 	disable_rx_mode_work(vi);
- 	flush_work(&vi->rx_mode_work);
- 
--	netif_tx_lock_bh(vi->dev);
--	netif_device_detach(vi->dev);
--	netif_tx_unlock_bh(vi->dev);
- 	if (netif_running(vi->dev)) {
- 		rtnl_lock();
- 		virtnet_close(vi->dev);
- 		rtnl_unlock();
- 	}
-+
-+	netif_tx_lock_bh(vi->dev);
-+	netif_device_detach(vi->dev);
-+	netif_tx_unlock_bh(vi->dev);
- }
- 
- static int init_vqs(struct virtnet_info *vi);
 -- 
 2.34.1
 
