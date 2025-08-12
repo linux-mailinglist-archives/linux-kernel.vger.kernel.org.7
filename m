@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-765358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE419B22F31
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5DAB22F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC757B6ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58D41A20799
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A47E2FDC25;
-	Tue, 12 Aug 2025 17:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxCWVEz6"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB192FDC2C;
+	Tue, 12 Aug 2025 17:37:27 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BCB2ECD27;
-	Tue, 12 Aug 2025 17:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3822FDC20
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755020147; cv=none; b=fplVrPEQmrhGp3MSJLqtqrG3fqm91qnkFyU1ibnw5o1k2I6fg/QDPZpevDiHcU37nefffXnCvJvtWc30sDQc6nBeGjqDbx0p0x9K8TceedUsERufgjM8VKC37LVfUOQ2pqKNpAnVPOiHANwCYxman52idDmA8Bbh6Y/80UIA0iA=
+	t=1755020246; cv=none; b=hjOlr5qjv+k7lqNcnD/H5scYAUdRTNZenNDtsX9JHmtoEqoBYCKPN8a3j1Fs+6fi4/6lK1oaoa6aSN8g/FE1O7xrjiDDOPquwERkT+643m7rZbroKXG6ZBwc60SP1bU6tB3WqDBOYbQ+Hv5STsVWmKsLmh7EoOAyMb1y8t5uL5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755020147; c=relaxed/simple;
-	bh=/fk0SInUI+7YMulFy98YQ3QInCIqTEu3ouODgJVlNh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiXB1bUd+92r75N+PBR9vwRIrYUc6HjKo7C+0rn4Fwtko2W2e560C0Ih46Wjkk77TlV1oONH7e8j7tNqsl0IeFw1cY2TSkXed+36L2gGB0aE0chtoeQcvFdJ03aOKLIx1M4XSmcLrZF5xmidUKJy4PeD0EFg1T/PXlw3l8SRKTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxCWVEz6; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-73c17c770a7so7215048b3a.2;
-        Tue, 12 Aug 2025 10:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755020146; x=1755624946; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3QqRiRc8S5UuRZr109N2LH3VeQOZ0mfRe2blg1ehQPc=;
-        b=bxCWVEz60prW43TgzLsddNqdEAheCJ4Op9LskSWIIMe5WpsRsbvD9QVAEQKEIz+Udd
-         vqf1DgBStxW+viadZKflUOSDChRq5faexFE9oHRsD4B2VIIBu1EQQpNgdyd/hPXOYais
-         OwrY/Km+DCFZb0SBW4AtLPnJkqeKmuv+82G/3tm2Ow+qEuI3Tmd44Cfx337QbSGXddDD
-         /QEzt97s9hIcUyi30gPUyWsDR0SSVbNk1TIJ1nNYjN/7p0cYasWYxNqAAtUG+RPg7U4x
-         6gA5+w0qO5lcfz24701uiGMGBHXq/Xq1jS8qTP3ocqiFgXO+jMl7Ysvvorezh4KmjzHW
-         OLTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755020146; x=1755624946;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3QqRiRc8S5UuRZr109N2LH3VeQOZ0mfRe2blg1ehQPc=;
-        b=Jt5MKXbs7l7nJYDhjle/C8llkaEU8TgcoKxtQpiNrYoRVELEbLj9EBvcsffXjdrb+C
-         a/Zw6hqajQ82D+mwHpN3kNbfd3fxwFDGtdu1PqvcnrvGzlqsaUeQahIzdsWqzJeYWxvZ
-         /HWi/PTj1pxCVD22b2WGhQ1zK/JNq7GMJoHb98C2duP7Sl0M/9GoycpTa9NPv+GAkl86
-         y4EziMRBuWaz8cRRAaBrKXgc9vVP/eOI/KGXvM1+MM8zGUC/SiwESfBbZ8aLPhjYJ/tn
-         rNSSwgbDfn+5KE9K0pWG4DjyR4yofBVUWKS2pNTfATiltedAc7qGdeFqtjsMKw1OOBNO
-         47eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUI8IJQSrh+B8uenj1JanJcS1g7n4emA0sxFl1PYdJyHMHQ5LXcQdRADlzeO554KCp4mMQHin3MdX+slicQaw==@vger.kernel.org, AJvYcCUhU7OKkRQEG8cRfCDCebynQCWpIE4dBsDQ9SyN/5370OTOzQ2en+rXfHWuTWlSDVX7u5V95ueMDAIv@vger.kernel.org, AJvYcCWNhEjO9ZdT4XmZrd9ZCxk6tHljADeKMuNjMhzjGf+KFRnR/zLe5lI7k/VPQOpT3X35L009X11MPPGNeHw2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7RFdT0kkohInSqomn94CSHsi/tShc+Tv8rud0t5dIsEOkk5cf
-	I0LAn8x7FV3Q50BbDuMy1wrsKB+JvnDOfcrBsy9xxD+6/vfymrqo8Nx3r+RkuxNi
-X-Gm-Gg: ASbGnct1V21laYNVUfxQOmnSM84RP4x4i/zCi5LaB8RDSVYmds0pDjd4krCqH7PLu2c
-	byQJ/DbrZSUMU01YuckEfMQPWedejEZMmwXX4TpDaigJRlNfnCb4kCpVzHSd8phTxvwP7GSHxRE
-	nwud6Zgl9VsRgRVorqt3w/YAP0qgrwK6kKl8qXbXSNfj+HVq63zDr0A3zk4X2tVdJuRUDttTgoz
-	CALhWzsMxBgjPjOO+P4Agd+cj2nEdPm16owpFYx8W7/2GnjjuypeDX2dBYui/xkQCfrKKP06oIf
-	rZgRjcADrb3rHN5cojbzJv/h14elak3B/7XwRmpEWCgDF76Y0U5YKp1C26WHXGaV9MSEfJSpx+/
-	DE4/lEkanG1aUF1N5DgeWqSqZBqc151WLsblG0j4NZT7pqZT6AQv9LA==
-X-Google-Smtp-Source: AGHT+IEOQGwikHmdxCwnSLSNmqiAKdWaAmIlOvX98dKTEa3j/V/1mLnNx7izZ8MziWVIRtrOO5jPPA==
-X-Received: by 2002:a05:6a00:a17:b0:740:b5f9:287b with SMTP id d2e1a72fcca58-76e20c9a0f3mr83634b3a.1.1755020145514;
-        Tue, 12 Aug 2025 10:35:45 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bd9795200sm28297220b3a.114.2025.08.12.10.35.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 10:35:45 -0700 (PDT)
-Date: Tue, 12 Aug 2025 10:35:41 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Rik van Riel <riel@surriel.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2] mm: remove redundant __GFP_NOWARN
-Message-ID: <aJt7bYkhuRBrIO_S@fedora>
-References: <20250812135225.274316-1-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1755020246; c=relaxed/simple;
+	bh=ScYa6iAUvMdq/c7bVBFcUnZXmO/nZjs+Lfs/QDtxXaQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jdrv2aNOYLPN5xb5voeN3QpknqTYdkmmaT381mD0kC4vJLx5OyeHHlJRyybmrL2Afl1cs3P2eYbQh9P3ml9dxNBBZEM3SJKVlBqUuBz6RGZPxR3j2+lbTObSNSeG50THwkDe5bxt/D+Xai83dYwYwjm/4JGcEb4Qr9rdTubVRcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ulsw5-0008Di-2a
+	for linux-kernel@vger.kernel.org; Tue, 12 Aug 2025 19:37:21 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ulsw4-00DEZs-0j
+	for linux-kernel@vger.kernel.org;
+	Tue, 12 Aug 2025 19:37:20 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id DC0BB456239
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:37:19 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id A5C694561F2;
+	Tue, 12 Aug 2025 17:37:16 +0000 (UTC)
+Received: from hardanger.blackshift.org (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 4e107f7f;
+	Tue, 12 Aug 2025 17:37:15 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 0/7] can: m_can: fix pm_runtime and CAN state handling
+Date: Tue, 12 Aug 2025 19:36:50 +0200
+Message-Id: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812135225.274316-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALJ7m2gC/x2M0QrDIAwAf6XkeQEtW5H9SikjamoDnS1axkD89
+ 4U9Htxdg8pFuMJzaFD4I1WOrGBvA4SNcmKUqAyjGR/GWYvvV6CMq3yxXnQxqhR3yQmNp7uPNAX
+ vGDQ/C6v1X89L7z+4crvzagAAAA==
+X-Change-ID: 20250811-m_can-fix-state-handling-0ba4bda6cb8e
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ Patrik Flykt <patrik.flykt@linux.intel.com>, 
+ Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+ Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
+ Markus Schneider-Pargmann <msp@baylibre.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-e44bb
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1582; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=ScYa6iAUvMdq/c7bVBFcUnZXmO/nZjs+Lfs/QDtxXaQ=;
+ b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBom3u8uAQp2ZvUHGJ2HZxpeJhg6/kBpfPVi5ToY
+ RPl/MT9YR+JATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaJt7vAAKCRAMdGXf+ZCR
+ nIzoB/wIKeQLxnHo5O5mXWwUqFXrG7ms9mqGlBzp22gYOYuyaDX8SNhvjn+VXkkin4mW2pGGH6I
+ MgN1QPyxTBaG/Ovv7mSjEaAn8grPXBIGvmbC+v38s4j1GnjRE9E9UCjH3Af4zB/KCH/tLMDQzl+
+ yLt3uCy5z7s2SsNiD3qJqQRliR5cIbG/JvWa9AqiuM/5TlxlvaKnm435ytqRwAgsy7XPGtTeH/3
+ hrfXkcAcaINiu4NS8QakwI+KhUpdWXclQUuT33DB4O8iiPuemuQMMZ+1cc+5pUEVKaXsHtCUQ5/
+ ZItAiXoVMY4vinkDlDRARPHo+Fs2VVqhTTbIHD5EKmcMg/kM
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Aug 12, 2025 at 09:52:25PM +0800, Qianfeng Rong wrote:
-> Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
-> GFP_NOWAIT implicitly include __GFP_NOWARN.
-> 
-> Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
-> `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
-> redundant flags across subsystems.
-> 
-> No functional changes.
-> 
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+The first patch fixes a pm_runtime imbalance in the m_can_platform
+driver.
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+The rest of this series fixes the CAN state handling in the m_can
+driver:
+- add the missing state transition from from Error Warning back to
+  Error Active (Patches 2+3)
+- address the fact that in some SoCs (observed on the STM32MP15) the
+  M_CAN IP core keeps the CAN state and CAN error counters over an
+  internal reset cycle. Set the correct CAN state during ifup and
+  system resume (Patches 4+5)
+- add support for optional shared external reset, to properly reset
+  the IP core (Patches 6+7)
+
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Marc Kleine-Budde (7):
+      can: m_can: m_can_plat_remove(): add missing pm_runtime_disable()
+      can: m_can: m_can_rx_handler(): only handle active interrupts
+      can: m_can: m_can_handle_state_errors(): fix CAN state transition to Error Active
+      can: m_can: m_can_chip_config(): bring up interface in correct state
+      can: m_can: fix CAN state in system PM
+      can: m_can: m_can_get_berr_counter(): don't wake up controller if interface is down
+      can: m_can: add optional support for reset
+
+ drivers/net/can/m_can/m_can.c          | 93 ++++++++++++++++++++++++----------
+ drivers/net/can/m_can/m_can.h          |  1 +
+ drivers/net/can/m_can/m_can_platform.c |  2 +-
+ 3 files changed, 68 insertions(+), 28 deletions(-)
+---
+base-commit: 89886abd073489e26614e4d80fb8eb70d3938a0b
+change-id: 20250811-m_can-fix-state-handling-0ba4bda6cb8e
+
+Best regards,
+--  
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
