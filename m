@@ -1,146 +1,103 @@
-Return-Path: <linux-kernel+bounces-765109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577CFB22B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:21:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED7BB22B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B18D2A6EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C80C421CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED45C2F5325;
-	Tue, 12 Aug 2025 15:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Kx92KOQi"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68532F546D;
+	Tue, 12 Aug 2025 15:23:13 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9032ED850
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0686032C85;
+	Tue, 12 Aug 2025 15:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755012066; cv=none; b=S2/mZ0WgNFMIV8ZfxSEcJU5RwgQvscC0Ij/HGmHwEHAj5W2B5L9dxI1fF0w+K+yH2gyTQulfVWmyhHQRl0xG261ubwCvANUvBpqsxVpYuFi/loQeFDbJP5lO7r0Pt4XFJ+tI6q5QQeH8ViQ/PEwEjejRqm8sQcbtX6Y2hG91YW8=
+	t=1755012193; cv=none; b=uXNIjY+ZWXXzkpp6e+998FJVlzcFuaCHR7WvnyKH4/Ri957h5swyUT9UZLV5venkGJ3efoFeHQz844JjiSiC2uQ+q9DMwLvk6qfu+b2DojW24uTtxur/LXFYhVykLf6wwbZSmMbL35lzaXqr9RK+jBZxWI8TjP29T45Hbu1ialM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755012066; c=relaxed/simple;
-	bh=QHHuJW/EiamKuHBNtdgrPVoL/XB/qHj8wnI2/U0ofGM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=oa3Fd/Dz3dAKcZ3yVkTkLFcfSogqkvAL2QzmVqiQ9gk07qKJGiNzmr5fpQI8veZjiGG1kF221sv3IeQNBg3v5PcJBo2R1fdCjLPtUNswixoNgAQdP3M+0wtJ76NEInmEY3GRDTMP9tMSOiuSRwMigXpxuV1WOfwFlF5eJQlSY6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Kx92KOQi; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso8823835a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1755012062; x=1755616862; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1cuCCH8VAlUam+cA47ykU/6jYW/fThVT5+TG1NG7tyQ=;
-        b=Kx92KOQiTjcPZvbXOkNoFcoyc/RZ4hV53WytAL+F3IBvXRhfSJCvyP+4sNAOx5RhiL
-         Qb+mKXqa8KtRUqL0jZX7zOL5ig7eigmWY6OxMicVhoGtmq8lG6wwREBqpTEIu267WL7V
-         MWyRpDKgsYxqacDxGJRqKQp5/4p7p3sj0Fr+e8N5jqeNUcohEp5zw509/RL924NlEyYp
-         p24XK8V5HOwgeIjsRQdUxXgThxa4jBdSInJJpj8xOZWr5vqokcARrP1ZZ+xjt9woUV1O
-         fwkxnw22iVkBAlkB8xCxtPb8lpX9J6WMyOUbI69PzZ4mLZqYB8R0PrxW8IucfmVGIOF6
-         jqpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755012062; x=1755616862;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1cuCCH8VAlUam+cA47ykU/6jYW/fThVT5+TG1NG7tyQ=;
-        b=nsdvQbR548u9RwQVv0eRpEWwfCkBen8jjMn/e5Wk5KFM89mdzHSmm5oP174AgoHka6
-         c7GdDK+tlE4t4kbK436bz4TW+bkQ/WV4lFNu88GEj7vRYlTQWwCf0WbFbhO2yLSTpOCr
-         16ZP+pgkZ4WnFS/kajDzgLTID3GEs6b0vG2dkBh70oxIqxznMRilju2iBotGYsG8sbnS
-         wFRgGG75/4pMr0nzGr719hpqKYG4O75vaJhDfbyyc8f9BmPFEHYIRdiqh1gQDDZaJJdu
-         3U3kDR1RqXYgQeNrtllWwfss5VR3Ik8FDEGoCrmLTRDpLte9oudJi3w0vfDREh8Ej2hs
-         Ef/g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/pQiiIp79ZC0NktnBTfnRJWZ2yNg8q8HjgMLMzDxyXntrEx+h7PhSpaLwJ1AX1dok9z56Eo5njT6Qc/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhPzQofOGsj3msf7f+xyfZB5XILErdN5FHjL44Fp9uCbVnGT1D
-	hd+i1A8tduOy6aYlmMb8Bw8n48OhOeXXWkl8wjm2SPuvW9dxzO985u/sUAJWhkJTTpM=
-X-Gm-Gg: ASbGncuuCkHFFqymL+81ZVBGwrGhmgkoGFJqHUbN4OSe6A8Cs7EFJkeKbgdXYAdv9DU
-	ukAs/aMiCDrWVcid3oq/Y4TSJM3UNbBoIpuJ4ut+wShPFsR1oPJcsXvI6SdteZOx+3kVQQcr6c7
-	tDpIZyZjGgev3kmk4H6gGYmsbWztP0Ku+T9EiNT56JFgFLr5xU9aSmi/zis0yZKE15P9toXqYWr
-	lfBGYXkmA8UbT9wiX6MbtWfeh1KN8WqPFrvflgITMkyET4e0VLPrdHJzT1zD4/0mRWVJ3ztC7mE
-	7I+UFFw836GlpeabzEyv2NUjjeYovUhV4J13Twy+jwrH/w1nYXVv405NM/AcryCa9T7RFH6m6Jy
-	pp9qKxtogSnhPmperTEzGzkh+X72J+g==
-X-Google-Smtp-Source: AGHT+IHi8A4KGcy8JJcWOFoy6dDibyPAXIGPczBPkGZjgn5/c5sakdzR7AlrO/zc+TLqsTti16DCqQ==
-X-Received: by 2002:a17:907:1c1d:b0:aec:65d1:cc30 with SMTP id a640c23a62f3a-afca3a74174mr8586866b.44.1755012061884;
-        Tue, 12 Aug 2025 08:21:01 -0700 (PDT)
-Received: from localhost ([2a05:2d01:2025:1908:e499:6dcf:1e86:8748])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b77sm2220245866b.51.2025.08.12.08.21.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 08:21:01 -0700 (PDT)
+	s=arc-20240116; t=1755012193; c=relaxed/simple;
+	bh=DaD/bMbY4cIGKaK6YNIyTRnx6li4wlPKjN/F+3bF/bE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOplg0MJduENyYiGhVAJKTUFjXwbjlISPyhCEIBd9/I9EChzQ5bUZSfUuCCez0c+v4oUFr3ofUSvWlGsIOz+qfwAk5iE/yClHNumZM9FCC0LwI20qEtHuacecVCSKYs5i2mNEVqKzpmXbB8+fKjKyJjREqQ2lbedvUYwcC8Cc5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57CFMt6r003862;
+	Wed, 13 Aug 2025 00:22:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57CFMtEe003859
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 13 Aug 2025 00:22:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <370cbc89-721c-46aa-9f6e-1681f5d04e99@I-love.SAKURA.ne.jp>
+Date: Wed, 13 Aug 2025 00:22:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vfs: show filesystem name at dump_inode()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Mateusz Guzik <mjguzik@gmail.com>
+References: <ceaf4021-65cc-422e-9d0e-6afa18dd8276@I-love.SAKURA.ne.jp>
+ <20250811-bahnhof-paare-593afaae19b5@brauner>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250811-bahnhof-paare-593afaae19b5@brauner>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 17:21:01 +0200
-Message-Id: <DC0JUQMZN9X8.26G5HXLTC8YJZ@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Bjorn
- Andersson" <andersson@kernel.org>
-Cc: "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Clark"
- <robin.clark@oss.qualcomm.com>, <~postmarketos/upstreaming@lists.sr.ht>,
- <phone-devel@vger.kernel.org>, "Konrad Dybcio"
- <konrad.dybcio@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] soc: qcom: ubwc: Add missing UBWC config for SM7225
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250723-ubwc-sm7225-v1-1-d688caff70f1@fairphone.com>
- <blibzpqgbjbbwvnsx3cu3fzjxk776lamnmd4erokc5jx7qkubh@7da6ihmb6xxj>
- <xsrkh75xb6klntc4mc564iq4wipe6iaqjiugk2r743n2y2h5dt@s33t7fckn5gq>
- <55xazajnwigd744shnkk3acba7fozsaciybjexvrp2rdvs2bhm@35lglwjsazdf>
-In-Reply-To: <55xazajnwigd744shnkk3acba7fozsaciybjexvrp2rdvs2bhm@35lglwjsazdf>
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav105.rs.sakura.ne.jp
 
-On Tue Aug 12, 2025 at 1:10 PM CEST, Dmitry Baryshkov wrote:
-> On Mon, Aug 11, 2025 at 01:32:00PM -0500, Bjorn Andersson wrote:
->> On Wed, Jul 23, 2025 at 10:03:15PM +0300, Dmitry Baryshkov wrote:
->> > On Wed, Jul 23, 2025 at 04:19:22PM +0200, Luca Weiss wrote:
->> > > SM7225 is a variation of SM6350, and also needs an entry in the tabl=
-e.
->> > >=20
->> > > Fixes: 1924272b9ce1 ("soc: qcom: Add UBWC config provider")
->> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> > > ---
->> > > Note, due to other bugs on next-20250723 I couldn't fully test that
->> > > DPU/GPU are working, but this seems to be required in any case...
->> > > ---
->> > >  drivers/soc/qcom/ubwc_config.c | 1 +
->> > >  1 file changed, 1 insertion(+)
->> > >=20
->> >=20
->> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> >=20
->>=20
->> @Dmitry will you pick this as well through your tree, so we avoid (the
->> trivial) conflict.
->
-> Yes
+On 2025/08/11 22:51, Christian Brauner wrote:
+> On Mon, 11 Aug 2025 15:50:28 +0900, Tetsuo Handa wrote:
+>> Commit 8b17e540969a ("vfs: add initial support for CONFIG_DEBUG_VFS") added
+>> dump_inode(), but dump_inode() currently reports only raw pointer address.
+>> Comment says that adding a proper inode dumping routine is a TODO.
+>>
+>> However, syzkaller concurrently tests multiple filesystems, and several
+>> filesystems started calling dump_inode() due to hitting VFS_BUG_ON_INODE()
+>> added by commit af153bb63a33 ("vfs: catch invalid modes in may_open()")
+>> before a proper inode dumping routine is implemented.
+>>
+>> [...]
+> 
+> Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-Could you maybe amend this patch to also add sm7325?
+It would be nice if we can get this patch merged into linux.git in 2 weeks, for
+https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d is hitting on more
+filesystems where a reproducer is not yet available.
 
-Or check if any other compatibles were left out in ubwc_config.c which
-are used upstream, I didn't check...
-
-Regards
-Luca
-
->
->>=20
->> Acked-by: Bjorn Andersson <andersson@kernel.org>
->>=20
->> Regards,
->> Bjorn
->>=20
->> >=20
->> > --=20
->> > With best wishes
->> > Dmitry
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.18.misc
+> 
+> [1/1] vfs: show filesystem name at dump_inode()
+>       https://git.kernel.org/vfs/vfs/c/ecb060536446
 
 
