@@ -1,179 +1,109 @@
-Return-Path: <linux-kernel+bounces-764420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9D2B222E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:23:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DD1B222F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBEF6E4E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5875E4243A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5012EAB6F;
-	Tue, 12 Aug 2025 09:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DC62EAB94;
+	Tue, 12 Aug 2025 09:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjU/zVK6"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="FtoVLQwr"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7162E9EA3;
-	Tue, 12 Aug 2025 09:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990208; cv=none; b=fjWjBlU44+f/QT5ne/LyQjxW6/fZrW8MVSL8LQvS0p5Gzgh/JEyDIuSlAx9F9MiWA1+UPLah2NBGY7wkH4WakmL4isUEQHUHTWwW/8dBFM+dRSNamljxl7ybx1DEw3G05Z9skblZ3P3PGkgSkpa/tOTWVefL9Qwxsa43E9sQLbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990208; c=relaxed/simple;
-	bh=XaiybivBLEOc5tyQ377RQv6aOttoAfSI7i2voibQNmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rP8vI1eudup8Gc9jSyKVghTUBqUu7TZUBCiA1UjZjirAD054byNmQqD3fzTyvesNYBuDEW3rRrW5rytCDRVnJcWIMK9ToqzTC2I8/CmIYcSniGAxTXpSAWouonBvTb5hB8Vbc3+0a9lORTedHwG5znLsmZbs8/vo3SOnujoCmdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjU/zVK6; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-433f78705feso1760249b6e.0;
-        Tue, 12 Aug 2025 02:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754990205; x=1755595005; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOGKCteFZMAy3LeuWf1j/2F5b+EEOJ9yxzrgy674/8c=;
-        b=NjU/zVK6vbqLI8VfdQg4AnNkm6nuowgSx6FiT6z1edLxob5znvBOVvWQS6icC89RgG
-         7/GyykHNqec1bj7f3o3FbD8tNQaufW3/9WczaTTzLtYBqwYXDPEF/0jvJSPfUgHNDNxL
-         LLidypZJLNl3+dQTqMUjGJlyklZKXTmo9sSaeWpMewhbPY0kpohxTV3E5B/z/G8LjV8R
-         qzTllGvAvPaCPquFJIuMhOlESlR9C1EH1DDH0xj4vxbjUtgEe2YJmatVeBVXxrGJRZCI
-         s3DnovxNfAsw+hdMtDUAoQwHhOfPymnEZTu+H1UqxBUYvqsUWMYhw/GZsAEuU0njGau3
-         GqAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990205; x=1755595005;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rOGKCteFZMAy3LeuWf1j/2F5b+EEOJ9yxzrgy674/8c=;
-        b=q6ArGYxM0rYR1CvLQ+vzVfyc/lQBz40iK+U1BsslJahiWUvu97RKPJodewMDNPUGlj
-         tQNrvNSLNjf0MDumyBjuLDqvV3N8ugqY8aPqL9va0Ax84AImGJoWzHIqM/7Q/DBI/YkJ
-         kAm91lFbRj0ooA1+RLP7watLg0C33B/A820NjkUedRMRLzQJBi5irKsQuzq2cuIniSOR
-         +jG3z7xaKDIjiNw/V52njvzcpybeOtDF1kYICVrDeQ+dXpR3kxxtg0YMVp96el1crGal
-         0AJTNqmS0XSoWT3kXSKKViDyWLWi18s7hupav96PJpyQ/PGxs7zmGIfcTsM0Ye22GDsK
-         EyBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWVU/g4NlLgW0vMZulHl3CcQ3mpDLY2ASM+5dyJus6u0c4890L5L+SOo8ejYaafDD4eol9BuPmNQ==@vger.kernel.org, AJvYcCUtk7J8CfUjJ4ieHBt/hlVKGFGea4b22aO9yIEjC/duviJPuzfAvsyU6zQRe97Jt9L1c4PwyTJ0q96xmGyu3tE2JnI=@vger.kernel.org, AJvYcCVFaNypN5Mv+dexa9rOUBda2I7jQfPb64xfVOKIHm+aCNJHOjt3573wHWazj6i96SRhUBFnUl53fQMAKIsWKg==@vger.kernel.org, AJvYcCVM1g6RKxvjU4NazZHrt9nQVGcJ0ERnDQLuxByIYwrK6fVzxQt4FzRR334DEpApjmqaMgp/HlaD1FjpXiSh8B0966Y=@vger.kernel.org, AJvYcCVNIdABiuAI+H3ZaptcapKmtlVAkGlMK/zLBG6BlaG2VeoSx2eQIyofEoYQSkaI3H/WxLMdqCXxh1C1@vger.kernel.org, AJvYcCXIjYgtYDJ7qDC+ZyIIpxsd/OthoYesacU8Mum9ejnU87+Ivhe8RX7pmgMKEG2CNSkiGPOtL8nYvJM11g==@vger.kernel.org, AJvYcCXM4nZd4bMoSiwI+UVsiZ6fbFLSwsOEEwQBMWMtX6U4yCB23rv/feUlrFOSEGuAm2vqsI/yEETas1Shmx0l@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzgn20BN2uR9o43qu21hKFaJgBkKns19AQD0VJ5wrsVTADpjWI
-	qjMioQ4iIRAsXVlHBWFmSKw2GwwVz88gAnVci8G7MIMRvHcSyZVOa4X6UHrs6Prrh8rD6zOtI1q
-	+/1OAH6bWoy4JkHvkErMCdL4bLRCToa4=
-X-Gm-Gg: ASbGncvmLMuONpPsbp0yX7L4DZLgM0iWbOGnaNm2OAh4wSTAns2mWSmKkO/ag9BLLBx
-	F2W4PtQ3GiAem2HTd/uxieSJM7oxiTGzqJGnX4+7qBLRquu8sLohRVLIg6/3bQpi/EY5xoqcJUw
-	jRZNkoKgJ4tej1DN/cP5oc88qYjJwgTYwvoUJJdn8RDgC9L2jNe7TxdR4i8Q5QiI/AhovnVDJSy
-	90BtA==
-X-Google-Smtp-Source: AGHT+IETTIJEQRSUprmEW/PZ43+7aaIWslt+bYkWZi3Waoz2cOUzGNm7S8/l4wJRhakmB2sfTn3K3AA6daLwKG1Ea8M=
-X-Received: by 2002:a05:6808:181a:b0:433:fd1b:73f1 with SMTP id
- 5614622812f47-435c90f0e8fmr1519318b6e.6.1754990205351; Tue, 12 Aug 2025
- 02:16:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A05C2E9EAC;
+	Tue, 12 Aug 2025 09:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754990212; cv=pass; b=NhPAvFAK3CYgWKXCqbUX/DdiLQSNKUaadnfDTbW8X3/JWu2LBy3v+iGHpG35G+PvhiJTvLBcFBv490h0T0P+8m1l0ncW6KTkGuILtAztmCEJmgIXahkqLgl2Jmq0TuhZHkv1pFFsUh56FH9rNVrHoz3oq8Ifg0Y5KiA5fsDIvlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754990212; c=relaxed/simple;
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=DzsTrNYkA52Jqo0R3dq/tnUVKxNa03tSHy3DNJdy6obpb5fDEWmb07rDWNSH4BC1HbJYMdM4zrYRK5LuLMwNVjf7N42wcUWMdd/aubtAs1BF1qS3VCmlhiN3AK6glQnKZ6eEZlM9jZ5FNMSTVbUFsfFsd3+CaW8eIdZxp7kAl6M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=FtoVLQwr; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754990175; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gCN4ceDMwS2sO8ua0KycD8kDVZEMv3eixn09ZfzQz/Ztr5XZoAdEy3KA31g9ocIkodVnnqsAoX55b9adHoCtAq5zDxMDRQtcc5EJFSj9XIxjgP25KziXfW/lUbL7FR068ElM+NPvW4WbuJENoDOSxuVHXkMPSeuUYvzkzA06soY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754990175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=; 
+	b=iMcPuzCl04jSwqNlE2sAPeShzAXgzKwA7qiSvmb9ypCEiflOXulFl5I+N+h8lwXz18CmrRWvgBumRahUcbFf1YjH/6lBNAw8WEk3m3uEIvIjDlchcH9+DewZGu1uQ/Gybl8snwGg3fr0YtnQg9dT6sTJ4+44Eu4NpmsTQ8Tjr6o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990175;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=WCHrfZ3FqSSAm8m6z10Yl9zXQWOEanY1aJ7VPxiQmRo=;
+	b=FtoVLQwraAG7EAXtulrfuXSaw2gwbluX74+xju36oKIsCrXiw7ooeNSRckv/LTqq
+	g0FHB4adlSNa3RANqC/8J0cH/4MPWivdRkfzU5UUQ3wbweDmgQ/cNa+E/iqddZtg3uk
+	46YzxgyrYzt0v/FLH7dZFBPwgf5wB9CRrsMzx1g0=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1754990173829768.6252306582485; Tue, 12 Aug 2025 02:16:13 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Tue, 12 Aug 2025 02:16:13 -0700 (PDT)
+Date: Tue, 12 Aug 2025 13:16:13 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
+In-Reply-To: <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
+Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-54-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-54-b3bf97b038dc@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Tue, 12 Aug 2025 17:16:09 +0800
-X-Gm-Features: Ac12FXzs0-qDCA0x0Aw1aZmy8texiIAG_F4IY6MycSoBtAjQ1ujDKaGaSXI8gxQ
-Message-ID: <CAAfSe-u-YkkwKyS4+6EU+-zg5ghemk-4VJVE8p4Sky1-e4Y13g@mail.gmail.com>
-Subject: Re: [PATCH 054/114] clk: sprd: pll: convert from round_rate() to determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227a2c34c5ab8c14803b4abf6dc00009210938a959c1bb3689b6ef1246a757dba4e101626c5a0942f:zu08011227dfb0fdd931ee86c1cd2f0e420000ba6a0a3185b7859d536a7a7d18ccd2a9382d444f4696fadf65:rf0801122bb274c5e08bb304d06800b10a0000bcecb4cdcc742b10fb5c526e9134a2da206c85f7656772d281405081c4:ZohoMail
 
-On Mon, 11 Aug 2025 at 23:18, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
->
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+fsmount:
+> Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called once in the lifetime of a filesystem instance to produce a mount object.
 
-Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
+I don't understand what you meant here. This phrase in its current form is wrong.
+Consider this scenario: we did this:
+fsopen(...)
+fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+fsmount(...)
+fsopen(...)
+fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
+fsconfig(..., FSCONFIG_CMD_CREATE, ...)
+fsmount(...)
 
-> ---
->  drivers/clk/sprd/pll.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-> index 13a322b2535ac37ecb17f2c39d17d2c03532cfcb..bc6610d5fcb72faa7406ea78dca4cd9b848e9392 100644
-> --- a/drivers/clk/sprd/pll.c
-> +++ b/drivers/clk/sprd/pll.c
-> @@ -254,16 +254,16 @@ static int sprd_pll_clk_prepare(struct clk_hw *hw)
->         return 0;
->  }
->
-> -static long sprd_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                               unsigned long *prate)
-> +static int sprd_pll_determine_rate(struct clk_hw *hw,
-> +                                  struct clk_rate_request *req)
->  {
-> -       return rate;
-> +       return 0;
->  }
->
->  const struct clk_ops sprd_pll_ops = {
->         .prepare = sprd_pll_clk_prepare,
->         .recalc_rate = sprd_pll_recalc_rate,
-> -       .round_rate = sprd_pll_round_rate,
-> +       .determine_rate = sprd_pll_determine_rate,
->         .set_rate = sprd_pll_set_rate,
->  };
->  EXPORT_SYMBOL_GPL(sprd_pll_ops);
->
-> --
-> 2.50.1
->
->
+We used FSCONFIG_CMD_CREATE here as opposed to FSCONFIG_CMD_CREATE_EXCL, thus
+it is possible that second fsmount will return mount for the same superblock.
+Thus that statement "fsmount() can only be called once in the lifetime of a filesystem instance to produce a mount object"
+is not true.
+
+--
+Askar Safin
+https://types.pl/@safinaskar
+
 
