@@ -1,163 +1,200 @@
-Return-Path: <linux-kernel+bounces-764664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C0FB225C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:21:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A701B2252F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29B93420096
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:21:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D001AA6899
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD6E2EE5F7;
-	Tue, 12 Aug 2025 11:20:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CE42E6137;
-	Tue, 12 Aug 2025 11:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF42EBB9B;
+	Tue, 12 Aug 2025 11:03:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B401F4CAC;
+	Tue, 12 Aug 2025 11:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997646; cv=none; b=DVPJnOqIKBKmLtMrNL5BAvRnhkCbngm3ToJws/ogLSE7KB7qAMPd0Aani0ogcXVave8jBj03U59RrsTx9lwT45rrk7jU+dQitSxlygL45/Kdi+mjSgEm0iplZ+1e/D0vZ1m7TsmLfbdVsMzEWlsmJr17SeVTo7QdpwYh4yLMAK8=
+	t=1754996596; cv=none; b=cEcQhqD73FgG/8XlFfG5aBbDU5qmZO8wW9gatAVDCw95o6SQ2BSP4Is/kZqr+wSgGuUrHnJ8vmYhY4IZy4f+qCvzqdcmW84Sbo5xI2+VcVVbcoQ6lReq1y+nGvcrnjF94b+OEPJzIUvoRI5I+qrNv71O/S8t/BQOTHwzIIuBTUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997646; c=relaxed/simple;
-	bh=sBDv7vR+It1XYOsUbKJGVxht0ECRwLjzMeT3ejRDm/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n5fqdY8t9JbUhGPYKbbCELfibq/9MJZf1eDJHTw/QPSyoZJ3+uQb7cJfn3EnUjh7a0r+4UyyBUr8k2ZNAnyizxNrXQERwbjeLgFssIDvCObqdsc0ZxkTQqRunwf2ilytpbokD1Q2R03E+Ff80Pyhf9qMVtrPqi9hwSMWS69zLvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c1TBR4kXzz9sT7;
-	Tue, 12 Aug 2025 13:03:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3y8dTxRQA3KN; Tue, 12 Aug 2025 13:03:11 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1TBP5hjWz9sSs;
-	Tue, 12 Aug 2025 13:03:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AE0E58B763;
-	Tue, 12 Aug 2025 13:03:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Qz7WChCQ-Wh5; Tue, 12 Aug 2025 13:03:09 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 20F128B764;
-	Tue, 12 Aug 2025 13:03:09 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 4/4] dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
-Date: Tue, 12 Aug 2025 13:02:54 +0200
-Message-ID: <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1754996033.git.christophe.leroy@csgroup.eu>
-References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1754996596; c=relaxed/simple;
+	bh=qLF+I7WPqhUrb+VNmpL20/SfL6ZE9h40NuAjJxQ1snU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p3wcBQqwFJOnzcZdKWslNt5+1AlR6BPbSqJhWxcwUC0baVckbhTSVSMQaICsPwlIvLx0smguOkcbKe0FHVvV6rwd9HhLlXbDNYtTTRVM36f0WH8Xh5rqBMGc5Y3IaI/Y962qaJ5V2oeFpWArvC9vPZi+wZg03qRHX3B/AQncV6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1TBQ6dXyzYQtr5;
+	Tue, 12 Aug 2025 19:03:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 879A41A09D8;
+	Tue, 12 Aug 2025 19:03:09 +0800 (CST)
+Received: from [10.174.178.72] (unknown [10.174.178.72])
+	by APP4 (Coremail) with SMTP id gCh0CgAXkxNrH5toyg63DQ--.43961S3;
+	Tue, 12 Aug 2025 19:03:09 +0800 (CST)
+Message-ID: <027a1ab7-1ff4-493c-b202-c0597a222403@huaweicloud.com>
+Date: Tue, 12 Aug 2025 19:03:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754996575; l=2493; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=sBDv7vR+It1XYOsUbKJGVxht0ECRwLjzMeT3ejRDm/U=; b=BOrAHvPX1MdgLy+6wlTvGbgoypCVvvGj7lfPu6JAC3QbSLnZxuD3Vq6NaU3gedK/5SowU993K yN7/zKYS8O5AWY9thNswXKEYACGBAOQv5dd7OmZYqNex0uG2y6q4nwB
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] md: fix sync_action incorrect display during
+ resync
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: song@kernel.org, yukuai3@huawei.com, linan122@huawei.com,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+ zhengqixing@huawei.com
+References: <20250812021738.3722569-1-zhengqixing@huaweicloud.com>
+ <20250812021738.3722569-3-zhengqixing@huaweicloud.com>
+ <1775d473-a77f-4ac8-8195-8547dd48d754@molgen.mpg.de>
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+In-Reply-To: <1775d473-a77f-4ac8-8195-8547dd48d754@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXkxNrH5toyg63DQ--.43961S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWxXw4UtryfZr48KFyDJrb_yoWrXr13pF
+	4ktFWUGry7Crn3JrW3J34DJFy5uw18JayDJr1xWa4UArsxKr1jqF1UWrnFgF1UJr40qr4j
+	qr1UXrZxuF17CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-The QUICC Engine provides interrupts for a few I/O ports. This is
-handled via a separate interrupt ID and managed via a triplet of
-dedicated registers hosted by the SoC.
+Hi,
 
-Implement an interrupt driver for it for that those IRQs can then
-be linked to the related GPIOs.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+在 2025/8/12 17:22, Paul Menzel 写道:
+> Dear Zheng,
+>
+>
+> Thank you for your patch.
+>
+> Am 12.08.25 um 04:17 schrieb Zheng Qixing:
+>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>
+>> During raid resync, if a disk becomes faulty, the operation is
+>> briefly interrupted. The MD_RECOVERY_RECOVER flag triggered by
+>> the disk failure causes sync_action to incorrectly show "recover"
+>> instead of "resync". The same issue affects reshape operations.
+>>
+>> Reproduction steps:
+>>    mdadm -Cv /dev/md1 -l1 -n4 -e1.2 /dev/sd{a..d} // -> resync happended
+>>    mdadm -f /dev/md1 /dev/sda                     // -> resync 
+>> interrupted
+>>    cat sync_action
+>>    -> recover
+>>
+>> Add progress checks in md_sync_action() for resync/recover/reshape
+>> to ensure the interface correctly reports the actual operation type.
+>>
+>> Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
+>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+>> ---
+>>   drivers/md/md.c | 38 ++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 36 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index 4ea956a80343..798428d0870b 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -4845,9 +4845,34 @@ static bool rdev_needs_recovery(struct md_rdev 
+>> *rdev, sector_t sectors)
+>>       return false;
+>>   }
+>>   +static enum sync_action md_get_active_sync_action(struct mddev 
+>> *mddev)
+>> +{
+>> +    struct md_rdev *rdev;
+>> +    bool is_recover = false;
+>
+> `is_recover` sounds strange to me, but I am not an expert with the 
+> code. Maybe `needs_recovery`?
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
-new file mode 100644
-index 0000000000000..7c98706d03dd1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+title: Freescale QUICC Engine I/O Ports Interrupt Controller
-+
-+maintainers:
-+  - name: Christophe Leroy
-+    email: christophe.leroy@csgroup.eu
-+
-+description: |
-+  Interrupt controller for the QUICC Engine I/O ports found on some
-+  Freescale/NXP PowerQUICC and QorIQ SoCs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,mpc8323-qe-ports-ic
-+      - fsl,mpc8360-qe-ports-ic
-+      - fsl,mpc8568-qe-ports-ic
-+
-+  reg:
-+    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
-+    minItems: 1
-+    maxItems: 1
-+
-+  interrupt-controller:
-+    type: boolean
-+    description: Indicates this node is an interrupt controller.
-+
-+  '#address-cells':
-+    const: 0
-+    description: Must be 0.
-+
-+  '#interrupt-cells':
-+    const: 1
-+    description: Number of cells to encode an interrupt specifier.
-+
-+  interrupts:
-+    minItems: 1
-+    maxItems: 1
-+    description: Interrupt line to which the QE I/O Ports controller is connected.
-+
-+  interrupt-parent:
-+    description: Phandle to the parent interrupt controller.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupt-controller
-+  - '#address-cells'
-+  - '#interrupt-cells'
-+  - interrupts
-+  - interrupt-parent
-+
-+examples:
-+  - |
-+    interrupt-controller@c00 {
-+      interrupt-controller;
-+      compatible = "fsl,mpc8323-qe-ports-ic";
-+      #address-cells = <0>;
-+      #interrupt-cells = <1>;
-+      reg = <0xc00 0x18>;
-+      interrupts = <74 0x8>;
-+      interrupt-parent = <&ipic>;
--- 
-2.49.0
+
+is_recover is used here to distinguish whether the current sync_action 
+is a recover, rather than a resync or reshape.
+
+But it's not a big deal, no need to focus on it :)
+
+
+>
+>> +
+>> +    if (mddev->resync_offset < MaxSector)
+>> +        return ACTION_RESYNC;
+>> +
+>> +    if (mddev->reshape_position != MaxSector)
+>> +        return ACTION_RESHAPE;
+>> +
+>> +    rcu_read_lock();
+>> +    rdev_for_each_rcu(rdev, mddev) {
+>> +        if (rdev->raid_disk >= 0 &&
+>> +            rdev_needs_recovery(rdev, MaxSector)) {
+>> +            is_recover = true;
+>> +            break;
+>> +        }
+>> +    }
+>> +    rcu_read_unlock();
+>> +
+>> +    return is_recover ? ACTION_RECOVER : ACTION_IDLE;
+>> +}
+>> +
+>>   enum sync_action md_sync_action(struct mddev *mddev)
+>>   {
+>>       unsigned long recovery = mddev->recovery;
+>> +    enum sync_action active_action;
+>>         /*
+>>        * frozen has the highest priority, means running sync_thread 
+>> will be
+>> @@ -4871,8 +4896,17 @@ enum sync_action md_sync_action(struct mddev 
+>> *mddev)
+>>           !test_bit(MD_RECOVERY_NEEDED, &recovery))
+>>           return ACTION_IDLE;
+>>   -    if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
+>> -        mddev->reshape_position != MaxSector)
+>> +    /*
+>> +     * Check if any sync operation (resync/recover/reshape) is
+>> +     * currently active. This ensures that only one sync operation
+>> +     * can run at a time. Returns the type of active operation, or
+>> +     * ACTION_IDLE if none are active.
+>> +     */
+>> +    active_action = md_get_active_sync_action(mddev);
+>> +    if (active_action != ACTION_IDLE)
+>> +        return active_action;
+>> +
+>> +    if (test_bit(MD_RECOVERY_RESHAPE, &recovery))
+>>           return ACTION_RESHAPE;
+>>         if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+>
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+>
+>
+> Kind regards,
+>
+> Paul
+
+
+Thanks,
+
+Qixing
+
 
 
