@@ -1,159 +1,153 @@
-Return-Path: <linux-kernel+bounces-765485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CB1B23903
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:33:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBBFB238F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2D13B5BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24A51661F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB742E11BF;
-	Tue, 12 Aug 2025 19:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jswZA5S3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575232F548F;
+	Tue, 12 Aug 2025 19:30:58 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BAF21C187;
-	Tue, 12 Aug 2025 19:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2F11DDA15;
+	Tue, 12 Aug 2025 19:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026938; cv=none; b=SImpiKgxiP9bIiXETY+YZHW+gm7X+x0AIredANyDX84QQY60fill7p98OA5Kb8GN69xroeCCZY7piZ1q7oX7hWrzYqp057v5hIVPC92WDEtdi2J7lsFBaoQSTp+gY72XW0GhUYKYTINudWfKMPjx/0d0FE51GNXqVNn5S8Bl2Yw=
+	t=1755027058; cv=none; b=YjPBwNMWpi7gsi+jCkNe6VIrxMxrrcfoelMW1X1FQGOqXI7vpnUOyee7NqzC3OQAKc+DgtxnbUYjyLmTsF58xHckTwlDxpL878+G9cATpRaLas0W6Dyq1FqtJmBjhS5/DQNKymbDuhD807jRlWByWZyi+nAQSltHi27ea/UEgvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026938; c=relaxed/simple;
-	bh=RmKMxHvtucfT9XVmSilfkkitPMsLboGkWPfSdC24ks8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tv/MPQmD118H5A+2BHI6xSvBRmJkyrn6jf3xCSxOHuCB9jYKODqPENbTDiUFtF5MNNoRuG3DYsO+AY2WbfPsEUeawVxtCZjA7ciTUJvG0eiTgpocuwlSenv/PVUxZD9kR5GmqdGrZLJunwZ8hn82ikwiaTCCX6NvAB3kjrpmjWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jswZA5S3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E0AC4CEF0;
-	Tue, 12 Aug 2025 19:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755026938;
-	bh=RmKMxHvtucfT9XVmSilfkkitPMsLboGkWPfSdC24ks8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jswZA5S3fwK1RCXv7aVUJcFz5bk33POYw2hRgUHf8S44yYJZSFGILwLc4LjuvdnlN
-	 uLhluGryK0OlERm99OAQYFlbn+YkxFh1OX1bAvSXGzjqUapOmQUw2x7PzIy26+oqzO
-	 CYXaGuEwW85zsiCkRpvlwKKLrSINc9b5lvLXvgJimDsuGV87Inlqmtk/vLsrEyzBBR
-	 z88omrrJydEXYCK75f9X0p1eEUdl+D1mc+qQbaBUDYPX0nNMjBiPmdEbIqUOYO/ni6
-	 uwddlN/K40fK2kIsVuP9smX+8MXAssCUxwF7Snan0MTHU9mRzvMGP9FuC/HpKOtkdt
-	 CYceAnSlvfedA==
-Date: Tue, 12 Aug 2025 12:28:57 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250812192857.GI7942@frogsfrogsfrogs>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <87freddbcf.fsf@igalia.com>
- <20250731-diamant-kringeln-7f16e5e96173@brauner>
- <20250731172946.GK2672070@frogsfrogsfrogs>
- <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
+	s=arc-20240116; t=1755027058; c=relaxed/simple;
+	bh=tgEQgmjowqpMlzEpXwgk7bLDVU5ZLuQRChISAv2i5mo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tqGKfAi9oo3/Ch4UXB7ZOFqrdak3XgjDjFEQodyfAPbdhRPU3SJc/w/IK+DE5BY+HYcLj1qDrLWT3DcizcWOfdz5sjnQOsOaBYQA48ZZlJ+Wcs+GisEF3a4OtOCAHYpTCUerbo34TALWNKnvyARu1aKVomRHZoUxmcOEPOtRNXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:acd6:d96f:40a0:aee])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 72F1D4092E;
+	Tue, 12 Aug 2025 19:30:45 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:acd6:d96f:40a0:aee) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	contact@arnaud-lcm.com,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH bpf-next v3 1/2] bpf: refactor max_depth computation in
+ bpf_get_stack()
+Date: Tue, 12 Aug 2025 20:30:34 +0100
+Message-ID: <20250812193034.18848-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ef33d3cb-4346-41af-9e0e-541fdc007f89@linux.dev>
+References: <ef33d3cb-4346-41af-9e0e-541fdc007f89@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175502704641.29886.4898775155046553663@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Mon, Aug 04, 2025 at 10:45:44AM +0200, Christian Brauner wrote:
-> On Thu, Jul 31, 2025 at 10:29:46AM -0700, Darrick J. Wong wrote:
-> > On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
-> > > On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
-> > > > Hi Darrick,
-> > > > 
-> > > > On Tue, Jul 29 2025, Darrick J. Wong wrote:
-> > > > 
-> > > > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
-> > > > >> Hi!
-> > > > >> 
-> > > > >> I know this has been discussed several times in several places, and the
-> > > > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
-> > > > >> able to restart a user-space FUSE server.
-> > > > >> 
-> > > > >> While looking at how to restart a server that uses the libfuse lowlevel
-> > > > >> API, I've created an RFC pull request [1] to understand whether adding
-> > > > >> support for this operation would be something acceptable in the project.
-> > > > >
-> > > > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > > > > could restart itself.  It's unclear if doing so will actually enable us
-> > > > > to clear the condition that caused the failure in the first place, but I
-> > > > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > > > > aren't totally crazy.
-> > > > 
-> > > > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
-> > > > the restart itself.  Instead, it simply adds some visibility into the
-> > > > opaque data structures so that a FUSE server could re-initialise a session
-> > > > without having to go through a full remount.
-> > > > 
-> > > > But sure, there are other things that could be added to the library as
-> > > > well.  For example, in my current experiments, the FUSE server needs start
-> > > > some sort of "file descriptor server" to keep the fd alive for the
-> > > > restart.  This daemon could be optionally provided in libfuse itself,
-> > > > which could also be used to store all sorts of blobs needed by the file
-> > > > system after recovery is done.
-> > > 
-> > > Fwiw, for most use-cases you really just want to use systemd's file
-> > > descriptor store to persist the /dev/fuse connection:
-> > > https://systemd.io/FILE_DESCRIPTOR_STORE/
-> > 
-> > Very nice!  This is exactly what I was looking for to handle the initial
-> > setup, so I'm glad I don't have to go design a protocol around that.
-> > 
-> > > > 
-> > > > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
-> > > > >> libfuse data structures so that a server could set some of the sessions'
-> > > > >> fields.
-> > > > >> 
-> > > > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
-> > > > >> pass it to libfuse while recovering, after a restart or a crash.  The
-> > > > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
-> > > > >> course.  And there are probably other data structures that user-space file
-> > > > >> systems will have to keep track as well, so that everything can be
-> > > > >> restored.  (The parameters set in the INIT phase, for example.)
-> > > > >
-> > > > > Yeah, I don't know how that would work in practice.  Would the kernel
-> > > > > send back the old connection flags and whatnot via some sort of
-> > > > > FUSE_REINIT request, and the fuse server can either decide that it will
-> > > > > try to recover, or just bail out?
-> > > > 
-> > > > That would be an option.  But my current idea would be that the server
-> > > > would need to store those somewhere and simply assume they are still OK
-> > > 
-> > > The fdstore currently allows to associate a name with a file descriptor
-> > > in the fdstore. That name would allow you to associate the options with
-> > > the fuse connection. However, I would not rule it out that additional
-> > > metadata could be attached to file descriptors in the fdstore if that's
-> > > something that's needed.
-> > 
-> > Names are useful, I'd at least want "fusedev", "fsopen", and "device".
-> > 
-> > If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
-> > be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
-> > the store as 'journal_dev'?" Then it just has to wait until the fd shows
-> > up, and it can continue with the mount process.
-> > 
-> > Though the "device" argument needn't be a path, so to be fully general
-> > mountfsd and the fuse server would have to handshake that as well.
-> 
-> Fwiw, to attach arbitrary metadata to a file descriptor the easiest
-> thing to do would be to stash both a (fuse server) file descriptor and
-> then also a memfd via memfd_create() that e.g., can contain all the
-> server options that you want to store.
+A new helper function stack_map_calculate_max_depth() that
+computes the max depth for a stackmap.
 
-<nod> I'll keep that in mind when I get to designing those components.
-Thanks for the input!
+Changes in v2:
+ - Removed the checking 'map_size % map_elem_size' from
+   stack_map_calculate_max_depth
+ - Changed stack_map_calculate_max_depth params name to be more generic
 
-(I'm still working on stabiling the new fuse4fs server, it's probably
-going to be a while yet...)
+Changes in v3:
+ - Changed map size param to size in max depth helper
 
---D
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7dfa..a267567e36dd 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct bpf_map *map)
+ 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
+ }
+ 
++/**
++ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
++ * @size:        Size of the buffer/map value in bytes
++ * @elem_size:       Size of each stack trace element
++ * @flags:       BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
++ *
++ * Return: Maximum number of stack trace entries that can be safely stored
++ */
++static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
++{
++	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 max_depth;
++
++	max_depth = size / elem_size;
++	max_depth += skip;
++	if (max_depth > sysctl_perf_event_max_stack)
++		return sysctl_perf_event_max_stack;
++
++	return max_depth;
++}
++
+ static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+ {
+ 	u64 elem_size = sizeof(struct stack_map_bucket) +
+@@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 			    struct perf_callchain_entry *trace_in,
+ 			    void *buf, u32 size, u64 flags, bool may_fault)
+ {
+-	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
++	u32 trace_nr, copy_len, elem_size, max_depth;
+ 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+ 	bool crosstask = task && task != current;
+ 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+@@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 		goto clear;
+ 	}
+ 
+-	num_elem = size / elem_size;
+-	max_depth = num_elem + skip;
+-	if (sysctl_perf_event_max_stack < max_depth)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+ 
+ 	if (may_fault)
+ 		rcu_read_lock(); /* need RCU for perf's callchain below */
+@@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	}
+ 
+ 	trace_nr = trace->nr - skip;
+-	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
++	trace_nr = min(trace_nr, max_depth - skip);
+ 	copy_len = trace_nr * elem_size;
+ 
+ 	ips = trace->ip + skip;
+-- 
+2.43.0
+
 
