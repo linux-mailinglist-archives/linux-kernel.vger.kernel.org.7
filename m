@@ -1,116 +1,85 @@
-Return-Path: <linux-kernel+bounces-763760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2CDB219FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB16B21A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5390746329F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:04:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6E4A463246
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860022D6638;
-	Tue, 12 Aug 2025 01:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACD42D7812;
+	Tue, 12 Aug 2025 01:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Fe158qLE"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfPIYdXV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CF728641D;
-	Tue, 12 Aug 2025 01:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DCA26E6FA;
+	Tue, 12 Aug 2025 01:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754960634; cv=none; b=HZeQGqYUlACRq+k++9o+ZTE9PeLjJXhGpGoPuvgra0TmRxfxaDaUdmr+7AZxRL9uyaWZC/v6wWCklojh9P3PXy0Grj0R9w5KwI74vQqjq3+3RWIOXhfaM5fyXiX8vmgHe1B9tT5XCwh05y37wtPuyGyGEr32DlAFe6rTW3TvvVw=
+	t=1754960747; cv=none; b=VGRD+geXgkUX2I+bDgsU3EdSdFNtzncOWk1SZwfE3CyL5xOWCUTnfFwD02fp5gBIqT9/a8ygHRmiTzsdou6Vg9478IyI0EX1wN9GDVi3xpiMtoKfaskJNRc+L0K/6o7pmPCGFokIcUxj39U7kix86f/58bx46vRP/WIJlF+uZWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754960634; c=relaxed/simple;
-	bh=nRB5p7wN6S+MA1ZoqdVvsPJNWE6Wryh2NcdsCtXed0I=;
+	s=arc-20240116; t=1754960747; c=relaxed/simple;
+	bh=tnadAJJ3gvSe37IaQuoRsAc1fSW7akru9HMWFLtRq6o=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDz5Nnd+gYKHq4bK8zVU+Ha24ad1i3gZoFE9dS8Gsn73h6rEqqRVU6ILpkSfyVYgel72XVNnUPqwo5H2/ZDSIoIR0eDTqsB8gauufEftlBB8m7e5nInouWOhRJL07jGfv2Z5kiAjIAuOPbs4qAO3B6nx+6nYkSbxFtOvmezu6QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Fe158qLE; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754960626;
-	bh=lKLrL/vRTKmPzP1dHfBCVayfLMY1Nn/TghmhvHD8P8w=;
+	 MIME-Version:Content-Type; b=HnIfI8OkIXT6tGPTq/H2wrzAusMTjW66Xit2v+h+PT944zHwwibhFb/2YLXhSHapHvs9E6UzqrTkKzRtlOXNPGyVWZ44YwF4exON2AqMIjWuo2CtILtDP3fReXroadAXOKH3uIhYAV43j6s62XuzviMEI1dv2l/oEhP85CUo4GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfPIYdXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE9CC4CEED;
+	Tue, 12 Aug 2025 01:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754960747;
+	bh=tnadAJJ3gvSe37IaQuoRsAc1fSW7akru9HMWFLtRq6o=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Fe158qLE/YdAJDDB6MTuOIzElWxiZNc5P4D3y8QIWwhAHGQQiYEc0pQdoxficA8J/
-	 dXZU2Yi4joD0IA4J+llokgoJO2f2ef4ruNq8bf1vijuQhisYvMqjFfjhw+PJ8Z0T6u
-	 o2uc+NE5N7VYOg00HwPtDehpFGGLtJW2EaG6tEzO5T/LDU6giwxzL5DQcOUUYWkSg7
-	 XLMygZeJWpIQT9AX7vAfVouRBO/nSadOUWHAGu9GSEap2YtY1jyd5SFzEuFuDqndLp
-	 j9SoAGiXL6+MDeLN5QkXGJn+DtY0GgTTH9ErJhNWsBofK6tGvebaYuJtdMKsp7Syas
-	 E7ab5/rw19WeA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1Ctn0rLxz4x6n;
-	Tue, 12 Aug 2025 11:03:45 +1000 (AEST)
-Date: Tue, 12 Aug 2025 11:03:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the fsl tree
-Message-ID: <20250812110343.6dd82e9f@canb.auug.org.au>
-In-Reply-To: <20250723094558.5bcfca69@canb.auug.org.au>
-References: <20250723094558.5bcfca69@canb.auug.org.au>
+	b=GfPIYdXVExsgK3SguULzi1D9OBQHnD6Cq59maXLIDI9fp1EdKCkxhXaeMQDV3xwgB
+	 TIfMdoqTBYipUC2dScd6XEvtCpxrCH9X8r/FD227jjjqlB00fHvxEZ55LUCJuAmcPh
+	 nrXUPcy9dSTVXkKBhYcZYpNjL+JjuvSFzwXA++KGQj7ZF17EW5BYnZ+DcRtq1DfMQ4
+	 1fjC/E4U6Qep1542NRAvg+6k0XR3IiVKbaT73urFu7WDOBzYQHYwsfNZB+pNjVwx10
+	 uT8B9+gGtj4FaBSOJ9egf+CXODpRxYM3wsqtMFNOdZWNkWkSxrm8H6YVn6Mrvoo0p3
+	 iE5EetAqAncHQ==
+Date: Mon, 11 Aug 2025 18:05:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Miguel =?UTF-8?B?R2FyY8OtYQ==?= <miguelgarciaroman8@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] net: tun: replace strcpy with strscpy for ifr_name
+Message-ID: <20250811180546.1bd97b0c@kernel.org>
+In-Reply-To: <20250811203329.854847-1-miguelgarciaroman8@gmail.com>
+References: <6899fde3dbfd6_532b129461@willemb.c.googlers.com.notmuch>
+	<20250811203329.854847-1-miguelgarciaroman8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DaDPZBJq=QWB.EGQY09Q2OW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/DaDPZBJq=QWB.EGQY09Q2OW
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christophe,
+On Mon, 11 Aug 2025 22:33:29 +0200 Miguel Garc=C3=ADa wrote:
+> Replace the strcpy() calls that copy the device name into ifr->ifr_name
+> with strscpy() to avoid potential overflows and guarantee NULL terminatio=
+n.
+>=20
+> Destination is ifr->ifr_name (size IFNAMSIZ).
+>=20
+> Tested in QEMU (BusyBox rootfs):
+>  - Created TUN devices via TUNSETIFF helper
+>  - Set addresses and brought links up
+>  - Verified long interface names are safely truncated (IFNAMSIZ-1)
+>=20
+> v2:
+> - Dropped third argument from strscpy(), inferred from field size.
 
-On Wed, 23 Jul 2025 09:45:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> The following commit is also in the arm-soc tree as a different commit
-> (but the same patch):
->=20
->   8b3da0519ae6 ("soc: fsl: qe: convert set_multiple() to returning an int=
-eger")
->=20
-> This is commit
->=20
->   12702f0c3834 ("soc: fsl: qe: convert set_multiple() to returning an int=
-eger")
->=20
-> in the arm-soc tree.
-
-Since 8b3da0519ae6 is the only commit in the fsl tree and the
-duplication is now causing a conflict due to another commit touching
-the same file, you could just reset the fsl tree to v6.17-rc1.
-
+Please don't post new patches in reply to old ones. Please read:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+there are multiple other problems with your submissions.
+Please fix and repost.
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DaDPZBJq=QWB.EGQY09Q2OW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiaku8ACgkQAVBC80lX
-0GxXWAf9Hohi3miKwerAUjseiUccCgRTs9/q+n5WYDNFtNc6BeWyQi03X6MYREnp
-Y8KowA0woFzw1BU4WTYywdflH1mdEakDfpdQpIbAtO+FXp5F+6Wg7UEzKl+EdO4V
-mUV0TXkB1gj8Jo2f1ctuC50f4LzGZDqYfnBryRqkmpdszvBcAE8MULchqwYmcrVk
-hlO7D+1/nof9BB8YoD6jStxcGvgcn78S1jxUYj1w1871yP8bnxNIM0OanJeubtwV
-FhV/ifsPnn/enEtVd/dWKmg9d+Pi+pjbfFU08m0rXIGpsworG4mzGshIoPzDPMQP
-uxkGM2Dia3jmWWGLJ45uClrFtYVkOQ==
-=cAi3
------END PGP SIGNATURE-----
-
---Sig_/DaDPZBJq=QWB.EGQY09Q2OW--
+pw-bot: cr
 
