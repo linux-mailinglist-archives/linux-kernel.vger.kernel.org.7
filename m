@@ -1,178 +1,230 @@
-Return-Path: <linux-kernel+bounces-764218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3518B21FFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBB3B22012
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E2A7A8582
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F611B6106C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AA32E03EE;
-	Tue, 12 Aug 2025 07:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585E62E173F;
+	Tue, 12 Aug 2025 07:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mRV72NiK"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012035.outbound.protection.outlook.com [40.107.75.35])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fob5rg5a"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B92DFA2F;
-	Tue, 12 Aug 2025 07:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985299; cv=fail; b=HLGvxhzCnDDhfQn6xYOPGWlwL4NuernOMPmedHrOQXwpVeFktKwqaIzGhLCUFFYnXgHFR9JklfC4byueyYdWnKdx7zPbSB5EC7iuMfnhiWrACsN/JuRSTJr3lvoLc6JXn2qOB7OCkqAaNaOtpdDBwQtmB+iFtrNL/87Nr1NQIeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985299; c=relaxed/simple;
-	bh=XsiOp5Z5D/mxAuADscuX4hK3Yk1NiPWmKY2NhRVOaIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ggItKVPhTlPOPaCGCmqHqH6Z44gTGG8h6HendPK4Im1/VOYbgqjjsZFAoJKW8ZHR7B4gHVEodiuM7sN+vl8k8Z+kpFuhRHuXBrwmTB9qXYmsmTXa7b6hNHNmZAItBmS2iXtWt7Jr6ddoQNS0z/szHgkZuJAuAcqeqPP4uwL4cmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mRV72NiK; arc=fail smtp.client-ip=40.107.75.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h+y5CMbf4PS0RMrdft9gp6aKgyUSkzhMLH8I7Liq3CncfsqVisBR6nVTUmkcsS026jafq10EaxMBzJPIgsEclVO+cdXHFs0Y7GL3pAOphubFOHgKuJ3ZG+q1I7qIDQzjpLKK1fzh5/IdtIfUVdX5kXNcfKqSV67aE590OKC0aI756etfzoao0gcFdmF0gOKcgTluiF04duQwU33fEfaDdxhsXha+mizyUECIcPUSggkN+VAu5IAzA3xVcjuQyMiQYILsiIXEQ0/I8lpGIx3nGXaXz7yO9GGeVRJCAS+VvV17ute2OhwRvvv6HW4igXySbY7O5eafE8RSFEnaH6hr8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AGVKkSJ9UgUDhfoUmPFvfv6z7FnbLf9xMosbGqJn3es=;
- b=rGX8RN4uHjfWjcn1kntyGkY6bdJDYAnOSaJldRiiNLUD/+ZnfDLmkWUmD8wr8SKuazVhrn4r1u71UhXgn2RTtIKdp7qMeSZPdOiPDkSnHS8IVDBGKcWw7pZ3y9lXiEKVXX+rFu8Mgo+2bJP7ab3+z5LALAi+NoXi23SO1HrVQmJ+2uXxTAXMQ3JtOiD+Ooqkxp5eKGxwNM1OScSpKx9/6x3S70BMMBty9uGas/pdnpv/shKnvQOQlsQChZtWZVIUrUkXwpwGgS39YxORU219Mxukh9m/1//c36wROjaCS6nJJQZPAs479TVaxSCrw89vk7xsFPpFxwxACaudQnhHlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AGVKkSJ9UgUDhfoUmPFvfv6z7FnbLf9xMosbGqJn3es=;
- b=mRV72NiKBbFvqMgn0ljUVb+0rRPz9iadZB9XqDHRln/nXIQ6u05Szxl626QqCcnxCWNA8q9wDRWql5t9vHxZlovU05r69weBB0bFsucwhH9s2MaOMM7xnNMSzEmej894HifyOfSYVwyKNNZD4yUJUpyq2xwCgxntCcdwpwVAzPFmDyCUXFVXMea3IpL5Zju3nTEbiT7sQpKykRIzeZbRCcVdNhPBOWJa7VfvPeePI4NKggmt9Xe7BfgFA9icno8rL5l2hoyuU/7BSiaY5AchOFEO4jpbxwnttdCJ0q9sBU6oojqSq8QC0H01ZSSeXKoFgGxkOrvrQbd2RoPZBSvZKg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SEZPR06MB7263.apcprd06.prod.outlook.com (2603:1096:101:22b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
- 2025 07:54:54 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.021; Tue, 12 Aug 2025
- 07:54:54 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] pinctrl: equilibrium: Remove redundant semicolons
-Date: Tue, 12 Aug 2025 15:54:44 +0800
-Message-Id: <20250812075444.8310-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYBP286CA0014.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:ce::26) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E8D2DECD2;
+	Tue, 12 Aug 2025 07:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754985339; cv=none; b=YcGuhlHzGBGXu87JYPSX4/Q3bz3XHIRGRq4P6RmHNrVqcNBuDNYlQwm4GtWosvXf7Xy53R0WcEuFXP5YFN/GuZ1anMuDJyxsEbgWIaio/RUuJpGt+QIqbyZ+Dy2dsGpFOEB5F3tJSF/GIS6vAjtEeleN8bvUI+DxPP6JJWYcq7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754985339; c=relaxed/simple;
+	bh=WR9zbpUeW6K0+9bkN6ytzYWgRt4/+A1lJKLEW8A3NVk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=N2ocLEGxxY4NOSmCAjmXP0a/92GJdiWR9l6kBxEFcJoxTAlsSXaHOLbgFRVFNXqubEbPSarO3Wir/27ny/BrOXgD8aLQFKfhhKBIofwb3Y8F8cbKAHt+EOTtguNedsxvSTFdwMO5PEFt3Im0mPRGJ/7o2LK28h7/b6WHnAGFY0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fob5rg5a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5C0TM013114;
+	Tue, 12 Aug 2025 07:55:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eqJxD8M3VSm8TRe08EtFgf0a8BABKU7/3MGq4jGw81Y=; b=Fob5rg5a9O1rOQCG
+	01j9YOL2lm6zU0ioWeNYODp11qiRxhDvUBDuVsSRJ2Nros6ucHBXS4nNKOyoxEMl
+	DNoWvbnyVeMopgqua6bOSzJ/28fJm6bg9A04LGgYp6yatlK5XVgYw9bc4t5lBtrR
+	MKbmnZTT2o/BHCpIMt7sUnS56W9REavtadmByC2vQ9xOcqU4xEoAaq1smbpxxuuE
+	/+b8QoVLG08zvCqoz+cdAzVjUJe2S0reUq2iX/30ltOIQsGiLJspjbIyoqX09byO
+	WPTBTGGJIUL1tEniplkOOecMzzPeYvn9/UQobembLh3zlTxZDwqX6uxVQ6cj88YS
+	B49Urw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmqe5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 07:55:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C7tR0p009638
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 07:55:27 GMT
+Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
+ 2025 00:55:22 -0700
+Message-ID: <2d6af3a8-059d-571f-359f-aaccf93f033e@quicinc.com>
+Date: Tue, 12 Aug 2025 13:25:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB7263:EE_
-X-MS-Office365-Filtering-Correlation-Id: e6c3601f-4497-42e3-a5c4-08ddd975864d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZajPnSfb0K59JjWcFP388LBsVaIbSZuk+aaNCyQM+WiY4MHfpEfTVDg2Fwnm?=
- =?us-ascii?Q?D9CqCVhHClRPbjKmoideujsFQgxWcNT6AM3Nv5A0wRHFn3E+uiv4tSXfGCZj?=
- =?us-ascii?Q?lrXzq8ds7mqVHlUmJZF2flAmI8HnFqVmI7D483ir0p/ipBgcMPIZ5bIHFQYw?=
- =?us-ascii?Q?V5lvw+bYK5Zf3qxzHv1dv4ZusiMZov+bG6hnVBcvsjR/yVUfnVTJFGCgYxt3?=
- =?us-ascii?Q?4PCvW+JOEz+zeV4KLSUqWmf4lujVwTIa+e+lSQnva3Slb70ehf0nDgK9o74V?=
- =?us-ascii?Q?2crH9e3gc33vA/OPZQlY7ppIYoa+n9yTB7dWz58PmSlu2VnexBQCLvZy+wNp?=
- =?us-ascii?Q?IBalBZe+NrwA5t+dYmGLDpk6rgRhhtY32zL4pKsn36GW9tkwn/YsTNJhikZg?=
- =?us-ascii?Q?TdiMnxxv38QvJ+PH+aZ2ef1oBCCZohS4DUegDtrCf+sWfCESYIr/WzgF0we6?=
- =?us-ascii?Q?ZOjbsPo0Na0WUKndU7W9L/KNCAyUXsGqJyH0SKU9Nac6y86m+fFFVJ4cWmoD?=
- =?us-ascii?Q?jfxULABaflirQOjipFvdjvQ+Pfpv6b2RPTGZRyNodSOtz5JkbITTKN0taopp?=
- =?us-ascii?Q?geV8/595Gl51oQPMN6fS+tCDzDwhIyFK3rXrn053svVlAN/YwYkGCQuCIGyv?=
- =?us-ascii?Q?IOi0pxLXKAgCiaTgmlSoO5VmP7ZMDQN2g1KyUZvHNbsERMQpGSlWdftDfHJ2?=
- =?us-ascii?Q?Ny+X4Y6o3CKopzSH4rhIJet3jefxF+dFJsh6hIN43SNBBB/a0uL0nwP99IG1?=
- =?us-ascii?Q?987DgJDjJyEiDHacX2Hsgnq11aVOUiroagllEKWY0cIZOMlWnETtPv3rzT6Q?=
- =?us-ascii?Q?4wCUKiBMoUhiE65ljABGA47BYu1q7HdrqugOWR3PcftCpYtAd5IVAPXClUVT?=
- =?us-ascii?Q?+r7NYuL22bLzbQCCm7GYH+/DK5mF2FB+uQKh1EoHEzDR5ySSqM2p5VDJn0Vy?=
- =?us-ascii?Q?jy7Yn2ZXeiyXmZAwnVwew65VZlGMOftHk5cCiwWP5zKNkoRllDDxzLQis8hk?=
- =?us-ascii?Q?KrnCaI22mEw6XN3xQsj/Wdy0K01ukbfDnMVTmUeuHJMIEHKM9A9qLtxu29ea?=
- =?us-ascii?Q?xKUvcyhRTxiHEgfOF7VuRg1DrNPHgMnJQSLQgBaWxvp1xrsF9aRHatre9xHk?=
- =?us-ascii?Q?ByP2aQgs1Wy0GCatv8tl2y+5UyHad2sEz3DNF85eZY0rUfvOB8UT1Q6kKQ8u?=
- =?us-ascii?Q?TR+LGJtkTWAzMYXuC9QZX3USD8y+kIOtJxz+BFp1mNdZdGophDg2i2BKL1f0?=
- =?us-ascii?Q?7rHsRq05PHKU+dZPq3hutxgl8iTxbiow2NPIuVMu+tVsj3Em0DcK8/0PTet+?=
- =?us-ascii?Q?vQTHvpiAnOQpJIpkN1m9StnwEfgvzxLMBDLTUolnZ8G53mKrJBrA4MW6sSsd?=
- =?us-ascii?Q?t+dbFuuilUa5DY6WVqkJKPMR4to81nBxPN1Q11+SXqxv+biVRbjSZq5eqHmU?=
- =?us-ascii?Q?yHRmq4tpkiTcuDWlvproou4Fp6/Q7fmIdX2cdIqJfAh1v5avvMtKBQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CJlHidWP9Hfm7fdE3HJ6j5b+1S7xPASHO0FrTyIQOBm2biP0AXi55i0E8nlP?=
- =?us-ascii?Q?bJ7gYyxqab5pSKQWiyAl5vs7ebOU7V0/UqSbHbyHf64R/elfEq/Yx4PB48lE?=
- =?us-ascii?Q?ovwcu+jkpJFx9ULvct1aOkUxqAKr3QYmdUjeVYBRXDOTLTMqa0ohV6iM8p8J?=
- =?us-ascii?Q?DS7CIlwuUQOS2KNy4FBSoqBbXtlHCoqNZaW9aqJZSvfuYvcib4Sh3MTpeiZP?=
- =?us-ascii?Q?LAoTjdjjomEGc2j4vLui5770IhrxlIdd+jFjdfFSMdImLXkr8m/WRSTw7vmN?=
- =?us-ascii?Q?TAfxhFK5HTivTAn2hsMUecd/n/4+udC16FQXX6bmp4CwusgJ/MSf2HmxtZSO?=
- =?us-ascii?Q?xfTQb4rOZfSM8UTrcYCiddGltJDnAuLguiXJqzyIfPFhj4JY5H9kJflQazcN?=
- =?us-ascii?Q?cejh2TgBaQbaxOLb2sCsVi7KvfTZa8FmBWPTtxpA1mOotwL/H8f6Vy2ggJEc?=
- =?us-ascii?Q?UXNCNy9kgtbm6O4J6SM8Qejdee57RfLqBt9GUZxzxwUZGM/sQc553AobQ4fh?=
- =?us-ascii?Q?QBkPZ7fOK/7wybZN2RDrFaFMMmVmihMl1E7V3bXgk4RYPUKmo4i5aclEJPhg?=
- =?us-ascii?Q?Gu5cZMaKL2i/TQ/YmmgODQC8fuTwEXeVIOv+nR9ZZkR8SLCPG2ihXrcjU5xd?=
- =?us-ascii?Q?L0vmtvFUwTzmjCDV62m/l1jF268Il7hzxHV7olDbPkUG6/9GJVGnzmTb29St?=
- =?us-ascii?Q?g2ieoPLhjGMPI5cam3iQ7ZRrbGHZSfmxKXTIGz4liEuzf+odTEB4k6NKX/+p?=
- =?us-ascii?Q?r0ot38Bp9RUWVAKS72EVHc5LKgCTTEGwnZu/Zc0pWI6x0lxj7rR16J4XC5Vr?=
- =?us-ascii?Q?UkHSwfM/LG/+Gp27PjDg5jJxU7Owj/7DH1h2+qfbKSO4j00kSqgsYU/TL+j/?=
- =?us-ascii?Q?rOVf9kIN62vbC0Za5fRnNi7nPbgRRhte/duRvWTkvprWHVImLz+NfBc+/CUB?=
- =?us-ascii?Q?rEthJABAFMaIH63mEeEQ4tbYpdkPBgct+MgL5T06eU8fM/0G7BlCIFk/r8hW?=
- =?us-ascii?Q?t9hZpI1N3AORasQ+Cic9RFNfglbUGSrWnmnW4W/JDOenjD9UR6J2tncyPvWx?=
- =?us-ascii?Q?N1tevOCqIEK0J7sj7vn34YFDCJv+AYKtL86ryzPTs3B0Vs3lp7fohcdZ1ldd?=
- =?us-ascii?Q?rU5ZZqIxpEe8+CBh9mCNY/J5hnwk+mIdmFx9cnMrWjIMv7E3nk914wj4QAOA?=
- =?us-ascii?Q?BDgWGLfSmunQXWqARldqffnIDCnSIo8HKHF4MKczx2CkV57D48F5qBmsPt/+?=
- =?us-ascii?Q?X0qbXYovJFqcaWoDckJTmusYzFrFO31+BK/sRGDhSp1TiiMyX7jfDmJOyJz0?=
- =?us-ascii?Q?Qsa8cT5f31/5zTbj5xT+YEtVFsW4GAo4pqQIc4z5pTtZQO0bDiJ8ykgo2Ptb?=
- =?us-ascii?Q?4zsNO8dpDNuaUeZAMjWwc0m0wpztj7MW3yLusvNsvjPIYUzmVfPiHPkim8u7?=
- =?us-ascii?Q?+IxpzEEu0ntCIbxqKLXIp+yPXxMY8KtwhtyIM2zEw7IglpKWThZqmWRGAtKN?=
- =?us-ascii?Q?LomlCCy5M92vQo4MIJ6TS9l0JZFs5Bv5RxIJNw9Nv4JbL9+oEy2aPDfj/9V0?=
- =?us-ascii?Q?bprylKgkidsyfoLeQWysyGmvRtldbClmuArXroFw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6c3601f-4497-42e3-a5c4-08ddd975864d
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 07:54:54.6421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1Qy6qnl10otTezTDWrNgE4rqK3nVWAIZf4/I2g0ySSN2W1zw7MayVrJsBWtFqC4IQCXcQ2rN4KT5FLO9tZ6Vmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7263
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Subject: Re: [PATCH v2 2/3] media: iris: Split power on per variants
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <20250804-sm8750-iris-v2-2-6d78407f8078@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250804-sm8750-iris-v2-2-6d78407f8078@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689af370 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=bSX0Cy9lciFp89yyxH8A:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: YvsYy9qsnHrM09QnmlU9sNXsFDTjRYIR
+X-Proofpoint-ORIG-GUID: YvsYy9qsnHrM09QnmlU9sNXsFDTjRYIR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfX5SrdkHsPIBQU
+ YldRuz3zjS5Yw2Fu+Y+HM3If5j4sivBnonUnRFR1qpW+s5DhP6PW0G9SUZ93OYfyKLOCcvq+n2y
+ 5rtV+2AS9AIkRYN4Izj9MCVSqFt/btWJHkua/4cuiOZ4v6FPvWwYdrvezoFGFNSfojzv4jvjapo
+ AcykrRQ5aLkmSpf6OB5Fz02CnixPs/YY8VfEq/q7YBXTjpBatr3oxXUm5HLa6VEJvrpNM0T08mX
+ L+NjSRXh1A871dZ1MZLK5wV5Aab1vIw8OvLqwyIr+mJ0hpwQtcjlaAhQaVmOOsAnkSP6SRS0R7b
+ kNo4dokeC7QHpyG7eEI8WGGfnNVXYvmxDjyTEMPtFU0Uy64zhGnaaeOlGVB085dL5xKO3hkuuJ/
+ RDsjbFWv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090000
 
-Remove unnecessary semicolons.
 
-Fixes: 1948d5c51dba4 ("pinctrl: Add pinmux & GPIO controller driver for a new SoC")
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/pinctrl/pinctrl-equilibrium.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
-index fce804d42e7d..f449576488d9 100644
---- a/drivers/pinctrl/pinctrl-equilibrium.c
-+++ b/drivers/pinctrl/pinctrl-equilibrium.c
-@@ -439,7 +439,6 @@ static int eqbr_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
- 	}
- 	raw_spin_unlock_irqrestore(&pctl->lock, flags);
- 	*config = pinconf_to_config_packed(param, val);
--;
- 	return 0;
- }
- 
--- 
-2.34.1
+On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
+> Current devices use same power up sequence, but starting with Qualcomm
+> SM8750 (VPU v3.5) the sequence will grow quite a bit, so allow
+> customizing it.  No functional change so far for existing devices.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/media/platform/qcom/iris/iris_vpu2.c       | 2 ++
+>  drivers/media/platform/qcom/iris/iris_vpu3x.c      | 4 ++++
+>  drivers/media/platform/qcom/iris/iris_vpu_common.c | 8 ++++----
+>  drivers/media/platform/qcom/iris/iris_vpu_common.h | 4 ++++
+>  4 files changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> index 7cf1bfc352d34b897451061b5c14fbe90276433d..de7d142316d2dc9ab0c4ad9cc8161c87ac949b4c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> @@ -34,6 +34,8 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
+>  
+>  const struct vpu_ops iris_vpu2_ops = {
+>  	.power_off_hw = iris_vpu_power_off_hw,
+> +	.power_on_hw = iris_vpu_power_on_hw,
+>  	.power_off_controller = iris_vpu_power_off_controller,
+> +	.power_on_controller = iris_vpu_power_on_controller,
+>  	.calc_freq = iris_vpu2_calc_freq,
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..c235112057aa7b7eab1995737541b7a8276ff18b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> @@ -264,12 +264,16 @@ static u64 iris_vpu3x_calculate_frequency(struct iris_inst *inst, size_t data_si
+>  
+>  const struct vpu_ops iris_vpu3_ops = {
+>  	.power_off_hw = iris_vpu3_power_off_hardware,
+> +	.power_on_hw = iris_vpu_power_on_hw,
+>  	.power_off_controller = iris_vpu_power_off_controller,
+> +	.power_on_controller = iris_vpu_power_on_controller,
+>  	.calc_freq = iris_vpu3x_calculate_frequency,
+>  };
+>  
+>  const struct vpu_ops iris_vpu33_ops = {
+>  	.power_off_hw = iris_vpu33_power_off_hardware,
+> +	.power_on_hw = iris_vpu_power_on_hw,
+>  	.power_off_controller = iris_vpu33_power_off_controller,
+> +	.power_on_controller = iris_vpu_power_on_controller,
+>  	.calc_freq = iris_vpu3x_calculate_frequency,
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> index 42a7c53ce48eb56a4210c7e25c707a1b0881a8ce..6c51002f72ab3d9e16d5a2a50ac712fac91ae25c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> @@ -271,7 +271,7 @@ void iris_vpu_power_off(struct iris_core *core)
+>  		disable_irq_nosync(core->irq);
+>  }
+>  
+> -static int iris_vpu_power_on_controller(struct iris_core *core)
+> +int iris_vpu_power_on_controller(struct iris_core *core)
+>  {
+>  	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+>  	int ret;
+> @@ -302,7 +302,7 @@ static int iris_vpu_power_on_controller(struct iris_core *core)
+>  	return ret;
+>  }
+>  
+> -static int iris_vpu_power_on_hw(struct iris_core *core)
+> +int iris_vpu_power_on_hw(struct iris_core *core)
+>  {
+>  	int ret;
+>  
+> @@ -337,11 +337,11 @@ int iris_vpu_power_on(struct iris_core *core)
+>  	if (ret)
+>  		goto err;
+>  
+> -	ret = iris_vpu_power_on_controller(core);
+> +	ret = core->iris_platform_data->vpu_ops->power_on_controller(core);
+>  	if (ret)
+>  		goto err_unvote_icc;
+>  
+> -	ret = iris_vpu_power_on_hw(core);
+> +	ret = core->iris_platform_data->vpu_ops->power_on_hw(core);
+>  	if (ret)
+>  		goto err_power_off_ctrl;
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> index 93b7fa27be3bfa1cf6a3e83cc192cdb89d63575f..d95b305ca5a89ba8f08aefb6e6acd9ea4a721a8b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> @@ -14,7 +14,9 @@ extern const struct vpu_ops iris_vpu33_ops;
+>  
+>  struct vpu_ops {
+>  	void (*power_off_hw)(struct iris_core *core);
+> +	int (*power_on_hw)(struct iris_core *core);
+>  	int (*power_off_controller)(struct iris_core *core);
+> +	int (*power_on_controller)(struct iris_core *core);
+>  	u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
+>  };
+>  
+> @@ -23,6 +25,8 @@ void iris_vpu_raise_interrupt(struct iris_core *core);
+>  void iris_vpu_clear_interrupt(struct iris_core *core);
+>  int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
+>  int iris_vpu_prepare_pc(struct iris_core *core);
+> +int iris_vpu_power_on_controller(struct iris_core *core);
+> +int iris_vpu_power_on_hw(struct iris_core *core);
+>  int iris_vpu_power_on(struct iris_core *core);
+>  int iris_vpu_power_off_controller(struct iris_core *core);
+>  void iris_vpu_power_off_hw(struct iris_core *core);
+> 
 
+Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 
