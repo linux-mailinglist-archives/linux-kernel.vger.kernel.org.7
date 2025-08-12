@@ -1,362 +1,139 @@
-Return-Path: <linux-kernel+bounces-765341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED91B22EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:21:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83599B22EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98253BD1DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82522161522
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875C62FD1C9;
-	Tue, 12 Aug 2025 17:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E692FDC2C;
+	Tue, 12 Aug 2025 17:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qyt9hHwm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/6HJJDY"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE872FD1DE
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB632E8895;
+	Tue, 12 Aug 2025 17:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755019219; cv=none; b=lL6nmnD+GgoZxtrxMDLkyQVnlB5E4+6datVtuhYry41uyGojqi+/d/CHtaX0CALzGTRjBMGyQw7xpMFplolNEFVFNzpCiLzT7rB2RQC8pPOyxuKekGF7cZoBTNTRDYp+kkuBuSL2y31+seb/TG8pe63EuA70jpdsXAO7b5F945w=
+	t=1755019289; cv=none; b=eEIj1M3C/Wps5bOYYXtEr1u77+ddpKgBo8clHQuxceKGPZ/nA+d7JsW654ASqZRwbc+kB+GpUUCMj55SnMMXd+zoaywbqx1fN/jzmShATHKpKWSR7npPtnrnv5arwkmvnXJYY7BzuDGaIsK6qUESyS8gTJf/ejFVdv1hnDm2sAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755019219; c=relaxed/simple;
-	bh=lYfvyK1xMFjnRLWau7Rs0JMTOBTpI9neUTXQE7hRiz4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=GWZxX5dhbWUWTB8q42izCLlNQgc2yywnoxfH527f/YZWMEIHP64EUuZmjKb8ldQQ+WLCEHJ62MFD6epSsnTHCESxuJtBrAkk6eu4HycaHfHluCULI7RlbnVq/5VtDuhAkLFjWL357OQp9GN2ZuN+bG/QYfnMibRdbu0m4qEmi20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qyt9hHwm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755019216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YlIhq4XvEAg19h097ofLj7fvRaPeRop6IC9VxAfNAOc=;
-	b=Qyt9hHwmucr7j96hfkyGEaW14yNZr9LE5JBg4V+7Al+xX7R9QProa8SUpF3rPLliLAjNf2
-	4dYF41qUGggZJNjUrTJHJWTknzR8YtdwNXpPQhphUw3Ap5mOB1MAoDeXyNKcX9kB2Iwzvn
-	ki3uiNcPTMN4BBEFZsJkYfszACeYbo0=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-20MBiwleMqmq-c5qcx3QHQ-1; Tue, 12 Aug 2025 13:20:15 -0400
-X-MC-Unique: 20MBiwleMqmq-c5qcx3QHQ-1
-X-Mimecast-MFC-AGG-ID: 20MBiwleMqmq-c5qcx3QHQ_1755019214
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e7fc5f1e45so1192247985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:20:15 -0700 (PDT)
+	s=arc-20240116; t=1755019289; c=relaxed/simple;
+	bh=3tier0us37SQg9NvU0fXoUfnzhLWQCIG9q9OBNM7f/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SOjMvCri/e5FlRQ+VK53mre72mpBhPzZz5iO/BzfoPSkKliH1otawzHhS4ISzjwzrP3eSbGsT/VQbogyrqCNmQIww2wymrUkCVkrt6RdLIqoQkCrQ4KXWT2pzNOi/Ol09ek22Wwhg0HXuznCyBwecGWzHUGP867Vr4XVaHtQY+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/6HJJDY; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e7f9bba93fso681948085a.3;
+        Tue, 12 Aug 2025 10:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755019287; x=1755624087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDwQUm3sZV03381lhrKBeQ+SKs2Y/6ZfkjM7dKYqOtc=;
+        b=N/6HJJDYsPndFYRR7Tcw2bzha8LWl9PGKG2E9fmeXTTDnUPq5T4fSlmPPmgVddwwDu
+         OBTh1TX3fYD7Bac1HPnKCDkpU7QIYMF+l6IjUrVpcFo7FeuhCOaH2VVST/mB/ukR3mGs
+         cWz9m2G3wiewW+cxZfkwS5xc0WE8CL+ZAHlGSfqaVe3aI5AFRIhZ47CEDjAeP2EeZaL3
+         t73OFfQpNb8Mr8RfNie+IvWKKqY8YpSuDwRKqOBMAz/RKkXF67SICI1jkDDdXuz1R4fS
+         jUOfsO+VCEarWKwkz1Z+M8VtLhoMVWr4I7jtBNMaqR40tCd0RFff4xGh+zSSX8xh6nJZ
+         aZ0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755019214; x=1755624014;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YlIhq4XvEAg19h097ofLj7fvRaPeRop6IC9VxAfNAOc=;
-        b=hfuwHXJLLvMn+uZXjUBzZNxZIdnVN4Lc0QvPBnCaIN04Fg797luVMm7RDf6sYp9j7X
-         NZTtqLTfBYERxBpV6OHYkYsQmN2hX2FYwZtlDrKHhrcer0+DJz4lV5RU+T3/gVemJj3g
-         QScAaHlVdEQ0vrwt7PpZeFv7/uQvrmAwTAwgbpgOlQrng8npLG4h/fbzo3nKXEEWFZpB
-         b6OKHs6qQiSfv/DH/q6nK8y1/stjoPfjsBH2qDiTFqIu05veVconhSeIAQ5lT4ZvIV6B
-         M9wgKUTpAgowC9XSXP/ESiRghA2X2LbS7W0VHMNF6GSECQIRCYkJ2QSVF+MMXy/nWZvQ
-         CP7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSeDHpWwwAZDK/OIPyMvDGupMH1xvz0yk5OIar7PWkXpQiRT9pNjoppbWd6ZLXX+iUiBbJWO8k+Azhgmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE+cEaTndwwwaBJD4lXuZD7MwT8VdRiqNSMYglaazYSVIOuimZ
-	1TlfUpCXdhOueCkSBCIe6OuSboPrfnLRXqE2Mr7OjDDFeUIqRIEeemRsQLlr31nVC2MRYY3xMOn
-	TtWeLyzumEPqnDltBFeOYp6LvHRQXb3qLVLGPgxyI5IQkhBoGHFEuhgGx1liBJHcUpbUrL/v1+g
-	==
-X-Gm-Gg: ASbGncvEibSlA3qAxr5Fu5FS7cVtBYIoLJhwwUzAIL7GUtVwrmdJ1PXBfZZw7dcRcIN
-	dYkVbSCGsWr42frA0tXI+fblaqyzm2kBupn0i6C0CHhNs7T62RJl42R/gxOubjzOFyfOLd+tCS5
-	TyvJ1uXmUR0LMzrgsydlxl7epibFxixUSEAaJy8EnJra0G6U1Tvo5tZJeVKoWafMfGcDCadMu8o
-	OoCGdJcztU8D1ESVVE+G84dfz2ehwfXNPIMAyZVUfeXYP8SSLmcYFiJ3JF3MjSd7ZWLUWDqEGbH
-	IzlLW7pI3/C5hHIA5sq/ttu/JRT/ptukO8LnQgBT4Iryhz6c6iTGm4o9J5NuOXhG7QdBO4XG+p5
-	9gc+2FtNAzg==
-X-Received: by 2002:a05:620a:4e04:b0:7e8:63bb:86a8 with SMTP id af79cd13be357-7e8646349dcmr51226985a.58.1755019213977;
-        Tue, 12 Aug 2025 10:20:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE8TOUtUKcQLFFi6qYb6Y1plR84ZE9G+5Cvz2NkMPx3tJSEVYO8cprLBhaEzG8ci6vHXGVMA==
-X-Received: by 2002:a05:620a:4e04:b0:7e8:63bb:86a8 with SMTP id af79cd13be357-7e8646349dcmr51223585a.58.1755019213294;
-        Tue, 12 Aug 2025 10:20:13 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5947e9sm1796627585a.1.2025.08.12.10.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 10:20:12 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <4b99074a-af21-4d14-b995-a4e62275a62f@redhat.com>
-Date: Tue, 12 Aug 2025 13:20:11 -0400
+        d=1e100.net; s=20230601; t=1755019287; x=1755624087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lDwQUm3sZV03381lhrKBeQ+SKs2Y/6ZfkjM7dKYqOtc=;
+        b=ZOIjzsCyGvRTjw17Y52RkypJ/gqpL0WFKW/nrWLrKDX8TZXy1q2bLmaQcRNout5iI6
+         cvwcc7blu+FZYxU9CXxxMt2PxeilaXatD0R5WrQhR9eZH9ODQeFe6tKlBnkuLKpQ5ope
+         L1bOLzRTpeyc6+NgIdG0tdXdBXSfKRJ8svSPKtSNiQQRKY3I2c/KvWhlNgyKTnCvInKv
+         PXtAkvgYW/KIOt6LuQ8O9/zWen4lCQhEEY90Hs7gCOia9awsuX7ENXIel9whc2zmE29C
+         HrCXS4jLcTE5bVeF7kCzs4GyqowjHTq29AIzFklxDzIlqLtbk58lDUchrXZD8Wk7IU/c
+         Of8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1vnfOujp2Iz6JutjlBgijHgzDAt6FayeI6cU1KyBZha5VrT8g5RwE+WT/qjCB+c5KjytriarDmCws6aUuJsT9CER/@vger.kernel.org, AJvYcCVNbz0wHaWpEmglMCriMdrgVloMG9Jd5XRzsC9AkGy/13dwu2vXfCy0wsRjvo4LOamYd7AHnFF4UtJWsqVz@vger.kernel.org, AJvYcCXMWL7x9t19vS7e6CiA7vN1eE9AOMcxDiHSRAfK5KtLD8GyLtyKkfNDAyzy6woa6pwHELMT3HoIhuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEvQgb1xwsOdY4uokqafB6vdUrnv5NTbLzsUVy8d5rkRgKUAMe
+	Z2Rd0nHZlYDiLXpwDe6py2AZ+jTr/KIAVrYdzkGYLVrm2q12crE/III4
+X-Gm-Gg: ASbGncszqPqfDEjFpqR6DIm7dNLfCSNAvaz0xr9dDYPSIr2xa27gFwePz3ROdo9ArdN
+	yYEnYzkr5drLS/e7Ya0G4H2Phtuv4SwN2zvmBzkWG+06CPWlwHNxgUzpAFYnFJc7f/48AAtm1Uk
+	6g4unnSj5KlQVnbSCZZmCjQffCQWlBwqC+L+aT3PENkV7DsQvJdO/mFhlMQIfzdnC3ZzK6wYiIM
+	ZXZ+bQe6aq5NxhcS/KUXsM97yC3v08kWRcbHPX6oVsR+w2UogBjY4wLUMT1It6LwKpsfN6JXNhG
+	SdTmCjwh4k1zPVhNpT/6N/qLz6+SWIGkZgfDNLgkFcAG0Ek1yOntB1/qKxE/QkIysLMCo0fQaAQ
+	+kBTplAUxO2KLQz0LfuYcESamYQwHk6aF/79hwrSFpdc/cqjglv6T2i6h95rSJXn2sGXjyHjMQ/
+	8mntnyE4YcR7/y
+X-Google-Smtp-Source: AGHT+IF8AVDYC/rOYxa9bUZ9toRTeHflbFY1OCIB3N09BoqVOFDSpMS621QvkibEM1+jcr2A3RmQdg==
+X-Received: by 2002:a05:620a:4083:b0:7e8:14f2:174c with SMTP id af79cd13be357-7e865297232mr2423085a.24.1755019285922;
+        Tue, 12 Aug 2025 10:21:25 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.mynetworksettings.com ([2600:4040:530f:f000:a841:61f7:aa1f:bc8])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e82a1ccbfesm863457285a.51.2025.08.12.10.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 10:21:25 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: rostedt@goodmis.org,
+	corbet@lwn.net,
+	tglozar@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>
+Subject: [PATCH v2 0/3] rtla: fix cgroup and trace options parsing
+Date: Tue, 12 Aug 2025 13:21:05 -0400
+Message-ID: <cover.1755018581.git.ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] timers: Exclude isolated cpus from timer
- migration
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250808160142.103852-1-gmonaco@redhat.com>
- <20250808160142.103852-9-gmonaco@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250808160142.103852-9-gmonaco@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/8/25 12:01 PM, Gabriele Monaco wrote:
-> The timer migration mechanism allows active CPUs to pull timers from
-> idle ones to improve the overall idle time. This is however undesired
-> when CPU intensive workloads run on isolated cores, as the algorithm
-> would move the timers from housekeeping to isolated cores, negatively
-> affecting the isolation.
->
-> Exclude isolated cores from the timer migration algorithm, extend the
-> concept of unavailable cores, currently used for offline ones, to
-> isolated ones:
-> * A core is unavailable if isolated or offline;
-> * A core is available if non isolated and online;
->
-> A core is considered unavailable as isolated if it belongs to:
-> * the isolcpus (domain) list
-> * an isolated cpuset
-> Except if it is:
-> * in the nohz_full list (already idle for the hierarchy)
-> * the nohz timekeeper core (must be available to handle global timers)
->
-> CPUs are added to the hierarchy during late boot, excluding isolated
-> ones, the hierarchy is also adapted when the cpuset isolation changes.
->
-> Due to how the timer migration algorithm works, any CPU part of the
-> hierarchy can have their global timers pulled by remote CPUs and have to
-> pull remote timers, only skipping pulling remote timers would break the
-> logic.
-> For this reason, prevent isolated CPUs from pulling remote global
-> timers, but also the other way around: any global timer started on an
-> isolated CPU will run there. This does not break the concept of
-> isolation (global timers don't come from outside the CPU) and, if
-> considered inappropriate, can usually be mitigated with other isolation
-> techniques (e.g. IRQ pinning).
->
-> This effect was noticed on a 128 cores machine running oslat on the
-> isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
-> and the CPU with lowest count in a timer migration hierarchy (here 1
-> and 65) appears as always active and continuously pulls global timers,
-> from the housekeeping CPUs. This ends up moving driver work (e.g.
-> delayed work) to isolated CPUs and causes latency spikes:
->
-> before the change:
->
->   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
->   ...
->    Maximum:     1203 10 3 4 ... 5 (us)
->
-> after the change:
->
->   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
->   ...
->    Maximum:      10 4 3 4 3 ... 5 (us)
->
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->   include/linux/timer.h         |   9 +++
->   kernel/cgroup/cpuset.c        |   3 +
->   kernel/time/timer_migration.c | 103 +++++++++++++++++++++++++++++++++-
->   3 files changed, 112 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/timer.h b/include/linux/timer.h
-> index 0414d9e6b4fc..62e1cea71125 100644
-> --- a/include/linux/timer.h
-> +++ b/include/linux/timer.h
-> @@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
->   #define timers_dead_cpu		NULL
->   #endif
->   
-> +#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-> +extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
-> +#else
-> +static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->   #endif
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 7b66ccedbc53..2e73fc450a81 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1393,6 +1393,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
->   
->   	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
->   	WARN_ON_ONCE(ret < 0);
-> +
-> +	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
-> +	WARN_ON_ONCE(ret < 0);
->   }
->   
->   /**
-> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-> index 0a3a26e766d0..07b63be18f83 100644
-> --- a/kernel/time/timer_migration.c
-> +++ b/kernel/time/timer_migration.c
-> @@ -10,6 +10,7 @@
->   #include <linux/spinlock.h>
->   #include <linux/timerqueue.h>
->   #include <trace/events/ipi.h>
-> +#include <linux/sched/isolation.h>
->   
->   #include "timer_migration.h"
->   #include "tick-internal.h"
-> @@ -436,6 +437,23 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
->   	return !(tmc->tmgroup && tmc->available);
->   }
->   
-> +/*
-> + * Returns true if @cpu should be excluded from the hierarchy as isolated.
-> + * Domain isolated CPUs don't participate in timer migration, nohz_full CPUs
-> + * are still part of the hierarchy but become idle (from a tick and timer
-> + * migration perspective) when they stop their tick. This lets the timekeeping
-> + * CPU handle their global timers. Marking also isolated CPUs as idle would be
-> + * too costly, hence they are completely excluded from the hierarchy.
-> + * This check is necessary, for instance, to prevent offline isolated CPUs from
-> + * being incorrectly marked as available once getting back online.
-> + */
-> +static inline bool tmigr_is_isolated(int cpu)
-> +{
-> +	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
-> +		cpuset_cpu_is_isolated(cpu)) &&
-> +	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
-> +}
-> +
->   /*
->    * Returns true, when @childmask corresponds to the group migrator or when the
->    * group is not active - so no migrator is set.
-> @@ -1451,6 +1469,8 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
->   
->   	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
->   	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-> +		if (!tmc->available)
-> +			return 0;
->   		tmc->available = false;
->   		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
->   
-> @@ -1470,7 +1490,7 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
->   	return 0;
->   }
->   
-> -static int tmigr_set_cpu_available(unsigned int cpu)
-> +static inline int _tmigr_set_cpu_available(unsigned int cpu)
->   {
->   	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
->   
-> @@ -1480,6 +1500,8 @@ static int tmigr_set_cpu_available(unsigned int cpu)
->   
->   	cpumask_set_cpu(cpu, tmigr_available_cpumask);
->   	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-> +		if (tmc->available)
-> +			return 0;
->   		trace_tmigr_cpu_available(tmc);
->   		tmc->idle = timer_base_is_idle();
->   		if (!tmc->idle)
-> @@ -1489,14 +1511,89 @@ static int tmigr_set_cpu_available(unsigned int cpu)
->   	return 0;
->   }
->   
-> +static int tmigr_set_cpu_available(unsigned int cpu)
-> +{
-> +	if (tmigr_is_isolated(cpu))
-> +		return 0;
-> +	return _tmigr_set_cpu_available(cpu);
-> +}
-> +
-> +static bool tmigr_should_isolate_cpu(int cpu, void *ignored)
-> +{
-> +	/*
-> +	 * The tick CPU can be marked as isolated by the cpuset code, however
-> +	 * we cannot mark it as unavailable to avoid having no global migrator
-> +	 * for the nohz_full CPUs.
-> +	 */
-> +	return tick_nohz_cpu_hotpluggable(cpu);
-> +}
-We may have to update the cpuset code to fail isolated partition 
-formation if it includes the nohz_full tick CPU as that CPU cannot be 
-fully isolated. That will also make this patch simpler.
-> +
-> +static void tmigr_cpu_isolate(void *ignored)
-> +{
-> +	tmigr_clear_cpu_available(smp_processor_id());
-> +}
-> +
-> +static void tmigr_cpu_unisolate(void *ignored)
-> +{
-> +	tmigr_set_cpu_available(smp_processor_id());
-> +}
-> +
-> +static void tmigr_cpu_unisolate_force(void *ignored)
-> +{
-> +	/*
-> +	 * Required at boot to restore the tick CPU if nohz_full is available.
-> +	 * Hotplug handlers don't check for tick CPUs during runtime.
-> +	 */
-> +	_tmigr_set_cpu_available(smp_processor_id());
-> +}
-> +
-> +int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-> +{
-> +	cpumask_var_t cpumask;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	cpumask_and(cpumask, exclude_cpumask, tmigr_available_cpumask);
-> +	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-> +	on_each_cpu_cond_mask(tmigr_should_isolate_cpu, tmigr_cpu_isolate, NULL,
-> +			      1, cpumask);
-> +
-> +	cpumask_andnot(cpumask, cpu_online_mask, exclude_cpumask);
-> +	cpumask_andnot(cpumask, cpumask, tmigr_available_cpumask);
-> +	on_each_cpu_mask(cpumask, tmigr_cpu_unisolate, NULL, 1);
-> +
-> +	free_cpumask_var(cpumask);
-> +	return 0;
-> +}
-> +
->   /*
->    * NOHZ can only be enabled after clocksource_done_booting(). Don't
->    * bother trashing the cache in the tree before.
->    */
->   static int __init tmigr_late_init(void)
->   {
-> -	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
-> -				 tmigr_set_cpu_available, tmigr_clear_cpu_available);
-> +	int cpu, ret;
-> +
-> +	ret = cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
-> +				tmigr_set_cpu_available, tmigr_clear_cpu_available);
-> +	if (ret)
-> +		return ret;
-> +	/*
-> +	 * The tick CPU may not be marked as available in the above call, this
-> +	 * can occur only at boot as hotplug handlers are not called on the
-> +	 * tick CPU. Force it enabled here.
-> +	 */
-> +	for_each_possible_cpu(cpu) {
-> +		if (!tick_nohz_cpu_hotpluggable(cpu)) {
-> +			ret = smp_call_function_single(
-> +				cpu, tmigr_cpu_unisolate_force, NULL, 1);
-> +			break;
-> +		}
-> +	}
-> +	return ret;
->   }
-Can you integrate the 
-tick_nohz_cpu_hotpluggable/tmigr_should_isolate_cpu check into 
-tmigr_set_cpu_available() instead of special-casing the tick CPU here?
+This series fixes 3 issue in rtla timerlat and osnoise parsing.
 
-Cheers,
-Longman
+1. Fix buffer overflow when using --on-threshold option. Currently
+   passing `--on-threshold trace` causes rtla timerlat to segfault.
+   First patch addresses this issue.
+
+2. Make -C/--cgroup option more user-friendly. Currently rtla timerlat
+   and osnoise parses does not allow to specify tracer's threads cgroup
+   name as `-C [cgroup]` or `--cgroup [cgroup]`. Second patch fixes this
+   by allowing users to specify cgroup in the aforementioned manner.
+
+3. When specifying `-t/--trace` before `-a/--auto`, trace filename is
+   override to default <osnoise|timerlat>_trace.txt. For example, when
+   running rtla as
+
+       `rtla timerlat top -t custom_file.txt -a 100`
+
+   when the threshold is reached, timerlat_trace.txt file is created
+   instead of specified custom_file.txt. Third patch addresses this
+   issue.
+
+changes v1 -> v2:
+   - Moved removing clear_terminal from `fix -C/--cgroup interface`
+     patch to `fix -a overriding -t argument` patch
+   - Added clarification why to remove clear_terminal
+   - Added `Fixes:` tag to the `fix -C/--cgroup interface` patch
+
+v1: https://lore.kernel.org/linux-trace-kernel/cover.1755014784.git.ipravdin.official@gmail.com/T/#t
+
+Ivan Pravdin (3):
+  rtla: fix buffer overflow in actions_parse
+  rtla: fix -C/--cgroup interface
+  rtla: fix -a overriding -t argument
+
+ Documentation/tools/rtla/common_options.rst |  2 +-
+ tools/tracing/rtla/src/actions.c            |  2 +-
+ tools/tracing/rtla/src/osnoise_hist.c       | 25 +++++++++-----
+ tools/tracing/rtla/src/osnoise_top.c        | 25 +++++++++-----
+ tools/tracing/rtla/src/timerlat_hist.c      | 25 +++++++++-----
+ tools/tracing/rtla/src/timerlat_top.c       | 37 +++++++++------------
+ 6 files changed, 66 insertions(+), 50 deletions(-)
+
+-- 
+2.48.1
 
 
