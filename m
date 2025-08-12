@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-765615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FEBB23B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91A3B23B5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A663A67E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6965F1A25563
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F100F2D876C;
-	Tue, 12 Aug 2025 21:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD43E2D9EE5;
+	Tue, 12 Aug 2025 21:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mlf2Nm/t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUnSU3IO"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B051C5D46;
-	Tue, 12 Aug 2025 21:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB72626E15D;
+	Tue, 12 Aug 2025 21:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755035505; cv=none; b=Ktauveb2ZviFl6EZmEycDexDyXy46S0TQXBGeQS7DsDnRPJTne/4lYQc5BpJfVaqlPDhLWPKxEDMfJVCGla1IyS30dMp5xsvRvROanzpNd9vN/nkEhOBCzf54+ROLD50skpQyXvz2gHOtm/5ZM5Q2a2WSkBrVa4wtIOiQOsQUhA=
+	t=1755035741; cv=none; b=Ue7N4d9RCXLqRFQPIzvXEopNHRF6sIswm/9mmFYaktTympBe4VwLiLu39uZ85Lv2ctYxm33CQMAYRTp4CXOMH/UvSDGyQhn80FQobd7ar6REQTggR+d/Mfptmr2dy95ZFz8MaudvMZfX6mISTYOwhWOmVfnnE4MqlkLoIg3YxQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755035505; c=relaxed/simple;
-	bh=Z4ijmhSJ5feAb5Ma0SBHCLw/eXb/BjN8yXCucChNEy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7qwUpdU/XY8x34U4mh6XJNHmVbtC0P5PU58b2lrFq7eb8OQZMSexRxxwuK8KeCM45u0nFRBidnbjKE77RzWnp1PIb3s9kycvo57SM48gMhe3q+cuFzFFAFXcjjXKdGCNZRwYtBRo3vbrF6c4Ad0g9EDIreL/C9U4yFWOBooIRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mlf2Nm/t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1990C4CEF0;
-	Tue, 12 Aug 2025 21:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755035504;
-	bh=Z4ijmhSJ5feAb5Ma0SBHCLw/eXb/BjN8yXCucChNEy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mlf2Nm/t2H9sUUM3klO4UsrAhlNCpq9FM20FEBzSh3qetyeBGP60a4/8TDG8PU35i
-	 IObGKAQct2IPoqdyr6xV75wmQwGONRb5XVif5jTg5jel1/3KkbzCut6kAckqR/Cwe5
-	 2LXqhPVplz2BtpV2F6AMy91zFGhdftcubGRko34CkdpHelQiN8PqldF4Jdfr9uwwQ+
-	 Ut31UMjCWxIpl+UAikgLnpk08/7rKMC3qcjGmgPjVE47uyfi1g5+a8xe+3lvj+4VhZ
-	 gE+Y42SzZB+sNX9NOaotVVvPXdlNPoSC9IG9UFYOVrE6Bfm2R0jIQjxWkdto0MRMXY
-	 3fhUS0v+o7ZHw==
-Date: Tue, 12 Aug 2025 23:51:40 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Message-ID: <aJu3bEAge1uOO8wO@example.org>
-References: <20250730161223.63783458@canb.auug.org.au>
- <20250804112540.6b8ed4b9@canb.auug.org.au>
- <aJBcn9jb2RseRwS3@example.org>
- <20250805081749.3be45c9a@canb.auug.org.au>
- <20250805133349.4339e693@canb.auug.org.au>
+	s=arc-20240116; t=1755035741; c=relaxed/simple;
+	bh=vlPefp1oJsAKGAOojGDRq6vH3BmPpc0aY3nMS24jLyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ByTLX5v+NvBlCS/I44JasbdoFuWpDN7h0X2vPaYj8GmWvS8Tq3Sx5Q3rDwnzECqzdWgUg0ixVl0P14EIJ75dP0GQtPCCaHamt1jeKwP112rCyjqwEEEWHQb3sPuyU5MSRV3kcnC9CUMaGG20X3+BMZuiMkA5ez6Q7j/Ykr4Bhxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUnSU3IO; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31f017262d9so4777969a91.1;
+        Tue, 12 Aug 2025 14:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755035737; x=1755640537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y0a3A0bYbvr9lrCrhrUFhqF9xvhHYsqGk1nSj17rg8s=;
+        b=GUnSU3IOXFeZjhrIlVHBdPQfw4KaWQ8WZMpcvn1RmJ8XNjwNkAhSaw/XEDfvCsDBT/
+         o0US7YQuYWcqtdowrAGkyod3JLi1y/VCAsy1w8sJN54Cl5cgALAgybgu/FLelU1x3798
+         HUXYmisRgspNKmvXr/+rf+6bCXCqMpvteoJkY0ynuoW3sdGV0+cztrEUiqUhy90wdcRC
+         90MfeaV8Id3ADSQDXe4Dp7UKPyQDtVH45nAHMOQvoy1zDD7DOYAw+8mAve/cz36VOPfB
+         YsVabwRWcJcA3fKAkdEYBKotry1DqMMyUp+HNDo01rKjm2yUM3TJpzaZmRHj9o4GYVsL
+         G+/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755035737; x=1755640537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y0a3A0bYbvr9lrCrhrUFhqF9xvhHYsqGk1nSj17rg8s=;
+        b=NUChDNoo7ekJhQzeRtv4/3nxQXEJp8UP7s2rZk4qlWpX+5yp1adlR/21a8lB7mPK/P
+         nvLPzkD5WPNOzvE3ZSfiIcrU6JB6+a+JH+Tx89tefeWEv2T7FU9IFoM6VpvlybhDALkY
+         7D6XzDFZWP4h1Cw/14JG8OZRGafxTa2IkZxz9QwSpjJPaAdKXrCasjsPXLaVE4GwxdVJ
+         +tyD5RlqceVLFBr8fg4FrVvu/yYrUEqw0SOVuHnX0ftQrp6R6WEYK8fxi28Xh8rYNBAU
+         f6b6dXCqD+SfvK9dMpH12FxgaJmYfqrUKp73y+TRvkNUmVUb5JHuY7c/m+TCOcpkFnqi
+         5RBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Duz1BSa/fChGckVcEBqkZLOsynm8httgaL4NsGdHetMDfeN3BOx3Na81zqGyaXODUzlQj+HBORM=@vger.kernel.org, AJvYcCWjtlQQGmBL+fuIaqkq/C4bGzV0IZ/p7GuXs5o5cH+ug2lQS1kDEcNdij9oNJ4Xbo6rUYtM+acGnQOEvI7e@vger.kernel.org, AJvYcCXu1Ap9pNHv3blToqUSkeOvVFdcPomUNypcBfmLGMDzZk/N1uK/tuHeZ2941sKzwAusDgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTej5zISjdXZ5MSA323TZ+kmNtBEy0iFtGwbLt6rvHIWoSW2oE
+	uk1JRwvWdgE1HhJDtJQDBEKi2auQVBrRSAY1Cl3hRGeBWWs1OErCCsul6w106v3ddASltuDuEZa
+	orhZki7pOmrS5fhj49QE5Gd+0LeLFBE2A6w==
+X-Gm-Gg: ASbGncs6+d5J00/iYQutanCOKHsXfz1R1H8+8mCKMZWNY1JH+YrBXWFZQlju0Smbvfm
+	bspRw6YO1ZsIOiQSTP2fuGtONandpxfYdkKEFcZRWlUbZz8CunEmY7yshjgDW9Qw+dJbcQzlWMo
+	YqghpGAk9frvK1hi7G3yGysJ8X3CW0wkIEFRR+RrMMEJVm576GQFppX1nABgde/Eu/Ai3gwII9x
+	e6SQCsrY9b6BNUOOt13+WNdYK6Va0Havw==
+X-Google-Smtp-Source: AGHT+IFaPXMEYoH/8Y9uBZvh0p6g9dH3lnj9wGZ7dtr40iitEllxWZXunkd+SEwcDZfkFJXnJu5CYYiF2lxSt5D88vU=
+X-Received: by 2002:a17:90b:3c4c:b0:311:c5d9:2c70 with SMTP id
+ 98e67ed59e1d1-321d0dad433mr834251a91.15.1755035736863; Tue, 12 Aug 2025
+ 14:55:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6TZ3juglqoHlKtJY"
-Content-Disposition: inline
-In-Reply-To: <20250805133349.4339e693@canb.auug.org.au>
-
-
---6TZ3juglqoHlKtJY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250606214840.3165754-1-andrii@kernel.org> <CANiq72kDA3MPpjMzX+LutOoLgKqm9uz8xAT_-iBzhR3pFC+L_Q@mail.gmail.com>
+ <CAEf4BzZDkkjRxp4rL7mMvjEOiwb_jhQLP2Y2YgyUO=O-FksDiQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzZDkkjRxp4rL7mMvjEOiwb_jhQLP2Y2YgyUO=O-FksDiQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 12 Aug 2025 14:55:22 -0700
+X-Gm-Features: Ac12FXz9QwA7PXP_msQVt6NhM-rD51DduktihmN0bHfoNoTRNMAHnFaoRjTBdEg
+Message-ID: <CAEf4BzbJpTZ9P-Deo7Oeikyd3vW953goAw3gYvTPzvDfEWj2hw@mail.gmail.com>
+Subject: Re: [PATCH v2] .gitignore: ignore compile_commands.json globally
+To: masahiroy@kernel.org
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, ojeda@kernel.org, nathan@kernel.org, 
+	bpf@vger.kernel.org, kernel-team@meta.com, linux-pm@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 05, 2025 at 01:33:49PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Tue, 5 Aug 2025 08:17:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
+On Thu, Jun 12, 2025 at 1:28=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Sat, Jun 7, 2025 at 2:27=E2=80=AFAM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
 > >
-> > On Mon, 4 Aug 2025 09:09:19 +0200 Alexey Gladkov <legion@kernel.org> wr=
-ote:
+> > On Fri, Jun 6, 2025 at 11:48=E2=80=AFPM Andrii Nakryiko <andrii@kernel.=
+org> wrote:
 > > >
-> > > On Mon, Aug 04, 2025 at 11:25:40AM +1000, Stephen Rothwell wrote: =20
-> > > > Hi all,
-> > > >=20
-> > > > On Wed, 30 Jul 2025 16:12:23 +1000 Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:   =20
-> > > > >
-> > > > > After merging the kbuild tree, today's linux-next build (i386 def=
-config)
-> > > > > failed like this:
-> > > > >=20
-> > > > > ld: .vmlinux.export.o: in function `__ksymtab___builtin_memcmp':
-> > > > > .vmlinux.export.c:(___ksymtab+__builtin_memcmp+0x0): undefined re=
-ference to `__builtin_memcmp'
-> > > > >=20
-> > > > > Caused by commit
-> > > > >=20
-> > > > >   c4b487ddc51f ("modpost: Create modalias for builtin modules")
-> > > > >=20
-> > > > > I have reverted that commit, along with its parent and child, for
-> > > > > today.  It's parent commit
-> > > > >=20
-> > > > >   66ef3890c628 ("modpost: Add modname to mod_device_table alias")
-> > > > >=20
-> > > > > generated this warning in the i386 defconfig build:
-> > > > >=20
-> > > > > scripts/mod/file2alias.c: In function =E2=80=98handle_moddevtable=
-=E2=80=99:
-> > > > > scripts/mod/file2alias.c:1480:25: warning: variable =E2=80=98modn=
-amelen=E2=80=99 set but not used [-Wunused-but-set-variable]
-> > > > >  1480 |         size_t typelen, modnamelen;
-> > > > >       |                         ^~~~~~~~~~   =20
-> > > >=20
-> > > > I am still reverting those commits.   =20
-> > >=20
-> > > I do not have my tree. Can you apply my fix for original commit inste=
-ad of
-> > > revert ?
-> > >=20
-> > > https://lore.kernel.org/all/20250730090025.2402129-1-legion@kernel.or=
-g/ =20
-> >=20
-> > I did wonder why this patch has not been applied to the kbuild tree?
-> >=20
-> > I will apply that today to the linux-next merge, but it is presumably
-> > delaying the kbuild tree being merged by Linus ...
->=20
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au> # build test
+> > > compile_commands.json can be used with clangd to enable language serv=
+er
+> > > protocol-based assistance. For kernel itself this can be built with
+> > > scripts/gen_compile_commands.py, but other projects (e.g., libbpf, or
+> > > BPF selftests) can benefit from their own compilation database file,
+> > > which can be generated successfully using external tools, like bear [=
+0].
+> > >
+> > > So, instead of adding compile_commands.json to .gitignore in respecti=
+ve
+> > > individual projects, let's just ignore it globally anywhere in Linux =
+repo.
+> > >
+> > > While at it, remove exactly such a local .gitignore rule under
+> > > tools/power/cpupower.
+> > >
+> > >   [0] https://github.com/rizsotto/Bear
+> > >
+> > > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > > Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+> >
+>
+> Masahiro,
+>
+> Would you be able to pick this up? Or where should we route this
+> through, in your opinion? Thanks!
+>
 
-I noticed that this patchset is not in the tree. I somehow missed when and
-why it was excluded. I thought I had submitted a fix and it had been
-accepted.
+Seems like this has fallen through the cracks... I guess we can take
+it through the bpf-next tree, if there is no better home for this?
 
-Do I need to resend it to the mailing list?
-
---=20
-Rgrds, legion
-
-
---6TZ3juglqoHlKtJY
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEfyo9BymBSaB5PJpOpFq6VEz/1DQFAmibt2wACgkQpFq6VEz/
-1DRTqw//X0iMZSWoiIsrS3Xj90NCf4863Odaxmnv5UWPvYhiD4rCwlY0LXpuKPlJ
-k2Bvk1P5aLUWJn1xIFAUbC2RmfqT7/TijUEd3rAIW0VNz/uyH1U26RoBVxyyS96H
-z1k127D9pAWQzM2VrqOWzHwadx8j+uDpUUUCpHf4qaqpnUhgM9yW4G/y5xKQv8D+
-pzEhHi99Axi3yIpR8D67AKGCdP2YxtYLZeoxKoyBLI+mzmnQROqi9GTGeIC4BX+A
-QaPZwrG9nVkA9LhiFN56llQFwDqP3bUKsILP9s7OulWE5drTgug5c+z33ZwNL/q+
-1gH94GpJUCosNPBwsAEgxJwZ7GMGnKknSDMsb3kqvKFnkEcL8EvWFInqEJsrVpVB
-ZBVZw9bFqzUJnPn4AbGGrL1NZbNkOwaUyP+ziD5W2ZaT+mHJ6LlvrxgdfEfJBY+u
-q5Si3sg+DrU81N5lEaZoibw2fWrN5j6tKcbRwfwOx4r5TN7PnQJbgnSy5D+tfvz8
-1lA7ppqBDhoSUsAPgevS+bGfYlqsoqs+8W+9F7FGPquaWghy7P8XNg4VW1juMrh2
-Qhihj6lP/M7GxvyoIREJiDe1R4UJZlAlTDHAxZEEUDPNvb94LwPgW8tfuAv6hxnj
-PaMbKxnfJwVPl4lPl0hnxt0SP1HLtxhIhkZ7EywKN4quFX4aHzA=
-=97eJ
------END PGP SIGNATURE-----
-
---6TZ3juglqoHlKtJY--
+> > Thanks!
+> >
+> > Cheers,
+> > Miguel
 
