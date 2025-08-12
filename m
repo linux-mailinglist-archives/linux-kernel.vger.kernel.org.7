@@ -1,227 +1,303 @@
-Return-Path: <linux-kernel+bounces-765223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D46B22D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AE3B22D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3FC1885809
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:12:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0753A4188
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E271223D7DE;
-	Tue, 12 Aug 2025 16:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94482D0C8B;
+	Tue, 12 Aug 2025 16:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ncs6K/51"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cBjwabI5"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011005.outbound.protection.outlook.com [52.101.70.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147D623D7DD
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755015115; cv=none; b=Z3bCY8+4InF5JVTzd39PbUE30qSfo/o4tm9UfgNC8iv0PJYkuUd1WVJNqL3xKLEeLO2TaUhvcfyTSQS43+cY6PiBJbufAYM0ims9C9LPf61Kj4OAro835m6vueaiZCmj5xusr4lQL78b0/mDvRdp+QK4r+++R/ZNeowrq6daAGE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755015115; c=relaxed/simple;
-	bh=ZNHzSWxxdQBQ5le7poj2nm65AEXDF8Di90b1RkACNOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhaQEwpmXTCYtlfP36EGfA6qlasIEL7PZFnThDuI7/AenL7pTQiQY2+9n5aiEjXrdx42OCAReHXiKvhyR0Tnn6/MFeuZZld41JeGxXcArq2QKW5n15CsBowq/K0xjjEq9pOm78XAau96dSbMNKyG7WfUR4z1/gnX66w47KGDbOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ncs6K/51; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755015109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85LD0M+g7vnAQvqfLaFISlWJcgUdOVtpk5d2oOh+o0w=;
-	b=Ncs6K/514Lq4fXrOke0KLWLMuWasTnw9WQfXhrASLXp7Qs2JIX9yfeIqUket2J2JHXRAhg
-	UoASoe1v2osVsYUtzl1cQNAKYLU6nyWinm2N5yUbzqXFH5eH7iizp5OzBHvFV0/1TaZh0C
-	o1JaAuZdOElIGVSFGCYglFd9aZIT8Ro=
-Date: Tue, 12 Aug 2025 09:11:45 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FDA305E08;
+	Tue, 12 Aug 2025 16:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755015195; cv=fail; b=UuggkqKYJpplRP6X3XxzCIYKyce/dWllMnt+dayO9FPimU4e42kQJsbouSLwEVSud6/odi4bu94wR2HDnj0t8oWH/asF61kObQlbiWsHuMZtJMA/luu+G/yhh5CL9CxrZ89FCF4a74ELw2ezSDOzyPrcVnzpPT9k8ScaqEL/M9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755015195; c=relaxed/simple;
+	bh=vArNtc1nHOgt64POvENaexx5x0kr1OF7ojI85bpyB1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pxHAk0DeAurMkwAabqh2ITVwUID8pQFYiTtTeB/GYxc+trvl5PHj1C4LmohQ3xuJmvhKg50UjMqj/bmPAmLNXI83edghwt1dumuUciK6O3T48FiFpWYBp2lQNsE+LaMjLm6J5OVmQQxK1gKOu2y8UFerSy01IXNM9d/ZeK5HfGA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cBjwabI5; arc=fail smtp.client-ip=52.101.70.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SO8irVjO9pCv9eCHk41MvOX5IWhiBJ2/UwiN2cwu9Dp1qZDypmGzME0oXTEmUuYa1+5yw8GDCGs8q27o63cDVkyQeMYPZaFU2YgZSHTGTvNKQLCyaRzdwwbYe9fb4+I70aDhBTs584X1VMNNzF5rj7vovIZDajHEYoLHDt1D2r4p9nxfxdfhgVKYCSRDJ9VWnRUc2SxbWGctDI3hQV8NdQe9Fw3s+CgadGjbYjzf1U2nwZOorSWTfakw5/FxutBzOkR4IJSQOgWLfIhIk06EhgaxUX8mCC5nV8tyuqalM50tu8yHdX2fQ55bcdvCmbfOiEzTdnZDz5OKhkE0AUzueQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k/sD+PQ2B2uWVW5s4K7GsR/Pdx1mP4nkfK9kZRwCT5c=;
+ b=ZNXnmSKPz3avtqwpzH6lHGmhOCKi4UPKXHDv8wKz2O3QELPzyY2pvo4J5E3tK24S0icbEKbYpRCI1zVUV1GM/WTlDvGj+fGVcVS/SmRY1QQ9tp/wNTbtKTKd/XGzZsJM/qpEfA+hB8LY+OVMb2Ru7uTOHF/+rEr31DD80kt4NBvPU9A40CAcYuOHEm6L8p2Bzj+D63Y9PHSMcOGuSIhHPqU1J1wYCjxIZjgOQwn6gSww+l/nd685h8OoDB4ccZq25fpgisVygqa3E7xDKp1mvvYN1qPh1y6qbP2O6uRsRYbNKJolDytsFaBYe3a74rg0z2r4RkgICDDSAwm9HPI/IA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k/sD+PQ2B2uWVW5s4K7GsR/Pdx1mP4nkfK9kZRwCT5c=;
+ b=cBjwabI5o0LJz17mr4GG2Y0tMhn/wCcTTo4pVWYs+Cxjvr1e9RS/4Rgst8jysT2VNfPVB1rC4T9HdrDsSpivBZFoTWoB268rgvDp7Sl4f42HEPlZlagxLZKqrmaXGPnquLf7YDn2wlO4y9bCDCNSmh3wx9RHHFdkhnUDNmB4rFwPsP2rics5leH5DC6uJf6g198zqmu01vCMO2KTA0RzAnmIZe/ir/mQ6NpsSVuHKaURjCeRON/Wu3eP1NG6HO5cUeknkA5Yp5QaVROrq1BuDymhRmC94u9Z7bxJcTM4bNk266Z80/4cwlco6CaLISF6oDwaX/sG/mgh8OaTsxaDPw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10712.eurprd04.prod.outlook.com (2603:10a6:800:261::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.12; Tue, 12 Aug
+ 2025 16:13:09 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9031.011; Tue, 12 Aug 2025
+ 16:13:09 +0000
+Date: Tue, 12 Aug 2025 12:13:01 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Subject: Re: [PATCH v3 1/3] media: imx8mq-mipi-csi2: Add data type field in
+ pixel format
+Message-ID: <aJtoDVBUUHyPITQS@lizhi-Precision-Tower-5810>
+References: <20250812091856.1036170-1-guoniu.zhou@oss.nxp.com>
+ <20250812091856.1036170-2-guoniu.zhou@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812091856.1036170-2-guoniu.zhou@oss.nxp.com>
+X-ClientProxiedBy: PH7P220CA0060.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:32b::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
- cover SIB handling logic
-Content-Language: en-GB
-To: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250806092458.111972-1-phoenix500526@163.com>
- <20250806092458.111972-3-phoenix500526@163.com>
- <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
- <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
- <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev>
- <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
- <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev>
- <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10712:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9716e96-9828-4236-85d0-08ddd9bb212b
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|52116014|376014|7416014|19092799006|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?YR/eSo7NaJ58Y6pX1pWhYTxVfURm9T+JM9SRXBtTBUjpLzMgPihhGqlf+5Sx?=
+ =?us-ascii?Q?ZcTgOcKuYZFJ42lSKhh+T97KffYdDKFsnLaw+mdkHG5Qd1Kx4RH1dwlqD4V7?=
+ =?us-ascii?Q?ZpC0ej5BDaiv0QW312Sl6k6Pem4KRSP5T/bLnA1L0z8/bm0T9jo6JxhI7dc7?=
+ =?us-ascii?Q?3i1AKnxPTQefD5DyhBGSxTE3O88/yWGxHVtEE/evt3H+82nWPc/DsVsXRhtR?=
+ =?us-ascii?Q?55MPQKDe+P8iBn9adP9B8hGHPAFy+rThplCoDSEsSqOQvH5elX2vgLIcQ497?=
+ =?us-ascii?Q?AKL3eRtb1taRxTpykDbWCro0b6TCTns8vVghzIqS8pHnSz3WC1XaOThqUdPG?=
+ =?us-ascii?Q?BiTeraAxOaq7Jz4rcwZ/9lNmomQfPoYz50K57ZyKe6LoHAfXt8Sei0rSnf6r?=
+ =?us-ascii?Q?1JwQf/WyH8irLDDeHF3jCLPJRm1sPMAJxQ7+rKHglV+ZhQpzCT/56ue5fWnd?=
+ =?us-ascii?Q?fsCIaxdX8ow8RK4UWxjRs+gsYGU43SU2sXStDl1DfaswaZLHhXJ0y4mFSjLY?=
+ =?us-ascii?Q?GxNojFaLeyyh1br0h4NOKUL0brGc5gYzbg5wYai4xoMciqmL2M9W2006a20H?=
+ =?us-ascii?Q?04nklJCTQcsgmSe8hFOcZ3SXIWLqcwF9s4Hmy/JfAu2z34Tqqq+Nez6a8/Sp?=
+ =?us-ascii?Q?Fce+N3qZBPfdKjuf6r9HuyVNDG41njjTJV43Bdk6oYJ+SVUUXbwOCk5hVDBZ?=
+ =?us-ascii?Q?EkXbWLEwe7XzusYWWNoLj6XFhY2NeWgYlTzIYvG5qOkYXseJJxlcsKhYraX1?=
+ =?us-ascii?Q?wDkDKXeTQ9WcvTq/RikGi3DoouZyVRu82r4Wx5/HcyIXmwDJ568o1y+Vw/3Y?=
+ =?us-ascii?Q?FZO3sGU+W+Q8vVNyQXWVoOYl8PDwV+99UjB6QGOG+aLqtF7eP6rV0aQ/ug+t?=
+ =?us-ascii?Q?xhmA7fw3vj44HjdAXkc24NjwTaQS2mPo66+qP7pt5CeL33xEQej1xxJTjA+g?=
+ =?us-ascii?Q?/iI+g8goy6CA+Q7m322MQAZUP7hj2dHEVqqzU6P0qdmaYFF+XEjWyPhw2x/y?=
+ =?us-ascii?Q?ZqygfW9TK8xXODROoT7v6v63mIvMxi+Fk+omhwkfyh3neMAAY2/TH4mL+4Qq?=
+ =?us-ascii?Q?+X7DZnf5rWVlTfjajohZpsId5fyZuiygL2RFuUiRIuaCdnhkaZBnSA5HoqPq?=
+ =?us-ascii?Q?m8BUBS4yKvNzaqln/8H0frUFpgZ0btbbHNN1+HFUMrsy4X+lrYAkCluk3Dwu?=
+ =?us-ascii?Q?AbfhUAGKjrD7ri99Wpk15GMutMGv9Og+UcHuTFkc0jr08j3vS7EwqyXpY7Js?=
+ =?us-ascii?Q?MOeP5PUJ3z8u8Vswp+xZNTbf1lbchGMa0N+mK3hyghAiQ3SMM7ijjbv3uIxO?=
+ =?us-ascii?Q?Gx1tRSV1efSX62D62Jq64BN9el9MQWZzMLc+dj42SnMq5VB7IItzHqRp5uMZ?=
+ =?us-ascii?Q?hN2/R2a2qnNnOUnfI3BTn9iCa680uKpXwwl/lM9o3MNZq5KKAUNDoYaBZt/R?=
+ =?us-ascii?Q?jR5x6iRYi8t/MQCFMc+XAQiApCo0czHOk7jB+zkWG7KaJHoYzwNn7JbPTcxX?=
+ =?us-ascii?Q?LkFJ1fZJjfdAOMM=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?2e131rR8fknAgVY7Yd5oY6RkJauxdNKH0ZkHZkUYTcvdAZ/KXKIgsh2qVZZh?=
+ =?us-ascii?Q?QcfEBjjtpTrZVohHzyheauOWXFvea9wnDfTXaK/HMv9uPE/o5tLnrWRzXKZ5?=
+ =?us-ascii?Q?HZvJnIhEWt+paRJ3sxuQTfRmPwQQV+bDjuMZ9N4GJp/hpg5s+cXbQqQgUf6F?=
+ =?us-ascii?Q?tE+Bdfc+izF8k/z8jSoOMFjMJo9Q1+opsON50BCvZGG/IlYtQelfNZT0gWSL?=
+ =?us-ascii?Q?rtTbsl27+Ps6Dv5HEbs0nhroLUXPbs3zN6p0+uHI9PGCJ9A7pdQO7ZXTUhUM?=
+ =?us-ascii?Q?e+G+i13FwfUMZkpZ7LIZkQw2/5VJhTJ7Qn/miarbva8lqZ+Rbk/WYw25GFrl?=
+ =?us-ascii?Q?o7nQkjPKaZPi+MW+9xjsJsb3N9V94g1A3cfk2TkBtjOm6wNo55afrk9M4Xn8?=
+ =?us-ascii?Q?oyEVx/UaL1M8TzBTedFT1h5r2UABExNM7kxr9QjysLa6c4/fAr6Dt74LloOp?=
+ =?us-ascii?Q?1+UH2RPCSYqamjODORJov//wS/qnMuhrHNsOTK4pOGS9aJ6FjeZuUQt4hQuD?=
+ =?us-ascii?Q?NRXyQqKbvoQEdy6eU+k1JLSE+IL2l9Dit9GuBLqYT7T1SRYu3j0/hsfkHhjq?=
+ =?us-ascii?Q?U0rO4R+ZdLNGcY4fRxYfLluBRSfvehMkQshlSmNjx5gt4RFirzkD3+qyH/5A?=
+ =?us-ascii?Q?UjNSjPFbT64/HEZt0yJizKlB5fGMbt9xi6n4fyvSrob9FN6BCynxtTv354rH?=
+ =?us-ascii?Q?is5sLumxJuzAmBL6k7DdtzCy7Fui3mNQ3/wzluhkOm2qjUVmAld1PGSKGeps?=
+ =?us-ascii?Q?lv72Xec4AdQFjU699J4v92clrUrwwFANm8Nv8wkxbhz9KC+J6wKoGB6hvq2Z?=
+ =?us-ascii?Q?lWqbUjZyUqwEztVjQD6dcjfP6SrbIa780xEdjsAGt0R84eVZ+XYvXCoqVehR?=
+ =?us-ascii?Q?M/Ws08JLA/brxZdAkngjT8BCHcJlsMcGKfVBvXU2cB0F4OWlfxCtdiIue+hX?=
+ =?us-ascii?Q?XOjLAv4gS4EpvrMDQdTzXg2pDC1ciA0/dZGEG9NWqmP9sKQcNZwTpOpFEsvu?=
+ =?us-ascii?Q?WSdKPmRiYM7b6PnANEqreNQj9/YaLA572Gb2wCcUgz/zo+fKz9VIhq4d2VJx?=
+ =?us-ascii?Q?JRNiUy4u1fAGgyylTPsI9jvJqq05tEokBf6wc2oU686wpscS2aQq2hETZMZk?=
+ =?us-ascii?Q?wQIqh0DQxSSmh7WEo2+doZL0NyCrdAmB4Br9N5q8N5E+WUaMxLmmuYd0ADsL?=
+ =?us-ascii?Q?VqvkXO8it7lzEISYtDCyO0hC61p6PMCFE9oUiAYernz8FULPVxkc307rXULi?=
+ =?us-ascii?Q?qwXw4OIbEKpmFZRbNWP2p36KB8RNiEMEhQUZ3SoM25PJbcUB729FtjKQsIJc?=
+ =?us-ascii?Q?ksqHd1gT/akuxvQl90JDbA4wrERwIZ3irHRvI36RTCM/1xTB9vU5fdlYDs/k?=
+ =?us-ascii?Q?yWG09btIhiawRaX/vhFL+Z67i4ekps/QfbqeR7wBNAuEw53cWxn/hgd0SRe/?=
+ =?us-ascii?Q?AP31tv+1xqSVpQLmddds1XaqFwbVNRPFiRnJRJKeqsIrNTtYDn/OOQfB4LrA?=
+ =?us-ascii?Q?xs3JZC7teCfbPphz9qAEjvwDYLNSPW+TwpZgOU8z690ODvehDkKwuh/7yCZq?=
+ =?us-ascii?Q?HLdexsLv8XvnJbn0Ty5XQwOiAl5hL0POhnE18qcN?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9716e96-9828-4236-85d0-08ddd9bb212b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 16:13:09.7085
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HJiArB53o1IaH68IHa8zMs0SORSGRNKJFCRSiSDR9oMoLo36UpoXO10a+86cNV1cV3ObyuJTxKyMP9oyqdr3RQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10712
 
+On Tue, Aug 12, 2025 at 05:18:55PM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> Add data type field in CSI pixel format info since the downstream
+> subdev in the pipeline need to know.
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> index 3a4645f59a44..7495400adc22 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/spinlock.h>
+>
+> +#include <media/mipi-csi2.h>
+>  #include <media/v4l2-common.h>
+>  #include <media/v4l2-device.h>
+>  #include <media/v4l2-fwnode.h>
+> @@ -138,6 +139,7 @@ struct csi_state {
+>
+>  struct csi2_pix_format {
+>  	u32 code;
+> +	u32 data_type;
+>  	u8 width;
+>  };
+>
+> @@ -262,68 +264,89 @@ static const struct csi2_pix_format imx8mq_mipi_csi_formats[] = {
+>  	/* RAW (Bayer and greyscale) formats. */
+>  	{
+>  		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
+> +		.data_type = MIPI_CSI2_DT_RAW8,
 
+CSI2 data type is well defined in MIPI CSI2 spec. so the convertion from
+media_bus_fmt to CSI2 DT is fixed patten for all CSI2 drivers.
 
-On 8/12/25 12:02 AM, 赵佳炜 wrote:
-> Yes, I've tried that but it didn't help. FYI:
->
-> $ readelf -nsr usdt_rip
->
->
-> Relocation section '.rela.dyn' at offset 0x530 contains 9 entries:
->    Offset          Info           Type           Sym. Value    Sym. Name + Addend
-> 000000003df0  000000000008 R_X86_64_RELATIVE                    1150
-> 000000003df8  000000000008 R_X86_64_RELATIVE                    1110
-> 000000004008  000000000008 R_X86_64_RELATIVE                    4008
-> 000000004018  000000000008 R_X86_64_RELATIVE                    1160
-> 000000003fd8  000100000006 R_X86_64_GLOB_DAT 0000000000000000 __libc_start_main@GLIBC_2.34 + 0
-> 000000003fe0  000200000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_deregisterTM[...] + 0
-> 000000003fe8  000300000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0
-> 000000003ff0  000400000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_registerTMCl[...] + 0
-> 000000003ff8  000500000006 R_X86_64_GLOB_DAT 0000000000000000 __cxa_finalize@GLIBC_2.2.5 + 0
->
->
-> Symbol table '.dynsym' contains 6 entries:
->     Num:    Value          Size Type    Bind   Vis      Ndx Name
->       0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
->       1: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND _[...]@GLIBC_2.34 (2)
->       2: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterT[...]
->       3: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
->       4: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMC[...]
->       5: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND [...]@GLIBC_2.2.5 (3)
->
->
-> Symbol table '.symtab' contains 42 entries:
->     Num:    Value          Size Type    Bind   Vis      Ndx Name
->       0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
->       1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS Scrt1.o
->       2: 000000000000038c    32 OBJECT  LOCAL  DEFAULT    4 __abi_tag
->       3: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS usdt_rip.c
->       4: 0000000000004021     1 OBJECT  LOCAL  DEFAULT   25 ti
->       5: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
->       6: 00000000000010a0     0 FUNC    LOCAL  DEFAULT   14 deregister_tm_clones
->       7: 00000000000010d0     0 FUNC    LOCAL  DEFAULT   14 register_tm_clones
->       8: 0000000000001110     0 FUNC    LOCAL  DEFAULT   14 __do_global_dtors_aux
->       9: 0000000000004020     1 OBJECT  LOCAL  DEFAULT   25 completed.0
->      10: 0000000000003df8     0 OBJECT  LOCAL  DEFAULT   21 __do_global_dtor[...]
->      11: 0000000000001150     0 FUNC    LOCAL  DEFAULT   14 frame_dummy
->      12: 0000000000003df0     0 OBJECT  LOCAL  DEFAULT   20 __frame_dummy_in[...]
->      13: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS damo.c
->      14: 0000000000004022     1 OBJECT  LOCAL  DEFAULT   25 ti
->      15: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
->      16: 00000000000020d8     0 OBJECT  LOCAL  DEFAULT   19 __FRAME_END__
->      17: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS
->      18: 0000000000003e00     0 OBJECT  LOCAL  DEFAULT   22 _DYNAMIC
->      19: 0000000000002008     0 NOTYPE  LOCAL  DEFAULT   18 __GNU_EH_FRAME_HDR
->      20: 0000000000003fc0     0 OBJECT  LOCAL  DEFAULT   23 _GLOBAL_OFFSET_TABLE_
->      21: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_mai[...]
->      22: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterT[...]
->      23: 0000000000004000     0 NOTYPE  WEAK   DEFAULT   24 data_start
->      24: 0000000000001160     8 FUNC    GLOBAL DEFAULT   14 add
->      25: 0000000000004020     0 NOTYPE  GLOBAL DEFAULT   24 _edata
->      26: 0000000000002004     1 NOTYPE  WEAK   HIDDEN    17 _.stapsdt.base
->      27: 0000000000004010     8 OBJECT  GLOBAL DEFAULT   24 t1
->      28: 0000000000001168     0 FUNC    GLOBAL HIDDEN    15 _fini
->      29: 0000000000004000     0 NOTYPE  GLOBAL DEFAULT   24 __data_start
->      30: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
->      31: 0000000000004008     0 OBJECT  GLOBAL HIDDEN    24 __dso_handle
->      32: 0000000000002000     4 OBJECT  GLOBAL DEFAULT   16 _IO_stdin_used
->      33: 0000000000004028     0 NOTYPE  GLOBAL DEFAULT   25 _end
->      34: 0000000000001070    38 FUNC    GLOBAL DEFAULT   14 _start
->      35: 0000000000004020     0 NOTYPE  GLOBAL DEFAULT   25 __bss_start
->      36: 0000000000001040    48 FUNC    GLOBAL DEFAULT   14 main
->      37: 0000000000004018     8 OBJECT  GLOBAL DEFAULT   24 add_ptr
->      38: 0000000000004020     0 OBJECT  GLOBAL HIDDEN    24 __TMC_END__
->      39: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMC[...]
->      40: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND __cxa_finalize@G[...]
->      41: 0000000000001000     0 FUNC    GLOBAL HIDDEN    11 _init
->
->
-> Displaying notes found in: .note.gnu.property
->    Owner                Data size        Description
->    GNU                  0x00000020       NT_GNU_PROPERTY_TYPE_0
->        Properties: x86 feature: IBT, SHSTK
->          x86 ISA needed: x86-64-baseline
->
->
-> Displaying notes found in: .note.gnu.build-id
->    Owner                Data size        Description
->    GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
->      Build ID: eb615daa575687cc44edc1d339b27890c12c27f1
->
->
-> Displaying notes found in: .note.ABI-tag
->    Owner                Data size        Description
->    GNU                  0x00000010       NT_GNU_ABI_TAG (ABI version tag)
->      OS: Linux, ABI: 3.2.0
->
->
-> Displaying notes found in: .note.stapsdt
->    Owner                Data size        Description
->    stapsdt              0x00000066       NT_STAPSDT (SystemTap probe descriptors)
->      Provider: usdt_rip
->      Name: rip_global_var
->      Location: 0x0000000000001058, Base: 0x0000000000002004, Semaphore: 0x0000000000000000
->      Arguments: -1@ti(%rip) 8@add_ptr(%rip) -1@4+t1(%rip) -1@ti(%rip)
+I post one patch at
+https://lore.kernel.org/imx/20250808-95_cam-v2-4-4b29fa6919a7@nxp.com/
 
-Could you share the complete source codes and compiler options which
-reproduce the above result?
+helper funciton media_bus_fmt_to_csi2_dt(.code) to get CSI2 data type.
 
->
->
->
-> At 2025-08-12 13:06:40, "Yonghong Song" <yonghong.song@linux.dev> wrote:
->>
->> On 8/10/25 1:55 AM, 赵佳炜 wrote:
->>>
->>> Hi Yonghong,
->>>
->>> I found another issue where symbols can be duplicated, and I’m not sure how to tell them apart.
->>>
->>> For example, I created two C files named usdt_rip.c and hello.c. Both define their own static ti variables, like:`static volatile char ti = 0;`.
->>>
->>> After compiling, I obtained an ELF file usdt_rip whose .symtab contains the following entries:
->>>
->>> $ readelf -s usdt_rip
->>>
->>> Symbol table '.symtab' contains 42 entries:
->>>      Num:    Value          Size Type    Bind   Vis      Ndx Name
->>>        0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
->>>        1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS Scrt1.o
->>>        2: 000000000000038c    32 OBJECT  LOCAL  DEFAULT    4 __abi_tag
->>>        3: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS usdt_rip.c
->>>        4: 0000000000004021     1 OBJECT  LOCAL  DEFAULT   25 ti
->>>        5: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
->>>        6: 00000000000010a0     0 FUNC    LOCAL  DEFAULT   14 deregister_tm_clones
->>>        7: 00000000000010d0     0 FUNC    LOCAL  DEFAULT   14 register_tm_clones
->>>        8: 0000000000001110     0 FUNC    LOCAL  DEFAULT   14 __do_global_dtors_aux
->>>        9: 0000000000004020     1 OBJECT  LOCAL  DEFAULT   25 completed.0
->>>       10: 0000000000003df8     0 OBJECT  LOCAL  DEFAULT   21 __do_global_dtor[...]
->>>       11: 0000000000001150     0 FUNC    LOCAL  DEFAULT   14 frame_dummy
->>>       12: 0000000000003df0     0 OBJECT  LOCAL  DEFAULT   20 __frame_dummy_in[...]
->>>       13: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS damo.c
->>>       14: 0000000000004022     1 OBJECT  LOCAL  DEFAULT   25 ti
->>>       15: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
->>>       16: 00000000000020d8     0 OBJECT  LOCAL  DEFAULT   19 __FRAME_END__
->>>
->>>
->>> As you can see, there are two ti variables in the .symtab section. Their values are very close, making them hard to distinguish.
->>>
->>> I’m unsure how to handle this situation. Do you have any suggestions?
->> Did you check relocations? Relocaitons should be able to point exact which symbol.
->>
->>> Thanks,
->>> Jiawei Zhao
->> [...]
+Laurent Pinchart have not time to review patch until sept 8. I hope first
+3 patches can be reviewed and merged soon if they agree this methods.
 
+also .width can be removed.
+
+Frank
+
+>  		.width = 8,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGBRG8_1X8,
+> +		.data_type = MIPI_CSI2_DT_RAW8,
+>  		.width = 8,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGRBG8_1X8,
+> +		.data_type = MIPI_CSI2_DT_RAW8,
+>  		.width = 8,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SRGGB8_1X8,
+> +		.data_type = MIPI_CSI2_DT_RAW8,
+>  		.width = 8,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_Y8_1X8,
+> +		.data_type = MIPI_CSI2_DT_RAW8,
+>  		.width = 8,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SBGGR10_1X10,
+> +		.data_type = MIPI_CSI2_DT_RAW10,
+>  		.width = 10,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGBRG10_1X10,
+> +		.data_type = MIPI_CSI2_DT_RAW10,
+>  		.width = 10,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGRBG10_1X10,
+> +		.data_type = MIPI_CSI2_DT_RAW10,
+>  		.width = 10,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SRGGB10_1X10,
+> +		.data_type = MIPI_CSI2_DT_RAW10,
+>  		.width = 10,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_Y10_1X10,
+> +		.data_type = MIPI_CSI2_DT_RAW10,
+>  		.width = 10,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SBGGR12_1X12,
+> +		.data_type = MIPI_CSI2_DT_RAW12,
+>  		.width = 12,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGBRG12_1X12,
+> +		.data_type = MIPI_CSI2_DT_RAW12,
+>  		.width = 12,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
+> +		.data_type = MIPI_CSI2_DT_RAW12,
+>  		.width = 12,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SRGGB12_1X12,
+> +		.data_type = MIPI_CSI2_DT_RAW12,
+>  		.width = 12,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_Y12_1X12,
+> +		.data_type = MIPI_CSI2_DT_RAW12,
+>  		.width = 12,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SBGGR14_1X14,
+> +		.data_type = MIPI_CSI2_DT_RAW14,
+>  		.width = 14,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGBRG14_1X14,
+> +		.data_type = MIPI_CSI2_DT_RAW14,
+>  		.width = 14,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SGRBG14_1X14,
+> +		.data_type = MIPI_CSI2_DT_RAW14,
+>  		.width = 14,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_SRGGB14_1X14,
+> +		.data_type = MIPI_CSI2_DT_RAW14,
+>  		.width = 14,
+>  	},
+>  	/* YUV formats */
+>  	{
+>  		.code = MEDIA_BUS_FMT_YUYV8_1X16,
+> +		.data_type = MIPI_CSI2_DT_YUV422_8B,
+>  		.width = 16,
+>  	}, {
+>  		.code = MEDIA_BUS_FMT_UYVY8_1X16,
+> +		.data_type = MIPI_CSI2_DT_YUV422_8B,
+>  		.width = 16,
+>  	}
+>  };
+> --
+> 2.34.1
+>
 
