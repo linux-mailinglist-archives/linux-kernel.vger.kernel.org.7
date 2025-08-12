@@ -1,275 +1,170 @@
-Return-Path: <linux-kernel+bounces-765667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DF6B23C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:31:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA3BB23C52
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E8A1AA79A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213B63AF163
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7578B2E1C63;
-	Tue, 12 Aug 2025 23:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF76B2DF3CF;
+	Tue, 12 Aug 2025 23:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RM9uDAaN"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KjSPDbZo"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2067.outbound.protection.outlook.com [40.107.96.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF00D15ADB4;
-	Tue, 12 Aug 2025 23:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A393615ADB4;
+	Tue, 12 Aug 2025 23:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755041420; cv=fail; b=E7Y90XN99Sluzj076PftgrVFf3WuEZPiC4Q4GpSEiX/gFfE5WDNDvFJ2YMEZ5IcMeCgjnItI50V6wMQe7MKqEmWxaY08QrnP7ybbRhvDJ8QB2FrxiULpuKh3RcLKcE5hFXC6ZVJftCI38oeZ/UvSHWz2VUJha8Ytboh49ALqBTs=
+	t=1755041884; cv=fail; b=prltSnZ0KUx4D5RkSNMynsNkodBxEEiLcH+Su2E2oCHjg9Pu0RyIvnZCX0hWcdEK/wrxgh+lllbQlnj50nC5KjzzS2VnE73iEYlV8ifiYX4jczuZFOg0b/uMzhI3QzJNvPcxz9DWSX8D5CfbNBtvX7S39ocuDCM4lRuLLzaQpqE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755041420; c=relaxed/simple;
-	bh=Vt4xcgcWsLcJoau+FI8I332Olicf9urWqFLbvW28XUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FSHbxsWKRiNrZFuWVdiRw5NLI8zuHbb24RIUabLUlq3fkKwoVT3IWaX5f0utfMsfv9dzMb5UogQJ2IWGQC9cOX6jy9WqQx/WtzOsk9z2s9eaumjICF6opQP1bRD3J8BjSSHymNeaThxceIr4UccFNNF/pI0ZFx/WNNexpzNf+RA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RM9uDAaN; arc=fail smtp.client-ip=40.107.94.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1755041884; c=relaxed/simple;
+	bh=G0JbBZZLWw5gogZp5qjEMveiX5J9stG7KDKS31ysxio=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pD3yPlGFJ6LtbLRNYvCxCXaU98D0HpZ7JqlxaD3KSNOppg0LmxtBL7RfweoZwopAn4N5aa8xoHT76RNLjgrJzoSYX4gZaEo4r0ORfbSjQe9g6NMKidauKatQXIWw/UrrApjSdAmKajmWDeliBlKZh9tXVYeIefAgicuelcMxBt4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KjSPDbZo; arc=fail smtp.client-ip=40.107.96.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LlzU9UqMgJiDtqd4gxCQi4GH99HM6n4KS/p2EZEzE2iRWpLrfJm60dYdl/Jsvj62oDzzVShWTS2v5I38Q0QkhdJP32El+rDSzjh2UI1IBTQzttssUknNb5vWE7jGxev1NuSJoPu6sin6bG+QQBBwKpbJYJoLMcHyaErxIdtWY6c9obHnCC4mUkrE9Ik3K0/95rbc8K5WW6yVn/WhTv6lfzpex0+HavtUYlXkxDUC7FvzA9ZaHEkmfyPVbWMzp0FnZvTkVKN6nxO8mmztDU1GRhFuxJA9HeQw84ZuIIT/i+Z8vnxvQxee2B7C3gF3HHlqYsx5Yir8dFzzCKO2U7Z4KA==
+ b=ds8kEQf3CKwjNrJqZZOX0XYQ3fte1ouM9KNAWwTSFb3BEcPNdx4181eL6h7PC5kFRt94AqaKM7/WfiPdPmiJjc78+4zSvDy8mNnTELGffgO8i+9fRPHRIVKPwYZ/tYdZM/vg7HMxn2Ay+1I/Cv8DDwVL8bD/cRDadRBQRdMrgpJE0dxZYGBQXs6fFWMRh/uQqWri/VwQH962o/DrQI164T/LeS3x4sEKnhClo56/Udr5+rbWrMxBMKvF0XcHSUStQxf2u/Hy50oWnYepgkW3twWUzSYfDE3zcR9jxsMgdoVxQvilcfQ1ZYcgMuC+2fB9lTnSxSkBShRNfukrOIiUmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xn7IYtW5qhOzA7a8J6Lb8NWTRhzCpNnEESk8UHRx2u4=;
- b=ylL1x4EVHh4wZmMkdoyfygu3LkyqgKWFnWmWStBVhFqMwukPtJHrljfaLGtVkzYqrbcf60NSqSRxNJg58hWT4AG9dlIb/ZqhKJX6xFa06QRDXuyXcz+s5GSQfuLMzSnlPEvn9CAFSAOgsvWMaAkvcV57p1+QkVrwtFycIit3JHufFrVqwhcOkLwKJPJR4LEM8YzrR9h6i4zVQGtgMf+wvXtIawmKsMADL6RHEnV+Z1PnZNKBHlYLSt5l+dzclW3W3ksLyL8kAEJzOVr+ydt1Vgn3fY39g6GgnXwH/S1eNGQdiX/UaWvWckgst0mkiQaVfiReY12no98hW6XC+m4+MA==
+ bh=6J9rAP/6p42WwLAAwyUNpNR80qyDNIFmJwcLmI5xvok=;
+ b=JC3sf3+ZTXNQSCgzr/T6pYs/d/tHEnjzWm/VYZm5SIHdUl6nN8LZ2gYTqstKURcVhspJbCcAkpI07tnOLGQBI2X9g8gFS3TdfsENUCIhzxA0u/qZGPvyLmK40MAnqduOytFNmHdpcy5GYjGf92+iMWs6YzusIGL/ujfzUwF5o8bxBlzJ10Sa9X+zx6038M4sOf3lizlaNt4J4L4vgS4OkTLNfaMj/D2AihQLg8925VNOHE/2T49yDzhlggcbTBFEz+erm9JAAKpBL2JTmd5KmgY4x830AqQZEBrqI4ShS/8E8dYVzF1YY+Rf3mzmQskWRaUezmPREsM7eWhVeZ5TFw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xn7IYtW5qhOzA7a8J6Lb8NWTRhzCpNnEESk8UHRx2u4=;
- b=RM9uDAaN6toMz6n0vf3vyNPitqF/1xf4DSboVYcP/udAMq6RxtnxmW8TnnIrd4EL8kIKzRU0isLUFr6LYeaiHgQDyYvi4RpNNRVNyQxWCBNob2WVlF9G5re/9vvAo5n2JoA6EHZET8dGsX5wDuG06WOXKq+8B6R3wD4OKWlPvls=
-Received: from BN9PR03CA0945.namprd03.prod.outlook.com (2603:10b6:408:108::20)
- by DS7PR12MB5861.namprd12.prod.outlook.com (2603:10b6:8:78::12) with
+ bh=6J9rAP/6p42WwLAAwyUNpNR80qyDNIFmJwcLmI5xvok=;
+ b=KjSPDbZo66DkChDnDBu1OlHoModL+pl0mSI9Iba0CXujjfHUyM/KvvGXvdFypTimLxAPKOWbRExtaXqbKqd0Eii+dZpy7bJBmGydJgFPSOr4dy2kBoKEKjNW0PINKuKWqO1TtuT4T3gulgbtgWofTOTlaDhJRNmLxAhVPsCyquSMbObIVwYw73O3Gjx7tII5j5iWhqy2/YVrnhnBZizlcFg/1hGDnXXDmh3KRNxoQ66o59Gg8gz4tTT8/KUMqGwi/9dK1iIWabUqfgI7IbXPChJ9JPXKpIo5FX6RZE9EqAATZr71sAbvp6xouu6n8ZKIndn3nXCK7QH73lhkaJYE1A==
+Received: from BY1P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59d::14)
+ by PH7PR12MB7842.namprd12.prod.outlook.com (2603:10b6:510:27a::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.24; Tue, 12 Aug
- 2025 23:30:15 +0000
-Received: from BN2PEPF00004FBD.namprd04.prod.outlook.com
- (2603:10b6:408:108:cafe::84) by BN9PR03CA0945.outlook.office365.com
- (2603:10b6:408:108::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.15 via Frontend Transport; Tue,
- 12 Aug 2025 23:30:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FBD.mail.protection.outlook.com (10.167.243.183) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 23:30:13 +0000
-Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
- 2025 18:30:12 -0500
-Message-ID: <a747227c-c194-47c4-89be-ba509c0633e4@amd.com>
-Date: Tue, 12 Aug 2025 18:30:11 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Tue, 12 Aug
+ 2025 23:37:57 +0000
+Received: from MWH0EPF000971E5.namprd02.prod.outlook.com
+ (2603:10b6:a03:59d:cafe::89) by BY1P220CA0001.outlook.office365.com
+ (2603:10b6:a03:59d::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.14 via Frontend Transport; Tue,
+ 12 Aug 2025 23:37:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000971E5.mail.protection.outlook.com (10.167.243.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 23:37:57 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 12 Aug
+ 2025 16:37:53 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 12 Aug 2025 16:37:53 -0700
+Received: from build-bwicaksono-focal-20241114.internal (10.127.8.12) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14
+ via Frontend Transport; Tue, 12 Aug 2025 16:37:53 -0700
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <suzuki.poulose@arm.com>,
+	<robin.murphy@arm.com>, <ilkka@os.amperecomputing.com>,
+	<mark.rutland@arm.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>, "Besar
+ Wicaksono" <bwicaksono@nvidia.com>
+Subject: [PATCH 0/5] perf/arm_cspmu: Preparatory patches for NVIDIA T410 PMU
+Date: Tue, 12 Aug 2025 23:34:06 +0000
+Message-ID: <20250812233411.1694012-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/7] KVM: SEV: Add SEV-SNP CipherTextHiding support
-To: "Kalra, Ashish" <ashish.kalra@amd.com>, Tom Lendacky
-	<thomas.lendacky@amd.com>, <corbet@lwn.net>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <john.allen@amd.com>, <herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>, <akpm@linux-foundation.org>, <rostedt@goodmis.org>,
-	<paulmck@kernel.org>
-CC: <nikunj@amd.com>, <Neeraj.Upadhyay@amd.com>, <aik@amd.com>,
-	<ardb@kernel.org>, <michael.roth@amd.com>, <arnd@arndb.de>,
-	<linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <cover.1752869333.git.ashish.kalra@amd.com>
- <44866a07107f2b43d99ab640680eec8a08e66ee1.1752869333.git.ashish.kalra@amd.com>
- <9132edc0-1bc2-440a-ac90-64ed13d3c30c@amd.com>
- <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
- <b063801d-af60-461d-8112-2614ebb3ac26@amd.com>
- <29bff13f-5926-49bb-af54-d4966ff3be96@amd.com>
- <5a207fe7-9553-4458-b702-ab34b21861da@amd.com>
- <a6864a2c-b88f-4639-bf66-0b0cfbc5b20c@amd.com>
- <9b0f1a56-7b8f-45ce-9219-3489faedb06c@amd.com>
- <96022875-5a6f-4192-b1eb-40f389b4859f@amd.com>
- <5eed047b-c0c1-4e89-87e9-5105cfbb578e@amd.com>
- <506de534-d4dd-4dda-b537-77964aea01b9@amd.com>
- <47783816-ff18-4ae0-a1c8-b81df6d2f4ef@amd.com>
-From: Kim Phillips <kim.phillips@amd.com>
-Content-Language: en-US
-In-Reply-To: <47783816-ff18-4ae0-a1c8-b81df6d2f4ef@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|DS7PR12MB5861:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4799a590-aaf8-48c1-078f-08ddd9f8302a
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E5:EE_|PH7PR12MB7842:EE_
+X-MS-Office365-Filtering-Correlation-Id: eca51d41-2dfa-4b3c-d2af-08ddd9f9446d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|7416014|1800799024|376014|921020;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Sk01UENBOGR5SHRoRWdwbk5EcWFYbmtvbmpFa3FHSHZiSVNkSjJHWTNqVjJR?=
- =?utf-8?B?MTB6ZU5NWEZaenJ2WWg4N2RCUXNia0NQSXdXZmhhNGZtZ3lTdnNsbnQwTUlZ?=
- =?utf-8?B?TzloUytOWkZSTW9YTHpocFpMSWV3VW1hbXR1dS9XZWdQTkFadzdQUkY0NHc0?=
- =?utf-8?B?VXcwWjdRbFEvRUpFRFRMMFY2RnkwSlRFeEdFUC9kYitnbHQwNllqelRFSG5T?=
- =?utf-8?B?MmRTbFdkeldNUG81ZmVPOWNrRXA3Z2JXUTBpMGRlK0xOUXBjdkdwZEZnY0NT?=
- =?utf-8?B?VlhUemdsc3RNYjA3dCtTTTdvVXIrVG9tSGJFZTJVVUNXZ1VNY2pJSEswS3I0?=
- =?utf-8?B?TnZ6ZzB6cC9QZzJlaC9GQS9CVDdMUWo3Rm5MMFR1QTFNTEZnUlN1RklwTlpJ?=
- =?utf-8?B?aFhDU3p6cFVWLzdpT2VLTWZoTkNpL0Nkcmd6TWt4ZXl0QUhlYnIyanZ3WVAy?=
- =?utf-8?B?UmVxdFhtWEM1cG5NVERPNUlhdFVGSFVzbjR4QTRyY2JPY1dhSXUrVmRmc0l5?=
- =?utf-8?B?SVQ4MVFYNkp4WUg5R1YvVldwalpjS2hiME83eTVHNEg3bnNiRUxwOHRHTEt6?=
- =?utf-8?B?N0FoQWtoWUNCWVNFbHFQcWgxcVVqdlFYSlBKZlpSeERiRWZZTG5NVklqZExi?=
- =?utf-8?B?U3Z6RjllN0M1b0JDdmpSQ2pranBKV3dxUm9vT1FVb3NJaWE2eTIvZ3NzdDgy?=
- =?utf-8?B?THg0YmtIN2xsbnN6WWsxajVZM09LbFhZN1JHQTByQnM2TWZDc3MzTEN0WVF6?=
- =?utf-8?B?b0VXZ3NYRlhpLzJyYVpUcXZvVmNSUk95eFlpTUhpZmV4bXRqN1ZYU1lLbTFa?=
- =?utf-8?B?N2FiVlBIMkRWcE55R3kxTXdhNEh5VFhwdnZGcnNaS0dCSURLUDkyNWdzRm15?=
- =?utf-8?B?NWxCSVYyV2Q1Q0Voc0NtQnlDOWEwQ3B6b1JqTmR6U1lsSVhodFdlcGFxZDFF?=
- =?utf-8?B?RlpZMDZkWGpXQlRaaHFxVVlvcEZ2bmdvcldBMVozZEgycEp6bkIzZ1d2VUtM?=
- =?utf-8?B?L21jSWt3RC9Pc0xhWm1Gd0JJZ2plSGpZSGtFbXloU3h6cWI4NjhWT1R0aDhC?=
- =?utf-8?B?Nk14NjVJcHFHL0cyMlM4VFNyM2wyTGtzVlQveGFndXMzRTZmSHhVZWxEZUlt?=
- =?utf-8?B?RWNGalMwN0VBa3JXeURMbEJwczVqQndyd0tkWDY5cmxRQlJWNHJaNnpTbXJi?=
- =?utf-8?B?Y25FRjRyaUhwNGpIU3ZqV2IySlFvNWlMNzU0b25LRC81TWVWN0RLbUllOU43?=
- =?utf-8?B?Qk0xSEdBeTdaVG15Q2V5Y1NYNXUrRHRSZ0JqUDQyWXpQbXpuWXJxNXZ3N2x1?=
- =?utf-8?B?elg5Tk0yVnRHdjhLTWppYzlOYmsrL0lUSjBuNUxxd09zWm9Xc0p0cDlNaW9Y?=
- =?utf-8?B?dDZHakd3M05hajhVK3lkSDg0RUtZcVZxSGwwK0xoYnMwcVdoM3E3bzAzSUpR?=
- =?utf-8?B?bm9tZ2VzSURKUTdLTTgrdkhEZS94QzBXNkRrMXlxWVdBTXUzcGZteHRDMnc0?=
- =?utf-8?B?clBOMFcxUFJzNHUrbDJ4c0U4ZEZxNTlyY2pzYTg0SXVjVlJNZ0RQMWlvbHhq?=
- =?utf-8?B?dVJLOXZkcXZKcHEzWFRSRHQ1M21CM3JYU3EwTVh5L0NTMDFGdHZ1Nnowek1n?=
- =?utf-8?B?bk1oR2xHbmRobEU0K013MkhnSlRGZ1JaZzJkVUNldURsN1VUa3M1ZG9kajRh?=
- =?utf-8?B?cVdHRWs1WDVwZGRiRjNhVmhHdnhndlVaS3psQ0w0dVg0QWZ0UlBaNFBuUExM?=
- =?utf-8?B?YSt6OWIzVkVuYnVJQjhISlZIWG5vS1c0UTNrdEdDU3JEeTdpOXdsdGQ2L3Bk?=
- =?utf-8?B?MGUxMlBvbjdNVHY5bWpjeWpvb0pJakZBM05DeFFQbzluMnh5bUdRSU5FMGtx?=
- =?utf-8?B?WVliTTRxc0JRNTg3RVo2YzRudmpPb2V4Yk9aU0kyRXpDTXRteEtHbFYwdEFV?=
- =?utf-8?B?c3ZaRk1DWkcrR08xaUhLTkJtTjhwUnRUcHlyTnJFZHY5Zm0xOVV2TExOaFVs?=
- =?utf-8?B?NC9kWkZFL0RyeWVtVTY3RFkyNWQzQTIrUVZYb3pPVUJTcFVudFQrUWtqa0xa?=
- =?utf-8?B?b0tlWkFpb2ZOelRGWW1HUG45Tllrc0xybmR5QT09?=
+	=?us-ascii?Q?kk04w3yEI9/iko2M/sDMEeGQGjCkcDLmy4TkaBk1CJltZ8zLv81tSRiGp79q?=
+ =?us-ascii?Q?Aiy5zWKehderDZ4SM6U6oSklqfHic8Ck2AdzMIy/ChvukADRKTLTY6YM2aDu?=
+ =?us-ascii?Q?xLizYYnCK3INNNDpm8zqEnWAuO99f0M2SHlAWkb2OpIK+sm9WFjdX7gYv51q?=
+ =?us-ascii?Q?MtYC4Pb7DDl/T6p0VkgYTvpbOXyjIAXdWmGmKUaWfZ6bBTCwa+TwQMZOvzSg?=
+ =?us-ascii?Q?lQdvMVwz0Z7QCPwpc17/VFJ/QRYbXqwYUn4uzMyxfi34wayXacFZ2dQksuKa?=
+ =?us-ascii?Q?ByAo1/k2AyswcYWPeKjbswaLHBVhvV68PLFgD7s4BX/FcLU/cyK7siyWqSb0?=
+ =?us-ascii?Q?roit5XLPSO56atoWiU+bVOEnwauLOgSRcaoVwpxYqlIVzP4UKAc8iNgEGvBZ?=
+ =?us-ascii?Q?MH0dZua78DDd7xBrLF9qZX5azfT0yQlSon1eh6FOQLPWK59z9A4+pPin7CaT?=
+ =?us-ascii?Q?L5Pk7wQfzQj0LLy48WuxpZjXFsjh9DXALKpdO97NXIVNyqeR1DUlussbNJhG?=
+ =?us-ascii?Q?CGrTr2IUzMlBInIgo12X0qhr3t+TOuTbeexf5G5SndxLNHckv0vim6WTdlA6?=
+ =?us-ascii?Q?imsiaZSW1LafEuKDOSH3TDihKym6tX4X0OrC7Y5y7xdNiSVbANJkxfPquTzo?=
+ =?us-ascii?Q?0Ty9ZCuIHd/mKm9hDowBPffaZz4CBQUHm80s5TZmkjfX6IqO+BJcP++N95nc?=
+ =?us-ascii?Q?bFF9v89XQAz1UsRJufFSMSCIcjwzx6bluofBbNEaE8bVN3ip1YCa8g5GgrFw?=
+ =?us-ascii?Q?ySnidPC6VzR1NLy0rC75I0lu07ZeqBLwb3zOewhhgNDI3UWm8eHRMGjm+Qug?=
+ =?us-ascii?Q?O4Gu3P1x9Lf5rDsCmoPJc9lpPEUnrBi9rZFVcd2y3eYs+qcurbu68YS2ylkf?=
+ =?us-ascii?Q?zSbRL9UhTtv9PqNDmTeBwC9nlAM2jGMW98pbz/geU5GBHIGL9FTw4je2p8Um?=
+ =?us-ascii?Q?Yzv88jUmUKJ8f8Yu3giM7GCx7zu+7TqxNl4vnllWlO5r2SayC6/ZNDuvOmgI?=
+ =?us-ascii?Q?DGk4Xel+O3g30R7xLW1/DVaGo9RGEMvGVJNaLgi5Z2cVL0FevP1Nb7VxePmi?=
+ =?us-ascii?Q?PIbxc94A3R8We+CRLIj283J4dRcQoPaQ7comWQJp3noH1XMBk/uNLiZ+BwSp?=
+ =?us-ascii?Q?3J/aAqNbzs1sw2pexh94GoplWMDV8VcIAp5Km2EV6xKI7uA7j2SBd9Gdca8Q?=
+ =?us-ascii?Q?scRPTY35aYXHji843nY6wBwXBCHZVquk6+33BpCiR2uNg9EYSiFhAG9QNR29?=
+ =?us-ascii?Q?VtD3C/4Xt1gCvdvlUVIH0SzOZMLQRW7TcnrsaP3KFYdd6+i1O+AnK+yQ1+sv?=
+ =?us-ascii?Q?gdpgjGHYFk6eeZXaAazvlG8c/F/7O6v9N+EPyIKd23NNJ/udPmOpaQnRkDFt?=
+ =?us-ascii?Q?5QRfzycMurAzxw2O1/s7rPF9DxdauGcWsUOS3l8s2RHCQ0hChBkP1grSFZhQ?=
+ =?us-ascii?Q?vEj2V9zB8DR7Gb0+UVsCIebCKuHb6xhcFzYP2F8BB3C5rwWE9LE9Nx8jIPrv?=
+ =?us-ascii?Q?+sgpJslJZI+Qn4dOyB7FJzgF2hcS3bqAV/P/?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 23:30:13.9254
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 23:37:57.3666
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4799a590-aaf8-48c1-078f-08ddd9f8302a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: eca51d41-2dfa-4b3c-d2af-08ddd9f9446d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBD.namprd04.prod.outlook.com
+	MWH0EPF000971E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5861
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7842
 
-On 8/12/25 2:38 PM, Kalra, Ashish wrote:
-> On 8/12/2025 2:11 PM, Kim Phillips wrote:
->> On 8/12/25 1:52 PM, Kalra, Ashish wrote:
->>> On 8/12/2025 1:40 PM, Kim Phillips wrote:
->>>>>> It's not as immediately obvious that it needs to (0 < x < minimum SEV ASID 100).
->>>>>> OTOH, if the user inputs "ciphertext_hiding_asids=0x1", they now see:
->>>>>>
->>>>>>         kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum SEV ASID 100)
->>>>>>
->>>>>> which - unlike the original v7 code - shows the user that the '0x1' was not interpreted as a number at all: thus the 99 in the latter condition.
->>>>> This is incorrect, as 0 < 99 < minimum SEV ASID 100 is a valid condition!
->>>> Precisely, meaning it's the '0x' in '0x1' that's the "invalid" part.
->>>>> And how can user input of 0x1, result in max_snp_asid == 99 ?
->>>> It doesn't, again, the 0x is the invalid part.
->>>>
->>>>> This is the issue with combining the checks and emitting a combined error message:
->>>>>
->>>>> Here, kstroint(0x1) fails with -EINVAL and so, max_snp_asid remains set to 99 and then the combined error conveys a wrong information :
->>>>> !(0 < 99 < minimum SEV ASID 100)
->>>> It's not, it says it's *OR* that condition.
->>> To me this is wrong as
->>> !(0 < 99 < minimum SEV ASID 100) is simply not a correct statement!
->> The diff I provided emits exactly this:
->>
->> kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum SEV ASID 100)
->>
->>
->> which means *EITHER*:
->>
->> invalid ciphertext_hiding_asids "0x1"
->>
->> *OR*
->>
->> !(0 < 99 < minimum SEV ASID 100)
->>
->> but since the latter is 'true', the user is pointed to the former
->> "0x1" as being the interpretation problem.
->>
->> Would adding the word "Either" help?:
->>
->> kvm_amd: Either invalid ciphertext_hiding_asids "0x1", or !(0 < 99 < minimum SEV ASID 100)
->>
->> ?
-> No, i simply won't put an invalid expression out there:
->
-> !(0 < 99 < minimum SEV ASID 100)
+This series contains initial patches before adding support for upcoming
+NVIDIA T410 PMUs.
 
-When not quoted out of context, it's not an invalid expression (in the 
-99 case) because it's preceded with the word "or:"
+Thanks,
+Besar
 
-..., or !(0 < 99 < minimum SEV ASID 100)
+Besar Wicaksono (5):
+  perf/arm_cspmu: Export arm_cspmu_apmt_node
+  perf/arm_cspmu: Add callback to reset filter config
+  perf/arm_cspmu: Add pmpidr support
+  perf/arm_cspmu: nvidia: Add revision id matching
+  perf/arm_cspmu: nvidia: Add pmevfiltr2 support
 
->> If not, feel free to separate them: the code is still much cleaner.
-> Separating the checks will make the code not very different from the original function, so i am going to keep the original code.
+ drivers/perf/arm_cspmu/arm_cspmu.c    |  51 ++++++-
+ drivers/perf/arm_cspmu/arm_cspmu.h    |  43 +++++-
+ drivers/perf/arm_cspmu/nvidia_cspmu.c | 194 +++++++++++++++++++-------
+ 3 files changed, 228 insertions(+), 60 deletions(-)
 
-Take a look at the example diff below, then.  It's still less, simpler 
-code because it eliminates:
-
-1. the unnecessary ciphertext_hiding_asid_nr variable
-
-2. the redundant isdigit(ciphertext_hiding_asids[0])) check
-and 3. the 'invalid_parameter:' label referenced by only one goto 
-statement. Thanks, Kim arch/x86/kvm/svm/sev.c | 44 
-++++++++++++++++++++------------------------ 1 file changed, 20 
-insertions(+), 24 deletions(-) diff --git a/arch/x86/kvm/svm/sev.c 
-b/arch/x86/kvm/svm/sev.c index 7ac0f0f25e68..d0a13f1b0572 100644 --- 
-a/arch/x86/kvm/svm/sev.c +++ b/arch/x86/kvm/svm/sev.c @@ -2970,8 +2970,6 
-@@ static bool is_sev_snp_initialized(void) static bool 
-check_and_enable_sev_snp_ciphertext_hiding(void) { - unsigned int 
-ciphertext_hiding_asid_nr = 0; - if (!ciphertext_hiding_asids[0]) return 
-false; @@ -2980,32 +2978,28 @@ static bool 
-check_and_enable_sev_snp_ciphertext_hiding(void) return false; } - if 
-(isdigit(ciphertext_hiding_asids[0])) { - if 
-(kstrtoint(ciphertext_hiding_asids, 10, &ciphertext_hiding_asid_nr)) - 
-goto invalid_parameter; - - /* Do sanity check on user-defined 
-ciphertext_hiding_asids */ - if (ciphertext_hiding_asid_nr >= 
-min_sev_asid) { - pr_warn("Module parameter ciphertext_hiding_asids (%u) 
-exceeds or equals minimum SEV ASID (%u)\n", - ciphertext_hiding_asid_nr, 
-min_sev_asid); - return false; - } - } else if 
-(!strcmp(ciphertext_hiding_asids, "max")) { - ciphertext_hiding_asid_nr 
-= min_sev_asid - 1; + if (!strcmp(ciphertext_hiding_asids, "max")) { + 
-max_snp_asid = min_sev_asid - 1; + min_sev_es_asid = max_snp_asid + 1; + 
-return true; } - if (ciphertext_hiding_asid_nr) { - max_snp_asid = 
-ciphertext_hiding_asid_nr; - min_sev_es_asid = max_snp_asid + 1; - 
-pr_info("SEV-SNP ciphertext hiding enabled\n"); + if 
-(kstrtoint(ciphertext_hiding_asids, 10, &max_snp_asid)) { + 
-pr_warn("ciphertext_hiding_asids \"%s\" is not an integer\n", 
-ciphertext_hiding_asids); + return false; + } - return true; + /* Do 
-sanity check on user-defined ciphertext_hiding_asids */ + if 
-(max_snp_asid < 1 || max_snp_asid >= min_sev_asid) { + pr_warn("!(0 < 
-ciphertext_hiding_asids %u < minimum SEV ASID %u)\n", + max_snp_asid, 
-min_sev_asid); + max_snp_asid = min_sev_asid - 1; + return false; } 
--invalid_parameter: - pr_warn("Module parameter ciphertext_hiding_asids 
-(%s) invalid\n", - ciphertext_hiding_asids); - return false; + 
-min_sev_es_asid = max_snp_asid + 1; + + return true; } void __init 
-sev_hardware_setup(void) @@ -3122,8 +3116,10 @@ void __init 
-sev_hardware_setup(void) * ASID range into separate SEV-ES and SEV-SNP 
-ASID ranges with * the SEV-SNP ASID starting at 1. */ - if 
-(check_and_enable_sev_snp_ciphertext_hiding()) + if 
-(check_and_enable_sev_snp_ciphertext_hiding()) { + pr_info("SEV-SNP 
-ciphertext hiding enabled\n"); init_args.max_snp_asid = max_snp_asid; + 
-} if (sev_platform_init(&init_args)) sev_supported = sev_es_supported = 
-sev_snp_supported = false; else if (sev_snp_supported)
+-- 
+2.47.0
 
 
