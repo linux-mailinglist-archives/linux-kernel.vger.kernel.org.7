@@ -1,111 +1,192 @@
-Return-Path: <linux-kernel+bounces-764923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB59B228E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE983B228D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0181BC4326
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7003B3B99EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4F32868B2;
-	Tue, 12 Aug 2025 13:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E291281510;
+	Tue, 12 Aug 2025 13:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb/sRMoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F2uhYkOV"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2074.outbound.protection.outlook.com [40.107.95.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F4828507F;
-	Tue, 12 Aug 2025 13:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005494; cv=none; b=r6I4n3G5n3r5DEmsFj/eduJUBBU9NSAic3k2Ad3y6F6J7U8hF5rmSJq71MKu4fU2eCMDyFiQuTi7Ly+pRM+dCiQoxI7N9BFeggqSZHR/UUvwoN08HSvo5rIjYtuwftL1rywyKkobTKz6Jju0jSpJV5kAyKAC2b0Dup5QFk2cdJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005494; c=relaxed/simple;
-	bh=K8lzBB9/Bh3jP/7LMg8a5TAR/9M1qucruuqKpFB7wz4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GMJ8d5d7zqBhF1AGXLYdEcruk2MbHQxhJl1yUs1NL1SeEEsN7YYyDqOMMzLkTubrX60VSFeUIV2BkEM384s6tziG2b0J/U0eziisZ6CUbAGmYAdxdAEbwsiQ9k3AUGj+NL6ACUbfvd3SpYgq9I0MsoyJLTB/13J468bTAJKGM5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lb/sRMoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2481C4CEF0;
-	Tue, 12 Aug 2025 13:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755005493;
-	bh=K8lzBB9/Bh3jP/7LMg8a5TAR/9M1qucruuqKpFB7wz4=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=lb/sRMoHaDv+Vq/LarNyxaysxQc7MLWzPtxUuJtQ+k5oOp6r3aRjDQ1WpShIRb0Lh
-	 ngC4YYsw/g7XBY6A/CXs/GUkpBsz5/F/be3+bDMRlDiEx9gliV/nK1W/qJMaQNzStX
-	 P2taRk5Wn6j2d9r4okncraoZiSDbJbn4LUq7MOrEUJp8IDmtkxcS5M8Y70LSK18QCz
-	 Vw9PMvUcl2hDohXiOOVuImNHE0IIAd9dxuaLMS/HpMmYTfXRPESZ47zxTJ+jmQWds1
-	 AaWzV0LkBtoMOgmRS53eEuxJWmStnut1B6VOGzfsccOhwPzyki0A83e/SI46jDtb3N
-	 0baqdca9yYL2w==
-From: Mark Brown <broonie@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Martin Sperl <kernel@martin.sperl.org>, Chuanhong Guo <gch981213@gmail.com>, 
- linux-spi@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, Liao Yuanhong <liaoyuanhong@vivo.com>
-In-Reply-To: <20250812033817.487565-1-liaoyuanhong@vivo.com>
-References: <20250812033817.487565-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH 0/2] spi: Remove redundant semicolons
-Message-Id: <175500549067.70594.14172853876781002627.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 14:31:30 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA8A1FBEAC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755005544; cv=fail; b=sbmdSjiLK/xdvJvLd0PFPlMGo9QtLt/oJcNdrcgSSqyJAJrjQZh0fWTdXabe9vHUqLTMSGuwBRm1w+C/FjnQga8Gh3IJrNtOs4vTcvxe+hmyQxJCGnR7PTCj3omAaa11Eks9mtq0jcNMS9/CS5NDRu7Cd66XFVa3O3gk3IgrAgA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755005544; c=relaxed/simple;
+	bh=svikDL6zg+QNq0gs2tiOmz1zT4cKIV08fKt00S9AxYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qxtI5L49uIBVfUkRgkzBFzwSAeFuY7hmDHM9sdP6r6NL5he+GzTaMqNaQZp5wqYGIO9z0yLj6OF5SaRnfe++fyYwrm5T/I3+gV4VLwHAnw4MFcwRM7aHuzw2miPK7AqFNejIaSJAcQWgcO49ZpAllL5fGXBSw/kS5LiNTAymOWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F2uhYkOV; arc=fail smtp.client-ip=40.107.95.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yX/9ewze5ZfiTTt8blEBV3yTfKyXX8eaPh7FmGaLax3dgFYFjDkdgppMTCTJVuPlVJD4CSst6xF9pN9Jh+BV0Y6K7yuxEJhOUL6o48qQpY68kb8/B9Q+FdKAMSIPJXc5cSEo/1XFobRROq9LcqB3Xb+PpGBKrBK8xPxwzmX6USgGwgKyN5LFvnQOwRV/3VT/kSTqW1HH2Lm1PyugR+N/CrrAI3Fudw72/k6vVKTb+Jt5RDCpFAyWBvhuC5mqXIZTgK59NFv4J+40E2Dl+zhl29CO3POcRRW8QeEAy6gIg3s9th0JldqMo7qJTxR/do+z66wVYwVUsJhEBhv8QCPrYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=clrkIKXV/imbydNkdIlDxQqmOgeEoRcbfhRfVHswdeo=;
+ b=tfGd9ohJFaUz5PQQbUfrS5C+yEwjzBf8fQOjnW4q0a0b0quqSPyaDHmM5Sx0u9prReI6Uj2odneR+rm+Pe+KqNVgaTRc5WpNLbxwf0eZhTpUcioHchXlqk9qrfDoH8cKrLIZHgzSSw+AZVWWYfFLhLAL16KFruaYcD6GUXfCAsiwDhbH0LXurX4Mkht8LjZFPDrOXtVW7DIkyWSr6xal81WTXavUYmG9YOpF7FtVwmwcj5U64hPqiJQAJEUpOp5sZpXAod05CCARLSTYsT/AGwQ5k97XBL8bmlTCV1b9KWcoc2+pR0wvryD+W8WS4+WtxE0/+Ln8Ywz3cHS8XGcHyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=clrkIKXV/imbydNkdIlDxQqmOgeEoRcbfhRfVHswdeo=;
+ b=F2uhYkOVBl0vY8An4di2kUWq0cLt6c+aEyAt9MggqSkzC/ac3EicHv+0FgQJS6xY4R4TJhqY4S7aksjypKrW2doN5A2vTg6w0Z60IPHZ2DT+jqpo+jWBCK7ZhhKd5nbs3QIyEGpJIGZVTSDC8DBOqe+NNDuT4zCQMRPuj1uulTS5nM0e9J5J4BDVa+ruj+M05St/WU91z79ECwWuPcubpjnTBrTcGha4RapILwIQ0FmrwHc6AAMBp8vCOY7dJnAWYBuXYvT/8a/yq+39Wpku60cEH87uxdnx2pM5wwMGIlFbyZzgkRJeC1dq8UEP+fo7iSYb5FDQT6Lmo4HmGzbAig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DS0PR12MB7926.namprd12.prod.outlook.com (2603:10b6:8:14a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.14; Tue, 12 Aug
+ 2025 13:32:17 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 13:32:17 +0000
+Date: Tue, 12 Aug 2025 15:31:54 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Jake Hillion <jake@hillion.co.uk>
+Cc: Tejun Heo <tj@kernel.org>, Christian Loehle <christian.loehle@arm.com>,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
+	mingo@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH v3 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
+Message-ID: <aJtCSjsCEtN1csjg@gpd4>
+References: <20250805111036.130121-1-christian.loehle@arm.com>
+ <20250805111036.130121-4-christian.loehle@arm.com>
+ <aJebkj-neVJNKEJ4@slm.duckdns.org>
+ <aJh6BWX7rYCNrzGu@gpd4>
+ <y23etey3foin5nrxgj6e4g373b3ap6oxqa5rrvuvwyus3umw5s@bgh3d6uuga5t>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <y23etey3foin5nrxgj6e4g373b3ap6oxqa5rrvuvwyus3umw5s@bgh3d6uuga5t>
+X-ClientProxiedBy: SI2PR04CA0002.apcprd04.prod.outlook.com
+ (2603:1096:4:197::17) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB7926:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7ba0402-07f2-48d7-ba5c-08ddd9a4a7dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h+OVPjgXTDuOVYlTMKnpzPnfIZ59fg+OXCG+f7wbriLfwFxsk6rvSo1Es7s4?=
+ =?us-ascii?Q?h9XtcTwPP9DHro4xKl1UfT8WbpANSHsl2X9U7WYR5iYiBegyYlj3takvgXDn?=
+ =?us-ascii?Q?4QCUV1tKxEvV1gI1z57BwhmIMeyzSuPEkBSR/B9Su9hfPexA/mjhlWtSuxnS?=
+ =?us-ascii?Q?nOS+cSDpBjQwSg1EaoOxGLO0nWZecRHR5EYxY4F8PHpmFeNvpXu81fwxY5CL?=
+ =?us-ascii?Q?+JpiQyJ5M/YHsI3AlTLXrmzjAr80SPchSa0abvWL25gQ+gFPLqNJkHZxSZmr?=
+ =?us-ascii?Q?qI1SKa7bjSmNEy+W/Stek659DTG1R5Qqviqm+R5gmrUiXqJhHuNv6/yFry2a?=
+ =?us-ascii?Q?STLkvWg7jSvdqhzIRPOHJeCeanLLrXHidolubLN8GBkUj+qLTY087GMmAz/0?=
+ =?us-ascii?Q?X387FfFUP41l6U0ah5H77vpl34htZYYO0YAVlqmpq3i3f0cVBw5jwC93Auj3?=
+ =?us-ascii?Q?sw5/8sm6KlLR0RKAd28FQExxzNsmIVophJgA0d7+fwVYMxyYQt0BOAdFlCqY?=
+ =?us-ascii?Q?aTHF8mEVf2jwW3v+nVa3qxtAgmTPqYbxjI47vVHYoH22BSbm6+IrAaLKs7Ea?=
+ =?us-ascii?Q?A3EOPcLdnRav2tOnyAkwMQPlM4gxfFHAr5dzwtYy6UZ6liA0Strt3zTZ3nmD?=
+ =?us-ascii?Q?/LaotJ3Z+2OtQ2/wAwADeoH5oCks7ngjEmEBwu5AH9HrBppbk72PeDxDlY8K?=
+ =?us-ascii?Q?0DD9kNqSuXLjGKaF1n2ZsrB+iKWw9ozN5pfWTbPOh8L8W3qR02zRCxbFYxZj?=
+ =?us-ascii?Q?PngXxHCDRMzgIH9mGvpMJngBwbCz8itHjuvY3VDUjlEn5aiwGPuXHJ/dktct?=
+ =?us-ascii?Q?9fjfIOVUBpO5VDPmAFng4pIWU+EjexK6X0T06L66HMmblSP1ba4bKtG/q37P?=
+ =?us-ascii?Q?QT1g2rFGeTSlrRPjuU2TH/CsPyNVZu+2lZyYo9IalnRSsItjyK6v6MgLl0+1?=
+ =?us-ascii?Q?4l3ZZDS0/Q1dNDmcDJFfK7ClEFE6liAQLyrgVuy80ybdK3JqwQUYBMP9Igfz?=
+ =?us-ascii?Q?SZVOigVeTHdP5dBMKfXwQOBMwjvTkavHHDrvqZ4/sdVmP7mX7ImMPcAcV8fU?=
+ =?us-ascii?Q?uqegItvlIr/jvNub/emU7OJtwqgV6HNXxB6N0SX1yVidQbq4qUUPr+JQGwW2?=
+ =?us-ascii?Q?4gFpCeh9/S8xVE5vvSMjSpOOPlwMB15y5ZzgOkZXCL/xhxxFZRoz4VdTlX43?=
+ =?us-ascii?Q?pJDFu5wQgdX0Sq5Lrbvy/PG27qVq1p+vV2LNymfAx2RIhFXkrkJS2GsfSUS7?=
+ =?us-ascii?Q?uD9RFoysoxCHp6JuH9pdQ577WHqqOeb+dTWhqGwdqvODinmJ3ascR2K+bORB?=
+ =?us-ascii?Q?Zqifm7ZDiruWvbbh7a9nGOzSpBU3OVSrpOIkFCxVlJJWF3R/HE6UopY80FXK?=
+ =?us-ascii?Q?I/KYN60z7P25sDhRbCaBm8M7J2EmF6KgDfq5+4TDygiEOzcr6A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NadIUrRqIT8WClThqC2YvCQ/xrgb9G70kHeqfjKwisxZsuVGZMyqFjhuXemc?=
+ =?us-ascii?Q?oG/n9Nkp9EhVaadDZy3/5j+tjZgUfx3f+40Zpn8UjnHgRJkmOgLqeaRp22Cb?=
+ =?us-ascii?Q?VDzjFfBC2LCmLys4gt2s+yHkYfXsAkjVv2QQMoFEzeo0bS0OcgGr/jeN9eQm?=
+ =?us-ascii?Q?BvVKn37yeAC+cIxhiCZ4vfD/iESeaeO3lWvBZU/ZnuIXQ8WPcD3ja3JKWHPf?=
+ =?us-ascii?Q?wqPe2U65WdZk5KENNje3vbA/qNRF+o0L9kcOA93TRAJUn54FQm4UedU1wknv?=
+ =?us-ascii?Q?O3GZFbxi4/gQjwKcT3iToIdq+q0JxW1sLmsWkmo9zWb2FXr6t4xHo5wAY2Dg?=
+ =?us-ascii?Q?3qCtYuLbiMCJTrXPZhcGHnapIOmfXy0KpO5dwhX8jORs9bcAE/g9GDrTND0M?=
+ =?us-ascii?Q?Tr/heWkZ5WvAbK12emniHgHCKXB65LiIyCR1q/gec4LzoAz4GmdbhYT0jIMd?=
+ =?us-ascii?Q?H/BFjtwuOjbxsXxp8rBkW1ZtHMG8VScw3x8DkyJv9DotW8EhJ8JNXM+Ox2E4?=
+ =?us-ascii?Q?cDkuLaUkAvW1s517QetKnfhh6JsLcceLu5f13amsw/uKoa8Hu/ixhoavROnE?=
+ =?us-ascii?Q?lFZ0rjzuIdJO1he90visQPGQBA4UYjxrUVWxOO2iDMr1K2ri3sTKbDMmo1e9?=
+ =?us-ascii?Q?VbSH+wLrsiLVE8bJYzzPeAsUU4zEEW6hreAI0Ec85fI6eLzyk1d0OqH2WKdQ?=
+ =?us-ascii?Q?B1MZ0VZNjX0dGaExzosTSSNeKLqbnwExXmPTOv9OxTwNvNwwgFT52yGxouLd?=
+ =?us-ascii?Q?vO3jiOMndu2QfmJkWnYUnLckFoB9X5H8Ieb5V3/F0IwnkjzA6Kj2uMYQmZa4?=
+ =?us-ascii?Q?5Q6aFa4qbQ+LnGJg7tOZ9mTDEhfXC5CmjWfYWVSL5o5YxFXyaMqdxnAmg7uU?=
+ =?us-ascii?Q?XoBpmSfGponqEHddxLU8P6DPgSCepPBOFDcFkbFIQ0IuNVPYXIkcUdRyU1c2?=
+ =?us-ascii?Q?gWudsH5fHBYLOualYb330ad3UawHseu6YqQ/HYdccGnw69pQamLkrCLR5dfN?=
+ =?us-ascii?Q?XtyAIz1xfXG/JqlOVUsOhVnWM9pyDZJ8WFirqQsFQxQPvmiSBSFSPmAK3mT2?=
+ =?us-ascii?Q?2TRwInwmDwySPyJoDu6Sik39GtFS0kkHnUW3zZoAdYarU6f80iqa41QwohFQ?=
+ =?us-ascii?Q?l2x/MFKBYQUPn0FJhooPpV0bVLQLVCTYAz0icp21TjAz+6PpbZ4BDIQyBdEp?=
+ =?us-ascii?Q?TX/mF9D5BS1oVbgM26FR9bYfIEXTwHzH+8f8h9und5kY9AbTm2ElwI/bWytd?=
+ =?us-ascii?Q?hwTbDAsxXO0yZb61ki1gOoJT/gFO3CKdELh8B8FqFwGokmJqLjSY3LuMJyYg?=
+ =?us-ascii?Q?mjgZCyLdI/iecjxLvCtkLtse2Q4J+OFDM2VCwC/zUC6lIyF/vZ9LzSlUvCNs?=
+ =?us-ascii?Q?lhV8jpS2oAD20IrHNG6X2WSP4fOJgIUKU+iuZjO9U6U9dRh9NfwLVC7dntQu?=
+ =?us-ascii?Q?RykxiNosctSwuTEqvH4ooPK2UTA2Fmo41oTLcQmyUurOmvLmVpDkwNCHyMhk?=
+ =?us-ascii?Q?JfaClbVh+4tVmDEtmrADcPzWcOEhpKyMnZpVmlZ3cRHMmRjkuoBeMsCtobCp?=
+ =?us-ascii?Q?XT2PgrJO2Rh/WUL1Wv2LdmXbcjIc/gC68EdxC0Pf?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7ba0402-07f2-48d7-ba5c-08ddd9a4a7dc
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 13:32:17.5459
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yx2mKu3ULxoJU8Axr8ky7Ke3P7yh4I38NRptrf3yrqZoe5NsPChgSbGYaQxxrRawRZwyTWleRWtcnKbdsXxY2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7926
 
-On Tue, 12 Aug 2025 11:38:15 +0800, Liao Yuanhong wrote:
-> Clean up the code by removing redundant semicolons.
+On Mon, Aug 11, 2025 at 03:35:05PM +0100, Jake Hillion wrote:
+> On Sun, Aug 10, 2025 at 12:52:53PM +0200, Andrea Righi wrote:
+> > Yeah, this is not nice, but they would be still broken though, in PATCH 1/3
+> > we force schedulers to check for NULL and, if they don't, the verifier
+> > won't be happy, so this already breaks existing binaries.
 > 
-> Liao Yuanhong (2):
->   spi: bcm2835: Remove redundant semicolons
->   spi: mtk-snfi: Remove redundant semicolons
+> I ran some testing on the sched_ext for-next branch, and scx_cosmos is
+> breaking in cosmos_init including the latest changes. I believe it kicks
+> off a timer in init, which indirectly calls
+> `scx_bpf_cpu_rq(cpu)->curr->flags & PF_IDLE`. This should be NULL
+> checked, but old binaries breaking is pretty inconvenient for new users.
 > 
-> drivers/spi/spi-bcm2835.c  | 2 +-
->  drivers/spi/spi-mtk-snfi.c | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> [...]
+> As Andrea says, this is the already merged patch triggering this.
 
-Applied to
+We should provide a compat helper in common.bpf.h and fix the schedulers to
+use this helper. Something like the following (untested):
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+static inline struct task_struct *
+__COMPAT_scx_bpf_task_acquire_remote_curr(s32 cpu)
+{
+	struct rq *rq;
 
-Thanks!
+	if (bpf_ksym_exists(scx_bpf_task_acquire_remote_curr)
+		return scx_bpf_task_acquire_remote_curr(cpu);
 
-[1/2] spi: bcm2835: Remove redundant semicolons
-      commit: 0ecc0e17f05bbb953b6ea3812e78bab224f08595
-[2/2] spi: mtk-snfi: Remove redundant semicolons
-      commit: 528a813a5d98702cc6fd51983484cf7eec9ebcac
+	rq = scx_bpf_cpu_rq(cpu);
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+	return rq ? rq->curr : NULL;
+}
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Then we can drop this after a couple of kernel releases (like in v6.20).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-Andrea
 
