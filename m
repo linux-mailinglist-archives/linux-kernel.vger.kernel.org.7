@@ -1,160 +1,115 @@
-Return-Path: <linux-kernel+bounces-764126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F7FB21E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:32:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9575BB21E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7D13BE4A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130DB62686D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AB023ED6A;
-	Tue, 12 Aug 2025 06:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FACA1474CC;
+	Tue, 12 Aug 2025 06:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEBiK2bM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lGkQBUpd"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6827C311C18;
-	Tue, 12 Aug 2025 06:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732094315A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754980330; cv=none; b=iO+ysfzYjjGr/GACcXd7/CM8V73Esi/pT8y3xodAUnSpHwEvfL9Y5mK3lEEZxqvk45p/ieig35XIwyyhHUlQZ9nWHlSDLIo44djXFxvIea1Z4YbEnCYY9jATtEEJC+kSDLFbuLhw5iEha4Rr+PLEGvw0NIxIh/5RmXo2qMXXZcY=
+	t=1754980358; cv=none; b=ZJ+M/bOgmewId6rzG9mX9MMOWoi6lC92vgrP+CbPutDacCvSgwlL6GBbETsn0ZwRe1ESeRFWUuov2SeMtQOBpgYwOJm/qLnWUk8SqxUATDM7O/GLPe3eTWmSkXobG7OMHU/qpYJ6/BKasfMU8YsjNkF4R5BYUqqF9fZ4PEEeej8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754980330; c=relaxed/simple;
-	bh=otaBZh9TNVNUn4n+KFk4zIkvpGN9iEpnVss/ZcBnHBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QR4o0jiL0D+hS8edFtIdjvmYVzTzTE8V1J1z7h/reRFEywtYtNpXFZK8L0uwroGetXkSem9CC0Ypr+duPlTiNigYlag42GDzCXPC6VxQf0bV+WqjWCKAVefxJ9087rZyAGCM2jCnk71o6gq9nFMbRNOBCYnAH8aPtdyXlbFodSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEBiK2bM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F55EC4CEF0;
-	Tue, 12 Aug 2025 06:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754980330;
-	bh=otaBZh9TNVNUn4n+KFk4zIkvpGN9iEpnVss/ZcBnHBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dEBiK2bMfsD5IpNQj20sm4pOp7cKkzzvO9rSw4Gc4mSvnL/LXBIClBjlBy62c4S7M
-	 rfwQdg/BnNkCGdBP3kGdr9AKfczzi+2jHXCQmDZP17F55Y1pNSNbQltkKeSP1idjn4
-	 Mz/44PhO+5nt8U3jsM3jW3W07IqePKAdArDZy70bBM92HV6nONtFFedk17iGAHAVIx
-	 KvK3rhg/cIVEyjTpRr82UQpTH5O2+4tWhJPTQmil/LFV1jsSS+vRu0Gcq/FuawBsC1
-	 SiPbsZ3LBDb8cB8e6Apc5MLF6hlQvArB64uhltW9jZIlumYpHy17P5kdYmjK/tZUeh
-	 2yCqq2tPYPW9A==
-Message-ID: <4a47b758-5c20-4e30-bc61-206acd48bdd0@kernel.org>
-Date: Tue, 12 Aug 2025 08:32:03 +0200
+	s=arc-20240116; t=1754980358; c=relaxed/simple;
+	bh=19MZZE+mtCCFUSlM4kyJs42djof52x9s/qHDexe1dtc=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ur077pG8h9xRSSHS19JBRNJ9tkTGxKsF6UNx9YtUlFu8E5dBZqkrNxQ9OMMXqKQzZRCZ0E460XO3BQeyaHSkxuMYPLM7mWmlMmGL+n2sa+zIOAbChDCs0+elVT+OqQ5UggbN2K1R1gUsFyzEcXhlmdpYE9AQ956En7QOKyoQrxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lGkQBUpd; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76aea119891so5880909b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 23:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1754980355; x=1755585155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e2EbEqlDXIPuEkSIhf625qIlzs3WVIMHmlWMM9SUkVA=;
+        b=lGkQBUpdmQaSEpQO4XOqTxzyrm2lEXAUGaQptys5XN9PGTiKs40/C5KrALgqdniZcj
+         rQizMlB5T9Nsw5eD3HiTRcwGfv0oxr8/+R2a3s2zPR9Wk1wwy7qbw21pqSyFyfToQNMb
+         rcMrDZfKAFUdWJN+OZ66FNH7hOH/+yw2fKiiI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754980355; x=1755585155;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e2EbEqlDXIPuEkSIhf625qIlzs3WVIMHmlWMM9SUkVA=;
+        b=OjVCCCxy4Ww2mM6GqvwkTdo0z6AZrOoObeF6NrHuJCYMIEfw8p/xZSbrZfj2YQQn51
+         7TbC8nvswNOCnX7Qt47F79M1+QWAMGHP+/uYTdyVnudOf3tP8D1HlMkj3q65CuC+LDx6
+         UdcHF9bnERjBBozAJVsz59ZQHX1ZOqTPJkR3c+DI2ZROMeCNiyj9pgPuT8elBI0t2Y/V
+         gETV8UkHPBNl6/uxw0gsH7TAmhgRujBppf09f65oa3auo+2fz7PaK+4/YOZDNJZ9CQkV
+         QzkqrHAUqZxdj+qF2TDFa0Gh1gfltAI6+7Z57f8cNJF5T9kGlUlZbHnSbQ3lssOjTPHe
+         Cxog==
+X-Forwarded-Encrypted: i=1; AJvYcCWbSyW8Q4vnZ+t0S0IAxetxhjbsSh+mL7Pb6Wnhm9P/G4WcX1pO2e39sVKeCTHmvet9Tv8ZuDhXUvcxE7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOZMeIC/UZP8MFm6TQmvJcc4VWiLWxLZVxM6RYJ/qgN11/Ryoy
+	rw8htxo5UA5Jm1i+rekqrXotC7HmWzfEqxTSttIw34RH2iDKylQNVCIdt3K1Qo8UWw==
+X-Gm-Gg: ASbGncsBc969nzoTglI8PZoX7B5/elEqhQseZYr56vAuP3M/FQ3m/ODI8GmVuMSXVZs
+	st4FC5oju85snO1ie5AslMrAX1wZnOrppz+RSPhUWdjbPXGrJE9hXLOHHR7IrQl0kL3vGjcUhHx
+	5AuGCx08buQNhCXElt0fcJP+0THjp+oJAXnuhzRSEy9TSbKz3KFlGxxZ6ys17lQxu4txbcbEgah
+	NkJdBVZG6dKQdn5zee3FKBRZNoyTbKRDXOd0OgCQCUkg7p0dlFH9AOU84ZCtrh0agBmD2NSL9f5
+	DwDIjlzLlr7Di2OnQd3zPsTLh/Ga4RqnOIEb6n/IzYDVD3U0UDrcUrXHu6d+y8Y6CGL4kRxpow7
+	Tik9GgRmyJUNAMQDGaft4sbNSMBvV8DB5QQpnqv9e
+X-Google-Smtp-Source: AGHT+IFhTFwxRSv8E2GLDX/po2ou7d5z6m3Vj1K82MSazLrjmlphpMDTRRPJFvKoS8p3fmF9jHXehw==
+X-Received: by 2002:a17:902:d4c4:b0:23f:9718:85f5 with SMTP id d9443c01a7336-242fc38a2efmr36482365ad.15.1754980354691;
+        Mon, 11 Aug 2025 23:32:34 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:f81e:7c91:8fbf:672a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976cbdsm291456165ad.75.2025.08.11.23.32.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 23:32:34 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Chia-I Wu <olvaffe@gmail.com>
+In-Reply-To: <20250610235825.3113075-1-olvaffe@gmail.com>
+References: <20250610235825.3113075-1-olvaffe@gmail.com>
+Subject: Re: [PATCH] drm/bridge: it6505: select REGMAP_I2C
+Message-Id: <175498035196.3219801.9473521709226149034.b4-ty@chromium.org>
+Date: Tue, 12 Aug 2025 14:32:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] dt-bindings: PCI: Split exynos host into two
- files
-To: Shradha Todi <shradha.t@samsung.com>, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-Cc: mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
- robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
- vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
- m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com
-References: <20250811154638.95732-1-shradha.t@samsung.com>
- <CGME20250811154721epcas5p26c9e2880ca55a470f595d914b4030745@epcas5p2.samsung.com>
- <20250811154638.95732-7-shradha.t@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250811154638.95732-7-shradha.t@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 11/08/2025 17:46, Shradha Todi wrote:
-> The current Exynos PCIe yaml binding file is hard to reuse by
-> other Samsung SoCs. Refactoring it by:
->  - Moving common Samsung PCIe properties into samsung,exynos-pcie.yaml
->  - Creating a dedicated samsung,exynos5433-pcie.yaml file for properties
->    and constraints specific to the Exynos5433 SoC
+
+On Tue, 10 Jun 2025 16:58:25 -0700, Chia-I Wu wrote:
+> Fix
 > 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  .../bindings/pci/samsung,exynos-pcie.yaml     | 70 +--------------
->  .../bindings/pci/samsung,exynos5433-pcie.yaml | 89 +++++++++++++++++++
->  2 files changed, 91 insertions(+), 68 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5433-pcie.yaml
+>   aarch64-linux-gnu-ld: drivers/gpu/drm/bridge/ite-it6505.o: in function `it6505_i2c_probe':
+>   ite-it6505.c:(.text+0x754): undefined reference to `__devm_regmap_init_i2c'
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-> index f20ed7e709f7..fd0b97b30821 100644
-> --- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-> @@ -11,7 +11,7 @@ maintainers:
->    - Jaehoon Chung <jh80.chung@samsung.com>
->  
->  description: |+
-> -  Exynos5433 SoC PCIe host controller is based on the Synopsys DesignWare
-> +  Samsung SoCs PCIe host controller is based on the Synopsys DesignWare
->    PCIe IP and thus inherits all the common properties defined in
->    snps,dw-pcie.yaml.
->  
-> @@ -19,9 +19,6 @@ allOf:
->    - $ref: /schemas/pci/snps,dw-pcie.yaml#
->  
->  properties:
-> -  compatible:
-> -    const: samsung,exynos5433-pcie
-> -
->    reg:
->      items:
->        - description: Data Bus Interface (DBI) registers.
+> 
 
+Applied, thanks!
 
-So the only common part left here is reg and phy? I don't think such
-common file brings any value.
-
+[1/1] drm/bridge: it6505: select REGMAP_I2C
+      commit: 21b137f651cf9d981e22d2c60a2a8105f50a6361
 
 Best regards,
-Krzysztof
+-- 
+Chen-Yu Tsai <wenst@chromium.org>
+
 
