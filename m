@@ -1,457 +1,204 @@
-Return-Path: <linux-kernel+bounces-765439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252BDB2353B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396EBB23576
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37009169E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC185850E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9242FE570;
-	Tue, 12 Aug 2025 18:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="aDOmLxzn"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2363C2FD1B2;
-	Tue, 12 Aug 2025 18:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43DB2FE597;
+	Tue, 12 Aug 2025 18:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458771474CC;
+	Tue, 12 Aug 2025 18:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755024452; cv=none; b=fWLPY82Qlf6p83clgnUenshtHyiZ+YRgUKK1zSmg+OoUmN9M3diiiSQz9CgPywS8PKMcWdDohN6lse4nUQAcQkEbDrVvmJZgRqkKY0KZ7FzzCrXU2b8zb/uHcHm3ormIM7wKrSaydGSfGHYi10X47Db68WzBpnqVo8NkwkDXQUY=
+	t=1755024637; cv=none; b=A68yAmRPisRtj27gihPA9Y+CA4kSmxwseaXc9f+TKp6vxmFs+UDzBNv009vzM9sHMq7Ts5XO8VyBSwkam31jDBpsRDzQwptJ9QxUFBASPLxLTu5hebjsCdApS78JcwEU4Aqmv+Mmu6m9iG41XZ1HQoG1oEeCVrOLBrLDiWgf20Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755024452; c=relaxed/simple;
-	bh=AGwDMxw8ZyZ47b4x8r5WQmJJdyok53ebtNAJF9tPEHM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=t6702JCjSbTn4FgEse/PSy0psEspltZxEQIphVmbNHJ3L2Vx9FzQdsIV6Ze+w/ciqIzHCWMrbjmfYrhLV5vqm/1x20SROWQ823OycLJ8KNH7evetx3JEK1mpRWtUXKOxJM7hqgXOMLoIqIA7NJgkRsXfCTyeGNwltivs9Jn+foM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=aDOmLxzn; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 12B67A0A91;
-	Tue, 12 Aug 2025 20:47:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=oQpFCPkQ2gBSs+m1fBfcJCpRchasPj3qAzp5b0KBTmA=; b=
-	aDOmLxznYAYglw6g6uFhIdWBgQ6mKZ98FsNVtcPNUnOIoRb2h+uAdP8exBz6nzjL
-	Be1kScblnQqZJ91G91qioo8KAyyxUQ/uHUofksX9RwaLA5XBJP/vGrUOYH9ozy04
-	iN32YuqVUAuDHaYFwzB1+RReNOr7DPySe0oNwHQqQ4GICKLdGzbb6dZmlOXtKZjG
-	pfUugwjSJr74kGHa5+SusXknx8tuvSiD/JAbACgqHDd5KauVOOXUVGE+2Kz6SBZy
-	WLFYuCaS2owVvSHqaRwc/59RgqBgVDeSXmoD0U8V34IUVDwFLHzNzfLw+UDVmz5w
-	cY5L0jnEx96wi+dzCVj9K3eo1cillGRk07I68yICL5qtYvi8h5HVjZXwf4qMLI2n
-	2Ie8E8UN4B1V5woen1TxnyPQboZ9Iy0cLtUAaXl6HcCWGt0pCsShbMdAtoiU/hwz
-	DcjlYN+Sz2EnkIPsw/GYi/2e10FcU/9VafDJPGTvIADb5SBhK6v1MMQJSFbt/CR7
-	zshBoHKTKZKUUt8XRrbA+iGI13eAe8cli1lFvUoRHs11xb5NkaPA+KIjPLXflD5j
-	nWH29Lb3GS5Ett2R/MENM2TT9BRndNM0jn7wEZ7mzOXznMo8glFj0nAMMm6xGvE0
-	47RZ20bXPE9g8emSTqo9EOgNqKk4XkcyxBtjUfr+NBg=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Tue, 12 Aug 2025 20:39:28 +0200
-Subject: [PATCH v3] ARM: dts: imx6-cubox: Replace license text comment with
- SPDX identifier
+	s=arc-20240116; t=1755024637; c=relaxed/simple;
+	bh=HlHptNenjmRuN7S5bI/iQBjtU0MTLhoVqeYVibkxhH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TU+CgZdeeaz1CaHQ7EUtX1eENvb9fRuXFVVXOPBqcMvlM3UDDmHM6f+I2fnitKbmffFxI9d2Wkvgt8XJi/jNtwQnZofP1RPlYS3ZRZttFWKqe1wxD+SJgKm9qdJ1do79gcLD0JsEhdw8uf0yv7/qUbQ/Wt8bcVE6Vemw1d28ydI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c1gK71N21z9sSN;
+	Tue, 12 Aug 2025 20:39:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id W34agYFEkjYq; Tue, 12 Aug 2025 20:39:39 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1gK707Z2z9sSL;
+	Tue, 12 Aug 2025 20:39:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D45368B764;
+	Tue, 12 Aug 2025 20:39:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id KCsZS5tQGZ3E; Tue, 12 Aug 2025 20:39:38 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 03CD88B763;
+	Tue, 12 Aug 2025 20:39:36 +0200 (CEST)
+Message-ID: <1cc6f739-3891-4cc7-84ac-676fef62c445@csgroup.eu>
+Date: Tue, 12 Aug 2025 20:39:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/11] powerpc/ptdump: rename "struct pgtable_level" to
+ "struct ptdump_pglevel"
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Lance Yang <lance.yang@linux.dev>
+References: <20250811112631.759341-1-david@redhat.com>
+ <20250811112631.759341-7-david@redhat.com>
+ <dac9e243-33ce-4203-a598-2877cf908cad@lucifer.local>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <dac9e243-33ce-4203-a598-2877cf908cad@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250812-cubox-dts-lic-v3-1-1eb7ef334934@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIAF+Km2gC/3WNQQ6DIBQFr9KwLg1QFe2q92i6gO+3kFgxoMTGe
- PeCK9Oky0nevFlJQG8xkNtpJR6jDdYNCa7nEwGjhhdS2yYmgomSSSYozNottJ0C7S1QxrnWUBS
- Mi5okZ/TY2WX/ezwTaxWQaq8GMPnlrcKEPg+NDZPzn70beZ7/S0ROORW6BWygqjmw++hdr4aLm
- UlORHG0m19bJFt2skIsG1kyONrbtn0BqR8KXQEBAAA=
-X-Change-ID: 20250702-cubox-dts-lic-011bbc440128
-To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	=?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-X-Mailer: b4 0.14.2
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1755024438;VERSION=7995;MC=2183211758;ID=1014970;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E617465
 
-Replace verbatim license text with a `SPDX-License-Identifier`.
+Hi Lorenzo,
 
-The comment header mis-attributes this license to be "X11", but the
-license text does not include the last line "Except as contained in this
-notice, the name of the X Consortium shall not be used in advertising or
-otherwise to promote the sale, use or other dealings in this Software
-without prior written authorization from the X Consortium.". Therefore,
-this license is actually equivalent to the SPDX "MIT" license (confirmed
-by text diffing).
+Le 12/08/2025 à 20:23, Lorenzo Stoakes a écrit :
+> On Mon, Aug 11, 2025 at 01:26:26PM +0200, David Hildenbrand wrote:
+>> We want to make use of "pgtable_level" for an enum in core-mm. Other
+>> architectures seem to call "struct pgtable_level" either:
+>> * "struct pg_level" when not exposed in a header (riscv, arm)
+>> * "struct ptdump_pg_level" when expose in a header (arm64)
+>>
+>> So let's follow what arm64 does.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> This LGTM, but I'm super confused what these are for, they don't seem to be
+> used anywhere? Maybe I'm missing some macro madness, but it seems like dead
+> code anyway?
 
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
-Changes in v3:
-- Fix erroneously added `GPL-2.0-or-later`
-- Link to v2: https://lore.kernel.org/r/20250709-cubox-dts-lic-v2-1-7f76ee59750c@prolan.hu
+pg_level[] are used several times in arch/powerpc/mm/ptdump/ptdump.c, 
+for instance here:
 
-Changes in v2:
-- Fix msg
-- Link to v1: https://lore.kernel.org/r/20250702-cubox-dts-lic-v1-1-2bdce9c681c0@prolan.hu
----
- .../dts/nxp/imx/imx6dl-cubox-i-emmc-som-v15.dts    | 38 +---------------------
- .../boot/dts/nxp/imx/imx6dl-cubox-i-som-v15.dts    | 38 +---------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i.dts       | 38 +---------------------
- .../dts/nxp/imx/imx6q-cubox-i-emmc-som-v15.dts     | 38 +---------------------
- .../arm/boot/dts/nxp/imx/imx6q-cubox-i-som-v15.dts | 38 +---------------------
- arch/arm/boot/dts/nxp/imx/imx6q-cubox-i.dts        | 38 +---------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi     | 38 +---------------------
- 7 files changed, 7 insertions(+), 259 deletions(-)
+static void note_page_update_state(struct pg_state *st, unsigned long 
+addr, int level, u64 val)
+{
+	u64 flag = level >= 0 ? val & pg_level[level].mask : 0;
+	u64 pa = val & PTE_RPN_MASK;
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-emmc-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-emmc-som-v15.dts
-index 2b2fc360b8653fcf2c01acb6a936564f1ba65452..4d6a88268513481d5d65a7c8e3d71870d8fe8b47 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-emmc-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-emmc-som-v15.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-som-v15.dts
-index e09c565d1d1febd4efc1a69f4dba677e9784a545..3007f5aa02d6d9e1f7be00add37cde140a141944 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i-som-v15.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i.dts
-index 2b1b3e193f53cf9ea679e6a8e916093d64946599..d8e599a6e1cec77cd1c49951dcf49e381732f985 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-cubox-i.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-emmc-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-emmc-som-v15.dts
-index 3e59ebbb360864b5d36ae85e609d8af26884b147..615c1693e31ea07597f6530e96690420f3c3b2ce 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-emmc-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-emmc-som-v15.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-som-v15.dts
-index dab70d1230a294ab7b2e7eb4cfe13ac6ae26d270..48e2fc272f17e1e59423e35ccda05df745017513 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i-som-v15.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i.dts b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i.dts
-index 1c7b262e370949da615d7aead5e5ff141da8145f..ac37d7df9eb321d8858abe907826d9702bf4cab0 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-cubox-i.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi
-index 41d073f5bfe7a5d42ecfe34341d8dc8a39f73801..11f6b1befc8d5f222042d9ecaf7e552f71900c8c 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2014 Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/gpio/gpio.h>
+	st->level = level;
+	st->current_flags = flag;
+	st->start_address = addr;
+	st->start_pa = pa;
 
----
-base-commit: 66701750d5565c574af42bef0b789ce0203e3071
-change-id: 20250702-cubox-dts-lic-011bbc440128
+	while (addr >= st->marker[1].start_address) {
+		st->marker++;
+		pt_dump_seq_printf(st->seq, "---[ %s ]---\n", st->marker->name);
+	}
+}
 
-Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
-
+> 
+> Anyway:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+>> ---
+>>   arch/powerpc/mm/ptdump/8xx.c      | 2 +-
+>>   arch/powerpc/mm/ptdump/book3s64.c | 2 +-
+>>   arch/powerpc/mm/ptdump/ptdump.h   | 4 ++--
+>>   arch/powerpc/mm/ptdump/shared.c   | 2 +-
+>>   4 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/ptdump/8xx.c b/arch/powerpc/mm/ptdump/8xx.c
+>> index b5c79b11ea3c2..4ca9cf7a90c9e 100644
+>> --- a/arch/powerpc/mm/ptdump/8xx.c
+>> +++ b/arch/powerpc/mm/ptdump/8xx.c
+>> @@ -69,7 +69,7 @@ static const struct flag_info flag_array[] = {
+>>   	}
+>>   };
+>>
+>> -struct pgtable_level pg_level[5] = {
+>> +struct ptdump_pg_level pg_level[5] = {
+>>   	{ /* pgd */
+>>   		.flag	= flag_array,
+>>   		.num	= ARRAY_SIZE(flag_array),
+>> diff --git a/arch/powerpc/mm/ptdump/book3s64.c b/arch/powerpc/mm/ptdump/book3s64.c
+>> index 5ad92d9dc5d10..6b2da9241d4c4 100644
+>> --- a/arch/powerpc/mm/ptdump/book3s64.c
+>> +++ b/arch/powerpc/mm/ptdump/book3s64.c
+>> @@ -102,7 +102,7 @@ static const struct flag_info flag_array[] = {
+>>   	}
+>>   };
+>>
+>> -struct pgtable_level pg_level[5] = {
+>> +struct ptdump_pg_level pg_level[5] = {
+>>   	{ /* pgd */
+>>   		.flag	= flag_array,
+>>   		.num	= ARRAY_SIZE(flag_array),
+>> diff --git a/arch/powerpc/mm/ptdump/ptdump.h b/arch/powerpc/mm/ptdump/ptdump.h
+>> index 154efae96ae09..4232aa4b57eae 100644
+>> --- a/arch/powerpc/mm/ptdump/ptdump.h
+>> +++ b/arch/powerpc/mm/ptdump/ptdump.h
+>> @@ -11,12 +11,12 @@ struct flag_info {
+>>   	int		shift;
+>>   };
+>>
+>> -struct pgtable_level {
+>> +struct ptdump_pg_level {
+>>   	const struct flag_info *flag;
+>>   	size_t num;
+>>   	u64 mask;
+>>   };
+>>
+>> -extern struct pgtable_level pg_level[5];
+>> +extern struct ptdump_pg_level pg_level[5];
+>>
+>>   void pt_dump_size(struct seq_file *m, unsigned long delta);
+>> diff --git a/arch/powerpc/mm/ptdump/shared.c b/arch/powerpc/mm/ptdump/shared.c
+>> index 39c30c62b7ea7..58998960eb9a4 100644
+>> --- a/arch/powerpc/mm/ptdump/shared.c
+>> +++ b/arch/powerpc/mm/ptdump/shared.c
+>> @@ -67,7 +67,7 @@ static const struct flag_info flag_array[] = {
+>>   	}
+>>   };
+>>
+>> -struct pgtable_level pg_level[5] = {
+>> +struct ptdump_pg_level pg_level[5] = {
+>>   	{ /* pgd */
+>>   		.flag	= flag_array,
+>>   		.num	= ARRAY_SIZE(flag_array),
+>> --
+>> 2.50.1
+>>
 
 
