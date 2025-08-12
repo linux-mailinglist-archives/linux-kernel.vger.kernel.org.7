@@ -1,89 +1,145 @@
-Return-Path: <linux-kernel+bounces-765627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CC2B23B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701F4B23B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E42097B786B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A68D1AA818E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2B92D9ECF;
-	Tue, 12 Aug 2025 22:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F287F2DAFB9;
+	Tue, 12 Aug 2025 22:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgjURPBB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8ySll2q"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7897523D7F2;
-	Tue, 12 Aug 2025 22:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63F82F0669;
+	Tue, 12 Aug 2025 22:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755036075; cv=none; b=ssST/iI3Xz9/zvd+i0FjJykh0jg1B+3qTpmj+eBp644Mb4JPs1mq0HA2e8ideSQSKdCDVzO9HRqYkEj4imbTlMg/nTq09V0lYIpOenqNmCXH5obo0hxdPaT412VN3Yo/NkmNoMPokmrM5ofQUHsDBzjv3LsvERgZfdfuwTmatbM=
+	t=1755036119; cv=none; b=e1Kv1eE3hx2OPGblebjAcQxgWGSA4aZm7LNVKhYP3KKJF+cS7vdlMiR8aE/+c4C2QkYAGE6VG3O/Bxy7aHGyVOqZBZ6vSwUpUcLKoXl1c9seubQe0NDxFm0NDb+TSAVKczLJR/Ixq4dqta0yM3bgxV6uIjWyh+eSWMdhp8FlukM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755036075; c=relaxed/simple;
-	bh=nmauN2trr2MqSwC7EVxjuakr7oqZi/jzkFSIDesD1Eg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=OBnHYDCQX0jMSLYL0zK5JchAOLyHTX9Z1aPCAyrPvM+3tmd+42qdSYu6Y3cMZtARzv+68niXnJJ/R25+nm3P2BSatLVLU7yvYRdIk89NZNKHkHnPhXjyg6KIB8lRlq9pT2erqui1McapC+qkO+PLuV72WRN1tn3tSdzknXEFxfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgjURPBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6FCC4CEF0;
-	Tue, 12 Aug 2025 22:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755036075;
-	bh=nmauN2trr2MqSwC7EVxjuakr7oqZi/jzkFSIDesD1Eg=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=DgjURPBB4aFl2oNJyvs0UxdK1fzXWdRruU65ddrQ8EK1Oebio6ob3u9tCtwoKaOzv
-	 e8IDWteM2nCRKguixNMoN9OYhcx9h2AXvpZnP9cXWtCWN+mO5uJ14qniLycNGtwRYD
-	 qwTH7rQdIjH3q+jCmiOTz4bCm4NmwDK5wmkCi7/vq017Xx+H7fvBGZCny7bS35bWnq
-	 ihLXnAGDEfNEn810JLkiVJuSgj+SZOBk7lmDfaqTaq7clqquwU9PUW1iMIiHwGk2A4
-	 JipWkJJUhk9gOvNdsdSB65zx5YY0sVpbDxktD8x4MNLdSDyHlwKCVM7if86pzBcaqj
-	 HQKpKPoEYawzg==
+	s=arc-20240116; t=1755036119; c=relaxed/simple;
+	bh=dZiwYUvC4jcEw/sftx0pXClvc/8dzqWFCpy9xCb+7Ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=svcqE/AT774yDULeE4xvmXQkyRQ6cY28SAqvNUl0+1IpzpoXz+UCJZxNQTMhuMNa68TGrAY05D0aHe+pSMHQI7ZscVV8Qhb0YOH/dztC9ec40XB8n4h0X7YaLvWqWGaNBNZeVeaylkjtNQ2d26Ru3sj4CfuRwwrccX74cnJ2LKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8ySll2q; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so1909045e9.1;
+        Tue, 12 Aug 2025 15:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755036116; x=1755640916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rp8fxJWWkR9mtza5tpe4CO6y3NWSepsIKtYTyVIj8RQ=;
+        b=D8ySll2qeUuiRpVDCoYPsBrUvJv2MC1iXGWHrg7etaZ2EDtBgzESj98DySaRKuCxBp
+         CgcA4m3FRymncUbiGi25GWbdf/c7ELrWVUE+2wjrQG4FQD7PdQabL8Aa6r+f9UM3uTGt
+         1py6JEDVq8+CMYWapmUDHD1lRVXRSAbPhKpsD0+FsCiREBdnViSV1nL2qxjE3vPieNhA
+         ZTsZ7QkP2o4XdSDwiYfeJR0gSF4cPMS2gzF4qAPW1tFK+jwVoQnJlWah+zwtsKC5oQSo
+         vvvsSLx5wqld/EwvN/1V8wgj6UDEbHY+MeTwlkXXGOYA51z2ipxWF3Upn4aB1xrP5jGg
+         tnag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755036116; x=1755640916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rp8fxJWWkR9mtza5tpe4CO6y3NWSepsIKtYTyVIj8RQ=;
+        b=EsImyis4gTO1RmI6lXMtIwlbHCGmngM3vfGAVmGQKxYjY6Kqanl5KapDUJa+7U8noM
+         l5kYZhF7IVJoiEHpKdi1WgtdezWcXf/A6DCl9QqsAZzTv0m+LyAXbiuKk58OCwi2Laba
+         BWguuMEFC8h5wCGWXH8oiOJH/hUtULPj4vkIWrZ7+HlJf84dZuGtKcOZ/V820pYxUQUZ
+         p/Upb2unxRO9hWqbSgBTNRfBhURRGR+1YLww5+N5ePy8FKt4at3lTv/T1ihhXrOz8lXc
+         hUYUq7w+c55LtM4m+JQ6u+gV31I9fPEd7+2UEyR8FzxAMWwWmHmvYFxlbCW14nZWUZhj
+         eTQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBpezE2pBP/ttcLiCD68bhge954v4NNmDQzRJyF6tWopMsD2co/a/ieJZcuZ37iYRV/Rk=@vger.kernel.org, AJvYcCUIymtmgQZzYIO/jMkzYf8GhiREQRHrKCWTWkMf+bSAD+By0xCewPnkLlJZMJCkSxwnVx7W5v+cOiyo@vger.kernel.org, AJvYcCXK09wlqGFwBmvm6ytNtXV/jwliQIRZsMDjGdtdoQQ3GhMhNeZ+wqvwvuX8qC7lMHHH7fq8IoQBLXsTt9JW@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywto9Qpvu01b9s5jOfess4BILtJG/iuzMrDJpxPIVgh1FgljJZx
+	+EY91wBesFh9rbYGfzqk3AIUUmabiBQgJpzmTKwWoMkVt3+Skj2kVhPqfyPzBjwL
+X-Gm-Gg: ASbGncs1NA2rmviiIB4ZPkSAP+BzX9kASfRx6pckxFJH7MM20GaR4JCk1+cMQiEXRbb
+	4rSbpu0BQ3oFaSoUKrPX5VzqaVY+z+0D3Reh2hagaNIHJbOdctRW2GTgn1E7hC4ZKMDwYUIpsMl
+	Y38zqi+AtTaqbrx75bz8cm6wLHbnc+riOBmBNEHXgInRFE7xSUV0kyc6Is/gANpI/lGpeWJi37e
+	z5G/JGG9MA55pjnilk6riKhsDkNZkllFEo6wW6VmvW54evOCyNkDca7v2DQT+fB1IX9tRwptlir
+	v1bRJMQv5w2jQlhtDsJ/qcIP/iW6TXMxNSD+3hr5xRo60jD6KouRGbKYy87peizaOBkTPRVi+ii
+	OBPrwubn9nrpGCleY1Zct9e+n
+X-Google-Smtp-Source: AGHT+IGV0LblS3YtHRZrtAYReogzaHuNpOyxfS/BjVqhbaoBslhN1wCrsmbTiAqs57BokMy5jPLsyw==
+X-Received: by 2002:a05:600c:4449:b0:459:dfa8:b85e with SMTP id 5b1f17b1804b1-45a16f9e27cmr1411995e9.0.1755036115669;
+        Tue, 12 Aug 2025 15:01:55 -0700 (PDT)
+Received: from localhost ([2a03:2880:31ff:2::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a16def4acsm3626955e9.23.2025.08.12.15.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 15:01:54 -0700 (PDT)
+From: Mohsin Bashir <mohsin.bashr@gmail.com>
+To: netdev@vger.kernel.org
+Cc: aleksander.lobakin@intel.com,
+	alexanderduyck@fb.com,
+	andrew+netdev@lunn.ch,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	corbet@lwn.net,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	hawk@kernel.org,
+	horms@kernel.org,
+	john.fastabend@gmail.com,
+	kernel-team@meta.com,
+	kuba@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mohsin.bashr@gmail.com,
+	pabeni@redhat.com,
+	sdf@fomichev.me,
+	vadim.fedorenko@linux.dev
+Subject: [PATCH net-next V3 0/9] eth: fbnic: Add XDP support for fbnic
+Date: Tue, 12 Aug 2025 15:01:41 -0700
+Message-ID: <20250812220150.161848-1-mohsin.bashr@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Aug 2025 00:01:10 +0200
-Message-Id: <DC0SD4G19EOX.3V3LFT84NMMVP@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] rust: devres: fix leaking call to devm_add_action()
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250812130928.11075-1-dakr@kernel.org>
-In-Reply-To: <20250812130928.11075-1-dakr@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Aug 12, 2025 at 3:09 PM CEST, Danilo Krummrich wrote:
-> When the data argument of Devres::new() is Err(), we leak the preceding
-> call to devm_add_action().
->
-> In order to fix this, call devm_add_action() in a unit type initializer i=
-n
-> try_pin_init!() after the initializers of all other fields.
->
-> Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+This patch series introduces basic XDP support for fbnic. To enable this,
+it also includes preparatory changes such as making the HDS threshold
+configurable via ethtool, updating headroom for fbnic, tracking
+frag state in shinfo, and prefetching the first cacheline of data.
 
 ---
-Cheers,
-Benno
+Changelog:
+V3:
+  * P1: Add missing constant causing transient build failure
+  * P1: Fix rcq_ctl config when hds_thresh is less than FBNIC_HDR_BYTES_MIN
+  * P1: Update commit message to add hds.py results from selftest
 
-> ---
-> Changes in v2:
->   - Drop inner in-place when devm_add_action() fails.
->   - Document to remove drop_in_place() once we can switch to UnsafePinned=
-.
-> ---
->  rust/kernel/devres.rs | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+V2: https://lore.kernel.org/netdev/20250811211338.857992-2-mohsin.bashr@gmail.com/
+V1: https://lore.kernel.org/netdev/20250723145926.4120434-1-mohsin.bashr@gmail.com/
+
+
+Mohsin Bashir (9):
+  eth: fbnic: Add support for HDS configuration
+  eth: fbnic: Update Headroom
+  eth: fbnic: Use shinfo to track frags state on Rx
+  eth: fbnic: Prefetch packet headers on Rx
+  eth: fbnic: Add XDP pass, drop, abort support
+  eth: fbnic: Add support for XDP queues
+  eth: fbnic: Add support for XDP_TX action
+  eth: fbnic: Collect packet statistics for XDP
+  eth: fbnic: Report XDP stats via ethtool
+
+ .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
+ .../net/ethernet/meta/fbnic/fbnic_ethtool.c   |  82 +++-
+ .../net/ethernet/meta/fbnic/fbnic_netdev.c    |  75 ++-
+ .../net/ethernet/meta/fbnic/fbnic_netdev.h    |   9 +-
+ drivers/net/ethernet/meta/fbnic/fbnic_txrx.c  | 458 +++++++++++++++---
+ drivers/net/ethernet/meta/fbnic/fbnic_txrx.h  |  23 +-
+ 6 files changed, 576 insertions(+), 82 deletions(-)
+
+-- 
+2.47.3
+
 
