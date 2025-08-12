@@ -1,375 +1,476 @@
-Return-Path: <linux-kernel+bounces-765644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3880BB23BCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:23:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73816B23BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C981AA83CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F657AA2CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEEF2E11CB;
-	Tue, 12 Aug 2025 22:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009E32D541E;
+	Tue, 12 Aug 2025 22:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtVn9Sm1"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V0W+JUtH"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5623027604E;
-	Tue, 12 Aug 2025 22:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C50296BD6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755037380; cv=none; b=VDMWZcWJZ9eO98BmBswBrdwVmz5WXMjO1jvdDQoJp15A9b8oYsPKW8DsuWtYWPcYnsCm6qGG6QZzMAKItVjTR2VDNWqL25gNdM7XeIZ5ZkCzzfowf2Wq5PiJ/J02ajSYveRM+/ck/wDbKX2jH/P/h+CkVgms8LFG6AZU53mRvAA=
+	t=1755037399; cv=none; b=F+cY5Dotw1FXTA05MChqmHf/+HFmup9EBko93KBuq82jFZB4qme9vpRM8hBweTXJk1pvK/ZQ6+s5jDIvSm0U5OiCAF2+FcvQFsE0pSS/Cx/487beAVKENOOD9qDGhpU9YkmPy8OxgTHHxzge7p9ha3z1DGvPsZve/y/L41RwOD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755037380; c=relaxed/simple;
-	bh=+sFQSTHIOhzJPPTHZ6mF3BRYYIb5lhP24qtZkAGLV1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otqOSj2J6Se+oiFEWwrVU+T8RIH+a5bwlcikhFAxLVxX/Eelrx3IYm5H/Y6mFGdPUH757f9oDFdhEKsIx4zY4+kAlKj6q0pMmebUJSKbybDbAj7SjtxaQ7KIjPTfC//ig9y2M0d1V0vD/cuEbVLSVEGUXxNFAWQ7QFYqIbDKVR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtVn9Sm1; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so6032179f8f.1;
-        Tue, 12 Aug 2025 15:22:58 -0700 (PDT)
+	s=arc-20240116; t=1755037399; c=relaxed/simple;
+	bh=E8nmSlXvjf1u4+0E+nINqeMzAfLQ4pfh/B1w+od194Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gjS7kopiJBa6yj184+RmcecJRR2iqlvP1wpHRKxLdhzZ6CIz2BTXbwmooJNVl30cepZbYbFAXP4rcNygxrIdmyIhXbofPi9Gfl2//B7OS1DkT97waO92UGkevY4seWUzJztHiQOZgcrMaSJNanm1HPKcbFY1Rcw7s8OShw3kIdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V0W+JUtH; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-709233a8609so61969566d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:23:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755037376; x=1755642176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1755037395; x=1755642195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WS7bmnIloASKqNj5zXPdW4P/ppO3Xb5AJCzOr3LRULg=;
-        b=WtVn9Sm1er9w2S2dhCRa/YPxh+NukpEh4fzb1d75371b+ezHkXCoG9yiMcDd1r1UOX
-         j59vCquJEQdmw7CHpjo75AhgAujBBkIGrGwdMKcwFXB2AV0WZYKJSYZBoqw08gptG9oS
-         Awjpq3/xPyW7Lc3SE/A45oGuuiJ0prQnJ1VOXncJQzZy7FJI9y6sqFwQvrpknA9JmMV3
-         aV6YNgm6XP6IQewbN7XJ0InYRYZj+0OQv7p3hNZi1Wo1fjlmaPuBH9YXN1lu7+SM1LaT
-         AobkHNPpE9tgt4K7ewmspC2c3/iyvg0IeiU5NnXCPR9EoeVDEbjedKejRcVx1aCO4X22
-         y3PA==
+        bh=NCjfCIARl7FEQlaEVHD1Q7u5jqwvzYtlI2DxlC6TvyE=;
+        b=V0W+JUtHM5kGkvkWqV3jXyc/yHM5YFJ25oYZGZLVN6rjEvGUHcjRHY53cTT6QTDvZ3
+         5/vE+5qXldxvNtIdsc5j9LbP/M6c5bDswKD/LcI21leKzFEVn7sQDSvofLixvyNDD1it
+         vysnc/fuk2rBIjo53e4mE+lL4ONBkKRhkDSzxV6Hhoe2cFs3+lbGYknNwIkyhwQejdr+
+         dC8rVSTSc/wreOns8Na21hS00wofvWmwtiyzpT1Hxp8xU6ScK8okFUII5g0UqCy2KM+8
+         qMAPSt2bWzk9CinlLCz3UWoHyxoC3RBIQilh/h72HiUHEZ9Cxk1v4ZRRgJyKHoZIqXD7
+         z1MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755037376; x=1755642176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755037395; x=1755642195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WS7bmnIloASKqNj5zXPdW4P/ppO3Xb5AJCzOr3LRULg=;
-        b=QOvaLXeMLleuJ2B9/8Cz1v58Z+yzwuU/XgAEQrgtHXifHECNgNjCAVSFMbylGFFApU
-         z2s8lXtVrUXdFBo2lSxoowDFPtqMTifNn9XcsSypR1S9eA+Y/pE8KR06+MkCRrS3hlk+
-         w2upGskl2GQrbZGBGTEgqnz+ZF8e+rrjWSeTfAgeRYPa0UkuCLb0RiwBDPWjyDp6CwUC
-         /NQI5EGBHAe95JFTQDucw7jX4AG+CRBBxTfUr/CsSfVyqA0fnrebcdH50+x43o8kW8IB
-         itszekPeNSVkmpR6PRgLeNNrpI7y4QDR5sC7Y65Naf5RX4GdfyURN4MBkWt4BZb3sedI
-         oFkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkgUfxcn7/DeugyhQbJ5NFHTgsrYRZsW3cg493wdwSJQxWedU4HdyyikTls1OoQHx7HuUnIsuxjjjl@vger.kernel.org, AJvYcCWt2WptgWUGy+3uD2q5e9nNHEQOyRFe+7/UE3v4Dof6vRimJEvr5desBML/LgLFp8UK8/I=@vger.kernel.org, AJvYcCXyIhBYvmO9SYnZ6JQetBtiNU1cXJDXPDQVvDoqxVvxneZX9TruQF1fEi9xtaH1SD0ZusxaoWOfognOz6iM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcOiPUusywhPMHL95Awffl6a9me7HMXAiobpVT6bEk3UdX9EjM
-	J9lHRqVsmrmoW6AWp1vMO03zMot3tx5BBiHxdx0SyEP5xmHHmvU68J3keFhDxRtQ
-X-Gm-Gg: ASbGncuv3FneQ0lZ8kENhFRt+K7QW3yLQ6O0h0jvYhg6JRlr4ZZvCOR4JTpAGfYjEd5
-	D4/6mFpPr9NP1R4iRQ/Q8t7iWUGFuZQ40yrZX3AR5D/qcKVKs+j7frZUGh7elcN2zsBC8jW+U5u
-	iBCE1RZUB0qS7wJk6JxMHHOX59KWp27xHqbYTVPLfG5kkq1Ad+f1lB9X4RjblQt6fZeEJdKuxIL
-	zHu362iMhqPYESKKbGCNamqko4ZhGZp/8+QxyiBsZDb8854kqjOosAhP55nrsv0eDcVHpnvmK05
-	Z4yvkgeqZSJiaXRwUTR0a3q/573XNk8wYqwPql+pikUP/zUSEIrKrEbSE5qbY6BrH55+1dnBqfY
-	eskyXo40eQuWJSqSvPc3h
-X-Google-Smtp-Source: AGHT+IGRW8XazU5RzfUKZN+cRS1p89FzfLhMPSsUMxnRANlZxTviQk72arFfrz8BYdCTYEyuoMn1Jg==
-X-Received: by 2002:a5d:5f56:0:b0:3b7:6828:5f78 with SMTP id ffacd0b85a97d-3b917e2da18mr371805f8f.4.1755037375963;
-        Tue, 12 Aug 2025 15:22:55 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:70::])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a16dffb63sm3812225e9.29.2025.08.12.15.22.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 15:22:55 -0700 (PDT)
-From: Mohsin Bashir <mohsin.bashr@gmail.com>
-To: netdev@vger.kernel.org
-Cc: aleksander.lobakin@intel.com,
-	alexanderduyck@fb.com,
-	andrew+netdev@lunn.ch,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	corbet@lwn.net,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	hawk@kernel.org,
-	horms@kernel.org,
-	john.fastabend@gmail.com,
-	kernel-team@meta.com,
-	kuba@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mohsin.bashr@gmail.com,
-	pabeni@redhat.com,
-	sdf@fomichev.me,
-	vadim.fedorenko@linux.dev
-Subject: [PATCH net-next V3 8/9] eth: fbnic: Collect packet statistics for XDP
-Date: Tue, 12 Aug 2025 15:22:52 -0700
-Message-ID: <20250812222252.261779-1-mohsin.bashr@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250812220150.161848-1-mohsin.bashr@gmail.com>
-References: <20250812220150.161848-1-mohsin.bashr@gmail.com>
+        bh=NCjfCIARl7FEQlaEVHD1Q7u5jqwvzYtlI2DxlC6TvyE=;
+        b=dyIePvRokhA/NhoVASYQ4qKJsJR86GX0W9HSQbwY8kpYtjQp90ba0OiXAx47q+jCpT
+         gkU52LQWwvyHK+swkkArfF9yR5nIvPnRqUGNUzkQfWCI/EQm/bA+zAjgbGis4K04vKMY
+         NVWjwobruF9B3Wi5OLDUXOB+HdgsX7W8gB7p0LrCzHO9kQMHCDGm4qoO0hu/mIXT6oKB
+         L6EJ1nhISujdrTd3DWBGe1Sk5DSMjO2TISnGl1BJekJR+x6oP2ropTgE9d4V1vCcOjou
+         JRjaHsiqcTNqNKsGXyaobXobsdSyrbRzBLMiAMLFsn+ps1JgoEz6tPaRA2HtAHfecNE7
+         QgkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/spB6UW346xv72Zibks58G1wVgc09vcqnzX0Ok+tKsAM21toHAAZ6XR+iw5I29QIommJqr9U3PvlH8EE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPsVV1dsmtX9OxQ5shpGpvcOCA7sf/AAkS5LJ2FMMe5lBm9myq
+	USr00kWyi8K2JKRD+Gq0bFHGZi+SCmwCH8/xY1fOnJeU75eK12RIjvLRnR+gc8xkNYXYWr3YhiO
+	6bMNra+yt4lUiVHHNzOoR5IXtWUp7EwGnQpSQ0N7j
+X-Gm-Gg: ASbGncsmwEk2jKsjs0wC7eghKVGa344XDsjLX9Lj1KMmi/etHYxrY9RmN5J6Y+TX7UJ
+	wQepp5SM3khN8sCy9vqziQNzo2EMTRorMGYLhh0P2j0IKgOtbQaK9kPaIKki1l+KqyOCx6GHDb0
+	uuxK96D79Ndj3Qk3PboLHB5U4SrQfnAnCdxM3MbdcUNvUGO3sPfhfsw6VP61o3fQt84XlZEjulc
+	t7Or0NVRhKn2L1I
+X-Google-Smtp-Source: AGHT+IGnoy69atcXwXPPIj9GFl8UpcYTqhwTguB0w1vUUoD9USRblUpDXommEo5/9iwaQm7/irPZGPrgYrbWivTJ5QI=
+X-Received: by 2002:a05:6214:b65:b0:707:2a42:b9b3 with SMTP id
+ 6a1803df08f44-709e87fc8eemr13324846d6.10.1755037394932; Tue, 12 Aug 2025
+ 15:23:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250811221739.2694336-1-marievic@google.com> <20250811221739.2694336-5-marievic@google.com>
+In-Reply-To: <20250811221739.2694336-5-marievic@google.com>
+From: Rae Moar <rmoar@google.com>
+Date: Tue, 12 Aug 2025 18:23:03 -0400
+X-Gm-Features: Ac12FXz_Z-KSxKbEjvzCLajE68vHYuAwVU6cW7c0HNZTIqwbxoPdgclX4rSmmA4
+Message-ID: <CA+GJov6bvx5FTKvDE9Bng1m4iDynwruDnFf5orpzc+yMc2-yzw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] kunit: Enable direct registration of parameter
+ arrays to a KUnit test
+To: Marie Zhussupova <marievic@google.com>
+Cc: davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
+	mark.rutland@arm.com, elver@google.com, dvyukov@google.com, 
+	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
+	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for XDP statistics collection and reporting via rtnl_link
-and netdev_queue API.
+On Mon, Aug 11, 2025 at 6:17=E2=80=AFPM Marie Zhussupova <marievic@google.c=
+om> wrote:
+>
+> KUnit parameterized tests currently support two
+> primary methods for getting parameters:
+> 1.  Defining custom logic within a generate_params()
+>     function.
+> 2.  Using the KUNIT_ARRAY_PARAM() and KUNIT_ARRAY_PARAM_DESC()
+>     macros with a pre-defined static array and passing
+>     the created *_gen_params() to KUNIT_CASE_PARAM().
+>
+> These methods present limitations when dealing with
+> dynamically generated parameter arrays, or in scenarios
+> where populating parameters sequentially via
+> generate_params() is inefficient or overly complex.
+>
+> This patch addresses these limitations by adding a new
+> `params_array` field to `struct kunit`, of the type
+> `kunit_params`. The `struct kunit_params` is designed to
+> store the parameter array itself, along with essential metadata
+> including the parameter count, parameter size, and a
+> get_description() function for providing custom descriptions
+> for individual parameters.
+>
+> The `params_array` field can be populated by calling the new
+> kunit_register_params_array() macro from within a
+> param_init() function. This will register the array as part of the
+> parameterized test context. The user will then need to pass
+> kunit_array_gen_params() to the KUNIT_CASE_PARAM_WITH_INIT()
+> macro as the generator function, if not providing their own.
+> kunit_array_gen_params() is a KUnit helper that will use
+> the registered array to generate parameters.
+>
+> The arrays passed to KUNIT_ARRAY_PARAM(,DESC) will also
+> be registered to the parameterized test context for consistency
+> as well as for higher availability of the parameter count that
+> will be used for outputting a KTAP test plan for
+> a parameterized test.
+>
+> This modification provides greater flexibility to the
+> KUnit framework, allowing testers to easily register and
+> utilize both dynamic and static parameter arrays.
+>
+> Signed-off-by: Marie Zhussupova <marievic@google.com>
 
-For XDP programs without frags support, fbnic requires MTU to be less
-than the HDS threshold. If an over-sized frame is received, the frame
-is dropped and recorded as rx_length_errors reported via ip stats to
-highlight that this is an error.
+Hello!
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mohsin Bashir <mohsin.bashr@gmail.com>
----
- .../device_drivers/ethernet/meta/fbnic.rst    | 11 ++++
- .../net/ethernet/meta/fbnic/fbnic_netdev.c    | 36 ++++++++++++-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.c  | 51 +++++++++++++++++--
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.h  |  1 +
- 4 files changed, 94 insertions(+), 5 deletions(-)
+Thanks for all your effort in updating this patch series. It is
+looking really good. I think I am happy with this patch as is but I do
+have a comment below.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-index afb8353daefd..fb6559fa4be4 100644
---- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -160,3 +160,14 @@ behavior and potential performance bottlenecks.
- 	  credit exhaustion
-         - ``pcie_ob_rd_no_np_cred``: Read requests dropped due to non-posted
- 	  credit exhaustion
-+
-+XDP Length Error:
-+~~~~~~~~~~~~~~~~~
-+
-+For XDP programs without frags support, fbnic tries to make sure that MTU fits
-+into a single buffer. If an oversized frame is received and gets fragmented,
-+it is dropped and the following netlink counters are updated
-+
-+   - ``rx-length``: number of frames dropped due to lack of fragmentation
-+     support in the attached XDP program
-+   - ``rx-errors``: total number of packets with errors received on the interface
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-index fb81d1a7bc51..b8b684ad376b 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-@@ -407,11 +407,12 @@ static void fbnic_get_stats64(struct net_device *dev,
- 			      struct rtnl_link_stats64 *stats64)
- {
- 	u64 rx_bytes, rx_packets, rx_dropped = 0, rx_errors = 0;
-+	u64 rx_over = 0, rx_missed = 0, rx_length = 0;
- 	u64 tx_bytes, tx_packets, tx_dropped = 0;
- 	struct fbnic_net *fbn = netdev_priv(dev);
- 	struct fbnic_dev *fbd = fbn->fbd;
- 	struct fbnic_queue_stats *stats;
--	u64 rx_over = 0, rx_missed = 0;
-+
- 	unsigned int start, i;
- 
- 	fbnic_get_hw_stats(fbd);
-@@ -489,6 +490,7 @@ static void fbnic_get_stats64(struct net_device *dev,
- 	stats64->rx_missed_errors = rx_missed;
- 
- 	for (i = 0; i < fbn->num_rx_queues; i++) {
-+		struct fbnic_ring *xdpr = fbn->tx[FBNIC_MAX_TXQS + i];
- 		struct fbnic_ring *rxr = fbn->rx[i];
- 
- 		if (!rxr)
-@@ -500,11 +502,29 @@ static void fbnic_get_stats64(struct net_device *dev,
- 			rx_bytes = stats->bytes;
- 			rx_packets = stats->packets;
- 			rx_dropped = stats->dropped;
-+			rx_length = stats->rx.length_errors;
- 		} while (u64_stats_fetch_retry(&stats->syncp, start));
- 
- 		stats64->rx_bytes += rx_bytes;
- 		stats64->rx_packets += rx_packets;
- 		stats64->rx_dropped += rx_dropped;
-+		stats64->rx_errors += rx_length;
-+		stats64->rx_length_errors += rx_length;
-+
-+		if (!xdpr)
-+			continue;
-+
-+		stats = &xdpr->stats;
-+		do {
-+			start = u64_stats_fetch_begin(&stats->syncp);
-+			tx_bytes = stats->bytes;
-+			tx_packets = stats->packets;
-+			tx_dropped = stats->dropped;
-+		} while (u64_stats_fetch_retry(&stats->syncp, start));
-+
-+		stats64->tx_bytes += tx_bytes;
-+		stats64->tx_packets += tx_packets;
-+		stats64->tx_dropped += tx_dropped;
- 	}
- }
- 
-@@ -603,6 +623,7 @@ static void fbnic_get_queue_stats_tx(struct net_device *dev, int idx,
- 	struct fbnic_ring *txr = fbn->tx[idx];
- 	struct fbnic_queue_stats *stats;
- 	u64 stop, wake, csum, lso;
-+	struct fbnic_ring *xdpr;
- 	unsigned int start;
- 	u64 bytes, packets;
- 
-@@ -626,6 +647,19 @@ static void fbnic_get_queue_stats_tx(struct net_device *dev, int idx,
- 	tx->hw_gso_wire_packets = lso;
- 	tx->stop = stop;
- 	tx->wake = wake;
-+
-+	xdpr = fbn->tx[FBNIC_MAX_TXQS + idx];
-+	if (xdpr) {
-+		stats = &xdpr->stats;
-+		do {
-+			start = u64_stats_fetch_begin(&stats->syncp);
-+			bytes = stats->bytes;
-+			packets = stats->packets;
-+		} while (u64_stats_fetch_retry(&stats->syncp, start));
-+
-+		tx->bytes += bytes;
-+		tx->packets += packets;
-+	}
- }
- 
- static void fbnic_get_base_stats(struct net_device *dev,
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-index 3ce1762bd11d..fd22e8f83962 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-@@ -620,8 +620,8 @@ static void fbnic_clean_twq1(struct fbnic_napi_vector *nv, bool pp_allow_direct,
- 			     struct fbnic_ring *ring, bool discard,
- 			     unsigned int hw_head)
- {
-+	u64 total_bytes = 0, total_packets = 0;
- 	unsigned int head = ring->head;
--	u64 total_bytes = 0;
- 
- 	while (hw_head != head) {
- 		struct page *page;
-@@ -633,6 +633,11 @@ static void fbnic_clean_twq1(struct fbnic_napi_vector *nv, bool pp_allow_direct,
- 		twd = le64_to_cpu(ring->desc[head]);
- 		page = ring->tx_buf[head];
- 
-+		/* TYPE_AL is 2, TYPE_LAST_AL is 3. So this trick gives
-+		 * us one increment per packet, with no branches.
-+		 */
-+		total_packets += FIELD_GET(FBNIC_TWD_TYPE_MASK, twd) -
-+				 FBNIC_TWD_TYPE_AL;
- 		total_bytes += FIELD_GET(FBNIC_TWD_LEN_MASK, twd);
- 
- 		page_pool_put_page(nv->page_pool, page, -1, pp_allow_direct);
-@@ -645,6 +650,18 @@ static void fbnic_clean_twq1(struct fbnic_napi_vector *nv, bool pp_allow_direct,
- 		return;
- 
- 	ring->head = head;
-+
-+	if (discard) {
-+		u64_stats_update_begin(&ring->stats.syncp);
-+		ring->stats.dropped += total_packets;
-+		u64_stats_update_end(&ring->stats.syncp);
-+		return;
-+	}
-+
-+	u64_stats_update_begin(&ring->stats.syncp);
-+	ring->stats.bytes += total_bytes;
-+	ring->stats.packets += total_packets;
-+	u64_stats_update_end(&ring->stats.syncp);
- }
- 
- static void fbnic_clean_tsq(struct fbnic_napi_vector *nv,
-@@ -1040,8 +1057,12 @@ static long fbnic_pkt_tx(struct fbnic_napi_vector *nv,
- 		frag = &shinfo->frags[0];
- 	}
- 
--	if (fbnic_desc_unused(ring) < nsegs)
-+	if (fbnic_desc_unused(ring) < nsegs) {
-+		u64_stats_update_begin(&ring->stats.syncp);
-+		ring->stats.dropped++;
-+		u64_stats_update_end(&ring->stats.syncp);
- 		return -FBNIC_XDP_CONSUME;
-+	}
- 
- 	page = virt_to_page(pkt->buff.data_hard_start);
- 	offset = offset_in_page(pkt->buff.data);
-@@ -1181,8 +1202,8 @@ static int fbnic_clean_rcq(struct fbnic_napi_vector *nv,
- 			   struct fbnic_q_triad *qt, int budget)
- {
- 	unsigned int packets = 0, bytes = 0, dropped = 0, alloc_failed = 0;
-+	u64 csum_complete = 0, csum_none = 0, length_errors = 0;
- 	s32 head0 = -1, head1 = -1, pkt_tail = -1;
--	u64 csum_complete = 0, csum_none = 0;
- 	struct fbnic_ring *rcq = &qt->cmpl;
- 	struct fbnic_pkt_buff *pkt;
- 	__le64 *raw_rcd, done;
-@@ -1247,6 +1268,8 @@ static int fbnic_clean_rcq(struct fbnic_napi_vector *nv,
- 				if (!skb) {
- 					alloc_failed++;
- 					dropped++;
-+				} else if (PTR_ERR(skb) == -FBNIC_XDP_LEN_ERR) {
-+					length_errors++;
- 				} else {
- 					dropped++;
- 				}
-@@ -1276,6 +1299,7 @@ static int fbnic_clean_rcq(struct fbnic_napi_vector *nv,
- 	rcq->stats.rx.alloc_failed += alloc_failed;
- 	rcq->stats.rx.csum_complete += csum_complete;
- 	rcq->stats.rx.csum_none += csum_none;
-+	rcq->stats.rx.length_errors += length_errors;
- 	u64_stats_update_end(&rcq->stats.syncp);
- 
- 	if (pkt_tail >= 0)
-@@ -1359,8 +1383,9 @@ void fbnic_aggregate_ring_rx_counters(struct fbnic_net *fbn,
- 	fbn->rx_stats.rx.alloc_failed += stats->rx.alloc_failed;
- 	fbn->rx_stats.rx.csum_complete += stats->rx.csum_complete;
- 	fbn->rx_stats.rx.csum_none += stats->rx.csum_none;
-+	fbn->rx_stats.rx.length_errors += stats->rx.length_errors;
- 	/* Remember to add new stats here */
--	BUILD_BUG_ON(sizeof(fbn->rx_stats.rx) / 8 != 3);
-+	BUILD_BUG_ON(sizeof(fbn->rx_stats.rx) / 8 != 4);
- }
- 
- void fbnic_aggregate_ring_tx_counters(struct fbnic_net *fbn,
-@@ -1382,6 +1407,22 @@ void fbnic_aggregate_ring_tx_counters(struct fbnic_net *fbn,
- 	BUILD_BUG_ON(sizeof(fbn->tx_stats.twq) / 8 != 6);
- }
- 
-+static void fbnic_aggregate_ring_xdp_counters(struct fbnic_net *fbn,
-+					      struct fbnic_ring *xdpr)
-+{
-+	struct fbnic_queue_stats *stats = &xdpr->stats;
-+
-+	if (!(xdpr->flags & FBNIC_RING_F_STATS))
-+		return;
-+
-+	/* Capture stats from queues before dissasociating them */
-+	fbn->rx_stats.bytes += stats->bytes;
-+	fbn->rx_stats.packets += stats->packets;
-+	fbn->rx_stats.dropped += stats->dropped;
-+	fbn->tx_stats.bytes += stats->bytes;
-+	fbn->tx_stats.packets += stats->packets;
-+}
-+
- static void fbnic_remove_tx_ring(struct fbnic_net *fbn,
- 				 struct fbnic_ring *txr)
- {
-@@ -1401,6 +1442,8 @@ static void fbnic_remove_xdp_ring(struct fbnic_net *fbn,
- 	if (!(xdpr->flags & FBNIC_RING_F_STATS))
- 		return;
- 
-+	fbnic_aggregate_ring_xdp_counters(fbn, xdpr);
-+
- 	/* Remove pointer to the Tx ring */
- 	WARN_ON(fbn->tx[xdpr->q_idx] && fbn->tx[xdpr->q_idx] != xdpr);
- 	fbn->tx[xdpr->q_idx] = NULL;
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-index 0e92d11115a6..873440ca6a31 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-@@ -90,6 +90,7 @@ struct fbnic_queue_stats {
- 			u64 alloc_failed;
- 			u64 csum_complete;
- 			u64 csum_none;
-+			u64 length_errors;
- 		} rx;
- 	};
- 	u64 dropped;
--- 
-2.47.3
+Thanks!
+-Rae
 
+> ---
+>
+> Changes in v2:
+>
+> - If the parameter count is available for a parameterized
+>   test, the kunit_run_tests() function will now output
+>   the KTAP test plan for it.
+> - The name of the struct kunit_params field in struct
+>   kunit was changed from params_data to params_array.
+>   This name change better reflects its purpose, which
+>   is to encapsulate both the parameter array and its
+>   associated metadata.
+> - The name of `kunit_get_next_param_and_desc` was changed
+>   to `kunit_array_gen_params` to make it simpler and to
+>   better fit its purpose of being KUnit's built-in generator
+>   function that uses arrays to generate parameters.
+> - The signature of get_description() in `struct params_array`
+>   was changed to accept the parameterized test context,
+>   as well. This way test users can potentially use information
+>   available in the parameterized test context, such as
+>   the parameterized test name for setting the parameter
+>   descriptions.
+> - The type of `num_params` in `struct params_array` was
+>   changed from int to size_t for better handling of the
+>   array size.
+> - The name of __kunit_init_params() was changed to be
+>   kunit_init_params(). Logic that sets the get_description()
+>   function pointer to NULL was also added in there.
+> - `kunit_array_gen_params` is now exported to make
+>   it available to use with modules.
+> - Instead of allowing NULL to be passed in as the
+>   parameter generator function in the KUNIT_CASE_PARAM_WITH_INIT
+>   macro, users will now be asked to provide
+>   `kunit_array_gen_params` as the generator function.
+>   This will ensure that a parameterized test remains
+>   defined by the existence of a parameter generation
+>   function.
+> - KUNIT_ARRAY_PARAM(,DESC) will now additionally
+>   register the passed in array in struct kunit_params.
+>   This will make things more consistent i.e. if a
+>   parameter array is available then the struct kunit_params
+>   field in parent struct kunit is populated. Additionally,
+>   this will increase the availability of the KTAP test plan.
+> - The comments and the commit message were changed to
+>   reflect the parameterized testing terminology. See
+>   the patch series cover letter change log for the
+>   definitions.
+>
+> ---
+>  include/kunit/test.h | 65 ++++++++++++++++++++++++++++++++++++++++----
+>  lib/kunit/test.c     | 30 ++++++++++++++++++++
+>  2 files changed, 89 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index b527189d2d1c..8cc9614a88d5 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -234,9 +234,13 @@ static inline char *kunit_status_to_ok_not_ok(enum k=
+unit_status status)
+>   * Provides the option to register param_init() and param_exit() functio=
+ns.
+>   * param_init/exit will be passed the parameterized test context and run=
+ once
+>   * before and once after the parameterized test. The init function can b=
+e used
+> - * to add resources to share between parameter runs, and any other setup=
+ logic.
+> - * The exit function can be used to clean up resources that were not man=
+aged by
+> - * the parameterized test, and any other teardown logic.
+> + * to add resources to share between parameter runs, pass parameter arra=
+ys,
+> + * and any other setup logic. The exit function can be used to clean up =
+resources
+> + * that were not managed by the parameterized test, and any other teardo=
+wn logic.
+> + *
+> + * Note: If you are registering a parameter array in param_init() with
+> + * kunit_register_param_array() then you need to pass kunit_array_gen_pa=
+rams()
+> + * to this as the generator function.
+>   */
+>  #define KUNIT_CASE_PARAM_WITH_INIT(test_name, gen_params, init, exit)   =
+       \
+>                 { .run_case =3D test_name, .name =3D #test_name,         =
+           \
+> @@ -289,6 +293,20 @@ struct kunit_suite_set {
+>         struct kunit_suite * const *end;
+>  };
+>
+> +/* Stores the pointer to the parameter array and its metadata. */
+> +struct kunit_params {
+> +       /*
+> +        * Reference to the parameter array for a parameterized test. Thi=
+s
+> +        * is NULL if a parameter array wasn't directly passed to the
+> +        * parameterized test context struct kunit via kunit_register_par=
+ams_array().
+> +        */
+> +       const void *params;
+> +       /* Reference to a function that gets the description of a paramet=
+er. */
+> +       void (*get_description)(struct kunit *test, const void *param, ch=
+ar *desc);
+
+I'm a little bit uncertain whether I like this change to
+get_description. I don't like that the function signature for a
+get_description function is different now between
+kunit_register_params_array and the KUNIT_ARRAY_PARAM_DESC. I think I
+would prefer it as it was before.
+
+However, I do still like the idea of users being able to set struct
+kunit test->name for each param run as the test name but that would
+require some reworking because the struct kunit test that is passed
+into generate_params and get_description is the parent test I believe
+rather than each individual param run. So I think I might prefer it as
+it was.
+
+
+> +       size_t num_params;
+> +       size_t elem_size;
+> +};
+> +
+>  /**
+>   * struct kunit - represents a running instance of a test.
+>   *
+> @@ -296,16 +314,18 @@ struct kunit_suite_set {
+>   *       created in the init function (see &struct kunit_suite).
+>   * @parent: reference to the parent context of type struct kunit that ca=
+n
+>   *         be used for storing shared resources.
+> + * @params_array: for storing the parameter array.
+>   *
+>   * Used to store information about the current context under which the t=
+est
+>   * is running. Most of this data is private and should only be accessed
+> - * indirectly via public functions; the two exceptions are @priv and @pa=
+rent
+> - * which can be used by the test writer to store arbitrary data and acce=
+ss the
+> - * parent context, respectively.
+> + * indirectly via public functions; the exceptions are @priv, @parent an=
+d
+> + * @params_array which can be used by the test writer to store arbitrary=
+ data,
+> + * access the parent context, and to store the parameter array, respecti=
+vely.
+>   */
+>  struct kunit {
+>         void *priv;
+>         struct kunit *parent;
+> +       struct kunit_params params_array;
+>
+>         /* private: internal use only. */
+>         const char *name; /* Read only after initialization! */
+> @@ -376,6 +396,8 @@ void kunit_exec_list_tests(struct kunit_suite_set *su=
+ite_set, bool include_attr)
+>  struct kunit_suite_set kunit_merge_suite_sets(struct kunit_suite_set ini=
+t_suite_set,
+>                 struct kunit_suite_set suite_set);
+>
+> +const void *kunit_array_gen_params(struct kunit *test, const void *prev,=
+ char *desc);
+> +
+>  #if IS_BUILTIN(CONFIG_KUNIT)
+>  int kunit_run_all_tests(void);
+>  #else
+> @@ -1696,6 +1718,8 @@ do {                                               =
+                              \
+>                                              const void *prev, char *desc=
+)                      \
+>         {                                                                =
+                       \
+>                 typeof((array)[0]) *__next =3D prev ? ((typeof(__next)) p=
+rev) + 1 : (array);      \
+> +               if (!prev)                                               =
+                       \
+> +                       kunit_register_params_array(test, array, ARRAY_SI=
+ZE(array), NULL);      \
+>                 if (__next - (array) < ARRAY_SIZE((array))) {            =
+                       \
+>                         void (*__get_desc)(typeof(__next), char *) =3D ge=
+t_desc;                  \
+>                         if (__get_desc)                                  =
+                       \
+> @@ -1718,6 +1742,8 @@ do {                                               =
+                              \
+>                                              const void *prev, char *desc=
+)                      \
+>         {                                                                =
+                       \
+>                 typeof((array)[0]) *__next =3D prev ? ((typeof(__next)) p=
+rev) + 1 : (array);      \
+> +               if (!prev)                                               =
+                       \
+> +                       kunit_register_params_array(test, array, ARRAY_SI=
+ZE(array), NULL);      \
+>                 if (__next - (array) < ARRAY_SIZE((array))) {            =
+                       \
+>                         strscpy(desc, __next->desc_member, KUNIT_PARAM_DE=
+SC_SIZE);              \
+>                         return __next;                                   =
+                       \
+> @@ -1725,6 +1751,33 @@ do {                                              =
+                              \
+>                 return NULL;                                             =
+                       \
+>         }
+>
+> +/**
+> + * kunit_register_params_array() - Register parameter array for a KUnit =
+test.
+> + * @test: The KUnit test structure to which parameters will be added.
+> + * @array: An array of test parameters.
+> + * @param_count: Number of parameters.
+> + * @get_desc: Function that generates a string description for a given p=
+arameter
+> + * element.
+> + *
+> + * This macro initializes the @test's parameter array data, storing info=
+rmation
+> + * including the parameter array, its count, the element size, and the p=
+arameter
+> + * description function within `test->params_array`.
+> + *
+> + * Note: If using this macro in param_init(), kunit_array_gen_params()
+> + * will then need to be manually provided as the parameter generator fun=
+ction to
+> + * KUNIT_CASE_PARAM_WITH_INIT(). kunit_array_gen_params() is a KUnit
+> + * function that uses the registered array to generate parameters
+> + */
+> +#define kunit_register_params_array(test, array, param_count, get_desc) =
+                               \
+> +       do {                                                             =
+                       \
+> +               struct kunit *_test =3D (test);                          =
+                         \
+> +               const typeof((array)[0]) * _params_ptr =3D &(array)[0];  =
+                         \
+> +               _test->params_array.params =3D _params_ptr;              =
+                         \
+> +               _test->params_array.num_params =3D (param_count);        =
+                         \
+> +               _test->params_array.elem_size =3D sizeof(*_params_ptr);  =
+                         \
+> +               _test->params_array.get_description =3D (get_desc);      =
+                         \
+> +       } while (0)
+> +
+>  // TODO(dlatypov@google.com): consider eventually migrating users to exp=
+licitly
+>  // include resource.h themselves if they need it.
+>  #include <kunit/resource.h>
+> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> index 01b20702a5a2..cbde238ff334 100644
+> --- a/lib/kunit/test.c
+> +++ b/lib/kunit/test.c
+> @@ -337,6 +337,14 @@ void __kunit_do_failed_assertion(struct kunit *test,
+>  }
+>  EXPORT_SYMBOL_GPL(__kunit_do_failed_assertion);
+>
+> +static void kunit_init_params(struct kunit *test)
+> +{
+> +       test->params_array.params =3D NULL;
+> +       test->params_array.get_description =3D NULL;
+> +       test->params_array.num_params =3D 0;
+> +       test->params_array.elem_size =3D 0;
+> +}
+> +
+>  void kunit_init_test(struct kunit *test, const char *name, struct string=
+_stream *log)
+>  {
+>         spin_lock_init(&test->lock);
+> @@ -347,6 +355,7 @@ void kunit_init_test(struct kunit *test, const char *=
+name, struct string_stream
+>                 string_stream_clear(log);
+>         test->status =3D KUNIT_SUCCESS;
+>         test->status_comment[0] =3D '\0';
+> +       kunit_init_params(test);
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_init_test);
+>
+> @@ -641,6 +650,23 @@ static void kunit_accumulate_stats(struct kunit_resu=
+lt_stats *total,
+>         total->total +=3D add.total;
+>  }
+>
+> +const void *kunit_array_gen_params(struct kunit *test, const void *prev,=
+ char *desc)
+> +{
+> +       struct kunit_params *params_arr =3D &test->params_array;
+> +       const void *param;
+> +
+> +       if (test->param_index < params_arr->num_params) {
+> +               param =3D (char *)params_arr->params
+> +                       + test->param_index * params_arr->elem_size;
+> +
+> +               if (params_arr->get_description)
+> +                       params_arr->get_description(test, param, desc);
+> +               return param;
+> +       }
+> +       return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_array_gen_params);
+> +
+>  static void kunit_init_parent_param_test(struct kunit_case *test_case, s=
+truct kunit *test)
+>  {
+>         if (test_case->param_init) {
+> @@ -701,6 +727,10 @@ int kunit_run_tests(struct kunit_suite *suite)
+>                                   "KTAP version 1\n");
+>                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT =
+KUNIT_SUBTEST_INDENT
+>                                   "# Subtest: %s", test_case->name);
+> +                       if (test.params_array.params)
+> +                               kunit_log(KERN_INFO, &test, KUNIT_SUBTEST=
+_INDENT
+> +                                         KUNIT_SUBTEST_INDENT "1..%zd\n"=
+,
+> +                                         test.params_array.num_params);
+>
+>                         while (curr_param) {
+>                                 struct kunit param_test =3D {
+> --
+> 2.51.0.rc0.205.g4a044479a3-goog
+>
 
