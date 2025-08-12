@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-764863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D39B2282B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA4DB2280A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C621BC3F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95209681225
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0010B267B02;
-	Tue, 12 Aug 2025 13:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED24267B02;
+	Tue, 12 Aug 2025 13:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGdoQg8a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Q60uJaTs"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228A20B1F5;
-	Tue, 12 Aug 2025 13:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316BC13A3ED
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004180; cv=none; b=roNd5qQumv9RROR6m6Xv2QrfN0Zi5RIIwdG3phaG5w16QA/dZmunDTJ9uLfvdw4sKfbZkjMn1KVRIVK32ucIMPzLJNF+RVMCnWQrTGIrcbsLrn03v+j6YlMlqsWmzSVFtC1sgWkEU8DnCAAjC90bPyZF9GU/VUs3Mssahuz3Wc4=
+	t=1755004155; cv=none; b=AkTw2UXAwRrIQGY955brT0KoFaAj88w3IqroQdGJB1Pb/QauOOfQC6STCGVZaWCpll7+afMUUOmrbKV/sRFgrP4yzoyZeM3fjD9X43ydM9gWT9UbNMLIlW0rxaM9/xcx7XQcgxaIwIwV5Uw7W9eX6J6UWQOYuo/LJ68IFTKJNPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004180; c=relaxed/simple;
-	bh=4dw/dCbsdvNnpX2D+rr3n1ONj7c/Xg5bifqPSG2z1eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLvwlT9IFPSki911sPNyu+cZGDA/lntbh1LqL6SOgkJTxYlaKNUSVi9xQtZFWdcnoAdMk0i6nTt4kw1URIicBAffD2lzr0lrjy5qyX9TvsFMEIwMK1r+PZV4VGOd9bxVk/bckwAh1N+qA6XDn1pnv9QBVj7plCSHfzvsLKeN6bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGdoQg8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D61C4CEF0;
-	Tue, 12 Aug 2025 13:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755004179;
-	bh=4dw/dCbsdvNnpX2D+rr3n1ONj7c/Xg5bifqPSG2z1eE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=vGdoQg8a4YwSJrwMrrEweiDx22olFdwFJiBFuYxxzdZ2ZicdmGW4WV/NWmg22HUv7
-	 taxbO+cQNGGLij804Qd5VTeYxMuRnkLVyOuL96Roy/c+22V8sk7FugT/rA2Kgzkiy2
-	 CPNBrz0ShtnMcygdVvi5/qHXa3OZHFWrS274vyYREkkjtdh+MxQQ/knudW30vBL2aF
-	 BSCrGC/1Y8jcJp53zQnl1UCThERLGXtZ3wgt216VQVjoddwNJCugSk4uGLv2tg6TIT
-	 /pnoAkSjFqq7HjCe+gnxpiYSSR1n1bOAuFc6F07I7/lQYTgDqy0raT/XRfoXvlDLIr
-	 1exk9y0xoNkzw==
-From: Danilo Krummrich <dakr@kernel.org>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2] rust: devres: fix leaking call to devm_add_action()
-Date: Tue, 12 Aug 2025 15:09:06 +0200
-Message-ID: <20250812130928.11075-1-dakr@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755004155; c=relaxed/simple;
+	bh=MAomTme2JM325tkXeqcrCAovhqZxr09aQ6wqQb8gykQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=sMrTDgr55RYfxauiDEBSe4/7hKwRLq8aOgGnREuC1De65afyMrSVduS6wvfJZagDTNiXKkLM9l2QGR6uk+y4L2a9h1B3EjoMpubL1PczVBz0UQ9ihzmnp+0lQf6lk8Mu+t8EwR6HzHrKWQyxISjegmGADbYqK+4DFZDEeSmvwL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Q60uJaTs; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9139aa446so34234f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755004150; x=1755608950; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MAomTme2JM325tkXeqcrCAovhqZxr09aQ6wqQb8gykQ=;
+        b=Q60uJaTsOOF5ebIfW/00Rg/iFfp/UJrgpzi7fKjwp6OTaKkDLybCBw0oecXEA//Rp+
+         OEhGcYLbgYkbIM3Jqdd4mWxKCBxkFpCG1laSD0Ws++cxWdon7EBiOWhUdlOpynHq+MJw
+         FW1Xadq1WVL9LjDYEeJdAftoZBH5to/rZTxpgeifgSEqvdaOJC/yjeZpGUk48lB4IVbR
+         BAEEnH7+gqXVnBBjJ4kOMSk4X34BVW79dYiOzTs+TxWDT5PeiZUfU8nDacTUFgmgsTta
+         getoB0iBHzEY7ytHu6DFxcWuzzNNpccBdWZyeffW5MZEt4YlhZG3RpisIgbexcViP4oo
+         lLiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755004150; x=1755608950;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MAomTme2JM325tkXeqcrCAovhqZxr09aQ6wqQb8gykQ=;
+        b=nTguaVhlI2g2Q2fLTiRNk64SRGpf3Hfmdq+mZ88TMyzQXrrKh/p5pZrPr5TLlWWWBM
+         sO65sHnW7mMRPDUANfiw6OOpYZV2WzCHGtPjQroFS/YvdI21x9x4Q+MsNX6hEGKRrbZ9
+         iBq1KNr2v2AQdATZQ2d4G/4tcfUwZPSvietDNYomSsxLjBbPj1XDL8x7Qo982vxSlplE
+         dRHWbo6UexcunLp0RY15yyMvQziF/KLDXczc6Gz/0IZujm+7LrBycGoFrrgD+uiropjt
+         Hgurd6AkVne/wXRQUR0/tgC8jFUF8Km2RQBCUhM7EZ5i3vgg9RHeij1b284DPFc9g69V
+         yDtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBujhEI8uI4c8aWO8Rs7f5NErkNzSOpfCqXi6xjPtTotmiobX3elfwV+vNcZXwwPLZsQve1R7AhjAmvw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU9gxGR/IuPHJQccgt8XcXtyEOchVv8gGbVkIS8g2z0t66hg2f
+	+BvUhTvloqvG6ISqbmpupHOdFP4mSpy1CyaaUX6bw2uvL/yr2vFlU8ysG+1ypa9BDa0=
+X-Gm-Gg: ASbGncsBf5KAc2rjqsUwAGnNBF3/IkcMiRVWx5jHdfwCUhR/PV2br4HmcfWAydkIIrG
+	zFUq7yuRwgCbAw5KmuC1XA0Vt78rtpfGANxTd5eRM5uZkmW9wtALu6pMomkI/GVCJ8iqqap2nm7
+	p0gsuE9l/Pwb9G4+i6+NOCnRp5OoaMe6FTNlklmrrr7Dil+4YG7KOWjYuQdFpKfgVuYb2Ebgt17
+	AyNm4eGIBC5gjXGuNB7O/7c9upniBGbgQ9+a4oEk7VxiY/JgYBCj28DV+T9uUe00wPfc0K/pA8B
+	n/7aCNLwHn2Xyw7Gv2cOy9oSKm6cfQxDPDZqqQv0mdzcv9bjDVEARDNy941DnTEzg3kuPr/n9Ff
+	TZCUIvzHHZc7qO8jy1awBuoaxFZ7UPA==
+X-Google-Smtp-Source: AGHT+IFCL0S2fG+7EvsWvlnJgkjJOc9wFOS6dc1oCWSwvbA7urqknr0ZeJjmy9NTqLN0RG30vSqL/A==
+X-Received: by 2002:a05:6000:1785:b0:3b7:948a:137b with SMTP id ffacd0b85a97d-3b9147c2a32mr526638f8f.11.1755004150288;
+        Tue, 12 Aug 2025 06:09:10 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:8113:2b11:8f42:672f])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c338c7dsm44458535f8f.0.2025.08.12.06.09.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 06:09:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 15:09:09 +0200
+Message-Id: <DC0H1RZKZ3QR.82P8JXIL5NBJ@ventanamicro.com>
+Subject: Re: [PATCH 0/2] riscv, bpf: fix reads of thread_info.cpu
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>,
+ "Song Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>,
+ "John Fastabend" <john.fastabend@gmail.com>, "KP Singh"
+ <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo"
+ <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>,
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, "Pu Lehui"
+ <pulehui@huawei.com>, "Puranjay Mohan" <puranjay@kernel.org>, "Paul
+ Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Kumar Kartikeya
+ Dwivedi" <memxor@gmail.com>, <linux-riscv@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alexandre Ghiti" <alex@ghiti.fr>, <bpf@vger.kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+ <1fdaa939-d26c-454a-a722-7d0a590557b7@ghiti.fr>
+In-Reply-To: <1fdaa939-d26c-454a-a722-7d0a590557b7@ghiti.fr>
 
-When the data argument of Devres::new() is Err(), we leak the preceding
-call to devm_add_action().
+2025-08-12T13:37:16+02:00, Alexandre Ghiti <alex@ghiti.fr>:
+> @Radim: This is the third similar bug, did you check all assembly code=20
+> (and bpf) to make sure we don't have anymore left or should I?
 
-In order to fix this, call devm_add_action() in a unit type initializer in
-try_pin_init!() after the initializers of all other fields.
+I looked at load/store instructions, including bpf, and focussed on
+patterns where we access non-xlen sized data through an offset.
 
-Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
-Changes in v2:
-  - Drop inner in-place when devm_add_action() fails.
-  - Document to remove drop_in_place() once we can switch to UnsafePinned.
----
- rust/kernel/devres.rs | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index da18091143a6..d04e3fcebafb 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -115,10 +115,11 @@ pub struct Devres<T: Send> {
-     /// Contains all the fields shared with [`Self::callback`].
-     // TODO: Replace with `UnsafePinned`, once available.
-     //
--    // Subsequently, the `drop_in_place()` in `Devres::drop` and the explicit `Send` and `Sync'
--    // impls can be removed.
-+    // Subsequently, the `drop_in_place()` in `Devres::drop` and `Devres::new` as well as the
-+    // explicit `Send` and `Sync' impls can be removed.
-     #[pin]
-     inner: Opaque<Inner<T>>,
-+    _add_action: (),
- }
- 
- impl<T: Send> Devres<T> {
-@@ -140,7 +141,15 @@ pub fn new<'a, E>(
-             dev: dev.into(),
-             callback,
-             // INVARIANT: `inner` is properly initialized.
--            inner <- {
-+            inner <- Opaque::pin_init(try_pin_init!(Inner {
-+                    devm <- Completion::new(),
-+                    revoke <- Completion::new(),
-+                    data <- Revocable::new(data),
-+            })),
-+            // TODO: Replace with "initializer code blocks" [1] once available.
-+            //
-+            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
-+            _add_action: {
-                 // SAFETY: `this` is a valid pointer to uninitialized memory.
-                 let inner = unsafe { &raw mut (*this.as_ptr()).inner };
- 
-@@ -152,13 +161,13 @@ pub fn new<'a, E>(
-                 //    live at least as long as the returned `impl PinInit<Self, Error>`.
-                 to_result(unsafe {
-                     bindings::devm_add_action(dev.as_raw(), Some(callback), inner.cast())
--                })?;
-+                }).inspect_err(|_| {
-+                    let inner = Opaque::cast_into(inner);
- 
--                Opaque::pin_init(try_pin_init!(Inner {
--                    devm <- Completion::new(),
--                    revoke <- Completion::new(),
--                    data <- Revocable::new(data),
--                }))
-+                    // SAFETY: `inner` is a valid pointer to an `Inner<T>` and valid for both reads
-+                    // and writes.
-+                    unsafe { core::ptr::drop_in_place(inner) };
-+                })?;
-             },
-         })
-     }
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.50.1
-
+(Nothing else popped up, but I mostly used grep and cscope as I don't
+ know of any semantic tool, so my confidence levels are low.)
 
