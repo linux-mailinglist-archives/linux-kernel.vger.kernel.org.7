@@ -1,126 +1,102 @@
-Return-Path: <linux-kernel+bounces-764185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9659B21F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C79B21F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01014506563
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C6D686D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDCA2DCF6C;
-	Tue, 12 Aug 2025 07:24:43 +0000 (UTC)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E5F29994B;
+	Tue, 12 Aug 2025 07:25:26 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8A2D7803;
-	Tue, 12 Aug 2025 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334892DE709;
+	Tue, 12 Aug 2025 07:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983483; cv=none; b=Kx7UUh7rJNtffjZv/OnLXVGYwKzmiIHEetCklBmm6owY2FpIDf/Tm7Od3epx3w3Sih4fx5pEwdj+5xC1sPLp+8X3MceEtS4NchmmSHnAy1igPdwFug/zPqrX2uii3D7oiZIFwY3tW9iYVb59s6qiCh/c1oQnTC1nOV79Mk1N7jU=
+	t=1754983526; cv=none; b=FMiR+P+ALeHrPp9Sjpqr5vyngFvMWHz43URjK+KQomA9HsxoRA3gRYEBxjGaG9eu+oDtLyd+B+VxUOpxyHupq0TrNcM+W8v6mzByA1KhZqaTbss6wBQnLZfIj1vLTMbmw25rKVWgtysCBXS0VRtJucAXTdFEHfoQum9PgWMn1d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983483; c=relaxed/simple;
-	bh=F1+sEh/R9brLB1dIm7iUxPhrrN4R39Dy8Uv/ot60slI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oW8lv9c49RTOrmM4qw8pnCr5KlgKFjgSBI/2gamMbBzthKyLP4+Sxo/F2c/1JZz+pjg6bFOB/x1THz3b7cW3508ydbJwTwY2KWHi3BdDUdYrBW3zwsUlCZxJTaS0KSS4RM+IYMPfmJbAPa62UG9BkhfpPp9OyVpHR+nEg0NndnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4fc1a5e600aso1872657137.1;
-        Tue, 12 Aug 2025 00:24:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754983476; x=1755588276;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XOtePJ+whO1RZk6W6FcCDIfHBFaG85SKwR/jfH7mXsk=;
-        b=SUoNFS61n34YXTByb984/BURL7m8KdyItK3E062VixEs8PEhVe88Yaj0Gp2Kq1wLO6
-         oWDuD9yKgpxgFmL2blGOJwK5ep4B18IRFvNjJydfeIb/TtQDZaCEST3XFejv6Rv/yzFW
-         LSC1ghPJY864JIafv3cP9a41jgqkwEvSb9voytam1loibWEModmOCqazMCNKq3Tl/86W
-         1sxE6xK75zZk8CsQq34BRoAdmLxbYfnM0o6Hpxq5rZ0U1+zy1IDZtU4XqPhyTJxDy6a5
-         ubLORK+cUvAwVyYoQQx8mnTvHZk6mLHhRKlaW/wjDz+iH2qew/auOxzdB4A2flABIl8n
-         XYIw==
-X-Forwarded-Encrypted: i=1; AJvYcCURLg0UDUiW04htSRaEjEZv6xdX78dGNa/rvmXAukm+1Y8P05v0KCWdprxXXZw3p1sG0eKYjhwZJKWDWta+@vger.kernel.org, AJvYcCUl908DYraWTylU2faiA2L5OekRAdCbyVB5+LRRXNjRQ/Tr93vzdajPhOUNCwJwwWHNMGgTRl5UyZRb@vger.kernel.org, AJvYcCVX7Cxg2bXZEnyBtvFljjtki1kl6uV9u9b0j23omEQXIKB41m4X60J5EE33TF/5Yc31FKTjn2JfYcZ2ptkt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQiMQ4D+Hm6BDLVktCH/4+nm0URWYAMCnHAm6y3H4urro0+s7a
-	gpNGSRm8ix3Azie26fkKoLq+NdPmxuW/7OXH26moYZN/qQgvwTGSB3HJSLHD5tm2
-X-Gm-Gg: ASbGncvm4iUjyhgJV+3YZA+e8dK1cUCuKEaoR+3cUaJoMUh4LWTjvmv7qOcfTLfiK2Q
-	JsF54a3YWFzKFmL5cFSrbhjWimbGKAJcAaaaC25lba1oqi9OfVY0u5/gft3Jq8Qn+qzepNBoU1u
-	E4WF6zMdM3MMKkMrAnFvvt0wk861qCOQA+pk65V6C+z/h3sgQehSmdYMJofb2aGQUXLZA4MpV93
-	sWkoeFl2nxlP6b/9n2i9OTR6o7Bvmbqn/mq5dO5DXRUeEGWrbGHMCUrz+ZhHcOHndJzzenAvwhc
-	daEriuzBNQ2O0cvFQ1Py1w9efxt54CWuEWs8zzuWfe6njccE7LZv7c8RzZOo2F8q5yr0TgftDx1
-	XHQpcRgWXY4aAPxlgoKFWi5qtiU7vtxdxVol3+X6lK2K32nxAJehxGWNZC02F+aXN7YDIKnc=
-X-Google-Smtp-Source: AGHT+IFc8Niv3i50vfcXctqOM9+EaZ22zdjVC0swY9qmcjEuQX8hCa12CQtuWuf4JLS0mLRf1jyUow==
-X-Received: by 2002:a05:6102:809e:b0:4e6:edce:4b55 with SMTP id ada2fe7eead31-50cbcfdaf30mr985804137.4.1754983476017;
-        Tue, 12 Aug 2025 00:24:36 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062b6519e7sm2134403137.13.2025.08.12.00.24.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fc18de8e1bso1720985137.0;
-        Tue, 12 Aug 2025 00:24:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ9+AhqXAYlLdeStixqoH8hsg70AGD6hWIKwvacfzPicalBC+TmxZd0C/KHXYy5YhzE6lN+neKSSPuwlly@vger.kernel.org, AJvYcCViHOCBcmIi56mcTkFyTZiVx8g2+j4lBemehmj7IKYn6tWER1GLPD6J/7RRP1Wte761HFqI+rClxRf8@vger.kernel.org, AJvYcCXcWxeDX/448yOHwoPy83mH0dnjOwlMAH/PXhIh6YJuGQHI3B/egynRFrTmZzITIkWplSAhPo5fx7/Lxhrv@vger.kernel.org
-X-Received: by 2002:a05:6102:3749:b0:4e9:b899:6f4e with SMTP id
- ada2fe7eead31-50cbd4c9427mr1106337137.7.1754983475510; Tue, 12 Aug 2025
- 00:24:35 -0700 (PDT)
+	s=arc-20240116; t=1754983526; c=relaxed/simple;
+	bh=oxBpnBaSb18ZCmhI9DN1neCWkluARg45MSJPHMp2Pm8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mMIY/9mvRxRLI+ZE7jvDQxoRhUj5J3iT3uZMDnJ0+q2YwoNNm6JXlRLadNHOPqH28l+N8wEEMyvKNG6m6+sXCTiKxQsCe/aIJSFmtERONLp69dLSgvTCOmaTVah4c+I1ISYPOiWY42+bzv8xChhV5sRZdF5XArV+OuJf6bFYG0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-03 (Coremail) with SMTP id rQCowAD3hnhW7Jpowe4mCw--.10002S2;
+	Tue, 12 Aug 2025 15:25:21 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: linux@dominikbrodowski.net,
+	make24@iscas.ac.cn
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
+Date: Tue, 12 Aug 2025 15:25:09 +0800
+Message-Id: <20250812072509.472061-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810101554.257060-1-alexjlzheng@tencent.com> <20250810101554.257060-2-alexjlzheng@tencent.com>
-In-Reply-To: <20250810101554.257060-2-alexjlzheng@tencent.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Aug 2025 09:24:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
-X-Gm-Features: Ac12FXxppZi-71w7rSLDFISw5f4QrRnM71zGAobEkqyavB6YoHT3FR5Y1ocCRLs
-Message-ID: <CAMuHMdUFn1aWxdgb__NY4yr1E8k_zSaaDzmkUBfyDV1mWawTMA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] iomap: make sure iomap_adjust_read_range() are
- aligned with block_size
-To: alexjlzheng@gmail.com
-Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3hnhW7Jpowe4mCw--.10002S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF1fXw17Kr17GrWDKrWDtwb_yoWDArc_WF
+	10gr97Gr4jqr4Ikw42yrsakr9a9rn3ur1xWFn3ta4fur9Fvw13uF1fJryDXw1xJrn3JF1k
+	AF9rJr13u3ZF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxkF7I0En4kS14v26r126r1DMxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2
+	IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v2
+	6r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
+	AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IY
+	s7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
+	0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUaiihUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi Jinliang,
+In __iodyn_find_io_region(), pcmcia_make_resource() is assigned to
+res and used in pci_bus_alloc_resource(). There is a dereference of res
+in pci_bus_alloc_resource(), which could lead to a NULL pointer
+dereference on failure of pcmcia_make_resource().
 
-On Mon, 11 Aug 2025 at 18:49, <alexjlzheng@gmail.com> wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
->
-> iomap_folio_state marks the uptodate state in units of block_size, so
-> it is better to check that pos and length are aligned with block_size.
->
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Fix this bug by adding a check of res.
 
-Thanks for your patch!
+Found by code review, complie tested only.
 
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
->         unsigned first = poff >> block_bits;
->         unsigned last = (poff + plen - 1) >> block_bits;
->
-> +       BUG_ON(*pos & (block_size - 1));
-> +       BUG_ON(length & (block_size - 1));
+Cc: stable@vger.kernel.org
+Fixes: 49b1153adfe1 ("pcmcia: move all pcmcia_resource_ops providers into one module")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/pcmcia/rsrc_iodyn.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-!IS_ALIGNED(...)
-
-> +
->         /*
->          * If the block size is smaller than the page size, we need to check the
->          * per-block uptodate status and adjust the offset and length if needed
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pcmcia/rsrc_iodyn.c b/drivers/pcmcia/rsrc_iodyn.c
+index b04b16496b0c..2677b577c1f8 100644
+--- a/drivers/pcmcia/rsrc_iodyn.c
++++ b/drivers/pcmcia/rsrc_iodyn.c
+@@ -62,6 +62,9 @@ static struct resource *__iodyn_find_io_region(struct pcmcia_socket *s,
+ 	unsigned long min = base;
+ 	int ret;
+ 
++	if (!res)
++		return NULL;
++
+ 	data.mask = align - 1;
+ 	data.offset = base & data.mask;
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
