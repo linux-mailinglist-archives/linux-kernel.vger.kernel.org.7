@@ -1,265 +1,117 @@
-Return-Path: <linux-kernel+bounces-764466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCF2B22356
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:37:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7C1B22349
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085103B4804
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:35:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC53E7A6001
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C912DF3CF;
-	Tue, 12 Aug 2025 09:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ev5uRS/J";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pXhmdKxL"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA32E8E1D;
+	Tue, 12 Aug 2025 09:35:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A427E1388
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991309; cv=fail; b=nxMmoKz9jCuMfT7LnVfPuMmfTW7HdsThRA4qMseYsTJgJkw/uMBKY9CNuP5dJgIq/M4M+szwRyFC9dtqEgszlGNPxynerZvkWzjCHvysehURD/awr4F9fpy1bpNObwB0vKIHa5anuCIv/lwwptP+zo/ZL5aTy9G55rqhz00x/4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991309; c=relaxed/simple;
-	bh=XENTbTLxnCQcf2w9ergqBzQBO6WYA33gY3bCKv79R+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eI9+g+7x3f89K7lsIG+ZQtOJzGz+YPlGKVouRRbJy738XihZDOJr+yPX9+wwyAzOo0xbUWp9wTPbnxrmH6E4P2VHFgUBpVa/ciLDf/LNvRyUJ229wUdZyhtprm663aj0FpBOKmTR8MpDxv86oP6o3lo3INSZn8+sdKSmi+GWiik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ev5uRS/J; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pXhmdKxL; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C7bgYl006631;
-	Tue, 12 Aug 2025 09:34:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Q5apAQa+Sdoa18UK51
-	Cl/q/J1fPYifsKB6saVohdY24=; b=Ev5uRS/JHZlg/1v4cJrofHxiVLK89n5EBp
-	T4LpTxThljxjy5e5Qu1ssUZ/6c8xTr/TOS5c0nDua/rm1roppwvClomOzncB5X8E
-	h/oKkQcpcJ7DFFtSQhMRUHCCNiI2xZmAXpyjtc9bY1nmS2ackw+yk8HVzRBkMBco
-	hIGgQTR4jNFmokXda1OJh1Rb1ZSz1exwEup+ehDOBGRY3lTmOZ7Mu6WkyORBKbjC
-	9o7iAbTFJ3SUO0KdH161M1VRg/LzLb0vtj5O7YgM3TtqmcRUsEiOKvxPir6xTPBE
-	K2XnXKR08TmTh0HuqRcH11yDH+AewrGJNXWW36xHHE+KVvOfNxeg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dwxv49f2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Aug 2025 09:34:53 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57C8xkvO030150;
-	Tue, 12 Aug 2025 09:34:52 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvs9r5tn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Aug 2025 09:34:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kWrAfxWJucAZx5XbpCaJxU3F757R5wS0mDQXqQBbv/eKQVS0OTimMP/LG+y2CQi7ZJCogzz/56ATsCh/LF0s0f8d3AhZIqJSE68pMTLlELhiyliyR4CjuS+yudM8vWhbY7rvBki6Cg0cR0kE2rv+WfDiQXlXD2JqcOPFwVSR6qFbzbdli8LG3nuTK1ODPG5ibcvv3IGKboOMztfN+Cr5Rsb1oC4njNPrb/gw+NZGmM+qIVURdmjPNqpM4t1byuLCnnqMGyzoI9/96j1xvOKcMN0uVmWO5Qw0r2+FpuzxvPbO/fXfU2pfYhq+qj4IQauAtCwAmhKNMIpkZAr1rGmL8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q5apAQa+Sdoa18UK51Cl/q/J1fPYifsKB6saVohdY24=;
- b=HH0oM5Uyd9gGTwRgSnG1fLybrK0SoR+lWcBvh8EToK28qi5Sgpfo4QAvzSlB5l97MhjTEMBTkm13t27HDDhbwjRc2Czrt81PNjOvSml5N+bCmki8A4ftctHVu9uiRgHpwpQUwDF8KsPszUCAUOkjeLqrjg4q4qDchij+PB00zevbuxVuGFHxJwUN4Qh1etSHeBAiaIgYaMPdI1jBHPysvtpYt0UUJJjFIV0iy0n2LmNE+r6HYPLBeo9kQpR8atc1UoWg0Qkgy01oi6pNyJ3qNs81RaKXNwXoaF4l6G7v6gPgiiudBEriNL1Ws0Bau5E3NO+RB/AUPvtNuwCNvA8N2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q5apAQa+Sdoa18UK51Cl/q/J1fPYifsKB6saVohdY24=;
- b=pXhmdKxLOOYcHrOixHlxO7NZgwkKIJ5lS2OI+y4WPvgzfMEgXUQ8H6Rf0Z3WjOoRW05Ms03cu8zKv87/lfMYvJ3dgVGo+2UfemAw31pMRdtNIFecciKcQV9iUmtpf3aWxYNUkBrKO2eEtSJYjGLGxyXnIzzRPR0g9T7MkpCFTtE=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by DS0PR10MB8221.namprd10.prod.outlook.com (2603:10b6:8:1ce::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
- 2025 09:34:39 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9009.021; Tue, 12 Aug 2025
- 09:34:39 +0000
-Date: Tue, 12 Aug 2025 18:34:31 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: vbabka@suse.cz, akpm@linux-foundation.org, cl@gentwo.org,
-        rientjes@google.com, roman.gushchin@linux.dev, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mempool: rename struct mempool_s to struct mempool
-Message-ID: <aJsKp9_j-GyPOfwy@hyeyoo>
-References: <20250812083105.371295-1-hch@lst.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812083105.371295-1-hch@lst.de>
-X-ClientProxiedBy: SEWP216CA0136.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2c0::11) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015BB1388;
+	Tue, 12 Aug 2025 09:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754991304; cv=none; b=GgSqStRIK9qucyKDW2OGwlSDZAFgyc6arzBp4z9LgHoPzoOcM7EIepQO9pW51ZfjDonh1K0OV/liZ1L7qO2FipLj232gUznm6XnKhO/dgQ7q5igkU+q2fwRou8sDb0fqiMlBad4lzWKlMztW3Q43BapofH/GhvF4UMzeYB9CHFA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754991304; c=relaxed/simple;
+	bh=XzVQikg6eVnr6+fdjiHmLEY2s0a2gcTyAxBsjBwO6AE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=f8EpHi/GQDF3OxWQebsQ4Ugo31QCBzTRSv/XEA9VsKkP0s4ltrRc3ZqDx1FAZ/yhkXLoqxzmj62xgXud/nSxGrjr4KjXqrqNf4PhkkRnv4mDO35CGdaS96mdMgxR/WU9s4gvh4BBq7Zwatn9riw9hNRD1Vq+F8EHMFZ0RgwRtuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1RDh0BsqzKHMwg;
+	Tue, 12 Aug 2025 17:35:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 417DE1A06E6;
+	Tue, 12 Aug 2025 17:34:59 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBHBCptoJTywDQ--.7024S3;
+	Tue, 12 Aug 2025 17:34:59 +0800 (CST)
+Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
+To: Christoph Hellwig <hch@infradead.org>, Damien Le Moal <dlemoal@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Rajeev Mishra <rajeevm@hpe.com>,
+ axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
+ <20250812033201.225425-1-rajeevm@hpe.com>
+ <34624336-331d-4047-822f-8091098eeebc@kernel.org>
+ <20250812042826.GU222315@ZenIV>
+ <a7cb5d59-8af5-47b2-8549-05c9322971e5@kernel.org>
+ <aJr9UKtIJ74XExf-@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e2a5550d-fb55-99c1-82b1-5b6c174f7cfc@huaweicloud.com>
+Date: Tue, 12 Aug 2025 17:34:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|DS0PR10MB8221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79e3b719-3165-4c85-af5b-08ddd983756b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LTclZZPCTrudaLr91wUmBYHlbMq6E5CRWY1VY62w4usAD11CReghc4+NFcZw?=
- =?us-ascii?Q?XZPn/Jj4ceh30MgAQFM8x3SpPu4PR1cC39+UVYP4vZW8VinJsjZI+LOCP8+T?=
- =?us-ascii?Q?oP7HvnhieHY8+Idf9S4rx8kwjIhqUIsXLKi1TOXBBllTCDIzG34kGdYmnoeh?=
- =?us-ascii?Q?H0Q9Cm+RbCtYp9HmTbpf/3iH7GhFzMrtdqYFCOTYgvEaIAOcpWSEEVs29Sbs?=
- =?us-ascii?Q?f4fG3pilo1FnIT3WxWKQyKXn7K7v1u8qGf1dTtrAIUIcCxSvDAQXArL/UyRm?=
- =?us-ascii?Q?0acviSh/elrJuT8G2LqK2Wn3IcEI1Ap0xx2Vb2DkJSe8NohSVtrgOz8nv2O7?=
- =?us-ascii?Q?dq5SE9BaRkK6v4SjQdEJ98k2BjuuBI99sd5Qd+x7PRO047lU+GT+4J0855qw?=
- =?us-ascii?Q?O/uGcokAC17a1FVTs0nOLVD0a6CImRtbitsIGaXZaT1OTG96IAKavEqP98Vt?=
- =?us-ascii?Q?0ZZR0RmQ5q5q34VZ/PuqTcrvxwrBdAmlkBwJGfH9WZF7MC6CyvBKlOz97M9S?=
- =?us-ascii?Q?DatR359nCxJyNNv2enWHUgZnDIiseaKqQxFaZ4OpUrk6aYvz9XrNrAwxJM1Y?=
- =?us-ascii?Q?Zokc2ee4E/CEziR17osC0zZIdi38lW/XphNCyMS0nmX15OPUydtcneUZJNlx?=
- =?us-ascii?Q?4CfhdqSMS13lSPyjcBt5Q+GCBKBG8IiLKm+K07PwgkXvKmz7hLNaADR2Sg/g?=
- =?us-ascii?Q?ws2zes+t9F1fV5LoBqSZDeaCZDThdVZjnocAquSAH1DVUPwWVX9kjaT2oLZg?=
- =?us-ascii?Q?eV0D2p+6Orw6oRkKibWTloQOUFIonEetHyEsxVfqG3tBTMVdqWq/FG07bR0i?=
- =?us-ascii?Q?0ojz3u2Z5+2KEEKdTj1uoX0mXwyMKX1xSvWOGbzFmcA3WSWrZmc6af+SVsYE?=
- =?us-ascii?Q?sd7m5vBKW+aIsKg5geMMCPOTs9qCpkTN7408te1nDxccUCg0KzSojR0pdYCF?=
- =?us-ascii?Q?RasHPfGNzUtYr4WGWSIuhgZ9qnaECW2OzEUWYUODG8ZDZddC7+UtRKk2Z1MH?=
- =?us-ascii?Q?UmNfH+rKZdnXNP7kDWzDawhPdW8wJDsqtUTxfHytSSOoVSor97gI0QrZVRDW?=
- =?us-ascii?Q?nktkP9LDr/kAgwAZ6i0pNRfgZIelN2Vk0vSte4D3J1FyMeKG7UxRXY8JrHmH?=
- =?us-ascii?Q?60i3xErVyHMbWzBBpqIeJNn2lxAT5WQ/oempjAEcL52aWI8pg+RBIFLK3anI?=
- =?us-ascii?Q?TckJ3WV7rcdTRqBkzyJzoMK4SnnOEiIdNU6bDnzQZSj+txdAwpOov9f/qA/D?=
- =?us-ascii?Q?Oh5Ka2o+CCylPmcqey9+xfYbMcCvQ4H85hFMTokAzzNdd0YUYrDRi5gzfiCf?=
- =?us-ascii?Q?jOsIyVkT1V88QAdycJDKS6jgupTaCr2xi8pC04JP1mkfSHO+SEEFqsCXDdnK?=
- =?us-ascii?Q?VTCT+9EiGs4o+p/Ne+C3BbkSX7DzHXPX2VMGu2BBPWJ0V99obeV6dpT2NNR+?=
- =?us-ascii?Q?N7UJQORo1XA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8llg8eCee6A7q6cbKgtlj6TvtXQnida2AsPsz7ojQCGJxKDojwnMQ0s4vzpz?=
- =?us-ascii?Q?aPIhLzruAu3RggdAi9SrI0YOlgVPFNXSUJfwVxZVJkmITOwtM2TueI2CBjxx?=
- =?us-ascii?Q?UEZ3hpSRx1jM6a7lOB+Ilr9s9SV8qPEyo71CmN0W82Uf6flONWsvG6M+AQMo?=
- =?us-ascii?Q?xNzHlNmRpkyd9lhv1QjoZZ+T65F9P49Mu1hfqIwjgkGxiLU1Xwfk+RNlOAdC?=
- =?us-ascii?Q?yGN1Lx3FNfCd1PqD6E8mE/W+HGvkfhRo8YQrSjG++z3xFIFKWmTGQdfb8Vp/?=
- =?us-ascii?Q?ZN451LrPdF7OkTgWt0BFKccpXHwbn8TdWXUbqeJinS9BBv2fnrDTPcMC/JUV?=
- =?us-ascii?Q?5qyDB3wNCzjrFMfWL9cr3T8ImPOA7eNNs4W2IfJiRpqLp5g5tk8foeIONva/?=
- =?us-ascii?Q?OIAxMAinYOaf2yhnKt5BbqwfyZqli/4bLEkkYrFDzXuBpCTvWfNyZ1fZJvSw?=
- =?us-ascii?Q?NWceV1IWTfaaHSTjgkW0oi/NsnkeATqgFrmIO6sj/Lyw1hcU9y7zqNFl4QD2?=
- =?us-ascii?Q?IbS1qqj2Jf7I8d7eIa7Up5m0y7f/DbavCDdylKpvX7TJwv+WCZ0Uotq+wWto?=
- =?us-ascii?Q?/2RU9vP5pGQEtDu/MzUJDLZkjvnh8918yUv7iyj+373JDlf0HsZWS5Ok+1aK?=
- =?us-ascii?Q?Yly57/i4BuAYZmB1j1kWGsN27ruQsNLKFNbmbLBeixY3RLyb6WLGX9G3HtHM?=
- =?us-ascii?Q?a7UTPZGXd/N6lj3Q2PwABfDU5TvDZZhV2Dy3zq6fwHOMlSlLaxRgKFT435ZJ?=
- =?us-ascii?Q?HXRDNeLqB9H7KqwRDCSjblCfJxz+c8EMvowlbh+31p1Uzom7DDEzEGEk+huz?=
- =?us-ascii?Q?ueotvGfl/T4vYme8I/PBWMBnxKKTSre4DDWNliSrpiNBQ3z8VCE9K97EiB6K?=
- =?us-ascii?Q?2rvdUj3bzpUD+oZt5LYK0lecMOkKOlDTmT9c8/au3xfUsgxEktD+aI0NeHZn?=
- =?us-ascii?Q?XcQknNIY6g65aeTryx84SuN5iHNp8tVBJ/aiCBjHozLXDFMHSqIptGHBXofB?=
- =?us-ascii?Q?qKTQVlwB97oDeAE/xuh8RSWVa5FLO7YR7ubw0pvPjev0yunAYV68wdRNrcE+?=
- =?us-ascii?Q?GqGFkjRpsNCQ7LS3G9NhYPZGS/2SoFToj9Hm9P8cqZwR+0rqiUuVaFhzoysY?=
- =?us-ascii?Q?9q3CJS3FfX5TBdjNAQUs1Masa0zjElgmiBpmz1jUCQVmlRKDspEblH3W9dLS?=
- =?us-ascii?Q?BBANVl4eLczFhRGi6k6YQjykY40lHP28HT2mV2aDZeZfAsKJ3qvoTTX1lGJ0?=
- =?us-ascii?Q?Ec5JuZESD1MDHFsxWT1eSNONjIDgZgTc3o8MlyHohT5AuFHIDS/QPyOkscjH?=
- =?us-ascii?Q?+mMn6CuQ9vmCSPvsU01xZi6gZe6G1xkQO8VRQ5gDkO8DRgG3sjvKYRozHZCU?=
- =?us-ascii?Q?Q83P0eXePVk+f7qR1FEOdaZECZ2qTtekbnhPzxWwcXz1aiAak1eZ2xdHZquz?=
- =?us-ascii?Q?t+Jlyb6B8eSDT2JwnQR1Sq8Jv2wLhoSC6dp9mdeP6Whw6YsObl6b8zlSQn9h?=
- =?us-ascii?Q?4YC6nT54qIoftGvGTYO4XsmWjWwKojpHoVXMv5lM0McLJnfYrDW1Cfc7x9fH?=
- =?us-ascii?Q?HsOzsPL66W7ORywe2Au9BRCQreRg3yy9fhg7ujhb?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Vup9vZ9zVXm5TZVENbOxH/stBdgy67nommSr6fDsKcD1gI9Exz5foPCRo7Ts1K6Ql0ttgV1CMnNoSpg6zzB0LVgvUz8T7UaY6Q+kBe1AblOO2bOVKok3ZDUm+S2AiPD+8LdXgdUXMJCZOx6xHCy4NBnXR7Vw/kJrelAjjPLyDa7ifNoTjm/QZy2rct7ImkWqytkfzyX28UTed1M8p+qHFK8cc7PUi777CqqFmw7k/no865mCNalknxG2qNnBCsnbew5sMTyKRqdSTxO4A/7KJP+GPr++OFuNDU8pJ/h70nWpmRsbR32jaATMExbg/ukiJ8eOdH5FGcF6HnUOpC+lLPkY6hIix2AVFkdz/76rAJ+jYR85WJRKz8KgiNvVVG5sT5zyN/dIf+y8XxijBuwdrIitxD+CGu5gKwSXnkodIuaahA/0V/oaCUSUwd7JdgbFAoyeazcrUBDwpPStuFh0uXYn7fbwy2AtbmYl9jj5T9ZP8+H5bh8NUVehTkpoMbjiPvfW02C3ZFk7lGGsV0NXfmXRjfcwzyBRZkrNA5oA2TBUXMqKTVzC5OGp/TfzfrO2q7VcdSa/mXhKkCthKH6NeQM1bqvWDPHl8Bf/cAhR8rI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79e3b719-3165-4c85-af5b-08ddd983756b
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 09:34:39.3018
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RVzR/ezPc78aM7Rv091nzLRTWfaaU0q1DQsNUBcymnEeiFs84Jsmlduwtnqbz/D2SYilm2R9XmJ7G3/p08eTkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8221
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508120091
-X-Proofpoint-GUID: Wdxt3yB7id9LKBInlZ4MD_AhsQzHCV-2
-X-Proofpoint-ORIG-GUID: Wdxt3yB7id9LKBInlZ4MD_AhsQzHCV-2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDA5MSBTYWx0ZWRfX8XbBEo3AwM95
- hEMNVTAa+vIpHwD2BUICik/rDSSZ1o5GXVX21efmNHdGRFULWh+lHYpRltW0BQNtQ0oxLfStt8v
- pQIegheMLK9lhIHut3KD7D+Od75szi4T8/1q3iCRg9O0LAbpJqLwtv46wArCW2nBAesE0UqmQOf
- 0wziI79QmzhoPqQHHnF5CN378UKGq+cu3kRYS+DEDfgAXU+5AQ0lplD++JwFKNnAsJeA7gKCR8c
- p2ZzrCaJMaq0uQEIBAQ0yXHDtHqTxyLZAsblo+/x9sFm1hpQ06zEqy0YXyUc3pLqKS7P3ANGppX
- 8Y05QRvmUg2RWrobboz5pi2KjqjXKAYxremtkxuL/vKHxSL8Z/bVP+ni03WkvpW+NTIhJ8RfO+H
- I1FgJpvHbKqYFvtxJCw0pGhS2CLYAQloBQTpJJJMEAEGQumwGzVqytbc1jIci7KdKuEJ3V3b
-X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=689b0abd cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=LuNiFPBW9M8ngUgbAAcA:9
- a=CjuIK1q_8ugA:10
+In-Reply-To: <aJr9UKtIJ74XExf-@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBHBCptoJTywDQ--.7024S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7JF4fZF1DWFyrZr47try5Arb_yoW3KFbE9r
+	Wavr4qywnruw4rtF4Utr4Yvr95trZxtr18X393KFsrJw18XFWDCFW09r95urs3Jw1rJwsa
+	9w12kw4DGay3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Aug 12, 2025 at 10:30:08AM +0200, Christoph Hellwig wrote:
-> Drop the pointless _s prefix and align to the usual struct naming to
-> prepare for actually using the struct instead of the typedef so that
-> random headers don't need to include mempool.h for just having a
-> pointer to the mempool.
+Hi,
+
+ÔÚ 2025/08/12 16:37, Christoph Hellwig Ð´µÀ:
+> On Tue, Aug 12, 2025 at 02:17:01PM +0900, Damien Le Moal wrote:
+>> And indeed, that:
+>>
+>> 	/* size of the new backing store needs to be the same */
+>>          if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
+>>                  goto out_err;
+>>
+>> Will need some massaging.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-
--- 
-Cheers,
-Harry / Hyeonggon
-
->  include/linux/blkdev.h  | 2 +-
->  include/linux/mempool.h | 2 +-
->  include/linux/netfs.h   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> Why?  get_loop_size just derives the first arguments to get_size
+> from the passed in loop device in the same way the only other caller
+> to get_size does.  So we can just:
 > 
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 95886b404b16..c3f3ec5bb864 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -199,7 +199,7 @@ struct gendisk {
->  	unsigned int		zone_wplugs_hash_bits;
->  	atomic_t		nr_zone_wplugs;
->  	spinlock_t		zone_wplugs_lock;
-> -	struct mempool_s	*zone_wplugs_pool;
-> +	struct mempool		*zone_wplugs_pool;
->  	struct hlist_head	*zone_wplugs_hash;
->  	struct workqueue_struct *zone_wplugs_wq;
->  #endif /* CONFIG_BLK_DEV_ZONED */
-> diff --git a/include/linux/mempool.h b/include/linux/mempool.h
-> index 7b151441341b..34941a4b9026 100644
-> --- a/include/linux/mempool.h
-> +++ b/include/linux/mempool.h
-> @@ -15,7 +15,7 @@ struct kmem_cache;
->  typedef void * (mempool_alloc_t)(gfp_t gfp_mask, void *pool_data);
->  typedef void (mempool_free_t)(void *element, void *pool_data);
->  
-> -typedef struct mempool_s {
-> +typedef struct mempool {
->  	spinlock_t lock;
->  	int min_nr;		/* nr of elements at *elements */
->  	int curr_nr;		/* Current nr of elements at *elements */
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 185bd8196503..270ed0822efa 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -21,7 +21,7 @@
->  #include <linux/rolling_buffer.h>
->  
->  enum netfs_sreq_ref_trace;
-> -typedef struct mempool_s mempool_t;
-> +typedef struct mempool mempool_t;
->  struct folio_queue;
->  
->  /**
-> -- 
-> 2.47.2
+>    1) convert loop_set_status to use get_loop_size
+>    2) Fold get_size into get_loop_size
+>    3) Maye rename get_size to lo_calculate_size to have a descriptive
+>       name while we're touching it?
+>    4) switch to vfs_getattr
+
+This looks good, it's better to refactor a bit before switch to getattr,
+and I agree still return 0 on failue is fine.
+
+Thanks,
+Kuai
+
 > 
+> 
+> .
+> 
+
 
