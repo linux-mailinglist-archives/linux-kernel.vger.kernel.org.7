@@ -1,290 +1,315 @@
-Return-Path: <linux-kernel+bounces-764516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F60B22404
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9F4B22408
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05D47A3732
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3D47ACF06
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4092EACF2;
-	Tue, 12 Aug 2025 10:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D682EAB98;
+	Tue, 12 Aug 2025 10:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kEilggSw"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zr+F9DbR"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197C282D98;
-	Tue, 12 Aug 2025 10:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993097; cv=fail; b=gkC2v+z0thMwmXfoHUnxmm/syv1/0QWMyM3/Ttua9rV98zy5pauVswCIPux8+12du1sUezlAjWCeg6lk3yiuYcc13SGF5xjUMU0N1yJvDGZKUv//w4NpGzoyAPuvncL1sjH6khC5SH0gROs5mfIT2uHNuLkRf6aHQ+Gp2bZwGYc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993097; c=relaxed/simple;
-	bh=HG0C3rhU84ChstpGkMWMJol5JFwy/J4OPeNa2aUgjQI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PyCsFAGEghcXje1fSD9mb/1tmyzlX9XTpmXFB2Vtr8Sor61uTYzrkyxoKJ+5KGv7UYEzt4XTA18fu9D8DTS28Z6C4XV6w8/ykEzllTYF5NTTCP5BcObJZUNCT2fkxp1kfX6M4/o+9+A5IonkhV3UG4wIenDkkdJIAiswqiMRLNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kEilggSw; arc=fail smtp.client-ip=40.107.237.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cowUnsLGq8SdP2pwhthX6UkKTGQUsZpHIPnK6XwpLcl/9ir8CXgD/4Zm/qgkNN4PmnxgS/JlpPGcgtt9JC2iw5t0XYKr2NA54te3yUKfa0Y1z/S/9Lar/+d1X5U0l+1Os+F8a67RcRjJbRyTswCskgNB1chl+hkZGixkRlV8+RtsjG41Tp3YkZoDzuCigB3qCA4HKCWIdbNN+dwRAh7XXLEKJgpxEeALILrDmwNDtUGlyms19TpwQ+whv7PMJC0b07/pFRV7r/hUkSUyP+0kWR5tuf6DQYvexiTNjb6FqC2RUQAA6AGHJpvIAkgzU/HKxQH93+H+8sVGEsSNH3b11g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R0wYjhMosTVKwenAMly2kpVrmOQFBDEHKQYO1nklSGs=;
- b=RNi4zB6es7SJNE6+eAOI6A6EBKfSnSViTu/A8BZmXuJt/HUAHUKGfd25PH1Nfqoe3wdhYsCfsroXhRrgMFM1lMUXd5flatRn8oIfNbNv1LEprB8CUSrG6Z4x/lS7w5522MYd5NeoUnhC9Sz3LCkcSRTXIOonOgcAUd00vpFXEMzLIqsgayHnWi4t6cMoARL2p/cnmPz2B++jKKSOxkQX+QV5PmS6NkMFq+6+yPeLzqMc3TntcnOl2r3ERLLHgomEsjm4eqA4lDSEvfz8nSrRS7dUh2zhCJkhUMECVaKqxDh6liwLBa0DuYCkML8wTzKNCF/5qed8L0rBxUEmG5WltA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R0wYjhMosTVKwenAMly2kpVrmOQFBDEHKQYO1nklSGs=;
- b=kEilggSw1J4ZBFWh3tD+a6yAyi4ExbSOpAncJmIwPYWWn2XmeEZrIVrvHWhjHnPLsIK7Z94GzpB0/6i6hcMfQgYDjN9a3pX/e7ICT7IP0gqK1bo3Qs9tAHdQARsBkttcxfQdK+SkW7Bjlpbp6QAiwCn7fXk6v7/xLg/qi3szYIo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by CH3PR12MB8404.namprd12.prod.outlook.com (2603:10b6:610:12d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.14; Tue, 12 Aug
- 2025 10:04:52 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9009.016; Tue, 12 Aug 2025
- 10:04:51 +0000
-Message-ID: <b94236b7-3a56-45f8-a085-9ca661b0f43c@amd.com>
-Date: Tue, 12 Aug 2025 18:04:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, pratap.nirujogi@amd.com,
- benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
- Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
- anson.tsao@amd.com
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-5-Bin.Du@amd.com>
- <aIclcwRep3F_z7PF@kekkonen.localdomain>
- <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
- <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
- <20250811123102.GC30760@pendragon.ideasonboard.com>
- <50f0958b-5234-4a89-a57e-5d330cca13af@amd.com>
- <20250812073432.GF30054@pendragon.ideasonboard.com>
- <aJr5RuD1lxnVBmed@kekkonen.localdomain>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aJr5RuD1lxnVBmed@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR04CA0211.apcprd04.prod.outlook.com
- (2603:1096:4:187::19) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718682EAB8B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754993131; cv=none; b=bpaqJC6OIzEuydqrdpbcotzdQRrfF+t09Sw9d3bETnhvH9pV7TiwmacJ9NMGpbGM82S1XmNk4fCLTEd8tsi5jv5kGeOmoaeaLCNvi90dUA4JKFJlZZvCb6a9rSTCzoxG/V5o4+BBMeH9cFbUojnLLky1BDEBxlsChImS8ytw/3I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754993131; c=relaxed/simple;
+	bh=XWLmAcxb47LR5YyiumJRk7B+Aw0Td4c8Q4AvQT48z8U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=DxAERjWpg/ok8NVkyCsExxq1CPantxDt0JwG4jrkulOgsbL7MLslW8lsdU15/DYUFrtbFsk1x63NGRnYmY9UUIM5mzxQsHNm7ZfWPFDiZukX1BNoR7uXYSl8zCNsCxFsE4t9pNIcu9lN9JCoSLxK+MxiCKCNW74IUpZ1NrVfZrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zr+F9DbR; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459e39ee7ccso51554295e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754993128; x=1755597928; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g4puXE3WG3G/o6QrhUTZRedOpdszGi21yFpntx6Hhf0=;
+        b=Zr+F9DbRm6bKzpi5hJSCw3G7QuojjYnOZ+Bm0VN6KzoOYmvBzmhgyXDFhCXuo0zlZ/
+         W0WGUHIFY7PntRSe8YDDejrzBnrvqCK4laehgdFIbqW9cI9TqY/ZL+DtdO8jpXAFj8mB
+         3TjXOLC7mL4njevQS5xvmmjQKJlOXqSkpdmmJ8CI46aOZ/XHR5TA57k/vUL2ZarFwGIl
+         Htel/dkRxYucWgnn1/YswZ9EJkBwQf5J3jaoK2vTK0oRIz2KLgAbFekACxPiNhJUvAZP
+         4hK+O8T4jaSYzm1VX718lKl65pZIBh6jo/9YpO57ltWu3su3Nq99vNutWK4uUBxoFnzH
+         m3xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754993128; x=1755597928;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g4puXE3WG3G/o6QrhUTZRedOpdszGi21yFpntx6Hhf0=;
+        b=UYZkf9crIRdhLNqFhKHnd5cHOKlFLzMO0t+CSLeT0dS2dictco7D738nfa0F7GnfQi
+         9FFxv+NFDOve9EN2zZd15Z2h6eqwCtIUdaOrulNRVsBaZlaFDU/eF53KlOYRZx8xyk9N
+         Ug11lHvBixW5f6ZB5/4yra79j0xLVAOE9vWl31xON8JH32Ww+sKhR14RybLlMJKpbMHK
+         J2hRCk0cbpJpUrCnlF4gg0Yp4ZnyPVc5j2udMBAUaP1QiCbVoKrR11dKNEH8Yxotx/YJ
+         w5vCGRlOVhoWC28Dj+bnt/JX+s1S21F2oxQj1fHXrkaovbYbWYlmJTEEDPnGHzmnCcuD
+         7Lgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWI8YLCUqSSUuAYKFD8V5WypARzYBn30E4miLM6HzovoZPZsF4dz/SV/R3O0KPMFwNP6hUAeJjOD8NLoJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzROzQ7lSrLq6jIUm8pLZROxpbAClsdD1IGv3pC2FKr0064pAGe
+	SBimguyN4pZ33cHxI+YQ/Uksrhrqy0Iq5ADanKqSxBD9KHC1JCgBpUFAAID0XpgG/pc=
+X-Gm-Gg: ASbGncsvdWJ8f+PCSFfC2kBRVRXvpwIjjAqxHMW9AvMkEXQAHINQ4zLfwmupwJH6jo4
+	186BqKciJ7zESpTIda4KuY5nFGKrd/IXeinXQ0CXOh/K5k0DpnID/dUORSW3Vvl+s4OF56mq8Gs
+	Hy/CMgfiZsOWRyRa25uxLzpw5wHjbODTyob79qFKFKHeUFN32HkjSeKo0+a2qpDXiOQnd4vXsNU
+	Nf5Ee3Gx14YZ6p1f/U/KIIE3yOewT4sxap0koK9WwIFVhMssrjGYG2e/TeVhxlTJzRwhp5c3j7d
+	YNd1+N0pomEWwlRUT+nYh6wxbQ5EiBnHwBexEJfkdP/iZJHFiOkz6Oa2yc+iAsTnUaFm7Rv4Vmw
+	3/JFiH2DIJoUVI1aqk/XWrqpDeys=
+X-Google-Smtp-Source: AGHT+IFgVaBDrE/OVb0Lh1YQvuxoYmxXAVREy1eRPSTlBSW7jn1WRvr6YcYi0LzfZNKXStQpAN7nxA==
+X-Received: by 2002:a05:600c:c4b7:b0:458:f70d:ebdd with SMTP id 5b1f17b1804b1-45a10bea224mr24581875e9.16.1754993127536;
+        Tue, 12 Aug 2025 03:05:27 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:42cc:2c69:7a9c:4dff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dc7e1ddesm381057535e9.27.2025.08.12.03.05.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 03:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|CH3PR12MB8404:EE_
-X-MS-Office365-Filtering-Correlation-Id: 182faeef-21b7-4338-9955-08ddd987ad5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bHIzbVd2bXcydE02dTgwZU1PTHVqRDdHR1FhUXdxSVd1Z0NMS1lwWkl6amVk?=
- =?utf-8?B?Mmk5cC9XOEMzOXBJaUp4Q25seVJyQ2NMdjNXRnFiNkhMT1YzOXdoY0hzQ0lF?=
- =?utf-8?B?S3hFOGgyRm9wcjJ0d0hZY2dGNzM3QmhXN01Cb0p0bGhyOXlvcDY1dEdDM1F0?=
- =?utf-8?B?eVZiKzhOaDBUN0hrNFpnRlZCQy8wczRqS2NPN1pvem1ZdTl2KzkrOTRJVkd3?=
- =?utf-8?B?WkFqQnJCekRwdG93K2hocUFDNHFYNnlBWUlXbTNETkpmSGdWR2FUTVJWaDk4?=
- =?utf-8?B?RkFMelZrNmcvbno5S1FKQVFYd1Y0ZE9hSTA5Z2NPYXhRRjUyZExGN0JWeUpo?=
- =?utf-8?B?bjV2TkJiSEI1OUJUK3VHYW5scHMya0xSRkVkZTUxN2wvdlJ2cWpadGxCWjRw?=
- =?utf-8?B?b3J1R1R1OFBSUDBIVEU3NWlkRS9ZUERwa294Q3QwM01BYU4zVm42aW9jUEZw?=
- =?utf-8?B?cVY5cGF0UWNEcVNjZ2VMU0VJOHFWVWhvTWliS05zNzFQTjBzaG1VTzBqZW1p?=
- =?utf-8?B?ejBNY0UvOENpVEd2b1gwMk16RmdtZWlWamdCakdiVHl1NEwvSGoxejE0aTcx?=
- =?utf-8?B?c2k5Zm0zbGJOamJya3FFMk5Pb3NPb3ZROVIrWFRsTWFqeVV2Nm5veWx3VVhx?=
- =?utf-8?B?SWxHWmlRd2JRQzFJVUFCU3d0OHZ5d1l0LzlHS3VNaFJtWWtMVzRNTTYza1Yw?=
- =?utf-8?B?bVdDdGM1QXdDK1lCcURkc0dIbHAySUg3RCtoczRhU3M1dkJiRTVCQy8rUGd6?=
- =?utf-8?B?THNJUi9pRXlJNVkwVUx6a3AxemZkT1hQbXdlbkN6S2phem1BQmMwcVJiZERT?=
- =?utf-8?B?V0JjelMvUmI3SWFDeHM4cnhvV3RBSDM0R3FxZ3FJOTFlRmoxSXRRQzJDcHV4?=
- =?utf-8?B?YkwyS1U1Z0xYWWZ4NHozQktYd1k5QkcyOFhvaFF2QTFiWllVRkFxWmZmRUUy?=
- =?utf-8?B?cTNmcmx5MkNUZXloWjJYS01GZVltTHJBdlBPVVRnVVNZTTJYZG9USUNjclpN?=
- =?utf-8?B?ZzRqWWQyeXd0MDd6WE1SS2FzZWhGQmd2c0s5VjJ4bjRsa2hKZFZ0S3A0UTlE?=
- =?utf-8?B?dmtUR09PQzNGcG55c0VITjBhYnNMK29LRCtYc1NTR1Q1SVJLZzZkY2l0b3Rj?=
- =?utf-8?B?SVY0aVdPQktQY1pEOGFJejZJUVpwYnJUajRUVm5XUDUrdkh2eEM5QUVnQUcr?=
- =?utf-8?B?STczcWo0WjNSQWlyZkRVQ0xWTG1nM0JiekpnR0VILytQYzRKc3JvRnZ1Wlps?=
- =?utf-8?B?S2tLUXlFcFBZSDZDeXV6anJvbHlXazJxQjhYN1NCMlo3M3ZIWWdWd3FoaGFY?=
- =?utf-8?B?MlpwN2tMK3NRdjJaNFl3YWtCcVF5WVhjbXNQbjAyWFNUUjJnYWVSekFFaDlF?=
- =?utf-8?B?L0dNNXp0aU45L0hXTnJhUFhWSXZLcGE4OHVkUm5ldFpLdmRFcFczSklqdS9V?=
- =?utf-8?B?dGdnMWRPVTRLbTlRWHpQajJEczBPd2kwemV5byt6VUFacW44M2xaU0JaeXBE?=
- =?utf-8?B?dE5id2FPTWRSdnNSWkhTOHNrRjBSSE00Y0xTbEh0SEZnV1owS0dqRkRMaVg0?=
- =?utf-8?B?dWlZTjlIL3gzRitYcXM1Y3BLdlQrbnFRdmVFOGRqYVQ3dXp5dVkwTzdBL1E2?=
- =?utf-8?B?cTR4UTdzREFNSjBSaWFqclIyMmdHTUVUU1pJdCthWHd0RFdBRzRYcXRGNW1x?=
- =?utf-8?B?cVFsSHVCdlNNUWI0UUxWV3RjRzdmVFozbklmRlpXY1JlZXVIOGIyTk5CT1E5?=
- =?utf-8?B?NnB3ZC80aHh5ay9tTG1rOW01L2w3Z1BsN1RoRmZCdFR0cHdrdVorU2pqMDRE?=
- =?utf-8?B?bGtZSGpuVzBqRURhMGM0c1NXcVd2TTJTUzZEZ3B6Tk9XMXRPTy9zRTNSVjdq?=
- =?utf-8?B?RGRzRS9xeWpzeXVmaFBDa3JqOUgxbFArSWlCWDVJYk9EOHpqSUtDOVRWNmJ6?=
- =?utf-8?Q?cJhP2wDxhIo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MmRuTWtIWXZ4NytIMy8yeE16RWIwUEd0VzdiWkRra0d1Uk5jUGw5blRtRVli?=
- =?utf-8?B?bzREL0pxRzBpRXRQcVZtV0g0dlhDRnppTlZlYjk0enp5MzE5MXZVR1pneEll?=
- =?utf-8?B?NXVhUDZIZVNJRFVheW01VnBEaGNSelZLZHIxTThpVmFrb04wanRKSGsweHpv?=
- =?utf-8?B?dTkrV0Rpa3N0UitqWFg5NnJMditVSHBROVp4V0JTSzMxRmxTaHpONjR1MlRP?=
- =?utf-8?B?emdtUUVGZ2R5SmVhR1pjUjNXUWlzdGhsYXBVL2NLd3BNMzlOWXBvbWdvNCtF?=
- =?utf-8?B?RzJuVHJIV1docXpmbEFYSTdVa2JET1FQWVpZQWxWSjE4OURhVk4vS2xRZTZH?=
- =?utf-8?B?d0RpVjlSTEVBVFFvdnhEQnUzSXM3MHYrUG1sYjU4cTZGUEN3YjkxcFRKVEVs?=
- =?utf-8?B?WjhqVEs3UFBod3BobVh5Q0w5WmJ4RFFwZ0FDQWFydys1YXlvcUoxOGNZUFdD?=
- =?utf-8?B?aEI5UXAvMmErUFpVK24xR1Avd3FkMHJjWWhpZWJnMUtSVmZWQ09qT1NrL0l0?=
- =?utf-8?B?dWJYMW0yK1hjeEtKN0RuYnc2RFdhZkhabXpvR0NnSjA0ZmxmNjFWRUpQNHFP?=
- =?utf-8?B?eWZzVFpMRDBoSmNZWHlScEdCSkw1eGNkeTNDYTJHR0N2R2lTMis3a0d4WGZN?=
- =?utf-8?B?VDE0RUQ4bC9ZdHlWWnBSNEJnSlJBVEhEcWxhaU1OWlJIUUQzR3h4Nml6MXlK?=
- =?utf-8?B?LzlSK3dFa282RlRIUllhalo3TWRVbFVHNWFLQXBvejdNT3loaUhTcVYyMmpV?=
- =?utf-8?B?QThtRGIzMVVnSk1taUlHNEZ1ZUFHcWRJeDRCSE9xTVRFVHBlK1IxbXp0d1RY?=
- =?utf-8?B?NEM4UVQ4ZThTaGdSMVBKb3hzbVZWZEFBNklINEtnRlVXN0cvbUROVjBweCtw?=
- =?utf-8?B?SG5tRkxta3Q4cTdsMExrdkNoVXFMWFNkTzRIMW9PQ3RpakdCZHF6eFhjLzkz?=
- =?utf-8?B?ellRbkwxTnU1TkprNGFxcnZ4cnJOOTZBVlA5Z2JsQnEyWWJsUFMzV1I2dWth?=
- =?utf-8?B?RVZzaCtXZVBnTXQxeldpdndIeWFBQm1oZnZNeFJmMk52Y3RzQmQ2bVNRL1F4?=
- =?utf-8?B?bjVqZ08xamgrRGgyTnkvRVhhck8wNTNWUzR2d0NaakkzTENVOWhnWFNCNmdJ?=
- =?utf-8?B?aDhpek9XczV6cGh2c3dDdXV3YnA0K1MvVlFjVjg2Z29xcmgxcGV1d1NWN3Zw?=
- =?utf-8?B?Y0tvRk84RTJPdHlyNW90QVRWaVN5R2NYaTZpTDRCaWtGNnJmVTdRNncyMHNz?=
- =?utf-8?B?NkVYTHoxYUZ6b0JEVWR0UHIxU1JHcUVCdVVzRy9sWWhNem4rRnJVM0sxRkVZ?=
- =?utf-8?B?RGFNOFBPUFhVaGEvamFHR3l5SnlKQk5IOVQvUncvREFqeDU2VGVkKzRkbVhQ?=
- =?utf-8?B?aTBwTGNCajBpbTRJWndqbVY2N0FUb3hLTEdSOTJSQVZvSWREN0t4M1J0UW5M?=
- =?utf-8?B?TTVxczRQQ0pxNGRSb3NwYUlZS2t1dnlsSCtrUHN5VGJRWnpSeE9Gazg2ZHZF?=
- =?utf-8?B?NWdvTUxDb2Y4cU16ZEdTVTlwUTA4YmVmMmkzZmw5Rzc4dFZ3YUtodzluL2tz?=
- =?utf-8?B?L0xoUmZUK0pURzV2c0h3dVVZYnRYVnJxQXF5MWRNRUtlUkFsS3Z1VHc2VUw1?=
- =?utf-8?B?Ry9BQ1YwRXNPVGg0dWYydEVlV080VlA1TW5wdjlJRmE5ZGxJK2loMEZBZWtM?=
- =?utf-8?B?NmRQV2duT0R2MmdYNUZ6TEpYd3JjSVpTcWs1T2JxblBGTU8wS21qS3pFRFlX?=
- =?utf-8?B?cHI3alhyMkdYbjY1NGUxUXBEbk5OS0ZmMnpVTmhmTlhrNUNZRG4zY2pCQ1Fj?=
- =?utf-8?B?N1JkRzVSZ3hXTDJNT0YwaDJKTks1WXA2MnhHWG4va0ZDcFFHQU5yb1FBdmVV?=
- =?utf-8?B?ek1CVUEvQ3pwQXAwZnhWRXZWU1F0S1JFdFZpSzZnZlZZTmtvd2U4YkxncjM1?=
- =?utf-8?B?MkxId1RpbnZEbkVTYUJkbkMycWhCVFZSMEM3Nk9HVE9hR3hpVExBbis3di9q?=
- =?utf-8?B?RXpnT1FaWmFhVHFndGM2T0tsQmErWEdPZkNmaFVXaE9GejBQMnFhOXZYb1RR?=
- =?utf-8?B?SG90bE96NTBlblViNUpTZElzUHJiQ3hSUlp4OUNYTHN2NUNCMHlPRWxlWmJQ?=
- =?utf-8?Q?1tFY=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 182faeef-21b7-4338-9955-08ddd987ad5a
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 10:04:51.2100
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bkho8IkW9jwZ7kwSNFzYFi5W3ILdGkk5+oqOszdB0hGeKnlvB8Nd6XWRRHqBhIdu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8404
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 11:05:26 +0100
+Message-Id: <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
+Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
+ driver
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Praveen Talari" <quic_ptalari@quicinc.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+ <dmitry.baryshkov@oss.qualcomm.com>
+Cc: <psodagud@quicinc.com>, <djaggi@quicinc.com>,
+ <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>,
+ <quic_arandive@quicinc.com>, <quic_cchiluve@quicinc.com>,
+ <quic_shazhuss@quicinc.com>, "Jiri Slaby" <jirislaby@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <bryan.odonoghue@linaro.org>, <neil.armstrong@linaro.org>,
+ <srini@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+ <20250721174532.14022-8-quic_ptalari@quicinc.com>
+In-Reply-To: <20250721174532.14022-8-quic_ptalari@quicinc.com>
 
-Hi Sakari Ailus,
+(c/c Neil and Srini)
 
-On 8/12/2025 4:20 PM, Sakari Ailus wrote:
-> Hi Laurent, Bin,
-> 
-> On Tue, Aug 12, 2025 at 10:34:32AM +0300, Laurent Pinchart wrote:
->> On Tue, Aug 12, 2025 at 11:36:23AM +0800, Du, Bin wrote:
->>> Many thanks Laurent Pinchart for the comments.
->>>
->>> On 8/11/2025 8:31 PM, Laurent Pinchart wrote:
->>>> On Mon, Aug 11, 2025 at 11:46:27AM +0000, Sakari Ailus wrote:
->>>>> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
->>>>>> On 7/28/2025 3:23 PM, Sakari Ailus wrote:
->>>>>>> On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
->>>>>>>> ISP firmware controls ISP HW pipeline using dedicated embedded processor
->>>>>>>> called ccpu.
->>>>>>>> The communication between ISP FW and driver is using commands and
->>>>>>>> response messages sent through the ring buffer. Command buffers support
->>>>>>>> either global setting that is not specific to the steam and support stream
->>>>>>>> specific parameters. Response buffers contains ISP FW notification
->>>>>>>> information such as frame buffer done and command done. IRQ is used for
->>>>>>>> receiving response buffer from ISP firmware, which is handled in the main
->>>>>>>> isp4 media device. ISP ccpu is booted up through the firmware loading
->>>>>>>> helper function prior to stream start.
->>>>>>>> Memory used for command buffer and response buffer needs to be allocated
->>>>>>>> from amdgpu buffer manager because isp4 is a child device of amdgpu.
->>>>>>>
->>>>>>> Please rewrap this, some lines above are quite short.
->>>>>>>
->>>>>> Thanks, the line after the short line is supposed to be a new paragraph?
->>>>>> Should we put all the description in one paragraph?
->>>>>
->>>>> One or more paragraphs work fine, but a new paragraph is separated from the
->>>>> previous one by another newline.
->>>>>
->>>>> ...
->>>>
->>>> Paragraphs are defined as a block of text that convey one idea. They
->>>> should be visually separated by a space. As we can't have fractional
->>>> line spacing in plain text, paragraphs need to be separated by a blank
->>>> line. This is a typography rule that maximizes readability. There should
->>>> be no line break between sentences in a single paragraph.
->>>>
->>>> Whether you write commit messages, formal documentation or comments in
->>>> code, typography is important to give the best experience to readers.
->>>> After all, a block of text that wouldn't focus on the readers would have
->>>> no reason to exist.
->>>>
->>>>
->>>> Now compare the above with
->>>>
->>>>
->>>> Paragraphs are defined as a block of text that convey one idea. They
->>>> should be visually separated by a space.
->>>> As we can't have fractional line spacing in plain text, paragraphs need
->>>> to be separated by a blank line.
->>>> This is a typography rule that maximizes readability. There should be no
->>>> line break between sentences in a single paragraph. Whether you write
->>>> commit messages, formal documentation or comments in code, typography is
->>>> important to give the best experience to readers.
->>>> After all, a block of text that wouldn't focus on the readers would have
->>>> no reason to exist.
->>>
->>> Really appreciate the detailed guide, will follow it. May I summarize
->>> like this? 1 Separate paragraphs by a blank line. 2 Don't add line break
->>> between sentences in a single paragraph, an exception to this is commit
->>> message, because of the 75-character patch check limit, line break can
->>> be added, but it should at the 75-character limit boundary
->>
->> When I wrote "line break", I meant breaking the line after a sentence,
->> before the 75 columns limits. Text blocks should always be wrapped (at
->> 75 columns in commit messages, or 80 in kernel code). What you should
->> avoid is line breaks not related to the columns limit.
->>
->> This is fine:
->>
->> This paragraph has a long sentence that does not hold on a single line
->> of 72 characters and therefore needs to be wrapped. There is no line
->> break otherwise, for instance between the first and second sentence, or
->> within a sentence.
->>
->> This is not right:
->>
->> This paragraph has a long sentence that does not hold on a single line
->> of 72 characters and therefore needs to be wrapped.
->> There is a line break between the first and second sentence,
->> and also a line break in the second sentence, which are not fine.
-> 
-> I wonder if this should make it to kernel documentation. I've come across
-> many new developers recently who would definitely benefit from this.
-> 
+On Mon Jul 21, 2025 at 6:45 PM BST, Praveen Talari wrote:
+> The GENI serial driver currently handles power resource management
+> through calls to the statically defined geni_serial_resources_on() and
+> geni_serial_resources_off() functions. This approach reduces modularity
+> and limits support for platforms with diverse power management
+> mechanisms, including resource managed by firmware.
+>
+> Improve modularity and enable better integration with platform-specific
+> power management, introduce support for runtime PM. Use
+> pm_runtime_resume_and_get() and pm_runtime_put_sync() within the
+> qcom_geni_serial_pm() callback to control resource power state
+> transitions based on UART power state changes.
+>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
 
-Yes, totally agree, furthermore, if checkpatch script can be 
-strengthened to add this kind of check, developers can even find and fix 
-them before submit the patches
 
-> Also, most editors can rewrap paragraphs of text (e.g. Emacs M-q or Joe C-k
-> C-j).
-> 
+This breaks at least RB1 (QRB2210), maybe others.
+Currently broken on -master and on linux-next.
 
--- 
-Regards,
-Bin
+Upon login prompt random parts of kernel seems to be off/failed and
+debugging led to udev being stuck:
+
+[   85.369834] INFO: task kworker/u16:0:12 blocked for more than 42 seconds=
+.
+[   85.376699]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
+[   85.382660] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[   85.390547] task:kworker/u16:0   state:D stack:0     pid:12    tgid:12  =
+  ppid:2      task_flags:0x4208060 flags:0x00000010
+[   85.401748] Workqueue: async async_run_entry_fn
+[   85.406349] Call trace:
+[   85.408828]  __switch_to+0xe8/0x1a0 (T)
+[   85.412724]  __schedule+0x290/0x7c0
+[   85.416275]  schedule+0x34/0x118
+[   85.419554]  rpm_resume+0x14c/0x66c
+[   85.423111]  rpm_resume+0x2a4/0x66c
+[   85.426647]  rpm_resume+0x2a4/0x66c
+[   85.430188]  rpm_resume+0x2a4/0x66c
+[   85.433722]  __pm_runtime_resume+0x50/0x9c
+[   85.437869]  __driver_probe_device+0x58/0x120
+[   85.442287]  driver_probe_device+0x3c/0x154
+[   85.446523]  __driver_attach_async_helper+0x4c/0xc0
+[   85.451446]  async_run_entry_fn+0x34/0xe0
+[   85.455504]  process_one_work+0x148/0x290
+[   85.459565]  worker_thread+0x2c4/0x3e0
+[   85.463368]  kthread+0x118/0x1c0
+[   85.466651]  ret_from_fork+0x10/0x20
+[   85.470337] INFO: task irq/92-4a8c000.:71 blocked for more than 42 secon=
+ds.
+[   85.477351]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
+[   85.483323] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[   85.491195] task:irq/92-4a8c000. state:D stack:0     pid:71    tgid:71  =
+  ppid:2      task_flags:0x208040 flags:0x00000010
+[   85.502290] Call trace:
+[   85.504786]  __switch_to+0xe8/0x1a0 (T)
+[   85.508687]  __schedule+0x290/0x7c0
+[   85.512231]  schedule+0x34/0x118
+[   85.515504]  __synchronize_irq+0x60/0xa0
+[   85.519483]  disable_irq+0x3c/0x4c
+[   85.522929]  msm_pinmux_set_mux+0x3a8/0x44c
+[   85.527167]  pinmux_enable_setting+0x1c4/0x28c
+[   85.531665]  pinctrl_commit_state+0xa0/0x260
+[   85.535989]  pinctrl_pm_select_default_state+0x4c/0xa0
+[   85.541182]  geni_se_resources_on+0xd0/0x15c
+[   85.545522]  geni_serial_resource_state+0x8c/0xbc
+[   85.550282]  qcom_geni_serial_runtime_resume+0x24/0x3c
+[   85.555470]  pm_generic_runtime_resume+0x2c/0x44
+[   85.560139]  __rpm_callback+0x48/0x1e0
+[   85.563949]  rpm_callback+0x74/0x80
+[   85.567494]  rpm_resume+0x39c/0x66c
+[   85.571040]  __pm_runtime_resume+0x50/0x9c
+[   85.575193]  handle_threaded_wake_irq+0x30/0x80
+[   85.579771]  irq_thread_fn+0x2c/0xb0
+[   85.583443]  irq_thread+0x16c/0x278
+[   85.587003]  kthread+0x118/0x1c0
+[   85.590283]  ret_from_fork+0x10/0x20
+[   85.593943] INFO: task (udev-worker):228 blocked for more than 42 second=
+s.
+[   85.600873]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
+[   85.606846] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[   85.614717] task:(udev-worker)   state:D stack:0     pid:228   tgid:228 =
+  ppid:222    task_flags:0x400140 flags:0x00000818
+[   85.625823] Call trace:
+[   85.628316]  __switch_to+0xe8/0x1a0 (T)
+[   85.632217]  __schedule+0x290/0x7c0
+[   85.635765]  schedule+0x34/0x118
+[   85.639044]  async_synchronize_cookie_domain.part.0+0x50/0xa4
+[   85.644854]  async_synchronize_full+0x78/0xa0
+[   85.649270]  do_init_module+0x190/0x23c
+[   85.653154]  load_module+0x1708/0x1ca0
+[   85.656952]  init_module_from_file+0x74/0xa0
+[   85.661273]  __arm64_sys_finit_module+0x130/0x2f8
+[   85.666023]  invoke_syscall+0x48/0x104
+[   85.669842]  el0_svc_common.constprop.0+0xc0/0xe0
+[   85.674604]  do_el0_svc+0x1c/0x28
+[   85.677973]  el0_svc+0x2c/0x84
+[   85.681078]  el0t_64_sync_handler+0xa0/0xe4
+[   85.685316]  el0t_64_sync+0x198/0x19c
+[   85.689032] INFO: task (udev-worker):229 blocked for more than 42 second=
+s.
+
+
+Usually wifi, all remoteprocs and anything that depends on lpass/pinctrl fa=
+il to probe.
+
+Reverting these:
+86fa39dd6fb7 serial: qcom-geni: Enable Serial on SA8255p Qualcomm platforms
+1afa70632c39 serial: qcom-geni: Enable PM runtime for serial driver
+
+resolves the regression. Couldn't say if we should go with reverting since =
+86fa39dd6fb7
+adds support of serial on SA8255p and for clean revert both have to be reve=
+rted.
+
+Any thoughts?
+
+Best regards,
+Alexey
+
+
+
+
+
+> ---
+> v6 -> v7
+> From Bjorn:
+> - used devm_pm_runtime_enable() instead of pm_runtime_enable()
+> - updated commit text.
+>
+> v5 -> v6
+> - added reviewed-by tag in commit
+> - added __maybe_unused to PM callback functions to avoid
+>   warnings of defined but not used
+> ---
+>  drivers/tty/serial/qcom_geni_serial.c | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/q=
+com_geni_serial.c
+> index 81f385d900d0..aa08de659e34 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -1713,10 +1713,10 @@ static void qcom_geni_serial_pm(struct uart_port =
+*uport,
+>  		old_state =3D UART_PM_STATE_OFF;
+> =20
+>  	if (new_state =3D=3D UART_PM_STATE_ON && old_state =3D=3D UART_PM_STATE=
+_OFF)
+> -		geni_serial_resources_on(uport);
+> +		pm_runtime_resume_and_get(uport->dev);
+>  	else if (new_state =3D=3D UART_PM_STATE_OFF &&
+>  		 old_state =3D=3D UART_PM_STATE_ON)
+> -		geni_serial_resources_off(uport);
+> +		pm_runtime_put_sync(uport->dev);
+> =20
+>  }
+> =20
+> @@ -1878,6 +1878,8 @@ static int qcom_geni_serial_probe(struct platform_d=
+evice *pdev)
+>  	if (ret)
+>  		return ret;
+> =20
+> +	devm_pm_runtime_enable(port->se.dev);
+> +
+>  	ret =3D uart_add_one_port(drv, uport);
+>  	if (ret)
+>  		return ret;
+> @@ -1909,6 +1911,22 @@ static void qcom_geni_serial_remove(struct platfor=
+m_device *pdev)
+>  	uart_remove_one_port(drv, &port->uport);
+>  }
+> =20
+> +static int __maybe_unused qcom_geni_serial_runtime_suspend(struct device=
+ *dev)
+> +{
+> +	struct qcom_geni_serial_port *port =3D dev_get_drvdata(dev);
+> +	struct uart_port *uport =3D &port->uport;
+> +
+> +	return geni_serial_resources_off(uport);
+> +}
+> +
+> +static int __maybe_unused qcom_geni_serial_runtime_resume(struct device =
+*dev)
+> +{
+> +	struct qcom_geni_serial_port *port =3D dev_get_drvdata(dev);
+> +	struct uart_port *uport =3D &port->uport;
+> +
+> +	return geni_serial_resources_on(uport);
+> +}
+> +
+>  static int qcom_geni_serial_suspend(struct device *dev)
+>  {
+>  	struct qcom_geni_serial_port *port =3D dev_get_drvdata(dev);
+> @@ -1952,6 +1970,8 @@ static const struct qcom_geni_device_data qcom_geni=
+_uart_data =3D {
+>  };
+> =20
+>  static const struct dev_pm_ops qcom_geni_serial_pm_ops =3D {
+> +	SET_RUNTIME_PM_OPS(qcom_geni_serial_runtime_suspend,
+> +			   qcom_geni_serial_runtime_resume, NULL)
+>  	SYSTEM_SLEEP_PM_OPS(qcom_geni_serial_suspend, qcom_geni_serial_resume)
+>  };
+> =20
 
 
