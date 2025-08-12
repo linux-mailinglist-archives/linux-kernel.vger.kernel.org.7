@@ -1,104 +1,94 @@
-Return-Path: <linux-kernel+bounces-764121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D2AB21E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D074B21E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC671A203A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6049F503329
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783DC2DE709;
-	Tue, 12 Aug 2025 06:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B22DEA7E;
+	Tue, 12 Aug 2025 06:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YCwjP4zv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3YZcet6u"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1k9fuZq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02FC2C21E3;
-	Tue, 12 Aug 2025 06:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F9F21A43B;
+	Tue, 12 Aug 2025 06:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754980050; cv=none; b=ntFX0br/1uqFFi1tpT7se5k36l8Tk3LTkoYoWF6AdiJJQ2xJMmgmJ+hH3ZrNOHd4vPfl9Wb2ZR0nih8Bawtkw/1QUhBnK5/YPQVR2cCV6O3u/4Asl3BNCn8N/tfysH44M/K3M4N9tMD6tQ2OFWloZcjYU21FkT2J+HV8sGkUkKY=
+	t=1754980132; cv=none; b=P8TMrUqAzw1TrwnZnFVQmHBWtrXPEZ5626c4vX7U2yS+aXQhxs8kLBZwLslgWXBbTblcFBtKDSredPBYUKBciFOxq2PelVgDSPXpumBCF56cIKGydf5re+LImWVXDz8iCV8VvIFSNYgPLBJYsa0ivGTLJmEhddwsLmUONg+M+fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754980050; c=relaxed/simple;
-	bh=2zXtN27wOEWwnqIzbf/6hOa52R9QIws6lpKyKqUO4E4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYmkGoNw4ozPMUC/XupN5eiqZrDs2VNmQR3YAleTtb+BhjRe/64OekKbQ0NeIykRkV5WURwG5ZsTaMucP2N92QLu1U8kdEhpWv7KBRHcKfxpMMXJNh4inKWw30O1dmubEHKotrn7GwuufnB7bhOZ7QhGNEcMWZymPMhy1grIYSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YCwjP4zv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3YZcet6u; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 12 Aug 2025 08:27:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754980047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IPmlgwTQjbKtST3ioeXe30KnbkE79UAnrUUUOawhgMU=;
-	b=YCwjP4zvmXq9xhFEzhXui7n8JEvZATOJKC61r7qq17HX3j8hgjTzA0kFH2upZpKj3kFswP
-	4TVxEwLraNI4FAwa7WkfOwYeFdXN57JMQBXBeG1t0kJ5BymFuHIsjhlnZp0krAzCT48EI6
-	N5WoUwotdGpVxNLhj87zIjELhuYlZ3k12rrw3ERODZKCxmx/UTrZt+3WzEFfnniwrL4HyO
-	bWD5J9aFwdZ6ZEO/evYeLnpd6MfT0n8gU9XON+J/X51vj9fFx5VyLSXv4NQlrewW7YgpuA
-	FVRd0pHJVvH0kkQWXB4Cq7ZdDIQf8U+oeBIyNkBMun1ss+iKx89V4tk9eefEIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754980047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IPmlgwTQjbKtST3ioeXe30KnbkE79UAnrUUUOawhgMU=;
-	b=3YZcet6uXvR2q2rBg7ocEhSRRGd8fg/sQN2tGHvsMwsT0zdQXQtz/b6kkAZ6AOMzVf873F
-	CQaknr+wMpdsi7Cw==
-From: Nam Cao <namcao@linutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] PCI: vmd: Remove MSI-X check on child devices
-Message-ID: <20250812062715.X9TWWWh-@linutronix.de>
-References: <20250811053935.4049211-1-namcao@linutronix.de>
- <20250811224659.GA168102@bhelgaas>
+	s=arc-20240116; t=1754980132; c=relaxed/simple;
+	bh=La7H9eByYagCohgqxw2G3+7zgFCfw7Yo597djXDnUI8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Y7JoT9vNk/Rx4AuGz8YO48IRdBPGIH2naDuakPBFzx8NrGfJcXhQmanHPdQ0KbHCvvdZqlhKY3rKVYBSJ24Vo3QX5izFC6WrGG+cychAiRqlo+5vv6djfY0pK1a3Q230WawV3AfkYe0zg7ISkOFJzsTQo6J5wa3a2sYDhB3a6i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1k9fuZq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6BDC4CEF5;
+	Tue, 12 Aug 2025 06:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754980131;
+	bh=La7H9eByYagCohgqxw2G3+7zgFCfw7Yo597djXDnUI8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=a1k9fuZqk/kOMkIEp11qlXl3Qx+u0W/KFGDziAfY78Q72ClFmLm+POlw50Vfogvg8
+	 OhOItv0BpS/V/TYbh8m0oYOUIpkD9iIDYOyZ3/dCbdRg08xd5GnUZkwP+7dwQZKZ4e
+	 ZvjubE22oGFfuVufiZx1AYnla3xjP5RTk1fAhNNgx2MyBvtULuXgp3pQ5kP1SKyP/I
+	 spePuE4VbfxV41b4eGC2cNvgP+gl8RI1sWVm8e93WjJ2zYXwQV4F6Vl+Df2snQKwPo
+	 4q7JXvVCL70drl/JoFl9KiLHO8R+ZnYn/zjESEsscFgi9Bt6w68NPO0ZUlkRoJtURr
+	 RwNEAlbN4FNRg==
+Message-ID: <c5195d5c-5f71-4057-9522-228b48e4cd90@kernel.org>
+Date: Tue, 12 Aug 2025 14:28:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811224659.GA168102@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: introduce flush_policy sysfs entry
+To: Christoph Hellwig <hch@infradead.org>
+References: <20250807034838.3829794-1-chao@kernel.org>
+ <aJnLXmepVBD4V2QH@infradead.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aJnLXmepVBD4V2QH@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 05:46:59PM -0500, Bjorn Helgaas wrote:
-> On Mon, Aug 11, 2025 at 07:39:35AM +0200, Nam Cao wrote:
-> > Commit d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
-> > added a WARN_ON sanity check that child devices support MSI-X, because VMD
-> > document says [1]:
-> > 
-> >     "Intel VMD only supports MSIx Interrupts from child devices and
-> >     therefore the BIOS must enable PCIe Hot Plug and MSIx interrups [sic]."
+On 8/11/25 18:52, Christoph Hellwig wrote:
+> On Thu, Aug 07, 2025 at 11:48:38AM +0800, Chao Yu wrote:
+>> This patch introduces a new sysfs entry /sys/fs/f2fs/<disk>/flush_policy
+>> in order to tune performance of f2fs data flush flow.
+>>
+>> For example, checkpoint will use REQ_FUA to persist CP metadata, however,
+>> some kind device has bad performance on REQ_FUA command, result in that
+>> checkpoint being blocked for long time, w/ this sysfs entry, we can give
+>> an option to use REQ_PREFLUSH command instead of REQ_FUA during checkpoint,
+>> it can help to mitigate long latency of checkpoint.
 > 
-> Can VMD tell the difference between an incoming MSI MWr transaction
-> and an MSI-X MWr?
-> 
-> I wonder if "MSIx" was meant to mean "VMD only supports MSI or MSI-X
-> interrupts, not INTx interrupts, from child devices"?
+> That's and odd place to deal with this.  If that's a real issue it
+> should be a block layer tweak to disable FUA, potentially with a quirk
+> entry in the driver to disable it rather than having to touch a file
+> system sysfs attribute.
 
-I don't know, sorry. I am hoping that the VMD maintainers can help us here.
+Okay, it makes sense to control how FUA be handled inside block layer, so
+let's drop this patch.
 
-But I don't expect to get an answer soon, and this is affecting users, so I
-prefer to merge it regardless.
+BTW, I suffered extremely long latency of checkpoint which may block every
+update operations when testing generic/299 w/ mode=lfs mount option in qemu,
+then I propose to use PREFLUSH instead of FUA to resolve this issue.
 
-And to be honest, depending on the answer, this patch may be the wrong fix.
-But in this worst case, we would just bring the driver back to how it had
-always behaved, and no one complained before. Therefore it should be safe to
-do.
+"F2FS-fs (vdc): checkpoint was blocked for 24495 ms"
 
-Nam
+I just realize that using cache=directsync option in qemu can avoid FUA hang
+issue, anyway, let me test more w/ this option.
+
+Thanks,
 
