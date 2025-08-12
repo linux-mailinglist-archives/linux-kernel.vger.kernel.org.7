@@ -1,161 +1,194 @@
-Return-Path: <linux-kernel+bounces-764200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D5BB21FBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D17B21FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A988680CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851AD1AA6BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F392E03F1;
-	Tue, 12 Aug 2025 07:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F6E2DE71D;
+	Tue, 12 Aug 2025 07:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R5BpJJm8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia5ubWtV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023DC2DEA90;
-	Tue, 12 Aug 2025 07:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B941A9F99;
+	Tue, 12 Aug 2025 07:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984584; cv=none; b=M2XD3nagDBfbQ8jVlI7+Ilv9g64ntNb3zOBnkn4tT3hIYEAoeQFrcTxVjNojh9wVNG+XmZX97k2OUalsXz1/xXSOPTTw6d5wGdCLmp6t7vIVfsA87PDvKUeA/tFBsXl+/UH0KQDdtd527RTEe9dH8krOkvj46B0vVcqYpcqkp04=
+	t=1754984581; cv=none; b=hX5pf39nrtGKRGqeDFH2J9STxopW3wv7kO3B/3zsUsPlHXXxrjaHoiFAbxIHLNi3WMohSqRwDQEYFxVeYgWE38UKkNCUMU+JpCFq/dc5DRhmhNttN4zxJDYowPsr1te7Iv2q4+QAztQk8zUyrgbPk+KNH4JehrLwaCt1MBipyx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984584; c=relaxed/simple;
-	bh=XuudU9Ut/rVqcvvSE0KR5roBjHUmIGtceSLksVXDWrk=;
+	s=arc-20240116; t=1754984581; c=relaxed/simple;
+	bh=6SKWaPVqjTRIWpOZveIQwPd0ps/h4mv/dHVafQ5rf1Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiTmBy7sinkhpiYiqFOdP/EFFfxrPW91iO/590dhQ3vffqregPa+iJscqRZGsubwo3btNkrxjFCT2RESDIzR7rTR3BjH/d2PHVU7H4spq1DdTEoF7eSo3EDh2jqtO0CsOcOEyQmXg9RYbQwfut1D9PyG9RK1B9MaZKZnwWIfTEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R5BpJJm8; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=pRjC9shHMyqHQbJMoHIYvO4XEWMGERwA2pE61iqgDIM=; b=R5BpJJm87tPddpxrOx/yjRIH2a
-	qgqjrz/o3GGfX3bVjsixGaAWeiVyUrLenI70nW8ioHf2airsBbaoAM0x7ad995jTuHD10Csbqjrjw
-	+6VCj8opZqAF+Itoo3QkhwCa0Ggq58Rv/tTb3JJC3T/k7U2xeNp4RZtGIvR75QT9xbVkjIYFxTw2n
-	TWL9e4bBMxGb9BaiphnnCHHPTiavCI0ot+/VfJN07tGpgWrec8aPGO9Lll5rExvfEfx9Llujw76/Y
-	5bgcokK/50ueGojJgJOojTaFULyc3d5PgqbtDkWtdwcbby7M74gmMACpE1w4uPlapjBWtdZa6CRZu
-	D05ZeI+Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uljeh-0000000FjYW-3OOT;
-	Tue, 12 Aug 2025 07:42:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C8FA33002C5; Tue, 12 Aug 2025 09:42:46 +0200 (CEST)
-Date: Tue, 12 Aug 2025 09:42:46 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Matt Wu <wuqiang.matt@bytedance.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 8/8] hrtimer: Remove hrtimer_clock_base::get_time
-Message-ID: <20250812074246.GC4067720@noisy.programming.kicks-ass.net>
-References: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
- <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPcM08muv8FJRQpDMxVwvpdKEZu3KpyMY1YOLWOe9nqSlOkv/ktCrtYBKn3Sl6VmCnZKPgRrzPyomeuibKEzkg0bduqgFkuz10KFb8uN9ktkP7lHNUdX9b+Z2wP0SEBT0Nay11plc249XjbKNc5xwDj8MklIkCdTXcUtEHf6/mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia5ubWtV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70771C4CEF1;
+	Tue, 12 Aug 2025 07:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754984581;
+	bh=6SKWaPVqjTRIWpOZveIQwPd0ps/h4mv/dHVafQ5rf1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ia5ubWtVGD9uVI3I8+5zJjfn5jo+rAqrnjPtJRuoKlVkGWvBn7HTITZtou7V86NDm
+	 rhPZlsgE0bfc9mD67yD25137PElf64vB0iM+6LjWdl+xZk1KIAP4Id9O7ew2MdXL8J
+	 dLe57ix9tVdX0HBN9Aj0lLkUS1/oQ6XF6kgULY3v8b7MK882keB3ap2aKOJV1GZNRI
+	 xd8HK0azfyFomH467KeyqfvUg0lxqsyJ1u0/3c+gSp2FaOvz1IZATaf7xPsk8m0gFa
+	 kowtk8luLibYGppdFeu+cIToyVBAVUI9VlvqQ7Xf6UiyAEt4CPnsYebr+KtwXIlIgr
+	 52ooBM728L7LA==
+Date: Tue, 12 Aug 2025 09:42:56 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Lizhi Hou <lizhi.hou@amd.com>
+Cc: Rob Herring <robh@kernel.org>, maz@kernel.org,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Issues with OF_DYNAMIC PCI bridge node generation
+ (kmemleak/interrupt-map IC reg property)
+Message-ID: <aJrwgKUNh68Dx1Fo@lpieralisi>
+References: <aJms+YT8TnpzpCY8@lpieralisi>
+ <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
+In-Reply-To: <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
 
-On Tue, Aug 12, 2025 at 08:08:16AM +0200, Thomas Weißschuh wrote:
+On Mon, Aug 11, 2025 at 08:26:11PM -0700, Lizhi Hou wrote:
+> On 8/11/25 01:42, Lorenzo Pieralisi wrote:
+> 
+> > Hi Lizhi, Rob,
+> > 
+> > while debugging something unrelated I noticed two issues
+> > (related) caused by the automatic generation of device nodes
+> > for PCI bridges.
+> > 
+> > GICv5 interrupt controller DT top level node [1] does not have a "reg"
+> > property, because it represents the top level node, children (IRSes and ITSs)
+> > are nested.
+> > 
+> > It does provide #address-cells since it has child nodes, so it has to
+> > have a "ranges" property as well.
+> > 
+> > You have added code to automatically generate properties for PCI bridges
+> > and in particular this code [2] creates an interrupt-map property for
+> > the PCI bridges (other than the host bridge if it has got an OF node
+> > already).
+> > 
+> > That code fails on GICv5, because the interrupt controller node does not
+> > have a "reg" property (and AFAIU it does not have to - as a matter of
+> > fact, INTx mapping works on GICv5 with the interrupt-map in the
+> > host bridge node containing zeros in the parent unit interrupt
+> > specifier #address-cells).
+> Does GICv5 have 'interrupt-controller' but not 'interrupt-map'? I think
+> of_irq_parse_raw will not check its parent in this case.
 
-> @@ -76,42 +77,34 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =
->  		{
->  			.index = HRTIMER_BASE_MONOTONIC,
->  			.clockid = CLOCK_MONOTONIC,
-> -			.get_time = &ktime_get,
->  		},
->  		{
->  			.index = HRTIMER_BASE_REALTIME,
->  			.clockid = CLOCK_REALTIME,
-> -			.get_time = &ktime_get_real,
->  		},
->  		{
->  			.index = HRTIMER_BASE_BOOTTIME,
->  			.clockid = CLOCK_BOOTTIME,
-> -			.get_time = &ktime_get_boottime,
->  		},
->  		{
->  			.index = HRTIMER_BASE_TAI,
->  			.clockid = CLOCK_TAI,
-> -			.get_time = &ktime_get_clocktai,
->  		},
->  		{
->  			.index = HRTIMER_BASE_MONOTONIC_SOFT,
->  			.clockid = CLOCK_MONOTONIC,
-> -			.get_time = &ktime_get,
->  		},
->  		{
->  			.index = HRTIMER_BASE_REALTIME_SOFT,
->  			.clockid = CLOCK_REALTIME,
-> -			.get_time = &ktime_get_real,
->  		},
->  		{
->  			.index = HRTIMER_BASE_BOOTTIME_SOFT,
->  			.clockid = CLOCK_BOOTTIME,
-> -			.get_time = &ktime_get_boottime,
->  		},
->  		{
->  			.index = HRTIMER_BASE_TAI_SOFT,
->  			.clockid = CLOCK_TAI,
-> -			.get_time = &ktime_get_clocktai,
->  		},
->  	},
->  	.csd = CSD_INIT(retrigger_next_event, NULL)
-> @@ -1253,7 +1246,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
->  	remove_hrtimer(timer, base, true, force_local);
->  
->  	if (mode & HRTIMER_MODE_REL)
-> -		tim = ktime_add_safe(tim, base->get_time());
-> +		tim = ktime_add_safe(tim, __hrtimer_cb_get_time(base->clockid));
->  
->  	tim = hrtimer_update_lowres(timer, tim, mode);
->  
-> @@ -1588,6 +1581,29 @@ static inline int hrtimer_clockid_to_base(clockid_t clock_id)
->  	}
->  }
->  
-> +static ktime_t __hrtimer_cb_get_time(clockid_t clock_id)
-> +{
-> +	switch (clock_id) {
-> +	case CLOCK_REALTIME:
-> +		return ktime_get_real();
-> +	case CLOCK_MONOTONIC:
-> +		return ktime_get();
-> +	case CLOCK_BOOTTIME:
-> +		return ktime_get_boottime();
-> +	case CLOCK_TAI:
-> +		return ktime_get_clocktai();
+But that's not the problem. GICv5 does not have an interrupt-map,
+the issue here is that GICv5 _is_ the parent and does not have
+a "reg" property. Why does the code in [2] check the reg property
+for the parent node while building the interrupt-map property for
+the PCI bridge ?
 
-It would've been nice if these had the same order as the other array.
+> > It is not clear to me why, to create an interrupt-map property, we
+> > are reading the "reg" value of the parent IC node to create the
+> > interrupt-map unit interrupt specifier address bits (could not we
+> > just copy the address in the parent unit interrupt specifier reported
+> > in the host bridge interrupt-map property ?).
+> > 
+> > - #address-cells of the parent describes the number of address cells of
+> >    parent's child nodes not the parent itself, again, AFAIK, so parsing "reg"
+> >    using #address-cells of the parent node is not entirely correct, is it ?
+> > - It is unclear to me, from an OF spec perspective what the address value
+> >    in the parent unit interrupt specifier ought to be. I think that, at
+> >    least for dts including a GICv3 IC, the address values are always 0,
+> >    regardless of the GICv3 reg property.
+> > 
+> > I need your feedback on this because the automatic generation must
+> > work seamlessly for GICv5 as well (as well as all other ICs with no "reg"
+> > property) and I could not find anything in the OF specs describing
+> > how the address cells in the unit interrupt specifier must be computed.
+> 
+> Please see: https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html
+> 
+> 2.4.3.1 mentions:
+> 
+> "Both the child node and the interrupt parent node are required to have
+> #address-cells and #interrupt-cells properties defined. If a unit address
+> component is not required, #address-cells shall be explicitly defined to be
+> zero."
 
-> +	default:
-> +		WARN(1, "Invalid clockid %d. Using MONOTONIC\n", clock_id);
-> +		return ktime_get();
-> +	}
-> +}
+Yes, but again, that's not what I am asking. GICv5 requires
+#address-cells (2.3.5 - link above - it has child nodes and it
+has to define "ranges") but it does not require a "reg" property,
+code in [2] fails.
+
+That boils down to what does "a unit address component is not required"
+means.
+
+Why does the code in [2] read "reg" to build the parent unit interrupt
+specifier (with #address-cells size of the parent, which, again, I
+don't think it is correct) ?
+
+> > I found this [3] link where in section 7 there is an interrupt mapping
+> > algorithm; I don't understand it fully and I think it is possibly misleading.
+> > 
+> > Now, the failure in [2] (caused by the lack of a "reg" property in the
+> > IC node) triggers an interrupt-map property generation failure for PCI
+> > bridges that are upstream devices that need INTx swizzling.
+> > 
+> > In turn, that leads to a kmemleak detection:
+> > 
+> > unreferenced object 0xffff000800368780 (size 128):
+> >    comm "swapper/0", pid 1, jiffies 4294892824
+> >    hex dump (first 32 bytes):
+> >      f0 b8 34 00 08 00 ff ff 04 00 00 00 00 00 00 00  ..4.............
+> >      70 c2 30 00 08 00 ff ff 00 00 00 00 00 00 00 00  p.0.............
+> >    backtrace (crc 1652b62a):
+> >      kmemleak_alloc+0x30/0x3c
+> >      __kmalloc_cache_noprof+0x1fc/0x360
+> >      __of_prop_dup+0x68/0x110
+> >      of_changeset_add_prop_helper+0x28/0xac
+> >      of_changeset_add_prop_string+0x74/0xa4
+> >      of_pci_add_properties+0xa0/0x4e0
+> >      of_pci_make_dev_node+0x198/0x230
+> >      pci_bus_add_device+0x44/0x13c
+> >      pci_bus_add_devices+0x40/0x80
+> >      pci_host_probe+0x138/0x1b0
+> >      pci_host_common_probe+0x8c/0xb0
+> >      platform_probe+0x5c/0x9c
+> >      really_probe+0x134/0x2d8
+> >      __driver_probe_device+0x98/0xd0
+> >      driver_probe_device+0x3c/0x1f8
+> >      __driver_attach+0xd8/0x1a0
+> > 
+> > I have not grokked it yet but it seems genuine, so whatever we decide
+> > in relation to "reg" above, this ought to be addressed too, if it
+> > is indeed a memleak.
+> 
+> Not sure what is the leak. I will look into more.
+
+Thanks,
+Lorenzo
+
+> 
+> 
+> Lizhi
+> 
+> > 
+> > Please let me know if something is unclear I can provide further
+> > details.
+> > 
+> > Thanks,
+> > Lorenzo
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml?h=v6.17-rc1
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/of_property.c?h=v6.17-rc1#n283
+> > [3] https://www.devicetree.org/open-firmware/practice/imap/imap0_9d.html
 
