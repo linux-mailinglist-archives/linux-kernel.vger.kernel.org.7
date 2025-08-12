@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-764144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39368B21E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:45:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F72B21E7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F24627BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:45:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51B834E1580
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9439244660;
-	Tue, 12 Aug 2025 06:45:43 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E132D3744;
+	Tue, 12 Aug 2025 06:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGeUgAKq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26999DDC3;
-	Tue, 12 Aug 2025 06:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016D62D47EF;
+	Tue, 12 Aug 2025 06:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754981143; cv=none; b=sTJ1pEsl6WPl6M3KtJEp2imzi1o2wa1abr806Rl+/2u0U5kZ1EVes7/WE0V8wVgOrI+RSi20N3Fh/TVoUwHVRie44s/qCckMw6AZbQIQDyADO6JyOXGSKRO2D68RZ2b9LoWDnCXCFs8e8mAohMBx7uz1WhVrKWmf4PoMhWC7PhA=
+	t=1754980803; cv=none; b=Rropmj3XwCkZ4+i7R4lAuQ/s+jimI02EOPwhFLapPpUBNmgdDcgSAUfi0rliu8/je0DLRtlOsAeLwNZADvdRAC9/5eEgrA8MFtH94LPvHH9k9SLZ8Xe2rYvyNBl8y53/TYBRPKTKb6aAuAk+1g1bREDAyyI0UxFjxP9FJMVhEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754981143; c=relaxed/simple;
-	bh=29ECu7mtTAeQD6TWYLdUNWx0I4czPhmreAg/gJJATfo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B1pglXNI/oWrXodwPmgj3MF5QVHEEYIm+Fd43erWYk9LbfeYQnPMIcR1ACDJx8z4useOpH2BKZcuGlpvD2omie5IIcvf6NeDzM3KW7XwjHLLWcVkiXSoADT17vm8v0/rIMTNknfJuy5oLBVMhMRCJU7tDW68R5k2Ap9VwyBOkyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1MTG227fzKHN1m;
-	Tue, 12 Aug 2025 14:45:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7DF1F1A0C29;
-	Tue, 12 Aug 2025 14:45:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHgxMP45po3vuiDQ--.42402S4;
-	Tue, 12 Aug 2025 14:45:37 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	libaokun1@huawei.com,
-	libaokun@huaweicloud.com
-Subject: [PATCH] jbd2: prevent softlockup in jbd2_log_do_checkpoint()
-Date: Tue, 12 Aug 2025 14:37:52 +0800
-Message-Id: <20250812063752.912130-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754980803; c=relaxed/simple;
+	bh=X+KxCS2Uhbsew3KgO4hOa0KHv118lmYhJfEXIpizQLA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jszI2vPneo+nZ0I+l67MrtHEy3tZ0JeOy4Fu21r/LCiCRUpgZxXe0IVq4Kab2sip233nMTqm5K7MVanE++RwjtDz8iOAGAW6+kHuX7JnqcA1jhg8YPOktOoRv06gSTIsKcstojYxYdql5Z94Xia/XrGjvTJc5dSwSP3wYIbqCBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGeUgAKq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4B1C4CEF5;
+	Tue, 12 Aug 2025 06:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754980802;
+	bh=X+KxCS2Uhbsew3KgO4hOa0KHv118lmYhJfEXIpizQLA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=uGeUgAKqMGN0+X2IcvnNoBIjhaf/7kQ6km8AFYlefJxFOCmWfvaXIhAMN8NzRBM0L
+	 rnc2gcYwUNVARLgR45xTNlChn0mDazpPUAefuhVjB6m96DUmWWkP5PLu6IG29+D5Mz
+	 RqTtyvjz6xrBcw8ehMGyp82K6gQZFoJQsgH6odkTn44TJUxOeNLcCVX26Fo/7Tf8Vg
+	 RxxX+56f42ROpsPP34MyJHPI3cQBWweNbS1ydIzDnYxduxMhNG5jbmNMbHgumRELnK
+	 pXS/kAuDiDr8OjyjLcN92VFKzePQFtO1cBF+6DgxmGxViz987NCEgLEJdhxWar9w3K
+	 7t4w4Famri2HA==
+Message-ID: <5c44c233-50ea-4cf2-9de9-b99c9e197bce@kernel.org>
+Date: Tue, 12 Aug 2025 14:39:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: introduce flush_policy sysfs entry
+To: Bart Van Assche <bvanassche@acm.org>,
+ Christoph Hellwig <hch@infradead.org>
+References: <20250807034838.3829794-1-chao@kernel.org>
+ <aJnLXmepVBD4V2QH@infradead.org>
+ <7a2534f5-bf20-4d3c-afe7-afcb8f340929@acm.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <7a2534f5-bf20-4d3c-afe7-afcb8f340929@acm.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHgxMP45po3vuiDQ--.42402S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZryUWw4xuryxuFy5KFyfJFb_yoW5GFy5pF
-	93u3yjqrWku34UZrsIvaykAr929a1kury7JrnY9F17Zw48JrsrKFW3t34jqryUArZ5A3yS
-	yFWj9wnagrnFy3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xx
-	MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73Uj
-	IFyTuYvjfU5R6zUUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQASBWiZm3JUBAAAse
 
-From: Baokun Li <libaokun1@huawei.com>
+On 8/11/25 21:44, Bart Van Assche wrote:
+> On 8/11/25 3:52 AM, Christoph Hellwig wrote:
+>> On Thu, Aug 07, 2025 at 11:48:38AM +0800, Chao Yu wrote:
+>>> This patch introduces a new sysfs entry /sys/fs/f2fs/<disk>/flush_policy
+>>> in order to tune performance of f2fs data flush flow.
+>>>
+>>> For example, checkpoint will use REQ_FUA to persist CP metadata, however,
+>>> some kind device has bad performance on REQ_FUA command, result in that
+>>> checkpoint being blocked for long time, w/ this sysfs entry, we can give
+>>> an option to use REQ_PREFLUSH command instead of REQ_FUA during checkpoint,
+>>> it can help to mitigate long latency of checkpoint.
+>>
+>> That's and odd place to deal with this.  If that's a real issue it
+>> should be a block layer tweak to disable FUA, potentially with a quirk
+>> entry in the driver to disable it rather than having to touch a file
+>> system sysfs attribute.
+> 
+> Chao, two years ago Christoph already suggested to integrate this
+> functionality in the UFS driver. From
+> https://lore.kernel.org/linux-scsi/Y+NCDzvuLJYGwyhC@infradead.org/:
+> "Please add quirks for the actually affected devices, and do not
+> block fua for an entire transport."
+> 
+> See also the ufs_fixups[] array in drivers/ufs/core/ufshcd.c.
 
-Both jbd2_log_do_checkpoint() and jbd2_journal_shrink_checkpoint_list()
-periodically release j_list_lock after processing a batch of buffers to
-avoid long hold times on the j_list_lock. However, since both functions
-contend for j_list_lock, the combined time spent waiting and processing
-can be significant.
+Bart, thank you for letting me know the history and decision there. I had a
+qemu option here to resolve my current issue, thanks.
 
-jbd2_journal_shrink_checkpoint_list() explicitly calls cond_resched() when
-need_resched() is true to avoid softlockups during prolonged operations.
-But jbd2_log_do_checkpoint() only exits its loop when need_resched() is
-true, relying on potentially sleeping functions like __flush_batch() or
-wait_on_buffer() to trigger rescheduling. If those functions do not sleep,
-the kernel may hit a softlockup.
+Thanks,
 
-watchdog: BUG: soft lockup - CPU#3 stuck for 156s! [kworker/u129:2:373]
-CPU: 3 PID: 373 Comm: kworker/u129:2 Kdump: loaded Not tainted 6.6.0+ #10
-Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.27 06/13/2017
-Workqueue: writeback wb_workfn (flush-7:2)
-pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : native_queued_spin_lock_slowpath+0x358/0x418
-lr : jbd2_log_do_checkpoint+0x31c/0x438 [jbd2]
-Call trace:
- native_queued_spin_lock_slowpath+0x358/0x418
- jbd2_log_do_checkpoint+0x31c/0x438 [jbd2]
- __jbd2_log_wait_for_space+0xfc/0x2f8 [jbd2]
- add_transaction_credits+0x3bc/0x418 [jbd2]
- start_this_handle+0xf8/0x560 [jbd2]
- jbd2__journal_start+0x118/0x228 [jbd2]
- __ext4_journal_start_sb+0x110/0x188 [ext4]
- ext4_do_writepages+0x3dc/0x740 [ext4]
- ext4_writepages+0xa4/0x190 [ext4]
- do_writepages+0x94/0x228
- __writeback_single_inode+0x48/0x318
- writeback_sb_inodes+0x204/0x590
- __writeback_inodes_wb+0x54/0xf8
- wb_writeback+0x2cc/0x3d8
- wb_do_writeback+0x2e0/0x2f8
- wb_workfn+0x80/0x2a8
- process_one_work+0x178/0x3e8
- worker_thread+0x234/0x3b8
- kthread+0xf0/0x108
- ret_from_fork+0x10/0x20
-
-So explicitly call cond_resched() in jbd2_log_do_checkpoint() to avoid
-softlockup.
-
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/jbd2/checkpoint.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/jbd2/checkpoint.c b/fs/jbd2/checkpoint.c
-index b3971e91e8eb..38861ca04899 100644
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -285,6 +285,7 @@ int jbd2_log_do_checkpoint(journal_t *journal)
- 		retry:
- 			if (batch_count)
- 				__flush_batch(journal, &batch_count);
-+			cond_resched();
- 			spin_lock(&journal->j_list_lock);
- 			goto restart;
- 	}
--- 
-2.39.2
+> 
+> Bart.
 
 
