@@ -1,91 +1,61 @@
-Return-Path: <linux-kernel+bounces-765160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209A3B22C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B544B22C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0337B504C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F0D2A03EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70E2F28E3;
-	Tue, 12 Aug 2025 15:52:55 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A7A2FD1DE;
+	Tue, 12 Aug 2025 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJvkgrZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19A13093B7;
-	Tue, 12 Aug 2025 15:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E97C2F83AB;
+	Tue, 12 Aug 2025 15:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013975; cv=none; b=ajXUnYgfm7emKjEmg5LaCLeLLZfwVhJmE323uwtZU2IT2fCtVzT9u3RVsa8VeNsTb5GGIuoCF2mNayCPcB5VkKpyeAsOt+y0mxJA3yf7dHlk12qD5GRlYdtbov+hUx7cwKL08nDFB+Fh3uID/SfprpB+9Y7FuWr1gvNmXaq5u3A=
+	t=1755013985; cv=none; b=aX8/W6ps6suCAFyzSOnTGGKwHSImcGI3ZDtfD4Z6cA21k1gmkNYPwAaPshTF0NpvZu6mL+//WchI/22G8Yyzi5qTll5A6c7hKKshxh1t8BDkESVMVWeR9phlQKS9x4qsJXVRqTs/W/0D3DJ8hu7lvQXRsjtDphyV43dxA/UQ+NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013975; c=relaxed/simple;
-	bh=n0sQUuKqf3jLXpNCjqUW24KyPE8yGVDwJlEFI3R/YWo=;
+	s=arc-20240116; t=1755013985; c=relaxed/simple;
+	bh=ItIkJyr4HT0xtooM1nUIr4FJ0PKDwnkSm1jezVW3R2s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qFpZWsFjDa9uf9R8Y9teUOM46+EzGquw+Ro7BF9FezP2kdAYIOF04dDF6eqHiQYlxgL083sG605+IUOeYPmsvLxPGqzAFuy+G/8WrkH7VHIyOl6ErhArEnqIO/qAfaVUqKa+EBpZy5IvB6aVlRQ80lUiqn3LDP1OED0+5s4shQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76bed310fa1so4853914b3a.2;
-        Tue, 12 Aug 2025 08:52:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013973; x=1755618773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dZz85zxG1Fdx2Dk3+7K6+fby+2lWmdMlXym1/uID5+g=;
-        b=tYzbO33YSCGHMb7VV+rCVtUBBZChkv3FDyRoUMS5YA/55ihbUoX58t5STVYoyJ3yF6
-         mexMdFyagSDyic1dmWb2WjpdvTqXyzFGQX17fFFv192+77l9IZEsCpYVEkWRg6jUscLp
-         mR0mh7odkzgO/d2yWn4Dh/3H1ZkqbxBntDQPyJdzLr9ebExN7XQCiXPWYo75wGlZv5+M
-         EgJTUeuErmWzvW2QHKoCaH+DBNFkEhwllgfVXHqx6dJN9wvJGKPaazgZy/BbCAiwLs+S
-         mlNPSSozZV1yyg2fginMjRCgjKEwtXl1n7G8tNgu5ansPCkNmOEVZidSEPplQGyoPmwS
-         h0rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQMunbWqYwWCeRri/lzeCMU4GN4M4WI7f7110LqSJ2htUfYqJrfnLcvqrPJQYsV4amJCqznGCnqbbDX9yxOD29@vger.kernel.org, AJvYcCWTylQjfjuJf8uILJJJV14nx3W+iqLUqx9W5l3mCUsL2rkyln+rirVVt/8I/T9GM0WrcOt+1PKgfwOCXrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrr09dFHGPAER7mmXtnoAoQMvnWvrryO6kcZP/YgnpkJPZStHY
-	BzXI0fKoBwlLMOm/DYuM1nTbPF7SKAq4GyIHZsSg1RstezTMZzCpU0Wj/KpK
-X-Gm-Gg: ASbGncukl/qF8b+79NzuP9OAHlJY2dtXxOCxw8h+TYKmSZSnpiDAL/hLhZJgbElukDX
-	Q7bSjnk1F2uXx0AHQ7BEHPt9A9BqRv5ce6XR2lzAb8CB/Rr3JLkSfwge4gsFk1nlNH1YAA75rn5
-	HD/YykkEAcO8vP3pdpHvi/wokuWbZJaSwWYxr4WxvbIFzko5KvRxXdeVDhO3DVNh6+DHlWW/lBl
-	WJDxnRZvlE1xVYlOWAN7tauGdG+gF+BjYz4Bb6JzImPwklbVO8laXIFRnWfJqUDOUR2yeaxQ3ad
-	XmhOtMYPa+6q1Kx6JrcLaAY0RNgQSzpUDv80hvmwrviNa23+xJmhaWK86MQ351rnCc4trli91xh
-	LWeBP5usSlwkx9Ux02V3WDe2NAFkhMOOZRPfAqaoKRJ3i7vbriVy701/Tc08=
-X-Google-Smtp-Source: AGHT+IEO5Z5M/KtjpW0VLb1+nruS8V4gTPoqbW8FOI4fKlCjaJC6j7Dcr7qiVY+6B9jvyJru9WYgYw==
-X-Received: by 2002:a17:902:da8c:b0:242:a3fa:edb4 with SMTP id d9443c01a7336-2430c133180mr2455155ad.44.1755013972729;
-        Tue, 12 Aug 2025 08:52:52 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e899a81fsm302235345ad.120.2025.08.12.08.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 08:52:52 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ayush.sawal@chelsio.com,
-	andrew+netdev@lunn.ch,
-	gregkh@linuxfoundation.org,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	steffen.klassert@secunet.com,
-	sdf@fomichev.me,
-	mhal@rbox.co,
-	abhishektamboli9@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	herbert@gondor.apana.org.au
-Subject: [PATCH net-next 6/7] chtls: Convert to skb_dst_reset
-Date: Tue, 12 Aug 2025 08:52:44 -0700
-Message-ID: <20250812155245.507012-7-sdf@fomichev.me>
+	 MIME-Version; b=sM7Zw+bSxkv21tTPFBdONOb+yDmS3BHclXljrz8z8ctyhLHE5fWAFglslNFkCEr000rTulmM1ZJ/Zm8nWGARHFL514NB7pWinL/CGytfR743/gM6YiYASsxCMsrpG/aHn/BNlMvxMClotH8KzQFp6Ca0kRelXRe0o+NFr7UQ//8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJvkgrZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40B4C4AF1C;
+	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755013985;
+	bh=ItIkJyr4HT0xtooM1nUIr4FJ0PKDwnkSm1jezVW3R2s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oJvkgrZkKkXGQJEYFtLP2iaNJg4BLn1zHUONvIY2ZXcext028TZGoOstV3hCweafR
+	 XUc/LuJTlrWAYVrL0ub1vli8gnK8cUmIuvixaF0Ks5gLALT0QZwRNLJ/2afFcnyzMa
+	 4Yo9GM7RRD80/zrfHt+VNg1XDEz27xyurHFpCWsgCWNEn9R49PdOUONPJfO9Vho+90
+	 x0Hnt/reEa7P4UMOOOWj8Lc9wAx3J50KvlSYQOZZ+XzT/v3IDqfPNKL1Tk6qVYNcQx
+	 7KIO61BENCltobikUe7tKTw0TcgYEedFdKVV1OeUBzRKUg67pReIquMVzjp6CaP0fm
+	 ZugIgCuyOACJA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ulrJ8-00000006kWw-3ZWr;
+	Tue, 12 Aug 2025 17:53:02 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 27/39] scripts: sphinx-pre-install: move ancillary checkers to a separate class
+Date: Tue, 12 Aug 2025 17:52:44 +0200
+Message-ID: <e2671eb14fae7a8510f5305ac44ad8063e237a5f.1754992972.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812155245.507012-1-sdf@fomichev.me>
-References: <20250812155245.507012-1-sdf@fomichev.me>
+In-Reply-To: <cover.1754992972.git.mchehab+huawei@kernel.org>
+References: <cover.1754992972.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,103 +63,194 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Going forward skb_dst_set will assert that skb dst_entry
-is empty during skb_dst_set. skb_dst_reset is added to reset
-existing entry without doing refcnt. Chelsio driver is
-doing extra dst management via skb_dst_set(NULL). Replace
-these calls with skb_dst_reset.
+The code there are just a bunch of static functions that are used by
+the main class. group them altogether to better organize the code.
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../ethernet/chelsio/inline_crypto/chtls/chtls_cm.c    | 10 +++++-----
- .../ethernet/chelsio/inline_crypto/chtls/chtls_cm.h    |  4 ++--
- .../ethernet/chelsio/inline_crypto/chtls/chtls_io.c    |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ scripts/sphinx-pre-install.py | 160 +++++++++++++++++-----------------
+ 1 file changed, 81 insertions(+), 79 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
-index 6f6525983130..b333da3b21bf 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
-@@ -171,7 +171,7 @@ static void chtls_purge_receive_queue(struct sock *sk)
- 	struct sk_buff *skb;
+diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
+index 47dce1fcddfb..b00e50028f4d 100755
+--- a/scripts/sphinx-pre-install.py
++++ b/scripts/sphinx-pre-install.py
+@@ -150,85 +150,11 @@ class DepManager:
+         if output_msg:
+             print(f"\n{output_msg}\n")
  
- 	while ((skb = __skb_dequeue(&sk->sk_receive_queue)) != NULL) {
--		skb_dst_set(skb, (void *)NULL);
-+		skb_dst_reset(skb);
- 		kfree_skb(skb);
- 	}
- }
-@@ -194,7 +194,7 @@ static void chtls_purge_recv_queue(struct sock *sk)
- 	struct sk_buff *skb;
+-class SphinxDependencyChecker:
+-    # List of required texlive packages on Fedora and OpenSuse
+-    texlive = {
+-        "amsfonts.sty":       "texlive-amsfonts",
+-        "amsmath.sty":        "texlive-amsmath",
+-        "amssymb.sty":        "texlive-amsfonts",
+-        "amsthm.sty":         "texlive-amscls",
+-        "anyfontsize.sty":    "texlive-anyfontsize",
+-        "atbegshi.sty":       "texlive-oberdiek",
+-        "bm.sty":             "texlive-tools",
+-        "capt-of.sty":        "texlive-capt-of",
+-        "cmap.sty":           "texlive-cmap",
+-        "ctexhook.sty":       "texlive-ctex",
+-        "ecrm1000.tfm":       "texlive-ec",
+-        "eqparbox.sty":       "texlive-eqparbox",
+-        "eu1enc.def":         "texlive-euenc",
+-        "fancybox.sty":       "texlive-fancybox",
+-        "fancyvrb.sty":       "texlive-fancyvrb",
+-        "float.sty":          "texlive-float",
+-        "fncychap.sty":       "texlive-fncychap",
+-        "footnote.sty":       "texlive-mdwtools",
+-        "framed.sty":         "texlive-framed",
+-        "luatex85.sty":       "texlive-luatex85",
+-        "multirow.sty":       "texlive-multirow",
+-        "needspace.sty":      "texlive-needspace",
+-        "palatino.sty":       "texlive-psnfss",
+-        "parskip.sty":        "texlive-parskip",
+-        "polyglossia.sty":    "texlive-polyglossia",
+-        "tabulary.sty":       "texlive-tabulary",
+-        "threeparttable.sty": "texlive-threeparttable",
+-        "titlesec.sty":       "texlive-titlesec",
+-        "ucs.sty":            "texlive-ucs",
+-        "upquote.sty":        "texlive-upquote",
+-        "wrapfig.sty":        "texlive-wrapfig",
+-    }
+-
+-    def __init__(self, args):
+-        self.pdf = args.pdf
+-        self.virtualenv = args.virtualenv
+-        self.version_check = args.version_check
+-
+-        self.deps = DepManager(self.pdf)
+-
+-        self.need_symlink = 0
+-        self.need_sphinx = 0
+-        self.need_pip = 0
+-        self.rec_sphinx_upgrade = 0
+-        self.verbose_warn_install = 1
+-
+-        self.system_release = ""
+-        self.install = ""
+-        self.virtenv_dir = ""
+-        self.python_cmd = ""
+-        self.activate_cmd = ""
+-
+-        # Some distros may not have a Sphinx shipped package compatible with
+-        # our minimal requirements
+-        self.package_supported = True
+-
+-        # Recommend a new python version
+-        self.recommend_python = None
+-
+-        # Certain hints are meant to be shown only once
+-        self.first_hint = True
+-
+-        self.min_version = (0, 0, 0)
+-        self.cur_version = (0, 0, 0)
+-        self.latest_avail_ver = (0, 0, 0)
+-        self.venv_ver = (0, 0, 0)
+-
+-        prefix = os.environ.get("srctree", ".") + "/"
+-
+-        self.conf = prefix + "Documentation/conf.py"
+-        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
+-        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
+-
+-    #
+-    # Ancillary methods that don't depend on self
+-    #
++class AncillaryCheckers:
++    """
++    Ancillary methods that checks for missing dependencies for different
++    types of types, like binaries, python modules, rpm deps, etc.
++    """
  
- 	while ((skb = __skb_dequeue(&tlsk->sk_recv_queue)) != NULL) {
--		skb_dst_set(skb, NULL);
-+		skb_dst_reset(skb);
- 		kfree_skb(skb);
- 	}
- }
-@@ -1734,7 +1734,7 @@ static int chtls_rx_data(struct chtls_dev *cdev, struct sk_buff *skb)
- 		pr_err("can't find conn. for hwtid %u.\n", hwtid);
- 		return -EINVAL;
- 	}
--	skb_dst_set(skb, NULL);
-+	skb_dst_reset(skb);
- 	process_cpl_msg(chtls_recv_data, sk, skb);
- 	return 0;
- }
-@@ -1786,7 +1786,7 @@ static int chtls_rx_pdu(struct chtls_dev *cdev, struct sk_buff *skb)
- 		pr_err("can't find conn. for hwtid %u.\n", hwtid);
- 		return -EINVAL;
- 	}
--	skb_dst_set(skb, NULL);
-+	skb_dst_reset(skb);
- 	process_cpl_msg(chtls_recv_pdu, sk, skb);
- 	return 0;
- }
-@@ -1855,7 +1855,7 @@ static int chtls_rx_cmp(struct chtls_dev *cdev, struct sk_buff *skb)
- 		pr_err("can't find conn. for hwtid %u.\n", hwtid);
- 		return -EINVAL;
- 	}
--	skb_dst_set(skb, NULL);
-+	skb_dst_reset(skb);
- 	process_cpl_msg(chtls_rx_hdr, sk, skb);
+     @staticmethod
+     def which(prog):
+@@ -335,6 +261,82 @@ class SphinxDependencyChecker:
  
- 	return 0;
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.h b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.h
-index f61ca657601c..4ca919925455 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.h
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.h
-@@ -171,14 +171,14 @@ static inline void chtls_set_req_addr(struct request_sock *oreq,
+         return subprocess.run(*args, **kwargs)
  
- static inline void chtls_free_skb(struct sock *sk, struct sk_buff *skb)
- {
--	skb_dst_set(skb, NULL);
-+	skb_dst_reset(skb);
- 	__skb_unlink(skb, &sk->sk_receive_queue);
- 	__kfree_skb(skb);
- }
- 
- static inline void chtls_kfree_skb(struct sock *sk, struct sk_buff *skb)
- {
--	skb_dst_set(skb, NULL);
-+	skb_dst_reset(skb);
- 	__skb_unlink(skb, &sk->sk_receive_queue);
- 	kfree_skb(skb);
- }
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-index 465fa8077964..85e4d90efd5b 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-@@ -1434,7 +1434,7 @@ static int chtls_pt_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
- 		continue;
- found_ok_skb:
- 		if (!skb->len) {
--			skb_dst_set(skb, NULL);
-+			skb_dst_reset(skb);
- 			__skb_unlink(skb, &sk->sk_receive_queue);
- 			kfree_skb(skb);
- 
++class SphinxDependencyChecker(AncillaryCheckers):
++    # List of required texlive packages on Fedora and OpenSuse
++    texlive = {
++        "amsfonts.sty":       "texlive-amsfonts",
++        "amsmath.sty":        "texlive-amsmath",
++        "amssymb.sty":        "texlive-amsfonts",
++        "amsthm.sty":         "texlive-amscls",
++        "anyfontsize.sty":    "texlive-anyfontsize",
++        "atbegshi.sty":       "texlive-oberdiek",
++        "bm.sty":             "texlive-tools",
++        "capt-of.sty":        "texlive-capt-of",
++        "cmap.sty":           "texlive-cmap",
++        "ctexhook.sty":       "texlive-ctex",
++        "ecrm1000.tfm":       "texlive-ec",
++        "eqparbox.sty":       "texlive-eqparbox",
++        "eu1enc.def":         "texlive-euenc",
++        "fancybox.sty":       "texlive-fancybox",
++        "fancyvrb.sty":       "texlive-fancyvrb",
++        "float.sty":          "texlive-float",
++        "fncychap.sty":       "texlive-fncychap",
++        "footnote.sty":       "texlive-mdwtools",
++        "framed.sty":         "texlive-framed",
++        "luatex85.sty":       "texlive-luatex85",
++        "multirow.sty":       "texlive-multirow",
++        "needspace.sty":      "texlive-needspace",
++        "palatino.sty":       "texlive-psnfss",
++        "parskip.sty":        "texlive-parskip",
++        "polyglossia.sty":    "texlive-polyglossia",
++        "tabulary.sty":       "texlive-tabulary",
++        "threeparttable.sty": "texlive-threeparttable",
++        "titlesec.sty":       "texlive-titlesec",
++        "ucs.sty":            "texlive-ucs",
++        "upquote.sty":        "texlive-upquote",
++        "wrapfig.sty":        "texlive-wrapfig",
++    }
++
++    def __init__(self, args):
++        self.pdf = args.pdf
++        self.virtualenv = args.virtualenv
++        self.version_check = args.version_check
++
++        self.deps = DepManager(self.pdf)
++
++        self.need_symlink = 0
++        self.need_sphinx = 0
++        self.need_pip = 0
++        self.rec_sphinx_upgrade = 0
++        self.verbose_warn_install = 1
++
++        self.system_release = ""
++        self.install = ""
++        self.virtenv_dir = ""
++        self.python_cmd = ""
++        self.activate_cmd = ""
++
++        # Some distros may not have a Sphinx shipped package compatible with
++        # our minimal requirements
++        self.package_supported = True
++
++        # Recommend a new python version
++        self.recommend_python = None
++
++        # Certain hints are meant to be shown only once
++        self.first_hint = True
++
++        self.min_version = (0, 0, 0)
++        self.cur_version = (0, 0, 0)
++        self.latest_avail_ver = (0, 0, 0)
++        self.venv_ver = (0, 0, 0)
++
++        prefix = os.environ.get("srctree", ".") + "/"
++
++        self.conf = prefix + "Documentation/conf.py"
++        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
++        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
++
+     #
+     # Methods to check if a feature exists
+     #
 -- 
 2.50.1
 
