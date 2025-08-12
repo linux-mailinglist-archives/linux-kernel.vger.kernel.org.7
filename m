@@ -1,96 +1,69 @@
-Return-Path: <linux-kernel+bounces-763926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBD3B21BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB104B21BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F85A1748BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CEB1627AD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3FD2D46AC;
-	Tue, 12 Aug 2025 03:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2D12D8798;
+	Tue, 12 Aug 2025 03:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPyQDdNg"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="KSl2CexN"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC901A76DE;
-	Tue, 12 Aug 2025 03:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154B2C2E0;
+	Tue, 12 Aug 2025 03:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754969518; cv=none; b=m1zW029zuJf3RUBBtPikeTIWWBbW0j0ee3RuEUVmAXl47l6tiL3sZnw7maGDSJlxAs6MsFZ9ZClDovycmuu+oiv9xeEgb9iCowwL874d2qDAz0klZcJ3nx3O5iOAKGlF0IaEK3GBxrE2ntma0T8q4z9hhC2YLadnpqrwxeP5Ax4=
+	t=1754970095; cv=none; b=Q1oyoARY6h+fcR15FOjRKQgmNpbCtDETEIrXymHRxBBe4dGZsakC/VM2HUPboddmzSKUBJXrWTv7Oocy4SZ1AOT1enZlY65jShNW4uNWuCRT0FouB3/xn27G3Ppn5G9KnhAszWCXVECDnLr/yP8oUuBb0n4Cw/GZoHOdRmk/9no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754969518; c=relaxed/simple;
-	bh=vfyvdPP9L3lM7kDtAuquN+RNsdO/iJpXaQt7vqW3n8M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Asi4Qd+abt4gz158WN5bwUyG58atGeyWNXmqpCp4ftOW2jJG697afFSQxyOAsBI75CDgCnsgSquvHUDxNDKzPKVez5gio4ZP2nTsRkpHqDcZ+OukPrX0bhKGuW8U6Nnu6nM2zNNxF+TemJ3J0d4rFuOg5+x0W5GGjAOGz0hAtdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPyQDdNg; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76bc68cc9e4so5181221b3a.2;
-        Mon, 11 Aug 2025 20:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754969517; x=1755574317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8S+no+XL5nD240u8M1Zin3Q7p8a0DhzQRaJrnzy39J8=;
-        b=fPyQDdNgrcheSyoXSezabg11clLUa1V/CD2BLx/PZlbtDO95kR3YLfJl6w69YmB5CG
-         ySGUJj5pLPAcC+qGV8kqEJW4GRP/p/tvYc+ticOdn0xNQi4hpQjRnQiVqysA/diyt+uf
-         8AnKeqayQyn/HiR8SGOVCXWTOLFwB51kAzhbusqOs9a4sRUkvSnvGW8Ucgm62gWE7O71
-         6VXLeOjx2x3wJK5ownFrusUaiowIujcm9zue0PIIaT1psJ7sB3oBrDU/lg9nwT2ZYnim
-         Gbh+sggva7+cIVyD8dGzNPQcXlcFFbTrV9UHfWEUdpseE7gghMi8Ag87Z6arbuJNK4mB
-         rKBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754969517; x=1755574317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8S+no+XL5nD240u8M1Zin3Q7p8a0DhzQRaJrnzy39J8=;
-        b=CmAxWDipjnmkoiLB809F2HTI4SyfhBYHRmB61cas1wSLAs7XQINl+QjQCQvqhzPASe
-         u0n2n5qfCT1n5yOJWn9dA/ODpksru1wxJVqmdt64QbUhXNhEWY8Fm7JtCgY0APu7iGF+
-         k7QWa8AaZdG/f6arP1z8Rc4LOkX2OxP7VseTtTrhXpeaL1WTWVf51CT7c1F7svWI4t55
-         RL347d3eGnUM4dtU4IOADTV1/piDOcJK7x6uP8tiX03ex4UpgmNWGk27cKiRp4eVe7r1
-         XK3tyBJcoENXw+JPlyoPK1CV8L6Ul7cd6AEEnruEM2Z3+V5fdihiKYMtUpaVWP7m6NKf
-         1Ieg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2iE1+TljOGbyMGNZ9YDRsy6k112QrdwIw2JEIgpNJc7gCCCbuaJ338TET5U3KVAocuewha7jQ/nC410I=@vger.kernel.org, AJvYcCVmEyZiotBztGplWpn0MV4IvSYdgZQVHF8Cp9RvJjVlcBiMMoUqJT27Qz/RB4U3bAqzFIMTknDGDtkxaL040IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygURdaehVc8jp+t2cKaxvzenRG3ARN4WUIlT5e/i1VDidzTpmB
-	BXv+I6Q53WgwApGSdGAiD+iyf8pIcwELsD6T/i09aoVaOjJ9rT6PcUBj
-X-Gm-Gg: ASbGnctmNgOeiaamRz9YJdX8+KA9fSSsMGxNj+PnFvPhvWiYpYmZKFddXLZjTCfs1/x
-	+FhG3jEaQ1RoJrXPCvxZ6zW3Ci3XztQsQnwfZLMwkTi5OyUiSPJCCjruLdZarQpAWz8mRnIfq/7
-	/HNtqPAjXiN76DkpBnUz/JIQmiPp9knpnV+sHd0N3v5wxDqdrAfJxod/0E58esKAGtRcWKkJ7nF
-	kVKnFcoDSRe+41X2OJJC7wpz9eq0q6wRP9VoNAn/lxUxKtJ1vbjSgFgIyRPc3u35ajnTLqn4cGS
-	4FObskxdH5K7KQ233Saum3gUswPEXxuBPxR6/wPkqBIJbm6IuPT2Gx8ecyT7S8aIuaAZM5ut+Sj
-	3ca7I7/brFFzkqIYAUWUrKIps
-X-Google-Smtp-Source: AGHT+IGiXvUO7CJi9ioOHnbz+EgEKBNFp1mg+EhD1KSh2unYYVRsummizomz+JScV+I7SUjWg8KgEQ==
-X-Received: by 2002:a05:6a20:72ac:b0:240:1b99:1595 with SMTP id adf61e73a8af0-2409a8bcf16mr3360034637.17.1754969516602;
-        Mon, 11 Aug 2025 20:31:56 -0700 (PDT)
-Received: from pop-os.. ([2401:4900:91d5:9edd:11bb:d389:5e47:9179])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b46e5074e87sm3091824a12.54.2025.08.11.20.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 20:31:56 -0700 (PDT)
-From: herculoxz <abhinav.ogl@gmail.com>
-To: dakr@kernel.org,
-	bhelgaas@google.com,
-	kwilczynski@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu
-Cc: linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhinav Ananthu <abhinav.ogl@gmail.com>
-Subject: [PATCH v3 1/1] rust: pci: use c_* types via kernel prelude
-Date: Tue, 12 Aug 2025 09:01:02 +0530
-Message-Id: <20250812033101.5257-1-abhinav.ogl@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754970095; c=relaxed/simple;
+	bh=QgvHaxSeDbIVQUHk12TJMQ6so4DmVH6KtnZCKhWLR8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C9CnJs1HtDVLOeB1vwsv5IGKADhdbP/BAa+lHPrSDQ6e4ceA+QpKvvFlJyXTQ8cPje2tYwJyHapmK2iFKiaczZ0g75xs6GqI6ZwZ9nJ28J+mF5Jtza9z8wVfB8JEKNEXew3bmQUseKLug8GzXMEo+bVRhf0GlAj3wsaHvmP13F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=KSl2CexN; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C3Wmeo000846;
+	Tue, 12 Aug 2025 03:41:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pps0720; bh=MnGBmYgqbRUxk
+	pdO5d15KMIfStl62/cGlh7Nl6XccLU=; b=KSl2CexNxcIULiWRD3y6CT5a+C2YO
+	7DmtuwCR69S16aGrxs6T55AmkPy9btdHgNRjknsKaHi/xhnHNLaf1eSNDIW0bdfE
+	ANuYlKAJfJZMwswrBq6t0X8OqZDZ5NsXIPDDC7ERpAtS8zJuGf5EPmiJrvxzCXCz
+	2YFFtFwwtIZSlY0TthCN1jF7reXWIEzQkW5eeXE94wY21PLpzyFXME4YF54yOKEY
+	ZULhLCxzvI3Tys8UGA8Rn76tje8Gobm19NOn89E88dNvs+hWR2IEfi6ssFC0e5/7
+	SPn4WGKNvdkH4mEB9Lkgu9jaJK40hH7CaaUmmVIqmQD8WCVK0HeHliXUA==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 48ewkrwxb8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 03:41:04 +0000 (GMT)
+Received: from test-build-fcntl.hpe.com (unknown [192.58.206.38])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 7E270805E2C;
+	Tue, 12 Aug 2025 03:41:02 +0000 (UTC)
+Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
+	id 17C178800130; Tue, 12 Aug 2025 03:32:02 +0000 (UTC)
+From: Rajeev Mishra <rajeevm@hpe.com>
+To: axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dlemoal@kernel.org
+Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
+Date: Tue, 12 Aug 2025 03:32:01 +0000
+Message-ID: <20250812033201.225425-1-rajeevm@hpe.com>
+X-Mailer: git-send-email 2.43.7
+In-Reply-To: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
+References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,40 +71,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDAzMSBTYWx0ZWRfX80kH5S3ZBHZn
+ LH+sCWpao2Dw5Qxy21GSNbuaXDO65cMYfxRKGt2L+1NRQnORTQRIrVqXXz8w34Osz3Wl61NisPm
+ U9KcZ7DuOV3DqMeIpPRmY3DTDmm7gOQI+cSbhe86R+gkbcRMXs87ksNv91PthCcLstpfTqySQCB
+ Y3VQEsCzGE22c9bS/iCqIvPZmmkY0kToJFPeC6n+tETNE9HDn0Tv9xysETiQKGxMPMp7bu+L4q7
+ ERGabHanB+3esNQSDZ0vFMciV8TgjuGWRsRbxmdK4RRV1X/miZQnuVgtiv3S3pnJ+bPiO4x1Km5
+ prFzjp9t8JlTOKNn4t4Kr7/mfTX5xtefNfTvTN7Z6mblyfMxbh/rb2siadIBnylEczKrgUXZF5e
+ qwJsJr9L1jdq1v9HR1sYC37g/TggKknXrg1fQc1uqYHJ0dB4o4jBpoqxbnSu0leofeThR1gM
+X-Authority-Analysis: v=2.4 cv=aelhnQot c=1 sm=1 tr=0 ts=689ab7d0 cx=c_pps
+ a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
+ a=2OwXVqhp2XgA:10 a=zVteXimfv2qfp4qxOFMA:9
+X-Proofpoint-GUID: 5dok6cb-zcoeWRy9zEgEn7KtNYpnkmJu
+X-Proofpoint-ORIG-GUID: 5dok6cb-zcoeWRy9zEgEn7KtNYpnkmJu
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 adultscore=0 spamscore=0 mlxlogscore=977
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 clxscore=1011
+ impostorscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508120031
 
-From: Abhinav Ananthu <abhinav.ogl@gmail.com>
+Hi Kuai,
 
-Update PCI FFI callback signatures to use `c_` from the prelude,
-instead of accessing it via `kernel::ffi::`.
+Thank you for the feedback on the v2 patch regarding error handling.
 
-Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
----
- rust/kernel/pci.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yu mentioned:
+> return 0 here is odd. Why not "return ret;" to propagate the error if any ?
 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 5ce07999168e..fbeeaec4e044 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -61,7 +61,7 @@ impl<T: Driver + 'static> Adapter<T> {
-     extern "C" fn probe_callback(
-         pdev: *mut bindings::pci_dev,
-         id: *const bindings::pci_device_id,
--    ) -> kernel::ffi::c_int {
-+    ) -> c_int {
-         // SAFETY: The PCI bus only ever calls the probe callback with a valid pointer to a
-         // `struct pci_dev`.
-         //
-@@ -333,7 +333,7 @@ unsafe fn do_release(pdev: &Device, ioptr: usize, num: i32) {
-         // `ioptr` is valid by the safety requirements.
-         // `num` is valid by the safety requirements.
-         unsafe {
--            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut kernel::ffi::c_void);
-+            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut c_void);
-             bindings::pci_release_region(pdev.as_raw(), num);
-         }
-     }
--- 
-2.34.1
+I understand the concern about proper error propagation. However, there's a 
+type compatibility issue I'd like to discuss before implementing v3:
 
+1. Current function signature: `static loff_t get_size(...)` 
+   - Returns size as positive loff_t (unsigned 64-bit)  
+   - All callers expect non-negative size values
+
+2. vfs_getattr_nosec() error codes are negative integers (-ENOENT, -EIO, etc.)
+   - Returning `ret` would cast negative errors to huge positive numbers
+   - This could cause loop devices to appear as exabyte-sized
+
+3. Current callers like loop_set_size() don't handle error checking
+
+Would you prefer for v3:
+a) Change function signature to `int get_size(..., loff_t *size)` and update all callers  
+b) Different approach?
+
+diff with ret approach
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index c418c47db76e..15117630c6c1 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -142,12 +142,13 @@ static int part_shift;
+  * @offset: offset into the backing file
+  * @sizelimit: user-specified size limit
+  * @file: the backing file
++ * @size: pointer to store the calculated size
+  *
+  * Calculate the effective size of the loop device
+  *
+- * Returns: size in 512-byte sectors, or 0 if invalid
++ * Returns: 0 on success, negative error code on failure
+  */
+-static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
++static int get_size(loff_t offset, loff_t sizelimit, struct file *file, loff_t *size)
+ {
+        struct kstat stat;
+        loff_t loopsize;
+@@ -159,7 +160,7 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+         */
+        ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
+        if (ret)
+-               return 0;
++               return ret;
+
+        loopsize = stat.size;
+
+@@ -167,7 +168,7 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+                loopsize -= offset;
+        /* offset is beyond i_size, weird but possible */
+        if (loopsize < 0)
+-               return 0;
++               return -EINVAL;
+
+        if (sizelimit > 0 && sizelimit < loopsize)
+                loopsize = sizelimit;
+@@ -175,12 +176,20 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+         * Unfortunately, if we want to do I/O on the device,
+         * the number of 512-byte sectors has to fit into a sector_t.
+         */
+-       return loopsize >> 9;
++       *size = loopsize >> 9;
++       return 0;
+ }
+
+ static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+ {
+-       return get_size(lo->lo_offset, lo->lo_sizelimit, file);
++       loff_t size;
++       int ret;
++
++       ret = get_size(lo->lo_offset, lo->lo_sizelimit, file, &size);
++       if (ret)
++               return 0;  /* Fallback to 0 on error for backward compatibility */
++
++       return size;
+ }
+
+
+I am happy to implement whichever direction you think is best.
+
+Thanks,
+Rajeev
 
