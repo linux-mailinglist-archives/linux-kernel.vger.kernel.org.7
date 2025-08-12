@@ -1,200 +1,97 @@
-Return-Path: <linux-kernel+bounces-764617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A701B2252F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:03:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587F9B22535
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D001AA6899
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83E39503540
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF42EBB9B;
-	Tue, 12 Aug 2025 11:03:16 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71D82EBB8E;
+	Tue, 12 Aug 2025 11:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ataNcfpo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B401F4CAC;
-	Tue, 12 Aug 2025 11:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418C822B590;
+	Tue, 12 Aug 2025 11:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996596; cv=none; b=cEcQhqD73FgG/8XlFfG5aBbDU5qmZO8wW9gatAVDCw95o6SQ2BSP4Is/kZqr+wSgGuUrHnJ8vmYhY4IZy4f+qCvzqdcmW84Sbo5xI2+VcVVbcoQ6lReq1y+nGvcrnjF94b+OEPJzIUvoRI5I+qrNv71O/S8t/BQOTHwzIIuBTUc=
+	t=1754996651; cv=none; b=Pa7Jpq0WyVmej8SDy6NQvbSZmwSPrm9tSK0w0AzuCVNxkBfmuq7q3vQWEzy6r9Zl2D2liGaXSU3+MKQfSbR0ZGAwvBm6GSyju8kep1ljgWTAYRoGxBc8vx80LZYb4HZL3Y/ubuVC/Co4DzZQl2tZo/b/3aW3QJc0fxoa4r5bmYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996596; c=relaxed/simple;
-	bh=qLF+I7WPqhUrb+VNmpL20/SfL6ZE9h40NuAjJxQ1snU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p3wcBQqwFJOnzcZdKWslNt5+1AlR6BPbSqJhWxcwUC0baVckbhTSVSMQaICsPwlIvLx0smguOkcbKe0FHVvV6rwd9HhLlXbDNYtTTRVM36f0WH8Xh5rqBMGc5Y3IaI/Y962qaJ5V2oeFpWArvC9vPZi+wZg03qRHX3B/AQncV6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1TBQ6dXyzYQtr5;
-	Tue, 12 Aug 2025 19:03:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 879A41A09D8;
-	Tue, 12 Aug 2025 19:03:09 +0800 (CST)
-Received: from [10.174.178.72] (unknown [10.174.178.72])
-	by APP4 (Coremail) with SMTP id gCh0CgAXkxNrH5toyg63DQ--.43961S3;
-	Tue, 12 Aug 2025 19:03:09 +0800 (CST)
-Message-ID: <027a1ab7-1ff4-493c-b202-c0597a222403@huaweicloud.com>
-Date: Tue, 12 Aug 2025 19:03:07 +0800
+	s=arc-20240116; t=1754996651; c=relaxed/simple;
+	bh=B+PEgTbf6nrhb/pTGdfvLO5lzTBBQrybiZaSI3MT0Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5gLuSXEP5ljlgsZgSPeo6utrOh9nbssjgLf+5KvSVmTqlwwsk2cnITXRHFx4eMAAOSVRjitUz1Jz5UU9reX4hWMc2eFdOY5fXnfHZDI5+OshsLmBXuspEL3FQeTm4kGEOi9fxa3iptdFQz6Gl6zVwZwdDo6I2Ike7xaFaS/IH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ataNcfpo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3316BC4CEF0;
+	Tue, 12 Aug 2025 11:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754996649;
+	bh=B+PEgTbf6nrhb/pTGdfvLO5lzTBBQrybiZaSI3MT0Ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ataNcfpoXpirEm7xwJlmEpcq4x8xZ2BB+TgjMheJOrtKYvO1w/i211qXrlLbenNNF
+	 fcWLhvUWILk0qLFvraxEw0clxYSqEkdYOz2dDwAjh1xbwgjB+aeGF3dyUGsrtUUOiq
+	 dZDf2zJyBdDBrr8rpcjMnnDzx5cvnIARDvz6OKH857UMKOxWxbg4XoeGEuOJdacT1P
+	 THhevSNdL+OXxaiQIlPslnERdx1fRpJwFX+qz8k+033GQbO4SUYqdLmMoC8OdyLXXl
+	 dSBAtxkHGXH0ykufdf8qCsCFIbE9YPc6eK+Q6Qu73kQMpJKLVb6cvuFeQb3hnirmvi
+	 baIJ2y2aCuqeA==
+Date: Tue, 12 Aug 2025 12:04:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: jeff_chang@richtek.com
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] regulator: rt5133: Add RT5133 PMIC regulator
+ Support
+Message-ID: <cce96a11-6bd2-4a95-8012-74fc9bbc76cd@sirena.org.uk>
+References: <20250812031541.2966667-1-jeff_chang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] md: fix sync_action incorrect display during
- resync
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: song@kernel.org, yukuai3@huawei.com, linan122@huawei.com,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com
-References: <20250812021738.3722569-1-zhengqixing@huaweicloud.com>
- <20250812021738.3722569-3-zhengqixing@huaweicloud.com>
- <1775d473-a77f-4ac8-8195-8547dd48d754@molgen.mpg.de>
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-In-Reply-To: <1775d473-a77f-4ac8-8195-8547dd48d754@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXkxNrH5toyg63DQ--.43961S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWxXw4UtryfZr48KFyDJrb_yoWrXr13pF
-	4ktFWUGry7Crn3JrW3J34DJFy5uw18JayDJr1xWa4UArsxKr1jqF1UWrnFgF1UJr40qr4j
-	qr1UXrZxuF17CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
-
-Hi,
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eVWQQKUyROMXhXEq"
+Content-Disposition: inline
+In-Reply-To: <20250812031541.2966667-1-jeff_chang@richtek.com>
+X-Cookie: For internal use only.
 
 
-在 2025/8/12 17:22, Paul Menzel 写道:
-> Dear Zheng,
->
->
-> Thank you for your patch.
->
-> Am 12.08.25 um 04:17 schrieb Zheng Qixing:
->> From: Zheng Qixing <zhengqixing@huawei.com>
->>
->> During raid resync, if a disk becomes faulty, the operation is
->> briefly interrupted. The MD_RECOVERY_RECOVER flag triggered by
->> the disk failure causes sync_action to incorrectly show "recover"
->> instead of "resync". The same issue affects reshape operations.
->>
->> Reproduction steps:
->>    mdadm -Cv /dev/md1 -l1 -n4 -e1.2 /dev/sd{a..d} // -> resync happended
->>    mdadm -f /dev/md1 /dev/sda                     // -> resync 
->> interrupted
->>    cat sync_action
->>    -> recover
->>
->> Add progress checks in md_sync_action() for resync/recover/reshape
->> to ensure the interface correctly reports the actual operation type.
->>
->> Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
->> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
->> ---
->>   drivers/md/md.c | 38 ++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 36 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index 4ea956a80343..798428d0870b 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -4845,9 +4845,34 @@ static bool rdev_needs_recovery(struct md_rdev 
->> *rdev, sector_t sectors)
->>       return false;
->>   }
->>   +static enum sync_action md_get_active_sync_action(struct mddev 
->> *mddev)
->> +{
->> +    struct md_rdev *rdev;
->> +    bool is_recover = false;
->
-> `is_recover` sounds strange to me, but I am not an expert with the 
-> code. Maybe `needs_recovery`?
+--eVWQQKUyROMXhXEq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 12, 2025 at 11:14:56AM +0800, jeff_chang@richtek.com wrote:
+> From: Jeff Chang <jeff_chang@richtek.com>
+>=20
+> RT5133 is a highly-integrated chip. It includes 8 LDOs and 3 GPOs that can
+> be used to drive output high/low purpose. The dependency of the GPO block=
+ is
+> internally LDO1 Voltage.
 
-is_recover is used here to distinguish whether the current sync_action 
-is a recover, rather than a resync or reshape.
+You're missing patch 1 here with the DT bindings.
 
-But it's not a big deal, no need to focus on it :)
+--eVWQQKUyROMXhXEq
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->
->> +
->> +    if (mddev->resync_offset < MaxSector)
->> +        return ACTION_RESYNC;
->> +
->> +    if (mddev->reshape_position != MaxSector)
->> +        return ACTION_RESHAPE;
->> +
->> +    rcu_read_lock();
->> +    rdev_for_each_rcu(rdev, mddev) {
->> +        if (rdev->raid_disk >= 0 &&
->> +            rdev_needs_recovery(rdev, MaxSector)) {
->> +            is_recover = true;
->> +            break;
->> +        }
->> +    }
->> +    rcu_read_unlock();
->> +
->> +    return is_recover ? ACTION_RECOVER : ACTION_IDLE;
->> +}
->> +
->>   enum sync_action md_sync_action(struct mddev *mddev)
->>   {
->>       unsigned long recovery = mddev->recovery;
->> +    enum sync_action active_action;
->>         /*
->>        * frozen has the highest priority, means running sync_thread 
->> will be
->> @@ -4871,8 +4896,17 @@ enum sync_action md_sync_action(struct mddev 
->> *mddev)
->>           !test_bit(MD_RECOVERY_NEEDED, &recovery))
->>           return ACTION_IDLE;
->>   -    if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
->> -        mddev->reshape_position != MaxSector)
->> +    /*
->> +     * Check if any sync operation (resync/recover/reshape) is
->> +     * currently active. This ensures that only one sync operation
->> +     * can run at a time. Returns the type of active operation, or
->> +     * ACTION_IDLE if none are active.
->> +     */
->> +    active_action = md_get_active_sync_action(mddev);
->> +    if (active_action != ACTION_IDLE)
->> +        return active_action;
->> +
->> +    if (test_bit(MD_RECOVERY_RESHAPE, &recovery))
->>           return ACTION_RESHAPE;
->>         if (test_bit(MD_RECOVERY_RECOVER, &recovery))
->
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
->
->
-> Kind regards,
->
-> Paul
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmibH6QACgkQJNaLcl1U
+h9Dopgf+JTqvi5jADxtTd+tqB0k4PtcNioCPW3RRBgZ1f4l+iubDJZGasBJ+/Tqo
+LwTAV8jDRmHJ9j3owAqo3X4dud5bOWJegkNxO56SVXv1rRt+/f07HO+UiIJ/6Ovu
+rUmPulogC3wmMUzc9fWTyknyJrfXlwzIo3cPE6d4nnIdTpV9Jdvu669m3nZmUzhi
+SBg0bjuOqBgHsZANrtEhJXrvn67IjQbcxoxAssq3dwOhT7zSfZlloqAk6s57aO98
+0HsplP1qKtUIWkeA39JkGkyJ8iRDt8IclE3ZmX/Xb48btRpRefR+005eDuPnE52g
+9kGfbNv2tMlXo1MpWd80jdKWW6unSw==
+=2GXV
+-----END PGP SIGNATURE-----
 
-
-Thanks,
-
-Qixing
-
-
+--eVWQQKUyROMXhXEq--
 
