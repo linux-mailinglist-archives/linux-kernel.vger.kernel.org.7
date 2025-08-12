@@ -1,151 +1,287 @@
-Return-Path: <linux-kernel+bounces-764363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D78B22208
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D36FB22214
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F51188061C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7BF5633EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35292E6104;
-	Tue, 12 Aug 2025 08:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701002E62A4;
+	Tue, 12 Aug 2025 08:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YLEHxVhM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ht7vS1eO"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF64D2D9ECF
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769972E6138
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988512; cv=none; b=OwYPmXPPEwBsp+b4p6J52ncFwzA+rebMIcDJDrFlSKgY1WMo13rgl7SQWMtR+wEnpgT1LVT/RpIS7WojVsUUw+iqVFr64HQZk92f/GRVNtRfoXCc0jBcJXouIWxR0wkQyZT8QSY9rx7++iS/05eS5HoWoXEe11ox9lxtzKFS4z4=
+	t=1754988530; cv=none; b=amHCq/QIWxUznwxj8pq6jK2PIbWMpb37WX+2ZUSHXvX3f+wfh83iEhBtzgqVtB3Wl2mYiLTuzNglh7jPSzqkjV9gQiL4DALU7tI2o2WiywJrfXgETXz4xP1uCniYDJUQcX764nTycztKdWfL5SABbWz80THKxxIm3kDNJEA6FVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988512; c=relaxed/simple;
-	bh=bIaw2FNK0aavrRb6Xybh2kRuBOYiqlu0QUXQh1nDLb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NoQy1gfpLeW6VtyebXclqvrQL8cz8AttGIuaKlloKqnUJmOLTZZsdxSxRaznoR2RK1U/foYhRvxNQXhUAEcGouThN/g244CVPcsqFCkxV+Fc2rmXlnt6BCwyjmt0IKRwN/L2L46dgEAHvEym9cLoGrnYpiEnvGqoY3UjoUrusXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YLEHxVhM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5YBjN018331
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:48:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3yei4bAWRTPlfjD9mJuCaf7V06gKwYYP2mn0nNjJIEY=; b=YLEHxVhMXGTLrKTB
-	6inOCxhPCCG+SwslG+L6YC/DWarJSjoQ3ARSNrHSqqKcvuBuVXbGdY0Fa/w17uQT
-	HdkJNrP8nK72Bktbd17izgld1oWf1sBqeF0kgAU2luxubb/nnEAmC3gg7IIinz4n
-	rsEIYDoA9QSlOFVI6QkUJ0VVL0+rVu0gqPykJkxR51+Dbia/SbkrkycmHD4J5Q8T
-	IT5MywbWbgzHKUZM+rlhbgDYihBrNlqiSyiUZhxCY1nlsylhYMPsS0r590Uz6p5S
-	Dk2VKu9bpysH/7OlXpLPUwI9Yu0THLgLdKnAI8zw/y1KUpYlY8eKLSQtlB/CNUkK
-	xUEO4g==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g7dmp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:48:29 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b071271e3eso13227551cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:48:29 -0700 (PDT)
+	s=arc-20240116; t=1754988530; c=relaxed/simple;
+	bh=9qS2RQEQWRUhlRvpmkKEY4aDI+YK0NEhtWiywKmD+CM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkniyipD+7SdgVrzt+DJuHweGIwa4F3nnUrPm10BHsgCpn1FHIcq5xlU7ZT9ZdckaxdXmUFhL53ex8wU23nFaqznN/CQ25g2RpS3slPhVbUV4TG0AEs1CM4nTRbaEy82SHaguyMyOvKRSc+tGUm+DXm4AzRzER9o6SSVcGxh26I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ht7vS1eO; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4233978326so2912525a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1754988528; x=1755593328; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XpIit4I/cjVIpPrd+Ctji5FRExg0FaKt0RzZLjt+AQw=;
+        b=ht7vS1eO8TgIYHdz8CKNlQEojixzroYtiEstWage0Todqo9a3M4eEKmrYb09+rGyXV
+         NWm3N7F5rtK4SY9lTLQ6cpJuXA3mvOv3jdjLZl4czu0sObpR6mRUxKd8Re7NzGjwUeJe
+         QA0SrKE9UN2+Go3BxYaR10th7uXYjcJfc0jD+Vtc/tg4AH/pz7+TnVzWcppL/AslBNKj
+         nP1XvJ2NQhQPv6K2FXWGdfF6DClUoOFmIkimThnPf5GhSzEcp/niSlB33wVzELacchWP
+         0YvsCLGAW+/7dmBdaje5dde825eQXdwlN8/dUdIZoPYF7TttoTbRSwZInEqU1HMQmj/5
+         gooQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754988508; x=1755593308;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1754988528; x=1755593328;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3yei4bAWRTPlfjD9mJuCaf7V06gKwYYP2mn0nNjJIEY=;
-        b=SvF4PIdw7ZAwbrnHR28j26RusjS7lwLUT4le5kRJTQtpcV07yg1hiuMu9nmz7Gldbf
-         c/9aTeRVfbDiB2xAR5vEZ6T1X1wo98Fc91mk25oNPM/r73wPU5A1mYuQOwgnWiPOEZz2
-         YBoFsqq8r+ZABTmBczvnRqiPz7cayIoZQsMsUU9cKTyGrlZQ53Z3KfRS59OXvIL4S4H7
-         gFB+TPUR7/m+KeF5LJKTwv0rDFE4o23jO8f2JLEXwyyX4M9FXLp+vr1qyxegkX6tAzDs
-         6RNXJ1nxHGXwUvvHtCsuVOPgJXFlylTJBU+R8GIyRWDBPhgAl6gg4xNf7RnYErTLGQ1s
-         jgGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrD0WxsuLx5pDtvNwsSYAGes2++9DkEHDgsSKL/2PtHzhg7M7msA+Is38rua9mkX+DfDUC53DiDcJbrXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyOyhP3Xssk7tObDJSzDXWoy9jc2VZxqyNFonaO9HPeAoL0A0O
-	zlq6GYp4dJeG579C3I+nCyrRDf4TMl/Dwzi/ohy8HOFWywekkJrCumLxwyMKcybc4h6KVmxzolX
-	jVlqPcY77TArcsI/oirW6N8aQFKy0B6kE8MFkfjIabfN3axAGl+grV7fiRLj0Pq+mL2Y=
-X-Gm-Gg: ASbGnctoOlkyIljzjOiFC4Fsw3fQY4Qw83OOyHgRrQ1S9lAMi4JIVa/JEE5TKT8gfyQ
-	EJu9DnSMZXkRpGOE7j3ST0M+7UpdzMus9g5nSGwiiGsKiVZjQ4HmBaRNwMTTTFobaekiwI0LWrS
-	B8lgn53N8sJNoPZTfknRpjUzHoTYK+9Z0+qKMH2KfSl+y532Px2hlOemXHrlTRwDC9kH5yNxV++
-	8I6dGqPraPd1uCE1k0BeX1UAOicqYDzjIlmWcgeNAYmfTUcF3RZ+C5j3eLpKYiEMRO4naxizma2
-	QmtmwPE2BqncchL92V3cn/OT+t600O3HtBoVsFC0+GxJmUnDVQiGVwtGdovCpaQk8Z35rLqf28L
-	ZYNPW3jyZQPA3ibyqSQ==
-X-Received: by 2002:ac8:7f8f:0:b0:4ae:73dc:3896 with SMTP id d75a77b69052e-4b0f4abde25mr1977211cf.12.1754988508337;
-        Tue, 12 Aug 2025 01:48:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG49SlooCoq2QbTSVdsPIBo36eilKODoBGFzeYr2YfN/S4e5IAMokZikrVjfKkfSBp8TpMdyw==
-X-Received: by 2002:ac8:7f8f:0:b0:4ae:73dc:3896 with SMTP id d75a77b69052e-4b0f4abde25mr1977031cf.12.1754988507544;
-        Tue, 12 Aug 2025 01:48:27 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0753f9sm2178410966b.20.2025.08.12.01.48.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 01:48:27 -0700 (PDT)
-Message-ID: <61a781d3-eb4f-4c56-8873-41c95999630f@oss.qualcomm.com>
-Date: Tue, 12 Aug 2025 10:48:24 +0200
+        bh=XpIit4I/cjVIpPrd+Ctji5FRExg0FaKt0RzZLjt+AQw=;
+        b=xTqkV1n7kueprfNnRjWWirNDH6B7wN96omRLVbblI55bNfxNSKSCbajw09/0yh4v/X
+         1Bq8Re9smprLKBsQw21mvcFczn9kY4gxquKmYyFx2syPdTiD2Y8cyaUXEyl/fu2/f1CJ
+         Dl/iBMcekUaXrP/9zpQNAJ3RfxtMYlWHhA4yk1tneUZWeyJU7sjLF9MVJLB2+Pzsbnim
+         xajEpbMQgGvJv+8x66j6onhk6G6J4y9gK+tNhAGbNJs9ct5HcmTBpbV9ZRoUZQdZHxdM
+         Mubm/SHprQDd48kDMnKiwl3MK9zWt0mrt3jsuMgSNb7Jg+DwiiF5y65UWlUdaRItZo0u
+         oUjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmhrRJT7A5ilmsHTyPxV4TDlwk9uN5Xu2xY5kZ2m3CwMwaWV96jYPDJn+D32LMg/aWOFJ9NR/DIXS2Xqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZdugQUsE77GLV6NV0YBjhdN6UwOq+j6KtdwJTD/kDjVdIbDAw
+	cSMMQy1RAT14/BS9ySSvZnS5m4BcofxPUUsttX+KfOb1jzxYP92Qnkk5RaGJRYs3yw==
+X-Gm-Gg: ASbGnctQbbpbl3Os62T/1tywgT/77AjAWM0Qjbq8qGsawtmHMHEe2MqF6phmlEBH5zS
+	+1izHSUM3DdoLGYxn+8t/pWP2NKV5/VRHd1mq4L6Bv7dXjJ2NuVTsxZHFvoGSZLMY7FJQX57fkJ
+	NR+dym6tWni8qTso+w/E2M8bZMulkf0+0OT5H6sxlqO/zGmk2sEMH9Fa/r7ksJ5g8jCIJ8GqWcy
+	vpeqYcg/bdzRIt4MaRZmxdCwmLivIfQ5JHHfRbkfCbKt37a8jRbbq7rHa1uYa00MrSmhw+P4syQ
+	cxCCERKSck51UjEmlAMRn/0qtu9jsUBfyUWl3LUzqIyiAy3SXA7nvS3etUJB7dmO6sQJVjaer60
+	UWwPT+nBFR3UO8Tw40XOPfomL77sUtNkquz4235vQXIEvrZCAV3ozgQ==
+X-Google-Smtp-Source: AGHT+IFUjBqEg8hRNqdI8JGKcdqO/SKeN+sfDKwdG8ab0l1S7Rsq2rv0SGMF6RdUG8mYneuEuHxE/w==
+X-Received: by 2002:a17:903:178e:b0:224:10a2:cae7 with SMTP id d9443c01a7336-242fc360f8dmr38940125ad.40.1754988527457;
+        Tue, 12 Aug 2025 01:48:47 -0700 (PDT)
+Received: from bytedance ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899aa1asm292781015ad.122.2025.08.12.01.48.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 01:48:46 -0700 (PDT)
+Date: Tue, 12 Aug 2025 16:48:28 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>
+Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250812084828.GA52@bytedance>
+References: <20250715071658.267-1-ziqianlu@bytedance.com>
+ <20250715071658.267-4-ziqianlu@bytedance.com>
+ <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20250808101330.GA75@bytedance>
+ <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc7280: Add MDSS_CORE reset to mdss
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250811-sc7280-mdss-reset-v1-0-83ceff1d48de@oss.qualcomm.com>
- <20250811-sc7280-mdss-reset-v1-3-83ceff1d48de@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250811-sc7280-mdss-reset-v1-3-83ceff1d48de@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689affdd cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=S_9igCkNjxJcElqm350A:9
- a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX02xboKjB4quJ
- l8FNx92iWvFxsTJHpU4VbFzx9zldczJqSekO9+9kJnJzcWWyqRp/mDBOSseneECWQEVXJPa6MD8
- NbjN3/q5+IKctmQViY9YvZy9MDRhFJIQ3fkce71GBT6NGuSWf2xubr2zwZ8DAF1hx6ZtyQJkLtS
- hUJfEFdwfEroaf6CkR0w45hEeii8t0H97aZ8emTepT30upj3x6xkUojqlmPyGzBSvTtGQfmPmmS
- TixBr5HZXjycb8rpQryBa+IvB67ftX9PcSwTf4GTbJ2G0NbkiYhZgW+pybNHaesBe8P9frduqbo
- cT5SDuP8nzZTdSN1Zl5XWwkV7sNlBo5Mb3Q09pLg3fk1wvQ3W8zLwbv5jyQA1pb/ObIb+wqFwA2
- X9VN52Pr
-X-Proofpoint-GUID: D_YkqOuryr1tw_Pgdh59LxRsF6sE9w85
-X-Proofpoint-ORIG-GUID: D_YkqOuryr1tw_Pgdh59LxRsF6sE9w85
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On 8/12/25 5:11 AM, Bjorn Andersson wrote:
-> Like on other platforms, if the OS does not support recovering the state
-> left by the bootloader it needs access to MDSS_CORE, so that it can
-> clear the MDSS configuration.
+On Fri, Aug 08, 2025 at 01:45:11PM +0200, Valentin Schneider wrote:
+> On 08/08/25 18:13, Aaron Lu wrote:
+> > On Fri, Aug 08, 2025 at 11:12:48AM +0200, Valentin Schneider wrote:
+> >> On 15/07/25 15:16, Aaron Lu wrote:
+> >> > From: Valentin Schneider <vschneid@redhat.com>
+> >> >
+> >> > In current throttle model, when a cfs_rq is throttled, its entity will
+> >> > be dequeued from cpu's rq, making tasks attached to it not able to run,
+> >> > thus achiveing the throttle target.
+> >> >
+> >> > This has a drawback though: assume a task is a reader of percpu_rwsem
+> >> > and is waiting. When it gets woken, it can not run till its task group's
+> >> > next period comes, which can be a relatively long time. Waiting writer
+> >> > will have to wait longer due to this and it also makes further reader
+> >> > build up and eventually trigger task hung.
+> >> >
+> >> > To improve this situation, change the throttle model to task based, i.e.
+> >> > when a cfs_rq is throttled, record its throttled status but do not remove
+> >> > it from cpu's rq. Instead, for tasks that belong to this cfs_rq, when
+> >> > they get picked, add a task work to them so that when they return
+> >> > to user, they can be dequeued there. In this way, tasks throttled will
+> >> > not hold any kernel resources. And on unthrottle, enqueue back those
+> >> > tasks so they can continue to run.
+> >> >
+> >> 
+> >> Moving the actual throttle work to pick time is clever. In my previous
+> >> versions I tried really hard to stay out of the enqueue/dequeue/pick paths,
+> >> but this makes the code a lot more palatable. I'd like to see how this
+> >> impacts performance though.
+> >> 
+> >
+> > Let me run some scheduler benchmark to see how it impacts performance.
+> >
+> > I'm thinking maybe running something like hackbench on server platforms,
+> > first with quota not set and see if performance changes; then also test
+> > with quota set and see how performance changes.
+> >
+> > Does this sound good to you? Or do you have any specific benchmark and
+> > test methodology in mind?
+> >
 > 
-> Until now it seems no version of the bootloaders have done so, but e.g.
-> the Particle Tachyon ships with a bootloader that does leave the display
-> in a state that results in a series of iommu faults.
+> Yeah hackbench is pretty good for stressing the EQ/DQ paths.
 > 
-> So let's provide the reset, to allow the OS to clear that state.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Tested hackbench/pipe and netperf/UDP_RR on Intel EMR(2 sockets/240
+cpus) and AMD Genoa(2 sockets/384 cpus), the tldr is: there is no clear
+performance change between base and this patchset(head). Below is
+detailed test data:
+(turbo/boost disabled, cpuidle disabled, cpufreq set to performance)
 
-Konrad
+hackbench/pipe/loops=150000
+(seconds, smaller is better)
+
+On Intel EMR:
+
+nr_group          base             head          change
+ 1              3.62±2.99%      3.61±10.42%      +0.28%
+ 8              8.06±1.58%      7.88±5.82%       +2.23%
+16             11.40±2.57%     11.25±3.72%       +1.32%
+
+For nr_group=16 case, configure a cgroup and set quota to half cpu and
+then let hackbench run in this cgroup:
+
+                 base             head           change
+quota=50%      18.35±2.40%     18.78±1.97%       -2.34%
+
+On AMD Genoa:
+
+nr_group          base             head          change
+ 1             17.05±1.92%     16.99±2.81%       +0.35%
+ 8             16.54±0.71%     16.73±1.18%       -1.15%
+16             27.04±0.39%     26.72±2.37%       +1.18%
+
+For nr_group=16 case, configure a cgroup and set quota to half cpu and
+then let hackbench run in this cgroup:
+
+                  base             head          change
+quota=50%      43.79±1.10%     44.65±0.37%       -1.96%
+
+Netperf/UDP_RR/testlen=30s
+(throughput, higher is better)
+
+25% means nr_clients set to 1/4 nr_cpu, 50% means nr_clients is 1/2
+nr_cpu, etc.
+
+On Intel EMR:
+
+nr_clients     base                 head             change
+  25%       83,567±0.06%         84,298±0.23%        +0.87%
+  50%       61,336±1.49%         60,816±0.63%        -0.85%
+  75%       40,592±0.97%         40,461±0.14%        -0.32%
+ 100%       31,277±2.11%         30,948±1.84%        -1.05%
+
+For nr_clients=100% case, configure a cgroup and set quota to half cpu
+and then let netperf run in this cgroup:
+
+nr_clients     base                 head             change
+ 100%       25,532±0.56%         26,772±3.05%        +4.86%
+
+On AMD Genoa:
+
+nr_clients     base                 head             change
+ 25%        12,443±0.40%         12,525±0.06%        +0.66%
+ 50%        11,403±0.35%         11,472±0.50%        +0.61%
+ 75%        10,070±0.19%         10,071±0.95%         0.00%
+100%         9,947±0.80%          9,881±0.58%        -0.66%
+
+For nr_clients=100% case, configure a cgroup and set quota to half cpu
+and then let netperf run in this cgroup:
+
+nr_clients     base                 head             change
+100%         4,954±0.24%          4,952±0.14%         0.00%
+
+> >> > +	if (throttled_hierarchy(cfs_rq) &&
+> >> > +	    !task_current_donor(rq_of(cfs_rq), p)) {
+> >> > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+> >> > +		return true;
+> >> > +	}
+> >> > +
+> >> > +	/* we can't take the fast path, do an actual enqueue*/
+> >> > +	p->throttled = false;
+> >> 
+> >> So we clear p->throttled but not p->throttle_node? Won't that cause issues
+> >> when @p's previous cfs_rq gets unthrottled?
+> >> 
+> >
+> > p->throttle_node is already removed from its previous cfs_rq at dequeue
+> > time in dequeue_throttled_task().
+> >
+> > This is done so because in enqueue time, we may not hold its previous
+> > rq's lock so can't touch its previous cfs_rq's limbo list, like when
+> > dealing with affinity changes.
+> >
+> 
+> Ah right, the DQ/EQ_throttled_task() functions are when DQ/EQ is applied to an
+> already-throttled task and it does the right thing.
+> 
+> Does this mean we want this as enqueue_throttled_task()'s prologue?
+> 
+>   /* @p should have gone through dequeue_throttled_task() first */
+>   WARN_ON_ONCE(!list_empty(&p->throttle_node));
+>
+
+Sure, will add it in next version.
+
+> >> > @@ -7145,6 +7142,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+> >> >   */
+> >> >  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >> >  {
+> >> > +	if (unlikely(task_is_throttled(p))) {
+> >> > +		dequeue_throttled_task(p, flags);
+> >> > +		return true;
+> >> > +	}
+> >> > +
+> >> 
+> >> Handling a throttled task's move pattern at dequeue does simplify things,
+> >> however that's quite a hot path. I think this wants at the very least a
+> >> 
+> >>   if (cfs_bandwidth_used())
+> >> 
+> >> since that has a static key underneath. Some heavy EQ/DQ benchmark wouldn't
+> >> hurt, but we can probably find some people who really care about that to
+> >> run it for us ;)
+> >> 
+> >
+> > No problem.
+> >
+> > I'm thinking maybe I can add this cfs_bandwidth_used() in
+> > task_is_throttled()? So that other callsites of task_is_throttled() can
+> > also get the benefit of paying less cost when cfs bandwidth is not
+> > enabled.
+> >
+> 
+> Sounds good to me; just drop the unlikely and let the static key do its
+> thing :)
+
+Got it, thanks for the suggestion.
 
