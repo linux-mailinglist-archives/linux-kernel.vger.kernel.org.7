@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-764222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1582B2200B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F88B21FE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48908505953
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44561171757
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617102E0914;
-	Tue, 12 Aug 2025 07:57:12 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C04C2D6E4B;
-	Tue, 12 Aug 2025 07:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DE72DECB7;
+	Tue, 12 Aug 2025 07:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jh3uStF3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFB02DEA7E;
+	Tue, 12 Aug 2025 07:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985432; cv=none; b=qD7Rt17/TJG/8KQD+NDnKg0ZC9Nojabxz8g0RNJJXtX5qn60fftX+QNO8MSoREmMm3AfscOSoLOcMcC7auCB7+MgoScobizrLQtQY1m2GLD74T6S7XxEkePjDYc8Q+EO1bgkOD7TCuXBCejJO67nbewzMqf8vZEZxBU7VYWjoEU=
+	t=1754985239; cv=none; b=b+VkrowRwHxAnt5gPWTV17oIZWKUp+K8j0/vdrd9ua5u/nYalXMIOtnwbHtfTOh40KJySg77JNPfVu5sOe9NEo0jwEDGjcVrRhCuvKA2RoHCl6Fo4080EcOrXjKryAb5vPS6BARiM05PndPDyfUjsiNjPiQeNyhYGlBN9TwkdOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985432; c=relaxed/simple;
-	bh=fBZW+gSb3x+bKEeBXEiVF8gvx98ESt7G5KmM8aSlMto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XpjXh7ojlNgJsq8J7FPBOVGeVOfcmm4bb9GiwwZnhXelfhM9EgM7tUOog+P7qYBQLVpFxCaVjDGwA33K4n8gNmmJ3amUobIKFMOkLudNA+pQpipUhUB1UR449lCMO3crQwAqKXY0HagH2Na0vjlrOn5BYX88YWgv8+b0bRJwlEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3689af30eaa6-96370;
-	Tue, 12 Aug 2025 15:53:56 +0800 (CST)
-X-RM-TRANSID:2ee3689af30eaa6-96370
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from FHA-W4100033 (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee4689af30cac4-dffae;
-	Tue, 12 Aug 2025 15:53:56 +0800 (CST)
-X-RM-TRANSID:2ee4689af30cac4-dffae
-From: bajing <bajing@cmss.chinamobile.com>
-To: shuah@kernel.org
-Cc: lizhijian@fujitsu.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bajing@cmss.chinamobile.com
-Subject: [PATCH] watchdog-test.c: Remove unused variable in main
-Date: Tue, 12 Aug 2025 15:53:45 +0800
-Message-ID: <20250812075345.872-1-bajing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1754985239; c=relaxed/simple;
+	bh=sw8wLAIZdKxUOMDtddxEFYfkLyHWxf/hNcZfBt9jddc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cJ2PDMOiukMMiREvCC00uR6G7dwvM9VYKim5ywz/jKlqUPHlmBv5hoFB7rkamJMNmLWxOgpzeFgpflZLGnEwILMKJWyhZSupby+1DN7aADANRKQsXtycCxqB5MZJnJndTMDBQVmPe54hW1Wrpu2HocwQSPrVCIIKr3MLkczaj5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jh3uStF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B358C4CEF0;
+	Tue, 12 Aug 2025 07:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754985239;
+	bh=sw8wLAIZdKxUOMDtddxEFYfkLyHWxf/hNcZfBt9jddc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=jh3uStF3r13oKRFs0sLYrM2446Mi+VB8hpHKE9Zh83l99O+usPogtPFDkMn9Q5GM1
+	 ulEPEVxJhe/iJdSxhpCcEs7THsZMAfxFmWt0cASdTay3BP6NgUC5bXq3e2Rj5NUrH3
+	 AGUweTGCW+hwhMuQ9gFmRjR9UW5kyJq9d1bhq5qBCtDVf150CeQW15gSD+CjZxwgWg
+	 U4heXQ0DgqonUyh78GfP/hhONpJOUWjPBxp1Gl0afR5DNOMx7QCTJT0ecG+2n5k9EB
+	 zJS5Y+vwsB//qSKw/W1Zb4OfmVnzGQiXWwtqp5AciGajSdR1iXRJwT6y+ZMP7hxh/Q
+	 DEBA8uRrQMeEQ==
+Message-ID: <dec5b832-53f1-4274-902c-418f01df9458@kernel.org>
+Date: Tue, 12 Aug 2025 15:53:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: introduce flush_policy sysfs entry
+To: Christoph Hellwig <hch@infradead.org>
+References: <20250807034838.3829794-1-chao@kernel.org>
+ <aJnLXmepVBD4V2QH@infradead.org>
+ <c5195d5c-5f71-4057-9522-228b48e4cd90@kernel.org>
+ <aJruCTOjcj1nEk-S@infradead.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aJruCTOjcj1nEk-S@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since $optind is not used in the subsequent code, the variable
-should be removed.
+On 8/12/25 15:32, Christoph Hellwig wrote:
+> On Tue, Aug 12, 2025 at 02:28:46PM +0800, Chao Yu wrote:
+>> BTW, I suffered extremely long latency of checkpoint which may block every
+>> update operations when testing generic/299 w/ mode=lfs mount option in qemu,
+>> then I propose to use PREFLUSH instead of FUA to resolve this issue.
+>>
+>> "F2FS-fs (vdc): checkpoint was blocked for 24495 ms"
+>>
+>> I just realize that using cache=directsync option in qemu can avoid FUA hang
+>> issue, anyway, let me test more w/ this option.
+> 
+> Well, for decent qemu performance you always want to use DIRECT I/O.
+> directsync is generally not a very good idea as it forces every write
+> to be synchronous and will give you very bad performance.
 
-Signed-off-by: bajing <bajing@cmss.chinamobile.com>
----
- tools/testing/selftests/watchdog/watchdog-test.c | 2 --
- 1 file changed, 2 deletions(-)
+Yeah, I think that may hurt the performance too, at least, I don't see
+any obvious change for time cost of generic/299 testcases, but still I
+need to run all my testcase to see what will happen. :)
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index a1f506ba5578..837001a9e3a0 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -209,8 +209,6 @@ int main(int argc, char *argv[])
- 		exit(ret);
- 	}
- 
--	optind = 0;
--
- 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
- 		switch (c) {
- 		case 'b':
--- 
-2.33.0
+generic/299 115s ...  113s
 
+> 
+> What did you use before?  At least for older qemu the default was
+> buffered I/O, which can lead to very expensive fua or flush calls.
 
+Previously, I didn't use any cache= option, as manual described, it
+should equal to cache=wrteback.
+
+Thanks,
 
 
