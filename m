@@ -1,65 +1,95 @@
-Return-Path: <linux-kernel+bounces-765030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8FCB22A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:31:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7684B22A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EA51BC0F01
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:19:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AC207AAA22
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59793279DBB;
-	Tue, 12 Aug 2025 14:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906DF2F5323;
+	Tue, 12 Aug 2025 14:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKXnghsv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhAEHJby"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7E28E579;
-	Tue, 12 Aug 2025 14:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42792ECEB5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755008284; cv=none; b=F42xX8uq4rHG/d6aSomW1nukbjUXLS5l2v12+Ck7hSZpjKk/qajbycyA00aTu5FoELNN66moTctPZctjxlvcgWXaxMNQkOBWSWLXnR8li4hMwWN6YNom9UOW+vNDA0m74dscPYhXf3WhtHhZTFcD9HvSL6pRcnB7VjoUCfbTRv4=
+	t=1755008309; cv=none; b=W9xbGARsAKJbvl8noUS6mYeiQUm7bCbwwi0Pu7xe/gVfJlo6MaNC+MfnbS1mXoWNUMxzY8Vev7P1TomzjDY+PpQmRfZlLRfDt2lYjb+gAfEk82g8TdurrxA6x0OcXhi9ItZ5lAX2lP8XmopopwkdQ2UPKsIgH0imSc84Y1ZJMsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755008284; c=relaxed/simple;
-	bh=XO4yi+cl35zAmP3v6jAb/UAs/XIZlfZgkA7+goZt8gY=;
+	s=arc-20240116; t=1755008309; c=relaxed/simple;
+	bh=XtmAMAj37rcZzfJ83uJ2neJDfrdqUS1UkEsK6Q3tjts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCaxQv1t4bw9fGu1fS12XJCu4StqxAgtgUh2VdBL9wf6hXVKGFNDk7OpwFMybcyAT55Q9H04z+Xg//piyt4kw1dmcK7OcbVGoBDGhcbyB3A2BbuBhgflRIRhcTjiebizskFpxD1vv2Ft1dlZ1ixGzP3T3u5Rs8sM+v+vyAXimQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKXnghsv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A503C4CEF0;
-	Tue, 12 Aug 2025 14:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755008284;
-	bh=XO4yi+cl35zAmP3v6jAb/UAs/XIZlfZgkA7+goZt8gY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qKXnghsvCobCiCc1V94xXx9EcY1CxqZVopyNQmp037uV70h1uWJLg3M0VmfiTPz3h
-	 ByRRD1j4hVIiL6aUCnFZ8NzgcK4Qd0fUtsYjPQF2gx6FHl+7GF+LFikcd3kIZ0rBrb
-	 rvy9gPLUErtuutBlKCnxjKC/NslhH1pwpAF9ZBOIhkAkzo4qZBbjNraTFl2P+u9Lgs
-	 QZPMWprmeBHhCm6nIKPKKqIAgkzfJtMrLrjxvBPHb8cfCI6MeeCLfJbgLokI109IGQ
-	 eOMOyPCIuiBhlGlzWageG9NOgncojpHfxL/tJolfGEAhIaT0jErLVQvhMXt2cqaq5H
-	 Y/ZyOMbrv64aQ==
-Date: Tue, 12 Aug 2025 19:48:00 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
-	igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
-	s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
-	dev.tailor@samsung.com, faraz.ata@samsung.com,
-	muhammed.ali@samsung.com, selvarasu.g@samsung.com
-Subject: Re: [PATCH v5 4/6] phy: exynos5-usbdrd: support HS combo phy for
- ExynosAutov920
-Message-ID: <aJtNGGjKy762BLcX@vaman>
-References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
- <CGME20250805114316epcas5p49b78db499c2e37a1fe68f4b2f0be62a7@epcas5p4.samsung.com>
- <20250805115216.3798121-5-pritam.sutar@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmTPCQed9SgFo/Xwts8CE1FG6/T2LkW+wk9C6axg46DOBZ2U6HzPQFXQ5JYYM3fAX32CiJBC+hsXSbTob7MPcQATZOIXTvLLdj6WRRCSjUoYwmndmgXukhN8fH1LD8Uqr5JuqlHcDHDuHkmtABXwT6zBFPpdO8u4836PGC5c9bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhAEHJby; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755008306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8lbF44vTiU1ANQcwmUNyKm+m1/4WbStG7daM487U6vs=;
+	b=YhAEHJbyF6Agwc0M+eNsF2czElav91INAaa2gmTv8Kassso84lumNHyhukQ63YvPZKDkZl
+	+2737WA2ms8h6IdRWPmL1K7azZMMkB3kQKjUJuIS77VvV+2cjsoftmbI6Ad0yjBwu70FFm
+	vQ5qo5rwjd9xxmNZ3axVjZrcPBpDeUU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-583-5gZNSgOwONKrv_GK2lGd9g-1; Tue, 12 Aug 2025 10:18:25 -0400
+X-MC-Unique: 5gZNSgOwONKrv_GK2lGd9g-1
+X-Mimecast-MFC-AGG-ID: 5gZNSgOwONKrv_GK2lGd9g_1755008304
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e69d69691fso557495885a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:18:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755008304; x=1755613104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8lbF44vTiU1ANQcwmUNyKm+m1/4WbStG7daM487U6vs=;
+        b=mTDy0ikNjmC5uM2EwQizBt6XMcpscGTSyJQeYufOm52Htqml6HSPKnoPIpz2uc2GU6
+         AIro/P1SDBZqJHAiyNbLraPo/FR7k0NCUpXbJPSAsZgxcFMRcBGJJXuIsNFE5rUmBMM0
+         i5RPuH8FO0ZQI0RjXgNoXaZfj4++q0LQG0joVVNpxE6MH1wuGxgxVh83BNERqUNYbHT5
+         Ji7htFohC1hyyr9tI+uXySyMdcDZ54TU5CK2bWhAhuGwpFns20PxdsMdYc+Bh0S6EMsn
+         8sChta357ko6/PqXlMW5CW8j4W5mIj8KJL7BRGszK6ON84/aBUgpXKW/5TfRnf3u6XnH
+         5U5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUB3KviSk6JVnKebjWBW8Cr6QNXL3tEsHGgn5m9IgmJxDr5YnlV9bi5GrCO93Hz9NW3sEFBhtBdw2OLmyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCcxYjdJJfhBw9KBo+EirCVlWLuH/Zod4xzX66vxlJ6fqJsZD0
+	guFP0EtI1P+N3Hx5CD5R1bvvx3Gdcuk+YMjMXT3c/uvDrwTpFVnC9k4qVQpX5sqZj7bVYtocKSH
+	Y2Neanq1j/Bh+l1yl85stoaxJHtVUQtFmaIW+3qAo6cSoZXTuBqjxAqoMoihPKbCtaA==
+X-Gm-Gg: ASbGncuPGR2h7PUWSWzCgPsykqIP6gfK5OhwNdHLXWhIhj6q6VksIHH/4JrOhkDWXb9
+	0oc/h1JRaOq7Mw0JCUyEgHJsWQ5pD56Z8nvThKaofpFV+9MME2dgLpV3I6x7vE5B1SUzf7/JGmz
+	+XRS3pnDpyUeCg77z/P3E1d36w/0zz90Phr7KCGjJgKNqwxjxSWk7Ylv/Jc4f2pl9Fzy3bXjc+H
+	S9tmXSI7FhUNGMRJE4+ZntbQHw4X6DbuI5G6UCrCHUGCzE9lIKgQQoZOyNbc3Ma7bCgJsXddNTK
+	HN8teBQ/suekVzsCFoOtCjQAD3/UjOO2eS8N+kNQDZtUDx3sxEog5ybw65N1UZj3W4zJhQ==
+X-Received: by 2002:a05:620a:4155:b0:7e8:158d:316c with SMTP id af79cd13be357-7e82c74fcefmr1696768985a.34.1755008304564;
+        Tue, 12 Aug 2025 07:18:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5/TCo0SmwQpZxOWc1S/HBIKPeZH0UU0FWhXDi2MwJ0DdL8fT6Pr30cNDJAH8I6EQ9SFaj7Q==
+X-Received: by 2002:a05:620a:4155:b0:7e8:158d:316c with SMTP id af79cd13be357-7e82c74fcefmr1696763585a.34.1755008303927;
+        Tue, 12 Aug 2025 07:18:23 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e80235288fsm1318373185a.22.2025.08.12.07.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 07:18:22 -0700 (PDT)
+Date: Tue, 12 Aug 2025 16:18:18 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: bsegall@google.com, dietmar.eggemann@arm.com,
+	linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
+	rostedt@goodmis.org, vincent.guittot@linaro.org,
+	vschneid@redhat.com, yuri.andriaccio@santannapisa.it
+Subject: Re: [PATCH v2] sched/deadline: Remove fair-servers from real-time
+ task's bandwidth accounting
+Message-ID: <aJtNKvNzkoAlIW9k@jlelli-thinkpadt14gen4.remote.csb>
+References: <aIxunUAqdecVuUMs@jlelli-thinkpadt14gen4.remote.csb>
+ <20250801160352.4816-1-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,146 +98,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250805115216.3798121-5-pritam.sutar@samsung.com>
+In-Reply-To: <20250801160352.4816-1-yurand2000@gmail.com>
 
-On 05-08-25, 17:22, Pritam Manohar Sutar wrote:
-> Support UTMI+ combo phy for this SoC which is somewhat simmilar to
-> what the existing Exynos850 support does. The difference is that
-> some register offsets and bit fields are defferent from Exynos850.
+Hey,
+
+On 01/08/25 18:03, Yuri Andriaccio wrote:
+> Hi,
 > 
-> Add required change in phy driver to support combo HS phy for this SoC.
+> thanks for reviewing the patch.
 > 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 210 +++++++++++++++++++++++
->  1 file changed, 210 insertions(+)
+> > > @@ -1688,17 +1690,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
+> > >  
+> > >    cpus = dl_bw_cpus(cpu);
+> > >    cap = dl_bw_capacity(cpu);
+> > > +  max_bw = div64_ul(cap_scale(BW_UNIT - dl_b->bw, cap), (unsigned long)cpus);
+> > 
+> > fc975cfb3639 ("sched/deadline: Fix dl_server runtime calculation
+> > formula") essentially removed cap/freq scaling for dl-servers. Should we
+> > rather not scale max_bw here as well?
 > 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 5400dd23e500..c22f4de7d094 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -41,6 +41,13 @@
->  #define EXYNOS2200_CLKRST_LINK_PCLK_SEL		BIT(1)
->  
->  #define EXYNOS2200_DRD_UTMI			0x10
-> +
-> +/* ExynosAutov920 bits */
-> +#define UTMICTL_FORCE_UTMI_SUSPEND		BIT(13)
-> +#define UTMICTL_FORCE_UTMI_SLEEP		BIT(12)
-> +#define UTMICTL_FORCE_DPPULLDOWN		BIT(9)
-> +#define UTMICTL_FORCE_DMPULLDOWN		BIT(8)
-> +
->  #define EXYNOS2200_UTMI_FORCE_VBUSVALID		BIT(1)
->  #define EXYNOS2200_UTMI_FORCE_BVALID		BIT(0)
->  
-> @@ -250,6 +257,22 @@
->  #define EXYNOS850_DRD_HSP_TEST			0x5c
->  #define HSP_TEST_SIDDQ				BIT(24)
->  
-> +#define EXYNOSAUTOV920_DRD_HSP_CLKRST		0x100
-> +#define HSPCLKRST_PHY20_SW_PORTRESET		BIT(3)
-> +#define HSPCLKRST_PHY20_SW_POR			BIT(1)
-> +#define HSPCLKRST_PHY20_SW_POR_SEL		BIT(0)
-> +
-> +#define EXYNOSAUTOV920_DRD_HSPCTL		0x104
-> +#define HSPCTRL_VBUSVLDEXTSEL			BIT(13)
-> +#define HSPCTRL_VBUSVLDEXT			BIT(12)
-> +#define HSPCTRL_EN_UTMISUSPEND			BIT(9)
-> +#define HSPCTRL_COMMONONN			BIT(8)
-> +
-> +#define EXYNOSAUTOV920_DRD_HSP_TEST		0x10c
-> +
-> +#define EXYNOSAUTOV920_DRD_HSPPLLTUNE		0x110
-> +#define HSPPLLTUNE_FSEL				GENMASK(18, 16)
-> +
->  /* Exynos9 - GS101 */
->  #define EXYNOS850_DRD_SECPMACTL			0x48
->  #define SECPMACTL_PMA_ROPLL_REF_CLK_SEL		GENMASK(13, 12)
-> @@ -2054,6 +2077,139 @@ static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
->  	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
->  };
->  
-> +static void
-> +exynosautov920_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	void __iomem *reg_phy = phy_drd->reg_phy;
-> +	u32 reg;
-> +
-> +	/*
-> +	 * Disable HWACG (hardware auto clock gating control). This
-> +	 * forces QACTIVE signal in Q-Channel interface to HIGH level,
-> +	 * to make sure the PHY clock is not gated by the hardware.
-> +	 */
-> +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
-> +	reg |= LINKCTRL_FORCE_QACT;
-> +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
+> Now that I think about it, you are correct. Since the fair-servers' rate is
+> fixed (i.e. by default 50ms every second), the bandwidth must be scaled for both
+> the CPU and the server, or equally, neither needs scaling for the check in
+> question.
+> 
+> ...
+> 
+> > > @@ -3149,10 +3138,13 @@ int sched_dl_global_validate(void)
+> > >        goto next;
+> > >  
+> > >      dl_b = dl_bw_of(cpu);
+> > > -    cpus = dl_bw_cpus(cpu);
+> > > +    cap = dl_bw_capacity(cpu);
+> > > +    fair_bw = dl_bw_fair(cpu);
+> > >  
+> > >      raw_spin_lock_irqsave(&dl_b->lock, flags);
+> > > -    if (new_bw * cpus < dl_b->total_bw)
+> > > +    if (cap_scale(new_bw, cap) < dl_b->total_bw)
+> > > +      ret = -EBUSY;
+> > 
+> > It's kind of a minor one, but can't we return early at this point already?
+> 
+> Yes, I suppose so. I'll update the patch to return as soon as the error
+> condition is met.
+> 
+> Additionally, I'll also update some of the checks in the above function to
+> reflect the aforementioned fixed rate behaviour for fair-servers.
 
-maybe add a read-modify-write helper, this is user a lot here
+Don't think you had a chance to send a new version yet, no worries!
 
-> +
-> +	/* De-assert link reset */
-> +	reg = readl(reg_phy + EXYNOS2200_DRD_CLKRST);
-> +	reg &= ~CLKRST_LINK_SW_RST;
-> +	writel(reg, reg_phy + EXYNOS2200_DRD_CLKRST);
-> +
-> +	/* Set PHY POR High */
-> +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
-> +	reg |= HSPCLKRST_PHY20_SW_POR | HSPCLKRST_PHY20_SW_POR_SEL;
-> +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSP_CLKRST);
-> +
-> +	/* Enable UTMI+ */
-> +	reg = readl(reg_phy + EXYNOS2200_DRD_UTMI);
-> +	reg &= ~(UTMICTL_FORCE_UTMI_SUSPEND | UTMICTL_FORCE_UTMI_SLEEP |
-> +		UTMICTL_FORCE_DPPULLDOWN | UTMICTL_FORCE_DMPULLDOWN);
-> +	writel(reg, reg_phy + EXYNOS2200_DRD_UTMI);
-> +
-> +	/* set phy clock & control HS phy */
-> +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
-> +	reg |= HSPCTRL_EN_UTMISUSPEND | HSPCTRL_COMMONONN;
-> +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
-> +
-> +	fsleep(100);
-> +
-> +	/* Set VBUS Valid and DP-Pull up control by VBUS pad usage */
-> +	reg = readl(reg_phy + EXYNOS850_DRD_LINKCTRL);
-> +	reg |= FIELD_PREP_CONST(LINKCTRL_BUS_FILTER_BYPASS, 0xf);
-> +	writel(reg, reg_phy + EXYNOS850_DRD_LINKCTRL);
-> +
-> +	reg = readl(reg_phy + EXYNOS2200_DRD_UTMI);
-> +	reg |= EXYNOS2200_UTMI_FORCE_VBUSVALID | EXYNOS2200_UTMI_FORCE_BVALID;
-> +	writel(reg, reg_phy + EXYNOS2200_DRD_UTMI);
-> +
-> +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
-> +	reg |= HSPCTRL_VBUSVLDEXTSEL | HSPCTRL_VBUSVLDEXT;
-> +	writel(reg, reg_phy + EXYNOSAUTOV920_DRD_HSPCTL);
-> +
-> +	/* Setting FSEL for refference clock */
-> +	reg = readl(reg_phy + EXYNOSAUTOV920_DRD_HSPPLLTUNE);
-> +	reg &= ~HSPPLLTUNE_FSEL;
+But, I just noticed that this seems to regress cpu hotplug. With this
+applied, offlining of cpus fails with device or resource busy on my test
+system. Can you please double check?
 
-Empty line here please
+Thanks!
+Juri
 
-> +	switch (phy_drd->extrefclk) {
-> +	case EXYNOS5_FSEL_50MHZ:
-> +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 7);
-> +		break;
-> +	case EXYNOS5_FSEL_26MHZ:
-> +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 6);
-> +		break;
-> +	case EXYNOS5_FSEL_24MHZ:
-> +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 2);
-> +		break;
-> +	case EXYNOS5_FSEL_20MHZ:
-> +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 1);
-> +		break;
-> +	case EXYNOS5_FSEL_19MHZ2:
-> +		reg |= FIELD_PREP(HSPPLLTUNE_FSEL, 0);
-> +		break;
-> +	default:
-> +		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
-> +			 phy_drd->extrefclk);
-
-but we still continue?
--- 
-~Vinod
 
