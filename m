@@ -1,183 +1,168 @@
-Return-Path: <linux-kernel+bounces-765489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B549B23912
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:36:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1558B23918
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABF73AA413
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E901D1883931
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18772F291B;
-	Tue, 12 Aug 2025 19:33:09 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEC62FD1C3;
+	Tue, 12 Aug 2025 19:34:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC989274B29;
-	Tue, 12 Aug 2025 19:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A06B3F9D2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755027189; cv=none; b=nE/KtytNBe8zcl38rl+riA+TbhmlCVBCZkd2PjNVOqdGq+ct4fqvOmtS4OJTRQ1FlVoOx0TIC2VHEbw1Oorlg0PRQvke6Uk9XCoTndAEfzziLQmztuDBdDV0LIhc4D7GzHNgJIGPdwSp9UsWXNQnyo5lCX/pJdfJkbFHFE02GnU=
+	t=1755027275; cv=none; b=k+PjXujA9zjinfWOJVgi64MgbATfhnsT8Gb1zu1Wa0sGgzMKJpq0b46nqTqgml/ClRToZp+8cQbe9IbKs08HGA8UcYC1yEgnxNNMRRaqXHA20NlwFQkaJ6yHwZO+3eHYEcTrcUwSBwxtHBVx0X/kkHOwDxAIIULLDDpEEI6pO9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755027189; c=relaxed/simple;
-	bh=YN/0K1jsGrVn6c69Fq/XeC29K5LGn/No2QJy6fS5BM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rcw0/Xvs50a20wIuKcxTeziREHS02yVn58Z7dYQwuc/Ij1owMpMm9Gl0uKHx4d0UMA/IyivAe6MmIroCZ2pIMBRV6T1LVvZ6bHVcdaB1yF3hXYmKYDFFDbp4JexWMuMvOOSMLB+dGVElGc/v882u+GYyUf1wiGUYu9m/Sz3mTvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:acd6:d96f:40a0:aee])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 6249F4180E;
-	Tue, 12 Aug 2025 19:33:05 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a02:8084:255b:aa00:acd6:d96f:40a0:aee) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: yonghong.song@linux.dev
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH bpf-next v3 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Tue, 12 Aug 2025 20:32:56 +0100
-Message-ID: <20250812193256.19029-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250812193034.18848-1-contact@arnaud-lcm.com>
-References: <20250812193034.18848-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1755027275; c=relaxed/simple;
+	bh=BttOEe0om/j6yDdmbqxNGW55BljQ0fFUrDOkjIRGnWs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Mg1cgDQPZXli2Sa2nVyOvCaHGGxWvF3nmmixX+9U1HziryadtxQPTRATNx3taPJIHqWy5F8OFRpQScz2Qgq+iypQcjeo39yT0rk15jYJ5WhlThs1bZXDZQo+8/4/8SK8tIzMSrI4FFsQF7ORBhqQe701I6c8NSe2x0io+DHaP78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-881a214c747so729961839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:34:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755027273; x=1755632073;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ky1xpaJkHaMalBKIFIDbZuOCRjkd+geBcZ++RLq1Ow=;
+        b=SIlmC5RHzT7EPQ1YX8D2NC1Ls2j0TETUQhfMjOVjnwzqGbJdWza6tVQc5cQd6jklDX
+         wRaj8rYEwMAZPnBCXbkOE6l+I64N2xIeoz14hHHRJNgKl7j0RuoUmUJBByP+h3r9oWax
+         bAjAQaE9poZpRzHF03q9zCbfJNpXCBfWehDK2CKakkL+0PTDblACK7Ra5CgruRccd7s8
+         ZDXCo5WFIRkdxt41AlfLTHl4bzjacV54SWkXGds4EtTrSwxTU9GKdZDNEUlKH4a2ePU1
+         BkgWUXkG1tnxOO/AQ9fwLbt8taU8hauSEXuGKMQGXVBIEKVz+cb9RfPdSfhY7Mh5RJzv
+         ia0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmP6TnRSzNMudV/eEpane/iz4FTbQddUmKbGQVQmum0L2gItD0gYAVYAbpYjzfvOzOLC/JZ8K1aySyRrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1kSkCX/2qUguUFZi39u4oJqAwQTs/apVg+Cc7Q+4edxDKG9Jl
+	S0Scd0kgPG+Vt/Gvfg87VqU824xqvXl5PQqjkg+dR1cj984BnHfigW81RfMhEsW71uZ+JpPawCG
+	zAyAK0dwzIibpCW3AXWvlj1TyxVYxM/dlerDVVd8128+ZaJne4NzGAfUZDV8=
+X-Google-Smtp-Source: AGHT+IFKeeTHkEW2QWzDj6h1W/75n764YasEY6mwj+vq18FxJ/vvGjxLiwPOEcnzBUw56WVj3zu8MlLroMx2oYu/7ooFJBRXEJBx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175502718630.31148.2341707338790401233@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+X-Received: by 2002:a05:6602:6b10:b0:883:f8dc:df53 with SMTP id
+ ca18e2360f4ac-8842960a458mr66395839f.3.1755027272782; Tue, 12 Aug 2025
+ 12:34:32 -0700 (PDT)
+Date: Tue, 12 Aug 2025 12:34:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689b9748.050a0220.51d73.00b6.GAE@google.com>
+Subject: [syzbot] [net?] general protection fault in llc_mac_hdr_init
+From: syzbot <syzbot+5da6dcdc18849d9fa01e@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+Hello,
 
-Changes in v2:
- - Fixed max_depth names across get stack id
+syzbot found the following issue on:
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+HEAD commit:    37816488247d Merge tag 'net-6.17-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cd61a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=658effe8a2c01c74
+dashboard link: https://syzkaller.appspot.com/bug?extid=5da6dcdc18849d9fa01e
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8430292542cd/disk-37816488.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69cd308fcca9/vmlinux-37816488.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a39d85d0b6c2/bzImage-37816488.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5da6dcdc18849d9fa01e@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc000ad6eb84: 0000 [#1] SMP KASAN NOPTI
+KASAN: probably user-memory-access in range [0x0000000056b75c20-0x0000000056b75c27]
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.16.0-syzkaller-12063-g37816488247d #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:llc_mac_hdr_init+0x2f/0x1a0 net/llc/llc_output.c:30
+Code: 56 49 89 f6 41 55 49 89 d5 41 54 55 53 48 89 fb e8 16 2d 30 f8 48 8d 7b 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 3b 01 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc90000a08c28 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000056b75c10 RCX: ffffffff81a7e2de
+RDX: 000000000ad6eb84 RSI: ffffffff898b660a RDI: 0000000056b75c20
+RBP: ffff888056b75c10 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 1ffff9200014118f
+R13: ffff88801e2ea440 R14: ffffffff81a7df41 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8881247c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3200fff8 CR3: 0000000027c8f000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ llc_conn_ac_send_i_rsp_f_set_ackpf net/llc/llc_c_ac.c:920 [inline]
+ llc_conn_ac_send_i_as_ack+0x31c/0x900 net/llc/llc_c_ac.c:945
+ </IRQ>
+ <TASK>
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:llc_mac_hdr_init+0x2f/0x1a0 net/llc/llc_output.c:30
+Code: 56 49 89 f6 41 55 49 89 d5 41 54 55 53 48 89 fb e8 16 2d 30 f8 48 8d 7b 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 3b 01 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc90000a08c28 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000056b75c10 RCX: ffffffff81a7e2de
+RDX: 000000000ad6eb84 RSI: ffffffff898b660a RDI: 0000000056b75c20
+RBP: ffff888056b75c10 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 1ffff9200014118f
+R13: ffff88801e2ea440 R14: ffffffff81a7df41 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8881247c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3200fff8 CR3: 0000000027c8f000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	56                   	push   %rsi
+   1:	49 89 f6             	mov    %rsi,%r14
+   4:	41 55                	push   %r13
+   6:	49 89 d5             	mov    %rdx,%r13
+   9:	41 54                	push   %r12
+   b:	55                   	push   %rbp
+   c:	53                   	push   %rbx
+   d:	48 89 fb             	mov    %rdi,%rbx
+  10:	e8 16 2d 30 f8       	call   0xf8302d2b
+  15:	48 8d 7b 10          	lea    0x10(%rbx),%rdi
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 3b 01 00 00    	jne    0x16f
+  34:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  3b:	fc ff df
+  3e:	48                   	rex.W
+  3f:	8b                   	.byte 0x8b
+
+
 ---
- kernel/bpf/stackmap.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index a267567e36dd..e1ee18cbbbb2 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -246,7 +246,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
- }
- 
- static long __bpf_get_stackid(struct bpf_map *map,
--			      struct perf_callchain_entry *trace, u64 flags)
-+			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
- {
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-@@ -262,6 +262,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 
- 	trace_nr = trace->nr - skip;
- 	trace_len = trace_nr * sizeof(u64);
-+	trace_nr = min(trace_nr, max_depth - skip);
-+
- 	ips = trace->ip + skip;
- 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
- 	id = hash & (smap->n_buckets - 1);
-@@ -321,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
--	u32 max_depth = map->value_size / stack_map_data_size(map);
--	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 elem_size = stack_map_data_size(map);
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	u32 max_depth;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
--	max_depth += skip;
--	if (max_depth > sysctl_perf_event_max_stack)
--		max_depth = sysctl_perf_event_max_stack;
-+	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
- 
- 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
- 				   false, false);
-@@ -342,7 +342,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 		/* couldn't fetch the stack trace */
- 		return -EFAULT;
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	return __bpf_get_stackid(map, trace, flags, max_depth);
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -374,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 	bool kernel, user;
- 	__u64 nr_kernel;
- 	int ret;
-+	u32 elem_size, max_depth;
- 
- 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
- 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
-@@ -392,16 +393,18 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		return -EFAULT;
- 
- 	nr_kernel = count_kernel_ip(trace);
--
-+	elem_size = stack_map_data_size(map);
- 	if (kernel) {
- 		__u64 nr = trace->nr;
- 
- 		trace->nr = nr_kernel;
--		ret = __bpf_get_stackid(map, trace, flags);
-+		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		ret = __bpf_get_stackid(map, trace, flags, max_depth);
- 
- 		/* restore nr */
- 		trace->nr = nr;
- 	} else { /* user */
-+
- 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 
- 		skip += nr_kernel;
-@@ -409,7 +412,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 			return -EFAULT;
- 
- 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
--		ret = __bpf_get_stackid(map, trace, flags);
-+		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		ret = __bpf_get_stackid(map, trace, flags, max_depth);
- 	}
- 	return ret;
- }
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
