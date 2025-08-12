@@ -1,145 +1,217 @@
-Return-Path: <linux-kernel+bounces-765547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA9DB239C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:09:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E102EB239DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FA71BC0793
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:07:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D20EE7BB83F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EAA1FAC34;
-	Tue, 12 Aug 2025 20:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F282C21C4;
+	Tue, 12 Aug 2025 20:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ONN9quwT"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="iPJ3MRfB"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EA2F0666
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 20:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7559C2F067C;
+	Tue, 12 Aug 2025 20:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755029201; cv=none; b=qe/KgJu8lpBa+f7JKf9saW2xXjWmeyAVkDqPW03oy3RsVdAYw/cPa/RLwFc3GsL/5M42eEwdmWberXqgG664nb/HJW3MbPtrtImsZe6GvavrtwhmQgu4BS97L7k45Ha33GsYZCkW6AZffkRy3A3Ye2M5+qU4Y+6rrIIDEowfdTs=
+	t=1755029788; cv=none; b=N6XQc61NjLTpzjU/NxNKk4JbDI2t0AsYQUGh+FDho3keD0/0w6eQuDyR1pZkHlXctnLIrORSqbxwp9eLIl8+1c8Frs8bVbTYuORX0goNsoa/YbEjuZiRbs8w1cyzNDrMO3dCOIxP+E+3FwguxmliFp0hgH3PKSyTSNz5ISGe6n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755029201; c=relaxed/simple;
-	bh=i8HY5u63XJP2plaosaDKuXc1itBLuDy+0U6FlcOWZ20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qrZTeuFt94wZlhMNIL300nvlmcgxQE/b4QDgdB2lEhJRgnj7/UVhrZjvA5g8xUmAOBWIlOTAi8cHOj0fWULc5FChAsMWTlFXd+bUgX0SDs2d13qPwgKtP9E0qUxRk2wXbug16RD0t7Da46JoW9U2LQ3ahRuHQZM/ok/KBgAd7F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ONN9quwT; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b0a0870791so80780221cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755029199; x=1755633999; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqkiQnb+v+DV7bwshJvcuqOvg6eI6sY8lksQaVEmngk=;
-        b=ONN9quwT/wFuQ9Fihb4ymxfK5Qn+8rULdZmdvb12CWxefvol6wTSVidKp9x70Gaaqi
-         0C/a6pC12WK2TGCFTNq62g6HcpjuedYAMRso+yGxyab2UlKJaVgxkwBRIl0m1siSo93H
-         T70DKdE0qCimZ5GffpKDvKQze13IXoZfjYeMHDtJLa963v/6Pmjl1MwHuSXZCUj9IjNu
-         nLUAnVwbyndewRH7M693cA+Jsfwm/aJVQU9j768uB5YqloVeHA+NKqHznZ1V1VzXHd0Z
-         VWL79B0ipIYtTJLIJgwIUWWN/uUQaWpjeiRGwCYaHxnZwHuW3bLDQttYRKh9bHVMmr6p
-         KVvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755029199; x=1755633999;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqkiQnb+v+DV7bwshJvcuqOvg6eI6sY8lksQaVEmngk=;
-        b=JHkEh/Ixbakb/uhazE8R7+yAg+upU0mXhuK0nz1G4UiNlGHU1xnShPSOtzpoFM/a8x
-         YQEveSl7SwJ9eM8YRLULpDQvbpQU0ztC2zPOdhveDSmta543AwLhKFC5mqcU3+SPCQbe
-         Ztr4j7jWZyZ7coedgubccdgp5Jgs/XW20riyX8FdLk82SvDoMs9jjoOaEq8Mgr18F8dW
-         Dvs6l630bhxDuUUqSW7lWjUkwykjyrdmNX9gBnthDJaMLgnMOC36JdUoAOXSZVQrqdDV
-         9MzivYR2J7ikaR01A01lz8DQRolrldVJScY6O5LZzGMxSNGgLRjCiddwr+jDq2LQ8wBE
-         XWuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxYemTYTDatbqwyMnInSKkRNio6VJN7xQm+OACJVGn4hpmboAF4WHFumpZvc2IEqzgnsOtopc7dxhTT1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPrn1PmAxt8eGUxcEx+k/5YeuePXeWx+d6dB+k/w6UEjKwY19C
-	8V+4XEJrHmzNQLbdOltCRULg2sH6aawN9lQ6s1kq+u3X0doCeV9ImGaypkHnuq6m9A==
-X-Gm-Gg: ASbGncuYWrE8bQh31cExeq+7DyQABaWzWmcd/wsTQB3JRXlxGwzaPkfDV8dOudgv11O
-	UV9XEndQMYtGharXEpJ+Hn+xVIX6+QCiv/RoHk6ugMlNWvFRLpFPytdGKFNT6Q1fZ7+Cb6PZ53h
-	QXSMj6DHiONTN9S1NlnJVqLHTz+WcYunj3madO3Mz7moiPPb3VQKRKrRoW2PgGmT3/OEDgGd6O9
-	WJiCl07RB1EZevb2Ls/mGF1FEMQWR0VsCHbzYL4Q1KRVO9lIGJdxgtGH4rGzFJcfqGZ+kFqQ3By
-	w/yrCJ6KjycH8tuwGSGOE9Z+n5INPRbPvn6lQrZc7+yUYCWGBD60PQvtSPnvNmV/sERSgyLdFu4
-	StyJRmWLd8GGFNn5I32i61v4=
-X-Google-Smtp-Source: AGHT+IGGZlvv17fMp2WDnfMMFShmDsTlMM6IcnzKcbMc/Ggu/R7+9qwyKK0VohswEqNLATbAFPlTWg==
-X-Received: by 2002:a05:6214:29e6:b0:707:51a6:184f with SMTP id 6a1803df08f44-709e89fd871mr5029606d6.48.1755029198601;
-        Tue, 12 Aug 2025 13:06:38 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::e316])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ca363fesm179978606d6.31.2025.08.12.13.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 13:06:38 -0700 (PDT)
-Date: Tue, 12 Aug 2025 16:06:35 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: storage: realtek_cr: Simplify
- rts51x_bulk_transport()
-Message-ID: <b11a19b6-9fb3-4fdc-b94e-33ff01a634b3@rowland.harvard.edu>
-References: <20250812144358.122154-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755029788; c=relaxed/simple;
+	bh=ReOXUiapkiPyT+dNUFjKcI1zRg06NazNsC4FbCqX5pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AK+QgAoh5tkRi4nmkDc7awrLZXXsrkd5HekiZEiGeUWkVbsyAcUB/GQ0VvXbTF/CuR60Wae/51MtF/3PKvS0ECsF1nMYe4MLhjWQrwFsMIFoWdAoJpmOTCHgpSm9LqbgjoA1PYcqQRPWGF9U5LLV6hDXbupmmbEAzf2SkyumJk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=iPJ3MRfB; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CJRLZB018944;
+	Tue, 12 Aug 2025 20:16:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pps0720; bh=95lsorJVpsmlUu1G3BMjrZjeCRoLf9/MPQzrr
+	gkGVII=; b=iPJ3MRfBV5JltkJBDoWHqSkf4P+ED7GqFyQptkGGSPlsMT0RSmDWx
+	dO4GFWE7Gq1YCT5kuledcHz6e+myeXqKn3j/lLmaC+b6wq7JQJbM6k5MvMDJycBD
+	+x8wy21slxlK6WwSGURetJOl/eQdkOkbo9IdwldwEDAQrXAWqLamzCMwVGtriIgi
+	UXo2fRwwdcWDCIDaNN4egcssfM7unFFHwZ3j6kMooCUr1KsU29n0ow44RLwentYb
+	0pB2cKVJ2CVzbXxtOXPakJMgZV5Y1V39aGw1V9Vt/FA9EtJvZ1O9eemomsfd8I+g
+	xw2HI4sN6BUhH5Mw+CIajQ3onNNQGsgug==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48g2rdnuq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 20:16:09 +0000 (GMT)
+Received: from test-build-fcntl.hpe.com (unknown [192.58.206.38])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id A48E1805E05;
+	Tue, 12 Aug 2025 20:16:08 +0000 (UTC)
+Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
+	id 8EF97883AC57; Tue, 12 Aug 2025 20:07:09 +0000 (UTC)
+From: Rajeev Mishra <rajeevm@hpe.com>
+To: axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajeev Mishra <rajeevm@hpe.com>
+Subject: [PATCH v3] loop: use vfs_getattr_nosec() for accurate file size
+Date: Tue, 12 Aug 2025 20:07:07 +0000
+Message-ID: <20250812200707.233139-1-rajeevm@hpe.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812144358.122154-1-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: sjITrpqU6aCvmWqh_-0wdgVWG5e1udJc
+X-Authority-Analysis: v=2.4 cv=EOIG00ZC c=1 sm=1 tr=0 ts=689ba10a cx=c_pps
+ a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
+ a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=wM2jcdVKGrdHGHgjmVEA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE5MyBTYWx0ZWRfXzoFb0l9DJvU3
+ wfjpda4IJNxhU5hMNzlo8JgbIpAhZCgjoni/xKtCG1OitvekgDRJbIpMRv0dvWcaejYp3imZUeX
+ ONmzX23wzH7gQI/zGMeGBJ6wz14jeExyG8+s428ztBog4ZK6Tex2z4Li3QGMeH8KKHxEszhx38i
+ zbnXhyD3qDwMPHB7FZE2RWc+1fXNfdAiXt9RCzwrui+PfM7XIk8ZLhdbccQMmKYFAUEdsYT9eo/
+ IypQrB6xgoiQQJzm8cDSxPCRPl8iVh6XwZpknqXoGkLRXcbuc54eDXMsVOLHHrqmSE5KpYBbkZi
+ bo3itBOlM+Kg4zg2GIMdIyQj688p6EweXdaY4vG9UvsHo9aM7mCUWIdJh0W/y7t5znG4P8wmsLr
+ qU0l6LtqYUiyt9cKCbxbz3QtVKe/wQEtJzdvWG897ldEWHoaXIzspZX/Gm5l7fjUC8bhRCU5
+X-Proofpoint-ORIG-GUID: sjITrpqU6aCvmWqh_-0wdgVWG5e1udJc
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 phishscore=0 spamscore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 impostorscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120193
 
-On Tue, Aug 12, 2025 at 04:43:58PM +0200, Thorsten Blum wrote:
-> Change the function parameter 'buf_len' from 'int' to 'unsigned int' and
-> only update the local variable 'residue' if needed.
-> 
-> Update the rts51x_read_status() function signature accordingly.
+This commit includes the following changes:
+ 1. Renamed get_size to lo_calculate_size.
+ 2. Merged the functionality of get_size and
+    get_loop_size into lo_calculate_size.
+ 3  Updated callers of the above functions
+    to use lo_calculate_size.
+ 4. Replaced i_size_read with vfs_getattr_nosec()
+    to obtain a more accurate file size for
+     network filesystems where cached metadata may be stale
 
-That last part isn't really necessary, is it?  It doesn't make the code 
-any clearer, less buggy, or quicker to execute.
+Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+---
+ drivers/block/loop.c | 53 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 35 insertions(+), 18 deletions(-)
 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/usb/storage/realtek_cr.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
-> index 7dea28c2b8ee..8a4d7c0f2662 100644
-> --- a/drivers/usb/storage/realtek_cr.c
-> +++ b/drivers/usb/storage/realtek_cr.c
-> @@ -199,7 +199,8 @@ static const struct us_unusual_dev realtek_cr_unusual_dev_list[] = {
->  #undef UNUSUAL_DEV
->  
->  static int rts51x_bulk_transport(struct us_data *us, u8 lun,
-> -				 u8 *cmd, int cmd_len, u8 *buf, int buf_len,
-> +				 u8 *cmd, int cmd_len, u8 *buf,
-> +				 unsigned int buf_len,
->  				 enum dma_data_direction dir, int *act_len)
->  {
->  	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *)us->iobuf;
-> @@ -260,8 +261,8 @@ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
->  	 * try to compute the actual residue, based on how much data
->  	 * was really transferred and what the device tells us
->  	 */
-> -	if (residue)
-> -		residue = residue < buf_len ? residue : buf_len;
-> +	if (residue > buf_len)
-> +		residue = buf_len;
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 1b6ee91f8eb9..6bfec38275b0 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -137,20 +137,43 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+ static int max_part;
+ static int part_shift;
+ 
+-static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
++/**
++ * lo_calculate_size - calculate the effective size of a loop device
++ * @lo: loop device
++ * @file: backing file
++ *
++ * Calculate the effective size of the loop device based on backing file size,
++ * offset, and size limit. Uses vfs_getattr_nosec() for accurate file size
++ * information, particularly important for network filesystems where cached
++ * metadata may be stale.
++ *
++ * Returns: size in 512-byte sectors, or 0 on error
++ */
++static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
+ {
++	struct kstat stat;
+ 	loff_t loopsize;
++	int ret;
+ 
+-	/* Compute loopsize in bytes */
+-	loopsize = i_size_read(file->f_mapping->host);
+-	if (offset > 0)
+-		loopsize -= offset;
+-	/* offset is beyond i_size, weird but possible */
++	/*
++	 * Get the accurate file size. This provides better results than
++	 * cached inode data, particularly for network filesystems where
++	 * metadata may be stale.
++	 */
++	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
++	if (ret)
++		return 0;
++
++	loopsize = stat.size;
++
++	if (lo->lo_offset > 0)
++		loopsize -= lo->lo_offset;
++	/* offset is beyond file size, weird but possible */
+ 	if (loopsize < 0)
+ 		return 0;
+ 
+-	if (sizelimit > 0 && sizelimit < loopsize)
+-		loopsize = sizelimit;
++	if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
++		loopsize = lo->lo_sizelimit;
+ 	/*
+ 	 * Unfortunately, if we want to do I/O on the device,
+ 	 * the number of 512-byte sectors has to fit into a sector_t.
+@@ -158,11 +181,6 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+ 	return loopsize >> 9;
+ }
+ 
+-static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+-{
+-	return get_size(lo->lo_offset, lo->lo_sizelimit, file);
+-}
+-
+ /*
+  * We support direct I/O only if lo_offset is aligned with the logical I/O size
+  * of backing device, and the logical block size of loop is bigger than that of
+@@ -569,7 +587,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 	error = -EINVAL;
+ 
+ 	/* size of the new backing store needs to be the same */
+-	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
++	if (lo_calculate_size(lo, file) != lo_calculate_size(lo, old_file))
+ 		goto out_err;
+ 
+ 	/*
+@@ -1063,7 +1081,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+ 	loop_update_dio(lo);
+ 	loop_sysfs_init(lo);
+ 
+-	size = get_loop_size(lo, file);
++	size = lo_calculate_size(lo, file);
+ 	loop_set_size(lo, size);
+ 
+ 	/* Order wrt reading lo_state in loop_validate_file(). */
+@@ -1255,8 +1273,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 	if (partscan)
+ 		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
+ 	if (!err && size_changed) {
+-		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
+-					   lo->lo_backing_file);
++		loff_t new_size = lo_calculate_size(lo, lo->lo_backing_file);
+ 		loop_set_size(lo, new_size);
+ 	}
+ out_unlock:
+@@ -1399,7 +1416,7 @@ static int loop_set_capacity(struct loop_device *lo)
+ 	if (unlikely(lo->lo_state != Lo_bound))
+ 		return -ENXIO;
+ 
+-	size = get_loop_size(lo, lo->lo_backing_file);
++	size = lo_calculate_size(lo, lo->lo_backing_file);
+ 	loop_set_size(lo, size);
+ 
+ 	return 0;
+-- 
+2.43.7
 
-This really has nothing at all to do with whether buf_len is a signed 
-quantity -- it should never be negative.  (And I have no idea why the 
-original code includes that test for residue being nonzero.)
-
-Much more serious is something you didn't change: Just above these lines 
-it says:
-
-	residue = bcs->Residue;
-
-It should say:
-
-	residue = le32_to_cpu(bcs->Residue);
-
-Alan Stern
 
