@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-764679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE955B225E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:32:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74F4B225E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CD01B642AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4FC3B829F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9432ED850;
-	Tue, 12 Aug 2025 11:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276812ED854;
+	Tue, 12 Aug 2025 11:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQol54+r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bJVy1O5g"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037A72857DF;
-	Tue, 12 Aug 2025 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2B22C21D7;
+	Tue, 12 Aug 2025 11:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754998331; cv=none; b=H8oIOY/ajGvp91X/6hDKWspvYLT990U6stA9/fFm5TdjmOWBAcbwvpXetbG9gXV0SCON5bfeLOhhgHmmTPyJb/FBm9Tsv2WmorI2WN/tkDhz9ZwhoJlMXlI/t7Oqu5DeVvq6K79k3N2gZs4rdtzjOat0WBZaJxeY1we8t2BHX+0=
+	t=1754998425; cv=none; b=nmq1Wyd2bXpDuUfOOrhanDIMS3QNpvLefTTC8TzgEwElfAZedx4n/kvOI8vKug7ZPUWup+z2NljxEmNMN0dHQpcBYJ2tz1HIdmlSJe+i7oQNbexk30l21qnfcGoH781mA1oSj8VGnbO7d7xXMeMjqDe90JxzOmt6gGJM99sHmNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754998331; c=relaxed/simple;
-	bh=cQOWn3jceA2AGFYehbqGll5sJj3MlSpToDLlFTKmkhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nhtDKeSyGb9XlTzbNbSlAFnJ6yAGubuQ8x5g8OF3MvNTvdgo9aSonOqQRFHtKTSyaKGOcIOpB4uv7JP7h/fkL9FVC3KbjSt5WYVIMZM7y8BJbFg9j947HDJwFuxRQfjbpR1AVhADg/wF54jo8kqDY1p0+PY3Y8LKSgK5hwsEOLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQol54+r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED7AC4CEF0;
-	Tue, 12 Aug 2025 11:32:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754998330;
-	bh=cQOWn3jceA2AGFYehbqGll5sJj3MlSpToDLlFTKmkhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sQol54+r9H3PpfZUkm4Q+nYzD9Fpdah/pD/jnKqeEGhOrPcmzCqs0qG0XLI2OA8T6
-	 bZDMW2Z4aYiUCRAn+66O91K3cgCXqkB5UdyFvD9Gud0IydACwcQXJeTDq1RcMO3ikU
-	 ekxTICz0nLGVhphDnBHIUIUA1oKr82qwZ+bNmbSSF3i19ec9RcNXdmOx3f1UnNZJc/
-	 ctSCWOR1EHqIjuDDqX7+QtWgC1GnDv/s03vtyBbIL3BFJLp7WOUJFasLIDsiJnYY/q
-	 H3ynodqBzCLhNCq0kjtliuUuqkACFRk/gLYldhVSQZPAEKPaQCHnFPWb4NyFNLEArH
-	 uZWH0hgLK+SUA==
-Message-ID: <aea953ea-c8de-4905-a89b-b3c2de2402b1@kernel.org>
-Date: Tue, 12 Aug 2025 13:32:06 +0200
+	s=arc-20240116; t=1754998425; c=relaxed/simple;
+	bh=h4oj1WhuRrapx4GHo/FKB4PFUHJ4LkPlpbn6wddZnfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hC1WYnMS09h4llLDEGqVSobaOHs68EcUU8Cf2pS/YSC1ksOccT/S+qG0KXMaTDrps9Z+5VaUdeqWhIFStKoVN+me72sW7gyVVFvC+BBUB4ZrjKoHj5nsRcgdqrbq20KM7r1yu4zVbHjmW41Knbg8nF4Z9toVqqnmhAaArC4DmKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bJVy1O5g; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MEBD3TpHaW1vadsSPwAt2sDJfbcaDwirw+PcwQCV5WA=; b=bJVy1O5gm96Ty50ADEC4XgIS1S
+	s9G1Jjwl8igaIouXLNAfTS+tnqAA6eos7KqAZNzhzjrlY6mf8G71g58Kj7T4/UCGZ3hM3urSJRMlD
+	jx37taTb7Cskg139OOo3QJ6VPd0gbDwuS3Vr5zXOa4G40MMFaMinMwLFz0b548gfOyd38irvF0r54
+	ZfcHxdZiZFPKty6DM79qEB5GIWbpmUbLM3novZ7Dx0Q0xh92qgp9vxiy6DNPOsv7oUGMGDNQ8we4r
+	ngt59GJ3yFN8iohk6q6HigcHW02Lmt7CgNkdHxoVOMC52dZLGTmtZKRDGH8hDawjZxkxk0Y8DqnDT
+	lYmRzTKw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50720)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ulnG7-0004n4-0w;
+	Tue, 12 Aug 2025 12:33:39 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ulnG4-0004gB-1T;
+	Tue, 12 Aug 2025 12:33:36 +0100
+Date: Tue, 12 Aug 2025 12:33:36 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stas Sergeev <stsp@list.ru>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: explicitly check in of_phy_is_fixed_link() for
+ managed = "in-band-status"
+Message-ID: <aJsmkAiV7tvFEeyA@shell.armlinux.org.uk>
+References: <20250812105928.2124169-1-vladimir.oltean@nxp.com>
+ <aJsj_zOGUinEke1o@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Describe the first PCIe
- controller and PHY
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
- cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJsj_zOGUinEke1o@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 12/08/2025 05:16, Bjorn Andersson wrote:
-> Only one PCIe controller has been described so far, but the SC7280 has
-> two controllers/phys. Describe the second one as well.
+On Tue, Aug 12, 2025 at 12:22:40PM +0100, Russell King (Oracle) wrote:
+> On Tue, Aug 12, 2025 at 01:59:28PM +0300, Vladimir Oltean wrote:
+> > And the other sub-case is when the MDIO-less PHY is also silent on the
+> > in-band autoneg front. In that case, the firmware description would look
+> > like this (b):
+> > 
+> > 	mac {
+> > 		phy-mode = "sgmii";
+> > 
+> > 		fixed-link {
+> > 			speed = <10000>;
+> > 			full-duplex;
+> > 		};
+> > 	};
+> > 
+> > (side note: phylink would probably have something to object against the
+> > PHY not reporting its state in any way, and would consider the setup
+> > invalid, even if in some cases it would work. This is because its
+> > configuration may not be fixed, and there would be no way to be notified
+> > of updates)
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 134 +++++++++++++++++++++++++++++++++++
->  1 file changed, 134 insertions(+)
+> Both of these are fully supported by phylink, and your side note is
+> incorrect. Phylink provides all the functionality.
+> 
+> With the description in (b), if a MAC driver wishes to, it can provide
+> phylink_config->get_fixed_state() and override the speed, duplex and
+> pause in the same way that is possible with fixed PHY.
+> 
+> So, unless I missed something, I don't think your commit description
+> is correct. If it is correct, it is ambiguous.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+As an additional point, I'm not sure what has broken that justifies
+this change for the net tree. You mention at one point in the commit
+description about wanting to use "c73" as a string for "managed",
+which suggests new development, and thus shouldn't this be targetting
+net-next?
 
-Best regards,
-Krzysztof
+Note that at present, all dts files in the kernel either omit the
+managed property, or have it present with value "in-band-status".
+
+Thus, I think the commit makes sense for net-next.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
