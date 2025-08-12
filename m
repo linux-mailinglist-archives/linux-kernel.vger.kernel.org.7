@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-764463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A78EB2234F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B6DB2245C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2CC188CAB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:34:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514B13A4376
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5C62E92DF;
-	Tue, 12 Aug 2025 09:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B93B2E3B17;
+	Tue, 12 Aug 2025 10:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pf7fzn4L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="jH69zRxe"
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF812E7BB1;
-	Tue, 12 Aug 2025 09:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA612E401
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991218; cv=none; b=pJQCDj667lCoQipV+hvU+BvG438Wy7dTY7ruuHDFE1mMByIwWqNiADVtSJRWd/WvWyA39vAVqkNMN6GLeuEaDGb6bG0UKUnF4qjKau6e7y9DhAWDUoyBsRIiclOZrgTQLiuiYH1H+ZGnoLPJHKb3wKJNI8e39F1gZrTmM8oUiAY=
+	t=1754993782; cv=none; b=qODPzLp2sSPay+c6o45o1vJwVtFw/lMaSHwPj59lcDE0gJalAXzfWcefU8iaovHugaXY4UbFQ+Vyv4suEoOrNQbxehyhwHDEZfFOn3TwzWsr9ZjW/LUwoIKCUWXVcf7MItil4CNUhmEIzSIwKF+YOmT66/WG75c1ANL8DkNJLww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991218; c=relaxed/simple;
-	bh=awVECIkj//NC3B2TraxKMvGe3uB8kJQ4UisWIm+eQEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZIt/cdGj6rzmHeglkzty4Fi8htmJPaJyeO7L6pO+DD5Xm1nQ+LCirUsZ/PI2nuqi/0Nx2kTTATekkb0kIo9JuJzzXqJ5lzPToEiWDx3ujMqIz8YWiKCTECUF5uuiJu6hgXcM+sG+AdAXVaDzR7yFFhYpnhy11F/QkKDMpGrFGAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pf7fzn4L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A6FCC4CEF6;
-	Tue, 12 Aug 2025 09:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754991217;
-	bh=awVECIkj//NC3B2TraxKMvGe3uB8kJQ4UisWIm+eQEc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pf7fzn4LaH5bQkMgjAiTtoP7T8keIrINlrcT/r7eagYQZjVIg9rmj6TIq0QJO5qq/
-	 lqcF8U7lezBatG5vitwCuO09s+OVWKNcPfw5O738QqQoh0q6W1ow0OPcmC3U8DHrCT
-	 AqqyIUSYmOqd0CBPkQz/7fOSISfQIy9Y6FhP2ZyASwV2PAJiVD5FNLiwiBiJyNkrsw
-	 p2B8/sXnDkizhStV548h/jyNap1kTeeZ1C8KCzrkxYuQzP13gtbX568ZHtyNTPdhAP
-	 vnyzJdK5obpPEMR+7OzHZntbzFX/Q4TJ5QaIdSvcooAuKO4ipSZ3jGag4Ye37zBCTl
-	 iufHl20YZyiQg==
-Date: Tue, 12 Aug 2025 11:33:29 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: EDAC Mailing List <linux-edac@vger.kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>, "David S. Miller" <davem@davemloft.net>, Ignacio
- Encinas Rubio <ignacio@iencinas.com>, Marco Elver <elver@google.com>, Shuah
- Khan <skhan@linuxfoundation.org>, Donald Hunter <donald.hunter@gmail.com>,
- Eric Dumazet <edumazet@google.com>, Jan Stancek <jstancek@redhat.com>,
- Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
- joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
- lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
- stern@rowland.harvard.edu, Breno Leitao <leitao@debian.org>, Randy Dunlap
- <rdunlap@infradead.org>, Simon Horman <horms@kernel.org>
-Subject: [GIT PULL for v6.17-rc2] add a generic yaml parser integrated with
- Netlink specs generation
-Message-ID: <20250812113329.356c93c2@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754993782; c=relaxed/simple;
+	bh=c4RWPv8ififaKqYqXU2CPR+8HAaQjUtL3HLdGTmVQPc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l5Y//vlXZExlFUtk2AQR5TbMmcgKzRtIQb6ZdFD30ef77guNshfHWweUYYmry9e5iQC9rgaBkqlPj90IV1fkjW/T3vDnpn+iQfxdEc0fW+2ai2Ly7U70CvUnQGi1sITGZfpYyy1TmQMAfNR7A+pJH64zuT8dr7sa6A0hgyT2Vxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=jH69zRxe; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 57C9YFv2048334
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:34:15 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 57C9XwwO046915;
+	Tue, 12 Aug 2025 17:33:58 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4c1RCD5g57z2KqZt3;
+	Tue, 12 Aug 2025 17:33:44 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Tue, 12 Aug 2025 17:33:56 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <dietmar.eggemann@arm.com>, <mingo@redhat.com>, <peterz@infradead.org>,
+        <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
+CC: <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <vdonnefort@google.com>, <ke.wang@unisoc.com>,
+        <xuewen.yan94@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
+Date: Tue, 12 Aug 2025 17:33:39 +0800
+Message-ID: <20250812093339.8895-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 57C9XwwO046915
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
+	s=default; t=1754991246;
+	bh=UWY2mKEvTa0wnX/pEG6AEYZML7JMB29Bm63BdbxkT9E=;
+	h=From:To:CC:Subject:Date;
+	b=jH69zRxe/Hv7o2TAXFIzXY3+oMctOVLoZeNh0B3ai4ga+LZEvEDvW9i2eqWI/tWXi
+	 Vpvlr90QO1k233NpaDOqo/1DwWKXP1o8vZ+NnB9jQpztc2c0JWYPuxOPt4yYBM6pBG
+	 Pvd34QDS8rzxyCTv0EdijGdnkGt22kmKFmUF0ulRPZ4Ud0UCooBoFkv3ZH1ic+iC6b
+	 jgGQexOwYiXYZzIFvV1oVhj8IO/5T+CtwWPUb0Eu/XUGHnyCxKaSvbzwy43itwfZQj
+	 9Wn5gkIvPOql5dWVMUK7d4uKugRNNCbCr94Z8gCsu5zh8rThUBuk0xE1TyKi97Xyf0
+	 xO9eaGLNHncSg==
 
-Hi Jon/Jakub,
+Now we use for_each_cpu() to traversal all pd's cpus,
+it is in order to compute the pd_cap. This approach may
+result in some unnecessary judgments.
+We can simply calculate pd_cap as follows:
 
-In case you both prefer to merge from a stable tag, please pull from:
+pd_cap = cpu_actual_cap * cpumask_weight(pd_cpus);
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git docs/v6.17-1
+Then we can AND pd'scpus, sd's cpus and task's cpus_ptr
+before traversing, which can save some unnecessary judgment.
 
-For:
-
-- An YAML parser Sphinx plugin, integrated with Netlink YAML doc
-  parser.
-
-The patch content is identical to my v10 submission:
-
-	https://lore.kernel.org/linux-doc/cover.1753718185.git.mchehab+huawei@kernel.org/
-
-The tag was rebased on the top of v6.17-rc1 to make easier for it to be
-merged on both docs and netlink trees. 
-
-No code changes since v10.
-
-Regards,
-Mauro
-
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 ---
+ kernel/sched/fair.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..e47fe94d6889 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8330,18 +8330,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 		cpu_actual_cap = get_actual_cpu_capacity(cpu);
+ 
+ 		eenv.cpu_cap = cpu_actual_cap;
+-		eenv.pd_cap = 0;
++		eenv.pd_cap = cpu_actual_cap * cpumask_weight(cpus);
+ 
+-		for_each_cpu(cpu, cpus) {
+-			struct rq *rq = cpu_rq(cpu);
+-
+-			eenv.pd_cap += cpu_actual_cap;
+-
+-			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+-				continue;
++		cpumask_and(cpus, cpus, sched_domain_span(sd));
+ 
+-			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+-				continue;
++		for_each_cpu_and(cpu, cpus, p->cpus_ptr) {
++			struct rq *rq = cpu_rq(cpu);
+ 
+ 			util = cpu_util(cpu, p, cpu, 0);
+ 			cpu_cap = capacity_of(cpu);
+-- 
+2.25.1
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git tags/docs/v6.17-1
-
-for you to fetch changes up to 47459937be8031aae6aaa17ac5f60985f7c9e1bd:
-
-  sphinx: parser_yaml.py: fix line numbers information (2025-08-12 07:47:31 +0200)
-
-----------------------------------------------------------------
-[GIT PULL for v6.17-rc2] add a generic yaml parser integrated with Netlink specs generation
-
-----------------------------------------------------------------
-Mauro Carvalho Chehab (14):
-      docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
-      tools: ynl_gen_rst.py: Split library from command line tool
-      docs: netlink: index.rst: add a netlink index file
-      tools: ynl_gen_rst.py: cleanup coding style
-      docs: sphinx: add a parser for yaml files for Netlink specs
-      docs: use parser_yaml extension to handle Netlink specs
-      docs: uapi: netlink: update netlink specs link
-      tools: ynl_gen_rst.py: drop support for generating index files
-      docs: netlink: remove obsolete .gitignore from unused directory
-      MAINTAINERS: add netlink_yml_parser.py to linux-doc
-      tools: netlink_yml_parser.py: add line numbers to parsed data
-      docs: parser_yaml.py: add support for line numbers from the parser
-      docs: parser_yaml.py: fix backward compatibility with old docutils
-      sphinx: parser_yaml.py: fix line numbers information
-
- Documentation/Makefile                             |  17 -
- Documentation/conf.py                              |  20 +-
- Documentation/netlink/specs/index.rst              |  13 +
- Documentation/networking/index.rst                 |   2 +-
- Documentation/networking/netlink_spec/.gitignore   |   1 -
- Documentation/networking/netlink_spec/readme.txt   |   4 -
- Documentation/sphinx/parser_yaml.py                | 123 +++++++
- Documentation/userspace-api/netlink/index.rst      |   2 +-
- .../userspace-api/netlink/netlink-raw.rst          |   6 +-
- Documentation/userspace-api/netlink/specs.rst      |   2 +-
- MAINTAINERS                                        |   1 +
- tools/net/ynl/pyynl/lib/__init__.py                |   2 +
- tools/net/ynl/pyynl/lib/doc_generator.py           | 398 +++++++++++++++++++++
- tools/net/ynl/pyynl/ynl_gen_rst.py                 | 384 +-------------------
- 14 files changed, 565 insertions(+), 410 deletions(-)
- create mode 100644 Documentation/netlink/specs/index.rst
- delete mode 100644 Documentation/networking/netlink_spec/.gitignore
- delete mode 100644 Documentation/networking/netlink_spec/readme.txt
- create mode 100755 Documentation/sphinx/parser_yaml.py
- create mode 100644 tools/net/ynl/pyynl/lib/doc_generator.py
 
