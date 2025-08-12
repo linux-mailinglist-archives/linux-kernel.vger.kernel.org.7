@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-764779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBA8B2273B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FDDB22742
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3846E1AA27A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E06506805
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A922F76E;
-	Tue, 12 Aug 2025 12:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9006230BC9;
+	Tue, 12 Aug 2025 12:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WTKJMJNG"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737233C2F;
-	Tue, 12 Aug 2025 12:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755002669; cv=pass; b=f86WGSuUYZJ4eP4IdIUE2u+UHxmwmZab/g6jw83WaZtp4wwEFQxPT0XAotn+mbpp8zY9VjqkOOzruQ967tnW9WLsP569rdOi/dX7G5yMJ8USI8lrS+6hKVru+dLX2qQeBMfWN4+yhhhiZT6k2hb6Ply1lJeBN5gOoFdyV71k4X8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755002669; c=relaxed/simple;
-	bh=aovnMvauQF14l6Ev5ezrn3B0Zeb5MSpsT+UmdVvzVno=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=N34LPRXHpjxFbpID+wqfZqDjsQdFw1SFDakyaiVDpJWev2h2XWbUoxv5IvI+0rdu3xDV2oNQmEj7+EyvifndFs+m9GmKdYS2i9omC1SKLlOGd6U80DjiTvMH8wq7GzxGuTboY+yyI6MUxo/rkGtgOjkG4cr6bcfXmOOjfC8PnSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WTKJMJNG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755002654; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lVQIibjdfhvMYBlR2QpvF1RpUnyaGJfDmIVEFm3xuwbZcYpobtvb/c3y6dMugUmzWCCYGzbietd7im/ZYeZ3a2vCQjrlHYrk7bd4hJ9UQGZ9qm4Gh8xuyJWjiOPaipLeea5+dlAtyIORY21oc7UPnqjTW7v0riPFQsy4FaczsIk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755002654; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NOOoxngxEdcM2kIUlTo4kWzeob+fFsO+rooI1FvSjkE=; 
-	b=nytNkYIIiLDhhjbMrHhe2+Z5MxLiti3Szv3XASp1+vniC+tsQ9mnhozUKxRZk+LXZEJ8YwbebpSABegV7MzIrYY+fkglLUcZxS4AlWnSi4OQvBtAKEk2EgBCIzrJix2x5VRpp6oEGzlKHLTYYMtreDBVRY+Npj4RbEOT/OkZGrc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755002654;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=NOOoxngxEdcM2kIUlTo4kWzeob+fFsO+rooI1FvSjkE=;
-	b=WTKJMJNGyjpvuT+FaweVGWfRNbK7cw18YEFnMqJ+BdA4lIjv4WTx8YVo2+rTxwTw
-	LaR+Dm8z+NfEXiPbDuh5ZlodPnt/uLRFTiLA9HiaHtxN1vVIHmNBHoqTjBomQ3Pq52e
-	GEU7dhMZRGyThkxeepM3njE/+99uTEPNMc7LGz1E=
-Received: by mx.zohomail.com with SMTPS id 1755002651086223.74919088830302;
-	Tue, 12 Aug 2025 05:44:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OkBwbnR/"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600132264CF
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755002705; cv=none; b=G2w4CbIubWiRm3EVpFeR0ranEFsSf4UXS2HgxRNo7hwrOzi5EKj8xLPBec4f4RtNiQcqL+3RE+4K1eE612/3xXdgWv+iawcTIF3LjjGp6a3xZidTwvAprTNs/ikKtNk0Iq/ZRalRkCU23P+cJ4vgTxeCcIe8EUjB/0esf6TVZEk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755002705; c=relaxed/simple;
+	bh=OeOKNsp1TJ3tODdB1TRUZ3miPBw028X/E/exf2UaPZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uI3bEzQ91phhfCwCXPeaQ5ERuL1jReWT2Ij8XHopf5iqSgYcxtWdSOaB4Ltuf86DvSi/Te0OvKuCTZ/hLnTRMUkNNTC2ot0nro9B29qrIIm446LSd3IogloVIzdOxsJVIdSPwQQZZc0K4AU6ui9ZEW/WtFAuIRNPFiElG4gjroU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OkBwbnR/; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=cO
+	k9r79i534l33IHFcOZxUqkWETUF/VetwHEVDXWx2k=; b=OkBwbnR/PkeJgGQPvY
+	E1oGt50+/fZnVylA9t4EyYKFzdoVZz8LZAUEjWTkYM9DquQdJC2MSikNoPNwSQRW
+	IPVKDUqaY2JdBRdX9doJTSQFwwLMk45Di80qzf1e5pI5o7135aVjgtmAKcAV4x0A
+	QTnkU2wcWMM2bDn8xLD5JH/XQ=
+Received: from lizhuoheng-virtual-machine.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXl1EnN5to+6r_Aw--.33623S2;
+	Tue, 12 Aug 2025 20:44:24 +0800 (CST)
+From: 15620332615@163.com
+To: suijingfeng@loongson.cn,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Zhuoheng Li <lizhuoheng@kylinos.cn>
+Subject: [PATCH] drm/lsdc: Use drm_gem_dumb_map_offset() helper
+Date: Tue, 12 Aug 2025 20:44:18 +0800
+Message-Id: <20250812124418.30914-1-15620332615@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aJsxUpWXu6phEMLR@sidongui-MacBookPro.local>
-Date: Tue, 12 Aug 2025 09:43:56 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9A6E941F-3F40-40C5-A900-4C22B27D1982@collabora.com>
-References: <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
- <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
- <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
- <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
- <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
- <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
- <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
- <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
- <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
- <DC0B7TRVRFMY.29LDRJOU3WJY2@kernel.org>
- <aJsxUpWXu6phEMLR@sidongui-MacBookPro.local>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXl1EnN5to+6r_Aw--.33623S2
+X-Coremail-Antispam: 1Uf129KBjvPXoW5Xr4kXw43Kr48uFWxXrW5p5X_Xr1kKoWIvF
+	13Ja1rtw1xAw4IyF13KFsxZFZrXrWa93y7Gr4DX3yDt3WUAr13XF97JFn5Ar13AFW3Z34j
+	kws3XrW7Ca18n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3AaLa
+	J3UbIYCTnIWIevJa73UjIFyTuYvjxUx18BUUUUU
+X-CM-SenderInfo: 5o2kikywsqjjiswrkqqrwthudrp/xtbBSQ6nLmibLAD5dwAAsf
 
+From: Zhuoheng Li <lizhuoheng@kylinos.cn>
 
+Replace the open-coded mmap offset calculation in the LSDC
+driver with the drm_gem_dumb_map_offset() helper. This avoids
+code duplication and ensures consistency with other DRM
+drivers.
 
-> On 12 Aug 2025, at 09:19, Sidong Yang <sidong.yang@furiosa.ai> wrote:
->=20
-> On Tue, Aug 12, 2025 at 10:34:56AM +0200, Benno Lossin wrote:
->> On Mon Aug 11, 2025 at 4:50 PM CEST, Sidong Yang wrote:
->>> On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
->>>>> There is `uring_cmd` callback in `file_operation` at c side. =
-`Pin<&mut IoUringCmd>`
->>>>> would be create in the callback function. But the callback =
-function could be
->>>>> called repeatedly with same `io_uring_cmd` instance as far as I =
-know.
->>>>>=20
->>>>> But in c side, there is initialization step `io_uring_cmd_prep()`.
->>>>> How about fill zero pdu in `io_uring_cmd_prep()`? And we could =
-assign a byte
->>>>> as flag in pdu for checking initialized also we should provide 31 =
-bytes except
->>>>> a byte for the flag.
->>>>>=20
->>>>=20
->>>> That was a follow-up question of mine. Can=C2=B4t we enforce =
-zero-initialization
->>>> in C to get rid of this MaybeUninit? Uninitialized data is just bad =
-in general.
->>>>=20
->>>> Hopefully this can be done as you've described above, but I don't =
-want to over
->>>> extend my opinion on something I know nothing about.
->>>=20
->>> I need to add a commit that initialize pdu in prep step in next =
-version.=20
->>> I'd like to get a comment from io_uring maintainer Jens. Thanks.
->>>=20
->>> If we could initialize (filling zero) in prep step, How about =
-casting issue?
->>> Driver still needs to cast array to its private struct in unsafe?
->>=20
->> We still would have the casting issue.
->>=20
->> Can't we do the following:
->>=20
->> * Add a new associated type to `MiscDevice` called `IoUringPdu` that
->>  has to implement `Default` and have a size of at most 32 bytes.
->> * make `IoUringCmd` generic
->> * make `MiscDevice::uring_cmd` take `Pin<&mut =
-IoUringCmd<Self::IoUringPdu>>`
->> * initialize the private data to be `IoUringPdu::default()` when we
->>  create the `IoUringCmd` object.
->=20
-> `uring_cmd` could be called multiple times. So we can't initialize
-> in that time. I don't understand that how can we cast [u8; 32] to
-> `IoUringPdu` safely. It seems that casting can't help to use unsafe.
-> I think best way is that just return zerod `&mut [u8; 32]` and
-> each driver implements safe serde logic for its private data.=20
->=20
+No functional changes intended.
 
-Again, can=E2=80=99t we use FromBytes for this?
+Signed-off-by: Zhuoheng Li <lizhuoheng@kylinos.cn>
+---
+ drivers/gpu/drm/loongson/lsdc_drv.c |  2 +-
+ drivers/gpu/drm/loongson/lsdc_gem.c | 16 ----------------
+ drivers/gpu/drm/loongson/lsdc_gem.h |  5 -----
+ 3 files changed, 1 insertion(+), 22 deletions(-)
 
+diff --git a/drivers/gpu/drm/loongson/lsdc_drv.c b/drivers/gpu/drm/loongson/lsdc_drv.c
+index 12193d2a301a..7638cb6dd9b2 100644
+--- a/drivers/gpu/drm/loongson/lsdc_drv.c
++++ b/drivers/gpu/drm/loongson/lsdc_drv.c
+@@ -44,7 +44,7 @@ static const struct drm_driver lsdc_drm_driver = {
+ 
+ 	.debugfs_init = lsdc_debugfs_init,
+ 	.dumb_create = lsdc_dumb_create,
+-	.dumb_map_offset = lsdc_dumb_map_offset,
++	.dumb_map_offset = drm_gem_dumb_map_offset,
+ 	.gem_prime_import_sg_table = lsdc_prime_import_sg_table,
+ 	DRM_FBDEV_TTM_DRIVER_OPS,
+ };
+diff --git a/drivers/gpu/drm/loongson/lsdc_gem.c b/drivers/gpu/drm/loongson/lsdc_gem.c
+index a720d8f53209..107efd240756 100644
+--- a/drivers/gpu/drm/loongson/lsdc_gem.c
++++ b/drivers/gpu/drm/loongson/lsdc_gem.c
+@@ -246,22 +246,6 @@ int lsdc_dumb_create(struct drm_file *file, struct drm_device *ddev,
+ 	return 0;
+ }
+ 
+-int lsdc_dumb_map_offset(struct drm_file *filp, struct drm_device *ddev,
+-			 u32 handle, uint64_t *offset)
+-{
+-	struct drm_gem_object *gobj;
+-
+-	gobj = drm_gem_object_lookup(filp, handle);
+-	if (!gobj)
+-		return -ENOENT;
+-
+-	*offset = drm_vma_node_offset_addr(&gobj->vma_node);
+-
+-	drm_gem_object_put(gobj);
+-
+-	return 0;
+-}
+-
+ void lsdc_gem_init(struct drm_device *ddev)
+ {
+ 	struct lsdc_device *ldev = to_lsdc(ddev);
+diff --git a/drivers/gpu/drm/loongson/lsdc_gem.h b/drivers/gpu/drm/loongson/lsdc_gem.h
+index 92cbb10e6e13..f79f06874286 100644
+--- a/drivers/gpu/drm/loongson/lsdc_gem.h
++++ b/drivers/gpu/drm/loongson/lsdc_gem.h
+@@ -14,11 +14,6 @@ lsdc_prime_import_sg_table(struct drm_device *ddev,
+ 			   struct dma_buf_attachment *attach,
+ 			   struct sg_table *sg);
+ 
+-int lsdc_dumb_map_offset(struct drm_file *file,
+-			 struct drm_device *dev,
+-			 u32 handle,
+-			 uint64_t *offset);
+-
+ int lsdc_dumb_create(struct drm_file *file,
+ 		     struct drm_device *ddev,
+ 		     struct drm_mode_create_dumb *args);
+-- 
+2.34.1
 
 
