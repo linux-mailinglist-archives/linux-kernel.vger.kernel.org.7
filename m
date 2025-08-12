@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-765318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05D6B22E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:12:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DC3B22EA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90F93BB27C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4E91A26BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCC22FAC1E;
-	Tue, 12 Aug 2025 17:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D42FAC1B;
+	Tue, 12 Aug 2025 17:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL4Sw+hk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E95QSfBv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E873C242D74;
-	Tue, 12 Aug 2025 17:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCFE23D7F6;
+	Tue, 12 Aug 2025 17:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018580; cv=none; b=h+nI8Tpqa4qtMBqcx6f55VlmHZOnTqQAVk0ugz2Nwq3L7kqAwjKtOsSJRja5asllqqgnci/gGBvkEIEUcDf+oiyhMmhKW7zAp0FmA7g2Feu7ZY5DDDhtyXqYd0By7BOGgc4tR7kOh4Dw/4xKBV0YhYavMiLIjlfGHwIUxs/4q8Y=
+	t=1755018659; cv=none; b=XcGDcqEYka1EgdiLYKqw+hNY0wscogEJRcDTucMj1NsEXSB1IyiJmnTc9YJ9TTcGJdDpqAAapKr7u+A7avMQg4YN1Qf00u413zlfbm0+oWJ5a2YecOX1/UThbxBMm+OXGgHk/3vfEkZ2oxG0ZHVDHFf6OxO0wunY4wBGNoCJIJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018580; c=relaxed/simple;
-	bh=WllhlpeuM1QYj3ynp+yRWpiZPyuig56MrMJq6geJbq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y1R0TIYcsGbnY+GuDvxx5A9Di8gJr2BcPjiW0HZHoiOEEnGiJJH/b8JLRwPJs8SAAJpWKeRmM8sM8sL0a8WcenKIuxYYmxFSu4C/Ci1MpyaGSWqAcmJHE762y1b71llMk5D/l/MxfCA68dVSKsvmCTSlPy1QgsApAXzjTBYJyA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL4Sw+hk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 315F7C4CEF6;
-	Tue, 12 Aug 2025 17:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755018576;
-	bh=WllhlpeuM1QYj3ynp+yRWpiZPyuig56MrMJq6geJbq0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oL4Sw+hk8pHYaYySOCd+3ByAPToVrqxHD3EhBtFQtquiy/gNpJhiIPi7WbacIdYq+
-	 JvtT9wxou7H8//kEP7MDOPvjQd4VmV1IYtx+Q/IG6W7pR23Rde8bNJVBEpyN3Q48go
-	 wA4XGXVUYZrDwV7DQ3VDcHGRJ/iMWWdqSMG9yafwpj49LkbHWRh15PW0xw9d6pqlkd
-	 IAdLzvxQ137cGLL35VCrUz47GH7iJNQYbtJ4KNK0AUoP52esjXltISKF3O/YNUU8ob
-	 WX9UxN5jHoZUnM/0UgRfb0OvEIWIn4+byx88nT14VS4T5qmwmL20Aq0dkjIy4XLHU6
-	 RrdPlWcKcaEZA==
-From: SeongJae Park <sj@kernel.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Rik van Riel <riel@surriel.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH] mm: remove redundant __GFP_NOWARN
-Date: Tue, 12 Aug 2025 10:09:33 -0700
-Message-Id: <20250812170933.56674-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <aJs9dPMdY_W5uZdc@hyeyoo>
-References: 
+	s=arc-20240116; t=1755018659; c=relaxed/simple;
+	bh=oeO3oswPSIxuGMauo6AcF42kFWIo1ZJwzMrkI3ytPDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8tCaPoT0Vq2tPQpInWO2aapzMRfQCvm7fSxYTILF1EhWiQWso/CY7vqSZanSQq9CrbkFGiFTzvtJmSc5+oEHuruNzpa3a4HJ0jTc2cqkgoZC9kPtYvK0unbBBY2VGiSYsRLS78esOvBLlg4U7a4bgIznvEgp18O5okCg7JKza8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E95QSfBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15094C4CEF0;
+	Tue, 12 Aug 2025 17:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755018657;
+	bh=oeO3oswPSIxuGMauo6AcF42kFWIo1ZJwzMrkI3ytPDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E95QSfBvzwPBeou03b7N2PaZxmUFSsnbQpRpgSJXg19TdnDdkzo39NoE+pJeuEhlP
+	 TILOEdEscv62rBW2O13X0Opqk/BJ0gaAP/oc5qV8WOHpkslUSy81wixeM0pffj1TYi
+	 rUKCkdvX9ErRcC1NPFWjVZZrct2CYPhKsul3Mep4=
+Date: Tue, 12 Aug 2025 19:10:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Ilya K <me@0upti.me>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	lenb@kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
+Message-ID: <2025081227-humpback-garden-7a4b@gregkh>
+References: <20250729062038.303734-1-W_Armin@gmx.de>
+ <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
+ <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
+ <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
+ <2025081246-raft-tattle-642c@gregkh>
+ <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
 
-On Tue, 12 Aug 2025 22:11:16 +0900 Harry Yoo <harry.yoo@oracle.com> wrote:
-
-> On Tue, Aug 12, 2025 at 05:57:46PM +0800, Qianfeng Rong wrote:
-> > Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
-> > GFP_NOWAIT implicitly include __GFP_NOWARN.
+On Tue, Aug 12, 2025 at 06:54:39PM +0200, Armin Wolf wrote:
+> Am 12.08.25 um 18:40 schrieb Greg KH:
+> 
+> > On Tue, Aug 12, 2025 at 06:51:10PM +0300, Ilya K wrote:
+> > > On 2025-08-12 16:32, Rafael J. Wysocki wrote:
+> > > > Applied as 6.17-rc material and sorry for the delay (I was offline).
+> > > > 
+> > > > Thanks!
+> > > Thanks!
+> > > 
+> > > Tagging stable@ so we're hopefully in time for 6.16.1.
+> > <formletter>
 > > 
-> > Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
-> > `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
-> > redundant flags across subsystems.
+> > This is not the correct way to submit patches for inclusion in the
+> > stable kernel tree.  Please read:
+> >      https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> > for how to do this properly.
 > > 
-> > No functional changes.
-> > 
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> > ---
+> > </formletter>
 > 
-> Maybe
+> Agree.
 > 
-> .gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
->                         __GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
-> 
-> in mm/damon/paddr.c also can be cleaned up to
-> 
-> .gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
->                         | __GFP_NOMEMALLOC | GFP_NOWAIT, 
-> 
-> ?
+> AFAIK the Fixes: tag should be enough to ensure that this patch gets included
+> in the affected stable kernels.
 
-Thank you for catching this, Harry!
+Not at all!
 
-FYI, the code has moved into mm/damon/ops-common.c by commit 13dde31db71f
-("mm/damon: move migration helpers from paddr to ops-common").  Please feel
-free to make the cleanup if anyone willing to.
+Please read the above link for the full details on how to do this (hint,
+Fixes: will not do it.)
 
+thanks,
 
-Thanks,
-SJ
-
-[...]
+greg k-h
 
