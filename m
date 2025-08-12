@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-765611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FEFB23ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CACB23ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3057517DF21
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1EC1AA48BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880C72D12E1;
-	Tue, 12 Aug 2025 21:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E42D46B3;
+	Tue, 12 Aug 2025 21:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBbCee3p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjUKFvqA"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBC2F0661
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381472F0661;
+	Tue, 12 Aug 2025 21:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755034694; cv=none; b=nHs+emhbZtpNb31JtgZQZG12W6PGmbTL/VLs0B4jl3VONDOGd3Vr7ffIo1RyQnvYAUdO/RSHOaMVXMnY7XuGvjR+KzSU0jWKyhpHgCfjBfi8rLeErB7ZX/hAncjvLViuemAQrAr3kYUY9aD9EynqpPnykaKQ/En/ylKxZ7IQKBY=
+	t=1755034736; cv=none; b=YboNSgMNLOrHcGKzwynYx0yrnsQQmDpDRx2wWIRFw6L3bxLKTYCmiRdzLiIUsSMJsRG/YlZnUxa+CswTIXD+JXfIUWQ3IGCzlwiQcuIjM2zM0z2iy7TpmlnZ4Szn/6MgoWJ+ATVSbJDHb4nzHZeZ30GXQ5E9FOe+2qcqfXXm1cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755034694; c=relaxed/simple;
-	bh=zrcNdbqwFxasgEHpfjq7To71wBNAxo6gnEKahJ8pP+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NA/p1vKDP0COYWilhG0/olgSYQxm5OVxM1qf4cbWTh8WUu1YC7g2O3cunEsBOggdfYd7sBLEGJMQc+AXBHwPKfH/3rDn9Ts+pkImRvefeQclPSusrX8aKRlq1dQqLujB1EEzw31JY/W/0BP/hWIPXQUoQ2nNvNiw/qMDCBGariA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBbCee3p; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755034690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oEuIZtwk5nlstzv/3AvGWbPy5sVy/y3wf4vmyz9yARI=;
-	b=CBbCee3p1Ow57hzMUItMfhv564o1NLUrPPRjaAmTmhAKwRHG8zyYqviBCpaEywwZaLUxwo
-	HPXiM2xl/9Gejmjup8BtIXcGisEjXemqufVrsvEf7M4b3a2aXlysTc2DTUdXwD8Px+HBFV
-	4tsmrHJvkg6t0sygwXwg06ZEnzvlsTo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-478-JwqqnvS9PkCaV7aIboi2IA-1; Tue,
- 12 Aug 2025 17:38:04 -0400
-X-MC-Unique: JwqqnvS9PkCaV7aIboi2IA-1
-X-Mimecast-MFC-AGG-ID: JwqqnvS9PkCaV7aIboi2IA_1755034683
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE7F8180035B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:38:03 +0000 (UTC)
-Received: from tbecker-thinkpadp16vgen1.rmtbr.csb (unknown [10.96.134.180])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7BDAD1800280;
-	Tue, 12 Aug 2025 21:38:02 +0000 (UTC)
-From: tbecker@redhat.com
-To: steved@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: Thiago Becker <tbecker@redhat.com>
-Subject: [PATCH] nfsrahead: modify get_device_info logic
-Date: Tue, 12 Aug 2025 18:37:59 -0300
-Message-ID: <20250812213759.403790-1-tbecker@redhat.com>
+	s=arc-20240116; t=1755034736; c=relaxed/simple;
+	bh=axiH4a3QJQrYWUfX19Djcue+yx0b1xai/MtOzqIXfxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkmm0N3ntsv89LygV3bS1EL135IwX2dNE5aRJuJDpJAYwo5EmrElFn0b/B7sX6EWXM1d+kO3JIvHNArjrlQZp9RmjeDJrUPPfBswr+k/4sCL/K5yy1HxMaT4zIeY8MwsDWGCywyPrlihQ5shlmxcK+zYjxP8qIwxG768TwPpOQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjUKFvqA; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so6328553fac.0;
+        Tue, 12 Aug 2025 14:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755034734; x=1755639534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QJal0HDcOW5BIJClCSpK9SqQz87Zh1sXeHnZhQzPs10=;
+        b=fjUKFvqAEcKxlzqR6WdmjZG9dfLdxDvsxsdLxqVUjNOi8AONScGiIjcpb22JKQLCo2
+         gvy6DJLSLNBD0/TaHQJSo8amamxw5I0LPFCYpaP4Y5BKUM56CWtFmBK6nbXoxXIUzHLo
+         xvsmb0QrascKGCD3mvXFzkFyAlrZl0SOx44TnNOS+WVjiWx+vVVLpM5m6G8IgLcEVqIs
+         M2znxBnXIHMtA1yMvabNWEWvhCiLcxD/g+h7T+L6gokCPHOrk/UkdedyJRwl8DB9tFRq
+         wAIwsB7bgK5VMqyjXRqTvS5qr1jOTeafjaRygvsunYTbtKE3Aqcg8ytnRTO62Ml2YtY6
+         lp6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755034734; x=1755639534;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJal0HDcOW5BIJClCSpK9SqQz87Zh1sXeHnZhQzPs10=;
+        b=HrFS3prjXjG//A6MFPSATla3jqsGfbZoD1zj1cTw27rGwbCNwz34HnggWkrj0g0l5/
+         PKs2Zj2mUYL76raTu3yq43l4uHh5f+pn3HhpgGBKkedqOKNq47nkcdsz+Ac4Jc0GRT4h
+         63BJcHc4zmesYKLXc+WXHnUmuaPCe7rhSqCJakLdnCGPkxf0M/m3lxzxu+loW3WGFyZe
+         GJJVwj7dBhDKdb9mH7LWNCJeO6fT0n0CuKKUIbmcjwTIy86Jrtk1W3wQjzJwTPeqRRI/
+         aTaNM4gPsbg1VwDJ9wyVqrbrOdwBBVOYp2vB3cO0knJsPR6oeloud69v/bsRdBQWRMLi
+         Rriw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZQ9horOb1DTTMsmWY05zzaYjdbE4tdI7fljqfHWmO1wE2g/60x1UKyENuvsaR3ash2bWVg72MkBNybmU=@vger.kernel.org, AJvYcCX2hn/GMlS7lGGlfHxLpVGaMnQQTRZYnoOvH39LH0tygoqcjIgut30Qw+cK0rvWk72ykd06KgXx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc53oB6JeWTsN8Vfk2uJSbo5EDb3Z9zmyCBY+OTobRhJsRij+/
+	qEoyZ96ea4mfcUcyjKjhnB/1il7X0CNY/eaHE2NZ97rw9AilsokJs2wM
+X-Gm-Gg: ASbGncsL4+IqNQHPu/5UGoRrehKv1BOzdeX/cL9C054qJVdUJEhFH7ydKh0lGtS4/2l
+	TaB5glDSQvdfrn10/KPTt5M6jB9IxNWanxV6/p22HMNo9alXuJCSnqHnIk3imsPxKiAFcQTyQmq
+	o14mvF6LwmnBuwW+vZZJDItYT0qQ/SeS/SFeCFdnaRZDEuQwMYyqFCLF42nyPWCiRX1tHo/DPzs
+	IW2xWkilIoPIvYiT3ZWoNJBDCwJ7Z4wYojUYKr5sHbsnzgoW3G1/4wB6nKXdthUcfykbVVLlHf8
+	zfb49EsH+fcr8yEgm+twgVJXzIVQS8jrwL1Y96XHZ9UHZNayPXrJFl+DfvYRSLGBqkT+nFybUiH
+	L5nfqLoBqqv0aHsmVJu0eoOJ9b7+IBtS01iM0+zb50ykuLf3krx+5maE=
+X-Google-Smtp-Source: AGHT+IFl2Y79ozRu1ULZq6ZoNCGOMk+NLdBFPuMjL831oBJp6MM/dM0bPqYtOM4m4GbvYYJh+hxX/w==
+X-Received: by 2002:a05:6870:a408:b0:2c7:6ad3:fe56 with SMTP id 586e51a60fabf-30cb5ae8711mr504002fac.15.1755034734291;
+        Tue, 12 Aug 2025 14:38:54 -0700 (PDT)
+Received: from [10.236.102.133] ([108.147.189.97])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f87a22fsm465486a34.16.2025.08.12.14.38.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 14:38:53 -0700 (PDT)
+Message-ID: <c33f7e60-9754-4cc2-82e0-e056313365f0@gmail.com>
+Date: Tue, 12 Aug 2025 14:38:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250812173014.736537091@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Thiago Becker <tbecker@redhat.com>
 
-There are a few reports of failures by nfsrahead to set the read ahead
-when the nfs mount information is not available when the udev event
-fires. This was alleviated by retrying to read mountinfo multiple times,
-but some cases where still failing to find the device information. To
-further alleviate this issue, this patch adds a 50ms delay between
-attempts. To not incur into unecessary delays, the logic in
-get_device_info is reworked.
 
-While we are in this, remove a second loop of reptitions of
-get_device_info.
+On 8/12/2025 10:24 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.42 release.
+> There are 369 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 14 Aug 2025 17:27:11 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.42-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Thiago Becker <tbecker@redhat.com>
----
- tools/nfsrahead/main.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-diff --git a/tools/nfsrahead/main.c b/tools/nfsrahead/main.c
-index 8a11cf1a..b7b889ff 100644
---- a/tools/nfsrahead/main.c
-+++ b/tools/nfsrahead/main.c
-@@ -117,9 +117,11 @@ out_free_device_info:
- 
- static int get_device_info(const char *device_number, struct device_info *device_info)
- {
--	int ret = ENOENT;
--	for (int retry_count = 0; retry_count < 10 && ret != 0; retry_count++)
-+	int ret = get_mountinfo(device_number, device_info, MOUNTINFO_PATH);
-+	for (int retry_count = 0; retry_count < 5 && ret != 0; retry_count++) {
-+		usleep(50000);
- 		ret = get_mountinfo(device_number, device_info, MOUNTINFO_PATH);
-+	}
- 
- 	return ret;
- }
-@@ -135,7 +137,7 @@ static int conf_get_readahead(const char *kind) {
- 
- int main(int argc, char **argv)
- {
--	int ret = 0, retry, opt;
-+	int ret = 0, opt;
- 	struct device_info device;
- 	unsigned int readahead = 128, log_level, log_stderr = 0;
- 
-@@ -163,11 +165,7 @@ int main(int argc, char **argv)
- 	if ((argc - optind) != 1)
- 		xlog_err("expected the device number of a BDI; is udev ok?");
- 
--	for (retry = 0; retry <= 10; retry++ )
--		if ((ret = get_device_info(argv[optind], &device)) == 0)
--			break;
--
--	if (ret != 0 || device.fstype == NULL) {
-+	if ((ret = get_device_info(argv[optind], &device)) != 0 || device.fstype == NULL) {
- 		xlog(D_GENERAL, "unable to find device %s\n", argv[optind]);
- 		goto out;
- 	}
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.43.5
+Florian
 
 
