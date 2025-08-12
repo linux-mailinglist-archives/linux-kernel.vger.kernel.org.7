@@ -1,518 +1,242 @@
-Return-Path: <linux-kernel+bounces-763751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBEFB219E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB74FB219E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF0B6244CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FAC1624566
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A81B2D3EE6;
-	Tue, 12 Aug 2025 00:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9892D3EE6;
+	Tue, 12 Aug 2025 00:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JtDx5CLC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P0oVq4fI";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="U4WZkwGc"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ADB1E4BE;
-	Tue, 12 Aug 2025 00:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754959567; cv=none; b=TveaL8/zY9k5NnPQJ72on0xc/epIHS94GqX6N94Vw/ORl1iBU/ZGCC/2+HtywfCiMl5aiTcQhgU7CoLmNTnaDPBSMNVy6rkxjEr4gnzH20sbwxsBXVxinnKqBvhQ3ncO940DR4wqWfzNVQyJN8Acgg7y0MWw7bcK8+Qepo740AI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754959567; c=relaxed/simple;
-	bh=HTvWHrbEgTwV6dOXbyxHGqJLFD1JoLZNgz6ZCTyt5AE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XcvNumO31bDHGfORqtbRMnQDjno5O3h+bHYkpWnSkockU5MM8xaTcAKuwds/2biJkmDMABM5xJInp0sUXxi5LIc/xA2RQ9uC+vhEkx5VtrplrZAJAH1uUiuZo9nQ01XBy4vHzZBe343kWbKvpKDKFrMe/ZufxJ8DMJpTIqtl0iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JtDx5CLC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=7xEGavM38EexJs6+R3NP60uuzbfpXor25lCw94ANNOs=; b=JtDx5CLCTLXAtES4F1cItMgI8f
-	TdwkUaS+3aktVQBl0AarUavpFW8Px3V3Ov09UA7pnbOQoeciPtN7l67fv8RMRkFBPTb2d/hnkk/b1
-	hKl+VoC769Mpj9+XLbWCwVOT7xdNdHMq9GtKCqcmrTQLYd67LnT93E223XlTu9lgMgSOpKucKwsX4
-	15ftrDNuCeSXByVg0U22onhzt7AVw88f8w+3Ai93UtxZ/unznt+RIZNV7cSOM0pPfRZYpi5Jl9XBF
-	zxt0R9xFhHmUBKeIRBufYIQdJRTBTyeXsAC4iW1MKIsXk/EJ7qnoUl2ofHhDRgld6YA76KJIr6ytN
-	sBM8Q7xQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uld9P-00000009TGQ-1sqU;
-	Tue, 12 Aug 2025 00:46:03 +0000
-Message-ID: <5cd1c94c-e122-45e6-8333-9eff3ae6303e@infradead.org>
-Date: Mon, 11 Aug 2025 17:46:02 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5DD2D3A9E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 00:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754959599; cv=fail; b=oDu3ZQmwDoDgeLGkDrmZF4Wd0IECuI5b1av/jsOETeYdAXpmsIIeoZeFRIqiJDi9AOlOo+FkEzxEnmuxTSVOqzWpkIq+IjZHgCVklYPQOZUMN1hq26fc09WRV/yYt5BbfUnK4DwmYl/jlP15PERejVMgQkh7Mr3hhHUHLRDlxf4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754959599; c=relaxed/simple;
+	bh=1koJCzFz6QwhZ0w/MpqQke0Vg9BWhKZRz/Q0TJGh92g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mBQKe80zdS1hWFKplspKy1rlgw6E6rEFHARVfBdi3Ym8Fy3n7j4sa8elZMFInq7PXcJixIUgX4VSHu+r5opqKQcvW4t1rIQaWiRGAVaukv/d9431M5gL3PnrmHSuixE4h6UF8ByCIOvQAHLQfvLaNXrNYlDJmv9nFOyeOlpTY+I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=P0oVq4fI; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=U4WZkwGc; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: c9c10514771511f08729452bf625a8b4-20250812
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=1koJCzFz6QwhZ0w/MpqQke0Vg9BWhKZRz/Q0TJGh92g=;
+	b=P0oVq4fI0YCvhk8epmeS1EWUYPr+Nzfd5XVe4F4CJFjXeSb66nXd2n4j+vOBSTGAjlDqFy8yuZMAhddTWBXyvhhzcBAhH9J6ZEScMTy6zBSeAwvzLx2Y1PUtbEVBqfDKXf1XseNXj4tFz5/1TWKKEH11PnUCWO6n7Ws23fiS6GU=;
+X-CID-CACHE: Type:Local,Time:202508120846+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:8dd57fe6-1274-405b-9bb1-fc445e03b5e1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:1f694c51-d89a-4c27-9e37-f7ccfcbebd5b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
+	t:0|15|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c9c10514771511f08729452bf625a8b4-20250812
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 342740948; Tue, 12 Aug 2025 08:46:31 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 12 Aug 2025 08:46:30 +0800
+Received: from SEYPR02CU001.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 12 Aug 2025 08:46:30 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QejrBjyJRdEonxw2AMyi6CHIBRg+8OazlXnNeea/czXfo6qxYvI2AUsBARSAFZO3UvzzcyLVp+OjsnDXPLx32AROM7N8ZM+d19sD3P1QQFL8Ii2VVyrDVAm3hdxM+hdikGYnyUGiNv2fQ9nefz6Hy58V6UTTSSIuoEC5o7OpIL6FHOHCt/iUdoT1CQD930JhtLG4boFGgnEP7MsX0LLtS62gnALmEMiaTYf4uKE8AVw4N7m055KOgiJPqgxxIDkFPEXvwWxLnKtpexvysJ9iT6pl32bfIChycLtO/zCa+77eux6NF54Je8GeHISEiM64T81IiH6qucLmPojeJ68e8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1koJCzFz6QwhZ0w/MpqQke0Vg9BWhKZRz/Q0TJGh92g=;
+ b=hGhSp6LUU9QJhEbUInKRrMvBJ438/0NSGNrZSNCz1KHlkQlXa6pnnPAYt7PSvUvIrdqgKiEcY0+CoEcPsgCSXW4DN9IuGIYsVK+ra1cNIens4AHadB+fjoLAIUIzja0Tk4O9DGGNNmrEUdCA0IFc+McVSOy5PRvt81r58G0MLxg+W9OMJllNUG8uLmp7ZYNfnePCQYPRpqFYt+R77Rn6CQ1YwxKK87R48QVdB+p7kCZ9Pqf/+jB8tpJRZuk+paJBhZIGCmwgIrj+ssg8ukTTOIq5TmuJpRk4CjYFAbhb63fEFkPpvkZFJcZ3i5wbUtyoIZDy/M5tJmRRxu3y+oYFZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1koJCzFz6QwhZ0w/MpqQke0Vg9BWhKZRz/Q0TJGh92g=;
+ b=U4WZkwGcjWSmFtPXElSa3xxplJcWjvenbEiethjIOpa/iePP4KFCIwe2ajOFdQKeReJeFwaUYSGQUJ4myW7f7sjHFUITWETaBqimuBKKG9iFtOKKDrA1ezNBV4qfddFgq7pUzrkvxH404KA+3vAbVntgfibKpYGzZkod2DA+qIM=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TYSPR03MB7860.apcprd03.prod.outlook.com (2603:1096:400:47b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
+ 2025 00:46:26 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 00:46:26 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "towwy321@gmail.com" <towwy321@gmail.com>, "chunkuang.hu@kernel.org"
+	<chunkuang.hu@kernel.org>, "simona@ffwll.ch" <simona@ffwll.ch>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"airlied@gmail.com" <airlied@gmail.com>, "msp@baylibre.com"
+	<msp@baylibre.com>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "granquet@baylibre.com"
+	<granquet@baylibre.com>
+CC: =?utf-8?B?UmV4LUJDIENoZW4gKOmZs+afj+i+sCk=?= <Rex-BC.Chen@mediatek.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] drm/mediatek: dp: Fix suspend/resume training failure
+Thread-Topic: [PATCH v3] drm/mediatek: dp: Fix suspend/resume training failure
+Thread-Index: AQHcCb7Z9LD2TPcSxUutqgH2NNREuLRdMRsAgAEAdoA=
+Date: Tue, 12 Aug 2025 00:46:26 +0000
+Message-ID: <c5abc7ac387a2bd51d000ca95bb90f37b097d0d0.camel@mediatek.com>
+References: <20250810061738.10977-1-towwy321@gmail.com>
+	 <c10ff37d3730bb1d434958d4d7f7002730fb117e.camel@mediatek.com>
+In-Reply-To: <c10ff37d3730bb1d434958d4d7f7002730fb117e.camel@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYSPR03MB7860:EE_
+x-ms-office365-filtering-correlation-id: f0dbdfc0-959f-4835-e4c3-08ddd939ab05
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|42112799006|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?YktJa2p5MjBzUGFMU3Z3TVdDWXIyeFg5bDlrWVVYZXdTWk8wR0tBdnpzNlVR?=
+ =?utf-8?B?NVVlcUt6SjBOTWNLY1A0cmlwaEpQT3ZUM2haWXpacTk2ZTJXeHJsa1Mwalhp?=
+ =?utf-8?B?SEZOdkNCczhsODVCYW5sN3pndTVFbzQ4MERaR21oTGJoeWdCc3Rsb2JwM0tT?=
+ =?utf-8?B?WUs5R2ZpaDJWMlZsS3hDTkpsSDNadjZXbXhqb0RDN1BZRUhpNmtvRFNEQlpj?=
+ =?utf-8?B?aFE3S1ZRcUNhdEFuV2xjTUEzQllhbkZNMjVNN2pvd1hvM3ZNMHgyR1gwTkN4?=
+ =?utf-8?B?dlkxQmZSYzg0S05uQk9qaVNHQ24rWWQ2dlV0QlpCNDBBUGFPRlYvM2hxWFY2?=
+ =?utf-8?B?VWFienpXRVlnWVJidVdmTGhOczdLbEtXRXFHRXJ3RTlqUURKSFhyOHdkUFVY?=
+ =?utf-8?B?aHFmekU4ZCtPTkZGdFBPc2I1Smt4SVVrZ1ppY05qQkh2TGhDNkJjVUFWejk1?=
+ =?utf-8?B?dEgramh6OUVZb2dub3NhNVk0R1JSaEU3K1J1ckFjWTVtMVJwcmRucitpeFlz?=
+ =?utf-8?B?dkd1VEE5OTVoRUNoZmNOZVJ2WjRycFhYMTBoK01uOE4vWTlkSHFIZUh6MFVO?=
+ =?utf-8?B?TGJ2MUFjaExEbGNPQzRlbTc4czY2UzVFTzk1U3owWEpkSlY2OGpJdjVWWXV3?=
+ =?utf-8?B?a2dkWVZWQ1ZvZThPL0NWRjBRbDA2N1JDUWU1c2ZSUU5mVXdidS92UjBnMnV6?=
+ =?utf-8?B?WTBUN20yS2p3S1F1bDdhQytNU3hodHlGaVNFZWxZNUVMV3FLUmgyakMxWTRo?=
+ =?utf-8?B?MHV2SlRHRHdJQkhVZmZ6cjZPL3FOSm9sM2ZHZkpwVUdqSC9JTFZHU2puUVR1?=
+ =?utf-8?B?Y0pQbTBJbDRsaVI5bjZvUkQyWWtBRS9kZjdOQncxUTRVNHErb0RuUFlPcy9K?=
+ =?utf-8?B?TnpSckhBc04zTHgyM1JaZDk3MGRrUHo5WTZQRWVGVGVpaWw0dDlnTm51NGh6?=
+ =?utf-8?B?a1ZlWkFIR1QrMTJWSmluKzNCWU1JTk1wZ0dXMDdJaFhNNy9sUnlyZVZYMWRI?=
+ =?utf-8?B?K3U4dlY1WmZvbVFlaE80L1UxN2d4bDF5UkxwQ2U4aGRDTkw3eU5jWVBrWGtO?=
+ =?utf-8?B?Yk1QeHVNYWcwL1FMb3hKS2pYdzFJM3N2MGJ1TmpubmJQUFcvNE5vOFhYZVNw?=
+ =?utf-8?B?MGxUdlYzYVFZRWFLZUlIYlZubUJva0JQOGN4ZlFTVjJtSnJ4b0Z3Z1RhL3kr?=
+ =?utf-8?B?Y1NoQkptZFEzV3FoakQ3amxOVTBRZjRwamJPS1pSSDJUSGpPWUxoOUdjS04y?=
+ =?utf-8?B?dzJ2Kyt1VjRkeUNDVGRMSnBnNFk3Z0tqWFBLT21aWCtrUTJTNm1Ha1JHVEdI?=
+ =?utf-8?B?dDZ2dzU5SnIxQzNiMzZjR3dRRGtmcGhoeS9GWGFaa2o0MzhyeTMweHQ4SGx0?=
+ =?utf-8?B?S3JqL0lOM1FEcmdMM2JHeHlHMndrRGpYVEE5cWhCbXlTVlF5UmtUOC80cVVh?=
+ =?utf-8?B?Z0M3SUcrRjB5RVFjUWNCUSsycFlySFpHMWR1cUJGRDdXM1ZpS05Jd3NtbTZS?=
+ =?utf-8?B?NWRMMHVnK0NYMjgyNVN5ZnVLbnFOV2I2dW40NnQyTE95K3IvSDZJUmRjUUV3?=
+ =?utf-8?B?dDg5aDdUbHNOaVRWeGpyaVIrMVVMa3hKN1BKNmVQd2Uyd21pcW5HWElYdy9Z?=
+ =?utf-8?B?dEhrdVR2bEh3MktxSUJSOXYrb3QxREY2YTdSMnR1dnpTSjNHM3NJRHFkUmNn?=
+ =?utf-8?B?WkRnT05YbmZOUmtJMDFQQmVJbVJZc0xjdW1McWw2T0ptWU94WUdudjFVNUZ2?=
+ =?utf-8?B?YlNmK0ZIY1RyenAwK0ZEcFBTWUFjZFkyQUVpL0xKUm5XZHpHa0tnZkVFNGM2?=
+ =?utf-8?B?blBNTXN3b1QrUldmRTNKVmVyYlkrZ1Z1M3pycjl6VkVvK0k1KzNldWlNMnIv?=
+ =?utf-8?B?emxoelhPbXJQODlzVVFyU0lzM2duRzI1Tk8vYStjQmtqUHltRE1CdUJBKzBP?=
+ =?utf-8?B?RC9oNkxEZnFTcDFKK3IvWkZzYUNzZ3VtSlJmUmFlejhoZ1NzT2QvWW93YTNS?=
+ =?utf-8?B?OUlmL1pXbmJBPT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(42112799006)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RDJEZ2hZbDlLTVJZNEdCUjE5VEZLanNDeUllVlAxQVNnZm80MVpLd0NZR1RD?=
+ =?utf-8?B?UXVIQk1aamZhdk0vZUhiN0QzTWUrcWJjUzJwY2lTNVdUUWkvQS9ndTBmZ21X?=
+ =?utf-8?B?ZDRudUVsekFiWGFOTVVZbW9kMTFXbEs4Z05zQitranU2Y1A3MXAwVGowU0Vm?=
+ =?utf-8?B?Q0pxck9yNWhoVTB6VFZpWFVLT1oySFBwNHNyR3lQeGRVT2xiR2JXbW5IU3ls?=
+ =?utf-8?B?ZWlvQzFLNE9TTWllVDd6dSszZm9hSGJqdUZYVXlDZXNMUHNpdFU1Q3pjZlR4?=
+ =?utf-8?B?MFJSaXh3bVBxRnhtN2hGN0tiNU9DY0lIVXI0ZHp2SlBWMkMwQzhsTWxXbTFm?=
+ =?utf-8?B?NFcyVTRTTkZuNjgzeDM2c2ZlR2N6ZWNLM0d4M1ZJVGo1OVQ4TTlURm1Cam0r?=
+ =?utf-8?B?WFc2bWdkOTdCM0lldjZyOXZZZWFWd2U0VWViRk53eHBEcVA4dGFlS2hBbjRV?=
+ =?utf-8?B?cERjSWI2TG16TkM3YjM1cGMzdGRadEo4cUpJZnRGRHB2M1gvR29DUXloQ0FC?=
+ =?utf-8?B?WkFOazVib2hVTEpQL1FQOXBOOUtqdmhKNGJrZTZxNldxK08ySUNzYWZvSTdC?=
+ =?utf-8?B?ZmZKM2JsRTBKYXIzY1FJeWZZTzdXOU9HMG9kVlJsQlE1bjZqblVHSWxDRzhh?=
+ =?utf-8?B?VU9yeENJbEFZMlFmYmhKa2VxdWZiSkhYcVdCTHBNWkpianRjWGNKd2VhZGZH?=
+ =?utf-8?B?N0JiZlhOS3BRcFE1THhxTnZUMFNydzZ2cGM5U3BLby9FZjFyUDUzSVNuMExC?=
+ =?utf-8?B?UUYxTUlkaHJNNjNPUUJjbUtzYWw4MjBzdFM0RGVNb3dGVEhlYys5czIyTmQv?=
+ =?utf-8?B?SW1qRXNTekhZSElsQnJjWG9rc3FPSXVnak9XVmlSbllXVW53KzBLRitFSkxa?=
+ =?utf-8?B?V2llRlVHdVY4dkcvMitoczhyYXZqSVhJTllNeGhNVzFxK3Y5YWEvK2tmem85?=
+ =?utf-8?B?VWlxbGNzWUNBVDZCRisxSUxUbHZUMFlQYkRpTHFGZGVxeUFMdnJpbnpqbWcy?=
+ =?utf-8?B?R2diUm9jbnI5cWNZa3dnV2w5enZwUS82YUxEUDdXcm5iSTRRdGt4YnkwNHRi?=
+ =?utf-8?B?Z1M1c2gxcmlsUExrN2M1bEhKeURXU09ldFN6ZStPZVE1TXBrcEhIV0RyTjZR?=
+ =?utf-8?B?NVBsLzAwMHkzaEdvSWx6WmdiM3JpZDJGK0lFZklsVUxqcEJTNjluTmxNeXZs?=
+ =?utf-8?B?Rkh4UGtyeUJ6OXBYQWtxNWgrQzVmdHdjMnQ5Ykl1WkpXZitoZWRWSXV1MXk1?=
+ =?utf-8?B?c0g0MWhiVmUza0hlQkVWSDcwOVgxbXIvL2Z3dHNzemV3Z3IvbVRiemk3SXBl?=
+ =?utf-8?B?c3JEK2NmSiszL3NzNUIyMlhrUExLOU5pclViMlNpOERzbStNSzE1am5Od0hL?=
+ =?utf-8?B?S0djek4ra3ZYRVV3QU9sSW5jWmlZaURaS082L0JuL3lka2xtVzZ0Q21HdWUy?=
+ =?utf-8?B?bE9xSkNhZlNHNFpvZVJ4eXlkdGFnL1VWR2M5QjVidE83VmFoZFhQOS90ZXhV?=
+ =?utf-8?B?MUdrc3JmUysxemExeGF4b1IxRk45MU9FN1lkVzA4MTh6aW44ZWpNVmVXZHo0?=
+ =?utf-8?B?alVqMUdkN1pSZjN5eTh0UFlVd0M4bmx0cFVaWmp1MDlQcjB6Y0JSc1dKbDhL?=
+ =?utf-8?B?YU1GK05DK3dZU25TWjdyQW5JMG5sSkNOT0hFNExUK1NNTWFzcENtaUtrRHli?=
+ =?utf-8?B?Mi9iTnpxU2wrRUVhbzRDLzQwKzYxdUVJWWRYUGVmTS8rZnI4NXV1RGJ4a2tR?=
+ =?utf-8?B?QjdMSEgvV3lsN0xoOFY2UDJDT0tvSHdsRUlyRHlOT015REJSOXBZMno3OGht?=
+ =?utf-8?B?cUUyUGNzakNNU3B4Wjc3c3ZRMkd2TTJHVDRMYzZxS3pSNHEwVzRJeDl4UGJh?=
+ =?utf-8?B?VWQxL1JOY1A4Zk9tU1hTaldOQzV2ZDl3Yy8wSWpYWmlFTmJkS3htNFJUaURH?=
+ =?utf-8?B?YXZMcW9qTmVvTlpwbGNoaWs5RUpWdnZzQ0xiNCtKZXdDOG5aQ2hCd2dONzJB?=
+ =?utf-8?B?RFlUbzZ2OUtpVitQSHdzVFdXbjIvRThHRURZV3pFQ3A5ZGVDQWtHcjZyTTQx?=
+ =?utf-8?B?ZG53VTN4U2lQQ0lqTlNKUWFtMmZUMzJlUmFNWXNCRG9pWmc4aWNxblZBRlVN?=
+ =?utf-8?Q?cg6WuJqR1vz4uMQ3wvMayRbzR?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B6424824B154E84AA77AD669DAF7DF05@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: gpio: add documentation about using
- software nodes
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>, Hans de Goede <hansg@kernel.org>,
- linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <b52lpk2vqr4asp5iaqwcvcac3b6gen52rbu4cwy5kcnxszc3fj@6i77jr53kzje>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <b52lpk2vqr4asp5iaqwcvcac3b6gen52rbu4cwy5kcnxszc3fj@6i77jr53kzje>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0dbdfc0-959f-4835-e4c3-08ddd939ab05
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2025 00:46:26.1772
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T34+g2ZhkqpogB8ndDGFT+JxNmFycG3MnaFgZiZStX+3Aw07nvQbfbsR/iecFqk1Jq0uxyHqWO6bDtZXW3LCwg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB7860
 
-Hi,
-
-On 8/11/25 2:30 PM, Dmitry Torokhov wrote:
-> Introduce documentation regarding use of software nodes to describe
-> GPIOs on legacy boards that have not been converted to device tree.
-> 
-
-Thanks for the additional documentation.
-
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  Documentation/driver-api/gpio/board.rst       |  64 ++++
->  Documentation/driver-api/gpio/index.rst       |   1 +
->  .../driver-api/gpio/legacy-boards.rst         | 298 ++++++++++++++++++
->  3 files changed, 363 insertions(+)
-> 
-> diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
-> index 4fd1cbd8296e..0cf64e1f2623 100644
-> --- a/Documentation/driver-api/gpio/board.rst
-> +++ b/Documentation/driver-api/gpio/board.rst
-> @@ -94,6 +94,70 @@ with the help of _DSD (Device Specific Data), introduced in ACPI 5.1::
->  For more information about the ACPI GPIO bindings see
->  Documentation/firmware-guide/acpi/gpio-properties.rst.
->  
-> +Software Nodes
-> +--------------
-> +Software nodes allows to construct an in-memory, device-tree-like structure
-
-                  allow { drivers | modules | software | us}
-
-although "software" seems redundant.
-
-> +using ``struct software_node`` and ``struct property_entry``. This structure
-
-Quoting Jon (for a different struct):
-  Better to just say "struct list_head", and the automarkup logic should
-  take care of the rest.
-
-@Jon: ISTM that we need something in Documentation/doc-guide/sphinx.rst (?) about which
-keywords are handled by automarkup logic. AFAIK, they are struct, union, enum,
-and typedef (keywords) and function() as indicated by the "()".
-
-
-
-> +can then be associated with a platform device, allowing drivers to use the
-> +standard device properties API to query configuration, just as they would on an
-> +ACPI or device tree systems.
-
-                       system.
-
-> +
-> +Software-node-backed GPIOs are described using ``PROPERTY_ENTRY_GPIO()``
-> +macro, which ties a sotfware node representing GPIO controller with consumer
-
-                       software
-
-> +device. It allows consumers to use regular gpiolib APIs, such as ``gpiod_get()``,
-> +``gpiod_get_optional()``.
-> +
-> +The software node representing GPIO controller need not be attached to the
-> +GPIO controller device. The only requirement that the node must be registered
-
-                                    requirement is that
-
-> +and its name much match the GPIO controller's label.
-
-                must
-
-> +
-> +For example, here is how to describe a single GPIO-connected LED. This is an
-> +alternative to using platform_data on legacy systems.
-> +
-> +.. code-block:: c
-> +
-> +	#include <linux/property.h>
-> +	#include <linux/gpio/machine.h>
-> +	#include <linux/gpio/property.h>
-> +
-> +	/*
-> +	 * 1. Define a node for the GPIO controller. Its .name must match the
-> +	 *    controller's label.
-> +	 */
-> +	static const struct software_node gpio_controller_node = {
-> +		.name = "gpio-foo",
-> +	};
-> +
-> +	/* 2. Define the properties for the LED device. */
-> +	static const struct property_entry led_device_props[] = {
-> +		PROPERTY_ENTRY_STRING("label", "myboard:green:status"),
-> +		PROPERTY_ENTRY_STRING("linux,default-trigger", "heartbeat"),
-> +		PROPERTY_ENTRY_GPIO("gpios", &gpio_controller_node, 42, GPIO_ACTIVE_HIGH),
-> +		{ }
-> +	};
-> +
-> +	/* 3. Define the software node for the LED device. */
-> +	static const struct software_node led_device_swnode = {
-> +		.name = "status-led",
-> +		.properties = led_device_props,
-> +	};
-> +
-> +	/*
-> +	 * 4. Register the software nodes and the platform device.
-> +	 */
-> +	const struct software_node *swnodes[] = {
-> +		&gpio_controller_node,
-> +		&led_device_swnode,
-> +		NULL
-> +	};
-> +	software_node_register_node_group(swnodes);
-> +
-> +	// Then register a platform_device for "leds-gpio" and associate
-> +	// it with &led_device_swnode via .fwnode.
-> +
-> +For a complete guide on converting board files to use software nodes, see
-> +Documentation/driver-api/gpio/legacy-boards.rst.
-> +
->  Platform Data
->  -------------
->  Finally, GPIOs can be bound to devices and functions using platform data. Board
-
-
-
-> diff --git a/Documentation/driver-api/gpio/legacy-boards.rst b/Documentation/driver-api/gpio/legacy-boards.rst
-> new file mode 100644
-> index 000000000000..6700a2549220
-> --- /dev/null
-> +++ b/Documentation/driver-api/gpio/legacy-boards.rst
-> @@ -0,0 +1,298 @@
-> +Supporting Legacy Boards
-> +========================
-> +
-> +Many drivers in the kernel, such as ``leds-gpio`` and ``gpio-keys``, are
-> +migrating away from using board-specific ``platform_data`` to a unified device
-> +properties interface. This interface allows drivers to be simpler and more
-> +generic, as they can query properties in a standardized way.
-> +
-> +On modern systems, these properties are provided via device tree. However, some
-> +older platforms have not been converted to device tree and instead rely on
-> +board files to describe their hardware configuration. To bridge this gap and
-> +allow these legacy boards to work with modern, generic drivers, the kernel
-> +provides a mechanism called **software nodes**.
-> +
-> +This document provides a guide on how to convert a legacy board file from using
-> +``platform_data`` and ``gpiod_lookup_table`` to the modern software node
-> +approach for describing GPIO-connected devices.
-> +
-> +The Core Idea: Software Nodes
-> +-----------------------------
-> +
-> +Software nodes allows to construct an in-memory, device-tree-like structure
-
-                  allow {some object of the verb, as suggested above}
-
-> +using ``struct software_node`` and ``struct property_entry``. This structure
-
-Please drop the "``" markups. They aren't needed.
-
-> +can then be associated with a platform device, allowing drivers to use the
-> +standard device properties API (e.g., ``device_property_read_u32()``,
-> +``device_property_read_string()``) to query configuration, just as they would
-> +on an ACPI or device tree systems.
-
-                             system.
-
-> +
-> +The gpiolib code has support for handling software nodes, so that if GPIO is
-> +described properly, as detailed in the section below, then regular gpiolib APIs,
-> +such as ``gpiod_get()``, ``gpiod_get_optional()`` and others will work.
-> +
-> +Requirements for GPIO Properties
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +When using software nodes to describe GPIO connections, the following
-> +requirements must be met for the GPIO core to correctly resolve the reference:
-> +
-> +1.  **The GPIO controller's software node ``name`` must match the controller's
-> +    ``label``.** The gpiolib core uses this name to find the corresponding
-> +    ``struct gpio_chip`` at runtime.
-
-"``" not needed.
-
-> +    This software node has to be registered, but need not be attached to the
-> +    device representing GPIO controller that is providing GPIO in question.
-> +    It may be left as a "free floating" node.
-> +
-> +2.  **The GPIO property must be a reference.** The ``PROPERTY_ENTRY_GPIO()``
-> +    macro handles this as it is an alias for ``PROPERTY_ENTRY_REF()``.
-> +
-> +3.  **The reference must have exactly two arguments:**
-> +
-> +    - The first argument is the GPIO offset within the controller.
-> +    - The second argument is the flags for the GPIO line (e.g.,
-> +      ``GPIO_ACTIVE_HIGH``, ``GPIO_ACTIVE_LOW``).
-> +
-> +The ``PROPERTY_ENTRY_GPIO()`` macro is the preferred way of defining GPIO
-> +properties in software nodes.
-> +
-> +Conversion Example
-> +------------------
-> +
-> +Let's walk through an example of converting a board file that defines a GPIO-
-> +connected LED and a button.
-> +
-> +Before: Using Platform Data
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +A typical legacy board file might look like this:
-> +
-> +.. code-block:: c
-> +
-> +  #include <linux/platform_device.h>
-> +  #include <linux/leds.h>
-> +  #include <linux/gpio_keys.h>
-> +  #include <linux/gpio/machine.h>
-> +
-> +  #define MYBOARD_GPIO_CONTROLLER "gpio-foo"
-> +
-> +  /* LED setup */
-> +  static const struct gpio_led myboard_leds[] = {
-> +  	{
-> +  		.name = "myboard:green:status",
-> +  		.default_trigger = "heartbeat",
-> +  	},
-> +  };
-> +
-> +  static const struct gpio_led_platform_data myboard_leds_pdata = {
-> +  	.num_leds = ARRAY_SIZE(myboard_leds),
-> +  	.leds = myboard_leds,
-> +  };
-> +
-> +  static struct gpiod_lookup_table myboard_leds_gpios = {
-> +  	.dev_id = "leds-gpio",
-> +  	.table = {
-> +  		GPIO_LOOKUP_IDX(MYBOARD_GPIO_CONTROLLER, 42, NULL, 0, GPIO_ACTIVE_HIGH),
-> +  		{ },
-> +  	},
-> +  };
-> +
-> +  /* Button setup */
-> +  static struct gpio_keys_button myboard_buttons[] = {
-> +  	{
-> +  		.code = KEY_WPS_BUTTON,
-> +  		.desc = "WPS Button",
-> +  		.active_low = 1,
-> +  	},
-> +  };
-> +
-> +  static const struct gpio_keys_platform_data myboard_buttons_pdata = {
-> +  	.buttons = myboard_buttons,
-> +  	.nbuttons = ARRAY_SIZE(myboard_buttons),
-> +  };
-> +
-> +  static struct gpiod_lookup_table myboard_buttons_gpios = {
-> +  	.dev_id = "gpio-keys",
-> +  	.table = {
-> +  		GPIO_LOOKUP_IDX(MYBOARD_GPIO_CONTROLLER, 15, NULL, 0, GPIO_ACTIVE_LOW),
-> +  		{ },
-> +  	},
-> +  };
-> +
-> +  /* Device registration */
-> +  static int __init myboard_init(void)
-> +  {
-> +  	gpiod_add_lookup_table(&myboard_leds_gpios);
-> +  	gpiod_add_lookup_table(&myboard_buttons_gpios);
-> +
-> +  	platform_device_register_data(NULL, "leds-gpio", -1,
-> +  				      &myboard_leds_pdata, sizeof(myboard_leds_pdata));
-> +  	platform_device_register_data(NULL, "gpio-keys", -1,
-> +  				      &myboard_buttons_pdata, sizeof(myboard_buttons_pdata));
-> +
-> +  	return 0;
-> +  }
-> +
-> +After: Using Software Nodes
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Here is how the same configuration can be expressed using software nodes.
-> +
-> +Step 1: Define the GPIO Controller Node
-> +***************************************
-> +
-> +First, define a software node that represents the GPIO controller that the
-> +LEDs and buttons are connected to. The ``name`` of this node must match the
-> +name of the driver for the GPIO controller (e.g., "gpio-foo").
-> +
-> +.. code-block:: c
-> +
-> +  #include <linux/property.h>
-> +  #include <linux/gpio/property.h>
-> +
-> +  #define MYBOARD_GPIO_CONTROLLER "gpio-foo"
-> +
-> +  static const struct software_node myboard_gpio_controller_node = {
-> +  	.name = MYBOARD_GPIO_CONTROLLER,
-> +  };
-> +
-> +Step 2: Define Consumer Device Nodes and Properties
-> +***************************************************
-> +
-> +Next, define the software nodes for the consumer devices (the LEDs and buttons).
-> +This involves creating a parent node for each device type and child nodes for
-> +each individual LED or button.
-> +
-> +.. code-block:: c
-> +
-> +  /* LED setup */
-> +  static const struct software_node myboard_leds_node = {
-> +  	.name = "myboard-leds",
-> +  };
-> +
-> +  static const struct property_entry myboard_status_led_props[] = {
-> +  	PROPERTY_ENTRY_STRING("label", "myboard:green:status"),
-> +  	PROPERTY_ENTRY_STRING("linux,default-trigger", "heartbeat"),
-> +  	PROPERTY_ENTRY_GPIO("gpios", &myboard_gpio_controller_node, 42, GPIO_ACTIVE_HIGH),
-> +  	{ }
-> +  };
-> +
-> +  static const struct software_node myboard_status_led_swnode = {
-> +  	.name = "status-led",
-> +  	.parent = &myboard_leds_node,
-> +  	.properties = myboard_status_led_props,
-> +  };
-> +
-> +  /* Button setup */
-> +  static const struct software_node myboard_keys_node = {
-> +  	.name = "myboard-keys",
-> +  };
-> +
-> +  static const struct property_entry myboard_wps_button_props[] = {
-> +  	PROPERTY_ENTRY_STRING("label", "WPS Button"),
-> +  	PROPERTY_ENTRY_U32("linux,code", KEY_WPS_BUTTON),
-> +  	PROPERTY_ENTRY_GPIO("gpios", &myboard_gpio_controller_node, 15, GPIO_ACTIVE_LOW),
-> +  	{ }
-> +  };
-> +
-> +  static const struct software_node myboard_wps_button_swnode = {
-> +  	.name = "wps-button",
-> +  	.parent = &myboard_keys_node,
-> +  	.properties = myboard_wps_button_props,
-> +  };
-> +
-> +
-> +
-> +Step 3: Group and Register the Nodes
-> +************************************
-> +
-> +For maintainability, it is often beneficial to group all software nodes into a
-> +single array and register them with one call.
-> +
-> +.. code-block:: c
-> +
-> +  static const struct software_node * const myboard_swnodes[] __initconst = {
-> +  	&myboard_gpio_controller_node,
-> +  	&myboard_leds_node,
-> +  	&myboard_status_led_swnode,
-> +  	&myboard_keys_node,
-> +  	&myboard_wps_button_swnode,
-> +  	NULL
-> +  };
-> +
-> +  static int __init myboard_init(void)
-> +  {
-> +  	int error;
-> +
-> +  	error = software_node_register_node_group(myboard_swnodes);
-> +  	if (error) {
-> +  		pr_err("Failed to register software nodes: %d\n", error);
-> +  		return error;
-> +  	}
-> +
-> +  	// ... platform device registration follows
-> +  }
-> +
-> +.. note::
-> +  When splitting registration of nodes by devices that they represent, it is
-> +  essential that the software node representing the GPIO controller itself
-> +  is registered first, before any of the nodes that reference it.
-> +
-> +Step 4: Register Platform Devices with Software Nodes
-> +*****************************************************
-> +
-> +Finally, register the platform devices and associate them with their respective
-> +software nodes using the ``fwnode`` field in ``struct platform_device_info``.
-
-Drop the "``" on struct platform_device_info.
-
-> +
-> +.. code-block:: c
-> +
-> +  static struct platform_device *leds_pdev;
-> +  static struct platform_device *keys_pdev;
-> +
-> +  static int __init myboard_init(void)
-> +  {
-> +  	struct platform_device_info pdev_info;
-> +  	int error;
-> +
-> +  	error = software_node_register_node_group(myboard_swnodes);
-> +  	if (error)
-> +  		return error;
-> +
-> +  	memset(&pdev_info, 0, sizeof(pdev_info));
-> +  	pdev_info.name = "leds-gpio";
-> +  	pdev_info.id = PLATFORM_DEVID_NONE;
-> +  	pdev_info.fwnode = software_node_fwnode(&myboard_leds_node);
-> +  	leds_pdev = platform_device_register_full(&pdev_info);
-> +  	if (IS_ERR(leds_pdev)) {
-> +  		error = PTR_ERR(leds_pdev);
-> +  		goto err_unregister_nodes;
-> +  	}
-> +
-> +  	memset(&pdev_info, 0, sizeof(pdev_info));
-> +  	pdev_info.name = "gpio-keys";
-> +  	pdev_info.id = PLATFORM_DEVID_NONE;
-> +  	pdev_info.fwnode = software_node_fwnode(&myboard_keys_node);
-> +  	keys_pdev = platform_device_register_full(&pdev_info);
-> +  	if (IS_ERR(keys_pdev)) {
-> +  		error = PTR_ERR(keys_pdev);
-> +  		platform_device_unregister(leds_pdev);
-> +  		goto err_unregister_nodes;
-> +  	}
-> +
-> +  	return 0;
-> +
-> +  err_unregister_nodes:
-> +  	software_node_unregister_node_group(myboard_swnodes);
-> +  	return error;
-> +  }
-> +
-> +  static void __exit myboard_exit(void)
-> +  {
-> +  	platform_device_unregister(keys_pdev);
-> +  	platform_device_unregister(leds_pdev);
-> +  	software_node_unregister_node_group(myboard_swnodes);
-> +  }
-> +
-> +With these changes, the generic ``leds-gpio`` and ``gpio-keys`` drivers will
-> +be able to probe successfully and get their configuration from the properties
-> +defined in the software nodes, removing the need for board-specific platform
-> +data.
-.
-
--- 
-~Randy
-
+T24gTW9uLCAyMDI1LTA4LTExIGF0IDE3OjI4ICswODAwLCBDSyBIdSB3cm90ZToNCj4gT24gU3Vu
+LCAyMDI1LTA4LTEwIGF0IDE0OjE3ICswODAwLCBIYXJ1IFpoZW5nIHdyb3RlOg0KPiA+IEV4dGVy
+bmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRz
+IHVudGlsIHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+ID4g
+DQo+ID4gDQo+ID4gV2hlbiBzdXNwZW5kaW5nIGFuZCByZXN1bWluZyBEaXNwbGF5UG9ydCB2aWEg
+VHlwZS1DLA0KPiA+IGxpbmsgdHJhaW5pbmcgd2lsbCBiZSBmYWlsLg0KPiA+IA0KPiA+IFRoaXMg
+cGF0Y2ggYmFja3BvcnRzIHRoZSBzb2Z0d2FyZSBJUlEgaGFuZGxpbmcgZm9yIERQLA0KPiA+IGFz
+IGVEUCB1c2VzIGhhcmR3YXJlIElSUSB3aGlsZSBEUCB1c2VzIHNvZnR3YXJlIElSUS4NCj4gDQo+
+IFRoaXMgcGF0Y2gganVzdCBtb2RpZnkgdGhlIGZsb3cgb2YgRFAsIG5vdCBlRFAsIHNvIGRvIG5v
+dCBtZW50aW9uIGVEUCBoZXJlLg0KPiBGb3IgRFAsIEkgZG9uJ3Qga25vdyB3aHkgaGFyZHdhcmUg
+SVJRIHdvdWxkIGZhaWwuDQo+IEhETUkgc3VwcG9ydCBzdXNwZW5kIGFuZCByZXN1bWUgYW5kIGl0
+IGRvZXMgbm90IHNvZnR3YXJlIElSUS4NCj4gUGxlYXNlIGRlc2NyaWJlIHRoZSBoYXJkd2FyZSBi
+ZWhhdmlvciB3aGVuIHJlc3VtZSBhbmQgcG9pbnQgb3V0IHdoeSBoYXJkd2FyZSB3b3VsZCBub3Qg
+dHJpZ2dlciBoYXJkd2FyZSBob3QgcGx1ZyBpbnRlcnJ1cHQuDQoNCkluIGFkZGl0aW9uLCByZXN1
+bWUgZmxvdyBpcyBzaW1pbGFyIHRvIGJvb3QgdXAgZmxvdy4NCg0KSW4gYm9vdCB1cCBmbG93LCB0
+aGUgc3RlcCBpczoNCjEuIFBsdWcgaW4gY2FibGUNCjIuIFBvd2VyIG9uIERQIGhhcmR3YXJlLg0K
+My4gRFAgSERQIGhhcmR3YXJlIGludGVycnVwdCBoYXBwZW4uDQoNClNvLCBpbiByZXN1bWUgZmxv
+dzoNCjEuIFBsdWcgaW4gY2FibGUNCjIuIFBvd2VyIG9uIERQIGhhcmR3YXJlDQozLiBEUCBIRFAg
+aGFyZHdhcmUgaW50ZXJydXB0IGhhcHBlbi4gKGRpc2FwcGVhcj8pDQoNClRoZSBmbG93IGlzIHRo
+ZSBzYW1lLCB3aHkgcmVzdW1lIGhhcyBubyBoYXJkd2FyZSBpbnRlcnJ1cHQ/DQoNClJlZ2FyZHMs
+DQpDSw0KDQo+IA0KPiA+IEFkZGl0aW9uYWxseSwgY2FibGVfcGx1Z2dlZF9pbiBpcyBmbGlwcGVk
+IGluDQo+ID4gbXRrX2RwX2hwZF9ldmVudCB0byBlbnN1cmUgY29ycmVjdCBob3RwbHVnIGRldGVj
+dGlvbg0KPiA+IGR1cmluZyByZXN1bWUuDQo+ID4gDQo+ID4gVGhlc2UgY2hhbmdlcyBmaXggdGhl
+IERQIHRyYWluaW5nIGZhaWx1cmUgYWZ0ZXIgc3VzcGVuZC9yZXN1bWUuDQo+ID4gDQo+ID4gRml4
+ZXM6IGY3MGFjMDk3YTJjZiAoImRybS9tZWRpYXRlazogQWRkIE1UODE5NSBFbWJlZGRlZCBEaXNw
+bGF5UG9ydCBkcml2ZXIiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IEhhcnUgWmhlbmcgPHRvd3d5MzIx
+QGdtYWlsLmNvbT4NCj4gPiANCj4gPiAtLS0NCg0K
 
