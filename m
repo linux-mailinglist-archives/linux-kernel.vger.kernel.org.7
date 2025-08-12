@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-765181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689C4B22C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D13B22C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2197ADF46
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B02621F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620972FD1C8;
-	Tue, 12 Aug 2025 15:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043EE2FA81A;
+	Tue, 12 Aug 2025 15:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/RuddMX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkYLY/qq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2992F83A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4704A2F6592;
 	Tue, 12 Aug 2025 15:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013985; cv=none; b=UYUSJpjBrvLbwSeLbr9LBdeY+n15XlywEj+LkPt+0lNkaFtdTEAm/1ha/KWH4ZJj+4n3Tslw64FfH4ovJaegIa+SPZFECZKAlCb5bA+BLurcY3ID5hZwTReTelqGsz0gb5Qp7ZC+1PRUmNFzAXUFdqGXYqkcZj9XDRottW5qQKM=
+	t=1755013985; cv=none; b=ijBWPhEXx1Vz+Il7V8aT9+J57CEU6gsj4DwIaoyx+qfDRyCTtswLHlz+SrOn58QgbBMlM2aY7rTvYWX81NZHncFHbzWg+UPCVNQ1pKId91LmCswVmCE+sLBtQNclb4US7yApVzo7kpZ2mcy70llKOwB6vmIY4atrPyO5BlzaoR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755013985; c=relaxed/simple;
-	bh=kHHUrzrUzCfISUwvoyyC98eBFz5CP0ST0NUYuTddsmQ=;
+	bh=xnQ6IjOnGM/7IpW6FAxRYORGqrWYSQqxyC/SU5roPxA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NBlZ73v4k/xWUvTmX1XioDozSFd2YjN3odT71bYmkUS9VMqkYE0P/LEBaWRUweqXWWPfiAeexymfJFhOocgtjlMuopKyTbEL7WND0zrwYOPPN7Nuqbc9sjfHcLUO/6bVxdrVcOtqFRUQlgT1slHc6h+8bo9UIhFl8mPWFcKPVUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/RuddMX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED01C116B1;
+	 MIME-Version; b=bcp/D4YxXa7aHNpGuWHD0QJED5QyiZKgBuKxOEVLqqwQncprXpyXHuFukZjkX9D0LsCTH95BoxOKoekuG3ZHHCx2V6KtgYHwHgs2z47DhbovjNt4a/4/t5rFUsWgphFbwVgSKElu8wAz2/TVkWejr7hibASHfBM02SlIBaHSSOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkYLY/qq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA0B6C4CEFF;
 	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755013985;
-	bh=kHHUrzrUzCfISUwvoyyC98eBFz5CP0ST0NUYuTddsmQ=;
+	s=k20201202; t=1755013984;
+	bh=xnQ6IjOnGM/7IpW6FAxRYORGqrWYSQqxyC/SU5roPxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C/RuddMXj01aFckxdmu1McLsV4wBlfjaWp3dv90LWm+tMd3Gdej/cR0EcJKUGExch
-	 Rgwer0d0WLCI6/UN3RAJXA7H3xvVWYXqOF/qB8p9gQRbLt/oEXv9aEnjTRaIEAng7L
-	 RCY2in7h8AK3bMWer6J1RU2+JxFPK9AlWiLTaDpXcV/Q/6i+Km6Ye+qoygL+jPGFpr
-	 spTUuHo0F+h/4NQGvsxY0CWNP1K8TNVgYgWJmdKX4VRMEXvINRJn0TCACbzE4+n6dI
-	 /U9jw4rGcbYXcR+Vn6bWQgU1TwOLc0LUjj+JIoMeMtxFr0E3qRug8FV/d95rAGXnkx
-	 1fM2z+i5m+rAA==
+	b=SkYLY/qqDhry6CyCAPVo9mPlJfps2zuZr/Ut5NPCengna0/SEhEWEejOdaCmPdBSU
+	 eZqs7Rk2LE7BmbVf+f4ukyLhHcjHGFajJlFWaDcDWkrbru+TMZnP5i9mGnjqNWcm4T
+	 JOI4/qAZX60g/yHpnOlwrxJVoA0E9mx+X0Y7Q21O/F+091pPL5wobxz0iMrXJHBuhs
+	 XtAsluJc4GFiSzI/pqM53mTmkR7wb40ONzq31sYRwH8AmQucAVzTT0btzRwKlekpH/
+	 mmthccgbHaxLWMj4IJC1t1I055vS6c33ldgldHEHbLkanpaygKSEYzyn9ywPKFqi0b
+	 he+0Fn2R85ePg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ulrJ8-00000006kVS-0ibi;
+	id 1ulrJ8-00000006kVW-0rGl;
 	Tue, 12 Aug 2025 17:53:02 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
@@ -50,9 +50,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Jonathan Corbet" <corbet@lwn.net>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/39] scripts: sphinx-pre-install: Make it compatible with Python 3.6
-Date: Tue, 12 Aug 2025 17:52:21 +0200
-Message-ID: <39d6e27a047bc3cc8208ac5e11fe6ba44faff9c4.1754992972.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 05/39] scripts: sphinx-pre-install: run on a supported version
+Date: Tue, 12 Aug 2025 17:52:22 +0200
+Message-ID: <76627055a7f82f6a79296ddbd873fa5ac8f82a1d.1754992972.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1754992972.git.mchehab+huawei@kernel.org>
 References: <cover.1754992972.git.mchehab+huawei@kernel.org>
@@ -65,55 +65,123 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The minimal version requirements we have is 3.9. Yet, the
-script which detects it is this one. So, let's try supporting
-an old version here, as we may want to suggest to upgrade
-Python version to build the docs.
+The scripts/sphinx-pre-install is used to detect problems at
+the system environment and adjust it to build the Kernel
+documentation. If the version is too old, it won't run, though.
+
+Check if the version which started the script is valid. If not,
+seek for a new one that is compatible with documentation
+build.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ scripts/sphinx-pre-install.py | 65 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index dcee2181b72f..71d86b230b22 100755
+index 71d86b230b22..3912359d2bae 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -115,7 +115,8 @@ class SphinxDependencyChecker:
-     def find_python_no_venv():
-         # FIXME: does it makes sense now that this script is in Python?
+@@ -5,6 +5,9 @@
+ # pylint: disable=C0103,C0114,C0115,C0116,C0301
+ # pylint: disable=R0902,R0904,R0912,R0915,R1705,R1710,E1121
  
--        result = subprocess.run(["pwd"], capture_output=True, text=True)
-+        result = SphinxDependencyChecker.run(["pwd"], capture_output=True,
-+                                             text=True)
-         cur_dir = result.stdout.strip()
++# Note: this script requires at least Python 3.6 to run.
++# Don't add changes not compatible with it, it is meant to report
++# incompatible python versions.
  
-         python_names = ["python3", "python"]
-@@ -135,12 +136,23 @@ class SphinxDependencyChecker:
+ import argparse
+ import os
+@@ -16,7 +19,6 @@ from glob import glob
+ 
+ def parse_version(version):
+     """Convert a major.minor.patch version into a tuple"""
+-#
+     return tuple(int(x) for x in version.split("."))
+ 
+ 
+@@ -27,6 +29,7 @@ def ver_str(version):
+ 
+ 
+ RECOMMENDED_VERSION = parse_version("3.4.3")
++MIN_PYTHON_VERSION = parse_version("3.7")
+ 
+ 
+ class SphinxDependencyChecker:
+@@ -132,6 +135,65 @@ class SphinxDependencyChecker:
+         # Python not found at the PATH
+         return python_names[-1]
+ 
++    @staticmethod
++    def get_python_version(cmd):
++
++        result = SphinxDependencyChecker.run([cmd, "--version"],
++                                            capture_output=True, text=True)
++        version = result.stdout.strip()
++
++        match = re.search(r"(\d+\.\d+\.\d+)", version)
++        if match:
++            return parse_version(match.group(1))
++
++        print(f"Can't parse version {version}")
++        return (0, 0, 0)
++
++    @staticmethod
++    def find_python():
++
++        patterns = [
++            "python3.[0-9]",
++            "python3.[0-9][0-9]",
++        ]
++
++        new_python_cmd = None
++
++        # Seek for a python binary newer than MIN_PYTHON_VERSION
++        for path in os.getenv("PATH", "").split(":"):
++            for pattern in patterns:
++                for cmd in glob(os.path.join(path, pattern)):
++                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
++                        version = SphinxDependencyChecker.get_python_version(cmd)
++                        if version >= MIN_PYTHON_VERSION:
++                            return(cmd)
++
++    @staticmethod
++    def check_python():
++
++        cur_ver = sys.version_info[:3]
++        if cur_ver >= MIN_PYTHON_VERSION:
++            return
++
++        python_ver = ver_str(cur_ver)
++
++        new_python_cmd = SphinxDependencyChecker.find_python()
++        if not new_python_cmd:
++            print(f"ERROR: Python version {python_ver} is not spported anymore")
++            print(f"       Can't find a new version. This script may fail")
++            return
++
++        # Restart script using the newer version
++        script_path = os.path.abspath(sys.argv[0])
++        args = [new_python_cmd, script_path] + sys.argv[1:]
++
++        print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
++
++        try:
++            os.execv(new_python_cmd, args)
++        except OSError as e:
++            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
++
+     @staticmethod
      def run(*args, **kwargs):
          """Excecute a command, hiding its output by default"""
+@@ -1107,6 +1169,7 @@ def main():
  
--        if not kwargs.get('capture_output', False):
-+        capture_output = kwargs.pop('capture_output', False)
-+
-+        if capture_output:
-+            if 'stdout' not in kwargs:
-+                kwargs['stdout'] = subprocess.PIPE
-+            if 'stderr' not in kwargs:
-+                kwargs['stderr'] = subprocess.PIPE
-+        else:
-             if 'stdout' not in kwargs:
-                 kwargs['stdout'] = subprocess.DEVNULL
-             if 'stderr' not in kwargs:
-                 kwargs['stderr'] = subprocess.DEVNULL
+     checker = SphinxDependencyChecker(args)
  
-+        # Don't break with older Python versions
-+        if 'text' in kwargs and sys.version_info < (3, 7):
-+            kwargs['universal_newlines'] = kwargs.pop('text')
-+
-         return subprocess.run(*args, **kwargs)
++    checker.check_python()
+     checker.check_needs()
  
-     #
+ 
 -- 
 2.50.1
 
