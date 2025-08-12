@@ -1,235 +1,126 @@
-Return-Path: <linux-kernel+bounces-765337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304B3B22EE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4D3B22EE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E393B70B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772B53B030D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F902FD1D5;
-	Tue, 12 Aug 2025 17:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF232FD1AA;
+	Tue, 12 Aug 2025 17:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU/fy6i3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM6qhym/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3301A9FA8;
-	Tue, 12 Aug 2025 17:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED6221C160;
+	Tue, 12 Aug 2025 17:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755019177; cv=none; b=qU0PMNNiSdtxX0yPhLNUIbq+slikfDfLBZ3nScT5pS/RFWqYla0ZQVLjaUu1OghrCOcnkLQWC2R9mkXqEu/XRBwkHVs/QIABooy5OC0pPPYtxTh2LPfZ1n4h0ZRD68NIO+cFI39qMFyI9NizKZUJ9O97dr0ES7RRDnhmXjsYTD4=
+	t=1755019204; cv=none; b=J1jnOVIER83hiZXzvojiW39pgRGl4T76+E9OIXjQloASqK8sRJFejFZPjbvmDn6BgdIsq2r7Y6GPx6Tploc9lMQPiRYLzMeXa+1Y8iinpj+P5uA33Di6rcGzwGZ7BCq1Lb2HDe42Sv0zb48uzFNx7ltYN6e2GyClKCZlaDTGH9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755019177; c=relaxed/simple;
-	bh=WIIuEzR92MmSZ+HKRr6ZkaI56dvR/J7/Nn+zRfscpZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8lPrcsyfconnt/0Sqy2mCaLoB5NNS1jUpSw3SBgGqH8MYFivYILE3ip3+qnpv7TDQk1Geyk5qpweENRILW415fVIEnP8L7lte+pheWaa1JC127u+Vy7n35685sTOuyO3dBtwSJov8vtp6h6dby/n3y7w325sHiXLMWD9isNidk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU/fy6i3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615C5C4CEF0;
-	Tue, 12 Aug 2025 17:19:36 +0000 (UTC)
+	s=arc-20240116; t=1755019204; c=relaxed/simple;
+	bh=mAC0HElfoi9Vm0ysz8JFlbF2hmtehTuzsx2QwPcA3lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ofDhWb1iBBUb7xNkFmtTH84w7SMqUfeVA2qcL5A+mnSjNM2sAOJhkERo5h1LC469bmtPOD7Lfgly/g1ol25Vdm4eme/b7je9rrA3BwpFYSUAzEXyXVc+Np2zZ3dY2Y90WKnZzELddWM88CcrzBwibRj5DcDUzzr/ZwPg3UnVceY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM6qhym/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFC5C4CEF0;
+	Tue, 12 Aug 2025 17:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755019176;
-	bh=WIIuEzR92MmSZ+HKRr6ZkaI56dvR/J7/Nn+zRfscpZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hU/fy6i3xv31ZOz5kYVcgc0yIxYlUBxhIcqDwbyg1vnwKLgoRSC7Qijv+recoHZ6c
-	 cJfKuHtd6UqceRn7ufr8mn65RSyXdtFM+eoPSUsm3pmetZitjnjIFXNU+pmsJVCX4m
-	 iCayd4VU+nGc/lMT/I0580G54adjeHf/23GFLWtZ6LXKQXwYDDTVsi88qnAISWf5hw
-	 N+sfdlyWVH8tFytt5EGW1lVArV7cmW6lg5ZlagxV+NZrikRqpJydAc0K0zjuORRCcO
-	 rRTY0VO97HEzuRpzmbPL/fn67R7KdkzALcpQAgjv0mKvoyumh/tsYPCjpawIMeIO3L
-	 jTpbyfGRaeRtA==
-Date: Tue, 12 Aug 2025 10:19:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 11/11] ext4: Atomic write test for extent split across
- leaf nodes
-Message-ID: <20250812171935.GD7938@frogsfrogsfrogs>
-References: <cover.1754833177.git.ojaswin@linux.ibm.com>
- <2c241ea2ede39914d29aa59cd06acfc951aed160.1754833177.git.ojaswin@linux.ibm.com>
+	s=k20201202; t=1755019203;
+	bh=mAC0HElfoi9Vm0ysz8JFlbF2hmtehTuzsx2QwPcA3lw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gM6qhym/4a3Wazw/nb45u6yf19ToNI2AupnrQWSMRSud2rXFjWscjBM03GnmGuaLC
+	 EsSxGSxYbn6bxLR4A2ABjxDsa+pL4ZQhGqWV2JTXluMQdvNFq8NiSxxMtND5gTwRzu
+	 /DCJj7O5o5G9jFdLQ4APf0J10q1OuZDvhbtv2qaNCwxZni62qKDkKYUKeAtL4Ntygo
+	 2GE778oQcigzTGsrra/5sdbfnFvQWrDutwQCehovhpDQS2bzt+lr/jH/3RezA9e+eI
+	 SRpDHftSUOViKMiuPwCw9CW9uD00n3W1C88LhfSiOfeftXXkcznJQN+SXh6ZICgtQT
+	 cT+O7nxy008Ag==
+From: SeongJae Park <sj@kernel.org>
+To: Sang-Heon Jeon <ekffu200098@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Enze Li <lienze@kylinos.cn>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/damon: fix damon selftests by installing _common.sh
+Date: Tue, 12 Aug 2025 10:20:01 -0700
+Message-Id: <20250812172001.57104-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CABFDxMEQYx7fdx4T7meUb01FoqJaHcW_2RoYnBwJ8GzmJTexzQ@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c241ea2ede39914d29aa59cd06acfc951aed160.1754833177.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 10, 2025 at 07:12:02PM +0530, Ojaswin Mujoo wrote:
-> In ext4, even if an allocated range is physically and logically
-> contiguous, it can still be split into 2 extents. This is because ext4
-> does not merge extents across leaf nodes. This is an issue for atomic
-> writes since even for a continuous extent the map block could (in rare
-> cases) return a shorter map, hence tearning the write. This test creates
-> such a file and ensures that the atomic write handles this case
-> correctly
-> 
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
->  tests/ext4/063     | 129 +++++++++++++++++++++++++++++++++++++++++++++
->  tests/ext4/063.out |   2 +
->  2 files changed, 131 insertions(+)
->  create mode 100755 tests/ext4/063
->  create mode 100644 tests/ext4/063.out
-> 
-> diff --git a/tests/ext4/063 b/tests/ext4/063
-> new file mode 100755
-> index 00000000..40867acb
-> --- /dev/null
-> +++ b/tests/ext4/063
-> @@ -0,0 +1,129 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> +#
-> +# In ext4, even if an allocated range is physically and logically contiguous,
-> +# it can still be split into 2 extents. This is because ext4 does not merge
-> +# extents across leaf nodes. This is an issue for atomic writes since even for
-> +# a continuous extent the map block could (in rare cases) return a shorter map,
-> +# hence tearning the write. This test creates such a file and ensures that the
-> +# atomic write handles this case correctly
-> +#
-> +. ./common/preamble
-> +. ./common/atomicwrites
-> +_begin_fstest auto atomicwrites
-> +
-> +_require_scratch_write_atomic_multi_fsblock
-> +_require_atomic_write_test_commands
-> +_require_command "$DEBUGFS_PROG" debugfs
-> +
-> +prep() {
-> +	local bs=`_get_block_size $SCRATCH_MNT`
-> +	local ex_hdr_bytes=12
-> +	local ex_entry_bytes=12
-> +	local entries_per_blk=$(( (bs - ex_hdr_bytes) / ex_entry_bytes ))
-> +
-> +	# fill the extent tree leaf with bs len extents at alternate offsets.
-> +	# The tree should look as follows
-> +	#
-> +	#                    +---------+---------+
-> +	#                    | index 1 | index 2 |
-> +	#                    +-----+---+-----+---+
-> +	#                   +------+         +-----------+
-> +	#                   |                            |
-> +	#      +-------+-------+---+---------+     +-----+----+
-> +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1  |
-> +	#      | off:0 | off:2 |...| off:678 |     |  off:680 |
-> +	#      | len:1 | len:1 |   |  len:1  |     |   len:1  |
-> +	#      +-------+-------+---+---------+     +----------+
-> +	#
-> +	for i in $(seq 0 $entries_per_blk)
-> +	do
-> +		$XFS_IO_PROG -fc "pwrite -b $bs $((i * 2 * bs)) $bs" $testfile > /dev/null
-> +	done
-> +	sync $testfile
-> +
-> +	echo >> $seqres.full
-> +	echo "Create file with extents spanning 2 leaves. Extents:">> $seqres.full
-> +	echo "...">> $seqres.full
-> +	$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
-> +
-> +	# Now try to insert a new extent ex(new) between ex(n) and ex(n+1).
-> +	# Since this is a new FS the allocator would find continuous blocks
-> +	# such that ex(n) ex(new) ex(n+1) are physically(and logically)
-> +	# contiguous. However, since we dont merge extents across leaf we will
-> +	# end up with a tree as:
-> +	#
-> +	#                    +---------+---------+
-> +	#                    | index 1 | index 2 |
-> +	#                    +-----+---+-----+---+
-> +	#                   +------+         +------------+
-> +	#                   |                             |
-> +	#      +-------+-------+---+---------+     +------+-----------+
-> +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1 (merged) |
-> +	#      | off:0 | off:2 |...| off:678 |     |      off:679     |
-> +	#      | len:1 | len:1 |   |  len:1  |     |      len:2       |
-> +	#      +-------+-------+---+---------+     +------------------+
-> +	#
+On Tue, 12 Aug 2025 22:27:00 +0900 Sang-Heon Jeon <ekffu200098@gmail.com> wrote:
 
-Thanks for the nice picture demonstrating what you're trying to test!
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-> +	echo >> $seqres.full
-> +	torn_ex_offset=$((((entries_per_blk * 2) - 1) * bs))
-> +	$XFS_IO_PROG -c "pwrite $torn_ex_offset $bs" $testfile >> /dev/null
-> +	sync $testfile
-> +
-> +	echo >> $seqres.full
-> +	echo "Perform 1 block write at $torn_ex_offset to create torn extent. Extents:">> $seqres.full
-> +	echo "...">> $seqres.full
-> +	$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
-> +
-> +	_scratch_cycle_mount
-> +}
-> +
-> +_scratch_mkfs >> $seqres.full
-> +_scratch_mount >> $seqres.full
-> +
-> +testfile=$SCRATCH_MNT/testfile
-> +touch $testfile
-> +awu_max=$(_get_atomic_write_unit_max $testfile)
-> +
-> +echo >> $seqres.full
-> +echo "# Prepping the file" >> $seqres.full
-> +prep
-> +
-> +torn_aw_offset=$((torn_ex_offset - (torn_ex_offset % awu_max)))
-> +
-> +echo >> $seqres.full
-> +echo "# Performing atomic IO on the torn extent range. Command: " >> $seqres.full
-> +echo $XFS_IO_PROG -c "open -fsd $testfile" -c "pwrite -S 0x61 -DA -V1 -b $awu_max $torn_aw_offset $awu_max" >> $seqres.full
-> +$XFS_IO_PROG -c "open -fsd $testfile" -c "pwrite -S 0x61 -DA -V1 -b $awu_max $torn_aw_offset $awu_max" >> $seqres.full
-> +
-> +echo >> $seqres.full
-> +echo "Extent state after atomic write:">> $seqres.full
-> +echo "...">> $seqres.full
-> +$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
-> +
-> +echo >> $seqres.full
-> +echo "# Checking data integrity" >> $seqres.full
-> +
-> +# create a dummy file with expected data
-> +$XFS_IO_PROG -fc "pwrite -S 0x61 -b $awu_max 0 $awu_max" $testfile.exp >> /dev/null
-> +expected_data=$(od -An -t x1 -j 0 -N $awu_max $testfile.exp)
-> +
-> +# We ensure that the data after atomic writes should match the expected data
-> +actual_data=$(od -An -t x1 -j $torn_aw_offset -N $awu_max $testfile)
-> +if [[ "$actual_data" != "$expected_data" ]]
-> +then
-> +	echo "Checksum match failed at off: $torn_aw_offset size: $awu_max"
-> +	echo
-> +	echo "Expected: "
-> +	echo "$expected_data"
-> +	echo
-> +	echo "Actual contents: "
-> +	echo "$actual_data"
-> +
-> +	_fail
-> +fi
-> +
-> +echo -n "Data verification at offset $torn_aw_offset suceeded!" >> $seqres.full
-> +echo "Silence is golden"
-> +status=0
-> +exit
-> diff --git a/tests/ext4/063.out b/tests/ext4/063.out
-> new file mode 100644
-> index 00000000..de35fc52
-> --- /dev/null
-> +++ b/tests/ext4/063.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 063
-> +Silence is golden
-> -- 
-> 2.49.0
+> Hello, Alexandre
 > 
+> On Tue, Aug 12, 2025 at 9:32 PM Sang-Heon Jeon <ekffu200098@gmail.com> wrote:
+> >
+> > Hello, Alexandre
+> >
+> > On Tue, Aug 12, 2025 at 5:13 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+> > >
+> > > _common.sh was recently introduced but is not installed and then
+> > > triggers an error when trying to run the damon selftests:
+> > >
+> > > selftests: damon: sysfs.sh
+> > > ./sysfs.sh: line 4: _common.sh: No such file or directory
+> > >
+> > > Install this file to avoid this error.
+> >
+> > I tried to reproduce those error with my vm environment but I failed;
+> > with my workaround test method, it doesn't exist.
+> > If you're okay, could you please tell me line by line how you execute
+> > tests in what environment?
+> > I'm also struggling with the test environment, as well.
 > 
+> I succeeded to reproduce and also check that this patch removes those errors.
+> 
+> > > Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host shared function")
+> > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > > ---
+> 
+> Tested-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+
+Thank you, Sang-Heon :)
+
+[...]
+> > > ---
+> > > base-commit: 2754d549af31f8f029f02d02cd8e574676229b3d
+> >
+> > Does this commit exist in `mm-new` or `damon-next`?  I failed to setup
+> > the same base-commit environment.
+> 
+> However, I'm still not sure that this patch is in the correct
+> baseline. maybe it will not cause any problems with the merge
+> though... but I'm not sure. So I didn't add a reviewed-by tag.
+
+I think unclear baseline of a patch shouldn't be a blocker of Reviewed-by tags.
+Since most DAMON patches are recommended to use mm-new[1], as long as the patch
+can cleanly applied on latest mm-new and you don't see anything wrong, I think
+you can assume it is based on mm-new.
+
+[1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
+
+
+Thanks,
+SJ
+
+[...]
 
