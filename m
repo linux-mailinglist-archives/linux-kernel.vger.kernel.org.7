@@ -1,237 +1,127 @@
-Return-Path: <linux-kernel+bounces-764953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0493B22965
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFE0B22967
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DC21BC803E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA65A0318
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF21B283C9F;
-	Tue, 12 Aug 2025 13:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF13228507F;
+	Tue, 12 Aug 2025 13:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aevNF6kd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="lvUjqhfh"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E221261574;
-	Tue, 12 Aug 2025 13:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755006164; cv=none; b=k6erurXdqHLASCaQ9Lp5crVrjXnQot4NSTUrFmiQ90Q2TYBYy47uc6XY0zYQ0JRw42+3IPAOc/bdWG1t0BQKQg9RoZ5tS/2jLOY5EeVA24+MR9pdr2cxNNQ+bAHKdYl92RQwd9g0rcj2IZfEnbHMsVI+5kwWsKIy3QWvyS+DzhM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755006164; c=relaxed/simple;
-	bh=dTqfOE3taa146pHzT0qdFCm8Pv3s+7unaUxH0yLl0SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/cTcasnG0L+xPrLQl6okCkO73IccczWi40qqNSrXM+cYgO3NsdOlsj8i/LcwPCzTLIMxcvyRq49UhY3qM5xedwt9loMa5t0P80wRj3Ad1m3Slvet9d0WFF+qw4RSBS3d6kHcZsuV9rNhkaOl8FELdKjmvvw+TFawCNDgvm5UY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aevNF6kd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 7E835446;
-	Tue, 12 Aug 2025 15:41:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755006107;
-	bh=dTqfOE3taa146pHzT0qdFCm8Pv3s+7unaUxH0yLl0SQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aevNF6kdEgyklGFKKUm+zWbNPofdOjHEGTzHIHphHVT2tvBIbFRriP/NlhXjXCzTE
-	 dROlzVpy7OWL/nbf+kKj/9PFpefAdaZ7BR34Bgwwx29/hYlzU4mFh+Kds+5sEMEydk
-	 PbAh6lFVNNck2T8DiMHNVn4GIBEy7/F72OTLBmgQ=
-Date: Tue, 12 Aug 2025 16:42:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
-Subject: Re: [PATCH v2 8/8] Documentation: add documentation of AMD isp 4
- driver
-Message-ID: <20250812134222.GN30054@pendragon.ideasonboard.com>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-9-Bin.Du@amd.com>
- <20250805113719.GF24627@pendragon.ideasonboard.com>
- <e614b565-81e0-49c0-93dc-af1936462728@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B227FB27;
+	Tue, 12 Aug 2025 13:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755006165; cv=pass; b=VeV3URzZbhcEniWIjT5NVJRazeKV7wwyojhr6lugzuSs+NQ6OOJ5so6gWRlHLm2EdwHvCTA2eARWUXcRJtnnOJg+e6M3ACPbsFAuiVbujxE8WFqvLH2JTHleO2bMeBL874KVBRU8WE3/nxqbptT/rxOqzOtPtpzbvubPnvGN6eo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755006165; c=relaxed/simple;
+	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XdsTC53mQnMzpukaGcSIdZQnNp/uJMtLDhiIYdjwE5oQcLM3xxRMxMT0VJjhea0rRuN+p9/KGw9czqrk6g9qejcxptJfZk4a6DeJtBThf6YLtnzli7GWCRAgeUX5sJJ1NUIzSLtvnhUhNl4wxzZ1H/LIhdaS91SYebxWXYjL2E8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=lvUjqhfh; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755006152; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ob2a/f0eaZdCkypYg4XmY5b8LnjcS5jzNQY8Wclo5TdSrhceyUMocmxn0bkcW5f65So9ut1pn/JU5WWc3W7WiMG3RUbHu/joNlg9JqadynXkD6k91ql301mUqzLY99f2b+fZs203uDCSZ918kYc08zgIqJzUdy7pmnCgS3iktfo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755006152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=; 
+	b=gd328Pg5XKwKeKvMXDpmob07Vb0f7nFIFU/c2nV1mNLzQbBUwgMTcmWepbg52MqvfF8lD4o2nFvPScY5DGbGxcUyiPxyhDP2ZgCLB+893DAhY6QSncBN5YEEJjUIb6+xWpQRftwCN+b2/JC7Ab/bba1OPKHYIlP/VfV6lHiV+6I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755006152;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=;
+	b=lvUjqhfh0BPdd0ewTbefpOQPYoD9rafGuCkqLGNeaojQjm7bQwnGfagG/yDm7wFh
+	hLIocF23EIbk23cW+rhqo0QzNQ9M/R4JYAGKi/SY0qvceCZFIJUtHxXuTe6R1gVQPH6
+	sDM9v3oEMe3RoUXJIHrTaUTAGrAurbov4orvNqaziPkhpaJEzTJa9i47mMSaWHuC6HE
+	BgWrZ37mp3xgQCa4vNmWUSg7OIMSdn+coL1DF+fk2Ko25yODGRFMGF+EbWvqe3BTAH6
+	tt6bN9nPUmdrJd20Qs8ASA3fUtEPmiu9ytH9x7TQ3uobdvI0bqlGb/4z50UZwf+whj+
+	W7j84GJwhA==
+Received: by mx.zohomail.com with SMTPS id 1755006149202627.0494069115554;
+	Tue, 12 Aug 2025 06:42:29 -0700 (PDT)
+Message-ID: <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
+Subject: Re: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 21:42:23 +0800
+In-Reply-To: <20250812054258.1968351-1-uwu@icenowy.me>
+References: <20250812054258.1968351-1-uwu@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e614b565-81e0-49c0-93dc-af1936462728@amd.com>
+X-ZohoMailClient: External
 
-On Tue, Aug 12, 2025 at 09:36:04AM +0800, Du, Bin wrote:
-> On 8/5/2025 7:37 PM, Laurent Pinchart wrote:
-> > On Wed, Jun 18, 2025 at 05:19:59PM +0800, Bin Du wrote:
-> >> Add documentation for AMD isp 4 and describe the main components
-> >>
-> >> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> >> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> >> ---
-> >>   Documentation/admin-guide/media/amdisp4-1.rst | 64 +++++++++++++++++++
-> >>   Documentation/admin-guide/media/amdisp4.dot   |  8 +++
-> >>   MAINTAINERS                                   |  2 +
-> >>   3 files changed, 74 insertions(+)
-> >>   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
-> >>   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
-> >>
-> >> diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
-> >> new file mode 100644
-> >> index 000000000000..417b15af689a
-> >> --- /dev/null
-> >> +++ b/Documentation/admin-guide/media/amdisp4-1.rst
-> >> @@ -0,0 +1,64 @@
-> >> +.. SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +.. include:: <isonum.txt>
-> >> +
-> >> +====================================
-> >> +AMD Image Signal Processor (amdisp4)
-> >> +====================================
-> >> +
-> >> +Introduction
-> >> +============
-> >> +
-> >> +This file documents the driver for the AMD ISP4 that is part of
-> >> +AMD Ryzen AI Max 385 SoC.
-> >> +
-> >> +The driver is located under drivers/media/platform/amd/isp4 and uses
-> >> +the Media-Controller API.
-> >> +
-> >> +Topology
-> >> +========
-> >> +
-> >> +.. _amdisp4_topology_graph:
-> >> +
-> >> +.. kernel-figure:: amdisp4.dot
-> >> +     :alt:   Diagram of the media pipeline topology
-> >> +     :align: center
-> >> +
-> >> +
-> >> +
-> >> +The driver has 1 sub-device:
-> >> +
-> >> +- isp: used to resize and process bayer raw frames in to yuv.
-> >> +
-> >> +The driver has 1 video device:
-> >> +
-> >> +- <capture video device: capture device for retrieving images.
-> >> +
-> >> +
-> >> +  - ISP4 Image Signal Processing Subdevice Node
-> >> +-----------------------------------------------
-> >> +
-> >> +The isp4 is represented as a single V4L2 subdev, the sub-device does not
-> >> +provide interface to the user space.
-> > 
-> > Doesn't it ? The driver sets the V4L2_SUBDEV_FL_HAS_DEVNODE flag for the
-> > subdev, and calls v4l2_device_register_subdev_nodes().
-> 
-> We have exported subdev device to user space during the testing with 
-> libcamera sample pipeline.
+=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 13:42 +0800=EF=BC=
+=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> This patchset is my changes to the TH1520 clock driver, mainly for
+> supporting the display controller (the first 3).
+>=20
+> The first two are functionality additions, with the first one adding
+> support for enabling/disabling PLLs (for DPU PLL) and the second one
+> adding support for changing DPU dividers.
+>=20
+> The 3rd one is to address hang issues met when testing the DPU driver
+> w/o clk_ignore_unused command line option.
+>=20
+> The 4th one has no relationship to display, and only exists for my
+> need
+> to change an arbitrary GPIO (well, GPIO3_3, the one controlling the
+> fan
+> on Lichee Pi 4A) with gpioset.
+>=20
+> This patchset has a dependency (a 0th one) [1].
+>=20
+> [1]
+> https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v1-1-=
+299c33d7a593@samsung.com/
+>=20
 
-But it's not needed anymore ? If not, you could stop exposing the subdev
-to userspace for the time being.
+Oops, looks like this patchset deserves a new revision now...
 
-> > As far as I understand, the camera is exposed by the firmware with a
-> > webcam-like interface. We need to better understand your plans with this
-> > driver. If everything is handled by the firmware, why are the sensor and
-> > subdev exposed to userspace ? Why can't you expose a single video
-> > capture device, with a media device, and handle everything behind the
-> > scene ? I assume there may be more features coming later. Please
-> > document the plan, we can't provide feedback on the architecture
-> > otherwise.
-> 
-> Currently, isp fw is controlling the sensor to update just the exposure 
-> and gain, since the 3A algorithms run on ISP HW rather than on x86.
+PATCH 2/4 has a round_rate() implementation, which is considered out-
+of-date and determine_rate() will replace it.
 
-This design decision makes my hair stand on end :-( Exposing the camera
-sensor to both the firmware and the host concurrently is asking for
-trouble. If you really want to abstract the camera behind a firmware and
-only expose a webcam-like API (or not even that in this version, as the
-driver exposes no control as far as I can see), then you should push the
-whole sensor handling to the firmware too. In my opinion that would not
-be a good solution compared to exposing the ISP to the host, but it
-would be better than this hybrid model.
+PATCH 3/4 was broken during rebasing.
 
-> In a 
-> future version, we plan to introduce raw output support in the ISP 
-> driver, allowing users to choose between AMD’s 3A running on ISP 
-> hardware or a custom 3A running on x86. If the user opts for the 
-> x86-based 3A, the firmware will relinquish control of the sensor, and 
-> hands over full control to the x86 system.
+PATCH 4/4 is found to be not working (and even makes padctrl0 an orphan
+clock). Yao Zi told me that I need to first do some changes to ccu_gate
+code.
 
-Will the firmware at that point expose to Linux all the ISP statistics
-needed to implement auto-exposure ? What if I want to also set digital
-gain ? Or have manual white balance (requiring statistics), and manual
-CCM ?
+> Icenowy Zheng (4):
+> =C2=A0 clk: thead: add support for enabling/disabling PLLs
+> =C2=A0 clk: thead: support changing DPU pixel clock rate
+> =C2=A0 clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+> =C2=A0 clk: thead: th1520-ap: fix parent of padctrl0 clock
+>=20
+> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 174 ++++++++++++++++++++++++---=
+-
+> --
+> =C2=A01 file changed, 143 insertions(+), 31 deletions(-)
+>=20
 
-> >> The sub-device is connected to one video node
-> >> +(isp4_capture) with immutable active link. The isp entity is connected
-> >> +to sensor pad 0 and receives the frames using CSI-2 protocol. The sub-device is
-> >> +also responsible to configure CSI2-2 receiver.
-> >> +The sub-device processes bayer raw data from the connected sensor and output
-> >> +them to different YUV formats. The isp also has scaling capabilities.
-> >> +
-> >> +  - isp4_capture - Frames Capture Video Node
-> >> +--------------------------------------------
-> >> +
-> >> +Isp4_capture is a capture device to capture frames to memory.
-> >> +This entity is the DMA engine that write the frames to memory.
-> >> +The entity is connected to isp4 sub-device.
-> >> +
-> >> +Capturing Video Frames Example
-> >> +==============================
-> >> +
-> >> +.. code-block:: bash
-> >> +
-> >> +         # set the links
-> > 
-> > This seems very under-documented.
-> 
-> Yes, documentation needs to be updated.
-> 
-> >> +
-> >> +         # start streaming:
-> >> +         v4l2-ctl "-d" "/dev/video0" "--set-fmt-video=width=1920,height=1080,pixelformat=NV12" "--stream-mmap" "--stream-count=10"
-> >> diff --git a/Documentation/admin-guide/media/amdisp4.dot b/Documentation/admin-guide/media/amdisp4.dot
-> >> new file mode 100644
-> >> index 000000000000..a4c2f0cceb30
-> >> --- /dev/null
-> >> +++ b/Documentation/admin-guide/media/amdisp4.dot
-> >> @@ -0,0 +1,8 @@
-> >> +digraph board {
-> >> +	rankdir=TB
-> >> +	n00000001 [label="{{<port0> 0} | amd isp4\n | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-> >> +	n00000001:port1 -> n00000004 [style=bold]
-> >> +	n00000004 [label="Preview\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-> >> +	n0000000a [label="{{} | ov05c10 22-0010\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-> >> +	n0000000a:port0 -> n00000001:port0 [style=bold]
-> >> +}
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 15070afb14b5..e4455bde376f 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -1113,6 +1113,8 @@ M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
-> >>   L:	linux-media@vger.kernel.org
-> >>   S:	Maintained
-> >>   T:	git git://linuxtv.org/media.git
-> >> +F:	Documentation/admin-guide/media/amdisp4-1.rst
-> >> +F:	Documentation/admin-guide/media/amdisp4.dot
-> >>   F:	drivers/media/platform/amd/Kconfig
-> >>   F:	drivers/media/platform/amd/Makefile
-> >>   F:	drivers/media/platform/amd/isp4/*
-
--- 
-Regards,
-
-Laurent Pinchart
 
