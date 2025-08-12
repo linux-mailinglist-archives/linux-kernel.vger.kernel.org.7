@@ -1,235 +1,266 @@
-Return-Path: <linux-kernel+bounces-764194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358A3B21FA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F28B21FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC6F7AC869
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8375962463A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF602D6E45;
-	Tue, 12 Aug 2025 07:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDEB2D7803;
+	Tue, 12 Aug 2025 07:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IeP8YUI8"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="R2AMMGg3"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C831A9F99;
-	Tue, 12 Aug 2025 07:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFA51A9F99;
+	Tue, 12 Aug 2025 07:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984094; cv=none; b=VIWNvkM/dstEDRgpeQlYU8tS9vaNM114fKsnDtyivVSyDDJ+4xP4NTnuXesq1OPyxmgzoDzO3W/sIczG+GsqT9AP5/6KwzdesHlLmMTncUifLU47+F8gqT+rK+r4PqQG+ggp7yZ7xQ2+55QyujMQmpQbDAOUs4SzCdquH/RS8qY=
+	t=1754984266; cv=none; b=RhJyDE5aNDZRmHPAlhFKXZt9zNKk/tagDPWxMkq8t1Xj40Qr/LQEnWRd32YnoH3sBpA8I5Mjcd25I98dyemNTk8cSTzgzuq37TEePvRQr3hlZrSUxbeeujgbuVM7Z6g5N6qT5keuqfe8Y+m6Rf96NM9ymxdN227WCL/+c0wDYG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984094; c=relaxed/simple;
-	bh=/ALrOFJ9/fMeB0jkp0E7drCOhw3pyhpTTvvoWjCfuVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbNgMnEczvnqM3nwypimE22IFsBuT9ZkcQwK6SSo03UKJd7dMciks88pBEhZiDfPdy1g4LNaOT7Y0QIl27uwWDSuK6JyeyjrnET+xLyaccVYkzOsPnuGx9mPQfB/ENOm3aWM0J9jsdWHOObx7M2zZ7FFl5FMoYADL+Ae+u/dsfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IeP8YUI8; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 790394A4;
-	Tue, 12 Aug 2025 09:33:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754984037;
-	bh=/ALrOFJ9/fMeB0jkp0E7drCOhw3pyhpTTvvoWjCfuVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IeP8YUI8zgsuCV6UGHT3iw7SXYrZ3/rdeK4Nn4Sy8FxP5bVAoigxS+M69I2QAuShc
-	 eBNGcJqkGQVwYZe9vWfZIss60nqfofdfLdZihwyw6+8mnKaPmppIPpy4Vq9kpmvTi8
-	 1wTTdt7HAONtf6U5HNDpqMQ4+DIBTI58ugJEoLWw=
-Date: Tue, 12 Aug 2025 10:34:32 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com,
-	Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
-	anson.tsao@amd.com
-Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
-Message-ID: <20250812073432.GF30054@pendragon.ideasonboard.com>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-5-Bin.Du@amd.com>
- <aIclcwRep3F_z7PF@kekkonen.localdomain>
- <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
- <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
- <20250811123102.GC30760@pendragon.ideasonboard.com>
- <50f0958b-5234-4a89-a57e-5d330cca13af@amd.com>
+	s=arc-20240116; t=1754984266; c=relaxed/simple;
+	bh=YF2BOgtvsRz+yT+YAwLFEroi8NzBJol25StSpW8uatM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axeL+tspsNUCfNNdSWbyRjBjye+BtAay5Eyt282pUM71zDzVC7gNMAdCuQThgKHjYaiz95DofS1FlnOllSbMGBwhRhXRh4OE3nzKDjVdQyO8ewpvKktWe75sTSLnonw9hIAE5xx9YzwRjAtvCdUJjqkHqRgv9ouB1VlgrbxCc/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=R2AMMGg3; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 89CA1635B040;
+	Tue, 12 Aug 2025 09:37:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1754984254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ko8fbK5GyQxFcouQBC+uaA5wBDCuoavWYQ2EzMwpjWI=;
+	b=R2AMMGg3UcI+D1Q0kO3yhjRvyygTC1w++Aaq90YxKJqFZseG8At7rRfbGdaSW+zLfWooYT
+	tJKBdsrKFfPWu+xWmebP5lZPTbF89Ein4L0rHp6/4CcTq97EWKMpcB5DpT6hZaO7HLbolf
+	oMhtdV2QQXFYdZIbIqWZmydi3U/+cRE=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: David Rientjes <rientjes@google.com>, Damien Le Moal <dlemoal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, John Garry <john.g.garry@oracle.com>,
+ Christoph Hellwig <hch@lst.de>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, linux-mm@kvack.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Michal Hocko <mhocko@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject:
+ Re: [REGRESSION][BISECTED] Unexpected OOM instead of reclaiming inactive file
+ pages
+Date: Tue, 12 Aug 2025 09:37:22 +0200
+Message-ID: <3553647.iZASKD2KPV@natalenko.name>
+In-Reply-To: <33b6c9a3-3165-4ce8-9667-afdbaff2c3ae@kernel.org>
+References:
+ <5905724.LvFx2qVVIh@natalenko.name> <15056829.uLZWGnKmhe@natalenko.name>
+ <33b6c9a3-3165-4ce8-9667-afdbaff2c3ae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <50f0958b-5234-4a89-a57e-5d330cca13af@amd.com>
+Content-Type: multipart/signed; boundary="nextPart3246356.PYKUYFuaPT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On Tue, Aug 12, 2025 at 11:36:23AM +0800, Du, Bin wrote:
-> Many thanks Laurent Pinchart for the comments.
-> 
-> On 8/11/2025 8:31 PM, Laurent Pinchart wrote:
-> > On Mon, Aug 11, 2025 at 11:46:27AM +0000, Sakari Ailus wrote:
-> >> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
-> >>> On 7/28/2025 3:23 PM, Sakari Ailus wrote:
-> >>>> On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
-> >>>>> ISP firmware controls ISP HW pipeline using dedicated embedded processor
-> >>>>> called ccpu.
-> >>>>> The communication between ISP FW and driver is using commands and
-> >>>>> response messages sent through the ring buffer. Command buffers support
-> >>>>> either global setting that is not specific to the steam and support stream
-> >>>>> specific parameters. Response buffers contains ISP FW notification
-> >>>>> information such as frame buffer done and command done. IRQ is used for
-> >>>>> receiving response buffer from ISP firmware, which is handled in the main
-> >>>>> isp4 media device. ISP ccpu is booted up through the firmware loading
-> >>>>> helper function prior to stream start.
-> >>>>> Memory used for command buffer and response buffer needs to be allocated
-> >>>>> from amdgpu buffer manager because isp4 is a child device of amdgpu.
-> >>>>
-> >>>> Please rewrap this, some lines above are quite short.
-> >>>>
-> >>> Thanks, the line after the short line is supposed to be a new paragraph?
-> >>> Should we put all the description in one paragraph?
-> >>
-> >> One or more paragraphs work fine, but a new paragraph is separated from the
-> >> previous one by another newline.
-> >>
-> >> ...
-> > 
-> > Paragraphs are defined as a block of text that convey one idea. They
-> > should be visually separated by a space. As we can't have fractional
-> > line spacing in plain text, paragraphs need to be separated by a blank
-> > line. This is a typography rule that maximizes readability. There should
-> > be no line break between sentences in a single paragraph.
-> > 
-> > Whether you write commit messages, formal documentation or comments in
-> > code, typography is important to give the best experience to readers.
-> > After all, a block of text that wouldn't focus on the readers would have
-> > no reason to exist.
-> > 
-> > 
-> > Now compare the above with
-> > 
-> > 
-> > Paragraphs are defined as a block of text that convey one idea. They
-> > should be visually separated by a space.
-> > As we can't have fractional line spacing in plain text, paragraphs need
-> > to be separated by a blank line.
-> > This is a typography rule that maximizes readability. There should be no
-> > line break between sentences in a single paragraph. Whether you write
-> > commit messages, formal documentation or comments in code, typography is
-> > important to give the best experience to readers.
-> > After all, a block of text that wouldn't focus on the readers would have
-> > no reason to exist.
-> 
-> Really appreciate the detailed guide, will follow it. May I summarize 
-> like this? 1 Separate paragraphs by a blank line. 2 Don't add line break 
-> between sentences in a single paragraph, an exception to this is commit 
-> message, because of the 75-character patch check limit, line break can 
-> be added, but it should at the 75-character limit boundary
+--nextPart3246356.PYKUYFuaPT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Tue, 12 Aug 2025 09:37:22 +0200
+Message-ID: <3553647.iZASKD2KPV@natalenko.name>
+In-Reply-To: <33b6c9a3-3165-4ce8-9667-afdbaff2c3ae@kernel.org>
+MIME-Version: 1.0
 
-When I wrote "line break", I meant breaking the line after a sentence,
-before the 75 columns limits. Text blocks should always be wrapped (at
-75 columns in commit messages, or 80 in kernel code). What you should
-avoid is line breaks not related to the columns limit.
+Hello.
 
-This is fine:
+On =C3=BAter=C3=BD 12. srpna 2025 2:45:02, st=C5=99edoevropsk=C3=BD letn=C3=
+=AD =C4=8Das Damien Le Moal wrote:
+> On 8/12/25 5:42 AM, Oleksandr Natalenko wrote:
+> > On pond=C4=9Bl=C3=AD 11. srpna 2025 18:06:16, st=C5=99edoevropsk=C3=BD =
+letn=C3=AD =C4=8Das David Rientjes wrote:
+> >> On Mon, 11 Aug 2025, Oleksandr Natalenko wrote:
+> >>> I'm fairly confident that the following commit
+> >>>
+> >>> 459779d04ae8d block: Improve read ahead size for rotational devices
+> >>>
+> >>> caused a regression in my test bench.
+> >>>
+> >>> I'm running v6.17-rc1 in a small QEMU VM with virtio-scsi disk. It ha=
+s got 1 GiB of RAM, so I can saturate it easily causing reclaiming mechanis=
+m to kick in.
+> >>>
+> >>> If MGLRU is enabled:
+> >>>
+> >>> $ echo 1000 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+> >>>
+> >>> then, once page cache builds up, an OOM happens without reclaiming in=
+active file pages: [1]. Note that inactive_file:506952kB, I'd expect these =
+to be reclaimed instead, like how it happens with v6.16.
+> >>>
+> >>> If MGLRU is disabled:
+> >>>
+> >>> $ echo 0 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+> >>>
+> >>> then OOM doesn't occur, and things seem to work as usual.
+> >>>
+> >>> If MGLRU is enabled, and 459779d04ae8d is reverted on top of v6.17-rc=
+1, the OOM doesn't happen either.
+> >>>
+> >>> Could you please check this?
+> >>>
+> >>
+> >> This looks to be an MGLRU policy decision rather than a readahead=20
+> >> regression, correct?
+> >>
+> >> Mem-Info:
+> >> active_anon:388 inactive_anon:5382 isolated_anon:0
+> >>  active_file:9638 inactive_file:126738 isolated_file:0
+> >>
+> >> Setting min_ttl_ms to 1000 is preserving the working set and triggerin=
+g=20
+> >> the oom kill is the only alternative to free memory in that configurat=
+ion. =20
+> >> The oom kill is being triggered by kswapd for this purpose.
+> >>
+> >> So additional readahead would certainly increase that working set.  Th=
+is=20
+> >> looks working as intended.
+> >=20
+> > OK, this makes sense indeed, thanks for the explanation. But is inactiv=
+e_file explosion expected and justified?
+> >=20
+> > Without revert:
+> >=20
+> > $ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl =
+=2Dkb >/dev/null; free -m
+> > 3
+> >                total        used        free      shared  buff/cache   =
+available
+> > Mem:             690         179         536           3          57   =
+      510
+> > Swap:           1379          12        1367
+> > /* OOM happens here */
+> >                total        used        free      shared  buff/cache   =
+available
+> > Mem:             690         177          52           3         561   =
+      513
+> > Swap:           1379          17        1362=20
+> >=20
+> > With revert:
+> >=20
+> > $ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl =
+=2Dkb >/dev/null; free -m
+> > 3
+> >                total        used        free      shared  buff/cache   =
+available
+> > Mem:             690         214         498           4          64   =
+      476
+> > Swap:           1379           0        1379
+> > /* no OOM */
+> >                total        used        free      shared  buff/cache   =
+available
+> > Mem:             690         209         462           4         119   =
+      481
+> > Swap:           1379           0        1379
+> >=20
+> > The journal folder size is:
+> >=20
+> > $ sudo du -hs /var/log/journal
+> > 575M    /var/log/journal
+> >=20
+> > It looks like this readahead change causes far more data to be read tha=
+n actually needed?
+>=20
+> For your drive as seen by the VM, what is the value of
+> /sys/block/sdX/queue/optimal_io_size ?
+>=20
+> I guess it is "0", as I see on my VM.
 
-This paragraph has a long sentence that does not hold on a single line
-of 72 characters and therefore needs to be wrapped. There is no line
-break otherwise, for instance between the first and second sentence, or
-within a sentence.
+Yes, it's 0.
 
-This is not right:
+> So before 459779d04ae8d, the block device read_ahead_kb was 128KB only, a=
+nd
+> 459779d04ae8d switched it to be 2 times the max_sectors_kb, so 8MB. This =
+change
+> significantly improves file buffered read performance on HDDs, and HDDs o=
+nly.
 
-This paragraph has a long sentence that does not hold on a single line
-of 72 characters and therefore needs to be wrapped.
-There is a line break between the first and second sentence,
-and also a line break in the second sentence, which are not fine.
+Right, max_sectors_kb is 4096.
 
-> >>>>> +	void *cpu_ptr;
-> >>>>> +	u64 gpu_addr;
-> >>>>> +	u32 ret;
-> >>>>> +
-> >>>>> +	dev = ispif->dev;
-> >>>>> +
-> >>>>> +	if (!mem_size)
-> >>>>> +		return NULL;
-> >>>>> +
-> >>>>> +	mem_info = kzalloc(sizeof(*mem_info), GFP_KERNEL);
-> >>>>> +	if (!mem_info)
-> >>>>> +		return NULL;
-> >>>>> +
-> >>>>> +	adev = (struct amdgpu_device *)ispif->adev;
-> >>>>
-> >>>> Why the cast?
-> >>>>
-> >>>> adev isn't a great name here as it's usually used for struct acpi_devices.
-> >>>>
-> >>> In the next patch, will use new helper function for this and will no longer
-> >>> use amdgpu_device
-> >>
-> >> Use correct types when you can; either way this doesn't seem to be changed
-> >> by the further patches in the set.
-> >>
-> >> ...
-> >>
-> >>>>> +static int isp4if_gpu_mem_free(struct isp4_interface *ispif,
-> >>>>> +			       struct isp4if_gpu_mem_info *mem_info)
-> >>>>> +{
-> >>>>> +	struct device *dev = ispif->dev;
-> >>>>> +	struct amdgpu_bo *bo;
-> >>>>> +
-> >>>>> +	if (!mem_info) {
-> >>>>> +		dev_err(dev, "invalid mem_info\n");
-> >>>>> +		return -EINVAL;
-> >>>>> +	}
-> >>>>> +
-> >>>>> +	bo = (struct amdgpu_bo *)mem_info->mem_handle;
-> >>>>
-> >>>> Why do you need to cast here?
-> >>>>
-> >>> In the next patch, will use new helper function for this and will no longer
-> >>> use amdgpu_bo
-> >>
-> >> Not quite, on top of this patch number 6 adds more of the same.
-> >>
-> >> ...
-> >>
-> >>>>> +static struct isp4if_cmd_element *
-> >>>>> +isp4if_append_cmd_2_cmdq(struct isp4_interface *ispif,
-> >>>>> +			 struct isp4if_cmd_element *cmd_ele)
-> >>>>> +{
-> >>>>> +	struct isp4if_cmd_element *copy_command = NULL;
-> >>>>> +
-> >>>>> +	copy_command = kmalloc(sizeof(*copy_command), GFP_KERNEL);
-> >>>>> +	if (!copy_command)
-> >>>>> +		return NULL;
-> >>>>> +
-> >>>>> +	memcpy(copy_command, cmd_ele, sizeof(*copy_command));
-> >>>>
-> >>>> kmemdup()?
-> >>>>
-> >>> Kmemdup is to allocate memory and copy, can't be used here.
-> >>
-> >> Isn't that what you're doing above?
-> >>
-> >>>>> +
-> >>>>> +	guard(mutex)(&ispif->cmdq_mutex);
-> >>>>> +
-> >>>>> +	list_add_tail(&copy_command->list, &ispif->cmdq);
-> >>>>> +
-> >>>>> +	return copy_command;
-> >>>>> +}
+> This means that your VM device is probably being reported as a rotational=
+ one
+> (/sys/block/sdX/queue/rotational is 1), which is normal if you attached an
+> actual HDD. If you are using a qcow2 image for that disk, then having
+> rotational=3D=3D1 is questionable...
 
--- 
-Regards,
+Yes, it's reported as rotational by default.
 
-Laurent Pinchart
+I've just set -device scsi-hd,drive=3Dhd1,rotation_rate=3D1 so that guest w=
+ill see the drive as non-rotational from now on, which brings old behaviour=
+ back.
+
+> The other issue is the device driver for the device reporting 0 for the o=
+ptimal
+> IO size, which normally happens only for SATA drives. I see the same with
+> virtio-scsi, which is also questionable given that the maximum IO size wi=
+th it
+> is fairly limited. So virtio-scsi may need some tweaking.
+>=20
+> The other thing to question, I think, is setting read_ahead_kb using the
+> optimal_io_size limit (io_opt), which can be *very large*. For most SCSI
+> devices, it is 16MB, so you will see a read_ahead_kb of 32 MB. But for SC=
+SI
+> devices, optimal_io_size indicates a *maximum* IO size beyond which perfo=
+rmance
+> may degrade. So using any value lower than this, but still reasonably lar=
+ge,
+> would be better in general I think. Note that lim->io_opt for RAID arrays
+> actually indicates the stripe size, so generally a lot smaller than the
+> component drives io_opt. And this use changes the meaning of that queue l=
+imit,
+> which makes things even more confusing and finding an adequate default ha=
+rder.
+
+Thank you for the explanation.
+
+=2D-=20
+Oleksandr Natalenko, MSE
+--nextPart3246356.PYKUYFuaPT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmia7zIACgkQil/iNcg8
+M0tTChAAwRcANFL3mXoAdtvq28I6ZKLSmHdY2tZhwVBttLRFWCXreDnNiYJV/+GH
+gIW7xVzpfYxVZ2jXjA+pNfEng7WrXYFQKrwXKdaexfUDS0/NS0uq8ICh9uCLb+Bp
+00F4E8IOL/DkrzC/AfxuXYgDo9LsCIi0+8sPWkMAuYLCxCWL52cal3yVxCq6wtlY
+JgxHcpxfC/zu6avLp0CrsPVxIYG2i5QV4F/9orZHUhIlitcjbvscsInu7KulDME5
+DT2gm+bEKxIHCLxCzNMqGm4b1fd5OF0nFaNypnOUhy30qvLawTTqmxd/UUoHpW6p
+BgViyIsGv4XukLKKJOKu3/A02rzT055QixDTXybSGDLowBD7Ia9tTV1+V4JrEuw9
+M/+V1zqwqIoyhsIIiu6LaKANaMATCFVrd4wSN8TkXyMh/yZzHjYuJDkrKrVjQzbv
+QO9qbhJ/CEyhU2bNIiAp/eITvI5Dr+S9Yj3uChZ0uJ0SYyYSF/YHq8fA8MsNwGBV
+gu4OIzi815wN5k+WBxhq22DFPuoDBxFmnmw/mJCXln8UG0VRdJbFvKzj5mJsj7ZZ
+VC1jpqT80ASM+2Cp7++uPK6rjOKr5wIYu1mxOYfyqCl3bXCd3CPQ3gHtZHi5EORn
+XYG2Mf/twoUjnFOIMhMz5jL438qvyA2aOyvZziDrai+fWB5VvF0=
+=58kA
+-----END PGP SIGNATURE-----
+
+--nextPart3246356.PYKUYFuaPT--
+
+
+
 
