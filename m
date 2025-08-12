@@ -1,111 +1,187 @@
-Return-Path: <linux-kernel+bounces-765410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12656B2333C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:26:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949FBB2334C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C533A840F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815472A6026
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053592F83A1;
-	Tue, 12 Aug 2025 18:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9902E7BD4;
+	Tue, 12 Aug 2025 18:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W0PJU9Y0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WvQmd9lb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2A/Py0u"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94081EBFE0;
-	Tue, 12 Aug 2025 18:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DA21EF38C;
+	Tue, 12 Aug 2025 18:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022947; cv=none; b=oqBeTwFVaXJTVUSk+oNEHF9IS4/Cp7snm9/lEPszOAJBdXkALGpSMRI6eeMZaetAlLRbR1San2qc3+nu4YpHWJ3Y/dtbHO/Dy0H+pvKgBKss4MWKQ++pz2aT+lxIoK9WL0zmy9Be2VIaCdUdXzom7Rwki8kSYsVZ+D52Rcj7uGQ=
+	t=1755022988; cv=none; b=R9aB7eUyYQC02yFwG9dptyOlNRspdKZpM6cEMfKZ335zunnJiQ798VgTloK1s+8L2J+cjrvaWrFyW4td19XMrDYhuHxMYO5NthNo7Eb6O1lkNrgswrgPJebHN3nJRA68j/ceR4qsOtY7nACv0Mkt4MmNAJ7eyUmq3LT9qfgH5Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022947; c=relaxed/simple;
-	bh=p/3UD5jav3q32TaAM30o1fI04zVNZZyMfypSSa78HPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQOEJLMJRj5opximw7nMneyVybL31LvdICgl7nav0sVa+/AHQEDzxydqIoqqur6Xdbbcs7bgMxAOGrEWd9AxN3B0gsKovBtOBeKottBLbG2GAe/irdZY+iVWDRjL5Ky//TZLdymPx/1NVaOiPY667aH6NttKjpnX3aMVH05B7RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W0PJU9Y0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WvQmd9lb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 12 Aug 2025 20:22:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755022943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxlU+znl/JTn8im/jrvMANP+QmBATT55GjJL6MNB2U0=;
-	b=W0PJU9Y0mwFXzoNEYmmWJ9DEaVd18sk5xZhfL5P6+SPy/UiH96Z3lwfGfxX0XukryhTCCt
-	BZqnOOBlkpLfNKaJgsY+2/RQYhMJlBV6VyncN5syQGvRjC50tBBIL7xXB5c8qNnPUF1nor
-	DrzE/x1ETcN9nIlroHk2RBBiVJMRkWhgffdXx+WJSs46rdW8MCwnDTmHmitymuhHMXcy+S
-	yclwkc14SY9Xnzf0hJ+tWOqgfn0Bo+xF6LA8rATGOK9vR+KCkMTPemRJKE+stAu/RslAHi
-	eMtDvREiZqr/88kERqWShhUBJWbFgjK8zWbpl5yiYq5casOfpD1trpkH++Hx6A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755022943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxlU+znl/JTn8im/jrvMANP+QmBATT55GjJL6MNB2U0=;
-	b=WvQmd9lbZTxISl3kvoyVzLH6spl7ILIfdAMDjJgeJRmHAqvHS2BR7rQ9CXzOO4ofU3Kwnh
-	lXe4Kxy5BgpumeCg==
-From: Nam Cao <namcao@linutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Keith Busch <kbusch@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] PCI: vmd: Remove MSI-X check on child devices
-Message-ID: <20250812182209.c31roKpC@linutronix.de>
-References: <aJtUjnuWr1S31jhX@kbusch-mbp>
- <20250812163015.GA194338@bhelgaas>
+	s=arc-20240116; t=1755022988; c=relaxed/simple;
+	bh=+3/e5cIrN3ZIg7Q/XkiiWzgfGgeF/Y6e5OkSlLU191A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lZolcy/iZG6dDqFhyKU2dQ7/weCT9AYQR63TeexWWahd9ACdN+oOBbq3/IF6DMx47cCQFdTo5eHPm8YfyoC4hKK7DOv3i9eeeSdrTd1dfjpLImopqs9AFKNAwbpRfjbQYLaI74NYkeJLXqLSYlYqRFQAiOBdlBmZCFH/ESJmMFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2A/Py0u; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74264d1832eso7243005b3a.0;
+        Tue, 12 Aug 2025 11:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755022986; x=1755627786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F+fE4qi+RcEuypAjW0Bd5U93e0N2So4i7NT1OnYWUSk=;
+        b=R2A/Py0uCPL8xZ3PcKpiSj1/D1HVk8sS1+t0lgKPzTa4Yi8qq75ZVjvdIFmAbeVMzL
+         CqWI/shBoX/jKO+Fhc585NY/tLPW0QhuUew6KWdpMD0iF5Hzu2sURfQ6ACK/Frc2m0tY
+         JTwNJqExFDbKKklOHRn7jkXAPzUOI/Kn5dmtPiZk98gMt1211sXnQ38Ih/aSpb5n50uP
+         CVcojmP5cAno/KVuzOpf4xE+zw7skgq0sRwuXDB1nwi9pHW7ncmYUUq6zAkpIM6bW93R
+         4mx/+KkY1/GAYt9g2mESAVvhlOtrJu+dOpWIHpIJem4b7C9gW6Kd7uZoKG0AIyLbfiyI
+         XZaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755022986; x=1755627786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F+fE4qi+RcEuypAjW0Bd5U93e0N2So4i7NT1OnYWUSk=;
+        b=G18gp8Nlgq43qqPHR0jkrKJQ5tyyl7biEtOcaaDo8lBpzk58axhtjRgS2+O5dFxxo6
+         giiBpA+n0Ev6VJjDSg5Qziqh9IVjOIHc0pou6YmrIZY03431draVSxmaaRQag5ItCfIT
+         wGFk+GiCSE8+gz6qyGpY9XJ75M+LzeqkKXI+d7lkSWqaU5+wVFI450fwjoqANM4/1IC2
+         nmFmwCPkw14a+R6P+NgEL9Mu4Moaq/GwJg+7kVJotISWZ6zbUvjVtXlr4iX2lIt8DvpP
+         A0zDlH2yB+dBbQATr5uUosOK5JzteEGJM19QgwkT5fvRN67oB+e3/DGjvFhKhUfpGM67
+         vk+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUsJcsNQjURum3noaRE1F4nZRQwpNy33QYPF8zanJSfmEJdbvRzWHfQ2myn4U4z6T2KHZfRCeVOH/K9KwM=@vger.kernel.org, AJvYcCVbgWXafOFBYLFZkikZj2L70tnL7sBvG64s9RnpQ6PIcdGBJgIxv6ZsZsa5fdrvv4A8+GXQ54VCjMzL04Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqeoU+xi9L5usayzk+bpYlVQPBdic9esgxV+diesok5zW8Jpwi
+	XajddRJDBoGsqy+/QF51yBWqBCbDKoyga9trn6U61jvUqBtX7t32zsEpeTsc0t9kJBfhW3Qc9HE
+	F8XNI2LPrwMNvLMAGrP0COIloAnuFk2Q=
+X-Gm-Gg: ASbGnct2DxPWc5sQOvlO078JUwyluzCYGgJIn00ntrGTOodPGxboNd/+wI8HeRIy8wZ
+	fQyoqhULVeaGw5GUKAkubDVCAyuT7UBs6VRp2o5iLkfUlWn/ZMq5WiscWteIsuR4ptbIrmwhZtN
+	p9xpexQ1LgXNPtTyNdyye0xOc0+EJXgKbHVPPDRshVM7vVSY/Z5vfLt0zyDMHe+cLxFjYDqvb6K
+	NITYnA=
+X-Google-Smtp-Source: AGHT+IF1A81h6PBEtWt1slLi737ERxn8vSMYRw2gKSj0MQoOmspT2W2SwpWW3xVupvi6KHU+18JPG2LtGK88eiUCFBY=
+X-Received: by 2002:a17:902:f612:b0:240:10dc:b795 with SMTP id
+ d9443c01a7336-2430d08b468mr3464675ad.1.1755022986134; Tue, 12 Aug 2025
+ 11:23:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812163015.GA194338@bhelgaas>
+References: <175308758352.3134829.9472501038683860006@localhost>
+ <175326599663.2811177.16620980968274114885@localhost> <m3h5z2vw12.fsf@t19.piap.pl>
+ <175344176070.2811177.10693943493658922992@localhost> <m3qzxyug1s.fsf@t19.piap.pl>
+ <m3cy9futcj.fsf@t19.piap.pl> <m34iumujcs.fsf@t19.piap.pl> <m3zfcet41n.fsf@t19.piap.pl>
+ <m3a545t789.fsf@t19.piap.pl> <20250812103243.GK30054@pendragon.ideasonboard.com>
+ <175501095338.74722.11604545949710100799@localhost>
+In-Reply-To: <175501095338.74722.11604545949710100799@localhost>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 12 Aug 2025 13:22:54 -0500
+X-Gm-Features: Ac12FXwjCPlZoDfcVHADfdJKsSiklxExi-nNGmkRvmvpKutlc9OII1WL40p-4DM
+Message-ID: <CAHCN7xKq_o_u7PhPMcZ2W9nzrFP8+CnhaYJOyxnjpKfbMTBCEw@mail.gmail.com>
+Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption: resolved
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Paul Elder <paul.elder@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 11:30:15AM -0500, Bjorn Helgaas wrote:
-> On Tue, Aug 12, 2025 at 08:49:50AM -0600, Keith Busch wrote:
-> > The doc you linked is riddled with errors. The original vmd commit
-> > message is more accurate: VMD domains support child devices with MSI and
-> > MSI-x interrupts. The VMD device can't even tell the difference which
-> > one the device is using. It just manipulates messages sent to the usual
-> > APIC address 0xfeeXXXXX.
-> 
-> Thanks, Keith!  I updated the commit log like this:
-> 
->   d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()") added a
->   WARN_ON sanity check that child devices support MSI-X, because VMD document
->   says [1]:
-> 
->     Intel VMD only supports MSIx Interrupts from child devices and therefore
->     the BIOS must enable PCIe Hot Plug and MSIx interrups [sic].
-> 
->   However, the VMD device can't even tell the difference between a child
->   device using MSI and one using MSI-X.  Per 185a383ada2e ("x86/PCI: Add
->   driver for Intel Volume Management Device (VMD)"), VMD does not support
->   INTx interrupts, but does support child devices using either MSI or MSI-X.
-> 
->   Remove the sanity check to avoid the unnecessary WARN_ON reported by Ammar.
+On Tue, Aug 12, 2025 at 10:07=E2=80=AFAM Stefan Klug
+<stefan.klug@ideasonboard.com> wrote:
+>
+> Hi Krzysztof, hi Laurent,
+>
+> Quoting Laurent Pinchart (2025-08-12 12:32:43)
+> > Hi Krzysztof,
+> >
+> > On Tue, Aug 12, 2025 at 07:54:46AM +0200, Krzysztof Ha=C5=82asa wrote:
+> > > Hi Stefan et al,
+> > >
+> > > BTW I've added Lucas Stach and Shawn Guo to "Cc" list.
+> > >
+> > > The problem is the CPU core power supply voltage :-)
+> >
+> > Ah, the dreadful overdrive mode.
+> >
+> > > - while the reference manual specifies the max ISP and MEDIA clocks a=
+t
+> > >   500 MHz, the datasheets show this requires the "overdrive" mode =3D
+> > >   increased CPU power supply voltage. In "normal" mode the ISPs are
+> > >   limited to 400 MHz (there are other limits, too).
+> > >
+> > > - I've tried lowering the clock rate after booting the systems (with
+> > >   a CCM register write), but it didn't fix the problem. I guess some
+> > >   reset logic is affected here, and the (lower) clock rate must be se=
+t
+> > >   right from the start, in the DT.
+> >
+> > That's interesting. I wouldn't have expected that.
+> >
+> > > - anyway, lowering the frequencies of ISP and MEDIA root clocks fixes
+> > >   the ISP2 MI corruption. I'm currently investigating PMIC settings
+> > >   (both my Compulab and SolidRun modules use PCA9450C PMICs), so perh=
+aps
+> > >   I'll be able to use the higher 500 MHz clocks. It doesn't matter mu=
+ch,
+> > >   though.
 
-Minor correction, it is not just an unnecessary WARN_ON, but child devices'
-drivers couldn't enable MSI at all.
+I was reading through the data sheet (not the reference manual), and
+it lists a few limitations for the clocks:
 
-So perhaps something like "Remove the sanity check to allow child devices
-which only support MSI".
+For single Camera, MIPI CSI 1 can support up to 400/500 MHz pixel
+clock in the Nominal/Overdrive mode.
+For single Camera, MIPI CSI 2 can support up to 277 MHz pixel clock.
+For dual Camera, both MIPI CSI can support up to 266 MHz pixel clock.
 
-Thank you both,
-Nam
+If you're running dual cameras, it sounds like you're capped at 266
+MHz regardless of whether or not you're in overdrive or nominal.
+
+
+
+> > >
+> > > - the question is if we should lower the clocks in the main imx8mp.dt=
+si
+> > >   DT file, or the overdrive mode should stay there, and the changes
+> > >   should be made to the individual board files, or maybe the U-Boot
+> > >   configs (PMIC output voltages) should be changed etc.
+> >
+> > I think it would make sense to lower the default clock frequencies, and
+> > provide an overlay to enable overdrive mode.
+> >
+> > It's also interesting that the issue only affected the second ISP, as
+> > the first one should also be limited to 400 MHz in normal mode.
+>
+> I support that. As a side note, there is already imx8mp-nominal.dtsi
+> which is only used by one board. That dtsi also uses the
+> fsl,operating-mode property which enables additional clock checks. So I
+> ask myself if the default imx8mp.dtsi should specify overdrive mode, or
+> if we should add a imx8mp-overdrive.dtsi (then we should possibly rename
+> them to imx8mp-mode-xxx.dtsi so that they sit side by side) to make it
+> easier to create overlays for both cases.
+
+My understanding is that the imx8mp.dtsi is pre-configured for
+overdrive mode, so if you need to run the ISP in nominal, the clock
+updates should go into imx8mp-nominial.dtsi.
+
+adam
+>
+> Best regards,
+> Stefan
+>
+> >
+> > --
+> > Regards,
+> >
+> > Laurent Pinchart
+>
 
