@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-765291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A890B22DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D339B22E1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49BF17ACD23
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871351896DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CDF2FE57B;
-	Tue, 12 Aug 2025 16:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CDA2FE598;
+	Tue, 12 Aug 2025 16:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/kTdtEh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7Vf9Gs9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030492FE571;
-	Tue, 12 Aug 2025 16:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFF32FE56E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016906; cv=none; b=KxIb2ERVvGlqCMklAjimZfMEtUu967fKDdd9VTuh3uYvb3yWVsFtQNJM+ETjnzok1B0B1Y/oZyWfOUgC321WNyTVcCqJm/Aqr430gh6UPTP2PXpBqNR1TxWSor4iWHAWs4jmU8IhoyEB/G9g5C9cnUXu444bqylygCfHFP5hdt0=
+	t=1755016908; cv=none; b=X5teBVS3A6RGc+4qt0ZuFDxWPqv+ZKHg6PFMaz9LE/cFFIsTLiGd/3hXyc+iIw/zDj8VIvaDHwu4QEUWI1yPkv9TysyPK6T+yxqhZ9PrZzP7QAN+Hy/DEp27Oep+cX2WAU9PlYp9NaDz9URPECIzYzuzqI8EKXEYDC2nZ8f7yfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016906; c=relaxed/simple;
-	bh=QGGDJtpzAvDGfqv7vg9yuxITaE/1e8imJeia0T1EH14=;
+	s=arc-20240116; t=1755016908; c=relaxed/simple;
+	bh=hs1EeUJADn7q7ZOde0HvLyucF1ZRGoxSA8x+URMHgOI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ojqULRFGoniM7bYHxQtNZsUqb09Rniv/YPtSnOUB2cxr/8lS+FgHiDdpFk6XElRiOHhFwm+2crdiMB1rRQOkNj9QjqPKCyjpf96zIQzLMQOK77uakFRQMGwfirukGhNkmpBd6OQgoHZk2SR1y3UbEH9yybF0yU4ntHoH2Kyf/a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/kTdtEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B88C4CEF1;
-	Tue, 12 Aug 2025 16:41:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ArggZS0/IeZb2Cp2FkkFCMxjnLThLC70A/kxzBZ14tPmLwxBhoYd6hYs/44N4hrbnjK9X9NFliCNy79DhkWKF/zNgGKzHwqI7r4MbCTGvCh4NbjFn4EhKy7hLx14MjjsOsUK1mR2kVmdMUdcbtJ5fwTHw0xXV5EYnVieBypuaOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7Vf9Gs9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37333C4CEF1;
+	Tue, 12 Aug 2025 16:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755016905;
-	bh=QGGDJtpzAvDGfqv7vg9yuxITaE/1e8imJeia0T1EH14=;
+	s=k20201202; t=1755016908;
+	bh=hs1EeUJADn7q7ZOde0HvLyucF1ZRGoxSA8x+URMHgOI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=T/kTdtEhphOT6xszjdKktCKpnJpfZa5VEwMlu+vUa4rn37Qe7G6XfB5had/tshpCT
-	 dKCJtPpwMY5mlN89kaeWEyCs2IesyHvzUj7WMcStNXTkp9KwDGuHpOjRzeUdmUkOQi
-	 jeuQd/v6m8VGR9de5HDYzGXpn24NdCDY07RoaMj3IScRqWuVEyqKERtzoao+6pRdSN
-	 9DhZycyPdSIwSY3WLvHPYdG/RZ/6YuPsBoB/wRIv9MRS5lrdh1bZVutkQlBME8rj3w
-	 nOUm7fqbxZqxqssQ4c6Wr/W2f8t+Jhu5KLpiKcZe2TPSBD4psDFdK4MoJoNFM5Ax/M
-	 kRjCYuRti3Bog==
+	b=R7Vf9Gs9kQtNWGFJA+PkvyG9xazwBDXkknHrhuHeZnwGDhJlT+G24QynElQny6HB6
+	 P/hAwS95X9AA+7AGhgGGof8AioNlen0OLkK/1y0dwLo4x/Zz2vS+/FHtJAxpq81Lnk
+	 0wWTIyF5HcSujyUuqJ4RSTKIylS7HLh7zzkjjVELjhLBy76z3fZG1olK0DJr4OTwqs
+	 iztpnDTIl8qLg9A1LHWLEMCM276dpdNWQqfNT9omvaxm2+lmCoEjFSwyiC0OuX297a
+	 7fWoFYgc5heZ43C9bKv3+7ZEybyIjcO7yJKQC2pc39HKGo7E+7HEU38qEm/R3dTr65
+	 N5bshTLv2i7Eg==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Frank Wang <frank.wang@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- Detlev Casanova <detlev.casanova@collabora.com>, 
- Shresth Prasad <shresthprasad7@gmail.com>, Chukun Pan <amadeus@jmu.edu.cn>, 
- Jonas Karlman <jonas@kwiboo.se>, Yao Zi <ziyao@disroot.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+To: Johan Hovold <johan@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-phy@lists.infradead.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250728102947.38984-2-ziyao@disroot.org>
-References: <20250728102947.38984-2-ziyao@disroot.org>
-Subject: Re: (subset) [PATCH v5 0/6] Support RK3528 variant of Rockchip
- naneng-combphy
-Message-Id: <175501689991.633310.3061565953624951232.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 22:11:39 +0530
+In-Reply-To: <20250724154823.15998-1-johan@kernel.org>
+References: <20250724154823.15998-1-johan@kernel.org>
+Subject: Re: [PATCH 00/11] phy: drop unused module aliases
+Message-Id: <175501690578.633310.16974700832772559803.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 22:11:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,28 +62,40 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 28 Jul 2025 10:29:42 +0000, Yao Zi wrote:
-> Rockchip RK3528 ships a naneng-combphy that operates in either PCIe or
-> USB 3.0 mode. It has a similar control logic to previous generations of
-> naneng-combphy but an apparently different register layout.
+On Thu, 24 Jul 2025 17:48:12 +0200, Johan Hovold wrote:
+> When fixing up some device leaks in the TI drivers I noticed that the
+> commits introducing the leaks had also converted the drivers to only
+> support OF probe.
 > 
-> This series prepares phy-rockchip-naneng-combphy.c for variants with a
-> different register layout and add RK3528 support.
+> This series drops the unused platform module alias from the PHY drivers
+> that never have supported or no longer supports anything but OF probing.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: soc: rockchip: Add RK3528 pipe-phy GRF syscon
-      commit: d7122636eca216ea2876baae45483d17e40a55f6
-[2/6] dt-bindings: phy: rockchip: naneng-combphy: Add power-domains property
-      commit: 19bb2bfdfa5dc4a912e7e5e3432290204e998ac9
-[3/6] dt-bindings: phy: rockchip: naneng-combphy: Add RK3528 variant
-      commit: d9e0fd60d8d44b2cabd41f5e370e9d41edffe6e9
-[4/6] phy: rockchip: naneng-combphy: Add SoC prefix to register definitions
-      commit: 11f1896e60f61ca1948cb7920585a79ce5254c0c
-[5/6] phy: rockchip: naneng-combphy: Add RK3528 support
-      commit: aee07ee1b97d9a3825e8db609a1c76157218cc59
+[01/11] phy: broadcom: brcm-sata: drop unused module alias
+        commit: b4e1e9108c948896661ecf5c61a29f6086e53f38
+[02/11] phy: broadcom: brcm-usb: drop unused module alias
+        commit: 33e64f6e38b2dccbaba8c3533cd0c45e1245c205
+[03/11] phy: cadence: Sierra: drop unused module alias
+        commit: d81e02d02b5f0c0f53e6cfb8982489fdacd546b6
+[04/11] phy: hisilicon: hi6220-usb: drop unused module alias
+        commit: b4d4af09092b50b940b37892445f0ae5a007e888
+[05/11] phy: qualcomm: ipq806x-usb: drop unused module alias
+        commit: 8cbb931b8ac285cd1ec46f8764a91a627704ccab
+[06/11] phy: samsung: exynos5-usbdrd: drop unused module alias
+        commit: a4c3d8015f4298d90d4d145101dd04de8854e6f9
+[07/11] phy: samsung: usb2: drop unused module alias
+        commit: 7ee2e0347cc781f0f87777558218961c51ec6aba
+[08/11] phy: ti: omap-usb2: drop unused module alias
+        commit: 36d20c023bfe98eb999ec5ba4f051460f6080564
+[09/11] phy: ti: ti-pipe3: drop unused module alias
+        commit: e709cc0741e8f155a39174d97eb9ae9c0cba2623
+[10/11] phy: ti: dm816x-usb: drop unused module alias
+        commit: 00837ae34f6321f9b6c290f92eb369e7f9259d41
+[11/11] phy: ti: omap-control: drop unused module alias
+        commit: e04f91e1d881120ff97389960cf7c765d510213e
 
 Best regards,
 -- 
