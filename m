@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-763904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92FAB21B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E74B21B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150E53A52C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A734F465AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A22E2DC4;
-	Tue, 12 Aug 2025 03:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qReQtZv0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A122E3B08;
+	Tue, 12 Aug 2025 03:11:54 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3532D9EE1;
-	Tue, 12 Aug 2025 03:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF27253359;
+	Tue, 12 Aug 2025 03:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754968230; cv=none; b=B+FGCyYny8DXRIE/bkQXyEx93//+sM5BcOEwONgGlkNBRjY4+Q5Sd8vmP/V2IAf5dPjnqhzZSxA6PZ067T3R5Anb3M1SZ33BaLv5j/GNMXZmlYGKmGfwOGSdJAj3+XNs1NMzZAQHs0vAF1y8vPm/TzPzIgaF7vAe7w5sYnp13kA=
+	t=1754968314; cv=none; b=Zt5OFaOQl8wjuOf4nAdb9bFB2snYjfQa9fRDqgiouWdB+8XbPFOftY9B0UjLY+E1oFJoYE6I22g+QsXKwwDa0M8z7gIDPaF9LYHr1p3QYd4UU+7jQ/ay+KSlmkNDwLvQEUkJ++mMMOB8CM0hVnuSciP1df48qzOKldoIn0ovPUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754968230; c=relaxed/simple;
-	bh=uCzb8kwAgH49gwxC/mQBrfjRJdkSNorM5rsO1dmnWRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OOjAQmqPD0trEoB86O2xIZWN4b/7aSJ0TfEXjr7Ufi5wpGOCbm9Aj0mjIRd7PkdlJ0v7xvDfF2OJOBeBvv13dQxePd+hbpAgWmEGXz51rjgFmZBNrzee+x1f10z5DjJ10kZXZlPHQK73eZSj2wnmItYBTbAYaAV7LCM/jdhgf6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qReQtZv0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754968225;
-	bh=vMNmzonxsB8Gvf2Yi9uKhjeVXOh4rfCdWKNyJyjnkq0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qReQtZv0bHyzZTb9AV7fe67IfeJ1V5RVsl0pfG2LwK81k0cK3CY1rHbVPQtA7RuZZ
-	 xwBZZ37IR3B7ett/71v4z/yXjbQeED7nTKcX2/yy4p/3wTJB4WLLYnjIIJZgqM1c1L
-	 exEsWCOQbd0xgG4W3WN3/JVTeCHsGbXklTCPtX76J1DgapI8e0/y+W1DMs+oTBXTl6
-	 /xykfBSiQpUqw/D4dn3Ro7yexeMCEsgB0SryccHl2T8Dg21bwzYA6zY4tFgTEmeq7m
-	 M5muCyTjg9MaHe+filL+xJube68lHD+zATRK2ybIyOXlXtaz4G9i9+M/THGlI/MNAG
-	 uqdUCocxVnE5Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1Ghx2MxLz4x6n;
-	Tue, 12 Aug 2025 13:10:25 +1000 (AEST)
-Date: Tue, 12 Aug 2025 13:10:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Len Brown <lenb@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the turbostat tree
-Message-ID: <20250812131024.2b83c815@canb.auug.org.au>
-In-Reply-To: <20250610141414.205a3b82@canb.auug.org.au>
-References: <20250407065923.47f0049c@canb.auug.org.au>
-	<20250610141414.205a3b82@canb.auug.org.au>
+	s=arc-20240116; t=1754968314; c=relaxed/simple;
+	bh=J+5V0xx3lI2r04i1in4bjdw1bkLd9VZSX0KX29JPZI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lQ+34POUyZjjJwXItI1J82u4j5oO7YGUvuqrfzly8hoEm3XHVPZi6k2mqWrq8KqOxkqX5zgVEotfWdLGgCIoz58HYPSmdYHSr+qTxsAAfUpi2AZcKrjQ/RvwbsPdkStIOYAltehEoiGQSD+g+ksc1bJen8TP5BVBWEphWXaJ1aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.111] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowADnPl+_sJpoQFIJCw--.51801S2;
+	Tue, 12 Aug 2025 11:10:56 +0800 (CST)
+Message-ID: <86b99a5f-02a0-43cc-9f7b-4ed3a260b4df@iscas.ac.cn>
+Date: Tue, 12 Aug 2025 11:10:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/B9HFmJwO=RLM2=9czl1rspB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <uwu@dram.page>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250812-net-k1-emac-v5-0-dd17c4905f49@iscas.ac.cn>
+ <20250812-net-k1-emac-v5-2-dd17c4905f49@iscas.ac.cn>
+ <5c32fde3-0478-4029-9b71-e46a60edf06b@lunn.ch>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <5c32fde3-0478-4029-9b71-e46a60edf06b@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowADnPl+_sJpoQFIJCw--.51801S2
+X-Coremail-Antispam: 1UD129KBjvdXoW5Kry3GFyDKrWxXFy7JF1rCrg_yoWxWwc_Gw
+	1Fk3yFkFs0yrs0y34Sgw15Ar1fKa95XF9xZw1v9r4xCF9xtFW29ryDuFnIq3WxWrZxGr95
+	trnI9w4UWrn7AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8YjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07jDsqXUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
---Sig_/B9HFmJwO=RLM2=9czl1rspB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andrew,
 
-Hi Len,
-
-On Tue, 10 Jun 2025 14:14:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On 8/12/25 10:17, Andrew Lunn wrote:
+>> +/* Caller must hold stats_lock */
+>> +static void emac_stats_update(struct emac_priv *priv)
+>> +{
+>> +	u64 *tx_stats_off = (u64 *)&priv->tx_stats_off;
+>> +	u64 *rx_stats_off = (u64 *)&priv->rx_stats_off;
+>> +	u64 *tx_stats = (u64 *)&priv->tx_stats;
+>> +	u64 *rx_stats = (u64 *)&priv->rx_stats;
+>> +	u32 i, res;
+> Rather than the comment, you could do:
 >
-> On Mon, 7 Apr 2025 06:59:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > The following commit is also in Linus Torvalds' tree as a different com=
-mit
-> > (but the same patch):
-> >=20
-> >   447c98c1ca4a ("tools/power turbostat: Add idle governor statistics re=
-porting")
-> >=20
-> > This is commit
-> >=20
-> >   ed625c61b85c ("tools/power turbostat: Add idle governor statistics re=
-porting")
-> >=20
-> > in Linus' tree. =20
->=20
-> Due to more changes in Linus' tree, this is now causing a conflict.
-> Since this former commit si the only commit in the turbostat tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git#next),
-> maybe it could be dropped.
+> 	assert_spin_locked(priv->stats_lock);
 
-And another unnecessary conflict today :-(  You should just reset the
-turbostat tree to v6.17-rc1.
+Thanks, I'll use assert_spin_locked.
 
---=20
-Cheers,
-Stephen Rothwell
+I don't think there's anything else that needs a similar assertion, but
+I'll check for sure and update next version.
 
---Sig_/B9HFmJwO=RLM2=9czl1rspB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Vivian "dramforever" Wang
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiasKAACgkQAVBC80lX
-0Gw0Uwf+JACsXbgc/BVsQ1IZr2q4r8EPcIyj5MxCtyIkFP1++eg4VRtrPQxKuJRq
-C0EcLxFFmSMb4NhUPJD5FXc5Ziv21iXgjSmvdPw5mnYNG2H+5q6pYk10vYoNYMJd
-P8broddDW2gxhFCRCKL60+YkkYCwnHDaRr7pMfIVRV4OA8cLerEezr6cW/9chIbg
-zEUPeLDYQ1vHSEJGoKIn8L6+IVTj9d8yrXreoYG1Xl267kgN2x5ywTMGpsmD2LAp
-q+w/7CH/BACpOpj5M4OmUfKYtqShWtYnnWqPItHr7D96shlmn5u0M3L9jDHAEKJ+
-4RXvAcXjDESu9koYHkX6YYOPHHBxmg==
-=pWP9
------END PGP SIGNATURE-----
+> 	Andrew
 
---Sig_/B9HFmJwO=RLM2=9czl1rspB--
 
