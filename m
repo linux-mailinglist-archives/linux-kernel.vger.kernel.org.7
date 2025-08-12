@@ -1,145 +1,106 @@
-Return-Path: <linux-kernel+bounces-764216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D4FB22009
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13570B22004
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174AB188E32D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A51B188AA11
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22972E0B59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9C52E03F2;
 	Tue, 12 Aug 2025 07:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kli0Bg4i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sttdIgbX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89D82D838F;
-	Tue, 12 Aug 2025 07:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697D42DECD8;
+	Tue, 12 Aug 2025 07:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985291; cv=none; b=jDM07rnATqJc+k1pwBccxhnV7sx95RjUtNw5r6WkRgOFiC1Qyf03238muNVVuIE3s68NkFqndaCW3Q/pQJhHXGaNrD7l+seLdVZQYeWUW3AusrhpwASvNDcUJFHGiJ5Nfse+sXKc6R154nikiJq4NyukS2qHfUwxghfzCbaKDhA=
+	t=1754985290; cv=none; b=q4yPMCL6E/GvA9RH2h24GAN80HofkFlZNMOaqcrSOmhx7eXVqVsxo0PPcqDsREprZsrRVkeJIpM2h5z6syF/J38vR7hFGVIGVeCQe42fHmeK/ckoP3X29J5e8GTjZJlLZ7QEBTwu/ldq3o7G7wI/QE7uqMp/mvYOGtdnujUQxKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985291; c=relaxed/simple;
-	bh=EWPWYnWnHYNW1g5JfQN/w40C+sjy6Y24SNdmuDQ0iic=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=u7Bj+Ea5RMwktYxvq6qk/F8Kt/TW0ccAXMeGzLEfh681Fiqmul3E8yR5sicCgfHJRug3BlEhkdnUvHploPYH8Nv69XJK1BErf9Qif1yfUCTsRp+ailLMB6wQWjiLZPdT0OaOF5riWLVZoPMDkqd8j9nJiiIk8EBvp6015m3I574=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kli0Bg4i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4siQK013175;
-	Tue, 12 Aug 2025 07:54:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BImLLIYXXRXdi8dtPDwTFksWlfP73Z4KuiGBXSwH71w=; b=kli0Bg4iuk+ncJJn
-	zsInfJidnM4B6tbpDDD8osV7CnoI6ZU2cOTzJrt/Puu2r8+NmuwOld9IZd7SeYc1
-	tJ0aWCng73qwBbB80iACMTgRcd+soj0UC4PxgGwchbCP4mTyiYCU214mDjitqPCL
-	gYnbmrETBQQpz31uavtrOI+1QsbdT/sS3krEc8ORYR+UDEMKYyMJovgdHUKb21fV
-	ePQofWGGZFVb3xuMFCQ5MkkWF3gIfi0vdLrPnSKY2ehDewtdBIRMCFQ31isgwlfV
-	MLYp7hrFqoed4xkVNKngam/otIE+D1U93Ctw7l6ZX14Ka9J2U7XA5aeg+T0c83MO
-	w+WMjQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmqe21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:54:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C7sebb008998
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:54:40 GMT
-Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
- 2025 00:54:36 -0700
-Message-ID: <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
-Date: Tue, 12 Aug 2025 13:24:31 +0530
+	s=arc-20240116; t=1754985290; c=relaxed/simple;
+	bh=BHJ5xoJPn+2ti329G2SFM29twFzww1ODA9PMzU7W59c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fUOtMMqwny8zIPt1P+xARONvwJPkDrwdlC6nZ8DbSqTtgUBbZ6ZNcuJj9uDbaM4PSXoKfSKMuSM7gw3VSdXK7BBglduZXztdvE+rqZ5l2EL55tCYib5XtHnlXBXEsOhzTD6jV44WiKm+2bWWfYPtSzRjeoKGQmwIF4Sp87CISiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sttdIgbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898A8C4CEF0;
+	Tue, 12 Aug 2025 07:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754985290;
+	bh=BHJ5xoJPn+2ti329G2SFM29twFzww1ODA9PMzU7W59c=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sttdIgbXR/zMpPwtYWo9tEDHWkvxHIdzXx4mCkeZC+beUlUKcpCZHJHLA8UKGtUse
+	 yb61P5jo64FxKOsWma+2ENRYP7aOwn8dcUSn1EaHfRaFvY+CZDfAhBMmUwD9Q5/NDA
+	 mc4tJ2CZKRlm+O0uN6BAwWKU/EO6xaJ9LDzdN8a2qIcWUe4wYiLIhTHeGFkrmWGZ0j
+	 Tntx4Wm5aFLBOAdaAFK/dtBOppsl0dVHBU4rFIGEE/KhS94frwCgrXD71bU+LtCWzc
+	 AJrNZ2UeB+z+55FmgDLu8XmYLXt9yb4i2dcnFthLY6Q6S8ybAiL+zqRxMjgEy+5auA
+	 RCM7cnbm584vQ==
+Message-ID: <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
+Date: Tue, 12 Aug 2025 09:54:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
- video codec
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
- <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+To: Christian Brauner <brauner@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Shivank Garg <shivankg@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
+ <20250811-wachen-formel-29492e81ee59@brauner>
 Content-Language: en-US
-In-Reply-To: <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250811-wachen-formel-29492e81ee59@brauner>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689af341 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=ueHH_9SqZEcs-A8xbiIA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: chaJrTlKVHfHcWcPQ_sIa7aBv7myAUVJ
-X-Proofpoint-ORIG-GUID: chaJrTlKVHfHcWcPQ_sIa7aBv7myAUVJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfXyv09ztrw/mP6
- zT6N3HPupRvrmbvcx+5UlcDYTfAZBysTNu1NTw6Tj90PLvzdkXkQWVgrU+zUm35B8bjjwQnCLKd
- h+uUfo4uzpSZ9H9zQpU9OLT38t+u5dRbMYSjV2haQWi4wiOPO8ZZBxzU41QAM20TukZaP4uLoHw
- 86D5QB7Ce3/SDwRplJYdYabWoYGXQJX3cpZiEKJa7YNQ0rDj8QLV4GLaWofhrsAI4p3LNRALS4v
- gxFS3etjl6jmTlkFgxpV8k5EsLVw1ZlDXI86SdDubv39KucM4zGqi7FoD9y36TwKGglu01FTugq
- qV+eY+trlFfN6FVNqTdINzZCtFZ6LOzRGpFcqZxwh8tYmTaiWNv6nZULwM0aAkxu96d3c4lRwsX
- UXNvB3qb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090000
 
-
-
-On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
-> Add binding for Qualcom SM8750 Iris video codec, which comes with
-> significantly different powering up sequence than previous SM8650, thus
-> different clocks and resets.  For consistency keep existing clock and
-> clock-names naming, so the list shares common part.
+On 11/08/2025 07.18, Christian Brauner wrote:
+> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
+>> Christoph suggested that the explicit _GPL_ can be dropped from the
+>> module namespace export macro, as it's intended for in-tree modules
+>> only. It would be possible to restrict it technically, but it was
+>> pointed out [2] that some cases of using an out-of-tree build of an
+>> in-tree module with the same name are legitimate. But in that case those
+>> also have to be GPL anyway so it's unnecessary to spell it out in the
+>> macro name.
+>>
+>> [...]
 > 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
->  1 file changed, 186 insertions(+)
-> 
+> Ok, so last I remember we said that this is going upstream rather sooner
+> than later before we keep piling on users. If that's still the case I'll
+> take it via vfs.fixes unless I hear objections.
 
-Query:
-Can the additional reset and clocks be accommodated in existing 8550-iris
-binding by extending it conditionally for SM8750 similar to what was done
-for SM8650 [1].
+This used to go through Masahiro's kbuild tree. However, since he is not
+available anymore [1] I think it makes sense that this goes through the modules
+tree. The only reason we waited until rc1 was released was because of Greg's
+advise [2]. Let me know if that makes sense to you and if so, I'll merge this
+ASAP.
 
-[1]:
-https://lore.kernel.org/linux-media/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
+Link: https://lore.kernel.org/all/CAK7LNAQW8b_HEQhWBzaQSPy=qDmKkqz6URtpJ+BYG8eq-sWRwA@mail.gmail.com/ [1]
+Link: https://lore.kernel.org/all/2025072219-dollhouse-margarita-de67@gregkh/ [2]
 
-Thanks,
-Dikshita
 
