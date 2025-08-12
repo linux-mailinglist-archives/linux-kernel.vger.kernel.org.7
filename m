@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-764576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0D8B224C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:42:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01159B224C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3660F7A4256
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BD51B62703
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EF22EBBB8;
-	Tue, 12 Aug 2025 10:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1DD2EBBB6;
+	Tue, 12 Aug 2025 10:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rLpSdnf/"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1fAi/GY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833572DCF73
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF619D8AC;
+	Tue, 12 Aug 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754995323; cv=none; b=P3r5tRXSNDX6pZpPRv7Yux0VqBDtOQ4rr8LsIg9lP+u9aM3He9ENP9vVwyy3T15bCe8tL/F3EJ8MiavI6r+CnJIv1iqeZTAGVAooCrlxLGsxam6Ir+HJSU6WsEGJds068WiZDXnEwus30HbW3gROyyoOmKBNhSv1drSmYB6fgrE=
+	t=1754995454; cv=none; b=jskpRrOA4I2yNEWLD0MsfFXgw/5S2zPaHqR3njKjtSNEOBRH05BrW/q8hFwUcgNkmvtufUKx49F/5PZ/8GoGYMbVtId8mywvjuJB3L0ln7eUIpn1HTRqsBV89oTyDX06pZY7XMA25XNxspNzUu7hdB4lqZcLkpv+1DgCNYuRgQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754995323; c=relaxed/simple;
-	bh=btAyvRtmkbXxP+i+9dkWP6dlhtZYn7iXm7lHIO+hiSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H329/mAlzZ/xreB+2ueP9RfXE2v/EDjBxe9G9BbwHyNpmcsmYqsi/8v85kfwOH3JwuEFjlqvbTO88M1uC8Ksog14JlrRQLv1uZuGeDJW+/eCAsV7IhwoTGNwdUSfH42YSsgICUDdbs45+Wq0ZSmjqJX66S1WomK3TaqJdG310nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rLpSdnf/; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-617b526d402so766757a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754995320; x=1755600120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QAaiOy/N3h7yB/4dFeIEkdF56kDC1q6Gqt9cvra5SPs=;
-        b=rLpSdnf/pDMpBqrmnjMsGp+OSG01Hv4w5tJObPxPQ8pb1U9LD84tPqWnErvtbbuhk5
-         m3Ve4wrxrBNOicbqWCXpKvo9F0nLdNjfOQxpQ5C+rh0vc4lzuojGevJE4zFDTjz+SK6N
-         hss6BMQWdRDzmI3KtNnZl5yB+9jXYJ0lV42wih892arjGwJm6GVQdP027vzQNc5M0iTj
-         FU16BIF8Cjw/J3y0QZLIR+WJ8JmYlLZDJLrWS7prcFcbt7YybNzeVkWzFRoLEOoWVLut
-         DaY6vmD06QyOC1/gwGn43eV0JcWaz8+vIYoQeSKYE2yPmiezEyGuKBVRu8SFZIoRIrmd
-         xFmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754995320; x=1755600120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QAaiOy/N3h7yB/4dFeIEkdF56kDC1q6Gqt9cvra5SPs=;
-        b=X0E1fsoV7jv2qXlqbmnpkdaTdm6UhsdXfjWmdutiUjZq9z1/b0IU+wp+f98lSfcW3F
-         gzvcHZ/tBYSRu/6kh8ofATqw4HD4ALh7DvGH09eryJ5MQwYLTwYZ6uOVMTyHUJRev7MM
-         C4oEOPQPDUM8+TjgM9sl+bQgydKOJ4he5F5H/kXjx47Yya2ZeLb85WJRAk5FbDg5zkkx
-         TqA+lZVxw5/lL6eoceFqb80Z/cABQbLwwdZvhvZMgh1NUC1cqG2QRNsaIZHXLVxojeIY
-         t8Li9eJzq0HPgYnD2Ijoc2JPMhYGmzZbkb6Ya/4E6QEgf2k4MEZc2ddxIrNUQIztq0CJ
-         88eA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/K304j8bLYL7aTvDN/ByS5nU+fULn1gccvWwxGRI8gzHNAlMcazQNoGvooijcL67OT8Vyqd5amxELRH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpElJY+fwGE4vPxTLE0DlorkYbUJHjLUYNGcqRPj//4LeDnOg/
-	Aj9OkswLDCSbIrvgQJ5NKDMOHEGxoKoKe9QAzl8sDAxpNRD782jMsgQDUnb0BVmQXBA=
-X-Gm-Gg: ASbGnct4mCfqsCXMuz+kDzcpy8vRGJo6CeQ5RxDAwjo5YA4A/NBMcElsRg1MB9iZcRg
-	VqwL+Qji95MliSQBwEg1c9r94Nd4iunAzFs3/Xk0YGPg5Y2OBz0kptLL/XURXL1F2gM/JHaSsMt
-	I7Sbr8u9CI+qqBQ13o4gwrolsTonXGfI04w5Mb529fSjfTL2QapAScNE2DPcW11pTWoZ2qhgQCk
-	hNUQfPyRMA9ZBGPdGk60PWjdLEVQYnL7CDV9hDLfA4ubwQwPd31K0+ewtCwkm0Faq2ObkTC6p4c
-	4rLXMsnoiHrHtsBmcOB9QgVY5lpsDJH6UVJ/vfbE1IB0nyszj9+dzJlpOVNItfGA8MPTbaFSXWX
-	/fKL07ajmvzi5CiTQ0io5/67DMYaH2tgvwA==
-X-Google-Smtp-Source: AGHT+IFVuPBX1WWXHjE5WiQCW0z9z7axEQSpNRILYD7CKS+Z1ca46MwosUVW2g0lgYDVQmrovf+vTQ==
-X-Received: by 2002:a05:6402:520c:b0:615:7ba6:4876 with SMTP id 4fb4d7f45d1cf-61859a4adaamr378641a12.8.1754995319829;
-        Tue, 12 Aug 2025 03:41:59 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6184b807728sm1460348a12.12.2025.08.12.03.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 03:41:59 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-arm-kernel@lists.infradead.org,
-	soc@lists.linux.dev,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] Documentation/process: maintainer-soc: Use "DTS" instead of "devicetree"
-Date: Tue, 12 Aug 2025 12:41:55 +0200
-Message-ID: <20250812104154.42289-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754995454; c=relaxed/simple;
+	bh=J8rVonJeLT9Z5TovIwI3US6OvTejPp0e0BDvn2/Z0BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bf8KWqwpE8NLPAribus73rqJtCppVrPdlC7qQnIzFxfclHuCZJZvv7daTLCmx9ZkjQfKpRYutJuBeFKIrOoBTJMhM8yMZU4BkTFfqiwZLfTWAcabK6NAb+A9cpBbbuN/hSTJA/T9xjprGwAsUPgLmjz8OH3clniBOAuPf8kT+EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1fAi/GY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CCDC4CEF0;
+	Tue, 12 Aug 2025 10:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754995453;
+	bh=J8rVonJeLT9Z5TovIwI3US6OvTejPp0e0BDvn2/Z0BI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1fAi/GYOYfaq4gVx2LznWOiqtFzauqUfFP/8rYCiQlxtmuQQ3+NSR5kYCi+CHLdy
+	 WKjfsFvvL+BM0vZTRX1MsWOukh0RDYHzoC5mIu1ExSyC8ElY9K9HNDtw7zNl9zCugz
+	 n1j1u0/g0wR+IxzaOYruW0l6NVino0PqLRaJnw3/8AY1fkHXhoMVjmyFtG6bd68s/5
+	 gBDPSjjauCtj9tU4RUbjCgo+GxeqgOHChyi0wfn7wBoycu04x0FELQwLwZBuEObgcW
+	 LeNtsDlePGt2cobTUxgN6CKALA2cqWmJht0v7e9YAzQ3IXvSB1XRjXyTuzYOobPzex
+	 GTQUQazAzmpww==
+Date: Tue, 12 Aug 2025 12:44:10 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: Rename GPIO set_rv callback back to its original
+ name
+Message-ID: <z7wqrfqvx5rtm6ztvwnb4po5dvabgb2lyse6nws6ojzjdr6k3e@qzpopioosaai>
+References: <5366fcd01c9f8b374914e6137f01d156033c8a9e.1754986373.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2047; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=btAyvRtmkbXxP+i+9dkWP6dlhtZYn7iXm7lHIO+hiSI=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBomxpy/fIPdRspqyjtDspdwQP8eCSdbbk/qvY1e
- 4DUh4r8dLeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaJsacgAKCRDBN2bmhouD
- 153BD/9pbsdOLBBjuH1T+Qx7JutSi91jJK1OztVssLYs4N3tTNF+Fu++ubUyfqjTPN9DDfUMc7z
- r8N7GY/iIODwgdDoMexHzoriyr70+llWuV2NjB6Nd4Xj9YHZXyxaxnhyhy+GJJ1SXRM3Pw919eq
- 616seqX5p2xJqBexrpCIkRLpR3QNaEEQSCC41ZLQ2BJNqgxZAIKjrRs0pkFzMYB1QSIofSoyFna
- f9yeIBIJs9WND+wnezDp5bsBNIE7OkaPZrKwZ0bQPG3eVeI9m4zsCht+AsngcHv79+UG5dEQ6E6
- +9XrLuX3vzUyFkqQ6muXyv9uDNpFdwyeh7B3sd3ZUMezddVdjFBZnabjjUSLntgJuJFl0oB9YIB
- WeTPZ1LNxCaOkY59Jt+dSdUrarHHqxVsL8woIvnHiE7nQhspm4pnReYjzgIqX15ol/dgbDmiQ3+
- a7Xfr3sz3hvMC3ynzjpbZFHIkHlL5EvZ3ZUMO0ru24+KMxFqFNXBqDq/Ay2IYRBRcjMuQIxkqZn
- I5reux0ksT9YUxOa6Bv/K9gHFG+CSX1i+6ssJ0t688S8c+bYD/crDYQi4OZR1tPSkhMyo+aYevb
- Ca6YM98/dQ7Sc/Wm1cIRb7S2HtQ0kzggeb61K8+3DLwfR9swlMo6APbfYaCFZUa3be3Q281MTSi HBP/vBdc3HJW2MA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qkl5xl6kf72ekdgo"
+Content-Disposition: inline
+In-Reply-To: <5366fcd01c9f8b374914e6137f01d156033c8a9e.1754986373.git.geert+renesas@glider.be>
 
-Devicetree is a data structure and it is a bit generic term, because
-some treat Devicetree bindings as Devicetree.  What the SoC maintainers
-profile is mentioning in ABI stability are the Devicetree sources, so
-DTS files.  It is also more common during reviews to refer to these as
-per "DTS" instead "devicetree".
 
-Clarify that by using "DTS" name in few more places.
+--qkl5xl6kf72ekdgo
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: Rename GPIO set_rv callback back to its original
+ name
+MIME-Version: 1.0
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Tue, Aug 12, 2025 at 10:14:59AM +0200, Geert Uytterhoeven wrote:
+> As of commit d9d87d90cc0b10cd ("treewide: rename GPIO set callbacks back
+> to their original names"), the .set_rv() callback no longer exists:
+>=20
+>     drivers/pwm/core.c: In function =E2=80=98__pwmchip_add=E2=80=99:
+>     drivers/pwm/core.c:2514:26: error: =E2=80=98struct gpio_chip=E2=80=99=
+ has no member named =E2=80=98set_rv=E2=80=99
+>      2514 |                         .set_rv =3D pwm_gpio_set,
+> 	  |                          ^~~~~~
+>     drivers/pwm/core.c:2514:35: error: initialization of =E2=80=98int (*)=
+(struct gpio_chip *, unsigned int)=E2=80=99 from incompatible pointer type =
+=E2=80=98int (*)(struct gpio_chip *, unsigned int,  int)=E2=80=99 [-Werror=
+=3Dincompatible-pointer-types]
+>      2514 |                         .set_rv =3D pwm_gpio_set,
+> 	  |                                   ^~~~~~~~~~~~
+>     drivers/pwm/core.c:2514:35: note: (near initialization for =E2=80=98(=
+anonymous).direction_input=E2=80=99)
+>=20
+> Fixes: 1c84bb7fc0ad5841 ("pwm: Provide a gpio device for waveform drivers=
+")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Probably to be folded into the original commit, when pwm/for-next is
+> rebased to v6.17-rc1.
 
----
+That's what I did, before seeing your patch. Note that the Fixes line
+isn't accurate, because it only gets wrong when it's merged in a tree
+that contains d9d87d90cc0b ("treewide: rename GPIO set callbacks back to
+their original names"). I don't know in which tree you found the two
+commits together (I think Stephen fixed it for next?), but then
+technically the merge commit would be at fault.
 
-This is a doc patch, but covering SoC tree, so maybe it can be applied
-by SoC (Arnd)?
----
- Documentation/process/maintainer-soc.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Best regards
+Uwe
 
-diff --git a/Documentation/process/maintainer-soc.rst b/Documentation/process/maintainer-soc.rst
-index fe9d8bcfbd2b..3ba886f52a51 100644
---- a/Documentation/process/maintainer-soc.rst
-+++ b/Documentation/process/maintainer-soc.rst
-@@ -10,7 +10,7 @@ Overview
- The SoC subsystem is a place of aggregation for SoC-specific code.
- The main components of the subsystem are:
- 
--* devicetrees for 32- & 64-bit ARM and RISC-V
-+* devicetrees (DTS) for 32- & 64-bit ARM and RISC-V
- * 32-bit ARM board files (arch/arm/mach*)
- * 32- & 64-bit ARM defconfigs
- * SoC-specific drivers across architectures, in particular for 32- & 64-bit
-@@ -97,8 +97,8 @@ Perhaps one of the most important things to highlight is that dt-bindings
- document the ABI between the devicetree and the kernel.
- Please read Documentation/devicetree/bindings/ABI.rst.
- 
--If changes are being made to a devicetree that are incompatible with old
--kernels, the devicetree patch should not be applied until the driver is, or an
-+If changes are being made to a DTS that are incompatible with old
-+kernels, the DTS patch should not be applied until the driver is, or an
- appropriate time later.  Most importantly, any incompatible changes should be
- clearly pointed out in the patch description and pull request, along with the
- expected impact on existing users, such as bootloaders or other operating
--- 
-2.48.1
+--qkl5xl6kf72ekdgo
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmibGvgACgkQj4D7WH0S
+/k5C/gf/WX66APsZZs/lryauGaiDHdlVAx6RfmXwGLnHh5a8+RhoXXjQuJ1pjc9R
+1jg/IYkyDta95dl9lD15KIBfty1sLttQzCGhW+ik1ywOGy29GL9eyqrx3WT2gOSI
+hV+xiquvmZPR+a8GTC/6zBZOi3sgHotkCtMUdBC/R5SegdwHerD+kiXWUDwqMXqj
+MZRmDUVAv2fLJY+0MPPtI/A5ST7WvxyLqRj2sxKVrzOJz/3k2h7/oaHelNnt8gIJ
+gm97SeN+i/9jiUOU3ONXms+HmvAhQ2luEQZ5PfVHAKMgm3H5Z+9GG4C7/ErX0aAu
+0ZpTlWbR5C8K8Ma+c/aS7p73OX2yfQ==
+=cfou
+-----END PGP SIGNATURE-----
+
+--qkl5xl6kf72ekdgo--
 
