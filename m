@@ -1,120 +1,234 @@
-Return-Path: <linux-kernel+bounces-765494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F57AB23919
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B65B23924
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F7916A893
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6917D1885393
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6FF2FE595;
-	Tue, 12 Aug 2025 19:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272292FF143;
+	Tue, 12 Aug 2025 19:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="A+8neLnf"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dm+JyeNK"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801DB27587C
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913A43FE7;
+	Tue, 12 Aug 2025 19:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755027452; cv=none; b=KmPqjV9KF4o2nsu1wPSmbSwdmZAwurhCBu4R1xrYwiQuJYUPlotogMalvV2bmruQvUTta7Os7WBCnXTlTLDThmzfhccUh2mMB9q/E9ERiLXvta4hHhN+gjzWtqZcAUNztczvWMp6bM+zknmYfFsSxV6k1ETHT2EMQDHJGyNq4jI=
+	t=1755027519; cv=none; b=urZbRqCM51zE/W0cT0Fz9moyqDdv2JTVtdtUhbYcn3SQVYOezGhYey5qdiHuFiu9gCsbMmIR0jHviVCILdV7jI22TsBDqw4wWwX3y5ABvz/0XcGu5qPfgNuYNRXjFBOWMyqle6S4YEk1HSt3+Ng6bgP/wQgfh2dZpjMEmkuBSBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755027452; c=relaxed/simple;
-	bh=lpjEYtls75Mz8HuyMAQeOkeLsxER9FsyOhrBS6beBRQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0HIrSh/fFe/jmAbx5pHZgvDIrQbN/p/MpAAoNRXRuyTpGT1JCzTxvknRmNX1DuZQPrFtKMnLYDAbZSweok29n5IVGKY8bnjzG+MYe2xrAM7v5nMPDRwufzBBNBhVivckLqo7oCADT4rtnsysIIqBnhKRv4iIwF9L/AODGMwJjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=A+8neLnf; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-458bf6d69e4so53139305e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:37:30 -0700 (PDT)
+	s=arc-20240116; t=1755027519; c=relaxed/simple;
+	bh=k0bcjssrJUD/KpgVbW06mRiBvNKVIgvAUj3fNEd199Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ecO+hXIGyJ54N1FfXkpEEKMypZk4DXYy3I1Ddf+9hsb4/40FG1IyB4y8tQpHIRat7AcfRRlUfdU6/xg/Mf2geCHBecgyCIT42ul10pAYBaHcwb7TGrIAfXmk78ULNcupEaesLoI+1yRbmYC0QruSfusLzeO+koR0+OFnqxwjG5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dm+JyeNK; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so29882945e9.2;
+        Tue, 12 Aug 2025 12:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1755027449; x=1755632249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lpjEYtls75Mz8HuyMAQeOkeLsxER9FsyOhrBS6beBRQ=;
-        b=A+8neLnfqxc2SW+xxy/vZ9x6VjD2FJKImHtM6OdzZQk+HC7leAs5gSP5JzYRlU46Cc
-         8ITcBz90z7g5GP8uA0WwnMyvKLIhavRoXTc4vabAnb57+eckZPUwFev3hw8c4tJ+SGjW
-         rI7Pv/KfvcHRefUN4gaHBmMX0vWKYeoExFiLBFiec38GPH9Syj0YLK8DHgTc/TF9eAR1
-         oYqRNiKaavm2FOwNJijtcpsezCdjU3OBF2NfUvvQ9TgYfxznrCYN6jNrbPO0hQg5cyM0
-         N2tnwGOiIYz5bNWWkqM2WxXfBA3sbCTbI20MDR+agGidSNqwndbASw/s4XpjWn+QMWik
-         gQXw==
+        d=gmail.com; s=20230601; t=1755027516; x=1755632316; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aRjJ2YZSkmssRTylvZmzxN9jsmpLOOeNPx4zXyP1f1o=;
+        b=dm+JyeNKSjdr7i6ZiqHF2dPe+RL/lmz0DvqxbH2xLjxN/KyBczLufX92aeng53/+hz
+         btyGbnyW492LhgICUm1A2tkzkyRXDE6u3IhNMbw6k0OWXKngF2mxGXhUAv/I/X1jIBS0
+         2Rk/8jWjceHHQk4WesvJ1WEXp6roXe8YLlA4J+fhwjCliYN11t5VWNLGr0NGll12tDHA
+         uw39k9BBgK0bS7FMyT8n4Q2DrqusBvCVPEPLCHZ0OruqjB7aIpG3lTiJg0znTF4m2a8P
+         cDwxb5iIqadXXLOP0DUhHS52E1gqBpbHgojsZSxeSGotCm5ZVTDlNSJtH1kk0A/jdKUb
+         q2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755027449; x=1755632249;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lpjEYtls75Mz8HuyMAQeOkeLsxER9FsyOhrBS6beBRQ=;
-        b=bDcLoMGadMv63Hl5wvaA2Nl5EYdU5QIpBQKYcrmEVFDSPsXfxzS22YQ0k9rG/h0tHf
-         eNOsjsFIRCqU5H8mBtM57wvpauDMkXQJxG1bV8NDLLKw6F40Cl8/EFmmLaTZ9QsVF6fw
-         JX5Zyw7QRHY38/I67gQosLwyF4LKgnXOWivYI2RDqIUTE40Jac+emUuplfn1gRJlKPM3
-         Mop2b+hvqjJ1v18hXGqvxcIJzGO+yClFSB2GQR1Xp2QlbpLJzoyVFMM2JFohqcam9uVH
-         euujsPiJw7Q8n1OkMtJrHm4FJg10jqW8ZYbXCwmlCFJ3AmAkU8W4Wti81LF0qZgFoAg/
-         2JNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbwtyIrwMLLJgQiijKYDiQBWbyNhjti4FDn/MrFlNTY/pZifCEPATyeVdnwUYlmItbRwmT77Lf1MjqU0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJUZRBdeokY8S1KPvBnbZetaLaWUZEkOkFFdOZPeBYtX+/CIPx
-	JmixDz6bxKzTauEzgEFMAH0I8/51UOiZMd9p1a99Mfmk4UxeOHc86nTH/aW/iilKpNw=
-X-Gm-Gg: ASbGncs4WYgkBZ4gaaEap680VjSyX/ssxdxcDx3PRCAZlZ7hCmW2+AdXeOp2RHmKnTa
-	8nUHUxvpR0MDlleC3T3tf+J28VhWsspH1ye3KoEQMSfnbNim5t4seGojYdGOMTDs5S2cN7bieKV
-	ZaCAUEmoFHaMwr04UXIvVX+KXdnoGR3M511tbEovFIqVVWmFB5+fxvBFfi8r0aVfyQL+n9kKMyk
-	T4CRJ7QFtarcVse52oc6OrDMUlcDiXcq3uwnuhi8L1PRGzrjpOVjAmqW8mD6pmvPu6BVU4wF2Nn
-	M9sxib/BkCn/i3NmOjdYu+hJXj1Pm91o0N5iYwwLzG1W8Y4ncJLObHpUJxQqQd6WMyz2bOnUnku
-	xDLJxDer9nRJ5CAblEVA4a4YtaGCZq7zPw0AaLJLg
-X-Google-Smtp-Source: AGHT+IEFG4AR8hyeoi9xGW3i9Kv3cfWS8J1y9CmyOAAwiS9HcKFO53BgEJ6PRTHA6JWAs5T67T1MdQ==
-X-Received: by 2002:a05:6000:2307:b0:3b8:d893:5234 with SMTP id ffacd0b85a97d-3b917f17216mr147809f8f.47.1755027448584;
-        Tue, 12 Aug 2025 12:37:28 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:631a:d481:b3a0:fb92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac51asm46249991f8f.1.2025.08.12.12.37.28
+        d=1e100.net; s=20230601; t=1755027516; x=1755632316;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aRjJ2YZSkmssRTylvZmzxN9jsmpLOOeNPx4zXyP1f1o=;
+        b=APkUd1UBFUJREFe8yYkbFDg0XFR6KZ+q7fMLe+eBt5vt4+8dS2JWD4DzH30tTA+J6u
+         K5jYaSpGGOu6DFmVMW7TnHeSqaFxqeUNtdZ+tePPQqouVLg8fQ5S8HVMZXYzmvr/eK7Z
+         og+otuOVvYdW9gGpPXpHY4eIJint6xktK93H5OFmhVys1+DKNmdYlzaeXCHeWIxt6X2a
+         4YjINF2KWdEi7zeNf7GbevJtJeXwWqkzou/RZCtNRVj5Lj+BtKKhDs5ePBEgyJyhzY9Q
+         gPzYmt3KIAxEmY/UwykOV411ARqymnbYY0OyO06TSDjV+phTUCbe2vJZ6tU1l9RK8t65
+         ZlNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1+pkU7Bb3JLMg5VybXxhGk4EG4bcxhEUgllInVpX7Sa/a6IAdzMCV9+URPWlwyNxL4CELoyjOIf7DW78=@vger.kernel.org, AJvYcCXgykpkyQxiXsxSQrQK+zgtmaUjcTCysjemA6IM9ledU31WWhd78MYXlO1b2SP6GW/NLlKJolIrH26QmCRtWoGC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBXP1X07d/rhq+1tt3G6fdyT9xHA1tpHrH7MWiCbURZAE/ZyQe
+	6LAYi00wktKR1lIc7oXhL2J8vFk4bARviw/5azhOH5XS0S6Rhxo2t5OK
+X-Gm-Gg: ASbGnctpz+ypr7T4Iopn+W1smdTW97bPMXt4kr0cyqSEuiYWflUTmFeKiZI6CD2vxRp
+	T1m/4hY768qUfV+4Hhe8oUZOLZ6fa8Pbpbqzpa9o3nM/zEMq0kDPJ6s/O1u3Nz6EGfW9rP756Yg
+	iM+xl2FEM78TnFzg2xgtLBjLIfzM1UD3Q2RKR0GpUQ5qDGalZw2sMlEvlj37R7yMrt9C7uucJwV
+	ipnCh5qjiWZGqphAAMZEwZt0BreoVqGFihnVIk1/ElYPPlL2uSkSZI+DnOyeY40Q98TvccH+MR6
+	lsU3P9+RQ9GIwL8xyExuw8xbtlUgGCFN4Yuwcwp++nSLrLzlVb69jJDkKMwjsyTEWsfwD1Q1iQi
+	4rfRwSLyMIStFFV+Jm5+zd8Ty2Fy/eHCYjkEj
+X-Google-Smtp-Source: AGHT+IEHq18jRo1NL097VskWhWmn+36nKMQHAFIlsAu9cmHnsNETDByYaq7CUpo72HYUl/5qcEKCrQ==
+X-Received: by 2002:a05:600c:8b22:b0:459:aa0a:db2d with SMTP id 5b1f17b1804b1-45a165f896emr2247985e9.28.1755027515647;
+        Tue, 12 Aug 2025 12:38:35 -0700 (PDT)
+Received: from [192.168.1.243] ([143.58.192.81])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dc900606sm373579395e9.15.2025.08.12.12.38.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 12:37:28 -0700 (PDT)
-From: Aliaksandr Smirnou <support@pinefeat.co.uk>
-To: krzk@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	support@pinefeat.co.uk
-Subject: [PATCH v2 1/2] dt-bindings: Pinefeat cef168 lens control board
-Date: Tue, 12 Aug 2025 20:37:22 +0100
-Message-Id: <20250812193722.10193-1-support@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <84262447-0877-4c52-8c80-65f1288e5944@kernel.org>
-References: <84262447-0877-4c52-8c80-65f1288e5944@kernel.org>
+        Tue, 12 Aug 2025 12:38:35 -0700 (PDT)
+From: Andre Carvalho <asantostc@gmail.com>
+Date: Tue, 12 Aug 2025 20:38:23 +0100
+Subject: [PATCH net-next v2] selftests: netconsole: Validate interface
+ selection by MAC address
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250812-netcons-cmdline-selftest-v2-1-8099fb7afa9e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAC6Ym2gC/3WNwQqDMBBEf0X23JQkrbX01P8oHmLc6IImJRvEI
+ v57F3sucxqG92YDxkzI8Kg2yLgQU4pS7KkCP7o4oKJeOlhta33XjYpYfIqs/NxPFFExTqEgF9V
+ dLNrGXbve3EDwd8ZA66F+gVBCrgVaWUbikvLn+FzMsf/0xvzXL0ZJQmNr12mrg3sOs6Pp7NMM7
+ b7vXwFI+wbKAAAA
+X-Change-ID: 20250807-netcons-cmdline-selftest-b32e27a4bd16
+To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andre Carvalho <asantostc@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755027515; l=4959;
+ i=asantostc@gmail.com; s=20250807; h=from:subject:message-id;
+ bh=k0bcjssrJUD/KpgVbW06mRiBvNKVIgvAUj3fNEd199Q=;
+ b=pgbd3qOQd5BDA5FfaDqIysrfZxaKvjm2QzOT8kaNIgKcbDb73bdYIt6slbmfn3GTneCjofxYp
+ jDc/agZMbNOD6VB4sDSIyNTTtz++QzNGK/bmpYzL5dFgPLW8B96auwm
+X-Developer-Key: i=asantostc@gmail.com; a=ed25519;
+ pk=eWre+RwFHCxkiaQrZLsjC67mZ/pZnzSM/f7/+yFXY4Q=
 
-On Tue, 12 Aug 2025 09:13:22 +0200, Krzysztof Kozlowski wrote:
-> Property says VCC, description says VDD, datasheet says 5V (not 3.3V).
->
-> I guess this should be for the 5V case, no?
+Extend the existing netconsole cmdline selftest to also validate that
+interface selection can be performed via MAC address.
 
-Thank you following up.
+The test now validates that netconsole works with both interface name
+and MAC address, improving test coverage.
 
-The 5V line is used exclusively to power the lens motor (through the
-power switch). This 5V supply can come from the Raspberry Pi GPIO
-header, a battery, or other sources. Importantly, this power source
-is independent of the board’s MCU and its kernel driver.
+Suggested-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Andre Carvalho <asantostc@gmail.com>
+---
+Changes in v2:
+- Redirect log line to stderr
+- Do not ignore error unloading the module between test cases
+- Remove nested quotes when building cmdline for module
+- Format comments to avoid exceeding 80 columns
+- Link to v1: https://lore.kernel.org/r/20250811-netcons-cmdline-selftest-v1-1-1f725ab020fa@gmail.com
+---
+ .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 10 +++-
+ .../selftests/drivers/net/netcons_cmdline.sh       | 55 +++++++++++++---------
+ 2 files changed, 43 insertions(+), 22 deletions(-)
 
-Additionally, the board does not include any voltage regulators.
-The MCU operates at 3.3V, which is supplied either via the CSI connector
-or the serial connector directly from the Raspberry Pi GPIO 3.3V rail.
-Therefore, the driver does not manage any regulator, which is why the
-“vcc-supply” property was absent in the binding.
+diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+index b6071e80ebbb6a33283ab6cd6bcb7b925aefdb43..8e1085e896472d5c87ec8b236240878a5b2d00d2 100644
+--- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
++++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+@@ -148,12 +148,20 @@ function create_dynamic_target() {
+ # Generate the command line argument for netconsole following:
+ #  netconsole=[+][src-port]@[src-ip]/[<dev>],[tgt-port]@<tgt-ip>/[tgt-macaddr]
+ function create_cmdline_str() {
++	local BINDMODE=${1:-"ifname"}
++	if [ "${BINDMODE}" == "ifname" ]
++	then
++		SRCDEV=${SRCIF}
++	else
++		SRCDEV=$(mac_get "${SRCIF}")
++	fi
++
+ 	DSTMAC=$(ip netns exec "${NAMESPACE}" \
+ 		 ip link show "${DSTIF}" | awk '/ether/ {print $2}')
+ 	SRCPORT="1514"
+ 	TGTPORT="6666"
+ 
+-	echo "netconsole=\"+${SRCPORT}@${SRCIP}/${SRCIF},${TGTPORT}@${DSTIP}/${DSTMAC}\""
++	echo "netconsole=\"+${SRCPORT}@${SRCIP}/${SRCDEV},${TGTPORT}@${DSTIP}/${DSTMAC}\""
+ }
+ 
+ # Do not append the release to the header of the message
+diff --git a/tools/testing/selftests/drivers/net/netcons_cmdline.sh b/tools/testing/selftests/drivers/net/netcons_cmdline.sh
+index ad2fb8b1c46326c69af20f2c9d68e80fa8eb894f..d1d23dc67f99aa357041b71718550ed94292e57a 100755
+--- a/tools/testing/selftests/drivers/net/netcons_cmdline.sh
++++ b/tools/testing/selftests/drivers/net/netcons_cmdline.sh
+@@ -19,9 +19,6 @@ check_netconsole_module
+ modprobe netdevsim 2> /dev/null || true
+ rmmod netconsole 2> /dev/null || true
+ 
+-# The content of kmsg will be save to the following file
+-OUTPUT_FILE="/tmp/${TARGET}"
+-
+ # Check for basic system dependency and exit if not found
+ # check_for_dependencies
+ # Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
+@@ -30,23 +27,39 @@ echo "6 5" > /proc/sys/kernel/printk
+ trap do_cleanup EXIT
+ # Create one namespace and two interfaces
+ set_network
+-# Create the command line for netconsole, with the configuration from the
+-# function above
+-CMDLINE="$(create_cmdline_str)"
+-
+-# Load the module, with the cmdline set
+-modprobe netconsole "${CMDLINE}"
+-
+-# Listed for netconsole port inside the namespace and destination interface
+-listen_port_and_save_to "${OUTPUT_FILE}" &
+-# Wait for socat to start and listen to the port.
+-wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
+-# Send the message
+-echo "${MSG}: ${TARGET}" > /dev/kmsg
+-# Wait until socat saves the file to disk
+-busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
+-# Make sure the message was received in the dst part
+-# and exit
+-validate_msg "${OUTPUT_FILE}"
++
++# Run the test twice, with different cmdline parameters
++for BINDMODE in "ifname" "mac"
++do
++	echo "Running with bind mode: ${BINDMODE}" >&2
++	# Create the command line for netconsole, with the configuration from
++	# the function above
++	CMDLINE=$(create_cmdline_str "${BINDMODE}")
++
++	# The content of kmsg will be save to the following file
++	OUTPUT_FILE="/tmp/${TARGET}-${BINDMODE}"
++
++	# Load the module, with the cmdline set
++	modprobe netconsole "${CMDLINE}"
++
++	# Listed for netconsole port inside the namespace and destination
++	# interface
++	listen_port_and_save_to "${OUTPUT_FILE}" &
++	# Wait for socat to start and listen to the port.
++	wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
++	# Send the message
++	echo "${MSG}: ${TARGET}" > /dev/kmsg
++	# Wait until socat saves the file to disk
++	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
++	# Make sure the message was received in the dst part
++	# and exit
++	validate_msg "${OUTPUT_FILE}"
++
++	# kill socat in case it is still running
++	pkill_socat
++	# Unload the module
++	rmmod netconsole
++	echo "${BINDMODE} : Test passed" >&2
++done
+ 
+ exit "${ksft_pass}"
 
-Would you like me to remove the “vcc-supply” property as it was
-originally?
+---
+base-commit: 37816488247ddddbc3de113c78c83572274b1e2e
+change-id: 20250807-netcons-cmdline-selftest-b32e27a4bd16
+
+Best regards,
+-- 
+Andre Carvalho <asantostc@gmail.com>
+
 
