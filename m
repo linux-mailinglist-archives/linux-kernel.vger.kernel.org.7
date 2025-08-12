@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-765579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E2FB23A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:56:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736CEB23A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAD43B9DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1E477A6BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C882D46AB;
-	Tue, 12 Aug 2025 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D6C2D7383;
+	Tue, 12 Aug 2025 20:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aci32url"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ocj8znkQ"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94342F0666;
-	Tue, 12 Aug 2025 20:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F932F0666;
+	Tue, 12 Aug 2025 20:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755032171; cv=none; b=ZtmmmSdRCbJwSGpSDPmxwp9NyZM8qErk5Ljnq0XAfG/fekDQFt8SGOfRbJQJCBWFwj+Ws/IH391cA3FY25SkVofPx2RahL/q3Zt4TLQ/yTO5MxtXGGxdhu75Ol967bEdSkKU4uiJPGRZ4yElD4Uv3L1nVe37L7WcRPb2QoKgIuE=
+	t=1755032252; cv=none; b=LaijVCdPVsxSZwmAAhGQbIIPF7zsV5fu4RsjI+siEFEmOuqFaSp/nOvd22YIfHgi7d3h13QgeL+iTYWaEZi4XrUJGl/uX0BKVSWElC9RR0vJ90fu5mweW5L805+mqRw1rsHrE2OYJIufpo3nB/dWRL3MuDzxMaMCS+V18WgCBAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755032171; c=relaxed/simple;
-	bh=oDx/4yjF6fOIMLyafK6z36XCnn2dAEJD56/3U6byJhU=;
+	s=arc-20240116; t=1755032252; c=relaxed/simple;
+	bh=UjqKcPavgi3v8eyPCYAxsYZ2g7dIP2TKc/biQ4qOReU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q911vhZOE+YV3W5WGxKQEP02MQ7ZajyBsScy3hIZy+C0qgKwXDAJmCygefgr+9K8FVHt4QpJ0sloPZB2IM+yHi8fj9aD9zyX+ADXyp6Atc9ihi8YPPT+eQSNZC1B0vgUn6EsdKD7XxP9EVMekwNkT1CHWkxbbYCsGAs2poU5g04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aci32url; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B44CC4CEF0;
-	Tue, 12 Aug 2025 20:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755032170;
-	bh=oDx/4yjF6fOIMLyafK6z36XCnn2dAEJD56/3U6byJhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aci32urlrI9CgDWLLZVE10UPVqDe2MuCNb7FoPCabmVIHnD2dNYTBYIDd9rymhZOn
-	 +a3CykFh184IeqAog5f/VAmRx++PklO1nWODv/on3WAGwhyitMTujNyt6XqdZhHFEz
-	 xWZQ962qlvMX6GwCKbv0yVR0F/fxvmMti10W0YMtTmGMTfAtGJMprjLU7r2dywA0oA
-	 8L+A0S6Wx5/380Esa0eS02O6q9H8l2zEvaeFIcN/w0GUSaLde/wZxNI3IoKam0WtCx
-	 fCy9mEAvvYLx92Sskkk0eQIEFQ84T1taZJKNbQ/oKzSdlWrKQDPyMTTK+Ng1i7CARu
-	 +r7orZEZFPFWw==
-Date: Tue, 12 Aug 2025 13:56:04 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 0/2] kbuild: enable CONFIG_WERROR for more build steps
-Message-ID: <20250812205604.GA532342@ax162>
-References: <20250812-kbuild-werror-v1-0-36c9ff653700@linutronix.de>
- <CANiq72k-PdSH2BNgbq=X+FhpyEErifSCKfO5ObXz6bu9_J8+fA@mail.gmail.com>
- <20250812121545-f00f588b-2239-4d96-baeb-55cbf4914556@linutronix.de>
- <CANiq72=rhY_k1RRJoTzsY8PnEW5D=m2Org9m0v3erJsWxW4HkQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ysf/nog8S1BDVwAGb9XkQnJbih8B0Ye9/HAI3M8R5Rj+Kc017hKdVlVpUanuFx2rGJrwFMXc7/Q5N5vLJy3mnFwLSl9uj0W9u8H/GFDGk1/szEztLIblWg1nTFJ1TvTMhfAyEl6ueZP4Z0DST0/bF89A+wEZA/5tXtvBenYdAv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ocj8znkQ; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 12 Aug 2025 16:57:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755032237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J2e80lClZC+hroA+JpkDKoaIfGaNEpk1W7TgTtMAGMI=;
+	b=ocj8znkQG9LEv17BE+sL93aDDrH7o5lEkGwxKeLptm7IN+xGYDqa982CG7odUZcBYhPlR7
+	KasC3WvNxhy9ztsmoo6RduIhzmM3zD3jjMsW8w2SmNoAdmNWZ1p8UAMSL2dHJVIOSjMMIc
+	hv+x9uwPYskBkFbjO5fmFXeMtES+U7o=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	list-bcachefs@carlthompson.net, malte.schroeder@tnxip.de, torvalds@linux-foundation.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <eby2jl7aidtbodivalgyha6w6pvesh6rgr765b2sr4vuv3z3r5@gspmak4tg4wu>
+References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+ <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+ <aJuXnOmDgnb_9ZPc@kbusch-mbp>
+ <htfkbxsxhdmojyr736qqsofghprpewentqzpatrvy4pytwublc@32aqisx4dlwj>
+ <aJukdHj1CSzo6PmX@kbusch-mbp>
+ <46cndpjyrg3ygqyjpg4oaxzodte7uu7uclbubw4jtrzcsfnzgs@sornyndalbvb>
+ <aJumQp0Vwst6eVxK@kbusch-mbp>
+ <ib4xuwrvye7niwgubxpsjyz7jqe2qnvg2kqn7ojossoby2klex@kuy5yxuqnjdf>
+ <aJup_fo6b6gNrGF0@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=rhY_k1RRJoTzsY8PnEW5D=m2Org9m0v3erJsWxW4HkQ@mail.gmail.com>
+In-Reply-To: <aJup_fo6b6gNrGF0@kbusch-mbp>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 12, 2025 at 12:50:44PM +0200, Miguel Ojeda wrote:
-> On Tue, Aug 12, 2025 at 12:25 PM Thomas Weißschuh
-> > Another possibility would be to use -Werror
-> > for hostprogs unconditionally. Various tools/ are doing that for example.
+On Tue, Aug 12, 2025 at 02:54:21PM -0600, Keith Busch wrote:
+> On Tue, Aug 12, 2025 at 04:45:48PM -0400, Kent Overstreet wrote:
+> > On Tue, Aug 12, 2025 at 02:38:26PM -0600, Keith Busch wrote:
+> > > On Tue, Aug 12, 2025 at 04:31:53PM -0400, Kent Overstreet wrote:
+> > > > If you're interested, is it time to do some spec quoting and language
+> > > > lawyering?
+> > > 
+> > > If you want to start or restart a thread on the block list specificaly
+> > > for that topic, then sure, happy to spec talk with you. But I don't want
+> > > to chat on this one. I just wanted to know what you were talking about
+> > > because the description seemed underhanded.
+> > 
+> > Not underhanded, just straightforward - I've seen the test data, and the
+> > spec seemed pretty clear to me...
 > 
-> Not sure what Kbuild thinks about that -- we have a small risk of
-> breaking things with newer compilers, but that may be not too bad for
-> just hostprogs (unlike when it was attempted to make it default `y`).
-...
-> appear -- so that should be fine, but it does make it way more urgent
-> if they are errors every time, though, since it blocks other testing
-> too).
+>   "the block layer developer who went on a four email rant where he,
+>    charitably, misread the spec or the patchset or both"
+> 
+> Please revisit the thread and let me know me if you still stand by that
+> description. I've no idea if you're talking about me or one of the other
+> block developers on it, but I frankly don't see anything resembling what
+> you're describing.
 
-Yeah I am conflicted. On the one hand, KBUILD_HOSTCFLAGS only has -Wall
-and a couple of extra warnings so the risk of new warnings breaking the
-build is pretty low. You can see the rate at which warnings get added or
-removed from -Wall in clang in the warning-wall.c test:
+Well, since you asked, Christoph...
 
-  https://github.com/llvm/llvm-project/commits/main/clang/test/Misc/warning-wall.c
-
-I'm obviously on top of testing upstream LLVM against hostprogs because
-LLVM= makes it easy to set HOSTCC. I suspect that GCC trunk sees less
-testing against the hostprogs unless the user has it in their PATH
-somehow.
-
-On the other hand, the recent changes to -Wuninitialized and the
-addition of -Wuninitialized-const-pointer were extremely disruptive only
-because of -Werror... I would have no problems with fast tracking fixes
-for hostprogs -Werror usage but I am not sure all maintainers will. This
-would also impact vendored host programs like dtc, which may be harder
-to update.
-
-We could try it for a development cycle in -next to see if anything gets
-noticed. Always easy to back out retrospectively as well. Alternatively,
-we could just recommend people use HOSTCFLAGS=-Werror if they desire it.
-
-Cheers,
-Nathan
+I want to say - no hard feelings, things being frosty between us goes
+way back, and we've recently made efforts to work better together. But
+that was pretty hard to respond to.
 
