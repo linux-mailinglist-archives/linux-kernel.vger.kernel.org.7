@@ -1,96 +1,207 @@
-Return-Path: <linux-kernel+bounces-763954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E164BB21BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:03:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9475B21C01
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217741A2094F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D732682F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D994A2E06E4;
-	Tue, 12 Aug 2025 04:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E070C2D5C91;
+	Tue, 12 Aug 2025 04:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKTVYyRp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qhuHlinE"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B632DE1FA;
-	Tue, 12 Aug 2025 04:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F02DB665
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754971420; cv=none; b=fQ/9JGr0B6vXEQGj5vXIbSW/FQWLXRLvXhV7aywYMO8koTsBQacvKaqwf1eCjW8Jqfb2Ff7gWkzA20s+lGs7tGjzkvtrIeAZ2uXgkL5vgGbeF5aWaJ+Fw2+pkyaniJ/nFEvDrKSrGzTebfSVi/sLgzrX66s1l7FbPhZK6B8NQJI=
+	t=1754971585; cv=none; b=Qz4SOWsCP1LMs7OmJrBGxMSdzDiYU3kieQ2tdSQH6iFW0VwJl44MdetZW9xuw+ZD/CA1f3E69NMYBlCis6RM81fxskwSr5OQTN8QXcWUtfY8SmjAmfO4xUpUdiublvL2GeM/STiEmTRpP40B0NCOJ1feRqeUbHAUw0Le594HbbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754971420; c=relaxed/simple;
-	bh=XcUN90SIX6F+Zc2KwnFda0c/JQ1wv7pJe7Dj45S2Y6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SIjYtnIU1UtsPsbHF97pQcEsfquxe7gJtbj5lvxe+OmNUpiGCF67gPOYQv98SPHpoj2g+PISROD7Qbh3nFy0UO5mRKM97RBZawsHy07funI8jKuG+9yw/wRmGCNqcBS8Do2Sc3qAWEuksXA3ynJ89vcG5pCeCzFUxNSwiMfELkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKTVYyRp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E72C4CEF7;
-	Tue, 12 Aug 2025 04:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754971419;
-	bh=XcUN90SIX6F+Zc2KwnFda0c/JQ1wv7pJe7Dj45S2Y6M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZKTVYyRpG479K8a1tLBiW3FE6rGJILzVcoT0qUh1YSP2DNmnZH7cJ4k6p5Eth0y0r
-	 SFLT8eWH8/KYNUmETCiLX7gNE+O91LWrUvDiN0RkIQ9OyfZDLK+h+4fLGWrQr/lhqn
-	 i+6xRF1L2zU0ja+55iNb2av14d+bneWO03jVn1E5JIC4P49hILFisesNRrfNXRzIjO
-	 vv51BII/9myYaKlNHMHcjB0mt4sVV69jodKsXvdc0sswXY8zC3bly2Bpb/Ka/nF8bn
-	 JaARd49KBc3k0DzOGjh5T/r46vyzVU2E5B1gwknpxyNnibMYsadH5rwAMuEyZ4YIQl
-	 P2QKVwDg4zEow==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] arm64: dts: qcom: add empty eDP endpoints to the SoC DTSI files
-Date: Mon, 11 Aug 2025 23:03:36 -0500
-Message-ID: <175497141341.170566.10974575943237439276.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250724-move-edp-endpoints-v1-0-6ca569812838@oss.qualcomm.com>
-References: <20250724-move-edp-endpoints-v1-0-6ca569812838@oss.qualcomm.com>
+	s=arc-20240116; t=1754971585; c=relaxed/simple;
+	bh=p8t6k+6GXovC5uDxdFfBS/FvVWKNaHn6GXxjO/8jQDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j3xxchsS30RXvYQRbDcKS0C12kHC05gWel+MQOY4hkWjkA7zQyyuO4hmyMGlpFZ6cST8/qUGKIVKOGpXeOkpwZmOCmI3N0xXt4+CegVuKTBZtdStfgHp9z0mDjZP9bLwBgDQpa1mPLlCR8Taa7rafiQpEv2TPgIYKqrOc5C0yI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qhuHlinE; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0767b8fe-7c04-4e73-9235-ee326ee058cc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754971570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gBKYKsRpkFn4IgKj6ShKVJvxeOJHa9l2mWxrzZCMV7Q=;
+	b=qhuHlinEYuRlBDjMI4MbGx0/KxiYdhdqOPfLP0oqsPpOj0jhFjA54EiI3M8GXC6Pk8EVb2
+	/qR3qQmpSiB5bweQlDPHRe22e6PYfTC+EImtk1BWutMGnco8opavqMnN7zPSLplYoArMLo
+	oySeWvOUlkHDpU7+xZL/bAN7td1TSM8=
+Date: Tue, 12 Aug 2025 12:05:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 3/6] LoongArch/kexec_file: Add initrd loading
+To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-4-youling.tang@linux.dev> <aJovKIKFqX6xi9ra@pie>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <aJovKIKFqX6xi9ra@pie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi, Yao
+On 2025/8/12 01:58, Yao Zi wrote:
+> On Mon, Aug 11, 2025 at 05:26:56PM +0800, Youling Tang wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
+>>
+>> Add inird loading support and pass it to the second kernel via the
+>> cmdline 'initrd=start,size'.
+> I think This won't work if the exec'ed kernel enables
+> CONFIG_CMDLINE_FORCE. Is it possible to mimic libstub's behavior of
+> installing a configuration table LINUX_EFI_INITRD_MEDIA_GUID?
+The command line passed by kexec to the second kernel has no effect if
+CONFIG_CMDLINE_FORCE is enabled, which is not quite suitable for the
+kexec scenario.
+
+Currently, the initrd, elfcorehdr, and mem parameters will all be passed
+through the command line to maintain consistency with the implementation
+behavior of kexec-tools. It is possible that the content of systab will
+be modified in the future and some parts will be integrated into systab
+(the current cmdline mode will be better compatible with the elf kernel).
+>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> ---
+>>   arch/loongarch/kernel/machine_kexec_file.c | 71 ++++++++++++++++++++++
+>>   1 file changed, 71 insertions(+)
+>>
+>> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
+>> index bc91ae0afa4c..e1240644f529 100644
+>> --- a/arch/loongarch/kernel/machine_kexec_file.c
+>> +++ b/arch/loongarch/kernel/machine_kexec_file.c
+>> @@ -34,13 +34,84 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+>>   	return kexec_image_post_load_cleanup_default(image);
+>>   }
+>>   
+>> +/* Adds the "initrd=start,size" command line parameter to command line. */
+>> +static void cmdline_add_initrd(struct kimage *image, unsigned long *cmdline_tmplen,
+>> +				char *modified_cmdline, unsigned long initrd)
+>> +{
+>> +	int initrd_strlen;
+>> +
+>> +	initrd_strlen = sprintf(modified_cmdline + (*cmdline_tmplen), "initrd=0x%lx,0x%lx ",
+> modified_cmdline is allocated as COMMAND_LINE_SIZE bytes, thus I think
+> it's possible to overflow the buffer.
+At this point, modified_cmdline can clearly know that it only stores
+the additional commands we add (initrd,mem,elfcorehdr), and will not
+exceed COMMAND_LINE_SIZE.
+>
+>> +		initrd, image->initrd_buf_len);
+>> +	*cmdline_tmplen += initrd_strlen;
+>> +}
+>> +
+>> +/*
+>> + * Tries to add the initrd to the image. If it is not possible to find
+>> + * valid locations, this function will undo changes to the image and return non
+>> + * zero.
+>> + */
+>>   int load_other_segments(struct kimage *image,
+>>   			unsigned long kernel_load_addr,
+>>   			unsigned long kernel_size,
+>>   			char *initrd, unsigned long initrd_len,
+>>   			char *cmdline, unsigned long cmdline_len)
+>>   {
+>> +	struct kexec_buf kbuf;
+>> +	unsigned long orig_segments = image->nr_segments;
+>> +	char *modified_cmdline = NULL;
+>> +	unsigned long cmdline_tmplen = 0;
+>> +	unsigned long initrd_load_addr = 0;
+>> +	int ret = 0;
+>> +
+>> +
+>> +	kbuf.image = image;
+>> +	/* not allocate anything below the kernel */
+>> +	kbuf.buf_min = kernel_load_addr + kernel_size;
+>> +
+>> +	modified_cmdline = kzalloc(COMMAND_LINE_SIZE, GFP_KERNEL);
+>> +	if (!modified_cmdline)
+>> +		return -EINVAL;
+>> +
+>> +	/* Ensure it's nul terminated */
+>> +	modified_cmdline[COMMAND_LINE_SIZE - 1] = '\0';
+>> +
+>> +	/* load initrd */
+>> +	if (initrd) {
+>> +		kbuf.buffer = initrd;
+>> +		kbuf.bufsz = initrd_len;
+>> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +		kbuf.memsz = initrd_len;
+>> +		kbuf.buf_align = 0;
+>> +		/* within 1GB-aligned window of up to 32GB in size */
+>> +		kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
+>> +						+ (unsigned long)SZ_1G * 32;
+>> +		kbuf.top_down = false;
+>> +
+>> +		ret = kexec_add_buffer(&kbuf);
+>> +		if (ret)
+>> +			goto out_err;
+>> +		initrd_load_addr = kbuf.mem;
+>> +
+>> +		kexec_dprintk("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>> +			      initrd_load_addr, kbuf.bufsz, kbuf.memsz);
+>> +
+>> +		/* Add the initrd=start,size parameter to the command line */
+>> +		cmdline_add_initrd(image, &cmdline_tmplen, modified_cmdline, initrd_load_addr);
+>> +	}
+>> +
+>> +	if (cmdline_len + cmdline_tmplen > COMMAND_LINE_SIZE) {
+> It's too later to check for overflowing here, where the data after
+> modified_cmdline may already be overwritten.
+At this point, we append the original command line to modified_cmdline,
+so it is appropriate to determine whether the command line length exceeds
+the limit.
+>
+>> +		pr_err("Appending kdump cmdline exceeds cmdline size\n");
+> I think load_other_segments could be invoked without kdump involved. If
+> that's correct, this message is inaccurate.
+Yes, it should be corrected.
 
 
-On Thu, 24 Jul 2025 15:23:38 +0300, Dmitry Baryshkov wrote:
-> Follow the example of other DP controllers and also eDP controller on
-> SC7280 and add missing mdss*_dp*_out endpoint declaration to the SoC
-> DTSI. This slightly reduces the boilerplate in the platform DT files and
-> also reduces the difference between DP and eDP controllers.
-> 
-> While we are at it, also clean up remaining data-lanes and supplies
-> leftovers.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/5] arm64: dts: qcom: sc8180x: add empty mdss_edp_out endpoint
-      commit: 45cca0f3c8208d210751ec91edf778a18336df88
-[2/5] arm64: dts: qcom: sc8280xp: add empty mdss*_dp*_out endpoints
-      commit: caaba55bb751133433c1b0806f5ce6b88359f0f7
-[3/5] arm64: dts: qcom: x1e80100: add empty mdss_dp3_out endpoint
-      commit: 91329efd132bf58aaecb33c07a4e566d9e95ff71
-[4/5] arm64: dts: qcom: move data-lanes to the DP-out endpoint
-      commit: c361adf09dfc77c62da4c0d548a8c8d50eb9c71d
-[5/5] arm64: dts: qcom: sc7180-acer-aspire1: drop deprecated DP supplies
-      commit: afde4d8ea536964b7b7fe83cc6736e28475b6135
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks,
+Youling.
+>
+>> +		ret = -EINVAL;
+>> +		goto out_err;
+>> +	}
+> Regards,
+> Yao Zi
+>
+>> +	memcpy(modified_cmdline + cmdline_tmplen, cmdline, cmdline_len);
+>> +	cmdline = modified_cmdline;
+>>   	image->arch.cmdline_ptr = (unsigned long)cmdline;
+>>   
+>>   	return 0;
+>> +
+>> +out_err:
+>> +	image->nr_segments = orig_segments;
+>> +	kfree(modified_cmdline);
+>> +	return ret;
+>>   }
+>> -- 
+>> 2.34.1
+>>
+>>
 
