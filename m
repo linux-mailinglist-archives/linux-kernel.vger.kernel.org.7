@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-763967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99A7B21C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:36:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5C3B21C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689CB425682
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:36:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 867777AB6B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FC029BDB2;
-	Tue, 12 Aug 2025 04:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365B24DCF7;
+	Tue, 12 Aug 2025 04:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qIpGpOwL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YPlU8LcF"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24E91FF7C5;
-	Tue, 12 Aug 2025 04:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DB21F78E6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754973366; cv=none; b=oUV17oDg/eLzLIsYYxWIScuLSiOyZgmotEyJjdxZVUli0fmNS2cBVjsfEQCTp1SYmxnEZU8XKFiLNWG20QmuZgGCrbjC+PQDJ1FLsIFHGtW1Q3PUPZ+0mFaV2767knpOfJhtHJeJKTduZnkDrmy9uyr1HBdcyW4tSKVVhplV3fc=
+	t=1754973607; cv=none; b=nZ2FUjTrQbXtmSuNiDYZq7blVST9WfwYrifnQ1i+fqUuByvaaR+Cup+68u8EY4unuQqAyFR1OAVJjFLi7U52MWA/khGUJNxDU4cTb8tVkiS9UzINYXcheXW5zPzTRgEels/24mbmgUA6fCOPsJkKngmYeMmfUOLfSdVmrbjAPyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754973366; c=relaxed/simple;
-	bh=a2fFT0SML1HIj0HNz8Dgc6iVsf23KZ0DRHF/eW1eDYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OECEAxDPWER3AY77inGuZ9dcdNFE4PS7mMTU+aE0eCaqXZpvoxJ0CNKvwM5ZwaXKsxG0zYUPpjVUF0sxHbemQd3k2k83WC14mx39I7sKErsiQqhy0c8W2pAUe+3rhitmSW+zj3eXdh68mwc8N8yH+Sump3H1dt2g7z8TSwC5R9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qIpGpOwL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754973361;
-	bh=yB5Ml8I8HYKSrQ/QSf1O5ePzfSDfVmXd+Ij2rdSEMXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qIpGpOwLcmJwom5dsH5tSdIA6MtAxg7UYjSZ2kH44CqnV/MZ4FqGf0Coh6jHl06qF
-	 RC3Ye0yOZKbEBGDDDrU4QNC8uU+5HS4oVs+ocX38PNh+AiBu+eoQF0X/RaV9Z+/Fov
-	 xXSn8RbDmtw0blohrJcRK1LLqprGesijuJd9AM2jNbH3NkKLSx5AvrMcRs9iG+yW3R
-	 SDzpwxvQq01AJXGQ80FAWA34Q9oYXyePi/leBSCbVNKwQCJKNGAamcZMDcNdtIcn1F
-	 cZBRe0ACTeBryMNbjdIWukRdS/YU0qIMW1c1InyuEvcFl7ee3Oy3L3noC7T/q+1Zgw
-	 CXW0rXAB/62MA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1Jbh5K5Wz4wbc;
-	Tue, 12 Aug 2025 14:36:00 +1000 (AEST)
-Date: Tue, 12 Aug 2025 14:36:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of the net-next tree
-Message-ID: <20250812143600.387da02c@canb.auug.org.au>
-In-Reply-To: <beada520-564a-481e-9f9d-91cd106aaee3@redhat.com>
-References: <20250711183129.2cf66d32@canb.auug.org.au>
-	<20250801144222.719c6568@canb.auug.org.au>
-	<beada520-564a-481e-9f9d-91cd106aaee3@redhat.com>
+	s=arc-20240116; t=1754973607; c=relaxed/simple;
+	bh=7QEfWkMj0Q5U/6xWS27ArDIWZyu+E2DhnlE//zrVl8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uVWkwYWgCEm7X0VaHLVn89LDM0xpbpbVn2g12oIvtQxQs1SznQ+zzE3ntpCN3RbyzSO53HsZWENdzhMPeCF+H+EvyTBAsQyUFf742wthBsViRLQ1xdJRfdKHYHr0EkaxWT7xjTgfh4LsuCHTRmJPn0NX0UfOFzt6x9pDHKhiiXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YPlU8LcF; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ef33d3cb-4346-41af-9e0e-541fdc007f89@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754973601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5SSuoYQxuP4N4+wD3+d2H9S35beJT6qelRadMcdDN44=;
+	b=YPlU8LcFpadrQflSfXw2q6rECE/dUO5/8etQGdMlcPhxYeBkWoooqQT98Nh7B4lPctPdln
+	Tl9sG5VZ6XQyNBthPJCFbmXuwGRe9GEB1pyKyW30s2YdDmTODsoZ8JpLWtC/+wQzbkD2lh
+	Y42I9oje8XRVS9jS67f+Lv2CSc8XNns=
+Date: Mon, 11 Aug 2025 21:39:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/F.92=Yo_jE0NJfV0MmXWkBz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Subject: Re: [PATCH RESEND v2 1/2] bpf: refactor max_depth computation in
+ bpf_get_stack()
+Content-Language: en-GB
+To: Arnaud Lecomte <contact@arnaud-lcm.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+ song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <20250809115833.87033-1-contact@arnaud-lcm.com>
+ <20250809120911.88670-1-contact@arnaud-lcm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250809120911.88670-1-contact@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/F.92=Yo_jE0NJfV0MmXWkBz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Paolo,
 
-On Mon, 11 Aug 2025 11:53:38 +0200 Paolo Abeni <pabeni@redhat.com> wrote:
+On 8/9/25 5:09 AM, Arnaud Lecomte wrote:
+> A new helper function stack_map_calculate_max_depth() that
+> computes the max depth for a stackmap.
+
+Please add 'bpf-next' in the subject like [PATCH bpf-next v2 1/2]
+so CI can properly test the patch set.
+
 >
-> On 8/1/25 6:42 AM, Stephen Rothwell wrote:
-> > On Fri, 11 Jul 2025 18:31:29 +1000 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote: =20
-> >>
-> >> After merging the net-next tree, today's linux-next build (htmldocs)
-> >> produced these warnings:
-> >>
-> >> include/linux/virtio.h:172: warning: Excess struct member 'features' d=
-escription in 'virtio_device'
-> >> include/linux/virtio.h:172: warning: Excess struct member 'features_ar=
-ray' description in 'virtio_device'
-> >>
-> >> Introduced by commit
-> >>
-> >>   e7d4c1c5a546 ("virtio: introduce extended features") =20
-> >=20
-> > I am still seeing those warnings.  That commit is now in Linus' tree. =
-=20
->=20
-> I'm sorry for the latency, I was off-the-grid in the past weeks.
->=20
-> I observed that warnings in an earlier revision of the relevant patch,
-> but I thought the previous commit:
->=20
-> eade9f57ca72 ("scripts/kernel_doc.py: properly handle
-> VIRTIO_DECLARE_FEATURES")
->=20
-> addressed it. At least I can't see the warnings locally while running:
->=20
-> make V=3D1 C=3D1 htmldocs
->=20
-> Perhaps it's sphinx version dependent? I'm using sphinx-build 7.3.7
-> Could you please share the exact command line and tools version used?
+> Changes in v2:
+>   - Removed the checking 'map_size % map_elem_size' from stack_map_calculate_max_depth
+>   - Changed stack_map_calculate_max_depth params name to be more generic
+>
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> ---
+>   kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
+>   1 file changed, 24 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 3615c06b7dfa..532447606532 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct bpf_map *map)
+>   		sizeof(struct bpf_stack_build_id) : sizeof(u64);
+>   }
+>   
+> +/**
+> + * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
+> + * @map_size:        Size of the buffer/map value in bytes
 
-I have been using the (older) perl version because it coped with files
-being missing.  The (newer) python version (which you run) now seems
-to cope to have been enhanced, so I sill start using it instead.  It
-(as you say) does not report the above warnings, so I will ignore them
-as well.
+let us rename 'map_size' to 'size' since the size represents size of
+buffer or map, not just for map.
 
---=20
-Cheers,
-Stephen Rothwell
+> + * @elem_size:       Size of each stack trace element
+> + * @flags:       BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
+> + *
+> + * Return: Maximum number of stack trace entries that can be safely stored
+> + */
+> +static u32 stack_map_calculate_max_depth(u32 map_size, u32 elem_size, u64 flags)
 
---Sig_/F.92=Yo_jE0NJfV0MmXWkBz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+map_size -> size
+Also, you can replace 'flags' to 'skip', so below 'u32 skip = flags & BPF_F_SKIP_FIELD_MASK'
+is not necessary.
 
------BEGIN PGP SIGNATURE-----
+> +{
+> +	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> +	u32 max_depth;
+> +
+> +	max_depth = map_size / elem_size;
+> +	max_depth += skip;
+> +	if (max_depth > sysctl_perf_event_max_stack)
+> +		return sysctl_perf_event_max_stack;
+> +
+> +	return max_depth;
+> +}
+> +
+>   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+>   {
+>   	u64 elem_size = sizeof(struct stack_map_bucket) +
+> @@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   			    struct perf_callchain_entry *trace_in,
+>   			    void *buf, u32 size, u64 flags, bool may_fault)
+>   {
+> -	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+> +	u32 trace_nr, copy_len, elem_size, max_depth;
+>   	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+>   	bool crosstask = task && task != current;
+>   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> @@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   		goto clear;
+>   	}
+>   
+> -	num_elem = size / elem_size;
+> -	max_depth = num_elem + skip;
+> -	if (sysctl_perf_event_max_stack < max_depth)
+> -		max_depth = sysctl_perf_event_max_stack;
+> +	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+>   
+>   	if (may_fault)
+>   		rcu_read_lock(); /* need RCU for perf's callchain below */
+> @@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   	}
+>   
+>   	trace_nr = trace->nr - skip;
+> -	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+> +	trace_nr = min(trace_nr, max_depth - skip);
+>   	copy_len = trace_nr * elem_size;
+>   
+>   	ips = trace->ip + skip;
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiaxLAACgkQAVBC80lX
-0GzPqgf7BH7uMXzImVE97hEtvZmDN1J2SwH1Y0jgUwelXX6jEkeqi6oGP/hHhJfW
-Is6ue1TyvneG+OGvqzYIGE6ozHIgW81jg6qSo2nBQ4yS7kypWXkZ9Jk4xm12lfnd
-AUrDIWV2/aw+0NiTrLZJ5RwJpz6bCj7Ogu+xpjfwfu23c9o6nxrxBtKqlY/PKHcD
-rq/ENX8HHSSCbdPg0iHDwnuga5M7oSoJUWGbCcfCxG60/xkiwPQEpe0yyKlSZJK1
-f8tp72+7kdwKCTiM4Ay4yWHfE+cBUBpTUPVcsw9lsfLP5nUiZ+AmFrShuUKE0AzW
-WKtCmTcMZOxRb1IXZqjScRn1teZSiQ==
-=I2E1
------END PGP SIGNATURE-----
-
---Sig_/F.92=Yo_jE0NJfV0MmXWkBz--
 
