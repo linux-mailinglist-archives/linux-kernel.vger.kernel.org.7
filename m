@@ -1,120 +1,120 @@
-Return-Path: <linux-kernel+bounces-765098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB362B22B5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14186B22B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236C93A9C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6213B136F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0C22F4A02;
-	Tue, 12 Aug 2025 15:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934C92F531B;
+	Tue, 12 Aug 2025 15:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="v4s0yHvZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zl8YIv+N"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7520528000D;
-	Tue, 12 Aug 2025 15:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3472F49FF
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755010960; cv=none; b=dei+FrN2RRddKm7MzhzNXW6V4jvCK0yes+FqOQj8Er9tMx4luIQ4uRWjCY0ZqtrU03zpewHPDlCps3BrFXtuY0w59Yb7X25pS/eLbDsAW0kH4FTZ12jk/diTZCTGeVUquDT4H3dAep212EbirSWU9vMKSNa2DHsPTvbWjC1L6xI=
+	t=1755011143; cv=none; b=hqB2bLVs6TEFWNgTniAcI0i+uBDEf0qg/zDF0R8ORqib96aQoSAuqg1R1707/M+UEPzRCPLRIIEE8r/2LYFnwJtEz7i5qh8mRZzaV02uH5caBd9ebL5v28AzwLis/TZJm8ck6+3m0snzazAADMWQt9UTO7HbJ+CXmqCXaKqP/Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755010960; c=relaxed/simple;
-	bh=wR0BxUp4dy33m59/4v222C9B6JZd9Ir0fQjUINH+5+c=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=SMFv4GV/lcMdtozfrxzjD3v72A9g/uO3TWa7QA8oU4hQ3GAMs0XLGeFzygExlADj8CfAgoXsemtUl0S9eA1raYv/mC00ALj8dzVp8CVGe4/awSngVxKTGjR0pXCJKPrt8Tn+V7c6e5lJJaxJSucg/uIidskwYdI9bC1qnu7DajQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=v4s0yHvZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:7c24:e2bc:68da:c990])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 6B4F64A4;
-	Tue, 12 Aug 2025 17:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755010903;
-	bh=wR0BxUp4dy33m59/4v222C9B6JZd9Ir0fQjUINH+5+c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=v4s0yHvZaZ/6VupsHQsCY3EgCCkGo9R/3YHqllY2jygzLaf0K8PIkymJitkGk9jaj
-	 Rl12W765kA/4eJ20Rz2rC7kdUYX3/Xa58+xjsfIBEPzMKd2l3hdzPQX321ewN3H26k
-	 6FEmlVdW+jb8tvvbaTc3wdJMJhBaUpzu7khXaGkY=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1755011143; c=relaxed/simple;
+	bh=13LJJo6dqvQkGASUem9OaXV1fYDIMnu0t4nIeHZzuOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O8fGSqK9ekGYxU4wo57KnWba65N6tyGNxB9AHgNXfCEexETUTprwLYtOqgMSp4KTPtpaNIR7+/j2uZxbEbIH6CZhJyO4OSsuV9Djx/Pqgcn7Rdl2PmeYWoc/HlGhfo99N+qLcsArIfScHLl8Aa+Z9/anfPw8BkAHy+y7tcdt4CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zl8YIv+N; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459fdc391c6so28118625e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755011140; x=1755615940; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iFiyXHmzPTJSM/FpIqJQMHXEodXhM8NURp+djBOJcws=;
+        b=Zl8YIv+NHaeknxTmX9VUlwVpvAn5dSqHUWM8OFlo/p0kE/AHP4jeEIkRAg62ZMW8hk
+         HUTFYHU2v1m+1z2CSX+6p+9lixrqccZUN1fj3vr0lml6gcaka6RNVvE7yWIXgfmWFgJH
+         pDmwocEuHB0NtVj9tuQw6ZTHKuq6euv2SR3yoI1DTUImknQ6WYTf0ob6r1J+eJpKccC9
+         gPpSeNYmNHF0JI2M3o5DRSqn8STh818a8DqW89rWT57rwnOewHTbI5V3xtXqik6UxYnr
+         j0hqrTIcv70LSYTRe5jQKT5FtTgIoVOamlzO1y6hVpX8766HXsgNKrRJLVuTB1ycYaXr
+         KWbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755011140; x=1755615940;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iFiyXHmzPTJSM/FpIqJQMHXEodXhM8NURp+djBOJcws=;
+        b=O7D/WmdaU73z3xxHMWUZ4hcKqIk5EryTq8aipYN0Sol1Tfyv8vCyGFIA2N0+rXNnpX
+         0843YJAnP1aKepFylHq6fXH6cdnfg0CfC9ZcV+rCJDE6+sZmmYecyDpdWLuHTrBiNdsF
+         TYvCUx01PACTvn77rSfZLopvAOCJrPml0imMdsW6eLIOiRY0f6OpZB1d3i5GdW7hCqUs
+         7ISDNHzgmqzGqcyL1DA2YJEMolDU5tk5Y4UKx1kJQMI5o6EWqsdusS4y2Q4Tn27VtRP8
+         +NtnFDkGddYCWvbu3tHGcrGa+o2lyfCyXHVGKyjfTdldDS5u8+PDdVLW3WHLQJ29NAkI
+         D8PA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5br+XXI+T0AI2uiqy/j+hymePAS57ey3cIvPnk/B+xOkgKyB7y7jJBzaoHXZc3wjhKxHWv5H5nIZHXLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqJGGhVsI2uZG4TEM6kypSZyq8qUXfK5Ra9Xpp9HZR6TQKgLzq
+	tQHt/pkL/y62OmfSo7jz3F684FoCoDvbsU3pTUT4vgB80sQP/UgoUosrOEYqaIGrUY4=
+X-Gm-Gg: ASbGncsRSRz1i9OvaiE7VhOq7hp7w15Gx44hSyR5mpn7ixmKvsaEj6ul3OMe/S34uuB
+	yL8+62kj6QrkJp0lFQZo6MyU4LKQkfzHiMFu0LHUdX2ZdXONh5QQpzn5lPgInT2BAXPGznXtIjP
+	IBgGOQB8MDP6gs/2eVe3X0ZmmRYUCxK+ZRMpCEJ0UQUHqt2sxLyTacl1xXEB4KLpxvtiEtNVcbm
+	QDbBnGES2Xdg7AqIlri+b6TwYTRGKfB1bsFp3bNlGGoJOOhr4Rxs4IlqY9gcuRFKrbW19ev/gTu
+	eEUUuasu/pXzsIAg0pgehNlosPKiYKdbivMpmmiKXXukuvdD6PnTVa81dBMNoIu+BKl5oDeHJ9m
+	hHSezEd32m44UXTxII07ZLmfNSP3rvY+/+2a3Yxi6GshzV3WsoURADvqmjjJVBQs=
+X-Google-Smtp-Source: AGHT+IFaF18WlpXLiOPapLF9skeq6bos29ChTJTlyHVAm8O0Lnm+tnZQv8MZbqesSAf81giG9PV3vg==
+X-Received: by 2002:a05:600c:474c:b0:456:1923:7549 with SMTP id 5b1f17b1804b1-45a15b555demr1276015e9.26.1755011139689;
+        Tue, 12 Aug 2025 08:05:39 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5873c43sm327424985e9.22.2025.08.12.08.05.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 08:05:39 -0700 (PDT)
+Message-ID: <16e4883a-a056-46c3-a7c7-a87ff5da89a1@linaro.org>
+Date: Tue, 12 Aug 2025 16:05:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250812103243.GK30054@pendragon.ideasonboard.com>
-References: <175308758352.3134829.9472501038683860006@localhost> <175326599663.2811177.16620980968274114885@localhost> <m3h5z2vw12.fsf@t19.piap.pl> <175344176070.2811177.10693943493658922992@localhost> <m3qzxyug1s.fsf@t19.piap.pl> <m3cy9futcj.fsf@t19.piap.pl> <m34iumujcs.fsf@t19.piap.pl> <m3zfcet41n.fsf@t19.piap.pl> <m3a545t789.fsf@t19.piap.pl> <20250812103243.GK30054@pendragon.ideasonboard.com>
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption: resolved
-From: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>, Paul Elder <paul.elder@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 12 Aug 2025 17:02:33 +0200
-Message-ID: <175501095338.74722.11604545949710100799@localhost>
-User-Agent: alot/0.12.dev8+g2c003385c862.d20250602
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Bryan O'Donoghue <bod@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
+ <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
+ <d7949778-73c4-4575-8db3-a3724f75eb38@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <d7949778-73c4-4575-8db3-a3724f75eb38@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof, hi Laurent,
+On 12/08/2025 14:39, neil.armstrong@linaro.org wrote:
+>> +    .clk_freq = {
+>> +        zero,
+> 
+> It seems clang doesn't like this at all:
+> drivers/phy/qualcomm/phy-qcom-mipi-csi2-3ph-dphy.c:486:3: error: 
+> initializer element is not a compile-time constant
+>                  zero,
+>                  ^~~~
+> 1 error generated.
 
-Quoting Laurent Pinchart (2025-08-12 12:32:43)
-> Hi Krzysztof,
->=20
-> On Tue, Aug 12, 2025 at 07:54:46AM +0200, Krzysztof Ha=C5=82asa wrote:
-> > Hi Stefan et al,
-> >=20
-> > BTW I've added Lucas Stach and Shawn Guo to "Cc" list.
-> >=20
-> > The problem is the CPU core power supply voltage :-)
->=20
-> Ah, the dreadful overdrive mode.
->=20
-> > - while the reference manual specifies the max ISP and MEDIA clocks at
-> >   500 MHz, the datasheets show this requires the "overdrive" mode =3D
-> >   increased CPU power supply voltage. In "normal" mode the ISPs are
-> >   limited to 400 MHz (there are other limits, too).
-> >=20
-> > - I've tried lowering the clock rate after booting the systems (with
-> >   a CCM register write), but it didn't fix the problem. I guess some
-> >   reset logic is affected here, and the (lower) clock rate must be set
-> >   right from the start, in the DT.
->=20
-> That's interesting. I wouldn't have expected that.
->=20
-> > - anyway, lowering the frequencies of ISP and MEDIA root clocks fixes
-> >   the ISP2 MI corruption. I'm currently investigating PMIC settings
-> >   (both my Compulab and SolidRun modules use PCA9450C PMICs), so perhaps
-> >   I'll be able to use the higher 500 MHz clocks. It doesn't matter much,
-> >   though.
-> >=20
-> > - the question is if we should lower the clocks in the main imx8mp.dtsi
-> >   DT file, or the overdrive mode should stay there, and the changes
-> >   should be made to the individual board files, or maybe the U-Boot
-> >   configs (PMIC output voltages) should be changed etc.
->=20
-> I think it would make sense to lower the default clock frequencies, and
-> provide an overlay to enable overdrive mode.
->=20
-> It's also interesting that the issue only affected the second ISP, as
-> the first one should also be limited to 400 MHz in normal mode.
+Weirdly I compile with clang..
 
-I support that. As a side note, there is already imx8mp-nominal.dtsi
-which is only used by one board. That dtsi also uses the
-fsl,operating-mode property which enables additional clock checks. So I
-ask myself if the default imx8mp.dtsi should specify overdrive mode, or
-if we should add a imx8mp-overdrive.dtsi (then we should possibly rename
-them to imx8mp-mode-xxx.dtsi so that they sit side by side) to make it
-easier to create overlays for both cases.=20
+thx though
 
-Best regards,
-Stefan
-
->=20
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
+---
+bod
 
