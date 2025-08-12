@@ -1,99 +1,213 @@
-Return-Path: <linux-kernel+bounces-765456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7B0B236A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC08B23687
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545DB1899D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34CA624509
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451E62FDC33;
-	Tue, 12 Aug 2025 19:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84B329BDA9;
+	Tue, 12 Aug 2025 19:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVWOGhNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rQLcUhPZ"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A255C260583;
-	Tue, 12 Aug 2025 19:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755025238; cv=none; b=VXgNgowzI3egzTgOgIwW7nc4/gEXlj8i3Zw7xw0TUqDjAvIzg8jALcCn12F3XXZXeODFCZIGJxeof8elQgR2zD0DDVZT26xuVXBJ5tSc1rdQFfyMBkkeg0U0kbFDG1euFqUwQfmWj0/qM3ruUTQ7MQBfS18cCKEuQeHu/Hygw1o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755025238; c=relaxed/simple;
-	bh=d0JhCkkZyd2LY7+XqnhS+Q79Efyg7IxxniIo3QR/Suw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z/AZE5xPRDG8bUjpYtyfUpMW3cUgjHb84QhNsGZ3htpL2KGTozaOeM97g1PI5LGWez7pIEUHSebHUvdwKMOKjYUT/wHiNOMhrHZrGYsJ/0cimTKJq3me3Cc5abWcTbKyINE2HNVW+roLom4tf5Z+wo+RqDQT/egDv1Pr+kR62J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVWOGhNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5583AC4CEF0;
-	Tue, 12 Aug 2025 19:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755025238;
-	bh=d0JhCkkZyd2LY7+XqnhS+Q79Efyg7IxxniIo3QR/Suw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nVWOGhNybWSj0nPCPYVbra069XOzf10WpEJyHEUbxfnL0uzmlKWGLtDtCdEUxSCfY
-	 xEBl73Eq+yz/Tc0o5m2EHHAEcmmQrRySFf2zJ3IPwU0EwjINxQ2zN+5CXJS0lwUebR
-	 LwWyEsjYIzasdOn3aAgIEVt9T0SyEuPuBOP/vU6Pz7H/avKxSGcgoWrPDyDTku2uRX
-	 sUmdRWQWuWJ9k5kFzclN2zOPRvcD1VImRtI4oY2+GkUpU+VzhbmG4UGacqfuRxqZlu
-	 3q1ws8pzYKz8Sx+SG9/+KMbmoE2WnWY+ZlRanaUStCEhNbBarClpQ+Aq7AWpSzO9Hr
-	 thzylI8hYYQhA==
-Date: Tue, 12 Aug 2025 14:00:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Keith Busch <kbusch@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] PCI: vmd: Remove MSI-X check on child devices
-Message-ID: <20250812190036.GA199875@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9303726FA77;
+	Tue, 12 Aug 2025 19:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755025251; cv=fail; b=k5RdvkL78gI1pXUxSUWz/9QpXmQvoyiGx8yNpNS3eQghdFYZPhiGDrl1bMrwRX8aHI96S9U+ZlLyt0D4RiAGHmYibtYeGcRK6HAiRbl0/AWDJd515E2g6dCrnlL2/o7GODf0HPCVjIAiiK1exmq3jXaktt4NxTeDJH+KIXA/u3g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755025251; c=relaxed/simple;
+	bh=2+02uoeEIOZ3L2aZeY91EYn+xDHaqDQqzZLoYtUmV6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RiYnD4Skhv7TeE2AygEYkkwT9qkl8hUejZYDtpKm244/Bh23lFN1hi64lG1j7/jzz3ZQqUy1zSKMeFEQvWn72JwOlmQDgf0urCc7ecHPUa4LXr9tnj+t4vwVtMXF6iJIjNTqI4tEU2Gf7CDEavghlu/SgdgqWXL50Z8RmouPgeo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rQLcUhPZ; arc=fail smtp.client-ip=40.107.101.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v/shoHpLWv2q81MvaAHbJTZ/MnduXnyeqFj9ypqot1+9Gg2OTfa4fys1cSiQouYSx6L8I5HZubPKkIcqP78l8E3oLViQvM4G66qssOUDGPfSnm1v1pEt80PEWLuPeHq+owRVstHvfePxWxxH4ZplKZjdACGIVUtgjH34aGuvV0f/Qo6MlTS93PP00pArsjKh+s1vnKv1gTVxEZ4ZJAaQxwpIzrvxXSjuxo1hA3V7MJ9yQgmhUK7qqMadD4wAoZ9MkUf8neuSM1vNpK+KeZOHa47cMaNZPUDpkCkR99fyhu28OSds6Vbi8RPu7R4msC6U5gXVyompbYOKUosVf6HGaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dz3PNh+i6ro6eUvfZ5R1Ro9CUvmUQBqEHRmywmQA9jc=;
+ b=CENGDAPMErsz6abIEIhR5yKNqlTzU+PE+vL3fD66EW6uR9f88Leh5vftHDmukMt6yYrkQkltW1l+xyWbBw4goH4nk7+eMEhru+qRbm+jBPzQ11xx8u5hf5esm2BGXtbR5aLpTxQKG8IrIQii7uipmWW0nHbMcpH+3lVXnxT+Cr4UBX49btPuS76k/6RLT9vQoYQJq9EW/VZcr5I2A499oTrhbrUw10RbXbvl9WBvQWafNmMKb9lmlgSwhwCPYJj7zDa4orzdvdLIPDNqKQ/9huLbwMx5gV6I8sxHpyXnin5YMGbhdAIoNP1rQrsML9uJEBH9biXJ7orvkBEjvXaNfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dz3PNh+i6ro6eUvfZ5R1Ro9CUvmUQBqEHRmywmQA9jc=;
+ b=rQLcUhPZQxCbu7neB5I6TtMNAf0XNu5XukIohy7QnUo+CjK4V3k8Jz0zq83OwFuPZCsGdn63jTgROtmPaQErKeV6JcMfZIqeFNShi7dG16AJkg81pIrrbK91qH5tvJtrIpnk1yOOKZq6qNeWiogBCxTTjfSN7r1v9TwHHw2+CBQ=
+Received: from SJ0PR13CA0078.namprd13.prod.outlook.com (2603:10b6:a03:2c4::23)
+ by DM4PR12MB6640.namprd12.prod.outlook.com (2603:10b6:8:8f::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
+ 2025 19:00:44 +0000
+Received: from SJ5PEPF00000206.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c4:cafe::1b) by SJ0PR13CA0078.outlook.office365.com
+ (2603:10b6:a03:2c4::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.15 via Frontend Transport; Tue,
+ 12 Aug 2025 19:00:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ5PEPF00000206.mail.protection.outlook.com (10.167.244.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 19:00:44 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
+ 2025 14:00:42 -0500
+Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 12 Aug 2025 14:00:41 -0500
+From: Jason Andryuk <jason.andryuk@amd.com>
+To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>, Chris Wright <chrisw@sous-sol.org>, "Jeremy
+ Fitzhardinge" <jeremy@xensource.com>
+CC: Jason Andryuk <jason.andryuk@amd.com>, <stable@vger.kernel.org>,
+	<xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
+Date: Tue, 12 Aug 2025 15:00:40 -0400
+Message-ID: <20250812190041.23276-1-jason.andryuk@amd.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812182209.c31roKpC@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000206:EE_|DM4PR12MB6640:EE_
+X-MS-Office365-Filtering-Correlation-Id: a604fa9c-e92b-4c21-e36f-08ddd9d28a56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?POVh427oB0urNGjNdGXUFW29B1nP0yzm+Ra6XTPOOfBXen2I/L5CfDt4IOGe?=
+ =?us-ascii?Q?E+8WWfbx9J/tkcfX/n90w/usYLpDB0UpRmeaey8i25XI/hsWOT9r3rOm4iwk?=
+ =?us-ascii?Q?3ODP9/xIr9tBwZHv2D1cbs60CeZVMfyPpOOrsVFNipdk8cgZM4wg7vbVvyyp?=
+ =?us-ascii?Q?rMHmr4YHn+cbjEvLsxZv28X2RRJezPrr4Tub2plKXxXrQc4W7jerUAliD1OJ?=
+ =?us-ascii?Q?IkQMbPMw0yN3uJqz50ebWzrCXGItHpZg8wBUmTtNZFzXOPcdj1tHrLgIOuRI?=
+ =?us-ascii?Q?R2sxRthYHGgP8KXUCoC0FvpPgl00X/ksCpz+DS/za0jeLaKVJozpl7e64loJ?=
+ =?us-ascii?Q?zmNzdFml5dFORJDut03J2TRgl0F3AWl9Dxq7Zv/0kHXJLbKMufubu8J71u9v?=
+ =?us-ascii?Q?4pvRFqNU5raDR9S2tBXhjSxC5O2jaLlK5tjQpaPiU/wUsApGDnNp8HW0m970?=
+ =?us-ascii?Q?MMqFOy489LBKFiaiKLwpnw0agbRUUrCEuaQVQUdOs/UQwT9+/meXdoqp7BPY?=
+ =?us-ascii?Q?AOWfrEqtMctSxPcgmnqEGBIoW2oHcfdO2jlsD6RpZ3zUzwaEwYJ8iIu8suth?=
+ =?us-ascii?Q?HeNtpdJOuP1xhT88E7jTzXCQ+qIUaYqpN/TLFZXCCn8OBP4ssL6SbZ7EFmK/?=
+ =?us-ascii?Q?mJ/GfC8U0OsyX0I+E+Wuy7dV/BqnlDX1L24PTl6MyDW0wTyL9tFjGjzn5G0R?=
+ =?us-ascii?Q?/TXGsdtPWQIWMA8HSk5PAG+o+L6PK9l42/IijVQgFzVFZa7bSribJSDqobXO?=
+ =?us-ascii?Q?azxzwgBYQidBYEE1gfO0Io1w2wFLnyRStr8xF0bsytHDcd+SFdcxBhUWUn3a?=
+ =?us-ascii?Q?AHaNR4DltLzN3O3ouZVfYeM/Jqbq98iw+1l4LyZTPhoYg23iifRjRj3lJhHs?=
+ =?us-ascii?Q?tWUKRGqJCyDHwMzSiYiYWpQ0iECXmf1pC++lYK3UJVs+Fx2YxlOtKzSaRfya?=
+ =?us-ascii?Q?HwbMUx5M06tufeczLyh6tSC6cqcLdASbiwKzHyk5n0lGX0ArBhKdnT24yR+n?=
+ =?us-ascii?Q?XTHLBmqoLaW+WSxAmDh0wpIIMIkGGSEQSIPh/7Ds/sZ1AcL5CHhw1h4+cKHb?=
+ =?us-ascii?Q?svDNfOn7gzusAlDdTMwy/87zwI5hYxcM4a1XVKsz4OSckZ+G0Gk9EjwCbL2c?=
+ =?us-ascii?Q?wLJ135hIirVS/8Ln+00Gi+UbWoPfFpfBL7//EPjM/IFYz0rFvbE19vFTO3G3?=
+ =?us-ascii?Q?ukakeRhpBn7JFa5lX4HqEcQZVyHBxbepZroVXcFWtvlEz1OD17MDoNWYwfGF?=
+ =?us-ascii?Q?Z5ax2zR+YdICXO6nQ3efSDUbDuTCKWRRZT6bIkXWgXh14sLWC1hNzQe6VXE9?=
+ =?us-ascii?Q?5zUohsWHWb+yaT3LFIsOY4Uz3lHcN8rrRCzHuTruL1h0oxYVPK9kaA10DKOB?=
+ =?us-ascii?Q?qimP6qs8yYJ4S+g5hExG4LooPhzJkVsfkBaV1nK2SzPM6HTn4XCUGhRT8Q38?=
+ =?us-ascii?Q?E2n7oExXZiFNqF6/7IedFxI4Tz9eLY/HvozzuCdhMVkjlKmCmBnehhcNhrM+?=
+ =?us-ascii?Q?sGksWJ07Sx9tqtqgwSXV9RARap8qWdLtLp11?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 19:00:44.2431
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a604fa9c-e92b-4c21-e36f-08ddd9d28a56
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000206.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6640
 
-On Tue, Aug 12, 2025 at 08:22:09PM +0200, Nam Cao wrote:
-> On Tue, Aug 12, 2025 at 11:30:15AM -0500, Bjorn Helgaas wrote:
-> > On Tue, Aug 12, 2025 at 08:49:50AM -0600, Keith Busch wrote:
-> > > The doc you linked is riddled with errors. The original vmd commit
-> > > message is more accurate: VMD domains support child devices with MSI and
-> > > MSI-x interrupts. The VMD device can't even tell the difference which
-> > > one the device is using. It just manipulates messages sent to the usual
-> > > APIC address 0xfeeXXXXX.
-> > 
-> > Thanks, Keith!  I updated the commit log like this:
-> > 
-> >   d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()") added a
-> >   WARN_ON sanity check that child devices support MSI-X, because VMD document
-> >   says [1]:
-> > 
-> >     Intel VMD only supports MSIx Interrupts from child devices and therefore
-> >     the BIOS must enable PCIe Hot Plug and MSIx interrups [sic].
-> > 
-> >   However, the VMD device can't even tell the difference between a child
-> >   device using MSI and one using MSI-X.  Per 185a383ada2e ("x86/PCI: Add
-> >   driver for Intel Volume Management Device (VMD)"), VMD does not support
-> >   INTx interrupts, but does support child devices using either MSI or MSI-X.
-> > 
-> >   Remove the sanity check to avoid the unnecessary WARN_ON reported by Ammar.
-> 
-> Minor correction, it is not just an unnecessary WARN_ON, but child devices'
-> drivers couldn't enable MSI at all.
-> 
-> So perhaps something like "Remove the sanity check to allow child devices
-> which only support MSI".
+VIRQs come in 3 flavors, per-VPU, per-domain, and global.  The existing
+tracking of VIRQs is handled by per-cpu variables virq_to_irq.
 
-Thanks, updated.
+The issue is that bind_virq_to_irq() sets the per_cpu virq_to_irq at
+registration time - typically CPU 0.  Later, the interrupt can migrate,
+and info->cpu is updated.  When calling unbind_from_irq(), the per-cpu
+virq_to_irq is cleared for a different cpu.  If bind_virq_to_irq() is
+called again with CPU 0, the stale irq is returned.
+
+Change the virq_to_irq tracking to use CPU 0 for per-domain and global
+VIRQs.  As there can be at most one of each, there is no need for
+per-vcpu tracking.  Also, per-domain and global VIRQs need to be
+registered on CPU 0 and can later move, so this matches the expectation.
+
+Fixes: e46cdb66c8fc ("xen: event channels")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+---
+Fixes is the introduction of the virq_to_irq per-cpu array.
+
+This was found with the out-of-tree argo driver during suspend/resume.
+On suspend, the per-domain VIRQ_ARGO is unbound.  On resume, the driver
+attempts to bind VIRQ_ARGO.  The stale irq is returned, but the
+WARN_ON(info == NULL || info->type != IRQT_VIRQ) in bind_virq_to_irq()
+triggers for NULL info.  The bind fails and execution continues with the
+driver trying to clean up by unbinding.  This eventually faults over the
+NULL info.
+---
+ drivers/xen/events/events_base.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
+index 41309d38f78c..a27e4d7f061e 100644
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -159,7 +159,19 @@ static DEFINE_MUTEX(irq_mapping_update_lock);
+ 
+ static LIST_HEAD(xen_irq_list_head);
+ 
+-/* IRQ <-> VIRQ mapping. */
++static bool is_per_vcpu_virq(int virq) {
++	switch (virq) {
++	case VIRQ_TIMER:
++	case VIRQ_DEBUG:
++	case VIRQ_XENOPROF:
++	case VIRQ_XENPMU:
++		return true;
++	default:
++		return false;
++	}
++}
++
++/* IRQ <-> VIRQ mapping.  Global/Domain virqs are tracked in cpu 0.  */
+ static DEFINE_PER_CPU(int [NR_VIRQS], virq_to_irq) = {[0 ... NR_VIRQS-1] = -1};
+ 
+ /* IRQ <-> IPI mapping */
+@@ -974,6 +986,9 @@ static void __unbind_from_irq(struct irq_info *info, unsigned int irq)
+ 
+ 		switch (info->type) {
+ 		case IRQT_VIRQ:
++			if (!is_per_vcpu_virq(virq_from_irq(info)))
++				cpu = 0;
++
+ 			per_cpu(virq_to_irq, cpu)[virq_from_irq(info)] = -1;
+ 			break;
+ 		case IRQT_IPI:
+-- 
+2.50.1
+
 
