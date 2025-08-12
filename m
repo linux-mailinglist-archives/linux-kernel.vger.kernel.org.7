@@ -1,114 +1,127 @@
-Return-Path: <linux-kernel+bounces-765607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A999B23AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:29:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB98B23AB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412EB17A4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:29:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D887B5DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C042D73BC;
-	Tue, 12 Aug 2025 21:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13E22D738E;
+	Tue, 12 Aug 2025 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U4qIh+hJ"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k35LF33q"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D642D738D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E84A2F067A;
+	Tue, 12 Aug 2025 21:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755034164; cv=none; b=oNLwoa5fyXFY/evFK4rbde/qTVXmyqZz6YrwoVidi1oBSgYBZdxEFGgY5vYI/BGj281Gc5m3pGRCGL+zZQYkp2PsYVg/EDUsGNMTNmwFBhuuH1vbVsFzo9+Phg49aQGiWyFszO+29pu1Fo0q9kIdAak/I+1xQlFI60DrHhBk/Vs=
+	t=1755034161; cv=none; b=Ivd4AkQ0KeKXRDpjycTN32t1b2D7JYOkELml/reowM86tipPRbbZxute10a3t66jeRX+91/0BSB+JmCoTvIbIYdUrLKShyUp4dWGeNmjXkSbw1d9tISlZNLip/QwJcd+kcH4IxOUx0BoBmwtwBrKhnZJa6f3ZQEzjLrqF18bux8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755034164; c=relaxed/simple;
-	bh=9AcDle46sSZ5GtNBAJiYb8IsxvgNROGM8+Rr9YfobSw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=p6TmCFpXTGvykj70LXPsiqixE9gSRmFOssxiIt00DsiqcSHzb7n06HtPPEXcqcpd5WwC9aMCI40FXslNiDGEDAYTxAY6/MDQYI30pMfX726+67+AnCIfKkDxxYxSxoraxjye5SKP92xD+2698Ll2+UMdFI1+LjXgN+2rleeOns4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U4qIh+hJ; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755034149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9A88w6834VrTqKLEi9WR7kJwaYhdtTvTEQR33TkiE8=;
-	b=U4qIh+hJRzaEk2bbxTNZgXDuMyG3cck7f9g2MeniiFZEx2iTdWC7ZhfBouiG9/cjE3CjQA
-	nfxIsEsY7C8l0+nu8LFs7R8oW5jsY1jO1bd3ClBBJXdF7N3uO5qeNsv2k0EYb2mSxRHrrj
-	58OMTboK0qdbiNzJt28vcImnQsI9h18=
+	s=arc-20240116; t=1755034161; c=relaxed/simple;
+	bh=eGqZCroda2wJopOF3l+REjl4tR5Yq9+2gAley7tEEew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ipv3OdC166EhujEBta0etoSs8vaEADPLc9J0oaMA2YE4NOYNUycAjuDQCP2cxA0biyyaaPBOwhYeybXsbeP7zzaBxvijLNLA3fjaWkHXQE9aykGLYkGL8IWG4bEodtIr+CbDtbriTit3CcNZbj60mPsxZBir69aZLIb2XBWDsBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k35LF33q; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-433f1cc2719so3933829b6e.1;
+        Tue, 12 Aug 2025 14:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755034159; x=1755638959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLeohoAGJ+hVylKDxkihOkXHb1E9F0dH5sp5SD+x3pc=;
+        b=k35LF33qQU1t2VktkrQb+UOc4wU5mqvglxKcnUxM6eU8pBOiY0dQlfvgzoySy/0zrO
+         xTVouWq2++I/6E8wk3CjHrn82IUYanuhLEO61azPNi+vvDc74DBkn6Of59UljDeaKXrY
+         CjtwRcDxlLykahh8SIZ7JmrvaFhR7wTdXB7txighdnkfT5qc00Lx0H8r7eUQUaLmpqeu
+         Guw0maEvE/IcJU2pT9DHsO4kKnQoq04IiIggwJo2eY/3XLH5lnfKvaXZl0p7G1RwDRu9
+         hKfTiHNzm7jfJ/eqg00LQFu+yU/d6xxF9zVIhc8rMjLv/xOlqxoqwJXTV1HUWjowmIUH
+         pAUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755034159; x=1755638959;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLeohoAGJ+hVylKDxkihOkXHb1E9F0dH5sp5SD+x3pc=;
+        b=MI+A3cp/DElJSyzQDV9a+ehW1IuxVQTEyHjGClmfeeSPUz6nSEjYTnFRV5wNsSZmms
+         C3H8bthHJbxlUBA5GweO67HI5MsdyKySM5TKcDjlKjCDWO8Q/FGCcmSgI6OmFZC9iQEi
+         WY++TelO2SXSoFk4a2dAAIYCOXeCOZiDP+/Vx9HvT19JPHMd4PVZtzy23iXL0cfqRHM3
+         WtDMjFI2vz8GkVqp6FE+SHglGe7obEvYyFIQ1PkzDY05HQjXSkATohn9ikPKYEW5HMkr
+         13gyknIYlbwrtyFl5qKIBzFNBHmxRTDix/H1/aGVSRnw/AFZQYjtk9H0VWGLL/WzZIHN
+         KfMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa2af4elsqaPOiXclaw7lE2e+rbaB1LNStgAYjD/X0KSrjyF/tkPIA5UtCwanlLkLpsQj6WQypAGBXquU=@vger.kernel.org, AJvYcCUpRx9KkNeVK1dQbVGXX2NK0AUhTRU4By6Oj3hI7+P9Tfrz9VDp9RASjfObgSnhZzUEtakq1Rmf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Vlk7BG6ToHBlx9qrEz/SmyyGbiilDzeXNqrjOg4GwtlCw2VC
+	siiim/ZJr4Aby1v4GoupE1RhnhCFBcTG7ChbrFXRL3fW3kMgCjQHVR/dSSW7aNhY
+X-Gm-Gg: ASbGncsRRcI1FhPBanPX1k9k4vTreUveVPJ5Alfyn4PdZC5NnTXMr2//CbUIIQhFp9b
+	Z2VnCg5qq9WLWb9HHJP2jLj3kuTxGbdljUnKmGM9Bel/nV6mWVR1e1WWU+0SQ624DrgF1KNxU2F
+	t7JaoaM6tDDJ8bv3cmGFa/h1w62TBN0F8MuYoVKMgrbqQNYMJKAZ9GrPhfHZizBe6VgrG8O3opb
+	CshLUfzQ7qUkEk7dpYOkEJZ4I+1uZBSJ4yXX3mk46gPEp65vfM0bGJM/IyahBB2nbNCOhuFbJw8
+	F1a0NT0GmxDtx4+ALSV2E02CVGhOccaf2DScEuViM8CvltmNCwjQ+Uc3QPWJU5gSZS/iicmIVnp
+	BMlJE3I0W632UJA///iam92nhSVfQEGr/dmWW8DMGp1kEJO79VyH5qVM=
+X-Google-Smtp-Source: AGHT+IGWVbUN21tmOA5DQIBW20HuNxcOZHa+8f5mkd53ppc4gWWw8N7yD+V3DBAFt9EaMmDWFFrpww==
+X-Received: by 2002:a05:6808:1781:b0:420:81f1:32fb with SMTP id 5614622812f47-435d4275049mr530209b6e.38.1755034158685;
+        Tue, 12 Aug 2025 14:29:18 -0700 (PDT)
+Received: from [10.236.102.133] ([108.147.189.97])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce85683dsm365938b6e.20.2025.08.12.14.29.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 14:29:17 -0700 (PDT)
+Message-ID: <f86afb24-a328-4b20-ad4c-e8f5b56eeb24@gmail.com>
+Date: Tue, 12 Aug 2025 14:29:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] usb: storage: realtek_cr: Simplify
- rts51x_bulk_transport()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <b11a19b6-9fb3-4fdc-b94e-33ff01a634b3@rowland.harvard.edu>
-Date: Tue, 12 Aug 2025 23:28:56 +0200
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org,
- usb-storage@lists.one-eyed-alien.net,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/262] 6.6.102-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250812172952.959106058@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250812172952.959106058@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <19E72C72-AFD3-4D13-8F14-9A1F96B971D3@linux.dev>
-References: <20250812144358.122154-1-thorsten.blum@linux.dev>
- <b11a19b6-9fb3-4fdc-b94e-33ff01a634b3@rowland.harvard.edu>
-To: Alan Stern <stern@rowland.harvard.edu>
-X-Migadu-Flow: FLOW_OUT
 
-Hi Alan,
 
-On 12. Aug 2025, at 22:06, Alan Stern wrote:
-> On Tue, Aug 12, 2025 at 04:43:58PM +0200, Thorsten Blum wrote:
->> Change the function parameter 'buf_len' from 'int' to 'unsigned int' and
->> only update the local variable 'residue' if needed.
->> 
->> Update the rts51x_read_status() function signature accordingly.
+
+On 8/12/2025 10:26 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.102 release.
+> There are 262 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> That last part isn't really necessary, is it?  It doesn't make the code 
-> any clearer, less buggy, or quicker to execute.
-
-It's mostly for consistency because the parameter 'len' is used to call
-rts51x_bulk_transport() which now expects an unsigned integer. I'd still
-argue that it makes the code and the function signature a bit clearer
-because now the type communicates that 'len' cannot be negative.
-
->> 	- if (residue)
->> 		- residue = residue < buf_len ? residue : buf_len;
->> 	+ if (residue > buf_len)
->> 		+ residue = buf_len;
+> Responses should be made by Thu, 14 Aug 2025 17:27:08 +0000.
+> Anything received after that time might be too late.
 > 
-> This really has nothing at all to do with whether buf_len is a signed 
-> quantity -- it should never be negative.  (And I have no idea why the 
-> original code includes that test for residue being nonzero.)
-
-I agree with "it should never be negative" and ideally the type should
-reflect this if possible.
-
-It's also easier to reason about the code when comparing two unsigned
-integers than having to think about implicit type conversion.
-
-> Much more serious is something you didn't change: Just above these lines 
-> it says:
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.102-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> 	residue = bcs->Residue;
+> thanks,
 > 
-> It should say:
-> 
-> 	residue = le32_to_cpu(bcs->Residue);
+> greg k-h
 
-That should probably be another patch, no?
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Thanks,
-Thorsten
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
