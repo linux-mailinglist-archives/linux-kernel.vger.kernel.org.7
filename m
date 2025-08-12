@@ -1,97 +1,54 @@
-Return-Path: <linux-kernel+bounces-765072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB14FB22B0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:51:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F99FB22B25
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A678189E8EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D2C3AF258
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51A32F5310;
-	Tue, 12 Aug 2025 14:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26C2ED155;
+	Tue, 12 Aug 2025 14:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG/edStX"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J7Hhq1Md"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7711B2ED860;
-	Tue, 12 Aug 2025 14:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7202ED149
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755009762; cv=none; b=X7s+jj1WsAiQiKTE+yDesRZaGBCqyw0i9gyEtV1z0JDZyqE8/gWhBNBcTG2tMENuNmlde41XThNIDNwkN8pZ2HbG6u0Vid7oCI74eTkA77VhvoBrBXHpfraYuZwaCUF5A25dtxNiRdv8qKkn80F663lD+C9uq8SXrUGpFMB7xos=
+	t=1755009858; cv=none; b=pULjUet4doDeB4yZFQcU+WBQNTYCqwfM/4B08E7fNKKq2RmOmHn5ss6cHvYNyNS79FnBAKaeDCOFWZFdGcVKwyY/faNThVBNojexZ/TIr7T4JcoGYeWmbspETSjDA9Woj0VdebNHKaoqtAGaEprwIdeA5WCnGwbBJRv+zZjQ9ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755009762; c=relaxed/simple;
-	bh=/vfWdDuxS4cmrgYy2Y1FDIhYup6GKzcFqTnOIHVLxd8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oJKMGf1F/+CHIQja6laVVvugYc0t4pbV2EfQRFrIhKB+0VpYQK1QHmu7AJr6b4FCsBl58yFwhvtC5tXi4Y7N2mGBK2CO13MTRh2tfCY/U1h3b/87d1aKwLeHrkVi73o/CeMU3B8YBalahuCHysEMLzYK+scmntXc/pYib/E+llc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG/edStX; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b792b0b829so5420733f8f.3;
-        Tue, 12 Aug 2025 07:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755009759; x=1755614559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksFZyo5Cvq1kE+J4/jOZ7KQ+h5+N9CEPfSL/qK66cWI=;
-        b=bG/edStXPlvlIHsZ62KmvCcW/VlFQbYi25vNV72RFY4MGEq/fR1tSWBBtK8w+/fhVJ
-         tBx80bY2C0zWgaexKPchTbwEfrqejVa6tT2v/0QMrh9RtISTB0YWva3Ho5sOi45DH5mg
-         9ApDAM7tpDrcFQEwuzZTBpAKkWrrWMP+sbG92iPV7SlNiaCVBM6/9co4jGnp8sM1KHzB
-         gQbodpr4Lleu1ZS6PnKTUASrbBJ+6SGOOkGhS7omKSJdd9xqQ+ySYmbRlok1/du9b/Qy
-         +HHNfoM4ZNegDcpimmZ9wLRTM+LBJ4/PQapcT9ALJ8vtP8otf9M5SAlkyn/5uV6MGRmS
-         bl9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755009759; x=1755614559;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ksFZyo5Cvq1kE+J4/jOZ7KQ+h5+N9CEPfSL/qK66cWI=;
-        b=A5saCyp0O2E6HUSt6rIosIYmVj5IoTAFRZ1FQvObBmkI55vKRLfQSIrYLxfJZuE7K/
-         JqCVhxXvUPtadHIpc1LHV2ppiperUEfhkfcWqKBxodBOAm/8GnVsjaCDmCPZHX+uJ9da
-         Pge1PjdZGnRSW/mP3hJ/P73stCL4ARVfufAiyp5edicWF9dJWItHEKzw48nR+WeDswne
-         kY8pM1wPFHAr8F9eyTs04OmOIDG0KaRb/TvEEoet5BRgiRA8TDAxjhV1CoY8XGa2rMtE
-         46gcMUkRlUyefhqHjxqOqO3hMdHl+Zh5S/xSuU06G5fsl4wZdyESCaLiQkQ2odiUlfQx
-         PDkw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5sRCmHNMihHs6VMectGaInPT6/bivTtx1DDR4UWT5QqVLMNeqPEO0M5ZGCHuENdy4f3ZzR80D9GV5V1A=@vger.kernel.org, AJvYcCW9iRn09tsp5eiTh74Xik9mY25RC/asEDAihgz2oy7tAfj3d9AqIVNMshUzfoNTP4fABPGhs2iZJmNyW4yStQI=@vger.kernel.org, AJvYcCWN640QD9NZg39ecAlMa1aCxBYQ8oZDa62kYix6i6YMTK/zaRXgIsF7wqP+/ainXgrFvK+8moe7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMjIzQf4Be82icIOoqct62BesrxdCqPFXgJ7f9ofLuhy8iH4se
-	VMVbqtzc8X2RErTpweBNP0CvMoKSMBnKkN0QqH6OWN5UMXMg4h1/3N5Y
-X-Gm-Gg: ASbGncuKPMmI/l9i2IyzCn/pdAArbxx4yz4OtD9/hBGni8wUxJIn5TlC/+20xo8Yfrm
-	yRZKeqW5hwIljo+b7AfRFRu14EkMDSRNsw560kNTN7wgXURIEJ0aQEoKoQPUO0E7mnZT80tbJVK
-	cRgv/QlYY8dCKdv8Gzvi7f72xnLaHoJEHGYV/1qvSWw8CDDE3tO/OXGOBHNmXWoFefUeeGOyudo
-	Fl3+NpQHCdh+VTnXioOWZOE5Z/nAdH6Mops38RCrYOC99f8g8GYSw3BWb8hBaGKAoBl7+3IUA+y
-	j4P/pEdz77p851qJ5iTH6nKREuxWiciLpoCGT2rWLy9NZYoN/pSw1mXjIK2P9MNVeXO3M1WyeEV
-	RNrFlW78zIwRsp7t/401c+gGWdLH3N0xiW/3iEQD3rxEK
-X-Google-Smtp-Source: AGHT+IHavcYA44T40lCV5RrSKd0V+Intv3acaFD1J/sQ3KPgNjMpYmbIlv1QyoKIG/ybOxSoDeNXBA==
-X-Received: by 2002:a05:6000:26ca:b0:3b7:9bfe:4f6f with SMTP id ffacd0b85a97d-3b900b7be30mr13872464f8f.44.1755009758481;
-        Tue, 12 Aug 2025 07:42:38 -0700 (PDT)
-Received: from blepers-Latitude-5420.. ([213.55.220.53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459db3048bdsm404377165e9.29.2025.08.12.07.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 07:42:37 -0700 (PDT)
-From: Baptiste Lepers <baptiste.lepers@gmail.com>
-To: 
-Cc: Baptiste Lepers <baptiste.lepers@gmail.com>,
-	stable@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1755009858; c=relaxed/simple;
+	bh=5EwuJcm6AhJtJ8vTEKl3568WYBq/RFLMOdDStPBbwxY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aMFRZ/L/vAts7X5Hg3rbojh5QXaVhsyeGoBIfLDMflT4N/saJ/jANgC31GR3VGDAxzfqQaT6V53pLiojgYSH20cf8jIcbps3whwCQJ8wEgePcjeJEI4rvnFsD/p9SbuUIPuxsA4BHoBy3w3Rpc/WzLtragoRS5uAWKLKsvc19WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J7Hhq1Md; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755009852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YTqnhR6tyqtUkbvKNDEAKenG6XgSBtu4zIxOIgfHtBM=;
+	b=J7Hhq1Md6G8yPtsqGt9XiRxqETYVZcsk7uHewmUWZC4r9c1LyDpLQUstenRItHTdPF0xGD
+	7KEfsgkiJpDDUXVxnsyuyeQw9bd2mIRqIRb92a4KcG3gU16eLG9LjbC+9saU/5mJRmi3nR
+	xHHnF7n9DuQabUqhRzigciWnZc556gA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: cpumask: Mark CpumaskVar as transparent
-Date: Tue, 12 Aug 2025 16:42:11 +0200
-Message-ID: <20250812144215.64809-1-baptiste.lepers@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] usb: storage: realtek_cr: Simplify rts51x_bulk_transport()
+Date: Tue, 12 Aug 2025 16:43:58 +0200
+Message-ID: <20250812144358.122154-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,32 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Unsafe code in CpumaskVar's methods assumes that the type has the same
-layout as `bindings::cpumask_var_t`. This is not guaranteed by
-the default struct representation in Rust, but requires specifying the
-`transparent` representation.
+Change the function parameter 'buf_len' from 'int' to 'unsigned int' and
+only update the local variable 'residue' if needed.
 
-Fixes: 8961b8cb3099a ("rust: cpumask: Add initial abstractions")
-Cc: stable@vger.kernel.org
-Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
+Update the rts51x_read_status() function signature accordingly.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- rust/kernel/cpumask.rs | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/storage/realtek_cr.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-index 3fcbff438670..05e1c882404e 100644
---- a/rust/kernel/cpumask.rs
-+++ b/rust/kernel/cpumask.rs
-@@ -212,6 +212,7 @@ pub fn copy(&self, dstp: &mut Self) {
- /// }
- /// assert_eq!(mask2.weight(), count);
- /// ```
-+#[repr(transparent)]
- pub struct CpumaskVar {
-     #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-     ptr: NonNull<Cpumask>,
+diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
+index 7dea28c2b8ee..8a4d7c0f2662 100644
+--- a/drivers/usb/storage/realtek_cr.c
++++ b/drivers/usb/storage/realtek_cr.c
+@@ -199,7 +199,8 @@ static const struct us_unusual_dev realtek_cr_unusual_dev_list[] = {
+ #undef UNUSUAL_DEV
+ 
+ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
+-				 u8 *cmd, int cmd_len, u8 *buf, int buf_len,
++				 u8 *cmd, int cmd_len, u8 *buf,
++				 unsigned int buf_len,
+ 				 enum dma_data_direction dir, int *act_len)
+ {
+ 	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *)us->iobuf;
+@@ -260,8 +261,8 @@ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
+ 	 * try to compute the actual residue, based on how much data
+ 	 * was really transferred and what the device tells us
+ 	 */
+-	if (residue)
+-		residue = residue < buf_len ? residue : buf_len;
++	if (residue > buf_len)
++		residue = buf_len;
+ 
+ 	if (act_len)
+ 		*act_len = buf_len - residue;
+@@ -417,7 +418,7 @@ static int rts51x_write_mem(struct us_data *us, u16 addr, u8 *data, u16 len)
+ }
+ 
+ static int rts51x_read_status(struct us_data *us,
+-			      u8 lun, u8 *status, int len, int *actlen)
++			      u8 lun, u8 *status, unsigned int len, int *actlen)
+ {
+ 	int retval;
+ 	u8 cmnd[12] = { 0 };
 -- 
-2.43.0
+2.50.1
 
 
