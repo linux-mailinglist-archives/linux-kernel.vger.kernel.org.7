@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-764984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D25DB22A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A23EB229E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C521C22CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257821BC4381
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83D8285C80;
-	Tue, 12 Aug 2025 13:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9186A289807;
+	Tue, 12 Aug 2025 13:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EuFhLCK0"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="WOFmavdt"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E4A2853ED;
-	Tue, 12 Aug 2025 13:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480A289802
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755006737; cv=none; b=DbPcZiHSYUAHZIs2WJrNYAxgGVyirTA3YVV5Vcf4ZGwiPqBCAIQ15CucEX3t/vWbRhkx5K6WgH7n+24l8e0a11b/m+iuUQc/wdFF/AjQ2tVV1hBzAT51hYFP3NlbvJmAI17A7he7GPW0kLTkIAWbQGOcNRfn7JdGrTi9Qn5xNuY=
+	t=1755006889; cv=none; b=MfL0qZE4y9r4P90CpWsaXBQPfpUgSaDFQcMgeBCqift3swZ8WbPkF20yu7vM/YYnR82xJgFJ4wBbI0a40/ukv1EwrHCyOrtKBHMvHXfyTgxxakbq/0gl5Skq3WnRkWGR1+KbyIvdKcA7yZ6q6ZTEJ/yayy+rXg5u4HBT0I4fsQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755006737; c=relaxed/simple;
-	bh=pbMUSHq/YNNaCArGDvDjk8wRb18KIRpXix8AV/Waf1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLsqGYi+RAmNsEcopxZ9ojEiDi3X7C9hHJDAupeS1BZMq9h6wkKja6o3S+qm6Qrl1dlmlD0n+xgZJE7fk96RoCNd1ux0iPbP0bvbsNO0iWhu5owC4dwpchw+qRmQQhz2aSxqvg1RWY10mBVQm4PQL/lz34wXc+x+qsab/HHQTos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EuFhLCK0; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24307977420so4745515ad.2;
-        Tue, 12 Aug 2025 06:52:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755006735; x=1755611535; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=m0llAY0VwEwkWRZxSWHsUTjSAYVzQD+4E2bIspQfrX0=;
-        b=EuFhLCK0j/wdW1DBaH6Yf2VKpGV5w7RAvgmDym4Bu++AAMACre4dyBdFZzvlbLBYTa
-         080VFePRBqowObU4gKvs9w3CRqqMtQI5uq1UeRAPwpb+5A6ncBcAibTRHN/YZdKScUl5
-         anVtxGWfWGJIlm525vI/6/0j39/5SWgMjsMI2VQPx/oHTz6rMGtaNq8pBeqknRqIThkx
-         qFLJQ26nXawTui90rXs61L5kwQpHFH7eyev+wCPJYh/BGk3MCfsF1d65641dB2FsCbp0
-         JmOEiiUdTGeAiRDpJloygyiaWTZeHfiV4P4dgG+MYOCOj4axhk8E4fPyib2uw6NdjH8W
-         Hzcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755006735; x=1755611535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0llAY0VwEwkWRZxSWHsUTjSAYVzQD+4E2bIspQfrX0=;
-        b=V5b/jkOqg3E7buRPVsfc76EBgYYV3Sl/vOrO2z7H/nGjvFCqTbhjBkUBeGemTaAD/k
-         NHNxPrPv9uc4wytMMNOOYuTK1tZVOka1MFG2zHcUGwt76uOMQMNi9oW2tsshWFewU9KP
-         rRxLn04KIUVr3YVYFW5JuUst5r9K/2lXH6Fp3+Agc+KJxaPeZiEc1NjAuV5K9svb1wKC
-         BmoLGA17bcsIKpHK4oSLQaqUCZOdPPAFuDLGstECexFLwH04csvU4wH9ELYw2GPtVe0B
-         +i/I+9GA9E7/uN20cuaWydsJciiJfxBpvwxcw50Gqa46G0WRHmPL5eHuGWVUJWYE4ZC4
-         vGtg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3d0V8C20WgD1nBjNImXLW6Yap/mDR3lSg5iDE1vjzSnLnfndDfvd+nbY8QLd5OG2S2m+K70YmUGSj@vger.kernel.org, AJvYcCU6C0fEA9fdr4m/lf1uM+EGGHxCCEXuCNn+BkOfZ9Ynj7qdYtmJT83r8ez/EApzSGs/FDUz43QCSk26TP+p@vger.kernel.org, AJvYcCVGFQFfmEwAIBT8glI9hkH/Brbcokbr+XAuGE0ZHl505hnl5+lHZphOV05/VOJ5rCDkKQJvEcjHfQNV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWqXYYyGTlLcqV5hTHRGFk/z/CYHI6GRHV4HwiYpLZGoOOx8vp
-	FDDrfjYQjKySsedjHLPeZBEOppiH1yh6bXAZ3Hy8Z38PoXnbYnIG1oPe
-X-Gm-Gg: ASbGncsKsEirL1kwMVe+sTVStV1BTR2u0R5QOXDpokptJO8cL8zl5UvtotbvMx5RKib
-	PcCACJq7KlBsN0xypoo15MieC8/iQN4a53c5sEnuqLBufX+eV/OMV9mktSGHmV8Z/UngRSY1C4f
-	AO1t6xsAOOTaqis//ZKxGzuC/Am40puOyW0xZQkf1fSJ/JHmFFpSvBApmNtMKHHYlwnDt/ZI9K+
-	3wqJvWFonpDv8hpWc7YmqYvy0ifRdi0+LHQuICoeC093X7q1sHIpTy57mV0SToNd2HAhEcO2z02
-	zcnVThVQ2TXuNK+5Cryoe2gRpD+n1IFyp4P+Hnq3EGEZg21Q2cYK9owgbdu0bIU1aQ0xJQtu5Gs
-	fsaGBdl5dCDe6+c+2EXRDnrDgVWO5TAI=
-X-Google-Smtp-Source: AGHT+IFCVeX4DZSLmnS1ZpbzghtTiDT7mUKw+SGxc7HopabHAMlQntL9W6YNEQh+avv/ZDVdDdhETw==
-X-Received: by 2002:a17:903:1106:b0:240:3f4d:b9b1 with SMTP id d9443c01a7336-242c21fe5e9mr248206715ad.29.1755006735266;
-        Tue, 12 Aug 2025 06:52:15 -0700 (PDT)
-Received: from localhost ([2804:30c:1f50:da00:c6fb:5400:5af6:282f])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31f63f0b04dsm35156975a91.25.2025.08.12.06.52.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 06:52:14 -0700 (PDT)
-Date: Tue, 12 Aug 2025 10:52:29 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: iio: Replace bouncing Analog emails
-Message-ID: <aJtHHdbWSYg9DjBd@debian-BULLSEYE-live-builder-AMD64>
-References: <20250812132445.75398-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1755006889; c=relaxed/simple;
+	bh=upbKxsQx0QpZRud8WIcDD5N4XVxgeeYJQFgMmyBLI/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fXChsa6FSl6PseCQ+kk8Udua6CrHwPgkK/JLhE/vUl3N/VzIuPljWisqqwTSRRlUm8cQdBPHtkedXr3Zax0g4yahkzghwylZhJYILrr2fWDevBlrTspyc0HokGwQvP4gjGsyIxuBZpCBjDcHBnLSxWjDSUo8MI6x7L2MK7OAue8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=WOFmavdt; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6003b.ext.cloudfilter.net ([10.0.30.175])
+	by cmsmtp with ESMTPS
+	id lnXXuS7iWuKaFlpR9ubL3X; Tue, 12 Aug 2025 13:53:11 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id lpR8uGEzhCNkwlpR8uVAjf; Tue, 12 Aug 2025 13:53:11 +0000
+X-Authority-Analysis: v=2.4 cv=QO1oRhLL c=1 sm=1 tr=0 ts=689b4747
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=R1XpmoYe2GHAZdAE2O7VqQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
+ a=5Dkndmrd0K96-EDDFPkA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tNUEls5kqSuuy6g4SOW4SUaFj+tL30sjkLiY9FumhRY=; b=WOFmavdthVNtCV3zeQ97C9GGXl
+	oTXUDOOCNTA4k1JANH17X36iWvSj+tla4eykDGakfzmwZ7eQctmnCJctpzQNesABWAo3DF7WnrJux
+	olQ6x3wMEOOBK05H5vpfpphZG0W5bd7M8fk0LlxhBxwaWLF/brFtPZnQ2vUjb4/GkUke5B/7AD9PI
+	6DFHMer5dWSPqaYdQ/7BytIBN0zmUfAH4ASFA6v2ojH6iYMArgTnDmxeeD4yQcntAI2dqedrvyAkb
+	Luk3JVGaVHG/z1joq28CaQPNmZdve5nd2C3fviiNNARxB0quvd3rOKE9bCWgkFxVNZhflmoIkRCZV
+	NJuHUdfw==;
+Received: from oni-27.109.98-104.oninet.ne.jp ([27.109.98.104]:57416 helo=[192.168.0.175])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1ulpR7-00000002cDc-3zrY;
+	Tue, 12 Aug 2025 08:53:10 -0500
+Message-ID: <c7ffab41-97ed-49d8-966c-ac83d52266bf@embeddedor.com>
+Date: Tue, 12 Aug 2025 22:52:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250812132445.75398-2-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: qla2xxx: Fix memcpy field-spanning write
+ issue
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Chris Leech <cleech@redhat.com>, Bryan Gurney <bgurney@redhat.com>,
+ Nilesh Javali <njavali@marvell.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aIqivJeq8kxRUX0N@kspp> <yq1y0s5gicq.fsf@ca-mkp.ca.oracle.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <yq1y0s5gicq.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 27.109.98.104
+X-Source-L: No
+X-Exim-ID: 1ulpR7-00000002cDc-3zrY
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: oni-27.109.98-104.oninet.ne.jp ([192.168.0.175]) [27.109.98.104]:57416
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHm3bE3IRumezWyLr2H8nIMu5W9EqL/dKIT/LbXxPDDJ0E+RQ/ubo5BqG8GHTk6/M/gG8GjVvct0so2Ga866Lso8DWXzE/oWG3Nppt1tyRfUZvCn8tmn
+ gHekZyqMhhJ5DhCey7Xoukb1QihxmdICaaqHpV2hbNY1yuF7b/XP5XQwt1eAPkhDIxhECaYHQQBO/aQahEnK/SQMlSCx1qFu5PqXi0cmK+wUFugJdo0DVmHu
 
-On 08/12, Krzysztof Kozlowski wrote:
-> Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
-> permanently:
-> 
->   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
-> 
-> so replace them with Marcelo Schmitt and Nuno Sá (listed alphabetically
-> by first name) from Analog where appropriate.
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Martin,
 
-Acked-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+On 31/07/25 12:17, Martin K. Petersen wrote:
+> 
+> Gustavo,
+> 
+>> +
+>> +	/* Must be last --ends in a flexible-array member. */
+>> +	TRAILING_OVERLAP(struct purex_item, default_item, iocb,
+>> +		uint8_t __default_item_iocb[QLA_DEFAULT_PAYLOAD_SIZE];
+>> +	);
+>>   } scsi_qla_host_t;
+> 
+> Looks OK to me but will have to wait for TRAILING_OVERLAP() to land.
+> 
 
-Thanks,
-Marcelo
+The helper is already out in -rc1. :)
+
+Thanks!
+-Gustavo
 
