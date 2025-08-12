@@ -1,163 +1,182 @@
-Return-Path: <linux-kernel+bounces-765135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477DDB22BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CCBB22C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93399163BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF361AA117A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BFC2F5494;
-	Tue, 12 Aug 2025 15:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A53A23D7D7;
+	Tue, 12 Aug 2025 15:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKhUzREU"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A+YUMXGO"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEE31A256E;
-	Tue, 12 Aug 2025 15:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D1723D7C1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013616; cv=none; b=hfw3NeIgKUtx7I0E1mCUeOxwYz4xXTpV9+o+nWAfdlPzO4xa8GjGEVnTsZOj07uqlGsL5xYqQScgCw3i6Qj0Arw8xBdUXfLup2HaadeoyapPR6+D1M/0D2s/4oEAC4BDuBlreuHqrv/MQj+M0kwN8EeMC3T38m0AS81j8cMbh70=
+	t=1755013797; cv=none; b=Dh9ANumYnfOv1kQjpxT4ZIVtfwb0Nm+XK2bnDgsLs1cV7PbOiTKyHu+0k1n+o3FqcClsmylNy+1JrjpTKJm6ABPTenv/KUOLuew6LWZGiH8Dsou/nUw4M7KFLgaY1EqorvmQHVgD909pxZDPTpYF71xZ555WKZ220lAmFJWtCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013616; c=relaxed/simple;
-	bh=6MG83oOsLuiPLNPayodlWNeXmfAkGq2HtuPevp8rFes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pC1VqdiTGD+U066RMiFRN7xw92SWXC+hHJPBlo49fMdygWER5ybhQ5Wy36dd3/gfuMuIVdUQ6dYpgGsJ7GpthaxlbyatnWKCzH2VaLMpbVf+M2+a5dIA9q08D06hO0Di0ADCGtoFNc/fSDWUYNmIdfjWSWzZ+2kQuTTOcCDsnPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKhUzREU; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e1d89fcc31so555562085a.1;
-        Tue, 12 Aug 2025 08:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755013613; x=1755618413; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dEdF8TyAjnfv0Re8VMprlNQjx5ZxBaILt7aUCj4Prxs=;
-        b=kKhUzREU/j79Y1uCVNt7UzK4bR74pG5kvswKa5r5HpP/jglUAejUmoJYNgxKLrKguT
-         dmsXlVPJ28THnXgJng47NwPgOhsmw0eaCkiqjf6hZVn5n8yW1sacTWxtaHvs0t9B1D3E
-         EdvzDWPXHKGEsSRSERznDMwUNR8ZzTwukIzkopC4BJsg2EXJkZRhQLreL81fNYeYoT1h
-         3zZ4JnEHiXSzQnySvot2szdQc+pt5lNap9JUPickraWrub6WyeaMw3CkCgQGAJcLqgor
-         etgHZ487mhi7+/cKxZkjwRPWRVw0vr4kLVTNiZFlwe975z8Ybr3XU8gvZkGK2meidlU0
-         IfcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013613; x=1755618413;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dEdF8TyAjnfv0Re8VMprlNQjx5ZxBaILt7aUCj4Prxs=;
-        b=AjW+kmaXssaBlikxbQ4+V5m2l3exPT0ZeyHuRvXJosAnk4YPC5YWWjk+oNxX3nv69C
-         Dq2Wq0q5Zh5c2Nvkdjt2LSHzRuuSspZI9U1fP6JZPTfzu3usXcYcREbasCs31r/EcNwE
-         1Yes1XLpjEvH05WP5kZKgTiSh/iJUIg1WQIRk/C2WIx2qpQHzEHEe3gE72R4gVky0YsV
-         1VdqDrTnXq3WbCuBqrCIGMWrG147Uwahq9drNUOCMpUKQUt4r3SL5KOTepQBLOvv5B7X
-         TGx0sxv48NhNgpfkd+REqx+qOUiWWFQHC3B9IYTkZCPnpMNveH6bgRNxMOZiw/yZS3oh
-         zedQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9D7aOtR4A2SoWVo6MrHv+8T3/m1aBNxPK5mYDfwdw04h+WwXRKwQmgUsaRmlWpfq223azmzaGUlSWf7lEPE=@vger.kernel.org, AJvYcCVEWeb/EMKFtWr3c4ny/zRFS5W2pWOaoj5YoRYvVslU4uM0z5YpzOHZedcf0HKAcntWaDEH10nW1piIILA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7doXz1lEK1QZp6UbrKwnZgcYV2rjY8pDM7SPVJdlr+wJdiSWo
-	N1jNnAy0VC0lD3AddonisoouAcN1r2jJZsEb9Z0viA45uWJ8+/1CJKgn
-X-Gm-Gg: ASbGncuH1itrovS6D5l3d+RTmLv4hLsJ0j0Pwkxrak9Y6APNFoX/6+a2nypS/QoqjGf
-	qdCbSLZ937A6+Lcrst1AR9cA2TnmJBgW6HYeSatiJq5O6jrKnj6x6pyaDbuLkTvhgiN5tWGVDmb
-	tzoyYYySh08PO8DN//dYuxMgyod8h0UWFwwaG3XfVshSCze0tBbobpBZceB47ZYWlgQCGINpDrK
-	hbmWbMPtykBR2Xuzt8rA9X6hal/oaS6bqjV37NyzLRp0Ue+Vh5B0G/RThCgf1mgs8h0m6oThDGt
-	LloOJ/D5B8JLBgcMufQlEY1cy6lP/uk8hPDqj3qzHgUKQWSFBwkCyKjclAhJ5IjOGDi0JAQ6/aq
-	yXF3q5eZneVKHWnQZw2ehB94vfiEMOFnaIRtxAhiPi4wJCYkCbnC03lj6l5LHFe4jioq4o0JKU0
-	kiCditZAiI1pWJ/FGjHF4gpME=
-X-Google-Smtp-Source: AGHT+IEOY3qgl37Oa+jXAYPHP4v2DVmsZz2e63W/5K4Eg4bgD7vnHai7mrSrxbytd3rDtZqjooTlAQ==
-X-Received: by 2002:a05:620a:10b9:b0:7e6:604f:f747 with SMTP id af79cd13be357-7e86460ea53mr18316085a.63.1755013613028;
-        Tue, 12 Aug 2025 08:46:53 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e84b5c141esm435361485a.8.2025.08.12.08.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 08:46:52 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id EB1C0F40066;
-	Tue, 12 Aug 2025 11:46:51 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 12 Aug 2025 11:46:51 -0400
-X-ME-Sender: <xms:62GbaBZmOFP0wTsJJN8s31dUSVSojd8SLfKaiG0ft_RfPuZGv_JZqA>
-    <xme:62GbaN7RjZHxBNU57QkwCGlcR_QGNzl5_G5_uzofoibiciZ3KdmRSH6Jge9jUw4zj
-    krRse1PYha2A9H5og>
-X-ME-Received: <xmr:62GbaDChloudh-HyUwAtey18Epj-yaIeiSjY9Cq31NliG9D036UqAmLaDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeehjeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedvvdeh
-    tdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
-    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthho
-    peduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrghrhi
-    esghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothho
-    nhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuhdprhgtphhtthho
-    pegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdgrlhhmvg
-    hiuggrsegtohhllhgrsghorhgrrdgtohhm
-X-ME-Proxy: <xmx:62GbaD_PzMXLCVTBk5QZOxWKckyeQ0BajFWFLaOZNqpNph_T3w3kLg>
-    <xmx:62GbaGFW5Twt3RNFLDuyeyKoT793aAEItPMvA8pDWmBsendilmOKfA>
-    <xmx:62GbaNQOnTUsWWETa9eShint0GTUB4NefJPfmP5kCRnMIBP6GxXzMQ>
-    <xmx:62GbaNRnD9j3bkBAdFGrCR8NH65i-OIvQPgoCs4OfXWsGFB8a2x-8w>
-    <xmx:62GbaA24Mf4GDG-GpF3AjhE7KEYwlJpDSjfA1RJiqB6s4o6sgTOfXiIi>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Aug 2025 11:46:51 -0400 (EDT)
-Date: Tue, 12 Aug 2025 08:46:50 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: sync: clean up LockClassKey and its docs
-Message-ID: <aJth6nUF0zqzNhHr@Mac.home>
-References: <20250728-lock-class-key-cleanup-v2-0-ad02b80c69e1@google.com>
- <20250728-lock-class-key-cleanup-v2-2-ad02b80c69e1@google.com>
- <DC0ALLZU4B8V.31REA4LHMQ6JL@kernel.org>
+	s=arc-20240116; t=1755013797; c=relaxed/simple;
+	bh=r9nRSmpQ0Q1tnVWbPzsdrA0J+YfIItvBLXSSqI5H8xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aVuOkThaBfTO0YQOGacElcSHfJRETlZt851CviJ2QiJc2JJX1VwZyj7GkKaKij6wSlSfnK66g1YZjOZwvp56jQTznyRHC2MrK3stUss5b1sxZAOtKR2znnKcPbU4lzsBhmq7vVZm/EHNu8m3Vumly2OmAqfX8Gp4uCrB6XWXcUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A+YUMXGO; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <69d797eb-4a17-4d54-a7c0-8409fa8bc066@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755013780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ucz50+HGWOpZtiZEia1PUziWiFKm4k3f8o7eN5YWlBw=;
+	b=A+YUMXGO9/ZJ/BvfIFZB/f/+10+t4OQMyamYip6EDn1+sfGFJji3Y8XrgrddrjckeRU/qt
+	8cSdHxJNKXFZsSpVegngEZElXogSJJ2W3EH5+aAzR1dkpiAqMAcSJVsOvc02FofPHGTEI7
+	e6F8Za4nGCi3v/l+Ovkr5h5yyiXnoUA=
+Date: Tue, 12 Aug 2025 16:49:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DC0ALLZU4B8V.31REA4LHMQ6JL@kernel.org>
+Subject: Re: [PATCH v3 2/5] net: rnpgbe: Add n500/n210 chip support
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-3-dong100@mucse.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250812093937.882045-3-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 12, 2025 at 10:05:55AM +0200, Benno Lossin wrote:
-> On Mon Jul 28, 2025 at 11:42 AM CEST, Alice Ryhl wrote:
-> > Several aspects of the code and documentation for this type is
-> > incomplete. Also several things are hidden from the docs. Thus, clean it
-> > up and make it easier to read the rendered html docs.
-> >
-> > Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> 
 
-Thanks! I'm going to apply your tag for v3 [1], and queue for v6.18.
+> +struct mucse_dma_info {
+> +	void __iomem *dma_base_addr;
+> +	void __iomem *dma_ring_addr;
+> +	void *back;
 
-[1]: https://lore.kernel.org/rust-for-linux/20250811-lock-class-key-cleanup-v3-2-b12967ee1ca2@google.com/
+it might be better to keep the type of back pointer and give it
+a bit more meaningful name ...
 
-Regards,
-Boqun
+> +	u32 dma_version;
+> +};
+> +
+> +struct mucse_eth_info {
+> +	void __iomem *eth_base_addr;
+> +	void *back;
 
-> ---
-> Cheers,
-> Benno
-> 
-> > ---
-> >  rust/kernel/sync.rs | 55 ++++++++++++++++++++++++++++++++++++++---------------
-> >  1 file changed, 40 insertions(+), 15 deletions(-)
+.. here ...
+
+> +};
+> +
+> +struct mucse_mac_info {
+> +	void __iomem *mac_addr;
+> +	void *back;
+
+and here...
+
+> +};
+> +
+> +struct mucse_mbx_info {
+> +	/* fw <--> pf mbx */
+> +	u32 fw_pf_shm_base;
+> +	u32 pf2fw_mbox_ctrl;
+> +	u32 pf2fw_mbox_mask;
+> +	u32 fw_pf_mbox_mask;
+> +	u32 fw2pf_mbox_vec;
+> +};
+> +
+> +struct mucse_hw {
+> +	void *back;
+
+you can also use container_of() as all these structures are embedded and
+simple pointer math can give you proper result.
+
+> +	void __iomem *hw_addr;
+> +	void __iomem *ring_msix_base;
+> +	struct pci_dev *pdev;
+> +	enum rnpgbe_hw_type hw_type;
+> +	struct mucse_dma_info dma;
+> +	struct mucse_eth_info eth;
+> +	struct mucse_mac_info mac;
+> +	struct mucse_mbx_info mbx;
+> +	u32 driver_version;
+> +	u16 usecstocount;
+> +};
+> +
+>   struct mucse {
+>   	struct net_device *netdev;
+>   	struct pci_dev *pdev;
+> +	struct mucse_hw hw;
+>   	u16 bd_number;
+>   };
+>   
+
+[...]
+
+> +/**
+> + * rnpgbe_add_adapter - Add netdev for this pci_dev
+> + * @pdev: PCI device information structure
+> + * @info: chip info structure
+> + *
+> + * rnpgbe_add_adapter initializes a netdev for this pci_dev
+> + * structure. Initializes Bar map, private structure, and a
+> + * hardware reset occur.
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +static int rnpgbe_add_adapter(struct pci_dev *pdev,
+> +			      const struct rnpgbe_info *info)
+> +{
+> +	struct net_device *netdev;
+> +	void __iomem *hw_addr;
+> +	static int bd_number;
+
+it's not clear from the patchset why do you need this static variable...
+
+> +	struct mucse *mucse;
+> +	struct mucse_hw *hw;
+> +	u32 dma_version = 0;
+> +	u32 queues;
+> +	int err;
+> +
+> +	queues = info->total_queue_pair_cnts;
+> +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
+> +	if (!netdev)
+> +		return -ENOMEM;
+> +
+> +	SET_NETDEV_DEV(netdev, &pdev->dev);
+> +	mucse = netdev_priv(netdev);
+> +	mucse->netdev = netdev;
+> +	mucse->pdev = pdev;
+> +	mucse->bd_number = bd_number++;
+
+... but this code is racy by design
+
+> +	pci_set_drvdata(pdev, mucse);
+> +
+> +	hw = &mucse->hw;
+> +	hw->back = mucse;
+> +	hw->hw_type = info->hw_type;
+> +	hw->pdev = pdev;
+> +
 
