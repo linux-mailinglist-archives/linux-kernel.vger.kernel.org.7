@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-765127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91C5B22BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A18B7B22BDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC17426A67
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56095426C05
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF382F5481;
-	Tue, 12 Aug 2025 15:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11018302CB6;
+	Tue, 12 Aug 2025 15:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eXfRhsSN"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiZpRdpD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D122EFD99
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6D10E3;
+	Tue, 12 Aug 2025 15:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013081; cv=none; b=q9WOhzO3d/C/ujxQHtttkWIFpT9asXyfgI8F3+6hHYJPeccL8Qvoq8dxUOfj5OZ912DO4pF7rCUtqFrHp2qK7jFd2LwER/xZFUDRw8RwN5r8EhUcMvkPaeP6oXL/1+fueuEUHFVucHEHbrqICHtEiveiRrhKXhaZpbTWtz5Ji/k=
+	t=1755013154; cv=none; b=ntMjPdejpXvBHRb9CgK+nrv+aUsAXRWGjH7qVbwjRpqsS21NJVa78OlUT2hBGNj/8stVyZJQlhHh67pzP043piPR3frKBNaLxgQy8zIqd/tYbBrZrXA7vBqmpomBZM0FDExUTUGTehlUp5vRw4i/frx4+gZVOjNIAprxqm1XXEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013081; c=relaxed/simple;
-	bh=J8k9jzClXSZNkJ0K47x0UVRLYUcCO3C4lq/c7tuk38w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VqCr5X9tx1uPAFfIfMxBPjM3lYeYz2qUZYAW5VZPJy76a0g+5rwMuhxs2metL15szJOkXdf0xYOmbDfkYGGAo7jivlYwALK78VDfSYWZ8Hp5yw2nt2xoTNS0lh1F/8xG+0c4w5/7KOlkPf4MTTNbULUjT3uKFrfmsWlgQMAJZPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eXfRhsSN; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <590a44a2-20a2-4a3f-b57f-5bf194712bf2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755013077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wVS20g5BT1BM7m+YRgAX195K9V79YnewkSuGBlHYS24=;
-	b=eXfRhsSN1BHo1ny1dpqr3LpVSdoEh1joTkzNRtWZUlHRRZCz7qidLLiOJO+y0AD07DqQlI
-	M1BE9t8jOBxLLWnEV1txSBG1YxpsDheQYFLk3Pn8uqFyBPvRKJjjxZF2QK+sj9PFOotAuH
-	C0VMjAu29+Z1b2a0cwYZLKi9VLcwnRA=
-Date: Tue, 12 Aug 2025 16:37:52 +0100
+	s=arc-20240116; t=1755013154; c=relaxed/simple;
+	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pt2CUML2WU0StiS8ogpgc9qfX0Fd/ncK9vppdttRzoQukRSvb7erxtgeupniJ7J5n+H4uJR8jsDmdpV8YMTg9LjtINh59L1whArUysy/XEc7lyMv5Qlc1aOTzJgC4qH8kuc7ZXV3K5wLw7Eijh/hITeBCEuRwr8eYH6LzSrR5vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiZpRdpD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284FDC4CEF0;
+	Tue, 12 Aug 2025 15:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755013153;
+	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LiZpRdpDhra8HQLi6oTJvzINkJJSuv23n4QKhmL0GdIDFfOjMCDM1OqYhcWHHq3TI
+	 L28O5b3iPN5wVc9EXSMe1wiMP/NajukL3ql7pF4a85lv1fNAUZsV+TlMAAvN2rrzmr
+	 wRMnMSseO6nd8/EPTJY79HOmJ9zeY5vY0LS0u24hUa3icUGD8uDqDLMHMPTvWLEQv1
+	 l7Tw7lcXGU5Rs7ZD4eklupowdOLUecuU8uOFa6RlUoRtZfGlD+/8Ge0Ca3RaSQaoYZ
+	 h2ClWJH1Q8I12fZ++utjNSDaO59Bx51zYgkj3Rxo8YY8S6cPtFbxYBa0hRIu+GN5Me
+	 k5jWalHFpopnQ==
+Date: Tue, 12 Aug 2025 21:08:28 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 079/114] clk: bm1880: convert from round_rate() to
+ determine_rate()
+Message-ID: <tcl4eqicuqcptnbo4mcvjhacxkh2gh344k2bdrwfjbqflxspy7@x24np6pxjacf>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/5] net: rnpgbe: Add build support for rnpgbe
-To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-2-dong100@mucse.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250812093937.882045-2-dong100@mucse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
 
-On 12/08/2025 10:39, Dong Yibo wrote:
-> Add build options and doc for mucse.
-> Initialize pci device access for MUCSE devices.
+On Mon, Aug 11, 2025 at 11:19:11AM GMT, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+
+Once this patch gets merged, the 'Coccinelle semantic patch on the cover letter
+of this series' becomes irrelevant. I'd suggest to either include the script
+here or do not mention it at all.
+
+- Mani
+
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
-
-[...]
-
-> +/**
-> + * rnpgbe_probe - Device initialization routine
-> + * @pdev: PCI device information struct
-> + * @id: entry in rnpgbe_pci_tbl
-> + *
-> + * rnpgbe_probe initializes a PF adapter identified by a pci_dev
-> + * structure.
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> +{
-> +	int err;
+>  drivers/clk/clk-bm1880.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+> index 002f7360b1c6c6e3058606a0808115b48fd3147a..dac190bc6e19a6dd4be413ea52d41f74934a1aa9 100644
+> --- a/drivers/clk/clk-bm1880.c
+> +++ b/drivers/clk/clk-bm1880.c
+> @@ -608,8 +608,8 @@ static unsigned long bm1880_clk_div_recalc_rate(struct clk_hw *hw,
+>  	return rate;
+>  }
+>  
+> -static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				      unsigned long *prate)
+> +static int bm1880_clk_div_determine_rate(struct clk_hw *hw,
+> +					 struct clk_rate_request *req)
+>  {
+>  	struct bm1880_div_hw_clock *div_hw = to_bm1880_div_clk(hw);
+>  	struct bm1880_div_clock *div = &div_hw->div;
+> @@ -621,13 +621,18 @@ static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+>  		val = readl(reg_addr) >> div->shift;
+>  		val &= clk_div_mask(div->width);
+>  
+> -		return divider_ro_round_rate(hw, rate, prate, div->table,
+> -					     div->width, div->flags,
+> -					     val);
+> +		req->rate = divider_ro_round_rate(hw, req->rate,
+> +						  &req->best_parent_rate,
+> +						  div->table,
+> +						  div->width, div->flags, val);
 > +
-> +	err = pci_enable_device_mem(pdev);
-> +	if (err)
-> +		return err;
-> +
-> +	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(56));
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"No usable DMA configuration, aborting %d\n", err);
-> +		goto err_dma;
-> +	}
-> +
-> +	err = pci_request_mem_regions(pdev, rnpgbe_driver_name);
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"pci_request_selected_regions failed 0x%x\n", err);
-> +		goto err_pci_req;
-> +	}
-> +
-> +	pci_set_master(pdev);
-> +	pci_save_state(pdev);
+> +		return 0;
+>  	}
+>  
+> -	return divider_round_rate(hw, rate, prate, div->table,
+> -				  div->width, div->flags);
+> +	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
+> +				       div->table, div->width, div->flags);
 > +
 > +	return 0;
-> +err_dma:
-> +err_pci_req:
-> +	pci_disable_device(pdev);
-> +	return err;
-> +}
+>  }
+>  
+>  static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -665,7 +670,7 @@ static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  static const struct clk_ops bm1880_clk_div_ops = {
+>  	.recalc_rate = bm1880_clk_div_recalc_rate,
+> -	.round_rate = bm1880_clk_div_round_rate,
+> +	.determine_rate = bm1880_clk_div_determine_rate,
+>  	.set_rate = bm1880_clk_div_set_rate,
+>  };
+>  
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
-Why do you need 2 different labels pointing to the very same line? The
-code is not changed through patchset, I see no reasons to have it like
-this
-
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
