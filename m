@@ -1,119 +1,173 @@
-Return-Path: <linux-kernel+bounces-764453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DA4B22333
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A1FB22332
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31532188A4FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C14B17BBD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686BB2E888C;
-	Tue, 12 Aug 2025 09:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D632E92A2;
+	Tue, 12 Aug 2025 09:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5d5YYNc"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AfUjRdMF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6490D2DECD8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0946C2DECD8;
+	Tue, 12 Aug 2025 09:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990911; cv=none; b=cqWD22OPZvf1N6Bve/T+7SXiVBRqp2Jadws343AmwM3jssH7JyPR7MBmsIzKsxkoLl23QT5ExQ40TZwcG3+HySSo88cek95TDGshl8UKc3WURi64f7CrM6oEv+/4IINpGPbUV5Kv3FZmNAHefLDN3zeO8TxHRILqPwDgskXBik0=
+	t=1754990951; cv=none; b=R6oRKyZfmAnJ5ozNGX1nWg0DPovt7H0xnd1rc15lTY2Zzw+Ja1qahGArISXnj/dFPIQHglV2Qa0ZGJ6C7131e3Y5BiumT9k0dCqvSfNGNygLJJ7cSPnuJSVoFtlSLXMayTsO94DNzd1jPdhIzydGcZl1el76Go5KyWQlh0HkBAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990911; c=relaxed/simple;
-	bh=VDkdBnoKzSFPcEcIcOOsNxcToj2WBcBBYHhaQlf2WOc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=soaH2Ua74CDWAUIafAhaLQfMxLSqV73LJyzzMDdu5ToUy/ELLvAFjMiPuDa97b5uOzBQ8vsiW/dJZk7IZjv1a8WoXvCwh68VYMqK+TE8br/GLDcZHdKxElGgOVhoIxqzUgd6zIecg1DKaw6AVAS1ZpWTCMxTvZ73R3fpAoDnP5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5d5YYNc; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b3507b63c6fso5515513a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754990910; x=1755595710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zOnpjr8QJ/n8t29OPk5AwXqGJw5vhg/RK5xcaM/Te08=;
-        b=a5d5YYNcA54YPTR52I7ibGdzLI4k6cNRCj7KbNmXNsxAjGwl+JQRvDw8dpUO2p71M8
-         6lIVqftwl7L10Zq9QqS27/NJVEHEbP9CowN6oKkopzze1JsyERKVP9jMU7FeOg79BNsk
-         UCaiXv43e22wu2EyomPwXxW0xW++6uba+6mNfpU6sT8/GEJ9Oc2IX2PiWqtb2dazPtju
-         opSMZVVwm+5VyrKnnpQU4H+iM3emGbYUpXLT1GajQP6xLdbRjJXtEE60HuaW9g9cgIRU
-         RTSSwr169YTL/N05RvFriUjN2VESRcVOzrNhQeSvyw+yZmmwI1PJ3craRZj+/GYrM1FW
-         tbAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990910; x=1755595710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zOnpjr8QJ/n8t29OPk5AwXqGJw5vhg/RK5xcaM/Te08=;
-        b=jA2fDXNzbNOg5mk4WfMVqe6myaYJg1QnMi4nQiL/PvwyxLA+shS4rbEsHR93gVsxeY
-         meMLkGzF+RflsG5Te8MV6Ml+iak1S3+zLZv2SJbXi775B9a5nC9Zv2q51PY4VwDOVy8n
-         TfASn4lE4ulEldWLRVPFB21HdwaXEakhRYQe/sPFvq18bqUL8BGMgqkMpp05J2RN0tRQ
-         n1xkGwgb2KC0/0HVZOeVF+B/Axqkysl4KK98ZYQOiOkHLzroBPoq8mdY5H5gKUpeuZ5P
-         AfycEo3jwuxziwX7L0VeGTVInCwYgPRw8m6MmGTSCeK6XN83cW51bCQ0GlS468uQdAfG
-         DJtQ==
-X-Gm-Message-State: AOJu0Yw2KeLcMvYqXjab8uuj13iLIGowWRcJI3Xp8fAPPTSGI1MPnLSW
-	lZxkzyN+aKZdEzOP87asyue09klA+ssMa3TYZMO6OvwF0kn3sXgyRTcv
-X-Gm-Gg: ASbGncuOkwtHubHYdweZKM2Q5HNAZ1gJdUDSuRjMfnO4C+ZEO75rhM3ddaO7J3zqHl1
-	Itzc8zPNgVtCdxlrXuHd+TZ+I4wRjDdGetOyAeTyCXGnEptrKE4UkilrA932Wt5MHlLlC8P3mJI
-	IX0HGLstH0C/ttpthaa3+MT33eVhC/yCaEjlZFRAM72Ql45h3fT+gdol3lUrlxhY5eN3ggSWNiU
-	vcqLz28uzwko2mjbCHvxxmlNCeG+mrBCiTqCyxg+UBwT2v9f2gqdJIohTDTCL8oABmkMORZhy6O
-	trxvnLqnGMGkCT2PbqevfAfQ9gHEzrhQNMAN0Nzc3r7bkpMqQmNmZIqmm4S+TpT6TsRn/CSrjvc
-	NoyAtzWdZSWWGSIL2Kw4/fp2BmDMu96CpDCf4mpFiUQ==
-X-Google-Smtp-Source: AGHT+IGW8P3HWJi6K927FtmKBoZlpB3AyQsjEUlzdKncYzfwMVJ87zxGmmuUozLueF9h8dd3XwKFDg==
-X-Received: by 2002:a17:90a:dfc4:b0:311:e605:f60e with SMTP id 98e67ed59e1d1-32183b3eb58mr19975301a91.20.1754990909599;
-        Tue, 12 Aug 2025 02:28:29 -0700 (PDT)
-Received: from localhost.localdomain ([2408:80e0:41fc:0:fe29:0:2:4699])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b429920ab6dsm9973915a12.58.2025.08.12.02.28.24
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 12 Aug 2025 02:28:29 -0700 (PDT)
-From: yaozhenguo <yaozhenguo1@gmail.com>
-X-Google-Original-From: yaozhenguo <yaozhenguo@jd.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	vincent.guittot@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	yaozhenguo@jd.com,
-	ZhenguoYao <yaozhenguo1@gmail.com>
-Subject: [PATCH] sched: change MAX_SHARES to NR_CPUS
-Date: Tue, 12 Aug 2025 17:28:10 +0800
-Message-Id: <20250812092810.38728-1-yaozhenguo@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1754990951; c=relaxed/simple;
+	bh=HJ0KxG5lbLaI5hiEc8MtSryj/4T4H3dyzApWoG552iM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XwwBBfi2EMWvTcEC49vgS/0p46gjAHLj7Oh1wYtWd6jtE/zbExU+hhhlf/0t31pT5kGgliCJKwMRsUXKx9FHDfid8UVFzypFVGLnHBJNc5FvpLKh67V9V2ZuF0o7rzGyNmU65KoXgroO1nyAxr2Z7slCwkoElCwW9xnr5y1+Pqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AfUjRdMF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5cOfl021620;
+	Tue, 12 Aug 2025 09:29:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hY8bI4WiZJyN9ZrRHaTZK1FNG9pHOnKhL0nDCGU3KD4=; b=AfUjRdMFwXGLm/1b
+	Ey67L4soNMcREcuALH4GRSa6UOpIDNKodcpnggYD6MEeEd0zBVHLNea6JxyLn3bm
+	XmUeclFofHpEmBIqboz+3Uq68fDS3khVIft45eoF55Vunr+wgFhyCXs+K2hLtVMG
+	W5lXwPFwPdCQTlKc/UyW0hCGVd8rw/mHdyMYRqUV6+Ih4Sy+hbV1FQVygZmLO7Oi
+	SWC0Eiv1/ywdtEo2uShfgjcKmH8u5bldp+qxo9dsB/7ds5ZdW6KacRlEEJ+39hhs
+	VeOz+Y5Kf71tkQ+BPrgtmWeW/i534Ya7OQXDbA1iTQpHXyDFeylsEITT3cR9LUng
+	6AkjBQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxj47jr5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 09:29:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C9T0r8030208
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 09:29:00 GMT
+Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
+ 2025 02:28:55 -0700
+Message-ID: <76731f2a-d120-ed3d-6a1c-e339b0a6ad10@quicinc.com>
+Date: Tue, 12 Aug 2025 14:58:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 0/3] media: iris: Add support for SM8750 (VPU v3.5)
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <c009fe77-8590-c467-a0a4-76bd6ec7cba4@quicinc.com>
+ <363cfc88-9664-483f-9503-9eca7c8e617c@kernel.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <363cfc88-9664-483f-9503-9eca7c8e617c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNyBTYWx0ZWRfX+hKYD1oleovm
+ KVPWpZszY7bMwxaB5n7mQ49UxhWpU4ME9x74HrUhZ5Lpt4Vhae0BeNlb7Itx56Uz12crUL0g5la
+ SMTtwPlevcDO1nXg5N8Hdf4GjmYdy8rxwwxYpM20qFv3SdIBveHPkEIiwxbOcMm6W2j5HSgohmG
+ L8yV2ybe5rtoAHU/fVSjg4NUag5jeeYZz3DY07kiZwHL3hKSLI0iyPTbNqR0y+nWALIGqSteGr4
+ 4GCfn/SdpRfZK39/JP/JtCcrE2Ouw1wyK03+U4YU9gqwppnZ8BMg6gaWZZyLD1bTtmzfFABI4/P
+ pAT9RilD9/gYeJ7OgGyuvJQRjt+HGLTbVg/0gy7SEDLgmVLZWMB9WyIMfGs58hPsuIAXXXk4ej9
+ OUDvtyRw
+X-Authority-Analysis: v=2.4 cv=fvDcZE4f c=1 sm=1 tr=0 ts=689b095c cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=S3NbW_dMZBFmUMV749MA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: V-o9tBp_jgO2FBk4F_6rdr1N7abrqWlo
+X-Proofpoint-GUID: V-o9tBp_jgO2FBk4F_6rdr1N7abrqWlo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090027
 
-From: ZhenguoYao <yaozhenguo1@gmail.com>
 
-As the number of cores in modern CPUs continues to increase,
-256 * 1024 is no longer sufficient to meet the requirements.
-Therefore, MAX_SHARES is being modified to NR_CPUS * 1024.
 
-Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
----
- kernel/sched/sched.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/12/2025 1:29 PM, Krzysztof Kozlowski wrote:
+> On 12/08/2025 09:52, Dikshita Agarwal wrote:
+>>>
+>>> v4l2-compliance report:
+>>>
+>>> v4l2-compliance 1.26.1-5142, 64 bits, 64-bit time_t
+>>> v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
+>>>
+>>
+>> Thank you for running the v4l2 compliance tests with your patches. While
+>> these tests are helpful for verifying API compliance, they do not cover the
+>> actual functional aspects of the new SOC support being added.
+>>
+>> Please run a decoder use-case using either v4l2-ctl or GStreamer (GST) and
+>> add the results in this cover letter.
+> You did not provide such details on your submission:
+> https://lore.kernel.org/all/20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com/
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d104f7..5c219e34f48d 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -510,7 +510,7 @@ struct task_group {
-  *  limitation from this.)
-  */
- #define MIN_SHARES		(1UL <<  1)
--#define MAX_SHARES		(1UL << 18)
-+#define MAX_SHARES		(NR_CPUS * 1024UL)
- #endif
- 
- typedef int (*tg_visitor)(struct task_group *, void *);
--- 
-2.43.5
+I have mentioned in my series that I have used both v4l2-ctl and GStreamer
+(GST) for encoder testing, in addition to running v4l2-compliance. That is
+what I am asking you to do as well.
 
+Your cover letter only mentions v4l2-compliance, which does not verify the
+actual functionality of the driver.
+
+As a maintainer, I believe it is my responsibility to ensure that anyone
+enabling support for any SoC with this driver has tested its basic
+functionality. Please note, my intention is not to block anyone’s patches.
+
+To clarify, I am not asking you to provide any test reports. If you have
+already tested this series with v4l2-ctl or GST, please just mention it in
+your cover letter.
+
+Thanks,
+Dikshita
+> 
+> so asking others of this is just unfair and unjustified obstacle. If you
+> have technical comments, then share. If you are just making fake
+> obstacles to stop some patchset then refrain from commenting.
+> 
+> Unless you want statement like:
+> 
+> 
+> All patches have been tested with v4l2-compliance, v4l2-ctl and
+> Gstreamer on SM8750.
+> 
+> Then I can give you such statement, just like you did for your patchset:
+> 
+> All patches have been tested with v4l2-compliance, v4l2-ctl and
+> Gstreamer on SM8750.
+> 
+> Best regards,
+> Krzysztof
 
