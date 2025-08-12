@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-765613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81769B23AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:46:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1EDB23B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA43F687E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E879D687E2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D092D2D481A;
-	Tue, 12 Aug 2025 21:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCF22D73BF;
+	Tue, 12 Aug 2025 21:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HcLTrA74"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMJjWDZS"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809A52727E6;
-	Tue, 12 Aug 2025 21:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9872E2675;
+	Tue, 12 Aug 2025 21:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755035199; cv=none; b=hw5sibcHleHnVl5dMAuPcp8I3KHqBECSRFo4mgVMfkQ5bG+E+Y0nyE5vz9VJRgNQpqUl4CwOHMPeCP1HJRHvdJbKXiRcCP6FhodIGgIJ6irfVS/aF1MoUXgthAVM6b3OB0m02ffEvG9t8I6OkVdV+BvVagXIudUrfr7psIwt2PA=
+	t=1755035247; cv=none; b=rHxfxRRBGpuTLJM76O+yuAF+JMG/Ly+An16o+RypI35XdE/KEu3Z2emfsfHyAIxgJsW14GpD9zUu/uzCvC08b8pDhW6BZ73FY/N1re6PBV4rKjwmUwf/OLuIMm52hDjHd7l3uWR2RY2K7k6ikWFoMNPh6Nwx1SA6JdHx2H/mXpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755035199; c=relaxed/simple;
-	bh=Xf1H+ySZWWLVeLIhuFpndzvCpwSw16J2X0fr7aWCB9Q=;
+	s=arc-20240116; t=1755035247; c=relaxed/simple;
+	bh=hsaqDC8OPPR0PygLlB4gX/F0Mb9ek+K2IeeHeAGzOek=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b47SWECXaofir6XjJDWGxGcUFsgkStK5YA4526n51Kbx4AnKFBUfP3B51H96Fe+LwvONAmlsE86cruX/aPTDJHynQewkfWx3yhK38pUUy36HETmb2rmqbynTYymK54ZslqaPbow0FoF8c/5gPZIfBGTxW6Afd8UaAfUg4TciGM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HcLTrA74; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755035197; x=1786571197;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Xf1H+ySZWWLVeLIhuFpndzvCpwSw16J2X0fr7aWCB9Q=;
-  b=HcLTrA74rh9cS+ydDr+3R0a2pJ2HWidsNMFMadkiWs9oAMFuGFig70hL
-   5JDr3bWF23sRKrIGwF6x+1lOYtgkOMttSiUlRr/sdj3Mvgr+qocN3KYKS
-   oa4wIbigFShz+rvGrmksuMpbOu5D6RpXHrc8IuNC2YnjQIfv03kcMRxSj
-   at6Y3CY3bIVefxgrsWdxnCTT/yTu+2BhptWsgDVf6UqZXwJPIgWg5VjVz
-   fK+7TPHxLVsHrduwjvpxi5IFZT4jxNfgOKw7ZYis8Uxbgq6s1RovzWnLg
-   P9j3irM7ikSN8RLsbXDXNGYfxoF9OldMh/etMb9N5RnbWp1jQmifk8ZfE
-   A==;
-X-CSE-ConnectionGUID: EMWaUEMwTwKeNT3+uuZ+BQ==
-X-CSE-MsgGUID: G6sB21g3QjW0DtAtVdFhKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57384627"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57384627"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 14:46:37 -0700
-X-CSE-ConnectionGUID: gK8oe98TSN6hKy7LLMf8gw==
-X-CSE-MsgGUID: G+wHHAdcSj2OiMRU++Awog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="166573218"
-Received: from anmitta2-mobl3.gar.corp.intel.com (HELO [10.247.119.148]) ([10.247.119.148])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 14:46:29 -0700
-Message-ID: <f2120762-bbc6-47b0-9cb6-fa45bd9cd460@intel.com>
-Date: Tue, 12 Aug 2025 14:46:24 -0700
+	 In-Reply-To:Content-Type; b=jw+MeT1UzHGkQatwi13IX8ULI8qUhdm+hM03ytdwQEyJbaMpr/lRmnmCry+Lkyrb2hW+Xrcecha2jK1LAXtrZpZcboLFMRZH4m0Q5Wy1DVLHRmbPpguDEfXTnjfLe0bNNpNp6obiXKiY5tNK3mVKbWqAuPXYHPj0JPaDRkU5AwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMJjWDZS; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-433f787057eso2980721b6e.2;
+        Tue, 12 Aug 2025 14:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755035243; x=1755640043; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DqsZo/0V3DrbiFJ1KYNqTCoRcndCD+0Zay74Kd6rwzw=;
+        b=OMJjWDZSbJO2S5Gz7/d1ryO3+TVWDs/kMrfMIWw2U+g6emdbWaRVrNTXYe+1/awdkf
+         uKE0aXzYgXH3GKLBMgcfieDq/O4OfUAmnr1kt1gSVBuX+Fn8BnCbbY0GhURPepzMFe6M
+         G4W1sQfi6Z9VqtVrcUAW9hjSSNL6LaPQAjGhpYZd1lV78VRAaNKhJO0rjflksU7ANSk2
+         8XrT8CF5ltKNWtgvGdaw+janPgMEYelaVj9O0bKegdGwFP0wjLLGYk7tfEecFcdxUmWu
+         P4uennEOtY+UEU2cljz0BABPRokb7BFP3T6Uykc2XQl0o8bjoojuos5dE15m8LBp12dD
+         wfTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755035243; x=1755640043;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DqsZo/0V3DrbiFJ1KYNqTCoRcndCD+0Zay74Kd6rwzw=;
+        b=rdAzUzUMEuzYjgK5IttoZpDyuFsCbsVwSyVnnfinTMt8mARzoU8UGGTqFGVbCBE1sc
+         Doz9KrJLclsdVOuNzh/76NcsKnpykMpVouUJqLka5CM+dlqPzgDjhDKP2CMqmIE6l0+r
+         YyYLGn+3ix38BSqvHesbFvAwJeKkvySOee39MHbNvLTWmDFM3Zw1aapoXVA6XF7L4Qkb
+         D8+puXB+oKdORasEHvAuPFQK+FLvx9ZeTj7Ob5vGOp7LOY9YHH43tf4qje43I66W232P
+         Gjvs0zP08NmkV/5uAOnLOItxcbODoWdCuDLl4/a/qpFC0IAIrqtKLpAL/kMWzixSch7i
+         HmWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKgJrdf2mC42luoNP8j0wPddcMDzbm+uxeUrZi7mgJaSMaGXGf+Q3Xf6lv/tN+dxkQDmt5XbBb@vger.kernel.org, AJvYcCXRB40iH2q4/1q2c3udbm7sqFNqmYF4V6AkVG/J1WSvsbF8C4AQS4Nuc25HJlhKVPDaGdkXJoEpFScCGIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCr01ivQEpUS1ChHI9UaB5mLSVIcehwqc04PaSBXuTV1ONwLQW
+	IPVm5kDlQXdVf8y8veF4Rf4rUFoCzF8xuvP+tTS414gF0zGuWaQOC8tK
+X-Gm-Gg: ASbGncuyffumbmj5vmLkKo+yPhjXZao+N42ROuSXsnpscI8Cb0FKUQuaRrPYeFgmYZX
+	lvi3pmI1OE6q8LOG7KQt14NX7T5BzehnSBFnx0PG2Ryfil+2uospxIO9F3etSsdYJOiFvHXQ7b2
+	7J5is4p5WV5uAp+UcqsUFcOj0JGEjoHgLiYhcHjdyfFCUhYj3jpeyFLcK83N4xVH93s9MAJXtFF
+	D1mkOPQZspKJfakUuNjZZxJbpejbmDAZrhQbb471YpsFgbyiMckTyi1OxR3EFt4UqTnxmikZ+CU
+	bcQ6nZ2HMMS3PwmnhczdXptJh8SLQQ/eGuAKewuGQII9ZGbdiGFnGXUS+1JhCmxuEt82tt5Nkt0
+	JL7TdMUVH0I5TYfsc1fap4qvQitpAZQ6W0+z4CCfPXkql
+X-Google-Smtp-Source: AGHT+IF9cUjsSFJiU6UBtafgV6gmnJFu9CkOBo9dXkRHbMOqAhT6sVwBWadWx/52BAuh/XOo7q6kng==
+X-Received: by 2002:a05:6808:1821:b0:435:72ab:27f2 with SMTP id 5614622812f47-435d414d2f6mr638942b6e.13.1755035243255;
+        Tue, 12 Aug 2025 14:47:23 -0700 (PDT)
+Received: from [10.236.102.133] ([108.147.189.97])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce8efb8bsm372942b6e.36.2025.08.12.14.47.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 14:47:22 -0700 (PDT)
+Message-ID: <d114cdf6-1aaa-4489-a75f-c519146dd371@gmail.com>
+Date: Tue, 12 Aug 2025 14:47:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,67 +81,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 00/20] Add CXL LSA 2.1 format support in nvdimm and cxl
- pmem
-To: Neeraj Kumar <s.neeraj@samsung.com>,
- Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
- <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <CGME20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37@epcas5p3.samsung.com>
- <20250730121209.303202-1-s.neeraj@samsung.com>
- <1983025922.01754829002385.JavaMail.epsvc@epcpadp1new>
+Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250812174357.281828096@linuxfoundation.org>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1983025922.01754829002385.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 8/7/25 2:02 AM, Neeraj Kumar wrote:
-> On 30/07/25 05:41PM, Neeraj Kumar wrote:
->> Introduction:
->> =============
->> CXL Persistent Memory (Pmem) devices region, namespace and content must be
->> persistent across system reboot. In order to achieve this persistency, it
->> uses Label Storage Area (LSA) to store respective metadata. During system
->> reboot, stored metadata in LSA is used to bring back the region, namespace
->> and content of CXL device in its previous state.
->> CXL specification provides Get_LSA (4102h) and Set_LSA (4103h) mailbox
->> commands to access the LSA area. nvdimm driver is using same commands to
->> get/set LSA data.
->>
+On 8/12/2025 10:43 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.10 release.
+> There are 480 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Hi Jonathan, Dave and Ira
+> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+> Anything received after that time might be too late.
 > 
-> I have addressed the review comments of V1 patch-set and sent out this
-> V2 Patch-set.
-> 0-Day Kernel Test bot has reported couple of minor issues which I will
-> address in next series.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
 > 
-> Can you please have a look at this V2 series and let me know your
-> feedback.
-
-Hi Neeraj,
-It's on my review queue. Will try to get to it soon.
-
-Also, it seems that lore is still not happy your mailer. 
-https://lore.kernel.org/linux-cxl/1983025922.01754829002385.JavaMail.epsvc@epcpadp1new/T/#t
-
-See all the [not found] threading. Just FYI.
-
-DJ
-
-
+> thanks,
 > 
-> 
-> Regards,
-> Neeraj
-> 
+> greg k-h
+
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
