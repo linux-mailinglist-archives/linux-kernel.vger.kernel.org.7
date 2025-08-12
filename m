@@ -1,339 +1,209 @@
-Return-Path: <linux-kernel+bounces-763938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DE3B21BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC11B21BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAC2460B89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE41460592
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C9C2DCF6E;
-	Tue, 12 Aug 2025 03:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECAF2D3A63;
+	Tue, 12 Aug 2025 03:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMeq6zRp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mfEjVlTj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38511DF27F;
-	Tue, 12 Aug 2025 03:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3907B2571C2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754970485; cv=none; b=c+suPs1velOy6JT1KhPraljT3m1oNvgty5xpYD3854U3PQG67oS1LaT4IY5/EjyM6CZZsL/hmh2gB4tYbaDZR/uYEH9KtvQ06yJx7JMimY3Z30iNl8w84+UGnLARGyrL5OSoWuIqVj7juO+gPwcZDcl4uQ2NegkS+K0OJnjFES4=
+	t=1754970596; cv=none; b=Nhjf9gOzrEQloMPVCEc05epFjPNfaystveJpmxNjcNY1VOOQIq0o8vCImRUzov5aFzGWMYC/kCNisX5RdQhTt1DcUz9QFhDQOyeHD5I3Q2OSKUC667Hn88bTJgmyJMBGTOTM0xhpFRC1wjk6GyQwnggNWy7v4wKKTwCvDRj/LXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754970485; c=relaxed/simple;
-	bh=ll3cdP8d//vor5VuPJwHFE7JYGIjaL7Gs2uj46+wuYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfSA3iFRHALtVPsMLx07YlWyY9WMQvJBHF/U5CXv+H+0yDycaA1xi7zYhgUve49LY/3RdHZJGIV16yeciusBWHXSY3j/YrRmopE7BLUQj8ZjbWUx0kN6G1aqEBVyflD5Kw8lBcc/SYJHlE3BlI52fwgMa6dtGJjyI+IKBZGw1es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMeq6zRp; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754970484; x=1786506484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ll3cdP8d//vor5VuPJwHFE7JYGIjaL7Gs2uj46+wuYE=;
-  b=ZMeq6zRp/lSTblTSdCzL01f0mzZ9jvq+ongMoPB7jIiCB0Ergvm1+4cm
-   0/PLmnqr0MrRILoIlEKVYlzyEYN+1U7YbmgBfGNLSSTAEOhaAq1r+mfIK
-   PxAHw4sdMnPXtpJHSouQqJCAJzXLsDy9aHWi4wkGoafMNnmwfHRfqgPsm
-   nHvjd+01G2IEh16dOuEZSusi5wBKF5VqN7KibUq+9YoGNhHkt9gLgvPX4
-   JcE+rQS2lZU2cU35Qql5dAsOTuGSRiXqbhchZPXhW4CjCeYwEfNfQfAvr
-   tc4gmp6+zHtqPYRTjVaVTXlfzSl5Lppd13sDt7GHVwGPKJ0rSKNwf7zgR
-   A==;
-X-CSE-ConnectionGUID: 6RmkGcaBTeGPbPrTY3SyUQ==
-X-CSE-MsgGUID: +nInCpVSTRiokzY5ws740g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="79805659"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="79805659"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 20:48:03 -0700
-X-CSE-ConnectionGUID: rBXqWIpGTrGEXfd288J8uw==
-X-CSE-MsgGUID: h6B2w0GfRnCeW4xa5h7SyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="196928492"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 11 Aug 2025 20:47:56 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ulfzN-0006Oa-0z;
-	Tue, 12 Aug 2025 03:47:53 +0000
-Date: Tue, 12 Aug 2025 11:47:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
-	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
-	pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de
-Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
- 'strscpy_pad()'
-Message-ID: <202508121145.d07aFegg-lkp@intel.com>
-References: <20250811064609.918593-4-bhupesh@igalia.com>
+	s=arc-20240116; t=1754970596; c=relaxed/simple;
+	bh=87OsKUWhd93bhH0mOSNgVS47foXOTSCk7LBABDEo+cI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fEH+BKw+n6HpQGso2dWUTfmF68/S3ua4lLCQ1cpruCIauQgLbgsx8cU+1mNJ/XO+CL4BfnMqjcOffrcQiCDMK8YKJVYyco47W6ud5KPDrNFYHhrEtXXxOsUPzUAmI0gzrMJgqy1CGVpmB3/RsvSOJwC8kWs8hTRPdjnC7BelFRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mfEjVlTj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BI1M03018332
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:49:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5TV846db6f3LjcIYa6Gb2G9q0zV9dsFXUpYfVhL1rCU=; b=mfEjVlTjeyFm0qHS
+	zFnOX5AD3U5UGq89NvX7+yyyR38LA2xb0dTSWn/ysP4ngFic0Vm8c+Lh5tHZzAo8
+	VoEHkp22Ayv1c5+t7D7v6RoUGG+TTIvJgehpN1JToIC2FOErWsNkJ7S0WKViXnnU
+	eXUl2UJqqEmSOKfNiJcyJOP3gdsV4wAbptMvxk2ei60AJ9b4A0MrIrIQ89kEVhax
+	92F/LjJP9eSnH55wPr52b75DAzLpNclov+8Q3JSYhD4p65Qx7+2z95HrjSfNABRd
+	kLLQ2DpJ9STUu65cbphDurT0z90ULGec0IDyWf2MqaHyjTB+KOL5F4NRcpRian87
+	qlJuug==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g6mdr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:49:54 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b4310451ae4so6696028a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:49:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754970593; x=1755575393;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5TV846db6f3LjcIYa6Gb2G9q0zV9dsFXUpYfVhL1rCU=;
+        b=TrVkQFUZZi4il8+UAAiaNE9U42YJ0CHi3FZkLh1xc18rU5m51g0XIkfaFR2XxOf1RV
+         xXTVSZ0dM8OSFhxFINIKF0R8G2u4Ry9F84Foov9v13QWtRBPJ+IuJyus4zc0uQX1HfGV
+         VZAR7Fkm8rJKAdtXc6al8m98TIam71o41Bw7TMxzlMkpBzi2m0zNQuKbEogA6pdMLI89
+         HyX3cbIKDMQYt0AWbyj4RUeVJdqFAXe5xzqQ507mrPUFi1C9eU4X1yp/aMxdyv63gdQS
+         jJSPEFMOBzZLebvbiEaG3leye7G9MbKZ09Fu2uUIMVkqlWqWznRJSbSCD/WQ7nVSRmjn
+         8fTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZDLIkrPbb4Ds8/mzk7I3IQm6/BDrYWkPu0EeKkUURtH0BaCHPORKmStMmNKI1gr/SkVXuo9FfHiyJ8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNcPAWp3r2hTK3MwoglOO5kkHL507mXsrahZ4wMfRIdK6Vel5p
+	qwBgTMyYtXpwLalq7RuUvna2DlbTqb6wwwu3r6+TxK3V93JPlxq895wGmVmwloCJ9G7dqrMb7iX
+	KLOhFWLJxVGFOkLDKr+b658hjyE3mkGwYLcJLe+Y2cBVOM2hPE0vTEpsfVMm2NP+Qlx0=
+X-Gm-Gg: ASbGnct3RFQo5o0I0pb5zRLyE+TRUf4Ns6Kni8B9GjBWk7woU9CH1ECTF9cQYACAkX5
+	3YCxcqzQQvft7kdjzpFbYOhhZ/NnR2NJ4mmVDv6vJgq12yWcOUdmuUIOWrSokq2pb9/FI4cGgs4
+	UsyoWWbXIwBnYrw0td9D57jc5D0x9j2Vap3pXaHbxn22+96iZ2HysXVCqe4JKKRNHdYXzykWxnC
+	eEEAAbYOCEF6hFNWxIZ+IjNbU+vgnjSHFCjIbEdbbv4MUC3CMasqccmPbhpVlao1eIr25jioc6S
+	iizNn+fY4SihUggiYcYv3wgWDw7Fh5VeBUOqMDk4PrzVGl0BoYMtS9VS7tIfvGbWRMgbYiF3ig=
+	=
+X-Received: by 2002:a05:6a20:3945:b0:238:351a:6437 with SMTP id adf61e73a8af0-2409a9b57f1mr3209088637.43.1754970593606;
+        Mon, 11 Aug 2025 20:49:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHP375zTdK8Lz8GD2GdflxZl60YmZFoMKeDDEAaMpk+lohW3i3wGJFGZRlHt70eEG4IIaUe0w==
+X-Received: by 2002:a05:6a20:3945:b0:238:351a:6437 with SMTP id adf61e73a8af0-2409a9b57f1mr3209046637.43.1754970593156;
+        Mon, 11 Aug 2025 20:49:53 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbce56sm28275963b3a.82.2025.08.11.20.49.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 20:49:52 -0700 (PDT)
+Message-ID: <f21f6fd0-9d58-4eee-9676-e6e9543cf7f6@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 09:19:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811064609.918593-4-bhupesh@igalia.com>
-
-Hi Bhupesh,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on next-20250808]
-[cannot apply to trace/for-next tip/sched/core brauner-vfs/vfs.all linus/master v6.17-rc1 v6.16 v6.16-rc7 v6.17-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250811-144920
-base:   next-20250808
-patch link:    https://lore.kernel.org/r/20250811064609.918593-4-bhupesh%40igalia.com
-patch subject: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with 'strscpy_pad()'
-config: arc-randconfig-002-20250812 (https://download.01.org/0day-ci/archive/20250812/202508121145.d07aFegg-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508121145.d07aFegg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508121145.d07aFegg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/build_bug.h:5,
-                    from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from net/netfilter/nf_tables_api.c:8:
-   net/netfilter/nf_tables_api.c: In function 'nf_tables_fill_gen_info':
->> include/linux/string.h:116:50: warning: passing argument 3 of 'nla_put_string' makes pointer from integer without a cast [-Wint-conversion]
-     116 | #define sized_strscpy_pad(dest, src, count)     ({                      \
-         |                                                 ~^~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                  |
-         |                                                  ssize_t {aka int}
-     117 |         char *__dst = (dest);                                           \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     118 |         const char *__src = (src);                                      \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     119 |         const size_t __count = (count);                                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     120 |         ssize_t __wrote;                                                \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     121 |                                                                         \
-         |                                                                         ~
-     122 |         __wrote = sized_strscpy(__dst, __src, __count);                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     123 |         if (__wrote >= 0 && __wrote < __count)                          \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     124 |                 memset(__dst + __wrote + 1, 0, __count - __wrote - 1);  \
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     125 |         __wrote;                                                        \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     126 | })
-         | ~~                                                
-   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                    ^~~~
-   net/netfilter/nf_tables_api.c:9659:9: note: in expansion of macro 'if'
-    9659 |         if (nla_put_be32(skb, NFTA_GEN_ID, htonl(nft_net->base_seq)) ||
-         |         ^~
-   include/linux/string.h:86:9: note: in expansion of macro 'sized_strscpy_pad'
-      86 |         sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +        \
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy_pad0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:149:9: note: in expansion of macro 'CONCATENATE'
-     149 |         CONCATENATE(__strscpy_pad, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |         ^~~~~~~~~~~
-   net/netfilter/nf_tables_api.c:9661:53: note: in expansion of macro 'strscpy_pad'
-    9661 |             nla_put_string(skb, NFTA_GEN_PROC_NAME, strscpy_pad(buf, current->comm)))
-         |                                                     ^~~~~~~~~~~
-   In file included from include/linux/netfilter/nfnetlink.h:7,
-                    from net/netfilter/nf_tables_api.c:17:
-   include/net/netlink.h:1655:46: note: expected 'const char *' but argument is of type 'ssize_t' {aka 'int'}
-    1655 |                                  const char *str)
-         |                                  ~~~~~~~~~~~~^~~
->> include/linux/string.h:116:50: warning: passing argument 3 of 'nla_put_string' makes pointer from integer without a cast [-Wint-conversion]
-     116 | #define sized_strscpy_pad(dest, src, count)     ({                      \
-         |                                                 ~^~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                  |
-         |                                                  ssize_t {aka int}
-     117 |         char *__dst = (dest);                                           \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     118 |         const char *__src = (src);                                      \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     119 |         const size_t __count = (count);                                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     120 |         ssize_t __wrote;                                                \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     121 |                                                                         \
-         |                                                                         ~
-     122 |         __wrote = sized_strscpy(__dst, __src, __count);                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     123 |         if (__wrote >= 0 && __wrote < __count)                          \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     124 |                 memset(__dst + __wrote + 1, 0, __count - __wrote - 1);  \
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     125 |         __wrote;                                                        \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     126 | })
-         | ~~                                                
-   include/linux/compiler.h:57:61: note: in definition of macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                             ^~~~
-   net/netfilter/nf_tables_api.c:9659:9: note: in expansion of macro 'if'
-    9659 |         if (nla_put_be32(skb, NFTA_GEN_ID, htonl(nft_net->base_seq)) ||
-         |         ^~
-   include/linux/string.h:86:9: note: in expansion of macro 'sized_strscpy_pad'
-      86 |         sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +        \
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy_pad0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:149:9: note: in expansion of macro 'CONCATENATE'
-     149 |         CONCATENATE(__strscpy_pad, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |         ^~~~~~~~~~~
-   net/netfilter/nf_tables_api.c:9661:53: note: in expansion of macro 'strscpy_pad'
-    9661 |             nla_put_string(skb, NFTA_GEN_PROC_NAME, strscpy_pad(buf, current->comm)))
-         |                                                     ^~~~~~~~~~~
-   include/net/netlink.h:1655:46: note: expected 'const char *' but argument is of type 'ssize_t' {aka 'int'}
-    1655 |                                  const char *str)
-         |                                  ~~~~~~~~~~~~^~~
->> include/linux/string.h:116:50: warning: passing argument 3 of 'nla_put_string' makes pointer from integer without a cast [-Wint-conversion]
-     116 | #define sized_strscpy_pad(dest, src, count)     ({                      \
-         |                                                 ~^~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                  |
-         |                                                  ssize_t {aka int}
-     117 |         char *__dst = (dest);                                           \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     118 |         const char *__src = (src);                                      \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     119 |         const size_t __count = (count);                                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     120 |         ssize_t __wrote;                                                \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     121 |                                                                         \
-         |                                                                         ~
-     122 |         __wrote = sized_strscpy(__dst, __src, __count);                 \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     123 |         if (__wrote >= 0 && __wrote < __count)                          \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     124 |                 memset(__dst + __wrote + 1, 0, __count - __wrote - 1);  \
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     125 |         __wrote;                                                        \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     126 | })
-         | ~~                                                
-   include/linux/compiler.h:68:10: note: in definition of macro '__trace_if_value'
-      68 |         (cond) ?                                        \
-         |          ^~~~
-   include/linux/compiler.h:55:28: note: in expansion of macro '__trace_if_var'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                            ^~~~~~~~~~~~~~
-   net/netfilter/nf_tables_api.c:9659:9: note: in expansion of macro 'if'
-    9659 |         if (nla_put_be32(skb, NFTA_GEN_ID, htonl(nft_net->base_seq)) ||
-         |         ^~
-   include/linux/string.h:86:9: note: in expansion of macro 'sized_strscpy_pad'
-      86 |         sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +        \
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy_pad0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:149:9: note: in expansion of macro 'CONCATENATE'
-     149 |         CONCATENATE(__strscpy_pad, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |         ^~~~~~~~~~~
-   net/netfilter/nf_tables_api.c:9661:53: note: in expansion of macro 'strscpy_pad'
-    9661 |             nla_put_string(skb, NFTA_GEN_PROC_NAME, strscpy_pad(buf, current->comm)))
-         |                                                     ^~~~~~~~~~~
-   include/net/netlink.h:1655:46: note: expected 'const char *' but argument is of type 'ssize_t' {aka 'int'}
-    1655 |                                  const char *str)
-         |                                  ~~~~~~~~~~~~^~~
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc7280: Add wake GPIO
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki"
+ <rafael@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com, sherry.sun@nxp.com, linux-pm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+References: <20250801-wake_irq_support-v4-0-6b6639013a1a@oss.qualcomm.com>
+ <20250801-wake_irq_support-v4-1-6b6639013a1a@oss.qualcomm.com>
+ <u4zedngig2jsraq27h2gc5ksp5swgypl2k3sy44znrhndtljpp@r4jb3wibkf3q>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <u4zedngig2jsraq27h2gc5ksp5swgypl2k3sy44znrhndtljpp@r4jb3wibkf3q>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689ab9e2 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=Ztk8bZVGPGJlfjIOV0sA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX3e0Y0a1AwnAa
+ aUcKpJ8cIfRg/rdG8wJMBE6hlYhm4U7AEgQN21KqXVokJ0pfttryMI3VtzuHnBAaRETJIlNixd0
+ HVs3w1OgPHzQ/Ipj1pKHslLaNmBMgS1lXOcIhF0B1muqn7IIzeBNfRjZM6rnulqJPngabfYxOe2
+ Qp/lmMfHsasZhJOLU/zkoeoqsI0lsnirND9ZvDxc6uYfSuZFL7Gk+2oIN++hW0mURPzNY45ZyX5
+ Jetf+yWDJabVpOu93i4062pSjQXx0vAIS7xWRugDq5clgppqRu3WNNOwCnA0u499hujqmi455K/
+ G4m1L0VC985/mPa5pKZMdTlXyTJpHpA3Za2sDFsPwVvlytxw5MmmROqbwc8fkGTXC6AEaZEy9O5
+ 28hgx0Jr
+X-Proofpoint-GUID: sjF-kuNwzEQaqzHsAR_bfgoGEFIBtCjx
+X-Proofpoint-ORIG-GUID: sjF-kuNwzEQaqzHsAR_bfgoGEFIBtCjx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090031
 
 
-vim +/nla_put_string +116 include/linux/string.h
 
-e6584c3964f2ff Kees Cook        2023-09-20   74  
-e6584c3964f2ff Kees Cook        2023-09-20   75  /*
-e6584c3964f2ff Kees Cook        2023-09-20   76   * The 2 argument style can only be used when dst is an array with a
-e6584c3964f2ff Kees Cook        2023-09-20   77   * known size.
-e6584c3964f2ff Kees Cook        2023-09-20   78   */
-e6584c3964f2ff Kees Cook        2023-09-20   79  #define __strscpy0(dst, src, ...)	\
-559048d156ff33 Kees Cook        2024-08-05   80  	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-559048d156ff33 Kees Cook        2024-08-05   81  				__must_be_cstr(dst) + __must_be_cstr(src))
-559048d156ff33 Kees Cook        2024-08-05   82  #define __strscpy1(dst, src, size)	\
-559048d156ff33 Kees Cook        2024-08-05   83  	sized_strscpy(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-e6584c3964f2ff Kees Cook        2023-09-20   84  
-8366d124ec937c Kees Cook        2024-02-02   85  #define __strscpy_pad0(dst, src, ...)	\
-559048d156ff33 Kees Cook        2024-08-05   86  	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-559048d156ff33 Kees Cook        2024-08-05   87  				    __must_be_cstr(dst) + __must_be_cstr(src))
-559048d156ff33 Kees Cook        2024-08-05   88  #define __strscpy_pad1(dst, src, size)	\
-559048d156ff33 Kees Cook        2024-08-05   89  	sized_strscpy_pad(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-458a3bf82df4fe Tobin C. Harding 2019-04-05   90  
-e6584c3964f2ff Kees Cook        2023-09-20   91  /**
-e6584c3964f2ff Kees Cook        2023-09-20   92   * strscpy - Copy a C-string into a sized buffer
-e6584c3964f2ff Kees Cook        2023-09-20   93   * @dst: Where to copy the string to
-e6584c3964f2ff Kees Cook        2023-09-20   94   * @src: Where to copy the string from
-e6584c3964f2ff Kees Cook        2023-09-20   95   * @...: Size of destination buffer (optional)
-e6584c3964f2ff Kees Cook        2023-09-20   96   *
-e6584c3964f2ff Kees Cook        2023-09-20   97   * Copy the source string @src, or as much of it as fits, into the
-e6584c3964f2ff Kees Cook        2023-09-20   98   * destination @dst buffer. The behavior is undefined if the string
-e6584c3964f2ff Kees Cook        2023-09-20   99   * buffers overlap. The destination @dst buffer is always NUL terminated,
-e6584c3964f2ff Kees Cook        2023-09-20  100   * unless it's zero-sized.
-e6584c3964f2ff Kees Cook        2023-09-20  101   *
-e6584c3964f2ff Kees Cook        2023-09-20  102   * The size argument @... is only required when @dst is not an array, or
-e6584c3964f2ff Kees Cook        2023-09-20  103   * when the copy needs to be smaller than sizeof(@dst).
-e6584c3964f2ff Kees Cook        2023-09-20  104   *
-e6584c3964f2ff Kees Cook        2023-09-20  105   * Preferred to strncpy() since it always returns a valid string, and
-e6584c3964f2ff Kees Cook        2023-09-20  106   * doesn't unnecessarily force the tail of the destination buffer to be
-e6584c3964f2ff Kees Cook        2023-09-20  107   * zero padded. If padding is desired please use strscpy_pad().
-e6584c3964f2ff Kees Cook        2023-09-20  108   *
-e6584c3964f2ff Kees Cook        2023-09-20  109   * Returns the number of characters copied in @dst (not including the
-e6584c3964f2ff Kees Cook        2023-09-20  110   * trailing %NUL) or -E2BIG if @size is 0 or the copy from @src was
-e6584c3964f2ff Kees Cook        2023-09-20  111   * truncated.
-e6584c3964f2ff Kees Cook        2023-09-20  112   */
-e6584c3964f2ff Kees Cook        2023-09-20  113  #define strscpy(dst, src, ...)	\
-e6584c3964f2ff Kees Cook        2023-09-20  114  	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-458a3bf82df4fe Tobin C. Harding 2019-04-05  115  
-8366d124ec937c Kees Cook        2024-02-02 @116  #define sized_strscpy_pad(dest, src, count)	({			\
-8366d124ec937c Kees Cook        2024-02-02  117  	char *__dst = (dest);						\
-8366d124ec937c Kees Cook        2024-02-02  118  	const char *__src = (src);					\
-8366d124ec937c Kees Cook        2024-02-02  119  	const size_t __count = (count);					\
-8366d124ec937c Kees Cook        2024-02-02  120  	ssize_t __wrote;						\
-8366d124ec937c Kees Cook        2024-02-02  121  									\
-8366d124ec937c Kees Cook        2024-02-02  122  	__wrote = sized_strscpy(__dst, __src, __count);			\
-8366d124ec937c Kees Cook        2024-02-02  123  	if (__wrote >= 0 && __wrote < __count)				\
-8366d124ec937c Kees Cook        2024-02-02  124  		memset(__dst + __wrote + 1, 0, __count - __wrote - 1);	\
-8366d124ec937c Kees Cook        2024-02-02  125  	__wrote;							\
-8366d124ec937c Kees Cook        2024-02-02  126  })
-8366d124ec937c Kees Cook        2024-02-02  127  
+On 8/11/2025 10:06 PM, Bjorn Andersson wrote:
+> On Fri, Aug 01, 2025 at 04:29:42PM +0530, Krishna Chaitanya Chundru wrote:
+>> Add WAKE# gpio which is needed to bring PCIe device state
+>> from D3cold to D0.
+>>
+> 
+> What tree did you base this on? None of these boards has pcieport1
+> defined in the upstream kernel.
+> 
+Sorry I forgot to add dependencies to dependencies to one more series.
+I will add the dependencies in the next series.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Krishna Chaitanya.
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   | 1 +
+>>   arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 1 +
+>>   arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       | 1 +
+>>   3 files changed, 3 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 10c152ac03c874df5f1dc386d9079d3db1c55362..a4d85772f86955ad061433b138581fa9d81110a4 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -810,6 +810,7 @@ &mdss_edp_phy {
+>>   
+>>   &pcieport1 {
+>>   	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
+>>   };
+>>   
+>>   &pcie1 {
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>> index 60b3cf50ea1d61dd5e8b573b5f1c6faa1c291eee..5e73060771329cade097bf1a71056a456a7937d7 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+>> @@ -477,6 +477,7 @@ &pcie1 {
+>>   
+>>   &pcieport1 {
+>>   	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
+>>   };
+>>   
+>>   &pm8350c_pwm {
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> index 0b0212b670797a364d7f0e7a458fc73245fff8db..240513774612fb2bfcdb951e5a5a77c49f49eb82 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+>> @@ -418,6 +418,7 @@ &lpass_va_macro {
+>>   
+>>   &pcieport1 {
+>>   	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
+>>   };
+>>   
+>>   &pcie1 {
+>>
+>> -- 
+>> 2.34.1
+>>
 
