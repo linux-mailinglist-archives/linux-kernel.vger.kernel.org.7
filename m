@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-765591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F6CB23A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DFEB23A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4191B64B7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3014B3B883F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4C32D73A6;
-	Tue, 12 Aug 2025 21:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB1E2D0632;
+	Tue, 12 Aug 2025 21:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS7w2UVo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ih3LCefU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4578D2D738F;
-	Tue, 12 Aug 2025 21:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D2B2F0698;
+	Tue, 12 Aug 2025 21:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755033240; cv=none; b=cDJQF2bpj1VwdTryYubVSFpKtVPdW9TVahi2afEQP4wqxFPCtISeW/kDT9wnyqTIYUdAmehgMBtK3CEYBypGdlarOw0NZ1lH8GKSqIg8sYpTtRIFfeFPAtaVHEgvdkdomGauNrhxgNuqHNsoo1XHUAdCnAYG9ToscKiyqmkJyM8=
+	t=1755033341; cv=none; b=Wax8j/0zzZ8gT+KSNuwwodGJpf65+oBM8d7SIOMNOx7LCcYUfIZmCeNLbnm6TzDdI0Q6/XKHRWVS0mpSEYJuv+fTwffFRaH+5cSsATmw+Rq4Q0WesURYLK7iYI9KPKxqU4YJ7efez/Vhgo1gapxgdwp75iUEBay4aAPs4czWD6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755033240; c=relaxed/simple;
-	bh=YhOmscR7zMS1RKKfQKFHS3r0NQs0SERPj/UPn4T2M1Q=;
+	s=arc-20240116; t=1755033341; c=relaxed/simple;
+	bh=HcOxzS6qBsSVE3yw+XQzBxASJfQdC62OPfuwpF03smk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e1H+UUqlh2UkG4/3mK3Kn6dkiG88RRIS0oxTwpU5k7mlVOFRjP6srJ6GwhD2mYENJln0DWP8AN7CGwFbyDBy7igXBYlPQ5fRQY//11jzKTBmresT7TwfGsEce2nRYdaACa4S8lsg7KgcKgzKScnUUDkLJcqvlqHO5yYrBBNgLzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS7w2UVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443C5C4CEFA;
-	Tue, 12 Aug 2025 21:13:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Ijpd1V076h0A4DEHpckgCe1+nhwCCb09cUFe17rfRS5Nha2l8dIaKu8YlSA+/qjrdL0Tb6ZwVvvXaAKAAKEonCgYuzW2svSJo10CVil/OfAv1lKUZmOBQ96AU5IhTe/NIBucJJwDE0WFqxNGDoiYDSWafOpuEwZitvtTa4L0ORQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ih3LCefU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E79FC4CEF1;
+	Tue, 12 Aug 2025 21:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755033239;
-	bh=YhOmscR7zMS1RKKfQKFHS3r0NQs0SERPj/UPn4T2M1Q=;
+	s=k20201202; t=1755033340;
+	bh=HcOxzS6qBsSVE3yw+XQzBxASJfQdC62OPfuwpF03smk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cS7w2UVop4QX7AUkhGhm30952y34sbGUMoZi2C+AtrCr8MpixTdIU6g+VyBSGNLx5
-	 YYrttZae+yPlHvk0uO/d86cD/gE2s/I8u0jcZRmqI5Ol9/d/PYQykULGxSMGLrxez5
-	 DGg+vHjbDftA3JthVpRXk/InHwVe+3VqRmn5JmrBxNGmsHk+NddLRkbuuiBTDZ8oqL
-	 /LnxG+m4EQvA+jBhKZANjAACnV/KNn9PUjiVjqV9iiJf9nczuzsdQ5pPYCOEmGDsFB
-	 iTChQfdsNxfT0gl36+Poam7O9bRCzRGa11FJvmbuFYY/YV7116L9Jjke3ArqtU9SXU
-	 C7UBNm7C2Py6Q==
+	b=Ih3LCefUSY+rnDkCyvJfBQnEGfKpKIUG/SSgONBmpBJeaT8QvIGebsBiqMguuhfpB
+	 kmzwwUJgNIkoUCTTP0Ko+F0pwbeMAiYph673Q73CY0OG3x44WvDpUnKnlxF5AsMih2
+	 YoqLCTYDvK/i5zeqoLD5x6WErxtRkgRHLYvKfO4S4xBC8XfbuLYuT8ppFQFIbgyx5u
+	 MKpFAIomBeARZaSYF2XEBlV+YRzPMV7I/CUA8l1m2mSPg8CsQkTpRv0qg7CI4V8Hwy
+	 /vyMz50naNCGd17P9GC2LQJR6ocg/UejODSxHS78IfVtNGIg5ybxWym2uNu9AzkVGI
+	 znoIKJjgpyZiA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: cros-qcom-dts-watchers@chromium.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
+To: Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Describe the first PCIe controller and PHY
-Date: Tue, 12 Aug 2025 16:13:43 -0500
-Message-ID: <175503322843.231048.8956982707170764479.b4-ty@kernel.org>
+Subject: Re: [PATCH v4] arm64: dts: qcom: ipq5424: Describe the 4-wire UART SE
+Date: Tue, 12 Aug 2025 16:13:45 -0500
+Message-ID: <175503322847.231048.7613485046039418494.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
-References: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
+In-Reply-To: <20250812-ipq5424_hsuart-v4-1-f1faa7704ea9@oss.qualcomm.com>
+References: <20250812-ipq5424_hsuart-v4-1-f1faa7704ea9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,16 +65,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 11 Aug 2025 22:16:29 -0500, Bjorn Andersson wrote:
-> Only one PCIe controller has been described so far, but the SC7280 has
-> two controllers/phys. Describe the second one as well.
+On Tue, 12 Aug 2025 16:02:41 +0530, Kathiravan Thirumoorthy wrote:
+> QUPv3 in IPQ5424 consists of six Serial Engines (SEs). Describe the
+> first SE, which supports a 4-wire UART configuration suitable for
+> applications such as HS-UART.
 > 
+> Note that the required initialization for this SE is not handled by the
+> bootloader. Therefore, add the SE node in the device tree but keep it
+> reserved. Enable it once Linux gains support for configuring the SE,
+> allowing to use in relevant RDPs.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: qcom: sc7280: Describe the first PCIe controller and PHY
-      commit: f8328b7549e1faff45e32ab2ecc2573b90604e76
+[1/1] arm64: dts: qcom: ipq5424: Describe the 4-wire UART SE
+      commit: d56ddcee0101a4b948be0d388e91f5f38f14d448
 
 Best regards,
 -- 
