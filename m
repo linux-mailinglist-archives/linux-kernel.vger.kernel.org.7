@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-764818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9E0B22796
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75BFB22798
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD40B626095
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F269680540
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC98526280A;
-	Tue, 12 Aug 2025 12:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C88525F796;
+	Tue, 12 Aug 2025 12:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="rM2CPcxk"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNUazFt+"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F6E23B627
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE21E9B19;
+	Tue, 12 Aug 2025 12:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003365; cv=none; b=BdWKLutq8R1QsWX3BPZJo+S2+5AkkiaP/3y/wFIXzK2Sa2vIJjT67GBtxPMADUQTR7fCjcf67iMJOV2stML/vgASNp6zQDuy2IfiRTndTKnJpI/g3bG/7BP8/kQX7igBphl0ND+C810D02OLVrr6jbz2oLtmoEc3PFKoA3a/Ey0=
+	t=1755003398; cv=none; b=juxy7q7WAtVlm/rIDAySPwQm74LqvMyWg1vavz5EYteQ9kcj5NKyod7+YHkb9oVYRIMnGp96QpHRh/fiAL20Rp45Y7xS1hnCs1QoNLuSjOpAjriXS+yW1Vqt7wLXLtnagJ3VtoIDbdT1ZS9uLXa9P2y6SofpRiOiBPFgelvCIVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003365; c=relaxed/simple;
-	bh=zJKsKHBoLA6OwRJ51uRdMlWZvRldd2N5rE/IXsJEWKM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=MWcGQlf1+DnVFhQSYy535O1ezj3j8eEYq8TpLPEwcM0zC0EKR1+Pl04VFrVWBKsyvGGg5f35ervnkZYB3UMWcEzvyHQ+78HEGn+7hgCQGGZAlOL/os8aE4tvrBOlL9GLp1979wqPQzkIKBJ1M+6zBYQeMhMMDRQBYqze1z+BNyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=rM2CPcxk; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755003398; c=relaxed/simple;
+	bh=mf3duEHJESRvPaAB11JCT1JY5xkEJKtp3WGuxWg7qUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dRn3QJTdkKgo9mlfjVSYFz2pU1UfVPT30QRGrJ65ajP9+NHe6jjhTocGOo08CfoWy5hgG+LZAjqyg37eHZFIDzoK0IyMM5uoOP16xquM0wpC8tMiOkS7J8nkXhu92v5jt4Bj2lbswj1iXn2LFp/oTEnhlfgygQHBGMmxoSGhJvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNUazFt+; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-adfb562266cso739770966b.0;
+        Tue, 12 Aug 2025 05:56:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755003395; x=1755608195; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+dWT3qwPW8fdc3Y+IWuANHr14YzOFSQ6K8iD8kS+KdY=;
+        b=eNUazFt+KcBMGMNTt6/JbtKvLSHSJ1sjG3/9VM7s8aj5ZBBblW72X/xbv8N15g7nfX
+         OUWi6e1y/Kr6+JwOWzMR17BkdoPQZ0HSo63eN7g1b4khBkUEBCWjnmo0H0Kv58uZXIB9
+         hN5cwvW00ovg/55FRkJ0OkXmnDh1sfAv5MYrV20B9tLG6cX4cKbxB6+LSGc/EHVfk/k4
+         ZcHDryVsWwr6znD6oXTL38tRTq6sH7OeXwxWKqjWN/jilFDQORIbF7sOrle3QaGOd9Os
+         WK5BmOiXlNvZ2cS+2p8aJHM+RnyuI1Sce2bAwI41DbculZZsUfbdniwEqTD6jdO6YqTL
+         j3Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755003395; x=1755608195;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+dWT3qwPW8fdc3Y+IWuANHr14YzOFSQ6K8iD8kS+KdY=;
+        b=rwvfUhVs67BCW7VFayH+Qp8QHI+iYOPE1CZjg5G4ikY0VahUwVRdoOWLZ4OeQkt2lM
+         3FKYtZgN4b0CupEqWGyEgA69LWbQdVwOMEa1Q4olqMXrDYxzl5339+Q9HOHqnzOZy3fS
+         FFh2jdL2rYlhunKz3ybjDEQLDgEXBYelvXSM7mlNEAeTk61t7Zu4oZfiYqeErdcaOFZo
+         DE5BAXntDvRBk7xGiZdb2UkX5y8E/tO+iuoqkC3KRA4mfTrjfu4gtCVWCYSeuZ9WYhqx
+         xR0l1Zj+P8EK86Bf1MZagD3SOGZfH58MBaAXzSbhTpn0kFKKdhesUeIEyAv0bWP7//Y+
+         cItA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Da6q89QMjZAecGBvnVy4NGQUXGSHmsTDZajguoh668PTchxJcXZMPrXjJhpAIRJnSu2JNT5kuMVsmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCQTCI87IzcUrsp8mz8M4jwpec1cL41gU/39ig6U0llJy5gJFh
+	s5/qEFZja9TRLZpjEwFLBsq5QgAcTj8UKYn0tM1R79ZCxYHIrPVJG480U8VlPuBYsQ8=
+X-Gm-Gg: ASbGnct7He4bsOG9xazKIpg79guOeVm2Xz1w1hh5Wcosi0Z7Qw+1qxPdRIhSJEL/Z2K
+	AN5G2VBxaksAqlEkC4K01YQNew3u9FHk4gnywiTNF0vtwDaQwwC6WSJ7VUREuyzax/OTA41birm
+	IweZdo06eBJmaDwh1EFUJETzXZ0O9wkfkuwtwH90KP6kmklhXlTDB7FG9uRHvrB1CtPRlJhDwz+
+	dWA9e6I580Xf0mbtsodHL0Za2MH1phCarxosH7zVmb5BNoYXqRwqAD1y5yHFr5eABqUU3Hz1y6l
+	qCZS2aS+mMbqqGgA9E+k/hpXt7CTmA2Ci5O6uJB0K8jlW7+6S05W/fAl3k2YSPB6OfZvSvp/M0r
+	ZTWw8AJPszIDJ+5J3ExkWNZ2W8jHANgAXzVgJEqGvTc9A/q6O/645d1f7Qs2jQccOFefon9ITNr
+	OC0SDiyg==
+X-Google-Smtp-Source: AGHT+IFBB5VtmMcf9ZQMHS4reiHwHt1CtGiCJaDPCvRw9TnDsz+Cq+RLpPilsEu6J3K2eNK4zjSwkA==
+X-Received: by 2002:a17:907:9728:b0:ae0:16c5:d429 with SMTP id a640c23a62f3a-afa1e1d5f10mr325309866b.58.1755003394977;
+        Tue, 12 Aug 2025 05:56:34 -0700 (PDT)
+Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3361sm2199158266b.39.2025.08.12.05.56.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 05:56:34 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+Subject: [PATCH v2 0/7] ALSA: usb-audio: Add driver for TASCAM US-144MKII
+Date: Tue, 12 Aug 2025 14:56:20 +0200
+Message-Id: <20250812125633.79270-1-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250810124958.25309-1-ramiserifpersia@gmail.com>
+References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755003359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2/K6Kmzeo0smswqH+INF7WIXwUm2J6GEj868GD/UacY=;
-	b=rM2CPcxknPD2SbRacMWMBVPBBCQsqxe9vhib0K7Ko9FjPHBdJCGtjs27Uf4U+77CUquUmP
-	rvGUkmHsQAPvPYxkLhE8EzUwvLWl52zW4IZViPkgTusRrjtBQAI6Q+ZvN/RDuSxlRiNbvI
-	m2u7o3GV+nJUg17UlbNMTOL/eoV5GhMccl0lqnmlJopNW6whQoYTLsHfTXWQ508wOqr81y
-	IVdCP+XPljYFGizwMvtlqGCBa5+QgHQTXVaTeESrk8Ih9u+HrCxvnkuM1B3VfmiBzToWTX
-	vZqBHP2hC37Ou5OGWDKd/tmvBJp6MUOTD9R3H0cJG1+qwpl8y9wBOtInoEVSDg==
-Content-Type: multipart/signed;
- boundary=5eb61e0f6c0eadb653b8d59c45a8a0be8243b30f21a6b0198e575406c8d8;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 12 Aug 2025 14:55:49 +0200
-Message-Id: <DC0GRKB9V014.1J7A2PO1B7U8H@cknow.org>
-Cc: "Alex Bee" <knaerzche@gmail.com>, "Nicolas Dufresne"
- <nicolas.dufresne@collabora.com>, <linux-media@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Diederik de Haas" <didi.debian@cknow.org>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
- "Detlev Casanova" <detlev.casanova@collabora.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <DC0FTXJNW0KB.3I8DLNHJVL21O@cknow.org>
-In-Reply-To: <DC0FTXJNW0KB.3I8DLNHJVL21O@cknow.org>
-X-Migadu-Flow: FLOW_OUT
-
---5eb61e0f6c0eadb653b8d59c45a8a0be8243b30f21a6b0198e575406c8d8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi again,
+This is v2 of the patch series to add a new driver
+for the TASCAM US-144MKII USB audio interface.
 
-On Tue Aug 12, 2025 at 2:11 PM CEST, Diederik de Haas wrote:
-> On Sun Aug 10, 2025 at 11:24 PM CEST, Jonas Karlman wrote:
->> This series add a HEVC backend to the Rockchip Video Decoder driver.
->>
->> Patch 1 add the new HEVC backend.
->> Patch 2-3 add variants support to the driver.
->> Patch 4 add support for a rk3288 variant.
->> Patch 5 add a rk3328 variant to work around hw quirks.
->> Patch 6-7 add device tree node for rk3288.
->
-> It looks like I had a previous version of linuxtv-rkvdec-hevc-v2 branch
-> locally and that also had this commit:
-> - media: rkvdec: Keep decoder clocks gated
->
-> Is that one no longer needed/useful/etc ?
->
-> And 'chewitt' also had a commit to fix 8/10-bit selection:
-> https://github.com/chewitt/linux/commit/4b93b05d2ca608bc23f1d52bcc32df926=
-d435c7c
-> "WIP: media: rkvdec: fix 8-bit/10-bit format selection"
->
-> I haven't tried that one (yet), but did  try an other variant with
-> changing the ordering in rkvdec_hevc_decoded_fmts but that didn't work
-> in my tests. (Can ofc be PEBKAC)
->
-> Would that be useful? I do/did have consistent problems with playing
-> 10-bit encoded video files.
+Changes in v2:
+  - Patch 1: Dropped blank line, initialized `__free(kfree)` variable to
+     NULL, and fixed `struct tascam_card` indentation.
+  - Patch 2: Corrected indentation in `us144mkii.h`.
+  - Patch 3: Changed `fpoInitPattern` to `fpo_init_pattern` (snake_case),
+     initialized `__free(kfree)` variable, and replaced
+     `guard(spinlock_irqsave)` with `scoped_guard()`.
+  - Patch 5: Updated control names to standard "Playback Source" and
+     "Capture Source" formats, and initialized `__free(kfree)` variable to NULL.
+  - Patch 6: Re-organized code style alignments into previous patches.
+  - Patch 7: Fixed trailing whitespace warning.
 
-nvm about the 10-bit problem. It exists, but it's not restricted to HEVC
-as it also exists with with H.264 files.
+Šerif Rami (7):
+  ALSA: usb-audio: Add initial driver for TASCAM US-144MKII
+  ALSA: usb-audio: us144mkii: Add PCM core infrastructure
+  ALSA: usb-audio: us144mkii: Implement audio playback and feedback
+  ALSA: usb-audio: us144mkii: Implement audio capture and decoding
+  ALSA: usb-audio: us144mkii: Add MIDI support and mixer controls
+  ALSA: usb-audio: us144mkii: Add deep sleep command
+  ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
 
-Cheers,
-  Diederik
+ sound/usb/Kconfig                    |  12 +
+ sound/usb/usx2y/Makefile             |   2 +
+ sound/usb/usx2y/us122l.c             |   6 -
+ sound/usb/usx2y/us144mkii.c          | 618 +++++++++++++++++++++++++++
+ sound/usb/usx2y/us144mkii.h          | 368 ++++++++++++++++
+ sound/usb/usx2y/us144mkii_capture.c  | 325 ++++++++++++++
+ sound/usb/usx2y/us144mkii_controls.c | 444 +++++++++++++++++++
+ sound/usb/usx2y/us144mkii_midi.c     | 401 +++++++++++++++++
+ sound/usb/usx2y/us144mkii_pcm.c      | 372 ++++++++++++++++
+ sound/usb/usx2y/us144mkii_pcm.h      | 165 +++++++
+ sound/usb/usx2y/us144mkii_playback.c | 463 ++++++++++++++++++++
+ 11 files changed, 3170 insertions(+), 6 deletions(-)
+ create mode 100644 sound/usb/usx2y/us144mkii.c
+ create mode 100644 sound/usb/usx2y/us144mkii.h
+ create mode 100644 sound/usb/usx2y/us144mkii_capture.c
+ create mode 100644 sound/usb/usx2y/us144mkii_controls.c
+ create mode 100644 sound/usb/usx2y/us144mkii_midi.c
+ create mode 100644 sound/usb/usx2y/us144mkii_pcm.c
+ create mode 100644 sound/usb/usx2y/us144mkii_pcm.h
+ create mode 100644 sound/usb/usx2y/us144mkii_playback.c
 
---5eb61e0f6c0eadb653b8d59c45a8a0be8243b30f21a6b0198e575406c8d8
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.39.5
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaJs51wAKCRDXblvOeH7b
-bjcHAP9PnLzGZY1YCKcprzz/K1OPRxwql59MG2CCmBYwRNgpggD/cJPqV7R+iPpd
-9qCnahBvk5X3jrA0jqxwYVblCkJpgAc=
-=bXI1
------END PGP SIGNATURE-----
-
---5eb61e0f6c0eadb653b8d59c45a8a0be8243b30f21a6b0198e575406c8d8--
 
