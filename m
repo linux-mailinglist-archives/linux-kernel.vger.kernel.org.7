@@ -1,219 +1,304 @@
-Return-Path: <linux-kernel+bounces-765473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985CFB23849
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E55B23857
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697CE1BC00F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174D61BC0B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAD62D4804;
-	Tue, 12 Aug 2025 19:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1112D8DC5;
+	Tue, 12 Aug 2025 19:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yhhm8auK"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2067.outbound.protection.outlook.com [40.107.93.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4fuM6o1A"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C487A21ABD0;
-	Tue, 12 Aug 2025 19:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026471; cv=fail; b=g27peaFsIpgB4eh6ZaMYamxus+ZpQJEZKhP4Z5McOZDa9ojGfDFTJ/DGlhdORDT4MLBhfCl5s6s47NzwyFf+BKLf9j2/UVyDOpOwyAswlSWjByaT0HEaMd0QVKWtkfp6xS5xb0R7S8nemNMskUz7AB5aefiGGLnPk5ZEoemH+iU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026471; c=relaxed/simple;
-	bh=Dj3x1D6AEbb3yu69nLFJX9sIuB6BDQYJtZtgNS2upjI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z8wIDbtUQUxlMzd/ngghwNz1Al0CcyAoSCDSlp2DKbs7ZtYisUDQe3Mv0fcVo5sJsCMVAC+HovsMRm6dye4rj76VHnmm8+NpqY+KmfXaK4bqosmWhFLpxeVZbWNROJsomYIY0bRfYFaITq/n1TzY/JeACJA34cmFXis3wnhJWNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yhhm8auK; arc=fail smtp.client-ip=40.107.93.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p//CvrsLbWN3DQaLquetBKm+9i6c7z1jLS8arQK1B4eBbngnXduECSRbcfuIMEzwA/qim/0fIcUaIIiTAVwAYFccQOO57u6RtWRX1wHjNxQ/eCrYoiSsAONMi+L0ZGQ3xx4oHLwHYdu/kEacX1YQ4dhtXnKaUIjgqIFsGsWrdmX+j+RdE0zfGrx8gakcqOrE40sEsqobPaszi3Kn9WwkUjPhIcefu90WSaq51kw4dwW9N42WNWKMgrnT60lqAvTfSFxvXmTVcWt32bHUiIJkxqHUneU9cbIFpX4D67eyAc4XmZ99Yk9Sn2o3320dvTyQ35jK0+6IzgbNnGoDP/jnsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=di5G9PM0arXs7Afgp3rVReYwXvq5xLIFDOvsRNkLixY=;
- b=cgBo4AmPIPhTWQpfY8v4ObMrSV1kV/yTnqdgkdSL6g2L/Xdey+Ucp1ORX+Gd3En+Nr4AzePT+AgeBiON5WTNNz2ImapX9oiGQQg076b8RnCO9fOrXTOWe0Yq5o+rE1eabpuEKvvHdGgft5zfkL2EralIeV9u/zWhDR/XzeePY0FX69YYg1ebM2PJ24KKlVM3p/evenxmcKNigPza/ek0ApKA/5uVqntQAtCu6loSbTD1pt83j/B8kcJ1Gh6kdp8qIF7MCubJDbWXJvRvm2fP0f2+42jtClVgQYDIuF2tERJTgx3ZFdYtaEr4uGRlHxcvKnqRq86T373l7e/sCcIf0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=di5G9PM0arXs7Afgp3rVReYwXvq5xLIFDOvsRNkLixY=;
- b=yhhm8auKZFJsfFBSvdxEp2dpWGAp5O8FFEZzJqzcME1ShvRN5bmhx7rEecP/CA2/QYKWIUBfjiRPQiuYmuXgNHX+ubMVCSGOaXHBhi+hxLlILw6fzBsVcJmjUUkay/ub030QX6PMLUZZ4eEy4EjI134Es5JSUAslObdIgNo1Kn0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by MN2PR12MB4407.namprd12.prod.outlook.com
- (2603:10b6:208:260::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Tue, 12 Aug
- 2025 19:21:07 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Tue, 12 Aug 2025
- 19:21:06 +0000
-Message-ID: <5b8decc6-56d3-4740-badb-32017239f3ca@amd.com>
-Date: Tue, 12 Aug 2025 14:21:02 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v16 33/34] x86/resctrl: Configure mbm_event mode if
- supported
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
- akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
- seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
- sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
- mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
- gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1753467772.git.babu.moger@amd.com>
- <dff9af435f3103a2e3750a563c753f65658dfebc.1753467772.git.babu.moger@amd.com>
- <bb734538-4280-4748-9192-5bfa5ca8c8ab@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <bb734538-4280-4748-9192-5bfa5ca8c8ab@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0001.namprd05.prod.outlook.com
- (2603:10b6:803:40::14) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70D121ABD0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755026506; cv=none; b=S8XuPHHDeO2ab0a0qBRQXfXxk4uQ8fo6f5z+arQueoDBOAZWM6HPo4A7aAyuldTCrOWKieVIYvIWGSL9UX7hJQvlhqup1fuK9XFn5gmmB55jRFxaUJEmAKD/caRSmiNEmiCOpx5AsapeLtydq9KUGvdgbnX9TM014oPniZoGbFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755026506; c=relaxed/simple;
+	bh=LZVfSD+9g2iG6Zp/WvEK8nNevTGgD8kpOWiqVjB44vk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G18syyhBu1+gDDl+hJJH7DMYHpuM4MiAvy6Y4sWnTGi0zqvoO6VUT/kLKQ5Pbgu+zxRRBywh2XWtzw1A1R2SZh/Bpwfc5b7ENYAOvzFiqCCEauc5U7TbevBZJ/vj7xwoQX0z8Jz9DEuEZ5QgUwA6/hJNlL+B0cOmpA0ruJe7YEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4fuM6o1A; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f1df58f21so57545651fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755026503; x=1755631303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hlLr74oj7kNde5sc/Z7gm+dSIgGuc1b54R25OBGeIpM=;
+        b=4fuM6o1A87GoEywpWhXWkX/a3JoAfkZ3iX6RxqzWKFHyOgHRmxjR5QHA799WAsTpkJ
+         Vzt4+ljYd4CddiOuNd/zw+5rQ6cDYOyclNdfzOtWQXXT78d+/v1oM8EbwzuhrqP5NQIn
+         TvoTFr8Sw1Qm/6MXSSnB2wCI2eVC0440xiaWGuX0rB4UnxSYbi8oOpDhKZ+xjYgKnyNA
+         0AHvuoU6HZ30MbD6G+sJRid/JHIyQ6bKBljsSeoSxZf9O5QX4yMrCIy1ZoSDXExMJryv
+         jj57T28buHFPozTVtcCCIUwFa3QyRS596lZB7uq/k4+YFsSlibdX4StTbVOmOKTBg6zM
+         DFbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755026503; x=1755631303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hlLr74oj7kNde5sc/Z7gm+dSIgGuc1b54R25OBGeIpM=;
+        b=QCNYZpPVRTS+OLre39xOTQ0ao/hJWOYNH9nsXJKKqhTitAjbzeD/+rPidVIsnmLlrx
+         isNnnE7B/CqwAGfbE4sMOzFv248aP0uMwtaNdW9AKaZeC8HPgWy3ig1QLQUljc4abNJj
+         LlCXMgQfh08Ld3wHE8mUK1gcQHMhSfQBNA+yK1OJIzFdRmuMDMgpPJ8Gbc0Xdqzbigvg
+         jOQKrBAfnsoxQ1IuVmeb2JpDCNEWheAJEee+BVYYsnLrQ6FgPe1ZZMF/7IpNGuF1ilXT
+         tN2Cf2/De7lXVHcjbPnyKZ8n8UQrBaimn7PKASb3e99pa+XEbgg2gEMwEo8GQ7cl8hmi
+         qMEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZRRuBDq9i/3MX34dfgnY2ftcLYqXT3Lyl9gfLBkcIhuSY8QOi6jxBtR8zJob62HKN/+tD53h9Kha+sbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/VYLGtIm+uIOb+eC5J9n6DI5tnGBhD75d/yrEueJQbNAd6281
+	Z6382HkhSWT5sYazY6ZH5/oQKJ2vLDzZmvdjgdJGezJ5v0S2vb9KuS4N6uiWmvmqKfgQcd8R30C
+	EMZFdbM9XzsKs3b7EnkiOKdjrVRAsizZFduWgvMSp71EJvhQlQVBpIAX+
+X-Gm-Gg: ASbGnctMbJT9r+Mbmr1ZNg14Ifx2uu379iMVB/4jCHNki2sfQgOxyRxIEY/95iM6bhO
+	q+NKop73uOciNRqAg3yjuoD/tjMcNS1h9xi9+zc91qAQ+NRxqPJHESgVrnd8HdlTzF/fa53RlTD
+	Ton3Y0CNcao/UC7ONSlrFxnMJvjSEFoH+qiDr5Z+TRx+2FDaELhnxZT/MnD4gFQ/fqAbTwcvTu3
+	joLBMfRc5chDwkkrw==
+X-Google-Smtp-Source: AGHT+IGqPXeFIPAOoZ3s0A8sYWXLemJ3PfMIvMNQi0Nr744O5BH7/Angge1d5qoZ3/6X1K5pNizMqNB+48VpK567/a8=
+X-Received: by 2002:a2e:612:0:b0:32b:7ddd:275f with SMTP id
+ 38308e7fff4ca-333e9b459f4mr240711fa.30.1755026502472; Tue, 12 Aug 2025
+ 12:21:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|MN2PR12MB4407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fd3101a-0dd7-4c52-db8c-08ddd9d562e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d2EyRnFkbXA3blE1dDlxLzE3Yk5FK1I3L3ViZnhxaldNbTRRbHZZOWM1Y1Nx?=
- =?utf-8?B?UjdRTElUZ0tZTWNqL2I3b21yZXMrREs4VXQxWnR4Z3lSYlpsdXBSLzB1VHRr?=
- =?utf-8?B?RGVWQUVjTGc0Nm1kZUZlYnlLdFlNY1VZNGs2OVJWMC9zZ043VlYyYStEQ2Fj?=
- =?utf-8?B?VDFDMy8wcVI2OHYxb1l5WCtWMU1sWk5ENHFhZHJ4Ynd3ZEQyTmI1M1QyOTVK?=
- =?utf-8?B?Ukd6VjA5VzN5QW5TdXhGYU1tdjFReUg2K2NjTmRvQlIxaDM4elF2U0YwcGlR?=
- =?utf-8?B?OFFSaktZSEVjRzJMbHBpOHlTUnNESGwvUjdxMUdsT2hGbVhEL2JKK1dqQjZr?=
- =?utf-8?B?RExVcm9BRnluOENNSXV5MXRDMEtxMEgxdXFGK0dGd3hNZEpHck40RUtER1FD?=
- =?utf-8?B?TnFwSE1mOXZTT2wwS3haVlVDRnVjNG5JZ0c0a0QzZW5NMzgxU0VsTWFwVUx0?=
- =?utf-8?B?ckRGUzh5bTF3eUtsRVEreWtlaTZvdmJpRDBRa20yb05pMUcxbElwcVdxMGta?=
- =?utf-8?B?aHhnUzlJZERPb0ZPejd3VW5NZUxXeXQxNUIzNzAwaWlSdjN4S0t6S3RQNHFH?=
- =?utf-8?B?WVZ5dzdJL1crNTFHdUlneVBuU05qYk10NDVIaHBjdlVNQ0JxbWZRQWNJVVFZ?=
- =?utf-8?B?U0xaZ0ZuL29kYTFINWlWL2dsSnhVSWVpaXpYZXJtdS9oR2g1M2NPaUhjTVBW?=
- =?utf-8?B?QXFzQ1dES2ZXTDlHUFEzN3RHeFByYnNVcE94L2duQUcrRS8yZERPVUpsaFoz?=
- =?utf-8?B?VDk4cTlCOStVNnhKb3MwZlo5VWhQNmdQdzBORS9YSElRa0kvTnZGcEY1UllN?=
- =?utf-8?B?ZUNxbDFITFRmNmNreGVDT1plR20zeURLSE5pQ05ibnpNTUtZZVgwclBpSjVS?=
- =?utf-8?B?a3NrMU1peGdzQjVxeXNVUmVlMmJuTkpidDZWS0tPQ0NnK3FMWDZkS2NoZkRO?=
- =?utf-8?B?ektYMld4ODNoa1RyU2RROWZtQUdLdDQvSDFpQTFabEE4TTRTeWlSV1VrMGxU?=
- =?utf-8?B?SmNaUnY1bWxEQ1YyMjVqcW1jVmJxRnBGdHV5YlVSL3F4WjE5TmovTm11aWNO?=
- =?utf-8?B?cUxYc243SVhyKzQrSzNZd0RmMCtoeGluajh6Slk2djhqc3kwUWF0aHQ1MzVr?=
- =?utf-8?B?REJUenlma29uelZaQUtZZXkwY1Y3YmY5VGhPRDBuWk1NVFlTSDhGWnRPQ3E2?=
- =?utf-8?B?TzZFWXdqVVQxWDdwRlpnV2gyd240N2dSN2c0NUU4V05YVlJxRmZkbnZDYWg5?=
- =?utf-8?B?ZlQzdlBhZThvQVE0MG5nMFlpZmZDYjBoUkRDQWxHMHdUS2w5RUYrSkZWd2pz?=
- =?utf-8?B?QllVcWczS29IdlR5RmgwMjF1SC9FR1BmTnRobmhmT0ZTUFFhU0NBcCsyVyt2?=
- =?utf-8?B?WmNEbVB2N0E4d3dJbjFCY3hDY29ZeVh3QVZTRC9HWWFIMHhYeE9HUG9LOTdB?=
- =?utf-8?B?QlZ3YUlwSnJLYzl1UUFZaDYyRGIrTnRZU1EzZGpIOXhFMmNVUWhkSElmZVVw?=
- =?utf-8?B?RWg4VFNNNkg5elBBeVp2RE4yMTVXa0RvVVZqK25DY0lnY2N1UW5KVnhSTDcr?=
- =?utf-8?B?UHhxQmlwVGxDYUJWajlFSVlqMjdZRUVNSDRTYU5tanBpWGJobWh0T3JJTmlh?=
- =?utf-8?B?UGtjWTIvZDFvaDZVNlFCOGhrRWxKa2JXS0FRcW1TNTJKZFVwN0JkNFhKZ2F2?=
- =?utf-8?B?NUhHdFZES1ZPdUR4ZVpSWmcxM2JROXYvc2R3R1RMck00TkF2YmZRa3RtaEJW?=
- =?utf-8?B?emVJcVpOSmxyMlZaSm1tcXlGNnd0MTIva1BlOCtUYWxXNzRLOFB1TU1CMnhm?=
- =?utf-8?B?N2dweURCYmdTSTFwL2haYXBmVFNjOVpGalgvN0tOejBjamkrTHN4Ujl3VDJU?=
- =?utf-8?B?UUVIV2lLVElBT2FZMThlL3QzeDVwZjM2SXIwaHpzYnRYYWZhWk1sSXpXTzJ3?=
- =?utf-8?Q?dj3J4hyg4n4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YWtDZ3FxVlY2dVRBbllPTWVBL2s2ZWpEKzJKK3ZYSVlxYklVMWhDamYzM05i?=
- =?utf-8?B?M2pNdFF1UkJFRS9aTmxMK3dTUWFxbFUwMWdHS3NXWkJWbE83cFZkWXdGeU85?=
- =?utf-8?B?QlY4bGQxYlBGbUlsOHdkbEt3VU0wL1hCQXV3ZzNKNEJZNjlYUmhyZTZQQ0Rv?=
- =?utf-8?B?OGZxMExzdE5YWGRsSFNoenlldTgwZjhjb3IwVFk4M0p0V2wralh2aGhXVFE5?=
- =?utf-8?B?akhiU0RMKzN2ZmliNVc4d25RM01UeGVDWWg5NUdZRUFldVpMb1JlQ0t5VmR3?=
- =?utf-8?B?cXJxczJ6MlZYTFMxOWdKSHNlNEhqS25qamlTVWpZaGU3dmhYWk9xNFVDMXRK?=
- =?utf-8?B?RlRsc2UvSCswMUFuUjB5MEVLaW9NdmQyOGlOc3VseVduUUc0ZEY2cG9kT1Zr?=
- =?utf-8?B?L1ZMUXpGcWViMmhtWkQrYUphelcvWUNyTW1QTUZXR1U1NW1WWUZWenFGL2pG?=
- =?utf-8?B?dytyMFUyckxoam9ZTDZhckVzQ2pGWkFqbEtXSlkxaHljOHRUcU9TdGxoRnpp?=
- =?utf-8?B?eTNzR0h5Mk5YV3dQRVVXY1U4ZmdXRFo0a09xLzcrUnJzLzNNZUQ2K1haVlN0?=
- =?utf-8?B?U1JRVlpuSUVmajRtQ0RvYlRlUUQ1SkxubGtuVlVkOVh3R2UwaXFlRWN4Z3Vk?=
- =?utf-8?B?RlNoT0hHRXRySlorbGJCa2tKZmEya1N6ZkVwRStxbjluQWNoU0VJdUl0SWEx?=
- =?utf-8?B?dGI5UEtaZzVGbkh3dm1KYllnOUxHZXNrdVg1V0tkdExNeGZRaTlodGNsa2Y3?=
- =?utf-8?B?UHp3V0xmTk9teUpsVlVUaWphemVHZUYvUzQ0eTg0aFR5RVVocXpvR25NUjhE?=
- =?utf-8?B?M1ZWai9YV2Vtb1gvWktlN3pqdncycndFSE1wcEo3ZHFxa29LaGRkK3oxR0Nh?=
- =?utf-8?B?ME1DWVRhaHBJaXNvSC9uV3Q3VTNLUlVkc1l2aHFmSmdhdGxOQ1lYbnlFSk9H?=
- =?utf-8?B?WmJ2eXk3ajhsSVJLVkNHdU5JSnM0N1VnOW9zTFROMSsyZGpJWjNwNnFCL1Rk?=
- =?utf-8?B?c0JGV0Q1V1Zna0Jtd0VpQ3hhV0lmSWovZGpxTjFxR1ZscTNYajZxM0JSSGtu?=
- =?utf-8?B?dTYzcmdmZ1ZkVE1CSmpkT2RpMlNLdXFaQy9wckFsaHpadjBrdk9paFp6aHF3?=
- =?utf-8?B?ZWRtZEF4OHBaZ2gxUFV4UWVWc0ZtUElGNndkV0hNWHBRSE5tTHloYWp2WVNa?=
- =?utf-8?B?M3FSTUhxU2l6b2hwMEZBSStIaUV4c0ZLd1p2Uko3N1RYUU9oOVAyaUh2S29N?=
- =?utf-8?B?WGNmY3gySHY0aWR1cStvSnNacEJJanMxUFBmWmVGdmR5WVBuVDA3ajZGVzUv?=
- =?utf-8?B?UEpieEM2THlLeG1EaXpMaHViSHhBd3BhdXlONDE5YlQwV2Q4M1lYbFlLaFpa?=
- =?utf-8?B?TER5b09RLzd1WUZiUFdCYXozd3hqYlFlUXhXamRLYjBuSEFUMkhreW9KS0hO?=
- =?utf-8?B?aWkxTVhnQlpmc1Qyd3YzRWF6Y0Z4ZEMxZjlBTDZ5bUYvK09aMkpSeUlBaGFB?=
- =?utf-8?B?M0NkYkVhQXJMejVuOVF4T20zT2Vsb3E1UFBkeVlaSnA4TkVUNnZMQ21ncisz?=
- =?utf-8?B?ODd0VXhjTkd2cHJ4emZvSjl2T0hCVU5JWmplZ2JVWENjOXFreUlsdDltZmgw?=
- =?utf-8?B?eG12MFo0SjVyYlFLcktpSTNwWFd3N21KelBzWjg2MFBMNjVzd3h5bVdHUmR5?=
- =?utf-8?B?OXBaNzdZNWNiU2x0NlZ4YjRVTzFyMkx0cCsrSFNJaU9PV2tLZUlEblNVYmlx?=
- =?utf-8?B?Q3BDeC9EUWdidnFaTE51N3RWVmYydzFwQnBaU3FqcGFpZ0MrZGV1N0hrTkhj?=
- =?utf-8?B?VFhYc3FqQS95Mm5iZ1lNVW1NQTNSL1dHTTBQclZTNlM1bEtiZCtQdDBSRmV2?=
- =?utf-8?B?ZlRHdFI0M1AzOGwvTU1TaXBqcEozT2xHQStocXBteHU3bnlMU0RCd1VVSDd6?=
- =?utf-8?B?MHBOTWJ4Z2tCMEJzbFlvV1hDSzAwWkd1cVFnalhnZmhqc0prcHprTzF6WVNh?=
- =?utf-8?B?b2tGTlNVR1VuUzg0OUhoeDhId3BhWnUwYTExMk1XZkM3WmtCT0oraExPelNF?=
- =?utf-8?B?amZ3SVZKZ0Zhb0JPS1RKa2s0d05wWm9iN1k0ei92OU5adW9oeW82QkVNRDF2?=
- =?utf-8?Q?mfsI=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fd3101a-0dd7-4c52-db8c-08ddd9d562e7
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 19:21:06.8782
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z1b42EbKP5VBRg4I63eoSJTlvc5IG+9xoh8rWtRFxaYCDo3IDThs8FpnnNTJtbOq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4407
+References: <20250707224720.4016504-1-jthoughton@google.com>
+ <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
+ <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com>
+ <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
+ <aIft7sUk_w8rV2DB@google.com> <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
+ <CALzav=eQWJ-97T7YPt2ikFJ+hPqUSqQ+U_spq8M4vMaQWfasWQ@mail.gmail.com> <aI05DvQlMWJXewUi@google.com>
+In-Reply-To: <aI05DvQlMWJXewUi@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Tue, 12 Aug 2025 12:21:15 -0700
+X-Gm-Features: Ac12FXzy8OiFs2n0sexVrOC6patBND53jwOL-JcXev94xDQT6ChYiHcU-0KraAc
+Message-ID: <CALzav=cy8SoVs1N7sCbtqv5b5smGFQi0JNwOdwrQkkv0wMrz8g@mail.gmail.com>
+Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+To: Sean Christopherson <seanjc@google.com>
+Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Fri, Aug 1, 2025 at 3:00=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Fri, Aug 01, 2025, David Matlack wrote:
+> > On Mon, Jul 28, 2025 at 2:49=E2=80=AFPM James Houghton <jthoughton@goog=
+le.com> wrote:
+> > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > > index a6a1fb42b2d1..e2bde6a5e346 100644
+> > > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > > @@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled=
+(struct kvm *kvm,
+> > > >  static void kvm_recover_nx_huge_pages(struct kvm *kvm,
+> > > >                                       const enum kvm_mmu_type mmu_t=
+ype)
+> > > >  {
+> > > > +#ifdef CONFIG_X86_64
+> > > > +       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
+> > > > +       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages=
+_lock;
+> > > > +#else
+> > > > +       const bool is_tdp_mmu =3D false;
+> > > > +       spinlock_t *tdp_mmu_pages_lock =3D NULL;
+> > > > +#endif
+> > > >         unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type=
+);
+> > > > -       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
+> > > >         struct list_head *nx_huge_pages;
+> > > >         struct kvm_mmu_page *sp;
+> > > >         LIST_HEAD(invalid_list);
+> > > > @@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struc=
+t kvm *kvm,
+> > > >         rcu_read_lock();
+> > > >
+> > > >         for ( ; to_zap; --to_zap) {
+> > > > -#ifdef CONFIG_X86_64
+> > > >                 if (is_tdp_mmu)
+> > > > -                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> > > > -#endif
+> > > > +                       spin_lock(tdp_mmu_pages_lock);
+> > > > +
+> > > >                 if (list_empty(nx_huge_pages)) {
+> > > > -#ifdef CONFIG_X86_64
+> > > >                         if (is_tdp_mmu)
+> > > > -                               spin_unlock(&kvm->arch.tdp_mmu_page=
+s_lock);
+> > > > -#endif
+> > > > +                               spin_unlock(tdp_mmu_pages_lock);
+> > > >                         break;
+> > > >                 }
+> > > >
+> > > > @@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct=
+ kvm *kvm,
+> > > >
+> > > >                 unaccount_nx_huge_page(kvm, sp);
+> > > >
+> > > > -#ifdef CONFIG_X86_64
+> > > >                 if (is_tdp_mmu)
+> > > > -                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> > > > -#endif
+> > > > +                       spin_unlock(tdp_mmu_pages_lock);
+> > > >
+> > > >                 /*
+> > > >                  * Do not attempt to recover any NX Huge Pages that=
+ are being
+> > > > --
+> > >
+> > > LGTM! Thanks Sean.
+> >
+> > Is the compiler not smart enough to optimize out kvm->arch.tdp_mmu_page=
+s_lock?
+>
+> Yes, the compiler will eliminate dead code at most optimization levels.  =
+But that
+> optimization phase happens after initial compilation, i.e. the compiler n=
+eeds to
+> generate the (probably intermediate?) code before it can trim away paths =
+that are
+> unreachable.
+>
+> > (To avoid needing the extra local variable?) I thought there was some o=
+ther
+> > KVM code that relied on similar optimizations but I would have to go di=
+g them
+> > up to remember.
+>
+> KVM, and the kernel, absolutely relies on dead code elimination.  KVM mos=
+t blatantly
+> uses the technique to avoid _defining_ stubs for code that is guarded by =
+a Kconfig,
+> e.g. all of these functions are defined in sev.c (guarded by CONFIG_KVM_A=
+MD_SEV),
+> but callers are guarded only with sev_guest() or sev_es_guest(), not with=
+ explicit
+> #idefs.
+>
+> There are no build errors because the function calls aren't fully resolve=
+d until
+> link time (when svm.o is linked into kvm-amd.o).  But KVM still needs to =
+_declare_
+> the functions, otherwise the compiler would fail during its initial code =
+generation.
+>
+>   int pre_sev_run(struct vcpu_svm *svm, int cpu);
+>   void sev_init_vmcb(struct vcpu_svm *svm);
+>   void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
+>   int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port,=
+ int in);
+>   void sev_es_vcpu_reset(struct vcpu_svm *svm);
+>   void sev_es_recalc_msr_intercepts(struct kvm_vcpu *vcpu);
+>   void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
+>   void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es=
+_save_area *hostsa);
+>   void sev_es_unmap_ghcb(struct vcpu_svm *svm);
+>
+> Other notable "users" of dead code elimination are the BUILD_BUG_ON() fam=
+ily of
+> compile-time asserts.  So long as the condition can be resolved to a cons=
+tant
+> false value during compile time, the "call" to __compiletime_error() will=
+ be
+> elided and everyone is happy.
+>
+>   #ifdef __OPTIMIZE__
+>   /*
+>    * #ifdef __OPTIMIZE__ is only a good approximation; for instance "make
+>    * CFLAGS_foo.o=3D-Og" defines __OPTIMIZE__, does not elide the conditi=
+onal code
+>    * and can break compilation with wrong error message(s). Combine with
+>    * -U__OPTIMIZE__ when needed.
+>    */
+>   # define __compiletime_assert(condition, msg, prefix, suffix)         \
+>         do {                                                            \
+>                 /*                                                      \
+>                  * __noreturn is needed to give the compiler enough     \
+>                  * information to avoid certain possibly-uninitialized  \
+>                  * warnings (regardless of the build failing).          \
+>                  */                                                     \
+>                 __noreturn extern void prefix ## suffix(void)           \
+>                         __compiletime_error(msg);                       \
+>                 if (!(condition))                                       \
+>                         prefix ## suffix();                             \
+>         } while (0)
+>   #else
+>   # define __compiletime_assert(condition, msg, prefix, suffix) ((void)(c=
+ondition))
+>   #endif
+>
+> Note, static_assert() is different in that it's a true assertion that's r=
+esolved
+> early on during compilation.
+>
+>  * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+>  * scope, but requires the expression to be an integer constant
+>  * expression (i.e., it is not enough that __builtin_constant_p() is
+>  * true for expr).
+>
+>
+> From a previous thread related to asserts (https://lore.kernel.org/all/aF=
+GY0KVUksf1a6xB@google.com):
+>
+>  : The advantage of BUILD_BUG_ON() is that it works so long as the condit=
+ion is
+>  : compile-time constant, whereas static_assert() requires the condition =
+to an
+>  : integer constant expression.  E.g. BUILD_BUG_ON() can be used so long =
+as the
+>  : condition is eventually resolved to a constant, whereas static_assert(=
+) has
+>  : stricter requirements.
+>  :
+>  : E.g. the fls64() assert below is fully resolved at compile time, but i=
+sn't a
+>  : purely constant expression, i.e. that one *needs* to be BUILD_BUG_ON()=
+.
+>  :
+>  : --
+>  : arch/x86/kvm/svm/avic.c: In function =E2=80=98avic_init_backing_page=
+=E2=80=99:
+>  : arch/x86/kvm/svm/avic.c:293:45: error: expression in static assertion =
+is not constant
+>  :   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=3D
+>  : include/linux/build_bug.h:78:56: note: in definition of macro =E2=80=
+=98__static_assert=E2=80=99
+>  :    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, m=
+sg)
+>  :       |                                                        ^~~~
+>  : arch/x86/kvm/svm/avic.c:293:9: note: in expansion of macro =E2=80=98st=
+atic_assert=E2=80=99
+>  :   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=3D
+>  :       |         ^~~~~~~~~~~~~
+>  : make[5]: *** [scripts/Makefile.build:203: arch/x86/kvm/svm/avic.o] Err=
+or 1
+>  : --
+>  :
+>  : The downside of BUILD_BUG_ON() is that it can't be used at global scop=
+e, i.e.
+>  : needs to be called from a function.
+>  :
+>  : As a result, when adding an assertion in a function, using BUILD_BUG_O=
+N() is
+>  : slightly preferred, because it's less likely to break in the future.  =
+E.g. if
+>  : X2AVIC_MAX_PHYSICAL_ID were changed to something that is a compile-tim=
+e constant,
+>  : but for whatever reason isn't a pure integer constant.
 
-On 7/30/25 15:11, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/25/25 11:29 AM, Babu Moger wrote:
->> Configure mbm_event mode on AMD platforms. On AMD platforms, it is
->> recommended to use the mbm_event mode, if supported, to prevent the
->> hardware from resetting counters between reads. This can result in
->> misleading values or display "Unavailable" if no counter is assigned
->> to the event.
->>
->> The mbm_event mode, referred to as ABMC (Assignable Bandwidth Monitoring
->> Counters) on AMD, is enabled by default when supported by the system.
-> 
-> needs imperative
-> 
-
-Sure.
-
->>
->> Update ABMC across all logical processors within the resctrl domain to
->> ensure proper functionality.
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
-> 
-> Patch looks good.
-> 
--- 
-Thanks
-Babu Moger
-
+Thank you so much for the detailed explanation!
 
