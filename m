@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-764870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A0DBB2281E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE00B22836
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF35B3B1C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77331BC027D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A4027E070;
-	Tue, 12 Aug 2025 13:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C7D27934A;
+	Tue, 12 Aug 2025 13:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="ooVfE/o/"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvQucUr/"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EE926AA91;
-	Tue, 12 Aug 2025 13:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1848924DD13;
+	Tue, 12 Aug 2025 13:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004243; cv=none; b=TyRDW8kTQ2T43rexsXNH/nQOjDWQhINILT+WBCe0vwSkaxWL+B7vbBmAL9NpljfUkuHTRjHc9DbgIUqrtsNIyEWw7oITpfkrwbffdBpc54CTBbNP0+lwn4wzAdlmsWieEhsHordvUO0NHxsQ1OlcRjuvoXIUKPW8TWWXwhuoZZs=
+	t=1755004267; cv=none; b=V0y/K0oIgqWr57+VRR2XDoE3e/tOweMX7Tigv9jkdc9sTrt/+VK8tEoYGDeKZAlm6gBnY0g5V8QoQQEzSmgJ8jDlNE1SLOkVnzO31lDb0ZeloQvGlsakvaMQdt0C0r37SVKt7nzB4QDKjGb8uDQpgxHKd7rkWO7izRFsjm0dxjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004243; c=relaxed/simple;
-	bh=ZcHfVtKBh57sGSj1qHQY7LIWAmWunnqamgpCc/QHtCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SqGzP9e1jWZKqavkdOTqOS36feEnCcnLXfTqVj8eL57+tHaCz9eankFkubkMozUGdHjX8+JXDaCTxzU5REb0lcaUMFvia6galFMFaj88xUAONx5PrwifxQac4NxEtVsl9ESD80/N4dHZoizvjmZ+EB5cwjmQXtyo7HDRHwCeu9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=ooVfE/o/; arc=none smtp.client-ip=212.227.126.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1755004267; c=relaxed/simple;
+	bh=jpvCdzmHJ5xj/A+c0w4r3SpkYQVGzyL63JnKHddt0Sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nzI53UXuIYM3VYz67h6+YMrVYc4mXl54THubrPQAV7INvC0JZjsSIHW5FpTcH5ChoBbIX2Wdv2CoXcLA0GQ/8OxYmQpf8Rlb9yqr0vM+DeYVA94PIZYHjOxm+vd4FllGKAeilIOKADyYZflIaMMe6ZYjQD0tMAjeGNp7+KHz1eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KvQucUr/; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso5942183a91.3;
+        Tue, 12 Aug 2025 06:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1755004231; x=1755609031;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=ZcHfVtKBh57sGSj1qHQY7LIWAmWunnqamgpCc/QHtCo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ooVfE/o/lZpYdYDmKG8ZHOysXk0DOA+2ZgIQ+FkSkxFpnaOzzgae69EaqJfJZsMR
-	 6GWdO8NKVwousorTYyW9eL2XC8oUVioURXsfuGY8Sd0XY9pAogRivlkIuIrVjv0R/
-	 WNDMsT59uytoPDvVajEjTPeSNF7SVU62sQenkIWjpHBp12SPLDAGKB8g6LZMmLCCQ
-	 GEJ/S9aM6IoZlUYSeq3Q0zE/4FXHxfJFU0ee999DWU3Ky853rq++NDIfYkGJ17kyF
-	 R5QzjRN/Y82jlK/kdSN8tHhvmQxyanAda53zPbIdRzxHdIDqA/vb9YT4J3XlAFLCQ
-	 KSAWcGTSyvvah/cngw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.107] ([91.64.235.193]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MlsWZ-1uKhQi1pn1-00cOH9; Tue, 12 Aug 2025 15:10:31 +0200
-Message-ID: <14a07b04-dd79-4418-b935-fddeb7249aec@oldschoolsolutions.biz>
-Date: Tue, 12 Aug 2025 15:10:30 +0200
+        d=gmail.com; s=20230601; t=1755004265; x=1755609065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UxIla1HyYnxUj2HsSHmkDkdZP2KuTjodsMUdmS63XNQ=;
+        b=KvQucUr/LWDOEcpAPMCwMye2Q6eh47ke7x3uhsnl7EAYP240NqkW3zMQSGZDENc1y/
+         j94X4AkOEmRfCHexag9fF/nt3aI6Xq6WQgZqkNb3TCM8+qxBIGw+r0vruj7fzEmLz7w0
+         eEA4oLqG4DCH/sBtTTt6HmJ29vZvn+iaXW8QnqMIoS9uKru/N4iEL/28XP/xxoFHKv71
+         X6bQNNDGGlWarmiMy/VyXlvZVmq/9q8M+e22/6TA34QKwdrWqvAO/tatl70ul8cVTG8x
+         g1ta52hzO0KK01SG05V3nhhSAD3vADsWxd9ATolKG1iSVPdqsDPbZiMwcp3i4EK8OlJ/
+         LaHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755004265; x=1755609065;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UxIla1HyYnxUj2HsSHmkDkdZP2KuTjodsMUdmS63XNQ=;
+        b=J6hhzWFt1kQLoVEM3ANIyGDfIR1AmWGW5N8MDNh7ZYa5vDlQvyO4MqUiyTZpGjdYbC
+         T9mkkkz+b59MIhPXhwMCuf9JxJCBN9vUXjnR+J5oIuJ+oIoVnDqMbFBn1j9U6COrd9r9
+         +vLEfMs+OhtC4B3YD3roWbhXXtIN1kjO5C6SJnn8F8hP/eUMRbdLA0NdHPSRjzQoeSWG
+         51e4GA0dQChoiEwLnUC5UixMjl+DOvg8PR2RjBZthHIqlt+5e/O57KugsuNhKP+OstGF
+         xCdJFwde09EQ5oZo9FPHr+8aJfKJXzR8nn6uqmgFv7V16jKtl2qF0/4DpDz/VOq1eS/u
+         d0dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSiFZcxXgahw2TieO/LZTGtKuAWg0ONQmrmHRTbKbTgQCQ4qghWLgkZo8ZcSXF/AVGUWZ4+XUW@vger.kernel.org, AJvYcCX2EkRP4yZVjqMR405GaEfc2TBraoLgdOk5kbP+tEdqnuplpXuVs9VzF8PnurgKSoh1ujgYiqR8kMZrVSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqY70tgT99NUs3FZISvulcuxPemFRzQSQiyRSfoPw8LiwLo+Km
+	S6mFxki21V+q2vLZ81VbPNX/AcOoUg6zV+V7A2PAFuTYkrC6Dy09k3Qz3tD9ZVx1
+X-Gm-Gg: ASbGncuizgp9qk0ZANCdC1vDifZV9CYJf4/NMpqO2lVkCyzvrzvIHc1A6x1zPMNFHTO
+	A/dAYqmEbGWdvN+URMgTfjvBah/iD6Za8+XUAqDVmaiHdojgXyTHA8JOoJ4rB01rGy6ATP11zz5
+	EYak7Ei8kwx7MGDV7Clt2naP5F6WungN7ynbap38Gddl9XCvvhNic2DeA+xy8J1mrREmHZmp+He
+	zFjGrp+tIAVepgBs+rvGcW9gq4XYL+fR2LrcD+2y+GHnfoVd5Ke5iIxFKVpKgwsOysgjlx3ULD4
+	KF6nr/3Poq+xrA1+ZrE19ZfkuLFPblnBL9Ga+sgKBF5kzQb0U75xgvjDEPAHi1z2iBtXVpZlTx/
+	0YUYla8KHI+FsZJJc/x834qgLx/vyMddQRHro97RoWBlSp9exg8MdSSs=
+X-Google-Smtp-Source: AGHT+IGZho0iQ/1nCW0ztaSgx/gJSrFI5h/wMr3ThsyqUo5BdfFFaDonVE6u2aePsc3KlxqPpcFzPw==
+X-Received: by 2002:a17:90a:e294:b0:321:2407:3cef with SMTP id 98e67ed59e1d1-321c0b60856mr3040069a91.32.1755004265102;
+        Tue, 12 Aug 2025 06:11:05 -0700 (PDT)
+Received: from TIANYXU-M-J00K.cisco.com ([2001:420:588c:1300:513:ebe8:5ec0:cab3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4285a15c26sm13545797a12.16.2025.08.12.06.11.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 12 Aug 2025 06:11:04 -0700 (PDT)
+From: Tianyu Xu <xtydtc@gmail.com>
+X-Google-Original-From: Tianyu Xu <tianyxu@cisco.com>
+To: anthony.l.nguyen@intel.com
+Cc: przemyslaw.kitszel@intel.com,
+	kuba@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tianyu Xu <tianyxu@cisco.com>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+	Joe Damato <joe@dama.to>
+Subject: [PATCH v2] igb: Fix NULL pointer dereference in ethtool loopback test
+Date: Tue, 12 Aug 2025 21:10:56 +0800
+Message-Id: <20250812131056.93963-1-tianyxu@cisco.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/3] arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY
- device tree
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250810-tb16-dt-v10-0-0bfed6d75c69@oldschoolsolutions.biz>
- <20250810-tb16-dt-v10-3-0bfed6d75c69@oldschoolsolutions.biz>
- <a6b063a2-2b99-4de4-a3b3-876f6b778bc6@kernel.org>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <a6b063a2-2b99-4de4-a3b3-876f6b778bc6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:kD2kBgaRNvvsdwEgMYxDcuye+iNl7L4/0VcUp2nn6LpVEui8OnX
- pzXKpISwPgmOY+Sp5K9RAnoasrbV8IiZAQBGkNDCLlO6D2oMrIe70p1VbcU+rdst4VRCxPP
- T37aP3kfoTCBGFKW1iH1K0AiIu7DXXfCBz0lnUZo5EtjDQKeHUEcGGgI7yqf/Awy3EC2rfV
- gVwJOTbn/WS0lpZhU49NA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bJp7w6u/eak=;eulfY51ELcm64B9SLgiVFsNlzu6
- tdfKInwwj0adyAojuwwUx7Knv/Q7iScONWFdsTkpClheFmZ5qyb0acMfgV/RABOdqVvFQeyi3
- SnSrXm6i1XHW9PBKuIjXBECQgFR5LZQvZfczqO8OqI4oOTrj8QmOethkBHAbMWjvxoWBTXGPY
- OzrpIiw7Q8h9mNbCLeX0A7TwG8bm86pbQGjrAK6HKTv0Bsxb1nnSvSrDn/Gc8OwMfQ5eIvUpi
- ZGyatHudmPHfm8FkRmAxADCpmDYyZJ/omW7UaPRwIwkovsdFuZGvBFC3KagTt2LV7qTvs1aJ9
- mkB3yQw6ZdHebXg2cvYQXxM89g5KWfUrsxGDpgZmPHTMNz8xKLzFSY7rhX+HWz6AM8Jc+Kqxz
- zHsqvUTLIR8WUQf8p6WypHsi5lqLN7avPr3113piYeIwLDr8voo4cdBZB12WWQxIGI2Rrv5ah
- 5HVxlS/p6wbE+l/YPiMY+BJJdl9D51z1s9xtcvEDVbCeCJEl9UWHDMyBWhArRYnZokwFUWLG1
- tXXVT64u99rZaCpnnO23/OiLSc3bU/DZfng7kZ9/bZ2xp1r+2fu+kSCYl0WQnU+GRlC7ZbVRg
- WQoyn/NDNZzh6trzf2W5orwHXF56jrMZkj9ZZHPNF1whNPNTgdn056Iq1rt9OdhUym9k227fA
- WpjF4XAdm7yu2nty+KdrJ2+5bMzf7tAOK0B1AMjf8vQiSHmXq0WQe9JU2JunDyWTgIpmj2GjZ
- /6vpbtj2Xzdw98AhGB5jeqVdkcMOUrWbUq6KA6r7d0ZUVMwit1M3DtyLXbkd1bYA7lUW4rvhA
- Q3hCKDsFJCkFL2sgsvXY2rqlfcGJPdAeGb8oVs4IFMh0GU20CocqaCPlkkdHrhipdkptNUd8D
- Jeg7TY9IqdkXDCGx/R+SbxlhXB0Il/HtF5to610gZEZzX9SF0vT2bXgEgXre0RYAMJKEils8a
- 7NcouTHKW9sNgR1gPjZvucDvua3h0PdSy6ZSE0Pfdr5ra3H9DdKGFYFNq8oQTFPkXnSYYvVqt
- RLieVPviA8CxW6poEdRfeUiqz1XoKQZbLZn8l4m92x3OaY2DEUWmtztueH96JgZGeQ0Qig5Bi
- ofHLnMmD/S/6nMbA15w5CP7OxE4pvMg1vyqKcu8HjbYKahpfLG4JBYFREGr3NXOEW+FE/0ZUt
- /GeWOPldUgGT86s99+QDekUrFiAh7PK3hrpvblj2ZpeefSrj6VCDLCok6g3a/4Y6a/zRPmUEW
- YMZHjYlps20tK1lmMFK2Jn2senLTQ7LsckBo9lQfuwvqMnUcEnmaWjJAuPsSMWMpFr/cF2ukq
- enE1KQOLgkXhHlnA2w5ZlRNc7+LGKF34Mud7vX5XTioqivWkcYNIVw4guz82BQ65jmrraqs9i
- GTrPynGRVhE0nplQ6MnUAYGMM8fhn9RZIgLW1L4jGxqGGjUH81zJ/Lfx6UecJp9U9nd4bh0QQ
- o/iPxz7ouyq9xBnZwpPfjchmoaTuWerj6bLRT19WwORnBFm1a7q53kY07ZimpYGVw51XEpEO5
- 5bBaBmwyGDflgcoS9DoGVFDoLasMHN5WhA7H8GwLh4BtC0Rl2LTivUyQBrIprIpgeU0x21iOH
- lBZ7qoFAdI4x/ObsExGetbHsBgZs4UpCWezXvGODqJC9VjaNkpwWJ9vIT9rrYhpAYaHDvLp26
- qHbLxCCDwyIG2YqI78ZEkk
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+The igb driver currently causes a NULL pointer dereference when executing
+the ethtool loopback test. This occurs because there is no associated
+q_vector for the test ring when it is set up, as interrupts are typically
+not added to the test rings.
 
-On 12.08.25 14:20, Krzysztof Kozlowski wrote:
-> Incorrect SoB chain. Please look at submitting patches which describe
-> exactly that case.
+Since commit 5ef44b3cb43b removed the napi_id assignment in
+__xdp_rxq_info_reg(), there is no longer a need to pass a napi_id to it.
+Therefore, simply use 0 as the last parameter.
 
-fixed in v11. Thank you for the hint.
+Fixes: 2c6196013f84 ("igb: Add AF_XDP zero-copy Rx support")
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Reviewed-by: Joe Damato <joe@dama.to>
+Signed-off-by: Tianyu Xu <tianyxu@cisco.com>
+---
+Thanks to Aleksandr and Joe for your feedback. I have added the Fixes tag
+and formatted the lines to 75 characters based on your comments.
 
-with best regards
+ drivers/net/ethernet/intel/igb/igb_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Jens
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index a9a7a94ae..453deb6d1 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -4453,8 +4453,7 @@ int igb_setup_rx_resources(struct igb_ring *rx_ring)
+ 	if (xdp_rxq_info_is_reg(&rx_ring->xdp_rxq))
+ 		xdp_rxq_info_unreg(&rx_ring->xdp_rxq);
+ 	res = xdp_rxq_info_reg(&rx_ring->xdp_rxq, rx_ring->netdev,
+-			       rx_ring->queue_index,
+-			       rx_ring->q_vector->napi.napi_id);
++			       rx_ring->queue_index, 0);
+ 	if (res < 0) {
+ 		dev_err(dev, "Failed to register xdp_rxq index %u\n",
+ 			rx_ring->queue_index);
+-- 
+2.39.5 (Apple Git-154)
 
 
