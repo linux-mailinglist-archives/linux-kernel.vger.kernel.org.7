@@ -1,184 +1,306 @@
-Return-Path: <linux-kernel+bounces-764087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41AAB21DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:04:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D601AB21DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC3C5025CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC0850094F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281B92DEA90;
-	Tue, 12 Aug 2025 06:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4BD1BD035;
+	Tue, 12 Aug 2025 06:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Oe6iIyCx"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9wbg9y1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E193229BDBF;
-	Tue, 12 Aug 2025 06:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C62627602D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754978609; cv=none; b=eQgngeTaucNzSYkfnzEp56A+vzLfdh+mJjxvl30wc+bu2oBP4eVVItRdypF1kD10x8EeO1sY/ZTh0ZW34GomkEQnulREVOsr6U/COmaU8x5umC5CrxRTI6a1OGinzeNdkh/XOSuM09eD6kSOk7BgRVUESVC5n+6T4RHQUAnARTQ=
+	t=1754978651; cv=none; b=GPeuVzjOXLwXrFsnnGWQxZVHMWiMt+ka371It/f55xQqFQskCGoG6oPgwKTAe91YrSwb9RiMdsM1/bF6US9g96uB7WgSp3u8jJRqLfOBwmmOPjzqES5SSGuH6HJsJxOS1Ww+g/+3WqZ4XiQjTlVFMoJPiQw1dSBk9kmW6wgSC4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754978609; c=relaxed/simple;
-	bh=BOm7AEsgiMrW87suG/yLBgr60mr9/oXp7XxqveuKoPo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8PplqVAY06IWU6KgtzIhf60QsgicwGmFVH7thT1uoYeAXdWEYandRwxDbNPi2S5qVLODTDxEENtt1Hqn7XDVzP6gxrOziniDfGhkqIqG6TQ2APvLaAejkxAxf6OVy0PbfMMqP8whgcuvObBFtK+dw7cs+sLdkhT5o1CNky0OFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Oe6iIyCx; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BM1jLK021525;
-	Mon, 11 Aug 2025 23:03:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=HZSBUEJQgQ67pMhpOI+NcoleH
-	XpTN1lryOy8bcl66uk=; b=Oe6iIyCxYAswin6m1cJihtFJJNy6XDRsq4tCvEjoa
-	YcIoAHIpefZZ6dHoc22EJipU4BAc54Z4AfG3lTzsZDuH3AiDV8Dg/9zA6TRtRttk
-	f/c/KGPikrM2Oo9w/N9WCkZ46RxlACxN5mhQNALQXJ+6fGNDk+8VH/xs+vSZj5fD
-	sYevLGu9zmyxsqtEiHZnWsgwJ0656ZXbsbIRDljzfLwei6F6ZuVxzeUplG3QXaDr
-	Roh7TAudVYY8YIbl19dMqoExFZH1bI+fUQT2j/xAAd1rqYl8rGWxV0XQxZZc/N1V
-	at20mW6NVfzU/+Qc+ZZY0HCybUfFmHJxGRFeeZZzFkfxA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48frxm8vxj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 23:03:00 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 11 Aug 2025 23:03:03 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 11 Aug 2025 23:03:03 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id 0BA963F703F;
-	Mon, 11 Aug 2025 23:02:51 -0700 (PDT)
-Date: Tue, 12 Aug 2025 11:32:48 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Vishal Badole <Vishal.Badole@amd.com>
-CC: <Shyam-sundar.S-k@amd.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 net-next] amd-xgbe: Configure and retrieve 'tx-usecs'
- for Tx coalescing
-Message-ID: <aJrZCPV+QFVXoHVn@test-OptiPlex-Tower-Plus-7010>
-References: <20250812045035.3376179-1-Vishal.Badole@amd.com>
+	s=arc-20240116; t=1754978651; c=relaxed/simple;
+	bh=0MGr25W73MzQVxLJ+yptcKKN6s8TSWhomvLsuueWA2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XFYhwKUjO5yHK56bblv6iMjmSSzIiHXkffrjzyy/5blrDUWxF0TiCqYmAQ0j3ZPBB2U1aQFT9iH9GZ2W//Byd3PPCnwOf8QGtxsATZwqaSKjG2JYwx8Bu81+LfKDklhk1Rby8+8Et5oe0M3CsnYOj83MsPUGhsJSpkAbQPOctlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9wbg9y1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754978647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3GbJAGTGX+Pn846IPOGuR02+e3qo8B7q3qgt3TnQIEI=;
+	b=h9wbg9y11a8EG5/hXZIkAJmxMMEBY5A8MrnWvSBnbsyAGFOjHfSInYMhkcmmwZgR0ZSi7E
+	5Fum91NN5s8MQRnOOFWXSvqJrkjOjfw0v5ijoITgJ3quhtsY9Aiz9LBKKqG0ckzBgyJ+SX
+	9mPOehByF4KtGQmVKUXYK0ujGoYmyGk=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-jlaWtD22PoucMQmxYEViGA-1; Tue, 12 Aug 2025 02:04:06 -0400
+X-MC-Unique: jlaWtD22PoucMQmxYEViGA-1
+X-Mimecast-MFC-AGG-ID: jlaWtD22PoucMQmxYEViGA_1754978646
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3217aae3f90so4679735a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 23:04:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754978645; x=1755583445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3GbJAGTGX+Pn846IPOGuR02+e3qo8B7q3qgt3TnQIEI=;
+        b=FUtBPcjpgz8GO5v+i5BqDKhuxFSNvZECCqiAb4xI9sH+b7QZmBxoagcpHNqGWBGNtS
+         CFDgBon4Z0DyOoMij/6mIKgiSNIapykuCE+1h+/hCeZKpIUbYz4hV7N/pEXVkK4A18UU
+         bZo1S63QEkn0axovv5ZdcgJqe+0CVrT7YBJFQgkk7LMTQPV9NkxP0oJ37mOCj2o04a1T
+         DTY3+SkDCRHF3UHgJy54MOzPiWhGRjHja+78+ffeSGChztlFOrtxJrEEONVj4VTNCXjV
+         C+xJV57ADlV84n2hzLBoHNflV02BmUBvoTeyG46EaC2uUoeJErlQLPwuYoWxUGJijC4y
+         dxnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV41aDb/NaclQ8a6TnCtKk8R2Iai+lpsKMjnTHpgtMJY3zXYCFS/DwOSEqvMFxmwTJdQSGvY1lYuAt4WlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxri+GbNZdw+Zw92Ztc4ps+UmOhv8oC375Rzx2HpETvuOKI9iM7
+	g6NDWoaPEnoV0jIQWd7OkcPzIIhfXOpb1E3bZubu5NAiFG/c9o6T31+/klV5gxOFATkazmoGyan
+	JLoRywJkuBaLt7XFqzGoXQDpzbDfwl1n3PY7mS59qSUqd+3igwjDNS9tVL4P+JwnUEaEXCLEYkA
+	gga+6tQxy+iT/UJDg+L7Dz0+rVbOCZEMVmGlpVT5ae
+X-Gm-Gg: ASbGnct/RNfbIpN5cj2l6WTs9+c7/V1KqOMgUphV5kVBxUUjcVN0aYRgCcSOtAtTWD8
+	6cOVPV8RgfG3atfCksj+kbqpSkuKt9MMgoHEnhX0IVZZpTXiuAetSo2PxtDWzNCyrWmil8xPXP1
+	PLTiaMYgXXIZ7Ejb45oW41
+X-Received: by 2002:a17:90b:4c86:b0:31e:ccfb:22fc with SMTP id 98e67ed59e1d1-321c0b8c1e3mr3115973a91.35.1754978645304;
+        Mon, 11 Aug 2025 23:04:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5r3xMOoc2+ckyY0tIA3SjtXWOoeKKaBtAZLMli/968b/Nb1ALOR8gdeYFvv5jF7vFEy7P0fr/8MCXWLcOdRI=
+X-Received: by 2002:a17:90b:4c86:b0:31e:ccfb:22fc with SMTP id
+ 98e67ed59e1d1-321c0b8c1e3mr3115934a91.35.1754978644837; Mon, 11 Aug 2025
+ 23:04:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250812045035.3376179-1-Vishal.Badole@amd.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDA1NCBTYWx0ZWRfX0pAskhp2mLF4 J94xMtLPcV0Giq1b9fY63fS4NNE8XopqdEo2qvxFUUHX2KiD6ScQP0fpe3r5SgvVsyt/kKy5EmN rBwhhc9b2t5uB/KXWvUGSW+aAf2dro4NyRyJ/0fN9iiPoNQn/k1C6T0uXIe4YBCHpTHVc+BGnZN
- OpDlHg07He2MJNJ9wvPxtsUZANUn3FrCMVryPJHr5wCMXLDX2VsiqW9r59kajVHDpHhUj5dfnXT oH7WP4YwSQIUoISTKwepVj/XYvKZ7ldUHdLTSHzl9QPng9CtxdlLo3vH1fA9A6gY5tdxgklrb/7 YgAF/7Y6d73NZw8SxzQLLEcugmDPsuzzpUa8MEBuD2WrDoJTi+Kfx8jEixhfLM8L1JD+zqULlW5
- RTXPwTHEGccUMJbxtcEIFaXalX6x5pH+LXQFC/YEGVtiRH7hrntpxLYGlPxCHE5uT+Jks6zx
-X-Authority-Analysis: v=2.4 cv=eKQTjGp1 c=1 sm=1 tr=0 ts=689ad914 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=zd2uoN0lAAAA:8 a=M5GUcnROAAAA:8 a=Wfs76xZ8JWsxpH59smMA:9 a=CjuIK1q_8ugA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: KIxthRt-1FEStnkqpHuDMypIniL63jcf
-X-Proofpoint-GUID: KIxthRt-1FEStnkqpHuDMypIniL63jcf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-2-eperezma@redhat.com>
+ <CACGkMEsw2taXgW11na2CFK6W03c=x=wMn3iwNZPypgPkeSU06Q@mail.gmail.com>
+ <CACGkMEvinV7Zd+xddnxcerFbw_c+RZypkeD5HaN8=g6+peZvMQ@mail.gmail.com>
+ <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
+ <CACGkMEvbxZsmPPHgfst89FCbZamBPLt8V=K-eepa4s3muFuM4A@mail.gmail.com>
+ <CAJaqyWerLAL44w-mnwaohZh+duzHqPS3BO-sJDoEHZDN5RLY1g@mail.gmail.com>
+ <CACGkMEvsvFzKUF6w0T4juUFcDbm67YoFFwNDw82K6kogB-1yRA@mail.gmail.com>
+ <CAJaqyWeteUcvzTbcf2ShatX8QLCVCEgs-dgy19ir=W3LJE3y1A@mail.gmail.com>
+ <CACGkMEtir49z9P=82SO9a4JML9D71UAaGSm38R2Ubx3Sg6ZufQ@mail.gmail.com>
+ <CAJaqyWfZn36gGbT=MjpdcXi3Sje1WRB6nycXJwP_BPugSzHRyQ@mail.gmail.com> <CACGkMEs+ZytUO8bEqYEG+Y6s85dqTZciWdU1NpxpEiMvRPC+ww@mail.gmail.com>
+In-Reply-To: <CACGkMEs+ZytUO8bEqYEG+Y6s85dqTZciWdU1NpxpEiMvRPC+ww@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Tue, 12 Aug 2025 08:03:28 +0200
+X-Gm-Features: Ac12FXwTdZgCrYs-TVFEHUQqO9qoI_jJFh9b51aC4ui85plPbJ-rXOsSZjGgjLg
+Message-ID: <CAJaqyWc-vGUF_T6_okai40SK_xMYzUe7WHR60W2q6jW0BAjMVw@mail.gmail.com>
+Subject: Re: [RFC 1/6] vduse: add v1 API definition
+To: Jason Wang <jasowang@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-08-12 at 10:20:35, Vishal Badole (Vishal.Badole@amd.com) wrote:
-> Ethtool has advanced with additional configurable options, but the
-> current driver does not support tx-usecs configuration.
-> 
-> Add support to configure and retrieve 'tx-usecs' using ethtool, which
-> specifies the wait time before servicing an interrupt for Tx coalescing.
-> 
-> Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
-> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> 
-> ---
-> v1 -> v2:
->     * Replace netdev_err() with extack interface for user error reporting.
-> ---
->  drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
->  drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
->  2 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> index 12395428ffe1..19cb1e2b7d92 100644
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-> @@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device *netdev,
->  	ec->rx_coalesce_usecs = pdata->rx_usecs;
->  	ec->rx_max_coalesced_frames = pdata->rx_frames;
->  
-> +	ec->tx_coalesce_usecs = pdata->tx_usecs;
->  	ec->tx_max_coalesced_frames = pdata->tx_frames;
->  
->  	return 0;
-> @@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->  	struct xgbe_prv_data *pdata = netdev_priv(netdev);
->  	struct xgbe_hw_if *hw_if = &pdata->hw_if;
->  	unsigned int rx_frames, rx_riwt, rx_usecs;
-> -	unsigned int tx_frames;
-> +	unsigned int tx_frames, tx_usecs;
->  
->  	rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
->  	rx_usecs = ec->rx_coalesce_usecs;
-> @@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->  		return -EINVAL;
->  	}
->  
-> +	tx_usecs = ec->tx_coalesce_usecs;
->  	tx_frames = ec->tx_max_coalesced_frames;
->  
-> +	/* Check if both tx_usecs and tx_frames are set to 0 simultaneously */
-> +	if (!tx_usecs && !tx_frames) {
-> +		NL_SET_ERR_MSG_FMT_MOD(extack,
-> +				       "tx_usecs and tx_frames must not be 0 together");
-> +		return -EINVAL;
-> +	}
-> +
->  	/* Check the bounds of values for Tx */
-> +	if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
-> +		NL_SET_ERR_MSG_FMT_MOD(extack, "tx-usecs is limited to %d usec",
-> +				       XGMAC_MAX_COAL_TX_TICK);
-> +		return -EINVAL;
-> +	}
->  	if (tx_frames > pdata->tx_desc_count) {
->  		netdev_err(netdev, "tx-frames is limited to %d frames\n",
->  			   pdata->tx_desc_count);
-> @@ -499,6 +513,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
->  	pdata->rx_frames = rx_frames;
->  	hw_if->config_rx_coalesce(pdata);
->  
-> +	pdata->tx_usecs = tx_usecs;
->  	pdata->tx_frames = tx_frames;
->  	hw_if->config_tx_coalesce(pdata);
->  
-> @@ -830,7 +845,7 @@ static int xgbe_set_channels(struct net_device *netdev,
->  }
->  
->  static const struct ethtool_ops xgbe_ethtool_ops = {
-> -	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
-> +	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
->  				     ETHTOOL_COALESCE_MAX_FRAMES,
->  	.get_drvinfo = xgbe_get_drvinfo,
->  	.get_msglevel = xgbe_get_msglevel,
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
-> index 42fa4f84ff01..e330ae9ea685 100755
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe.h
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
-> @@ -272,6 +272,7 @@
->  /* Default coalescing parameters */
->  #define XGMAC_INIT_DMA_TX_USECS		1000
->  #define XGMAC_INIT_DMA_TX_FRAMES	25
-> +#define XGMAC_MAX_COAL_TX_TICK		100000
->  
->  #define XGMAC_MAX_DMA_RIWT		0xff
->  #define XGMAC_INIT_DMA_RX_USECS		30
-> -- 
-> 2.34.1
-> 
-Reviewed-by: Hariprasad Kelam <hkelam@marvell.com> 
+On Tue, Aug 12, 2025 at 4:55=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Mon, Aug 11, 2025 at 5:02=E2=80=AFPM Eugenio Perez Martin
+> <eperezma@redhat.com> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 4:58=E2=80=AFAM Jason Wang <jasowang@redhat.com=
+> wrote:
+> > >
+> > > On Sun, Aug 10, 2025 at 6:18=E2=80=AFPM Eugenio Perez Martin
+> > > <eperezma@redhat.com> wrote:
+> > > >
+> > > > On Fri, Aug 8, 2025 at 2:50=E2=80=AFAM Jason Wang <jasowang@redhat.=
+com> wrote:
+> > > > >
+> > > > > On Thu, Aug 7, 2025 at 6:56=E2=80=AFPM Eugenio Perez Martin <eper=
+ezma@redhat.com> wrote:
+> > > > > >
+> > > > > > On Tue, Jun 10, 2025 at 10:36=E2=80=AFAM Jason Wang <jasowang@r=
+edhat.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, Jun 9, 2025 at 2:11=E2=80=AFPM Eugenio Perez Martin <=
+eperezma@redhat.com> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Jun 9, 2025 at 3:50=E2=80=AFAM Jason Wang <jasowang=
+@redhat.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, Jun 9, 2025 at 9:41=E2=80=AFAM Jason Wang <jasowa=
+ng@redhat.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9r=
+ez <eperezma@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > This allows to define all functions checking the API =
+version set by the
+> > > > > > > > > > > userland device.
+> > > > > > > > > > >
+> > > > > > > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.co=
+m>
+> > > > > > > > > >
+> > > > > > > > > > It might be worth clarifying how it works.
+> > > > > > > > > >
+> > > > > > > > > > For example,
+> > > > > > > > > >
+> > > > > > > > > > 1) would VDUSE behave differently or if it's just some =
+new ioctls
+> > > > > > > >
+> > > > > > > > I'd like to test more in-depth, but a device can just bump =
+the version
+> > > > > > > > ID and then implement the replies to the vduse messages. No=
+ need to
+> > > > > > > > implement new ioctls. If the VDUSE device sets 0 in either =
+number of
+> > > > > > > > ASID or vq groups, the kernel assumes 1.
+> > > > > > >
+> > > > > > > Right, this is the way we use now and I think maybe we can do=
+cument
+> > > > > > > this somewhere.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > But you have a very good point here, I think it is wise to =
+evaluate
+> > > > > > > > the shortcut of these messages in the VDUSE kernel module. =
+If a VDUSE
+> > > > > > > > device only has one vq group and one ASID, it can always re=
+turn group
+> > > > > > > > 0 and asid 0 for everything, and fail every try to ser asid=
+ !=3D 0.
+> > > > > > >
+> > > > > > > Yes, and vhost-vDPA needs to guard against the misconfigurati=
+on.
+> > > > > > >
+> > > > > > > > This
+> > > > > > > > way, the update is transparent for the VDUSE device, and fu=
+ture
+> > > > > > > > devices do not need to implement the reply of these. What d=
+o you
+> > > > > > > > think?
+> > > > > > >
+> > > > > > > This should work.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > > > 2) If VDUSE behave differently, do we need a ioctl to s=
+et the API
+> > > > > > > > > > version for backward compatibility?
+> > > > > > > > >
+> > > > > > > > > Speak too fast, there's a VDUSE_SET_API_VERSION actually.
+> > > > > > > > >
+> > > > > > > > > I think we need to think if it complicates the migration =
+compatibility or not.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Do you mean migration as "increase the VDUSE version number=
+", not "VM
+> > > > > > > > live migration from vduse version 0 to vduse version 1", is=
+n't it? The
+> > > > > > > > second should not have any problem but I haven't tested it.
+> > > > > > >
+> > > > > > > I mean if we bump the version, we can't migrate from version =
+1 to
+> > > > > > > version 0. Or we can offload this to the management (do we ne=
+ed to
+> > > > > > > extend the vdpa tool for this)?
+> > > > > > >
+> > > > > >
+> > > > > > I just noticed I left this unreplied. But I still do not get wh=
+at
+> > > > > > migrate means here :).
+> > > > > >
+> > > > > > If migrate means to run current VDUSE devices on kernel with th=
+is
+> > > > > > series applied these devices don't set V1 API so they have one =
+vq
+> > > > > > group, and one asid. I'm actually testing this with my libfuse+=
+VDUSE
+> > > > > > modifications that don't use V1 at all. Adding this explanation=
+ to the
+> > > > > > patch as it is a very good point indeed.
+> > > > >
+> > > > > Right.
+> > > > >
+> > > > > >
+> > > > > > If it means to migrate a guest from using a V1 VDUSE device to =
+a V0
+> > > > > > device "it should work", as it is just a backend implementation
+> > > > > > detail.
+> > > > >
+> > > > > For example src is the VDUSE with multiqueue support (v1) but des=
+t
+> > > > > doesn't have this support (v0). I think the qemu should fail to l=
+aunch
+> > > > > in dest.
+> > > > >
+> > > > > > If we migrate from or to a vdpa device backed by hardware, for
+> > > > > > example, one of the devices does not even have the concept of V=
+DUSE
+> > > > > > API version.
+> > > > > >
+> > > > > > In the case of net, it does not work at the moment because the =
+only
+> > > > > > way to set features like mq are through the shadow CVQ.
+> > > > >
+> > > > > I think you mean qemu should fail, I'm not sure this is friendly =
+to libvirt.
+> > > > >
+> > > >
+> > > > No, I think QEMU should not transmit vdpa backend properties not
+> > > > visible to the guest, so we don't get an explosion of properties th=
+at
+> > > > are hard to get. Expanding on this, QEMU is not even able to know i=
+f
+> > > > it is talking with VDUSE, vdpa_sim, or a vdpa device backed by
+> > > > hardware. And I think we don't want QEMU to have this information. =
+So
+> > > > sending the VDUSE version implies removing a lot of useful
+> > > > abstractions.
+> > > >
+> > > > In the case of net, the destination QEMU should fail if it is not a=
+ble
+> > > > to restore the device state. At this moment this implies to have at
+> > > > least two ASID if the net device has CVQ, and that CVQ is in its ow=
+n
+> > > > ASID, but that may not be true in the future.
+> > > >
+> > > > But QEMU does not check if that is the case migrating between two
+> > > > vdpa_net_sim if one supports ASID but the other doesn't.
+> > >
+> > > Ok I think I must miss something. I need some context here. For
+> > > example, Is the shadow cvq option used by libvirt or not? (Or it has
+> > > been enabled by default if Qemu detect cvq has its own group?)
+> > >
+> > > If shadow cvq is neither used by libvirt nor automatically enabled, w=
+e
+> > > need to make it work for libvirt first.
+> > >
+> > > If it relies on libvirt to enable it explicitly, is libvirt expected
+> > > to detect the vDPA ability (I guess it is not what libvirt wants)?
+> > > If shadow cvq is enabled automatically, migrating from V2 to V1 is
+> > > fine but not the reverse.
+> > >
+> >
+> > QEMU uses shadow CVQ automatically if all the conditions (ASID, proper
+> > set of features, etc) are supported.
+> >
+>
+> Ok, so V1 implies non-migratable.  So I'm still confused about how to
+> deal with migration compatibility.
+>
+> For example, ping-pong migration between V1 and V2.
+>
+
+If the device does not have CVQ, everything works.
+
+If the device has CVQ, it is not possible at the moment. Everything
+breaks the same way as if the destination vhost_vdpa does not have the
+ASID capability. For example, if the destination device is an intel,
+pensando, or solidrun vdpa.
+
 
