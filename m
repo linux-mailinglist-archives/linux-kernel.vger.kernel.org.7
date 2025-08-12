@@ -1,77 +1,116 @@
-Return-Path: <linux-kernel+bounces-763965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2596B21C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D58B21C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059B71894145
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499B81902A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37822DEA90;
-	Tue, 12 Aug 2025 04:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="c+eLJlyb"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F99199223;
-	Tue, 12 Aug 2025 04:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3237217736;
+	Tue, 12 Aug 2025 04:35:57 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AC61FF7C5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754972911; cv=none; b=M4CjHkuc7XDoHSehF5tvnPjxqqCPSR/QSxMijC2j1pCaA+4GN/WYlrkVwS9UAChYKv1jaieldu5285BmFoNf7+EyqSHZW2a9Gl0gaMnFj7gMr48gtUoCuTtxgWVxeBmV0LwBdkD2KeORA1P/q5KGrrAE9ti5rcivwrhm1yZv360=
+	t=1754973357; cv=none; b=a3HkzLKgeEMv82Mo1ZsqhY/epJRx+t6tGhtvIAH4Dxkh5PhirDGut9BEszmrfFeLaju8z0iV3I7m7qOXbPReCb4+QRCQlGs6Az8zaeIIlQVzU3r97FmNurMz2ZYlDDjbUJ4h99nZDRsJPUNCZLR+p6qDN0fkgevA9qDYJADdLWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754972911; c=relaxed/simple;
-	bh=EVg1QPlryJI5RlQoLq7IKMrluLBr88OBOidARW0cTH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9JoZu6w+MU4ICKZvEqFjohqcKzcFl8/EMi+Hqd/gnCv/TkCHIm/sw3UqReBAiQCC6873CVHJrnF70yeJEZyi2XwVAuahXoLBmmv37SdRHqr2RCx5PLGsef/OVYiUX78rf0BZlWe/r3EgsacN6/ucZgRhg3X/ztlS3hwsewrHu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=c+eLJlyb; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JSElFSsA6IBpZJbElLm1tzo0NDz8BKGsF+KpN39TN64=; b=c+eLJlyb508Z/tnQVJUcXyoRkU
-	YxHTR9gNKj3yTrbbFtcgeYvZzvdBxoy+9SnWv1Kq9z4MXZx6AtHL8pR/FlYipiP2lfY/AFpkuiIfH
-	ysXQekjWDAetPP3pn/zJcfg01jVmDI0jtK1g5pg5uPeO8rtClqnx6D9h/nVVQK9rxdAyNqdWoex2j
-	EU+1cI4F8TQbt63hT/KDHh1WqWt7u8mQDLZTa4lhn+zoN7RqSi2WxUHLV/FsMNKUbeZTJ0ggzLlk3
-	8qPoXdef9xCdfTc+igSy/Mq5DT+aB4ppNgwXOYBTNXShRUV8f/+qel88Z10YqsWY5KfIjWleq+E6P
-	weLLC9Jg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulgcc-0000000A1Rx-1QSy;
-	Tue, 12 Aug 2025 04:28:26 +0000
-Date: Tue, 12 Aug 2025 05:28:26 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk,
-	yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
-Message-ID: <20250812042826.GU222315@ZenIV>
-References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
- <20250812033201.225425-1-rajeevm@hpe.com>
- <34624336-331d-4047-822f-8091098eeebc@kernel.org>
+	s=arc-20240116; t=1754973357; c=relaxed/simple;
+	bh=3RX/FsuzoD2yb8xKJwiO3S1whcb419rTpx5L0brj2Z4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UHGRGQ2P8QS51bReFuJ3cXoGI+DZGujHvLxHfXcVGFigstoBJB0iLRtce+tA4aENcbNS4LaJiU8roMHGae74iGAcXiaYsD5aF6U5jssQBEYLy0pTnp37rk8c4OForA/GioZ/6MHnpCKqIrxUaZXoAGCpj4uP2DJH1qKRLUyR2DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrABHTqZ7xJpou6gmAA--.728S2;
+	Tue, 12 Aug 2025 12:35:07 +0800 (CST)
+Received: from [192.168.43.195] (unknown [10.200.80.159])
+	by gateway (Coremail) with SMTP id _____wAXuix2xJpoRy1XAQ--.64379S2;
+	Tue, 12 Aug 2025 12:35:06 +0800 (CST)
+Message-ID: <cbd31e8c-4e73-42f6-bb16-ed44091a353c@hust.edu.cn>
+Date: Tue, 12 Aug 2025 12:35:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34624336-331d-4047-822f-8091098eeebc@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scripts/checktransupdate.py: add support for scanning
+ directory
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Haoyang LIU <tttturtleruss@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ hust-os-kernel-patches@googlegroups.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250810161730.6530-1-tttturtleruss@gmail.com>
+ <aJmZUJeKJ6hd_pmx@stanley.mountain>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <aJmZUJeKJ6hd_pmx@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:HwEQrABHTqZ7xJpou6gmAA--.728S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrykJr1kXw48tw17tFW3trb_yoWktrgE9r
+	y8tw1kW3yUWry7AFWkJwsYgrZ8Ww4UZFyqyrWrJanxCFn0va98CFs7Gr9Yvw4xtay5uF13
+	Ar9aqrs2v3ZI9jkaLaAFLSUrUUUU0b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbPkYjsxI4VW3JwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
+	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
+	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
+	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82
+	IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
+	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU3YFADUUUU
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On Tue, Aug 12, 2025 at 12:42:44PM +0900, Damien Le Moal wrote:
 
-> Since loff_t is "long long", so a signed type, I would keep this interface and
-> add a negative error check in the 2 call sites for get_size(). That is simpler.
+On 8/11/25 3:18 PM, Dan Carpenter wrote:
+> On Mon, Aug 11, 2025 at 12:17:30AM +0800, Haoyang LIU wrote:
+>>   
+>>   import os
+>> @@ -131,7 +144,7 @@ def check_per_file(file_path):
+>>       opath = get_origin_path(file_path)
+>>   
+>>       if not os.path.isfile(opath):
+>> -        logging.error("Cannot find the origin path for {file_path}")
+>> +        logging.error(f"Cannot find the origin path for {file_path}")
+> Send this as a separate patch with a Fixes tag.
+> Fixes: 63e96ce050e5 ("scripts: fix all issues reported by pylint")
+>
+> Ideally, pylint should be modified to complain about this or something...
+> I have a script for kernel patches which checks these kinds of mechanical
+> changes and someone could make a similar script which checks pylint
+> changes.  https://github.com/error27/rename_rev
 
-Umm...  First of all, what's the point of separate get_size() and loop_get_size()?
-Another thing to watch out for - replacing file needs to be careful, lest you
-replace the old file that has come to fail vfs_getattr() with new one that
-does the same thing ;-)
+Yes, this seems really wired. We have a project - Linux Kernel Patch 
+Statistic among Universities[1]. In one PR[2], Haoyang also found a 
+quote string issue.
+
+Interestingly, this PR is trying to fix issues raised by pylint.
+
+
+[1] https://github.com/hust-open-atom-club/linux-edu-rank
+
+[2] https://github.com/hust-open-atom-club/linux-edu-rank/pull/45
+
+
+>
+> regards,
+> dan carpenter
+>
+
 
