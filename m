@@ -1,124 +1,160 @@
-Return-Path: <linux-kernel+bounces-764933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B92B22913
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569ECB2291A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41901BC1619
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2151BC21E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93160288C96;
-	Tue, 12 Aug 2025 13:33:05 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7097A27C84E;
+	Tue, 12 Aug 2025 13:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSNgCxpW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38554283FDB;
-	Tue, 12 Aug 2025 13:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FD8261574;
+	Tue, 12 Aug 2025 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005585; cv=none; b=HbeWuz3HSJPGrTIsaTNAYrobfRWrsDX54r+hm3fg85USWT5ILBn/huwK4M+5AtlyrnPCe+YelbT0mAfVZc20/NZdNkKwaJtCSVpinBDUXcLuc388FPnaAnloFNVTq0PfQbNKX9e7fXHoYJ30goGwuoXzjUjNmpS1GEdJuqkyAdI=
+	t=1755005615; cv=none; b=JW6uQjlFkx0d2hJWHdinjetS7x9r7g6DV3bcL4HH5dVrfMfNUyXstmJFO18HdrorRCUCFlAv+o7TwomhXE7gvyyHtqXJf/68v99KMLLtnJVx3WtvsmBD6c9TkRJ+DNgSS6XsDgLQ8FO3gT9ZDlNMs7aO1fmozPizGE04QhtfFPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005585; c=relaxed/simple;
-	bh=azJu+fhlrpxcVL8tkf5V9HgKElWVE7T5uf5qkKB30WE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uz8Omgd7aecSbXZEGDY8EtxQf4nN0jywtGwU3PFkJFEM1qYEV66a96xYfrxR/zoSfzknL8ZVs3vfAw5ujV+xiILTk89fcZGcU4LQPenwaI6eheKNWk2RSwSK7tY6KvtMQge3/vr2iYeIi5nI3wZKFFr6+C40tnplhHt8yOPeadc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4febcc4c93dso4290172137.0;
-        Tue, 12 Aug 2025 06:33:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755005582; x=1755610382;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KxUnhAYsbqE1oebUrR3dSoY83+mPkLhSSJqVf05cClM=;
-        b=VwvQYtnjACJfH+KG1Q2yriULKM1rdi9jm7eO/FSeFG4Ofdux9C+qIN6Dc8ziCB91et
-         kCOHN4jpXCUiItJTyN5HLg8EIB/vW1r6SCGByJhRnjNApGADVkld/kjhZDLrabAh4DNa
-         Zy/TXUavOy0ooAjnRAwqsyIB1MdYEP+w88Um00oN7tmpXN66PiqpXCJPnEQeRiMMRBoz
-         2/28y7A4GhWdiNLsUv/wENkSKHUO7GDDUiG2e3NiSPI4dN5qDFoyjV+SIRIqp2VO5yCc
-         en4PL9KEelhC2/QlCd0WTNOCQ/hGt+sVqdlk61zjXIeytR5wTO4FlPiENBazLmhTmCLL
-         qV4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1plLCEOWUlLAghApKCZyMyvG8mao8j4nw748I53mlEGDn1pjriCoVZR+uW0Fj88WtQbWLc+Hm2RjXet0=@vger.kernel.org, AJvYcCV3Cao4opeRFguCnbGIX1u5t51cmg0fnjwazt+pDW1Y6IELXkR97redDnahdO596vAh37hXMI68nuExFw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvoFItrfJPnFwys8woEUgN7HOueicz6RSHgOwIOxjqVJiKelCL
-	3wPmZzRWkZJEN07q3B0cAXLZJZlWs3AGMXnyMDXSBfdIZS5ZbX9B7+NU65rRRb7W
-X-Gm-Gg: ASbGnctS3k//r909/kenuT07ExnS5E1K7S6CjPCa3bq2mBgARIRZzptdZz3co7/Hc2q
-	EGHL5/+EVToOgYFDCJ/3xZACmTiatRpbt1sOEPMTuEhj+2UJK4Ti1fpjWoMRxCyZxiOkxuvP+af
-	WmaRvPMrUtmCgVhof1sL1rgwfboMozuareYMVfp/eayL7mIHpaos9CKZMeQEb7QFVb/ox5vkzSq
-	bDkBgMoYRVNtLSTTl/gqSAOjLlumb0DrbIiUWGnZ1YKrt25aCrrmSTWb0e+3ldFvG/+uIiNpdAu
-	GjBRZoLCR4FdQO2F9mH/QBpAlQKe97aPUd9pDIM6EZxB1uFBNajvx/r6HR5Dy1ELUMnb7ktZLZZ
-	NFjNF246iVKm/Dssm2eJywXeEy3UtMm6cEZ37ngOZYP6pve/o4vi9kFRbNUt0
-X-Google-Smtp-Source: AGHT+IHpFaQBzKhpwKRUtPFSRqRnBV+bspWFoZtjFWHXiNOTw6TGKVXq3GyLo6y8YtkSg1r7GFBeNQ==
-X-Received: by 2002:a05:6102:834f:20b0:4e2:e5ec:fa09 with SMTP id ada2fe7eead31-50cc53677bdmr953888137.6.1755005581104;
-        Tue, 12 Aug 2025 06:33:01 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062b6519fdsm2266776137.10.2025.08.12.06.33.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 06:33:00 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-88e4fb65341so470969241.0;
-        Tue, 12 Aug 2025 06:33:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+06xI2nPzHK2Bq0iVzHaYJDpxpyZRkI3XRO/SaJ1/hRLSHblg9QaBD4/S+zJpTL4V3ArX55Qq/CjE9w==@vger.kernel.org, AJvYcCW/qm0BBItak5M901nuRrmKXHE9oSnAMDMiG2hy+epX265zVgIJQT9Cr2pgmAtI3KG9EmY4zJMZd+GaNGM=@vger.kernel.org
-X-Received: by 2002:a05:6102:621b:20b0:4fa:3f49:a3b4 with SMTP id
- ada2fe7eead31-50cc46c0294mr978170137.3.1755005579826; Tue, 12 Aug 2025
- 06:32:59 -0700 (PDT)
+	s=arc-20240116; t=1755005615; c=relaxed/simple;
+	bh=dS4y36QAOmFxGB3IF5rTASgVCuJo6srS84clRq8Bg1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aYUQEuO7WiG+lVsh/P+mwI3yFzaGp5A4kW/+ZuTxARvkS26TyE3Dc9R4E0tdLvo/NYMk5fN3/7GdYdl+5uk96A1Yb4SeDJ6gbqjQP9gDULBO5NyBd7R6hY1fWlvw2X9qUgBvWSQeMqgQzHiYvCfkYRD66TYfOCxrSrzsJ3XlrU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSNgCxpW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43663C4CEF0;
+	Tue, 12 Aug 2025 13:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755005615;
+	bh=dS4y36QAOmFxGB3IF5rTASgVCuJo6srS84clRq8Bg1g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GSNgCxpWNzfLytjJp0Y1T36No9Z0k5sKzohw1PUPPYsUuofA9cjlW0leejkQnvCs3
+	 BdEiaQZD7XTiCrNmCEE5SLwEHsFs4z0MKscQlPaf4heIYtknhFbCBxcWC7NjDOT3GI
+	 ZfD6sDdbGh/sCnsbt+xmkcVaPiR/xYKMCfz0biIBFGs0TlNgO9yTBtTT4tKIk/lBJe
+	 pGdzdV+I4jUcdZScGDQbFOBz7VaQ3qwtTKo+Kyde+ztrFPdtfcWYA1d0sj9Tt4nk/c
+	 4ezbmx32Z7zi1ERFImujsqEYQne0LpVocgrJNmc0MxYJAqal0tbMrDXzt4WKqI+OZ5
+	 K6NOgWC4ACf1Q==
+Message-ID: <45ec2fee-9b76-4f36-8476-000fbce775c6@kernel.org>
+Date: Tue, 12 Aug 2025 15:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Aug 2025 15:32:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSSVMK_ohHrna8DWy7KU697mnsVHhBrzNMzs1d07J=qQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy6WiMOmxcdzGmOeIuAczA6ZfHPkX867HQKbYVDkybGYZR6lDiSm0lMM0Y
-Message-ID: <CAMuHMdXSSVMK_ohHrna8DWy7KU697mnsVHhBrzNMzs1d07J=qQ@mail.gmail.com>
-Subject: Duplicate TI EDMA debugfs registration
-To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Vinod Koul <vkoul@kernel.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: dmaengine <dmaengine@vger.kernel.org>, 
-	"open list:TI ETHERNET SWITCH DRIVER (CPSW)" <linux-omap@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] MAINTAINERS: add and consolidate Black Sesame
+ Technologies (BST) ARM SoC support
+To: Albert Yang <yangzh0906@thundersoft.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, ulf.hansson@linaro.org,
+ catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ adrian.hunter@intel.com, robin.murphy@arm.com, ding.wang@bst.ai,
+ gordon.ge@bst.ai
+Cc: bst-upstream@bstai.top, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, soc@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250812123110.2090460-1-yangzh0906@thundersoft.com>
+ <20250812123110.2090460-9-yangzh0906@thundersoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250812123110.2090460-9-yangzh0906@thundersoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 12/08/2025 14:31, Albert Yang wrote:
+> Add and consolidate the MAINTAINERS entry for Black Sesame Technologies
 
-The TI EDMA driver registers two DMA engines:
-https://elixir.bootlin.com/linux/v6.16/source/drivers/dma/ti/edma.c#L2525
+I do not see consolidation in the patch, so this part and subject are
+incorrect. You only add.
 
-This was fine when support for the second engine was introduced[1],
-as it predated debugfs support for DMA engines[2].
-However, both instances contain a pointer to the same physical device,
-hence when the debugfs directory is created for the second engine at
-https://elixir.bootlin.com/linux/v6.16/source/drivers/dma/dmaengine.c#L71,
-it fails.
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-E.g. on BeagleBone Black:
 
-    debugfs: '49000000.dma' already exists in 'dmaengine'
+> ARM SoC support. This entry covers device tree bindings, drivers, and board
+> files for BST SoCs, including MMC, and platform support.
+> 
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
 
-Note that this is not really a new problem, but it was brought to my
-attention because the printed error message was changed in v6.17-rc1[3].
-Before, it printed:
+What does this SoB represent? Who wrote the code?
 
-    debugfs: Directory '49000000.dma' with parent 'dmaengine' already present!
+You added that SoB everywhere so I have worries it was automatic or
+manager's decision. That isn't what SoB is about.
 
-Thanks!
+And looking at actual M: entry, this should be rather publicly Acked.
+That's what Ack is. Not SoB.
 
-[1] 1be5336bc7ba050e ("dmaengine: edma: New device tree binding")
-[2] 26cf132de6f79c06 ("dmaengine: Create debug directories for DMA devices")
-[3] 59200f4526748158 ("new helper: simple_start_creating()")
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+> ---
+> Change for v3:
+> - No changes
+> 
+> Change for v2:
+> - No changes
+> ---
+>  MAINTAINERS | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index efb51ee92683..e3236384c28a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2441,6 +2441,16 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/arm/blaize.yaml
+>  F:	arch/arm64/boot/dts/blaize/
+>  
+> +ARM/BST SOC SUPPORT
+> +M:	Ge Gordon <gordon.ge@bst.ai>
+Best regards,
+Krzysztof
 
