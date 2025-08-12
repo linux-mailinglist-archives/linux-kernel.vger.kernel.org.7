@@ -1,216 +1,244 @@
-Return-Path: <linux-kernel+bounces-765396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1878EB23223
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:14:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6DB23265
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FFA91668E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D71A2495B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37882ECE9F;
-	Tue, 12 Aug 2025 18:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B01EF38C;
+	Tue, 12 Aug 2025 18:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTHVWcvt"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EBtlOOjj"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2B42D46B3;
-	Tue, 12 Aug 2025 18:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF63B305E08;
+	Tue, 12 Aug 2025 18:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022174; cv=none; b=KBIjbJMx2VhNTwjjz5Zxojj5PUGGcOILpRg8EeABYRLfSPkWyVxCrmrT8+aOAgPyaZQPU1HM1k9fAZGz6420NbUGtLQpSr9et7K0WD42SdKu0JtAgoBdafAgC4EKbVM+/ueXs6l8shjPopLMn0evtvH3Omv0Q13ofo1iGmEH7J4=
+	t=1755022293; cv=none; b=GP1itCRFbUROK63L4FFdfZJi+UMp5C011iunxUEpTylsdL4PM4kWJXPCPyxtXRdQv2ziQY+3h3grGBJzBg1JoBQLJnfpJh4U/LGWGCrtQzxDys07SkHJoPvh3goPTpByW9+++OT/cyFtjgyGrNtg/ohbsT0npwatlTsjh7l24z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022174; c=relaxed/simple;
-	bh=70cgqr8HffMA+vqKtde654+uKtYtNAc3JgtQnYP35Mw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKfWx5TtMPcKnYexoSRSD4lJsnmES5U0XChIgG93zbLxsjGVS8C6hzcrrjTytM60T8AlsDMDjPzGz1Jy7j25kCnUwtxsP55fAiuxrKMST+cPOjLqnjUrwj65O6zMEokL6aeGUYDI8DWvz710dm3y/yAXMhaZ8oseBnbRNZpHcuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTHVWcvt; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55b93104888so7372926e87.1;
-        Tue, 12 Aug 2025 11:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755022171; x=1755626971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZDUkMKu9atmajMTxQr8Zy4WtzGPeYmeD3V264EGn5E=;
-        b=kTHVWcvtf/8zhaxWKsTtt2k6mKBbW3d1KKm2roz/x7niszZHJjHhfzbdSNsHPYZzY0
-         8jdWI4RBKm6vYUt4I+wIZ+UpcJ2zjU/51OkZ6RNAHwv5nr382IHO3eahJ8dGI7U7qlj4
-         8BNAU313/4eqEvgO5pmOs8s8DIX1XGbn/vDFV7FOrCKgOWS2UtfnPxCQFsET/J3CV++0
-         tckNk+u1Lal34/NT5FQp8/4OoI4UUoEjge8VtaNYgBYK5l7OkxJgnYpXCEcLtpKPL8Md
-         17ODUpWnnSrkWzQPLxydcjxnRu3JVKd3rAGpj8n81WntweacMALZ4PVUzY0QQsInQK1j
-         iNAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755022171; x=1755626971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ZDUkMKu9atmajMTxQr8Zy4WtzGPeYmeD3V264EGn5E=;
-        b=tJdf35W677vE95hokrjWHBGeDxZKEU14x1xJ/M+RK8XEmhnqWo5GYkm8X5FEIMshI8
-         G5wiuh2QnBzi/WutBy9BzVKz9+FiZQyoC3dD6VgTrx/Mpxd020snncxkC582SKttodw+
-         8pM1CYIa9gCOwoH7LS0PUp6UwboEqRgIRqtfGY+tObyPFHbFaCZeddlhheRdKxoTqzFM
-         v2W9RW82RVIqcL6K94njUxo9wNTugpV/BrxG0r5ald8MKYjEmXNzixE0UVoT6DtaPudO
-         mtcVXQRzs91DZjLLh5rbgNAe371gvajv5J5HO2pankKoaC6GNDdpvSfiEsxBgGchQnty
-         GEOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdLHXMNdrk/ayCu+/GbrKZzc29y/of6h6lx9tcD9yhMiBR3TZySGKyjP5IH+tKGh5JXvnds7/pVPPrVmKLbw==@vger.kernel.org, AJvYcCVLDe2uYhdDIiWUT1IBDvmtJl/I2izkcL23uLZe3rzY4Wc7UB48ET+paIOoQOogr++Nsfwd51yZRZWF3vzx@vger.kernel.org, AJvYcCWpUYUN9BO13G7cyQ/1vz7/z/f+Hpk1ohHT5l8R70jSNDU46u70lJM1AZcKS2NuPO+pbSn5BlvuGQdy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjQL3fksZFKAdml0wJM2Q5lQJAyibeeArXJkz9wwnpPvPDGZge
-	Xv9ELYu3Q406qW7wctM+/qAEbzQ98dFda5vu5sTObzYPbyjVQVoxcr48
-X-Gm-Gg: ASbGnctSDWnoqdN/pu6oZ+id1Fzh0yh8qr8Jax6d5e9Ke8KMFWmDXI4RnKt3rH2iW0p
-	Zc2RDGjGmExm8UFB/SEZTJ1CwELCqaXBVNmwAqTqz+CFzYj1ai36+4UMqPYdTSLA4I30A88KR/B
-	NSz4NQq3sNczu2d7wgvFXVNcOZV6IIIbCu5895PoUq7VjuZGhhyJpvC6VHDyTk25u/UG6PnCoWv
-	VCyNvI73CmYNAhFssxwiA9wAhBZzfbd6mh/MTB92YZhSArRvWnF0GB1W42Ul7HKg4js7FIjED2g
-	79gWnDR9dq5BkUzVIbmVosYNBoP84Dn2685QnTBO1d+y1BV6kMlrf//Mv6W3Mg7p
-X-Google-Smtp-Source: AGHT+IEEXGoeStCQXxDKTFTywpHq4TMpC9VS4tHSeegQS3BoIg5LO4J7Q33M2SPYDxo1P69r+f8Ryg==
-X-Received: by 2002:a05:6512:3b2b:b0:55b:9647:8e64 with SMTP id 2adb3069b0e04-55ce03b94abmr69831e87.36.1755022170530;
-        Tue, 12 Aug 2025 11:09:30 -0700 (PDT)
-Received: from pc636 ([2001:9b1:d5a0:a500::800])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88cae595sm4928492e87.155.2025.08.12.11.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 11:09:29 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 12 Aug 2025 20:09:27 +0200
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>, SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Rik van Riel <riel@surriel.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2] mm: remove redundant __GFP_NOWARN
-Message-ID: <aJuDV7OzUZZ4g5lL@pc636>
-References: <20250812135225.274316-1-rongqianfeng@vivo.com>
- <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
+	s=arc-20240116; t=1755022293; c=relaxed/simple;
+	bh=vY/psp6pRM7f5gUdmAuJdPrf6i+r2OHtDbxkIHicgkE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Apx38sbNEd/pKUS0mmEbGSaeUFPZYoQjBjxeVfEWIsP4HgYBUramIkxJcz/6vYh7CXjSOXtgfWl+vaTTSZmUCWq2MUCEY98ZBohl5PfZIShuFsNu3IaLYZXZNYAsslQgpU/95351fvsChQW7K8KYifScH1ZiwQjtFTwrkngU8to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EBtlOOjj; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57CIAhtT1896346;
+	Tue, 12 Aug 2025 13:10:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755022243;
+	bh=DTRGSr/sFqz08xTFK9XBf9uPAWALzcXmf8DmSzCh0us=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=EBtlOOjj5xK3wwwMUOSHbhUYClQTKWCZlZlNuSgsm74hVSgN+8Qh0tM1Wx+mcmiE2
+	 Qr7esoVUrjGZ22kSvHng8LlxowAAtE6h06JA3wfMoxui/8e3CvvKwV9+QYGzMdxV/Q
+	 CYvOR1aR78/xQBLTVbetN7CLtUYbRT6bzmCh7mtQ=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57CIAhPi3655268
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 12 Aug 2025 13:10:43 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 12
+ Aug 2025 13:10:42 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 12 Aug 2025 13:10:42 -0500
+Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57CIAZNH1066109;
+	Tue, 12 Aug 2025 13:10:36 -0500
+Message-ID: <02920114-b86b-47ad-945d-1905b9117518@ti.com>
+Date: Tue, 12 Aug 2025 23:40:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] drm/tidss: Fix sampling edge configuration
+From: Swamil Jain <s-jain1@ti.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, devarsh <devarsht@ti.com>,
+        "Jyri Sarha" <jyri.sarha@iki.fi>,
+        Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Sam
+ Ravnborg <sam@ravnborg.org>,
+        Benoit Parrot <bparrot@ti.com>, Lee Jones
+	<lee@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+CC: <thomas.petazzoni@bootlin.com>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen
+	<tomi.valkeinen@ti.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <stable@vger.kernel.org>
+References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+ <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
+ <71ef3203-e11d-4244-8d2d-8e47e8ba6140@ti.com>
+ <f15779ad-788a-4dc6-b5a6-4187b9a9c986@ti.com>
+ <e9df67f0-8fce-4fbf-8fff-c499c4a2efaf@bootlin.com>
+ <86cf7d99-1295-42ab-acda-88a8212ec4d4@ti.com>
+Content-Language: en-US
+In-Reply-To: <86cf7d99-1295-42ab-acda-88a8212ec4d4@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Aug 12, 2025 at 05:46:47PM +0100, Lorenzo Stoakes wrote:
-> On Tue, Aug 12, 2025 at 09:52:25PM +0800, Qianfeng Rong wrote:
-> > Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
-> > GFP_NOWAIT implicitly include __GFP_NOWARN.
-> >
-> > Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
-> > `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
-> > redundant flags across subsystems.
-> >
-> > No functional changes.
-> >
-> > Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> 
-> LGTM, I wonder if there are other such redundancies in the kernel?
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> 
-> > ---
-> > v1->v2:
-> > - Added a modification to remove redundant __GFP_NOWARN in
-> >   mm/damon/ops-common.c
-> > ---
-> >  mm/damon/ops-common.c | 2 +-
-> >  mm/filemap.c          | 2 +-
-> >  mm/mmu_gather.c       | 4 ++--
-> >  mm/rmap.c             | 2 +-
-> >  mm/vmalloc.c          | 2 +-
-> >  5 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
-> > index 99321ff5cb92..b43595730f08 100644
-> > --- a/mm/damon/ops-common.c
-> > +++ b/mm/damon/ops-common.c
-> > @@ -303,7 +303,7 @@ static unsigned int __damon_migrate_folio_list(
-> >  		 * instead of migrated.
-> >  		 */
-> >  		.gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
-> > -			__GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
-> > +			__GFP_NOMEMALLOC | GFP_NOWAIT,
-> >  		.nid = target_nid,
-> >  	};
-> >
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 4e5c9544fee4..c21e98657e0b 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -1961,7 +1961,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
-> >  			gfp &= ~__GFP_FS;
-> >  		if (fgp_flags & FGP_NOWAIT) {
-> >  			gfp &= ~GFP_KERNEL;
-> > -			gfp |= GFP_NOWAIT | __GFP_NOWARN;
-> > +			gfp |= GFP_NOWAIT;
-> >  		}
-> >  		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
-> >  			fgp_flags |= FGP_LOCK;
-> > diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-> > index b49cc6385f1f..374aa6f021c6 100644
-> > --- a/mm/mmu_gather.c
-> > +++ b/mm/mmu_gather.c
-> > @@ -32,7 +32,7 @@ static bool tlb_next_batch(struct mmu_gather *tlb)
-> >  	if (tlb->batch_count == MAX_GATHER_BATCH_COUNT)
-> >  		return false;
-> >
-> > -	batch = (void *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
-> > +	batch = (void *)__get_free_page(GFP_NOWAIT);
-> >  	if (!batch)
-> >  		return false;
-> >
-> > @@ -364,7 +364,7 @@ void tlb_remove_table(struct mmu_gather *tlb, void *table)
-> >  	struct mmu_table_batch **batch = &tlb->batch;
-> >
-> >  	if (*batch == NULL) {
-> > -		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
-> > +		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT);
-> >  		if (*batch == NULL) {
-> >  			tlb_table_invalidate(tlb);
-> >  			tlb_remove_table_one(table);
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 568198e9efc2..7baa7385e1ce 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -285,7 +285,7 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
-> >  	list_for_each_entry_reverse(pavc, &src->anon_vma_chain, same_vma) {
-> >  		struct anon_vma *anon_vma;
-> >
-> > -		avc = anon_vma_chain_alloc(GFP_NOWAIT | __GFP_NOWARN);
-> > +		avc = anon_vma_chain_alloc(GFP_NOWAIT);
-> >  		if (unlikely(!avc)) {
-> >  			unlock_anon_vma_root(root);
-> >  			root = NULL;
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 6dbcdceecae1..90c3de1a0417 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -5177,7 +5177,7 @@ static void vmap_init_nodes(void)
-> >  	int n = clamp_t(unsigned int, num_possible_cpus(), 1, 128);
-> >
-> >  	if (n > 1) {
-> > -		vn = kmalloc_array(n, sizeof(*vn), GFP_NOWAIT | __GFP_NOWARN);
-> > +		vn = kmalloc_array(n, sizeof(*vn), GFP_NOWAIT);
-> >  		if (vn) {
-> >  			/* Node partition is 16 pages. */
-> >  			vmap_zone_size = (1 << 4) * PAGE_SIZE;
-> > --
-> > 2.34.1
-> >
-Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 
---
-Uladzislau Rezki
+
+On 8/12/25 23:32, Swamil Jain wrote:
+> 
+> 
+> On 8/11/25 15:26, Louis Chauvet wrote:
+>>
+>>
+>> Le 08/08/2025 à 18:26, Swamil Jain a écrit :
+>>>
+>>>
+>>> On 8/8/25 19:16, devarsh wrote:
+>>>> Hi Louis,
+>>>>
+>>>> Thanks for the patch.
+>>>>
+>>>> On 30/07/25 22:32, Louis Chauvet wrote:
+>>>>> As stated in the AM62x Technical Reference Manual (SPRUIV7B), the data
+>>>>> sampling edge needs to be configured in two distinct registers: one 
+>>>>> in the
+>>>>> TIDSS IP and another in the memory-mapped control register modules.
+>>>>
+>>>> I don't think AM62x is thee only one which requires this and on the
+>>>> contrary not all SoCs require this extra setting. We had been 
+>>>> waiting on
+>>>> confirmations from hardware team and very recently they gave a list of
+>>>> SoCs which require this, as per that I think we need to limit this to
+>>>> AM62x and AM62A per current supported SoCs.
+>>>>
+>>>> Swamil,
+>>>> Please confirm on this and share if any additional details required 
+>>>> here.
+>>>>
+>>>
+>>> Yeah Devarsh, as you mentioned, this is valid for AM62X, AM62A and
+>>> AM62P. We would have upstreamed this feature, but there are some
+>>> corrections in Technical Reference Manual for these SoCs regarding
+>>> programming CTRL_MMR_DPI_CLK_CTRL register fields, we are in loop with
+>>> H/W team, waiting for their official confirmation regarding this issue.
+>>>
+>>> Thanks Louis for working on this patch, but we should wait for H/W
+>>> team's confirmation.
+>>
+>> Hello all,
+>>
+>> Thanks for the feedback. I was not aware of this current work.
+>> Do you plan to send the fix yourself? Should I wait your HW team 
+>> feedback and send a v2?
+>>
+> Hi Louis, H/W team confirmed that, CTRL_MMR_DPI0_CLK_CTRL.bit[8] should 
+> be programmed same as DSS_VP1_POL_FREQ.bit[14](IPC) and 
+> CTRL_MMR_DPI0_CLK_CTRL.bit[9] should be programmed same as 
+> DSS_VP1_POL_FREQ.bit[16](RF). Please continue with you patches.
+> 
+Please go ahead and send v2.
+We are working with the documentation team to get the Technical 
+Reference Manual updated in parallel.
+
+Regards,
+Swamil.
+
+>> I also have a very similar patch ready for u-boot (depending on the 
+>> same DT modifications), do you plan to fix u-boot too?
+>>
+> Please fix u-boot also.
+> 
+> Thanks and regards,
+> Swamil.
+> 
+>> Thanks,
+>> Louis Chauvet
+>>
+>>
+>>> Regards,
+>>> Swamil.
+>>>
+>>>> Regards
+>>>> Devarsh
+>>>>
+>>>>    Since
+>>>>> the latter is not within the same address range, a phandle to a syscon
+>>>>> device is used to access the regmap.
+>>>>>
+>>>>> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone 
+>>>>> platform Display SubSystem")
+>>>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>>>>
+>>>>> ---
+>>>>>
+>>>>> Cc: stable@vger.kernel.org
+>>>>> ---
+>>>>>    drivers/gpu/drm/tidss/tidss_dispc.c | 14 ++++++++++++++
+>>>>>    1 file changed, 14 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c 
+>>>>> b/drivers/gpu/drm/tidss/tidss_dispc.c
+>>>>> index 
+>>>>> c0277fa36425ee1f966dccecf2b69a2d01794899..65ca7629a2e75437023bf58f8a1bddc24db5e3da 100644
+>>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+>>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+>>>>> @@ -498,6 +498,7 @@ struct dispc_device {
+>>>>>        const struct dispc_features *feat;
+>>>>>        struct clk *fclk;
+>>>>> +    struct regmap *clk_ctrl;
+>>>>>        bool is_enabled;
+>>>>> @@ -1267,6 +1268,11 @@ void dispc_vp_enable(struct dispc_device 
+>>>>> *dispc, u32 hw_videoport,
+>>>>>                   FLD_VAL(mode->vdisplay - 1, 27, 16));
+>>>>>        VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1, 0, 0);
+>>>>> +
+>>>>> +    if (dispc->clk_ctrl) {
+>>>>> +        regmap_update_bits(dispc->clk_ctrl, 0, 0x100, ipc ? 0x100 
+>>>>> : 0x000);
+>>>>> +        regmap_update_bits(dispc->clk_ctrl, 0, 0x200, rf ? 0x200 : 
+>>>>> 0x000);
+>>>>> +    }
+>>>>>    }
+>>>>>    void dispc_vp_disable(struct dispc_device *dispc, u32 hw_videoport)
+>>>>> @@ -3012,6 +3018,14 @@ int dispc_init(struct tidss_device *tidss)
+>>>>>        dispc_init_errata(dispc);
+>>>>> +    dispc->clk_ctrl = 
+>>>>> syscon_regmap_lookup_by_phandle_optional(tidss->dev->of_node,
+>>>>> +                                   "ti,clk-ctrl");
+>>>>> +    if (IS_ERR(dispc->clk_ctrl)) {
+>>>>> +        r = dev_err_probe(dispc->dev, PTR_ERR(dispc->clk_ctrl),
+>>>>> +                  "DISPC: syscon_regmap_lookup_by_phandle 
+>>>>> failed.\n");
+>>>>> +        return r;
+>>>>> +    }
+>>>>> +
+>>>>>        dispc->fourccs = devm_kcalloc(dev, 
+>>>>> ARRAY_SIZE(dispc_color_formats),
+>>>>>                          sizeof(*dispc->fourccs), GFP_KERNEL);
+>>>>>        if (!dispc->fourccs)
+>>>>>
+>>>>
+>>
+> 
 
