@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-764386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5E0B22262
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:09:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55330B2225D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0AA18837D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB453AAB12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A252E7F0B;
-	Tue, 12 Aug 2025 09:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290A92E7197;
+	Tue, 12 Aug 2025 09:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Jl5Y9VlQ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js6kE89d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4602E7629
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8154F2D9EE8;
+	Tue, 12 Aug 2025 09:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754989454; cv=none; b=tsUgOW/iUfF431GzGtARftJvTwNyc/tyCpJtInmwzFBXkBDvDT9lu4JBBOUWGxYglxUStLtdav8reE5aqy4MMOlBqDpRNQwVdORTo2srnG01P8fzmc7slZvRAdE4yLLtfsB+cfwdVSKFMb6CHYZ4zIaWmTvu1Hkk5MDQz06wDSI=
+	t=1754989431; cv=none; b=txOu1n9CIVNXhioPEspQKzYfLT24of1MNtDYCza2UqJv0dwytV9qJ9z3bGIigqJTBYC55VPCv+Hk7aKQln9i7kk2fn0LmKlv5Kk+yd1RKnF93L+/vVbq9vPnM1rp2JPXyiMWjtkPUUkIMkhPVR+FGE2v+z4F80gK+wzoINR1v4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754989454; c=relaxed/simple;
-	bh=jX+YEQB0b2jg/94uudyOzj3RkscIhZDeVVogCJzZ67M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UrLdkxRXWyZ3aR7vCIaJlEY9mpUMMXrmCBgoe3/sPPsV0cS/NKeJ9jhJm4vcJlV3vy1ISML6r3B3My7vnbgwypMVrmk1awJub7N5eXhMZ3eNIxwld+DmqKS2oDcw0bmAFzmXEn7yD4rcisLBHNFYUn6zOnsd/TGgotbNBV7ASs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Jl5Y9VlQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-456127fa3d6so7959705e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1754989451; x=1755594251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkDi9sQ4u1Zsf5AcaPzYnSO2sPwb0elGC7q2l8b77oI=;
-        b=Jl5Y9VlQtRQgQ0wZapz6JmbwaoLFP6lFy1uOBPSW6zPTVaSiKkYXXB5/Yhgdk1f51I
-         aGHyOg6b4cD8a3Kr7Ltqg58lvN+v4yVURDZMvVqtbPkIaw3tKOPS79iH014g3A5A0JkP
-         Wxlpf89JlXrZlcWb8ktgo63426JPiVwEdADeP2uBM7vGnck3b1cZCsZme+0fdyfH0amo
-         4TJtqmOuYApTj/a32MhsDZ6q9cKshyt/wnYvQlLGX42XnybAOXYgbsRvjsQPwNYum9TN
-         OsFDUVTpnM5jppqVIzV4necufmbZruyzAhpGOmYdU+A3roIz1SWpvAEgdYX+XbURfzjB
-         HqCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754989451; x=1755594251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DkDi9sQ4u1Zsf5AcaPzYnSO2sPwb0elGC7q2l8b77oI=;
-        b=xU3jfqm+ko2N9w40lsQPvW4xXeaeHCD/EYKfMPDTkzWzhjpHxFKxgH3LAIIlyzhZkc
-         U5OKAjM0R0KcWGRxUiFfAjBvvi87qijdue2nwS6cXoZ2c/TVhIatZLqqP2h1J2TY+j/0
-         e82/H7p+8varoM3u0kxCP+xH4H6rmQA9MW5xmgrHLKY/YsImOqlSjBGhcVmrttos/6z5
-         fd5S1/E7ZZ0TOkK/UtN9SndsH/Eo1Wrb0XGWHDYP84LBvpwoq6i2Lwo4r312KULntlrP
-         Rek1foZlL0oDcY1ZBGKG9aSdW6y7cdrBXqi9jAle7mtw86NyeaW9se12siaUhs5JFSuq
-         XJTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUzNrbDF02hqROP++L1YxF6cJ6zCLCFEg9dn7pmGLz56IZfM/3iqTLdBoxcIqpa9OLGtw5fx004LGjdrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9zpMtbhPuWuOB34Etks6LP0iQd+C9TnrNEyUrr2XV7R8uWNAB
-	IGjfVDqzxXI/3KeuIIyCI99Q9LZzipZ5aa+U84OvOEq0LvlCvurXMeeXFc1/HQF3iXQ=
-X-Gm-Gg: ASbGncuF2PQoCE4Xus/OsMFvvFsuZtYjKe6Oeh2FWjSsHJQhvhxbtouWK1gF3z115qI
-	ZbQORzGBEIVebipE/UNfCYD460HBCah/F01RWetjf5Ft/+JLhPEvT55Ir2QYGmHmE9AJrcpVhGm
-	XrVXLnfq8QQ7oq0CtAeoMhcjARNCunXLNDsr05SCrgfw4WN/ZihVC05DOUV7Dfv5dBH5JEI6G82
-	Wyk5E8q4QAr2Hq0PjO9em3muZrenR9myDuwHlmiS/VILuTb2RM0UP3z+2M7XZuditomIzd+2ZEl
-	G3qNXMDtpjnretrQ/GndVcrcy/7FDr8oxP9VvRrE35dV/1hry6U4G+pI59FfUW3JccJbjVyqLbz
-	DFjzQvaIDTV+Gtz9HzPO5ReB3BN2dWw==
-X-Google-Smtp-Source: AGHT+IFBefRRbVz8mjWqcsAPH9QQgYekCVsZTS4QORs3XTzsM/mOl+JX5+dSUj2YaHIFPPZ1EW6gKQ==
-X-Received: by 2002:a05:600c:608c:b0:458:a753:f3a1 with SMTP id 5b1f17b1804b1-45a1404e5b0mr2724695e9.3.1754989450650;
-        Tue, 12 Aug 2025 02:04:10 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:8113:2b11:8f42:672f])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a053a9019sm104340625e9.21.2025.08.12.02.04.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:04:10 -0700 (PDT)
-From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-To: bpf@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
-	Pu Lehui <pulehui@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] riscv, bpf: use lw when reading int cpu in bpf_get_smp_processor_id
-Date: Tue, 12 Aug 2025 11:02:56 +0200
-Message-ID: <20250812090256.757273-4-rkrcmar@ventanamicro.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
-References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+	s=arc-20240116; t=1754989431; c=relaxed/simple;
+	bh=pEhHGHVMUuHh5GhlTrTlvajaC+W67kdilWL3yeGGv3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G69Y7EnAJrDRp64JzbzyExbaK57ph2SlEDiBAQ67CyEziJuG/CNp47HO5qnvtG+WFZtJHDX2NQMHNb1MVXxf8lHS7kkC6RiaDHfQG+0nEUKFUYZ2lGMtGrEniAKflADNFY8isWr4/WqSuB/HhnR3jYXmja7wyK2rDHTPN/FeII4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js6kE89d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D217C4CEF0;
+	Tue, 12 Aug 2025 09:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754989431;
+	bh=pEhHGHVMUuHh5GhlTrTlvajaC+W67kdilWL3yeGGv3g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=js6kE89dm9D3Z8FU1/2TKhxDTlZ+cWE+Jw84+k4vfTdgFEsb+S27so8A8bGT3YSRN
+	 dU21OUCa3Vf1Ds/zuER/DpxNKqekK7K+UG18E261kexqQHLOkDCK+/IcNRsH0ueAAZ
+	 OMQq102O1X3vSRy9VC32QxBNVC7FwC+Wb08Bt6SMXkp/BjRpQ2hhcjOBXALXtQ9bI5
+	 GnJQe8O9MoqsV5BBdwrmLv9twdoTTm78iTLINwoM2XAB8hmhpiiHryV8XfRSW4eGiF
+	 wbjBUge28NrBbd8MEx1An0MOUnzf2sXJmXUnja51sZPj/KTbd3lFZnnGuUvAL4pma1
+	 9WIqBi90TVUKw==
+Message-ID: <758fb1ce-bf7e-4dd8-aa24-3f89d9be5652@kernel.org>
+Date: Tue, 12 Aug 2025 11:03:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt: bindings: fsl,vf610-ftm-pwm: Add compatible
+ for s32g2 and s32g3
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, ukleinek@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, Frank.Li@nxp.com
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ghennadi.Procopciuc@nxp.com, s32@nxp.com
+References: <20250811223044.3087090-1-daniel.lezcano@linaro.org>
+ <20250811223044.3087090-2-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811223044.3087090-2-daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-emit_ld is wrong, because thread_info.cpu is 32-bit, not xlen-bit wide.
-The struct currently has a hole after cpu, so little endian accesses
-seemed fine.
+On 12/08/2025 00:30, Daniel Lezcano wrote:
+> The S32G2 and S32G3 have a FlexTimer (FTM) available which is the same
+> as the one found on the Vybrid Family and the i.MX8.
+> 
+> Add the compatibles in the bindings
+I already asked in previous patches - prefix is always dt-bindings.
 
-Fixes: 2ddec2c80b44 ("riscv, bpf: inline bpf_get_smp_processor_id()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
----
- arch/riscv/net/bpf_jit_comp64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-index 6e1554d89681..9883a55d61b5 100644
---- a/arch/riscv/net/bpf_jit_comp64.c
-+++ b/arch/riscv/net/bpf_jit_comp64.c
-@@ -1763,7 +1763,7 @@ int bpf_jit_emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
- 		 */
- 		if (insn->src_reg == 0 && insn->imm == BPF_FUNC_get_smp_processor_id) {
- 			/* Load current CPU number in R0 */
--			emit_ld(bpf_to_rv_reg(BPF_REG_0, ctx), offsetof(struct thread_info, cpu),
-+			emit_lw(bpf_to_rv_reg(BPF_REG_0, ctx), offsetof(struct thread_info, cpu),
- 				RV_REG_TP, ctx);
- 			break;
- 		}
--- 
-2.50.0
 
+Best regards,
+Krzysztof
 
