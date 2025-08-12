@@ -1,183 +1,171 @@
-Return-Path: <linux-kernel+bounces-764204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C16BB21FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631DEB21FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE8E504CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48738502615
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71F2DEA62;
-	Tue, 12 Aug 2025 07:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA062E1751;
+	Tue, 12 Aug 2025 07:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bMqRojIL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sotapeli.fi header.i=@sotapeli.fi header.b="NXV/aewe"
+Received: from se.sotapeli.fi (se.sotapeli.fi [206.168.212.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D3346B5;
-	Tue, 12 Aug 2025 07:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D592DF3D1;
+	Tue, 12 Aug 2025 07:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.168.212.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984967; cv=none; b=MlPSzpsZHeOlSe6HlzGVA0srhY+jAzmu7Lhk5jVOvh5jANMgbU6oMP/0B5WOC2JJ+puinMabApucRLmKYH3jaLMb3vhgWxBLgjGznQg+tqwZ7xHl0xY5eA72tkB5LP33GlXjnuePXF0R8lobFHiO7BGCj/8arC9BliOoldTB/90=
+	t=1754985295; cv=none; b=C36Y3QIs5U85jewDxsv8muY8A7V0Llk3wqkEkPV92c//YQRzbifKiw+wvWwDvDydNWIhBrRl039aBzvjkYt/uY7hiuDlN/RBZhsDJ8IbadmLMV2VUpP74T+hh3ou4QBntsmTlx7hnnm3oOawT4BshfFZEAwioUi8zOpR7fqMuE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984967; c=relaxed/simple;
-	bh=7U+4gn9pS8I+rtj2LNkrjT4KMQyuRjN6Ze9TE7TFzZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=OnH7UA77mXoqgCTHn1VUUKwECwprrRNeJ34fsNp9+gDpRv8BCJcuc1w6+voM5zlszA4x9gfqD0qIY2TZRVqzffcRT78X3bXisrGicjzmzbATuzfVQYm3ID8vXH+KbIbHDhpRAlqMBIhGZYYPH14h6tQWed32v0lkruDySIgGJDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bMqRojIL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5g3XP018332;
-	Tue, 12 Aug 2025 07:49:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=IkAYvHtINB6LUMF8R7RUL3
-	O74Vv1lk8ZW/9p0E3HbYE=; b=bMqRojILf4oPLFgHTJQi4NT6qLOuQDQWQUMBtJ
-	E14C0Ajn9kyiGJJEQkbpR8EF4UlWmxqEM/EfgNEV6/qEnHZD6c3lplXQMS5LUgzT
-	DtDTP2FZkCJfWG+pf2R3wwIBsWxGxx37RS+gp7I9rQhpCrn6tx1+mn8LbXdgRvQG
-	ADLAHS0ENrcT/ytcjJuX2pkGsczrTj19MI6uQ06JWK8TvXvjLHaoICn+PP6LJ2MH
-	EYqpWo++Hur3nqHsJ3j/b7mvqaLg34+Nk62RlFeNtuPp+dfZTRtVNT2351wIzi41
-	UqA2nhlR2AK1gtno/lv/dILNp/S3lIzqHOLjOfdNQCbXzlDQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g77v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:49:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C7nJYo031488
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:49:19 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 12 Aug 2025 00:49:16 -0700
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Tue, 12 Aug 2025 13:18:56 +0530
-Subject: [PATCH] media: iris: vpu3x: Add MNoC low power handshake during
- hardware power-off
+	s=arc-20240116; t=1754985295; c=relaxed/simple;
+	bh=G0bZntmSwAfoPQ+6pF2OOgLr6cbO5CLZQzjcmfT3cKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mXjR1MC6KBuLEwbLNPCMknQHNjar9S6EeVaWlUG7izlypog7hKVE1ldVbEbCzE0Wdm9hoL/UIKALjuXzK3N5+7crvreKsNycWnMgkyY0DQJUe3wG22TFX8JIRkgzrCRPduGnWBaGiveiv7gj+3Eo+sL4agF2PfOGo65l/cxXksQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sotapeli.fi; spf=pass smtp.mailfrom=sotapeli.fi; dkim=pass (2048-bit key) header.d=sotapeli.fi header.i=@sotapeli.fi header.b=NXV/aewe; arc=none smtp.client-ip=206.168.212.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sotapeli.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sotapeli.fi
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C12A9181AA00;
+	Tue, 12 Aug 2025 09:49:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sotapeli.fi; s=dkim;
+	t=1754984950; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=iUxUyma4bnNa8hrTNpMn9u9YO0iIOktTKvT27O4pMpw=;
+	b=NXV/aeweTNpKiHipLLyIIOf7bjsdBaFKQCGQGsTbqWsIUsk9FKi/G9ytWyOEZcQLpdpB/f
+	vQqy5Kslw6kf67M8yVK/2l4L1BxcagnkEV/iofucOuqId1iJT+Z5942mPHOyMKZktwJAld
+	d2wNMadMToBRHArSi4LhPrmoE3UOGby62+SCE/9GyV6WQNxoycXN/f9vrUibh8Yh4rbDSw
+	8G9KHW4dNWrJ65rtjdABdVyDMGfd8LKCCQ14Wkwfr/ZBa5rWEelnpf69eOLvg8uSNGZm2N
+	2WpSP6qTm4BalY4me8S2z9rsotrCiF3qq3fSPt9gkx/2UMxKNEpRpJ8vGHcIeA==
+Message-ID: <c55affa6-4b8e-4110-bf44-c595d4cda81f@sotapeli.fi>
+Date: Tue, 12 Aug 2025 10:49:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOfxmmgC/x2MzQrCMBAGX6Xs2YV0QyXxVcRDWj91D6Y1S3+g9
- N0bPM7AzE6GojC6NTsVLGo65grtpaHhk/IbrM/KJE46F1ph+4Zr53gaVxQ2/GbkAfzSjfsUUxQ
- Xg3hPtZ8Kqv6/74/jOAHm/0xcawAAAA==
-X-Change-ID: 20250812-sm8650-power-sequence-fix-ba9a92098233
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754984955; l=2400;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=7U+4gn9pS8I+rtj2LNkrjT4KMQyuRjN6Ze9TE7TFzZc=;
- b=MwDge/r7ZIMngbdJMq3HI09BUxIvHQTo+Fcl1hex6sfG/R3meDPrDT39rRC9sQT/sE6sapbsI
- qzEKEZ8JA3pCpeC0+YnbktIZmfj6BDW/0pVx78/Ck8hQsEObo9SiKau
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689af1ff cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=oH3p6_XQ8KUHbw2Ta6wA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX/4ywGcHjaapk
- qgQQF7MhRlDsaZ8fLZm8EOcOPWdlWXJVd+dbXiwdFsnPGmgJAZt91ysDwdZo9rx09io7FIlMrOf
- IDqaP0E7Pmb3AbUasBWDV2R05sTvO2pktbybplQBKAXSt6Vl7CqkYLyh6v4D0OWIKQJKJDipUHZ
- INySFOctXv1FEOvkdHV79qh+syyV3lvPT39TRmV5UGvnlV6l2k82ND+iEMAWruAloiQzJamOtRV
- Hr3Ewul13D3LE3spum4u4+N2Ep5GYoa7xuKeXpB91EiJ1XgHWok4Z4hrw6YkhXTDoIm+5xaYbwW
- wy0GPpimNtirc/XRBWe7V8GaK0pHgpiOHRX7Ky9GcRRcN9KkdcHoqv06S8p2gIW8VlAscATYqbo
- Ar6IlYYn
-X-Proofpoint-GUID: i7ZEoxzYUCVeu6pGKH4V3OLyNnKlYQkc
-X-Proofpoint-ORIG-GUID: i7ZEoxzYUCVeu6pGKH4V3OLyNnKlYQkc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Aquinas Admin <admin@aquinas.su>,
+ =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+ <1869778184.298.1754433695609@mail.carlthompson.net>
+ <5909824.DvuYhMxLoT@woolf>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <aJfTPliez_WkwOF3@casper.infradead.org>
+ <5ip2wzfo32zs7uznaunpqj2bjmz3log4yrrdezo5audputkbq5@uoqutt37wmvp>
+Content-Language: en-US
+From: Jani Partanen <jiipee@sotapeli.fi>
+Autocrypt: addr=jiipee@sotapeli.fi; keydata=
+ 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
+In-Reply-To: <5ip2wzfo32zs7uznaunpqj2bjmz3log4yrrdezo5audputkbq5@uoqutt37wmvp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
-reading the LPI status register. Introduce a handshake loop to ensure
-MNoC enters low power mode reliably during VPU3 hardware power-off with
-timeout handling.
+On 10/08/2025 2.13, Kent Overstreet wrote:
+> And now, I just got an email from Linus saying "we're now talking about
+> git rm -rf in 6.18", after previously saying we just needed a
+> go-between.
+>
+> So if that's the plan, I need to be arguing forcefully here, because a
+> lot is on the line for a lot of people.
 
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- drivers/media/platform/qcom/iris/iris_vpu3x.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..c2e6af575cbe4b3e3f2a019b24eecf3a5d469566 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-@@ -110,6 +110,7 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
- static void iris_vpu33_power_off_hardware(struct iris_core *core)
- {
- 	u32 reg_val = 0, value, i;
-+	u32 count = 0;
- 	int ret;
- 
- 	if (iris_vpu3x_hw_power_collapsed(core))
-@@ -128,13 +129,31 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
- 			goto disable_power;
- 	}
- 
-+	/* set MNoC to low power */
-+	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-+
-+	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
-+
-+	while (!(value & BIT(0)) && (value & BIT(2) || value & BIT(1))) {
-+		writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-+
-+		usleep_range(10, 20);
-+
-+		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-+
-+		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
-+		if (++count >= 1000) {
-+			dev_err(core->dev, "LPI handshake timeout\n");
-+			break;
-+		}
-+	}
-+
- 	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
- 				 reg_val, reg_val & BIT(0), 200, 2000);
- 	if (ret)
- 		goto disable_power;
- 
--	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
--	writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-+	writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
- 
- 	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
- 	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+No that is not what you need to do. Arguing is the guarantee way that rm 
+-rf will happen.
 
----
-base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-change-id: 20250812-sm8650-power-sequence-fix-ba9a92098233
+You need to *SHUT* *THE* *FUCK* *UP* *RIGHT* *NOW!* That is what you 
+need to do and find very very fast some spokesman/woman/person who deal 
+all the communication.
 
-Best regards,
--- 
-Dikshita Agarwal <quic_dikshita@quicinc.com>
+As I already said like month or 2 back, you are unable to do code and 
+communication. You do one well (what I understand from comments, I am 
+not a coder myself) and you suck on the other.
+
+
+It does not help:
+
+- that you are trashing constantly other filesystems.
+
+- that you are bragging that you are here to challenge Linus.
+
+  -that you cannot see your own faults.
+
+- that you are playing the victim when shit hits the fan.
+
+
+You and I have much same. I am also asshole who will argue for the sake 
+of argument. So even when I know that I am wrong, I still keep going and 
+that is behavior what I am not proud and I start to be too old that I 
+can be fixed. After all, I am always right.
+
+Linus is that kind of person who would really feed my hunger to argue. 
+Seems like he works for you also.
+
+
+Minor stuff I want to point out is that you do fearmongering by telling 
+how other filesystems constantly break up and world really need bcachefs 
+to save the world. This is quite pointless and stupid marketing. I have 
+been running btrfs, ext4 and xfs years, sorry decades in multiple 
+systems and I cannot even recall when I had last  time any issues with 
+them what wasn't user error or hardware error. I am running even btrfs 
+raid-5 on system what is not behind UPS and power outtakes is a thing here.
+
+
+// Jani
 
 
