@@ -1,216 +1,147 @@
-Return-Path: <linux-kernel+bounces-764232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0958EB22045
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:07:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAD2B2204B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A6B3B857A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3541C3BE3DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D421E2E03F1;
-	Tue, 12 Aug 2025 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906802E173E;
+	Tue, 12 Aug 2025 08:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icJm+4Hy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlaKB9kC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198322DE6F7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99D12D4808;
+	Tue, 12 Aug 2025 08:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985890; cv=none; b=lJDeI7OX0KNtF4pgXhWMYzssCmdAUYTBxDI4xl/ogPl7jKRxAT4RV2F4GKGgyfGrUyWezBDIgPebHRDmw8Uf1+izZEFQpGFWXuxzyHyacLQ8Pk3SG7Q1ES5ZV73v1OVWLuV8hh9m6ZeN4bjNDw/lP2RxWklwtKbmhBtczQikJhc=
+	t=1754985895; cv=none; b=PiBB/5zwA5atmCgMzYd/c4GKErFG8EQDh+kt2bM1KlIjwRaUliLrlZmERkj5+EkJCjdxVyeRLYaSRzmMfvEsCa2Bq6Fo3kGu1OPi6zS5YcmcnINO4PrWpwRO7K2TSUPoU/Wzg7Z0mHD69qWjtUGMUZGJZa8Ma6XWX8jhQ2FJdj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985890; c=relaxed/simple;
-	bh=ZyReWlcffHTYComn/DA/6pf7MXj5iV6r/6JbT+q/nGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPg4ZHTCsO8/3A7nCwB50geotrX8iOQHU1Im4q0uyFOHC82kFXXT8f9VYTlI65IEYK8/DLIpYQ/PzE76hLby4I0D5YUoRi11184h6QqZhHO9avuEH4DpWwYTV2Hi6vvw4kaCIWeMHsmpExC1j4vkkyI+a+c6KZHgapoRShuO6dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icJm+4Hy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D1CC4CEF4;
-	Tue, 12 Aug 2025 08:04:49 +0000 (UTC)
+	s=arc-20240116; t=1754985895; c=relaxed/simple;
+	bh=c73LO9Yk4slOIaSDIMJ469ieIfFhTA/dD9L7cByGet0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hLkF4WfahDtqcMIgNrvvb8Woam9kpipD+7G09Ju6c9D8/HxjeNjamSD32hjUCxp9kz88fqLoeBhLljmBPuCSQKj27m21xhN7P5g0cIHKj/PdGIiFAXtRFmQcyqbgnM86sncw1vyArUDfZGFtLu4q1OOnKt64pRUB13VsVuEVTp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlaKB9kC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50EE8C4CEF7;
+	Tue, 12 Aug 2025 08:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754985889;
-	bh=ZyReWlcffHTYComn/DA/6pf7MXj5iV6r/6JbT+q/nGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=icJm+4Hyc5UfKQlm9+NdFODSOHl+7DaCF7bWFz9wbdufkvhzj5ASaAyVL+UdksFcn
-	 z+h+2mJ+5q8kA8zEhKVaRjp+fjmkB7qvUdAadbiB7EPoiOc8JtTYQxLhvabZhTWEJG
-	 RmoBc3bwnIPYexYIBGMuFrslSca+QZIGgKpADpE4BJmswp7IsuurEl3pi0UC2LVGD2
-	 +mgn20FJw2hJ1V7bgwfeOz2CZJct16KVdTdZgroEVpBZ4uJGr9zZcxXlAukrQfkrAG
-	 a4yXeVAzE1SU5I6s0KO3iGbUujeirrwN9bK6/l5QXA5uPXZ4X9Q1KvGQzch2VNsq5U
-	 b4wf6CzUu+SqA==
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 74C98F40067;
-	Tue, 12 Aug 2025 04:04:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 12 Aug 2025 04:04:48 -0400
-X-ME-Sender: <xms:oPWaaKrTGD5gf99uULRgBXFEQ9h38C0AoExjXfgPxcEFEZ6pN3yaOQ>
-    <xme:oPWaaFzx6VXoeoy38Ey3aK7pDetzP5czCHHIpRNVGwkNMU8w3psfjRooEF_TgMgyG
-    4eMipRJYx2TiOvoM2g>
-X-ME-Received: <xmr:oPWaaPpTtaqGWjlNTMF71ltc5FB8vbI7R6h01q4pOIm4wHO3A9kWlIPfEkPd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeegkedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpedfkhgrshes
-    khgvrhhnvghlrdhorhhgfdcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrth
-    htvghrnhepgfduveffkeekvdfhheetkefhteefffetjeejfefhhfefieetfeefueeutdeh
-    veejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqudeiudduiedvieehhedqvdekgeeggeejvdekqdhkrghspe
-    epkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthho
-    peefvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhgrnhhnrghpuhhrvhgvse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopehsvggrnhhjtgesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpd
-    hrtghpthhtoheptghhrghordhgrghosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkh
-    grihdrhhhurghnghesihhnthgvlhdrtghomhdprhgtphhtthhopegsphesrghlihgvnhek
-    rdguvgdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmih
-    hnghhosehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:oPWaaK7e-GqeLNT8n3Lbyql3t0HyNIgdzuF8-tMisx-CemmPX_O39w>
-    <xmx:oPWaaBjfDp7VkbAJT9uDPxtY-kYL5IfjOMoOyjQH062FnawFDWDz7g>
-    <xmx:oPWaaA0fHfJA-u_ixajPz8C3GhOjQB1pCJ7t_bVnHG9hTNCHU4ucUA>
-    <xmx:oPWaaPWyb_gsGoxdDBFF5Y-5TnlmTCboB1Z1nlAgI3LgQyvzhhLYpw>
-    <xmx:oPWaaF0IG5yNscATDSwK3G3l_P6-o7qN9LZ7e7R1UDyscBQRmz8houeI>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Aug 2025 04:04:47 -0400 (EDT)
-Date: Tue, 12 Aug 2025 09:04:45 +0100
-From: "kas@kernel.org" <kas@kernel.org>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kai Huang <kai.huang@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"x86@kernel.org" <x86@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
-Message-ID: <itbtox4nck665paycb5kpu3k54bfzxavtvgrxwj26xlhqfarsu@tjlm2ddtuzp3>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
- <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
- <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
- <aJqgosNUjrCfH_WN@google.com>
- <CAGtprH9TX4s6jQTq0YbiohXs9jyHGOFvQTZD9ph8nELhxb3tgA@mail.gmail.com>
+	s=k20201202; t=1754985893;
+	bh=c73LO9Yk4slOIaSDIMJ469ieIfFhTA/dD9L7cByGet0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BlaKB9kCAMKI1fS0ZN4My4d+GOu0dnsQil8xrgEvKM9u2TRnAbtV5biV3D5PjDqq4
+	 eDFkLnozMX+y8aYe2+H7JpAcDSpZr1wJFmxu+nHNmUn/69JScsHXGh7+7UJfHhk4U0
+	 uEih9jtqqW2BIjr9SK/O2bLDHrBjKMMVuTgXG4jNLgLoCgwXDyipJxCmDdY4hbmCzc
+	 JEvWGlOL2XAPB5jlvSEyrt2LdxNMxtJjLTzED26kKa0a1naFi+LMZJ8xInH4d1JVXe
+	 CcdOOyKY/a80qCR9ZHlUgSxc8HzdJu2aqx5a5EZ2xIjTT49C/6IegJIQa3ECuoUelK
+	 /Rcg6pFg2Ei6Q==
+Message-ID: <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
+Date: Tue, 12 Aug 2025 10:04:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH9TX4s6jQTq0YbiohXs9jyHGOFvQTZD9ph8nELhxb3tgA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
+ video codec
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
+ <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
+ <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 07:31:26PM -0700, Vishal Annapurve wrote:
-> On Mon, Aug 11, 2025 at 7:02 PM Sean Christopherson <seanjc@google.com> wrote:
-> >
-> > On Mon, Aug 11, 2025, Rick P Edgecombe wrote:
-> > > On Mon, 2025-08-11 at 07:31 +0100, kas@kernel.org wrote:
-> > > > > I don't see any other reason for the global spin lock, Kirill was that
-> > > > > it?  Did you consider also adding a lock per 2MB region, like the
-> > > > > refcount? Or any other granularity of lock besides global? Not saying
-> > > > > global is definitely the wrong choice, but seems arbitrary if I got the
-> > > > > above right.
-> > > >
-> > > > We have discussed this before[1]. Global locking is problematic when you
-> > > > actually hit contention. Let's not complicate things until we actually
-> > > > see it. I failed to demonstrate contention without huge pages. With huge
-> > > > pages it is even more dubious that we ever see it.
-> > > >
-> > > > [1]
-> > > > https://lore.kernel.org/all/4bb2119a-ff6d-42b6-acf4-86d87b0e9939@intel.com/
-> > >
-> > > Ah, I see.
-> > >
-> > > I just did a test of simultaneously starting 10 VMs with 16GB of ram (non huge
-> >
-> > How many vCPUs?  And were the VMs actually accepting/faulting all 16GiB?
-> >
-> > There's also a noisy neighbor problem lurking.  E.g. malicious/buggy VM spams
-> > private<=>shared conversions and thus interferes with PAMT allocations for other
-> > VMs.
-> >
-> > > pages) and then shutting them down. I saw 701 contentions on startup, and 53
-> > > more on shutdown. Total wait time 2ms. Not horrible but not theoretical either.
-> > > But it probably wasn't much of a cacheline bouncing worse case.
-> >
-> > Isn't the SEAMCALL done while holding the spinlock?  I assume the latency of the
-> > SEAMCALL is easily the long pole in the flow.
-> >
-> > > And I guess this is on my latest changes not this exact v2, but it shouldn't
-> > > have changed.
-> > >
-> > > But hmm, it seems Dave's objection about maintaining the lock allocations would
-> > > apply to the refcounts too? But the hotplug concerns shouldn't actually be an
-> > > issue for TDX because they gets rejected if the allocations are not already
-> > > there. So complexity of a per-2MB lock should be minimal, at least
-> > > incrementally. The difference seems more about memory use vs performance.
-> > >
-> > > What gives me pause is in the KVM TDX work we have really tried hard to not take
-> > > exclusive locks in the shared MMU lock path. Admittedly that wasn't backed by
-> > > hard numbers.
-> >
-> > Maybe not for TDX, but we have lots and lots of hard numbers for why taking mmu_lock
-> > for write is problematic.  Even if TDX VMs don't exhibit the same patterns *today*
-> > as "normal" VMs, i.e. don't suffer the same performance blips, nothing guarantees
-> > that will always hold true.
-> >
-> > > But an enormous amount of work went into lettings KVM faults happen under the
-> > > shared lock for normal VMs. So on one hand, yes it's premature optimization.
-> > > But on the other hand, it's a maintainability concern about polluting the
-> > > existing way things work in KVM with special TDX properties.
-> > >
-> > > I think we need to at least call out loudly that the decision was to go with the
-> > > simplest possible solution, and the impact to KVM. I'm not sure what Sean's
-> > > opinion is, but I wouldn't want him to first learn of it when he went digging
-> > > and found a buried global spin lock in the fault path.
-> >
-> > Heh, too late, I saw it when this was first posted.  And to be honest, my initial
-> > reaction was very much "absolutely not" (though Rated R, not PG).  Now that I've
-> > had time to think things through, I'm not _totally_ opposed to having a spinlock
-> > in the page fault path, but my overall sentiment remains the same.
-> >
-> > For mmu_lock and related SPTE operations, I was super adamant about not taking
-> > exclusive locks because based on our experience with the TDP MMU, converting flows
-> > from exclusive to shared is usually significantly more work than developing code
-> > for "shared mode" straightaway (and you note above, that wasn't trivial for TDX).
-> > And importantly, those code paths were largely solved problems.  I.e. I didn't
-> > want to get into a situation where TDX undid the parallelization of the TDP MMU,
-> > and then had to add it back after the fact.
-> >
-> > I think the same holds true here.  I'm not completely opposed to introducing a
-> > spinlock, but I want to either have a very high level of confidence that the lock
-> > won't introduce jitter/delay (I have low confidence on this front, at least in
-> > the proposed patches), or have super clear line of sight to making the contention
-> > irrelevant, without having to rip apart the code.
-> >
-> > My biggest question at this point is: why is all of this being done on-demand?
-> > IIUC, we swung from "allocate all PAMT_4K pages upfront" to "allocate all PAMT_4K
-> > pages at the last possible moment".  Neither of those seems ideal.
-> >
-> > E.g. for things like TDCS pages and to some extent non-leaf S-EPT pages, on-demand
-> > PAMT management seems reasonable.  But for PAMTs that are used to track guest-assigned
-> > memory, which is the vaaast majority of PAMT memory, why not hook guest_memfd?
+On 12/08/2025 10:00, Krzysztof Kozlowski wrote:
+> On 12/08/2025 09:54, Dikshita Agarwal wrote:
+>>
+>>
+>> On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
+>>> Add binding for Qualcom SM8750 Iris video codec, which comes with
+>>> significantly different powering up sequence than previous SM8650, thus
+>>> different clocks and resets.  For consistency keep existing clock and
+>>> clock-names naming, so the list shares common part.
+>>>
+>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> ---
+>>>  .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
+>>>  1 file changed, 186 insertions(+)
+>>>
+>>
+>> Query:
+>> Can the additional reset and clocks be accommodated in existing 8550-iris
 > 
-> This seems fine for 4K page backing. But when TDX VMs have huge page
-> backing, the vast majority of private memory memory wouldn't need PAMT
-> allocation for 4K granularity.
-> 
-> IIUC guest_memfd allocation happening at 2M granularity doesn't
-> necessarily translate to 2M mapping in guest EPT entries. If the DPAMT
-> support is to be properly utilized for huge page backings, there is a
-> value in not attaching PAMT allocation with guest_memfd allocation.
+> No, different hardware. Although it is hardware from your domain and
+> your company, so I would assume you know the answer.
+I guess I misread - I thought you want to re-use existing properties or
+something like that, but you just want to create one huge binding?
 
-Right.
+No. Don't grow these unmaintainable patterns. We have been changing this
+for some time already :/
 
-It also requires special handling in many places in core-mm. Like, what
-happens if THP in guest memfd got split. Who would allocate PAMT for it?
-Migration will be more complicated too (when we get there).
-
--- 
-Kiryl Shutsemau / Kirill A. Shutemov
+Best regards,
+Krzysztof
 
