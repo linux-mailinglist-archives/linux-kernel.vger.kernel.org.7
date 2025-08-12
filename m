@@ -1,54 +1,61 @@
-Return-Path: <linux-kernel+bounces-765566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035EAB23A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A63EBB23A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527CE3B2C94
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E82B3B38F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D8E2D5A10;
-	Tue, 12 Aug 2025 20:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158EC2D6E6E;
+	Tue, 12 Aug 2025 20:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa+vG2Tn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9+JR9Qs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9BD2D0620;
-	Tue, 12 Aug 2025 20:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427E627450;
+	Tue, 12 Aug 2025 20:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030813; cv=none; b=Qd6P0GiEs6CY+ISc044aXeJb29fFknkJeJFtLXO67F0OZC9kQKLuvRDFRGUHv2YxzFuxCxDEtwCp05ZP0QCYQuxf9KF4my05G/vAkXH5ASClksRzGh8p5IFK1+toibh/sF3UOcEl4+25aw5AITbPZebOdKJYE+J07THUKk0tFvc=
+	t=1755030824; cv=none; b=NYk8U03Bgjtm/PUlZwCooeQiiUzOZsZ/PztmkxQXTdNvHXtFY8QJuhlHaE/hIDCsIeGRHcVLZ0Q2piEmfY4yn4Vih4r7svAqu8i6A1Yrlw5L4v5P1/eKdE+BbuU7m6JH9qxVPCzzugU057utukUSOJPp2dJYX3dMSmjhsb0Px5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030813; c=relaxed/simple;
-	bh=/WxdcxVSVB55aSEvRfOAMjNtTpm8ccMC/c3OiQ0UWUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lz/PWGF8mqtYB0yv14cXBdBpJP6I8+YJiyq/mcUecbAc+6RCT/tOmit2w03a5q4jXRk5lkmWGBMIOVL9fDI+Lo/W5H3Psx3lPcpEYOM/dX7wE0j2L0faY35lZONj87K6YHEjA//TGQ80SsAuirA4xZ4lwusTCHRX7PzFJcQLV84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aa+vG2Tn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EBA6C4CEF9;
-	Tue, 12 Aug 2025 20:33:31 +0000 (UTC)
+	s=arc-20240116; t=1755030824; c=relaxed/simple;
+	bh=zooOfB0tNT+jdYTga7tEZwavR+s9ns18YwK/qin3B8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GVEwSKUx4+BQm38Ah31ZSU0rlWyRnivwQbt6cMpjI1hDiBz27JldskpDSO4NZSgsOy/YOPD/OtGgTQaUzeBOxs0o5bC8JmXG1KAhKu1mHEVozgHfPmz5lPFLUqStai8uSJTnH70UJENjPP0UGuD/qCgMLW6hKiW2qprXyznxDNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9+JR9Qs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52336C4CEF4;
+	Tue, 12 Aug 2025 20:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755030811;
-	bh=/WxdcxVSVB55aSEvRfOAMjNtTpm8ccMC/c3OiQ0UWUk=;
+	s=k20201202; t=1755030823;
+	bh=zooOfB0tNT+jdYTga7tEZwavR+s9ns18YwK/qin3B8U=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Aa+vG2TnRFOJ6eTw3Su47MFPjd/D78hBGV+oN4kdGZBDP6VeXBPiMF9/Elt+Iabcy
-	 AYvaAOZ2jr6GWIIUd3IA28Gs9tp+xm0iuNG34wp5skHUuxEtn+KBE2qYCsZfKTtIyr
-	 YTDnAbfUvscih0eIrrzykLUmvvslBPV857W+0AWQqx++GCFkzZX77ctD17/TEPhjc8
-	 2ggC6brUvht/xbpkqGJ7jNsWavG9DnyiXefjPqy+r9agHJL7M9p18WRZaCuTwTi4A7
-	 IvZDkWfw3G8In7PgtJf9kTM6ePPBZHGwroYWSmws1+X/1GpuLXzXCcEibrpVvej15j
-	 BJMsPUwF4MPGQ==
+	b=i9+JR9QshrKMHb4xOmwO+xcCnCZEviBAyaUE3Vm2MtX6Pkrisq52olA9UPMjk4/g5
+	 p+PWGAgcsJG2AcdX7UmjD3TtSbSZ/r/ly++EhleRXkm3xzki2i9d56vIghjsCFFXpV
+	 HIIA8DA4WRqb5KQnCi6E86BLvYmBPcVvjYEY+VoU6bFOBianacfVw6zp4ZiTLcxZp2
+	 cYxvBmBfmaoAtaXmcXWSRYZsSeU6ul8v9Df6vud5iyJxsvPG8nlk2+rJkWg4FjzcF7
+	 A/CrvLFHcoy/kpramWwOSA5dl6rg3plAM5IFPOgHORutnxJHXFXzXyiwuv441pacjn
+	 8U1fAyN2SJ/uw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
+To: Linus Walleij <linus.walleij@linaro.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Wei Xu <xuwei5@hisilicon.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: interrupt-controller: Convert hisilicon,mbigen-v2 to DT schema
-Date: Tue, 12 Aug 2025 15:33:25 -0500
-Message-ID: <20250812203327.730393-1-robh@kernel.org>
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: Convert brcm,bcm2835-gpio to DT schema
+Date: Tue, 12 Aug 2025 15:33:34 -0500
+Message-ID: <20250812203337.731648-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,190 +63,256 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert the HiSilicon MBIGEN binding to DT schema format. It's a
-straight-forward conversion.
+Convert the Broadcom BCM2835 GPIO (and pinmux) controller binding to DT
+schema format.
+
+The structure of the child nodes wasn't well defined. The schema is
+based on the .dts users. The legacy binding is a single level of child
+nodes while the standard binding is 2 levels of child nodes.
+
+The "all banks" interrupt is treated as optional following actual users.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../hisilicon,mbigen-v2.txt                   | 84 -------------------
- .../hisilicon,mbigen-v2.yaml                  | 76 +++++++++++++++++
- 2 files changed, 76 insertions(+), 84 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.yaml
+ .../bindings/pinctrl/brcm,bcm2835-gpio.txt    |  99 ---------------
+ .../bindings/pinctrl/brcm,bcm2835-gpio.yaml   | 120 ++++++++++++++++++
+ 2 files changed, 120 insertions(+), 99 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.txt b/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.txt
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
 deleted file mode 100644
-index a6813a071f15..000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.txt
+index 5682b2010e50..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
 +++ /dev/null
-@@ -1,84 +0,0 @@
--Hisilicon mbigen device tree bindings.
--=======================================
+@@ -1,99 +0,0 @@
+-Broadcom BCM2835 GPIO (and pinmux) controller
 -
--Mbigen means: message based interrupt generator.
+-The BCM2835 GPIO module is a combined GPIO controller, (GPIO) interrupt
+-controller, and pinmux/control device.
 -
--MBI is kind of msi interrupt only used on Non-PCI devices.
+-Required properties:
+-- compatible: "brcm,bcm2835-gpio"
+-- compatible: should be one of:
+-  "brcm,bcm2835-gpio" - BCM2835 compatible pinctrl
+-  "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+-  "brcm,bcm2711-gpio" - BCM2711 compatible pinctrl
+-  "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+-- reg: Should contain the physical address of the GPIO module's registers.
+-- gpio-controller: Marks the device node as a GPIO controller.
+-- #gpio-cells : Should be two. The first cell is the pin number and the
+-  second cell is used to specify optional parameters:
+-  - bit 0 specifies polarity (0 for normal, 1 for inverted)
+-- interrupts : The interrupt outputs from the controller. One interrupt per
+-  individual bank followed by the "all banks" interrupt. For BCM7211, an
+-  additional set of per-bank interrupt line and an "all banks" wake-up
+-  interrupt may be specified.
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells : Should be 2.
+-  The first cell is the GPIO number.
+-  The second cell is used to specify flags:
+-    bits[3:0] trigger type and level flags:
+-      1 = low-to-high edge triggered.
+-      2 = high-to-low edge triggered.
+-      4 = active high level-sensitive.
+-      8 = active low level-sensitive.
+-    Valid combinations are 1, 2, 3, 4, 8.
 -
--To reduce the wired interrupt number connected to GIC,
--Hisilicon designed mbigen to collect and generate interrupt.
+-Please refer to ../gpio/gpio.txt for a general description of GPIO bindings.
 -
+-Please refer to pinctrl-bindings.txt in this directory for details of the
+-common pinctrl bindings used by client devices, including the meaning of the
+-phrase "pin configuration node".
 -
--Non-pci devices can connect to mbigen and generate the
--interrupt by writing ITS register.
+-Each pin configuration node lists the pin(s) to which it applies, and one or
+-more of the mux function to select on those pin(s), and pull-up/down
+-configuration. Each subnode only affects those parameters that are explicitly
+-listed. In other words, a subnode that lists only a mux function implies no
+-information about any pull configuration. Similarly, a subnode that lists only
+-a pul parameter implies no information about the mux function.
 -
--The mbigen chip and devices connect to mbigen have the following properties:
+-The BCM2835 pin configuration and multiplexing supports the generic bindings.
+-For details on each properties, you can refer to ./pinctrl-bindings.txt.
 -
--Mbigen main node required properties:
---------------------------------------------
--- compatible: Should be "hisilicon,mbigen-v2"
+-Required sub-node properties:
+-  - pins
+-  - function
 -
--- reg: Specifies the base physical address and size of the Mbigen
--  registers.
+-Optional sub-node properties:
+-  - bias-disable
+-  - bias-pull-up
+-  - bias-pull-down
+-  - output-high
+-  - output-low
 -
--Mbigen sub node required properties:
--------------------------------------------
--- interrupt controller: Identifies the node as an interrupt controller
+-Legacy pin configuration and multiplexing binding:
+-*** (Its use is deprecated, use generic multiplexing and configuration
+-bindings instead)
 -
--- msi-parent: Specifies the MSI controller this mbigen use.
--  For more detail information,please refer to the generic msi-parent binding in
--  Documentation/devicetree/bindings/interrupt-controller/msi.txt.
+-Required subnode-properties:
+-- brcm,pins: An array of cells. Each cell contains the ID of a pin. Valid IDs
+-  are the integer GPIO IDs; 0==GPIO0, 1==GPIO1, ... 53==GPIO53.
 -
--- num-pins: the total number of pins implemented in this Mbigen
--  instance.
+-Optional subnode-properties:
+-- brcm,function: Integer, containing the function to mux to the pin(s):
+-  0: GPIO in
+-  1: GPIO out
+-  2: alt5
+-  3: alt4
+-  4: alt0
+-  5: alt1
+-  6: alt2
+-  7: alt3
+-- brcm,pull: Integer, representing the pull-down/up to apply to the pin(s):
+-  0: none
+-  1: down
+-  2: up
 -
--- #interrupt-cells : Specifies the number of cells needed to encode an
--  interrupt source. The value must be 2.
+-Each of brcm,function and brcm,pull may contain either a single value which
+-will be applied to all pins in brcm,pins, or 1 value for each entry in
+-brcm,pins.
 -
--  The 1st cell is hardware pin number of the interrupt.This number is local to
--  each mbigen chip and in the range from 0 to the maximum interrupts number
--  of the mbigen.
+-Example:
 -
--  The 2nd cell is the interrupt trigger type.
--	The value of this cell should be:
--	1: rising edge triggered
--	or
--	4: high level triggered
+-	gpio: gpio {
+-		compatible = "brcm,bcm2835-gpio";
+-		reg = <0x2200000 0xb4>;
+-		interrupts = <2 17>, <2 19>, <2 18>, <2 20>;
 -
--Examples:
+-		gpio-controller;
+-		#gpio-cells = <2>;
 -
--	mbigen_chip_dsa {
--			compatible = "hisilicon,mbigen-v2";
--			reg = <0x0 0xc0080000 0x0 0x10000>;
--
--			mbigen_gmac:intc_gmac {
--				interrupt-controller;
--				msi-parent = <&its_dsa 0x40b1c>;
--				num-pins = <9>;
--				#interrupt-cells = <2>;
--			};
--
--			mbigen_i2c:intc_i2c {
--				interrupt-controller;
--				msi-parent = <&its_dsa 0x40b0e>;
--				num-pins = <2>;
--				#interrupt-cells = <2>;
--			};
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
 -	};
--
--Devices connect to mbigen required properties:
------------------------------------------------------
---interrupts:Specifies the interrupt source.
-- For the specific information of each cell in this property,please refer to
-- the "interrupt-cells" description mentioned above.
--
--Examples:
--	gmac0: ethernet@c2080000 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0 0xc2080000 0 0x20000>,
--		      <0 0xc0000000 0 0x1000>;
--		interrupt-parent  = <&mbigen_device_gmac>;
--		interrupts =	<656 1>,
--				<657 1>;
--	};
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.yaml b/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.yaml
 new file mode 100644
-index 000000000000..326424e6e02a
+index 000000000000..6514f347f6bc
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/hisilicon,mbigen-v2.yaml
-@@ -0,0 +1,76 @@
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.yaml
+@@ -0,0 +1,120 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/interrupt-controller/hisilicon,mbigen-v2.yaml#
++$id: http://devicetree.org/schemas/pinctrl/brcm,bcm2835-gpio.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Hisilicon mbigen v2
++title: Broadcom BCM2835 GPIO (and pinmux) controller
 +
 +maintainers:
-+  - Wei Xu <xuwei5@hisilicon.com>
++  - Florian Fainelli <f.fainelli@gmail.com>
 +
 +description: >
-+  Mbigen means: message based interrupt generator.
-+
-+  MBI is kind of msi interrupt only used on Non-PCI devices.
-+
-+  To reduce the wired interrupt number connected to GIC, Hisilicon designed
-+  mbigen to collect and generate interrupt.
-+
-+  Non-pci devices can connect to mbigen and generate the interrupt by writing
-+  ITS register.
++  The BCM2835 GPIO module is a combined GPIO controller, (GPIO) interrupt
++  controller, and pinmux/control device.
 +
 +properties:
 +  compatible:
-+    const: hisilicon,mbigen-v2
++    enum:
++      - brcm,bcm2835-gpio
++      - brcm,bcm2711-gpio
++      - brcm,bcm7211-gpio
 +
 +  reg:
 +    maxItems: 1
 +
-+required:
-+  - compatible
-+  - reg
++  '#gpio-cells':
++    const: 2
++
++  gpio-controller: true
++  gpio-ranges: true
++  gpio-line-names: true
++
++  interrupts:
++    description: >
++      Interrupt outputs: one per bank, then the combined “all banks” line.
++      BCM7211 may specify up to four per-bank wake-up lines and one combined
++      wake-up interrupt.
++    minItems: 4
++    maxItems: 10
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupt-controller: true
 +
 +additionalProperties:
-+  type: object
-+  additionalProperties: false
++  oneOf:
++    - type: object
++      additionalProperties: false
 +
-+  properties:
-+    interrupt-controller: true
++      patternProperties:
++        '^pins?-':
++          type: object
++          allOf:
++            - $ref: /schemas/pinctrl/pincfg-node.yaml#
++            - $ref: /schemas/pinctrl/pinmux-node.yaml#
++          additionalProperties: false
 +
-+    '#interrupt-cells':
-+      const: 2
++          properties:
++            pins: true
++            function: true
++            bias-disable: true
++            bias-pull-up: true
++            bias-pull-down: true
++            output-high: true
++            output-low: true
 +
-+    msi-parent:
-+      maxItems: 1
++          required:
++            - pins
++            - function
 +
-+    num-pins:
-+      description: The total number of pins implemented in this Mbigen instance.
-+      $ref: /schemas/types.yaml#/definitions/uint32
++    - type: object
++      additionalProperties: false
++      deprecated: true
 +
-+  required:
-+    - interrupt-controller
-+    - "#interrupt-cells"
-+    - msi-parent
-+    - num-pins
++      properties:
++        brcm,pins:
++          description:
++            GPIO pin numbers for legacy configuration.
++          $ref: /schemas/types.yaml#/definitions/uint32-array
++
++        brcm,function:
++          description:
++            Legacy mux function for the pins (0=input, 1=output, 2–7=alt functions).
++          $ref: /schemas/types.yaml#/definitions/uint32-array
++          maximum: 7
++
++        brcm,pull:
++          description: >
++            Legacy pull setting for the pins (0=none, 1=pull-down, 2=pull-up).
++          $ref: /schemas/types.yaml#/definitions/uint32-array
++          maximum: 2
++
++      required:
++        - brcm,pins
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - brcm,bcm2835-gpio
++              - brcm,bcm2711-gpio
++    then:
++      properties:
++        interrupts:
++          maxItems: 5
 +
 +examples:
 +  - |
-+    mbigen@c0080000 {
-+        compatible = "hisilicon,mbigen-v2";
-+        reg = <0xc0080000 0x10000>;
-+
-+        mbigen_gmac: intc_gmac {
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+            msi-parent = <&its_dsa 0x40b1c>;
-+            num-pins = <9>;
-+        };
-+
-+        mbigen_i2c: intc_i2c {
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+            msi-parent = <&its_dsa 0x40b0e>;
-+            num-pins = <2>;
-+        };
++    gpio@2200000 {
++        compatible = "brcm,bcm2835-gpio";
++        reg = <0x2200000 0xb4>;
++        interrupts = <2 17>, <2 19>, <2 18>, <2 20>, <2 21>;
++        #gpio-cells = <2>;
++        gpio-controller;
++        #interrupt-cells = <2>;
++        interrupt-controller;
 +    };
 -- 
 2.47.2
