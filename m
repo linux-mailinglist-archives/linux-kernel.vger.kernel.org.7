@@ -1,92 +1,120 @@
-Return-Path: <linux-kernel+bounces-765434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF73B23499
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82A1B23511
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578B77AF77D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665896E58E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89A12FE580;
-	Tue, 12 Aug 2025 18:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3C2F4A0A;
+	Tue, 12 Aug 2025 18:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="bFfug0PV"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yQgyeJ+v"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BF82FD1AD;
-	Tue, 12 Aug 2025 18:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B002FD1AD;
+	Tue, 12 Aug 2025 18:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755024092; cv=none; b=faizlPnV0A+F0w2dLzjQfMz4nLCueC76ghdwZbSs1+ElkhpHbC/iOezDmDcv4ndn/Q3x/Brkglty67rB9T2SXZ2PSWdP/y6gV/XXtBInCuMdRPj0eAuLTsUc4eTidEx9n06ZM5uHS4MbD8j92uAmmrBKCv0qSBVVtKe4KStaAgg=
+	t=1755024124; cv=none; b=ti+TWW7VwJrOTLp+f1HYGLZYHlyA1A71EvVHZ13QXkeC3OHmDptC4fDKvwTaHVtWofkAtyXef3BE1EnGT+1wt8NcVrkn3kQOW5YaaqcYwe9iozPoXEB6e1WXxbELZs9+PxE9XYXsL4t510/3wLtwHrBPdfjZMQvBHOrgmGCTmME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755024092; c=relaxed/simple;
-	bh=m1YFo2pHoa2FnHSf+idfwIE1abFhAZSNl+JJ0+8GLMY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kdRQdL1SLSlLIBmkzsUHIesVamNedMwrDMgb04LWz/r/NQuh9BXTWyLhJy8PJpf5S6Bikf1XX5QdPg51bnpViPsOQ5TxvWd1uFxxXp473J0Qx3bMXyfH0g30KdRGj443E29alnX7+1DxY7+aJ50U6jyQyQoMBvHMoFvqw/PM/tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=bFfug0PV; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2988A40AD9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755024090; bh=Qz9xyrwA+51NtlPF0l7SMypdEBoz7b93XGGhwSa5h80=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=bFfug0PVxFua0jbrjBW4UPzg+ccJSGnn6+athUML9m7e0hD8CCQe29cmaAN8BECrQ
-	 hTQJRlXANvyE2p8jbzS55SNYyKJy+ul+wYLUgaYlupx8av/INhoWVs/p6KCwhqmTHY
-	 m8RcuHYqZCkAA4McTvJ9kbPGYQQYdzXToDilYjKSwF6rbQHYRH95FfDWoGqgJqHcKP
-	 xJcCAgDwsO8tb0vLZoq1EWSkXDZSlYAB8yIHGgSzJkg+jUgN35lBXdayZ8Pg3Nopap
-	 sjieId9254wUOsfZuE0VjtVroRPE82OP+yoQBvQTpl22b5V5nX0dQF4dHAtWIk4pvq
-	 MkGYo/QeuuhOQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 2988A40AD9;
-	Tue, 12 Aug 2025 18:41:30 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Gopi Krishna Menon <krishnagopi487@gmail.com>, rostedt@goodmis.org
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
- skhan@linuxfoundation.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] Documentation/rv: Fix minor typo in monitor_synthesis page
-In-Reply-To: <20250810111249.93181-1-krishnagopi487@gmail.com>
-References: <20250810111249.93181-1-krishnagopi487@gmail.com>
-Date: Tue, 12 Aug 2025 12:41:29 -0600
-Message-ID: <87zfc4e61y.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755024124; c=relaxed/simple;
+	bh=YjV5DM7i5vfTBStJBu8Kywd0Ft5kKFglI7QFrz3GbUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i/yQ23+WbFrjubx1dS47ij471+xSfbFAqqayc9AlAaBSzmLIGR49PEsZ/I/rPaAFFkLHdM7O11aJIP327w5NPx/gV53l60RBtHoS2lzHx5WVMxBS/KcFBNgpLs8wcGCRo1/CEdHPt4wpy5Ce93cjXqsiIQtFOBA/CDD9+L2xxhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yQgyeJ+v; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=FHxkqkCIby6/Iwqsc8oIyaMEmmoKiEI2VaqX4PkNjA4=; b=yQgyeJ+v3xmajheA8wQcWn/qgm
+	Q9nr4AETXhsY2N8iAHfrQAhE9WY1x7I7309HIPgTU7MI3KGFJLhAaDMPmpmuYFr/DJRrp2+0Urm8S
+	nOKPzaseTLmUVmClk89LwlEw5/aG0cRHMDGL4Q6fTD5qP0lIxvmEhhenPJaohLLqhEHbOyLrMCq9C
+	NGrSG3+kDojmyqNIu9Cq6dKDv3G78Hb5Z4e9cHm44ZyhVdixfzvr2fazbXPGlVXV97lvnRFtQ+pXb
+	PU+0U3sxkpoGqJcGwX3heIN8d2vUmw+NhdvIkIEy3WAIByPPAzN3Ui0XzKYxTdgtSAZFS21FxlYAX
+	Vz/y+diw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ultwd-0000000BjH6-38xA;
+	Tue, 12 Aug 2025 18:41:59 +0000
+Message-ID: <e8731f6f-9057-46f0-8df0-7ece500c0928@infradead.org>
+Date: Tue, 12 Aug 2025 11:41:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL for v6.17-rc2] add a generic yaml parser integrated
+ with Netlink specs generation
+To: Jonathan Corbet <corbet@lwn.net>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: EDAC Mailing List <linux-edac@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ Akira Yokosawa <akiyks@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Ignacio Encinas Rubio <ignacio@iencinas.com>, Marco Elver
+ <elver@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
+ Donald Hunter <donald.hunter@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ Jan Stancek <jstancek@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ruben Wauters <rubenru09@aol.com>, joel@joelfernandes.org,
+ linux-kernel-mentees@lists.linux.dev, lkmm@lists.linux.dev,
+ netdev@vger.kernel.org, peterz@infradead.org, stern@rowland.harvard.edu,
+ Breno Leitao <leitao@debian.org>, Simon Horman <horms@kernel.org>
+References: <20250812113329.356c93c2@foz.lan> <87h5ycfl3s.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <87h5ycfl3s.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Gopi Krishna Menon <krishnagopi487@gmail.com> writes:
 
-> Specifically, fix spelling of "practice"
->
-> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> ---
->  Documentation/trace/rv/monitor_synthesis.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/trace/rv/monitor_synthesis.rst b/Documentation/trace/rv/monitor_synthesis.rst
-> index ac808a7554f5..3a7d7b2f6cb6 100644
-> --- a/Documentation/trace/rv/monitor_synthesis.rst
-> +++ b/Documentation/trace/rv/monitor_synthesis.rst
-> @@ -181,7 +181,7 @@ which is the list of atomic propositions present in the LTL specification
->  functions interacting with the Buchi automaton.
->  
->  While generating code, `rvgen` cannot understand the meaning of the atomic
-> -propositions. Thus, that task is left for manual work. The recommended pratice
-> +propositions. Thus, that task is left for manual work. The recommended practice
->  is adding tracepoints to places where the atomic propositions change; and in the
 
-Applied, thanks.
+On 8/12/25 11:31 AM, Jonathan Corbet wrote:
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+>> Hi Jon/Jakub,
+>>
+>> In case you both prefer to merge from a stable tag, please pull from:
+>>
+>> 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git docs/v6.17-1
+>>
+>> For:
+>>
+>> - An YAML parser Sphinx plugin, integrated with Netlink YAML doc
+>>   parser.
+> 
+> OK, I have done that.  I will note that it adds a warning:
+> 
+>> Documentation/networking/netlink_spec/index.rst: WARNING: document isn't included in any toctree
+> 
+> ...it might be nice to get that straightened out.
 
-jon
+I see it, at least in linux-next. However, its format is
+"different," so that may have confused whatever printed
+that message:
+
+from Documentation/networking/index.rst:
+
+   filter
+   generic-hdlc
+   generic_netlink
+   netlink_spec/index
+   gen_stats
+   gtp
+   ila
+
+
+-- 
+~Randy
+
 
