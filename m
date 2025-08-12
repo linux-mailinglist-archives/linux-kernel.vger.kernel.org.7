@@ -1,213 +1,170 @@
-Return-Path: <linux-kernel+bounces-765457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC08B23687
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:01:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C3EB23697
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34CA624509
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E946221DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84B329BDA9;
-	Tue, 12 Aug 2025 19:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEED2FDC49;
+	Tue, 12 Aug 2025 19:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rQLcUhPZ"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWWqRHWn"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9303726FA77;
-	Tue, 12 Aug 2025 19:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755025251; cv=fail; b=k5RdvkL78gI1pXUxSUWz/9QpXmQvoyiGx8yNpNS3eQghdFYZPhiGDrl1bMrwRX8aHI96S9U+ZlLyt0D4RiAGHmYibtYeGcRK6HAiRbl0/AWDJd515E2g6dCrnlL2/o7GODf0HPCVjIAiiK1exmq3jXaktt4NxTeDJH+KIXA/u3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755025251; c=relaxed/simple;
-	bh=2+02uoeEIOZ3L2aZeY91EYn+xDHaqDQqzZLoYtUmV6w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RiYnD4Skhv7TeE2AygEYkkwT9qkl8hUejZYDtpKm244/Bh23lFN1hi64lG1j7/jzz3ZQqUy1zSKMeFEQvWn72JwOlmQDgf0urCc7ecHPUa4LXr9tnj+t4vwVtMXF6iJIjNTqI4tEU2Gf7CDEavghlu/SgdgqWXL50Z8RmouPgeo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rQLcUhPZ; arc=fail smtp.client-ip=40.107.101.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v/shoHpLWv2q81MvaAHbJTZ/MnduXnyeqFj9ypqot1+9Gg2OTfa4fys1cSiQouYSx6L8I5HZubPKkIcqP78l8E3oLViQvM4G66qssOUDGPfSnm1v1pEt80PEWLuPeHq+owRVstHvfePxWxxH4ZplKZjdACGIVUtgjH34aGuvV0f/Qo6MlTS93PP00pArsjKh+s1vnKv1gTVxEZ4ZJAaQxwpIzrvxXSjuxo1hA3V7MJ9yQgmhUK7qqMadD4wAoZ9MkUf8neuSM1vNpK+KeZOHa47cMaNZPUDpkCkR99fyhu28OSds6Vbi8RPu7R4msC6U5gXVyompbYOKUosVf6HGaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dz3PNh+i6ro6eUvfZ5R1Ro9CUvmUQBqEHRmywmQA9jc=;
- b=CENGDAPMErsz6abIEIhR5yKNqlTzU+PE+vL3fD66EW6uR9f88Leh5vftHDmukMt6yYrkQkltW1l+xyWbBw4goH4nk7+eMEhru+qRbm+jBPzQ11xx8u5hf5esm2BGXtbR5aLpTxQKG8IrIQii7uipmWW0nHbMcpH+3lVXnxT+Cr4UBX49btPuS76k/6RLT9vQoYQJq9EW/VZcr5I2A499oTrhbrUw10RbXbvl9WBvQWafNmMKb9lmlgSwhwCPYJj7zDa4orzdvdLIPDNqKQ/9huLbwMx5gV6I8sxHpyXnin5YMGbhdAIoNP1rQrsML9uJEBH9biXJ7orvkBEjvXaNfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dz3PNh+i6ro6eUvfZ5R1Ro9CUvmUQBqEHRmywmQA9jc=;
- b=rQLcUhPZQxCbu7neB5I6TtMNAf0XNu5XukIohy7QnUo+CjK4V3k8Jz0zq83OwFuPZCsGdn63jTgROtmPaQErKeV6JcMfZIqeFNShi7dG16AJkg81pIrrbK91qH5tvJtrIpnk1yOOKZq6qNeWiogBCxTTjfSN7r1v9TwHHw2+CBQ=
-Received: from SJ0PR13CA0078.namprd13.prod.outlook.com (2603:10b6:a03:2c4::23)
- by DM4PR12MB6640.namprd12.prod.outlook.com (2603:10b6:8:8f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
- 2025 19:00:44 +0000
-Received: from SJ5PEPF00000206.namprd05.prod.outlook.com
- (2603:10b6:a03:2c4:cafe::1b) by SJ0PR13CA0078.outlook.office365.com
- (2603:10b6:a03:2c4::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.15 via Frontend Transport; Tue,
- 12 Aug 2025 19:00:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ5PEPF00000206.mail.protection.outlook.com (10.167.244.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 19:00:44 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
- 2025 14:00:42 -0500
-Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 12 Aug 2025 14:00:41 -0500
-From: Jason Andryuk <jason.andryuk@amd.com>
-To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>, Chris Wright <chrisw@sous-sol.org>, "Jeremy
- Fitzhardinge" <jeremy@xensource.com>
-CC: Jason Andryuk <jason.andryuk@amd.com>, <stable@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-Date: Tue, 12 Aug 2025 15:00:40 -0400
-Message-ID: <20250812190041.23276-1-jason.andryuk@amd.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE022F83B4;
+	Tue, 12 Aug 2025 19:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755025299; cv=none; b=ZP2bEFYtX4PJaF2oQjRoqsrnWAkMH474zaG7sRgoBPpplYUhYo6Igbpz1DMJoEeDhHsQbflhXzyPNogUNVphuxDh5Ek8XtXeLO30AtD7WrNwKO79WL1oWpSwDybYgPsrJN4y93Jt8IZEzf6Hh/iccIHWaSd6LMKyx+UmF0JmJ3Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755025299; c=relaxed/simple;
+	bh=M/p3pYZE7NgDPFNWKrq7He8MGAFpae6CLjM2PEmsp+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=SkXIIgq742p4vylpsk8OQsV2Sl9D1+EuzGFYF8vRGIwiQsOVLV2ayG72QC28QzgBcMGkMVtwo6l2/sMCGSkWL8aGb0/bPSqxduhml+aYDUglU1hnLQIRYwD2JpaUzKFTuoaId/zOHeArifx5lk6sfSmcpW/+wFicfdreqIe+nNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWWqRHWn; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e917b687974so953009276.1;
+        Tue, 12 Aug 2025 12:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755025294; x=1755630094; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RJdPfv4oJrrKa85uLhLU8NneF6sIzQNQGxQtBwW81ws=;
+        b=EWWqRHWn3qoD1EeGN8cutudOfSrEBXCqc1g3epYvGl+PPT3Y/kd27VmRk3vH8QvTn2
+         LcRiX585BsfmVztvv6yATjWmz89tIFVNHR80xwT3CnyixIbmGOD0kf/j0lHMEkCJhNFi
+         DuFxhCPRpe/h3xylRlTTxs2aPt/DG9INjKii9Vb2rEYJiDNKa1HleVvSQ+hvL2Nx28U/
+         fLiRQigBcfHCn5dgCxzEqpZBl3fMA2KYFDLsXjYZ8vthFglesp1SFC1hL6ZZLsr7o0sN
+         AeDKm0CuFcyrVqoQ8UW+EbmpAZYGOr8rR/Ijpa9gQ9PCI1Fs29LpMXQ1UvZcexWUoyXu
+         jhpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755025294; x=1755630094;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RJdPfv4oJrrKa85uLhLU8NneF6sIzQNQGxQtBwW81ws=;
+        b=qWCA4pHTtQilVUqFIpYPQLy+6/QUghp1BImNuLluRr3SCn/cuK7oSZA1veTJcIPgxT
+         p4Sz3EH9Pw6W8aC7t0y5tvQtmvMPdlh0c2c+KUYWJ6OR5tWy75AfjBXk56XfsjplzNG7
+         4OxLIXoSrk305JFs777lzWJbhMx597CguWFoEoNJvetK+vaESnhJ3h5NZ/bCTewVK1/k
+         MNGfaSDyqIvaj3/IqHaAHKnXQ2CH8m9A8GUfe3oQqXQuxpf9vZ4nqQEn7LjPU/X3Ug4W
+         hmuOav2vy4RhtPXnUhtDWSKvMOWKCnV6A4uU+KC9oHjRe67K+xVjeybsCy4vZnry6/Sz
+         Hj5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWURW8rhgqQu85ibqP5icC7Z85NnOdpi2BDqDSwCE4rJ+FPhna7OIeVEd+JW5EHBP2oeBdcrNXXLXwXuhM=@vger.kernel.org, AJvYcCWcPjlLKruItScAaE1XuJYfmvIQ9njECmol7gKPgcSOw4PNSgrvMKjvBr8ILtQRXk92Y8JiGDw3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxciCOa3vyc/w/HjUxU/WWkw3/iSC/h/psMr0L9yShca+pFTQjN
+	uzQ1P5uNgIOsLSL/YwxYVZJzhXrXd2yDfMaia6g3AO1fRoGgglCaB+CX8zIwOYhLM/iHgYh1NZm
+	8kPna8H9u0VAJ2G/DrXckNcCLZPVoHuw=
+X-Gm-Gg: ASbGncsH9J7QB+Pfz7qihxILvmhI9AGqmE6FxTjLUwKbVtKp8Sc1KoAb17/wKecnd12
+	hcC3nN21Q1MEsO6KEJmCnkm3dSMMMFaEg9r8xZpcT07jSPb9nuT7qRbQmmvB9RYII3Ennijl3WZ
+	SFCl3nH+ZpjJbMdi93Nz6dz3cMgnpiSmgsvucKrddwlWFAcNrSfjnFK3KBUzLeJK3fn+gbjwfZf
+	uAxmd5Qcd04mFnP+a7e9JAmq5IFMz9XFJXdAuShzw==
+X-Google-Smtp-Source: AGHT+IGPPLINepNlKnFcr8z4SjIsSnt/rMexZuZnT12hj0cF/2iB0grJ9swlvm70eT5xVdjIhOfhJZt1My2vevHknTI=
+X-Received: by 2002:a05:690c:f0f:b0:71b:9482:d53d with SMTP id
+ 00721157ae682-71d4e583afcmr3655797b3.35.1755025294325; Tue, 12 Aug 2025
+ 12:01:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000206:EE_|DM4PR12MB6640:EE_
-X-MS-Office365-Filtering-Correlation-Id: a604fa9c-e92b-4c21-e36f-08ddd9d28a56
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?POVh427oB0urNGjNdGXUFW29B1nP0yzm+Ra6XTPOOfBXen2I/L5CfDt4IOGe?=
- =?us-ascii?Q?E+8WWfbx9J/tkcfX/n90w/usYLpDB0UpRmeaey8i25XI/hsWOT9r3rOm4iwk?=
- =?us-ascii?Q?3ODP9/xIr9tBwZHv2D1cbs60CeZVMfyPpOOrsVFNipdk8cgZM4wg7vbVvyyp?=
- =?us-ascii?Q?rMHmr4YHn+cbjEvLsxZv28X2RRJezPrr4Tub2plKXxXrQc4W7jerUAliD1OJ?=
- =?us-ascii?Q?IkQMbPMw0yN3uJqz50ebWzrCXGItHpZg8wBUmTtNZFzXOPcdj1tHrLgIOuRI?=
- =?us-ascii?Q?R2sxRthYHGgP8KXUCoC0FvpPgl00X/ksCpz+DS/za0jeLaKVJozpl7e64loJ?=
- =?us-ascii?Q?zmNzdFml5dFORJDut03J2TRgl0F3AWl9Dxq7Zv/0kHXJLbKMufubu8J71u9v?=
- =?us-ascii?Q?4pvRFqNU5raDR9S2tBXhjSxC5O2jaLlK5tjQpaPiU/wUsApGDnNp8HW0m970?=
- =?us-ascii?Q?MMqFOy489LBKFiaiKLwpnw0agbRUUrCEuaQVQUdOs/UQwT9+/meXdoqp7BPY?=
- =?us-ascii?Q?AOWfrEqtMctSxPcgmnqEGBIoW2oHcfdO2jlsD6RpZ3zUzwaEwYJ8iIu8suth?=
- =?us-ascii?Q?HeNtpdJOuP1xhT88E7jTzXCQ+qIUaYqpN/TLFZXCCn8OBP4ssL6SbZ7EFmK/?=
- =?us-ascii?Q?mJ/GfC8U0OsyX0I+E+Wuy7dV/BqnlDX1L24PTl6MyDW0wTyL9tFjGjzn5G0R?=
- =?us-ascii?Q?/TXGsdtPWQIWMA8HSk5PAG+o+L6PK9l42/IijVQgFzVFZa7bSribJSDqobXO?=
- =?us-ascii?Q?azxzwgBYQidBYEE1gfO0Io1w2wFLnyRStr8xF0bsytHDcd+SFdcxBhUWUn3a?=
- =?us-ascii?Q?AHaNR4DltLzN3O3ouZVfYeM/Jqbq98iw+1l4LyZTPhoYg23iifRjRj3lJhHs?=
- =?us-ascii?Q?tWUKRGqJCyDHwMzSiYiYWpQ0iECXmf1pC++lYK3UJVs+Fx2YxlOtKzSaRfya?=
- =?us-ascii?Q?HwbMUx5M06tufeczLyh6tSC6cqcLdASbiwKzHyk5n0lGX0ArBhKdnT24yR+n?=
- =?us-ascii?Q?XTHLBmqoLaW+WSxAmDh0wpIIMIkGGSEQSIPh/7Ds/sZ1AcL5CHhw1h4+cKHb?=
- =?us-ascii?Q?svDNfOn7gzusAlDdTMwy/87zwI5hYxcM4a1XVKsz4OSckZ+G0Gk9EjwCbL2c?=
- =?us-ascii?Q?wLJ135hIirVS/8Ln+00Gi+UbWoPfFpfBL7//EPjM/IFYz0rFvbE19vFTO3G3?=
- =?us-ascii?Q?ukakeRhpBn7JFa5lX4HqEcQZVyHBxbepZroVXcFWtvlEz1OD17MDoNWYwfGF?=
- =?us-ascii?Q?Z5ax2zR+YdICXO6nQ3efSDUbDuTCKWRRZT6bIkXWgXh14sLWC1hNzQe6VXE9?=
- =?us-ascii?Q?5zUohsWHWb+yaT3LFIsOY4Uz3lHcN8rrRCzHuTruL1h0oxYVPK9kaA10DKOB?=
- =?us-ascii?Q?qimP6qs8yYJ4S+g5hExG4LooPhzJkVsfkBaV1nK2SzPM6HTn4XCUGhRT8Q38?=
- =?us-ascii?Q?E2n7oExXZiFNqF6/7IedFxI4Tz9eLY/HvozzuCdhMVkjlKmCmBnehhcNhrM+?=
- =?us-ascii?Q?sGksWJ07Sx9tqtqgwSXV9RARap8qWdLtLp11?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 19:00:44.2431
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a604fa9c-e92b-4c21-e36f-08ddd9d28a56
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000206.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6640
+References: <20250810180339.228231-1-chandramohan.explore@gmail.com> <aJp-qm55O_ka7vSv@MacBook-Air.local>
+In-Reply-To: <aJp-qm55O_ka7vSv@MacBook-Air.local>
+From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
+Date: Wed, 13 Aug 2025 00:31:22 +0530
+X-Gm-Features: Ac12FXxxR-kay0lQFHL4WJVsvGyvbGh-9Np6TBGE-rCLMw2RbPNtLGXCmw5VIeo
+Message-ID: <CADBJw5aqQCprGJvG2T4v2_O6BK2dh+2cZRLbyryyktucsqHtVg@mail.gmail.com>
+Subject: Re: [PATCH net] Octeontx2-af: Fix negative array index read warning
+To: Joe Damato <joe@dama.to>, Chandra Mohan Sundar <chandramohan.explore@gmail.com>, sgoutham@marvell.com, 
+	lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com, 
+	hkelam@marvell.com, sbhatta@marvell.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VIRQs come in 3 flavors, per-VPU, per-domain, and global.  The existing
-tracking of VIRQs is handled by per-cpu variables virq_to_irq.
+On Mon, 11 Aug 2025 16:37:14 -0700, Joe Damato wrote:
+>A couple pieces of feedback for you:
 
-The issue is that bind_virq_to_irq() sets the per_cpu virq_to_irq at
-registration time - typically CPU 0.  Later, the interrupt can migrate,
-and info->cpu is updated.  When calling unbind_from_irq(), the per-cpu
-virq_to_irq is cleared for a different cpu.  If bind_virq_to_irq() is
-called again with CPU 0, the stale irq is returned.
+>1. Since this is a fixes it needs a Fixes tag and a commit SHA that it is =
+fixing.
 
-Change the virq_to_irq tracking to use CPU 0 for per-domain and global
-VIRQs.  As there can be at most one of each, there is no need for
-per-vcpu tracking.  Also, per-domain and global VIRQs need to be
-registered on CPU 0 and can later move, so this matches the expectation.
+Thank you very much for your feedback.I will add the Fixes tag as suggested=
+.
 
-Fixes: e46cdb66c8fc ("xen: event channels")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
----
-Fixes is the introduction of the virq_to_irq per-cpu array.
+>2. cgx_get_cgxid is called in 3 places, so your patch would probably need =
+to
+>   be expanded to fix all uses?
 
-This was found with the out-of-tree argo driver during suspend/resume.
-On suspend, the per-domain VIRQ_ARGO is unbound.  On resume, the driver
-attempts to bind VIRQ_ARGO.  The stale irq is returned, but the
-WARN_ON(info == NULL || info->type != IRQT_VIRQ) in bind_virq_to_irq()
-triggers for NULL info.  The bind fails and execution continues with the
-driver trying to clean up by unbinding.  This eventually faults over the
-NULL info.
----
- drivers/xen/events/events_base.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Thanks for the suggestion.
+I can add a similar check in cgxlmac_to_pf() to check if cgx_id is
+negative and return an error.
 
-diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-index 41309d38f78c..a27e4d7f061e 100644
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -159,7 +159,19 @@ static DEFINE_MUTEX(irq_mapping_update_lock);
- 
- static LIST_HEAD(xen_irq_list_head);
- 
--/* IRQ <-> VIRQ mapping. */
-+static bool is_per_vcpu_virq(int virq) {
-+	switch (virq) {
-+	case VIRQ_TIMER:
-+	case VIRQ_DEBUG:
-+	case VIRQ_XENOPROF:
-+	case VIRQ_XENPMU:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+/* IRQ <-> VIRQ mapping.  Global/Domain virqs are tracked in cpu 0.  */
- static DEFINE_PER_CPU(int [NR_VIRQS], virq_to_irq) = {[0 ... NR_VIRQS-1] = -1};
- 
- /* IRQ <-> IPI mapping */
-@@ -974,6 +986,9 @@ static void __unbind_from_irq(struct irq_info *info, unsigned int irq)
- 
- 		switch (info->type) {
- 		case IRQT_VIRQ:
-+			if (!is_per_vcpu_virq(virq_from_irq(info)))
-+				cpu = 0;
-+
- 			per_cpu(virq_to_irq, cpu)[virq_from_irq(info)] = -1;
- 			break;
- 		case IRQT_IPI:
--- 
-2.50.1
+>Overall though, did you somehow trigger this issue?
+>
+>It seems like all cases where cgx_get_cgxid is used it would be extremely
+>difficult (maybe impossible?) for cgxd to be NULL and for it to return a
+>negative value.
 
+I could not reproduce a scenario where cgx_get_cgxid returns a
+negative value. However, this issue was reported by the Black Duck
+Coverity scan.
+The fix was made to cover all possible return paths.
+
+Please advise if you think there=E2=80=99s a better way to address it.
+
+Thanks,
+Chandra Mohan Sundar
+
+
+On Tue, Aug 12, 2025 at 5:07=E2=80=AFAM Joe Damato <joe@dama.to> wrote:
+>
+> On Sun, Aug 10, 2025 at 11:33:27PM +0530, Chandra Mohan Sundar wrote:
+> > The cgx_get_cgxid function may return a negative value.
+> > Using this value directly as an array index triggers Coverity warnings.
+> >
+> > Validate the returned value and handle the case gracefully.
+> >
+> > Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
+> > ---
+> >  drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/=
+drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> > index 8375f18c8e07..b14de93a2481 100644
+> > --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> > +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+> > @@ -3005,6 +3005,8 @@ static int cgx_print_fwdata(struct seq_file *s, i=
+nt lmac_id)
+> >               return -EAGAIN;
+> >
+> >       cgx_id =3D cgx_get_cgxid(cgxd);
+> > +     if (cgx_id < 0)
+> > +             return -EINVAL;
+> >
+> >       if (rvu->hw->lmac_per_cgx =3D=3D CGX_LMACS_USX)
+> >               fwdata =3D  &rvu->fwdata->cgx_fw_data_usx[cgx_id][lmac_id=
+];
+>
+> A couple pieces of feedback for you:
+>
+> 1. Since this is a fixes it needs a Fixes tag and a commit SHA that it is=
+ fixing.
+> 2. cgx_get_cgxid is called in 3 places, so your patch would probably need=
+ to
+>    be expanded to fix all uses?
+>
+> Overall though, did you somehow trigger this issue?
+>
+> It seems like all cases where cgx_get_cgxid is used it would be extremely
+> difficult (maybe impossible?) for cgxd to be NULL and for it to return a
+> negative value.
 
