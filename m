@@ -1,179 +1,92 @@
-Return-Path: <linux-kernel+bounces-765435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDF5B234A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:42:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72E7B234E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09B974E46BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AF36E1B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027832FFDE9;
-	Tue, 12 Aug 2025 18:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D92FFDD4;
+	Tue, 12 Aug 2025 18:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="YS/4WtQ3"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.183])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Xv1u1woK"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB92C2FFDC8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DBE2FF17D;
+	Tue, 12 Aug 2025 18:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755024098; cv=none; b=POsXTFG2DVwHJ2McualcWZLb9LI2bJPP/TtB9lDkEB+RL91Nt9DVzkx7uYCCXbreGwApPiyXBChBSXulD3ui/b7vrvyFzy6G83olujEBBPP3qbnZ4F/rChxNbLJQpFVu84vDe42SeedH5DiCteg5CFg6y10L59W+acrdWs+FjCw=
+	t=1755024028; cv=none; b=CczE9X5Dyj2FeLInVS8J45FfG2nxWBkI3VlYbjSoX46Yz7B/f6waA/RKwXQmUg22mIsrhqquHRFt+CViwVjMc/IILJQmQqfGa2X1dJc6qxf/41TOPcAcyoS92PFhurVsLtAQVjRj1+YTJTOuiiiC/d1OzvWQdXklTqnTuVYcA5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755024098; c=relaxed/simple;
-	bh=gLRMsIvCv8IG45hsz/MkPHRnEYM5tUj2cZW2pTMmcKs=;
-	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References; b=Da9OOTVCbS996IFCeyJwLG/8tDIVrE2QYj2S6Qt50FpQ06jxyLOW+3Mpr+iAm5tu6WnzDoXaa64s2qlllbqXiq25O3IElFXI72HEJSdKdu95TTwozHuBM0u8urlyFGcoJUdbbhMk9ZoMt4U3Z98pigvQAjBgYbpS5cn9LXwq5uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=YS/4WtQ3; arc=none smtp.client-ip=195.121.94.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: fe89f747-77ab-11f0-84d2-005056992ed3
-Received: from smtp.kpnmail.nl (unknown [10.31.155.5])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id fe89f747-77ab-11f0-84d2-005056992ed3;
-	Tue, 12 Aug 2025 20:41:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=subject:to:from:message-id:date;
-	bh=/3M4lDWEC7hP7KuGM7cE06jKWy9RiyUcvF4Xfh1YCsk=;
-	b=YS/4WtQ37lFKvMGEtTp+8J4iVoj/Mq6NfwVVO2Hji77xVOzkuyl4bLguvP7hDn0a0VBukuhuyh7zg
-	 KuSNcRQ0cF9eiYdxero+cf/vvpFXONKl/C4j6QblGLmueCVZtFoJ+beNVYOwgqKIo0APWVAF0E0xIr
-	 +zWQ1Kc9EKGU9pk6YL6qHPLq+bFhkvuv7Cao1XStZfQSIM8PbBly48L6CZxD/52naH0FsVuqTsESEV
-	 GK7tcNnnSNIlsMSG2AOzDjjjCqfP7QDAAloanNzAQXQO6em1wzP6/kTR1oxnGau7xQH/z3oKjUCsXC
-	 ZGHURoLZp7tcuKrw9ujHd4j6Qu9vSfQ==
-X-KPN-MID: 33|1+wkTmLP+rbkYDZSTRx2TNyahSDVBKcTrCDARRxfA37PcVf4d7uR4kLyDmD0fdK
- jzy4QDeFgZUc7eR6T4tH+4zkNo/16Oy1xT2hMauxbMwo=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|M/4jMQFXP+rTo5MG/gkkhJmKuNihgybGQtzZ0C9WJAVb6Xo5AJP0id5rm9zQv/k
- kmwbNz08Bnlb8DMOJ3Cb94w==
-Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id cf6dfa05-77ab-11f0-8d53-00505699b758;
-	Tue, 12 Aug 2025 20:40:25 +0200 (CEST)
-Date: Tue, 12 Aug 2025 20:40:25 +0200
-Message-Id: <87wm78l6xy.fsf@bloch.sibelius.xs4all.nl>
-From: Mark Kettenis <mark.kettenis@xs4all.nl>
-To: Sven Peter <sven@kernel.org>
-Cc: j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev,
-	lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alexandre.belloni@bootlin.com,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, sven@kernel.org
-In-Reply-To: <20250812-wip-smc-rtc-v1-1-66a8e96dad60@kernel.org> (message from
-	Sven Peter on Tue, 12 Aug 2025 18:25:15 +0000)
-Subject: Re: [PATCH 1/3] dt-bindings: rtc: Add Apple SMC RTC
-References: <20250812-wip-smc-rtc-v1-0-66a8e96dad60@kernel.org> <20250812-wip-smc-rtc-v1-1-66a8e96dad60@kernel.org>
+	s=arc-20240116; t=1755024028; c=relaxed/simple;
+	bh=dMHlKk75+tPnXU4KgT+bLdlEkx19Sn3kugZwFqU4Iks=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dnndSbC9qZwa6fhZYJTsuBWX/2nru3vyy4dXmVCPde1YiaUB3tZdrfQG1gRVrZ/7VPvEheRRJy7p0yyOVqfhfa2yZOU8kDH3WxHBBFMePMV5ATx+5DvrI6ZmpPwMmIvBBx7m2yrswwfQXpZnUMjtexkE1lZhQMD6W+uqWtRT0oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Xv1u1woK; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1CFB140AD9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755024026; bh=DUXEjNQofN7i2jKB1Vi4l0ISHfcgWa6MdCHIYt9HVl4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Xv1u1woKx6mh/a6vSumZBaYe9ACuOoZ3pmXhWevUh+b/+DaFYHF0Hd5z15zp7R5Sa
+	 tYoIvCHjvBw2byZ/CdrXHq1PcFfsyqPM9a+xf1rsM4vl62ohPj5LRrf73iXp8zvdMx
+	 meFWlktA5ULg2Fycs0QAtbhVwQ4fyojA1SJ2Ecs67GfaSBP+I0g1Ss4CDF//1GK6ks
+	 jYbTP6lEflwxMAqB8P3R+U5seTRvf0vL0FJlvxoxymiO6BxJZUZ+O10o5atcXUCA6B
+	 9V6q9uNfqhv0D5mBTxTU9p0rEFCfgm7Cy6UiTx12Kk2LIl4u5Z0VGEfYK5xd8fyv25
+	 XUQQHmw6gJ0uw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 1CFB140AD9;
+	Tue, 12 Aug 2025 18:40:26 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>, dhowells@redhat.com,
+ brauner@kernel.org, max.kellermann@ionos.com, skhan@linuxfoundation.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] docs: folio_queue: Fix minor typo in folio_queue page
+In-Reply-To: <20250810235346.4153-1-krishnagopi487@gmail.com>
+References: <20250810235346.4153-1-krishnagopi487@gmail.com>
+Date: Tue, 12 Aug 2025 12:40:25 -0600
+Message-ID: <874iucfko6.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-> From: Sven Peter <sven@kernel.org>
-> Date: Tue, 12 Aug 2025 18:25:15 +0000
-> 
-> Apple Silicon Macs (M1, etc.) have an RTC that is part of the PMU IC,
-> but most of the PMU functionality is abstracted out by the SMC.
-> An additional RTC offset stored inside NVMEM is required to compute
-> the current date/time.
-> 
-> Signed-off-by: Sven Peter <sven@kernel.org>
+Gopi Krishna Menon <krishnagopi487@gmail.com> writes:
 
-Reviewd-by: Mark Kettenis <kettenis@openbsd.org>
-
+> Specifically, fix typo 'hese'-> 'these'
+>
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
 > ---
->  .../devicetree/bindings/mfd/apple,smc.yaml         |  9 ++++++
->  .../devicetree/bindings/rtc/apple,smc-rtc.yaml     | 35 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  3 files changed, 45 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/apple,smc.yaml b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
-> index 8a10e270d421ecd703848f64af597de351fcfd74..38f077867bdeedba8a486a63e366e9c943a75681 100644
-> --- a/Documentation/devicetree/bindings/mfd/apple,smc.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
-> @@ -41,6 +41,9 @@ properties:
->    reboot:
->      $ref: /schemas/power/reset/apple,smc-reboot.yaml
+>  Documentation/core-api/folio_queue.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/core-api/folio_queue.rst b/Documentation/core-api/folio_queue.rst
+> index 83cfbc157e49..b7628896d2b6 100644
+> --- a/Documentation/core-api/folio_queue.rst
+> +++ b/Documentation/core-api/folio_queue.rst
+> @@ -44,7 +44,7 @@ Each segment in the list also stores:
+>   * the size of each folio and
+>   * three 1-bit marks per folio,
 >  
-> +  rtc:
-> +    $ref: /schemas/rtc/apple,smc-rtc.yaml
-> +
->  additionalProperties: false
->  
->  required:
-> @@ -75,5 +78,11 @@ examples:
->            nvmem-cell-names = "shutdown_flag", "boot_stage",
->                               "boot_error_count", "panic_count";
->          };
-> +
-> +        rtc {
-> +          compatible = "apple,smc-rtc";
-> +          nvmem-cells = <&rtc_offset>;
-> +          nvmem-cell-names = "rtc_offset";
-> +       };
->        };
->      };
-> diff --git a/Documentation/devicetree/bindings/rtc/apple,smc-rtc.yaml b/Documentation/devicetree/bindings/rtc/apple,smc-rtc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..607b610665a28b3ea2e86bd90cb5f3f28ebac726
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/apple,smc-rtc.yaml
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/apple,smc-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple SMC RTC
-> +
-> +description:
-> +  Apple Silicon Macs (M1, etc.) have an RTC that is part of the PMU IC,
-> +  but most of the PMU functionality is abstracted out by the SMC.
-> +  An additional RTC offset stored inside NVMEM is required to compute
-> +  the current date/time.
-> +
-> +maintainers:
-> +  - Sven Peter <sven@kernel.org>
-> +
-> +properties:
-> +  compatible:
-> +    const: apple,smc-rtc
-> +
-> +  nvmem-cells:
-> +    items:
-> +      - description: 48bit RTC offset, specified in 32768 (2^15) Hz clock ticks
-> +
-> +  nvmem-cell-names:
-> +    items:
-> +      - const: rtc_offset
-> +
-> +required:
-> +  - compatible
-> +  - nvmem-cells
-> +  - nvmem-cell-names
-> +
-> +additionalProperties: false
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa45799dfe07de2f54de6d6a1ce0615..aaef8634985b35f54de1123ebb4176602066d177 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2397,6 +2397,7 @@ F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
->  F:	Documentation/devicetree/bindings/power/apple*
->  F:	Documentation/devicetree/bindings/power/reset/apple,smc-reboot.yaml
->  F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-> +F:	Documentation/devicetree/bindings/rtc/apple,smc-rtc.yaml
->  F:	Documentation/devicetree/bindings/spi/apple,spi.yaml
->  F:	Documentation/devicetree/bindings/spmi/apple,spmi.yaml
->  F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
-> 
-> -- 
-> 2.34.1
-> 
-> 
-> 
-> 
+> -but hese should not be accessed directly as the underlying data structure may
+> +but these should not be accessed directly as the underlying data structure may
+>  change, but rather the access functions outlined below should be used.
+
+Applied, thanks.
+
+jon
 
