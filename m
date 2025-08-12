@@ -1,151 +1,183 @@
-Return-Path: <linux-kernel+bounces-764760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B02B226F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C16B226FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720763B98AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840DB1891136
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5001684B4;
-	Tue, 12 Aug 2025 12:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI0MtiKa"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4791D435F;
+	Tue, 12 Aug 2025 12:33:43 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D124311C26;
-	Tue, 12 Aug 2025 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256A478F2B;
+	Tue, 12 Aug 2025 12:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755001976; cv=none; b=cSAscJ6tTkbzmo+q3WKnvyDYCEq/3dEwQTmiUwqUM8N15FWzhv/mS5cuyOEr8CXB5tw+OQMEIeMhhr1BVX04VIkPCq0dk/6EbWlc1re/Ap5sv8PJWWfS/hwVM0uiTo1KWzQ/W5ydb6/s+mD5AIHdvxk4g/zvlfKUp0TsCLDeNeI=
+	t=1755002022; cv=none; b=Z3SPa4BmTVYa9TeBKylhMIs5SWy7RUYqxiK6a+MeRQp3W5b9eFXUttWAYhN1227Adr6OsZYTGg4VfMCJxKT27mhmrlImoR+QwQiwQ08RKoVRiJSRd45aoP/S4dBa1ToJ20QRmpM3oyOTGxQRAz1pLi6SV2/sFVyKX0Jhssu9SF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755001976; c=relaxed/simple;
-	bh=4rgOB75uHJhQ9FKGjjwyzR4VYHrWoTncP8I0hzQ36Kc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6uDrCRRCoyEcQ7+v5ZoJVJGLxhapeQsudCOrcMkahyKIqLIJj5CMeEW7Q7SqQErFTFw3FcaZTxWPVwfMqdMYZZKDTwsshSkKT8RV7qWUTYIUkQ8X6sFBOpc9viDnWaIsOaBri6/EXHlR24C24FxM1jCejSeP1wa15Mv6i/SRBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI0MtiKa; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61b932f2c0eso395868eaf.3;
-        Tue, 12 Aug 2025 05:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755001973; x=1755606773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YJbVEsQJVCjelejxZubJqTtynOwasKvIUa9eAU0KJJo=;
-        b=PI0MtiKabbFDU+7SgIlArGvmyRyrtvR6SwsZ3awpVsQWTadDOThMMmrcw0oIQtTVNI
-         uej8Y++CtmrOJaqPP5r3gV3xI1M4U679REtXqtdh6jXWe0KM0EAS3d58QPni87GFpt41
-         Xzs65WsudRf3x6MDUWSFktLYGkIflUuOqeHqPXIe9y0AofofpylhFbNqp44ndngUwPvO
-         Pkd1vwZ+LYKQ4A9FUBTbuSi1U+AmOsRSlhv69PfHH65M2Ih+V7PmpPXFZ1fYypUqsVpG
-         uWKnJ/WT0dRDpBBG0RB5tRQoPHvCWGCxtGCqYGTPDtk9fQAs/yGahUcg3j91zMnzTRcT
-         VIrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755001973; x=1755606773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YJbVEsQJVCjelejxZubJqTtynOwasKvIUa9eAU0KJJo=;
-        b=YAzU7/EmqdzISaRXCPhPKGCZYYUnxLT0pJAr5ssKGIxwaPz7AeCQ/VqkXJNN7nM4Jc
-         113Ir6A66gLw1fcnd1o0prAqbF7uxNWPxgguL5gmFDVk0wpKC0KYK6pGXJzyg2BGFGTU
-         cgTbbDtzFQJuTQ/wz3jufbp/lFCKlVgS7MLDHimyHtsSJfegDp0JxG9gtA/bd+uBhck5
-         hNxzzJ1HJgIPp/3p2fETYXAHqu1nPhJp0PPzz9gbvbTNmKA9pFwAr5olixo7uS1e1l0X
-         AlwkRWqEkVw4759GKsnkfG+iO4KaQ+iCjWFMkS6BhbrTENAMZfKGn2u5pO5azSX9zKFu
-         Bxnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFsmc0voKjt0st3jU57o67XoWvm1bhkxT6UMQX5UjnnxzXhKJhtJ4D1yf9bihyGzXke9PBxR+73Y2rcmp9c6fO@vger.kernel.org, AJvYcCWOHTJsdd0APxg6z0CQW7DVHGFUt+9N3VR08RG0HB2fTwbOAhPhXzFQdsRimJ3BuO3XMe6TZV7J8qfa++M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys1aWfrUG7tPMNyQrFJhsbonXuhbpVWTdkKp/Kr4qbI1IeEcBk
-	Coo7mFPFliF7wqh8hj045ReamyUr8ZHsZ54nWku/JHAyUqoxMWRrsMNrq0vNO+2UTsG4vj4ZsM2
-	pkkRRNf/Mh33T2IxVeP47mc6xFWF+WuA=
-X-Gm-Gg: ASbGncuguOieAPQkQEFvs5Va1TQa+c1N8tJUI8yZ8c/8+MnITpaNbMAIdjYkcPP/wMr
-	Z0dnbJySA+6D/BXut4L65h7NJpttSoM8CUgFo+n5rElpYm3vTbcQFqph0jnV0//5sXIQlXFmFGj
-	RwBsIFsKrkUwnjvEF5rFG0LOfWS7RsEbDBY9L8vSwwwk6P4TMQRrPhxX0afH/WeZk1qNx1SDKF2
-	R40
-X-Google-Smtp-Source: AGHT+IFLY+ky7e3BroIIydWjoY0aabZimRGPv+KZv2ff2sfoqaC+0xQ4C7oeRILPEIRw/Fmk+/4AWjzm7pUMRn5Tgvs=
-X-Received: by 2002:a05:6870:169b:b0:30b:9750:3085 with SMTP id
- 586e51a60fabf-30c94ed0290mr2350864fac.10.1755001973402; Tue, 12 Aug 2025
- 05:32:53 -0700 (PDT)
+	s=arc-20240116; t=1755002022; c=relaxed/simple;
+	bh=Z1RUETnyt/uhnNB9un2P97XRWyixMYAvNmk4l5UKUZ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OsuLb7bHiM03xqnmlw9G8HVFIWakMNBVVFBJJ9aO/IFN7bSBEa49diGwychrZheD59Y5becW1v+6Yg79RIKm6Ft7A3gdtj2blmvq45/LzeBMJp9LiYTgYCeBFSSc3QZ0KGmp7s6vt6akqZjkpStWhoYPTH95SIhVXLj4wd8AjME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c1W9W2nBvztTDq;
+	Tue, 12 Aug 2025 20:32:31 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id B2D9F180B54;
+	Tue, 12 Aug 2025 20:33:31 +0800 (CST)
+Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Aug 2025 20:33:30 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Fu Guiming <fuguiming@h-partners.com>, Meny Yossefi
+	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v12 0/8] net: hinic3: Add a driver for Huawei 3rd gen  NIC - management interfaces
+Date: Tue, 12 Aug 2025 20:33:18 +0800
+Message-ID: <cover.1754998409.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-alex-fixes_manual-v1-1-c4e99b1f80e4@rivosinc.com>
-In-Reply-To: <20250812-alex-fixes_manual-v1-1-c4e99b1f80e4@rivosinc.com>
-From: Sang-Heon Jeon <ekffu200098@gmail.com>
-Date: Tue, 12 Aug 2025 21:32:41 +0900
-X-Gm-Features: Ac12FXzk5--95ren1VR6OqqAUzs5yqbnOkCJYlLg7DPyV4KuIMBIBIZHxZk8QM4
-Message-ID: <CABFDxMGPS6LE=A25VjXEpfKuzVfgxfgu=_uhkWXc3D+xuq-B6w@mail.gmail.com>
-Subject: Re: [PATCH] selftests/damon: fix damon selftests by installing _common.sh
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: SeongJae Park <sj@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Enze Li <lienze@kylinos.cn>, damon@lists.linux.dev, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-Hello, Alexandre
+This is the 2/3 patch of the patch-set described below.
 
-On Tue, Aug 12, 2025 at 5:13=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
-.com> wrote:
->
-> _common.sh was recently introduced but is not installed and then
-> triggers an error when trying to run the damon selftests:
->
-> selftests: damon: sysfs.sh
-> ./sysfs.sh: line 4: _common.sh: No such file or directory
->
-> Install this file to avoid this error.
+The patch-set contains driver for Huawei's 3rd generation HiNIC
+Ethernet device that will be available in the future.
 
-I tried to reproduce those error with my vm environment but I failed;
-with my workaround test method, it doesn't exist.
-If you're okay, could you please tell me line by line how you execute
-tests in what environment?
-I'm also struggling with the test environment, as well.
+This is an SRIOV device, designed for data centers.
+Initially, the driver only supports VFs.
 
-> Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host share=
-d function")
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  tools/testing/selftests/damon/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/testing/selftests/damon/Makefile b/tools/testing/selft=
-ests/damon/Makefile
-> index 5b230deb19e8ee6cee56eb8f18c35e12f331e8b7..ddc69e8bde2905ff1c461a08f=
-2ad008e6b28ac87 100644
-> --- a/tools/testing/selftests/damon/Makefile
-> +++ b/tools/testing/selftests/damon/Makefile
-> @@ -4,6 +4,7 @@
->  TEST_GEN_FILES +=3D access_memory access_memory_even
->
->  TEST_FILES =3D _damon_sysfs.py
-> +TEST_FILES +=3D _common.sh
->
->  # functionality tests
->  TEST_PROGS +=3D sysfs.sh
->
-> ---
-> base-commit: 2754d549af31f8f029f02d02cd8e574676229b3d
+Following the discussion over RFC01, the code will be submitted in
+separate smaller patches where until the last patch the driver is
+non-functional. The RFC02 submission contains overall view of the entire
+driver but every patch will be posted as a standalone submission.
 
-Does this commit exist in `mm-new` or `damon-next`?  I failed to setup
-the same base-commit environment.
+Changes:
 
-> change-id: 20250812-alex-fixes_manual-aed3ef75dd83
->
-> Best regards,
-> --
-> Alexandre Ghiti <alexghiti@rivosinc.com>
->
->
+PATCH 02 V01: https://lore.kernel.org/netdev/cover.1749561390.git.root@localhost.localdomain
 
-Thank you for great work!
+PATCH 02 V02: https://lore.kernel.org/netdev/cover.1749718348.git.zhuyikai1@h-partners.com
+* Fix build allmodconfig warning (patchwork)
+* Update cover-letter changes information.
 
-Best Regards.
-Sang-Heon Jeon
+PATCH 02 V03: https://lore.kernel.org/netdev/cover.1750054732.git.zhuyikai1@h-partners.com
+* Use refcount_*() instead of atomic_*() (Jakub Kicinski)
+* Consistency fixes : HIG->HIGH, BAR45->BAR4/5 , etc (ALOK TIWARI)
+* Code format fixes : use \n before return, remove extra spaces (ALOK TIWARI)
+* Remove hinic3_request_irq redundant error print (ALOK TIWARI)
+* Modify hinic3_wq_create error print (ALOK TIWARI)
+
+PATCH 02 V04: https://lore.kernel.org/netdev/cover.1750665915.git.zhuyikai1@h-partners.com
+* Break it up into smaller patches (Jakub Kicinski)
+
+PATCH 02 V05: https://lore.kernel.org/netdev/cover.1750821322.git.zhuyikai1@h-partners.com
+* Fix build clang warning (Jakub Kicinski)
+
+PATCH 02 V06: https://lore.kernel.org/netdev/cover.1750937080.git.zhuyikai1@h-partners.com
+* Use kmalloc instead of kzalloc for cmd_buf allocation (Vadim Fedorenko)
+* Use usleep_range() for avoid CPU busy waiting (Vadim Fedorenko)
+* Use kcalloc for intr_coalesce initialization (Vadim Fedorenko)
+* Code format fixes: use reverse x-mas tree (Vadim Fedorenko)
+* Simplify hinic3_mbox_pre_init logic (Vadim Fedorenko)
+
+PATCH 02 V07: https://lore.kernel.org/netdev/cover.1751597094.git.zhuyikai1@h-partners.com
+* Use threaded IRQ instead of tasklet (Paolo Abeni)
+* Use wmb instead of rmb in cmdq_sync_cmd_handler (Paolo Abeni)
+
+PATCH 02 V08: https://lore.kernel.org/netdev/cover.1752126177.git.zhuyikai1@h-partners.com
+* Remove msg_send_lock to avoid a double-locking schema (Vadim Fedorenko)
+* Use send_msg_id when assigning the value to msg_id (Vadim Fedorenko)
+
+PATCH 02 V09: https://lore.kernel.org/netdev/cover.1752489734.git.zhuyikai1@h-partners.com
+* Use iowrite32be & ioread32be instead of writel & readl (Jakub Kicinski)
+* Use queue_work instead of queue_work_on(WORK_CPU_UNBOUND...) (Jakub Kicinski)
+* Modify aeqe & ceqe wmb comment (Jakub Kicinski)
+* Remove synchronize_irq before free_irq (Jakub Kicinski)
+
+PATCH 02 V10: https://lore.kernel.org/netdev/cover.1753152592.git.zhuyikai1@h-partners.com
+* Use spin_lock in aeq & ceq events instead of bits ops (Jakub Kicinski)
+* Modify memory barriers comments to explain more clearly (Jakub Kicinski)
+
+PATCH 02 V11: https://lore.kernel.org/netdev/cover.1753240706.git.zhuyikai1@h-partners.com
+* Remove unused cb_state variable (Simon Horman)
+
+PATCH 02 V12:
+* Use swab32_array instead of swab32 (Simon Horman)
+* Use __le16/32/64 value in structs for interacting with HW (Simon Horman)
+* Remove const char __iomem * casts (Simon Horman)
+* use u8 * instead of void * to be more meaningful (Simon Horman)
+* use FIELD_PREP to mask and shift up values (Simon Horman)
+
+Fan Gong (8):
+  hinic3: Async Event Queue interfaces
+  hinic3: Complete Event Queue interfaces
+  hinic3: Command Queue framework
+  hinic3: Command Queue interfaces
+  hinic3: TX & RX Queue coalesce interfaces
+  hinic3: Mailbox framework
+  hinic3: Mailbox management interfaces
+  hinic3: Interrupt request configuration
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   4 +-
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.c  | 914 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.h  | 156 +++
+ .../ethernet/huawei/hinic3/hinic3_common.c    |  23 +
+ .../ethernet/huawei/hinic3/hinic3_common.h    |  27 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |  79 ++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.c   | 775 +++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.h   | 122 +++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    |  43 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  31 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  36 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 148 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 136 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |  61 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  | 842 +++++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  | 126 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  14 +-
+ .../net/ethernet/huawei/hinic3/hinic3_wq.c    | 109 +++
+ .../net/ethernet/huawei/hinic3/hinic3_wq.h    |  19 +-
+ 21 files changed, 3675 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_csr.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.h
+
+
+base-commit: bc4c0a48bdad7f225740b8e750fdc1da6d85e1eb
+-- 
+2.43.0
+
 
