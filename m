@@ -1,159 +1,95 @@
-Return-Path: <linux-kernel+bounces-764551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EF0B22463
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:17:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B4CB2246D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 387DB7B3269
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98EF3A3524
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECE9189F5C;
-	Tue, 12 Aug 2025 10:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963402DAFCE;
+	Tue, 12 Aug 2025 10:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jbdns70t"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="rIZHafz7"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2F32EAD07
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07F22E3B17
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993841; cv=none; b=SlJnaf3bDQSetPY1+qlcKQ5ftUTaV6AWATafaVpXBL9pq6OZ/Y4m+rr9FpAmRvrILBnhPSkj60X98ZzEanRN6Ualt3FpH6xIHyiP/WMc5IyVfeZQqIU1/GeiVB44IdecG7kqPaOhQi8TaSKeQ/w2Dj7O+suZYSy/Uop8NU81YWA=
+	t=1754993838; cv=none; b=V7z+KFNXgG9bmm54js7zifANB/mPGbgAMsMEsYGIYh+I/SqSDK4kz4A5cdLeuFxXeAhe7LsBvndJ2biLgUNxtArnotgChyPPbCEyYbxKjvnNiO1fsWE3C46DH3NfPvWR2axcRnwfW6/g9CVf3IQS05kvHKuORBqktKokZKa2m6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993841; c=relaxed/simple;
-	bh=Ny8XbyguypEdsSdRIs3kzjqtG3O0P7VKO0BiwhlY8cc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UmC2gS9IAQR5JqFy7XnLksQcyP00qpUV4xtQQSogNRBQC7mG/enFIky3e98fyvm2owHfFcJxj4rrTKPCkSt/VqDN/BtwSYYOL+DCpLOLrsZZlIONbGHAvQs7QIcWX+9/tm8Fqe3MH4Q1BAfuzZaMj94Nrgzgbn9x3A8LgpLsVNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jbdns70t; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24041a39005so33525465ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754993839; x=1755598639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tAiDA+pPXeX+eqjEKGR/i+gKN8pUN58x+qsDUmNsB7M=;
-        b=Jbdns70t/wvZ5HMyUWl7520VVnwF6QDxFRstBzcHHLo9hIYFURO/kbiNbnwU1xJwhY
-         8ABs2Xz7GgXTA2R3RxbslPcms9nN4xMbjPecRwRgfa0O1Ux7/8ts+OMJYLouv6lN330O
-         xlxH3LbVMyUZ3kfbqrteb1vo0IvYd0xfVV3etZjefPHqIiThTf74CAObkVpT3CGjIR9K
-         knKqwBNOfYlIv0b4+Y6dneMGO4QkH0ISUPo+AAe3t/JJuKIlkiNz/fbJqSlOsV55MBDI
-         +ESEPARye1S7XyM+9nOIYJZrMX0Cmly6cUKfheEmZun0u6HQKW6zjYzuGjIAfItzbK/R
-         Oa4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754993839; x=1755598639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tAiDA+pPXeX+eqjEKGR/i+gKN8pUN58x+qsDUmNsB7M=;
-        b=rtLMnkRVNLxArG6HwfCl5erOtuZB9ucq5pZJeNF7gxokaj3/3CWwceI1kciAseUiWi
-         X/Sd+CONGY7n22AWQvForn1+VBafOlp8ESgOjFzvtoHAhkaI9mEYhd2e1KXiYH/njq25
-         cywD/7ec59+gKNrO6BDjhGcJBL/k9H+xQCqfkbKpmvNs0K26xofrnTjrsChhX9WW2xMg
-         rwxmj2dQzcLMhRPMrA2hfx0LKU0nCmlMC0gHqrcciS8UffszQ0ngP8t8g7RvwJLLQWfC
-         Ckp9pMgybr3WVdYyFhGTO9NH9ZvrWll6/39uAjpzNj7GL2aD4MiUddyV2jQDP5zJgtoe
-         1GYg==
-X-Gm-Message-State: AOJu0YyL4Hpd6foH4Qs/3WM7audbrYUka0fMqdfvxtmUdaJmPhAKe2+5
-	a7AfobFZbTsARuPNMjOqZxcU/qQYbEXCycayyyRyVMBipfdr2PBk7SA+
-X-Gm-Gg: ASbGncsUBUUurerFJs81JK3FXfRFGwtBwzCC3r6fu23D1tHr3i6QeopfW42N6zLv6v9
-	9zAS4raZ1eCl0Tg0LSmUH7lvJ78bWdvsrwLw89kB9nqiD6X1P9u5cBvL0QVUHPTbcXvTaUwYue1
-	IGBCAMxi5knPXmVRREmpwpjm+m+EL+1U26DPx+e1VnLwQyddxDaF2vdhEWTWLGheIom17su9l9T
-	DZj0oo11w7xBZEcOWP/+CetO8KO14ZFuFzw0Fz+IQAl2md6dgtj1TqnqJvd3t1Q/RXC7akNNezx
-	CT7K1LJlr/H3/C/qlj4/LQumQGcJZbWk19utpeIlAzCxWz8TaUyrXDSHcp39gWIIEDN0QX7C+HA
-	40DyDUNQAC7ENJWoA0rrUUZoY34scSQE/plAWzz4JUpPVxeU=
-X-Google-Smtp-Source: AGHT+IEiyvNjbueqwD2m6uyn9hGiCFKOElpcUtnIoXnLnoXrC/giOH+BN4AZeaByskAmR2yVP+7ivg==
-X-Received: by 2002:a17:903:15cf:b0:234:c8ec:51b5 with SMTP id d9443c01a7336-242c2259699mr202977645ad.53.1754993839297;
-        Tue, 12 Aug 2025 03:17:19 -0700 (PDT)
-Received: from localhost.localdomain ([2408:80e0:41fc:0:fe29:0:2:4699])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-242ff520192sm14464165ad.90.2025.08.12.03.17.13
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 12 Aug 2025 03:17:18 -0700 (PDT)
-From: yaozhenguo <yaozhenguo1@gmail.com>
-X-Google-Original-From: yaozhenguo <yaozhenguo@jd.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	vincent.guittot@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	yaozhenguo@jd.com,
-	ZhenguoYao <yaozhenguo1@gmail.com>
-Subject: [PATCH] sched/fair: Introduce WAKEUP_SELECT_IDLE sched feature
-Date: Tue, 12 Aug 2025 18:16:50 +0800
-Message-Id: <20250812101650.44110-1-yaozhenguo@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1754993838; c=relaxed/simple;
+	bh=NbbnhG7V+vl5U1+YJnrVj1ogrs9erTio/i//AGOZzOA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=E9wBroOXZKE0jCxY8CoB7lziTuqeBnDWPg4SW/qGt72MSpMz6yWnRa7DFZqE9fV6Q95sZiTrXKe8WyE3T2Ez1qlW4l0TjcfMUrMBFs9AVDRWx3TsauOGpZdPYX/uwPYVpfBJk11b7ZEDAPsITPzK+GKWq/mzmakODqqbA+RRjb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=rIZHafz7; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 48360 invoked from network); 12 Aug 2025 12:17:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1754993822; bh=XottfDTJ3G6nJndrCm4cjXt23u+R3hnCONSdUmC/xL0=;
+          h=From:To:Subject;
+          b=rIZHafz71lSXYkFaWhxFrwSwnQyzT4lSQM+2eDYk2joOhfxzH50+lvTn33sYPRc7q
+           YLLZnlx6ARB5mL3eImD2r7tchmHMtaffzVRrYMG7LiMQE8fz5QqBpi+rF/iI2zw1hF
+           mhkySKiBnOE8C7jEvX51aC/9FmS+Ac+yslqEfJhgwlTnFQfJgsLJHwlIbMqD/SCgy7
+           4kczrAkfqxTn56jeFL34NG/3SnxYsUIy1qc9c2vBuSM/bQVZff687HoGJ6pyKGC9VZ
+           F4lbR9gh3EDT+oCsr54FTKXwiNxHQycoCBpIHtqCphkpSVMh6MU64CCxgoQvenP/On
+           arZMbO5mGwvGA==
+Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <robh@kernel.org>; 12 Aug 2025 12:17:02 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	olek2@wp.pl,
+	devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mips: lantiq: danube: rename stp node on EASY50712 reference board
+Date: Tue, 12 Aug 2025 12:16:57 +0200
+Message-ID: <20250812101700.970879-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-WP-MailID: ad10e5644dcca723fe192dd19dad4262
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [EWNk]                               
 
-From: ZhenguoYao <yaozhenguo1@gmail.com>
+This fixes the following warning:
+arch/mips/boot/dts/lantiq/danube_easy50712.dtb: stp@e100bb0 (lantiq,gpio-stp-xway): $nodename:0: 'stp@e100bb0' does not match '^gpio@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-stp-xway.yaml#
 
-Introduce WAKEUP_SELECT_IDLE to control if to select
-CPU only has SCHED_IDLE task or idle cpu.
-
-open it:
-echo WAKEUP_SELECT_IDLE > /sys/kernel/debug/sched/features
-close it:
-echo NO_WAKEUP_SELECT_IDLE > /sys/kernel/debug/sched/features
-
-In cloud computing host environments, management and monitoring software
-are typically configured with SCHED_IDLE priority to avoid interference
-with normal virtual machine operations. However, if vCPU wakeups
-consistently select CPU cores running SCHED_IDLE tasks, critical
-management and monitoring services may fail to execute—even when other
-idle CPU cores are available in the system.
-
-Our servers operate in performance power mode with idle states ( >2μs)
-disabled. Consequently, selecting CPU cores running SCHED_IDLE processes
-yields minimal benefits while introducing excessive latency for monitoring
-and management software. Although these processes are low-priority, they
-are not equivalent to offline processes.
-
-To address this, we propose implementing a configurable switch to control
-whether wakeups may target CPUs executing SCHED_IDLE tasks.
-
-More info:https://lore.kernel.org/lkml/cover.1561523542.git.viresh.kumar@linaro.org/
-
-Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 ---
- kernel/sched/fair.c     | 5 ++++-
- kernel/sched/features.h | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/mips/boot/dts/lantiq/danube_easy50712.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..2d1629086307 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6781,7 +6781,10 @@ static int sched_idle_rq(struct rq *rq)
+diff --git a/arch/mips/boot/dts/lantiq/danube_easy50712.dts b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
+index 1ce20b7d05cb..aa7256ddd529 100644
+--- a/arch/mips/boot/dts/lantiq/danube_easy50712.dts
++++ b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
+@@ -91,7 +91,7 @@ etop@e180000 {
+ 			mac-address = [ 00 11 22 33 44 55 ];
+ 		};
  
- static int sched_idle_cpu(int cpu)
- {
--	return sched_idle_rq(cpu_rq(cpu));
-+	if (sched_feat(WAKEUP_SELECT_IDLE))
-+		return sched_idle_rq(cpu_rq(cpu));
-+	else
-+		return 0;
- }
- 
- static void
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 3c12d9f93331..bf23a9dc6e05 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -63,6 +63,8 @@ SCHED_FEAT(DELAY_ZERO, true)
-  */
- SCHED_FEAT(WAKEUP_PREEMPTION, true)
- 
-+SCHED_FEAT(WAKEUP_SELECT_IDLE, true)
-+
- SCHED_FEAT(HRTICK, false)
- SCHED_FEAT(HRTICK_DL, false)
- 
+-		stp0: stp@e100bb0 {
++		stp0: gpio@e100bb0 {
+ 			#gpio-cells = <2>;
+ 			compatible = "lantiq,gpio-stp-xway";
+ 			gpio-controller;
 -- 
-2.43.5
+2.47.2
 
 
