@@ -1,251 +1,167 @@
-Return-Path: <linux-kernel+bounces-764610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7334FB2251A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A796B2251F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7D95034CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1F83BD2FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544772ECD2A;
-	Tue, 12 Aug 2025 10:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A2F1C1AB4;
+	Tue, 12 Aug 2025 11:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cWwF6Fun"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013033.outbound.protection.outlook.com [40.107.162.33])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XqQ5FNNm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2559B2EBB9E;
-	Tue, 12 Aug 2025 10:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996389; cv=fail; b=DyyipSMW4UEBqRqeeAVTP0diIJ9SSDfm9PS0cQKTdslhstStsnu08iJijv81M38kJ3m8Fknx6xNsF271/S3YsVnFjoqFj7TCJ2zYOnOrRnucQ52ph1gqQ+WnwItk4F9rBBzU6kCCMvllTdbmSrFeO2HgsEtiGusJ5gGKPW3wmA4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996389; c=relaxed/simple;
-	bh=A5d4KoSVvPNSb0K7ziRYkuvFc8HncdiAmAYq0ndfPMY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VuIMTlF85Gi9IcQgYcImDWX4tEGCiTAYUkLeVikifsh09j5d/htAFR3R92ULE/adAU8ZAd94xm4MXc/CjOMO5Va2R3ATVeNcdPhuT/+QFloJcKFYhflm+yz4G8cHQsKj9Wbu0GPSEC6moV38cwLUgDaBXHBj5i5TJkHYSbEv3VY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cWwF6Fun; arc=fail smtp.client-ip=40.107.162.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TPx+NXpQO3lxLx4JmliLmpkBJTsafBv6sghYzducH7ZhgqUGZRaNrJmO0dpx+Nae0K4EtmOcquKrMrHcuY5kETJcMmU9QmUW034rjKGcWAE4h73jxe1Ob1S5fKqCxqmjKb9f3vv8m8VDa7a+6ryQIG2UxIAeqilMpj3oBUia2j7jWkZakfRETviIICT4qMro+Ja7TiHeYj+/AxFphtONoKfEwPsw0b/nQVJiuU23DuTy572yqq5EgE35gp9Hcn55m5G5zhfNPL7feBsk0Bu+ClnsM0/EXgw64ZAwmyN2UIhRe0+uK7TQEddbKQrM94d8ga1Px1PrU4v6f30HFS4YUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1r0SPA+bk8MVsciotAHllylwYbeklPFIoUdn/AaUzyY=;
- b=Nhcwq+2KyycMdutFqVwVg5unDpA/KNahpLNBazdxTa/jt9KeK0WcmxLfnH4LIBPvGUSmGeWx9ltcxC2acq2LHQZK5twWV/u04gsV+xvqxL73X5cPVFjisPw5iZajwowY3NR9EC6rz0vjv3edL+X6klgmwJVZ7f7BXKq0YMjMq92vLIAAeeBCsn1b1EWnSiYoeQm4AENuPSM90gAxynpLiFWirkVXHp6fH5L8qRGr3gP3BeGU1dTYg0DF/sV7C7CqZ5IeAbbR63/CF2hudnJTLU2zHcDzEAGg/O23TyYHRRAG1tw2sy1MwpY8X6dJhEcZXC8U/xXsTv9ymA7LTpA2QA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1r0SPA+bk8MVsciotAHllylwYbeklPFIoUdn/AaUzyY=;
- b=cWwF6FunFmaQF1dBsLc2SnvmFQHbPh3PAppqMAhHBuH4DJdQLdcLp/Mv1YTh3u3Ck5tQkAbyZ4pWecot0pZneiAncc2rLB6ccuN2vOOTp2tXRMdz+nYejddbGGVazGvEZgD4AVzFeo41I/thWDsUxaFGlqt/EU9klmaSeoaNdHO+o579DVVLZHHa0D/Y06XFarvAZaBpR6HXrB7480r2J02TQQU3YTV2M6GKyjoJXloQab5AZeRFrkED45ZxMj6Q9bgxqmtR+j3jX0V/bxQd5GyIN+TzF5vjebvqipjBoUnZ1X7xwAvkbCC2XJZCY16TG20y978hmkeN2kWwOPb9Jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DU2PR04MB9147.eurprd04.prod.outlook.com (2603:10a6:10:2f6::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
- 2025 10:59:43 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9031.012; Tue, 12 Aug 2025
- 10:59:43 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Stas Sergeev <stsp@list.ru>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: explicitly check in of_phy_is_fixed_link() for managed = "in-band-status"
-Date: Tue, 12 Aug 2025 13:59:28 +0300
-Message-Id: <20250812105928.2124169-1-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR04CA0142.eurprd04.prod.outlook.com
- (2603:10a6:208:55::47) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AFB13790B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754996420; cv=none; b=txj1ood0GyBSJvJNkIQQ164WR0sv9ymJfDMXLrPlG4VxDYKDGj++p2xAdH6WIBJYPgcobVe0Ilt3Ru3CdXv8RROdsCHk4fAxEeU258oK7O2aEXow6yaLRe155fT/g/sAEsnExO3qYYQQ+KD7+brgORRZ134xkCcrnv6Gp+WeqHU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754996420; c=relaxed/simple;
+	bh=877/LB5hEo/Tk9VjW20Rf7ElmChEz02j8+kgdbdRLfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/mtWZaJ8fFwlr1VL/pi2FEl0wGihmActipgWNSbz3SJ78N7uh1u3P1FrHY4o8aDN7NuBODaw/HvDALEKRAbR+N19j/Rtp9y8rByddOrCKTBjEfJsfOv9qZpOl1SlWY3oIRYQeOpImSvBMh7UxVJajpLD/lMTOOfv16oPukfrvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XqQ5FNNm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAw8x8018204
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:00:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sYKDUmKgY/cIJ0QE0wtE6aKD
+	wx9772ZZbTFluaBLWww=; b=XqQ5FNNm79lXCGW/dPVpAB6D+LmJrWVxIt1U7E/w
+	aVUPj3yAo4UP3Hcq3mT0ZJMVA8fRvTxBI55A4Kb5wIOJAvAK5bEHWvHvs/3CMUhf
+	oBT99kZguGZSVfPH6j3ozAgr8SrcNK7zB11f8pk61h2kXArlmi5HYdrHHKNShZka
+	ThzEuEwuq2nafEGxfrv5Tw7hHvH8RRfb297BsWnoNfnkyE8TeZAHbdKvB3s1RETM
+	3AlLzrZ5uA1KTO9C7L1S8wAjRlY1xqvUbkAZVXkL5kAsrYBuuesYIve8acEH95w4
+	rXQ/q+resU+MtiY5w7oUZqgJ9ru5g/IlbbF4Rg9qXXxQRA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4bua5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:00:17 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b0de38c71fso24252101cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:00:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754996411; x=1755601211;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYKDUmKgY/cIJ0QE0wtE6aKDwx9772ZZbTFluaBLWww=;
+        b=GOowpcFb4jLaAL4ykxepHAyDiGeXD8dkfd2aTypXteTzSTyfPQhOhuaQ9Ted31jG5H
+         rLj03IrwfC+grf6xYJIxHUEFNjxUjMl6c+7LM+xA26qsqgPX9YsO+YHIO588qRrN8Hwu
+         suEVf45xCG1hxiWowovbL1G0LVIZ44EBtXQBBGvkqDbRDDR4G4XWAZxq2cUtMxuUKHPO
+         8KSv6HUlaj4aY77L4JHcd3NnyO5Ryb/EUufM4VqPHfolFASsNP4L3pvLH1NKGDSdr/A+
+         Qcxyfjy5CN6M3pBXCHfcC1sELAIYEUrOl/5+Y8o5r661VEppHGgKBoZzqUR3wZBhGNDH
+         UVrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnJ1PXej0iPG+Roi9C0cjS/i4ZT7mqRQNcpv6U7ktEyEx9JH4uqjdohqxvLAgfaWCWqQnVWLjWDO3XRzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnuak4DeEXGDEHtzWOQvevHoQTOFU3qvHyA3NlGFlq1LqVH/Lv
+	WhGJ/wVsDt5CmearkIj5NrOU72OXpDYyPnz3qsuWoi+cIllDMj9pkGeOuUQ70U57XuFYJMNSOeE
+	S0gzwyOKNOmmb8HRvKoxMDpdNc/02Gg4KipKcMD44aPtEjTFauMtNWahJJvZua8u3ulI=
+X-Gm-Gg: ASbGncv0idZcpH63mdcDnG3tngbOGU4TFZYqZ4pfn+ZDPTmDoqQGnogbrW93AeWpy/f
+	/MJL/N/JWtVQkOijSAMCu8DoagCvyQzBLD5MlgNKlIAfz0MuY9VkSFx74VV7vXV80liY3wESk+W
+	XKT9g4Lu4ngU5C72pgE4/2ayw8BBVkOwYG7nxgpfvdi3Cr2XkAdjT16USq+3FRn7UgKrrhPthNG
+	Bd4ImYa9Hu+HS3e6HSA4u7aUxPxCcpwpI5VSO2f1jpNhTR/byavf7E5dhUlaFinYJQtCGTAZsTt
+	LswVByP/cSlHRV+vfJYMUmWgzw8brBGri2OHn2kjlWiUTN/yCqQcA93XjQ+ILOP55P5RgIyJSuB
+	DkfIQ7TQaH26caUghollrAdR16E1Ku1msfCbqhQhfDOF9QgmvpaGA
+X-Received: by 2002:ac8:5a41:0:b0:4b0:9dd8:724e with SMTP id d75a77b69052e-4b0aed424f7mr182024981cf.20.1754996409898;
+        Tue, 12 Aug 2025 04:00:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEK+PS2Km6eFiBdg8brjdDEzx18v2Lf6FOZGJ4lOZ/y8LWgI14SjtnyDV1G/jfYIdki6K5MAw==
+X-Received: by 2002:ac8:5a41:0:b0:4b0:9dd8:724e with SMTP id d75a77b69052e-4b0aed424f7mr182024401cf.20.1754996409157;
+        Tue, 12 Aug 2025 04:00:09 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8949e698sm4863138e87.72.2025.08.12.04.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 04:00:08 -0700 (PDT)
+Date: Tue, 12 Aug 2025 14:00:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] arm64: dts: qcom: sm8750-mtp: Add WiFi and
+ Bluetooth
+Message-ID: <ibitgekdjsktpvr6zmouuhgzcbfjfeuv4l4zsl6vszv4hauug5@one6zo6gdykb>
+References: <20250811131055.154233-2-krzysztof.kozlowski@linaro.org>
+ <l6u4y3suv3dpylexbiiznhcuyanlc4ouizhzj2cchblaf6o4wg@fe4laxrioaj5>
+ <481985cb-fa84-4b09-9b95-948ee70b557a@linaro.org>
+ <k7mw7rj7cno3con2t57nps23y7evd3da6gahyl5gnrxss7e3s4@qncnuekxr7lb>
+ <f7704cc1-95b4-4860-86ea-96ec18f61c8a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU2PR04MB9147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3556cadb-ba7c-4b82-c73b-08ddd98f5775
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|1800799024|376014|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7WhfAbGXOZz9FI0Wry0YP+1Yf0eqwVMAkFQgxoiNHf41W8kPYOg7MSF2ktXI?=
- =?us-ascii?Q?uSAlKlj/W483sqpqCI+nnYNiWKA3XVpyQUCoFR5FBt3N1G4OaCu5G6r1bWFy?=
- =?us-ascii?Q?/bzxR7Nx62tlIh8n/FRA7btfeYmAMOyOaSdE+xogcSQ+bbActIe/NFS+avnW?=
- =?us-ascii?Q?ODuz1pAsFU2XYID1BRBTzgVHN4WTnBtrxpU+iyeHtqEz3h2BPwktqmV6KaWQ?=
- =?us-ascii?Q?3uPV61cJa+ixCfoVj9EU1rUEl2Eow7KM/PNj3bmR9PaTydzpsftnRt/bn4fo?=
- =?us-ascii?Q?kEHNNHfjgcZVBadmNjxF4BR+Jg3cXiT275Tm8lRLhUrM8g0/6QoZGGClFOrU?=
- =?us-ascii?Q?DhUlK+GbsY2VoYfus2/Shhgl+R8L4aa5EOkgenxgm5KryfcZACdZMVC58EQo?=
- =?us-ascii?Q?tepyEXnsL+dAtR+T6jAylrJ06EcG/LxLSWqDGKfT01jTwuwkwkk8IVT2IIKv?=
- =?us-ascii?Q?76rcYvENZYhG+QjSciyW7FoWVgCXBwXrAYFfnXJv5uiz6jawQyJu1idugQsY?=
- =?us-ascii?Q?gpdawdOPGB9KmiGw6BXLxvTJDtnBlQfr9wSHi0maew5ScrideIRzjM5A3EDm?=
- =?us-ascii?Q?/SwFjpdD3+vJ0MKS+zRdmfFwl+2ygjfFU9CJ/t1to6qJvsnSJttTfziqgmm9?=
- =?us-ascii?Q?yoAPa0cYG9C9LefLavrkPQcuE3KPLuKCx2BnocZ2AC/Ywrc1AFdXEpcOUREJ?=
- =?us-ascii?Q?wOPD+TXDurCREVOjt4MiQmlndX4W2agS2zQHMQuRBapneq4LAxGyDvobC189?=
- =?us-ascii?Q?q4YOVHKhx+c2UmIW13hNE9wd9Ih5wEcRA2ARVXoywFnwXqUyU98JFURnWRJq?=
- =?us-ascii?Q?EF8BG05jmd5Z/kaQgkjze4akMhFUx28vIDkY00lmwdskmKePRuKP9sgOeJbq?=
- =?us-ascii?Q?BgBal/7WgMy/qjjBIVWMA/m52U9JSfhmeQbVkXsRd/2ZaQZrqeImJgSjDFuJ?=
- =?us-ascii?Q?AkhgFQVJxBH9XDLwRp4kkrYDyygOmKWn0MFsFLAECGYlNWlNfLutAKx+a8X7?=
- =?us-ascii?Q?ctbLAhjTAyypj8+04OevEMMFg5rgYd+yipS4k2jUV9rMHKhUKyeYhpyn2afB?=
- =?us-ascii?Q?hfXGm2J81Dj9Ts2X6s+RMnc4smy+aLCQAZua7GotYubzc2Ghn+oSJF81tMQw?=
- =?us-ascii?Q?zg+B3HqGqNO0nWdmneM2X5GeR+lPu6gegKQn+l/xIola52zdMjWDsBA86wVA?=
- =?us-ascii?Q?6R2yV2gyaFwWR/T+FgEEpCj491nBWzYppEWCe3SsqEHRM/btm/TJMKSkkjv9?=
- =?us-ascii?Q?rxomFRqyaPiL45FMFfZ7EW16myExljzadDAF9Vh9gmiOLTRnRwKFhXZJJMCJ?=
- =?us-ascii?Q?mnFQOUHi1//WU32/R3qj9JP5Pds0WI+lGb/duf5+oP2i/P479cx0mevAFkZV?=
- =?us-ascii?Q?R/vMA62Am/vkCMP40dku9Pz3ErOwQnEVexIZRqc3UeW6TOycdijDWmFrUIZQ?=
- =?us-ascii?Q?jYHFy5T12YhFeB54zpAIJotjU0Pu8le2kVCwBRJ42Hd7lVO4aoOqvdypfFpD?=
- =?us-ascii?Q?wG+fN9wJks0yaUc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WsAY+vJQlS1jI6g8J08WHj7j2g78Ee+Ga9qAkPOlCONwtB78rLbBkF2XlrHe?=
- =?us-ascii?Q?eBY7FmIpscte5vKRrZ8rSvnPLeRIXwnAMaGVne4JXL8Rb0Dsiw58YHs3o+sw?=
- =?us-ascii?Q?wG7MtRrRNTYqIIZsIjUu1JGtKu7anfNUixNQx4O7kbeIj2BU/gbDt0vy15Ja?=
- =?us-ascii?Q?LkhfrukzKLYPlC7Nub+pNyuRC3IRU0aKcRQlHLm0aCKEVEL3i/GGSXb9c10C?=
- =?us-ascii?Q?Hjqj66PqgqhHPic2mAeOvza4Sinvs1xyhgX9Prkj3zTpwl6kLu5CTLcQMAdY?=
- =?us-ascii?Q?mkJAdSZuQE/63Ksr1A6yp29Ijg68h2y538SK4Eqn+uQkdt7FOZpZchXGDmY7?=
- =?us-ascii?Q?BmDUyAwOXd3cGA86Y2mVjEDZHBDzMSwQIIPSJG7p/o69b5XbOCSTm3FMYwSh?=
- =?us-ascii?Q?WJpKjIMkmTO0W5CtKs396zQn9DMwUnsKPkObSSEgQiKEQh4rdZTFslQAlMQo?=
- =?us-ascii?Q?QdaBx3j+5UUe7KDeWLpBQarhzVYX5h1vnVIxIUkKA+IBf5p4tzVR90FNXGHa?=
- =?us-ascii?Q?nuQrzzfuzM0Qx+mBg+xQOH+AsJiYrswEEW4Z6Ctarjsb/XYil4avtdvUVRmX?=
- =?us-ascii?Q?cXTQeg0ZHYiB4mLIAgaQ1P/kHYjnsN0o7We3yAeyPVz1+b3k5onB8rfk9Zq3?=
- =?us-ascii?Q?Yuh4SedrdaIL/O5n/FzQq6lt3N3gXYfLAiuWLE7h/CJQ2pIKuZGXdJ4afW1Q?=
- =?us-ascii?Q?5jIaR0P8HJk/KU8N5a6zKeVP2f772fe8nQnQsYHpkx8FsuFc8FhhyWEzlt9E?=
- =?us-ascii?Q?3vHm3rWTLiFCFo2/hVFWFwBHBWtlubHMof0zldzZnrFmL0XymyiJYb4joM6K?=
- =?us-ascii?Q?Wp2Alf3fGXC0k0WDZH5mvRU2wGrzY+4oyY2CiLQciHNY3XigaDMPybkGju0W?=
- =?us-ascii?Q?BOmNOZoSynuLj3vPHwA4QKFHDh4njO4aUyVBzO1m7ik1RaVLWlGtoLFXpc3+?=
- =?us-ascii?Q?8/1OnokyntUH+K/OaJr08bqw1n6kjMmmo7ppZtjEW/hlKdqd/p3NYIuQ8Lzw?=
- =?us-ascii?Q?nveBLuWdfs9tJxOLdaM+3NAoWpwrpfztk4HMll11bWHcGDoCgxuxj4AZzenI?=
- =?us-ascii?Q?/HxaIdNwWJml52XF3U/plYkgagRyy5dkShH4vjJi1PtEuhCh+bsYR1xO+6T7?=
- =?us-ascii?Q?Fyb+8xPLvY2gajpTYiYJiK2nB35094xnCZ4nU5iz7F7j8yb8OR6MS/jKmG9m?=
- =?us-ascii?Q?k1fwMSRHSNWjIX9XUcyeZzUtl0hoQAhnaDVniwqXITOqK7ysTwt8ExrpGfla?=
- =?us-ascii?Q?+5YFHxicUzvXcagHRDWq+v1VBH4uX1W/Ay8BwMlGtim8pJgz8oZojvq654qh?=
- =?us-ascii?Q?MOgNXb2NgrFeyDurOtzLsqZD47c5huTmBshbEpwLERraO4JhjjWFSXmqQYJb?=
- =?us-ascii?Q?Glnl/3S1Fm/paOf+dgin1T1yMmqg3zp0aqkrAejmpn3HV0sPv2V+PnN3EdMq?=
- =?us-ascii?Q?t7pzlEHlgeafyjwKoP6zdSlbMkZRfwljE6fU+YW1U9gvk/cWN5/yRtLcYDfi?=
- =?us-ascii?Q?YvJK6ec5z+eF3Rgi7FskVYTC9i3h9eJniXxv10iO2Oa7IlAsWduNM3DcUn1V?=
- =?us-ascii?Q?b9nAl/cr073SVVIENSyAkYZoU35Mx9o6bSu4FyHr?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3556cadb-ba7c-4b82-c73b-08ddd98f5775
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 10:59:42.9490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1X24XUS/B8nVD0HuUtUTnxGHHMoeZjeXeD+cnH0jkrGWYh2U1tynQE2RPmrpXmF3VCK0KWY0PjWp1Deg3RrAAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9147
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7704cc1-95b4-4860-86ea-96ec18f61c8a@linaro.org>
+X-Proofpoint-GUID: aeB0AlQM3ZUbWQ7Vpt1rLY0gYpL4V-q1
+X-Proofpoint-ORIG-GUID: aeB0AlQM3ZUbWQ7Vpt1rLY0gYpL4V-q1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX6zOeUDApbqYW
+ VJcAeky4OxuIEuSKwTD7H4qkZGLs3QwAqBv0OHndGFqvZY/zy+q76p8UUR+2s7aKw5FZksS9T88
+ bYlBmv2tTCYyNgw2p+CFqtzPckIySWrx6f7Tgf5Xe4usn6itxZ5NaYeQyJkuuVgNpsTB0M7Wc1F
+ sGPDw1yyD5Zs4zpTXDssIA1M92UyrmRuevIQ4tv18U1W3RiHW2GK1c6TLwCGiEl20fIPPkBNBO6
+ 9UrnbZObvkw9BWsPwX088ZE8UH/YTY62HD3hDDhau5TpH+PBLG21VMwGlLNA731yrutWPb1hagD
+ vMfeH0fv0TxJSdfUswnBkUK8B93zhHqZVjl0n7MpZehZz8MiTtAnGgjeP0pBQzBPEvvBnGNf/RS
+ rJh7pb5f
+X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689b1ec1 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=lbISek1RY3kVFRfJcvkA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_06,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
-In phylib-based systems, there are at least two ways of handling a link
-to a PHY whose registers are unavailable over MDIO. The better known
-implementation is phylink, the lesser known one was added by Stas
-Sergeev two years prior, in commit 898b2970e2c9 ("mvneta: implement
-SGMII-based in-band link state signaling") and its various follow-ups.
+On Mon, Aug 11, 2025 at 04:40:09PM +0200, Krzysztof Kozlowski wrote:
+> On 11/08/2025 16:33, Dmitry Baryshkov wrote:
+> > On Mon, Aug 11, 2025 at 04:25:47PM +0200, Krzysztof Kozlowski wrote:
+> >> On 11/08/2025 16:22, Dmitry Baryshkov wrote:
+> >>> On Mon, Aug 11, 2025 at 03:10:56PM +0200, Krzysztof Kozlowski wrote:
+> >>>> MTP8750 rev 2.0 (power grid v8) boards come as two different variants
+> >>>> with different WiFi chips: WCN7850 and WCN786x.  WCN7850 is already
+> >>>> supported by the kernel, but WCN786x is not.  Both of the board variants
+> >>>> are considered newest revisions and the difference is only in MCN
+> >>>> numbers and internal codenames.
+> >>>
+> >>> Are they soldered on board, installed via add-on cards or installed via
+> >>> M.2 slot?
+> >>
+> >> This is MTP, so same answer as other MTPs - these are replaceable parts,
+> >> just like you can replace display or modem.
+> >>
+> >>>
+> >>> Are they going to be somewhat compatible (e.g. on the BT side?)
+> >>
+> >> No clue, you need to ask Qualcomm people - it's their hardware.
+> > 
+> > And you (hopefully) have access to the docs.
+> 
+> 
+> No, fought with that for 1 year, got some basic docs only. It is very
+> difficult to get any access to these docs. I assume you mean the MTP board.
+> 
+> If you mean Bluetooth or WiFi - I have 0 access there.
 
-There are two sub-cases of the MDIO-less PHY to consider. First is the
-case where the PHY would at least emit in-band autoneg code groups.
-The firmware description of this case looks like below (a):
+I mean WiFi / BT. Then you can ask Jeff or a corresponding BT maintainer
+to provide necessary details. You make it sound as if you are not a part
+of the system. You are. You can talk to necessary people within
+Qualcomm.
 
-	mac {
-		managed = "in-band-status";
-		phy-mode = "sgmii";
-	};
-
-And the other sub-case is when the MDIO-less PHY is also silent on the
-in-band autoneg front. In that case, the firmware description would look
-like this (b):
-
-	mac {
-		phy-mode = "sgmii";
-
-		fixed-link {
-			speed = <10000>;
-			full-duplex;
-		};
-	};
-
-(side note: phylink would probably have something to object against the
-PHY not reporting its state in any way, and would consider the setup
-invalid, even if in some cases it would work. This is because its
-configuration may not be fixed, and there would be no way to be notified
-of updates)
-
-Concentrating on sub-case (a), Stas Sergeev's mvneta implementation
-differs from the later phylink implementation which also took over in
-mvneta.
-
-In the well known phylink model, the phylib PHY is completely optional,
-and the pl->cfg_link_an_mode will be placed in MLO_AN_INBAND.
-
-Whereas Stas Sergeev admittedly took "the path of least resistance" and
-worked with what was available, i.e. the fixed PHY software emulation:
-https://lore.kernel.org/lkml/55156730.5030807@list.ru/
-
-Commit 4cba5c210365 ("of_mdio: add new DT property 'managed' to specify
-the PHY management type") made of_phy_is_fixed_link() return true for
-sub-case (a), so that the fixed PHY driver would handle it. From
-forensic evidence, I believe that was done to have unified phylib driver
-handling with sub-case (b).
-
-We want to preserve that behavior, but if other values for the "managed"
-property have to be introduced, it means of_phy_is_fixed_link() will
-automatically return true for them. As a general rule, that doesn't make
-any sense. For example, managed = "c73" may be added to mean that the
-operating interface of a port is selected through IEEE 802.3 clause 73
-(backplane) auto-negotiation.
-
-So, we need to be explicit about the check.
-
-Documentation/devicetree/bindings/net/ethernet-controller.yaml makes it
-clear that the 2 allowed values for "managed" are "auto" and
-"in-band-status". So, given the current binding, strcmp(managed, "auto") != 0
-should be exactly equivalent with strcmp(managed, "in-band-status") == 0.
-The difference is made for new additions.
-
-The Fixes: tag and backport to stable is justified by the fact that new
-device trees need to do something reasonable with old kernels.
-
-Fixes: 4cba5c210365 ("of_mdio: add new DT property 'managed' to specify the PHY management type")
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/mdio/of_mdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/mdio/of_mdio.c b/drivers/net/mdio/of_mdio.c
-index 98f667b121f7..8e8a34293a8b 100644
---- a/drivers/net/mdio/of_mdio.c
-+++ b/drivers/net/mdio/of_mdio.c
-@@ -401,7 +401,7 @@ bool of_phy_is_fixed_link(struct device_node *np)
- 	}
- 
- 	err = of_property_read_string(np, "managed", &managed);
--	if (err == 0 && strcmp(managed, "auto") != 0)
-+	if (err == 0 && strcmp(managed, "in-band-status") == 0)
- 		return true;
- 
- 	/* Old binding */
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
