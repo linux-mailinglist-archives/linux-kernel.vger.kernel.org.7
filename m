@@ -1,144 +1,152 @@
-Return-Path: <linux-kernel+bounces-763811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B47CB21A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00649B21A91
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5C5683E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:05:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A0ED7B3F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24C22E2DD7;
-	Tue, 12 Aug 2025 02:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGwsFGlG"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120542D9ED9;
+	Tue, 12 Aug 2025 02:06:05 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D9726E711;
-	Tue, 12 Aug 2025 02:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FB2CA9;
+	Tue, 12 Aug 2025 02:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754964306; cv=none; b=Ja7w0paBx3oG8SmCkOzNk62LpF8228p1fSOCQ6De7lPhmyifkaiJSo//I6MPCXYhz5VIdBfKwzgq1kDHklv0CbCOwuA4geA8u0RnebidGDZlTg7jfUQmI3WcDmCv5IURRe/S/liRIH38MAVJslCL4QVaWsHYZXs888KUhKlHEt0=
+	t=1754964364; cv=none; b=HPvYHvX/TTtskuMnj6jgUavmULcc0XZ3C+tRcQUGaUtexMNAQH/O8Q9P5pOoPS5S5xkITXiTfvOfnEuMyWxw8fDj1y+u6NgJqD23PC3RKcGow9NI7OR+2lM9C3zgYre1I1+yNEAyruGULM21d5E7FoeSbi2xMSSzV/ppxDPVsUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754964306; c=relaxed/simple;
-	bh=RjTDarFgDHVpPrzYT2axlng5nhxU1CVet5QEkXeQ/hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuWCYmrlOiiw4yGwSP3h7fnloDW7FAmzoSZtg/q+P9I4EBGFsvWgNHpRRuyXRhnoL2RKzWB1//RfKtP28suNIPYjScwblzZVoflG2SFbcAVGW6Par0oDmlUuh4sYfM+0PSd/3M/EhobL65mxwpRHMZEAohDaC5XFIYrea5BTFes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGwsFGlG; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso4212918b3a.0;
-        Mon, 11 Aug 2025 19:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754964304; x=1755569104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5lawOvHD2CjKxIjf/Cbngx5HR7ekX+/0JRSq9sIPG4=;
-        b=RGwsFGlGoTXwZEBRWvriNWsciYYc5wbwTsQrPNpnUwb509x/ncMQD5yGa693vB+BaX
-         WD16tzT4O7PPV8Lkqwf4V2XkLBeC5ls/thquswMwd2HZH2sAp7H1XPfgsQ2Q2v+fzsEL
-         6LuhIFdAydPgk1AWeSKYY3krCuDp6ogI46KOGzmC64UWdYO1EYPiUK7H89QWHTx3QpM1
-         BjseQnxU/7WhA9t32+P/796c+l5BFPR31xVVd9ZtqyRWzpV1E/lDrTY41UtuDxqVrrdw
-         G3n9UN0+n5Tg4HlQLnBaYAFpqM3xE76JUt6xlRQX+v8pxYM+voa5p4wroIjKKEPR+Ugc
-         tgxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754964304; x=1755569104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o5lawOvHD2CjKxIjf/Cbngx5HR7ekX+/0JRSq9sIPG4=;
-        b=XDcoNsqy1nTUAd8sgRhMXPiu/w9RY4yF2kOtqlw8KpWGaVfP7yZIxtdu5/Il5bIWX6
-         Ci1I3gBeysYjgu2TE937rEwP+04vqsMpixzsfss6P0+j181LQ6ly6UooqowvoSt9qKpO
-         +remjvm7vTs2XScyDTjFUkPxPPELhqrTclsjBhk9KjAshCDzxS5Ynp7ew7c0IiyWK3GG
-         51O6X8xxlFFygEY4iNnZLm5bIeqnAr5GuQuEQwboyJsEdo44FCxU4EtinGwOIDyQ1KTY
-         aPT8LMyEw0vZZO6d3J8KsHo3WzOceY9bdRDluPyF+EFgkC0j22lDCZweK0jwKmpyPxip
-         y0tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEKyaBsQ01DAhfXd3Hztn9bkcTBoWcpDaqpGn1Dm8rENGtmAFYhCc81tSG0U9aQeaYlWKxFVwK5vj2Q3IYRe4t@vger.kernel.org, AJvYcCXxjulTB88mLUkRQYDVczWHGWrD4acIYnXz4x6K3JVK8VHAUB9NYyjgo/y2mFnECdp/YG+01T8Wa8pTP94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsYXVxFOK+2AuKcpQB2txO2/SFgTy5I2cj/JwAJ2Jl1GEEx2je
-	j5Q4UO6bse8z6HuIe2rw3/tIqr7jTknuyc7VCoyLkDSDcX7tHscaUiL5
-X-Gm-Gg: ASbGncupqVGdi6uQ+3kYOb29HXdtNKZVaXlDZv8/5Y23EYX8plGytu6dmbkzjKdzCXk
-	x+siCHPsVOiBIp5zM9q2Mas32hnCUENccDHyhuF1iE1mtpV+PKSn+qcJ5wtddQrdIxbIQxHZFSj
-	sP1ldsSnq6/Rzu1yRPKpLNFiBykhoiZJICxVs0VeNhHPKyFyNaJtP1fEHZtXj6ZfjzcEN371qMW
-	xoSdrMGr+YX6bLxNpH1WycQcVtnD+54NgymG0vOQxjsAlSs08ZSdoEZo656Glf0tbFkXIjWH4As
-	gqs+cXaYVbBV2lPh6h0XI/omzzRpF4rBqt27eDLOZ9N+TDF3KmsDroc13awxU3003Vq8sCxJ6LB
-	952VvaQ+p/URX5pqTBkcmY7nRemtTgsNutavY1g==
-X-Google-Smtp-Source: AGHT+IGctf4XaXebgXft26yrprC8zPso1cAn1g1+lgcF2k+dE3hMmXHueL+7T5RRaRlzjifbWgEyWg==
-X-Received: by 2002:a05:6a20:a123:b0:240:a06:7821 with SMTP id adf61e73a8af0-240551c8240mr30393096637.31.1754964303857;
-        Mon, 11 Aug 2025 19:05:03 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b42b93391e0sm7621216a12.11.2025.08.11.19.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 19:05:03 -0700 (PDT)
-Date: Tue, 12 Aug 2025 02:04:53 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>, Jay Vosburgh <jv@jvosburgh.net>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Wilder <wilder@us.ibm.com>
-Subject: Re: [PATCH net] bonding: don't set oif to bond dev when getting NS
- target destination
-Message-ID: <aJqhRXIb3zZutO6H@fedora>
-References: <20250811140358.2024-1-liuhangbin@gmail.com>
- <783435.1754922439@famine>
- <20250811093328.70343754@kernel.org>
+	s=arc-20240116; t=1754964364; c=relaxed/simple;
+	bh=tdlTKcqBSGbRchsC3CdAHsNL98oa72v0PDwWqtsHXHI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NA15rAJeOMYj3KMTz6w8FRX6KwFgBp73UXXc3DoqE0OjdAxpM2TDblUzPjmYd6n89eKLwfyGAGqCzY1MwDCvjyBCaF48rzKVHTGwASU/YUG5iOetUlfSZWRC9fCdFtxxS+b7gIK+njyYvcxVyQPh3bhZnt4HQ75nWT+9JoDEzFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1FGV0v3MzYQtwt;
+	Tue, 12 Aug 2025 10:05:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B79BA1A0E5E;
+	Tue, 12 Aug 2025 10:05:52 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDXUxR+oZpoyeCMDQ--.40233S3;
+	Tue, 12 Aug 2025 10:05:52 +0800 (CST)
+Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
+To: Damien Le Moal <dlemoal@kernel.org>, Rajeev Mishra <rajeevm@hpe.com>,
+ axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250811190303.222802-1-rajeevm@hpe.com>
+ <45b33232-9089-4df4-b9f8-c843cb3d2d07@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
+Date: Tue, 12 Aug 2025 10:05:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811093328.70343754@kernel.org>
+In-Reply-To: <45b33232-9089-4df4-b9f8-c843cb3d2d07@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXUxR+oZpoyeCMDQ--.40233S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur4UGr4fGFWktry7GF48JFb_yoW8tw17pF
+	W3tFWYyF1jgFy7CFsrAw47X3yFvan3uryUury7Ca17AFn0yr9xuF97GFWY934UXry5Ar1r
+	XF4DtrW7uFyDArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbSfO7UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 11, 2025 at 09:33:28AM -0700, Jakub Kicinski wrote:
-> On Mon, 11 Aug 2025 07:27:19 -0700 Jay Vosburgh wrote:
-> > 	Generically, I'm wondering if test updates should be separate
-> > patches from the functional changes as a general policy.
+Hi,
+
+在 2025/08/12 9:40, Damien Le Moal 写道:
+> On 8/12/25 4:03 AM, Rajeev Mishra wrote:
+>> The get_size() function now uses vfs_getattr_nosec() instead of
+>> i_size_read() to obtain file size information. This provides more
+>> accurate results for network filesystems where cached metadata
+>> may be stale, ensuring the loop device reflects the current file
+>> size rather than potentially outdated cached values.
+>>
+>> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+>> ---
+>>   drivers/block/loop.c | 24 ++++++++++++++++++++++--
+>>   1 file changed, 22 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+>> index 1b6ee91f8eb9..c418c47db76e 100644
+>> --- a/drivers/block/loop.c
+>> +++ b/drivers/block/loop.c
+>> @@ -137,12 +137,32 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+>>   static int max_part;
+>>   static int part_shift;
+>>   
+>> +/**
+>> + * get_size - calculate the effective size of a loop device
+>> + * @offset: offset into the backing file
+>> + * @sizelimit: user-specified size limit
+>> + * @file: the backing file
+>> + *
+>> + * Calculate the effective size of the loop device
+>> + *
+>> + * Returns: size in 512-byte sectors, or 0 if invalid
+>> + */
+>>   static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+>>   {
+>> +	struct kstat stat;
+>>   	loff_t loopsize;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * Get the accurate file size. This will prevent caching
+>> +	 * issue that occurs at filesystem layer.
+>> +	 */
+>> +	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
+>> +	if (ret)
+>> +		return 0;
 > 
-> Yes, not sure if we made it a hard requirement, but I think it's our
-> preference. It is the reason why we don't require cover letters for
-> submissions with 2 patches.
+> return 0 here is odd. Why not "return ret;" to propagate the error if any ?
+> An error may come from the underlying FS inode->i_op->getattr().
+
+This helper is supposed to return the size, all the callers don't
+hanldle error value for now.
+
+However, I agree return error value instead of set disk size to 0 will
+make more sense, at least from ioctl path. Perhaps go through all the
+callers and see, if we want to handle errors or set disk size to 0.
+
+Thanks,
+Kuai
+
 > 
-> Hangbin, please update config for bonding tests, looks like vlans 
-> are not enabled there today.
+>> +
+>> +	loopsize = stat.size;
+>>   
+>> -	/* Compute loopsize in bytes */
+>> -	loopsize = i_size_read(file->f_mapping->host);
+>>   	if (offset > 0)
+>>   		loopsize -= offset;
+>>   	/* offset is beyond i_size, weird but possible */
+> 
+> 
 
-BTW, I'd like to change the bond config to modules. Because we can't unload
-the modules with current config. It that OK for you?
-
-diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-index dad4e5fda4db..858ba0f19348 100644
---- a/tools/testing/selftests/drivers/net/bonding/config
-+++ b/tools/testing/selftests/drivers/net/bonding/config
-@@ -1,11 +1,11 @@
--CONFIG_BONDING=y
--CONFIG_BRIDGE=y
--CONFIG_DUMMY=y
-+CONFIG_BONDING=m
-+CONFIG_BRIDGE=m
-+CONFIG_DUMMY=m
- CONFIG_IPV6=y
--CONFIG_MACVLAN=y
--CONFIG_IPVLAN=y
--CONFIG_NET_ACT_GACT=y
--CONFIG_NET_CLS_FLOWER=y
--CONFIG_NET_SCH_INGRESS=y
--CONFIG_NLMON=y
--CONFIG_VETH=y
-+CONFIG_MACVLAN=m
-+CONFIG_IPVLAN=m
-+CONFIG_NET_ACT_GACT=m
-+CONFIG_NET_CLS_FLOWER=m
-+CONFIG_NET_SCH_INGRESS=m
-+CONFIG_NLMON=m
-+CONFIG_VETH=m
-
-Thanks
-Hangbin
 
