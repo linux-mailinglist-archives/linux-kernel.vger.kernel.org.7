@@ -1,146 +1,98 @@
-Return-Path: <linux-kernel+bounces-764511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B853B223EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:01:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18774B223F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2531350849F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CC9563256
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA552EA72F;
-	Tue, 12 Aug 2025 09:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37942EA49C;
+	Tue, 12 Aug 2025 10:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JySaj/KK"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hXKewk9X"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A2C2EA499
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3E26AEC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754992775; cv=none; b=LsegJU4d0mfBGXwfHar1oQhy6f6Horlr3EogOJuNkEzuR7FTECjygZrIveHtM0L9KULHPjYjcJ8jBmm5JWUBJMR/vvIE++Qnm6jwe5iwFQBEIk9Hh0VMDLd6BdAyuRrsLxXIPfHqSKtu4BketR4XYUzYzaJRQ+oVKEpTq7BOo2E=
+	t=1754992845; cv=none; b=Jnh9mUWh8Rghr28jKesBzrLOi12pnHnkIb43ZAKp3Clo+MPXsgJLENGqJV1osdiSbHN4Fq9rr7Hm0AOAKQEbfv3vST4n6mhuZ4ptDRRucLQWkB4mxIvhSTbOje5G45sAW3ihua3nKvjUXmLrW2S6jbzRQXb9lQAoETiqKW8c0ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754992775; c=relaxed/simple;
-	bh=fdw+3Gh+VFRomWVLfv0e7HTdn397jxovmsPiCFpOtlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=muID7r/u/kTVZwMK0rQzZauSOzyGY7YpDp9UREurTsbsNchVz6EI04UlsFlGUJ8RFWmju248fVHyk+ah/+kTgfEbeNus7MH/rn59bzx79rfw066xOhJiEceCH92WwuEwvwGIFRVFGKEbxuXt92sSLkO/IMt84ylwel3KQWdY12A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JySaj/KK; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55ccc6964c9so2558286e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754992772; x=1755597572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1mDrWuohEgopTPInI6sA+uoNinbrVfmWIHEgismuPk=;
-        b=JySaj/KKE+Jr1HqFK+9h+6f78vADIvRNx7h2I0SQQ9/mZIJ06IDEocguSaS8LneuXb
-         alFHu/eZDE7znbTuFWwPowjlWOfLDvC6QupeWEi0WUMO2LPuSOKlcOR4AWA3VR+3QTP9
-         aq9eo88KBaIs8bsYBaFck7jVj6Ax4sE2k3MztTD57u3hVqLt//6AwlAVe5l6B29o+Dap
-         rRvUOlpDxFhVnLQDnyiNCyX+FJ34EJJWBQUbOdYzuep+TnezDTEJeQ0jkBxucHNEYn+a
-         mX/hsf8PlX7N0GUPPaMNsmSgihW4hfn60sFyZAOS4jbRP/APNhisuqG7PL8Zv/gUvyXY
-         KpgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754992772; x=1755597572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1mDrWuohEgopTPInI6sA+uoNinbrVfmWIHEgismuPk=;
-        b=r4unWLR5M1Rd7iGj116Y9b9DQ2O7gjj8119OMC+6Oi93cBvGc/dWWPo1eLNuduNUe3
-         CZhDkxvAW9OQRs2FIqCRZ8b6rn9vWy5GnmaDR1kaM9liS2rNIbER2xr0E6N1lc8c3oTj
-         B+4mowsrn7hNwYYUrmFiG9Rb33JAuCtF9Kr0UI7c4XPzcZKTEaPOeSgTL3lV85/H5ELY
-         0jXNL/LBI3uPkDtSY4lu1ajM2t529Ed4yBFo6iR7+RfOVZzsfT6nVtjfI0/SM1eV/JZj
-         Bti8P608yUbfFwpwTzEcSz15ht9x453QbBo/B1XOgrsrEuO3Rz2DA/yt9TE23HDiQJ06
-         UYew==
-X-Forwarded-Encrypted: i=1; AJvYcCXoei94K1n9rgT4j5LREiqT6iIh2QxLWIRDhws94vJbkHdkZj5G/YJd9xaO0c2X/RrPPm8qtiG2xBZlBhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSPRWrASPNarTflJm/AL4Rfa+tKTyRFsclMt0EPbHoTHt1WLCp
-	qwtinAnFk0Zluft7Ks91So6gb7P/b1Sd3DuYr7w/lu/extGO72YMJzUwv42zhyMAom/vr112Sw5
-	41qBFyrAkPqOIA63XKUpU8RjXPljQtteTBA1etfox2w==
-X-Gm-Gg: ASbGnctME5WYYxEczKqFjPzM8T+zeKvNX0/4XYE2mVj+JUhPUtdpypZzn3hVnbHQBM6
-	aa5xhBONTlt6eN3Q7nYhBX6JHXzh4GLUh/nOVwOYkdFOfw+mvp41uDCDHQgfEtiSW7S9moMBnPX
-	ojSpjTPB2AfEpisn2AGZ6xDYXxBIf/yF5MgvBQkFRdMdKFQsnAW9h4xYAIQ9/7SQXoiglP1YaQx
-	7vCDVRW3mtPaAW0TyYao8Y9Ag1MxAXvhzmR
-X-Google-Smtp-Source: AGHT+IF3WgiehWnZQLfMQrcxniMNK/2fuKGhQA/XqVGq1OCbr4PDYFcEG0ahDGLz1N6K7QygM6mYjF0gHE1SQR7cH3A=
-X-Received: by 2002:a05:6512:3b07:b0:553:cfa8:dd2d with SMTP id
- 2adb3069b0e04-55cd766f8c4mr730147e87.55.1754992771830; Tue, 12 Aug 2025
- 02:59:31 -0700 (PDT)
+	s=arc-20240116; t=1754992845; c=relaxed/simple;
+	bh=40a1YksTvJCs+rBlRjjS+rcej/s7nvSDRioxGmX5oJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0rKafb2e/c8hz8GfHOiKDTmraovyzECU93jnPBBK1t+yXUcNmmmUUholcibaKCMaN9yzscf02kBQvT5OfzyttMscu10ptrxuuoHMN9kQW/ZiOIWnyhlV5IE6Vk/rmG3jHx9IbfFZNjFbDRbJWlWuQWECp0uvIa+zDYbpEZfeiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hXKewk9X; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WDUATZ9KIBG+Gp5uz1Zxi3Brlk7uXVybEbEZ9Z8bTP8=; b=hXKewk9X0NWhWIzaf0tWyv7zis
+	WxubWiCd9Wf7jlRLRCFzK03i1Rc/uoH9SYH0gJcFXfpbcGn1sbjrf6mPVgOm4o6MrPvwTHpak5Tbk
+	6cJrVh0Iw1o4i4gxGJ7m6jJnHE320jd1uUlXpFwEkk5/nmJO4YZUrpipVke89E6Sx+M9KnXVCmNSP
+	EQ8g3pqJISbuXoiQMgprC+XLkPAgvy+TY6LVGDrVY0Zs6TmIAp26v0O/D3XjmJJgkPT0Cu+nT8pd9
+	JAIU78Cr49ixknSkBKF66qTlT55rA80nsI6CYJdinhUvI++3OPJ9biGVCio+cRdR9J3XUTPvFxDEH
+	DuKshMFw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ullo4-0000000FmR1-3hAt;
+	Tue, 12 Aug 2025 10:00:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B347D300237; Tue, 12 Aug 2025 12:00:35 +0200 (CEST)
+Date: Tue, 12 Aug 2025 12:00:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: yaozhenguo <yaozhenguo1@gmail.com>
+Cc: mingo@redhat.com, vincent.guittot@linaro.org,
+	linux-kernel@vger.kernel.org, yaozhenguo@jd.com
+Subject: Re: [PATCH] sched: change MAX_SHARES to NR_CPUS
+Message-ID: <20250812100035.GG4067720@noisy.programming.kicks-ass.net>
+References: <20250812092810.38728-1-yaozhenguo@jd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-gpio-mmio-gpio-conv-v1-0-8492f4a4c1e4@linaro.org>
-In-Reply-To: <20250812-gpio-mmio-gpio-conv-v1-0-8492f4a4c1e4@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 12 Aug 2025 11:59:18 +0200
-X-Gm-Features: Ac12FXytMUHnfMvorE7AaIZ4tQn_RJRgw5kgUrTE9wtdfJEknR5-9y8JUWSkapc
-Message-ID: <CAMRc=MdTWpdQp22yf7w5zNhfKBdWKJAX=rvAG-bkYxtCfLSFAg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 00/14] gpio: replace legacy bgpio_init() with its
- modernized alternative
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Hoan Tran <hoan@os.amperecomputing.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Yang Shen <shenyang39@huawei.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812092810.38728-1-yaozhenguo@jd.com>
 
-On Tue, Aug 12, 2025 at 11:58=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> I hit a network error when sending for the first one, retrying now.
->
-> This is the first round of GPIO driver conversions to using the
-> modernized variant of the gpio-mmio API.
->
-> While at it: sprinkle in some additional tweaks and refactoring.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Aug 12, 2025 at 05:28:10PM +0800, yaozhenguo wrote:
+> From: ZhenguoYao <yaozhenguo1@gmail.com>
+> 
+> As the number of cores in modern CPUs continues to increase,
+> 256 * 1024 is no longer sufficient to meet the requirements.
+> Therefore, MAX_SHARES is being modified to NR_CPUS * 1024.
+
+You forgot to explain why this needs to scale with CPUs, you also forgot
+to provide an argument for why this will not introduce numerical issues.
+
+> Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
 > ---
-> Bartosz Golaszewski (14):
->       gpio: generic: provide to_gpio_generic_chip()
->       gpio: generic: provide helpers for reading and writing registers
->       gpio: hisi: use the BGPIOF_UNREADABLE_REG_DIR flag
->       gpio: ts4800: remove the unnecessary call to platform_set_drvdata()
->       gpio: ts4800: use generic device properties
->       gpio: ts4800: use dev_err_probe()
->       gpio: ts4800: use new generic GPIO chip API
->       gpio: loongson-64bit: use new generic GPIO chip API
->       gpio: dwapb: use new generic GPIO chip API
->       gpio: amdpt: use new generic GPIO chip API
->       gpio: rda: use new generic GPIO chip API
->       gpio: grgpio: use new generic GPIO chip API
->       gpio: mpc8xxx: use new generic GPIO chip API
->       gpio: ge: use new generic GPIO chip API
->
->  drivers/gpio/gpio-amdpt.c          |  44 +++++-----
->  drivers/gpio/gpio-dwapb.c          | 160 ++++++++++++++++++++-----------=
-------
->  drivers/gpio/gpio-ge.c             |  25 ++++--
->  drivers/gpio/gpio-grgpio.c         |  87 ++++++++++----------
->  drivers/gpio/gpio-hisi.c           |   3 +-
->  drivers/gpio/gpio-loongson-64bit.c |  42 +++++-----
->  drivers/gpio/gpio-mpc8xxx.c        | 102 +++++++++++++----------
->  drivers/gpio/gpio-rda.c            |  35 ++++----
->  drivers/gpio/gpio-ts4800.c         |  39 ++++-----
->  include/linux/gpio/generic.h       |  37 +++++++++
->  10 files changed, 337 insertions(+), 237 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250728-gpio-mmio-gpio-conv-623517c3df74
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-
-Sorry for the noise, I'm hitting some SMTP errors with gmail currently. :(
-
-Bartosz
+>  kernel/sched/sched.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index be9745d104f7..5c219e34f48d 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -510,7 +510,7 @@ struct task_group {
+>   *  limitation from this.)
+>   */
+>  #define MIN_SHARES		(1UL <<  1)
+> -#define MAX_SHARES		(1UL << 18)
+> +#define MAX_SHARES		(NR_CPUS * 1024UL)
+>  #endif
+>  
+>  typedef int (*tg_visitor)(struct task_group *, void *);
+> -- 
+> 2.43.5
+> 
 
