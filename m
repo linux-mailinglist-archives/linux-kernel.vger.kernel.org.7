@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-765563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D35EB23A06
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:33:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA864B23A0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A217B35F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:31:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E4C47B4B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511BE2D0627;
-	Tue, 12 Aug 2025 20:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676A62D0639;
+	Tue, 12 Aug 2025 20:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4SQ4e4b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey348pIx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB5202C3A;
-	Tue, 12 Aug 2025 20:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94A92F0693;
+	Tue, 12 Aug 2025 20:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030785; cv=none; b=eChGLUy/xq3XwknEsgxQT9nFkrHsCQkz+0xJunxCZKhghzoIa9zmcGsqLn0s8jhHDzdy/Mo/VoU4aDYOVLN/0mHSLdUMcrNsQvexH/Eyy7P0Cs1IWdqdjqoXukwWbZoBnVkfV8wPLWvroaFCSB8cB1nDJAqP8TwT+QWryAu+4yM=
+	t=1755030796; cv=none; b=VN8NkeDywdTYeT9OQoFRFWG4Fs3Vm/lBT9ryEOuvMSU+jgXPpn4oWHz2s2//wmfWHzzYhMRzX7z86rKmrL/xYgCf8kXj+mFcqra/uEHldHFY0776Vnnk4Zs7CR/h6yMi/ZEb+ZxbuYvyPV0Xo+oVZNHiKSD/Ani1yQORyqq1TH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030785; c=relaxed/simple;
-	bh=1zQDwv+c+2f8PAjLjmyAUalogDJhgfoJjuw8TmC5/fQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u8aiU5gmZw5Q7dehR1AdsRN/a2mUekZmUGSDNcsUpXN3fdU0znGgtckesZ11KK28P1ECH0e59tUoXVjfD4m/DxDtp/t9+sshC5IwAsYxYWvPVPGj63YzdJFVgIVAJgy48h0LVnP85j4SOogfBWgpeKE1haxOSgGG6UwGXTZ1H68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4SQ4e4b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF141C4CEF0;
-	Tue, 12 Aug 2025 20:33:04 +0000 (UTC)
+	s=arc-20240116; t=1755030796; c=relaxed/simple;
+	bh=uwbhXIneRmsaZaWvxLCpVQGXbk9Wr+ul8nmFQxg5e64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YVJABLHpkP7gJ2CWKX7OhHJSZ16Plv3Hv9SpCs0j2CbrrAXmUKo3RoweJyh/GVlEWQMSbGXsDuYlnsNHxdOeMmgniJUppjCTPWHkp/NX1Q/vu0mT8sOM+LEe37YpJEVD739Vcc8Lo6mR0cQ7n7OETOKwMBEimYyWp5sAfmwYKhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey348pIx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B056AC4CEF0;
+	Tue, 12 Aug 2025 20:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755030785;
-	bh=1zQDwv+c+2f8PAjLjmyAUalogDJhgfoJjuw8TmC5/fQ=;
+	s=k20201202; t=1755030794;
+	bh=uwbhXIneRmsaZaWvxLCpVQGXbk9Wr+ul8nmFQxg5e64=;
 	h=From:To:Cc:Subject:Date:From;
-	b=P4SQ4e4bFLupR3TzUMp1am/GwXfw7JyeJPr1ysMR7ki4SP6VkCE8A2g61LTrM2EXK
-	 U7EkuaZzgMPLghKkZ39zoTCNjwuvFy4kiWmsfLigXy69Rt5aSjURab/QVf8bdBtFCs
-	 OQuvaicDLsuPHbIJ67Ismm+KPGF4wABSCYOU0s3U9V2Mux7sBuytZ5XviXM5YYuUfO
-	 6fCi2TE5gkH/bfXFBgTLZGkVZ1d9/qsTVE1s6PriULIM7rrfxIgr0LKRm3hb6w2tk3
-	 v+T9buWsTsJQMVj/SsWeiv0rWIZjYQ5MIPFsrxMVQkTxYfhILlfWjY+9IILhES4unh
-	 KYCHaMbNWHnqQ==
+	b=ey348pIxSmFm/UuOuwlV3pkJy5dMXtVoasKq52qo7O4uY0j2SJbbn6qngNNJBcBHW
+	 X9Q11QGg5IQebv64cEGTwnMIF9xB37Qt9OLbVilFMMjHJvXxfkIU6RzPd0tUgwLroD
+	 AsYkvpxBbdzty+v9+//6RFeHzYdGtfyw4KN3+jfi09MUXZnHbJ9r5SeuNSy9yO00jX
+	 /sek+IMGEQ+w4vh8He+bZr0DZwnm0tNdAOnKEs1SoNwjsMv/vxJlrM9uoBrVzOQwWm
+	 q9J0P581vrR5fy1MVSAenZ4R+9X95afhO9ruvsra9bIpGn3ropkCR580C27pEcTfgZ
+	 D0kKpJoI3CQQw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
+To: Vinod Koul <vkoul@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Cc: linux-watchdog@vger.kernel.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dmaengine@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: watchdog: Convert marvell,armada-3700-wdt to DT schema
-Date: Tue, 12 Aug 2025 15:32:57 -0500
-Message-ID: <20250812203301.726374-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: dma: nvidia,tegra20-apbdma: Add undocumented compatibles and "clock-names"
+Date: Tue, 12 Aug 2025 15:33:07 -0500
+Message-ID: <20250812203308.727731-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,110 +59,50 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert the Marvell Armada 3700 watchdog binding to DT schema format.
-It's a straight-forward conversion.
+Add the undocumented NVIDIA APBDMA compatibles and "clock-names" which
+are already in use. There doesn't appear to be any per compatible
+differences.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/watchdog/armada-37xx-wdt.txt     | 23 -----------
- .../watchdog/marvell,armada-3700-wdt.yaml     | 41 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 42 insertions(+), 24 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
+ .../bindings/dma/nvidia,tegra20-apbdma.yaml          | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt b/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
-deleted file mode 100644
-index a8d00c31a1d8..000000000000
---- a/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--* Armada 37xx CPU Watchdog Timer Controller
--
--Required properties:
--- compatible : must be "marvell,armada-3700-wdt"
--- reg : base physical address of the controller and length of memory mapped
--	region.
--- clocks : the clock feeding the watchdog timer. See clock-bindings.txt
--- marvell,system-controller : reference to syscon node for the CPU Miscellaneous
--	Registers
--
--Example:
--
--	cpu_misc: system-controller@d000 {
--		compatible = "marvell,armada-3700-cpu-misc", "syscon";
--		reg = <0xd000 0x1000>;
--	};
--
--	wdt: watchdog@8300 {
--		compatible = "marvell,armada-3700-wdt";
--		reg = <0x8300 0x40>;
--		marvell,system-controller = <&cpu_misc>;
--		clocks = <&xtalclk>;
--	};
-diff --git a/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml b/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
-new file mode 100644
-index 000000000000..60d44d642fb5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
-@@ -0,0 +1,41 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/marvell,armada-3700-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
+index a2ffd5209b3b..ea40c4e27a97 100644
+--- a/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
++++ b/Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.yaml
+@@ -18,10 +18,17 @@ maintainers:
+ properties:
+   compatible:
+     oneOf:
+-      - const: nvidia,tegra20-apbdma
++      - enum:
++          - nvidia,tegra114-apbdma
++          - nvidia,tegra20-apbdma
+       - items:
+           - const: nvidia,tegra30-apbdma
+           - const: nvidia,tegra20-apbdma
++      - items:
++          - enum:
++              - nvidia,tegra124-apbdma
++              - nvidia,tegra210-apbdma
++          - const: nvidia,tegra148-apbdma
+ 
+   reg:
+     maxItems: 1
+@@ -32,6 +39,9 @@ properties:
+   clocks:
+     maxItems: 1
+ 
++  clock-names:
++    const: dma
 +
-+title: Armada 37xx CPU Watchdog Timer Controller
-+
-+maintainers:
-+  - Marek Behún <kabel@kernel.org>
-+
-+properties:
-+  compatible:
-+    const: marvell,armada-3700-wdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  marvell,system-controller:
-+    description: Reference to syscon node for the CPU Miscellaneous Registers
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - marvell,system-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    watchdog@8300 {
-+        compatible = "marvell,armada-3700-wdt";
-+        reg = <0x8300 0x40>;
-+        marvell,system-controller = <&cpu_misc>;
-+        clocks = <&xtalclk>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 06a4cde222bd..6a2de9638c08 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2623,7 +2623,7 @@ F:	Documentation/devicetree/bindings/firmware/cznic,turris-mox-rwtm.txt
- F:	Documentation/devicetree/bindings/firmware/cznic,turris-omnia-mcu.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/marvell,mpic.yaml
- F:	Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml
--F:	Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
-+F:	Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
- F:	drivers/bus/moxtet.c
- F:	drivers/firmware/turris-mox-rwtm.c
- F:	drivers/gpio/gpio-moxtet.c
+   interrupts:
+     description:
+       Should contain all of the per-channel DMA interrupts in
 -- 
 2.47.2
 
