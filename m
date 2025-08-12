@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-764565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49570B22494
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0A5B22493
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8DA3B4949
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8882189B31C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073302EBB87;
-	Tue, 12 Aug 2025 10:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFB22E92A8;
+	Tue, 12 Aug 2025 10:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C+p1DqYm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zi2mHvFO"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C092E92A8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085D2E4249
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754994441; cv=none; b=pWMnI/jtcSo57oXZt/iP0hfBXA5geE4/rAoO0Pl+TmbvuxySm+ZrDQiH+HOAmDU6E20mhRy6jN6UWfEfoHgP4y3FhvT40uWaNFcUWYgBWlnNhSX5JyvkjDoFp4Qni1C2CZpiYxho3t8SWw5GMHUWe/oIDdwGvFXncp4dnuTFfWI=
+	t=1754994499; cv=none; b=TbZRHLz9tDjgwkoFo931ibeueOFLJLQSQwf2CVyTZLPy66g0IHePDzCSjsHdiy8hvPs7tEDpAjPnWoWnZoknlfYiskTqQP8E96Qa1hezGraw8fU6D6E/Kx6qfxGaMFI13Ft/suYhS36CltzA32aVazhxq+hR/IkChVZHYKPbS88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754994441; c=relaxed/simple;
-	bh=p6XJ2Ia1ZWj9X46ugQeYG4h7CM0YCYpi+GVyAiwcBag=;
+	s=arc-20240116; t=1754994499; c=relaxed/simple;
+	bh=B9Vrmcfl+8IVTDBQ/VpLV4BqgqKtRjIoSIkTrqYOTCs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BHfynb6BwND+Egpm1VrG3l+COtS88Ikr3+lplvRsmdDduHpwbSzG/IYfkOoflZ2o8oqRBugIUmZfD5FpnItruigmZBqVHJTnqj+W1WbjmjqosWoMgTvvPTJuXX3IQVnk8VCGLdzCLuECk9Y7+DD3ZkPjPfS9AllNr5BvDEvzy7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C+p1DqYm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C7VjTR007595
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:27:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	C9vCp9m+qHfHd3sxSOOc74EeHEbwHcJ/Vc8rKeqTxWw=; b=C+p1DqYmbrJU/Coh
-	bokhX1Hwqe+djWwDbWYX16FTHV52bz+TPAG1ISJJx9RagMCEfE6NwyQ4whxAvhbM
-	p1wwopY6ag5xi8uvABmqHSLWe/eRltRVQnOKvrrjwyt8uaExrI4PPLzCLckYv2M0
-	WU3fAZ38r9xeDgp6WhiCTML9ypUd7a5oXxDRy3C+cMGM30kyrgR2fl3PKtEojDrq
-	kqdFOYrt/cKIex/DgTFQMGnUMCGTlIlQmt6NGAeC/fhmYwRicYRQJD5H03IOHW0b
-	ubCflHD5qMRRSG2HVgJjBvlhy7TAH29DKKZ72BVkQwHBkRpzYMuLVUtlAFPp06E3
-	wNQnog==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6kkjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:27:19 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b07ae72350so13623681cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:27:19 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=KO5F9tjwWlSj6LKqLDWmZtKT34u5tf3nChDiIvuYGU2QIYKImK5LIDX6Hrgs9q4RyGmfcg6OiQOZpfet1NKXm7SV6qdNBuyY0R7AE80GaVEQU/9imHMJBspS5A0FR8s+ixF57z4gXQMzd/W17ytqJewF1cvzrmxuvtNpgtbKNy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zi2mHvFO; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78a034f17so4012970f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754994496; x=1755599296; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pm63ILDmwa7xNpo98Np+0qeN8z2wnjVlHzO2eRsHLP8=;
+        b=zi2mHvFOFQ0696LkV8C3hFZtIhBdaTDbS9RgFnPtvUZeTCCAqsoCubS38GfcJ7cUhM
+         ToxOOYi+rtpYZVBrWEIY1aE+tiQ29O0uV5ngDMpD4gYB1onlPVExDq3ikLMFkG+okD05
+         djwbVT7Hq/3w/wxpZ6ZU/4aS0aBp+3ghYv0GFVcqeIhTLAJFJSOE4ayK/7bBUX0K1LtF
+         wvD3gixqpEWRWkP+tuC2Q+qB9ah86Eetlkmym/z6YUEvyD+5ngaeAhqiwLvtnGZWhR+5
+         x17NmBLbunYEZzOawUR2vKQg0QEqUDFcfxJoyySFKCI2Ba1NR3PNImq8zLxjmJNTj4bt
+         fexg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754994438; x=1755599238;
+        d=1e100.net; s=20230601; t=1754994496; x=1755599296;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9vCp9m+qHfHd3sxSOOc74EeHEbwHcJ/Vc8rKeqTxWw=;
-        b=DsCjgEPOPdTysYpHZ3s6p6pfDlu51RpqL/IcHQCBQd1ZnFks5NT3guyDnjv7twxkGj
-         X8jngppsJZ+pz9b5BtJgoXl3pZisVC8f9W9/XweTCodBLZW/eARh9OkIr75z78tqhS12
-         OAXIkKiGnCB0DIiVG6uccCEuyYaxW+ktbVvpn17t6HxpzMhz665BYhvBRBSveu9yCVu6
-         /wJPX1C4gM6sVz6s36Nelyq6nQBCJnozUrvGpanhiJouCqQMTcrnnMgZkIfzr0T5Tozl
-         JbzJN06APxHNCFPdtytSW9cZtYSqpTFXdrFb0KnblyefJYoMwq5lQsCELJYLu2vSbmM6
-         yeqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF+M/hiOjB2H+g0i5wxCPHFn5wsTaqo97vDhbG0FEmuKaucS+SbBbt1E26IA+0dKl3QY6wOB2FDBVMgDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2rWwh1/fBia2P4e55MtYsdkIPGW7VUiKxG7ELLm5YI96pD4MX
-	NzEmW4cpU5xCWxb+7KjFYB2U7uyRZPr/HFDr43MBBHT4emwfNWxjsX31i78SYIPgxT9/i+Z3K9d
-	oI7yH6cKwbDnp0EByNSZwg+uVOIcqwjUcCcHfz/GdHM6cUnOfNALUui/wjGV6SHdGuFY=
-X-Gm-Gg: ASbGnct8pWYvtr1VaCTQl0mg3rOwh+Q+xHszmNZEEG6yipVMsRcMWndA9vUhWtjHhz/
-	+osHp3QULuM4b6L04EuYvz8L1ArjZ+cpcqim0LDe62o9j2IumZvF5hfbBZmS/hUhUj8azOShr65
-	73hCRvWPe6npZ6ViRBr4XcySHf+e+NydTR7ExkgdJrwMkCVWMo/PbLcLwumlOBYZFfdWk+6zfi+
-	iZmP17+v6asYKxX5IfZLsMvbalMiQtqZBtpEz1tJELfSlhR6dfE5c0qL3WJq71Wq3bTOubQXPAg
-	Tv4MiX1UpcVSNx5AZ76mSoNTabVsJIeBKAKCPlFtYUPaYqLiwM+jqco0jMPhyt/H+WAEdjG86a0
-	+LMlC4s5Bf5/llenTQg==
-X-Received: by 2002:a05:622a:1a26:b0:4ab:6de9:46ae with SMTP id d75a77b69052e-4b0f6267d03mr2669011cf.13.1754994437728;
-        Tue, 12 Aug 2025 03:27:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcHGbLJllfiL6T0pXR0Qe7084myDh4JmZG4tqCEOLzDDsKtMH0MRvtexCeFrKzOU71x8TNjA==
-X-Received: by 2002:a05:622a:1a26:b0:4ab:6de9:46ae with SMTP id d75a77b69052e-4b0f6267d03mr2668781cf.13.1754994437236;
-        Tue, 12 Aug 2025 03:27:17 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af9f4796e23sm444380766b.26.2025.08.12.03.27.15
+        bh=Pm63ILDmwa7xNpo98Np+0qeN8z2wnjVlHzO2eRsHLP8=;
+        b=wq+0LX0DM//1HeLnqLb8IOJaYKc1ufCMxkhEJ7eh3QfUBjQ1bEnWMlz+P4JgGg7iN6
+         HRQUsjWc2Hzea6/He3Q93v0N+JoqYZNg+rtLV6zR7WvablofOi9U/zA/OlbkO0WoRzcx
+         9VdMclzJKrH055BjEDL/o5YATiamcrQhmaGtzFj2JbRvAW2mPtNYITGb6B4vlfC5UBFR
+         zAqe4RNP5yknJ6VdbWgHIO50jwEHh4HbqSBsY1cinWSyyTbSuFEXPicNc9CYzhTaKYVc
+         xzLAXglCERldOyrTeNsVnIkAwpjan3/VIQv58lZgg8YmiklbsNnToS6xHsZ+6x3ZQdsR
+         Cnqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqgNSd6rG/S9U+FCk4XB73L309FOuTM0EFdaOLcdL9Htaru3MYgi082zCT7dJNRFUNHMxIC5QkIIjN0Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/9hhOCtNAO6ackYwCk8d2ZoZZ7DKZGOfCYQMIR4OK1/kMXQaA
+	Y3rvZflRmVrLuVEVl1Cr9AdimIYuLwYEibSVS38OMTuR2BBZgi9/dxoKySeYutt+vGg=
+X-Gm-Gg: ASbGncv3q2JdLAHC4OtggDQwWusPpRJz/xwReKqsm4uRRO3EkiAM9Mg5UlHLPz/VBv6
+	nKiQii0nG8vN1CxFeP1n0XJrkU8roi+S/EpuofwK1+eNUWZsRHFGNtsmoAlxSQ8W8NSSt/Lnfwo
+	Eo1/VZm1TzKRhLlmXYL/QmsJS3td3OdKzKfDTHPSkETunY9G6Dt6nOwCmgtyrAAtPbOeGg8p98u
+	sf70xXiE45a+TrkCojupqtEHfn2MLSxAUWOs2E+uDvH+X1ekvkDL4ofzofkhfNSzVBuyoSUrCEQ
+	jUVKk/dpDCISgcc2k9s9pMUJ9rjg5uk5SL5xxhtnM9Y9GyK7CAUx25AoguJ8qDSJVjSs6hmLRxf
+	L5jq9FlsKL5t0lkVuG1dDpMekTI67CQ28cZdCLIGOKMFUE2wPnvNVqH2XbQReCQ==
+X-Google-Smtp-Source: AGHT+IFcdKMW5nagxZx6H4FgaqbvprQU5gv49abZvdzjaniK3RNc9c2E5u7r/cWE1TXNI9GVsZSWQw==
+X-Received: by 2002:a05:6000:24c5:b0:3b7:8832:fdcc with SMTP id ffacd0b85a97d-3b900b751edmr12603011f8f.38.1754994495881;
+        Tue, 12 Aug 2025 03:28:15 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b915deec6bsm9208f8f.7.2025.08.12.03.28.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 03:27:16 -0700 (PDT)
-Message-ID: <0bda8e0e-4f86-458f-b55e-c5b0d6cd5c30@oss.qualcomm.com>
-Date: Tue, 12 Aug 2025 12:27:14 +0200
+        Tue, 12 Aug 2025 03:28:15 -0700 (PDT)
+Message-ID: <b7a7f3fe-faa8-4143-a200-d91597d46124@linaro.org>
+Date: Tue, 12 Aug 2025 12:28:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,95 +81,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: display/msm: qcom,mdp5: drop lut clock
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250809-msm8976-no-lut-v1-1-f5479d110297@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/2] dt: bindings: fsl,vf610-ftm-pwm: Add compatible
+ for s32g2 and s32g3
+To: Krzysztof Kozlowski <krzk@kernel.org>, ukleinek@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, Frank.Li@nxp.com
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ghennadi.Procopciuc@nxp.com, s32@nxp.com
+References: <20250811223044.3087090-1-daniel.lezcano@linaro.org>
+ <20250811223044.3087090-2-daniel.lezcano@linaro.org>
+ <758fb1ce-bf7e-4dd8-aa24-3f89d9be5652@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250809-msm8976-no-lut-v1-1-f5479d110297@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX7h9M2EhbEAl8
- h0Ky45Y7dJuXMXAqvKaxT398ZkHstDJQAR14EbhM2bBH2hV5PjBiZAfpsDzk/3rgw46SFrnClLf
- KE02k0SmNmd2NWWF5alEyk/62STHOHR+PonhZFK3EOeZ0fTwa8Z63yF7zG1M4stbqEnLJaLd7qh
- OHnUG60yxxPq2i0DN23uDm1raPafUDt56nni63DKsw01YUbTkmJWrc+V8fPof3mlRcWtsLZ+LJx
- DQPBABcmNMafr7XepzqwRY+pqEc1yzAWL7G0HIh4VLCSa8wrhkrmkwrPYS9qjuiCSf225Rdw1aV
- WMoSSnW7WQ706cHV0m6L7MiWQ1AYPxILwqIXqEgPhHf86wFOWMSa902gf277dm6NuA35JNa9j4g
- 3jjRNXXn
-X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689b1707 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=vZF-wXTcH1iwIe0ERPwA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: Dj1PsSv6_Q9eqDpfydtrOF97tRxb7EL9
-X-Proofpoint-ORIG-GUID: Dj1PsSv6_Q9eqDpfydtrOF97tRxb7EL9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_05,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <758fb1ce-bf7e-4dd8-aa24-3f89d9be5652@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/9/25 10:36 AM, Dmitry Baryshkov wrote:
-> None of MDP5 platforms have a LUT clock on the display-controller, it
+On 12/08/2025 11:03, Krzysztof Kozlowski wrote:
+> On 12/08/2025 00:30, Daniel Lezcano wrote:
+>> The S32G2 and S32G3 have a FlexTimer (FTM) available which is the same
+>> as the one found on the Vybrid Family and the i.MX8.
+>>
+>> Add the compatibles in the bindings
+> I already asked in previous patches - prefix is always dt-bindings.
 
-8974 and friends seem to bind it to the GDSC
+Yeah noted (again), thanks
 
-although on msm-3.4:
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-arch/arm/mach-msm/clock-8974.c
-4197:static struct branch_clk mdss_mdp_lut_clk = {
-4203:           .dbg_name = "mdss_mdp_lut_clk",
-4205:           CLK_INIT(mdss_mdp_lut_clk.c),
-4609:   {&mdss_mdp_lut_clk.c,                   MMSS_BASE, 0x0015},
-5118:   CLK_LOOKUP("lut_clk", mdss_mdp_lut_clk.c, "mdp.0"),
-5387:   CLK_LOOKUP("lut_clk", mdss_mdp_lut_clk.c, "fd8c2304.qcom,gdsc"
-
-Konrad
-
-> was added by the mistake. Drop it, fixing DT warnings on MSM8976 /
-> MSM8956 platforms. Technically it's an ABI break, but no other platforms
-> are affected.
-> 
-> Fixes: 385c8ac763b3 ("dt-bindings: display/msm: convert MDP5 schema to YAML format")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-> index e153f8d26e7aaec64656570bbec700794651c10f..2735c78b0b67af8c004350f40ca9700c563b75f8 100644
-> --- a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-> @@ -60,7 +60,6 @@ properties:
->            - const: bus
->            - const: core
->            - const: vsync
-> -          - const: lut
->            - const: tbu
->            - const: tbu_rt
->          # MSM8996 has additional iommu clock
-> 
-> ---
-> base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-> change-id: 20250809-msm8976-no-lut-4b5100bcfb35
-> 
-> Best regards,
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
