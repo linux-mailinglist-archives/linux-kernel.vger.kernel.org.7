@@ -1,236 +1,185 @@
-Return-Path: <linux-kernel+bounces-763834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27EEB21ACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3546B21ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A87937A3245
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63259426FF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44D027F75F;
-	Tue, 12 Aug 2025 02:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D376A1DDC2B;
+	Tue, 12 Aug 2025 02:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d0s8ej0j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ozjxrm75"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A7F311C02;
-	Tue, 12 Aug 2025 02:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD0A311C02
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754966012; cv=none; b=FU98vbm756Aaly2kAAi8gi0TQyij/GgMhtpeAN81nX4Pw/8ReEY/7Obm3oqtJniJlQIHyxelC/fX8zu4ihXyEJ9MVLHrc6i+Z6q2kBZznh6+R/3l/eHwbizoEX8I5bCgG1if0svxdE6caEzTRY6a/5aEcaAMEWthb8V/9EOei0A=
+	t=1754966342; cv=none; b=fAwMiUsFN7Ac9bkHuKeYWmVvNF96Moh4TEtLMj0M56s/CopUMSJrVPNt891h0WRL/Q5+55EuaZ1MQ9Q0hB2iZuT18n9Xb3XhTrzVXu/WDoUMJ+jAdIGnNCY/h9H3x5T/VEedTnVJpuNF3a99+9KVJDrSzY00x/VXL65aGygFFZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754966012; c=relaxed/simple;
-	bh=3gFhAs0g0jLXYK5uTwjCYmhzdcBGuOQHCG2c+aVH7/0=;
+	s=arc-20240116; t=1754966342; c=relaxed/simple;
+	bh=JYIAJ9fc1rJwUZC6IIh/QZHDIZ/HKFpG9Nny0OS/gG8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjD40IAGuTNYAx9i7WBPg9W1tdvu496vPkN857TrCWATg81I+iPGo54Ad5HSRzkhSTuNT2LQbYkYDg0xSRjHElYlQbASUJkpOHAVRoIeQRIfgfUnCvzZLojxeKkD7+ALV6/Qx9NdV/bh4N6OUcT45Xx5rMSxxDBJCjY2m2mBvs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d0s8ej0j; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754966011; x=1786502011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3gFhAs0g0jLXYK5uTwjCYmhzdcBGuOQHCG2c+aVH7/0=;
-  b=d0s8ej0jDiSsqa+ms8K2fBKWxSIrF2kHwbroZlm5bLBk+ORcgc8iosVA
-   +y2sZ9EKsYibieE/YS3uPQfcLmqEiLuxuMkof9N81oXIduGhJSnPqfJCw
-   YoHGeUlrt6Y5as6QbTbXZ9TShuXw3eZ0IierEJmr9YHNeJc343l5kQdfB
-   TggAQ+PWoIrplnewHB7Azrf10m0yIkYgGqJ8qi5SO0m0RJzLAII+tL+ri
-   tUYzp9s4PVwFJTQR/QhkaBtPezGOee5+EULjJmxkmJvDfo+AGJg5RZpjY
-   kEjhYbJj+WdsEgELVWCswD03xExclXv/s247kwuftHfbqYA6elY3GVMhu
-   A==;
-X-CSE-ConnectionGUID: gFLZiOWHQ8aPQ+qO7mJbHA==
-X-CSE-MsgGUID: 2vnMq/M1T8K8raHp9b2dIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="60855067"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="60855067"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:33:30 -0700
-X-CSE-ConnectionGUID: GbCBNCDcQ5yl3TFHSelZbg==
-X-CSE-MsgGUID: J/buwugiSiON548+aWj1dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166366003"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:33:26 -0700
-Message-ID: <0c546386-dde8-4aac-b499-9c18221ad981@linux.intel.com>
-Date: Tue, 12 Aug 2025 10:33:23 +0800
+	 In-Reply-To:Content-Type; b=hQpIVsfjG4GHPjkMTPz0ITAZCDVCIrfxhoieiaK5wLwJD6rVEYwSQpRwFZzHqunoKcL0nMJP7bOC31ZvNSkKVjsThL3AzwWQwhvzMg1b5JrHn9iP7gagGvqntbftVcd7H9yr23rrfoZqtWjJ/Hf37YnoN7Y0bd+wL8JighyCkVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ozjxrm75; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <15fdef37-f380-4b5c-85bb-24482e883dcc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754966327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V6JNn1qTclk48lL6vZFHUSkocWBaeAf2PNn/YVMcWo=;
+	b=Ozjxrm75yxPx1BIPykdr+lWI04fhVMMGxHIm1EP3iR0ODmrvMKkAwitPgr8eNsEibYwjw7
+	ENdHH61wWWA0lwkKDzTh7EBfdRJF5ij86bwcNIVOIOh8DQQbF5rLjFLk+o74pavqvtb/5i
+	8RXwAriihep/XeC2IFajtYOj7Ko768s=
+Date: Tue, 12 Aug 2025 10:38:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 3/6] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-To: "Liang, Kan" <kan.liang@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, kernel test robot <oliver.sang@intel.com>
-References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
- <20250811090034.51249-4-dapeng1.mi@linux.intel.com>
- <17298e98-1a2d-4cdd-9156-73e77cc4eb5b@linux.intel.com>
+Subject: Re: [PATCH 3/6] LoongArch/kexec_file: Add initrd loading
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-4-youling.tang@linux.dev>
+ <CAAhV-H4Sf=74-ni=qUkg3doC4iLrVt=m2bCYCgfmVC0WLNhiDQ@mail.gmail.com>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <17298e98-1a2d-4cdd-9156-73e77cc4eb5b@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <CAAhV-H4Sf=74-ni=qUkg3doC4iLrVt=m2bCYCgfmVC0WLNhiDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-
-On 8/12/2025 7:32 AM, Liang, Kan wrote:
+Hi, Huacai
+On 2025/8/11 22:12, Huacai Chen wrote:
+> Hi, Youling,
 >
-> On 2025-08-11 2:00 a.m., Dapeng Mi wrote:
->> The PMI handler could disable some events as the interrupt throttling
->> and clear the corresponding items in cpuc->events[] array.
+> On Mon, Aug 11, 2025 at 5:28 PM Youling Tang <youling.tang@linux.dev> wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
 >>
->> perf_event_overflow()
->>   -> __perf_event_overflow()
->>     ->__perf_event_account_interrupt()
->>       -> perf_event_throttle_group()
->>         -> perf_event_throttle()
->>           -> event->pmu->stop()
->>             -> x86_pmu_stop()
->>
->> Moreover PMI is NMI on x86 platform and it could interrupt other perf
->> code like setup_pebs_adaptive_sample_data(). 
-> The PMU is disabled when draining the PEBS records. I don't think a PMI
-> can be triggered in the setup_pebs_adaptive_sample_data().
+>> Add inird loading support and pass it to the second kernel via the
+>> cmdline 'initrd=start,size'.
+> I think Patch-3 and Patch-5 should be merged into Patch-2.
+Not all cases require loading initrd, so Patch-2 is a runnable basic patch.
+Separating it into different patches makes it easier to understand and
+review the code.
 
-Besides in NMI handler, the drain_pebs helper intel_pmu_drain_pebs_buffer()
-could be called in many places, like context switch and PEBS event
-disabling. All these places could be interrupted by the NMI handler, and
-then the trigger this NULL pointer access issue.
+Patch-5 coming out separately can better illustrate the role of "mem"
+parameters in capturing the kernel.
 
-
+Youling.
 >
->> So once PMI handling
->> finishes and returns into setup_pebs_adaptive_sample_data() and it could
->> find the cpuc->events[*] becomes NULL and accessing this NULL pointer
->> triggers an invalid memory access and leads to kernel crashes eventually.
-> The commit 9734e25fbf5a stops all events in a group when processing the
-> last records of the leader event. For large PEBS, it's possible that
-> there are still some records for member events left. It should be the
-> root cause of the NULL pointer. If so, we should drain those records as
-> well.
-
-The left PEBS record would always be cleared by
-intel_pmu_drain_large_pebs() when disabling PEBS event.
-
-
+> Huacai
 >
-> Thanks,
-> Kan>
->> Thus add NULL check before accessing cpuc->events[*] pointer.
->>
->> Reported-by: kernel test robot <oliver.sang@intel.com>
->> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
->> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Tested-by: kernel test robot <oliver.sang@intel.com>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 >> ---
->>  arch/x86/events/core.c       |  3 +++
->>  arch/x86/events/intel/core.c |  6 +++++-
->>  arch/x86/events/intel/ds.c   | 13 ++++++-------
->>  3 files changed, 14 insertions(+), 8 deletions(-)
+>>   arch/loongarch/kernel/machine_kexec_file.c | 71 ++++++++++++++++++++++
+>>   1 file changed, 71 insertions(+)
 >>
->> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->> index 7610f26dfbd9..f0a3bc57157d 100644
->> --- a/arch/x86/events/core.c
->> +++ b/arch/x86/events/core.c
->> @@ -1711,6 +1711,9 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
->>  			continue;
->>  
->>  		event = cpuc->events[idx];
->> +		if (!event)
->> +			continue;
+>> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
+>> index bc91ae0afa4c..e1240644f529 100644
+>> --- a/arch/loongarch/kernel/machine_kexec_file.c
+>> +++ b/arch/loongarch/kernel/machine_kexec_file.c
+>> @@ -34,13 +34,84 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+>>          return kexec_image_post_load_cleanup_default(image);
+>>   }
+>>
+>> +/* Adds the "initrd=start,size" command line parameter to command line. */
+>> +static void cmdline_add_initrd(struct kimage *image, unsigned long *cmdline_tmplen,
+>> +                               char *modified_cmdline, unsigned long initrd)
+>> +{
+>> +       int initrd_strlen;
 >> +
->>  		last_period = event->hw.last_period;
->>  
->>  		val = static_call(x86_pmu_update)(event);
->> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->> index 15da60cf69f2..386717b75a09 100644
->> --- a/arch/x86/events/intel/core.c
->> +++ b/arch/x86/events/intel/core.c
->> @@ -2718,6 +2718,8 @@ static void update_saved_topdown_regs(struct perf_event *event, u64 slots,
->>  		if (!is_topdown_idx(idx))
->>  			continue;
->>  		other = cpuc->events[idx];
->> +		if (!other)
->> +			continue;
->>  		other->hw.saved_slots = slots;
->>  		other->hw.saved_metric = metrics;
->>  	}
->> @@ -2761,6 +2763,8 @@ static u64 intel_update_topdown_event(struct perf_event *event, int metric_end,
->>  		if (!is_topdown_idx(idx))
->>  			continue;
->>  		other = cpuc->events[idx];
->> +		if (!other)
->> +			continue;
->>  		__icl_update_topdown_event(other, slots, metrics,
->>  					   event ? event->hw.saved_slots : 0,
->>  					   event ? event->hw.saved_metric : 0);
->> @@ -3138,7 +3142,7 @@ static void x86_pmu_handle_guest_pebs(struct pt_regs *regs,
->>  
->>  	for_each_set_bit(bit, (unsigned long *)&guest_pebs_idxs, X86_PMC_IDX_MAX) {
->>  		event = cpuc->events[bit];
->> -		if (!event->attr.precise_ip)
->> +		if (!event || !event->attr.precise_ip)
->>  			continue;
->>  
->>  		perf_sample_data_init(data, 0, event->hw.last_period);
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index c0b7ac1c7594..b23c49e2e06f 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -2480,6 +2480,8 @@ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, u64
->>  	 */
->>  	for_each_set_bit(bit, (unsigned long *)&pebs_enabled, X86_PMC_IDX_MAX) {
->>  		event = cpuc->events[bit];
->> +		if (!event)
->> +			continue;
->>  		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
->>  			intel_pmu_save_and_restart_reload(event, 0);
->>  	}
->> @@ -2579,10 +2581,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->>  			continue;
->>  
->>  		event = cpuc->events[bit];
->> -		if (WARN_ON_ONCE(!event))
->> -			continue;
->> -
->> -		if (WARN_ON_ONCE(!event->attr.precise_ip))
->> +		if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>  			continue;
->>  
->>  		/* log dropped samples number */
->> @@ -2645,9 +2644,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>  		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
->>  		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
->>  			event = cpuc->events[bit];
->> -
->> -			if (WARN_ON_ONCE(!event) ||
->> -			    WARN_ON_ONCE(!event->attr.precise_ip))
->> +			if (!event || WARN_ON_ONCE(!event->attr.precise_ip))
->>  				continue;
->>  
->>  			if (counts[bit]++) {
->> @@ -2663,6 +2660,8 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->>  			continue;
->>  
->>  		event = cpuc->events[bit];
->> +		if (!event)
->> +			continue;
->>  
->>  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->>  					    counts[bit], setup_pebs_adaptive_sample_data);
+>> +       initrd_strlen = sprintf(modified_cmdline + (*cmdline_tmplen), "initrd=0x%lx,0x%lx ",
+>> +               initrd, image->initrd_buf_len);
+>> +       *cmdline_tmplen += initrd_strlen;
+>> +}
+>> +
+>> +/*
+>> + * Tries to add the initrd to the image. If it is not possible to find
+>> + * valid locations, this function will undo changes to the image and return non
+>> + * zero.
+>> + */
+>>   int load_other_segments(struct kimage *image,
+>>                          unsigned long kernel_load_addr,
+>>                          unsigned long kernel_size,
+>>                          char *initrd, unsigned long initrd_len,
+>>                          char *cmdline, unsigned long cmdline_len)
+>>   {
+>> +       struct kexec_buf kbuf;
+>> +       unsigned long orig_segments = image->nr_segments;
+>> +       char *modified_cmdline = NULL;
+>> +       unsigned long cmdline_tmplen = 0;
+>> +       unsigned long initrd_load_addr = 0;
+>> +       int ret = 0;
+>> +
+>> +
+>> +       kbuf.image = image;
+>> +       /* not allocate anything below the kernel */
+>> +       kbuf.buf_min = kernel_load_addr + kernel_size;
+>> +
+>> +       modified_cmdline = kzalloc(COMMAND_LINE_SIZE, GFP_KERNEL);
+>> +       if (!modified_cmdline)
+>> +               return -EINVAL;
+>> +
+>> +       /* Ensure it's nul terminated */
+>> +       modified_cmdline[COMMAND_LINE_SIZE - 1] = '\0';
+>> +
+>> +       /* load initrd */
+>> +       if (initrd) {
+>> +               kbuf.buffer = initrd;
+>> +               kbuf.bufsz = initrd_len;
+>> +               kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +               kbuf.memsz = initrd_len;
+>> +               kbuf.buf_align = 0;
+>> +               /* within 1GB-aligned window of up to 32GB in size */
+>> +               kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
+>> +                                               + (unsigned long)SZ_1G * 32;
+>> +               kbuf.top_down = false;
+>> +
+>> +               ret = kexec_add_buffer(&kbuf);
+>> +               if (ret)
+>> +                       goto out_err;
+>> +               initrd_load_addr = kbuf.mem;
+>> +
+>> +               kexec_dprintk("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>> +                             initrd_load_addr, kbuf.bufsz, kbuf.memsz);
+>> +
+>> +               /* Add the initrd=start,size parameter to the command line */
+>> +               cmdline_add_initrd(image, &cmdline_tmplen, modified_cmdline, initrd_load_addr);
+>> +       }
+>> +
+>> +       if (cmdline_len + cmdline_tmplen > COMMAND_LINE_SIZE) {
+>> +               pr_err("Appending kdump cmdline exceeds cmdline size\n");
+>> +               ret = -EINVAL;
+>> +               goto out_err;
+>> +       }
+>> +       memcpy(modified_cmdline + cmdline_tmplen, cmdline, cmdline_len);
+>> +       cmdline = modified_cmdline;
+>>          image->arch.cmdline_ptr = (unsigned long)cmdline;
+>>
+>>          return 0;
+>> +
+>> +out_err:
+>> +       image->nr_segments = orig_segments;
+>> +       kfree(modified_cmdline);
+>> +       return ret;
+>>   }
+>> --
+>> 2.34.1
+>>
 
