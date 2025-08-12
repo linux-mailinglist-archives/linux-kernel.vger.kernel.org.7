@@ -1,61 +1,91 @@
-Return-Path: <linux-kernel+bounces-765172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840AFB22C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B6EB22C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 438507B976D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71EC6214DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0ED2FA81C;
-	Tue, 12 Aug 2025 15:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zg9+phgP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A05A23D7E6;
+	Tue, 12 Aug 2025 15:52:51 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B572F8BEA;
-	Tue, 12 Aug 2025 15:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCBB2F8BC4;
+	Tue, 12 Aug 2025 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013985; cv=none; b=hFP3mtAhZBGDl+vSw3b0lUO+iv7nsFxdJYYKDHyh6/vvmYuaFPanznuIePCXKMJ/EAxJ+KlZ0liWVSo6Nh6dX4LbnlVqUvOJYbWfWRLs/fjNSv6ZfR4bk9/syWkQXGOSHpi9LpTeDjI9HzN8dEiUeJG6d6lcLbk34drqD85yxTs=
+	t=1755013970; cv=none; b=nKyED6qyX8k6hpz4XTXsyJqU89ao4+vEDsj5ExalxcoTDXhVSJjgTB09Pa6N2RfX3ffFf1q1C1SoC78+YLGJP8/aZ5P5fc6GsQmaFOdjddOFj518KEb4r14aL8bVZFJ3TVJG7/UWNVA02k7WtJ6HUPHElNPxphFzPtbWPXrmLWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013985; c=relaxed/simple;
-	bh=vRnsNCgM3YDMxmN+8rNiF2tJ0DjUjMBLbtkTm4kNDsA=;
+	s=arc-20240116; t=1755013970; c=relaxed/simple;
+	bh=vvOHe9u+/zNDaZKxeW2eoRXHJCvHl2v5R/bFdM2LQis=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m3NS4/Frr4zXQIToyI+3jfp9FjAWzD6UN+yWXZ9pps+tdiJ7uVh+07HWaON4Hqro+9sGXpU/Rni7EIbTKnpjGuWTaqpYeeSUn3Ry7CRutKyIPu2MT8khuTVBv7d5kI8ProCygLq1VulEwiMr1IWGaepqwchtTplUsNuZJBRSdLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zg9+phgP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30CCC4AF0B;
-	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755013984;
-	bh=vRnsNCgM3YDMxmN+8rNiF2tJ0DjUjMBLbtkTm4kNDsA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zg9+phgPZLhUffMRUl030IJ328z2sfa3qoqxB+/JmkolJDwbax5Di9rzzstuO8nBr
-	 mnLVMBbC/ce4olnSO4h9kqbdDXrQiFXginVneHRqf0f5a+yubvA5Ryddv/WU1VHfuf
-	 GARm3lIU5SECBI+teXCJF8zT8q0tkJ9KKJgZqKO3jfV8n6YKez6bcA7FspgiuZ61IR
-	 sExHOZJvaqhWCiMH1BcTsS2aEqTdpId6DB0EHXr5IlnCzOzse6Sbm30Y5qyB4279qD
-	 47qcMp9v4Muj2mLxT571EzzixWVt1wtyCKi6bUTUF0KGd/5m56z4TrAXfSzsFxh8NI
-	 HxFDbdGy1aq/w==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ulrJ8-00000006kWc-2yPm;
-	Tue, 12 Aug 2025 17:53:02 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 22/39] scripts: sphinx-pre-install: adjust a warning message
-Date: Tue, 12 Aug 2025 17:52:39 +0200
-Message-ID: <74a17edd70364ca623a54b62bd97a344bb474988.1754992972.git.mchehab+huawei@kernel.org>
+	 MIME-Version; b=ifyF6LZySsez7NO35/TTWV/yHxjo333NXEfQ05gVXIQ+6bS+5p3HnDSvCLIKr8ZhCBp4Zxi2UQfjY3QJuFPwjkd1oI4isvwj169Qo4hRhHcbiaOU2dpWN4PPBGDiihjsZxLvucl3qNy7Q2qfMvQUr5WpNLiIe6bHSqsvfGebJd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24306318aeeso5098455ad.1;
+        Tue, 12 Aug 2025 08:52:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755013968; x=1755618768;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5xhittB1Z3BFmPBedtymhQdJl4mLRLMPRy6NV0jWS1k=;
+        b=VXU6sli/wmPCSRLf36NwMDbfAGGjy82gw+e/OpYski5x3Tj7/5FPPEj86hTKFP6KaJ
+         qOyOZXgwY6cxiv/5n0TdtKEJsf7Bec5BVFACOFXDe1PT2bClFy0b5vXmWBiUTphV41j4
+         Nx/ph3BZhSnemDay7rz7pjF6O71QylZ2AoGWejpI0soCyq//kQgmge2i9PZ6SpVdUfzs
+         ZVGtXvheeXr+OpK0j8orOWiHM51ZdHe3NX/EEJuUhU36940xExbNMtKq1Y1BgihhJuR+
+         MKR89pM20cVcTKZZzRQ56owuilwV1TDHqCW5wG5VFM8S2C/Ib3yB+nQ2k3VO9yroNPZA
+         RQJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKVeeAUmaO4r9GFN4fNLjNZpsj2dDgzVf1iUn3hbZyiGVwX7Zs4wWml9edGpY0QwIbXMKtT4l3vAxAaCw=@vger.kernel.org, AJvYcCXVIvwAFiCTUiJOQFA7bMYooASWQeJ4fNKIl//FsED+cG0f03RIzTljA74PgiRNepCekGJoBuVW1GOxFq3wHUUk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsW/exyKQs3xs1KzW41ZW3cjSG+Ntbc7aY+ANPW13tV5ris6VU
+	C+8PDZ77ZosTt5nb/clqZQrJQ9OqqFlZQ3pLkZ2S5zRU/HOqAXCweajV6JWh
+X-Gm-Gg: ASbGncu8RL44rEN7876vKN3wlpe0vEQ7at/y69avMPLCPvkzP7exq5YCPqHo5fl797f
+	jwxF6n7OcYTwkrMHrMWZK/AE0HRW0qucwRgPbhKFm3vvwyE+6CBj5q7QV4AlVi80xhlRPd3ARVT
+	oSBwVGvBX0Y7XEwTyLHy4GX0GWFxy4RgMunDOUekaVpPXkiQkfV/aAqdvmKEWLA5+oJ0y41mM6U
+	zBJ5mjx6YQWAfwYuy9x5zwtg8sezO951+nZ0GpH0UUeCVLm0cdBNacx7S6TMShRHeJ+Yzn6zDaA
+	UQkqRELv/kELSsf3PRVi3ti/lNSoW2ip0w46t1cUG/xL6jb0leJ/mbSkw/8UDoQ600gAl7vbN9r
+	8BauRoT24mJuz6poh2mT2obpNo7TD+rzwweoBZIdSK6jwK3j8KUnirgUEgY8=
+X-Google-Smtp-Source: AGHT+IFoG9C56EZHwN/MxrzFFA3UJZXB7gFcizSUrt7Y/XjCXBdEhjPeu8ZIdfLSs1+cGeiDc4xfCg==
+X-Received: by 2002:a17:903:1aac:b0:243:3da:17bb with SMTP id d9443c01a7336-2430c10d63fmr3177625ad.32.1755013967516;
+        Tue, 12 Aug 2025 08:52:47 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e899b4adsm304377985ad.132.2025.08.12.08.52.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 08:52:47 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ayush.sawal@chelsio.com,
+	andrew+netdev@lunn.ch,
+	gregkh@linuxfoundation.org,
+	horms@kernel.org,
+	dsahern@kernel.org,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	steffen.klassert@secunet.com,
+	sdf@fomichev.me,
+	mhal@rbox.co,
+	abhishektamboli9@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	herbert@gondor.apana.org.au
+Subject: [PATCH net-next 1/7] net: Add skb_dst_reset and skb_dst_restore
+Date: Tue, 12 Aug 2025 08:52:39 -0700
+Message-ID: <20250812155245.507012-2-sdf@fomichev.me>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1754992972.git.mchehab+huawei@kernel.org>
-References: <cover.1754992972.git.mchehab+huawei@kernel.org>
+In-Reply-To: <20250812155245.507012-1-sdf@fomichev.me>
+References: <20250812155245.507012-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,31 +93,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-There is one extra space at the first line. Also, as now we only
-support Python 3.4+, update the text.
+Going forward skb_dst_set will assert that skb dst_entry
+is empty during skb_dst_set to prevent potential leaks. There
+are few places that still manually manage dst_entry not using
+the helpers. Convert them to the following new helpers:
+- skb_dst_reset that resets dst_entry and returns previous dst_entry
+  value
+- skb_dst_restore that restores dst_entry previously reset via skb_dst_restore
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- scripts/sphinx-pre-install.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/skbuff.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 2360ca2ed21c..365590f81551 100755
---- a/scripts/sphinx-pre-install.py
-+++ b/scripts/sphinx-pre-install.py
-@@ -1081,8 +1081,8 @@ class SphinxDependencyChecker:
-             self.recommend_package()
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 14b923ddb6df..8240e0826204 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1159,6 +1159,37 @@ static inline struct dst_entry *skb_dst(const struct sk_buff *skb)
+ 	return (struct dst_entry *)(skb->_skb_refdst & SKB_DST_PTRMASK);
+ }
  
-         print("\n" \
--              "    Please note that Sphinx >= 3.0 will currently produce false-positive\n" \
--              "   warning when the same name is used for more than one type (functions,\n" \
-+              "   Please note that Sphinx currentlys produce false-positive\n" \
-+              "   warnings when the same name is used for more than one type (functions,\n" \
-               "   structs, enums,...). This is known Sphinx bug. For more details, see:\n" \
-               "\thttps://github.com/sphinx-doc/sphinx/pull/8313")
- 
++/**
++ * skb_dst_reset() - return current dst_entry value and clear it
++ * @skb: buffer
++ *
++ * Resets skb dst_entry without adjusting its reference count. Useful in
++ * cases where dst_entry needs to be temporarily reset and restored.
++ * Note that the returned value cannot be used directly because it
++ * might contain SKB_DST_NOREF bit.
++ *
++ * When in doubt, prefer skb_dst_drop() over skb_dst_reset() to correctly
++ * handle dst_entry reference counting.
++ *
++ * Returns: original skb dst_entry.
++ */
++static inline unsigned long skb_dst_reset(struct sk_buff *skb)
++{
++	unsigned long refdst = skb->_skb_refdst;
++
++	skb->_skb_refdst = 0;
++	return refdst;
++}
++
++/**
++ * skb_dst_restore() - restore skb dst_entry saved via skb_dst_reset
++ * @skb: buffer
++ */
++static inline void skb_dst_restore(struct sk_buff *skb, unsigned long refdst)
++{
++	skb->_skb_refdst = refdst;
++}
++
+ /**
+  * skb_dst_set - sets skb dst
+  * @skb: buffer
 -- 
 2.50.1
 
