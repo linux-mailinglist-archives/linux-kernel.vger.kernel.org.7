@@ -1,215 +1,191 @@
-Return-Path: <linux-kernel+bounces-763746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22635B219B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC9BB219BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AD71907407
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B63D1906164
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B335428B7E6;
-	Tue, 12 Aug 2025 00:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFF22D46B3;
+	Tue, 12 Aug 2025 00:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djf/+dZA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="uh+Z1GZE"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8C6259CBD;
-	Tue, 12 Aug 2025 00:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754957692; cv=fail; b=MJdAaP1giobSvtsz63f2atCoy3SlaeOglwSQ0Py/90PcNCe9MTM8AU5MjKQNi/wCa0REKKVcIDPEo4DsNysi2Td8xF5vE0EI67X83+7UoNr5TsRD95J3KjvVTJQV84PGOoI9rvmCofnIIE0amuOTOaF4psJdwgmeaSAcNep4wK8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754957692; c=relaxed/simple;
-	bh=c0SwuP5gHZdNCCpH4AYsImjOzyn7t4blA63RdNcmBWc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qDXSKso4Jt/OfYCISLclGzghoB8saVHtpN/dKvXQFUyf3UZ/LZnfxGnGCXjlNk8BuXq33fKlS1MDUVGiiObPwe2cV+9za38dRjTUyNERBQBuhobtJ2qtH94uNaEkfQbJpVndlJ2G3zB+1cX5XMSrZbrNgQSnT4tYUM/kl48yRb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djf/+dZA; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754957691; x=1786493691;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=c0SwuP5gHZdNCCpH4AYsImjOzyn7t4blA63RdNcmBWc=;
-  b=djf/+dZAm45ecyFv3u2FCKQvjrsbRjWcYAc6XxaTxoCCKk0UTNGLA/NJ
-   Ty8C6yAY91lqk6zDoKstnwpq2o6Z81WT/xKfcV7WFZqiKHB6lZQ0hwUsP
-   uFNa7SyR/HarQ/j/0oBvtG2J4q7Pn3A+2UBu7TwSbpE0dGF3J8qkwHVua
-   q3cB/qr9C0S/9fvktmBjUiFSCNbsi68elnpeFQTLQGZe1lC20EYA1NZEm
-   lVq6SHCFucSJEiUVxOninz/CelwHc9nlxN8hhnwkLUOZ2y86PASLYCFJ+
-   afHRpvc72o/BtEfEZakZnWCpNz0k27wQmBuk72LR3Nw4DsqjOS8udLxFZ
-   w==;
-X-CSE-ConnectionGUID: 5fKf50g8THComwUNbrP2nw==
-X-CSE-MsgGUID: gZ2X/zgMQ+yEOt8XE6uMhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68594138"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="68594138"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:14:50 -0700
-X-CSE-ConnectionGUID: TVqNln2ZQUGwrJeRcJdslQ==
-X-CSE-MsgGUID: uefY/QOXRZSZv5AUlDp7+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166044752"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:14:51 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 11 Aug 2025 17:14:50 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Mon, 11 Aug 2025 17:14:50 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.88)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 11 Aug 2025 17:14:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bt3LpiRmgOxnCIQUhihFLPdYT8bk9LHGAiIcHgIl+hESacpOtfCAheMAU5X0BpKELmFfHRWRfNMrumgZruMMx3nm8EHbgcN8dTe0fPHSZ0NU0sHrVxl4+uvUAaQ9jEpDe7YxIQp9ypD6aBwj5emTxpKHgjtCeOVJ0zRh4cNhK2xgqPun+NpamwL9O3BVmpZPeOEI8Qd1KdNmfhLIeaOeG6sOqXGJ5tI1XOTCDYx9OVN0cBTiCT218TzdZqb5Qf+4tL/lJkVOle1RBPfvnb3RD1dKpEISe6ALP3/QdAjW0/ibzUrNIK5Pw+ekaAx2tTce2fPQ6Tj3bozsbjf0i/Nf1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tkTcYlJ1f3m/ghWumcpyM0L1+GeaX6uK44KijIj988s=;
- b=JVTDV+QOYA0s9v3aV85zXxYGfwrNiuYV3gsUs/tw0zDhx1FEv4N0biEyDXvM/9uw8xxIM7rGeCrGv7kv734Q0mKXr+kWD+5KB58aXlVoyVzGZiZiKnLGqozM5Xft/ITcl5ryugZk5A6yE345YPUXw0XJpVxEQsozbT6xG9MtP/+Uo6Uy8fArLI/utLpdpbrHZwsxehv3BMaCe9X3SqkgjMzFrQ5HMP9xTuFzswy/KWst7qptw+eT84wnDyP5dSxV2+NXTSL5hAj/4fPGOqovxcUsDWDcmtuCBfKDDQiBzx8DBoGOpmy5Es9y3bx/rmiD7ofHy0ia16PFTaevymq7gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
- by MN2PR11MB4664.namprd11.prod.outlook.com (2603:10b6:208:26e::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
- 2025 00:14:42 +0000
-Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
- ([fe80::4e89:bb6b:bb46:4808]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
- ([fe80::4e89:bb6b:bb46:4808%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
- 00:14:42 +0000
-Date: Mon, 11 Aug 2025 17:14:38 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-CC: <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
-	<dave.jiang@intel.com>, <vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cxl/hdm: Use str_plural() to simplify the code
-Message-ID: <aJqHbkMX6L2AIe_B@aschofie-mobl2.lan>
-References: <20250811122519.543554-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250811122519.543554-1-zhao.xichao@vivo.com>
-X-ClientProxiedBy: BY3PR05CA0012.namprd05.prod.outlook.com
- (2603:10b6:a03:254::17) To DS4PPF0BAC23327.namprd11.prod.outlook.com
- (2603:10b6:f:fc02::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B36285CBD
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 00:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754958150; cv=none; b=sbCXyAa/YIW06/AXhL0HuN3yKtH+us+OIh+sN2t1EchLiy32hTY3xRbuEFvWjSGf9alR2hAz8si8WlVG5BsGWJG4YuaCCy2t+p/uEJSU57pNw+6NCAWVgWg/K7evPwhmJF7I2irUVdPjRmWABwiCA5mpAyAsaTurR3sGwyhyRs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754958150; c=relaxed/simple;
+	bh=4vV6mJEZwu6rjyk3+ILiQM6xYpQgWeouFAWsYzr4qUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/934/FzyQh7+wmbwDXQ6BG03YyINbRcOvu/cjJbUQqzNfRTSKDCi/YVa4K4mRREG6NeFsyzjvVXIKkWI2eaNWPIlxPEg29UmWZQ6RBQ9rHaem78LAM7YbQMkZJlFaQVEq4p/jyMZsuEwX2k8LlOK63MjDZOPKJPUiGM5J2ztr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=uh+Z1GZE; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76bd050184bso6411832b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1754958148; x=1755562948; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NVmXRLsnGW3cFHXuVJBTWBFI9qQhZmPZ+bs1wEjG9L4=;
+        b=uh+Z1GZEzcKTRUChpq5MFwh2uQWcEW8FUKxjl/dSLbEmUjywM4vm2LNsaH8rjRmZ6b
+         Sgc1SxdNvQIOBvY164cgkpDrnGLRNy8VmAEXhjaalaKsep8uZ/rw+NTpumdkfR/d3CEd
+         tVVB0N1eXlWr0bMpHaQN1UcIQaQUKFDUub/3gDs6HfK9qDTnetpdEfu9H4X3ktMRVDQ8
+         qiI2XfIQdIeA66qNSDxUvJBu9XMGzPILtOTAFgMVdVjRMzD2rRoCHwac6NdsYFF4VY7n
+         H3inaIJ9UDadMJHHM1zNkKBIBEUymCx3Guybmf7AbMqyIvuBJAF3GMRw4++BatUrs7e9
+         c8ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754958148; x=1755562948;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NVmXRLsnGW3cFHXuVJBTWBFI9qQhZmPZ+bs1wEjG9L4=;
+        b=b++m4BjA80ItCFtYlDjyi1AY85qhsct6OXlDOL8i92dxrYS4pGYdyxMVKuzJgqRGql
+         7FVzDsuICQcqRV/Lbw+akFcpj68OSPSKPVBDNGsU9jyO6Wkc9xO1zE7EL1ZpAw1DILni
+         pp5Yyc4mHoGVX7QW7QSSkaziAkvcyete3Q6mawg+z0X16ug95Tn9YlgfuM50L1I3S46e
+         C04jM9gAqge4TYkwEwilC+s5Qn46+7ToYfDbSAB6ZEoJfbGOTGDLiRnpvTq3ZTc1FQ0n
+         7DtrmbjcR+R2RgIpGT59QrrfdceVQUZZycBRqd/z80UkC3iZGNGn89rkUGGwITxmQx/l
+         ljnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDOYjpOXuhtYszHPJG4YYOb9SV3eFnYW/nLanLIp4n2aXZ+CkZgiPeRK+nXcB+xc6NsuTpHZhSArblv7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3XPpQgGwuZiNa3VJZc+XDZHt8DP4kPNO8IhOZDWatpNf4STXg
+	bji75GRXExLXwW3MuXs1HMySjzAhr3VohN88PrTqTK+ope5RDtTtwLL27pcPHWMcu3w=
+X-Gm-Gg: ASbGncvVQ74sJ1EVwAPZUOCk9sIv31n8o1hXZeU1cQF35RWN3VKdNdA1Oh0q7Hd+ttB
+	lK2Y62V5CclzbsDntIZJUIFW3em4X3wcpxFoZT3IiyQvKjKzbQwLcFzAOtDYfwm56T2C55eXg2Z
+	1jI3OGMjN37L7dBu47SDtVG20ea2Gj+vRFAVDifCKJo7+nIZ8JrW5K9uScN5F+276umcfUzAb5w
+	RT/konS4UvLWX3AoX9zRx5Mpgzxt+9CtM98tmscghOlSYW6J9S9APzINbscS91S1pGZsmaVs4j8
+	yQYvKJX/w4e6wNCV0jsHdiGx46n5CHq86Pb/A/GEA47SCBSFhk0atbJS1RIlUvQ+VG46TG6ICwq
+	lr1hCHWFAU5bLcscNQMPf7y4kR8M9qw3n2AzdM/ytvCR3PBzfrgi10lLletNz2ozYfBAMes5C2g
+	==
+X-Google-Smtp-Source: AGHT+IGzh+uMSU7BHhpxFeer+HEFeBpAKaXldU9vx5byQlHklHYY4EDhPqfwtXepqgMjD7P4DJSHFQ==
+X-Received: by 2002:a05:6a20:1611:b0:238:351a:6438 with SMTP id adf61e73a8af0-2409a9b58c3mr2190335637.44.1754958148226;
+        Mon, 11 Aug 2025 17:22:28 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6fe4bsm27839370b3a.9.2025.08.11.17.22.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 17:22:27 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1ulcmW-00000005DMv-3nr9;
+	Tue, 12 Aug 2025 10:22:24 +1000
+Date: Tue, 12 Aug 2025 10:22:24 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: liuhuan01@kylinos.cn
+Cc: cem@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] xfs: prevent readdir infinite loop with billions
+ subdirs
+Message-ID: <aJqJQIvFO1H2QYrR@dread.disaster.area>
+References: <20250801084145.501276-1-liuhuan01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|MN2PR11MB4664:EE_
-X-MS-Office365-Filtering-Correlation-Id: c14dfa7a-c953-49b4-25f9-08ddd9353c50
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MJlFZkeUedCJE/b1XoRKde88XAruGSrMO9Bd/7GDlXiV80gun/Hza0zPfKvO?=
- =?us-ascii?Q?1e6Ylaxoblgh8rsTgCwKKM80TkS5m3Ovf78SZ5BdZ/qF2vm5uck/EOncEFvt?=
- =?us-ascii?Q?kMUxF2NxEyU6tB6qb+b2TA+hiZPe/EOotpOOARJOOemB9DhbE2LjloS0A3eY?=
- =?us-ascii?Q?EjDJSaxf3mbYxu4DdFVugc40YdCSFdpeyRBIc2w32L1f7QZ9Ve+Unxu+vzbj?=
- =?us-ascii?Q?FPlBpS2b+vhCel2RUhWJIMsjUW1bPNr0ASM5DOh1ddYjld3mZfdRlEV842d7?=
- =?us-ascii?Q?dKV1O0WXNFkAw0cWhP2/Q3pBDUzXKn4Rr0vgq4PTrofcV78Rz8eTWOHQvCTI?=
- =?us-ascii?Q?Es2GpgqUJCZiroA/Wmrn+EsBeuqcjVcSPTruLdijGjfjVKMCqp1gKGvHI/2x?=
- =?us-ascii?Q?eVhVuVRLaIV2ZVcD48UHTDsaC0S4a9UQGB6q7rbj82iudCGDPf8RuwUukMi+?=
- =?us-ascii?Q?2RJR0InjMXtKotx8zAuqqYkUiKudh0SHlbkPzX+BD8JcBxW/QcBxI0U9lTvr?=
- =?us-ascii?Q?wfJsJnv+YaGDX8Kp7kbHSa2jqMCWQb19BHx2G1RZ9yPsKI6CX32cf6IZGA4a?=
- =?us-ascii?Q?8RXydN57WuHhGeyw8XmclZ0BhV7NkPtqb8m+RcjCsedV4tc/hSAKrO1DYHEW?=
- =?us-ascii?Q?KxoQEoaQMYk/q/QEd+9upT4CsonTLi/K0jN8E2hH60xx6UBWv48Crkd7yDOX?=
- =?us-ascii?Q?4MSjbk/DfdQdTqjiAFTAlGJRI+T7C3wn23gWSj+k2sKN8vcpy9MHEn9KvFlp?=
- =?us-ascii?Q?s9ZVs2XCfa+KZHeDDf0R6nozLWKwoZUnCAHlsYZ34i/wLOBgucun3gELZGpI?=
- =?us-ascii?Q?zkWXH01boM4pRzt4dU4JFZtY8JV/5jemJzkQFbSIkUJa12UuVh+n/iGswtqg?=
- =?us-ascii?Q?H/iOitFOhgXTBMr0qRflpk8JUaxlpiW7QiX9d5vC9J7o5yzuaQ1KXyD2UyOd?=
- =?us-ascii?Q?Hz4vAjhLrBQnEJ3bmUO9JGw9CXMyW42D04DFwWaVCEXO9hDJYYHLOoSc9kng?=
- =?us-ascii?Q?LzFl9vSaWrJ3kk0S189Hc75iUgMJMsbO6hAJ0fOuJQTf0//jRuHi1DQkgyVR?=
- =?us-ascii?Q?burvxPe/QZeDlfTPQdNwhUu1FLhPQjzFoI4Lc0YQdXoWDONzQL5GJHkeDf9E?=
- =?us-ascii?Q?FUOlIlUEFzbWFWLr4+J9zbwQ8sebZUk2iHi7nngKhodfTVW35OvJLKhw6oJf?=
- =?us-ascii?Q?WSohJGCgC1lIO7gUGKlV8bNJQltpaWKU9KBZjgJ4K3E2QbOXPW1LjD9nEBno?=
- =?us-ascii?Q?9KlnjoBenAvTmw/Ct975Ksznu0hz46EcDM87YlF1Rb5DF5Wj41N5VbGaTW3o?=
- =?us-ascii?Q?+7sLUITk3tnQREO2OTSWToYp5c98py7EgzrE8gtSNQi67whslh/SkPbRnZ29?=
- =?us-ascii?Q?d6AuzafDIY0JqausSJZEDS8aUcE9GS/2m8zConZTLMqX7Uirfg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+V3jfe+7oKdnUu5+Lr2F6tI7hKIzpjTx1Q6Qhs8d47ubTS07cU0rNWigmPUL?=
- =?us-ascii?Q?Wla5g6l95Sda4ht+H4ub2MB5xTSzcLBCz/RAkyw6sBbVeyXq9RHfTrEvGFeX?=
- =?us-ascii?Q?Fwn3O8mF1QfmDz7f5N+Hfui8QxxAD3txkLTsl0K+jUj31rBCT7yJe1slEgdj?=
- =?us-ascii?Q?btHVzB2N8LHAE4THxXjPgBz9KqLTzuI2PGosg4JOpp8Td16DsJaH1cd9Q3S9?=
- =?us-ascii?Q?ySZBwj9i0WuIygayg0MqxMlHxPYwGBIi781WqV73i57aRFXVaOYEuQVETtI7?=
- =?us-ascii?Q?G+fRn+SejZODY5ZjmjBgPIKDps9O554oYoeEFumnjMmBUItBMrjmKSjaZUJ5?=
- =?us-ascii?Q?hk/ZFcIpaxVnmunZmE0NTscOqUu0K6F5tocGIwVXoT42y6ohrMHymz6CaUmx?=
- =?us-ascii?Q?lVGXQVnG2unOoM1n7Tp+qC4mXwkBGa52iXif4DjXq3jtYSIAIUq+cv6obtS8?=
- =?us-ascii?Q?BRr6vcuw6pNEllophDRsFuQwFExZgOxk2B7/kqkE3zig8wr5cdKat3wMdX7X?=
- =?us-ascii?Q?1Ysd6fsCBhKuOX/25s3F98pozbiHMiWSnOsfKvS58eZAj9SsSiCT9sSj7c2C?=
- =?us-ascii?Q?EoL8YyFSyIFYR6+5cqJtM9PUG6QutOqU2pX+ohHhjosmi8ne/DnkgJ+5DOuN?=
- =?us-ascii?Q?SGzMZwV+3+Scwdn010q9jjq2RPxNW3WnkvpBipJtE1VkCUFWAEGJ4Azj9wyq?=
- =?us-ascii?Q?JW96jEDEEj7z4O0DpLlUqKyMb2Sg1IMfWT9t/zNY1mw5sDC7TQZ9nlxnrWk8?=
- =?us-ascii?Q?Tsoys9347QZ4pcGli77UpBPigy5ZbUb5RE4huZQcoXIPnWaixXFEIJwcIAeU?=
- =?us-ascii?Q?wcY4BsSY8lMiDDNg5rmG0CY+UJwV5xNgh/xvYksCd2bA6JtfT6fLAoKU2Zdy?=
- =?us-ascii?Q?myAJ0HkkcSH45kUWcx9oQ3KOGM+hotKBBAehvo1pJ/LhkWdspDxpRccNjrB3?=
- =?us-ascii?Q?826hgSeWK6/Dk/AymT3ZdfqSp3dwppFB/fZmGqrPpjzVZcYYSRhyKTvDgvAl?=
- =?us-ascii?Q?l58C8RqYDZAAA+yIp5X6w/96B16flGnoHv56JXAcfu3fyRkUHmJrsdBTLtHt?=
- =?us-ascii?Q?SDyXRXWGYZqZVnXlZy/G+l4dJb1/CfKE/HiAwjF8tlaIdVft35zSoyF5XjVE?=
- =?us-ascii?Q?+TVHyrS3RdEAkCsBOpKUSNYoc10fPXaEkMef4Xk1brTX0R1fKx/+B3AErEIg?=
- =?us-ascii?Q?+PbDUegJgs3wIWSSqn6EdV+ps+c3rDq8RdPS6KGmjYyJZ0yUPQjPILE52SwS?=
- =?us-ascii?Q?OLXKIsEuVz7RMnbBFzZSNBixU/tH7zLiQMAfD3z6TAbLI6W0sE9hdNCHNPva?=
- =?us-ascii?Q?HTiJBejdisMFmCsZiwEvXnV0N+XKiYKlCylFu3CO3guWjpJXRQCq2Psci+Ol?=
- =?us-ascii?Q?1T0FzlN8LJ0ZFvIRhGiemHlOM6nod+Ey2Q7kj3L5TE2vsKrZNyA7mzimJNcg?=
- =?us-ascii?Q?U/1PM/0aDj1a8rpQvuhjTGLjucLGIFGXGnMDLTS6fFZuOKpkChZWrPOgl8fJ?=
- =?us-ascii?Q?Lao2wCVzoD+6nrkcc1nnx3EeKNpy6SuV7Kzyt2q3jqQWIpoSCozOJPE/CgeA?=
- =?us-ascii?Q?PkisbO7xo6rwBN8v/iDdNnTSAbGbxkDwI+j9P7CLO3/fQRPf2WE8IQfj6/rF?=
- =?us-ascii?Q?Gw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c14dfa7a-c953-49b4-25f9-08ddd9353c50
-X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 00:14:42.6205
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cINKiwpz3wTmd1aAEiQoOhu2wIv5hYnjrX65tclLZr1CB9TtgGYXMyZafoopqKWkCJjvFUqGnkJGFXW4Fvb6895/xxPZrHpFHNmTBEYPMOw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4664
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801084145.501276-1-liuhuan01@kylinos.cn>
 
-On Mon, Aug 11, 2025 at 08:25:19PM +0800, Xichao Zhao wrote:
-> Use the string choice helper function str_plural() to simplify the code.
+On Fri, Aug 01, 2025 at 04:41:46PM +0800, liuhuan01@kylinos.cn wrote:
+> From: liuh <liuhuan01@kylinos.cn>
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> When a directory contains billions subdirs, readdir() repeatedly
+> got same data and goes to infinate loop.
 
-Thanks!
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+FWIW, we don't support "billions of dirents in a directory" in XFS.
+The max capacity is 1.43 billion dirents, and much less than that is
+filenames are anything but minimum length to encode 1.43 billion
+unique names.
 
-> ---
->  drivers/cxl/core/hdm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index e9e1d555cec6..37176c0a781f 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -197,7 +197,7 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+e.g. if we limit outselves to ascii hex (e.g. for hash based
+filenames in an object store), we need 31 characters to encode
+enough entries to fill the entire directory data space (32GB).
+At this point, the dirent size is 48 bytes (instead of 24 for the
+minimum length encoding), and so the maximum
+number of entries ends up being around 700 million.
+
+In this case, we'd hit the looping problem at about 350 million
+entries into the getdents operation.
+
+The issue is that when we start filling the upper 16GB of the data
+segment, the dataptr exceeds 2^31 in length and that high bit is
+then filtered off, even on 64 bit systems.
+
+IOWs, the problem is not triggered by the number of entries, but by
+the amount of space being consumed in the directory data segment.
+
+Thing is, the kernel directory context uses a loff_t for the dirent
+position (i.e. the readdir cookie). So, in the kernel, it is always
+64 bits because:
+
+typedef long long       __kernel_loff_t;
+
+And so the low level directory iteration code in XFS does not need
+to truncate the dir_context->pos value to 31 bits, especially as
+the position is always a 32 bit value.
+
+> @@ -491,9 +491,9 @@ xfs_dir2_leaf_getdents(
+>  	 * All done.  Set output offset value to current offset.
 >  	 */
->  	if (should_emulate_decoders(info)) {
->  		dev_dbg(dev, "Fallback map %d range register%s\n", info->ranges,
-> -			info->ranges > 1 ? "s" : "");
-> +			str_plural(info->ranges));
->  		cxlhdm->decoder_count = info->ranges;
->  	}
->  
-> -- 
-> 2.34.1
-> 
+>  	if (curoff > xfs_dir2_dataptr_to_byte(XFS_DIR2_MAX_DATAPTR))
+> -		ctx->pos = XFS_DIR2_MAX_DATAPTR & 0x7fffffff;
+> +		ctx->pos = XFS_DIR2_MAX_DATAPTR;
+
+I think that code is wrong to begin with: if the curoff is beyond
+32GB, something is badly wrong with the directory structure. i.e.
+we've had a directory data segement overrun.
+
+This can only happen if there's been a corruption we haven't caught
+or some kind of bug was tripped over.  This condition should result
+in failing the operation and returning -EFSCORRUPTED, not truncating
+the directory offset....
+
+This also points out the big problem with the seekdir/telldir APIs
+on 32 bit systems. telldir returns a signed long for the dirent
+cookie, and whilst the man page says:
+
+	Application programs should treat this strictly as an opaque
+	value, making no assumptions about its contents.
+
+Despite this, the value of -1 (0xffffffffff on 32 bit systems) is
+not allowed to be used as the dir cookie on 32 bit systems as this
+is the indicator that telldir() uses to inform the application that
+it encountered an error.
+
+Hence we cannot return XFS_DIR2_MAX_DATAPTR as a valid file position
+during getdents on 32 bit systems, nor should we accept it from
+seekdir() operations on directories.....
+
+Similarly, seekdir() on a 32 bit system won't support cookie
+values over 2^31 (i.e. negative 32 bit values) because XFS doesn't
+set FOP_UNSIGNED_OFFSET for directory file objects. Hence seekdir()
+will fail with -EINVAL as the offset gets interpretted as being less
+than zero...
+
+IOWs, 32 bit APIs are a mess w.r.t. unsigned 32 bit dir cookies,
+and so the filtering of the high bit was an attempt to avoid those
+issues. Using hundreds of millions of entries in a single directory
+is pretty much always a bad idea, so this really hasn't been an
+issue that anyone has cared about in production systems.
+
+If we want to fix it, the handling of 32 bit offset overflows stuff
+should really be moved to a higher level (e.g. to xfs_file_readdir()
+and, perhaps, new directory llseek functions). We probably should
+also be configuring directory files on 32 bit systems with
+FOP_UNSIGNED_OFFSET so that everything knows that we are using the
+whole 32 bit cookie space with seekdir/telldir...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
