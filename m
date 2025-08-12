@@ -1,121 +1,82 @@
-Return-Path: <linux-kernel+bounces-764571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFD4B224A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:33:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F13B224AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158495081FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEBF1B6336B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA512EB5D8;
-	Tue, 12 Aug 2025 10:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E9F2EBBB0;
+	Tue, 12 Aug 2025 10:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n9NDDkgg"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/18jpML"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A90311C27;
-	Tue, 12 Aug 2025 10:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6932E9EA1;
+	Tue, 12 Aug 2025 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754994785; cv=none; b=luFgmpGwOUm84QnF1cxGrWE3vxnxheV5yR9u0UujDlPmGhV11NCJWxosT1A7QNQ7Lqh54X1B/4Rg/g/3ax/431CuPz2lg16hHMmybJ0O5Jrv+OIlLhROVS3t8r/kcOtH12WpobVfdbtTtYKMHuTnMCxbedcmbD+ReRTANFzAbVw=
+	t=1754994812; cv=none; b=sZQDluAw+1eOLvGdT2ADRZGb8a93slPJTCALIxIL3R+bafEdQhjW/3N9Tm3tA6jzJETGUNPdlUZ9C9XBf5TQOBBaVpg0VPC6rQ0Sv8Sm58xi0KbqaX0qstgcar+Mtf+9citFIAJw5me+sfDk+hDFmPCqz6WHuKGFddEQ1IJa/WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754994785; c=relaxed/simple;
-	bh=N/zIXxDe3G/XcFSJ5iLcD4wYwc9bg47M5HzamE2Ado8=;
+	s=arc-20240116; t=1754994812; c=relaxed/simple;
+	bh=NrSTn5crAr7ZLQY3cQ0AurAdvBSzrxB5k9V4PIfyaq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VO1Lpv5z3FK7JgtExKSZ90PGVC4GL87VR49L1lTaV4omX/N3HrNLNTLIO7y7qAPr84aRiSh5x9N3CYYDZ0AS5OLhrf/EwgyleVxSwyOQv62XWltS9tn6tFoEFa1K6LwU8Nlo1hlkbK7yL2G2TlMH3+AH3qp9TPuizd22z8ChB8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n9NDDkgg; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 49A983D5;
-	Tue, 12 Aug 2025 12:32:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754994728;
-	bh=N/zIXxDe3G/XcFSJ5iLcD4wYwc9bg47M5HzamE2Ado8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSwiZGvTU+ZwflaY75rANR1RIBKbzvDEzdJ71OKFFg1o/q64VA7TsUzu+7PcOiJsn8fErW8HotSlHz4k/wSGVOgZoBFnzNKtpXtm6H+rBSBW5ItaCUY7aYa+LMGTY94M99UpcsJRXn5Cbbvk0M7hV3d3nMNBpjshcE1e5CF3NNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/18jpML; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87345C4CEF0;
+	Tue, 12 Aug 2025 10:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754994812;
+	bh=NrSTn5crAr7ZLQY3cQ0AurAdvBSzrxB5k9V4PIfyaq8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n9NDDkggCX2zZjc9kd+xyESuqoBhnKN+B6QOO6dCfmIcyIPR8dsmG02S9uS6Gacky
-	 XsvwDKo2NU2ZdfNIZc2pUokrqIX4arAHMesCPqh7Y6EtJHfu3bKP9D9VQinWU0TDde
-	 cxSl6WM2Xv6aJ9OPGJ5YW1miOGdCXHCl2cQiKFBU=
-Date: Tue, 12 Aug 2025 13:32:43 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption: resolved
-Message-ID: <20250812103243.GK30054@pendragon.ideasonboard.com>
-References: <175308758352.3134829.9472501038683860006@localhost>
- <m31pq9y98z.fsf@t19.piap.pl>
- <175326599663.2811177.16620980968274114885@localhost>
- <m3h5z2vw12.fsf@t19.piap.pl>
- <175344176070.2811177.10693943493658922992@localhost>
- <m3qzxyug1s.fsf@t19.piap.pl>
- <m3cy9futcj.fsf@t19.piap.pl>
- <m34iumujcs.fsf@t19.piap.pl>
- <m3zfcet41n.fsf@t19.piap.pl>
- <m3a545t789.fsf@t19.piap.pl>
+	b=h/18jpMLrqn95RuAHTMYpKZPJOBjQyZ4el76bHIQazX7WMYQoQ5Yk6d8A3ZMGAjHt
+	 WEL0KBSv7Bu2+e09B+gKCc8g6OWgo44VsZCzYor7Nv87ruSTLQzzvdT5D0B8KqCQ98
+	 hdYJnPxtxZ+o0F+c91uK7rdyH4ttGaVt1lIxOJe9Hl6iPIW57UW3AOyXWfiAly5M00
+	 Izvc33f7lBmLueiB8l/bts/Jgo/L3Nup8tcuAeSUpRyGSiNp+T0AiTRggdI3A4YNOS
+	 2zmDnx3KuIajgNIC7I8eijwXPoU+2sCN2U3ZQQ26ZRUcVbasi9PiRQYGHBdNpAFco6
+	 vkQrMwPKItBig==
+Date: Tue, 12 Aug 2025 16:03:27 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org,
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v10 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Update pcie phy bindings for qcs8300
+Message-ID: <aJsYd7tAi4CdOfZ9@vaman>
+References: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
+ <20250811071131.982983-2-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <m3a545t789.fsf@t19.piap.pl>
+In-Reply-To: <20250811071131.982983-2-ziyue.zhang@oss.qualcomm.com>
 
-Hi Krzysztof,
-
-On Tue, Aug 12, 2025 at 07:54:46AM +0200, Krzysztof Hałasa wrote:
-> Hi Stefan et al,
+On 11-08-25, 15:11, Ziyue Zhang wrote:
+> The gcc_aux_clk is not required by the PCIe PHY on qcs8300 and is not
+> specified in the device tree node. Hence, move the qcs8300 phy
+> compatibility entry into the list of PHYs that require six clocks.
 > 
-> BTW I've added Lucas Stach and Shawn Guo to "Cc" list.
-> 
-> The problem is the CPU core power supply voltage :-)
+> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
+> used by any instance.
 
-Ah, the dreadful overdrive mode.
-
-> - while the reference manual specifies the max ISP and MEDIA clocks at
->   500 MHz, the datasheets show this requires the "overdrive" mode =
->   increased CPU power supply voltage. In "normal" mode the ISPs are
->   limited to 400 MHz (there are other limits, too).
-> 
-> - I've tried lowering the clock rate after booting the systems (with
->   a CCM register write), but it didn't fix the problem. I guess some
->   reset logic is affected here, and the (lower) clock rate must be set
->   right from the start, in the DT.
-
-That's interesting. I wouldn't have expected that.
-
-> - anyway, lowering the frequencies of ISP and MEDIA root clocks fixes
->   the ISP2 MI corruption. I'm currently investigating PMIC settings
->   (both my Compulab and SolidRun modules use PCA9450C PMICs), so perhaps
->   I'll be able to use the higher 500 MHz clocks. It doesn't matter much,
->   though.
-> 
-> - the question is if we should lower the clocks in the main imx8mp.dtsi
->   DT file, or the overdrive mode should stay there, and the changes
->   should be made to the individual board files, or maybe the U-Boot
->   configs (PMIC output voltages) should be changed etc.
-
-I think it would make sense to lower the default clock frequencies, and
-provide an overlay to enable overdrive mode.
-
-It's also interesting that the issue only affected the second ISP, as
-the first one should also be limited to 400 MHz in normal mode.
+This does not apply on phy tree, please rebase
 
 -- 
-Regards,
-
-Laurent Pinchart
+~Vinod
 
