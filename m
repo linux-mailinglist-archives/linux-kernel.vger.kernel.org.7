@@ -1,155 +1,126 @@
-Return-Path: <linux-kernel+bounces-764435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6BBB222D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1C1B2230F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8D934E3A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:21:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CFB41B6633A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5492E92BA;
-	Tue, 12 Aug 2025 09:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34CD2E8E17;
+	Tue, 12 Aug 2025 09:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yY9BAJk5"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZW0ayuv"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B792E1C53
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA442E2DFD;
+	Tue, 12 Aug 2025 09:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990447; cv=none; b=lktuq0FQiLwmv8HbIhAOVYsT8pPiz9GChcbKel11rxm68ynFe1tAVi7rfq7B6FkQ7ONokEb/sqJNDfpoDuKdgFQYcvqCpjchSH9K29TkBTmGvZWVvcXYqQGinA/p5WS2RZRgfAawftBteTmdNumvFq69wO3ucmtKh8FW5TGsflc=
+	t=1754990498; cv=none; b=doO6NL+WEUr3EEFlXBps/sy50GCLmiYbt1BJRuWcaRTnnxcJMrtotqxV6V8SORQ7rpnHERjKw5o45FDivZ5gb1P8I7dQe+rhblAA2VOwjffpfERKex28IsjSk5O507HjNirRPJer6C1jIXOsP0Ah9tmAQya7mmkgz7M0xENKLOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990447; c=relaxed/simple;
-	bh=VlyJRw6fjn+cGBFDjG2vyIh5vFz+jjEif6UAkbsfgRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaW1KOrvPh4wWtWJqNIoQ4mhpkTdS6Lw0lqrYzjyzC0bGka5WQSOD9nDBNeedAskcxr5+mSJtdD5IUrOzWpnKyQFM4dEpnudt7QgxQTZCGCo0aJG16efQNyY6yv5sdg4OPcLzy6i+hnCbL3zCeTUEvGArj7AovqtTPHVE3aMAAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yY9BAJk5; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b780bdda21so4306519f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:20:45 -0700 (PDT)
+	s=arc-20240116; t=1754990498; c=relaxed/simple;
+	bh=WQiyorV77zyaTQ7AF1IMpiv7Z306Tvbk0U/iXRpbHnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kel6zdjgAMcvz2EFBfzxT6MW4SE4HOc/9TPq3XjvbPmCygBCBbvruOi16xF6sWiaDISBJ6FckBNwIqefJNF/SGMfOkmVaFPhFP1drZqP6zLprBNZ+uvDxFL3ylIcKMpoD/m/LpDBesn69bBXSXojCaME1tjTtGRrB6OGtPI3F34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZW0ayuv; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76624ecc7efso587504b3a.0;
+        Tue, 12 Aug 2025 02:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754990444; x=1755595244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=flLwVRQBtS9lSLzZddc/x+DXeymZfEUE4F/7WVbfGqA=;
-        b=yY9BAJk5S3cpuIAxclrrVj4pIGbXxhEc7EXc6eum6dRFeY7HGePyQQzY1P0KWYDAMl
-         v/I3Va7L2TQEp5JX2q1otT7EF0xnW0jqU/Z3YgW6OWlNYTIo6lFnb23Z1kDqFFlkvBnE
-         25Z79sHfkPjOKO9AnbgoyuuBbwbqr9yqt/eqpBddzkdY32HyAJPTcuf+m4rjZKahyTXQ
-         WQK3Br11KxjCSivdjOTD3fX1FvDU5gIJGSU+jkDMF1jKz69uYLvxIQvTJzwfXlzXMdCy
-         Mx3/hXpNpp7GNtefVBQSaVpT4kMjrNlE6KQGpV6b9CqSEiE6ssEPgSLcZTFd1Q0iIMJp
-         /uxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990444; x=1755595244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754990496; x=1755595296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=flLwVRQBtS9lSLzZddc/x+DXeymZfEUE4F/7WVbfGqA=;
-        b=kLRWnAZejPY7Dz1aAUAW8PJzCyAw8noAsL4Mu/6mxLUzL2N3ueMMg5itCMMsUsTj2Z
-         OAMdqsEppVks3JFKQGG8EhK+1TMWG7oubBmAliK+6vQ+w9Hxif6hmi2q82gXiCzUC+Zu
-         R7hc8sJgYx3xNARsj7hTTXfSfbGND+eVzmte/cvroFUFQv46I7e4LH8agz/0OwJ7Bzvm
-         /afqJ0bHFn2wPNMhbP9jeu2L3dgcgWORf5Oz5Kue9pqPmPW/zRa1qpDQBILWxRcK2uOM
-         QNZ8qZzUnKf8PcllLzKlZEB8iq/ivfGvRgKPz8DeSGbh965dSUmVzWXEE+DnVLKJmiHR
-         n1NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcxf9Otrd97IWss+o2XdAkp5J2/9qaAIN4HW94venBIjQYwlcxxe2S9RWw47LKadS53LsawbqRQrCx6Rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw47e0zVkPqmy7UL3q3Iw2q8TYoMvy0IqjLov0367gU12nQQzm9
-	m4Z6YGrYGo3PMJFyByA+16cbkkXh+eb+KTJizHuSBo2Hb4dAjjfB9+IX81fiwCdItvY=
-X-Gm-Gg: ASbGncsRQFedHqYM0Wyc94MpjgAK2Ogf1rA6jomNxVDXpHQP75Uszt9kdLbAD7r/DJM
-	JEfCwYKooGB7o/O1OLiCTVIl75/sdV248f0nMPRXCApfhT4wkPAS6VHqJWQyyfOwBvpM4fnKyVg
-	0uPPG0MKPPLMHge36sVvBMvRmdr+EXb1CHPxgWAjVvQb6PJ59Jav/3LhKsvUl7KdR2pmxJhTizl
-	FLBlww0zIPpoLCLAZohJEG78YUL6d5Hdzpi05ku2uU2C60eLMxZ/zypIMbtebb/wjWJnTXPwcON
-	F2B8IaeH3PHNiNFW0yz9odtzohcAslAJViMGu4PIs47piUQSf46C9b2IfttD/kcXA7ZCkIGaAsB
-	Wkl5v0/o5p0khaLdhMFPHX9x3mUg=
-X-Google-Smtp-Source: AGHT+IFrIo9/UNEvyO7O0y53JZzndWiEpzx55oxCbBR3AWHX7mjJt83BXH44/bTtMAxbhFy/v2lNzg==
-X-Received: by 2002:a05:6000:401e:b0:3b8:d138:41d3 with SMTP id ffacd0b85a97d-3b900b8101emr12499799f8f.56.1754990444236;
-        Tue, 12 Aug 2025 02:20:44 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453328sm45866511f8f.46.2025.08.12.02.20.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:20:43 -0700 (PDT)
-Date: Tue, 12 Aug 2025 12:20:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Scott Guo <scott_gzh@163.com>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Scott Guo <scottzhguo@tencent.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: squashfs: Avoid mem leak in squashfs_fill_super
-Message-ID: <aJsHZmHN2I712xX3@stanley.mountain>
-References: <20250811061921.3807353-1-scott_gzh@163.com>
- <24759bdb-b427-47a7-b9c3-724a11d0162e@web.de>
- <461ae944-5fb9-4860-81c1-1ac48c3d888f@163.com>
- <aJr43n1np2nB8bht@stanley.mountain>
- <dceb4471-82d9-48f0-94dc-e9277eadeada@web.de>
+        bh=hYvCo0iEJq+ZxS2rhikncTd5AQY0cs0mvYn/ZYwYUdM=;
+        b=JZW0ayuvO8n0KSMxpEzedi0/H9GwnZH7VLnE130JcwKxHWPlhybUsw7vzABJhoN16x
+         lDGVeJo1k6kCWmv15zDYnvNkH7B2PEnaYJ9C9/F3ah4GJaX7UbQlf2tLbfXGLyfwJjFw
+         23QVSiTV4XC3YIyL55u770CUb5AMPPUFAmat6irz3AIgbGNBoil85Y8yCavn0vnZ9CME
+         goG84+TqzTqXnU41r6DTNLT2wgSfJ+bj2ufTmn1uSUd3D4+qcv3aZGKXmdcSxdDUGzTv
+         8RuklAp1M2d81e1Ab2do2iMW1Ko5SsDmoMzGw3AKNoB7UL2Ep7ySu38KBPWpEZLRcj37
+         asNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754990496; x=1755595296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hYvCo0iEJq+ZxS2rhikncTd5AQY0cs0mvYn/ZYwYUdM=;
+        b=w0h2Gm+m3JaFvxM/kYoJGzGCbneFaEK/5ItGy93ezxC1nkYLs/GBaxoQ5z96CNhNVn
+         k0bOCOEsst8RgI8X4Vrk21YIuWixmGwACinI71CSDGSjB6pkNs8ptWNCp10jK3QghCmw
+         oT1wylscCwRORTlxzcAmDSSp/atNLOThq2dTEdZZUrCFjs3FchymX70Q+gyCsk2TMDaA
+         uJvTvFZvd4/UDjHw/tmNEtWQYazvUUlaquuLnsrbD6IPs/oxCNkp3ldDKCrKr3vxo6N1
+         4Hizh0aU1UEIQhpM//afJcFaHSDVRjucEeRJJxZ5XLik+gVPy0hze2YIjASLthD8C4Sh
+         kPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsD0Y7Em/vWV1617DMGt8db5GDA6BXMVh5+X7869Ixcuw+oRIDr7tfwYvOzTp+EdUdPVUzPIx3SJTE2YZvB/A=@vger.kernel.org, AJvYcCXMwS/31Q08WfaVdb7vZx5a8rEvQ9ETXqvj7oARPd9RxPKC311YTJ1SiFNqa8mQ9rQ46n7oQLr7PrrotlJg@vger.kernel.org, AJvYcCXPG07N3oNr+DCZZ/fCMxYUieqe5J/mX4VozWNnr5dC1jgFF36hhCbiY7m7aWIyFnQZPflJg5tdTSjp7yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo2ZTlI6H/zKHs+XbO+q5IgLgdfNmj9BO2mXi3Z+N+tM0JfZVW
+	2uAhj7+MW8Ds3L3+AuCkSLi4dppvEcFRjum7AUE6AxTZp6YS7xFOZTSIQgG3MJ5mGXv2ovPSiP7
+	PxGrPoKQR4yZOoIhinUu5sm8l7J1s//o=
+X-Gm-Gg: ASbGncvTPv25audxpwuy4hsFK4Kb8pQLf1O0gltSlJcWLE6aVUf4macT7DO9VsWKOc1
+	6ht94xQ2zPYW132eqBZvIJsAUQwgzqtWtk6tQTj/LNVu7zgILVsVZEc0Q9ZrYyvVspb6UR22D6h
+	8Z4sywMrVBW8yXBWuM21dl+OtEbtryStsCn+4cn4tEktSSXjHKp1fiRokGsQ5gL/1BRLhReBoQJ
+	Rb+VPBu0d+V3pKCfOs=
+X-Google-Smtp-Source: AGHT+IESYKcihEDu0NOwPQjnLbNGzr/vMkV0bVQOv7S3LdRIIZarF+53jISTF5/kFZPUqcmWXoC+txIkwTl2k1Thny0=
+X-Received: by 2002:a17:90b:4acc:b0:313:2f9a:13c0 with SMTP id
+ 98e67ed59e1d1-321c87397f5mr416660a91.1.1754990495995; Tue, 12 Aug 2025
+ 02:21:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dceb4471-82d9-48f0-94dc-e9277eadeada@web.de>
+References: <20250812-kbuild-werror-v1-0-36c9ff653700@linutronix.de>
+In-Reply-To: <20250812-kbuild-werror-v1-0-36c9ff653700@linutronix.de>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 12 Aug 2025 11:21:24 +0200
+X-Gm-Features: Ac12FXw0jpURTsZx35iCN2Jrw_NmdxAdgGldjx7cwS7E5VDyFiyvWmS_xdA2Pto
+Message-ID: <CANiq72k-PdSH2BNgbq=X+FhpyEErifSCKfO5ObXz6bu9_J8+fA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] kbuild: enable CONFIG_WERROR for more build steps
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 10:38:59AM +0200, Markus Elfring wrote:
-> > Please, don't introduce more of those e_inval, e_nomem labels.
-> 
-> Would you find any other label identifiers more helpful for sharing
-> error code assignments according to better exception handling?
+On Tue, Aug 12, 2025 at 7:31=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> CONFIG_WERROR is useful for all build steps, not only compilation of C an=
+d
+> Rust sources linked into the kernel.
+>
+> Also enable it for assembler and linker invocations, userprogs, as well a=
+s
+> C and Rust hostprogs.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Just assign "err = -EINVAL" before the goto everyone else does.
+The Rust part is:
 
-The common kernel error handling style is called an "unwind ladder".
-Assigning the error code is not part of the unwind process and it
-messes up the top rung of the unwind ladder.
+    https://lore.kernel.org/rust-for-linux/20240519211235.589325-1-ojeda@ke=
+rnel.org/
 
-//=================== Good =============================
-	return 0;
+However, Masahiro back then mentioned that we shouldn't make the C
+host flags depend on `WERROR` since `HOSTCC` builds Kconfig and, for
+consistency, not for Rust host progs either:
 
-err_free_thing:
-	free(thing);
-	return ret;
+    https://lore.kernel.org/rust-for-linux/CAK7LNATPx2wTEM=3DKDmGtcH8vVTB4s=
+uOhh-CUQKP54F8wtPWDiw@mail.gmail.com/
 
-//=================== Bad ==============================
-	return 0;
+Perhaps it could make sense to explicitly exclude certain bits, like
+Kconfig, from `WERROR`, and apply it for everything else instead.
 
-e_inval:
-        ret = -EINVAL;
-        free(something);
-        return ret;
-
-Now imagine you need to add a new free:
-
-//=================== Good =============================
-	return 0;
-
-err_free_other_thing:
-	free(other_thing);
-err_free_thing:
-	free(thing);
-	return ret;
-
-//=================== Bad ==============================
-	return 0;
-
-e_inval:
-	ret = -EINVAL;
-	goto fail;
-free_other_thing:
-	free(other_thing);
-fail:
-	free(something);
-	return ret;
-
-Also, in places which basically hardcode -EINVAL into of the unwind, then
-it's pretty common for later updates to carry on returning -EINVAL even
-when it's the wrong error code.
-
-regards,
-dan carpenter
+Cheers,
+Miguel
 
