@@ -1,256 +1,281 @@
-Return-Path: <linux-kernel+bounces-764431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B2AB22305
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:25:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8A0B2230D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D8E1B649E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF3C6E778B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B4E2E9EBA;
-	Tue, 12 Aug 2025 09:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE822E8894;
+	Tue, 12 Aug 2025 09:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="VKwHQD3k"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013005.outbound.protection.outlook.com [52.101.83.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ws4lpQo0"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D192E9EC2;
-	Tue, 12 Aug 2025 09:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990402; cv=fail; b=cmUWFvdMEum6dG/5TOJaJngx3UoZBaz0N7mPfgJgOH3RgMWt0LUkeSsP3l+P9UDPDNjmciUA2m+DFcXYOaWaEk9f2l1pmxTYMoAEteaC+SPvBiAmn83Quykh7Sw4CBSOWlVwtFH0EXJ9IPIC/tp6sWCnvUhQoez0OB+zMHLoCTs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990402; c=relaxed/simple;
-	bh=ev+VoKQWc22ZRZH7gFZKUMsOdD4edWgs/IlVeeimGr8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WuASMr/Uo6GTyNEVi+ECWrv0LBh7bf3Vhtu49riVYDBD3lBbAo9Ri0aoeP0Kh/GP5k1Gzi8bi/Qr6M9W2EiNFYenBa/ElV6oFXz2LpyphXdbPKfJcomCG36A17MdcjbyOCn+OQVwwy6wIaUTHv07ouKbeoq4BmfZYEuhTxEqGPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=VKwHQD3k; arc=fail smtp.client-ip=52.101.83.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=df1IAUwlT6hEwU133hXkFbxTc1ayimNrBCVWDip6eRl8T7iQ20VS18s+XLCOFvDELGKXyn5xs5+erxcTGW1JG/+LrmmIYu3wTsWqehg038Be1+mcylLnCHTZWfMO+82k9+hhRR+h/mrVjrmdxZ+G5p6Y4VK6wPQQQSi8qGtorviAxbdP3k8UCmiJF4btbgWTvLJiXEfo6qfNCFhkSTcwrn9C/iQsQv3VXV+tiVteGUCIClnBYQp+7AwmCfc765pKPEMZjVl0CYLS/MRXQWuf+bdPeaczAdpRezIufRMyb1OIiJtn+Qrc61vDBFI+TV3Om1Nu0xyNoBXkq6v1oBRiGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SrY1vC629cDqdzPFpOwsItfoYUOhl4JR4U7eVl2MbKM=;
- b=W6wc5BMH66eJ8mBEHZIBQiuxeZ8Na9okN49d82opyzbeyFEhqc+ENIqT9EYGJYK25qYU+D8i5zVtoHWOxAn3wd7gC1oVuDpN3rOqeQENvl9Pr2NzimHfJp1DjpV5PgNYlF+anSsfy4IqtnbqxIzNMr4NNTgNTYgn8PtyUqoigZm0BHh3NNiG++Tge/GYTD/qY6c25y4SoJTRDWqP0vqBQjjqmpF3+FhSIm0enQ/GDRtianpuTHoQnZjozlkh6JTXTAEzkXZpqlR48d5uE2BpM0VCQ9D4IBbR7kfZYAZOc8ZXQWSFFF/11fG5Gh9zZZAfc7PN5QMd4c6ndCLb3EndYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SrY1vC629cDqdzPFpOwsItfoYUOhl4JR4U7eVl2MbKM=;
- b=VKwHQD3kDN2RR/OXta6JKX4y3KfzG+2B2aM90QqNBKyg/VtdwHDtna9XblNBiT1yh0StjvNVNCwQEn+uuOjcajoFzDiFasuVbjRWmANhWWoeKob0JRXneNiqZSzAo4B2Ltq3jjf8GQmD13LSmGUtR0QCw62WHIazybhbsJ+fYBHSy3vurw13l12u0PC0Osh6bcdXlXPtjGRBAfsAcXSobpersG1lMHEJAv80LRMI6sWT9pJbeMIv27C365dbbBB0D1fQ7BjfjF5jrYE+ftqPaigdgKDUxMwaccAcBd9OE3hKFqU8KcAoUDqbkZmjhdtje2oVhrn9K0JvHvQ98QFC9Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
- by AM7PR04MB6904.eurprd04.prod.outlook.com (2603:10a6:20b:106::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
- 2025 09:19:55 +0000
-Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::93bd:316b:682f:5e59]) by AS8PR04MB9080.eurprd04.prod.outlook.com
- ([fe80::93bd:316b:682f:5e59%6]) with mapi id 15.20.9031.012; Tue, 12 Aug 2025
- 09:19:55 +0000
-From: guoniu.zhou@oss.nxp.com
-To: linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: rmfrfs@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	martink@posteo.de,
-	kernel@puri.sm,
-	mchehab@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	frank.li@nxp.com
-Subject: [PATCH v3 3/3] media: imx8mq-mipi-csi2: Implement .get_frame_desc subdev callback
-Date: Tue, 12 Aug 2025 17:18:57 +0800
-Message-Id: <20250812091856.1036170-4-guoniu.zhou@oss.nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250812091856.1036170-1-guoniu.zhou@oss.nxp.com>
-References: <20250812091856.1036170-1-guoniu.zhou@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0007.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::6) To AS8PR04MB9080.eurprd04.prod.outlook.com
- (2603:10a6:20b:447::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB12E88AA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754990418; cv=none; b=LmZF8AJr47wt0oVifsV0TEp8j1dl50F2jA4RHUDzVxFrumonqRIlm9uiI0kgCJrI9ShQqkR6GohyBlQ0LGVTH/Z5GZm80JbRdUkgNDJqMnWhpWPddPIRWeCgLLIjRcPk5mZijSHQ03d1+Y7lRulgg4jwgChkxU90FeARdJhWKyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754990418; c=relaxed/simple;
+	bh=Rll97YQ5vuw2udS/XZUyIkkICLtqDy4MwGkuogNaJUg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F/BNMjrB9J/JwDIv3fWqJ22u0KzpNhzU9pCWKqL0wTeplYBGFYDV6u18Nl8AOVJrDH5lgGnpPFPUa77q2R46UoZuPeiUt++z35j37eB1bxmFsg7UTHho2/i3y67ErdwYB5Bj2VaxuRntqzWk+w84osPhcK7ZtmCYCxaov4mXMIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ws4lpQo0; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6185a9bb91eso346688a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754990414; x=1755595214; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=naiEIwYwGuDf/CY0Rk/O0uYgQE/3lMNIjYzePPRvS00=;
+        b=ws4lpQo0YkzVexf1Uz04je6/FwFLkmUv6Iqu9yfcKR+F4baSsA/bVtA0qwMjUQIPza
+         z2PI6VYQxkEWPcGUemkmfI5rIkNUgS5dfR89gWijbvRq4AbD8QhBAW+Bc2Q8XOJPpDgK
+         /DUj9o4ZIUVUWpch2WX6dlb5zbWMHj0uMFlwubao3vigr6bhztnyijq+skCffu7eJoGv
+         6DVILGXbNbmVpCj7dOkGgDfubBiCwHuHMVoKq3HYAF13lFfnA5UGVemdpAoj9PFfIpkl
+         u67wQHI1Mh8z6Ero6/7zvG6SHeil9sPqedDQS5FK5KzUPgz4SsTfaYcRJwkMOxekEbXJ
+         dLcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754990414; x=1755595214;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=naiEIwYwGuDf/CY0Rk/O0uYgQE/3lMNIjYzePPRvS00=;
+        b=gKg8tMjj0vgzg/d/wljoA4Bbw/qcP3itl0ChGggjPswnzpBkARA1pTbOmChCgX2AVc
+         alNYtg7rJZdTfhNfu4jiJzw1iD2nPiwWNifl2TDH31b1ZthjxFEqd9WUd1Fl08VC7oZV
+         YnhFCawCKHdCyIdh85Ewm9l01uxu6QV6G20HUqXkt5ukELvkrclLH0+NarRfMKpAT+rq
+         QAdcObeUjJtCbSWsqlKqqaFqutU1nW3FdB9/eATZJqnG6nP3kkKv2Kq64j4nVx6Ak2HD
+         qcRzUbJj2APZSN6bPsG6EcYks2dHMrewnj3C6Qvn7mnqrByP8DCEQgSblnwlj+JHnyVd
+         0A2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWlTdkoulZhgR5MwtZqlSCJJKPdgRo6e7MFeVDjpoeCwmrR+bex6AhU0O4UF9ynii9ISD1DOjCGKFdn0FM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqnxcF5kJLqPqjHdij/xWjK8xdzuLjc675iqWvuBuHSL26Cjpr
+	hq6bjuSEt8HeS9JZaM4lGvSyue5BiZ/+Mkh38U4GnDXfZB9UjIFHTa1wkb8TLCYatTo=
+X-Gm-Gg: ASbGnct0aiVQ/MiVomeVbpOAycblrG+M7ZArAHUCS2E1wr9EKoBkg4ce0FSiPWMnSqr
+	FfCm2tIM69+U/M9owPONQzd30KS3YnbYXQP5K5HvFDUk1VArkSQfdCuvWHBWX1pZg/jX2HIw0wq
+	LPk/2bvRSGhWtxCQZuy4XE21gNR0CnUw1VrNHRl/NMtO/0G5EGtKadaXTKEt05IDzW9L0AKPX8d
+	gJRUorgLrDbICgGCBEIroItdryws7BZLdcGVrYJwbm5j5SWVArwDmjcJXctYiEArSL6wVQpTY2L
+	I7ULlMyJphDoYBDNEI/QnS2CcexIAwfusiiomLtlSiZOpRWnnf55oOERuTKb/byHOP7B+4jlSZs
+	EJPrJBPZd2tqrUb8F3A==
+X-Google-Smtp-Source: AGHT+IHLAQYCOX8PPid3D3VRdVWAZs9n1fYBxg+C8ZteuSFbIYqwrxnkYMt6Q4wpM9LITX2LzflJpQ==
+X-Received: by 2002:a17:906:ef0c:b0:af9:353d:e69a with SMTP id a640c23a62f3a-afa1e06e444mr231782166b.21.1754990413650;
+        Tue, 12 Aug 2025 02:20:13 -0700 (PDT)
+Received: from localhost ([2001:4090:a244:8691:4b7a:7bbd:bac:c56e])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af91a0771basm2160615866b.29.2025.08.12.02.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:20:13 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH v7 0/2] firmware: ti_sci: Partial-IO support
+Date: Tue, 12 Aug 2025 11:19:46 +0200
+Message-Id: <20250812-topic-am62-partialio-v6-12-b4-v7-0-ac10865c2d87@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|AM7PR04MB6904:EE_
-X-MS-Office365-Filtering-Correlation-Id: f34c801a-9d9c-4b71-58e7-08ddd98166d9
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?MHZBUDkrR1lmYjlBbzA1R3puY3BiT0JqbVQ4ZEQyNkJ3UHh4ZWR0dEM2aGxh?=
- =?utf-8?B?MENubjB1REFaemVHQmJOeGo5bEVMTDR4VEpmdHdOTFgweFh1Zm9NajZoUjB3?=
- =?utf-8?B?NHhLOHN1NVpqaXFWbVU1R2tKMTFpQmpteDVHTHlralFPY1FNTTdxYmxFQUp2?=
- =?utf-8?B?ZHlyN2l6MmYreFdRU2FVSE9jc1htWXU0OGpYeEs2NEpRNk9vMVpHZzJ5MDMr?=
- =?utf-8?B?RFM5OUprM1ZIRmFxR2dRcHp1UDIyTkxmZ3BYVk1BSlZGaXJicnJSQUlKMzB2?=
- =?utf-8?B?OHIzWUdBV2FlcGlTNEJEaDJLcFFpb0FXenJaSWRWN2dJbHgyVG5aaWJwRDF3?=
- =?utf-8?B?cDNKWHNFcUdoaFExdk1YKzFjdnJIN1prTERGZml4NjZIR0hQYmU3cmVKYnR2?=
- =?utf-8?B?TWpubHRZY3BYVXQxYmV3S0dWek1CckhGZ29FNWk2UC9BMlIwbmVKYUo4ZkUy?=
- =?utf-8?B?eUw3bjBiV2R5TnVNSnJmMVYrazRWSTByS1pPdy9Fd2lvamJ1WTJsNDN6UnZU?=
- =?utf-8?B?UVR0RVpBQUNGeVFOR2pIajhLVlRIamZWM0VYVnlwK0d3VFU4M295RDF0ZFRD?=
- =?utf-8?B?TmI3WnVMa2VNRFJGNFU1d0VmY3ZQZ3JJbWRDcVdUem5Cd1JCWjVyMEM1VWlZ?=
- =?utf-8?B?Y0lNSnFyLzJGOHlTV1FDUmN3VHdCTjFIdFF4Q3BhVUZmVU5SU3BYZE94Vkhz?=
- =?utf-8?B?RVFRWkdNVVZlcjdhL1ByWXpoT3dtUDR4aGM4Zi9TeVl6RlY2QTVTWjJkbkN1?=
- =?utf-8?B?Sm1QMG15UnZmOVhRaHJRNW0vRFpIanYxZUJqZmNxeDE5cWFTRFVkZWpGSlll?=
- =?utf-8?B?OXRNQjJLZUQ4RE8ycWQ2NjREN2NRWEg2dW1PRFhXN2RQdDQ5U2J3eFFjSlh0?=
- =?utf-8?B?MTR6VU96bkoyOVRLRjlTTlYzeE5uMEZmOEpuVENKRVFmL1FMd0pxd0NZZ0Mw?=
- =?utf-8?B?N2JXZ05EcUU1aGV5K2FhRndxblNvMjdmM0UrRG4zVjdjYi81bXRxSURLSWdW?=
- =?utf-8?B?YnVDbHhKSmlGT0FRTDhwcGluT2s5NzdQN2lBNzhDcW9qNklPbDZFeVNHZm5y?=
- =?utf-8?B?SDJpY0J6Tkk3d1lob0VPSGlvc0w4WjJCeTljUDRQM3Y3dzNrNFR0NWpJWGd2?=
- =?utf-8?B?bzVncFZLOFBXYnRIaGpUcS9PZ1puN1RQNmtmcGxibU9EbW5ZRHorbUZCZEhv?=
- =?utf-8?B?S2FPZ2hFYkFkT29OMnA1OE45bkJrUEtYV2pFbEZzRnVmOXkydk8vRk83Lzc1?=
- =?utf-8?B?NlNOSjNQTDdBOURzbG45L2dHZXNLQmhXeTBLZE1LSHg0MGZsMmNuVzgvNDhQ?=
- =?utf-8?B?dTYvV3k5RVF3bnlnaVZ1NmhiSmhnNjZkSVhwUlVlL2FjUEpCd3ArWmhtTWRS?=
- =?utf-8?B?L2xJQVpJQ2JieGFlcEdjOXFjWEtqaXljSFpFK1VnMnN0bDI5N2kxNlUvU3c1?=
- =?utf-8?B?SVE5YkVKVW9BY1lvNmVQTzVNdmRhNG5pZW16bjlsa2FWaU5pZTFGanN4ZVNy?=
- =?utf-8?B?RHU3UDRUSWsvTkxhcEtVTzFtdE45Z25HMHVDRzYrb1JIMWdlYTIrbTdzeUox?=
- =?utf-8?B?TXJ5dm5xQTQ0NHdkNE9oYlNtNGgxdmd4NUVxNDZsN2ttSlZ4ZFBxa0hVOXhJ?=
- =?utf-8?B?SlNkR0ZzN2xXSEpTWmEwcDNINENjVFRSWkNrdXBEVHhYRk9uang2dWtxS1Rt?=
- =?utf-8?B?SjIxQXJLUEUxaU5icWxBMW9vSGNPTUNyeGdKMStLMXgzWFlSbk92VHN4Y25n?=
- =?utf-8?B?eCtEZEJSTEtYWTZ0ZDBGT1RsaFA4V0ZEbGZoUjZNNkQ0NjFCZjR6V1pvZVZv?=
- =?utf-8?B?N0poeC9BODM4UjBuWW9JcTM5UTdHWGR4ZkV6M1pSNndXNDVkc2k4ZjNsc0tH?=
- =?utf-8?B?VjgyeW8waWk2N1FUMTA1V2R6OVd0MlplcWdLemlJd09xSlhOQVB1TDlGd2RF?=
- =?utf-8?B?NGt4eXUwYWRmQko1YzdZWDVSQjBmenhYSjhMMytMSC9DMGlwTHlKTmtLUTBC?=
- =?utf-8?B?b1hxRGdERHlnPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Nzdja0tsdjBaZVBzQTdtOHV3aGlkbDlBSllUYTZkQmJFZXlUZ0JkTk4rNkVY?=
- =?utf-8?B?a05uVmVVaHBjT1pSU1VYdTFqWjByNFl0dDQzbkRad1Q0Nnl5endLZ2F3SW5E?=
- =?utf-8?B?Z3ZNNDkxQlBCR0RETjVqYWJ3R25DU1FwTE9TeUpiMXNZblh2RDBkVlJCY2pk?=
- =?utf-8?B?L3RQcHROdnV0Y1AzTDl6dWRHVm9kN0JpRWxyOHJDWVk5VDFUZmNXWHRpUDkw?=
- =?utf-8?B?Z2pNMTZiQXJTZXo3MnhrcW1uQW5saHpWRWo5SDN5cGtTRkJaSVBsdkNpNGRJ?=
- =?utf-8?B?MTcxcFl4bkpKVHJxN1FKb2ZkUzBESXQ2cnBLcmFpT09XUDZIdTNkZnJMRzhk?=
- =?utf-8?B?SnhUdkZORnlFbHZjTDJJTEVxdHM4QnRISXBLWmRoZ2M3a1ljQmxCZHdnYmtv?=
- =?utf-8?B?c01QS2JUNWNiT002aWk5b0c0K1VsN0JCZitaMWdlQzJ3UFIycE1FaUo5U0JQ?=
- =?utf-8?B?RHNrNytTWklQUGZTZzhYTTdUK2RUclEyVlc0d0NyaGVNMG5FRnA1Z0M5RWt1?=
- =?utf-8?B?TFI1clpMMFRVYnVFUlY3VWloZFk3bSt3ZW8vdVRuK2R4WTRNcCtNblRaamVB?=
- =?utf-8?B?VVlUWEU2dFpBUUZJYU45YmZERDJuZmpXbVowUjE3cnlWWVhQTlJmY28rWkJi?=
- =?utf-8?B?WmZjdU5ST2MxVDJ1OHE5eTFGb2tXQXZ6R3ZDTGc4N2cyWU93Ri85eXgyUklj?=
- =?utf-8?B?T2g5WElsMDV0eCtmWWY3NC8xMTRRampDcndtb2FRcWxvZmV0L2hhUWNIQ1lD?=
- =?utf-8?B?clVyKzlDR21DL2tQVE9jWEpVcld6TjBkTTFlcEFpSjJnVWN1WDFIRGRCVmd4?=
- =?utf-8?B?RlByUE9oYy84aXNKNXUyVGN4VHdnd3U1eEJjTVJONlZSMzZPQnQ1WkhZSUFP?=
- =?utf-8?B?Z1JmMzFQQUJFYmxVMDQxZVpnRTJUbVIrNUx0UzhTeGhYUEdFbWw0RXNxV010?=
- =?utf-8?B?S2NsR3ZpMllOT1hDY0k2OVBtYVV2THM1cHNIY1I1OEh6eGZWNTZpWVVoT0hl?=
- =?utf-8?B?YU8xYUc1bzhTb1dUUXkzb25RQVBtM0MvV25kTHNSZDF0VVpCR0V0Z1FYOXNE?=
- =?utf-8?B?SnN4L2NlT0VmeXYrT3l1VEh6bnkweXlYeCttSnd0RWdsWXhSaTZaUlY1UGpn?=
- =?utf-8?B?eER0eExDR0xrY0Q3ODhwMm5sdXEyVUxTQk0yeEg1dkFEK3JreW5WR0NjK3U2?=
- =?utf-8?B?STQ2Y0tIdURaSHA5T1EzbnpKWE95bGRsUHEwZGNyZmtreU1rM2ZmNTVUb0Zz?=
- =?utf-8?B?OVB2K0pjSXcvR28wQ0g5bTJXNFh2Ukd5NzFqRzdMdVphM3VUc2RoNzMxNk0r?=
- =?utf-8?B?ZXcrRXE3U2plV3VYUG8xYkJwVm5PL2lPa3lNVk0vVlFRSlhLSnJtUE9wMWhl?=
- =?utf-8?B?UEs4VXREeGkxZTZ3YjZqRzJjZjVUZG9UY01EQnUwbWNKWHJ4NVpzRlV6YWRV?=
- =?utf-8?B?OERHWi9ER1cybFBQQzFxaG9wR05Xd3JsOHBwZkpSSkg2U0hVd0swWnZNNFpF?=
- =?utf-8?B?WTVUb1RSTkdudnRscDNyK3R6MWRJanhia2hCa0tyZkZSTTA3eCt5ZGhxSTNo?=
- =?utf-8?B?clpmSUFVYWFXK3JVZ1JFZXhFZytQOE5OMFpyeml3QURTR3dubXVLV3p6SVNJ?=
- =?utf-8?B?NURjaGQ4amRMQWNqTGQ4WGF3d2d4dHNLVVp4Z0h4REZqNDFpTXBjYjVmQ3Ax?=
- =?utf-8?B?YmluaGl6VFVPNlpkUG1UcUEwQTNRWm92RXh4SFJBSDFaMjkwMnF0bW5Rd1FC?=
- =?utf-8?B?ZGNDdzI1c2NJbzVVR3NnQVZjUWtvMk9DNjRoZzkzbFRiVjJrUC81Y0ViT2Fm?=
- =?utf-8?B?WEpEMjc3ZGcvdVgrdkkvSUxzcXE2UTFnUVI0VGtmSUhXTWw0cUJCTU9sdmN1?=
- =?utf-8?B?TDF4UGNWNy9TRmtOaWd4TjZDTmliUysxZnJxK0x5dUZPb0VvdXBBRFVRdDdi?=
- =?utf-8?B?dlV2Mys2VU8wT2pzNlRVUmZiU0FUL0RyUHQwTjI1V015N2xnWC82WjV4MXU0?=
- =?utf-8?B?K0Vja09vQUlKOUtUMFU3RUNZVU1wRG1KTjlYdGhNL0xjb2pCMG00dHFRNlBJ?=
- =?utf-8?B?M0k0b2NwaHFGakpUTmRhWHVVRi9ielppL3ZkeDk3R2Y3anVmd0FLZDVVMWdS?=
- =?utf-8?B?b0J6bG5sU2pHdDFuY1V0NFlML2FtSCs5SGhqL3NaQzZOKzEwUnNBZXcwNG9t?=
- =?utf-8?B?V2c9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f34c801a-9d9c-4b71-58e7-08ddd98166d9
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 09:19:55.8485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: stRzk3YlQns5HjITB+ruA7J7UpHAWV+i6up6v44H2PwZZlhitunXSX1MvDKYeqLKcaQUUphNnZaZ/pP7FTgYWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6904
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADMHm2gC/4XQy27CMBAF0F+JvO4gj59JVv2Pqgu/Uqw2JHWCW
+ 4T495pABaKoLGcW596ZPZlCimEibbUnKeQ4xWFTBv1UEbc2m7cA0ZeZMMoEUlrDPIzRgekVg9G
+ kOZqPOEBWgAysAMc076xxQghNijGm0MXvxX95Pc0pfG5LzHxaEmumAG7o+zi3VVYr1JAckuv8t
+ jqnN+f03pkNfJn3sB1hGrbJhXOD2qFXTcPR+rrN9V9FUoHy+gY/35whgTPtPXYdam/azMix9zp
+ O85B2y5syX4qfOpXQ/z+SOVDotFPH1zSqxmdrdh/RprAqVy94FheQYfMIFAVEZ+tgrBdUhzug/
+ AUl5VQ9AuWxYcMZ91wLYdgdUF1AwfARqArIrXShMxY5b27Aw+HwAw/mC4p4AgAA
+X-Change-ID: 20241008-topic-am62-partialio-v6-12-b4-c273fbac4447
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+ Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Markus Schneider-Pargmann <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7839; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=Rll97YQ5vuw2udS/XZUyIkkICLtqDy4MwGkuogNaJUg=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhozZ7Das3PfvMbOr3pmX0GPulHH/f57Huk7v/WXTfp8tU
+ grzEOXpKGVhEONikBVTZOlMDE37L7/zWPKiZZth5rAygQxh4OIUgIkU9TIyHF3yk3ej6XOLlg+6
+ i7z998TkSr3deTT05500hQPCm5P69jMyTH3BnPNlb0OAQLmBq92cvzPm3FuXIsynLLd3f/GyNye
+ ZmQA=
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-From: Guoniu Zhou <guoniu.zhou@nxp.com>
+Hi,
 
-Implement .get_frame_desc subdev callback since downstream subdev
-need to get frame description.
+This series adds support for Partial-IO to the ti-sci driver, implementing the
+firmware interface necessary to enter this low power state. It processes the
+wakeup-source properties from the devicetree and communicates with the system
+firmware to enter Partial-IO mode when appropriate wakeup sources are enabled.
 
-Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+Partial-IO Overview
+------------------
+Partial-IO is a low power system state in which nearly everything is
+turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
+wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the system
+on pin activity. Note that this does not resume the system as the DDR is
+off as well. So this state can be considered a power-off state with wakeup
+capabilities.
+
+A documentation can also be found in section 6.2.4 in the TRM:
+  https://www.ti.com/lit/pdf/spruiv7
+
+Implementation Details
+----------------------
+The complete Partial-IO feature requires three coordinated series, each handling
+a different aspect of the implementation:
+
+1. m_can driver series: Implements device-specific wakeup functionality
+   for m_can devices, allowing them to be set as wakeup sources.
+   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-source/v6.17?ref_type=heads
+   https://lore.kernel.org/r/20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com
+
+2. Devicetree series: Defines system states and wakeup sources in the
+   devicetree for am62, am62a and am62p.
+   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/am62-dt-partialio/v6.17?ref_type=heads
+   https://lore.kernel.org/r/20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com
+
+3. This series (TI-SCI firmware): Implements the firmware interface to enter
+   Partial-IO mode when appropriate wakeup sources are enabled.
+
+Devicetree Bindings
+-------------------
+This series depends on the dt-schema pull request that adds bindings for
+system-idle-states and updates the binding for wakeup-source:
+  https://github.com/devicetree-org/dt-schema/pull/150
+
+This is now merged. These new bindings allow the ti-sci driver to
+identify devices that can act as wakeup sources for specific system
+states like Partial-IO.
+
+Testing
+-------
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-partialio/v6.17?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+These patches are tested on am62-lp-sk.
+
+Best,
+Markus
+
+Previous versions "firmware: ti_sci: Partial-IO support":
+ v1: https://lore.kernel.org/lkml/20240523080225.1288617-1-msp@baylibre.com/
+ v2: https://lore.kernel.org/lkml/20240729080101.3859701-1-msp@baylibre.com/
+ v3: https://lore.kernel.org/r/20241012-topic-am62-partialio-v6-13-b4-v3-0-f7c6c2739681@baylibre.com
+ v4: https://lore.kernel.org/r/20241219-topic-am62-partialio-v6-12-b4-v4-0-1cb8eabd407e@baylibre.com
+ v5: https://lore.kernel.org/r/20250306-topic-am62-partialio-v6-12-b4-v5-0-f9323d3744a2@baylibre.com
+ v6: https://lore.kernel.org/r/20250421-topic-am62-partialio-v6-12-b4-v6-0-3b5cefab1339@baylibre.com
+
+Previous versions "can: m_can: Add am62 wakeup support":
+ v1: https://lore.kernel.org/lkml/20240523075347.1282395-1-msp@baylibre.com/
+ v2: https://lore.kernel.org/lkml/20240729074135.3850634-1-msp@baylibre.com/
+ v3: https://lore.kernel.org/lkml/20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com
+ v4: https://lore.kernel.org/r/20241015-topic-mcan-wakeup-source-v6-12-v4-0-fdac1d1e7aa6@baylibre.com
+ v5: https://lore.kernel.org/r/20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com
+ v6: https://lore.kernel.org/r/20241219-topic-mcan-wakeup-source-v6-12-v6-0-1356c7f7cfda@baylibre.com
+
+Changes in v7:
+ - Rebase to v6.17-rc1
+ - Update the idle-state-name used to off-wake as introduced in
+   dt-schema
+
+Changes in v6:
+ - Narrowed down the wakeup-source binding to phandle lists
+ - Split off the mcan and DT changes into separate series
+
+Changes in v5:
+ - Rebased to v6.14-rc1
+ - Merged m_can and ti_sci series to avoid conflicts and show
+   dependencies more easily
+ - Added definitions of system-states for am62/am62a/am62p
+ - Moved wakeup-source definitions into board dts files as they require
+   a bit of support on the board.
+ - Updated ti_sci support to walk through the wakeup-source phandle
+   lists
+ - Added pinctrl settings for mcu_mcan0/1 on all boards
+ - Minor style updates for ti_sci support for transfers without response
+ - Update and move the dt-binding for wakeup-source from the m_can
+   binding to the dt-schema repository
+
+Changes in v4:
+ - Rebased to v6.13-rc1
+ - Removed all regulator related structures from patches and implemented
+   the wakeup-source property use instead.
+
+Changes in v3:
+ - Remove other modes declared for PREPARE_SLEEP as they probably won't
+   ever be used in upstream.
+ - Replace the wait loop after sending PREPARE_SLEEP with msleep and do
+   an emergency_restart if it exits
+ - Remove uarts from DT wakeup sources
+ - Split no response handling in ti_sci_do_xfer() into a separate patch
+   and use goto instead of if ()
+ - Remove DT binding parital-io-wakeup-sources. Instead I am modeling
+   the devices that are in the relevant group that are powered during
+   Partial-IO with the power supplies that are externally provided to
+   the SoC. In this case they are provided through 'vddshv_canuart'. All
+   devices using this regulator can be considered a potential wakeup
+   source if they are wakeup capable and wakeup enabled.
+ - Added devicetree patches adding vcc_3v3_sys regulator and
+   vddshv_canuart for am62-lp-sk
+ - Add pinctrl entries for am62-lp-sk to add WKUP_EN for mcu_mcan0 and
+   mcu_mcan1
+
+Changes in v2:
+ - Rebase to v6.11-rc1
+ - dt-binding:
+    - Update commit message
+    - Add more verbose description of the new binding for a better
+      explanation.
+ - ti_sci driver:
+    - Combine ti_sci_do_send() into ti_sci_do_xfer and only wait on a
+      response if a flag is set.
+    - On failure to enter Partial-IO, do emergency_restart()
+    - Add comments
+    - Fix small things
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Markus Schneider-Pargmann (2):
+      firmware: ti_sci: Support transfers without response
+      firmware: ti_sci: Partial-IO support
 
-diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-index 3de9007ad122..ed6578f7f0f9 100644
---- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-+++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-@@ -689,6 +689,37 @@ static int imx8mq_mipi_csi_set_fmt(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int imx8mq_mipi_csi_get_frame_desc(struct v4l2_subdev *sd,
-+					  unsigned int pad,
-+					  struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct v4l2_mbus_frame_desc_entry *entry = &fd->entry[0];
-+	const struct csi2_pix_format *csi2_fmt;
-+	const struct v4l2_mbus_framefmt *fmt;
-+	struct v4l2_subdev_state *state;
-+
-+	if (pad != MIPI_CSI2_PAD_SOURCE)
-+		return -EINVAL;
-+
-+	state = v4l2_subdev_lock_and_get_active_state(sd);
-+	fmt = v4l2_subdev_state_get_format(state, MIPI_CSI2_PAD_SOURCE);
-+	csi2_fmt = find_csi2_format(fmt->code);
-+	v4l2_subdev_unlock_state(state);
-+
-+	if (!csi2_fmt)
-+		return -EPIPE;
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+
-+	entry->flags = 0;
-+	entry->pixelcode = csi2_fmt->code;
-+	entry->bus.csi2.vc = 0;
-+	entry->bus.csi2.dt = csi2_fmt->data_type;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_video_ops imx8mq_mipi_csi_video_ops = {
- 	.s_stream	= imx8mq_mipi_csi_s_stream,
- };
-@@ -697,6 +728,7 @@ static const struct v4l2_subdev_pad_ops imx8mq_mipi_csi_pad_ops = {
- 	.enum_mbus_code		= imx8mq_mipi_csi_enum_mbus_code,
- 	.get_fmt		= v4l2_subdev_get_fmt,
- 	.set_fmt		= imx8mq_mipi_csi_set_fmt,
-+	.get_frame_desc		= imx8mq_mipi_csi_get_frame_desc,
- };
- 
- static const struct v4l2_subdev_ops imx8mq_mipi_csi_subdev_ops = {
+ drivers/firmware/ti_sci.c | 138 +++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/firmware/ti_sci.h |   5 ++
+ 2 files changed, 140 insertions(+), 3 deletions(-)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20241008-topic-am62-partialio-v6-12-b4-c273fbac4447
+prerequisite-change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8:v8
+prerequisite-patch-id: 02b7142f56c849c9a3faab2d2871805febd647aa
+prerequisite-patch-id: 830b339ea452edd750b04f719da91e721be630cb
+prerequisite-patch-id: 2c9142d2bc47e64c49b7b8a7ca20a62a0be14870
+prerequisite-patch-id: f7652a616dca17fd5e4a7e5cba59de6a6a36079f
+prerequisite-change-id: 20250415-topic-am62-dt-partialio-v6-15-327dd1ff17da:v2
+prerequisite-patch-id: 33c717bb60c1d01f8cc7118916c23c7c0b2199a8
+prerequisite-patch-id: 707e4619d7b844e1b67ccde28b4484b7b0d27daa
+prerequisite-patch-id: 412feb5d3fc125e489d11b726c0b2d8fd5ff36f3
+prerequisite-patch-id: 4e3ed635267f9548b9ac7a9e440971bb1e54a5ee
+prerequisite-patch-id: e0330ef081affbe91e02b2e9b5a76ebab59e6ea6
+prerequisite-patch-id: 8ed14e4861cf2fb4ce2dc2712222ad4d956746d7
+prerequisite-patch-id: 7b961aadd7a3298eb8ad245f173e1c5e47b37be9
+
+Best regards,
 -- 
-2.34.1
+Markus Schneider-Pargmann <msp@baylibre.com>
 
 
