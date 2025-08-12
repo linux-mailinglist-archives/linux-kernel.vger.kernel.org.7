@@ -1,126 +1,217 @@
-Return-Path: <linux-kernel+bounces-764655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98BEB225A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915B9B225A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9ADB3BAA05
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BA1BC0B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7C22ECE8A;
-	Tue, 12 Aug 2025 11:13:12 +0000 (UTC)
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B9A2EAD15
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D127D2ECE8F;
+	Tue, 12 Aug 2025 11:13:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB2D2EAD15
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997191; cv=none; b=bmZQT8QKIrNltTfYpuJ5MRYqltZb1y6D6MknMp/TSD53TPgUjYYpMmntnFmk6YYIDBVrXsPaGaK5UGsCA1c851GS9KXeQKaV3pkV/gvAXiq3WGv7GCf+Hesdr/iB8eTlACqWcGLM8193qVUTQ+ICxmBkU/rIWX+fgt54+zwxI9s=
+	t=1754997231; cv=none; b=g02dheFecOQ+M+DB9V0gxjeYpAQSLitZoEBtJ8yVFlaDzR0YQvRoIK1GkpElN6TtV+k2oa68FV5W1T+T7lT8vQlqiIkqZ+jn2h78+qsQe8xYvBS0m42NvGEFCTveNnebG1Y9vD57ctnmhfcg5W66Cwm4L/hplG1BXESFojjvqPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997191; c=relaxed/simple;
-	bh=0OTulO0TrVaj/t5LScgyrH005tzhIUqyO+zSODJfLVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bEw47C4RtNF+Ba8njHloe02+AEJWR2AVGXeaCBfXNIB1Tve9b8nCZhHwDtnii1HeZJYvscFJkKKFiwBxRGOqN8GeP81qg+Ri2M8GNHxVh37Mruufh66xdjCEfnfyWx7rZiiXnv2FYG66PML73L7JDFl0/NFJ/C5/ChPNF1ux8ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 12 Aug 2025 07:12:58 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ben Collins <bcollins@kernel.org>
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@anaog.com>, 
-	Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH] iio: iio_format_list() should set stride=1 for IIO_VAL_CHAR
-Message-ID: <vidvwybkm3vwmtopihyaj6tlvswwa5ixmgptfzpk5ujl2ixjjb@olz6275ftabs>
-Mail-Followup-To: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@anaog.com>, Andy Shevchenko <andy@kernel.org>
+	s=arc-20240116; t=1754997231; c=relaxed/simple;
+	bh=bfXl0lc5VxsqL8BU5w0/n8jAkLmKrV0vNFAkL7sU7q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+bCO3+dnw+dBM4htNxgw4ACkIw5irGShiy6oW1PkjmqeocQXJzD5ZJ9tcahDNoaFQf+pGN2v+yBAy4fjnOI6mL+dYmuh4QGE6EUyr/dtLZcuAzD0Hrky68ksdfmFKrGoBh78Dn3aIKIO6IN1wf9LB0QyYvcSRQyQyYKb7sRDqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FE5225E1;
+	Tue, 12 Aug 2025 04:13:41 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BB453F63F;
+	Tue, 12 Aug 2025 04:13:45 -0700 (PDT)
+Date: Tue, 12 Aug 2025 12:13:42 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
+	sstabellini@kernel.org, puranjay@kernel.org, broonie@kernel.org,
+	mbenes@suse.cz, ryan.roberts@arm.com, akpm@linux-foundation.org,
+	chenl311@chinatelecom.cn, ada.coupriediaz@arm.com,
+	anshuman.khandual@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, ardb@kernel.org, leitao@debian.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH -next v7 5/7] arm64: entry: Refactor
+ preempt_schedule_irq() check code
+Message-ID: <aJsh5oM3CoUELkvY@J2N7QTR9R3>
+References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
+ <20250729015456.3411143-6-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vdu2yj32lit53a2q"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250729015456.3411143-6-ruanjinjie@huawei.com>
 
+On Tue, Jul 29, 2025 at 09:54:54AM +0800, Jinjie Ruan wrote:
+> ARM64 requires an additional check whether to reschedule on return
+> from interrupt. So add arch_irqentry_exit_need_resched() as the default
+> NOP implementation and hook it up into the need_resched() condition in
+> raw_irqentry_exit_cond_resched(). This allows ARM64 to implement
+> the architecture specific version for switching over to
+> the generic entry code.
+> 
+> To align the structure of the code with irqentry_exit_cond_resched()
+> from the generic entry code, hoist the need_irq_preemption()
+> and IS_ENABLED() check earlier. And different preemption check functions
+> are defined based on whether dynamic preemption is enabled.
+> 
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> Suggested-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  arch/arm64/include/asm/preempt.h |  4 ++++
+>  arch/arm64/kernel/entry-common.c | 35 ++++++++++++++++++--------------
+>  kernel/entry/common.c            | 16 ++++++++++++++-
+>  3 files changed, 39 insertions(+), 16 deletions(-)
 
---vdu2yj32lit53a2q
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [PATCH] iio: iio_format_list() should set stride=1 for IIO_VAL_CHAR
-MIME-Version: 1.0
+Can you please split the change to kernel/entry/common.c into a separate
+patch? That doesn't depend on the arm64-specific changes, and it'll make
+it easier to handle any conflcits when merging this.
 
-iio_format_list() sets a stride across the val array of 1 for INT
-type, and 2 for all others. Add IIO_VAL_CHAR so it also gets a
-stride of 1 assuming val is an array of integers with char type
-values.
+Mark.
 
-No drivers currently use this, but I found this issue adding an
-avail callback for IIO_INFO_THERMOCOUPLE_TYPE for a driver I'm
-working on.
-
-Signed-off-by: Ben Collins <bcollins@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>
-Cc: Nuno S=E1 <nuno.sa@analog.com>
-Cc: Andy Shevchenko <andy@kernel.org>
-
----
- drivers/iio/industrialio-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-cor=
-e.c
-index 159d6c5ca3cec..eb6a54f8115de 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -790,6 +790,7 @@ static ssize_t iio_format_list(char *buf, const int *va=
-ls, int type, int length,
-=20
- 	switch (type) {
- 	case IIO_VAL_INT:
-+	case IIO_VAL_CHAR:
- 		stride =3D 1;
- 		break;
- 	default:
---=20
-2.50.1
-
---=20
- Ben Collins
- https://libjwt.io
- https://github.com/benmcollins
- --
- 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
-
---vdu2yj32lit53a2q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmibIboACgkQXVpXxyQr
-Is9KFRAArz2LNaIYXkr3/HgyJk78e924E3WyQ1bjODM/Qc2z7+vJ0PI0o3Ea57Ft
-3bVRzIqyHR8yQ3xBQbI56vrsqd4W80ybnMfk/4ZGSlh+ffBKp0kkWknqxaJIz3S7
-3XCWAFsC1OQgunxumyTaz8QCJxChD5p4aOyJXo+U+Eo1za3Xo014A0x5R+5JiM4s
-a8jRq9QxaN/oxkfZoOV8S5Rvrys5pF215qbqlX4qRXgkjL6KzhGOurY4JUylNXIi
-YqiGoWNSXh9qiy3BaiFE3kJzhUfGdhp1GYDv9F0rPyy6DWiJRYp4nIFSBLk+NN5r
-9E7OORe8boQl9jjtWECp/9c1Gn1LnacC9I+Ty2YYPMLfrXa+72NjG630tzLIBVQD
-riHfxJn4JfK71G1LESgnA5UQLIaemigDrFy0I3p0lveie+Fd2g16aCZWwYOPSsOl
-zSZhM9KAdVk67q7m8It1stZqz7yQh1ra3LQyp8hbwSMQzOIeeuYPp1Dp+Ad+MG5n
-szMGxS5+6kBqNXYOyu2zXfFLNHE6ZR/8k/jkpQeavzZjGiYjPPXD7wnnHBhCe9Ef
-38C8CfB+FMz22a+/UYA/TYO1/ggk1BJUTbZ4awdV1KoWDXYfsFSEAX5HXMIv6WaC
-ouzPaDSHcnOr5q72A4zysieyVauiVD5PvV41XvH95etr1ikQpjY=
-=ebh1
------END PGP SIGNATURE-----
-
---vdu2yj32lit53a2q--
+> 
+> diff --git a/arch/arm64/include/asm/preempt.h b/arch/arm64/include/asm/preempt.h
+> index 0159b625cc7f..0f0ba250efe8 100644
+> --- a/arch/arm64/include/asm/preempt.h
+> +++ b/arch/arm64/include/asm/preempt.h
+> @@ -85,6 +85,7 @@ static inline bool should_resched(int preempt_offset)
+>  void preempt_schedule(void);
+>  void preempt_schedule_notrace(void);
+>  
+> +void raw_irqentry_exit_cond_resched(void);
+>  #ifdef CONFIG_PREEMPT_DYNAMIC
+>  
+>  DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+> @@ -92,11 +93,14 @@ void dynamic_preempt_schedule(void);
+>  #define __preempt_schedule()		dynamic_preempt_schedule()
+>  void dynamic_preempt_schedule_notrace(void);
+>  #define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
+> +void dynamic_irqentry_exit_cond_resched(void);
+> +#define irqentry_exit_cond_resched()	dynamic_irqentry_exit_cond_resched()
+>  
+>  #else /* CONFIG_PREEMPT_DYNAMIC */
+>  
+>  #define __preempt_schedule()		preempt_schedule()
+>  #define __preempt_schedule_notrace()	preempt_schedule_notrace()
+> +#define irqentry_exit_cond_resched()	raw_irqentry_exit_cond_resched()
+>  
+>  #endif /* CONFIG_PREEMPT_DYNAMIC */
+>  #endif /* CONFIG_PREEMPTION */
+> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+> index 7c2299c1ba79..4f92664fd46c 100644
+> --- a/arch/arm64/kernel/entry-common.c
+> +++ b/arch/arm64/kernel/entry-common.c
+> @@ -285,19 +285,8 @@ static void noinstr arm64_exit_el1_dbg(struct pt_regs *regs,
+>  		lockdep_hardirqs_on(CALLER_ADDR0);
+>  }
+>  
+> -#ifdef CONFIG_PREEMPT_DYNAMIC
+> -DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+> -#define need_irq_preemption() \
+> -	(static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
+> -#else
+> -#define need_irq_preemption()	(IS_ENABLED(CONFIG_PREEMPTION))
+> -#endif
+> -
+>  static inline bool arm64_preempt_schedule_irq(void)
+>  {
+> -	if (!need_irq_preemption())
+> -		return false;
+> -
+>  	/*
+>  	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
+>  	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
+> @@ -672,6 +661,24 @@ static __always_inline void __el1_pnmi(struct pt_regs *regs,
+>  	arm64_exit_nmi(regs, state);
+>  }
+>  
+> +void raw_irqentry_exit_cond_resched(void)
+> +{
+> +	if (!preempt_count()) {
+> +		if (need_resched() && arm64_preempt_schedule_irq())
+> +			preempt_schedule_irq();
+> +	}
+> +}
+> +
+> +#ifdef CONFIG_PREEMPT_DYNAMIC
+> +DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+> +void dynamic_irqentry_exit_cond_resched(void)
+> +{
+> +	if (!static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
+> +		return;
+> +	raw_irqentry_exit_cond_resched();
+> +}
+> +#endif
+> +
+>  static __always_inline void __el1_irq(struct pt_regs *regs,
+>  				      void (*handler)(struct pt_regs *))
+>  {
+> @@ -681,10 +688,8 @@ static __always_inline void __el1_irq(struct pt_regs *regs,
+>  	do_interrupt_handler(regs, handler);
+>  	irq_exit_rcu();
+>  
+> -	if (!preempt_count() && need_resched()) {
+> -		if (arm64_preempt_schedule_irq())
+> -			preempt_schedule_irq();
+> -	}
+> +	if (IS_ENABLED(CONFIG_PREEMPTION))
+> +		irqentry_exit_cond_resched();
+>  
+>  	exit_to_kernel_mode(regs, state);
+>  }
+> diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+> index b82032777310..4aa9656fa1b4 100644
+> --- a/kernel/entry/common.c
+> +++ b/kernel/entry/common.c
+> @@ -142,6 +142,20 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * arch_irqentry_exit_need_resched - Architecture specific need resched function
+> + *
+> + * Invoked from raw_irqentry_exit_cond_resched() to check if need resched.
+> + * Defaults return true.
+> + *
+> + * The main purpose is to permit arch to skip preempt a task from an IRQ.
+> + */
+> +static inline bool arch_irqentry_exit_need_resched(void);
+> +
+> +#ifndef arch_irqentry_exit_need_resched
+> +static inline bool arch_irqentry_exit_need_resched(void) { return true; }
+> +#endif
+> +
+>  void raw_irqentry_exit_cond_resched(void)
+>  {
+>  	if (!preempt_count()) {
+> @@ -149,7 +163,7 @@ void raw_irqentry_exit_cond_resched(void)
+>  		rcu_irq_exit_check_preempt();
+>  		if (IS_ENABLED(CONFIG_DEBUG_ENTRY))
+>  			WARN_ON_ONCE(!on_thread_stack());
+> -		if (need_resched())
+> +		if (need_resched() && arch_irqentry_exit_need_resched())
+>  			preempt_schedule_irq();
+>  	}
+>  }
+> -- 
+> 2.34.1
+> 
 
