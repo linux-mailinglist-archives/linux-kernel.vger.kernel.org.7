@@ -1,74 +1,57 @@
-Return-Path: <linux-kernel+bounces-763962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D89B21C1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D7EB21C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9CC1A260D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EA3189312D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253B22D97B8;
-	Tue, 12 Aug 2025 04:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E90D2DE6EA;
+	Tue, 12 Aug 2025 04:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pfg0XciA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ECmQhPk5"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB81F09B3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE8C1F09B3;
+	Tue, 12 Aug 2025 04:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754972711; cv=none; b=Z0aZUhiaGh+eQ+IvzGxAX8jSePaMF7Onj1UWIQqSj7KC2CMEQUD4XstJdEZJUUV/iswRBjxuXqS2+dUuPqozeS9diamXT+YSRlf4R7HOZjE2mrV+RRsjk/KVpSm4RUop/n6U/biBY3mkf3whS5Qr6T+IqC57GIbTbcRXD47hHkU=
+	t=1754972746; cv=none; b=P/CWYEFRjzsQfIVcgCM3jwmLwsFRaC77ECrgTnzbBwBtSLnjQxq6+wlzm86aqvDxT9R9yaWmRnlZl1Okga1zy1GKLVtDBlvkHOcLhTLsk40yoG65L53v/UwhNfVNVKIOAdTyRy0Gujsrh7nXi7xZMRvynPTV0eU9Lg8j2+r5ePs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754972711; c=relaxed/simple;
-	bh=GcaymzhezF8G36GX0K3K1sbeQTw49v8aWQ5b4GeUkOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jaPDhSTXDG2l+sB3fLuUOK57wULe2VMG8C58wvo8fw1FfiwHbHDzIVd71mmjcQs0zXs35vAiDZUfpMuGYsd5gmfOR3nmWN/Xr8FUDNabIebBgz9UQ2ppHGuYV1R5B5GEJAhLLCuyXDsu+fjKHRiHUGRU8xqu+wX1U3eKOXRGvMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pfg0XciA; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754972710; x=1786508710;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GcaymzhezF8G36GX0K3K1sbeQTw49v8aWQ5b4GeUkOk=;
-  b=Pfg0XciABq5gnHHN+idAC2LfDBPAATtB71gAu2UbypJaE9gAqNkRsCTQ
-   Fcd2H5lA2L5yS9ajRRRRGPmrL+n+IiOgGs3gG0Ya+XAhPL2D50YrYALJD
-   lEDqOr/HrvM/4A5rq8jk3a3k4S6W7+3sotuopSCVZaytcBKup7cr8HHwH
-   3ptx1WAUKZMjC4Z8ljSdztDEYSdEyeSma8z7uGCwGd+oy8q5AjP9/IsxH
-   aI0iilpb3ov9pD85ypm/qVJAnBKawH9ARSn/44s0nSLKyLq3JxXopZhdn
-   dJvZEPHUkdX2tKXh3H6iYDo0bPJVo1e+iDCXJOJNtwAi6q7EfKH5+rwSO
-   Q==;
-X-CSE-ConnectionGUID: vD8QGVnPTGq9E+k+FWHFAQ==
-X-CSE-MsgGUID: B9MsdZmMRh625qSlLWGqfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="44819412"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="44819412"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 21:25:09 -0700
-X-CSE-ConnectionGUID: Yyt8/yAMQFOWGQD8On8uQA==
-X-CSE-MsgGUID: yddPVtKtSmSF4BID+O0O7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166444111"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 11 Aug 2025 21:25:08 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ulgZO-0006Pg-05;
-	Tue, 12 Aug 2025 04:25:06 +0000
-Date: Tue, 12 Aug 2025 12:24:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: aarch64-linux-ld:
- drivers/media/platform/qcom/iris/iris_firmware.c:59: undefined reference to
- `qcom_mdt_load'
-Message-ID: <202508121206.uUCMMLad-lkp@intel.com>
+	s=arc-20240116; t=1754972746; c=relaxed/simple;
+	bh=jn7VKIKwmh9yijF39BDSI8MmB0R0ozzp+ugiE5JuQGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RistoQ3R+oc3tI2O6lYayNVQxK493kBhIlClJEd0dyTtDdNAnyE28SGf/apgL9TrDQARyQLazowSxIZFXAMQs9MwZ40j8hYdRINnwaM1O4TkcapypU8Q3xtk9w3dbiz/AwLYl9749aSfIVPyEdthezN/wEp9kzWq1lIkQG0ezxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ECmQhPk5; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DYOAsvUTPlTJfsNrGGcHNre0gNCRuUiS7M0G90F4Jr8=; b=ECmQhPk5CTjtn3t2u9hlC/b++y
+	+RRT1u4SPiMVjlM2ubuaL9oIgZuxipnWVW6Vhsp75jrtMIlHXViqQ9kdpefbmFFYK2pVqMLIwCJAC
+	2phU7j8mVLoDKnkwkp1N8TdA8ERZS4X+lfqYz4JmCUCBqYmkNFu1xtU53iFEMPDiLeOeh9cAdeosQ
+	++SGcr5023ok1aoWNvsClYH4774QndQXgkEMUdCDUkpoL8kf4RqmLS6WDaPkmRoMVp29ar0urc/jp
+	dxLlWB32SG+ZqiDIxKbkQ8wySOyHbHT7wMTfV9/niRrjL92dhdkLu2owktpYiLaab//Dr73GqoWKh
+	C+6x1daA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulgZv-00000009zbD-0H67;
+	Tue, 12 Aug 2025 04:25:39 +0000
+Date: Tue, 12 Aug 2025 05:25:39 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Rajeev Mishra <rajeevm@hpe.com>
+Cc: axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dlemoal@kernel.org
+Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
+Message-ID: <20250812042539.GT222315@ZenIV>
+References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
+ <20250812033201.225425-1-rajeevm@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,29 +60,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250812033201.225425-1-rajeevm@hpe.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
-commit: 9ceba431a31544f4f8feb0df58287a58644dc5f5 Merge tag 'ath-next-20250418' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath into wireless-next
-date:   4 months ago
-config: arm64-randconfig-004-20250812 (https://download.01.org/0day-ci/archive/20250812/202508121206.uUCMMLad-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508121206.uUCMMLad-lkp@intel.com/reproduce)
+On Tue, Aug 12, 2025 at 03:32:01AM +0000, Rajeev Mishra wrote:
+> Hi Kuai,
+> 
+> Thank you for the feedback on the v2 patch regarding error handling.
+> 
+> Yu mentioned:
+> > return 0 here is odd. Why not "return ret;" to propagate the error if any ?
+> 
+> I understand the concern about proper error propagation. However, there's a 
+> type compatibility issue I'd like to discuss before implementing v3:
+> 
+> 1. Current function signature: `static loff_t get_size(...)` 
+>    - Returns size as positive loff_t (unsigned 64-bit)  
+>    - All callers expect non-negative size values
+> 
+> 2. vfs_getattr_nosec() error codes are negative integers (-ENOENT, -EIO, etc.)
+>    - Returning `ret` would cast negative errors to huge positive numbers
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508121206.uUCMMLad-lkp@intel.com/
+Huh? loff_t is signed; had always been that way...
 
-All errors (new ones prefixed by >>):
+> 3. Current callers like loop_set_size() don't handle error checking
 
-   aarch64-linux-ld: drivers/media/platform/qcom/iris/iris_firmware.o: in function `iris_load_fw_to_memory':
->> drivers/media/platform/qcom/iris/iris_firmware.c:49: undefined reference to `qcom_mdt_get_size'
->> drivers/media/platform/qcom/iris/iris_firmware.c:49:(.text+0x2a0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_mdt_get_size'
->> aarch64-linux-ld: drivers/media/platform/qcom/iris/iris_firmware.c:59: undefined reference to `qcom_mdt_load'
->> drivers/media/platform/qcom/iris/iris_firmware.c:59:(.text+0x2ec): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_mdt_load'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you start returning errors, they ought to.  Incidentally, it might make
+sense to return the size in bytes - just move the shift into loop_set_size()...
 
