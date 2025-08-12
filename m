@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-765661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F340B23C2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0F6B23C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A1EE7A798A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 780147B708B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAF22F0683;
-	Tue, 12 Aug 2025 23:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3656F2D0622;
+	Tue, 12 Aug 2025 23:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKEkzqTS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7i4scn1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2CF208CA;
-	Tue, 12 Aug 2025 23:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908B31E493C;
+	Tue, 12 Aug 2025 23:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755039674; cv=none; b=qXUFTZnUzEQ9K1JYcNKMVLOcZ5c/WBmz7hk+1rMY+uqFIdRZdJ/2n+KJHTfxUAICchddILye69CFHI4oHWUNPiz+eoJO6X+v0Why/4L2ecXeQKG8hjEd/Cq5ustNMfzMGHyGIp0sS/Gftbykys+nRcwhIneQIGCPbbF9DELSKFM=
+	t=1755040671; cv=none; b=dZjA6q9GLiEYwaFqNk80GCZnC/WT3NvHiLa45jwXQxBk6eJ01v59H/kYvv6PUv+U3pb0iPw0j5Js728Q2hSiLAiu18oeV9oozezAx5iLwz4wQgQsHEtiBqGMEYzjZTKySDRFZvqQ7QrTb8QRgKSUfjEdyrISgjQo+WM8EUuk5+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755039674; c=relaxed/simple;
-	bh=fyIoJvtI8A7FcfvrBxgqARccMQCph7ooMA2iQKEgbwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SOvzkNVSWPJ/HwUdz8jZ5666y9oNKtc1USKKMMTGTjYCnvbVSdSU85tJNQiwyv6oW6U7bDmGJc9Zn1t+CFWByPM0boVAWA0ovn/F9+2ZlzarXZhrbFt7m4Bjvt5jDX2lwlVEy6rG6QpQKpRX4n1iAHubboMGDeuvpMAaE2VuuDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKEkzqTS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F19EC4CEF1;
-	Tue, 12 Aug 2025 23:01:13 +0000 (UTC)
+	s=arc-20240116; t=1755040671; c=relaxed/simple;
+	bh=mphiqOdQXDDKL7JZOE6d1Tgtt4nHTE3ai/ZtREqsIbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bS1HUOaCO75VS+8o4WkRJP5t3bNrxYmUbS3zIFSGIn5R4yDLLxZ6KZzD3xyJVzDHGD0dgtgtGY8qLOiuNcDFQOWoq4OsD7AtG9MhWnPcgFE1pPR3ghSYqslcyS0J+W0w9NLaA/KvxtOqvh/J7Wi+kuvaRNW2bhwKZGcO6Y0Z2iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7i4scn1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3820C4CEF0;
+	Tue, 12 Aug 2025 23:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755039673;
-	bh=fyIoJvtI8A7FcfvrBxgqARccMQCph7ooMA2iQKEgbwY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jKEkzqTSnP5vQnMh2MQGsDWEx3tTFsnl7CsLNWphQ/6MduONMP3yWiFFAM6C+KEmR
-	 ENucYmDo4CUmDedYcx/vgExl7tIScNBK2ON80Hq7lKsWQnyzYHO9GsFVLKKpBchA8c
-	 DtiNctisHlc8evUEBAUQpHYQX8ULMTUdk+tJOKCloaREhU8MaNPNyMjP5QcgfZIA6B
-	 gRI6bmyqGOrbQGTOlXT/idFfIaIfBg1PA3GwBrrM3y8TYEe3S1nAQEBlkAHLaMYt55
-	 UNNI0R403Rf1qEkjq7UAPsgZO/JJxlAo9ACTD8fiPNwdAmdCdrSMWtD1ddTui05gAn
-	 NhXeWVsMtfKNQ==
-Date: Tue, 12 Aug 2025 18:01:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, cassel@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
-	thippeswamy.havalige@amd.com
-Subject: Re: [PATCH v7 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Message-ID: <20250812230112.GA202387@bhelgaas>
+	s=k20201202; t=1755040671;
+	bh=mphiqOdQXDDKL7JZOE6d1Tgtt4nHTE3ai/ZtREqsIbw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D7i4scn1FQ/wT7dOAYsdhBmhevEiPfY/I3BUlQhqFg4t9ByvbjzkFH18wgOpMzg3d
+	 MFRqGjvG6An1L2ZHjkqTLZndtfnaJPtJwufhroPVkP40UNhfjrAI+ZEp4EvxXGLyEj
+	 wprEyM4oRjB7FLisg/gGjU8Ct8wVHxCT9IF6Zv/NNALonRmBnG3sb38HSVqRqvFLH1
+	 a/z88sPXJxOL+50l4lR02YmbbWFL4V0Uy40if9sus75cuAwxUfH7WsYwuXwo2wLkWR
+	 uiMWRMDC2/eU+Xa5b+rLffxiFi/VIphl3L43UCSrLZnej1Pw24NcVXSQJXHItsIEOP
+	 sZM9bHV1HlTVQ==
+Date: Wed, 13 Aug 2025 01:17:46 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 3/7] docs: kdoc: clean up the create_parameter_list()
+ "first arg" logic
+Message-ID: <20250813011746.6779c0f1@foz.lan>
+In-Reply-To: <20250812195748.124402-4-corbet@lwn.net>
+References: <20250812195748.124402-1-corbet@lwn.net>
+	<20250812195748.124402-4-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812194113.GA199940@bhelgaas>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 02:41:15PM -0500, Bjorn Helgaas wrote:
-> On Thu, Aug 07, 2025 at 01:10:19PM +0530, Sai Krishna Musham wrote:
-> > Add support for handling the AMD Versal Gen 2 MDB PCIe Root Port PERST#
-> > signal via a GPIO by parsing the new PCIe bridge node to acquire the
-> > reset GPIO. If the bridge node is not found, fall back to acquiring it
-> > from the PCIe host bridge node.
-> > 
-> > As part of this, update the interrupt controller node parsing to use
-> > of_get_child_by_name() instead of of_get_next_child(), since the PCIe
-> > host bridge node now has multiple children. This ensures the correct
-> > node is selected during initialization.
-> ...
+On Tue, 12 Aug 2025 13:57:44 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-> >   * @slcr: MDB System Level Control and Status Register (SLCR) base
-> >   * @intx_domain: INTx IRQ domain pointer
-> >   * @mdb_domain: MDB IRQ domain pointer
-> > + * @perst_gpio: GPIO descriptor for PERST# signal handling
-> >   * @intx_irq: INTx IRQ interrupt number
-> >   */
-> >  struct amd_mdb_pcie {
-> > @@ -63,6 +65,7 @@ struct amd_mdb_pcie {
-> >  	void __iomem			*slcr;
-> >  	struct irq_domain		*intx_domain;
-> >  	struct irq_domain		*mdb_domain;
-> > +	struct gpio_desc		*perst_gpio;
-> >  	int				intx_irq;
-> >  };
-> >  
-> > @@ -284,7 +287,7 @@ static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
-> >  	struct device_node *pcie_intc_node;
-> >  	int err;
-> >  
-> > -	pcie_intc_node = of_get_next_child(node, NULL);
-> > +	pcie_intc_node = of_get_child_by_name(node, "interrupt-controller");
-> >  	if (!pcie_intc_node) {
-> >  		dev_err(dev, "No PCIe Intc node found\n");
-> >  		return -ENODEV;
-> > @@ -402,6 +405,28 @@ static int amd_mdb_setup_irq(struct amd_mdb_pcie *pcie,
-> >  	return 0;
-> >  }
-> >  
-> > +static int amd_mdb_parse_pcie_port(struct amd_mdb_pcie *pcie)
-> > +{
-> > +	struct device *dev = pcie->pci.dev;
-> > +	struct device_node *pcie_port_node __maybe_unused;
-> > +
-> > +	/*
-> > +	 * This platform currently supports only one Root Port, so the loop
-> > +	 * will execute only once.
-> > +	 * TODO: Enhance the driver to handle multiple Root Ports in the future.
-> > +	 */
-> > +	for_each_child_of_node_with_prefix(dev->of_node, pcie_port_node, "pcie") {
+> The logic for finding the name of the first in a series of variable names
+> is somewhat convoluted and, in the use of .extend(), actively buggy.
+> Document what is happening and simplify the logic.
 > 
-> This is only the second user of for_each_child_of_node_with_prefix()
-> in the whole tree.  Also the only use of "__maybe_unused" in
-> drivers/pci/controller/.
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 > 
-> Most of the PCI controller drivers use
-> for_each_available_child_of_node_scoped(); can we do the same here?
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 53051ce831ba..47f7ea01ed10 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -553,18 +553,18 @@ class KernelDoc:
+>                  arg = KernRe(r'\s*\[').sub('[', arg)
+>                  args = KernRe(r'\s*,\s*').split(arg)
+>                  args[0] = re.sub(r'(\*+)\s*', r' \1', args[0])
+> -
+> -                first_arg = []
+> -                r = KernRe(r'^(.*\s+)(.*?\[.*\].*)$')
+> -                if args[0] and r.match(args[0]):
+> -                    args.pop(0)
+> -                    first_arg.extend(r.group(1))
+> -                    first_arg.append(r.group(2))
 
-I suppose you used for_each_child_of_node_with_prefix() because, as
-you mentioned in the commit log, there may be multiple children
-(interrupt controller and Root Port(s))?
+I double-checked the Perl code. The Python version seems to be an exact
+translation of what was there:
 
-I think of_irq_parse_and_map_pci() takes care of much of the INTx
-setup based on interrupt-map, so many drivers don't contain any
-explicit INTx stuff.  But amd-mdb must be an exception for some
-reason.
+            $arg =~ s/\s*\[/\[/g;
 
-Most bindings don't include an interrupt-controller child in the pcie@
-stanza.  I don't know enough about device tree to understand why
-amd-mdb needs it.
+            my @args = split('\s*,\s*', $arg);
+            if ($args[0] =~ m/\*/) {
+                $args[0] =~ s/(\*+)\s*/ $1/;
+            }
 
-Bjorn
+	    my @first_arg;
+            if ($args[0] =~ /^(.*\s+)(.*?\[.*\].*)$/) {
+                shift @args;
+                push(@first_arg, split('\s+', $1));
+                push(@first_arg, $2);
+            } else {
+                @first_arg = split('\s+', shift @args);
+            }
+
+Yeah, I agree that this logic is confusing. 
+
+> +                #
+> +                # args[0] has a string of "type a".  If "a" includes an [array]
+> +                # declaration, we want to not be fooled by any white space inside
+> +                # the brackets, so detect and handle that case specially.
+> +                #
+> +                r = KernRe(r'^([^[\]]*\s+)' r'((?:.*?\[.*\].*)|(?:.*?))$')
+
+Same comment as patch 6/7... concats in the middle of the like IMO makes it
+harder to read. Better to place them on separate lines:
+
+	r = KernRe(r'^([^[\]]*\s+)'
+		   r'((?:.*?\[.*\].*)|(?:.*?))$')
+
+> +                if r.match(args[0]):
+> +                    args[0] = r.group(2)
+> +                    dtype = r.group(1)
+>                  else:
+> -                    first_arg = KernRe(r'\s+').split(args.pop(0))
+> -
+> -                args.insert(0, first_arg.pop())
+> -                dtype = ' '.join(first_arg)
+> +                    # No space in args[0]; this seems wrong but preserves previous behavior
+> +                    dtype = ''
+>  
+>                  bitfield_re = KernRe(r'(.*?):(\w+)')
+>                  for param in args:
+
+I didn't test your new code. On a first glance, it doesn't seem identical
+to the previous one, but if you tested it and the results are the same,
+the new version seems nicer once you split the concat on two lines. So,
+feel free to add:
+
+Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+
+-
+
+Btw, IMHO, it would make sense to have unittests to check things
+like that to ensure that new patches won't cause regressions for
+some particular usecases.
+
+Thanks,
+Mauro
 
