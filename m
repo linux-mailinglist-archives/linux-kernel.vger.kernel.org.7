@@ -1,127 +1,81 @@
-Return-Path: <linux-kernel+bounces-765376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBA8B230C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:56:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3054DB230ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183D6685CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00EDC567189
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5AC2FE563;
-	Tue, 12 Aug 2025 17:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49EC268C73;
+	Tue, 12 Aug 2025 17:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIMfAvgs"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="ofFm2+Kj"
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE62FAC02;
-	Tue, 12 Aug 2025 17:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17CF2FAC02;
+	Tue, 12 Aug 2025 17:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755021317; cv=none; b=dGS1pUbJJ8NPVR1/oPhWHAtq7oYd45+27htHQ+9J3LD2RCZWgU7D+Jvw2c5g7rBRGrYO/tzQPt4/bESaeoSckNEQITqNPgsM2kmpkM/S3cGsESj+5jKYYC+XRiaK5+quh9eg4EGKoFYzze3zDEOz2+Xmz391bK36nsc/sdjRUUs=
+	t=1755021430; cv=none; b=aygC/08PzUYbO4FEiMQMPSkJquZfdyMJbXH9bZrqKuKZ2sK2/sDqMbyibHmonYjZUCExb8iKpYyI3YhYKOtTaEPMcF3ED60b65rzDNPCXFSF6mXUexj2R25Sljs1k013v/IOOrzQlMoQqjs+grKNA9fpsEd6kNzDEjfAkgdl3Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755021317; c=relaxed/simple;
-	bh=PQ92Ps1KLUdy3bH+AaO3wSg7T74mkl3PFwFmSqQ51gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dv/RgAt248ieoBcXEcNwN7peIwbPOL0aOWOZPrxJEA7J2ovAoIIFtvrEw+Qa+ugaqVjqpxCpNnj3hxZMHB1ZtPOeQaCZ+/gN24AJ3WFOISFbTrS2XyIFkXzpVC9xH3Qs3KgubWG9lxNglWU6oWOjpBkNQg4WcSqmeWHQHpJTpvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIMfAvgs; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24049d1643aso42781895ad.3;
-        Tue, 12 Aug 2025 10:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755021316; x=1755626116; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymZGpmngRJ7fOyPoIYIbr864BuGgQbxABMyIAp/lv7M=;
-        b=dIMfAvgsZ57UsrIZ4/MgyjcOdG8YzxhK0Nas9FRVyfoa2rauXWhwgCrQQkWPiuyfr5
-         pAVn5/jo12mWvWYXr1VJ8SmsEJcZzb5PG9vUTA25SBUz8dLYxA/G6ChV/11T9P9V5/Gq
-         J2ti1cbKEeLASNK2LG3YfrBCBlbcivrkIWoYu70QafNGOLGIshDyhFkpkFkn4wFOhIID
-         hKOZwbQOWji0YKCFtfYwxqmJhB+mCEcE1BVGzRAz7Bc14IRaGZb2LedgkZq8vjZT2gJu
-         HCUccuuCB6jPO7M7V5IWAQNQjMyHQ5IyaNJBu8EWHeDNVQElamvo1KKRZYM33tawYRev
-         I9YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755021316; x=1755626116;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ymZGpmngRJ7fOyPoIYIbr864BuGgQbxABMyIAp/lv7M=;
-        b=lcZS+ACgawfOafnK6iMaqClRXfavKqT7lR7C9wrcoZdMkqvrX3UM2Kir0JvsGJi7u/
-         O7gpHZPkAAKaAE8wxAcjij5mLJcOLfGfzqzifhy7EuLYwXKPdAue8xlAQNZHZxDDX9L/
-         xgAe2PhJAtPkK9vqgKfUjgO2/AA7N2vSZXR6vBoeN5/zbPRaua7r+Nv0V2uTZzn6MiZU
-         wDtFBx6VXA3ayeJWe0JkXbrCnoMfWQflcKhkZ1kx4LSGs3pQASQYdWkHVRFqUBwfKbOI
-         btODmDumeKlxY5ZYDJcySQLQJXOd5uj6VIEO7cTeW6SkFpTmZ9DDpM5Lgsh0saQ8EyEY
-         XlMg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9X9vtGseMOumh1vXyMBlJlEm7FtuYQejSuaHcE70wMiya4ymOegyMCYPw8FK0T8bMqNLHwQPv++LU@vger.kernel.org, AJvYcCVVLW+aL/9tTwLzRb3JstnUaYSbMTNezFyEgF1GUUuK46Rs2he6NeTzDggx+p0SaNK/l86atLyhwEgjrxScPw==@vger.kernel.org, AJvYcCXNBj0Hh2FK4siXoah8tA3OiPXUp1mWs0KUb9yG1sJWsd107Dr+2e2R14B/TUlWP7PIVGQm028rnxlHk6aS@vger.kernel.org
-X-Gm-Message-State: AOJu0YznBbzpVMU+juDv30UFxCOjg4eXiFr6fSLY6mFTTEUyk76dz/Ay
-	nUNitCU3VtoWkADEoYABu3xg+g2yGtFjoC6rmSAeO9V75wfgbFWXzfbR
-X-Gm-Gg: ASbGncv00eaiApbOQru2hfVXiJeZdpXIqLqbq8gotjJIH8w/KGaoF41XogA0u7Qw/Cp
-	T7l16iTOLVVUv3A3arNTH+k4VmzHhDZcUMXZk/GvAmkdElWwFmVP3ZG7hgud4/Qzw6EI6X6dAhY
-	Fjzuu7OAjR548qDgS1KJt1ypx2VKYeT0wv9+GUoBlR1ORicWsdas6oWlJrC7bRHFhcxSh/phls8
-	zc6foWeUtcne4h2fEmPgZ2OIiqTlzxG0ZFKiDKUD14l5GUgDCTCZW1k4ZhAV9Gv/RPkK6ZkWFWK
-	RRsjeDgG7lw2duMjg6GNzExqSLTnqpnFo3JSJ+XUTDTQq8o3KDNlgtBCsgjq5bKzxDJs9d1aDyo
-	KsfAsPUujdCm043rXME1jeqYyTb15QcukKphut7Lq/4v2wxp/AJqf4EPOfpRPro4R
-X-Google-Smtp-Source: AGHT+IE18aIbwR3kUmI00of6zx1vDAbhjJri7AMTb1JJykSzC0p6KytmOlYDyZhwco9kF97wduWaUA==
-X-Received: by 2002:a17:903:2a8d:b0:243:8f:6db5 with SMTP id d9443c01a7336-2430d0a260amr1715145ad.6.1755021315592;
-        Tue, 12 Aug 2025 10:55:15 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm279039935ad.16.2025.08.12.10.55.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 10:55:15 -0700 (PDT)
-Date: Tue, 12 Aug 2025 10:55:11 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>, SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Rik van Riel <riel@surriel.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2] mm: remove redundant __GFP_NOWARN
-Message-ID: <aJt__zOHjGcaghNf@fedora>
-References: <20250812135225.274316-1-rongqianfeng@vivo.com>
- <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
+	s=arc-20240116; t=1755021430; c=relaxed/simple;
+	bh=1Z+U2DJlMAuCw1lLwAJpxBKenOLT+M23V2k2PAUX/N4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OWX7dkvLesWtOfug5jlYlCq4uVuuaAo8DIMXGsfdlX/UzLK0LuT/yO8FWJngcY9MtVEaEjPubmMpudlVJQEphKdoYxNUyJX1vJETojBb6v+Ox5xdsmIMsndRjUNreiobPJsNvbbem0dqY7YV+6pC8Vir+quzo09i6jlGLKT2Z18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=ofFm2+Kj; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
+Received: from mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:1aa8:0:640:56c3:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 02B8DC155E;
+	Tue, 12 Aug 2025 20:56:57 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id tuOFsvIM14Y0-jyHhrPpY;
+	Tue, 12 Aug 2025 20:56:56 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
+	t=1755021416; bh=MAVwawUlLgCHpxdh35P/HleysPyy+xhHuOJcxMhmnSQ=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=ofFm2+Kjrq2J1SYDJpKgMUPpMyoQfpv1IitwJazcQadpjSjrVHbVvVIoS33OeK/lS
+	 YbsWRq4ugUdDW2ESetorV/XTzDY26cv7lp6qI0Qf3TdtmrFFdC+VIFWww8+U5p/azJ
+	 Ch9MF6Rs++ptPjtWoB1bZ/nzELxDrqQzatzbNSME=
+Authentication-Results: mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net; dkim=pass header.i=@0upti.me
+Message-ID: <d51317d4-92da-4617-970d-6a63236aec30@0upti.me>
+Date: Tue, 12 Aug 2025 20:56:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
+To: Greg KH <gregkh@linuxfoundation.org>, Armin Wolf <W_Armin@gmx.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250729062038.303734-1-W_Armin@gmx.de>
+ <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
+ <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
+ <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
+ <2025081246-raft-tattle-642c@gregkh>
+ <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
+ <2025081227-humpback-garden-7a4b@gregkh>
+Content-Language: en-US
+From: Ilya K <me@0upti.me>
+In-Reply-To: <2025081227-humpback-garden-7a4b@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 05:46:47PM +0100, Lorenzo Stoakes wrote:
-> On Tue, Aug 12, 2025 at 09:52:25PM +0800, Qianfeng Rong wrote:
-> > Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
-> > GFP_NOWAIT implicitly include __GFP_NOWARN.
-> >
-> > Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
-> > `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
-> > redundant flags across subsystems.
-> >
-> > No functional changes.
-> >
-> > Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+On 2025-08-12 20:10, Greg KH wrote:
 > 
-> LGTM, I wonder if there are other such redundancies in the kernel?
+> Please read the above link for the full details on how to do this (hint,
+> Fixes: will not do it.)
+> 
 
-Looks like theres a lot left for this specific case. At least 48 show up
-that are spread out across subsystems when running 'git grep
-"GFP_NOWAIT.*GFP_NOWARN"'.
-
-I think they should be cleaned up in sets per-subsystem to minimize
-merge conflicts, as suggested in the commit mentioned above (16f5dfbc851b).
+I might be missing something, but doesn't that just tell you to CC stable@?
+Or do you have to specifically have the CC on the initial patch submission, not anywhere in the thread?
 
