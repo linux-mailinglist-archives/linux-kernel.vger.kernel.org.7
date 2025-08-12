@@ -1,97 +1,217 @@
-Return-Path: <linux-kernel+bounces-764787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E52B22750
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:48:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C3FB2275F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5EA5004FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED904501446
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E167B23B612;
-	Tue, 12 Aug 2025 12:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvr2PH6Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5D199230;
-	Tue, 12 Aug 2025 12:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05D826AA88;
+	Tue, 12 Aug 2025 12:50:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0731225949A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755002910; cv=none; b=e1vEjX6Z0a5XNol8fK/+ocbJ+GOrOIbEu37Es+O71gJmhEpYafH1RjibpFs3812yv1OofComv+yCCGN9Sh4hC/AW1DwmHmfqLKCLLSxtlUN0Ds8ReMiDKR8oFYBiES3g51fdwLtO48NAEe3DWoUlprnUcVZUF7HatKBchi+hQbY=
+	t=1755003017; cv=none; b=gA6PHUcUvUlS8UjVHsmZexHXmvChs/LsbUO1fhUbyavJntQQSw/1wPHg3RupJlu52+5cRvTVbJuVvHByMssK03fTCLNv0v91kdFz5z/O/HfLz4oQ5LhBg9VVX6viTGVIiIU0iTTyWDfbtFpr3uzsbutmwciPXEauuhBeNwLJf3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755002910; c=relaxed/simple;
-	bh=i/vGmqu9dH6WECIjxg44yJaSv5Tp+gsmXK0hqRe81+s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gXt/X4ahpWtGl+6dQ3bvHZ2F6eww90BPIyHKkfT4T/Uo+z+mdg4lnsAEh5heOWwjIPzITiaLQtVFmoEHsT2Bvtlf6Nmkhk8FwVKn3foIyj7nzusxdiBnfT7r2K38K/QKrI+bdv5Hez6DnIGnmW/YcaIs234AgdMNrhREHXXJL7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvr2PH6Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D5DC4CEF0;
-	Tue, 12 Aug 2025 12:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755002909;
-	bh=i/vGmqu9dH6WECIjxg44yJaSv5Tp+gsmXK0hqRe81+s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=dvr2PH6Yj8f0OBVwaaJHNIN4ZRIt2K/GerN1FTiy03jPBgED48IvCxVTfPKPDdAqt
-	 qtfAk+p3J0nNikz/O4xko2kX6/wKxOXmSUMQXgWtlZb6ni5E9UmTLReBBcAj9FE1jr
-	 oPCizXq3SVMopiZVY6gvhf/T6LE+Cbpc5HjgOTuskrcBHIFrjFKjSA72L4SwJStVou
-	 9SEXwBmDvyhMGXlIW3YXxVVgLWRk7ks6hCd+AZ8t7lp7rbVSP2E4isxmwdftxiio1I
-	 TUzJrm3oiCvnZLSHcm2JqKcuejTgoXljOc6JgJ+KrRoQHZ1meQyFjAkehT844HUCB3
-	 aXMiDukzEt77Q==
-Date: Tue, 12 Aug 2025 14:48:27 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-cc: bentiss@kernel.org, hadess@hadess.net, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: steelseries: refactor probe() and remove()
-In-Reply-To: <20250717112643.1410093-1-aha310510@gmail.com>
-Message-ID: <4r8n3287-o91r-4903-0o01-5q93834sp47n@xreary.bet>
-References: <20250717112643.1410093-1-aha310510@gmail.com>
+	s=arc-20240116; t=1755003017; c=relaxed/simple;
+	bh=BQ9qfFghJkHCuYTaa5QLrx/7K3yz+3ozWDI00+epl04=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=G/2yrclZecTD9M9343Mjg0RbX+P22rMHt/eubdV4X3CTVvHT9kmNkUN7howsuhaTmJovBCBk6TKzJYKls3om8bRxA4N7mx3+bTr0Dzet3w+1WlR2OaW0rFlFEt1WfyqbrnJrZ0XrVangtpHIieFQC/Jtg0AvsQ7PCm5rkF436Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.126])
+	by gateway (Coremail) with SMTP id _____8AxlnB+OJtoS_Y+AQ--.53318S3;
+	Tue, 12 Aug 2025 20:50:06 +0800 (CST)
+Received: from [10.20.42.126] (unknown [10.20.42.126])
+	by front1 (Coremail) with SMTP id qMiowJAxE+R6OJtoeaNGAA--.5023S3;
+	Tue, 12 Aug 2025 20:50:05 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
+ threads in virtual machines
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>,
+ Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250812090056.771379-1-lixianglai@loongson.cn>
+ <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
+From: lixianglai <lixianglai@loongson.cn>
+Message-ID: <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
+Date: Tue, 12 Aug 2025 20:48:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowJAxE+R6OJtoeaNGAA--.5023S3
+X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWF1rZr1xCw47Ar15Kw48GrX_yoWrAF45pr
+	WkCFs8KrZYkrn2vw13t3srZFy3tw4kGw12vFyfXF17Ar9rZr9YgF40qryq9Fy5Jaykur40
+	vw10vrnxuF4DtrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8hiSPUUUUU==
 
-On Thu, 17 Jul 2025, Jeongjun Park wrote:
 
-> steelseries_srws1_probe() still does not use devm_kzalloc() and
-> devm_led_classdev_register(), so there is a lot of code to safely manage
-> heap, which reduces readability and may cause memory leaks due to minor
-> patch mistakes in the future.
-> 
-> Therefore, it should be changed to use devm_kzalloc() and
-> devm_led_classdev_register() to easily and safely manage heap.
-> 
-> Also, the current steelseries driver mainly checks sd->quriks to determine
-> which product a specific HID device is, which is not the correct way.
-> 
-> remove(), unlike probe(), does not receive struct hid_device_id as an
-> argument, so it must check hdev unconditionally to know which product
-> it is.
-> 
-> However, since struct steelseries_device and struct steelseries_srws1_data
-> have different structures, if SRWS1 is removed in remove(), converts
-> hdev->dev, which is initialized to struct steelseries_srws1_data,
-> to struct steelseries_device and uses it. This causes various
-> memory-related bugs as completely unexpected values exist in member
-> variables of the structure.
-> 
-> Therefore, in order to modify probe() and remove() to work properly,
-> Arctis 1, 9 should be added to HID_USB_DEVICE and some functions should be
-> modified to check hdev->product when determining HID device product.
-> 
-> Fixes: a0c76896c3fb ("HID: steelseries: Add support for Arctis 1 XBox")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 
-Applied to hid.git#for-6.18/steelseries, thanks.
+Hi Huacai Chen:
+> Hi, Xianglai,
+>
+> There is something that can be improved.
+>
+> On Tue, Aug 12, 2025 at 5:24 PM Xianglai Li <lixianglai@loongson.cn> wrote:
+>> When the cpu is offline, the timer under loongarch is not correctly closed,
+>> resulting in an excessively high cpu usage rate of the offline vcpu thread
+>> in the virtual machine.
+>>
+>> To correctly close the timer, we have made the following modifications:
+>>
+>> Register the cpu hotplug timer start event for loongarch.This event will
+>> be called to close the timer when the cpu is offline.
+>>
+>> Clear the timer interrupt when the timer is turned off
+>>
+>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+>> ---
+>>   arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
+>>   include/linux/cpuhotplug.h   |  1 +
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+>> index 367906b10f81..4daa11512eba 100644
+>> --- a/arch/loongarch/kernel/time.c
+>> +++ b/arch/loongarch/kernel/time.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/kernel.h>
+>>   #include <linux/sched_clock.h>
+>>   #include <linux/spinlock.h>
+>> +#include <linux/cpu.h>
+>>
+>>   #include <asm/cpu-features.h>
+>>   #include <asm/loongarch.h>
+>> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct clock_event_device *evt)
+>>          timer_config &= ~CSR_TCFG_EN;
+>>          csr_write64(timer_config, LOONGARCH_CSR_TCFG);
+>>
+>> +       /* Clear Timer Interrupt */
+>> +       write_csr_tintclear(CSR_TINTCLR_TI);
+>> +
+>>          raw_spin_unlock(&state_lock);
+>>
+>>          return 0;
+>> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
+>>          return res;
+>>   }
+>>
+>> +static int arch_timer_dying_cpu(unsigned int cpu)
+> We can use arch_timer_dying() for short. And then add an
+> arch_timer_starting() like this:
+>
+> static int arch_timer_starting(unsigned int cpu)
+> {
+>          set_csr_ecfg(ECFGF_TIMER);
+>
+>          return 0;
+> }
+>
+> Though ECFGF_TIMER may be enabled in other places, for syntax we need it here.
+>
+>> +{
+>> +       constant_set_state_shutdown(NULL);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>   void __init time_init(void)
+>>   {
+>> +       int err;
+>> +
+>>          if (!cpu_has_cpucfg)
+>>                  const_clock_freq = cpu_clock_freq;
+>>          else
+>> @@ -220,4 +233,11 @@ void __init time_init(void)
+>>          constant_clockevent_init();
+>>          constant_clocksource_init();
+>>          pv_time_init();
+>> +
+>> +       err = cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>> +                                       "loongarch/timer:starting",
+>> +                                       NULL, arch_timer_dying_cpu);
+> Then we need use cpuhp_setup_state() here, because we have a startup
+> function now.
+>
+> And "loongarch/timer:starting" should be
+> "clockevents/loongarch/timer:starting" like others.
+>
+> And the whole should be moved to the last of
+> constant_clockevent_init() because it is clockevent specific.
 
--- 
-Jiri Kosina
-SUSE Labs
+like this?
+
+@@ -164,6 +182,10 @@ int constant_clockevent_init(void)
+
+         timer_irq_installed = 1;
+
++       cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
++                         "clockevents/loongarch/timer:starting",
++                         arch_timer_starting, arch_timer_dying_cpu);
++
+         sync_counter();
+
+
+I was wondering whether it should be placed before or after the 
+"timer_irq_installed" judgment
+
+
+>> +       if (err)
+>> +               pr_info("cpu hotplug event register failed");
+> This is not so useful, because the error isn't fatal.
+>
+>
+> Huacai
+>
+>> +
+>>   }
+>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+>> index edfa61d80702..6606c1546afc 100644
+>> --- a/include/linux/cpuhotplug.h
+>> +++ b/include/linux/cpuhotplug.h
+>> @@ -159,6 +159,7 @@ enum cpuhp_state {
+>>          CPUHP_AP_PERF_ARM_STARTING,
+>>          CPUHP_AP_PERF_RISCV_STARTING,
+>>          CPUHP_AP_ARM_L2X0_STARTING,
+>> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>>          CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>          CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>>          CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
+>>
+>> base-commit: 53e760d8949895390e256e723e7ee46618310361
+>> --
+>> 2.39.1
+>>
 
 
