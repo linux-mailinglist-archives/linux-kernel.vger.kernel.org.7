@@ -1,151 +1,221 @@
-Return-Path: <linux-kernel+bounces-763886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B2FB21B37
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2449AB21B38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA9016B951
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326771652DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1FD2E4245;
-	Tue, 12 Aug 2025 03:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF47A2505A5;
+	Tue, 12 Aug 2025 03:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JdDbeqeX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bcc+nNl/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5772E0B6D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076A81946DF
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754967753; cv=none; b=L7R1SEV2PE4mGnfk6vGurPpehrW7fCXM68H03C4F/nddXaHOVNGL/5Ca9/fsmWN0aoul4niMuVJFIUpTD0ffc9CE6EnGlbi1vKxuZaRv/Gwj6/DByU4jzaCxaWc9F/UxKyVkHv79H0Or33Mc3Xf0cQcKupt2p8K8gxXOyBleCpE=
+	t=1754967850; cv=none; b=EyKQbAVouGmoDVCRxjoLdS0sY5iQJuk9K6bKOZKUHRyAQzC8tQThdvE2laQCUihSH5ibLp1EsJjoUbYoPJBQwLTka3poOkXEix8n2rx1mf1x3Sv3oFtbD/1Ju2+8XF71AhRj0OKHHX7dairBJNn6hr034/hWq6PuYyIUKydIdqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754967753; c=relaxed/simple;
-	bh=ioZp9GwhYq3DOLcNu3g4TvlRC4KH8eaX1JYYcMUAeto=;
+	s=arc-20240116; t=1754967850; c=relaxed/simple;
+	bh=JZcssSDwXvkq47K2QFU0GKFjCEkGDp3/xk6/4k4s/jU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M4+XChEiienv8CKYWC3jLE/vSt9u3d9uDF1HpjEy1jSilK4hutEcIvtorLx3e23h6R9ImV5JoxFsyQq0TH+Y/XCBnaFYaF730Tm2dpqcX2ghiZkPoalafEt+lKrE6FsHA+gL+MWNJUra88eLhCoysC7yuNJv4pMkq8ARinEXOiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JdDbeqeX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754967751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bvrOcstLTid8vKk7e+6Q+Q4vFiqhAtxVL8U0N+GhLdg=;
-	b=JdDbeqeXATtnEcN53MGXm+MTiFo7rXZC3WnF3akq3RsrLjrIFiNgvca99ilKaKj9wQgf7/
-	u8Dc/hb+hRLX1KorSaHOLqVMjhleKTAZthjldXsiBhyWecqoTU1O90WpYbkrXurRMuzEMl
-	+ytL4I/A03FxzviQI9smpVI4tF4kkZI=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-PKhiZYtnNEOT1gcSRoWQDg-1; Mon, 11 Aug 2025 23:02:29 -0400
-X-MC-Unique: PKhiZYtnNEOT1gcSRoWQDg-1
-X-Mimecast-MFC-AGG-ID: PKhiZYtnNEOT1gcSRoWQDg_1754967749
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-31f74a64da9so5478527a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:02:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754967749; x=1755572549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bvrOcstLTid8vKk7e+6Q+Q4vFiqhAtxVL8U0N+GhLdg=;
-        b=eYTkpXcfrpoE7jTjOoY8lwEDPSuaid7171NGWjqpP5w16SdtY8rq3jVowYWnnFIde1
-         hUpuBg1VRnKt1tQzIHONFL8mLRQVg3TIXIu5qK1D3Nbe9FAQc2K8yuX9vS1Gyzc4Orrj
-         lgSJdBUrD9xaf7Y2YscYapwkBJuU1VUKO0KWdDX1NPrLTKK2NJ3nb4vJKKHfqfRu+FXI
-         Mz6J/sTiTHQGAgNkMU7JxXY+Si4k6oIv2Xv8s61JaZ4xKdawPmnjVubff0ZlTjV0zGoL
-         X4OAYwb9lEcKHEyqIpn85a++mW6w4C++WlX+KtFPGWnZQuzxyUXkoKivQBY6rJCCl6BZ
-         ymfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtvxdRyBLUw6d/Ud5KCp5Uo5YF7EVXvxJB5v9onOkeXOSuqKtcoXzXHNRgn7HL6Aal35Uo9hqrViNSNwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy5KKmm0koWcCzzJa29JvUQBi7u25d69byLQsERJ3Vu3j6R59e
-	UkznebNkGX2qOFy7+6dvQuojumTdxGQdY6BorlWdMMFDObK/Qs+l31LvZBipKAxVJPhw5EZ8qYw
-	vqOFLHIj2Ivp4qFG3288GqpMQJk7IK9AgD9mKGeEFmXC8cb20a/DGzeOb9gu/R3uxcY7cPBXvzg
-	+FITqwCGmqvbNtffxZ+CON1K79U0K9Ihpa3VgwZDAm
-X-Gm-Gg: ASbGnctMuFZElpjXa5npwa+3oKlt2LZdoCNc5KRIbitCP8n45OYh8qsJpMqqrMzgVqm
-	A5r41CHaBL/tC6xOPLv8eVhYeVGwsQCzSvYPbkch3NOQzUStLX8QCFAqexXECttbq6e50Btx4hP
-	R/L1jgklNe40k4wytUxfWSCjs=
-X-Received: by 2002:a17:90b:58cd:b0:312:e8ed:758 with SMTP id 98e67ed59e1d1-321c0a52c02mr2393325a91.13.1754967748568;
-        Mon, 11 Aug 2025 20:02:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExmyC1v+o3+EX+7wPrTBSi1UurHHwYyuQx49y6mXs8rpoVylUDhQeJ16Iggq7jiFnxBbGtnT04jO3+mxUeT2E=
-X-Received: by 2002:a17:90b:58cd:b0:312:e8ed:758 with SMTP id
- 98e67ed59e1d1-321c0a52c02mr2393277a91.13.1754967747878; Mon, 11 Aug 2025
- 20:02:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=byjed6IEWK3t9/DDx6u4En55iZiLXz4ktLvhhfP1Ugvzglrb9j7pTxJus4SklwG5rYKJKW6fzhRdbqfk4XAANYMNgsNhwhAyoP+SyHxnwttZQnTqsQ2zgHIHkMW26U8uZvM53yPASFEl89RFlkMKpRtZG+nJQAoxI2q7aVdK/yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bcc+nNl/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919C5C4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754967849;
+	bh=JZcssSDwXvkq47K2QFU0GKFjCEkGDp3/xk6/4k4s/jU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Bcc+nNl/qbetm1EZdjaM2ELnQC1FlhvVLukQYTaHhMzeA7lc2qmxtKaxwXW4KEMVP
+	 qjQaSSkwMxNH2iDhAGFlaali1B8cJIJXPRwHmKlwE/XFLnIVokJzfN4TLlQo2vo802
+	 St1R9EbdDkYrYRvJrn75iUn7WFtOrU8cXuoVqhyiu/1HC7nCk8JVbfjB1h70A8HAEe
+	 SBXiagSWNU+ZVPCPGXyj/dMTIE0BvoILlA1/WileNZmO/6mdapuGEniaRIU4q28hSp
+	 ZJWVDGhViLRz7y+gQRaRAcU7ZmYlXo9Aj+gkcqjFdOBRe7hDlCyKaBQCqE3tzjH+Rp
+	 lq4I9xFcJet+w==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61592ff5df8so6302990a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 20:04:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3x2JbzbOXuyYs+odKJbDyz4A+Hv8bY9GUq2yEiqaV4Qe3cTpr2pBIP7ou2OfoXHKqsJX5ZmkFVqithjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0VD80qN6GzAzdp0pjUZdDM0H+MRWl9yl/eVzJ2iZ+Se4XcqbD
+	79jeoa+BXxsg75CSA5V9Zyc/o3dBl1C840/zYkxRi2EVom0xmeoF3CiQskoKYHguoXk44P7hhuz
+	B3ux6WL5m7wf0u73RxXtAkJQ4+de3Sb4=
+X-Google-Smtp-Source: AGHT+IEpJwbYH7nvlbwIEAKaW6ujz8pkWtW42xhS+xF8oiKPPlaUkSCWoy63SJWAR2gGIT1pakCRMbPUvsHqGJRiLT0=
+X-Received: by 2002:a50:8ad8:0:b0:618:1250:ac54 with SMTP id
+ 4fb4d7f45d1cf-6184ecc363amr837963a12.21.1754967848164; Mon, 11 Aug 2025
+ 20:04:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-5-eperezma@redhat.com>
- <CACGkMEurTUOb6t9g+nVdzwU8LrZ=eAAxzHYVCTH1XkQkRtAUXQ@mail.gmail.com> <CAJaqyWfh_3_J3+rq_7pa0YMUQSQHfeHn7Tvurz=PAmWoqV5vNg@mail.gmail.com>
-In-Reply-To: <CAJaqyWfh_3_J3+rq_7pa0YMUQSQHfeHn7Tvurz=PAmWoqV5vNg@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 12 Aug 2025 11:02:16 +0800
-X-Gm-Features: Ac12FXwZqnO6d7oHIYNzKyQAmB2XYu0MI_aY6JIP8N8FOq5205LaGyJbsvfLzJc
-Message-ID: <CACGkMEv+-zbtPYsRam_8XB1hLCB-Gh5xaRLxpF_gLWZNnG2OEg@mail.gmail.com>
-Subject: Re: [RFC v2 4/7] vduse: return internal vq group struct as map token
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
-	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-4-youling.tang@linux.dev> <CAAhV-H4Sf=74-ni=qUkg3doC4iLrVt=m2bCYCgfmVC0WLNhiDQ@mail.gmail.com>
+ <15fdef37-f380-4b5c-85bb-24482e883dcc@linux.dev>
+In-Reply-To: <15fdef37-f380-4b5c-85bb-24482e883dcc@linux.dev>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 12 Aug 2025 11:03:56 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4_9r=dG=mDU-s2thbv8agoso51U0kHXtx15gxt_wZwVw@mail.gmail.com>
+X-Gm-Features: Ac12FXzivR9jQD2OLx7jwFn4TBUMS53K4UxBkvWIv0r6F9WVP2OGUGDgDn1X83E
+Message-ID: <CAAhV-H4_9r=dG=mDU-s2thbv8agoso51U0kHXtx15gxt_wZwVw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] LoongArch/kexec_file: Add initrd loading
+To: Youling Tang <youling.tang@linux.dev>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Youling Tang <tangyouling@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 7:04=E2=80=AFPM Eugenio Perez Martin
-<eperezma@redhat.com> wrote:
+On Tue, Aug 12, 2025 at 10:38=E2=80=AFAM Youling Tang <youling.tang@linux.d=
+ev> wrote:
 >
-> On Mon, Aug 11, 2025 at 5:11=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
+> Hi, Huacai
+> On 2025/8/11 22:12, Huacai Chen wrote:
+> > Hi, Youling,
 > >
-> > On Thu, Aug 7, 2025 at 7:58=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@red=
-hat.com> wrote:
-> > >
-> > > Return the internal struct that represents the vq group as virtqueue =
-map
-> > > token, instead of the device.
-> >
-> > Note that Michael prefers to use the iova domain. This indeed seems to
-> > be better.
-> >
->
-> Well iova domain would delete an indirection in the pointer chase, but
-> it would be problematic to store the token in the caller.
->
-> And we need to add some way to protect that the ASID of a vq group is
-> not changed in the middle of the operation by an ioctl. IOW, the
-> vq_group_internal struct pointer is constant for all the lifetime of
-> the device, while iova_domain is not.
-
-I will post a new version of DMA rework and switch to using the iova
-domain there. Let's see if it works then.
+> > On Mon, Aug 11, 2025 at 5:28=E2=80=AFPM Youling Tang <youling.tang@linu=
+x.dev> wrote:
+> >> From: Youling Tang <tangyouling@kylinos.cn>
+> >>
+> >> Add inird loading support and pass it to the second kernel via the
+> >> cmdline 'initrd=3Dstart,size'.
+> > I think Patch-3 and Patch-5 should be merged into Patch-2.
+> Not all cases require loading initrd, so Patch-2 is a runnable basic patc=
+h.
+> Separating it into different patches makes it easier to understand and
+> review the code.
+Unnecessary, without separating the code is clear enough.
 
 >
-> > > This allows the DMA functions to access
-> >
-> > s/DMA/map/
-> >
->
-> Ouch, thanks for the catch!
->
-> > > the information per group.
-> > >
-> > > At this moment all the virtqueues share the same vq group, that only
-> > > can point to ASID 0.  This change prepares the infrastructure for act=
-ual
-> > > per-group address space handling
-> > >
-> > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> >
-> > Thanks
-> >
->
+> Patch-5 coming out separately can better illustrate the role of "mem"
+> parameters in capturing the kernel.
+Emm, Patch-5 should be squashed to Patch-4, not Patch-2.
 
-Thanks
+Huacai
 
+>
+> Youling.
+> >
+> > Huacai
+> >
+> >> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> >> ---
+> >>   arch/loongarch/kernel/machine_kexec_file.c | 71 ++++++++++++++++++++=
+++
+> >>   1 file changed, 71 insertions(+)
+> >>
+> >> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongar=
+ch/kernel/machine_kexec_file.c
+> >> index bc91ae0afa4c..e1240644f529 100644
+> >> --- a/arch/loongarch/kernel/machine_kexec_file.c
+> >> +++ b/arch/loongarch/kernel/machine_kexec_file.c
+> >> @@ -34,13 +34,84 @@ int arch_kimage_file_post_load_cleanup(struct kima=
+ge *image)
+> >>          return kexec_image_post_load_cleanup_default(image);
+> >>   }
+> >>
+> >> +/* Adds the "initrd=3Dstart,size" command line parameter to command l=
+ine. */
+> >> +static void cmdline_add_initrd(struct kimage *image, unsigned long *c=
+mdline_tmplen,
+> >> +                               char *modified_cmdline, unsigned long =
+initrd)
+> >> +{
+> >> +       int initrd_strlen;
+> >> +
+> >> +       initrd_strlen =3D sprintf(modified_cmdline + (*cmdline_tmplen)=
+, "initrd=3D0x%lx,0x%lx ",
+> >> +               initrd, image->initrd_buf_len);
+> >> +       *cmdline_tmplen +=3D initrd_strlen;
+> >> +}
+> >> +
+> >> +/*
+> >> + * Tries to add the initrd to the image. If it is not possible to fin=
+d
+> >> + * valid locations, this function will undo changes to the image and =
+return non
+> >> + * zero.
+> >> + */
+> >>   int load_other_segments(struct kimage *image,
+> >>                          unsigned long kernel_load_addr,
+> >>                          unsigned long kernel_size,
+> >>                          char *initrd, unsigned long initrd_len,
+> >>                          char *cmdline, unsigned long cmdline_len)
+> >>   {
+> >> +       struct kexec_buf kbuf;
+> >> +       unsigned long orig_segments =3D image->nr_segments;
+> >> +       char *modified_cmdline =3D NULL;
+> >> +       unsigned long cmdline_tmplen =3D 0;
+> >> +       unsigned long initrd_load_addr =3D 0;
+> >> +       int ret =3D 0;
+> >> +
+> >> +
+> >> +       kbuf.image =3D image;
+> >> +       /* not allocate anything below the kernel */
+> >> +       kbuf.buf_min =3D kernel_load_addr + kernel_size;
+> >> +
+> >> +       modified_cmdline =3D kzalloc(COMMAND_LINE_SIZE, GFP_KERNEL);
+> >> +       if (!modified_cmdline)
+> >> +               return -EINVAL;
+> >> +
+> >> +       /* Ensure it's nul terminated */
+> >> +       modified_cmdline[COMMAND_LINE_SIZE - 1] =3D '\0';
+> >> +
+> >> +       /* load initrd */
+> >> +       if (initrd) {
+> >> +               kbuf.buffer =3D initrd;
+> >> +               kbuf.bufsz =3D initrd_len;
+> >> +               kbuf.mem =3D KEXEC_BUF_MEM_UNKNOWN;
+> >> +               kbuf.memsz =3D initrd_len;
+> >> +               kbuf.buf_align =3D 0;
+> >> +               /* within 1GB-aligned window of up to 32GB in size */
+> >> +               kbuf.buf_max =3D round_down(kernel_load_addr, SZ_1G)
+> >> +                                               + (unsigned long)SZ_1G=
+ * 32;
+> >> +               kbuf.top_down =3D false;
+> >> +
+> >> +               ret =3D kexec_add_buffer(&kbuf);
+> >> +               if (ret)
+> >> +                       goto out_err;
+> >> +               initrd_load_addr =3D kbuf.mem;
+> >> +
+> >> +               kexec_dprintk("Loaded initrd at 0x%lx bufsz=3D0x%lx me=
+msz=3D0x%lx\n",
+> >> +                             initrd_load_addr, kbuf.bufsz, kbuf.memsz=
+);
+> >> +
+> >> +               /* Add the initrd=3Dstart,size parameter to the comman=
+d line */
+> >> +               cmdline_add_initrd(image, &cmdline_tmplen, modified_cm=
+dline, initrd_load_addr);
+> >> +       }
+> >> +
+> >> +       if (cmdline_len + cmdline_tmplen > COMMAND_LINE_SIZE) {
+> >> +               pr_err("Appending kdump cmdline exceeds cmdline size\n=
+");
+> >> +               ret =3D -EINVAL;
+> >> +               goto out_err;
+> >> +       }
+> >> +       memcpy(modified_cmdline + cmdline_tmplen, cmdline, cmdline_len=
+);
+> >> +       cmdline =3D modified_cmdline;
+> >>          image->arch.cmdline_ptr =3D (unsigned long)cmdline;
+> >>
+> >>          return 0;
+> >> +
+> >> +out_err:
+> >> +       image->nr_segments =3D orig_segments;
+> >> +       kfree(modified_cmdline);
+> >> +       return ret;
+> >>   }
+> >> --
+> >> 2.34.1
+> >>
 
