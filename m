@@ -1,93 +1,102 @@
-Return-Path: <linux-kernel+bounces-763920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B07B21B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A3B21BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB18188CB15
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28BAC1A27B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE922E5B33;
-	Tue, 12 Aug 2025 03:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E6F2D3EFB;
+	Tue, 12 Aug 2025 03:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJ+G3nwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WDQwiN26"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7C62E5B1D;
-	Tue, 12 Aug 2025 03:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99565240611;
+	Tue, 12 Aug 2025 03:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754968815; cv=none; b=tc0Hjm7n/yHqzcZyNiZ2WrnPs2G4Qv/9dvimGKO3Lh5dQN/xA54kLWoYphBoSrYQluwCOSRFD+GNAwYmUq+DOlxqQZh4Kj+EFFuK7bUBpL4jkVZ5ts8Rk7qdJxfpUAM0pqJSBCs1d/ILnYGXyJbdJtO+qc3QC+ZBT0KjjwMhWjA=
+	t=1754968906; cv=none; b=EnkAFBNkZHyvvkdr8MNjGDLoRhfvaMM7rolFXmP0kg5WMv6D0c+Yfi/nRR1Cxj1KN8Ly9ftD4SS9mvUzCdW0MO/nOZKsSf9y4VooSzIs+Aam1chcJb3RYBFf3/TeTClbv1u4xiR1gmxLzhQemP/hBfzpwDmXGUHg8XASvIwX5Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754968815; c=relaxed/simple;
-	bh=/wZ5J2aHm0wr+JulREeL2jKH/HWt7HxPuCfjCYFvJ18=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YgpmFRPNNZyuykKfZgmD0eqta9d8IlZTR9bGsWyhTP2Bk1ReqDuC7M5dv+qf+P+ResF30dhpfwdnQgS+FJgF7maJCS5kxFTp6yhzztf+cXIzaaMev3crqLLjctVw5K4WAYNs9bhV9wkS7/AlYzt3eECi0VIlNFrCZXNtRWAVo+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJ+G3nwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D9AC4CEF5;
-	Tue, 12 Aug 2025 03:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754968813;
-	bh=/wZ5J2aHm0wr+JulREeL2jKH/HWt7HxPuCfjCYFvJ18=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jJ+G3nwXooveQfIhJ6EdKc0pV2wa5PzX3iES0RJoDvonQbjX5L0J5dURuyHGtzSgO
-	 KdhpPhoYeYvPYO8XwMZzYJfON319GXYNUXFqNbDexmB2Qo8OMkrFfOZNaoZvSNZVbC
-	 chFditxAcqMHsEqG5fqCDHtVq0idBGhnCU2ARxm1V0MqpvaHl8FxMzPa5XyPtBCXCF
-	 9lo+1b3c5LPpGUHTExHUidcKP9TN7Ih/iQWr20MaDo1D1BXv/OttFegYONl4dgNEZL
-	 uy5kwU5dwdeRH1z8hVhxFmA+i3ZJBZqPCkpiwBNzc9MdYH5XZLVWjd+ykK/+DLv/uy
-	 nODQDTYkaNlAw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ABA383BF51;
-	Tue, 12 Aug 2025 03:20:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754968906; c=relaxed/simple;
+	bh=Y951hGZfoesU2QrL9JWqCrWguO/lZIcA5b0xIPnv5Mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HH2x4Fs+od4rgzXFj8jnlHvjkaQP6TU2SJd+iYs4kZUEu9s0BI5xWhrRsEGSxJjIYybWpY+YslIZKKGFS1ELZkPEdNlp4kTrWe4VOk27qLysegOgchLy3QuJTpcfR8Pnu8JJQybV72TOMPnCkUhiRjtmzCGw3hJk4kfTogF7o1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WDQwiN26; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754968900;
+	bh=uduF2WEF7XSb7XuEoby5ZlSeBspLl0vgbpLHLGFxAIw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WDQwiN26X3sGwMTSchZKgKQLbWVECv4sqHMDhKkqIncIx2ihAhB9UQVhM/4KZP4LQ
+	 cD7D6RVYh3dmXCQrCgh3zYettv7JFNxyV+hgkmbp3m87JmoLoadyfCOKSFOVTFLzdN
+	 /630rERdzrE10DyWnpJ1/mgrDvEPt8IrtKnQ5CGBwRml/maTnzAeuUCIUskiosKSJL
+	 f6axO0XGYBnByC4UwgpvWLT/mg0KHn6u0CqOvCZWQGmqFBpaDfKnlD5NVGwuBh1LMj
+	 ttVgpA2PezWzuuhaTrMJQtQYuP0iqmtkBdvCdxIsZeicbvHbYNDOfVQB/g69UoeURr
+	 oyee9TCcAv0Qg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1Gxw3GDyz4xcW;
+	Tue, 12 Aug 2025 13:21:40 +1000 (AEST)
+Date: Tue, 12 Aug 2025 13:21:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the pwm tree
+Message-ID: <20250812132139.7813c65f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] selftests/net: Ensure assert() triggers in
- psock_tpacket.c
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175496882574.1990527.2336308877381188320.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Aug 2025 03:20:25 +0000
-References: <20250809062013.2407822-1-wakel@google.com>
-In-Reply-To: <20250809062013.2407822-1-wakel@google.com>
-To: Wake Liu <wakel@google.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, horms@kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/ix/4GX8wN7q/w4D.0Wb0ne/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello:
+--Sig_/ix/4GX8wN7q/w4D.0Wb0ne/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi all,
 
-On Sat,  9 Aug 2025 14:20:13 +0800 you wrote:
-> The get_next_frame() function in psock_tpacket.c was missing a return
-> statement in its default switch case, leading to a compiler warning.
-> 
-> This was caused by a `bug_on(1)` call, which is defined as an
-> `assert()`, being compiled out because NDEBUG is defined during the
-> build.
-> 
-> [...]
+After merging the pwm tree, today's linux-next build (htmldocs) produced
+this warning:
 
-Here is the summary with links:
-  - [v2] selftests/net: Ensure assert() triggers in psock_tpacket.c
-    https://git.kernel.org/netdev/net-next/c/bc4c0a48bdad
+include/linux/pwm.h:357: warning: Function parameter or struct member 'gpio=
+' not described in 'pwm_chip'
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Introduced by commit
 
+  1c84bb7fc0ad ("pwm: Provide a gpio device for waveform drivers")
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ix/4GX8wN7q/w4D.0Wb0ne/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmias0MACgkQAVBC80lX
+0Gwhnwf9GVofnwvxRE3H+8K8gLC8kI6VNpTISfN5587TBeij2NJBUaROFIm6pRXx
+lEWZWzUZWF1HF03IkjTdsfHIDsNVD0Hg+E33XL4jpQH3REnc74Bk8BVG7weEIVyS
+YW2r9gplUVuV6buSBx86zk+E4OfA3FqMdP16oVrj6rPTmG/ZxHXxQRcDH2x0KpX/
++S2aJXA7AkC5LBQSCCCj9cz3CBCVp/9qg5c+MrsQ3gvElsDhDyTWfUo9eJ1gsi9T
+8u3ejh3rUBVln0VXtSDT5EUmZ2HLS+A0FjSija0budNhJYF+oeZdxJEMGBV+p4P6
+IVByVL+ZSDLe3SF7f2oI1ydvEyd/wQ==
+=ziD/
+-----END PGP SIGNATURE-----
+
+--Sig_/ix/4GX8wN7q/w4D.0Wb0ne/--
 
