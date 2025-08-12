@@ -1,169 +1,183 @@
-Return-Path: <linux-kernel+bounces-763741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68EDB219A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E119B219A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C007B1055
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD41E4643B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA032BE7CB;
-	Tue, 12 Aug 2025 00:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A5C296BBB;
+	Tue, 12 Aug 2025 00:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1zPaFgg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/x1B/D5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33212BE03B;
-	Tue, 12 Aug 2025 00:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C885C28EA72;
+	Tue, 12 Aug 2025 00:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754956865; cv=none; b=uCiayFRcWKTX61puMC74cItv0pCkKEqIOIhZXSQlZODBXAcYDrFgMkjuEPocytGQBIGxhHok6noEQ0zcXY3rzavRS4ijRozvDxjsK0zwyDLdb4B/KsQNZcpod72H4uszcIaI/j+4hEU2UBP9ISMauQ9FcAjVJ6VNK+REzYcMjXc=
+	t=1754956818; cv=none; b=Jw3ATpIllridUm1FyTtZxqFgiYxaZ7hxddqfLCHRYYXTyhAYD5jKOIiAMZbNmddrlkvX9bDn5QNO+jKz4zwksYL9jaa72MQfLG4g1CpkaSySqpg0msqyV28kb1e08VW7iCdfp+3BnrQ9X9eneHOQk2tmqoM5Cvowgpe0V8PAVDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754956865; c=relaxed/simple;
-	bh=0BsARfXFOK9iv+i6XDSueazUUe1YJAx4E+RY8y9T6UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnBKvtQ8bZAYuC5cnCuWg+QS9mLqH/Nm4PORPrQAHfoDgIuIgGxmNe0MEMk/v8Cbf5GR6Ucmhauelsi6mDefBedDxmjRzecBPb2Cquc6owQSpciBjDLevAPjAJBpwmVHFpeJEFlJwerulRpmeNgmUpoL6+HU3VBAbTACoye46jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1zPaFgg; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1754956818; c=relaxed/simple;
+	bh=JKSS5BhhnouCxp94xQ9hwJyMDXsBN6DcFUARmFsQeK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IwUks/uY5L6jJSnuVmy7FtrPYKZCxVFYq5+Dy5VYF4om6EkAC726ccnWf+nKiL8ZYcbkakX0P+nPspJC12mopja6erFbyKC0Ci7Hja3/kDN4iOcgnHtoqKoFJ2qPZW49u2HC1pCEipYBccyJ3/HwoHi9bJCHpUNzH/sYJZEFc8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/x1B/D5; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754956864; x=1786492864;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0BsARfXFOK9iv+i6XDSueazUUe1YJAx4E+RY8y9T6UQ=;
-  b=K1zPaFggAMheRJVjc7kgwSXuS97lXuZfyoYFLG8glX5ymcmx8r3b9GYj
-   v15zscCzR/R8WI0o/bivj4HJYtCrBP7RfIWoWqUKwlDNAW/a89/cYuTMM
-   29ZjaMlG1tBRpXpYpCNhYrUv9Wg0dnqNYslRTlOCUVOkMThJoCIrRjObT
-   SoI3hkI9LsUKv1uveSI3EZLW8kkg/LrxUTkDHTq7+CWkQC5qzwsHMiDKi
-   utESC2gBLa/QQjYO7G9f3wZ2Q3EaQefKOKBI9QCU7N4Nc3/UJWChsJMGb
-   UqeWDeBTiFSTCEC0mVCEnBONeuk//S3sddaKrml5QLES5xuyyTSf5ztBn
-   A==;
-X-CSE-ConnectionGUID: yu0dhlojTSKngKAgiT04dw==
-X-CSE-MsgGUID: ajU2ussWS1eOwjW5aSbLYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="82659501"
+  t=1754956817; x=1786492817;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JKSS5BhhnouCxp94xQ9hwJyMDXsBN6DcFUARmFsQeK0=;
+  b=D/x1B/D5qd5lyE9qr/Lzyeapxx/v4hoX4S97ipFQqdYObzX9Jv4uzCc+
+   qHsp+7/RrHtS6PC0kZZ42Ep5Jk0wkq4jLT/Y1YhktDPoq5hUewOsHegdM
+   I5z+3q7rkDwZ+ueeIYxGgX1OqYRsxGvDAusI7GXaHtIvulzSKAm/wCY5M
+   /D81daOp+uh63YEAT4AJerSENhzg40F+xFfENKRy5a5Wm1Wlmlir2EJGq
+   0qJtDbXAdCLpajRPU/tn8rz429JdKrg3HXrlPGtfaZemxmrqFQcOcRL70
+   kSFFary8QKFogVqMX+xWcJ7X8OWz4CGPtstxcKyLmHMbuGLPVKgE7c+3x
+   Q==;
+X-CSE-ConnectionGUID: IHxzdF7ySNOgG+4WtX4jkA==
+X-CSE-MsgGUID: yurOA08iQeG2khHBm8hgCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68592842"
 X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="82659501"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:01:03 -0700
-X-CSE-ConnectionGUID: /+F4pJ2/QBmrReRdHnf/fA==
-X-CSE-MsgGUID: S5LZyq5LS2SfK3Kxq//CzA==
+   d="scan'208";a="68592842"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:00:16 -0700
+X-CSE-ConnectionGUID: 7iLeg3hORT2dJ4onOUtL+A==
+X-CSE-MsgGUID: bH/qdpoeQYisIC0QF+LT8A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166842144"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Aug 2025 17:01:01 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ulcRm-0006Iu-2l;
-	Tue, 12 Aug 2025 00:00:58 +0000
-Date: Tue, 12 Aug 2025 08:00:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Leo L. Schwab" <ewhac@ewhac.org>, Hans de Goede <hansg@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Kate Hsuan <hpa@redhat.com>,
-	"Leo L. Schwab" <ewhac@ewhac.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: lg-g15 - Add support for Logitech G13.
-Message-ID: <202508120615.TGJUom52-lkp@intel.com>
-References: <20250810225617.1006272-2-ewhac@ewhac.org>
+   d="scan'208";a="166340782"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:00:16 -0700
+Received: from [10.124.35.105] (kliang2-mobl1.ccr.corp.intel.com [10.124.35.105])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 0F1FE20B571C;
+	Mon, 11 Aug 2025 17:00:15 -0700 (PDT)
+Message-ID: <8c32c5be-02a4-4f4c-9a81-1afe649e88bb@linux.intel.com>
+Date: Mon, 11 Aug 2025 17:00:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810225617.1006272-2-ewhac@ewhac.org>
-
-Hi Leo,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on linus/master v6.17-rc1 next-20250808]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Leo-L-Schwab/HID-lg-g15-Add-support-for-Logitech-G13/20250811-070633
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20250810225617.1006272-2-ewhac%40ewhac.org
-patch subject: [PATCH] HID: lg-g15 - Add support for Logitech G13.
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20250812/202508120615.TGJUom52-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508120615.TGJUom52-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508120615.TGJUom52-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/hid/hid-lg-g15.c: In function 'lg_g13_event':
->> drivers/hid/hid-lg-g15.c:703:68: error: 'struct led_classdev' has no member named 'brightness_hw_changed'
-     703 |                 (!!TEST_BIT(rep->keybits, 23)) ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
-         |                                                                    ^
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 6/6] perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into
+ INTEL_FIXED_BITS_MASK
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>, Yi Lai <yi1.lai@intel.com>
+References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
+ <20250811090034.51249-7-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250811090034.51249-7-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +703 drivers/hid/hid-lg-g15.c
 
-   665	
-   666	static int lg_g13_event(struct lg_g15_data *g15, u8 const *data)
-   667	{
-   668		struct g13_input_report const * const rep = (struct g13_input_report *) data;
-   669		int i, val;
-   670		bool hw_brightness_changed;
-   671	
-   672		/*
-   673		 * Main macropad and menu keys.
-   674		 * Emit key events defined for each bit position.
-   675		 */
-   676		for (i = 0;  i < ARRAY_SIZE(g13_keys_for_bits);  ++i) {
-   677			if (g13_keys_for_bits[i]) {
-   678				val = TEST_BIT(rep->keybits, i);
-   679				input_report_key(g15->input, g13_keys_for_bits[i], val);
-   680			}
-   681		}
-   682		input_sync(g15->input);
-   683	
-   684		/*
-   685		 * Joystick.
-   686		 * Emit button and deflection events.
-   687		 */
-   688		for (i = 0;  i < ARRAY_SIZE(g13_keys_for_bits_js);  ++i) {
-   689			if (g13_keys_for_bits_js[i]) {
-   690				val = TEST_BIT(rep->keybits, i + 33);
-   691				input_report_key(g15->input_js, g13_keys_for_bits_js[i], val);
-   692			}
-   693		}
-   694		input_report_abs(g15->input_js, ABS_X, rep->joy_x);
-   695		input_report_abs(g15->input_js, ABS_Y, rep->joy_y);
-   696		input_sync(g15->input_js);
-   697	
-   698		/*
-   699		 * Bit 23 of keybits[] reports the current backlight on/off state.  If
-   700		 * it has changed from the last cached value, apply an update.
-   701		 */
-   702		hw_brightness_changed =
- > 703			(!!TEST_BIT(rep->keybits, 23)) ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
-   704		if (hw_brightness_changed) {
-   705			led_classdev_notify_brightness_hw_changed(
-   706				&g15->leds[0].cdev,
-   707				TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF);
-   708		}
-   709	
-   710		return 0;
-   711	}
-   712	
+On 2025-08-11 2:00 a.m., Dapeng Mi wrote:
+> ICL_FIXED_0_ADAPTIVE is missed to be added into INTEL_FIXED_BITS_MASK,
+> add it and opportunistically refine fixed counter enabling code.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Tested-by: Yi Lai <yi1.lai@intel.com>
+> ---
+>  arch/x86/events/intel/core.c      | 10 +++-------
+>  arch/x86/include/asm/perf_event.h |  6 +++++-
+>  arch/x86/kvm/pmu.h                |  2 +-
+>  3 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index cdd10370ed95..1a91b527d3c5 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -2849,8 +2849,8 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
+>  {
+>  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+>  	struct hw_perf_event *hwc = &event->hw;
+> -	u64 mask, bits = 0;
+>  	int idx = hwc->idx;
+> +	u64 bits = 0;
+>  
+>  	if (is_topdown_idx(idx)) {
+>  		struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> @@ -2889,14 +2889,10 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
+>  
+>  	idx -= INTEL_PMC_IDX_FIXED;
+>  	bits = intel_fixed_bits_by_idx(idx, bits);
+> -	mask = intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
+> -
+> -	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip) {
+> +	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip)
+>  		bits |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
+> -		mask |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
+> -	}
+>  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This changes the behavior. The mask will always include the ADAPTIVE bit
+even on a platform which doesn't support adaptive pebs.
+The description doesn't mention why it's OK.
+
+Thanks,
+Kan> -	cpuc->fixed_ctrl_val &= ~mask;
+> +	cpuc->fixed_ctrl_val &= ~intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
+>  	cpuc->fixed_ctrl_val |= bits;
+>  }
+>  
+> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+> index f8247ac276c4..49a4d442f3fc 100644
+> --- a/arch/x86/include/asm/perf_event.h
+> +++ b/arch/x86/include/asm/perf_event.h
+> @@ -35,7 +35,6 @@
+>  #define ARCH_PERFMON_EVENTSEL_EQ			(1ULL << 36)
+>  #define ARCH_PERFMON_EVENTSEL_UMASK2			(0xFFULL << 40)
+>  
+> -#define INTEL_FIXED_BITS_MASK				0xFULL
+>  #define INTEL_FIXED_BITS_STRIDE			4
+>  #define INTEL_FIXED_0_KERNEL				(1ULL << 0)
+>  #define INTEL_FIXED_0_USER				(1ULL << 1)
+> @@ -48,6 +47,11 @@
+>  #define ICL_EVENTSEL_ADAPTIVE				(1ULL << 34)
+>  #define ICL_FIXED_0_ADAPTIVE				(1ULL << 32)
+>  
+> +#define INTEL_FIXED_BITS_MASK					\
+> +	(INTEL_FIXED_0_KERNEL | INTEL_FIXED_0_USER |		\
+> +	 INTEL_FIXED_0_ANYTHREAD | INTEL_FIXED_0_ENABLE_PMI |	\
+> +	 ICL_FIXED_0_ADAPTIVE)
+> +
+>  #define intel_fixed_bits_by_idx(_idx, _bits)			\
+>  	((_bits) << ((_idx) * INTEL_FIXED_BITS_STRIDE))
+>  
+> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
+> index ad89d0bd6005..103604c4b33b 100644
+> --- a/arch/x86/kvm/pmu.h
+> +++ b/arch/x86/kvm/pmu.h
+> @@ -13,7 +13,7 @@
+>  #define MSR_IA32_MISC_ENABLE_PMU_RO_MASK (MSR_IA32_MISC_ENABLE_PEBS_UNAVAIL |	\
+>  					  MSR_IA32_MISC_ENABLE_BTS_UNAVAIL)
+>  
+> -/* retrieve the 4 bits for EN and PMI out of IA32_FIXED_CTR_CTRL */
+> +/* retrieve a fixed counter bits out of IA32_FIXED_CTR_CTRL */
+>  #define fixed_ctrl_field(ctrl_reg, idx) \
+>  	(((ctrl_reg) >> ((idx) * INTEL_FIXED_BITS_STRIDE)) & INTEL_FIXED_BITS_MASK)
+>  
+
 
