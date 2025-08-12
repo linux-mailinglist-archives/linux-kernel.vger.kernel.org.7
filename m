@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-764880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C887B22838
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7A4B2277B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C4FD7A8248
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1341621B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5811727A10F;
-	Tue, 12 Aug 2025 13:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4002C19C546;
-	Tue, 12 Aug 2025 13:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B942727A10F;
+	Tue, 12 Aug 2025 12:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LegAkMtk"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4EF275AF9;
+	Tue, 12 Aug 2025 12:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004838; cv=none; b=LYw6zZ/u0Jhm7tCxBZ2A4ca0mp6yV6xdLGFJyCM+llEcfvuoJB+hDDA+kXtPfDNgWl7OvQprixStxx/f+ox1AzgvJOuIPqD8D1yllilyk6hxVbcY1KFk5dLMmOszcGFM1l5hPf+HlCfbl5QHayJIM0dQagHcA1yd7zQrO0koKfI=
+	t=1755003150; cv=none; b=b7gWGU7KbrIuBT14INvKvYua/BDqNC24PYCnI8cdUPcujVKcXNNimIHgfvsJCah66Ue3f+I/FQDqDaBvAhFhHFTBWJhq4dZwj8s1qOAHqsB1NyMFbQL/oNeA+f+/9a4uzsy3ZF50X3Oga6YkWsKWrLbpG1sxWu7M4XWIq7otL2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004838; c=relaxed/simple;
-	bh=dKZeRbXDmDXyWaQzC5JavRNVD3OYwP4u3q81PEyl0tA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fN346rcWN4Ho1PupgnBwMq7xkjLAoivjZnDnAaQ7JozumCOFjhOqI+CsKaDoPUsxqlWnfQUMw9GudwdPXA2xNoRecXpnjkW1rbHeUSUzrlUu9L6zffnYUFmxDqAozsL2sPBCUujUKkeQtzq67YRS9FOmfePsMICV1VbnwgWLeZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c1WbS5Yxdz9sSf;
-	Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id iikEfDgg7jeb; Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1WbS4ppkz9sSW;
-	Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8FFCD8B764;
-	Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Vtjy13ysAxeu; Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4277B8B763;
-	Tue, 12 Aug 2025 14:51:32 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] watchdog: mpc8xxx_wdt: Reload the watchdog timer when enabling the watchdog
-Date: Tue, 12 Aug 2025 14:51:26 +0200
-Message-ID: <7cfd025ca62fb501dff1f0f923091415a5bc663f.1755002982.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1755003150; c=relaxed/simple;
+	bh=KVBK6hFvK1FY7u2Ma5CCjrgqrBhs+p6LJR/g3yxritY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=czA8PqzY7zMFQkLWCUoUCMRAS2cvMkvsCglGl72ccY2+Psr1TZ0nZup2jdP0l/Qkk++TVZfF3EthchqmIgZYrEa+6lq905/l8e65DpJxHSAZr/DSQnWqZvsgy3bQT3CUavkusRacfPtz/p8Nni4laqwYctQVs4c0bX0rVTb8lQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LegAkMtk; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a11f20e03so5222065e9.2;
+        Tue, 12 Aug 2025 05:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755003147; x=1755607947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XOysFTmDeKPqaIvm8qxt1S6RVmsmgHTr+dtBSiMbDRw=;
+        b=LegAkMtkE0mxOxugbwBzou2i751MQMM2Nf9IVXmPs9vCilqGs9RzkP4uhOnIdaT5Ih
+         jKaEM207jn6/s0956puPsBe3HHyoA6xAUKdEAgyEojQ8q/X/iWU3Kq3ExENazmqqqUK5
+         exh4mrrmYzkOdn5SIJKZzlasey48VSg2i49WkVdybYO4slrFrXBbwFlvTCTNmXF0hOTK
+         F4jcmpZqFE3tATvqI+QWhRNhRneZou+T/tbYkvZRSxiDZV0041JUJvKKuM6Tm+l6hF7l
+         qGVQO0O+w8qNF5PzHcC4DxkejwsMBQ30ypSsYBGxAJl3WjVxV5sTJ1m86XOZDFL2WjGF
+         D3/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755003147; x=1755607947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XOysFTmDeKPqaIvm8qxt1S6RVmsmgHTr+dtBSiMbDRw=;
+        b=OPd93zazGw78XQ1srlVTVA35yr4PJiwlrkk462x79EaOnmYeyRrC7AxQYNicmCX5JD
+         3UWRUtsgbfTAeDyk3ju+2CG5ekLGM5nyadCkHoXR7uPB4Rx1b2/8GS9sOq59bQ0MJMPj
+         E1llOKEtfYbky2XcH4HlbLnfXD2SBUz/r4I2ke90OxTA/u7B7VH6gAvRzPUZXOjVQoQZ
+         nXRK0/zqLiILGjgHqNRaUkDp+8fmVCQa9HY65EkdASPMzEFOF+rVykoU4/z/F12GAdkY
+         iDq+jEKJGuPx/CR30u3Lvav1QFosxrisXfXmoXANys21ODD+FsTP6KWn+LvzFU1ECLIx
+         DM5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIa4W7NbXSPNPssQB0ruONK871gueZWP8uFT2UGdjEm4/44V58ykqAl+mivKen760/HyXxiFlrP+YflLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD+7B38Jexm18/wKYyV4vzjlv2TXyXUvZh3RQLu+8AP2ZQl4m2
+	viD3pbJKgA8aWAgqtKn0TY7gXt3G97FFW4N8nKxbBO4fBRfr1mnPXuuvHYJWeCPcaDnW2Q==
+X-Gm-Gg: ASbGncu2H2qwCZE+XCW2rtH+8fDsiDMCHnaUiFYbfb69v8/8lt7n7ANzvzLGv5UQWME
+	ih9sFSiroQ+CmA972nkQs7aJ75xWT7C/U5pbek1sGrvSdgYsO95B/zlBkR2cowkfPnSvaTciWJt
+	+eLWdyc28Y0NizEl/i/kw30IK/e5EOHvnIeXYvMF07cd8ZhR2HC1jy63Jc442GvSGjJsVCw+e7Z
+	c6FkXctwzt9TgrYk4DfUE2mB/C0ZFR+d7LwKoXRufTw2Si15nFXktSU9yDpTeON8z4LnHC/opIj
+	fIDknTmXBzRFhZ+KVa7a1X1p5CphTyACNtthxWOBh7tZ7hBK23+dOPR3CUZp/c0fgnindUPQW7d
+	ff5Wv/jm2Xv75WyLeZQW/2pkUFV0XgNhfy1QgV4GlM33w
+X-Google-Smtp-Source: AGHT+IHambSLcIwjd4Pof98E6EGZfRkNzEIbNQj+mxtntYAQiGMw/fG734bFYM0l5/M/qMtlNQOl4Q==
+X-Received: by 2002:a05:600c:1d16:b0:459:e025:8c40 with SMTP id 5b1f17b1804b1-45a10ba05bbmr37664535e9.10.1755003146299;
+        Tue, 12 Aug 2025 05:52:26 -0700 (PDT)
+Received: from localhost ([45.10.155.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c485444sm44730050f8f.66.2025.08.12.05.52.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 05:52:25 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	donald.hunter@gmail.com,
+	andrew+netdev@lunn.ch,
+	dsahern@kernel.org,
+	shuah@kernel.org,
+	daniel@iogearbox.net,
+	jacob.e.keller@intel.com,
+	razor@blackwall.org,
+	idosch@nvidia.com,
+	petrm@nvidia.com,
+	menglong8.dong@gmail.com,
+	martin.lau@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Richard Gobert <richardbgobert@gmail.com>
+Subject: [PATCH net-next v5 0/5] net: add local address bind support to vxlan and geneve
+Date: Tue, 12 Aug 2025 14:51:50 +0200
+Message-Id: <20250812125155.3808-1-richardbgobert@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755003087; l=1306; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=dKZeRbXDmDXyWaQzC5JavRNVD3OYwP4u3q81PEyl0tA=; b=DHlc4najn4H0S8heYPb/zAXQoBhuXVwytdtt0/rZgWx85ANJqqu396NbX9HuLosa5Kmauvvlc Aok+4K7ILhvCCtwuBRNhhfDkYALoJmHH8/zyAan4/WS7+aBD4SsGJ6X
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-When the watchdog gets enabled with this driver, it leaves enough time
-for the core watchdog subsystem to start pinging it. But when the
-watchdog is already started by hardware or by the boot loader, little
-time remains before it fires and it happens that the core watchdog
-subsystem doesn't have time to start pinging it.
+Currently, vxlan sockets are always bound to 0.0.0.0. For security, it is
+better to bind to the specific interface on which traffic is expected.
 
-Until commit 19ce9490aa84 ("watchdog: mpc8xxx: use the core worker
-function") pinging was managed by the driver itself and the watchdog
-was immediately pinged by setting the timer expiry to 0.
+This series adds a netlink option that makes vxlan sockets bind to their
+local addresses. The option is disabled by default as it can potentially
+break existing network.
 
-So restore similar behaviour by pinging it when enabling it so that
-if it was already enabled the watchdog timer counter is reloaded.
+This series also adds a local address option to geneve, similar to vxlan.
+The geneve socket is bound to the local address by default.
 
-Fixes: 19ce9490aa84 ("watchdog: mpc8xxx: use the core worker function")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/watchdog/mpc8xxx_wdt.c | 2 ++
- 1 file changed, 2 insertions(+)
+v4 -> v5:
+  - Fix whitespace issues
+  - Fix IPv6 compilation errors
+  - Add missing documentation
+  - Add selftest to test localbind functionality
+  - Change localbind option in VXLAN to be non-default
+  - v4: https://lore.kernel.org/netdev/20250717115412.11424-1-richardbgobert@gmail.com/
 
-diff --git a/drivers/watchdog/mpc8xxx_wdt.c b/drivers/watchdog/mpc8xxx_wdt.c
-index 867f9f3113797..a4b497ecfa205 100644
---- a/drivers/watchdog/mpc8xxx_wdt.c
-+++ b/drivers/watchdog/mpc8xxx_wdt.c
-@@ -100,6 +100,8 @@ static int mpc8xxx_wdt_start(struct watchdog_device *w)
- 	ddata->swtc = tmp >> 16;
- 	set_bit(WDOG_HW_RUNNING, &ddata->wdd.status);
- 
-+	mpc8xxx_wdt_keepalive(ddata);
-+
- 	return 0;
- }
- 
+v3 -> v4:
+  - Fix a problem where vxlan socket is bound before its outgoing interface is up
+  - v3: https://lore.kernel.org/netdev/20240711131411.10439-1-richardbgobert@gmail.com/
+
+v2 -> v3:
+  - Fix typo and nit problem (Simon)
+  - v2: https://lore.kernel.org/netdev/20240708111103.9742-1-richardbgobert@gmail.com/
+
+v1 -> v2:
+  - Change runtime checking of CONFIG_IPV6 to compile time in geneve
+  - Change {geneve,vxlan}_find_sock to check listening address
+  - Fix incorrect usage of IFLA_VXLAN_LOCAL6 in geneve
+  - Use NLA_POLICY_EXACT_LEN instead of changing strict_start_type in geneve
+  - v1: https://lore.kernel.org/netdev/df300a49-7811-4126-a56a-a77100c8841b@gmail.com/
+
+Richard Gobert (5):
+  net: udp: add freebind option to udp_sock_create
+  net: vxlan: add netlink option to bind vxlan sockets to local
+    addresses
+  net: vxlan: bind vxlan sockets to their local address if configured
+  net: geneve: enable binding geneve sockets to local addresses
+  selftests/net: add vxlan localbind selftest
+
+ Documentation/netlink/specs/rt-link.yaml      |   8 +
+ drivers/net/geneve.c                          |  80 ++++-
+ drivers/net/vxlan/vxlan_core.c                | 102 +++++-
+ include/net/geneve.h                          |   6 +
+ include/net/udp_tunnel.h                      |   3 +-
+ include/net/vxlan.h                           |   1 +
+ include/uapi/linux/if_link.h                  |   3 +
+ net/ipv4/udp_tunnel_core.c                    |   1 +
+ net/ipv6/ip6_udp_tunnel.c                     |   1 +
+ tools/include/uapi/linux/if_link.h            |   3 +
+ tools/testing/selftests/net/Makefile          |   1 +
+ .../selftests/net/test_vxlan_localbind.sh     | 306 ++++++++++++++++++
+ 12 files changed, 490 insertions(+), 25 deletions(-)
+ create mode 100755 tools/testing/selftests/net/test_vxlan_localbind.sh
+
 -- 
-2.49.0
+2.36.1
 
 
