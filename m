@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-765126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE580B22BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:37:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91C5B22BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39981A27EB2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC17426A67
 	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8EC2F547D;
-	Tue, 12 Aug 2025 15:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF382F5481;
+	Tue, 12 Aug 2025 15:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkX5stmy"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eXfRhsSN"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7098F10E3;
-	Tue, 12 Aug 2025 15:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D122EFD99
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013059; cv=none; b=bfxCKyaP5L3r6vmwS+EozOlsmN2WhaF5LwKm+Ph9ExNxu/ymOn6aKkiqWRJbhda+eefTrEuWJVNSTFG2g6y+q9zPw3Cjg8WbXVpmxbeeVWPz6J4WuniX+yer5/RsPVW0ZMYzEJZ9SZVJF++SDqnN+yAywmy8kQ/GGb/Kx9L0G24=
+	t=1755013081; cv=none; b=q9WOhzO3d/C/ujxQHtttkWIFpT9asXyfgI8F3+6hHYJPeccL8Qvoq8dxUOfj5OZ912DO4pF7rCUtqFrHp2qK7jFd2LwER/xZFUDRw8RwN5r8EhUcMvkPaeP6oXL/1+fueuEUHFVucHEHbrqICHtEiveiRrhKXhaZpbTWtz5Ji/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013059; c=relaxed/simple;
-	bh=0jz1kEdq01eWZaBFOsITXb/WcBKFjNiX53rgt3BOXRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fdfIhXmqmG8joL3+4Oq7obAP1rPCjkNypjTlnrIyCV9YkJu1JGQcrKrGrnNHinrjHyGyvAzjx80HDN4i4hC2cd5OA5hkkk6L8LJy+OA2lpwatj1Oef3SBrtVx5DegqggvXBTz5LMGMQWpr9LJCNH4MCI6zgtRh8kVKuah3lb9uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkX5stmy; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24099fade34so41134005ad.0;
-        Tue, 12 Aug 2025 08:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755013058; x=1755617858; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UnA3wQhwicH01DrI97DSCPT/OMKNvf36iGTqbZFNSaY=;
-        b=PkX5stmyYZIaAjFZCcwFnEs+bsdCvtXElELriAlRsGQOdKC8sPIev8/lqpKNHS+NAE
-         4Hx/SyJPVpk6xQ/+TLdAMi2bsDT7SzYv9xl5sPQiJ0qozIRM+ZmPcc6etCzrG2tNInoB
-         Ke7UIaod8NiH7yDkz6JpIxnMA9OyX5grEPAFjgSA2eLApw3sCDovg8DHQLVXQXU4Yokl
-         QRXdJikBG/rEV7N8oCj1YwjzTfvm9kHc01suOLtdzm6nRATb2RYZzruSh+tiqaxDdYxh
-         FLGBzrc9DbYsl6Sf0awCH6DYAOtBqTrhxX/Pp5GQh6w5pYTkjjGrLaR9AZldjhd3nCVS
-         mBNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013058; x=1755617858;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UnA3wQhwicH01DrI97DSCPT/OMKNvf36iGTqbZFNSaY=;
-        b=FHS7cS/rqFwlfYiA/OvmrovT0i+dgD/GG7dgBY0cXr8SGQGoc+WUrRiNev+wPF7Cx4
-         1r65N9nlwDgJSpnChTbqaEJ1wOBHBmPbfAvshBbO2JgCpKHdiLX3KhLtlo8t2WghEEmZ
-         4lqidxcRu4Tg/xPjevMzqd2kEbScdcxWTAE+PxNbYjaxx7aUJaQ4xae48zJKY4ECgVSm
-         hzbq5lj/wlXq3VeNPgpv3lzTgXBQOZ/sBnzNSnzUgSKkKbnKFbP8818i/7osRE8QnNg5
-         Uyr+i5kF4tlllfsvdgGE9qg9R7hUCpHDxp0ov2nSOAjDhXFJujssM9EbUyQxyOvVqx09
-         hpyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUifbVU9dSda5t995Bi2jtcogmLOseAmxxZ44FhGTaGYAK4BhJfRNitOEJVIuOr+lj29/I=@vger.kernel.org, AJvYcCVXYsaXdF+IJ1tSRK50eRpt6g30sPDca7MLiowuHZntoZJxQyDeiZndiL+J8n9G3ZdDhrcd9ZaS955D0sM9@vger.kernel.org, AJvYcCXZLIqaXsez+e/Y0zDF1yGeeKq7flVBEAcBQpVZcmBTHkgjP+ecyINlMhzjmnEY8W3M1Zi6jXz8KukzXXjcG/vy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW4T9t9jf6n1f/MEmjZzKVjaZOxRxhnsqf3QCsQ1CJOWu7FIal
-	TrMyMYdb25Gam/zvr55VnwxhExQd+HGvp0LV5uwze7K++hwP+VMonnPu
-X-Gm-Gg: ASbGncsdleST56KjmsVDQxiqMpEi2sq2tPUgp/X0Y3Up1hRp3CLwEgvf1g5cW21+DbM
-	KjqcVUM+KDqW/+3N1f07o0OJO8HljuaiH+/hmDU0I4PwLHyVn/483ceY7BbN8hgyfGAasM0cY+4
-	q0Dj3qVMrIrSl+R1nzPOo5skHmN0WwOqhKArH5Yt8I74r3g3NUUQwO9p/uB9uGAZ2/fG65QmgKg
-	51YD5TwnIWL6Zw1zFAIfhauNXwgqHW+byPaJwoCO+IihTmGahp7JpvIrzy4gJaLa6WBNHj1Jzjp
-	i4TLyYyeGKDBXb3WNGV2Ijaxn2MKk3Nh2LoBsbqyfi8ulu2wbbtCrl1DakaMWi8v5aCOuicXMvz
-	FaXu1RK8XCyOFyWypo1EzNavRCIDUGFLB8wqpzvk2PZLWHi4qAISn4r2pHw4p
-X-Google-Smtp-Source: AGHT+IFqd2CWZuEfvfO4qN2rt0TfIpt1Fgx7A+xrLrIH5v6SuL06/j3hqPSNwIJI5pREio0g8s253Q==
-X-Received: by 2002:a17:903:3204:b0:234:a139:1206 with SMTP id d9443c01a7336-2430c11d70amr1760275ad.40.1755013057618;
-        Tue, 12 Aug 2025 08:37:37 -0700 (PDT)
-Received: from shubham-HP-Pavilion-Laptop-15-eg3xxx.. ([117.250.157.213])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aabda2sm304011925ad.163.2025.08.12.08.37.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 08:37:37 -0700 (PDT)
-From: Shubham Sharma <slopixelz@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shubham Sharma <slopixelz@gmail.com>
-Subject: [PATCH] selftests/bpf: Fix typo in kprobe_multi_test.c
-Date: Tue, 12 Aug 2025 21:07:19 +0530
-Message-ID: <20250812153719.36465-1-slopixelz@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755013081; c=relaxed/simple;
+	bh=J8k9jzClXSZNkJ0K47x0UVRLYUcCO3C4lq/c7tuk38w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VqCr5X9tx1uPAFfIfMxBPjM3lYeYz2qUZYAW5VZPJy76a0g+5rwMuhxs2metL15szJOkXdf0xYOmbDfkYGGAo7jivlYwALK78VDfSYWZ8Hp5yw2nt2xoTNS0lh1F/8xG+0c4w5/7KOlkPf4MTTNbULUjT3uKFrfmsWlgQMAJZPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eXfRhsSN; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <590a44a2-20a2-4a3f-b57f-5bf194712bf2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755013077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wVS20g5BT1BM7m+YRgAX195K9V79YnewkSuGBlHYS24=;
+	b=eXfRhsSN1BHo1ny1dpqr3LpVSdoEh1joTkzNRtWZUlHRRZCz7qidLLiOJO+y0AD07DqQlI
+	M1BE9t8jOBxLLWnEV1txSBG1YxpsDheQYFLk3Pn8uqFyBPvRKJjjxZF2QK+sj9PFOotAuH
+	C0VMjAu29+Z1b2a0cwYZLKi9VLcwnRA=
+Date: Tue, 12 Aug 2025 16:37:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 1/5] net: rnpgbe: Add build support for rnpgbe
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-2-dong100@mucse.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250812093937.882045-2-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Fixed a spelling mistake:
-- comparision -> comparison
+On 12/08/2025 10:39, Dong Yibo wrote:
+> Add build options and doc for mucse.
+> Initialize pci device access for MUCSE devices.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
 
-Signed-off-by: Shubham Sharma <slopixelz@gmail.com>
----
- tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-index e19ef509ebf8..f377bea0b82d 100644
---- a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-@@ -463,7 +463,7 @@ static bool skip_entry(char *name)
- 	return false;
- }
- 
--/* Do comparision by ignoring '.llvm.<hash>' suffixes. */
-+/* Do comparison by ignoring '.llvm.<hash>' suffixes. */
- static int compare_name(const char *name1, const char *name2)
- {
- 	const char *res1, *res2;
--- 
-2.43.0
+> +/**
+> + * rnpgbe_probe - Device initialization routine
+> + * @pdev: PCI device information struct
+> + * @id: entry in rnpgbe_pci_tbl
+> + *
+> + * rnpgbe_probe initializes a PF adapter identified by a pci_dev
+> + * structure.
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> +{
+> +	int err;
+> +
+> +	err = pci_enable_device_mem(pdev);
+> +	if (err)
+> +		return err;
+> +
+> +	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(56));
+> +	if (err) {
+> +		dev_err(&pdev->dev,
+> +			"No usable DMA configuration, aborting %d\n", err);
+> +		goto err_dma;
+> +	}
+> +
+> +	err = pci_request_mem_regions(pdev, rnpgbe_driver_name);
+> +	if (err) {
+> +		dev_err(&pdev->dev,
+> +			"pci_request_selected_regions failed 0x%x\n", err);
+> +		goto err_pci_req;
+> +	}
+> +
+> +	pci_set_master(pdev);
+> +	pci_save_state(pdev);
+> +
+> +	return 0;
+> +err_dma:
+> +err_pci_req:
+> +	pci_disable_device(pdev);
+> +	return err;
+> +}
+
+Why do you need 2 different labels pointing to the very same line? The
+code is not changed through patchset, I see no reasons to have it like
+this
+
 
 
