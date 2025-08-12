@@ -1,100 +1,148 @@
-Return-Path: <linux-kernel+bounces-765604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FEFB23AB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0590BB23ABB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED6C16FBC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6399A1A2658E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916963D987;
-	Tue, 12 Aug 2025 21:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DB92D949D;
+	Tue, 12 Aug 2025 21:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UrHwknPC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bznh4Yn7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M2JsktkK"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0312F067A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE972D6619;
+	Tue, 12 Aug 2025 21:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755034113; cv=none; b=DIQXLV3pQ9EN75Wtfv/VP8Im1Y/XkPQgrxCz1BYWgshEf0m4+Ug1xHZagVopOhsmxaS8b4ekedsnnM91Nqf86WV5jsPEaHeIDV/0uSCh17FtiwFIqPSfzDICNtuvo7YBdVk9WGdHSl9E1iPS1dQrSEIsxqQbyi3YS5Cwsixxp18=
+	t=1755034164; cv=none; b=a7x2Z6ba1JE9eB0nFj+7Wa0LBMlQi73VWdWqxZylVyVPminrF7lY1qVIgzG22p1Ta4/p3U/cB5cxEO7SBUgxoYQcjZHjQlEq+8tpNR2qFRsED0DuiQpJl8sZp72nYAKdRX697ChuNvXfhGlkNalqGdnuBfWk5i31dW1ZxH1GSVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755034113; c=relaxed/simple;
-	bh=bWpLl8JcfMBDUjHpTaO+a2K06yTMRhLkFXKa0IqnP2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSZ0vec8P2c89ijQ31ksf08umYfOCJPi+s0t+YuoUUQfVJO5U1lVAElAUm+99BW4EEr45OsuvuPIt4Xr9GHLMVH33SkeAKhzP+ouwZy36iO52NxkempvOh/290WEO/mZusShUXk5cU4PJoDTdqTupNX2ytT/6IOPKqh9QJpBbSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UrHwknPC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 63EE440E023D;
-	Tue, 12 Aug 2025 21:28:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zom92M2YPU9J; Tue, 12 Aug 2025 21:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755034100; bh=t+l+i2HcKoTSJllu2RucYPzM6HsCD034+o5Ss/w0WHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UrHwknPCYH/p4FDJ/2zdu4H0zGpXvaItBBWBTLTtWrIorj1P1gJikg40Nh6rzuqbi
-	 m88f5KBNbcyMf5wpOyLDHfkq15NBXQbYwiVHN2xQ8bUvyyBL+jBzqvfgT5nRSClcX2
-	 za/zTSsVd0Sy5GoDDMsBXztlRvi29cYu10b+lTO5bypS8zSSY5bqCf6MM2U3rYwvsd
-	 c1BCKrA5RLtSgO7mDqr3or2zW38ix3vmko5UBpuHIrgv5HRTl1YJXEv+eSEnDrEspy
-	 zy1+5keoDFLWNusnH+f60UED+CQqCAID7RHL5/Juo3lzqdnFsv5GOGFjsrQ9+gh8fY
-	 SEo758RReTQf5sG6IvvJEvscgKv1QDkDWus/pDclYxjOUYdCDe4OtGlE1NQCe3o/wm
-	 1mxkzDLPSx4B69vYlvkG36bbAWXrXiys8XLiVmziMUSPBoW/XkTPlovaxeAYPx1oXb
-	 KJncWTvcxuwMLiQsMmn6T2TZZ/uymdh8zvuOeKNuw9AoY9DQhNZRHh2Ph2LLnt2JRM
-	 JbIOvhBTvrLxlggZ215nJyrEa5OQafyi8M/3E4Ya8BjSDYI2c8CfLiO+LPhotgL7Yk
-	 rfTOThgc7PGC5W5DgJZkdF94xhYQ4rTY6GHKmB7OiPD+EHodB04IHAcnFjyyOxEqzB
-	 xYi9gY56s5x5kYEdkwHm5DZ0=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D7BE640E00DC;
-	Tue, 12 Aug 2025 21:28:15 +0000 (UTC)
-Date: Tue, 12 Aug 2025 23:28:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] x86/microcode: Add microcode= cmdline parsing
-Message-ID: <20250812212809.GHaJux6TFpbHecBTwW@fat_crate.local>
-References: <20250809094206.28028-1-bp@kernel.org>
- <20250809094206.28028-2-bp@kernel.org>
- <f641cc0f-e542-45ef-bdb9-d8364860688e@intel.com>
- <20250812102345.GAaJsWMTNvC2ULKtep@fat_crate.local>
- <2952979d-3275-4a33-aadb-c946e1ce0100@intel.com>
+	s=arc-20240116; t=1755034164; c=relaxed/simple;
+	bh=m+K/AlYj6sFpDViOsi+7YVub9fm04RF467U2Bgdxm4s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gBxcu16xJaUgwXuQK2lIYBSlDb8394TiiWdlWpN+1Xy7crg7qHxQ628juw8wHhz5R/EppKu3/0WlTZ0up8LhgEnGRwqivjUNb0S66l9KSikP7TqvuST8NKw7Dhj+6tVMDBQq3/7JdiR2g6FahfBkbn4IJEMCSm9cPjgBs+ynzj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bznh4Yn7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M2JsktkK; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id DCDCD1D0011D;
+	Tue, 12 Aug 2025 17:29:20 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 12 Aug 2025 17:29:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1755034160;
+	 x=1755120560; bh=lbs7wklbxmzRpXaW4E8RAy4dqvO2ltqvef6oxyXevvA=; b=
+	Bznh4Yn7V0ie0KyWMyoEvQJOHUzGPETC4xDdS5LF7U8Gz/yqR02DoUEYwpHi9xXO
+	oD0ZF757xFqRVjWs+iRYj2bR5KSZB6zEhpThknnA9IMT4Ke417jWsil5YiPdfOSd
+	Ye7fARZtAZ1T9SCZlttSpCiUe6U4NoI59G1CrRy72wm2IZ++nRpVTBI5ChDQBLIq
+	/ANAQIhrNdXNfUQTUXblXDrS14c0nZ6BP2T65JkCZT5XNAaFPm/2M0somUYgwyO6
+	TtQuP79u+X/kuU9IxsgfaS5Gmt6M1PJQ5MQHCHqxLV1E5rPyzib2owmPDPBo3Xo8
+	ZOFmIwXF4HGr4g0FUYEA6w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755034160; x=
+	1755120560; bh=lbs7wklbxmzRpXaW4E8RAy4dqvO2ltqvef6oxyXevvA=; b=M
+	2JsktkKAbWoNiQGi2MqZqVunuBW4m5QszIndv/w35s6JwiA7qVutZ23PBjn8lZRe
+	lg+VVATG9a0U0ckFqA2w0/N8GMmlpcmMLqEul3bIrBYx/DLw2T5wf13f6Ibe8zlD
+	+Dr/nAJoojfYoIo7VdE5sZc+TM16p66owEKX7ghoFNgBar465QIl0mxh2yEDFawJ
+	+cIaAapu+cTFyO4XwA/VV9PwLuVA+9WwXqAiqxJJyds4Ba2SeBYzDkdB+HbnKjOw
+	bU8I7oeC7dPk2RsvcExcqM8/a4axXesp73b3jTL++c29cKW8NjgTjOP5q0b5sRzI
+	RnwYuUrNiZn20GV4Ko4ow==
+X-ME-Sender: <xms:KrKbaAnSuJrr233c4CrYMALw3gG_oVU-yEdpQeBYRIOzPKIdhZANpw>
+    <xme:KrKbaP2fp6PsjOsLr4s6ELlQa0fiumR2ywhDgSHmnJDftlkV9gD8bCqFfOZqM33vi
+    o_ytWY3gJ0pvNgnUFY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeeigeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepmhhpvgesvg
+    hllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshes
+    ghhlihguvghrrdgsvgdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorh
+    hgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghs
+    rghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhhmtghksehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehrohgssehlrghnughlvgihrdhnvghtpdhrtghp
+    thhtohepuggrlhhirghssehlihgstgdrohhrgh
+X-ME-Proxy: <xmx:KrKbaLGLANg2iu2E9nJSHOy59LLCLZBvZjrZDy4ZWbRDkVwxeamS6A>
+    <xmx:KrKbaMci3nSHQPp-4KYqB3adv175iViWoJZpB3-ji7jOpbQqcdxOWg>
+    <xmx:KrKbaKJXjEC95J7iwGgoxNgDY4whTIcl6PTOBbZeV7xMBfpCWhKS0Q>
+    <xmx:KrKbaDp4tpq2VTJCKzfruaw1XKsOQGuSAimUeHnI6AhzR_5UcqQgbw>
+    <xmx:MLKbaIswpiNVCYAkrxdlxctSUj48ckr5RFxcHZEgDzKdP_ek3rSXROgh>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4915470006A; Tue, 12 Aug 2025 17:29:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2952979d-3275-4a33-aadb-c946e1ce0100@intel.com>
+Date: Tue, 12 Aug 2025 23:28:31 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Rob Landley" <rob@landley.net>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "Yoshinori Sato" <ysato@users.sourceforge.jp>,
+ "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Cc: "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Dave Vasilevsky" <dave@vasilevsky.ca>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <e7128300-31f7-409f-9158-c5af915ed598@app.fastmail.com>
+In-Reply-To: <543b5d42-a007-4f13-824e-1f8a27dfbd33@landley.net>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-5-arnd@kernel.org>
+ <543b5d42-a007-4f13-824e-1f8a27dfbd33@landley.net>
+Subject: Re: [PATCH 04/21] sh: select legacy gpiolib interface
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 12:14:51PM -0700, Sohil Mehta wrote:
-> But, this patch introduces code to support microcode=dis_ucode_ldr which
-> would then become ABI.
+On Tue, Aug 12, 2025, at 20:28, Rob Landley wrote:
+> On 8/8/25 10:17, Arnd Bergmann wrote:
+>> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+>> index d5795067befa..d60f1d5a94c0 100644
+>> --- a/arch/sh/Kconfig
+>> +++ b/arch/sh/Kconfig
+>> @@ -462,6 +462,7 @@ config CPU_SUBTYPE_SHX3
+>>   	select CPU_SHX3
+>>   	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
+>>   	select GPIOLIB
+>> +	select GPIOLIB_LEGACY
+>>   	select PINCTRL
+>
+> Is there a reason to have both rather than having GPIOLIB_LEGACY select 
+> GPIOLIB? (Does the legacy one ever NOT use the new one?)
 
-... and supports the old cmdline argument as well.
+The way I've staged the series was
 
-> Sure, a separate patch directly adding support for microcode=off works
-> as well.
+1. add GPIOLIB_LEGACY as an always-enabled symbol in 6.17
+2. add the 'select' and 'depends on' for that symbol in 6.18
+3. turn it off for all configs that don't select it already
 
-I don't see the need for an alias atm.
+Having GPIOLIB_LEGACY select GPIOLIB does sound like a nice
+idea in stage 3, but that doesn't work with the first step
+that's already merged now.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+      Arnd
 
