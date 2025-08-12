@@ -1,286 +1,215 @@
-Return-Path: <linux-kernel+bounces-763858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6AEB21AFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB2BB21AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1897A4CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4AC41A22912
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8706028643E;
-	Tue, 12 Aug 2025 02:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D1F2D97BF;
+	Tue, 12 Aug 2025 02:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VMXpNW1w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="avOISrDp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057526AE4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459A113D8A4;
+	Tue, 12 Aug 2025 02:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754967321; cv=none; b=IalbkZAuPZLKqLz0eKozz5+2Dmr9a+n8RtqblDCc26wabfEt6dZ/1S/Sn3YvTQdi+sTeHdudKsh9l23Hj+UMJgNrxCS+3wSXyN6izN/ucr8XP8WcuMvVZdtRY/H8ZtlTb9pjBpcfhEQVo3AiRZvmVK0m7DeJFLFKI9yeND7Z574=
+	t=1754967382; cv=none; b=KTUAOM80Huq8/VTIRzlbWHpH1iBPar0Rl+r6AW8cvlmVI/4pg6dQ7yoeujgZH/n5y77FJju2bSQ412UXTrvJq03RQytEaEy5S8rhO4OTxnbkuHSZBu9l8DlcfjYR7tRyVJBzdLVgGB1MJfVHVGS5fOl3PIJYP1NIi9sKC9kb494=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754967321; c=relaxed/simple;
-	bh=i4nIiHs46YfjUauzTykgl3BvodxjLB+KF6h3xbjgklI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u40M2OjEpuk5iZEqNsRhmcK4WQ4ofvtvz1IQLcyZodQYRah5OoPdAXNX0R/SRiG8eFHVjKhAn/rY4rfSaURNWvnNNoDzcLn7qXgJyGDzZ+I9434nz2+GZWfEww30HHMvbPGIkiqPfoab5WLCg4CVXsIVKFGQeGGyana6j0mTSQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VMXpNW1w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754967318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6pqbS3wrVGrxLndM70/poYm/QoyzIpWpUcgU17t6W0=;
-	b=VMXpNW1wG9Tf8s/gm58uPNfBneZvqunMD5h5nf3j73v3CQHlnGqIDGWQaXWq4ypG4Fzh39
-	njfEHmp1BDiK5WNB7Omvgxy1OwaL1bayEwWRTPTB8dJ1Sf7upzAdrh5D9nT6cUJ8aqxT3K
-	LQjKu4UigCZuXqmFVqC9GCrPJCm/2Hg=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-Nz5516EpODSyI5lJrNx9Dw-1; Mon, 11 Aug 2025 22:55:17 -0400
-X-MC-Unique: Nz5516EpODSyI5lJrNx9Dw-1
-X-Mimecast-MFC-AGG-ID: Nz5516EpODSyI5lJrNx9Dw_1754967316
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31f5f70a07bso7904880a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:55:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754967316; x=1755572116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M6pqbS3wrVGrxLndM70/poYm/QoyzIpWpUcgU17t6W0=;
-        b=Obw+hznFw2m6+MdmmY5c9RqNaQ9rxxTbfXBkD3Rego+m6jW3rXbXv+/aogqldSAb3e
-         oM4El/Fk85S60/ooKiNBvIX43uSPswoXBmXrWT76vMgfZgoOhISJIRaObHIAuDNMMDf8
-         8Tg+Mdf91oMGc9NN1qKAXe3PXuuhPbaG/UzSDVi5b3Lxdrj0KQp7a56gm8AYl4bz0QLN
-         h27GKL5A2/vZotno2cHTM2cBkHUcYs8oVn1DMMhbXmcolKI9yegZVvevH81U32FqfsLp
-         jsVhXFuIY7YAu2P5taqk/JrfOM/KWwaX4jfRdMu3aV7nAgdSncKPn+1j8SpXyxgXZH0e
-         1+Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3r69OQoQiu89DO1Vie/leLogBYog0EpPxGQzV/Te5gIDWed8fHgRn78eMtnWt/MhDx/DfUmuLGf0KL4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr8D2eM7eHBy98m3ysF0wxfc7blTNEi/QVgsHa1gfziwA4UIER
-	hEKkPRVBNAowMRBX9vwjt0eZFBZj/ABH8kLV9bKiNhJyJDEvjt8SpqItTsrcIUzpNGZSBpd2gtK
-	uThgSRGcrUWCBHwyW8RCvi5iB+lruEU5mIktT44CAfiaKo5eI1aqnnTn/CfBHSSDfGTCy/kWfkW
-	+AiUCqdsIcQagciKLZJIRm5j/s+TsJC+SvAr/il180
-X-Gm-Gg: ASbGncuaqQcEmIWrgCfGbxyvQtC0Oq2H9eIF8H2t/z1vs92eD5mTQlqohea3w3nZSLi
-	N+frbYLvfV7Ktjhk2xLbuVRfnOaRfdq6JMPOAG1ojDKcnV+ULnsTlaKD+z3GpGgBBx1Fy1LYSzF
-	ejYKqCZ/g4KCp2TjFPcUbqQOc=
-X-Received: by 2002:a17:90b:540d:b0:311:ea13:2e70 with SMTP id 98e67ed59e1d1-321839f1159mr20937873a91.14.1754967315864;
-        Mon, 11 Aug 2025 19:55:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGPgaSgVlGVEhY4jiEd1h3ZWnC2p/B/LDs7/sYmqUIjR+WgITtBGZFWyV4hwaraPn0MmaKBu/RsYEWRNtC42k=
-X-Received: by 2002:a17:90b:540d:b0:311:ea13:2e70 with SMTP id
- 98e67ed59e1d1-321839f1159mr20937831a91.14.1754967315137; Mon, 11 Aug 2025
- 19:55:15 -0700 (PDT)
+	s=arc-20240116; t=1754967382; c=relaxed/simple;
+	bh=Ko3AjVpWTBy2eVUwDGzR71/wCb7ro5IS8O7k67DJkaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RAAo1fVE+3Uzi5iQTDPq1Muu8QEZwK9bFodZaVDcfvvOKQvQ10G3FaZ/i/Q8L2w+VqR/MIOruUZGim9qm+JJ1hphslMh/1T0ofat3ZV3bHV9AckSrTP5IMpk400rvRi8EKFAx2RDnFTrEEcu1f7SxNyn/lhCTmg2SkkTtIXmHIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=avOISrDp; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754967380; x=1786503380;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ko3AjVpWTBy2eVUwDGzR71/wCb7ro5IS8O7k67DJkaI=;
+  b=avOISrDpIfpSp4hBMblp7W9SzSFXRt97yGdSIUJKj8vgaHYsZfLHTV5J
+   u8DaTwgrsf3Hm1rT34tjUiUFpyfEsgUmUNIaJiTrdkmJ+4WsXDIbF+5rS
+   w0G27+Z7u2/9kk91HCwVX7flpbY4uFOR24GEbh7/wsD8d86nG3/mSpeRx
+   JMhYFzbTFT6VjlktOjbSZmVLLHOF0XOA7zzCIRcIcI8wxVN0Itm3UFRGE
+   cmStVc/AV30GRiAYuIvAHWZ6O/WV8vot87kIrcXp/4A+FC/141PWbw5Ad
+   MhW8PMeJlSm1wQYBucsEHBMJYmVMdvQ3K6SfNtjjgTTv9OE56usQtGO3y
+   w==;
+X-CSE-ConnectionGUID: l5KQ7wiyTE6KwBa1dLYIyQ==
+X-CSE-MsgGUID: v/GLx8tPR66B8NOJC5UaFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57100417"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="57100417"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:56:19 -0700
+X-CSE-ConnectionGUID: 57ivHpJVTwW4i8roMMMqDQ==
+X-CSE-MsgGUID: ESiHzduhQFiMTCvrx2CgxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="171321195"
+Received: from 984fee019967.jf.intel.com ([10.165.54.94])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:56:18 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mlevitsk@redhat.com,
+	rick.p.edgecombe@intel.com,
+	weijiang.yang@intel.com,
+	xin@zytor.com,
+	Chao Gao <chao.gao@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org
+Subject: [PATCH v12 00/24] Enable CET Virtualization
+Date: Mon, 11 Aug 2025 19:55:08 -0700
+Message-ID: <20250812025606.74625-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-2-eperezma@redhat.com>
- <CACGkMEsw2taXgW11na2CFK6W03c=x=wMn3iwNZPypgPkeSU06Q@mail.gmail.com>
- <CACGkMEvinV7Zd+xddnxcerFbw_c+RZypkeD5HaN8=g6+peZvMQ@mail.gmail.com>
- <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
- <CACGkMEvbxZsmPPHgfst89FCbZamBPLt8V=K-eepa4s3muFuM4A@mail.gmail.com>
- <CAJaqyWerLAL44w-mnwaohZh+duzHqPS3BO-sJDoEHZDN5RLY1g@mail.gmail.com>
- <CACGkMEvsvFzKUF6w0T4juUFcDbm67YoFFwNDw82K6kogB-1yRA@mail.gmail.com>
- <CAJaqyWeteUcvzTbcf2ShatX8QLCVCEgs-dgy19ir=W3LJE3y1A@mail.gmail.com>
- <CACGkMEtir49z9P=82SO9a4JML9D71UAaGSm38R2Ubx3Sg6ZufQ@mail.gmail.com> <CAJaqyWfZn36gGbT=MjpdcXi3Sje1WRB6nycXJwP_BPugSzHRyQ@mail.gmail.com>
-In-Reply-To: <CAJaqyWfZn36gGbT=MjpdcXi3Sje1WRB6nycXJwP_BPugSzHRyQ@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 12 Aug 2025 10:55:03 +0800
-X-Gm-Features: Ac12FXxnkg1JOTajc2pKVvf4Bn1SkcQME2RfHqdq88tLH7OdIhFXIG4Ypql1zUs
-Message-ID: <CACGkMEs+ZytUO8bEqYEG+Y6s85dqTZciWdU1NpxpEiMvRPC+ww@mail.gmail.com>
-Subject: Re: [RFC 1/6] vduse: add v1 API definition
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
-	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 5:02=E2=80=AFPM Eugenio Perez Martin
-<eperezma@redhat.com> wrote:
->
-> On Mon, Aug 11, 2025 at 4:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >
-> > On Sun, Aug 10, 2025 at 6:18=E2=80=AFPM Eugenio Perez Martin
-> > <eperezma@redhat.com> wrote:
-> > >
-> > > On Fri, Aug 8, 2025 at 2:50=E2=80=AFAM Jason Wang <jasowang@redhat.co=
-m> wrote:
-> > > >
-> > > > On Thu, Aug 7, 2025 at 6:56=E2=80=AFPM Eugenio Perez Martin <eperez=
-ma@redhat.com> wrote:
-> > > > >
-> > > > > On Tue, Jun 10, 2025 at 10:36=E2=80=AFAM Jason Wang <jasowang@red=
-hat.com> wrote:
-> > > > > >
-> > > > > > On Mon, Jun 9, 2025 at 2:11=E2=80=AFPM Eugenio Perez Martin <ep=
-erezma@redhat.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Jun 9, 2025 at 3:50=E2=80=AFAM Jason Wang <jasowang@r=
-edhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Jun 9, 2025 at 9:41=E2=80=AFAM Jason Wang <jasowang=
-@redhat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9rez=
- <eperezma@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > This allows to define all functions checking the API ve=
-rsion set by the
-> > > > > > > > > > userland device.
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > > > > > > >
-> > > > > > > > > It might be worth clarifying how it works.
-> > > > > > > > >
-> > > > > > > > > For example,
-> > > > > > > > >
-> > > > > > > > > 1) would VDUSE behave differently or if it's just some ne=
-w ioctls
-> > > > > > >
-> > > > > > > I'd like to test more in-depth, but a device can just bump th=
-e version
-> > > > > > > ID and then implement the replies to the vduse messages. No n=
-eed to
-> > > > > > > implement new ioctls. If the VDUSE device sets 0 in either nu=
-mber of
-> > > > > > > ASID or vq groups, the kernel assumes 1.
-> > > > > >
-> > > > > > Right, this is the way we use now and I think maybe we can docu=
-ment
-> > > > > > this somewhere.
-> > > > > >
-> > > > > > >
-> > > > > > > But you have a very good point here, I think it is wise to ev=
-aluate
-> > > > > > > the shortcut of these messages in the VDUSE kernel module. If=
- a VDUSE
-> > > > > > > device only has one vq group and one ASID, it can always retu=
-rn group
-> > > > > > > 0 and asid 0 for everything, and fail every try to ser asid !=
-=3D 0.
-> > > > > >
-> > > > > > Yes, and vhost-vDPA needs to guard against the misconfiguration=
-.
-> > > > > >
-> > > > > > > This
-> > > > > > > way, the update is transparent for the VDUSE device, and futu=
-re
-> > > > > > > devices do not need to implement the reply of these. What do =
-you
-> > > > > > > think?
-> > > > > >
-> > > > > > This should work.
-> > > > > >
-> > > > > > >
-> > > > > > > > > 2) If VDUSE behave differently, do we need a ioctl to set=
- the API
-> > > > > > > > > version for backward compatibility?
-> > > > > > > >
-> > > > > > > > Speak too fast, there's a VDUSE_SET_API_VERSION actually.
-> > > > > > > >
-> > > > > > > > I think we need to think if it complicates the migration co=
-mpatibility or not.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Do you mean migration as "increase the VDUSE version number",=
- not "VM
-> > > > > > > live migration from vduse version 0 to vduse version 1", isn'=
-t it? The
-> > > > > > > second should not have any problem but I haven't tested it.
-> > > > > >
-> > > > > > I mean if we bump the version, we can't migrate from version 1 =
-to
-> > > > > > version 0. Or we can offload this to the management (do we need=
- to
-> > > > > > extend the vdpa tool for this)?
-> > > > > >
-> > > > >
-> > > > > I just noticed I left this unreplied. But I still do not get what
-> > > > > migrate means here :).
-> > > > >
-> > > > > If migrate means to run current VDUSE devices on kernel with this
-> > > > > series applied these devices don't set V1 API so they have one vq
-> > > > > group, and one asid. I'm actually testing this with my libfuse+VD=
-USE
-> > > > > modifications that don't use V1 at all. Adding this explanation t=
-o the
-> > > > > patch as it is a very good point indeed.
-> > > >
-> > > > Right.
-> > > >
-> > > > >
-> > > > > If it means to migrate a guest from using a V1 VDUSE device to a =
-V0
-> > > > > device "it should work", as it is just a backend implementation
-> > > > > detail.
-> > > >
-> > > > For example src is the VDUSE with multiqueue support (v1) but dest
-> > > > doesn't have this support (v0). I think the qemu should fail to lau=
-nch
-> > > > in dest.
-> > > >
-> > > > > If we migrate from or to a vdpa device backed by hardware, for
-> > > > > example, one of the devices does not even have the concept of VDU=
-SE
-> > > > > API version.
-> > > > >
-> > > > > In the case of net, it does not work at the moment because the on=
-ly
-> > > > > way to set features like mq are through the shadow CVQ.
-> > > >
-> > > > I think you mean qemu should fail, I'm not sure this is friendly to=
- libvirt.
-> > > >
-> > >
-> > > No, I think QEMU should not transmit vdpa backend properties not
-> > > visible to the guest, so we don't get an explosion of properties that
-> > > are hard to get. Expanding on this, QEMU is not even able to know if
-> > > it is talking with VDUSE, vdpa_sim, or a vdpa device backed by
-> > > hardware. And I think we don't want QEMU to have this information. So
-> > > sending the VDUSE version implies removing a lot of useful
-> > > abstractions.
-> > >
-> > > In the case of net, the destination QEMU should fail if it is not abl=
-e
-> > > to restore the device state. At this moment this implies to have at
-> > > least two ASID if the net device has CVQ, and that CVQ is in its own
-> > > ASID, but that may not be true in the future.
-> > >
-> > > But QEMU does not check if that is the case migrating between two
-> > > vdpa_net_sim if one supports ASID but the other doesn't.
-> >
-> > Ok I think I must miss something. I need some context here. For
-> > example, Is the shadow cvq option used by libvirt or not? (Or it has
-> > been enabled by default if Qemu detect cvq has its own group?)
-> >
-> > If shadow cvq is neither used by libvirt nor automatically enabled, we
-> > need to make it work for libvirt first.
-> >
-> > If it relies on libvirt to enable it explicitly, is libvirt expected
-> > to detect the vDPA ability (I guess it is not what libvirt wants)?
-> > If shadow cvq is enabled automatically, migrating from V2 to V1 is
-> > fine but not the reverse.
-> >
->
-> QEMU uses shadow CVQ automatically if all the conditions (ASID, proper
-> set of features, etc) are supported.
->
+The FPU support for CET virtualization has already been merged into 6.17-rc1.
+Building on that, this series introduces Intel CET virtualization support for
+KVM.
 
-Ok, so V1 implies non-migratable.  So I'm still confused about how to
-deal with migration compatibility.
+Changes in v12:
+1. collect Tested-by tags from John and Mathias.
+2. use less verbose names for KVM rdmsr/wrmsr emulation APIs in patch 1/2
+   (Sean/Xin)
+3. refer to s_cet, ssp, and ssp_table in a consistent order in patch 22
+   (Xin)
 
-For example, ping-pong migration between V1 and V2.
+Please note that I didn't include Mathias' patch, which makes CR4.CET
+guest-owned. I expect that patch to be posted separately.
 
-Thanks
+---
+Control-flow Enforcement Technology (CET) is a kind of CPU feature used
+to prevent Return/CALL/Jump-Oriented Programming (ROP/COP/JOP) attacks.
+It provides two sub-features(SHSTK,IBT) to defend against ROP/COP/JOP
+style control-flow subversion attacks.
+
+Shadow Stack (SHSTK):
+  A shadow stack is a second stack used exclusively for control transfer
+  operations. The shadow stack is separate from the data/normal stack and
+  can be enabled individually in user and kernel mode. When shadow stack
+  is enabled, CALL pushes the return address on both the data and shadow
+  stack. RET pops the return address from both stacks and compares them.
+  If the return addresses from the two stacks do not match, the processor
+  generates a #CP.
+
+Indirect Branch Tracking (IBT):
+  IBT introduces new instruction(ENDBRANCH)to mark valid target addresses
+  of indirect branches (CALL, JMP etc...). If an indirect branch is
+  executed and the next instruction is _not_ an ENDBRANCH, the processor
+  generates a #CP. These instruction behaves as a NOP on platforms that
+  doesn't support CET.
+
+CET states management
+=====================
+KVM cooperates with host kernel FPU framework to manage guest CET registers.
+With CET supervisor mode state support in this series, KVM can save/restore
+full guest CET xsave-managed states.
+
+CET user mode and supervisor mode xstates, i.e., MSR_IA32_{U_CET,PL3_SSP}
+and MSR_IA32_PL{0,1,2}, depend on host FPU framework to swap guest and host
+xstates. On VM-Exit, guest CET xstates are saved to guest fpu area and host
+CET xstates are loaded from task/thread context before vCPU returns to
+userspace, vice-versa on VM-Entry. See details in kvm_{load,put}_guest_fpu().
+
+CET supervisor mode states are grouped into two categories : XSAVE-managed
+and non-XSAVE-managed, the former includes MSR_IA32_PL{0,1,2}_SSP and are
+controlled by CET supervisor mode bit(S_CET bit) in XSS, the later consists
+of MSR_IA32_S_CET and MSR_IA32_INTR_SSP_TBL.
+
+VMX introduces new VMCS fields, {GUEST|HOST}_{S_CET,SSP,INTR_SSP_TABL}, to
+facilitate guest/host non-XSAVES-managed states. When VMX CET entry/exit load
+bits are set, guest/host MSR_IA32_{S_CET,INTR_SSP_TBL,SSP} are loaded from
+equivalent fields at VM-Exit/Entry. With these new fields, such supervisor
+states require no addtional KVM save/reload actions.
+
+Tests
+======
+This series has successfully passed the basic CET user shadow stack test
+and kernel IBT test in both L1 and L2 guests. The newly added
+KVM-unit-tests [2] also passed, and its v11 has been tested with the AMD
+CET series by John [3].
+
+For your convenience, you can use my WIP QEMU [1] for testing.
+
+[1]: https://github.com/gaochaointel/qemu-dev qemu-cet
+[2]: https://lore.kernel.org/kvm/20250626073459.12990-1-minipli@grsecurity.net/
+[3]: https://lore.kernel.org/kvm/aH6CH+x5mCDrvtoz@AUSJOHALLEN.amd.com/
+
+Chao Gao (3):
+  KVM: x86: Zero XSTATE components on INIT by iterating over supported
+    features
+  KVM: nVMX: Add consistency checks for CR0.WP and CR4.CET
+  KVM: nVMX: Add consistency checks for CET states
+
+Sean Christopherson (4):
+  KVM: x86: Use double-underscore read/write MSR helpers as appropriate
+  KVM: x86: Manually clear MPX state only on INIT
+  KVM: x86: Report XSS as to-be-saved if there are supported features
+  KVM: x86: Load guest FPU state when access XSAVE-managed MSRs
+
+Yang Weijiang (17):
+  KVM: x86: Rename kvm_{g,s}et_msr()* to show that they emulate guest
+    accesses
+  KVM: x86: Add kvm_msr_{read,write}() helpers
+  KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
+  KVM: x86: Refresh CPUID on write to guest MSR_IA32_XSS
+  KVM: x86: Initialize kvm_caps.supported_xss
+  KVM: x86: Add fault checks for guest CR4.CET setting
+  KVM: x86: Report KVM supported CET MSRs as to-be-saved
+  KVM: VMX: Introduce CET VMCS fields and control bits
+  KVM: x86: Enable guest SSP read/write interface with new uAPIs
+  KVM: VMX: Emulate read and write to CET MSRs
+  KVM: x86: Save and reload SSP to/from SMRAM
+  KVM: VMX: Set up interception for CET MSRs
+  KVM: VMX: Set host constant supervisor states to VMCS fields
+  KVM: x86: Don't emulate instructions guarded by CET
+  KVM: x86: Enable CET virtualization for VMX and advertise to userspace
+  KVM: nVMX: Virtualize NO_HW_ERROR_CODE_CC for L1 event injection to L2
+  KVM: nVMX: Enable CET support for nested guest
+
+ arch/x86/include/asm/kvm_host.h |  16 +-
+ arch/x86/include/asm/vmx.h      |   9 +
+ arch/x86/include/uapi/asm/kvm.h |  13 ++
+ arch/x86/kvm/cpuid.c            |  19 +-
+ arch/x86/kvm/emulate.c          |  46 +++--
+ arch/x86/kvm/smm.c              |  12 +-
+ arch/x86/kvm/smm.h              |   2 +-
+ arch/x86/kvm/svm/svm.c          |   4 +
+ arch/x86/kvm/vmx/capabilities.h |   9 +
+ arch/x86/kvm/vmx/nested.c       | 175 +++++++++++++++--
+ arch/x86/kvm/vmx/nested.h       |   5 +
+ arch/x86/kvm/vmx/vmcs12.c       |   6 +
+ arch/x86/kvm/vmx/vmcs12.h       |  14 +-
+ arch/x86/kvm/vmx/vmx.c          |  85 +++++++-
+ arch/x86/kvm/vmx/vmx.h          |   9 +-
+ arch/x86/kvm/x86.c              | 339 +++++++++++++++++++++++++++-----
+ arch/x86/kvm/x86.h              |  61 ++++++
+ 17 files changed, 732 insertions(+), 92 deletions(-)
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.47.1
 
 
