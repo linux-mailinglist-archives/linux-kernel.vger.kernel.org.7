@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-765317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDC9B22E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05D6B22E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF21188A7D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90F93BB27C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA012F83DE;
-	Tue, 12 Aug 2025 17:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCC22FAC1E;
+	Tue, 12 Aug 2025 17:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="h1kA7+0I"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL4Sw+hk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBED1A9FB7;
-	Tue, 12 Aug 2025 17:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018504; cv=pass; b=KV+6q8b3sHuuwWU+iFQlb48XAGQUetbde2kc3UAyxGbx1J97M61t489Z6X5MQC4NoJ5i0FUCz/K2d0s0ySM0FQ1STU3ODK2tmCf5o1pIJJg3TpqXIAbOpzB/EQ5sxvT3fOFSR/OLIejHUxUbcd0+LX+4gh3JWJ+iUQ1dZSj6Xwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018504; c=relaxed/simple;
-	bh=nQ/ztbq3yjkUYINidoautnSKxc9fr9+WkgQ0va3g8XE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dn6P9AMi6QC15cEbX7nC1LTcG+l/AQyd04/PHitdjak/+nUHXNwpHl4/y5n1PYdK2uERKEFz9w1uzbzsvYClBJ7Pr8Gkxq8lbddRgV1CFTyg6dpPOvT4f/QUCeRetaFg2uVmh4yjrI3vBXtmk3PyElGmDnSM/SzJ7UwCIv+Q1WU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=h1kA7+0I; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755018476; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=X2+6LwOk6qAv9zrq6LA5lWJtwOuVWCKOYnHqz+/wya1EJ7ZFLuBXrXwPuSE5Y09kXg9IW+ufBGm+8my9JZ0G0NaK1Hr2RaQ+Lq1IzsVM1UWAfnj97rhqerSSWRLjTS9w/iwPgsVhn/k1cBgfLVyE8tYPGyAA+XYPDvo7fd6AcJ4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755018476; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=sw4HIiGpcTlEANcKneYpvYEeePB5QhOBB0MDbHc9D3c=; 
-	b=DydPo1JcWKdDn1l5azr8mzuF8AMH/N0ACJ6fHZBdW0i14ZqlJgQZW4PNP9C4UusAHku6ZQlbSF/gokc+99CObc2Ly4q1H6BwSuh8AVIX0mylFmQtsu56RhlToq3RcFL5ihY8ZcI30T4AWIPJp6IS1ccfLHdxzdiX+KPFIFb1kdM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755018476;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=sw4HIiGpcTlEANcKneYpvYEeePB5QhOBB0MDbHc9D3c=;
-	b=h1kA7+0Ixsm5zg0SIUI3cJXY0kA3JL2n/i4eyh20FfZKM4fe0xcNwT6EgM15ZOqz
-	clya8QxUyjydBdtY+7ZYDY2PeYd/sEVspUvj9ic1w/Q92BqmykR2RIn2LA/ReGuqQel
-	Te6aYj3DP5kBM8m4Nf55CcEnK8QafOaPGGNob5Os=
-Received: by mx.zohomail.com with SMTPS id 1755018474668548.5768361747636;
-	Tue, 12 Aug 2025 10:07:54 -0700 (PDT)
-Message-ID: <f3b7414c-8182-4018-951b-b6c64653c38d@collabora.com>
-Date: Tue, 12 Aug 2025 20:07:50 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E873C242D74;
+	Tue, 12 Aug 2025 17:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755018580; cv=none; b=h+nI8Tpqa4qtMBqcx6f55VlmHZOnTqQAVk0ugz2Nwq3L7kqAwjKtOsSJRja5asllqqgnci/gGBvkEIEUcDf+oiyhMmhKW7zAp0FmA7g2Feu7ZY5DDDhtyXqYd0By7BOGgc4tR7kOh4Dw/4xKBV0YhYavMiLIjlfGHwIUxs/4q8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755018580; c=relaxed/simple;
+	bh=WllhlpeuM1QYj3ynp+yRWpiZPyuig56MrMJq6geJbq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y1R0TIYcsGbnY+GuDvxx5A9Di8gJr2BcPjiW0HZHoiOEEnGiJJH/b8JLRwPJs8SAAJpWKeRmM8sM8sL0a8WcenKIuxYYmxFSu4C/Ci1MpyaGSWqAcmJHE762y1b71llMk5D/l/MxfCA68dVSKsvmCTSlPy1QgsApAXzjTBYJyA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL4Sw+hk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 315F7C4CEF6;
+	Tue, 12 Aug 2025 17:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755018576;
+	bh=WllhlpeuM1QYj3ynp+yRWpiZPyuig56MrMJq6geJbq0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oL4Sw+hk8pHYaYySOCd+3ByAPToVrqxHD3EhBtFQtquiy/gNpJhiIPi7WbacIdYq+
+	 JvtT9wxou7H8//kEP7MDOPvjQd4VmV1IYtx+Q/IG6W7pR23Rde8bNJVBEpyN3Q48go
+	 wA4XGXVUYZrDwV7DQ3VDcHGRJ/iMWWdqSMG9yafwpj49LkbHWRh15PW0xw9d6pqlkd
+	 IAdLzvxQ137cGLL35VCrUz47GH7iJNQYbtJ4KNK0AUoP52esjXltISKF3O/YNUU8ob
+	 WX9UxN5jHoZUnM/0UgRfb0OvEIWIn4+byx88nT14VS4T5qmwmL20Aq0dkjIy4XLHU6
+	 RrdPlWcKcaEZA==
+From: SeongJae Park <sj@kernel.org>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Will Deacon <will@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Nick Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Rik van Riel <riel@surriel.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH] mm: remove redundant __GFP_NOWARN
+Date: Tue, 12 Aug 2025 10:09:33 -0700
+Message-Id: <20250812170933.56674-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <aJs9dPMdY_W5uZdc@hyeyoo>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] media: rkvdec: Add H264 support for the VDPU381
- variant
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
- <20250808200340.156393-10-detlev.casanova@collabora.com>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20250808200340.156393-10-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 8/8/25 23:03, Detlev Casanova wrote:
-> +static struct rcb_size_info vdpu381_rcb_sizes[] = {
-> +	{6,	PIC_WIDTH},	// intrar
-> +	{1,	PIC_WIDTH},	// transdr (Is actually 0.4*pic_width)
-> +	{1,	PIC_HEIGHT},	// transdc (Is actually 0.1*pic_height)
-> +	{3,	PIC_WIDTH},	// streamdr
-> +	{6,	PIC_WIDTH},	// interr
-> +	{3,	PIC_HEIGHT},	// interc
-> +	{22,	PIC_WIDTH},	// dblkr
-> +	{6,	PIC_WIDTH},	// saor
-> +	{11,	PIC_WIDTH},	// fbcr
-> +	{67,	PIC_HEIGHT},	// filtc col
-> +};
-> +
-> +const struct rkvdec_config config_vdpu381 = {
+On Tue, 12 Aug 2025 22:11:16 +0900 Harry Yoo <harry.yoo@oracle.com> wrote:
 
-Nit: config_vdpu381 should be declared as "static", same for
-config_vdpu383 in the next patch
+> On Tue, Aug 12, 2025 at 05:57:46PM +0800, Qianfeng Rong wrote:
+> > Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
+> > GFP_NOWAIT implicitly include __GFP_NOWARN.
+> > 
+> > Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
+> > `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
+> > redundant flags across subsystems.
+> > 
+> > No functional changes.
+> > 
+> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> > ---
+> 
+> Maybe
+> 
+> .gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
+>                         __GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
+> 
+> in mm/damon/paddr.c also can be cleaned up to
+> 
+> .gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
+>                         | __GFP_NOMEMALLOC | GFP_NOWAIT, 
+> 
+> ?
 
--- 
-Best regards,
-Dmitry
+Thank you for catching this, Harry!
+
+FYI, the code has moved into mm/damon/ops-common.c by commit 13dde31db71f
+("mm/damon: move migration helpers from paddr to ops-common").  Please feel
+free to make the cleanup if anyone willing to.
+
+
+Thanks,
+SJ
+
+[...]
 
