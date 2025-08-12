@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-765293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F7EB22E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:49:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97818B22DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF824681D7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:44:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0A37A7845
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0942FF15B;
-	Tue, 12 Aug 2025 16:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9244E2FFDC0;
+	Tue, 12 Aug 2025 16:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewk+AaHK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsA/mEHm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06BD2FF14F;
-	Tue, 12 Aug 2025 16:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33692FAC01
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016913; cv=none; b=BYl2IudtYCwvdLuIhCOXlWuvKvFOG3/CFib2kMMe7jxB15pyeGvfBcRkDHPltgtgegCBwdtTfcMc6BwGFH4cM+P08ouFvBgd27qieBg6FA0zVC7Bdvm5PdX+uZIpxouGwwYEOEbzoPW4T1yi45CW8bv2vLU71+ig3p7z8r4Nlf4=
+	t=1755016917; cv=none; b=eQ4AoUuUnaQerpiyGBGHs8XX6dQleSa7JBqiHvqxz92s1tLP9glzAlhQDuqMgaETyR0L/Bqwak379JPLrQCYXblM0+sTMBoXaPyVnjwxg7ENAzWlaHMnAhoQ064KI4WYfl/pE4KpuEhqkVA7tlmh/SvQMU6wMptwzvd4tNww8SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016913; c=relaxed/simple;
-	bh=yQgCyFgmlpiQfbU/3+VFXyd2IaPslpZXj/9VuPOztFU=;
+	s=arc-20240116; t=1755016917; c=relaxed/simple;
+	bh=qylFsF0HkvEqH5od8S1haU8m9Yen1Xq7TJ1PYMkZias=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LQTdomjD6pz8r53GY9xqHyBXBIzrhksJtRlXwUds7FJVhaAaVOWIMzrcrmVD/byI13+TSeHSTe+ub85yfR3aFGYZyw459Kn5xrSPuIqP6v2dcDDDRsJsEHzGDA9InD2w+su2VEZIZkA4FYIxdjLI09NaTg2gyOBw20FiBK4ExAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewk+AaHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF14C4CEF7;
-	Tue, 12 Aug 2025 16:41:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=J89HawbX60wEmp4pXjMqCOT2BwWTcGSwgc2dEhkbOaF//OKz4H9CQa7h8FNmIjVjTn6WOO/pcsODytER9Tt91F4iRf+UuyHm/GznLezDRKV6Rwn6wx1m64I24+u7YDBPZf2zOCdV5c8APBsdtYZwWKTZnB5KltaRsjCv79N7E1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsA/mEHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C953EC4CEF8;
+	Tue, 12 Aug 2025 16:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755016913;
-	bh=yQgCyFgmlpiQfbU/3+VFXyd2IaPslpZXj/9VuPOztFU=;
+	s=k20201202; t=1755016916;
+	bh=qylFsF0HkvEqH5od8S1haU8m9Yen1Xq7TJ1PYMkZias=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ewk+AaHKTP1J9VFrYB8nT2+5Cg6D99RsW5lyPD5+L4I9I3n5OXVHxm0slnz96N0YG
-	 0YJO2IlR9zkGQeJWz/xSSPneYp+3Rt97D3i001ieiFK7jJafOkDEswF/T40lhMcwMc
-	 JZfNFW6SOmdS7akXx03Mc+tMlplQSugtAa11JrY/KF9FerNQHVZvDAGNWTGjvQWa+6
-	 9+WOvGdZRFW7cpimtjagJFHJ3OA4VknEt4L9bH/2hMT2vwekHZ+sReTRYhxRlWGyxv
-	 cQo3N0Bq30hyDY4vSkbwfnZ8vZgSRRhE/CRSRfgDJ/DnqxLNtfZYyyBYd7h6bS7I/x
-	 fi0gydERTUPDQ==
+	b=EsA/mEHmCN10Kazb1TmB4OujmNIqjyo9ou7fbL6gpyghMgeQbNn6UY0w1lJWikO/9
+	 IrkN8VHSFQYroUiu8bXSmnPX/YZbx9N7nHEa31yq0dBeHh6pj6GpcL8PY3VryKwMkY
+	 45IgdIQA8S/q+W2zwMCj8kBbGE6rjxU0wbElH2gIBQ0W1vNLsVjl6wJ3XEcjK/2Ajj
+	 bzLYDo5SUqHIT5ga7OEVia6GC6935zfdLh/uEyux7qeM5VNbO84dw+UHJRUY5HNfBz
+	 /jlTgdPLSTscyikEtks38OHjPoYksQXk+9WSmn+v+FOJD/dIRw4/CO+h9zOgKqf77J
+	 +EAc6qmda75fA==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250709-sm7635-eusb-repeater-v2-0-b6eff075c097@fairphone.com>
-References: <20250709-sm7635-eusb-repeater-v2-0-b6eff075c097@fairphone.com>
-Subject: Re: [PATCH v2 0/4] Add support for eUSB2 repeater on PMIV0104
-Message-Id: <175501690862.633310.534963018208999296.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 22:11:48 +0530
+ Heiko Stuebner <heiko@sntech.de>, Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
+ Johan Jonker <jbx6244@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250723072324.2246498-1-jonas@kwiboo.se>
+References: <20250723072324.2246498-1-jonas@kwiboo.se>
+Subject: Re: [PATCH] phy: rockchip: naneng-combphy: Enable U3 OTG port for
+ RK3568
+Message-Id: <175501691338.633310.6315313120573301384.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 22:11:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +63,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Wed, 09 Jul 2025 16:55:13 +0200, Luca Weiss wrote:
-> Add a new property qcom,tune-res-fsdif for the eUSB2 repeater and add
-> the compatible for the repeater on the PMIV0104 PMIC.
+On Wed, 23 Jul 2025 07:23:22 +0000, Jonas Karlman wrote:
+> The boot firmware may disable the U3 port early during boot and leave it
+> up to the controller or PHY driver to re-enable U3 when needed.
 > 
+> The Rockchip USBDP PHY driver currently does this for RK3576 and RK3588,
+> something the Rockchip Naneng Combo PHY driver never does for RK3568.
+> This may result in USB 3.0 ports being limited to only using USB 2.0 or
+> in special cases not working at all on RK3568.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Document qcom,tune-res-fsdif
-      commit: 47e9b6f601932899280f725b0fdbc4d4f85e2719
-[2/4] phy: qualcomm: phy-qcom-eusb2-repeater: Support tune-res-fsdif prop
-      commit: 8e086fe190b63ef1d0d31b300bfefb5d00217427
-[3/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Add compatible for PMIV0104
-      commit: eb86c2ce4a89157da71d3a7953eac4dcde7d5527
-[4/4] phy: qualcomm: phy-qcom-eusb2-repeater: Add support for PMIV0104
-      commit: 8427a4ca85b36247cb2c055ec7507a78a19246ad
+[1/1] phy: rockchip: naneng-combphy: Enable U3 OTG port for RK3568
+      commit: 4e346666edcc0506d8f0e581de4280b85b0d3e98
 
 Best regards,
 -- 
