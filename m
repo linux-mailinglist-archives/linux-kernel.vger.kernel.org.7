@@ -1,61 +1,91 @@
-Return-Path: <linux-kernel+bounces-765166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC49B22C5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82135B22C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A50377AC642
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967C67B6950
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F105B2F9468;
-	Tue, 12 Aug 2025 15:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/+T373I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5608323D7EA;
+	Tue, 12 Aug 2025 15:52:51 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A78C2F659E;
-	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6BD2F8BD8;
+	Tue, 12 Aug 2025 15:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013985; cv=none; b=C3eQLQ4T2hFmKNEeg4CdZrxVaMlDmZ2HGWhV4u7teHFKohKNSdBvVXXUUG7dy862kZ1GJf16VtJT7n3iROi/hyUc6gJd/+jPKXpARX2KwqMjlBCmtcA4vTHq+3J0OiLqa7VERok0xRfpaXQpGs8c6sK8kU+vM31RlXUIfSEnX/s=
+	t=1755013970; cv=none; b=c3YYqtgM4l1WrnNJkDsKF1fXAbJkfcarMNBDWNZre4QsFvfnM1/NwecBo6EKDg+rm1pb+oNZcycNa9YkvL2ebhA4PgJdQ2ivdwF19y22PGaUx9ntpup+/Aff8jLDWJphBMj6mcD7KIsCTDlsSk8nseJprW4LIFt6rT2ZRyG4KRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013985; c=relaxed/simple;
-	bh=tUovukr9LJAZFuTCxPr3I6APWlpK5/pEVeW1gSeYrBI=;
+	s=arc-20240116; t=1755013970; c=relaxed/simple;
+	bh=Y6yt61AOmS8VLZtjJ1BuuUWNqePIcTOn+4ook9c6mRM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hJSMgRDYyxOqI3vmP/7UjlTAuf4IgCN5L9f8UNbfkznZvni2NeNXGLKCY8UFjZCDGuUUTfmIvjKfNKgNeEXS7cKSBmI4fa0CqgQ2JB0AdEDVgoHu2C6BsbochldqzM9RMHGfi/yrRjR3iWxSEnCpjtn9wcVpaKgecoCKEwIZl0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/+T373I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9BEC4CEF7;
-	Tue, 12 Aug 2025 15:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755013984;
-	bh=tUovukr9LJAZFuTCxPr3I6APWlpK5/pEVeW1gSeYrBI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I/+T373IkRxMN4+DbM1srsAKLqJA4EpftaFElQ21Z13GAB1+HutvQICiDJDocfqMF
-	 EfS5atY9zpDFPSH6RbYx16uq8cvZsw6BRgQvZJ0kKMA/OCxk5Z2EidulJxmuoIR4u0
-	 aZyLXWeJciCwPkGwTMR2cwtONhoHP7ilJqQ3HQYTjZm3nMBCazgMOX0FZ+nq+6jzNP
-	 VwlgcrKRCgs3ju7XbFRVDxA6k++hjNb7Zz8kRk4kGs3P3Rb5ybovsDnu9d0KUkSCrC
-	 raV4o0DqUFQ8oy1Idt8IMiO1gr3/WDy30rgT32TgsheX2h+0HfMXy4V8nPTvCgvMXv
-	 coIGXToQ8uRnw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ulrJ8-00000006kWg-35r3;
-	Tue, 12 Aug 2025 17:53:02 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/39] scripts: sphinx-pre-install: better handle Python min version
-Date: Tue, 12 Aug 2025 17:52:40 +0200
-Message-ID: <013aeb848ecc3f6b69b4518cf3d335bd2353b6e1.1754992972.git.mchehab+huawei@kernel.org>
+	 MIME-Version; b=NQ+8hspQe6Kr6XSUWsBH20H8Rle1YXSDHgj5G/g1MyfZLQ4WUqlrNFEdnNtR5CrsOj0wU6SDMMm9mRjMqsg2QJs+1hx/Rbd+XyYkOVYHuaARLE4U7QJ99m6EATBSOdIgB1mIqUo4Da9xarFyXefnJUZXZoQBG5sOyjbyyBXu+bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bed310fa1so4853850b3a.2;
+        Tue, 12 Aug 2025 08:52:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755013969; x=1755618769;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qmQTgKFXI0yRI1h+Wuwej2H5g2T+K6OFKy/n9+ooPsI=;
+        b=rkhiSYqB3SRqv63VXadYYzCCKq5om3JlN2SgnrKTmr47HNpFkS51eQOaWJ4XE53M1N
+         o0/9mgCpwsFiCjwPoVhXfbZ3FZDexfBiCpSJ62wYGZPmvjUt1TYme18U5F8ES2929UEC
+         C04t7uvUPyH0cWvzS0QU8JMXiFITdhuXEWsiy/usvYqn+hUAltGoquYwG9KidQVcUu4o
+         5Ts0rYmsUD7nQxNj9LAsLbBKy+NjCSgvAeJm1znoKkRZm/koCCqgohzt8j6kX/w3GMj9
+         UMyOHqvqxyDnkpUsz1Y/RK1wBbOfr8cHUkm2jmU+jF4GhOsQL9iciRvo9U8XQ3skvmy/
+         D+FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoDFgyT76x68VYZXa3oJEnYVpmI+HpzuB3yoivc1Lk0kX8yOMR4RPVsFTRk6bjpUz/IGPejSoShEOrw1gZojfK@vger.kernel.org, AJvYcCVkdkClJC8Xd9d2ZUQatB2Uq01jOfZTQoYkydR+M/mmOiI3oWU9ioRUfVPtT2+ZQPaE9GXzCmPKVkNX6H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOsEW4U7/m4FeY5f7+t7gKCX37GKSBQN+RTEfpTUlfLgQ90yLG
+	ljGc5JFBQTexY1Hl/pZ0eYEFuTSB8KgJh10HTonFgauYUYwxWkH5mW9JJ6qv
+X-Gm-Gg: ASbGnct1QIDYRsnI+NHBEHXwfuzx/Bo/eJTmexX3Aa063TAh7MBkBK/6a0MTY97Aoty
+	fB0bevkX43OhESpRZKmp+PiMqxu20HDSZssxlF8YMiv6sp0svWsd4DZS2Zz3lTeButiPyE61Mf8
+	tf8sdvX1bMzRwhzoulz7O0yp6fxIyfF8WSKWlSCCogNKP3yMgqntNN6C5kMWSqFnKXnoVwQAc0N
+	PwQVMACEWVWALROwqPZXIrzfhXMVSePqR3OGggyJxJmL/gq9jR7TdPs6UzeZNVzRTwk2tu6VK9d
+	sKGxGOF/P/CN23kwz7V6VPovN5wg8K5B4fnt/OZ04UzpEy9ej14EzRZKMvexcb65w5NFkgLeBnj
+	LmB56poo4bulqUTFtqnzAzh9Q9n/woE3Jndsx+UAKArROAy0tgK9qBmGTX/4=
+X-Google-Smtp-Source: AGHT+IGJSjbc3JsMK2uU2uNHTgltCW9hcJeoyzvVY/wYRm8KIQ5ucZ82mLJT2TdzcjIEdgViuEX/LA==
+X-Received: by 2002:a17:902:c94f:b0:23f:f983:5ca1 with SMTP id d9443c01a7336-2430c01c8f1mr2953545ad.12.1755013968571;
+        Tue, 12 Aug 2025 08:52:48 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e899d347sm300038675ad.140.2025.08.12.08.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 08:52:48 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ayush.sawal@chelsio.com,
+	andrew+netdev@lunn.ch,
+	gregkh@linuxfoundation.org,
+	horms@kernel.org,
+	dsahern@kernel.org,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	steffen.klassert@secunet.com,
+	sdf@fomichev.me,
+	mhal@rbox.co,
+	abhishektamboli9@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	herbert@gondor.apana.org.au
+Subject: [PATCH net-next 2/7] xfrm: Switch to skb_dst_reset to clear dst_entry
+Date: Tue, 12 Aug 2025 08:52:40 -0700
+Message-ID: <20250812155245.507012-3-sdf@fomichev.me>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1754992972.git.mchehab+huawei@kernel.org>
-References: <cover.1754992972.git.mchehab+huawei@kernel.org>
+In-Reply-To: <20250812155245.507012-1-sdf@fomichev.me>
+References: <20250812155245.507012-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,68 +93,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Don't do any recommendations about Sphinx install with too
-old python versions.
+Going forward skb_dst_set will assert that skb dst_entry
+is empty during skb_dst_set. skb_dst_reset is added to reset
+existing entry without doing refcnt. Switch to skb_dst_reset
+in __xfrm_route_forward and add a comment on why it's safe
+to skip skb_dst_restore.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- scripts/sphinx-pre-install.py | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ net/xfrm/xfrm_policy.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 365590f81551..a5c777e529ec 100755
---- a/scripts/sphinx-pre-install.py
-+++ b/scripts/sphinx-pre-install.py
-@@ -92,6 +92,10 @@ class SphinxDependencyChecker:
-         # Some distros may not have a Sphinx shipped package compatible with
-         # our minimal requirements
-         self.package_supported = True
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index c5035a9bc3bb..a5ffe26b64d5 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -3881,12 +3881,18 @@ int __xfrm_route_forward(struct sk_buff *skb, unsigned short family)
+ 	}
+ 
+ 	skb_dst_force(skb);
+-	if (!skb_dst(skb)) {
++	dst = skb_dst(skb);
++	if (!dst) {
+ 		XFRM_INC_STATS(net, LINUX_MIB_XFRMFWDHDRERROR);
+ 		return 0;
+ 	}
+ 
+-	dst = xfrm_lookup(net, skb_dst(skb), &fl, NULL, XFRM_LOOKUP_QUEUE);
++	/* ignore return value from skb_dst_reset, xfrm_lookup takes
++	 * care of dropping the refcnt if needed.
++	 */
++	skb_dst_reset(skb);
 +
-+        # Recommend a new python version
-+        self.recommend_python = None
-+
-         # Certain hints are meant to be shown only once
-         self.first_hint = True
- 
-@@ -511,11 +515,11 @@ class SphinxDependencyChecker:
-                 print("ERROR: Distro not supported. Too old?")
-                 return
- 
--            # TODO: check if RHEL8 still works.
--            # On my tests with  docker "redhat/ubi8" image, there's no
--            # python3-sphinx (or similar) package. It comes with Python 3.6,
--            # but there are other python packages over there, so it may be
--            # possible to work with venv.
-+            # RHEL 8 uses Python 3.6, which is not compatible with
-+            # the build system anymore. Suggest Python 3.11
-+            if rel == 8:
-+                self.add_package("python39", 0)
-+                self.recommend_python = True
- 
-             if self.first_hint:
-                 print("Note: RHEL-based distros typically require extra repositories.\n" \
-@@ -596,6 +600,7 @@ class SphinxDependencyChecker:
-             # the build system anymore. Suggest Python 3.11
-             if rel == 15:
-                 if not self.which(self.python_cmd):
-+                    self.recommend_python = True
-                     self.add_package(self.python_cmd, 0)
- 
-                 progs.update({
-@@ -1000,6 +1005,11 @@ class SphinxDependencyChecker:
-         #	- recommended version.
-         # It also needs to work fine with both distro's package and venv/virtualenv
- 
-+        if self.recommend_python:
-+            print("\nPython version is incompatible with doc build.\n" \
-+                  "Please upgrade it and re-run.\n")
-+            return
-+
-         # Version is OK. Nothing to do.
-         if self.cur_version != (0, 0, 0) and self.cur_version >= RECOMMENDED_VERSION:
-             return
++	dst = xfrm_lookup(net, dst, &fl, NULL, XFRM_LOOKUP_QUEUE);
+ 	if (IS_ERR(dst)) {
+ 		res = 0;
+ 		dst = NULL;
 -- 
 2.50.1
 
