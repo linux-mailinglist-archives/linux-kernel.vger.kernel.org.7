@@ -1,76 +1,316 @@
-Return-Path: <linux-kernel+bounces-763950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D95B21BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:02:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B7FB21BF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBE717B6025
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9B64659C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B783246788;
-	Tue, 12 Aug 2025 04:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cvTLaKBE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDF52DF3D9;
+	Tue, 12 Aug 2025 04:02:25 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB912169AE6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995C52DCBE0;
+	Tue, 12 Aug 2025 04:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754971319; cv=none; b=pIjYJAfv5HhvgK1fyymqoEyxTrOSqwO7BmNqYnVjfy4yOkhpimNTUmcHOAx5djPayzd1LTgrYWSd3IvXoTuPy+pFLKeUo8ePOLvYCswfybFIGzD8TBrvou5G7g8zXj0rVfhwUYyUZVnCVueWnXF2frSZSd6OZwaXCeFIkKXei7Y=
+	t=1754971344; cv=none; b=fmQkt4VmNhut71av9+al6EFcCoCwKX6Qmdw7/YwdKj4isZ49aE0vqgW9mZZUpSzeXMrqJ9QUX1VX/b/gF1cLg1mcBIi+v7tz1kCjXtbp84PSxmyMZjaNw4DWX7dc9OpYeMauayhXjeoOaTPESR/nhfnZTsjeO8D7I6Mg0/zkvjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754971319; c=relaxed/simple;
-	bh=PFzKbM+2fBf16ElXHAHAbCarcxJp3vqRWsPHanph7lk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jGgYBf9L063e721TOI6HIvLy57A9LP9kFotzrb9DPRp6VV/UpGlgm8LCT8um8UK+YmfubUnDpoBrSnZcFHkD8akmPwonCY27w5CN7tt66Eaqr0pZGS2e1ZvbR2jqkh+YwfRkaFGYNBi5NP4fP66NjnInDzW44lYyvcEbmMaxkuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cvTLaKBE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BA1C4CEF0;
-	Tue, 12 Aug 2025 04:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1754971319;
-	bh=PFzKbM+2fBf16ElXHAHAbCarcxJp3vqRWsPHanph7lk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cvTLaKBEBDVURD8sSrIpI1InFCjf5XX57tNgRWBiBq81fUfav7SU1vBYoUYYP0Eov
-	 KK2mVLyQ0yPBOehKRbH+IKdeUxVocyl0ARLdMjlBVSTy9cWr3NpqW+T2Atvjz5/OXO
-	 s+1sYraF9XHzEzw4esI25jmz4tsla1ihoMIGKKjM=
-Date: Mon, 11 Aug 2025 21:01:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.17 0/3] mm/mremap: allow multi-VMA move for huge
- folio, find ineligible earlier
-Message-Id: <20250811210158.3241454a858582a7600e62e6@linux-foundation.org>
-In-Reply-To: <cover.1754218667.git.lorenzo.stoakes@oracle.com>
-References: <cover.1754218667.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754971344; c=relaxed/simple;
+	bh=+SoXXrqBG6qXuGy3DPY/hDaNYhnT88Na6YsbOx9HFj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pr46yi/RmxuM+oXTB7MxZm8jX/WE7vSDijkCRlAetalFQYhqt7LJV37YBNAzVbvwjUbQzfduxpRH2yjKyH8hwDHU1xpzjntgGUiZQJ0SzNmFGQsMPJTx2GoX7k0Cht+psI63aU/nHlpQCui2FxYJLgHw+JQwKNI+0iCkEtTDeEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1Hrq1QyrzYQv7k;
+	Tue, 12 Aug 2025 12:02:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id C76101A07BB;
+	Tue, 12 Aug 2025 12:02:17 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP1 (Coremail) with SMTP id cCh0CgCXUa3IvJpoiXVVDQ--.54111S2;
+	Tue, 12 Aug 2025 12:02:17 +0800 (CST)
+Message-ID: <53c46f61-2901-4225-a6e7-a82c2e6663b9@huaweicloud.com>
+Date: Tue, 12 Aug 2025 12:02:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/4] bpf: Add overwrite mode for bpf ring buffer
+Content-Language: en-US
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Willem de Bruijn <willemb@google.com>, Jason Xing
+ <kerneljasonxing@gmail.com>, Paul Chaignon <paul.chaignon@gmail.com>,
+ Tao Chen <chen.dylane@linux.dev>, Kumar Kartikeya Dwivedi
+ <memxor@gmail.com>, Martin Kelly <martin.kelly@crowdstrike.com>
+References: <20250804022101.2171981-1-xukuohai@huaweicloud.com>
+ <20250804022101.2171981-2-xukuohai@huaweicloud.com>
+ <CAADnVQKC8HdoEnjL-Y3tDrfghJnpVddDoSsyDYxacvHLAJqFQQ@mail.gmail.com>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <CAADnVQKC8HdoEnjL-Y3tDrfghJnpVddDoSsyDYxacvHLAJqFQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCXUa3IvJpoiXVVDQ--.54111S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFy5Kw1fAr4xArykJF43Jrb_yoWxZr1rpr
+	43tF1ayr1UJr1UGr1UtF17Jry8Wr1kJ34UJr1Utry8Zr1UAr1UXFyUJFyFyryUJry8Jryj
+	yr1UJr1DJryUJFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On Sun,  3 Aug 2025 12:11:20 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On 8/9/2025 5:39 AM, Alexei Starovoitov wrote:
+> On Sun, Aug 3, 2025 at 7:27 PM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>>
+>> From: Xu Kuohai <xukuohai@huawei.com>
+>>
+>> When the bpf ring buffer is full, new events can not be recorded util
+>> the consumer consumes some events to free space. This may cause critical
+>> events to be discarded, such as in fault diagnostic, where recent events
+>> are more critical than older ones.
+>>
+>> So add ovewrite mode for bpf ring buffer. In this mode, the new event
+>> overwrites the oldest event when the buffer is full.
+>>
+>> The scheme is as follows:
+>>
+>> 1. producer_pos tracks the next position to write new data. When there
+>>     is enough free space, producer simply moves producer_pos forward to
+>>     make space for the new event.
+>>
+>> 2. To avoid waiting for consumer to free space when the buffer is full,
+>>     a new variable overwrite_pos is introduced for producer. overwrite_pos
+>>     tracks the next event to be overwritten (the oldest event committed) in
+>>     the buffer. producer moves it forward to discard the oldest events when
+>>     the buffer is full.
+>>
+>> 3. pending_pos tracks the oldest event under committing. producer ensures
+>>     producers_pos never passes pending_pos when making space for new events.
+>>     So multiple producers never write to the same position at the same time.
+>>
+>> 4. producer wakes up consumer every half a round ahead to give it a chance
+>>     to retrieve data. However, for an overwrite-mode ring buffer, users
+>>     typically only cares about the ring buffer snapshot before a fault occurs.
+>>     In this case, the producer should commit data with BPF_RB_NO_WAKEUP flag
+>>     to avoid unnecessary wakeups.
+> 
+> If I understand it correctly the algorithm requires all events to be the same
+> size otherwise first overwrite might trash the header,
+> also the producers should use some kind of signaling to
+> timestamp each event otherwise it all will look out of order to the consumer.
+> 
+> At the end it looks inferior to the existing perf ring buffer with overwrite.
+> Since in both cases the out of order needs to be dealt with
+> in post processing the main advantage of ring buf vs perf buf is gone.
 
-> Subject: [PATCH 6.17 0/3] mm/mremap: allow multi-VMA move for huge folio, find ineligible earlier
+No, the advantage is not gone.
 
-I missed this series until just now, because the Subject: innovation
-fooled me.
+The ring buffer is still shared by multiple producers. When an event occurs,
+the producer queues up to acquire the spin lock of the ring buffer to write
+event to it. So events in the ring buffer are always ordered, no out of order
+occurs.
 
-My pattern recognizer saw "[PATCH 6.17 ..." and said "that's an LTS
-patch".  Because that's precisely what they do.  By the million.
+And events are not required to be the same size. When an overwrite happens,
+the events bing trashed are discared, and the overwrite_pos is moved forward
+to skip these events until it reaches the first event that is not trashed.
 
-I can't say I find this change valuable, really.
+To make it clear, here are some example diagrams.
 
-Now wondering which other patches I missed.
+1. Let's say we have a ring buffer with size 4096.
+
+    At first, {producer,overwrite,pending,consumer}_pos are all set to 0
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |                                                                       |
+    |                                                                       |
+    |                                                                       |
+    +-----------------------------------------------------------------------+
+    ^
+    |
+    |
+producer_pos = 0
+overwrite_pos = 0
+pending_pos = 0
+consumer_pos = 0
+
+2. Reserve event A, size 512.
+
+    There is enough free space, so A is allocated at offset 0 and producer_pos
+    is moved to 512, the end of A. Since A is not submitted, the BUSY bit is
+    set.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |        |                                                              |
+    |   A    |                                                              |
+    | [BUSY] |                                                              |
+    +-----------------------------------------------------------------------+
+    ^        ^
+    |        |
+    |        |
+    |    producer_pos = 512
+    |
+overwrite_pos = 0
+pending_pos = 0
+consumer_pos = 0
+
+
+3. Reserve event B, size 1024.
+
+    B is allocated at offset 512 with BUSY bit set, and producer_pos is moved
+    to the end of B.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |        |                 |                                            |
+    |   A    |        B        |                                            |
+    | [BUSY] |      [BUSY]     |                                            |
+    +-----------------------------------------------------------------------+
+    ^                          ^
+    |                          |
+    |                          |
+    |                   producer_pos = 1536
+    |
+overwrite_pos = 0
+pending_pos = 0
+consumer_pos = 0
+
+4. Reserve event C, size 2048.
+
+    C is allocated at offset 1536 and producer_pos becomes 3584.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |        |                 |                                   |        |
+    |    A   |        B        |                 C                 |        |
+    | [BUSY] |      [BUSY]     |               [BUSY]              |        |
+    +-----------------------------------------------------------------------+
+    ^                                                              ^
+    |                                                              |
+    |                                                              |
+    |                                                    producer_pos = 3584
+    |
+overwrite_pos = 0
+pending_pos = 0
+consumer_pos = 0
+
+5. Submit event A.
+
+    The BUSY bit of A is cleared. B becomes the oldest event under writing, so
+    pending_pos is moved to 512, the start of B.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |        |                 |                                   |        |
+    |    A   |        B        |                 C                 |        |
+    |        |      [BUSY]     |               [BUSY]              |        |
+    +-----------------------------------------------------------------------+
+    ^        ^                                                     ^
+    |        |                                                     |
+    |        |                                                     |
+    |   pending_pos = 512                                  producer_pos = 3584
+    |
+overwrite_pos = 0
+consumer_pos = 0
+
+6. Submit event B.
+
+    The BUSY bit of B is cleared, and pending_pos is moved to the start of C,
+    which is the oldest event under writing now.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |        |                 |                                   |        |
+    |    A   |        B        |                 C                 |        |
+    |        |                 |               [BUSY]              |        |
+    +-----------------------------------------------------------------------+
+    ^                          ^                                   ^
+    |                          |                                   |
+    |                          |                                   |
+    |                     pending_pos = 1536               producer_pos = 3584
+    |
+overwrite_pos = 0
+consumer_pos = 0
+
+7. Reserve event D, size 1536 (3 * 512).
+
+    There are 2048 bytes not under writing between producer_pos and pending_pos,
+    so D is allocated at offset 3584, and producer_pos is moved from 3584 to
+    5120.
+
+    Since event D will overwrite all bytes of event A and the begining 512 bytes
+    of event B, overwrite_pos is moved to the start of event C, the oldest event
+    that is not overwritten.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |                 |        |                                   |        |
+    |      D End      |        |                 C                 | D Begin|
+    |      [BUSY]     |        |               [BUSY]              | [BUSY] |
+    +-----------------------------------------------------------------------+
+    ^                 ^        ^
+    |                 |        |
+    |                 |   pending_pos = 1536
+    |                 |   overwrite_pos = 1536
+    |                 |
+    |             producer_pos=5120
+    |
+consumer_pos = 0
+
+8. Reserve event E, size 1024.
+
+    Though there are 512 bytes not under writing between producer_pos and
+    pending_pos, E can not be reserved, as it would overwrite the first 512
+    bytes of event C, which is still under writing.
+
+9. Submit event C and D.
+
+    pending_pos is moved to the end of D.
+
+    0       512      1024    1536     2048     2560     3072     3584       4096
+    +-----------------------------------------------------------------------+
+    |                 |        |                                   |        |
+    |      D End      |        |                 C                 | D Begin|
+    |                 |        |                                   |        |
+    +-----------------------------------------------------------------------+
+    ^                 ^        ^
+    |                 |        |
+    |                 |   overwrite_pos = 1536
+    |                 |
+    |             producer_pos=5120
+    |             pending_pos=5120
+    |
+consumer_pos = 0
+
 
