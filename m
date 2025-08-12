@@ -1,148 +1,190 @@
-Return-Path: <linux-kernel+bounces-764547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA10BB22458
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EF2B2245B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110224200EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724373A671A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CD12EBB94;
-	Tue, 12 Aug 2025 10:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2B12EB5B9;
+	Tue, 12 Aug 2025 10:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="DtpD1KnN"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V0lYz0sV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551862EAD18
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6BE2D6E59
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993624; cv=none; b=lm/kpq672hkuyParsZgXvXOECQTW4vXxmuOtAa3dgvRO+5LVsTBygaenODjt0jioFbPvcKviZmTUojC+VT5+IQCOsBb2UzlZjTn7iUssHbCB13e4uw3IREGGV0m4uB3yhzqaAPjm6anaeSKe1/XMftsLVQa6C+bWJkQhAX8HE/I=
+	t=1754993758; cv=none; b=jsYG6GAva2NRfEiTg4jxNm+Uh3nVYfj/QZdKAdk+ER6qrTMkR0u0oWt5iWeZw3cUl0D96BnBZQrplpyudFqhKD8Z6b3TKcsa7WsxFBanY+5MATszBUoTqbq6Ro4Bb4ETyvS0iDBBGQZ8h0hu4A0Ymc9DLXDaQxmsHGuJGHdL3tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993624; c=relaxed/simple;
-	bh=BUfIlbd5/UkD2wVzHyZHd6/3DmqElGGDfku/aZ/JPzU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mf0INUz1XOwaBNeKx07wcc4TKbQUrcegUhxLnQWK41f6MxCnOhdslWVabWUnxzia8PPYDqjrdUsYkRpiq9nyeeHgMv8s1DYwljRmLU+lubuAI/ANoFgV4eRB4gSXl+Btu6MLq0H0jV8Mn3z8xgb4OLEWYwsUFIOTR8MiSJYGlnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=DtpD1KnN; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af93150f7c2so803124966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1754993621; x=1755598421; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mFxusUULII2JCz6cFWedFdJO93eFdX6UtIqw/uCfDBk=;
-        b=DtpD1KnNeqMhJH76tZWp/JAkq/8BQn/FcoTLPjHVOQglkBCuyjBRFXflS4gB/q23Wh
-         0sj4smO7AuHu0SXW1y1QH7k6l+lUfXdtuvO+JmRWxsNe56NYb5Cz57Gig2lf3qudpS6D
-         DgDSCZ7x4g5p7zX1xPXOcqFZ/3yFQIOMiZaGAJ84N99AP4QhtdDIUb9f1Pz7cLFy5sai
-         xwoOxc1ST/p9/l9dM6kmtwYe4DLeYRjCoWAmRRAGF0Fnak6RqYQja1hB5EvQBgc9WFFz
-         dyaTvmMouqJR5KzuCuvNPYCHdledrHaZ08CNlUM6vpr07eFKHeGku6Fx51wKMIbdoGOF
-         c8hg==
+	s=arc-20240116; t=1754993758; c=relaxed/simple;
+	bh=upr5gTPfA5jEvog5a5LIT8yWlQej74MFP6ZeE5bVIUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IdpqjiL/Wybt3ZuzVOcur3yBqLP/P6N6gni1oHzuSAe0RTtL87MpHU8HgcdK0fH+ezrmB2Job5cROln6pbSVnhytT0NmKQRvAjkxgOfaeEpLiBcA85s6XiADtPGRaRvnaK4+aL1ukfCZY8RWTxffu9uAuC67XTNTPqQscSz0k9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V0lYz0sV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754993755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I6rPgfUZWncjHqWz3Gs2f0Po8oy+srlfPWRWaLP7/JA=;
+	b=V0lYz0sVMiSzURKFkGG1aw/E9dhlGxOLf3aoBTVzp1He/VmnxlEiXQPykWkYsqi5FH5WGZ
+	StgVAREEsYZ+bx/WbEPjxL+a9rz2JC+WE+A6u6Xi0qaDjFLj3pV9MeHFfoLtQLmZBlWMiV
+	+7jLX9fs1TXnkzHb48hO7fWRXaJgq2Y=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-302-wAf4fYDZMFSfPiW-hBlL5A-1; Tue, 12 Aug 2025 06:15:52 -0400
+X-MC-Unique: wAf4fYDZMFSfPiW-hBlL5A-1
+X-Mimecast-MFC-AGG-ID: wAf4fYDZMFSfPiW-hBlL5A_1754993751
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459e4b85895so31064565e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:15:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754993621; x=1755598421;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mFxusUULII2JCz6cFWedFdJO93eFdX6UtIqw/uCfDBk=;
-        b=tqUJHfUOmYAbN42yUnALGnUJjtRBw4tmL8M5+hryOG8nmq4AWzoLm1PNN0Qygjz7xd
-         qbj5A/dVaC5MqDQKdyf8d8oxN0SkDXz4GqiQrPzMs4/ljF5mQu8noHwhFVSX5mCTJKAX
-         bCFUXM5BTNR+0nnXbR/Bgs3oVnAwReQZExTqJRopNbbFmmjJOMjb21tzPf+4DavOhnhu
-         Yg1VKJk/PVUNq8TKkw3V4NwOPv8PW/7tdsCKobLG3gcEjidcUvu13Q3Lko1nId+xGbvG
-         FwKh9pEsQvti45S//QIQVZBldhKvDcyj4gYsgVK5lrnfzNaXN6pIn41hdNnPjYxiSCac
-         HZ+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYzYzbXJnzcwAjIFusTHhoAWwmJfD5kkgcdXCKCRFMHEmc8E1lsJ8aGZZiX1cirzgdhbNO2WWSTrzlaXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGUs+eui8vKcodLuCEiZWyXYV4N3M183y52T8+WN01KoeqYUvJ
-	Cu4X4IrWQEeqmGWMtGdi5aNSQbN/WBQhkcYNRDlmRubFHRKLJphqQ3gAtTRrLsFxoTg=
-X-Gm-Gg: ASbGncu/YpbbAaihfv5VhxbNosmvUmfZ77eskds9TtNzmQCOEz7869pW7vQarnPnUVW
-	XAMlvaAZPWu+IqTdd+ON5Pk1vzxvxuSVDr4q7+/q+HhakFhcC+qFSee6hw6R879ITaK7iq4K90X
-	60CNzFnhSGOz+IlI6H65JqAFWR8gJFdcRgWUgom6j/W+vRdH2U/gHuSNlc617oE5F0hXXvc5j5Y
-	pQVgSq12gIaTReTbd1BJ+wgafrtBrk+qYi0fkNuaXhwK1Fe5drZieJyJLr0+pgmNp4efUe2dhpj
-	PF7ZDjFlFEAISqi0Z8dO/9inlxUbqlOFcejBPskKvfP4mIzb/fnXdS+tlYEanB6ZgLKARPyfAGV
-	jdRwxQ+hJKiwNr9wXYm7RhT06THFIjQ==
-X-Google-Smtp-Source: AGHT+IG4ua34nZK6YcSnAqJDbTdQgxSKRc/Mui8zRSNQj1FuZgDFYh3if8GQtcr/adYrVmTV/vsBYA==
-X-Received: by 2002:a17:907:7fa8:b0:ae9:ca8f:9642 with SMTP id a640c23a62f3a-afa1e04122bmr244712166b.15.1754993620573;
-        Tue, 12 Aug 2025 03:13:40 -0700 (PDT)
-Received: from localhost ([2a05:2d01:2025:1908:e499:6dcf:1e86:8748])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23ffc3sm2177082666b.124.2025.08.12.03.13.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 03:13:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754993750; x=1755598550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I6rPgfUZWncjHqWz3Gs2f0Po8oy+srlfPWRWaLP7/JA=;
+        b=Rw0Xm0O6oJOX3uttimDHCr+uyIJg9niW7oAYvf7MWt9LR3R+553Shjbaf5+QLDbNoM
+         5sQOphr+O4ad7JWSAuHtNQESlotR8kwXaBgLoOoJ9En2whJTZnwAhkidEmZSw/qdC6na
+         S2YKhCxWceTBsPhJ1sTvsOM/2M8ZyfPD3J+1vsdQK+8MRSX9DUDI2cxQawHe+EBNd26Q
+         hFgsudkVH46dY1JeJgiK8iDV7kJY+SgiaHt0NiDBj81/wB0lnZBjl96FERis1qNgQqnp
+         NyVHZjVJ6JlHpzKAsAZnpMHrHifc8w6PeIh8UhPkNN616GHzXRHU0w8IyCaQ09VM4XON
+         Lymw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzZdEPpGP9sC8jbhORleCLU95Xk0OAEy8rQsP68DkIo+USwszq4zdDiexCrwRcx6dSt29VSJv9fx+xgZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIF/LYPUK/YNs+B7Qbalbrs8dcwvi9nVu5GEXTCovS4okTGyJ4
+	COmWlkzIAj4etcNaYajoWSidu349ouKPhyF6KL0IvlBZggrQsbIsWk0tcHg1l41fMP5hFGRf8fu
+	TM5kAuHSqik/gMKLAkcZeZDlxssh3Ox7qNElD456zead4i0m667yg4J/hewquCwCa5w==
+X-Gm-Gg: ASbGncuzJSJzoFeXTj1ckRcP0OD0T6aHFMFEiwCK+s5162vFUqbo8/0KhtJNwbo+DCA
+	7Zv+WrnQaYU+u5VGb4ZfTX0J2x3Xxmluq4XQV3qdBuJUyD8ZHTbO+GSyJ51aY90ctLASypFeXpC
+	DcfyhSbL33S658145rjM8mau7sqboswrxzAmUPzpRrOQVIXUXvNUAPbMRO/Zr0i1dRjfOfqZRKN
+	qKkm0FHi9smd95V8nBqQK+NgenqECHwc1aMawHzTAjHEDLZyNXXRHTuYSi0j82f/IOaLkTQ7uQ6
+	QUkcWa56EVmzIHpkN9EKcVqBL+TFhA6y
+X-Received: by 2002:a05:600c:4f86:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-459f4f1278dmr156943565e9.17.1754993750421;
+        Tue, 12 Aug 2025 03:15:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4hpwCPxI92uHx8TgM/s0ZsgXXko7udMPgKR65VR2LmUddnVMaoV0RM5rKfkQhEswaG8878g==
+X-Received: by 2002:a05:600c:4f86:b0:456:3b21:ad1e with SMTP id 5b1f17b1804b1-459f4f1278dmr156943275e9.17.1754993749988;
+        Tue, 12 Aug 2025 03:15:49 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459db3048bdsm393003455e9.29.2025.08.12.03.15.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 03:15:49 -0700 (PDT)
+Date: Tue, 12 Aug 2025 06:15:46 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com,
+	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com, sgarzare@redhat.com,
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com,
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com,
+	Will Deacon <will@kernel.org>
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in
+ virtio_transport_send_pkt_info
+Message-ID: <20250812061425-mutt-send-email-mst@kernel.org>
+References: <20250812052645-mutt-send-email-mst@kernel.org>
+ <689b1156.050a0220.7f033.011c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 12:13:39 +0200
-Message-Id: <DC0DBER6477Q.143SU9KXEI6FN@fairphone.com>
-Cc: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] phy: qualcomm: phy-qcom-eusb2-repeater: fix override
- properties
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Pengyu Luo" <mitltlatltl@gmail.com>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Konrad Dybcio"
- <konrad.dybcio@oss.qualcomm.com>, "Abel Vesa" <abel.vesa@linaro.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250812093957.32235-1-mitltlatltl@gmail.com>
-In-Reply-To: <20250812093957.32235-1-mitltlatltl@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <689b1156.050a0220.7f033.011c.GAE@google.com>
 
-On Tue Aug 12, 2025 at 11:39 AM CEST, Pengyu Luo wrote:
-> property "qcom,tune-usb2-preem" is for EUSB2_TUNE_USB2_PREEM
-> property "qcom,tune-usb2-amplitude" is for EUSB2_TUNE_IUSB2
->
-> The downstream correspondence is as follows:
-> EUSB2_TUNE_USB2_PREEM: Tx pre-emphasis tuning
-> EUSB2_TUNE_IUSB2: HS trasmit amplitude
-> EUSB2_TUNE_SQUELCH_U: Squelch detection threshold
-> EUSB2_TUNE_HSDISC: HS disconnect threshold
-> EUSB2_TUNE_EUSB_SLEW: slew rate
->
-> Fixes: 31bc94de7602 ("phy: qualcomm: phy-qcom-eusb2-repeater: Don't zero-=
-out registers")
+On Tue, Aug 12, 2025 at 03:03:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in virtio_transport_send_pkt_info
 
-Oh, not sure how this happened. Thanks for catching this, I do see the
-problem in my original commit.
+OK so the issue triggers on
+commit 6693731487a8145a9b039bc983d77edc47693855
+Author: Will Deacon <will@kernel.org>
+Date:   Thu Jul 17 10:01:16 2025 +0100
 
-Reviewed-by: Luca Weiss <luca.weiss@fairphone.com>
+    vsock/virtio: Allocate nonlinear SKBs for handling large transmit buffers
+    
 
-Regards
-Luca
+but does not trigger on:
 
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c b/drivers/phy=
-/qualcomm/phy-qcom-eusb2-repeater.c
-> index d7493c229..3709fba42 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
-> @@ -127,13 +127,13 @@ static int eusb2_repeater_init(struct phy *phy)
->  			     rptr->cfg->init_tbl[i].value);
-> =20
->  	/* Override registers from devicetree values */
-> -	if (!of_property_read_u8(np, "qcom,tune-usb2-amplitude", &val))
-> +	if (!of_property_read_u8(np, "qcom,tune-usb2-preem", &val))
->  		regmap_write(regmap, base + EUSB2_TUNE_USB2_PREEM, val);
-> =20
->  	if (!of_property_read_u8(np, "qcom,tune-usb2-disc-thres", &val))
->  		regmap_write(regmap, base + EUSB2_TUNE_HSDISC, val);
-> =20
-> -	if (!of_property_read_u8(np, "qcom,tune-usb2-preem", &val))
-> +	if (!of_property_read_u8(np, "qcom,tune-usb2-amplitude", &val))
->  		regmap_write(regmap, base + EUSB2_TUNE_IUSB2, val);
-> =20
->  	/* Wait for status OK */
+commit 8ca76151d2c8219edea82f1925a2a25907ff6a9d
+Author: Will Deacon <will@kernel.org>
+Date:   Thu Jul 17 10:01:15 2025 +0100
+
+    vsock/virtio: Rename virtio_vsock_skb_rx_put()
+    
+
+
+Will, I suspect your patch merely uncovers a latent bug
+in zero copy handling elsewhere.
+Want to take a look?
+
+
+
+> ------------[ cut here ]------------
+> 'send_pkt()' returns 0, but 65536 expected
+> WARNING: CPU: 0 PID: 5936 at net/vmw_vsock/virtio_transport_common.c:428 virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:426
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5936 Comm: syz.0.17 Not tainted 6.16.0-rc6-syzkaller-00030-g6693731487a8 #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:426
+> Code: 0f 0b 90 bd f2 ff ff ff eb bc e8 2a 15 74 f6 c6 05 17 6f 40 04 01 90 48 c7 c7 00 4b b7 8c 44 89 f6 4c 89 ea e8 e0 f7 37 f6 90 <0f> 0b 90 90 e9 e1 fe ff ff e8 01 15 74 f6 90 0f 0b 90 e9 c5 f7 ff
+> RSP: 0018:ffffc9000cc2f530 EFLAGS: 00010246
+> RAX: 72837a5a4342cf00 RBX: 0000000000010000 RCX: ffff888033218000
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: ffffffff8f8592b0 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1bfa6ec R12: dffffc0000000000
+> R13: 0000000000010000 R14: 0000000000000000 R15: ffff8880406730e4
+> FS:  00007fc0bd7eb6c0(0000) GS:ffff88808d230000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fd5857ec368 CR3: 00000000517cf000 CR4: 0000000000352ef0
+> Call Trace:
+>  <TASK>
+>  virtio_transport_stream_enqueue net/vmw_vsock/virtio_transport_common.c:1111 [inline]
+>  virtio_transport_seqpacket_enqueue+0x143/0x1c0 net/vmw_vsock/virtio_transport_common.c:839
+>  vsock_connectible_sendmsg+0xac4/0x1050 net/vmw_vsock/af_vsock.c:2123
+>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>  __sock_sendmsg+0x219/0x270 net/socket.c:727
+>  ____sys_sendmsg+0x52d/0x830 net/socket.c:2566
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>  __sys_sendmmsg+0x227/0x430 net/socket.c:2709
+>  __do_sys_sendmmsg net/socket.c:2736 [inline]
+>  __se_sys_sendmmsg net/socket.c:2733 [inline]
+>  __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2733
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc0bc98ebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc0bd7eb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+> RAX: ffffffffffffffda RBX: 00007fc0bcbb5fa0 RCX: 00007fc0bc98ebe9
+> RDX: 0000000000000001 RSI: 0000200000000100 RDI: 0000000000000004
+> RBP: 00007fc0bca11e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000024008094 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fc0bcbb6038 R14: 00007fc0bcbb5fa0 R15: 00007ffdb7bf09f8
+>  </TASK>
+> 
+> 
+> Tested on:
+> 
+> commit:         66937314 vsock/virtio: Allocate nonlinear SKBs for han..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> console output: https://syzkaller.appspot.com/x/log.txt?x=159d75bc580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=84141250092a114f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> 
+> Note: no patches were applied.
 
 
