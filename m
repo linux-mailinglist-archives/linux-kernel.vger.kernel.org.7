@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-764094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92279B21DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B750B21E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08937AEB5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:04:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077B64282C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E727A2E2DE4;
-	Tue, 12 Aug 2025 06:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MMVZjRPw"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914620C478;
-	Tue, 12 Aug 2025 06:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754978706; cv=pass; b=m9LhJDwW+MHw+D4S9bIgIO5Ndu4zTxd+5C15qWGRhy0o1QyztBPh7/bRDNg9rv9mjN0ucfg9rtQwc/q9Be6eViuXSOiDanxMaMFLGH5g6j7I62+2F2yxqv3y0LaRnPf1NaheVf6yUPucymwymba3YWgSMejjGP4lvxNTrVpXMrs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754978706; c=relaxed/simple;
-	bh=EzUOIACUt1KmxYumzQmo1PMKVaWaBgvmTxu7Hvc4jDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KWnzR4dsqSCmkNY0c1WpF0r6iPbUtX/v6QkTlor1chzjh56G+qps0+YNS43s500Oo8pRoNvAEU64nYm11C0yW4qqoE0Kh1UhArzAO3K+TzDxAZvzkDfeP883eK5FcAHiUicBix+WSnvCTEUiHRGhTm+psU8+dr2tyzYwBU584YU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MMVZjRPw; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1754978687; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lhEHMyl/snY8uIxfzQJiI8041IfgDLHDzB4JRZDC3NkJ8okt2jsPCvVFgc82v+IRRNHsjOk3T4IS7ebvea5K79ZgT3t+lBgcF4FTPagxvDUC6vyw5t6KolkVaj/h9edan4X0KM+LslV1F/63Bp/GYh+GrGadvdJdfZA9UMuTshY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754978687; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6N05Gi0z8r9iMMzOAx3PYV4MnXawFgktXAzKcF+UKt0=; 
-	b=HidNwNw+PoHLUrp/RZYAji1z+bmsK0+JuBs5Fus64UC1fAANu8bi//sv0CpzOnTjVoxAFIYB+IYmFgmvimgAFEjo+Oqf0S2Lu4+E7OOaZ8Xw3b1YDzsoBwNyYLEM6rbGWvmby8DuDnFlfPsdc7mPtsmVl2Nblq7dGDnMNcceCV4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754978687;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6N05Gi0z8r9iMMzOAx3PYV4MnXawFgktXAzKcF+UKt0=;
-	b=MMVZjRPw/PBiqhXAdqaKcYF+3RNhDrrJtOkHjJD+1WCvNA/V30KXvZ9KPO4Ei40/
-	jrEP+iqGiZISJLD3MNejGiVWTfp77O7gk49YLSvis9x5lhiGXysWyePSj57eiodGzGE
-	Fe/Jevo8rBaxgFMfAU7it5RKDH7W2AC8zSKubGevyEhX90f153xB29ezufKfAJYuvBV
-	xKXbyrPo9Hcpe/8YHwBBs1yWwc6KSRIUBA99U18jY6i9rRy69ExCXAHreq/XIKiXbHt
-	jH09BxHAwgGydKG30Cnfs2NZFaMPYXAO3k2h32Oxo8Is58/2VD9ilm51w4HU77DnrP4
-	xrvcRFvI2w==
-Received: by mx.zohomail.com with SMTPS id 1754978686237125.18407234908796;
-	Mon, 11 Aug 2025 23:04:46 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 4/4 FIXED] clk: thead: th1520-ap: fix parent of padctrl0 clock
-Date: Tue, 12 Aug 2025 14:04:33 +0800
-Message-ID: <20250812060433.1979587-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812054258.1968351-5-uwu@icenowy.me>
-References: <20250812054258.1968351-5-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597ED2D4811;
+	Tue, 12 Aug 2025 06:20:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0935F15383A;
+	Tue, 12 Aug 2025 06:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754979638; cv=none; b=FygcVDG3d8SDz3nxwQFApn0px2hCOEc0xgpnfD/Ex/NQ6H2e3rubtGNQTujFECP3rMs2Bq28MwD3BZKVTSunrRXlcvdxl1BT/BLwPS4Ge5fz0LawQ7Cl+YKRjGiRQdUTZ6hzpXWm8hPLzbKM+K1iEPQ31mDkk/Swmp1dM+gBwn8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754979638; c=relaxed/simple;
+	bh=Y7VqHf4C+JSQxOFwIP6hzbmo5lu9mZzg++Z+7+9xQJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DOdj6knzg2b9C9uHB5eGWNS2GhonIWqNlp+kzHocmAjpTqbfBgudCdVoQZyzBD/TYTezklt9rwmrJC5t4KsKzoEba7jPO7AruOXkQurogmgjQkFjKxddULzpBgqjvOy3K9FqhRFviV62Fvfg1ReZFkXyGpJnKAK+JQyVdr6Tc+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c1LbP1ZCQz9sSH;
+	Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 3WR0gSTJzGY1; Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1LbP0Kj8z9sSC;
+	Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE8C38B764;
+	Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id VXWlAoGWUx8D; Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1C6768B763;
+	Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
+Message-ID: <d72bb0f7-8dc3-42ca-84d9-c74b4db02445@csgroup.eu>
+Date: Tue, 12 Aug 2025 08:05:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] selftests: vDSO: fix -Wunitialized in powerpc
+ VDSO_CALL() wrapper
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
+ <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>, llvm@lists.linux.dev,
+ kernel test robot <lkp@intel.com>
+References: <20250812-vdso-tests-fixes-v2-0-90f499dd35f8@linutronix.de>
+ <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-The padctrl0 clock seems to be a child of the perisys_apb4_hclk clock,
-gating the later makes padctrl0 registers stuck.
 
-Fix this relationship.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-This is the consequence of fixing 3/4, because these two patches are at
-nearly the same position, and unfortunately get dependent by the
-algorithm of diff.
+Le 12/08/2025 à 07:39, Thomas Weißschuh a écrit :
+> The _rval register variable is meant to be an output operand of the asm
+> statement but is instead used as input operand.
+> clang 20.1 notices this and triggers -Wuninitialized warnings:
+> 
+> tools/testing/selftests/timers/auxclock.c:154:10: error: variable '_rval' is uninitialized when used here [-Werror,-Wuninitialized]
+>    154 |                 return VDSO_CALL(self->vdso_clock_gettime64, 2, clockid, ts);
+>        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> tools/testing/selftests/timers/../vDSO/vdso_call.h:59:10: note: expanded from macro 'VDSO_CALL'
+>     59 |                 : "r" (_rval)                                           \
+>        |                        ^~~~~
+> tools/testing/selftests/timers/auxclock.c:154:10: note: variable '_rval' is declared here
+> tools/testing/selftests/timers/../vDSO/vdso_call.h:47:2: note: expanded from macro 'VDSO_CALL'
+>     47 |         register long _rval asm ("r3");                                 \
+>        |         ^
+> 
+> It seems the list of input and output operands have been switched around.
+> However as the argument registers are not always initialized they can not
+> be marked as pure inputs as that would trigger -Wuninitialized warnings.
+> Adding _rval as another input and output operand does also not work as it
+> would collide with the existing _r3 variable.
+> 
+> Instead reuse _r3 for both the argument and the return value.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Foe-kbuild-all%2F202506180223.BOOk5jDK-lkp%40intel.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C611dd96dfdad4dcd55d708ddd9629305%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905739611064850%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=QcOje8P4T0%2BsqgkSaP%2BkT3fS875kqCZhxChDmvWVY%2Fg%3D&reserved=0
+> Fixes: 6eda706a535c ("selftests: vDSO: fix the way vDSO functions are called for powerpc")
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Ignore the original 4/4 and look at this too.
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
- drivers/clk/thead/clk-th1520-ap.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 75ea1705cc08f..0ecedac50d6cb 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -917,13 +917,18 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", p
- 		0x150, BIT(11), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
- 		0x150, BIT(12), 0);
-+
-+static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
-+	{ .hw = &perisys_apb4_hclk.common.hw },
-+};
-+
- static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
- static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
- static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
- static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, BIT(23), 0);
--static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb_pclk_pd, 0x204, BIT(22), 0);
-+static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb4_hclk_pd, 0x204, BIT(22), 0);
- static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi", axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
- static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk", peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
- static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd, 0x204, BIT(19), 0);
--- 
-2.50.1
+> ---
+>   tools/testing/selftests/vDSO/vdso_call.h | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
+> index bb237d771051bd4103367fc60b54b505b7586965..e7205584cbdca5e10c13c1e9425d2023b02cda7f 100644
+> --- a/tools/testing/selftests/vDSO/vdso_call.h
+> +++ b/tools/testing/selftests/vDSO/vdso_call.h
+> @@ -44,7 +44,6 @@
+>   	register long _r6 asm ("r6");					\
+>   	register long _r7 asm ("r7");					\
+>   	register long _r8 asm ("r8");					\
+> -	register long _rval asm ("r3");					\
+>   									\
+>   	LOADARGS_##nr(fn, args);					\
+>   									\
+> @@ -54,13 +53,13 @@
+>   		"	bns+	1f\n"					\
+>   		"	neg	3, 3\n"					\
+>   		"1:"							\
+> -		: "+r" (_r0), "=r" (_r3), "+r" (_r4), "+r" (_r5),	\
+> +		: "+r" (_r0), "+r" (_r3), "+r" (_r4), "+r" (_r5),	\
+>   		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
+> -		: "r" (_rval)						\
+> +		:							\
+>   		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
+>   		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
+>   	);								\
+> -	_rval;								\
+> +	_r3;								\
+>   })
+>   
+>   #else
+> 
 
 
