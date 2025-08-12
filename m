@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-763822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44269B21AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CBEB21AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A695F1903F11
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0197C3B0393
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94A52DECD4;
-	Tue, 12 Aug 2025 02:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571D62E11DE;
+	Tue, 12 Aug 2025 02:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I43MsbSk"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3192D13D8A4;
-	Tue, 12 Aug 2025 02:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kNTKg67v"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570C813D8A4;
+	Tue, 12 Aug 2025 02:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754965079; cv=none; b=WTqOw0+yzh4u+e5kY/riohybXIjwJkM/im88Zh28zovPsiAJv8IOH5Rnlto9HKZNSa5N8OuLaj7a3ez/pnVWCgzjmz5PsO/DyjYwuzzW4/gj2pQd5kvx0JfmzOvcQpmUc8TbPA3VKXsHBL1byQN3NZF+fMyB5oyel+AfU6Gh2Sc=
+	t=1754965065; cv=none; b=MfdcxOQPQ54KA5/0yk6ZDoy2/LoBDCN9N7dCotk4qY2dLXibc8MS+QxTB7/7gJS9q+N3JqNEfbQwpZO4e2/KRwnAv6cFYV4vPo7Zh4jYptFU5/9agWPUlj+LwN9J/7nvaOCJHWVn9xMYdq+P5YHlCACu1ODdmovp2oiGiRnClt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754965079; c=relaxed/simple;
-	bh=p8rIpSOUd8wR9bvs3gGvqLbx8KrOSm2aQbTqFSvf1ow=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOGDro/5DI92Mxdp8NQHqYCBp6pGpFUlFg6fq5t/+tZs2LmXvJ7Brkzpahrbr/UNeHCbqOJ4DiTTxegcDXp0CHGezr8n3EqRdNyptf1epnY7/SpHLCWk5GLiTyiqbLujWnqSkgx5wiOa+EM1xOW76pOYu2DaFOPhm3PmKoknpPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I43MsbSk; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=3Q
-	OTaZ52O6+1gNzGEBm2ulp2/tQEcCZJjcbyg+KHPhc=; b=I43MsbSkTvZEomIfuq
-	6ZW0k9NAiD5PHmmOqTmxZzD0Pa7BB4zRfMtYHcz3hw/KEof9n2EdEruK0BDxtsJi
-	HWl0Y/U3gIdcwsti9e9g7F9KlUM7PeuGoYwzUFOAtdO9bfhNaXk1N97/P3YCbnt3
-	KgfH2m6WsAoODz7+BWJ7c1DBs=
-Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3939EpJpoxPx8BQ--.48488S2;
-	Tue, 12 Aug 2025 10:17:42 +0800 (CST)
-From: Baolin Liu <liubaolin12138@163.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Baolin Liu <liubaolin@kylinos.cn>
-Subject: [PATCH v1] ext4: fix incorrect function name in comment
-Date: Tue, 12 Aug 2025 10:17:09 +0800
-Message-Id: <20250812021709.1120716-1-liubaolin12138@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754965065; c=relaxed/simple;
+	bh=9hyw2ZamaVKPucYdpchYgL0a3W1CoFD/HweVTzEnR1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhxONekxmKgornFROa+mFXTwYPR4j2+n6xPvtcSFCVqSoLYj5Wa6qH4UFIHP4WW/zSM7bXKvyE75x5qKe3NbOP7tzIDV0oOHHPGmiiqzi4oWG3cPlSqpZ8FJ+ySbohvqDi/vPqUgg30XGrOCXfMLYzufZQANvsZ3/6gvVxIL1So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kNTKg67v; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Xg2zz37NQZwnjzW1ZVhxRl064ST3U4ZE4dYyZIQGosE=; b=kNTKg67vzA9dT0L+K3+eNJMYni
+	rT9ZgJZnmhoczgL6neUKbWK45YwYXHRH/IM+y/EVuL9eLuaRBQrBJHnbkps8pAKA0aZHmkJzlbFPV
+	w3CYg4sdSFpso53dUjGSDPsSgmW7BsHxU4m6kkailW8+fdZUyDBDoE2xS30d3zci/Jl0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uleZa-004P2G-1f; Tue, 12 Aug 2025 04:17:10 +0200
+Date: Tue, 12 Aug 2025 04:17:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <uwu@dram.page>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <5c32fde3-0478-4029-9b71-e46a60edf06b@lunn.ch>
+References: <20250812-net-k1-emac-v5-0-dd17c4905f49@iscas.ac.cn>
+ <20250812-net-k1-emac-v5-2-dd17c4905f49@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3939EpJpoxPx8BQ--.48488S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7WryUuryUGr43JrW3ZF1DKFg_yoW3twc_W3
-	WkXws5J3ZxJFn3AF4rJ3yYqrn29w1fWr1UZ395JF43Z3yYvan5Cwn8XFyUAr98WF1jgrW5
-	CrnrXFW3AFyxXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8kwIDUUUUU==
-X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiMRanymiaoBXO1gAAsV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812-net-k1-emac-v5-2-dd17c4905f49@iscas.ac.cn>
 
-From: Baolin Liu <liubaolin@kylinos.cn>
+> +/* Caller must hold stats_lock */
+> +static void emac_stats_update(struct emac_priv *priv)
+> +{
+> +	u64 *tx_stats_off = (u64 *)&priv->tx_stats_off;
+> +	u64 *rx_stats_off = (u64 *)&priv->rx_stats_off;
+> +	u64 *tx_stats = (u64 *)&priv->tx_stats;
+> +	u64 *rx_stats = (u64 *)&priv->rx_stats;
+> +	u32 i, res;
 
-The comment mentions block_write_begin(), but the actual function
-called is ext4_block_write_begin().
-Fix the comment to match the real function name.
+Rather than the comment, you could do:
 
-Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
----
- fs/ext4/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	assert_spin_locked(priv->stats_lock);
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index ed54c4d0f2f9..b0e3814f8502 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3155,7 +3155,7 @@ static int ext4_da_write_begin(const struct kiocb *iocb,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 		/*
--		 * block_write_begin may have instantiated a few blocks
-+		 * ext4_block_write_begin may have instantiated a few blocks
- 		 * outside i_size.  Trim these off again. Don't need
- 		 * i_size_read because we hold inode lock.
- 		 */
--- 
-2.39.2
-
+	Andrew
 
