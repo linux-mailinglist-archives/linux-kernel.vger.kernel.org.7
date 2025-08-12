@@ -1,176 +1,198 @@
-Return-Path: <linux-kernel+bounces-764449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9D8B2232F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D41B22323
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA043B4013
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE810164FCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260122E8DEE;
-	Tue, 12 Aug 2025 09:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E4F2E8E0A;
+	Tue, 12 Aug 2025 09:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CI8PX8iM"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Si62xXAg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EB51C5D46
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E932153E7
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990832; cv=none; b=a1QSBMIgx/ICKrt1DIjRMFDugive9MNkv4On/R1cuHAWWDw2KtO3tBg7HhoKAKU3CgLyERf7Os8B/WrpiL7teJ7jwkPnEdINDEX/xCgLuz1RD/y5C1aePyaYKiFzhSIO5g4bTprG/pLZek6lkZK6h6ZSC45p7yBunl3FZRdTLnk=
+	t=1754990809; cv=none; b=PqNcYG2fdv7mxtJBbe3XrS6fXp+HQoKNd5bRYU+injg5DpDW5ID+/sOGo6GQ1KbVkY8ntw5RHHFEo56sWfq0dClvdlCaGtat9bCHpiI1PPGzPXpDL5RE/UcEqYn2ZYMtKiJ3b9auQCyK97Naw71keZNoLBA8eZTJqjismDt2lgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990832; c=relaxed/simple;
-	bh=EQiCMrOW6d0ack6Jt6caSgsfJMbni5eEelJcbz45kfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e9MRCFpVg24XF2Oyy6/7VgO8Cu6AfFllRqVvH7e6dFeynqO2pFl1pLjzULZFKhw28oCY79iP2yBlQeWLdPyhcrt94vDHUM7u7d9oi7EX0ZPkWU04WrHwnYeTa6fUA4lo4hREMkL6mkymNpwxRLDe3YBBJFIeEMzSeM43Gqn4KeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CI8PX8iM; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-708d90aa8f9so55557387b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754990830; x=1755595630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tbNnZigL96XkjlyiZZXbbetrtilx16GXfj1hRtZynwA=;
-        b=CI8PX8iMbLj74ca6ygw0BS6S8YXFLDPp3dKDirP6aL6k4RUKs36rdJgKpWZofMoF/D
-         JxQdWIpkOUexFl45pocoSvGOkihceheWZcII0lA97J/DzRX4SUDpZrKYlnROez1bAyXi
-         tU3EVRz5uf8dGWQWqdmO0D4Ym3t8NkKHC4UCLjvyK+8aanYIcZ1cnkUBL23mBysxLaz3
-         TIcqDqnJaA8IuJmSG4Xw8P6SPbahYEdV87ISFyNikJu9P5/htZNhdCN2AUfHoxlay8Vp
-         lC5HxK5OKuCngWYxvfBTWxTUx5b4duC8a8DA5ifbprlHiDqJIPjZ59DQddQLqMspjDAL
-         pgRw==
+	s=arc-20240116; t=1754990809; c=relaxed/simple;
+	bh=2jQQhPx7fDhjqgwZEv2HTKTsSEOUcuWb3seC1V18dDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXuk/eWV2qtcF/4j+MeInJxYiiNvD4mUveerVXLt/qATnohpS0G7XOC5OkhDGTO4OQzZUDIe5FLoBhAhK5MB/vdeqY0VbL1j6JVoGya7yPo12qrIN2i9wRuXKa/wRJOt44A0PxuN9MT44dpmm22/Z1U0smbXQQvdI32WwUw4IoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Si62xXAg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754990806;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8FqEOts7cjbFL2GxnmOTUKK/m+lDHG7eDxkUxgY3gxA=;
+	b=Si62xXAgHSSPD91S4jvSal7FfKRllKOpXFXj2qtiAbGUXlYrjyGLaVm1DcXwEY1pxmi7/U
+	3SEIp6ddFyfGcVUQ0DEdf3jyAyd+XtB6cZcKFEcBzKkCKB8z9vCV0WuxS2DiP2CKDunGwZ
+	sod9/HCe8bvp4JWJPHFpmf1r4mdZDB0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-ApO4FY0XMFWp8cQIN4Z8Yg-1; Tue, 12 Aug 2025 05:26:45 -0400
+X-MC-Unique: ApO4FY0XMFWp8cQIN4Z8Yg-1
+X-Mimecast-MFC-AGG-ID: ApO4FY0XMFWp8cQIN4Z8Yg_1754990804
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45359bfe631so26903045e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:26:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990830; x=1755595630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tbNnZigL96XkjlyiZZXbbetrtilx16GXfj1hRtZynwA=;
-        b=N0t/dsUEyoqdPwHYUaO0eNCfjeEePtaH9bZzQY5XyESNEItgc/MuLezSGfKCHExbL3
-         L+N/mmJ/IygUBzqeX4JlIir46yuPhy9J3zy4eHPBNvVFl6GorLKVgiPNK6dIoebut7ri
-         8CxTwbO4V4oGuqZtIyE0/ttxcYpD3M6URyeMQzgeWWV9pdW9iEDXBHHt+4EnOMXeYcgh
-         SweVi1nSCbz8pqFlGG/Xcpn7o9+Cc0SYtQ7RG6Jg8yKVxIitk1QvCOK++YOlW+tyoxiu
-         9bj6pptzhIhysPDFnzKSYSVdlD80GFO0mvOnZdV1KITv80qfmqMwa45g74qTLTRkaFDK
-         M3aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/dc+rVyL+G7Tvz1VnfKqEsdekn38wJDk55Eop2VYqfmRDHiXjuoIYph36GPqSUw2XmTwwhaMxh+n3QzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU8DL+kZNdZ7zsySTrCgE8x58BDYV7AjNjOzvzarxhsemVtkwF
-	zriwKE78rMwuAC7AKyiRS4ENDZSgt3O/0xVIj7TQ9c0zYw8H4SteBwQ0Wj+ERNMdIbcYJ/1QHoT
-	yfMBFC6KmsVaYHzgQI+WkEBqqgxE1C9n5RcHTXqvm9g==
-X-Gm-Gg: ASbGnctX12FzfY7NqNj2jSHGMBxbdpe2wMKLzjvRF17QffsTiKPIZh8aODbe/k9IoZN
-	x+nlN9HAEs8Z5OHfe9OWPH3gC09Bh5+/TNEMrQc5aOiMXtSK4aRLLxTVD+kuKRvABy/EJ1803fo
-	suDu2UkNeJTTkmfXRDDgWh24E9x9qsOSEXBG2GkzXN1B4dHe94XyPvjvNNp2Zzj9UkDCQRPQXkg
-	6m88zmS
-X-Google-Smtp-Source: AGHT+IFNHyi9PkglivXNoVBWj4TyIoB57VF8R/kbQ4uy2Cl5XiB1zv2NfrPbzHVGSmscBPhn3nbLKKjwbESLvohzgkA=
-X-Received: by 2002:a05:690c:2609:b0:71c:530:1450 with SMTP id
- 00721157ae682-71c42a3efd5mr27229697b3.21.1754990829669; Tue, 12 Aug 2025
- 02:27:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754990804; x=1755595604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FqEOts7cjbFL2GxnmOTUKK/m+lDHG7eDxkUxgY3gxA=;
+        b=HJL9x1sBJsyWQV7N+gAT7ZRqzZ80bfORKEYgHztEGdjlu/mE8JiFQ924B4UCNIvhGE
+         4CSX53+5K+MIMlTihGOBqM7OgGN3E52z5RG3PEhbKmLvKLU28UYzuflEZLaatHoYyQWD
+         tcKKX3aHvPe/tfLKAw3v/xmRrO0sp9i1OSxvWZqwxvJo+JHUGXG3yRgd0tTzGunPTEoY
+         vfCFCUnepW8o5Wpv5RhwJrHysQlWY3tgZ8gMbdGvYZuitVfuZtHypEgGHYIUR5XzN93w
+         6tB6MhWldPz6LGx1l5gEbGGFXt2cqNCjr0zA2SvO2q2Hdgo2YOfi6GWFPL9Fc1exIC6S
+         pXdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOoddC4BvHYVUe9KwEPS5x3GFKjwvxqlX8ZWVvgL3xXlHbpQSVPHZt6/i93IzoEt2DZiKbm3reNsHkxg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN2+g23d1SRFD+q+4Da6vS00WKvU8U241911dtSJzfuRHiVzWy
+	HUMEy683yByajQ+uQ15+SXgG5sZOdM5vY1PZT2VnhFnx2RptVUByvbGXBv/1ya5zDsbbm9VByvF
+	OKA5jjOT95r+LCTicMju7D3+laAdqcIDz102NSAFTI5GArnLI6FP5vUnTnvOUjSNxkQ==
+X-Gm-Gg: ASbGncuqkhOtLEtWY+bdSLAKuoakiyonJUkFDi6E+MBncN5vdtBADTlAvy/3OSOBKkW
+	gdw133YDmP7fnskoMPT7CRpfvkNJkoQI9p/bHxPP0RiASXmho/Qcs+hT4Wj1AT59Wi+iOWraEPW
+	APhUBhFOAyeXaeBzbUMZs05kwhsJZAbwAimaRcANbBHhzpAFOn86KoMQjXcqWI8q/Ja4+avxpA2
+	2F9ByHMqXNz2ckJVgNwrr3fK5n2m0gAtT1IOCMZj5BESu/anibhLFL1JpHafkrnaPvcluVhgLoS
+	ogPAk9vipOyNIz5w71w4LrHMTYygmVfm
+X-Received: by 2002:a05:600c:4748:b0:456:161c:3d6f with SMTP id 5b1f17b1804b1-45a10bb020emr23221005e9.11.1754990803689;
+        Tue, 12 Aug 2025 02:26:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFEXWjg9WUytTJs/5mxhcuBTLsQA+wgTgNaY4EutJ5NHJY7LJaT22Y7BY4IoMEr3P4QNDHpwQ==
+X-Received: by 2002:a05:600c:4748:b0:456:161c:3d6f with SMTP id 5b1f17b1804b1-45a10bb020emr23220675e9.11.1754990803200;
+        Tue, 12 Aug 2025 02:26:43 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c469319sm42730533f8f.54.2025.08.12.02.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:26:42 -0700 (PDT)
+Date: Tue, 12 Aug 2025 05:26:39 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, eperezma@redhat.com,
+	horms@kernel.org, jasowang@redhat.com, kuba@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com, sgarzare@redhat.com,
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com,
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in
+ virtio_transport_send_pkt_info
+Message-ID: <20250812052537-mutt-send-email-mst@kernel.org>
+References: <689a3d92.050a0220.7f033.00ff.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 12 Aug 2025 11:26:33 +0200
-X-Gm-Features: Ac12FXwwaNXc80cBU4vSzIIxgYvcERSkmEn1P5fKOYJFDUVvl_f-HYgIWyz5FVI
-Message-ID: <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-pm@vger.kernel.org, Pavel Machek <pavel@kernel.org>, 
-	Len Brown <len.brown@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Saravana Kannan <saravanak@google.com>, Maulik Shah <quic_mkshah@quicinc.com>, 
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <689a3d92.050a0220.7f033.00ff.GAE@google.com>
 
-On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@baylibre.co=
-m> wrote:
-> >
-> > "Rafael J. Wysocki" <rafael@kernel.org> writes:
-> >
-> > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > >>
-> > >> Some platforms and devices supports multiple low-power-states than c=
-an be
-> > >> used for system-wide suspend. Today these states are selected on per
-> > >> subsystem basis and in most cases it's the deepest possible state th=
-at
-> > >> becomes selected.
-> > >>
-> > >> For some use-cases this is a problem as it isn't suitable or even br=
-eaks
-> > >> the system-wakeup latency constraint, when we decide to enter these =
-deeper
-> > >> states during system-wide suspend.
-> > >>
-> > >> Therefore, let's introduce an interface for user-space, allowing us =
-to
-> > >> specify the system-wakeup QoS limit. Subsequent changes will start t=
-aking
-> > >> into account the QoS limit.
-> > >
-> > > Well, this is not really a system-wakeup limit, but a CPU idle state
-> > > latency limit for states entered in the last step of suspend-to-idle.
-> > >
-> > > It looks like the problem is that the existing CPU latency QoS is not
-> > > taken into account by suspend-to-idle, so instead of adding an
-> > > entirely new interface to overcome this, would it make sense to add a=
-n
-> > > ioctl() to the existing one that would allow the user of it to
-> > > indicate that the given request should also be respected by
-> > > suspend-to-idle?
-> > >
-> > > There are two basic reasons why I think so:
-> > > (1) The requests that you want to be respected by suspend-to-idle
-> > > should also be respected by the regular "runtime" idle, or at least I
-> > > don't see a reason why it wouldn't be the case.
-> > > (2) The new interface introduced by this patch basically duplicates
-> > > the existing one.
-> >
-> > I also think that just using the existing /dev/cpu_dma_latency is the
-> > right approach here, and simply teaching s2idle to respect this value.
-> >
-> > I'm curious about the need for a new ioctl() though.  Under what
-> > conditions do you want normal/runtime CPUidle to respect this value and
-> > s2idle to not respect this value?
->
-> In a typical PC environment s2idle is a replacement for ACPI S3 which
-> does not take any QoS constraints into account, so users may want to
-> set QoS limits for run-time and then suspend with the expectation that
-> QoS will not affect it.
+On Mon, Aug 11, 2025 at 11:59:30AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    37816488247d Merge tag 'net-6.17-rc1' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10b3b2f0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e143c1cd9dadd720
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f0f042580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14855434580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-37816488.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/74b3ac8946d4/vmlinux-37816488.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a2b391aacaec/bzImage-37816488.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> 'send_pkt()' returns 0, but 65536 expected
+> WARNING: CPU: 0 PID: 5503 at net/vmw_vsock/virtio_transport_common.c:428 virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:426
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5503 Comm: syz.0.17 Not tainted 6.16.0-syzkaller-12063-g37816488247d #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:426
+> Code: 0f 0b 90 bd f2 ff ff ff eb bc e8 8a 20 65 f6 c6 05 94 cf 32 04 01 90 48 c7 c7 00 c3 b8 8c 44 89 f6 4c 89 ea e8 40 af 28 f6 90 <0f> 0b 90 90 e9 e1 fe ff ff e8 61 20 65 f6 90 0f 0b 90 e9 c5 f7 ff
+> RSP: 0018:ffffc900027ff530 EFLAGS: 00010246
+> RAX: d7fcdfc663889c00 RBX: 0000000000010000 RCX: ffff888000e1a440
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: ffffffff8f8764d0 R08: ffff88801fc24253 R09: 1ffff11003f8484a
+> R10: dffffc0000000000 R11: ffffed1003f8484b R12: dffffc0000000000
+> R13: 0000000000010000 R14: 0000000000000000 R15: ffff888058b48024
+> FS:  000055556bda1500(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000020000003f000 CR3: 000000003f6db000 CR4: 0000000000352ef0
+> Call Trace:
+>  <TASK>
+>  virtio_transport_stream_enqueue net/vmw_vsock/virtio_transport_common.c:1111 [inline]
+>  virtio_transport_seqpacket_enqueue+0x143/0x1c0 net/vmw_vsock/virtio_transport_common.c:839
+>  vsock_connectible_sendmsg+0xac7/0x1050 net/vmw_vsock/af_vsock.c:2140
+>  sock_sendmsg_nosec net/socket.c:714 [inline]
+>  __sock_sendmsg+0x21c/0x270 net/socket.c:729
+>  ____sys_sendmsg+0x52d/0x830 net/socket.c:2614
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+>  __sys_sendmmsg+0x227/0x430 net/socket.c:2757
+>  __do_sys_sendmmsg net/socket.c:2784 [inline]
+>  __se_sys_sendmmsg net/socket.c:2781 [inline]
+>  __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2781
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fddc238ebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffd48081028 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+> RAX: ffffffffffffffda RBX: 00007fddc25b5fa0 RCX: 00007fddc238ebe9
+> RDX: 0000000000000001 RSI: 0000200000000100 RDI: 0000000000000004
+> RBP: 00007fddc2411e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000024008094 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fddc25b5fa0 R14: 00007fddc25b5fa0 R15: 0000000000000004
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-Yes, I agree. To me, these are orthogonal use-cases which could have
-different wakeup latency constraints.
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 8ca76151d2c8219edea82f1925a2a25907ff6a9d
 
-Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael would
-allow this to be managed, I think.
 
-Although, I am not fully convinced yet that re-using
-/dev/cpu_dma_latency is the right path. The main reason is that I
-don't want us to limit the use-case to CPU latencies, but rather allow
-the QoS constraint to be system-wide for any type of device. For
-example, it could be used by storage drivers too (like NVMe, UFS,
-eMMC), as a way to understand what low power state to pick as system
-wide suspend. If you have a closer look at patch2 [1] , I suggest we
-extend the genpd-governor for *both* CPU-cluster-PM-domains and for
-other PM-domains too.
 
-Interested to hear your thoughts around this.
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Kind regards
-Uffe
-
-[1]
-https://lore.kernel.org/all/20250716123323.65441-3-ulf.hansson@linaro.org/
 
