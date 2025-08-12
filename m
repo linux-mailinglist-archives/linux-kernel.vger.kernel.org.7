@@ -1,204 +1,156 @@
-Return-Path: <linux-kernel+bounces-763883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1F1B21B2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B56C7B21B30
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB091A269C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0291A26A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52BF2E2DFB;
-	Tue, 12 Aug 2025 02:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B02BEC44;
+	Tue, 12 Aug 2025 03:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XV3YqZH4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MIJLHOit"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221A52EA156;
-	Tue, 12 Aug 2025 02:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61371946DF;
+	Tue, 12 Aug 2025 03:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754967404; cv=none; b=n5/vItoyToSdHlmkMlzJVDxF21onetWX4HgsT3fMmusJQm/qEIX7xI5YhXxha+hYYttyzAlkGMEGaVevo87bxWYTquUs+MGVW5nPpn8ncWgwrugGmEv9S45Q5PlyWLSsuWAlUmPv6jyXOFKq20YeNPNX5KNojArqJnCIFiliYrw=
+	t=1754967697; cv=none; b=Miv/vfGJAEFu/h11Hs9UYEw36iiBt5DDT0X8PE9z4JxSnwL7ilX+1yjqa8w+SAPQUQ0ss5hkajVtxiG00v+QGxL0FYuffOsKg8gCpFNVNfSS3jtOVG4j4npV6GA4PcDUC2X+WtLa/I2Si6a0cVGeoiu5cyD6I5FcItddonQdSpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754967404; c=relaxed/simple;
-	bh=WWXmejuSNj1MrJ3JUYatoYWUto9PetsGoWxYgnZzpo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LALirT5Gw11nm2uxGsbqcSry68AjLcpdCqIjakb/zkNhzgpP3ehgmBQ45b4tLJCw7Hp78uDHG9ztMJwWOzM+COzntqyAN7xApLWGoRd5X2Q/50/p/+sSEFqtdZsZYX4vOpdLZVsAXof3Gzrtka8tQhuSjtAOvvN8QqPMHSuXCMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XV3YqZH4; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754967403; x=1786503403;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WWXmejuSNj1MrJ3JUYatoYWUto9PetsGoWxYgnZzpo0=;
-  b=XV3YqZH40lv8MDAr4w+4rYrcBaycCMPeKRqKEh9C3hIT1ot7VFtRkwnK
-   h+roaZGlZj9p/f4aw3RNe2upzifO7WY1zIMuM0NX1smP01tVF8OAfwpbp
-   SyMYKNEn23RcTFzrOT/3c7Tzu0Y7/emMtJCJPFbHnlCirHIcXSiUj4Ct6
-   WyiKrg9NWXJ/xtWpjlZtHfNPpweOAomK3UnyXktTqP7kJJ6hVdyCXBZ9t
-   1det+DD1NEBuK9Ks1wQowHPmSBy0Os/WK3+qFQOMl1uhFwOEIysXT/zUC
-   HIuNVSc155opscw4JXF2RQNguPb8c5yYQwq4F+70I6WeFSh/pL5StOup5
-   Q==;
-X-CSE-ConnectionGUID: o74QWlmtTny6sS1Wu5x++A==
-X-CSE-MsgGUID: 5JH2vl8bSLqpkpQ127KV4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57100670"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="57100670"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:56:43 -0700
-X-CSE-ConnectionGUID: Z7MXRvTaRT2ixdXVUoUTdA==
-X-CSE-MsgGUID: KP531+qoTKu8N9r3Ct92sA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="171321376"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 19:56:42 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mlevitsk@redhat.com,
-	rick.p.edgecombe@intel.com,
-	weijiang.yang@intel.com,
-	xin@zytor.com,
-	Chao Gao <chao.gao@intel.com>,
-	Mathias Krause <minipli@grsecurity.net>,
-	John Allen <john.allen@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v12 24/24] KVM: nVMX: Add consistency checks for CET states
-Date: Mon, 11 Aug 2025 19:55:32 -0700
-Message-ID: <20250812025606.74625-25-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250812025606.74625-1-chao.gao@intel.com>
-References: <20250812025606.74625-1-chao.gao@intel.com>
+	s=arc-20240116; t=1754967697; c=relaxed/simple;
+	bh=DU1zdGbeQJ/d5cgbUObAYxms8t9eChfcU6gQ6uHUDtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tkB4HQc9VgVv/BcHPL3YCNBAIo1QC6e3xYeHaB+Dj1NHZBLhoytaWFNbVWiV0zxQiuMNq7df0akhJsL9WKA5qtuT/wmyraDubLtJEgT2KeSvdwsdYs57CNZUWF7YLYNVYXQDPxEa7g/tIZcbcRPg/oyiVjk9l7qNMTAyUv6SnhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MIJLHOit; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754967685;
+	bh=UbyDXgVR2fBm66dYP6vu8P9kH6wcxaDF0cudUM+pQ+k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MIJLHOitylZrQ70XHjxdlgkrz4W3B60D3mJEOq7FJgxb0An3plmPESdaLTXMzI5hK
+	 4VGoDPkSnpWMUlh0M8dHbofvP5OCG0EsWB/1ecePmzGk1CxNxMACfAu+5UTwqy4Me6
+	 zMAbRAiagdzjJLWXslfECe2Cd1vESPz5UNBKMD0O7vTY5m01BKIalbFeo0sBDAUE+Y
+	 3gueYMF71PQdfNZOs1mmLsMG4ZOB9Vpo6OtMvxlfBtW5PXw3wG448pRqDx5r4DIjzY
+	 RuGUbiX38DdfaM9YEw0qL15CnIzLlXdj72/Cztv5Jlw3Vnw1XOLAtlnBpHtdlGA1Iz
+	 WOwNQRtt1ZOJg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1GVY2CpXz4xf5;
+	Tue, 12 Aug 2025 13:01:25 +1000 (AEST)
+Date: Tue, 12 Aug 2025 13:01:11 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge the pwm tree with Linus' tree
+Message-ID: <20250812130029.2a06ca7c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/VVTRkzdJ.FEivUpY5uX07oo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Introduce consistency checks for CET states during nested VM-entry.
+--Sig_/VVTRkzdJ.FEivUpY5uX07oo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-A VMCS contains both guest and host CET states, each comprising the
-IA32_S_CET MSR, SSP, and IA32_INTERRUPT_SSP_TABLE_ADDR MSR. Various
-checks are applied to CET states during VM-entry as documented in SDM
-Vol3 Chapter "VM ENTRIES". Implement all these checks during nested
-VM-entry to emulate the architectural behavior.
+Hi all,
 
-In summary, there are three kinds of checks on guest/host CET states
-during VM-entry:
+After merging the pwm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-A. Checks applied to both guest states and host states:
+drivers/pwm/core.c: In function '__pwmchip_add':
+drivers/pwm/core.c:2514:26: error: 'struct gpio_chip' has no member named '=
+set_rv'
+ 2514 |                         .set_rv =3D pwm_gpio_set,
+      |                          ^~~~~~
+drivers/pwm/core.c:2514:35: error: initialization of 'int (*)(struct gpio_c=
+hip *, unsigned int)' from incompatible pointer type 'int (*)(struct gpio_c=
+hip *, unsigned int,  int)' [-Wincompatible-pointer-types]
+ 2514 |                         .set_rv =3D pwm_gpio_set,
+      |                                   ^~~~~~~~~~~~
+drivers/pwm/core.c:2514:35: note: (near initialization for '(anonymous).dir=
+ection_input')
 
- * The IA32_S_CET field must not set any reserved bits; bits 10 (SUPPRESS)
-   and 11 (TRACKER) cannot both be set.
- * SSP should not have bits 1:0 set.
- * The IA32_INTERRUPT_SSP_TABLE_ADDR field must be canonical.
+Caused by commit
 
-B. Checks applied to host states only
+  1c84bb7fc0ad ("pwm: Provide a gpio device for waveform drivers")
 
- * IA32_S_CET MSR and SSP must be canonical if the CPU enters 64-bit mode
-   after VM-exit. Otherwise, IA32_S_CET and SSP must have their higher 32
-   bits cleared.
+interacting with commit
 
-C. Checks applied to guest states only:
+  d9d87d90cc0b ("treewide: rename GPIO set callbacks back to their original=
+ names")
 
- * IA32_S_CET MSR and SSP are not required to be canonical (i.e., 63:N-1
-   are identical, where N is the CPU's maximum linear-address width). But,
-   bits 63:N of SSP must be identical.
+from Linus' tree.
 
-Tested-by: Mathias Krause <minipli@grsecurity.net>
-Tested-by: John Allen <john.allen@amd.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
+I have applied this merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Aug 2025 12:38:34 +1000
+Subject: [PATCH] fix up for "pwm: Provide a gpio device for waveform driver=
+s"
+
+interacting with commit
+
+  d9d87d90cc0b ("treewide: rename GPIO set callbacks back to their original=
+ names")
+
+from Linus' tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/x86/kvm/vmx/nested.c | 47 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ drivers/pwm/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 47e413e56764..7c88fedc27c7 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3104,6 +3104,17 @@ static bool is_l1_noncanonical_address_on_vmexit(u64 la, struct vmcs12 *vmcs12)
- 	return !__is_canonical_address(la, l1_address_bits_on_exit);
- }
- 
-+static bool is_valid_cet_state(struct kvm_vcpu *vcpu, u64 s_cet, u64 ssp, u64 ssp_tbl)
-+{
-+	if (!is_cet_msr_valid(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
-+		return false;
-+
-+	if (is_noncanonical_msr_address(ssp_tbl, vcpu))
-+		return false;
-+
-+	return true;
-+}
-+
- static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 				       struct vmcs12 *vmcs12)
- {
-@@ -3173,6 +3184,26 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 			return -EINVAL;
- 	}
- 
-+	if (vmcs12->vm_exit_controls & VM_EXIT_LOAD_CET_STATE) {
-+		if (CC(!is_valid_cet_state(vcpu, vmcs12->host_s_cet, vmcs12->host_ssp,
-+					   vmcs12->host_ssp_tbl)))
-+			return -EINVAL;
-+
-+		/*
-+		 * IA32_S_CET and SSP must be canonical if the host will
-+		 * enter 64-bit mode after VM-exit; otherwise, higher
-+		 * 32-bits must be all 0s.
-+		 */
-+		if (ia32e) {
-+			if (CC(is_noncanonical_msr_address(vmcs12->host_s_cet, vcpu)) ||
-+			    CC(is_noncanonical_msr_address(vmcs12->host_ssp, vcpu)))
-+				return -EINVAL;
-+		} else {
-+			if (CC(vmcs12->host_s_cet >> 32) || CC(vmcs12->host_ssp >> 32))
-+				return -EINVAL;
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -3283,6 +3314,22 @@ static int nested_vmx_check_guest_state(struct kvm_vcpu *vcpu,
- 	     CC((vmcs12->guest_bndcfgs & MSR_IA32_BNDCFGS_RSVD))))
- 		return -EINVAL;
- 
-+	if (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_CET_STATE) {
-+		if (CC(!is_valid_cet_state(vcpu, vmcs12->guest_s_cet, vmcs12->guest_ssp,
-+					   vmcs12->guest_ssp_tbl)))
-+			return -EINVAL;
-+
-+		/*
-+		 * Guest SSP must have 63:N bits identical, rather than
-+		 * be canonical (i.e., 63:N-1 bits identical), where N is
-+		 * the CPU's maximum linear-address width. Similar to
-+		 * is_noncanonical_msr_address(), use the host's
-+		 * linear-address width.
-+		 */
-+		if (CC(!__is_canonical_address(vmcs12->guest_ssp, max_host_virt_addr_bits() + 1)))
-+			return -EINVAL;
-+	}
-+
- 	if (nested_check_guest_non_reg_state(vmcs12))
- 		return -EINVAL;
- 
--- 
-2.47.1
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index b05186b9569e..ec4112e6209a 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -2511,7 +2511,7 @@ int __pwmchip_add(struct pwm_chip *chip, struct modul=
+e *owner)
+ 			.request =3D pwm_gpio_request,
+ 			.free =3D pwm_gpio_free,
+ 			.get_direction =3D pwm_gpio_get_direction,
+-			.set_rv =3D pwm_gpio_set,
++			.set =3D pwm_gpio_set,
+ 			.base =3D -1,
+ 			.ngpio =3D chip->npwm,
+ 			.can_sleep =3D true,
+--=20
+2.50.1
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VVTRkzdJ.FEivUpY5uX07oo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiarncACgkQAVBC80lX
+0GwKpgf9HBoKEGhuO1OaTDPUrjJ4rxdFIj8XcwvOWIfDHv4qH71CUOgV0tFKk3n0
+RAJHBCbwWlGO8PDrboacVgpLtqTbGneDXzVtQzdEYVA+2bV2j+kMX24JcZJdRm69
+5GxlMpCYv6xnuqJcsDmT3fjRamlc9WGL6J2qrS6/haWTNERt7m6HQ+6JuAk9QW9n
+LomyxK6sGK/QqV9xcvBg7E2XBXdcDRue7nm1lxuoPSGe37bPtX7c4spXhPAJRytw
+rVnnryIsvksVvy40G0JZfcWqQOgGha1YAtkJyNV//C/IY066BzyLqazNXuKr2YRc
+QBT66gnMfocUq4VVKa8YQ1eLbWgL2w==
+=xqOR
+-----END PGP SIGNATURE-----
+
+--Sig_/VVTRkzdJ.FEivUpY5uX07oo--
 
