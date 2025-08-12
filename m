@@ -1,253 +1,239 @@
-Return-Path: <linux-kernel+bounces-764859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDA4B227FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2576B22802
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494E96273ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B656A627C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF5726C383;
-	Tue, 12 Aug 2025 13:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3380B265292;
+	Tue, 12 Aug 2025 13:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/GQv5V9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M29NhZ/i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5244E265292;
-	Tue, 12 Aug 2025 13:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D28010E0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004077; cv=none; b=b5ZA/SxF5i2w5pOKCrgijOEpcq4Jpd7UI6Iqm21YHZEumrVgmeW0SluWV9fH5VVnON/XBnY82Rb5FF9vp1CUij+XFwVgaaQN5XlEayMFPzv3GxLuOhW4h2m+epMQOqIZtlHYRSGQAlqvgsMpFn3VjJsFynlO35XxGNQbDNisgJg=
+	t=1755004088; cv=none; b=BOSCmH6LR4m7tIKj4GLJ4HeshUP1QM+oZTXtnenYslB0QLn3irexL10/gb5uwjZic/bGxzO6Txzkvls95MRxHML0/DQNoonrn+BAhJC2Eb5+xxJuZr/HXBNEG+b4z7PDpTASTFPzeysrUXFAcEO+XgTN2mmgEfkvHueSnkdoeoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004077; c=relaxed/simple;
-	bh=Cra1VPgbqnASPwX8o008CBcKLCeKaqYIpAhZOh46rzo=;
+	s=arc-20240116; t=1755004088; c=relaxed/simple;
+	bh=ENhWohJdXUUS1MTKMDzA+YV47rv2W52JUPatF4v3k3A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EQD9i0IzW691T3N3rndXy+EAI58RKikkgtWouxUvAFTy8Tdbg+eIjuLQ5L8G4MiRCCcRpSzGObBIqXnHHxkRXu9IeH96Yaj8O9yi4Ux505M3YX+PrJoZcBkF8iqH6BCSqy9W+BwajAbmQN31DuYTAIq1Y+Z4DX+cdNGVq/rEGO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/GQv5V9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9660C4CEF7;
-	Tue, 12 Aug 2025 13:07:56 +0000 (UTC)
+	 To:Cc:Content-Type; b=fCJ4JObx9TptcSigHwWV8z7T1O+l8Zayq3k0BTchWN196IAc/SmqXDFTMbceQac/DaRqgfJq9H2BoqwMUoM1oE0eA+CsdXgUXdpt/C30u5UG6FDHSsMIMt1j3Z4U/rv9O1DPhrNchMeluADQp1GRzhSwvz/3BApI5LM4yO8bUs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M29NhZ/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083E2C4CEF0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755004076;
-	bh=Cra1VPgbqnASPwX8o008CBcKLCeKaqYIpAhZOh46rzo=;
+	s=k20201202; t=1755004088;
+	bh=ENhWohJdXUUS1MTKMDzA+YV47rv2W52JUPatF4v3k3A=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A/GQv5V90QgF5pUSQoVc+FeRWo0V5jaapnKyY3mFglLrRHAQRq15rPON2CQezZTk1
-	 r9IZCrCh2iDIgaRqPKkvCYJOkeFOpO/ISYzxFGj6spFmsDm4USsneWT8TfRlgH3PBZ
-	 ZouVl0cYN1JaRsCwTa4+K0wLmbh3DugaPA1pSA0vfOScm7huxW04VrlaCWSOjC6OGT
-	 HABcJz5QuoaZ2+MiWaZ5QpZaI2wVD10Xoo15XWbZT4ovAjdGSXDPXZdkTOg2651KZ1
-	 4UhUm/k6gnvQR68b/yMSKxAbBgtcqmagQLqi1l7Z3wHFEmnUfgk7SFOImeZ5UTDTtC
-	 /CNUgFdxTViOQ==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61b4b90fb87so2560140eaf.0;
-        Tue, 12 Aug 2025 06:07:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQ4dIAbVZu7FXUFWGCFLoWj33kFeIDN8RQGtizufZNuKTFYeg7PJH7tPT1gG+U8ZeYY9XfkEHlobhF@vger.kernel.org, AJvYcCXy7IWpC1QbAXhVeIqdlICmXng5sOrVR+dcG0y+udI9pQC3NsyryzDIRxl9mhTPzKKs235Mmwz/zS//+Hhb@vger.kernel.org
-X-Gm-Message-State: AOJu0YychOaQ6RHW0C4akSR5hdjPbV9ubd7MbsjGJsloCWDBGPyKCcmh
-	JxTkZKYhjyEa27lse7/bcxMZYh45EEJqH07Lv66K/u8CHdMQCxVhmX7FrZvfKH/dmdmEDzrzauR
-	Uf1KziNKcZXoK4NV2uNanar81LECqV44=
-X-Google-Smtp-Source: AGHT+IGv7LOZVB5K28j8sX+pAtpnHEFpK8LB9mW/TbmqQNamcmCY4gLxEhEDPz/2PhkTifKVBiRtrCqa4qK1YjNoCNQ=
-X-Received: by 2002:a05:6820:1505:b0:619:844f:2d0e with SMTP id
- 006d021491bc7-61bb5d76de1mr1952119eaf.8.1755004076146; Tue, 12 Aug 2025
- 06:07:56 -0700 (PDT)
+	b=M29NhZ/i88MJ4kLTiJe5o5anL94vD05MhPgXB9incJoLT8Daq1yC9kuH8YbTjpdqJ
+	 bYeDcwkutQUNa4Vcy2Q7+Ae766dekpT9iK5mHRAyXb1RGWLBq12dQvSaP/8AL6N5NN
+	 jNICy+Exy7jTpB5EsAKUwppVS7uV+HVZShKFjbAskDx3sqp6XaZnv+exiRfTCKEvRU
+	 fBprfDbNAMxs0dFtrSi+af/HD0RQj5gfoAQuTe1Z3A6oSNiEP9lfbyl2MTmhz+ipfM
+	 DRj4dOQMvJfE6K1a3gAr5JPEZuAsOjp70B6om17fZDwpenozOXdvTUROuu6+2cy0Sc
+	 +jqqIRT9SZ03A==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61553a028dfso7181645a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:08:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUiDYvKj3x+Fqh0jrTNCcPqAE5VmFd6nz7KMadcBmhSbkSqsLeMu+IfGyMpp0TX7QBYn1h6H/5pB9g9vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9aeSjBAjLALryIzUebptKc7hcgBSqPb+rNQxibd9Z+k6lVPAf
+	LTpJRwyANoFmuMepg9OlsUIXv1oUOOinMDb+dVdAtzE6h33M+jpUk7lWM8xg60j2b+kZgA9vLpl
+	5kUeZkQxXn+YqjcRAZdtfA9vWC7Fw4dM=
+X-Google-Smtp-Source: AGHT+IFudGAnAFNiT6SjRp7L6THpqvsswlm2XoTOBcXgnG826IQRjdWdOaRmSDIzP6PFrFKdc346NTBYaqIUnwW3j4g=
+X-Received: by 2002:a05:6402:13c4:b0:617:ddc1:ddf4 with SMTP id
+ 4fb4d7f45d1cf-617e2bc5edfmr14149378a12.14.1755004086575; Tue, 12 Aug 2025
+ 06:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250803153829.6545-1-dikshakdevgan@gmail.com>
-In-Reply-To: <20250803153829.6545-1-dikshakdevgan@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Aug 2025 15:07:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i_StL59p=4bD8eQ_40KjtJy293b-M2NfA_HsCPLU_Q-Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwBGOMThivpFYUw6DAginI5SpADUYvNeakxOMxvm_gjhC3zmPxgw9rigaU
-Message-ID: <CAJZ5v0i_StL59p=4bD8eQ_40KjtJy293b-M2NfA_HsCPLU_Q-Q@mail.gmail.com>
-Subject: Re: [PATCH V2] acpi: remove unnecessary parenthesis from return statement
-To: Diksha Kumari <dikshakdevgan@gmail.com>
-Cc: rafael@kernel.org, robert.moore@intel.com, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Markus.Elfring@web.de
+References: <20250812090056.771379-1-lixianglai@loongson.cn>
+ <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com> <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
+In-Reply-To: <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 12 Aug 2025 21:07:53 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
+X-Gm-Features: Ac12FXz4ArCfTVS2xsBmacHl-EbcS_6v8wbSGA2j9iZLcyhYLOzDDTQrG_ys3Xg
+Message-ID: <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
+ threads in virtual machines
+To: lixianglai <lixianglai@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 3, 2025 at 5:39=E2=80=AFPM Diksha Kumari <dikshakdevgan@gmail.c=
-om> wrote:
+On Tue, Aug 12, 2025 at 8:50=E2=80=AFPM lixianglai <lixianglai@loongson.cn>=
+ wrote:
 >
-> checkpatch.pl is generating a warning when return value is enclosed
-> in parenthesis. Remove the parenthesis to improve code readability.
+>
+>
+> Hi Huacai Chen:
+> > Hi, Xianglai,
+> >
+> > There is something that can be improved.
+> >
+> > On Tue, Aug 12, 2025 at 5:24=E2=80=AFPM Xianglai Li <lixianglai@loongso=
+n.cn> wrote:
+> >> When the cpu is offline, the timer under loongarch is not correctly cl=
+osed,
+> >> resulting in an excessively high cpu usage rate of the offline vcpu th=
+read
+> >> in the virtual machine.
+> >>
+> >> To correctly close the timer, we have made the following modifications=
+:
+> >>
+> >> Register the cpu hotplug timer start event for loongarch.This event wi=
+ll
+> >> be called to close the timer when the cpu is offline.
+> >>
+> >> Clear the timer interrupt when the timer is turned off
+> >>
+> >> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+> >> ---
+> >>   arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
+> >>   include/linux/cpuhotplug.h   |  1 +
+> >>   2 files changed, 21 insertions(+)
+> >>
+> >> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time=
+.c
+> >> index 367906b10f81..4daa11512eba 100644
+> >> --- a/arch/loongarch/kernel/time.c
+> >> +++ b/arch/loongarch/kernel/time.c
+> >> @@ -12,6 +12,7 @@
+> >>   #include <linux/kernel.h>
+> >>   #include <linux/sched_clock.h>
+> >>   #include <linux/spinlock.h>
+> >> +#include <linux/cpu.h>
+> >>
+> >>   #include <asm/cpu-features.h>
+> >>   #include <asm/loongarch.h>
+> >> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct clock_=
+event_device *evt)
+> >>          timer_config &=3D ~CSR_TCFG_EN;
+> >>          csr_write64(timer_config, LOONGARCH_CSR_TCFG);
+> >>
+> >> +       /* Clear Timer Interrupt */
+> >> +       write_csr_tintclear(CSR_TINTCLR_TI);
+> >> +
+> >>          raw_spin_unlock(&state_lock);
+> >>
+> >>          return 0;
+> >> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
+> >>          return res;
+> >>   }
+> >>
+> >> +static int arch_timer_dying_cpu(unsigned int cpu)
+> > We can use arch_timer_dying() for short. And then add an
+> > arch_timer_starting() like this:
+> >
+> > static int arch_timer_starting(unsigned int cpu)
+> > {
+> >          set_csr_ecfg(ECFGF_TIMER);
+> >
+> >          return 0;
+> > }
+> >
+> > Though ECFGF_TIMER may be enabled in other places, for syntax we need i=
+t here.
+> >
+> >> +{
+> >> +       constant_set_state_shutdown(NULL);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >>   void __init time_init(void)
+> >>   {
+> >> +       int err;
+> >> +
+> >>          if (!cpu_has_cpucfg)
+> >>                  const_clock_freq =3D cpu_clock_freq;
+> >>          else
+> >> @@ -220,4 +233,11 @@ void __init time_init(void)
+> >>          constant_clockevent_init();
+> >>          constant_clocksource_init();
+> >>          pv_time_init();
+> >> +
+> >> +       err =3D cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIME=
+R_STARTING,
+> >> +                                       "loongarch/timer:starting",
+> >> +                                       NULL, arch_timer_dying_cpu);
+> > Then we need use cpuhp_setup_state() here, because we have a startup
+> > function now.
+> >
+> > And "loongarch/timer:starting" should be
+> > "clockevents/loongarch/timer:starting" like others.
+> >
+> > And the whole should be moved to the last of
+> > constant_clockevent_init() because it is clockevent specific.
+>
+> like this?
+>
+> @@ -164,6 +182,10 @@ int constant_clockevent_init(void)
+>
+>          timer_irq_installed =3D 1;
+>
+> +       cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+> +                         "clockevents/loongarch/timer:starting",
+> +                         arch_timer_starting, arch_timer_dying_cpu);
+> +
+>          sync_counter();
+>
+>
+> I was wondering whether it should be placed before or after the
+> "timer_irq_installed" judgment
+Should be after "timer_irq_installed" because we only need to run once.
 
-Teach checkpatch.pl to skip the ACPICA code instead.  Seriously.
+The best place is after pr_info("Constant clock event device register\n");
 
-This code is generated semi-automatically out of the upstream ACPICA
-code hosted on GitHub and it follows its own code-style rules.  Don't
-change it manually unless you have made a corresponding change
-upstream.
+And there is another question:
+Should we move "write_csr_tintclear(CSR_TINTCLR_TI)" from
+constant_set_state_shutdown() to arch_timer_dying()?
 
-Thanks!
 
-> Signed-off-by: Diksha Kumari <dikshakdevgan@gmail.com>
-> ---
->  drivers/acpi/acpica/dbconvert.c | 43 +++++++++++++++------------------
->  1 file changed, 19 insertions(+), 24 deletions(-)
+Huacai
+
 >
-> diff --git a/drivers/acpi/acpica/dbconvert.c b/drivers/acpi/acpica/dbconv=
-ert.c
-> index 8dbab6932049..5f53388b6f1e 100644
-> --- a/drivers/acpi/acpica/dbconvert.c
-> +++ b/drivers/acpi/acpica/dbconvert.c
-> @@ -31,9 +31,8 @@ acpi_status acpi_db_hex_char_to_value(int hex_char, u8 =
-*return_value)
 >
->         /* Digit must be ascii [0-9a-fA-F] */
+> >> +       if (err)
+> >> +               pr_info("cpu hotplug event register failed");
+> > This is not so useful, because the error isn't fatal.
+> >
+> >
+> > Huacai
+> >
+> >> +
+> >>   }
+> >> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> >> index edfa61d80702..6606c1546afc 100644
+> >> --- a/include/linux/cpuhotplug.h
+> >> +++ b/include/linux/cpuhotplug.h
+> >> @@ -159,6 +159,7 @@ enum cpuhp_state {
+> >>          CPUHP_AP_PERF_ARM_STARTING,
+> >>          CPUHP_AP_PERF_RISCV_STARTING,
+> >>          CPUHP_AP_ARM_L2X0_STARTING,
+> >> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+> >>          CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+> >>          CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+> >>          CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
+> >>
+> >> base-commit: 53e760d8949895390e256e723e7ee46618310361
+> >> --
+> >> 2.39.1
+> >>
 >
-> -       if (!isxdigit(hex_char)) {
-> -               return (AE_BAD_HEX_CONSTANT);
-> -       }
-> +       if (!isxdigit(hex_char))
-> +               return AE_BAD_HEX_CONSTANT;
->
->         if (hex_char <=3D 0x39) {
->                 value =3D (u8)(hex_char - 0x30);
-> @@ -42,7 +41,7 @@ acpi_status acpi_db_hex_char_to_value(int hex_char, u8 =
-*return_value)
->         }
->
->         *return_value =3D value;
-> -       return (AE_OK);
-> +       return AE_OK;
->  }
->
->  /***********************************************************************=
-********
-> @@ -68,19 +67,17 @@ static acpi_status acpi_db_hex_byte_to_binary(char *h=
-ex_byte, u8 *return_value)
->         /* High byte */
->
->         status =3D acpi_db_hex_char_to_value(hex_byte[0], &local0);
-> -       if (ACPI_FAILURE(status)) {
-> -               return (status);
-> -       }
-> +       if (ACPI_FAILURE(status))
-> +               return status;
->
->         /* Low byte */
->
->         status =3D acpi_db_hex_char_to_value(hex_byte[1], &local1);
-> -       if (ACPI_FAILURE(status)) {
-> -               return (status);
-> -       }
-> +       if (ACPI_FAILURE(status))
-> +               return status;
->
->         *return_value =3D (u8)((local0 << 4) | local1);
-> -       return (AE_OK);
-> +       return AE_OK;
->  }
->
->  /***********************************************************************=
-********
-> @@ -122,9 +119,8 @@ acpi_db_convert_to_buffer(char *string, union acpi_ob=
-ject *object)
->         }
->
->         buffer =3D ACPI_ALLOCATE(length);
-> -       if (!buffer) {
-> -               return (AE_NO_MEMORY);
-> -       }
-> +       if (!buffer)
-> +               return AE_NO_MEMORY;
->
->         /* Convert the command line bytes to the buffer */
->
-> @@ -132,7 +128,7 @@ acpi_db_convert_to_buffer(char *string, union acpi_ob=
-ject *object)
->                 status =3D acpi_db_hex_byte_to_binary(&string[i], &buffer=
-[j]);
->                 if (ACPI_FAILURE(status)) {
->                         ACPI_FREE(buffer);
-> -                       return (status);
-> +                       return status;
->                 }
->
->                 j++;
-> @@ -145,7 +141,7 @@ acpi_db_convert_to_buffer(char *string, union acpi_ob=
-ject *object)
->         object->type =3D ACPI_TYPE_BUFFER;
->         object->buffer.pointer =3D buffer;
->         object->buffer.length =3D length;
-> -       return (AE_OK);
-> +       return AE_OK;
->  }
->
->  /***********************************************************************=
-********
-> @@ -175,7 +171,7 @@ acpi_status acpi_db_convert_to_package(char *string, =
-union acpi_object *object)
->             ACPI_ALLOCATE_ZEROED(DB_DEFAULT_PKG_ELEMENTS *
->                                  sizeof(union acpi_object));
->         if (!elements)
-> -               return (AE_NO_MEMORY);
-> +               return AE_NO_MEMORY;
->
->         this =3D string;
->         for (i =3D 0; i < (DB_DEFAULT_PKG_ELEMENTS - 1); i++) {
-> @@ -190,7 +186,7 @@ acpi_status acpi_db_convert_to_package(char *string, =
-union acpi_object *object)
->                 if (ACPI_FAILURE(status)) {
->                         acpi_db_delete_objects(i + 1, elements);
->                         ACPI_FREE(elements);
-> -                       return (status);
-> +                       return status;
->                 }
->
->                 this =3D next;
-> @@ -199,7 +195,7 @@ acpi_status acpi_db_convert_to_package(char *string, =
-union acpi_object *object)
->         object->type =3D ACPI_TYPE_PACKAGE;
->         object->package.count =3D i;
->         object->package.elements =3D elements;
-> -       return (AE_OK);
-> +       return AE_OK;
->  }
->
->  /***********************************************************************=
-********
-> @@ -251,7 +247,7 @@ acpi_db_convert_to_object(acpi_object_type type,
->                 break;
->         }
->
-> -       return (status);
-> +       return status;
->  }
->
->  /***********************************************************************=
-********
-> @@ -272,9 +268,8 @@ u8 *acpi_db_encode_pld_buffer(struct acpi_pld_info *p=
-ld_info)
->         u32 dword;
->
->         buffer =3D ACPI_ALLOCATE_ZEROED(ACPI_PLD_BUFFER_SIZE);
-> -       if (!buffer) {
-> -               return (NULL);
-> -       }
-> +       if (!buffer)
-> +               return NULL;
->
->         /* First 32 bits */
->
-> @@ -331,7 +326,7 @@ u8 *acpi_db_encode_pld_buffer(struct acpi_pld_info *p=
-ld_info)
->                 ACPI_MOVE_32_TO_32(&buffer[4], &dword);
->         }
->
-> -       return (ACPI_CAST_PTR(u8, buffer));
-> +       return ACPI_CAST_PTR(u8, buffer);
->  }
->
->  /***********************************************************************=
-********
-> --
-> 2.34.1
 >
 
