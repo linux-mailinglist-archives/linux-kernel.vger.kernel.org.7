@@ -1,122 +1,354 @@
-Return-Path: <linux-kernel+bounces-764243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C741B22061
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:10:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557FFB22063
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189A2502600
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D29B165A1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AEA2E0B64;
-	Tue, 12 Aug 2025 08:07:43 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021A72E03F3;
+	Tue, 12 Aug 2025 08:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4o8v1b+J"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC12D323D;
-	Tue, 12 Aug 2025 08:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754986063; cv=none; b=upePujkZeIKhIth3T3xt/ZdFpFYha8G2/9bsdh3SJ43fOAvQ6KlCGCmLP/+Jcx9OkqlU0rP/lDnQBU4Ffku7g0eXAymEtCduzBGeVt/peN4V73wgDsFQlipVBfuvmdKxV+p/hFVURDlAZrAe9tnPxqnVMd6DgCwcS7gwedKW1mQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754986063; c=relaxed/simple;
-	bh=ppHfjYLPLrvBKVXbor0vxJ7W7C3/XYdv6C+CE+7RQuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NINOPlAcBAEu7zGruZzw0aISEP1FyOR08y2EFJe7uh4Mr9CXCMP83tehG5t3OxKSX9cSPmlfv4g+7/QDMLXsIoAsISD+npLbL6jF2Xjizijai6nPOXesF6Z2bcfbkk/6e8mwBLJaNaDIfWHRHWJQeiBmCK284dYil8xMfP9XJwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 64813e56775311f0b29709d653e92f7d-20250812
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:24076325-4bf9-4abf-b7fe-95fc83e76d02,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:4ac8a97a339f6c8d3cea5f3b62b86d7b,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 64813e56775311f0b29709d653e92f7d-20250812
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1538524574; Tue, 12 Aug 2025 16:07:30 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id E888CE008FA3;
-	Tue, 12 Aug 2025 16:07:27 +0800 (CST)
-X-ns-mid: postfix-689AF63F-547715471
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id D062EE008FA2;
-	Tue, 12 Aug 2025 16:07:11 +0800 (CST)
-Message-ID: <9dca7c98-84e5-4d16-af76-93f2b0470243@kylinos.cn>
-Date: Tue, 12 Aug 2025 16:07:11 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449F5182B4;
+	Tue, 12 Aug 2025 08:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754986108; cv=fail; b=ZFcoNdTBmzoMhWAVhpS9fJthM2MVoO2lr8TuLsZcaj83565rZlPrIh8ub5OSmxHyKfF08kAFPUnu/RbUhRfYTyPbNHM6IDtAuLvustx+xRgHVefREwE1i6podIs8Zd1HcG0oRma397erK9LN5PwgN+W1xM4OFFaWTqV4X5WgYP0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754986108; c=relaxed/simple;
+	bh=6fzcg5bkIDOqU4/5q/T8ua9qn0BaU1yCJhRsRidjvGM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eA7U0yTMSpOxY+U4p7yp6P3DEZ7HIbOeXvjvbNGcCpn7HSWjrCZEFNO8fCZQ3/VZ3OaqNB0MaC6pYGEgwsCNg0eb+i84WouCaNIeleoN3oG+uGxobpQTU1ULklOiZREzlaEIIPsYy3fAR83sBhUs22QZ/OiasT5lqWVQeDeB9L4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4o8v1b+J; arc=fail smtp.client-ip=40.107.220.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y4gLXqP+go6AgmcpXdiussjlQhtFmsr1Y73wx+j/O9SvaXd/nikJSSMvuWE5tRIR6g3qdoaXFKzjjewM7ZfS62GX7m8+xYETPxGG8wXr1MeiZN8CVXW3e1FCXjaei25a8bclPBb6HJDq1gosbDHpLhdR3NfvPwgX3WRkXte2xPNIbdNFEbTXG1sk4vu2jjDoeuaHdi5KZSMAG96bMrrVaPyjzb9g7B+V3x+9uojnn+Os7OwHbBU3xTrK8QmFPjKimH7/nxfUU0BLb0JVe4XXhXqEXzoCkfQMz2dx0cmqiko2VgtkQPBeANWSnJPxf0tw7SReK5to7wu4s7RuKW4mpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gRHggZErhZ2Br5CSo3mTdGgL07e6XoRVR80mm60eb9Y=;
+ b=joIZ5MU4H/inB0sg1G2uDrYNPoB85DQrMEB6TRgQY/xPt22F8JSwUButRWIi5fUTPZmR5InwIjkFuYXDcbyVJfCc1YpQv4zmmQH/8dRCYZzXYt87V5NJmKo/ScxMipYK3HAdnOh+ZZVgjQOuw/mZIsdQs72GF684pT0Xdv6T/utaydy52PiOJxSXIkzUdiHVV1f+lFbaMkzzgAuZ90J0QLWGEnQehtIHL0LtELy7RAWpDGBghdvNEw7vxAh9FI72tO/knS4TMkvDkNmQfDxfJ52k1mOGng/SUlufq16LZljegwcxeqy3Njg/fqhUPz12ieP5v2g8VI5MsFfHZ1Ph4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gRHggZErhZ2Br5CSo3mTdGgL07e6XoRVR80mm60eb9Y=;
+ b=4o8v1b+JrQG1bxKsCFrkI4e51Wji9pVTp42zfEGq48rAXosgt4WIMkXLPw2eJT6X9AiXI3NnveZly4/QW8dg8WHAGY26mRnMDfi+VLHSuDVaDbWPZHeXRA21O5ri4+Q3XGb/0MoPz5dr1rhwYz60wZGHDYx4ylKJpVC/6zxQ9vo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by SN7PR12MB7323.namprd12.prod.outlook.com (2603:10b6:806:29a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Tue, 12 Aug
+ 2025 08:08:22 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9009.016; Tue, 12 Aug 2025
+ 08:08:22 +0000
+Message-ID: <d113f2bd-7771-47d3-90c7-116f21f6facc@amd.com>
+Date: Tue, 12 Aug 2025 16:08:14 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, mchehab@kernel.org,
+ hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratap.nirujogi@amd.com,
+ benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
+ Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+ Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
+ anson.tsao@amd.com
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <20250618091959.68293-5-Bin.Du@amd.com>
+ <aIclcwRep3F_z7PF@kekkonen.localdomain>
+ <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
+ <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
+ <20250811123102.GC30760@pendragon.ideasonboard.com>
+ <50f0958b-5234-4a89-a57e-5d330cca13af@amd.com>
+ <20250812073432.GF30054@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <20250812073432.GF30054@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0028.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::21) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 6/9] freezer: Set default freeze priority for
- zombie tasks
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <20250807121418.139765-7-zhangzihuan@kylinos.cn>
- <20250808142948.GA21685@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250808142948.GA21685@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SN7PR12MB7323:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b414ada-361c-463a-2005-08ddd977678b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHRlaGZjVmRRUXh3eVZPQXEzdUpObVl0UnhpWWg3TlYwb0xkNnkxUmZFemtW?=
+ =?utf-8?B?anNoNUt6YStwNjdGdHhneDFrQU5NRkJXbXlZNGU0cnNJMVVGYjJETTdkUHU2?=
+ =?utf-8?B?b3RpVUNhaGZqM2lta0NUbCtSL1ZjTE5ML2ViVjEwY0d5TSsrU1lGQnFRc3Ra?=
+ =?utf-8?B?NUdXeGdvZWZzaURpT1hpaEEyWUhqMmxzckVxOXB2TGgxM1JNMTRURkdRUGNY?=
+ =?utf-8?B?L1ZZU1ZtaTNWenRDbXB1c0gxQlA2U1ZoNnJyRGVqRmZYWGZjdmhwaldvOWFL?=
+ =?utf-8?B?b3JWTVlqY0FPVi95YzdKYjUvVlhMUk1RVzFPU051bkFRaWthZEZOTWc3NU94?=
+ =?utf-8?B?RUNRdnpCbUh0WDQzZmwzV0hWL0tpanVDOVJFdzVnWlZncEV4VThBcXdFWFhO?=
+ =?utf-8?B?THJubTQva05wb3UzWHdnYXh4ZWhFK012Y2p3YnhOSUJNTTl6SEMvTlhCbzZT?=
+ =?utf-8?B?clZrZVExMnJRVE5ERWNMU3hnUXNyQ1YyeHFvOHd3Rm1IOXEyZ0EyZVlPYUFq?=
+ =?utf-8?B?WTdtWXNaS2Yza0h2OW9CajFjYmhJZjNKdkJJSVR3bnhEQm9iU2I0MTYzZlRv?=
+ =?utf-8?B?Z2hZckhLNEdVejBLVUEzbkQ0QXA3TmdLYWYzemkxZFlDOTJFNVBIZ3E3WS81?=
+ =?utf-8?B?SXo2dTdJeWRFM2FLeFRMbnRMRVN1Vk14SGx3UTVISmhURmdwd3ZkYlZLNHJC?=
+ =?utf-8?B?clpqMWNweTlaUDI2WGxoZ3YybG9ZOTQ4Zy9vNmw3dUQ3VWJudC9waWwraWxJ?=
+ =?utf-8?B?YnRXc3dHVWFkemZiKzYxOWthOThCUVhtZmoyTTd5VGV3QjBzME9VSEZwWjBt?=
+ =?utf-8?B?ck9IejgwcjhsekwwTjgrVk9GelFvemxhZERYa0doUWt4MGIwTjdnTnZvZnc2?=
+ =?utf-8?B?WnZxMFdCdDZpTmZHUDlVWUVCbVllRHo2cjQyRUt5LzVDU0ZYT1pEVnVISDQr?=
+ =?utf-8?B?eWFzZnVUQ3pRZm1HSnJFNUNacTZ0ZlhBcmhiKytWWVFhbGl6d2dUOFlCV3VN?=
+ =?utf-8?B?ckE3eUROSGc2OHVSR1ZPSFJOUmUrQ1E4YlhCN29QZEtrcytaMFRScmFhZzN2?=
+ =?utf-8?B?bDI4UEkxbHRXTDRqWlllNE5NRU9sRXQyeFhYQythVGZ6NmoyaWlOUjcrVTRC?=
+ =?utf-8?B?ZFZhMWhrWmtLNnpiNVlNQTgweUJZV0pVTWgwUlFnZ0hBUzE4SWtEU2JrWEZ0?=
+ =?utf-8?B?ZGU2MXRjdmNnWStBQ1pyeTQzdENvYVNkTzJIUE5yZm9sbVFWamROV01zMlE1?=
+ =?utf-8?B?SERSYXp5bytDS2dsdmdWOGlWWE41c3JWMUFmbVV6QmZyYTB2bUkrZXVnR1NX?=
+ =?utf-8?B?eTN1Wnh4VWFPeTdzN20weG1OdWRrZFJuSVQ2ZTRDVGlUT0RqNDFqZDNqVXU5?=
+ =?utf-8?B?ZGZTYkRYYVhaWFNYOEpZWDJaRUsxaGRQNmt2TjFicmtZcEwwR3J0K3ZKaWJB?=
+ =?utf-8?B?UEQ1LzN3M0VCek5CaHBMWC9GaDBZajlKL1ZmUCtOMVFxK3o4OTM1MG1DNjV6?=
+ =?utf-8?B?ZUcxdVFmWkFMYXE2SWxNMDEwNE1MdVljV1FDVjlVdHAwZlVpTitFdXRPV250?=
+ =?utf-8?B?QUFBTGFTaHdkQlF6VHpJUm51V1JOdThPcFRZb2krQ25ndVp2VEd4K3hFa04w?=
+ =?utf-8?B?MFVGdVZnNUVvOXIrQmQzbzZLQ0xzT0hJb2VNOUlMckVlNmlDNml0V294OUNJ?=
+ =?utf-8?B?UzIvV1pjaVhHc1hGeC9sVTZUZVVGeldDRGt6dUp1TzBYMWwxVVBMMG9TN3lw?=
+ =?utf-8?B?b210czQ1NlQ3RmpIckpVK0wvZ3JLSUpTaVBkOTJhUlJydU9udTBrNytjSCtk?=
+ =?utf-8?B?SmFkTGdWMHFVTGpobWVCZkpJNHNhdS9RNWk4NkFSaitNSi9uRlpsM0VLMDgv?=
+ =?utf-8?B?bHNGUmZRYXRjelZjOUlZcU03WDBNMTBmTEoxVDY2K24xSHQxTHFibTlPWGxM?=
+ =?utf-8?Q?wPA5/07svTg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Wmd1a0NSMTZGRFVqU1FFNE9iajhPK050R0J1aXQwZERCM1ZsN1V4SG12VTJu?=
+ =?utf-8?B?bEdrR3RXL3MvWHdZcTFIaHJobTQ5TnROZzdnTWVOdVFXeXZiTFJvZzJheXFK?=
+ =?utf-8?B?azhweDEwS09IV1BOOXVOZ3lobzVLdm42Qk5mQzJLK0piMXdidXZzU0hNYThB?=
+ =?utf-8?B?ckgvQzd3ZWhsNlE4TWxNQkEwY0dhTUtRc0JtbmV3alQxOTZER055MVBUZEtR?=
+ =?utf-8?B?Sm5JYlorVW9MeGVkSHpuQmw2ZlZ2VElYUVRnUXpPbHNZSHkzaHpBc2NudGF6?=
+ =?utf-8?B?cFRxTTlzeGNOcE00Lzd3TVFEUXVBNENCRUtwVW05Rm1rbGYwZnEzL2FTdVU2?=
+ =?utf-8?B?T3cxR2Nvd1JReXBxMDlYek96T3VISERVS29DWGszdWptN3JPQnJmY2JlM2NI?=
+ =?utf-8?B?SWlNelYvOWZlelorR2tqVzF3Ulk5NndLTFhFMGVPSDZsR01Zd29pNmlqTGJR?=
+ =?utf-8?B?MDZnbDRsTEhaaVBjaVBpak9qM3RPMXZIZ0RIU2JMMTlzWEYyd2I2L3pIdVJQ?=
+ =?utf-8?B?ZkQzMDB3ZWNPc0lwQ2hGdzF4eDdPbFpTeWQycnFjQ3JsYW84eVB3TG1BaDFG?=
+ =?utf-8?B?ekx3ZTNBanhhb3BNYzFWSDJmOG5IYUVpcUFEd2FmT3g5MzM0K0pmcTJ2VEJH?=
+ =?utf-8?B?TVYxUWwySTRrT29JSVF1L2U5TXdwbU9zK0dSM2wyNzUvb1IrZ0dwdHppWmlX?=
+ =?utf-8?B?aDhoSCthNDNRUUNLV1g5cnkvWGZFZ2lrWS9PRVM2MVREQ2lIOVFDdmJFR3Jx?=
+ =?utf-8?B?alZOY21SZG03OU4xdUhNeU5mMXMwVGxlN3poMktGb0R6NnNPaXpVTkNVWUlJ?=
+ =?utf-8?B?aTV3dE1QRjdteVdkNG5ZLzU0SEJrZ1NVd1RwWTVjT1hNcnZqOXNocHRHb25h?=
+ =?utf-8?B?ZW1EN21ya01HSTRCc1VHajBFT3BrM2ZzZFMwYUozNGMxZkxGSFhhd1VCbVJL?=
+ =?utf-8?B?YUZKdHZaQ0RsaEtSU2YyTm5YQUtDQVZuSkt2YUhmNHRqT1RCYlBydElzRWlL?=
+ =?utf-8?B?RUpYM0pzbmZiVU9ENDJlSCtTRWlYVCtiWDhJWFhOQXdVRVpHZFVyU1hoU2Fk?=
+ =?utf-8?B?WGs4aFQrWkVITm1DZm1mcCtVOXJ2NHE5cFJZRjFKL1d1bzcvYTlGeG9ONzdh?=
+ =?utf-8?B?N21ybG5kVEdMbEx4K0tUNkIyeG9JRnc1b0trZW9NRE1pUGxPMmJwbVBvVWl4?=
+ =?utf-8?B?Sktrb1hZYUx1TGx5dFBvVDVxcHdiZHhJOWxkM3NvZ0pOZVJoVk41a0pVKy96?=
+ =?utf-8?B?c2RmMm9GaVh4eVllL3JCbDcybEprTm1FelYyVC8yUEZRMHF1WGN4YmNtZnFJ?=
+ =?utf-8?B?dWxxZXN3eWhtMDcxL2FEaHpaQ0pFU29rb3VQYk1wbVhTaDRiWnRCdkdmWDJn?=
+ =?utf-8?B?MFUwVjNmK3g1NTlLTEFXL2QyWFhiTVhtUnFGakZ4aXNPU0NOZUQ4ZHl5QVp4?=
+ =?utf-8?B?c21DbjlmbmdDcXJTNXhmZnhwK2xXVUhRakpqMG4vdTVVVWhpU01QdWlhTmtD?=
+ =?utf-8?B?ZHQxMnd4UU5XWS9rMmJDNUhXdDNKQWNvS2dvWTJtOFVRekVsRkNCSzk4YU52?=
+ =?utf-8?B?UHlpT0pBRmVjaFkvUHpsbk5EZU5YcVk5MlQrakFSNFloVjN4bC9tVkllYVQ2?=
+ =?utf-8?B?MFlILzlEYjl0WEh1dERzenVvT2dvWU1URWVqTjBpeUtEbkI2UVBMSmdFMlVx?=
+ =?utf-8?B?NWxTYS9TOUF1MDNMU2tUamJFdGRVSmtJdHI1aEExR1lXdVlPQnl1Uk9wM3hQ?=
+ =?utf-8?B?WWFRZGN6eXBpek5IcTFjeTgycmR1NFpuNGx1aVhEbzVaMksxR0ZqVkJWdEZ2?=
+ =?utf-8?B?SzROMVhzVXZzQTltMDA2WGpBd1RhZXNxZVZ0OTA5QWM3eXh0czVIRmYzRjE3?=
+ =?utf-8?B?NHA5dDVNWnpMS29YRWROSnRDNFpVY2IrU2srRFlxT2UzM1R6a1lRVHRrZXpv?=
+ =?utf-8?B?TERzNTA0c3U1VUFmNGp6bjNUMjE5a1hTcDFaMWZMV0FWc1IzdnpBYmhYY1Zl?=
+ =?utf-8?B?Mk1FaGJCcTE1WWltZEJzNm4zVjhnVmgxTEo2TnlpMjhhaE9ad0lkKytCVDk3?=
+ =?utf-8?B?QnQ1Q2I1NjJISFN1ME5HRzJMMi9zelVwTWpKS2VlSkMrRWtXelBoamxPOVdr?=
+ =?utf-8?Q?jjsg=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b414ada-361c-463a-2005-08ddd977678b
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 08:08:22.1368
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sQG7IriWofSnmvjtABVhGLeqTGU9hHu8g334TKedOvq99ZUW9ayhu3dCTQUfoGwX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7323
 
+Many thanks Laurent Pinchart
 
-=E5=9C=A8 2025/8/8 22:29, Oleg Nesterov =E5=86=99=E9=81=93:
-> On 08/07, Zihuan Zhang wrote:
->> @@ -6980,6 +6981,7 @@ void __noreturn do_task_dead(void)
->>   	current->flags |=3D PF_NOFREEZE;
+On 8/12/2025 3:34 PM, Laurent Pinchart wrote:
+> On Tue, Aug 12, 2025 at 11:36:23AM +0800, Du, Bin wrote:
+>> Many thanks Laurent Pinchart for the comments.
 >>
->>   	__schedule(SM_NONE);
->> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
->>   	BUG();
-> But this change has no effect?
->
-> Firstly, this last __schedule() should not return, note the BUG() we ha=
-ve.
->
-> Secondly, this zombie is already PF_NOFREEZE, freeze_task() will return
-> false anyway.
+>> On 8/11/2025 8:31 PM, Laurent Pinchart wrote:
+>>> On Mon, Aug 11, 2025 at 11:46:27AM +0000, Sakari Ailus wrote:
+>>>> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
+>>>>> On 7/28/2025 3:23 PM, Sakari Ailus wrote:
+>>>>>> On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
+>>>>>>> ISP firmware controls ISP HW pipeline using dedicated embedded processor
+>>>>>>> called ccpu.
+>>>>>>> The communication between ISP FW and driver is using commands and
+>>>>>>> response messages sent through the ring buffer. Command buffers support
+>>>>>>> either global setting that is not specific to the steam and support stream
+>>>>>>> specific parameters. Response buffers contains ISP FW notification
+>>>>>>> information such as frame buffer done and command done. IRQ is used for
+>>>>>>> receiving response buffer from ISP firmware, which is handled in the main
+>>>>>>> isp4 media device. ISP ccpu is booted up through the firmware loading
+>>>>>>> helper function prior to stream start.
+>>>>>>> Memory used for command buffer and response buffer needs to be allocated
+>>>>>>> from amdgpu buffer manager because isp4 is a child device of amdgpu.
+>>>>>>
+>>>>>> Please rewrap this, some lines above are quite short.
+>>>>>>
+>>>>> Thanks, the line after the short line is supposed to be a new paragraph?
+>>>>> Should we put all the description in one paragraph?
+>>>>
+>>>> One or more paragraphs work fine, but a new paragraph is separated from the
+>>>> previous one by another newline.
+>>>>
+>>>> ...
+>>>
+>>> Paragraphs are defined as a block of text that convey one idea. They
+>>> should be visually separated by a space. As we can't have fractional
+>>> line spacing in plain text, paragraphs need to be separated by a blank
+>>> line. This is a typography rule that maximizes readability. There should
+>>> be no line break between sentences in a single paragraph.
+>>>
+>>> Whether you write commit messages, formal documentation or comments in
+>>> code, typography is important to give the best experience to readers.
+>>> After all, a block of text that wouldn't focus on the readers would have
+>>> no reason to exist.
+>>>
+>>>
+>>> Now compare the above with
+>>>
+>>>
+>>> Paragraphs are defined as a block of text that convey one idea. They
+>>> should be visually separated by a space.
+>>> As we can't have fractional line spacing in plain text, paragraphs need
+>>> to be separated by a blank line.
+>>> This is a typography rule that maximizes readability. There should be no
+>>> line break between sentences in a single paragraph. Whether you write
+>>> commit messages, formal documentation or comments in code, typography is
+>>> important to give the best experience to readers.
+>>> After all, a block of text that wouldn't focus on the readers would have
+>>> no reason to exist.
+>>
+>> Really appreciate the detailed guide, will follow it. May I summarize
+>> like this? 1 Separate paragraphs by a blank line. 2 Don't add line break
+>> between sentences in a single paragraph, an exception to this is commit
+>> message, because of the 75-character patch check limit, line break can
+>> be added, but it should at the 75-character limit boundary
+> 
+> When I wrote "line break", I meant breaking the line after a sentence,
+> before the 75 columns limits. Text blocks should always be wrapped (at
+> 75 columns in commit messages, or 80 in kernel code). What you should
+> avoid is line breaks not related to the columns limit.
+> 
+> This is fine:
+> 
+> This paragraph has a long sentence that does not hold on a single line
+> of 72 characters and therefore needs to be wrapped. There is no line
+> break otherwise, for instance between the first and second sentence, or
+> within a sentence.
+> 
+> This is not right:
+> 
+> This paragraph has a long sentence that does not hold on a single line
+> of 72 characters and therefore needs to be wrapped.
+> There is a line break between the first and second sentence,
+> and also a line break in the second sentence, which are not fine.
+> 
 
-Thanks for pointing that out.
-Indeed, I=E2=80=99ve noticed that in the current position the code has no=
- effect.
-If we move this code to a more appropriate place, it should improve both=20
-safety and usefulness compared to the previous implementation.
+Really appreciate for your patient explanation and wonderful example, 
+it's totally clear now.
 
-> Oleg.
->
+>>>>>>> +	void *cpu_ptr;
+>>>>>>> +	u64 gpu_addr;
+>>>>>>> +	u32 ret;
+>>>>>>> +
+>>>>>>> +	dev = ispif->dev;
+>>>>>>> +
+>>>>>>> +	if (!mem_size)
+>>>>>>> +		return NULL;
+>>>>>>> +
+>>>>>>> +	mem_info = kzalloc(sizeof(*mem_info), GFP_KERNEL);
+>>>>>>> +	if (!mem_info)
+>>>>>>> +		return NULL;
+>>>>>>> +
+>>>>>>> +	adev = (struct amdgpu_device *)ispif->adev;
+>>>>>>
+>>>>>> Why the cast?
+>>>>>>
+>>>>>> adev isn't a great name here as it's usually used for struct acpi_devices.
+>>>>>>
+>>>>> In the next patch, will use new helper function for this and will no longer
+>>>>> use amdgpu_device
+>>>>
+>>>> Use correct types when you can; either way this doesn't seem to be changed
+>>>> by the further patches in the set.
+>>>>
+>>>> ...
+>>>>
+>>>>>>> +static int isp4if_gpu_mem_free(struct isp4_interface *ispif,
+>>>>>>> +			       struct isp4if_gpu_mem_info *mem_info)
+>>>>>>> +{
+>>>>>>> +	struct device *dev = ispif->dev;
+>>>>>>> +	struct amdgpu_bo *bo;
+>>>>>>> +
+>>>>>>> +	if (!mem_info) {
+>>>>>>> +		dev_err(dev, "invalid mem_info\n");
+>>>>>>> +		return -EINVAL;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	bo = (struct amdgpu_bo *)mem_info->mem_handle;
+>>>>>>
+>>>>>> Why do you need to cast here?
+>>>>>>
+>>>>> In the next patch, will use new helper function for this and will no longer
+>>>>> use amdgpu_bo
+>>>>
+>>>> Not quite, on top of this patch number 6 adds more of the same.
+>>>>
+>>>> ...
+>>>>
+>>>>>>> +static struct isp4if_cmd_element *
+>>>>>>> +isp4if_append_cmd_2_cmdq(struct isp4_interface *ispif,
+>>>>>>> +			 struct isp4if_cmd_element *cmd_ele)
+>>>>>>> +{
+>>>>>>> +	struct isp4if_cmd_element *copy_command = NULL;
+>>>>>>> +
+>>>>>>> +	copy_command = kmalloc(sizeof(*copy_command), GFP_KERNEL);
+>>>>>>> +	if (!copy_command)
+>>>>>>> +		return NULL;
+>>>>>>> +
+>>>>>>> +	memcpy(copy_command, cmd_ele, sizeof(*copy_command));
+>>>>>>
+>>>>>> kmemdup()?
+>>>>>>
+>>>>> Kmemdup is to allocate memory and copy, can't be used here.
+>>>>
+>>>> Isn't that what you're doing above?
+>>>>
+>>>>>>> +
+>>>>>>> +	guard(mutex)(&ispif->cmdq_mutex);
+>>>>>>> +
+>>>>>>> +	list_add_tail(&copy_command->list, &ispif->cmdq);
+>>>>>>> +
+>>>>>>> +	return copy_command;
+>>>>>>> +}
+> 
+
+-- 
+Regards,
+Bin
+
 
