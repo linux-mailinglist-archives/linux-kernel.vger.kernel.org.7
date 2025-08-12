@@ -1,163 +1,182 @@
-Return-Path: <linux-kernel+bounces-764214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5147BB21FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8F2B21FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC09E3AC1B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CEA1641F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A4C2DFA2A;
-	Tue, 12 Aug 2025 07:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8072DEA7E;
+	Tue, 12 Aug 2025 07:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MDEgMQIX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="WwNbvfDU"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013047.outbound.protection.outlook.com [40.107.44.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1435A21D3F5;
-	Tue, 12 Aug 2025 07:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985250; cv=none; b=RkAL7QaLSwBYTR4WO33eFY/5guLRTg3AswkvlvPSR/hnoIlpFkJrooqHVVb/qCqqwuynu/3AGze/9Vkgch7zK+ksJStOdXEK6ozFnU0LS/pzV6OE9s8WYaltRFa+tpsYFrhwlNIX3QJC3tD0kyT9xJ1+gJnflbYqMRyX8rRrb0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985250; c=relaxed/simple;
-	bh=5ZJNrOvG62+G8wSEDV8YHrlOfH8zuqLSvFO3q8Tc9cc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=tNYDXQI08jtGp06+O4FgX/whMj7QCxkh0IUx4SWVwcROEBB+X/YfAD5QKiVjST2VS3W/ebtKllSOCrjwEOYdDoOfJtxcf/K9AyHvjdJGkgsamAW7mMm2vDJgjQtd5493Oewf2k+UjUEHdIJPSFYeP5rHyIbCfmg/eNjW0Ptc2zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MDEgMQIX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C51fQl019036;
-	Tue, 12 Aug 2025 07:54:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6yEFOFYSfqfaUAowNl7o6t+7yRibP2E7iMvJ1yRlAlk=; b=MDEgMQIXGAJFuNRE
-	UAg33puKwfRW5rFRLsGfjSQNe/S9fH22+hFoOLe2Ca7usnooiWLlXmo/dO+od5/X
-	PexBxK7pGf1J+MlxO+FMCFft6XKJnR7lgAQqLQzOywpiMQjkXBhkT00LXBYwI0Le
-	lwPP7hc2TUfk0V/54pGAHGax2kWITzB3hKXY1nIeCnWctWQZJj3B+of1j2/xDHnp
-	o2TADwV4LUXrGqKPgdQu9WFbsTX7inFR4SBLzbyERO3B7MQ8zKcuvy0PB+jE+ZWK
-	18qJF3kF7bEp6qTV/oYG7ORjPE+KT9w3RZca2I3PA2nNdisgqc5BZwyNYcr8P44u
-	hWKhPA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduy9ek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:54:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C7rxIU013582
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 07:53:59 GMT
-Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
- 2025 00:53:54 -0700
-Message-ID: <c009fe77-8590-c467-a0a4-76bd6ec7cba4@quicinc.com>
-Date: Tue, 12 Aug 2025 13:22:47 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2054236453;
+	Tue, 12 Aug 2025 07:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754985199; cv=fail; b=n8y7ECXdCzO5K1I3zCWFX+A/V7ixDiHeNVm+D1Wy/XxiZAcQ/r7yLTJ3vtbfRIHktaE/jj47Kc9rwIG+XeF3/APOlzGtQx92N4BThiuQbKPpC07o31bWZ6XcjHZbqo9Tb3uo88cODOSxsbEn+fRdO/4NWck9xlhOtR6+W9uwsDo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754985199; c=relaxed/simple;
+	bh=4VB0qzjMOMs8O8J0+BbBPUzJuITq6/GjFXjxNGeFK7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bV042MAmOq1mdArLpay7008Sn9ZpkQBql266pLJXfEGU1HwkpEIM/WKg6jcEhzH/C7jzFGP0Ug3cXAznOLxoQw1lFgV68LR1Div82vrJpYBaPfq601G4LYM40j18mwnR9T8BFC7tXCfQ3Kgm+eCGWWGLxMISXi+xihCOmd10TAA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=WwNbvfDU; arc=fail smtp.client-ip=40.107.44.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k/3MnTWRW+mYQofkx4qNTnCKzzY9d3UB7SKg9qiE5IIz6xEvDJvWKe28KhCIIz78Ww6L1iLx7qxP3V/9u/guomEyZvXR7kFCqBgjn7f+Ku5juJ6Sc24UTZ0mAnrORge95+h0X8YrK9s8ILXnGgW+DK9Ylx8JnHQkmNjjfuUqhiPoAQoJscOeTA9F5cIoH9k5M4shmpinCbrle8EfpE26ZFF3cBBGsxuS1ETIc0hykbIKNQeypTd4gPEpCHxgGkRrycaCnJWWEdH8AVmpPFo3OYRAJzlUP263E0YF/pf/ehXkRS5X0wGWPyrI8s7ybdzHTUVKpMjj8DbY+tdW+Xzxgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0ZgCXMZ787UP+z3Zt+DnLJa0Ltw5qqpQxX18oS2v28c=;
+ b=Rel0GcJ6EFBC4+Cus/guLviD0fIgJODcT0SuAPUAFSNCe2MRq9A1dGfph48dS1WI4wLOgpuWCLPSEI9WtEM8OKZiuJkUcRr4TXJc1PL+XJkKb6Oxbi5acLyq2sy4Iw9qrhe7Y2n7wA6Y5p8qFzVcmHYyqSOCTXEWAd/2MR+Yo3NKNzr/4W6gC5erShJJ9dHAhcN3ZtT3bouVRA91NQdvxaqb8tp/mPwFyHaFJNEARQteLxUxVhJOOR7aVWwlwcyG28+C3C24NmgTivM0y3NMuTpxs0oCAo869E5fKxtzP4JBkZeKiEw297lPwNiAlaHNobf8mHG87Apioa4pPcedYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0ZgCXMZ787UP+z3Zt+DnLJa0Ltw5qqpQxX18oS2v28c=;
+ b=WwNbvfDUJX5hLSJluR9RlGw7NqsrhgZ8ptzvruKwVsbhkTuveEDBkEPZDDB6+5AUz7iT96RxiO2txHapogIRCrBXYd6F0eFpIWXNKYFvJ3MZXRys+26YbpiFG0zPu/YztbGUGICws9rMKt6nIJVYuCVjHxL+RAhz/t9uL7TKx28nqZwNXDb2vEeBCa9pPUS2yV8If8R1qaEyyk0Zi/j2Nh6eyLKaeATT0sBllrNM5zhimD/iOMGgAcRufdgrgfM2UehtIC3+TAiqZuHOELM8AyKCZRqcW72edxhEL20zngjuO5PJBKuRri12riC7nT9s82bKAmB6bo3QPsUflkUsgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEZPR06MB7263.apcprd06.prod.outlook.com (2603:1096:101:22b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
+ 2025 07:53:11 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.021; Tue, 12 Aug 2025
+ 07:53:11 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jeff Johnson <jjohnson@kernel.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	Anilkumar Kolli <quic_akolli@quicinc.com>,
+	Ganesh Sesetti <gseset@codeaurora.org>,
+	Julia Lawall <julia.lawall@lip6.fr>,
+	Muna Sinada <quic_msinada@quicinc.com>,
+	linux-wireless@vger.kernel.org (open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER),
+	ath11k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] wifi: ath11k: Remove redundant semicolons
+Date: Tue, 12 Aug 2025 15:52:58 +0800
+Message-Id: <20250812075259.6921-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0078.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::15) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Subject: Re: [PATCH v2 0/3] media: iris: Add support for SM8750 (VPU v3.5)
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689af318 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=uiWDzxgDrFXmigHyhEwA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: k7B3iSPthe_nVLpKtyYgpsK-U7SwKcFf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfXwQ+5Roh/mKzL
- /nok21L+tDwrMVKM16s10U6uJ11v/ug9U9C8Hfcki7iGVrmv/6w37lML7AXf27DSTiiSIKbGa+A
- 0BK0QbgnHoRklMUlnrtusZ+W/hdjSS/YLspfIGyBFJRYQjO3+Urya/PP2c8NO9DxqdgC+H1wiOC
- klGoQ9VeVrxPH1vhkAxBgkU0gxIaRxl6BWkNmOdWRyA7h3BmLsCdDBa9D2dn8rL/znQPpkw+9ZX
- adtE4rTEXpegGYIWMRediYqwieVRiylWiCMn2OPcDIAKu2apSPyrziwclXJ3ufduI0mBWeX8Psz
- y5o5GGme9UA7BRlY8FSo4p0givbHAFNWIHFLzenBmIIdgRXUNFCaGSWSUeZdKKAjv39oEBuv8vV
- Ptlpu0Yb
-X-Proofpoint-GUID: k7B3iSPthe_nVLpKtyYgpsK-U7SwKcFf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB7263:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e2fc32b-943d-4b05-1a65-08ddd975486e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8TtU8NBCxb51oRxdrZRX3CjWU3p3glbEsboiwlh61CMmlHjAfV27G8MOFZcI?=
+ =?us-ascii?Q?3ulgjUsAWRXp4NsrOLFHG6u0ihIkU/f1hhs1XrJXdJA2c1DIES1Ti8mJ0UMV?=
+ =?us-ascii?Q?aS+omwhDSrvCszj+011wKawBZiYTCbD5uZJl6ZllvsQxkdfpK6Ut5vKNmU+b?=
+ =?us-ascii?Q?Qw4LcJx5qOoJgxEiembgVDhNbXMI1WcodLCcFfphVY0OFZ5cNf/k4nLskwAd?=
+ =?us-ascii?Q?X67QHqlyWMV2af1+hAJSTsU87dpFFEWF5QJTvd+E1NNOmImLprdlKg8uewI6?=
+ =?us-ascii?Q?X11gQinInFAkqVH41HFuOmJBjo5da7f+pCmwIyXDYQnE8l/VmvmG22tVPkxW?=
+ =?us-ascii?Q?ZhPXR4Iy0KpVxIWMNwFRHTeajB2+2zTm+RtwA5L7lqH8b0Hfj3hsf2IMFUhF?=
+ =?us-ascii?Q?Y/6lHu935YpEclGHvy9zzx8iG8l+u2VLHXKHH7C7UC8s1FWY0QIYHK2anEyw?=
+ =?us-ascii?Q?NXeyafgl6v8uqTV8U3FqJYlkodqohPG+9kseW7GI72m4j/Bd1RQFlzMuX4O/?=
+ =?us-ascii?Q?dG8py2YGP1L3JyncyeLxu1RM0MMPANWwHDek6Zy+YWPKxr96AhQFhVkDOIhc?=
+ =?us-ascii?Q?YSw4wfmE2jdbiO8h35AXETGQlDNr1TPxHzqrDAstys0Giu2PhxEyPAqu4++a?=
+ =?us-ascii?Q?ARqG1dAup9hxWYvIQKDazIgKS/+lZ0ovr3uVA/0u41ZGX8PnyCii108FHckc?=
+ =?us-ascii?Q?6L9QvW1lmX9Doq3rEeqjwkx+TrHDLm6xVPYQ1wxQhnQ+Y58NEWenOmBNhqBu?=
+ =?us-ascii?Q?2grC/vrfUYLeux0Dc/0zgajy+Ib8pk9KhJgfElgISWG3S97ye0+hK8ltkPjJ?=
+ =?us-ascii?Q?Lr6njKrQS5ZiSJ4vbWblIwT2gQSclqYRn3zPYuhU6N7c2R/Kv10YmJkttx/y?=
+ =?us-ascii?Q?uSPAUx9+Mkw2KFzY/WeUFUdXYvjyHJP29koyd2GoemcU7RBA0vmqYy+D0IQf?=
+ =?us-ascii?Q?hoEgV1r+uu9HKlzZ17lr3q8jyyh0o9KEUGNheX87YJEsJrf1GhdpvSNzebnb?=
+ =?us-ascii?Q?N2f5I0U/PqgNzhl8Q++vlZOHrRxorntyfrLgOi249Jd8RlfN+o4jGop+jx/7?=
+ =?us-ascii?Q?jgHD5or7zIRrZRXocgIYu82LpHYC3KOwlrti8A0lpXvJwXTWyY8Yvp/tigrQ?=
+ =?us-ascii?Q?AjW7WNkw5OdZIhwerFqgszUOPWUHd2zBHlJLhHZaECb4S7nCR8B9F9khGgm4?=
+ =?us-ascii?Q?9zAsP5kQv1bdpyScRdadGbF1sFYHLXQ55VE7pbYlrDXdF3MIIKu3QZAN95Iy?=
+ =?us-ascii?Q?LIEtJPcTin+3tCFqdnT54Egf8Dz21TrMqF1snBCOeOqFtJJgK9DIzVLpjxdb?=
+ =?us-ascii?Q?e4QwaowerIBIzk8Rhldrk17sSzlVFHobJ0C/XEOjmc+znYHzdh4u26P3tBAX?=
+ =?us-ascii?Q?vv/+Hrm9nVee213M6Boks0DbmS2lhV3i6+lZP8djXgxhzRR1pmQhNEFaBw0h?=
+ =?us-ascii?Q?ZPubEupjLRXpIh0PJW2OmSS/XyHW8VQIeXK1jD85Z4Y/zWi5BXdHmg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SWjZDMF7Pc19vc8URCUraILCF1vR6dLRw17XQZnU0puuXAcG1okKxJn1sryt?=
+ =?us-ascii?Q?ucyG/pBvuAM4d3BU9hivTSfoJxX0CVy8qtyqRqPuA4GFjlmhmqr9mpx4KxC0?=
+ =?us-ascii?Q?qNXL3ePEEvwWrkmt6Bi7AXwu4DqGOvVaNPfkvBgbfEq8H5LhkxyAmJl4Hny2?=
+ =?us-ascii?Q?JEzSK5ep0pUoKul8Rl7+QwZkGlm3kDq8Bj3PUu82mgHNa7kBrp5Lkc5q0FN2?=
+ =?us-ascii?Q?ryuw+JzNMFQ536KcFAhRTL3K1LNQxagJ+WznYMML0qVacESxMVIBxNZGi3y7?=
+ =?us-ascii?Q?IFxUWAzDEssqsMgv3bm9hR70oRxpejDGEZZpqjTYGVGYCQ3r/llV0uBsRs1k?=
+ =?us-ascii?Q?JFmWCShJXyX++pU7FacpUqRzZgsTaFqM8RICVcOTZw3xT0x9Ksx8ZqMaFHlC?=
+ =?us-ascii?Q?dFtrmFBQS2PJe3LvMeBAe+q2R1xHWqCdXXmcWwQYB0PJXKqbotGJBAdh2phJ?=
+ =?us-ascii?Q?+94QgbI6KM7MWaZmAz6QoB5d3GRFPFNx4Gfq4jHTZvkgVU6CzOOrp2YIf4ff?=
+ =?us-ascii?Q?dLRmp9YcicKmXVDIhEVrKhM+HUxwEue10pPUkkMRTIpN0/zX2H52xltwm64e?=
+ =?us-ascii?Q?5vrNjyyA9n2YiO4s+WtuCmMQodkWHuVQoFq4VpWhab4ySZggTzTZsu6VYB0t?=
+ =?us-ascii?Q?yJehTZTTVJ0hkl3/1+XQtFPhjzjUe6+bn23gFg69anfy7wZhU+gT2f6RvKzA?=
+ =?us-ascii?Q?22d9GP0DwVmddNeoam7/K5zRtiyBXoPUS2FHQ+h8QPWuaQm7a1fDyEsICdcY?=
+ =?us-ascii?Q?JMwHX5uIGh272yJbVk8QSZ5jKRQm4H9/c8JLyw308xg7BQW7cCIXjkYt344A?=
+ =?us-ascii?Q?97m7DMO6Jmujo3wkYzUzBMcBPSp9CcgVI/SK+feh/oZoEjpPG+P/65sneW9h?=
+ =?us-ascii?Q?2tKzvWTi6QcwJPiZOvdP/1Ic+hPbDtA9gqPJkXAwYoPZzAtCYwiA2/YgNgpt?=
+ =?us-ascii?Q?wzX7rWZsPLppHWnrUhCRKEyV+qj9xyw2ZZEocjhrePr75j8fd4KWlgEviZGe?=
+ =?us-ascii?Q?qkkfXaVyd9w4wtbcfItZNrzkq6ZOQ29okKbdJDZrIWyTFlscdYlBvppeZaNX?=
+ =?us-ascii?Q?E0I/st3552dWkpw/DLl9wtW3Ya2/uTPJhlaWLpFHNFGG1fQ9oPAYhnFtZLZA?=
+ =?us-ascii?Q?nrM1nq9Az9d6FGAzFHnLQMKZFbekw4WhhXWxdOPtu+s+S+9uov0U+Ye1ooO+?=
+ =?us-ascii?Q?0EPXApG/ugtVx87naoK9xqukIOeBZU/gVHR0LoNmRk//iGgcbvKAiQ6EtbTw?=
+ =?us-ascii?Q?HhZyvrDUCBF4ruokLT2LO4ogpXXD1ik1C4dgaLcExnPqEm8r/09u/RYuwgUS?=
+ =?us-ascii?Q?S4j9YRcAOzPhPtrM7YDi8pMppbjBMYDJBIaJw+mYdO/0WAQleMJi/98D4TkO?=
+ =?us-ascii?Q?zoAkG+2I+HtXlOJP0QDkrE6cBJJWKs+KCPC9c0eN3m+hm2PrK2vi6kCDfFz/?=
+ =?us-ascii?Q?zaJyCYCbDam0eJGFANEVKGev6EImfA5Jn8VlVHUbmr0b2YlVQTjYoe6+RV9n?=
+ =?us-ascii?Q?9uzi3zt3H04UvaI9Rt+KwuA6tMBtl9yqSr1R+fqSp/vfVjIJ9IE+xgVPYcJH?=
+ =?us-ascii?Q?KF12rGN86nnO43apadYxjqN8Cryg9XWhMnpPPuRn?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e2fc32b-943d-4b05-1a65-08ddd975486e
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 07:53:10.9402
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3kDz9QvaJ8gX17yVbT28cN3KwyR3Yod99+IYpY7umLShAZ+1o0z7pRbUxHnZqZVSg18FWSlPhxuG8IKcMJx6tg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7263
 
+Remove unnecessary semicolons.
 
+Fixes: d5c65159f2895 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/net/wireless/ath/ath11k/dp_rx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
-> Changes in v2:
-> - Unify power-off sequence with SM8650 and re-use existing callbacks.
-> - Drop incorrect WRAPPER_CORE_POWER_CONTROL and unused
->   controller_resets.
-> - Rename FW to qcom/vpu/vpu35_p4.mbn.
-> - DT binding: correct typo + Rb tag.
-> - Link to v1: https://lore.kernel.org/r/20250714-sm8750-iris-v1-0-3006293a5bc7@linaro.org
-> 
-> Firmware:
-> =========
-> Mot yet released, AFAIK. Will be hopefully released later by Qualcomm.
+diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
+index ffc7482c77b6..b9e976ddcbbf 100644
+--- a/drivers/net/wireless/ath/ath11k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+@@ -4615,7 +4615,6 @@ static void ath11k_hal_rx_msdu_list_get(struct ath11k *ar,
+ 			      msdu_details[i].buf_addr_info.info0) == 0) {
+ 			msdu_desc_info = &msdu_details[i - 1].rx_msdu_info;
+ 			msdu_desc_info->info0 |= last;
+-			;
+ 			break;
+ 		}
+ 		msdu_desc_info = &msdu_details[i].rx_msdu_info;
+-- 
+2.34.1
 
-Its released here:
-https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/qcom?id=530f283206034b20ed791ef379f4394ca21fe63d
-
-> 
-> DTS for reference was posted here:
-> https://lore.kernel.org/all/20250714-b4-sm8750-iris-dts-v1-0-93629b246d2e@linaro.org/
-> 
-> Description:
-> ============
-> Add support for SM8750 Iris codec with major differences against
-> previous generation SM8650.
-> 
-> DTS will follow up separately (depends on other DTS patches so cannot be
-> merged as is).
-> 
-> v4l2-compliance report:
-> 
-> v4l2-compliance 1.26.1-5142, 64 bits, 64-bit time_t
-> v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
-> 
-
-Thank you for running the v4l2 compliance tests with your patches. While
-these tests are helpful for verifying API compliance, they do not cover the
-actual functional aspects of the new SOC support being added.
-
-Please run a decoder use-case using either v4l2-ctl or GStreamer (GST) and
-add the results in this cover letter.
-
-Thanks,
-Dikshita
 
