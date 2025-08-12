@@ -1,226 +1,183 @@
-Return-Path: <linux-kernel+bounces-765036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3555EB22A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2267EB22A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6611B501FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E21588032
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C772E8898;
-	Tue, 12 Aug 2025 14:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4A92EB5A6;
+	Tue, 12 Aug 2025 14:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VbB2Av/i"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hwBTCCJ8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBCD281357
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC772D46A2
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755008418; cv=none; b=DDQpTsL9yb3WTIZ2tWeMw1LfSsot56fNRs0ba9ML6+DBIPAfMx7HjcDJrhzk9w8M+4PDDCQSExqr2GHg+AAcq8DH5vorLGkAOYcb7FdaeOkmm32op9SYNVX6siS/txwPlXaHaiBHhIIpkNwSuquBrkShDTG9DdI/sGKMyaLPdw8=
+	t=1755008483; cv=none; b=MKZ6TYEGfeEwXJrwlsJr/EpU0S7dinKDF3j9C/tIjUdELSPBlRU30BGaS5fl3XqOAjrXZT+hbBO+qvzcdVmhghQIkq6dL6D8TZRkfFYGd01CDJ8VmqyJLkQWUznvcdIQ3G+W2C3jc4r2szFDXdyMjBAim165+lgzXS2hoAspmIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755008418; c=relaxed/simple;
-	bh=r/g7cxm9Na/CcdAsWOeh8hMTNl83bUK5G5JindICPdA=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r+NOHUj/u1uMh7Q0AOzc75w2tVSvgyh6SuCmWeonjxlNKTN2Phs3tiEaqpb8UPgC2Mfslk7kOcfrTiCL0lhJxk1WW0x1Ek2TJ0U3rolR7Y46FMlz+d1FDoaI0ZrC2aSb58LHYDKNem4zRnhoU6tLaHE9ah0vBbe1pSsvn0OISVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VbB2Av/i; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55cd6a56af5so1669691e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755008415; x=1755613215; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zMY/csa2U5fal/bu+jvHfhppLjeOUw06LSvQ98vCN+Y=;
-        b=VbB2Av/ilyFpfSAy7GSw5jAA2dcwGrFIjhwLIZLgsPne7uhPCPNnzTq75Z7woz4Wzl
-         1UqV7H/VtZ3RCbcNzZ2tGZEUCT885M+F0G1cljgS9ZjfKsYpuAwrJJYQdvIbiB46m/XZ
-         myEsXrf1cKaTjGoAkDBa27MdEseueIVThlvy0XklSfXw+QuXqPcSsXy5SrU/ZBXqmx8h
-         j232RdLXJt+yX7YvcRjQk6ifwnvbdM+Ffd7EiZSGZ/AVQjdBWJKNGVTiv/nWWWtg99Or
-         bbKAB/fTgvVbdlbOY/mMjHFmnQ53YNG16PB1EYxMLGab2s1PtrNvAZPZZmGV48am4RXV
-         1giQ==
+	s=arc-20240116; t=1755008483; c=relaxed/simple;
+	bh=gfuHTagF17Ec8Db9LA1xP5sCwdVtVM7nvbXpiYZi7SI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A1QKCDDRBliq5wBpx7AS62qcZ5L2u5yzhdjCsbvAGNX9+nKkFGLl2yKy12NF4cRYD4Nl+QRM83EwX0CnzwC36vri7Kc4gZYGiLl9XM0zrS8RWgexWM/Axbg4IKItYU/1utKrTIOPFX8FHCqvlXOjdDCs4COr4dTeWpFfBiTuqsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hwBTCCJ8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAvisA021066
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:21:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n2CFaYge9d+yp8oBGPwz1QQ2VOoJSFwhIkoJHoNOR8I=; b=hwBTCCJ8Ubj/xMZ4
+	iOxebIVMvJwPA1XqQP457mrT/r7lMWxIi1nFK+G1cbsW1WimYIEVq4eIZKPQzJ5U
+	T3RQLKGYX6+22O/+1D72phqJvOScVB5zVo53VSEMxiwxFuJPqG0kk+yaqWkdNA8M
+	fyUeamHICyhXnS+l+fg3giqYlJBCWPHHy8rT4AdZte5EDbVqxH9FnPRnSyRI0DJd
+	Kvm3m4xILVNWJkkaIsPlRYGVAxT4JY5Xwsxz7woAIUzo/8/Hg1vCSgNrjj9YcLc1
+	kKOSC10A2zPIz4CVODao9Qq09ArSlIABUtIJhk+u/U4sZPTzi8tElEEWmx4C4Lo6
+	oioGKQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6m9ds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:21:21 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b07ae72350so14398571cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:21:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755008415; x=1755613215;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zMY/csa2U5fal/bu+jvHfhppLjeOUw06LSvQ98vCN+Y=;
-        b=sV+hbVUyU7pUEzZizv7Hmwq0AZ5VY23PHCpjGnha1RSUywE0i/kiwqDGKbrNdKTbCH
-         ThFMcC+FNhoOscNSVVFg/lXq0IKIoRIRyiM55GLj9KyWlM7UVU2tYTYI/O6t6hyp8vXY
-         pc6Ph8QR02vFqJ3uQEeYOGX/MkC+ZzIWWZ6nR8M8tXf9SgfSypFXhjP1guOFWz5Ap8E3
-         NgTAOODogEuEEXcTYw5OL3P9fCFS5pyZkbPxzBzj1Wyz081Xj6olPI4F5m1VpC39KcuN
-         2wHPcvRfDTaevhv32mqsycDKShWZOLh1gWBc/nIULw2I/xyzoRlB72An0w1KqRV5QKeA
-         cLmg==
-X-Gm-Message-State: AOJu0YyLJfOmKR34K4m8SJedWdHXp8KAxorfgcSPY1dijtAoTBUua3iu
-	bq7gLiBXMugavvrNY8nYuG2I6JtRs6Ctnu1/p5ZCZ5LBRZG+/Y6pI7mkvixW+fBSr1MC56K7Fvm
-	FwBqrAMF+Ux5GWAxgstVcskRc8u634fVqEhwZ+5jY9bZJlMHpwVTW
-X-Gm-Gg: ASbGncsba7MOTX8Vq+xvpQ6biLAGG5now6NwTwSbPnVFbHd5IboGtRkKmtqsv+zqlFQ
-	xyc3JIpvLY/DTRPKSVrF3yYwyCaj58anGMMGXxs91+bHqypqA76uVEb4ZrHD1fwRoyODOUzxrcw
-	JRVhFtA3hH0hfJP5AfKT5xgoUl7PvScy2UxxsqiysuhcrGKx2RpLe/yx4V0EAH/DaamzNwYQoEp
-	CjuhQdk1IbcSkNhv1oFz3dSq+D+U/+ZQfL4
-X-Google-Smtp-Source: AGHT+IHuu5wvW4QtT3XRKQhSqRyAl4ltkuZNueZbz0L47TOdCOtZKGDL/QaBXRZMyQYhkVVn0ozd5KBBIXmm6CR5nec=
-X-Received: by 2002:a05:6512:1193:b0:55b:84b9:9a32 with SMTP id
- 2adb3069b0e04-55cd7602a4dmr1190170e87.30.1755008414804; Tue, 12 Aug 2025
- 07:20:14 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 12 Aug 2025 10:20:14 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 12 Aug 2025 10:20:14 -0400
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <f4d04d0c9d72d089af7490c6ce91bb4c455fbffd.1754996033.git.christophe.leroy@csgroup.eu>
+        d=1e100.net; s=20230601; t=1755008480; x=1755613280;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2CFaYge9d+yp8oBGPwz1QQ2VOoJSFwhIkoJHoNOR8I=;
+        b=NvTaOWcAx+Rb7TOHotkBxcQtGVVkvZ2ut6Q47bXZ56Mr+qsjY2s4O/C3XwhF9/LvrN
+         qbqVqP41Ub62rh3VghX/Hfw3IJt0sE7VV+ONWUFujMIurXtFPKTCYWc+J9vAxrJsTZww
+         muEbVSLW/xGZdZzHxe/epcMoAh6aSo/XeLkww1UZeDvhv7inSjRNGObClTLn0pmTTDM3
+         F/fizyaIplO2Djqdu5WflJ1OqwXIjB2MfgkgiYlTnSHa7lFJ4NQbyw0BvQaPcxNr7wHc
+         eKAM/mZ8SH/yfzCq7Hy2CF1h6/k6+XkUwJ9VnL/Z9/Yc07eG+VwBpG5tmass4Eactie1
+         e7Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCX28pZL5Y2K1bwxQSvfrOldd0p3f0LCXhWpRZ/GiUsJ0Mo5+8nyvhgN6Pr2QWx8bCSKHQvD1LMfq4pQr8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhnVvEWbh/eAK/bFl8wdhc3T3ARXXX7WxKbjyUlprW0Ow/7anp
+	dHk8FqC35hD4UL/yRzEm3yCGRh3O6Ec4G4Dv/HwT30PHskeOgsWAw7vzBo1UqPVV/DS7oaETL+z
+	cZ0/fpxfc+gZCXKza57NHjl9X25rXtUum93Xl5sOSyVqo/Saasqvq8WPuCbqmvro6yGM=
+X-Gm-Gg: ASbGncsaDGamx/lugcxc0S5YMiduWU+LMlkXP2XhOKeQ3MaTZh4j8Y5COVVxC90mujo
+	Z5G6Cgfc3LzB7ge1uG4FgK5XDoCc1WXYHsZZNLLqq0bO7/1DmcdTm468aD/TDS2YlrFFWm8a+gi
+	yvy169SU1gQTLyd+TtUboxWb36gwop3/IPQEQhWOulqnBbgQn6+0mDwS98Ae4A4M/HOtvCoddPA
+	cq/zgx299XO5UGUOvAvcD1aa9SHkiWruhHKaP1XMbNjBx1Mo2VmveQQcj4PJV6KehN0ML1G0NYY
+	sHLvb9b4jAhG2ZdxuobTvKzjaj8wuy7AjzmG73Jf4qdeWfOHtFhuYCie
+X-Received: by 2002:ac8:7d46:0:b0:4a9:71b9:188a with SMTP id d75a77b69052e-4b0f6018279mr8546491cf.6.1755008480002;
+        Tue, 12 Aug 2025 07:21:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvi0YztLn+CDmiojczoRdgEFlf1XLkiuwgJAb6OHV8JUzQolkq39ajVYiwmX7PvKoHQJys9w==
+X-Received: by 2002:ac8:7d46:0:b0:4a9:71b9:188a with SMTP id d75a77b69052e-4b0f6018279mr8546111cf.6.1755008479436;
+        Tue, 12 Aug 2025 07:21:19 -0700 (PDT)
+Received: from [192.168.43.16] ([78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23fb8bsm2186132066b.123.2025.08.12.07.21.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 07:21:18 -0700 (PDT)
+Message-ID: <e414163e-e171-466f-965d-afb9203d32fa@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 16:21:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754996033.git.christophe.leroy@csgroup.eu> <f4d04d0c9d72d089af7490c6ce91bb4c455fbffd.1754996033.git.christophe.leroy@csgroup.eu>
-Date: Tue, 12 Aug 2025 10:20:14 -0400
-X-Gm-Features: Ac12FXxJwAJyIiJkerY_ZMj0NVdYlnI0XD6BtSNaGx0TIql8RITghXtjTU4PQzQ
-Message-ID: <CAMRc=MfkaY5AgYrOE7eVSMbkPjWj6+5XLSrFoaSDjzUWX4Dn0Q@mail.gmail.com>
-Subject: Re: [PATCH 2/4] soc: fsl: qe: Change GPIO driver to a proper platform driver
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, Qiang Zhao <qiang.zhao@nxp.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/3] arm64: dts: qcom: sm8750: Add Iris VPU v3.5
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
+ <20250806-b4-sm8750-iris-dts-v2-1-2ce197525eed@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250806-b4-sm8750-iris-dts-v2-1-2ce197525eed@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX1JuZ4KXd18x2
+ XUtFU45jdTiAcxAidtIxO9Y6nwAJSiWFtx/rubO8bjTYpMaRHu0LloG7WTpglJ8Qgb8jfjfwC6u
+ moRvJPVjWmr6F7tIgbSw0CRghjqTA7nASdC62wNbzjxMv64nVf/MfecG7N5d6Yf4ZXF5/FYDeuq
+ sXNEXFu3Sz1BVMugZPmm07bJzOcHz7kdNTiSyvgDTcanx9mJHPogwGxvREqrzPupsGqOrYI96Tp
+ ACxgPr/y3H4pA61qzYBjp4O1nYPQIEzkZUSkYmaZgMto4dTTkcIWtM5VRDqUtCzrXfCtehoRUlp
+ Lp1XPWxweTfuf1oL4thNgGzvo4idBuEEcc6/jV4rEht9PbJ7zk/EZMmgsmZikC3bSzclZnvfcum
+ sloQVGh4
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689b4de1 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=OjNCceoZ-5M9CiTWRqAA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: VZS7J_sCSSRQzhQJTWmeaJ3oZqKj2yQ3
+X-Proofpoint-ORIG-GUID: VZS7J_sCSSRQzhQJTWmeaJ3oZqKj2yQ3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
-On Tue, 12 Aug 2025 13:02:52 +0200, Christophe Leroy
-<christophe.leroy@csgroup.eu> said:
-> In order to be able to add interrupts to the GPIOs, first change the
-> QE GPIO driver to the proper platform driver in order to allow
-> initialisation to be done in the right order, otherwise the GPIOs
-> get added before the interrupts are registered.
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+On 8/6/25 2:38 PM, Krzysztof Kozlowski wrote:
+> Add Iris video codec to SM8750 SoC, which comes with significantly
+> different powering up sequence than previous SM8650, thus different
+> clocks and resets.  For consistency keep existing clock and clock-names
+> naming, so the list shares common part.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 > ---
->  drivers/soc/fsl/qe/gpio.c | 88 +++++++++++++++++++++++----------------
->  1 file changed, 53 insertions(+), 35 deletions(-)
->
-> diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-> index 8df1e8fa86a5f..b502377193192 100644
-> --- a/drivers/soc/fsl/qe/gpio.c
-> +++ b/drivers/soc/fsl/qe/gpio.c
-> @@ -19,6 +19,7 @@
->  #include <linux/slab.h>
->  #include <linux/export.h>
->  #include <linux/property.h>
-> +#include <linux/platform_device.h>
->
->  #include <soc/fsl/qe/qe.h>
->
-> @@ -295,45 +296,62 @@ void qe_pin_set_gpio(struct qe_pin *qe_pin)
->  }
->  EXPORT_SYMBOL(qe_pin_set_gpio);
->
-> -static int __init qe_add_gpiochips(void)
-> +static int qe_gpio_probe(struct platform_device *ofdev)
->  {
-> -	struct device_node *np;
-> -
-> -	for_each_compatible_node(np, NULL, "fsl,mpc8323-qe-pario-bank") {
-> -		int ret;
-> -		struct qe_gpio_chip *qe_gc;
-> -		struct of_mm_gpio_chip *mm_gc;
-> -		struct gpio_chip *gc;
-> -
-> -		qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
-> -		if (!qe_gc) {
-> -			ret = -ENOMEM;
-> -			goto err;
-> -		}
-> +	struct device *dev = &ofdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	int ret;
-> +	struct qe_gpio_chip *qe_gc;
-> +	struct of_mm_gpio_chip *mm_gc;
-> +	struct gpio_chip *gc;
-> +
-> +	qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
-> +	if (!qe_gc) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
->
-> -		spin_lock_init(&qe_gc->lock);
-> +	spin_lock_init(&qe_gc->lock);
->
-> -		mm_gc = &qe_gc->mm_gc;
-> -		gc = &mm_gc->gc;
-> +	mm_gc = &qe_gc->mm_gc;
-> +	gc = &mm_gc->gc;
->
-> -		mm_gc->save_regs = qe_gpio_save_regs;
-> -		gc->ngpio = QE_PIO_PINS;
-> -		gc->direction_input = qe_gpio_dir_in;
-> -		gc->direction_output = qe_gpio_dir_out;
-> -		gc->get = qe_gpio_get;
-> -		gc->set = qe_gpio_set;
-> -		gc->set_multiple = qe_gpio_set_multiple;
-> +	mm_gc->save_regs = qe_gpio_save_regs;
-> +	gc->ngpio = QE_PIO_PINS;
-> +	gc->direction_input = qe_gpio_dir_in;
-> +	gc->direction_output = qe_gpio_dir_out;
-> +	gc->get = qe_gpio_get;
-> +	gc->set = qe_gpio_set;
-> +	gc->set_multiple = qe_gpio_set_multiple;
->
-> -		ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
-> -		if (ret)
-> -			goto err;
-> -		continue;
-> +	ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
 
-Actually scratch my R-b, on second glance - this should now be
-replaced with devm_gpiochip_add_data(). I don't see anything that
-would be in the way now that it's an actuall platform device.
+[...]
 
-Bartosz
+> +			iris_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-240000000 {
+> +					opp-hz = /bits/ 64 <240000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs_d1>,
+> +							<&rpmhpd_opp_low_svs_d1>;
+> +				};
+> +
+> +				opp-338000000 {
+> +					opp-hz = /bits/ 64 <338000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>,
+> +							<&rpmhpd_opp_low_svs>;
+> +				};
+> +
+> +				opp-420000000 {
+> +					opp-hz = /bits/ 64 <420000000>;
+> +					required-opps = <&rpmhpd_opp_svs>,
+> +							<&rpmhpd_opp_svs>;
+> +				};
+> +
+> +				opp-444000000 {
+> +					opp-hz = /bits/ 64 <444000000>;
+> +					required-opps = <&rpmhpd_opp_svs_l1>,
+> +							<&rpmhpd_opp_svs_l1>;
+> +				};
+> +
+> +				opp-533333334 {
+> +					opp-hz = /bits/ 64 <533333334>;
+> +					required-opps = <&rpmhpd_opp_nom>,
+> +							<&rpmhpd_opp_nom>;
+> +				};
 
-> +	if (!ret)
-> +		return 0;
->  err:
-> -		pr_err("%pOF: registration failed with status %d\n",
-> -		       np, ret);
-> -		kfree(qe_gc);
-> -		/* try others anyway */
-> -	}
-> -	return 0;
-> +	dev_err(dev, "registration failed with status %d\n", ret);
-> +	kfree(qe_gc);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id qe_gpio_match[] = {
-> +	{
-> +		.compatible = "fsl,mpc8323-qe-pario-bank",
-> +	},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, qe_gpio_match);
-> +
-> +static struct platform_driver qe_gpio_driver = {
-> +	.probe		= qe_gpio_probe,
-> +	.driver		= {
-> +		.name	= "qe-gpio",
-> +		.of_match_table	= qe_gpio_match,
-> +	},
-> +};
-> +
-> +static int __init qe_gpio_init(void)
-> +{
-> +	return platform_driver_register(&qe_gpio_driver);
->  }
-> -arch_initcall(qe_add_gpiochips);
-> +arch_initcall(qe_gpio_init);
-> --
-> 2.49.0
->
->
+There's an additional OPP: 570 MHz @ NOM_L1
+
++Dmitry, Vikash, please make sure you're OK with the iommu entries
+
+the other properties look OK
+
+Konrad
 
