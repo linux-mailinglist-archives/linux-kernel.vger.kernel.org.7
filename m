@@ -1,253 +1,156 @@
-Return-Path: <linux-kernel+bounces-764662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B1FB225BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:20:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174A4B224F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD923BE942
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4DF1885665
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E242EBB92;
-	Tue, 12 Aug 2025 11:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928092D5A07;
-	Tue, 12 Aug 2025 11:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8812EBDDD;
+	Tue, 12 Aug 2025 10:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SaCptQg8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5840B2E92CD
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997637; cv=none; b=XGnpzh9wfbyyzXFldhfMezQZTYR3gOs95DMSl2qwuMtg1q8RNKwWmbleNnSMs6y/IXBiW1rz1i83tWp3xpWoXeNkAYsfvGBxsGmyBCUsY/QniOazUkBQkBnEk/jiIl6U+CZrEMRVoMmKn8pH2iQaKILDa9VYPdEyoPC5QE8lQWg=
+	t=1754995889; cv=none; b=r3Na7jePvr+oLrylnkzdDtm7aePVh/GyNEmiew3mtoCCVwoq3bWiyVOjF/G0Nd3SeSgkqUoxNw6Mb+fb5okFGqobmH3nq8iqq+TmZwrkSqyIljY7PIklft3AAL0Vwir99W6XjzUiFNIClSdOYbgqdtxRHcTqaAoSlUVTsegXU5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997637; c=relaxed/simple;
-	bh=D8aJWskat7D7j+YQUUJGr8krPsanE8nzMLSq+13eJYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ocuVnloDsHuhf6isv2d4s7QdIhHEEow94DQZu9tBd94PCtZLkpPRRerw1Uy5BOYAkKy5PiuPMz8+u/A3MTz36oCBNuGir5giDKHsHRWbE1CUzH1AldbsQ1gS+6fSHr5ff/0G11i/ulmtWw46V1CpaI14Xvxk0v56lqzgbUkCBLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c1Swd6CHXz9sSX;
-	Tue, 12 Aug 2025 12:51:13 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id iI9dJ_a7pdSu; Tue, 12 Aug 2025 12:51:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1Swc1tNfz9sSS;
-	Tue, 12 Aug 2025 12:51:12 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D1808B764;
-	Tue, 12 Aug 2025 12:51:12 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 4jorW_lag49m; Tue, 12 Aug 2025 12:51:12 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 685288B763;
-	Tue, 12 Aug 2025 12:51:11 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH v2 4/4] ASoc: fsl: fsl_qmc_audio: Drop struct qmc_dai_chan
-Date: Tue, 12 Aug 2025 12:50:58 +0200
-Message-ID: <0e73d47d15cf38ad5c4c35fbab545153829dde75.1754993232.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1754993232.git.christophe.leroy@csgroup.eu>
-References: <cover.1754993232.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1754995889; c=relaxed/simple;
+	bh=KgnjkLOYLkDSwC0GXwfOBN4C4F4nJHESxIsZ3ha4nMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDkttjxoorj94sUw31qBXZKjensssC0n0jN91LAwFPaT4JO8UzDmlItDD4tM4Fx+CDUyuWWIuW0jqOmO+AJVYYlRokRRmC2tmfn+chBA7/hQ63zJC+6UCfv74fu/LG6cwrdG6ZpFs3Nc3pgRYNzPU6kGNb84umQnFVzKAZwO5VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SaCptQg8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAl7sI004687
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:51:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=bhG7bDwD3mvvB+arfoW2xQRe
+	XiSpPUNHdkakI97zRUg=; b=SaCptQg8OXr1fB+vzrIxE0gIdTuUI0OSlqiSVAo6
+	hv4hYpHddXMK4iTZYGmZ8+1Lako3QGbjomeNsCXme4kAX/1sjY+F1/N1OF4jrRiP
+	zOvg9fWQv92SawDa3fmv6U47AtfmwoItcptGQlG/kvI2rzkY09rivUwjxBNCqRzp
+	kCs4TW6w4MrIveaRol49orOXOPs72DmRCL9wjyU8w/TlR+Unlv1UFybeROkf1bde
+	uAjOehhWjcWN2le9Z11GKckLtSi9sY3tmD7JRlA2V5taolCJhDrdSW0w5/1oBDzO
+	HvGs/J94Zqsp6Ceta8DBr8qUSRi324lFr8xQGgi0/CDetQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxbaxtw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:51:26 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7075a0b5580so105355906d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:51:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754995885; x=1755600685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bhG7bDwD3mvvB+arfoW2xQReXiSpPUNHdkakI97zRUg=;
+        b=wpw+GKssUf9vO7GAjJXXzCaCAvXOP/hkmxd9r2dBHo3jk3jYzPXAQhUpVd80fqXAF/
+         y67CznosBJymjk/LWT4YQiam+RNPmCwo9WZczKbFJTsXyUFqIbh2JsQIdh0eceJktGX3
+         Ld/fY6BI52FB5xlwIDg81Q4+JHiZb6K6pQgjj6j1/vG50hFZQCD4EClL6uUEZ9PFGCMN
+         zCmdePtvLPnqUU4RPIHS4z/GxlAgn8Gs6O2Y/yknW9Jo5plGJq/Nt8dEF41sIlDLbF4h
+         /i+5Ib7kaxRAYnJ4ccGaNBO2lnuQY4Tj4US9XIlXZxzAd9i47s1fXmAO8qHWuoT9fADf
+         jYhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq9j9iWKL/WXdFXEoxVAdc+EdoxSM0ZxltVxQ01wPY8cylui7O8iSV1j4NU7ELZNIHtrd4JCQ1AjxvcRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/o24N9hbXKkoAJEXqyoJyKNvkvoD/bqYkj3mxoKFYb39032Cj
+	TohhbLh8IgUVErK0KmA0BRn2WUXqqmQDvJhF+Zj6E6J8a+Us0wmqUXY3WrAIvjNrviIa1wHbIlp
+	yTW+GkwY3NyMG7UgzLIn7jzpYRhQVkJCfw/S0xH2Bh3FsrdgD2v2kk14Ek9KQ34VjHlY=
+X-Gm-Gg: ASbGncucMgCgNH+FUg7mh0y/+UKO+DVLJnliEUeTCfIruX3midPyqw3SSTWTwbsVrF4
+	HcOO8utWc/KqUmb+6sIRa7dN6OFbWgjmuouWOU2fcn7ktyEPGgI0hnmETAWa0LHCgp5EFm02C6i
+	863tXkeAA2Qu1PvSQwZ2MDzHdZyyxwjqceLDQHF4WtCQweyp27IWtxKDoTEr5BOIE0VIl0n+8+B
+	kb46/xCggUxtCajYPwHHYoreZ8BzZvwH7Fa5z43LQz2Z1y4AW0A2ybTxaWKtBn+2qULDb4xQEEA
+	yfX3hUv75WuVW68fhVK1Jp/1b1bTRN/s2xj+ckZFA1yh0TpxAZG2KySdxUBnKAbCuFIWwV8arXt
+	diP3MpBLaNebtFzojce8m970jZIPX6up+3pRZjGUwlWNHOLdMEgLt
+X-Received: by 2002:ad4:5dea:0:b0:704:8db8:d3cd with SMTP id 6a1803df08f44-709d5c76484mr34564006d6.8.1754995885283;
+        Tue, 12 Aug 2025 03:51:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDlfuS4Nwz3fIMIuFWUdbpX9cZH7Wuc6mH++YEeE7VTQQtOIc09mesMedO5BiAjMUO345wxg==
+X-Received: by 2002:ad4:5dea:0:b0:704:8db8:d3cd with SMTP id 6a1803df08f44-709d5c76484mr34563536d6.8.1754995884789;
+        Tue, 12 Aug 2025 03:51:24 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ac341sm4628423e87.60.2025.08.12.03.51.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 03:51:23 -0700 (PDT)
+Date: Tue, 12 Aug 2025 13:51:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: cristian_ci@protonmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RESEND v4 3/3] arm64: dts: qcom: msm8953: Add device tree
+ for Billion Capture+
+Message-ID: <b7qczborzhw7slea3mpmwp5lbcawurvgkdhioqener5ph3hbvg@kdvyoqqv6xy5>
+References: <20250811-rimob-initial-devicetree-v4-0-b3194f14aa33@protonmail.com>
+ <20250811-rimob-initial-devicetree-v4-3-b3194f14aa33@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754995860; l=6627; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=D8aJWskat7D7j+YQUUJGr8krPsanE8nzMLSq+13eJYM=; b=sdXjy3Q5FBCRj+brdHzpE1YVcgqKY2OAvclAR2RvhgKoAGHu+CrM+KqAy40KOfN+VjEtaaeSL 1sImg+Jndj+Cd1xOlWkzqNaSAy1uJ/L/0iilFFGpdP8y8+O2C3bP6l6
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-rimob-initial-devicetree-v4-3-b3194f14aa33@protonmail.com>
+X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689b1cae cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=sfOm8-O8AAAA:8 a=EUspDBNiAAAA:8 a=N6ARxV_FePN732dIbUEA:9
+ a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=TvTJqdcANYtsRzA46cdi:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX2dah5T6RNd5k
+ 2OKYE8FPr+wjrjNqJzNk4RiSrHH+A9R4Mv3lcE7jtAoNCfrqtrOcgQeWxcY6RDoM3XDNYNyme8n
+ gvMgMVP3PkgGvfXDdCU7xeVrksqjiysIz3JiELmx1rs7dzYuHtn9ZUQIwr14oZK3o474DdLgiiH
+ l1EHTQ0zXaHgMmyQXEAxiEmlGJLKT+U6cdzLjOjFtAA+5aAFr7ie0Ps7G2fhUvrxb0x99n/VTU0
+ qyHSRLV2UF6mx1B1UB0q32u0zKvLJJO3v+MSIRatFEBHDuUDtac5kts53mJ4gb+BJ8dONRsJHdF
+ 2NNQxtHqgIteDRrNvZRzV47/jQtACCCNR6KI3y4RCjn0Rnq/VpwwPMtRnzDzTqfNMdvqlYQ2mbd
+ W0WKGkE1
+X-Proofpoint-ORIG-GUID: IXJbfcJP6VPstssdAdkyhZi2VyejdypJ
+X-Proofpoint-GUID: IXJbfcJP6VPstssdAdkyhZi2VyejdypJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_05,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
 
-prtd_tx and prtd_rx members are not used anymore and only qmc_chan
-member remains so struct qmc_dai_chan has become pointless.
+On Mon, Aug 11, 2025 at 11:08:11PM +0200, Cristian Cozzolino via B4 Relay wrote:
+> From: Cristian Cozzolino <cristian_ci@protonmail.com>
+> 
+> Billion Capture+ (flipkart,rimob) is a smartphone released in 2017, based
+> on Snapdragon 625 (MSM8953) SoC.
+> 
+> Add a device tree with initial support for:
+> 
+> - GPIO keys
+> - SDHCI (internal and external storage)
+> - USB Device Mode
+> - Regulators
+> - Simple framebuffer
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>  .../arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts | 255 +++++++++++++++++++++
+>  2 files changed, 256 insertions(+)
+> 
 
-Use qmc_chan directly and drop struct qmc_dai_chan.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2: New
----
- sound/soc/fsl/fsl_qmc_audio.c | 50 +++++++++++++----------------------
- 1 file changed, 19 insertions(+), 31 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
-index 92aa813aa3bee..6719da1c81f1d 100644
---- a/sound/soc/fsl/fsl_qmc_audio.c
-+++ b/sound/soc/fsl/fsl_qmc_audio.c
-@@ -17,12 +17,6 @@
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- 
--struct qmc_dai_chan {
--	struct qmc_dai_prtd *prtd_tx;
--	struct qmc_dai_prtd *prtd_rx;
--	struct qmc_chan *qmc_chan;
--};
--
- struct qmc_dai {
- 	char *name;
- 	int id;
-@@ -33,7 +27,7 @@ struct qmc_dai {
- 	unsigned int nb_chans_avail;
- 	unsigned int nb_chans_used_tx;
- 	unsigned int nb_chans_used_rx;
--	struct qmc_dai_chan *chans;
-+	struct qmc_chan **qmc_chans;
- };
- 
- struct qmc_audio {
-@@ -125,7 +119,7 @@ static int qmc_audio_pcm_write_submit(struct qmc_dai_prtd *prtd)
- 	int ret;
- 
- 	for (i = 0; i < prtd->channels; i++) {
--		ret = qmc_chan_write_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+		ret = qmc_chan_write_submit(prtd->qmc_dai->qmc_chans[i],
- 					    prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
- 					    prtd->ch_dma_size,
- 					    i == prtd->channels - 1 ? qmc_audio_pcm_write_complete :
-@@ -165,7 +159,7 @@ static int qmc_audio_pcm_read_submit(struct qmc_dai_prtd *prtd)
- 	int ret;
- 
- 	for (i = 0; i < prtd->channels; i++) {
--		ret = qmc_chan_read_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+		ret = qmc_chan_read_submit(prtd->qmc_dai->qmc_chans[i],
- 					   prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
- 					   prtd->ch_dma_size,
- 					   i == prtd->channels - 1 ? qmc_audio_pcm_read_complete :
-@@ -206,7 +200,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 				 struct snd_pcm_substream *substream, int cmd)
- {
- 	struct qmc_dai_prtd *prtd = substream->runtime->private_data;
--	unsigned int i;
- 	int ret;
- 
- 	if (!prtd->qmc_dai) {
-@@ -220,9 +213,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 		prtd->ch_dma_addr_current = prtd->ch_dma_addr_start;
- 
- 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			for (i = 0; i < prtd->channels; i++)
--				prtd->qmc_dai->chans[i].prtd_tx = prtd;
--
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_write_submit(prtd);
- 			if (ret)
-@@ -238,9 +228,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 			if (ret)
- 				return ret;
- 		} else {
--			for (i = 0; i < prtd->channels; i++)
--				prtd->qmc_dai->chans[i].prtd_rx = prtd;
--
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_read_submit(prtd);
- 			if (ret)
-@@ -610,9 +597,9 @@ static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
- 		chan_param.mode = QMC_TRANSPARENT;
- 		chan_param.transp.max_rx_buf_size = params_period_bytes(params) / nb_chans_used;
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret = qmc_chan_set_param(qmc_dai->chans[i].qmc_chan, &chan_param);
-+			ret = qmc_chan_set_param(qmc_dai->qmc_chans[i], &chan_param);
- 			if (ret) {
--				dev_err(dai->dev, "chans[%u], set param failed %d\n",
-+				dev_err(dai->dev, "qmc_chans[%u], set param failed %d\n",
- 					i, ret);
- 				return ret;
- 			}
-@@ -654,7 +641,7 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret = qmc_chan_start(qmc_dai->chans[i].qmc_chan, direction);
-+			ret = qmc_chan_start(qmc_dai->qmc_chans[i], direction);
- 			if (ret)
- 				goto err_stop;
- 		}
-@@ -663,13 +650,13 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_STOP:
- 		/* Stop and reset all QMC channels and return the first error encountered */
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 			if (ret_tmp)
- 				continue;
- 
--			ret_tmp = qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_reset(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 		}
-@@ -681,7 +668,7 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
- 		/* Stop all QMC channels and return the first error encountered */
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 		}
-@@ -697,8 +684,8 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 
- err_stop:
- 	while (i--) {
--		qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
--		qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+		qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
-+		qmc_chan_reset(qmc_dai->qmc_chans[i], direction);
- 	}
- 	return ret;
- }
-@@ -794,19 +781,20 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
- 		return dev_err_probe(qmc_audio->dev, -EINVAL,
- 				     "dai %d no QMC channel defined\n", qmc_dai->id);
- 
--	qmc_dai->chans = devm_kcalloc(qmc_audio->dev, count, sizeof(*qmc_dai->chans), GFP_KERNEL);
--	if (!qmc_dai->chans)
-+	qmc_dai->qmc_chans = devm_kcalloc(qmc_audio->dev, count, sizeof(*qmc_dai->qmc_chans),
-+					  GFP_KERNEL);
-+	if (!qmc_dai->qmc_chans)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < count; i++) {
--		qmc_dai->chans[i].qmc_chan = devm_qmc_chan_get_byphandles_index(qmc_audio->dev, np,
--										"fsl,qmc-chan", i);
--		if (IS_ERR(qmc_dai->chans[i].qmc_chan)) {
--			return dev_err_probe(qmc_audio->dev, PTR_ERR(qmc_dai->chans[i].qmc_chan),
-+		qmc_dai->qmc_chans[i] = devm_qmc_chan_get_byphandles_index(qmc_audio->dev, np,
-+									   "fsl,qmc-chan", i);
-+		if (IS_ERR(qmc_dai->qmc_chans[i])) {
-+			return dev_err_probe(qmc_audio->dev, PTR_ERR(qmc_dai->qmc_chans[i]),
- 					     "dai %d get QMC channel %d failed\n", qmc_dai->id, i);
- 		}
- 
--		ret = qmc_chan_get_info(qmc_dai->chans[i].qmc_chan, &info);
-+		ret = qmc_chan_get_info(qmc_dai->qmc_chans[i], &info);
- 		if (ret) {
- 			dev_err(qmc_audio->dev, "dai %d get QMC %d channel info failed %d\n",
- 				qmc_dai->id, i, ret);
 -- 
-2.49.0
-
+With best wishes
+Dmitry
 
