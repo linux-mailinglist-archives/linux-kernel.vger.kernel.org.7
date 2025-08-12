@@ -1,428 +1,145 @@
-Return-Path: <linux-kernel+bounces-764861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E611BB22806
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D39B2282B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2EE68082A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C621BC3F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B76C265CD8;
-	Tue, 12 Aug 2025 13:08:43 +0000 (UTC)
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0010B267B02;
+	Tue, 12 Aug 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGdoQg8a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E3925C706;
-	Tue, 12 Aug 2025 13:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228A20B1F5;
+	Tue, 12 Aug 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004122; cv=none; b=upwdwaBArRlxCy1paxL6ID+uorwAqiu2b1uzzRQwo2jSZeN5/KFk9D8ggsxpMNbKTOGY23lvr6OWukkEw5yF+QVOeAgI6NlDk+SeS3k1di5GeJCvJpUkXje8uWzqGQd1YGOAr2m1ByTVJTSRqlxc991t8vOuN19n1/CgoCGMWtM=
+	t=1755004180; cv=none; b=roNd5qQumv9RROR6m6Xv2QrfN0Zi5RIIwdG3phaG5w16QA/dZmunDTJ9uLfvdw4sKfbZkjMn1KVRIVK32ucIMPzLJNF+RVMCnWQrTGIrcbsLrn03v+j6YlMlqsWmzSVFtC1sgWkEU8DnCAAjC90bPyZF9GU/VUs3Mssahuz3Wc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004122; c=relaxed/simple;
-	bh=WvKOX7hS0o0QYPcNUwaM88tA9HKMxZQBer+HdNlzMNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JJPZ901GLNAGwLCJ3KL6OSiGHv+ozC2bt/NAuqdIdNVNNmDyErSlg7u3WQd+yTll76jI75HL6HfwbfzTzpgzzfhVwqpO2oq71kFch+/s2HJbrwUhQR3kVtKULhZPTdxtxksJOkfN8fy/yE7GGnhWjeKkl6rjctziK5mdv584mNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 12 Aug 2025 09:08:30 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ben Collins <bcollins@kernel.org>
-To: linux-iio@vger.kernel.org
-Cc: Andrew Hepp <andrew.hepp@ahepp.dev>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: [PATCH] mcp9600: Add support for mcp9601 and sensor config
-Message-ID: <6esdq4e4r7vmxwlyfs4a3sgdomazxospr3go2oaqkwhpgw6mkh@hdca2d3f6zwp>
-Mail-Followup-To: linux-iio@vger.kernel.org, 
-	Andrew Hepp <andrew.hepp@ahepp.dev>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
+	s=arc-20240116; t=1755004180; c=relaxed/simple;
+	bh=4dw/dCbsdvNnpX2D+rr3n1ONj7c/Xg5bifqPSG2z1eE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLvwlT9IFPSki911sPNyu+cZGDA/lntbh1LqL6SOgkJTxYlaKNUSVi9xQtZFWdcnoAdMk0i6nTt4kw1URIicBAffD2lzr0lrjy5qyX9TvsFMEIwMK1r+PZV4VGOd9bxVk/bckwAh1N+qA6XDn1pnv9QBVj7plCSHfzvsLKeN6bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGdoQg8a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D61C4CEF0;
+	Tue, 12 Aug 2025 13:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755004179;
+	bh=4dw/dCbsdvNnpX2D+rr3n1ONj7c/Xg5bifqPSG2z1eE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vGdoQg8a4YwSJrwMrrEweiDx22olFdwFJiBFuYxxzdZ2ZicdmGW4WV/NWmg22HUv7
+	 taxbO+cQNGGLij804Qd5VTeYxMuRnkLVyOuL96Roy/c+22V8sk7FugT/rA2Kgzkiy2
+	 CPNBrz0ShtnMcygdVvi5/qHXa3OZHFWrS274vyYREkkjtdh+MxQQ/knudW30vBL2aF
+	 BSCrGC/1Y8jcJp53zQnl1UCThERLGXtZ3wgt216VQVjoddwNJCugSk4uGLv2tg6TIT
+	 /pnoAkSjFqq7HjCe+gnxpiYSSR1n1bOAuFc6F07I7/lQYTgDqy0raT/XRfoXvlDLIr
+	 1exk9y0xoNkzw==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2] rust: devres: fix leaking call to devm_add_action()
+Date: Tue, 12 Aug 2025 15:09:06 +0200
+Message-ID: <20250812130928.11075-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gqcc3rkwto4a7r2v"
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+When the data argument of Devres::new() is Err(), we leak the preceding
+call to devm_add_action().
 
---gqcc3rkwto4a7r2v
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [PATCH] mcp9600: Add support for mcp9601 and sensor config
-MIME-Version: 1.0
+In order to fix this, call devm_add_action() in a unit type initializer in
+try_pin_init!() after the initializers of all other fields.
 
-The mcp9600 dt binding doc claims to support thermocouple-type but
-I don't see where this is implemented.
-
-- Add support to detect mcp9601 device type
-- Add support to use thermocouple-type dt prop
-- Add thrermocouple iio info to get/set this from sysfs
-- Add filter-level dt prop to set the filtering level of the chip
-- Update dt binding docs
-
-Signed-off-by: Ben Collins <bcollins@kernel.org>
-Cc: Andrew Hepp <andrew.hepp@ahepp.dev>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-iio@vger.kernel.org
-Cc: "Nuno S=E1" <nuno.sa@analog.com>
+Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- .../iio/temperature/microchip,mcp9600.yaml    |   9 +
- drivers/iio/temperature/mcp9600.c             | 185 ++++++++++++++++--
- 2 files changed, 181 insertions(+), 13 deletions(-)
+Changes in v2:
+  - Drop inner in-place when devm_add_action() fails.
+  - Document to remove drop_in_place() once we can switch to UnsafePinned.
+---
+ rust/kernel/devres.rs | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mc=
-p9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mc=
-p9600.yaml
-index d2cafa38a5442..0ee0259471c6a 100644
---- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.y=
-aml
-+++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.y=
-aml
-@@ -42,6 +42,14 @@ properties:
-       Use defines in dt-bindings/iio/temperature/thermocouple.h.
-       Supported types are B, E, J, K, N, R, S, T.
-=20
-+  filter-level:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Level of chip filtering to use. 0 means filtering is disabled.
-+      See reference manual 5.2.2 - THERMOCOUPLE SENSOR CONFIGURATION
-+      REGISTER, FIGURE 5-6 for Filter Step Response graph. Supported
-+      values are in the range of 0-7.
-+
-   vdd-supply: true
-=20
- required:
-@@ -65,6 +73,7 @@ examples:
-             interrupts =3D <25 IRQ_TYPE_EDGE_RISING>;
-             interrupt-names =3D "open-circuit";
-             thermocouple-type =3D <THERMOCOUPLE_TYPE_K>;
-+            filter-level =3D <1>;
-             vdd-supply =3D <&vdd>;
-         };
-     };
-diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mc=
-p9600.c
-index 6e9108d5cf75f..c1fe1e530786c 100644
---- a/drivers/iio/temperature/mcp9600.c
-+++ b/drivers/iio/temperature/mcp9600.c
-@@ -18,15 +18,23 @@
- #include <linux/minmax.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <dt-bindings/iio/temperature/thermocouple.h>
-=20
- #include <linux/iio/events.h>
- #include <linux/iio/iio.h>
-=20
- /* MCP9600 registers */
--#define MCP9600_HOT_JUNCTION 0x0
--#define MCP9600_COLD_JUNCTION 0x2
-+#define MCP9600_HOT_JUNCTION		0x0
-+#define MCP9600_COLD_JUNCTION		0x2
- #define MCP9600_STATUS			0x4
- #define MCP9600_STATUS_ALERT(x)		BIT(x)
-+#define MCP9600_STATUS_OC_IR		BIT(4)
-+#define MCP9601_STATUS_SC		BIT(5)
-+#define MCP9600_SENSOR_CFG		0x5
-+#define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
-+#define MCP9600_SENSOR_TYPE(x)		((x << 4) & MCP9600_SENSOR_TYPE_MASK)
-+#define MCP9600_FILTER_MASK		GENMASK(2, 0)
-+#define MCP9600_FILTER(x)		((x << 0) & MCP9600_FILTER_MASK)
- #define MCP9600_ALERT_CFG1		0x8
- #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
- #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-@@ -38,10 +46,11 @@
- #define MCP9600_ALERT_LIMIT1		0x10
- #define MCP9600_ALERT_LIMIT(x)		(MCP9600_ALERT_LIMIT1 + (x - 1))
- #define MCP9600_ALERT_LIMIT_MASK	GENMASK(15, 2)
--#define MCP9600_DEVICE_ID 0x20
-+#define MCP9600_DEVICE_ID		0x20
-=20
- /* MCP9600 device id value */
--#define MCP9600_DEVICE_ID_MCP9600 0x40
-+#define MCP9600_DEVICE_ID_MCP9600	0x40
-+#define MCP9600_DEVICE_ID_MCP9601	0x41
-=20
- #define MCP9600_ALERT_COUNT		4
-=20
-@@ -58,6 +67,21 @@ enum mcp9600_alert {
- 	MCP9600_ALERT4
- };
-=20
-+static const unsigned int mcp9600_type_map[] =3D {
-+	[THERMOCOUPLE_TYPE_K] =3D 0,
-+	[THERMOCOUPLE_TYPE_J] =3D 1,
-+	[THERMOCOUPLE_TYPE_T] =3D 2,
-+	[THERMOCOUPLE_TYPE_N] =3D 3,
-+	[THERMOCOUPLE_TYPE_S] =3D 4,
-+	[THERMOCOUPLE_TYPE_E] =3D 5,
-+	[THERMOCOUPLE_TYPE_B] =3D 6,
-+	[THERMOCOUPLE_TYPE_R] =3D 7,
-+};
-+
-+static const int mcp9600_tc_types[] =3D {
-+	'B', 'E', 'J', 'K', 'N', 'R', 'S', 'T'
-+};
-+
- static const char * const mcp9600_alert_name[MCP9600_ALERT_COUNT] =3D {
- 	[MCP9600_ALERT1] =3D "alert1",
- 	[MCP9600_ALERT2] =3D "alert2",
-@@ -87,8 +111,12 @@ static const struct iio_event_spec mcp9600_events[] =3D=
- {
- 		{							       \
- 			.type =3D IIO_TEMP,				       \
- 			.address =3D MCP9600_HOT_JUNCTION,		       \
--			.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |	       \
--					      BIT(IIO_CHAN_INFO_SCALE),	       \
-+			.info_mask_separate =3D                                  \
-+					BIT(IIO_CHAN_INFO_RAW) |	       \
-+					BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
-+					BIT(IIO_CHAN_INFO_SCALE),              \
-+			.info_mask_separate_available =3D                        \
-+					BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE),  \
- 			.event_spec =3D &mcp9600_events[hj_ev_spec_off],	       \
- 			.num_event_specs =3D hj_num_ev,			       \
- 		},							       \
-@@ -125,6 +153,9 @@ static const struct iio_chan_spec mcp9600_channels[][2]=
- =3D {
-=20
- struct mcp9600_data {
- 	struct i2c_client *client;
-+	unsigned char dev_id;
-+	u32 thermocouple_type;
-+	u32 filter;
- };
-=20
- static int mcp9600_read(struct mcp9600_data *data,
-@@ -155,13 +186,82 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
- 		if (ret)
- 			return ret;
- 		return IIO_VAL_INT;
-+
- 	case IIO_CHAN_INFO_SCALE:
- 		*val =3D 62;
- 		*val2 =3D 500000;
- 		return IIO_VAL_INT_PLUS_MICRO;
-+
-+	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-+		*val =3D mcp9600_tc_types[data->thermocouple_type];
-+		return IIO_VAL_CHAR;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int mcp9600_write_raw_get_fmt(struct iio_dev *indio_dev,
-+				     struct iio_chan_spec const *chan,
-+				     long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-+		return IIO_VAL_CHAR;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int mcp9600_config(struct mcp9600_data *data)
-+{
-+	struct i2c_client *client =3D data->client;
-+	int ret, cfg;
-+
-+	cfg  =3D MCP9600_SENSOR_TYPE(mcp9600_type_map[data->thermocouple_type]) |
-+		MCP9600_FILTER(data->filter);
-+
-+	ret =3D i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
-+
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to set sensor configuration\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp9600_write_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     int val, int val2, long mask)
-+{
-+	struct mcp9600_data *data =3D iio_priv(indio_dev);
-+	int tc_type =3D -1;
-+	int i, ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-+		for (i =3D 0; i < ARRAY_SIZE(mcp9600_tc_types); i++) {
-+			if (mcp9600_tc_types[i] =3D=3D toupper(val)) {
-+				tc_type =3D i;
-+				break;
-+			}
-+		}
-+		if (tc_type < 0)
-+			return -EINVAL;
-+
-+		data->thermocouple_type =3D tc_type;
-+		ret =3D mcp9600_config(data);
-+		if (ret < 0)
-+			return ret;
-+
-+		break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-+
-+	return 0;
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index da18091143a6..d04e3fcebafb 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -115,10 +115,11 @@ pub struct Devres<T: Send> {
+     /// Contains all the fields shared with [`Self::callback`].
+     // TODO: Replace with `UnsafePinned`, once available.
+     //
+-    // Subsequently, the `drop_in_place()` in `Devres::drop` and the explicit `Send` and `Sync'
+-    // impls can be removed.
++    // Subsequently, the `drop_in_place()` in `Devres::drop` and `Devres::new` as well as the
++    // explicit `Send` and `Sync' impls can be removed.
+     #[pin]
+     inner: Opaque<Inner<T>>,
++    _add_action: (),
  }
-=20
- static int mcp9600_get_alert_index(int channel2, enum iio_event_direction =
-dir)
-@@ -299,12 +399,32 @@ static int mcp9600_write_thresh(struct iio_dev *indio=
-_dev,
- 	}
- }
-=20
-+static int mcp9600_read_avail(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan,
-+			      const int **vals, int *type, int *length,
-+			      long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-+		*vals =3D mcp9600_tc_types;
-+		*type =3D IIO_VAL_CHAR;
-+		*length =3D ARRAY_SIZE(mcp9600_tc_types);
-+		return IIO_AVAIL_LIST;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct iio_info mcp9600_info =3D {
- 	.read_raw =3D mcp9600_read_raw,
-+	.write_raw =3D mcp9600_write_raw,
-+	.write_raw_get_fmt =3D mcp9600_write_raw_get_fmt,
- 	.read_event_config =3D mcp9600_read_event_config,
- 	.write_event_config =3D mcp9600_write_event_config,
- 	.read_event_value =3D mcp9600_read_thresh,
- 	.write_event_value =3D mcp9600_write_thresh,
-+	.read_avail =3D mcp9600_read_avail,
- };
-=20
- static irqreturn_t mcp9600_alert_handler(void *private,
-@@ -418,26 +538,65 @@ static int mcp9600_probe(struct i2c_client *client)
- {
- 	struct iio_dev *indio_dev;
- 	struct mcp9600_data *data;
--	int ret, ch_sel;
-+	int ch_sel, dev_id, ret;
-=20
--	ret =3D i2c_smbus_read_byte_data(client, MCP9600_DEVICE_ID);
--	if (ret < 0)
--		return dev_err_probe(&client->dev, ret, "Failed to read device ID\n");
--	if (ret !=3D MCP9600_DEVICE_ID_MCP9600)
--		dev_warn(&client->dev, "Expected ID %x, got %x\n",
--				MCP9600_DEVICE_ID_MCP9600, ret);
-+	dev_id =3D i2c_smbus_read_byte_data(client, MCP9600_DEVICE_ID);
-+	if (dev_id < 0)
-+		return dev_err_probe(&client->dev, dev_id, "Failed to read device ID\n");
-+
-+	switch (dev_id) {
-+	case MCP9600_DEVICE_ID_MCP9600:
-+		dev_info(&client->dev, "Identified as mcp9600");
-+		break;
-+	case MCP9600_DEVICE_ID_MCP9601:
-+		dev_info(&client->dev, "Identified as mcp9601");
-+		break;
-+
-+	default:
-+		return dev_err_probe(&client->dev, -EINVAL, "Unknown device ID: %x\n",
-+				     dev_id);
-+	}
-=20
- 	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
- 	if (!indio_dev)
- 		return -ENOMEM;
-=20
- 	data =3D iio_priv(indio_dev);
-+
-+	ret =3D device_property_read_u32(&client->dev, "thermocouple-type",
-+				       &data->thermocouple_type);
-+	if (ret) {
-+		dev_warn(&client->dev,
-+			 "Missing thermocouple-type property, using Type-K\n");
-+		data->thermocouple_type =3D THERMOCOUPLE_TYPE_K;
-+	} else if (data->thermocouple_type < 0 || data->thermocouple_type >=3D
-+		   ARRAY_SIZE(mcp9600_type_map)) {
-+		dev_warn(&client->dev,
-+			 "Invalid thermocouple-type property, using Type-K\n");
-+		data->thermocouple_type =3D THERMOCOUPLE_TYPE_K;
-+	}
-+
-+	ret =3D device_property_read_u32(&client->dev, "filter-level",
-+				       &data->filter);
-+	if (ret) {
-+		dev_warn(&client->dev,
-+			 "Missing filter-level property, using 0\n");
-+		data->filter =3D 0;
-+	} else if (data->filter < 0 || data->filter > 7) {
-+		dev_warn(&client->dev,
-+			 "Invalid filter-level property, using 0\n");
-+		data->filter =3D 0;
-+	}
-+
-+	data->dev_id =3D dev_id;
- 	data->client =3D client;
-=20
- 	ch_sel =3D mcp9600_probe_alerts(indio_dev);
- 	if (ch_sel < 0)
- 		return ch_sel;
-=20
-+	mcp9600_config(data);
-+
- 	indio_dev->info =3D &mcp9600_info;
- 	indio_dev->name =3D "mcp9600";
- 	indio_dev->modes =3D INDIO_DIRECT_MODE;
---=20
+ 
+ impl<T: Send> Devres<T> {
+@@ -140,7 +141,15 @@ pub fn new<'a, E>(
+             dev: dev.into(),
+             callback,
+             // INVARIANT: `inner` is properly initialized.
+-            inner <- {
++            inner <- Opaque::pin_init(try_pin_init!(Inner {
++                    devm <- Completion::new(),
++                    revoke <- Completion::new(),
++                    data <- Revocable::new(data),
++            })),
++            // TODO: Replace with "initializer code blocks" [1] once available.
++            //
++            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
++            _add_action: {
+                 // SAFETY: `this` is a valid pointer to uninitialized memory.
+                 let inner = unsafe { &raw mut (*this.as_ptr()).inner };
+ 
+@@ -152,13 +161,13 @@ pub fn new<'a, E>(
+                 //    live at least as long as the returned `impl PinInit<Self, Error>`.
+                 to_result(unsafe {
+                     bindings::devm_add_action(dev.as_raw(), Some(callback), inner.cast())
+-                })?;
++                }).inspect_err(|_| {
++                    let inner = Opaque::cast_into(inner);
+ 
+-                Opaque::pin_init(try_pin_init!(Inner {
+-                    devm <- Completion::new(),
+-                    revoke <- Completion::new(),
+-                    data <- Revocable::new(data),
+-                }))
++                    // SAFETY: `inner` is a valid pointer to an `Inner<T>` and valid for both reads
++                    // and writes.
++                    unsafe { core::ptr::drop_in_place(inner) };
++                })?;
+             },
+         })
+     }
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
 2.50.1
 
---=20
- Ben Collins
- https://libjwt.io
- https://github.com/benmcollins
- --
- 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
-
---gqcc3rkwto4a7r2v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEPsl1mBZylhoRORc6XVpXxyQrIs8FAmibPM4ACgkQXVpXxyQr
-Is+inw/8DnA3uJq6J+zmY2Qt0V101x2kGDb8Wxxp3Yti3Ye5fPXRpWl5bZtW8k9j
-SIcKQOmKKso+ufm92NRHcDCNYuaL0bXfnvun+gI95h75UEC6AaqxaWNRneQH9wfS
-dQKqm9E7h3sQCZqhcJY0CiTERlPcXKhiNA/ZqxBVsnGBE+56d52I0XDfQ/d5vPf0
-UK4qolx1oGDH85vQwmoZ/Qqwk0f5N6jaEjGlkz5gKCkALtKdekdK2UOrFZs8a4yQ
-oDBoLJmTN4FWfggzJIU2jTDrEoGOKpD1pL3KTQR9kIW4DiCpj9augswnsbWXlQGx
-svvTUWyLhp4IMG/V4MjAfuLC4MfFSBgo2Yv5jfxeuwuPxFgiRZWQha2SfRSQjnTZ
-PhMfHa0ZRSJO7TtCkUJd5ih9vX77sWrYVBsob7BqPS9KjAj1ca//IUk+Rj8x7hjO
-9JwrOg9DvfVdFwfsWR0qIntm+XjZ6JdCB68Pt0aKuJHGo7kzhhpdFJu2sx2HpfpT
-itr/kMqqTvlU1ABRr413ne3htwV+nnC1eRb5jKFljV4bSWQrEf96C114USJiFsyV
-fgeEpUv3Acx/4593UP243eu8by++OO9kpEL3w3QyUTvcqk2LP/lurxxj5basF1m3
-Uerue/rMwHBvUNxG6d+WKplmjAHB6J626ddr9Vd66eO3S7hjYwU=
-=V3T6
------END PGP SIGNATURE-----
-
---gqcc3rkwto4a7r2v--
 
