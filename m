@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-765253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F80B22DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F22B22DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA1D684D88
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA2D170E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0482298CD9;
-	Tue, 12 Aug 2025 16:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2B82F90E1;
+	Tue, 12 Aug 2025 16:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UFbCLI06"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bMms5c9Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8316156CA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F02D305E26;
+	Tue, 12 Aug 2025 16:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016019; cv=none; b=CAy+b9QjROIa9a/GTW4eLUidiKKPglOHUZeZE2KguEl7lvNnMQw66HuErvymp2+UwjCm5N0AgHpl1w3K2heLWYtQRE4Z1dGKryCfxw/RuXpd0+dGhFAw3lHzVovr9eu9imWO1E2oHo4xyvdAKm1MsIXnWNaeLMtk9rWcp7WNiJY=
+	t=1755016024; cv=none; b=THLrGC2PcvS3/FCrS5NxYSkx4piNp46dU2S+kME15lnpKEPv+GpzzLXPsIrjthPHs+Yednif04JX6W287UvdwkOpiJn7V1OPGZYQgf/2Rmg30bb+BDtjV1s1tBVocputq8FI8M0rN1gTOK3uiDWBz+/UcJhWq7Kf4V1g6/ZqF20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016019; c=relaxed/simple;
-	bh=LAikos5lzzdESsSEkmdS9LjgN97g2onbBh4FxE+a9K4=;
+	s=arc-20240116; t=1755016024; c=relaxed/simple;
+	bh=SgiOIo0+U4m4CywXjwqcS9SUXLMQx+94iYxhv5zSRsk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTWsbN1mhnWKhxvqqdsT3VwPp18tXlWyMfNenIjtYrBrmigJr1izyGsqHxbUOfDzVn8TCZTtMbKVsQQyl/ZrE1Y8tPcBCyy5rQmmY2DOsKA6+oDEm04ippr15t8g63Wcd/RzsosmKYFcl6mB3u77a0dH4UWmLPG343m5COEZU9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UFbCLI06; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 12 Aug 2025 12:26:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755016013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJlIa7B1GOmbF07zwobl79PO4S1K7t//me3rFoWJres=;
-	b=UFbCLI06OvK2/xHzupsvhKVkZe8XtqTL4bGU8BnkMKF7I1SYwdyTyLQsKejAXoFIAQ5y0k
-	pXxf249bH13IoZ3ivHTgoqzm/btr7F+eczN4IgKzxlvtvfOYTfRPjTo3iku7NozNm7SYcp
-	CCC4RZtR95GoxhDr5JIkUA1YjBvEhXs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: James Lawrence <jalexanderlawrence@gmail.com>, tytso@mit.edu, 
-	admin@aquinas.su, gbcox@bzb.us, josef@toxicpanda.com, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	list-bcachefs@carlthompson.net, malte.schroeder@tnxip.de, sashal@kernel.org, 
-	torvalds@linux-foundation.org
-Subject: Re: Peanut gallery 2c
-Message-ID: <cijxbws4ngjmfj7chgz7pyjelc4lpz2uqqo655sc6rlyoai6og@ysy65pdg56fz>
-References: <20250810055955.GA984814@mit.edu>
- <20250811154826.509952-1-james@egdaemon.com>
- <ct5pqur2cwn2gulxuu277uomoknflxae32zzpyf4yqbrxcxj4d@p5j77u6xks4l>
- <aJsIOj6jbPKayO0s@mayhem.fritz.box>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cz9m0bj6cAJDpsR+QBVl4dymZmzPUrAa5VqBAEGKj6xn8jvkasjoz8bjfCHnff6uSTaOUtqthVwSHyVS35MRaejj7HE6dJjJfEXhOFl1mqYt6/7E38rushMTnJMWrsSHVn1oWNz/lYADzzuCq6ZCfJkjgVKF2swjWqzvsWY+iqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bMms5c9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A32C4CEF8;
+	Tue, 12 Aug 2025 16:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755016023;
+	bh=SgiOIo0+U4m4CywXjwqcS9SUXLMQx+94iYxhv5zSRsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bMms5c9Qi4DHUwgY+Aw7KJLEV9yTjvxrFpsuZPx+ShTdFzHOki5+WybI+mPNMu+Ob
+	 N/539NLmMcc1FBQUfaPVfLPmsiercNs6laHW35vGZ6y9gquFv/K9XEwuMAxZtuhmIi
+	 l8OWmP5k9sqpuRL6gS4exGypqsPHCoe3Ll/w9mP4=
+Date: Tue, 12 Aug 2025 18:27:00 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: stable@vger.kernel.org, Jeff Johnson <jjohnson@kernel.org>,
+	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Gregoire <gregoire.s93@live.fr>,
+	Sebastian Reichel <sre@kernel.org>,
+	Baochen Qiang <quic_bqiang@quicinc.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: Stable Request: wifi: ath12k: install pairwise key first
+Message-ID: <2025081240-trustless-secret-1354@gregkh>
+References: <20250523-ath12k-unicast-key-first-v1-0-f53c3880e6d8@quicinc.com>
+ <aFvGnJwMTqDbYsHF@hovoldconsulting.com>
+ <2d688040-e547-4e18-905e-ea31ea9d627b@quicinc.com>
+ <e23d7674-31cd-4499-9711-6e5695b149c6@oss.qualcomm.com>
+ <053a7887-c08d-4272-8ada-cf4a008894f9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,32 +61,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJsIOj6jbPKayO0s@mayhem.fritz.box>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <053a7887-c08d-4272-8ada-cf4a008894f9@oss.qualcomm.com>
 
-On Tue, Aug 12, 2025 at 11:24:18AM +0200, Johannes Thumshirn wrote:
-> On Mon, Aug 11, 2025 at 12:08:12PM -0400, Kent Overstreet wrote:
-> > I think bcachefs has been a bit of a kick in the pants for them, they've
-> > taken some stuff directly from bcachefs - e.g. I believe they took the
-> > basic design of raid5 v2, the stripes tree, directly from bcachefs. A
-> > btrfs engineer asked me and I explained the design at a conference some
-> > years back [...]
+On Tue, Aug 12, 2025 at 08:58:52AM -0700, Jeff Johnson wrote:
+> Stable team,
 > 
-> Just one single mail and I will not reply to any follow ups on this. But I
-> feel the need to clarify things as people have approached me. Yes Kent and I
-> have talked about RAID. This has been at LSFMM 2024 in Salt Lake City. 
+> Per https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> Option 2 (since the patch was merged before being identified for -stable)
+> Please consider the following for -stable
 > 
-> I can't remember if we talked about stripe trees, I only remember us talking
-> about erasure coding, which Kent has done for bcachefs and I was planning to
-> do for btrfs as well.
+> subject of the patch:
+> wifi: ath12k: install pairwise key first
 > 
-> But the 1st presentations I did on the idea of the stripe tree have been Lund
-> Linux Conference and Plumbers in 2022 [1]. This is easy to look up. In the
-> beginning the RAID stripe tree didn't have anything to do with RAID5 and the
-> write hole at all (this is just a nice side effect) but with doing RAID on
-> zoned block devices and ZONE APPEND writing.
+> commit ID:
+> 66e865f9dc78d00e6d1c8c6624cb0c9004e5aafb
 > 
-> [1] https://lpc.events/event/16/contributions/1235/attachments/1111/2132/BTRFS%20RAID-DP.pdf
+> why you think it should be applied:
+> This issue impacts all products that use iwd (instead of wpa_supplicant) for
+> WLAN driver management
+> 
+> what kernel versions you wish it to be applied to:
+> All LTS kernels from 6.6+
 
-Thanks for the correction :)
+It only applied cleanly to 6.16.y, so if you want it backported to older
+kernels, please provide a working backport.
+
+thanks,
+
+greg k-h
 
