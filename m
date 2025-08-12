@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-764378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8754EB22248
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C93B2224B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7C63AB302
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96604225BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D852E62CF;
-	Tue, 12 Aug 2025 09:00:00 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACB12DCF7C;
+	Tue, 12 Aug 2025 09:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ss0GfxD3"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A8A2D836A;
-	Tue, 12 Aug 2025 08:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDFD4CB5B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754989200; cv=none; b=RBWyj5dowmm+CKmova7UvRh7Zr71i24N5QuEThRH8R29bOuKZOcamWQVSCZAX/uxmAqAUGeVplpLlpVDWkdzoNY6yTGH5Ij8Wo6Ntr8DMJC9GJhr+kxXvlGBn2zIyVgLUo95X/gwasJ6ziZxxRVXt1txa3mmo9DT48fJBThqiaM=
+	t=1754989256; cv=none; b=Xe761PuSVPV4Dr8GGhGCpmWBhIhFmTWGTm4SszHtJftFU15kGyGq8K6SCFZLI8BP1LHUqWNiuPDEja8roPn/opwWlU5yLWWEMCBACkGfFqV1tn8Y7766QoThvJy3aZx4iDPqG5yq28gsHDTOLdiejC8Y2ncAsEhj4Cgy/NiKGns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754989200; c=relaxed/simple;
-	bh=lCUCcWSajSHBubbvz3TpoXdgIFsupR6n4qNsl6f5xy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cjWVQWFZvJPgnc8PJ8rffb3RJg/3TYP6CmHHVtNAbwLPqjwPiCmWuT/2s3DRt4bW2g8E7paevBDlLvKm/bCNO21NutA741zJJqn55seLfpYP8c+bPhSY7dIy9ClTOJUFy0IS5ueTAg5eps7/mJLjtde6H8EK4fDT9/LJaoPRrqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b30a0af6775a11f0b29709d653e92f7d-20250812
-X-CID-CACHE: Type:Local,Time:202508121650+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:006c181b-e2b3-4d48-aa88-aa662b726859,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:ba2f0da70cf20a38ff9c9c8b6094ec8f,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
-	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
-	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b30a0af6775a11f0b29709d653e92f7d-20250812
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zhaoguohan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 375932857; Tue, 12 Aug 2025 16:59:48 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 0C83AB8258E7;
-	Tue, 12 Aug 2025 16:59:48 +0800 (CST)
-X-ns-mid: postfix-689B0283-820907551
-Received: from localhost.localdomain (unknown [10.42.12.87])
-	by node2.com.cn (NSMail) with ESMTPA id 21158B812916;
-	Tue, 12 Aug 2025 08:59:44 +0000 (UTC)
-From: zhaoguohan@kylinos.cn
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	thomas.falcon@intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	GuoHan Zhao <zhaoguohan@kylinos.cn>
-Subject: [PATCH] perf parse-events: Fix potential null pointer dereference in __add_event()
-Date: Tue, 12 Aug 2025 16:59:41 +0800
-Message-ID: <20250812085941.19982-1-zhaoguohan@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754989256; c=relaxed/simple;
+	bh=fy78Jp4P1LO4rZbIIu+gNVO4SGVSEz4RbE4x7iWiTBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adFbcBiNCN7pk5DDBo2/xneFgm/Wqgba/uMfX0tnNL8QviqzdktFQr/H7uggTtcBbfJnn/b77My0udcdSU4HqHGip4k5NqAD77qfmNvD9CpOKNUbqFeVSrKwgJOckh5Lp4V49+8p58WSWw9PGTyz1HEtZ3GhFP0IxIK27YUw9uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ss0GfxD3; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7823559a5so2471989f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754989253; x=1755594053; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fy78Jp4P1LO4rZbIIu+gNVO4SGVSEz4RbE4x7iWiTBE=;
+        b=ss0GfxD3Sx4ct1z7Rir5420EkNnhdjtF10preYgo/GrIMjy4MONS+jhW8qa7U6YlGu
+         m6fAOSKpP6RNvlnSmCutCZ5wbQdXKHIL34kyXQloZl5jutH7/o8Onwn/ciTEbW4oIBr3
+         o9PbUPeiiBNMs5xxMkH0jNXahHY5Rj7UsnZj8oJNNPOXbOdMTvQAC9E3Tj1MDU5O8AbK
+         MrUbBKwEe9QofoJFGKD7zVKComDgnEO152wZMSMROq+mkzPq62AENkI5zl8Q8+KqbfTV
+         je1SCSsrh97BJ1m5XFab+ZqG/Lx+VoVOqD0N9v4Is+hopU+Jh0PmQl5KR5MHVI652JT3
+         5xoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754989253; x=1755594053;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fy78Jp4P1LO4rZbIIu+gNVO4SGVSEz4RbE4x7iWiTBE=;
+        b=juQSOqcKW5reqQHqdt0pAPzEM/cj9RwVpXdoX01FCJzD1wDC2RzlrvnFJk9DpjITQp
+         jgWPXXc08yYg7EDWa8JsQpJJf1v6REZ1AzAnoF5ARUsYGfwEvFuZRVKOh8xLRFvH0c9L
+         GRJAE6AmvoOb8BQq+FWg6Orpsl6FMayc82P7DCO6xjievCHfeWDQE63R4jh9MJwCo+3d
+         8LfYi+AaI9jUGhG0sV/gU1fXt1dgPXkGtaV3ZwogMlTLx5hiGtI3MMT5Dtdgdq/eFJ1c
+         CfmmmwwMQMBkSlFf/pOjZJKpQ/Puh58osz5ropTshGB/hj96De5CJ45Y4XEZkPsrsbkJ
+         O7Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXGXPP10q0B6aAvpzBrX+n95QgzWFGuWkI8spQVKwIUQaqy4tLvJLzQVYLDIz2kQ67kTWkromvObj3M/RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBd1ExmeD9czAcjMhoG1/4NzCco9wvdu7qGlFJ3fmVE9S80Z5i
+	r4mj25yEnfk2xNhBOt7x1zyX3cH3a4m7tkHTB5OF12+1MpC3+hyRAiZTSBDI2AD5xDo=
+X-Gm-Gg: ASbGncuv4ccKluqOYGT8Hhk2QaEVOhXMD+wBi5aRz0cXoFDpScmCjKTC5wlDbE+hEoI
+	7UNZmVWoavBJdCtJfwLfeoTasOSvKQM+orGbFN08YaZG/ICMdtm8IPokw5mvZ1rEgf1Hm2rLJlX
+	1Ith0CnZuoX3KCNGpe6LDKC/Dm9hTx5SbwAOOfNktDmsWzagGhKG3ANnQklB83Z2KhsNMiorJZA
+	7SBfL7+2Gz8z1jUUFHdMR/1lcNEajTqeV3TjlaHNocTawTee+9o81aNJMoKwHTJbitDZbIdBIOy
+	EPTCeM7pnInvaVbkbdA7ODDD2qZsvSzPI3C2h123Oxd99AQ7P9KpKWzcZpy7PCvHpRJ/AefKzca
+	rEjSvye9NM+Szn7ibC1fyVNL66RAPWPo/wIBEpp3/qTwLjp33MKrL3W9Cd1FxSSs=
+X-Google-Smtp-Source: AGHT+IGgf6IE5QU7F/5cEqMJuSiQxnLhtBPDTGDlyRH9YPXSIH/Jdg+r30fMZEER57XN0t3TVHpcCA==
+X-Received: by 2002:a05:6000:144d:b0:3b4:9b82:d432 with SMTP id ffacd0b85a97d-3b910f8cf54mr2290237f8f.0.1754989252722;
+        Tue, 12 Aug 2025 02:00:52 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0e70218sm315924085e9.20.2025.08.12.02.00.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 02:00:52 -0700 (PDT)
+Message-ID: <af4cd1f0-9f3a-4eb9-8cd4-ad20506c7a9b@linaro.org>
+Date: Tue, 12 Aug 2025 10:00:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: iris: vpu3x: Add MNoC low power handshake during
+ hardware power-off
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: GuoHan Zhao <zhaoguohan@kylinos.cn>
+On 12/08/2025 08:48, Dikshita Agarwal wrote:
+> Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
+> reading the LPI status register. Introduce a handshake loop to ensure
+> MNoC enters low power mode reliably during VPU3 hardware power-off with
+> timeout handling.
 
-In the error handling path of __add_event(), if evsel__new_idx() fails
-and returns NULL, the subsequent calls to zfree(&evsel->name) and
-zfree(&evsel->metric_id) will cause null pointer dereference.
+Can you confirm this is the sequence you want for sm8750 also ?
 
-Add a null check before accessing evsel members in the error path.
-
-Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
 ---
- tools/perf/util/parse-events.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-index 8282ddf68b98..251f1b31b62f 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -313,9 +313,13 @@ __add_event(struct list_head *list, int *idx,
- out_err:
- 	perf_cpu_map__put(cpus);
- 	perf_cpu_map__put(pmu_cpus);
--	zfree(&evsel->name);
--	zfree(&evsel->metric_id);
--	free(evsel);
-+
-+	if (evsel) {
-+		zfree(&evsel->name);
-+		zfree(&evsel->metric_id);
-+		free(evsel);
-+	}
-+
- 	return NULL;
- }
-=20
---=20
-2.43.0
-
+bod
 
