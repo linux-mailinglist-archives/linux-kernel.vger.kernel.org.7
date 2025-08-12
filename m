@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-764623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3303B2253A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D6AB2253C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6375B503E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB02504748
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2214D2EAD15;
-	Tue, 12 Aug 2025 11:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFCA2ED15D;
+	Tue, 12 Aug 2025 11:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksO+RRwk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6QwRGWm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F832571DA;
-	Tue, 12 Aug 2025 11:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6324A2ED141;
+	Tue, 12 Aug 2025 11:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996708; cv=none; b=a8IbPo2WRZcYeAw/bXS7iAKqNzwY+ZYfUiAW9+n8M5p9ntCKqS3SSFkvzyL2+rhPYwOiekHSGKOLYuPRppHCUhSFACoOmzI3o04NxBXGsKl4C2XfRVVibC3jnhIAPqErue2huxuNYnFNRXbee9Q1jfJcEOPAbYjFBJgtytXMi5o=
+	t=1754996712; cv=none; b=dB9eRb8dG2eRBjdf6BwsHMWVjnhnB0WnOG+MyqkIG11LaZTh/r2fBRJdmXwoffOiLIJfDNpFHxgtM6CzN+9H6DVGOtSu2pIvwRT4pWWZ0Vrq+XbdGlzLGfsSHvPCGlk09z9C45xB2YrshJGUeAwr7I7x3g4J8YX9LC4e/qkeytE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996708; c=relaxed/simple;
-	bh=i83FLRORzAWaY4/0VoGrVVs4sujsdhDnKVLh/tbKi9w=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XysUf4SIULKYT7cuETKQCljIttZ+BcypTWm6Kzqm6IjtBbpSBEvxYsNsj9I9gwJwcdE2AWGS0kvCkol8d6lRmvmM7KKdLwDsFVkH4zKB6OaPvUT1i+tOTOkUl+gkTpEGwIBYz+/2ew3qCuSIoCpDuu9VH3YGZ/LXrW6/UM5wtVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksO+RRwk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B503C4CEF7;
-	Tue, 12 Aug 2025 11:05:06 +0000 (UTC)
+	s=arc-20240116; t=1754996712; c=relaxed/simple;
+	bh=NbG/dlAMBbcennAPv/FIC5IAuzcBiFtNf8p2K2/4H70=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tfgY/C9d4gkR40+YBZSPhPwdwW8IfQ07y2EeFgMuB90GmX7tpbrllVyBHlRQLLX/nZYMQjkPf1vBXcHVhUfAduQRQ8WrE73qC/mZEDEG9BLErm0nZwjjdEZMi6z9udTDW7z2EgiiU16Xag3RS1VICBWuEEOYOtyD5WFZwS1DTR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6QwRGWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8035CC4CEF6;
+	Tue, 12 Aug 2025 11:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996708;
-	bh=i83FLRORzAWaY4/0VoGrVVs4sujsdhDnKVLh/tbKi9w=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=ksO+RRwkquDBtc2qSEkIsY/W/9oVsvewgkKCETs1psFyO9oYhSWYxdccqvf6GA6in
-	 HRkUSrLa5aLliSCE+jS4ZD+DF2Ch3QEcYdz9L6Z2lPAYVDTX2g9vEWRV+c7u/7XMlW
-	 yt4zdzN/jPn8++9RuiOKa8bKh96MRVDp+JA17/WN6ITyEKRR3fG2+46XUl1MWjmLNZ
-	 o3rh4TASDUNFSuORrZa/O2jGsnedZafT5ftzABpJlPWkTGzJtfwZ2A5JKLihQj6r5K
-	 puX+wAbXHxgfPaWqy1H9ZOuucI/LyDeRKV7hIfmBzbkkWj0OVN9qAxnRfl36G0rqsP
-	 pqf8DydXndMRg==
+	s=k20201202; t=1754996712;
+	bh=NbG/dlAMBbcennAPv/FIC5IAuzcBiFtNf8p2K2/4H70=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=c6QwRGWmx8TDXhl97WGGhkLLG7F2WcfRKNik+10cNQOjIu7PeBUl/aRAPKDkWXYol
+	 hS7OzGzYfR5JlN3xxWCQ70pcibnuKSmGXq/XOnugeZRrn7Hl7LLOCK5Ev4e/HVcX7o
+	 55lQOL3BaJVoL6r3sfgYvphXBLn0ZGJOHh0jyhbxRxmmUJtBgH9T9hQr4+msVVUNnt
+	 e/37uQv1mtL3jebcp2pSkSZtQKhlp82LZnvJPshiKokXCzKcifQ/fkd83D9zH/tKDd
+	 eGxNMjem6BaonsZ0OAzyoD6OZqEiREfaEJZVjxOUSmZAFkxpvIvjBBiQXxPj4bccAZ
+	 wvM0Z3ULjU6jg==
 From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20250807020318.2143219-1-shengjiu.wang@nxp.com>
-References: <20250807020318.2143219-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH] ASoC: fsl_sai: replace regmap_write with
- regmap_update_bits
-Message-Id: <175499670591.16031.7607194509968600371.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:05 +0100
+To: linux-sound@vger.kernel.org, srini@kernel.org, lgirdwood@gmail.com, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+Cc: perex@perex.cz, tiwai@suse.com, neil.armstrong@linaro.org, 
+ linux-arm-msm@vger.kernel.org, krzysztof.kozlowski@linaro.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250806140030.691477-1-alexey.klimov@linaro.org>
+References: <20250806140030.691477-1-alexey.klimov@linaro.org>
+Subject: Re: [PATCH v2] ASoC: codecs: tx-macro: correct
+ tx_macro_component_drv name
+Message-Id: <175499671026.16031.5383052594222916199.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,15 +62,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 07 Aug 2025 10:03:18 +0800, Shengjiu Wang wrote:
-> Use the regmap_write() for software reset in fsl_sai_config_disable would
-> cause the FSL_SAI_CSR_BCE bit to be cleared. Refer to
-> commit 197c53c8ecb34 ("ASoC: fsl_sai: Don't disable bitclock for i.MX8MP")
-> FSL_SAI_CSR_BCE should not be cleared. So need to use regmap_update_bits()
-> instead of regmap_write() for these bit operations.
+On Wed, 06 Aug 2025 15:00:30 +0100, Alexey Klimov wrote:
+> We already have a component driver named "RX-MACRO", which is
+> lpass-rx-macro.c. The tx macro component driver's name should
+> be "TX-MACRO" accordingly. Fix it.
 > 
 > 
-> [...]
 
 Applied to
 
@@ -77,8 +75,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: fsl_sai: replace regmap_write with regmap_update_bits
-      commit: 0e270f32975fd21874185ba53653630dd40bf560
+[1/1] ASoC: codecs: tx-macro: correct tx_macro_component_drv name
+      commit: 43e0da37d5cfb23eec6aeee9422f84d86621ce2b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
