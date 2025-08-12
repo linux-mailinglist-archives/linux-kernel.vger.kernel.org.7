@@ -1,599 +1,251 @@
-Return-Path: <linux-kernel+bounces-765104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF988B22B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:11:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95471B22B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC3B14E1DED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9031A27681
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DDD2F5326;
-	Tue, 12 Aug 2025 15:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A9F2F5323;
+	Tue, 12 Aug 2025 15:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WWCGMT8a"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013026.outbound.protection.outlook.com [52.101.72.26])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eppAt1Qt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D418B27932D;
-	Tue, 12 Aug 2025 15:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A843D2D3744;
+	Tue, 12 Aug 2025 15:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755011496; cv=fail; b=P8SW+0hgupr8e5gtD60NbFA7oOWwwUTqV8i1KEyBnWuwCWHzNJUhm0aVssvAcqVc2mOQY8iZWbcCPaVDTQjWUsFLa8vDR7ISi2NHMAMy//JJTjsMzZkNFOQFJMW4FYDfAyArdH/GmNAR7H6gstCxbRRsulfg16CsK5BIUNpsPOE=
+	t=1755011577; cv=fail; b=ZTUcZ5R/cnYmzV5SgmleHhcc8xuX6+CtEUMbrNqDBNObouaO70bZdrViLy2iA1lW3bOutKcUvVINvAu5CElHCSZDWrLb1pFILmP282Vd1ejbLiqIcX0qV9IDLnoQppny6Rbhb+MdwhS+0Z1SXMmi0/EOeNEpC+sOIiA2S/IcWGM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755011496; c=relaxed/simple;
-	bh=as7yOGfFxWioD4bdcaf+sUTKWRh+JUP6/H8o5chiisM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ee+2c1Z75aZ1l3oOF72s0gm1dVTzr7aCK/2ssgVEbcN9WbeoBR76kw2HUqqaDdAk0d4Hzxd8YsMZcuPe8qHjyrun3ri/Igc0qn1BBWiztQObDYb6JbTxblSXGTA1VlKPF1FvLrP6n997IMRZdrHS8Qx/OerW/Pd+t/0eYZKsN5U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WWCGMT8a; arc=fail smtp.client-ip=52.101.72.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1755011577; c=relaxed/simple;
+	bh=t+jQ8l6fCSSREg4oUunGPIRppdMhoEzCf5FrMy9RcBE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DkVrID9TOHdVQplHK+pOzCkiVIL4W4FED2B15qUAdyBxSWlKo1AotZ+mHqPLovbp8pH/7Mh1Qx5ndh0NDGk3+yQZ1v7c/q7cOa4QL1UPF3Bk4NUSrKO8tG+6r8TgeAGCk23hzqCO7Poy+g/YGTIOHmW6P4PSnZ6E5d75Q/Joh4U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eppAt1Qt; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755011576; x=1786547576;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=t+jQ8l6fCSSREg4oUunGPIRppdMhoEzCf5FrMy9RcBE=;
+  b=eppAt1QtjFk6gvjT3x229lje7pSnp3ivpicGZ8Rc326ignoOfz/WTnvJ
+   pNmWTtTgESqe2qZYPVWm4biLFJ7Rx8D+s8EfBlvgxodMXFSjbXBAe/s0D
+   21G2RNzFgJKYXqeb7UKTP/zB0bmi0szF+8SvHn0c+ZjkZT0qFffimKuwt
+   QKlgwfTtKSbxHWU99aGvy/FD2mUxEj7n/WHAmDSQzpgZLkbjJQIFPx4m/
+   Mcf5HITybtZINuCwd3GSoLIMw4f+HwKbqCLOn4lBQsvTU4DHPTWppDNYH
+   jgsvJiSLloZSqJRUZgC1HBBqTATvZYItnuJcZeJEpefRSR6Vu78PFr4zq
+   w==;
+X-CSE-ConnectionGUID: voTFhAnQTySk6tvW1NkpJw==
+X-CSE-MsgGUID: f/WJrQRRRZy5HeombTM/5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61133919"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="61133919"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 08:12:56 -0700
+X-CSE-ConnectionGUID: zQ58l7CwSfKhIc2BZZyc0w==
+X-CSE-MsgGUID: yhKDqGiXRX+QprRRhHH8tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="170666077"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 08:12:55 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 12 Aug 2025 08:12:54 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 12 Aug 2025 08:12:54 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.72)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 12 Aug 2025 08:12:54 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X1LRnC7H3Gl1VM1Eu9hcYMFducbT5KwGDZ3JYuW/Ohlklj8uQtpvKGc9xN9O7W8+U2heRZDx7skB3IAX79C7W4G8BafTfseumCuZXiBWkbPVXQabGR3A7kvuNUCm2hUUmMscfRBAIQyHBh3xWv9DOlFwmCHepC/iXAUnNrPZQO+zXNrhpM8AzNlnAnebWEVxA6UpQS1JnSixJfd38iCc/mstxGOU5+tCOSJTiFRB7mcJkR6hjO0JFFW7RuA305oOJ0lVTVKdYdokpmrhh0kk0CTIZFsa/XcM9ZF259Mbk+pNIJ9OiUD4sUr009cU9cNwXwj5KExjkFTFBMMSrxhh+Q==
+ b=ksLfVjLWtc5SRYnGkS4RNWSo20ooiW/GLsvpvz4wP5CEC0EFJS3OBlCt/F0fr4vDPrLLavxk199/+F0mYdB5+h1rts2bxaGd+5a7zK8DDungnRWxDllZkUu06Pv3dKk++OvmCVC2dMORiM/mLKxYRggURFeh7F3tRqiQVXN3PI7WO2LAp1GSSCqVcwTFC+fCYYZNdCq3V7+yrCEbDKdWlnF7O8+AkahgvHTpAAmM/3GjYIQcIGQNlvmeU1i2AMNneNoCtra18AmOiBD5iWYL7UXCmTCqCw/s8aLGZIjHDYnoQL7b9EayCW8aQp/l3AbYjDp6H3FwBuBYFByOMkdPIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J3K8fQPE6BrpNOP8jqtJn80PmX77nM7LrhH9x9tw7ww=;
- b=GNcXG23CMqfNg493bvXYQLL0woDd2JjAa3yLsvtcNcqtL9MWkEK5gH9p1yuJr+z9hrZbDzjQs8H4i8trLRXpMV2mjoLF9cS1tKrYrdVP8PMdfUdbL0gkL4gmX/z1Zp2A0L7Wtaam7v6P4Vp2557l1+v0mwvfVKzvJYm/sT6LrGWKNsQb3k1yEy5jUTkd+lw7CDODKsQv48ZAESkzir1HkDewG5lrsJh4qyva8lIpmWRTGLHPVvcaIzCDKATMGS43keiVTMujZtznXnRVhCxX1+Bj1dNWHwmIlRtEWA5jwGojAU3YZsN4WxUQ8hYNcb0S8be1z9gYuRPXCOf8VtB3/g==
+ bh=t+jQ8l6fCSSREg4oUunGPIRppdMhoEzCf5FrMy9RcBE=;
+ b=Pf0ZU11SDsUqWWKyXFC9ilM209fSHvPTpx1BdVsw6yz3ANtdTno7TdcV1J9/3oz6+aRFjcvhA15SIhOWMzAiQjoqEaHbLG3Hp5R5ceryO62o81UdhrVvzptVNtefHoY0Dlt4oCr6DS6wmVslU2hquYEoxsVwS5Fr7Cf5sN3QV2hKHuOqZy+Xhm4lrAEQ9L2VJI+NuH+bTolQu1kUxrjv6kZI8wioygRUXoUg7wMnjtRXmGWbAhuVSzRcp9Cg7F5J6Po2qoO0k/pc6HaF36b3rhX5PEOMYFqNZxiUSDjlu2RQz6sXBQpP39QeqFXS805r9B4tzPYL3tDMooQ/mPFT2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J3K8fQPE6BrpNOP8jqtJn80PmX77nM7LrhH9x9tw7ww=;
- b=WWCGMT8aO/0cawInpy2wSn0WkqtjmDjHhhsmOvD57/4ImpBoooi3/VBjlj2N2Esnbwi+Gl+njMgtyeKQMYC3v596SeScFJXCzDDW3gBisJHXh41gmlXBfhpsgg5DuxNU2BYMBcGoCtUKRuHJMyS7vrx6RNa6ngLUBW3UbiwSC5fY7V1PR+6kyP6pPvD4BVKjBADrc51WT8Z/M/6+vgWCoSauZqosjswyWfjcYe2BbPJPJ1k7eYaDaDQ1bXtFq3JXacUG3laI1+PIQLSLGf+JXVXog5rBjPiJvTzmFppLoDYQQoVq06P9NsKxaMGZt5Kj3vti6i89wjBZZcA8jJTXCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10728.eurprd04.prod.outlook.com (2603:10a6:150:200::13) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by SA1PR11MB6965.namprd11.prod.outlook.com (2603:10b6:806:2bf::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
- 2025 15:11:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9031.011; Tue, 12 Aug 2025
- 15:11:28 +0000
-Date: Tue, 12 Aug 2025 11:11:19 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, vadim.fedorenko@linux.dev,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	fushi.peng@nxp.com, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v3 net-next 05/15] ptp: netc: add PTP_CLK_REQ_PPS support
-Message-ID: <aJtZl3jgBD0hLyt0@lizhi-Precision-Tower-5810>
-References: <20250812094634.489901-1-wei.fang@nxp.com>
- <20250812094634.489901-6-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812094634.489901-6-wei.fang@nxp.com>
-X-ClientProxiedBy: PH7P223CA0022.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:510:338::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
+ 2025 15:12:52 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 15:12:52 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "kas@kernel.org" <kas@kernel.org>, "Annapurve, Vishal"
+	<vannapurve@google.com>
+CC: "Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com" <seanjc@google.com>,
+	"x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>, "Huang,
+ Kai" <kai.huang@intel.com>, "mingo@redhat.com" <mingo@redhat.com>, "Zhao, Yan
+ Y" <yan.y.zhao@intel.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
+Thread-Topic: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
+Thread-Index: AQHb2XKrCJQDYmgN9EmkL7mVJaZZf7RZwqaAgAOdgICAAQwrgIAAOwMAgAAILQCAAF0hgIAAd5yA
+Date: Tue, 12 Aug 2025 15:12:52 +0000
+Message-ID: <57755acf553c79d0b337736eb4d6295e61be722f.camel@intel.com>
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+	 <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
+	 <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
+	 <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
+	 <aJqgosNUjrCfH_WN@google.com>
+	 <CAGtprH9TX4s6jQTq0YbiohXs9jyHGOFvQTZD9ph8nELhxb3tgA@mail.gmail.com>
+	 <itbtox4nck665paycb5kpu3k54bfzxavtvgrxwj26xlhqfarsu@tjlm2ddtuzp3>
+In-Reply-To: <itbtox4nck665paycb5kpu3k54bfzxavtvgrxwj26xlhqfarsu@tjlm2ddtuzp3>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB6965:EE_
+x-ms-office365-filtering-correlation-id: 8fe2d0ef-fdb8-4856-1f1f-08ddd9b2b501
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?V2g2VCtNUFRMbVJYYkdlUHlVcjVVbUFBM2JkV3Z0M1VuMDZkaFJ6eUk2WUZL?=
+ =?utf-8?B?allTZUJMWlgzZGpOdVRlelhuT1gzWGVsa1dRa0ZJRDVjUko2Rzk1OWtKWk5K?=
+ =?utf-8?B?Ym5IdFI4RTJtRjVVeHpGNE1hVUJaVGZ3R2tjUU1RSDAvVzJmcHBmM1RjY1A2?=
+ =?utf-8?B?VGtabjlKdlBmY2d3OEFrRk5uMW9aMVQvYklPTU5LdDdFMVcrelFMeC9ia2NZ?=
+ =?utf-8?B?dkIwci9remJFNm9xMGJRajh1ZEtFdCtHV3h5SUNzRDlrNHpiTlYrSytHaGd6?=
+ =?utf-8?B?V2h3L2xDZU1QS1M4MWdDV3cySEEvNUFEdFVseXc1TWlvVkYwak5TMVU4YkNC?=
+ =?utf-8?B?VWlrYkxmR2wwbCtTem9jMkwwcFlQNTVnKzk5L2xCSmFNVVFLWG5uakc3S0pp?=
+ =?utf-8?B?aDZENUZYSVpqSXI2dDg3aEhBa2IwdlkvMDd3R1M5VEltWGtvUFFWVXdkb1pp?=
+ =?utf-8?B?T3UyR2Z1WUNZdFJDdjc5azFmSjc0REViTWNiUzBxenVCNmE1dkh5Z3NpdzdB?=
+ =?utf-8?B?Z1VnS3BBQ21wWWgyUENWUWwvOHZIcDZ5bEtoNEJWY2Nwemt2V0kzMTNOZlFM?=
+ =?utf-8?B?YmM1Wmd3SUg3ejZNL1JyS3RIRmk0K3ZZR2hpbS9ZN05JTFVUMWszYkZUTkJ5?=
+ =?utf-8?B?OXc5cGJmaWczMklacVpFQ0d6VWlYekhybVZ2Rk5XNGFpOVpJTjNIeWJyNHZW?=
+ =?utf-8?B?OTJHdEU3TGtnY1JoV3NLL1JZTWp5czRRdnF3Qy81MWhuWG1CZ1ZCWkx4NkxW?=
+ =?utf-8?B?RE1GWXk3WDN5RzJyTENrYldoN1Rmb2UwZkdZT1dvN0VHa2FVUFpEREpETSt1?=
+ =?utf-8?B?UmRXZC9BRlJ2SkxMODR3YUdjMjdkeUw1U2o1Y3RjZ0l2bTF2MVlyQ2pmYVhs?=
+ =?utf-8?B?R2lNcTdKMmplaC9mclFFdkp5YWplTklPNjdmcXdxd3A5UVRJeDZBd1psRGVK?=
+ =?utf-8?B?bVZTVFRMVEtSajVOUkFPbHZEUlh2RktpaVVLOWk1VkQzcGdKVUtEcVo4YzNt?=
+ =?utf-8?B?Y2pGVlZWb3pvY1VraDU3cnZJUDB6Q2hZV3YyVDlQek92WEkzaUYzYnloR3M3?=
+ =?utf-8?B?ZGxrdnNHcGN3T3hyOXRGdGxxSlBNMjBYSkEyTTVUS0kxRG1RQXZZNmFmK3VB?=
+ =?utf-8?B?REsxRmdCc01xdDh5K0luNWpIeTRkRmp1Vks2MXhubVM0WGNISXFJUThKUlh6?=
+ =?utf-8?B?SEloZ3JDdHQwLzlrNzM3YjgvQnB5OFMvSHBzWkQ1TVBwSXZNNm9LM0IxNGJv?=
+ =?utf-8?B?LzJxY01HeElHNXdhdW50MUo2bzJDNENKaXBBa1NwVzhnZ25OdDZqSU9SbHNC?=
+ =?utf-8?B?L2pUWTlLcXlId0kxY000ZTZsYUdGN2JnSVZZZ2NKOUpGdlUzL0V4MDI3OU1p?=
+ =?utf-8?B?UHhEbVJQUjB2NDBCZ2ZONXBZbTZySzVYaXFxTzNzcnVYSC9OK0ptdSs1TGN0?=
+ =?utf-8?B?ZU1aME1teC9UcjMvZmNnNUJQQ1RySXU1STJTTHJ4TkZhR3ozc0FlWU1PZVdw?=
+ =?utf-8?B?VDZLWGJtWHFTeUpLZFQ1V2xhMWRJaktSRG5OamFtMUNIMUlVSUlhTUtsS1o5?=
+ =?utf-8?B?YXBmVTRNMXN4UFF4c3ZNai9QZkg5cnl0Q2F6bGx1Z3VlUFhlNWhYTnZrSHFk?=
+ =?utf-8?B?OW5QdEh6Tk0zbVhLeTdWdXNmM1l1UCtrZ3d1dmRDU3ZMUW02aW5wNEdtZCtJ?=
+ =?utf-8?B?Njd4YSsyWDhRc1YyTmpzeDFUK3VQQ0MrQUZMVjJvSGFoSDFMcDgzamRTdG1k?=
+ =?utf-8?B?YW5VWjkrNHF0eVF4VUdUSnBUenVBc2hwVGtGSENJUmVoTUlqcTMrUWRVNGNw?=
+ =?utf-8?B?VVZqQU4xTzVFSmN1RlBXUVliWEM4cTU5NjRPYmVrYjBxa3g1TTZMU0kzMHZ5?=
+ =?utf-8?B?Nm9QRWh4UHhMaCtWOXRCbFpnZnh5b3FIU1o2S1dxQmlUaC9HOTMzbGx0Nzdn?=
+ =?utf-8?B?S2h2QmRKdGNGKzZuek5RNktoYnBxbEFNVndVaVNtdkJsNWtGdURzeXd3Mmdx?=
+ =?utf-8?B?WU9lb2N2dDVBPT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S1dybHVXbWw1dzZSc2JZMEFsQWFiVVhRMXZvYldXWDZ1cWtrc1hNR1ExQWtZ?=
+ =?utf-8?B?NnNvMUE0alE3Q1JReW01RURHQWtyYzdQRHJPdTlodVF2ZzFDQlNnOFdjYXc3?=
+ =?utf-8?B?UVpaOW5ZZTU3d0tOOUZDd254Qm81ZGdDYTh5bjdBWG5TdHpOZXZYd1RIekRi?=
+ =?utf-8?B?d3IwM1djVENPZTFkRmtJbldPTWxHUmJqM04vT1ZneTYyeGFWWlFOVVpNbFA4?=
+ =?utf-8?B?cy9VclFIeERQMzNlQy9aYmJjRVJHYjRJeHl4TFZkVncxUU1iditQbjZpUUtY?=
+ =?utf-8?B?VWdGU0VnRUp4RVNDdHJjVVo3MkVTbVpOVytaUy90U28vT0Q3emxxaW1jN1Qz?=
+ =?utf-8?B?OGxTMG1nMS9VdEtCdkowbWxzZEV5eDhYTkZwK2dBc0pnOG80dnlKRTYrYkFG?=
+ =?utf-8?B?QmQ2Tko5ZGtrWEQzblVFVWJuLzhjN3FlN3BsSmwrZlZFWFdqTUdPWDBoZzR1?=
+ =?utf-8?B?TU9Zc1VMN0tKWUxGRWRGUTU4VzJ4L0gwL29WRERDTklQWitMZUJUYW1Fbk4r?=
+ =?utf-8?B?eDhJelZ6VTdkNWgvS2FHVExpajlQZnB3cE9Wd09MNVlvaFQrVmw5V2llK05t?=
+ =?utf-8?B?dlBFc0U3SWx5VERlMWQ2VWQvL2JVRDVXUEtlRUpGNHU0NkNEeVBZeExPSnVC?=
+ =?utf-8?B?dzdnV1dLUDFNa0tySmhmNG9qemlVMzhXWjBqQWZZSmpQTVhybTEvZkU2UERG?=
+ =?utf-8?B?aitXMDV3Q0lNRmtDV1B2SSt1R2czSTN6RW04YlNXN2VabFhUNXdoRllHWWg0?=
+ =?utf-8?B?NURWK2NUdkFjNWVGbU5kRzNydUN4WkEwRUdOT0U2SmgyYTRTazdFQmtjN09j?=
+ =?utf-8?B?U0k2RnZDbVRlL0RlTUh3R1VGQWsycFJxNjUvM28wUE5nMVNySTlkc2NxcGJj?=
+ =?utf-8?B?a2lJN200aVIzdkk0eGhoZDZDeXBzWlkyRVlNUjhjenFHaE1Ud2JNMStPZ2Ju?=
+ =?utf-8?B?N2d6SWxMRENJUGNCdlZSUEZrbXVaOTdldWlITnM1UXlRVkJYbUpIL0cwZjk1?=
+ =?utf-8?B?OWM3T0pIeThqMVlBM3JyaG1nNXNtczB1MGlyTkpNTDBZekdhb0NvVjk5Vzl0?=
+ =?utf-8?B?MXBHRGZYaHNRVjMraDZkUGFwK3FpWkF1cTRvaExVdFl3VEN6NlJreDc2QXZt?=
+ =?utf-8?B?R3FBYW9CUlA1TVNXV0N1by9hd2g5RzNZTzVxektxWk1iYXNtMFNBbmhLNUhY?=
+ =?utf-8?B?VlZmVXRnOUl2L2JlNnk4ZUpQSnBVMEhCWEVRV1F4OFNsVStxWXBkWTBFNEM2?=
+ =?utf-8?B?bGIwMmlzbXNDUkRTUFRPcno3cjhQS0cwbGE3TzV4RGZCbDVxclZ5S0wwa05L?=
+ =?utf-8?B?QjhTdVlNMUJGYkc2cHpIbG1rb09ZTHRVYnlyUUhYdW1kOFhCeFdZSjJmWDk3?=
+ =?utf-8?B?RzhieDArQTE4WWY4cFA4YmNIZVpWbW1KcHg0anVkNElWU3g0dHp4SnRnbHdT?=
+ =?utf-8?B?NEFsRUxIdERKWlRiSTJvSWs2amc0b2Y5cG9kSUpYcmNtdDF1M2RtTHpZTVpF?=
+ =?utf-8?B?eG84bzRTNW5jWUZGL1AzZFIycTQyQU5NaVlLZHI3cW5pcjFuVzBsMytEcllO?=
+ =?utf-8?B?L2pQUkZFVkxQU0FmQ2ZKYWpzRm16bCs4MG9idk11TEQ3NWI3Z2FLTy84Sk0y?=
+ =?utf-8?B?VWxUajVQam5jUGFUNXdEaEJrYVord0Nwc2drVzRqYnA5cUZSSk1BV2phUzZP?=
+ =?utf-8?B?bTQ3Mml4MWp6Zm1NU25oR2ZJMSsyU25PQ2ZOaE5FZnZYcDFMd0QrRWJnN2k4?=
+ =?utf-8?B?VHczeXB5WGZ4U2EvbU5teGM3NTQ0NHBaTThxdHZSc0pUVVZmOXkwa0NqeXdm?=
+ =?utf-8?B?aHhHcWpvNHJnNUhrZHVQY0tDclRlV3JZcm1GQjR6UTNPbTVjazZRN3JvbVdN?=
+ =?utf-8?B?TGhEaXRhUWtzTyt3aExRM3FDT0R5ZjdXYUlMa3RXMS9Pb2tiSkZZZ24yeUNM?=
+ =?utf-8?B?WWh1MStTYjg2QTRpWi9JMGhRTURsVEhwN1AyTE1uVU12azJZUHo2SkdtV0dP?=
+ =?utf-8?B?ZTlYWVdmN2JoVmtUU1VmR0oyck0wNllGWXltTXJJZWdITlUwTVh3UDIrbUNl?=
+ =?utf-8?B?MDNjNUxOWDdEZTR6RjFTYkl6WUJxaWlBbWZQeHVTN1NHelZZMGJFa3d3dVNE?=
+ =?utf-8?B?eXdZcFhXMWxJM1ZkZVZoeG5FS2hhQWZnM3BEVWtpKzdpSzZ4RW9qQmJmUE1L?=
+ =?utf-8?B?Wnc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FF66BC610F099A4193F655AB0D98C3EF@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10728:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0549eb7-251c-4203-0548-08ddd9b28331
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZstRWWd2Lt1d3YVS2dyGBPR2EpAxqBXqMRlpd+8LQ3IuLUraYfoKdNYlKY4I?=
- =?us-ascii?Q?zYTxfACtKF8LQOu758G+qSVGoM+rk9mwW+5hhYiXeEeaZz5jMhd/K4LPxwGp?=
- =?us-ascii?Q?gZMcuHau9uJ7NWAFsPa5XLNlkVfzoYLIVie0BIGV8sitOrTGF7HkZOBcImxQ?=
- =?us-ascii?Q?chvpdzEeQO/gsjeoGlg1vztpQHLUp+25oJHRgixH97LhDXMAjCVOh9tFwkEd?=
- =?us-ascii?Q?0NX1GIAXVG4yMFRAkHpdeZ7pFNGanz8ri35b5iAkFWgaBT+QCHPmk84C/aEq?=
- =?us-ascii?Q?020onEPmbVOhlgEUSrPMBuHTjCA3IwanJ18FNZGYPSCwW16ZDCm4V+qnNAnU?=
- =?us-ascii?Q?Wby7/N9TBCXao2A5Fb3neSN+spYBmkfLZrbud+RAXunYwcQfaZzfU/WrfRva?=
- =?us-ascii?Q?3GVBeVEw9dmbXkb1wnZVp1jL8DGnbqkYo1FRGb+W+0GHaCWxYavn3hv2xGmT?=
- =?us-ascii?Q?u5/kOFZ5i7KNVVOZSWD8TGgqhwXVNI0ye816Y092D+XHSV5AH2M+PRbGfxyg?=
- =?us-ascii?Q?6gJv390YxW0BiISkgGuapiSQ9TQBkox3DDKiGiHhZLsOmNsIz3UaTGFVPTLZ?=
- =?us-ascii?Q?uviWD9enEq8f6EV1qm6A70VAY3EDAmDdo5P/U+EhTTWN2/9x3OQwttQcp74/?=
- =?us-ascii?Q?Exfv24EvLX64IRmrQssjDJwJUOht+rnRhssPtNWvIhdROIjyCrOiPzF4/Jkb?=
- =?us-ascii?Q?Gy8NLyLFw0ej08ZNUJrRMwtN/qFeo7Q8TpkmOgf3/N0+E4+I9TNpXVudfO1T?=
- =?us-ascii?Q?OcI6fWCe4RadsZ+/O2wNb6G+2OMyvy3axXiZDDoT5RgXzMi1Xih7F9PIr9W4?=
- =?us-ascii?Q?8cXN8xesHfopAPV15wSgz4dT/DK8l38rfEq/mdQkREe2rZj+Nz0oBKF7HfzB?=
- =?us-ascii?Q?ncVpZZ/WZUR+kzICjLJGY+TnrDaB5zamIH91sLRJ14CTmyzVfd/mC0PXCv3y?=
- =?us-ascii?Q?XOuc+FiqQa8EwUx31HGtNEHKvfvkEoFGKUw10EORbqhy9qrtzMuG3XkuI+7W?=
- =?us-ascii?Q?ptpW5TjlPbAPVuiouT/w2I5T14zD8H8hbNSSLUDtB3pjI89gM+UBV6Iev8AB?=
- =?us-ascii?Q?ZEjk8ZEKbyJIBIMl0dsw4oz2cpIN/WKOSxePO4VFZXBs6aWXlijXUHcm9uvE?=
- =?us-ascii?Q?3coEjA0THlLHRPBMtPjs0bIWWifXxPIR4Gax0rEGo71ikxY6exr2mTAKH63L?=
- =?us-ascii?Q?eIx26o4pcuW5o/b1eOrJPqrUHxY9cHwi+tCXa/NI9L7I+0Pc4bEjcgpZzUt4?=
- =?us-ascii?Q?0y3pZ7GQqSwfqbYVlDKQeYEfVkiixM2IMHN3AmtC23XnVnu0Jp/0mlShmY6K?=
- =?us-ascii?Q?jwlzSxhNc6/oEy2NHviV+ZnmVPDSoMmBdchh7r/OtBDk2xkSzafG3LlRAQvl?=
- =?us-ascii?Q?OMzgqpP7t7jgGIknJ4hJaBF34ELvLvcF5RwibryzAW42dZnNRMBf8PD8pdFL?=
- =?us-ascii?Q?/M2o4vjP1zrCGIB+TeUBj6h8M9EsHQI3D9b24gRTsCiViBmm+NXA6epQzwYF?=
- =?us-ascii?Q?FIWqTnCgI8dFYcE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yX8DdKCKZd0NFdX4QqLDDKuEbLyHprBjBObddt5tlRzgpCUsvOFi7Co6MFvU?=
- =?us-ascii?Q?Dag+3D+cmEaukVJDU7yf+aFVEZK4ABzsE3a3tXyd4czzHn9mgRcfivSbZIp6?=
- =?us-ascii?Q?nKWJTcczlhkA77zO0AjDFOl3ilDL+9JLYRkKyO2qN3E8Tq89u2Xgvufp5iYO?=
- =?us-ascii?Q?nxJyNWOVImU0dsB11mNClsiyNq5FINF6weamnt02OhQlY8AtViL7a8/bCCJc?=
- =?us-ascii?Q?UkB3/wpowiqZ+Jf0VqOTJFvhrxcxg6OZFnPF7XF5k9gVeewRfhO/Jnf9PzqC?=
- =?us-ascii?Q?XtjioZeNlpCmrA92p/P7vgSC1zIVRv5cTUBi9WbJW1htZLMgKTZ2QtWEtVV/?=
- =?us-ascii?Q?JT1Lmwy+BSAXrZHypjX6TmDRD/pRXxs+4qA0kb6Yk4jWAgIs5h1xAdLVeQ4p?=
- =?us-ascii?Q?y/rd9ZMQHIftZ7SExakrvV8HsQIbEdLOgLqJPV4Du7WlWD6ZZpgH8h9ziOoL?=
- =?us-ascii?Q?0ochSNywx8Fb9g/pCawWF+RmQi/928oNGnsC0sLDmHp+/7A5bhO61yz0Fy9f?=
- =?us-ascii?Q?BPJCACijIlZCpisYcmiSd/7Zrsigp+ej9XqaIZtECgstIfMyWC1EBBJ5muF5?=
- =?us-ascii?Q?jILQW55k/iZGx2N16csOmYg5ujDVmcsQY82aeYBayRcCe/+Jgs6K8hywUt62?=
- =?us-ascii?Q?Nsk0RrOidYCzJbMJa4tDmbuICrG+7VNknLruw/kJ4xa6gneJ0TQYtLufaejc?=
- =?us-ascii?Q?5BuxGsBHMCauY4BCzbty+HB+2xd8wKcZptLujHwkO1YVL16egMo2n1OF1YOw?=
- =?us-ascii?Q?4xFkoBc+lFxTUlj798Qy1R/XuWwaKc7+SQLaeSGLGcWbaHh0NO51cIBVuq9L?=
- =?us-ascii?Q?+MxExG/+zIHQjk+YvZ72kw2xjZJO0XeFSBi5Oe1ojtjIuYVPQ1QXOrNHWTxs?=
- =?us-ascii?Q?sa/xPDussxgtjXK66FgWSmd94UuVyjb5x4eyU0MsYdMtV9I3kXhd9PRtxWIP?=
- =?us-ascii?Q?MZhYs9tl/0BaSAeE1Hv1eYSCboDEROo5Hd9zFodeWi688Nvz3Ku+ffkyw7XH?=
- =?us-ascii?Q?RDjY3M5dHjruhLD1HPq3T2MJf/jY5CCoV9ThO3VrcVkjdoPNW44hhcUcEGLi?=
- =?us-ascii?Q?Em4ozzFipQmRouSFyZdVOIyw66QMzkkGRktsHQR6P2YAl9twYDIempA6/gtK?=
- =?us-ascii?Q?BGVq+TFB5NRPThSDnPlds2WYoAHPYoKqPpvIEmVZHu9L7SWs64QPRzXRtVIp?=
- =?us-ascii?Q?GyxEy+heBCWq3w6secFL78psN2LNfu8mMfZhcL3OcUDdCWaHl9wS2jhvTyKs?=
- =?us-ascii?Q?4Xr5LI2wXmaIlheXyNhAZPzA0FmYI+YxpAycRoVEUuGulb9PqIaeDOD0PTOo?=
- =?us-ascii?Q?UoBxBCx5Rui6bTDszbsIQXdA7v5xPrvjZPxVWELZNTOIALX7oHKEusJqg/t3?=
- =?us-ascii?Q?iVHeeiwUFHeEfwfaPebO2XTkubttnb1Hxt8XzXTHlAFjs0BUy2Z181NpMq2z?=
- =?us-ascii?Q?wQud2YpAJtEbll2kLbT1Lq6JLnxGnLnM15cY3onYe68uIgGMMyB1kX01VW88?=
- =?us-ascii?Q?t0ZFWPpVZLOGf7m7TuNZjTwD6V6pI/VMMFJoHDM7+JAwwdfWl6Eh3CJpJpyw?=
- =?us-ascii?Q?DUQaCOHQ1vttujtNM+57SoHOwcEUllRQ9LVsPyar?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0549eb7-251c-4203-0548-08ddd9b28331
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 15:11:28.6387
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fe2d0ef-fdb8-4856-1f1f-08ddd9b2b501
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2025 15:12:52.0561
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wihle2CBsHiW/9EV6xV09lp9u6LTCm/VO+N80iPytC5c9lHttpmvC09I6G9BzpZP1/7H7xcXGpotoPcXPhGogA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10728
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tzKkm5Kfe5dDTHlMHiVJnwJx53n5G+jDRNq7xIsiYS/T6xt4HhJtFvRBiuPUaYcPMgIADU65TFUDwZIYCHXMS2H/V56ORlMDuDMRxzLFRWk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6965
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 12, 2025 at 05:46:24PM +0800, Wei Fang wrote:
-> The NETC Timer is capable of generating a PPS interrupt to the host. To
-> support this feature, a 64-bit alarm time (which is a integral second
-> of PHC in the future) is set to TMR_ALARM, and the period is set to
-> TMR_FIPER. The alarm time is compared to the current time on each update,
-> then the alarm trigger is used as an indication to the TMR_FIPER starts
-> down counting. After the period has passed, the PPS event is generated.
->
-> According to the NETC block guide, the Timer has three FIPERs, any of
-> which can be used to generate the PPS events, but in the current
-> implementation, we only need one of them to implement the PPS feature,
-> so FIPER 0 is used as the default PPS generator. Also, the Timer has
-> 2 ALARMs, currently, ALARM 0 is used as the default time comparator.
->
-> However, if there is a time drift when PPS is enabled, the PPS event will
-> not be generated at an integral second of PHC. The suggested steps from
-> IP team if time drift happens:
-
-according to patch, "drift" means timer adjust period?
-netc_timer_adjust_period()
-
-generally, netc_timer_adjust_period() happen 4 times every second, does
-disable/re-enable impact pps accurate?
-
-Frank
->
-> 1. Disable FIPER before adjusting the hardware time
-> 2. Rearm ALARM after the time adjustment to make the next PPS event be
-> generated at an integral second of PHC.
-> 3. Re-enable FIPER.
->
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
->
-> ---
-> v2 changes:
-> 1. Refine the subject and the commit message
-> 2. Add a comment to netc_timer_enable_pps()
-> 3. Remove the "nxp,pps-channel" logic from the driver
-> v3 changes:
-> 1. Use "2 * NSEC_PER_SEC" to instead of "2000000000U"
-> 2. Improve the commit message
-> 3. Add alarm related logic and the irq handler
-> 4. Add tmr_emask to struct netc_timer to save the irq masks instead of
->    reading TMR_EMASK register
-> 5. Remove pps_channel from struct netc_timer and remove
->    NETC_TMR_DEFAULT_PPS_CHANNEL
-> ---
->  drivers/ptp/ptp_netc.c | 260 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 257 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/ptp/ptp_netc.c b/drivers/ptp/ptp_netc.c
-> index cbe2a64d1ced..9026a967a5fe 100644
-> --- a/drivers/ptp/ptp_netc.c
-> +++ b/drivers/ptp/ptp_netc.c
-> @@ -20,7 +20,14 @@
->  #define  TMR_CTRL_TE			BIT(2)
->  #define  TMR_COMP_MODE			BIT(15)
->  #define  TMR_CTRL_TCLK_PERIOD		GENMASK(25, 16)
-> +#define  TMR_CTRL_FS			BIT(28)
->
-> +#define NETC_TMR_TEVENT			0x0084
-> +#define  TMR_TEVNET_PPEN(i)		BIT(7 - (i))
-> +#define  TMR_TEVENT_PPEN_ALL		GENMASK(7, 5)
-> +#define  TMR_TEVENT_ALMEN(i)		BIT(16 + (i))
-> +
-> +#define NETC_TMR_TEMASK			0x0088
->  #define NETC_TMR_CNT_L			0x0098
->  #define NETC_TMR_CNT_H			0x009c
->  #define NETC_TMR_ADD			0x00a0
-> @@ -28,9 +35,19 @@
->  #define NETC_TMR_OFF_L			0x00b0
->  #define NETC_TMR_OFF_H			0x00b4
->
-> +/* i = 0, 1, i indicates the index of TMR_ALARM */
-> +#define NETC_TMR_ALARM_L(i)		(0x00b8 + (i) * 8)
-> +#define NETC_TMR_ALARM_H(i)		(0x00bc + (i) * 8)
-> +
-> +/* i = 0, 1, 2. i indicates the index of TMR_FIPER. */
-> +#define NETC_TMR_FIPER(i)		(0x00d0 + (i) * 4)
-> +
->  #define NETC_TMR_FIPER_CTRL		0x00dc
->  #define  FIPER_CTRL_DIS(i)		(BIT(7) << (i) * 8)
->  #define  FIPER_CTRL_PG(i)		(BIT(6) << (i) * 8)
-> +#define  FIPER_CTRL_FS_ALARM(i)		(BIT(5) << (i) * 8)
-> +#define  FIPER_CTRL_PW(i)		(GENMASK(4, 0) << (i) * 8)
-> +#define  FIPER_CTRL_SET_PW(i, v)	(((v) & GENMASK(4, 0)) << 8 * (i))
->
->  #define NETC_TMR_CUR_TIME_L		0x00f0
->  #define NETC_TMR_CUR_TIME_H		0x00f4
-> @@ -39,6 +56,9 @@
->
->  #define NETC_TMR_FIPER_NUM		3
->  #define NETC_TMR_DEFAULT_PRSC		2
-> +#define NETC_TMR_DEFAULT_ALARM		GENMASK_ULL(63, 0)
-> +#define NETC_TMR_DEFAULT_FIPER		GENMASK(31, 0)
-> +#define NETC_TMR_FIPER_MAX_PW		GENMASK(4, 0)
->
->  /* 1588 timer reference clock source select */
->  #define NETC_TMR_CCM_TIMER1		0 /* enet_timer1_clk_root, from CCM */
-> @@ -60,6 +80,10 @@ struct netc_timer {
->  	u32 oclk_prsc;
->  	/* High 32-bit is integer part, low 32-bit is fractional part */
->  	u64 period;
-> +
-> +	int irq;
-> +	u32 tmr_emask;
-> +	bool pps_enabled;
->  };
->
->  #define netc_timer_rd(p, o)		netc_read((p)->base + (o))
-> @@ -124,6 +148,155 @@ static u64 netc_timer_cur_time_read(struct netc_timer *priv)
->  	return ns;
->  }
->
-> +static void netc_timer_alarm_write(struct netc_timer *priv,
-> +				   u64 alarm, int index)
-> +{
-> +	u32 alarm_h = upper_32_bits(alarm);
-> +	u32 alarm_l = lower_32_bits(alarm);
-> +
-> +	netc_timer_wr(priv, NETC_TMR_ALARM_L(index), alarm_l);
-> +	netc_timer_wr(priv, NETC_TMR_ALARM_H(index), alarm_h);
-> +}
-> +
-> +static u32 netc_timer_get_integral_period(struct netc_timer *priv)
-> +{
-> +	u32 tmr_ctrl, integral_period;
-> +
-> +	tmr_ctrl = netc_timer_rd(priv, NETC_TMR_CTRL);
-> +	integral_period = FIELD_GET(TMR_CTRL_TCLK_PERIOD, tmr_ctrl);
-> +
-> +	return integral_period;
-> +}
-> +
-> +static u32 netc_timer_calculate_fiper_pw(struct netc_timer *priv,
-> +					 u32 fiper)
-> +{
-> +	u64 divisor, pulse_width;
-> +
-> +	/* Set the FIPER pulse width to half FIPER interval by default.
-> +	 * pulse_width = (fiper / 2) / TMR_GCLK_period,
-> +	 * TMR_GCLK_period = NSEC_PER_SEC / TMR_GCLK_freq,
-> +	 * TMR_GCLK_freq = (clk_freq / oclk_prsc) Hz,
-> +	 * so pulse_width = fiper * clk_freq / (2 * NSEC_PER_SEC * oclk_prsc).
-> +	 */
-> +	divisor = mul_u32_u32(2 * NSEC_PER_SEC, priv->oclk_prsc);
-> +	pulse_width = div64_u64(mul_u32_u32(fiper, priv->clk_freq), divisor);
-> +
-> +	/* The FIPER_PW field only has 5 bits, need to update oclk_prsc */
-> +	if (pulse_width > NETC_TMR_FIPER_MAX_PW)
-> +		pulse_width = NETC_TMR_FIPER_MAX_PW;
-> +
-> +	return pulse_width;
-> +}
-> +
-> +static void netc_timer_set_pps_alarm(struct netc_timer *priv, int channel,
-> +				     u32 integral_period)
-> +{
-> +	u64 alarm;
-> +
-> +	/* Get the alarm value */
-> +	alarm = netc_timer_cur_time_read(priv) +  NSEC_PER_MSEC;
-> +	alarm = roundup_u64(alarm, NSEC_PER_SEC);
-> +	alarm = roundup_u64(alarm, integral_period);
-> +
-> +	netc_timer_alarm_write(priv, alarm, 0);
-> +}
-> +
-> +/* Note that users should not use this API to output PPS signal on
-> + * external pins, because PTP_CLK_REQ_PPS trigger internal PPS event
-> + * for input into kernel PPS subsystem. See:
-> + * https://lore.kernel.org/r/20201117213826.18235-1-a.fatoum@pengutronix.de
-> + */
-> +static int netc_timer_enable_pps(struct netc_timer *priv,
-> +				 struct ptp_clock_request *rq, int on)
-> +{
-> +	u32 fiper, fiper_ctrl;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +
-> +	fiper_ctrl = netc_timer_rd(priv, NETC_TMR_FIPER_CTRL);
-> +
-> +	if (on) {
-> +		u32 integral_period, fiper_pw;
-> +
-> +		if (priv->pps_enabled)
-> +			goto unlock_spinlock;
-> +
-> +		integral_period = netc_timer_get_integral_period(priv);
-> +		fiper = NSEC_PER_SEC - integral_period;
-> +		fiper_pw = netc_timer_calculate_fiper_pw(priv, fiper);
-> +		fiper_ctrl &= ~(FIPER_CTRL_DIS(0) | FIPER_CTRL_PW(0) |
-> +				FIPER_CTRL_FS_ALARM(0));
-> +		fiper_ctrl |= FIPER_CTRL_SET_PW(0, fiper_pw);
-> +		priv->tmr_emask |= TMR_TEVNET_PPEN(0) | TMR_TEVENT_ALMEN(0);
-> +		priv->pps_enabled = true;
-> +		netc_timer_set_pps_alarm(priv, 0, integral_period);
-> +	} else {
-> +		if (!priv->pps_enabled)
-> +			goto unlock_spinlock;
-> +
-> +		fiper = NETC_TMR_DEFAULT_FIPER;
-> +		priv->tmr_emask &= ~(TMR_TEVNET_PPEN(0) |
-> +				     TMR_TEVENT_ALMEN(0));
-> +		fiper_ctrl |= FIPER_CTRL_DIS(0);
-> +		priv->pps_enabled = false;
-> +		netc_timer_alarm_write(priv, NETC_TMR_DEFAULT_ALARM, 0);
-> +	}
-> +
-> +	netc_timer_wr(priv, NETC_TMR_TEMASK, priv->tmr_emask);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER(0), fiper);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER_CTRL, fiper_ctrl);
-> +
-> +unlock_spinlock:
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static void netc_timer_disable_pps_fiper(struct netc_timer *priv)
-> +{
-> +	u32 fiper_ctrl;
-> +
-> +	if (!priv->pps_enabled)
-> +		return;
-> +
-> +	fiper_ctrl = netc_timer_rd(priv, NETC_TMR_FIPER_CTRL);
-> +	fiper_ctrl |= FIPER_CTRL_DIS(0);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER(0), NETC_TMR_DEFAULT_FIPER);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER_CTRL, fiper_ctrl);
-> +}
-> +
-> +static void netc_timer_enable_pps_fiper(struct netc_timer *priv)
-> +{
-> +	u32 fiper_ctrl, integral_period, fiper;
-> +
-> +	if (!priv->pps_enabled)
-> +		return;
-> +
-> +	integral_period = netc_timer_get_integral_period(priv);
-> +	fiper_ctrl = netc_timer_rd(priv, NETC_TMR_FIPER_CTRL);
-> +	fiper_ctrl &= ~FIPER_CTRL_DIS(0);
-> +	fiper = NSEC_PER_SEC - integral_period;
-> +
-> +	netc_timer_set_pps_alarm(priv, 0, integral_period);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER(0), fiper);
-> +	netc_timer_wr(priv, NETC_TMR_FIPER_CTRL, fiper_ctrl);
-> +}
-> +
-> +static int netc_timer_enable(struct ptp_clock_info *ptp,
-> +			     struct ptp_clock_request *rq, int on)
-> +{
-> +	struct netc_timer *priv = ptp_to_netc_timer(ptp);
-> +
-> +	switch (rq->type) {
-> +	case PTP_CLK_REQ_PPS:
-> +		return netc_timer_enable_pps(priv, rq, on);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
->  static void netc_timer_adjust_period(struct netc_timer *priv, u64 period)
->  {
->  	u32 fractional_period = lower_32_bits(period);
-> @@ -136,8 +309,11 @@ static void netc_timer_adjust_period(struct netc_timer *priv, u64 period)
->  	old_tmr_ctrl = netc_timer_rd(priv, NETC_TMR_CTRL);
->  	tmr_ctrl = u32_replace_bits(old_tmr_ctrl, integral_period,
->  				    TMR_CTRL_TCLK_PERIOD);
-> -	if (tmr_ctrl != old_tmr_ctrl)
-> +	if (tmr_ctrl != old_tmr_ctrl) {
-> +		netc_timer_disable_pps_fiper(priv);
->  		netc_timer_wr(priv, NETC_TMR_CTRL, tmr_ctrl);
-> +		netc_timer_enable_pps_fiper(priv);
-> +	}
->
->  	netc_timer_wr(priv, NETC_TMR_ADD, fractional_period);
->
-> @@ -163,6 +339,8 @@ static int netc_timer_adjtime(struct ptp_clock_info *ptp, s64 delta)
->
->  	spin_lock_irqsave(&priv->lock, flags);
->
-> +	netc_timer_disable_pps_fiper(priv);
-> +
->  	/* Adjusting TMROFF instead of TMR_CNT is that the timer
->  	 * counter keeps increasing during reading and writing
->  	 * TMR_CNT, which will cause latency.
-> @@ -171,6 +349,8 @@ static int netc_timer_adjtime(struct ptp_clock_info *ptp, s64 delta)
->  	tmr_off += delta;
->  	netc_timer_offset_write(priv, tmr_off);
->
-> +	netc_timer_enable_pps_fiper(priv);
-> +
->  	spin_unlock_irqrestore(&priv->lock, flags);
->
->  	return 0;
-> @@ -205,8 +385,12 @@ static int netc_timer_settime64(struct ptp_clock_info *ptp,
->  	unsigned long flags;
->
->  	spin_lock_irqsave(&priv->lock, flags);
-> +
-> +	netc_timer_disable_pps_fiper(priv);
->  	netc_timer_offset_write(priv, 0);
->  	netc_timer_cnt_write(priv, ns);
-> +	netc_timer_enable_pps_fiper(priv);
-> +
->  	spin_unlock_irqrestore(&priv->lock, flags);
->
->  	return 0;
-> @@ -232,10 +416,13 @@ static const struct ptp_clock_info netc_timer_ptp_caps = {
->  	.name		= "NETC Timer PTP clock",
->  	.max_adj	= 500000000,
->  	.n_pins		= 0,
-> +	.n_alarm	= 2,
-> +	.pps		= 1,
->  	.adjfine	= netc_timer_adjfine,
->  	.adjtime	= netc_timer_adjtime,
->  	.gettimex64	= netc_timer_gettimex64,
->  	.settime64	= netc_timer_settime64,
-> +	.enable		= netc_timer_enable,
->  };
->
->  static void netc_timer_init(struct netc_timer *priv)
-> @@ -252,7 +439,7 @@ static void netc_timer_init(struct netc_timer *priv)
->  	 * domain are not accessible.
->  	 */
->  	tmr_ctrl = FIELD_PREP(TMR_CTRL_CK_SEL, priv->clk_select) |
-> -		   TMR_CTRL_TE;
-> +		   TMR_CTRL_TE | TMR_CTRL_FS;
->  	netc_timer_wr(priv, NETC_TMR_CTRL, tmr_ctrl);
->  	netc_timer_wr(priv, NETC_TMR_PRSC, priv->oclk_prsc);
->
-> @@ -372,6 +559,66 @@ static int netc_timer_parse_dt(struct netc_timer *priv)
->  	return netc_timer_get_reference_clk_source(priv);
->  }
->
-> +static irqreturn_t netc_timer_isr(int irq, void *data)
-> +{
-> +	struct netc_timer *priv = data;
-> +	struct ptp_clock_event event;
-> +	u32 tmr_event;
-> +
-> +	spin_lock(&priv->lock);
-> +
-> +	tmr_event = netc_timer_rd(priv, NETC_TMR_TEVENT);
-> +	tmr_event &= priv->tmr_emask;
-> +	/* Clear interrupts status */
-> +	netc_timer_wr(priv, NETC_TMR_TEVENT, tmr_event);
-> +
-> +	if (tmr_event & TMR_TEVENT_ALMEN(0))
-> +		netc_timer_alarm_write(priv, NETC_TMR_DEFAULT_ALARM, 0);
-> +
-> +	if (tmr_event & TMR_TEVENT_PPEN_ALL) {
-> +		event.type = PTP_CLOCK_PPS;
-> +		ptp_clock_event(priv->clock, &event);
-> +	}
-> +
-> +	spin_unlock(&priv->lock);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int netc_timer_init_msix_irq(struct netc_timer *priv)
-> +{
-> +	struct pci_dev *pdev = priv->pdev;
-> +	char irq_name[64];
-> +	int err, n;
-> +
-> +	n = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
-> +	if (n != 1) {
-> +		err = (n < 0) ? n : -EPERM;
-> +		dev_err(&pdev->dev, "pci_alloc_irq_vectors() failed\n");
-> +		return err;
-> +	}
-> +
-> +	priv->irq = pci_irq_vector(pdev, 0);
-> +	snprintf(irq_name, sizeof(irq_name), "ptp-netc %s", pci_name(pdev));
-> +	err = request_irq(priv->irq, netc_timer_isr, 0, irq_name, priv);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "request_irq() failed\n");
-> +		pci_free_irq_vectors(pdev);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void netc_timer_free_msix_irq(struct netc_timer *priv)
-> +{
-> +	struct pci_dev *pdev = priv->pdev;
-> +
-> +	disable_irq(priv->irq);
-> +	free_irq(priv->irq, priv);
-> +	pci_free_irq_vectors(pdev);
-> +}
-> +
->  static int netc_timer_probe(struct pci_dev *pdev,
->  			    const struct pci_device_id *id)
->  {
-> @@ -395,17 +642,23 @@ static int netc_timer_probe(struct pci_dev *pdev,
->  	priv->oclk_prsc = NETC_TMR_DEFAULT_PRSC;
->  	spin_lock_init(&priv->lock);
->
-> +	err = netc_timer_init_msix_irq(priv);
-> +	if (err)
-> +		goto timer_pci_remove;
-> +
->  	netc_timer_init(priv);
->  	priv->clock = ptp_clock_register(&priv->caps, dev);
->  	if (IS_ERR(priv->clock)) {
->  		err = PTR_ERR(priv->clock);
-> -		goto timer_pci_remove;
-> +		goto free_msix_irq;
->  	}
->
->  	priv->phc_index = ptp_clock_index(priv->clock);
->
->  	return 0;
->
-> +free_msix_irq:
-> +	netc_timer_free_msix_irq(priv);
->  timer_pci_remove:
->  	netc_timer_pci_remove(pdev);
->
-> @@ -417,6 +670,7 @@ static void netc_timer_remove(struct pci_dev *pdev)
->  	struct netc_timer *priv = pci_get_drvdata(pdev);
->
->  	ptp_clock_unregister(priv->clock);
-> +	netc_timer_free_msix_irq(priv);
->  	netc_timer_pci_remove(pdev);
->  }
->
-> --
-> 2.34.1
->
+T24gVHVlLCAyMDI1LTA4LTEyIGF0IDA5OjA0ICswMTAwLCBrYXNAa2VybmVsLm9yZyB3cm90ZToN
+Cj4gPiA+IEUuZy4gZm9yIHRoaW5ncyBsaWtlIFREQ1MgcGFnZXMgYW5kIHRvIHNvbWUgZXh0ZW50
+IG5vbi1sZWFmIFMtRVBUIHBhZ2VzLA0KPiA+ID4gb24tZGVtYW5kDQo+ID4gPiBQQU1UIG1hbmFn
+ZW1lbnQgc2VlbXMgcmVhc29uYWJsZS7CoCBCdXQgZm9yIFBBTVRzIHRoYXQgYXJlIHVzZWQgdG8g
+dHJhY2sNCj4gPiA+IGd1ZXN0LWFzc2lnbmVkDQo+ID4gPiBtZW1vcnksIHdoaWNoIGlzIHRoZSB2
+YWFhc3QgbWFqb3JpdHkgb2YgUEFNVCBtZW1vcnksIHdoeSBub3QgaG9vaw0KPiA+ID4gZ3Vlc3Rf
+bWVtZmQ/DQo+ID4gDQo+ID4gVGhpcyBzZWVtcyBmaW5lIGZvciA0SyBwYWdlIGJhY2tpbmcuIEJ1
+dCB3aGVuIFREWCBWTXMgaGF2ZSBodWdlIHBhZ2UNCj4gPiBiYWNraW5nLCB0aGUgdmFzdCBtYWpv
+cml0eSBvZiBwcml2YXRlIG1lbW9yeSBtZW1vcnkgd291bGRuJ3QgbmVlZCBQQU1UDQo+ID4gYWxs
+b2NhdGlvbiBmb3IgNEsgZ3JhbnVsYXJpdHkuDQo+ID4gDQo+ID4gSUlVQyBndWVzdF9tZW1mZCBh
+bGxvY2F0aW9uIGhhcHBlbmluZyBhdCAyTSBncmFudWxhcml0eSBkb2Vzbid0DQo+ID4gbmVjZXNz
+YXJpbHkgdHJhbnNsYXRlIHRvIDJNIG1hcHBpbmcgaW4gZ3Vlc3QgRVBUIGVudHJpZXMuIElmIHRo
+ZSBEUEFNVA0KPiA+IHN1cHBvcnQgaXMgdG8gYmUgcHJvcGVybHkgdXRpbGl6ZWQgZm9yIGh1Z2Ug
+cGFnZSBiYWNraW5ncywgdGhlcmUgaXMgYQ0KPiA+IHZhbHVlIGluIG5vdCBhdHRhY2hpbmcgUEFN
+VCBhbGxvY2F0aW9uIHdpdGggZ3Vlc3RfbWVtZmQgYWxsb2NhdGlvbi4NCj4gDQo+IFJpZ2h0Lg0K
+PiANCj4gSXQgYWxzbyByZXF1aXJlcyBzcGVjaWFsIGhhbmRsaW5nIGluIG1hbnkgcGxhY2VzIGlu
+IGNvcmUtbW0uIExpa2UsIHdoYXQNCj4gaGFwcGVucyBpZiBUSFAgaW4gZ3Vlc3QgbWVtZmQgZ290
+IHNwbGl0LiBXaG8gd291bGQgYWxsb2NhdGUgUEFNVCBmb3IgaXQ/DQo+IE1pZ3JhdGlvbiB3aWxs
+IGJlIG1vcmUgY29tcGxpY2F0ZWQgdG9vICh3aGVuIHdlIGdldCB0aGVyZSkuDQoNCkkgYWN0dWFs
+bHkgd2VudCBkb3duIHRoaXMgcGF0aCB0b28sIGJ1dCB0aGUgcHJvYmxlbSBJIGhpdCB3YXMgdGhh
+dCBURFggbW9kdWxlDQp3YW50cyB0aGUgUEFNVCBwYWdlIHNpemUgdG8gbWF0Y2ggdGhlIFMtRVBU
+IHBhZ2Ugc2l6ZS4gQW5kIHRoZSBTLUVQVCBzaXplIHdpbGwNCmRlcGVuZCBvbiBydW50aW1lIGJl
+aGF2aW9yIG9mIHRoZSBndWVzdC4gSSdtIG5vdCBzdXJlIHdoeSBURFggbW9kdWxlIHJlcXVpcmVz
+DQp0aGlzIHRob3VnaC4gS2lyaWxsLCBJJ2QgYmUgY3VyaW91cyB0byB1bmRlcnN0YW5kIHRoZSBj
+b25zdHJhaW50IG1vcmUgaWYgeW91DQpyZWNhbGwuDQoNCkJ1dCBpbiBhbnkgY2FzZSwgaXQgc2Vl
+bXMgdGhlcmUgYXJlIG11bHRpcGxlIHJlYXNvbnMuDQo=
 
