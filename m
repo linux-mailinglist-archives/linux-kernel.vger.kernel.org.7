@@ -1,70 +1,61 @@
-Return-Path: <linux-kernel+bounces-764221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414E9B22005
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6CDB2201D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 297794E4B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8061A21280
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078242DF3F8;
-	Tue, 12 Aug 2025 07:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAA2311C18;
+	Tue, 12 Aug 2025 07:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n38cBToB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="belUHZ5w"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227BB2C3265;
-	Tue, 12 Aug 2025 07:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2D2E0410;
+	Tue, 12 Aug 2025 07:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985427; cv=none; b=WQ3uNOqWM1jEegOU+uqA20pMrf9+tFa0J8XrsOuPYJ9gjer+9mBCjEed2XtvEk2MaJ5tbR2SWe4fMTnD3SXpEU/DmShS1PiH//P9Mmtkrmne+kOaLbU2Oi/wmwv8fCByueSDVX9o0AJb9Drxp7VIf75FgsOrroChCrxFFU8dJfY=
+	t=1754985553; cv=none; b=X5KuAN5w4cMAwekuQd+MxhcwE0A321uU/L6skRB1juNq5VAdTp+5ovhxAEMaxWVVJ/Xss0ZCzb4eTzmjnwW05WFhMaUzvpxFVWvAP41Kf/XsMOAuRx3crOiut0Y0ZKqx9hyM8DuPEwkQ+Zw2sZmFMgoTSQNYf8i/jEFFXuwVXCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985427; c=relaxed/simple;
-	bh=uND59x9ZQ5rkqPTf5MVpzM2uV3BtQWtHn7hG4Nn7W54=;
+	s=arc-20240116; t=1754985553; c=relaxed/simple;
+	bh=S1PwdsId4eDIha95kORFrOwN42BU9NJ/foahGhV8L7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZStd5s7tQyCOxeDKfKOIpPVPpdlCNYzr2OLbwQrSYPfZSaIq7eHLtvxzp+6g81QmnFvayKk16jsG/JWnTvzMhiZW0BZ5nioA7CFAp5DSS6T2aLUoL3UI/mFZI17HQ/AgXCFnEGFQnNIOy3dpx8lS3m4ddVF/c1CMRDWoeek4FA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n38cBToB; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qx5rP3bTKHOjkGyaVMBaTo8Zr9YZS1LuLXk27LRXM4mfN4uO2ZyKPePczmOzE2DyOXEUpbkpdXY2aQTXaj1KOpme97mfUwJgkY5QxfLMh9YlfTCXHQhJjqzwS/i7gXTHRIAX5mqpPKQ0bvgieR/AlLUTYUsPI+ijvVKlniX3kl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=belUHZ5w; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xFzUS7aI0hvY4j9wtcgEliFgmjU3wq4f3XK0sCbKOPY=; b=n38cBToBaEhHuXspah2SPNjIMU
-	EEugFiYSXEKxezGCVOK+gY9KGRtUQeIuB5RecgDax/hlt9Zw0apZ0dQoVk2+t/P9R/XiX97vi0J7x
-	NPeawwhdnvVGNj+TxMa+gFz6a7ceCUQj+oMhGH4PjZd6Q4/qtQLt2zosZpV1lv+Io4u/NSyeJm6AD
-	LAHds1atVaPw1SRccOr3Ja7YseBtRA0JGORrBuqNOJK0rJAz50bbFqGkmC82OIYWLmMVjnTlpWyD4
-	E1rndUbqd+CfDUEy9tRxqmUp81imHFkKcPoWfEXcTGcWsjwB/KHi6oSreyqAQz0tMtSGlgEbtxw1E
-	tiJKDFrg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uljsO-0000000E7eN-2fF3;
-	Tue, 12 Aug 2025 07:56:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 56FD53002D4; Tue, 12 Aug 2025 09:56:56 +0200 (CEST)
-Date: Tue, 12 Aug 2025 09:56:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-	Austin Kim <austindh.kim@gmail.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [PATCH v2] perf: Avoid undefined behavior from stopping/starting
- inactive events
-Message-ID: <20250812075656.GE4067720@noisy.programming.kicks-ass.net>
-References: <20250812012722.127646-1-ysk@kzalloc.com>
+	bh=Vd1f/4Sp7X7PECw8VCBF/HCYX3GWhKDPDeSyyBxNL0o=; b=belUHZ5wnvzwGG+QVZgWBECz07
+	H+yQPI+U+xjeTV4rMC6T/tolOAGXgux1DhEgBcB8qF2ZPrCrWxRM+nX4Ink/cdL5uCFnG+u9ogJU5
+	n6GwC6PT4UmbFBkf66HmSAQT4tXZUPDZ4jKw+FbBZCG4B1Uf/zlHySxvq3UogpBeRJ/bCKaojpkrt
+	ghwOMEGWoPj+iymXYuf+BHktP8CVDfV5UykJJACstqvhec+DAeuSoxrZTPP5EeoKvgr6O+m8s3g4y
+	oQvuFUY52hwL5uQ1r/eehnN5SdMPalKRqjegYNxaccEx2rA9QRh20c2wAoIEV6GSVSnNzS6J9jLeN
+	en+D4YxQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uljuY-0000000AAuT-1FIF;
+	Tue, 12 Aug 2025 07:59:10 +0000
+Date: Tue, 12 Aug 2025 00:59:10 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, jaegeuk@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: introduce flush_policy sysfs entry
+Message-ID: <aJr0Tk36ZNiCg8mQ@infradead.org>
+References: <20250807034838.3829794-1-chao@kernel.org>
+ <aJnLXmepVBD4V2QH@infradead.org>
+ <c5195d5c-5f71-4057-9522-228b48e4cd90@kernel.org>
+ <aJruCTOjcj1nEk-S@infradead.org>
+ <dec5b832-53f1-4274-902c-418f01df9458@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,57 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812012722.127646-1-ysk@kzalloc.com>
+In-Reply-To: <dec5b832-53f1-4274-902c-418f01df9458@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Aug 12, 2025 at 01:27:22AM +0000, Yunseong Kim wrote:
-> Calling pmu->start()/stop() on events in PERF_EVENT_STATE_OFF can leave
-> event->hw.idx at -1, which may lead to UBSAN shift-out-of-bounds reports
-> when the PMU code later shifts by a negative exponent.
-
-Yeah, but how do we get there? I suppose there is a race somewhere?
-Please describe.
-
-> Move the state check into perf_event_throttle()/perf_event_unthrottle() so
-> that inactive events are skipped entirely. This ensures only active events
-> with a valid hw.idx are processed, preventing undefined behavior and
-> silencing UBSAN warnings.
-> The problem can be reproduced with the syzkaller reproducer:
-> Link: https://lore.kernel.org/lkml/714b7ba2-693e-42e4-bce4-feef2a5e7613@kzalloc.com/
+On Tue, Aug 12, 2025 at 03:53:54PM +0800, Chao Yu wrote:
+> > What did you use before?  At least for older qemu the default was
+> > buffered I/O, which can lead to very expensive fua or flush calls.
 > 
-> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
-> ---
->  kernel/events/core.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 8060c2857bb2..c9322029a8ae 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2665,6 +2665,9 @@ static void perf_log_itrace_start(struct perf_event *event);
->  
->  static void perf_event_unthrottle(struct perf_event *event, bool start)
->  {
-> +	if (event->state <= PERF_EVENT_STATE_OFF)
-> +		return;
+> Previously, I didn't use any cache= option, as manual described, it
+> should equal to cache=wrteback.
 
-This seems wrong. We should only {,un}throttle ACTIVE events, no?
+Modern qemu actually split the cache option.  You absolute want
+cache.direct=on.  If you don't do simulated power fail testing by
+killing qemu (or run real workloads for the matter, but who does that
+:)) it might make sense to just ignore the flushes with cache.no-flush=on
+as well, which is what I do for my test VMs on the laptop.
 
->  	event->hw.interrupts = 0;
->  	if (start)
->  		event->pmu->start(event, 0);
-> @@ -2674,6 +2677,9 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
->  
->  static void perf_event_throttle(struct perf_event *event)
->  {
-> +	if (event->state <= PERF_EVENT_STATE_OFF)
-> +		return;
-> +
->  	event->hw.interrupts = MAX_INTERRUPTS;
->  	event->pmu->stop(event, 0);
->  	if (event == event->group_leader)
-> -- 
-> 2.50.0
-> 
 
