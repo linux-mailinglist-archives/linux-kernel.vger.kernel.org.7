@@ -1,146 +1,176 @@
-Return-Path: <linux-kernel+bounces-764425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89236B222DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:22:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F4CB222C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD1A2A3B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:19:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13A494E1AE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6962E974A;
-	Tue, 12 Aug 2025 09:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF952EA172;
+	Tue, 12 Aug 2025 09:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="AOHW2uep"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="eedG8Tfk"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013065.outbound.protection.outlook.com [52.101.127.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3D2E8DFA;
-	Tue, 12 Aug 2025 09:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E269E2EA158;
+	Tue, 12 Aug 2025 09:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990295; cv=pass; b=m2ooUEaUBebLvOgAFlXvOntv8C/nWb5sLzogz9ON+bDV4AUDCGh60saUS7t1u1T5psSwARvEZLlpe53iDN9hItYE166hsXaxyJuVUROwtf0QYKoUQm7R+FYI19OKC3kvxRDOfMYNqS2vCD5IlQAgvut+CHLZlCKo6roNwtRij20=
+	t=1754990299; cv=fail; b=Z2zoDTHGnNArhV7F2JqePg8cynkWD4+3GDBSt4br/TTNOgcH7B69ibVh2GSGng8IHt8h0uQJUALJL4rj0H/jn4UATCnSKty/UAvyWc1bas6YaAGw3x6COegFKc95jTM2DICvhAeoWY4SytdsTYbod3D4Ebn1U8yTEk03b5iO7eg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990295; c=relaxed/simple;
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IWG66FAWxZPxUgv8knZ91bJJoafCpfHP8tcBkC0WmgxjgRpuIyYD9+Ks6+SUyRaKs+lXdTcIv/n3W9K8N9bQwcyEdqQH/lzrZXp9A4fnPu9GebV3mI3lieLTRvmpS7HCRloN/cfA+LFk8Hd/0EHvh8gijELTJ0aHfPp4X6+9reU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=AOHW2uep; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1754990274; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VGoHwuknbXdy2ikBZ1vGU0AWjSXzzg0mbeI+XAGjv3lI6bjWhYJe+W6PZpzvf8HkjK3FEkG0hbzKbj9V3ywie1c1s9+mF/rWWDDltZbfjZJIUwCWE+bS8HX80iAfnyPcTBj6Xx104uWUbmV+Oa3ioxqF0K7pS3vibr9TIfMQdq8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754990274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=; 
-	b=iROwg3CKcXXrofcmrd3Pz9aX8GMpSIOt+9JzonuH/ivzcEkUiZeTrHVWLhHOhh6ptgtWQc9DD+5D6dnEQCIKh32AZIYC4RI/zLvfmvFRFXEBgR1Pkd2lpOcBsGt1pX+Vn/TsJAiPd8JgpTzVH2WUmMAAo/FR/21H+8uYHOofBkI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990274;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
-	b=AOHW2uepCwbOHaGmfXrIOS7xN5xZ7vXbAwjyRc/gFEbvSb0cBIkHga3zU+BlcgKz
-	3BvH+dgbFSBKdx7pivNHiOOdj2vL57zp2EjeRssbmNuOWeT14zFq6PzBkLGjmT27dsH
-	N2vailR+WOvTebM2bc0/ovf0YYJF4pKgh5PKfr2aVhP9/p31pZhjtpJw7utukub7JaO
-	owUadTOQY0NQwwKH/F8eQM3sujQxBj1euXhd7A+7RkKjYuPbx0xiYfunfRa9qkkf3Ap
-	xMKkSAgQ6bbvHvxwCrIK5dMfxFeP7rFq8PZYmXiIPDEx6mtPV5UWSr90dbaV97z+rZK
-	e1i/ZXUZ9A==
-Received: by mx.zohomail.com with SMTPS id 1754990271194111.10728242341895;
-	Tue, 12 Aug 2025 02:17:51 -0700 (PDT)
-Message-ID: <6d21521067409c483a8d7af39e43a6d579c98dc4.camel@icenowy.me>
-Subject: Re: [PATCH 4/4 FIXED] clk: thead: th1520-ap: fix parent of padctrl0
- clock
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 12 Aug 2025 17:17:45 +0800
-In-Reply-To: <20250812060433.1979587-1-uwu@icenowy.me>
-References: <20250812054258.1968351-5-uwu@icenowy.me>
-	 <20250812060433.1979587-1-uwu@icenowy.me>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	s=arc-20240116; t=1754990299; c=relaxed/simple;
+	bh=AS0Hs3JjYeXduUzE4GoVUGFTHXnCEAwLs9cXxH0I4AM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UiTKIbvDChP3GomhmezJ35QwnW5pPNuFKYagmqmaebUbq4Cms4ue1XhsYXF77kyxBIu7N4YVCkeU/AmkZVVZTfDYY5cxkH0y4qBefNXCE2E6cqoDSq6XLgoAZvSYDjrAi/Tns0Ho+ZIlJs2+Ih6ebANGrC0glF2uXQ7bGWIHpXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=eedG8Tfk; arc=fail smtp.client-ip=52.101.127.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Nawmi+sB5RdbvK9KgcH8yfBfZoTwQMqltprsTTEwbQAx7MHZjOKvK39yOfqN4Y+MayOJbQ0qMqtigOdKR8n7xbpCjUlkuP8GaTPp8YedJaRRxBAUF0NfzSUKaWfQpJoyNv2jpnpvfKiuvKCRIim8JcJXruVX++fLTbCtvqh7wrysB8bDYE8WmZaBV/peo1bEf5iP6y/sm/h2Cy0VRslh7g9+yy6N77c+pqE/5Tv+JVGUtPQzF3aIDdsYlZJDjS6VuCUaDS6AvWH6wOcwmn3/zW2gBzPArK2QUvylOonHbzzStrSZmpPSMtxaORvBsGUBwczPkUphLjTDYKeD2w9YWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S2G42K45HiSF8Y7fTGDTSya+v/R/Z2lDj836W7G3MyA=;
+ b=gHC1pCJ0tse3diDCkNr/VT0dLs72nIh2yCTjim9Joy3ChcQLCtXiNVE4QVBMzl/E0lvqGEdWT6Mpo2TZJ2LJmfVyZ0tHA6aCdVo6zTr6uO9n+Ieqih7J4XGz6FCJV6nMeDnJ24ZgpzhsaTbDFS6okov52QhA2Zju3LOurOWe2uEvTvwCkEZtUbIkgrzt/yGInZkzTWw2vfA1Uq9LU3D5isX7QNcizaFs/20QffEieKqC0O7LcEFVy5aBht2Xo6G3vYiiesfh79tW+d5TCqOA4wf0ZFCyGteVh/rqeDKzM8MU+KHmJ+U9puERa0Qq/LZl5hQt+WS/Nk1KXTAeE6RNTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S2G42K45HiSF8Y7fTGDTSya+v/R/Z2lDj836W7G3MyA=;
+ b=eedG8TfkWgaR9+JYVRI4EcnQr9n/0OOH0ThSIAq8eOkImTbFm4fy0B9PLFBpJfhoaI0qQvlqMfN1WtZEnw+uF8ysvZQj0DNEQpLL9vBDwBSriGnCyieRSBaRsUqAnCtoRKKowp4qcLtMBq5mtKSn/Ta0frk1LweQvrzIXRslnQzkZmlA6nsb8FiDPU/ZmMviE+BD6v7mQsuQiLpZcmxLH9WlIWqR+KP6rX9LfipD+GKHV4AhIbxZOX3/+Uqwsxp6M43KlkH182Mt6ipHQmuHioIYtr/Mf7skz6dOVnjZNmqJ8iMkI2g7V4jKijZg5/FCMycgkaiSQU7StwNOIpwHfA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by PS1PPFB7AB72C83.apcprd06.prod.outlook.com (2603:1096:308::260) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Tue, 12 Aug
+ 2025 09:18:13 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 09:18:13 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] block: fix "prefered"->"preferred"
+Date: Tue, 12 Aug 2025 17:18:03 +0800
+Message-Id: <20250812091803.94751-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0054.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b5::19) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|PS1PPFB7AB72C83:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad2e1845-2ee7-4576-7c31-08ddd98129a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?70DaxJHjiPhMkHH2O9nhVoJarNDCEpHOPXnhUPE1BH8fDW1lbOuXlnxFb6Vs?=
+ =?us-ascii?Q?+1v8z5xXQpxO18nwF5nmPr9rL1Qa5BzAWjpLlzgxJaDhDLgfCsYfLbbd3XGz?=
+ =?us-ascii?Q?Hl/C7djmze2ggemXslxmYY86QzZwz41zt4Q65ZJFgvTDjKGmQ5jcYc46uO1g?=
+ =?us-ascii?Q?yL6GPYQoW5Cjt79A6WN+jxDYVjLqVJhQE/7eZPthZXXMID0zKLcPEEQvmq25?=
+ =?us-ascii?Q?egkPKOAQhUsWggyTUV1tPL03Yk9oVDPb+2z7ki/5tR5sdMAL1uJ+YASO3Xdl?=
+ =?us-ascii?Q?fl9CHauVW5jmNg3evtNPslAT1ai3EBSYqS7ke2k/TZm/raIIr2f5qbW+ef7Z?=
+ =?us-ascii?Q?gXA+x0OOs4koVz+fEAtmYnXhKuqK8o6JIUrJVkaZufAhCbzAM1k77vUB6Efw?=
+ =?us-ascii?Q?0VDk95TRmjkKrnbZUiOkzbo+jX+ms3AYzkNls9BNMXDj1GtSmetrahP1URaU?=
+ =?us-ascii?Q?ohK9A7nkpStWUxhvn3FH5W4Y0TXgWVa+PvZcSQATeRjbzKzlNOgOxx57wrrq?=
+ =?us-ascii?Q?+T1zgeqqw6F8/RvoSlymVZbRgzcuKPh6OEokkpaGHX07QyrfbbM/Dpe8rNRA?=
+ =?us-ascii?Q?p/IePLfdVsPgiDpT02X4AooM5WSyiuJ3S2N3LDQ7XOojFnHQrKjjZxdbnB2v?=
+ =?us-ascii?Q?LP1KIoSgNPStXMAMmwjHjcWoSFiz12TWqzujQ9krRZGBmHgy029VOX5w497S?=
+ =?us-ascii?Q?525YBwRWu9PAZAcAeUUtCRikgK1wj8yMQ5lkGBcv99MUeOA2s195iSCzrSYf?=
+ =?us-ascii?Q?gOJ9cB6eA6xw+Z6+c614BShthEGUF8kS9NGEHoHIOQOJ4UAgg4rCKsEqSG9b?=
+ =?us-ascii?Q?81T8U3GYzzEHvUEZWuaipt0Ity1BtdRXgRqsHcJ1udI5aSMzHbjWch/k8xQO?=
+ =?us-ascii?Q?DfJpQn/FD7F10SAONyG2yGGdntRoqkgFTb82mMSIPD2o9c7W7OM/pCCzJRsR?=
+ =?us-ascii?Q?cBh9YTi44YqmFeUQX+S52H5JH1ltXS1wn/JYBdrCu55Bupnj6xzH8iZcSpge?=
+ =?us-ascii?Q?ekFx4HAyvBMd3D/5ldFb7R/F83jeuuUK7k3h0mPddN/77woZa9YfNVhmdvjX?=
+ =?us-ascii?Q?h5q1JGWy3HP7Zrp2+Wi079Q3dWJJTaxTz1bb6frXdmoBigVg4aWafmWoVvcZ?=
+ =?us-ascii?Q?+4XxQ6WtrzvaQ1l+nYktnSxb6Gpr6oEH9WmbGFvnN3FOwWcPykIBMDTzq9eR?=
+ =?us-ascii?Q?GGKATjNav7LejOL7epbJwIhrftP7Bw/ehmOUE/kCXt5v3aoH2sEwcSs1VsQY?=
+ =?us-ascii?Q?ZFtWSjLLnMU3HtHtngbMlkaQAi+8LNGTR45SnAex0g9fz38JmwgcePSA0FF7?=
+ =?us-ascii?Q?u8+hWtGrXRAiNGMoZuO45bI/Ytt7IL1JQnKscbT5R7zH+HtZeS+YN/VoSUj7?=
+ =?us-ascii?Q?ssIs3wZTTzNrmIAxU9i3Ovoy2/KI+vgQ8lqHmiw4edlFDd+IiJR4HjzHx+aM?=
+ =?us-ascii?Q?OsJmUhXyDz7gcbRsO8TnD4DHEweaRpivnWfPuXwpGoiMzXWWtH8xwA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9B9h7+CgwAx7Ckiu4V/OA4+xxIQtyjmYhnZhhZ6cjs9xqC7O1g9cUSodEiaK?=
+ =?us-ascii?Q?BVReMz3iRvgK3LbrC7zQV8qC1QMj9zXz1Xuo42XFirFwgSyd+0pMtJh6sLII?=
+ =?us-ascii?Q?MIIYUHMNoyl37nRW4w70W2XlCt8RZyJ81dvhgrfhE+iUa3YUZvB3DoT0YNcC?=
+ =?us-ascii?Q?bnE66hUA1+7IEXySKgTaGZev/qrdPZ4PWSs/1dR18W2C2dlzDnpV1dX3lcZH?=
+ =?us-ascii?Q?juUtWlZTapjba1O0dXylW4sGFYm5ZLVXn1u/PatwFPKWwPtkmb+B6cdmMG/z?=
+ =?us-ascii?Q?yhgLhYC2XR6j8Onz7qlmOZIpJL5J3qg9ZfPgRsS/Bjdutrxf+T5QmUz65Snx?=
+ =?us-ascii?Q?qhaEOs4IVM43kC96HAYqCaBtFYc6TAeyVEVOJMwAQPHfeZCtEM98VPWqUawo?=
+ =?us-ascii?Q?rI6BKYc3UDnNLBCmMT4PucUIeB3EcvnxDovxZ4ecpotmWL2Y2BScH4czHzcJ?=
+ =?us-ascii?Q?EtYJ0TLmu9e2hrSssoPYSUb5xYjY7O7a4DdXx/6XUEotey1cJ2XktrFT8hru?=
+ =?us-ascii?Q?Shln0w7cj72DgzSZMNF+pxgHSxrAGUPn8d86BE8Z5Zsc3myiTZyLUnSm+dcL?=
+ =?us-ascii?Q?uu3lCvbe/l3IRPX/xbC/fEbyJg16bCNAZ1dydJ88mn/KujS5SSLutxi5xs0F?=
+ =?us-ascii?Q?spYJ0r6EsyCG1YBWbG9ybrd8c33UIWHLbaJ77c987Slh8EXqB3dlAvXD4rjv?=
+ =?us-ascii?Q?FOlQnFAMfNt+3Z9Cb84lmuXiniAxHTSmNDAAKyz1j3MTcaHYECPerZLx9xeU?=
+ =?us-ascii?Q?g3CzPNOx9l11lXULF6kzoSFnb47u1Zub9ol6gmcndXMa8vBIQvxpnJOsXfIh?=
+ =?us-ascii?Q?otqSH/+VI7xG+fVaF5az65nYdxU22NS6AxJ/NX+DA4uJqMPchPVyMMVO5FWr?=
+ =?us-ascii?Q?GvyzV0BklDNnhWih+tX8fEzVDTA8sc4gpcXN9+bEtxTKg4rYtNMCe+n0O5pE?=
+ =?us-ascii?Q?8dGQRFInfa0XygKtjWjMDWmuG4gmOSnJrgMYZ24EK9zLWOJ/tB7/jlkk0lBN?=
+ =?us-ascii?Q?blGRDl+UPKXII+qZWiBlZb6g7uW8RWAgFe9XOgPVWVl9d5Hv/gkCQgkSzpyz?=
+ =?us-ascii?Q?2kFW4+hh7gSPlp5fDeZqmVNIYIP956bTHGfburfvvUrJA4x+j7jnUt8xIL0N?=
+ =?us-ascii?Q?SALnvD9gZ6guZ3iCixpSInaWwb/bt8z4lQ+1r5yDYMU0MxYAQ5DEntthR8DA?=
+ =?us-ascii?Q?S0CYLoOdnJbHe6TgJ/bzuU9olR8Cs/M2QtwvqMw5IqABvxlNM14RwfFnGIcE?=
+ =?us-ascii?Q?mGp+Qr3Lqh4jHROCnggf+ZBZZnx6Ovf5QtcvddiNLycO4WHjsz2NW6ogcNx6?=
+ =?us-ascii?Q?uInMGtcXVY2K60pJKvOUP/YQvXF1kAo0JXpvJm0F8mmWG9jfjHw9dUPKXncJ?=
+ =?us-ascii?Q?WN1ZSt2fYuApBCxi/AjoRlG9/Foq6kevLdCRiLRmlYSWKBRWcAc87lMRC2B5?=
+ =?us-ascii?Q?/tuhICFVXToA5uYJfPIDLKJdiSNw9V3884egD+bYtwoQ53C2/ycXO7gfKoP2?=
+ =?us-ascii?Q?DSddGjdu05b1JqddVbSyJFzMCbqc7CQwsKOusjqJ4KAf8ilyYMkswaRLFhaI?=
+ =?us-ascii?Q?wkuw3s0QdrODnNXIKK28e8gaz6dYw0FIB1R3N2Xm?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad2e1845-2ee7-4576-7c31-08ddd98129a7
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 09:18:13.2074
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5p7X7jLx8LqE7HPFsuNkwXEgXpKtL4XjLlkdv2KkVIpVyPLcG/1FP4MzAhSSkbQnM76et/4ts3/X2g0e8z3Zdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPFB7AB72C83
 
-=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 14:04 +0800=EF=BC=
-=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
-> The padctrl0 clock seems to be a child of the perisys_apb4_hclk
-> clock,
-> gating the later makes padctrl0 registers stuck.
->=20
-> Fix this relationship.
->=20
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
-> This is the consequence of fixing 3/4, because these two patches are
-> at
-> nearly the same position, and unfortunately get dependent by the
-> algorithm of diff.
->=20
-> Ignore the original 4/4 and look at this too.
->=20
-> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 7 ++++++-
-> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c
-> b/drivers/clk/thead/clk-th1520-ap.c
-> index 75ea1705cc08f..0ecedac50d6cb 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -917,13 +917,18 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK,
-> perisys_apb3_hclk, "perisys-apb3-hclk", p
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(11), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-
-> apb4-hclk", perisys_ahb_hclk_pd,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(12), 0);
-> +
-> +static const struct clk_parent_data perisys_apb4_hclk_pd[] =3D {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .hw =3D &perisys_apb4_hclk.c=
-ommon.hw },
-> +};
-> +
-> =C2=A0static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
-> 0x1c8, BIT(5), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
-> 0x1e0, BIT(13), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
-> emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
-> =C2=A0static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
-> 0x204, BIT(26), 0);
-> =C2=A0static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
-> perisys_apb_pclk_pd, 0x204, BIT(24), 0);
-> =C2=A0static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
-> perisys_apb_pclk_pd, 0x204, BIT(23), 0);
-> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
-> perisys_apb_pclk_pd, 0x204, BIT(22), 0);
-> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
-> perisys_apb4_hclk_pd, 0x204, BIT(22), 0);
+Trivial fix to spelling mistake in comment text.
 
-Oops looks like this does not work and orphans the clock...
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+---
+ block/blk-mq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> =C2=A0static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
-> axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
-> =C2=A0static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
-> peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
-> =C2=A0static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
-> 0x204, BIT(19), 0);
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 9692fa4c3ef2..adb26eab67d8 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2361,7 +2361,7 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
+ EXPORT_SYMBOL(blk_mq_run_hw_queue);
+ 
+ /*
+- * Return prefered queue to dispatch from (if any) for non-mq aware IO
++ * Return preferred queue to dispatch from (if any) for non-mq aware IO
+  * scheduler.
+  */
+ static struct blk_mq_hw_ctx *blk_mq_get_sq_hctx(struct request_queue *q)
+-- 
+2.34.1
 
 
