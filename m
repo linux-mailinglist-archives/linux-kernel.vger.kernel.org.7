@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-764939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9712B22917
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:49:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29996B22947
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22422A0C5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DC92A0E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8EC28314E;
-	Tue, 12 Aug 2025 13:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148DA285CBD;
+	Tue, 12 Aug 2025 13:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFyK2pr0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GTtbRx97"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B51632DD;
-	Tue, 12 Aug 2025 13:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A58C285C87
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005761; cv=none; b=HPzXjto33SUrNbosMAjQgMiTiYHSOoVwXbWdS5tb9XeNMiOYpTnTGtj2T1XpfqczAZYKpnY5P1Kxpx3Xz/79EQ00vBZf6xwjEY99PRiOuamKKtAPPpmlbABKPxQICccZBhv5+4qLAC0QjayNuD6nRh76yQt2/c4KoPYgFfwAv+g=
+	t=1755005782; cv=none; b=fVqn647CZD75WfZYnVjelIWStger1yZoH7gd0XU83SwDb8JWOhBIYU4MR7tVcRcAI0GG9tp/V28q8qZKh5+WHvWySJL+zKtM6FWh71zRxBLjjCCb45UggD4VKs2+FxRvKVA3Snmil8xjA8ncfWEWRmk5NyvSwitTqi4o888Yafo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005761; c=relaxed/simple;
-	bh=06KyMX/ZPEEj+Ni0Hx96uCasR7hXuo5TzHLcgvQ59VY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTHr6ZEZuV/7ysJLTddrF7v2v52c23dB1ffAE9ODRrRRBLfj+Jz5E/vHekGeUPYJnX+nvKIA8q4GmQijuUBn8peVXwM98U0CsvFS/TTgoPQv12LLE9Knx4B0YEu9xe+Hi3CZJl/pFjTr7Q7uCv6piBBHTs53Oc4gpDQsn/femkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFyK2pr0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40AE3C4CEF7;
-	Tue, 12 Aug 2025 13:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755005761;
-	bh=06KyMX/ZPEEj+Ni0Hx96uCasR7hXuo5TzHLcgvQ59VY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lFyK2pr0Rw1IAAWc1l29EAsZl6y5wRkq5FS9sZCI7zaCMDeHzfoydKLg60Rd/5ze2
-	 FXFh3jeH1lxJYw8dsIV8oQnSozUq0860bFWset+IrpwfsomaVeVeHime+nfkFtgzH7
-	 zpOj1BlGoC5efLwYiLFHbafa4e4xoBABHwPofSXeNaXxk7kXYXEmOhRirNMdfSzFEx
-	 b1T7At7W29ynyKlX0t+JjgJz8+vuO4Dpjkap0kUCuXa5VmIVCTX+p38rCiSLj6+Gnr
-	 Vwx5/yLHNOmHrbeRTCdJai+SgmuvNNitZ140tTUjmt6PZvxN259HYVWm6HhpN+N5eG
-	 iSSyBAA3y8b/A==
-Message-ID: <1512efa1-40c7-46e0-8636-dc0dc0e379c4@kernel.org>
-Date: Tue, 12 Aug 2025 15:35:55 +0200
+	s=arc-20240116; t=1755005782; c=relaxed/simple;
+	bh=FfeqLL6dQOkRGa+2qH5Nfx6sExnoJH9Br0Sq46snNaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iyG0VZmvjx0bzd26KxZWjPiqoxoqV5O042OiOFs9j4sL7sQg5nKu0n50cIyXkOsFjjNXoKJSmY2OjaiIp8uzmd1TOrpVtFaa57/qiLExxa7+nQyH6RcqmPl92952iffPwbYbiVoFk/IRCjTA+auGDf4BTs5se4hHrE53JyyYnQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GTtbRx97; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b792b0b829so5347315f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755005778; x=1755610578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FfeqLL6dQOkRGa+2qH5Nfx6sExnoJH9Br0Sq46snNaI=;
+        b=GTtbRx97XiaJEGG7UCftlkG3XhyblU+WxIIJB8SFySDMDZl+kzOYoTwC78pW6c9u0f
+         b0Rg5NVjpYz6I4mvdEOi1/eOsvKA3lKeCmOP2vfNchhgJCZ3UAhZDUmO+ztp4DD8Y0do
+         QD7hDrj4GRj86jTqoznrj1xjuMOg5MH2vKMioFfeFnjBPlh+haJkyFKBEzZkUePnJHJS
+         xMGhJZN3Va26lK3As7hZQz/8HJXyS7lhRQkkYDc59SVxalRcu8TkuRKnEUJFjW+YNq2a
+         wJcSWy35IVRHN2lY45Tvi4FuUr4wU30q+uc9cwWzfA1yy0C9D/i/ic2aQGjlLP5PG29O
+         9Bvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755005778; x=1755610578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FfeqLL6dQOkRGa+2qH5Nfx6sExnoJH9Br0Sq46snNaI=;
+        b=OJYBqwstXEC3YruQ7LQgO/PUivyqXSIUTmN6zl9onHG1zcYijzRC3okZc1m/WkGM0m
+         BUgVnoCNmiQXjW9teO/DkFv0NzGqrmGeqOPPU/IIoUX4vKVLhfgzukFUdUfry07Krty8
+         2CzimU7jt48KsfSY2cQMHwIZoyvjXwta5RzzLWFca3np3+geBg/N3WRF/QHm7TdQgeV8
+         abkmDIJV5EQmkTViW7Y3Q6bRmdioHYhpocVijC5fc9XZ7KA74MMj8EK06eIa+5T0+YfV
+         vIcK1ZEoOfsdFkX5G0bxsC44UaBUU1ZpnQB7ZaWL6sYSzSzcDRtuT7TUSAHVYJIlR56N
+         Ybrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPC8AXkk/k9PdFl+Zl3V/TNU6VWuTcEvUDhEq9aFH8RWNCTitdY3/D2DLrO9Q1Zu6KTmCjsipkg2XuOBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Qp1XcbwN8l6yLlRAYwk6m3cli22ZY9MNtOUnmnQBzoF4wnzh
+	57mk55QnYWdcBoITR2BVWzk20hymtFfAkizFVfD5mVRqMf40kO3dT6sugWV5WEDUpvXCi+T2wH/
+	RXwgM4hb8dEOK5qve/i2E0NdiPJygH99iv49WTmAn
+X-Gm-Gg: ASbGncv/DSnRDv2I/lWavjWojCbkZ45sE98fngbeeYdVOjM4yJafPRAgsrQy+FQfeZs
+	jz1nbCZaW5GLpLUku7IxEtzCNX8gVBmtH7Rk6RRZtsV/qa8dVT3vK1n0h5gdQHvSby4cjHJbPI7
+	wsQQbE3H9yVRhoiqXkT1Qsa1FigjBQH+DwitM9dXdtFPu+zRV8+MaALSWZ1FtprU/ldTntMFXeH
+	U78zaGmxT0ZTIrrXNakG0ZhF11LWmhU7t5OKg==
+X-Google-Smtp-Source: AGHT+IGvi39HzBKuKECl3B4URDI7XM1LzzhtHLRMHVg4OfVEDl7Qv4mmJaL0Z/gOx5HNOgcCpFj+tchSrBuJVnqWU6o=
+X-Received: by 2002:a05:6000:2010:b0:3b7:9d83:5104 with SMTP id
+ ffacd0b85a97d-3b900b83ce4mr14406064f8f.51.1755005778141; Tue, 12 Aug 2025
+ 06:36:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] dt-bindings: arm: add Black Sesame Technologies
- (bst) SoC
-To: Albert Yang <yangzh0906@thundersoft.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, ulf.hansson@linaro.org,
- catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
- adrian.hunter@intel.com, robin.murphy@arm.com, ding.wang@bst.ai,
- gordon.ge@bst.ai
-Cc: bst-upstream@bstai.top, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, soc@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250812123110.2090460-1-yangzh0906@thundersoft.com>
- <20250812123110.2090460-3-yangzh0906@thundersoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250812123110.2090460-3-yangzh0906@thundersoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+In-Reply-To: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 12 Aug 2025 15:36:06 +0200
+X-Gm-Features: Ac12FXy01SQUE4GxmHxLMqxN5BkDGNIVt8wh-Nzq-CeDX_ijk0ldVPo5VW0VQoY
+Message-ID: <CAH5fLgi4idH+bU-fQm-kup66+-oF2MkH5CDWp0jguHbkLHqU4Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
+To: Baptiste Lepers <baptiste.lepers@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/08/2025 14:31, Albert Yang wrote:
-> Add device tree bindings for Black Sesame Technologies Arm SoC,
-> it consists several SoC models like C1200, etc.
-> 
-> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+On Tue, Aug 12, 2025 at 3:29=E2=80=AFPM Baptiste Lepers
+<baptiste.lepers@gmail.com> wrote:
+>
+> Unsafe code in VmaNew's methods assumes that the type has the same
+> layout as the inner `bindings::vm_area_struct`. This is not guaranteed by
+> the default struct representation in Rust, but requires specifying the
+> `transparent` representation.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Right. It's the case that the layout matches in practice, but we
+should use repr(transparent) so that rustc guarantees it. Thanks!
 
-... and place it correctly please. This goes below or under your SoB.
-Not some other place.
+> Fixes: dcb81aeab406e ("mm: rust: add VmaNew for f_ops->mmap()")
+> Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
 
-Best regards,
-Krzysztof
+Andrew, can you pick this up? Thanks!
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
