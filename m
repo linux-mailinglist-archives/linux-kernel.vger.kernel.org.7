@@ -1,173 +1,109 @@
-Return-Path: <linux-kernel+bounces-765551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398BBB239D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F341B239E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E76856714A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716F85809FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB522F0684;
-	Tue, 12 Aug 2025 20:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8102D0612;
+	Tue, 12 Aug 2025 20:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZk5s4qd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="GPwE0YXu"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E152F0673;
-	Tue, 12 Aug 2025 20:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3D2777E8;
+	Tue, 12 Aug 2025 20:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755029609; cv=none; b=f+t5OakJvHg2tdZdYK1Cb5Q33bj15u3NXbgdA2soajct3WCtpMlDYwMxX8Mz31g3gEYEMXpla4dPU14/wPPGHxIp7Bq+Da7SN6yalTKc4SSFG3DtfmYw3wnQqximghMPGlaQft2lPFBR3zT/XpboyPwLhw1+G98b851rs15WciY=
+	t=1755030051; cv=none; b=lU22jZOHqCNZ59PrZNNp0HCeLc7Mj2i2iVzbOL2YV+uTJN7Htl7kxffrxOmjVPE/I2/o9DEoqzNI3KzjHPuxCKy+NTZMhrGB2E0oPKEv763l3hrlNFAL05YzAPOtY4bQJpPsOFG1sjTIiaZnv1DpotKEekcldyoCCu3H0hEA9pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755029609; c=relaxed/simple;
-	bh=67thnts7t0DLgkZq/Ii6wBw0jrSFJtM5mUMWCYrbVS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gpmu5EpKg06/gjEnOBvYRUSECSS0AJpSo/Jg3E7SPM8lTzATPALntaAnVPGdHWcgOzWNPc20gGgrlIszCa4t6mbqeg6AKSECBHM8/1zTkWeQfXOyivUjt+GsgkdQAZFYi9G019HsjrBqFBLJOhvpehSAn9VhdAx9tf/AMsODE3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZk5s4qd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD26C4CEF0;
-	Tue, 12 Aug 2025 20:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755029609;
-	bh=67thnts7t0DLgkZq/Ii6wBw0jrSFJtM5mUMWCYrbVS8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gZk5s4qdbM6pcT8YroWmQOKRLwIIFGieYYi0v9aoNi2ICJDuc3wg8bhKf+s6pvQNd
-	 c+i3MR/y/FAagcjMfROfPVLTOsoG3YlP79F/PpCEZGyFDsyuBtQtypuh96jit6toX0
-	 v+aQUOZ71f1sVS4LLJKLKq+8hdeGPjE2mpVgs/FuY2KZSzhX/6T7dzeh6CvpLmMDoF
-	 weuTiAVwv1mVOxNZA1KKoDpEA1hk0wwazemaioBJiDYkvkx74pTiTr9+YupNxQLK8F
-	 rz5RHVzbW4bBYKxh5nyMODvXXmIYvJS3DB65gwqyMSJvM3wUZw/6uqpQTB/gIvOiXG
-	 Gs3FPiwr7oo7A==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 00/10] mm: make mm->flags a bitmap and 64-bit on all arches
-Date: Tue, 12 Aug 2025 13:13:26 -0700
-Message-Id: <20250812201326.60843-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
-References: 
+	s=arc-20240116; t=1755030051; c=relaxed/simple;
+	bh=+tF8MQexVjrJPdLLHizEV4nsnUoIOHoqc7qC4YT//+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvnrIKhssrUx/dl7qhW9aCy4ZHdJiLp+amFY4u4RwXwKuKyE4niFASaa5pV9WlLyC4IrDofTo0KuuKEYslA/7Fp+RDeJYQhe3O7lpZ7zT4P9GSUyHLRSiSpv9f8ad0so3+ORkU3u312LMSZV6aEtefiBWB+S2ptUXMZYR1vDL6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=GPwE0YXu; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A2AFD1038C11C;
+	Tue, 12 Aug 2025 22:20:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1755030039; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=H3tyxek2HzYAbWyIkDVz6bqMHyz10AfZCUT3ToRhPE4=;
+	b=GPwE0YXu7Ga2Bwj/ovKlonpQebTULUgbX8okkVgFb1Cvf3FEN77iVzNyWwKVL+Lo5q+yc+
+	cUvDVq/Fm58niFyvz6j8tcVm8ELDMDwmwne547AU/kP4+V4I2mpBOKCV5RaC3L0Uf0NqWl
+	it9Rs8pz2dhWGFXtkfxKl3lpvo2YwdmRsP38kVwqPC2oGQVwYKyzHBGGNGZSVv/MWHoMZT
+	Zy05tgSPj+EKQkqRED9j6gSuZowB2VhNM56khsPDLXRbyWdF7KLkZoHJ981WW3RQxaPg4/
+	9ugsgx9UTunu5HUo4pjgGLVy4xb2O7C8ebBNg3ogJ0CO4V+lipSuD0uIkQUhdQ==
+Date: Tue, 12 Aug 2025 22:20:31 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.1 000/253] 6.1.148-rc1 review
+Message-ID: <aJuiD7hke+/50/gG@duo.ucw.cz>
+References: <20250812172948.675299901@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-On Tue, 12 Aug 2025 16:44:09 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> We are currently in the bizarre situation where we are constrained on the
-> number of flags we can set in an mm_struct based on whether this is a
-> 32-bit or 64-bit kernel.
-> 
-> This is because mm->flags is an unsigned long field, which is 32-bits on a
-> 32-bit system and 64-bits on a 64-bit system.
-> 
-> In order to keep things functional across both architectures, we do not
-> permit mm flag bits to be set above flag 31 (i.e. the 32nd bit).
-> 
-> This is a silly situation, especially given how profligate we are in
-> storing metadata in mm_struct, so let's convert mm->flags into a bitmap and
-> allow ourselves as many bits as we like.
-
-I like this conversion.
-
-[...]
-> 
-> In order to execute this change, we introduce a new opaque type -
-> mm_flags_t - which wraps a bitmap.
-
-I have no strong opinion here, but I think coding-style.rst[1] has one?  To
-quote,
-
-    Please don't use things like ``vps_t``.
-    It's a **mistake** to use typedef for structures and pointers. 
-
-checkpatch.pl also complains similarly.
-
-Again, I have no strong opinion, but I think adding a clarification about why
-we use typedef despite of the documented recommendation here might be nice?
-
-[...]
-> For mm->flags initialisation on fork, we adjust the logic to ensure all
-> bits are cleared correctly, and then adjust the existing intialisation
-
-Nit.  s/intialisation/initialisation/ ?
-
-[...]
-
-[1] https://docs.kernel.org/process/coding-style.html#typedefs
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QhHZ/vbaSeeHaVxq"
+Content-Disposition: inline
+In-Reply-To: <20250812172948.675299901@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
 
-Thanks,
-SJ
+--QhHZ/vbaSeeHaVxq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> This is the start of the stable review cycle for the 6.1.148 release.
+> There are 253 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Thu, 14 Aug 2025 17:27:05 +0000.
+> Anything received after that time might be too late.
+
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--QhHZ/vbaSeeHaVxq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaJuiDwAKCRAw5/Bqldv6
+8jZqAJ9P4IzM7rmI9LXSqGKiNQ//lJR9mQCeJxcbMuO9PF3Wk1xsuqC60VYd0+Q=
+=C9v4
+-----END PGP SIGNATURE-----
+
+--QhHZ/vbaSeeHaVxq--
 
