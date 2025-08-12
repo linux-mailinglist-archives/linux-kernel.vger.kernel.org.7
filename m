@@ -1,285 +1,123 @@
-Return-Path: <linux-kernel+bounces-764959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40BBB22969
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4680B2298A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59896220AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CB2586F12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAC645C0B;
-	Tue, 12 Aug 2025 13:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF7C2853F8;
+	Tue, 12 Aug 2025 13:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N/xaT4Z+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="K0THCnpe"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29207283FD6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB032868BA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755006429; cv=none; b=SlUS8/jepxY+QgLHJuJNtNhhalC6eZYhfimCwyKPdU8VbZ32z3i/vL064jZQtrYeo+7qmMI89fivLwpIDCLeix1aUNZvnD3w3MPdI5i3wt39qxwt+sPYzo68X2MQhffuMnsbC+uVUWxxJp58+fOQqezKeJ4SJjf235iMxM/kAuE=
+	t=1755006457; cv=none; b=OufdVuXD/uPhfx9xTFoEEahl9W5AxU2r3x+WE3Bsv7PyK7rU0P+3ziuijz3zzLRmkTzmyqxqEsQFtiY5DsCgp3Jvj3N8AQPWudGCUQKYPIw9Z4jX/CP4ZUvrQcSxsXEB+RHelX9cX/QqaEY32zMdVrqaXitwdLWVkGN0C5BOQx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755006429; c=relaxed/simple;
-	bh=qNJQ858gOSPy6kQdYFjCHpvz41LSZgIxrbPFpqAX2+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tByoc4hfA8ZvfqC0YTMK+TvrbvEgW5abF81NwNQbhi7YVbe+rgsAykKHIwruDXtNwQ+gT9hL4KnGIhQGN4u16Y1tAOg7+Jr87YXzpgOoT6B9qOOxxVeXeti9Gtrion6SbnYm3Vhjk4nhgV2IfOtJ6dtvLDtrx/guWsk9QN6IUiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N/xaT4Z+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2400f746440so45410815ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:47:06 -0700 (PDT)
+	s=arc-20240116; t=1755006457; c=relaxed/simple;
+	bh=ZEQS7dHy4bqa5xEK/OWh6tiW9JpSTnxX7NCQEJRoP3I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D/MxDyVd+sjIh8bTcLhm0FgdDEV+AjbnhJyfdqGsNpU8kbRyi1nQ+Jcki58j8rFxO2W7xZouY0rghTVCbkDTjXNyyBTtZGeJ3YmGcJvcRSzZL6QhXmWJc6otAMZHQKpMtBWC8Q8mXpEHGOjN34FQGf5hYpsy67Vn2D0VbjPvM3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=K0THCnpe; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b07d777d5bso62333191cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1755006426; x=1755611226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=soleen.com; s=google; t=1755006454; x=1755611254; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D8WoxjvDBkfx4Zq67j4dS/oZqS1XLjrG4y/OFkK7qEk=;
-        b=N/xaT4Z+YJbX1F5Qlk2hTKw2G1nBF7m9cps97WTm0LXSVH7I6xBQynVMZRiLxflYpK
-         hVSlsvA69pyIRWUnUDcHCFtlTI2itKepVpFCSWJCkzJJ/YN56zMSWTxOe6WW3VJW6BWK
-         9Tv4btG8+Q33Enzl0giTO0pNJohCJG2CPNyGo/rQrw8FbLaVLSTk5LFG3Xd1BZNrkIhj
-         VNO74Q+ZFCXh0j6y0TQTGGtEkx4VLkRs19+ml4qVvOWRBEPODAx1lAWr8YwKptWABdy/
-         /wNp0xKf0YNyxuWf58uPv2w3MKirYkiPcejDZSemywiQGPfrtHDp0AV8aIZA5diyRPdu
-         3y9Q==
+        bh=oiaiHLfj5U8yaY5aeIgIVQg9pcSst1kk2u6M/Lgbw4w=;
+        b=K0THCnpeTjOMO+wmtK6BXCJiNqGiOI8E/zYggQPT5DSu/DlHxQylnBcBWtAujk1D8I
+         IdRRq7AK0to8H5ZxTlXUo9Og85GnOdqb5eUXv0/u4FZL1eiORkLaoQqpzYqHImicS2O5
+         iIzYxIKTWl4Py9CFJcnK27fyl8Po+OERdIbufRP7fru/9fCyR13XnRCXJHGl2gmKR8t8
+         dRKQVst+PEfSiFNwgAjXZk5XaXBRrZR6/gvLokiX60z8fKHTqmM6tY4OdIttClwQEJ6v
+         qaSLzjdgu0/vLz7wcdutWb0JCH7SjJQCuDSwzm5lYrLtpAizlZ9DFHS3vEUHdPfjZHmc
+         uV3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755006426; x=1755611226;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755006454; x=1755611254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D8WoxjvDBkfx4Zq67j4dS/oZqS1XLjrG4y/OFkK7qEk=;
-        b=Oei8RW1/xdk5ejwGBbXe0XToEWO8c3XeJTD/BjLgSqnuO+fl2ISXVBkz50WhpF7oSi
-         CHwOxQ2VJosTfzam0Dqad7dkBkvlzc+EtEL4IM7MQldKLgE1DDOmYqEFFzTIUyv44XTU
-         UrLpvvB7iQFXSo+yg2pdxs0ChxctL8Hrb9YFP2tIEmKNL4b1Tt1c6ddjQvcfCOJHNtWo
-         9nC/ZHhg+bPo2uTxFMm28zM4SHQh48n+yeppzsCe4FLW2ozNTQW4Ye5qveK/L3PJlckU
-         6Ir88wSIsR+EC6i7QN5Dk+G7UMxvHsgyRXrJauxqsDFd34d9GHzUivAaOIx27YQ0wOWE
-         zHcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWWdtxdSRe7U316P7rXsORXwtLd5Q83+U/oJSDiT48tURBCqm68Q/hPn0/ztcjy84JtepFcx7I8hVz5P8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAan/HmzF8n18C4a9pOPmwb0JrLI2+LAiQLmTTI7EZ06WDwJox
-	vNgYKhb0KHK5S0pjiYo3IlLtJAVk6IyrXunm10VDDCEogxg2RYmznW8CPoH5NauXxCM=
-X-Gm-Gg: ASbGncusFdP5mo6AUcozNpeSqFZZn61UElY3qFCTx5X0u8gwca6XkbK4YsiVPwJNEXM
-	vqk54INUPD+CJpE4F72CNk062n0C23TkXXK1FB/TtyW5HNyFUifu8WfssIsWO1XrCXMtoAFk92d
-	hhaGP8F9feYl7mHpdy3PUCFhGHQrmVXsKFquk5qTHZFkgBw+EFXeF1i9p0HITkwtD8hx8+7FdOe
-	kZ92NO2wzZFbYGQ54Ybr1IaSQ5/SbgHnD/UYhErRs4WFIh+BR13WZ+l+tbdurCAUdaxHdZepPEh
-	siwrSx6nnoQGBo1weR49ZTtXrAl8t14KS0Godw4YQeJkLAILigLoLuvBQ87UPw2mW5txk4VXbih
-	UqgVz38CYJHamSck2ZeBvScnQVCiRZvpFf2n4tMtoGzXfGXH0Sz8=
-X-Google-Smtp-Source: AGHT+IHA60tP4SeRa6XXCks2V9uQ+cQDXkYaDUBAx/8PtuesE53gCrJ6FR505cnAE/3WujtaqV6XRQ==
-X-Received: by 2002:a17:902:ccc2:b0:240:99d8:84 with SMTP id d9443c01a7336-242fc38ac30mr53371355ad.52.1755006426232;
-        Tue, 12 Aug 2025 06:47:06 -0700 (PDT)
-Received: from H3DJ4YJ04F.bytedance.net ([2001:c10:ff04:0:1000:0:1:d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b42890523basm12948595a12.45.2025.08.12.06.46.58
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 12 Aug 2025 06:47:05 -0700 (PDT)
-From: Yongting Lin <linyongting@bytedance.com>
-To: anthony.yznaga@oracle.com
-Cc: akpm@linux-foundation.org,
-	andreyknvl@gmail.com,
-	arnd@arndb.de,
-	brauner@kernel.org,
-	catalin.marinas@arm.com,
-	dave.hansen@intel.com,
-	david@redhat.com,
-	ebiederm@xmission.com,
-	khalid@kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	luto@kernel.org,
-	markhemm@googlemail.com,
-	maz@kernel.org,
-	mhiramat@kernel.org,
-	neilb@suse.de,
-	pcc@google.com,
-	rostedt@goodmis.org,
-	vasily.averin@linux.dev,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org,
-	xhao@linux.alibaba.com
-Subject: Re: [PATCH v2 13/20] x86/mm: enable page table sharing
-Date: Tue, 12 Aug 2025 21:46:55 +0800
-Message-Id: <20250812134655.68614-1-linyongting@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250404021902.48863-14-anthony.yznaga@oracle.com>
-References: <20250404021902.48863-14-anthony.yznaga@oracle.com>
+        bh=oiaiHLfj5U8yaY5aeIgIVQg9pcSst1kk2u6M/Lgbw4w=;
+        b=f44uma+iCVTCKJBtJ1zDgIZl6c7uX133U5mP7cUatJv6UaJCgr2WJ64NOWt/j+vKjI
+         m6VvxJTlVxdh4OJU/LS3tMI1YlfbL/UTwAxjSvd1XrEryzWswTL3MPZDysR72GQw6yh6
+         v9H03q9rfxthJq1kLl3MU2/YgfeFULhReaFVxKLKiMI6yzsoWD2w2U6S9eEVG8txgdxv
+         wjZtANy4kexEOAlGfjUeOtHAbAsXHguLlmriAaTBBm4fWWnbVvtkqm/9UMdgX/qWQoyZ
+         1DSXs/4CKimadz2Kml6Dohszr+M/KAiRSrCMoo4YRY0I0vn3CGF1tGsMAiB7BNWxmM2D
+         Vpeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGcog+0plwzPnMPD+hanvd4y2h2cGYIe0nYpCSC4clAF3zE8B3m/8UoPaTHdOjcJFRzQKlsPbzTLGR4As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJexD2JGGTUJylHsXuks7tJnU8eSHmVBMUBdGtn6u7tW7cexgO
+	8L8BHzXA3jKqDXP1/5E4mfwzAOjQf7EJ8GH8APfQiGJDE6s4kra3wH28f9oMZBTPpTA6ckwDoxs
+	UapcyBUYmCfQPhEHm+YH+wf49hcYzuKZLMhRWnrksCA==
+X-Gm-Gg: ASbGncu6ldrOzU+ujs1BcG9V6YoeO9+vSZAPTUDHR3GhBlIJmOmhxjXPu2hl0EJWg/7
+	c/6VrrIXDKK8lb0jGK7bjLxlZBMGOpOUnkoxRlBoxHXncpVCcrygfpVZkBga1qU2KU0PHtg5+QC
+	FRWMumBgOSuwe4qLTQVSv9+0kZbWTiu/HcWvoTnxcpV9a0t9WSZo+ltrv0NEo7T/PoJrTe0wz04
+	9ZC
+X-Google-Smtp-Source: AGHT+IF9FZQj5pw4nHAwLVl/go1Y++Pq0B8DDhdGaT/iuEWOeTWwC7Lzx4CQw7oh7nPUzVFMmTtXLbUtj63G3OrsETo=
+X-Received: by 2002:a05:622a:230d:b0:4b0:a098:1f75 with SMTP id
+ d75a77b69052e-4b0ecbb0bc3mr37690691cf.8.1755006454033; Tue, 12 Aug 2025
+ 06:47:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250812164436.557c805f@canb.auug.org.au>
+In-Reply-To: <20250812164436.557c805f@canb.auug.org.au>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 12 Aug 2025 13:46:57 +0000
+X-Gm-Features: Ac12FXzdOr9gxDZaTKBaBDu-lCxDswcINL4uysL5NReZ5kaQL2LOxR3gFpp4Bto
+Message-ID: <CA+CK2bA=thKfEuiFZ-Nmr1ZNALC7ZcKv5uPVy2RCgc-Jy96Now@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the mm-hotfixes tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 4/4/25 10:18 AM, Anthony Yznaga wrote:
-> Enable x86 support for handling page faults in an mshare region by
-> redirecting page faults to operate on the mshare mm_struct and vmas
-> contained in it.
-> Some permissions checks are done using vma flags in architecture-specfic
-> fault handling code so the actual vma needed to complete the handling
-> is acquired before calling handle_mm_fault(). Because of this an
-> ARCH_SUPPORTS_MSHARE config option is added.
+On Tue, Aug 12, 2025 at 6:44=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
 >
-> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
-> ---
->  arch/Kconfig        |  3 +++
->  arch/x86/Kconfig    |  1 +
->  arch/x86/mm/fault.c | 37 ++++++++++++++++++++++++++++++++++++-
->  mm/Kconfig          |  2 +-
->  4 files changed, 41 insertions(+), 2 deletions(-)
+> Hi all,
 >
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 9f6eb09ef12d..2e000fefe9b3 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -1652,6 +1652,9 @@ config HAVE_ARCH_PFN_VALID
->  config ARCH_SUPPORTS_DEBUG_PAGEALLOC
->  	bool
->  
-> +config ARCH_SUPPORTS_MSHARE
-> +	bool
-> +
->  config ARCH_SUPPORTS_PAGE_TABLE_CHECK
->  	bool
->  
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1502fd0c3c06..1f1779decb44 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -125,6 +125,7 @@ config X86
->  	select ARCH_SUPPORTS_ACPI
->  	select ARCH_SUPPORTS_ATOMIC_RMW
->  	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> +	select ARCH_SUPPORTS_MSHARE		if X86_64
->  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK	if X86_64
->  	select ARCH_SUPPORTS_NUMA_BALANCING	if X86_64
->  	select ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP	if NR_CPUS <= 4096
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 296d294142c8..49659d2f9316 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1216,6 +1216,8 @@ void do_user_addr_fault(struct pt_regs *regs,
->  	struct mm_struct *mm;
->  	vm_fault_t fault;
->  	unsigned int flags = FAULT_FLAG_DEFAULT;
-> +	bool is_shared_vma;
-> +	unsigned long addr;
->  
->  	tsk = current;
->  	mm = tsk->mm;
-> @@ -1329,6 +1331,12 @@ void do_user_addr_fault(struct pt_regs *regs,
->  	if (!vma)
->  		goto lock_mmap;
->  
-> +	/* mshare does not support per-VMA locks yet */
-> +	if (vma_is_mshare(vma)) {
-> +		vma_end_read(vma);
-> +		goto lock_mmap;
-> +	}
-> +
->  	if (unlikely(access_error(error_code, vma))) {
->  		bad_area_access_error(regs, error_code, address, NULL, vma);
->  		count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> @@ -1357,17 +1365,38 @@ void do_user_addr_fault(struct pt_regs *regs,
->  lock_mmap:
->  
->  retry:
-> +	addr = address;
-> +	is_shared_vma = false;
->  	vma = lock_mm_and_find_vma(mm, address, regs);
->  	if (unlikely(!vma)) {
->  		bad_area_nosemaphore(regs, error_code, address);
->  		return;
->  	}
->  
-> +	if (unlikely(vma_is_mshare(vma))) {
-> +		fault = find_shared_vma(&vma, &addr);
-> +
-> +		if (fault) {
-> +			mmap_read_unlock(mm);
-> +			goto done;
-> +		}
-> +
-> +		if (!vma) {
-> +			mmap_read_unlock(mm);
-> +			bad_area_nosemaphore(regs, error_code, address);
-> +			return;
-> +		}
-> +
-> +		is_shared_vma = true;
-> +	}
-> +
->  	/*
->  	 * Ok, we have a good vm_area for this memory access, so
->  	 * we can handle it..
->  	 */
->  	if (unlikely(access_error(error_code, vma))) {
-> +		if (unlikely(is_shared_vma))
-> +			mmap_read_unlock(vma->vm_mm);
->  		bad_area_access_error(regs, error_code, address, mm, vma);
->  		return;
->  	}
-> @@ -1385,7 +1414,11 @@ void do_user_addr_fault(struct pt_regs *regs,
->  	 * userland). The return to userland is identified whenever
->  	 * FAULT_FLAG_USER|FAULT_FLAG_KILLABLE are both set in flags.
->  	 */
-> -	fault = handle_mm_fault(vma, address, flags, regs);
-> +	fault = handle_mm_fault(vma, addr, flags, regs);
-> +
-> +	if (unlikely(is_shared_vma) && ((fault & VM_FAULT_COMPLETED) ||
-> +	    (fault & VM_FAULT_RETRY) || fault_signal_pending(fault, regs)))
-> +		mmap_read_unlock(mm);
+> In commit
+>
+>   25ee3c404f35 ("kho: mm: don't allow deferred struct page with KHO")
+>
+> Fixes tag
+>
+>   Fixes: 990a950fe8fd ("kexec: add config option for KHO")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Maybe you meant
+>
+> Fixes: 4e1d010e3bda ("kexec: add config option for KHO")
 
-I was backporting these patches of mshare to 5.15 kernel and trying to do some
-basic tests. Then found a potential issue.
+Yes, this is the correct one. Thank you!
 
-Reaching here means find_shared_vma function has been executed successfully 
-and host_mm->mmap_lock has got locked.
+Andrew, do you want me to send a new patch version to update the commit log=
+?
 
-When returned fault variable has VM_FAULT_COMPLETED or VM_FAULT_RETRY flags,
-or fault_signal_pending(fault, regs) takes true, there is not chance to release
-locks of both mm and host_mm(i.e. vma->vm_mm) in the following Snippet of Code.
+Pasha
 
-As a result, needs to release vma->vm_mm.mmap_lock as well.
-
-So it is supposed to be like below:
-
--	fault = handle_mm_fault(vma, address, flags, regs);
-+	fault = handle_mm_fault(vma, addr, flags, regs);
-+
-+	if (unlikely(is_shared_vma) && ((fault & VM_FAULT_COMPLETED) ||
-+	    (fault & VM_FAULT_RETRY) || fault_signal_pending(fault, regs))) {
-+		mmap_read_unlock(vma->vm_mm);
-+		mmap_read_unlock(mm);
-+	}
-
->  
->  	if (fault_signal_pending(fault, regs)) {
->  		/*
-> @@ -1413,6 +1446,8 @@ void do_user_addr_fault(struct pt_regs *regs,
->  		goto retry;
->  	}
->  
-> +	if (unlikely(is_shared_vma))
-> +		mmap_read_unlock(vma->vm_mm);
->  	mmap_read_unlock(mm);
->  done:
->  	if (likely(!(fault & VM_FAULT_ERROR)))
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e6c90db83d01..8a5a159457f2 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1344,7 +1344,7 @@ config PT_RECLAIM
->  
->  config MSHARE
->  	bool "Mshare"
-> -	depends on MMU
-> +	depends on MMU && ARCH_SUPPORTS_MSHARE
->  	help
->  	  Enable msharefs: A ram-based filesystem that allows multiple
->  	  processes to share page table entries for shared pages. A file
-
-Yongting Lin.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
