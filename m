@@ -1,134 +1,391 @@
-Return-Path: <linux-kernel+bounces-764891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6970AB2286A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DA2B22882
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9D83BCC2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA6A620CB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B5428000B;
-	Tue, 12 Aug 2025 13:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A522727FB29;
+	Tue, 12 Aug 2025 13:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Ckh5bYhw"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QjPMH/oc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE1127FB37
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AB874420;
+	Tue, 12 Aug 2025 13:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004975; cv=none; b=k8V2hf4ZulFpOFHumGZ9oQlJMwRhIcTKflJvLqKS3t3lJ5MbgqphTb0OLVN1L5R3sbQuyBqFk8BxZRIajCe3a8sAWPgNG60mugaARJmVPDb7s0LiQ/o8qgikg2SPBbbQNl/IIR9yPeAZMaGtfwb87ZI6YFjUR9Tu5CsntyxN3PY=
+	t=1755005210; cv=none; b=E5hyD+ALQuz0/Y5Qbris57kgD+FeECjhCKeOFupCHvtsGWTP1+TPVS5NhwUcOrLgnof6tPrxnCwx1Gc3ZIcHuw/V3cK0qhJogNDbWQSOvycTNIj7SJsMttk5OnyppATNxD5atvQwjoQvOwx6njdiyi+U8Rx6kaQqot3D3eEb1Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004975; c=relaxed/simple;
-	bh=Rc0fSOx4ODT+niej0z9sfBuk37BOAGSBh4g04bdKLEE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=A6yns27J3ZdAzXKG7jKe3dtI4NX3isYi1wWjaA+XBodWK7DeC044pABE90y68XjJ3biQQ+4+EX3oo+c89BAerAAMfokAfd1t13bVBTHX+aND/cVaLIxioUX/UP1ieyiyFnIdjtVPAwIDeYaZmniVtQ+fd9GlV0IEHZV/RExXjiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Ckh5bYhw; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459ebc99726so2194275e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:22:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755004973; x=1755609773; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:from:to:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9B+m7y7gtFTTGyBFc0gL8TaOwTzdqm4Gs9PW5eoUpxg=;
-        b=Ckh5bYhwf/WZaDalDmOxheSfMGh8HgZL6604VbXFmRPnfGuOKIqptGunxMUNDQl0DP
-         cGhZ7c/XQ7bfHy49cPbEEZSejqoukzEX3jofk4o0S42CqDhkMoNd4sfPYoUr+XbE8O9J
-         iwSplD49sBQV/vG7ZTQDLZC+9XXrD8w7Ebm21e+4z7u2VhYaBL8KTLwlxdMo4QZ3yXza
-         qlE2yXNDeDXB4kE6maBZDgLsigqPjvkSkq2z01K5WwgAgGmU0t8B9gJOZCf6Ol9ujkMy
-         wMMEV7/qAFgTKt7Lee0HLq/uS50UWFAK8j/20UIelsp/jpzViDqI+zWIWhL4tceVtl5Y
-         4lYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755004973; x=1755609773;
-        h=in-reply-to:references:subject:from:to:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9B+m7y7gtFTTGyBFc0gL8TaOwTzdqm4Gs9PW5eoUpxg=;
-        b=d66nBXgqc0qm/N/5Hb6Gn+gfRIBLucVU7kvttLZzee1V8A3iSJRO7v5IXV+WEtfya8
-         EkAZxLHMl8kPQQ/GQ17QL/J/n1dmvcGJflgW8jSP6fvV3H5xabAz7R48FKc8U5X4ZSc/
-         b70UlI2dxZgsfUJcxmfkmKT/5x2mAmdkJSN2f0FVdI0INxQllDQotSbV6uyiq4ggZdjC
-         D7RFBzBe8S8/IU5V3BCUonR4y3v6rNnnYoQG8781ipA2L9IlUkW2GI42TS5RtEXdu9YX
-         rjTN3q6xNwscKpOK05bzeGO7S7IeVc33r7ME5tEWMl03je8Gu+8OJf8jZBQBHGGt1VQf
-         Q4IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUolIbOf1dzqI8/VejNRKCJwOuHroO4/QS5CU1ETjMEgC5P/d3XgazzPp1HtRYCY2f+9lGYzHT35SbngbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGJCMA75dquGkgFixiln4OI9mYDWi6eceNgCzVYNWu555q847g
-	G+7+57v+2amDyiEWay3b9AiWunPBB9h8eAjLhJe0Gs3ym25MZef/edF4LTxbnposon8=
-X-Gm-Gg: ASbGncsSXgnyh75gg7nDniWwLqpQeKzvbzvSPCiTwyqd/Q9RYU++Sp3RUq/IcPyiOHg
-	AiWAoLBpfuyuxR4CFqIwvyKG2frhnOKD7SxNo5TCNj+9jD4V5V70Ft+EIA17n/4iK2y/AOtITri
-	PMzRzva2BmH052Kve02xB+jiwCpfiZ/Q7yFihTr0DwXkvofufvB6ibdeJTtFKEpexRQU6QqhlTo
-	edwvXn9uJQOp8JHbFIx1ZM3dzVoI8ZCfSqb9shAxnutBveKvoMjotz/v2wpPyDP9c5qTGoHw9SE
-	JF0V3Rkwg6Zzq8KZ22rCW2POy0taNr7kK72/wdv6bCbhAAfwJL3fFieaFCrNN9ekYtqGnu4HTQC
-	2o36jmmD0pbCjiJFWC6bL75b7yjh4VQ==
-X-Google-Smtp-Source: AGHT+IE2d/O56DZUtoh12B2LgxGIZeb1yHos8UKAErVtVVQ4j+I6Ktyv6mqGKISnmKVi1pnhPfvJHQ==
-X-Received: by 2002:a05:600c:1ca1:b0:459:ddd6:1cbf with SMTP id 5b1f17b1804b1-45a157b70b9mr736355e9.0.1755004972582;
-        Tue, 12 Aug 2025 06:22:52 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:8113:2b11:8f42:672f])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453d6esm44093096f8f.37.2025.08.12.06.22.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 06:22:52 -0700 (PDT)
+	s=arc-20240116; t=1755005210; c=relaxed/simple;
+	bh=3vjNsBiRH4qTtxkXlQjP9ZJdLJ+PMfRGcHXqnMgrRUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ozc2yKNwfdubHe7Gtj4p1vIViN0NoD0WhXyywcUmUe+YbMPEGPnU2PMgXi9kJDJ3OmjHTNVk3S/5TnZc7cIxWehoYULCMz94Z60PCB1R584HUnzecmNZ2nUjCx8HzxML+poX7/nwACfHyzAIjbVvfwmqxKPi/px3do5EXL+jVrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QjPMH/oc; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755005209; x=1786541209;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3vjNsBiRH4qTtxkXlQjP9ZJdLJ+PMfRGcHXqnMgrRUE=;
+  b=QjPMH/ocYsoQHGGe1FSnCo42J8PAuLvgUvM62xMhbiAXst9758mEKpEp
+   2XLVpLH23rgeQ3+gHah5naA8vN3QkMmmJMdujMKkRYhxBwr6fCXw3hVso
+   0FRXV9OE+4lG3qp/tGLvvjx9yEPbACB3ESKJ6fdxW09Q/WSJ5kriGbSz7
+   dqWIntavRZiU5SaiOHySt19Tifa9hkCaomGoMVKHYk8SLE8a2eI9U3tYE
+   1EjS1YZB8eZjcwK8DRiZwws6c10F+YXa2AoQ1/yVfp1DS65P1Nq8Q6uZA
+   MVuy2blzOHjyawwGwtIvh9pn1VMyt+P7zcx2XOwMOqklNXEECy9jdC3tg
+   A==;
+X-CSE-ConnectionGUID: 8JXx3dMDQ3qfLIbIaKGeSg==
+X-CSE-MsgGUID: 5+w1kJbQRmiFiMYEEvHZeQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="60903111"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="60903111"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 06:24:59 -0700
+X-CSE-ConnectionGUID: kayhpomIS0akEcqtG//q8Q==
+X-CSE-MsgGUID: VWXG4HKqROyugDxAls9HoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165831255"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.54])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 06:24:35 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: nathan@kernel.org,
+	arnd@arndb.de,
+	broonie@kernel.org,
+	Liam.Howlett@oracle.com,
+	urezki@gmail.com,
+	will@kernel.org,
+	kaleshsingh@google.com,
+	rppt@kernel.org,
+	leitao@debian.org,
+	coxu@redhat.com,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	luto@kernel.org,
+	jpoimboe@kernel.org,
+	changyuanl@google.com,
+	hpa@zytor.com,
+	dvyukov@google.com,
+	kas@kernel.org,
+	corbet@lwn.net,
+	vincenzo.frascino@arm.com,
+	smostafa@google.com,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	andreyknvl@gmail.com,
+	alexander.shishkin@linux.intel.com,
+	thiago.bauermann@linaro.org,
+	catalin.marinas@arm.com,
+	ryabinin.a.a@gmail.com,
+	jan.kiszka@siemens.com,
+	jbohac@suse.cz,
+	dan.j.williams@intel.com,
+	joel.granados@kernel.org,
+	baohua@kernel.org,
+	kevin.brodsky@arm.com,
+	nicolas.schier@linux.dev,
+	pcc@google.com,
+	andriy.shevchenko@linux.intel.com,
+	wei.liu@kernel.org,
+	bp@alien8.de,
+	ada.coupriediaz@arm.com,
+	xin@zytor.com,
+	pankaj.gupta@amd.com,
+	vbabka@suse.cz,
+	glider@google.com,
+	jgross@suse.com,
+	kees@kernel.org,
+	jhubbard@nvidia.com,
+	joey.gouly@arm.com,
+	ardb@kernel.org,
+	thuth@redhat.com,
+	pasha.tatashin@soleen.com,
+	kristina.martsenko@arm.com,
+	bigeasy@linutronix.de,
+	maciej.wieczor-retman@intel.com,
+	lorenzo.stoakes@oracle.com,
+	jason.andryuk@amd.com,
+	david@redhat.com,
+	graf@amazon.com,
+	wangkefeng.wang@huawei.com,
+	ziy@nvidia.com,
+	mark.rutland@arm.com,
+	dave.hansen@linux.intel.com,
+	samuel.holland@sifive.com,
+	kbingham@kernel.org,
+	trintaeoitogc@gmail.com,
+	scott@os.amperecomputing.com,
+	justinstitt@google.com,
+	kuan-ying.lee@canonical.com,
+	maz@kernel.org,
+	tglx@linutronix.de,
+	samitolvanen@google.com,
+	mhocko@suse.com,
+	nunodasneves@linux.microsoft.com,
+	brgerst@gmail.com,
+	willy@infradead.org,
+	ubizjak@gmail.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	sohil.mehta@intel.com
+Cc: linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	llvm@lists.linux.dev,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/18] kasan: x86: arm64: KASAN tag-based mode for x86
+Date: Tue, 12 Aug 2025 15:23:36 +0200
+Message-ID: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 15:22:51 +0200
-Message-Id: <DC0HC9ORWWX1.1LUBWVHPGFK95@ventanamicro.com>
-Cc: <alex@ghiti.fr>, <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
- <atish.patra@linux.dev>, <guoren@linux.alibaba.com>,
- <kvm-riscv@lists.infradead.org>, <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-riscv-bounces@lists.infradead.org>,
- <linux-riscv@lists.infradead.org>, <palmer@dabbelt.com>,
- <paul.walmsley@sifive.com>
-To: <fangyu.yu@linux.alibaba.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-Subject: Re: [PATCH] RISC-V: KVM: Using user-mode pte within
- kvm_riscv_gstage_ioremap
-References: <DBX0JNR61UNM.Z42YERAKRFR8@ventanamicro.com>
- <20250809032020.51380-1-fangyu.yu@linux.alibaba.com>
-In-Reply-To: <20250809032020.51380-1-fangyu.yu@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-2025-08-09T11:20:20+08:00, <fangyu.yu@linux.alibaba.com>:
->>> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->>> According to the RISC-V Privileged Architecture Spec, for G-stage addre=
-ss
->>> translation, all memory accesses are considered to be user-level access=
-es
->>> as though executed in Umode.
->>
->>What implementation are you using?  I would have assume that the
->>original code was tested on QEMU, so we might have a bug there.
->>
->
-> This issue can be reproduced using QEMU.
-> Since kvm has registered the MMIO Bus for IMSIC gpa, when a guest
-> page fault occurs, it will call the imsic_mmio_write function,the
-> guest irq will be written to the guest interrupt file by kvm.
+======= Introduction
+The patchset aims to add a KASAN tag-based mode for the x86 architecture
+with the help of the new CPU feature called Linear Address Masking
+(LAM). Main improvement introduced by the series is 2x lower memory
+usage compared to KASAN's generic mode, the only currently available
+mode on x86. The tag based mode may also find errors that the generic
+mode couldn't because of differences in how these modes operate.
 
-Oh, so the interrupts were "just" slower.  Great job catching that!
+======= How does KASAN' tag-based mode work?
+When enabled, memory accesses and allocations are augmented by the
+compiler during kernel compilation. Instrumentation functions are added
+to each memory allocation and each pointer dereference.
 
->>> ---
->>> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
->>> @@ -359,8 +360,11 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_=
-t gpa,
->>> +		pte =3D pte_mkdirty(pte);
->>
->>Is it necessary to dirty the pte?
->>
->>It was dirtied before, so it definitely doesn't hurt,
->
-> Make pte dirty is necessary(for hardware without Svadu), and here is
-> the first time to make this pte dirty.
+The allocation related functions generate a random tag and save it in
+two places: in shadow memory that maps to the allocated memory, and in
+the top bits of the pointer that points to the allocated memory. Storing
+the tag in the top of the pointer is possible because of Top-Byte Ignore
+(TBI) on arm64 architecture and LAM on x86.
 
-Right, we would get a pointless trap otherwise,
+The access related functions are performing a comparison between the tag
+stored in the pointer and the one stored in shadow memory. If the tags
+don't match an out of bounds error must have occurred and so an error
+report is generated.
 
-Thanks.
+The general idea for the tag-based mode is very well explained in the
+series with the original implementation [1].
+
+[1] https://lore.kernel.org/all/cover.1544099024.git.andreyknvl@google.com/
+
+======= Differences summary compared to the arm64 tag-based mode
+- Tag width:
+	- Tag width influences the chance of a tag mismatch due to two
+	  tags from different allocations having the same value. The
+	  bigger the possible range of tag values the lower the chance
+	  of that happening.
+	- Shortening the tag width from 8 bits to 4, while it can help
+	  with memory usage, it also increases the chance of not
+	  reporting an error. 4 bit tags have a ~7% chance of a tag
+	  mismatch.
+
+- Address masking mechanism
+	- TBI in arm64 allows for storing metadata in the top 8 bits of
+	  the virtual address.
+	- LAM in x86 allows storing tags in bits [62:57] of the pointer.
+	  To maximize memory savings the tag width is reduced to bits
+	  [60:57].
+
+- Inline mode mismatch reporting
+	- Arm64 inserts a BRK instruction to pass metadata about a tag
+	  mismatch to the KASAN report.
+	- On x86 the INT3 instruction is used for the same purpose.
+
+======= Testing
+Checked all the kunits for both software tags and generic KASAN after
+making changes.
+
+In generic mode the results were:
+
+kasan: pass:59 fail:0 skip:13 total:72
+Totals: pass:59 fail:0 skip:13 total:72
+ok 1 kasan
+
+and for software tags:
+
+kasan: pass:63 fail:0 skip:9 total:72
+Totals: pass:63 fail:0 skip:9 total:72
+ok 1 kasan
+
+======= Benchmarks [1]
+All tests were ran on a Sierra Forest server platform. The only
+differences between the tests were kernel options:
+	- CONFIG_KASAN
+	- CONFIG_KASAN_GENERIC
+	- CONFIG_KASAN_SW_TAGS
+	- CONFIG_KASAN_INLINE [1]
+	- CONFIG_KASAN_OUTLINE
+
+Boot time (until login prompt):
+* 02:55 for clean kernel
+* 05:42 / 06:32 for generic KASAN (inline/outline)
+* 05:58 for tag-based KASAN (outline) [2]
+
+Total memory usage (512GB present on the system - MemAvailable just
+after boot):
+* 12.56 GB for clean kernel
+* 81.74 GB for generic KASAN
+* 44.39 GB for tag-based KASAN
+
+Kernel size:
+* 14 MB for clean kernel
+* 24.7 MB / 19.5 MB for generic KASAN (inline/outline)
+* 27.1 MB / 18.1 MB for tag-based KASAN (inline/outline)
+
+Compilation time comparison (10 cores):
+* 7:27 for clean kernel
+* 8:21/7:44 for generic KASAN (inline/outline)
+* 8:20/7:41 for tag-based KASAN (inline/outline)
+
+[1] Currently inline mode doesn't work on x86 due to things missing in
+the compiler. I have written a patch for clang that seems to fix the
+inline mode and I was able to boot and check that all patches regarding
+the inline mode work as expected. My hope is to post the patch to LLVM
+once this series is completed, and then make inline mode available in
+the kernel config.
+
+[2] While I was able to boot the inline tag-based kernel with my
+compiler changes in a simulated environment, due to toolchain
+difficulties I couldn't get it to boot on the machine I had access to.
+Also boot time results from the simulation seem too good to be true, and
+they're much too worse for the generic case to be believable. Therefore
+I'm posting only results from the physical server platform.
+
+======= Compilation
+Clang was used to compile the series (make LLVM=1) since gcc doesn't
+seem to have support for KASAN tag-based compiler instrumentation on
+x86.
+
+======= Dependencies
+The base branch for the series is the mainline kernel, tag 6.17-rc1.
+
+======= Enabling LAM for testing
+Since LASS is needed for LAM and it can't be compiled without it I
+applied the LASS series [1] first, then applied my patches.
+
+[1] https://lore.kernel.org/all/20250707080317.3791624-1-kirill.shutemov@linux.intel.com/
+
+Changes v4:
+- Revert x86 kasan_mem_to_shadow() scheme to the same on used in generic
+  KASAN. Keep the arithmetic shift idea for the KASAN in general since
+  it makes more sense for arm64 and in risc-v.
+- Fix inline mode but leave it unavailable until a complementary
+  compiler patch can be merged.
+- Apply Dave Hansen's comments on series formatting, patch style and
+  code simplifications.
+
+Changes v3:
+- Remove the runtime_const patch and setup a unified offset for both 5
+  and 4 paging levels.
+- Add a fix for inline mode on x86 tag-based KASAN. Add a handler for
+  int3 that is generated on inline tag mismatches.
+- Fix scripts/gdb/linux/kasan.py so the new signed mem_to_shadow() is
+  reflected there.
+- Fix Documentation/arch/arm64/kasan-offsets.sh to take new offsets into
+  account.
+- Made changes to the kasan_non_canonical_hook() according to upstream
+  discussion.
+- Remove patches 2 and 3 since they related to risc-v and this series
+  adds only x86 related things.
+- Reorder __tag_*() functions so they're before arch_kasan_*(). Remove
+  CONFIG_KASAN condition from __tag_set().
+
+Changes v2:
+- Split the series into one adding KASAN tag-based mode (this one) and
+  another one that adds the dense mode to KASAN (will post later).
+- Removed exporting kasan_poison() and used a wrapper instead in
+  kasan_init_64.c
+- Prepended series with 4 patches from the risc-v series and applied
+  review comments to the first patch as the rest already are reviewed.
+
+Maciej Wieczor-Retman (16):
+  kasan: Fix inline mode for x86 tag-based mode
+  x86: Add arch specific kasan functions
+  kasan: arm64: x86: Make special tags arch specific
+  x86: Reset tag for virtual to physical address conversions
+  mm: x86: Untag addresses in EXECMEM_ROX related pointer arithmetic
+  x86: Physical address comparisons in fill_p*d/pte
+  x86: KASAN raw shadow memory PTE init
+  x86: LAM compatible non-canonical definition
+  x86: LAM initialization
+  x86: Minimal SLAB alignment
+  kasan: arm64: x86: Handle int3 for inline KASAN reports
+  kasan: x86: Apply multishot to the inline report handler
+  kasan: x86: Logical bit shift for kasan_mem_to_shadow
+  mm: Unpoison pcpu chunks with base address tag
+  mm: Unpoison vms[area] addresses with a common tag
+  x86: Make software tag-based kasan available
+
+Samuel Holland (2):
+  kasan: sw_tags: Use arithmetic shift for shadow computation
+  kasan: sw_tags: Support tag widths less than 8 bits
+
+ Documentation/arch/arm64/kasan-offsets.sh |  8 ++-
+ Documentation/arch/x86/x86_64/mm.rst      |  6 +-
+ MAINTAINERS                               |  4 +-
+ arch/arm64/Kconfig                        | 10 ++--
+ arch/arm64/include/asm/kasan-tags.h       |  9 +++
+ arch/arm64/include/asm/kasan.h            |  6 +-
+ arch/arm64/include/asm/memory.h           | 14 ++++-
+ arch/arm64/include/asm/uaccess.h          |  1 +
+ arch/arm64/kernel/traps.c                 | 17 +-----
+ arch/arm64/mm/kasan_init.c                |  7 ++-
+ arch/x86/Kconfig                          |  4 +-
+ arch/x86/boot/compressed/misc.h           |  1 +
+ arch/x86/include/asm/cache.h              |  4 ++
+ arch/x86/include/asm/kasan-tags.h         |  9 +++
+ arch/x86/include/asm/kasan.h              | 71 ++++++++++++++++++++++-
+ arch/x86/include/asm/page.h               | 24 +++++++-
+ arch/x86/include/asm/page_64.h            |  2 +-
+ arch/x86/kernel/alternative.c             |  4 +-
+ arch/x86/kernel/head_64.S                 |  3 +
+ arch/x86/kernel/setup.c                   |  2 +
+ arch/x86/kernel/traps.c                   |  4 ++
+ arch/x86/mm/Makefile                      |  2 +
+ arch/x86/mm/init.c                        |  3 +
+ arch/x86/mm/init_64.c                     | 11 ++--
+ arch/x86/mm/kasan_init_64.c               | 19 +++++-
+ arch/x86/mm/kasan_inline.c                | 26 +++++++++
+ arch/x86/mm/pat/set_memory.c              |  1 +
+ arch/x86/mm/physaddr.c                    |  1 +
+ include/linux/kasan-tags.h                | 21 +++++--
+ include/linux/kasan.h                     | 51 +++++++++++++++-
+ include/linux/mm.h                        |  6 +-
+ include/linux/mmzone.h                    |  1 -
+ include/linux/page-flags-layout.h         |  9 +--
+ lib/Kconfig.kasan                         |  3 +-
+ mm/execmem.c                              |  4 +-
+ mm/kasan/hw_tags.c                        | 11 ++++
+ mm/kasan/report.c                         | 45 ++++++++++++--
+ mm/kasan/shadow.c                         | 18 ++++++
+ mm/vmalloc.c                              |  8 +--
+ scripts/Makefile.kasan                    |  3 +
+ scripts/gdb/linux/kasan.py                |  5 +-
+ scripts/gdb/linux/mm.py                   |  5 +-
+ 42 files changed, 381 insertions(+), 82 deletions(-)
+ mode change 100644 => 100755 Documentation/arch/arm64/kasan-offsets.sh
+ create mode 100644 arch/arm64/include/asm/kasan-tags.h
+ create mode 100644 arch/x86/include/asm/kasan-tags.h
+ create mode 100644 arch/x86/mm/kasan_inline.c
+
+-- 
+2.50.1
+
 
