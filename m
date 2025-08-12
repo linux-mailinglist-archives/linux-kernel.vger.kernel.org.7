@@ -1,198 +1,221 @@
-Return-Path: <linux-kernel+bounces-765025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68F8B22A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:33:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90FCB22A6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2680D3B761E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90457171AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7654C2D0278;
-	Tue, 12 Aug 2025 14:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596A42ECEBC;
+	Tue, 12 Aug 2025 14:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1zqQJXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="h9+/ju6M"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013012.outbound.protection.outlook.com [52.101.127.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41522D46A2;
-	Tue, 12 Aug 2025 14:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755008022; cv=none; b=pqURJBLi4eT/vujxaP9Dkj1xipO5GzSyew4Uu0VNEZt66lAAtEZm+Hk+fxAkhm66HH6tzormxkAs08QAnipUK4TTVTGU7CAbQnyiaFRTcVcF7etktPy01hs8TLGzm0gRw74hQnshZmYTefMyzxnEkudr90sc7DZZJc4ZZB2FIJo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755008022; c=relaxed/simple;
-	bh=/E8ODUHv0/aKECOWNenhubhKtwKSn9HS1K3Gi+YJTHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=etvaaH8mCAES4HJn1/vDNDdXG0NllDIVcds6//Y09aUkK+71zsSYWWVMuYs21pncov6Bc2//aAclNU/TvddatAagXHW6BjjCU8g9b0xufbHqmnk3Qhx83xc0hfNQhxSVnP7Z6je5YBrJccL20x4PgzZLZO5jnd074n4lnwV1jkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1zqQJXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C986C4CEF0;
-	Tue, 12 Aug 2025 14:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755008022;
-	bh=/E8ODUHv0/aKECOWNenhubhKtwKSn9HS1K3Gi+YJTHg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=A1zqQJXAFSATCRyyy3JRw5dP4oLOwgvcEkzCttMl5hen7T5lTWM7/0Sfr0COfPdM8
-	 RBFdNpbHF3vbiLYmoYQBHLVrIBDzebuXxCDOM9w/JFCmSUAu6vr7/mx0xK6/Skiz3J
-	 rBB99Z0LT2JDgozPwMaIOxyfiw82qGlbukVyUpTgsdXpweGVRGBg0JqkL4vDpsIbTl
-	 2ECEaUgtIYp8hW2aCnd12vZ7g6GyXnc49cd3FpnKQoVjDkAVRykw/z0Ac549qIkMKh
-	 nIGbkpEJwg3rxXaL+At2p+PJrYlsjAy9ffSuUaKwtwmjvm9EowmjzODiT2QaPmMPix
-	 ROwCDX+lDo1CQ==
-Date: Tue, 12 Aug 2025 23:13:37 +0900
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] scsi: fc: Avoid -Wflex-array-member-not-at-end warnings
-Message-ID: <aJtMETERd-geyP1q@kspp>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B1261FFE;
+	Tue, 12 Aug 2025 14:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755008035; cv=fail; b=kI0Phc0sa4E0bX4dG4Q6ZLdn2Ilh3hQANnrhETy8M5yJenyQLwc9LKvqYYFWoKfefb9Ht5CZZCu/M3HWa40fB+ozoYyvNdUcIIi4Znu/O13rnj6U733FGgJ1BZF8hAruDg+tyP3vF6Nz7EY6LdssVKtCN9VVIDa0AdKELWO+FGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755008035; c=relaxed/simple;
+	bh=ljtmcUkUcSBTWsUSJGB4jRWez0YZvLnAp9YbujI8DlY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cxA5/HSoLZCaNKjMZXRuyNNpaQd5gJxM/8nsSuvLAXDkrkL6FDvU6srr7TU4dcXnSU7LOeSJA6jNXnF4GDJggEVQpTkeAV24i00y64rBfucGWm+d9daTUxKcJDIBaCiZpzlKUjHmFYYin7Y6Ko1TwwpRwgNW9N3Myfodai+S//w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=h9+/ju6M; arc=fail smtp.client-ip=52.101.127.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RWuNhA04UJ6A2Y+ggVWQiJwMwBPY5BNHEoRuTErRSAhEWdzc2FzwGYXOp7YzkM7TPpLIsvMIMP9xVXW7tjEI/Xl/Pm8oQLJC/MkaJIJL+Wc9wK9oRqRVJMKv688i2+ep6t5d8R0+oN14ccAOFq4BdYd7YpLMjfauJWLEGPFTlUaJPpgJSA2CL41Rc1EsoFxuQfNdirivfz/nOtw47705IjDoRi6gJ8/YDgbIsjXCNEcKl6W+xiCfgEtXfL55FM29yQU6/p4Vve2YphvqKkmuw08QvOvkrgrD8oIuMjfVcRz489UBjcUfZYV4JyXFscSP0F4Nq9g5bSu1TpvRCFM7YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mZRw+P9V9zODY/TufI/AMRwQau7EPFTuKMOQfato1y4=;
+ b=Fw5BfBPYKMov1OrGFaqtzTMNzWxQZgdyGiZah0Hm6fh/B96GvRKx15DGqFw4HTI5ZUkJx2ZSnbnoetnYtlHuLmmkyobvpPPzkrS6eJz8E6GNBTcDmzpZL+rHR4wZlOdYM8mKljbRSWsi5FVlEpfPtX8t50Keev1b0I7evB4+wVOTsXzRnRIy1HVvKN3Swu9PPZG/BKfUPdc8mRsyNVDNut0G2QQd+Zo4Sg2iI0ZCh9FUbFITE7188bAGP2p7KeUMJbdn/gxyaIyZch9SlfX/91jRHn5f0T7NKoxR3z8Ts4ueUSgDafvob0f9IZcmmupq8Cb6vk6MKCeHYZ938NCEHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mZRw+P9V9zODY/TufI/AMRwQau7EPFTuKMOQfato1y4=;
+ b=h9+/ju6M+1MgZLTtxBk8oReQ2eACHb8/4T+NJICbbNq2kit9UxTdEBq7L/KeeFUJKQy5+UVQ8SOPfYHQoqrLyQEQfPj0/cqtwSb0eoE2iVqFSlzobBXM+xtJsJUeDI9zZ5pkRI/f2gR5kEirfaMWRHIanUhqzmxxJhR49zEhe7vuGe6p913Dcc7KUOD1BEta7vLiUhgRvDfuHkgzD2YWsGKMk6F/AWNiaKzb8nhd1bg6Z2+2HUcNCX9Y3VNq45YWDK/MQlHRM2KPga/NI0TLDPvrUwjMph0DfNwPPcTk9HKBxX7IxbZL/ipUJGoc93vSwWWMaTz4J2w9W/n7D/OoJw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEYPR06MB6251.apcprd06.prod.outlook.com (2603:1096:101:c4::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.20; Tue, 12 Aug 2025 14:13:47 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 14:13:47 +0000
+Message-ID: <e66eb22f-5565-4f33-b523-f93dc81a1210@vivo.com>
+Date: Tue, 12 Aug 2025 22:13:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] wifi: mwifiex: use vmalloc_array() to simplify code
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Kalle Valo <kvalo@kernel.org>,
+ Aditya Kumar Singh <quic_adisi@quicinc.com>,
+ Rameshkumar Sundaram <quic_ramess@quicinc.com>,
+ Roopni Devanathan <quic_rdevanat@quicinc.com>,
+ "open list:MARVELL MWIFIEX WIRELESS DRIVER"
+ <linux-wireless@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250812133226.258318-1-rongqianfeng@vivo.com>
+ <20250812133226.258318-6-rongqianfeng@vivo.com>
+ <aJtGSxkRztAsy92h@stanley.mountain>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <aJtGSxkRztAsy92h@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR06CA0232.apcprd06.prod.outlook.com
+ (2603:1096:4:ac::16) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB6251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c726a40-94e8-4879-7676-08ddd9aa7429
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TDU2NkpLVFNEWEJzMmxVQ2hmK2pFRGhOTkk5Nko1c1BGb1RYWWFxUmtLUmhB?=
+ =?utf-8?B?bTgwZEtSSEluZGZjOVc3RW5wcFdkc2VZUzEvVmxrQXBrWUlwK25CNStXMmda?=
+ =?utf-8?B?ZlZneTNHb0ppQTlhVjRxVFE0eit2OS8zRE5jbXA5RDVTczFmTG5PNjJwNnAx?=
+ =?utf-8?B?Mk9OUlJLNUlOWEVucXVnZTBpRmNHUUFjRHoveEpGc2VTRjZNQ2dENGJzTnNT?=
+ =?utf-8?B?a0RLbEpNYXJFdXRxcnVHNzZUbUhCWmlhemZzaC8zb2dpT0tVS0JxNzhEU2FP?=
+ =?utf-8?B?VmJKMXNmekhnMnJJalp6SzhIYUIydXAxeWhKVExBVFlSZ281bmM2UzMwNVNu?=
+ =?utf-8?B?MDZGbWtEM0Y1dE5WS0g0K0ExMERTZlUvVFduWTBEZHBLRSs1TjlFMkxmN2RL?=
+ =?utf-8?B?MnFjRVJvY0g1bEQ5V0c1V05kQ3Brb1ZwNGR1SE1KVjRXNDcyWDVhTmxyNy9U?=
+ =?utf-8?B?dEZML2ZHUGxrN3BMMHY3UHFJbkNBNnZIY3NTZkt2YTFVc2E4K3VVN08zdHhS?=
+ =?utf-8?B?MzYrdktkbVNEL1p6OWRZM1lIQ0RUclNnTEZpVmQrZUdHbzE5Sy9ENkcrbWxY?=
+ =?utf-8?B?UEIySStYdXhBM0xEU1BWM3B0a0dkOGdpajdlRksyb3ZFUFp6TmtjallDbmRX?=
+ =?utf-8?B?aVF3NTFUa0FQWmhvQzB3cUorandFcTZIN0kzZnY2MUFEcW9Fdk5qUWxtT2Ja?=
+ =?utf-8?B?N0Nwa3pURktKUHpuZkE1M3JJOWZnV0N0TnZhbkplL21Cd24xVzRnZWxLNFZa?=
+ =?utf-8?B?R0xWdHFYWVNCbFZpYTVBcWVOcS9UV0FsalpXSjJUZnk5c3hkUDRFY1d1QXFu?=
+ =?utf-8?B?T0hmMW9zbkdpNklaanBtdHdmSkwyK0lIUDFvblBLZlg3TkZpcUk4NnFFQm9D?=
+ =?utf-8?B?T0szVkJ3OVNRRWJjdS9BNFphZUNqQ1N2M3JQdnY3SVRGTmhzc09KNGpBRDlP?=
+ =?utf-8?B?QjloN0hIemRJVTBKU1VYME5xcW1iMGY5VHY2TDl0U2pTVUlON3NpV3JVSEdP?=
+ =?utf-8?B?dmFMZmgrYzZVVGd4Ylg3ZUN0L2NRbVY5ajBUcmo0QzA0anY3ODBFb0lKUnpz?=
+ =?utf-8?B?WDBncnpVQlNCT2l0ZGZFRnZJUlR5NzN2SE1VR0t3QkdKN0VUVm42bEFaNVoy?=
+ =?utf-8?B?K0xFeVliNWZGQUJXV3RRZlpxNmJaWHgrK1JNVzlOdE4zMExObm5uNXZtYVZn?=
+ =?utf-8?B?M2JZbXlkalhZSWpoOCtvcEsyMnlPQnFyYzEvTnp2NUE0YTdwdStJNVBJeDl5?=
+ =?utf-8?B?ek5zOGsxTld3RmJVMWNhSmZkYkc3UzVRc2g0Z1AzOXUvN1BwYWJFTHFDY3ZJ?=
+ =?utf-8?B?dGFRMEdnVHdRWGVSOE9nS0k5K2VEVlJjbkd0L1VGUHlmbVgvQldnUWRYODRv?=
+ =?utf-8?B?WktaYjg0MnhSaXFTTVJOSjlZMW1DdDRDOXpkTWU4d1RTK1lhVXE3UVlpSHJa?=
+ =?utf-8?B?L1ZtNnFxclhqMkdQZFRzc1c3UTduc0xRZGMyTU54VUdxekdmd3ZBVzN1bmZ0?=
+ =?utf-8?B?ZXNLWmhYR1FFci9BeUFJdGc1Z1UvejN5aWxjeThlZ21CU2Y2eEJsK0Vidjll?=
+ =?utf-8?B?aVA3cUpleXdVOW1jdVBnUk5uOVYwdTZNRlVqUE1iYjhPM2dIMHFLVkpZd1lQ?=
+ =?utf-8?B?ZUxFV1hOMnNlVXlVTUF5dytXbnd5OEZlRzE5cGtRM2o0OC9YYnJZUjBSbXZw?=
+ =?utf-8?B?eVVVeVRXZGFNa0RVRXNUcmI2emhYRGNVTzJNNXpKb2VDRG9WazVtcG01Z2FR?=
+ =?utf-8?B?K3NqNHBpa1g0V05ONFZGQzZmMXgrWGhhR01mZmdSR3VvRWtkUEk3Y0hiTnZn?=
+ =?utf-8?B?RDNJWHFsekE2QkM0alhaeGlGZzBseURBM05rY2FiMG1pbSs3Z211TkltaHda?=
+ =?utf-8?B?ZzVXUUswa1E0enBWV2ZxMnVsUTVLMUNzdjZrem1ZaEUrRlBtcXFqKzNmVElM?=
+ =?utf-8?Q?b8tfeaj/3gQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N3JpcVpUWGtNaDFtUVV5a05td1VWMFlQbk9KcFEyUTdRa0NHWEZkUStzU3cz?=
+ =?utf-8?B?alFBV0svemE4UzFxZTBucVBRUitvRGtJaFF3U1VEYklvZHhQN1g3Z09BNnlJ?=
+ =?utf-8?B?Vm5JVXFsdkFPQzc2MVA5anpwRUptak9MTjB3RkM2T3kyazBvRVVrK1loMVlO?=
+ =?utf-8?B?ZzRnWFQ2UGRZQzdreUlTS3phTU9YajRpTVpFbWtVMFdvTzRLb1RMZEh5bnRl?=
+ =?utf-8?B?WG1UTXQyUWN3VG1wcmV4SE5PZEZvNURzZGtNWXJyS3BraGxaT09EQkFPY0pt?=
+ =?utf-8?B?MHcvQ2VtMS9tbGxoOEZwVXhGYXdyeGdQTWxuOEZYNnlkNmxKKzV1ZzFRbGpU?=
+ =?utf-8?B?M3JHUTl5UUFEZ3ZpRE5rb200MldZOFFlVEowcFhiSFRkdEF1WXpjU0lRM0pm?=
+ =?utf-8?B?aExENUdUQk4vSnhkaXJ5RDlVZHVGclphOWtjWWZnTXBtbzY4T1NpbHdYVmJw?=
+ =?utf-8?B?cWVZQ2x0aHhxTm1OREFBT25lZ21qWVdXZThEVHYzaCszMkRQclR1RTBnVjhD?=
+ =?utf-8?B?d3FJRkh3ZExoSWVYMi9TN2pObFNRU3Zudi9LM2tKRVp3Q2Nkd3dDVithZE02?=
+ =?utf-8?B?c3hoL05aYVdqaWRXMHVhRjRtem15cG83TjMrT1BiVDNyMTVmL3BEdzB6T0dM?=
+ =?utf-8?B?Y3dCU1NTQUc1YVNZK2NsbUxEd1daYmJQaGpyMUVMWmNHNm9mbXdpQVJ0dmRX?=
+ =?utf-8?B?QlRNK0wrNDlnbFNxVDJKbFgzWjVacExmL2Q0WDlUYnNoTnhPSnZscGFleFVn?=
+ =?utf-8?B?NWJkQVlOMzJVcHY0c3NwbXNWR0NTM1Rlc0R2TmQvbkR4VFNHZ2tCNm5FSVdu?=
+ =?utf-8?B?YWpiamVScE1kNEhGSUtVaVVMTnR1b09zdWJyUWdzVEx4NXJUOW5MSzlIcEE3?=
+ =?utf-8?B?WVRlZkJGVTRUOUhibkY0WElySVIxbHNaMUxVTkgweHVoVEFoc0hrYStCK0pv?=
+ =?utf-8?B?bmtHV210THM5RUdNTGhhcm9MblcxdEMrYThUQU9RN3dQclY5VWFjVWxNSTl0?=
+ =?utf-8?B?YjQvNEppcDdkRkIweGdwNXdyMXR0Wm9MY2lnT2lGVmxXTHJiK3VmTU9HNUth?=
+ =?utf-8?B?cUpGMTkyN2Vkd2IxU1dkeFkwck13VGIxZEMrcGM4TmJObmJxUVlrTCsxL1JB?=
+ =?utf-8?B?dzRBWUtvRWRkZlNyQjVKMFZnUWNmak1Fck1YWjNMUXhsV2JldTh2WjZsSXJ3?=
+ =?utf-8?B?UFR6S1UwMlFpdW5TaHVkS0xEa2Zpem1yZDhiMnd1Q2QyQWVrMWNQc0JHYTc0?=
+ =?utf-8?B?WllQTi9zaDMzVHlLQ1oza3JQNy85TFN1b1JSWWx3Zm83bCtqaGdyUjBpeWU0?=
+ =?utf-8?B?d2N6ai9XUC9RaGZpa1RsalVlTmdhUGU1eVVMZFBHWktCenZrRFJSekdBczd0?=
+ =?utf-8?B?Y0lxWDBucVVtZ005OGhKS3daS0ROOTY0eERvWXZncHNmeGsxY1FRUGYyT0tz?=
+ =?utf-8?B?L2dRTVd0ZGd1UjFOdlVLMWlPMGdDazA5YXNXQnNRNS9zMjNXclRSeXptZDdY?=
+ =?utf-8?B?LzNSSlVsMWxqNWtUaDg5LzZIc3BYU0tSRUNDdGh1S1Z4U2hwWmh3RzNMZTJh?=
+ =?utf-8?B?RDdiVURYUTdTcjcvN0JnT0VLaFFaMGgrU29seHlUS0FibUlyVUtNZnRXV0U5?=
+ =?utf-8?B?YUZMVXBaSlBnMlhJQ2hTV2xPWFBYZEZ3K1RiZFcvYmdhdnpJNDkrRGdQc3F0?=
+ =?utf-8?B?RWRoVGxubWI5NU1DL2I5eWNjUWZ1N25YRHNISGJBeUx4ZVlKcU9EN3hnM1Rh?=
+ =?utf-8?B?Y2YxZXFab1M0Ym5EWXlKNzErcXpTOENJdTV4MFVKaldYSW5KRUhlRFhRTTFD?=
+ =?utf-8?B?N1F6UHkzYUJQei90dm9KQ2pYWWFPdHBvcWU0Q1J6VC9nRGlqSTVPSFF3dG5p?=
+ =?utf-8?B?Z0tsck9IZitad1NZTTFOUjlOY3V5RUlrcVRvMXhOd2l4UURMR1ladU5aK1pk?=
+ =?utf-8?B?UUhYeHk4QUdQdi9ZRTlJcU9QY3AyZUp2bUZHUWEzV0RhNGc5VDNmRmpoSGNi?=
+ =?utf-8?B?dTZZRGVETmRiOTRNRXpHcHBJem0yNlVZL3pPRXdRbEhMU1dpM1RqMisyck40?=
+ =?utf-8?B?VnU0aGVGcTQ5dklWRjBvaE41bE5PSFFUY1p0VWtpbCtocVA1cWk4Wm16cjUw?=
+ =?utf-8?Q?7sJDcZ9j2tOCN28VjzVdG7d1d?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c726a40-94e8-4879-7676-08ddd9aa7429
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 14:13:47.4132
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uI2DDUR617zFbswEu5pN2uvL+LUuWBtKlpMPBKclfnN0P9fF/jDCQ4xt7pIrJb+T+xvU2BqprJaRHVrhq9IF3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6251
 
--Wflex-array-member-not-at-end has been introduced in GCC-14, and we
-are getting ready to enable it, globally.
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `__struct_group()`
-helper to create a new tagged `struct fc_df_desc_fpin_reg_hdr`.
-This structure groups together all the members of the flexible
-`struct fc_df_desc_fpin_reg` except the flexible array.
+在 2025/8/12 21:48, Dan Carpenter 写道:
+> On Tue, Aug 12, 2025 at 09:32:18PM +0800, Qianfeng Rong wrote:
+>> Remove array_size() calls and replace vmalloc() with vmalloc_array() to
+>> simplify the code.
+>>
+>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+>> ---
+>>   drivers/net/wireless/marvell/mwifiex/cfg80211.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+>> index 3498743d5ec0..fb4183ff02a9 100644
+>> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+>> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+>> @@ -4673,8 +4673,8 @@ int mwifiex_init_channel_scan_gap(struct mwifiex_adapter *adapter)
+>>   	 * additional active scan request for hidden SSIDs on passive channels.
+>>   	 */
+>>   	adapter->num_in_chan_stats = 2 * (n_channels_bg + n_channels_a);
+>> -	adapter->chan_stats = vmalloc(array_size(sizeof(*adapter->chan_stats),
+>> -						 adapter->num_in_chan_stats));
+>> +	adapter->chan_stats = vmalloc_array(adapter->num_in_chan_stats,
+>> +					    sizeof(*adapter->chan_stats));
+> n_channels_bg is 14
+> n_channels_a is either 0 or 31 depending on if we're using BAND_A.
+> sizeof(*adapter->chan_stats) is 10.
+>
+> So we're either allocating 280 or 900 bytes, which is quite small.  We
+> should just use kmalloc_array() instead of vmalloc_array().
+Switching to kmalloc_array() requires changing vfree() to kfree(),
+but I couldn't locate the memory release code.  This modification
+likely requires deep familiarity with the codebase.  Also, for
+variable-sized allocations, kvmalloc_array() is preferable, but
+requires kvfree() for proper memory release.
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct members currently causing
-trouble from `struct fc_df_desc_fpin_reg` to `struct
-fc_df_desc_fpin_reg_hdr`.
-
-We also want to ensure that in case new members need to be added to the
-flexible structure, they are always included within the newly created
-tagged struct. For this, we use `_Static_assert()`. This ensures that
-the memory layout for both the flexible structure and the new tagged
-struct is the same after any changes.
-
-This approach avoids having to implement `struct fc_df_desc_fpin_reg_hdr`
-as a completely separate structure, thus preventing having to maintain
-two independent but basically identical structures, closing the door
-to potential bugs in the future.
-
-The above is also done for flexible `struct fc_els_rdf`.
-
-So, with these changes, fix the following warnings:
-drivers/scsi/lpfc/lpfc_hw4.h:4936:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/lpfc/lpfc_hw4.h:4942:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/lpfc/lpfc_hw4.h:4947:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/scsi/lpfc/lpfc_hw4.h  |  4 ++--
- include/uapi/scsi/fc/fc_els.h | 40 ++++++++++++++++++++++++-----------
- 2 files changed, 30 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_hw4.h b/drivers/scsi/lpfc/lpfc_hw4.h
-index dcd7204d4eec..e319858c88ba 100644
---- a/drivers/scsi/lpfc/lpfc_hw4.h
-+++ b/drivers/scsi/lpfc/lpfc_hw4.h
-@@ -4909,13 +4909,13 @@ struct send_frame_wqe {
- 
- #define ELS_RDF_REG_TAG_CNT		4
- struct lpfc_els_rdf_reg_desc {
--	struct fc_df_desc_fpin_reg	reg_desc;	/* descriptor header */
-+	struct fc_df_desc_fpin_reg_hdr	reg_desc;	/* descriptor header */
- 	__be32				desc_tags[ELS_RDF_REG_TAG_CNT];
- 							/* tags in reg_desc */
- };
- 
- struct lpfc_els_rdf_req {
--	struct fc_els_rdf		rdf;	   /* hdr up to descriptors */
-+	struct fc_els_rdf_hdr		rdf;	   /* hdr up to descriptors */
- 	struct lpfc_els_rdf_reg_desc	reg_d1;	/* 1st descriptor */
- };
- 
-diff --git a/include/uapi/scsi/fc/fc_els.h b/include/uapi/scsi/fc/fc_els.h
-index 16782c360de3..81b9f87943f4 100644
---- a/include/uapi/scsi/fc/fc_els.h
-+++ b/include/uapi/scsi/fc/fc_els.h
-@@ -11,6 +11,12 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- 
-+#ifdef __KERNEL__
-+#include <linux/stddef.h>	/* for offsetof */
-+#else
-+#include <stddef.h>		/* for offsetof */
-+#endif
-+
- /*
-  * Fibre Channel Switch - Enhanced Link Services definitions.
-  * From T11 FC-LS Rev 1.2 June 7, 2005.
-@@ -1109,12 +1115,15 @@ struct fc_els_fpin {
- 
- /* Diagnostic Function Descriptor - FPIN Registration */
- struct fc_df_desc_fpin_reg {
--	__be32		desc_tag;	/* FPIN Registration (0x00030001) */
--	__be32		desc_len;	/* Length of Descriptor (in bytes).
--					 * Size of descriptor excluding
--					 * desc_tag and desc_len fields.
--					 */
--	__be32		count;		/* Number of desc_tags elements */
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(fc_df_desc_fpin_reg_hdr, hdr, /* no attrs */,
-+		__be32		desc_tag; /* FPIN Registration (0x00030001) */
-+		__be32		desc_len; /* Length of Descriptor (in bytes).
-+					   * Size of descriptor excluding
-+					   * desc_tag and desc_len fields.
-+					   */
-+		__be32		count;	  /* Number of desc_tags elements */
-+	);
- 	__be32		desc_tags[];	/* Array of Descriptor Tags.
- 					 * Each tag indicates a function
- 					 * supported by the N_Port (request)
-@@ -1124,19 +1133,26 @@ struct fc_df_desc_fpin_reg {
- 					 * See ELS_FN_DTAG_xxx for tag values.
- 					 */
- };
-+_Static_assert(offsetof(struct fc_df_desc_fpin_reg, desc_tags) == sizeof(struct fc_df_desc_fpin_reg_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- /*
-  * ELS_RDF - Register Diagnostic Functions
-  */
- struct fc_els_rdf {
--	__u8		fpin_cmd;	/* command (0x19) */
--	__u8		fpin_zero[3];	/* specified as zero - part of cmd */
--	__be32		desc_len;	/* Length of Descriptor List (in bytes).
--					 * Size of ELS excluding fpin_cmd,
--					 * fpin_zero and desc_len fields.
--					 */
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(fc_els_rdf_hdr, hdr, /* no attrs */,
-+		__u8		fpin_cmd;	/* command (0x19) */
-+		__u8		fpin_zero[3];	/* specified as zero - part of cmd */
-+		__be32		desc_len;	/* Length of Descriptor List (in bytes).
-+						 * Size of ELS excluding fpin_cmd,
-+						 * fpin_zero and desc_len fields.
-+						 */
-+	);
- 	struct fc_tlv_desc	desc[];	/* Descriptor list */
- };
-+_Static_assert(offsetof(struct fc_els_rdf, desc) == sizeof(struct fc_els_rdf_hdr),
-+	       "struct member likely outside of __struct_group()");
- 
- /*
-  * ELS RDF LS_ACC Response.
--- 
-2.43.0
-
+Best regards,
+Qianfeng
+>
+> regards,
+> dan carpenter
+>
 
