@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-764034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BB5B21D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4513EB21D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC27668305F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E281905761
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B892D3A86;
-	Tue, 12 Aug 2025 05:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B054029BDBC;
+	Tue, 12 Aug 2025 05:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GE8wz8IM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="A+1wIpON"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F147D296BCA;
-	Tue, 12 Aug 2025 05:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754977198; cv=none; b=HYa+80ntUMz6T93BvyGeYtWCQMip8/hGjnbKXmeK2PYdw+xGmGkFjsDGBHmmo3OekfaFQJtfx2EQqUp4SUtD7nNrr0DFhshqhRdPi3jO+VIkTaRef8G2j4zw5O7HlfdeocZAG9otYqfIoXFaR2GOuvCpkBTSIHMmCc3c01Y6Hfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754977198; c=relaxed/simple;
-	bh=8Ka0sd8FxkjIz00jjTcMx5oRTqQPN4HlysV+S/vVdgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvbtHcFzx5a3A7e2F4qFP6M8Dq1Y08z9lEX+zMBz0EK3fmDKtiPcvq0wd3W1dVggY8gCnddM7LE1dGRbaw/1uDo1YPugrTI9UlFy9sBJgzhM8niHb3+O8KBxvXcfP2m5ungggTUzMCOlDscq9VZfimlMrqD+Xf1Xw7+KYaLKDe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GE8wz8IM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A546C4CEF0;
-	Tue, 12 Aug 2025 05:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754977197;
-	bh=8Ka0sd8FxkjIz00jjTcMx5oRTqQPN4HlysV+S/vVdgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GE8wz8IMlrQ5frhZwhslxoZ05i34brKKZumRyQwF689QOSgTaFZ4QOtiuRFdLkKFo
-	 T8FdEaLYiDtcdg0jBvfLspbmGk3B0Yvqb7JT8CYbJtUfaRLpE2UKWKHbihYErODUOt
-	 BmPxM+qVmzdAwUiAch8OuSyRWgCO22dYFAbTPgOokj78zRc+EgY2yNpJkv90wiMYqu
-	 /T6uG+wHR/R6gjdsAA8gftXTQmDlP8R+2BICsqJFlhtZfJVid+ODeHsFKviFyG0/Ud
-	 HGDQkXVlBYcqGDPh8zSyl8U1T0opdAmMP1VLxRSuluHHibY1+mNyteI4yg644FX8XU
-	 i9FhMfDk8ObzA==
-Date: Mon, 11 Aug 2025 22:39:55 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>
-Subject: Re: [PATCH] reset: thead: Scope TH1520 reset driver to VO subsystem
-Message-ID: <aJrTq775sXTrsepl@x1>
-References: <CGME20250810211419eucas1p173e5fefcfaae437d8b5531d1406ff6a6@eucas1p1.samsung.com>
- <20250810-fix_reset_2-v1-1-b0d1900ba578@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4168F29BD96;
+	Tue, 12 Aug 2025 05:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754977416; cv=pass; b=YR6DjlzL73BTvVHMxKt6Rdg0ru/82T6Ew6JhGHirDad/BvrwrG1dYg3tKAyXbnqF1uxPcC8Csu+Op+Qn/vhiOxxIGcZqsw63hKGihkk8sz+/b8UjuREzreL+W+FULYYcZoFvcMz28TzD9OX9crlGRV2JLlsVMXiBpY5N6i2jzrw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754977416; c=relaxed/simple;
+	bh=bh/Db1KHs7GNIXYtK735ef/NGxKQRs0jn6cR78ocYNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOopFud4XMb/3LSgVBjIyUFkWNSLU3WEGIwcU/SG2k0xajviLBZkRFh5/nyiRDv+1ux6yaRS/ZI/fnocqR+55VsOyLLqxkfMxMLyIM/kpRs1YmWCtJwgStI1wjMWkMVF7BbivnBpa4zIHgR5OGTcgbn4uW4OdKGhNwGKloBSnNE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=A+1wIpON; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1754977396; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BrBGm/vA4NzG7o7uj5qjFNzDvDw74Kmterqa2XgiiCV2Ho1W4tlrgiERdmGuXls+AGbR3V5UvXGfhBJvKRTeR5MbzO5ga/i2pdmMfVUhwDObPf56Ez0c6cswE1THgC03TP0dAEW4ZwGKaOxoYYQFcULrBh/9BWsd9dVpZTq101w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754977396; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pA524d/aKpZyY20fSlZrDb9/G4WDB7CsquWn7adUTYc=; 
+	b=n/mdmUFuumwC68cdBL2WocQOVOfclfkDGDV6WA359thzGSWpzsGKzzVyPTvleumAoCRcxomhopVpgN5v+p0pQq/o8IaYfL98zy2rfx6V1ugD28IEqko1UniZ8PCoQFduBVj/iX8+1PQRYG7ZorbJnIOGHsw8hui6CdodAjFES6k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754977396;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=pA524d/aKpZyY20fSlZrDb9/G4WDB7CsquWn7adUTYc=;
+	b=A+1wIpONbt6KdAeW2suguNZ5G+FXc24a7PTbFjOCPIcrWTLFv+mVKK8fS67ydlzw
+	CMvwCoQQbyJDfbG6IqK6IGdDzMlN6OS5YKNqCMz2pZGAjHpbjLE+N35W5MDq2iK2/04
+	YsdaInTGFCsVzYZusnD/J2Q8A4mNoK2nQHfMeEloQUCQ5WYw6V8jZI+/dufXBp1RKPG
+	UaG3DJmLDoCPcJpQokWD7C1b3E14JlOcBoDNtoi8P5FSgj38m6YXlbjwj+BzUaqhtCt
+	fyW3mmA3sh3nSIiiRsUeIKEWla6e3WJ5N44qgLthSL5brQookr/cDAkTUfbKZzogmhv
+	xlsNMVxKTQ==
+Received: by mx.zohomail.com with SMTPS id 1754977393951539.500568194191;
+	Mon, 11 Aug 2025 22:43:13 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
+Date: Tue, 12 Aug 2025 13:42:54 +0800
+Message-ID: <20250812054258.1968351-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810-fix_reset_2-v1-1-b0d1900ba578@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, Aug 10, 2025 at 11:14:19PM +0200, Michal Wilczynski wrote:
-> The reset controller driver for the TH1520 was using the generic
-> compatible string "thead,th1520-reset". However, the current
-> implementation only manages the resets for the Video Output (VO)
-> subsystem.
+This patchset is my changes to the TH1520 clock driver, mainly for
+supporting the display controller (the first 3).
 
-Looking at Section 5.4 on Page 451 of the TH1520 System User Manual [1],
-it does seem like we would ultimately need 6 separate nodes for reset
-controllers:
+The first two are functionality additions, with the first one adding
+support for enabling/disabling PLLs (for DPU PLL) and the second one
+adding support for changing DPU dividers.
 
- 0xFF_EF01_4000: AP_SUBSYS
- 0xFF_EC02_C000: MISC_SUBSYS
- 0xFF_E404_0000: VI_SUBSYS
- 0xFF_EF52_8000: VO_SUBSYS
- 0xFF_ECC3_0000: VP_SUBSYS
- 0xFF_EF04_0000: DSP_SUBSYS
+The 3rd one is to address hang issues met when testing the DPU driver
+w/o clk_ignore_unused command line option.
 
-Maybe we should take this opportunity to document the bindings for all
-the resets that the REE (e.g. Linux) can control?
+The 4th one has no relationship to display, and only exists for my need
+to change an arbitrary GPIO (well, GPIO3_3, the one controlling the fan
+on Lichee Pi 4A) with gpioset.
 
-It seemed like that was overkill for the 2 resets needed for the GPU,
-but, as Krzysztof noted in this thread, problems arise when bindings are
-introduced that are not complete.
+This patchset has a dependency (a 0th one) [1].
 
-Thanks,
-Drew
+[1] https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v1-1-299c33d7a593@samsung.com/
 
-[1] https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+Icenowy Zheng (4):
+  clk: thead: add support for enabling/disabling PLLs
+  clk: thead: support changing DPU pixel clock rate
+  clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+  clk: thead: th1520-ap: fix parent of padctrl0 clock
+
+ drivers/clk/thead/clk-th1520-ap.c | 174 ++++++++++++++++++++++++------
+ 1 file changed, 143 insertions(+), 31 deletions(-)
+
+-- 
+2.50.1
+
 
