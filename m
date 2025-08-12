@@ -1,157 +1,418 @@
-Return-Path: <linux-kernel+bounces-763766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0CAB21A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325DAB21A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294622A793C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:17:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37104271F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900F72D63FD;
-	Tue, 12 Aug 2025 01:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B402D6623;
+	Tue, 12 Aug 2025 01:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JC8PbDmK"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lY4Akxb5"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C9D1F8676;
-	Tue, 12 Aug 2025 01:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBBD2367CC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754961434; cv=none; b=IMqtWU4dwju18S873Ap6oYy21LkfoR/aRMfIxwzDjbdJz2si4YZwsEIdiLoSHDoNdNgdqAp8gxF7J1bV1xTxFWxNNiSjV6FdMX+PvSRqcLlNAgoYyecVQYy0t6Uem9p9IlwiFGWxCFtCA6iSiyII6ZMG0JOYIXddhLJrUqmZOFo=
+	t=1754961762; cv=none; b=jcpMPlUBsBYzlJ/X/HzF8gK3J+DcNOCzrzkbOSKOVbORcPGgOOf9fo0TgJyQ8elMG0RVolUcYGUQovvHMwjg9+ykZq1HJ+pUuryqy0o91DzVQ5+nN0U+jzSybc8soalSRKlwC5dJ5JCObyTPaVdIwEGcnxPPalP+3uE/i8O9SbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754961434; c=relaxed/simple;
-	bh=gBCHP64kXB1dQICiP2hErVP2nwgWWbnltU6gcp20yvg=;
+	s=arc-20240116; t=1754961762; c=relaxed/simple;
+	bh=G8gxWvMovGeu0q+QZwOqtNcTfZkerkosarL8CBusYJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C1DCOwc0c+keHpPiTPdYNC35nV4p6tL9CHK6MJ1oNDi+Oi8hJRv1jngch79d1f81kjHBZOXh5uN9gkydZwX4ReH8XRdHABcyAdLzAc55b3OMz2qPZsucAmxPB3BNEqm90FarXt6/AYfHLjujTsPdy68u80wFbSKOod2nmsaeDYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JC8PbDmK; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-af95ecfbd5bso824885766b.1;
-        Mon, 11 Aug 2025 18:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754961431; x=1755566231; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kx6NdeUOK2ZAavwzyn07ncyKXSjBQKSfiC64En8ptK0=;
-        b=JC8PbDmKwI0uenPWzDZoW5kAVqpiBzm0szLzbaqr4Vt/5vs0CesgogDwp4i++3Nkps
-         5YX+zdmRVwyAxtNyHXFM+7TomdbH6VLz5wDKnk9dBGOkgKsSYrfD51607L9P1S4kyhWA
-         jg7Fj9uYHHrZ82qZ9DxTxI/qM5g0gwCLfaoRyMP0FAsBsw5jLPj7MP0M/LSPrqO078Nd
-         oXuxySTZw6AvbEgjRLeeZyZ5TumyLd16KleQytOULK4DZPES+Y5PXXGAscPcDEuOEqyZ
-         LWnUztG3c+rXWwYJefOKVqlWTtr0/n5bQIthNQHnVNm43xu5atO4nJoal1Qlqa+c0H0K
-         xuQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754961431; x=1755566231;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kx6NdeUOK2ZAavwzyn07ncyKXSjBQKSfiC64En8ptK0=;
-        b=iRDy/bEUKBH+ZIOpnawh+ySGtKR9TNSgR7RR8ytO1RlPSLZeivON/UQ6P3ZkPGhi6e
-         nE+848nzDsY2pZZ01Ecs5atZUaxHuyDuwzHfsoUTbNRInGjKbqns1TBxvUj/owCuL17y
-         vbjOjUzX0xS9RCye84dUJUtrFGUZh6+ecPNnJSMAVYE5i1AXLYg5SaGHaSuvB+1zP7rL
-         QjaDRpINZBYqxsJGAtbgECTMnXFuAN71f9rpozQEyolaQay20vNg6N1n+mZNCMb4qBEY
-         VB7Oy0xHHi9JCEGMgNGC+83qlMyhnbAJm1JtFQSiIqBWwX8XHH+byXSANrFCvXYeN4SE
-         ia0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKxkqYuXAPxsIRtqQzhJ5ieG2/szDO1Y57X2FMZLq06hQZx35QRxbeSV6lD09Wc5cclIYVKenNkdatYdM=@vger.kernel.org, AJvYcCXm0jx22+5uL19ecFonbdMyNzZS+I0T6bXgEJioDekY8S6uJb24UZfxLrcbgHkWZbw6OA2OUl/6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUuNr3/6vN52KdZPNz6XfJCQa6Ou7HUKyOW/17O0YBeoDOmyAS
-	PykQRk/R5P52RpfVYz00vjNOqKjPrrKGI5GixNS5vE8nKhihZQ0uEuuf
-X-Gm-Gg: ASbGncsPPFtiU279AIljpcp8lJd5Gy3Hq8uQQ/sV8iv/bd/JO/2Iq/Onte1D3xCZY/4
-	DbEpdbMYTrUneuLAZh3lfZCQ1DhcBBDb033sRcl4GUaV6qRZ2VXWkLjHxIkmVRbBjOIyJCoTjaA
-	MXyclyTqsZtz/S6sg5cWGlPhy0oAuK3CTjp0RCic6laEeAjoHFRqCYXjLDs6hVUIZmAhpwioiiH
-	aQCNJxF8x4e8xvG2xzdOFtEJoX0vRuwHRJ2msKSfkZeXSpL5EolY2FEv4KWQm3h3UySk1rmd48G
-	jpiyMM8MWy2ndgoNzXJ9uXIWgzIT6p8+JwJEnUSstzGQvzirNeXmrtYbj9wKJTvr/+k91pCVa9t
-	dqwTYKAaXtyxSyLzsu6jCDXmqUWNWbKqvIVrnom+E1L7KJwThwQzKTefw7gq4atOe1CJKWRu5xG
-	rB/NS0vemtK38fCol+fxzM
-X-Google-Smtp-Source: AGHT+IEEgh2ZE7NXrGwzl02oI8iVdXUPjVYyGKwYEOxmUW1rZ67qA/e691Ikur9GysNftuEPTgJSWw==
-X-Received: by 2002:a17:907:7206:b0:ad8:9a86:cf52 with SMTP id a640c23a62f3a-afa1dfa336dmr126169266b.11.1754961430541;
-        Mon, 11 Aug 2025 18:17:10 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3e80sm2125702966b.47.2025.08.11.18.17.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 18:17:10 -0700 (PDT)
-Message-ID: <563bd363-d806-4ee5-bcfe-05725055598d@gmail.com>
-Date: Tue, 12 Aug 2025 09:17:01 +0800
+	 In-Reply-To:Content-Type; b=ODI4EG/BwUspq9pRYProWPrlrH3mdYdUMsXFrLYiG3yI7krL6bw6jJrmG+GC1wPaKX7z9VsurIsmF4bo0vy4/LvuaqemsZPWXTsTrIkyy6FXdq++H52JtzGEjukwTVz2gkyKATZih8D95IESYK2mqmX4EKDE2MWw91eHIX9tjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lY4Akxb5; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9760e574-3eb0-46b2-bccd-916f73b9c39e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754961757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=akQgPLt0rU1NO/ECRY4EbvXlLiEYaE9L1zWyh6GJbjk=;
+	b=lY4Akxb58vBAMONc1Hbrr3rh6wP5QmNCGXr0on3dGeUvXypsSmYM8GirF6e9U2Z0FADh7O
+	XjOYnjiQkhNu9Nxr24ONAIYy1b5DzZ5Rwg33N+gtu1VAoan9cmwUKta3RX7ugUxkdQ57wN
+	RyV1DZxd/hnt/W/Xjr7QT8BYo3XXN5A=
+Date: Tue, 12 Aug 2025 09:21:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Dave Hansen <dave.hansen@intel.com>, Uladzislau Rezki <urezki@gmail.com>,
- Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
- <b6defa2a-164e-4c2f-ac55-fef5b4a9ba0f@linux.intel.com>
- <2611981e-3678-4619-b2ab-d9daace5a68a@gmail.com> <aJm0znaAqBRWqOCT@pc636>
- <83c47939-7366-4b97-9368-02d432ddc24a@intel.com>
+Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-3-youling.tang@linux.dev>
+ <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
 Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <83c47939-7366-4b97-9368-02d432ddc24a@intel.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 8/11/2025 9:55 PM, Dave Hansen wrote:
-> On 8/11/25 02:15, Uladzislau Rezki wrote:
->>> kernel_pte_work.list is global shared var, it would make the producer
->>> pte_free_kernel() and the consumer kernel_pte_work_func() to operate in
->>> serialized timing. In a large system, I don't think you design this
->>> deliberately 🙂
->>>
->> Sorry for jumping.
+Hi, Huacai
+On 2025/8/11 22:07, Huacai Chen wrote:
+> Hi, Youling,
+>
+> On Mon, Aug 11, 2025 at 5:28 PM Youling Tang <youling.tang@linux.dev> wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
 >>
->> Agree, unless it is never considered as a hot path or something that can
->> be really contented. It looks like you can use just a per-cpu llist to drain
->> thinks.
-> 
-> Remember, the code that has to run just before all this sent an IPI to
-> every single CPU on the system to have them do a (on x86 at least)
-> pretty expensive TLB flush.
-> 
-It can be easily identified as a bottleneck by multi-CPU stress testing 
-programs involving frequent process creation and destruction, similar to 
-the operation of a heavily loaded multi-process Apache web server. 
-Hot/cold path ?
+>> This patch adds support for kexec_file on LoongArch.
+>>
+>> The image_load() as two parts:
+>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+>> - the second part loads other segments (eg: initrd, cmdline)
+>>
+>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
+>> but ELF format is not supported.
+>>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> ---
+>>   arch/loongarch/Kconfig                     |   8 ++
+>>   arch/loongarch/include/asm/image.h         |  18 ++++
+>>   arch/loongarch/include/asm/kexec.h         |  12 +++
+>>   arch/loongarch/kernel/Makefile             |   1 +
+>>   arch/loongarch/kernel/kexec_image.c        | 112 +++++++++++++++++++++
+>>   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>>   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
+>>   7 files changed, 219 insertions(+), 11 deletions(-)
+>>   create mode 100644 arch/loongarch/kernel/kexec_image.c
+>>   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+>>
+>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+>> index f0abc38c40ac..fd50c83f7827 100644
+>> --- a/arch/loongarch/Kconfig
+>> +++ b/arch/loongarch/Kconfig
+>> @@ -625,6 +625,14 @@ config CPU_HAS_PREFETCH
+>>   config ARCH_SUPPORTS_KEXEC
+>>          def_bool y
+>>
+>> +config ARCH_SUPPORTS_KEXEC_FILE
+>> +       def_bool 64BIT
+>> +
+>> +config ARCH_SELECTS_KEXEC_FILE
+>> +       def_bool y
+>> +       depends on KEXEC_FILE
+>> +       select HAVE_IMA_KEXEC if IMA
+>> +
+>>   config ARCH_SUPPORTS_CRASH_DUMP
+>>          def_bool y
+>>
+>> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
+>> index 1f090736e71d..829e1ecb1f5d 100644
+>> --- a/arch/loongarch/include/asm/image.h
+>> +++ b/arch/loongarch/include/asm/image.h
+>> @@ -36,5 +36,23 @@ struct loongarch_image_header {
+>>          uint32_t pe_header;
+>>   };
+>>
+>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+>> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 0x0, 0x64, 0x62};
+>> +
+>> +/**
+>> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
+>> + *
+>> + * Returns non-zero if 'MZ' signature is found.
+>> + */
+>> +
+>> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
+>> +{
+>> +       if (!h)
+>> +               return 0;
+>> +
+>> +       return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+>> +               && h->pe_sig[1] == loongarch_image_pe_sig[1]);
+>> +}
+>> +
+>>   #endif /* __ASSEMBLY__ */
+>>   #endif /* __ASM_IMAGE_H */
+>> diff --git a/arch/loongarch/include/asm/kexec.h b/arch/loongarch/include/asm/kexec.h
+>> index cf95cd3eb2de..3ef8517a3670 100644
+>> --- a/arch/loongarch/include/asm/kexec.h
+>> +++ b/arch/loongarch/include/asm/kexec.h
+>> @@ -41,6 +41,18 @@ struct kimage_arch {
+>>          unsigned long systable_ptr;
+>>   };
+>>
+>> +#ifdef CONFIG_KEXEC_FILE
+>> +extern const struct kexec_file_ops kexec_image_ops;
+>> +
+>> +int arch_kimage_file_post_load_cleanup(struct kimage *image);
+>> +#define arch_kimage_file_post_load_cleanup arch_kimage_file_post_load_cleanup
+>> +
+>> +extern int load_other_segments(struct kimage *image,
+>> +               unsigned long kernel_load_addr, unsigned long kernel_size,
+>> +               char *initrd, unsigned long initrd_len,
+>> +               char *cmdline, unsigned long cmdline_len);
+> I think the RISC-V naming "load_extra_segments" is better.
+This name is also fine, but I prefer it to be consistent with
+that in kexec-tools.
+>
+>> +#endif
+>> +
+>>   typedef void (*do_kexec_t)(unsigned long efi_boot,
+>>                             unsigned long cmdline_ptr,
+>>                             unsigned long systable_ptr,
+>> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makefile
+>> index 6f5a4574a911..bd9405ee3888 100644
+>> --- a/arch/loongarch/kernel/Makefile
+>> +++ b/arch/loongarch/kernel/Makefile
+>> @@ -62,6 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)     += sysrq.o
+>>   obj-$(CONFIG_RELOCATABLE)      += relocate.o
+>>
+>>   obj-$(CONFIG_KEXEC_CORE)       += machine_kexec.o relocate_kernel.o
+>> +obj-$(CONFIG_KEXEC_FILE)       += machine_kexec_file.o kexec_image.o
+> We only support the efi format, so we don't need to split a
+> kexec_image.c like RISC-V, just put everything into
+> machine_kexec_file.c is OK.
+I hope it is separated and consistent with other architectures.
+For instance, arm64 only supports one type.
 
-> If this is a hot path, we have bigger problems on our hands: the full
-> TLB flush on every CPU.
-Perhaps not "WE", IPI driven TLB flush seems not the shared mechanism of
-all CPUs, at least not for ARM as far as I know.
-
-> 
-> So, sure, there are a million ways to make this deferred freeing more
-> scalable. But the code that's here is dirt simple and self contained. If
-> someone has some ideas for something that's simpler and more scalable,
-> then I'm totally open to it.
-> 
-> But this is _not_ the place to add complexity to get scalability.
-At least, please dont add bottleneck, how complex to do that ?
-
-Thanks,
-Ethan
-
-
+Youling.
+>
+> Huacai
+>
+>>   obj-$(CONFIG_CRASH_DUMP)       += crash_dump.o
+>>
+>>   obj-$(CONFIG_UNWINDER_GUESS)   += unwind_guess.o
+>> diff --git a/arch/loongarch/kernel/kexec_image.c b/arch/loongarch/kernel/kexec_image.c
+>> new file mode 100644
+>> index 000000000000..fdd1845b4e2e
+>> --- /dev/null
+>> +++ b/arch/loongarch/kernel/kexec_image.c
+>> @@ -0,0 +1,112 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Kexec image loader for LoongArch
+>> +
+>> + * Author: Youling Tang <tangyouling@kylinos.cn>
+>> + * Copyright (C) 2025 KylinSoft Corporation.
+>> + */
+>> +
+>> +#define pr_fmt(fmt)    "kexec_file(Image): " fmt
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/kexec.h>
+>> +#include <linux/pe.h>
+>> +#include <linux/string.h>
+>> +#include <asm/byteorder.h>
+>> +#include <asm/cpufeature.h>
+>> +#include <asm/image.h>
+>> +
+>> +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
+>> +{
+>> +       const struct loongarch_image_header *h =
+>> +               (const struct loongarch_image_header *)(kernel_buf);
+>> +
+>> +       if (!h || (kernel_len < sizeof(*h))) {
+>> +               pr_err("No loongarch image header.\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       if (!loongarch_header_check_pe_sig(h)) {
+>> +               pr_err("Bad loongarch PE image header.\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void *image_load(struct kimage *image,
+>> +                               char *kernel, unsigned long kernel_len,
+>> +                               char *initrd, unsigned long initrd_len,
+>> +                               char *cmdline, unsigned long cmdline_len)
+>> +{
+>> +       struct loongarch_image_header *h;
+>> +       struct kexec_buf kbuf;
+>> +       unsigned long text_offset, kernel_segment_number;
+>> +       struct kexec_segment *kernel_segment;
+>> +       int ret;
+>> +
+>> +       h = (struct loongarch_image_header *)kernel;
+>> +       if (!h->image_size)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       /* Load the kernel */
+>> +       kbuf.image = image;
+>> +       kbuf.buf_min = 0;
+>> +       kbuf.buf_max = ULONG_MAX;
+>> +       kbuf.top_down = false;
+>> +
+>> +       kbuf.buffer = kernel;
+>> +       kbuf.bufsz = kernel_len;
+>> +       kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +       kbuf.memsz = le64_to_cpu(h->image_size);
+>> +       text_offset = le64_to_cpu(h->text_offset);
+>> +       kbuf.buf_align = SZ_2M;
+>> +
+>> +       kernel_segment_number = image->nr_segments;
+>> +
+>> +       /*
+>> +        * The location of the kernel segment may make it impossible to satisfy
+>> +        * the other segment requirements, so we try repeatedly to find a
+>> +        * location that will work.
+>> +        */
+>> +       while ((ret = kexec_add_buffer(&kbuf)) == 0) {
+>> +               /* Try to load additional data */
+>> +               kernel_segment = &image->segment[kernel_segment_number];
+>> +               ret = load_other_segments(image, kernel_segment->mem,
+>> +                                         kernel_segment->memsz, initrd,
+>> +                                         initrd_len, cmdline, cmdline_len);
+>> +               if (!ret)
+>> +                       break;
+>> +
+>> +               /*
+>> +                * We couldn't find space for the other segments; erase the
+>> +                * kernel segment and try the next available hole.
+>> +                */
+>> +               image->nr_segments -= 1;
+>> +               kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
+>> +               kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +       }
+>> +
+>> +       if (ret) {
+>> +               pr_err("Could not find any suitable kernel location!");
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       kernel_segment = &image->segment[kernel_segment_number];
+>> +
+>> +       /* Make sure the second kernel jumps to the correct "kernel_entry". */
+>> +       image->start = kernel_segment->mem + h->kernel_entry - text_offset;
+>> +
+>> +       kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>> +                     kernel_segment->mem, kbuf.bufsz,
+>> +                     kernel_segment->memsz);
+>> +
+>> +       return NULL;
+>> +}
+>> +
+>> +const struct kexec_file_ops kexec_image_ops = {
+>> +       .probe = image_probe,
+>> +       .load = image_load,
+>> +};
+>> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kernel/machine_kexec.c
+>> index f9381800e291..008f43e26120 100644
+>> --- a/arch/loongarch/kernel/machine_kexec.c
+>> +++ b/arch/loongarch/kernel/machine_kexec.c
+>> @@ -70,18 +70,28 @@ int machine_kexec_prepare(struct kimage *kimage)
+>>          kimage->arch.efi_boot = fw_arg0;
+>>          kimage->arch.systable_ptr = fw_arg2;
+>>
+>> -       /* Find the command line */
+>> -       for (i = 0; i < kimage->nr_segments; i++) {
+>> -               if (!strncmp(bootloader, (char __user *)kimage->segment[i].buf, strlen(bootloader))) {
+>> -                       if (!copy_from_user(cmdline_ptr, kimage->segment[i].buf, COMMAND_LINE_SIZE))
+>> -                               kimage->arch.cmdline_ptr = (unsigned long)cmdline_ptr;
+>> -                       break;
+>> +       if (kimage->file_mode == 1) {
+>> +               /*
+>> +                * kimage->cmdline_buf will be released in kexec_file_load, so copy to
+>> +                * the KEXEC_CMDLINE_ADDR safe area.
+>> +                */
+>> +               memcpy((void *)KEXEC_CMDLINE_ADDR, (void *)kimage->arch.cmdline_ptr,
+>> +                                       strlen((char *)kimage->arch.cmdline_ptr) + 1);
+>> +               kimage->arch.cmdline_ptr = (unsigned long)KEXEC_CMDLINE_ADDR;
+>> +       } else {
+>> +               /* Find the command line */
+>> +               for (i = 0; i < kimage->nr_segments; i++) {
+>> +                       if (!strncmp(bootloader, (char __user *)kimage->segment[i].buf, strlen(bootloader))) {
+>> +                               if (!copy_from_user(cmdline_ptr, kimage->segment[i].buf, COMMAND_LINE_SIZE))
+>> +                                       kimage->arch.cmdline_ptr = (unsigned long)cmdline_ptr;
+>> +                               break;
+>> +                       }
+>>                  }
+>> -       }
+>>
+>> -       if (!kimage->arch.cmdline_ptr) {
+>> -               pr_err("Command line not included in the provided image\n");
+>> -               return -EINVAL;
+>> +               if (!kimage->arch.cmdline_ptr) {
+>> +                       pr_err("Command line not included in the provided image\n");
+>> +                       return -EINVAL;
+>> +               }
+>>          }
+>>
+>>          /* kexec/kdump need a safe page to save reboot_code_buffer */
+>> @@ -288,7 +298,8 @@ void machine_kexec(struct kimage *image)
+>>          local_irq_disable();
+>>
+>>          pr_notice("EFI boot flag 0x%lx\n", efi_boot);
+>> -       pr_notice("Command line at 0x%lx\n", cmdline_ptr);
+>> +       pr_notice("Command line addr at 0x%lx\n", cmdline_ptr);
+>> +       pr_notice("Command line at %s\n", (char *)cmdline_ptr);
+>>          pr_notice("System table at 0x%lx\n", systable_ptr);
+>>          pr_notice("We will call new kernel at 0x%lx\n", start_addr);
+>>          pr_notice("Bye ...\n");
+>> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
+>> new file mode 100644
+>> index 000000000000..bc91ae0afa4c
+>> --- /dev/null
+>> +++ b/arch/loongarch/kernel/machine_kexec_file.c
+>> @@ -0,0 +1,46 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * kexec_file for LoongArch
+>> + *
+>> + * Author: Youling Tang <tangyouling@kylinos.cn>
+>> + * Copyright (C) 2025 KylinSoft Corporation.
+>> + *
+>> + * Most code is derived from LoongArch port of kexec-tools
+>> + */
+>> +
+>> +#define pr_fmt(fmt) "kexec_file: " fmt
+>> +
+>> +#include <linux/ioport.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/kexec.h>
+>> +#include <linux/memblock.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/string.h>
+>> +#include <linux/types.h>
+>> +#include <linux/vmalloc.h>
+>> +#include <asm/bootinfo.h>
+>> +
+>> +const struct kexec_file_ops * const kexec_file_loaders[] = {
+>> +       &kexec_image_ops,
+>> +       NULL
+>> +};
+>> +
+>> +int arch_kimage_file_post_load_cleanup(struct kimage *image)
+>> +{
+>> +       vfree(image->elf_headers);
+>> +       image->elf_headers = NULL;
+>> +       image->elf_headers_sz = 0;
+>> +
+>> +       return kexec_image_post_load_cleanup_default(image);
+>> +}
+>> +
+>> +int load_other_segments(struct kimage *image,
+>> +                       unsigned long kernel_load_addr,
+>> +                       unsigned long kernel_size,
+>> +                       char *initrd, unsigned long initrd_len,
+>> +                       char *cmdline, unsigned long cmdline_len)
+>> +{
+>> +       image->arch.cmdline_ptr = (unsigned long)cmdline;
+>> +
+>> +       return 0;
+>> +}
+>> --
+>> 2.34.1
+>>
 
