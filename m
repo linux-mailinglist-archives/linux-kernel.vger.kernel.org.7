@@ -1,85 +1,239 @@
-Return-Path: <linux-kernel+bounces-764703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3392BB22639
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8771FB2263C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B45B1B62494
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0431AA5127
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D9A2EF64C;
-	Tue, 12 Aug 2025 11:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mM4jYoBT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D132E62D8;
-	Tue, 12 Aug 2025 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3886F2EF656;
+	Tue, 12 Aug 2025 11:59:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20F52EBBB0
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754999941; cv=none; b=q/w+d0Ib8ITGlsXNlzVcZCGWU5nDrdwN+VkDxObQtZr8zcY9/cmOIweDNmcg4mGhGlrhFx31rTlxrnQKFUFQbabqz5FdlSp2RwxeWRvKhCJqt3Fyhhr6BMiA3L+InELol27TXlxYoI51KqOYGHONN6HQor2PSpntDbOvXqEEjss=
+	t=1754999997; cv=none; b=JyJUhzcgJ11LVIzmr6zkcDtoa+4UAw8BYlCT52V01anWQm4A8vPGCQXavrUo30J+QSKVaF+09n4seCg0AZGAxVPn4D/sTQHuTC/Z4fPfQZTuyD2DKdgfQ/UEhb6tBaeUI6JhVK3aFy0VKADpS9lMFWrZwdAQZjx7qCADa6/XdCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754999941; c=relaxed/simple;
-	bh=bFoQNPp4DCiblcqpjyNN3DM8ukhyKEZROnXDYuNO008=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nli+kb0uWln3S/DUJjiVVK6w+ZH8TBJGMQ8zfeE9LJczfUjYFI7Q/ZjQjGNK/4o/GAm4UuHsgwZq2Rvt+KAyNBZx37PpVA2gwVfGqxIuRM4JESaXQHdjDRlso5CeSTRZnV4WVgXsfj5vSTsvKoUPQuszNRfoSeJ6mCH2YDQ2d3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mM4jYoBT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F615C4CEF0;
-	Tue, 12 Aug 2025 11:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754999940;
-	bh=bFoQNPp4DCiblcqpjyNN3DM8ukhyKEZROnXDYuNO008=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mM4jYoBTLqkkfob6mMWgaOCMPw13PV1XAoIseHAV0UNIFP2KSnMzdLw6dBbjxx/mx
-	 HXP6zRmPnPr6VbAOAHOoH21JM5DPeTdrMff4Bc8DwLvhqFc0HATKQ8vawbc+urrUN9
-	 B1b64ghU6F3SOoMK9Bw9Iwf7yU6DD33v3OzDCKBc=
-Date: Tue, 12 Aug 2025 13:58:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Srinivasa Srikanth Podila <srinivasa-srikanth.podila@broadcom.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vannapurve@google.com, Mukul Sinha <mukul.sinha@broadcom.com>,
-	Ramana Reddy <ramana.reddy@broadcom.com>
-Subject: Re: Regarding linux kernel commit
- 805e3ce5e0e32b31dcecc0774c57c17a1f13cef6
-Message-ID: <2025081231-boxer-footsie-7800@gregkh>
-References: <CAGhJvC47-ku9-72pDwVu_2iuROfLGchZVtmofWeJoN0wV7yBPg@mail.gmail.com>
+	s=arc-20240116; t=1754999997; c=relaxed/simple;
+	bh=03z7Cyoq9SDJzbs2BPUxa3foPXw00v94rt7eOwqmcxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePAnpHE+n0mltma7cK544RGAt8rq3PWnZrebXECk1QzR3t3CPOas77vqc5dzbMhSB5jrEHwnt4bUHuULIStZK5g1JbpuhVyy6hOtOKsGlGsEEh/QQEN2MX12O//v4y6e61VNY8f4MmCRLWG5HB+qSrlD8GDf0x3527QTxs1pARM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.45])
+	by gateway (Coremail) with SMTP id _____8Bx22q3LJtof_I+AQ--.18926S3;
+	Tue, 12 Aug 2025 19:59:51 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.45])
+	by front1 (Coremail) with SMTP id qMiowJDx_8OvLJtodotGAA--.3774S2;
+	Tue, 12 Aug 2025 19:59:46 +0800 (CST)
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Lee Jones <lee@kernel.org>,
+	Corey Minyard <minyard@acm.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	jeffbai@aosc.io,
+	kexybiscuit@aosc.io,
+	wangyao@lemote.com,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: [PATCH v9 0/3] LoongArch: Add Loongson-2K BMC support
+Date: Tue, 12 Aug 2025 19:59:32 +0800
+Message-ID: <cover.1754999365.git.zhoubinbin@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGhJvC47-ku9-72pDwVu_2iuROfLGchZVtmofWeJoN0wV7yBPg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDx_8OvLJtodotGAA--.3774S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxuFyxtFyxZF1fuF47Wr15Awc_yoW7Ar1Upa
+	15ursxCr1DKF1xJrZ3Aw1fuFyYga95Ja4SgF17A345ZF4UCa40yryFka13XFy7AF4kKryI
+	qrsayF1Ska45u3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
-On Tue, Aug 12, 2025 at 05:11:01PM +0530, Srinivasa Srikanth Podila wrote:
-> Hello,
-> 
-> I have come across the linux kernel
-> commit 805e3ce5e0e32b31dcecc0774c57c17a1f13cef6 merged into the 6.15 kernel.
-> 
-> Kernel Commit:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=805e3ce5e0e32b31dcecc0774c57c17a1f13cef6
-> 
-> Currently, we need this fix into the latest 6.8 based kernel as our servers
-> are all based on Ubuntu 24.04 with 6.8 based kernels. Please let us know
-> the process for the same.
-> 
-> Could you please help in this regard. Any help on this would be greatly
-> appreciated.
+Hi all:
 
-As per the front page of kernel.org, the 6.8.y kernel is long
-end-of-life and not supported by us at all.  If you are relying on a
-distro to provide a specific kernel version for you, please contact them
-as you are paying for that service from them already, there's nothing
-that we can do about that for obvious reasons.
+This patchset introduces the Loongson-2K BMC.
 
-hope this helps,
+It is a PCIe device present on servers similar to the Loongson-3 CPUs.
+And it is a multifunctional device (MFD), such as display as a sub-function
+of it.
 
-greg k-h
+For IPMI, according to the existing design, we use software simulation to
+implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
+
+Also since both host side and BMC side read and write kcs status, we use
+fifo pointer to ensure data consistency.
+
+For the display, based on simpledrm, the resolution is read from a fixed
+position in the BMC since the hardware does not support auto-detection
+of the resolution. Of course, we will try to support multiple
+resolutions later, through a vbios-like approach.
+
+Especially, for the BMC reset function, since the display will be
+disconnected when BMC reset, we made a special treatment of re-push.
+
+Based on this, I will present it in four patches:
+patch-1: BMC device PCI resource allocation.
+patch-2: BMC reset function support
+patch-3: IPMI implementation
+
+Thanks.
+
+-------
+V9:
+Patch (2/3):
+ - PCIE -> PCI-E in dev_err();
+ - Separate the read from the write;
+
+Link to V8:
+https://lore.kernel.org/all/cover.1752548073.git.zhoubinbin@loongson.cn/
+
+V8:
+Patch (1/3):
+ - Similar to as3711_subdevs, identify elements in ls2k_bmc_cells.
+
+Patch (2/3):
+ - Rename variables using usual names, such as `priv` -> `ddata`;
+ - Use if statements instead of #ifery;
+ - Rewrite the error message to ensure it is easy to understand;
+ - ls2k_bmc_pdata_initial(dev, priv); -> ls2k_bmc_pdata_initial(priv);
+
+Link to V7:
+https://lore.kernel.org/all/cover.1751617911.git.zhoubinbin@loongson.cn/
+
+V7:
+Patch (1/3):
+  - Fix build warning by lkp: Add depend on ACPI_GENERIC_GSI
+    - https://lore.kernel.org/all/202507021011.sDAHGinj-lkp@intel.com/
+
+Link to V6:
+https://lore.kernel.org/all/cover.1750939357.git.zhoubinbin@loongson.cn/
+
+V6:
+- Add Acked-by tag from Corey, thanks;
+Patch (1/3):
+  - Fix build warning by lkp: Add depend on PCI
+    - https://lore.kernel.org/all/202506210204.LVZc2VG2-lkp@intel.com/
+    - https://lore.kernel.org/all/202506210231.ZWWNhofU-lkp@intel.com/
+    - https://lore.kernel.org/all/202506210652.ipUFDU5B-lkp@intel.com/
+    - https://lore.kernel.org/all/202506210343.XCHkzorp-lkp@intel.com/
+
+Link to V5:
+https://lore.kernel.org/all/cover.1750301674.git.zhoubinbin@loongson.cn/
+
+V5:
+Patch (1/3):
+ - Rename ls2kbmc-mfd.c to ls2k-bmc-core.c;
+ - Rename MFD_LS2K_BMC to MFD_LS2K_BMC_CORE and update its help text.
+Patch (3/3):
+ - Add an IPMI_LS2K config in the IPMI section that enables the IPMI
+   interface and selects MFD_LS2K_BMC_CORE.
+
+Link to V4:
+https://lore.kernel.org/all/cover.1749731531.git.zhoubinbin@loongson.cn/
+
+V4:
+- Add Reviewed-by tag;
+- Change the order of the patches.
+Patch (1/3):
+  - Fix build warning by lkp: Kconfig tristate -> bool
+    - https://lore.kernel.org/all/202505312022.QmFmGE1F-lkp@intel.com/
+ - Update commit message;
+ - Move MFD_LS2K_BMC after MFD_INTEL_M10_BMC_PMCI in Kconfig and
+   Makefile.
+Patch (2/3):
+  - Remove unnecessary newlines;
+  - Rename ls2k_bmc_check_pcie_connected() to
+    ls2k_bmc_pcie_is_connected();
+  - Update comment message.
+Patch (3/3):
+  - Remove unnecessary newlines.
+
+Link to V3:
+https://lore.kernel.org/all/cover.1748505446.git.zhoubinbin@loongson.cn/
+
+V3:
+Patch (1/3):
+ - Drop "MFD" in title and comment;
+ - Fromatting code;
+ - Add clearer comments.
+Patch (2/3):
+ - Rebase linux-ipmi/next tree;
+ - Use readx()/writex() to read and write IPMI data instead of structure
+   pointer references;
+ - CONFIG_LOONGARCH -> MFD_LS2K_BMC;
+ - Drop unused output.
+Patch (3/3):
+ - Inline the ls2k_bmc_gpio_reset_handler() function to ls2k_bmc_pdata_initial();
+ - Add clearer comments.
+ - Use proper multi-line commentary as per the Coding Style documentation;
+ - Define all magic numbers.
+
+Link to V2:
+https://lore.kernel.org/all/cover.1747276047.git.zhoubinbin@loongson.cn/
+
+V2:
+- Drop ls2kdrm, use simpledrm instead.
+Patch (1/3):
+ - Use DEFINE_RES_MEM_NAMED/MFD_CELL_RES simplified code;
+ - Add resolution fetching due to replacing the original display
+   solution with simpledrm; 
+ - Add aperture_remove_conflicting_devices() to avoid efifb
+   conflict with simpledrm.
+Patch (3/3):
+ - This part of the function, moved from the original ls2kdrm to mfd;
+ - Use set_console to implement the Re-push display function.
+
+Link to V1:
+https://lore.kernel.org/all/cover.1735550269.git.zhoubinbin@loongson.cn/
+
+Binbin Zhou (3):
+  mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
+  mfd: ls2kbmc: Add Loongson-2K BMC reset function support
+  ipmi: Add Loongson-2K BMC support
+
+ MAINTAINERS                      |   7 +
+ drivers/char/ipmi/Kconfig        |   7 +
+ drivers/char/ipmi/Makefile       |   1 +
+ drivers/char/ipmi/ipmi_si.h      |   7 +
+ drivers/char/ipmi/ipmi_si_intf.c |   4 +
+ drivers/char/ipmi/ipmi_si_ls2k.c | 189 +++++++++++
+ drivers/mfd/Kconfig              |  13 +
+ drivers/mfd/Makefile             |   2 +
+ drivers/mfd/ls2k-bmc-core.c      | 525 +++++++++++++++++++++++++++++++
+ 9 files changed, 755 insertions(+)
+ create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
+ create mode 100644 drivers/mfd/ls2k-bmc-core.c
+
+
+base-commit: 006aa8f57f55dd5bf68c4ada1e0d3f4e59027d71
+-- 
+2.47.3
+
 
