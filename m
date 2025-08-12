@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-765375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219DFB23096
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBA8B230C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C895262512D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:52:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183D6685CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1329E2FDC57;
-	Tue, 12 Aug 2025 17:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5AC2FE563;
+	Tue, 12 Aug 2025 17:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDf+4lx4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIMfAvgs"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AB9268C73;
-	Tue, 12 Aug 2025 17:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE62FAC02;
+	Tue, 12 Aug 2025 17:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755021160; cv=none; b=tesbhR5ps+9sP8Tj/V2l4lpouSMa95qIwoXZ2LwUfyhJjO7jJLYjGNJHkRFILeCm1CoQR01nwdv2UbuHBYNO0gGbr70eXKcXEumE+tPcUWCXkTTkYMh7ftZxzatYiGwMuv6J2YTSUudmziVIjTegeptapVrQIWLuVVDl4Z9h+Fg=
+	t=1755021317; cv=none; b=dGS1pUbJJ8NPVR1/oPhWHAtq7oYd45+27htHQ+9J3LD2RCZWgU7D+Jvw2c5g7rBRGrYO/tzQPt4/bESaeoSckNEQITqNPgsM2kmpkM/S3cGsESj+5jKYYC+XRiaK5+quh9eg4EGKoFYzze3zDEOz2+Xmz391bK36nsc/sdjRUUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755021160; c=relaxed/simple;
-	bh=HrWt7KsFmQFhR+gbni5exLfgmFjQs3b24up4/s6MmUg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=a0IaZD9hXM/rswVsx0XKBPR7gWadtHkRCNx7gmNUI1arpPyFU49if6jp6VmXUaAIxPsLBj/IOkmAPqRyJyE0Z+A+00KO/5NWKu6O+VQnWjQ17ICBcKkOW/ewBu7G/fahdPBQua01CYCjkpVslvn2XoT6yC2WEEx1uY1t1hvMpYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDf+4lx4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48EFC4CEF6;
-	Tue, 12 Aug 2025 17:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755021159;
-	bh=HrWt7KsFmQFhR+gbni5exLfgmFjQs3b24up4/s6MmUg=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=EDf+4lx4IuM9rw8qi4wI1aL1fFeQH/N1+zaWTH51ERi8hnA7G07qo26tb3konaG7C
-	 sMqCLR2++PPj/UJzbowqN3eJHrxckicnDUjnrPXqS426jZIuJuQqTnQwV7+9TTKNpE
-	 ryRfutW6sZyjUFRqYcRpiY5mugzhPWIbv2HC0Ivbe/4zPfeFBzg/BxKlcDHdK9+Slp
-	 aXAMyKg+rbnfEmYb8gKgzuIHKc/kha6hu4YVSfA6suInHQO2SDLrrzMRDsnYmIb+u7
-	 Rt1ask5T+OWQCX0BGHsZr+mkNLbQV54y60NM2DEWzXbKR4NJl1weaKKPE8+JQy5wAq
-	 iMpJ232uW+npg==
+	s=arc-20240116; t=1755021317; c=relaxed/simple;
+	bh=PQ92Ps1KLUdy3bH+AaO3wSg7T74mkl3PFwFmSqQ51gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dv/RgAt248ieoBcXEcNwN7peIwbPOL0aOWOZPrxJEA7J2ovAoIIFtvrEw+Qa+ugaqVjqpxCpNnj3hxZMHB1ZtPOeQaCZ+/gN24AJ3WFOISFbTrS2XyIFkXzpVC9xH3Qs3KgubWG9lxNglWU6oWOjpBkNQg4WcSqmeWHQHpJTpvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIMfAvgs; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24049d1643aso42781895ad.3;
+        Tue, 12 Aug 2025 10:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755021316; x=1755626116; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ymZGpmngRJ7fOyPoIYIbr864BuGgQbxABMyIAp/lv7M=;
+        b=dIMfAvgsZ57UsrIZ4/MgyjcOdG8YzxhK0Nas9FRVyfoa2rauXWhwgCrQQkWPiuyfr5
+         pAVn5/jo12mWvWYXr1VJ8SmsEJcZzb5PG9vUTA25SBUz8dLYxA/G6ChV/11T9P9V5/Gq
+         J2ti1cbKEeLASNK2LG3YfrBCBlbcivrkIWoYu70QafNGOLGIshDyhFkpkFkn4wFOhIID
+         hKOZwbQOWji0YKCFtfYwxqmJhB+mCEcE1BVGzRAz7Bc14IRaGZb2LedgkZq8vjZT2gJu
+         HCUccuuCB6jPO7M7V5IWAQNQjMyHQ5IyaNJBu8EWHeDNVQElamvo1KKRZYM33tawYRev
+         I9YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755021316; x=1755626116;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymZGpmngRJ7fOyPoIYIbr864BuGgQbxABMyIAp/lv7M=;
+        b=lcZS+ACgawfOafnK6iMaqClRXfavKqT7lR7C9wrcoZdMkqvrX3UM2Kir0JvsGJi7u/
+         O7gpHZPkAAKaAE8wxAcjij5mLJcOLfGfzqzifhy7EuLYwXKPdAue8xlAQNZHZxDDX9L/
+         xgAe2PhJAtPkK9vqgKfUjgO2/AA7N2vSZXR6vBoeN5/zbPRaua7r+Nv0V2uTZzn6MiZU
+         wDtFBx6VXA3ayeJWe0JkXbrCnoMfWQflcKhkZ1kx4LSGs3pQASQYdWkHVRFqUBwfKbOI
+         btODmDumeKlxY5ZYDJcySQLQJXOd5uj6VIEO7cTeW6SkFpTmZ9DDpM5Lgsh0saQ8EyEY
+         XlMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9X9vtGseMOumh1vXyMBlJlEm7FtuYQejSuaHcE70wMiya4ymOegyMCYPw8FK0T8bMqNLHwQPv++LU@vger.kernel.org, AJvYcCVVLW+aL/9tTwLzRb3JstnUaYSbMTNezFyEgF1GUUuK46Rs2he6NeTzDggx+p0SaNK/l86atLyhwEgjrxScPw==@vger.kernel.org, AJvYcCXNBj0Hh2FK4siXoah8tA3OiPXUp1mWs0KUb9yG1sJWsd107Dr+2e2R14B/TUlWP7PIVGQm028rnxlHk6aS@vger.kernel.org
+X-Gm-Message-State: AOJu0YznBbzpVMU+juDv30UFxCOjg4eXiFr6fSLY6mFTTEUyk76dz/Ay
+	nUNitCU3VtoWkADEoYABu3xg+g2yGtFjoC6rmSAeO9V75wfgbFWXzfbR
+X-Gm-Gg: ASbGncv00eaiApbOQru2hfVXiJeZdpXIqLqbq8gotjJIH8w/KGaoF41XogA0u7Qw/Cp
+	T7l16iTOLVVUv3A3arNTH+k4VmzHhDZcUMXZk/GvAmkdElWwFmVP3ZG7hgud4/Qzw6EI6X6dAhY
+	Fjzuu7OAjR548qDgS1KJt1ypx2VKYeT0wv9+GUoBlR1ORicWsdas6oWlJrC7bRHFhcxSh/phls8
+	zc6foWeUtcne4h2fEmPgZ2OIiqTlzxG0ZFKiDKUD14l5GUgDCTCZW1k4ZhAV9Gv/RPkK6ZkWFWK
+	RRsjeDgG7lw2duMjg6GNzExqSLTnqpnFo3JSJ+XUTDTQq8o3KDNlgtBCsgjq5bKzxDJs9d1aDyo
+	KsfAsPUujdCm043rXME1jeqYyTb15QcukKphut7Lq/4v2wxp/AJqf4EPOfpRPro4R
+X-Google-Smtp-Source: AGHT+IE18aIbwR3kUmI00of6zx1vDAbhjJri7AMTb1JJykSzC0p6KytmOlYDyZhwco9kF97wduWaUA==
+X-Received: by 2002:a17:903:2a8d:b0:243:8f:6db5 with SMTP id d9443c01a7336-2430d0a260amr1715145ad.6.1755021315592;
+        Tue, 12 Aug 2025 10:55:15 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm279039935ad.16.2025.08.12.10.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 10:55:15 -0700 (PDT)
+Date: Tue, 12 Aug 2025 10:55:11 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>, SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Will Deacon <will@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Nick Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Rik van Riel <riel@surriel.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>, damon@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2] mm: remove redundant __GFP_NOWARN
+Message-ID: <aJt__zOHjGcaghNf@fedora>
+References: <20250812135225.274316-1-rongqianfeng@vivo.com>
+ <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 19:52:35 +0200
-Message-Id: <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, "Andrew Morton" <akpm@linux-foundation.org>,
- "Matthew Wilcox" <willy@infradead.org>, "Tamir Duberstein"
- <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
- Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of
- each allocator
-References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
- <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
-In-Reply-To: <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b5ca3ef2-bd36-4cb5-a733-a5d4f1fb32fa@lucifer.local>
 
-On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
-> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator=
-.rs
-> index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d77130=
-b374bd1397f7384 100644
-> --- a/rust/kernel/alloc/allocator.rs
-> +++ b/rust/kernel/alloc/allocator.rs
-> @@ -17,6 +17,8 @@
->  use crate::bindings;
->  use crate::pr_warn;
-> =20
-> +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN a=
-s usize;
+On Tue, Aug 12, 2025 at 05:46:47PM +0100, Lorenzo Stoakes wrote:
+> On Tue, Aug 12, 2025 at 09:52:25PM +0800, Qianfeng Rong wrote:
+> > Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
+> > GFP_NOWAIT implicitly include __GFP_NOWARN.
+> >
+> > Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
+> > `GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
+> > redundant flags across subsystems.
+> >
+> > No functional changes.
+> >
+> > Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> 
+> LGTM, I wonder if there are other such redundancies in the kernel?
 
-I think this needs the following diff:
+Looks like theres a lot left for this specific case. At least 48 show up
+that are spread out across subsystems when running 'git grep
+"GFP_NOWAIT.*GFP_NOWARN"'.
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helpe=
-r.h
-index 84d60635e8a9..4ad9add117ea 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -84,6 +84,7 @@
-
- /* `bindgen` gets confused at certain things. */
- const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN;
-+const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN =3D ARCH_KMALLOC_MINA=
-LIGN;
- const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
- const gfp_t RUST_CONST_HELPER_GFP_ATOMIC =3D GFP_ATOMIC;
- const gfp_t RUST_CONST_HELPER_GFP_KERNEL =3D GFP_KERNEL;
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.r=
-s
-index 25fc9f9ae3b4..5003907f0240 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -17,7 +17,7 @@
- use crate::bindings;
- use crate::pr_warn;
-
--const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN as =
-usize;
-+const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN;
-
- /// The contiguous kernel allocator.
- ///
-
-
-No need to resend I can fix it up when applying the patch.
+I think they should be cleaned up in sets per-subsystem to minimize
+merge conflicts, as suggested in the commit mentioned above (16f5dfbc851b).
 
