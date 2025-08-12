@@ -1,203 +1,179 @@
-Return-Path: <linux-kernel+bounces-764597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DD6B224E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B77B224F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57F7427676
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFCC1B64254
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF452ECE8A;
-	Tue, 12 Aug 2025 10:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGAWVHTV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256972EBDC1;
-	Tue, 12 Aug 2025 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0164A2EB5C3;
+	Tue, 12 Aug 2025 10:50:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA34C265284
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754995701; cv=none; b=aqGYkFGz26sIjIh+OBl8QDAe+896CvxxKDmS0pCTlRbR+zP6hw+6tc3KgQK7OZF4VrBWizM+U9lZGSWM9Bm7lahiVVMCZzj8lZJg+mtVFYgthOuB8U1w9boQ3vHsw20nBI3N+fpyaL4xZaPOV/uL19SqeJ4uLhR9PlXwu+u4Erk=
+	t=1754995851; cv=none; b=guOVo0tuaoPRXT008fV/B9bE6Ei9vZobaDw4Pqi2Rt7cY37waE9yJAF57B25+YwFZlRCtqABW/HVrgK1JKm3Pu7YE+5e/deso3jCIflK+7LAHqHYx615Skp0pAiFjneOoDkSAk/nHRp1xja4srT+4pmkOh6UIwBpyhpyt9cix94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754995701; c=relaxed/simple;
-	bh=qJuZ1zfPMACXkpwdurJoB/v+S2kyjw+gslo+Q0ciylw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kfkHaClR18gnObDNN16TOh28m5pkP3atzRL4KjeHb7ljyVCvC2g0CQjxN+8pugtFsB126YLZH/b9X1xbersNXooeeDWLkl5GAShMkbwzJqX9HPJLnz6qoOwPwTKjEb3deNZNgmM4jKq2AGlZ/mtbYlkXn+KFYnCwFK25WIenmQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGAWVHTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B645C4CEF0;
-	Tue, 12 Aug 2025 10:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754995700;
-	bh=qJuZ1zfPMACXkpwdurJoB/v+S2kyjw+gslo+Q0ciylw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uGAWVHTVio83+Y7dzKzwpZWVyKiin9jVAANSIW169aaS22UsHavud+ZKRr9X8dG+W
-	 C0pvO+QhaV0CucGkpAE4hIVj+UrXQAf5aZqSmum0VtUotQRgKhQ7StwGSQrcOOrXfB
-	 E6zvBj/7GufCvDIJySk+yR7BGGYBlh8KtA+Pa5CWZFqsX0mA2/PRl9roceurLwFv4c
-	 9WKyRUgM1oz12SJvHhphOHTRDKrGQXTVi/OpEWuEfHNLM2fdS6UM5GKPwnZTJVP39Z
-	 BYDw7xIsqNqNAJfX7zUG74B6/iMEWO5aZJH2cfsR9PtyX1nwz6QmkqXaRKfl+GiX/1
-	 nP69dgt0KJWog==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 12 Aug 2025 12:48:15 +0200
-Subject: [PATCH v2] arm64: dts: qcom: sc7180: Describe on-SoC USB-adjacent
- data paths
+	s=arc-20240116; t=1754995851; c=relaxed/simple;
+	bh=kPnB99pQiUhV3Oo0icKYUmjWyuqBMOn8KUPUwJ75h4M=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nUpD9KChDVYO9YclHUVAeP87xYqdYsXaCzALrwO1TeHg0/9MnzUl4xfb6JRSlu5JTEJEKU2YXDfotN5cUZJIcsAKsBjPPwJEgBmaoItso7z4GaX283GIsjzd6ggmGQrpqa3hPL3eyUYUW3SoSZ3nQTAiY12WmxEHLLHa51rxSb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxrnKDHJtop+4+AQ--.54739S3;
+	Tue, 12 Aug 2025 18:50:43 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJCxM+R_HJto02lGAA--.3184S3;
+	Tue, 12 Aug 2025 18:50:42 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
+ threads in virtual machines
+To: Xianglai Li <lixianglai@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250812090056.771379-1-lixianglai@loongson.cn>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <f271abd3-e1b6-0968-abf8-6f1b74e21f65@loongson.cn>
+Date: Tue, 12 Aug 2025 18:48:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-topic-7180_qmpphy_ports-v2-1-7dc87e9a1f73@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAO4bm2gC/4WNWwqDMBREtyL3u5E8fKT96j6KiMS0Xqgm5lqpS
- Pbe6Ab6M3AG5swOZANaglu2Q7ArEropgbxkYIZuelmGfWKQXJZcc80W59GwWmjezqP3w9Z6FxZ
- itlIFL5QSlS4hrX2wT/ye5keTeEBaXNjOo1Uc7X/nKpg46r42pbxK0d0dUT5/urdx45ingCbG+
- AME3IjyxQAAAA==
-X-Change-ID: 20250808-topic-7180_qmpphy_ports-e63404331685
-To: cros-qcom-dts-watchers@chromium.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754995698; l=3405;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=lSzhXLpPZoVQAthuBtMb1HCovEwgwFgei9iOzdI/0o0=;
- b=f/3JtEIbg+zOj8QQDQaRKOEkNNI8yiTCUH8IPz5fkdJ9z8nz5DoGQ1yRqw8U77pmdtZC9Btvh
- E7MT8QRRG8sCSlWxoGNuFFi+FTqWHgegooH7tVQnZ7sHjE13MjN1ucB
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+In-Reply-To: <20250812090056.771379-1-lixianglai@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxM+R_HJto02lGAA--.3184S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWF47trWDtFy3Zr48JF4fZwc_yoW5Cw1kpr
+	WDCFs3trWFkrn29w1ay3sFvF13Ww4kGr42vasrWF17Ar9rZFyrWF4kKr98tF15Wa97Zw42
+	93W09rsIkayqqrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8hiSPUUUUU==
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-USB connector bindings describe a ports subnode, which describes how
-its High-/SuperSpeed data lines (as well as the SBU pins for Type-C)
-are connected.
 
-On Linux, skipping the graph results in the 'connect_type' sysfs
-attribute returning 'unknown', instead of 'hotplug' or similar. This in
-turn is parsed by some operating systems (such as CrOS), to e.g. make
-security policy decisions.
+On 2025/8/12 下午5:00, Xianglai Li wrote:
+> When the cpu is offline, the timer under loongarch is not correctly closed,
+> resulting in an excessively high cpu usage rate of the offline vcpu thread
+> in the virtual machine.
+> 
+> To correctly close the timer, we have made the following modifications:
+> 
+> Register the cpu hotplug timer start event for loongarch.This event will
+> be called to close the timer when the cpu is offline.
+> 
+> Clear the timer interrupt when the timer is turned off
+During timer is turned off, timer interrupt may be arriving. Here adding 
+EOI with timer after disabling it so that there is no pending timer 
+interrupt when offline cpu is halted state.
+> 
+> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+> ---
+>   arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
+>   include/linux/cpuhotplug.h   |  1 +
+>   2 files changed, 21 insertions(+)
+> 
+> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+> index 367906b10f81..4daa11512eba 100644
+> --- a/arch/loongarch/kernel/time.c
+> +++ b/arch/loongarch/kernel/time.c
+> @@ -12,6 +12,7 @@
+>   #include <linux/kernel.h>
+>   #include <linux/sched_clock.h>
+>   #include <linux/spinlock.h>
+> +#include <linux/cpu.h>
+>   
+>   #include <asm/cpu-features.h>
+>   #include <asm/loongarch.h>
+> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct clock_event_device *evt)
+>   	timer_config &= ~CSR_TCFG_EN;
+>   	csr_write64(timer_config, LOONGARCH_CSR_TCFG);
+>   
+> +	/* Clear Timer Interrupt */
+> +	write_csr_tintclear(CSR_TINTCLR_TI);
+> +
+>   	raw_spin_unlock(&state_lock);
+>   
+>   	return 0;
+> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
+>   	return res;
+>   }
+>   
+> +static int arch_timer_dying_cpu(unsigned int cpu)
+> +{
+NULL is a little strange here, how about something like this?
 
-Define ports {} for the DWC controller & the QMPPHY and connect them
-together for the SS lanes.
+         struct clock_event_device *evt;
 
-Leave the DP endpoint unconnected for now, as both Aspire 1 and the
-Chromebooks (unmerged, see [1]) seem to have a non-trivial topology.
-Take the creative liberty to add a newline before its ports' subnodes
-though.
+         evt = this_cpu_ptr(constant_clockevent_device);
+         constant_set_state_shutdown(evt);
 
-[1] https://lore.kernel.org/linux-arm-msm/20240210070934.2549994-23-swboyd@chromium.org/
+Regards
+Bibo Mao
 
-Suggested-by: Rob Herring (Arm) <robh@kernel.org>
-Closes: https://lore.kernel.org/linux-arm-msm/175462129176.394940.16810637795278334342.robh@kernel.org/
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
-Changes in v2:
-- Tell the story of what this change is useful for
-- Leave DP lines unconnected, IIUC Nikita will submit changes for the
-  Acer laptop separately after giving it a test (i.e. no code change)
-- Link to v1: https://lore.kernel.org/r/20250808-topic-7180_qmpphy_ports-v1-1-718d7c52921a@oss.qualcomm.com
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 48 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 8f827f1d8515d6113c85a2ecacf7ac364e195242..a0df10a97c7f8aa5cd468c8983e74256490d1d06 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -2897,6 +2897,31 @@ usb_1_qmpphy: phy@88e8000 {
- 
- 			#clock-cells = <1>;
- 			#phy-cells = <1>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usb_1_qmpphy_out: endpoint { };
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usb_1_qmpphy_usb_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usb_1_qmpphy_dp_in: endpoint { };
-+				};
-+			};
- 		};
- 
- 		pmu@90b6300 {
-@@ -3070,6 +3095,26 @@ usb_1_dwc3: usb@a600000 {
- 				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
- 				phy-names = "usb2-phy", "usb3-phy";
- 				maximum-speed = "super-speed";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						usb_1_dwc3_hs: endpoint {
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						usb_1_dwc3_ss: endpoint {
-+							remote-endpoint = <&usb_1_qmpphy_usb_ss_in>;
-+						};
-+					};
-+				};
- 			};
- 		};
- 
-@@ -3384,8 +3429,10 @@ mdss_dp: displayport-controller@ae90000 {
- 				ports {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
-+
- 					port@0 {
- 						reg = <0>;
-+
- 						dp_in: endpoint {
- 							remote-endpoint = <&dpu_intf0_out>;
- 						};
-@@ -3393,6 +3440,7 @@ dp_in: endpoint {
- 
- 					port@1 {
- 						reg = <1>;
-+
- 						mdss_dp_out: endpoint { };
- 					};
- 				};
-
----
-base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
-change-id: 20250808-topic-7180_qmpphy_ports-e63404331685
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> +	constant_set_state_shutdown(NULL);
+> +
+> +	return 0;
+> +}
+> +
+>   void __init time_init(void)
+>   {
+> +	int err;
+> +
+>   	if (!cpu_has_cpucfg)
+>   		const_clock_freq = cpu_clock_freq;
+>   	else
+> @@ -220,4 +233,11 @@ void __init time_init(void)
+>   	constant_clockevent_init();
+>   	constant_clocksource_init();
+>   	pv_time_init();
+> +
+> +	err = cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+> +					"loongarch/timer:starting",
+> +					NULL, arch_timer_dying_cpu);
+> +	if (err)
+> +		pr_info("cpu hotplug event register failed");
+> +
+>   }
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index edfa61d80702..6606c1546afc 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -159,6 +159,7 @@ enum cpuhp_state {
+>   	CPUHP_AP_PERF_ARM_STARTING,
+>   	CPUHP_AP_PERF_RISCV_STARTING,
+>   	CPUHP_AP_ARM_L2X0_STARTING,
+> +	CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>   	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>   	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>   	CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
+> 
+> base-commit: 53e760d8949895390e256e723e7ee46618310361
+> 
 
 
