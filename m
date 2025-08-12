@@ -1,190 +1,137 @@
-Return-Path: <linux-kernel+bounces-764212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35924B21FE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4786B22020
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C1C1886498
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA813B2613
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74852DECB1;
-	Tue, 12 Aug 2025 07:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BBD2DFA2A;
+	Tue, 12 Aug 2025 07:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TqEeud0a"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012010.outbound.protection.outlook.com [52.101.126.10])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r7yb3X2/"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8952F2D6E66;
-	Tue, 12 Aug 2025 07:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985212; cv=fail; b=BRSyzt1SEouSDTAkPDvC8hDeXU7Pdn/m1hGE+hXdUXMSVXw5ZkmdzRncGbDt9vDwTzHYqC9VQFlVd46jgJaGw9lp0tY64QzMvejMFYhXJQs3f8b4IH0f48tzOj/YjaxrpPyLDQKh2CDX083/1mqiZQ7UTK67B9ef5feeUS9XlhY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985212; c=relaxed/simple;
-	bh=XjgCMQMHMxeHA2j8HS8rtaVNENSuxX/s2mpNq/ydRlY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=miCd/L60w46MWRsFBeR2n4lAI4exUL0+dzgRT6YcfpM0FwIZJ46xauvUBUCo6zi3VzkY9vuRkIgfPLW/jKLPVv4dxVKHxu9X7EQYqdHhsIoVu41OLcTYHQNB6gty5R6ISLo5WE+7BzAJrfgi09hroJIsngMPHr+Z/7pZrDlpVY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TqEeud0a; arc=fail smtp.client-ip=52.101.126.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pwMCIxrG957fZsY6+E5+b0g5uCbUlvN1uMOGEcPhaAncRBAvQoYl6dWvHp2bbkfxA9XvvqbgwIHcb7PuakWqYZMYUb98EPwTMzeWQy9FojmFEtQnhDXpDKDu4dbTYaiTH8OnoOOCEI285vhBqzXAuuxmgX8oQpaa/ShGGLuZ54LNQZ4rYMJtvncPYd0JFL4aO7gA5Hlx0L0mM1VcEeci89ftgyWEl3y6K0SG4jFwEyjGWpedVFqV+ov7Y/CLxH1mdBuhKPhQ3DVBoHxNGEoOMbJqr62YfJq1Irkcol2/YMz3qKRrVBxhOai0R7mz0xeUhmOaqEFsOmxYj7SjcNCHhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+Fy0MopROTm9EIXSzdol2UFWgZMOjHHHYA2n3ei0cd0=;
- b=dgLLcgNHn5Dei3YDKUJQIH+01FeKmNhCDmISxoYbtaSX0YklSiZ571ld8BKb2EzEr2xbTehogFS0bCP9Q8inMHu88vqt/cIYFKYwc2PeYAU9791BvMCMeyaUxyRY6i7oY4U5j36MgrMZYKzV+38z2KtOb0IexZGdT9CB2N+XtULbnS/X3XH8Td/NINOkKdvjAw/QkeN1S0IICdEhEIaXfAg/adN36tnxNyPptevMvWn4kBRPYk7LPLoN0vsTBa6KjFYvchbi+H6Q9KJLmIeaeArGZUmIZZRlcCzJRno3dkeGOuW8t2hvxIFRNAGIEvpw0iJHlfByax7qFUUypl4SRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Fy0MopROTm9EIXSzdol2UFWgZMOjHHHYA2n3ei0cd0=;
- b=TqEeud0a/1BjIpLQheNMOuJljeSAqoDii7UNNvijjv6Krj0xELwHa/uCOXpevyaTsyUNiaWBILmS0A7pRdb1SybgLsAI+xrehEybMj2HeE6yGv8HlOF+e8I3FqQr1Bc46r+yw8qs2elPdRM1jyV3YBOFZ6RKq9t7LyP5hX6VIPrbLjiAsj0XVj87sS7BEKppPXJY6Db2eJXuPATCuHYYnop0ffPIKEEfVPDA1QH0Zfs3OWsJ9Ad3ic5ttmCD87TdzyinSCoc4CGGGTo0iglXnPHwRWEE6PNNNPZAqzASK/VvMHVnqBQ6x1YTtaqO092SahQweAu6ZmRUwWWqPS9JiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by OSQPR06MB7280.apcprd06.prod.outlook.com (2603:1096:604:295::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
- 2025 07:53:27 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
- 07:53:26 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] io_uring: use PTR_ERR_OR_ZERO() to simplify code
-Date: Tue, 12 Aug 2025 15:53:15 +0800
-Message-Id: <20250812075315.6940-1-zhao.xichao@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E214529BDAC
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754985549; cv=none; b=r/GCqrnsyKJt9foC82PLZH0DERg4cTSSrrT+eBoj9I1aJvtzFRdbfrdvI4ai7SH/186aNaHvZGm+PKW9WO8noW7TR3vz0q881f1YEYeuRAotH1INaksOZJnCubiK1oI4sB37IbZiAtOY7BESwmqkffsXQHkni43zhecbDANP/Jg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754985549; c=relaxed/simple;
+	bh=DbCYlvp+Nqq/DkXn254DLcWQPyJQDF1pLJoekwIQSiM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=cLlkfKLvchWGsHI638xlCAv19pA+YpDpki1l+G62W86mVKtu8WDFohVTRjmeLqiWR8j9MR+p+tM1qTLeiEUYB9dtGRPEYMC/Y6yenwj6YEGHAfSlguXzKuGzDRWw1ymRFVOwfQyg433jg3OnOS8IyIdGOR4fXxu5MCSN+cTzXfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r7yb3X2/; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250812075903epoutp02093716469e57ad14b49af112f27d8dc6~a9g3H1Lzs3015430154epoutp02R
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:59:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250812075903epoutp02093716469e57ad14b49af112f27d8dc6~a9g3H1Lzs3015430154epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754985543;
+	bh=Zti1wjO1UjlveyU0dr46ymgnEgQrPxfFkW7q08MyKpY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=r7yb3X2/8+SPzA6B4rLauW2+VJaqMO3XutcJmH4tY0Ja8Yd+/NemxjLIGnI1fAcgV
+	 FFwqVnwnj+39mBHd9izfHWiC7Af7nLGOYZsmyJh2ynLWOw473jvGabKTQywG/QkMyC
+	 fZj0PLcPzf0VWhLPa7uMZgX0aPwhZq1qTSmksC60=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250812075903epcas5p278fb107a87ca7067f6c307eca48d83b9~a9g2kA0502927829278epcas5p24;
+	Tue, 12 Aug 2025 07:59:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c1P5x6lpPz2SSKm; Tue, 12 Aug
+	2025 07:59:01 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250812075350epcas5p1cc4533582704978ec3a4a8b73dc1535c~a9cTo56871942019420epcas5p1h;
+	Tue, 12 Aug 2025 07:53:50 +0000 (GMT)
+Received: from asg29.. (unknown [109.105.129.29]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250812075349epsmtip29897c66a9d79b3d305ada139381f8afe~a9cSEItUW1933319333epsmtip2I;
+	Tue, 12 Aug 2025 07:53:49 +0000 (GMT)
+From: Junnan Wu <junnan01.wu@samsung.com>
+To: sudeep.holla@arm.com, cristian.marussi@arm.com
+Cc: florian.fainelli@broadcom.com, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lei19.wang@samsung.com, q1.huang@samsung.com, Junnan Wu
+	<junnan01.wu@samsung.com>
+Subject: [PATCH] firmware: arm_scmi: Set device ready before register
+ scmi_virtio_driver
+Date: Tue, 12 Aug 2025 15:53:43 +0800
+Message-Id: <20250812075343.3201365-1-junnan01.wu@samsung.com>
 X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0143.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::19) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|OSQPR06MB7280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7795f186-ef90-4055-df2d-08ddd97551fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cwNADsnXG0lxI7q+yiDeY5sPJyPTKnS74ih5OdR7jKVAeWctQk5cY0LUmCAX?=
- =?us-ascii?Q?G9SUFZ1SJJXG0AqGxCxHpmHBHXekTg9Bh5gAlHuhIb+HxzA8BoMhont1z+cV?=
- =?us-ascii?Q?dksjoaak9MXc8OuFvN9uBGT6n48oMKHNGOpRLGANbHW6kX8yCSlixZJeqYg3?=
- =?us-ascii?Q?59xqY0hyiysBqWYGpdBatgWv1bwFagX3t6kZLe0tLfojnUeihvLcL2Ctqn8o?=
- =?us-ascii?Q?Bt+GyHTQGkHwpoG7DmmcGDkOGMzHAGN3k54j4kUtgYsusLoPYKOsxzsjjcGb?=
- =?us-ascii?Q?mbX2+1nauidY44CwwXEdbHUIzUIQmgnrsUVc69tCLy8Af8wZsje56fNvkunF?=
- =?us-ascii?Q?KXMNJ5b2HoFgwzX43KeADRV5M2+w+wHO9NVZ7I5jGzeCLqgn4RFGFjf21bon?=
- =?us-ascii?Q?mJIPrcTyrH8IZyR9ISDCneArmoFPMpSYcT2DLX4wCTpFT42TZ+IE3zTzQ5ML?=
- =?us-ascii?Q?x5RmA8mBjJNEH5Xg5Se3GJl2wQWo91fLoWJrF+9Q9hlAQsN1ydcjw6+j/tLf?=
- =?us-ascii?Q?3N/L2IM/GwN1CDoVQFZTPAWM1ywfAZEQCHr39FTioCpdSjPkVWZER9zp+HVq?=
- =?us-ascii?Q?tj5bt4oWa8QNrfIgOEkmP4ipMRb+tHHhofDdzWdnvHYVHHCuQSyztQ6Wdq+5?=
- =?us-ascii?Q?Vlgf2/2C7LQ5HNaKdhT08SRUktO9ba1PCot8TMlpRRMdYqRbZgwl2sWPQOGX?=
- =?us-ascii?Q?aZHR+GmqIg3OWwsldNdBwVlLL+dGZPWpU5/qpqzACDcWu3EDiXXBsh/+zx/X?=
- =?us-ascii?Q?Y4tdCZYdPKh+hlNg4HUzRx3NwsSpJ3yuk1s8Cz0zCHz/YvY4lfhpB1GXkLb/?=
- =?us-ascii?Q?RdwP+c7kKCkhie/Vz2DuWQ91zPxDsCkB1IRcRxMeMn16xJ+zjHs5kkWhv3vV?=
- =?us-ascii?Q?gCwkV+ICkwlbnwWaUOEKmyqH/RL62tjOkypzerpdpix7wm9LQAb2I+hZIIpa?=
- =?us-ascii?Q?cTwud0hj4JmR4EdWVY1S9gU/TxBV5TM/iwIyd2Y2Jea69WL16aw8AH/HQLHM?=
- =?us-ascii?Q?oMrkJiJ2f0iKfhpQPRZrARQDMRlzij6IjhatOw9QOhh9B6rJmpLDZXlRS9Jl?=
- =?us-ascii?Q?fV/S2C0ek2TwPNs3XCX7Z2tcaVu7GGQKLI0dNm1q+jOM4mlqMFg6bBYLzaNU?=
- =?us-ascii?Q?RZ0JTfoc7E8Z2n+iiGwDYhrywfhyhNIlpzCtS94IrzwZ1r9BHo0fH/OnBO2f?=
- =?us-ascii?Q?xDNErCJ7uXpwyn9xdoPjWq55TuN+XYN/bX2jW94iaw8XzlrEtJ7+6xjiIxEM?=
- =?us-ascii?Q?6OmndPE2F9gV1VldE6AUySs3a5TsFypKPF06NyHWcwvsyUhcD1qo3BqxGiGg?=
- =?us-ascii?Q?72Cl0XPZvKnInCkBTVaQTsgQ4kbccMJKsEk2nvDsrSqlo1OtEmn1WrDRcVOx?=
- =?us-ascii?Q?HruqEzUOLst2y8JCA/2PcD6FBGfM8J+phLS/8/OkGmnZM5MFzyRHA+afEeV1?=
- =?us-ascii?Q?3CV0SjiNo8r9oMe5gdCD7rsS1z3RxNs7HcxL2myQPIFAGQRHvJLfHw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6N6KvjKlowd8jJJuzXeKol4UMjLr8gHaLw5rTgF8TpuH1tQkJpuMqz1qQUXH?=
- =?us-ascii?Q?XulLDZtuT8LNFKW6NJ9gldVIeAGbiq6D/tMWSW4uVFmWjN9TxbyHopIjnw6l?=
- =?us-ascii?Q?5vXTDYlfbTK6aHdVXsWNe5r1kAEJcXrYhHbGNdwf7RRWKBJPqCS88M7NkG3I?=
- =?us-ascii?Q?GYOw4VHiA8WrwHY87/3yxItXWbB9LBuA8T25QXGTuFplnngZZ5SB1ktR9unO?=
- =?us-ascii?Q?19nD+Rqv6QMPBuisr4tPLE/wbShh+74Ucrt9+115qw8yJwJEj2U38w/2bcXW?=
- =?us-ascii?Q?XpRFq3E0Apn2t3uVwbcdNsWm5PI7i26d163upas5M48DQZRHhss+UTdRkjzd?=
- =?us-ascii?Q?n4sKsZUkcEdndllWU9WQRcwuWCP9vX/3F0atxKwdsOe6ARsOP7SMRT98yx6l?=
- =?us-ascii?Q?q+wfjAXqPlBySH8jxNO9e/mvhc6b4RuHLF8O4jYoLr2FPcNvpqZC3etgXAJW?=
- =?us-ascii?Q?c+YO40dQcDSVRrkEqGB6TqPD2nDY+vX2I72HlDxI09TuNRfHnBPZFsUUfngj?=
- =?us-ascii?Q?EqkUQdHyAoT5YbLoOYd12K5dMQvzz5e9AbbvVgkX8ZbXfejYrHyvYFdJww+l?=
- =?us-ascii?Q?gZ6Pb+Q2yzaXmyY4TfcKkQeqfl/0XRWv7OWHEVCeMSXiHNrcQNGsoktBH2Xp?=
- =?us-ascii?Q?hSyvdnheF1/ouFW5HagMe2QlyX7TXPYDC4u4OcF/r6tm9n1tC5a8EkJCdVe4?=
- =?us-ascii?Q?S/8CDFpQN++NTxyZbWW33hm5ey7sfcSm30wTlSpEqW+0jKhEzD7popD60LUc?=
- =?us-ascii?Q?FbiJKNb1HvMIWqg3qIhHuJDXWPLW+QK03CM7B8v57ADGWBbdV0Vfb4Mu5Tui?=
- =?us-ascii?Q?GqJXQCgoqsY4/fwxUj6lmKXAB9AHF63VoHTaHFbPFSeCoovE9lXz/A+/ZrzS?=
- =?us-ascii?Q?3KaEoOynqUghpwR+Q58juR/MsVXNp3WLEn1PUAxiA1wFCBKLsCOLHSlrETfw?=
- =?us-ascii?Q?7CYAmeBpgamL2ezxyEMMXA0A5OrexT7JhNI+SkbcURpKGg8PTJEPCiTuZ5Cj?=
- =?us-ascii?Q?vwLJkrnVhAsNE9KX5FPQ3zCODH9SiEgVLbGxPcDP4/9OPD5PWgJiKAMn7hN7?=
- =?us-ascii?Q?roXGqvI27JaW+E+JukR8Xy4FIOaH91qiA9l8x6wJDmAIF6vGpwxA3aMYo7H0?=
- =?us-ascii?Q?4avmCRmoZR7Bgh8MyGCg/xvhE7lGPBGv0CA70dXt0VFLDje/TpOugXTZf5b9?=
- =?us-ascii?Q?1m/xhCZrze8WtcMSVYZLNhe6QZNxem5fgVqZc48dmGpim5c9gBZMniagLi/K?=
- =?us-ascii?Q?ax5znjLdu4XRnp2X+OCB+RAuBXcLhMa2RnmeL6ruma/OhJqIGU198kCHkCTk?=
- =?us-ascii?Q?IvExqQY/EsVKmkGX9sMYyCPcQq3S5yJg9ufnO2I/2cuqJSrUczBSBKf1i/aS?=
- =?us-ascii?Q?hbXzIkltLULF4AL5XMxF5UFzT7s+AmQTgsUQ7ZoDRVtk0aG0j79dNf5/mVbY?=
- =?us-ascii?Q?9uT4bBJ40ZrxznhYSNCICKNyB2ayIuuNjQKBOWTfrNJHDDHlDBmF0SphZJg6?=
- =?us-ascii?Q?jE2F40xVCxV3QYBkIWScGwTaO2FLHexodbt6ovQbOnITp/u3jBPigG4T+0Zi?=
- =?us-ascii?Q?vn+gi+bpmFFVSdkRx/JI3M3BRFiyFqz9aRG+/Peg?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7795f186-ef90-4055-df2d-08ddd97551fb
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 07:53:26.8563
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FhmdCNHO6cyHjGcRQTYgt74zB0ExYLh7JEilz3FUayMQVT3/+OKRzFrQUF9g7R3kmbgJ2raEHgE1qdncAPY4PA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7280
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250812075350epcas5p1cc4533582704978ec3a4a8b73dc1535c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250812075350epcas5p1cc4533582704978ec3a4a8b73dc1535c
+References: <CGME20250812075350epcas5p1cc4533582704978ec3a4a8b73dc1535c@epcas5p1.samsung.com>
 
-Use the standard error pointer macro to shorten the code and simplify.
+Fix irregularities in scmi driver probe.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+After 'commit 20bda12a0ea0 ("firmware: arm_scmi: Make VirtIO transport a standalone driver")'
+making SCMI VirtIO transport a standalone driver,
+`scmi_virtio_probe` will follow `scmi_vio_probe`,
+and during `scmi_virtio_probe`, it will do `scmi_probe` which will invoke
+function `scmi_protocol_acquire(handle, SCMI_PROTOCOL_BASE)`,
+and this function will send message via virtqueue and wait device's reply
+
+Before this patch, only after `scmi_vio_probe`,
+frontend will mark device DRIVER_OK by function `virtio_dev_probe`
+in 'drivers/virtio/virtio.c' itself.
+
+Accroding to chapter '3.1 Device Initialization' in virtio-spec,
+```
+The driver MUST NOT send any buffer available notifications
+to the device before setting DRIVER_OK.
+```
+
+In some type1-hypervisor, available buffer notifications
+will be intercepted until virtio driver is okay. In this case,
+`scmi_vio_probe` will be blocked at `scmi_wait_for_reply`
+and probe can never complete.
+
+Therefore, the operation to set DRIVER_OK must follow
+perform device-specific setup immediately,
+then available buffer notifications can be sent in function `scmi_probe`.
+
+Fixes: 20bda12a0ea0 ("firmware: arm_scmi: Make VirtIO transport a standalone driver")
+Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
 ---
- io_uring/xattr.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/firmware/arm_scmi/transports/virtio.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 322b94ff9e4b..d0720835a1cf 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -94,10 +94,7 @@ int io_getxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+diff --git a/drivers/firmware/arm_scmi/transports/virtio.c b/drivers/firmware/arm_scmi/transports/virtio.c
+index cb934db9b2b4..326c4a93e44b 100644
+--- a/drivers/firmware/arm_scmi/transports/virtio.c
++++ b/drivers/firmware/arm_scmi/transports/virtio.c
+@@ -871,6 +871,9 @@ static int scmi_vio_probe(struct virtio_device *vdev)
+ 	/* Ensure initialized scmi_vdev is visible */
+ 	smp_store_mb(scmi_vdev, vdev);
  
- 	ix->filename = getname(path);
--	if (IS_ERR(ix->filename))
--		return PTR_ERR(ix->filename);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(ix->filename);
- }
- 
- int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-@@ -170,10 +167,7 @@ int io_setxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
- 
- 	ix->filename = getname(path);
--	if (IS_ERR(ix->filename))
--		return PTR_ERR(ix->filename);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(ix->filename);
- }
- 
- int io_fsetxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++	/* Set device ready */
++	virtio_device_ready(vdev);
++
+ 	ret = platform_driver_register(&scmi_virtio_driver);
+ 	if (ret) {
+ 		vdev->priv = NULL;
 -- 
 2.34.1
 
