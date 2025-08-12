@@ -1,111 +1,277 @@
-Return-Path: <linux-kernel+bounces-764133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EBEB21E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:36:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1FFB21E74
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6814A2A6345
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394221A233A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAEB28AB0B;
-	Tue, 12 Aug 2025 06:36:11 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397362C21E2;
+	Tue, 12 Aug 2025 06:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gph698/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE920C001;
-	Tue, 12 Aug 2025 06:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5665420C001;
+	Tue, 12 Aug 2025 06:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754980571; cv=none; b=fqKhrMMNlYbxhJN+iMjSDMtA3jC4Qi68R36BL3YY+Py2OUEGmtK0Gz060Gfvt6ovpL2sFY5klGwRQHRdoQfhYY7g06MMPZHBl7Z26lT57OzgLLpAnml6YRhh+OVms5JxrJHGVbxhp9uK+pCO8K1s5zc6uVkdgNXDPcy8ej38U60=
+	t=1754980630; cv=none; b=mlSGMCRYpa8HvJTGp3zcKpVQW2ey8E62r/Rxt5vNyju+1mBdBub8fIZLOjhOuO2NQzpx0GX05PW1mU9BYP2mxYKmHAwSBOF62dQX2oDzIg0FGuxuaWWK7mWkmeXeIcKeHaaKTgcYhOEC7iaraEDecuwatBMM1HDscxXPPkf8+Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754980571; c=relaxed/simple;
-	bh=PqRBrCjuPPipQqbUjPrWWJCYZSDA5+ULEgdTcRC0Z84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QcSiKdZ+5Lb/PO/FHPmV5lJc4j5lYMqjhvGtEoTJVUuoNUDvYJlnY1GcrlT1J4WpxZHDeS+Id9Sf8vUMJla7LAWDezCREdL0oLA3on9SF9PTafJyLjNcP6YkaJiJ8vxcJKvSW23vNIvw86sVMzFRztq3Ka3lasTlekO+ZG5FnPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 9bdcc792774611f0b29709d653e92f7d-20250812
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:a156faad-1cdd-447b-aa95-3a03135fa44c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:ca2de71062e30d2de27ae29bbae5efd9,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1,IP:nil,URL
-	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
-	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9bdcc792774611f0b29709d653e92f7d-20250812
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zhaoguohan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1047693736; Tue, 12 Aug 2025 14:35:59 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 37199B8258E7;
-	Tue, 12 Aug 2025 14:35:59 +0800 (CST)
-X-ns-mid: postfix-689AE0CE-987816144
-Received: from localhost.localdomain (unknown [10.42.12.87])
-	by node2.com.cn (NSMail) with ESMTPA id 9B798B812916;
-	Tue, 12 Aug 2025 06:35:52 +0000 (UTC)
-From: zhaoguohan@kylinos.cn
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	GuoHan Zhao <zhaoguohan@kylinos.cn>
-Subject: [PATCH] perf drm_pmu: fix fd_dir leaks in for_each_drm_fdinfo_in_dir()
-Date: Tue, 12 Aug 2025 14:35:46 +0800
-Message-ID: <20250812063546.13797-1-zhaoguohan@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754980630; c=relaxed/simple;
+	bh=DN6AGEd04LkeapvqxKCW4A0HOrkg6SVHzX1aPEHJMg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eY+ZmlY+v+hMUd3jl0lko7QuyrOCSWk6ZdqAzncyGxytQB9q7NIBNWaahfxvZqorHmPm1cpfdXL035y4h0h9K79TiEdW8rq9lCYhlKEImbiPEHa9ZwCYCUXZDYLJumOPa8Y3FKAjkJox29OdKqxJpnjIfjldUjrBykmLCxecNwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gph698/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD51C4CEF6;
+	Tue, 12 Aug 2025 06:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754980629;
+	bh=DN6AGEd04LkeapvqxKCW4A0HOrkg6SVHzX1aPEHJMg4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gph698/U/m7daZax4mS3+51vt1C9rQ9Mamx5EA5uZCz7i4FjgS1W1yAHXO1f+DUuY
+	 lKd09pCOkuV2Zq6yb34rbDJhqrgcf6I8RibJK2BTg6HBI5X88G6OU2zYsa9F6FBOE+
+	 Fgu9YgiZ5HAJP7uxJHA/6GS05BOfQSPxH5Gs6kD1ChExQ0yZzn3TVgT2Zpw2cGLj+5
+	 C+//TlTmtstVLyEDsnGy/R5CSouGaRTFONYT99GkQHp9PFRbXQCD0cCOUotpnqN2xA
+	 GAF0a6YIMfZZCdULb05B6MYayw25wL4sQ6KO/iY+is0j5tOT7kAw0pl+O0xgmFbC5M
+	 BoCkxKBH/IMgw==
+Message-ID: <9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
+Date: Tue, 12 Aug 2025 08:37:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/12] dt-bindings: PCI: Add support for Tesla FSD SoC
+To: Shradha Todi <shradha.t@samsung.com>, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org
+Cc: mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
+ m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+ <CGME20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097@epcas5p4.samsung.com>
+ <20250811154638.95732-8-shradha.t@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811154638.95732-8-shradha.t@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: GuoHan Zhao <zhaoguohan@kylinos.cn>
+On 11/08/2025 17:46, Shradha Todi wrote:
+> +
+> +  clocks:
+> +    maxItems: 4
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aux
+> +      - const: dbi
+> +      - const: mstr
+> +      - const: slv
+> +
+> +  num-lanes:
+> +    maximum: 4
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  samsung,syscon-pcie:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: phandle for system control registers, used to
+> +                 control signals at system level
 
-Fix file descriptor leak when callback function returns error. The
-function was directly returning without closing fdinfo_dir_fd and
-fd_dir when cb() returned non-zero value.
+What is "system level"? and what are these "signals" being controlled?
 
-Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
----
- tools/perf/util/drm_pmu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/drm_pmu.c b/tools/perf/util/drm_pmu.c
-index 988890f37ba7..424a76d1a953 100644
---- a/tools/perf/util/drm_pmu.c
-+++ b/tools/perf/util/drm_pmu.c
-@@ -458,8 +458,10 @@ static int for_each_drm_fdinfo_in_dir(int (*cb)(void=
- *args, int fdinfo_dir_fd, c
- 		}
- 		ret =3D cb(args, fdinfo_dir_fd, fd_entry->d_name);
- 		if (ret)
--			return ret;
-+			goto cleanup;
- 	}
-+
-+cleanup:
- 	if (fdinfo_dir_fd !=3D -1)
- 		close(fdinfo_dir_fd);
- 	closedir(fd_dir);
---=20
-2.43.0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - num-lanes
+> +  - phys
+> +  - samsung,syscon-pcie
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/fsd-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        pcieep0: pcie-ep@16a00000 {
+> +            compatible = "tesla,fsd-pcie-ep";
+> +            reg = <0x0 0x168b0000 0x0 0x1000>,
+> +                  <0x0 0x16a00000 0x0 0x2000>,
+> +                  <0x0 0x16a01000 0x0 0x80>,
+> +                  <0x0 0x17000000 0x0 0xff0000>;
+> +            reg-names = "elbi", "dbi", "dbi2", "addr_space";
+> +            clocks = <&clock_fsys1 PCIE_LINK0_IPCLKPORT_AUX_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK0_IPCLKPORT_DBI_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK0_IPCLKPORT_MSTR_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK0_IPCLKPORT_SLV_ACLK>;
+> +            clock-names = "aux", "dbi", "mstr", "slv";
+> +            num-lanes = <4>;
+> +            phys = <&pciephy1>;
+> +            samsung,syscon-pcie = <&sysreg_fsys1 0x50c>;
+> +        };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/pci/tesla,fsd-pcie.yaml b/Documentation/devicetree/bindings/pci/tesla,fsd-pcie.yaml
+> new file mode 100644
+> index 000000000000..533870ab1d73
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/tesla,fsd-pcie.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/tesla,fsd-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tesla FSD SoC series PCIe Host Controller
+> +
+> +maintainers:
+> +  - Shradha Todi <shradha.t@samsung.com>
+> +
+> +description:
+> +  Tesla FSD SoCs PCIe host controller inherits all the common
+> +  properties defined in samsung,exynos-pcie.yaml
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/samsung,exynos-pcie.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tesla,fsd-pcie
+> +
+> +  clocks:
+> +    maxItems: 4
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aux
+> +      - const: dbi
+> +      - const: mstr
+> +      - const: slv
+> +
+> +  num-lanes:
+> +    maximum: 4
+> +
+> +  samsung,syscon-pcie:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: phandle for system control registers, used to
+> +                 control signals at system level
+> +
+> +required:
+> +  - samsung,syscon-pcie
 
+clocks are required, compatible as well.
+
+Missing supplies, both as properties and required. PCI devices do not
+work without power.
+
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/fsd-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        pcierc1: pcie@16b00000 {
+> +            compatible = "tesla,fsd-pcie";
+> +            reg = <0x0 0x16b00000 0x0 0x2000>,
+> +                  <0x0 0x168c0000 0x0 0x1000>,
+> +                  <0x0 0x18000000 0x0 0x1000>;
+> +            reg-names = "dbi", "elbi", "config";
+> +            ranges =  <0x82000000 0x0 0x18001000 0x0 0x18001000 0x0 0xffefff>;
+
+Misaligned. Follow closely DTS coding style.
+
+> +            clocks = <&clock_fsys1 PCIE_LINK1_IPCLKPORT_AUX_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_DBI_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_MSTR_ACLK>,
+> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_SLV_ACLK>;
+> +            clock-names = "aux", "dbi", "mstr", "slv";
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            dma-coherent;
+> +            device_type = "pci";
+> +            interrupts = <GIC_SPI 117 IRQ_TYPE_EDGE_RISING>;
+> +            num-lanes = <4>;
+> +            phys = <&pciephy1>;
+> +            samsung,syscon-pcie = <&sysreg_fsys1 0x510>;
+
+Incomplete, missing supplies.
+
+> +        };
+> +    };
+> +...
+
+
+Best regards,
+Krzysztof
 
