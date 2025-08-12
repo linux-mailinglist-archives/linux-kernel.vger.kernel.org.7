@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-763935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF9BB21BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:46:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DE3B21BC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BCEC426E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195AD19064FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9E61DF27F;
-	Tue, 12 Aug 2025 03:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA332DCF44;
+	Tue, 12 Aug 2025 03:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n+lQbuD4"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NbYqq15F"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9782139D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 03:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4232D9EDD;
+	Tue, 12 Aug 2025 03:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754970362; cv=none; b=p1IOLXCFGRDO8/fUS6E3c7J55U+S1Km9u57hQ919evnr/97kltK0VBJbSs7ZkvkRCxm7yMRs5jxlxpdIm1uA6AVg3GVM/Q6GXb08LItHqP/6mZjLrSFUUZiwoDIGlEF1iWC58Z36WwOtzQiH5pQfKSZ8AECBmM8e0wcCMBeSris=
+	t=1754970371; cv=none; b=B1VrKQXdIYIThtOnm77gmhVvsgB/13hF0OBa0GG1okbedZag5Lp2h6mqAonFyWbppluP1TnzRI5YA9zRNt6/dR0AM4I4xmW/bpmHuiKY2PC3st9eL7CwivGSekM85AH5tMwLjzhB5z65E/4qmRDjHFskNie4aVAhhi8jBfhLR+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754970362; c=relaxed/simple;
-	bh=uq1iFLrAntOLexQc1zApfJz11vi8iOWR3dJOewxP6yw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kJAIYdNophPVvHEjQ50SBSEqd08F5lF5mPIka+sTSPD/x75N0oXD+8F47B5dCeTLjDy+ep4KH+vI8vpt3SWUcMU8DpW1gt7BL9aNt7zMcftRIfUP2URquEuXNANmikiB+sBjfFkDNiCkPcwEyr7w8KL+vW1/wjRNObsUz0R4Rww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n+lQbuD4; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C06ccc007051;
-	Tue, 12 Aug 2025 03:45:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9q0gyF
-	MLlQZ80P29WiuD/0gjHl1p7rDeeQUw/CFDdr8=; b=n+lQbuD4TolJiw2ByCZWaa
-	2ivfMmfaBQJP+XqPMNldoL8BXnqpK725L+1bHGKmkM/nyvPkRnmn8ropkmUsRG7r
-	JztOozAm1y44MZrDDqLxkusR0xj3Cpc9/W+vMvW5v+QqsB8yZrSaaeXorwmhWtWf
-	7XBLD7DtYYH6SwdB02V0YF1+Xt7+6xLF6JIUxbrTU8tlIhhVO26uKlVzl50/Qk7J
-	Qp7iv1omTG5N/u+l2kJRLjjR1BAZncU7dxvsF/fSlQ7PMTLCDqX2MqFmVQsH70Rt
-	YtPcgRvDEkmt5++pjq7L+NjuTa5SBRAHkdNzjgCUlQ+WD9itu6Y1mwvLecLaTb5w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14cb7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 03:45:42 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57C3jgJE030651;
-	Tue, 12 Aug 2025 03:45:42 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14cb7f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 03:45:42 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57C0C3UO028585;
-	Tue, 12 Aug 2025 03:45:41 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5n0k78-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 03:45:41 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57C3jdU110159228
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Aug 2025 03:45:39 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 67F8658059;
-	Tue, 12 Aug 2025 03:45:39 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 94EEF5804B;
-	Tue, 12 Aug 2025 03:45:34 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.150.9.64])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Aug 2025 03:45:34 +0000 (GMT)
-Message-ID: <4adce2fdf58f74e42949528e1d6c4345337706b7.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/2] powerpc: pci-ioda: Optimize
- pnv_ioda_pick_m64_pe()
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Yury Norov <yury.norov@gmail.com>,
-        "Jiri Slaby (SUSE)"	
- <jirislaby@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael
- Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy	 <christophe.leroy@csgroup.eu>,
-        Thomas Gleixner
- <tglx@linutronix.de>,
-        Frederic Barrat <fbarrat@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 12 Aug 2025 13:45:32 +1000
-In-Reply-To: <20250811165130.37552-3-yury.norov@gmail.com>
-References: <20250811165130.37552-1-yury.norov@gmail.com>
-	 <20250811165130.37552-3-yury.norov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754970371; c=relaxed/simple;
+	bh=QKrhEizsg0N1zg4M61hvf6ECAUH4usaiehJgLk+LSYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgqciquRsZ7KpGmJZx+GH2WSBvWqp0LxxLd83fOHaow7Uez3nCwAKHcy7L7Mf6EmDVp2OIc2JYCUQkM25PhqvESkC7oCqt6U0w7p4AsggnkRcLSbiAlcnm/hJMtYP8Lr5Ah/hMByuiSb8MpK/hAz1YQnNPxn2HyysslYheMo2LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NbYqq15F; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NIC/wkT8xDaIY7MD6UsDmD8NMUh6b3J8xBtXrNsXYKo=; b=NbYqq15F+k0PaYhFy5Hc5uGO1C
+	F7j6cSoP/whS4817YNAeQ66fdIUeTNQC5RhDl3Pn2Jkb/dJBC2qkppaK48DJ9uxXASz28fYUHgXWy
+	gKaqh24ZdeiIwvrmcSyoigBz47PTJ39VEZOCcGj6Fe050vKSBFjjU3uGdFI1pW5XiSuY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ulfxA-004PNl-P9; Tue, 12 Aug 2025 05:45:36 +0200
+Date: Tue, 12 Aug 2025 05:45:36 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <uwu@dram.page>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <ac9cce0b-d29e-499b-8a86-28979cd12fb5@lunn.ch>
+References: <20250812-net-k1-emac-v5-0-dd17c4905f49@iscas.ac.cn>
+ <20250812-net-k1-emac-v5-2-dd17c4905f49@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Rsad0eRKtkOpz_KqJuf7rD7dvcmKxzRf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDAyOSBTYWx0ZWRfX+xP77WtJt37o
- Pn8BnX+j9HGO+jwQmMwtdbAh9MnSQAN/3SmXP3j6rhPgkX0GiMRnIN9BLcISas6hs2bu3/b51k2
- M02A+p1DrFer8F4qyiqs180xGsm0hnYOm+Qg8IQu20ivq5jCW9vEgdjRUEGppoMHmtbGDk0HMwc
- xEqni2k7MqwrmZEjKIg+3BmqhL9Gfu5kJLX1RBP0kEv0QdE2ZgpHUZ4LDC+w1rVXjLWEbF3oim0
- dugTEP/WosNlWPyUEJnDuifty8PkgFB465F8yN6g1GvR1TlDxfsZSlQ6AG3ul4YcfdgQUWbopFl
- L7lw1IftNPwL5Q8Mb/hRmYm3SKUb4WH5L+C8iy8NxjnarWVbvunYHdxi3gQLpTvpiFT4W/A8afi
- FQC/5ZCFoT7tjZr+WYJjsBbzrSGmMyrxiELpzm/ul5iqY7Ed2QJWd3ja4G352RRwcKNddE5O
-X-Proofpoint-GUID: dKeHuJW1_dp9vEApp2VRkMjY1Bx9w3xf
-X-Authority-Analysis: v=2.4 cv=fLg53Yae c=1 sm=1 tr=0 ts=689ab8e6 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=KWSvNgz8TR5Tj8vLfpoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxlogscore=485 malwarescore=0 bulkscore=0
- mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508120029
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812-net-k1-emac-v5-2-dd17c4905f49@iscas.ac.cn>
 
-On Mon, 2025-08-11 at 12:51 -0400, Yury Norov wrote:
-> From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
->=20
-> bitmap_empty() in pnv_ioda_pick_m64_pe() is O(N) and useless because
-> the following find_next_bit() does the same work.
->=20
-> Drop it, and while there replace a while() loop with the dedicated
-> for_each_set_bit().
->=20
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> +static void emac_get_pause_stats(struct net_device *dev,
+> +				 struct ethtool_pause_stats *pause_stats)
+> +{
+> +	struct emac_priv *priv = netdev_priv(dev);
+> +	struct emac_hw_tx_stats *tx_stats;
+> +	struct emac_hw_rx_stats *rx_stats;
+> +
+> +	tx_stats = &priv->tx_stats;
+> +	rx_stats = &priv->rx_stats;
+> +
+> +	scoped_guard(spinlock_irqsave, &priv->stats_lock) {
+> +		emac_stats_update(priv);
+> +
+> +		pause_stats->tx_pause_frames = tx_stats->tx_pause_pkts;
+> +		pause_stats->rx_pause_frames = rx_stats->rx_pause_pkts;
+> +	}
+> +}
 
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+You have pause statistics, but not actual configuration of pause.
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+> +static void emac_adjust_link(struct net_device *dev)
+> +{
+> +	struct emac_priv *priv = netdev_priv(dev);
+> +	struct phy_device *phydev = dev->phydev;
+> +	u32 ctrl;
+
+Normally the adjust_link callback you configure the hardware with the
+result of pause negotiation.
+
+> +/* Called when net interface is brought up. */
+> +static int emac_open(struct net_device *ndev)
+> +{
+> +	struct emac_priv *priv = netdev_priv(ndev);
+> +	struct device *dev = &priv->pdev->dev;
+> +
+> +	int ret;
+
+Extra blank line.
+
+
+    Andrew
+
+---
+pw-bot: cr
 
