@@ -1,446 +1,286 @@
-Return-Path: <linux-kernel+bounces-764811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F60DB2278E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC524B22778
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD86565141
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18F91B675F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E15B2820B9;
-	Tue, 12 Aug 2025 12:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E67265CA0;
+	Tue, 12 Aug 2025 12:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDMQeRiF"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="f26Zfakx"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFD3280A4B;
-	Tue, 12 Aug 2025 12:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003170; cv=none; b=I4RYmdKTb9o/Ov/HJlppQCLtvu/1Pvzo7xn7Io+7mRK1sON0Xn3F5fkUvecPViPslklEjkg/0D0RsvJeIOhF4uZtM3gU2IaT3Qy8zame2nNrRWqJfHO1C/aAE6uv7mJd+0i6MiFeVtoSExcc9nC8mh0MMegZtWOngnoIZ1wqBCc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003170; c=relaxed/simple;
-	bh=n4ELKnV7jIl0+1lW2DQi8lUwFMi+5+dywheFxhIobFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=s8Km7k++y0L1y35OkW1IqzqQSkpkf650yQwVHfb+GHMzssRpGuwp3XsoKJAUrNUmtZH9m1RrFq25V7JYwrxS/tpTZMF12G1aCbnBbKvXTes7jePuf4Y+WojXb4R2mAYNmA7WPN0JpykVKGC3OS1k6t9GrvMX1Vtns8220Z2bDrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDMQeRiF; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b914a9c77dso305488f8f.2;
-        Tue, 12 Aug 2025 05:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755003166; x=1755607966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJOro309rX4Wa3welMZVLgwK6SeC0RoTfCmmnfx70t8=;
-        b=KDMQeRiFqM3vyBPoFmQgQW8OSjYzNs4XfpZUcavjY/CWnyEnuIBjWOUo+KcRovjjKE
-         HWqSQouBHYCu59a1y8CN5QCHGSPbakiw/XsAGMb0tRQRk9hO4DWc67P6o/ccKiYdDHf4
-         Aor/RE0C4qwZgJgKhWIZyYeOogSeLC0LBH8oA1+KNz3OAnS85gW6T1BI7J4Llh1kwD9+
-         ZPf8rIZmCfXg1Ej4xL+EvwZk2nanfHyuRhBWvjoXVwE+3utenQklK+LxmspQsnWTSgSi
-         ieS1NvgwnpDFf3tdos3Z64aGlfQQ3ZdmdRAOpZdGRp++bq8aYVW/jcP6vEsfpNFJoV0o
-         19Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755003166; x=1755607966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJOro309rX4Wa3welMZVLgwK6SeC0RoTfCmmnfx70t8=;
-        b=qcI5B7MkNRAwoGW8V30DTdVf+GqJA1lZ/XrFyu0/5kbSnC4LUsBmwvWH10LwPOXAV7
-         lzHQtmrq068U9HCLVQA8PJ4dy48fUTPS7tiF8Nwi+oVqGgYmTzwNss9r/MtmTDI9Jrli
-         nvOuTssnyMaRv4MWTbyyT+njVNa7eBFXjJ0hSaEmk/SoiyissuT0asO4vXH2afU1ipFm
-         yoPo4hgpqrrZzrXKZlEry6BwBA5UF2dM2/0L6dXYWzwuBL5eKF8eQijz7oSi+KLu+BQ8
-         64WTRE8o7GuI7zbRHbWjs9y9XjFXIm7AHuXQyuZpuDu13fj/vyw8U1tzHTdk1jM7atky
-         fpyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIy9ciwAGg9ThjanpTA4Q5xAk1JWe8iMT3XtJnq/zsbIabavyCX3Yv43HPE1PEXRhvA08CRm46+qZBdVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNJQB/z9VTAurHHiZut+LYYnXVlkoO4reGOJVYC0OQ4i2RlN2M
-	+n60dSbJbBZtYHJN4RyuNDWJbW4PQRPJk4w6WyX0kuxzhnJk7vnx9cm42NLZ5s1bc+SJDg==
-X-Gm-Gg: ASbGnct/N0//1+w3f3pyLQb0xRty9/FPRJziXFnubhY9V7BiM+XfqexZvfRt+p1tP4F
-	H5RSgS3wRhkocQhYEq/G29uynAVnXmQyQpi5GIqGDo9wBk4c4aLaPNVpMeSe3/Qc1OlWg60OMOi
-	n06tPs81gN5XEyZSJEUstxwcKx6IkiFsJZRaDmWB5OFcABvw1Bne15WctHPc7l9JOiNpd4PZD3J
-	Oqngk/kWoiO3XfNBWcQAWD9U5iRe+S2z1tTh3ge1j9qnTXjeE9mgB9aN/GbsLWVx90IduQLvLto
-	cbwQgZ2LLDw78oa3g8PO0KpLR+qR1U5aYJi/58ICpevAcqoEbO7bl0xnSt0kfBNhIjrSibAFvM+
-	9gqo09BtqWVNQlDr4yxGbtWOjFC3tVeCEVIg+EA4XV71h
-X-Google-Smtp-Source: AGHT+IEpMThsR4gQcuq+tmcVaiTlHtydYrEaD+CU65Sm6QGeVCAZrsNuyv7VrWgE+icZuWwdzAxbgQ==
-X-Received: by 2002:a05:6000:18a8:b0:3a4:f66a:9d31 with SMTP id ffacd0b85a97d-3b900b2d56cmr12107268f8f.16.1755003166238;
-        Tue, 12 Aug 2025 05:52:46 -0700 (PDT)
-Received: from localhost ([45.10.155.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b914e70596sm1106392f8f.61.2025.08.12.05.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 05:52:45 -0700 (PDT)
-From: Richard Gobert <richardbgobert@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	donald.hunter@gmail.com,
-	andrew+netdev@lunn.ch,
-	dsahern@kernel.org,
-	shuah@kernel.org,
-	daniel@iogearbox.net,
-	jacob.e.keller@intel.com,
-	razor@blackwall.org,
-	idosch@nvidia.com,
-	petrm@nvidia.com,
-	menglong8.dong@gmail.com,
-	martin.lau@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Gobert <richardbgobert@gmail.com>
-Subject: [PATCH net-next v5 5/5] selftests/net: add vxlan localbind selftest
-Date: Tue, 12 Aug 2025 14:51:55 +0200
-Message-Id: <20250812125155.3808-6-richardbgobert@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250812125155.3808-1-richardbgobert@gmail.com>
-References: <20250812125155.3808-1-richardbgobert@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178091EDA1A;
+	Tue, 12 Aug 2025 12:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755003138; cv=fail; b=c3jvYFJa7rioM2P41hMyil2oo1kHVZwDxUcJo8JWHw6YJklvwt/+qjiHB9ORTh/YSBNIihjr84NYSifkxZXqjzOW8wYvaQ9qCde9Y22XccJldavnek2dwtAUbUerYHq5qr+tCfC3U+7iJCAsRX3R8d1tb/+mkD8nNfVrXbfj6cA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755003138; c=relaxed/simple;
+	bh=lDHi+f+b24vkN2faYYWi9GJ4WfZ2fDEpf4xzIkRLrHE=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=t98qcH79IC+la8Z0u6KgjWiia8Qp2qvXzYcPaLjrFSRQgYnE6i/33D/kp1ltDP8UsakqXcopfIYlGkQbXPn5qog2JxWmyCm6TsU4ZEZ26jmSxIbUSyzYWhgrjCFqcf9MTeFNWVujHq0nZaNzABKpGQuQ+EoF6ptz5Tc/4XF1ApI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=f26Zfakx; arc=fail smtp.client-ip=40.107.92.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FVFwJ6WBx0uIKiejbTWwQDqh1aFxoc3HgY51lgxRgxlkFwFbZ83TTeqo6uRq0A/JZUapT7xjpBmDOIEqsLdJDAhkXcVcygdc/0jY5I31p2DhEF8ogIXh4rxcBCqxPcqx+YWk+WzayC7vdUD/uj+wLnCh11bHq+FCYfGbyB9rjePvZGxDq/AgCSP9rdANxLQF8G5nkcDNn4gYLruOMJAViOJMKyCS/IJKDDuAmHGzDQEPDOfMpDhP0op4zAU2UMa25a2VmbV3bFN6nITiRhDJd2u4e9WPELSVHdWNgdRfn8tGOwuVfumP3yo4RVPs/8UEXUnPO1c710JD5lhQb+TF9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vPEyv715Eo7AN0s2C6ovOZbf+zlBrLnyxB3c1uQLYtU=;
+ b=YSVAEjuL+aFP5rFcz0ASjdKKe86OFsY/JbD8EZ4sdz/eh2q2AdrNyXzIXS+Fme9Ug5htfFNg4xsT8MSw6FGBLWsj2IqAqkUG4bAQX1xPF5EQRpbMc4rkY442nDQ6wJZdF2aSAu1hePZvcj53ENxoQODRBH5MKYejGLWCms90ThZzWDqpqM0QNCQdslZgbx6NyA6EPLMe2LjiOs16wCJarVZ3SOsfj4dkK+W1k1TEo/XBHS0cA71W2alnFyk/vYgqFLFmyKRnLRWDmctfy+5YyLMY7GlwiTTzJ8raRW635OZAL8lILSBIdct+TeT97Tbf6Bj9EtVLl4gAa1l/tLCXMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vPEyv715Eo7AN0s2C6ovOZbf+zlBrLnyxB3c1uQLYtU=;
+ b=f26ZfakxIhM2aa5wLRQXTtMFxPo+nVnBzyC+hxKFlA0nh9+xpLua057Q4G3E2C9iS3mOqxBpiDqAQ52bqEQUBntXUF/oRYsZL08qJY3H2LTYHb7XEorVu8COkLbF8UJpnUKYAulvOEiVAQa3yr1G1sugKSRRKmp3nZBI0PfCTWyGySvtnG/IEqlGejtDym1cPNxrSxZ6E7YzFwmJt0unuXiWgQC4byFMrkn4Py0GyT+GibEq9GR/5+rtp/S0+xR63BwjOQIn1MC6iiIlQQbReJ4ostYd7bhHjtZcc8Y6NlwKG5dqzpKzUxtMx2ubdQ+7idKjJrxOgiBoYS94iw8kIA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB7221.namprd12.prod.outlook.com (2603:10b6:806:2bd::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Tue, 12 Aug
+ 2025 12:52:13 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 12:52:12 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 21:52:03 +0900
+Message-Id: <DC0GOOU90TP3.B661QBU4KZT9@nvidia.com>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] device: rust: expand documentation for
+ DeviceContext
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+ <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250722150110.23565-1-dakr@kernel.org>
+ <20250722150110.23565-2-dakr@kernel.org>
+In-Reply-To: <20250722150110.23565-2-dakr@kernel.org>
+X-ClientProxiedBy: TYCP301CA0022.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:381::7) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB7221:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd6400ef-35e1-4975-2907-08ddd99f0b1b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eERVOUM5NVJPWXBVa0RWRWNRSmV0K2FJVkJydTA5bnlROE5ERlRXNDZtMWgr?=
+ =?utf-8?B?Vy9Kb0hOMnVPZFNkU1VKUnNySklvVnA4ditQZFpCajZ3TVdSc0h5aHZMWTJT?=
+ =?utf-8?B?YXVSOTd3TERpbmU1bnZiYWdXTTQvNHQybVNTS0U1SDd6UEFvOVoxSWZhaXNQ?=
+ =?utf-8?B?QlI3TU1oN1ZKZGUwUUpLOGJYVEh2aEROTnVLcWdFSTdBTzhMVmcvUXJERjZ0?=
+ =?utf-8?B?M05PVmdrSUFkUVdycEhjdGhqTUZ6Q282WVplWkNTYys5dkdLUW9RNTVrZUJ1?=
+ =?utf-8?B?L3RMNzBGbnNMbUNwZVk4NTA0UzgwMUFLK1ZwTHVsR2Z6SldIdktJQkNnUjVB?=
+ =?utf-8?B?VzNhODlZTGcwa2kzNThqdU1VSzN3N0RQY2N5R0JXYUE1QlNZWEoyclRZcndR?=
+ =?utf-8?B?K1JpNmVvWU5WeHBVTm9OeVJSUkw2dEhCY29WUE1mak44QmtOTStPRnBoWU5Q?=
+ =?utf-8?B?UzhCTnp3TzJ0UUJhdk1aNHFKN0gyeDQydDhlelUzcFV2dHR1a0ZSbVNSRzFu?=
+ =?utf-8?B?blljbTJ5NVlrbmVWT2svT011UVBOWnhTL3draGF3S1VsMHdTQ3NMdEZnNWUy?=
+ =?utf-8?B?Tmw4TnVLTkVkcWNhK21hZk9xRjhqbXUwNkNNbHBaWERFb1pFVjZUUkRCQUFI?=
+ =?utf-8?B?bkZsdExCMzNsdFpzV1hzZUhWeDhPR3dhT1lrVHdFaGNsZFpJaEZMRE1BcnJG?=
+ =?utf-8?B?RnUrazNQYWdlOWJUSlFNYlR6Tm5kZnFSeWJxWmVSclVTbDg2UWkxRmNnRTlH?=
+ =?utf-8?B?UDczRTkrZTR5bHNNY2lOVUJDVGdQMW91TlBVd3dXYTFOWW1UTktPM2xNNnRX?=
+ =?utf-8?B?dFNZWjJsanJid2VkMXJ3T2hvYlYyQ3R5MkhCeENlMXh1UUhGT0paUzVtMzg4?=
+ =?utf-8?B?Y0tDWjl1enhLajY2RSt4U0gwUnZhR3pKSk5WY3FuUHVQV1NXaGdBK21oK1Z0?=
+ =?utf-8?B?cnVub1hGLy83WDVsK3ByTkFFMnhwOWxRNHEvN2UySG54eE5OV2JacjZMc2Fu?=
+ =?utf-8?B?NW5yYWxFbThVY1VXdmJwQzJOTTNUcEFmZCtmcVNmcHpZaWlvMU8rOEx2NlRR?=
+ =?utf-8?B?K3orVHpSaGp3bDd1Zi9NazdiY3dsck1tcmxOeEp0QTVlOWNzSjBGU2NnVk44?=
+ =?utf-8?B?RTRDakVSTXlycENGK0sxSnIzY25ObUYyTkphU1ZtejVlVGIxVFM1UExCNHh4?=
+ =?utf-8?B?bk53Q3ZveGt3MHB1MDczbXhoVUtPM2RSZ25jQWcyeHNkc3piWDJYVk9CaytZ?=
+ =?utf-8?B?Sm1pZEZSMEI2eEhBK0RYdXRDRTJkdjlycEwyOHdVcUF2WnIvcTBDWXZncFBD?=
+ =?utf-8?B?SHpscW83MzgwZmVudjl4TndMMXVRWE9pMjExbTQybjd4OWJLWEgwazdYL1VH?=
+ =?utf-8?B?TncvaUhheDV3bFMzNXFrbDVqT3BweS9nYjVTcGE3ZGFoK2syeWpObVF3MEVx?=
+ =?utf-8?B?SEpnTHNyMDRDcEtNMnovRVViNXl3YjVtaGJEcy9tMUNiSFhKdWk3cG5pZ2w0?=
+ =?utf-8?B?SjY0enJJLzUrOElubW9lWkpTY1o4SDRBcVFjcWdaMXRiTS9RRXlIM3FoaE9L?=
+ =?utf-8?B?SER3VzcvT1lXMW5reDhBU3QrK3hBeFQrODc4aElZdlhxRzdyVmRvY1pHcU9C?=
+ =?utf-8?B?Y1JoYjRLZVNjSlJTaDBGa2pFRWZSSmRCZFdiZS83ZXB3QmVRR3I0bldadDhB?=
+ =?utf-8?B?YWh5UmJabk5Cb3F1dGRIOEtTSXVIZEp0eXBTQjI0aE0xVkg1aUh3cXgxYWp3?=
+ =?utf-8?B?WGpQcVFiV3dNN0hCNEM2S2kwUGVoaFNHbTQzNFlNNFlRQ3JSRmpZSmlaeVJq?=
+ =?utf-8?B?NGdBUHNpYTRHWWI5aXZTRFdBbkYzZW1DQUdIUU5hd1VucDgzWGcvYjRVdUJR?=
+ =?utf-8?B?eEJqakpISmltSGZSZk84KzJuOFNqMis1WUhCbjhqcHA1eDUwWFZMRkNGUmZY?=
+ =?utf-8?B?NDRabzVHU1FMbUxzUS9PVmxuZkRkTUNRNFVvWml0RWRxL3ozUTlhUTdITDJ0?=
+ =?utf-8?B?bUVVRnI2MGdBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bzJBcEVUd1FwYk1RWVRqRUx5TkcrT3F3Z1hKUWM0QzhSNVFHVVJyY3ZIT1o0?=
+ =?utf-8?B?cVlaLy9rK29QOXRqYXByUHNFWmtrTmg2bllPTHdhZFk5U1FHY2Jyak5hVkdI?=
+ =?utf-8?B?ZngxNi9PdStxTzZKM1FPOHZ1VkdRNlRSZGp2Y3ZKU2dRcktXb3VTSnhlcjQ4?=
+ =?utf-8?B?VjVCcUhucnhUMkFUTVJnbnkyYkdUOGEwcHdHNUZIRjZBdHYveE5Bdlo0TjZU?=
+ =?utf-8?B?VFlJbm4vWkJlWGtCV2doMlRYc3cvSzU1SVhnUmthSkhsUUdwaGc1MGRwcWNH?=
+ =?utf-8?B?SGJyK3FYVXQ3Vzd5MWhERHVOYjJVbEpHV2JBUGlzVlBkVi9NcVY0eDZTejho?=
+ =?utf-8?B?VlNlSE8zWkNYeG9hcHZ5c29QVmdQUFQ1V005cHpPUHJlalNFSnFzcHZHWHN4?=
+ =?utf-8?B?cVRaRVRtUlE4N2ZwcDlnaVlZbGJmVkVzbzl3QnR5eVJYWVVpVWgxa3I3S1c3?=
+ =?utf-8?B?YlFRUlRTa1R5dVBOMDlkN1BJREZhc3ErSXBEOVFXNTNQQ2tYZFM1cm5EQWNJ?=
+ =?utf-8?B?RVZTdTJNc0dqL3puYkljT0ZFWXpBbUJiTHlocEFDQ0I1clBZeTJJcy9kVlNI?=
+ =?utf-8?B?RUdxV3BsNmZZYkxDUDBGUXJHdVVKaVFlb290YlltNGJSOUVnbjFBSmZSS2FE?=
+ =?utf-8?B?YjdpNXV4dFQyM2pKRHYxekZpNXg0L2hmdkZWeHZSd2NNN0hORW9FVEIzdjRW?=
+ =?utf-8?B?MGx2ZXRpMExWS2JNWnNwWjVMcW9LT3FZdnNPeW5VdnB6dmQrMk1sbEpyYkFE?=
+ =?utf-8?B?cDZmNUk5aVhyR0psRU5mQ2huTVdBTXlNbW1SbU9YZURUWjQ1UlpsWjl2SnZn?=
+ =?utf-8?B?eHh6aXlZSStkUW02UTNiblVQSFJXWnJmOVFuQVVGYzNWV0k5N25FcWlGdDJ2?=
+ =?utf-8?B?VTVIK3lERUNXTEhhc1dhcUUwSFdzMVVHaUJHZVJHS0lubnRzTExaODN0VTFa?=
+ =?utf-8?B?Q0U4SzlZbUhaVDQyZmdDQTc3dGtTbVhtU2ZhVlpPbW00WGp1SDJGTThvQlFI?=
+ =?utf-8?B?Q3BGNVR5dE5FMnV5SnVkNmZ0YjQrNjV5dUg0Z25tL2VtZnYra1R1MmtjRmpk?=
+ =?utf-8?B?aWNsY3ZBdEFVV1VUeDBEUVJDcnh6NEZjcXMveUM3czlBakhONWRaQ01JSUJa?=
+ =?utf-8?B?bkRBWHlqNm80RjQvMHRTMWdSN3pYMHJCM1pPakdFTlNRN0FxSTRuTHV4dnR1?=
+ =?utf-8?B?MW1sdHZlOUQ1YkhWbHkvOXkydi8vcGJ2WjBKcFIyRWpaYjhzNGdlZnJwVDFt?=
+ =?utf-8?B?VDlobTlMb0E0MTBrRDFiSWRjOUFuOEFFZEhsWjlBQnRJZXMyNTVpUVdxUGIv?=
+ =?utf-8?B?RmltUkJoTHZ3NzJ6MGVCVTl1alczTWNZdS9sK2JOeURjVG4rWjV5dFF5NFc2?=
+ =?utf-8?B?bVUyV0c1b0VBeHJxMmRsd1ZMVFY4em4vaWtXY3RNSmZxTnJ1cWI5U1lzb3d2?=
+ =?utf-8?B?amVBVU1PNzVJZW8vQTZaQlB5TGFQQWFZc1NtaUlsb296b3AyVEgyalJoYUxY?=
+ =?utf-8?B?SWdRZXEvNmNWblYxVXhSeVBjTmFYMVpmSW14V2hOVGhYYW1uNkYyRnFuM3o0?=
+ =?utf-8?B?Si9vMHB4dERuOWo5elBUSWdjWnJiemVaZkRkT005VWRUMWZNT1ZPNE5tN2ZS?=
+ =?utf-8?B?UnFkVUY5UVNVbFU0ZCtvaEJ5NHpZRzhzeTBmR2xoM1I1ZDllUG94UTRlTHRY?=
+ =?utf-8?B?eWNQL0dpME56eWt6M05LaW13TXNMWFZpd1gvRUdnWXJhVUNJUU05WlRJT01J?=
+ =?utf-8?B?Sys5aXg3MGJaS2FMWHl0N2x0R0ZNOWNia0lXZ1habENoQlN2eUV0eS9YemQ5?=
+ =?utf-8?B?R3dMUTJrOS9raVJYSHd4OEZkb282OERQMWRRdi8yVjl2Sjl4Vk9GNUU0ZDdl?=
+ =?utf-8?B?dkdXZDE4MG9ycWo0dTZwZ01WaFkyVHVnNmpXVEZPbS9LWFhDWE53L0xsclVm?=
+ =?utf-8?B?TU1iK3ljS2lnMGRnQWQwL1BzR09TQ1Erdlk2MU5pT1FNR2t5TndFM0h3QkZN?=
+ =?utf-8?B?Qmhmck9Ra1Y4cWxNK3plbFJvYzJMWE5VWmZqNi8yK0FkQ3d6aW5ETWlPd0Qw?=
+ =?utf-8?B?VWRROUEySjQ4UzYvMjRaRWtDdUc4TERWQWVGNDRTQzFVYlFzSGl6VlA3R1Jh?=
+ =?utf-8?B?L3ZjU1F0aFczdmVicU1rM3Nma09URXFNbDRtT3hHRGNxVUh6MVFhMTRxNG9Z?=
+ =?utf-8?Q?7rQ/TJjuWamlWCWVYf66zySX+FgfxS3R2cvl/hpi1N6X?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd6400ef-35e1-4975-2907-08ddd99f0b1b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 12:52:12.8529
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xk/VaBSojmKH/emLW35Ctnhq4ikHn5Bia8qWlrVsWErbpRi21dL81x7iw0EkJz3GsiIxucDW7yk8MjvfvbnZ3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7221
 
-Test to make sure the localbind netlink option works
-in VXLAN interfaces.
+On Tue Jul 22, 2025 at 11:59 PM JST, Danilo Krummrich wrote:
+> Expand the documentation around DeviceContext states and types, in order
+> to provide detailed information about their purpose and relationship
+> with each other.
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
----
- tools/testing/selftests/net/Makefile          |   1 +
- .../selftests/net/test_vxlan_localbind.sh     | 306 ++++++++++++++++++
- 2 files changed, 307 insertions(+)
- create mode 100755 tools/testing/selftests/net/test_vxlan_localbind.sh
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index b31a71f2b372..9305601f4eba 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -117,6 +117,7 @@ TEST_GEN_FILES += tfo
- TEST_PROGS += tfo_passive.sh
- TEST_PROGS += broadcast_pmtu.sh
- TEST_PROGS += ipv6_force_forwarding.sh
-+TEST_PROGS += test_vxlan_localbind.sh
- 
- # YNL files, must be before "include ..lib.mk"
- YNL_GEN_FILES := busy_poller netlink-dumps
-diff --git a/tools/testing/selftests/net/test_vxlan_localbind.sh b/tools/testing/selftests/net/test_vxlan_localbind.sh
-new file mode 100755
-index 000000000000..60b97a578c74
---- /dev/null
-+++ b/tools/testing/selftests/net/test_vxlan_localbind.sh
-@@ -0,0 +1,306 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# This test is for checking the VXLAN localbind option.
-+#
-+# It simulates two hypervisors running a VM each using four network namespaces:
-+# two for the HVs, two for the VMs.
-+# A small VXLAN tunnel is made between the two hypervisors to have the two vms
-+# in the same virtual L2, connected through two separate subnets:
-+#
-+# +-------------------+                                    +-------------------+
-+# |                   |                                    |                   |
-+# |    vm-1 netns     |                                    |    vm-2 netns     |
-+# |                   |                                    |                   |
-+# |  +-------------+  |                                    |  +-------------+  |
-+# |  |   veth-hv   |  |                                    |  |   veth-hv   |  |
-+# |  | 10.0.0.1/24 |  |                                    |  | 10.0.0.2/24 |  |
-+# |  +-------------+  |                                    |  +-------------+  |
-+# |        .          |                                    |         .         |
-+# +-------------------+                                    +-------------------+
-+#          .                                                         .
-+#          .                                                         .
-+#          .                                                         .
-+# +-----------------------------------+   +------------------------------------+
-+# |        .                          |   |                          .         |
-+# |  +----------+                     |   |                     +----------+   |
-+# |  | veth-tap |                     |   |                     | veth-tap |   |
-+# |  +----+-----+                     |   |                     +----+-----+   |
-+# |       |                           |   |                          |         |
-+# |    +--+--+                        |   |                       +--+--+      |
-+# |    | br0 |                        |   |                       | br0 |      |
-+# |    +--+--+                        |   |                       +--+--+      |
-+# |       |                           |   |                          |         |
-+# |   +---+----+  +--------+--------+ |   | +--------+--------+  +---+----+    |
-+# |   | vxlan0 |..|      veth0      |.|...|.|      veth0      |..| vxlan0 |    |
-+# |   +--------+  | 172.16.1.1/24   | |   | | 172.16.1.2/24   |  +--------+    |
-+# |               | 172.16.2.1/24   | |   | | 172.16.2.2/24   |                |
-+# |               +-----------------+ |   | +-----------------+                |
-+# |                                   |   |                                    |
-+# |             hv-1 netns            |   |           hv-2 netns               |
-+# |                                   |   |                                    |
-+# +-----------------------------------+   +------------------------------------+
-+#
-+# This tests the connectivity between vm-1 and vm-2 using different subnet and
-+# localbind configurations.
-+
-+source lib.sh
-+ret=0
-+
-+TESTS="
-+    same_subnet
-+    same_subnet_localbind
-+    different_subnets
-+    different_subnets_localbind
-+"
-+
-+VERBOSE=0
-+PAUSE_ON_FAIL=no
-+PAUSE=no
-+
-+################################################################################
-+# Utilities
-+
-+which ping6 > /dev/null 2>&1 && ping6=$(which ping6) || ping6=$(which ping)
-+
-+log_test()
-+{
-+	local rc=$1
-+	local expected=$2
-+	local msg="$3"
-+
-+	if [ ${rc} -eq ${expected} ]; then
-+		printf "TEST: %-60s  [ OK ]\n" "${msg}"
-+		nsuccess=$((nsuccess+1))
-+	else
-+		ret=1
-+		nfail=$((nfail+1))
-+		printf "TEST: %-60s  [FAIL]\n" "${msg}"
-+		if [ "$VERBOSE" = "1" ]; then
-+			echo "    rc=$rc, expected $expected"
-+		fi
-+
-+		if [ "${PAUSE_ON_FAIL}" = "yes" ]; then
-+		echo
-+			echo "hit enter to continue, 'q' to quit"
-+			read a
-+			[ "$a" = "q" ] && exit 1
-+		fi
-+	fi
-+
-+	if [ "${PAUSE}" = "yes" ]; then
-+		echo
-+		echo "hit enter to continue, 'q' to quit"
-+		read a
-+		[ "$a" = "q" ] && exit 1
-+	fi
-+
-+	[ "$VERBOSE" = "1" ] && echo
-+}
-+
-+run_cmd()
-+{
-+	local cmd="$1"
-+	local out
-+	local stderr="2>/dev/null"
-+
-+	if [ "$VERBOSE" = "1" ]; then
-+		printf "COMMAND: $cmd\n"
-+		stderr=
-+	fi
-+
-+	out=$(eval $cmd $stderr)
-+	rc=$?
-+	if [ "$VERBOSE" = "1" -a -n "$out" ]; then
-+		echo "    $out"
-+	fi
-+
-+	return $rc
-+}
-+
-+check_hv_connectivity() {
-+    slowwait 5 ip netns exec $hv_1 ping -c 1 -W 1 172.16.1.2 &>/dev/null
-+    slowwait 5 ip netns exec $hv_1 ping -c 1 -W 1 172.16.2.2 &>/dev/null
-+
-+	return $?
-+}
-+
-+check_vm_connectivity() {
-+    if [ $2 -eq 1 ]; then
-+        prefix="! "
-+    else
-+        prefix=""
-+    fi
-+
-+	slowwait 5 run_cmd "${prefix}ip netns exec $vm_1 ping -c 1 -W 1 10.0.0.2"
-+	log_test $? 0 "VM connectivity over $1"
-+}
-+
-+################################################################################
-+# Setup
-+
-+setup-hv-networking() {
-+    id=$1
-+    local=$2
-+    remote=$3
-+    flags=$4
-+
-+    [ $id -eq 1 ] && peer=2 || peer=1
-+
-+    ip link set veth-hv-$id netns ${hv[$id]}
-+    ip -netns ${hv[$id]} link set veth-hv-$id name veth0
-+    ip -netns ${hv[$id]} link set veth0 up
-+
-+    ip -netns ${hv[$id]} addr add 172.16.1.$id/24 dev veth0
-+    ip -netns ${hv[$id]} addr add 172.16.2.$id/24 dev veth0
-+
-+    ip -netns ${hv[$id]} link add br0 type bridge
-+    ip -netns ${hv[$id]} link set br0 up
-+
-+    ip -netns ${hv[$id]} link add vxlan0 type vxlan id 10 local 172.16.$local.$id remote 172.16.$remote.$peer $flags dev veth0 dstport 4789
-+    ip -netns ${hv[$id]} link set vxlan0 master br0
-+    ip -netns ${hv[$id]} link set vxlan0 up
-+
-+    bridge -netns ${hv[$id]} fdb append 00:00:00:00:00:00 dev vxlan0 dst 172.16.$remote.$peer self permanent
-+}
-+
-+setup-vm() {
-+    id=$1
-+
-+    ip link add veth-tap type veth peer name veth-hv
-+
-+    ip link set veth-tap netns ${hv[$id]}
-+    ip -netns ${hv[$id]} link set veth-tap master br0
-+    ip -netns ${hv[$id]} link set veth-tap up
-+
-+    ip link set veth-hv address 02:1d:8d:dd:0c:6$id
-+
-+    ip link set veth-hv netns ${vm[$id]}
-+    ip -netns ${vm[$id]} addr add 10.0.0.$id/24 dev veth-hv
-+    ip -netns ${vm[$id]} link set veth-hv up
-+}
-+
-+setup()
-+{
-+    setup_ns hv_1 hv_2 vm_1 vm_2
-+    hv[1]=$hv_1
-+    hv[2]=$hv_2
-+    vm[1]=$vm_1
-+    vm[2]=$vm_2
-+
-+    # Setup "Hypervisors" simulated with netns
-+    ip link add veth-hv-1 type veth peer name veth-hv-2
-+    setup-hv-networking 1 1 2 $2
-+    setup-hv-networking 2 $1 1 $2
-+    setup-vm 1
-+    setup-vm 2
-+}
-+
-+cleanup() {
-+    ip link del veth-hv-1 2>/dev/null || true
-+    ip link del veth-tap 2>/dev/null || true
-+
-+    cleanup_ns $hv_1 $hv_2 $vm_1 $vm_2
-+}
-+
-+################################################################################
-+# Tests
-+
-+same_subnet()
-+{
-+	setup 2 "nolocalbind"
-+    check_hv_connectivity
-+    check_vm_connectivity "same subnet (nolocalbind)" 0
-+}
-+
-+same_subnet_localbind()
-+{
-+	setup 2 "localbind"
-+    check_hv_connectivity
-+    check_vm_connectivity "same subnet (localbind)" 0
-+}
-+
-+different_subnets()
-+{
-+	setup 1 "nolocalbind"
-+    check_hv_connectivity
-+    check_vm_connectivity "different subnets (nolocalbind)" 0
-+}
-+
-+different_subnets_localbind()
-+{
-+	setup 1 "localbind"
-+    check_hv_connectivity
-+    check_vm_connectivity "different subnets (localbind)" 1
-+}
-+
-+################################################################################
-+# Usage
-+
-+usage()
-+{
-+	cat <<EOF
-+usage: ${0##*/} OPTS
-+
-+        -t <test>   Test(s) to run (default: all)
-+                    (options: $TESTS)
-+        -p          Pause on fail
-+        -P          Pause after each test before cleanup
-+        -v          Verbose mode (show commands and output)
-+EOF
-+}
-+
-+################################################################################
-+# Main
-+
-+trap cleanup EXIT
-+
-+while getopts ":t:pPvh" opt; do
-+	case $opt in
-+		t) TESTS=$OPTARG ;;
-+		p) PAUSE_ON_FAIL=yes;;
-+		P) PAUSE=yes;;
-+		v) VERBOSE=$(($VERBOSE + 1));;
-+		h) usage; exit 0;;
-+		*) usage; exit 1;;
-+	esac
-+done
-+
-+# Make sure we don't pause twice.
-+[ "${PAUSE}" = "yes" ] && PAUSE_ON_FAIL=no
-+
-+if [ "$(id -u)" -ne 0 ];then
-+	echo "SKIP: Need root privileges"
-+	exit $ksft_skip;
-+fi
-+
-+if [ ! -x "$(command -v ip)" ]; then
-+	echo "SKIP: Could not run test without ip tool"
-+	exit $ksft_skip
-+fi
-+
-+if [ ! -x "$(command -v bridge)" ]; then
-+	echo "SKIP: Could not run test without bridge tool"
-+	exit $ksft_skip
-+fi
-+
-+ip link help vxlan 2>&1 | grep -q "localbind"
-+if [ $? -ne 0 ]; then
-+	echo "SKIP: iproute2 ip too old, missing VXLAN localbind support"
-+	exit $ksft_skip
-+fi
-+
-+cleanup
-+
-+for t in $TESTS
-+do
-+	$t; cleanup;
-+done
-+
-+if [ "$TESTS" != "none" ]; then
-+	printf "\nTests passed: %3d\n" ${nsuccess}
-+	printf "Tests failed: %3d\n"   ${nfail}
-+fi
-+
-+exit $ret
-+
--- 
-2.36.1
+A couple of nits below.
+
+> ---
+>  rust/kernel/device.rs | 69 ++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 58 insertions(+), 11 deletions(-)
+>
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index ca82926fd67f..f5d1db568f00 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -311,28 +311,75 @@ unsafe impl Send for Device {}
+>  // synchronization in `struct device`.
+>  unsafe impl Sync for Device {}
+> =20
+> -/// Marker trait for the context of a bus specific device.
+> +/// Marker trait for the context or scope of a bus specific device.
+>  ///
+> -/// Some functions of a bus specific device should only be called from a=
+ certain context, i.e. bus
+> -/// callbacks, such as `probe()`.
+> +/// [`DeviceContext`] is a marker trait for types representing the conte=
+xt of a bus specific
+> +/// [`Device`].
+>  ///
+> -/// This is the marker trait for structures representing the context of =
+a bus specific device.
+> +/// The specific device context types are: [`CoreInternal`], [`Core`], [=
+`Bound`] and [`Normal`].
+> +///
+> +/// [`DeviceContext`] types are hierarchical, which means that there is =
+a strict hierarchy that
+> +/// defines which [`DeviceContext`] type can be derived from another. Fo=
+r instance, any
+> +/// [`Device<Core>`] can dereference to a [`Device<Bound>`].
+> +///
+> +/// The following enunumeration illustrates the dereference hierarchy of=
+ [`DeviceContext`] types.
+
+Typo: enumeration
+
+> +///
+> +/// - [`CoreInternal`] =3D> [`Core`] =3D> [`Bound`] =3D> [`Normal`]
+> +///
+> +/// Bus devices can automatically implement the dereference hierarchy by=
+ using
+> +/// [`impl_device_context_deref`].
+> +///
+> +/// Note that the guarantee for a [`Device`] reference to have a certain=
+ [`DeviceContext`] comes
+> +/// from the specific scope the [`Device`] reference is valid in.
+> +///
+> +/// [`impl_device_context_deref`]: kernel::impl_device_context_deref
+>  pub trait DeviceContext: private::Sealed {}
+> =20
+> -/// The [`Normal`] context is the context of a bus specific device when =
+it is not an argument of
+> -/// any bus callback.
+> +/// The [`Normal`] context is the default [`DeviceContext`] of any [`Dev=
+ice`].
+> +///
+> +/// The normal context does not indicate any specific context. Any `Devi=
+ce<Ctx>` is also a valid
+> +/// [`Device<Normal>`]. It is the only [`DeviceContext`] for which it is=
+ valid to implement
+> +/// [`AlwaysRefCounted`] for.
+> +///
+> +/// [`AlwaysRefCounted`]: kernel::types::AlwaysRefCounted
+>  pub struct Normal;
+> =20
+> -/// The [`Core`] context is the context of a bus specific device when it=
+ is supplied as argument of
+> -/// any of the bus callbacks, such as `probe()`.
+> +/// The [`Core`] context is the context of a bus specific device when it=
+ appears as argument of
+> +/// any bus specific callback, such as `probe()`.
+> +///
+> +/// The core context indicates that the [`Device<Core>`] reference's sco=
+pe is limited to the bus
+> +/// callback it appears in. It is intended to be used for synchronizatio=
+n purposes. Bus device
+> +/// implementations can implement methods for [`Device<Core>`], such tha=
+t they can only be called
+> +/// from bus callbacks.
+>  pub struct Core;
+> =20
+> -/// Semantically the same as [`Core`] but reserved for internal usage of=
+ the corresponding bus
+> +/// Semantically the same as [`Core`], but reserved for internal usage o=
+f the corresponding bus
+> +/// abstraction.
+> +///
+> +/// The internal core context is intended to be used in exactly the same=
+ way as the [Core] context,
+
+[Core] -> [`Core`] I suppose?
 
 
