@@ -1,117 +1,181 @@
-Return-Path: <linux-kernel+bounces-764465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7C1B22349
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7518FB22358
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC53E7A6001
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37398188452B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA32E8E1D;
-	Tue, 12 Aug 2025 09:35:04 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DF92E92D7;
+	Tue, 12 Aug 2025 09:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AARhKlah"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015BB1388;
-	Tue, 12 Aug 2025 09:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A210E2E8DF1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991304; cv=none; b=GgSqStRIK9qucyKDW2OGwlSDZAFgyc6arzBp4z9LgHoPzoOcM7EIepQO9pW51ZfjDonh1K0OV/liZ1L7qO2FipLj232gUznm6XnKhO/dgQ7q5igkU+q2fwRou8sDb0fqiMlBad4lzWKlMztW3Q43BapofH/GhvF4UMzeYB9CHFA=
+	t=1754991418; cv=none; b=eV1IhvBoY9EeW2q0U+GTv1gcMbCt1XfaB4NXTWE1s+W6dNJePtUTlaTVOBsnVnblhwaJgjvk9Kc/PcMatKnXjSPIHt7RnS9TEeDzU+54NBUtE+ozPPPILSHBQMPpQcBiuoMd1izcDOlS83MWj3FcLQdgYu34nMzr9He1x+s/DLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991304; c=relaxed/simple;
-	bh=XzVQikg6eVnr6+fdjiHmLEY2s0a2gcTyAxBsjBwO6AE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=f8EpHi/GQDF3OxWQebsQ4Ugo31QCBzTRSv/XEA9VsKkP0s4ltrRc3ZqDx1FAZ/yhkXLoqxzmj62xgXud/nSxGrjr4KjXqrqNf4PhkkRnv4mDO35CGdaS96mdMgxR/WU9s4gvh4BBq7Zwatn9riw9hNRD1Vq+F8EHMFZ0RgwRtuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1RDh0BsqzKHMwg;
-	Tue, 12 Aug 2025 17:35:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 417DE1A06E6;
-	Tue, 12 Aug 2025 17:34:59 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXIBHBCptoJTywDQ--.7024S3;
-	Tue, 12 Aug 2025 17:34:59 +0800 (CST)
-Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
-To: Christoph Hellwig <hch@infradead.org>, Damien Le Moal <dlemoal@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Rajeev Mishra <rajeevm@hpe.com>,
- axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
- <20250812033201.225425-1-rajeevm@hpe.com>
- <34624336-331d-4047-822f-8091098eeebc@kernel.org>
- <20250812042826.GU222315@ZenIV>
- <a7cb5d59-8af5-47b2-8549-05c9322971e5@kernel.org>
- <aJr9UKtIJ74XExf-@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e2a5550d-fb55-99c1-82b1-5b6c174f7cfc@huaweicloud.com>
-Date: Tue, 12 Aug 2025 17:34:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754991418; c=relaxed/simple;
+	bh=xy7fu3bqLVGUxcOG89JTlBYxbGin5ym/A9LZ46qGwJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XNra4DDE3cRCdr/YVN6eo7YbPWnrDDRhHdWvMPSEufU3VzvKhMtRXr6TM4YHxCRABOY3NQ31SB6n66fSG7Euq/EhqP+TzFZKO6fMsiqZvHu5JOReC/fUfqkqyuc2+RnRfcKeYR7IJYYSCDxDEPOpebdz6zcBd5/rbFgFtNwYiYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AARhKlah; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61539f6815fso840327a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754991415; x=1755596215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADwSJg/JZOng+mwbjsbxIO67zpngBFcvDlGmCvsbQyQ=;
+        b=AARhKlahzRKOKfy8S7Xrm7cNEz3PNIGlMwfaiYtivkx79Q8gxTUVOLDV8VnnMvTUW5
+         3fH/C9Br0CRCeoLDvfvL4tv0WUxhVaJ76WRSjTMRUsmoMn+LFwryR3t1nbD9pAJ+Tmb6
+         fEBi9WXAsuqev/4PPjpPmv6S8EINKJsmZeO6Gx+tGYlDCEbbtROGUyHK3Q6AA6OhfLBy
+         tZB2Ri/iAhqFIn5EdWigz/0CrcS6rho6D7A9LePqbek49eY0DqX+1Ctca/bxmpZZtj0w
+         vbTpbPoxIOqPgVJEM1bGKo/opDlIOCXfChOWcUjuSPN4UhYl0VEsazXSU9M1N5sh42r/
+         Hy7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754991415; x=1755596215;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ADwSJg/JZOng+mwbjsbxIO67zpngBFcvDlGmCvsbQyQ=;
+        b=M57JFb4Z3UxNl+oxYn1DN19vsP5MUEM4O1XR9YGA5lPClunb20WeKE4cGyJLCYd1x+
+         GS4EiGvdyd/3MKqOOR65Rv4QRjnAmRj9Hn/R+j7qKFwrh63VO9YzA5Ckjgzo9WR7WIGH
+         UpUCRZ642wp5vXI6NJMFy4NqQ2KQGNUcfB4HVSSx5zEio8+lewxwkZNdokdEYay1LEcs
+         GCyuOObHZo6Qs+k21/ZFsWI7h6nj1m7TLRQvNo4q/+XlXYiMSnx1cZem4UKaZ1ivRkiE
+         G4vzzZisJVYqyUYHQd5qVfExFVXMtvuSd8b9ChPmoxpGInX5rD0qd7Y4fULFyB/GuK6S
+         ckPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUF9b6fN1RD35pkYGjoq1jnnpCEpbl1/VvxvckbWbb87U5j7W/mPUAcRZeCVdUTQEhwu72ddUgg3HrgNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTwP18ffCgLjvF5i2ZbSqoStkuqVz5XsktxISiecUQ019NsTcH
+	a8mXXXnhVMnakaMt0rpJ/ETqcnV386XCXLIlCQbss8ZmmVD5suUgSHcmNNe26r1SuQU=
+X-Gm-Gg: ASbGnctepFt8iy5z9pYaDNmiDrkkEQDAwuvzdCgOLLw7lAp8NhpY94wPDmBY2Yuu1px
+	+ZaVotW3JNfdI8iHY4IPKyhGuCLjylbZS4+Mm8DIIIH4d3g8NkGEthDADCoc/G9Iq3lw9P+Hy3D
+	Jvzs5yD6AFnf0mIZEFNGNHaGWHN9Ds1XeELY8Hs+F1iryGRdOjXDYkFnawHtQPPlWGPq1ZQyRX1
+	zLdQo4f3GGqp0377k7oIN8JE2AVbOTaSjhOt+cN5ijYz1XnoiCjfyEyqh1gYO8xlly5EuixXP74
+	pBkFdvxqeI/BXnhk0klJzXnGoOjJX/ac7feMKyq6rvh+vkDQa6ykzjA74DFnh504qbqE/yHxyke
+	/wWCj4aQenJ48VqK3pGhlNaozVgoBbKER5NyRwdc66Nc=
+X-Google-Smtp-Source: AGHT+IH68+DTudLvhjWZFe9I337nrE98NoV0wQLFkeyCzhFX8lSKM7+7m3H9OfPa7R3X5pnbmsMnZA==
+X-Received: by 2002:a05:6402:34c8:b0:615:894a:7c27 with SMTP id 4fb4d7f45d1cf-618599ffb9bmr409681a12.5.1754991414905;
+        Tue, 12 Aug 2025 02:36:54 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2a448sm19945005a12.20.2025.08.12.02.36.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 02:36:54 -0700 (PDT)
+Message-ID: <7322c2a0-82a4-464a-8aa6-75d04dece2f4@linaro.org>
+Date: Tue, 12 Aug 2025 11:36:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aJr9UKtIJ74XExf-@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] media: iris: Add support for SM8750 (VPU v3.5)
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <c009fe77-8590-c467-a0a4-76bd6ec7cba4@quicinc.com>
+ <363cfc88-9664-483f-9503-9eca7c8e617c@kernel.org>
+ <76731f2a-d120-ed3d-6a1c-e339b0a6ad10@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <76731f2a-d120-ed3d-6a1c-e339b0a6ad10@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXIBHBCptoJTywDQ--.7024S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF4fZF1DWFyrZr47try5Arb_yoW3KFbE9r
-	Wavr4qywnruw4rtF4Utr4Yvr95trZxtr18X393KFsrJw18XFWDCFW09r95urs3Jw1rJwsa
-	9w12kw4DGay3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-ÔÚ 2025/08/12 16:37, Christoph Hellwig Ð´µÀ:
-> On Tue, Aug 12, 2025 at 02:17:01PM +0900, Damien Le Moal wrote:
->> And indeed, that:
+On 12/08/2025 11:28, Dikshita Agarwal wrote:
+> As a maintainer, I believe it is my responsibility to ensure that anyone
+> enabling support for any SoC with this driver has tested its basic
+> functionality. Please note, my intention is not to block anyoneâ€™s patches.
+> 
+> To clarify, I am not asking you to provide any test reports. If you have
+> already tested this series with v4l2-ctl or GST, please just mention it in
+> your cover letter.
+> 
+> Thanks,
+> Dikshita
 >>
->> 	/* size of the new backing store needs to be the same */
->>          if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
->>                  goto out_err;
+>> so asking others of this is just unfair and unjustified obstacle. If you
+>> have technical comments, then share. If you are just making fake
+>> obstacles to stop some patchset then refrain from commenting.
 >>
->> Will need some massaging.
-> 
-> Why?  get_loop_size just derives the first arguments to get_size
-> from the passed in loop device in the same way the only other caller
-> to get_size does.  So we can just:
-> 
->    1) convert loop_set_status to use get_loop_size
->    2) Fold get_size into get_loop_size
->    3) Maye rename get_size to lo_calculate_size to have a descriptive
->       name while we're touching it?
->    4) switch to vfs_getattr
+>> Unless you want statement like:
+>>
+>>
+>> All patches have been tested with v4l2-compliance, v4l2-ctl and
+>> Gstreamer on SM8750.
+>>
+>> Then I can give you such statement, just like you did for your patchset:
+>>
+>> All patches have been tested with v4l2-compliance, v4l2-ctl and
+>> Gstreamer on SM8750.
 
-This looks good, it's better to refactor a bit before switch to getattr,
-and I agree still return 0 on failue is fine.
+I gave you the answer here.
 
-Thanks,
-Kuai
-
-> 
-> 
-> .
-> 
-
+Best regards,
+Krzysztof
 
