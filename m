@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-765652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA38B23BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:39:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B8AB23BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7E01AA00A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1438627599
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595FE2D0622;
-	Tue, 12 Aug 2025 22:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A4B2D839E;
+	Tue, 12 Aug 2025 22:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9stgKG0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDcyhXgo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FD31A9F9A;
-	Tue, 12 Aug 2025 22:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217A427604E;
+	Tue, 12 Aug 2025 22:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755038346; cv=none; b=bIWg+l/27R5CQ1n/YfCKkSY+jDlqUsoM4lLULsKqB/LnuKdG+7NI9wev+mwkLBhoLz7GEZ3cF/G6ZypdC0ukRt4zJsZOWOKN2svJDcXm0Wa9ZjJP8nGtZ4zZkJjYMdL9AHlI2By1kdw0ryrG7yF0FX3cZGfzfW3uD1Hm11h1GgA=
+	t=1755038598; cv=none; b=p78Q/aHKabldr0/fFNJ+bRE0iznTC0UJCxW60RojffnWdsuuD/+g1Kjh6SQytLruvOeYTDsxwvyRjfiabjbSjM7s/kHCkHrtWn74N2vXGkkL1f1LQO/duu4tCQAVj+5aRrE+olydYELRxPRdxEGCxLOzh1jpP8179bKPQrOU87M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755038346; c=relaxed/simple;
-	bh=zBLOdm+92gEjPKvOs7yrSjtIDseJ9HloWYSWxpDP+AQ=;
+	s=arc-20240116; t=1755038598; c=relaxed/simple;
+	bh=UxzWheqWoiB+m/TkMADcd0R6gmi2dNNc+ZH7D6ARViY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSjJaQ9pm9UJoQBjlUjXOoZalluqN8L/kXVl29iaxceVbdsSbE+vhmi7ns/A0rQJXZ4WJFA63898CH7DH3fisTaqdLQuWOFQU1VG9QZN9C07YOR66/8QX/iEvF88gIM20TeEXA0K9lvhG1oIdSPELeSaKmNTGBS7yvEfX+9Qzco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9stgKG0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCC1C4CEF0;
-	Tue, 12 Aug 2025 22:39:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=esrfCGRmbdUDCyLnZvQ3lKl3x2T0+j3NDoe0KiE0HIOEeSLAsdP8cFKgmZhti1tF6WyXYDAm8DDBsx88OXLhhl3STy5YKHtKTbkyKlFLACaULwmiQ7xwr1X5GhlZsGWl0rQJTNUrxuM4mOugTORGQBQp6lCpMOcimlqt6yxzSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDcyhXgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEA6C4CEF0;
+	Tue, 12 Aug 2025 22:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755038346;
-	bh=zBLOdm+92gEjPKvOs7yrSjtIDseJ9HloWYSWxpDP+AQ=;
+	s=k20201202; t=1755038597;
+	bh=UxzWheqWoiB+m/TkMADcd0R6gmi2dNNc+ZH7D6ARViY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q9stgKG02jgzChio9R11ImFMLmJWPrCcFBIaQgPV/DOLd2FkDaVSiFs5N64KzHiC2
-	 HQKKXCrRCFPxZsBqSdeK2vRGSXL0juE8zchC/W40Kn3rWLHKvwSpB5+55WPHeeYlhK
-	 3NIev4fnjUn1PRtbY+j+RIcmBkINRZdotSA0zYeYT01qjYrb9fQJolOBCph6w95Qlf
-	 py9N68whkQVZH9+Efc9Na+9+vl7fxsaF8oZjzbWNG8vEaMt8I9MzB8LdFI1cVKOvA3
-	 xJ9FLFKpKx2tRFDxLg72iZ1DzaV9HwfWB6YFc44860QbefIlwp80RPGqz9wZ0v5Rkw
-	 Z13p/5/hrRaTg==
-Date: Wed, 13 Aug 2025 00:39:02 +0200
+	b=nDcyhXgoFjHxd5pitaBoHCKDwZuarm5cP7U/XkQqWX1p9am1/XfUAHqDpnV7rr8Si
+	 Y2KIJZx95qT94vo+/Wc38sVJldrDP7V6VGeugaPMS2uxOpLVZj/jtYF7wMmj3MvbKK
+	 ta3Dxt3QtfyAZDCtkQizElgPtS9gTYQCu7wLgv3Ojkh/0UOwQm6ZMNJ8RyHMrsdbRt
+	 15pEgAYdslqI8ZExSIdQsQEBqlKP9KCUrIPG7aQ82bY6s7j0VI7trFfka2GV4Eh5rA
+	 hybeMzSO2d2w2x75lT5gw5xSwFaMK0bSg1y6GutLXTIBETo/sv/URfhBGwfZE5WUuZ
+	 hpPvEHyOI2hjg==
+Date: Wed, 13 Aug 2025 00:43:13 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>
-Subject: Re: [PATCH 6/7] docs: kdoc: tighten up the pointer-to-function case
-Message-ID: <20250813003902.2fc82b54@foz.lan>
-In-Reply-To: <20250812195748.124402-7-corbet@lwn.net>
+Subject: Re: [PATCH 1/7] docs: kdoc: remove dead code
+Message-ID: <20250813004313.5b014127@foz.lan>
+In-Reply-To: <20250812195748.124402-2-corbet@lwn.net>
 References: <20250812195748.124402-1-corbet@lwn.net>
-	<20250812195748.124402-7-corbet@lwn.net>
+	<20250812195748.124402-2-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,69 +60,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Aug 2025 13:57:47 -0600
+On Tue, 12 Aug 2025 13:57:42 -0600
 Jonathan Corbet <corbet@lwn.net> wrote:
 
-> Tighten up the code and remove an unneeded regex operation.
+> create_parameter_list() tests an argument against the same regex twice, in
+> two different locations; remove the pointless extra tests and the
+> never-executed error cases that go with them.
 > 
 > Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/lib/kdoc/kdoc_parser.py | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index d7fb79a64487..ceb38b59fb4c 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -511,22 +511,19 @@ class KernelDoc:
->                  # Treat preprocessor directive as a typeless variable
->                  self.push_parameter(ln, decl_type, arg, "",
->                                      "", declaration_name)
-> -
-> +            #
-> +            # The pointer-to-function case.
-> +            #
->              elif KernRe(r'\(.+\)\s*\(').search(arg):
-> -                # Pointer-to-function
-> -
->                  arg = arg.replace('#', ',')
-> -
-> -                r = KernRe(r'[^\(]+\(\*?\s*([\w\[\].]*)\s*\)')
-> +                r = KernRe(r'[^\(]+\(\*?\s*' r'([\w\[\].]*)' r'\s*\)')
 
-Heh, it took me a couple of seconds to understand this concat, as I haven't
-seem concat pattern like that before (maybe except for some old C book
-I read a millennium ago that I barely remember).  So, IMO, it became harder
-to understand this way. I would either remove the extra two ' r' from the
-string or write it as:
-
-               r = KernRe(r'[^\(]+\(\*?\s*' 
-			  r'([\w\[\].]*)'
-			  r'\s*\)')
-
-Eventually adding a comment for the capture group. 
-
-With that, feel free to add:
+LGTM.
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
->                  if r.match(arg):
->                      param = r.group(1)
->                  else:
->                      self.emit_msg(ln, f"Invalid param: {arg}")
->                      param = arg
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 22 ++++++----------------
+>  1 file changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 9e65948f8254..96e3fe4ec431 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -564,28 +564,18 @@ class KernelDoc:
+>                  args.insert(0, first_arg.pop())
+>                  dtype = ' '.join(first_arg)
+>  
+> +                bitfield_re = KernRe(r'(.*?):(\w+)')
+>                  for param in args:
+> -                    if KernRe(r'^(\*+)\s*(.*)').match(param):
+> -                        r = KernRe(r'^(\*+)\s*(.*)')
+> -                        if not r.match(param):
+> -                            self.emit_msg(ln, f"Invalid param: {param}")
+> -                            continue
 > -
-> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
-> -                self.push_parameter(ln, decl_type, param, dtype,
-> -                                    arg, declaration_name)
-> +                dtype = arg.replace(param, '')
-
-Nice cleanup. 
-
-> +                self.push_parameter(ln, decl_type, param, dtype, arg, declaration_name)
->              #
->              # The array-of-pointers case.  Dig the parameter name out from the middle
->              # of the declaration.
+> -                        param = r.group(1)
+> -
+> +                    r = KernRe(r'^(\*+)\s*(.*)')
+> +                    if r.match(param):
+>                          self.push_parameter(ln, decl_type, r.group(2),
+>                                              f"{dtype} {r.group(1)}",
+>                                              arg, declaration_name)
+>  
+> -                    elif KernRe(r'(.*?):(\w+)').search(param):
+> -                        r = KernRe(r'(.*?):(\w+)')
+> -                        if not r.match(param):
+> -                            self.emit_msg(ln, f"Invalid param: {param}")
+> -                            continue
+> -
+> +                    elif bitfield_re.search(param):
+>                          if dtype != "":  # Skip unnamed bit-fields
+> -                            self.push_parameter(ln, decl_type, r.group(1),
+> -                                                f"{dtype}:{r.group(2)}",
+> +                            self.push_parameter(ln, decl_type, bitfield_re.group(1),
+> +                                                f"{dtype}:{bitfield_re.group(2)}",
+>                                                  arg, declaration_name)
+>                      else:
+>                          self.push_parameter(ln, decl_type, param, dtype,
 
 
 
