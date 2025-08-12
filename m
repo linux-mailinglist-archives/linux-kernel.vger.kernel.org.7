@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-765049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1155B22A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B939CB22ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375EC7A4287
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAC516F06F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5D72EBBA7;
-	Tue, 12 Aug 2025 14:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6F12EBBA1;
+	Tue, 12 Aug 2025 14:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hEGmOT2F"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSX2XH+P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEB2EACE2;
-	Tue, 12 Aug 2025 14:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AA82EB5A7;
+	Tue, 12 Aug 2025 14:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755009205; cv=none; b=RtMJ0TJTu1xcRf+aSNjcHNHvGZEH7YJXiytuXuCzkJ8uNuXBsEFhsSa6849i75mDc5e+n9DfPemvt5342hDWEJC/i0dekIUSjeCkbaJ/868tj+RUfj8mnbHWVwfZE+WG/WMdvlqMfgFB3MisVbSeKXdIl3eIq7CTI8Kd/fEWrHo=
+	t=1755009347; cv=none; b=EXho/2vcBSzIApZ2269TTptsW4vEscw0fvdtg7Y8bi5zfy0TGk767T8h1Xpw31UZO38+66+aCCdBwZi6ELJgqhJBg22N10CVPTR+TK6HVixPTXXWzBGT3NtOPtc/IPaer3ojtOy9mb5HxFungS36CCwpNMKZPWqmjX3uGYfZVE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755009205; c=relaxed/simple;
-	bh=Z4YpjWDFsTisTYRrs6dwdNxnd1Rfd901xv2zPPVlSzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xw967hWEcJ63ngk8JW8hyZ+aV3sM6/2c796MqUlFdiyUkJB5ADBO3kqKFjgy6b/tBJWJPPdYwUV6coS3mNxmeXGpuhWwXI7DkXmpOvDzd1uryeh1wHFY5k4ATIZOQBRtGsegJ/Ov6Cd8QJluvfV6F2EDcRuGZ/5+fCah2COETUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hEGmOT2F; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c1Yrt6cZ5z9t89;
-	Tue, 12 Aug 2025 16:33:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755009199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G85S6yN/jpAxYJYn22nLde2onQJqpGZG2EjZVAKSCR0=;
-	b=hEGmOT2FM06uSJI210uoGwYT8ijebX66XoYQNfd/oNGtB/w9zAZAxcoOnwZMmcBUrUtSAu
-	ZK4YCfAPOX/nML2b3iCyiEJhrXE+MVtaUN/VW8vnpQlqfTte4bts9Gzixp8VJqI9BqxLVe
-	MNfaTgwl1ApZXQrQowjWIy9eLjD61dFs4J4zYZwPxmAs1E2u1t1bKtYJaHemd+FcmtpWtd
-	PRxqo5sHx527p8Kl4mA+Hfue5WIBEucH7Nf/Tfhf0Gz+AVmKMvs31uU8h3K11EFEOumR5E
-	BD1ZipHmbK4jOrC9k0s22kri0Uq2hUNYaGVUpATd7VIz8tWEBANMJF7LmtlIRA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Wed, 13 Aug 2025 00:33:04 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
-Message-ID: <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
- <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
+	s=arc-20240116; t=1755009347; c=relaxed/simple;
+	bh=RUaz2F7M+J8suIFZqnO0eXnGJrhkRbwORESw+0/OzrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=apCcqDiyShzXufYGSe+x9i0m+6CEh4xXtT6/CbExYpMkRMndnhnEizJibwyhjDejUoD+JhLyXYE6IgYzZdWiu+k8drEjEmp+8HyzyqPC9U4RiDta++tiMGVoNVaylkjuOxEUiPLyPMM0axugmLartHm4TUyXXJicafkRTJefy1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSX2XH+P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0892C4CEF0;
+	Tue, 12 Aug 2025 14:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755009346;
+	bh=RUaz2F7M+J8suIFZqnO0eXnGJrhkRbwORESw+0/OzrA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RSX2XH+P10pKNs0r8n92lYyeDmpMNovIKyedzkNNNFy05oyRj/Ri1NTZyQv6V9SmI
+	 0fWwaDTNRwFdfTh3X9NdnmhTBwhhrzBF8fctIZ45I+hdiVcMB/oPTrLOiVIqBMRvbb
+	 0oIpVX5RgYPKjfEh0haxl9sgFRQVVQwWpcQUt5HD/tl5QTaNjuC3itOOf17yWWXkvK
+	 jGwqTV9FXj0/8Rg8Z4Q+PlfSnczIMnWP/kWIj2UhpDvd8T7SjLoug8PFdwyi6AXj0W
+	 f2QTEJj2YW/Z6AkByTNzszY+HsKDkn/K962FPFldePiAWprcyMxfv6e5XtydRoGlhN
+	 7Hwp8D+EdrxkQ==
+Date: Tue, 12 Aug 2025 23:35:41 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>
+Cc: linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <aJtRPZpc-Lv-C6zD@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b2zuzbzu2rwnxtze"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
-X-Rspamd-Queue-Id: 4c1Yrt6cZ5z9t89
 
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
---b2zuzbzu2rwnxtze
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
-MIME-Version: 1.0
+Use the new TRAILING_OVERLAP() helper to fix the following warnings:
 
-On 2025-08-12, Askar Safin <safinaskar@zohomail.com> wrote:
-> fsmount:
-> > Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called =
-once in the lifetime of a filesystem instance to produce a mount object.
->
-> I don't understand what you meant here. This phrase in its current form i=
-s wrong.
-> Consider this scenario: we did this:
-> fsopen(...)
-> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
-> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
-> fsmount(...)
-> fsopen(...)
-> fsconfig(..., FSCONFIG_SET_STRING, "source", ...)
-> fsconfig(..., FSCONFIG_CMD_CREATE, ...)
-> fsmount(...)
->=20
-> We used FSCONFIG_CMD_CREATE here as opposed to FSCONFIG_CMD_CREATE_EXCL, =
-thus
-> it is possible that second fsmount will return mount for the same superbl=
-ock.
-> Thus that statement "fsmount() can only be called once in the lifetime of=
- a filesystem instance to produce a mount object"
-> is not true.
+drivers/pwm/pwm-cros-ec.c:53:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/pwm/pwm-cros-ec.c:87:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-Yeah, the superblock reuse behaviour makes this description less
-coherent than what I was going for. My thinking was that a reused
-superblock is (to userspace) conceptually a new filesystem instance
-because they create it the same way as any other filesystem instance.
-(In fact, the rest of the VFS treats them the same way too -- only
-sget_fc() knows about superblock reuse.)
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it. This overlays
+the trailing members onto the FAM while preserving the original
+memory layout.
 
-But yeah, "filesystem context" is more accurate here, so probably just:
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/pwm/pwm-cros-ec.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-  Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called
-  once in the lifetime of a filesystem context.
+diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
+index 189301dc395e..67cfa17f58e0 100644
+--- a/drivers/pwm/pwm-cros-ec.c
++++ b/drivers/pwm/pwm-cros-ec.c
+@@ -49,10 +49,9 @@ static int cros_ec_pwm_set_duty(struct cros_ec_pwm_device *ec_pwm, u8 index,
+ 				u16 duty)
+ {
+ 	struct cros_ec_device *ec = ec_pwm->ec;
+-	struct {
+-		struct cros_ec_command msg;
++	TRAILING_OVERLAP(struct cros_ec_command, msg, data,
+ 		struct ec_params_pwm_set_duty params;
+-	} __packed buf;
++	) __packed buf;
+ 	struct ec_params_pwm_set_duty *params = &buf.params;
+ 	struct cros_ec_command *msg = &buf.msg;
+ 	int ret;
+@@ -83,13 +82,12 @@ static int cros_ec_pwm_set_duty(struct cros_ec_pwm_device *ec_pwm, u8 index,
+ 
+ static int cros_ec_pwm_get_duty(struct cros_ec_device *ec, bool use_pwm_type, u8 index)
+ {
+-	struct {
+-		struct cros_ec_command msg;
++	TRAILING_OVERLAP(struct cros_ec_command, msg, data,
+ 		union {
+ 			struct ec_params_pwm_get_duty params;
+ 			struct ec_response_pwm_get_duty resp;
+ 		};
+-	} __packed buf;
++	) __packed buf;
+ 	struct ec_params_pwm_get_duty *params = &buf.params;
+ 	struct ec_response_pwm_get_duty *resp = &buf.resp;
+ 	struct cros_ec_command *msg = &buf.msg;
+-- 
+2.43.0
 
-Though maybe we should mention that it's fsopen(2)-only (even though
-it's mentioned earlier in the DESCRIPTION)? If you read the sentence in
-isolation you might get the wrong impression. Do you have any
-alternative suggestions?
-
-FWIW, superblock reuse is one of those things that is a fairly hairy
-implementation detail of the VFS, and as such it has quite odd
-semantics. I probably wouldn't have documented it as heavily if it
-wasn't for the addition of FSCONFIG_CMD_CREATE_EXCL (maybe an entry in
-BUGS or CAVEATS at most -- this behaviour has an even worse impact on
-mount(2) but it's completely undocumented there).
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---b2zuzbzu2rwnxtze
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJtQmRsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/UwAD+MwnSuB2nUpF6VN+lG6Sk
-ahtWU9Ut5x9w1cljgw+oql0BAPzwUVFsh5FWVEt9gyvDxhFsVMHokKdK4FubSZ9L
-TmEO
-=CcEX
------END PGP SIGNATURE-----
-
---b2zuzbzu2rwnxtze--
 
