@@ -1,50 +1,76 @@
-Return-Path: <linux-kernel+bounces-765483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1472B238EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C23B238F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFFB3ABB76
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46D41BC227C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1F72E11BF;
-	Tue, 12 Aug 2025 19:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9C829BD9D;
+	Tue, 12 Aug 2025 19:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stegemann.de header.i=@stegemann.de header.b="syHWDa0E"
-Received: from dd41718.kasserver.com (dd41718.kasserver.com [85.13.145.53])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MKw5MZi3"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468BD2D0C9F;
-	Tue, 12 Aug 2025 19:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.145.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507D27FB35
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026825; cv=none; b=lDmmimvdLmQFECEDKYJi056fWBknkB8gSphxIkFOESQAMDdwmWneFVVpYs0epVquDB+1stFeDbTcnXbshE3FBNcMJ1AN4cHIXSF9p/lvSCQbOJyuRiCbxNp+u1qcNddtQME2VZDbCh/Q7OIcrWMgJkerlZv+GDShhCZrV13yCxI=
+	t=1755026879; cv=none; b=aZIif6ysW6LzvYrhMK7NCKxVbd/p1axl5wydojzPHqv/4BbRcasoSACIbCs/Wpl/3bN5wJZcO/CK1K67f/P4H3KIQCC5zBdA1otP5vHIegfg6GzorTsgSb+njCluONprhEYvy+AUXYYddzXLzZ0mgbkCzJqanxGCKdwpxeb6cMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026825; c=relaxed/simple;
-	bh=W7XKBmcNVEkMC9KS30OOWEiJju3V0m0T2wsu2TZxlas=;
+	s=arc-20240116; t=1755026879; c=relaxed/simple;
+	bh=y0y2N5LIeyP8xsy0Qa63fgrKE/mH0tt08exbUT5h0jw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hvub3F1HA2nkRgbPb8XhbncD/27vsRLJuersbRHz1fL8NeG4N9GRDpRDcj+UFkRhJsKENnuP0S8lzmzmLMSkLpfnvAp6xtSMRlKomi8EtFt2N5F50Xj5MRqXrCxIr8TMfKzu5mVpuwUXI7HMPaattJq//d9Y6NST/uwLUgM6T54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=stegemann.de; spf=pass smtp.mailfrom=stegemann.de; dkim=pass (2048-bit key) header.d=stegemann.de header.i=@stegemann.de header.b=syHWDa0E; arc=none smtp.client-ip=85.13.145.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=stegemann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stegemann.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stegemann.de;
-	s=kas202307141421; t=1755026821;
-	bh=HYYj4t5xcGhm716nOvNPQ3SJLJ59k6cXRav/7+WF7rY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:From;
-	b=syHWDa0EZRBxctgugRlD+nXQcj5EAHw2RaQYu/8DSqGxUQhRrdWWvOoLhBx1KD9uW
-	 CHWZDpJmYeQpfGifBQU1Dkc5yG/tV9x57q5SdtYQ/hEefu4n+mcDTNZYWxdfzclYPY
-	 cqOO3vWJbZVh0O3MBA4KkSbyLvS1BXzKpb3osoHq1aYv0Z4xh4VC+M4EP/TzwaKwD7
-	 poVVgNSuzpqGtHWGovgwWN4yhNv9ZGIs+/Or8q6gzlhsJ7UmzhuYuiagQ/L26OkT58
-	 qP65NDmq4t1n8UGhF/qcSuDptXXdsnBCCFM7wnPIMQpf0O39VLJSZAseTVlJS9fnVl
-	 GnKldJhInt7wg==
-Received: from [10.144.2.19] (p5b2eae0a.dip0.t-ipconnect.de [91.46.174.10])
-	by dd41718.kasserver.com (Postfix) with ESMTPSA id 5CA9555E03F2;
-	Tue, 12 Aug 2025 21:27:01 +0200 (CEST)
-Message-ID: <71c79b47-d44f-45da-9558-770690addb79@stegemann.de>
-Date: Tue, 12 Aug 2025 21:27:00 +0200
+	 In-Reply-To:Content-Type; b=s9wATamclzkZ/F54gyXkYViDFe4xCAL3nXMFA8rM0VLzntq9e8yVtSVo6so0vIjcm9ZDUNR8ISqcwdUkhGiUusg1nQ41/gKEXUkOyocO4YDsiPAsiFIKzmdNIOpehx9Jl5PjEqTo2HtqU9v9l0WVAdrK+W5j22OGIxNqHhqzFYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MKw5MZi3; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3e51dc20af6so56009595ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1755026876; x=1755631676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1RNO+JaaEkY/OEdHDihqn21pputuGs/yjSpDhvuKLeI=;
+        b=MKw5MZi3KtfJao50CyvdDDxaC1iTr9aQBbAxreZa5wqvXsnrufo+0bv785xkygUEKK
+         MvxfAMbgbqRc6dKLUkOQCzN8cwqn3DJ2/4XwfqbhBLHaiJDsvEw1iF07CgXn0gAoBXdU
+         cJRVZKvScZtLLZ/+moSJAQ1/ZTY7z17FUw7i4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755026876; x=1755631676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RNO+JaaEkY/OEdHDihqn21pputuGs/yjSpDhvuKLeI=;
+        b=kLcwpAVH/3sXmvwMOvtgGDiIiTFGEQWSEzy2VC/y6F9Vmd9ktlYB0M1WciyFF3At5+
+         0DJXcjRekkALookhLkWiYzWRoSfsj8CoLgqcTNEnv/7aJl87Bo97FaY1loGDpdWQkM69
+         qUuMhnqexpT9a9DP8G0YNWBpVaTR6m0//qs9e6TwmH68Id/+Sz20asJqTPdPSx7HZ3cm
+         GeuMGn2zG+KfBIAyYBVpEGEGE6NkuDF3YEALDW1hZPrDZABwawHs3GZplceon7jjCCad
+         Bs2jtFdLWstAkLRST4DvyyP07Y0IlHtbagvzjhPNuKfdz+2b4XobyyjNHdDdstVBXs8n
+         ckRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2g/imQ8xFBirrT1Kdy1Kr9mwkd0DGk/udbXIymU279m88+YRtdG4qeikfG2Jk/kDHMiaKrlTHYcOHku0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2wbs6yoKjjcrt/4d65td6kk9BxqArONIOG2LO10KadD14rfBe
+	Qh9rWC2wPrXyyTdvkNeuCNEeLCnsvzv53niqSeiBk4APP37QXjrDCWPbmBFNPG235fk=
+X-Gm-Gg: ASbGncvG7ox8F1YsIA5Y17zsn2KFLzc6dICKWoA9Fb4pj1jw3RvXgioiUYy+Ocf6DQD
+	KfUaYBbDvitpCLPqWD2HOhPxw2DVHMDtiQozbWHDbTsPzBaE5n+JlEyCv5NTL9lrWYTskdIQlUB
+	XuQ3REp1iFtaVfFWff1xJCI7ZlBsD3DPax5XKb90JSq4R60+n1tXhZuDmez7F4mipGhH9VA4CDG
+	9Kq/hOyDh1yOPtgyIF/+4cW8S/QzBpSv/iupfXNvsuIR5ernPbfEFSOSJh+qD4XU635fQWHrK0N
+	A6hb33PsYtGAWl9AILbWmApePZsAcCoi+bCzmZP6d6Z7eBz31quLSGh+SDp4dLkW1oKjDKC1cHV
+	gUjGkHhs3Ou8W9maO4X04tU4pBiBQz6z6YQ==
+X-Google-Smtp-Source: AGHT+IEUCGZnLw63tW0KNVTQOiNtoNzl7gbeEHojoAK0DgCBv29G2cLC+KWOONDi4CrPrrCxgtRIBw==
+X-Received: by 2002:a05:6e02:2147:b0:3e5:3520:4a76 with SMTP id e9e14a558f8ab-3e5674e77f6mr4612365ab.24.1755026876188;
+        Tue, 12 Aug 2025 12:27:56 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e546358251sm31477615ab.54.2025.08.12.12.27.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 12:27:55 -0700 (PDT)
+Message-ID: <ba9f7752-ceb2-4fcd-acaa-b5afa77eecda@linuxfoundation.org>
+Date: Tue, 12 Aug 2025 13:27:55 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,49 +78,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: kcm: Fix race condition in kcm_unattach()
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+e62c9db591c30e174662@syzkaller.appspotmail.com,
- syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>
-References: <20250809063622.117420-1-sven@stegemann.de>
- <194e4774-a931-4ce4-af63-4610da7c4350@redhat.com>
-From: Sven Stegemann <sven@stegemann.de>
-Autocrypt: addr=sven@stegemann.de; keydata=
- xjMEZrXtmhYJKwYBBAHaRw8BAQdA3Ejzsjqv+hzfA59byjISoS/VehggsxakHVtgwKSoA9PN
- IlN2ZW4gU3RlZ2VtYW5uIDxzdmVuQHN0ZWdlbWFubi5kZT7CjwQTFggANxYhBHSSwIIEOMdM
- COsZe4gToYAVM3dwBQJmte2aBQkHhM4AAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQiBOhgBUz
- d3Dq2wEA3Y7BLtU/NzbpTu+ZnEIIVc0DuTfrinsv8qnSAEF3zjoBAOiCC+pZdO06qat8VL/O
- BUalGs5fNIVGA+udw/opviIMzjgEZrXtmhIKKwYBBAGXVQEFAQEHQGNHDhm0CMpuUnwzlf6Q
- MA34IVeba8HZ3dD1tHjsmNJjAwEIB8J+BBgWCAAmFiEEdJLAggQ4x0wI6xl7iBOhgBUzd3AF
- Ama17ZoFCQeEzgACGwwACgkQiBOhgBUzd3A7yQD/bq9BjmEfA5aRi+jPGGKccfqjo/h1cgCg
- Jhc6fNUaCgIA/1SOhP2plCGFj8xPLvhY/FfFWeE38DbrETpOLdl+NysO
-In-Reply-To: <194e4774-a931-4ce4-af63-4610da7c4350@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] watchdog-test.c: Remove unused variable in main
+To: bajing <bajing@cmss.chinamobile.com>, shuah@kernel.org
+Cc: lizhijian@fujitsu.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250812075345.872-1-bajing@cmss.chinamobile.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250812075345.872-1-bajing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Bar: +
 
-On 8/12/2025 2:54 PM, Paolo Abeni wrote:
-> On 8/9/25 8:36 AM, Sven Stegemann wrote:
->> @@ -1714,6 +1708,7 @@ static int kcm_release(struct socket *sock)
->>  	/* Cancel work. After this point there should be no outside references
->>  	 * to the kcm socket.
->>  	 */
->> +	disable_work(&kcm->tx_work);
->>  	cancel_work_sync(&kcm->tx_work);
+On 8/12/25 01:53, bajing wrote:
+> Since $optind is not used in the subsequent code, the variable
+> should be removed.
 > 
-> The patch looks functionally correct, but I guess it would be cleaner
-> simply replacing:
+> Signed-off-by: bajing <bajing@cmss.chinamobile.com>
+> ---
+>   tools/testing/selftests/watchdog/watchdog-test.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> 	cancel_work_sync(&kcm->tx_work);
-> 
-> with:
-> 
-> 	disable_work_sync(&kcm->tx_work);
+> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+> index a1f506ba5578..837001a9e3a0 100644
+> --- a/tools/testing/selftests/watchdog/watchdog-test.c
+> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
+> @@ -209,8 +209,6 @@ int main(int argc, char *argv[])
+>   		exit(ret);
+>   	}
+>   
+> -	optind = 0;
 
-Thank you, that's a good point.
+Removing the assignment soles based on looking at the subsequent
+is incorrect.
 
-I just submitted a cleaned up version of the patch.
+Explain why this needs to be removed? Did you happen to check
+getopt_long() and how it uses optind before making this change?
+
+> -
+>   	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
+>   		switch (c) {
+>   		case 'b':
+
+thanks,
+-- Shuah
 
