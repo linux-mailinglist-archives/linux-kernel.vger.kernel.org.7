@@ -1,321 +1,145 @@
-Return-Path: <linux-kernel+bounces-765310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC329B22E89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B39B22E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1CF3B6D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31FF53B1624
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AF02FAC0F;
-	Tue, 12 Aug 2025 17:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5F82FAC19;
+	Tue, 12 Aug 2025 17:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRC6Og15"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V4Ztrk78"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB29E2874E4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AE92F28F1;
+	Tue, 12 Aug 2025 17:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018049; cv=none; b=Q0drs/Oq059DscXMZuCP2LebAOOcxZYLTu2LeHeje26NRKrgJISv4CJD9bgjJJyKE6gpbzJPbslE9ktCzEOQV7hrkYkRtOyqPReqJi/9vwPxDTEeVBv9+mPULu5eCeWUfqfNBkV41dQHuwt2TQBNMICi9bzbPFkzhQX/QJ0PLM8=
+	t=1755018147; cv=none; b=oGcxxkedWuWkhhF1lk+FDDjl7+uGuq35TuaCI4pEGEbiwyk9l7nub62SOC+Waew48B6co6bnWcOp8Pw1YRko/qBevTnB7fdRTgDWIQS7F1ck2PtKvHW69LboLjLNHlyyEENc+cD56LI1bOMK6G59f6XuVStY6ZHP39PIGkDe12Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018049; c=relaxed/simple;
-	bh=dCWS2gXVwz/JvpJ3uTvsq+5QknRMo+7y7mpGSKtV/Uk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bm56gmpQbZce7nOOnjawOk1F2T0k4ZcTWtAR54pqsPiI/FfI4BlAQcJeb3kJqFx+IzVGO8y51NeHleX/ZVUMaytnB8nIlZQn65juL83TDq0RYSQo/epBICmvY9bkjBACgRKdRV+ziWNiBjLx/3lxEtzjTOC1z2JXkoUxzn6AimA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRC6Og15; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF7BC4CEF0;
-	Tue, 12 Aug 2025 17:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755018049;
-	bh=dCWS2gXVwz/JvpJ3uTvsq+5QknRMo+7y7mpGSKtV/Uk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dRC6Og15dp+Yif66krceFfRwsNS+6ngVlVK8LjCwFgQ1tdOWjsk5WNFU8vVSf6QyF
-	 WnGNCEDjkkWc5xwW8ybD6MfNr8/lCNUya4mIBFNA+4lDLMNve5Hp7X/0Y9Rif+qYEu
-	 9j3janwVtv7hG4jmMuIcuktGUIvmK/w4jeGv6Oy9Cu0Aa0odxgnH+P71XznEZ3fD1S
-	 0Go0l2o7CJivzgq1Z1SF7O2Slatk7XYb7OP/81NpVT7AFG/oQn1Y80SgJawMN+e4UQ
-	 +WF+mcSwon7vczDYPcKU770aPHc8AjDEVFovzofe6n8x1ZyuYV1CXb/CZZsghJjso5
-	 aYrIN4HUzuibA==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
+	s=arc-20240116; t=1755018147; c=relaxed/simple;
+	bh=ORKtKIjOObFOnyi6C0JkWlQVdNqqRyj7TK7gyYhelaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhQESv9PH47Z8jWVgQlShW2ZAQdKCuztu0GWLQD3F6AzDuAF1ter7BeXOulNcBhnXuHcbg8RFH6cNMnYo1XaiADBHL+HN567zVJF9TD1wLp9HACTvLuRMBTudJxcX0fyR8z1CyltxBGv9Tbb+bIAZYaNygsQoOAwRwbj2TFhXyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V4Ztrk78; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF11C40E0289;
+	Tue, 12 Aug 2025 17:02:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id P7u1MG-buWMw; Tue, 12 Aug 2025 17:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755018137; bh=OWNkdg7JeQ94GyRKo+H1ESi2roT5ujbMOOMUZMYSPNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V4Ztrk78ZD9ZO1cN+IU8PlhFnSufi2ol4yIMkFmKmAi2Ff6EsUTgRCJP8bpFNx+du
+	 oYxZUcld7KVS4iNtwFiXgX5aFJb3wVc5yxigMpoiyDP96xkFMK/PpJfCuky9Eq0HQB
+	 6sGbIHgMtI5H4B6YYjVu/suxDs+BJQoUgechdcyta4Pqtt74lWfUx2Bt2Ar5CS3oOJ
+	 lyGQCb5uxqeVZsHS7BXWPP09ZgBgb0Pl2U1zolc5KckeMOjicCAAWNNDXAC+VkovGY
+	 sRbokEAEob9MEgQs8AoVJNqaCPawoEfwNRqFAYruFZxlq3VYJ8ohFHx0+Yz7lmEB2h
+	 eVTX8F0v1Gq77qplp7oNJV4bct48vimUphQVRMH09c194pGsvaEWC/7/L1NVgYaj6B
+	 lw3z2w8yFqHfqnCJe7cxkHooAmXnHobias4KT7ey//TgnvxwZVs3l4kkNWYco2IJ9i
+	 vRD0T5jtoXE+vfrEvL58ccka+GVoAC9kXVfGowJ3tuIp29+ZEQxLw1bdDp9FaIWuuH
+	 zFPNfidoEwYRIv6NmYM6GOxNZe/K/6TgwgdCK79rMPrIGH80/Ck1JyLIW+qsCHDjc2
+	 mFquqUVIA4IRlf1dnGa6WngNdMajuVIV1MLEh4tn7cZ7JzafuuhGzUYp9HuDrEi7Ky
+	 SpqFTdOmaP+uRX/2LOWmj6vo=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EACF540E00DD;
+	Tue, 12 Aug 2025 17:02:00 +0000 (UTC)
+Date: Tue, 12 Aug 2025 19:01:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>
-Subject: [PATCH v2] mm/zswap: store <PAGE_SIZE compression failed page as-is
-Date: Tue, 12 Aug 2025 10:00:46 -0700
-Message-Id: <20250812170046.56468-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 06/21] x86/olpc: select GPIOLIB_LEGACY
+Message-ID: <20250812170155.GEaJtzg6ud45lDHwEf@fat_crate.local>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-7-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250808151822.536879-7-arnd@kernel.org>
 
-When zswap writeback is enabled and it fails compressing a given page,
-the page is swapped out to the backing swap device.  This behavior
-breaks the zswap's writeback LRU order, and hence users can experience
-unexpected latency spikes.  If the page is compressed without failure,
-but results in a size of PAGE_SIZE, the LRU order is kept, but the
-decompression overhead for loading the page back on the later access is
-unnecessary.
+On Fri, Aug 08, 2025 at 05:17:50PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The OLPC GPIO controller sets up a fixed number space that is used
+> by at least two drivers:
+> 
+> arch/x86/platform/olpc/olpc-xo1-sci.c: In function 'setup_ec_sci':
+> arch/x86/platform/olpc/olpc-xo1-sci.c:358:13: error: implicit declaration of function 'gpio_request' [-Wimplicit-function-declaration]
+>   358 |         r = gpio_request(OLPC_GPIO_ECSCI, "OLPC-ECSCI");
+>       |             ^~~~~~~~~~~~
+> sound/pci/cs5535audio/cs5535audio_olpc.c: In function 'olpc_analog_input':
+> sound/pci/cs5535audio/cs5535audio_olpc.c:41:9: error: implicit declaration of function 'gpio_set_value'; did you mean 'gpiod_set_value'? [-Wimplicit-function-declaration]
+>    41 |         gpio_set_value(OLPC_GPIO_MIC_AC, on);
+> 
+> Select CONFIG_GPIOLIB_LEGACY for this platform and make sure the
+> sound driver portion cannot be compiled without this.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/x86/Kconfig  | 1 +
+>  sound/pci/Kconfig | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 58d890fe2100..3fd5e378a9f1 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -3006,6 +3006,7 @@ config OLPC
+>  	bool "One Laptop Per Child support"
+>  	depends on !X86_PAE
+>  	select GPIOLIB
+> +	select GPIOLIB_LEGACY
+>  	select OF
+>  	select OF_PROMTREE
+>  	select IRQ_DOMAIN
+> diff --git a/sound/pci/Kconfig b/sound/pci/Kconfig
+> index e0996a9d90b0..6366f72b3667 100644
+> --- a/sound/pci/Kconfig
+> +++ b/sound/pci/Kconfig
+> @@ -300,6 +300,7 @@ config SND_CS5535AUDIO
+>  	tristate "CS5535/CS5536 Audio"
+>  	depends on X86_32 || MIPS || COMPILE_TEST
+>  	depends on HAS_IOPORT
+> +	depends on GPIOLIB_LEGACY || !OLPC
+>  	select SND_PCM
+>  	select SND_AC97_CODEC
+>  	help
+> -- 
 
-Keep the LRU order and optimize unnecessary decompression overheads in
-those cases, by storing the original content as-is in zpool.  The length
-field of zswap_entry will be set appropriately, as PAGE_SIZE,  Hence
-whether it is saved as-is or not (whether decompression is unnecessary)
-is identified by 'zswap_entry->length == PAGE_SIZE'.
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-Because the uncompressed data is saved in zpool, same to the compressed
-ones, this introduces no change in terms of memory management including
-movability and migratability of involved pages.
-
-This change is also not increasing per zswap entry metadata overhead.
-But as the number of incompressible pages increases, total zswap
-metadata overhead is proportionally increased.  The overhead should not
-be problematic in usual cases, since the zswap metadata for single zswap
-entry is much smaller than PAGE_SIZE, and in common zswap use cases
-there should be a sufficient amount of compressible pages.  Also it can
-be mitigated by the zswap writeback.
-
-When the writeback is disabled, the additional overhead could be
-problematic.  For the case, keep the current behavior that just returns
-the failure and let swap_writeout() put the page back to the active LRU
-list in the case.
-
-Knowing how many compression failures happened will be useful for future
-investigations.  investigations.  Add a new debugfs file, compress_fail,
-for the purpose.
-
-Tests
------
-
-I tested this patch using a simple self-written microbenchmark that is
-available at GitHub[1].  You can reproduce the test I did by executing
-run_tests.sh of the repo on your system.  Note that the repo's
-documentation is not good as of this writing, so you may need to read
-and use the code.
-
-The basic test scenario is simple.  Run a test program making artificial
-accesses to memory having artificial content under memory.high-set
-memory limit and measure how many accesses were made in given time.
-
-The test program repeatedly and randomly access three anonymous memory
-regions.  The regions are all 500 MiB size, and accessed in the same
-probability.  Two of those are filled up with a simple content that can
-easily be compressed, while the remaining one is filled up with a
-content that read from /dev/urandom, which is easy to fail at
-compressing to <PAGE_SIZE size.  The program runs for two minutes and
-prints out the number of accesses made every five seconds.
-
-The test script runs the program under below seven configurations.
-
-- 0: memory.high is set to 2 GiB, zswap is disabled.
-- 1-1: memory.high is set to 1350 MiB, zswap is disabled.
-- 1-2: On 1-1, zswap is enabled without this patch.
-- 1-3: On 1-2, this patch is applied.
-
-For all zswap enabled cases, zswap shrinker is enabled.
-
-Configuration '0' is for showing the original memory performance.
-Configurations 1-1, 1-2 and 1-3 are for showing the performance of swap,
-zswap, and this patch under a level of memory pressure (~10% of working
-set).
-
-Because the per-5 seconds performance is not very reliable, I measured
-the average of that for the last one minute period of the test program
-run.  I also measured a few vmstat counters including zswpin, zswpout,
-zswpwb, pswpin and pswpout during the test runs.
-
-The measurement results are as below.  To save space, I show performance
-numbers that are normalized to that of the configuration '0' (no memory
-pressure), only.  The averaged accesses per 5 seconds of configuration
-'0' was 36493417.75.
-
-    config            0       1-1     1-2      1-3
-    perf_normalized   1.0000  0.0057  0.0235   0.0367
-    perf_stdev_ratio  0.0582  0.0652  0.0167   0.0346
-    zswpin            0       0       3548424  1999335
-    zswpout           0       0       3588817  2361689
-    zswpwb            0       0       10214    340270
-    pswpin            0       485806  772038   340967
-    pswpout           0       649543  144773   340270
-
-'perf_normalized' is the performance metric, normalized to that of
-configuration '0' (no pressure).  'perf_stdev_ratio' is the standard
-deviation of the averaged data points, as a ratio to the averaged metric
-value.  For example, configuration '0' performance was showing 5.8%
-stdev.  Configurations 1-1 and 1-3 were having about 6.5% and 6.1%
-stdev.  Also the results were highly variable between multiple runs.  So
-this result is not very stable but just showing ball park figures.
-Please keep this in your mind when reading these results.
-
-Under about 10% of working set memory pressure, the performance was
-dropped to about 0.57% of no-pressure one, when the normal swap is used
-(1-1).  Note that ~10% working set pressure is already extreme, at least
-on this test setup.  No one would desire system setups that can degrade
-performance to 0.57% of the best case.
-
-By turning zswap on (1-2), the performance was improved about 4x,
-resulting in about 2.35% of no-pressure one.  Because of the
-incompressible pages in the third memory region, a significant amount of
-(non-zswap) swap I/O operations were made, though.
-
-By applying this patch (1-3), about 56% performance improvement was
-made, resulting in about 3.67% of no-pressure one.  Reduced pswpin of
-1-3 compared to 1-2 let us see where this improvement came from.
-
-Related Works
--------------
-
-This is not an entirely new attempt.  Nhat Pham and Takero Funaki tried
-very similar approaches in October 2023[2] and April 2024[3],
-respectively.  The two approaches didn't get merged mainly due to the
-metadata overhead concern.  I described why I think that shouldn't be a
-problem for this change, which is automatically disabled when writeback
-is disabled, at the beginning of this changelog.
-
-This patch is not particularly different from those, and actually built
-upon those.  I wrote this from scratch again, though.  Hence adding
-Suggested-by tags for them.  Actually Nhat first suggested this to me
-offlist.
-
-Historically, writeback disabling was introduced partially as a way to
-solve the LRU order issue.  Yosry pointed out[4] this is still
-suboptimal when the incompressible pages are cold, since the
-incompressible pages will continuously be tried to be zswapped out, and
-burn CPU cycles for compression attempts that will anyway fail.  One
-imaginable solution for the problem is reusing the swapped-out page and
-its struct page to store in the zswap pool.  But that's out of the scope
-of this patch.
-
-[1] https://github.com/sjp38/eval_zswap/blob/master/run.sh
-[2] https://lore.kernel.org/20231017003519.1426574-3-nphamcs@gmail.com
-[3] https://lore.kernel.org/20240706022523.1104080-6-flintglass@gmail.com
-[4] https://lore.kernel.org/CAJD7tkZXS-UJVAFfvxJ0nNgTzWBiqepPYA4hEozi01_qktkitg@mail.gmail.com
-
-Suggested-by: Nhat Pham <nphamcs@gmail.com>
-Suggested-by: Takero Funaki <flintglass@gmail.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
-Changes from v1
-(https://lore.kernel.org/20250807181616.1895-1-sj@kernel.org)
-- Optimize out memcpy() per incompressible page saving, using
-  k[un]map_local().
-- Add a debugfs file for counting compression failures.
-- Use a clear form of a ternary operation.
-- Add the history of writeback disabling with a link.
-- Wordsmith comments.
-
-Changes from RFC v2
-(https://lore.kernel.org/20250805002954.1496-1-sj@kernel.org)
-- Fix race conditions at decompressed pages identification.
-- Remove the parameter and make saving as-is the default behavior.
-- Open-code main changes.
-- Clarify there is no memory management changes on the cover letter.
-- Remove 20% pressure case from test results, since it is arguably too
-  extreme and only adds confusion.
-- Drop RFC tag.
-
-Changes from RFC v1
-(https://lore.kernel.org/20250730234059.4603-1-sj@kernel.org)
-- Consider PAGE_SIZE compression successes as failures.
-- Use zpool for storing incompressible pages.
-- Test with zswap shrinker enabled.
-- Wordsmith changelog and comments.
-- Add documentation of save_incompressible_pages parameter.
-
- mm/zswap.c | 36 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 3c0fd8a13718..0fb940d03268 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -60,6 +60,8 @@ static u64 zswap_written_back_pages;
- static u64 zswap_reject_reclaim_fail;
- /* Store failed due to compression algorithm failure */
- static u64 zswap_reject_compress_fail;
-+/* Compression into a size of <PAGE_SIZE failed */
-+static u64 zswap_compress_fail;
- /* Compressed page was too big for the allocator to (optimally) store */
- static u64 zswap_reject_compress_poor;
- /* Load or writeback failed due to decompression failure */
-@@ -976,8 +978,26 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	 */
- 	comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->req), &acomp_ctx->wait);
- 	dlen = acomp_ctx->req->dlen;
--	if (comp_ret)
--		goto unlock;
-+
-+	/*
-+	 * If a page cannot be compressed into a size smaller than PAGE_SIZE,
-+	 * save the content as is without a compression, to keep the LRU order
-+	 * of writebacks.  If writeback is disabled, reject the page since it
-+	 * only adds metadata overhead.  swap_writeout() will put the page back
-+	 * to the active LRU list in the case.
-+	 */
-+	if (comp_ret || dlen >= PAGE_SIZE) {
-+		zswap_compress_fail++;
-+		if (mem_cgroup_zswap_writeback_enabled(
-+					folio_memcg(page_folio(page)))) {
-+			comp_ret = 0;
-+			dlen = PAGE_SIZE;
-+			dst = kmap_local_page(page);
-+		} else {
-+			comp_ret = comp_ret ? comp_ret : -EINVAL;
-+			goto unlock;
-+		}
-+	}
- 
- 	zpool = pool->zpool;
- 	gfp = GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABLE;
-@@ -990,6 +1010,8 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	entry->length = dlen;
- 
- unlock:
-+	if (dst != acomp_ctx->buffer)
-+		kunmap_local(dst);
- 	if (comp_ret == -ENOSPC || alloc_ret == -ENOSPC)
- 		zswap_reject_compress_poor++;
- 	else if (comp_ret)
-@@ -1012,6 +1034,14 @@ static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
- 	obj = zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buffer);
- 
-+	/* zswap entries of length PAGE_SIZE are not compressed. */
-+	if (entry->length == PAGE_SIZE) {
-+		memcpy_to_folio(folio, 0, obj, entry->length);
-+		zpool_obj_read_end(zpool, entry->handle, obj);
-+		acomp_ctx_put_unlock(acomp_ctx);
-+		return true;
-+	}
-+
- 	/*
- 	 * zpool_obj_read_begin() might return a kmap address of highmem when
- 	 * acomp_ctx->buffer is not used.  However, sg_init_one() does not
-@@ -1809,6 +1839,8 @@ static int zswap_debugfs_init(void)
- 			   zswap_debugfs_root, &zswap_reject_kmemcache_fail);
- 	debugfs_create_u64("reject_compress_fail", 0444,
- 			   zswap_debugfs_root, &zswap_reject_compress_fail);
-+	debugfs_create_u64("compress_fail", 0444,
-+			   zswap_debugfs_root, &zswap_compress_fail);
- 	debugfs_create_u64("reject_compress_poor", 0444,
- 			   zswap_debugfs_root, &zswap_reject_compress_poor);
- 	debugfs_create_u64("decompress_fail", 0444,
-
-base-commit: 44fa6646d975349f6499d1aeb0ed826680d0bb5c
 -- 
-2.39.5
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
