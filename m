@@ -1,91 +1,124 @@
-Return-Path: <linux-kernel+bounces-765506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EB8B2394B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6B6B23953
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39CC4584AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECBAC6E0E24
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F12FE591;
-	Tue, 12 Aug 2025 19:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA012FFDCC;
+	Tue, 12 Aug 2025 19:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMEMalru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ6bsLIb"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0808274420;
-	Tue, 12 Aug 2025 19:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C137A296BCA;
+	Tue, 12 Aug 2025 19:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755028343; cv=none; b=F9cYp7xv81u5aQyHocu99xPVWuGSjbU+ef+ktVr7qjDNTKQ/tiBJlF801GubUpZpXjtnUPtW1WWDXIH2qBd2Om/TZzBxou9UUIpLfaSplDpUkzYqOxtByfdzLaKMmGnoNeKsW/I52LI2Kq7I+Sp/7GNCn9gdWMl14KMHIJ0XBu8=
+	t=1755028379; cv=none; b=SElxFgNkmQVBTZVX8Y4Wqfim3MQrCbH2L1b0gM/NGUmNwD7iyxwdEywBtMKF4H3cH3WB6kyh6DWlwd2h3zH63ZHY1R9GagGAVwHQoDmZs83i5/6n7KFgCAIjyMW0+EMuWH4rgTrBVtMngMlayzliex4rP0Gmn2plnyUIshTF7tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755028343; c=relaxed/simple;
-	bh=EWG5kAL/Ns/8hOr1OySYjFtWDg18A78ZP5BXzP7VvO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8QiAwqGYV3JHHgDEItYEWY1LCIycHGEkMLlO6RUhkuIfV7WC5zSk9Rewez9ckEUEDwvxigmn0Qq4JGqAEnT1v733O7qCTKFoq4jW0lNt+5U2yhUDHM49IqarmOW/v9xzKKdEOhoaUZjkYPx9GmEUNdyL+yJMnds4BsAOKRwUEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMEMalru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A748C4CEF0;
-	Tue, 12 Aug 2025 19:52:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755028342;
-	bh=EWG5kAL/Ns/8hOr1OySYjFtWDg18A78ZP5BXzP7VvO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LMEMalruz0fBGUDsTe5fSqjlX7I48DWPERT1R6ba/W2X0fqhj0G5XuE7aXt4SNSMS
-	 H8mIbw+5JIP9hQjYT6KZZ1Y027/Pe0CkqmsHt0flMHaalKQyqZ/b48CVMp+UjFjV2W
-	 8NMIPU61zIDSCSInhterr0Uc9zUQH+MXBhlBxegErTv8p033WePHuQHmGDb+rH9MhY
-	 EaEYSr2ZWlFWOZshqrM165pC1u6vND/tukpZY3a2aKk7H141AEr0GXKcwqA/u3wEl6
-	 B07Nq0qGvmqcXHvGqjrUefhvpxwU3DjwyfO4Nx5VktUXc+GT53jXePtEbKWEykZ0zK
-	 /DoaCjr+zIT+w==
-Date: Tue, 12 Aug 2025 09:52:21 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	david@fromorbit.com, djwong@kernel.org, ebiggers@kernel.org,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 04/29] fsverity: add per-sb workqueue for post read
- processing
-Message-ID: <aJubdUBFAFnxe7C_@slm.duckdns.org>
-References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org>
- <20250728-fsverity-v1-4-9e5443af0e34@kernel.org>
- <20250811114519.GA8969@lst.de>
- <aJotnxPj_OXkrc42@slm.duckdns.org>
- <20250812074350.GC18413@lst.de>
+	s=arc-20240116; t=1755028379; c=relaxed/simple;
+	bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RH7WlbEzWu7HAuXbJ3fcvnrqWjq/UcW35oxi2r0kZVlmogBz4QMY51UV+L4KJ9rUo8uAgDtynEYlp6T9tah7SuIZBZhsCabf79GMMSXg80olnCyIv+DJIhCM2D0RDkkQiT4F4eVmuCC0LAsHov1A38e4L+JQNQdb8D34gIYZroM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ6bsLIb; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-242fdf8568dso1611815ad.2;
+        Tue, 12 Aug 2025 12:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755028377; x=1755633177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
+        b=YQ6bsLIb5bQIst8AzQ0GywuZCZa8QeJX0fPMB4gNJ92iBrwKGAhuAW9cj+10YNucKB
+         HrVOrDpNT+VCwexMFVJSNXLehOVx3bSlU4/KMKwEzCWrHUfX3TeQFyBuz4U54Bk2WTF/
+         qH25nmqe/l9dXtRNf+Udw+VqtWSROo2TWykATPZDEbaMIshPNBiAph4Ex6fZlho9zemm
+         uoXERAMWm1Fb7TDzkbfeudOmP56STcTlR5utzbfjmB0ivilsBgBdSwnfcCGgQ9o6Hjdq
+         FXj2fl9rAbWhPw0ggmXd1m5i4bYrH+tQ82AOgkcNUBOeW+Fj2Oe7eZsitVPNL+yNmr5E
+         yFTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755028377; x=1755633177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
+        b=dJOEX3Qj/fcazHHo2lo/MuUKZXJfevCfiHm4qdtETPnoOPzkkGEkNDYcxEMS9Y9E0/
+         mb9SsgyoZTxYc9OI1wmS6QPWAkqeWTeD9mhGEMsz7h2ay2PkO+pcbo3iSvLt8AszfR2+
+         RZfYL6TO+YMBCY5Lrt96KVtc3ozpol/g9sdFC9BuvFUGwX7Pfu4z7b2BU59oUhjzu8UU
+         QOV4ZQ6dyrMHocHTB4sZsMQLheZlH+n22C6RqweZ4JGHDdtqfbwsFE/ywX6/+NHznE/z
+         /vT71UrMBPP5tbEFWvTmN7MbxfxG31el1L2uvIRsBygseIVkRdAcupN+6G100/w5XgKi
+         FIVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNADos1xrG3YIKKyBKAhy6lwffWGHM+NinWmjRHpiHyv171VhAUdbkRb2KbbLwBOjMpaY+QM27tGUl29vgT4U=@vger.kernel.org, AJvYcCXFux/4ofQcZLNGmk7jKjShnYZZcsfo0FadU9TN/eB/3ydFblZIwgCIZLLouOe2e+MuZ0BgKHMaqF0WRrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhuDnhO11kULSS1ZPMEXB9tHMJyQpY66zAyV4rIo5aa2mHr9lE
+	pCG1DifUpSnpeV0lGyGD2VvHX+VRcRjjr7Ve9/wIuMMOSZkO8fZqdz8BJRRf4sX7AJNSp9ivQ5Q
+	XsjnzRLs3LvfyfduOwvtmchGFfymJvSE=
+X-Gm-Gg: ASbGnctoRn/tCZQNGeffVlvYzsIm4gwaJwGDLS4ECZP/mD7+cqoh1p53Dmg0OuxpF2t
+	Wi/TwU2LtZT8a+fDQw/KSNT5rT5x7fcAmdWcp/WqnB/7SZqqmxdC2Xcy4k/EBfT/tUd2FgGdbNg
+	RMLy6F8uaqNHZ/slw8HbCYVVh2squKAGV7DJXKGwetNNoMy6V2xNtZtGWLc8+ja9OGegduCAfE5
+	8PSi06g
+X-Google-Smtp-Source: AGHT+IGp2dikV2vxjvTnzDsMEmpfe17vDuKqbKTf/CZzTpQPjGrvZF5vqCTO61EiCku5j1w4GqjR19wPBunrAjI29rI=
+X-Received: by 2002:a17:902:ea0c:b0:240:729c:a022 with SMTP id
+ d9443c01a7336-2430d32b8a7mr2923825ad.11.1755028377016; Tue, 12 Aug 2025
+ 12:52:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812074350.GC18413@lst.de>
+References: <20250731154919.4132-1-dakr@kernel.org> <20250731154919.4132-2-dakr@kernel.org>
+In-Reply-To: <20250731154919.4132-2-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 12 Aug 2025 21:52:44 +0200
+X-Gm-Features: Ac12FXwx1OhTXBSqNTxWMSI4678VquyiqAavjpkw2PB14JZbF78QjVQ8X5t3gEY
+Message-ID: <CANiq72mWVmso1yMYGYih-NDwjB9E1iVE=_oSpPiSvqTu5mkE0g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: lorenzo.stoakes@oracle.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	urezki@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jul 31, 2025 at 5:49=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> aligned_size() dates back to when Rust did support kmalloc() only, but
+> is now used in ReallocFunc::call() and hence for all allocators.
+>
+> However, the additional padding applied by aligned_size() is only
+> required by the kmalloc() allocator backend.
+>
+> Hence, replace aligned_size() with Kmalloc::aligned_layout() and use it
+> for the affected allocators, i.e. kmalloc() and kvmalloc(), only.
+>
+> While at it, make Kmalloc::aligned_layout() public, such that Rust
+> abstractions, which have to call subsystem specific kmalloc() based
+> allocation primitives directly, can make use of it.
+>
+> Fixes: 8a799831fc63 ("rust: alloc: implement `ReallocFunc`")
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-On Tue, Aug 12, 2025 at 09:43:50AM +0200, Christoph Hellwig wrote:
-...
-> Andrey (or others involved with previous versions):  is interference
-> with the log completion workqueue what you ran into?
-> 
-> Tejun, are you going to prepare a patch to fix the rescuer priority?
+Did this need Cc: stable or was it skipped since it is just extra padding?
 
-NVM, I was confused. All rescuers, regardless of the associated workqueue,
-set their nice level to MIN_NICE. IIRC, the rationale was that by the time
-rescuer triggers the queued work items already have experienced noticeable
-latencies and that rescuer invocations would be pretty rare. I'd be
-surprised if rescuer behavior is showing up as easily observable
-interferences in most cases. The system should already be thrashing quite a
-bit for rescuers to be active and whatever noise rescuer behavior might
-cause should usually be drowned by other things.
+(i.e. not sure what you usually do for DRM, but I was looking at this
+since it is alloc since I would normally pick it.)
 
-Thanks.
+Thanks!
 
--- 
-tejun
+Cheers,
+Miguel
 
