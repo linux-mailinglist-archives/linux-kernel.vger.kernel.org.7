@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-764813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C232BB227A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:02:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFC3B227A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1381B68071
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA741B683C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A92F27466E;
-	Tue, 12 Aug 2025 12:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7417727932F;
+	Tue, 12 Aug 2025 12:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="cKKw9t76"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DyI0Kw2l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52228265CA2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DB5277814
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003251; cv=none; b=o+StAsjGTvcNSQyUPGIHi4p6HPZaYzIN2RlxEpinVRCivs0prwPP+zFnSaZ7ouZMG5n707GbqvuoGtnTpErl4TY2QSy3MVbNp1SNZbz7btvvjxuGwPdsH9F1lcpMrusk4V+iEsOJpb2+e46fwi2KHTtYgEykPDNV7+iVfQhQb08=
+	t=1755003268; cv=none; b=DvQcm8GYpTXVQzFeeqiecklT14kqBqb3oEsl2s2VCsPkaJygNJQd3G7EZtPV6knZhppn4/pjs9fmx7CuoJNRGDMwnikJC95Gow41HskSO1Hfkh0hmRAhxeSjDHJwbzDqBwkwSzgBU+qazq7CxSXIrfGVPuKo/FDhWJawGdixMEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003251; c=relaxed/simple;
-	bh=kuFMJmU+9JWcojUuJvsQuwkddP22POkgDm8BHLJTRh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eRbb/lWHp/FcaqeM+UZG3oSw5pAcZxiMSycLOjc+XF5zecvG8wrTYD/VDfB7BQDeQapjfQV6jvtk+Dw/mQ/29/JFHIsqxDQnIxA4MhHOjDqwHoDyoQVbC22BgahlZz209PbZK7i/D9eiTNxyDLZSgo2ov3adm8vtvrvzd0ue19k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=cKKw9t76; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7de159778d4so565236185a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1755003248; x=1755608048; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2WtksxPDLT/0y+3eZjc8hEFOkmY30/S+XOZ4ZbmRdMw=;
-        b=cKKw9t76vyDgJtFR+gCN5oEIOubX0QbmYB0n5PpLKNfKSp/bQznq4vRXQLLxZmTKTI
-         YpfBqKnO2OnQMTTQuMA7+fspjwam8MHCz1DMcoq9g0Zcew3KfXGtPSx9OKdi77E0aHqR
-         c3oPD6rQuf61C6etXR3yt9i2olVmC1gF7ZuFUmOQP3U76xKplICA0JdIj+35RavNwBCf
-         QVLusNQiijzlX5xVqKoHt2kSKKgIOqPajRwCJlWWoG+naxhljbZihUktkeZIMn/P/s4v
-         AyD2d7S8iLCjuf26NWyKxjHtZmFkWbBUk2Biw5cVWJYOZfhbZo9LcybzUmjidNiZZ/sd
-         4TZQ==
+	s=arc-20240116; t=1755003268; c=relaxed/simple;
+	bh=ODpyotMqbR19gg+oEM80+cCkM0ODDUkNV/2kT+hopxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U5DHS/TEY3H4MezmfILxqUzksJz3CCQtho9z6qG62kRbdTCtdo1wJBFnxqnLeFnCSh2nzvM6gJsLD2NQ/qo0jEkHvBzuQRo1FWcYzoBz8f9Wq9E0Cfinhbkhbk0xDMP/RIHUGW6kQgqx7meOZP/L2J7n0yrh9YgyzKqfqJsBcys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DyI0Kw2l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755003266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DRwZCYRsxjvJxx5GllLV801jS3kCOXiKfQ2tbx5q35Q=;
+	b=DyI0Kw2lj+PTRNAJ3wUdHaxfM8rJgxIEbGH0bvbrkNQ2qejA0e0wBs14QE1gHAPC8Wt1u6
+	cwqwp5OG0+ZpGEpgW3b6VAW5hQHPfg2FzzJfiwh2iUoQBU80Y6Bn6NuZGF1D3ajjGQsqCa
+	TxVOZMdivsq/VPsZraGfHd7KuJYpST8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-WPKCYfRONQGW1wDAjtTlyA-1; Tue, 12 Aug 2025 08:54:25 -0400
+X-MC-Unique: WPKCYfRONQGW1wDAjtTlyA-1
+X-Mimecast-MFC-AGG-ID: WPKCYfRONQGW1wDAjtTlyA_1755003264
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459e30e4477so46891395e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:54:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755003248; x=1755608048;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2WtksxPDLT/0y+3eZjc8hEFOkmY30/S+XOZ4ZbmRdMw=;
-        b=a8/kTjwk2mdTUGeIUTYiDEs1IiurJ2GkOqh/C+XXJDivC/MmGRlqa1RazE9jM4GfO9
-         u0+wEbq+W/UKTcar5oOz/IkUcNMMtx/InQ/A73iZ3PsWEUhpn6ihjNdw+e9BJ0BVhhDz
-         VjbFjqcPHuWbzFgbAa4RqlHt8WnLU+2iD6m378R0ELLoT+zKk16wRJH30gxQG/RMIa8M
-         csbbpJWxgTFjL+KiRAZRQzy+AzWTmVsnvj0K8i6tuuzPkvXodhA02flgBMfP4UdON4qV
-         2VdnKx/g2zrowuNRj6HJGpoXI+coSUiScJH7xnsdyPiWfREMk1Has6z4wbAD0yKTx86c
-         wKfw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8x2SV59Ml564DZNai7uOpT/rFT+57GfFJoydaefa0THoV8ybMpyaj9hhpppQUiY2JO/BCVeepNw4VGsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyln0Q9CcYNVUArZiUvqcZ5yH92J4Y9JkZL9OYjy57o1cmDdhM8
-	DtarEOJVbYfzap4s5G0U0gOdkD3wD4rcEWn8iDrUa/2jcMvevQwLYhXHaX+cKB1tjS2KJYgzLvz
-	QmhYRNmTY58B8dMra/ar+kTyxf+v9NYXtMR4F6SP4bw==
-X-Gm-Gg: ASbGnct1yRo1RgfvQ+iGI0ZrLhCZ9ABtqAHS+7rN6m7a+iXBf9WiGtH5khvaZR5iYfN
-	ndQiHapO/9LvQTvarnzhE1gNNAG/vTfkg+zQ9ReaZoj9Fsm1pRCVpyY6zga0e8hRSVw6Y6VYGCR
-	dfj+v5S5+TDdfHHuT+XOIMaqfPfHtx8zUY2Bx7UQeOBq0TC6dO/6uiOs+LG6Wz6H8xOFq7VfIr8
-	Lx2PhXLAeb0DrGSnwtQmU+IxDafeH3NMdi0hOBxWw==
-X-Google-Smtp-Source: AGHT+IEigi3eT3slvsaqaQxfpzA5/X/BpBps7n3zcMZvnFhGp0J3xR5YD/W1WjO/6HkGh5ZjKB8p2S+Mbi6DGKsspO8=
-X-Received: by 2002:a05:620a:a117:b0:7e6:50f2:d62d with SMTP id
- af79cd13be357-7e82c616e28mr2406978785a.5.1755003248102; Tue, 12 Aug 2025
- 05:54:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755003264; x=1755608064;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRwZCYRsxjvJxx5GllLV801jS3kCOXiKfQ2tbx5q35Q=;
+        b=WYdW7DxZ4H3n0OZD4pd0D15exwTnrWQbcjvK0XvpbKnzGj+xOAtOinEImJh4ItkFXf
+         fvapIiMQnN5iR6EC7saa5vanP93s/a4I/wec+HsjQJO/1AXJ+/MXEAy4/Wq8WkNEct/P
+         mUzphbVWZOzD/F6ObZNeUaK+L9xnHgvotsM3UW41Qgv9aVC2mcWXz45JzZ/cefZg/3jx
+         yEX8GLEqS4D+fuqraSdcguX6Wt4CLT0oTk0/MwDMvC3R6lIWcQ1nuAF9S6NEBV5hZUke
+         nm7w2DNmZqoUjBN7L+pZgMSD8LEGAU1nOOCd17Il4wJ/9tDeBt8Bj5fKj6zWi1rjNxJb
+         mkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxvco9NaxyGZkay/h6TWbY4HxqsV+CUyeoAK9OFBMqgS/ZTSQbj79PMMPwbTPbWx9/EYIY4nIOai//MWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwScV2XSdaszdBHef6tDwKM8Fw7h/mvZZ0NsbPtWFm+NFU2Lcod
+	yc022NlMCiOtVLw1gPx8K6xdkqkOwqzY7zrWCR8r8UDEbMeu+idqgNWLfbof8UZ6NVPUUF/0Iaq
+	iHCFDQBBUkQ8x6twfQYb6c4bNB+K1uSkikRqMeeMuUgQWiA2QU9G+ufcEZRHklR4upQ==
+X-Gm-Gg: ASbGnctnDL+gCl6BIy9Fr0KohuJnkGFO8N+n+bdfCZKMyvN1fjp7pTrWh1/Pu0+jYcU
+	WJQkjav1qX0+wTilAFQ/l8aPHZrZEX5GN4qvWXwvrNBrdHng8rsVlmLbuYT124lVHTTot3+BzUw
+	1+WVjPEuQ7lJUioUL2pC6yHxjdE0y/oArwwChW2k4AlmDwHLu7mWgXoZc2qQEgUzw5ZKAsNDuEU
+	GhOC4A03Qr8ZtiRMonkYc9jPj89O5FB9/7XZ32toag6EFIBtiuJavVlH7qothq++wfnschxnuxI
+	nu7+tAb54ILOgIlqwf5qpYUfOCXVy1ZIh18iI4jqy7s=
+X-Received: by 2002:a05:6000:2502:b0:3a6:f2d7:e22b with SMTP id ffacd0b85a97d-3b900b4f08fmr11620937f8f.18.1755003263970;
+        Tue, 12 Aug 2025 05:54:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFERWBxAhdG/9H6I4uUmTqO1UoV/PLVlBD6GvON7ihQC9dnpd6IAbGFKbO3xw56aaR9q/kStQ==
+X-Received: by 2002:a05:6000:2502:b0:3a6:f2d7:e22b with SMTP id ffacd0b85a97d-3b900b4f08fmr11620919f8f.18.1755003263540;
+        Tue, 12 Aug 2025 05:54:23 -0700 (PDT)
+Received: from [192.168.0.115] ([212.105.149.252])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac093sm46464914f8f.9.2025.08.12.05.54.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 05:54:23 -0700 (PDT)
+Message-ID: <194e4774-a931-4ce4-af63-4610da7c4350@redhat.com>
+Date: Tue, 12 Aug 2025 14:54:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org> <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
-In-Reply-To: <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Tue, 12 Aug 2025 13:53:56 +0100
-X-Gm-Features: Ac12FXy89rNxCKeR5zfeZeSe2T50SLXSk1IHDgjCBDBFp3HnioWFlDD6e2e-kGA
-Message-ID: <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: kcm: Fix race condition in kcm_unattach()
+To: Sven Stegemann <sven@stegemann.de>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+e62c9db591c30e174662@syzkaller.appspotmail.com,
+ syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com
+References: <20250809063622.117420-1-sven@stegemann.de>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250809063622.117420-1-sven@stegemann.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+On 8/9/25 8:36 AM, Sven Stegemann wrote:
+> @@ -1714,6 +1708,7 @@ static int kcm_release(struct socket *sock)
+>  	/* Cancel work. After this point there should be no outside references
+>  	 * to the kcm socket.
+>  	 */
+> +	disable_work(&kcm->tx_work);
+>  	cancel_work_sync(&kcm->tx_work);
 
-On Mon, 11 Aug 2025 at 22:05, Rob Herring (Arm) <robh@kernel.org> wrote:
-> +static int ethos_ioctl_submit_job(struct drm_device *dev, struct drm_file *file,
-> +                                  struct drm_ethos_job *job)
-> +{
-> +       [...]
-> +       ejob->cmd_bo = drm_gem_object_lookup(file, job->cmd_bo);
-> +       cmd_info = to_ethos_bo(ejob->cmd_bo)->info;
-> +       if (!ejob->cmd_bo)
-> +               goto out_cleanup_job;
+The patch looks functionally correct, but I guess it would be cleaner
+simply replacing:
 
-NULL deref here if this points to a non-command BO. Which is better
-than wild DMA, but hey.
+	cancel_work_sync(&kcm->tx_work);
 
-> +       for (int i = 0; i < NPU_BASEP_REGION_MAX; i++) {
-> +               struct drm_gem_object *gem;
-> +
-> +               if (job->region_bo_handles[i] == 0)
-> +                       continue;
-> +
-> +               /* Don't allow a region to point to the cmd BO */
-> +               if (job->region_bo_handles[i] == job->cmd_bo) {
-> +                       ret = -EINVAL;
-> +                       goto out_cleanup_job;
-> +               }
+with:
 
-And here I suppose you want to check if the BO's info pointer is
-non-NULL, i.e. disallow use of _any_ command BO instead of only
-disallowing this job's own command BO.
+	disable_work_sync(&kcm->tx_work);
 
-(There's also a NULL deref if an invalid GEM handle is specified.)
+Thanks,
 
-Cheers,
-Daniel
+Paolo
+
 
