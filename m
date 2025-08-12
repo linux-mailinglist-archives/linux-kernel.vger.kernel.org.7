@@ -1,87 +1,175 @@
-Return-Path: <linux-kernel+bounces-764389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15771B2226E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:11:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331C1B22260
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9340623FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:07:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016437A743D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A41B2E765A;
-	Tue, 12 Aug 2025 09:07:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5162E7641
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AC22E7BB6;
+	Tue, 12 Aug 2025 09:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YQoExukR"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3238E2E7BA5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754989673; cv=none; b=XoA64ys9qondMepjYsyc6c/Rw2oJRHvgP99kTZai9vWqXhPPV7GGNZxns8X/Lymx6WpH66anINQJrQnS8u0df1qSBg6D1CiXxA5GGII1ShCmc7RZPaAyqXfFJxURl4Kt4Z2Doh/h/cP/X+9ZzRMjL9CHCiUwYkubvcRA26j2Gfs=
+	t=1754989711; cv=none; b=ukxrrtzLtdNHeA4QU6WN2LXNyb2qoS1Ye0Wlb5aJoGVAwfj48hcNM0eMhZSiA5MO0sdnvmPq1ucRngD41oHrsIa0yaCNjWOCN29ztxfMuR7/aHOIRcxXj2e5XS54+ZhAIQuW6QESzUaGVVpskOnHRNavKolOqVqEqXqNZdUcVxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754989673; c=relaxed/simple;
-	bh=BSyVqA0WE/LnCMOkpVe7F5LcO/3lVqy1k6UvLduegSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KrJ64pQsZZhOuUx0cnInETikczk69wez1LyryigxYFBAi689zytBoLWulQIXZoytq1hmMa1jutB/e/SYCHR6odZeYL8Sa+Hxiy4dZvh/poFH6srLcDGi0GdnrnOwL0W6B9wVauucvxZhbie9HUC52gg9VOT+WBkmKiOdsl1JwOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37C0925E1;
-	Tue, 12 Aug 2025 02:07:42 -0700 (PDT)
-Received: from [10.1.37.57] (unknown [10.1.37.57])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52F2C3F63F;
-	Tue, 12 Aug 2025 02:07:48 -0700 (PDT)
-Message-ID: <356a3c25-9c7c-41a5-a88e-ceeaf8405641@arm.com>
-Date: Tue, 12 Aug 2025 10:07:46 +0100
+	s=arc-20240116; t=1754989711; c=relaxed/simple;
+	bh=XFOPORjq8GcREkHwBlxSYHtm0NpOHASGisBz2Dt78UQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=Ir/BY+erMBAW5fgDpu5om2BfC3fPaFq2bfPzMpSRFteBp4t91qBctxsHwIT0TGUdzP7KbfQIKg/OCPvLvieS448rL6wnIoicSA7+SUGwllzMBlqgEpJmy4Dp/9HatVCH4O69pnaN0O2JuQH7eAvl4YTSEjEgSZ665i5Yd5syBII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YQoExukR; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250812090827epoutp013b7c41f5071410e6dc803409e85de11a~a_dcnl-eT0870708707epoutp01r
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:08:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250812090827epoutp013b7c41f5071410e6dc803409e85de11a~a_dcnl-eT0870708707epoutp01r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754989707;
+	bh=8xEd4SUUha0bAbY0XzlCiDYrRhqQiem5yvi1bXt6EQ0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=YQoExukRTbEqryD0ozd4DGOJFAgr77RVRQZa9r8qi38alGCzUMPDsS3pbo+XeSZqD
+	 1vS0MgeFixfY6eXtcI9dZdCQR2+Oax/KewTSPpaMuByKm42hSy3DDnaxJaMsDbxzY8
+	 IaTq1hDCZgVreh/HC4o88572+Mf5P/iCVNiK2gfg=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250812090825epcas5p2da0ef83e97d363373011084787aecf0d~a_dbXvRMy2934229342epcas5p29;
+	Tue, 12 Aug 2025 09:08:25 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4c1Qf06zQvz3hhTT; Tue, 12 Aug
+	2025 09:08:24 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5~a_dIDowPa1993619936epcas5p21;
+	Tue, 12 Aug 2025 09:08:05 +0000 (GMT)
+Received: from asg29.. (unknown [109.105.129.29]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250812090803epsmtip2d22a0d6f203ef7877ab182f5c7ef7b83~a_dGj1rlf2788827888epsmtip2E;
+	Tue, 12 Aug 2025 09:08:03 +0000 (GMT)
+From: Junnan Wu <junnan01.wu@samsung.com>
+To: mst@redhat.com, jasowang@redhat.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ying123.xu@samsung.com,
+	lei19.wang@samsung.com, q1.huang@samsung.com, Junnan Wu
+	<junnan01.wu@samsung.com>
+Subject: [PATCH net] virtio_net: adjust the execution order of function
+ `virtnet_close` during freeze
+Date: Tue, 12 Aug 2025 17:08:17 +0800
+Message-Id: <20250812090817.3463403-1-junnan01.wu@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] sched_ext: Introduce scx_bpf_cpu_rq_locked()
-To: Tejun Heo <tj@kernel.org>
-Cc: arighi@nvidia.com, void@manifault.com, linux-kernel@vger.kernel.org,
- sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
- mingo@redhat.com, peterz@infradead.org, jake@hillion.co.uk
-References: <20250811212150.85759-1-christian.loehle@arm.com>
- <20250811212150.85759-2-christian.loehle@arm.com>
- <aJp-2TPbNKO3k_lq@slm.duckdns.org>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <aJp-2TPbNKO3k_lq@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5
+References: <CGME20250812090805epcas5p25ba25ca1c5c68bbdf9df27d95ccae4f5@epcas5p2.samsung.com>
 
-On 8/12/25 00:38, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Aug 11, 2025 at 10:21:48PM +0100, Christian Loehle wrote:
->> +/**
->> + * scx_bpf_cpu_rq_locked - Fetch the locked rq of a CPU
->> + * @cpu: CPU of the rq
->> + */
->> +__bpf_kfunc struct rq *scx_bpf_cpu_rq_locked(s32 cpu)
->> +{
->> +	struct rq *rq;
->> +
->> +	if (!kf_cpu_valid(cpu, NULL))
->> +		return NULL;
->> +
->> +	preempt_disable();
->> +	rq = cpu_rq(cpu);
->> +	if (rq != scx_locked_rq()) {
->> +		scx_kf_error("Accessing not locked rq %d", cpu);
->> +		rq = NULL;
->> +	}
->> +	preempt_enable();
->> +	return rq;
->> +}
-> 
-> Do we need @cpu? What do you think about making the function not take any
-> arguments and just return the locked rq?
+"Use after free" issue appears in suspend once race occurs when
+napi poll scheduls after `netif_device_detach` and before napi disables.
 
-Indeed now that this no longer has to be a drop-in replacement.
+For details, during suspend flow of virtio-net,
+the tx queue state is set to "__QUEUE_STATE_DRV_XOFF" by CPU-A.
+
+And at some coincidental times, if a TCP connection is still working,
+CPU-B does `virtnet_poll` before napi disable.
+In this flow, the state "__QUEUE_STATE_DRV_XOFF"
+of tx queue will be cleared. This is not the normal process it expects.
+
+After that, CPU-A continues to close driver then virtqueue is removed.
+
+Sequence likes below:
+--------------------------------------------------------------------------
+              CPU-A                            CPU-B
+              -----                            -----
+         suspend is called                  A TCP based on
+                                        virtio-net still work
+ virtnet_freeze
+ |- virtnet_freeze_down
+ | |- netif_device_detach
+ | | |- netif_tx_stop_all_queues
+ | |  |- netif_tx_stop_queue
+ | |   |- set_bit
+ | |     (__QUEUE_STATE_DRV_XOFF,...)
+ | |                                     softirq rasied
+ | |                                    |- net_rx_action
+ | |                                     |- napi_poll
+ | |                                      |- virtnet_poll
+ | |                                       |- virtnet_poll_cleantx
+ | |                                        |- netif_tx_wake_queue
+ | |                                         |- test_and_clear_bit
+ | |                                          (__QUEUE_STATE_DRV_XOFF,...)
+ | |- virtnet_close
+ |  |- virtnet_disable_queue_pair
+ |   |- virtnet_napi_tx_disable
+ |- remove_vq_common
+--------------------------------------------------------------------------
+
+When TCP delayack timer is up, a cpu gets softirq and irq handler
+`tcp_delack_timer_handler` will be called, which will finally call
+`start_xmit` in virtio net driver.
+Then the access to tx virtq will cause panic.
+
+The root cause of this issue is that napi tx
+is not disable before `netif_tx_stop_queue`,
+once `virnet_poll` schedules in such coincidental time,
+the tx queue state will be cleared.
+
+To solve this issue, adjusts the order of
+function `virtnet_close` in `virtnet_freeze_down`.
+
+Co-developed-by: Ying Xu <ying123.xu@samsung.com>
+Signed-off-by: Ying Xu <ying123.xu@samsung.com>
+Signed-off-by: Junnan Wu <junnan01.wu@samsung.com>
+---
+ drivers/net/virtio_net.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index d14e6d602273..975bdc5dab84 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -5758,14 +5758,15 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+ 	disable_rx_mode_work(vi);
+ 	flush_work(&vi->rx_mode_work);
+ 
+-	netif_tx_lock_bh(vi->dev);
+-	netif_device_detach(vi->dev);
+-	netif_tx_unlock_bh(vi->dev);
+ 	if (netif_running(vi->dev)) {
+ 		rtnl_lock();
+ 		virtnet_close(vi->dev);
+ 		rtnl_unlock();
+ 	}
++
++	netif_tx_lock_bh(vi->dev);
++	netif_device_detach(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ }
+ 
+ static int init_vqs(struct virtnet_info *vi);
+-- 
+2.34.1
+
 
