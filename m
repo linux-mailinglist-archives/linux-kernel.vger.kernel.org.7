@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-765283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6143B22E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F11EB22E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AD93B33E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD6D3B6BAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACA82FAC1B;
-	Tue, 12 Aug 2025 16:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4932FABE9;
+	Tue, 12 Aug 2025 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDGo2CNW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gA4Kwv1J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA3C2FA0FA;
-	Tue, 12 Aug 2025 16:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F2D2FA0C3;
+	Tue, 12 Aug 2025 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016834; cv=none; b=SzVof/Fbj5ITX7NCgOCJlOZRSM6ReLIje8WEPYgtHu2YoxTrYEdCQFO6qEmSKTaJ/ccrI6PRstrCqMNelodRfLO/+Gpdu5NYfTDwjnuH2Z5gmL/HxWYMoufZCU+ZDq2tk86IJhAxnDmZLNXpd81C5FFbSuZS1IskHtj0RUWYsKk=
+	t=1755016858; cv=none; b=BkxcXODpmuRdfyfzn27YJkcYvC5p+KesFFPiDQMWwOIsXwbswibjx80tfdb7aqG4+YiV0I/ahYzSjDCcPhAnmzjXAGoxt/8x7031RVpvS2bQgAfYhk6JT4jdsvc+eSymkS9emeoD2heWEIF27/f0qKyhfydbkDn/ix43igDYACU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016834; c=relaxed/simple;
-	bh=c0imZ72TUJ70OzV/83zxsZL4bXqGEF0O9JOXyLfWMgY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Vaf3XKZri+8BALFvZ9qF92tc2kGonhe3exqirCG545m8EuLh1Mt4hplrmKQ6X0rbBttUxIezqdzzn/iyA8tDCqPvnnroaKwEUtlmbydwNnMONFpYpfzQEajUZwBtfUtEQ98Nw6Bvuojjte3Lcv4Chq9T48SZPN8Wo5s/UfqURhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDGo2CNW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318FAC4CEF0;
-	Tue, 12 Aug 2025 16:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755016834;
-	bh=c0imZ72TUJ70OzV/83zxsZL4bXqGEF0O9JOXyLfWMgY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WDGo2CNWD1Bi+gY3wt+qreis05jO5RimzwXEGs3acdX6RAtHFtlQuV4lEyAZSyS/R
-	 zWRqi351ysteb4BfND75gZkKyRcItV6BvEoGa9/2FsjIYm5/YnhXeach63vNJiw1Z6
-	 F74DVKTxRMMSOh3qWAEKeaywAzVPYCHjZSW7h4VV8YBgry5Xh9lf+pVoGT/M06o8LW
-	 LHmDOyKO9JjG7AHaXNSj10nUs9NeGTypfiqLeARh4qs4V/tg8Hlhw8MH+JMTJjJaAA
-	 o3z/VQ3staVVr1j3uNMC7IW43prPdg6aJk53cS/lGek5OOFtu8DwtdUgM2IaqcXI+8
-	 OL1elNUz5QZ9g==
-From: Vinod Koul <vkoul@kernel.org>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
- krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com, 
- mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org, 
- bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org, 
- neil.armstrong@linaro.org, abel.vesa@linaro.org, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com, 
- quic_krichai@quicinc.com, quic_vbadigan@quicinc.com, 
- Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <20250725102231.3608298-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250725102231.3608298-1-ziyue.zhang@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v7 0/3] pci: qcom: drop unrelated clock and
- add link_down reset for sa8775p
-Message-Id: <175501682675.633066.14367700051268770361.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 22:10:26 +0530
+	s=arc-20240116; t=1755016858; c=relaxed/simple;
+	bh=5PySVuPXNrKkXoK8Bf3VnkR26p+3LBRsdWzp7VQVvQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvJyk5TYd6kfyDFixTqurz03WDzhfO1gX8KgcijbpmII8veCugjKSSxia7wL/DEH5r8R+JroRmJgG87/4Kr/rtThyeowFqPND/Dsapd/ephrw/nMGa7ePmm605LWgADe/JdbujmJ3kY7d/QLPfcf6gFJdkjfT+TSvBZRKtx9d8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gA4Kwv1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A7EC4CEF0;
+	Tue, 12 Aug 2025 16:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755016858;
+	bh=5PySVuPXNrKkXoK8Bf3VnkR26p+3LBRsdWzp7VQVvQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gA4Kwv1JrWcZ4sGMyol4SApnxD+rQCg5iCUiPOaFl6rqYyhT/O938Z2qkDlm145v1
+	 xqJl3gK52vOTy/RDeZcEvYtrqUGzujyx1u5t/QnWkKQr8M3nj4qCQE6mwPsmqWgWgr
+	 VUr1M0kc1jGdBFiLHY9otIk9/geKk980QTtEl4n8=
+Date: Tue, 12 Aug 2025 18:40:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ilya K <me@0upti.me>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Armin Wolf <W_Armin@gmx.de>,
+	lenb@kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
+Message-ID: <2025081246-raft-tattle-642c@gregkh>
+References: <20250729062038.303734-1-W_Armin@gmx.de>
+ <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
+ <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
+ <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
 
-
-On Fri, 25 Jul 2025 18:22:28 +0800, Ziyue Zhang wrote:
-> This series drop gcc_aux_clock in pcie phy, the pcie aux clock should
-> be gcc_phy_aux_clock. And sa8775p platform support link_down reset in
-> hardware, so add it for both pcie0 and pcie1 to provide a better user
-> experience.
+On Tue, Aug 12, 2025 at 06:51:10PM +0300, Ilya K wrote:
+> On 2025-08-12 16:32, Rafael J. Wysocki wrote:
+> > 
+> > Applied as 6.17-rc material and sorry for the delay (I was offline).
+> > 
+> > Thanks!
 > 
-> Have follwing changes:
->   - Update pcie phy bindings for sa8775p.
->   - Document link_down reset.
->   - Remove aux clock from pcie phy.
->   - Add link_down reset for pcie.
+> Thanks!
 > 
-> [...]
+> Tagging stable@ so we're hopefully in time for 6.16.1.
 
-Applied, thanks!
+<formletter>
 
-[1/3] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
-      commit: aac1256a41cfbbaca12d6c0a5753d1e3b8d2d8bf
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-Best regards,
--- 
-~Vinod
-
-
+</formletter>
 
