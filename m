@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-764954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFE0B22967
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:58:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D35B2296B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA65A0318
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFFC15A05B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF13228507F;
-	Tue, 12 Aug 2025 13:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F78A28469B;
+	Tue, 12 Aug 2025 13:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="lvUjqhfh"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eGAQjq9I"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B227FB27;
-	Tue, 12 Aug 2025 13:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755006165; cv=pass; b=VeV3URzZbhcEniWIjT5NVJRazeKV7wwyojhr6lugzuSs+NQ6OOJ5so6gWRlHLm2EdwHvCTA2eARWUXcRJtnnOJg+e6M3ACPbsFAuiVbujxE8WFqvLH2JTHleO2bMeBL874KVBRU8WE3/nxqbptT/rxOqzOtPtpzbvubPnvGN6eo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755006165; c=relaxed/simple;
-	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XdsTC53mQnMzpukaGcSIdZQnNp/uJMtLDhiIYdjwE5oQcLM3xxRMxMT0VJjhea0rRuN+p9/KGw9czqrk6g9qejcxptJfZk4a6DeJtBThf6YLtnzli7GWCRAgeUX5sJJ1NUIzSLtvnhUhNl4wxzZ1H/LIhdaS91SYebxWXYjL2E8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=lvUjqhfh; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755006152; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ob2a/f0eaZdCkypYg4XmY5b8LnjcS5jzNQY8Wclo5TdSrhceyUMocmxn0bkcW5f65So9ut1pn/JU5WWc3W7WiMG3RUbHu/joNlg9JqadynXkD6k91ql301mUqzLY99f2b+fZs203uDCSZ918kYc08zgIqJzUdy7pmnCgS3iktfo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755006152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=; 
-	b=gd328Pg5XKwKeKvMXDpmob07Vb0f7nFIFU/c2nV1mNLzQbBUwgMTcmWepbg52MqvfF8lD4o2nFvPScY5DGbGxcUyiPxyhDP2ZgCLB+893DAhY6QSncBN5YEEJjUIb6+xWpQRftwCN+b2/JC7Ab/bba1OPKHYIlP/VfV6lHiV+6I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755006152;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=VA/IhSA+wElgw/TQpAmNJns2NWQ8O3CCkvUy+PyqOsQ=;
-	b=lvUjqhfh0BPdd0ewTbefpOQPYoD9rafGuCkqLGNeaojQjm7bQwnGfagG/yDm7wFh
-	hLIocF23EIbk23cW+rhqo0QzNQ9M/R4JYAGKi/SY0qvceCZFIJUtHxXuTe6R1gVQPH6
-	sDM9v3oEMe3RoUXJIHrTaUTAGrAurbov4orvNqaziPkhpaJEzTJa9i47mMSaWHuC6HE
-	BgWrZ37mp3xgQCa4vNmWUSg7OIMSdn+coL1DF+fk2Ko25yODGRFMGF+EbWvqe3BTAH6
-	tt6bN9nPUmdrJd20Qs8ASA3fUtEPmiu9ytH9x7TQ3uobdvI0bqlGb/4z50UZwf+whj+
-	W7j84GJwhA==
-Received: by mx.zohomail.com with SMTPS id 1755006149202627.0494069115554;
-	Tue, 12 Aug 2025 06:42:29 -0700 (PDT)
-Message-ID: <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
-Subject: Re: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 12 Aug 2025 21:42:23 +0800
-In-Reply-To: <20250812054258.1968351-1-uwu@icenowy.me>
-References: <20250812054258.1968351-1-uwu@icenowy.me>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF941B040D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755006173; cv=none; b=UdmiQ7oouHybVj8AcTNPEqlUMTVmCWfTBUYYR0ZcjhboVd3wXcQlb3k89EcEk751BMkaZHXxGmwP2juDx7WKb7k1XPpErD4YPtQwWt6m+3k1rdoa4Nzbf9ek7q13Fg/+tWFZmbmIRFHFWudpSkyX3ES3h6DUXQ8ujP064i80C5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755006173; c=relaxed/simple;
+	bh=WkpTqop/p/VXbD3Mpouw39PkBycZix50Z8dm6sU9O/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E+YVngSZYhKo4MEuKbkjszPhbco9E7UoygcSKOuk6aYRyIExWXPgjWd6Xmin4mxaRm6InyESSKIUvF9M+74PlNTpoQQOqdEES7TJANREUU7wEls1OTHGh0utAQCroukpQ/e/b58o47xthH8AAzRwZ3HeYNqAq07/S6QS4i8D1qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eGAQjq9I; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55b8248e77bso5462142e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755006170; x=1755610970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b4g0CjNts11+3oHCNDZ5gJDPRrk4gclKzgBm7miqOkM=;
+        b=eGAQjq9IpL/gTUg3TWy67rbCDD3buTRrsMR28J+dmE4fCg9jNCtr87utJ7ETkXfSAS
+         Yl4076ccSYY0CpyMz7paNR5aeIRKXFSYtz6F3KuykrPMhEh84V69fPkPPTh0PtdeLOcA
+         JD/zRp7fqycyCbEA4sO1xJfRFu7tsnHepG7vuvWZJf58GXk+PEguAw1TvrRQ1AfomNqy
+         7c5hS67XfMDnAZMSdpVk3ysOMWpyBWaXmKrBSKJ8HhpBtDhWsZJaVRHUdFjmkZi/ayOI
+         BwFevQaiXLhhZrepFPwWBG33GzQoi+o/fzRxi9AClBxNBoERUnm3s9rJkPmfRVjSBvP2
+         j92Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755006170; x=1755610970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b4g0CjNts11+3oHCNDZ5gJDPRrk4gclKzgBm7miqOkM=;
+        b=gLiBO5fbXX2HUxkdOa/cp/U9/2oKrcgt+jsR3HmilmMYHfbW4sAmA3IV5DugR0QAyV
+         fMlAxh79Bp/EOK+KyaEu4GEOFHclsg2fgGdaCR/cePMU+0thdnR7I3KMopz6h1vFA48b
+         JBOwpCTi3tE1AGP6qUh0ZxBmBXYjTbfBAYXLftOUVkbISt9RjFsRY1/USAqy67IQYIs6
+         uCJvfgHGXvTiAXlEzlnV6ajW5ZgNUq5NFN/gGEM+OFNPet+Muikw6pAWYKoCYSBOI+J/
+         EluvX+9eqUCvURKL2ChiDvFrQSfphc+BmIyMmebnwGwN8SMh94C3Zwm6UEZLZbUTrj8F
+         aosw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbl6cpvmqSQBknCqyFGpACQjGPPI25GDnJzVbsNtKLDNwJ0fi+LzqM0wU+UoTkuI1bXx1I3eyLUikdRH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsrLJeBou4q00/NPYA9QhwxpbMOJ55muQCAlV61pcx5hoG+jYi
+	YA1bZ/6oJK1xVaMOtgXhVGoFRwRt2MiU1XVVwMhU3dDmRtUOavp4+pwoqLJjtFwSMurEHmLfdy4
+	vVFYpdNW+blqMj+wDl8aGfzpzUJ3qMdnfJu3F/HdWjSLx0wCPxoeR
+X-Gm-Gg: ASbGnctNFUB/NRqJtWQtMRdZFANwhU9v59niYgqVnbL0dMxStUGlba6OY7J0h4rRnxA
+	z1qxVGOcIRo+ftes7V7x+q/Nf837j3RN78xiD9/wad5rHPEyKA9u74EobA7lE60f22yW/ysIHbU
+	DDdVH3ZqjSjgLZhHXlvmD9ajVMikpW+cT+ALyni7Ta8oZAqxZp3q1wjNhByiIPdS81yWz7bDRNu
+	3fuI7LH0dajkGBfx422UWLZLGoFfQqhkyxM
+X-Google-Smtp-Source: AGHT+IGT7C6SpEMV2b6ciCNBkYT3ULmCzFc5kB/Au9Kxn/MeeusTVlqfq7XNooEYzUyJ6v739uDuC8+2x4p+q07BWkE=
+X-Received: by 2002:a05:6512:31c3:b0:55b:7fd2:25f0 with SMTP id
+ 2adb3069b0e04-55cd763b33cmr1197242e87.31.1755006170093; Tue, 12 Aug 2025
+ 06:42:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+References: <cover.1754928650.git.davthompson@nvidia.com> <ce70b98a201ce82b9df9aa80ac7a5eeaa2268e52.1754928650.git.davthompson@nvidia.com>
+ <aJpT_nS5bDNRVn9a@smile.fi.intel.com>
+In-Reply-To: <aJpT_nS5bDNRVn9a@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 12 Aug 2025 15:42:38 +0200
+X-Gm-Features: Ac12FXym4hP-E2PFWmiXeVjXY0EWjQJ327lO786BIbiVQWIwmxf2XAqohuOfWrY
+Message-ID: <CAMRc=MftLCu6bedHkV=K9j-VgB=myWH_Lp_=vUprqUMC3RmpnQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] gpio: mlxbf3: use platform_get_irq_optional()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Thompson <davthompson@nvidia.com>, linus.walleij@linaro.org, 
+	mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 13:42 +0800=EF=BC=
-=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
-> This patchset is my changes to the TH1520 clock driver, mainly for
-> supporting the display controller (the first 3).
->=20
-> The first two are functionality additions, with the first one adding
-> support for enabling/disabling PLLs (for DPU PLL) and the second one
-> adding support for changing DPU dividers.
->=20
-> The 3rd one is to address hang issues met when testing the DPU driver
-> w/o clk_ignore_unused command line option.
->=20
-> The 4th one has no relationship to display, and only exists for my
-> need
-> to change an arbitrary GPIO (well, GPIO3_3, the one controlling the
-> fan
-> on Lichee Pi 4A) with gpioset.
->=20
-> This patchset has a dependency (a 0th one) [1].
->=20
-> [1]
-> https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v1-1-=
-299c33d7a593@samsung.com/
->=20
-
-Oops, looks like this patchset deserves a new revision now...
-
-PATCH 2/4 has a round_rate() implementation, which is considered out-
-of-date and determine_rate() will replace it.
-
-PATCH 3/4 was broken during rebasing.
-
-PATCH 4/4 is found to be not working (and even makes padctrl0 an orphan
-clock). Yao Zi told me that I need to first do some changes to ccu_gate
-code.
-
-> Icenowy Zheng (4):
-> =C2=A0 clk: thead: add support for enabling/disabling PLLs
-> =C2=A0 clk: thead: support changing DPU pixel clock rate
-> =C2=A0 clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
-> =C2=A0 clk: thead: th1520-ap: fix parent of padctrl0 clock
->=20
-> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 174 ++++++++++++++++++++++++---=
--
+On Mon, Aug 11, 2025 at 10:35=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Aug 11, 2025 at 01:50:45PM -0400, David Thompson wrote:
+> > The gpio-mlxbf3 driver interfaces with two GPIO controllers,
+> > device instance 0 and 1. There is a single IRQ resource shared
+> > between the two controllers, and it is found in the ACPI table for
+> > device instance 0. The driver should not use platform_get_irq(),
+> > otherwise this error is logged when probing instance 1:
+> >     mlxbf3_gpio MLNXBF33:01: error -ENXIO: IRQ index 0 not found
+>
+> Missed Cc to stable@.
+>
 > --
-> =C2=A01 file changed, 143 insertions(+), 31 deletions(-)
->=20
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
+I added it when applying.
+
+Bart
 
