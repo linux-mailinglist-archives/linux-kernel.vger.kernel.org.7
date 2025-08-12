@@ -1,142 +1,126 @@
-Return-Path: <linux-kernel+bounces-764009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6B8B21CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5E1B21CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728CB7B5FA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:20:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B341E7B6341
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D0B1A2630;
-	Tue, 12 Aug 2025 05:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00E11A9FA0;
+	Tue, 12 Aug 2025 05:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQOEOIQI"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OXvC01V1"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408E2311C34
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC2311C34;
+	Tue, 12 Aug 2025 05:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754976122; cv=none; b=BjB815KNu9bsPGgzoEP7MdSZOfnUsMMbey7e/9zoL7hmuReOuYLlqb5H93P7T/H2BAnpoVunWQDURKPYh+A70zbg3aJcpnWH7w0bb/15c4zUg+WRh8n3SNp7hs3W7wHGlypQLDo7wpzRc0qTlEPUIdWJsHR1v2V8ieYxkm5VtTI=
+	t=1754976166; cv=none; b=h35Dh09QU30nxwG3oMlELReim6Ivba57JrkfxohnMdpkyECghjQlRb6we9T0ynvePHSrvm0Ji/aXsPe7/k5UbKTNVwthHML8pVRFF2XKi9rPIRSN1pYWKw7nHBJb8BHv2JP65bnpQyspVyYZRxIZv0gbDnG3LX2bhRhIlDpN8+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754976122; c=relaxed/simple;
-	bh=tk3tbv5O4aZIyU8u6kFHYPb+xV11YL3DbWD9O/Hxse0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dAhn/yv9XQzzje1nG5nPX2Gy1qiueGX3NUGk7ETvAEtAXHCFzlwFVLbIDlhQUIDgAtMNqHZeeG57A4z5gPOiz0hKvC5Xc2WYfMh/wu6tV63PWf+Us/79HRJruR+1btuNHWSb1O2qTVbFc1ZGSlWOuhFf0xMym4zMCTIEFHJJcAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQOEOIQI; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23ffa7b3b30so46927945ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754976120; x=1755580920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6NJO3iNOv3qmpNKbpG0b8ArdkFZkJCoKkSUSOP4dNw=;
-        b=bQOEOIQIzULQxW3FSL/+/9DiVIuGz6ouVlsLLGZ4f/LM4b4xIJpRp31jl0v1I0fQsX
-         CM6wftNLKB4EpXZuOAgV2Dt6p5egKt9D0Otj1GdwDMapIWhW6u+i2Pi/HkGfctgEOL5h
-         unB0/+fmX7pZ5rOcgMDiYxZ9ykutUeLj/LVr/X8OHWSDTwUGaZ8zitrk9s304Maedwjf
-         H2Fo2mDxoQ4fqBflL8t7s7eME+BcCAFVpFJxeJo0uG+xJ2BwehtjV5kmmCJMw1tFiY3z
-         6OVzyWgmxx4H7PH0/qrbdglGYoYU503utGJ2/1OspljUWjpvNfzLqhEGlKH78N9G7wet
-         mPMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754976120; x=1755580920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J6NJO3iNOv3qmpNKbpG0b8ArdkFZkJCoKkSUSOP4dNw=;
-        b=lzOeHUqAtfxcIFZWT6g+IAxLHeuUodSOIkeVVbEtdXsarTg4Q2UQqn3egt/ALVOeoe
-         aDGhjvSAAP4vMwAV8RnSY9XHr2sr1+h7nsjA/6VxCeKNFG6rwPyZYpeGkKEewb5PNIcI
-         l66DXUDpuTwKMMlI+PCB/txfH3pReBby/j8/MyWDvlM6jHovhB5Kj7JgbYBuarv/JSU3
-         LolHKqBjhtHuYhEeoyne4+ftidUqFt2i9ZEw7lBFGXCUA4bN3YORxfYaNsbw9loG/Y+d
-         hZXUKpcY+NmUnN8qQALNkDyOf9p3BtlNs41Cl2XMV4/XJfBjNJaQI85aOpxEuD/+YYPe
-         8Nww==
-X-Forwarded-Encrypted: i=1; AJvYcCWShqd6WQ1mxWUJ+oUR2iEJWfZaSqtkhWhJC1ji7UMEM4oocgcLZ5Cbm5nhQlBBQhsT+KEoAqh/VnWOkMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR2mr/D0SFPJ7z2FeTqSZL+rn9F4IPuOZYkDdKDqiU3JztFzLr
-	ykIvk/DjLGv0VAzu/3nvREbhaoUdFuIm+W1AEdg4xgiGIWfL3+7ORnKOw/05rQ==
-X-Gm-Gg: ASbGncsHufPgG0KOR4vzAJISjnyFE+9wICcUnPQd94WqpXHe0DqKg014EB4T0VXQ7Zz
-	0AzhFz3w1zuNOdRXQzqywgRLWjVp+Xs6XkCxIxyYiy7hb8R63JyUrAGa4cJh3zwEolpu+Mi+oPw
-	lZxQzRCJOfgqGGInLugwCwkhma9gq1vh+Lq0gUmzSzzK4fkIaTEy2L2JyNAdPD393a83Wc49Vcl
-	x361XKgaavGUf39dqrgRxYJcKxb44342wKUpJLDdWaH1QClHyejw2DH5WKYYUDqo1v5uYNeD6mM
-	mw7osXU13gv8VC7OQdausa/Na2YtuLAq37eXCvmgQyE2nZsXAzfbxoJuoubwrm9odxz9LAAfgkW
-	PcZtTL+l6oIhKZYWIAb7RD2PiQQm3flTO5UzbzRNm84RgL8RC3TR7RIZNWVxhkg==
-X-Google-Smtp-Source: AGHT+IF1ochuXZ3IX5U0e55OXQGDw4nd3ipP9HyvaUP+4khivk9Hd9lYjetLf8OXfPWiIAhXj5+nig==
-X-Received: by 2002:a17:903:1ac6:b0:235:e942:cb9e with SMTP id d9443c01a7336-242c1ffb1e7mr217653265ad.9.1754976120361;
-        Mon, 11 Aug 2025 22:22:00 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aab0ffsm290686715ad.166.2025.08.11.22.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 22:21:59 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 79DBE8022A;
-	Tue, 12 Aug 2025 13:27:22 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: richard@nod.at,
-	chengzhihao1@huawei.com,
-	miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [RFC] mtd: ubi: skip programming unused bits in ubi headers
-Date: Tue, 12 Aug 2025 13:19:49 +0800
-Message-Id: <20250812051949.983040-1-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754976166; c=relaxed/simple;
+	bh=xKGtxk14qWbIxBnbnD7lvK6dle3f9/QDyUPqoK06VWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkNRtzmSUEjpO9yznz9TSx3hHt9rriiVIOynIb9f2FBjzTDz+sNntbJ6872H7sANuMS4x5Cy/QPNffW8EDIfP8UVMzRPoXClPyHB0EAqOBXBNbgEla+kd6fItRKVPwO0Qaf5ghOYHoO/a85+5leYTlHlpigJY5kTMPpyIjhbFk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OXvC01V1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C07u3a004660;
+	Tue, 12 Aug 2025 05:22:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=xKGtxk14qWbIxBnbnD7lvK6dle3f9/
+	QDyUPqoK06VWc=; b=OXvC01V1wgcAkEwFeDktK/qmKxIDK2dv77roheOf1O5KgS
+	QBTu8iEdRL/78+FJ6hQC3ZqxxYMpm1yJpv2cnMc3c7T4eKxaGWHTHcLM6VgRf30e
+	LIelJ0B4MOCnnxSMEqBVQW4aKFYxmI7HRX/fuHmCogsyC/cqbvtuaGWTlEmocsTp
+	oU9W0r+GJrd+yt2eC/bqqgIKnyXL2yvACPfgiX9MnPDW82l/5n6tDKZt9Ln3bW98
+	K1ZbpcANK72ZqwzJqU3DqCQkIpp63++QZurwoLtRw8bXixXWZ/LFT/L5wGbonNK9
+	HoFXIvBq8jDyU1t0lTnEYYSAKiQbrR97sqtl3PTQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrnvff8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 05:22:29 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57C5LTYV013997;
+	Tue, 12 Aug 2025 05:22:28 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrnvff4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 05:22:28 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57C1h7gx017588;
+	Tue, 12 Aug 2025 05:22:27 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3gman-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 05:22:27 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57C5MQwK27918598
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Aug 2025 05:22:26 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F55B2004B;
+	Tue, 12 Aug 2025 05:22:26 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B71B820040;
+	Tue, 12 Aug 2025 05:22:23 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.124.216.188])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 12 Aug 2025 05:22:23 +0000 (GMT)
+Date: Tue, 12 Aug 2025 10:52:19 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: maddy@linux.ibm.com, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
+Message-ID: <aJrPixEe8V-oFK_O@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
+References: <20250728055937.58531-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728055937.58531-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDA0OCBTYWx0ZWRfX+DH7CG0D2NIG
+ jZjplNYinTnZd7wV7j4zOM26wL1YCjt1KIeWZifMxulrUF9hL5cGEHCznd8534t/3HqN0RPNkXU
+ GmsdnQjzxr8j9fr0JLPzAG5NUL+Q4xi6F7FJeTKTavB8t0F+p0QiJThyAjotFoK513ibIHaNK3U
+ VtDzVcoOsnrQ6jOpsfmI/+WvPTtLcSFo6Kd0lhQYJB4m8yf2Vj0AQD/LSzJPJXO1BREKBzdgps9
+ m4eQAyZ/xQr5V9NrhDYAYS6dRvKWnZiVIf5p7R8Glh46llqG5WTxKvZ4G7c5bizL2GEcdwKzrWc
+ fFBPtMe1IPgImY45pbGd3lLN3PedWJUcctzHCgOdBpzbFbUu0X7GN+58F2JUCgttdiiGykpyPUz
+ riXd8C7jz1n2lY9rVyPZkEAPpTyHgoPVDigcFtAeSVL+7E9gIPmCf4EtweDIRB+hjm406fC8
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689acf95 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=ksViGgUnWK_QOdP0v_MA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: sFETTEih0as8YD_2vJo2jeMLMK5FdFwU
+X-Proofpoint-ORIG-GUID: 6p3ttzUjRn_RS9O2GgLzOmpTikUpQ5Vi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 mlxlogscore=742
+ malwarescore=0 clxscore=1015 adultscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120048
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+Hello,
 
-This patch prevents unnecessary programming of bits in ec_hdr and
-vid_hdr that are not used or read during normal UBI operation. These
-unused bits are typically already set to 1 in erased flash and do not
-need to be explicitly programmed to 0 if they are not used.
+Please do review this series and let me know if any changes are needed.
 
-Programming such unused areas offers no functional benefit and may
-result in unnecessary flash wear, reducing the overall lifetime of the
-device. By skipping these writes, we preserve the flash state as much
-as possible and minimize wear caused by redundant operations.
-
-This change ensures that only necessary fields are written when
-preparing UBI headers, improving flash efficiency without affecting
-functionality.
-
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/ubi/io.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mtd/ubi/io.c b/drivers/mtd/ubi/io.c
-index a4999bce435f..ccab4691b338 100644
---- a/drivers/mtd/ubi/io.c
-+++ b/drivers/mtd/ubi/io.c
-@@ -868,6 +868,7 @@ int ubi_io_write_ec_hdr(struct ubi_device *ubi, int pnum,
- 		return -EROFS;
- 	}
- 
-+	memset((char *)ec_hdr + UBI_EC_HDR_SIZE, 0xFF, ubi->ec_hdr_alsize - UBI_EC_HDR_SIZE);
- 	err = ubi_io_write(ubi, ec_hdr, pnum, 0, ubi->ec_hdr_alsize);
- 	return err;
- }
-@@ -1150,6 +1151,7 @@ int ubi_io_write_vid_hdr(struct ubi_device *ubi, int pnum,
- 		return -EROFS;
- 	}
- 
-+	memset((char *)p + ubi->vid_hdr_shift, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR_SIZE);
- 	err = ubi_io_write(ubi, p, pnum, ubi->vid_hdr_aloffset,
- 			   ubi->vid_hdr_alsize);
- 	return err;
--- 
-2.25.1
-
+Thanks,
+Gautam
 
