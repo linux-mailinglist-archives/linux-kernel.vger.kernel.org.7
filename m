@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-764537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99814B22451
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D7EB22449
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C197E1B660CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24D216C394
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD72EFD88;
-	Tue, 12 Aug 2025 10:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6242F0C4A;
+	Tue, 12 Aug 2025 10:08:47 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BA62EF651;
-	Tue, 12 Aug 2025 10:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C221D2EFD84;
+	Tue, 12 Aug 2025 10:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993324; cv=none; b=TtZEctbTrwlXVnmxtz6x493pYDQy8lBBUBQzI0AmH59mTR2BDTzasI73AdbZXeKz8Si9fIEjpJLZP7nDAZTh3qnXMYUkhGLecebHigDqVz4Jk711QUHTUVxAgh9YObm3QDyW13sE5e7OkwOdiIubYGDJ7wE/UmUHXHBZGpwpO78=
+	t=1754993326; cv=none; b=FsrgJzU3bpPwIyBXXx2Whj4whrODklVyst4tBib0LtzSslAAKb38Bgrzcs3BVRnuhd0lzZMwp7oEvzVL0L9jcxXFA3C8gUg2apB4ulCqqSOi6crXYXI1lzXA6EgSq08GxuWqwKZtaNrU18RawDyrf+QMHsWORU9GTcj9VFh/+SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993324; c=relaxed/simple;
-	bh=sDLN2BozXJb+Dv+rfdAAuoiT+Ufjq+r3/bi3B0ON6pw=;
+	s=arc-20240116; t=1754993326; c=relaxed/simple;
+	bh=boNUNTEbc1FZDsnH9y9PLw5Zh8iuulYiDkEv0attGC8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aGa/CzuTIEYNZMJbF90DHHCeIEmyVLbw7GXJvoclgXk785s1zGwWF1D7j6WEkf4IRKi8saAckWIHloUkURCR1tDk6EEExcSySuFEORulo9kRiJIpCfMCwCYgjtmCMaZ1KlxDlYmeWKE4uHLVYaQpHyvNYkiywPIgEFadw+kMtHo=
+	 MIME-Version:Content-Type; b=V3cmy8O8zlPZ34EdDuaZ5idttQ73BDCg2LX2PVGCjLyE5XWs+VPkazN7oY696oIHZVWNJU07c6C5caeYgHWrVGxfqeVMn5Dl/fUJMWN9hb30bgmbDtOtXIbEBYdIwZi82X8beLVeiwotCMzfgskiTG7tgSFT9f2Y5lPUm/vsgQ0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -43,9 +43,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
 	<kevin_chen@aspeedtech.com>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>
-Subject: [PATCH v4 1/2] dt-bindings: interrupt-controller: aspeed: Add parent compatibles and refine documentation
-Date: Tue, 12 Aug 2025 18:08:29 +0800
-Message-ID: <20250812100830.145578-2-ryan_chen@aspeedtech.com>
+Subject: [PATCH v4 2/2] Irqchip/ast2700-intc: add debugfs support and AST2700 INTC0/INTC1 routing/protection display
+Date: Tue, 12 Aug 2025 18:08:30 +0800
+Message-ID: <20250812100830.145578-3-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250812100830.145578-1-ryan_chen@aspeedtech.com>
 References: <20250812100830.145578-1-ryan_chen@aspeedtech.com>
@@ -58,226 +58,229 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-AST2700 contains two independent top-level interrupt controllers (INTC0,
-INTC1). Each occupies its own register space and handles different sets of
-peripherals. Above them, the PSP (CA35) GIC is the root interrupt
-aggregator. In hardware, INTC1 outputs are routed into INTC0, and INTC0
-outputs are routed into the GIC.
-
-Introduce distinct compatibles for these parent blocks so the DT can model
-the hierarchy and register space layout accurately:
-
-  - aspeed,ast2700-intc0  (parent node at 0x12100000)
-  - aspeed,ast2700-intc1  (parent node at 0x14c18000)
-
-The existing child compatible:
-
-  - aspeed,ast2700-intc-ic
-
-continues to describe the interrupt-controller instances within each INTC
-block (e.g. INTC0_0..INTC0_11 and INTC1_0..INTC1_5).
+AST2700 INTC0/INTC1 nodes ("aspeed,ast2700-intc0/1") not only
+include the interrupt controller child node ("aspeed,ast2700-intc-ic"),
+but also provide interrupt routing and register protection features.
+Adds debugfs entries for interrupt routing and protection status for
+AST2700 INTC0/INTC1.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- .../aspeed,ast2700-intc.yaml                  | 158 +++++++++++++-----
- 1 file changed, 115 insertions(+), 43 deletions(-)
+ drivers/irqchip/Kconfig            |   6 +
+ drivers/irqchip/Makefile           |   1 +
+ drivers/irqchip/irq-ast2700-intc.c | 174 +++++++++++++++++++++++++++++
+ 3 files changed, 181 insertions(+)
+ create mode 100644 drivers/irqchip/irq-ast2700-intc.c
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-index 55636d06a674..81304b53c112 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-@@ -10,6 +10,33 @@ description:
-   This interrupt controller hardware is second level interrupt controller that
-   is hooked to a parent interrupt controller. It's useful to combine multiple
-   interrupt sources into 1 interrupt to parent interrupt controller.
-+  Depend to which INTC0 or INTC1 used.
-+  INTC0 and INTC1 are two kinds of interrupt controller with enable and raw
-+  status registers for use.
-+  INTC0 is used to assert GIC if interrupt in INTC1 asserted.
-+  INTC1 is used to assert INTC0 if interrupt of modules asserted.
-+  +-----+   +---------+
-+  | GIC |---|  INTC0  |
-+  +-----+   +---------+
-+            +---------+
-+            |         |---module0
-+            | INTC0_0 |---module1
-+            |         |---...
-+            +---------+---module31
-+            |---....  |
-+            +---------+
-+            |         |     +---------+
-+            | INTC0_11| +---| INTC1   |
-+            |         |     +---------+
-+            +---------+     +---------+---module0
-+                            | INTC1_0 |---module1
-+                            |         |---...
-+                            +---------+---module31
-+                            ...
-+                            +---------+---module0
-+                            | INTC1_5 |---module1
-+                            |         |---...
-+                            +---------+---module31
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index c3928ef79344..9f6473bf4055 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -97,6 +97,12 @@ config AL_FIC
+ 	help
+ 	  Support Amazon's Annapurna Labs Fabric Interrupt Controller.
  
- maintainers:
-   - Kevin Chen <kevin_chen@aspeedtech.com>
-@@ -17,49 +44,70 @@ maintainers:
- properties:
-   compatible:
-     enum:
--      - aspeed,ast2700-intc-ic
-+      - aspeed,ast2700-intc0
-+      - aspeed,ast2700-intc1
- 
-   reg:
-     maxItems: 1
- 
--  interrupt-controller: true
-+  '#address-cells':
-+    const: 2
- 
--  '#interrupt-cells':
-+  '#size-cells':
-     const: 2
--    description:
--      The first cell is the IRQ number, the second cell is the trigger
--      type as defined in interrupt.txt in this directory.
--
--  interrupts:
--    maxItems: 6
--    description: |
--      Depend to which INTC0 or INTC1 used.
--      INTC0 and INTC1 are two kinds of interrupt controller with enable and raw
--      status registers for use.
--      INTC0 is used to assert GIC if interrupt in INTC1 asserted.
--      INTC1 is used to assert INTC0 if interrupt of modules asserted.
--      +-----+   +-------+     +---------+---module0
--      | GIC |---| INTC0 |--+--| INTC1_0 |---module2
--      |     |   |       |  |  |         |---...
--      +-----+   +-------+  |  +---------+---module31
--                           |
--                           |   +---------+---module0
--                           +---| INTC1_1 |---module2
--                           |   |         |---...
--                           |   +---------+---module31
--                          ...
--                           |   +---------+---module0
--                           +---| INTC1_5 |---module2
--                               |         |---...
--                               +---------+---module31
- 
-+  ranges: true
++config AST2700_INTC
++	tristate "AST2700 Interrupt Controller"
++	depends on ARCH_ASPEED
++	help
++	  Support AST2700 Interrupt Controller.
 +
-+patternProperties:
-+  "^interrupt-controller@":
-+    type: object
-+    description: Interrupt group child nodes
-+    additionalProperties: false
+ config ATMEL_AIC_IRQ
+ 	bool
+ 	select GENERIC_IRQ_CHIP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 23ca4959e6ce..eea0a8699204 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -88,6 +88,7 @@ obj-$(CONFIG_LS_EXTIRQ)			+= irq-ls-extirq.o
+ obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
+ obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o irq-aspeed-i2c-ic.o irq-aspeed-scu-ic.o
+ obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-intc.o
++obj-$(CONFIG_AST2700_INTC)		+= irq-ast2700-intc.o
+ obj-$(CONFIG_STM32MP_EXTI)		+= irq-stm32mp-exti.o
+ obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
+ obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
+diff --git a/drivers/irqchip/irq-ast2700-intc.c b/drivers/irqchip/irq-ast2700-intc.c
+new file mode 100644
+index 000000000000..7c7241539fe5
+--- /dev/null
++++ b/drivers/irqchip/irq-ast2700-intc.c
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * AST2700 Interrupt Controller
++ */
 +
-+    properties:
-+      compatible:
-+        enum:
-+          - aspeed,ast2700-intc-ic
++#include <linux/debugfs.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/seq_file.h>
 +
-+      reg:
-+        maxItems: 1
++/* INTC0 register layout */
++#define INTC0_PROT_OFFS           0x40
++#define INTC0_ROUTING_SEL0_BASE   0x200
++#define INTC0_ROUTING_GAP         0x100
++#define INTC0_GROUPS              4
 +
-+      interrupt-controller: true
++/* INTC1 register layout */
++#define INTC1_PROT_OFFS           0x00
++#define INTC1_ROUTING_SEL0_BASE   0x80
++#define INTC1_ROUTING_GAP         0x20
++#define INTC1_GROUPS              6
 +
-+      '#interrupt-cells':
-+        const: 2
-+        description:
-+          The first cell is the IRQ number, the second cell is the trigger
-+          type.
++struct aspeed_intc_data {
++	const char                  *name;
++	u32                          prot_offs;
++	u32                          rout_sel0_base;
++	u32                          rout_gap;
++	unsigned int                 groups;
++};
 +
-+      interrupts:
-+        minItems: 1
-+        maxItems: 6
-+        description: |
-+          The interrupts provided by this interrupt controller.
++static const struct aspeed_intc_data aspeed_intc0_data = {
++	.name            = "INTC0",
++	.prot_offs       = INTC0_PROT_OFFS,
++	.rout_sel0_base  = INTC0_ROUTING_SEL0_BASE,
++	.rout_gap        = INTC0_ROUTING_GAP,
++	.groups          = INTC0_GROUPS,
++};
 +
-+      interrupts-extended:
-+        minItems: 1
-+        maxItems: 6
-+        description: |
-+          This property is required when defining a cascaded interrupt controller
-+          that is connected under another interrupt controller. It specifies the
-+          parent interrupt(s) in the upstream controller to which this controller
-+          is connected.
++static const struct aspeed_intc_data aspeed_intc1_data = {
++	.name            = "INTC1",
++	.prot_offs       = INTC1_PROT_OFFS,
++	.rout_sel0_base  = INTC1_ROUTING_SEL0_BASE,
++	.rout_gap        = INTC1_ROUTING_GAP,
++	.groups          = INTC1_GROUPS,
++};
 +
-+    oneOf:
-+      - required: [interrupts]
-+      - required: [interrupts-extended]
++struct aspeed_intc {
++	void __iomem                    *base;
++	const struct aspeed_intc_data   *data;
++#ifdef CONFIG_DEBUG_FS
++	struct dentry                   *dbg_root;
++#endif
++};
 +
-+    required:
-+      - compatible
-+      - reg
-+      - interrupt-controller
-+      - '#interrupt-cells'
- 
- required:
-   - compatible
-   - reg
--  - interrupt-controller
--  - '#interrupt-cells'
--  - interrupts
- 
- additionalProperties: false
- 
-@@ -68,19 +116,43 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     bus {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
++#ifdef CONFIG_DEBUG_FS
++static int aspeed_intc_regs_show(struct seq_file *s, void *unused)
++{
++	struct aspeed_intc *intc = s->private;
++	const struct aspeed_intc_data *d = intc->data;
++	void __iomem *base = intc->base;
++	unsigned int i;
 +
-+      intc0: interrupt-controller@12100000 {
-+        compatible = "aspeed,ast2700-intc0";
-+        reg = <0 0x12100000 0 0x4000>;
-+        ranges = <0x0 0x0 0x0 0x12100000 0x0 0x4000>;
-+        #address-cells = <2>;
-+        #size-cells = <2>;
++	for (i = 0; i < d->groups; i++) {
++		void __iomem *b = base + d->rout_sel0_base + i * 4;
++		u32 r0 = readl(b);
++		u32 r1 = readl(b + d->rout_gap);
++		u32 r2 = readl(b + 2 * d->rout_gap);
 +
-+        intc0_11: interrupt-controller@1b00 {
-+          compatible = "aspeed,ast2700-intc-ic";
-+          reg = <0 0x12101b00 0 0x10>;
-+          #interrupt-cells = <2>;
-+          interrupt-controller;
-+          interrupts = <GIC_SPI 192 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+                       <GIC_SPI 193 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+                       <GIC_SPI 194 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+                       <GIC_SPI 195 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+                       <GIC_SPI 196 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+                       <GIC_SPI 197 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+        };
-+      };
++		seq_printf(s, "ROUTE[%u]: 0x%08x 0x%08x 0x%08x\n", i, r0, r1, r2);
++	}
++	return 0;
++}
 +
-+      intc1: interrupt-controller@14c18000 {
-+        compatible = "aspeed,ast2700-intc1";
-+        reg = <0 0x14c18000 0 0x400>;
-+        ranges = <0x0 0x0 0x0 0x14c18000 0x0 0x400>;
-         #address-cells = <2>;
-         #size-cells = <2>;
- 
--        interrupt-controller@12101b00 {
--            compatible = "aspeed,ast2700-intc-ic";
--            reg = <0 0x12101b00 0 0x10>;
--            #interrupt-cells = <2>;
--            interrupt-controller;
--            interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+        intc1_0: interrupt-controller@100 {
-+          compatible = "aspeed,ast2700-intc-ic";
-+          reg = <0x0 0x100 0x0 0x10>;
-+          #interrupt-cells = <2>;
-+          interrupt-controller;
-+          interrupts-extended = <&intc0_11 0 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-         };
-+      };
-     };
++static int aspeed_intc_regs_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, aspeed_intc_regs_show, inode->i_private);
++}
++
++static const struct file_operations aspeed_intc_regs_fops = {
++	.owner    = THIS_MODULE,
++	.open     = aspeed_intc_regs_open,
++	.read     = seq_read,
++	.llseek   = seq_lseek,
++	.release  = single_release,
++};
++
++static int aspeed_intc_prot_show(struct seq_file *s, void *unused)
++{
++	struct aspeed_intc *intc = s->private;
++	const struct aspeed_intc_data *d = intc->data;
++	u32 prot = readl(intc->base + d->prot_offs);
++
++	seq_printf(s, "%s_PROT: 0x%08x\n", d->name, prot);
++	return 0;
++}
++
++static int aspeed_intc_prot_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, aspeed_intc_prot_show, inode->i_private);
++}
++
++static const struct file_operations aspeed_intc_prot_fops = {
++	.owner    = THIS_MODULE,
++	.open     = aspeed_intc_prot_open,
++	.read     = seq_read,
++	.llseek   = seq_lseek,
++	.release  = single_release,
++};
++#endif /* CONFIG_DEBUG_FS */
++
++static int aspeed_intc_probe(struct platform_device *pdev)
++{
++	const struct aspeed_intc_data *data;
++	struct aspeed_intc *intc;
++	struct resource *res;
++
++	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
++
++	intc = devm_kzalloc(&pdev->dev, sizeof(*intc), GFP_KERNEL);
++	if (!intc)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	intc->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(intc->base))
++		return PTR_ERR(intc->base);
++
++	intc->data = data;
++
++	platform_set_drvdata(pdev, intc);
++
++#ifdef CONFIG_DEBUG_FS
++	intc->dbg_root = debugfs_create_dir(dev_name(&pdev->dev), NULL);
++	if (intc->dbg_root) {
++		debugfs_create_file("routing", 0400, intc->dbg_root, intc,
++				    &aspeed_intc_regs_fops);
++		debugfs_create_file("protection", 0400, intc->dbg_root, intc,
++				    &aspeed_intc_prot_fops);
++	}
++#endif
++	return 0;
++}
++
++static void aspeed_intc_remove(struct platform_device *pdev)
++{
++#ifdef CONFIG_DEBUG_FS
++	struct aspeed_intc *intc = platform_get_drvdata(pdev);
++
++	if (intc && intc->dbg_root)
++		debugfs_remove_recursive(intc->dbg_root);
++#endif
++}
++
++static const struct of_device_id aspeed_intc_of_match[] = {
++	{ .compatible = "aspeed,ast2700-intc0", .data = &aspeed_intc0_data },
++	{ .compatible = "aspeed,ast2700-intc1", .data = &aspeed_intc1_data },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, aspeed_intc_of_match);
++
++static struct platform_driver aspeed_intc_driver = {
++	.probe   = aspeed_intc_probe,
++	.remove  = aspeed_intc_remove,
++	.driver  = {
++		.name           = "aspeed-ast2700-intc",
++		.of_match_table = aspeed_intc_of_match,
++	},
++};
++module_platform_driver(aspeed_intc_driver);
 -- 
 2.34.1
 
