@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-764198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3740B21FB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D5BB21FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A09504C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A988680CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB812D7803;
-	Tue, 12 Aug 2025 07:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F392E03F1;
+	Tue, 12 Aug 2025 07:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB48C4KB"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R5BpJJm8"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86381A9F99
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023DC2DEA90;
+	Tue, 12 Aug 2025 07:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984524; cv=none; b=ejk6sB9Ql0S3cNGtkr+Z969Aq9ovPlXAWtIQEC+WP3CjDfAQqrEtws1d9sGknCWpXLNcv8VS6JJ0To4QKinTd/O+wTe5VWMXgoGU2+v8MENxLn9+AVk046aWecR1OoD75mSaHmeeVN9w54FkAVxDY1e44Vi1Xs/3TtqOEqNSFwc=
+	t=1754984584; cv=none; b=M2XD3nagDBfbQ8jVlI7+Ilv9g64ntNb3zOBnkn4tT3hIYEAoeQFrcTxVjNojh9wVNG+XmZX97k2OUalsXz1/xXSOPTTw6d5wGdCLmp6t7vIVfsA87PDvKUeA/tFBsXl+/UH0KQDdtd527RTEe9dH8krOkvj46B0vVcqYpcqkp04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984524; c=relaxed/simple;
-	bh=+49DWXrfhN657dha6xI2fqhhRcYzq0kFnIT7YL3Gtew=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R+122+AioXOvxZHJN06vB4lc87MDU5gMj9hTnrP1ZrXCUTYsRrUXV1LLuPiUm6Tm+HfmeWJvK+lTEEWANjUmob0GuH9gkhQ/rb8u5P7sw+er2Et/JBiZ7jY+J0Eh+ach9wb8MuYiR3lslIKJCU7IuSVoM2VPrOWNROW57KHwroI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gB48C4KB; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-321a5d6d301so1480106a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 00:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754984522; x=1755589322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2usP4TJRBl0R4HFxzOwnETO15gJ9qQezUfLPVB9501c=;
-        b=gB48C4KBzIwvnmu2Ixjxqi+F1icgSou54MWnOnxOHfE7cw6OS/P+HFqY0rtoKLNZwM
-         h2iGXjGBOgKQDSEkbgvtIFA6sPns0QU43R7J684xgwQRpke6O2EWH72bTDUXJH2x3acF
-         CoqynaHP5icDHds1RYBKOlmquqsfaVF5l66lDM05nOiizmc9Tm0AmsC9Q/nJdg0xEFxi
-         5JNE/DWYQq3yWLwIXXJND4W3SzKstCDNPp3AbB6A/yGCBKjU3DUnfFjo57X9BX73319b
-         7cD9BpVza80rhfklAiHP9+wGdoHZLbbc+FwVITsQoSxwC++iHfB1PrO+XqfyScEkBhW+
-         1URA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754984522; x=1755589322;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2usP4TJRBl0R4HFxzOwnETO15gJ9qQezUfLPVB9501c=;
-        b=goyk9H/WqbeJotOfNujfNswdDvW736vZDMKIjbLOcI6CNJbDONvHkUzikIajZTdPLz
-         hjxiDNy0z6f1zm2c2mV6QlKaZJyJDoAroBTpyJTsdTwjsRmawvd/Tun3IqOqhig2CXea
-         m5S1SZTC1VeTOK9m1oRrmov8VjOUqRs5hXL5empG6T3msu5L16Yt/43NtICjOPOzcUng
-         IecrEHn4Rq1M4ofXuCUzna4vQRNoFqCT4BJh9PGRQiWA/mfvtJnw35sBK6/nG8R10IxX
-         jniuivJkhuGq1NGWkaZazPLC748nzeSEMxZipy+hlCyE+6lD4ffMEU9dGfkOh84u5crT
-         yu7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8yOBkHaf1/5VnfB0tpGtsCr0IamRTPLQD85edvzBnExvaBLljMyERpGNqKiApd9eKGtBUIo14NluEVD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKXOXIbclkiNXR87RH79VlD3pY+YMBLK7KTgNV3x+JTuFz/qF+
-	thZcwulXGT657tqiY+praGtkeApBheXWXiV5x6GWLPbeyz4KyhN2gyDY
-X-Gm-Gg: ASbGncvOfChWaQ2r5HwsLDGfQ18OHP52j+g9qJix+fxpM5O74cm0YnQJMuc9lVyqT8K
-	A2hXkgMLOn3Ek0MU/M/RLHqymcimGdnB6Y3zuJRRx9YbH3KJ/kgF2YIOPtrxeW9+iTlqiSNrgDy
-	ERh/INKqLNmZcSgu2nsgSEh1G/T3ubvcBYpSuBmJSNUow9JpSt7i/I0geNTZKCOizcuemXzxFGG
-	eBOUpkjvdmSbpTVVteQ1r+RTuTdmL2jVzsEFzbikKGM3xA8/P5AotMq2Ryuo6b+3tEqmRE/WACP
-	zF1Lc0fZPntg/hIXqDFQ3gOa25tHwpDgXBFB36IDMsp9qWPnE9R6MylvcOGKVv7gn0HqroWGsvZ
-	BBpq0+lFZeA9FyK4li2tQZnJ8Wyq6xLIwBM4XD/belQ==
-X-Google-Smtp-Source: AGHT+IFG26EXpuER/wCjLeHOwcnArS39F+L5FUFGkrr1EOswZWiAUtIlDmGAln1pS7Xn+ypZt9hzxQ==
-X-Received: by 2002:a17:90a:d603:b0:321:1680:e056 with SMTP id 98e67ed59e1d1-321839ec009mr23028178a91.9.1754984521824;
-        Tue, 12 Aug 2025 00:42:01 -0700 (PDT)
-Received: from localhost.localdomain ([2408:80e0:41fc:0:fe29:0:2:4699])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321c25f3063sm1234347a91.32.2025.08.12.00.41.55
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 12 Aug 2025 00:42:01 -0700 (PDT)
-From: yaozhenguo <yaozhenguo1@gmail.com>
-X-Google-Original-From: yaozhenguo <yaozhenguo@jd.com>
-To: tglx@linutronix.de,
-	yaoma@linux.alibaba.com,
-	akpm@linux-foundation.org
-Cc: max.kellermann@ionos.com,
-	lihuafei1@huawei.com,
-	yaozhenguo@jd.com,
-	linux-kernel@vger.kernel.org,
-	ZhenguoYao <yaozhenguo1@gmail.com>
-Subject: [PATCH] watchdog/softlockup: fix wrong output when watchdog_thresh < 3
-Date: Tue, 12 Aug 2025 15:41:32 +0800
-Message-Id: <20250812074132.27810-1-yaozhenguo@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1754984584; c=relaxed/simple;
+	bh=XuudU9Ut/rVqcvvSE0KR5roBjHUmIGtceSLksVXDWrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jiTmBy7sinkhpiYiqFOdP/EFFfxrPW91iO/590dhQ3vffqregPa+iJscqRZGsubwo3btNkrxjFCT2RESDIzR7rTR3BjH/d2PHVU7H4spq1DdTEoF7eSo3EDh2jqtO0CsOcOEyQmXg9RYbQwfut1D9PyG9RK1B9MaZKZnwWIfTEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R5BpJJm8; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=pRjC9shHMyqHQbJMoHIYvO4XEWMGERwA2pE61iqgDIM=; b=R5BpJJm87tPddpxrOx/yjRIH2a
+	qgqjrz/o3GGfX3bVjsixGaAWeiVyUrLenI70nW8ioHf2airsBbaoAM0x7ad995jTuHD10Csbqjrjw
+	+6VCj8opZqAF+Itoo3QkhwCa0Ggq58Rv/tTb3JJC3T/k7U2xeNp4RZtGIvR75QT9xbVkjIYFxTw2n
+	TWL9e4bBMxGb9BaiphnnCHHPTiavCI0ot+/VfJN07tGpgWrec8aPGO9Lll5rExvfEfx9Llujw76/Y
+	5bgcokK/50ueGojJgJOojTaFULyc3d5PgqbtDkWtdwcbby7M74gmMACpE1w4uPlapjBWtdZa6CRZu
+	D05ZeI+Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uljeh-0000000FjYW-3OOT;
+	Tue, 12 Aug 2025 07:42:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C8FA33002C5; Tue, 12 Aug 2025 09:42:46 +0200 (CEST)
+Date: Tue, 12 Aug 2025 09:42:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Matt Wu <wuqiang.matt@bytedance.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 8/8] hrtimer: Remove hrtimer_clock_base::get_time
+Message-ID: <20250812074246.GC4067720@noisy.programming.kicks-ass.net>
+References: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
+ <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
 
-From: ZhenguoYao <yaozhenguo1@gmail.com>
+On Tue, Aug 12, 2025 at 08:08:16AM +0200, Thomas Weißschuh wrote:
 
-When watchdog_thresh is below 3, sample_period will be less than 1 second.
-So the following output will print when softlockup:
+> @@ -76,42 +77,34 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =
+>  		{
+>  			.index = HRTIMER_BASE_MONOTONIC,
+>  			.clockid = CLOCK_MONOTONIC,
+> -			.get_time = &ktime_get,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_REALTIME,
+>  			.clockid = CLOCK_REALTIME,
+> -			.get_time = &ktime_get_real,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_BOOTTIME,
+>  			.clockid = CLOCK_BOOTTIME,
+> -			.get_time = &ktime_get_boottime,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_TAI,
+>  			.clockid = CLOCK_TAI,
+> -			.get_time = &ktime_get_clocktai,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_MONOTONIC_SOFT,
+>  			.clockid = CLOCK_MONOTONIC,
+> -			.get_time = &ktime_get,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_REALTIME_SOFT,
+>  			.clockid = CLOCK_REALTIME,
+> -			.get_time = &ktime_get_real,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_BOOTTIME_SOFT,
+>  			.clockid = CLOCK_BOOTTIME,
+> -			.get_time = &ktime_get_boottime,
+>  		},
+>  		{
+>  			.index = HRTIMER_BASE_TAI_SOFT,
+>  			.clockid = CLOCK_TAI,
+> -			.get_time = &ktime_get_clocktai,
+>  		},
+>  	},
+>  	.csd = CSD_INIT(retrigger_next_event, NULL)
+> @@ -1253,7 +1246,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
+>  	remove_hrtimer(timer, base, true, force_local);
+>  
+>  	if (mode & HRTIMER_MODE_REL)
+> -		tim = ktime_add_safe(tim, base->get_time());
+> +		tim = ktime_add_safe(tim, __hrtimer_cb_get_time(base->clockid));
+>  
+>  	tim = hrtimer_update_lowres(timer, tim, mode);
+>  
+> @@ -1588,6 +1581,29 @@ static inline int hrtimer_clockid_to_base(clockid_t clock_id)
+>  	}
+>  }
+>  
+> +static ktime_t __hrtimer_cb_get_time(clockid_t clock_id)
+> +{
+> +	switch (clock_id) {
+> +	case CLOCK_REALTIME:
+> +		return ktime_get_real();
+> +	case CLOCK_MONOTONIC:
+> +		return ktime_get();
+> +	case CLOCK_BOOTTIME:
+> +		return ktime_get_boottime();
+> +	case CLOCK_TAI:
+> +		return ktime_get_clocktai();
 
-CPU#3 Utilization every 0s during lockup
+It would've been nice if these had the same order as the other array.
 
-Fix this by changing time unit from seconds to milliseconds.
-
-Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
----
- kernel/watchdog.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 80b56c002c7f..9c7134f7d2c4 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -455,17 +455,17 @@ static void print_cpustat(void)
- {
- 	int i, group;
- 	u8 tail = __this_cpu_read(cpustat_tail);
--	u64 sample_period_second = sample_period;
-+	u64 sample_period_msecond = sample_period;
- 
--	do_div(sample_period_second, NSEC_PER_SEC);
-+	do_div(sample_period_msecond, NSEC_PER_MSEC);
- 
- 	/*
- 	 * Outputting the "watchdog" prefix on every line is redundant and not
- 	 * concise, and the original alarm information is sufficient for
- 	 * positioning in logs, hence here printk() is used instead of pr_crit().
- 	 */
--	printk(KERN_CRIT "CPU#%d Utilization every %llus during lockup:\n",
--	       smp_processor_id(), sample_period_second);
-+	printk(KERN_CRIT "CPU#%d Utilization every %llums during lockup:\n",
-+	       smp_processor_id(), sample_period_msecond);
- 
- 	for (i = 0; i < NUM_SAMPLE_PERIODS; i++) {
- 		group = (tail + i) % NUM_SAMPLE_PERIODS;
--- 
-2.43.5
-
+> +	default:
+> +		WARN(1, "Invalid clockid %d. Using MONOTONIC\n", clock_id);
+> +		return ktime_get();
+> +	}
+> +}
 
