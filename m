@@ -1,129 +1,174 @@
-Return-Path: <linux-kernel+bounces-764369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED71B22236
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31160B22239
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24463B2EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B346E4FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A22E611D;
-	Tue, 12 Aug 2025 08:55:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4DC2E62C8;
+	Tue, 12 Aug 2025 08:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlhMGelf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E0A1388
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8F42E1C74;
+	Tue, 12 Aug 2025 08:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988905; cv=none; b=EQYvm5zGe0vMbN7qmL9TvDydBvjp6LorCmuJVn5vAlh6gFsZx9VoUMvLQm0i2jZwkJiw3Zldl1WYK+MuAgwOpVNnKVyimJx/j7A8f8yXl/k7LI0O/fmsufdlcOY4RYLGxoA6NYmAlrlV9ZCgD9swQcWECXs6lerzq6NaV76GxVs=
+	t=1754988912; cv=none; b=D7Z6fcOYqzLFuxko3KJLheAX+klkzBbTzNJKcXaiRSsoJbHLcGt7v1nD8cylGrFVmGMN09M3B6QfTw8hbivbo7roDUOJwcA20J1++Hcwmrl42lj5TVNl/i7J4Jm4bzN7CEtAV80McSn6rD7riRYCNtB2MzvxXhTBo3iOM0NPfy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988905; c=relaxed/simple;
-	bh=5FAwIgCWwLvG75FTJ67snAUC94QQP3/IP6u91l7EtzY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m44R1evmEfPPA52oSeMZYgZcaQchlhd5QGEt1M0k9VdF8bvxNbLoYCs97c9dtYtLVIrXLiGWzwPH5swk7ZI5J3lDSVAMarDSlrLXbFRpZteRm/xr+NwtBp5LPjb8bB8yEeDgaEJeHckBbvaPUyXleaZ3RbmFT/3tniMbb30YkLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8816e763309so519749039f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:55:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754988903; x=1755593703;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+4Qvdr3epVEVndEgOI31ELS1GTkpXAidB7+cLopG1qk=;
-        b=NsnBEEuW4zkeio4RGgnK8f7siRxDMj11Bt6nNoPiE0lnckeHvAaetNoqm2RFmCOIHs
-         uy+OSi3intrtycwAoUld8dLQVncE8UMLntU7/bkGPpBgX8LQQlap8WHNc7ypW22mCoW1
-         NWshkcwu/8JXClCve86Zelh1pkVVGw1NXHmHY+JU4e1UBZkoxESJq4bbvo6menD5+BE7
-         JrLQUtKLGWiGcVwrP+UqcnITydPWh/6pMUtHPt1WogPqMbhc4r7Ca3T9uoZVowQuS2j/
-         RjgVYP+XMIB9BYdOQLfB/pZqpYEWyvq6cputwleOPD9o9aaRu+p/b446PcG5PxVbvIHT
-         COcg==
-X-Gm-Message-State: AOJu0YwJ76W4D5bcysofphxdX83VwdSGG8lO7wMwvzLakMQc1dLaMvXT
-	sR/NuIhv+qdRLitO+Sk7Hr9FQt95uxT4qCAdcyXtLGOfunjyB4twPbMUGz2Sv2UZsirHQiVVJ79
-	0FSRLmhUW96AYqZp/wMu0s15DkluqvCdaR+H7pH01UuRWSxle2vtB64/Co4o=
-X-Google-Smtp-Source: AGHT+IFgaGYtyNYhhextw5nsjFa8tJpzkF65+NM3DLpTAlC9zZE+TGzK3PRs6MZ+0bnB6MfuF1iBhj/r2PYM9LMfkhHKlStaPdxu
+	s=arc-20240116; t=1754988912; c=relaxed/simple;
+	bh=D5p6Ycjb+TLwUgdojPUyJJLdzqDj0US7QUkvj3u+Yok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F0bHmi9HDVGHZ5wQb5K298axWIheMCayQF2lMXp6bTcURnwlA9V1jThKdU7V3JKsvN4Zcyn9B9vtgP0psbspc2mHrLe4wdH2jlbZgMMYmnwaNG/ffg2XppumCIY8+4JX0hHcuEKu3LA3L3lvq19s5Oj4ACAAo/k7DAr16PrcQfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlhMGelf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74246C4CEF0;
+	Tue, 12 Aug 2025 08:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754988912;
+	bh=D5p6Ycjb+TLwUgdojPUyJJLdzqDj0US7QUkvj3u+Yok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JlhMGelfVzXLX0u23DmiEy1PAw3Li3frBqx+eX25g2ZLSJ8GMcQ8ecdEOlqWLZCL6
+	 FmWY7MtUY1zzcXTKk+iZhFJoz+WE6CKzsMnVZz44XgeI8UJPglRLIPpsDhF2H139Kg
+	 KME4LaVDVaYTW2bbGDS6PcLbAhYpCmDzTjucEmf6zB7VuKiyTw1DkCePxSmoIju1oW
+	 qjITLhU1Y33oxrZhDgUKMQqD/lNTK1J2er71vT0cknB7SiAwN7x4K7w2tEJnUr3+uR
+	 8lYIrT8wcVYz6C61WnpgF/oQcCSj4d/T3qDDJqYCf404u7UMXSfzMelXwYl0cch636
+	 XFcxElEWFyD8Q==
+Message-ID: <4fee3870-f9d5-48e3-a5be-6df581d3e296@kernel.org>
+Date: Tue, 12 Aug 2025 10:55:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:150f:b0:87c:538b:2a3c with SMTP id
- ca18e2360f4ac-883f1278d0bmr3349742039f.14.1754988902981; Tue, 12 Aug 2025
- 01:55:02 -0700 (PDT)
-Date: Tue, 12 Aug 2025 01:55:02 -0700
-In-Reply-To: <20250812040733-mutt-send-email-mst@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689b0166.050a0220.7f033.0116.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mst@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: pci: brcmstb: Add rp1-nexus node to fix DTC
+ warning
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ kwilczynski@kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, iivanov@suse.de,
+ svarbanov@suse.de, mbrugger@suse.com,
+ Jonathan Bell <jonathan@raspberrypi.com>, Phil Elwell <phil@raspberrypi.com>
+Cc: kernel test robot <lkp@intel.com>
+References: <20250812085037.13517-1-andrea.porta@suse.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250812085037.13517-1-andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 12/08/2025 10:50, Andrea della Porta wrote:
+> The devicetree compiler is complaining as follows:
+> 
+> arch/arm64/boot/dts/broadcom/rp1-nexus.dtsi:3.11-14.3: Warning (unit_address_vs_reg): /axi/pcie@1000120000/rp1_nexus: node has a reg or ranges property, but no unit name
+> /home/andrea/linux-torvalds/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: pcie@1000120000: Unevaluated properties are not allowed ('rp1_nexus' was unexpected)
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in virtio_transport_send_pkt_info
+Please trim the paths.
 
-DEBUG: zerocopy_fill_skb_from_iter: final skb->len=0, skb->data_len=0
-DEBUG: virtio_transport_fill_skb returned err=0, skb->len=0
-------------[ cut here ]------------
-'send_pkt()' returns 0, but 65536 expected
-WARNING: CPU: 0 PID: 5984 at net/vmw_vsock/virtio_transport_common.c:435 virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:433
-Modules linked in:
-CPU: 0 UID: 0 PID: 5984 Comm: syz.0.17 Not tainted 6.17.0-rc1-syzkaller-g53e760d89498-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:virtio_transport_send_pkt_info+0xd11/0xf00 net/vmw_vsock/virtio_transport_common.c:433
-Code: 0f 0b 90 bd f2 ff ff ff eb bc e8 0a bf 64 f6 c6 05 ba 87 32 04 01 90 48 c7 c7 80 d8 b8 8c 44 89 f6 4c 89 ea e8 c0 4d 28 f6 90 <0f> 0b 90 90 e9 e1 fe ff ff e8 e1 be 64 f6 90 0f 0b 90 e9 c5 f7 ff
-RSP: 0018:ffffc900029cf530 EFLAGS: 00010246
-RAX: 3eb3238673451c00 RBX: 0000000000010000 RCX: ffff888034db0000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: ffffffff8f879d50 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfa1ec R12: dffffc0000000000
-R13: 0000000000010000 R14: 0000000000000000 R15: ffff88804fdd20a4
-FS:  00007f24a46d96c0(0000) GS:ffff88808d211000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000020000003f000 CR3: 0000000048de9000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- virtio_transport_stream_enqueue net/vmw_vsock/virtio_transport_common.c:1118 [inline]
- virtio_transport_seqpacket_enqueue+0x143/0x1c0 net/vmw_vsock/virtio_transport_common.c:846
- vsock_connectible_sendmsg+0xac7/0x1050 net/vmw_vsock/af_vsock.c:2140
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x52d/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmmsg+0x227/0x430 net/socket.c:2757
- __do_sys_sendmmsg net/socket.c:2784 [inline]
- __se_sys_sendmmsg net/socket.c:2781 [inline]
- __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2781
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f24a378ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f24a46d9038 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00007f24a39b5fa0 RCX: 00007f24a378ebe9
-RDX: 0000000000000001 RSI: 0000200000000100 RDI: 0000000000000004
-RBP: 00007f24a3811e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000024008094 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f24a39b6038 R14: 00007f24a39b5fa0 R15: 00007ffcbd16bc88
- </TASK>
+> 
+> Add the optional node that fix this to the DT binding.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506041952.baJDYBT4-lkp@intel.com/
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> index 812ef5957cfc..7d8ba920b652 100644
+> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> @@ -126,6 +126,15 @@ required:
+>  allOf:
+>    - $ref: /schemas/pci/pci-host-bridge.yaml#
+>    - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: brcm,bcm2712-pcie
+> +    then:
+> +      properties:
+> +        rp1_nexus:
+
+No, you cannot document post-factum... This does not follow DTS coding
+style.
+
+Also:
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+... and nodes should be anyway defined in top-level and only customized
+per variant. I am surprised that DTS patch carries a reviewed tag,
+because it was never checked/tested :/
+
+> +          $ref: /schemas/misc/pci1de4,1.yaml
+>    - if:
+>        properties:
+>          compatible:
 
 
-Tested on:
-
-commit:         53e760d8 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=17794af0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12ad8c34580000
-
+Best regards,
+Krzysztof
 
