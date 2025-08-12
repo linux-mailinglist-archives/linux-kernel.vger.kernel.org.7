@@ -1,126 +1,176 @@
-Return-Path: <linux-kernel+bounces-763946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862ECB21BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:57:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E43B21BDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DA147B4DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47893461DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE002DE6F1;
-	Tue, 12 Aug 2025 03:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFBE2DCF44;
+	Tue, 12 Aug 2025 03:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Owh/9vCF"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iIs9rAbA"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013005.outbound.protection.outlook.com [40.107.44.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359361DF27F;
-	Tue, 12 Aug 2025 03:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754971048; cv=none; b=Uk92MvgjtbyqqjswUYAwzLq4YZuVCFCKMGWieilkGXP0x4jexmzZ+l6iHhmIzZU2flfSuAqGy+8BpUeztonKv3PVykLodk1QhnyVzhJobuaLebwPOSwYTtpt9cxcAg62BmLRWcC0OWdOFzkpmFwXY4rkPNTsxlykl3oYdow1uEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754971048; c=relaxed/simple;
-	bh=1u6CtnYrRlSWb3/FRIHoEst584jU/lPlU6Z3EO67IJA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=NiqdKRT/T61UYccij7c5kSxXeXSfyl6HLP5qLAuBmwpk6ErfhdKxg5hnD7pG1DNAqu8vKEJ4GVylGa2xk6bml/GGxIgdk1mHpvP1PVapVxIYyWVF2rYcBmc50/yvRYmf8/XQL6RVJY6I6893T0VAtj1J4yYHUWy72/nyHc3ATrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Owh/9vCF; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7426c44e014so4181510b3a.3;
-        Mon, 11 Aug 2025 20:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754971046; x=1755575846; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oHPrTUit6799Ukyl327yHbnkbr4IJYMNh4FvhRAhqPE=;
-        b=Owh/9vCFdMoz6hNAAsHulGOCcCLVHxgsaxiZa2ayxcfhVYUzL9otbxIjBhMYUI9U8E
-         qK5iL8OC68SUM4WyS39wUsEJuZPjtJ9nU+UQzun+/wgF5cbET8A6+s9UsjKeU2WCtdhK
-         Q++rlHEZXWCAt9g6XtZH2bSWh9eUUaTEv+9T+6Rx9SVXaWhwxcFXCPNbiF08p+kv2VvR
-         3a5XxNk44jnvpYvD6ztdlhncFleTih9ONf+BP+uhRhaVA1PZF8ycwOEOBPNAOW3gRsV9
-         5Ug3302IXxIN8HNb7IRrw5sObidCInc5gntolvqyZQMIWUToy206Z7YEwAhSDl5Xz1KQ
-         uT/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754971046; x=1755575846;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oHPrTUit6799Ukyl327yHbnkbr4IJYMNh4FvhRAhqPE=;
-        b=CO/ESOtXk85D0NeS9vTArAni5oE1Y6nvUoe1o465QaaDqgU2tHYlBdWx0krF8SI/37
-         SvTSVmmcHjARlckziWkdVl7Cz9BRtGtjwfUIWLpmx7bSgfjLiluX3LwLbtUwHkZCbBKB
-         8p5yc0g8jsrJOQEDHdGItziXfU7+WIMmrhngRkFHLlcwDopC2pMhjQ2ArbYnFMFZMVcB
-         zOJNZy78Q2sEq21CpojN4L48OZnkb3rBUL1Cku6fxxqe2D0/s6rR1hEWEU/jnOkTDcKx
-         a62VFKZdtlkz8XV7nHfn37TeBLetZhlAHYrIdXFdvhZabI4C7CTBOdsPTIWxTfdS2mV0
-         EiKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpdTlAfblxMDTuo/zZNsV0zanZzDxH7rI+9XwQ1fOWY73DmSTq8/7pz5G3Kb9rrkNSsjDhZHwCkT+0JLToAw==@vger.kernel.org, AJvYcCV4DGNoQtpSDYIpzu87g0ywZB9B7JRv/NtqHjAgR8AB1kmx7w/vm4LUm1YrxrItB12knVEzJteh99DZlQ==@vger.kernel.org, AJvYcCVusMpXGWjFjt9Vwcdx2KxcpYprkHVPFmxfJc7JEOK/QphU5lP47H3672K6zXRMQmWCTpNlEkW4EIqAPyP5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDR3Ym6HeT9jocXDqa2nR7MtlHUvA9RyF67gS/u1yYqhvGutVR
-	lyLKV6Jp1mqrW17GUBC6BT4tkeoUdRiQH/1bEoPuT0dsslmSHQGuG0br
-X-Gm-Gg: ASbGnctkxutF6J6WNGI39dwbLLo4mZM5YdJFGllX7DprjWiu6huE7LVI5landJWHwVe
-	GGVe/fIkWy1O/Dr4tzW5i8iWtWEY2sHuduhvWQ8ZONoBBjZ4PJw0WcK/CPWKPgLM09ZCvliqDYd
-	7sJY6ZJ24rpWA6CHeEWJAE6+BzshGqCN+ua3VQ/RwP7amaFuCn2vosKnF+SS4bA+VdvlswdA/VP
-	CMV4hJGz31NkmgIy0yy3vxjW1HTCKbH1Hbij9GpfEtkKUtbnXIQhb0WZNpcUTWbSB96fC5Gm48r
-	HhtLx5TjvPIRjfXRy7P8v3CbuuVVwm1gtR2ufUHaHg4isSPsPDmCi7sa3i+BHPPPL/snr//S8df
-	2DApsMqpL190kE74=
-X-Google-Smtp-Source: AGHT+IEkniR3HqY/dwK8Kl26I13c00NtfCllhZC4xMwWhoDZe02+yOvV18spWIGeG2IlgEKVjtPGFg==
-X-Received: by 2002:a05:6a00:4b14:b0:76b:dee5:9af4 with SMTP id d2e1a72fcca58-76e0def6cd0mr2882742b3a.13.1754971046534;
-        Mon, 11 Aug 2025 20:57:26 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfe50c8sm28095622b3a.120.2025.08.11.20.57.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 20:57:25 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, David Hildenbrand <david@redhat.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
-In-Reply-To: <hp2wzpu3bgwqyw6almor2x6exgx7t76kch4uec5fbh3xw6sy5w@p6bvhcdhpyea>
-Date: Tue, 12 Aug 2025 09:22:30 +0530
-Message-ID: <87frdx5h8h.fsf@gmail.com>
-References: <20250811084113.647267-1-kernel@pankajraghav.com> <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b> <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com> <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com> <hp2wzpu3bgwqyw6almor2x6exgx7t76kch4uec5fbh3xw6sy5w@p6bvhcdhpyea>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C6E1E1C22;
+	Tue, 12 Aug 2025 03:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754970877; cv=fail; b=La+RJHjt3vCWi7mJHCI6Lu+ceGjWz9t+/7KxNv8iVMR+bTwi6/YK3qr0tmwljdduE7FnQtjaCcL5tBsUyAwDsbQc8056ozhOjTdiQg4ZZT1trk4jLs+IRlxkkVTcyEPVMZ5Wcgdnh23HlWjrTPiqPpJISHplHrJvEqVTxJseWXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754970877; c=relaxed/simple;
+	bh=wLojaKhshPaZh/a3MlEKHLwOeSfeIXV6wYeLrWcGcrM=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BMTzq7npYQZ/7nmr9qldQuQ+iGdl0j3zHZYusS5O4HtSbvx8C0A6In0NgRxOTIHXCgHfdfJccX+UmLqSJcAnkvzWORZViRrCvfcF3EocH4DI2Zu/G7iosOtie/56iNC+QHvvL/9V2dEVXN8Ucm/XswGhHCOHZWAabPg3rdLigJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iIs9rAbA; arc=fail smtp.client-ip=40.107.44.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aRJ0PSGqI1zDBhRtsZBRzMdGWnLR8H48lNq5ipmzFStUqh6+rYZoZk9eN8XyFCM6/rnuW/xWW9LAHmJYvxowJeDDbe9PuAD3BShD+auWYK9nG3Biom86pnwmmcH+feBfdCfJJ6qJv2BrDyRhVz6HzU+7fbPr7mDzKiJRBZ9EuN0SmubRmTVe+mR8EiKuIZX8qn5XRX/e1Qcugjqbm7CfeaXlL7dqtsPGCLk4Kxu7XfVkg04MzUJRmVkx1CLn3DeW25G7b6oOCux0Cz5GTuTqveOPYkSJuP00uY5xz6zRnZqM0Q1lUbM3lZula2T22oJ0y4y9Xomgl4a/9NowIPisiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3iZ9gb8NRV7SnzlUd9qOJ1SaPxhdMiwCsjPvv3/8kFk=;
+ b=ovYey+h+pC3mkQ3xQ+SvT83s2ZldjjGQhqC1vA8IMTL4uwJMI+O5lHxdo0s82HTk+84j4ff+UTJebbdhsvR6eWfbsOwvAazfRvFoOp683uI13W8kNfVUUtsb1oKJu71ap2aBJVMaGdx1Z8+qAEHzk+7JZtDcYMTDeU8PBfBcvsDSba1xQyFJaeHXuh2IM44+8hDFDgaQ1HARcMqztqTSQo76dSFeDw+em4CqVMN76ZYAHYE0RJECPYig9PXLJKVg2HbxtiuMSStAHgBpCNT68+0440SLABKfE0W2Mnp1fHNlYhvVt4hbcn/pU4RJd0Qen/oC8ke30xp7Mf7iXnw0Ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3iZ9gb8NRV7SnzlUd9qOJ1SaPxhdMiwCsjPvv3/8kFk=;
+ b=iIs9rAbAr8dP9zEhKs5N+iZ/0QjwTclWnUD1AvgGHhzz7VlWsHB90XmsOjebDNKAsiTOJI9756Pk1ccTSDn+QjT2bKU8FeaoCw4mlFelUBDSdrHeis1FpJbiKTEPBWv4LdlCJ2J8JDfGUCfTKmvudR0q9tajWZAhM2/SCqGfEGVBhq5domUysXzZQ1Eg3GmBrHKTN077Dad5PDY9CInnvQXlpAf62QwjC3gHm/FmndENipUXFxLmAsSgBrcvR+pe4d8Un00X/gHAkTlApz5qcAZt/blrFymBe0QjNUd7kTFdSJg/11W+OWJVMgUzc+LbjyRJznJ933LveIB0F80ZAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYSPR06MB7046.apcprd06.prod.outlook.com (2603:1096:400:46b::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.21; Tue, 12 Aug 2025 03:54:30 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
+ 03:54:30 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Akihiro Tsukada <tskd08@gmail.com>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"jieqing.wang" <standback@126.com>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/3] media: use vmalloc_array and vcalloc to simplify code
+Date: Tue, 12 Aug 2025 11:53:01 +0800
+Message-Id: <20250812035310.497233-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGXP274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::32)
+ To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYSPR06MB7046:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d83c30b-2753-4793-7226-08ddd953f0f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8jl+gRzA4KA1VJPb0TEV8o3cuP9OaaUGoHZwN0UBv0W5xtxhG62Srlt//Jyh?=
+ =?us-ascii?Q?Jut5b7uEkRq4DdBtImYzvGOS8ItLCgj1zL6euM6P2mflrxRnsHiElDRMCzDi?=
+ =?us-ascii?Q?hx1qX46CLURa6+vMuCuVwBMgn5hfTY+sRooBmRjAKzW/Nm9fevzppA2C/feG?=
+ =?us-ascii?Q?98JapU2JZJTZMQ1JyNu93FChBtsfs7sOmDk2ut31XX1jPDKsQXq6zrgwfBkY?=
+ =?us-ascii?Q?ugDZRi8l6l0vLojEHAg4JMeRZyVE7v9/Yl3RJgUnvr49Pn6S7ol35z2VDhIZ?=
+ =?us-ascii?Q?G5cVAPHUPTZWcpQj0BXzhB9Q7Gs2Nl1oo0qiG09FUoLyPPLHdbgn2/z/ZFXv?=
+ =?us-ascii?Q?JPOuwdH/NJN4joZbj9SVCCYATSsbl3s5w+9vW3dfWNleTZlcvV+zW/RdiNGd?=
+ =?us-ascii?Q?1nrr9NpkeIfbFaRHDO/SEREDAWgmgOzipWEkHbPu4+gYmxmzE2tc3hR+qOVN?=
+ =?us-ascii?Q?TkkdF1EJeE3YK5VmdRT/GtfUMfqSDyHvp+kd7WT4Z2CfprFdSsW4IOOFh1Xc?=
+ =?us-ascii?Q?pPBLB2JIDFpeHCMsHXWDB/kx/0b7VjVi/clTQGjaPbaA+o8fMf072DaIKFcM?=
+ =?us-ascii?Q?yjug1LHKDVUa6NZAtDy/27QSR1dhOwRglA4UiTIoi5bZ6Ww8JIyyZ86/+NYD?=
+ =?us-ascii?Q?XdGL3Z8+ECC7EmTncqq6MhiXTskN37DAwltGz1voj6q8h0NB8ztbvpeKKS0z?=
+ =?us-ascii?Q?n8IO0QBkQPqxXZYFZ2zSewuX4pzXbcxxkqRkhs1ZfkDHZ11IyyfzJudxSlVH?=
+ =?us-ascii?Q?Qx8rESs0x04zPREmu40CR9KVd9OtcX++FNIi+S/MVUsv6TUWpfYC/myYHn8Y?=
+ =?us-ascii?Q?+i1/800T5dtgGLxxARwI7mcFg7TE0rvJj5sq5zmYd7PsjxSnzTdCxw6r6OHp?=
+ =?us-ascii?Q?J9o0O03AtIKfMRuEwYQr1j/HSFvEwTOrNrfyTnY9vkUVkbODD6PerIUXv+bb?=
+ =?us-ascii?Q?WJNRogepl4KSW/jqpRnM6vJv5iiw5yV7E0ooGR52Im84R2AL5kdz6m5b5OuV?=
+ =?us-ascii?Q?m1dNqnpsqjG/+CV4NO0n7C1khZLn6kI9YRW3Sg86emYfpvQ77CSUyRNDePbz?=
+ =?us-ascii?Q?FcUy2HGtwQ4rADx3mZxnWq8dmYbyNQ1bs0qmYgVJO522I4vjidCLeXJQxl4d?=
+ =?us-ascii?Q?NvahQw77egx1P0uBFoP9j4Cjnj8LsW+5+JXSI15x0MieaYPrWI/jWaLxzxzd?=
+ =?us-ascii?Q?2eQVTHoGM+5mVJWw80RgcbSSEV3KYYqfZw1REtZzwdFzxIrp1LdI+2VxMn2r?=
+ =?us-ascii?Q?xBzmVybV7UG2zgqprkLI02WIEYyXkX3rRAGGFEN4zdoTdZFlaqaPXldIKjHi?=
+ =?us-ascii?Q?x/r8JnMupgPVhmgfh75ZXYyCZMvjfA3C3A+BolQiu+8LSQwz69GW6g5vBSs0?=
+ =?us-ascii?Q?VWtbOSQXvMYgCJoKUJs20MxydpNlZzDDPQh6mRiesimrTSX0baDPAnz5SqWa?=
+ =?us-ascii?Q?FvINX099m/bRjnPDZGW8CT9UXZbQbEafJXWU4ZBkkFNjtiBCD1OyAw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bN1mgFmOAv22nWAhDlfBg8Usk7qyusxv7ELeE05PW/L2bsExVj0FYMP2D2jq?=
+ =?us-ascii?Q?XhEWMzfMP8+SnG9tfFhisgoPA+eZu00p/0v0lTXOmkJHj+ggzFRVf0LRgAZh?=
+ =?us-ascii?Q?cxK+4O3IuMc9LfpRxq0TqFWSR/dvMzsGvnE5oM0VeHWrOoFV8mTAbK4iKoy+?=
+ =?us-ascii?Q?vAcIbaVHCYGAGVi97McemAijheob9ENlpGKxEfKIs0NzGwrrx7L2RCS9iQr5?=
+ =?us-ascii?Q?hR134GBR/NnBzRR4ETkY3Gc5jLQoB5/H+IJIMqsHAX6GixgCgSAfW7JrMKJa?=
+ =?us-ascii?Q?Ca6pCsKVSGt8oYydYO+ADgEwPwJJaCH6LyviJoZ3KSSXD7TN4/WefA6AWtOP?=
+ =?us-ascii?Q?PH/KV6znH2OjUzX9M4jXseaC9UlItms3fgyTEDQLQUHcJSQCKLUJgPqzRzXh?=
+ =?us-ascii?Q?YJSqPyAyz4PBgjErCdn4PYzT2Kj6DP89kKoMYcV8qcT+HdAVjhGoH7T0llnJ?=
+ =?us-ascii?Q?Frmo4JEH6LXODfcRdRDo8J6A/77ALsKAHOB5wtbrIPqeLkSGgMQ6+Sk2aY1L?=
+ =?us-ascii?Q?+hGvsZbh+A1gT/rsKevTxq3uJ2v5/iIpcAXFUEY6twD9EI0s1f78vDBiK/Bc?=
+ =?us-ascii?Q?6gS2CPasFD4LeyA+bxz9MEOcBPbTCLRTlyI6UIZD6ynAr062isqAHdtlhVa4?=
+ =?us-ascii?Q?7hV+a0K/J373YBmUL22Q+rKu7JQIZu8HSBiCe95owu9ReMtsXTcKLmbutIbw?=
+ =?us-ascii?Q?MI/7lE3mBnHa5Jr+ww6pwAS5Bst/J1ZThpIQc85vsEqSPM0WfULe6kW1bE2V?=
+ =?us-ascii?Q?L2rLK0WPfuz6gd5eS5M2MC1Pix2wNZ+HYqyjisa3HtYNQtNL2Jom2toAffNT?=
+ =?us-ascii?Q?CQ22u3yB0Xi3eIH4UnLKSdH4lRb/rtUR8o2is48SdGZ0nOScIDJdWFmZDSlz?=
+ =?us-ascii?Q?RuzMU14VSg0Kz+gBT9MFMcd8c5LTnnd+0WUekcb4KuDVy0p2SOlWa1Tlm2e1?=
+ =?us-ascii?Q?dXe/pE3UTZIHNntxRpy978J3HjpDC1mA0+Exk288/iGXu/3w1v9d4SYhsCpz?=
+ =?us-ascii?Q?nmnLpc725Egzno1FVfDPSddlaNnorvDxwm22G7j6dvVII8hS9ejtPYuEh3W/?=
+ =?us-ascii?Q?umFhJSrFn+K9UNBjASmUrluwr51vb1/cbTco9NjGYZ4CPM9aH+QktFPcDCeM?=
+ =?us-ascii?Q?UanA30NjR7D5hQ6vFcWHWO52nPFOBeZrczAAX/FQgoJCLH9Y3a9ZdU4uMRup?=
+ =?us-ascii?Q?Kfmgwfrm59mrQi0GekrXQqNWmeFhJA6c3tlbajI686G/AwHi+bMCPD4BOXJi?=
+ =?us-ascii?Q?0dk0XQN4rarh/n8DArlEkMI5I2tldGfYBu0jliYPXZvA/uvIuE1lJD5r0hdu?=
+ =?us-ascii?Q?sf6WQCVmA+1Lb+s2cfhiSJpkgHcHiS1nf9BaoIxRXjNI/RxpOZDjBPCOiuC/?=
+ =?us-ascii?Q?hb03fz/hZJ1DjhqYGD4/lEDZS0fKa7VR03ddYtzFvSvIz43rDjL3pu8hjndC?=
+ =?us-ascii?Q?pKydrEplLazxdvDY9T5DyWEc9hXC8VzITR65uDTjB9EbMNHDN2Ucrf0NyHRk?=
+ =?us-ascii?Q?vRlDGCsSBN5AMExdvKjgTfgNgjxAkQ8agjyroiSaqDyNzLGfS8jIONbbpMtd?=
+ =?us-ascii?Q?TI7vS2j4d3y329tdzQPFehD7pPuEw1Xhh9lSMHDp?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d83c30b-2753-4793-7226-08ddd953f0f8
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 03:54:30.8319
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KdDV3XzXRSQpfetDJICCuWyOpSVd2ae8pQF3YRodQ5QnUVC2qck4/Z/lYJQHLcgGqX0o1IWQH7Q9ZA9zlsQN7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7046
 
-"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
+Remove array_size() calls and replace vmalloc(array_size()) with
+vmalloc_array() and vzalloc(array_size()) with vcalloc() to simplify
+the code.
 
->> > > > Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will always allocate
->> > > > the huge_zero_folio, and disable the shrinker so that huge_zero_folio is
->> > > > never freed.
->> > > > This makes using the huge_zero_folio without having to pass any mm struct and does
->> > > > not tie the lifetime of the zero folio to anything, making it a drop-in
->> > > > replacement for ZERO_PAGE.
->> > > > 
->> > > > I have converted blkdev_issue_zero_pages() as an example as a part of
->> > > > this series. I also noticed close to 4% performance improvement just by
->> > > > replacing ZERO_PAGE with persistent huge_zero_folio.
->> > > > 
->> > > > I will send patches to individual subsystems using the huge_zero_folio
->> > > > once this gets upstreamed.
->> > > > 
->> > > > Looking forward to some feedback.
->> > > 
->> > > Why does it need to be compile-time? Maybe whoever needs huge zero page
->> > > would just call get_huge_zero_page()/folio() on initialization to get it
->> > > pinned?
->> > 
->> > That's what v2 did, and this way here is cleaner.
->> 
->> Sorry, RFC v2 I think. It got a bit confusing with series names/versions.
->> 
->
-> Another reason we made it a compile time config is because not all
-> machines would want a PMD sized folio just for zeroing. For example,
-> Dave Hansen told in one of the early revisions that a small x86 VM would
-> not want this.
->
-> So it is a default N, and it will be an opt-in.
->
+Compile-tested only.
 
-I looked over the patches and I liked this design. This is much simpler
-and cleaner compared to the initial version. 
+Qianfeng Rong (3):
+  media: dvb-core: use vmalloc_array to simplify code
+  media: pt1: use vmalloc_array to simplify code
+  media: vivid: use vmalloc_array and vcalloc to simplify code
 
-Thanks!
--ritesh
+ drivers/media/dvb-core/dmxdev.c               | 4 ++--
+ drivers/media/dvb-core/dvb_demux.c            | 8 ++++----
+ drivers/media/pci/pt1/pt1.c                   | 2 +-
+ drivers/media/test-drivers/vivid/vivid-core.c | 6 +++---
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.34.1
+
 
