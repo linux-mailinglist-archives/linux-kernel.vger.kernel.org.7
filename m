@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-764226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB84B22023
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A03B2202A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C976828C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF64C188647A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65ED2E03F3;
-	Tue, 12 Aug 2025 07:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973FD2D8DA9;
+	Tue, 12 Aug 2025 08:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRwgGS3J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZLkIo9R/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028C2DF3D1;
-	Tue, 12 Aug 2025 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB942BD012;
+	Tue, 12 Aug 2025 08:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985588; cv=none; b=YIG7wa1tcr9gmx4lkbeSvyGT53fe1nvsyJpQtaqMwccDL4Q/JqVa3JH+dpTtx11e8/FX8KExsIoMclc1jl1TIoNBE/pqC1xPJJSxDOcMD/eqDs1REw4jXIjFTF6OZC0KuSvjkTDYdsXD88i/kHOTqNny30FkbPzi3pT0O0eHSok=
+	t=1754985655; cv=none; b=OyUSdjJuDX4RbiaeVk6T8GD2lgB9+gdvydsRO29Kmy2JDn40IA6YNo4Rd6Q1r+XbIstJuGbV6iXqjvWa5dt1hM6FIzVLiHZEX7M7Ficz5s+iVrMGfmJ9RLWNmszLyY0SklrRScGDeN2m3gKXTahXjtGxaM2MNuraqAlCp70rFoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985588; c=relaxed/simple;
-	bh=ymkjN9ZtuK+LQ/wrsa9QbECgUoYFiNmqiBmrVh6GFiI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QZsCD5GzUDgU6Chs6sWvsBJ9dpzN0d7onqinW0K2DfoeNksbTTeZKJRPAEfJEqc7J886b6B+Oop1EgkS+nYxICLy/AZAVMPrSZFgTaNc++POcr6AWTEvGbCetuNmR+PxF/wwNMr7V909ds/tWMf3NES2i7O9Vdh8nX6OZPEZrtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRwgGS3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A7EC4CEF4;
-	Tue, 12 Aug 2025 07:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754985586;
-	bh=ymkjN9ZtuK+LQ/wrsa9QbECgUoYFiNmqiBmrVh6GFiI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=fRwgGS3J9wup10Ei3nMlgDK3Tgvf2t+7imPsLvpkb5ZtD3/A32Q9Y5YZ5rDtvuFeG
-	 hgC9a+csI9kC5FHQB+hi1j1FL5QjxD3eB1SDVi75cYA4RRIipRwpJ8VodLcyGEByR5
-	 AgRKIsddUGMTWK+WCRy6MxiXY7thfZd4O5/ev5lx2bB9lRNeH72EBIfU4zOrS8y6cg
-	 V9HqLh8P9FxVJm8e+Lmwfy6MaleB+KrcCgVLrXyi0NFRb6athaI0U2wAPotxGnf/dJ
-	 FNbJ2YIQyLCUydSq8zAH/u+QYRqSMiTf2+PTY8EJO7L9vHP5rGSH2UekZXj8RCc5Zt
-	 ClJPbUKj9iUgg==
+	s=arc-20240116; t=1754985655; c=relaxed/simple;
+	bh=uyEtLXeLg4FHmnligzjbn2MdDoRRq4bB6zO2ymBoI8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPDrcKuI9O3XwC11t0W2oTOZH5cKgd0BT/M3+lhJnB/ro6UemmfaqNaGNjWgDR9El+RFybOr7B5qBviZBiQjfVeUuV6JY89tWd0hgRyD+SLEAzT5XpurEJC2RXgNkmelRLoXQhacNdIAoHYFZ4rg2yuTcIpSnriqgegLdblQ4Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZLkIo9R/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wlmUP0bvh7oStSsT56tZcpB9xFZY6Z5hBSuWAqL4Ejs=; b=ZLkIo9R/mEzx6Ei4GgNt9pxcUW
+	/f5duMLQg4WvcKAvpaYEZN0btxfEJXZBiXzX/scUAg8VnrULricim/D8CMQYQ6Fyw29oUVEuKuIdy
+	6nE1p4+OYXXUUnKP9Ppbw7lEPDEVlOUpp5b5I9axsiNI3R6cWYvZZA4svQcEF4qxBN6WV7+/oi/eO
+	7f/g3uYLBkSEqiNFUGvdevxU/jqBTgEYM01kqLf5sWEukwXlYiYXvIBl+IRG+NNdIKEOWmQiOOhhx
+	21sfgEvEAqn4rsMkT93uU+mTrG6g4ukDKrzyc3eGA8+BnqwvjBvxEWuZxev3Rk78Vrk5rNAKTFHeT
+	Ikc6ravQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uljw6-0000000E8eQ-0wNK;
+	Tue, 12 Aug 2025 08:00:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 68A433002C5; Tue, 12 Aug 2025 10:00:46 +0200 (CEST)
+Date: Tue, 12 Aug 2025 10:00:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: tj@kernel.org, arighi@nvidia.com, void@manifault.com,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev,
+	changwoo@igalia.com, hodgesd@meta.com, mingo@redhat.com,
+	jake@hillion.co.uk
+Subject: Re: [PATCH v4 0/3] sched_ext: Harden scx_bpf_cpu_rq()
+Message-ID: <20250812080046.GF4067720@noisy.programming.kicks-ass.net>
+References: <20250811212150.85759-1-christian.loehle@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 09:59:39 +0200
-Message-Id: <DC0AGT8F3JH1.2PZIXKX9AQBWD@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
- <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
- Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v8 4/9] rust: sync: atomic: Add generic atomics
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
- <linux-arch@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250719030827.61357-1-boqun.feng@gmail.com>
- <20250719030827.61357-5-boqun.feng@gmail.com>
-In-Reply-To: <20250719030827.61357-5-boqun.feng@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811212150.85759-1-christian.loehle@arm.com>
 
-On Sat Jul 19, 2025 at 5:08 AM CEST, Boqun Feng wrote:
-> To provide using LKMM atomics for Rust code, a generic `Atomic<T>` is
-> added, currently `T` needs to be Send + Copy because these are the
-> straightforward usages and all basic types support this.
->
-> Implement `AtomicType` for `i32` and `i64`, and so far only basic
-> operations load() and store() are introduced.
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+On Mon, Aug 11, 2025 at 10:21:47PM +0100, Christian Loehle wrote:
+> scx_bpf_cpu_rq() currently allows accessing struct rq fields without
+> holding the associated rq.
+> It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
+> scx_tickless. Fortunately it is only ever used to fetch rq->curr.
+> So provide an alternative scx_bpf_task_acquire_remote_curr() that
+> doesn't expose struct rq and provide a hardened scx_bpf_cpu_rq_locked()
+> by ensuring we hold the rq lock.
+> Add a deprecation warning to scx_bpf_cpu_rq_locked() that mentions the
+> two alternatives.
+> 
+> This also simplifies scx code from:
+> 
+> rq = scx_bpf_cpu_rq(cpu);
+> if (!rq)
+> 	return;
+> p = rq->curr
+> if (!p)
+> 	return;
+> /* ... Do something with p */
+> 
+> into:
+> 
+> p = scx_bpf_task_acquire_remote_curr(cpu);
+> if (!p)
+> 	return;
+> /* ... Do something with p */
+> bpf_task_release(p);
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-
-> ---
->  rust/kernel/sync/atomic.rs           | 274 +++++++++++++++++++++++++++
->  rust/kernel/sync/atomic/predefine.rs |  15 ++
->  2 files changed, 289 insertions(+)
->  create mode 100644 rust/kernel/sync/atomic/predefine.rs
-
-> +/// # Limitations
-> +///
-> +/// Because C primitives are used to implement the atomic operations, an=
-d a C function requires a
-> +/// valid object of a type to operate on (i.e. no `MaybeUninit<_>`), hen=
-ce at the Rust <-> C
-> +/// surface, only types with all the bits initialized can be passed. As =
-a result, types like `(u8,
-> +/// u16)` (padding bytes are uninitialized) are currently not supported.=
- Note that technically
-> +/// these types can be supported if some APIs are removed for them and t=
-he inner implementation is
-> +/// tweaked, but the justification of support such a type is not strong =
-enough at the moment. This
-> +/// should be resolved if there is an implementation for `MaybeUninit<i3=
-2>` as `AtomicImpl`.
-
-I'd remove the last sentence, as it makes it sound like one only would
-have to add that impl and be finished.
-
----
-Cheers,
-Benno
+Why do that mandatory refcount dance, rather than directly exposing the
+RCU-ness of that pointer? IIRC BPF was good with RCU.
 
