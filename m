@@ -1,88 +1,44 @@
-Return-Path: <linux-kernel+bounces-765073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2A2B22ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A621B22B26
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E1DA7AD968
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2019624D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E882EA743;
-	Tue, 12 Aug 2025 14:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4678A2F4A07;
+	Tue, 12 Aug 2025 14:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghBjadcu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837CC280CC1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hSn9NDoP"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDFB2C159B;
+	Tue, 12 Aug 2025 14:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755009852; cv=none; b=SsD4u6p5mJRccs/uUpyagFN/iVU+vLQ3+f6RjEqbb+JlM8QN+SMP8ZikYSnw/2n7m5yECqUvvRzh7+LDZJ/DkEgth6F7iIQkpF5LIwALxXN7o4jT2/hVNh2oBgjI74ivenzEz5QWV0YBW9MbgbZVHO2aG3X9ZQiM6qxnKxwTXT0=
+	t=1755009881; cv=none; b=AnDn7hbKdrmQ2vhAwo9f5iPpeLw/fg7K8/R5qKljuErXC6vt5++csrQ4j8wQFKAAj/n99Z7iBVT07I+qhcUR0wQNh0JCn7sDW7qjMj7wHR8qaHp4cYHCt+RlXysQYrnZK2bMUPxt524jJHkLT7k4SsrT+S6kVtLgZ/Z0ErRAzMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755009852; c=relaxed/simple;
-	bh=XVWCAtqiIuVkfrO6+ebbHiZyyWqO2a7hGPigNRefIZk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MBE+cHVRVyhYa8jS5QC2zQacpWHIHknjLmoazNgx5R/X45G8FZSVgV+irS8/zPl2J70FZkz2uAjEVPxm/+1/d+7b7XfKDjrJkTizLLwXs38ie1cYsLCp6Iaw0xmL8TrUBAeS97Kn/D05LH1YK4RNs6RFI0+mN/HvitksehPFNMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghBjadcu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755009849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F8SRqg++OlbXFY+j9lois5UJ3vRtb2rmOlD6n8xgG7Q=;
-	b=ghBjadcuf51d3xFrxKQv2fWe0ATAyk6BkvjEB9GpatDd8mgyLHtCsyUp/2AONVdMrs/wIw
-	QET/8UEgS3LNIYr0XSEByyyTbHjKjrxirzcJz8hhstZLn1NYCTd7SSUvIyxVdYxWFTk9sd
-	Tvc5VcM7hRZ1gh2TMj7V5onVzeG/jb4=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-BvOJyLsOOzibTnbxCMz48A-1; Tue, 12 Aug 2025 10:44:07 -0400
-X-MC-Unique: BvOJyLsOOzibTnbxCMz48A-1
-X-Mimecast-MFC-AGG-ID: BvOJyLsOOzibTnbxCMz48A_1755009847
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b08431923dso136094571cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:44:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755009847; x=1755614647;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8SRqg++OlbXFY+j9lois5UJ3vRtb2rmOlD6n8xgG7Q=;
-        b=qGGPA61+IkVXFK/Ew3mydE4lq63c9gCllEHeCSXv3/rQBiEN9elaK08GQDOqerR7no
-         j/Y53QR5rMzY+sodkP/wAbHHdeyabux0t6aOgBuOyC4R+pL8QXfXFZhn7tySZc6UfrCY
-         hG1eidbm1kulGoO1A/mUI73hiilsdjp7zNxabu7PzgBCUfTmlrl67CzoxzQQNe7hOjpU
-         W8ok/XMqjhOjyWnfPnzYlayfeeGIXy2KxAZn/5gbhqny9GLuj5IUOBAh4Tm0HzzwdiCl
-         V0jaEpCIVsyhMBsMclzW6svWlfOP8gXUv1wan52nrUp//QU0VpWLL7e5J7jwomZDfou0
-         hIJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbIaBv7LQJICeWfrmuFdv5tL7nQeGPNiH0zQsngmWjgvLsPcjIJkd+Aym2kNQS7IC0w0zewkmNnDoiQaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP9dBxS9q/8MgDF/QLgovJfNF66pqSZmop/UPC5tAKtYg/ROD1
-	sERcWtG2iSmZJFpkk4KSImzYxeZpq9FRKtjGDmBiIYluQQiFUp8Xnxfc/oG+USMNp6qmZOoF2WJ
-	4NUVVIxaeZYEXP12IDTKjk4rXrlToufMPRGj5S4tkakYkjZE7OxO6EesrJNHJGF+csQ==
-X-Gm-Gg: ASbGncubZgEiVw6SKYLU3vX+l8YaIEbT3Mzq8Dct7p3U4FrzAQyCGx3cTpP+XrSbMwt
-	toXqhX6VlPL7eVfQ+XLc0SACFJRT5WXvCsqoc0QH06IIDe+hxLROPnA7t9bgSVHTZZUGpjnow0K
-	9JqhKmoNsoa6rfJQGNJNvxF1sUDBc45bTdz+QQjys+/xESCn14FklNNo9yocE9eMypMqU+7lVIu
-	iMjTfFa3C0X3n37ftI7IKI9MDe0x4KEBtH67JzoNZwWzU9/EnB4ehXCmcPJhC9nbHlGAv05zNIO
-	AhDNXzZz1dGm2Ve9kPiMGvCzcavTu976YNGsnc5LlSOXQWyllCjlAm5YtNYcVHVPHLCrLpAqdxQ
-	wjjOrm8Swuw==
-X-Received: by 2002:a05:622a:590e:b0:4b0:7915:9765 with SMTP id d75a77b69052e-4b0eccd1726mr59918451cf.49.1755009846957;
-        Tue, 12 Aug 2025 07:44:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKHg3U1+wE5LXpOAb41ZqegmqSeXii/jIiXvt61sEz9qRoASxs/xeyUF6IfNZS8YPumZQ+eQ==
-X-Received: by 2002:a05:622a:590e:b0:4b0:7915:9765 with SMTP id d75a77b69052e-4b0eccd1726mr59917731cf.49.1755009846194;
-        Tue, 12 Aug 2025 07:44:06 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b07611dc5asm114366661cf.42.2025.08.12.07.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 07:44:05 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <db5fdf29-43d9-4e38-a5a8-02cd711b892a@redhat.com>
-Date: Tue, 12 Aug 2025 10:44:04 -0400
+	s=arc-20240116; t=1755009881; c=relaxed/simple;
+	bh=xuGaNBZVtuATaDvw043eDtsOmUQ4CSlU6fJHQ6dnGP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EWm6lakr/kdCYPmA5NzwAfIH30ZamW6JPK6+5QzBLDJ2CC45u4ZySC7239GWRFJ30aB85/+YvatLrdY5/Hf/tQnTVZARoxZLSSnM9YvGQf9TNhAbuSGfiKccU+0j9V6QxpaqwBsEj3Emlpf38t3eOpSJFmvJ4kEH0JqYvYjN7Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hSn9NDoP; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=ZhsbIXFNOoOJ8ZX4+6Y1Tfv+zUQqehas4lLbJyxnt9U=;
+	b=hSn9NDoPDyVhJnamiV1TQi5v2FbGParWsrEUpuyRTzLUf6FBtm1rShLeKJBBid
+	FL1mEVeHMijfXyuRQC3YGTNVXGwfAyZMoHcG51t0wq5UeEhStFvixibXvzhecrWo
+	kWeK52d4wF+kzzTxmS7B+5o91Aihk2LDJL7OUvMIxUrMg=
+Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3XxQ2U5toJw+iAA--.23507S2;
+	Tue, 12 Aug 2025 22:44:08 +0800 (CST)
+Message-ID: <9d0cce06-25fa-4ca6-8cd1-388e932d1ffc@163.com>
+Date: Tue, 12 Aug 2025 22:44:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,111 +46,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/4] cpuset: remove redundant CS_ONLINE flag
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250808092515.764820-1-chenridong@huaweicloud.com>
- <20250808092515.764820-2-chenridong@huaweicloud.com>
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+To: Gerd Bayer <gbayer@linux.ibm.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Hans Zhang <hans.zhang@cixtech.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+ bhelgaas@google.com, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ jingoohan1@gmail.com, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
+ linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Rob Herring <robh@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>,
+ geert@linux-m68k.org
+References: <20250731183944.GA3424583@bhelgaas>
+ <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
+ <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
+ <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
+ <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
+ <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
+ <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
+ <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
+ <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
+ <6efa10219a41907ebdd7b75fc8d9249e115e8864.camel@linux.ibm.com>
 Content-Language: en-US
-In-Reply-To: <20250808092515.764820-2-chenridong@huaweicloud.com>
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <6efa10219a41907ebdd7b75fc8d9249e115e8864.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PCgvCgD3XxQ2U5toJw+iAA--.23507S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww15tF4fGFyUKryxuF47twb_yoW8Jw1fpF
+	WSyF4akF4kGrWxJFWIgw1UXF1j93yvyryfu395Gwn8A3Z09r1rJrs3ZF4YgF9rGr97ur4Y
+	va13ZF1aqryjvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZiSLUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQw+no2ibT2J2SgAAsq
 
-On 8/8/25 5:25 AM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> The CS_ONLINE flag was introduced prior to the CSS_ONLINE flag in the
-> cpuset subsystem. Currently, the flag setting sequence is as follows:
->
-> 1. cpuset_css_online() sets CS_ONLINE
-> 2. css->flags gets CSS_ONLINE set
-> ...
-> 3. cgroup->kill_css sets CSS_DYING
-> 4. cpuset_css_offline() clears CS_ONLINE
-> 5. css->flags clears CSS_ONLINE
->
-> The is_cpuset_online() check currently occurs between steps 1 and 3.
-> However, it would be equally safe to perform this check between steps 2
-> and 3, as CSS_ONLINE provides the same synchronization guarantee as
-> CS_ONLINE.
->
-> Since CS_ONLINE is redundant with CSS_ONLINE and provides no additional
-> synchronization benefits, we can safely remove it to simplify the code.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   include/linux/cgroup.h          | 5 +++++
->   kernel/cgroup/cpuset-internal.h | 3 +--
->   kernel/cgroup/cpuset.c          | 4 +---
->   3 files changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-> index b18fb5fcb38e..ae73dbb19165 100644
-> --- a/include/linux/cgroup.h
-> +++ b/include/linux/cgroup.h
-> @@ -354,6 +354,11 @@ static inline bool css_is_dying(struct cgroup_subsys_state *css)
->   	return css->flags & CSS_DYING;
->   }
->   
-> +static inline bool css_is_online(struct cgroup_subsys_state *css)
-> +{
-> +	return css->flags & CSS_ONLINE;
-> +}
-> +
->   static inline bool css_is_self(struct cgroup_subsys_state *css)
->   {
->   	if (css == &css->cgroup->self) {
-> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
-> index 383963e28ac6..75b3aef39231 100644
-> --- a/kernel/cgroup/cpuset-internal.h
-> +++ b/kernel/cgroup/cpuset-internal.h
-> @@ -38,7 +38,6 @@ enum prs_errcode {
->   
->   /* bits in struct cpuset flags field */
->   typedef enum {
-> -	CS_ONLINE,
->   	CS_CPU_EXCLUSIVE,
->   	CS_MEM_EXCLUSIVE,
->   	CS_MEM_HARDWALL,
-> @@ -202,7 +201,7 @@ static inline struct cpuset *parent_cs(struct cpuset *cs)
->   /* convenient tests for these bits */
->   static inline bool is_cpuset_online(struct cpuset *cs)
->   {
-> -	return test_bit(CS_ONLINE, &cs->flags) && !css_is_dying(&cs->css);
-> +	return css_is_online(&cs->css) && !css_is_dying(&cs->css);
->   }
->   
->   static inline int is_cpu_exclusive(const struct cpuset *cs)
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index f74d04429a29..cf7cd2255265 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -207,7 +207,7 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
->    * parallel, we may leave an offline CPU in cpu_allowed or some other masks.
->    */
->   static struct cpuset top_cpuset = {
-> -	.flags = BIT(CS_ONLINE) | BIT(CS_CPU_EXCLUSIVE) |
-> +	.flags = BIT(CS_CPU_EXCLUSIVE) |
->   		 BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
->   	.partition_root_state = PRS_ROOT,
->   	.relax_domain_level = -1,
 
-top_cpuset.css is not initialized like the one in the children. If you 
-modify is_cpuset_online() to test the css.flags, you will probably need 
-to set the CSS_ONLINE flag in top_cpuset.css.flags. I do doubt that we 
-will apply the is_cpuset_online() test on top_cpuset. To be consistent, 
-we should support that.
 
-BTW, other statically allocated css'es in the cgroup root may have 
-similar problem. If you make the css_is_online() helper available to all 
-other controllers, you will have to document that limitation.
+On 2025/8/4 18:09, Gerd Bayer wrote:
+> On Mon, 2025-08-04 at 11:06 +0800, Hans Zhang wrote:
+>>
+>> On 2025/8/1 19:30, Gerd Bayer wrote:
+>>> On Fri, 2025-08-01 at 16:24 +0530, Manivannan Sadhasivam wrote:
+>>>
+>>> <--- snip --->
+>>>
+>>>>>>
+>>
+>> Dear all,
+>>
+>> According to the issue mentioned by Lukas and Mani. Gerd has already
+>> been tested on the s390. I have tested it on the RK3588 and it works
+>> fine. RK3588 uses Synopsys' PCIe IP, that is, the DWC driver. Our
+>> company's is based on Cadence's PCIe 4.0 IP, and the test function is
+>> normal. All the platforms I tested were based on ARM.
+>>
+>> The following is the patch based on the capability-search branch. May I
+>> ask everyone, do you have any more questions?
+>>
+>> Gerd, if there's no problem, I'll add your Tested-by label.
+> 
+> Before you add that I'd like to re-test with the "final" patch.
+> 
+>> Branch:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=capability-search
+>>
+>> Patch:
+> 
+> <--- snip --->
+> 
+> Please bear with me while I'm working on that.
 
-Cheers,
-Longman
+
+Dear Gerd,
+
+May I ask if there is any update?
+
+
+
+I plan to submit the v15 version of my series based on v6.17-rc1.
+The modification method is like the previous comment:
+https://lore.kernel.org/linux-pci/06012cc6-824d-4a7d-85c9-9995ec915382@163.com/
+
+Best regards,
+Hans
 
 
