@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-765548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF2CB239C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D185BB239D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7D3A7B8742
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A0C6210BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FDF2F0679;
-	Tue, 12 Aug 2025 20:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FFD8F40;
+	Tue, 12 Aug 2025 20:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="h/wkpEmz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Milj+E8n"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60612F0667;
-	Tue, 12 Aug 2025 20:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755029434; cv=pass; b=AY7RNcM46QU1dcYbmTidXXtbQPfXa5xnvZJ0fZdacuU5lc+d2zzBJiZ/LxMdIBIFurFNNCpW+FaIWo2wFEGXJh+xA6MFEly6BWIW6w++TuxCPr/Q0f1RmghXR4XaWaPy/oXFYWHMWu6QddI8FWK1ccpOl+mt4LBwkSYHJkNcX6s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755029434; c=relaxed/simple;
-	bh=OBJN8hEzkJUuPyydB2OtILSl6ilZGKeXmC8ai0/BsyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OS7wfuuOyD9A2QzJgnpfLSheEFQi1uNEBI7HLTKsqXiijXJTm/dHrrWQs1lXaQ8Uo94v0JB9zCVHwsiNVjiXeX//sWmdjaPDBjix+jQYZpe7ol1RgLrP81M0W3qRA69RK7tdjPoYAoSVdXGVcSGXjx4ZseGKR01lz/aARyqnv7o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=h/wkpEmz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755029415; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MyhnnS/y2ph5BqU/m2pJCp5zVK2dPRtUTHVf/RDIXVhEaqU07l94Hds6NKVgEBcrzlS2ITy/EH3JSc7tEz4WyNfVxUaFRb8nMpbUoXfmYQuxGOXUg8OgaWYVlrOxa4stYNpuKkpZjpjlL7aBZQKmChAp3EcUBfAH9DwUqVF6tHA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755029415; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vKMv3EjzyP5e1tIqE6+kbHOhv7w3DBH++PQKZ6L3hMo=; 
-	b=BNis0RKCcDx6Kec0YV/WJ1VowIXmaJ1JFaZnYKQr/CNn+ATgOvLoIC75ixZXlR4Rev4ZNArQaaAjRkg5zgUi7zVScHveIxmkHgjZelDXaOyFSSE8EuGgXYMhq/nEtRxwfiEamK6i7O1AjQTOh8Enw/dEwSKt15lqXu959MkudNs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755029415;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=vKMv3EjzyP5e1tIqE6+kbHOhv7w3DBH++PQKZ6L3hMo=;
-	b=h/wkpEmzpQIxvba+VNZ/Ff9F/YD4ozHH0sTNiwxMyrAiPuG8fitB7zpbUzNPjbGa
-	aBYnsdYAWs7g3ixsD1aWxyD6gfU2M8NlJfMcrlANEGOPH/MG+GWvzniAR61YovFegH2
-	RhAV7ItqQbk83DkbKi1sOdqz25kkX/gc473lOGN0=
-Received: by mx.zohomail.com with SMTPS id 1755029413898374.0260479942565;
-	Tue, 12 Aug 2025 13:10:13 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>
-Cc: Alex Bee <knaerzche@gmail.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
-Subject: Re: [PATCH v2 1/7] media: rkvdec: Add HEVC backend
-Date: Tue, 12 Aug 2025 16:10:12 -0400
-Message-ID: <22971824.EfDdHjke4D@earth>
-In-Reply-To: <20250810212454.3237486-2-jonas@kwiboo.se>
-References:
- <20250810212454.3237486-1-jonas@kwiboo.se>
- <20250810212454.3237486-2-jonas@kwiboo.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D322F0677;
+	Tue, 12 Aug 2025 20:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755029548; cv=none; b=eT2x9xualhCNKsbDVI8vf3619Q5F07F2bsSaDKvLlMpqyl3gRCxwyAIB3W1v4kDRyuaUZo/R6E0A+cppxvaA0iGYY5H+q75X22J2BXGUsRsoyS75ErUPhBH2zYVE1bHH2dhPxVNkCiau2Ub6OL9ktDEGH8VTGtYVF05rQspfHjg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755029548; c=relaxed/simple;
+	bh=LdMwsRNMhr3RdlfS1sg03g0GGfVON6z2LjlOFlQzz/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rANcK3V19hmdw69oscpmaFQDE704DCjA9mcitIKH6vyyly5GH7zB/mUcLeNaKa45qVHHmtnH0VFID6bdaFwN4RYu/voCa7TS+12rdHXJAvqSMuBNf+rKihmYxDpy5rkmDmrqCkIu+AY3ZaS+kfVUlSozLnigPgqQhA7j8y32BxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Milj+E8n; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2400a0c3cf7so8617795ad.0;
+        Tue, 12 Aug 2025 13:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755029546; x=1755634346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LdMwsRNMhr3RdlfS1sg03g0GGfVON6z2LjlOFlQzz/w=;
+        b=Milj+E8nHCciOlpaDB93QQ19DTfku/+qrq9m+0m325gO/k2zzqU9bMu2Z43FruExxb
+         xQo7NOxMc9aFgwqE/F/nShVFLKJ89yP/gRKeZQvDk0B8BAXLhArK0fjXovo3PQr2coEv
+         8R0Bd967hG2Bvahp2Vo+qlAsauLmTrnu9qZ998sXFhuh58Rd6zvNh+6mNdd8AQX/MkIS
+         wv/U5YOwkyyXfelljdC5d3MITpa4sQ8E9fmxW2WTwbwy4xgMLCQjn8tUES3NcdkfRu+k
+         NfVQrL/HWyThj2YWmaaB5onZWKgaSzgcjGjz0CeOKojMzp1iypy1QkrZSDWwOLXInNwW
+         FrWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755029546; x=1755634346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LdMwsRNMhr3RdlfS1sg03g0GGfVON6z2LjlOFlQzz/w=;
+        b=FgK3dcBI8z43l8svrQy+H8dtzik83zcIrVMKH7FnZkNsTYYfekkRjoeNvpRWR2TjNF
+         FCAXzvTYA10h+BKOAwT1jttyigw0j07EWvj3oqh/tkWW/b+KVXGO1h6hEMjLNYUkAKUz
+         FOrlPHfXuDsRunImgK8z93hZt3xjksg+N+d8gl5mOALbTsxj8ZrmBH4j76O7cWKu7SJ7
+         +j0fntlYloHvh8G6SpsMz6kDMbuSPFwY+1e0PG3EplHDQD2xjQgkvQ+lmgamb7pODdJa
+         uFB0pEIOJljvGbvLVGROz+mP322BtVTO9xe/dZiargD3NOlSW8LeqdpUQm+PAPq9cbi5
+         g2Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCULN/ajsu/JnYHHbqK7rqXqbr1W01Af/INEcP5xNHMNNJFuyxulXvhYFveJpVZWz+fXEQPqvx8LGL4AgSlua/s=@vger.kernel.org, AJvYcCUVlrDQOd7Vr+JYTNIo506siprBPiVuwcScuzOMPoue8mMcz3RsUU+pa6kTVkYhmdpzsEeK39A8mLTh86w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJR67Rx/7scp3g8OtHLW+ml+6fffgFOvG8qxOaqsBi6eUYejX
+	bk7+4gsK9zyhUrwe/07qA1Ml8STAFC/esTnaNYM/4DE7lPa9hI4BpaJ72itdSIpZ7/XOHVsDGLg
+	2vcgcn0j8vPqiZra4D2QAYxhT9a7Ss6Q=
+X-Gm-Gg: ASbGnctcLipf+PQ2XI4H5oPvEWV6z7GWJaboGIXp56lzsQfUZ4rrQRGK75Px1lBdCIe
+	lw+t4bMM9U2RmPS1gUaMQ/3XJeq2ojqpWEz0UcTU+wU1HzPfStr+Jz/ZT5olgCazVWj/kIG5ust
+	0CHkhDKKRNPnBVPm7uK7H6+PAemS5EBm4rCWzIcD9FsfnQ3o4xldx/9SCLdmUYLz853cZ3xPsAD
+	zaepbjzSwfY4Ig1NYk=
+X-Google-Smtp-Source: AGHT+IEvmTEfhYgDEcmoTdFN/im+6O1T6OckAAjt4c2JWcP23ebcCH33w4iQbi5CmkutIrqX+H/I09EqUXavPgjNsec=
+X-Received: by 2002:a17:902:d2d0:b0:240:25f3:5be9 with SMTP id
+ d9443c01a7336-2430d263d94mr3422375ad.10.1755029546192; Tue, 12 Aug 2025
+ 13:12:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+References: <20250731154919.4132-1-dakr@kernel.org> <20250731154919.4132-2-dakr@kernel.org>
+ <CANiq72mWVmso1yMYGYih-NDwjB9E1iVE=_oSpPiSvqTu5mkE0g@mail.gmail.com> <DC0PSDBCPGVO.38EGYXRFQVM8N@kernel.org>
+In-Reply-To: <DC0PSDBCPGVO.38EGYXRFQVM8N@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 12 Aug 2025 22:12:13 +0200
+X-Gm-Features: Ac12FXx3JqohsxItEiz0vXv8AeDOYSWVWda9zJanptt2JqBNAGTufcd5lRCQvPQ
+Message-ID: <CANiq72nfpecn3qQqNJiXGDX_Veg1Q9yQF0BZzCk68Ue_i3qtVg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: lorenzo.stoakes@oracle.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	urezki@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonas,
-
-On Sunday, 10 August 2025 17:24:31 EDT Jonas Karlman wrote:
-> The Rockchip VDEC supports the HEVC codec with the Main and Main10
-> Profile up to Level 5.1 High tier: 4096x2304@60 fps.
-> 
-> Add the backend for HEVC format to the decoder.
-> 
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
-> Changes in v2:
-> - Use new_value in transpose_and_flatten_matrices()
-> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
-> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
-> ---
->  .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
->  .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
->  .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  817 ++++++++
->  .../platform/rockchip/rkvdec/rkvdec-regs.h    |    2 +
->  .../media/platform/rockchip/rkvdec/rkvdec.c   |   76 +
->  .../media/platform/rockchip/rkvdec/rkvdec.h   |    1 +
->  6 files changed, 2745 insertions(+), 1 deletion(-)
->  create mode 100644
-> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c create mode
-> 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+On Tue, Aug 12, 2025 at 10:00=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
+> I don't think so, it just lead to pad to the alignment for Vmalloc too.
+>
+> Technically, this makes no difference, since Vmalloc is always PAGE_SIZE =
+aligned
+> and the size always a multiple of PAGE_SIZE.
 
-[snip]
+Got it, thanks for the quick reply! Then I guess we could have skipped
+the Fixes in this one, but it is not a big deal and as usual it
+depends on how one defines "fix".
 
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c new file mode 100644
-> index 000000000000..1994ea24f0be
-> --- /dev/null
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
-
-[snip]
-
-> +
-> +static enum rkvdec_image_fmt rkvdec_hevc_get_image_fmt(struct rkvdec_ctx
-> *ctx, +						       struct 
-v4l2_ctrl *ctrl)
-> +{
-> +	const struct v4l2_ctrl_hevc_sps *sps = ctrl->p_new.p_hevc_sps;
-> +
-> +	if (ctrl->id != V4L2_CID_STATELESS_HEVC_SPS)
-> +		return RKVDEC_IMG_FMT_ANY;
-> +
-> +	if (sps->bit_depth_luma_minus8 == 0) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_8BIT;
-
-Is 4:2:2 really supported ? It is not on rk3588 and likely neither on rk3576.
-You also mention later that Only 4:0:0 and 4:2:0 are supported.
-
-> +		else
-> +			return RKVDEC_IMG_FMT_420_8BIT;
-> +	} else if (sps->bit_depth_luma_minus8 == 2) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_10BIT;
-
-Same here.
-
---
-Detlev.
-
-
-
+Cheers,
+Miguel
 
