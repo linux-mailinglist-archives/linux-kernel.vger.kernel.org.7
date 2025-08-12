@@ -1,105 +1,160 @@
-Return-Path: <linux-kernel+bounces-764173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6C6B21F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:17:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABC9B21F56
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD031737FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FED2179E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35EE2D94A6;
-	Tue, 12 Aug 2025 07:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cock.li header.i=@cock.li header.b="IYsQGkEF"
-Received: from mail.cock.li (mail.cock.li [37.120.193.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6092D9EFC;
+	Tue, 12 Aug 2025 07:20:00 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5A311C28;
-	Tue, 12 Aug 2025 07:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.193.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9F824BBEC;
+	Tue, 12 Aug 2025 07:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983044; cv=none; b=X+qzS3VuJTxdfkaY77Pzl8jr0UJ9zjFbVfSZpSGGI44Zrm1mq6IUNgEeDe7zwvLhxwAqMfYNi43PXL4YI0T/ymBtScSQ1CvYOjpAeQsMc3YM+dx2fSIrrO5j0GPOf0mf/mC9Oak8XB3e+1ZrQQ8RUZu4cAVFX7jN4mFY1ScemUY=
+	t=1754983200; cv=none; b=ZVu83mDs+FejXkjfaBTC+qoU3/SA4Uq9U0RrCf6kfFcxyA0ZbUt825tR86lcnMJGIZAQZalq9eNVdGs+7T1Z3wotud0zGCa8id01uZiukdG6sIrNpIfoOAi4894VQhrAZ3FOWHNKb1YQ5L+r3pCntI+sh5S5hwDCbW8WHlLz1LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983044; c=relaxed/simple;
-	bh=Nw5DXZD4EG15mYMBDrHw8FvaFfajl4SMYn2QjYQl9ME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KGIm/pCnwswczWS5yvnLIPRnHW2taaWzgz4lE5uYW8t7J4ZAh/N/uYyNmMFL/sC4QWkg9InP1Abp8kisisDb0akLu30CIuH/TuP0LHPY8h+g7QqVhPJA43aMyhKoCmAkbM/7JP988vqAKUY9SijRY3i+Q5dSlkBKEnMKpet+Rx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cock.li; spf=pass smtp.mailfrom=cock.li; dkim=pass (2048-bit key) header.d=cock.li header.i=@cock.li header.b=IYsQGkEF; arc=none smtp.client-ip=37.120.193.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cock.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cock.li
-Message-ID: <9e81bbfd-1688-46bd-bf38-252fed3b1c82@cock.li>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cock.li; s=mail;
-	t=1754983034; bh=Nw5DXZD4EG15mYMBDrHw8FvaFfajl4SMYn2QjYQl9ME=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IYsQGkEFxANswCrL89YQRKOb2KF/WB6jiMguv7n7IhNDwJLQhjqRfH9ftl1DZhVCj
-	 2Q8/sDb7QHhl/z/LxypbrU3X61l67JwvqoBpNaZf4JhqNSGDWQzfqQUIYmWnKHyz4i
-	 HPVbzkhdNMYfBh7m/rtAceCkQl95n/HsafkoviZaitA+rAvfcegFX8LVpGll7tB1lN
-	 tBsoyjzta8bFvSmGT7Ps6ODN+D44b500mYrBBZNTChPaliwGlyq4ADKByU9OcnSbVu
-	 rQ5M1HUjFdZBEVA6MV0nNRw7rGurbd/yJQaSynvdP71QJ1qQS++nZhx3idbgVG1VyE
-	 y5wMknNvVcotw==
-Date: Tue, 12 Aug 2025 04:17:07 -0300
+	s=arc-20240116; t=1754983200; c=relaxed/simple;
+	bh=rqA86ZOJ0KqOXcvwmWcBuG56Gy/DWIj6uSKpAUAyYj8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EVRjQ2TwsMq7Q9gWuZtN3w8y3J/420rz595zUMecf1iws9h1B+AqAbFdP7/bCHbNEhg7ZAqo+1jeL+TI6ZsDSPmCCIAREStc4GADAqMjtDaEgrTd5ghehIcjCK6NBCOlVxEhXaG/TGNnML+JYBatFSZXW9GWc9uYPbhbTR2rWZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [211.71.28.34])
+	by APP-03 (Coremail) with SMTP id rQCowADXZngG65poj7gmCw--.9934S2;
+	Tue, 12 Aug 2025 15:19:45 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: ck.hu@mediatek.com,
+	chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	nancy.lin@mediatek.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] drm/mediatek: Fix device/node reference count leaks in mtk_drm_get_all_drm_priv
+Date: Tue, 12 Aug 2025 15:19:32 +0800
+Message-Id: <20250812071932.471730-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net,
- malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <c1516337-a681-40be-b3f1-4d1e5290cbff@cock.li>
- <rabpjlpydnsnlkrgqmolvgg5tyo2kk5v45evwdt6ffetsqynfy@dt2r3cxio5my>
-Content-Language: en-US
-From: asdx <asdx52@cock.li>
-In-Reply-To: <rabpjlpydnsnlkrgqmolvgg5tyo2kk5v45evwdt6ffetsqynfy@dt2r3cxio5my>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADXZngG65poj7gmCw--.9934S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4UCr48XrWDJw1xXw43ZFb_yoW5GryrpF
+	WUGFWFvrW8tr4UKrsYyFW8CF1YkF1xta1fWF1Igw13Cw1rZryay345t34avryDArWkAF1r
+	JwnxtFy8CFyjkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwV
+	W8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUpa0PUUUUU
+	=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+Using device_find_child() and of_find_device_by_node() to locate
+devices could cause an imbalance in the device's reference count.
+device_find_child() and of_find_device_by_node() both call
+get_device() to increment the reference count of the found device
+before returning the pointer. In mtk_drm_get_all_drm_priv(), these
+references are never released through put_device(), resulting in
+permanent reference count increments. Additionally, the
+for_each_child_of_node() iterator fails to release node references in
+all code paths. This leaks device node references when loop
+termination occurs before reaching MAX_CRTC. These reference count
+leaks may prevent device/node resources from being properly released
+during driver unbind operations.
 
-On 8/12/25 4:04 AM, Kent Overstreet wrote:
-> On Tue, Aug 12, 2025 at 03:52:39AM -0300, asdx wrote:
->> On 8/11/25 11:26 AM, Kent Overstreet wrote:
->>> On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
->>>>>    Yes, this is accurate. I've been getting entirely too many emails from Linus about
->>>>> how pissed off everyone is, completely absent of details - or anything engineering
->>>>> related, for that matter.
->>>> That's because this is not an engineering problem, it's a communication problem. You just piss
->>>> people off for no good reason. Then people get tired of dealing with you and now we're here,
->>>> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
->>>> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
->>>>
->>>> If you really want to change the way things work go see a therapist. A competent enough doctor
->>>> probably can fix all that in a couple of months.
->>> Konstantin, please tell me what you're basing this on.
->>>
->>> The claims I've been hearing have simply lacked any kind of specifics;
->>> if there's people I'd pissed off for no reason, I would've been happy to
->>> apologize, but I'm not aware of the incidences you're claiming - not
->>> within a year or more; I have made real efforts to tone things down.
->>>
->> You keep lying. How can you be so cynical? Just two days ago you were
->> complaining on #bcache about how much control Linus has over Linux and there
->> was a lot of talk about getting him removed from Linux via CoC action.
-> Are you the same guy who was just posting this on Phoronix? Either
-> you're trolling, or you misread something.
->
-> For the record, I'm one of the more anti CoC people out there - I agree
-> with the spirit of their goals, not so much the approach. I would never
-> invoke them on anyone; I prefer to talk things out (and I don't mind
-> getting flamed, so long as it doesn't get in the way of the work).
+As comment of device_find_child() says, 'NOTE: you will need to drop
+the reference with put_device() after use'.
 
-I read your messages well.
+Found by code review.
 
-Linus Torvalds is way more valuable than bcachefs. Please back off.
+Cc: stable@vger.kernel.org
+Fixes: 1ef7ed48356c ("drm/mediatek: Modify mediatek-drm for mt8195 multi mmsys support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- added goto labels as suggestions.
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index d5e6bab36414..f8a817689e16 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -387,19 +387,19 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
+ 
+ 		of_id = of_match_node(mtk_drm_of_ids, node);
+ 		if (!of_id)
+-			continue;
++			goto next_put_node;
+ 
+ 		pdev = of_find_device_by_node(node);
+ 		if (!pdev)
+-			continue;
++			goto next_put_node;
+ 
+ 		drm_dev = device_find_child(&pdev->dev, NULL, mtk_drm_match);
+ 		if (!drm_dev)
+-			continue;
++			goto next_put_device_pdev_dev;
+ 
+ 		temp_drm_priv = dev_get_drvdata(drm_dev);
+ 		if (!temp_drm_priv)
+-			continue;
++			goto next_put_device_drm_dev;
+ 
+ 		if (temp_drm_priv->data->main_len)
+ 			all_drm_priv[CRTC_MAIN] = temp_drm_priv;
+@@ -411,10 +411,17 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
+ 		if (temp_drm_priv->mtk_drm_bound)
+ 			cnt++;
+ 
+-		if (cnt == MAX_CRTC) {
+-			of_node_put(node);
++next_put_device_drm_dev:
++		put_device(drm_dev);
++
++next_put_device_pdev_dev:
++		put_device(&pdev->dev);
++
++next_put_node:
++		of_node_put(node);
++
++		if (cnt == MAX_CRTC)
+ 			break;
+-		}
+ 	}
+ 
+ 	if (drm_priv->data->mmsys_dev_num == cnt) {
+-- 
+2.25.1
 
 
