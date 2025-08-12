@@ -1,161 +1,97 @@
-Return-Path: <linux-kernel+bounces-763968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5C3B21C2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:40:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D0EB21C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 867777AB6B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E50D6233DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365B24DCF7;
-	Tue, 12 Aug 2025 04:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A8C2580CF;
+	Tue, 12 Aug 2025 04:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YPlU8LcF"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VP10vn1P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DB21F78E6
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6441F78E6
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754973607; cv=none; b=nZ2FUjTrQbXtmSuNiDYZq7blVST9WfwYrifnQ1i+fqUuByvaaR+Cup+68u8EY4unuQqAyFR1OAVJjFLi7U52MWA/khGUJNxDU4cTb8tVkiS9UzINYXcheXW5zPzTRgEels/24mbmgUA6fCOPsJkKngmYeMmfUOLfSdVmrbjAPyw=
+	t=1754973655; cv=none; b=WkcN3J/nj9cjclfFHadmaOQRLMiCFpIk20ydeOnSCfh0HJGpbjv9S5n+J6JP0hBhUG47ajxaE+551OCK5KA+mv60LIto+wL17NWRb4zEXTKhGm3yjWMhNJmO5NRoiPkNRB7fJgCLiMWY7uYWBO9/9Z2goQIDPobi5YJWkKaYGw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754973607; c=relaxed/simple;
-	bh=7QEfWkMj0Q5U/6xWS27ArDIWZyu+E2DhnlE//zrVl8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uVWkwYWgCEm7X0VaHLVn89LDM0xpbpbVn2g12oIvtQxQs1SznQ+zzE3ntpCN3RbyzSO53HsZWENdzhMPeCF+H+EvyTBAsQyUFf742wthBsViRLQ1xdJRfdKHYHr0EkaxWT7xjTgfh4LsuCHTRmJPn0NX0UfOFzt6x9pDHKhiiXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YPlU8LcF; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef33d3cb-4346-41af-9e0e-541fdc007f89@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754973601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5SSuoYQxuP4N4+wD3+d2H9S35beJT6qelRadMcdDN44=;
-	b=YPlU8LcFpadrQflSfXw2q6rECE/dUO5/8etQGdMlcPhxYeBkWoooqQT98Nh7B4lPctPdln
-	Tl9sG5VZ6XQyNBthPJCFbmXuwGRe9GEB1pyKyW30s2YdDmTODsoZ8JpLWtC/+wQzbkD2lh
-	Y42I9oje8XRVS9jS67f+Lv2CSc8XNns=
-Date: Mon, 11 Aug 2025 21:39:44 -0700
+	s=arc-20240116; t=1754973655; c=relaxed/simple;
+	bh=SgaMmRStB2UhLZxqv6pMOrDE29SweSzVbjPPDpPgtmU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=A/4D3+Wlbg5HpbqwpFQgZ3T6Wm4wOZ1gmHKKr4CZMNurKvsMRjySeLg8BcJWe5njZxJxYf3EMWX4A2TS2gb5gVbuhiKG8yLgHlAOEoQ+c+xhggunbga1zN1rA31cSaYq07urAAHCU2S73wzOhy3moXEq+sIbV1vrGv3sgK6IOCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VP10vn1P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C63C4CEF0;
+	Tue, 12 Aug 2025 04:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754973654;
+	bh=SgaMmRStB2UhLZxqv6pMOrDE29SweSzVbjPPDpPgtmU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VP10vn1P+011ti+EqhXQwSG+r/eDBHvTGGQb2lyZrJ45ld3lf3nd4OKR/XGiAXZ/6
+	 IlokcWfYSlDDqH4BC3sxL9fzWy7b50tGSGfjf3oN1aMOiD809wR5h3wDZXIeOWb70a
+	 GDomZFuifwsQdEbCxMskLCTV5OpzCEEmO424GgdY=
+Date: Mon, 11 Aug 2025 21:40:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Qingshuang Fu <fffsqian@163.com>, hannes@cmpxchg.org, mhocko@kernel.org,
+ zhengqi.arch@bytedance.com, lorenzo.stoakes@oracle.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Qingshuang Fu <fuqingshuang@kylinos.cn>,
+ Yuanchu Xie <yuanchu@google.com>, Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH] Fix the data type inconsistency issue of min (tier,
+ MAX_CR_TIERS-1) in read_ctrl_pos
+Message-Id: <20250811214053.857168fd35e70e73dee1583d@linux-foundation.org>
+In-Reply-To: <91d72c49-22df-43ed-aeeb-0b93a9da3bfa@redhat.com>
+References: <20250808072106.153449-1-fffsqian@163.com>
+	<91d72c49-22df-43ed-aeeb-0b93a9da3bfa@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH RESEND v2 1/2] bpf: refactor max_depth computation in
- bpf_get_stack()
-Content-Language: en-GB
-To: Arnaud Lecomte <contact@arnaud-lcm.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250809115833.87033-1-contact@arnaud-lcm.com>
- <20250809120911.88670-1-contact@arnaud-lcm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250809120911.88670-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Fri, 8 Aug 2025 09:35:19 +0200 David Hildenbrand <david@redhat.com> wrote:
 
+> > 
+> > Due to the fact that the tier data type in min (tier, MAX_CR_TIERS -1)
+> > is int,but MAX_CR_TIERS is an unsigned type, directly using
+> > the min function for comparison will result in an error:
+> > from mm/vmscan.c:15:
+> > mm/vmscan.c: In function ‘read_ctrl_pos’:
+> > ./include/linux/build_bug.h:78:41: error: static assertion failed:
+> > "min(tier, 4U - 1) signedness error, fix types or
+> > consider umin() before min_t()"
+> > And MAX_CR_TIERS is a macro definition defined as 4U,
+> > so min_t can be used to convert it to int type before
+> > performing the minimum value operation.
+> > 
+> 
+> Please use empty lines to make the description easier to read. Also, I 
+> think you can simplify this heavily.
+> 
+> We should add
+> 
+> Fixes: 37a260870f2c ("mm/mglru: rework type selection")
 
-On 8/9/25 5:09 AM, Arnaud Lecomte wrote:
-> A new helper function stack_map_calculate_max_depth() that
-> computes the max depth for a stackmap.
+I'm not liking read_ctrl_pos() much.
 
-Please add 'bpf-next' in the subject like [PATCH bpf-next v2 1/2]
-so CI can properly test the patch set.
+Local variable `i' has the rottenest possible name.  In this case it is
+a "tier", so let's call it that.  And its type should be unsigned.
 
->
-> Changes in v2:
->   - Removed the checking 'map_size % map_elem_size' from stack_map_calculate_max_depth
->   - Changed stack_map_calculate_max_depth params name to be more generic
->
-> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-> ---
->   kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
->   1 file changed, 24 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 3615c06b7dfa..532447606532 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct bpf_map *map)
->   		sizeof(struct bpf_stack_build_id) : sizeof(u64);
->   }
->   
-> +/**
-> + * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
-> + * @map_size:        Size of the buffer/map value in bytes
+But an incoming arg has that name.  Probably inappropriately.  I'm
+suspecting that something like base_tier or start_tier would be more
+descriptive.  Hard to tell, because read_ctrl_pos() forgot to get
+documented.  And this arg should have unsigned type also.
 
-let us rename 'map_size' to 'size' since the size represents size of
-buffer or map, not just for map.
-
-> + * @elem_size:       Size of each stack trace element
-> + * @flags:       BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
-> + *
-> + * Return: Maximum number of stack trace entries that can be safely stored
-> + */
-> +static u32 stack_map_calculate_max_depth(u32 map_size, u32 elem_size, u64 flags)
-
-map_size -> size
-Also, you can replace 'flags' to 'skip', so below 'u32 skip = flags & BPF_F_SKIP_FIELD_MASK'
-is not necessary.
-
-> +{
-> +	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> +	u32 max_depth;
-> +
-> +	max_depth = map_size / elem_size;
-> +	max_depth += skip;
-> +	if (max_depth > sysctl_perf_event_max_stack)
-> +		return sysctl_perf_event_max_stack;
-> +
-> +	return max_depth;
-> +}
-> +
->   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
->   {
->   	u64 elem_size = sizeof(struct stack_map_bucket) +
-> @@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->   			    struct perf_callchain_entry *trace_in,
->   			    void *buf, u32 size, u64 flags, bool may_fault)
->   {
-> -	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
-> +	u32 trace_nr, copy_len, elem_size, max_depth;
->   	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
->   	bool crosstask = task && task != current;
->   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> @@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->   		goto clear;
->   	}
->   
-> -	num_elem = size / elem_size;
-> -	max_depth = num_elem + skip;
-> -	if (sysctl_perf_event_max_stack < max_depth)
-> -		max_depth = sysctl_perf_event_max_stack;
-> +	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
->   
->   	if (may_fault)
->   		rcu_read_lock(); /* need RCU for perf's callchain below */
-> @@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->   	}
->   
->   	trace_nr = trace->nr - skip;
-> -	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
-> +	trace_nr = min(trace_nr, max_depth - skip);
->   	copy_len = trace_nr * elem_size;
->   
->   	ips = trace->ip + skip;
-
+(cc mglru maintainers, who have yet to reveal themselves in MAINTAINERS)
 
