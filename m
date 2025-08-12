@@ -1,70 +1,55 @@
-Return-Path: <linux-kernel+bounces-763740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E119B219A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:00:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8B2B219A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD41E4643B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16967B2ED9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A5C296BBB;
-	Tue, 12 Aug 2025 00:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C71639;
+	Tue, 12 Aug 2025 00:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/x1B/D5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rRv6moFR"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C885C28EA72;
-	Tue, 12 Aug 2025 00:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6FC8634C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 00:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754956818; cv=none; b=Jw3ATpIllridUm1FyTtZxqFgiYxaZ7hxddqfLCHRYYXTyhAYD5jKOIiAMZbNmddrlkvX9bDn5QNO+jKz4zwksYL9jaa72MQfLG4g1CpkaSySqpg0msqyV28kb1e08VW7iCdfp+3BnrQ9X9eneHOQk2tmqoM5Cvowgpe0V8PAVDU=
+	t=1754956929; cv=none; b=SD5M851BBYbPUmi0eRJYc5doGieY8Pf/M82fchIVwgfMd/VSv5EhyhM6F5p5oGJvJkOdDdtWhm4F0ZB85nfwQ5VN8QdYAEO9oLdXC2PbmLVCzBGxmeqjAeRvxLDssYu625PuhcVW/jNj4EwwAY5vE+etjL8ybCIIL/lTXI8Yj6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754956818; c=relaxed/simple;
-	bh=JKSS5BhhnouCxp94xQ9hwJyMDXsBN6DcFUARmFsQeK0=;
+	s=arc-20240116; t=1754956929; c=relaxed/simple;
+	bh=h3XIrRi4Eh1r1otKGR/Gs4MjvshCnmwLL1ZN39prrfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IwUks/uY5L6jJSnuVmy7FtrPYKZCxVFYq5+Dy5VYF4om6EkAC726ccnWf+nKiL8ZYcbkakX0P+nPspJC12mopja6erFbyKC0Ci7Hja3/kDN4iOcgnHtoqKoFJ2qPZW49u2HC1pCEipYBccyJ3/HwoHi9bJCHpUNzH/sYJZEFc8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/x1B/D5; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754956817; x=1786492817;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JKSS5BhhnouCxp94xQ9hwJyMDXsBN6DcFUARmFsQeK0=;
-  b=D/x1B/D5qd5lyE9qr/Lzyeapxx/v4hoX4S97ipFQqdYObzX9Jv4uzCc+
-   qHsp+7/RrHtS6PC0kZZ42Ep5Jk0wkq4jLT/Y1YhktDPoq5hUewOsHegdM
-   I5z+3q7rkDwZ+ueeIYxGgX1OqYRsxGvDAusI7GXaHtIvulzSKAm/wCY5M
-   /D81daOp+uh63YEAT4AJerSENhzg40F+xFfENKRy5a5Wm1Wlmlir2EJGq
-   0qJtDbXAdCLpajRPU/tn8rz429JdKrg3HXrlPGtfaZemxmrqFQcOcRL70
-   kSFFary8QKFogVqMX+xWcJ7X8OWz4CGPtstxcKyLmHMbuGLPVKgE7c+3x
-   Q==;
-X-CSE-ConnectionGUID: IHxzdF7ySNOgG+4WtX4jkA==
-X-CSE-MsgGUID: yurOA08iQeG2khHBm8hgCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68592842"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="68592842"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:00:16 -0700
-X-CSE-ConnectionGUID: 7iLeg3hORT2dJ4onOUtL+A==
-X-CSE-MsgGUID: bH/qdpoeQYisIC0QF+LT8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166340782"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 17:00:16 -0700
-Received: from [10.124.35.105] (kliang2-mobl1.ccr.corp.intel.com [10.124.35.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 0F1FE20B571C;
-	Mon, 11 Aug 2025 17:00:15 -0700 (PDT)
-Message-ID: <8c32c5be-02a4-4f4c-9a81-1afe649e88bb@linux.intel.com>
-Date: Mon, 11 Aug 2025 17:00:14 -0700
+	 In-Reply-To:Content-Type; b=rDD0/3VT8T4mR5o3k04Y0qHod+wO0qeqBgqhAp8OOPD+k2YqQ5aJKqAjBIEVqt45utoZn+UdnV8z1gperyVUTcC9TGo8L5P2uHFKmpbBt7LgPYgNfaXo8MAxKphvN8f0/jMWkJgMJ+cIm6TPjAc3HEkN561q8xbLmLYtBLM/X9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rRv6moFR; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1754956921;
+ bh=LksAwlMK4Zcalf/VkDre46LCCYPoR3RkYJEdyB3ZKtw=;
+ b=rRv6moFRLQjxUU/pz/VLhOs4X9seXAituXO5e/o2mkaUOmfGfT5rnOlnX2M0t8Vp9HAAtqHv1
+ jhFQeKXwuS6xzghNlzNiwoDOYeXbE3VW7tJrl/wi+RWbu0SkK7ixZZsu5xXOIv+2St3kNDapuSS
+ q4KR/qrdPS3rmHgy8Zewms2ZOlmvsxU607X5uyF/1BMmOFmCsNYz32Ud0wN4Les+7941s1uwWm7
+ 6wOeAbyMDy7C89Mc7zDHWtjk+nRSKH7SvsOkqctE8lWt1PInB6PiT5zkz0dfUKyBQWAw1J71vHQ
+ fxTYHX3DY4Gh9wCmH4Dw+mPn8heirfVP1cw/nJdpHYcQ==
+X-Forward-Email-ID: 689a841810bdea4a6d7c54b0
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.2.4
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+Date: Tue, 12 Aug 2025 02:00:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,112 +57,230 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 6/6] perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into
- INTEL_FIXED_BITS_MASK
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, Yi Lai <yi1.lai@intel.com>
-References: <20250811090034.51249-1-dapeng1.mi@linux.intel.com>
- <20250811090034.51249-7-dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+ <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250811090034.51249-7-dapeng1.mi@linux.intel.com>
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi Nicolas,
 
-
-On 2025-08-11 2:00 a.m., Dapeng Mi wrote:
-> ICL_FIXED_0_ADAPTIVE is missed to be added into INTEL_FIXED_BITS_MASK,
-> add it and opportunistically refine fixed counter enabling code.
+On 8/11/2025 11:52 PM, Nicolas Dufresne wrote:
+> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
+>> This series add a HEVC backend to the Rockchip Video Decoder driver.
+>>
+>> With the dependent H.264 High 10 and 4:2:2 profile support series
+>> finally merged there is finally time to send a v2 with minor changes and
+>> a suggested code style fix of this series. v1 of this series has been
+>> fully functional up until recent unstaging of the rkvdec driver.
+>>
+>> A version of this HEVC backend has been in use by the LibreELEC distro
+>> for the past 5+ years [1]. It was initially created based on a copy of
+>> the H264 backend, unstable HEVC uAPI controls and a cabac table + scaling
+>> matrix functions shamelessly copied 1:1 from the Rockchip mpp library.
+>>
+>> It has since then been extended to use the stable HEVC uAPI controls and
+>> improved opon e.g. to include support for rk3288 and fix decoding issues
+>> by Alex Bee and Nicolas Dufresne.
+>>
+>> The version submitted in this series is based on the code currently used
+>> by the LibreELEC distro, excluding hard/soft reset, and with cabac table
+>> and scaling matrix functions picked from Sebastian Fricke prior series
+>> to add a HEVC backend [2].
+>>
+>> Big thanks to Alex Bee, Nicolas Dufresne and Sebastian Fricke for making
+>> this series possible!
+>>
+>> Patch 1 add the new HEVC backend.
+>> Patch 2-3 add variants support to the driver.
+>> Patch 4 add support for a rk3288 variant.
+>> Patch 5 add a rk3328 variant to work around hw quirks.
+>> Patch 6-7 add device tree node for rk3288.
+>>
+>> This was tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+>>
+>>   v4l2-compliance 1.30.1, 64 bits, 64-bit time_t
+>>   ...
+>>   Total for rkvdec device /dev/video1: 49, Succeeded: 49, Failed: 0, Warnings:
+>> 0
+>>
+>>   Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2request
+>>   ...
+>>   Ran 137/147 tests successfully
 > 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Tested-by: Yi Lai <yi1.lai@intel.com>
-> ---
->  arch/x86/events/intel/core.c      | 10 +++-------
->  arch/x86/include/asm/perf_event.h |  6 +++++-
->  arch/x86/kvm/pmu.h                |  2 +-
->  3 files changed, 9 insertions(+), 9 deletions(-)
+> I've also tested RK3399 using Renegade Elite from Libre Computer, though with
+> GStreamer. My results for this suite is 134/147, with failing tests being:
 > 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index cdd10370ed95..1a91b527d3c5 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -2849,8 +2849,8 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
->  {
->  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->  	struct hw_perf_event *hwc = &event->hw;
-> -	u64 mask, bits = 0;
->  	int idx = hwc->idx;
-> +	u64 bits = 0;
->  
->  	if (is_topdown_idx(idx)) {
->  		struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> @@ -2889,14 +2889,10 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
->  
->  	idx -= INTEL_PMC_IDX_FIXED;
->  	bits = intel_fixed_bits_by_idx(idx, bits);
-> -	mask = intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
-> -
-> -	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip) {
-> +	if (x86_pmu.intel_cap.pebs_baseline && event->attr.precise_ip)
->  		bits |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
-> -		mask |= intel_fixed_bits_by_idx(idx, ICL_FIXED_0_ADAPTIVE);
-> -	}
->  
+> - DBLK_D_VIXS_2
+> - DSLICE_A_HHI_5
+> - DELTAQP_A_BRCM_4
+> - EXT_A_ericsson_4
+> - PICSIZE_A_Bossen_1 (expected)
+> - PICSIZE_B_Bossen_1 (expected)
+> - PICSIZE_C_Bossen_1 (expected)
+> - PICSIZE_D_Bossen_1 (expected)
+> - SAODBLK_A_MainConcept_4
+> - SAODBLK_B_MainConcept_4
+> - TSUNEQBD_A_MAIN10_Technicolor_2 (expected)
+> - WPP_D_ericsson_MAIN10_2
+> - WPP_D_ericsson_MAIN_2
+> 
+> Please share your list, this seems big enough difference to be worth making sure
+> we did not diverge somewhere between both interpretation of the V4L2 spec.
+> GStreamer has been mostly tested with MTK driver so far. Can you also share a
+> link to the latest ffmpeg tree you are using (since its not upstream FFMPEG) ?
 
-This changes the behavior. The mask will always include the ADAPTIVE bit
-even on a platform which doesn't support adaptive pebs.
-The description doesn't mention why it's OK.
+As mentioned in this cover letter the full fluster report can be found
+at [3], and has links to the trees used to produce the raw report data,
+have now also added some more details of versions used.
 
-Thanks,
-Kan> -	cpuc->fixed_ctrl_val &= ~mask;
-> +	cpuc->fixed_ctrl_val &= ~intel_fixed_bits_by_idx(idx, INTEL_FIXED_BITS_MASK);
->  	cpuc->fixed_ctrl_val |= bits;
->  }
->  
-> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-> index f8247ac276c4..49a4d442f3fc 100644
-> --- a/arch/x86/include/asm/perf_event.h
-> +++ b/arch/x86/include/asm/perf_event.h
-> @@ -35,7 +35,6 @@
->  #define ARCH_PERFMON_EVENTSEL_EQ			(1ULL << 36)
->  #define ARCH_PERFMON_EVENTSEL_UMASK2			(0xFFULL << 40)
->  
-> -#define INTEL_FIXED_BITS_MASK				0xFULL
->  #define INTEL_FIXED_BITS_STRIDE			4
->  #define INTEL_FIXED_0_KERNEL				(1ULL << 0)
->  #define INTEL_FIXED_0_USER				(1ULL << 1)
-> @@ -48,6 +47,11 @@
->  #define ICL_EVENTSEL_ADAPTIVE				(1ULL << 34)
->  #define ICL_FIXED_0_ADAPTIVE				(1ULL << 32)
->  
-> +#define INTEL_FIXED_BITS_MASK					\
-> +	(INTEL_FIXED_0_KERNEL | INTEL_FIXED_0_USER |		\
-> +	 INTEL_FIXED_0_ANYTHREAD | INTEL_FIXED_0_ENABLE_PMI |	\
-> +	 ICL_FIXED_0_ADAPTIVE)
-> +
->  #define intel_fixed_bits_by_idx(_idx, _bits)			\
->  	((_bits) << ((_idx) * INTEL_FIXED_BITS_STRIDE))
->  
-> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-> index ad89d0bd6005..103604c4b33b 100644
-> --- a/arch/x86/kvm/pmu.h
-> +++ b/arch/x86/kvm/pmu.h
-> @@ -13,7 +13,7 @@
->  #define MSR_IA32_MISC_ENABLE_PMU_RO_MASK (MSR_IA32_MISC_ENABLE_PEBS_UNAVAIL |	\
->  					  MSR_IA32_MISC_ENABLE_BTS_UNAVAIL)
->  
-> -/* retrieve the 4 bits for EN and PMI out of IA32_FIXED_CTR_CTRL */
-> +/* retrieve a fixed counter bits out of IA32_FIXED_CTR_CTRL */
->  #define fixed_ctrl_field(ctrl_reg, idx) \
->  	(((ctrl_reg) >> ((idx) * INTEL_FIXED_BITS_STRIDE)) & INTEL_FIXED_BITS_MASK)
->  
+The tests from the report was running on a RK3399 Rock Pi 4B v1.5.
+
+- Linux: 6.17-rc1 + patches
+- fluster: 0.4.1 + patch
+- FFmpeg: 7.1.1 + patches
+- GStreamer: 1.27.1
+
+JCT-VC-HEVC_V1 on GStreamer-H.265-V4L2SL-Gst1.0:
+
+- DBLK_D_VIXS_2 (fail)
+- DSLICE_A_HHI_5 (fail)
+- EXT_A_ericsson_4 (fail)
+- PICSIZE_A_Bossen_1 (error)
+- PICSIZE_B_Bossen_1 (error)
+- PICSIZE_C_Bossen_1 (error)
+- PICSIZE_D_Bossen_1 (error)
+- SAODBLK_A_MainConcept_4 (fail)
+- SAODBLK_B_MainConcept_4 (fail)
+- TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+
+JCT-VC-HEVC_V1 on FFmpeg-H.265-v4l2request:
+
+- CONFWIN_A_Sony_1 (fail)
+- EXT_A_ericsson_4 (fail)
+- PICSIZE_A_Bossen_1 (error)
+- PICSIZE_B_Bossen_1 (error)
+- PICSIZE_C_Bossen_1 (error)
+- PICSIZE_D_Bossen_1 (error)
+- SAODBLK_A_MainConcept_4 (fail)
+- SAODBLK_B_MainConcept_4 (fail)
+- TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+- VPSSPSPPS_A_MainConcept_1 (error)
+
+The WPP_*_ericsson_MAIN* samples get a mixed Fail/Success when running
+the full test suite for FFmpeg-H.265-v4l2request, however retrying them
+individually they will eventually report Success. Not sure this is an
+issue with FFmpeg or the driver, since they pass with GStreamer.
+
+Interesting that DBLK_D_VIXS_2, DSLICE_A_HHI_5 and CONFWIN_A_Sony_1
+consistently differs between GStreamer and FFmpeg.
+
+[3] https://gist.github.com/Kwiboo/bedf1f447b50921ffbe26cb99579582d
+
+> 
+> Detlev reports 146/147 on newer hardware using GStreamer, failing
+> TSUNEQBD_A_MAIN10_Technicolor_2 (9bit chroma) only. On Detlev side, it will we
+> important to check why 8K videos (PICSIZE*) passes with a single core, perhaps
+> we accidently use both cores ?
+> 
+> Note, also expected, we failt JCT-VC-SCC, JCT-VC-MV-HEVC, and JCT-VC-RExt passes
+> 2/49. This last suite is pretty new in fluster.
+
+Following is the FFmpeg-H.265-v4l2request result with this:
+
+- JCT-VC-MV-HEVC 9/9
+- JCT-VC-RExt 2/49
+- JCT-VC-SCC 0/15
+- JCT-VC-3D-HEVC 27/27
+- JCT-VC-SHVC 1/69
+
+Regards,
+Jonas
+
+> 
+> regards,
+> Nicolas
+> 
+>>
+>>   Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2request
+>>   ...
+>>   Ran 9/9 tests successfully
+>>
+>> And on a TinkerBoard (RK3288):
+>>
+>>   v4l2-compliance 1.30.1, 32 bits, 32-bit time_t
+>>   ...
+>>   Total for rkvdec device /dev/video3: 49, Succeeded: 49, Failed: 0, Warnings:
+>> 0
+>>
+>>   Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4l2request
+>>   ...
+>>   Ran 137/147 tests successfully
+>>
+>>   Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4l2request
+>>   ...
+>>   Ran 9/9 tests successfully
+>>
+>> The WPP_x_ericsson tests from test suite JCT-VC-HEVC_V1 has been showing
+>> a mix of both Success and/or Fail result for FFmpeg-H.265-v4l2request.
+>>
+>> Full summary of fluster run can be found at [3].
+>>
+>> Please note that there is a known issue with concurrent decoding,
+>> decoding errors in one decode session may affect a separate session.
+>> The only known mitigation to this is to pause decoding for some time
+>> and/or do a full HW reset, something to handle in future series.
+>>
+>> Changes in v2:
+>> - Rabase after h264 high10/422 merge and unstaging of rkvdec driver
+>> - Use new_value in transpose_and_flatten_matrices()
+>> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
+>> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
+>> - Adjust code style in rkvdec_enum_coded_fmt_desc()
+>> - Collect a-b tag
+>> - Drop merged vdec node reg size patches
+>> Link to v1:
+>> https://lore.kernel.org/linux-media/20231105233630.3927502-1-jonas@kwiboo.se
+>>
+>> [1]
+>> https://github.com/LibreELEC/LibreELEC.tv/blob/master/projects/Rockchip/patches/linux/default/linux-2000-v4l2-wip-rkvdec-hevc.patch
+>> [2]
+>> https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-v2-0-fa1897efac14@collabora.com/
+>> [3] https://gist.github.com/Kwiboo/bedf1f447b50921ffbe26cb99579582d
+>>
+>> Alex Bee (4):
+>>   media: rkvdec: Add variants support
+>>   media: rkvdec: Add RK3288 variant
+>>   media: rkvdec: Disable QoS for HEVC and VP9 on RK3328
+>>   ARM: dts: rockchip: Add vdec node for RK3288
+>>
+>> Jonas Karlman (3):
+>>   media: rkvdec: Add HEVC backend
+>>   media: rkvdec: Implement capability filtering
+>>   media: dt-bindings: rockchip,vdec: Add RK3288 compatible
+>>
+>>  .../bindings/media/rockchip,vdec.yaml         |    1 +
+>>  arch/arm/boot/dts/rockchip/rk3288.dtsi        |   17 +-
+>>  .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
+>>  .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
+>>  .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  826 ++++++++
+>>  .../platform/rockchip/rkvdec/rkvdec-regs.h    |    4 +
+>>  .../platform/rockchip/rkvdec/rkvdec-vp9.c     |   10 +
+>>  .../media/platform/rockchip/rkvdec/rkvdec.c   |  184 +-
+>>  .../media/platform/rockchip/rkvdec/rkvdec.h   |   15 +
+>>  9 files changed, 2886 insertions(+), 21 deletions(-)
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
 
 
