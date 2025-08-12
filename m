@@ -1,186 +1,130 @@
-Return-Path: <linux-kernel+bounces-765070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0037BB22B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB14FB22B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3D94256EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A678189E8EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2109302CDB;
-	Tue, 12 Aug 2025 14:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51A32F5310;
+	Tue, 12 Aug 2025 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EuAhNLZk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG/edStX"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842802F549B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7711B2ED860;
+	Tue, 12 Aug 2025 14:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755009682; cv=none; b=CefKqImPcZxKp2giUZCmK5eg6Q4eoklwaq+drPgm4Jw+Bdgfr1nIN0fju1ZwyMqu+EkByWbSxAartlKD9d+yCWq8I6PacA5o83wYENuvlrat1Bm0/aUqfsGSXtsZviFe5CFTGQSeth+iNRw8LgY8BWF5mW6zPyQCBhN0sL/M+T0=
+	t=1755009762; cv=none; b=X7s+jj1WsAiQiKTE+yDesRZaGBCqyw0i9gyEtV1z0JDZyqE8/gWhBNBcTG2tMENuNmlde41XThNIDNwkN8pZ2HbG6u0Vid7oCI74eTkA77VhvoBrBXHpfraYuZwaCUF5A25dtxNiRdv8qKkn80F663lD+C9uq8SXrUGpFMB7xos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755009682; c=relaxed/simple;
-	bh=sDM4TxN8ShOb8aBv+Z7HrYy5822cwlDrWFqdSR4OZKE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LqMA86/QQHx6dASmBMS8WeG22jhj8gcSKowRHFPm62GFzOOypONKiSJmlrMn30zwlMaChQ0U6qd/C3CXpDl081EZFIWR61ixkLXJihrKxY/eJB7kBO8cBoICiPw93WfizQI+D73JJ9uLmymYzro3KB3EBSqBHc2EkVlpVwBN9ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EuAhNLZk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755009679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXSNQkir9l0c6O4Uch1lbWYG6q3I9kiF+5fAxrExQNg=;
-	b=EuAhNLZker0h2r2Qdv/tzsry5d3z3N7L4C1Nr7TDYLc2F31I++mp1IQdSUNvpCW5at8iKr
-	4K5Dsx3tWmR0JEuaJ8015Xz+jTXggBXhhulUcSbaAJj3Ht/G+F+6kd1lvrSClzQ3q3SL6T
-	9g995ltnqM/K6/1VNSw+YWDPz94oVS0=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-ATXxWWIhMPyV5x3sMoo7VA-1; Tue, 12 Aug 2025 10:41:18 -0400
-X-MC-Unique: ATXxWWIhMPyV5x3sMoo7VA-1
-X-Mimecast-MFC-AGG-ID: ATXxWWIhMPyV5x3sMoo7VA_1755009678
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e6a5428a76so1648966385a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:41:18 -0700 (PDT)
+	s=arc-20240116; t=1755009762; c=relaxed/simple;
+	bh=/vfWdDuxS4cmrgYy2Y1FDIhYup6GKzcFqTnOIHVLxd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oJKMGf1F/+CHIQja6laVVvugYc0t4pbV2EfQRFrIhKB+0VpYQK1QHmu7AJr6b4FCsBl58yFwhvtC5tXi4Y7N2mGBK2CO13MTRh2tfCY/U1h3b/87d1aKwLeHrkVi73o/CeMU3B8YBalahuCHysEMLzYK+scmntXc/pYib/E+llc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG/edStX; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b792b0b829so5420733f8f.3;
+        Tue, 12 Aug 2025 07:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755009759; x=1755614559; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ksFZyo5Cvq1kE+J4/jOZ7KQ+h5+N9CEPfSL/qK66cWI=;
+        b=bG/edStXPlvlIHsZ62KmvCcW/VlFQbYi25vNV72RFY4MGEq/fR1tSWBBtK8w+/fhVJ
+         tBx80bY2C0zWgaexKPchTbwEfrqejVa6tT2v/0QMrh9RtISTB0YWva3Ho5sOi45DH5mg
+         9ApDAM7tpDrcFQEwuzZTBpAKkWrrWMP+sbG92iPV7SlNiaCVBM6/9co4jGnp8sM1KHzB
+         gQbodpr4Lleu1ZS6PnKTUASrbBJ+6SGOOkGhS7omKSJdd9xqQ+ySYmbRlok1/du9b/Qy
+         +HHNfoM4ZNegDcpimmZ9wLRTM+LBJ4/PQapcT9ALJ8vtP8otf9M5SAlkyn/5uV6MGRmS
+         bl9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755009677; x=1755614477;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rXSNQkir9l0c6O4Uch1lbWYG6q3I9kiF+5fAxrExQNg=;
-        b=JRMHC6DFPPsQz2k6BUiUm4rGquRFgFhaPjjmr2YEagoylHbqJ6CUzesIRTOHd6Ajdj
-         iJ58kOUKancMZIydMhSjvVf0sXwKM+ahvI23nIyWuznnpuzzykDXuHtPCgjGwbIfTapP
-         KKa7XSbBzxOsIgmyS7Zn3HAqHMe+uoqexBDYNSGc231vuENsaHIl+mxfY8eXlwuf0DA0
-         TjDGfmbN1Cy6HmrDPbxS5Cl6biqYqPfCvYcDR/nlyF99aFVrN40w8K1rQ7P8rvwHdvmR
-         5L+botspUfWnqK99W3gtCmVO2NUS0R7f+SJ5vQrMOVOO7pt0B/sM3xPP9poe6ZApgWuB
-         R4BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW10vdzDsWDC0loLm4cC7hgGJKEI58aELtiEAeZfLxbqEFbU333QwwAk67J8ZOJacHDJLj1cdRc0+FX24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgnnGkwxNVAmOpQOcNkxwqHtdWvaGwqwQZPdkZHE9H/NKiMVcD
-	zUnl8/nYzZprDxa4MU9cqo4+Rzag4iTn3V+8dcyStMMuyzsoAW6xfGtqBdQOFjPizL3ELyFuFvu
-	Pf4i7Zems7nkDW1urGh81HhBiCtM9lbL1AljNj0i65Ohq27Epd/nT/+EY7q2xwHQ2ejTeq/6I9D
-	0YIR/mTH0FkCFQP6reZdN9I+PUeEbppswTEOwk6sJuY5pA/2JltGk=
-X-Gm-Gg: ASbGncvL+P6TEU64KnCLd6YYYkz6GlJWUIeii/rUYEitzmtBVitn4+1j6ph0Co8YVPj
-	3cZEHz1BeEm3bfAO96tU90P0ies5e8waP9KF0lpHNIJV/hLkHD9dWShU6SgrMN/dQy4WzOVY9pF
-	CRcwWLnpa4LCZ+sUUBeDH03AaksD/4WksVm3W6gypIq7QnR8qhx5HnnFP7+jCQ+q1qXbnaU7sWI
-	NdHZ8kFQ9odIE9bW90YJer5UviQyCwykzZ6p65tp1lk0aV3GqytzVQ+Rolvu+FJDbl6P6B0OXCs
-	ZZv5mMFstN7cX4k393IE9Fz5idQ98i+0Dnbp4vV6Y3Saf1V3jgOk1nH8jSzC4edVi5CxU6nFMe/
-	qIg==
-X-Received: by 2002:a05:622a:1823:b0:4ab:722e:3b39 with SMTP id d75a77b69052e-4b0ec9faa2cmr31287731cf.1.1755009677232;
-        Tue, 12 Aug 2025 07:41:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVeqwIbgPVF4yzmFFuy2sDDvdU3iNThQxQDamVLjzwWjBf5U6ADjdwgTxVdogE5PzekAcxfw==
-X-Received: by 2002:a05:622a:1823:b0:4ab:722e:3b39 with SMTP id d75a77b69052e-4b0ec9faa2cmr31287091cf.1.1755009676475;
-        Tue, 12 Aug 2025 07:41:16 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b0aa1efe78sm76186821cf.8.2025.08.12.07.41.13
+        d=1e100.net; s=20230601; t=1755009759; x=1755614559;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ksFZyo5Cvq1kE+J4/jOZ7KQ+h5+N9CEPfSL/qK66cWI=;
+        b=A5saCyp0O2E6HUSt6rIosIYmVj5IoTAFRZ1FQvObBmkI55vKRLfQSIrYLxfJZuE7K/
+         JqCVhxXvUPtadHIpc1LHV2ppiperUEfhkfcWqKBxodBOAm/8GnVsjaCDmCPZHX+uJ9da
+         Pge1PjdZGnRSW/mP3hJ/P73stCL4ARVfufAiyp5edicWF9dJWItHEKzw48nR+WeDswne
+         kY8pM1wPFHAr8F9eyTs04OmOIDG0KaRb/TvEEoet5BRgiRA8TDAxjhV1CoY8XGa2rMtE
+         46gcMUkRlUyefhqHjxqOqO3hMdHl+Zh5S/xSuU06G5fsl4wZdyESCaLiQkQ2odiUlfQx
+         PDkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5sRCmHNMihHs6VMectGaInPT6/bivTtx1DDR4UWT5QqVLMNeqPEO0M5ZGCHuENdy4f3ZzR80D9GV5V1A=@vger.kernel.org, AJvYcCW9iRn09tsp5eiTh74Xik9mY25RC/asEDAihgz2oy7tAfj3d9AqIVNMshUzfoNTP4fABPGhs2iZJmNyW4yStQI=@vger.kernel.org, AJvYcCWN640QD9NZg39ecAlMa1aCxBYQ8oZDa62kYix6i6YMTK/zaRXgIsF7wqP+/ainXgrFvK+8moe7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMjIzQf4Be82icIOoqct62BesrxdCqPFXgJ7f9ofLuhy8iH4se
+	VMVbqtzc8X2RErTpweBNP0CvMoKSMBnKkN0QqH6OWN5UMXMg4h1/3N5Y
+X-Gm-Gg: ASbGncuKPMmI/l9i2IyzCn/pdAArbxx4yz4OtD9/hBGni8wUxJIn5TlC/+20xo8Yfrm
+	yRZKeqW5hwIljo+b7AfRFRu14EkMDSRNsw560kNTN7wgXURIEJ0aQEoKoQPUO0E7mnZT80tbJVK
+	cRgv/QlYY8dCKdv8Gzvi7f72xnLaHoJEHGYV/1qvSWw8CDDE3tO/OXGOBHNmXWoFefUeeGOyudo
+	Fl3+NpQHCdh+VTnXioOWZOE5Z/nAdH6Mops38RCrYOC99f8g8GYSw3BWb8hBaGKAoBl7+3IUA+y
+	j4P/pEdz77p851qJ5iTH6nKREuxWiciLpoCGT2rWLy9NZYoN/pSw1mXjIK2P9MNVeXO3M1WyeEV
+	RNrFlW78zIwRsp7t/401c+gGWdLH3N0xiW/3iEQD3rxEK
+X-Google-Smtp-Source: AGHT+IHavcYA44T40lCV5RrSKd0V+Intv3acaFD1J/sQ3KPgNjMpYmbIlv1QyoKIG/ybOxSoDeNXBA==
+X-Received: by 2002:a05:6000:26ca:b0:3b7:9bfe:4f6f with SMTP id ffacd0b85a97d-3b900b7be30mr13872464f8f.44.1755009758481;
+        Tue, 12 Aug 2025 07:42:38 -0700 (PDT)
+Received: from blepers-Latitude-5420.. ([213.55.220.53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459db3048bdsm404377165e9.29.2025.08.12.07.42.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 07:41:14 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 12 Aug 2025 10:40:39 -0400
-Subject: [PATCH v3 9/9] clk: test: introduce test variation for sibling
- rate changes on a gate/mux
+        Tue, 12 Aug 2025 07:42:37 -0700 (PDT)
+From: Baptiste Lepers <baptiste.lepers@gmail.com>
+To: 
+Cc: Baptiste Lepers <baptiste.lepers@gmail.com>,
+	stable@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Yury Norov <yury.norov@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: cpumask: Mark CpumaskVar as transparent
+Date: Tue, 12 Aug 2025 16:42:11 +0200
+Message-ID: <20250812144215.64809-1-baptiste.lepers@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-clk-tests-docs-v3-9-054aed58dcd3@redhat.com>
-References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com>
-In-Reply-To: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755009649; l=2537;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=sDM4TxN8ShOb8aBv+Z7HrYy5822cwlDrWFqdSR4OZKE=;
- b=r5FvK3WTbTODfyrV1UUlVrGiqX+hXi0edFBQWx7+UwkPASXGz05BP0ajvIkJT4VYwtDbP4lQL
- wxpW1BxVD+QDZQ4h48aqXcxF0q1N9kAFLxpJrPRt67SoIj70Y7oYpSu
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Transfer-Encoding: 8bit
 
-Introduce a test variation that creates a parent with two children: a
-gate and a mux. Ensure that changing the rate of the gate does not
-affect the rate of the mux.
+Unsafe code in CpumaskVar's methods assumes that the type has the same
+layout as `bindings::cpumask_var_t`. This is not guaranteed by
+the default struct representation in Rust, but requires specifying the
+`transparent` representation.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
+Fixes: 8961b8cb3099a ("rust: cpumask: Add initial abstractions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
 ---
- drivers/clk/clk_test.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ rust/kernel/cpumask.rs | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index f1c43b5004057eccd0591f17d625c549d9eecc78..abc0e4dd1b79e7d54673d3eeae7c95b0d1d61e33 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -947,6 +947,46 @@ clk_rate_change_sibling_div_mux_test_init(struct kunit *test)
- 	return &ctx->clk_ctx;
- }
- 
-+struct clk_rate_change_sibling_gate_mux_sibling_context {
-+	struct clk_dummy_gate child1;
-+	struct clk_multiple_parent_ctx child2_mux;
-+	struct clk_test_rate_change_sibling_clk_ctx clk_ctx;
-+};
-+
-+static struct clk_test_rate_change_sibling_clk_ctx *
-+clk_rate_change_sibling_gate_mux_test_init(struct kunit *test)
-+{
-+	struct clk_rate_change_sibling_gate_mux_sibling_context *ctx;
-+	int ret;
-+
-+	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return ERR_PTR(-ENOMEM);
-+	test->priv = ctx;
-+
-+	ret = clk_init_multiple_parent_ctx(test, &ctx->child2_mux,
-+					   "parent0", clk_dummy_rate_mhz(24),
-+					   "parent1", clk_dummy_rate_mhz(48),
-+					   "child2", CLK_SET_RATE_NO_REPARENT,
-+					   &clk_multiple_parents_mux_ops);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ctx->child1.hw.init = CLK_HW_INIT_HW("child1", &ctx->child2_mux.parents_ctx[0].hw,
-+					     &clk_dummy_gate_ops, CLK_SET_RATE_PARENT);
-+	ret = clk_hw_register_kunit(test, NULL, &ctx->child1.hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ctx->clk_ctx.parent_clk = clk_hw_get_clk(&ctx->child2_mux.parents_ctx[0].hw, NULL);
-+	ctx->clk_ctx.child1_clk = clk_hw_get_clk(&ctx->child1.hw, NULL);
-+	ctx->clk_ctx.child2_clk = clk_hw_get_clk(&ctx->child2_mux.hw, NULL);
-+
-+	return &ctx->clk_ctx;
-+}
-+
- struct clk_test_rate_change_sibling_test_case {
- 	const char *desc;
- 	struct clk_test_rate_change_sibling_clk_ctx *(*init)(struct kunit *test);
-@@ -961,6 +1001,10 @@ static struct clk_test_rate_change_sibling_test_case clk_test_rate_change_siblin
- 		.desc = "div_mux",
- 		.init = clk_rate_change_sibling_div_mux_test_init,
- 	},
-+	{
-+		.desc = "gate_mux",
-+		.init = clk_rate_change_sibling_gate_mux_test_init,
-+	},
- };
- 
- KUNIT_ARRAY_PARAM_DESC(clk_test_rate_change_sibling_test_case,
-
+diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
+index 3fcbff438670..05e1c882404e 100644
+--- a/rust/kernel/cpumask.rs
++++ b/rust/kernel/cpumask.rs
+@@ -212,6 +212,7 @@ pub fn copy(&self, dstp: &mut Self) {
+ /// }
+ /// assert_eq!(mask2.weight(), count);
+ /// ```
++#[repr(transparent)]
+ pub struct CpumaskVar {
+     #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+     ptr: NonNull<Cpumask>,
 -- 
-2.50.1
+2.43.0
 
 
