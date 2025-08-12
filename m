@@ -1,193 +1,171 @@
-Return-Path: <linux-kernel+bounces-764352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFA6B22213
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AC9B221CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A0E6E5F1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00DC720F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26C2E7BDE;
-	Tue, 12 Aug 2025 08:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9805D2E284E;
+	Tue, 12 Aug 2025 08:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="lng0be1E"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fwMMmEsi"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7322E765B;
-	Tue, 12 Aug 2025 08:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBCD2DCF7C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988360; cv=none; b=tQVkJG4Cq5hRtYBsxX5Ylcn3A89LGFvJuZaEDUpus1qu2Nojfdli3aHhU0lkThl2IQHkPQNTiwP9CieHK97DXxNUXJ9q/YEJswymeMrHeuZFlu2OBW4O6xn9RwZc5QbqNtv0JqM9cPBt1d8xDuZ0NoHdwlty2frwSH0yHwaxAaQ=
+	t=1754988298; cv=none; b=eZ71d2yEGVkOjgyj6J+OSFKt1ATbnQt8TPEmHuzFcupWyGm9qrmrA9yidXDcq0NVmiYRW4DXI+8y7qRc40UhsXM0SoYubiKVPReErlsQDzOGGrMnzTQTdT/PSv+baB3B8UO6efsNHfuBtE7FkS7aD/R7NQVS6TIG9T3j+xAO+TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988360; c=relaxed/simple;
-	bh=nUQlyN1n4j3UgDVGQCRzPb4qjKkiojRa8wCKJO7ioYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QXDqEyRP+XlgdCaoxk3eKsF/X/p+OQfghT73YmE87VTnrSQdSMPaERUk/PUSq6YKytIiP9Rtt3K3Tcr4owQ8hTh++rwy1lbrAA0w6AiVePdeTlNpt0/leu0vqkgHwdZBA87fFOSa8KvMipF7zCpOrovL31CWqUTiP8h1Pco0xLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=lng0be1E; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4fqFKZRX+VXRgMC+0U0SHSLoX7IVzWzQk49myeTjMC0=; b=lng0be1EtH1NwTkyOrfJ1ypzjm
-	Ddta3DOel3KELJHU7Ljf6sNwYidTcfJRFDolNYD4s4qiCTxkgCrn1Y1XPQAm+t/R1QPosqnglWg2P
-	eoTtqS1uE6Mm2Z4KuWN2TqGNPwsI/qNiAtBT5l7PPRPOlAwkz9YUdQgc/AB9xsQMTAzsyJTUmr2Ji
-	6rVQjAgQ2fWxwnE/ZwXlpCWuwoPZG8AsXWfYRmMbZaYy6NR5kCfthx6GKrzajxmqgBSPqA/wp61cw
-	KCS+JVHajYr1LZSW/2uQPtMLDxsRtKN3gpex3QBS5z74C8cLYHomnHe3omMdksCoTgSknxUaKp7OF
-	TnXF1q+w==;
-Received: from [89.212.21.243] (port=39484 helo=[192.168.69.116])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1ulkdj-00DLjg-0H;
-	Tue, 12 Aug 2025 10:45:50 +0200
-Message-ID: <ffafc9d6-2cfe-4e3f-a610-9bddc7eb49f4@norik.com>
-Date: Tue, 12 Aug 2025 10:45:48 +0200
+	s=arc-20240116; t=1754988298; c=relaxed/simple;
+	bh=yUEBG3s2Iox5Z1YnWor/+RVWc+Tlit/BIkynfNjn8u0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=cJFxckfL81JU0tfhj9tfPk1CQL3sebgzXy3wks64lOTwi92qvPKP7RPx51XtVTWfRNCFu8DPnAcd7Rzr3VGSt/dJtsbc3PIGd2xviJXZfkT9pOtvHTjRE5ypsV7f0ZwZmRLRw5Dgo0G3HZyb2juoGv9FW4Bw8bLEIbkeNijnu2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fwMMmEsi; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af93c3bac8fso735705166b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754988294; x=1755593094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIMOvue31dwc/J4aquxw833RlbJuhQchriCV8fOzVLE=;
+        b=fwMMmEsiVc+pLmQmqeEk98Y6Bpb8sbp7eqUEA5l3qqW+nsDnCJZKbXskaAs5/Gb8+E
+         mCQnO7LKfyzy9w3nTl355jSCdt8YgrTUivBHa6YRLNYn8qwTslua/Oxf4v3bCTjFsdgM
+         hXQV+O/JyWkylrjYLgYp/706HrGhvYx8ICmSEiPHdg85A6Pa8zn3rMe8W5M/nKNe2hWl
+         IoVIHhUn9u9EtCPwfkXrfXgf4tB7U276Dvv86fDq1mhyn99wsMDgi99+dpNoOOHcLDnn
+         j46gIsVBp9TyEjpU2itO8FSnxZpu7oeCUcQcBOxsqDWuG9g6Y8p866mX4+NMKLl3WD2j
+         k/Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754988294; x=1755593094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIMOvue31dwc/J4aquxw833RlbJuhQchriCV8fOzVLE=;
+        b=gTxVRvNEP00PbngOuSwoyrosRW7GQC+gb1j8Q0JAHShmtYbvfUgdHhqOhTMmZsGpzf
+         s0RnXGvCgWV9OMJH0snG06MvEUg0AZOuzqdEfMCn3EWIXzBWwD/wlRCBL7Zp26RWvoaY
+         n6D6KDh1zpzR1qtDuk0nRVPZuJ6BJ0mjiw+QWch8ck9Z/G3mbJYfBO7T9vGq4ei5VZ55
+         vP6AKkx18kThMqxCWjrNpQtB803qVQ6VK6IrYxPwmrVa65xjKbFHOt0DeIUwDkIHB/E5
+         a8icQIztJt80fNDNtK13qTXIP9/CWj0+6k8bE9nAyhGopJek3dPErBCL8PcE5xw8j2RG
+         DHPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUpuqcKvknqPumw+ojtM/TIAEvJOCcqTk1omILNJ9zvz9JAxUq6Uza35Re2GEtd8VJDpji8Gu2ELRu3QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLVFfSJnk4AKzt/O/Xe+RdfEpWpQE5WN8zB3SitxgV47jxeh6N
+	taVckxdeFCjufk5OYuMtLKdYh6Mo5GNfoCCQIQanarqVN864DeZu4lYIMc5I1nLafFU=
+X-Gm-Gg: ASbGncuRm71pkUHW6k4EONeJ50pqn3L6EJTG+JcW+NnFTJXYsfTdP8lpMDBaDRogacu
+	BocfTvvmO0dA2Sf2woVMFUK+3tRYCco3+2sI1YrT8s01ol+32iQH7xoyNQxGn0KXZW9mIwNZgTU
+	6tDqs7AfxPdD5SQpqN1JIUMOMTx8b2Ui9cTukx4BOn92ZNiaLujJH99Q4+x17LWaUX7P7mdgAfh
+	fdHMvddaszW/ww2Ichg54iE4uCqjpJzoR+sAAfXxISPH3qV50u7f3XtEHC2ejUIEWULU7rucPiG
+	s1k241SF+O7TEO0wlduQpPck+LATNdvTKPZ2w2rq3Qg8yFYVOBPHjtO2iYyWQoIKW7SxiSVDH9i
+	irDVAGcPPetvnJRCek/Dj0sbceiTGg9NvLnXzGjpMzs3/jnFl1iA6+YQuZMt/jMEJAw==
+X-Google-Smtp-Source: AGHT+IHGS28WyNhkMEqCYl++k5tXKsI+SYF4vISQjhRE5gJkG3IUVoDSvuT7pIyGxqFMWkpcex+/TQ==
+X-Received: by 2002:a17:907:3f94:b0:af9:14cf:d808 with SMTP id a640c23a62f3a-af9c654272amr1559960166b.55.1754988293947;
+        Tue, 12 Aug 2025 01:44:53 -0700 (PDT)
+Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078afbsm2158282666b.4.2025.08.12.01.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 01:44:53 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	andrea.porta@suse.com,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	iivanov@suse.de,
+	svarbanov@suse.de,
+	mbrugger@suse.com,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Phil Elwell <phil@raspberrypi.com>
+Subject: [PATCH] dt-bindings: pinctrl: rp1: Describe groups for RP1 pin controller
+Date: Tue, 12 Aug 2025 10:46:39 +0200
+Message-ID: <20250812084639.13442-1-andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: adc: imx93_adc: load calibrated values even
- calibration failed
-To: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-iio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "upstream@lists.phytec.de" <upstream@lists.phytec.de>
-References: <20250812-adc-v2-0-0260833f13b8@nxp.com>
- <20250812-adc-v2-2-0260833f13b8@nxp.com>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <20250812-adc-v2-2-0260833f13b8@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
-Hi Haibo,
+The DT binding for RP1 pin controller currently lacks the group
+definitions.
 
-On 12. 08. 25 10:04, Haibo Chen wrote:
-> ADC calibration might fail because of the noise on reference voltage.
-> To avoid calibration fail, need to meet the following requirement:
->     ADC reference voltage Noise < 1.8V * 1/2^ENOB
-> 
-> For the case which the ADC reference voltage on board do not meet
-> the requirement, still load the calibrated values, so ADC can also
-> work but maybe not that accurate.
+Add groups enumeration to the schema.
 
-Reviewed-by: Primoz Fiser <primoz.fiser@norik.com>
+Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+---
+ .../pinctrl/raspberrypi,rp1-gpio.yaml         | 35 ++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-Thanks for fixing this.
-
-BR,
-Primoz
-
-> 
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
->  drivers/iio/adc/imx93_adc.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
-> index 8471737ac04a2bac0417a6397f20865f6a2c01ca..17b0a2548b0a3614ac537b01e28bc3144d17d6fc 100644
-> --- a/drivers/iio/adc/imx93_adc.c
-> +++ b/drivers/iio/adc/imx93_adc.c
-> @@ -38,6 +38,7 @@
->  #define IMX93_ADC_PCDR6		0x118
->  #define IMX93_ADC_PCDR7		0x11C
->  #define IMX93_ADC_CALSTAT	0x39C
-> +#define IMX93_ADC_CALCFG0	0x3A0
->  
->  /* ADC bit shift */
->  #define IMX93_ADC_MCR_MODE_MASK			BIT(29)
-> @@ -58,6 +59,8 @@
->  #define IMX93_ADC_IMR_ECH_MASK			BIT(0)
->  #define IMX93_ADC_PCDR_CDATA_MASK		GENMASK(11, 0)
->  
-> +#define IMX93_ADC_CALCFG0_LDFAIL_MASK		BIT(4)
-> +
->  /* ADC status */
->  #define IMX93_ADC_MSR_ADCSTATUS_IDLE			0
->  #define IMX93_ADC_MSR_ADCSTATUS_POWER_DOWN		1
-> @@ -145,7 +148,7 @@ static void imx93_adc_config_ad_clk(struct imx93_adc *adc)
->  
->  static int imx93_adc_calibration(struct imx93_adc *adc)
->  {
-> -	u32 mcr, msr;
-> +	u32 mcr, msr, calcfg;
->  	int ret;
->  
->  	/* make sure ADC in power down mode */
-> @@ -158,6 +161,11 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
->  
->  	imx93_adc_power_up(adc);
->  
-> +	/* Enable loading of calibrated values even in fail condition */
-> +	calcfg = readl(adc->regs + IMX93_ADC_CALCFG0);
-> +	calcfg |= IMX93_ADC_CALCFG0_LDFAIL_MASK;
-> +	writel(calcfg, adc->regs + IMX93_ADC_CALCFG0);
-> +
->  	/*
->  	 * TODO: we use the default TSAMP/NRSMPL/AVGEN in MCR,
->  	 * can add the setting of these bit if need in future.
-> @@ -180,9 +188,13 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
->  	/* check whether calbration is success or not */
->  	msr = readl(adc->regs + IMX93_ADC_MSR);
->  	if (msr & IMX93_ADC_MSR_CALFAIL_MASK) {
-> +		/*
-> +		 * Only give warning here, this means the noise of the
-> +		 * reference voltage do not meet the requirement:
-> +		 *     ADC reference voltage Noise < 1.8V * 1/2^ENOB
-> +		 * And the resault of ADC is not that accurate.
-> +		 */
->  		dev_warn(adc->dev, "ADC calibration failed!\n");
-> -		imx93_adc_power_down(adc);
-> -		return -EAGAIN;
->  	}
->  
->  	return 0;
-> 
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+index eec9a9b58542..af6fbbd4feea 100644
+--- a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+@@ -72,10 +72,36 @@ $defs:
+       pins:
+         description:
+           List of gpio pins affected by the properties specified in this
+-          subnode.
++          subnode (either this or "groups" must be specified).
+         items:
+           pattern: '^gpio([0-9]|[1-4][0-9]|5[0-3])$'
+ 
++      groups:
++        description:
++          List of groups affected by the properties specified in this
++          subnode (either this or "pins" must be specified).
++        items:
++          anyOf:
++            - pattern: '^gpio([0-9]|[1-4][0-9]|5[0-3])$'
++            - enum: [ uart0, uart0_ctrl, uart1, uart1_ctrl, uart2, uart2_ctrl,
++                      uart3, uart3_ctrl, uart4, uart4_ctrl, uart5_0,
++                      uart5_0_ctrl, uart5_1, uart5_1_ctrl, uart5_2,
++                      uart5_2_ctrl, uart5_3,
++                      sd0, sd1,
++                      i2s0, i2s0_dual, i2s0_quad, i2s1, i2s1_dual, i2s1_quad,
++                      i2s2_0, i2s2_0_dual, i2s2_1, i2s2_1_dual,
++                      i2c4_0, i2c4_1, i2c4_2, i2c4_3, i2c6_0, i2c6_1, i2c5_0,
++                      i2c5_1, i2c5_2, i2c5_3, i2c0_0, i2c0_1, i2c1_0, i2c1_1,
++                      i2c2_0, i2c2_1, i2c3_0, i2c3_1, i2c3_2,
++                      dpi_16bit, dpi_16bit_cpadhi, dpi_16bit_pad666,
++                      dpi_18bit, dpi_18bit_cpadhi, dpi_24bit,
++                      spi0, spi0_quad, spi1, spi2, spi3, spi4, spi5, spi6_0,
++                      spi6_1, spi7_0, spi7_1, spi8_0, spi8_1,
++                      aaud_0, aaud_1, aaud_2, aaud_3, aaud_4,
++                      vbus0_0, vbus0_1, vbus1, vbus2, vbus3,
++                      mic_0, mic_1, mic_2, mic_3,
++                      ir ]
++
+       function:
+         enum: [ alt0, alt1, alt2, alt3, alt4, gpio, alt6, alt7, alt8, none,
+                 aaud, dcd0, dpi, dsi0_te_ext, dsi1_te_ext, dsr0, dtr0, gpclk0,
+@@ -103,6 +129,13 @@ $defs:
+       drive-strength:
+         enum: [ 2, 4, 8, 12 ]
+ 
++    required:
++      - function
++
++    oneOf:
++      - required: [ groups ]
++      - required: [ pins ]
++
+     additionalProperties: false
+ 
+ allOf:
 -- 
-Primoz Fiser
-phone: +386-41-390-545
-email: primoz.fiser@norik.com
---
-Norik systems d.o.o.
-Your embedded software partner
-Slovenia, EU
-phone: +386-41-540-545
-email: info@norik.com
+2.35.3
+
 
