@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-765112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C02B22B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FA6B22BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21A72A7AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:24:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F08D7A6279
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B2F2F5499;
-	Tue, 12 Aug 2025 15:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B39C2F5481;
+	Tue, 12 Aug 2025 15:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hcenBkK3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4uw3FOF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC482F546F;
-	Tue, 12 Aug 2025 15:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7278E2EE607;
+	Tue, 12 Aug 2025 15:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755012254; cv=none; b=bZCamn5Gf2WJw/231h2TxEg/uSwcnGkDXnO+AqH1pKgJQQlTKrC6QaomWPI5Elj1FaGHRJMITUCxSqZ4VfyvnKeQKI24u+WEl//g9rQGumkMgrAQ4vfSkv0ZXdjvYWY84O+OnAApKIEO3wofsgw/WPriDh3sDcN38bexmcqIG9E=
+	t=1755012237; cv=none; b=sVqmmOumgJhHDRBMSJWXjU9eMjSvbC0iUQ+wjByYrn25svSahW8/Haiju7OYLN7pWq9cVii6+gvmTGfG1kLMCCxML6WqXlithlK0sYOKfBe//6KfNy/hXtHx2MecKWnoNIqnYNT/zqQYojp2pHaFDc7FZxxjglU3LNkisRGEniI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755012254; c=relaxed/simple;
-	bh=30yPRQBKhF1sBwqIUODZ/JKK+AQMMqhM1j80Zu8h0lI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CES9Ud0WeTYIyqpW/mFagImf02593gKe6ymw/bP4SYEgSyMxHaMi31YBHyhliLLGkK1NPsQ448Vt3bKKIhrC7gMmvEAm8sDJSVEd3e+mabjCUrDfXkJnzI55+Hn4FS7lMRy7l9G5+gxD6KkulaEGIwTxDZjO1dfXPNbAp6U6KD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hcenBkK3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAvjLL012593;
-	Tue, 12 Aug 2025 15:23:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3cjXHwMaWiX5/OP582acD5h+jjOdYS5FldMvq9RW0M4=; b=hcenBkK3GC8wxgCG
-	6ag75kHiwmOde+0ORZrx2cS28mDU4M1uMUdmL0bvrwzgCHxlqxSVOHXDwuWKqL7q
-	NsiGRuWtOJoSFqeqmLS7n0v9xyGsMtKCR3hSxnOLifYJAL/xp71ZMXNWGwpqmAUd
-	5nasBDS9ngWgA1iIS71LXKSSp7KDORoyhXo8ARIGfBQ04Jz1BCgpi0igtxDUYIut
-	bfyPFhYBjX5cVrydGBKAnVMeKXAwKMqA0mt09PvoqVw+I59lmG3z0QwG4ylSeAcy
-	OA+OY66DU1UzJ/xov5SIw+U3ZslJju/8swkKxXH8zdUZU5y+J79q3s4SYQ2QwNK1
-	bXQ04g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxdv0kqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 15:23:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57CFNwF9010964
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 15:23:58 GMT
-Received: from [10.216.60.9] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
- 2025 08:23:52 -0700
-Message-ID: <3ac1efc5-4c17-410e-8a84-948e5c9cdd1a@quicinc.com>
-Date: Tue, 12 Aug 2025 20:53:49 +0530
+	s=arc-20240116; t=1755012237; c=relaxed/simple;
+	bh=mX6tR4+Ke57loofg2X/TVfboE2bhITCHejUM+A1Udjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P6G/e9ymLkKOWzsw4OugNshau4smpDdVqJt9sdFALJ6MlzqiLqi2A3AawuiI6gBRfl/uNmXK3qEf5o7IPg9iytuq9O0k8d0eMKXpOBV1jj/Lto2OTSex3m2tUR+yy1gxJf3mlqxw8YTqZUwwO1/9zzKMgiGIT2bm7xffTf5Yj7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4uw3FOF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CF1C4CEF6;
+	Tue, 12 Aug 2025 15:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755012237;
+	bh=mX6tR4+Ke57loofg2X/TVfboE2bhITCHejUM+A1Udjg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H4uw3FOFtceDyVXfp2hkab8EBMAGh6+jXNXurLp3g7xpXd899UiLoYprwvEiDFj8g
+	 ysEXiSt0VNG2Vh142IEL2VQ3/otMit935/8wPO28T1lsOoxTYwvBiiB1LhVjcJ2qk+
+	 3PeRKrEQYmduxF/DJpS733Ojbu/CyCCKM6B5Guov+rJPQKeaeEAjNMeV3tqYnHIE4B
+	 GK82buDJxXO2p26YhMNXKvnSujwDkBCKgjVYpM7kgqwnUk2jJTPnxRRCGMSNDtFklu
+	 SBACn4xSHt8YauzOcYZ6KXAGsesPB1FO8SizrDD+iOInWtve73k4VoP1A18RyZfpGN
+	 21xQd2dgEtuiA==
+Message-ID: <0fd6fefc-9fad-4ea6-a619-e9f480747ac0@kernel.org>
+Date: Tue, 12 Aug 2025 17:23:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,116 +49,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, <mani@kernel.org>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
- <20250811143139.16422-3-quic_rdwivedi@quicinc.com>
- <67aedb2a-3ccc-4440-b2ff-b3dbedf5e25c@kernel.org>
- <9ff100b4-a3a5-4364-8172-1ccb5566e50c@quicinc.com>
- <27qmlr3lie54lyigl5v434yzvbes5twy6zgtkqb52ycfh23vsp@zdg57ifh7kog>
+Subject: Re: [PATCH 4/4] dt-bindings: soc: fsl: qe: Add an interrupt
+ controller for QUICC Engine Ports
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+ <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <27qmlr3lie54lyigl5v434yzvbes5twy6zgtkqb52ycfh23vsp@zdg57ifh7kog>
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <0b56ef403a7c8d0f8305e847d68959a1037d365e.1754996033.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689b5c8f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=GiozvvAXbBCNVtD0RQIA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: EAODzY8Jadu8K-twJvAUUxb6RdQKm2wk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX2xFoNpSCmq3z
- 5GBl/P/YdDYcxIn7/xlYzMBqlWJnAXztN0cnuDb6GQcIChkyLDQw/669Vxs6W8luiIX8+tj6DZ0
- 4KjKoLw04+zQSPLYptI6qsl6GislkUoo3BMSmjwkNeIkFNkigF9Jga8xHedda9jyD6kpZeoqc2I
- r31jLsghFvdisJnVdtDTdWV6sQAlZ6YiRw2fZoXtusGSdiFsAT9tHepgwPPEQH2ZqFZ2ajjG+tJ
- sEE0CI1QxRIO6euPvgBqyrZ6OY73e7CUuNh3afM9QkzwKw+T81yY7FADa8UIQi5ZMADWSSADdEs
- NZqUJeWoLtvdX6YnXNa/6wVKbUXX99RYwUg4rAYLuYgpJqF5DQ9mDeWdupbPkkVzA5cd8KiO1eA
- 98r/Ysxx
-X-Proofpoint-GUID: EAODzY8Jadu8K-twJvAUUxb6RdQKm2wk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
 
-
-
-On 12-Aug-25 4:25 PM, Dmitry Baryshkov wrote:
-> On Mon, Aug 11, 2025 at 10:24:29PM +0530, Ram Kumar Dwivedi wrote:
->>
->>
->> On 11-Aug-25 8:13 PM, Krzysztof Kozlowski wrote:
->>> On 11/08/2025 16:31, Ram Kumar Dwivedi wrote:
->>>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->>>> on the Qualcomm SM8650 platform by updating the device tree node. This
->>>> includes adding new register region for MCQ and specifying the MSI parent
->>>> required for MCQ operation.
->>>>
->>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 7 ++++++-
->>>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> Way you organize your patchset is confusing. Why DTS is in the middle?
->>> It suggests dependency and this would be strong objection from me.
->>
->> Hi Krzysztof,
->>
->> My current patch submission order is as follows:
->>
->> 1.DT binding
->> 2.Device tree
->> 3.Driver changes
->>
->> Please let me know if you'd prefer to rearrange the order and place the driver patch in the middle.
+On 12/08/2025 13:02, Christophe Leroy wrote:
+> The QUICC Engine provides interrupts for a few I/O ports. This is
+> handled via a separate interrupt ID and managed via a triplet of
+> dedicated registers hosted by the SoC.
 > 
-> THe recommended way is opposite:
+> Implement an interrupt driver for it for that those IRQs can then
+> be linked to the related GPIOs.
 > 
-> - DT bindings
-> - Driver changes
-> - DT changes
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
 > 
-> This lets maintainers to pick up their parts with less troubles.
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+> new file mode 100644
+> index 0000000000000..7c98706d03dd1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +
+> +title: Freescale QUICC Engine I/O Ports Interrupt Controller
+> +
+> +maintainers:
+> +  - name: Christophe Leroy
+> +    email: christophe.leroy@csgroup.eu
 
-Hi Dmitry and Krzysztof,
+Oh no...
 
-Thanks for the suggestion. I'll update the next patchset order to
-follow the recommended structure:
-1. DT bindings
-2. Driver changes
-3. DT changes
+> +
+> +description: |
+> +  Interrupt controller for the QUICC Engine I/O ports found on some
+> +  Freescale/NXP PowerQUICC and QorIQ SoCs.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,mpc8323-qe-ports-ic
+> +      - fsl,mpc8360-qe-ports-ic
+> +      - fsl,mpc8568-qe-ports-ic
+> +
+> +  reg:
+> +    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
+> +    minItems: 1
+> +    maxItems: 1
 
-Appreciate the guidance.
+This was never tested but more important this and everything further
+looks like generated by AI. Please don't do that or at least mark it
+clearly, so I will prioritize accordingly (hint: AI generates poor code
+and burden to decipher AI slop should not be on open source reviewers
+but on users of AI, but as one of maintainers probably you already know
+that, so sorry for lecturing).
 
-Thanks,
-Ram.
-
-> 
->>
->>
->> Regards,
->> Ram
->>>
->>> Please read carefully writing bindings, submitting patches in DT and SoC
->>> maintainer profile.
->>>
->>> Best regards,
->>> Krzysztof
->>
-> 
-
+Best regards,
+Krzysztof
 
