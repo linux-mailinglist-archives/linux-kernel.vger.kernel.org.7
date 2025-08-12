@@ -1,279 +1,201 @@
-Return-Path: <linux-kernel+bounces-764175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BE9B21F5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE819B21F5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD2E3B4D6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC612A2C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90D12DCF6C;
-	Tue, 12 Aug 2025 07:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49432DC32F;
+	Tue, 12 Aug 2025 07:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFA+l0xD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HaHquvz5"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085EA2D781F;
-	Tue, 12 Aug 2025 07:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAF127462;
+	Tue, 12 Aug 2025 07:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983232; cv=none; b=b2P1Rt+t8rPnw771SAUd0zOSlQEGprf+HggMtCzrblAvX8WI+XU/2GMTO3vJNJjv4/ePDyfzCErbKkqOvtcAVOvOUwPxUsqGYQFkGBejzKY/uAsN2AtBPp7D4fTdWAvidnMu24fY1dEcwS3/PQChd1MjWIbACFOC2eoBcoL1pn4=
+	t=1754983267; cv=none; b=BQO/fplBBFUwQzUuMRszHTR+b/QvBl6HdtneIOUE+lxpxIQ5iFCpvopMaDEINEr4zPWWhSuzMivdfZGWXHvf9d0M43PKt5cWOSxpwbLMx4prNBPuv5DpL+5Qf4MBuCWxoL72/bPseQkaJ0+ms/bP3xDN/TFckmJ1jnE5eND+iw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983232; c=relaxed/simple;
-	bh=3zXD/+65HbFtTHBlTBULFxIEcPSOGq0V7b8vr8mcreE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N+1nRZE1+ym9tDypg94fUTDX9YU4ZuzzuP0ws7htjRlg2YkllVHdhV/aPRMqavOioxt0KWjBaeCb/i5jsnQy6p7ydqXtxjo0tF9w1Rxza/SMuU27LZimv1Xz8VM9e41iJ8wfzcvCgZ1LXoR9KZ9m31Vi8n6BVQR3pwrzy6ZWG5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFA+l0xD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6B0C4CEF0;
-	Tue, 12 Aug 2025 07:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754983231;
-	bh=3zXD/+65HbFtTHBlTBULFxIEcPSOGq0V7b8vr8mcreE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WFA+l0xDczXlJQV0BfNDF6S5Adxp4Jjr1xRUUhYBWgihhjiPxagxSt5sJfBnl5OcD
-	 ehqDYQORdF6Ss/ew4pR38LZX//pWEaqLxzcV+pQLMVLx27jxQr5bP1c53bddIN+3RM
-	 IISVe8bkBRxC5xz+oodaWBu9eLoZwZHupBjMzDcLvQeahd6c7+AAcYOyEt5kJo2wCG
-	 tKY4NnjCKQaQpk9NoGbYM7+E0rQQsxGZbc+ZelO302jsegywG2Sl24Pn/ik6k2c0p5
-	 tZlNFGoXPgAY/bkoExgU3Ml4rQ8wKiI88Ums6TzxCE7ylIlSE4wDlnBVX4jANLJmew
-	 Mbt2KZpcCBSdQ==
-Message-ID: <eab6d2d2-9337-40fe-81c7-95dc1956ce6f@kernel.org>
-Date: Tue, 12 Aug 2025 09:20:26 +0200
+	s=arc-20240116; t=1754983267; c=relaxed/simple;
+	bh=tigkppWCWYMCvNyNEubqAvylnX60Uy4UDRVtMpltcMs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MOpR2wMMo+QiVKUOica7Zu3HxQ7KTmW0AlY2ot6F5B/16IBohxvHmwIjGKnSlCDuKALOdptBjrO+vzc8nR/YZCB1Ei1tg64MbwMP8y6AYYlkOmWPvdvm4Eadqc7Jfgjb0J+cqUAEpjcTvz6D/nG1PGuqrBGaAJNFaJ3bGIUyFBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HaHquvz5; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af96524c5a9so669592366b.1;
+        Tue, 12 Aug 2025 00:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754983264; x=1755588064; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KdvN3hos4ZfIVGUNdDwdDNs5CgvOMtRQ9WBj592DhBk=;
+        b=HaHquvz5iuqC4hkDhnyicai3AsN9SFtkMvGz5217jSd7YLvHECCRZGbWV/zXcXFd2t
+         JH+PCmbCxUMVCBXWFEs8fjHLkWUOFoV+UnBmMzUiZg2Z0VofS3V0l14PcQRmBEnxmVsL
+         fwREbMp6P+vSnNzkcognLGkABFBPxdO3/47e8aGzVgWnjYuXGmjUIuGL7IFO5SfpHxRG
+         +h5khV7fbMAr/saYXzTRjWHhlbJKjFfxUjfcgGZcSLnhse8T4c8a7jcloJZ3ruAd+rYw
+         f478FAGf0IAMznv54HdlCrW2/TTH0K8teAF81QOa5/dFqmxM7D3XZ0Dn5iCzeValGoNR
+         Ugxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754983264; x=1755588064;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KdvN3hos4ZfIVGUNdDwdDNs5CgvOMtRQ9WBj592DhBk=;
+        b=GSMh+yL98KvQXW8WMJ4hDHCQfStr9KjWxvvQss1wZ6hVn8MfZej4QZU+RTZN9MR/13
+         6EAUj7ba83EZopYt8puZIU7hfj9EfTsSwfpNLl/TsAJM+8BstaygjgKSSloHwRgkWYPE
+         kMcdkdVnwse+nPNuSDYcIY7Fcl4GMN+IFdkHnAJ6OsBwy0lrbwiXbkAS6+ucy8EY/3Qc
+         wXN0IaGWq1xiRR3fb+jEeCzy6Xl1/Nqxm+ulTw+Ec7WlpPSkl2NC2YGJZhPm1raKzMjO
+         UtN64Zgfc/D6VsUPv8hIQRnjVx3J8CgeKl4Z9zAmFaQ9FkxWV4jaXLYQRbFYW3yAj0VF
+         Xu6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVSLHcExocSYz8zNvwOBBj2HJTQHPMy7uzhR59il+tGyqj+eC+FoutK/k0IQDrQjaWzgG8v6/G4d7wYvg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWe2017FNzqHW5Otw+bR6tVnLxSGCX/kRaL+eRMUgBRAXiCr9Q
+	Qs7pGAEdR6ohLFCsxfY1PZQ6WBncNVfDEhzYKxYggZKTDZShGlJndtCl
+X-Gm-Gg: ASbGncu0b4tSO5JCtdP775smzar3p2Svl67protRXbyjIZk5hdTFt0LwAUimpx4iyHc
+	wDrgHJ7kYV5QNKwL5OKpJz4bUtxwjtVRrJF5RXDc6qRmSv0iSPPXkv/K9XD3HXSEpxN5qT8VDho
+	EJwo2mG7aPjJJINnMSFUTYLdXQDHqXPo5MYlvEOIVTZnDwrDffqa7j25+iGoyzdiuspz6RVtx8R
+	3mLLmYb1jSmbGcS9mS7C3clWB7LEJi5Wi99BMJDVCHmzc7LJ8keKZSO8TSXC22a04whjURjdmiY
+	8YvA4C05NAsWbxuxeB2Kmy6BEZkwbQXILrNVLfXqHnSqvP+JYorLjN+wZ56AVOYfTjIwaXScV7x
+	x8IL1QMl74oVymWRHmlKc3nK+ajkFlFYpnKJrLfP6c6ceApJNuUqSg3gNdx5asnUSM10S9KKDA1
+	HWQybP5ruaUg0=
+X-Google-Smtp-Source: AGHT+IEEEuwo1oGl7QN9YdJIWFLJDjjJKJXuGCx345I6XSM6Vd9H1McXJijKZIxcZ5MMMWp2gsEhrQ==
+X-Received: by 2002:a17:907:787:b0:af9:2e2a:64a8 with SMTP id a640c23a62f3a-af9c6403ac8mr1625756866b.25.1754983263453;
+        Tue, 12 Aug 2025 00:21:03 -0700 (PDT)
+Received: from smtpclient.apple (89-66-237-154.dynamic.play.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c081sm2131936566b.97.2025.08.12.00.21.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Aug 2025 00:21:02 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: update TI TPS23861 bindings
- with per-port schema
-To: gfuchedgi@gmail.com, Robert Marko <robert.marko@sartura.hr>,
- Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250811-hwmon-tps23861-add-class-restrictions-v2-0-ebd122ec5e3b@gmail.com>
- <20250811-hwmon-tps23861-add-class-restrictions-v2-2-ebd122ec5e3b@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250811-hwmon-tps23861-add-class-restrictions-v2-2-ebd122ec5e3b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/08/2025 18:13, Gregory Fuchedgi via B4 Relay wrote:
-> From: Gregory Fuchedgi <gfuchedgi@gmail.com>
-> 
-> Update schema after per-port poe class restrictions and a few other options
-> were implemented.
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-> 
-> Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
-> ---
->  .../devicetree/bindings/hwmon/ti,tps23861.yaml     | 86 ++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml b/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-> index ee7de53e19184d4c3df7564624532306d885f6e4..578f4dad7eab630b218e9e30b23fc611a760d332 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-> @@ -24,12 +24,62 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
->    shunt-resistor-micro-ohms:
->      description: The value of current sense resistor in microohms.
->      default: 255000
->      minimum: 250000
->      maximum: 255000
->  
-> +  reset-gpios:
-> +    description: Optional GPIO for the reset pin.
-> +    maxItems: 1
-> +
-> +  shutdown-gpios:
-
-powerdown-gpios, see gpio-consumer-common.yaml
-
-> +    description: |
-
-Drop |
-
-> +      Optional GPIO for the shutdown pin. Used to prevent PoE activity before
-> +      the driver had a chance to configure the chip.
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: |
-> +      The interrupt specifier. Only required if PoE class is restricted to less
-
-Drop first sentence, redundant. Interrupts property cannot be anything
-else than interrupt specifier.
-
-> +      than class 4 in the device tree.
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^port@[0-3]$":
-
-This goes to ports property.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 00/12] media: rkvdec: Add support for VDPU381 and
+ VDPU383
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <20250808200340.156393-1-detlev.casanova@collabora.com>
+Date: Tue, 12 Aug 2025 09:20:51 +0200
+Cc: linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3786B8EA-9796-40A9-8EEF-16CFAEE27766@gmail.com>
+References: <20250808200340.156393-1-detlev.casanova@collabora.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+X-Mailer: Apple Mail (2.3826.700.81)
 
 
-> +    type: object
-> +    description: Port specific nodes.
-> +    unevaluatedProperties: false
-> +    required:
-> +      - reg
 
-required goes to the end.
+> Wiadomo=C5=9B=C4=87 napisana przez Detlev Casanova =
+<detlev.casanova@collabora.com> w dniu 8 sie 2025, o godz. 22:03:
+>=20
+> These variants are found respectively in the RK3588 and RK3576 SoCs.
+> This patch only adds support for H264 and H265 in both variants.
+>=20
+> As there is a considerable part of the code that can be shared with =
+the
+> already supported rkvdec decoder driver, the support for these =
+variants
+> is added here rather than writing a new driver.
+>=20
+> This patch set uses the newly introduced hevc_ext_sps_[ls]t_rps v4l2
+> controls for HEVC [1].
+> Therefore, a patched version of userpace tools is needed for HEVC
+> support (added for GStreamer[2] and in an early stage for FFmpeg[3]).
+>=20
+> This patch set also depends on the preparation patch set sent earlier =
+[4]
+> as well as the iommu restore fix [5] (already merged in linux-media) =
+and
+> Nicolas Frattaroli's bitmap patch [6] to support setting registers =
+that
+> uses upper 16 bits as masks.
+>=20
+> [1]: =
+https://lore.kernel.org/all/20250807194327.69900-1-detlev.casanova@collabo=
+ra.com/
+> [2]: =
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9355
+> [3]: https://gitlab.collabora.com/detlev/ffmpeg
+> [4]: =
+https://lore.kernel.org/all/20250623160722.55938-1-detlev.casanova@collabo=
+ra.com/
+> [5]: =
+https://lore.kernel.org/all/20250508-rkvdec-iommu-reset-v1-1-c46b6efa6e9b@=
+collabora.com/
+> [6]: =
+https://lore.kernel.org/all/20250623-byeword-update-v2-1-cf1fc08a2e1f@coll=
+abora.com/
+>=20
+> Changes since v1:
+> - Add parsing of the short and long term ref frame sets from the new =
+v4l2
+>   controls
+> - Add RPS cache to avoid parsing the same data again
+> - Fix HEVC pixel formats selection
+> - Fix multiple indentation errors
+>=20
+> Detlev Casanova (12):
+>  media: rkvdec: Switch to using structs instead of writel
+>  media: rkvdec: Move cabac table to its own source file
+>  media: rkvdec: Use structs to represent the HW RPS
+>  media: rkvdec: Move h264 functions to common file
+>  media: rkvdec: Add per variant configuration
+>  media: rkvdec: Add RCB and SRAM support
+>  media: rkvdec: Support per-variant interrupt handler
+>  media: rkvdec: Enable all clocks without naming them
+>  media: rkvdec: Add H264 support for the VDPU381 variant
+>  media: rkvdec: Add H264 support for the VDPU383 variant
+>  media: rkvdec: Add HEVC support for the VDPU381 variant
+>  media: rkvdec: Add HEVC support for the VDPU383 variant
+>=20
+> ..
 
-> +
-> +    properties:
-> +      reg:
-> +        description: Port index.
-> +        items:
-> +          minimum: 0
+Detlev,
 
-Drop minimum.
+I give run for this series on rk3576 and rk3588 devices (various SBC =
+boards) on mainline 6.16 kernel.
+Userspace was: KODI, MythTV and mpv.
+All are using ffmpeg - but without [3] applied*.
+Tested video rendering pipelines was: EGL DAMBuf and DRM direct to plane
 
-> +          maximum: 3
-> +
-> +      class:
-> +        description: The maximum power class a port should accept.
-
-What are the values? Where is the property defined - which schema - that
-you do not use vendor prefix?
-
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-
-Drop minimum.
-
-> +        maximum: 4
-> +
-> +      off-by-default:
-
-Same question - which common schema defines this?
-
-> +        description: Indicates the port is off by default.
-> +        type: boolean
-> +
-> +      label:
-> +        description: Optional port label
-
-Skip all "optional" here and other places. Schema tells it, not free
-form text. Say something useful here or just ": true".
-
-> +
->  required:
->    - compatible
->    - reg
-> @@ -51,3 +101,39 @@ examples:
->              shunt-resistor-micro-ohms = <255000>;
->          };
->      };
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        tps23861@28 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-
-Follow closely DTS coding style.
-
-> +            compatible = "ti,tps23861";
-> +            reg = <0x28>;
-> +            shunt-resistor-micro-ohms = <255000>;
-> +            reset-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
-> +            shutdown-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-> +            interrupt-parent = <&gpio1>;
-> +            interrupts = <14 0>;
-
-0 looks like invalid flag. Use proper defines and proper values.
-
-> +            label = "my_poe_controller";
-
-Use useful names or just drop it.
+Happy to report:
+-all h264 content** i tested was decoded ok.
+-on some rk3576 h264 rendering manifest known "green lines" issue*** =20
+-hevc content**** was also decoded ok except samples requiring long =
+sps/rps hinting from userspace (from ffmpeg in my case)
 
 
-> +            port@0 {
-> +                    reg = <0>;
-> +                    class = <2>; // Max PoE class allowed.
+* - it looks (to me) your's ffmpeg branch changes are incompatible with =
+yours rkvdec code (i.e. ffmpeg refers to =
+V4L2_HEVC_EXT_SPS_RPS_FLAG_INTER_REF_PIC_SET_PRED but kernel v2 driver =
+don't have it)
 
+**  - i'm referring to multiple h.264 movies and TV HD channels
 
-> +                    off-by-default;
-> +                    label = "myport";
+*** - issue of thin green lines we discussed on rockchip IRC channel
 
-Also not useful.
+**** - as my ffmpeg7.1 has not applied newly introduced =
+hevc_ext_sps_[ls]t_rps v4l2
+controls for HEVC (due *) - some content is not decoded properly.
 
+If any extra tests can be helpful - i'' be more that happy to do so!
 
-Best regards,
-Krzysztof
+br=20
+
 
