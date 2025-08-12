@@ -1,165 +1,198 @@
-Return-Path: <linux-kernel+bounces-765092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4EFB22B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:01:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3194CB22B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E027416474B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:57:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC4D1885BCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728D42ED167;
-	Tue, 12 Aug 2025 14:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D63C2F4A0B;
+	Tue, 12 Aug 2025 14:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="tFFO+7rH"
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gr+95pxJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D85184
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0FB2ED167;
+	Tue, 12 Aug 2025 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755010636; cv=none; b=uoL+WptqW87+ZMYSqz3LlRIcksWAclOUwH+CT5alCK7LhaGNEU3Rk1c/4V9AXVN6bG1m1UB+EPBL/ClvGlBkDupf70KHeVS0gGBB5ZnQy77erYesiZHyMvBxqzs7AHaL4BNeYjzgvK2LMl5xBrWTkhokPPBEEF3KTmckVUQgZ2E=
+	t=1755010700; cv=none; b=RJb4msvbhqbPoN4o/IpGZ++/Q/4/T+yM1Wrex7MKjrTp5Yt+k6QUKZQ/TAVDYEKZK4aVjLamk5CefKhBuuS8a5T6XbcVjdceu/vYVgtSScfz5TlPOZ3Ojs3kgBkR/XGBkvqGWsJTspFVkCHodar0DiosBGjvfD/omB0q6zDg0ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755010636; c=relaxed/simple;
-	bh=xpU3v7NRK6yEBI/4cSkXapJ9FiycVuvBE6/Z6qs1xeo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S1IX0Ozrdwlcjo5sLyqbpGBRwcrQ+x+Z9lKJX3jXaS5gRP4xGvZF93OnepWSroHJljrN3BQ9PDsODQdDb1yode7AqkJGlsD/45WO275YTUlzaWDLrfoxqt7P7TemkOCConsaMBz4+KE5brzD2P6lSaVGPDNb/Hce3qV6pNF1ZQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=tFFO+7rH; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755010629;
-	bh=ljim8K8H9HpOPQA//CjcNWiJEPPngBxmUYz6bMj+1WI=;
-	h=From:Subject:Date:Message-ID;
-	b=tFFO+7rHyj+lrUrxfOefHknZN+K3PB2l0G3+M6ZvrEMcBbWEaIiteWpWsl3S2r550
-	 XfA/dqb1emoWhDMi5aYn9HY4uTqB6eZCPL/MiqqiUwN1ZFFPqhH3x3v7lF9gO/nAC2
-	 urK91PoKIsgDaOQFF7XrqIGM6XEKab3oj8zvqHzw=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 689B563A00000C21; Tue, 12 Aug 2025 22:56:59 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7941594456628
-X-SMAIL-UIID: 2780363561E44E29BDE95771D08913C2-20250812-225659-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
-Date: Tue, 12 Aug 2025 22:56:47 +0800
-Message-ID: <20250812145648.4310-1-hdanton@sina.com>
-In-Reply-To: <689b1044.050a0220.7f033.011b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755010700; c=relaxed/simple;
+	bh=Rk2Wv+XIInfRq7CIVjb46iopF138UdtfA0/xltArFE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/3QS+5KnLpkxCi2YL9jukYJtudEIEHS5JuDE1dhJ+MxuLGRrWRezFYP3cIdWl1Hq6Klv/JulR8haciJsRW1e55zKK6gOSvbwygjZvT1MK7gFVMr2QucQd+xUBwBiKmpI9BQPEmVX760Hz9SMgFbZFaOpgiUZBwU8VbT0IBxzTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gr+95pxJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBACEC4CEF0;
+	Tue, 12 Aug 2025 14:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755010699;
+	bh=Rk2Wv+XIInfRq7CIVjb46iopF138UdtfA0/xltArFE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gr+95pxJS+t0zEZwDxuWO4Zulu5pWboRnBN0sYvpSPCIhgPgcG0CIuNrcuV9cm2iL
+	 JXGLEfoNloA76MSb80VjrzdSRHDkajmPjIDikik6T9k4H64EsfgMxesNGkiJr56TsO
+	 WDGPche70euE6kocR+2vfFYyOF9rq2nI9lR/rZsImJgRG2CFUhRzuZ4p0A5kvp1nbj
+	 M4JC2zibR0HLVtpO8Mv+fQbEvhNLnF7iw0fT8C1synXwh7ip2Pr7da+9FvnOnQF6bR
+	 7HI4Qy2k1OknRHYiuqqRJYI+f2alQAoZpQl1cTcxIugkQ57av21FxSTnbcZJuiQqMg
+	 JaWM2NsG792xA==
+Date: Tue, 12 Aug 2025 09:58:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: linux-kernel@vger.kernel.org, peter.ujfalusi@gmail.com,
+	dmitry.torokhov@gmail.com, krzk+dt@kernel.org, lgirdwood@gmail.com,
+	tiwai@suse.com, conor+dt@kernel.org, lee@kernel.org,
+	ukleinek@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH 1/8] mfd: dt-bindings: ti,twl4030-audio: convert to DT
+ schema
+Message-ID: <20250812145818.GB3607226-robh@kernel.org>
+References: <20250811224739.53869-1-jihed.chaibi.dev@gmail.com>
+ <20250811224739.53869-2-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811224739.53869-2-jihed.chaibi.dev@gmail.com>
 
-> Date: Tue, 12 Aug 2025 02:58:28 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+On Tue, Aug 12, 2025 at 12:47:32AM +0200, Jihed Chaibi wrote:
+> Convert the legacy TXT binding for the TWL4030 audio module
+> to the modern YAML DT schema format. This adds formal validation
+> and improves documentation.
 > 
-> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c415a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa80c6232008f7b957d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151be9a2580000
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> ---
+>  .../bindings/mfd/ti,twl4030-audio.yaml        | 91 +++++++++++++++++++
+>  .../devicetree/bindings/mfd/twl4030-audio.txt | 46 ----------
 
-#syz test
+Shouldn't this move to bindings/sound/?
 
---- x/drivers/net/netdevsim/netdev.c
-+++ y/drivers/net/netdevsim/netdev.c
-@@ -709,10 +709,14 @@ static struct nsim_rq *nsim_queue_alloc(
- 
- static void nsim_queue_free(struct net_device *dev, struct nsim_rq *rq)
- {
-+	struct netdevsim *ns = netdev_priv(dev);
-+
- 	hrtimer_cancel(&rq->napi_timer);
--	local_bh_disable();
--	dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
--	local_bh_enable();
-+	if (ns->registed) {
-+		local_bh_disable();
-+		dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
-+		local_bh_enable();
-+	}
- 	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
- 	kfree(rq);
- }
-@@ -981,6 +985,7 @@ err_free_prev:
- 	while (i--)
- 		kfree(ns->rq[i]);
- 	kfree(ns->rq);
-+	ns->rq = NULL;
- 	return -ENOMEM;
- }
- 
-@@ -989,6 +994,8 @@ static void nsim_queue_uninit(struct net
- 	struct net_device *dev = ns->netdev;
- 	int i;
- 
-+	if (!ns->rq)
-+		return;
- 	for (i = 0; i < dev->num_rx_queues; i++)
- 		nsim_queue_free(dev, ns->rq[i]);
- 
-@@ -1001,6 +1008,7 @@ static int nsim_init_netdevsim(struct ne
- 	struct mock_phc *phc;
- 	int err;
- 
-+	ns->registed = 0;
- 	phc = mock_phc_create(&ns->nsim_bus_dev->dev);
- 	if (IS_ERR(phc))
- 		return PTR_ERR(phc);
-@@ -1038,6 +1046,7 @@ static int nsim_init_netdevsim(struct ne
- 							&ns->nn))
- 			ns->nb.notifier_call = NULL;
- 	}
-+	ns->registed = 1;
- 
- 	return 0;
- 
---- x/drivers/net/netdevsim/netdevsim.h
-+++ y/drivers/net/netdevsim/netdevsim.h
-@@ -106,6 +106,7 @@ struct netdevsim {
- 	struct mock_phc *phc;
- 	struct nsim_rq **rq;
- 
-+	int registed;
- 	int rq_reset_mode;
- 
- 	struct nsim_bus_dev *nsim_bus_dev;
---- x/net/ipv4/udp_tunnel_nic.c
-+++ y/net/ipv4/udp_tunnel_nic.c
-@@ -733,7 +733,8 @@ static void udp_tunnel_nic_device_sync_w
- 	struct udp_tunnel_nic *utn =
- 		container_of(work, struct udp_tunnel_nic, work);
- 
--	rtnl_lock();
-+	if (!rtnl_trylock())
-+		return;
- 	mutex_lock(&utn->lock);
- 
- 	utn->work_pending = 0;
-@@ -782,6 +783,8 @@ static void udp_tunnel_nic_free(struct u
- 
- 	for (i = 0; i < utn->n_tables; i++)
- 		kfree(utn->entries[i]);
-+	disable_work(&utn->work);
-+	cancel_work_sync(&utn->work);
- 	kfree(utn);
- }
- 
---
+>  2 files changed, 91 insertions(+), 46 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl4030-audio.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-audio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl4030-audio.yaml b/Documentation/devicetree/bindings/mfd/ti,twl4030-audio.yaml
+> new file mode 100644
+> index 000000000..16ddcf007
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl4030-audio.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/ti,twl4030-audio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments TWL4030-family Audio Module
+> +
+> +maintainers:
+> +  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
+> +
+> +description: |
+
+Don't need '|' if no formatting to preserve.
+
+> +  The audio module within the TWL4030-family of companion chips consists
+> +  of an audio codec and a vibra driver. This binding describes the parent
+> +  node for these functions.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,twl4030-audio
+> +
+> +  codec:
+> +    type: object
+> +    description: Node containing properties for the audio codec functionality.
+
+       additionalProperties: false
+
+and a blank line here.
+
+> +    properties:
+> +      ti,digimic_delay:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Delay in milliseconds after enabling digital microphones to reduce
+> +          artifacts.
+> +
+> +      ti,ramp_delay_value:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Headset ramp delay configuration to reduce pop noise.
+> +
+> +      ti,hs_extmute:
+> +        type: boolean
+> +        description:
+> +          Enable the use of an external mute for headset pop reduction.
+> +
+> +      ti,hs_extmute_gpio:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description:
+> +          The GPIO specifier for the external mute control.
+> +        maxItems: 1
+> +
+> +      ti,offset_cncl_path:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Offset cancellation path selection. Refer to the Technical
+> +          Reference Manual for valid values.
+
+Constraints for any of these properties?
+
+> +
+> +    # The 'codec' node itself is optional, but if it exists, it can be empty.
+> +    # We don't require any of its sub-properties.
+> +
+> +  ti,enable-vibra:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Set to 1 to enable the vibra functionality, if missing
+> +      or it is 0, the vibra functionality is disabled.
+
+Sounds like constraints. Don't write constraints in prose.
+
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +
+> +      clock-frequency = <2600000>;
+
+Drop. Not relevant to this binding.
+
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      twl: twl@48 {
+> +        reg = <0x48>;
+> +        interrupts = <7>; /* SYS_NIRQ cascaded to intc */
+> +        interrupt-parent = <&intc>;
+> +
+> +        twl_audio: audio {
+> +          compatible = "ti,twl4030-audio";
+> +
+> +          ti,enable-vibra = <1>;
+> +
+> +          codec {
+> +            ti,ramp_delay_value = <3>;
+> +          };
+> +
+> +        };
+> +      };
+> +    };
 
