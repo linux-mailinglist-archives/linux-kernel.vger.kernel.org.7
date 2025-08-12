@@ -1,86 +1,59 @@
-Return-Path: <linux-kernel+bounces-764080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9DAB21DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B09B21DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCB063A6A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4893B420472
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28642882D3;
-	Tue, 12 Aug 2025 05:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hs0Z0FEh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFFD2D781B;
+	Tue, 12 Aug 2025 05:58:13 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FD626C3B7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51098226888;
+	Tue, 12 Aug 2025 05:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754978229; cv=none; b=oBp5Lo9v4iKjEF2U9qkHyemFfUAAFa/E7Mnlwmj6P0Nek1ixDnwNnGU1Ia0dgDw+x4IGrl8DMY5KpKVJgKCBhsCbr3tAs67S+BepkYWAGLxGIm+l2WNMDg1RP1TX91v6eoAV+maFOKDg8ogKuNz7J47igCUqx/Yh86cgrQIWFwo=
+	t=1754978292; cv=none; b=anwsHBvZSA4NRoEAkjr/grU9+5u9JF1o8EJfP1nQQ+9vN/55/NfCa0ImJjC+OQET5fPdLgE7k2L1tO814rr+IvfnZgJo6XzovJKuDPtxbMj90eBlqeLOmI/JIyew0Qfs0CHkFn/uqdPBYYsnyc3euAHO6KSTkNO2HGUSCVBK6f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754978229; c=relaxed/simple;
-	bh=tJOG9UGC1KS2vzDhLT4V/tFSo5qJ8SWB999TC4doV2E=;
+	s=arc-20240116; t=1754978292; c=relaxed/simple;
+	bh=72/bFUMbQkxIlhNalLj8wt1kYDVxk1aI+8+zUZG2XyI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MaKuyvbxrnCaDdeeA37fivVfzn4MvcUBwGUrs50iKUa9Ps1PHTEuOLELhnxXkwcChcdR04DYQQaJd6s5G93hN0XXTw1duFruxMKHP5OZZ6Rsd1FDmxF9i5eJp3AcNGePoGR5wfAYxjn5mbFhPdJyqlJgyqWxTzSSXO+TrGlEc0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hs0Z0FEh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C51fCL019036
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:57:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vEv5nCd5JEtL1flZjqEInCbJgZ550nvvo3TiB8HuuSY=; b=hs0Z0FEhvaOvvfTg
-	NV0kSogdHRCrLxvFuNZaJ5QeOl/HDsOE4tFeC5N4lZI6AIQzHS4ISDd69sjoDuCH
-	YqVJ5XD8A02rTJU0bFGdeH3o54BLSTUjbFHYsIrO9AvvnNFbFjtQv084D1VPWSHW
-	NYg6ef+Hz1m1ZzTz5pHupxfRcAoGAaPKVtsnE8jasguIUEw0XyJYhlquiYEguz+F
-	XgOw8Eeyq/cc90pQewknEB8HOiMzEEH0JdCHaornil0Ngm9x01gW/N06mgErmc0f
-	vwFGrBgedkVIo9IwvDMPy2iCuy0QsXVTTqts+mrvLp6uPwi3AUsS4PcaS4kfQ8+w
-	Z7RNiA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduxygw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:57:06 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-242ffe6d0afso3536565ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:57:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754978225; x=1755583025;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vEv5nCd5JEtL1flZjqEInCbJgZ550nvvo3TiB8HuuSY=;
-        b=B/pOFHRbliYL/eFg9U1NmQZgxGAp8E6E6/lTprwn2yHWLIlO07aFbFowRC2/WKeGwo
-         O7mQ7vjzT5Z5hbYy4haNIsPQpaiQFhx9btaA7/cI5TKY5lSNXbD3CkBXEIvtTcqY5ihh
-         0BigkxLkIi46hPY81tlwEuX4wN/LMhB2hnXzgZOhVh712TJWGZJhjjdaD27rSIrT87dM
-         l8jzsE2S1sYZMcAd6FzYrrYZuSjAUYiOn4uRtCKVEjC2MC5DVbtj1hV4QeYzsRfQsl+i
-         Ugl4izIY8xkVm9/FI0yeRHSlDFXIDcAI0awIo0H78FePCtA/tGCGqWjFQoBLExdt6SYQ
-         FlTw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3tuf+N2dLMgPph2hDJ2ZoQmebQNvTpznnxzjhKZK+TO3Intc7tsXfO51G/sGFfENwWctlqzgdGfmnLkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxey9OKxGJciwN2HKKZr4QELCUhT1i6qOtTHy7Gf/8rZNhNtzZG
-	2nI1vaPmeuQ+BEoqwYiuqD6k0Q/FAOv7wDJNemEBJLyb89tmdHrBMZ4+3cwG6kbLp4PB26gdFgm
-	+NOZrh5SY/oyKfdfER/YZeVjq17ivHHsPRvZmbhnvEV1NUdH5GtFE141N8bsvMM8dTM0=
-X-Gm-Gg: ASbGnctjn3xp4GagumbmiMg4aLSUJwYkaU7X4wkiPHAxq9AfqAqmm5wzEHDxfze29kF
-	cVn54dOL5SyfAMN/g7877/ZU4tVytCYuoR6kNgF9FWWKpcuWQyir5zZoDjuMPMb0BkiuIg2FLrZ
-	2dcwFEeZmC0YcHHIChRIqR7De7qumynimPsqwAAEjO7UCwWGjjCdi3VDgoEkD8ZjJ21viRd0gYf
-	DVBrVnsbTkS8Rew5F2gEoDiHTpZIsHoDimjCC3ThP7ZzQMjPmWIG/+kyJA9S7+e44K5ixSVz6q8
-	CG9/G3r/Oi1/Lv2kdPj0vx9ycoyaFXufqiW9FckFslTQ0ptEtRX7W1L2i4zrbJBGzUHzPF4=
-X-Received: by 2002:a17:902:e545:b0:240:7fcf:ced7 with SMTP id d9443c01a7336-242c20596c4mr261796365ad.21.1754978225067;
-        Mon, 11 Aug 2025 22:57:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFERojaneRpqNViWbpvGH1a8gBIpXR0UabwcFfFfj0BA9yVPsYry01nCaz8ljkh4PoEkyna6A==
-X-Received: by 2002:a17:902:e545:b0:240:7fcf:ced7 with SMTP id d9443c01a7336-242c20596c4mr261796045ad.21.1754978224580;
-        Mon, 11 Aug 2025 22:57:04 -0700 (PDT)
-Received: from [10.206.107.125] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2426dec66desm207795295ad.54.2025.08.11.22.57.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 22:57:04 -0700 (PDT)
-Message-ID: <78b335f9-7f6d-415b-bf56-5e9dc2c38f3d@oss.qualcomm.com>
-Date: Tue, 12 Aug 2025 11:26:56 +0530
+	 In-Reply-To:Content-Type; b=oUrWd6OoVxkbkmqBS87CGEHQLCsT1jXQAPmD8Un8fMRkuvm/mrDWfvsFgwp0G405p9fUTXND3SHg8zfnDY26OLmPFsYjaKxZoRRE2W2HO2OEjkWWlK5MxaZVLLagvKUzHZSXZw/wcX9xlQQOVgzd+pnfMdSEVDhyuvjjjMxJqqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 4c5b128c774111f0b29709d653e92f7d-20250812
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:438044e9-dee8-467f-ba90-68936615dac9,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:a708c60e7cf78976e1210166e7a6b49d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 4c5b128c774111f0b29709d653e92f7d-20250812
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 259772601; Tue, 12 Aug 2025 13:57:58 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 33322E008FA3;
+	Tue, 12 Aug 2025 13:57:58 +0800 (CST)
+X-ns-mid: postfix-689AD7E6-4259899
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id D6EF0E008FA2;
+	Tue, 12 Aug 2025 13:57:49 +0800 (CST)
+Message-ID: <d86a9883-9d2e-4bb2-a93d-0d95b4a60e5f@kylinos.cn>
+Date: Tue, 12 Aug 2025 13:57:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,112 +61,219 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] misc: fastrpc: Remove kernel-side domain checks
- from capability ioctl
-To: Ling Xu <quic_lxu5@quicinc.com>, srini@kernel.org,
-        amahesh@qti.qualcomm.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: quic_kuiw@quicinc.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
- <20250716132836.1008119-4-quic_lxu5@quicinc.com>
-Content-Language: en-US
-From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-In-Reply-To: <20250716132836.1008119-4-quic_lxu5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689ad7b2 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=_YpjYfwp_6jjpJQCciMA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: uMhoiYzNeVufynS_xuw7lzS6-o0isNG9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX8c1DMuoqdSae
- x2ziOBG7iqs6tfDHHmSvFdAZHJAevmRcHBrlX8b7KK/gkigfCLgJihXpf58ROeO4rvlHH57kajj
- PszmQf456vBc/B/jMZCoOJPU8fnpyEsIP8yU/H+qZk0HVNnjgxYuVx0n5YWvRneHKLfRndEjn9o
- qPOGVZTpXvuVc7Lrt49t79qCPBg+wbyTYciJqxOSvYSg8bBch/ee80j482cpAOYI9v2XPfYt2cD
- 4rc2TXvzU2VJI5ZmhWe1RCNaEF+rdHM9xcc++tVeS0dSxdY+0SwGgQtDsDZAeX5Qu5ltr4sV5JS
- ryWYbNYLicRThYFcKjfTeGgOM0L67WEwJ4iRz6GW3Q+GbP8rkS9nZthQZrAJ7XsSqpfotK5ffe0
- Har6m5Qp
-X-Proofpoint-GUID: uMhoiYzNeVufynS_xuw7lzS6-o0isNG9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+To: Michal Hocko <mhocko@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+ Jan Kara <jack@suse.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+ Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
+ xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
+ <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <aJSpTpB9_jijiO6m@tiehlicka>
+ <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+ <aJWglTo1xpXXEqEM@tiehlicka>
+ <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
+ <aJW8NLPxGOOkyCfB@tiehlicka>
+ <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
+ <aJnM32xKq0FOWBzw@tiehlicka>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <aJnM32xKq0FOWBzw@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+We encountered an issue where the number of freeze retries increased due=20
+to processes stuck in D state. The logs point to jbd2-related activity.
+
+log1:
+
+6616.650482] task:ThreadPoolForeg state:D stack:0=C2=A0 =C2=A0 =C2=A0pid:=
+262026
+tgid:4065=C2=A0 ppid:2490=C2=A0 =C2=A0task_flags:0x400040 flags:0x0000400=
+4
+[ 6616.650485] Call Trace:
+[ 6616.650486]=C2=A0 <TASK>
+[ 6616.650489]=C2=A0 __schedule+0x532/0xea0
+[ 6616.650494]=C2=A0 schedule+0x27/0x80
+[ 6616.650496]=C2=A0 jbd2_log_wait_commit+0xa6/0x120
+[ 6616.650499]=C2=A0 ? __pfx_autoremove_wake_function+0x10/0x10
+[ 6616.650502]=C2=A0 ext4_sync_file+0x1ba/0x380
+[ 6616.650505]=C2=A0 do_fsync+0x3b/0x80
+
+log2:
+
+[=C2=A0 631.206315] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.0=
+02 seconds)
+[=C2=A0 631.215325] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.0=
+01 seconds)
+[=C2=A0 631.240704] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.3=
+86 seconds)
+[=C2=A0 631.262167] Filesystems sync: 0.424 seconds
+[=C2=A0 631.262821] Freezing user space processes
+[=C2=A0 631.263839] freeze round: 1, task to freeze: 852
+[=C2=A0 631.265128] freeze round: 2, task to freeze: 2
+[=C2=A0 631.267039] freeze round: 3, task to freeze: 2
+[=C2=A0 631.271176] freeze round: 4, task to freeze: 2
+[=C2=A0 631.279160] freeze round: 5, task to freeze: 2
+[=C2=A0 631.287152] freeze round: 6, task to freeze: 2
+[=C2=A0 631.295346] freeze round: 7, task to freeze: 2
+[=C2=A0 631.301747] freeze round: 8, task to freeze: 2
+[=C2=A0 631.309346] freeze round: 9, task to freeze: 2
+[=C2=A0 631.317353] freeze round: 10, task to freeze: 2
+[=C2=A0 631.325348] freeze round: 11, task to freeze: 2
+[=C2=A0 631.333353] freeze round: 12, task to freeze: 2
+[=C2=A0 631.341358] freeze round: 13, task to freeze: 2
+[=C2=A0 631.349357] freeze round: 14, task to freeze: 2
+[=C2=A0 631.357363] freeze round: 15, task to freeze: 2
+[=C2=A0 631.365361] freeze round: 16, task to freeze: 2
+[=C2=A0 631.373379] freeze round: 17, task to freeze: 2
+[=C2=A0 631.381366] freeze round: 18, task to freeze: 2
+[=C2=A0 631.389365] freeze round: 19, task to freeze: 2
+[=C2=A0 631.397371] freeze round: 20, task to freeze: 2
+[=C2=A0 631.405373] freeze round: 21, task to freeze: 2
+[=C2=A0 631.413373] freeze round: 22, task to freeze: 2
+[=C2=A0 631.421392] freeze round: 23, task to freeze: 1
+[=C2=A0 631.429948] freeze round: 24, task to freeze: 1
+[=C2=A0 631.438295] freeze round: 25, task to freeze: 1
+[=C2=A0 631.444546] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.2=
+49 seconds)
+[=C2=A0 631.446387] freeze round: 26, task to freeze: 0
+[=C2=A0 631.446390] Freezing user space processes completed (elapsed 0.18=
+3=20
+seconds)
+[=C2=A0 631.446392] OOM killer disabled.
+[=C2=A0 631.446393] Freezing remaining freezable tasks
+[=C2=A0 631.446656] freeze round: 1, task to freeze: 4
+[=C2=A0 631.447976] freeze round: 2, task to freeze: 0
+[=C2=A0 631.447978] Freezing remaining freezable tasks completed (elapsed=
+=20
+0.001 seconds)
+[=C2=A0 631.447980] PM: suspend debug: Waiting for 1 second(s).
+[=C2=A0 632.450858] OOM killer enabled.
+[=C2=A0 632.450859] Restarting tasks: Starting
+[=C2=A0 632.453140] Restarting tasks: Done
+[=C2=A0 632.453173] random: crng reseeded on system resumption
+[=C2=A0 632.453370] PM: suspend exit
+[=C2=A0 632.462799] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.0=
+00 seconds)
+[=C2=A0 632.466114] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.0=
+01 seconds)
+
+This is the reason:
+
+[=C2=A0 631.444546] jdb2_log_wait_log_commit=C2=A0 completed (elapsed 0.2=
+49 seconds)
 
 
+During freezing, user processes executing jbd2_log_wait_commit enter D=20
+state because this function calls wait_event and can take tens of=20
+milliseconds to complete. This long execution time, coupled with=20
+possible competition with the freezer, causes repeated freeze retries.
 
-On 7/16/2025 6:58 PM, Ling Xu wrote:
-> Domain ID in the uAPI is misleading. Remove checks and log messages
-> related to 'domain' field in capability structure. Update UAPI to
-> mark the field as unused.
+While we understand that jbd2 is a freezable kernel thread, we would=20
+like to know if there is a way to freeze it earlier or freeze some=20
+critical processes proactively to reduce this contention.
+
+Thanks for your input and suggestions.
+
+=E5=9C=A8 2025/8/11 18:58, Michal Hocko =E5=86=99=E9=81=93:
+> On Mon 11-08-25 17:13:43, Zihuan Zhang wrote:
+>> =E5=9C=A8 2025/8/8 16:58, Michal Hocko =E5=86=99=E9=81=93:
+> [...]
+>>> Also the interface seems to be really coarse grained and it can easil=
+y
+>>> turn out insufficient for other usecases while it is not entirely cle=
+ar
+>>> to me how this could be extended for those.
+>>  =C2=A0We recognize that the current interface is relatively coarse-gr=
+ained and
+>> may not be sufficient for all scenarios. The present implementation is=
+ a
+>> basic version.
+>>
+>> Our plan is to introduce a classification-based mechanism that assigns
+>> different freeze priorities according to process categories. For examp=
+le,
+>> filesystem and graphics-related processes will be given higher default
+>> freeze priority, as they are critical in the freezing workflow. This
+>> classification approach helps target important processes more precisel=
+y.
+>>
+>> However, this requires further testing and refinement before full
+>> deployment. We believe this incremental, category-based design will ma=
+ke the
+>> mechanism more effective and adaptable over time while keeping it
+>> manageable.
+> Unless there is a clear path for a more extendable interface then
+> introducing this one is a no-go. We do not want to grow different ways
+> to establish freezing policies.
 >
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c      | 14 +-------------
->  include/uapi/misc/fastrpc.h |  2 +-
->  2 files changed, 2 insertions(+), 14 deletions(-)
+> But much more fundamentally. So far I haven't really seen any argument
+> why different priorities help with the underlying problem other than th=
+e
+> timing might be slightly different if you change the order of freezing.
+> This to me sounds like the proposed scheme mostly works around the
+> problem you are seeing and as such is not a really good candidate to be
+> merged as a long term solution. Not to mention with a user API that
+> needs to be maintained for ever.
 >
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 378923594f02..495ac47e7f90 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1723,7 +1723,6 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
->  	uint32_t attribute_id = cap->attribute_id;
->  	uint32_t *dsp_attributes;
->  	unsigned long flags;
-> -	uint32_t domain = cap->domain;
->  	int err;
->  
->  	spin_lock_irqsave(&cctx->lock, flags);
-> @@ -1741,7 +1740,7 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
->  	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES);
->  	if (err == DSP_UNSUPPORTED_API) {
->  		dev_info(&cctx->rpdev->dev,
-> -			 "Warning: DSP capabilities not supported on domain: %d\n", domain);
-> +			 "Warning: DSP capabilities not supported\n");
->  		kfree(dsp_attributes);
->  		return -EOPNOTSUPP;
->  	} else if (err) {
-> @@ -1769,17 +1768,6 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
->  		return  -EFAULT;
->  
->  	cap.capability = 0;
-> -	if (cap.domain >= FASTRPC_DEV_MAX) {
-> -		dev_err(&fl->cctx->rpdev->dev, "Error: Invalid domain id:%d, err:%d\n",
-> -			cap.domain, err);
-> -		return -ECHRNG;
-> -	}
-> -
-> -	/* Fastrpc Capablities does not support modem domain */
-> -	if (cap.domain == MDSP_DOMAIN_ID) {
-> -		dev_err(&fl->cctx->rpdev->dev, "Error: modem not supported %d\n", err);
-> -		return -ECHRNG;
-> -	}
->  
->  	if (cap.attribute_id >= FASTRPC_MAX_DSP_ATTRIBUTES) {
->  		dev_err(&fl->cctx->rpdev->dev, "Error: invalid attribute: %d, err: %d\n",
-> diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-> index f33d914d8f46..c6e2925f47e6 100644
-> --- a/include/uapi/misc/fastrpc.h
-> +++ b/include/uapi/misc/fastrpc.h
-> @@ -134,7 +134,7 @@ struct fastrpc_mem_unmap {
->  };
->  
->  struct fastrpc_ioctl_capability {
-> -	__u32 domain;
-> +	__u32 unused; /* deprecated, ignored by the kernel */
->  	__u32 attribute_id;
->  	__u32 capability;   /* dsp capability */
->  	__u32 reserved[4];
+> So NAK from me on the interface.
+>
+Thanks for the feedback. I understand your concern that changing the=20
+freezer priority order looks like working around the symptom rather than=20
+solving the root cause.
 
-Reviewed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+Since the last discussion, we have analyzed the D-state processes=20
+further and identified that the long wait time is caused by=20
+jbd2_log_wait_commit. This wait happens because user tasks call into=20
+this function during fsync/fdatasync and it can take tens of=20
+milliseconds to complete. When this coincides with the freezer=20
+operation, the tasks are stuck in D state and retried multiple times,=20
+increasing the total freeze time.
+
+Although we know that jbd2 is a freezable kernel thread, we are=20
+exploring whether freezing it earlier =E2=80=94 or freezing certain key=20
+processes first =E2=80=94 could reduce this contention and improve freeze=
+=20
+completion time.
 
 
+>>> I believe it would be more useful to find sources of those freezer
+>>> blockers and try to address those. Making more blocked tasks
+>>> __set_task_frozen compatible sounds like a general improvement in
+>>> itself.
+>> we have already identified some causes of D-state tasks, many of which=
+ are
+>> related to the filesystem. On some systems, certain processes frequent=
+ly
+>> execute ext4_sync_file, and under contention this can lead to D-state =
+tasks.
+> Please work with maintainers of those subsystems to find proper
+> solutions.
+
+We=E2=80=99ve pulled in the jbd2 maintainer to get feedback on whether ch=
+anging=20
+the freeze ordering for jbd2 is safe or if there=E2=80=99s a better appro=
+ach to=20
+avoid the repeated retries caused by this wait.
 
