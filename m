@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-764003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DBBB21CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4810B21CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A3A1A2058C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B265F1A21FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F281D2D46B3;
-	Tue, 12 Aug 2025 05:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052621A9F8D;
+	Tue, 12 Aug 2025 05:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMsmmC2r"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1f6Zg4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BDC1A9FA6;
-	Tue, 12 Aug 2025 05:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CE1182D0;
+	Tue, 12 Aug 2025 05:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754975483; cv=none; b=IRYUSOgYM6jInVMvfoGrzqDrNYd0m4OdIWc/K+3gH6sSjGEiQ+u7n5SWt2lBkgolatk3WF5vtJ0H2MSEgJH5rPmqVjzoOrYeZBTNP3XSZIIOKxVkOnzZ420m4fLAAzKWLjMZsSzg1YWWI1koZRvVCrMrgqC+TijWVJtBI2SwWeA=
+	t=1754975985; cv=none; b=siqFHTAIXt3BnNJkXJqPYrdVZ6oZSdaX8x29mwKc+A4gSMFq8XcI/CLcnSIrvi+ELmvAt2w/y3X7Mffwbakw6SLVh+cN5vbULk+noUWOIah4okIZ2jFSqovh4k7mpOORz3JPKzDb9wQ+XyBTd7lUCYvjvpgtWLDtfHDsCk8hruo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754975483; c=relaxed/simple;
-	bh=ruoWzsKElHTPoCIhnSgV0Sg7RApZtpOfeWv8x9LYjcg=;
+	s=arc-20240116; t=1754975985; c=relaxed/simple;
+	bh=J+5yvAscXrqAy3W7hvqIzP3kMrORcMX1vF02V5ClISY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MleMVjnoRwo4Xk33vEQOMGJZShfgIVOr4ZYbb13SD5dlIFpNXOYVyeimnzjCjtgoNiGx6z7xYH6sYS0BgdQUV7Zeql2j5Xv/Bzut+n0l7TTLjz/pKLM8/TA8wmKvb8e0Ae3McMqvYBd1v/PC5tti0QHBLBRK9rs5fVsebMBnVLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMsmmC2r; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-333be1f3f46so18511151fa.2;
-        Mon, 11 Aug 2025 22:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754975479; x=1755580279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6RCogcx5Oo6CLi0hB9llbGlmCv7IU5XWHAW2F4/A1O8=;
-        b=QMsmmC2rrFn5Ob1oNw/DzCewplzJ2m+X0fWHCcKbh1zup+tvlq7ouQY4yah3I5eCSv
-         odz0a7IabDbXTDICkkvkL4SkamcNWbAdRXR2Z9TQH0ZSGKxrH+mNtfNfnzHnX4f6ppP2
-         PGh3Wj66O8ToZ3NX491oTFDIs3KA4UZSKL90FcxpyfHI2LONaWTNtLF3XLCEhFGQD0l1
-         Cxny5+ra+TkUHxWcKGV1kz+060f7pbQ9/iRq6s1AADkxRpz4Y3Bv05cVZHu7P9IQk+E5
-         yvBuNHUGzAHLhPCoSggqvI53CoYcpaioJt0Va5ScbEMMTi44guC7FLAHv0ZaSJ3/J8pO
-         +XTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754975479; x=1755580279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RCogcx5Oo6CLi0hB9llbGlmCv7IU5XWHAW2F4/A1O8=;
-        b=dIvtz1CAuMAbfzTkcr2typU9quh5KXHTpFx/FO7SSwbVzIjTv2gdKjb091MVtm1ioQ
-         uHk63l4SmqlFvRe7wvB6RePyO3zG+JIZefFRLL1Fs+0M0cM2y3gAtm21IYXBQDJbM+fJ
-         qMRM6Dt+a5KSOB/dwRMmdCrR9aWZ3pCi3BT8YyIyxbSgW+E/P9BbTH9uAoIai8FAk2km
-         AxTTPhMYvWnWSH/frnlzuFeZlS1+Kp45PBuTG1bh83kn7za5qcD7Fb9/41IM3id4kfmo
-         TWSyjAysFk/TEf3r0mar3B1rHVpipyY+BUaEGO+Nc8s5Un2wRhYML7xttmjMNXPHeb18
-         QnTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTAVXngNHZhbzSUwle6wISbkGyzYU5pVYpLt4i2Asd7RpAiy+dBIt/j/EN3s5bEbqvuSA4edVUp7wa@vger.kernel.org, AJvYcCXBVLmHCajAO6UGo2ufNnctoSl2KQ+cTUfnOK4J/lf/EOIwZrsrr4+9U3QvG4RsnCtGJHN4KbQ564iAXi/A@vger.kernel.org, AJvYcCXSiylD1DCs7mTWuSXSwmUnlhW+hvUTupzNRuMNCCyfpKKdumfZVd9MaObiI16qSG29C8SgFGNy+COS8s4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmzV31zzdNmg9StQleBkiKxkmobzgO5QpHIITDUxT1rbq2aJty
-	zxMv7WSmFWuHb8T9qtYkuN65HRz46+0cYK4RqDmfFjc7gLQ5eP49oowp
-X-Gm-Gg: ASbGnctOKpEC7DihJLl7g4R5Xps0iUOFjTDQDgR8yjElsmAVlTvkrIEQKLAtwHHapOG
-	8U11RLd6ZUL1TGFh+K26eXDw4EINPvkwDzZtvtVW4/NdIPbS0nhGHm9A7L0dZy+vV1CZ3C3kgd+
-	l0Ptye7FuhK67LValqVSJYQfuXcFWlYcsBP6lm12EmRpxHjHyqYJ4QF5ADigCAdY4KgSQOE5izX
-	CRtZ0zE/+t4CTFGGdxz6PxxFhqItRUM7/7ErTeKzAEovZDOE2wovdxADgb4B4TE8+O0e+wP0tGA
-	5L3HwVT1oiw3xodxRIZ43cbxiddaGEFQIf6mLeT+AIQwNCch9lnX2bzu/WwHZB4prtQxyEKWt6I
-	tvglP4PQpUJ+52jw3l+a2IQx8/plnIU8wKOS+Ck1+28xicn8EppyVJIIKaUylJOAHBy1VFko0p9
-	NO/zs=
-X-Google-Smtp-Source: AGHT+IHWJM7707fkvhhfDDaVDfm0yh8SKnLXN3Du9JflbVXZU98HEhTKuegsiCyTS1CVAK9w56sCKQ==
-X-Received: by 2002:a2e:bc10:0:b0:332:50e7:9898 with SMTP id 38308e7fff4ca-333d7ad447emr4442691fa.13.1754975479216;
-        Mon, 11 Aug 2025 22:11:19 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332388d46besm42491251fa.48.2025.08.11.22.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 22:11:18 -0700 (PDT)
-Message-ID: <b3c94552-c104-42e3-be15-7e8362e8039e@gmail.com>
-Date: Tue, 12 Aug 2025 08:11:16 +0300
+	 In-Reply-To:Content-Type; b=EMpCdQO9wsV6I63SnkVo+85FPcMyWLg20S+6TQ3ZmJ2XkY5lk81qPrJQ6iLsrAet4UmovF591AJWf44Gk/Me248L8wvqYvHvBariPR0UU1whlvbj6mnMDyrZyUJf7Mi4CJBJCMR8MeBp95Zbvn9glRD4YWBI1BrEJ5xUUmnnhCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1f6Zg4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17928C4CEF0;
+	Tue, 12 Aug 2025 05:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754975984;
+	bh=J+5yvAscXrqAy3W7hvqIzP3kMrORcMX1vF02V5ClISY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o1f6Zg4Qha4hpJ/0LpTkmTnlxAWqzz7tIV1yTLTmzNnveyHOE479wWQcfVCfhmTQL
+	 Qd7kmmPlYRk0q1MA/ywVXezVF6P6gZA6LESgygJ6EUMojY1pLshSTwTZXRc0niSqX5
+	 Bo3f4ntOENcbAKDEl0BlNAuzdCY0YWTg8BcY5I17QAvneJobLxDAx1DvEVEJFPE1WL
+	 +N2NDcLzZcCrRpbKaKELpVTC5rsRrVDTPxFb4qF6nT1ccoR6KJ20mYxAd/qkDSPQ5B
+	 XdVFrRZDfkS/uU7HBLnijWZ3f3iE26L9e+yQyx9Fp9IgfUPM4xxXT3uE2aOZ7r0Hl0
+	 53xhoEeFM796Q==
+Message-ID: <a7cb5d59-8af5-47b2-8549-05c9322971e5@kernel.org>
+Date: Tue, 12 Aug 2025 14:17:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,101 +49,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-10-arnd@kernel.org>
- <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
- <aJnng9z9pUTFI49x@smile.fi.intel.com>
- <mrqxggv7vhclnranoc3uacfyzccod6dmc54kip4f7wjdpngjzz@falnsjwnfcjc>
- <aJpOEq_5jqGTUr4x@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <aJpOEq_5jqGTUr4x@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] loop: use vfs_getattr_nosec() for accurate file size
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk,
+ yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <a8041180-03f2-3342-b568-867b3f295239@huaweicloud.com>
+ <20250812033201.225425-1-rajeevm@hpe.com>
+ <34624336-331d-4047-822f-8091098eeebc@kernel.org>
+ <20250812042826.GU222315@ZenIV>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250812042826.GU222315@ZenIV>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/08/2025 23:09, Andy Shevchenko wrote:
-> On Mon, Aug 11, 2025 at 12:21:51PM -0700, Dmitry Torokhov wrote:
->> On Mon, Aug 11, 2025 at 03:52:19PM +0300, Andy Shevchenko wrote:
->>> On Mon, Aug 11, 2025 at 01:34:43PM +0300, Matti Vaittinen wrote:
->>>> On 08/08/2025 18:17, Arnd Bergmann wrote:
+On 8/12/25 1:28 PM, Al Viro wrote:
+> On Tue, Aug 12, 2025 at 12:42:44PM +0900, Damien Le Moal wrote:
 > 
-> ...
+>> Since loff_t is "long long", so a signed type, I would keep this interface and
+>> add a negative error check in the 2 call sites for get_size(). That is simpler.
 > 
->>>> As such, this patch seems Ok to me, you can treat this as an ack :) This,
->>>> however made me ponder following - is this the tight way to handle the
->>>> power-button IRQ? I don't see any other MFD devices doing this in same way,
->>>> although I am pretty sure there are other PMICs with similar power-button
->>>> IRQ...
->>>>
->>>> I see for example the "drivers/mfd/rt5120.c" to invoke
->>>> "drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. This,
->>>> however, feels like code duplication to me. I'd rather kept using the
->>>> gpio-keys, but seeing:
->>>>
->>>> git grep KEY_POWER drivers/mfd/
->>>> drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
->>>> drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
->>>>
->>>> makes me wonder if there is more widely used (better) way?
->>>
->>> FWIW, on Intel platforms that use power button by PMIC we add a special driver
->>> for each of such cases.
->>
->> If we can make gpio-keys work for various power buttons that would be
->> great IMO. The MFD drivers in question already are using device tree,
->> but they do not define/expect nodes for the power buttons. If the nodes
->> were there then I think gpio-keys would work out of the box?
-> 
-> Looking at the, e.g., https://elixir.bootlin.com/linux/v6.16/source/drivers/platform/x86/intel/mrfld_pwrbtn.c,
-> I am not sure it's as simply as it sounds. Basically it's an IRQ, which
-> requires IRQ handling and proper acking/masking/etc.
+> Umm...  First of all, what's the point of separate get_size() and loop_get_size()?
+> Another thing to watch out for - replacing file needs to be careful, lest you
+> replace the old file that has come to fail vfs_getattr() with new one that
+> does the same thing ;-)
 
-In some (many?) cases the interrupts (acking/masking) are handled by an 
-irqchip code. When this is the case, the gpio-keys (or any other 
-power-button code) does not need to care about IRQ-specifics. (I don't 
-know about the Intel driver though.)
+I did a quick grep and missed the fact that get_size() is mostly used through
+get_loop_size(). So yes, making these 2 a single function will be clearer.
 
-Problem with many of the bd718* (and probably some other MFD drivers) 
-is, that the interrupts are really relevant only for the drivers 
-specific to this one device (like PMIC in ROHM case). When this is the 
-case, the device is not really (from the HW perspective) an 
-interrupt-controller, which means it shouldn't probably be marked as one 
-in the device-tree either. It will then also mean that there can't be 
-meaningful interrupt specification for the button IRQ in the 
-device-tree, right?
+And indeed, that:
 
-Additionally, we have devices where most of the interrupts are internal 
-to the PMIC, but then the PMIC also has some pins usable as GPIO, which 
-can be used as interrupt sources. Eg, someone can connect another device 
-to these pins - which makes the PMIC an interrupt-controller. For these 
-PMICs the power-button IRQ can be provided via device-tree node (but the 
-IRQ spec may become a bit hairy, since most of the IRQs are meant to be 
-internal).
+	/* size of the new backing store needs to be the same */
+        if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
+                goto out_err;
 
-Hence, for me, providing the IRQ number in platform data seems still to 
-be the right thing to do :)
+Will need some massaging.
 
-TLDR; I agree with Dmitry. It's nice to have an easily re-usable 
-power-button handler, which requires no IC-specific code. Gpio-keys 
-works for simple IRQ based power-buttons where IRQ controller takes care 
-of the acks/masks. I just wanted to know if it is for some reason 
-discouraged, or if I've used it in a wrong way (because the grep 
-resulted so few results).
 
-Yours,
-	-- Matti
+-- 
+Damien Le Moal
+Western Digital Research
 
