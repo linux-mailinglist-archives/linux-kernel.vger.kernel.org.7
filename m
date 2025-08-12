@@ -1,131 +1,332 @@
-Return-Path: <linux-kernel+bounces-765268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F073B22DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:38:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2809FB22DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71063506392
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96DD11886BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1042F2FA0EB;
-	Tue, 12 Aug 2025 16:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CCF2F90FF;
+	Tue, 12 Aug 2025 16:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaYl0haz"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PDDayXFJ"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9C12F90FA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EE32F5490;
+	Tue, 12 Aug 2025 16:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016235; cv=none; b=ufqwCNy1b3yLZCB3ewRDKNc+VJRuYX6tExNmkFIO4X+njj5errA0zNAInw6gqflY5FM1PRCI/uWbMrvkJv2uj8UFhG/zLDP8Mls6STv5vvm+T3GKOtm6eqs8IfqTfxQFjtjWhkoQQ+QySXUzCwGtKacLgkALnIZqrYmxuxjWuF4=
+	t=1755016652; cv=none; b=Uf0rkRy+PnWBCBHuM9HQ1m/kCUYckTBTiTw+gL7IuiNKHJy6zabImxcjMbZi8xmmQZmRjGT+8KIGhibxhZhr2bfiThIYZAXSqpvFPMjJK9NioA2Y/Ijh0dzpQ5FxtcbY+fgntielSM+0XUZjJy/4MHOQW6ViFa23IzKCG8x4WZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016235; c=relaxed/simple;
-	bh=3j8xKXkujeUjf5e9rY7vG7l6sIwASGILa12VI5a38Lo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0gMi9dAn5QS0l8g4IhagKhG9YDlpzPyuH5Ati6s6eldi/OlS5wBVpFWeXZrQBM0AsDkgV3zDtagsEsJct64iuD6lSLQu0nH3e2UCFPl//lOCm4HI0EPYMY7Q3KaL3vMy41uJEWsHeAp7Gm4QgbUlVC34evoXb62mINLTLTXzLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaYl0haz; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-242abc28161so8790755ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755016231; x=1755621031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8T/1xH98koL02eKJOzZQVca6m36I5E4mnDKNc4f/Gc0=;
-        b=WaYl0hazsfiPdI4TeR3+6OYNvBLmpPNUPuiwX5es6rrq/5aHvCxPiNDJ94Dkum/zsR
-         HxR+pX7lP937FF3U7bEh2qyuqNRzicpnV//CL7lwoS3BBlOhw2Mki9j0809BA3UgEcV6
-         d8k5nvpzKEYW/Bm3swh6OldqP5/bi9iWeku5w/DMTVdmIUu4paxb01OB7hZqJOM62War
-         qnh3Rw0KqV05yPhKLZhpIyynfpFcwo1x5UkKthg4VMlp0Nbjs6hRk2rzVbGkvUP8aNed
-         nE0QAoDjFlRagXC+Ctzbf8WPfNg1FkhgOtErWHn9+8Y4Q0qOSZ8VasqGKACTDVdvUKFs
-         Ni9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755016231; x=1755621031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8T/1xH98koL02eKJOzZQVca6m36I5E4mnDKNc4f/Gc0=;
-        b=pMMnLq6uRrABXnSyuLmx9iOKhXwNO1CjrTqrpXJ+IA2ca8Ckh33i174XO8SZAA+QqU
-         gpXhs0ZPCXO10AojVJqbBrqrg3kMs5xkl5dZsAE0RkPqmQbaWM2JQK0LGyj3FC9HCQ6Y
-         jIuifE14YWI3cnK2FAx5Lw9r6yp9yUOSbkvKtuDxuW39tz0PoBQ0apHT34JcihVl+VDi
-         v3mFdtGLT8BklY7QBWAYShTbHYC6cCOLFto8EsS5d/Ulr+ucPvJzGumcDT68j5SnHCfP
-         WyWOY2WurIHHv9jlrHIo5y7VTNtTJ2tHWUYUStamLUieiEPYypPODhy4WlQEfTVwD4TY
-         Sfow==
-X-Forwarded-Encrypted: i=1; AJvYcCXWMmPXYakZlnZleHcgXU2/7PZAI8rTstuEhvugKPXj5XMR1SGIH6ck4a+wWUBitFPMhJREO6nE1AaSHw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHpLrxpFpr4QGAiAvPPmwjG6JRV2kpYzj8sNRMqIGr/w1psF1h
-	umK5PYM2833cE3a9eC351mc1S9hai0CVTQM0Y5d3RwtTLi3uiLiGLGc+wRw9zYlAvVZ5K4RoAXu
-	mS77RLTdL+D00nVyOvXAPKOY3mJz9sVQ=
-X-Gm-Gg: ASbGnctGLJuI/G53UTWqa+aoRa6ZngberArDXxrC8NdKqDKmt9P2ZIE167x/0IP5DHq
-	QEe2jseIHPn/cMptUgc9Hvx3cSLnHp8mvKvPZSOtvNc3gy+XA+91Swrh87NII1X8XjNBiGsj8OF
-	k5Hft7iw1dcOlsRl+48ZiRrPr1cWc/ipxDLpRsaV10cEid4F9TqYokjp5GL9rtx1mXGaVMBtgOd
-	SiSsjs=
-X-Google-Smtp-Source: AGHT+IF6LenLB7j3sb0DjrhGCwQFdll3J05cq7yX/orGvMVj4rpQ84UCdUaSMteeycXpCZf2PJiFy6FVwOGq6PrKN7s=
-X-Received: by 2002:a17:903:2281:b0:240:711f:2068 with SMTP id
- d9443c01a7336-24306d87e8cmr13447905ad.7.1755016231149; Tue, 12 Aug 2025
- 09:30:31 -0700 (PDT)
+	s=arc-20240116; t=1755016652; c=relaxed/simple;
+	bh=KCKNEl62rjrtMG8u1hgKULtjfvWRT+ksDKwDjpV2ePE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S4ovOM7NCVL67UTOIK/oGAYDRWOacCLVdMkEb57mCSAr7q91NQbvc6Vq1eWEks3xQT/GxtEJeyCbAJzrkpweAP7fh7whQihPeiJs0prPps3wzDubuvoQK/eXp4doPgMpaRRPEbwh5/YRGSXm83Yx35uyiifCDUm5XZRLT/hggQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PDDayXFJ; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57CGVEpi1447545;
+	Tue, 12 Aug 2025 11:31:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755016274;
+	bh=YFLM9pfLOusy2YVMdLzf9ptsSRr3pdKzRMQf7aNOi3M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=PDDayXFJeFvugwsuu8W3/SXdqBGeOvAgqbJl/IOnBJcnLKq8bMOp574l4TIH8rRHi
+	 TPnzd0FP2DnLEM8AP6y+oaiEzvRVl6AmeFUswvqFmNvqEFaZzKZS5xlwMv0fslKAmz
+	 A8MvM9Dy77mB89zmD/claPP7wZP79g9A962sjOzA=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57CGVEBg3598831
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 12 Aug 2025 11:31:14 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 12
+ Aug 2025 11:31:13 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 12 Aug 2025 11:31:13 -0500
+Received: from [10.249.130.61] ([10.249.130.61])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57CGUw4i639914;
+	Tue, 12 Aug 2025 11:30:59 -0500
+Message-ID: <4f8d678a-8b72-449e-9809-bed912f26e59@ti.com>
+Date: Tue, 12 Aug 2025 22:00:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812031603.463355-1-zhao.xichao@vivo.com> <0811e8e8-5990-4880-a2cc-f9bd6b3ec4bd@amd.com>
-In-Reply-To: <0811e8e8-5990-4880-a2cc-f9bd6b3ec4bd@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 12 Aug 2025 12:30:19 -0400
-X-Gm-Features: Ac12FXwysyVxVP_3MLSXv30V9nQuvTxCQ2luc4NpmdCvnL8zlEQC9gaSc1twh5g
-Message-ID: <CADnq5_ON4rM2LRAw88iyBCTVJ+nB61-EZy2vxLVc48oxk=Gbew@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: replace min/max nesting with clamp()
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Xichao Zhao <zhao.xichao@vivo.com>, alexander.deucher@amd.com, airlied@gmail.com, 
-	simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] net: rnpgbe: Add basic mbx ops support
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <danishanwar@ti.com>, <lee@trager.us>, <gongfan1@huawei.com>,
+        <lorenzo@kernel.org>, <geert+renesas@glider.be>,
+        <Parthiban.Veerasooran@microchip.com>, <lukas.bulwahn@redhat.com>,
+        <alexanderduyck@fb.com>, <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-4-dong100@mucse.com>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <20250812093937.882045-4-dong100@mucse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Applied.  Thanks!
 
-Alex
 
-On Tue, Aug 12, 2025 at 2:49=E2=80=AFAM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> On 12.08.25 05:16, Xichao Zhao wrote:
-> > The clamp() macro explicitly expresses the intent of constraining
-> > a value within bounds.Therefore, replacing min(max(a, b), c) and
-> > max(min(a,b),c) with clamp(val, lo, hi) can improve code readability.
-> >
-> > Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
->
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
->
-> > ---
-> >  drivers/gpu/drm/radeon/radeon_display.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/=
-radeon/radeon_display.c
-> > index b4bf5dfeea2d..d66c1a30df95 100644
-> > --- a/drivers/gpu/drm/radeon/radeon_display.c
-> > +++ b/drivers/gpu/drm/radeon/radeon_display.c
-> > @@ -926,10 +926,10 @@ static void avivo_get_fb_ref_div(unsigned nom, un=
-signed den, unsigned post_div,
-> >                                unsigned *fb_div, unsigned *ref_div)
-> >  {
-> >       /* limit reference * post divider to a maximum */
-> > -     ref_div_max =3D max(min(100 / post_div, ref_div_max), 1u);
-> > +     ref_div_max =3D clamp(100 / post_div, 1u, ref_div_max);
-> >
-> >       /* get matching reference and feedback divider */
-> > -     *ref_div =3D min(max(den/post_div, 1u), ref_div_max);
-> > +     *ref_div =3D clamp(den / post_div, 1u, ref_div_max);
-> >       *fb_div =3D DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
-> >
-> >       /* limit fb divider to its maximum */
->
+On 8/12/2025 3:09 PM, Dong Yibo wrote:
+> Initialize basic mbx function.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
+>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  37 ++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   5 +
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 443 ++++++++++++++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  31 ++
+>  6 files changed, 520 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+> 
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> index 42c359f459d9..5fc878ada4b1 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> @@ -6,4 +6,5 @@
+>  
+>  obj-$(CONFIG_MGBE) += rnpgbe.o
+>  rnpgbe-objs := rnpgbe_main.o\
+> -	       rnpgbe_chip.o
+> +	       rnpgbe_chip.o\
+> +	       rnpgbe_mbx.o
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 0dd3d3cb2a4d..05830bb73d3e 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -5,6 +5,7 @@
+>  #define _RNPGBE_H
+>  
+>  #include <linux/types.h>
+> +#include <linux/mutex.h>
+>  
+>  extern const struct rnpgbe_info rnpgbe_n500_info;
+>  extern const struct rnpgbe_info rnpgbe_n210_info;
+> @@ -40,7 +41,43 @@ struct mucse_mac_info {
+>  	void *back;
+>  };
+>  
+> +struct mucse_hw;
+> +
+> +struct mucse_mbx_operations {
+> +	void (*init_params)(struct mucse_hw *hw);
+> +	int (*read)(struct mucse_hw *hw, u32 *msg,
+> +		    u16 size);
+> +	int (*write)(struct mucse_hw *hw, u32 *msg,
+> +		     u16 size);
+> +	int (*read_posted)(struct mucse_hw *hw, u32 *msg,
+> +			   u16 size);
+> +	int (*write_posted)(struct mucse_hw *hw, u32 *msg,
+> +			    u16 size);
+> +	int (*check_for_msg)(struct mucse_hw *hw);
+> +	int (*check_for_ack)(struct mucse_hw *hw);
+> +	void (*configure)(struct mucse_hw *hw, int num_vec,
+> +			  bool enable);
+> +};
+> +
+> +struct mucse_mbx_stats {
+> +	u32 msgs_tx;
+> +	u32 msgs_rx;
+> +	u32 acks;
+> +	u32 reqs;
+> +	u32 rsts;
+> +};
+> +
+>  struct mucse_mbx_info {
+> +	const struct mucse_mbx_operations *ops;
+> +	struct mucse_mbx_stats stats;
+> +	u32 timeout;
+> +	u32 usec_delay;
+> +	u16 size;
+> +	u16 fw_req;
+> +	u16 fw_ack;
+> +	/* lock for only one use mbx */
+> +	struct mutex lock;
+> +	bool irq_enabled;
+>  	/* fw <--> pf mbx */
+>  	u32 fw_pf_shm_base;
+>  	u32 pf2fw_mbox_ctrl;
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> index 20ec67c9391e..16d0a76114b5 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -1,8 +1,11 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+>  
+> +#include <linux/string.h>
+> +
+>  #include "rnpgbe.h"
+>  #include "rnpgbe_hw.h"
+> +#include "rnpgbe_mbx.h"
+>  
+>  /**
+>   * rnpgbe_init_common - Setup common attribute
+> @@ -23,6 +26,8 @@ static void rnpgbe_init_common(struct mucse_hw *hw)
+>  
+>  	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
+>  	mac->back = hw;
+> +
+> +	hw->mbx.ops = &mucse_mbx_ops_generic;
+>  }
+>  
+>  /**
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> index fc57258537cf..aee037e3219d 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> @@ -7,6 +7,8 @@
+>  #define RNPGBE_RING_BASE 0x1000
+>  #define RNPGBE_MAC_BASE 0x20000
+>  #define RNPGBE_ETH_BASE 0x10000
+> +/**************** DMA Registers ****************************/
+> +#define RNPGBE_DMA_DUMY 0x000c
+>  /**************** CHIP Resource ****************************/
+>  #define RNPGBE_MAX_QUEUES 8
+>  #endif /* _RNPGBE_HW_H */
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+> new file mode 100644
+> index 000000000000..1195cf945ad1
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+> @@ -0,0 +1,443 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2022 - 2025 Mucse Corporation. */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/errno.h>
+> +#include <linux/delay.h>
+> +#include <linux/iopoll.h>
+> +
+> +#include "rnpgbe.h"
+> +#include "rnpgbe_mbx.h"
+> +#include "rnpgbe_hw.h"
+> +
+> +/**
+> + * mucse_read_mbx - Reads a message from the mailbox
+> + * @hw: pointer to the HW structure
+> + * @msg: the message buffer
+> + * @size: length of buffer
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	/* limit read size */
+> +	min(size, mbx->size);
+> +	return mbx->ops->read(hw, msg, size);
+> +}
+
+What's the purpose of min() here if you are anyways passing size to read()?
+
+The min() call needs to be assigned to size, e.g.: size = min(size,
+mbx->size);
+
+> +
+> +/**
+> + * mucse_write_mbx - Write a message to the mailbox
+> + * @hw: pointer to the HW structure
+> + * @msg: the message buffer
+> + * @size: length of buffer
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+
+> +
+> +/**
+> + * mucse_mbx_reset - Reset mbx info, sync info from regs
+> + * @hw: pointer to the HW structure
+> + *
+> + * This function reset all mbx variables to default.
+> + **/
+> +static void mucse_mbx_reset(struct mucse_hw *hw)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +	int v;
+> +
+
+Variable 'v' should be declared as u32 to match the register read.
+
+> +	v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
+> +	hw->mbx.fw_req = v & GENMASK(15, 0);
+> +	hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
+> +	mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
+> +	mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
+> +}
+> +
+> +/**
+> + * mucse_mbx_configure_pf - Configure mbx to use nr_vec interrupt
+> + * @hw: pointer to the HW structure
+> + * @nr_vec: vector number for mbx
+> + * @enable: TRUE for enable, FALSE for disable
+> + *
+> + * This function configure mbx to use interrupt nr_vec.
+> + **/
+> +static void mucse_mbx_configure_pf(struct mucse_hw *hw, int nr_vec,
+> +				   bool enable)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +	u32 v;
+> +
+> +	if (enable) {
+> +		v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
+> +		hw->mbx.fw_req = v & GENMASK(15, 0);
+> +		hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
+> +		mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
+> +		mbx_wr32(hw, FW2PF_MBOX_VEC(mbx), nr_vec);
+> +		mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
+> +	} else {
+> +		mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), 0xfffffffe);
+> +		mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
+> +		mbx_wr32(hw, RNPGBE_DMA_DUMY, 0);
+> +	}
+> +}
+> +
+> +/**
+> + * mucse_init_mbx_params_pf - Set initial values for pf mailbox
+> + * @hw: pointer to the HW structure
+> + *
+> + * Initializes the hw->mbx struct to correct values for pf mailbox
+> + */
+> +static void mucse_init_mbx_params_pf(struct mucse_hw *hw)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	mbx->usec_delay = 100;
+> +	mbx->timeout = (4 * 1000 * 1000) / mbx->usec_delay;
+
+Use appropriate constants like USEC_PER_SEC instead of hardcoded values.
+
+> +	mbx->stats.msgs_tx = 0;
+> +	mbx->stats.msgs_rx = 0;
+
+
+-- 
+Thanks and Regards,
+Md Danish Anwar
+
 
