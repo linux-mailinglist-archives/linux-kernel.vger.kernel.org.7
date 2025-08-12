@@ -1,91 +1,77 @@
-Return-Path: <linux-kernel+bounces-765571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D89DB23A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6587EB23A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4602516E464
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C84F170EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A092D062F;
-	Tue, 12 Aug 2025 20:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2C72D0634;
+	Tue, 12 Aug 2025 20:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cc8mOwnQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQ4YARpg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00392F0679;
-	Tue, 12 Aug 2025 20:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14DF7080E;
+	Tue, 12 Aug 2025 20:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030958; cv=none; b=HyeSY4IDdJiCRt4Ecu56SaM/YX8GlHNnx7FiMifcN7lEJxEoV2SMo/5hIRSVQf1wzqROZr2Bk6YJizB2p2UqZ1EEP0/nGJQhPgnZ1q7i66i0mwUD5E822Tu+V1YGIe4l0HhF3CpFSgfTYZiik7AJVp8v7ZqSxchqMBXj1qS6SsA=
+	t=1755031108; cv=none; b=J1+GvO+ulzWrCyNURjtYPL2UBC2tyr2gO6325MgxF0N8f0F3+l3bnGqxgbzZvSdlcMTL07Bk3SqRJQrcswdSdE8lH8e9OzYCUgZfkHGNdbQYLNVfCvQHcbj6ru151Wdp9ZVGYOi1C4H6MegUbhfCFjsvrqWsmGoL4EgM9MaPHxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030958; c=relaxed/simple;
-	bh=+StpLUbIz4Cn8lrRgBX1tOfusvqJ9s3Ec800QrIyjPA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=K6sPRYK6HecKQC2sjKjocuhapqSt2ZosFCTwarRNFHD67QxSe+TWPIZLlPau9cekhFX6GFeJxsdBgOXMiihdRu8k84rURHnvkc+N4hCxXIvEJLzc3NnJq5bF7OSvpnEuV410kL2IA39/3tl1Yt3UFiYqUAVVSysOXSYtIGlIq0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cc8mOwnQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2625AC4CEF0;
-	Tue, 12 Aug 2025 20:35:53 +0000 (UTC)
+	s=arc-20240116; t=1755031108; c=relaxed/simple;
+	bh=MOrpQZhreUubPx+rC1Q7y6y80hHcEBKe4ubj1Szw8ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQMfdyt6RaYDK0sGIf6c9H1qsVc6hDxrhEGPPms2a6FccYBbICZZUfK5RqGc6E4s9dVu8TzJVoeYWmYJC6S4ap8cHKH+XagPlWl5IHzuk/I9QjFo9g4IxpkOnWBq+UCsPRJPh0vkdB+WFWi/k7StWKrw2MiOadPvCKd8XpIWB7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQ4YARpg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CD9C4CEF0;
+	Tue, 12 Aug 2025 20:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755030958;
-	bh=+StpLUbIz4Cn8lrRgBX1tOfusvqJ9s3Ec800QrIyjPA=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=cc8mOwnQMZouqZAXTEyb1qgwlK4LxASLn1WbYrTamO5NeyoXsjkgs45NM5Ncb6WeX
-	 lfrGeYSoJyYaUu/mwqNs4aR/NSPzwj/E20p6IlE4JbfJNUgnneyAPDcBuctVUNO/Ci
-	 zBjbIwiEwiuAnUOPIfRZ4Bmrk/Ay921LRP8MnzaYyx9tmeg/gqA7fMzyVWQICn+6D1
-	 L8HGJLEpqgdHcDZIUrsq+IidnYyDtSaa2AEd5sNgWED626W6EsGp6f62fb1l8IDodX
-	 H9awiY1T72RF14BTyzbL1DxAJBwy3wM1jGHCRtUxIitVHNvFxKZkDLkJ4lB9W4sVmB
-	 3kgHgKcu0V+aw==
+	s=k20201202; t=1755031108;
+	bh=MOrpQZhreUubPx+rC1Q7y6y80hHcEBKe4ubj1Szw8ls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FQ4YARpgtlJySyXSMgJf5M7MJO0kz9T7qTfye28oMqj/ZVC51SG2G7JdAW1ZY8VH8
+	 0ZCTiS+9BIIB+el6pUanxHCvQH0kVSmiet4jhE3pPh37m/d2WYE0JCccUIks0OT9T9
+	 NT02lKz69SEJwVKZzLc4kQp+zWsbcPvhOojmX5TKtEc4Sfr8Ry+uEfyzZU7OAcv9aN
+	 mjKGjtUOw38wSWushQkhb0JpwfHTQ7199Ei8yMHSXy8gaA4Io4oxrN4aFkoMIw/9Ni
+	 exJTLzr97zUn5aMvBfTAsUo4gowDlhN8ydNYI2l0Bw00DeTBsXaZ32u+JmrbSeydyE
+	 ZEVBM+dTqRkCw==
+Date: Tue, 12 Aug 2025 14:38:26 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, list-bcachefs@carlthompson.net,
+	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <aJumQp0Vwst6eVxK@kbusch-mbp>
+References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
+ <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
+ <aJuXnOmDgnb_9ZPc@kbusch-mbp>
+ <htfkbxsxhdmojyr736qqsofghprpewentqzpatrvy4pytwublc@32aqisx4dlwj>
+ <aJukdHj1CSzo6PmX@kbusch-mbp>
+ <46cndpjyrg3ygqyjpg4oaxzodte7uu7uclbubw4jtrzcsfnzgs@sornyndalbvb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 22:35:52 +0200
-Message-Id: <DC0QJT650CI5.268HLIHWB4L8I@kernel.org>
-Cc: <lorenzo.stoakes@oracle.com>, <vbabka@suse.cz>,
- <Liam.Howlett@oracle.com>, <urezki@gmail.com>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 1/4] rust: alloc: replace aligned_size() with
- Kmalloc::aligned_layout()
-References: <20250731154919.4132-1-dakr@kernel.org>
- <20250731154919.4132-2-dakr@kernel.org>
- <CANiq72mWVmso1yMYGYih-NDwjB9E1iVE=_oSpPiSvqTu5mkE0g@mail.gmail.com>
- <DC0PSDBCPGVO.38EGYXRFQVM8N@kernel.org>
- <CANiq72nfpecn3qQqNJiXGDX_Veg1Q9yQF0BZzCk68Ue_i3qtVg@mail.gmail.com>
-In-Reply-To: <CANiq72nfpecn3qQqNJiXGDX_Veg1Q9yQF0BZzCk68Ue_i3qtVg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46cndpjyrg3ygqyjpg4oaxzodte7uu7uclbubw4jtrzcsfnzgs@sornyndalbvb>
 
-On Tue Aug 12, 2025 at 10:12 PM CEST, Miguel Ojeda wrote:
-> On Tue, Aug 12, 2025 at 10:00=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>
->> I don't think so, it just lead to pad to the alignment for Vmalloc too.
->>
->> Technically, this makes no difference, since Vmalloc is always PAGE_SIZE=
- aligned
->> and the size always a multiple of PAGE_SIZE.
->
-> Got it, thanks for the quick reply! Then I guess we could have skipped
-> the Fixes in this one, but it is not a big deal and as usual it
-> depends on how one defines "fix".
+On Tue, Aug 12, 2025 at 04:31:53PM -0400, Kent Overstreet wrote:
+> If you're interested, is it time to do some spec quoting and language
+> lawyering?
 
-Yeah, in the past I was more on the "'Fixes:' for actual bugs only" side of
-things, but I changed my mind a bit; I find it useful to have this as a
-reference even for minor issues that might not be actual bugs, such as this
-one.
+If you want to start or restart a thread on the block list specificaly
+for that topic, then sure, happy to spec talk with you. But I don't want
+to chat on this one. I just wanted to know what you were talking about
+because the description seemed underhanded.
 
