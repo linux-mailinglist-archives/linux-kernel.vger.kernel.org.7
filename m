@@ -1,148 +1,349 @@
-Return-Path: <linux-kernel+bounces-764675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B611B225DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:26:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40155B225DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556C83A4CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5182D1B64C96
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053F2ED17E;
-	Tue, 12 Aug 2025 11:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525E22ED852;
+	Tue, 12 Aug 2025 11:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="C9RFMPjQ"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T+ZEoERn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D482EA163
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FA22E2DE0;
+	Tue, 12 Aug 2025 11:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997958; cv=none; b=fiVSJa6S+GsFAy2FSbXiC4RqhvOgXH3aKq5mE7ql3X5M6FTsV0Iyk6ZTZk4FX1e9DdS62DDpWmyvvJzZPqPxPQk7L4s2qKDTzyZFz2XowFezBUHjcBo9SI8EQQDWXg+xoTsbz1udw2nhDPfFVWR2dXXLiyDS7ppOiTt0euGNUzc=
+	t=1754998120; cv=none; b=MG/XPZA4fv8ean2jAJzk5AKjpMZHd6W8GVBqR+jvC7Bbp9gKUoZTpK+kfn9iKOEMLpHHnLCDFmrnUwUDFVB0102wvdzNrCprW0OmYh450gztuhSHrJ+TWeZxRD4VuPvwCIXENgx4Yl+xxK3O5OwmrrLkhvQGzcw2W7Glw56vdVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997958; c=relaxed/simple;
-	bh=ZKKuolHihaGCQVn/G8GeT0Fv3Uj+qdXeNK7uItuc6nE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=bMlAxT2TrDynYe6JU3Yb923nKGVHIxEMzh1V6f8BP3n2EQQrciCxwkXbSQpSfLN0TP8PvzG1REqTJpxorK7NQun4gMgLtbvgxyxRg/ORmZVWKqfbAO3b0mCniSplW9cy12W/n/iWdRHYSlfmHWsAMPwvcxWknnidNwrY51Duems=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=C9RFMPjQ; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-433fa926cb9so3621663b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1754997955; x=1755602755; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qjfyf5ayYUQV/s7vBTZ8Nh9S9lY0mAPp0Jy1qKR37a4=;
-        b=C9RFMPjQZB+x+5CCIGJW15+GJGwgSO2pCUB22WGAQ5qn1sResuds0qqZ/Ea+ouOgpG
-         mhe26CxHS0jal328pzqUbVOsbaTg5Mp3k7+VVv7BvZBgO9uRDMpOROGEOOTzQKHR1PxF
-         sFI009h3e1+A41OjVNaT3pAlPCsSi7VB6F9ILYgtbxaNsW72YQWihHbh4MHV2rJIPTaq
-         ZdAtk52aEbYuRupIEEN1XpGVtnEYpGbD5gY0t/tCbut6hg80hXkWoFyVzfMQ3eU67l0C
-         kRxN6QY2OIA5Ic5tGE0v7GgAkH9PFwFAmRAca8JDFZL/AoI3oI1teC/PgmjkxzUeLat5
-         LoDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754997955; x=1755602755;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qjfyf5ayYUQV/s7vBTZ8Nh9S9lY0mAPp0Jy1qKR37a4=;
-        b=SvTS/HuALczu5PBYDeGDLRClPtVRv78bsjmJhz3HSLq9Nvyko75iCcA6kBF9OQSbpu
-         mMWOCPeDJpRMURlLXS2XK5kIDBU4bgOD/+p/6FiSJ6afxyce489SPrxWQx+OPGww2LZ+
-         smJNeJdmGHyryHTGsGBD1/nGVNYHuIjNXfU/TxYLEKPJ63imtQjf411Ol1tTDntsiU9D
-         2vGvt/BEsDZpV9ZvMyfP6JeQqwwGU9zPZ3V+pF29VzkpUHl/EoAo/jKnRiM8hFBJJ2uH
-         tYcf8r7U7OQJMBhotXIFyFySJ5jxG4gAEk3zwGFXLBrkguj9diCjxuzFlLFX6ZbZDvZl
-         wuZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkd6vwGXt69Z6foMFreX3ao8Zlsvpjkf9VFNfwXRM4HxjVkls7zLSOpwDRXYRhkCEhFnyX1mTZGABPDEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJmUCNOZtXLhtl6mgrHnpzTCXHE5xxNgz32cdw8J9pjJEDdHlo
-	Xj7oUqnppzQOCoUWhBEsLIiHpcBRswhyqU1tZfFPY1C+4G6OVkzBG9kArwoN2Lve5TrkCdpftBE
-	hhCajVaxChYrt1WNXRAx0aJKLSKI57bTL+sz1KXubEg==
-X-Gm-Gg: ASbGncvuk+zwNbq/wfgKdFzMAPGcG5sR7thHwcKxr9EBF3wukdo1+3XhlV95V4pjD+Y
-	8CeiTTQZMdWSeSltb7rN5TROFCrCHAtPh/52cmjeIxA4EsobCj6h6V+miE+DD8he14j2NGPmGHp
-	uuHt5ymnrIA5HEX06xV2X56G9m1iKtfP3fm0zmPDKC1I8JjwgyZE/E2gbo7htLAjO3JKZH6q0mP
-	ZvT6gCP0uWTExG+IKAxKMXT
-X-Google-Smtp-Source: AGHT+IFcPYgbej7VXqBZ9l2ZGteq16uRDcRJtLkqmXUHtMhTcloMmWBdGKMKq/p/vubapwMbfjDcv+/odkkwRTeoq8c=
-X-Received: by 2002:a05:6808:4f61:b0:41b:75ca:b104 with SMTP id
- 5614622812f47-435c925f657mr1622625b6e.39.1754997955426; Tue, 12 Aug 2025
- 04:25:55 -0700 (PDT)
+	s=arc-20240116; t=1754998120; c=relaxed/simple;
+	bh=aucV3Sk1cFWXbwVP3m/8s6jEvha/U79mOmkbk6667gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duGnjDFPy1S7B9a3nDSXV74tc4FdyMRzE4qhS5+Y5mIf69x79z2RMcP98iVlb2/KhmOlWKC0rOUouGOzHFnS6cgbablLNGYlPeITvN604lZ/xZ3ie0XAQq0iCqzSzbzsBZSYDc7TmoF+hbdmYOsHdr40+1nruyrBcnrtFHmHT4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T+ZEoERn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8BDC4346;
+	Tue, 12 Aug 2025 13:27:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754998062;
+	bh=aucV3Sk1cFWXbwVP3m/8s6jEvha/U79mOmkbk6667gI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T+ZEoERn73hAtMcyzscX3cz4VPPafGKpTE2h2HjIZM2OpmAGVTFS8xPTF/20T/CN8
+	 Hn06axQhyd6SgqJRu+O7SuXSo87H0eCkXvGdSfcTezoPdQE6q4+qDvMBp8QaRrfzxL
+	 X1F0IqfF5lKbuFVsnlrU+aid6LeNCy4Rwq/U/R7A=
+Date: Tue, 12 Aug 2025 14:28:17 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Will Whang <will@willwhang.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/4] media: docs: Add userspace-API guide for the
+ IMX585 driver
+Message-ID: <20250812112817.GM30054@pendragon.ideasonboard.com>
+References: <20250810220921.14307-1-will@willwhang.com>
+ <20250810220921.14307-5-will@willwhang.com>
+ <CAPY8ntATfq=yqoYkpuD5Ga-7yUb8C-_k=wSZJBpz0p9PLjVk0w@mail.gmail.com>
+ <CAFoNnrzHhJVbR1yQrr6o1+1JhyDB6y0NNfyJkK=by9YOJRGusQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20250515094301.40016-1-cuiyunhui@bytedance.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Tue, 12 Aug 2025 19:25:44 +0800
-X-Gm-Features: Ac12FXzJhCUBUv-F1HNVERzz4bnGfTnGrmHS9y4FCCPn4eJYOe2JOvnJfPiVMIk
-Message-ID: <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
-To: sunilvl@ventanamicro.com, rafael@kernel.org, lenb@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFoNnrzHhJVbR1yQrr6o1+1JhyDB6y0NNfyJkK=by9YOJRGusQ@mail.gmail.com>
 
-Hi Sunil,
+Hi Will,
 
-On Thu, May 15, 2025 at 5:44=E2=80=AFPM Yunhui Cui <cuiyunhui@bytedance.com=
-> wrote:
->
-> Add the read of CSR_CYCLE to cppc_ffh_csr_read() to fix the
-> warning message: "CPPC Cpufreq: cppc_scale_freq_wokrfn: failed
-> to read perf counters".
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  drivers/acpi/riscv/cppc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 4cdff387deff6..c1acaeb18eac3 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -69,11 +69,14 @@ static void cppc_ffh_csr_read(void *read_data)
->         struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
->
->         switch (data->reg) {
-> -       /* Support only TIME CSR for now */
->         case CSR_TIME:
->                 data->ret.value =3D csr_read(CSR_TIME);
->                 data->ret.error =3D 0;
->                 break;
-> +       case CSR_CYCLE:
-> +               data->ret.value =3D csr_read(CSR_CYCLE);
-> +               data->ret.error =3D 0;
-> +               break;
->         default:
->                 data->ret.error =3D -EINVAL;
->                 break;
-> --
-> 2.39.2
->
+On Mon, Aug 11, 2025 at 07:31:13PM -0700, Will Whang wrote:
+> On Mon, Aug 11, 2025 at 7:24 AM Dave Stevenson wrote:
+> > On Sun, 10 Aug 2025 at 23:11, Will Whang wrote:
+> > >
+> > > The new IMX585 V4L2 sub-device driver introduces several
+> > > driver-specific controls for configuring Clear-HDR blending,
+> > > gradation compression thresholds, and HCG enabling.  This patch adds
+> > > an rst document under Documentation/userspace-api/media/drivers/
+> > > that details each control, allowed values, and their effects.
+> > >
+> > > Signed-off-by: Will Whang <will@willwhang.com>
+> > > ---
+> > >  .../userspace-api/media/drivers/imx585.rst    | 122 ++++++++++++++++++
+> > >  .../userspace-api/media/drivers/index.rst     |   1 +
+> > >  MAINTAINERS                                   |   1 +
+> > >  3 files changed, 124 insertions(+)
+> > >  create mode 100644 Documentation/userspace-api/media/drivers/imx585.rst
+> > >
+> > > diff --git a/Documentation/userspace-api/media/drivers/imx585.rst b/Documentation/userspace-api/media/drivers/imx585.rst
+> > > new file mode 100644
+> > > index 000000000..9f7c16f30
+> > > --- /dev/null
+> > > +++ b/Documentation/userspace-api/media/drivers/imx585.rst
+> > > @@ -0,0 +1,122 @@
+> > > +.. SPDX-License-Identifier: GPL-2.0-only
+> > > +
+> > > +Sony IMX585 driver
+> > > +==================
+> > > +
+> > > +The IMX585 image-sensor driver provides the following *driver-specific*
+> > > +V4L2 controls.  They are visible only when the IMX585 driver is loaded
+> > > +and sit in the sensor-private control class.
+> > > +
+> > > +HDR data blending
+> > > +-----------------
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_DATASEL_TH``  (``U16[2]``)
+> > > +    Lower/upper **thresholds** (0 – 4095) that decide which exposure is
+> > > +    chosen—or blended—for each pixel in Clear-HDR mode.
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_DATASEL_BK``  (menu)
+> > > +    **Blending ratio** between the long-gain (LG) and
+> > > +    high-gain (HG) read-outs.
+> > > +
+> > > +    .. flat-table::
+> > > +       :stub-columns: 0
+> > > +       :widths: 1 5
+> > > +
+> > > +       * - ``0``
+> > > +         - HG ½, LG ½
+> > > +       * - ``1``
+> > > +         - HG ¾, LG ¼
+> > > +       * - ``2``     # duplicate ratio present in the datasheet
+> > > +         - HG ½, LG ½
+> > > +       * - ``3``
+> > > +         - HG ⅞, LG ⅛
+> > > +       * - ``4``
+> > > +         - HG 15⁄16, LG 1⁄16
+> > > +       * - ``5``     # second 50/50 entry as documented
+> > > +         - **2ⁿᵈ** HG ½, LG ½
+> > > +       * - ``6``
+> > > +         - HG 1⁄16, LG 15⁄16
+> > > +       * - ``7``
+> > > +         - HG ⅛, LG ⅞
+> > > +       * - ``8``
+> > > +         - HG ¼, LG ¾
+> > > +
+> > > +Gradation compression
+> > > +---------------------
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_GRAD_TH``  (``U32[2]``)
+> > > +    17-bit **break-points** (0 – 0x1ffff) that shape the 16-bit
+> > > +    gradation-compression curve.
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_GRAD_COMP_L``  (menu)
+> > > +    See V4L2_CID_IMX585_HDR_GRAD_COMP_H
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_GRAD_COMP_H``  (menu)
+> > > +    **Compression ratios** below the first break-point and between the
+> > > +    two break-points, respectively.
+> > > +
+> > > +    .. flat-table::
+> > > +        :stub-columns: 0
+> > > +        :widths: 1 4
+> > > +
+> > > +        * - ``0``
+> > > +          - 1 : 1
+> > > +        * - ``1``
+> > > +          - 1 : 2
+> > > +        * - ``2``
+> > > +          - 1 : 4   *(default for COMP_L)*
+> > > +        * - ``3``
+> > > +          - 1 : 8
+> > > +        * - ``4``
+> > > +          - 1 : 16
+> > > +        * - ``5``
+> > > +          - 1 : 32
+> > > +        * - ``6``
+> > > +          - 1 : 64  *(default for COMP_H)*
+> > > +        * - ``7``
+> > > +          - 1 : 128
+> > > +        * - ``8``
+> > > +          - 1 : 256
+> > > +        * - ``9``
+> > > +          - 1 : 512
+> > > +        * - ``10``
+> > > +          - 1 : 1024
+> > > +        * - ``11``
+> > > +          - 1 : 2048
+> > > +
+> > > +Gain settings
+> > > +-------------
+> > > +
+> > > +``V4L2_CID_IMX585_HDR_GAIN``  (menu)
+> > > +    **Additional gain** (in dB) applied to the high-gain path when
+> > > +    Clear-HDR is active.
+> > > +
+> > > +    .. flat-table::
+> > > +        :stub-columns: 0
+> > > +        :widths: 1 3
+> > > +
+> > > +        * - ``0``
+> > > +          - +0 dB
+> > > +        * - ``1``
+> > > +          - +6 dB
+> > > +        * - ``2``
+> > > +          - +12 dB *(default)*
+> > > +        * - ``3``
+> > > +          - +18 dB
+> > > +        * - ``4``
+> > > +          - +24 dB
+> > > +        * - ``5``
+> > > +          - +29.1 dB
+> > > +
+> > > +``V4L2_CID_IMX585_HCG_GAIN``  (boolean)
+> >
+> > HCG stands for High Conversion Gain, so we've got Gain repeated in the name.
+> >
+> > Spell it out as V4L2_CID_IMX585_HIGH_CONV_GAIN, or call it
+> > CONVERSION_GAIN and use an enum control?
+> >
+> > > +    Toggle **High-Conversion-Gain** mode.
+> > > +
+> > > +    *0 = LCG (default), 1 = HCG.*
+> >
+> > An HCG / LCG control would also be applicable for IMX290 [1], so it
+> > would be nice if this could be a generic control instead of imx585
+> > specific.
+> >
+> > I never got a good description as to the benefit HCG was meant to
+> > give. The datasheet for IMX290 says the conversion efficiency ratio
+> > between HCG and LCG is 2, but not why that is any better than adding
+> > 6dB of analog gain.
+> 
+> What I've learned is that HCG is actually a 2nd stage amplifier, so
+> instead of using one for high gain, you can split it into two lower
+> gain stages that lower the noise.
 
-The purpose of cppc_ffh_csr_read() is to calculate the actual
-frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX.
+DCG as a term is a bit confusing. It was initially used to describe an
+inter-frame HDR technique, where two different conversion gains are
+applied to separate frames by switching on and off an extra capacitor on
+the pixel's floating diffusion node. I don't know how it evolved from
+there, but just adding a second amplifier doesn't seem to be a very
+effective way to lower noise.
 
-CSR_XXX should be a reference clock and does not count during WFI
-(Wait For Interrupt).
+If anyone does some research on the topic and finds clear information,
+please share them.
 
-Similar solutions include: x86's aperf/mperf, and ARM64's AMU with
-registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
+> This is also why ClearHDR and HCG have the conflict, because it is
+> basically sampling after the 1st gain stage and 2nd gain stage as
+> High/Low gain images.
+> 
+> I have thought about making it more generic because IMX662 and IMX678
+> are going to be the next patch once this one passes that also has this
+> function (the two are basically stripped down versions from IMX585
+> that the driver can be adapted to easily). I intended for the upcoming
+> IMX662/IMX678 driver to use IMX585's V4L2 HCG control also.
+> 
+> But given that I'm new to Linux kernel developments, or more
+> specifically, V4L2, I really don't have an idea how to do so in a way
+> the patch will be accepted.
+> Or I can make this more generic name to replace IMX585 for STARVIS2,
+> for example: V4L2_CID_STARVIS2_HIGH_CONV_GAIN
 
-However, we know that CSR_TIME in the current code does count during
-WFI. So, is this design unreasonable?
+We should really try to standardize V4L2 controls for HDR support in
+sensors. See https://lore.kernel.org/linux-media/20250710220544.89066-1-mirela.rabulea@nxp.com
+for an attempt at doing so (for some of the controls at least). Could
+you share your feedback in that mail thread ?
 
-Should we consider proposing an extension to support such a dedicated
-counter (a reference clock that does not count during WFI)? This way,
-the value can be obtained directly in S-mode without trapping to
-M-mode, especially since reading this counter is very frequent.
+The proposal doesn't address the sensor-side blending controls. For
+those, I recommend considering how they should be handled from
+userspace. We don't want to have per-sensor code there if we can avoid
+it, and that should drive the API design.
 
-Thanks,
-Yunhui
+As for what you call gradation above, that's not strictly speaking
+limited to HDR, right ? If my understanding is right, this is about
+applying a compression curve to lower the bandwidth by lowering the
+number of bits per pixel while preserving more dynamic range in the
+lower and middle parts of the pixel value range. Is that correct ? If
+so, the term "companding" is also often used for this feature. I think
+we have three needs:
+
+- Enable/disable companding (which includes configuring the bit depth of
+  the output format)
+
+- Obtaining the companding curve applied by the sensor (as the host will
+  have to apply the inverse expansion curve)
+
+- Optionally, modifying the companing curve.
+
+I'd like standard controls for those.
+
+> > Sony's website [2] states
+> > "Sony’s Super High Conversion Gain technology is designed to amplify
+> > electrical signals immediately after the conversion from photons, when
+> > the noise levels are relatively low. In this way, it reduces the
+> > overall noise after amplification. As a result, lower-noise images,
+> > compared to conventional technology, can be captured even in a
+> > low-illuminance environment. Lower noise levels in images also help to
+> > enhance the accuracy in visual or AI-assisted image recognition."
+> > From that one would presume you'd always want it on (lower noise =
+> > good), unless needing the minimum exposure time and the image was
+> > already over-exposed.
+> > I'm guessing you have no additional information based on your description text.
+> >
+> >   Dave
+> >
+> > [1] Also IMX327, IMX462, and IMX662 which are in the same family,
+> > IMX678 (ratio of 2.6), and quite probably most of the Sony Starvis or
+> > Starvis 2 ranges.
+> > [2] https://www.sony-semicon.com/en/technology/security/index.html
+> 
+> Yeah I think Starvis 2 series all have this capability.
+> 
+> > > +
+> > > +Notes
+> > > +-----
+> > > +
+> > > +* Controls are writable while streaming; changes take effect from the
+> > > +  next frame.
+> > > +* HDR-specific controls are hidden when HDR is disabled.
+> > > +* Inter-control dependencies are enforced by the driver.
+> > > diff --git a/Documentation/userspace-api/media/drivers/index.rst b/Documentation/userspace-api/media/drivers/index.rst
+> > > index d706cb47b..87912acfb 100644
+> > > --- a/Documentation/userspace-api/media/drivers/index.rst
+> > > +++ b/Documentation/userspace-api/media/drivers/index.rst
+> > > @@ -32,6 +32,7 @@ For more details see the file COPYING in the source distribution of Linux.
+> > >         cx2341x-uapi
+> > >         dw100
+> > >         imx-uapi
+> > > +       imx585
+> > >         max2175
+> > >         npcm-video
+> > >         omap3isp-uapi
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 175f5236a..42e32b6ba 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -23183,6 +23183,7 @@ M:      Will Whang <will@willwhang.com>
+> > >  L:     linux-media@vger.kernel.org
+> > >  S:     Maintained
+> > >  F:     Documentation/devicetree/bindings/media/i2c/sony,imx585.yaml
+> > > +F:     Documentation/userspace-api/media/drivers/imx585.rst
+> > >  F:     drivers/media/i2c/imx585.c
+> > >  F:     include/uapi/linux/imx585.h
+> > >
+
+-- 
+Regards,
+
+Laurent Pinchart
 
