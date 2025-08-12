@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-765606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A28B23AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:29:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B738CB23AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B8B1A21D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:29:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A25B6E04D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993CA2D739F;
-	Tue, 12 Aug 2025 21:29:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACEA2D7386
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55442D062D;
+	Tue, 12 Aug 2025 21:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yXaZO/Uo"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC20326E15D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755034162; cv=none; b=BkffrxA9cKLnSSSpNF2SoTt/T2xU/ZsMApJUKcCChk85/LyaK8JwVktfvvcifMuCW/UKF+jGqmvFMbR4TrdPy9/FcTTPIbr6VXV0vifQoG82zdQvQGxv8mWOc+QkR+STiF0KmDVx6UJincd2ZhsSYCbMYt1rY6A2ZkdfbB/B/y8=
+	t=1755034304; cv=none; b=UiLHuplyVVuPgEcqm+4xANIRq6/d3daRxPB0BikxoNmw3akG9npeiKDtFg4c/fi+J3NBG5VuebwAF7ORBdjR4oMQ3Ew+nG+bnsnjZke1YvmQYAf4ZT/2cSD1D0lYLWc4YrFSd9WlQdVm5IRoRuMw5G8sh3rnkgqwtK9N/IkA3gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755034162; c=relaxed/simple;
-	bh=bOpoyvu/ZWbO47SQ5CoC25RHHvk18Ll/nfEeXHS47qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0u5VnxOpOCqhJH6RCf8NYZjOOiAIF2Fi2FPUZJSyRWKekwvwBEm/GkN9nzvjzrPoJ7HssrFXWFJzSJdzVM/yJ1nkSGLb9bmiTjb0aKYufQjiS1oPcTIQzZPdwA/v+zUoPuf4w/Ud41XfMwzjyP0j8pg5vqDABRy/PqB9syFWSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D1C31758;
-	Tue, 12 Aug 2025 14:29:11 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 218793F63F;
-	Tue, 12 Aug 2025 14:29:15 -0700 (PDT)
-Message-ID: <b16979c4-47cf-4a9f-8f67-30f784933c05@arm.com>
-Date: Tue, 12 Aug 2025 22:29:13 +0100
+	s=arc-20240116; t=1755034304; c=relaxed/simple;
+	bh=enFAnsuBI7tzmg+XmneTDUq3ne1AMj8+s7skBIKgsMQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=M+6uk+9cWdvTavmhb5QqekND31Ra4TIUBpsHsjZ0uCTEP61EB8NMkrslWRw8cdGGwQOiCBA56RX/4LjyxfiOmQyyLvDOKddXQhbbwt4dKdNf3BrlCO7M1TtkMzdJ50wi0Z4oV4WTDrXj2xGxXjjfPEhsIW1aD6Um4wFZG6yClP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yXaZO/Uo; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b42ebea2f2aso2586918a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:31:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755034302; x=1755639102; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LmQ7nvxSibxmUYTy/1bFPxOn10Uk+OIUVnbImlldc88=;
+        b=yXaZO/UoET62Iuf2ZYzjcUnivma017SEysZaunvi5McG1tjlYtOxTS02Wxxq1CRwGD
+         PBaj/qNcARKX1of6jzxeUg00paxv5wVTCIGaMOfeha6PTtQt92flHKXqJIorMZKD8o24
+         7d2PAb+LYqyxLFX4Va4HmCSHAfoD8NC1kt5K20z/h4cfVTGMscMTbh1q6vfngSk+Td+L
+         G4b3FtWX7rZeoRfv27TFq70djLxkHOLEuBIKR9ydlbafBeQOoTST5M9oZxWlhU4eZaAS
+         EXg+LC1lUtWKTiVPp+ADDDStBcTqtqOCoFpo/lL5t51x16+7lOPPy9SAs215ICRWFQ9t
+         aQWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755034302; x=1755639102;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LmQ7nvxSibxmUYTy/1bFPxOn10Uk+OIUVnbImlldc88=;
+        b=gEK+oBLrYBJVRp5xR9DA4RLoTIgUGe+/PKFfuylD8rKCR65CEQgT5sbqPNwV+I2k4y
+         Zslnm2US12Dgdcz4ziE9JY0xA80/1KWBrPO6N/k8uhsJQvYtrXd1ipC5/EUMMkqexwtc
+         lPjVGFOliR8820jubNXeqtLz4jn3mk+y+Wwsni7lm3/+p1CPrtMB6PKNVA/xHGsiqqNV
+         Wyalny18BZ8+sy/oBi0sDMaqfyw9J7LoMl9SVG75MriV7wyli+hgfsxzZb1dekVa8nKp
+         S3eURLOBexnGzU8pRfv2AC46DFg/ZU6rvR8ULjLuOdOXBBt7yU/9fCBU1MiNv8lmcgdM
+         4q0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqvVFBxnac9c/iq6Zc1UOhnAq4s5kU/Cw5vEdWHYYXpJlqEnp/KoZzOMCqwOhZKyNajF5XO+lHr5JixM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9MB+8kxyG0pJQdZXHhdkcYCH3FuUmUmAItHiesVV1hNKEOlYK
+	w1i7DSMbA+hc5/csXTNDvbLAnHuHkeifloXTha5UEd6oP4z5uqs7sjdkt/RWbdhuxVDyqcxIW+f
+	ZybSpeQ==
+X-Google-Smtp-Source: AGHT+IHViKr/WTmLaVxvva9jhkIu5PG322nOf87K7N2XTyh0J1XIA4uCdArN8R4zYi5HUXl83HRkSTciuUM=
+X-Received: from pghm11.prod.google.com ([2002:a63:f60b:0:b0:b42:2386:7609])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e78c:b0:235:6aa:1675
+ with SMTP id d9443c01a7336-2430d23f276mr9439865ad.52.1755034302080; Tue, 12
+ Aug 2025 14:31:42 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 12 Aug 2025 14:31:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
-To: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org
-Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, vdonnefort@google.com, ke.wang@unisoc.com,
- xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-References: <20250812093339.8895-1-xuewen.yan@unisoc.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250812093339.8895-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
+Message-ID: <20250812213133.161300-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2025.08.13 - CANCELED
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/12/25 10:33, Xuewen Yan wrote:
-> Now we use for_each_cpu() to traversal all pd's cpus,
-> it is in order to compute the pd_cap. This approach may
-> result in some unnecessary judgments.
-> We can simply calculate pd_cap as follows:
-> 
-> pd_cap = cpu_actual_cap * cpumask_weight(pd_cpus);
-> 
-> Then we can AND pd'scpus, sd's cpus and task's cpus_ptr
-> before traversing, which can save some unnecessary judgment.
-
-IMO this would be clearer if it's:
-Calculate pd_cap as follows:
-...
-
-instead of traversing ...
-
-Other than that LGTM.
-
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->  kernel/sched/fair.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c..e47fe94d6889 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8330,18 +8330,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
->  		cpu_actual_cap = get_actual_cpu_capacity(cpu);
->  
->  		eenv.cpu_cap = cpu_actual_cap;
-> -		eenv.pd_cap = 0;
-> +		eenv.pd_cap = cpu_actual_cap * cpumask_weight(cpus);
->  
-> -		for_each_cpu(cpu, cpus) {
-> -			struct rq *rq = cpu_rq(cpu);
-> -
-> -			eenv.pd_cap += cpu_actual_cap;
-> -
-> -			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-> -				continue;
-> +		cpumask_and(cpus, cpus, sched_domain_span(sd));
->  
-> -			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-> -				continue;
-> +		for_each_cpu_and(cpu, cpus, p->cpus_ptr) {
-> +			struct rq *rq = cpu_rq(cpu);
->  
->  			util = cpu_util(cpu, p, cpu, 0);
->  			cpu_cap = capacity_of(cpu);
-
+PUCK is canceled for tomorrow as I won't be able to join.  My apologies for the
+late notice.
 
