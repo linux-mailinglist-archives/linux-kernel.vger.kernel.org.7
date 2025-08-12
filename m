@@ -1,172 +1,117 @@
-Return-Path: <linux-kernel+bounces-765650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18600B23BE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2D7B23BF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED8944E25AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB13362825C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A392D46DA;
-	Tue, 12 Aug 2025 22:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9C6260583;
+	Tue, 12 Aug 2025 22:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gdlUCr3b"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wY/nEQYL"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F308A2F0693;
-	Tue, 12 Aug 2025 22:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8672A1B2;
+	Tue, 12 Aug 2025 22:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755037634; cv=none; b=dyArimnlXGDIgKUwwROhcYquWZsaHj4ljctnju+8Md60IZmLvWHj7iryJS940An0BmmU4nQqH0c5RDS+LJ+Cl3W/irQSN+Bh4HRL6DTQpoRXf9f1pG/JquukdlYEjXzFQUfOlDcE0PKoj3jE6TdWlsnuP0hV2o8Vi5wwC2goOiM=
+	t=1755038107; cv=none; b=CFzwGNwU31tr/y25Okfdy171qNHcssrbTmNC84brpKxwAqybfjKk1b3HsnWdg0YRWEotRKAkYbuMQNctgsLTDnIhcIaV3LlwqhSOWTHUAmLR49pApvAFNgWL1ApmvsSXCpMRFAvW5UjHc2PLs6w8ueokFlWlnuCE8yLC6g999iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755037634; c=relaxed/simple;
-	bh=VY5Ka5lKFTywN1joTNL4CpA9sajHibbkhU+nf4Nd58Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XR2B5FCdH0rTkT5SgNzgMYZghF+qR6a05O8JFutbRThYsVFVUky924Qrf0y1TBsDtip1lZEXdEShEz5qDjW1CAQJasnPTT1D5E0SffhdG9RwYD0MccZ5hvteuOpOWaxQQq8n9BaAWuqxJN3NdMwj+x/jImFF6rptMWFwaHoWD78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gdlUCr3b; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1755037629; x=1755642429; i=w_armin@gmx.de;
-	bh=Yo83TFZryGsnrgCIpOREWBxoCr1jDrR7cTvv7FC/rog=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gdlUCr3b6ehbTxWu/onnomcGps346w3/HYKOquxASqSuXAexWBfztSTndpqsH7F7
-	 /vOx6yhAtjbBouahNsw8K5BSYmfMGnxGOepGvVPGSdxfnbn48OQSCm0PhsL8ZTHKa
-	 plJTfSTZyQYujPkZ8kANsZTNftxPPZgFuYIvwwCe48X9xMowV4hmGrPFUfoE/cwSl
-	 FEAS1wYNpUYZsDxa8JEbGWLqCKk9hxVtcbwUZ8JWm0gz88ZM7DZbMS7B30JSC4xQD
-	 63KEoNeiTmSZ0scqqFuLLqtsG5/tEV0mhEqlIL0pWvwssf48170uO6LMb6VNWiKvR
-	 42oPL2hKNXlX+nVF7Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([91.14.231.131]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbAcs-1uAPiP0v6m-00dQxo; Wed, 13
- Aug 2025 00:27:09 +0200
-Message-ID: <f4de859e-3cbc-403b-b9da-12a426ba6a74@gmx.de>
-Date: Wed, 13 Aug 2025 00:27:08 +0200
+	s=arc-20240116; t=1755038107; c=relaxed/simple;
+	bh=JOvOvagIe67ABYGy6BhEc1L3UU4ePTBysXYTRPqBA/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l4KFjWOQekidH1iNyjQSELFRVHdJrk7svpKnptf8PCxrMOMoV6rrH/ADi+YpBBV+MUgmO7+fQt5CaZTeNw+HCX24qWN9rLpzCUYkeVnf+hhfA2UC2KPAsvuxCBsHqZUP89V04wn8lUteUxjRxy8PSzHmqQNnGe9e093dbPeF0Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wY/nEQYL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=+EEI7yK6XojmomNRzKfQjOSdi05xxiTDf/TrM9DIwLg=; b=wY/nEQYLWfmZV65rZDU0tvPxe/
+	mtuEEHdD6Bp90o2B9+c9C0SBEMR4WHyzY9Y2FsFdfD9AQaqAw0Gzr01AAX60YVBZIKyDtF+CpjhHA
+	nvlGj0QcDO3D7Vvn4eV6csaZHYt0q4F6miG69KN5Nd3dZpUlvkik75KyqmXQ9UTl4KplVAH7A8O/7
+	058/0DZbn0tSdsRxfpfkorQtJ91NHf2+vhUs6cOW65Y08RAHBqjw+pOkyUUudxLtV3EDZcfSP5zSG
+	X5DLFXC+9Bfa6hl+RvzOP0ofSdJWfhcg0s5Ozl3cSFt8G6k5zD7MCifl87lnNK+OFyAo3xc67eCGc
+	WU9Rl3gQ==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulxaB-0000000CA2Y-1DcU;
+	Tue, 12 Aug 2025 22:35:03 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH] kconfig: qconf/xconfig: show the OptionsMode radio button setting at startup
+Date: Tue, 12 Aug 2025 15:35:02 -0700
+Message-ID: <20250812223502.1356426-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Ilya K <me@0upti.me>, "Rafael J. Wysocki" <rafael@kernel.org>,
- lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250729062038.303734-1-W_Armin@gmx.de>
- <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
- <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
- <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
- <2025081246-raft-tattle-642c@gregkh>
- <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
- <2025081227-humpback-garden-7a4b@gregkh>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <2025081227-humpback-garden-7a4b@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:yXmBsPSJEVg1N3/Ko18xp0wSy9HGuahKqkrItLUPFjtzZ698fY7
- IDYH+poOERKD6AclGlMvvpphA4/MuRAFo6FRXvIiRlNnWEieSFyqy5yYf/D0WJ9CGkLLwi/
- VXcn/bzIk62sYPqzvc62b7q+XpxaPPSKCwTT4e4kaxpDEFO8kKFi36f4Iubjqj0bTKDEFeE
- V5NWBBJDryWgkwVOjjxMw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WArHKKeKQNg=;TjMIHUYIY/8xW+d5p1g72XGq07H
- 9wWIemPdXlKk6+NlO1voOsAr5GiMPzAhiJskRy8n+4WuFzmge6x7n0IVH0ytG+q0a5oHPYOpm
- XI75CckFW57G9W9R1+s4FN1HDEWNzhBkdWqESRJkj4IpIGhJpCFRtaOnUtPBcfaSL5XRUq+Mu
- hUELaU79ysFsiw1X2kK/zxmqiMC+KS8zf4Dd5DpQqYTeG0EO2emU6PhjVZZXHc6bkHALYbNg2
- GOcKhVgg3Ti3yCa4VHQXiaXtuQNeDB2Az5cNuZxj89luzyVZCz37xclxyLxXBcl6k5z70Mz97
- jbmfEnchkLp74Ozr69CGxwRtl2uJfBy/tI4nMAqPfTNbgnlelhUaxKxaLgpvRWoNOqL/5hVk8
- 7tqBuGFVBzrpOanlA8KQ2IJ1aDeJ9X285iwZ/rURMO974fpU/UwEBtIcodLIU1W+YQyPWbvGA
- NYQKY2BRQRYQ+ai+tJCYQI0jKzQnzQLnb0b/lk1gSsJ5nxgaifpoBKWrWf3VZGfTWaIe0RGn8
- VwMuS8Ov5+mSUzffWiJ51NTYmMUZ3ojqowFkHPjXSBa6LbJuk/PLz6lzURSeJUWnRB2YSNXlf
- LBMNWa0t5IngbEG1kYdlqLZhm62Ja6dKTjC8X6fkTXV/4Pk83hJj4zfpTN43yHUrNujIw5iR/
- ZYqc+xZTsO99n8NtlBoGf9XVG8Segy+A5UxX5HGWa+DcuDKFk91HvQuEmO0iPQ0GdzBSwekYN
- EvuTDVFziL0bABNVVB7Lcp5gsms6+5FmgpVRRT3Z7ZVfnrlZ9pwP/77blkvnjCf1zgZz9URjW
- UvB8L7XTbpzOXEy/II7rPXPvPuw0PHMki264fcSw/o/4OtDKOM6zD1EKJ9BWnjOzbEi5UziBe
- 4meLU/0ja07aNGbZiHAlSq8ERTnSadqLahu0WlmOlOxplXZxTBKgs5x3evVuyyPQXl37x6MYD
- hZdFrFP/VchSsKsWgU4B4tw8jIbjXHA/PB8iFVD363X+0TVoG30vEpUgoEONfmuSCruxTFe3s
- L8KE8kggvgRqcLVQU5DmdMRUAV7xDYn+b9JlZF/yFHJNAkMFm4hhRcaEreerNaKbiFauGVYcL
- ofCrHBu09yDV2FZV/+0nBx0uIPPLC7t/ZSHMFCVOT+jub1Y7AxATQ+XZ7Z8B7dxrI/k3GJpgf
- xaGn6A80y14IRoN1kJEO84C7lgv6gZVr6AcincSlCAYNx/t90TzqITkVxxI8NNc0I2NHkZFj0
- SVo4dr+9xdzie0TOVIBWdAIISTCCIaNta2/xVjvp8Zqg3pH6nmWm67v/087D3KhX47Kz8Ok5V
- GHTV+80Ah8fmYtD9hDwBieXwAW3u8FhCspUmemR4DrUdZffHhnw9QomAiv6Ia1jxIgJaS8KJw
- tRPW9Z+vksRdqzJL20cTmtmzYcJu3hnzQ2W0NkOHXqlOPQp6LaSOffWtFIXlBTxPvz5f/7ONX
- kGm8pDbmaFT5pg+dsRBLkbgxPqaX6ohkgSfhQtceWGLmYs/cIq3peByLO/mycOeoZp8XduXZd
- IwQ3QcOHP6ic5iOv5WTBq5T1iqydaFMOe3xxaSLhOhY2SYLQQgYc7mXX00ecFs20zYQ96aGoq
- DpPD1bytwgvGKg+3ug2DZa0YZxs8pc5WDbYcydqWpEpUG1V/REZ+XmmSPoLcAM/8eP65J3cUe
- Hg67353ZWY7eodbOT1IQQFH6UaDqSiwvkeeffJQNYXM+S3X2Y5VzyLy4QDCW7br4EYImGYJGZ
- ZHUeKQShHOxc/Ycaa3+uv7gert4NE2CNOj5ExDRvPqFjR8wBN7H5MkeqBQgeWoVjacRWvoPJk
- sq06TQ6LeFk5g/AoNwSNAszo1LOy4azf3IPyGYmGdTfQJDp2Ybj9IOVol79Eyg8SF2kJq0QJP
- kDlkGzLR71IZbsdCwftWwTrGqGmo5n+XxooUEb+6h5L5D8Uwe8Id2gAq5/RYEf67ayBw4elwT
- Lud14wSUEwGxsawSGnbqdQSkiRFYGhJEFQif4r2iMXvbpK6wJBjR6PVvxqkZNN/jdL0Dv5wgG
- pAOrUB6FeTWJu9qfsTL5v8EmlOGJsKSigX4UV7935ybo510uydKkozYnQsqV1vOmLeLzm3oSG
- 6ziqiMsBdT6ip/4a1HFu5utDhvF3OhGVvzSqVTy5yRBGNMLOZ20cn2m3DFrcSvmRHNBXxrX6/
- sfwaskouSVJVUbkOp+cV9SzlywFI2YxCcf63OEqYxzg+PEMED7LjzkZ7i8kkBNFQS6QPPip5b
- btVf5HaNpg2vwVzrFXrqVFcsCBiqX51GsdaaSUYuAMpTvEZKakKMRy1/HpFYJuJaWur4cilAd
- RMaBMLYxZJYcSla55oHMcTPmdXzsHUUfGSO7eS1zG3Zvr6H2P1PAnMmjmsk6JWE1DR2HL0/zx
- MoljCwwJKLnzPqdNPNqyIZS2gxGKeBeA4o/idwc86GMUEQL0ToeWZi6MaFukh5NJ/+YeWFXcx
- Flpgrdo8tC5xbqpBeuu20SqM9s+K/An9qpGvTh3w6nmXGwhevlKkcRxkeRn1aX46mrZdLWvGd
- WtO06KgC6HzGOZJHnjzO9MMpdycoPpqoczcbVs6/RU2et7eHfh7gworjGX79/2SqD+UiPuqpy
- AlOy4xb5Us9p54Kh/UMzYB2LhbdjbWIL/VDLL2Amyv2ZrQyw+PNFK9E6grWoUlEU6/BqPt9Gd
- UHJLbeB9HSzf6DofrZs9JFULxfg29p21HT6z7xtvJu0DRRYhUEmZT1xmBIO8Ckw1mOrRD/MT/
- HiPzCnvUwwPbRMdRcg6K2AhVA7UQS0C/DQgD6GOD3Nj/H5D8ZQz/54WDoqQzwRyT1gawdI1fm
- FZV7Ud1O/ZNo4d788MWKG6S5h+wZ6pyzLIcFkkCHR/61fNoAXvy5/GLZuoQ35USIYj7Rq2ssm
- 1nRndPTE7yLVX3kgHZ1/xtr5uvqknpSe8lmJuKUcwFRCufFdHrdG1Cylu7tyjGVauxgGr7ODb
- 8X3vdxXMUastz+FedDCFEq1pgpG9uQQtII/ogv+1Vb2MdehvALcIZDEonJeLLwyNYaCvLOn6u
- xvEYoCSsxg+/UVLwEy9hUhd6c7nxZxIbpR+CkpXq/b9YQM+gVsN/rnQSGHjkQxD9xLlUz5Gsf
- WBjbxOO/9s4LWMw7SE4dUZDhXVtCXWAdU3FjmgR+hNrq1zlJ3WT0ZwjYqmFmZB/c+AGPpKHvv
- wKBlzChBz6RfeaJbt/RaXTb6HKcW0bnF0dRo8vSs26TxJJ/q3QBKCWc4rCUFKKtEQuQzgi4WB
- 5RZkp8hr0NeUfAVN0k41Yt+pS5jxS5B9fAYvlj8oniuOikpjioG7tI0ICmTBElMJ1jWxevK36
- wuuhIwVQwGVCQ37FLQTL9/oOwQEe/DFc1yqnErWNKfQbBnWbpQcaRGe5XzhAVMyiaTnhmYzfa
- VKGeAIYCA8u14aIZrAkA==
+Content-Transfer-Encoding: 8bit
 
-Am 12.08.25 um 19:10 schrieb Greg KH:
+When qconf (xconfig) exits, it saves the current Option settings
+for Show Name, Show Debug Info, and Show {Normal|All|Prompt} Options.
+When it is next run, it loads these Option settings from its
+config file. It correctly shows the flag settings for Show Name
+and Show Debug Info, but it does not show which of the 3 Show...Options
+is set. This can lead to confusing output, e.g., if the user thinks
+that xconfig is in Show All Options mode but kconfig options which
+have an unmet dependency are still being listed.
 
-> On Tue, Aug 12, 2025 at 06:54:39PM +0200, Armin Wolf wrote:
->> Am 12.08.25 um 18:40 schrieb Greg KH:
->>
->>> On Tue, Aug 12, 2025 at 06:51:10PM +0300, Ilya K wrote:
->>>> On 2025-08-12 16:32, Rafael J. Wysocki wrote:
->>>>> Applied as 6.17-rc material and sorry for the delay (I was offline).
->>>>>
->>>>> Thanks!
->>>> Thanks!
->>>>
->>>> Tagging stable@ so we're hopefully in time for 6.16.1.
->>> <formletter>
->>>
->>> This is not the correct way to submit patches for inclusion in the
->>> stable kernel tree.  Please read:
->>>       https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
->>> for how to do this properly.
->>>
->>> </formletter>
->> Agree.
->>
->> AFAIK the Fixes: tag should be enough to ensure that this patch gets included
->> in the affected stable kernels.
-> Not at all!
->
-> Please read the above link for the full details on how to do this (hint,
-> Fixes: will not do it.)
->
-> thanks,
->
-> greg k-h
+Add code to show the radio button for the current Show...Options
+mode during startup so that it will reflect the current config
+setting.
 
-Oops, seems that i missed something rather significant about the stable kernels.
-I will give keep that in mind when sending future patches.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Nathan, Nicolas: do you want me to ask someone else to merge this?
+  I don't mind doing that;
+  or throw it into your tree and see what breaks.
 
-Thanks,
-Armin Wolf
+I know next to nothing about the Qt toolkit, so any comments or
+testing are appreciated. There could easily be a better fix for this.
+Thanks.
 
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+
+ scripts/kconfig/qconf.cc |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+--- linux-next-20250807.orig/scripts/kconfig/qconf.cc
++++ linux-next-20250807/scripts/kconfig/qconf.cc
+@@ -1377,6 +1377,19 @@ ConfigMainWindow::ConfigMainWindow(void)
+ 	ConfigList::showPromptAction = new QAction("Show Prompt Options", optGroup);
+ 	ConfigList::showPromptAction->setCheckable(true);
+ 
++	switch (configList->optMode) {
++	case allOpt:
++		ConfigList::showAllAction->setChecked(true);
++		break;
++	case promptOpt:
++		ConfigList::showPromptAction->setChecked(true);
++		break;
++	case normalOpt:
++	default:
++		ConfigList::showNormalAction->setChecked(true);
++		break;
++	}
++
+ 	QAction *showDebugAction = new QAction("Show Debug Info", this);
+ 	  showDebugAction->setCheckable(true);
+ 	connect(showDebugAction, &QAction::toggled,
 
