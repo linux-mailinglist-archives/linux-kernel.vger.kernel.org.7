@@ -1,257 +1,288 @@
-Return-Path: <linux-kernel+bounces-765269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4226DB22DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A291DB22DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053FC189E6C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347975069CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583042F8BFD;
-	Tue, 12 Aug 2025 16:31:39 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4A32F8BE1;
+	Tue, 12 Aug 2025 16:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QntEh5/D"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013045.outbound.protection.outlook.com [52.101.72.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C042F7457
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016298; cv=none; b=GC6O4g4HuSa4vFl3i3yuvmePIbvxS3u0MgBLJacHkfJXxHVtsIjUgpeopCSa6QigPbu+X+NaJArBCMwOloFNBUUFGGMoNEMKSULu/2ArQ7EceutwuSuiuJWgiFgk8plFxjeTRrFFlzDnEHAeb1p5CxrthjQozHdMLmJOKzpniio=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016298; c=relaxed/simple;
-	bh=mEyCROJ7ksAaIcSi5vN82QcICHBjKIOinJzgTmepqOM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HLXerIr6LfpfoXoMYGaBjZD4G4JoNjDe2Y62CZpaDliny2m7KUorck3eJr49OdXXK5zWJRhh2ugk/yVYMVXNaNeZ/ts3sEYVKPzYbTnaffpAvNUySH/OqA/h7YhGCFIy71KSabimBPrj6lIIzN0KVv6LVnamuovwGHUVG2y8/O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8760733a107so629650939f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:31:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755016296; x=1755621096;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QLs7X8EcsVOsOKLnQEUaliSvTAEIpt58s/g0vpng1nM=;
-        b=b9cMvKAPuHAKTAvYJqyleLzo4jbJ6Pkc8vruQpGNEESi9qnwNZtSEKCe4iWAUYAANh
-         ElyyreARQ5C17NIINiOnwNiYnA+zJ7tYPVSBLSoGjnoZVvB+NcTBX0DfJRhQJEXQsNtR
-         qfhIMUEPItJS8nHr4SO97kgZryfUHS+HjPkjFKI5k7/mHRAJyKbUXJQ2kWypDvluheCM
-         gkUHwxzeDcBQ6iuQTQz3xt1owXB7xbyGirzF/GGhFZNKJt59jWvcVdU81cYvUBpJb3XN
-         zRTeZaWUfc40lw/kopMznokfCJ+u6w8XtJshkh88dtG5F2Z/6FE3nQlkCe+c9G4vd5MF
-         1kyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyZE1R9WEkYF9GMXnRLS2S3EWpKVWHU84RYxiIY9BZ8gRyFKVJW/gnmIj2BtD0fuaFfpJGghjoKj3SrFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW9qv7VJSy2qiKnqJXGazJjCsllNPKrqfA6bLDiNasQx0UGU3N
-	lfg4Nebj00ScD1dmxsL5n338rNQ//Fbv9Gji4jjKf5pCZsE9Y3gOfo+ydMsS6SHLiCd1RGge0vE
-	gDgQVHApz0fu0HnsIBEvSLW5yaYNB2PzmkDg5NwSfON1+jkNbsaju9JJic+o=
-X-Google-Smtp-Source: AGHT+IEYzhTGVCbYOSHr1Q87yxGIKJMLmS9Bu1iiBsS6tu96Bx51Qr0SGjZsDKB1lC5wmcbZsChLLF/4UUqoYYZZdqQDdajafY2h
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7CF2F2900;
+	Tue, 12 Aug 2025 16:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755016323; cv=fail; b=thL7p7g4uF2wdo8/wLLw78HTVGijiqCiv2X9pIt7z40a6f013JMvXIsk0OFWVvuM+oN4c+T1NcLTXVFCestPmF3Tqe97cI3TGj6g8fcWGPpKOyPghrCIPXMCHzI76Xn15n5qVzu8isKf1zw0RyGLeLEYaQDN/xIBckO8NRREodU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755016323; c=relaxed/simple;
+	bh=ei168s2yNjDxydF2SNVmmQoXPZ9x4iTyhZ3OISlsaZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z1lskH1QDTbJK8azHBEZiyiOGfQs8PcPiE+NC443Dr5lqF7+qxHw0ZHwqJuZCCHiGe41bEJPwRBHYfLi54d1Iaj+JZMXkxO0WRBDi2hflVqvC0MpClPI8jxc2PyumBfygM5c222sEOJjsXMGoWq6omyscgkjKBEU/3xjXgc5VCE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QntEh5/D; arc=fail smtp.client-ip=52.101.72.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=doAwARCAFgDTaO/uOBEdz6Uq/tJCVq4n+vnk200AkyLtpiIJo6V9FV50JNK8nK275FPZAYRtks+yJFCEmH/q4YRUas2LFPQZ3LX9S28tbtKzReqwABDlIXVOIbf9vBaLVy1KlO1941EteJ/B8vcRKaf8IiwlvmqAtPB+MmhuTaRn+qbc8ga+Cxh4Ii63W6k/IiIvRv1kyQoZ/p2bFLrFio+Z4disNmaIWMeRltkUCYERz7YMjFoznTZQOqAgqMHKJa4pfY7cFk0UFZeYWmnLXUj+DlRng29OKrP4z8BDD3euTBJR8YfYnv9/+FKoe1ur26NX23dxImpRheNCK24Bdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+/sEGqUj87/lWXEYll6BgeV5Yifd8u2j53QFLVMq8FM=;
+ b=IUSByfz7dM5APaS0ziNkAaKAv3wndtbwBTX5Sa3ux+irrnfgmxPz/T5mLA5ruwbWvDK/10XXsNZjrh6ms3O7nfIpf8DV4dcHdtW35uQmH2lwwQhem2uQCD5Ql4AQjMTwpf8Vtn14tm11N7k9oNBW+QS6ESVmO02tz2kP9WGrtnhTQoV3uuQy6wUJ1e3/INfTY5TuXjAIWLqx6sCCzM2EG3LDR97wKjVM9ZvuEsio5VXEQ8nco8LIHbu3eSFeGb1DVuqi4PhuxzHj1zCivaIs9gt6jpT1y8WXQin7fIgKWi5J7jNiFeCfPA01VRVmVVvP93dFiOMb0D3lA0hgC+9xiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+/sEGqUj87/lWXEYll6BgeV5Yifd8u2j53QFLVMq8FM=;
+ b=QntEh5/DX0lcmRb3HYEHNB3CKfgndyFu5sdYcPewCgzjv3bea3GgIOjNeVa01QC6iJXFE5srFlYItMpY5S61d/+ZgQMppmJoTDdRXR4gbp+BkXkYedXMPQ0e27VoNIrhJDwqAAnEmMKoWV3wNioEnzYRxYylg5sRah562mVo4NFIJyg5Hj5h3F1CJ8jn4I8uR+Inm/c09iqMBB1NxDpDfSn+mj/OSlPs38tMZXKSJZu52+O8yK0Q0U7xsH/Ze4aDmTGNmid92k3HAJ9WmWJ8+fyVjoXr+ayEzOCI/+4AihfT8F4tX+kDQo/LVNe9Z5PgZnY/I45nbsoou/q5gwO0JA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB5PR04MB11253.eurprd04.prod.outlook.com (2603:10a6:10:5e6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.12; Tue, 12 Aug
+ 2025 16:31:59 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9031.011; Tue, 12 Aug 2025
+ 16:31:59 +0000
+Date: Tue, 12 Aug 2025 12:31:53 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com, martink@posteo.de,
+	kernel@puri.sm, mchehab@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Subject: Re: [PATCH 3/5] media: imx8mq-mipi-csi2: Use devm_clk_bulk_get_all()
+ to fetch clocks
+Message-ID: <aJtsearbkc52vzAV@lizhi-Precision-Tower-5810>
+References: <20250812081923.1019345-1-guoniu.zhou@oss.nxp.com>
+ <20250812081923.1019345-4-guoniu.zhou@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812081923.1019345-4-guoniu.zhou@oss.nxp.com>
+X-ClientProxiedBy: AS4P195CA0021.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9744:0:b0:881:72ca:57f with SMTP id
- ca18e2360f4ac-88428c2ae6fmr24103239f.10.1755016295785; Tue, 12 Aug 2025
- 09:31:35 -0700 (PDT)
-Date: Tue, 12 Aug 2025 09:31:35 -0700
-In-Reply-To: <67251e01.050a0220.529b6.0162.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689b6c67.050a0220.7f033.0134.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_unregister_user
-From: syzbot <syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, hdanton@sina.com, johan.hedberg@gmail.com, 
-	kuba@kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, luiz.von.dentz@intel.com, 
-	marcel@holtmann.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB5PR04MB11253:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14ee9bc1-943c-4d26-ea10-08ddd9bdc267
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|19092799006|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?F/OO8iIxC7zl9jSle+zQvxQ8+Pt1oJXCPAi2fLHzSCYc/3xrDcQpAej1vg0k?=
+ =?us-ascii?Q?zKscVfpqvMEQ5Kjf7wmw3KyDB0d6G7LnO4Jgn97L1DggkLBKgDGlRFy7POaq?=
+ =?us-ascii?Q?WuBtczTMDliJu9wL/j0zSa1UjoqBIW6/YNEtsX+572wyhpsR0l6ITtDiRKWY?=
+ =?us-ascii?Q?NQlerxTsNWyPcNJcX5lmf7ynzg8kK///8x+OpFKpX1WkSwBTY/J167flutNI?=
+ =?us-ascii?Q?Z5X2xFu89YiIHgsUiynZxwp2vpBa+39eSza8VOPfJycCstywb6XfnWsfgLen?=
+ =?us-ascii?Q?wdpHZAM4YYEFk3l+bRp2yX8IMharkpHqzcHBhapTLb0iWBtI4Yer1CW644ea?=
+ =?us-ascii?Q?bXVEvyf0CTmfFWVzipOsS6YxX8uhxXB5ho7t+oAc/dhTrJ9ds9h+mHYsBfgr?=
+ =?us-ascii?Q?HUhOwK61w2Rizg0FTT3UTWiI2/2m/LtTryTFiXZrYzuJmb26Ze3pe886gtg6?=
+ =?us-ascii?Q?kpyQAjiZJaINVnlXFqAx4jtlzf0t97UcG3r3B3iQlnYJsSN4KkTTEziYd+I5?=
+ =?us-ascii?Q?S+ystG/6K0QPgK1KAPciG75j6ZeR851auhiuRXWJxRZPryryyHMrS1V0ecH5?=
+ =?us-ascii?Q?zByYaMa1ylIIUZfSIxQmD9yFs8KnrsKw3t9Pt0riYOWTnYXZJAZVMuarexBW?=
+ =?us-ascii?Q?Zd+qChZAxSNhZpyC3NzAUEHK4iKFZV4CfzEKP3iBIyxMj5KFWlHlk4K/48Gn?=
+ =?us-ascii?Q?w5CKY1mm5sqCnmURcgEMBjrXV/77PuUGMZzLm5dbxhd6Ncvkm7uBC8OfTfIO?=
+ =?us-ascii?Q?loWji2Lm391Z+wjwjnOSVge9KHy7leh6cGHIr9SvPf++t9SDjNtrPgowbxAz?=
+ =?us-ascii?Q?1JUj88cqReLBFva3BneeEMuWRDflhz7P1tQHeg1/sy5uUN93/N0vvbMTlf03?=
+ =?us-ascii?Q?H0w2EzBiHI0Y0rR9y3RdNFiVZvwZVpewPnvApHPYzMKFpj3V1Do0ptSSRr7J?=
+ =?us-ascii?Q?QPnVGj+ASREvuRBFW0XjI+wKKpaWJb50W8WQjOQNg0QGNUPqxBQsjgJkVmDB?=
+ =?us-ascii?Q?QWw/aUTiJNUALvIRsoyz0ihoNXWYNXHwQHghvv5YCTva/QDMRkEGTD7GZ9XK?=
+ =?us-ascii?Q?4j2rM4nxj6Muqyh2WQv+e/ZNVSVfTGT7OpNIUBvnLQSdg9CjR6cSvxpIZZNH?=
+ =?us-ascii?Q?bftAc6xm8xZFGkBX0Swb+hvChWMN2t0hxWD7WG9FPE4ankdEDzXb4cGj05fr?=
+ =?us-ascii?Q?F5DLaxYHPhhbsy2b7d+QtNWdBtgGi/Fs7HRmKz9Bf3wkOTuaelgFYL7WDxtw?=
+ =?us-ascii?Q?qQGG39/gh3JP6ZpBADMSiaEVdEEb7a9N/w0d05ynQ9tnPcrdI24NT6mkdK5d?=
+ =?us-ascii?Q?rG3b1iGI/dyJzO/cXbE6IbrqoaccrpWdW9/K4JXiUnDrDpy+0X7CLjkGkMEA?=
+ =?us-ascii?Q?LHwr55rS33y4BmEWvDQIRydVe7exgFhlRECVO5WyAUWhjV13V5w0C0X02m5n?=
+ =?us-ascii?Q?FztaD/3x3IsPs9+PDso436a6YdPE3oBp+0jI4yjcRaZSyXY3Rf53MQ=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(19092799006)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?BrgXPwC3nrEdVz9wjJB6Lrk4xsFRqcHOc7U5hlcIO19vlfqTlDsHeA8T/67a?=
+ =?us-ascii?Q?lJrErAc84KILx424l7l1u/e+UuYP7gaXu6rDW2Umq7EjvqncvRTE9Agyn3ub?=
+ =?us-ascii?Q?VDHbJUJO3bYJ3hQU12FT+F9siUO65OQBmeB3RysVNpgaqGC/U8LVYHHeNt5u?=
+ =?us-ascii?Q?EAqsOeA+Pr4BVM8gsisQumj+BhtyVqo6PmxtcMdXVHIHIghlI7YL64wt9j3R?=
+ =?us-ascii?Q?0SYyCD8u7hveLKmAT9swUVOWKKyBjPCkeXBdOf8rFKA0+IzcLweZAsdH4mnw?=
+ =?us-ascii?Q?pbYad8QZ/Y50iNTeOm/V6tAmPUg1de9eQi6b74SwmWhK51ozJkUt8vfzlTZP?=
+ =?us-ascii?Q?NMh+kr17lP6zUoD/vaCa8LaR93DLs77NlB6m+xlJ6vzaMYVwK/+QIQYLWY6r?=
+ =?us-ascii?Q?cQvU0O4WgIV9zxlZ/B/Xpb9tkPTx3/un988hdm7Lk31VH/K5VK2M1MrmAhjF?=
+ =?us-ascii?Q?NKU19dzj19funCzZMOWQLrPPxzqyYIcY7294UAgY+ldxATpMn4nv8ghSxTq+?=
+ =?us-ascii?Q?oJJFHjuegbp6FAUNPgPUqAEXqhCT48XuygXvtdoptKsBzrglHu+1X7rS0+av?=
+ =?us-ascii?Q?Y3uUbsdIFE6UUuV9wNwmh+RayRDBF3hWqcWv6zAAdANgVsHBa84NLrQZ52JA?=
+ =?us-ascii?Q?R5sN6iyjO/OCHoBepFN0dUSLtB4zQzXcpQ4IHDic+b7nGHU4RNVEaFNo80h/?=
+ =?us-ascii?Q?ky9Bksk39aJL9sjrtIkyycSE+v0qQ7+m9mP2DCWD5a2eqwIlp+PSayNWofhk?=
+ =?us-ascii?Q?/oY9MZwr4UlYZ7w9qFXArFaHcAq2RhGYsJGdbqaB2SDtsaAfXYTvSuWa7bf8?=
+ =?us-ascii?Q?gSs8m3a7PpFscLVaYfgZFdoaTjhGkfzLvyObd73eZ+Hn5ybIrYmtpNllpNdQ?=
+ =?us-ascii?Q?27P/7ePcsizXh9GpeHVQtKUfdR5vPM8/TnX57Q+844ZFABKbiIklhV7YwkNi?=
+ =?us-ascii?Q?02M0QAO0rrR/y2QjX6cZobMvtzeghD+TD6dRRCzMvWxb9C32/s5eObTHzBQI?=
+ =?us-ascii?Q?PMU69NUbiEe+SZfhAJzwS6c5++TEjA3wLYn1o7UAUXhdOO627cIwtYIghlzz?=
+ =?us-ascii?Q?QTB8y8vshtKm2RBx0MyyBgShappuSKXO85DblPuFatWn06gDe0xHMvvd7HMd?=
+ =?us-ascii?Q?MM6gOLWB+zt5RjBOVURWcxA8XVzn/UbVkPz8QvP8WAjx3u4jILU7j0CoPVzO?=
+ =?us-ascii?Q?qdbBtnw4jPH+WoI7M+eU78mJMDZQvt+yKyl8YC0zjop1HLyfD1KsljdnFQor?=
+ =?us-ascii?Q?hgD3emGcxcUiOx2cAnTxotrau7s5b45RYtKnCCq4jhpV5qucWx1SSz3T0a96?=
+ =?us-ascii?Q?sByLxqw0/npSItO5COuspwkiJjy5sMKRbLpsMvQIyiQ2Dmol40LnTfWY/OEZ?=
+ =?us-ascii?Q?fV2Z9Qb9y5Sw8b+Xy2Di5d2FvmJrpQcWT4gmxTGiCsFw17SEgtnISgL8jLHM?=
+ =?us-ascii?Q?k38DWiC46hxjfWIERYOLtjfVsSgrO7T3whdoGeBSOm1J/EoC3chy0J9uEdah?=
+ =?us-ascii?Q?olbWKecKIvlK0uCDGLgCssA0COthha8LNtWiH5y0DASJ8aZP471MWMGp92hL?=
+ =?us-ascii?Q?DaYy+WpWUSbRj8phOyuFWIcetHfmqwzlI/1586cc?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14ee9bc1-943c-4d26-ea10-08ddd9bdc267
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 16:31:59.2443
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6d83esnmpc7wpNhVNWvzkUc73z0hW+jsRqm57OwpU0RWXWHPua2WJeCUVJpfXt6H6x4i57SPu21503cdd8zOWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB11253
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Aug 12, 2025 at 04:19:24PM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> Use devm_clk_bulk_get_all() helper to simplify clock handle code.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 
-HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=15494c34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1428caf0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11da19a2580000
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cdc3889e34d0/mount_4.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1412a842580000)
-
-The issue was bisected to:
-
-commit c8992cffbe7411c6da4c4416d5eecfc6b78e0fec
-Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Date:   Wed Dec 1 18:55:05 2021 +0000
-
-    Bluetooth: hci_event: Use of a function table to handle Command Complete
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d538c4580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d538c4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d538c4580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
-Fixes: c8992cffbe74 ("Bluetooth: hci_event: Use of a function table to handle Command Complete")
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __mutex_waiter_is_first kernel/locking/mutex.c:183 [inline]
-BUG: KASAN: slab-use-after-free in __mutex_lock_common+0xcb4/0x24ac kernel/locking/mutex.c:678
-Read of size 8 at addr ffff0000c99f80a0 by task khidpd_05c25886/6940
-
-CPU: 0 UID: 0 PID: 6940 Comm: khidpd_05c25886 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/18/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- print_address_description+0xa8/0x238 mm/kasan/report.c:378
- print_report+0x68/0x84 mm/kasan/report.c:482
- kasan_report+0xb0/0x110 mm/kasan/report.c:595
- __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
- __mutex_waiter_is_first kernel/locking/mutex.c:183 [inline]
- __mutex_lock_common+0xcb4/0x24ac kernel/locking/mutex.c:678
- __mutex_lock kernel/locking/mutex.c:760 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
- l2cap_unregister_user+0x74/0x190 net/bluetooth/l2cap_core.c:1728
- hidp_session_thread+0x3d0/0x46c net/bluetooth/hidp/core.c:1304
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-
-Allocated by task 6767:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x44/0x54 mm/kasan/generic.c:562
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x9c/0xb4 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4365 [inline]
- __kmalloc_noprof+0x2fc/0x4c8 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- hci_alloc_dev_priv+0x2c/0x1b84 net/bluetooth/hci_core.c:2448
- hci_alloc_dev include/net/bluetooth/hci_core.h:1706 [inline]
- __vhci_create_device drivers/bluetooth/hci_vhci.c:399 [inline]
- vhci_create_device+0x108/0x6d4 drivers/bluetooth/hci_vhci.c:471
- vhci_get_user drivers/bluetooth/hci_vhci.c:528 [inline]
- vhci_write+0x314/0x3d4 drivers/bluetooth/hci_vhci.c:608
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x540/0xa3c fs/read_write.c:686
- ksys_write+0x120/0x210 fs/read_write.c:738
- __do_sys_write fs/read_write.c:749 [inline]
- __se_sys_write fs/read_write.c:746 [inline]
- __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-Freed by task 6984:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_free_info+0x58/0x70 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x74/0x98 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kfree+0x17c/0x474 mm/slub.c:4879
- hci_release_dev+0xf48/0x1060 net/bluetooth/hci_core.c:2776
- bt_host_release+0x70/0x8c net/bluetooth/hci_sysfs.c:87
- device_release+0x8c/0x1ac drivers/base/core.c:-1
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x2b0/0x438 lib/kobject.c:737
- put_device+0x28/0x40 drivers/base/core.c:3797
- hci_free_dev+0x24/0x34 net/bluetooth/hci_core.c:2579
- vhci_release+0x84/0xd0 drivers/bluetooth/hci_vhci.c:666
- __fput+0x340/0x75c fs/file_table.c:468
- ____fput+0x20/0x58 fs/file_table.c:496
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x524/0x1a14 kernel/exit.c:961
- do_group_exit+0x194/0x22c kernel/exit.c:1102
- get_signal+0x11dc/0x12f8 kernel/signal.c:3034
- do_signal+0x274/0x4434 arch/arm64/kernel/signal.c:1618
- do_notify_resume+0xb0/0x1f4 arch/arm64/kernel/entry-common.c:152
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:173 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:182 [inline]
- el0_svc+0xb8/0x180 arch/arm64/kernel/entry-common.c:880
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-Last potentially related work creation:
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- kasan_record_aux_stack+0xb0/0xc8 mm/kasan/generic.c:548
- insert_work+0x54/0x2cc kernel/workqueue.c:2184
- __queue_work+0xc88/0x1210 kernel/workqueue.c:2343
- queue_work_on+0xdc/0x18c kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:669 [inline]
- hci_cmd_timeout+0x178/0x1c8 net/bluetooth/hci_core.c:1480
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3400
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-
-Second to last potentially related work creation:
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- kasan_record_aux_stack+0xb0/0xc8 mm/kasan/generic.c:548
- insert_work+0x54/0x2cc kernel/workqueue.c:2184
- __queue_work+0xdb0/0x1210 kernel/workqueue.c:2339
- delayed_work_timer_fn+0x74/0x90 kernel/workqueue.c:2485
- call_timer_fn+0x1b4/0x818 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1793 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x54c/0x76c kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xcc/0x194 kernel/time/timer.c:2403
- handle_softirqs+0x328/0xc88 kernel/softirq.c:579
- __do_softirq+0x14/0x20 kernel/softirq.c:613
-
-The buggy address belongs to the object at ffff0000c99f8000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 160 bytes inside of
- freed 8192-byte region [ffff0000c99f8000, ffff0000c99fa000)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1099f8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0x5ffc00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 05ffc00000000040 ffff0000c0002280 fffffdffc374ca00 0000000000000005
-raw: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
-head: 05ffc00000000040 ffff0000c0002280 fffffdffc374ca00 0000000000000005
-head: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
-head: 05ffc00000000003 fffffdffc3267e01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff0000c99f7f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff0000c99f8000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff0000c99f8080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                               ^
- ffff0000c99f8100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000c99f8180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> ---
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 52 ++++++-------------
+>  1 file changed, 15 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> index ed6578f7f0f9..be07ff27071f 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -72,21 +72,6 @@ enum {
+>  	ST_SUSPENDED	= 4,
+>  };
+>
+> -enum imx8mq_mipi_csi_clk {
+> -	CSI2_CLK_CORE,
+> -	CSI2_CLK_ESC,
+> -	CSI2_CLK_UI,
+> -	CSI2_NUM_CLKS,
+> -};
+> -
+> -static const char * const imx8mq_mipi_csi_clk_id[CSI2_NUM_CLKS] = {
+> -	[CSI2_CLK_CORE] = "core",
+> -	[CSI2_CLK_ESC] = "esc",
+> -	[CSI2_CLK_UI] = "ui",
+> -};
+> -
+> -#define CSI2_NUM_CLKS	ARRAY_SIZE(imx8mq_mipi_csi_clk_id)
+> -
+>  struct imx8mq_plat_data {
+>  	int (*enable)(struct csi_state *state, u32 hs_settle);
+>  	void (*disable)(struct csi_state *state);
+> @@ -112,7 +97,8 @@ struct csi_state {
+>  	struct device *dev;
+>  	const struct imx8mq_plat_data *pdata;
+>  	void __iomem *regs;
+> -	struct clk_bulk_data clks[CSI2_NUM_CLKS];
+> +	struct clk_bulk_data *clks;
+> +	int num_clks;
+>  	struct reset_control *rst;
+>  	struct regulator *mipi_phy_regulator;
+>
+> @@ -417,24 +403,16 @@ static void imx8mq_mipi_csi_set_params(struct csi_state *state)
+>  			      CSI2RX_SEND_LEVEL);
+>  }
+>
+> -static int imx8mq_mipi_csi_clk_enable(struct csi_state *state)
+> -{
+> -	return clk_bulk_prepare_enable(CSI2_NUM_CLKS, state->clks);
+> -}
+> -
+> -static void imx8mq_mipi_csi_clk_disable(struct csi_state *state)
+> +static struct clk *find_esc_clk(struct csi_state *state)
+>  {
+> -	clk_bulk_disable_unprepare(CSI2_NUM_CLKS, state->clks);
+> -}
+> -
+> -static int imx8mq_mipi_csi_clk_get(struct csi_state *state)
+> -{
+> -	unsigned int i;
+> +	int i;
+>
+> -	for (i = 0; i < CSI2_NUM_CLKS; i++)
+> -		state->clks[i].id = imx8mq_mipi_csi_clk_id[i];
+> +	for (i = 0; i < state->num_clks; i++) {
+> +		if (!strcmp(state->clks[i].id, "esc"))
+> +			return state->clks[i].clk;
+> +	}
+>
+> -	return devm_clk_bulk_get(state->dev, CSI2_NUM_CLKS, state->clks);
+> +	return NULL;
+>  }
+>
+>  static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
+> @@ -489,7 +467,7 @@ static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
+>  	 * documentation recommends picking a value away from the boundaries.
+>  	 * Let's pick the average.
+>  	 */
+> -	esc_clk_rate = clk_get_rate(state->clks[CSI2_CLK_ESC].clk);
+> +	esc_clk_rate = clk_get_rate(find_esc_clk(state));
+>  	if (!esc_clk_rate) {
+>  		dev_err(state->dev, "Could not get esc clock rate.\n");
+>  		return -EINVAL;
+> @@ -848,7 +826,7 @@ static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
+>
+>  	if (state->state & ST_POWERED) {
+>  		imx8mq_mipi_csi_stop_stream(state);
+> -		imx8mq_mipi_csi_clk_disable(state);
+> +		clk_bulk_disable_unprepare(state->num_clks, state->clks);
+>  		state->state &= ~ST_POWERED;
+>  	}
+>
+> @@ -866,7 +844,7 @@ static int imx8mq_mipi_csi_pm_resume(struct device *dev)
+>
+>  	if (!(state->state & ST_POWERED)) {
+>  		state->state |= ST_POWERED;
+> -		ret = imx8mq_mipi_csi_clk_enable(state);
+> +		ret = clk_bulk_prepare_enable(state->num_clks, state->clks);
+>  	}
+>  	if (state->state & ST_STREAMING) {
+>  		sd_state = v4l2_subdev_lock_and_get_active_state(sd);
+> @@ -1092,9 +1070,9 @@ static int imx8mq_mipi_csi_probe(struct platform_device *pdev)
+>  	if (IS_ERR(state->regs))
+>  		return PTR_ERR(state->regs);
+>
+> -	ret = imx8mq_mipi_csi_clk_get(state);
+> -	if (ret < 0)
+> -		return ret;
+> +	state->num_clks = devm_clk_bulk_get_all(dev, &state->clks);
+> +	if (state->num_clks < 0)
+> +		return dev_err_probe(dev, state->num_clks, "Failed to get clocks\n");
+>
+>  	platform_set_drvdata(pdev, &state->sd);
+>
+> --
+> 2.34.1
+>
 
