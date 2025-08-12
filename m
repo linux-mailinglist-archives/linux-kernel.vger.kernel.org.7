@@ -1,102 +1,183 @@
-Return-Path: <linux-kernel+bounces-765488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9A4B23910
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B549B23912
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625A63A687C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABF73AA413
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BF2DD5E2;
-	Tue, 12 Aug 2025 19:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X9w1/5mr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rM3MM1Vn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18772F291B;
+	Tue, 12 Aug 2025 19:33:09 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05EE244660;
-	Tue, 12 Aug 2025 19:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC989274B29;
+	Tue, 12 Aug 2025 19:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755027156; cv=none; b=LOl6TmJ+6/Qd58YCOqLpIah/HLcVbXRx8kDQV7NqwbFCm4JQixPuaz2KRwwC0ZsiwZ7mIJpewTuxEPwPJQgrFXtot3FUdyOqJZGBlAq16LuxZ7Qqhj69BxGVsPfEP1KSTatujEBoI8f5+UZZ+yLtLUBW0+W5qRK81sykN4w7Pmg=
+	t=1755027189; cv=none; b=nE/KtytNBe8zcl38rl+riA+TbhmlCVBCZkd2PjNVOqdGq+ct4fqvOmtS4OJTRQ1FlVoOx0TIC2VHEbw1Oorlg0PRQvke6Uk9XCoTndAEfzziLQmztuDBdDV0LIhc4D7GzHNgJIGPdwSp9UsWXNQnyo5lCX/pJdfJkbFHFE02GnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755027156; c=relaxed/simple;
-	bh=3cvO8hjq6YpgO7S22HAORkzKx2wKSr/uxkMNB8M2uP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFAIdqVcdAcpFDm8S+Hwf91R+K9lOBEjvAL+AXRz0N2O7T/6diiiAZ187b8JNGqCMfK9QAD0KIHoVa16q9faHkpSTVnsz5jYogvRTWAVkACVBEo7+zfcVJ9hUvNKRxeQZIHJ0D17DFFP0IqeAjvY/vhgTO2KFeCS5GwwWff3TVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X9w1/5mr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rM3MM1Vn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 12 Aug 2025 21:32:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755027152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qYD+GkbgVB+ErRzMJKT5gL8WfFw1lW76rnM8mlxL/o8=;
-	b=X9w1/5mrVKx4VnVotNducu33l1BWfuMOZ2hkJ4jI2ND71noDBnPiT1Y8RjcFPc8yarKYIr
-	Kq+qiAf/PE6ewvgPQBfPaJ+Z6dFaNzkowEC9+mSdG9Ve69EETbsTWAPB7qpfe4g8z7Xpbc
-	m9fd6dPmIFSFqNpTaDSzzC5NRzTCBzshIl679cwAt57k7mf8Hqih1oJjYh6QhUJx6Z/rEF
-	oV5EHdUI8lXjSbAQh9eQcFL8rZeTYrqtba9OdsYPIMYd2WZZDUZqUwOWXHpKQMs4Bre3YQ
-	AF6reBppWJYRsI9fdxYVPlv/TCj/G6fStBe4+jE2jToVdO2TGfgR73JiQNpn0w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755027152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qYD+GkbgVB+ErRzMJKT5gL8WfFw1lW76rnM8mlxL/o8=;
-	b=rM3MM1VnH1nkJevwo60HAwk89AKBhakTdc330pvFKZa3PVsodG87qNN9NYT2BNbqInXCeX
-	4YXzuofq/fx1gmDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Keith Busch <kbusch@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] PCI: vmd: Remove MSI-X check on child devices
-Message-ID: <20250812193219.9E_pRwle@linutronix.de>
-References: <20250812182209.c31roKpC@linutronix.de>
- <20250812190036.GA199875@bhelgaas>
+	s=arc-20240116; t=1755027189; c=relaxed/simple;
+	bh=YN/0K1jsGrVn6c69Fq/XeC29K5LGn/No2QJy6fS5BM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rcw0/Xvs50a20wIuKcxTeziREHS02yVn58Z7dYQwuc/Ij1owMpMm9Gl0uKHx4d0UMA/IyivAe6MmIroCZ2pIMBRV6T1LVvZ6bHVcdaB1yF3hXYmKYDFFDbp4JexWMuMvOOSMLB+dGVElGc/v882u+GYyUf1wiGUYu9m/Sz3mTvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:acd6:d96f:40a0:aee])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 6249F4180E;
+	Tue, 12 Aug 2025 19:33:05 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:acd6:d96f:40a0:aee) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH bpf-next v3 2/2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+Date: Tue, 12 Aug 2025 20:32:56 +0100
+Message-ID: <20250812193256.19029-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250812193034.18848-1-contact@arnaud-lcm.com>
+References: <20250812193034.18848-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812190036.GA199875@bhelgaas>
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175502718630.31148.2341707338790401233@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Tue, Aug 12, 2025 at 02:00:36PM -0500, Bjorn Helgaas wrote:
-> On Tue, Aug 12, 2025 at 08:22:09PM +0200, Nam Cao wrote:
-> > Minor correction, it is not just an unnecessary WARN_ON, but child devices'
-> > drivers couldn't enable MSI at all.
-> > 
-> > So perhaps something like "Remove the sanity check to allow child devices
-> > which only support MSI".
-> 
-> Thanks, updated.
+Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+when copying stack trace data. The issue occurs when the perf trace
+ contains more stack entries than the stack map bucket can hold,
+ leading to an out-of-bounds write in the bucket's data array.
 
-Sorry for the extra work I have been putting on you this cycle. I trust you
-understand it is for good reason.
+Changes in v2:
+ - Fixed max_depth names across get stack id
 
-It is unfortunate that I do not have hardware for most patches I sent. The
-best I could do was staring at the patches until I think "yeah, that
-probably isn't broken". That obviously isn't good enough to remove all
-bugs. I wish that I could do better, but oh well...
+Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ kernel/bpf/stackmap.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-Thanks Ammar as well, for helping me tracking down this bug.
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index a267567e36dd..e1ee18cbbbb2 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -246,7 +246,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
+ }
+ 
+ static long __bpf_get_stackid(struct bpf_map *map,
+-			      struct perf_callchain_entry *trace, u64 flags)
++			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
+ {
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+@@ -262,6 +262,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 
+ 	trace_nr = trace->nr - skip;
+ 	trace_len = trace_nr * sizeof(u64);
++	trace_nr = min(trace_nr, max_depth - skip);
++
+ 	ips = trace->ip + skip;
+ 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+ 	id = hash & (smap->n_buckets - 1);
+@@ -321,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
+ 
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+ 
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+@@ -342,7 +342,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 		/* couldn't fetch the stack trace */
+ 		return -EFAULT;
+ 
+-	return __bpf_get_stackid(map, trace, flags);
++	return __bpf_get_stackid(map, trace, flags, max_depth);
+ }
+ 
+ const struct bpf_func_proto bpf_get_stackid_proto = {
+@@ -374,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	bool kernel, user;
+ 	__u64 nr_kernel;
+ 	int ret;
++	u32 elem_size, max_depth;
+ 
+ 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+ 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+@@ -392,16 +393,18 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		return -EFAULT;
+ 
+ 	nr_kernel = count_kernel_ip(trace);
+-
++	elem_size = stack_map_data_size(map);
+ 	if (kernel) {
+ 		__u64 nr = trace->nr;
+ 
+ 		trace->nr = nr_kernel;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 
+ 		/* restore nr */
+ 		trace->nr = nr;
+ 	} else { /* user */
++
+ 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
+ 
+ 		skip += nr_kernel;
+@@ -409,7 +412,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 			return -EFAULT;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 	}
+ 	return ret;
+ }
+-- 
+2.43.0
 
-I hope this one is the last regression report that we will see.
-
-Nam
 
