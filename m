@@ -1,176 +1,175 @@
-Return-Path: <linux-kernel+bounces-764141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04474B21E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB2B21E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C3F1A272DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5DD5055CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488F42D6E5F;
-	Tue, 12 Aug 2025 06:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426112D3744;
+	Tue, 12 Aug 2025 06:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g6prJ0ft";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lnSDHn7g";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g6prJ0ft";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lnSDHn7g"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gt9H/8j5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3EF1A9FAD
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86710DDC3;
+	Tue, 12 Aug 2025 06:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754981006; cv=none; b=M5Zi1clmKzW/3Yddhw+zg9/dQM3cdkclXuO3yqrdJtvJB+ZzYBky3w8/QJQ3J11jSG5RTJngSnnlsrMblYxK6gx6+FAH6Dmgrkb9Pwt7Ouas1LaP3ishMAYtSGNpZIXSHJhqkVj8bWibcqmqdqAp6/V13oQdujW54wrOb9JS0tQ=
+	t=1754981030; cv=none; b=FAHJcQim4z8D1vQpydxCG5T066BzZ2Jo5VRBFO6xM6b85fqFj2ae3cJVW0JmfpbgxCzvCrMEJoyEYFrpaVYuzZAnvc7WKv3/M4oXSEBP1T5UjGUPVnPWW+JGoqT1dGaRfXRPdgXm0CRkH3EQnB6hJL4YC20DQnuDHfd9doLgLag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754981006; c=relaxed/simple;
-	bh=TQl2TPYu7KnlQ2D9x5rVcoRtynF25Gop0WSSzxunoms=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YMoC/MO3hVpWrLFJRwurmxTOq1EpiGulPfl29yZVfdUtf+2IAsYi+ErDqW8sBNPabjHIYAHJLFM29TQrN8fV0on7mu0gjYlrMVwsUvun54VFkmjLHx1YzC0gav5vyNOmNsU544XqXSCDwinJduyjP4p/NjwHARdABnjDCQa7/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g6prJ0ft; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lnSDHn7g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g6prJ0ft; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lnSDHn7g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A123E219F5;
-	Tue, 12 Aug 2025 06:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754981002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OU9B9fNQG2MGtM/gkUEPnE1wDz2NkzWTy2UYMxGIbXM=;
-	b=g6prJ0ftfU0FguocXpstFV0DUufy1elMqpJgFgmF/hB/ObjuhxhmrZuMF1jwOozjDl+Sid
-	D41CXr02eltV8ngLiWPFQfePze78Dtcbw0q118ZhXthZIoki1LPIfYeRDBEc+UN1kR8p1c
-	6lwVqITg3/MPyZ3wWzsQ3PAs5PeA3B4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754981002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OU9B9fNQG2MGtM/gkUEPnE1wDz2NkzWTy2UYMxGIbXM=;
-	b=lnSDHn7gqrWQSoqG0dbhUQRv9DKw6LuD1dp8ZgHqdN7nM1Z+kiBzr7KniWgkIzKrFfLT8D
-	PWL67bJ/UeDKSgDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754981002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OU9B9fNQG2MGtM/gkUEPnE1wDz2NkzWTy2UYMxGIbXM=;
-	b=g6prJ0ftfU0FguocXpstFV0DUufy1elMqpJgFgmF/hB/ObjuhxhmrZuMF1jwOozjDl+Sid
-	D41CXr02eltV8ngLiWPFQfePze78Dtcbw0q118ZhXthZIoki1LPIfYeRDBEc+UN1kR8p1c
-	6lwVqITg3/MPyZ3wWzsQ3PAs5PeA3B4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754981002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OU9B9fNQG2MGtM/gkUEPnE1wDz2NkzWTy2UYMxGIbXM=;
-	b=lnSDHn7gqrWQSoqG0dbhUQRv9DKw6LuD1dp8ZgHqdN7nM1Z+kiBzr7KniWgkIzKrFfLT8D
-	PWL67bJ/UeDKSgDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 759361351A;
-	Tue, 12 Aug 2025 06:43:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nZuCG4rimmiqSgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 12 Aug 2025 06:43:22 +0000
-Date: Tue, 12 Aug 2025 08:43:22 +0200
-Message-ID: <87tt2dyr91.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] ALSA: usb-audio: us144mkii: Add PCM core infrastructure
-In-Reply-To: <20250810124958.25309-3-ramiserifpersia@gmail.com>
-References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
-	<20250810124958.25309-3-ramiserifpersia@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1754981030; c=relaxed/simple;
+	bh=zlYzkb/SmH9Pk9yM1sbdACMWIhS2Nn4oAnRI4PYr55o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iY2AcfcsbkUuQ9jarKpjuf0D2KiAI0su65ZMvtgaKSjv3D6hP3DipuRO1mQLBq4dgJ230rLVoLyZ2WuB4mv8t069wDxs9uAjOakkPlOZfvDrFOCjK3/ulkkbujP0KwKuSlDPZHFC4+018XRRwidEQqKqktRgXFkybE0coIUP3nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gt9H/8j5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E4AC4CEF0;
+	Tue, 12 Aug 2025 06:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754981030;
+	bh=zlYzkb/SmH9Pk9yM1sbdACMWIhS2Nn4oAnRI4PYr55o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gt9H/8j53mklQi6Pcs7jwIZCJb/5anOjXpGqUFxbiJY8BQvFK3Dg4zwNg9uWRtqGr
+	 e39P/sb0M+46fdSHQ8VA6J4qIzV2QJWiAA1aVMUSWIkOz20zC1HjvFozuVlvWDQNKT
+	 1yJ8n3gcjNqxC7wGMoF+aAKdAMNprk/si94lfuyH455Mb1X+j+pj9ujow3eN4NmLWF
+	 q5Ne3wVAC6OIk1gIleMudsJjP3GvrQ21ZxpkZ3d6qDUbn147mMxdOJdMaHtfRMzM+E
+	 mCk73ccZorNuGbd9/5mDvcjZznrX/wSgbDWavtM+za9gFMtOMPmM1ZtNfly5mX0Ymf
+	 VlPwB8h9WsZNg==
+Message-ID: <b22f9381-1835-463a-8daa-97835b159f78@kernel.org>
+Date: Tue, 12 Aug 2025 08:43:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/12] arm64: dts: fsd: Add PCIe support for Tesla FSD
+ SoC
+To: Shradha Todi <shradha.t@samsung.com>, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org
+Cc: mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de,
+ m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+ <CGME20250811154746epcas5p261ba0c811f9dd8748f8f241b76be6525@epcas5p2.samsung.com>
+ <20250811154638.95732-13-shradha.t@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811154638.95732-13-shradha.t@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 10 Aug 2025 14:49:53 +0200,
-©erif Rami wrote:
+On 11/08/2025 17:46, Shradha Todi wrote:
+> Add the support for PCIe controller driver and phy driver for Tesla FSD.
+> It includes support for both RC and EP.
 > 
-> --- a/sound/usb/usx2y/us144mkii.h
-> +++ b/sound/usb/usx2y/us144mkii.h
-> @@ -1,38 +1,75 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  // Copyright (c) 2025 ©erif Rami <ramiserifpersia@gmail.com>
->  
-> - #ifndef __US144MKII_H
-> - #define __US144MKII_H
-> +#ifndef __US144MKII_H
-> +#define __US144MKII_H
->  
-> - #include <linux/usb.h>
-> - #include <sound/core.h>
-> - #include <sound/initval.h>
-> +#include <linux/usb.h>
-> +#include <sound/core.h>
-> +#include <sound/initval.h>
-> +#include <sound/pcm.h>
->  
-> - #define DRIVER_NAME "us144mkii"
-> +#define DRIVER_NAME "us144mkii"
->  
->  /* --- USB Device Identification --- */
-> - #define USB_VID_TASCAM 0x0644
-> - #define USB_PID_TASCAM_US144 0x800f
-> - #define USB_PID_TASCAM_US144MKII 0x8020
-> +#define USB_VID_TASCAM 0x0644
-> +#define USB_PID_TASCAM_US144 0x800f
-> +#define USB_PID_TASCAM_US144MKII 0x8020
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  arch/arm64/boot/dts/tesla/fsd-evb.dts      |  34 +++++
+>  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi |  65 +++++++++
+>  arch/arm64/boot/dts/tesla/fsd.dtsi         | 147 +++++++++++++++++++++
+>  3 files changed, 246 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> index 9ff22e1c8723..1b63c5d72d19 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> @@ -130,3 +130,37 @@ &serial_0 {
+>  &ufs {
+>  	status = "okay";
+>  };
+> +
+> +&pcierc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie1_clkreq>, <&pcie1_wake>, <&pcie1_preset>,
+> +			<&pcie0_slot1>;
+> +};
+> +
+> +&pcieep2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie1_clkreq>, <&pcie1_wake>, <&pcie1_preset>,
+> +			<&pcie0_slot1>;
+> +};
+> +
+> +&pcierc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake0>, <&pcie0_preset0>,
+> +			 <&pcie0_slot0>;
+> +};
+> +
+> +&pcieep0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake0>, <&pcie0_preset0>,
+> +			 <&pcie0_slot0>;
+> +};
+> +
+> +&pcierc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake1>, <&pcie0_preset0>;
+> +};
+> +
+> +&pcieep1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie0_clkreq>, <&pcie0_wake1>, <&pcie0_preset0>;
 
-Another unneeded indentation changes.  Please fix in the first patch.
-(Also for the rest.)
 
+All these are pointless, because the node is disabled. The board level
+should be complete, so also supplies and enabling the device.
 
-thanks,
-
-Takashi
+Best regards,
+Krzysztof
 
