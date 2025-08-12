@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-764633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355EAB22557
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 492B9B22559
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC471B6677B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B51F1B67367
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D2B2EFDA1;
-	Tue, 12 Aug 2025 11:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242E52ED159;
+	Tue, 12 Aug 2025 11:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8vYU/q0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4PDUbYy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ECD2EFD8C;
-	Tue, 12 Aug 2025 11:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F562ECE85;
+	Tue, 12 Aug 2025 11:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996742; cv=none; b=hr/d7n8063eSEEju+knQyiVTdVZeKj9Mj8fbcWBdX2YfZ7toyQGW1B0FtC1dyBT8ua4mMMggMYnte2KaoJMmMxOId54LMY6xxofnBhteOLBX8fTHHYyiRQJ3HKkmGWJsNzOsyDpjUooJY1Bf5xcWEe3nAhzZRveXBkmZLh/BGVw=
+	t=1754996749; cv=none; b=H6oKDbxlwpZu6f5ighdJG26cIa5Bpww/2ryZsZacrnUbYfKngo6bvzJx9Nzhr8BhqI8goHLNfUXCGU7S64fgEHYf52xL+7++YDKmLesDiSXJzieUGp7eO+TZrBcIympwCnPh0l40HrNMbf08a2BjrhSJ3O3IwkdwJi8mj0IcW2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996742; c=relaxed/simple;
-	bh=jxTjEnHMPmG/BlK3tUeUzJ7ztWZxZ6PlYKzdAUEeXPs=;
+	s=arc-20240116; t=1754996749; c=relaxed/simple;
+	bh=g20C9K2TQXmv2/dkv5R+EPa+NT4O7i13vNHQ2DfdRqY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cW9a8SiJwCidM3k1pn7SZTUPVCs5YaJ1tuMX9IJUB70WxvWJ6o9cwAG0U4EsRGiWbQlGSvKwWFoXxH1O480urvcTfCyjb6Q3Qy1u0fd37yLHPB/q0kUqTAOvoJUKZaHcJ+rZMH4rYNgyytx0TonlfATBXTxVPYjS5jdnzPuR02Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8vYU/q0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853C4C4CEF4;
-	Tue, 12 Aug 2025 11:05:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nihCqrl67FPTkP24kCm1HQ5u5P1ZVpv3hIAta/B3GYLPI/IfxCP3qFBOUlUSSACHtc7G6+6FSs2eU8pSOmYSZCN4emuy9Su+fqh5DDosHmvvCAy9KS5D/luV+thIi06M5JwwcgGEz2I93Vb7yTO8Sb7ZI9sOfXyibONJqK8xU20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4PDUbYy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8C9C4CEF0;
+	Tue, 12 Aug 2025 11:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996742;
-	bh=jxTjEnHMPmG/BlK3tUeUzJ7ztWZxZ6PlYKzdAUEeXPs=;
+	s=k20201202; t=1754996748;
+	bh=g20C9K2TQXmv2/dkv5R+EPa+NT4O7i13vNHQ2DfdRqY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P8vYU/q0NEUim5xP4qaa7JJH6ed2uJcE0DvoTEx+DYq17cfY8JeAY3YZrF1MruKuo
-	 jc9L88hfparqYQth3xaLv//o0sLtxi9Jmp8HRLYh+uuTaBzHnlTp2O694si6apnOhs
-	 I2Z2B9iB1YS2WmT8TU7YUaASrlDNQrktlcoTjK+QdmrygNJ78AHVFyRor4hlaRSqbu
-	 B1C63NqZgQ0Ra4W9TVrmVTWU4ueIMFA88Ls6dzLOuLFzK3vtqTe0b5ABpv3xTnn9VD
-	 2nEa2QO+TsvsjfnN5mYhOFdqwnimL++x+uycDnQpVgEH0clp+h7j4lODHVKqQq2nXi
-	 ZAjILq64EkUeA==
+	b=L4PDUbYyXCZaP+y0X41IB6O+a9n+mRG7EXoDivcQK+cyshetoV7W8ljhfg3N8y6Cq
+	 bXLm+iBCCdFhjZV+iw9NAdz4vFd5lEvUIAVz8D5mp3AHUgWbukbgcpbvTGqYSWKMLx
+	 4nmx40qbFh7FpVrEAaxEcyrgmkeMLm4Ct8EH/BPAHXGK4VbWn4F9DlJ1ozKwBjiLLg
+	 DLavmjcazUmFT2K+IYBPlcSPJYHKq2FcSUIlnznTaEjoFAdixm6jhzKCnT7niPPWnO
+	 52LWhHuh+d/pyg4UHIay7+ppvbLTqf0dpyPaMAC4Iwhu4MLGlk55tbEpima8hEuREx
+	 vBJobPfiAJHwA==
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org
-In-Reply-To: <20250807214459.4173892-1-robh@kernel.org>
-References: <20250807214459.4173892-1-robh@kernel.org>
-Subject: Re: [PATCH] regulator: dt-bindings: Clean-up active-semi,act8945a
- duplication
-Message-Id: <175499674028.16220.7731759072204819862.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:40 +0100
+To: lhjeff911@gmail.com, "Darshan R." <rathod.darshan.0896@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250728124104.6370-1-rathod.darshan.0896@gmail.com>
+References: <20250728124104.6370-1-rathod.darshan.0896@gmail.com>
+Subject: Re: [PATCH] spi: sunplus: sp7021: Clean up coding style
+Message-Id: <175499674777.16293.15470606723953307689.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +58,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 07 Aug 2025 16:44:57 -0500, Rob Herring (Arm) wrote:
-> The active-semi,act8945a binding is documented in multiple places. The
-> charger child node is documented in regulator/active-semi,act8945a.yaml
-> and power/supply/active-semi,act8945a-charger.yaml. An old text binding
-> is in mfd/act8945a.txt.
+On Mon, 28 Jul 2025 12:41:04 +0000, Darshan R. wrote:
+> This patch tidies up minor coding style deviations within the Sunplus SP7021 SPI driver, ensuring closer adherence to established kernel coding guidelines.
 > 
-> Update the regulator/active-semi,act8945a.yaml with the additional
-> descriptions and constraints from
-> power/supply/active-semi,act8945a-charger.yaml, and then remove it and
-> mfd/act8945a.txt.
+> Specifically, it addresses:
+> - Correction of a whitespace inconsistency before a comma in `writel()` calls.
+> - Alignment of function parameter indentation for `struct spi_transfer *xfer` in `sp7021_spi_host_transfer_one()` and `sp7021_spi_target_transfer_one()`.
+> 
+> While purely cosmetic, these adjustments contribute to improved code readability and maintainability, making future development and review easier.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: dt-bindings: Clean-up active-semi,act8945a duplication
-      commit: a54ef14188519a0994d0264f701f5771815fa11e
+[1/1] spi: sunplus: sp7021: Clean up coding style
+      commit: f1ac30a862cc5d53392d59f42b513e79948acb18
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
