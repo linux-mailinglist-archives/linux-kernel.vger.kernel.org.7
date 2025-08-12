@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-765463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E1DB2375F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5198CB23771
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCC3189F8E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F91AA4483
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB03526FA77;
-	Tue, 12 Aug 2025 19:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFCE2FE599;
+	Tue, 12 Aug 2025 19:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="jOGQWu8E"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="15/UvXHy"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2083.outbound.protection.outlook.com [40.107.236.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CECA29BDB7
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755025815; cv=none; b=d4JDzvW2GXnqNseagE/HMTGDXWlvCALwlANlh5jNW2K8tKYzV1eCcrLUMjbZOuV6NBBVonOx1zpLceVJI1mXGE5XE/A80opFd+/0//YIEBErotn/gMAnkX/7w2av1+2VWGtDoXCHwOAy41TZxREeN7frfl5U//slzDExQDAJrBg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755025815; c=relaxed/simple;
-	bh=bu64oC04OFNyI6udWxYJQC3csVF6k/C6VpNlIgqgsFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MyPDBYNydAsqYFIE2e+F7WtLfvPgDaJbdxjMzdrhKDTAxUTgaGmq/73KO7F9fd6CRo5g032hgGc7lMJVzkoKgTuLhJZKD+OU1GZPH1oaKABeo145oxfcepiCQHfy7DSMWwYsBsi6V6nF/IxJiDKv07X/CuOO8y5WkTeWlXkUCrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=jOGQWu8E; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9141866dcso535449f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:10:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1755025811; x=1755630611; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=liYN9p+w76I5yk0XmtckGD/YtX7vKJXADbbeud4KcVk=;
-        b=jOGQWu8E0tiMEdyRjW3kvDxuFJ2mwTrMgNNKoDTtMsyx9Qg+tnxNKj8h+ywwSBrfII
-         DETndfURroRLQ1W4jcj5kIX27FurPKHsiZXo1rbierexNUQCg2HIwwygy1/RpdkHpBaq
-         kXieDu+QJ+zLao19p8KsjxX9+Rdx0jh/Cbg2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755025811; x=1755630611;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=liYN9p+w76I5yk0XmtckGD/YtX7vKJXADbbeud4KcVk=;
-        b=NsmdnJMPIpBkaW/A+MM0x2y3lg3PD8do25h5IIzjIkCYhp6mbMWEBap2GtTYj4Rd2k
-         XwWMRUjbY/XuUj7IcZmviIxP0gy32VbJVecvslWbJn8SzrSKHzBE9CmcTyVeHfQWVsK+
-         U0DyWuResdBzhN6LbdsUz3TVcLl5eCxFYTlpnHbszoQaACmG2rY1F5tWqoUpvlrOPs87
-         yNH41OmGj5/6AtwE/Ag8fWYwbFx2tJPFG5h2RUFmTbnBxPdkFSnhlZv3ugNhj4Yix06b
-         RXOK0oiUearxjZhIFg67a+WiaU3WdR4I9UZbeRchkYOMoBRNUvqBU7Dj51BV9JxRuQq5
-         3Ahw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJBKtvpfdVKIv8ub8NDE5bTWIOqbPexSfuF9OzOetU+bmHTItGkaIwtMqHbpJjbKoGI1x7aZwdiZbuKck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3DSrmhSQPye32eJ7GI22R+gfi9eLJiAm0jth0KkEFTl1MQfCx
-	UCvplDttGT04//9XyBpp5lOqG/1YOdmRS0A6kzwUVjBbQ19L71ZFC5hPSj5PivjtH3w=
-X-Gm-Gg: ASbGncvH6bY1lRfhAUujZmhz2gcEmPCoiam5lRfyMFYkkHmzzL2XbO0Ebj1PJeUrqu5
-	UrbDSgPXcElBhD0F+NzA6YHDRjf3DWXz+T12rSWVmbbbY6eaH9B5MPWrZoBgg4U6sp88psoCUq/
-	bawVqC7lJQog9xvWw+CmRm9xnAd+IvMy6s89G4UL3J4r1GU836NMTwVyCnMv4kunL14GX99J9nJ
-	OEEMFOnSCVCF3lq1GZDqt9ELpuzNjU2DFq2iNjtq75vihs4LYX2a3/kJhAoGKR8WwZjOi5/oL+t
-	bZhryuonxYKJ1AmyQRq7uAUsf6ERx+MrkJxiEpBGU5vSVU1wjay2zz8h45IieZNPNoKukT3VJIl
-	Au71WZmMExQfmU2aCU/a36g2/rwdFY6TFbH9OIgtgz+LbgDJFPMO9/ruob+g0sXIIWjKW
-X-Google-Smtp-Source: AGHT+IGfmjf8JsGQUca7vkYCPtAmZK9nxXpEiIAbePK3VMkH+hfJD9ojk3aIkYnpPKD9PoVOzbAcZQ==
-X-Received: by 2002:a05:6000:2c0c:b0:3b8:893f:a17d with SMTP id ffacd0b85a97d-3b917eb5b74mr88711f8f.49.1755025811336;
-        Tue, 12 Aug 2025 12:10:11 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abec8sm47083546f8f.8.2025.08.12.12.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 12:10:10 -0700 (PDT)
-Message-ID: <5407877d-4c7c-494f-8fc1-d44eea4762b9@citrix.com>
-Date: Tue, 12 Aug 2025 20:10:09 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AA21A3029;
+	Tue, 12 Aug 2025 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755025877; cv=fail; b=bXeYopJszVhQtG2AZy+TydIJipBT5nwO4FpmzB0F1PEsd/c8ZsP2e1x5Ni12zQ9n/l35YacEFU9PW5JKzcNLI7vuanfZpzLbY/v81aCSOMFFk3ilUKb6HpKzmfLt+4zhp9MQ2X6bV+1pzleAJs+qJKZg4RwRu4eqaF0VNHLBj/s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755025877; c=relaxed/simple;
+	bh=8iXdeAkGnsUtzz2pQ4MpFPeGBwrFOd3/VI9klWAGpq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UlldIP/k7O9/gDURTRX1YIsgVKrsVO8OqjsRqT/wueYRoCTBvSVQjkqXVkqvVgqfUBnJV/q2HsS+919nby54ngWyGNaAh1hyj7ZXORCLyu+0byKBpJpPuxhmuUcTXrIJMDbs8zOCVmoqGQdaSeg7WTcM2NWMocwb0JRSna//CZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=15/UvXHy; arc=fail smtp.client-ip=40.107.236.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BW7Zhteh+A2/b4ztbK0Op8yNRhYhGu6rMT/7YrsYmE/Mxxhn4GJUoq5SlbsWJ22fcKRKTCdXHm83LMfZCC3MWUBYnPk4jYPw7/eQyi+x5BLHaef7IN8ZXanO+ehlz6cntSNupspAEPeeHXVVKgbZHWVcyhA7Hn7FM6noQviIcybt6K/yp7Wui+LcWR0NXx/YIs9GNXoHgJqfy2uGzwlyzyOFB5/sYnkJst0U/N06iXCdRFYvSzZbZ6FnkAhI582wfIMsSzAh2WSpBdarVX6EaHFjKAM9c+/OXZ6rBJYoezoTOxi2CzhE5WgLQUZfaZc+wNQy9gRq/njYJMcd+hqBpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kGZOeSPoW1Pov5wO3f+hMPfD6ITI3APpxwzHxHilsKs=;
+ b=PotE/wWGgKTYQwCkKXAo5OxmhMMjGuM7yajEZCBWTjd3xuI8MxUqW84ZJnG6IvXEZLliqkdqkyYTEdSE0f0ZqcPXBo4anDFlF6vjXels0XFCGbgDFbqC2yYC5qbNGkWTOe+fTumcvEAYK/MmirM7tg9hqgPgrSrWFRmmkb+kILLRQI3ftYsK8OC3/Ejp1pd4WWCfbI0r1L86qyL/gIRHUVJjejPzFWT7/wIFEjXogRy9PfFJQ7gvYGohCnxwDdO9jPFDFMaHWqFF/MZOvvaSLJcDo1xtpCN5LHfxomEN3D1XByUeGAXVrq8YXw85A099D014ocdF+y8hMMz62nj0+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kGZOeSPoW1Pov5wO3f+hMPfD6ITI3APpxwzHxHilsKs=;
+ b=15/UvXHyOFeN3MwspkQQmJp81PZiXhc9mbH2jOjMVQNzSaMSxxbfqs2rNRncnCs7Z+dFVYi33HSm3rLHO+0Lc6DqYJr2UnKr2zp7ddpBnr0n9h0OxEK3MvG63gqWBuXsz5PH9T1heRH38nnP31zPz3lSNS+5VczyN25Hh9tRX7I=
+Received: from PH7P220CA0075.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32c::11)
+ by SA3PR12MB9227.namprd12.prod.outlook.com (2603:10b6:806:398::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
+ 2025 19:11:11 +0000
+Received: from BY1PEPF0001AE1C.namprd04.prod.outlook.com
+ (2603:10b6:510:32c:cafe::1b) by PH7P220CA0075.outlook.office365.com
+ (2603:10b6:510:32c::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.14 via Frontend Transport; Tue,
+ 12 Aug 2025 19:11:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BY1PEPF0001AE1C.mail.protection.outlook.com (10.167.242.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 19:11:10 +0000
+Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
+ 2025 14:11:08 -0500
+Message-ID: <506de534-d4dd-4dda-b537-77964aea01b9@amd.com>
+Date: Tue, 12 Aug 2025 14:11:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,144 +78,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
-To: Jason Andryuk <jason.andryuk@amd.com>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Chris Wright <chrisw@sous-sol.org>,
- Jeremy Fitzhardinge <jeremy@xensource.com>,
- Christopher Clark <christopher.w.clark@gmail.com>,
- Daniel Smith <dpsmith@apertussolutions.com>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-References: <20250812190041.23276-1-jason.andryuk@amd.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
- VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
- srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
- Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
- ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
- YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
- LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
- e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
- gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
- ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
- cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
- CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
- 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
- IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
- SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
- JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
- mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
- ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
- RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
- dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
- /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
- TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
- Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
- 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
- vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
- g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
- wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
- 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
- kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
- bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
- uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
- XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
- HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
- pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
- vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
- b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
- 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
- 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
- nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
- B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
- d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
- 6+ahAA==
-In-Reply-To: <20250812190041.23276-1-jason.andryuk@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v7 7/7] KVM: SEV: Add SEV-SNP CipherTextHiding support
+To: "Kalra, Ashish" <ashish.kalra@amd.com>, Tom Lendacky
+	<thomas.lendacky@amd.com>, <corbet@lwn.net>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <john.allen@amd.com>, <herbert@gondor.apana.org.au>,
+	<davem@davemloft.net>, <akpm@linux-foundation.org>, <rostedt@goodmis.org>,
+	<paulmck@kernel.org>
+CC: <nikunj@amd.com>, <Neeraj.Upadhyay@amd.com>, <aik@amd.com>,
+	<ardb@kernel.org>, <michael.roth@amd.com>, <arnd@arndb.de>,
+	<linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+References: <cover.1752869333.git.ashish.kalra@amd.com>
+ <44866a07107f2b43d99ab640680eec8a08e66ee1.1752869333.git.ashish.kalra@amd.com>
+ <9132edc0-1bc2-440a-ac90-64ed13d3c30c@amd.com>
+ <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
+ <b063801d-af60-461d-8112-2614ebb3ac26@amd.com>
+ <29bff13f-5926-49bb-af54-d4966ff3be96@amd.com>
+ <5a207fe7-9553-4458-b702-ab34b21861da@amd.com>
+ <a6864a2c-b88f-4639-bf66-0b0cfbc5b20c@amd.com>
+ <9b0f1a56-7b8f-45ce-9219-3489faedb06c@amd.com>
+ <96022875-5a6f-4192-b1eb-40f389b4859f@amd.com>
+ <5eed047b-c0c1-4e89-87e9-5105cfbb578e@amd.com>
+From: Kim Phillips <kim.phillips@amd.com>
+Content-Language: en-US
+In-Reply-To: <5eed047b-c0c1-4e89-87e9-5105cfbb578e@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1C:EE_|SA3PR12MB9227:EE_
+X-MS-Office365-Filtering-Correlation-Id: f7ef0d15-dd61-4b07-7f9e-08ddd9d3ffdc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|36860700013|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OGhOZmlWQ0VXVjlCWW5BSWpIUHN2MFdZbXl2NUo1Rnltd3M0L0lsUkdFSHlU?=
+ =?utf-8?B?L25JN1VBbEJaVGdFNHR4eXNsTzJpWS9jT1Y2MGRqRWFEVUV0NHVsMC9IZlFo?=
+ =?utf-8?B?aVc0elhITXE5RVVCZWdEd3RRYUN0Z2lHaVA4M2pkdmt1V0pNMWZCVStnL0JU?=
+ =?utf-8?B?Nk5CK2hWUVptd2J0Z25NSVpnQkI5d2NrRyt5QWRCajF2ZW5VZzBNdndpUFcv?=
+ =?utf-8?B?Mm5kVHBOMkk4cWRvdW4zb3cyZmhyaFVZQUpBQWRMbnI2TWxoRmxWQkpiY1lX?=
+ =?utf-8?B?bzNyejBNYytXaVFLeWI4ZTdnay9lcmtWR2dKTVA1Q003ZmNCUW9zbUU4QzZh?=
+ =?utf-8?B?OHhUQ0FacFRXOFZqbVJnRjJIQVVUYzl6ODhKcFFEOXFCRFdJSTN0MEcvMTVt?=
+ =?utf-8?B?OXdBY2FQTzJXUlpCeWxwS0Zhd2ZvQXlYRmRRWW9nbkg0amtaSGI1NWlPWTNq?=
+ =?utf-8?B?dG9uZ0x2ZkdjVHJXY0hBSGt0N0kwdzFyQTJiWlRkbHBzeWd3U0VnNW5iS3B6?=
+ =?utf-8?B?dlp0OUE2dWlEbnhTMW1abHZhdFAwZis4Tmx2Mmw4ZngwTkx5S011L0NsS2tU?=
+ =?utf-8?B?RE4zMXNMVURFTHQ5WFhFVFVuaHM1eE5JaVlicTRoM09OV2F2QWorRU80NVNp?=
+ =?utf-8?B?M3VIY3JoV3VDNnZNVU12WGs1SHlVc254d2tJcjlPZDdZaVM5WDE0N3VrNnp0?=
+ =?utf-8?B?cDh2QTQycnRFMGZXUWs1RlI5VVVCQk1LSDNrQVQzcEdxbFV0QklXSlhRSEdr?=
+ =?utf-8?B?OEV3ZUlzVGN5d0VGL1F3bVRXRDMwakh2Q2hEVzNYdHlndmlyc24waXdWZHlj?=
+ =?utf-8?B?UGZ2UGlkMjRKQWVDL0tyY0dzSjlucnFwNHh3QW01U3FZd0JvcHBQOWdSY2tD?=
+ =?utf-8?B?NXBXbjF4dXpnU091c3hoZE41RFhSaU5BRDZsRmhYc1BtSkRmbUZDaFpXZXVZ?=
+ =?utf-8?B?eHREZmM4dGpBbG0zaWU4S3ZNREhDYW9WWG5DWHIyRmd6VXF2MStLR0JOMnBJ?=
+ =?utf-8?B?WlFsQ0U4d2tjNzVNSVVDRHlHcWU5UmRtM2t5M0xlWmNWZllEZGY2b0NiYzdi?=
+ =?utf-8?B?R2NpR1d4WUc5elNEZ2V2WUlsT3RlT1kzc2VaVjVtdWw3UDByOGI3MDFMV3gw?=
+ =?utf-8?B?aS81bXdIdUJqSFpPT0VQZ0RFMzkzdklYZUw4QUlRc2NuSjRYUGpOT3diVDJ1?=
+ =?utf-8?B?Sk84eldmeUIrOTU4RmNFVlg4b1NweWU1SHFHanJGREloSGdlMU1DVHdIMDNY?=
+ =?utf-8?B?eUV1WmtIL0F0OVpyUVEvdU1TbHcrajk5cEFMbW42TlZncTl4Z2NGbzJlTEZM?=
+ =?utf-8?B?bjc2SXUzWm9VdXZHTkoxL3ZPU1h6REovL3NEcUhCY3NnWXJuNTloSVpsbHh4?=
+ =?utf-8?B?VWpNdUtvSEo4TGJaY2I3TjVxUStGNlZGM1ZzWEU3UjFQZjFHc0RTMDdycEp0?=
+ =?utf-8?B?SjM5bnNrbzVSbFF6ZTROVlBsbG10UWlCRWc3cGZSZUpUaXNaVHl1M05yUFI0?=
+ =?utf-8?B?STJKRldxcnBGdnM3V0I1a0Z1M2ZsdFBFZEEzNnJqMEs1bHRueVg2NlJ2aEF3?=
+ =?utf-8?B?U2Z2Ry8vd1haSHBwYnhES1hmdHVQOGxKU0F4cDZhTmpVRFBtK2RieHFyYWl1?=
+ =?utf-8?B?bDYraUM4U1pjdzZzeFBqaDdDTEtPV0xWT1BzMlFwam41aVU0bmt6ODBYTCtJ?=
+ =?utf-8?B?aVFLWGlTMlVTektZYjk3Mm1NYm1uNElzNHhVTS9qS2N4M0VaWERpRGlHSmQ3?=
+ =?utf-8?B?YmNwS1JyOGxmV2htakg0TXZkYU9xZkpzWHc5Z2hnZUlYR0xEQ2VWRUs4dUox?=
+ =?utf-8?B?L012M2dZZTloNzZTTWVhQUZwd1VBclBYd0hBNE5oZ0VXTURRaHdvZ2V4V2Fl?=
+ =?utf-8?B?R29JdVF3azQxbDVMcGt5Vm5kTDlPZHQwMEdlV0xrNW5ONjI1M0Zwcjhab0ZE?=
+ =?utf-8?B?OFd6WjNtNXRVTmF0VWxGeklQSFBtUVQrQVM0TVY2TGd2Y0RLK3E2cDlLM2Q0?=
+ =?utf-8?B?RU12eGNSRm9wQmdTYmNQQ1NlMVZhYkNOLzRlY0tBUlE0VEc2ZmswKzVMTXUw?=
+ =?utf-8?B?SHpHdDg4OXpUY2xiSzVyM1ErZkdOelRKWEJtZz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(36860700013)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 19:11:10.9096
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7ef0d15-dd61-4b07-7f9e-08ddd9d3ffdc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE1C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9227
 
-On 12/08/2025 8:00 pm, Jason Andryuk wrote:
-> VIRQs come in 3 flavors, per-VPU, per-domain, and global.  The existing
-> tracking of VIRQs is handled by per-cpu variables virq_to_irq.
+
+
+On 8/12/25 1:52 PM, Kalra, Ashish wrote:
 >
-> The issue is that bind_virq_to_irq() sets the per_cpu virq_to_irq at
-> registration time - typically CPU 0.  Later, the interrupt can migrate,
-> and info->cpu is updated.  When calling unbind_from_irq(), the per-cpu
-> virq_to_irq is cleared for a different cpu.  If bind_virq_to_irq() is
-> called again with CPU 0, the stale irq is returned.
+> On 8/12/2025 1:40 PM, Kim Phillips wrote:
 >
-> Change the virq_to_irq tracking to use CPU 0 for per-domain and global
-> VIRQs.  As there can be at most one of each, there is no need for
-> per-vcpu tracking.  Also, per-domain and global VIRQs need to be
-> registered on CPU 0 and can later move, so this matches the expectation.
->
-> Fixes: e46cdb66c8fc ("xen: event channels")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
-> ---
-> Fixes is the introduction of the virq_to_irq per-cpu array.
->
-> This was found with the out-of-tree argo driver during suspend/resume.
-> On suspend, the per-domain VIRQ_ARGO is unbound.  On resume, the driver
-> attempts to bind VIRQ_ARGO.  The stale irq is returned, but the
-> WARN_ON(info == NULL || info->type != IRQT_VIRQ) in bind_virq_to_irq()
-> triggers for NULL info.  The bind fails and execution continues with the
-> driver trying to clean up by unbinding.  This eventually faults over the
-> NULL info.
+>>>> It's not as immediately obvious that it needs to (0 < x < minimum SEV ASID 100).
+>>>> OTOH, if the user inputs "ciphertext_hiding_asids=0x1", they now see:
+>>>>
+>>>>        kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum SEV ASID 100)
+>>>>
+>>>> which - unlike the original v7 code - shows the user that the '0x1' was not interpreted as a number at all: thus the 99 in the latter condition.
+>>> This is incorrect, as 0 < 99 < minimum SEV ASID 100 is a valid condition!
+>> Precisely, meaning it's the '0x' in '0x1' that's the "invalid" part.
+>>
+>>> And how can user input of 0x1, result in max_snp_asid == 99 ?
+>> It doesn't, again, the 0x is the invalid part.
+>>
+>>> This is the issue with combining the checks and emitting a combined error message:
+>>>
+>>> Here, kstroint(0x1) fails with -EINVAL and so, max_snp_asid remains set to 99 and then the combined error conveys a wrong information :
+>>> !(0 < 99 < minimum SEV ASID 100)
+>> It's not, it says it's *OR* that condition.
+> To me this is wrong as
+> !(0 < 99 < minimum SEV ASID 100) is simply not a correct statement!
 
-I don't think the Fixes: tag is entirely appropriate.
+The diff I provided emits exactly this:
 
-per-domain VIRQs were created (unexpectedly) by the merge of ARGO into
-Xen.  It was during some unrelated cleanup that this was noticed and
-bugfixed into working.  i.e. the ARGO VIRQ is the singular weird one here.
+kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum SEV ASID 100)
 
-In Xen we did accept that per-domain VIRQs now exist; they had for
-several releases before we realised.
 
-~Andrew
+which means *EITHER*:
 
-> ---
->  drivers/xen/events/events_base.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-> index 41309d38f78c..a27e4d7f061e 100644
-> --- a/drivers/xen/events/events_base.c
-> +++ b/drivers/xen/events/events_base.c
-> @@ -159,7 +159,19 @@ static DEFINE_MUTEX(irq_mapping_update_lock);
->  
->  static LIST_HEAD(xen_irq_list_head);
->  
-> -/* IRQ <-> VIRQ mapping. */
-> +static bool is_per_vcpu_virq(int virq) {
-> +	switch (virq) {
-> +	case VIRQ_TIMER:
-> +	case VIRQ_DEBUG:
-> +	case VIRQ_XENOPROF:
-> +	case VIRQ_XENPMU:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +/* IRQ <-> VIRQ mapping.  Global/Domain virqs are tracked in cpu 0.  */
->  static DEFINE_PER_CPU(int [NR_VIRQS], virq_to_irq) = {[0 ... NR_VIRQS-1] = -1};
->  
->  /* IRQ <-> IPI mapping */
-> @@ -974,6 +986,9 @@ static void __unbind_from_irq(struct irq_info *info, unsigned int irq)
->  
->  		switch (info->type) {
->  		case IRQT_VIRQ:
-> +			if (!is_per_vcpu_virq(virq_from_irq(info)))
-> +				cpu = 0;
-> +
->  			per_cpu(virq_to_irq, cpu)[virq_from_irq(info)] = -1;
->  			break;
->  		case IRQT_IPI:
+invalid ciphertext_hiding_asids "0x1"
+
+*OR*
+
+!(0 < 99 < minimum SEV ASID 100)
+
+but since the latter is 'true', the user is pointed to the former
+"0x1" as being the interpretation problem.
+
+Would adding the word "Either" help?:
+
+kvm_amd: Either invalid ciphertext_hiding_asids "0x1", or !(0 < 99 < minimum SEV ASID 100)
+
+?
+
+If not, feel free to separate them: the code is still much cleaner.
+
+Thanks,
+
+Kim
 
 
