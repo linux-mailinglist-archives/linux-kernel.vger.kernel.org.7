@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-765089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FE5B22B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9ECB22B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20E41894824
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E1E1894E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3F72F4A18;
-	Tue, 12 Aug 2025 14:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF232ED860;
+	Tue, 12 Aug 2025 14:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPgTTLoL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct53i35n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA019311C18;
-	Tue, 12 Aug 2025 14:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB22DE703;
+	Tue, 12 Aug 2025 14:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755010456; cv=none; b=D6XcQdfIHfTnh9UTx6spBochQ1tIY+2DuDNU02es1CenRvCgiqe1nNSw1Kr4DCD6+8kScTWZfetIGek2yJ6wu8tTSfpUZHXmVT51Y/E1hwJEtIYCp9XPldC88PGEowHGgJgYQTawRG5WkbhT+qKKLWscrzmy4hmQPnNz/VNA9RA=
+	t=1755010499; cv=none; b=s/mDqy2CJDq25JIgmL1HzemYSQz5OsTwpsX92x8f+voiahdff0PE/0XadaZ0DySeRslxSN+Zto0E2LF8rw9yjRmgUhZ+uzg6J9JEmzUfNmV2jsTNX9wvfdSFwXIFZO3S1pgLR/wDO/xxEn+1q0XkxxGKMiGQiNRZMKdbjElT5e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755010456; c=relaxed/simple;
-	bh=6pI6kv0289+5HGzGYD4ZwmD4e83daVjaIOswUg35e+8=;
+	s=arc-20240116; t=1755010499; c=relaxed/simple;
+	bh=lJnQY+aWGBe5007j6NioyIK8Sb6art474dNbjRtW7y0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3wJ9NhCG1RvlVRx3P92kpYsf+rMYCYtGccBGSd3sgOAiNIhHdJ1pQzm9sHCjAMINbWf7HdIkq5d9y0sskW+wH5EITKdzrB/I6uYCHJePbRJKNVRJUJzyWxlj/JAcnmcsz4t152g4pcoUKGgmqepP+r+ymXAofZ8uhYoJHvAsgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPgTTLoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B78BC4CEF0;
-	Tue, 12 Aug 2025 14:54:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qe0fJvSs63Qa4IKbShAhs0GiwwvrKkmKKvZxk0ey2PVSvh2YCWv7joTjNnhJljRzg19mktH30p8AVKlJkfDfrSqZqUZeXHVu66Sx2nZwGbAEHU0rsOQ3u0n5i6iGgiN425KfqrpprqX6CowyJJLZlR7FZh3tKgNLU1R9UER4IM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct53i35n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C40FC4CEF0;
+	Tue, 12 Aug 2025 14:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755010456;
-	bh=6pI6kv0289+5HGzGYD4ZwmD4e83daVjaIOswUg35e+8=;
+	s=k20201202; t=1755010499;
+	bh=lJnQY+aWGBe5007j6NioyIK8Sb6art474dNbjRtW7y0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JPgTTLoLqe8lR0yg5vbUjDT+qPRN4AaGU6hRt+7dRDbVNHeBUsH95943N4NQ6dbzX
-	 XrnA90tp1fpbZg+BLUjHyvOus/wnfhIUyt4Oq/31+spstDgSJPri72hDYxMMj34Swc
-	 berbxtsDQo1uKWCzPTykSlApoEUZ26kPCE+2pil22xWNXqSj2LIq4DeD3iPyq+NNR+
-	 cFoGeW1Q0P3J4b5mcJR9At1q54LUKYoJ6p0vIBKHiC7RNTw/mfZJwabcArjlqP+Dv9
-	 QYb0+klhialiVpQJA8EhBejCyObLMWyR31T947fsz/DI2VpkwfrZx+qUW7kVewAmvA
-	 Z5ySg0U/Poy/A==
-Date: Tue, 12 Aug 2025 09:54:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: tiwai@suse.com, devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org, ukleinek@kernel.org, krzk+dt@kernel.org,
-	dmitry.torokhov@gmail.com, broonie@kernel.org,
-	linux-pwm@vger.kernel.org, lee@kernel.org,
-	linux-sound@vger.kernel.org, lgirdwood@gmail.com,
-	peter.ujfalusi@gmail.com, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, shuah@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 2/8] mfd: dt-bindings: ti,twl6040: convert to DT schema
-Message-ID: <20250812145415.GA3607226-robh@kernel.org>
-References: <20250811224739.53869-1-jihed.chaibi.dev@gmail.com>
- <20250811224739.53869-3-jihed.chaibi.dev@gmail.com>
- <175496188325.1486426.9118766970247515386.robh@kernel.org>
+	b=ct53i35n+qUOyANFK08CZAoJcWjU4JRsrJp/fL+pa3KtkPdpUhDeMNO8NX/DOZjDY
+	 //JEvmLanzEAig7vgHAKqlUy6hoS1RhWc0WJWeT2nP9zOMilDT1wd4q02NcN98pC8o
+	 sfrke2dNyx0vozDKpi1hUjzL64BVWhdKOtxpLcNxym/lre5v9m00Y8a0ZDsHVM3VQT
+	 ghAG9AyFW6K42eDCQe421JZeocGqa4BakPlj0lf8iX0KuQ2RPAU82jUTMaLxetz2Mg
+	 Q2JA7CrBSP5ezl4P5ShWWffe7QKYbNktfe2rb3JjliobHciFkMVtj//V5kUIHC/Qwe
+	 vKPqKRFYKqOiA==
+Date: Tue, 12 Aug 2025 09:54:56 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: dispcc-sc7280: Add dispcc resets
+Message-ID: <fh3uvnu3ydgdtez77ruuhlgq2obry4jifn5w3kok2qbjdkmtoz@j6jsealfbxzu>
+References: <20250811-sc7280-mdss-reset-v1-0-83ceff1d48de@oss.qualcomm.com>
+ <20250811-sc7280-mdss-reset-v1-2-83ceff1d48de@oss.qualcomm.com>
+ <ed0341b3-4056-4826-bec7-e835a6da4fad@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +62,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <175496188325.1486426.9118766970247515386.robh@kernel.org>
+In-Reply-To: <ed0341b3-4056-4826-bec7-e835a6da4fad@oss.qualcomm.com>
 
-On Mon, Aug 11, 2025 at 08:24:43PM -0500, Rob Herring (Arm) wrote:
+On Tue, Aug 12, 2025 at 10:35:30AM +0530, Taniya Das wrote:
 > 
-> On Tue, 12 Aug 2025 00:47:33 +0200, Jihed Chaibi wrote:
-> > Convert the legacy TXT binding for the TWL6040 MFD
-> > to the modern YAML DT schema format. This adds formal validation
-> > and improves documentation.
+> 
+> On 8/12/2025 8:41 AM, Bjorn Andersson wrote:
+> > Like many other platforms the sc7280 display clock controller provides
+> > a couple of resets for the display subsystem. In particular the
+> > MDSS_CORE_BCR is useful to reset the display subsystem to a known state
+> > during boot, so add these.
 > > 
-> > Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> 
+> In this issue I believe the requirement is to have a clean sheet and
+> restart the MDSS explicitly. Historically MDSS never required a BCR reset.
+> 
+
+On most targets we rely on the display driver coming up and configuring
+the hardware anew in a way that happens to be aligned with the existing
+state (boot splash) - or there was no state, which makes this easier.
+
+But I had to introduce the use of the BCR reset in compute platforms
+when I worked on DP, because some of the state left by the bootloader
+would conflict with what Linux was doing. Similar on this target, as
+we're trying to initialize the display driver, we get a bunch of iommu
+faults.
+
+Ultimately, the display driver should likely read back the hardware
+state and attempt a graceful transition between whatever state the
+bootloader left the hardware in and what Linux wants it to be.
+
+When this feature is implemented, the display driver can simply stop
+pulling the BCR.
+
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > > ---
-> >  .../devicetree/bindings/mfd/ti,twl6040.yaml   | 155 ++++++++++++++++++
-> >  .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
-> >  2 files changed, 155 insertions(+), 67 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
+> >  drivers/clk/qcom/dispcc-sc7280.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
+> > index 8bdf57734a3d47fdf8bd2053640d8ef462677556..465dc06c87128182348a4e0ea384af779647bd84 100644
+> > --- a/drivers/clk/qcom/dispcc-sc7280.c
+> > +++ b/drivers/clk/qcom/dispcc-sc7280.c
+> > @@ -17,6 +17,7 @@
+> >  #include "clk-regmap-divider.h"
+> >  #include "common.h"
+> >  #include "gdsc.h"
+> > +#include "reset.h"
+> >  
+> >  enum {
+> >  	P_BI_TCXO,
+> > @@ -847,6 +848,11 @@ static struct gdsc *disp_cc_sc7280_gdscs[] = {
+> >  	[DISP_CC_MDSS_CORE_GDSC] = &disp_cc_mdss_core_gdsc,
+> >  };
+> >  
+> > +static const struct qcom_reset_map disp_cc_sc7280_resets[] = {
+> > +	[DISP_CC_MDSS_CORE_BCR] = { 0x1000 },
+> > +	[DISP_CC_MDSS_RSCC_BCR] = { 0x2000 },
+> > +};
+> > +
+> >  static const struct regmap_config disp_cc_sc7280_regmap_config = {
+> >  	.reg_bits = 32,
+> >  	.reg_stride = 4,
+> > @@ -861,6 +867,8 @@ static const struct qcom_cc_desc disp_cc_sc7280_desc = {
+> >  	.num_clks = ARRAY_SIZE(disp_cc_sc7280_clocks),
+> >  	.gdscs = disp_cc_sc7280_gdscs,
+> >  	.num_gdscs = ARRAY_SIZE(disp_cc_sc7280_gdscs),
+> > +	.resets = disp_cc_sc7280_resets,
+> > +	.num_resets = ARRAY_SIZE(disp_cc_sc7280_resets),
+> >  };
+> >  
+> >  static const struct of_device_id disp_cc_sc7280_match_table[] = {
 > > 
 > 
-> My bot found errors running 'make dt_binding_check' on your patch:
+> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> yamllint warnings/errors:
+
+Thanks,
+Bjorn
+
+> -- 
+> Thanks,
+> Taniya Das
 > 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,twl6040.example.dtb: 
-> twl@4b (ti,twl6040): 'twl6040,audpwron-gpio' does not match any of 
-> the regexes: '^#.*', 
-> '^(at25|bm|devbus|dmacap|dsa|exynos|fsi[ab]|gpio-fan|gpio-key|gpio|gpmc|hdmi|i2c-gpio),.*', 
-> '^(keypad|m25p|max8952|max8997|max8998|mpmc),.*', 
-> '^(pciclass|pinctrl-single|#pinctrl-single|PowerPC),.*', 
-> '^(pl022|pxa-mmc|rcar_sound|rotary-encoder|s5m8767|sdhci),.*', 
-> '^(simple-audio-card|st-plgpio|st-spics|ts),.*',
-
-You will need to add 'twl6040' to this list of exceptions in 
-vendor-prefixes.yaml.
-
-Rob
 
