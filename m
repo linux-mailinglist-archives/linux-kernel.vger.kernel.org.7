@@ -1,201 +1,100 @@
-Return-Path: <linux-kernel+bounces-764752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CAEB226CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:30:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84214B226C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8C8563F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EB9650852D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9B9223328;
-	Tue, 12 Aug 2025 12:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408542066CE;
+	Tue, 12 Aug 2025 12:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lRpJIciM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D27Q7G71"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51D722069F;
-	Tue, 12 Aug 2025 12:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453431E5B7B;
+	Tue, 12 Aug 2025 12:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755001776; cv=none; b=K/fC9XnILa6clImqYvSoDQ5cJhbLrYb/FDyLJb5S+CnakHUKu9e26ZtOTrEP1liaYAXLIvn5/1MSnvafJ5Rq5RP/PP3ld1ob+Og6lRYs6Lpoz+WPsx5xP+hNfJ1jA8jeMrYj+3AiHKYj8BdOR3ymgCAre4pnlGMg5yr1q/Vq7yU=
+	t=1755001756; cv=none; b=RP9cRnHFQQM3Mgn6SUB4UTze355Y0aNJICX6GC5CjtSkamHIjr65LdsGErPOAjjLyVaOZTxYU02AR3vhhcQQGrNeizLmABGaRwAD8cl0cXRGQcFwmVAZxg31zSA3QRP6LNmRZXtmLBG04EKUyLe2nY0sv8+vuHipVCF0Ag13jMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755001776; c=relaxed/simple;
-	bh=4nZspt6FQtmPeOr0pILI5mDZRC1ewkBGJrubtoDgCuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cXFdZMf+ezwam+mqZ1itZb7H8fFVcu43H+JLsy6/R9n2z60TyNmTNbtR0VpG2XdHjW1qGzFEzcJnX1CANzXQOE79jcv+2VnoNcUE+zpsYz5iNJvSMJOexCWSJsXw1NRzgEoM2+pGjJhcx6iig1M+qTwUVw0ujF/AVuAmCD2qbtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lRpJIciM; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1755001756; c=relaxed/simple;
+	bh=LK5txVFI7G9Dh/VuhxO0Z3jVBKbeqjt+ITjSo3Vro3Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tBZcOjHEgb2zlO5zXxgc2BYmUdG8YHy5LfN9UYY6wr4AuCcuISx174WHFDRMswqD2GO1vxit+wD9C+jvuZiZKNxd7p7KU3VrJMFSvAdSPtLXc9jHyXso6uFrlNXf/J+Cd2/GZrHXy45wudCoca7DLf6xZtrwhHXwn0dBKlp8c28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D27Q7G71; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755001775; x=1786537775;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4nZspt6FQtmPeOr0pILI5mDZRC1ewkBGJrubtoDgCuE=;
-  b=lRpJIciMkotcoOepDIaRPxRepbQvRFA69LYyMWdhKxHXZXCrvFOsG6Ud
-   ZVIubnT6Ay6ZBEAdrafvmsKw/0JvyXmuIIbPaS5epW4hgFJCGyHiRJNxX
-   MZc8sqX14e0YGjthn8bk6Z6UcLIV3juLMTgicCpMPYgOFIOSKRGyRV57P
-   mIIxRddCnlmf8csjKQbE+UT5B4Uulr1hXAFmbxCY1NvWRBGyszwihFAtR
-   4XJzk180GnepBL1HgeSFU7C69viV0hFUHxXGfugbzDmbMPcZksQRsV/f6
-   fwTUJEyTVwq5Ywrs3eSN7iKJkhJc9eedUNevNx2fSwHo0thYnuPlso8a4
-   w==;
-X-CSE-ConnectionGUID: 6vIfpjn2SUCcFjxzFIWSSQ==
-X-CSE-MsgGUID: Po7xv8LuRUyENKhBwnF80Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68648860"
+  t=1755001755; x=1786537755;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=LK5txVFI7G9Dh/VuhxO0Z3jVBKbeqjt+ITjSo3Vro3Y=;
+  b=D27Q7G71kjxvdA2ub4UAQwpLK8wancuuElaoE7tdyHHnERtKW3zYFDUM
+   A0yKDUYCD9kItH0IwqY4b4r5MlbvV/ZwWycnqNdOf/rZ/sTkoBwFXzk/L
+   jHt0H609KsfpZWamltLbHcuZbRKxPcUjpyD8XtYpI7ewuHEJqxF+lYDDR
+   /3jMv1mwEmaSDiyEdskYm4Xr6eT18Tn3wLWomFEoEopryYi3Hf1P3/xVm
+   y3rsvQQ7jAtjz3JQdz41kIeQ6SN7b+fPf2auQeeg5/J1N95OC5jae/IPn
+   m+tirP3dxK5xxAa/hUKd5vk6XshPgYuQQdiRAAZdsZ4/TL3pFBFYaFi+h
+   A==;
+X-CSE-ConnectionGUID: p6JmtkZSQS2fan4ZVgUgSQ==
+X-CSE-MsgGUID: KIRe7EWPSlC7obXrMOEokw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68648832"
 X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="68648860"
+   d="scan'208";a="68648832"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 05:29:34 -0700
-X-CSE-ConnectionGUID: dZ8itZ3HQDu6aAMfA0L/Aw==
-X-CSE-MsgGUID: gxv7xIJuSu604uixNwit/w==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 05:29:14 -0700
+X-CSE-ConnectionGUID: kiop/s72ScqjAPuuGNfo9g==
+X-CSE-MsgGUID: XES1ihE4TP6Y/NyjgVzEFA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="166548380"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 05:29:28 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Tony Luck <tony.luck@intel.com>,
-	pbonzini@redhat.com,
-	seanjc@google.com
-Cc: vannapurve@google.com,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	H Peter Anvin <hpa@zytor.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com,
-	binbin.wu@linux.intel.com,
-	ira.weiny@intel.com,
-	isaku.yamahata@intel.com,
-	Fan Du <fan.du@intel.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com
-Subject: [PATCH V2 2/2] x86/mce: Remove MCI_ADDR_PHYSADDR
-Date: Tue, 12 Aug 2025 15:28:59 +0300
-Message-ID: <20250812122859.70911-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250812122859.70911-1-adrian.hunter@intel.com>
-References: <20250812122859.70911-1-adrian.hunter@intel.com>
+   d="scan'208";a="166548287"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.96])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 05:29:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>, edip@medip.dev
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250728115805.20954-2-edip@medip.dev>
+References: <20250728115805.20954-2-edip@medip.dev>
+Subject: Re: [PATCH] platform/x86: hp-wmi: mark Victus 16-r1xxx for
+ victus_s fan and thermal profile support
+Message-Id: <175500174766.2252.16933943803051805256.b4-ty@linux.intel.com>
+Date: Tue, 12 Aug 2025 15:29:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Now that the address is masked when it is read from the machine check bank
-address register (refer patch "x86/mce: Fix missing address mask in
-recovery for errors in TDX/SEAM non-root mode"), the MCI_ADDR_PHYSADDR
-macro is no longer needed.  Remove it.
+On Mon, 28 Jul 2025 14:58:06 +0300, edip@medip.dev wrote:
 
-Note MCE address information also enters the kernel from APEI via the
-Common Platform Error Record (CPER) Memory Error Section "Physical Address"
-field (struct cper_sec_mem_err physical_addr), refer the UEFI
-specification.  It is assumed that field contains only the physical
-address.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
+> This patch adds Victus 16-r1xxx laptop DMI board name into existing
+> list.
+> Tested on 16-r1077nt and works without any problem.
+> 
+> 
 
 
-Changes in V2:
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-      New patch
+The list of commits applied:
+[1/1] platform/x86: hp-wmi: mark Victus 16-r1xxx for victus_s fan and thermal profile support
+      commit: 748f897511446c7578ca5f6d2ff099916bad6e28
 
-
- arch/x86/include/asm/mce.h     | 3 ---
- arch/x86/kernel/cpu/mce/core.c | 6 +++---
- drivers/cxl/core/mce.c         | 2 +-
- drivers/edac/skx_common.c      | 2 +-
- 4 files changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 6c77c03139f7..0cf8017dcae9 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -91,9 +91,6 @@
- #define  MCI_MISC_ADDR_MEM	3	/* memory address */
- #define  MCI_MISC_ADDR_GENERIC	7	/* generic */
- 
--/* MCi_ADDR register defines */
--#define MCI_ADDR_PHYSADDR	GENMASK_ULL(boot_cpu_data.x86_phys_bits - 1, 0)
--
- /* CTL2 register defines */
- #define MCI_CTL2_CMCI_EN		BIT_ULL(30)
- #define MCI_CTL2_CMCI_THRESHOLD_MASK	0x7fffULL
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index deb47463a75d..80e06d6728a7 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -642,7 +642,7 @@ static int uc_decode_notifier(struct notifier_block *nb, unsigned long val,
- 	    mce->severity != MCE_DEFERRED_SEVERITY)
- 		return NOTIFY_DONE;
- 
--	pfn = (mce->addr & MCI_ADDR_PHYSADDR) >> PAGE_SHIFT;
-+	pfn = mce->addr >> PAGE_SHIFT;
- 	if (!memory_failure(pfn, 0)) {
- 		set_mce_nospec(pfn);
- 		mce->kflags |= MCE_HANDLED_UC;
-@@ -1415,7 +1415,7 @@ static void kill_me_maybe(struct callback_head *cb)
- 	if (!p->mce_ripv)
- 		flags |= MF_MUST_KILL;
- 
--	pfn = (p->mce_addr & MCI_ADDR_PHYSADDR) >> PAGE_SHIFT;
-+	pfn = p->mce_addr >> PAGE_SHIFT;
- 	ret = memory_failure(pfn, flags);
- 	if (!ret) {
- 		set_mce_nospec(pfn);
-@@ -1444,7 +1444,7 @@ static void kill_me_never(struct callback_head *cb)
- 
- 	p->mce_count = 0;
- 	pr_err("Kernel accessed poison in user space at %llx\n", p->mce_addr);
--	pfn = (p->mce_addr & MCI_ADDR_PHYSADDR) >> PAGE_SHIFT;
-+	pfn = p->mce_addr >> PAGE_SHIFT;
- 	if (!memory_failure(pfn, 0))
- 		set_mce_nospec(pfn);
- }
-diff --git a/drivers/cxl/core/mce.c b/drivers/cxl/core/mce.c
-index ff8d078c6ca1..4ba8b7ae3de7 100644
---- a/drivers/cxl/core/mce.c
-+++ b/drivers/cxl/core/mce.c
-@@ -24,7 +24,7 @@ static int cxl_handle_mce(struct notifier_block *nb, unsigned long val,
- 	if (!endpoint)
- 		return NOTIFY_DONE;
- 
--	spa = mce->addr & MCI_ADDR_PHYSADDR;
-+	spa = mce->addr;
- 
- 	pfn = spa >> PAGE_SHIFT;
- 	if (!pfn_valid(pfn))
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 39c733dbc5b9..2de675958560 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -732,7 +732,7 @@ int skx_mce_check_error(struct notifier_block *nb, unsigned long val,
- 
- 	memset(&res, 0, sizeof(res));
- 	res.mce  = mce;
--	res.addr = mce->addr & MCI_ADDR_PHYSADDR;
-+	res.addr = mce->addr;
- 	if (!pfn_to_online_page(res.addr >> PAGE_SHIFT) && !arch_is_platform_page(res.addr)) {
- 		pr_err("Invalid address 0x%llx in IA32_MC%d_ADDR\n", mce->addr, mce->bank);
- 		return NOTIFY_DONE;
--- 
-2.48.1
+--
+ i.
 
 
