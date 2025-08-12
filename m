@@ -1,190 +1,140 @@
-Return-Path: <linux-kernel+bounces-764259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F54B22092
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBCDB220B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1A4169FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06115205E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA152E1737;
-	Tue, 12 Aug 2025 08:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923E2E282B;
+	Tue, 12 Aug 2025 08:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fBxE0EYJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1HcdkPY"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9BD14A60F;
-	Tue, 12 Aug 2025 08:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890D22E2657;
+	Tue, 12 Aug 2025 08:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754986831; cv=none; b=XdoV/BDNWzuJgtOS8HounH9BfndNnEmXzpVQ122m72YmSGMy1kUwJOPsJ4xfZoVl/3kPAoimI4wdtyKk7MrMAy6q0aGHI4TzHuzmW+uh+4z1lOdekwSNknzVKvYUCENyuyC4fepNxMFuKbrvWvCAL2yiJMsb4jX2z0XW9aZgUMI=
+	t=1754986972; cv=none; b=YFWyxZS7h2BSx+GfO/0xPdyhNG/o8857VdEiRG5pJjLBfx49GpQ9aplpFXnW3zf0TAVJ2wnEdvRlK9UVDZ3ZT9OsYgd+Z9fABwUJn9e9qJ0Gd9HLiJA+ZBmjOXgWOUguoLd0JFa22draV0C+wZrLNo+u6d6Tlc8x1RnN+EtzJNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754986831; c=relaxed/simple;
-	bh=l6LIpcn35RlQuRr0+4hqMdB454QrY+cXAkxgSf0Vucg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCD7j++pZUmQ2Jo8kYdlSPyhVeiqMF9Rm/SSyXBzKQ9QW0EWdvGo7A3DGYE2ddO0wMq3Z3R32HjgvD7uQxN6pzHoPXmhV20IIxCbGoVi+a43uxNUweeKMIAm3puv9sK7a9+wYTl9FXjOcfvoWTEQ3miMXZsxE8iG6pe8OGGsqCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fBxE0EYJ; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754986830; x=1786522830;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l6LIpcn35RlQuRr0+4hqMdB454QrY+cXAkxgSf0Vucg=;
-  b=fBxE0EYJbkE2YJb89e0CIE5ZHZAPeZ2gu8e5rnxIm5E4oy8gyYmKximy
-   Cdx/kUG8ewo2OlVwHdSxUkg9/51L/J4nfUZm/OaGSwBCzNnoSR0vospN9
-   x6YsTdG5OFeoz5wZy05tw9fQKoEcv4rPk1GdquKR7aqNkFPB26Zreo7Wp
-   SSbFH3bl89GfnRGc4WHM/VxVWDsHkoyD3720sC13DaEH5x70KgHNVmmc/
-   TPOcDFOLu3Xp5ZNmNocrSgCKhi2aIhq+ogD6kOHx1rTTiQuF52i8o0LjO
-   ART0Z0acHxkc1s/VSeICBkcxaTb7MVRmIVU3Pw3VjUA38MNvKhvPaKucb
-   g==;
-X-CSE-ConnectionGUID: FaCGISHYQ0GPdPvx5t+BXQ==
-X-CSE-MsgGUID: /CP26QBCSpOzlEi1ITRtvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57400036"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="57400036"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 01:20:29 -0700
-X-CSE-ConnectionGUID: yxR/RFrmRPSqT6uj35ScEw==
-X-CSE-MsgGUID: hxif269IQ+eBFvWMlaB98A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="203330077"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.28])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 01:20:25 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1BEEE11F83C;
-	Tue, 12 Aug 2025 11:20:22 +0300 (EEST)
-Date: Tue, 12 Aug 2025 08:20:22 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Du, Bin" <bin.du@amd.com>, mchehab@kernel.org, hverkuil@xs4all.nl,
-	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com,
-	Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
-	anson.tsao@amd.com
-Subject: Re: [PATCH v2 4/8] media: platform: amd: Add isp4 fw and hw interface
-Message-ID: <aJr5RuD1lxnVBmed@kekkonen.localdomain>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-5-Bin.Du@amd.com>
- <aIclcwRep3F_z7PF@kekkonen.localdomain>
- <b033bf6c-c824-4f6d-8025-b6542ea8f35f@amd.com>
- <aJnYE2Z7F-PK1VHL@kekkonen.localdomain>
- <20250811123102.GC30760@pendragon.ideasonboard.com>
- <50f0958b-5234-4a89-a57e-5d330cca13af@amd.com>
- <20250812073432.GF30054@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1754986972; c=relaxed/simple;
+	bh=fJX20PohZpCHadUb7Zc2OniYoY/K0awKaD9ACu1c3jc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ug3A/8EiPWZa5GeVwUx/ztkOPmr3qX/iXgAUs2r4DTDWfXvjJ8++IsA8mTodgLE92XhbKNQqWdY21W5yK7zP4frGWgffv3S8RUN61oHpJdIRRmn2Vd5Hvc54u45SLjFICnMYBgMXMmw3bPMiVRc7Qt2vYOli64UxlIrVnNx8gnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1HcdkPY; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459d55ba939so2388465e9.3;
+        Tue, 12 Aug 2025 01:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754986968; x=1755591768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YbyGTm/Kphup1yQ5OdKhT2GE+zUDtJtHd0XwG3yDXbc=;
+        b=k1HcdkPYU6xZZHO5/JOTOkhwOb0hpYmXQUmBTkkxMHnorHfGvRaEhgaxjDW08qL52y
+         8S6hJQ9p57SADuHKQBDt1AvGRMBKmQ2vBEH/XQwZYsYmO9AlW7vZ+j7HV/OMMLd6C1h4
+         mvq4TwyD4LUOhonGdNAoKqJkMqYVKPehhIHJxgU+4OFg9PbODMbH+a1TXTQo8y/fIPnV
+         hHvZi/49LTDfcBW+5fviDvQux8QEltVYk/eQbH1DpgzL+eMJzcvJkFQ4dqoe2sKiB0dG
+         d4CuUXgZ2z/C5UTRHKnJOmUi76Eyu+0rPmE081Ie/JvedF69DunIr++tmJUfMJHMVMgt
+         tnhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754986968; x=1755591768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YbyGTm/Kphup1yQ5OdKhT2GE+zUDtJtHd0XwG3yDXbc=;
+        b=DgqGcS8kj/6GTnxLuHZRYPfKJIYB0KrPDKULP4T233X6HPEnZQDysCCPSx5CfPYUkZ
+         WRi/z49gPPwJdhz+zniqv1ZcpPJBb1u3Uyp9H+ymirBNnIlH8lOIbRkAW4YSbvdukNEN
+         7zM5WwsX2FJu1KzfQW8vSerVSCIKaKGD7/N8+/CQNmTJEbxp6Ritms3DrdecfPtq98NB
+         OJbT/kih/0Ki77mso+SsLHq+iexBGpfaDGccCsaC+M7zh6xmgR8JhFtpbR1gfa2qqcp0
+         GnZA8qJRlP+C4PDzKyz46Z94HzARDGZ9tlAyPKEEcecKjMs3PGU7ZrcbjbqFQZvuLsfU
+         A/lw==
+X-Gm-Message-State: AOJu0YykqP1f8nraWTgAlYCdmkD09+W6JwxhsjauHCrQJ1miPYUjvXS/
+	FHZ9EYpqweKsuBLAHXtiGQrcrJIsSQgYrgzBu5pvZdnKeuGuSk2rg0fwyBMQD0b5eAU=
+X-Gm-Gg: ASbGncvzl45exy7FteWg5NVB6MExZ5U6cxQtq3s2JWemBUu12dW+PvJbInWoeniyxJ1
+	518aQBEKSDRLDcdkGobnwFlqM3yRY13dXbpueHDl1+XHOEiN/WbJldsi5MPgYJ+qS5prsgy/BKv
+	ZfaG+aQ7szZYkngsMSEYfqx9NGZfeBOFvzfA+3nHsDX4DcWdO6hUp4SP13RlRF+HkH16z/Ny80q
+	MO+lZQKbLZ6ygIA1PCowIz3BrbbHpsSbOpg8M+ymGGVVAb4jGrykRAW26z+jeEqxWOlCOprIsul
+	3qgO8Zqpmpp+66ocukLN08n6l8HsZW0Nb/0aL/TvzFqACVTJEQQjaF8mL0Et1s7yPRpSj7RAJSZ
+	n0oA3qkEdhOE7VsXnYIeIlkzUd5FxMzwqVckFTyG3ZqrXpLsthuAk5s9R5bbor8NoKFiJxidv2V
+	Ulb2fJwrM+
+X-Google-Smtp-Source: AGHT+IFVpnUtIAvOnPWm8jbKDKspsCrZdFXLx787xQt1P0oYsLh7XnWPIpJj+MxukmZjQbC+KPQDmQ==
+X-Received: by 2002:a05:600c:3acf:b0:458:b6b9:6df5 with SMTP id 5b1f17b1804b1-45a13f53375mr2090295e9.1.1754986968337;
+        Tue, 12 Aug 2025 01:22:48 -0700 (PDT)
+Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b90fdc85a4sm4142823f8f.60.2025.08.12.01.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 01:22:47 -0700 (PDT)
+From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	skhan@linuxfoundation.org,
+	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+Subject: [PATCH net-next v2] tun: replace strcpy with strscpy for ifr_name
+Date: Tue, 12 Aug 2025 10:22:44 +0200
+Message-Id: <20250812082244.60240-1-miguelgarciaroman8@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812073432.GF30054@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent, Bin,
+Replace the strcpy() calls that copy the device name into ifr->ifr_name
+with strscpy() to avoid potential overflows and guarantee NULL termination.
 
-On Tue, Aug 12, 2025 at 10:34:32AM +0300, Laurent Pinchart wrote:
-> On Tue, Aug 12, 2025 at 11:36:23AM +0800, Du, Bin wrote:
-> > Many thanks Laurent Pinchart for the comments.
-> > 
-> > On 8/11/2025 8:31 PM, Laurent Pinchart wrote:
-> > > On Mon, Aug 11, 2025 at 11:46:27AM +0000, Sakari Ailus wrote:
-> > >> On Tue, Jul 29, 2025 at 05:12:03PM +0800, Du, Bin wrote:
-> > >>> On 7/28/2025 3:23 PM, Sakari Ailus wrote:
-> > >>>> On Wed, Jun 18, 2025 at 05:19:55PM +0800, Bin Du wrote:
-> > >>>>> ISP firmware controls ISP HW pipeline using dedicated embedded processor
-> > >>>>> called ccpu.
-> > >>>>> The communication between ISP FW and driver is using commands and
-> > >>>>> response messages sent through the ring buffer. Command buffers support
-> > >>>>> either global setting that is not specific to the steam and support stream
-> > >>>>> specific parameters. Response buffers contains ISP FW notification
-> > >>>>> information such as frame buffer done and command done. IRQ is used for
-> > >>>>> receiving response buffer from ISP firmware, which is handled in the main
-> > >>>>> isp4 media device. ISP ccpu is booted up through the firmware loading
-> > >>>>> helper function prior to stream start.
-> > >>>>> Memory used for command buffer and response buffer needs to be allocated
-> > >>>>> from amdgpu buffer manager because isp4 is a child device of amdgpu.
-> > >>>>
-> > >>>> Please rewrap this, some lines above are quite short.
-> > >>>>
-> > >>> Thanks, the line after the short line is supposed to be a new paragraph?
-> > >>> Should we put all the description in one paragraph?
-> > >>
-> > >> One or more paragraphs work fine, but a new paragraph is separated from the
-> > >> previous one by another newline.
-> > >>
-> > >> ...
-> > > 
-> > > Paragraphs are defined as a block of text that convey one idea. They
-> > > should be visually separated by a space. As we can't have fractional
-> > > line spacing in plain text, paragraphs need to be separated by a blank
-> > > line. This is a typography rule that maximizes readability. There should
-> > > be no line break between sentences in a single paragraph.
-> > > 
-> > > Whether you write commit messages, formal documentation or comments in
-> > > code, typography is important to give the best experience to readers.
-> > > After all, a block of text that wouldn't focus on the readers would have
-> > > no reason to exist.
-> > > 
-> > > 
-> > > Now compare the above with
-> > > 
-> > > 
-> > > Paragraphs are defined as a block of text that convey one idea. They
-> > > should be visually separated by a space.
-> > > As we can't have fractional line spacing in plain text, paragraphs need
-> > > to be separated by a blank line.
-> > > This is a typography rule that maximizes readability. There should be no
-> > > line break between sentences in a single paragraph. Whether you write
-> > > commit messages, formal documentation or comments in code, typography is
-> > > important to give the best experience to readers.
-> > > After all, a block of text that wouldn't focus on the readers would have
-> > > no reason to exist.
-> > 
-> > Really appreciate the detailed guide, will follow it. May I summarize 
-> > like this? 1 Separate paragraphs by a blank line. 2 Don't add line break 
-> > between sentences in a single paragraph, an exception to this is commit 
-> > message, because of the 75-character patch check limit, line break can 
-> > be added, but it should at the 75-character limit boundary
-> 
-> When I wrote "line break", I meant breaking the line after a sentence,
-> before the 75 columns limits. Text blocks should always be wrapped (at
-> 75 columns in commit messages, or 80 in kernel code). What you should
-> avoid is line breaks not related to the columns limit.
-> 
-> This is fine:
-> 
-> This paragraph has a long sentence that does not hold on a single line
-> of 72 characters and therefore needs to be wrapped. There is no line
-> break otherwise, for instance between the first and second sentence, or
-> within a sentence.
-> 
-> This is not right:
-> 
-> This paragraph has a long sentence that does not hold on a single line
-> of 72 characters and therefore needs to be wrapped.
-> There is a line break between the first and second sentence,
-> and also a line break in the second sentence, which are not fine.
+Destination is ifr->ifr_name (size IFNAMSIZ).
 
-I wonder if this should make it to kernel documentation. I've come across
-many new developers recently who would definitely benefit from this.
+Tested in QEMU (BusyBox rootfs):
+ - Created TUN devices via TUNSETIFF helper
+ - Set addresses and brought links up
+ - Verified long interface names are safely truncated (IFNAMSIZ-1)
 
-Also, most editors can rewrap paragraphs of text (e.g. Emacs M-q or Joe C-k
-C-j).
+Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
+---
+v2:
+  - Dropped third argument from strscpy(), inferred from field size.
+v1: https://lore.kernel.org/netdev/20250811112207.97371-1-miguelgarciaroman8@gmail.com/
 
+ drivers/net/tun.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index f8c5e2fd04df..ad33b16224e2 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2800,13 +2800,13 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
+ 	if (netif_running(tun->dev))
+ 		netif_tx_wake_all_queues(tun->dev);
+ 
+-	strcpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name);
+ 	return 0;
+ }
+ 
+ static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
+ {
+-	strcpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name);
+ 
+ 	ifr->ifr_flags = tun_flags(tun);
+ 
 -- 
-Kind regards,
+2.34.1
 
-Sakari Ailus
 
