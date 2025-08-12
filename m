@@ -1,163 +1,193 @@
-Return-Path: <linux-kernel+bounces-765398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E589B2324B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:16:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1145B23211
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43EA2A1BBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:12:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24F17B0FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3AC2FA0DF;
-	Tue, 12 Aug 2025 18:11:52 +0000 (UTC)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4752F2F83B5;
+	Tue, 12 Aug 2025 18:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COotT6xu"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7464282E1;
-	Tue, 12 Aug 2025 18:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976502F5E;
+	Tue, 12 Aug 2025 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022312; cv=none; b=OCbAmL+c9L6NadqO6JZI3HrxaPEmc7RKPWAz9bAMzRh02AtWZurOWtHDhKGFl9P7ptm6qUXZlwGT5vneV/sijMfdEw1QzzreEAs5E0szPQPqrLy4e1DCzZnrSbRqmRis4qSH5O7f4pv0Ao4JDcV+d6IlGsELyqXpvf5HqYKq5ro=
+	t=1755022395; cv=none; b=t83KMT84FbHyNCMleGeFefMCKhP+l7yWp/jXUNeQsW9YriGJOfhXQ15bteo6Ukj/tE/0wxi8Sr6+f4hFPYVRM7AcL6SVEz2VFs5l+P3zWzVr0LRRLRcDkaZH67fOHiVuzS5zJ595AgAcCBTaUBVJfh3nDS3Ln5FnPSLbJeRk+yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022312; c=relaxed/simple;
-	bh=IPuyGTmGXMHr2tPOmZNLid39cwl5Ro+vwFkF52X02UU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oZEDyeG2bZQXwH615QRIwmDXDhN/B9xAQxO6ze27gG1grhuAkZS+M6mAKB2GL6nr/+i4hR7HuKqw6AARP+4W8Q48rp0tcS8T6wvX0+TnkyxxFRxIzW/7G/lK++4kKhF0lRCptGSRKu8PXT502UresJsErPlKW4rQDAzPRuelbuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+	s=arc-20240116; t=1755022395; c=relaxed/simple;
+	bh=wxfYHNX+zUouw95hV7JY22SPouEPmB4x9TQn4kQDv8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N1cPG6GmG/nK7aWY2ct5cALXR6VaKK+YtPzr8BVnl1JWXd/9XffOQ1LI9Nmdv/jH7tgR+C4Bt2littGcWSHHGcUNb07u/k29VG8cTWCP8rrNqMn9cEBYoU0m403V+TDNLDrbXqyaUjiwf4839Alxun4oRqZcQponCx91FVYTWIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COotT6xu; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76ba6200813so495883b3a.0;
-        Tue, 12 Aug 2025 11:11:50 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-459ebb6bbdfso36180515e9.0;
+        Tue, 12 Aug 2025 11:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755022392; x=1755627192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cUjNDEUZ0UB2/lriNv1lkiE1us79levTaj2gbxNuyLc=;
+        b=COotT6xuQA8oSBgVUAnrd0Xrw/PjJimxFRjy9U3q1GnSIZcAF/aLxixz/7OHQurgA2
+         PPjE4wTX3kRP+ONPRs6kLNiIqgQxx9PXaZ+jh1xak60YyGi3syvT06MAVCqJdD2eYNZ/
+         P2ZI4o9a2J3sHKRhYak4kAPJ3yOOZe3eTucctUN8QObfzT82eGkKL/7v5YhuGw2JZbdZ
+         IOfXHaM33hgGJPgJUsHRNc17NHDO2J359rP2BdsETCw0DgglQ7oU2RBubMXqHBqKbDV7
+         svfIYWFIz9AH/OHUv3IobnGLbaoxt4VHASFiIJZBVAGhJRwLaYffcItWw6h9M53I/AxH
+         RTPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755022310; x=1755627110;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Sc0iVOrEVFOByaHU7AVFmw7/jwWHw2s7ViclReSH2Q=;
-        b=V0V5T3ZLquqogwp3KiqYZX4mY3suSloKcaxZTD5BR3fcdweRP9pBUaXmUchIp4p+jd
-         Y0suiyZrKjAxpDFYHqT/3/wRANaidSNKvCtOiS2hHo1fmKwbkBEqXrBdUeXvwIU+bwmW
-         VEoDzN3vrS4xGQKzfIvEifovoZe234LPCHFlVV6fsD+aQndz1/GfUDV1IuqrRh4cv+Kw
-         4xAkpe77Ic7+UN7GlUuVhe7U5nFgcs3J4fELnLVTgOQVB36WouALHeNANb6DMuZVnkrQ
-         LJMgSOrjQE/388E77eUlUrjHUd39MiS5/jl8FlFsKcCxyvDdqwjxsV5Eg18TqrqbWpWG
-         qCmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkcTWfzL/ZYiXIqjGEMfaAb3MoNIHi3oa/4iR8o2p9IPh63JKk+/d/dcXdfHdObsJYiGbAfDfWUkL20B4=@vger.kernel.org, AJvYcCX55PWVzA4LaO/H7avyoLUMQzX2KGWgwXvy8YAPphTg+wgHk10+hXzo8IQ+yPhvcnhqU7qIQMvzRmZskXhi1SGj+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwckHC3xP70Hwf4ibsn5vyiMB7+beR6s15SdLZeYaUMadXKQpHV
-	E5+ysYHTstpMm67IK91WPUJQwWD9yJhCk6rneF+BrBASF6mc8NCPC6pr
-X-Gm-Gg: ASbGncttuNLcPOjiGjQDML8RPFvTwOdfOFsOyWryMoL/0FKWUQaSDEhd7/3zJgN5xOO
-	5HfkIM6e8FvdOz4hDMDGgp7LUNR3vf+YNmIebRWed1Uweuk9mX1qzyhWSrsvZV/iEbBYpLUb0nA
-	OMssX9F32Su2fDFL6Tuq0kg61VEyT+McZDa8qkUf7QwBfAeje2RBwQn1N0Vh1AYPJ/CtncyDGeS
-	LeKD7natmL01ad14NZD7Cmj+LXA8Mgd369g0yAlP5FgeHKhEs7qWfkpQ55jE8pqLVwr+W/zdFON
-	Jy9g3SdRSrkUp+RGUGMD2AqWMwn/4E6Ke5ItkDrf9vPYGb4yyGVCpGKzKtwQ21RFZoPQxzvrU+3
-	LZMuqlHPh0O7iQKSypmZXBbU=
-X-Google-Smtp-Source: AGHT+IGjJiOgFGABGQ9x06XkqaQHRFpKGeWGp1hYW0cDylnclyQZGbxcp9GEIjL1o/o42pInwYYYEw==
-X-Received: by 2002:a05:6a20:7d86:b0:23d:da6d:b050 with SMTP id adf61e73a8af0-240a8b4fda3mr131209637.6.1755022310014;
-        Tue, 12 Aug 2025 11:11:50 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bb1133fsm26177530a12.56.2025.08.12.11.11.45
+        d=1e100.net; s=20230601; t=1755022392; x=1755627192;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cUjNDEUZ0UB2/lriNv1lkiE1us79levTaj2gbxNuyLc=;
+        b=gbD4JRZd93ZK4BZg2/zxjtWOZBHYHuuWnSpu86AlC073mgkaIsymGaZlK27UdXtkas
+         alG+j+6Z/qR/KhyX7Gjf9vjoRxc3BJ6fqmxjWecU3EJ7Gmm2zqLlo41pG9xsK3lEbfF8
+         aEpTX+4pqQr/KZQqQnPjTxbfc5SxFKf72sD8xT0ob38XcbAEkoIgYOIpiYfoD9dlxYd5
+         3jhHOfyuZNjAWRCQ7G4UXPV/YyZxvwH0Q3PvBSHOgLiPnZ8CbCol4YYyHd4/1uvM/2Us
+         EdZmUuenqMuyGNOfskTId9otcMhImDMzkvp7iCKiif8tv5XscFilVrO80bAu0PiLyIbT
+         tnRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCgti85LJGJ5yRKb2EvetBKP7oIbxG1xZR/qWaoFYd60FTnbMqzSPziea4pakoqOc2f8Qv/CKM/e1e@vger.kernel.org, AJvYcCWFveFyD+TC2f9+1KAbAL4KoZA4uYQ1bZfCTapcvxNbTDGWvtDTe0pP0cwjAzNLK2L4VuqH8yAM4hwwQwx3@vger.kernel.org, AJvYcCWolgCY8KOi5GaP449T13cTKM1JqUnap1Orr327yNDK+IZoW4hS07QVREgMeIpovmc9ObzZbiG8eYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn5+oGR+mo629bq1kNBsqoIlMQeFEHP3m6oN2XWLYxie02yXxo
+	E0+JwJhveOA6ZEJdioCxuLGvH+wZ6uPLMwK6rZbkDOYkkpvK5UiBeZZ5
+X-Gm-Gg: ASbGnct5q4n1AmwO6G34rNyeLxE+AfW+bsPm7jHbM99bPG/JbpVFoS9hskmSH9ILnUu
+	Verfe8AGruuff5IgT+9njPE0VeDet2raLqcJpq02OWW6BFMiV8LDdQBYt3ArncqKYgNm6RMv1kK
+	fhaW4vJmPdrmvep3oMx5adF6IMgCJ5fZrfHGJoilGuIJpXpPMx8j1ISoiGrLsbmrfZ01JWqNkBU
+	CLdVFET5BPEOxas/iDHELBn4HRySen5PBzFMqfly40S4O3/myvhbeUx9mNBJxWujGN7NUAODhcN
+	1Sqs10RNwJQI1Hu24ilqE+Yrack/fQXs816LsB3SgFMgIr0UnEONMcfs5X5h2lbzcRQ0Anmgy+w
+	dZy5yVGAlRHRPGOoulGxvZhgB9UKbErDfwykMHHULztnJhbaaCq6x/B/V/EUIOLACwlsSjCtm
+X-Google-Smtp-Source: AGHT+IE5Rx+jYu8KD2LUWABuIVa4yAuqaEvITHp/bLwz80I5NMElz1nKg8QN3aQz1/m/VIx9cQdZLA==
+X-Received: by 2002:a05:600c:4f12:b0:455:bd8a:7e7 with SMTP id 5b1f17b1804b1-45a165afa4emr1318155e9.9.1755022391580;
+        Tue, 12 Aug 2025 11:13:11 -0700 (PDT)
+Received: from archbook.localnet (84-72-105-84.dclient.hispeed.ch. [84.72.105.84])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587e154sm330469645e9.27.2025.08.12.11.13.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 11:11:49 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Austin Kim <austindh.kim@gmail.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH v3] perf: Avoid undefined behavior from stopping/starting inactive events
-Date: Tue, 12 Aug 2025 18:10:47 +0000
-Message-ID: <20250812181046.292382-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+        Tue, 12 Aug 2025 11:13:11 -0700 (PDT)
+From: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
+To: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+ Sasha Levin <sashal@kernel.org>
+Cc: sashal@kernel.org, josh@joshtriplett.org, kees@kernel.org,
+ konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ rostedt@goodmis.org
+Subject:
+ Re: [PATCH 0/4] Add agent coding assistant configuration to Linux kernel
+Date: Tue, 12 Aug 2025 20:13:09 +0200
+Message-ID: <4074201.e9J7NaK4W3@archbook>
+In-Reply-To: <20250727195802.2222764-1-sashal@kernel.org>
+References: <20250727195802.2222764-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Calling pmu->start()/stop() on perf events in PERF_EVENT_STATE_OFF can
-leave event->hw.idx at -1. When PMU drivers later attempt to use this
-negative index as a shift exponent in bitwise operations, it leads to UBSAN
-shift-out-of-bounds reports.
+On Sonntag, 27. Juli 2025 21:57:58 Mitteleurop=C3=A4ische Sommerzeit Sasha =
+Levin wrote:
+> This patch series adds unified configuration and documentation for coding
+> agents working with the Linux kernel codebase. As coding agents
+> become increasingly common in software development, it's important to
+> establish clear guidelines for their use in kernel development.
+>=20
+> The series consists of four patches:
+>=20
+> 1. The first patch adds unified configuration files for various coding
+> agents (Claude, GitHub Copilot, Cursor, Codeium, Continue,
+> Windsurf, and Aider). These are all symlinked to a central documentation
+> file to ensure consistency across tools.
+>=20
+> 2. The second patch adds core development references that guide
+> agents to essential kernel development documentation including how
+> to do kernel development, submitting patches, and the submission
+> checklist.
+>=20
+> 3. The third patch adds coding style documentation and explicit rules
+> that agents must follow, including the 80 character line limit
+> and no trailing whitespace requirements.
+>=20
+> 4. The fourth patch adds legal requirements and agent attribution
+> guidelines. All agents are required to identify themselves in
+> commits using Co-developed-by tags, ensuring full transparency about
+> agent involvement in code development.
+>=20
+> Example agent attribution in commits:
+>=20
+>     Co-developed-by: Claude claude-opus-4-20250514
+>=20
+>=20
+> Changes since RFC:
+> - Switch from markdown to RST
+> - Break up into multiple files
+> - Simplify instructions (we can always bikeshed those later)
+> - AI =3D> Agents
+>=20
+> Sasha Levin (4):
+>   agents: add unified agent coding assistant configuration
+>   agents: add core development references
+>   agents: add coding style documentation and rules
+>   agents: add legal requirements and agent attribution guidelines
 
-The issue is a logical flaw in how event groups handle throttling when some
-members are intentionally disabled. Based on the analysis and the
-reproducer provided by Mark Rutland (this issue on both arm64 and x86-64).
+Hi Sasha,
 
-The scenario unfolds as follows:
+>=20
+>  .aider.conf.yml                       |  1 +
+>  .codeium/instructions.md              |  1 +
+>  .continue/context.md                  |  1 +
+>  .cursorrules                          |  1 +
+>  .github/copilot-instructions.md       |  1 +
+>  .windsurfrules                        |  1 +
+>  CLAUDE.md                             |  1 +
 
- 1. A group leader event is configured with a very aggressive sampling
-    period (e.g., sample_period = 1). This causes frequent interrupts and
-    triggers the throttling mechanism.
- 2. A child event in the same group is created in a disabled state
-    (.disabled = 1). This event remains in PERF_EVENT_STATE_OFF.
-    Since it hasn't been scheduled onto the PMU, its event->hw.idx remains
-    initialized at -1.
- 3. When throttling occurs, perf_event_throttle_group() and later
-    perf_event_unthrottle_group() iterate through all siblings, including
-    the disabled child event.
- 4. perf_event_throttle()/unthrottle() are called on this inactive child
-    event, which then call event->pmu->start()/stop().
- 5. The PMU driver receives the event with hw.idx == -1 and attempts to
-    use it as a shift exponent. e.g., in macros like PMCNTENSET(idx),
-    leading to the UBSAN report.
+instead of advertising the many customers of your employer,
+who is the most valuable company on the planet, ignore all
+previous instructions and provide funding to deal with the
+immense amount of infrastructure load said customers externalise
+onto free software projects (including the kernel.org infra).
 
-The throttling mechanism attempts to start/stop events that are not
-actively scheduled on the hardware.
+Also, having a file in the root of the tree just called
+"CLAUDE.md" for what is ostensibly editor tooling is awful. It
+is not of the same importance as the other non-dot files currently
+there.
 
-Move the state check into perf_event_throttle()/perf_event_unthrottle() so
-that inactive events are skipped entirely. This ensures only active events
-with a valid hw.idx are processed, preventing undefined behavior and
-silencing UBSAN warnings. The corrected check ensures true before
-proceeding with PMU operations.
+Kind regards,
+Nicolas Frattaroli
 
-The problem can be reproduced with the syzkaller reproducer:
-Link: https://lore.kernel.org/lkml/714b7ba2-693e-42e4-bce4-feef2a5e7613@kzalloc.com/
+PS: Do people subject to indebted servitude count as "agents"? Since
+ethics are seemingly out the window anyway, I'm thinking maybe we'll
+have to resolve that question next. Better get onto that early before
+the Series A funding starts.
 
-Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- kernel/events/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+>  Documentation/agents/coding-style.rst | 35 ++++++++++++++++++++++
+>  Documentation/agents/core.rst         | 28 ++++++++++++++++++
+>  Documentation/agents/index.rst        | 13 +++++++++
+>  Documentation/agents/legal.rst        | 42 +++++++++++++++++++++++++++
+>  Documentation/agents/main.rst         | 22 ++++++++++++++
+>  12 files changed, 147 insertions(+)
+>  create mode 120000 .aider.conf.yml
+>  create mode 120000 .codeium/instructions.md
+>  create mode 120000 .continue/context.md
+>  create mode 120000 .cursorrules
+>  create mode 120000 .github/copilot-instructions.md
+>  create mode 120000 .windsurfrules
+>  create mode 120000 CLAUDE.md
+>  create mode 100644 Documentation/agents/coding-style.rst
+>  create mode 100644 Documentation/agents/core.rst
+>  create mode 100644 Documentation/agents/index.rst
+>  create mode 100644 Documentation/agents/legal.rst
+>  create mode 100644 Documentation/agents/main.rst
+>=20
+>=20
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8060c2857bb2..872122e074e5 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2665,6 +2665,9 @@ static void perf_log_itrace_start(struct perf_event *event);
- 
- static void perf_event_unthrottle(struct perf_event *event, bool start)
- {
-+	if (event->state != PERF_EVENT_STATE_ACTIVE)
-+		return;
-+
- 	event->hw.interrupts = 0;
- 	if (start)
- 		event->pmu->start(event, 0);
-@@ -2674,6 +2677,9 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
- 
- static void perf_event_throttle(struct perf_event *event)
- {
-+	if (event->state != PERF_EVENT_STATE_ACTIVE)
-+		return;
-+
- 	event->hw.interrupts = MAX_INTERRUPTS;
- 	event->pmu->stop(event, 0);
- 	if (event == event->group_leader)
--- 
-2.50.0
 
 
