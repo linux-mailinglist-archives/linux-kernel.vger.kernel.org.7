@@ -1,155 +1,298 @@
-Return-Path: <linux-kernel+bounces-765008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97392B22A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:21:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2091B22A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7EC1AA3AD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E7E1BC27BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193872DCC0B;
-	Tue, 12 Aug 2025 14:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A9B2E7BD9;
+	Tue, 12 Aug 2025 14:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="xunq7241"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OK/K6Fit"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDF32D29AA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 14:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784D828C036;
+	Tue, 12 Aug 2025 14:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755007823; cv=none; b=IogAi6+eOs3UmjYoz5wA6F/ksOLHIJwmcFplSUeMl39uW2tgrf4iI2uNrl0bnTHjtkDHgHZzNXcSCyanaAE5JfsQkbChV8FGxb6f95PJGeChbQRV1AeGHOJaxAOmngxcQKFzlVJky3GPXoy0cPxImGK+qVEPHtbVxPVlRRKMkiU=
+	t=1755007866; cv=none; b=e/Erwqb0HHqujHJ/36V/r23owaL++h7CKhOQeFLN/CbtIzLF5EQ1uFSa6JgkfIVwv6MNnG7QBn+ozC13YN0hiaeiN7g9qiVJx+K2Byb+UginMHhby4bBfeZ0RyWVNxc0IXJDvlbKAnYADStH9i41uU0UTsHgcrmtuz6WKPW0/5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755007823; c=relaxed/simple;
-	bh=8LfjAJHW+mfgXBUXql5OobxymMq4p4kqJvNiBeMWw4w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=oGDCC5isOgKsSYjXp6l8XdC87A/d8nPKKL1tqg7eDNA5eGYQRzqYFEsskexLo+I1dyka1UdlJluQQQZTWEVqwX+nSVhDIHbQUdnqAt3HpodVoznasciq8lXXAWhlDxfkXG1/tyV9/tk0xyARGR3vGKR1oJiQSs4S6wCHrleaBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=xunq7241; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1755007866; c=relaxed/simple;
+	bh=qMH3cTKgJh6SBVXlTLjeA7u07E/rJtuf9VbpMh50f8k=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=q8Q0YQ68nmV+3R8dC3eiIY3ugV6TuimUROGIZWNXG+RymAtVylDQC+OvcfOxiS+WllwHiJexO5RPgZYDSffRckV5Y6R2tBfXMOt/fgTu1znkd1seCxozGh2IpTierw3sJiEDCZgeIuIXj8XA2bcr387ZMKaWzFEZv3Shb59/X7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OK/K6Fit; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CAvgCP032241;
+	Tue, 12 Aug 2025 14:10:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6B+5/Kq0FGdDqjbr13nFxd
+	qyYfTIQYymlpG3JdXEwmQ=; b=OK/K6Fitl/1L1ACRH5446vmg4NOMFyYUBdYvEC
+	360i/fnklG1DTBPezxSXEdp2+KzM8Ef5E7pus8ulv8WNqc7EE6dDD2ATdW4AtU9P
+	cTxR4UKEaULXcbWIJaN+3gyVus7DOhc9jxQa5aGeYyoVGO64QhnRm4dZhj/G+RcD
+	XhZQGCpp6N8GOs2ceGvghSg8ZDKd89WQ3SvlVzVh1nfsKvaRonSXYnkKgmQuFGFs
+	WZimPee+9x7xD3QoKfr2WDDCOWforHH3FxKCHWZbYNQqdrSu60G0fl8cEw2AQp3j
+	6NnOiz8dfGku/hlhgAAXVkJWe1IHY4HjDDTb28FG76ywAo1w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vk9ac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 14:10:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57CEAkl2020552
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 14:10:46 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 12 Aug 2025 07:10:41 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH net-next v7 00/14] Add PPE driver for Qualcomm IPQ9574 SoC
+Date: Tue, 12 Aug 2025 22:10:24 +0800
+Message-ID: <20250812-qcom_ipq_ppe-v7-0-789404bdbc9a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1755007809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8au1BkNQCBnNySZYfiMEj46zoU7WWHs+Ju163gDFc6o=;
-	b=xunq7241M6hc19Bn3WAarEymwrckCDjykmgAvQZ4VQbsrTAClXRwweHiQoupA3SOzTdnI8
-	FZanaU4w22jwRoeytpngU5w8uLV7rdvFGZYDsZxbTUn3IaHEez09tTu1MiNOYtU4/+okcV
-	hAxO9R4FzzqnRUmgcOI+bHjHjcVFGMhusj8cgNFM6lW7fU/p5k2EztxCZ8RymMhPxPpI5f
-	lphtG9rMtLYs4vFZLko7nQWNTfLwpXVtY3z8P9Lz3ERwf/7JXkNzWAf1ENoXmhLmw2/qG6
-	7yoFHtpTcnm+XlsGz6oWcZSxY0CV916mhxpnQhUZFTZdoZBBfqtaf1sxz3e7rQ==
-Content-Type: multipart/signed;
- boundary=2acb74a24eb3823e8a8b290ffe7c02819ac18ce13497a3a8eecc3891ed83;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 12 Aug 2025 16:09:56 +0200
-Message-Id: <DC0ICB8ESISQ.1111XINSCI29S@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Nicolas Dufresne" <nicolas.dufresne@collabora.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
- "Detlev Casanova" <detlev.casanova@collabora.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>
-Cc: "Alex Bee" <knaerzche@gmail.com>, <linux-media@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <DC0FTXJNW0KB.3I8DLNHJVL21O@cknow.org>
- <DC0GRKB9V014.1J7A2PO1B7U8H@cknow.org>
- <816fa42715e8bc4bf538371975f97b6d102a74f5.camel@collabora.com>
-In-Reply-To: <816fa42715e8bc4bf538371975f97b6d102a74f5.camel@collabora.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFBLm2gC/12NQQ6DIBREr9KwLg2igHbVezSNUfzUvygiWGJjv
+ HsJm6YuJzPvzUYCeIRArqeNeIgYcLIpqPOJ6LGzT6A4pEw444KpQtFZT68W3dw6B1TJuhp6Xda
+ mq0hCnAeDa9bdiYWFWlgX8kjNiGGZ/Cf/RJH7rJRc/iujoIw2oh+07GsjjbnNb9Ro9SWtsirKH
+ 644O+Ay4VUHTaE5KztxwPd9/wIJl3hW8wAAAA==
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal
+	<quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>,
+        "Simon
+ Horman" <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook
+	<kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "Philipp
+ Zabel" <p.zabel@pengutronix.de>
+CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        Luo Jie
+	<quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755007841; l=8484;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=qMH3cTKgJh6SBVXlTLjeA7u07E/rJtuf9VbpMh50f8k=;
+ b=9GDcw4nZb91ZozoRO8bhod6tyNaQq+9ikeaOOoTcjC8cTgYru6TNXUNzSkPmU3OUdpWMHfx/4
+ 9VTMQkZIxckCew2/4GlBVjN92HIJZefpiL1qK2/yx82vQ2a7Abd2eCh
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfXy8I3NZS1Zx2C
+ Gpf/aLMFaODZBwa9j0OnKnChGXmy8ehxNXhB4u+3riPuRxZClDfMtITWCF4qZ3Agec7s4bnSxOF
+ Rs24Z6+qj8G7TIMDLAscjOl70UAhYaHGtdo8r1zpFVf5kA2PLUOcWnft8vgvC50oRcGtuSbARwr
+ xBLwxHXx4DF5bJcMtNrUyzaeLKc+Vm3yETrtPOjzSYupG7rUw6AbQZ9/NZjxEXkqPVVwx1qpEBa
+ McjurL8DZKEcJSSruNwTf7G6eGLwvjuIp9VEZtJaVsIls7yq21x6mi9/YNGI1Kr+aXwHL0lFG3r
+ 0a/3FPUIliBJ5yRBIVVdip0nLTJgJ/NbpdfXUvdp4XFLkk7Ke0k5Bi0AUDgzMJFR0LbWCvY+5Ib
+ VaE4b+T3
+X-Proofpoint-GUID: pRXJGHoM1k6CgH791KIzhFN-qS2iTJug
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689b4b67 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=z2GUvUhWd2_2b9YoxfUA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: pRXJGHoM1k6CgH791KIzhFN-qS2iTJug
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
---2acb74a24eb3823e8a8b290ffe7c02819ac18ce13497a3a8eecc3891ed83
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+The PPE (packet process engine) hardware block is available in Qualcomm
+IPQ chipsets that support PPE architecture, such as IPQ9574 and IPQ5332.
+The PPE in the IPQ9574 SoC includes six ethernet ports (6 GMAC and 6
+XGMAC), which are used to connect with external PHY devices by PCS. The
+PPE also includes packet processing offload capabilities for various
+networking functions such as route and bridge flows, VLANs, different
+tunnel protocols and VPN. It also includes an L2 switch function for
+bridging packets among the 6 ethernet ports and the CPU port. The CPU
+port enables packet transfer between the ethernet ports and the ARM
+cores in the SoC, using the ethernet DMA.
 
-On Tue Aug 12, 2025 at 3:27 PM CEST, Nicolas Dufresne wrote:
-> Le mardi 12 ao=C3=BBt 2025 =C3=A0 14:55 +0200, Diederik de Haas a =C3=A9c=
-rit=C2=A0:
->> On Tue Aug 12, 2025 at 2:11 PM CEST, Diederik de Haas wrote:
->> > On Sun Aug 10, 2025 at 11:24 PM CEST, Jonas Karlman wrote:
->> > > This series add a HEVC backend to the Rockchip Video Decoder driver.
->> > >=20
->> > > Patch 1 add the new HEVC backend.
->> > > Patch 2-3 add variants support to the driver.
->> > > Patch 4 add support for a rk3288 variant.
->> > > Patch 5 add a rk3328 variant to work around hw quirks.
->> > > Patch 6-7 add device tree node for rk3288.
->> >=20
->> > It looks like I had a previous version of linuxtv-rkvdec-hevc-v2 branc=
-h
->> > locally and that also had this commit:
->> > - media: rkvdec: Keep decoder clocks gated
->> >=20
->> > Is that one no longer needed/useful/etc ?
->> >=20
->> > And 'chewitt' also had a commit to fix 8/10-bit selection:
->> > https://github.com/chewitt/linux/commit/4b93b05d2ca608bc23f1d52bcc32df=
-926d435c7c
->> > "WIP: media: rkvdec: fix 8-bit/10-bit format selection"
->> >=20
->> > I haven't tried that one (yet), but did=C2=A0 try an other variant wit=
-h
->> > changing the ordering in rkvdec_hevc_decoded_fmts but that didn't work
->> > in my tests. (Can ofc be PEBKAC)
->> >=20
->> > Would that be useful? I do/did have consistent problems with playing
->> > 10-bit encoded video files.
->>=20
->> nvm about the 10-bit problem. It exists, but it's not restricted to HEVC
->> as it also exists with with H.264 files.
->
-> The referred patch is against some out-dated kernel. In mainline linux wi=
-th
-> have:
->
-> 	if (sps->bit_depth_luma_minus8 =3D=3D 0) {
-> 		if (sps->chroma_format_idc =3D=3D 2)
-> 			return RKVDEC_IMG_FMT_422_8BIT;
-> 		else
-> 			return RKVDEC_IMG_FMT_420_8BIT;
-> 	} else if (sps->bit_depth_luma_minus8 =3D=3D 2) {
-> 		if (sps->chroma_format_idc =3D=3D 2)
-> 			return RKVDEC_IMG_FMT_422_10BIT;
-> 		else
-> 			return RKVDEC_IMG_FMT_420_10BIT;
-> 	}
+This patch series is the first part of a three part series that will
+together enable Ethernet function for IPQ9574 SoC. While support is
+initially being added for IPQ9574 SoC, the driver will be easily
+extendable to enable Ethernet support for other IPQ SoC such as IPQ5332.
+The driver can also be extended later for adding support for L2/L3
+network offload features that the PPE can support. The functionality
+to be enabled by each of the three series (to be posted sequentially)
+is as below:
 
-That's indeed the code for H.264.
+Part 1: The PPE patch series (this series), which enables the platform
+driver, probe and initialization/configuration of different PPE hardware
+blocks.
 
-> Which covers all cases supporte by the hardware. Chewitt seem to add a
-> previously missing 10bit case, and forcing downconversion from 422 to 420=
-. A
-> downconversion is something to be chosen and applied by userspace, the ke=
-rnel
-> should pick a non-destructive format by default.
+Part 2: The PPE MAC patch series, which enables the phylink operations
+for the PPE ethernet ports.
 
-It's based on the 6.16 mainline kernel, but that patch is a 'fix' on a
-not (yet) accepted patch he added on top of that for HEVC. So it not
-working for me on H.264 must be from somewhere else in the/my stack.
+Part 3: The PPE EDMA patch series, which enables the Rx/Tx Ethernet DMA
+and netdevice driver for the 6 PPE ethernet ports.
 
-Sorry for the noise.
+A more detailed description of the functions enabled by part 1 is below:
+1. Initialize PPE device hardware functions such as buffer management,
+   queue management, scheduler and clocks in order to bring up PPE
+   device.
+2. Enable platform driver and probe functions
+3. Register debugfs file to provide access to various PPE packet
+   counters. These statistics are recorded by the various hardware
+   process counters, such as port RX/TX, CPU code and hardware queue
+   counters.
+4. A detailed introduction of PPE along with the PPE hardware diagram
+   in the first two patches (dt-bindings and documentation).
 
---2acb74a24eb3823e8a8b290ffe7c02819ac18ce13497a3a8eecc3891ed83
-Content-Type: application/pgp-signature; name="signature.asc"
+Below is a reference to an earlier RFC discussion with the community
+about enabling ethernet driver support for Qualcomm IPQ9574 SoC. This
+writeup can help provide a higher level architectural view of various
+other drivers that support the PPE such as clock and PCS drivers.
+Topic: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet.
+https://lore.kernel.org/linux-arm-msm/d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com/
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v7:
+- DT binding improvements:
+    * Remove the description "from NSS clock controller" for clocks and
+      resets properties.
+    * Update interconnect property descriptions to specify the use of
+      "bus interconnect path".
+    * Add item constraints for interrupt-names.
+    * Mark 'ethernet-ports' as the mandatory node name for switch ports
+      section.
+- Link to v6: https://lore.kernel.org/r/20250720-qcom_ipq_ppe-v6-0-4ae91c203a5f@quicinc.com
 
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaJtLOQAKCRDXblvOeH7b
-bs3HAQCxT5YbN/2lR7MNLL4Ut6pvl9wf/Pgc1qE3anE5JNfU7wEA9hiJInBMZsPp
-WQpNfZk10b6mmxacnf912uguESmwRgU=
-=rf9k
------END PGP SIGNATURE-----
+Changes in v6:
+- DT binding improvements:
+    * Add the missing ethernet-ports node.
+    * Update to use 'ethernet-port' as the port node name.
+    * Ensure the port node numbering is constrained appropriately.
+    * Enhance the commit message to add a brief overview of the switch schema
+      hierarchy and properties.
+- Refactor the RSS hash configuration code to eliminate redundant code.
+- Update copyright to remove year as per guidelines in all driver files.
+- Update 'M' to 'MHz' in the documentation patch for clarity.
+- Link to v5: https://lore.kernel.org/r/20250626-qcom_ipq_ppe-v5-0-95bdc6b8f6ff@quicinc.com
 
---2acb74a24eb3823e8a8b290ffe7c02819ac18ce13497a3a8eecc3891ed83--
+Changes in v5:
+- DT binding improvements:
+    * Update example by using clock & reset ID instead of magic number.
+    * Fix the duplicate '>' symbol.
+    * Convert the interrupt number to a fixed value and add the missing but
+      unused interrupts to complete the hardware description.
+    * Constraint the port node with clock and reset.
+- Add debugfs based queue drop counter.
+- Cosmetic update to commit messages to wrap the text correctly.
+- Link to v4: https://lore.kernel.org/r/20250513-qcom_ipq_ppe-v4-0-4fbe40cbbb71@quicinc.com
+
+Changes in v4:
+- Simplify statements regarding module load in documentation as per comments.
+- Improve data structure definitions for scheduler patch for clarity.
+- Replace u32p_replace_bits() with FIELD_MODIFY().
+- Enhance the comment of the PPE scheduler for BM and QM configurations.
+- Debugfs improvements:
+    *Remove print related macros and inline the code instead.
+    *Return error codes from register read/write wherever applicable.
+    *Split the hardware counter display file into separate files.
+- Link to v3: https://lore.kernel.org/r/20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com
+
+Changes in v3:
+- Add the top-level ref ethernet-switch.yaml and remove node definition
+  ethernet-ports in the DT binding file.
+- Remove unnecessary error message for devm_kzalloc().
+- Reverse the mapping of BM ceiling bits.
+- Fix multicast queue start/end configurations.
+- Declare the SoC-specific PPE configuration variables as const.
+- Fix kernel documentation errors.
+- Fix the compile errors reported by gcc-14.
+- Improve the commit message of L2 bridge initialization and debugfs patches.
+- Link to v2: https://lore.kernel.org/r/20250108-qcom_ipq_ppe-v2-0-7394dbda7199@quicinc.com
+
+Changes in v2:
+- Represent the PPE hardware hierarchy in dtbindings, add PPE hardware diagram.
+- Remove all SoC specific hardware properties from dtbindings since driver
+  maintains them.
+- Move out the PCS (UNIPHY) handling into a separate PCS driver posted
+  separately at below.
+  https://lore.kernel.org/all/20250108-ipq_pcs_net-next-v4-0-0de14cd2902b@quicinc.com
+- Move out the PPE MAC patches into a separate series to limit patch count to
+  15 or less. (PPE MAC patches will be posted sequentially after this series).
+- Rename the hardware initialization related files from ppe_ops.c[h] to
+  ppe_config.c[h]
+- Improve PPE driver documentation and diagram.
+- Fix dtbinding check errors.
+- Link to v1: https://lore.kernel.org/r/20240110114033.32575-1-quic_luoj@quicinc.com
+
+---
+Lei Wei (2):
+      docs: networking: Add PPE driver documentation for Qualcomm IPQ9574 SoC
+      net: ethernet: qualcomm: Initialize PPE L2 bridge settings
+
+Luo Jie (12):
+      dt-bindings: net: Add PPE for Qualcomm IPQ9574 SoC
+      net: ethernet: qualcomm: Add PPE driver for IPQ9574 SoC
+      net: ethernet: qualcomm: Initialize PPE buffer management for IPQ9574
+      net: ethernet: qualcomm: Initialize PPE queue management for IPQ9574
+      net: ethernet: qualcomm: Initialize the PPE scheduler settings
+      net: ethernet: qualcomm: Initialize PPE queue settings
+      net: ethernet: qualcomm: Initialize PPE service code settings
+      net: ethernet: qualcomm: Initialize PPE port control settings
+      net: ethernet: qualcomm: Initialize PPE RSS hash settings
+      net: ethernet: qualcomm: Initialize PPE queue to Ethernet DMA ring mapping
+      net: ethernet: qualcomm: Add PPE debugfs support for PPE counters
+      MAINTAINERS: Add maintainer for Qualcomm PPE driver
+
+ .../devicetree/bindings/net/qcom,ipq9574-ppe.yaml  |  533 +++++
+ .../networking/device_drivers/ethernet/index.rst   |    1 +
+ .../device_drivers/ethernet/qualcomm/ppe/ppe.rst   |  194 ++
+ MAINTAINERS                                        |    8 +
+ drivers/net/ethernet/qualcomm/Kconfig              |   15 +
+ drivers/net/ethernet/qualcomm/Makefile             |    1 +
+ drivers/net/ethernet/qualcomm/ppe/Makefile         |    7 +
+ drivers/net/ethernet/qualcomm/ppe/ppe.c            |  239 +++
+ drivers/net/ethernet/qualcomm/ppe/ppe.h            |   39 +
+ drivers/net/ethernet/qualcomm/ppe/ppe_config.c     | 2034 ++++++++++++++++++++
+ drivers/net/ethernet/qualcomm/ppe/ppe_config.h     |  317 +++
+ drivers/net/ethernet/qualcomm/ppe/ppe_debugfs.c    |  847 ++++++++
+ drivers/net/ethernet/qualcomm/ppe/ppe_debugfs.h    |   16 +
+ drivers/net/ethernet/qualcomm/ppe/ppe_regs.h       |  591 ++++++
+ 14 files changed, 4842 insertions(+)
+---
+base-commit: bc4c0a48bdad7f225740b8e750fdc1da6d85e1eb
+change-id: 20250717-qcom_ipq_ppe-7684dbc38fa4
+
+Best regards,
+-- 
+Luo Jie <quic_luoj@quicinc.com>
+
 
