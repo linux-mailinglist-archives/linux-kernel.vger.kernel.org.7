@@ -1,109 +1,279 @@
-Return-Path: <linux-kernel+bounces-764152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73130B21EA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:57:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E26B21EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 854E31AA2BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:57:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6D77AA265
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11C29BDA0;
-	Tue, 12 Aug 2025 06:57:17 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089962BCF47;
+	Tue, 12 Aug 2025 06:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RMrkyik1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/PquIW72";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RMrkyik1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/PquIW72"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACF229A30D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70123C2C9
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754981837; cv=none; b=t10P7htNLjBWUV2l0mrvkRMB8fD5ji/mtPqj/GWYiK505vlhECmbWzGEasHEQ41OvBCwfBASfibYLvDD0gUHoj+0/sn7Vbh0BG4ecTHW39rzNj8C2Nu6F5l52fGEKUyTcKmq1bfSnQQlntCLXnz+ZPbZb8OQU1zvouj4TpKd6zM=
+	t=1754981948; cv=none; b=ea2N1ba3z3gD1hlBxAeYDmTsTPWfWlYhCZIwuN74T0HVarH5lJtRSqd5izPz9aWeiGcpJZuG0DT6ol3XrhkjPTpY7eiFiAvE5KxwLaUnNGOtl8qwvDkP2dqJ4F87BNg9PIkEIZrRNB42pxFD8mpNCC2TpwNI8YPK9Hiu2qexRLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754981837; c=relaxed/simple;
-	bh=Zqj3rfGFk2cIji8pWhQUoFLjx5k6yHtxC9iWrwTB0h0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=aVTrfGFrJ6HUzQfE4jqfNavvIwvgKmOyqN2kWwRo50s6I68na2roJOq8dEDdPVdLc2GHKUnekzA/wnjYSvhgJJt45SmXEUeiln8iOiPMAoAQJnrp2T3nirtkxrHOY1TJGY0rSlD8YmmTXIR616FcUvmN2fmkAUgJNUGijtjaETw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 71B812CFC9E;
-	Tue, 12 Aug 2025 08:57:10 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id DZXKfu6zHe_N; Tue, 12 Aug 2025 08:57:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 2FC222CFCA2;
-	Tue, 12 Aug 2025 08:57:09 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UyyYftYaZDx0; Tue, 12 Aug 2025 08:57:09 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id E9B322CFC9E;
-	Tue, 12 Aug 2025 08:57:08 +0200 (CEST)
-Date: Tue, 12 Aug 2025 08:57:08 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: chengzhihao1 <chengzhihao1@huawei.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Alvin Zhou <alvinzhou@mxic.com.tw>, leoyu@mxic.com.tw, 
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Message-ID: <152133202.103367.1754981828821.JavaMail.zimbra@nod.at>
-In-Reply-To: <20250812051949.983040-1-linchengming884@gmail.com>
-References: <20250812051949.983040-1-linchengming884@gmail.com>
-Subject: Re: [RFC] mtd: ubi: skip programming unused bits in ubi headers
+	s=arc-20240116; t=1754981948; c=relaxed/simple;
+	bh=TLq5M/mc6fxqOeoLjp+2eQHZWF4OBZSaQQWvLUxNxSs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ITSjbBNi8xklIRUtLwXbL3JnJeXB6lHIagqLvw+/1ozLvcT9G6kZDR9v05XjinPiZ8a7E7etWy2c54vnEmbEehT5jKSYaiK3oeer2cO3NFb+Gvj4utUl85AnrAkSPQLWCW8Loa5jpMRrHowsOjyo9Wk5+HpGvkxIzRF/0gwzROw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RMrkyik1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/PquIW72; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RMrkyik1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/PquIW72; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8663A2174F;
+	Tue, 12 Aug 2025 06:59:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754981944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MZhpgNEEjBSLHO+jCd6inXzbaJT2Rb8vaB59NJtE9XA=;
+	b=RMrkyik1HIVZkdMcvpuw3oBPW4SUHbNB0lvP/ANnMnxLZSZcUSdddBMaqukfm5ksbO3eTa
+	kCy5xRgKPauLSYcxVQ4bx41tfG6dOWrjXswUtHBJ0qYEDUCCGUdlS6tgmjptq5Xl6Cucm0
+	GDAyYeJ0Gr7P3qT2bVBlN7hX0leUALQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754981944;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MZhpgNEEjBSLHO+jCd6inXzbaJT2Rb8vaB59NJtE9XA=;
+	b=/PquIW72ma7MbE9eTcJEVretlH8RtNHX1gjAUuRmslCGlOD/faK7/OEVZb4N3ggAyXKl82
+	4LwnwSo7mUk6DmCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RMrkyik1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/PquIW72"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754981944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MZhpgNEEjBSLHO+jCd6inXzbaJT2Rb8vaB59NJtE9XA=;
+	b=RMrkyik1HIVZkdMcvpuw3oBPW4SUHbNB0lvP/ANnMnxLZSZcUSdddBMaqukfm5ksbO3eTa
+	kCy5xRgKPauLSYcxVQ4bx41tfG6dOWrjXswUtHBJ0qYEDUCCGUdlS6tgmjptq5Xl6Cucm0
+	GDAyYeJ0Gr7P3qT2bVBlN7hX0leUALQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754981944;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MZhpgNEEjBSLHO+jCd6inXzbaJT2Rb8vaB59NJtE9XA=;
+	b=/PquIW72ma7MbE9eTcJEVretlH8RtNHX1gjAUuRmslCGlOD/faK7/OEVZb4N3ggAyXKl82
+	4LwnwSo7mUk6DmCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 542DC1351A;
+	Tue, 12 Aug 2025 06:59:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UqT7Ejjmmmh2TgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 12 Aug 2025 06:59:04 +0000
+Date: Tue, 12 Aug 2025 08:59:03 +0200
+Message-ID: <87qzxhyqiw.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] ALSA: usb-audio: us144mkii: Add MIDI support and mixer controls
+In-Reply-To: <20250810124958.25309-6-ramiserifpersia@gmail.com>
+References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
+	<20250810124958.25309-6-ramiserifpersia@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
-Thread-Topic: skip programming unused bits in ubi headers
-Thread-Index: VhBWjQYhkWEhcaAAxAB74s5JC7o1Cw==
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 8663A2174F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Cheng Ming Lin" <linchengming884@gmail.com>
-> An: "richard" <richard@nod.at>, "chengzhihao1" <chengzhihao1@huawei.com>,=
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
-> "Vignesh Raghavendra" <vigneshr@ti.com>, "linux-mtd" <linux-mtd@lists.inf=
-radead.org>, "linux-kernel"
-> <linux-kernel@vger.kernel.org>
-> CC: "Alvin Zhou" <alvinzhou@mxic.com.tw>, leoyu@mxic.com.tw, "Cheng Ming =
-Lin" <chengminglin@mxic.com.tw>
-> Gesendet: Dienstag, 12. August 2025 07:19:49
-> Betreff: [RFC] mtd: ubi: skip programming unused bits in ubi headers
+On Sun, 10 Aug 2025 14:49:56 +0200,
+©erif Rami wrote:
+> +/**
+> + * @brief Text descriptions for playback output source options.
+> + *
+> + * Used by ALSA kcontrol elements to provide user-friendly names for
+> + * the playback routing options (e.g., "Playback 1-2", "Playback 3-4").
+> + */
+> +static const char *const playback_source_texts[] = { "Playback 1-2",
+> +						     "Playback 3-4" };
+> +
+> +/**
+> + * @brief Text descriptions for capture input source options.
+> + *
+> + * Used by ALSA kcontrol elements to provide user-friendly names for
+> + * the capture routing options (e.g., "Analog In", "Digital In").
+> + */
+> +static const char *const capture_source_texts[] = { "Analog In", "Digital In" };
+> +
+> +/**
+> + * tascam_playback_source_info() - ALSA control info callback for playback
+> + * source.
+> + * @kcontrol: The ALSA kcontrol instance.
+> + * @uinfo: The ALSA control element info structure to fill.
+> + *
+> + * This function provides information about the enumerated playback source
+> + * control, including its type, count, and available items (Playback 1-2,
+> + * Playback 3-4).
+> + *
+> + * Return: 0 on success.
+> + */
+> +static int tascam_playback_source_info(struct snd_kcontrol *kcontrol,
+> +				       struct snd_ctl_elem_info *uinfo)
+> +{
+> +	return snd_ctl_enum_info(uinfo, 1, 2, playback_source_texts);
+> +}
+> +
+> +/**
+> + * tascam_line_out_get() - ALSA control get callback for Line Outputs Source.
+> + * @kcontrol: The ALSA kcontrol instance.
+> + * @ucontrol: The ALSA control element value structure to fill.
+> + *
+> + * This function retrieves the current selection for the Line Outputs source
+> + * (Playback 1-2 or Playback 3-4) from the driver's private data and populates
+> + * the ALSA control element value.
+> + *
+> + * Return: 0 on success.
+> + */
+> +static int tascam_line_out_get(struct snd_kcontrol *kcontrol,
+> +			       struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
+> +
+> +	ucontrol->value.enumerated.item[0] = tascam->line_out_source;
+> +	return 0;
+> +}
+> +
+> +/**
+> + * tascam_line_out_put() - ALSA control put callback for Line Outputs Source.
+> + * @kcontrol: The ALSA kcontrol instance.
+> + * @ucontrol: The ALSA control element value structure containing the new value.
+> + *
+> + * This function sets the Line Outputs source (Playback 1-2 or Playback 3-4)
+> + * based on the user's selection from the ALSA control element. It validates
+> + * the input and updates the driver's private data.
+> + *
+> + * Return: 1 if the value was changed, 0 if unchanged, or a negative error code.
+> + */
+> +static int tascam_line_out_put(struct snd_kcontrol *kcontrol,
+> +			       struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
+> +
+> +	if (ucontrol->value.enumerated.item[0] > 1)
+> +		return -EINVAL;
+> +	if (tascam->line_out_source == ucontrol->value.enumerated.item[0])
+> +		return 0;
+> +	tascam->line_out_source = ucontrol->value.enumerated.item[0];
+> +	return 1;
+> +}
+> +
+> +/**
+> + * tascam_line_out_control - ALSA kcontrol definition for Line Outputs Source.
+> + *
+> + * This defines a new ALSA mixer control named "Line OUTPUTS Source" that allows
+> + * the user to select between "Playback 1-2" and "Playback 3-4" for the analog
+> + * line outputs of the device. It uses the `tascam_playback_source_info` for
+> + * information and `tascam_line_out_get`/`tascam_line_out_put` for value
+> + * handling.
+> + */
+> +static const struct snd_kcontrol_new tascam_line_out_control = {
+> +	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+> +	.name = "Line OUTPUTS Source",
 
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
->=20
-> This patch prevents unnecessary programming of bits in ec_hdr and
-> vid_hdr that are not used or read during normal UBI operation. These
-> unused bits are typically already set to 1 in erased flash and do not
-> need to be explicitly programmed to 0 if they are not used.
->=20
-> Programming such unused areas offers no functional benefit and may
-> result in unnecessary flash wear, reducing the overall lifetime of the
-> device. By skipping these writes, we preserve the flash state as much
-> as possible and minimize wear caused by redundant operations.
+The control name is always a difficult question.
+For following the standards, it'd be better to be a name like
+"Line Playback Source" (i.e. prefix + direction + suffix where
+direction is either "Playback" or "Capture").
 
-We talk about programming a single (sub)page, right?
+> +static const struct snd_kcontrol_new tascam_digital_out_control = {
+> +	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+> +	.name = "Digital OUTPUTS Source",
 
-> This change ensures that only necessary fields are written when
-> preparing UBI headers, improving flash efficiency without affecting
-> functionality.
+Ditto.
 
-I have been told that writing 0xFF bytes to NAND should be avoided.
-This is also why UBI initializes them to 0x00.
+> +static const struct snd_kcontrol_new tascam_capture_12_control = {
+> +	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+> +	.name = "ch1 and ch2 Source",
 
-Do you have data which proves the opposite?
+This should be "... Capture Source", then, and what comes at the
+prefix is another difficult question.  I find better to have capital
+letters, or combine like "Ch1/2 Capture Source".
 
-Thanks,
-//richard
+> +static const struct snd_kcontrol_new tascam_capture_34_control = {
+> +	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+> +	.name = "ch3 and ch4 Source",
+
+Ditto.
+
+> +static int tascam_samplerate_get(struct snd_kcontrol *kcontrol,
+> +				 struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct tascam_card *tascam =
+> +		(struct tascam_card *)snd_kcontrol_chip(kcontrol);
+> +	u8 *buf __free(kfree);
+
+Don't forget NULL initialization.
+
+
+thanks,
+
+Takashi
 
