@@ -1,141 +1,346 @@
-Return-Path: <linux-kernel+bounces-764554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05526B22469
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C28CB22479
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12890162503
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA56B16EB7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860EF2EAD01;
-	Tue, 12 Aug 2025 10:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911142EB5CD;
+	Tue, 12 Aug 2025 10:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WE0bWRih"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b78rUotk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91916189F5C;
-	Tue, 12 Aug 2025 10:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4102EAD0E;
+	Tue, 12 Aug 2025 10:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993910; cv=none; b=XFq0zyjYYwbOHtXKznNG2q8iR1MH+P45CMgI0NokTNP98IvXIf+UPOPmlYMixkUtPSMUKV6x7cHJCWj0KTYofPpKdJ7yH6BRmHbamv3pbvDvAumeIwUm5vtdwfwzDLRHE3u28Db9QyahJ8tbyYB2FN7tQq2tcTdyyLIYwwMhwL8=
+	t=1754994119; cv=none; b=n9uzNk/gKnwCnol9McLE6AFPijfS+8twCccU8wN7zXmhLi13hR2RNBnavyuE6idSiqhHgrYfmaWk4Too+Z7wmWybAuGQboZTsVmilp9YXU86yhMCZBDhnBCeiM91FojVoVwIY6yobp0G78PNJ0NJCBydz8lbvlt7Hn1w312WoEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993910; c=relaxed/simple;
-	bh=Bz6TBG3gxi8FiG+ibhXuB9So8hkRyyvwLQokIXq0rxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sEQCpswKhHGPzFIQE3SJcnLlR3vlnyyAfIQYjQl2ohzGrltDe76f1OHTHKLlIv+U7Sj2G0pnT862f8/E01z73v0ums8qjEVnBE/74h0tMAVy2lSgbFbHf4wkuAZVt1ePwQub+6uFNK7KGYXcR8ZI+W3i3JmRXMmvp5GUbmBqEDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WE0bWRih; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-306ab1b63fdso3086259fac.1;
-        Tue, 12 Aug 2025 03:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754993907; x=1755598707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eg4wE+5PRG/8bGt1RO7F5F4ItHMVKsy6gTMOPz3mUNw=;
-        b=WE0bWRihZc/iOs7NtYy6RycVDFNSnu+Jfof89aWu7W6V8UU/VJBlTvgLXy1Pm7NXrr
-         J0vD5YP1fDLvlwvWjrZVrVboN1rL2slGoyHVypmcjbAr1ZHv1XzqtugQV3vVQZfiZKXw
-         eiLl6QRlMhXhhTFFKGGtVS+Nkq4yhJO5ilgvLtCXF+Gvxh8OapKyD+0RrrjDRrVFh4OY
-         WP3ofeCyA5DUXDGOzbP/N1jpmziaIMjJBSH1uk6uukAKA2Ws0tB3THIyPUFVBwveCB+9
-         EYj6xBqfcwt0vncgIHgoUrM7KGs2jXYymSeUJyappj7NezprVZ1Ck4/ogMzqTnWDjVR6
-         kjvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754993907; x=1755598707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eg4wE+5PRG/8bGt1RO7F5F4ItHMVKsy6gTMOPz3mUNw=;
-        b=brJG/6B2Dcpj0fqsvgXUfFfsRKY1Ske4f+RXkavoT1xxO9lmkig0iFzdYA5a1K9FdV
-         8hOJZGeqwl3T//NlbOC6bsM/M9UtYU6XDNdqrTpebYleDAVQEQdfi7cU/mmZS6NbcRfl
-         7zNfDdA2NkWnqiIoOSes5DQylQOmc9YvR5dZgSaSY+pt1RXvt5ZRDaXy3etonH2Sqr5t
-         wkdWi6TEbOAu9c9Y3xBWmfrdhP/L7ar9DvVcQRYRCaF9uFlsURLR7jeo3VO+dhWxQ/V/
-         zOtPp0cNRxBpim/F28k5xJlOKOc4xOMVQhq37p5XhXLnZO2RubpmWTg790vY44R5Yh+M
-         vE0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVQaO37efQRZy/PRRfzwSIAcbbc+5BPyEKhRhy+20W6ZRm+flMGmAJ9VImY6D8w2mlXDIY=@vger.kernel.org, AJvYcCVveid3GkeJcCVQ1JhwYqOsYRGLwEw/KYTQLMYMgLZP3P/DYlI86andbVuUjmGcRVdTwhl7+CNHGpilfB0S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxanjTki+wMLOL388dVI4tLx74FxA4TEj2U6DnXNKdkCbIDCDLE
-	WSrfXy4HIhdfOS9oDivXqWcgz4Cif1ym6h5v8D+lyi9KzsZhl40kq1AuACzLtqJimY8AU3siUio
-	RJ1jq1dCuNbQbqhB0Ztm8HWu0HsRUkhk=
-X-Gm-Gg: ASbGncvXLET6CwSaHB498QJnXPM5egMBAwUv5nDL15JKzLYVLXtMmN45a49vvpJc5ln
-	T9UczHmWdkCPAkXJpKDcg7AC2P3uEQHfuVbzcIlS1i6BqlEzEqysFm7VrPbnsG+9B5m0N5tokf/
-	DHeZp8zeJMDnlZDbwGY9ISD7U2OM38i/4ri9FZVwvGHDFpGCbOjRS2d/3BCN04+LoLmfC1z/zmc
-	CLLidY=
-X-Google-Smtp-Source: AGHT+IHA0Xv5J7+oGM+5EIMa/TgKIPqiKF/W6nLtsDXM/L8bTAhhbxwmGZWD74HIRPitMmLb2XvWetVleZJfdJfBL94=
-X-Received: by 2002:a05:6871:6205:b0:2c1:ac88:4a8d with SMTP id
- 586e51a60fabf-30c21152297mr10911149fac.30.1754993907541; Tue, 12 Aug 2025
- 03:18:27 -0700 (PDT)
+	s=arc-20240116; t=1754994119; c=relaxed/simple;
+	bh=Dj/MOQ1+urIXNRd/7BWQT3KAk/oGZYIeXl2/1/7+vM8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cJF2ST7JBmuT4Vegj3L7oy6B0u0Yz2nKyd/NGjkUMPpb89hOVZJeXzvcM1EFU83WbaVXnxnprlpehofflnGFiBlpahJDZMTmf16arJ1ANuMq29iGEYjSgGHXnB8sMCSXn2+8G+RP6BKhpho31YfPWXw4RM7V29Ik/NkJxSzXiho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b78rUotk; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754994117; x=1786530117;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=Dj/MOQ1+urIXNRd/7BWQT3KAk/oGZYIeXl2/1/7+vM8=;
+  b=b78rUotkNeAwqB6aXkJ2GiQwVcfBfT/WtqkBKmYRSqBGPI34Nddgs17u
+   1yQWR0/ScqOUz8WXwCL8GTmCrsFH7njyJLcdzP2gi4F9hiVqZkuILbiPg
+   SHyvNTWIpKUOt3Hz4pRQz8Zx0zkBu+cD2HT5wLk+zIs3j23NZr0ci+uWU
+   6iOtITrxLkxrp2b4qVdxSWSLVLxvJRSvqnkQAz2ftW1HATerbUZPuX5TC
+   5MFmz4+qxIli7+Ui+4cMPPABuDbzu9OImwwAm2RO3F2Ha+AL3G/8KBvRL
+   sEPNKOMERN9AajYElVGkT9PDVJRy7zQe+OQYNthFeI6FxftwPbdOYr86U
+   A==;
+X-CSE-ConnectionGUID: 3vR4uffwRn2cTE5IPLZEFA==
+X-CSE-MsgGUID: 0YcYYsZ/RUKLhHQrBL+Urg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67865982"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="67865982"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 03:21:56 -0700
+X-CSE-ConnectionGUID: qzXG4LUpSGyCeRGlnMsMcA==
+X-CSE-MsgGUID: oqv7yFxKQxSvucXaJGiFiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="170364989"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.96])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 03:21:53 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 12 Aug 2025 13:21:49 +0300 (EEST)
+To: Ron Li <xiangrongl@nvidia.com>
+cc: Herbert Xu <herbert@gondor.apana.org.au>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+    Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
+    Khalil Blaiech <kblaiech@nvidia.com>, 
+    David Thompson <davthompson@nvidia.com>, 
+    "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1] platform/mellanox: Add mlxbf_pka driver for BlueField
+ Soc
+In-Reply-To: <BYAPR12MB30155B51CFA7F8665CAAA504A928A@BYAPR12MB3015.namprd12.prod.outlook.com>
+Message-ID: <22f3b2c5-517f-5bcf-157d-3ade74cba548@linux.intel.com>
+References: <20250515193234.2436452-1-xiangrongl@nvidia.com> <c85784ee-5f06-6d7a-377e-07db7af8bd35@linux.intel.com> <BYAPR12MB30155B51CFA7F8665CAAA504A928A@BYAPR12MB3015.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806081051.3533470-1-hugoolli@tencent.com>
- <aJOc8vIkds_t3e8C@google.com> <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
- <aJTytueCqmZXtbUk@google.com> <CAAdeq_+wLaze3TVY5To8_DhE_S9jocKn4+M9KvHp0Jg8pT99KQ@mail.gmail.com>
- <aJobIRQ7Z4Ou1hz0@google.com> <6a1d61925118b93badc777c2b9282d190c55a32b.camel@infradead.org>
-In-Reply-To: <6a1d61925118b93badc777c2b9282d190c55a32b.camel@infradead.org>
-From: hugo lee <cs.hugolee@gmail.com>
-Date: Tue, 12 Aug 2025 18:18:16 +0800
-X-Gm-Features: Ac12FXxGLATZGJ7RoDOdiXtGF_l2O8hV2IV1qNheuXDCF9NpwqbqYPnaHVon3C0
-Message-ID: <CAAdeq_KUjUFz0y5rspoWLonxnh8C06NV5Dn4pGuuYPPaFJJ6XQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when irqchip=split
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yuguo Li <hugoolli@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; BOUNDARY="8323328-1565688773-1754992195=:995"
+Content-ID: <15eb6b0a-ad53-2ca1-05f2-f2844dc299ca@linux.intel.com>
 
-On Tue, Aug 12, 2025 at 5:39=E2=80=AFPM David Woodhouse <dwmw2@infradead.or=
-g> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1565688773-1754992195=:995
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <fc783fc7-1d87-04a2-4ce6-cb6a75d5e58a@linux.intel.com>
+
+On Mon, 11 Aug 2025, Ron Li wrote:
+
+> Hi Ilpo,
+> I have answers for three of the review questions. You can search for "Ron=
+ Answer" to locate them.
+
+Next time if the mail is long, please trim the response to only contain=20
+the relevant parts of the exchange so you won't even need to mark them=20
+like that. :-)
+
+> All the other review questions have been fixed in the patch v2.
 >
-> On Mon, 2025-08-11 at 09:32 -0700, Sean Christopherson wrote:
-> > On Fri, Aug 08, 2025, hugo lee wrote:
-> > > On Fri, Aug 8, 2025, Sean Christopherson <seanjc@google.com> wrote:
-> > > >
-> > > > On Thu, Aug 07, 2025, hugo lee wrote:
-> > > > > On Thu, Aug 7, 2025 Sean Christopherson wrote:
-> > > > > >
-> > > > > > On Wed, Aug 06, 2025, Yuguo Li wrote:
-> > > > > > > When using split irqchip mode, IOAPIC is handled by QEMU whil=
-e the LAPIC is
-> > > > > > > emulated by KVM.  When guest disables LINT0, KVM doesn't exit=
- to QEMU for
-> > > > > > > synchronization, leaving IOAPIC unaware of this change.  This=
- may cause vCPU
-> > > > > > > to be kicked when external devices(e.g. PIT)keep sending inte=
-rrupts.
-> > > > > >
-> > > > > > I don't entirely follow what the problem is.  Is the issue that=
- QEMU injects an
-> > > > > > IRQ that should have been blocked?  Or is QEMU forcing the vCPU=
- to exit unnecessarily?
-> > > > > >
-> > > > >
-> > > > > This issue is about QEMU keeps injecting should-be-blocked
-> > > > > (blocked by guest and qemu just doesn't know that) IRQs.
-> > > > > As a result, QEMU forces vCPU to exit unnecessarily.
-> > > >
-> > > > Is the problem that the guest receives spurious IRQs, or that QEMU =
-is forcing
-> > > > unnecesary exits, i.e hurting performance?
-> > > >
+> > -----Original Message-----
+> > From: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Sent: Friday, May 16, 2025 5:20 AM
+> > To: Ron Li <xiangrongl@nvidia.com>; Herbert Xu
+> > <herbert@gondor.apana.org.au>; David S. Miller <davem@davemloft.net>;
+> > linux-crypto@vger.kernel.org
+> > Cc: Hans de Goede <hdegoede@redhat.com>; Vadim Pasternak
+> > <vadimp@nvidia.com>; Khalil Blaiech <kblaiech@nvidia.com>; David
+> > Thompson <davthompson@nvidia.com>; platform-driver-
+> > x86@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>
+> > Subject: Re: [PATCH v1] platform/mellanox: Add mlxbf_pka driver for Blu=
+eField
+> > Soc
+> >=20
+> > External email: Use caution opening links or attachments
+> >=20
+> >=20
+> > On Thu, 15 May 2025, Ron Li wrote:
+> >=20
+> > > Add the mlxbf_pka driver to support the BlueField SoC Public Key
+> > > Acceleration (PKA) hardware. The PKA provides a simple, complete
+> > > framework for crypto public key hardware offload. It supports direct
+> > > access to the public key hardware resources from the user space, and
+> > > makes available several arithmetic operations: some basic operations
+> > > (e.g., addition and multiplication), some complex operations (e.g.,
+> > > modular exponentiation and modular inversion), and high-level
+> > > operations such as RSA, Diffie-Hallman, Elliptic Curve Cryptography,
+> > > and the Federal Digital Signature Algorithm (DSA as documented in
+> > > FIPS-186) public-private key systems.
 > > >
-> > > It is QEMU is forcing unnecessary exits which will hurt performance b=
-y
-> > > trying to require the Big QEMU Lock in qemu_wait_io_event.
-> >
-> > Please elaborate on the performance impact and why the issue can't be s=
-olved in
-> > QEMU.
->
-> Is there a corresponding QEMU patch to use this new exit reason?
+> > > The PKA driver initializes the PKA hardware interface and implements
+> > > file operations so that user space libraries can bypass the kernel an=
+d
+> > > have direct access to a specific set of device registers. The Arm cor=
+es
+> > > interface to the PKA hardware through rings and a 64KB memory known a=
+s
+> > > Window RAM. There are multiple PKA devices on the BlueField SoC. In
+> > > general, each PKA device has 4 rings, 1 window RAM and 1 True Random
+> > > Number Generator (TRNG). Thus, the driver has been designed to probe
+> > > each PKA and each individual ring inside a given PKA. It also registe=
+rs
+> > > the TRNG to feed the kernel entropy (i.e., /dev/hwrng). To implement
+> > > such design, the driver creates individual device files for each ring
+> > > and TRNG module. The ring device files are identified using their ids=
+,
+> > > i.e., /dev/mlxbf_pka/<ring_id>.
+> > >
+> > > The main driver logic such as probe() and remove() are implemented in
+> > > mlxbf_pka_drv.c. The PKA ring device operations are also implemented =
+in
+> > > this source file, such as open(), release() and mmap().
+> > >
+> > > The mlxbf_pka_dev.c source file implements functions to operate the
+> > > underlying PKA hardware, such as TRNG operation, PKA hardware I/O
+> > > access, PKA memory resource operation, etc.
+> > >
+> > > The PKA driver is a lighweight driver that implements file operations
+> > > and map memory regions of the PKA hardware to user space drivers and
+> > > libraries. There is no in-kernel crypto support. Therefore, the PKA
+> > > driver is included under drivers/platform/mellanox.
+> > >
+> > > Testing
+> > >
+> > > - Successful build of kernel for ARM64.
+> > >
+> > > - Tested ARM64 build on several Mellanox BlueField 2 and 3 SoC boards
+> > > that include the PKA hardware. The testing includes the validation of
+> > > the PKA hardware execution, random number generation and public key
+> > > acceleration performance.
+> >=20
+> > Hi,
+> >=20
+> > We've the in-kernel crypto framework but I don't see any attempt to bui=
+ld
+> > into that framework AFAICT. Why is that? You brush it off as "The PKA
+> > driver is a lightweight driver ..." but lets see if the crypto people
+> > agree with that approach (I added them).
+> >=20
+> > (Please also Cc crypto people in any further submission.)
 
-No, but the patch is done and will be submitted soon.
+I don't see crypto people Cc'ed in v2 :-(.
+
+> > > +     ring->ring_info->cmmd_base =3D cmd_desc_ring_base;
+> >=20
+> > Is cmmd a typo?
+> >=20
+> Ron Answer: This is from the PKA IP document description:
+> Command ring base address control words (RING_CMMD_BASE_0 =E2=80=A6 _n).
+
+Hmm, is that document consistent in shortening "command" to "cmmd"? It=20
+feel quite untypical and might be a typo in that document too.
+
+If it looks inconsistent in that document, my suggestion is to use=20
+cmd_base and add a comment where you define ring_info's struct to map it=20
+into the RING_CMMD_BASE_0 spelling in the document.
+
+> > > +             /* Check test status bits. */
+> > > +             csr_reg_off =3D mlxbf_pka_dev_get_register_offset(csr_r=
+eg_base,
+> > > +                                                             MLXBF_P=
+KA_TRNG_INTACK_ADDR);
+> > > +             if (status & MLXBF_PKA_TRNG_STATUS_MONOBIT_FAIL) {
+> > > +                     mlxbf_pka_dev_io_write(csr_reg_ptr, csr_reg_off=
+,
+> > > +                                            MLXBF_PKA_TRNG_STATUS_MO=
+NOBIT_FAIL);
+> > > +                     *monobit_fail_cnt +=3D 1;
+> > > +             } else if (status & MLXBF_PKA_TRNG_STATUS_RUN_FAIL) {
+> > > +                     mlxbf_pka_dev_io_write(csr_reg_ptr, csr_reg_off=
+,
+> > > +                                            MLXBF_PKA_TRNG_STATUS_RU=
+N_FAIL);
+> > > +                     *run_fail_cnt +=3D 1;
+> > > +             } else if (status & MLXBF_PKA_TRNG_STATUS_POKER_FAIL) {
+> > > +                     mlxbf_pka_dev_io_write(csr_reg_ptr, csr_reg_off=
+,
+> > > +                                            MLXBF_PKA_TRNG_STATUS_PO=
+KER_FAIL);
+> > > +                     *poker_fail_cnt +=3D 1;
+> > > +             }
+> >=20
+> > Are these fails prioritized like this so it's should count just into on=
+e
+> > counter if more than one FAIL is asserted?
+> >=20
+> Ron Answer: the monobit_fail_cnt, run_fail_cnt and poker_fail_cnt are use=
+d to represent different type
+> of failure counts. Will be printed separately in debug message.
+
+Unfortunately, this didn't answer my question. Can those bits be asserted=
+=20
+at the same time? If they can, is it okay to count the failure into just a=
+=20
+one of the failure counters?
+
+> > > +static void mlxbf_pka_drv_get_mem_res(struct mlxbf_pka_device
+> > *mlxbf_pka_dev,
+> > > +                                   struct mlxbf_pka_dev_mem_res *mem=
+_res,
+> > > +                                   u64 wndw_ram_off_mask)
+> > > +{
+> > > +     enum mlxbf_pka_mem_res_idx acpi_mem_idx;
+> > > +
+> > > +     acpi_mem_idx =3D MLXBF_PKA_ACPI_EIP154_IDX;
+> > > +     mem_res->wndw_ram_off_mask =3D wndw_ram_off_mask;
+> > > +
+> > > +     /* PKA EIP154 MMIO base address. */
+> > > +     mem_res->eip154_base =3D mlxbf_pka_dev->resource[acpi_mem_idx]-
+> > >start;
+> > > +     mem_res->eip154_size =3D mlxbf_pka_dev->resource[acpi_mem_idx]-
+> > >end -
+> > > +                            mem_res->eip154_base + 1;
+> >=20
+> > resource_size(), please change all of them.
+> >=20
+> > > +     acpi_mem_idx++;
+> > > +
+> > > +     /* PKA window RAM base address. */
+> > > +     mem_res->wndw_ram_base =3D mlxbf_pka_dev-
+> > >resource[acpi_mem_idx]->start;
+> > > +     mem_res->wndw_ram_size =3D mlxbf_pka_dev->resource[acpi_mem_idx=
+]-
+> > >end -
+> > > +                              mem_res->wndw_ram_base + 1;
+> > > +     acpi_mem_idx++;
+> > > +
+> > > +     /*
+> > > +      * PKA alternate window RAM base address.
+> > > +      * Note: the size of all the alt window RAM is the same, depict=
+ed by
+> > 'alt_wndw_ram_size'
+> > > +      * variable. All alt window RAM resources are read here even th=
+ough not
+> > all of them are used
+> > > +      * currently.
+> > > +      */
+> > > +     mem_res->alt_wndw_ram_0_base =3D mlxbf_pka_dev-
+> > >resource[acpi_mem_idx]->start;
+> > > +     mem_res->alt_wndw_ram_size   =3D mlxbf_pka_dev-
+> > >resource[acpi_mem_idx]->end -
+> > > +                                    mem_res->alt_wndw_ram_0_base + 1=
+;
+> > > +
+> > > +     if (mem_res->alt_wndw_ram_size !=3D
+> > MLXBF_PKA_WINDOW_RAM_REGION_SIZE)
+> > > +             dev_err(mlxbf_pka_dev->device, "alternate Window RAM si=
+ze from
+> > ACPI is wrong.\n");
+> >=20
+> > Should this return error and result in failing to register the device?
+> >=20
+> Ron Answer: if the alternative Window RAM is not properly initialized, th=
+e PKA will fall back to contiguous
+> Window RAM.
+> Also, the alternative Window RAM is not available in BlueField DPU. This =
+check will give warning,
+> in case the DPU customer manually updated the ACIP table to use alternati=
+ve Window RAM.
+
+Please downgrade it into dev_warn() then.
+
+Things like this might be nice to mention also into changelog so that it=20
+is permanently recorded somewhere. At least to me, the fallback doesn't=20
+look obvious from the code alone and one day it might be that neither of=20
+us is around to tell it when a 3rd person comes and has to figure this=20
+code out. :-)
+
+> > This is extremely long and it would make reviewing it significantly eas=
+ier
+> > if it would be split into multiple, logical patches. Mixing two types o=
+f
+> > devices in a single probe adds to the confusion, can like one of those =
+be
+> > introduced first and then the other?
+
+I think you might have misunderstood this comment. I didn't mean to=20
+address my code style and kernel API comments in separate patches, those=20
+should be used right when new code is introduced.
+
+It would be large benefit if this single big change could be split into=20
+multiple patches so that you introduce this support in multiple steps.
+As noted above, one potential thing would be to add the types in different=
+=20
+changes (if possible). If there are features which can be separated into=20
+own patches, that would also help to bring the lines added per patch down=
+=20
+helping to review each patch, and allow writing more focused changelog=20
+entry for each change, etc.
+
+Please do realize that by posting a large patch like this, you'll place=20
+this patch into a very disadvantaged position. Small patches are easy to=20
+review quickly, whereas large one like this take considerable time, so the=
+=20
+chance for me or other reviewers finding time to go through it are much=20
+lower than if the series consists smaller patches.
+
+
+--=20
+ i.
+--8323328-1565688773-1754992195=:995--
 
