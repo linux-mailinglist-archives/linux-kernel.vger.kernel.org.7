@@ -1,165 +1,98 @@
-Return-Path: <linux-kernel+bounces-763999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F59B21CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FF8B21CBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EEE1888DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:07:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5979718877AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA2C2D3ED6;
-	Tue, 12 Aug 2025 05:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dfj80GVM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33D6278E42
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598B12C21CA;
+	Tue, 12 Aug 2025 05:07:59 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328901A9FA6;
+	Tue, 12 Aug 2025 05:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754975234; cv=none; b=IezF/X2w0d9h7nRHC8MT6A96PtPdHxoqmCnCZKT9v2AhD5YRTo+dfXuUCGSrVL2XQ/afFz3og0vDAXMAmEN1RK9V+Ge9kURxw+QPQC5muzzf79JH3tgKp4W2egCP0yldq45dWxx4syQCnLOVK7pAc2s0FofCVQRvFL2Ui3WlRt0=
+	t=1754975279; cv=none; b=YNL1V5fjVBYsFJjNoQM8qT83e+4+e5hCBet+2EYal5MbfjBKyzElr1DyudZEh80gBsERIV/3vlGyVzL75XwZOlSpFQIRp1YgW76soHM9ORIZwgvFADSthHX4ShCR8Mvb/hEjY8zJkkz9Qn6mxKLC0GH3salJvgrxNmNohsXhMmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754975234; c=relaxed/simple;
-	bh=JW8imEaLawVdDB6pLuEapa6akjqmjGy+TlVBOIdQTJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hb3Y1h+vNBB4V15pnNoV5v8u01neZgiuVh12XnOUA2zfDKseSOswi5HCdyksQS06KZ+6ykUx38r/OCLPyFcCmLALFFP8GuC1p4WuhEBhWhmUlROUEmtPM0/5mwP4lxloBx1uY4qU9J1ks0CUcd46OZl2Eg7ArOdmn8rHYCSt1rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dfj80GVM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C48BJ5019065
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:07:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oNkEVDKLytEFqjfBNwlsGmqz4UAUYa8AuW7pBH2uoB8=; b=Dfj80GVM+Y5bhCYP
-	zMLeMO2K/ZFS/sru+sGIT+iynd5c/OmM61twuHzNH85UyFCbs+K4OGmJenKBezPh
-	NaxmtzjVHBAWnbkQex2yJbts90kd33oFDXGvk3DhyjhIh3imS+RP/hs5LqzBG00W
-	tZ8+h8RgRrFz/NH7Q0/ODt3JgAaA9gaitKs66gFt+t8YtW5a7qhX2QNO9kmTfsRp
-	aFDChMzZwQpCDr2RT2fngQoCBrA7OF5dCzD6vz1kk9t9nrIvGWgWiznjfdVE+8IN
-	bZHhh6lF9YrVM2D3wq7DTwdIRfB547T/+iZRUifZpjjSrNmp3xN5cijwzWfyFMb7
-	/3EV3g==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduxu0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:07:11 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3217ba6843cso4193311a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:07:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754975230; x=1755580030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNkEVDKLytEFqjfBNwlsGmqz4UAUYa8AuW7pBH2uoB8=;
-        b=rwwoMhCyJuAtQOYM3uNSAalP4vO/JSuXiH4EkWKII5l1x/keJ+VJ2GL9Ko4HnO5ZGu
-         61V7/Q7BQjUyaigk0b7DLoCtsagFwK4kXo3BHvGkK657/3PREp27gk9XPEHLN2TYzUmQ
-         4bGRF2eW8g9lRJlabvTmGdhB68Xwoa5gICqmHbVC/58+YZtnvuPj8xTn7NIEr5kzgIoF
-         ZuYzs/kixskPOtOZo4GI51kAhs9+ffoVp0cmo3OWXPljSmu6YTieC5RdYlzHwH+EC6l6
-         UcePoMWn+isf8Q9tRnF0R4ljuqUz1tOy/5MSu9HcINuVSZE86IlbMShY3HhbTEhh9dgy
-         UZ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWegwYBu3rWM/4jT2OYyTfHSE8PzijEQq6A9zho2M0AAw1TaPO8+eMBpdQTYy+3NUa4aQXNzfiwavHjPjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa/bqxbYcpmOo99MP6TnS9cRRmiG0jBNnz0p/XWQ5VofLWhiid
-	clpditaEk6Y+a5UUxMnAH4uIMBuU8en7Wz5G1/f/FWU3Co4dEjU9620mN3KEzCHJvGt8LH8kYQ/
-	tNpPXYiKZHz0rHa70srk/Pp5/RzX+1A28wt/b5dBTxW0no8LbWwJSYv4KGyUYPMVVrxg=
-X-Gm-Gg: ASbGncuRu/gUDvkr6BLqg85qPuOfIw/zrl0LtTCfuPlTf3oIgwgUZWoOwrSZobo1K8D
-	hJEO51DY8phk+t7zFGWtllpUdql0j+cuDTckU+XWRGNHgS/XpBbPON7qM/UH8fvLn59rrQ9V5Xh
-	nT04OuXRoWxQ8Yvai8tB/XX0jDpbkMndDKMtjCJgOgqg6L9hfNieG4RUSj+329FQ+H2He+bbdUO
-	LEi+2deLBoc7M+Quu02OWM3kFCVgX1ERKWfqzH848W+uI5eojqkGHqX0pCM0FvywoAmY6cVGE6V
-	LMXRO5/0Bt5pLawNYf9K52/2FdgqNxjQrT5Xb+FbWY3h4803i64cuMb0aa/BEmVkDZG/
-X-Received: by 2002:a17:90a:ca96:b0:31e:c95a:cef8 with SMTP id 98e67ed59e1d1-321c0ae441bmr1689051a91.32.1754975230171;
-        Mon, 11 Aug 2025 22:07:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUuQTvbkjznzZD3wAoSWPaV/NV4ZMjR4FA8Z5+ChKoQlXLWNgp3NjNrHW6g0TBMCJaplmSmA==
-X-Received: by 2002:a17:90a:ca96:b0:31e:c95a:cef8 with SMTP id 98e67ed59e1d1-321c0ae441bmr1689037a91.32.1754975229729;
-        Mon, 11 Aug 2025 22:07:09 -0700 (PDT)
-Received: from [10.217.217.159] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321c2be2c2csm735782a91.12.2025.08.11.22.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 22:07:09 -0700 (PDT)
-Message-ID: <7da20363-7b7c-4b98-9068-d82a186170fd@oss.qualcomm.com>
-Date: Tue, 12 Aug 2025 10:37:04 +0530
+	s=arc-20240116; t=1754975279; c=relaxed/simple;
+	bh=10+O5604qlxvSutID6a/mGeuyisqpxtE4eEmXYjsZSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=usV5Ul7SPDt1+uOhP/9aNPPlD5ZexgMPCIVmqgGJKv9UdpBuw7WMC5n08zNMIHa4mFYUMeeq4nwE7ZhPPUlz4uLWyyhLrWYsl1xg4TvoeJqmX/uHiEAMbOoxeq1p9EPM6u3YJFhltO2ELST7qoad3F70wCHbeKdiNGT+2Ctfsio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrAAnLqYHzJpoR7UmAA--.858S2;
+	Tue, 12 Aug 2025 13:07:19 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wCXgJoBzJpo1LbVAQ--.40495S2;
+	Tue, 12 Aug 2025 13:07:14 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	alexs@kernel.org,
+	si.yanteng@linux.dev,
+	dzm91@hust.edu.cn,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: add File entry for scripts/checktransupdate.py to DOCUMENTATION
+Date: Tue, 12 Aug 2025 13:07:10 +0800
+Message-ID: <20250812050711.2515173-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: dispcc-sc7280: Add display resets
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250811-sc7280-mdss-reset-v1-0-83ceff1d48de@oss.qualcomm.com>
- <20250811-sc7280-mdss-reset-v1-1-83ceff1d48de@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20250811-sc7280-mdss-reset-v1-1-83ceff1d48de@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689acbff cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=C2TcYtzuST-dhkRVSHAA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: mN7W5QTfx4HO5BhQlXbCCZr1AV4-76Hk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX048mIqh4NaZb
- v9amDIE1NO1tDomRD+OvkmFjSWCEFTT+5gxsa3LSIxn4TvLJ/0wQy2YwqNnlCEM7cN1dnRuSnJr
- uH80xdPVIqHLQcgtSc8Ibb2HgniKGtin3oIXHSq59QG0dFPX5Yg6iu79LH2mvo2f6yc3ZTJcach
- GvimLLizc2/WCuuqh8e+GhCkEG7yi1b9oM9LtbnrB2/fjBiB6UbFy5G29nfh1Gw4w31OsdI+q3t
- 2aW6VQbLZSjbIdukxfieIib+pTO4mtv9aiu8x8vMi0gYk72cE9/fyLlGrvNluyjjmJzFl7iAbcu
- F4A4TqvcnZpqGC/F+5pfz0hWf/YzxUk/2QHw+dCCEETRKBfHBYgrYnGT1bcI4juqOd/0m0QqTuB
- hDy6Vbsa
-X-Proofpoint-GUID: mN7W5QTfx4HO5BhQlXbCCZr1AV4-76Hk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrAAnLqYHzJpoR7UmAA--.858S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr4DJFW8Gr1rXrWDKr45Jrb_yoW3WFgEyr
+	nrtFWIgFykGF17tr4kGasxJr4avr1xXrW8Xan8Jay3AasrKrZxKF9xKas7Cw13WryfurZ7
+	ZasxXr9xGr4avjkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbv8YjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUXV
+	WUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
+	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr
+	1j6F4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
+	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l42xK82
+	IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU0X_-JUUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
+As suggested by Nathan, add a File entry for scripts/checktransupdate.py
+to the DOCUMENTATION section to maintain this script.
 
+Link: https://lore.kernel.org/all/20250811212446.GA924610@ax162/
 
-On 8/12/2025 8:41 AM, Bjorn Andersson wrote:
-> Like other platforms the sc7280 display clock controller provides a
-> couple of resets, add the defines to allow referring to them.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
->  include/dt-bindings/clock/qcom,dispcc-sc7280.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-sc7280.h b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> index a4a692c20acfc954251fd1a1a59239ac62b20015..9f113f346be80b8a7815ffb17a6a6ce5e008f663 100644
-> --- a/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> +++ b/include/dt-bindings/clock/qcom,dispcc-sc7280.h
-> @@ -52,4 +52,8 @@
->  /* DISP_CC power domains */
->  #define DISP_CC_MDSS_CORE_GDSC				0
->  
-> +/* DISPCC resets */
-> +#define DISP_CC_MDSS_CORE_BCR				0
-> +#define DISP_CC_MDSS_RSCC_BCR				1
-> +
->  #endif
-> 
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..b7e3a8c8832e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7302,6 +7302,7 @@ P:	Documentation/doc-guide/maintainer-profile.rst
+ T:	git git://git.lwn.net/linux.git docs-next
+ F:	Documentation/
+ F:	scripts/check-variable-fonts.sh
++F:	scripts/checktransupdate.py
+ F:	scripts/documentation-file-ref-check
+ F:	scripts/get_abi.py
+ F:	scripts/kernel-doc*
 -- 
-Thanks,
-Taniya Das
+2.43.0
 
 
