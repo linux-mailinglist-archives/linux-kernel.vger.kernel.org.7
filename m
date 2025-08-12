@@ -1,135 +1,186 @@
-Return-Path: <linux-kernel+bounces-763750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEADB219E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:44:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C0B219EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77F5D1A23A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:44:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7C8E7B5707
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75D82D46D8;
-	Tue, 12 Aug 2025 00:44:07 +0000 (UTC)
-Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9D12D6614;
+	Tue, 12 Aug 2025 00:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRIxrjnA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE531CF5C6;
-	Tue, 12 Aug 2025 00:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277B720D517;
+	Tue, 12 Aug 2025 00:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754959447; cv=none; b=QmJfUq414fe/QZZdOt78yZt/TPWmikTGzLaHlRpEBCxc1pGyLhuIEhBls0kce45C0qYMWuQzyOEU1D1r4h7micf6tXqPrvomUI+ss6jMNmoeh1o1kzNlKIyiduTkLohnNovu/whWWo9LmcdkOnCJzOJT0ATt/J+VpDsZcl5g/mM=
+	t=1754959667; cv=none; b=ID46QpiYCSW1pzcAefNi0YApYZ70iPOLEgqzluiHki605thijCeR/jAscZvr0YT9fRaJLbfr/844AXddhJ2Zz4M3IN8juWBRcOr8KxcaqgiMz8F597VZsoMdJT+9nI3n6lkazozvs89F9SCRSZ4F6xTm4bHR1RMABwGgS8hM2qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754959447; c=relaxed/simple;
-	bh=mRAWBIV95BkuutBdA/+h8mf/Vigka9Kkrl/7nYZrY5w=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=lY+gvG8ruOCaDOpxLYlGqaCX6kZ8dBArxGq5SJrEy4oF7oh3bHWp5igl7km4AwEk+D16nnemghOT2CNX4JRRwUDXU1nivQu5GqTg2wzxxzcV7y23FEL0NlEYH4X5G0gdvDpOElE/8S6eJcSh/r5KLAuxpCGQOAVvOuTaXkJIQRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
-Received: from mail.carlthompson.net (mail.home [10.35.20.252])
-	(Authenticated sender: cet@carlthompson.net)
-	by smtp.carlthompson.net (Postfix) with ESMTPSA id 85A5F1E3AE570;
-	Mon, 11 Aug 2025 17:44:03 -0700 (PDT)
-Date: Mon, 11 Aug 2025 17:44:03 -0700 (PDT)
-From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-To: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Message-ID: <145928469.642.1754959443409@mail.carlthompson.net>
-In-Reply-To: <28dbd3e0-8d5b-4dfe-a7e7-3a73347480f6@tnxip.de>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <514556110.413.1754936038265@mail.carlthompson.net>
- <28dbd3e0-8d5b-4dfe-a7e7-3a73347480f6@tnxip.de>
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
+	s=arc-20240116; t=1754959667; c=relaxed/simple;
+	bh=MiSIs1rnDHHU/+k/Z0JgED1xlZ7cCjxh1VZ0AZ2BDT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TdrfqUUdvOlMuNbWHiQK08H8apnZ7cbKBc/sFpCJLUt9Dk+aPwwmz9B0wMhBJaovkNczuUEW/HYIfTQfyUxpdfRGUtISmLZnUS3V2kdd4uBtLJ1gjFLqEB8Nuy9VU+OSUTLuL+OsVarr/IrevnFGxGEcqgpgiNnX9AA3OfT+Y3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRIxrjnA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91C5C4CEED;
+	Tue, 12 Aug 2025 00:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754959666;
+	bh=MiSIs1rnDHHU/+k/Z0JgED1xlZ7cCjxh1VZ0AZ2BDT8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uRIxrjnA3BXLDmoa/+xkrvzFkUSvGstXPnHQMBeyCTbbsPm2yOho/HshYUtjiT3nh
+	 Rp7qhKMW/N4SboRZxJQy8pMaZJihOn+k8pl0p8hoiBVTRYL/fFzcU1DE1lR0R78FxE
+	 8d7FNucqi/vstujZJP2tHn182Wf51rcykaLMck3vrB4kawhydoj/AVOcIIgooT6C3O
+	 80mAEoNAW2Lp0j2ka+qYHnITX0w217G6MAlKyUthaqkkNOdD7F32YjK5GyJl5l8hlW
+	 fcaBRyBfPRlulaFal+WGHFr1iRueER3xzFnbu4rLx+3Xmx/o7BgPaDjb6XdZ8Dbqcb
+	 bllYFPQvP4vkg==
+Message-ID: <33b6c9a3-3165-4ce8-9667-afdbaff2c3ae@kernel.org>
+Date: Tue, 12 Aug 2025 09:45:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED] Unexpected OOM instead of reclaiming
+ inactive file pages
+To: Oleksandr Natalenko <oleksandr@natalenko.name>,
+ David Rientjes <rientjes@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, John Garry <john.g.garry@oracle.com>,
+ Christoph Hellwig <hch@lst.de>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, linux-mm@kvack.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Qi Zheng
+ <zhengqi.arch@bytedance.com>, Michal Hocko <mhocko@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <5905724.LvFx2qVVIh@natalenko.name>
+ <199fb020-19ee-89d1-6373-7cc7f5babab8@google.com>
+ <15056829.uLZWGnKmhe@natalenko.name>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <15056829.uLZWGnKmhe@natalenko.name>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
 
+On 8/12/25 5:42 AM, Oleksandr Natalenko wrote:
+> Hello.
+> 
+> On pondělí 11. srpna 2025 18:06:16, středoevropský letní čas David Rientjes wrote:
+>> On Mon, 11 Aug 2025, Oleksandr Natalenko wrote:
+>>
+>>> Hello Damien.
+>>>
+>>> I'm fairly confident that the following commit
+>>>
+>>> 459779d04ae8d block: Improve read ahead size for rotational devices
+>>>
+>>> caused a regression in my test bench.
+>>>
+>>> I'm running v6.17-rc1 in a small QEMU VM with virtio-scsi disk. It has got 1 GiB of RAM, so I can saturate it easily causing reclaiming mechanism to kick in.
+>>>
+>>> If MGLRU is enabled:
+>>>
+>>> $ echo 1000 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+>>>
+>>> then, once page cache builds up, an OOM happens without reclaiming inactive file pages: [1]. Note that inactive_file:506952kB, I'd expect these to be reclaimed instead, like how it happens with v6.16.
+>>>
+>>> If MGLRU is disabled:
+>>>
+>>> $ echo 0 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+>>>
+>>> then OOM doesn't occur, and things seem to work as usual.
+>>>
+>>> If MGLRU is enabled, and 459779d04ae8d is reverted on top of v6.17-rc1, the OOM doesn't happen either.
+>>>
+>>> Could you please check this?
+>>>
+>>
+>> This looks to be an MGLRU policy decision rather than a readahead 
+>> regression, correct?
+>>
+>> Mem-Info:
+>> active_anon:388 inactive_anon:5382 isolated_anon:0
+>>  active_file:9638 inactive_file:126738 isolated_file:0
+>>
+>> Setting min_ttl_ms to 1000 is preserving the working set and triggering 
+>> the oom kill is the only alternative to free memory in that configuration.  
+>> The oom kill is being triggered by kswapd for this purpose.
+>>
+>> So additional readahead would certainly increase that working set.  This 
+>> looks working as intended.
+> 
+> OK, this makes sense indeed, thanks for the explanation. But is inactive_file explosion expected and justified?
+> 
+> Without revert:
+> 
+> $ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl -kb >/dev/null; free -m
+> 3
+>                total        used        free      shared  buff/cache   available
+> Mem:             690         179         536           3          57         510
+> Swap:           1379          12        1367
+> /* OOM happens here */
+>                total        used        free      shared  buff/cache   available
+> Mem:             690         177          52           3         561         513
+> Swap:           1379          17        1362 
+> 
+> With revert:
+> 
+> $ echo 3 | sudo tee /proc/sys/vm/drop_caches; free -m; sudo journalctl -kb >/dev/null; free -m
+> 3
+>                total        used        free      shared  buff/cache   available
+> Mem:             690         214         498           4          64         476
+> Swap:           1379           0        1379
+> /* no OOM */
+>                total        used        free      shared  buff/cache   available
+> Mem:             690         209         462           4         119         481
+> Swap:           1379           0        1379
+> 
+> The journal folder size is:
+> 
+> $ sudo du -hs /var/log/journal
+> 575M    /var/log/journal
+> 
+> It looks like this readahead change causes far more data to be read than actually needed?
 
-> On 2025-08-11 11:40 AM PDT Malte Schr=C3=B6der <malte.schroeder@tnxip.de>=
- wrote:
-> ...
+For your drive as seen by the VM, what is the value of
+/sys/block/sdX/queue/optimal_io_size ?
 
-> Frankly for me as a user who does probably not know the hole picture you
-> seem to just be spewing paranoid hate into these threads which I do not
-> quite understand.
+I guess it is "0", as I see on my VM.
+So before 459779d04ae8d, the block device read_ahead_kb was 128KB only, and
+459779d04ae8d switched it to be 2 times the max_sectors_kb, so 8MB. This change
+significantly improves file buffered read performance on HDDs, and HDDs only.
 
-I apologize for coming across that way. I guess I'm just very frustrated at=
- this whole situation and the fact that it appears from my perspective to b=
-e damaging the reputation and credibility of Linux which is something I car=
-e about very deeply.
+This means that your VM device is probably being reported as a rotational one
+(/sys/block/sdX/queue/rotational is 1), which is normal if you attached an
+actual HDD. If you are using a qcow2 image for that disk, then having
+rotational==1 is questionable...
 
-And I'm angry. I'm angry because of the damage to Linux and because Kent ap=
-pears to be misrepresenting events in a way that make others whom I respect=
- look bad. For example, here in this thread a key point Kent is claiming is=
- that no one has ever told him specifically anything that he's done wrong a=
-nd essentially that other kernel developers are attacking him for no good r=
-eason. That's simply not true. Linus has explained his mistakes to Kent on =
-multiple occasions. Other kernel developers have tried to help him see what=
- he's doing wrong. Random users (including I) have tried to help him intera=
-ct better with others. It is simply not true that no one has told him what =
-he's done wrong.
+The other issue is the device driver for the device reporting 0 for the optimal
+IO size, which normally happens only for SATA drives. I see the same with
+virtio-scsi, which is also questionable given that the maximum IO size with it
+is fairly limited. So virtio-scsi may need some tweaking.
 
-There are many other things about Kent's recounting of events and things he=
- has said in this thread that also seem to be objectively not true. If anyo=
-ne thinks it would be useful I can itemize those things I've noticed.
+The other thing to question, I think, is setting read_ahead_kb using the
+optimal_io_size limit (io_opt), which can be *very large*. For most SCSI
+devices, it is 16MB, so you will see a read_ahead_kb of 32 MB. But for SCSI
+devices, optimal_io_size indicates a *maximum* IO size beyond which performance
+may degrade. So using any value lower than this, but still reasonably large,
+would be better in general I think. Note that lim->io_opt for RAID arrays
+actually indicates the stripe size, so generally a lot smaller than the
+component drives io_opt. And this use changes the meaning of that queue limit,
+which makes things even more confusing and finding an adequate default harder.
 
-I'm also angry because I'm a long-time bcachefs supporter. I started using =
-bcachefs years ago long before it was in the kernel. I've put a lot of my o=
-wn work into running it, testing it and submitting bug reports. Up until a =
-few months ago I had about 20 bcachefs filesystems of varying sizes spread =
-across my personal workstations, servers and lab. I even integrated bcachef=
-s as a core part of a relatively large (by my standards) project I'm hoping=
- to release some time before the end of the year. There were some warning s=
-igns along the way but I ignored them because I really, really wanted bcach=
-efs.=20
-
-But eventually I had to ask myself... If Kent repeatedly brings conflict an=
-d discord to a group that needs to work closely and trust each other, and i=
-f Kent repeatedly makes the same interpersonal mistakes and doesn't learn f=
-rom them, and if Kent seemingly regularly misrepresents things... Can I rea=
-lly trust him or his code? My personal answer to that is "no." So I've migr=
-ated everything I have from bcachefs and I'm angry about wasting all the ti=
-me and effort I put into it.
-
-Finally I'm angry because so many people appear to be thinking only of them=
-selves. They appear to think: *I* really want to use bcachefs and it would =
-be much more convenient for *me* if it were in the kernel therefore it shou=
-ld be in the kernel and the other kernel developers should let Kent do what=
-ever he wants no matter how it makes them feel about their work environment=
-.
-
-My opinion is that's a really great recipe for making Linux worse: Suck the=
- joy out of the other kernel developers' jobs by forcing them to work with =
-someone who seemingly doesn't respect anyone but himself simply because *we=
-* (the users) really want bcachefs. Go that route and valuable contributors=
- will mentally check out or worse leave altogether. It will spread like can=
-cer (and probably already is). It's an absolute fact that people who are un=
-happy in the workplace do worse work. Let's keep the kernel developers happ=
-y.
-
-Again, I apologize for being overly harsh.
-
-Carl
-
-PS: I do hope that Kent can work things out and figure out how to contribut=
-e in a way that's useful for others and makes him happy. But we sometimes h=
-ave to weigh giving someone like Kent another chance against the harm keepi=
-ng him around does to other people we care about.
+-- 
+Damien Le Moal
+Western Digital Research
 
