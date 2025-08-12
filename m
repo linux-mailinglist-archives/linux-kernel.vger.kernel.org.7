@@ -1,87 +1,141 @@
-Return-Path: <linux-kernel+bounces-764247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC94B22068
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:12:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BA7B2206D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268191890424
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716E82A730F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAA52E0915;
-	Tue, 12 Aug 2025 08:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9763A2DFA46;
+	Tue, 12 Aug 2025 08:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8SlcYjY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="fr4C/d8R"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF302DE6EA;
-	Tue, 12 Aug 2025 08:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F390C2E0400
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754986310; cv=none; b=FSOyonQIcGDIJkxTJOGWVeq+Z6O+KKgEpnrgNNG5eB8k6diVCBcCyuQlns7BLjVgHwiKbD1Hjb08lPsd5yc2Hh1IHj9Lh2ApeDn9ds9NK3EAALUWllAEpRmmajnsse1yek0ZbpcTCITAL3dGtF0Kwq4AGlDa33eF4TZuqUu+/hg=
+	t=1754986370; cv=none; b=YZ6RYMXVxKEO39VWCIO0SgTH0arEP/ukt+7wKt3vnGVnUuOKaiDfm+a0yBT74gHYM4HXaANKLQsiwDWggsYeRZqPr9Q6yfHUlYs1likpg0toogLNYNhQbbUfEcBxA+a4Nt328/MlokKxJgu41xMnIMOkRDKNdTVNgXRzl3nw1g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754986310; c=relaxed/simple;
-	bh=0V7U3rTiwFSJd5eMfwC739jhVOM/UljdnAB801+DTgQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SpDD4oJGk9jj9v6Xe1gzqsMjNp6yxIHOv3feD17T1YVqt80T7K3AhjgrnU9PGhkpCzMBMraUdUaBxCAlSkeWcJOjUwTHsDj4XGwUvQ9zz6NzrPx6Dom7LUa279NFjPtsgc5TxVLtp6aBskEkW//l7ie4oXwRKfbyNglqeDb9/9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8SlcYjY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A53C4CEF0;
-	Tue, 12 Aug 2025 08:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754986309;
-	bh=0V7U3rTiwFSJd5eMfwC739jhVOM/UljdnAB801+DTgQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=r8SlcYjYjFOwegtCIGl/2aOv55Xef/MYMPC6+HwMc/JRWuIhpD92NEAVF4UFHBKOY
-	 N1zv+UzRNlxYP4AP3uYBy1ZqptGaOEI4YgLZli7ZMgpoMzj6bTcXNPRnzDLZV6bqwW
-	 GisPbyzel86QToq2OosB9iKNX9MfSNVUnPs8+0wpFxjLDitnfDSU94Hculkx/EurkG
-	 +I9f8b8o6LOVQ8Sve/Evi+gxRGEac11sDEZ/PZsMopFfuW2U0fHO69xT3Uuk9I05eI
-	 t0dHYEIDr0rYVFXphYyk2RxlQPVPYh4bj0iwaW96K/peWjDuPnWQoJEYDEVRgXlIad
-	 CA5bG3dzQkOZw==
+	s=arc-20240116; t=1754986370; c=relaxed/simple;
+	bh=CygRsQzHeViey1sMjJDwpFXY4aVKiZK+tOw7A+FX4l8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CXXfjgcN2/0YUL61D/WiIkIzrfOqlEZnK8ZZ6jCP2Ikw6b9RlaEW828QUxTDWyjQGV2LEXtFki1CtYcHHDASIT8PVrWhUQkOb2tBzmQ2Xfy0V1UQunDXnilIu+G7vXxkASTXfDZkc9SQvV+lyMfW2+08/e7Sjc4WvXhO0isS5ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=fr4C/d8R; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b428dd79d46so3383397a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:12:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1754986368; x=1755591168; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yw0gy+knuGeGzY6jivnMfN7pV1rj29Xt61Zw/czzFhY=;
+        b=fr4C/d8RLCc0CMHwfJZv6LvJklQavbucFxaJCgqT7qlE4LXKxTl07jDR9jvSGtb7K1
+         bZbtX/HMjJArZVYyipvQyoYuSXIXPeHwnmQPeZdx04vBgKeuZG3Nt/uIquaqtQfhZ6Ih
+         GU3US8LOGZzMIKdrzjoiz9yzYtC/8Y1Wx+4hMd1GDwa8dwe+Jxpf2ji70xi7RbvQGm9Y
+         Huksal7Btyag7SvXiaiXYSgVJOyg0/49GOfShTI1+lBn1eKQVe9FhEDNGxZdGRMJgFcN
+         iu63glRCKjqu4Xx8bW3Txa+vckwg5PQwaqAu2YpSpTiY6QHCU/iYeqc37Womf8QHsEc7
+         kD/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754986368; x=1755591168;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yw0gy+knuGeGzY6jivnMfN7pV1rj29Xt61Zw/czzFhY=;
+        b=d405MRqU353hOfbSGjjiTQWuUx2uKoMto2c6zfCu0uK1en1x5kRbi+MKIqeddGyBwh
+         QxeGlbWxuxCG4v+F9384fcij5UFqBIDhLq+xAm3tkjjH3qWl/5ti4SKhdCt/jb5g4QZG
+         5Dg+UFuSgvP1twcwoXkIfMfJRzpznTe9Mmj4O2A5twtyo+RUE67WTJp1SM1+ErSpATXV
+         GYDPds8usKTk15H8DLNLX53Z+7KD7SBgRxFdTVv7FBIGqv44Qio9r93tZEL5QjzIqT8N
+         mLFKstB8cBT9G+jduSmVghrngWEVS3hxR8Mha6vg1zKGpj2qtHlmJUHpj3mc8eZxnBwl
+         DBCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGRs8ULBKDu9TQPFxY+LSRh63vmQFzFxkkIiGPsk9pup43atHgh1PokAAGbulG/B61wvfATVFLCRMlpnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFDw1fBPoDo0XHf5VPUoM7HnfC6DhuWzfBQLs3qZ2qGOvRm5db
+	GxtECd8EWKIs3J8Ncj5r3eQLxxHyq/G+I7dLwq8QiUwqs+I2i7xL5F4vzTZyePqGEEA=
+X-Gm-Gg: ASbGncunqMtQpGDVFw36V9FAC8SXFLZ3sO8PrfONxraB1AYyAZjQhZJUVpoPMVjisM8
+	/3KaHW75GA8ASHs5/IpeyH8O2rUvVjPH16JBtgsNboDyYs6kuj6Oe8wtinNb7zx9DIQXsIzrsDm
+	Wp5etA2jq6TsKneK4biQxsl1rSBzjzDfuuABCWkNAl15Z00oaglb2PAaxZfAjZEdLEcs8Ptrm1m
+	3A4icnche1DZxrg7BFc7lwq2m7nn93pbl6RVkoyy4mB21YEfg43n2BkRH1juTFjUbLiRBAIvvg3
+	aRHYpvCX+2DPq2RyR5uaPORdB/cB4j45WNr0Hr0KfuQQF4XgtZW+5JHWMxnh75/oXSZg0biphrT
+	SjKtXfUWnJ5z77H9JT3ENz+T0vOqodlbtvRgngnDYKcAPr1Af9E7+tmU8HoBUhaw+kZ1gWw==
+X-Google-Smtp-Source: AGHT+IGv0knKdRcpuo+yhVFvI7xkp6TkQ4XGBRBCTHxnRsgbNXwPcNcWPjfrvDLzGLuhSytlCrPZuQ==
+X-Received: by 2002:a17:903:247:b0:240:3c0e:e8c3 with SMTP id d9443c01a7336-242c228e6femr208574645ad.51.1754986368009;
+        Tue, 12 Aug 2025 01:12:48 -0700 (PDT)
+Received: from alexghiti.eu.rivosinc.com (alexghiti.eu.rivosinc.com. [141.95.202.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e83esm291171955ad.49.2025.08.12.01.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 01:12:47 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 12 Aug 2025 08:12:11 +0000
+Subject: [PATCH] selftests/damon: fix damon selftests by installing
+ _common.sh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 10:11:43 +0200
-Message-Id: <DC0AQ1UOF0TG.134431D3TCJ9W@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, "Fiona Behrens" <me@kloenk.dev>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/5] rust: implement `kernel::sync::Refcount`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Gary Guo" <gary@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Tamir Duberstein" <tamird@gmail.com>, "Ingo
- Molnar" <mingo@kernel.org>, "Mitchell Levy" <levymitchell0@gmail.com>,
- "Lyude Paul" <lyude@redhat.com>, "Wedson Almeida Filho"
- <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>
-X-Mailer: aerc 0.20.1
-References: <20250723233312.3304339-1-gary@kernel.org>
- <20250723233312.3304339-2-gary@kernel.org>
-In-Reply-To: <20250723233312.3304339-2-gary@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250812-alex-fixes_manual-v1-1-c4e99b1f80e4@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAFr3mmgC/x3L4QpAMBSG4VvR+W3FlsitSDrZN04x2iK13Lvl5
+ 9PbmygiCCL1RaKAW6IcPqMuC5pX9guU2GzSlW6qrtaKNzzKyYM47ewv3hTDGri2sbYzlL8z4O9
+ 5G8b3/QDygZf4YwAAAA==
+X-Change-ID: 20250812-alex-fixes_manual-aed3ef75dd83
+To: SeongJae Park <sj@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, Enze Li <lienze@kylinos.cn>
+Cc: damon@lists.linux.dev, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1133;
+ i=alexghiti@rivosinc.com; h=from:subject:message-id;
+ bh=CygRsQzHeViey1sMjJDwpFXY4aVKiZK+tOw7A+FX4l8=;
+ b=owGbwMvMwCGWYr9pz6TW912Mp9WSGDJmfS9tPHdv2e/gSPnDbX98/P6y8smEhomFZkvN8NSNf
+ JzmepKxo5SFQYyDQVZMkUXBPKGrxf5s/ew/l97DzGFlAhnCwMUpABMx2c7IcKJKMfDZyu7SW6eu
+ i6sb2R6bxmCePlXJaktytu0G9uKKlYwM129NC3i4x4knS9vwc62dnPXFhi07dT7cYTz3Q6epca8
+ aIwA=
+X-Developer-Key: i=alexghiti@rivosinc.com; a=openpgp;
+ fpr=DC049C97114ED82152FE79A783E4BA75438E93E3
 
-On Thu Jul 24, 2025 at 1:32 AM CEST, Gary Guo wrote:
-> +    /// Set a refcount's value.
-> +    #[inline]
-> +    pub fn set(&self, value: i32) {
-> +        // SAFETY: `self.as_ptr()` is valid.
-> +        unsafe { bindings::refcount_set(self.as_ptr(), value) }
-> +    }
+_common.sh was recently introduced but is not installed and then
+triggers an error when trying to run the damon selftests:
 
-One more thing, I think this function could use some better docs. When
-do you want to use it? (How) does it synchronize with other reads/writes?
+selftests: damon: sysfs.sh
+./sysfs.sh: line 4: _common.sh: No such file or directory
+
+Install this file to avoid this error.
+
+Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host shared function")
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+ tools/testing/selftests/damon/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/damon/Makefile b/tools/testing/selftests/damon/Makefile
+index 5b230deb19e8ee6cee56eb8f18c35e12f331e8b7..ddc69e8bde2905ff1c461a08f2ad008e6b28ac87 100644
+--- a/tools/testing/selftests/damon/Makefile
++++ b/tools/testing/selftests/damon/Makefile
+@@ -4,6 +4,7 @@
+ TEST_GEN_FILES += access_memory access_memory_even
+ 
+ TEST_FILES = _damon_sysfs.py
++TEST_FILES += _common.sh
+ 
+ # functionality tests
+ TEST_PROGS += sysfs.sh
 
 ---
-Cheers,
-Benno
+base-commit: 2754d549af31f8f029f02d02cd8e574676229b3d
+change-id: 20250812-alex-fixes_manual-aed3ef75dd83
+
+Best regards,
+-- 
+Alexandre Ghiti <alexghiti@rivosinc.com>
+
 
