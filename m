@@ -1,136 +1,247 @@
-Return-Path: <linux-kernel+bounces-764344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4A5B22187
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BC2B221AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E96B7AB920
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC9A5802F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9399C2E542E;
-	Tue, 12 Aug 2025 08:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R/lXxPyS"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA072E62CB;
+	Tue, 12 Aug 2025 08:39:16 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E842E2F09;
-	Tue, 12 Aug 2025 08:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F60E2E62B5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988277; cv=none; b=lXDW8gEYWkJj0npd+Z+2uKqfu4Th0MLgVEcnlq3Ia1VK+Q32VO2p8mxFJNpooMBmrtX4sKJPb1cwdCsJ6NyasXL2hVYv8RdpOeLYmTxnYjDblFdWG8o+cyy5ZFkMF6JPD1wtcdL/zRld93vDAtfyNI2T1y0gjuZ/84XVXrxndVo=
+	t=1754987956; cv=none; b=A2FrLqafye4dCIhgjUqG7kES297pM0iamktPPj5Qja5P4pqcT+cX8w75T3H/xVPWldmkyUfDccybHdU9XMEjzgwS4ea1q9uYB7F5WJCKEeaMp5XmMQgcepJ3NSlPfu3vG6/DE8Q+yPMVnSv6Svxlrvo3HNor3W6HJvGOWdFhMUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988277; c=relaxed/simple;
-	bh=0sa1+cy2n9/ztHd24898UjwMnXyWFv1CIPlwh8OfXik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9uaeSZi0HZdkPe59mkHa9it4/gIHHgYSogcrMp44hMl0Qi7lOBYSin3mj4Nijgj7PmvpdM2YqLeeaMCTpiXVZNeujAOiHRWRcuuPuzqHx7LcdXu2c0y4jORJquWMcDgk7dsjfqariIySSA1K1oFb94GieyJtOfHHxTfaeaf4sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R/lXxPyS; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754988272; x=1755593072; i=markus.elfring@web.de;
-	bh=0sa1+cy2n9/ztHd24898UjwMnXyWFv1CIPlwh8OfXik=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=R/lXxPySpxrdftNIPm6ASKlJ+yeyMhqki5CUUMWIM/UBCtJrKfM5t5P2ZCHIgQT6
-	 d/Ue2n3sS6+9k0rUYp2GevXX+ttrvDa1OMoITtHopkPCCWV984fGaIUE7XhWei+lv
-	 T+s80xIR0VdaBMvO5iY5GbrW0Tamkc0jYyXOBarJDPDUmyLojvH2qXe8xuRdcn3Lp
-	 0e7wm7v5LRNpmbX0BKLmhtMnKXoyeZjHewHjQ1LQwb1paIxWhbDbTFsdWDjXs72rh
-	 ZQYvT8fgo/Nkx57rxhcW4Rzyhr2CWxjchD+D4cLRx/s6XrLGxQesNiQ1v9+R2Bqnx
-	 qP4RYHQtw5Clzw5ucA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MumNL-1uTfcM3Yot-00yEEF; Tue, 12
- Aug 2025 10:39:01 +0200
-Message-ID: <dceb4471-82d9-48f0-94dc-e9277eadeada@web.de>
-Date: Tue, 12 Aug 2025 10:38:59 +0200
+	s=arc-20240116; t=1754987956; c=relaxed/simple;
+	bh=t1P8O1ZE6m0J9fUQzC0rTyT5UMdRYeQNWCxsVEPCcy4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Sgmr8PQgxxBQhXLu7vQ1vHZR9YmhyNc6E/Jt+bYHt5iTPcJCeGKlCycZ1+9Md+KwEnpOYXSefpzZU16RNTUSoeQY6xsg6zsIA27+2IWPx4kwOquJ//cOUxMMjirXTbrwsCX5/yBOgrvlyvrjMDVGiHtJdjgla/GStfWTcYwishk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-884030b4235so506818839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:39:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754987953; x=1755592753;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IBL66k/8KHurOIDyb2X7HCwsLAWc5cSdmDfE598q/c=;
+        b=FNW6hFtHobY5maewnXnZtY15P5WUWkTP5FzZ19zN6fdv8lF7QzPDPpMDN4u0S1B+AS
+         gQxoywUm2INs+PxJt5Kjtb53/ffKss2sWWFyckHyaCLF0SiY+cxQHPxLTUXh/wrFcnn5
+         PR54su/fGU7x8wFBdei450xbQekgh/lYxqokBu2xQohmHrOV5ShmaRs+idTDgiWrbVzN
+         HJYUYTaQPg4k9PZa6nbD7wVk+8Q8x4YRJjAQ2xVM9uUcNh99JUyr3VAlGNyjMBzYK4VD
+         +NKf1/FPUx9jSNp5ljYlilyGgiD/4rKPP/fUuKiYA77SgJN+6oHVT39fRT47ROVVOgt+
+         tvMw==
+X-Gm-Message-State: AOJu0YzShHFH6Tern2/IM9npm9GuwHntc7K7FRauhb/wm7d3pYHY/UmA
+	Hz5TJyTGU14FkxQxwPwzdYQEjJ3fMYvfw04nuFD7h+MszvvAlXDOgXusvxKg0akAW4bMcl7GMqq
+	kR24irQETkOX1GCVLGT9vUU1VkaxqLItoyg1KB7HQWs9A6Up04DomeoxkERM=
+X-Google-Smtp-Source: AGHT+IEX7+88Id4mxk31XEjvX9Uds6pbIL1ZEJk6+3aCKZvI08fvO7pFgvecCz19haPqeZS1JrRm62bZFoa0nAw9OyURCryV2EXm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: squashfs: Avoid mem leak in squashfs_fill_super
-To: Dan Carpenter <dan.carpenter@linaro.org>, Scott Guo <scott_gzh@163.com>,
- Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Scott Guo <scottzhguo@tencent.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-References: <20250811061921.3807353-1-scott_gzh@163.com>
- <24759bdb-b427-47a7-b9c3-724a11d0162e@web.de>
- <461ae944-5fb9-4860-81c1-1ac48c3d888f@163.com>
- <aJr43n1np2nB8bht@stanley.mountain>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aJr43n1np2nB8bht@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:NGeLIdKQ0SEVmD5c9tS+S9veob3IrUuUr7BATf3Tgeg5NtO4umb
- m8kvQnKd+iRJSlC3Q5ZrOOWzKX2/kXpEIJb6w3aq/TcxGkQywLSLU/eF95lGB9+mT/7/PAg
- MzwV/NUEjry7q2BC3DnZZMdx2Hwg4WFdI32vEBytBBCadi8IkdKjraVBbn17+Q/ETBvFR73
- a72pQA9I0XN5S4lhy6dMw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eESia0PHrSs=;eUb+aH6kShBM8jjyM7pNMYUmkJ3
- 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
- vmiEfU0MS8Zxua663gQw==
+X-Received: by 2002:a05:6602:6d0f:b0:873:f23:ff5 with SMTP id
+ ca18e2360f4ac-8841bf1c9f8mr535824939f.12.1754987953668; Tue, 12 Aug 2025
+ 01:39:13 -0700 (PDT)
+Date: Tue, 12 Aug 2025 01:39:13 -0700
+In-Reply-To: <689a3d92.050a0220.7f033.00ff.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689afdb1.050a0220.7f033.0114.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
+From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> Please, don't introduce more of those e_inval, e_nomem labels.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Would you find any other label identifiers more helpful for sharing
-error code assignments according to better exception handling?
+***
 
-Regards,
-Markus
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
+Author: mst@redhat.com
+
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f9193f952f49..a8c90676d715 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1149,10 +1149,15 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ {
+ 	unsigned int n, gup_flags = 0;
+ 
++	pr_err("DEBUG: __iov_iter_get_pages_alloc: initial maxsize=%zu, i->count=%zu\n",
++	       maxsize, i->count);
++
+ 	if (maxsize > i->count)
+ 		maxsize = i->count;
+-	if (!maxsize)
++	if (!maxsize) {
++		pr_err("DEBUG: __iov_iter_get_pages_alloc: returning 0 - no maxsize\n");
+ 		return 0;
++	}
+ 	if (maxsize > MAX_RW_COUNT)
+ 		maxsize = MAX_RW_COUNT;
+ 
+@@ -1166,15 +1171,31 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 			gup_flags |= FOLL_NOFAULT;
+ 
+ 		addr = first_iovec_segment(i, &maxsize);
++		pr_err("DEBUG: first_iovec_segment returned addr=%lx, maxsize_after=%zu\n",
++		       addr, maxsize);
++
+ 		*start = addr % PAGE_SIZE;
+ 		addr &= PAGE_MASK;
+ 		n = want_pages_array(pages, maxsize, *start, maxpages);
++
++		pr_err("DEBUG: want_pages_array returned n=%u, addr=%lx, start=%zu\n",
++		       n, addr, *start);
++
+ 		if (!n)
+ 			return -ENOMEM;
++
+ 		res = get_user_pages_fast(addr, n, gup_flags, *pages);
++
++		pr_err("DEBUG: get_user_pages_fast returned res=%d (requested n=%u)\n",
++		       res, n);
++
+ 		if (unlikely(res <= 0))
+ 			return res;
++
+ 		maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - *start);
++
++		pr_err("DEBUG: final maxsize=%zu, advancing iterator\n", maxsize);
++
+ 		iov_iter_advance(i, maxsize);
+ 		return maxsize;
+ 	}
+@@ -1213,11 +1234,21 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
+ 		size_t maxsize, unsigned maxpages, size_t *start)
+ {
++	ssize_t result;
++
++	pr_err("DEBUG: iov_iter_get_pages2: maxsize=%zu, maxpages=%u, iter_count=%zu, iter_type=%u\n",
++	       maxsize, maxpages, iov_iter_count(i), i->iter_type);
++
+ 	if (!maxpages)
+ 		return 0;
+ 	BUG_ON(!pages);
+ 
+-	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start);
++	result = __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages, start);
++
++	pr_err("DEBUG: iov_iter_get_pages2: returning result=%zd, start=%zu, iter_count_after=%zu\n",
++	       result, start ? *start : 0, iov_iter_count(i));
++
++	return result;
+ }
+ EXPORT_SYMBOL(iov_iter_get_pages2);
+ 
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index 94cc4705e91d..135dc37bd746 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -623,6 +623,21 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
+ {
+ 	int frag = skb_shinfo(skb)->nr_frags;
+ 
++	pr_err("DEBUG: zerocopy_fill_skb_from_iter: initial length=%zu, iov_iter_count=%zu, iter_type=%u\n",
++	       length, iov_iter_count(from), from->iter_type);
++
++	if (from->iter_type == ITER_IOVEC) {
++		pr_err("DEBUG: IOVEC iterator: nr_segs=%lu, iov_offset=%zu\n",
++		       from->nr_segs, from->iov_offset);
++		if (from->__iov && from->nr_segs > 0) {
++			pr_err("DEBUG: Current iovec[0]: base=%px, len=%zu\n",
++			       from->__iov[0].iov_base, from->__iov[0].iov_len);
++			if (from->nr_segs > 1)
++				pr_err("DEBUG: Next iovec[1]: base=%px, len=%zu\n",
++				       from->__iov[1].iov_base, from->__iov[1].iov_len);
++		}
++	}
++
+ 	if (!skb_frags_readable(skb))
+ 		return -EFAULT;
+ 
+@@ -633,16 +648,32 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
+ 		size_t start;
+ 		ssize_t copied;
+ 
++		pr_err("DEBUG: zerocopy loop: length=%zu, iov_iter_count=%zu, frag=%d\n",
++		       length, iov_iter_count(from), frag);
++
+ 		if (frag == MAX_SKB_FRAGS)
+ 			return -EMSGSIZE;
+ 
+ 		copied = iov_iter_get_pages2(from, pages, length,
+-					    MAX_SKB_FRAGS - frag, &start);
++					     MAX_SKB_FRAGS - frag, &start);
++
++		pr_err("DEBUG: iov_iter_get_pages2 returned copied=%zd, start=%zu\n",
++		       copied, start);
++		pr_err("DEBUG: iterator state after get_pages2: iov_iter_count=%zu\n",
++		       iov_iter_count(from));
++
+ 		if (copied < 0)
+ 			return -EFAULT;
+ 
++		if (copied == 0 && iov_iter_count(from) > 0)
++			pr_err("BUG: iov_iter_get_pages2 returned 0 but iterator claims %zu bytes remaining (requested %zu bytes)\n",
++			       iov_iter_count(from), length);
++
+ 		length -= copied;
+ 
++		pr_err("DEBUG: after processing: length=%zu, iov_iter_count=%zu, copied=%zd\n",
++		       length, iov_iter_count(from), copied);
++
+ 		skb->data_len += copied;
+ 		skb->len += copied;
+ 		skb->truesize += PAGE_ALIGN(copied + start);
+@@ -686,6 +717,12 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
+ 		if (refs)
+ 			page_ref_sub(last_head, refs);
+ 	}
++
++	pr_err("DEBUG: zerocopy_fill_skb_from_iter: loop exit - length=%zu, iov_iter_count=%zu\n",
++	       length, iov_iter_count(from));
++	pr_err("DEBUG: zerocopy_fill_skb_from_iter: final skb->len=%u, skb->data_len=%u\n",
++	       skb->len, skb->data_len);
++
+ 	return 0;
+ }
+ 
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+index fe92e5fa95b4..25300125b789 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -288,7 +288,14 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
+ 	if (info->msg && payload_len > 0) {
+ 		int err;
+ 
++		pr_err("DEBUG: virtio_transport_alloc_skb: calling fill_skb with payload_len=%zu, zcopy=%d\n",
++		       payload_len, zcopy);
++
+ 		err = virtio_transport_fill_skb(skb, info, payload_len, zcopy);
++
++		pr_err("DEBUG: virtio_transport_fill_skb returned err=%d, skb->len=%u\n",
++		       err, skb->len);
++
+ 		if (err)
+ 			goto out;
+ 
+
 
