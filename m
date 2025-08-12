@@ -1,281 +1,193 @@
-Return-Path: <linux-kernel+bounces-764350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7498AB221D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:52:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFA6B22213
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A0EC5671D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A0E6E5F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7079E2E7659;
-	Tue, 12 Aug 2025 08:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26C2E7BDE;
+	Tue, 12 Aug 2025 08:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4B5LTe/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="lng0be1E"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6272E2F00;
-	Tue, 12 Aug 2025 08:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7322E765B;
+	Tue, 12 Aug 2025 08:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988357; cv=none; b=gn2SJF1tB+RyDrklSGT3z4RgCYsO8tXVq4vesXRm8Nn94O1xwM+v9jmIpsiPW6YMMvpfaBVQGRkNqBgT8AyZCVl9hOQhsjLLBgeqWQywPFnrAXvVs1e4FnnOEABRsKYG/EfLkapyr3gzk5zHEIftTeXtqpoMX1idJA4n7ZLgTSo=
+	t=1754988360; cv=none; b=tQVkJG4Cq5hRtYBsxX5Ylcn3A89LGFvJuZaEDUpus1qu2Nojfdli3aHhU0lkThl2IQHkPQNTiwP9CieHK97DXxNUXJ9q/YEJswymeMrHeuZFlu2OBW4O6xn9RwZc5QbqNtv0JqM9cPBt1d8xDuZ0NoHdwlty2frwSH0yHwaxAaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988357; c=relaxed/simple;
-	bh=Y3vina1qhyMgk8nl1C5xu+5Ei5OeBSOUuHwJTqyPFQU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kE4voUMfFzfE/gPuBbfUtHcu3pPsa8lkDUkYud5bziVuL4zhfekjitQKoehoMvXH/NKQ8ohr5B4Xe4wKUibw3o2s33N0KqQqNNZ46kk0TE+rv/NcfgEIK8v6fnvjtrYztvIbKarQNLb0j/REIenAQheL0p5K+IqwXyNqT28xrKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4B5LTe/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6163FC4CEF4;
-	Tue, 12 Aug 2025 08:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754988357;
-	bh=Y3vina1qhyMgk8nl1C5xu+5Ei5OeBSOUuHwJTqyPFQU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k4B5LTe/KYuFbmJ+Us8rQokdIyZpgNGr9iHlzUnK7yEGMjm8hLjhBlRpEjvH/IHh0
-	 32030t7iLU12tpgLDWFnYP+2XuXgmErZbJbVxkRCLS5cSTFDMA1/E9XxZevFmVoLQZ
-	 RiYrr0y10csIlemn5KSb7MNIHekcluZ2ArU1QLE7Bb/FlDjPhTtHOPTtuQyHDeT2po
-	 xiS0Qqjd4NHqtABygJh5psuO7DCECdt4ZqnwOk+7sfy9oEFfNm2aMWocoEouoX6eyI
-	 vgi2mB7hSJFryXT6C2Pqv61bwhNRG+nbqjiMCTjZqqmkf+tkrOUZQ1wfWC7a/GT3PT
-	 Q0BYazNZq7xnQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 12 Aug 2025 10:44:33 +0200
-Subject: [PATCH v4 15/15] rnull: add soft-irq completion support
+	s=arc-20240116; t=1754988360; c=relaxed/simple;
+	bh=nUQlyN1n4j3UgDVGQCRzPb4qjKkiojRa8wCKJO7ioYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QXDqEyRP+XlgdCaoxk3eKsF/X/p+OQfghT73YmE87VTnrSQdSMPaERUk/PUSq6YKytIiP9Rtt3K3Tcr4owQ8hTh++rwy1lbrAA0w6AiVePdeTlNpt0/leu0vqkgHwdZBA87fFOSa8KvMipF7zCpOrovL31CWqUTiP8h1Pco0xLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=lng0be1E; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4fqFKZRX+VXRgMC+0U0SHSLoX7IVzWzQk49myeTjMC0=; b=lng0be1EtH1NwTkyOrfJ1ypzjm
+	Ddta3DOel3KELJHU7Ljf6sNwYidTcfJRFDolNYD4s4qiCTxkgCrn1Y1XPQAm+t/R1QPosqnglWg2P
+	eoTtqS1uE6Mm2Z4KuWN2TqGNPwsI/qNiAtBT5l7PPRPOlAwkz9YUdQgc/AB9xsQMTAzsyJTUmr2Ji
+	6rVQjAgQ2fWxwnE/ZwXlpCWuwoPZG8AsXWfYRmMbZaYy6NR5kCfthx6GKrzajxmqgBSPqA/wp61cw
+	KCS+JVHajYr1LZSW/2uQPtMLDxsRtKN3gpex3QBS5z74C8cLYHomnHe3omMdksCoTgSknxUaKp7OF
+	TnXF1q+w==;
+Received: from [89.212.21.243] (port=39484 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1ulkdj-00DLjg-0H;
+	Tue, 12 Aug 2025 10:45:50 +0200
+Message-ID: <ffafc9d6-2cfe-4e3f-a610-9bddc7eb49f4@norik.com>
+Date: Tue, 12 Aug 2025 10:45:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: imx93_adc: load calibrated values even
+ calibration failed
+To: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-iio@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "upstream@lists.phytec.de" <upstream@lists.phytec.de>
+References: <20250812-adc-v2-0-0260833f13b8@nxp.com>
+ <20250812-adc-v2-2-0260833f13b8@nxp.com>
+Content-Language: en-US
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <20250812-adc-v2-2-0260833f13b8@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-rnull-up-v6-16-v4-15-ed801dd3ba5c@kernel.org>
-References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
-In-Reply-To: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6342; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=Y3vina1qhyMgk8nl1C5xu+5Ei5OeBSOUuHwJTqyPFQU=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBomv8p3KOzLO9xTSZ1fel1sUh05sdwYtsqovB60
- dQt9ItidxOJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaJr/KQAKCRDhuBo+eShj
- d3AED/9vxUI0kMQwOYpfQIRuxeIoyYi+yoNMALeEuFXYdOixW7mHdvNfGqnN19QgnDuprb2IioA
- UgZqQvMt+6mLsakQjUZvL/rGDO4D7KSmis07n5FBvQd2s965L0K9BxQXZ97yyIDgbH7Mz5H4fI4
- dcugL/uHdarTp4VkehMoD1luZMzpPIons1lEBbm69mtIoPLZTCUxU2d4CvaI/CHqQ+jTvRLCJSI
- C/cxNGHsJEdDcJ25baHJoBxwQtC6Stv9DCMUBxRfEWsMgPr0j01itPpdGK9Z2h/DVHT9h3g0kuE
- HHFLwT43uT2MWrlH/UIkyqDrFGNSu91kUGYyYDigAc2qosIR/NnisVY2ENmA2LAe/zPbItSfEYp
- 4ASpbwO+cow0JGc4+mdVYXmW0IVXPEg4gMdV+d+w23Z+kJIk/2sC/yCGXbfAfIp0zonYoa9Gike
- WxRFA4NSWD9kDFARYtoczSfmSKalp7j4SPJ6I0S8WeR03Uf2XMeJRnCb0tL/sZaHHfb8uWmCW3K
- GmdZy8OsVCVmYkYmZcctfc+oeg4QG+nGpdnX1iG028mKSNaJUXcNSi4ncGI+g6fpFYzfmf2fvIS
- 0DDmU2DG5qRL4fGCcSGdhF0h27rVpMitQFqk/oMSFW7VQ0AFAO4n2NIjKhGisRPh1SC9Xpi4CFK
- twyiBQ3+3ijN9VQ==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-rnull currently only supports direct completion. Add option for completing
-requests across CPU nodes via soft IRQ or IPI.
+Hi Haibo,
 
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- drivers/block/rnull/configfs.rs | 59 +++++++++++++++++++++++++++++++++++++++--
- drivers/block/rnull/rnull.rs    | 32 ++++++++++++++--------
- 2 files changed, 78 insertions(+), 13 deletions(-)
+On 12. 08. 25 10:04, Haibo Chen wrote:
+> ADC calibration might fail because of the noise on reference voltage.
+> To avoid calibration fail, need to meet the following requirement:
+>     ADC reference voltage Noise < 1.8V * 1/2^ENOB
+> 
+> For the case which the ADC reference voltage on board do not meet
+> the requirement, still load the calibrated values, so ADC can also
+> work but maybe not that accurate.
 
-diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
-index 8d469c046a39..c4f6131eb9da 100644
---- a/drivers/block/rnull/configfs.rs
-+++ b/drivers/block/rnull/configfs.rs
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- use super::{NullBlkDevice, THIS_MODULE};
--use core::fmt::Write;
-+use core::fmt::{Display, Write};
- use kernel::{
-     block::mq::gen_disk::{GenDisk, GenDiskBuilder},
-     c_str,
-@@ -36,7 +36,7 @@ impl AttributeOperations<0> for Config {
- 
-     fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-         let mut writer = kernel::str::Formatter::new(page);
--        writer.write_str("blocksize,size,rotational\n")?;
-+        writer.write_str("blocksize,size,rotational,irqmode\n")?;
-         Ok(writer.bytes_written())
-     }
- }
-@@ -58,6 +58,7 @@ fn make_group(
-                 blocksize: 1,
-                 rotational: 2,
-                 size: 3,
-+                irqmode: 4,
-             ],
-         };
- 
-@@ -72,6 +73,7 @@ fn make_group(
-                     rotational: false,
-                     disk: None,
-                     capacity_mib: 4096,
-+                    irq_mode: IRQMode::None,
-                     name: name.try_into()?,
-                 }),
-             }),
-@@ -79,6 +81,34 @@ fn make_group(
-     }
- }
- 
-+#[derive(Debug, Clone, Copy)]
-+pub(crate) enum IRQMode {
-+    None,
-+    Soft,
-+}
-+
-+impl TryFrom<u8> for IRQMode {
-+    type Error = kernel::error::Error;
-+
-+    fn try_from(value: u8) -> Result<Self> {
-+        match value {
-+            0 => Ok(Self::None),
-+            1 => Ok(Self::Soft),
-+            _ => Err(EINVAL),
-+        }
-+    }
-+}
-+
-+impl Display for IRQMode {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        match self {
-+            Self::None => f.write_str("0")?,
-+            Self::Soft => f.write_str("1")?,
-+        }
-+        Ok(())
-+    }
-+}
-+
- #[pin_data]
- pub(crate) struct DeviceConfig {
-     #[pin]
-@@ -92,6 +122,7 @@ struct DeviceConfigInner {
-     block_size: u32,
-     rotational: bool,
-     capacity_mib: u64,
-+    irq_mode: IRQMode,
-     disk: Option<GenDisk<NullBlkDevice>>,
- }
- 
-@@ -128,6 +159,7 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-                 guard.block_size,
-                 guard.rotational,
-                 guard.capacity_mib,
-+                guard.irq_mode,
-             )?);
-             guard.powered = true;
-         } else if guard.powered && !power_op {
-@@ -216,3 +248,26 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-         Ok(())
-     }
- }
-+
-+#[vtable]
-+impl configfs::AttributeOperations<4> for DeviceConfig {
-+    type Data = DeviceConfig;
-+
-+    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-+        let mut writer = kernel::str::Formatter::new(page);
-+        writer.write_fmt(fmt!("{}\n", this.data.lock().irq_mode))?;
-+        Ok(writer.bytes_written())
-+    }
-+
-+    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-+        if this.data.lock().powered {
-+            return Err(EBUSY);
-+        }
-+
-+        let text = core::str::from_utf8(page)?.trim();
-+        let value = text.parse::<u8>().map_err(|_| EINVAL)?;
-+
-+        this.data.lock().irq_mode = IRQMode::try_from(value)?;
-+        Ok(())
-+    }
-+}
-diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-index 371786be7f47..85b1509a3106 100644
---- a/drivers/block/rnull/rnull.rs
-+++ b/drivers/block/rnull/rnull.rs
-@@ -4,6 +4,7 @@
- 
- mod configfs;
- 
-+use configfs::IRQMode;
- use kernel::{
-     alloc::flags,
-     block::{
-@@ -54,35 +55,44 @@ fn new(
-         block_size: u32,
-         rotational: bool,
-         capacity_mib: u64,
-+        irq_mode: IRQMode,
-     ) -> Result<GenDisk<Self>> {
-         let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
- 
-+        let queue_data = Box::new(QueueData { irq_mode }, flags::GFP_KERNEL)?;
-+
-         gen_disk::GenDiskBuilder::new()
-             .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
-             .logical_block_size(block_size)?
-             .physical_block_size(block_size)?
-             .rotational(rotational)
--            .build(fmt!("{}", name.to_str()?), tagset, ())
-+            .build(fmt!("{}", name.to_str()?), tagset, queue_data)
-     }
- }
- 
-+struct QueueData {
-+    irq_mode: IRQMode,
-+}
-+
- #[vtable]
- impl Operations for NullBlkDevice {
--    type QueueData = ();
-+    type QueueData = KBox<QueueData>;
- 
-     #[inline(always)]
--    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
--        mq::Request::end_ok(rq)
--            .map_err(|_e| kernel::error::code::EIO)
--            // We take no refcounts on the request, so we expect to be able to
--            // end the request. The request reference must be unique at this
--            // point, and so `end_ok` cannot fail.
--            .expect("Fatal error - expected to be able to end request");
--
-+    fn queue_rq(queue_data: &QueueData, rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-+        match queue_data.irq_mode {
-+            IRQMode::None => mq::Request::end_ok(rq)
-+                .map_err(|_e| kernel::error::code::EIO)
-+                // We take no refcounts on the request, so we expect to be able to
-+                // end the request. The request reference must be unique at this
-+                // point, and so `end_ok` cannot fail.
-+                .expect("Fatal error - expected to be able to end request"),
-+            IRQMode::Soft => mq::Request::complete(rq),
-+        }
-         Ok(())
-     }
- 
--    fn commit_rqs(_queue_data: ()) {}
-+    fn commit_rqs(_queue_data: &QueueData) {}
- 
-     fn complete(rq: ARef<mq::Request<Self>>) {
-         mq::Request::end_ok(rq)
+Reviewed-by: Primoz Fiser <primoz.fiser@norik.com>
+
+Thanks for fixing this.
+
+BR,
+Primoz
+
+> 
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
+>  drivers/iio/adc/imx93_adc.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
+> index 8471737ac04a2bac0417a6397f20865f6a2c01ca..17b0a2548b0a3614ac537b01e28bc3144d17d6fc 100644
+> --- a/drivers/iio/adc/imx93_adc.c
+> +++ b/drivers/iio/adc/imx93_adc.c
+> @@ -38,6 +38,7 @@
+>  #define IMX93_ADC_PCDR6		0x118
+>  #define IMX93_ADC_PCDR7		0x11C
+>  #define IMX93_ADC_CALSTAT	0x39C
+> +#define IMX93_ADC_CALCFG0	0x3A0
+>  
+>  /* ADC bit shift */
+>  #define IMX93_ADC_MCR_MODE_MASK			BIT(29)
+> @@ -58,6 +59,8 @@
+>  #define IMX93_ADC_IMR_ECH_MASK			BIT(0)
+>  #define IMX93_ADC_PCDR_CDATA_MASK		GENMASK(11, 0)
+>  
+> +#define IMX93_ADC_CALCFG0_LDFAIL_MASK		BIT(4)
+> +
+>  /* ADC status */
+>  #define IMX93_ADC_MSR_ADCSTATUS_IDLE			0
+>  #define IMX93_ADC_MSR_ADCSTATUS_POWER_DOWN		1
+> @@ -145,7 +148,7 @@ static void imx93_adc_config_ad_clk(struct imx93_adc *adc)
+>  
+>  static int imx93_adc_calibration(struct imx93_adc *adc)
+>  {
+> -	u32 mcr, msr;
+> +	u32 mcr, msr, calcfg;
+>  	int ret;
+>  
+>  	/* make sure ADC in power down mode */
+> @@ -158,6 +161,11 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
+>  
+>  	imx93_adc_power_up(adc);
+>  
+> +	/* Enable loading of calibrated values even in fail condition */
+> +	calcfg = readl(adc->regs + IMX93_ADC_CALCFG0);
+> +	calcfg |= IMX93_ADC_CALCFG0_LDFAIL_MASK;
+> +	writel(calcfg, adc->regs + IMX93_ADC_CALCFG0);
+> +
+>  	/*
+>  	 * TODO: we use the default TSAMP/NRSMPL/AVGEN in MCR,
+>  	 * can add the setting of these bit if need in future.
+> @@ -180,9 +188,13 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
+>  	/* check whether calbration is success or not */
+>  	msr = readl(adc->regs + IMX93_ADC_MSR);
+>  	if (msr & IMX93_ADC_MSR_CALFAIL_MASK) {
+> +		/*
+> +		 * Only give warning here, this means the noise of the
+> +		 * reference voltage do not meet the requirement:
+> +		 *     ADC reference voltage Noise < 1.8V * 1/2^ENOB
+> +		 * And the resault of ADC is not that accurate.
+> +		 */
+>  		dev_warn(adc->dev, "ADC calibration failed!\n");
+> -		imx93_adc_power_down(adc);
+> -		return -EAGAIN;
+>  	}
+>  
+>  	return 0;
+> 
 
 -- 
-2.47.2
-
-
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
