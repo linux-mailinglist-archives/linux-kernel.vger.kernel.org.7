@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-764201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D64BB21FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00DEB21FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 039BA4E3D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD969680DE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B752D8375;
-	Tue, 12 Aug 2025 07:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80CA2E11A5;
+	Tue, 12 Aug 2025 07:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpHolMAn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ak0jpxAM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23F82D7803;
-	Tue, 12 Aug 2025 07:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E0D2DE709;
+	Tue, 12 Aug 2025 07:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984586; cv=none; b=gwOI4QpJNMfkb8GnOkrGxeiLu6T9bK5FqyjU07xkZ/LpvBftGPnm733bkcmRjjkx430oDQJDf2Bqp1vet0auATUUHyyoOsGzWuOINphozaog8lWehOdoas1kGJV3lfyct+nEHAng81QvbY4Yy3CrRVVhNo9RjyMHDFkBf6egB6s=
+	t=1754984595; cv=none; b=d1YhwqmaMMXxZxq2YhMT9r+TKH+gR6xlxFMpDdcIB/kiaNpEIO3UoKn/CTfTWRBU//7OrMPnJyYK1EQO7XxsSK0VRGbfx4fNVizRZX5hPe3ayGFfEkeFyaIPNpC967TMRuWy/U6v1RiM3iJn7pKi+80F9w9oWFgR1ewi+Fvwxvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984586; c=relaxed/simple;
-	bh=1cRnQersqcQvz+yWOTCBkCExWQMW2QB2FBbOUQAleYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Np7n/U2tzM1wQhGZEZYIxTFqgiA/d27/DHCh36eQ6BT7WBdsaK3u9j22ivkoe+QaqEjcXg8t2S+FoqGVknxVPk5RiAUMIGo73B9z9Fc8P4sYyHbHXg5RanBdcBMlp5S5xS0Egxxd8Zfu5Vp+auly/r1wfT3Fw9LHY0/HtkkWjm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpHolMAn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DDCC4CEF8;
-	Tue, 12 Aug 2025 07:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754984585;
-	bh=1cRnQersqcQvz+yWOTCBkCExWQMW2QB2FBbOUQAleYk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gpHolMAnHPF7LJ36a+KOSpg9bK2tULx1gTw9Kz4IGRaE3cipeer8Z+OO0QnqbneBE
-	 tCVp8cPmeu3MjYJVVmUI5IjdoSvQG5Od0U0wI9rQTTwD8oXTRRUmG1jJu8KIMqewkz
-	 Hee+SkmRZ0gWZ+HGo1rWbFVb4NXwqs4nppkOwuz4AIMfkJKrXIn5D8jJIi2pGHLkQb
-	 GAwPK7FUybpeqZ0aKbtYXRK10I+gDB3rcAWDWUJZVxnfVy7+w9+qGzyBfen6cg75s9
-	 j9RevmP1FsAr2FL/Jgn2CxU0raY0OYX138sx4aqnJmBVC6LuZDJVC1UBf+frC78Gg6
-	 kHlPQY/6D0ljg==
-Message-ID: <1400fece-db6c-45b3-831d-f653d28eb192@kernel.org>
-Date: Tue, 12 Aug 2025 09:42:59 +0200
+	s=arc-20240116; t=1754984595; c=relaxed/simple;
+	bh=0A//2Exv4mtissrpUI9DkbYI+FdyOCpS4fL7Ag/lo5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOnd3wUt60aMLDyULj26ikkGcaooiMAYGiVm24oikcJY4W9/JTckxJAnX6oDzJnnvChv+JmNBTaA6YRHCcuaYlvn2rfmewEkEuD4nVe0QBFMmOMsl5NmFIc5Zw1+PMSZ1nvAZc8p+x/4na8QJgv2TInYyB69GaEtawQz7/low6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ak0jpxAM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=MnE2DIPhZPQSmiehfj+YTSIBtI5Zzg3HCPs+hiz8JBw=; b=ak0jpxAMIUrtGsVuw3wZFfdUfz
+	t1mnz1beNInoxHY2u3eZREtheVvVjQJw1Ru7Os9rRcD1S1JzWpQnl4XQO93oCh3rhU/W4OXjZ+0Dm
+	YO0zQzVjOJZijJYBP8xDGGEE82bkN5kVOhqNlYK92f2L5wLXliKq60UJpBmMzm426M1vAiSLTercT
+	YKNs4zLoACoA3Ad000d2VQRNtYK2cFyfg3SlLxOK1d/U4wH5DLgULjo6GQ3QK4g2src5iaDGThFT8
+	uBEUjQeTn8Tpq5GIe31uP+Pbd3ZXNbSyfdm009ro3/UpWULud5JFjYwT9bBeDcuqXpPQPY8wEu9Yf
+	VHvrhNzg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uljf0-0000000FjYr-30Bn;
+	Tue, 12 Aug 2025 07:43:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 540293002C5; Tue, 12 Aug 2025 09:43:06 +0200 (CEST)
+Date: Tue, 12 Aug 2025 09:43:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Matt Wu <wuqiang.matt@bytedance.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 0/8] hrtimer: Remove hrtimer_clock_base::get_time
+Message-ID: <20250812074306.GD4067720@noisy.programming.kicks-ass.net>
+References: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] ASoC: dt-bindings: nau8825: Document routing strings
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drake@endlessm.com,
- katsuhiro@katsuster.net, matteomartelli3@gmail.com, zhoubinbin@loongson.cn,
- KCHSU0@nuvoton.com, patches@opensource.cirrus.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
-References: <20250809151853.47562-1-jihed.chaibi.dev@gmail.com>
- <20250809151853.47562-3-jihed.chaibi.dev@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250809151853.47562-3-jihed.chaibi.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
 
-On 09/08/2025 17:18, Jihed Chaibi wrote:
-> The nau8825 driver defines several DAPM widget names that are used for
-> audio routing in the Device Tree. However, these strings are not
-> documented in the binding file.
+On Tue, Aug 12, 2025 at 08:08:08AM +0200, Thomas Weiﬂschuh wrote:
+> The get_time() callbacks always need to match the bases clockid.
+> Instead of maintaining that association twice in hrtimer_bases,
+> use a helper.
 > 
-> This forces developers to read the C source to discover the valid
-> names, which can be inefficient and error-prone.
-
-Reading snd_soc_dapm_route can be automatize/scripted, so I don't
-consider it error prone or difficult, comparing to reading free form
-text in any documentation.
-
-> 
-> Add a list of the input and output widget names to the binding's
-> description to make it self-contained and improve the user
-> experience for board bring-up.
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 > ---
->  .../devicetree/bindings/sound/nuvoton,nau8825.yaml   | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Thomas Weiﬂschuh (8):
+>       posix-timers: Avoid direct access to hrtimer clockbase
+>       timers/itimer: Avoid direct access to hrtimer clockbase
+>       sched/core: Avoid direct access to hrtimer clockbase
+>       lib: test_objpool: Avoid direct access to hrtimer clockbase
+>       ALSA: hrtimer: Avoid direct access to hrtimer clockbase
+>       media: pwm-ir-tx: Avoid direct access to hrtimer clockbase
+>       hrtimer: Use hrtimer_cb_get_time() helper
+>       hrtimer: Remove hrtimer_clock_base::get_time
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml b/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
-> index a54f194a0..cb1c82aa3 100644
-> --- a/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
-> +++ b/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
-> @@ -9,6 +9,18 @@ title: NAU8825 audio CODEC
->  maintainers:
->    - John Hsu <KCHSU0@nuvoton.com>
->  
-> +description: |
-> +  NAU8825 audio CODEC
-> +
-> +  Valid routing names defined in the driver for this codec include:
-Describe pins on the device or device properties instead.
+>  drivers/media/rc/pwm-ir-tx.c   |  5 +----
+>  include/linux/hrtimer.h        | 14 +++++---------
+>  include/linux/hrtimer_defs.h   |  2 --
+>  kernel/sched/core.c            |  2 +-
+>  kernel/time/hrtimer.c          | 34 +++++++++++++++++++++++++---------
+>  kernel/time/itimer.c           |  3 +--
+>  kernel/time/posix-timers.c     |  5 ++---
+>  kernel/time/timer_list.c       |  2 --
+>  lib/test_objpool.c             |  2 +-
+>  scripts/gdb/linux/timerlist.py |  2 --
+>  sound/core/hrtimer.c           |  2 +-
+>  11 files changed, 37 insertions(+), 36 deletions(-)
 
-Best regards,
-Krzysztof
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
