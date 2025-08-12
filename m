@@ -1,37 +1,47 @@
-Return-Path: <linux-kernel+bounces-764678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A5DB225E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE955B225E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B10E57B665A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CD01B642AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EE02ECD3C;
-	Tue, 12 Aug 2025 11:32:02 +0000 (UTC)
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9432ED850;
+	Tue, 12 Aug 2025 11:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQol54+r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48982857DF;
-	Tue, 12 Aug 2025 11:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037A72857DF;
+	Tue, 12 Aug 2025 11:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754998321; cv=none; b=JncRcE5RvzVxhCsJ+8YoeEctyhGwoEtXD661GdtIIqkJg4IVpWCEW7+0hp/cuiIc2yZLpoVOgRLcZuMKGixf6jAEicuxQKtXOPuYXVOVGXlh68dcgiVbZawbKK1Wz/bbir0l+MK6PJgdixvHMe7DUOgFV0BK1JJFa1vidPdnBE4=
+	t=1754998331; cv=none; b=H8oIOY/ajGvp91X/6hDKWspvYLT990U6stA9/fFm5TdjmOWBAcbwvpXetbG9gXV0SCON5bfeLOhhgHmmTPyJb/FBm9Tsv2WmorI2WN/tkDhz9ZwhoJlMXlI/t7Oqu5DeVvq6K79k3N2gZs4rdtzjOat0WBZaJxeY1we8t2BHX+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754998321; c=relaxed/simple;
-	bh=7kxPRunFsFqcegGcujVUOac3phCEbrLXAC4fvNP2PMw=;
+	s=arc-20240116; t=1754998331; c=relaxed/simple;
+	bh=cQOWn3jceA2AGFYehbqGll5sJj3MlSpToDLlFTKmkhU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JoKpi+9LBOuaICaVsvEd4a375WXmJdV3XAizTMARnq7VxUXvSK9g1Uq/LmIeiDq4VnRpEdmk1++hkf1J+95U31/ZlsJPSQ0g7galkqxn477Qc9GqvEH1lT8OC253zilV+HCjRhzIk4rs0RdbKwJoIXPl8TEfwLR9Y7TnjrnBySc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF99D44964;
-	Tue, 12 Aug 2025 11:31:47 +0000 (UTC)
-Message-ID: <cf90951d-0eee-4b51-a769-b657144dab7a@ghiti.fr>
-Date: Tue, 12 Aug 2025 13:31:47 +0200
+	 In-Reply-To:Content-Type; b=nhtDKeSyGb9XlTzbNbSlAFnJ6yAGubuQ8x5g8OF3MvNTvdgo9aSonOqQRFHtKTSyaKGOcIOpB4uv7JP7h/fkL9FVC3KbjSt5WYVIMZM7y8BJbFg9j947HDJwFuxRQfjbpR1AVhADg/wF54jo8kqDY1p0+PY3Y8LKSgK5hwsEOLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQol54+r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED7AC4CEF0;
+	Tue, 12 Aug 2025 11:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754998330;
+	bh=cQOWn3jceA2AGFYehbqGll5sJj3MlSpToDLlFTKmkhU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sQol54+r9H3PpfZUkm4Q+nYzD9Fpdah/pD/jnKqeEGhOrPcmzCqs0qG0XLI2OA8T6
+	 bZDMW2Z4aYiUCRAn+66O91K3cgCXqkB5UdyFvD9Gud0IydACwcQXJeTDq1RcMO3ikU
+	 ekxTICz0nLGVhphDnBHIUIUA1oKr82qwZ+bNmbSSF3i19ec9RcNXdmOx3f1UnNZJc/
+	 ctSCWOR1EHqIjuDDqX7+QtWgC1GnDv/s03vtyBbIL3BFJLp7WOUJFasLIDsiJnYY/q
+	 H3ynodqBzCLhNCq0kjtliuUuqkACFRk/gLYldhVSQZPAEKPaQCHnFPWb4NyFNLEArH
+	 uZWH0hgLK+SUA==
+Message-ID: <aea953ea-c8de-4905-a89b-b3c2de2402b1@kernel.org>
+Date: Tue, 12 Aug 2025 13:32:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,95 +49,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Remove pud_user() from asm-generic/pgtable-nopmd.h
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
- Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>
-References: <c7f99612ecfa04054b37518df661d04f88f7c9af.1754997083.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Describe the first PCIe
+ controller and PHY
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <c7f99612ecfa04054b37518df661d04f88f7c9af.1754997083.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250811-sc7280-pcie0-v1-1-6093e5b208f9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeehvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeejtdduugemkeguuggumegskegrtdemvdejfhgsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeejtdduugemkeguuggumegskegrtdemvdejfhgspdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeejtdduugemkeguuggumegskegrtdemvdejfhgsngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedufedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlr
- dhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
 
-Hi Christophe,
-
-On 8/12/25 13:14, Christophe Leroy wrote:
-> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
-> issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
->
-> But pud_user() only exists on ARM64 and RISCV and is not expected
-> by any part of MM.
->
-> Add the missing definition in arch/riscv/include/asm/pgtable-32.h
-> and remove it from asm-generic/pgtable-nopmd.h
->
-> A stub pud_user() is also required for ARM64 after
-> commit ed928a3402d8 ("arm64/mm: fix page table check compile
-> error for CONFIG_PGTABLE_LEVELS=2")
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Reviewed-by: Peter Xu <peterx@redhat.com>
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+On 12/08/2025 05:16, Bjorn Andersson wrote:
+> Only one PCIe controller has been described so far, but the SC7280 has
+> two controllers/phys. Describe the second one as well.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > ---
->   arch/arm64/include/asm/pgtable.h    | 1 +
->   arch/riscv/include/asm/pgtable-32.h | 5 +++++
->   include/asm-generic/pgtable-nopmd.h | 1 -
->   3 files changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index abd2dee416b3b..fef7cc7a340d8 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -955,6 +955,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
->   
->   #define pud_valid(pud)		false
->   #define pud_page_paddr(pud)	({ BUILD_BUG(); 0; })
-> +#define pud_user		false /* Always 0 with folding */
->   #define pud_user_exec(pud)	pud_user(pud) /* Always 0 with folding */
->   
->   /* Match pmd_offset folding in <asm/generic/pgtable-nopmd.h> */
-> diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
-> index 00f3369570a83..37878ef374668 100644
-> --- a/arch/riscv/include/asm/pgtable-32.h
-> +++ b/arch/riscv/include/asm/pgtable-32.h
-> @@ -36,4 +36,9 @@
->   static const __maybe_unused int pgtable_l4_enabled;
->   static const __maybe_unused int pgtable_l5_enabled;
->   
-> +static inline int pud_user(pud_t pud)
-> +{
-> +	return 0;
-> +}
-> +
->   #endif /* _ASM_RISCV_PGTABLE_32_H */
-> diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-> index 8ffd64e7a24cb..b01349a312fa7 100644
-> --- a/include/asm-generic/pgtable-nopmd.h
-> +++ b/include/asm-generic/pgtable-nopmd.h
-> @@ -30,7 +30,6 @@ typedef struct { pud_t pud; } pmd_t;
->   static inline int pud_none(pud_t pud)		{ return 0; }
->   static inline int pud_bad(pud_t pud)		{ return 0; }
->   static inline int pud_present(pud_t pud)	{ return 1; }
-> -static inline int pud_user(pud_t pud)		{ return 0; }
->   static inline int pud_leaf(pud_t pud)		{ return 0; }
->   static inline void pud_clear(pud_t *pud)	{ }
->   #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 134 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 134 insertions(+)
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
-
-Thanks,
-
-Alex
-
+Best regards,
+Krzysztof
 
