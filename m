@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-765314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABEEB22E93
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:08:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65986B22E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BF53BB96B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF5F3BB23D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECEB2FAC14;
-	Tue, 12 Aug 2025 17:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EA72FAC1F;
+	Tue, 12 Aug 2025 17:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Gm1htpT5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0082F83CE;
-	Tue, 12 Aug 2025 17:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFvvjqsy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C961A76DE;
+	Tue, 12 Aug 2025 17:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018312; cv=none; b=NO2/8TF1ZTPpda6PSHmlTtp/dcKKVxR+UfucZqghffIXy9IX+L7QkDVKnnV8OwiIcp9RmNV2REMTSpJALLd5OQe9Z40rHOlyLclPEJmC2rTiEYtadaNPXk0Jcc5vWKpHW3nWieg/nI9/UvA0QQJgW+RLICM5rOe7u3xPT3wrZG0=
+	t=1755018303; cv=none; b=K2Fh6o8y18H+iOhRgsoBpsOMiFeiiPO/H5398kwT4UiPAQ0/NdA0DD2ajACW3IKIFTdeWuR6WfjrZonS7EQpLVkPu5+BzHPy2Al1HBcZ1kKot9d9YUvRrlS+ZhswCluQznYylAR1LompE2zQ/ScFkOrYtvOiyqno2qKQFCIJT3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018312; c=relaxed/simple;
-	bh=NQTEZl9pZAXnSXVryxNtdsNz0W9aBjYzDb0D4HpaHIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nTMxz10QNE+vdAzUArHZU/iUgQyphEPndY+O1brrbs+YLopzTjC81xJRJz4nz9GJF2IqI7CAkCEZyF7TYnVPQCwr3UqtABxWoRP9ajsKzQeBq866OtOt2dx6pEQxBxZHeO6QulE/LYXpl8nzsKJD1C/O7ElMD/zrZ+jDBiq1z98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Gm1htpT5; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=60
-	GzXJ/pzzYqeT1Unc8iYznrFO7L2shobSHFgzePkIM=; b=Gm1htpT5ydBtG43C55
-	mprn8ZogaNRK/p16ppEdbHENIrAj8ZDJ4pP8896XxNHeSubJ7TIvbyTwo90Y47u1
-	zMs7eurBXKZDwx+RZalBPFWG3QktW1QNgY40GrfuXBS1l1ZRbTSNiYOyERDuf9om
-	8VuBr+/6/viFBF/1/zRLaAPI8=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBnKQUedJtoVOYKBA--.44003S2;
-	Wed, 13 Aug 2025 01:04:31 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: af_packet: Use hrtimer to do the retire operation
-Date: Wed, 13 Aug 2025 01:04:30 +0800
-Message-Id: <20250812170430.290604-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755018303; c=relaxed/simple;
+	bh=tTm/T4JRN/HERZIZ3VLZ5EgeyXpLsz7VKH4O9wed3sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TCNoTEDIn5kjOlM3D1+mCkWd26csH4YhkIrV0uHXYK4eY1f9I7tUE3d8Nw0WAhHcc963KjE/mVFwAGpHTkeYszF+gKv7MjX3MNThkwbI/GeVJCHSKwSQXMN+7Iu6nBkDqGmxGVUgV9qfTaea1JFPtpcP8bzlhM/1ska8xsRuxN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFvvjqsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EA9C4CEF7;
+	Tue, 12 Aug 2025 17:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755018303;
+	bh=tTm/T4JRN/HERZIZ3VLZ5EgeyXpLsz7VKH4O9wed3sk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RFvvjqsyso8V5LN31kOLuBTnmSe+jxVxPUb9ANpeq3wgfgOTUcuDqELcIsLcyB2/E
+	 2p/tfOI3TcatjuRglbUIr03JKTcuv6Bzp9OJQ+v3kya0swhfWvrJcZXZkKIHngCviS
+	 5YnjjVXqBVRyURAfKozHHzAf0PNMo040AWhyn2C//wheXn+vcYDAFviTgaSYs8vr2G
+	 Ms9Fvosp5m8g0N2Mv8zmPk6zsexopoy5UrqNLYlltdJqqgzU2agv9IauBlTJbruA4D
+	 EE5mzus1tD7oBXD84NQ0zRwPHkVvNuMCd7PBnjYAoJX4Ua1wXOvs0pCcnfhZAhywnZ
+	 HrBYxBt2Ht6pw==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af98b77d2f0so1065096166b.3;
+        Tue, 12 Aug 2025 10:05:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV++s5dKZsciXRzEy5ux5zs3CwH61a4hsYvAcDxpEGEgdOCbdoAAIEP02OYpVCdg4eBS/qHaFVAV/Aj@vger.kernel.org, AJvYcCXWvzgliFnk3hpIHMglqJG59KkLKw3167Nec6u4qgQmYbHySlD2JoLXwq/FatmoV14kVPx75mBjpSIV@vger.kernel.org, AJvYcCXnsMzrTh0alxpkcf3rNMg03L1V3UpdiWabu7e0ddGDJBMG+VHpalp3iIHsAMo+5jU70T+96XdtaVBJxFz/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXCk8E6eLNXsbQRcXPUCCyLwFbmpdPFbdtkrq3SDT0ShBsR92l
+	mALTgiuucGcJ1+j+zFpr87Yopyj+BOAPHHIThcB+qMdQuXvtDFcua3QtKIEejhAA4xvPFT9Dsj3
+	AnlG9PnLsRh08pg2eJevs1f1J2Ib+tg==
+X-Google-Smtp-Source: AGHT+IFEoa4tlba107KUcmaKXIp6JOYHjwYjuPSz8H4SqTYk9RgSva5MazUnhA1P/IoiGLfpqgZnuyxmnoxsj1Dgv1g=
+X-Received: by 2002:a17:907:97c4:b0:ade:44f8:569 with SMTP id
+ a640c23a62f3a-afca4ec18dfmr3291466b.42.1755018301768; Tue, 12 Aug 2025
+ 10:05:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnKQUedJtoVOYKBA--.44003S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF1rXrW3ZrW7Aw45urWUtwb_yoW8KF45pa
-	y5W347GwsrZF12gr4UAw48ZFyrK3WDArn8Gws3Grsayas5GFyrtayj9FZ0qFWxtF4q9F4x
-	Ar4rZr98Cwn0q3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK-erUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxWmCmiaBhczAwACsL
+References: <aJms+YT8TnpzpCY8@lpieralisi> <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
+ <aJrwgKUNh68Dx1Fo@lpieralisi> <e15ebb26-15ac-ef7a-c91b-28112f44db55@amd.com> <aJtpJEPjrEq8Z78F@lpieralisi>
+In-Reply-To: <aJtpJEPjrEq8Z78F@lpieralisi>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 12 Aug 2025 12:04:49 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+tPM7+W9u1k6Gf9_vzB2na_0kBMxN4O3FtTxub7GK_xw@mail.gmail.com>
+X-Gm-Features: Ac12FXyQ-pfmrPqnZ0AOuFGYZ4csB3TC-QnSiCqdO5VXcnUBg2ZInOknVt5umAo
+Message-ID: <CAL_Jsq+tPM7+W9u1k6Gf9_vzB2na_0kBMxN4O3FtTxub7GK_xw@mail.gmail.com>
+Subject: Re: Issues with OF_DYNAMIC PCI bridge node generation
+ (kmemleak/interrupt-map IC reg property)
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Lizhi Hou <lizhi.hou@amd.com>, maz@kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-08-11 at 22:48 +0800, Willem wrote:
+On Tue, Aug 12, 2025 at 11:17=E2=80=AFAM Lorenzo Pieralisi
+<lpieralisi@kernel.org> wrote:
+>
+> On Tue, Aug 12, 2025 at 08:53:06AM -0700, Lizhi Hou wrote:
+> >
+> > On 8/12/25 00:42, Lorenzo Pieralisi wrote:
+> > > On Mon, Aug 11, 2025 at 08:26:11PM -0700, Lizhi Hou wrote:
+> > > > On 8/11/25 01:42, Lorenzo Pieralisi wrote:
+> > > >
+> > > > > Hi Lizhi, Rob,
+> > > > >
+> > > > > while debugging something unrelated I noticed two issues
+> > > > > (related) caused by the automatic generation of device nodes
+> > > > > for PCI bridges.
+> > > > >
+> > > > > GICv5 interrupt controller DT top level node [1] does not have a =
+"reg"
+> > > > > property, because it represents the top level node, children (IRS=
+es and ITSs)
+> > > > > are nested.
+> > > > >
+> > > > > It does provide #address-cells since it has child nodes, so it ha=
+s to
+> > > > > have a "ranges" property as well.
+> > > > >
+> > > > > You have added code to automatically generate properties for PCI =
+bridges
+> > > > > and in particular this code [2] creates an interrupt-map property=
+ for
+> > > > > the PCI bridges (other than the host bridge if it has got an OF n=
+ode
+> > > > > already).
+> > > > >
+> > > > > That code fails on GICv5, because the interrupt controller node d=
+oes not
+> > > > > have a "reg" property (and AFAIU it does not have to - as a matte=
+r of
+> > > > > fact, INTx mapping works on GICv5 with the interrupt-map in the
+> > > > > host bridge node containing zeros in the parent unit interrupt
+> > > > > specifier #address-cells).
+> > > > Does GICv5 have 'interrupt-controller' but not 'interrupt-map'? I t=
+hink
+> > > > of_irq_parse_raw will not check its parent in this case.
+> > > But that's not the problem. GICv5 does not have an interrupt-map,
+> > > the issue here is that GICv5 _is_ the parent and does not have
+> > > a "reg" property. Why does the code in [2] check the reg property
+> > > for the parent node while building the interrupt-map property for
+> > > the PCI bridge ?
+> >
+> > Based on the document, if #address-cells is not zero, it needs to get p=
+arent
+> > unit address. Maybe there is way to get the parent unit address other t=
+han
+> > read 'reg'?
+>
+> Reading the parent "reg" using the parent #address-cells as address size =
+does
+> not seem correct to me anyway.
 
-> > @@ -603,9 +603,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> >  	struct tpacket_kbdq_core *pkc;
-> > 
-> >  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> > -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> > -		    0);
-> > -	pkc->retire_blk_timer.expires = jiffies;
-> > +	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> > +		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-> > +	if (pkc->tov_in_msecs == 0)
-> > +		pkc->tov_in_msecs = jiffies_to_msecs(1);
+Right, the parent #address-cells applies to reg/ranges(parent addr) in
+the child node.
 
-> why is this bounds check needed now, while it was not needed when
-> converting to jiffies?
-> 
-> init_prb_bdqc will compute a retire_blk_tov if it is passed as zero,
-> by calling prb_calc_retire_blk_tmo.
+> > Or maybe zero should be used as parent unit address if 'reg' does not
+> > exist?
+>
+> zeros are used for eg GICv3 interrupt-map properties, I suppose that's
+> a wild card to say "any device in the interrupt-controller bus",
+> whatever that means.
+>
+> Just my interpretation, I don't know the history behind this.
 
-Dear Willem,
+They should be zero simply because a device's address never has any
+influence with a device's interrupt connection to a GIC (or any SoC
+interrupt controller).
 
-I am very grateful for your suggestion. I will delete this bounds check in the v1
-PATCH.
-
-
-> >  static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> >  {
-> > -	mod_timer(&pkc->retire_blk_timer,
-> > -			jiffies + pkc->tov_in_jiffies);
-> > +	hrtimer_start_range_ns(&pkc->retire_blk_timer,
-> > +			       ms_to_ktime(pkc->tov_in_msecs), 0, HRTIMER_MODE_REL_SOFT);
-
-> Just hrtimer_start if leaving the slack (delta_ns) as 0.
-> 
-> More importantly, this scheduled the timer, while the caller also
-> returns HRTIMER_RESTART. Should this just call hrtimer_set_expires or
-> hrtimer_forward.
-
-I will use hrtimer_set_expires here while using hrtimer_start in 
-prb_setup_retire_blk_timer to start the timer.
-Previously I used hrtimer_forward here, then encountered 
-WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED warning in the hrtimer_forward
-function. This warning occurred because the tpacket_rcv function eventually calls
-prb_open_block, which might call _prb_refresh_rx_retire_blk_timer at the same time
-prb_retire_rx_blk_timer_expired might also call _prb_refresh_rx_retire_blk_timer,
-leading to the warning.
-
-
-> >  refresh_timer:
-> >  	_prb_refresh_rx_retire_blk_timer(pkc);
-> > +	ret = HRTIMER_RESTART;
-> 
-> reinitializing a variable that was already set to the same value?
-> > 
-> >  out:
-> >  	spin_unlock(&po->sk.sk_receive_queue.lock);
-> > +	return ret;
-> 
-> just return HRTIMER_RESTART directly.
-> >  }
-
-I will modify the patch based on these suggestions and upload it later.
-
-
-Thanks
-Xin Zhao
-
+Rob
 
