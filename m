@@ -1,99 +1,144 @@
-Return-Path: <linux-kernel+bounces-764780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7B7B2273D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:44:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54516B2273E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5896416A4A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:44:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41AA64E1427
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AB323B627;
-	Tue, 12 Aug 2025 12:44:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32F622E402;
+	Tue, 12 Aug 2025 12:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VYlGXz1h"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089B4221283
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E333C2F;
+	Tue, 12 Aug 2025 12:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755002670; cv=none; b=obucN4UuG7dDmNAYPzGEH/m3nE3oXdC04benOukr1Y9nCUK7IE0J3CjzKutpPdZP5x3oM54LqH+aemb06MBcjkl7dqy+6s+wosoGAGwFidRjkjT9nbCPbW3GBaiFnj4+2eqKCEObdVeFsqjjXjfB/cnrnov4Mlp/jQUdVXq64Y4=
+	t=1755002693; cv=none; b=TMqwr/mV/fwY6/CFxksA7gbdXpw/8mytaWDSpB7vYI70vpRwBFnWoP5pCaV7vmmvl8fDblztg08qJyAuD2GWwwtwEjZrzbX7OuIkYSfnWjStM/xrgM3YFkcyWvczEybBIbEhQasOMguBuau5RZOQN5h9UfP606bj7xPt6r3GowY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755002670; c=relaxed/simple;
-	bh=TzD4jA+N3MMYaWwcOXPOC4OerO3RLPLSpKetpxZyxcE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YIJhNi4X+7VwKevrJxM4mrYeaD/r0d1oZcd2EYAuYq6kkmmcQ5/ftyug3EqbejJrlkfBHX1eo4fjTl50oknLAl159fMn6rLMpiyiwQ+2Jvan5Y4h31dn15NVSgokGGhzF0vWQ/Fpfeijen/Xgp37d7Kb/guRfnMaeBVEB1kndHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8818b1512c2so512843139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:44:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755002668; x=1755607468;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+GzWE/J4uSXlwdpiI8hN+iUBERztCJ8dbBSTUHerrzk=;
-        b=BE8XIzCGW9CWoH3Hjw7NnAMaMm323UAHsYD2BQ+z6fa5v9sbtZCnfaU2ffjgRxqcG+
-         kLPXbpq0J5ikIeYIdcy2+1DKD3SRmbCS+tWD3CQptWSNex6uM5csQmiSpKIpJDSOCvWf
-         Q/FYGY5dixZvJMIKD8Slt4GQ38Q7erHb8j7io4WZmAXdO0Eqz+N36USdWQcRV+8w6bA0
-         U8SSpghK6nNS2O/9IBDncK4TVnIAuWPsAkjjKJoQrXa+VXMRhtm7H5lhx6OY4tm4fGLL
-         BefLJILxO4qy+Ks5AEENgRL4BIDMT/hwxDODMCY2ngTmBZnrjbwSifWYVVxAU/9zt6ad
-         TkzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXu+RyoMQgtwrB5V2B6lHkf6HlMrBtpobF4IzthmQaeKRh7ryzNY/WrUML7hdOY1rG3CXr2xCCTGhe/s50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWDlp92egIgzx1WwsBw1LO8/NHGCeHwNKz2ELzdvdndizsAdqb
-	8DaRJCZzxjXlpfzOn1Zhb9V66/gVR7qOjbTMjFQD0ygYBM0o2ti7vuZI6IoyZzwKKI8kCnzQ/PD
-	hbDfoeD6JUY91/xiDG7qs/RBz5mK9ytHI4/3StMlLvKQow8Dt50GwlplNP3k=
-X-Google-Smtp-Source: AGHT+IHcuQUBjTWzacTU13h3gx2dMNdcdOtTLeBpIAgpk97l3NdHMVRzgA60bLKt6sGnEB+bm3wrN14gbeqVEeihXXtGGranIpt7
+	s=arc-20240116; t=1755002693; c=relaxed/simple;
+	bh=zMiRV+p+DUcdpzuTRwPcyJNdY52FdWHiETIA/GgW848=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TKfGLPaibjLJSowvP+oiRFd8cJo/Q9i90b5gjh026DuKreeZkWhI+l/33ePL9I6kbhknwcMnJRUPd6DWv6U2v9o9U5loAqpdgQDlvcY7A7AY4iXOoi99AifHRzLGhts/EBLzfK2Xr5GCNIxbMDhFXstIMXsDR7yyQXRfZz1slHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VYlGXz1h; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755002689;
+	bh=zMiRV+p+DUcdpzuTRwPcyJNdY52FdWHiETIA/GgW848=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VYlGXz1hiPGGu1TBTb2QI72OdiYPHXlCYWNxCdy6xpdu/HKnD74CDfQgSt9VgmyYf
+	 TylHrl3NC+EFCO4C9GoOVmibBiaDdwiN2rzbgC9ENXuEGN5V4/Yl5lMV2QFV3BtLiE
+	 X7N+Ff+Fd0GdMm3zSzN/1GTAfgF/wYBOiLXbTZQV1ZnrcVrUllN80vH61by23Y9x+O
+	 fqn7yJvwm/Xfgi1+7qgJNif1EzpVB7LIPAWnjEUfb9uVYHbeAZXd9joP4nipfLn1Cb
+	 cLs1aFozax3A9mbZo1gx4Zpd2IIn51u+/zJEKW20JYvGHXl1OsqHCj6CMODtxu3JSu
+	 WENTFidEoBo9Q==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5B8BB17E107A;
+	Tue, 12 Aug 2025 14:44:48 +0200 (CEST)
+Message-ID: <a66feb89fa02f05b187e5603ffc3b1501ef3cbd5.camel@collabora.com>
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Alex Bee <knaerzche@gmail.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, 	linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, 	devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 08:44:46 -0400
+In-Reply-To: <91864a1c047d2bdfce202b070716a694ede47d5e.camel@collabora.com>
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+		 <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
+		 <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+	 <91864a1c047d2bdfce202b070716a694ede47d5e.camel@collabora.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-Y2sl7uZiPmx/2tINlSGb"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f94:b0:87c:1d65:3aeb with SMTP id
- ca18e2360f4ac-8841be437femr626500339f.2.1755002668323; Tue, 12 Aug 2025
- 05:44:28 -0700 (PDT)
-Date: Tue, 12 Aug 2025 05:44:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689b372c.050a0220.7f033.0124.GAE@google.com>
-Subject: [syzbot] Monthly fbdev report (Aug 2025)
-From: syzbot <syzbot+list949e1e9e2a92a664de72@syzkaller.appspotmail.com>
-To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+
+
+--=-Y2sl7uZiPmx/2tINlSGb
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello fbdev maintainers/developers,
+I forgot,=20
 
-This is a 31-day syzbot report for the fbdev subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fbdev
+Le mardi 12 ao=C3=BBt 2025 =C3=A0 08:38 -0400, Nicolas Dufresne a =C3=A9cri=
+t=C2=A0:
+> > JCT-VC-HEVC_V1 on GStreamer-H.265-V4L2SL-Gst1.0:
+> >=20
+> > - DBLK_D_VIXS_2 (fail)
+> > - DSLICE_A_HHI_5 (fail)
+> > - EXT_A_ericsson_4 (fail)
+> > - PICSIZE_A_Bossen_1 (error)
+> > - PICSIZE_B_Bossen_1 (error)
+> > - PICSIZE_C_Bossen_1 (error)
+> > - PICSIZE_D_Bossen_1 (error)
+> > - SAODBLK_A_MainConcept_4 (fail)
+> > - SAODBLK_B_MainConcept_4 (fail)
+> > - TSUNEQBD_A_MAIN10_Technicolor_2 (error)
 
-During the period, 0 new issues were detected and 1 were fixed.
-In total, 4 issues are still open and 27 have already been fixed.
+I'me getting the same result if I force a single job in fluster. The test I
+posted was with 2 jobs. Detlev found that the iommu reset is required in mo=
+re
+cases on RK3588/3576, perhaps the HEVC decoder in older hardware needs the =
+same,
+I will try and report.
 
-Some of the still happening issues:
+Nicolas
 
-Ref Crashes Repro Title
-<1> 225     Yes   KASAN: slab-out-of-bounds Read in fbcon_prepare_logo
-                  https://syzkaller.appspot.com/bug?extid=0c815b25cdb3678e7083
-<2> 47      No    KASAN: vmalloc-out-of-bounds Write in fillrect
-                  https://syzkaller.appspot.com/bug?extid=7a63ce155648954e749b
-<3> 34      Yes   KASAN: global-out-of-bounds Read in bit_putcs (3)
-                  https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
+--=-Y2sl7uZiPmx/2tINlSGb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-----BEGIN PGP SIGNATURE-----
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJs3PwAKCRBxUwItrAao
+HF5IAJ9I+Gxb7MlBwyEmKIXw1+qOngNv3QCgtFeTxOPKSG0sAWm3UYeR1QhlsMQ=
+=9ofb
+-----END PGP SIGNATURE-----
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+--=-Y2sl7uZiPmx/2tINlSGb--
 
