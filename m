@@ -1,124 +1,205 @@
-Return-Path: <linux-kernel+bounces-765417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE96B2339D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98788B2334B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C525825D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 687607A6189
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576162FF152;
-	Tue, 12 Aug 2025 18:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A192FF148;
+	Tue, 12 Aug 2025 18:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="nEEu5SR9"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c6eBDRSG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B750E2FE588;
-	Tue, 12 Aug 2025 18:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA842FE57C;
+	Tue, 12 Aug 2025 18:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755023159; cv=none; b=aP5BBL9NOUkVTeTfjdQl3XZCwXB95110OxTE+X0P+Zy+gOxhRgKxLctGBNTLzwKbI1kPobHcDCZM4t9NJ9vfSYNWiECH1BYkj/1EcZbz4gjpjYnCiD9mGKRZOdPGKszFVaUGR306uhkYKcgZiHu2GD1uzltv0yT78bESd3ro698=
+	t=1755023208; cv=none; b=icwjgxlOZj8j+AR6UbW82tM5K+lHVl6MK2bfc1XpfuJUBiSoJ5+WQBonlNcdYuayc0QcPGcAKRFmTewn6ccvJYpLJgoBZkzG5FvN6AnaVZNIxATcReITb5AYZ/muh2F9sdo7AZE09SX2CkIBeH5K8butv4t8bf9c3QjGQakFBis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755023159; c=relaxed/simple;
-	bh=D2kznNko9H94sUcgP34cPoaWoDFJprxynNhncMVz620=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NmKzY2Be9JI0ID5i+hiOqj/mzVL9BI1AgYpuMfVFX8bhtYuuX9fXT9hCf2Z1PkIO81DL0N9aG23TXshBXZAKIBV7YrCBONcRNYnj5TLL9+ZhZ4GlzHfHSIDZx063S89fQDmgYSmHa11qmqhKGvTh0TKrzpKHBMXqOB8gQ6Qtv20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=nEEu5SR9; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	s=arc-20240116; t=1755023208; c=relaxed/simple;
+	bh=69/IXjK3yV6/KOHFU1P3cPM9KgocQb+6h8pn3YliXQg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eg3HqNHKxoNRxnRgsPKw5jZTMfsteFjM7jdh1Omu33E+wCwPme1STYLqpnPJsQx0vvyf4UAygFdfBN3rqA0C1SKGIumZCye6AhYIp+mF5vBI/whuQIj76a4j3PkYheSm9weEdWJOpp3IUWA6/1K0t/2bcjYpnenMUjXfopnpCEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c6eBDRSG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755023204;
+	bh=69/IXjK3yV6/KOHFU1P3cPM9KgocQb+6h8pn3YliXQg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=c6eBDRSGAzq1MJtGpLaDtmEdS4kvrirKcJrrDOzzCPK4q+aJLTKgy8KMbqNO8Fffw
+	 0Bd80jew4vb/AOLCWZt3JjE0whNfBJFjnRPSEJZqWbz7Mr9q2mkoc2484kfYYeVBo+
+	 dnoGEHcIncM4IPzHv6gzKJuJ95Oe+HsFeh5+M5oHM5Kzn2xjXqsONUL1QxnjwLtWOP
+	 3ZzOkljxXqjr7Ufw/BSRTnvrSX7eainxdUioGObpcLfzmqc/LxYiu7dBiD5DJnj5BA
+	 1yC/zRsDvSPtwCRWtRRDvBV3L2v59T2Bba5ZenhVIi0UNagmWNq3RVjVcw25WYpKp0
+	 frHK2da8L1aGQ==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4c1g1F4T6Dz9sD9;
-	Tue, 12 Aug 2025 20:25:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755023153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D2kznNko9H94sUcgP34cPoaWoDFJprxynNhncMVz620=;
-	b=nEEu5SR9dR13EEirK4NOnCeF+VX2yXPD650WplJFp+mshMPIhHLsKkxLY6/aK1xFpFzXj+
-	O6q26l80mQFXNcGHyX/HqiDAPN7bIF4gicUakUIIwdbFZ3t3vXo5LeHU51QC1N8CyJw+PE
-	s+LhjzukW6iIn2yFnGNnvCXFCkZaaUygaVmoaJruxQeDQHfBvNPlntuIAYtlanUH0Rjo3k
-	vf+BMAPMQtn/UU+nusVkqnOD33BvPK2ZUof1aEdWKRU08/hxB5CwQ78LUzU6QPD5miq/vW
-	Ct6gkh+U2AOJXUxqhrciksrcGJoHfTvjpckc0k4ajSJBYpweNRi80n0MYd8JMw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Wed, 13 Aug 2025 04:25:40 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <2025-08-12.1755022847-yummy-native-bandage-dorm-8U46ME@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com>
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4D2C717E011A;
+	Tue, 12 Aug 2025 20:26:43 +0200 (CEST)
+Message-ID: <25ce30446e8e8d038273fcdfb398c90995c242db.camel@collabora.com>
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Alex Bee <knaerzche@gmail.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 14:26:41 -0400
+In-Reply-To: <efdf8c99-d166-4b78-afc5-d4a6eb5ac046@kwiboo.se>
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+	 <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
+	 <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+	 <91864a1c047d2bdfce202b070716a694ede47d5e.camel@collabora.com>
+	 <a66feb89fa02f05b187e5603ffc3b1501ef3cbd5.camel@collabora.com>
+	 <efdf8c99-d166-4b78-afc5-d4a6eb5ac046@kwiboo.se>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPW0RE5pY29sYXMgRHVmcmVzbmUgKEIuIFNjLiBJbmZvcm1hdGlxdW
+ UpIDxuaWNvbGFzZEBibHVlc3RyZWFrdGVjaC5jb20+iGAEExECACAFAkZjGzoCGwMGCwkIBwMCBBU
+ CCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHBl7AJ0d2lrzshMmJaik/EaDEakzEwqgxQCg0JVZMZm9
+ gRfEou1FvinuZxwf/ms=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-1m44GyIlgc9M/VdWhbhx"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="37ixlo766hjzmteu"
-Content-Disposition: inline
-In-Reply-To: <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com>
-X-Rspamd-Queue-Id: 4c1g1F4T6Dz9sD9
 
 
---37ixlo766hjzmteu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--=-1m44GyIlgc9M/VdWhbhx
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
-MIME-Version: 1.0
 
-On 2025-08-09, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> +Note that the Linux kernel reuses filesystem instances
-> +for many filesystems,
-> +so (depending on the filesystem being configured and parameters used)
-> +it is possible for the filesystem instance "created" by
-> +.B \%FSCONFIG_CMD_CREATE
-> +to, in fact, be a reference
-> +to an existing filesystem instance in the kernel.
-> +The kernel will attempt to merge the specified parameters
-> +of this filesystem configuration context
-> +with those of the filesystem instance being reused,
-> +but some parameters may be
-> +.IR "silently ignored" .
+Hi Jonas,
 
-While looking at this again, I realised this explanation is almost
-certainly incorrect in a few places (and was based on a misunderstanding
-of how sget_fc() works and how it interacts with vfs_get_tree()).
+Le mardi 12 ao=C3=BBt 2025 =C3=A0 19:31 +0200, Jonas Karlman a =C3=A9crit=
+=C2=A0:
+> On 8/12/2025 2:44 PM, Nicolas Dufresne wrote:
+> > I forgot,=20
+> >=20
+> > Le mardi 12 ao=C3=BBt 2025 =C3=A0 08:38 -0400, Nicolas Dufresne a =C3=
+=A9crit=C2=A0:
+> > > > JCT-VC-HEVC_V1 on GStreamer-H.265-V4L2SL-Gst1.0:
+> > > >=20
+> > > > - DBLK_D_VIXS_2 (fail)
+> > > > - DSLICE_A_HHI_5 (fail)
+> > > > - EXT_A_ericsson_4 (fail)
+> > > > - PICSIZE_A_Bossen_1 (error)
+> > > > - PICSIZE_B_Bossen_1 (error)
+> > > > - PICSIZE_C_Bossen_1 (error)
+> > > > - PICSIZE_D_Bossen_1 (error)
+> > > > - SAODBLK_A_MainConcept_4 (fail)
+> > > > - SAODBLK_B_MainConcept_4 (fail)
+> > > > - TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+> >=20
+> > I'me getting the same result if I force a single job in fluster. The te=
+st I
+> > posted was with 2 jobs. Detlev found that the iommu reset is required i=
+n
+> > more
+> > cases on RK3588/3576, perhaps the HEVC decoder in older hardware needs =
+the
+> > same,
+> > I will try and report.
+>=20
+> Vendor kernel [1] check following bits from RKVDEC_REG_INTERRUPT reg to
+> decide if a full HW reset should be done.
+>=20
+> =C2=A0 err_mask =3D RKVDEC_BUF_EMPTY_STA
+> =C2=A0=C2=A0	=C2=A0=C2=A0 | RKVDEC_BUS_STA
+> =C2=A0=C2=A0	=C2=A0=C2=A0 | RKVDEC_COLMV_REF_ERR_STA
+> =C2=A0=C2=A0	=C2=A0=C2=A0 | RKVDEC_ERR_STA
+> =C2=A0=C2=A0	=C2=A0=C2=A0 | RKVDEC_TIMEOUT_STA;
+>=20
+> Adding proper reset support can be rather involved and main reason why
+> this series does not handle it, better suited for a separate future
+> series.
+>=20
+> Proper HW reset will require e.g. dt-bindings, DT updates, pmu idle
+> request integration and for rk3328 vendor even moved VPU reset to TF-A.
+>=20
+> Doing the iommu detach/attach dance not only on RKVDEC_SOFTRESET_RDY
+> could possible improve some cases, until full reset can be implemented.
 
-I'll rewrite this in the next version.
+Rockchip is following VSI design of "self reset" on error. But since the io=
+mmu
+is part of the device, it also gets reset, which imply having to reprogram =
+it.
+This showed to be very reliable logic, despite RK doing a hard reset.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+Since self reset is documented for RKVDEC_BUS_STA, RKVDEC_ERR_STA,
+RKVDEC_TIMEOUT_STA, it would seem that RKVDEC_BUF_EMPTY_STA is redundant, u=
+nless
+its asynchronous operation that need to be polled. Possibly something to
+investigate. RKVDEC_BUF_EMPTY_STA and RKVDEC_COLMV_REF_ERR_STA are not
+documented a such, so its not quite logical to reprogram the iommu.
 
---37ixlo766hjzmteu
+I don't immediately trust reference software for these type of things, we s=
+hould
+find what works best and have a rationale for. The hard reset is every
+expensive, and hard to upstream.
+
+Nicolas
+
+>=20
+> [1]
+> https://github.com/Kwiboo/linux-rockchip/blob/linux-6.1-stan-rkr6.1/drive=
+rs/video/rockchip/mpp/mpp_rkvdec.c#L924-L931
+>=20
+> Regards,
+> Jonas
+>=20
+> >=20
+> > Nicolas
+
+--=-1m44GyIlgc9M/VdWhbhx
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJuHJBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/DdAEAmGOUConq3tLwui3YLCqO
-oooG4yU8zga+usQs3d46vfkA/1khBf1sU2NIjEjQfxibEU3xXZCn6MtD2JU/ewdU
-bFsG
-=fkeT
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJuHYQAKCRBxUwItrAao
+HGFAAKCCjxsKHnwiBkJhZl1nzpBQCCMhtQCdHzRB3yV4I1LVEzFyzTbwZPxMo8A=
+=mrJE
 -----END PGP SIGNATURE-----
 
---37ixlo766hjzmteu--
+--=-1m44GyIlgc9M/VdWhbhx--
 
