@@ -1,343 +1,282 @@
-Return-Path: <linux-kernel+bounces-764845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B479B227E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900C3B227CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DEA21BC53F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17B4582E7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32114281525;
-	Tue, 12 Aug 2025 13:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AC8275B07;
+	Tue, 12 Aug 2025 13:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJpA2q5a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oSvgX2of"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A24D280037;
-	Tue, 12 Aug 2025 13:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764261D6AA;
+	Tue, 12 Aug 2025 13:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003641; cv=none; b=IzdaRrfaMZ/OHSeR7OyM6aquM7ugaZeTxi95xZ3L+p/E3IDBXFo0/Zq+108+0fCppQPZNk9cU7vWTUfKzgJbA+y/8GOQFRlQ+q9BsIE0lTJRW3mTU0CrxrHuMWbKqt9ZZ8aiL12iBb0fEQsPcJFLd3f4IZ488zSowaLshfhhLqY=
+	t=1755003623; cv=none; b=hSdA8QNApMuOHUMePdOGAmdo5kxC3fhajsOKHaYKDhLHK8R35WlssbRhSP5bFHHT7PEFvAQl6PmhWz+AErlQjDnZHx8ov9u1Y0ROaSG229S7hl250tvEca0eR/EpFvwTI/tjzJ58kOeoR5oPq+cbNOAvb6CAKpzUPIZ+ijJWAl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003641; c=relaxed/simple;
-	bh=GD+CuAWLXSm+fQaLF9A5X/6cvNCIJxhOBEqUK57Iydg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LlMSWy9/mMIXc1CNiCgJdMxRL4WhRojWsO0PwZ5e99W3mWLtGVgUfz2h1DdxVM329v3DHFRgOd5k/hLD2RxbpQ3ah7GRcopwA5MKSW5l2x72e6RqfR/b6YVRclmoWaiJtqfP2cmwyGMt8XMdfhWeMSInjRM4b8p93cCpV/J4QXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJpA2q5a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB357C4CEF9;
-	Tue, 12 Aug 2025 13:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755003640;
-	bh=GD+CuAWLXSm+fQaLF9A5X/6cvNCIJxhOBEqUK57Iydg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cJpA2q5abMNY7V4igk9IrRnHcwZ42EubI4pikkXyBgOQQTXCffmy7jjbF7ce4+NZe
-	 lJStoQ5oofYvwmNibHLDtIayOM6cwOan6fmZQOmR1Eloc8zSmEJJYVChCrgGpT4y9c
-	 g1oQuZeUYktP5uOmZaWERlVOdmtSrkgrGlC95aH5NRdy0FWdi8eSripcETaYc1W+mM
-	 tefZ5SM6IKt8EoJjawiiQrkUHV8Eg+XOUjNkBJtLE3bqzqi8obe9rQrkgpNBqHRano
-	 G+GUmo8Ad1m+6KL4QaYA2cM8kJmiDI+/dEM7sCmcJX6DttRSJR6CeuRDaKw0mrQM93
-	 NCSs8mK+ZzH9w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12ABCA0EDA;
-	Tue, 12 Aug 2025 13:00:40 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Tue, 12 Aug 2025 20:59:27 +0800
-Subject: [PATCH RESEND v2 4/4] firmware: stratix10-svc: Add for SDM mailbox
- doorbell interrupt
+	s=arc-20240116; t=1755003623; c=relaxed/simple;
+	bh=BPZhi1cYHWPs10d8aw+eUuAT4jQOgOOanuDWooHD66M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X4rfe18fLP/ThtsJ1wlqFg/1ydYHEsTd722qth5R0nMuuk4W2OmvTUF4DOojrDZYouc/dMeNK7K5sYZrlcO+VyvX0thYg7hK3Jdag3IqxNFp7RKFSiIqK+4VgD17TSLRME76rfdrxV8oXWYFj/V8hvVmeqR+w6o3QPOrcHI72P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oSvgX2of; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755003619;
+	bh=BPZhi1cYHWPs10d8aw+eUuAT4jQOgOOanuDWooHD66M=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=oSvgX2of80L02E0fcdOtjkRdCDV4W2cJtF0VNyeDf7vjjydxLjB5DamTHdsrGAIT2
+	 cy6fVuTM6Rh5ao6b3R8HQKvqZAT4t71qjg7sk4xB76Z0Wr5AvXbuutFT4TMO93mva1
+	 nW+tgKKfU/5EVJobEPLS18jDbotTUzhEtTOimDI/3bfffrRUVZO72qClzwOZwHSqTf
+	 yQ1AbYoT7OQHWwYpHOkh1gEP2Z/CCiSUbjvHfLyyRmrDPzVN6P1OJxrIzYWCOBIdxq
+	 isrZ5ygEstVzItRUu8B4KssVP8vJtRjHTLv/1lz5Rqrr/1gFRv6C7AUkOIDG2topIQ
+	 hv3ctCcBhWyog==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 19A3217E04C0;
+	Tue, 12 Aug 2025 15:00:18 +0200 (CEST)
+Message-ID: <f2908b2d35671e70e6a8b295de623e3a3ffe2212.camel@collabora.com>
+Subject: Re: [PATCH v2 5/7] media: rkvdec: Disable QoS for HEVC and VP9 on
+ RK3328
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Alex Bee
+ <knaerzche@gmail.com>, Sebastian Fricke	 <sebastian.fricke@collabora.com>,
+ linux-media@vger.kernel.org, 	linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 09:00:15 -0400
+In-Reply-To: <9dce97a9-92e6-4803-9e06-b2938e3c4999@kwiboo.se>
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+	 <20250810212454.3237486-6-jonas@kwiboo.se>
+	 <3cf31d3b89a66b1bec57486c54c3df31393335e5.camel@collabora.com>
+	 <9dce97a9-92e6-4803-9e06-b2938e3c4999@kwiboo.se>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-JAuicq2EIvWHvsvtmtAs"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+
+
+--=-JAuicq2EIvWHvsvtmtAs
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le mardi 12 ao=C3=BBt 2025 =C3=A0 01:08 +0200, Jonas Karlman a =C3=A9crit=
+=C2=A0:
+> Hi Nicolas,
+>=20
+> Missed some comments in my last mail.
+>=20
+> On 8/11/2025 11:25 PM, Nicolas Dufresne wrote:
+> > Le dimanche 10 ao=C3=BBt 2025 =C3=A0 21:24 +0000, Jonas Karlman a =C3=
+=A9crit=C2=A0:
+> > > From: Alex Bee <knaerzche@gmail.com>
+> > >=20
+> > > The RK3328 VDEC has a HW quirk that require QoS to be disabled when H=
+EVC
+> > > or VP9 is decoded, otherwise the decoded picture may become corrupted=
+.
+> > >=20
+> > > Add a RK3328 variant with a quirk flag to disable QoS when before
+> > > decoding is started.
+> > >=20
+> > > Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> > > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> > > ---
+> > > Changes in v2:
+> > > - No change
+> > > ---
+> > > =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c |=C2=A0 9 =
++++++++++
+> > > =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h |=C2=A0 2 =
+++
+> > > =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c=C2=A0 | 10 =
+++++++++++
+> > > =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 12 ++++++++++++
+> > > =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.h=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 4 ++++
+> > > =C2=A05 files changed, 37 insertions(+)
+> > >=20
+> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+> > > b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+> > > index 1994ea24f0be..f8bb8c4264f7 100644
+> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+> > > @@ -789,6 +789,15 @@ static int rkvdec_hevc_run(struct rkvdec_ctx *ct=
+x)
+> > > =C2=A0	writel(1, rkvdec->regs + RKVDEC_REG_PREF_LUMA_CACHE_COMMAND);
+> > > =C2=A0	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
+> > > =C2=A0
+> > > +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
+> > > +		u32 reg;
+> > > +
+> > > +		reg =3D readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
+> > > +		reg |=3D 0xFFFF;
+> > > +		reg &=3D ~BIT(12);
+> >=20
+> > I wonder if there is a better way to express that, if not, a comment fo=
+r
+> > future
+> > readers would be nice. If read it will, we keep the upper 16bit, and
+> > replaced
+> > the lower bits with 0xEFFF (all bits set except 12) ? I'd rather not sp=
+end
+> > time
+> > thinking if I walk by this code again.
+>=20
+> Vendor kernel use following comment to describe the purpose of this [1]:
+>=20
+> =C2=A0 HW defeat workaround: VP9 and H.265 power save optimization cause
+> =C2=A0 decoding corruption, disable optimization here.
+>=20
+> From the TRM we can see following for rkvdec_swreg99_qos_ctrl:
+>=20
+> =C2=A0 27:26 sw_axi_wr_hurry_level
+> =C2=A0=C2=A0=C2=A0 00: hurry off=20
+> =C2=A0=C2=A0=C2=A0 01~11: hurry level=20
+> =C2=A0 25:24 sw_axi_rd_hurry_level
+> =C2=A0=C2=A0=C2=A0 00: hurry off=20
+> =C2=A0=C2=A0=C2=A0 01~11: hurry level=20
+> =C2=A0 23:16 sw_bus2mc_buffer_qos_level
+> =C2=A0=C2=A0=C2=A0 range is: 0~255
+> =C2=A0=C2=A0=C2=A0 the value is means that left space <=3D
+> =C2=A0=C2=A0=C2=A0 sw_bus2mc_buffer_qos_level, it will give hurry
+> =C2=A0 15:0 swreg_block_gating_e
+>=20
+> So yes this set swreg_block_gating_e to 0xEFFF. Possible this configure
+> hw to not auto gate most internal clocks?
+>=20
+> Could add a comment and possible use something like following:
+>=20
+> =C2=A0 reg &=3D GENMASK(31, 16);
+> =C2=A0 reg |=3D 0xEFFF;
+
+Thanks for the information, I think this form is somewhat nicer indeed, and=
+ a
+little comment, its fine to say that the QOS bits are undocumented.
+
+Nicolas
+
+>=20
+> [1]
+> https://github.com/Kwiboo/linux-rockchip/blob/linux-6.1-stan-rkr6.1/drive=
+rs/video/rockchip/mpp/mpp_rkvdec.c#L857-L867
+>=20
+> >=20
+> > > +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
+> > > +	}
+> > > +
+> > > =C2=A0	/* Start decoding! */
+> > > =C2=A0	reg =3D (run.pps->flags & V4L2_HEVC_PPS_FLAG_TILES_ENABLED) ?
+> > > =C2=A0		0 : RKVDEC_WR_DDR_ALIGN_EN;
+> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> > > b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> > > index 540c8bdf24e4..c627b6b6f53a 100644
+> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+> > > @@ -219,6 +219,8 @@
+> > > =C2=A0#define RKVDEC_REG_H264_ERR_E				0x134
+> > > =C2=A0#define RKVDEC_H264_ERR_EN_HIGHBITS(x)			((x) &
+> > > 0x3fffffff)
+> > > =C2=A0
+> > > +#define RKVDEC_REG_QOS_CTRL				0x18C
+> > > +
+> > > =C2=A0#define RKVDEC_REG_PREF_LUMA_CACHE_COMMAND		0x410
+> > > =C2=A0#define RKVDEC_REG_PREF_CHR_CACHE_COMMAND		0x450
+> > > =C2=A0
+> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> > > b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> > > index 0e7e16f20eeb..cadb9d592308 100644
+> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+> > > @@ -824,6 +824,16 @@ static int rkvdec_vp9_run(struct rkvdec_ctx *ctx=
+)
+> > > =C2=A0	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
+> > > =C2=A0
+> > > =C2=A0	writel(0xe, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
+> > > +
+> > > +	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
+> > > +		u32 reg;
+> > > +
+> > > +		reg =3D readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
+> > > +		reg |=3D 0xFFFF;
+> > > +		reg &=3D ~BIT(12);
+> > > +		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
+> >=20
+> > Can we deduplicate that ?
+>=20
+> Guess so, any suggestion on how to best do that?
+>=20
+> One possible way that comes to mind:
+>=20
+> =C2=A0 if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS)
+> 	rkvdec_quirk_disable_qos(rkvdec);
+>=20
+> >=20
+> > > +	}
+> > > +
+> > > =C2=A0	/* Start decoding! */
+> > > =C2=A0	writel(RKVDEC_INTERRUPT_DEC_E | RKVDEC_CONFIG_DEC_CLK_GATE_E |
+> > > =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 RKVDEC_TIMEOUT_E | RKVDEC=
+_BUF_EMPTY_E,
+>=20
+> [snip]
+
+--=-JAuicq2EIvWHvsvtmtAs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-sip_svc_irq-v2-4-53098e11705a@altera.com>
-References: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
-In-Reply-To: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mahesh Rao <mahesh.rao@altera.com>, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755003637; l=10436;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=kD1dKAGC5+KV8f19LP5klFEJsJBn+SrRu6Htg7n4yPU=;
- b=DCHlQCv75XfDCh3+VbjOmsktyBbO4f41HSorqTr413sQ4+L1E+SSepmMMAQwea4RIQjZ8YogT
- VWXbETl3a6DDbPgC3BzTLjj0Ush9283wEykOB9tTfLcDjHwVEY2e7Cc
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+-----BEGIN PGP SIGNATURE-----
 
-Add support for SDM (Secure Device Manager) mailbox
-doorbell interrupt for async transactions. On interrupt,
-a workqueue is triggered which polls the ATF for
-pending responses and retrieves the bitmap of all
-retrieved and unprocessed transaction ids of mailbox
-responses from SDM. It then triggers the corresponding
-registered callbacks.
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJs63wAKCRBxUwItrAao
+HAUsAKC1sBxNA1+yEIFCnD/e1Ljvs4W7zQCgkzXoEfYGmIbzQwoE/GL67jAV2K8=
+=/EUA
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/firmware/stratix10-svc.c             | 117 ++++++++++++++++++++++++---
- include/linux/firmware/intel/stratix10-smc.h |  23 ++++++
- 2 files changed, 130 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 491a8149033f975d515444f025723658c51aa1fe..a65c64c1be61d9f1fd27114d7f30d7a759e8201e 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -9,12 +9,14 @@
- #include <linux/delay.h>
- #include <linux/genalloc.h>
- #include <linux/hashtable.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kfifo.h>
- #include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -22,6 +24,7 @@
- #include <linux/firmware/intel/stratix10-smc.h>
- #include <linux/firmware/intel/stratix10-svc-client.h>
- #include <linux/types.h>
-+#include <linux/workqueue.h>
- 
- /**
-  * SVC_NUM_DATA_IN_FIFO - number of struct stratix10_svc_data in the FIFO
-@@ -213,6 +216,7 @@ struct stratix10_async_chan {
-  *                               asynchronous operations
-  * @initialized: Flag indicating whether the control structure has
-  *               been initialized
-+ * @irq: Interrupt request number associated with the asynchronous control
-  * @invoke_fn: Function pointer for invoking Stratix10 service calls
-  *             to EL3 secure firmware
-  * @async_id_pool: Pointer to the ID pool used for asynchronous
-@@ -223,11 +227,13 @@ struct stratix10_async_chan {
-  *                     structure
-  * @trx_list_wr_lock: Spinlock for protecting the transaction list
-  *                    write operations
-+ * @async_work: Work structure for scheduling asynchronous work
-  * @trx_list: Hash table for managing asynchronous transactions
-  */
- 
- struct stratix10_async_ctrl {
- 	bool initialized;
-+	int irq;
- 	void (*invoke_fn)(struct stratix10_async_ctrl *actrl,
- 			  const struct arm_smccc_1_2_regs *args,
- 			  struct arm_smccc_1_2_regs *res);
-@@ -236,6 +242,7 @@ struct stratix10_async_ctrl {
- 	struct stratix10_async_chan *common_async_chan;
- 	/* spinlock to protect the writes to trx_list hash table */
- 	spinlock_t trx_list_wr_lock;
-+	struct work_struct async_work;
- 	DECLARE_HASHTABLE(trx_list, ASYNC_TRX_HASH_BITS);
- };
- 
-@@ -1709,14 +1716,81 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
- 	arm_smccc_1_2_smc(args, res);
- }
- 
-+static irqreturn_t stratix10_svc_async_irq_handler(int irq, void *dev_id)
-+{
-+	struct stratix10_svc_controller *ctrl = dev_id;
-+	struct stratix10_async_ctrl *actrl = &ctrl->actrl;
-+
-+	queue_work(system_bh_wq, &actrl->async_work);
-+	disable_irq_nosync(actrl->irq);
-+	return IRQ_HANDLED;
-+}
-+/**
-+ * stratix10_async_workqueue_handler - Handler for the asynchronous
-+ * workqueue in Stratix10 service controller.
-+ * @work: Pointer to the work structure that contains the asynchronous
-+ *        workqueue handler.
-+ * This function is the handler for the asynchronous workqueue. It performs
-+ * the following tasks:
-+ * - Invokes the asynchronous polling on interrupt supervisory call.
-+ * - On success,it retrieves the bitmap of pending transactions from mailbox
-+ *   fifo in ATF.
-+ * - It processes each pending transaction by calling the corresponding
-+ *   callback function.
-+ *
-+ * The function ensures that the IRQ is enabled after processing the transactions
-+ * and logs the total time taken to handle the transactions along with the number
-+ * of transactions handled and the CPU on which the handler ran.
-+ */
-+static void stratix10_async_workqueue_handler(struct work_struct *work)
-+{
-+	struct stratix10_async_ctrl *actrl =
-+		container_of(work, struct stratix10_async_ctrl, async_work);
-+	struct arm_smccc_1_2_regs
-+		args = { .a0 = INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ }, res;
-+	DECLARE_BITMAP(pend_on_irq, TOTAL_TRANSACTION_IDS);
-+	struct stratix10_svc_async_handler *handler;
-+	unsigned long transaction_id = 0;
-+	u64 bitmap_array[4];
-+
-+	actrl->invoke_fn(actrl, &args, &res);
-+	if (res.a0 == INTEL_SIP_SMC_STATUS_OK) {
-+		bitmap_array[0] = res.a1;
-+		bitmap_array[1] = res.a2;
-+		bitmap_array[2] = res.a3;
-+		bitmap_array[3] = res.a4;
-+		bitmap_from_arr64(pend_on_irq, bitmap_array, TOTAL_TRANSACTION_IDS);
-+		rcu_read_lock();
-+		do {
-+			transaction_id = find_next_bit(pend_on_irq,
-+						       TOTAL_TRANSACTION_IDS,
-+						       transaction_id);
-+			if (transaction_id >= TOTAL_TRANSACTION_IDS)
-+				break;
-+			hash_for_each_possible_rcu_notrace(actrl->trx_list,
-+							   handler, next,
-+							   transaction_id) {
-+				if (handler->transaction_id == transaction_id) {
-+					handler->cb(handler->cb_arg);
-+					break;
-+				}
-+			}
-+			transaction_id++;
-+		} while (transaction_id < TOTAL_TRANSACTION_IDS);
-+		rcu_read_unlock();
-+	}
-+	enable_irq(actrl->irq);
-+}
-+
- /**
-  * stratix10_svc_async_init - Initialize the Stratix10 service
-  *                            controller for asynchronous operations.
-  * @controller: Pointer to the Stratix10 service controller structure.
-  *
-  * This function initializes the asynchronous service controller by
-- * setting up the necessary data structures and initializing the
-- * transaction list.
-+ * setting up the necessary data structures ,initializing the
-+ * transaction list and registering the IRQ handler for asynchronous
-+ * transactions.
-  *
-  * Return: 0 on success, -EINVAL if the controller is NULL or already
-  *         initialized, -ENOMEM if memory allocation fails,
-@@ -1728,7 +1802,7 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
- 	struct stratix10_async_ctrl *actrl;
- 	struct arm_smccc_res res;
- 	struct device *dev;
--	int ret;
-+	int ret, irq;
- 
- 	if (!controller)
- 		return -EINVAL;
-@@ -1775,6 +1849,22 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
- 	hash_init(actrl->trx_list);
- 	atomic_set(&actrl->common_achan_refcount, 0);
- 
-+	irq = of_irq_get(dev_of_node(dev), 0);
-+	if (irq < 0) {
-+		dev_warn(dev, "Failed to get IRQ, falling back to polling mode\n");
-+	} else {
-+		ret = devm_request_any_context_irq(dev, irq, stratix10_svc_async_irq_handler,
-+						   IRQF_NO_AUTOEN, "stratix10_svc", controller);
-+		if (ret == 0) {
-+			dev_alert(dev,
-+				  "Registered IRQ %d for sip async operations\n",
-+				irq);
-+			actrl->irq = irq;
-+			INIT_WORK(&actrl->async_work, stratix10_async_workqueue_handler);
-+			enable_irq(actrl->irq);
-+		}
-+	}
-+
- 	actrl->initialized = true;
- 	return 0;
- }
-@@ -1784,13 +1874,14 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
-  *                            service controller
-  * @ctrl: Pointer to the stratix10_svc_controller structure
-  *
-- * This function performs the necessary cleanup for the asynchronous
-- * service controller. It checks if the controller is valid and if it
-- * has been initialized. It then locks the transaction list and safely
-- * removes and deallocates each handler in the list. The function also
-- * removes any asynchronous clients associated with the controller's
-- * channels and destroys the asynchronous ID pool. Finally, it resets
-- * the asynchronous ID pool and invoke function pointers to NULL.
-+ * This function performs the necessary cleanup for the asynchronous service
-+ * controller. It checks if the controller is valid and if it has been
-+ * initialized. Also If the controller has an IRQ assigned, it frees the IRQ
-+ * and flushes any pending asynchronous work. It then locks the transaction
-+ * list and safely removes and deallocates each handler in the list.
-+ * The function also removes any asynchronous clients associated with the
-+ * controller's channels and destroys the asynchronous ID pool. Finally, it
-+ * resets the asynchronous ID pool and invoke function pointers to NULL.
-  *
-  * Return: 0 on success, -EINVAL if the controller is invalid or not
-  *         initialized.
-@@ -1812,6 +1903,12 @@ static int stratix10_svc_async_exit(struct stratix10_svc_controller *ctrl)
- 
- 	actrl->initialized = false;
- 
-+	if (actrl->irq > 0) {
-+		free_irq(actrl->irq, ctrl);
-+		flush_work(&actrl->async_work);
-+		actrl->irq = 0;
-+	}
-+
- 	spin_lock(&actrl->trx_list_wr_lock);
- 	hash_for_each_safe(actrl->trx_list, i, tmp, handler, next) {
- 		stratix10_deallocate_id(handler->achan->job_id_pool,
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index f87273af5e284b8912d87eb9d7179eb3d43e40e1..45e9dd4211f4994d67e5a6e00a5a817e96d42a8d 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -645,6 +645,29 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_ASYNC_POLL \
- 	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_POLL)
- 
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
-+ * Async call used by service driver at EL1 to read response from SDM
-+ * mailbox and to retrieve the transaction id's of the read response's.
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
-+ * a1 transaction job id
-+ * a2-7 will be used to return the response data
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1-a4 will contain bitmap of available responses's transaction id as set
-+ *  bit position.
-+ * a5-17 not used
-+ * Or
-+ * a0 INTEL_SIP_SMC_STATUS_NO_RESPONSE
-+ * a1-17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL (0xC9)
-+#define INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL)
-+
- /**
-  * Request INTEL_SIP_SMC_ASYNC_RSU_GET_SPT
-  * Async call to get RSU SPT from SDM.
-
--- 
-2.35.3
-
-
+--=-JAuicq2EIvWHvsvtmtAs--
 
