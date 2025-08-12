@@ -1,379 +1,138 @@
-Return-Path: <linux-kernel+bounces-765210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03432B22CAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:07:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E064B22CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5EE7BB589
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE951728C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BADC2F7479;
-	Tue, 12 Aug 2025 15:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDADC2F83C5;
+	Tue, 12 Aug 2025 16:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p7vt6KpV"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NHqyh+ut"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1B82F7457;
-	Tue, 12 Aug 2025 15:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755014145; cv=fail; b=es+A70YR/R3yeDBxcx591vn3we1mAJMMBimBNeQZc9UWtihvKopz7AnNo+vXnbFWyqfKRDOtKbIr4VRrY8HPdkSwEJNyzqOHacgDLzbdnMoEeqcjfwEDYK9mno8aBqWlHH4SYxYfp8BYF0H3bt3w+I8lqonWzH/y6iVtFXskp08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755014145; c=relaxed/simple;
-	bh=ct4bo06R7vGo0uxb+/b3CJ/9P3EYREcm/15Zcnm8flM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZSJJ5qCxcjfUTesMJUzYPT/l4s4lT7Zl3Qa4d+pDZ3uoYbrjHyZoDBebArqLJqbkeY9AWYdo8wsML+0HfTRAcUA5bdR2ogsu7TlEXpiFjmzjo736vDLr3abG+pBf/herPPprQAGhlVy+GbdpuNPH7kDtThtzkObpLMGjBmGyLO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p7vt6KpV; arc=fail smtp.client-ip=40.107.236.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oqx1Ra0V0RogACDLEhNpGTqi6gY7ebW/j0FtzIgWePnHnMRExc1ZcQDQQJbhaNnWxe7OmyxNPsjHmm0OGQPKjNJHj/ef/u71i9w74ggwIxF18bpCB7djqOyIgNbroWtnqCOVn6mQVGqRSPrS+UyXfnDKnMnJtzyTm6r/1e4TOUGFO5BxpjKPSvSheIcemj4TfrrRSOtZ2W2+GHuqaebjeOpIbiS5jkZMX+JtStM9NR32NiOYAl2koOBkgj3zeEShV3s1g+hj2F8W4YHP9h7RgJ0044qKK/zxZb74w/doC+heW4c9AYT068WefDuu3P/uO9RLly7Ut2ZhHZYcFQtzqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8hdFH4a1PWpMGAUKGFm9BZbELCgo0toT31U/ahUTeeQ=;
- b=Oojbup6u2eX8STN9WG5R/Owrc4Pru+2evmf155DW7xM160OoTuEsFhbIkfF03+9eJfX42XrSpz0uXKlDL/whCBxOxUhudfcNkti0bkd5eaBldvcisOZIpenkUTACT5hos5Fr3bFOiWNm3hcfMHF6ag5X3tFarHTLCav2F+Lb+TE+99tyiSE7bGD8LnjsfQidNxhlnMPkREaNZI1EsH6nQeAGN4H8ldicaNwJhz/67N7+cHOI5VJn4guCt1AgcS/oI72g3hcQKbQ8wERC+wYY4msMkTyXAx+4FDRD8pRKfjJABgYjfEzB6CPSJhhcr6L07GMp3uX7SVUsb9heufvxjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8hdFH4a1PWpMGAUKGFm9BZbELCgo0toT31U/ahUTeeQ=;
- b=p7vt6KpVZv1+AsvtgEw2iYlTr95CrWQgutDc4wBjg1MRHOor6WcY93DhrPwWfznVtV6Y8x1AfHVCOg0cqUxgj00xPZocKQAzRiT3fNDBGOHH6OxpvAMaDiCD28oOgrLHr/em5IDQ6jXbQ/bkZVJrO6Q563MNKezvIDiNZdekmxIdAHOJKnTvJMpHJwYMGeh+gmi3xP1o22MKzCm29fTtOpjdU9X3uedF+dXMahlGnGtJV5D5j3w8cwIcJmMmzk2L+y9sglV5IcTb/U7a05FGzqThfecapqMQoXBUr2srp6n3Bhxn7Iwo9XBs0wzOUoIKiCUgUMgYZPd3ZjLJQZcOEw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CYXPR12MB9441.namprd12.prod.outlook.com (2603:10b6:930:dc::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.21; Tue, 12 Aug 2025 15:55:35 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.017; Tue, 12 Aug 2025
- 15:55:35 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Wei Yang <richard.weiyang@gmail.com>,
-	wang lian <lianux.mm@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>,
-	linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 4/4] selftests/mm: check after-split folio orders in split_huge_page_test.
-Date: Tue, 12 Aug 2025 11:55:12 -0400
-Message-ID: <20250812155512.926011-5-ziy@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250812155512.926011-1-ziy@nvidia.com>
-References: <20250812155512.926011-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0063.namprd03.prod.outlook.com
- (2603:10b6:408:fc::8) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00192EAB65;
+	Tue, 12 Aug 2025 16:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755014614; cv=none; b=CH4z98jcKCXrBao+ByTG3ND0eO9CUg9FfESxXHJbjIwUI5CQW2d7TA7eIArcg7Lm+XfEXer0rf0DrRTIoCV9/esdOhzxQ8rLfJbPjYocangDJQ5l+UmXqP34bXAsknEup9Hf9uPTxT8V00e6T0568s9GGjskz91jIiApDIUcYqI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755014614; c=relaxed/simple;
+	bh=rLDokQ3meDb12H0ixXllyRaNPT5ixWjxQgRmY1Y8n0Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=q2mgWk+tSQtH3EINo8EeAmy0gpWvKjUZKVAsizO72FGDLZ4uGZLvCrOjtb9Arkam1WAG+QgQEqs3FjGAyyUPn0Uyl+2SrKIGp+pDgZkQ0rx4V+/h4Norinlw9iCYMRO30CIIexYkqiMISWUEkUYa2nqeysWTK3TcHq8kmnz3yYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NHqyh+ut; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755014604; x=1755619404; i=markus.elfring@web.de;
+	bh=w3zBTRQBpWsXwpXyA85dTEYjXcvJ7ige8VdHG7gLgoM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=NHqyh+utjC1zjs+VOuLFKBZRwOfu34eBNn8ZaVPuURw7FpwWLVPx37ANnA5JniwU
+	 Z1M5EnCGJLlJJS5szyaKx0PtoV6qNXJIdUg7B6J4VR42pkpkS1hPiYccWTe3W9fMW
+	 58+Njw3ZG8Sw0oeaGDV9MsnpGY7l+bO+w69EuVfO/jzOrhh8OFZ/Ue9pVNx/Ulf14
+	 mt5Lcl6ErM8DscDIVplbUr14S1j/Xj9HVq5p9KZGrXmMzAtx+JRP6sfgGScrB+KL5
+	 fdv7vgPhKY9hcXHXRTsj3jgrhNujhxRnQUhr0AGudstchWYp/n6Vi3E0OiHMiTfTu
+	 BLw9RUtMS8Yt0zmHWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1uWFOF2GFd-010jt2; Tue, 12
+ Aug 2025 17:57:54 +0200
+Message-ID: <29a87213-8a56-439a-98d3-377d067dda9d@web.de>
+Date: Tue, 12 Aug 2025 17:57:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CYXPR12MB9441:EE_
-X-MS-Office365-Filtering-Correlation-Id: d38c344f-0227-41f4-e518-08ddd9b8ac89
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZzryUON6ABWxVRCAmPWZKKFoiAEVUZZm9gJW/s597Q05rNNLyST08EdfDxH+?=
- =?us-ascii?Q?LmHlekZX2xtI4NpG4DzG65K2fFEBSsdhT4QXwUkHp4zuw1Zh2kTK1+d92iG/?=
- =?us-ascii?Q?KErXq8u2N614EB2SDPUmT5wOVuwFeECqxbqTS1k2n8EcYY2ExZqkn0vYMUWW?=
- =?us-ascii?Q?yzCz4DmW2WJd49vdB2Op1x7HGEC1XnhkidhX+LfX7rgfpDPetQuC78KnrFfx?=
- =?us-ascii?Q?u0ozIMQjqIZtvqangwa+v8UwQdN0nG0ogCfg0rEldwQwIy/kEqjAxR1zl5b/?=
- =?us-ascii?Q?BrLbj0pWjVqMBPsPhsbZPzSfP3638DCqL412HYpEnohQwpmQ3txCYfLC8v9W?=
- =?us-ascii?Q?x7iZzEqVCi1EJRS1Ch/DyJ2B4gtmO6guVXlMRwTrcPWBRZyqhXwevWpuEU5o?=
- =?us-ascii?Q?EFjCOpRcHL/Fih1OCxTQxgBd3iQdwK0o7MrscwkLl2BM0GKn8odQS9azt7TT?=
- =?us-ascii?Q?z9RFE63IqDP8j/ifnELxysZEzGAzEKtQ9QqdSc8W+FD6P5H/tD38WYuwhB52?=
- =?us-ascii?Q?oMVpJNTcTIE+maAu3voAd8m6SABAaL2DxNn1ZId0u7lPlIuV5CDAv2Jamn8r?=
- =?us-ascii?Q?lrya46p3E5B8gRuI9akTpubjZDRrsriNYGu5avIbDCwTHQ2n7DB1s8xyq5VE?=
- =?us-ascii?Q?M33iGKJ7jT80onrHhJUa6nMprXMp2tydMUz3YwZeiBI/o26xXtDN8nWaCPFS?=
- =?us-ascii?Q?ouECowtDkdEwbr7iVa/Y0s8h38ehNsVezw7mzCZHlb2mECHYlUq44aBQvgeS?=
- =?us-ascii?Q?57zWqnAN8cQnnZxNhmklru35+WiyNXFD6GtujLcnDLCCvZL9uvEJJD6KK8QI?=
- =?us-ascii?Q?tbjc/n3nqqqs2snTgGFXwuskQG0gEC82qvz4Azov7bHLM0Bh9/DYjcrCRUGy?=
- =?us-ascii?Q?h/dkt2PCGHGt0ODOtdNYUtAPWJsBzbAPMCdZgba753023MntWW4hb8YZgtHv?=
- =?us-ascii?Q?b08an3WhZ96IoyHw3ll/L+RlX5YufUL2+X8d4Bq/WehM4Vtkr4xgiTfIVGwY?=
- =?us-ascii?Q?lpzi/SgAIW5cEV1JazD77zqSxfkxXJH8ED95466VPaKbf/AAknYdOKWBDnBK?=
- =?us-ascii?Q?VbOsNDS7B37vcgza4S2LiOX34+Im9L9pUSfLN18zlsrWqVEDa4+D2PJyjDaQ?=
- =?us-ascii?Q?Dkr9sl2mtTHcjvqq1aWkYUxYAecWyX3MhmZoJtG8b6VSddFg51ge0hJmHZvx?=
- =?us-ascii?Q?myiFy5s+beiYPhole+jStQ+B1gSawhFgFp4nBLWgx9MzEfuaQSE3MLyYbjiZ?=
- =?us-ascii?Q?VmtJPp1FS/2qfDDrP73nf9YxLmTU1hWjSX+xRNlP15dLj5IC5AWeJ4luRt4V?=
- =?us-ascii?Q?MEBmRtaPfe4IGhNzrv5FlKWHjXvaqdSdbHac7DlyoHScTCRfg9k1KjKDB4le?=
- =?us-ascii?Q?Gj8lDZ6QTWsTdhTCU0+4GQgJlxDPw1EMragMfzDQm9upFxKVmIYIy85UFK0C?=
- =?us-ascii?Q?bzpUNAkwI/Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o+TSSdyhu6vJNHYXexWggtcU4mqE8ozSF3RDs3OlfSkHobwb5JFLCtMhPNaV?=
- =?us-ascii?Q?oV+FG2qGVFMQROyEJptwZJ4WeqhJ/Mnq03Na7GMntiPJR3JcJBy93q5TErn0?=
- =?us-ascii?Q?w7hsYXHAJVoGxdWBWrupnDMh1PvcWna59DMMZSgZ6bzs6JBGdSj1WLuJfDw6?=
- =?us-ascii?Q?p+c34UdOHKODT39iAnoBA7lfW72swEqWlmgSkOfQiayyxHUb8GfHVrbbd2rV?=
- =?us-ascii?Q?xLN121UKnEW3Zdn+ZpEz2KkAAlpMNrKa3fb/8Rv/NAXh7zv0weKiOYwznMSw?=
- =?us-ascii?Q?kBd2DE+AW3otAhuB3RIo2I5G1CGzb4EPdJbUCeVaS8Y83KRW11TNXdAC/rHw?=
- =?us-ascii?Q?e03ia2iYYnm5kEqsE6sY+9Cx/rGdZ/GPwSJFfRq66U4bljY8MJDYXoS1r/5X?=
- =?us-ascii?Q?buVuxMjymowSufhHJYK3xtPYO2qcTvG+UtNf2jSl7nV6MU2kJe3AH2wJOFb1?=
- =?us-ascii?Q?hy5Q+4A2NjR3JVqJ6aMEYL4Jsh//oaRdha6bRjDMLWL/lVBcNnoI5Rs91exi?=
- =?us-ascii?Q?0sNlDb9RViN67LJMYnyAszBDWhW35MC9YHeKhzNicb2XwEPAptB8NCjmIne9?=
- =?us-ascii?Q?tS50LibhUCtv6V7dYDTSRywpL0AzgOLQsFGussi3n4iMOfsQcxpF7NYtMLvM?=
- =?us-ascii?Q?JIoNRQuMbL/8wP0B3vckaEqjdUGaCoa0KP3ABWf4zd1eqHH6PijNQ9U7jjuI?=
- =?us-ascii?Q?dfMda3WZZ7oBhs4DZP7mFrpzrJdBIhb7avUtDv0GUZ9UgEW6RmLjkNpgRFfT?=
- =?us-ascii?Q?nt3SKB3QcTCp9+GsMItPHBh/RL7DOaaChlMXFGUW1c+5O1bkCC9qz1RZjAPs?=
- =?us-ascii?Q?596yUSB74C8l/uqDIVyx4DQlAYMLaPgfKHw1ZrnRFUQ8P2U48EQz3F9f3uw5?=
- =?us-ascii?Q?bRT30HFweQF5QJRhz5/vrDGmfFV9x7ySpy1APpAEwjS4JMfWv7W9vp8eQX16?=
- =?us-ascii?Q?qsW/c17FXmw8ioV05MbTEaS3Ljx/psWqfavRR24ZM78Cae2M0UcCdDPx8nCU?=
- =?us-ascii?Q?6eQZi8vaTBnPD7fT/6NLoq3U/jLnxYljs7f6d7RcUaPIoXj9OU/TqIfKWXXp?=
- =?us-ascii?Q?H6WxfWaee/H/5bYa7mEWHpG8OF9SFGCq/rk5HvVcmIXSlxBYjqPG7Ycjb6S1?=
- =?us-ascii?Q?1EWPPqqnE9RX20XgDqiulc/+9Ycn09KqNVIc1xA3IdN2FwgNkEtQ1UVTWX93?=
- =?us-ascii?Q?7lMT6pJUCpfDFOGtVOr1S3yFzL6kHiT319hVP7XXHrc5QkhBeObNN+qPUZM7?=
- =?us-ascii?Q?seXIhUzMZVwng6D6IjWu2P8kFZaFkrFhnAXUyBDd45CZSReNXdPV8HLVJ5PO?=
- =?us-ascii?Q?7y1fagpIBb5s8ifXM23F3RzsmT3SyMbOISduHailP6BlyiTlAmhflR1i2Vxt?=
- =?us-ascii?Q?9lp16wDlpbqbKcFSe7N1/mer5y/ateuzfOxefoUPiA3qtfBadFjYfzzQBXI9?=
- =?us-ascii?Q?xdjO7A1Gl6gRW0qulLtoVmbWKJV6Ko17iuPhGcHpr3EIKzuchVsMkoIU8juW?=
- =?us-ascii?Q?13mzywOP23phlPeTapF6ZUxxE7E0xhTxJDDXBkyKn8F+cATyxWQulk1DUyzw?=
- =?us-ascii?Q?ot1nc9B/fTEAxTF84nG0cW9PxLIo/2iQAmfFxjot?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d38c344f-0227-41f4-e518-08ddd9b8ac89
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 15:55:34.9400
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SOl2vhyCo73j5socPEFC4F6B62aqfrsTVyvr9D0tfU278ipARf/e3lyByDZE970w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9441
+User-Agent: Mozilla Thunderbird
+To: Scott Guo <scottzhguo@tencent.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>
+Cc: Scott Guo <scott_gzh@163.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20250812030403.517269-1-scott_gzh@163.com>
+Subject: Re: [PATCH v2] squashfs: Avoid mem leak in squashfs_fill_super()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250812030403.517269-1-scott_gzh@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:sSV3r31ikOCCp0ZOCPrk29+dRSognoGv43dc94j8wd14HcS0W5W
+ NaKMj1DRooDNX1KyDL8d91W2b8szmJXP8fOJWFASOdlIKInDtvoMCrB9l/yw8xZdQZsmFWJ
+ Pulb4AYdoHyNcQduQ/MN1bayz+36LJUJGDbrOhcx1aOsRp2VOgP5w4lTMyELGS9mcpqBPJY
+ 3h/r4MMUDbulvrEFPVawg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HVlPc0rffEQ=;uhQS8IUm8Aa0kQoABWs2q+glsyq
+ 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
+ /30loklX6OS71Ty3GK6Q==
 
-Instead of just checking the existence of PMD folios before and after folio
-split tests, use check_folio_orders() to check after-split folio orders.
+> If sb_min_blocksize() returns 0, -EINVAL was returned without freeing
+> sb->s_fs_info, causing mem leak.
 
-The following tests are not changed:
-1. split_pte_mapped_thp: the test already uses kpageflags to check;
-2. split_file_backed_thp: no vaddr available.
+                         memory?
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- .../selftests/mm/split_huge_page_test.c       | 85 +++++++++++++------
- 1 file changed, 61 insertions(+), 24 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 3aaf783f339f..1ea2c7f22962 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -26,6 +26,7 @@ uint64_t pagesize;
- unsigned int pageshift;
- uint64_t pmd_pagesize;
- unsigned int pmd_order;
-+int *expected_orders;
- 
- #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
- #define SMAP_PATH "/proc/self/smaps"
-@@ -37,6 +38,11 @@ unsigned int pmd_order;
- 
- #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
- 
-+const char *pagemap_proc = "/proc/self/pagemap";
-+const char *kpageflags_proc = "/proc/kpageflags";
-+int pagemap_fd;
-+int kpageflags_fd;
-+
- int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd)
- {
- 	unsigned long pfn_head;
-@@ -49,18 +55,21 @@ int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd
- 
- 	pfn = pagemap_get_pfn(pagemap_fd, vaddr);
- 
-+	/* non present page */
- 	if (pfn == -1UL)
- 		return 0;
- 
- 	if (get_pfn_flags(pfn, kpageflags_fd, &pfn_flags))
- 		return 0;
- 
-+	/* check for order-0 pages */
- 	if (!order) {
- 		if (pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))
- 			return 0;
- 		return 1;
- 	}
- 
-+	/* non THP folio */
- 	if (!(pfn_flags & KPF_THP))
- 		return 0;
- 
-@@ -69,9 +78,11 @@ int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd
- 	if (get_pfn_flags(pfn_head, kpageflags_fd, &pfn_flags))
- 		return 0;
- 
-+	/* head PFN has no compound_head flag set */
- 	if (!(pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD)))
- 		return 0;
- 
-+	/* check all tail PFN flags */
- 	for (i = 1; i < (1UL << order) - 1; i++) {
- 		if (get_pfn_flags(pfn_head + i, kpageflags_fd, &pfn_flags))
- 			return 0;
-@@ -198,6 +209,12 @@ void split_pmd_thp_to_order(int order)
- 		if (one_page[i] != (char)i)
- 			ksft_exit_fail_msg("%ld byte corrupted\n", i);
- 
-+	memset(expected_orders, 0, sizeof(int) * (pmd_order + 1));
-+	expected_orders[order] = 4 << (pmd_order - order);
-+
-+	if (check_folio_orders(one_page, len, pagemap_fd, kpageflags_fd,
-+			       expected_orders, (pmd_order + 1)))
-+		ksft_exit_fail_msg("Unexpected THP split\n");
- 
- 	if (!check_huge_anon(one_page, 0, pmd_pagesize))
- 		ksft_exit_fail_msg("Still AnonHugePages not split\n");
-@@ -212,22 +229,6 @@ void split_pte_mapped_thp(void)
- 	size_t len = 4 * pmd_pagesize;
- 	uint64_t thp_size;
- 	size_t i;
--	const char *pagemap_template = "/proc/%d/pagemap";
--	const char *kpageflags_proc = "/proc/kpageflags";
--	char pagemap_proc[255];
--	int pagemap_fd;
--	int kpageflags_fd;
--
--	if (snprintf(pagemap_proc, 255, pagemap_template, getpid()) < 0)
--		ksft_exit_fail_msg("get pagemap proc error: %s\n", strerror(errno));
--
--	pagemap_fd = open(pagemap_proc, O_RDONLY);
--	if (pagemap_fd == -1)
--		ksft_exit_fail_msg("read pagemap: %s\n", strerror(errno));
--
--	kpageflags_fd = open(kpageflags_proc, O_RDONLY);
--	if (kpageflags_fd == -1)
--		ksft_exit_fail_msg("read kpageflags: %s\n", strerror(errno));
- 
- 	one_page = mmap((void *)(1UL << 30), len, PROT_READ | PROT_WRITE,
- 			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-@@ -285,8 +286,6 @@ void split_pte_mapped_thp(void)
- 
- 	ksft_test_result_pass("Split PTE-mapped huge pages successful\n");
- 	munmap(one_page, len);
--	close(pagemap_fd);
--	close(kpageflags_fd);
- }
- 
- void split_file_backed_thp(int order)
-@@ -489,6 +488,7 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
- 		int order, int offset)
- {
- 	int fd;
-+	char *split_addr;
- 	char *addr;
- 	size_t i;
- 	char testfile[INPUT_MAX];
-@@ -502,14 +502,27 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
- 	err = create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
- 	if (err)
- 		return;
-+
- 	err = 0;
- 
--	if (offset == -1)
--		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
--			      (uint64_t)addr + fd_size, order);
--	else
--		write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)addr,
--			      (uint64_t)addr + fd_size, order, offset);
-+	memset(expected_orders, 0, sizeof(int) * (pmd_order + 1));
-+	if (offset == -1) {
-+		for (split_addr = addr; split_addr < addr + fd_size; split_addr += pmd_pagesize)
-+			write_debugfs(PID_FMT, getpid(), (uint64_t)split_addr,
-+				      (uint64_t)split_addr + pagesize, order);
-+
-+		expected_orders[order] = fd_size / (pagesize << order);
-+	} else {
-+		int times = fd_size / pmd_pagesize;
-+
-+		for (split_addr = addr; split_addr < addr + fd_size; split_addr += pmd_pagesize)
-+			write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)split_addr,
-+				      (uint64_t)split_addr + pagesize, order, offset);
-+
-+		for (i = order + 1; i < pmd_order; i++)
-+			expected_orders[i] = times;
-+		expected_orders[order] = 2 * times;
-+	}
- 
- 	for (i = 0; i < fd_size; i++)
- 		if (*(addr + i) != (char)i) {
-@@ -518,6 +531,13 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
- 			goto out;
- 		}
- 
-+	if (check_folio_orders(addr, fd_size, pagemap_fd, kpageflags_fd,
-+			       expected_orders, (pmd_order + 1))) {
-+		ksft_print_msg("Unexpected THP split\n");
-+		err = 1;
-+		goto out;
-+	}
-+
- 	if (!check_huge_file(addr, 0, pmd_pagesize)) {
- 		ksft_print_msg("Still FilePmdMapped not split\n");
- 		err = EXIT_FAILURE;
-@@ -569,9 +589,22 @@ int main(int argc, char **argv)
- 
- 	nr_pages = pmd_pagesize / pagesize;
- 	pmd_order = GET_ORDER(nr_pages);
-+
-+	expected_orders = (int *)malloc(sizeof(int) * (pmd_order + 1));
-+	if (!expected_orders)
-+		ksft_exit_fail_msg("Fail to allocate memory: %s\n", strerror(errno));
-+
- 	tests = 2 + (pmd_order - 1) + (2 * pmd_order) + (pmd_order - 1) * 4 + 2;
- 	ksft_set_plan(tests);
- 
-+	pagemap_fd = open(pagemap_proc, O_RDONLY);
-+	if (pagemap_fd == -1)
-+		ksft_exit_fail_msg("read pagemap: %s\n", strerror(errno));
-+
-+	kpageflags_fd = open(kpageflags_proc, O_RDONLY);
-+	if (kpageflags_fd == -1)
-+		ksft_exit_fail_msg("read kpageflags: %s\n", strerror(errno));
-+
- 	fd_size = 2 * pmd_pagesize;
- 
- 	split_pmd_zero_pages();
-@@ -596,6 +629,10 @@ int main(int argc, char **argv)
- 			split_thp_in_pagecache_to_order_at(fd_size, fs_loc, i, offset);
- 	cleanup_thp_fs(fs_loc, created_tmp);
- 
-+	close(pagemap_fd);
-+	close(kpageflags_fd);
-+	free(expected_orders);
-+
- 	ksft_finished();
- 
- 	return 0;
--- 
-2.47.2
+> Fix it by calling and checking result of sb_min_blocksize() before
+> kzalloc.
 
+         () call?
+
+Regards,
+Markus
 
