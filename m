@@ -1,186 +1,206 @@
-Return-Path: <linux-kernel+bounces-764145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C64DB21E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:47:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4041EB21E99
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F109A18935C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CF36206AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1FC26B0AE;
-	Tue, 12 Aug 2025 06:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C169B2475C8;
+	Tue, 12 Aug 2025 06:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXTxxK6U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="COr5Q049";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TNUql2R3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="COr5Q049";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TNUql2R3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936BF204C36;
-	Tue, 12 Aug 2025 06:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2CA21D3F5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754981239; cv=none; b=EXePrb7UqSimLRTSSVe5KHWUmV1tFxvpfhNDAnN6TwZs6tImTOhdrk3IhKmj7WzAMTQ1tR39VMQUE3G3bhtG1IsvmnLt1kjg8TY1vfkvjmF546NnhrLieOYautrrKJvrRd2W5dguSy6m9zq26XVOM3YYZzhva87ZzeM6Mlh1WLc=
+	t=1754981337; cv=none; b=hwtXaGATSDhsqnPfWdXXESkppARAtjh3CLQEMBHlCyOqE9MIlik3QigsKu+krATV7VtP+DJt8PoESWPgaLfLFqnMdqJ/a0giy4wuSCYBmx/8FeKHHLoJ7ZlBxVFT5BgMhHUR66ajKDXznKfCo++o+dRX5qExisoMm0qjIRxCGIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754981239; c=relaxed/simple;
-	bh=/HZqQfR9eGDYw52QNI2P2rJt4fBRwuB/h0GTLpd4Xek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FTBhm0hDZZDAGSD369U/EOcw7eTTdFq8PBjzjtD2W4OHG4wJ3NsfN0hm1kDXGfvDnhJWKL1FgyhP3F7FIfxWQJb10ak9/9g7qY0XMlfDBLzFyOB0YJxqq1BEc0iJjQfuJ7eL968RrQnDO/LyW9RjNPA8RTRChuT2NQ4aP3wjYaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXTxxK6U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA68C4CEF0;
-	Tue, 12 Aug 2025 06:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754981237;
-	bh=/HZqQfR9eGDYw52QNI2P2rJt4fBRwuB/h0GTLpd4Xek=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IXTxxK6UaeBi3I4CEDYFNOhvzeZDrcnMZRNlK4ga9/i8THpqqn3sj5jecXiGOKOsM
-	 u8YT828jgG+PTBp86bsbR36fuRfDDiuMvnDtZIC5xQTUvezx6bH3GoaoZtuUcSeEQm
-	 R0eA5lNuvMdKRKe7JCF3ZWqnAh7cGS3pTLLepqk3LC+dGmxPoSfCVQObpcSdxWPQFT
-	 +tTuzrIXVjgtp7YEnnUN2P7nRc0q8v4uuzbroJvbX0CxIaBnQ3QNdnMzOdRbCRqNm+
-	 2IC70RGDkRsFkeVLkfSQnOo7fz31ag4mJI10DKwoYWZXXvbr5ReQfinot5xj9SdKSU
-	 CsAnAYBpK1y9Q==
-Message-ID: <e695c61a-e183-4eea-a7f6-1b2861b2129f@kernel.org>
-Date: Tue, 12 Aug 2025 08:47:12 +0200
+	s=arc-20240116; t=1754981337; c=relaxed/simple;
+	bh=QV51PAAZiiy8yMEWPLPGWvSqHqWPbLdXOHYKp939S0c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e4d3q7QuKsyxCLyktlBcHCdGX9Je1lSWotxStatyqqNmEAnde8XqJDnk6/f1rTTU5U2Y8mJb3UvJitGx27wjCsGvwegUvw0i6+uwMPE9fDx50o+jCq57oSeuKmm4vXSAPbZpDwgIhblSwC2VbR1aaVnGjoVFLFV1/3D+tFP+QpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=COr5Q049; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TNUql2R3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=COr5Q049; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TNUql2R3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 948C121170;
+	Tue, 12 Aug 2025 06:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754981333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmzm+jXCiCsLVw7nuGXgeBX/GB9YrIukEbwxuJ5aod4=;
+	b=COr5Q049szG7EiSLxfrcFl0KjUDLQxGsXSQtRk+nYStDRHZoE8qKNwR6peNmXqDXfMsAPv
+	y6KoOlWQ/ZyEC6WpYRlJ3bB6ynItItPGACK6KTTPdXgcxMFCFSymc1RqcO7yt+wqqgVh4o
+	DyxW+2GtvX7yVRKztNSyc+0hRZ1eoeM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754981333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmzm+jXCiCsLVw7nuGXgeBX/GB9YrIukEbwxuJ5aod4=;
+	b=TNUql2R3fdHexssq4ifokATRQI039sGVsWb0R4i7P8Gw4xwJrYF857jsc+F4WlhHz34syu
+	YfIDHWrgASH8PDBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=COr5Q049;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TNUql2R3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754981333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmzm+jXCiCsLVw7nuGXgeBX/GB9YrIukEbwxuJ5aod4=;
+	b=COr5Q049szG7EiSLxfrcFl0KjUDLQxGsXSQtRk+nYStDRHZoE8qKNwR6peNmXqDXfMsAPv
+	y6KoOlWQ/ZyEC6WpYRlJ3bB6ynItItPGACK6KTTPdXgcxMFCFSymc1RqcO7yt+wqqgVh4o
+	DyxW+2GtvX7yVRKztNSyc+0hRZ1eoeM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754981333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmzm+jXCiCsLVw7nuGXgeBX/GB9YrIukEbwxuJ5aod4=;
+	b=TNUql2R3fdHexssq4ifokATRQI039sGVsWb0R4i7P8Gw4xwJrYF857jsc+F4WlhHz34syu
+	YfIDHWrgASH8PDBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B59C1351A;
+	Tue, 12 Aug 2025 06:48:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2oa/F9XjmmjtSwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 12 Aug 2025 06:48:53 +0000
+Date: Tue, 12 Aug 2025 08:48:52 +0200
+Message-ID: <87sehxyqzv.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] ALSA: usb-audio: us144mkii: Implement audio playback and feedback
+In-Reply-To: <20250810124958.25309-4-ramiserifpersia@gmail.com>
+References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
+	<20250810124958.25309-4-ramiserifpersia@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: media: Add Sony IMX585 CMOS image
- sensor
-To: Will Whang <will@willwhang.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20250810220921.14307-1-will@willwhang.com>
- <20250810220921.14307-2-will@willwhang.com>
- <20250811-successful-military-dragon-d72486@kuoka>
- <CAFoNnrxWwqT9WA-h2WOsUe6Q-qEoz2mTHLpDogAyMwiXXZ9MrA@mail.gmail.com>
- <f12e6ff3-6ec3-487f-bf9c-0f8c06ee6444@kernel.org>
- <CAFoNnrxhUof8BBrefm1L1peTxg==Koz72TY+54G_8QUy-rrT8g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAFoNnrxhUof8BBrefm1L1peTxg==Koz72TY+54G_8QUy-rrT8g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 948C121170
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On 12/08/2025 08:31, Will Whang wrote:
-> Hi Krzysztof,
+On Sun, 10 Aug 2025 14:49:54 +0200,
+�erif Rami wrote:
 > 
-> Reply inline,
-> Thanks,
-> Will Whang
-> 
-> On Mon, Aug 11, 2025 at 11:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 12/08/2025 04:47, Will Whang wrote:
->>> Hi Krzysztof,
->>> Reply inline.
->>> Thanks,
->>> Will Whang
->>>
->>> On Mon, Aug 11, 2025 at 1:01 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On Sun, Aug 10, 2025 at 11:09:18PM +0100, Will Whang wrote:
->>>>> +description:
->>>>> +  IMX585 sensor is a Sony CMOS sensor with 4K and FHD outputs.
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    enum:
->>>>> +      - sony,imx585
->>>>> +      - sony,imx585-mono
->>>>
->>>> I don't understand this second compatible. Is this different hardware?
->>>> Can you point me to "mono" datasheet?
->>>>
->>>> Your description should explain this. Commit msg as well, instead of
->>>> speaking about driver (in fact drop all driver related comments).
->>>>
->>> Mono version of this sensor is basically just removing the bayer
->>> filter, so the sensor itself actually doesn't know if it is color or
->>> mono and from my knowledge there are no registers programmed in the
->>> factory that will show the variant and model number. (That is why when
->>> the driver probing it only test blacklevel register because there are
->>> no ID registers)
->>> Originally in V1 patch I've made the switch between color and mono in
->>> dtoverlay config but reviewer comments is to move it to compatible
->>> string and not property.(https://lore.kernel.org/linux-media/20250703175121.GA17709@pendragon.ideasonboard.com/)
->>
->> You only partially answer and judging by mentioning driver below:
->>
->>
->>>
->>> In this case, what would you recommend?
->>>
->>> compatible:
->>>   enum:
->>>     - sony,imx585
->>>     - sony,imx585-mono
->>>   description: IMX585 has two variants, color and mono which the
->>> driver supports both.
->>
->> ... I still have doubts that you really understand what I am asking. Is
->> this one device or two different devices?
-> One device that has two variants: IMX585-AAMJ1 (Mono) and IMX585-AAQJ1
-> (Color). Silicon-wise the difference is just with or without bayer
-> filter.
-Then I would propose to use sony,imx585-aamj1 and -aaqj1 with short
-explanation either in comment or description about difference in RGB
-mosaic filter.
+> +/**
+> + * fpoInitPattern() - Generates a packet distribution pattern.
+> + * @size: The number of elements in the pattern array (e.g., 8).
+> + * @pattern_array: Pointer to the array to be populated.
+> + * @initial_value: The base value to initialize each element with.
+> + * @target_sum: The desired sum of all elements in the final array.
+> + *
+> + * This function initializes an array with a base value and then iteratively
+> + * adjusts the elements to match a target sum, distributing the difference
+> + * as evenly as possible.
+> + */
+> +static void fpoInitPattern(unsigned int size, unsigned int *pattern_array,
+> +			   unsigned int initial_value, int target_sum)
 
-Best regards,
-Krzysztof
+Any need for camel case only for this?
+
+> +int us144mkii_configure_device_for_rate(struct tascam_card *tascam, int rate)
+> +{
+> +	struct usb_device *dev = tascam->dev;
+> +	u8 *rate_payload_buf;
+> +	u16 rate_vendor_wValue;
+> +	int err = 0;
+> +	const u8 *current_payload_src;
+
+Use __free(kfree) for temporary allocation/free for this function.
+
+> @@ -36,29 +209,82 @@ int tascam_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+>  {
+>  	struct tascam_card *tascam = snd_pcm_substream_chip(substream);
+>  	int err = 0;
+> +	int i;
+> +	bool do_start = false;
+> +	bool do_stop = false;
+>  
+> -	guard(spinlock_irqsave)(&tascam->lock);
+> -	switch (cmd) {
+> -	case SNDRV_PCM_TRIGGER_START:
+> -	case SNDRV_PCM_TRIGGER_RESUME:
+> -		if (!atomic_read(&tascam->playback_active)) {
+> -			atomic_set(&tascam->playback_active, 1);
+> -			atomic_set(&tascam->capture_active, 1);
+> +	{
+> +		guard(spinlock_irqsave)(&tascam->lock);
+
+You can use scoped_guard() instead, e.g.
+
+	scoped_guard(spinlock_irqsave, &tascam->lock) {
+		switch (cmd) {
+		.....
+		}
+	}
+
+
+thanks,
+
+Takashi
 
