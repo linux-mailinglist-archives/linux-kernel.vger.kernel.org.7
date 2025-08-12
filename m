@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-765585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D88B23A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF179B23A62
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3310B562F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2D8688437
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934C3268C55;
-	Tue, 12 Aug 2025 21:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACEB2BCF47;
+	Tue, 12 Aug 2025 21:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=achill.org header.i=@achill.org header.b="Z7bOETaj"
-Received: from mailout02.platinum-mail.de (mx02.platinum-mail.de [89.58.18.167])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iPMgSUEk"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC6120C469
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.18.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE2197A76;
+	Tue, 12 Aug 2025 21:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755032964; cv=none; b=qVMbpVJ7ZM7L9Pdp9aYiNMM4h0efExuNIDFJ2qB9QVoN9PE7npiLZvS7BTkiX46p7SfoCvRX9j03Vnf6WWKQqQxtrLon8YGSSyyVNla7aPeSPwh2jlNo+ySnDpj4O5R70y0riprL+cuKSg1IgW217i3QmbPLvkxGqEvqy7uLbVI=
+	t=1755033079; cv=none; b=tvtFLDxN+KOalvXA/SHjCYkFu3FMDlNLYjlBmHdGa3dBL1Xvm36nH/ReoiZWXkg8tVJq+ROJcvlXMW/wZv4TMFRa0Vjdbahu6Zg0MAMQDhikh0jl3M5uodXZA2xJkfvHzn8j1NPnK7F1bCbSAZ5tTZICq5AiCe+/e0krynuZZVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755032964; c=relaxed/simple;
-	bh=nlz94/12tGKOGIP7I3mDjoSbnHBOPTZwWTMcmg5RrJo=;
-	h=Mime-Version:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=rp9E9x+o/g45EdLWi0E3G5/2/PtJnTTyyIv81tVQCKYMmuQvkOeb2Q27spIirzj8c/Tyw3+s+kDK2pPFHvp+i+XH7Om1DNCHSamJfbp6JYFv6GTmFWMPb1W+dTgies8XdeIT2j6kTD+X6a78cfkOYc/1HB6TYCkd4F/gvcS3D5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=achill.org; spf=pass smtp.mailfrom=achill.org; dkim=pass (2048-bit key) header.d=achill.org header.i=@achill.org header.b=Z7bOETaj; arc=none smtp.client-ip=89.58.18.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=achill.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=achill.org
-Received: from [127.0.0.1] (localhost [127.0.0.1])
+	s=arc-20240116; t=1755033079; c=relaxed/simple;
+	bh=ptw9LWjwcshgBavY2yDU/Ee+H+KyvQTD0coZYZFxVfw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ULmDe/Bzm/M1UBRgPmwPE049MDBJmQLcBowAYMqjp+7AP1VLOVf6J9MUI02NDzm/1atlmJ1EbyGStqsG/+9sbhIh/bdA7JS5HOI7mnzkZEy56FedcTaZL6NoAYaoI7ur40aszCqg9Tq59EBavEPIx6NTBIS4ZG5MWzUsmXYY2RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iPMgSUEk; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755033076;
+	bh=ptw9LWjwcshgBavY2yDU/Ee+H+KyvQTD0coZYZFxVfw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iPMgSUEkfNJiAjaNCg4fHebUfF9p4iwEMZYSQwgT3Wag8oCvrrorR82Bq+flfOcAA
+	 tJE/Yoicrzw8NxpJCIWPPwA8lhSY3QDThCFfZS0af2JKOocxNwJNPGGFvi52DpWIPR
+	 rfp96b9bk+frqd/JoscI7HeslPOnw24WS16oaArSS9knnpRp6StIjNe34jMttiQ/N2
+	 PwrCFWxH28cc2bJhESkMhUuieD/1bwztCE2rL1oY3n/B+JDdgpUVuXdnVPPctJe1Nr
+	 ggH7Sftmy6AqFFgE9khGPbHMDitLVejnKoL1yJUUDLXdN1bGzQpQ754p+334Mxdt/W
+	 JLqzujFi6Sk4A==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by mailout02.platinum-mail.de (Mail Service) with ESMTPS id 8E4859A2964
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; d=achill.org; s=mail; c=relaxed/simple;
-	t=1755032955; h=date:message-id:subject:from:to;
-	bh=nlz94/12tGKOGIP7I3mDjoSbnHBOPTZwWTMcmg5RrJo=;
-	b=Z7bOETajqvAhvQ58ek6rJyB+11LjoeHvS2+OxoVIs4yJVvLqng4fI9xTChPxfLsp5oc4/Ux5YWt
-	rrhGqTNhQmOhrr3KSVY842Xam0RmfBev4fe+TcrNoaFVzArguXnYLITg3fzw8HnINsKcsNmW1B7Fz
-	+9rNqJjDOHu8y6Or1iqdm1SZPPROaZ4OuytugAaW5N9zwTTewQwF3vbr5Z90L9x6VabUDCZPSTodr
-	dlqhuiD6unpSDM0mj945tR93UVlrRcOQDnZVDiOO7+HFmhhT7On8rf8XJ5DX98N3vmOMeGRDrqoBk
-	8JGRK8Qg4rpg3EXA+6C+XQBCAjZC+VcXvUtw==
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A839717E0237;
+	Tue, 12 Aug 2025 23:11:14 +0200 (CEST)
+Message-ID: <d4f53de2dabce333e9f24fe0036d91b8d60af628.camel@collabora.com>
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>, Jonas Karlman
+	 <jonas@kwiboo.se>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>
+Cc: Alex Bee <knaerzche@gmail.com>, Sebastian Fricke
+	 <sebastian.fricke@collabora.com>, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 17:11:12 -0400
+In-Reply-To: <3547812.44csPzL39Z@earth>
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+	 <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
+	 <3547812.44csPzL39Z@earth>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoiZBBMWCgBBAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheAFiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmgssvgFCQll93U
+ ACgkQ2UGUUSlgcvRSeQEAjcvEl/A6R2y2nMufL4A8MiKQfPZqJPXlhhno2PZqqUcBAIR87Pv5+cZV
+ ZTN26stch5wMyalcKgRNQ9IxtGvVelUCtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1ZnJlc
+ 25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
+ TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZsmBU
+ pkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHCAAS0
+ LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBFiEE7
+ w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAwECHg
+ cCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8bRLv
+ 9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-3mQpTUvxe3+s5ASJnZMy"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+
+
+--=-3mQpTUvxe3+s5ASJnZMy
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 12 Aug 2025 23:09:14 +0200
-Message-Id: <DC0R9CV2PQCG.26IYGBPDZBPR2@achill.org>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
-From: "Achill Gilgenast" <achill@achill.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1
-References: <20250812174357.281828096@linuxfoundation.org>
-In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
 
-On Tue Aug 12, 2025 at 7:43 PM CEST, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.10 release.
-> There are 480 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10=
--rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-6.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi,
 
-Thanks, build-tested on all Alpine architectures and boot-tested on
-x86_64.
+Le mardi 12 ao=C3=BBt 2025 =C3=A0 15:57 -0400, Detlev Casanova a =C3=A9crit=
+=C2=A0:
+> > Detlev reports 146/147 on newer hardware using GStreamer, failing
+> > TSUNEQBD_A_MAIN10_Technicolor_2 (9bit chroma) only. On Detlev side, it =
+will
+> > we important to check why 8K videos (PICSIZE*) passes with a single cor=
+e,
+> > perhaps we accidently use both cores ?
+>=20
+> 1 core can do 8K. In theory, it can do up to close to 65535x65535... It i=
+s=20
+> only a speed issue, so you can do 8K but you won't be able to get to 8K@6=
+0=20
+> with only one core on rk3588.
 
-Tested-By: Achill Gilgenast <achill@achill.org>=
+now that makes me wonder if that means we can reach speed such as 240Hz 4K =
+by
+slaving the cores, of if that only works for 8K. If this is the case, perha=
+ps
+the decoder will need to be target performance aware to make the best
+scheduling.
+
+Nicolas
+
+--=-3mQpTUvxe3+s5ASJnZMy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaJut8AAKCRDZQZRRKWBy
+9Ih8AQDKyfk0G5x1w5UjIb06h+rwgbK7YR0Lu+0CgbaCFrUrCwEAtl6TV9GOaFhe
+Ubqzqi3x44DC0qxKWNjsJ9wdHUCpbAM=
+=ANNJ
+-----END PGP SIGNATURE-----
+
+--=-3mQpTUvxe3+s5ASJnZMy--
 
