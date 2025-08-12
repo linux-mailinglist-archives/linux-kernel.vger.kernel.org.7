@@ -1,57 +1,99 @@
-Return-Path: <linux-kernel+bounces-764908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643BBB228A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4611CB228BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0A63A23B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6B01B64DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C723F27FB26;
-	Tue, 12 Aug 2025 13:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C9A2857EF;
+	Tue, 12 Aug 2025 13:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DaePAfMZ"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILUcj/a9"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8D28152D
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0047C284B39;
+	Tue, 12 Aug 2025 13:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005280; cv=none; b=BEMj8IcluSFTNsVR8FWxaaxBEnQiUUQStX9Erw/emEq60P4JTy4kUf+5vuGoW4FDtHHbloCP+AII4rRi3v0uxoTHS2BH23zKUB9O6tMwzItWCBJYfsigQdIz/rYKQAsFZtIoTt/fnqMHfavWiFKgu94RuxHKFiKSqx3tKrVQSPs=
+	t=1755005362; cv=none; b=aPazHCC/XQCbslFCbKf29Esax0Sikh1KoVdoVzYESBbS3ZPb0uyFy67lR3hvuc2sQhem1FdPQsvJpXaU/kzTcJNx6Rwql8bq1sqES8uF9SPEvVlaOcD/oSfacNtCr9oHVNPivKbt++MRuM0TYu3RUQwBXAJA4hrVMfzs0axutgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005280; c=relaxed/simple;
-	bh=uUQekeSvKTsCb7oOO+EoYwxc2+w8LsYYt2YRxgpULUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uilb9afVdPH//nS8fXD4OmVshSBwiw1piRziuyFQ8U7yOHb24SlcdKQ+BoJBfmKM7nVy7kbq7nSDIsx/S25dbKc81UVQQTtx4EbPxSZ2N88Y7Oh4cU4tf4CiBZXA8IuQXH/D2Na5fUTl0Jvk6Q1LnwthU1+w/kURBgO5dgEoCW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DaePAfMZ; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755005274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bYA302zJcMdsKk1KdP3gy61mJzhYwbPixdUGA0jPcRs=;
-	b=DaePAfMZeHLDRsZ6v8S3bAZXf3PUGab484s2kCgPraf42WOLmShkCGa93atMyHJXjhMby6
-	jQwLDX9rVMgM6ytfMsK4jcpm+j4ZpA26RZd1igeoJGiwhRfuXuW5F3qohW4ItjZSDdNyM7
-	lHND/061G3VNRDgFxTXAvgFh9ilbReA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Justin Stitt <justinstitt@google.com>
-Cc: linux-hardening@vger.kernel.org,
-	Daniel Thompson <daniel@riscstar.com>,
-	kgdb-bugreport@lists.sourceforge.net,
+	s=arc-20240116; t=1755005362; c=relaxed/simple;
+	bh=IEeHt29EbAGwAmdrm+Bkmgts0MfalXN7j7gGaBeDylM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kfbBIM1SfP29PjoYrp4xOtF61fO/6tvVxYtQbRwOA+HdKgEtmBUaC/4hSiCKVeiiyFvjXH52YcAFyjNU3HdUmTfBsbYYQHb0fMQftbb7/QJOp2JiOXn6RpuW9fOl1t+Ijb2+2ZGFDWIvDXllqon3Fix9qFyXEesEEJQOTo8GmwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILUcj/a9; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b7848df30cso3660363f8f.0;
+        Tue, 12 Aug 2025 06:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755005358; x=1755610158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sFms8DfYlZzU9dKa8CQCWgZb50bkFnu2RQfAfYZeVs=;
+        b=ILUcj/a9e0WlLDYUz/WthXD33FglbqlRJLYQ1k3dZQyfaPMlpvuAk6qLYEoqbcABHa
+         4Ba5O72EKGDpNgEHCZolMbLZi3eekXNBW4R87+J6jnTCst9JwNbM3SyEk8kcaBdm76Ct
+         QL4uSNKyboWezCPUE0kK8xIQ1EjEtp62idug0a7B2N9kHAqmNc+UFx06qL1plm2Mtjc5
+         Ue3Q4/UCmZyW4mh8QTZ51GNbVNpww/w1DsuNbTfxlrqIeJKsDooQy9UwKbnbkzZCiaSn
+         GHH4anIXxYzrPodqLthhutcQK0JUoMkM/9zI+eDmgMtzRCDmQr8LN+JMjsz9hp9CMBOD
+         DKWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755005358; x=1755610158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1sFms8DfYlZzU9dKa8CQCWgZb50bkFnu2RQfAfYZeVs=;
+        b=vCcLx64lrjUJcDGgvDYpaO0xGUcqJLwITpKl0kj7GQYnCWRDrwBNen6zZVFhbbF/Hf
+         bx9oKpUMeZIrx0ymeaJkgXvWgQd+7V/brDoWuEhna0xXL/V1Vszf/8b689NAY5U4Ewra
+         xezaWTJFOPNHk5INQ+sSb+80yycOEotX/GSkFMkAOZjjZJv5emDAgVVJevCq62oefE9V
+         L4JXV+8S7M7f7fZhn6tq61DOCsHzbzWYteeQFSA+s6tO2SlCWP88CbZoTpJyxEkNKo0u
+         xQcsCjq8eBj8aMSW1cYfI2JUEAsVUM8Yh7cmYJ3ZunH40DbFSAFQmQ7fgDvYjDlJijzS
+         rU1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUzOb35iOvDEoNX9K/8nY9lAr28jKMsZqPWktV6BiTiBNcsf0tWkKmc0sEtJLyLSG3lnwAUCDSHXWZ1HvE=@vger.kernel.org, AJvYcCXZh6vxqeTgxlyKN08DKqB/soKZ2T9NFTYf5Ko/GF6bABm5I1WNZ+y+rolCw7z2CnF6cEez7TtHc2OkehpU9lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3JeoAxaS3PZsgVFy1+hOupaKg2OJ4Ave4mqnOJfWC5XynRTug
+	JhwRqysgRB81WkFRVhyOf4qnSQLkY6OlyCL5JGFm9iqW/2GfLtBxAg3y
+X-Gm-Gg: ASbGncvHT9zV9pIzIKddF03mdZQWC+XkWjX0sEEIDc9meiR3Ym8XrDtxCjwlc86XzAN
+	NbVTnkeE6cIv0eEAHUQk5oaYzQqZdvnVOesqGcnh3/GE20uM53dk2XdlUdXK2AvjqR5tb7zCbpC
+	IOipX2eAnjdpofSy8dQGICGrGtqj+Jr3ZiWFzE4tLR7Hpxfu/iUgRZtf6XacLe1leZuesGfG/Lq
+	FQMADeilCEwSVvweWgef7E9Gp8W9NOPe8mgDcJeGx23TyaCuyeVJBVrJNG/rMIJjMixekrAfi7p
+	hLCaXL6WEvt9oQfhowbZH0DwVTYbO0veLpWc50i2Qsxm/KQtgjkezkOm5JKIULadZeZ9Bl8+OB7
+	o/00V4vkJiX4xxjcJIUCvBPUDpoIsUCzqzqq1ueM1m2Ic
+X-Google-Smtp-Source: AGHT+IGYEv1UKXbeigwHa2TP8gKJ65pVI0sFh0NThS1xGWQn0fvli/9NFZm7AX5K1g9q3yR/X2RpyQ==
+X-Received: by 2002:a05:6000:250d:b0:3a5:8934:4959 with SMTP id ffacd0b85a97d-3b9111f4b67mr2712178f8f.27.1755005358067;
+        Tue, 12 Aug 2025 06:29:18 -0700 (PDT)
+Received: from blepers-Latitude-5420.. ([213.55.220.53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b8aab8c0sm433003905e9.19.2025.08.12.06.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 06:29:17 -0700 (PDT)
+From: Baptiste Lepers <baptiste.lepers@gmail.com>
+To: 
+Cc: Baptiste Lepers <baptiste.lepers@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kdb: Replace deprecated strcpy() with memmove() in vkdb_printf()
-Date: Tue, 12 Aug 2025 15:26:20 +0200
-Message-ID: <20250812132621.119641-3-thorsten.blum@linux.dev>
+Subject: [PATCH] rust: mm: Mark VmaNew as transparent
+Date: Tue, 12 Aug 2025 15:26:56 +0200
+Message-ID: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,66 +101,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-strcpy() is deprecated and its behavior is undefined when the source and
-destination buffers overlap. Use memmove() instead to avoid any
-undefined behavior.
+Unsafe code in VmaNew's methods assumes that the type has the same
+layout as the inner `bindings::vm_area_struct`. This is not guaranteed by
+the default struct representation in Rust, but requires specifying the
+`transparent` representation.
 
-Adjust comments for clarity.
-
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Fixes: dcb81aeab406e ("mm: rust: add VmaNew for f_ops->mmap()")
+Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
 ---
-Changes in v2:
-- Use memmove() because of strcpy()'s undefined behavior with
-  overlapping buffers as suggested by Doug Anderson
-- Compile-tested only
-- Link to v1: https://lore.kernel.org/lkml/20250811170351.68985-1-thorsten.blum@linux.dev/
----
- kernel/debug/kdb/kdb_io.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ rust/kernel/mm/virt.rs | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 9b11b10b120c..b12b9db75c1d 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -714,8 +714,8 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
- 		 * it, depending on the results of the search.
- 		 */
- 		cp++;	 	     /* to byte after the newline */
--		replaced_byte = *cp; /* remember what/where it was */
--		cphold = cp;
-+		replaced_byte = *cp; /* remember what it was */
-+		cphold = cp;	     /* remember where it was */
- 		*cp = '\0';	     /* end the string for our search */
- 
- 		/*
-@@ -732,8 +732,9 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
- 			 * Shift the buffer left.
- 			 */
- 			*cphold = replaced_byte;
--			strcpy(kdb_buffer, cphold);
--			len = strlen(kdb_buffer);
-+			len = strlen(cphold);
-+			/* Use memmove() because the buffers overlap */
-+			memmove(kdb_buffer, cphold, len + 1);
- 			next_avail = kdb_buffer + len;
- 			size_avail = sizeof(kdb_buffer) - len;
- 			goto kdb_print_out;
-@@ -872,8 +873,9 @@ int vkdb_printf(enum kdb_msgsrc src, const char *fmt, va_list ap)
- 	 */
- 	if (kdb_grepping_flag && !suspend_grep) {
- 		*cphold = replaced_byte;
--		strcpy(kdb_buffer, cphold);
--		len = strlen(kdb_buffer);
-+		len = strlen(cphold);
-+		/* Use memmove() because the buffers overlap */
-+		memmove(kdb_buffer, cphold, len + 1);
- 		next_avail = kdb_buffer + len;
- 		size_avail = sizeof(kdb_buffer) - len;
- 	}
+diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+index 6086ca981b06..a1bfa4e19293 100644
+--- a/rust/kernel/mm/virt.rs
++++ b/rust/kernel/mm/virt.rs
+@@ -209,6 +209,7 @@ pub fn vm_insert_page(&self, address: usize, page: &Page) -> Result {
+ ///
+ /// For the duration of 'a, the referenced vma must be undergoing initialization in an
+ /// `f_ops->mmap()` hook.
++#[repr(transparent)]
+ pub struct VmaNew {
+     vma: VmaRef,
+ }
 -- 
-2.50.1
+2.43.0
 
 
