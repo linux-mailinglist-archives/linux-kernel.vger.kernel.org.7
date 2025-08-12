@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-765508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6B6B23953
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:55:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B793B2394A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECBAC6E0E24
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6CF1892AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA012FFDCC;
-	Tue, 12 Aug 2025 19:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA12FF160;
+	Tue, 12 Aug 2025 19:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQ6bsLIb"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3idmMqT"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C137A296BCA;
-	Tue, 12 Aug 2025 19:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EC72FA0C3;
+	Tue, 12 Aug 2025 19:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755028379; cv=none; b=SElxFgNkmQVBTZVX8Y4Wqfim3MQrCbH2L1b0gM/NGUmNwD7iyxwdEywBtMKF4H3cH3WB6kyh6DWlwd2h3zH63ZHY1R9GagGAVwHQoDmZs83i5/6n7KFgCAIjyMW0+EMuWH4rgTrBVtMngMlayzliex4rP0Gmn2plnyUIshTF7tM=
+	t=1755028413; cv=none; b=Qnp1SZ0NI7uQcJsFfqjNuYvYMiJN4HwUgJd0Kg6dA/yj4RbgJP28w5we34p8EPmh4YSZm1JEmrTmC2e/r4MjWm/fD/E3rsVWLJpgYMC5b0K19NKqTONNxCScqAzRkt/hwXyrKGSEUppf+gjU9IESZ+6VCO+NTqqdl9t9BSUY9+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755028379; c=relaxed/simple;
-	bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
+	s=arc-20240116; t=1755028413; c=relaxed/simple;
+	bh=vhKEJdDCorgUHjle84atTRE7pJ5rUNqpQxJLE0r93UY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RH7WlbEzWu7HAuXbJ3fcvnrqWjq/UcW35oxi2r0kZVlmogBz4QMY51UV+L4KJ9rUo8uAgDtynEYlp6T9tah7SuIZBZhsCabf79GMMSXg80olnCyIv+DJIhCM2D0RDkkQiT4F4eVmuCC0LAsHov1A38e4L+JQNQdb8D34gIYZroM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQ6bsLIb; arc=none smtp.client-ip=209.85.214.171
+	 To:Cc:Content-Type; b=mam06iIQYOFq5vfqHGRS4uObX1ZtL6plVbOEbk3uD4C8baBeM8V+LHWkGD/rAuDK0NJ3nrMuZEJy7888uqK8+Hyy1gz7FqRUp6kIsr5Fg9m0A6wvaHDdIFifE4KR7GrFW0Ug9HZ79yWGPsmA7K4BeX1geIEJJVVpBLRPGbSgKQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3idmMqT; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-242fdf8568dso1611815ad.2;
-        Tue, 12 Aug 2025 12:52:57 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-242abc28161so9089975ad.1;
+        Tue, 12 Aug 2025 12:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755028377; x=1755633177; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755028411; x=1755633211; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
-        b=YQ6bsLIb5bQIst8AzQ0GywuZCZa8QeJX0fPMB4gNJ92iBrwKGAhuAW9cj+10YNucKB
-         HrVOrDpNT+VCwexMFVJSNXLehOVx3bSlU4/KMKwEzCWrHUfX3TeQFyBuz4U54Bk2WTF/
-         qH25nmqe/l9dXtRNf+Udw+VqtWSROo2TWykATPZDEbaMIshPNBiAph4Ex6fZlho9zemm
-         uoXERAMWm1Fb7TDzkbfeudOmP56STcTlR5utzbfjmB0ivilsBgBdSwnfcCGgQ9o6Hjdq
-         FXj2fl9rAbWhPw0ggmXd1m5i4bYrH+tQ82AOgkcNUBOeW+Fj2Oe7eZsitVPNL+yNmr5E
-         yFTA==
+        bh=xUy+WBIe8s5eG7yD9G+tniGamA+stC4Ks75UPKA0L7U=;
+        b=K3idmMqTP+kmUyhIi0NbiOTgorAJtC3pRgKuBRFPgsLOp8okTaLE2BIVDa5+XNL1tx
+         /jkG/L60vTC2Z/66tPNDKP3slTAYiGDSXaEwOpROatzTVkYz9z0Gv7xfAWHCdwevbIgN
+         JPTIu7C89tsXuAXSlZJmTBtOTTaV5cEZlCcGeQGquM18HccClOkJvCcY2V/hD3XEg/KG
+         E279GNcAvwqims8AUfqdHSJ9G7Nr/Yrqt6nOfUpAkhR960wEeF/0eYDbI+0sDu+2rXPy
+         PF0smlfYRGjLe1s8YJIP0UV1l7RlNt+JMaD2rGfIrkJ094AjFaFRHYCbsMrxWjclaeq/
+         4SqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755028377; x=1755633177;
+        d=1e100.net; s=20230601; t=1755028411; x=1755633211;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T/aLjDLfTvyKnPGOQdgq0rcqlXVBr/0vWvH6zLMPvLs=;
-        b=dJOEX3Qj/fcazHHo2lo/MuUKZXJfevCfiHm4qdtETPnoOPzkkGEkNDYcxEMS9Y9E0/
-         mb9SsgyoZTxYc9OI1wmS6QPWAkqeWTeD9mhGEMsz7h2ay2PkO+pcbo3iSvLt8AszfR2+
-         RZfYL6TO+YMBCY5Lrt96KVtc3ozpol/g9sdFC9BuvFUGwX7Pfu4z7b2BU59oUhjzu8UU
-         QOV4ZQ6dyrMHocHTB4sZsMQLheZlH+n22C6RqweZ4JGHDdtqfbwsFE/ywX6/+NHznE/z
-         /vT71UrMBPP5tbEFWvTmN7MbxfxG31el1L2uvIRsBygseIVkRdAcupN+6G100/w5XgKi
-         FIVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNADos1xrG3YIKKyBKAhy6lwffWGHM+NinWmjRHpiHyv171VhAUdbkRb2KbbLwBOjMpaY+QM27tGUl29vgT4U=@vger.kernel.org, AJvYcCXFux/4ofQcZLNGmk7jKjShnYZZcsfo0FadU9TN/eB/3ydFblZIwgCIZLLouOe2e+MuZ0BgKHMaqF0WRrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhuDnhO11kULSS1ZPMEXB9tHMJyQpY66zAyV4rIo5aa2mHr9lE
-	pCG1DifUpSnpeV0lGyGD2VvHX+VRcRjjr7Ve9/wIuMMOSZkO8fZqdz8BJRRf4sX7AJNSp9ivQ5Q
-	XsjnzRLs3LvfyfduOwvtmchGFfymJvSE=
-X-Gm-Gg: ASbGnctoRn/tCZQNGeffVlvYzsIm4gwaJwGDLS4ECZP/mD7+cqoh1p53Dmg0OuxpF2t
-	Wi/TwU2LtZT8a+fDQw/KSNT5rT5x7fcAmdWcp/WqnB/7SZqqmxdC2Xcy4k/EBfT/tUd2FgGdbNg
-	RMLy6F8uaqNHZ/slw8HbCYVVh2squKAGV7DJXKGwetNNoMy6V2xNtZtGWLc8+ja9OGegduCAfE5
-	8PSi06g
-X-Google-Smtp-Source: AGHT+IGp2dikV2vxjvTnzDsMEmpfe17vDuKqbKTf/CZzTpQPjGrvZF5vqCTO61EiCku5j1w4GqjR19wPBunrAjI29rI=
-X-Received: by 2002:a17:902:ea0c:b0:240:729c:a022 with SMTP id
- d9443c01a7336-2430d32b8a7mr2923825ad.11.1755028377016; Tue, 12 Aug 2025
- 12:52:57 -0700 (PDT)
+        bh=xUy+WBIe8s5eG7yD9G+tniGamA+stC4Ks75UPKA0L7U=;
+        b=KCT9gy/ZJCnXsdFb6IXQgamrwJObUDO1h/UghBHHviPPlU+fEgDrzNWBWkQrykFU/T
+         7Ob6vJur0fAXq5DER9RfAccCUAOTj9XTRG2utPtngtMV2oPiVRivAgocDQXoPVd0GsWT
+         kH6zX3T+Tk4Ge0btgDNBES3jCXXdLMSMvHyEAVGFQgW41fT4K/FKv0dEe4cHxBSL9Ahp
+         upilmgThqy+l+xQd2HNKxWBwsp40UZGmxTyNS4VNVLSqO9QlQrpPqnXPyPg7Yb2eSP4A
+         Tv0mpdRwUBAZig2T1HmbYiiQRH3aaeWnKrjWgtjlSOpVXxfOtL50olg/Hkrjj0RUZ+Ee
+         GVQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE2GnXUKH6kYGKC9OY6OhTj/oyMAR7LpEyyVu4gzRcf95QKHomu88M4inNkBRQ0Ui4J162zzO9@vger.kernel.org, AJvYcCVPxzd9PaVlMdpKHXQnnSEftmW4WQjg8np9OLbD/DarCN+WrthgfoLJ1r+jOshRQx1GlVPNSeHqrEWnJgvbrQU=@vger.kernel.org, AJvYcCVX0jMDMEm7xiit3JqIzqOXeg1xL1ANVuOXNBeLv8bJJ8vFLklP0rDD8MojGfcUHRS5IG6PD+r1pOr08aKb@vger.kernel.org, AJvYcCXGE24MfuFVjIG0dwSfi3uwHY4A11leoeE3CvQXJcPNiTTsu5ucmjECnK4fW9bEwAbAyisLgGQhY3hIAfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ynGNSC+94jcj5Tki7UBYYRBpFobMvSE1hmWZkmDjOACvADUf
+	inSBs1hyFOxw/BUAEW63xOH0B6DYhLp/nhO5veSpuzH2PLT0nMgDOiXem20O/qqOnggJpzdZwlY
+	KiGSer8DjEbytV2Hax5/vgiZdRpCUz9M=
+X-Gm-Gg: ASbGncuLLGrCWPuTaX3UN6Q+oFiC9BWwWrWM2mP4z0LcqZU0PNg2Z9f0q2gpsNVJgkK
+	eV4x88fBL5Qfc+ALZRtXCfuXnWlu1TToPUQOAmk4tPBYa+Yd4BQ0A0U8bW+fc5J6Yxvg1/z/Upy
+	bRSUns1AfmKOb+8varpUoDCRFtYt8oxWm0LCqFNfceyPomcQriIbt1mU1js/dlJb7Hb/UCwB0TP
+	CBarTfo
+X-Google-Smtp-Source: AGHT+IGJF9vlSl6LtugLF3G5FrHTTGXElXZh3V5XBDYr50G2/qrw0kFxML7ITvym8eH96YpjpZcxBgyhI2RTXm8ZkWs=
+X-Received: by 2002:a17:902:c405:b0:242:d237:e20b with SMTP id
+ d9443c01a7336-2430d0f9cf4mr3360985ad.4.1755028410985; Tue, 12 Aug 2025
+ 12:53:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731154919.4132-1-dakr@kernel.org> <20250731154919.4132-2-dakr@kernel.org>
-In-Reply-To: <20250731154919.4132-2-dakr@kernel.org>
+References: <20250726133435.2460085-1-ojeda@kernel.org>
+In-Reply-To: <20250726133435.2460085-1-ojeda@kernel.org>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 12 Aug 2025 21:52:44 +0200
-X-Gm-Features: Ac12FXwx1OhTXBSqNTxWMSI4678VquyiqAavjpkw2PB14JZbF78QjVQ8X5t3gEY
-Message-ID: <CANiq72mWVmso1yMYGYih-NDwjB9E1iVE=_oSpPiSvqTu5mkE0g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: lorenzo.stoakes@oracle.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	urezki@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 21:53:19 +0200
+X-Gm-Features: Ac12FXw9PM7CHJhFQfCIPFdA9X2yBdN7wgOVawlhnEq1u63q42B2t16j4ZB72TI
+Message-ID: <CANiq72kbsj5nJCZOo_jh8YzsiX8RgOKVAF=x8vDYbFjoCh6mjg@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: clean output before running `rustdoc`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 5:49=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
+On Sat, Jul 26, 2025 at 3:34=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
 >
-> aligned_size() dates back to when Rust did support kmalloc() only, but
-> is now used in ReallocFunc::call() and hence for all allocators.
+> `rustdoc` can get confused when generating documentation into a folder
+> that contains generated files from other `rustdoc` versions.
 >
-> However, the additional padding applied by aligned_size() is only
-> required by the kmalloc() allocator backend.
+> For instance, running something like:
 >
-> Hence, replace aligned_size() with Kmalloc::aligned_layout() and use it
-> for the affected allocators, i.e. kmalloc() and kvmalloc(), only.
+>     rustup default 1.78.0
+>     make LLVM=3D1 rustdoc
+>     rustup default 1.88.0
+>     make LLVM=3D1 rustdoc
 >
-> While at it, make Kmalloc::aligned_layout() public, such that Rust
-> abstractions, which have to call subsystem specific kmalloc() based
-> allocation primitives directly, can make use of it.
+> may generate errors like:
 >
-> Fixes: 8a799831fc63 ("rust: alloc: implement `ReallocFunc`")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>     error: couldn't generate documentation: invalid template: last line e=
+xpected to start with a comment
+>       |
+>       =3D note: failed to create or modify "./Documentation/output/rust/r=
+ustdoc/src-files.js"
+>
+> Thus just always clean the output folder before generating the
+> documentation -- we are anyway regenerating it every time the `rustdoc`
+> target gets called, at least for the time being.
+>
+> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned i=
+n older LTSs).
+> Reported-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Closes: https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic=
+/x/near/527201113
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Did this need Cc: stable or was it skipped since it is just extra padding?
-
-(i.e. not sure what you usually do for DRM, but I was looking at this
-since it is alloc since I would normally pick it.)
-
-Thanks!
+Applied to `rust-fixes` -- thanks everyone!
 
 Cheers,
 Miguel
