@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-764192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D98BB21F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AFBB21F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61A26503DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D971862126F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD722E0915;
-	Tue, 12 Aug 2025 07:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473102641FB;
+	Tue, 12 Aug 2025 07:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZIPxJktF"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b="VQPG+mGb"
+Received: from out28-83.mail.aliyun.com (out28-83.mail.aliyun.com [115.124.28.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0E21E5B7A;
-	Tue, 12 Aug 2025 07:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E181A9F99;
+	Tue, 12 Aug 2025 07:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983950; cv=none; b=Y46kN9zASsJAu9U/Yw7FyBE2L29T5aLwm2AOuDCo1HhDWA7ROzIyXW2xuVsKlJqPZEfxIdOVbPETdbbf1mnHhy6G+8M/UMLVYKxR2WwQveIX0KeAgjlxF5+TOyxbpJlS7jk3E1lzf/6uJOjuAUJtr5FgulqCxECm6T1bgQiZL4A=
+	t=1754983930; cv=none; b=KYOB9rGqbM8kJUliGsmmXeRfgEab5Sb8CRt49U2HJzQa74qHlB5lY4M8XBHjpP9yQ7HNmIG0y/UNpXUheQgh6vrgFVY1keQP98FfyveTiPNT28BtVEHWyo/Gvov+/I3juh8zTtT/OXVKo+QNfNzrvwPFn3hAxnTGJGYQXBzWa/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983950; c=relaxed/simple;
-	bh=im4P2kTlmt6PLY8QYFkY1ii1Y7TpEnk9g7eONr8XoKM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ELLDKsvE98NH1TY+F29PLKxXU6oVatcOxn9nXmUVT0tZIfKXKbv0Z6jBUn4KhKIze0oI8cNCWRBPQAtlMAwz2gOJfuPUgn4iOGcSYbAVDd5DGvhq2Wdw0tDrhKWMbxiQLt36BGLcpPhGdj/2IcIxXq5tjqHOl8BhXrwjbL7lYEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZIPxJktF; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C7IRVx020079;
-	Tue, 12 Aug 2025 09:32:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=kKzblfJnewqfnHkkVYa4YD
-	iRnQ2gHOTdHxuje0MFec4=; b=ZIPxJktFdjnmzaFfOUtkQ7bXbmPJI+TSc4mliP
-	fb1SHOp4O/wHTp2l1szOCsiUlGlh0GDvjDxxoLXfCQU1o5U3BRKJRwlG6J0gA1hZ
-	66iL25umfyUziZDgki2XAKb8uRymIolCbS8hqGD8a434ykGWOzMKwSEu4Q4BLo1e
-	ExGk4veL7N1ziUqhIwse/NfA/o5JZF7v7adQrDVwUXJXcZqAEi1ScGcVhguRxMiT
-	s8t9bI/7iqn/uRRizk9Ex5225v3rW1TKv1wl9/+78KJR09xJDnBbHtF2+JWH4/Qj
-	ghP0Srs+8YYhviDuMSpZWTzF9P3CyLHmCAZUi64yQYb1K8Nw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48efw4q6pm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:32:06 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5462240044;
-	Tue, 12 Aug 2025 09:30:53 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E005D747A8E;
-	Tue, 12 Aug 2025 09:30:13 +0200 (CEST)
-Received: from localhost (10.48.87.65) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
- 2025 09:30:13 +0200
-From: Christophe Kerello <christophe.kerello@foss.st.com>
-Date: Tue, 12 Aug 2025 09:30:08 +0200
-Subject: [PATCH] mtd: rawnand: stm32_fmc2: fix ECC overwrite
+	s=arc-20240116; t=1754983930; c=relaxed/simple;
+	bh=CCa9Ci3J5QHDFddhdCFeCywPPj7C95oJwqOE6D7d/3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmwKwV3ss5yI6zSZloEUyT4l/eUz6etXRGKMBXnccAHEI2WvEVDww+e3X+SZ9vCBhSnSkkaniy8Gt4jB8eDyyffQCU9XTB2Kn4M86hcjVMkKEoQQ2bunW7XELSZHIBjgvxk21Itwzp2Pk0l7bUFxsJhI3gS7tSaSs3CvlGd5OoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net; spf=pass smtp.mailfrom=pascal-lab.net; dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b=VQPG+mGb; arc=none smtp.client-ip=115.124.28.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pascal-lab.net
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=pascal-lab.net; s=default;
+	t=1754983916; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=j3T37CffnhSQE5FtkbQoa66mwv8d5798OrQGY72RZOw=;
+	b=VQPG+mGbqnhsxNzwTXCEbSLMO8Y6Eh6SF7FNWqHaWXV/FR9nlT76lG/WYzIcEMxobJzFmtBaQLTbCUXVUTRiH6J8NR6m5DjyRC2X8JAW/Lqk9ipSFKa2WLwqzmrpZO7CEdKzv3Ihg11hAK7ms08BdBkZ0M4YCljt5rAOMijbb8A=
+Received: from 192.168.0.105(mailfrom:yujundong@pascal-lab.net fp:SMTPD_---.eDV-wna_1754983914 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Aug 2025 15:31:55 +0800
+Message-ID: <1f73657c-74b3-44a7-bee4-b7cda1a75a02@pascal-lab.net>
+Date: Tue, 12 Aug 2025 15:31:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250812-fix-ecc-overwrite-v1-1-6585c55c88b0@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIAH/tmmgC/x2MQQ5AMBAAvyJ7tknb0KqviAO12AuylZKIv2scJ
- 5mZByIJU4S2eEAoceR9y6DLAsI6bAshT5nBKFOrRmuc+UYKAfdEcgmfhN5bMzrnnass5O4QytL
- /7Pr3/QDFtYbCYwAAAA==
-X-Change-ID: 20250811-fix-ecc-overwrite-9962b7797746
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger
-	<richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Kerello <christophe.kerello@st.com>,
-        Boris Brezillon
-	<bbrezillon@kernel.org>
-CC: <linux-mtd@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        <stable@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf branch: Fix heap out-of-bounds write in
+ branch_type_count()
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-perf-users@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
+References: <20250809093812.308027-1-yujundong@pascal-lab.net>
+ <17bdc644-329a-42fb-aba2-d7f80f2a1037@arm.com>
+Content-Language: en-US
+From: Yujun Dong <yujundong@pascal-lab.net>
+In-Reply-To: <17bdc644-329a-42fb-aba2-d7f80f2a1037@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-In case OOB write is requested during a data write, ECC is currently
-lost. Avoid this issue by only writing in the free spare area.
-This issue has been seen with a YAFFS2 file system.
+On 2025/8/11 15:03, Anshuman Khandual wrote:
+ > On 09/08/25 3:08 PM, Yujun Dong wrote:
+ > > The branch_type_count() function writes to 
+st->new_counts[flags->new_type]
+ > > when flags->type is PERF_BR_EXTEND_ABI. However, while the array
+ > > st->new_counts is sized for PERF_BR_NEW_MAX (8) entries, the field
+ > > flags->new_type is a 4-bit unsigned value and may hold values up to 15.
+ > >
+ > > This mismatch allows crafted perf data to trigger a heap out-of-bounds
+ > > write when flags->new_type >= 8, leading to memory corruption.
+ >
+ > Crafted ? How could flags->new_type >= 8 when PERF_BR_NEW_MAX is 
+capped at 8.
+ > Is this a real scenario that happened on a system ?
+ >
 
-Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
-Cc: stable@vger.kernel.org
-Fixes: 2cd457f328c1 ("mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash controller driver")
----
- drivers/mtd/nand/raw/stm32_fmc2_nand.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Thanks for your review and for raising that question. The new_type field
+in struct branch_flags is declared as a 4-bit bitfield (u64 new_type:4),
+meaning it can hold values from 0 to 15, even though PERF_BR_NEW_MAX is
+defined as 8. So, it's entirely possible for flags->new_type to be >= 8.
 
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index a960403081f11091837b73b8610231fe421d0c05..f84f23392fa441327bec90ba12a2a57d825d9330 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -996,9 +996,21 @@ static int stm32_fmc2_nfc_seq_write(struct nand_chip *chip, const u8 *buf,
- 
- 	/* Write oob */
- 	if (oob_required) {
--		ret = nand_change_write_column_op(chip, mtd->writesize,
--						  chip->oob_poi, mtd->oobsize,
--						  false);
-+		unsigned int offset_in_page = mtd->writesize;
-+		const void *buf = chip->oob_poi;
-+		unsigned int len = mtd->oobsize;
-+
-+		if (!raw) {
-+			struct mtd_oob_region oob_free;
-+
-+			mtd_ooblayout_free(mtd, 0, &oob_free);
-+			offset_in_page += oob_free.offset;
-+			buf += oob_free.offset;
-+			len = oob_free.length;
-+		}
-+
-+		ret = nand_change_write_column_op(chip, offset_in_page,
-+						  buf, len, false);
- 		if (ret)
- 			return ret;
- 	}
+In fact, I've observed such cases when running real-world perf record/top,
+where perf.data produced contains invalid new_type values, likely due to
+other bugs or unexpected data corruption. Additionally, a maliciously
+crafted perf.data file can also force this out-of-bounds write.
 
----
-base-commit: fb2fae70e7e985c4acb1ad96110d8b98bb64a87c
-change-id: 20250811-fix-ecc-overwrite-9962b7797746
+ > >
+ > > Add a bounds check to ensure flags->new_type is less than
+ > > PERF_BR_NEW_MAX before accessing the new_counts array.
+ >
+ > But it might make sense to add this check just to be on the safer side.
+ >
 
-Best regards,
--- 
-Christophe Kerello <christophe.kerello@foss.st.com>
+Notably, new_type is only used in two places:
+1. In branch_new_type_name(), where the bounds are already validated.
+2. In branch_type_count(), where the current patch now adds the
+necessary check.
 
+Admittedly, the mismatch between the bit-field width (0-15) and
+PERF_BR_NEW_MAX (8) is the root cause. While adjusting the bit-field
+to match PERF_BR_NEW_MAX would also resolve the mismatch, that risks
+breaking existing compatibility. Therefore, adding a bounds check at
+the use site is the least disruptive correction.
+
+ > >
+ > > Fixes: 0ddea8e2a0c2 ("perf branch: Extend branch type classification")
+ > > Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
+ > > ---
+ > >  tools/perf/util/branch.c | 8 +++++---
+ > >  1 file changed, 5 insertions(+), 3 deletions(-)
+ > >
+ > > diff --git a/tools/perf/util/branch.c b/tools/perf/util/branch.c
+ > > index 3712be067464..8ea6628c7735 100644
+ > > --- a/tools/perf/util/branch.c
+ > > +++ b/tools/perf/util/branch.c
+ > > @@ -21,10 +21,12 @@ void branch_type_count(struct branch_type_stat 
+*st, struct branch_flags *flags,
+ > >      if (flags->type == PERF_BR_UNKNOWN || from == 0)
+ > >          return;
+ > >
+ > > -    if (flags->type == PERF_BR_EXTEND_ABI)
+ > > -        st->new_counts[flags->new_type]++;
+ > > -    else
+ > > +    if (flags->type == PERF_BR_EXTEND_ABI) {
+ > > +        if (flags->new_type < PERF_BR_NEW_MAX)
+ > > +            st->new_counts[flags->new_type]++;
+ > > +    } else {
+ > >          st->counts[flags->type]++;
+ > > +    }
+ > >
+ > >      if (flags->type == PERF_BR_COND) {
+ > >          if (to > from)
+ >
 
