@@ -1,93 +1,120 @@
-Return-Path: <linux-kernel+bounces-765597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E62DB23A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20837B23A9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436C41782F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235025616D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6E42DAFB1;
-	Tue, 12 Aug 2025 21:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749232D73A6;
+	Tue, 12 Aug 2025 21:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgytJMWm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFcZs2kR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43322D7808;
-	Tue, 12 Aug 2025 21:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59A2777E8;
+	Tue, 12 Aug 2025 21:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755033618; cv=none; b=sDTuny6l96re955Um4k0bkOiIzNQJj4ScYZ01IdWDOJYVLqkzXpSMiw2gVpKWi4Ble0vdooWl/dHd7VKj/NA5h6b2aRocy5xO9UG4k+IBgbAp46rAnr+8lAOu2bcYC+sEvlkLCMSi64HTtxuw72Z+6UnLDYpsxZUi8lhw8+ziBw=
+	t=1755033885; cv=none; b=H8sJ1pL2NQGlPvpbTrEsqFc22l8wb771gG1rgPphqi+nJcVI7DEddYb8L04Tpfc/TbldR6XJunf9e463xyLTyXlG/a7010bZ0Z6Fk3VcjupDh9H2IKtbTXNcuXkzPVe2bBjKihCbfdAYbtHIuaN3o2VtII6cTWLjIrs3pbuPxUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755033618; c=relaxed/simple;
-	bh=C+KttgTZ2avh2OL713FKvz8YyKV99KKUUR2nqlakuUA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fLAf4q4R9gyqGEjQEOIyI7nkb4byTVdEdbHHtrQNmmtdgyG/Tw3/bTS4ptDm2RjmS+naniyV90ExiqI1VXbeiACltm/7fvWpqWPnFXwP+/6Yr/cZzThvKmBk+bIm4ejxmF4/seChtdfRa0ROYTSr2um2Xbe7BVveUWDRyLQF1RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgytJMWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 827F7C4CEF5;
-	Tue, 12 Aug 2025 21:20:18 +0000 (UTC)
+	s=arc-20240116; t=1755033885; c=relaxed/simple;
+	bh=Dpv1oPQG74ZYLF+MG89cus6fJnJbgGSnLUHZdOkHhkA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nBNnVeFlXN++kbjxmtVttdIit8FYhMj3gTSq3WC9zlRXaHavB4MzsDbtS4LPmbHsb2B77ZAxNFVQYqvF/3HFDStezN7H3v1SKRFqTkshtU19QBPCrw7febDuH4DWGYnpothq0dHL9/inR8wWEJ4UDyF8RoHRL7b4XJz5s/BCVqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFcZs2kR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 673AEC4CEF0;
+	Tue, 12 Aug 2025 21:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755033618;
-	bh=C+KttgTZ2avh2OL713FKvz8YyKV99KKUUR2nqlakuUA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CgytJMWm3/0qZvHyGUr8HrkftmMw+XIFpSUcajD9c4i/h6Kkenko833K4exGhIWRt
-	 Pd7XhSi3/0QE5XuEOTxh6Tqk2DfTJ6T8NbNILb6jxXsXO9yVGKEZ9O9+5gClL98HGr
-	 gon02Q9tkV86mrE3nLuwT6R8RbdT+0lmBryxAU/0+4jLgn+jbcJ6TgOB8xcRA5YvYG
-	 n8YDP+356eRCt2bTXboU41O208hTV4/zw/+pEp/Gn69+ggOJgE85vKn7XzvppjNe2O
-	 P3CJqhaHribQXaMuCpYfIh9iyn4vXU1GiiNw2iY0ovZzFG9Y0MEHYAs/omi8CecA/K
-	 nscMaczaZIqsg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDE9383BF51;
-	Tue, 12 Aug 2025 21:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755033885;
+	bh=Dpv1oPQG74ZYLF+MG89cus6fJnJbgGSnLUHZdOkHhkA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aFcZs2kRnESxCNSzFaIigjm+lJrVETBlzHhA1EMtyoMOI1xv+V0BUJRt687FbE1KM
+	 2xDVQEuGFwrkSBtcrzqAbdJGYIP1LYRILpuJQC05WNdjhneCRz/Nz9OvpxKx42kzz4
+	 fCYG80IfyC2WsFDWXmyApFS39X9aEmhdbwL7isAuxDbp9rjxgSZWxZzdUmjEdBvVrz
+	 vsFai37kQAyoPicAJYML1ei81toATNuuzEznbY2dlRUzlq4p+khkD7mOekCNnnSW6k
+	 HAGDt5uv9ofNeYeahdmDMbWo1xCUL/zhOM1ulvJ7o5UoXax4jx1jw3c+aQhcWSBXP1
+	 MxSjMwTafoU4Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5807FCA0EDC;
+	Tue, 12 Aug 2025 21:24:45 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Date: Tue, 12 Aug 2025 16:24:39 -0500
+Message-Id: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] dt-bindings: nfc: ti,trf7970a: Drop 'db' suffix
- duplicating dtschema
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175503363024.2827924.6313629408379264166.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Aug 2025 21:20:30 +0000
-References: <20250811142235.170407-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250811142235.170407-2-krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: mgreer@animalcreek.com, krzk@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- robh@kernel.org, conor+dt@kernel.org, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABexm2gC/23OSw6DIBCA4asY1qWBAVG76j2aLhQGJfEVMKSN8
+ e5Fu2iTdvlPMt/MSgJ6h4FcspV4jC64aUwhThnRXT22SJ1JTYBBzgQr6YKtr3mp6OxGvfieqpx
+ b2zQNllyRtDZ7tO5xkLd76s6FZfLP40Lk+/SNSah+scgpowWALrQEUUm8tkPt+rOeBrJjET6A+
+ vdNhATkDIzkViAa8w1s2/YCxaQ4DvEAAAA=
+X-Change-ID: 20250308-tegra186-pinctrl-651ffbbbe816
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755033884; l=1385;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=Dpv1oPQG74ZYLF+MG89cus6fJnJbgGSnLUHZdOkHhkA=;
+ b=+vr+CNjojq1xVphpGn0Tq+9eXtmNHftCVnsWUizbQ1tZ7hiFuCn5eBh7/C3TuIBy7UF+eAKG5
+ iQ8k4EUtK1rBoyxoD+0U3yNUsA/uH74/dCNzeRMRCVDRZM6kUWDxJ3a
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Hello:
+This series adds support for Tegra186 pin control, based on a downstream
+driver, updated to match the existing Tegra194 driver.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v3:
+- Fixed some spacing and formating issues in patch 2
+- Link to v2: https://lore.kernel.org/r/20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com
 
-On Mon, 11 Aug 2025 16:22:36 +0200 you wrote:
-> A common property unit suffix '-db' was added to dtschema, thus
-> in-kernel bindings should not reference the type.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml | 1 -
->  1 file changed, 1 deletion(-)
+Changes in v2:
+- Don't allow underscores in node names in patch 1
+- Rebase on v6.16-rc1
+- Patch 2 was picked up and thus not in the rebase
+- Link to v1: https://lore.kernel.org/r/20250429-tegra186-pinctrl-v1-0-722c7c42394e@gmail.com
 
-Here is the summary with links:
-  - [net-next] dt-bindings: nfc: ti,trf7970a: Drop 'db' suffix duplicating dtschema
-    https://git.kernel.org/netdev/net-next/c/f8262b8dadfa
+---
+Aaron Kling (3):
+      dt-bindings: pinctrl: Document Tegra186 pin controllers
+      pinctrl: tegra: Add Tegra186 pinmux driver
+      arm64: tegra: Add Tegra186 pin controllers
 
-You are awesome, thank you!
+ .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   |  285 +++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   12 +
+ drivers/pinctrl/tegra/Kconfig                      |    4 +
+ drivers/pinctrl/tegra/Makefile                     |    1 +
+ drivers/pinctrl/tegra/pinctrl-tegra186.c           | 1979 ++++++++++++++++++++
+ drivers/soc/tegra/Kconfig                          |    1 +
+ 6 files changed, 2282 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250308-tegra186-pinctrl-651ffbbbe816
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Aaron Kling <webgeek1234@gmail.com>
 
 
 
