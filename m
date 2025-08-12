@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-764196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467DFB21FB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446FEB21FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A1A1AA6418
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4BCE6203A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2382D6E45;
-	Tue, 12 Aug 2025 07:39:26 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7AD2DE6F7;
+	Tue, 12 Aug 2025 07:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKV6/h+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7C41A9F99;
-	Tue, 12 Aug 2025 07:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F841A9F99;
+	Tue, 12 Aug 2025 07:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984366; cv=none; b=RwUT3KqHYsRqsv1XAl35bxaH8NYpB5Y9gecGAZj1zaGBx6EObwnP81K8wxwy6pbRccSekzZW/9xfYWHriv0dPYfYJM/caO9lZZuOkZZpm66fTo/o8z904GsrPH2fuWNUQ+u4KHaXS58VErEmgDbAWYXtpX5xkzysn3R5Tc0OPBc=
+	t=1754984426; cv=none; b=phBo9mHCFroehRnuOCDD64AS5/Hz7WfYbUXYdOufveJ/TG62lZZ8knIgahkSv6sHTDa9BbqzxU3hW2lG41v8GobsyQPxV7dCWytRS5xzAca0uF5LsAmdDs9hqv2PEtg4Z3eKeQinQo/T0r1XtvD3S2kU/XBaHuXVc2JZ21HZJCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984366; c=relaxed/simple;
-	bh=XKD7DlFpMgjKkbysOhN5zMLBr97T/g9HvMvGTtflrVg=;
+	s=arc-20240116; t=1754984426; c=relaxed/simple;
+	bh=wfjGcl31LN8RT0HnE6qlAX5V1ZOh3Ia0Y/31tNz9kKQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HoQd2jWHfVnJJJXmryLSsjI11mp1sMrqpWdAWbnRNbuqhTrZ39Nid8+tFpB3xyRkcutqBKbYFEuX7OQpXBYurg8U7+FB6Zcn+KNvkoqz5l+hCgnQaeuaBcVdKnQzKlqmM7fW2E57oqCc7SDSA8itqYam0MSUqTInD2d2YOWrvMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.13.134] (g389.RadioFreeInternet.molgen.mpg.de [141.14.13.134])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0E68561E647B3;
-	Tue, 12 Aug 2025 09:38:41 +0200 (CEST)
-Message-ID: <613fed75-efb7-46b8-8598-3b32f4f0b012@molgen.mpg.de>
-Date: Tue, 12 Aug 2025 09:38:40 +0200
+	 In-Reply-To:Content-Type; b=toznbd1gFh3nx6zZVQ6CPzXr1RbRk3luA59O4rQadJnMWPwq2qr7dfZXr4vgpAhh2GrSJ4LiFWcva5urlDDtQXD2wNctn24c7cxycjNVAmO04ymTgkzWOUkUp/Yh7qx+x9ktcxOnDqx/WUl6eMhMsWtTGQocmbCe6fdDVPOakt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKV6/h+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581A7C4CEF1;
+	Tue, 12 Aug 2025 07:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754984425;
+	bh=wfjGcl31LN8RT0HnE6qlAX5V1ZOh3Ia0Y/31tNz9kKQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hKV6/h+eBdhrGOR8LWo2tUnD1ifH3Wq1YtGrBb6JHh6uQ1buxuoWe6QbWqArRuRb9
+	 GD8Rh+IGPTCxcCTB3c9/9SWXmhuWUlJT55gaGF9GMKQFNrqBn5ogTQIiKhmgfT26OC
+	 uz0rOg9BW292o9M+5Fel25c9L9bEL34TpN8otEYXNXJkH3BZb4v9301FlHTvcUZDTe
+	 kx1VCGUaUvfXwAgoyaZRLQajIHezn+wNVE0J2OZsZn6HQKvcr9S+1JYIReM7x69v16
+	 jRtln5FTv7R+EZbLyRllsMTXjwFB7KNjQYTUD6y6TFcwDQytgWAtDdxfWQOmo5BXZI
+	 1IObiCZTNBUuw==
+Message-ID: <d5d0133f-1b42-4ad0-a3e0-2a2bdeb67484@kernel.org>
+Date: Tue, 12 Aug 2025 09:40:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,85 +49,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] md: add helper rdev_needs_recovery()
-To: Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: song@kernel.org, yukuai3@huawei.com, linan122@huawei.com,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com
-References: <20250812021738.3722569-1-zhengqixing@huaweicloud.com>
- <20250812021738.3722569-2-zhengqixing@huaweicloud.com>
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: everest,es8316: Document routing
+ strings
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drake@endlessm.com,
+ katsuhiro@katsuster.net, matteomartelli3@gmail.com, zhoubinbin@loongson.cn,
+ KCHSU0@nuvoton.com, patches@opensource.cirrus.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
+References: <20250809151853.47562-1-jihed.chaibi.dev@gmail.com>
+ <20250809151853.47562-2-jihed.chaibi.dev@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250812021738.3722569-2-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250809151853.47562-2-jihed.chaibi.dev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Dear Zheng,
-
-
-Thank you for your patch.
-
-Am 12.08.25 um 04:17 schrieb Zheng Qixing:
-> From: Zheng Qixing <zhengqixing@huawei.com>
+On 09/08/2025 17:18, Jihed Chaibi wrote:
+> The es8316 driver defines several DAPM widget names that are used for
+> audio routing in the device tree. However, these strings are not
+> documented in the binding file.
 > 
-> Add a helper for checking if an rdev needs recovery.
+> This forces developers to read the C source to discover the valid
+> names, which can be inefficient and error-prone.
+
+Reading free form text is as inefficient and error-prone as reading the
+driver.
+
 > 
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> Add a list of the input and output widget names to the binding's
+> description to make it self-contained and improve the user
+> experience for board bring-up.
+> 
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 > ---
->   drivers/md/md.c | 20 ++++++++++++--------
->   1 file changed, 12 insertions(+), 8 deletions(-)
+>  .../devicetree/bindings/sound/everest,es8316.yaml  | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index ac85ec73a409..4ea956a80343 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -4835,6 +4835,16 @@ metadata_store(struct mddev *mddev, const char *buf, size_t len)
->   static struct md_sysfs_entry md_metadata =
->   __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
->   
-> +static bool rdev_needs_recovery(struct md_rdev *rdev, sector_t sectors)
-> +{
-> +	if (!test_bit(Journal, &rdev->flags) &&
-> +	    !test_bit(Faulty, &rdev->flags) &&
-> +	    !test_bit(In_sync, &rdev->flags) &&
-> +	    rdev->recovery_offset < sectors)
-> +		return true;
-> +	return false;
-> +}
+> diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.yaml b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
+> index e4b2eb5fa..cd073dd0c 100644
+> --- a/Documentation/devicetree/bindings/sound/everest,es8316.yaml
+> +++ b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
+> @@ -12,6 +12,20 @@ maintainers:
+>    - Matteo Martelli <matteomartelli3@gmail.com>
+>    - Binbin Zhou <zhoubinbin@loongson.cn>
+>  
+> +description: |
+> +  Everest ES8311, ES8316 and ES8323 audio CODECs
 > +
->   enum sync_action md_sync_action(struct mddev *mddev)
->   {
->   	unsigned long recovery = mddev->recovery;
-> @@ -8969,10 +8979,7 @@ static sector_t md_sync_position(struct mddev *mddev, enum sync_action action)
->   		rcu_read_lock();
->   		rdev_for_each_rcu(rdev, mddev)
->   			if (rdev->raid_disk >= 0 &&
-> -			    !test_bit(Journal, &rdev->flags) &&
-> -			    !test_bit(Faulty, &rdev->flags) &&
-> -			    !test_bit(In_sync, &rdev->flags) &&
-> -			    rdev->recovery_offset < start)
-> +			    rdev_needs_recovery(rdev, start))
->   				start = rdev->recovery_offset;
->   		rcu_read_unlock();
->   
-> @@ -9333,10 +9340,7 @@ void md_do_sync(struct md_thread *thread)
->   				rdev_for_each_rcu(rdev, mddev)
->   					if (rdev->raid_disk >= 0 &&
->   					    mddev->delta_disks >= 0 &&
-> -					    !test_bit(Journal, &rdev->flags) &&
-> -					    !test_bit(Faulty, &rdev->flags) &&
-> -					    !test_bit(In_sync, &rdev->flags) &&
-> -					    rdev->recovery_offset < mddev->curr_resync)
-> +					    rdev_needs_recovery(rdev, mddev->curr_resync))
->   						rdev->recovery_offset = mddev->curr_resync;
->   				rcu_read_unlock();
->   			}
+> +  Valid routing names defined in the driver for this codec include:
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Anyway, don't describe drivers but hardware.
 
-
-Kind regards,
-
-Paul
+Best regards,
+Krzysztof
 
