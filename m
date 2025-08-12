@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-764066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850B3B21D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E76CB21D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61BA31AA1777
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A96A1AA1B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A252D8798;
-	Tue, 12 Aug 2025 05:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D2F2E2DCD;
+	Tue, 12 Aug 2025 05:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S+v8NTpX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DTIJRl8e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FD2D46B3
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70CA2D46B3;
+	Tue, 12 Aug 2025 05:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754977686; cv=none; b=Pjs9vZ9TfPZr8uFJ3QAWh8KigAEADV90Qs7GCjnbB5UpiGTxRCVSxBZsGWFhB91lx31blQcZoXaRpzZ3zcqSI/eIxWAMcYI0tXJDX0c8YrkVbV73kwo53T0FY99WgPMEt/GNlbdLZQYeNgV81AMshPTey8boYOB+Mhk3o65147w=
+	t=1754977724; cv=none; b=USLiX7r20XMxCwiQomiFYf+Fjxsd5W/hAxI2DyluRnXR8GUlO1fZWuv+6uFiHY/kKxMYMkF+wSTIdz5uHdJlaK9ta/sua40juBuaASfqtmwg/kW+7HskYX3ra88OVhtUrb0OU1murllTv+6NrhNnc7Rq6WrLa2nFwS0jtUh1e+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754977686; c=relaxed/simple;
-	bh=jO+IVzo3YAMCTJto5kIWS0+ylU9YXHD9qWaBlsMVx6g=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=JoGHcz3nHUoRYvPM2tuiAbyXLuda8wLw5JVeI6FeBE6uu1n87kbcSGo8eEX4yrkC0tFgRXLHfsV4OVR0lTvWCKVqjQsRvO9K3fkIq5YfjJT4L/gL/igt/D7ePPbOe6OBElQf/1HrpXmbRy8eh/0Yv6rs5+VMlUAPiEG/pVhcDeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=S+v8NTpX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:bd1a:669e:3dcb:5a6b:a905])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 810083A4;
-	Tue, 12 Aug 2025 07:47:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754977628;
-	bh=jO+IVzo3YAMCTJto5kIWS0+ylU9YXHD9qWaBlsMVx6g=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=S+v8NTpX1xLrmvzy9mlWxQ3TmWy36wXMt66fHZ+wOGiKTbu9gHKybPhxZPpa3nsUk
-	 HbzrRtyNqNc3IIkyjkYL0IYZtQShSWsMI1v3KMZ+3EVS/tfkAvrMBEn3t/Fi8ActTs
-	 6nqssOD6mLnCWpZqWm5R8ovhEGA6F32ZUT7iHABc=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754977724; c=relaxed/simple;
+	bh=Mt75utOS+FLQdNmbVCXZeloFSRJkEf4uCSos32mxQkM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WWsv4xdy3BF2TDWVBw6j9g5w2U2kufzdcPYB6yLanTjeIfWAcKwSLneYO0zlcXW0aTV4FfUAhcZ/7KqF5jQ8sq8uoxX/Bx0tX1eILhP9L6Yz66BLFUbdtQoNolEA5p9ZopMp1VwSPuH89Hb0Aot8H6ujb1YeLm6g/ivZO8jFOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DTIJRl8e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5XLYA029228;
+	Tue, 12 Aug 2025 05:48:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zv4jFYnA5NgrKThOuZiXOL
+	7P6F+n1+7pt2PzbD7/OLs=; b=DTIJRl8e2PSlDHIxurdSy4TDH2a0Qf6l/4tQwi
+	Vj9v31dA6eLa8s3dzq8+EM2CKkE9ckDBaMW0ZGSIFvc/StmJ6rPBSebT7/tbss2b
+	V7rTlbMtbl6OBqJliU5P4otv5PHnje3JRnTBUhrgbpmy/FJc9DMKAFCmUT4tRmxE
+	sPkSOe7oSsXgidO7RRPpA3EyzQLYo9ws8Allg7S2hul26QQBkWfk9mv2FTC8nlxM
+	WOSUuYe2BOqu00yI2zf8ecjtkQo7WjPv5YQOoVwU/sA2rRiJVpG25xaNn5HRv9wl
+	IXBClEOJQZhNeUKgLv1IFxKq+LPrD+kMr8zpnssOefnTHUkw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygmex6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 05:48:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C5mewW026959
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 05:48:40 GMT
+Received: from zongjian-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 11 Aug 2025 22:48:37 -0700
+From: Zong Jiang <quic_zongjian@quicinc.com>
+To: <gregkh@linuxfoundation.org>, <linux-serial@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_ztu@quicinc.com>, <quic_anupkulk@quicinc.com>,
+        <quic_msavaliy@quicinc.com>, <quic_vdadhani@quicinc.com>,
+        Zong Jiang
+	<quic_zongjian@quicinc.com>
+Subject: [PATCH v2 0/2] serial: qcom-geni: Add support to increase UART ports efficiently
+Date: Tue, 12 Aug 2025 13:48:17 +0800
+Message-ID: <20250812054819.3748649-1-quic_zongjian@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250224-cdns_phy_pm-v1-1-0fe2c544cc87@ideasonboard.com>
-References: <20250224-cdns_phy_pm-v1-1-0fe2c544cc87@ideasonboard.com>
-Subject: Re: [PATCH] phy: cadence: cdns-dphy-rx: Add runtime PM support
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Date: Tue, 12 Aug 2025 11:17:56 +0530
-Message-ID: <175497767648.8696.3021844845686596634@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfXzm5twPHdxOs2
+ r5zrYeldowu84sR3huGpWlsWbdnSGLggbg0VcvYzduv0BjpWX+QxQPd4S1P8Vctx7T175gXeE9X
+ 2qOg10/hKarU6m6kf/LRJl3OKJ4WuaTdt/Xa4qiFqxipSDdv7py42D+CnWebAB118T4l/I5r7Wk
+ ECQBZ74iRKoZ6ElNGH+22J3mP8YmdWaJA++1PFTQJzyMbcGOeX4x5zNIRJq+FwaBFf/IF3PnU1w
+ R0hFDujymvByDQ3+yozUDw7vACorbl7BFz8nHusm+ssrui3XxllT7Bs9WK4a/qXlhwVFmMPggfW
+ RmpkjHl3+B5NNREGz1KhuYAF/P/D9F/3BQcm8w1pAeNg+0y+Cqc/4DsD01nyn1PRW5AXCJxSN+Q
+ lfmwRYFj
+X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=689ad5b8 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=0UXVF4T5m0Rc8HU1ALcA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: ksnGgTZVValycvpa2ckCJm_iJsrMTTfZ
+X-Proofpoint-ORIG-GUID: ksnGgTZVValycvpa2ckCJm_iJsrMTTfZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090035
 
-Hi Vinod, Kishon,
+This patch series improves the flexibility and scalability of the
+Qualcomm GENI serial driver by refactoring UART port allocation and
+introducing a Kconfig option to configure the number of supported
+UART ports.
 
-Quoting Jai Luthra (2025-02-24 18:10:05)
-> Enable runtime power management for the device. The PHY framework
-> handles calling pm_runtime_(get|put)_sync when powering on/off this
-> device.
->=20
+Changes since v1:
+- Based on Greg KH's comments, the following changes have been made in v2:
+  - Split the original patch into two separate patches.
+  - Replaced static UART port allocation with dynamic allocation.
+  - Added a Kconfig option to configure UART port count.
+  - Improved commit messages and changelog to better justify the changes.
 
-Can this patch get picked for the next merge window?
+Patch 1 replaces the hardcoded static array of UART ports with dynamic
+allocation, reducing memory usage and improving maintainability.
 
-The CSI PM series is already reviewed [1], and it would be good to have
-runtime PM for cameras working in 6.18, which needs both the PHY and CSI
-IPs to be powered off.
+Patch 2 introduces a new Kconfig option,
+SERIAL_QCOM_GENI_UART_PORTS, allowing platforms to configure the
+maximum number of UART ports at build time.
 
-[1]: https://lore.kernel.org/linux-media/20250224-ti_csi_pm-v1-0-8f8c29ef64=
-6d@ideasonboard.com/
+These changes are useful for platforms that require more than the
+previously hardcoded number of UART ports, and help avoid unnecessary
+allocation for unused ports.
 
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/phy/cadence/cdns-dphy-rx.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/phy/cadence/cdns-dphy-rx.c b/drivers/phy/cadence/cdn=
-s-dphy-rx.c
-> index 7729cf80a9bd892c3e5db6cdbdc4ece9ada2d99f..3ac80141189c4c8c350b67899=
-8e5dec7a15c3892 100644
-> --- a/drivers/phy/cadence/cdns-dphy-rx.c
-> +++ b/drivers/phy/cadence/cdns-dphy-rx.c
-> @@ -12,6 +12,7 @@
->  #include <linux/phy/phy.h>
->  #include <linux/phy/phy-mipi-dphy.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/sys_soc.h>
-> =20
->  #define DPHY_PMA_CMN(reg)              (reg)
-> @@ -265,7 +266,7 @@ static int cdns_dphy_rx_probe(struct platform_device =
-*pdev)
->                 return PTR_ERR(provider);
->         }
-> =20
-> -       return 0;
-> +       return devm_pm_runtime_enable(dev);
->  }
-> =20
->  static const struct of_device_id cdns_dphy_rx_of_match[] =3D {
->=20
-> ---
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-> change-id: 20250224-cdns_phy_pm-b2b7d472835d
->=20
-> Best regards,
-> --=20
-> Jai Luthra <jai.luthra@ideasonboard.com>
->=20
+Patch summary:
+  [PATCH v2 1/2] serial: qcom-geni: Dynamically allocate UART ports
+  [PATCH v2 2/2] serial: qcom-geni: Make UART port count configurable via Kconfig
 
-Thanks,
-Jai
+Signed-off-by: Zong Jiang <quic_zongjian@quicinc.com> 
+
 
