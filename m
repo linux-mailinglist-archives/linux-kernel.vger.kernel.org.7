@@ -1,130 +1,77 @@
-Return-Path: <linux-kernel+bounces-764699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F713B22629
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0C1B2262A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2959E3B3916
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8AC3B81E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AF22EE5F4;
-	Tue, 12 Aug 2025 11:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G41KKAo1"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1282EE5F4;
+	Tue, 12 Aug 2025 11:53:11 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9796E248F6A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F92A248F6A
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754999584; cv=none; b=jhNLBrovrAloe76CjrZxabzy/tihba1jkLDc3kj7K8e5WB3F4ZRGVtSNa2XnFPPTp8Tz+3Ad8HFbYY39jBp25jwFfnKQX5DEJ1dpmOBNs7pHZKaZHveD5TDdn5PlVLtNei52i4euRzLlIr70w+xHPI+4tuj4H51nSuTLPi4UGh0=
+	t=1754999591; cv=none; b=mSmqNeNAm3U5enK5I1SNiKxH9XW4Ln0WPFSGyM9/L/AiEXsQ9seFCeY06W/6xSBi9P5O2wHqgy+FLdcQR7SoKGqbXcbG8+W01L7Pu9n8KZFyncgh4yNLu0msb7qNY95POaQApL13/4Zqu7P7dvU/j8+Y82ZXVR7SGYyBzIAQNZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754999584; c=relaxed/simple;
-	bh=RTYfJMPh+t1vQg/mU0nSTVELG2bD2Xan9cEtIsFKB/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oispeeHEin6QVp3+OVt+5o037aKhqpf9cRm5npoQw9H6iWNeHiGYgl+NFiBqudoWfZFqUU64B9d048e7L7gU58UCBZL+yPV1AN1BN62xt00ss3NGXgR2RwcxV+QEa95QCH/EgXWlaVBiYQcFSd8LMozxE5y06XfM5UlLjuuUenA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G41KKAo1; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af95d5c0736so836750466b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754999581; x=1755604381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t3c3phlVUTTXn2usyZSOEwXAjpjuYewwi7y9E6CClAI=;
-        b=G41KKAo1//W93DeCsfXj5aAAKAzyoZCvEXDaE9Vvagdm8fprXsbHR5xLP193XIkybb
-         j9VYhQtww5oTWJoVbGouiZvJToymxHyJ8kV/GiYwfXEBxQGU21yb5ObhynrcBKBxcyIT
-         TZ9DgfhG5NTUN+hcuZKSr4mC5vaa9HrIgQCU1Zz433u6KrsxSFPZbBHfXDgniz09CfdS
-         1rt4nV1aG2U7SsHTnnSfltm4MOCDWt31k99bW9p38Q+mOBBo5RVJSV/jKiUAnxa2ya9C
-         g9UTRG5AoUIh8H+lyGgcCcyhK2htaOnnMB5oNd9jGMexFRLQRpqgGKuvP+7/TV6gcoWk
-         y5Ug==
+	s=arc-20240116; t=1754999591; c=relaxed/simple;
+	bh=joC4jihkaES7PJZp425YJBTOpFFfmNeVymxE+lkSVO8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RJMXRCCwLdKHaJ38mlnYPrgcRkNjsFqOPA2lO0ANuHeBYJI3jqQcIpCWTP/fD2aZQ6Cx2busl7hlpNS2XQeddy6p7SDkE1AuETm3bzbmXRKiTfXZ9lftbcKzqX4I9Ld2mw6DzoFFtkVFnUVAswtV//jTp8L/iLai/Y9yW+OfR+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8817ecc1b33so1240648039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:53:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754999581; x=1755604381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3c3phlVUTTXn2usyZSOEwXAjpjuYewwi7y9E6CClAI=;
-        b=dkQraxXTAlGd2nfoumqAG+Z3OYJpifHjkdQlRKtBY1RMs1m2Au+XHpJ/x5uDKJCt7I
-         XjbvqaI7JFytiD6C53XNE3P7dczNKR6jpf/ipZfLzjMNH4UHNshdsoRzaDcKA5SiFrRv
-         iNLbypePv4OHZNb24TwfQNtWPMPzqlCb9fo0TkQkNOrwjqzvyOMMJEbt/nBdbEtkk/Vd
-         sIcjq++RZYXPUsNnxY2x0nzc/pV6u/ag2xj2OjIBFCghEqkV7BY22CwU0q/Sb1P8N8ga
-         K/v2I4lUtz+l9/YhFYFVORUsq9PdUzqX3jBh+dRqYLa9sONU/PCM8Hd0+EdhVIHqyVwH
-         YIdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQNg6AtxVBA1PhRT+YkBASrGiDo6xsyXoZ1I9g/a6NL4Dk5aHtdZOcE69m2q3auAe0Y7TJxz73iEYV24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGkHlSBFXGYtWWYFtZgl21JFWFY2Ng8p6qiKxaIkKTmhqyv6dP
-	ZnqtJdyVIvVfgc74DJhIWv/+3h2w6JT25k4PSwq23I8PMnHTP1Ldoz4JzgA4nqC8sZ4=
-X-Gm-Gg: ASbGnctrc30wTHG5yoDkvNK1Dx+g/pe+zvsbAvx0Cp2MCQKBo/d+lijpubZAcuM0bRU
-	rJCJUuIxZMrl7E5LCZFYa7SeR3xcy4pPSlcjei2ORJesxudu3/2keZD3lhBNSAZt+ZaOBs6Seoa
-	WYJRli6cQX/p6o3wtY4q+NZjmm2v2487kzH4HWa4y3KzqTSeADjLd6huJ2fZppiivSxv/9SHyyF
-	vFbTr79k8FWmMLihKVklMpZE6dcgvn1YMbZLsh7O1IQhfNOyxgHXHLSRr8X+AZnNqmBdismyPut
-	R5ewHOJfdtIyZkh/dm/8d+ljEqxTwEOZNpFp9UYyMobAcWgnvUXI5FyvrfQhfTq+c/tFD09Se/f
-	pby+Rfjr7y/m6yEnO4WDVt5hG
-X-Google-Smtp-Source: AGHT+IEaMvCzBAksy8L9owi3KvmTTsx17pGMfVp6Np/7tT3cRaQ374KNXZ2K3mEfFBEYaAD9l8T+RA==
-X-Received: by 2002:a17:907:3f18:b0:af9:495b:99e4 with SMTP id a640c23a62f3a-afa1e17fcfbmr254043366b.60.1754999580873;
-        Tue, 12 Aug 2025 04:53:00 -0700 (PDT)
-Received: from pathway ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21b115sm2170905966b.103.2025.08.12.04.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 04:53:00 -0700 (PDT)
-Date: Tue, 12 Aug 2025 13:52:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH v3 5/5] panic: add note that panic_print sysctl interface
- is deprecated
-Message-ID: <aJsrGgTYxtEhZ7jX@pathway>
-References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
- <20250703021004.42328-6-feng.tang@linux.alibaba.com>
+        d=1e100.net; s=20230601; t=1754999589; x=1755604389;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=joC4jihkaES7PJZp425YJBTOpFFfmNeVymxE+lkSVO8=;
+        b=CKpLltTgHwKSRV2IuJFGTROTAn66T3mKE31Ti7MaOEHJpPCiJKpComUwE6+9lA77kk
+         Ey0awrRQ9XzwSMvrEfG4RncJjyn3MT+Lofd+ErbIYDWl+UMu0m8qsDMvJVGBXgf4sN4R
+         jmmOG2pGZONeQAu6Ig4WFMcb3TtXHleB1Hcjf9fMF+bYPqEaMlRKnalQyxzxUhaZGV9M
+         gebdFWI2R+ij6e7BeWBNqEKFGqpEMrHSLt7bvDn7eld4Jvh2EPcgC/1QAw9REieMBm80
+         08Mn/tgnK55WqzkcnZ/K1iLUTnVuyS4KZV15ZDmZVy47wsuZzVV/x8xz0GNajtCThv2W
+         0oSA==
+X-Gm-Message-State: AOJu0Yw4goDNd1bTlrrwHAOGoBZXB8PGsnb067YQGUI6SAbhDp7C/aD5
+	33d8hQIhQR1sWXBaG7wkP6h9H7iGRCOOeKZolMEyhFLNIsmBqfh+kZ72IjEXdazpi9BOLVVjWDM
+	splaLPO6dT+8KjukTdLPFQbfhcDTKsvlTsSxPfw5qQdhQSaDHYhOxZ2PMA/A=
+X-Google-Smtp-Source: AGHT+IHL9/DDblEaq1OXkzHZh6lu3nH8LUDnvynoN3KuUmX3Llt0EzVoBymrl3vGRIhxsbocUluWURCbmDIwrLAKRZKRS6zJTk3q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703021004.42328-6-feng.tang@linux.alibaba.com>
+X-Received: by 2002:a05:6602:7401:b0:881:85cd:d08e with SMTP id
+ ca18e2360f4ac-8841be2bfadmr585610739f.3.1754999589273; Tue, 12 Aug 2025
+ 04:53:09 -0700 (PDT)
+Date: Tue, 12 Aug 2025 04:53:09 -0700
+In-Reply-To: <689a3d93.050a0220.7f033.0100.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689b2b25.050a0220.7f033.0121.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ 53e760d8949895390e256e723e7ee46618310361
+From: syzbot <syzbot+30754ca335e6fb7e3092@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 2025-07-03 10:10:04, Feng Tang wrote:
-> Add a dedicated core parameter 'panic_console_replay' for controlling
-> console replay, and add note that 'panic_print' sysctl interface  will
-> be obsoleted by 'panic_sys_info' and 'panic_console_replay'.  When it
-> happens, the SYS_INFO_PANIC_CONSOLE_REPLAY can be removed as well.
-> 
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -77,6 +78,13 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
->  EXPORT_SYMBOL(panic_notifier_list);
->  
->  #ifdef CONFIG_SYSCTL
-> +static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
-> +			   void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-> +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
-> +}
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-This warning is printed "only" when the value is accessed via the
-procfs. It would be great to print it also when it is set
-via the command line parameter.
+***
 
-It would require replacing
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 53e760d8949895390e256e723e7ee46618310361
+Author: dmantipov@yandex.ru
 
-core_param(panic_print, panic_print, ulong, 0644);
-
-with
-
-core_param_cb(panic_print, &panic_print_ops, &panic_print, 0644);
-
-Best Regards,
-Petr
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 53e760d8949895390e256e723e7ee46618310361
 
