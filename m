@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-764112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B750B21E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7A9B21DEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077B64282C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7022C188B3F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597ED2D4811;
-	Tue, 12 Aug 2025 06:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0935F15383A;
-	Tue, 12 Aug 2025 06:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF722E041E;
+	Tue, 12 Aug 2025 06:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HUVRS7Bf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7C52D239A;
+	Tue, 12 Aug 2025 06:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754979638; cv=none; b=FygcVDG3d8SDz3nxwQFApn0px2hCOEc0xgpnfD/Ex/NQ6H2e3rubtGNQTujFECP3rMs2Bq28MwD3BZKVTSunrRXlcvdxl1BT/BLwPS4Ge5fz0LawQ7Cl+YKRjGiRQdUTZ6hzpXWm8hPLzbKM+K1iEPQ31mDkk/Swmp1dM+gBwn8=
+	t=1754978804; cv=none; b=FuIhXk4JRrbt+uLHO5HFgcnhF0HOFZeW4Tns8qVGM1lhEZpjfIdaYxmIIKAzpXKErMxStY4KGrVE34H+n8r4NcSSKuhlQYMkOxpyFpQJRQxUedXwjPaZdaC/PLk4Wf2MkloS0hKHSakQzlSPSmdgExsM2ugBhljluDMBzV1WBU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754979638; c=relaxed/simple;
-	bh=Y7VqHf4C+JSQxOFwIP6hzbmo5lu9mZzg++Z+7+9xQJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DOdj6knzg2b9C9uHB5eGWNS2GhonIWqNlp+kzHocmAjpTqbfBgudCdVoQZyzBD/TYTezklt9rwmrJC5t4KsKzoEba7jPO7AruOXkQurogmgjQkFjKxddULzpBgqjvOy3K9FqhRFviV62Fvfg1ReZFkXyGpJnKAK+JQyVdr6Tc+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c1LbP1ZCQz9sSH;
-	Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3WR0gSTJzGY1; Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1LbP0Kj8z9sSC;
-	Tue, 12 Aug 2025 08:05:53 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE8C38B764;
-	Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id VXWlAoGWUx8D; Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1C6768B763;
-	Tue, 12 Aug 2025 08:05:52 +0200 (CEST)
-Message-ID: <d72bb0f7-8dc3-42ca-84d9-c74b4db02445@csgroup.eu>
-Date: Tue, 12 Aug 2025 08:05:51 +0200
+	s=arc-20240116; t=1754978804; c=relaxed/simple;
+	bh=apMP4ekpsYIJk4A0RDbaySbVTi4hpd1ZOt/PXNJNdPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XHLd54L630BPoVoIVrOQIK9dkKeoBkNNTjOsF5wtkB42fcFabbCWanjTinMHjNr/6EqbeXO6+VU+5R93Kw/PqSh9H7GFXK9MtZ6AwObO+mJ+YPCgiuivj2s7VoiGw3YDrgaUefJSQ7HJ+QcIfQHiGsORacc7ItmabCLircsTq10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HUVRS7Bf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BK2gBc005519;
+	Tue, 12 Aug 2025 06:06:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A8vishNfstTVMhUB07t1AD+/M0h9hK1mTL6rcDYYgmw=; b=HUVRS7Bf693dTKrI
+	avtMEjx4Y5XPj7n21oAHZvROGlfh6n2yaubA2BPplV+H1+Kzoxi/iAuGVvsfKDjH
+	ypbhkVy4LHnbSuysDPY2byinAQGW6InDMZXsbWA0wpQY/OGbNafDXdw/lZZFT8ax
+	u/0eztcjksq2KUAi6+17OmAlH+oYSE4i1PTOyFlv296dLLWSeAZjzevAjcqavMPB
+	iNOgVWJyZmLWPc/t64S+5ugNWFNo/UVkSJUqUXc78VP7MpVf3Kkg4XZY9G9j64Bo
+	Tsnv0nyG6DffjpmxZBsamkC0M7/6y5ti2dueO4uSL4pJtAcgvCH5O4QAjjYfGzKy
+	LAmSPw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6jugt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 06:06:35 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C66ZFt019077
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 06:06:35 GMT
+Received: from [10.253.14.152] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
+ 2025 23:06:32 -0700
+Message-ID: <e08cb2a3-e96b-4b06-b56e-0b630cff38fa@quicinc.com>
+Date: Tue, 12 Aug 2025 14:05:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,92 +64,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] selftests: vDSO: fix -Wunitialized in powerpc
- VDSO_CALL() wrapper
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>, llvm@lists.linux.dev,
- kernel test robot <lkp@intel.com>
-References: <20250812-vdso-tests-fixes-v2-0-90f499dd35f8@linutronix.de>
- <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] media: qcom: camss: Add support for regulator
+ init_load_uA in CSIPHY
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250729-camss_csiphy_current-v2-1-da3c72a2055c@quicinc.com>
+ <d32cbtfzhwpzsvxpb7esvndpqxooergkzhlx2jp4ikuc3bsaop@gyxnlusuptg3>
+Content-Language: en-US
+From: Wenmeng Liu <quic_wenmliu@quicinc.com>
+In-Reply-To: <d32cbtfzhwpzsvxpb7esvndpqxooergkzhlx2jp4ikuc3bsaop@gyxnlusuptg3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfXzzbbl8hAav8n
+ oHlhq9BDrflLIoFWyvxnOwlWsdaOV51bh0ahA4hHV5b58r72CvP2qXppvDH3WHulXynI3PuZbLI
+ gqio3N63HKhJdiL7FguOMoK1/8Pzt6iGe6aDxsQ1lxdmWgV2yneb38Aw2WytXwAlsZNpCYKt9Kw
+ MO+NG0b4yvu8p+2pRNz9A0NKbFXOxXQ/ohBuqEIOlG20+r86S8gmmjemwBVl0wfr5A/Xn3pE0RJ
+ OTcFVSOXaX/0NVYnzOg94revAXep3+/ILGLTJ2rXuGIV8BKTKwcNhntFGh0zxKMiuA3BnGUfSGO
+ 82t5GniYLJeEqjzxj6hbtEzTzvy5BlRougWCyzXItL662fCTxCs+KdLMBu8R17H9QuPpbihqxaP
+ ohT0sfUV
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689ad9eb cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=FIJzFur9OfJVfuh530gA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: l930B3BglghgRcKGw_0vLFz7CEq1cZqH
+X-Proofpoint-ORIG-GUID: l930B3BglghgRcKGw_0vLFz7CEq1cZqH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
 
 
-Le 12/08/2025 à 07:39, Thomas Weißschuh a écrit :
-> The _rval register variable is meant to be an output operand of the asm
-> statement but is instead used as input operand.
-> clang 20.1 notices this and triggers -Wuninitialized warnings:
+On 2025/8/11 18:39, Dmitry Baryshkov wrote:
+> On Tue, Jul 29, 2025 at 03:24:55PM +0800, Wenmeng Liu wrote:
+>> Some Qualcomm regulators are configured with initial mode as
+>> HPM (High Power Mode), which may lead to higher power consumption.
+>> To reduce power usage, it's preferable to set the initial mode
+>> to LPM (Low Power Mode).
+>>
+>> To ensure the regulator can switch from LPM to HPM when needed,
+>> this patch adds current load configuration for CAMSS CSIPHY.
+>> This allows the regulator framework to scale the mode dynamically
+>> based on the load requirement.
+>>
+>> The current default value for current is uninitialized or random.
+>> To address this, initial current values are added for the
+>> following platforms:
+>> SDM670, SM8250, SC7280, SM8550, and X1E80100.
+>>
+>> For SDM670, the value is set to -1, indicating that no default
+>> current value is configured, the other values are derived
+>> from the power grid.
+>>
+>> ---
+>> Changes in v2:
+>> - Change the source of the current value from DTS to CAMSS resource
+>> - Link to v1: https://lore.kernel.org/all/20250620040736.3032667-1-quic_wenmliu@quicinc.com/
+>> ---
+>>
+>> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+>> ---
+>>   drivers/media/platform/qcom/camss/camss-csiphy.c |  4 +++-
+>>   drivers/media/platform/qcom/camss/camss.c        | 26 ++++++++++++++++++++++++
+>>   drivers/media/platform/qcom/camss/camss.h        |  1 +
+>>   3 files changed, 30 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+>> index 2de97f58f9ae4f91e8bba39dcadf92bea8cf6f73..7a2d80a03dbd0884b614451b55cd27dce94af637 100644
+>> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
+>> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+>> @@ -707,8 +707,10 @@ int msm_csiphy_subdev_init(struct camss *camss,
+>>   			return -ENOMEM;
+>>   	}
+>>   
+>> -	for (i = 0; i < csiphy->num_supplies; i++)
+>> +	for (i = 0; i < csiphy->num_supplies; i++) {
+>>   		csiphy->supplies[i].supply = res->regulators[i];
+>> +		csiphy->supplies[i].init_load_uA = res->regulators_current[i];
 > 
-> tools/testing/selftests/timers/auxclock.c:154:10: error: variable '_rval' is uninitialized when used here [-Werror,-Wuninitialized]
->    154 |                 return VDSO_CALL(self->vdso_clock_gettime64, 2, clockid, ts);
->        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> tools/testing/selftests/timers/../vDSO/vdso_call.h:59:10: note: expanded from macro 'VDSO_CALL'
->     59 |                 : "r" (_rval)                                           \
->        |                        ^~~~~
-> tools/testing/selftests/timers/auxclock.c:154:10: note: variable '_rval' is declared here
-> tools/testing/selftests/timers/../vDSO/vdso_call.h:47:2: note: expanded from macro 'VDSO_CALL'
->     47 |         register long _rval asm ("r3");                                 \
->        |         ^
+> Could you possibly refactor to use devm_regulator_bulk_get_const()? It
+> would save you from this data moving.
+Initially, we were aiming for a minimal-change implementation.
+Consider refactor for save data moving, will be refactored in the next 
+version.
 > 
-> It seems the list of input and output operands have been switched around.
-> However as the argument registers are not always initialized they can not
-> be marked as pure inputs as that would trigger -Wuninitialized warnings.
-> Adding _rval as another input and output operand does also not work as it
-> would collide with the existing _r3 variable.
+>> +	}
+>>   
+>>   	ret = devm_regulator_bulk_get(camss->dev, csiphy->num_supplies,
+>>   				      csiphy->supplies);
+>> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+>> index e08e70b93824baa5714b3a736bc1d05405253aaa..daf21c944c2b4818b1656efc255e817551788658 100644
+>> --- a/drivers/media/platform/qcom/camss/camss.c
+>> +++ b/drivers/media/platform/qcom/camss/camss.c
+>> @@ -750,6 +750,7 @@ static const struct camss_subdev_resources csiphy_res_670[] = {
+>>   	/* CSIPHY0 */
+>>   	{
+>>   		.regulators = { "vdda-phy", "vdda-pll" },
+>> +		.regulators_current = { -1, -1 },
 > 
-> Instead reuse _r3 for both the argument and the return value.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Foe-kbuild-all%2F202506180223.BOOk5jDK-lkp%40intel.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C611dd96dfdad4dcd55d708ddd9629305%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905739611064850%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=QcOje8P4T0%2BsqgkSaP%2BkT3fS875kqCZhxChDmvWVY%2Fg%3D&reserved=0
-> Fixes: 6eda706a535c ("selftests: vDSO: fix the way vDSO functions are called for powerpc")
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> If it's unset, it should be 0, not -1.
+I considered existing implementations as a reference:
+https://lore.kernel.org/all/20220804073608.v4.5.I55a9e65cb1c22221316629e98768ff473f47a067@changeid
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+but based on the implementation of regulator_bulk_get, setting it to 0 
+seems to be a better approach:
 
-> ---
->   tools/testing/selftests/vDSO/vdso_call.h | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
-> index bb237d771051bd4103367fc60b54b505b7586965..e7205584cbdca5e10c13c1e9425d2023b02cda7f 100644
-> --- a/tools/testing/selftests/vDSO/vdso_call.h
-> +++ b/tools/testing/selftests/vDSO/vdso_call.h
-> @@ -44,7 +44,6 @@
->   	register long _r6 asm ("r6");					\
->   	register long _r7 asm ("r7");					\
->   	register long _r8 asm ("r8");					\
-> -	register long _rval asm ("r3");					\
->   									\
->   	LOADARGS_##nr(fn, args);					\
->   									\
-> @@ -54,13 +53,13 @@
->   		"	bns+	1f\n"					\
->   		"	neg	3, 3\n"					\
->   		"1:"							\
-> -		: "+r" (_r0), "=r" (_r3), "+r" (_r4), "+r" (_r5),	\
-> +		: "+r" (_r0), "+r" (_r3), "+r" (_r4), "+r" (_r5),	\
->   		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
-> -		: "r" (_rval)						\
-> +		:							\
->   		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
->   		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
->   	);								\
-> -	_rval;								\
-> +	_r3;								\
->   })
->   
->   #else
-> 
+drivers/regulator/core.c
+consumers[i].init_load_uA > 0
+
+Thanks,
+Wenmeng
 
 
