@@ -1,281 +1,162 @@
-Return-Path: <linux-kernel+bounces-764963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59479B2298B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B8FB2298F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9B0586BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3384A5640A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E905287248;
-	Tue, 12 Aug 2025 13:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6490283FFA;
+	Tue, 12 Aug 2025 13:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3xQY9H7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pU3/iCO0"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64754286D62;
-	Tue, 12 Aug 2025 13:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C912B9A5
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755006456; cv=none; b=UzGa4Vnp6VfeXEDvlf5aDoDEiRhaX2O2C1mtyryPhW9TnW8uAJjp9gviQ0SrobUP3otmaWi8LaD9Ba0cQRXfgfsY42Fky9xrjU/7eLH3zB099Vt3ns18cKRd6BAmSYWNyCkTqVYtiHhddDkYgeD/46XRnEqrn1/zVXXuGGWQU7I=
+	t=1755006492; cv=none; b=cO8v3C7lssRv+a2az0eorLg3+NZ9FrIlmaJxHAtdKYrwyp8/UmM2Nhr5t7mVdHRDwdX+ce4NQb+kdPw/1HBTsH9apQvmXf5Q5T2U+45wkm/2HLlGMpEvYRgorJDreOD8fNY5NHO0pfuwBrH0nr77To0xKcPFXVV1cpH0jsWy27E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755006456; c=relaxed/simple;
-	bh=X6n/+3xEiROoaLOeAyKDEfF8djhS8Jnz2Ne7NWGpc7c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iqIWaCDUzb04u7pvrgVIs4He+KR0FL+EW1QnYBuhWbI2pHArefCY0BNFYpuPX3tEflTJAmEcxBs3KrqkIw56nT0feXt1kp+YnIMSQYduvuVi4ecCFR/QJbclIYz63alPALJ6C6GUu0BdmBD8M3kHNF8Eq2fo5CILaiBhf7raiMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3xQY9H7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB291C4CEF6;
-	Tue, 12 Aug 2025 13:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755006456;
-	bh=X6n/+3xEiROoaLOeAyKDEfF8djhS8Jnz2Ne7NWGpc7c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=X3xQY9H7xOVd/abyJtucpPtLEGbGbksIwjAOL383bi2NaMMp/rvcbNrtlT6Mni4es
-	 gkTc7mpJfb3waYRDLCnD8XmKMvHHCze1ANPpfrPMDk8NAgUsPxci58aZTlaA1KfOoB
-	 i5vw+MzkvzLkgEZWdtpu6+eYs9RVlyO1dVKkZoL7DHvANDiL/VYZAOdJVOncaTWyud
-	 gTXunRW71OfAiEiEQfQVSqNybl0ZrUWO2tSEuvJJ3S624BSl72W5FtZtZilU114mRT
-	 TnwaljKMaCuQQ7Ybvy14o9cchqD0ENqumSWFTD662dkx22qZOvKsAIICHuepcN2uW3
-	 5zQEsTTtWOZ6w==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 12 Aug 2025 15:47:24 +0200
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-romulus: Add WCN7850
- Wi-Fi/BT
+	s=arc-20240116; t=1755006492; c=relaxed/simple;
+	bh=8w8dsb/uFPEAy0xmEBycHMX3X/m+wobouE+WgPVe6Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6weyiLEjhDmUGCRC8NU34lKhqswTWC0HcSBvcqwKyrxvO6kZBihKtBxe/6Zk27Fx87hDlnZGVkx+8ogQtENwxjfXRWQ1q3ekEJi93THVX+gj5J53Iu9Y5Wwjw5bkpaNehXE74oer3DFMO8SYK5zKu2wYUTIYj9rfOn2pYZSzNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=pU3/iCO0; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b070b3b7adso95293061cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1755006489; x=1755611289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FR8GU0OhyrXp1118wyyWRxkyUnIP7crv/d61bMyXgwE=;
+        b=pU3/iCO0orWZpodk8GAif6sbT/DPRpN21ZyQDvFPR+GIdyTBYjXKtHkYLmsC+9b35x
+         4foLpqTx5HyPZmoTy/PxjGC7s3EilbwE08YyyxYhteNaaM5J3hgbYqwysPLPaPiDc9oM
+         wYqkFLmeNXAjfaE2wnNHyfmSJb4NzuqASZPURRADPE6dBx9o75nTz5piF2dCX2xaoJja
+         I8MKlJGvIcb7HuesRHK+O9DI1itd0kaUYNI9bFA8S+/n1rjid42Bqh515+wR2owc2YRj
+         QvDhEUs5Aghi40LPcOMBt/lemJefFMC0kB3927XCKAQYbb4TYzrBkAGR4QoosD702Pw2
+         QMeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755006489; x=1755611289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FR8GU0OhyrXp1118wyyWRxkyUnIP7crv/d61bMyXgwE=;
+        b=fa/rVyNsHaNx1JaPZFd53hKAIdCPmVIbv9Pa4p0tKuUPFgE5D2AmPgyknle2edoHx5
+         5jU23/wbHgfxQTtOcDdV/fvLJO58XfiMa/QT8BC/oRaQIeH/9t9E/GvNXeouLFRny1EW
+         cc6imbSRZNnjepEspFPxPKNTqkrajtuA38+Iex3vKo9RFhLQ2K0sqF7FBY5YhO6h8cWD
+         wiJ+533sIi9fq+AqCLoymcYoIODV0VwOq4JpaJoIuKtsMnxPyqDKECMKodcy1hFGkzxx
+         1ooq1svhDr7aCLAMBEgHBcYT3OUAxy1l69IZpXwJixg6vdRULwtkfUgBtqyx/4CGoxay
+         AdzQ==
+X-Gm-Message-State: AOJu0Yz0dFJrcWJv+JEVY0cRXsOryPhGBnA/KVwiqL793pyZAky6zKiQ
+	48fadr3pTbSpgZTSEDgnYJ2m7AoSvr4hUcCFAkIuvM5MkJchHdEM2CoRaKW75s2ZTeM=
+X-Gm-Gg: ASbGnctjFHgVu+Ot1HqfCewK3xNRDOEJs1hjrZUVfO261/Hmd8VtmLBwosj8J1X3Iz+
+	28JETZSoaf1aSIscSIWyDZC8IOZDZHd07S9T3QZL05u3Z9Blvt/OXoTliIk08dUI53Gz92GoaUv
+	tM2Dv6up4QMc7QA9N51VyqQ53MJ+Ubg8XXzseAGfND1XEx082oGDYKyVB5/3/J0I3GAjSq9iHA7
+	6oyPFUfMtvnpevUesTJ7yI+so+mExL/VTn7/BthQ8vdbSZxbTKJRF9dJ2tNpdArUtLIPUG7X+y8
+	h8kYrUVUoK655MH53nllh4R4XrhXTQRpT9rCsriYE98gzpyLegEq9X5WSUdwPhIJrWk0eVP5DGv
+	rB6lMfH7Fs6Osc/IwvGwU33JMCiKSKzX933Apw7vgS9y9vKv6M94vsatGGVnPKg84qRgn
+X-Google-Smtp-Source: AGHT+IHI6EhFhIRzAESYthEtnG0baUD5Q9gVXq2RPFWP9iicVSAJltUOiMffIa1QwE25DHjgtqhMEw==
+X-Received: by 2002:a05:622a:6:b0:4b0:86b4:2520 with SMTP id d75a77b69052e-4b0ecbe5777mr52212061cf.22.1755006489353;
+        Tue, 12 Aug 2025 06:48:09 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b09c11bf8bsm83500631cf.20.2025.08.12.06.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 06:48:08 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ulpMG-00000002cyr-0e38;
+	Tue, 12 Aug 2025 10:48:08 -0300
+Date: Tue, 12 Aug 2025 10:48:08 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
+Message-ID: <20250812134808.GC599331@ziepe.ca>
+References: <20250731165757.GZ26511@ziepe.ca>
+ <aIurlx5QzEtjpFLd@google.com>
+ <20250801185930.GH26511@ziepe.ca>
+ <aJDGm02ihZyrBalY@google.com>
+ <20250805175753.GY26511@ziepe.ca>
+ <aJNiW48DdXIAFz8r@google.com>
+ <20250811185523.GG377696@ziepe.ca>
+ <aJsXkidmcSl3jUJP@google.com>
+ <20250812121056.GB599331@ziepe.ca>
+ <aJs1dMiomjtxVwl4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-topic-romulus_wifi_pci-v1-2-2adbed1b1f1d@oss.qualcomm.com>
-References: <20250812-topic-romulus_wifi_pci-v1-0-2adbed1b1f1d@oss.qualcomm.com>
-In-Reply-To: <20250812-topic-romulus_wifi_pci-v1-0-2adbed1b1f1d@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755006446; l=5113;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=YrfeJ4a+N+nuR8SIwAnAuBWoP6xTXRmOMVpzKvzHzb4=;
- b=SB6w7LL2/SZR+vZAGi0OWU958n99GsgwcXsLpy2g8Am7GfyImkFgp/jcvvZIvwIWObIf6Lsov
- M1jlg+cqmVPCE0+BceJf5v7cHsXesMZoF6J9wS7HvJaVv8TzU99n1qX
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJs1dMiomjtxVwl4@google.com>
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Tue, Aug 12, 2025 at 12:37:08PM +0000, Mostafa Saleh wrote:
+> I see, but most of the code in KVM mode is exactly the same as in the
+> current driver, as the driver is not HW agnostic (unlike virtio-iommu).
+> In fact it does almost everything, and just delegates
+> attach_identity/blocked to the hypervisor.
 
-It comes soldered onboard, just like on the QCP.
+How is that possible? the kvm driver for smmuv3 should be very
+different than the iommu subsystem driver. That seemed to be what this
+series was showing.. Even the memory allocations and page table code
+were all modified?
 
-Unfortunately, the rfkill pin is triggered by default, so a workaround
-is needed to convince the Linux driver to enable the hw, after which it
-works just fine.
+This delta seems to only get bigger as you move on toward having full
+emulation in the hypervisor.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 143 +++++++++++++++++++++
- 1 file changed, 143 insertions(+)
+So, I'm confused what is being shared here and why are we trying so
+hard to force two different things to share some unclear amount of
+code?
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 3a4df8f8066ae699eb7d889530f976fce565757e..d5105ebbfc387f3a6626f1f135cab8a5f92b8e6b 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -379,6 +379,42 @@ vreg_pcie_3v3_main: regulator-pcie-3v3-main {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_wcn_0p95: regulator-wcn-0p95 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_0P95";
-+		regulator-min-microvolt = <950000>;
-+		regulator-max-microvolt = <950000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_1p9: regulator-wcn-1p9 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_1P9";
-+		regulator-min-microvolt = <1900000>;
-+		regulator-max-microvolt = <1900000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_3p3: regulator-wcn-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wcn_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	sound {
- 		compatible = "qcom,x1e80100-sndcard";
- 		model = "X1E80100-Romulus";
-@@ -458,6 +494,65 @@ platform {
- 			};
- 		};
- 	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		vdd-supply = <&vreg_wcn_0p95>;
-+		vddio-supply = <&vreg_l15b>;
-+		vddaon-supply = <&vreg_wcn_0p95>;
-+		vdddig-supply = <&vreg_wcn_0p95>;
-+		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-+		vddrfa1p8-supply = <&vreg_wcn_1p9>;
-+
-+		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&wcn_wlan_bt_en>;
-+		pinctrl-names = "default";
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -1087,6 +1182,23 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie4_port0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -1310,6 +1422,13 @@ ssam_state: ssam-state-state {
- 		bias-disable;
- 	};
- 
-+	wcn_wlan_bt_en: wcn-wlan-bt-en-state {
-+		pins = "gpio116", "gpio117";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	pcie3_default: pcie3-default-state {
- 		perst-n-pins {
- 			pins = "gpio143";
-@@ -1385,6 +1504,13 @@ wcd_default: wcd-reset-n-active-state {
- 		output-low;
- 	};
- 
-+	wcn_sw_en: wcn-sw-en-state {
-+		pins = "gpio214";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	cam_indicator_en: cam-indicator-en-state {
- 		pins = "gpio225";
- 		function = "gpio";
-@@ -1408,6 +1534,23 @@ embedded-controller {
- 	};
- };
- 
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+		max-speed = <3200000>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+	};
-+};
-+
- &usb_1_ss0_hsphy {
- 	vdd-supply = <&vreg_l3j>;
- 	vdda12-supply = <&vreg_l2j>;
+> In addition, with no standard iommu-binding, this driver has to be
+> enlightened somehow about how to deal with device operations.
+> 
+> As mentioned before, when nesting is added, many of the hooks will be
+> removed anyway as KVM would rely on trap and emulate instead of HVCs.
+> 
+> Otherwise, we can skip this series and I can post nesting directly
+> (which would be a relatively bigger one), that probably would rely
+> on the same concept of the driver bootstrapping the hypervisor driver.
 
--- 
-2.50.1
+I think you end up with the same design I am suggesting here, it is
+nonsense to have one smmu driver when it is actually split into two
+instances where one is running inside the protected world and one is
+the normal iommu subsystem driver. That's not just bootstrapping, that
+is two full instances running in parallel that are really very
+different things.
 
+> I am generally open to any path to move this forward, as Robin and
+> Will originally suggested the KVM mode in the upstream driver approach,
+> what do you think?
+
+Well, I'd like to see you succeed here too, but it these series are
+very big and seem a pretty invasive. I'm very keen we are still able
+to support the smmuv3 driver in all the non-pkvm configurations
+without hassle, and I don't want to become blocked on inscrutible pkvm
+problems because we have decided to share a few lines of code..
+
+Are you sure there isn't some inbetween you can do that allows getting
+to the full emulation of smmuv3 without so much churn to existing
+code?
+
+This is why I prefer adding new stuff that you then just erase vs
+mangling the existing drivers potentially forever..
+
+Jason
 
