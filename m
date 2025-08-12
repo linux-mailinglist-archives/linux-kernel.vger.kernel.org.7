@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-763819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A97B21AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44269B21AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3992D1A26A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A695F1903F11
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FF52D3A71;
-	Tue, 12 Aug 2025 02:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94A52DECD4;
+	Tue, 12 Aug 2025 02:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HnHzW0Ch"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C715328152A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I43MsbSk"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3192D13D8A4;
+	Tue, 12 Aug 2025 02:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754964717; cv=none; b=QMmGgHYrtB4V4dQGpWF2v/ADkCZDGEZu2NrQkkvnFeBmZGDdNAfh7jknXdKI2WFWuLh0wkCoUt4wsjj/f416YCH8eMm+JE2VRJPDFHlS1k3+Fo7plQ9TZ8FKYttSsodVPcimCJFjVXKNtV1O+dYMrbAUWX4q+/0fORexLTfIuJM=
+	t=1754965079; cv=none; b=WTqOw0+yzh4u+e5kY/riohybXIjwJkM/im88Zh28zovPsiAJv8IOH5Rnlto9HKZNSa5N8OuLaj7a3ez/pnVWCgzjmz5PsO/DyjYwuzzW4/gj2pQd5kvx0JfmzOvcQpmUc8TbPA3VKXsHBL1byQN3NZF+fMyB5oyel+AfU6Gh2Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754964717; c=relaxed/simple;
-	bh=Iz/nn4JR8QQz/ds/6Spin2ipyfgcS6EeeW+Z+7mhuaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gd56nZ1pRxTVgFV6D+QZDBOxuQUYEUR1m7OfUXweUq8Cci8Jou3gObfe4hYWA3rW6Jp5fdXD5mL812lVu6OjCt+lH2vnnpBgL8OjBzJLMhDOT04UIr52kclENTkvXCHOapA4/vJCPSMBXGXH4id2QgOV1qoFtKz3n33IK+LCtZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HnHzW0Ch; arc=none smtp.client-ip=220.197.31.2
+	s=arc-20240116; t=1754965079; c=relaxed/simple;
+	bh=p8rIpSOUd8wR9bvs3gGvqLbx8KrOSm2aQbTqFSvf1ow=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOGDro/5DI92Mxdp8NQHqYCBp6pGpFUlFg6fq5t/+tZs2LmXvJ7Brkzpahrbr/UNeHCbqOJ4DiTTxegcDXp0CHGezr8n3EqRdNyptf1epnY7/SpHLCWk5GLiTyiqbLujWnqSkgx5wiOa+EM1xOW76pOYu2DaFOPhm3PmKoknpPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I43MsbSk; arc=none smtp.client-ip=117.135.210.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=XDNdNXOmo52Q94XIReYYcRMfbXp9CyT343G38778Jxk=;
-	b=HnHzW0ChvQ7wyplCanNLS9KdiMHWJ+nCSTozcROxMWgebYQ/ktJ2yV0Ga+alCZ
-	1oytHvpQ5QUmTZroNIcM0vyoKBkyJ8oFTQFfJz1EBtzObni0CisoQ1g2GOmy1t6I
-	/iEA9BlTab2jDmXr9Cz2kodZ3bSX+rSvwdajb3Q85Cy+c=
-Received: from [127.0.0.1] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3v_vgoppohntyBQ--.44019S2;
-	Tue, 12 Aug 2025 10:11:44 +0800 (CST)
-Message-ID: <eb18bedb-4ff8-42ee-a0dd-a3a6dccf70dc@163.com>
-Date: Tue, 12 Aug 2025 10:11:44 +0800
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=3Q
+	OTaZ52O6+1gNzGEBm2ulp2/tQEcCZJjcbyg+KHPhc=; b=I43MsbSkTvZEomIfuq
+	6ZW0k9NAiD5PHmmOqTmxZzD0Pa7BB4zRfMtYHcz3hw/KEof9n2EdEruK0BDxtsJi
+	HWl0Y/U3gIdcwsti9e9g7F9KlUM7PeuGoYwzUFOAtdO9bfhNaXk1N97/P3YCbnt3
+	KgfH2m6WsAoODz7+BWJ7c1DBs=
+Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3939EpJpoxPx8BQ--.48488S2;
+	Tue, 12 Aug 2025 10:17:42 +0800 (CST)
+From: Baolin Liu <liubaolin12138@163.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [PATCH v1] ext4: fix incorrect function name in comment
+Date: Tue, 12 Aug 2025 10:17:09 +0800
+Message-Id: <20250812021709.1120716-1-liubaolin12138@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] squashfs: Avoid mem leak in squashfs_fill_super
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: linux-kernel@vger.kernel.org, Scott GUO <scottzhguo@tencent.com>
-References: <20250811061921.3807353-1-scott_gzh@163.com>
- <2156fc8a-a43b-4986-8537-d1d530821dbf@squashfs.org.uk>
-From: Scott Guo <scott_gzh@163.com>
-In-Reply-To: <2156fc8a-a43b-4986-8537-d1d530821dbf@squashfs.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v_vgoppohntyBQ--.44019S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tFyfZFyxWrW8Jr1UCFyxuFg_yoW8WFyxpr
-	yxWF1YkrWjvF1UZF1IqF95XF1v9w4v9FWUWrW8Zw13X39Ivw17JrWDtrsIg3ySkrnrGrs5
-	WF1kWa4S9Fy8JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jcPE-UUUUU=
-X-CM-SenderInfo: hvfr33hbj2xqqrwthudrp/1tbiOhGnnWianal14gACsC
+X-CM-TRANSID:_____wD3939EpJpoxPx8BQ--.48488S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7WryUuryUGr43JrW3ZF1DKFg_yoW3twc_W3
+	WkXws5J3ZxJFn3AF4rJ3yYqrn29w1fWr1UZ395JF43Z3yYvan5Cwn8XFyUAr98WF1jgrW5
+	CrnrXFW3AFyxXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8kwIDUUUUU==
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiMRanymiaoBXO1gAAsV
 
-在 2025/8/12 6:35, Phillip Lougher 写道:
-> 
-> 
-> On 11/08/2025 07:19, scott_gzh@163.com wrote:
->> From: Scott GUO <scottzhguo@tencent.com>
->>
->> If sb_min_blocksize returns 0, -EINVAL was returned without freeing
->> sb->s_fs_info, causing mem leak.
->>
->> Fix it by goto failed_mount.
->>
-> 
-> Thanks for spotting this, but, NACK to the patch.
-> 
-> A better fix is to call sb_min_blocksize and check the
-> return result before the memory is allocated.
-OK, will send v2.>
-> Phillip
-> 
->> Fixes: 734aa85390ea ("Squashfs: check return result of sb_min_blocksize")
->> Signed-off-by: Scott GUO <scottzhguo@tencent.com>
->> ---
->>   fs/squashfs/super.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
->> index 992ea0e37257..7d501083b2e3 100644
->> --- a/fs/squashfs/super.c
->> +++ b/fs/squashfs/super.c
->> @@ -201,10 +201,12 @@ static int squashfs_fill_super(struct 
->> super_block *sb, struct fs_context *fc)
->>       msblk->panic_on_errors = (opts->errors == Opt_errors_panic);
->> +    err = -EINVAL;
->> +
->>       msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
->>       if (!msblk->devblksize) {
->>           errorf(fc, "squashfs: unable to set blocksize\n");
->> -        return -EINVAL;
->> +        goto failed_mount;
->>       }
->>       msblk->devblksize_log2 = ffz(~msblk->devblksize);
->> @@ -227,8 +229,6 @@ static int squashfs_fill_super(struct super_block 
->> *sb, struct fs_context *fc)
->>           goto failed_mount;
->>       }
->> -    err = -EINVAL;
->> -
->>       /* Check it is a SQUASHFS superblock */
->>       sb->s_magic = le32_to_cpu(sblk->s_magic);
->>       if (sb->s_magic != SQUASHFS_MAGIC) {
+From: Baolin Liu <liubaolin@kylinos.cn>
+
+The comment mentions block_write_begin(), but the actual function
+called is ext4_block_write_begin().
+Fix the comment to match the real function name.
+
+Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+---
+ fs/ext4/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index ed54c4d0f2f9..b0e3814f8502 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3155,7 +3155,7 @@ static int ext4_da_write_begin(const struct kiocb *iocb,
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 		/*
+-		 * block_write_begin may have instantiated a few blocks
++		 * ext4_block_write_begin may have instantiated a few blocks
+ 		 * outside i_size.  Trim these off again. Don't need
+ 		 * i_size_read because we hold inode lock.
+ 		 */
+-- 
+2.39.2
 
 
