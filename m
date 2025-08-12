@@ -1,135 +1,135 @@
-Return-Path: <linux-kernel+bounces-764836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC09B2279A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0776B227C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FFB7A59D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAC01BC3F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E93265CA0;
-	Tue, 12 Aug 2025 12:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CB827932D;
+	Tue, 12 Aug 2025 12:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RR/hbQfU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="KBC7fYIt"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5F61EDA1A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50825A331
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003512; cv=none; b=IKnwxfERctyMFAR2y+2SunzVjnyh+C52+I8Yvh8b2+YOzmAqSaVIjuZeloFqbpiN95uKcGUECEeC4SneEFosPB+LDT6LmEN38SWAEdQVBoeiVyga49/RHnUQl+DtXo9u2BXJWTcwCw4WO9WAbetwSk/14+VtiIQgCp+9k1wFAr4=
+	t=1755003436; cv=none; b=Pcwt82r1qnZ5VSGV/dNHhtZtKKSHe9u/W49PUSx76SjnclfdUD9T6I3UssZLlkyNHCrW71ZsetRfirdty8hxQ9rjDFXKMy44+WzXmTpKpeXrDGpY28ZPwYmowhwktZKU5xsliDE6PKEiPFcLEcppLrlEwnNXq9TOmLPP5TvZtE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003512; c=relaxed/simple;
-	bh=EEkuhCImXOv29EGKYKdaJrf1utelA1HOYG2A/NiU+y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfwI1nqD4sHt0kKmbNYpdIvvgYajNbm9mAKELeav6VNCn7IW6IAC+HufYLbGGf2XnRDA8JAhSNdbpWAfv75oTk6FivFzxRNl+QHFBaO2TryDRmRuUTxFQsgvHD6RowQGq+big6WHRvHdY04Dik9mlgy5Q4LgmneolHQsPpLqixU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RR/hbQfU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755003509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EEkuhCImXOv29EGKYKdaJrf1utelA1HOYG2A/NiU+y4=;
-	b=RR/hbQfUhBOgH2ZDkJVoJtdEsUai6k25GvSUJ891lRRw9cvUlkk5NJpUKYz/58O4ALMTjV
-	oEOGI6U3MaHpgLDB/hNNRm89WJBnQ2HOJn+GiLgCJjg/EOjWF5zZt6eN9KhPO6Ob6EiTqH
-	lwp9CN52IQVH9hUT952RoktCEi+9kB0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-240-EyuRv2cqPNq0KfoH_LQgCQ-1; Tue,
- 12 Aug 2025 08:58:26 -0400
-X-MC-Unique: EyuRv2cqPNq0KfoH_LQgCQ-1
-X-Mimecast-MFC-AGG-ID: EyuRv2cqPNq0KfoH_LQgCQ_1755003504
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6E9019560B0;
-	Tue, 12 Aug 2025 12:58:22 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 480B5180028B;
-	Tue, 12 Aug 2025 12:58:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 12 Aug 2025 14:57:10 +0200 (CEST)
-Date: Tue, 12 Aug 2025 14:57:01 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: "Lai, Yi" <yi1.lai@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vignesh Balasubramanian <vigbalas@amd.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Brian Gerst <brgerst@gmail.com>, Eric Biggers <ebiggers@google.com>,
-	Kees Cook <kees@kernel.org>, Chao Gao <chao.gao@intel.com>,
-	Fushuai Wang <wangfushuai@baidu.com>, linux-kernel@vger.kernel.org,
-	yi1.lai@intel.com
-Subject: Re: [PATCH v3 2/2] x86/fpu: Update the debug flow for x86_task_fpu()
-Message-ID: <20250812125700.GA11290@redhat.com>
-References: <20250724013422.307954-1-sohil.mehta@intel.com>
- <20250724013422.307954-2-sohil.mehta@intel.com>
- <aJVuZZgYjEMxiUYq@ly-workstation>
- <20250808074948.GA29612@redhat.com>
- <e46bab92-ee1f-478f-8076-d46bd3fe9411@intel.com>
- <20250808151131.GD21685@redhat.com>
- <39edf291-d842-4ae1-b988-76dc3688673b@intel.com>
+	s=arc-20240116; t=1755003436; c=relaxed/simple;
+	bh=mzD8sr4w2A+BSz1Y6ofS4iGUheeGjGjvJekxF47ge+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b5sGyzc702t4iCVYNPavFLwaADAjBrnqM7FNgCtSmkcvTcym6iE70PS5733C0Qgf1SAuDvCkxgaB1kdAIPFxLd4Ny/QW/K4attN30r99bpq8aC5pb0wTP/ZikAoh4q/pq5+GmqwMNajPxqzizreQTIm72VaYoVxDyAWv/uY3zj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=KBC7fYIt; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76bd7676e60so4613101b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1755003433; x=1755608233; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2CQwup3JJa1ayhdQThgOgG4MUx5X/EUx4Tii1T+qif0=;
+        b=KBC7fYItnoD5Rw90aUlppQIX6xTtoajxiWHQXbT2y11VjzZWzJKu2LbrewK8JLFM1N
+         974Hwk52+HTA8zZdKUkGUH3kUebNTp0oSJfY1xYZaeNSKkPHcIiP79jwZRhDGa6ZsmNl
+         pE8dvVc/Vz18pvt/VZ5n/B5vAh14qNtIJo8yBWBxMbONkb4QbIx42MxxxbtTa1rnAMbs
+         QwgHhl+kJNtUVzvzZ61LeaWLoX5qPwJ27lzLD47UtTvO+M6JCJU1XlszGQZSrOnoX9WQ
+         2BWUklrwu8Xc3wGwTYZWQ6FV9dtrvMrUF2doHLfVx0Wc1zbZgwBbsb+Bln2kLC8PH0eq
+         opNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755003433; x=1755608233;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2CQwup3JJa1ayhdQThgOgG4MUx5X/EUx4Tii1T+qif0=;
+        b=vCW2GTJxHNSfyEHTeO6E4QC/pFjuz7+8qYkjNGHWldYFg/DQW0Vz9HV5pHcst1L4Fn
+         yFvbeT4+Q0/Dl4lE4BSzXTj/tAq5yDzEmQj7oG8vK6qY+IPExpfQo/eurPwUqodvyWVi
+         Ukx/CiPJyaJi1JgR7v+WXAIqaIBCiUSAwvtfpgZxrRQrsZ2onDO19gcMCA4ICxhiC3r1
+         MR6BO4BIlkjkmjUD8B9mig71RWeLZBEp4D0Hm2W3XOmB1TmvpzKgbL1JDX2a9t+NTUJD
+         1BwJBKwz2krvU9zugv6dYhNiIiE37t0+KzgTyP0/2ZetIHBuPuxT7aFZU0l0oGYKZIPG
+         H5cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXICx0FMba1I8xMmfrF7xlh1K/gx2pucUf86qly3HDdsTpI5OxIRdBKX+hOJG6+soetSEg/BxeK6FrAcV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzFlqi1PezpZSgWxXXdzfXak6H70Z1g5xFwdnKmVBUM1rY4bI+
+	M7Ma0O+quxPqTjx9VhmSgtKDWumpI5STHH4F5MqVk35fpDXSSQHCrDzEYUe0d84ouqk=
+X-Gm-Gg: ASbGnctE+rCfZtuwgeJGMxjgTY7QfrdAf2t4CCOgukzdVp/YKefVhZNt7vCG1mxfF+z
+	/zcaROwxmL/byZtv/11v/JHP8JAv/vjDI38JWPMrm3jgkChQpqsmt4NM1Loe6LKr3ogz1M4iwKp
+	3y4Fl3OxsDI70BzPN3TFlMQ4oxU6p45ns18Dt3Ys/8RVZtjfRnYDRcyvlJ6ejkIQxu+3zRPwoSl
+	J0zwX9G6ndbATVF31pg4wl9gKkLOIVfVNO+4mXU8Xs8CqQTCfB/HBsZijL4b9MF3ftsxXwN+OrV
+	UVQQK/gbE68a3lSUVTKguANOhcQjr+9F9u8Lf+6wU+p9GVQMymPd/XhrQLiUCmCyBCxUCcR2aPV
+	RlrBZbQrChaxQBykpeu+efMmxXNjzGWF8IMro3m8A/GGXQ8918eo7lONI5puE3O1QPqRBNknbne
+	CJ6Q==
+X-Google-Smtp-Source: AGHT+IHLx2NmNN4eIHAGhJaj/DxTDLbTh85qThe6wdpXJOc29/KjHDsxypcCoyrdkW0QCjfRPpKYfQ==
+X-Received: by 2002:a05:6a00:2d7:b0:76b:cf2b:18bf with SMTP id d2e1a72fcca58-76c4603e0c4mr17297275b3a.2.1755003433445;
+        Tue, 12 Aug 2025 05:57:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd98csm29222812b3a.67.2025.08.12.05.57.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 05:57:12 -0700 (PDT)
+Message-ID: <56c18c70-ebb9-4018-b8b6-9041337bb3c3@rivosinc.com>
+Date: Tue, 12 Aug 2025 14:57:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39edf291-d842-4ae1-b988-76dc3688673b@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] [PATCH v6 3/5] drivers: firmware: add riscv SSE
+ support
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
+ Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>
+References: <20250808153901.2477005-1-cleger@rivosinc.com>
+ <20250808153901.2477005-4-cleger@rivosinc.com>
+ <CAEEQ3wmUvQRx3HLG=i7fk60-wf1AtYmjV20Xbe2c5_RHi1c1gw@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <CAEEQ3wmUvQRx3HLG=i7fk60-wf1AtYmjV20Xbe2c5_RHi1c1gw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 08/08, Sohil Mehta wrote:
->
-> On 8/8/2025 8:11 AM, Oleg Nesterov wrote:
->
-> >> However, independent of this warning, can xfpregs_get()->sync_fpstate()
-> >> be called in the context of the PF_USER_WORKER thread?
-> >
-> > Probably not but I need to recheck.
->
-> IIUC, if a PF_USER_WORKER thread encounters a fault, coredump could get
-> triggered in its context. That could cause the above check in
-> sync_fpstate() to pass. Maybe I am missing something?
 
-A PF_USER_WORKER can't initiate the coredump, it blocks all signals except
-SIGKILL and SIGSTOP. But this doesn't really matter.
 
-First of all, I think that in the long term kthreads and PF_USER_WORKERs
-should run without "struct fpu" attached to task_struct, so x86_task_fpu()
-should return NULL regardless of CONFIG_X86_DEBUG_FPU in this case. That
-is why I like your patch which adds the PF_USER_WORKER check. But this
-needs more work.
+On 12/08/2025 14:54, yunhui cui wrote:
+>>                                                       &preferred_hart);
+>> +                       if (ret)
+>> +                               goto err_event_free;
+>> +
+>> +                       cpu = riscv_hartid_to_cpuid(preferred_hart);
+>> +                       sse_global_event_update_cpu(event, cpu);
+>> +
+>> +                       ret = sse_sbi_register_event(event, event->global);
+>> +                       if (ret)
+>> +                               goto err_event_free;
+>> +
+>> +               } else {
+>> +                       sse_on_each_cpu(event, SBI_SSE_EVENT_REGISTER,
+>> +                                       SBI_SSE_EVENT_DISABLE);
+>> +               }
+> It is necessary to check the return value; otherwise, the event might
+> be passed as a valid value to subsequent logic, such as
+> sse_event_enable().
+> 
+> 
 
-So. The problem is that do_coredump() paths or ptrace can abuse
-PF_USER_WORKER's FPU state for no reason.
+Hi Yunhui,
 
-To simplify, lets only discuss REGSET64_FP for now. As for xfpregs_get(),
-everything looks simple, but needs some preparatory patches. membuf_write()
-and copy_xstate_to_uabi_buf() should use &init_fpstate instead of
-x86_task_fpu(target)->fpstate when target->flags & PF_USER_WORKER. This
-matches the reality.
+Indeed, nice catch. I'll fix that.
 
-But what about xfpregs_set() ? Can it simply return, say, -EPERM ?
+Thanks,
 
-What do you think?
-
-Oleg.
-
+Clément
 
