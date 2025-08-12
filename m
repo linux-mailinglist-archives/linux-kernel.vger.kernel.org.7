@@ -1,150 +1,133 @@
-Return-Path: <linux-kernel+bounces-765556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56540B239F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:30:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C410B239F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B871A268C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6957A7A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4D9202C3A;
-	Tue, 12 Aug 2025 20:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F7C2D060D;
+	Tue, 12 Aug 2025 20:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PKBYSynD"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950C52F0693;
-	Tue, 12 Aug 2025 20:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNf5OIQN"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA74627450;
+	Tue, 12 Aug 2025 20:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030617; cv=none; b=rFTL6Oqq7HUaMnJKxOJ/gZofcyZpaPrS5cbMOG+zYvgwXMF89AJake5PHE7WdwnhrO+xfE+XW95ss4P93gYKQOBf40va4oOjqut/4Wm8mmjCTnSfzLSEkaa1MiCrDh7Pho0dSG5cr2szi68lnRBkwY61RNOuAQS9WWWr3W4pc0Y=
+	t=1755030631; cv=none; b=gY2X3jJUSwBbF14bu/x0jQ+gQnSICo9ksEtCCYv/DNcrfRkpcQBpABhdvthB/BjHwvjkOhE4GnGer1pdFx/rVP90SSR9CgPtHLDQopph7tOoFunmAwmI/w/fj1GwpsML580ckarPut8TMWSppm/Zh2waONKTv1uq4khDgaHRP8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030617; c=relaxed/simple;
-	bh=lIpmLMAiZ52nvcInx8bvEbyXOzEr2wlgUxL4u7rKJSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kXpzusDJZbCv8u8SzMZwbiOJIkFQaBch6VYGDn9/vMOlDw15WVkg9ku7yaxo7SHrl27p63Xl5ejfwPXA+uYQZpeD1Jfw2FVAP8qb14RRqgHQ3BivIHZ+4dP15bHeiNs4j/JitVAn9d/iEbonTsV+E6WkLQUAaNf//oyUeVrOIDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PKBYSynD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.217.112] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B2CF12119397;
-	Tue, 12 Aug 2025 13:30:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2CF12119397
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1755030610;
-	bh=+dHVx0X/rHhwboPhpxe6uj0DRnhjEIQ93tWrA66yv4Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PKBYSynDYXtU/TJg3NA96rNjFkJZ+BiZm3j0+wonLvW9BUELLe1TbHZF02STc9V9F
-	 XHHVR+ZKShNMz9eiockA85kJQLyUGBf7abLJCelacEzn7JkaTxi80R+aCZuLNzgMCh
-	 KuDhH3p6pHlLfarL2AJSbGHfYUWDEPrK94voDwsA=
-Message-ID: <2c1fcdbb-5b50-4a41-9adf-f3b815624f81@linux.microsoft.com>
-Date: Tue, 12 Aug 2025 13:30:03 -0700
+	s=arc-20240116; t=1755030631; c=relaxed/simple;
+	bh=DPUg/AoorRxu3yhwbYOhHRtH0CbbSLCxMzRYqdsDRVU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UNQi1m5HnZeFegjmdrHPL2IE2dkoVcxB3w+Vjcefxdvu+IgsM8WVFwIImnMUgWus2SinO/YeGctlNmtD/ZiFV6NEqQlalbGeEUxAJW3lH1VkgHF04u2Lj/KDPQHBNNfD6Gw7YtLPjiQFQ6SxrEqepBIuZXo2/QApuCfzZzYl/9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNf5OIQN; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af967835d0aso823756866b.0;
+        Tue, 12 Aug 2025 13:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755030628; x=1755635428; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDpZ/uLV4xgn4kCXyhg6m1oHwpXbM6/gIBFZ0zY+grE=;
+        b=lNf5OIQNgUlxgmXTvvoo3oGnDIu2K3jjmKH/PafOtUfmmQaAaFBVJJM0gzRoasMnpd
+         ufGnSr4w2th/LDajBCtaRefl/0jnL94u7n+2KEaMi6GT3vT2TZmdRrNfR900RgCGR5eh
+         BpooY/OmXOR01APCgR2KrIAYwN3g9ICNX3D6ha7V7hVqfrcbjYbSSFQKCEP7EyQMu2p3
+         5FLewnY63A5Sl+CbvK3vfIE0xXiiKHxID9mwt8DsRqtvqIWXfbnU6wAArYsWCvWlR2/O
+         IDKm+/W0Sgmh5ichbC5E9hejt7WVuvrFJFjb/cjRuWR7/apnMVI+lsw5YmuCiSFs3sv4
+         qaPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755030628; x=1755635428;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UDpZ/uLV4xgn4kCXyhg6m1oHwpXbM6/gIBFZ0zY+grE=;
+        b=bUYJOAMAQdUfz+Ptu1pu1X4ly704EQ18qBZkWaRFKjbS1wECEnGIAV7xuKr8UmEX6F
+         UdYZNaKzIYwM2/jyVaGysPiMpESZ87xAvl51q5LxvcvK88UrEMRWNsr+sPwCAABa2Rmi
+         RQLZxCMIpNnIvkSDj9LGHZgQNXwU/PIuN0sYkGeNjEnB85SbrNxAmkXIwvf0TiS7Ivlc
+         dw2+hRESPgz8OGh5QpnlMmbl/Mhwgy6Wi8rP9aajH/py1p1rl3QKIPXXY6aOwCNepvCh
+         924xleP5IBEZWpJ9inCB52VPeQ4n6Yj8gkf23Ys/i+8HWnJXJbGeRPIkO1BdoXxnLLIr
+         Km1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwxD2ujXk9twHzJ3zIhedmQ8txaYoQKs5Y1ysUW8dKu6d+5pbevW0fN7Czgf4UwUt0VSib7kYJvNe9B2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDOIqJ0oBNrmZOCcHipNciDqSogKNrhAeRWGubbM235ejkp/vS
+	vy6/lVVz5z+JrQP4bu3m1PkLqSQbNr5IBGwqL9DHTlIFd9A4asUku6OH
+X-Gm-Gg: ASbGncsKV8Qk09I8bZb1PM5pPiUcrrBb53dcpfwLusCYO/tWpHPNjLd7uCCMtfJsG5U
+	h+OFhS+kSLMCUA1zt0EZ6t4www2LODFZVm+FWsXmk7A9U1VVSnjnUdkT27dvNvA/Is/gToaTHhA
+	LSd3JUgsHMUXtPoWDzMpRIvrQYlS902ojzCByyZaKo66F5aOQVwS1Epsnhboqeyh03aAnrRxjjh
+	UujFpftRQRS+rBl3qoJiLte0icwmQ3gV/BGnCO83YutWbsAnmcgSd2HxNJvLJBc7s7/2hQot7nh
+	7U5+/j2PtDhtA4cizX0u/xVtX0zh6tfIOkr7OBph3Cr8t929A2qgZLCuM8W3FfFUx3/OvDeYKxl
+	1+bIRWGObSdiRTImK/S99qNGDAHfFKgJSSHwFwVvSctDb5vML8go=
+X-Google-Smtp-Source: AGHT+IE8qPYJK5nv9hP6mJhBYPJdtTcVBRcIuezef0tNEf/XrB7lXj0liRGKyKHHW8hVebGuWOnP2g==
+X-Received: by 2002:a17:907:1b13:b0:afa:1a67:c046 with SMTP id a640c23a62f3a-afca4cbb1c0mr54830066b.11.1755030627838;
+        Tue, 12 Aug 2025 13:30:27 -0700 (PDT)
+Received: from alchark-surface.localdomain ([185.213.155.230])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b58sm2266073166b.58.2025.08.12.13.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 13:30:27 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+Subject: [PATCH 0/3] arm64: dts: rockchip: Enable RTC, WiFi and Bluetooth
+ on RK3576 EVB1
+Date: Wed, 13 Aug 2025 00:30:22 +0400
+Message-Id: <20250813-evb1-rtcwifibt-v1-0-d13c83422971@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: hyper-v: Skip unnecessary checks for the
- root partition
-To: Wei Liu <wei.liu@kernel.org>,
- Linux on Hyper-V List <linux-hyperv@vger.kernel.org>
-Cc: mhklinux@outlook.com, "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-References: <20250812194846.2647201-1-wei.liu@kernel.org>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250812194846.2647201-1-wei.liu@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF+km2gC/x3MQQqAIBBA0avIrBPU0qSrRAutsWZjoVJBdPek5
+ Vv8/0DGRJhhYA8kPCnTHitkw2DeXFyR01INSigtrDAcTy95KvNFgXzhru2kFr3RdtFQoyNhoPs
+ fjtP7fqGDmURgAAAA
+X-Change-ID: 20250806-evb1-rtcwifibt-a341507658d5
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Pavel Zhovner <pavel@flipperdevices.com>, 
+ Alexey Charkov <alchark@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755030626; l=1045;
+ i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
+ bh=DPUg/AoorRxu3yhwbYOhHRtH0CbbSLCxMzRYqdsDRVU=;
+ b=olIxr2X1rvA6OPvIHjWNujq7kqoN3cBugQA6uDhbvCgzXX49DIhFHYGpp25HJaliyfIbItPBh
+ 9GeZmMsbRDNAsn+459X9Obgn6qN1H6ZX9a+K5vr0zTjK5oFDsVtaNMo
+X-Developer-Key: i=alchark@gmail.com; a=ed25519;
+ pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
 
-On 8/12/2025 2:48 PM, Wei Liu wrote:
-> The HV_ACCESS_TSC_INVARIANT bit is always zero when Linux runs as the
-> root partition. The root partition will see directly what the hardware
-> provides.
-> 
-> The old logic in ms_hyperv_init_platform caused the native TSC clock
-> source to be incorrectly marked as unstable on x86. Fix it.
-> 
-> Skip the unnecessary checks in code for the root partition. Add one
-> extra comment in code to clarify the behavior.
-> 
-> Signed-off-by: Wei Liu <wei.liu@kernel.org>
-> ---
-> v2: update the commit message and comments
-> ---
->  arch/x86/kernel/cpu/mshyperv.c     | 11 ++++++++++-
->  drivers/clocksource/hyperv_timer.c | 10 +++++++++-
->  2 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-> index c78f860419d6..25773af116bc 100644
-> --- a/arch/x86/kernel/cpu/mshyperv.c
-> +++ b/arch/x86/kernel/cpu/mshyperv.c
-> @@ -565,6 +565,11 @@ static void __init ms_hyperv_init_platform(void)
->  	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
->  #endif
->  #endif
-> +	/*
-> +	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. Root
-> +	 * partition doesn't need to write to synthetic MSR to enable invariant
-> +	 * TSC feature. It sees what the hardware provides.
-> +	 */
->  	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
->  		/*
->  		 * Writing to synthetic MSR 0x40000118 updates/changes the
-> @@ -636,8 +641,12 @@ static void __init ms_hyperv_init_platform(void)
->  	 * TSC should be marked as unstable only after Hyper-V
->  	 * clocksource has been initialized. This ensures that the
->  	 * stability of the sched_clock is not altered.
-> +	 *
-> +	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. No
-> +	 * need to check for it.
->  	 */
-> -	if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
-> +	if (!hv_root_partition() &&
-> +	    !(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
->  		mark_tsc_unstable("running on Hyper-V");
->  
->  	hardlockup_detector_disable();
-> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-> index 2edc13ca184e..ca39044a4a60 100644
-> --- a/drivers/clocksource/hyperv_timer.c
-> +++ b/drivers/clocksource/hyperv_timer.c
-> @@ -549,14 +549,22 @@ static void __init hv_init_tsc_clocksource(void)
->  	union hv_reference_tsc_msr tsc_msr;
->  
->  	/*
-> +	 * When running as a guest partition:
-> +	 *
->  	 * If Hyper-V offers TSC_INVARIANT, then the virtualized TSC correctly
->  	 * handles frequency and offset changes due to live migration,
->  	 * pause/resume, and other VM management operations.  So lower the
->  	 * Hyper-V Reference TSC rating, causing the generic TSC to be used.
->  	 * TSC_INVARIANT is not offered on ARM64, so the Hyper-V Reference
->  	 * TSC will be preferred over the virtualized ARM64 arch counter.
-> +	 *
-> +	 * When running as the root partition:
-> +	 *
-> +	 * There is no HV_ACCESS_TSC_INVARIANT feature. Skip the unnecessary
-> +	 * check.
->  	 */
-> -	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
-> +	if ((ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) ||
-> +	    hv_root_partition()) {
->  		hyperv_cs_tsc.rating = 250;
->  		hyperv_cs_msr.rating = 245;
->  	}
+Rockchip RK3576 EVB1 boards follow the usual Rockchip design pattern
+with the I2C connected RTC chip feeding a 32 kHz LPO clock to the
+onboard Ampak AP6275P combo WiFi/BT module. In this case the WiFi
+part is connected by a PCIe link and BT over UART.
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Add required DT nodes to enable them.
+
+The board also has a connector for an external WiFi/BT module, which
+is out of scope for this series. There is also a PCM connection from
+SAI2 M0 to the Bluetooth module, which is also left out for now.
+
+Signed-off-by: Alexey Charkov <alchark@gmail.com>
+---
+Alexey Charkov (3):
+      arm64: dts: rockchip: Add RTC on rk3576-evb1-v10
+      arm64: dts: rockchip: Add WiFi on rk3576-evb1-v10
+      arm64: dts: rockchip: Add Bluetooth on rk3576-evb1-v10
+
+ arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts | 115 +++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250806-evb1-rtcwifibt-a341507658d5
+
+Best regards,
+-- 
+Alexey Charkov <alchark@gmail.com>
+
 
