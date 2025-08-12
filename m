@@ -1,91 +1,164 @@
-Return-Path: <linux-kernel+bounces-764618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD8CB22534
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1339B223AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C05504FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADF43B0A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A3E2ECE8E;
-	Tue, 12 Aug 2025 11:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874F42EA466;
+	Tue, 12 Aug 2025 09:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="kxYVcsWM"
-Received: from mail-m3295.qiye.163.com (mail-m3295.qiye.163.com [220.197.32.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZcl5DJE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501982ECD38;
-	Tue, 12 Aug 2025 11:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBEC2EA162;
+	Tue, 12 Aug 2025 09:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996600; cv=none; b=pwLD60CzjqGWIoqJrtv8h9jT6Dw3JHQhgiPtn7Eh5qzkuFNZEIvZmNu0bTnaZcXGxoY8a/YfrzhUKIcTLZbh4JmnHiNGPjO9hXHL+px7LvDYqIs9hR9J3KYaVC8PgQBvEwyM2HeayCIUiFBjh6WHhwALYPRxCoFGC9z1ZL/OxMM=
+	t=1754992073; cv=none; b=lls+LcrT/2m1h5P7n/hG+Pdic2YQoswEO1VxT+9ALU61Dc0TBoi3Ktgnef4CuIVyUN9k/c1LiDRhh1PoZIPHwLybzRy8wypJVrrUGLuu8iNBt+HlBU9cEbzdvKXMCVys2Vfz7HLDohqwEA2PDUrsKos1DaeD0JzkGkMBuI/g09E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996600; c=relaxed/simple;
-	bh=aMU6L1c5K22WNXfOw4hDrPqadebF1K1kG8GKgIO4tjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kNG3IJuW5to+hv+dCXbKMrtTNQJHlXsxhw2ewB7GBFjvXjN0S6wMe+AhhkLlpPb6ttPMFgmbClnmewWQ2Bd2oqoNB/fSFVV9DhlOCiwcWkqVPPyuP8HCeYfi/lpwDu7GsjiQaZDPNsnkl4HWv1JZJH9ahvkQXLljKTy6bbmA3Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=kxYVcsWM; arc=none smtp.client-ip=220.197.32.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1f1d6e1f4;
-	Tue, 12 Aug 2025 17:47:42 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: robh@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	krzk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangzh0906@thundersoft.com
-Subject: Re: [PATCH v2 6/8] arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board
-Date: Tue, 12 Aug 2025 17:47:41 +0800
-Message-ID: <20250812094741.2040632-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250702141957.GA1416711-robh@kernel.org>
-References: <20250702141957.GA1416711-robh@kernel.org>
+	s=arc-20240116; t=1754992073; c=relaxed/simple;
+	bh=gBGz6JJ6cRgbUBJIFDCaSAVfdTTaWH+QXuZPhWp/Rkc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VgjijW6bKmu43y+m/WZwaadd3g24PD+FYKiW02fkRdfFooKKj25aJI1/jp0N0/0toVsajvCcJns+LZMrpPRNBdQ/W1ei8fVYKqXyekDVhtXUr0Ls6t/lGf9k9hIqtjaI8QHwcPoOrJbToMqWZDbwVOPxBsOSclQVQoFXrFalD9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZcl5DJE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754992071; x=1786528071;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=gBGz6JJ6cRgbUBJIFDCaSAVfdTTaWH+QXuZPhWp/Rkc=;
+  b=nZcl5DJE7ULEKlCUgOyrFZ/PRFyQTFA8er9Gq7u9thsVCXMFtYrvqroB
+   QOeI37vGOM1+fdefAqwiBwJqTF9vUywxjDSNijr5LCe5P3RxzyQp7PNNh
+   VESxt5P2HJRliNA+y+NMnCYcZoNHwyLof19U/keB8d3WBUYJGKJZ4t5yu
+   7qcA9RyKkhqkopC4ODkH7EymrXltIn2Zpb5dDtXKOnLCrd4mPFFzNaF+m
+   ohPHDfOsR6TbVXroTsbgqUTwrBEN61WgP82dR5Rw3Ywc7llYlK1rEoHW+
+   rgWaVjId0U90ERef74SnkmKvSzfv154TX32cZeHYJljJkFa38W/i8swbH
+   A==;
+X-CSE-ConnectionGUID: dCE2AO5qSs228Z43RnnPHg==
+X-CSE-MsgGUID: HHe3XKF6RsaemJNn6EDcUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67525923"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="67525923"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:47:51 -0700
+X-CSE-ConnectionGUID: b3huImeqR1O4Dn2mjiUvdA==
+X-CSE-MsgGUID: B1BW/SVmRVOa19rSNi1MAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165342077"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.96])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:47:48 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 12 Aug 2025 12:47:44 +0300 (EEST)
+To: Ron Li <xiangrongl@nvidia.com>
+cc: Hans de Goede <hdegoede@redhat.com>, vadimp@nvidia.com, 
+    alok.a.tiwari@oracle.com, kblaiech@nvidia.com, davthompson@nvidia.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] platform/mellanox/mlxbf_pka: add __free(kfree)
+ to handle memory allocation
+In-Reply-To: <20250811153934.671070-5-xiangrongl@nvidia.com>
+Message-ID: <d4c48d92-e064-c050-d275-2d03f320c98b@linux.intel.com>
+References: <20250811153934.671070-1-xiangrongl@nvidia.com> <20250811153934.671070-5-xiangrongl@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a989dadae4509cckunmdb40a9fb81067c
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGk9MVh0YShkeTR5PGElPS1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUJCSU5LVUpLS1
-	VKQktCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=kxYVcsWMOpTGsnZF5jR9z7iRDjwbaGFjkdHOwNe4pUuDdnqz/6W9yl9SXEm7boBfhRMV7X4HIgCUjsrq/UNELXgIdbA3UbU/fuqHYL1HzZ4ZtIRDYOzuUw/KTlKwuhGmP+nc+XP1m0Ml2G2UyuPn9JVIaxb+zAEeMk7BV9mfr3M=; s=default; c=relaxed/relaxed; d=thundersoft.com; v=1;
-	bh=H2WTsuc3EhhC/Vf4tfE8U6JbtAliV9KGGfugOgJdqqw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Jul 02, 2025 at 09:19:57AM -0500, Rob Herring wrote:
-> On Wed, Jul 02, 2025 at 08:31:33PM +0800, Albert Yang wrote:
-> > Before (incorrect):
-> >   memory@800151000 { reg = <0x8 0x00151000 0x0 0x1000>; };
-> >   memory@800254000 { reg = <0x8 0x00254000 0x0 0x1000>; };
-> >   ...
-> >
-> > After (correct):
-> >   memory@800151000 {
-> >     reg = <0x8 0x00151000 0x0 0x1000>,
-> >           <0x8 0x00254000 0x0 0x1000>,
->
-> These are very odd. Are these really main memory vs. some on chip SRAM
-> or some other specific purpose?
->
-> A 4KB block doesn't really work if the OS uses 16 or 64KB pages, but I 
-> guess that would be up to the OS to ignore them.
+On Mon, 11 Aug 2025, Ron Li wrote:
 
-Thank you for pointing out this issue. My colleagues and I have discussed 
-that these two 4ks are indeed ineffective, so we will remove them in v3
+> Used __free(kfree) attribute to call kzalloc for allocating the 'data'
 
-Best Regards,
-Albert
+Hi Ron,
+
+Grammar problems, but this patch won't be necessary, see below.
+
+> variable in mlxbf_pka_drv_ring_ioctl(). So that the variable can be
+> released automatically.
+> 
+> Reviewed-by: David Thompson <davthompson@nvidia.com>
+> Reviewed-by: Khalil Blaiech <kblaiech@nvidia.com>
+> Signed-off-by: Ron Li <xiangrongl@nvidia.com>
+> ---
+>  drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c b/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
+> index 0f93c1aa7130..2dd773ec1dc3 100644
+> --- a/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
+> +++ b/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
+> @@ -3,12 +3,14 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/cdev.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/device.h>
+>  #include <linux/hw_random.h>
+>  #include <linux/idr.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/iommu.h>
+>  #include <linux/ioport.h>
+> +#include <linux/kdev_t.h>
+>  #include <linux/kernel.h>
+>  #include <linux/miscdevice.h>
+>  #include <linux/module.h>
+> @@ -438,7 +440,6 @@ static long mlxbf_pka_drv_ring_ioctl(void *device_data, unsigned int cmd, unsign
+>  		struct mlxbf_pka_dev_shim_s *shim;
+>  		bool trng_present;
+>  		u32 byte_cnt;
+> -		u32 *data;
+>  		int ret;
+>  
+>  		shim = ring_dev->ring->shim;
+> @@ -456,25 +457,21 @@ static long mlxbf_pka_drv_ring_ioctl(void *device_data, unsigned int cmd, unsign
+>  		 */
+>  		byte_cnt = round_up(trng_data.count, MLXBF_PKA_TRNG_OUTPUT_CNT);
+>  
+> -		data = kzalloc(byte_cnt, GFP_KERNEL);
+> +		u32 *data __free(kfree) = kzalloc(byte_cnt, GFP_KERNEL);
+>  		if (!data)
+>  			return -ENOMEM;
+>  
+>  		trng_present = mlxbf_pka_dev_has_trng(shim);
+> -		if (!trng_present) {
+> -			kfree(data);
+> +		if (!trng_present)
+>  			return -EAGAIN;
+> -		}
+>  
+>  		ret = mlxbf_pka_dev_trng_read(shim, data, byte_cnt);
+>  		if (ret) {
+>  			dev_dbg(ring_dev->device, "TRNG failed %d\n", ret);
+> -			kfree(data);
+>  			return ret;
+>  		}
+>  
+>  		ret = copy_to_user((void __user *)(trng_data.data), data, trng_data.count);
+> -		kfree(data);
+>  		return ret ? -EFAULT : 0;
+>  	}
+
+Please make the code to use the up-to-date conventions right from the 
+start. We try to avoid changing same lines back and forth within the same 
+series.
+
+In general, anything newly introduced should use the most recent 
+conventions. I might occassionally allow exceptions to this rule for 
+a pre-existing file to remain consistent within that file but that
+won't apply here.
+
+-- 
+ i.
+
 
