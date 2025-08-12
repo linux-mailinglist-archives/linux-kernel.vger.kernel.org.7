@@ -1,114 +1,81 @@
-Return-Path: <linux-kernel+bounces-764202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00DEB21FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9071DB21FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD969680DE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2E96870A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80CA2E11A5;
-	Tue, 12 Aug 2025 07:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ak0jpxAM"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4D12DECC6;
+	Tue, 12 Aug 2025 07:43:57 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E0D2DE709;
-	Tue, 12 Aug 2025 07:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416BB2D97AB;
+	Tue, 12 Aug 2025 07:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984595; cv=none; b=d1YhwqmaMMXxZxq2YhMT9r+TKH+gR6xlxFMpDdcIB/kiaNpEIO3UoKn/CTfTWRBU//7OrMPnJyYK1EQO7XxsSK0VRGbfx4fNVizRZX5hPe3ayGFfEkeFyaIPNpC967TMRuWy/U6v1RiM3iJn7pKi+80F9w9oWFgR1ewi+Fvwxvk=
+	t=1754984636; cv=none; b=hiMEVcUW2CWzqJd+/T+nWiUipINQ9FtzAn2f57bJ5oYnSJxwZrJYhIG9qXonbJ9zZVmKe43XY9t4ML5QqUh2Y0umrrI/CG3fgHLm3N5LEGufEd1jt8Da2zA99rw8028a7UZF9chZUFsM/BiZPkbsAsIgoLoQqtBnTeKLQu/HFL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984595; c=relaxed/simple;
-	bh=0A//2Exv4mtissrpUI9DkbYI+FdyOCpS4fL7Ag/lo5Y=;
+	s=arc-20240116; t=1754984636; c=relaxed/simple;
+	bh=bqM/4wRwEzoxQlCRe3b94XAem80UH0+YgjAbaGhuyCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOnd3wUt60aMLDyULj26ikkGcaooiMAYGiVm24oikcJY4W9/JTckxJAnX6oDzJnnvChv+JmNBTaA6YRHCcuaYlvn2rfmewEkEuD4nVe0QBFMmOMsl5NmFIc5Zw1+PMSZ1nvAZc8p+x/4na8QJgv2TInYyB69GaEtawQz7/low6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ak0jpxAM; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=MnE2DIPhZPQSmiehfj+YTSIBtI5Zzg3HCPs+hiz8JBw=; b=ak0jpxAMIUrtGsVuw3wZFfdUfz
-	t1mnz1beNInoxHY2u3eZREtheVvVjQJw1Ru7Os9rRcD1S1JzWpQnl4XQO93oCh3rhU/W4OXjZ+0Dm
-	YO0zQzVjOJZijJYBP8xDGGEE82bkN5kVOhqNlYK92f2L5wLXliKq60UJpBmMzm426M1vAiSLTercT
-	YKNs4zLoACoA3Ad000d2VQRNtYK2cFyfg3SlLxOK1d/U4wH5DLgULjo6GQ3QK4g2src5iaDGThFT8
-	uBEUjQeTn8Tpq5GIe31uP+Pbd3ZXNbSyfdm009ro3/UpWULud5JFjYwT9bBeDcuqXpPQPY8wEu9Yf
-	VHvrhNzg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uljf0-0000000FjYr-30Bn;
-	Tue, 12 Aug 2025 07:43:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 540293002C5; Tue, 12 Aug 2025 09:43:06 +0200 (CEST)
-Date: Tue, 12 Aug 2025 09:43:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Matt Wu <wuqiang.matt@bytedance.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 0/8] hrtimer: Remove hrtimer_clock_base::get_time
-Message-ID: <20250812074306.GD4067720@noisy.programming.kicks-ass.net>
-References: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAX7Gx0x/vUMY13EAZu9agKhrDD2Tx/cIvfXV5bB+Rzs+CSMeZSwc1d2KihFVMTQtt1X0wIJT+2yijixSMTKw1UdtvxQiT3LPiST7AJc6JlOLhaJasM4z79o5/K6cCB/agKXOP0tygpj+BB7CnftixSSTcCW8vfxTwZrjPFcLsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 043A4227A87; Tue, 12 Aug 2025 09:43:51 +0200 (CEST)
+Date: Tue, 12 Aug 2025 09:43:50 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	david@fromorbit.com, djwong@kernel.org, ebiggers@kernel.org,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 04/29] fsverity: add per-sb workqueue for post read
+ processing
+Message-ID: <20250812074350.GC18413@lst.de>
+References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org> <20250728-fsverity-v1-4-9e5443af0e34@kernel.org> <20250811114519.GA8969@lst.de> <aJotnxPj_OXkrc42@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de>
+In-Reply-To: <aJotnxPj_OXkrc42@slm.duckdns.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Aug 12, 2025 at 08:08:08AM +0200, Thomas Weiﬂschuh wrote:
-> The get_time() callbacks always need to match the bases clockid.
-> Instead of maintaining that association twice in hrtimer_bases,
-> use a helper.
+> On Mon, Aug 11, 2025 at 01:45:19PM +0200, Christoph Hellwig wrote:
+> > On Mon, Jul 28, 2025 at 10:30:08PM +0200, Andrey Albershteyn wrote:
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > 
+> > > For XFS, fsverity's global workqueue is not really suitable due to:
+> > > 
+> > > 1. High priority workqueues are used within XFS to ensure that data
+> > >    IO completion cannot stall processing of journal IO completions.
+> > >    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
+> > >    path is a potential filesystem livelock/deadlock vector.
+> > 
+> > Do they?  I though the whole point of WQ_HIGHPRI was that they'd
+> > have separate rescue workers to avoid any global pool effects.
 > 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> ---
-> Thomas Weiﬂschuh (8):
->       posix-timers: Avoid direct access to hrtimer clockbase
->       timers/itimer: Avoid direct access to hrtimer clockbase
->       sched/core: Avoid direct access to hrtimer clockbase
->       lib: test_objpool: Avoid direct access to hrtimer clockbase
->       ALSA: hrtimer: Avoid direct access to hrtimer clockbase
->       media: pwm-ir-tx: Avoid direct access to hrtimer clockbase
->       hrtimer: Use hrtimer_cb_get_time() helper
->       hrtimer: Remove hrtimer_clock_base::get_time
-> 
->  drivers/media/rc/pwm-ir-tx.c   |  5 +----
->  include/linux/hrtimer.h        | 14 +++++---------
->  include/linux/hrtimer_defs.h   |  2 --
->  kernel/sched/core.c            |  2 +-
->  kernel/time/hrtimer.c          | 34 +++++++++++++++++++++++++---------
->  kernel/time/itimer.c           |  3 +--
->  kernel/time/posix-timers.c     |  5 ++---
->  kernel/time/timer_list.c       |  2 --
->  lib/test_objpool.c             |  2 +-
->  scripts/gdb/linux/timerlist.py |  2 --
->  sound/core/hrtimer.c           |  2 +-
->  11 files changed, 37 insertions(+), 36 deletions(-)
+> HIGHPRI and MEM_RECLAIM are orthogonal. HIGHPRI makes the workqueue use
+> worker pools with high priority, so all work items would execute at MIN_NICE
+> (-20). Hmm... actually, rescuer doesn't set priority according to the
+> workqueue's, which seems buggy.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Andrey (or others involved with previous versions):  is interference
+with the log completion workqueue what you ran into?
+
+Tejun, are you going to prepare a patch to fix the rescuer priority?
+
 
