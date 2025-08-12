@@ -1,231 +1,111 @@
-Return-Path: <linux-kernel+bounces-764313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21FCB2217E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C186B2216F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1445620BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82AF81B65F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6392E265A;
-	Tue, 12 Aug 2025 08:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06952E54A1;
+	Tue, 12 Aug 2025 08:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iJqoUHc/"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012055.outbound.protection.outlook.com [40.107.75.55])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KeB6nkkx"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B56E2E2665
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754987547; cv=fail; b=koO4jH0NnFrfnZxQKG3avTPYClyN8GCNmaLK1l53X4F2aFChfipCfmS/9m8K2od0vUz/Ks3VFqqfA1pZd4/EA2+LhTcLbcX766TzsjwbCD9se96XPvJIfFbNn5923+Sj3tjItim0yAhsbcBaAZyTfaSjTKg0IATgm2ms5+SmtPM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754987547; c=relaxed/simple;
-	bh=dWwiWkET5WtI1B5U47HLzumd2rD79bVycHz+1BIUWXg=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JmJKL1VpqOyIWZ2eFs1n1u/vU2pV0EOO4Tuutf9N6nRzapqJehmisLaPZWA5NdFGyh7zzeXi/icBbP4/lQAjnkHpL1nFJHDatJ130EI7Rm62ZHghoIoYHlwyy6gfLufvLJiz4Rz1qwQE8uUpzxQY65yd+2mYjn6RO3lBVSbuM0A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iJqoUHc/; arc=fail smtp.client-ip=40.107.75.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uW1dnEUaZa61RcNERL66s9+pgpm8BPgaWQuZT9+oHkwugLyhdKX5itDuCLi23zxw9YS4Cf8MmkEwGdfkPFewQqOwl+vhiVxOufswQxrHPE7tXOxwh2ZcFrlATiM2mMmc+5upLq6cTlqdZtBcQGi0NAHyhAaAIUmNRzXuFC2jQzXVjqLj/uBSe1hd5FlnQwnk/7ykehu688blHT6fZbFn53YMU377zL3g1/+I/711BsT8j1+AQjoU8P/wR54MOkLksUmDeXcgw5Qf4fYSpYQ9N+YpGBzIN1zbDpnX0pwIng+L6jFSoVLSTb0vhoGmDvkXZ1XHgvWhdl/vIfEC+UOSrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9uHsdIe3m2ri47Gibuqpe4BxsymeWEIxeu6s15XyQI8=;
- b=wVbmpoJI1Xpn53JrW+++eAHxwXWkY7wEHUVNZ0Oeg5WykFaCdn2YWZ29VeJWpcGTRlNEs7qNrApOQRBUK9iJMydVrwCxw2wv14S7sMlVHbjRhAgnbL3thzIZv/F4wIcxeNBSMWVsffoNoDze17al/2BAW68c61DtNRZTa5ubAnKzWfRhpNBqAFCsfmyoafciaf4nTZOQMLKhe/v7X9kaXe0S8kuS04R1My6hwLD0/FynfYT3l8Sf6dqNvDvB+NRE/CkOPUwonYzCT8sc6Rd8Jyat9APL7aR9AzgNAz6Tb8VV02L189ks9xz0hJi4hlGJWVEva7p9J5znLsv+KwW7sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9uHsdIe3m2ri47Gibuqpe4BxsymeWEIxeu6s15XyQI8=;
- b=iJqoUHc/LIpCXfNEQatOs4DnVSH0uZMfug6curgbtprcAL4LVLxMfSEPJbY8PB71huboDyOz8srV2KcswVa00q+ryKyyt1A9xt4VZjDnMLHUz/cIi1p9Y/+sb9WHO7RzDIFwyu2OSWIt3A8AvdQmgMEuSl5nDMOl3TK/3CQYk9q3UgDeUqtJZX/pfu90RoF9hDk29swIcGEQvA46OW0mU1u3h1K695XHo4o9OoO+HxJYT1LztQ+GzS6bXzs4JdP/wBhH4oMI7bMtNzZ4a08bvg0iZrl9e0dBvKguOAhpYdGxMptzkUCSnJyEX02H4v+/3WxFXwwAQBJr3MV3t7mZQQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TY0PR06MB5102.apcprd06.prod.outlook.com (2603:1096:400:1ba::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.22; Tue, 12 Aug 2025 08:32:21 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
- 08:32:21 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Austin Zheng <austin.zheng@amd.com>,
-	Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Dillon Varone <dillon.varone@amd.com>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	Alvin Lee <alvin.lee2@amd.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/display: Use boolean context for pointer null checks
-Date: Tue, 12 Aug 2025 16:31:49 +0800
-Message-Id: <20250812083208.53809-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0184.jpnprd01.prod.outlook.com
- (2603:1096:400:2b0::13) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714342E2853;
+	Tue, 12 Aug 2025 08:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754987555; cv=none; b=eeGfd6j72noqe68odspOEp+MYn6/ut45kAgHTSZ5hlyYzCl/85RMElc7AunhjW50C5rhWyvlidQ3x7/kffcg7lqBJDLaHJubgugnNbK8vrSOKh+pRB6zbl4wE+IiajzIMDGhl68eT4DuD2xL99UZHxyl082Uif2tMzY38cbfw00=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754987555; c=relaxed/simple;
+	bh=6BSHWnUCmKK761l0Jf8Sz/mVRy22H4iNNlajbyBDS/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e2hVzNkejLKX84VWqcminNyljWB9/PckvGh0HLINDgwAR1cuSlXjjYW7vfvApt4gOhDYDCyHDolt9gGq+DDNbYfQOghpX6K8ovlrPizP7QdPI25sSL+pJ1orJpE6YgjloHV1HcP0xKC1AE9NouskrwrF5qWOJPMHpKeSzwHVgzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KeB6nkkx; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=iQpTDZH7lXr4FoO7KJPIkTJ/j35kWz/ImE22PyEPmP8=; b=KeB6nkkxVQZcgot7no6Ky4uaBg
+	9fqcPV0af4CxhF5cseNcv1gzT3uMp/XF3D2hkwKqpZtwIMkgyc6DE0S5oRhWrpkxswYDQf/3qLSrG
+	GIn6REpbTezPkUdE9niV3T3rjQO8NZWnBXePAnjfurX48QacpszCt+9pyvln+FYvtW8513lEFKEzR
+	fqhPdjyVoZOrlxi+qL0AWefVTaT37vKfcabQ8+KsJ1esDakSAarOoI9qeVoPOFEoPCArZ3cojpdhq
+	nN9A89qt80+ZoZsHyBpiCZyv3d/vG0hN9EMgoohtfykIEfgQeX24nYQqPVT/fKMIuRk7HrJbCeJhO
+	5cGqrhqg==;
+Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ulkQc-0001tw-Hq; Tue, 12 Aug 2025 10:32:18 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	damon.ding@rock-chips.com
+Subject: [PATCH v3 0/2] Add RK3588 Tiger DisplayPort carrier
+Date: Tue, 12 Aug 2025 10:32:15 +0200
+Message-ID: <20250812083217.1064185-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY0PR06MB5102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cd21128-9ddb-49a4-204e-08ddd97ac1a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ASZQVgpXIZyhSoMYSsRo1sjmL1hWu7x+onh+/1kV98l3FI6mQ2gqaU36UAS2?=
- =?us-ascii?Q?NL+UFf5EHWCJ74C3HpOyhBE2Nsp3srVi6Aw/wxkQxJDlJtxolKuZwY3aF2+R?=
- =?us-ascii?Q?NCpDabRZ3mR/eOpNK0ZtTBdp4JlDbhvcUObJ9k0wNFI9tGt3Bh2IlNS2Ycr2?=
- =?us-ascii?Q?apVVhjvRXq5IvH6ezKJ0TMCxFflNTYs1s5fTirmmvjur1TGfsvtb+7PT+ceQ?=
- =?us-ascii?Q?d6kCMOP9vGvzEmbjjmqjFt8hYF7bU3GUSrZWis1Zh9+aOF+YTINcm0cn/rbY?=
- =?us-ascii?Q?sgSLehVq8caeQyskPrvJVd+7oQwJlGJeNS30kuEGmfZEA6K4N7/iQMXJTcKo?=
- =?us-ascii?Q?K6rK11uxJfH1XYlNFTARYq2zRbWGjDLPmzmUbpxn+dM9s4KCixNw8F1dT7Fs?=
- =?us-ascii?Q?XFmv1jcjBDJWXLxunwJMJVW5kocEfIx9X+ciitPOJ9o3HUVAOLNms9H9Y75F?=
- =?us-ascii?Q?qXFBMVDP1OKNXZPDOYNm5Qtnay3r3ZQ6IDBE4Aq4jrl52W5Qu1F6f5EUXAzs?=
- =?us-ascii?Q?+50QQg9KWZytwHm5FX64TOsmNvtjMZXlCZJcU+a9M90HaNyC7cUCN0EjW9Wu?=
- =?us-ascii?Q?1gYh+3JgNTn6iXY3S/LtZyAMZzpxWXa+VPxf7s0/fh2w3T3jU8hCAcbQEDAH?=
- =?us-ascii?Q?q4gaVPu15zQ225kXZYbS1PVZv/hj88G0uqUW668vY/g0qb4O3Z0ojzlaxxpo?=
- =?us-ascii?Q?iuqYgPS769EDJO16VnWQ/4vMILXjwrT/zdPon46PPzPUu0hjc90RGq8/c6Cw?=
- =?us-ascii?Q?v+222+9k8vqq4SscwA3AauQi4eAaPkZCMcTlraJZ4A3SGgEErI5gmfv2UHvv?=
- =?us-ascii?Q?opzIzutnC2Q20V6DytcOWBkB4Z79dK6OKNSozHDbcPsJCFXbSlDyoe+hlU1y?=
- =?us-ascii?Q?3ZbPZgftLDQ6lo/3bEwpkh/qruzwJVFC6A3TaFtmEelDMIdOdOFUZH0041Vn?=
- =?us-ascii?Q?SaTtIHBL0mXFGj1yVFenKyLvzJ7QN/HwciLRYmNQvCRF9MW3Ll4RC7AZe2g3?=
- =?us-ascii?Q?KvidXXkBpO5V3eniKHcm5IN7MiuyaDi2d31COQG/X0EZWpwRpU6p5p2wjWRR?=
- =?us-ascii?Q?+va7rceVux913rjqEWH3YJkGTusdP3CqA6aZOtFUR2bv9UxmV/dXTmCuXQuo?=
- =?us-ascii?Q?xrvua9n9ozi6+mSOebHtABX27M0lAv0xPTO1gSbvsW5tDAPqK4qCdin50smp?=
- =?us-ascii?Q?9kFDaRZQ4kmyzrv94kmpj8EFJ2X+GTLV5GFpF28Y4X6/MlvyFYXT0oKXalv0?=
- =?us-ascii?Q?EeRNQhG+SiALqhWZRECvgb2ABwpb/7eRF7f19LQSDqPRaZbkBn8sha/sSG74?=
- =?us-ascii?Q?LWEkG3jYRpod/qkeNxBiuD3VAU5VHodIXh+3jYEFjvKq2k+3ETar9uyEZJAh?=
- =?us-ascii?Q?ypTk+mEentDvr6YHFvb3P/waVIItZmdgWHtEsn0IO66lhZYgPiggKcCpmrC2?=
- =?us-ascii?Q?ZaRwBqwTryVqMQ/tAhSs9DRo5rj92Hu4jRTtw4CfkIjhpwtebol86vvz/Gnj?=
- =?us-ascii?Q?ayBYykEsaF3WRew=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CIJ9hhU69a/hCVPZKXU+lcV4h9xJ5djL0JVBP0Eetm+Z5gWOFS8zCdFWP8wc?=
- =?us-ascii?Q?kwUf6iuhGv3lJSxwB/rKWRdEw+XJMyy13zS89EcXMkKWSWd2YUphDN+lpgcq?=
- =?us-ascii?Q?+XYMCMm4Q2LDCyi2z9My4+QMg0ON9wU2XXOYJD77W4ciGKhlGmeJ+VcDegFS?=
- =?us-ascii?Q?qToHoH1vF3Iyju/zIN7BcJpGp4YqF2yM/tjooG9dS8ymBko5Z1OCtFJPPmjX?=
- =?us-ascii?Q?8H7w+c6U/CrtPsKQDw6niFcbvL4T74iwCSnv/qyJjYPTy4ZHcNTRIWA2Hal+?=
- =?us-ascii?Q?qUbe/H87PZW9v5D3Xti08B+hLioE/7rXPgELCOqy36agmAOoZ2q5GghDDJvQ?=
- =?us-ascii?Q?seVTJ+MHA/K6No8qWhEATwG27H/1sY4M92GIPuajc74CPYbhbNUCohyPg+Vn?=
- =?us-ascii?Q?H6z6g0WSfuravxlRcsMhTcaWKt6CVoTn+hkGsgzI6/wD/NfNaRYScEUeoaYE?=
- =?us-ascii?Q?3cjroroOSlQQU/4wSf8wonhjDvV8bmGukaIC4+8IwG7UxigjLN2qBUVnTQI0?=
- =?us-ascii?Q?KDpm7mVTvGCNa2mBWMM0A+KH/+cRGCuZgtH/4QIsWtLzenRb0gZ3BAP1Qg94?=
- =?us-ascii?Q?dfL48Qi31l4bCbglZQpkecpwggNsWLEPIaAt2t48x/4Nt89DQ/0JwFAf7k+9?=
- =?us-ascii?Q?jjty+9kYlwbAYNoaNVnFtiOR5dLssn7fiTAo3TijtWP7rQsQOYak/loEDWdj?=
- =?us-ascii?Q?gBLEHFsUjn4POlbGyU3em6aZkiZdoFSYkH5FyAhb0smwXNlgGlO1UMw+L6OL?=
- =?us-ascii?Q?gsV7sdX/LX9/fKpztbRkC3O33XJSe8WLRPEUm08ba36oExSbqXzMX4WNdBQp?=
- =?us-ascii?Q?B7bopGqc+uju/gZtBXwSVpD9WZVyP3PaFLenneZ+9e/QFb0tehNmTqMkvFxS?=
- =?us-ascii?Q?ya+Zc1LxluAIABUJMo11w75zyAjmtVEcT5KB9vsu/HGDZLMSqabk9OI01HG7?=
- =?us-ascii?Q?hlzOi9+q3GcFvdRfKWyxsF9dW+EEq2MgqjmvdQADmqK8qUg+E74T3nzp+gSh?=
- =?us-ascii?Q?YbJs+X3IzsqadajBtpaStg2L+n11lysCZwqnYOw+BaJ/PPFUAXcf2UBxHVPH?=
- =?us-ascii?Q?a1GMkb62lliAKBI2w+xOLA/y71XQssCKfz91tx/hlPu9kt8hcT7XcWJ5A9Zm?=
- =?us-ascii?Q?R8ZhsY/vg3zf9aVw3cjyTpgoAGgoZh1wT+bGNPe1Mlb/dxkJw+PRwT5jIF0f?=
- =?us-ascii?Q?+h6Bjq9HhePLsKqOib/Q2NKkan4Yq74cxfkpIiMFwtkDuubE0J1a/byi/F8q?=
- =?us-ascii?Q?KwYA8LdWnfSXrxM81p/m4xaaStm19xHlk+u2375GPxCTbMU5KPwZbRGajaDs?=
- =?us-ascii?Q?PZ3zatIsY5jwq4e05u3YBTGPA2gbJHwKFwE1c/ueMuwh5tmyWYCNQbi3Wq17?=
- =?us-ascii?Q?g+HOnbFHaTyQ/XViRFkcXNMnOd7qW6HNkZqAZHAR3k3uyp9cAlx0KbxGWn3i?=
- =?us-ascii?Q?HdRJa3WYneaIzhpkDhqaT2V5k4fqzxcMireYVpQtz0GWmN8s21om/xJvJhrc?=
- =?us-ascii?Q?30OfehnvOI9MZKEN75ZzRAS+2YP+X64DjsL3nNlpNfBa0gAv47xQVFC/Cd4K?=
- =?us-ascii?Q?ezho8zhrNkxGrkiHDhpGuR/+MZSZVOCnx3MWXyvd?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cd21128-9ddb-49a4-204e-08ddd97ac1a3
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 08:32:21.5904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FN3ouiyoYwj6sxOvOdT9XI3/KrmvqavCJtrYtjsTB7piszMFGziUgykePMcXtHc8elbtrMc/YweFenmRY1GxQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5102
+Content-Transfer-Encoding: 8bit
 
-Replace "out == 0" with "!out" for pointer comparison to improve code
-readability and conform to coding style.
+A board that allows easy testing of the Analogix eDP controller on the
+RK3588. Requires Damon's recent work on allowing bridges in the
+Rockchip variant of the controller driver [0].
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- .../amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c | 2 +-
- .../amd/display/dc/dml2/dml21/src/dml2_dpmm/dml2_dpmm_factory.c | 2 +-
- .../amd/display/dc/dml2/dml21/src/dml2_mcg/dml2_mcg_factory.c   | 2 +-
- .../amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_factory.c   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Concerning displays, my current setup is
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c
-index 28394de02885..640087e862f8 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c
-@@ -10,7 +10,7 @@ bool dml2_core_create(enum dml2_project_id project_id, struct dml2_core_instance
- {
- 	bool result = false;
- 
--	if (out == 0)
-+	if (!out)
- 		return false;
- 
- 	memset(out, 0, sizeof(struct dml2_core_instance));
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_dpmm/dml2_dpmm_factory.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_dpmm/dml2_dpmm_factory.c
-index 3861bc6c9621..dfd01440737d 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_dpmm/dml2_dpmm_factory.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_dpmm/dml2_dpmm_factory.c
-@@ -20,7 +20,7 @@ bool dml2_dpmm_create(enum dml2_project_id project_id, struct dml2_dpmm_instance
- {
- 	bool result = false;
- 
--	if (out == 0)
-+	if (!out)
- 		return false;
- 
- 	memset(out, 0, sizeof(struct dml2_dpmm_instance));
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_mcg/dml2_mcg_factory.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_mcg/dml2_mcg_factory.c
-index cd3fbc0591d8..c60b8fe90819 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_mcg/dml2_mcg_factory.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_mcg/dml2_mcg_factory.c
-@@ -15,7 +15,7 @@ bool dml2_mcg_create(enum dml2_project_id project_id, struct dml2_mcg_instance *
- {
- 	bool result = false;
- 
--	if (out == 0)
-+	if (!out)
- 		return false;
- 
- 	memset(out, 0, sizeof(struct dml2_mcg_instance));
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_factory.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_factory.c
-index 7ed0242a4b33..55d2464365d0 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_factory.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_factory.c
-@@ -26,7 +26,7 @@ bool dml2_pmo_create(enum dml2_project_id project_id, struct dml2_pmo_instance *
- {
- 	bool result = false;
- 
--	if (out == 0)
-+	if (!out)
- 		return false;
- 
- 	memset(out, 0, sizeof(struct dml2_pmo_instance));
+  DP-carrier -> DP-port -> DP-to-eDP converter from Aliexpress -> eDP panel
+
+which produces a nice 1080p image, but it seems Quentin's experience was
+not as nice, as he reported in v2 [1] that his two test monitors produced
+dfferent tints, but not real output with:
+
+green tint on a Iiyama ProLite XU2294HSU and purple tint on a Dell P2319H
+
+
+changes in v3:
+- rebase on top of 6.17-rc1
+- still should wait on the analogix bridge support
+
+changes in v2:
+- collect Ack/Review for binding
+- address Quentin's comments
+  - sorting in Makefile and dp-connector properties
+  - ethernet alias
+  - drop data-lanes comment
+
+[0] https://lore.kernel.org/dri-devel/20250709070139.3130635-1-damon.ding@rock-chips.com/
+[0] https://lore.kernel.org/linux-rockchip/0582b7bc-e5b2-4b5e-821e-8d2c4301579f@cherry.de
+Heiko Stuebner (2):
+  dt-bindings: arm: rockchip: add RK3588 DP carrier from Theobroma
+    Systems
+  arm64: dts: rockchip: add RK3588 DP carrier from Theobroma Systems
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   6 +-
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../rk3588-tiger-displayport-carrier.dts      | 109 ++++++++++++++++++
+ 3 files changed, 114 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
+
 -- 
-2.34.1
+2.47.2
 
 
