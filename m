@@ -1,173 +1,146 @@
-Return-Path: <linux-kernel+bounces-764423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067BFB222EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:23:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89236B222DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98D41AA7C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:19:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD1A2A3B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B492E92D7;
-	Tue, 12 Aug 2025 09:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6962E974A;
+	Tue, 12 Aug 2025 09:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lV4eq8Yz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="AOHW2uep"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4111C5D46;
-	Tue, 12 Aug 2025 09:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990258; cv=none; b=UxKKZ5VixcQVlPV7uaOcDzJ/4HrgVyC10hF7CCibhNmf4+p4ebyMdKbXVqaKDIq05L4UcwKv5zargwCCt2jeHQMohTVzjCrrljWYixIxdTnnyxusctwxtDUbP2rfz4ORqoMAi5IamX2ppc3M+yNgBo9hgScq+rJ3lCDqOIuehJ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990258; c=relaxed/simple;
-	bh=l+JPmVSGkKQNgqZW0QHP1wnt+nmYWZ0r+uotxr/gTtg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hGCkrEtCUO0QpExteV3/GYxR7XRzppne+ENOJUVTpBJ7/lz1J0XHQeRvwpdeS9l6eBH3d/HKw7jfok/hRBI3jrEm18RTMRAexsF2gDhDvPr8Nf8wyOyA+cfyjAX1yoXFv4Etdoj6I4CBdlza1OIqJz066fXm7j1QNc6QHG4s+vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lV4eq8Yz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C7FhQh008171;
-	Tue, 12 Aug 2025 09:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=iyvIoy5EeZGmERvcNtqAnD
-	yjt7Kpu0kI1S5BLe32aXY=; b=lV4eq8YziAKVw/fUM4WBmrihYxmoRGo74IOT9T
-	9CdNrMAPjyGTtXkc8kKiLKARCkUN7zuCO2lSseYn0ePwjyOYzlJbXXLI9altO0Rw
-	+1WhLE7KMaKXxu/IIU5QWaQQXi7updx3VuPemzfPETfWVBUe1+h2urVMrDPRNFZN
-	dG7Kz5wRUskFCporkoQ/1B8aB64Q64WhjPmh3V4CcRrD+v+Nt8tQNpuUNDZuW9Tu
-	Y5lAXQTkDQOTVxkqfZjHIzaKKCuEuLzxHViGv5pDmlGlMtLHClPO5l4efRCC+eKd
-	L9Q0QLAWYAqLJCUuQVQczmrDrt7O5lNdTleAqjGL72Ed2PLA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffhjkchf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:17:31 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C9HUrm026331
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:17:30 GMT
-Received: from hu-pkambar-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 12 Aug 2025 02:17:28 -0700
-From: Palash Kambar <quic_pkambar@quicinc.com>
-To: <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
-        <martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        Palash Kambar
-	<quic_pkambar@quicinc.com>
-Subject: [PATCH v3] ufs: ufs-qcom: Align programming sequence of Shared ICE for  UFS controller v5
-Date: Tue, 12 Aug 2025 14:47:14 +0530
-Message-ID: <20250812091714.774868-1-quic_pkambar@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3D2E8DFA;
+	Tue, 12 Aug 2025 09:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754990295; cv=pass; b=m2ooUEaUBebLvOgAFlXvOntv8C/nWb5sLzogz9ON+bDV4AUDCGh60saUS7t1u1T5psSwARvEZLlpe53iDN9hItYE166hsXaxyJuVUROwtf0QYKoUQm7R+FYI19OKC3kvxRDOfMYNqS2vCD5IlQAgvut+CHLZlCKo6roNwtRij20=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754990295; c=relaxed/simple;
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IWG66FAWxZPxUgv8knZ91bJJoafCpfHP8tcBkC0WmgxjgRpuIyYD9+Ks6+SUyRaKs+lXdTcIv/n3W9K8N9bQwcyEdqQH/lzrZXp9A4fnPu9GebV3mI3lieLTRvmpS7HCRloN/cfA+LFk8Hd/0EHvh8gijELTJ0aHfPp4X6+9reU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=AOHW2uep; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1754990274; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VGoHwuknbXdy2ikBZ1vGU0AWjSXzzg0mbeI+XAGjv3lI6bjWhYJe+W6PZpzvf8HkjK3FEkG0hbzKbj9V3ywie1c1s9+mF/rWWDDltZbfjZJIUwCWE+bS8HX80iAfnyPcTBj6Xx104uWUbmV+Oa3ioxqF0K7pS3vibr9TIfMQdq8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754990274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=; 
+	b=iROwg3CKcXXrofcmrd3Pz9aX8GMpSIOt+9JzonuH/ivzcEkUiZeTrHVWLhHOhh6ptgtWQc9DD+5D6dnEQCIKh32AZIYC4RI/zLvfmvFRFXEBgR1Pkd2lpOcBsGt1pX+Vn/TsJAiPd8JgpTzVH2WUmMAAo/FR/21H+8uYHOofBkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990274;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
+	b=AOHW2uepCwbOHaGmfXrIOS7xN5xZ7vXbAwjyRc/gFEbvSb0cBIkHga3zU+BlcgKz
+	3BvH+dgbFSBKdx7pivNHiOOdj2vL57zp2EjeRssbmNuOWeT14zFq6PzBkLGjmT27dsH
+	N2vailR+WOvTebM2bc0/ovf0YYJF4pKgh5PKfr2aVhP9/p31pZhjtpJw7utukub7JaO
+	owUadTOQY0NQwwKH/F8eQM3sujQxBj1euXhd7A+7RkKjYuPbx0xiYfunfRa9qkkf3Ap
+	xMKkSAgQ6bbvHvxwCrIK5dMfxFeP7rFq8PZYmXiIPDEx6mtPV5UWSr90dbaV97z+rZK
+	e1i/ZXUZ9A==
+Received: by mx.zohomail.com with SMTPS id 1754990271194111.10728242341895;
+	Tue, 12 Aug 2025 02:17:51 -0700 (PDT)
+Message-ID: <6d21521067409c483a8d7af39e43a6d579c98dc4.camel@icenowy.me>
+Subject: Re: [PATCH 4/4 FIXED] clk: thead: th1520-ap: fix parent of padctrl0
+ clock
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 17:17:45 +0800
+In-Reply-To: <20250812060433.1979587-1-uwu@icenowy.me>
+References: <20250812054258.1968351-5-uwu@icenowy.me>
+	 <20250812060433.1979587-1-uwu@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NCBTYWx0ZWRfX4FjLjF4dWYWU
- 6S/HLygM0xSiydTRfPCINc4a91DPxUzwsUWO0gkv7YECR2qvX8rgk5iCZzVqIQy219Js6WbPe8s
- bzI/87dP3VkMeFZzePEAhNzOEGsh/sH6aLaRjNUhCtAK8LuC6pdKTPl9X2bQ1xDpKMutGv4qz1B
- 7GNi2OBPVl0Rs2vVMX97fkvdiDNkapZA0QipWoOJp2QQgfFf4p+KEuvLw9+dZEdJjyRwZcBD9h5
- VaiuY3KKxeB98ykz7aYikR5yowP46CYa2P+Sdl314qNEoOFYnIQnxnZ8VFcswTdsV+SMTwXneeC
- pDJxrJD7yFeXi49ktlfdRDHHqEv9ZWWNTikzxtbhI3kL5Ko5t5Jqptkyt65N7JV2nEHfJzIaERu
- 4BUMkgjp
-X-Proofpoint-GUID: 7WUXzIBLcuq0cE-PQirWhe3mnPo-VcFU
-X-Authority-Analysis: v=2.4 cv=TJFFS0la c=1 sm=1 tr=0 ts=689b06ac cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=VXgbpkJe1Aw4WB-MpbAA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 7WUXzIBLcuq0cE-PQirWhe3mnPo-VcFU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 clxscore=1015 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110074
+X-ZohoMailClient: External
 
-Disable of AES core in Shared ICE is not supported during power
-collapse for UFS Host Controller V5.0.
+=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 14:04 +0800=EF=BC=
+=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> The padctrl0 clock seems to be a child of the perisys_apb4_hclk
+> clock,
+> gating the later makes padctrl0 registers stuck.
+>=20
+> Fix this relationship.
+>=20
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+> This is the consequence of fixing 3/4, because these two patches are
+> at
+> nearly the same position, and unfortunately get dependent by the
+> algorithm of diff.
+>=20
+> Ignore the original 4/4 and look at this too.
+>=20
+> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 7 ++++++-
+> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c
+> b/drivers/clk/thead/clk-th1520-ap.c
+> index 75ea1705cc08f..0ecedac50d6cb 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -917,13 +917,18 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK,
+> perisys_apb3_hclk, "perisys-apb3-hclk", p
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(11), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-
+> apb4-hclk", perisys_ahb_hclk_pd,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(12), 0);
+> +
+> +static const struct clk_parent_data perisys_apb4_hclk_pd[] =3D {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .hw =3D &perisys_apb4_hclk.c=
+ommon.hw },
+> +};
+> +
+> =C2=A0static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
+> 0x1c8, BIT(5), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
+> 0x1e0, BIT(13), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
+> emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+> =C2=A0static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
+> 0x204, BIT(26), 0);
+> =C2=A0static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
+> perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+> =C2=A0static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
+> perisys_apb_pclk_pd, 0x204, BIT(23), 0);
+> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> perisys_apb_pclk_pd, 0x204, BIT(22), 0);
+> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> perisys_apb4_hclk_pd, 0x204, BIT(22), 0);
 
-Hence follow below steps to reset the ICE upon exiting power collapse
-and align with Hw programming guide.
+Oops looks like this does not work and orphans the clock...
 
-a. Write 0x18 to UFS_MEM_ICE_CFG
-b. Write 0x0 to UFS_MEM_ICE_CFG
-
-Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
-
----
-changes from V1:
-1) Incorporated feedback from Konrad and Manivannan by adding a delay
-   between ICE reset assertion and deassertion.
-2) Removed magic numbers and replaced them with meaningful constants.
-
-changes from V2:
-1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
----
- drivers/ufs/host/ufs-qcom.c | 14 ++++++++++++++
- drivers/ufs/host/ufs-qcom.h |  2 +-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 444a09265ded..60bf5e60b747 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -38,6 +38,9 @@
- #define DEEMPHASIS_3_5_dB	0x04
- #define NO_DEEMPHASIS		0x0
- 
-+#define UFS_ICE_RESET_ASSERT_VALUE	0x18
-+#define UFS_ICE_RESET_DEASSERT_VALUE	0x00
-+
- enum {
- 	TSTBUS_UAWM,
- 	TSTBUS_UARM,
-@@ -756,6 +759,17 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	if (err)
- 		return err;
- 
-+	if ((!ufs_qcom_is_link_active(hba)) &&
-+	    host->hw_ver.major == 5 &&
-+	    host->hw_ver.minor == 0 &&
-+	    host->hw_ver.step == 0) {
-+		ufshcd_writel(hba, UFS_ICE_RESET_ASSERT_VALUE, UFS_MEM_ICE);
-+		ufshcd_readl(hba, UFS_MEM_ICE);
-+		usleep_range(50, 100);
-+		ufshcd_writel(hba, UFS_ICE_RESET_DEASSERT_VALUE, UFS_MEM_ICE);
-+		ufshcd_readl(hba, UFS_MEM_ICE);
-+	}
-+
- 	return ufs_qcom_ice_resume(host);
- }
- 
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index 6840b7526cf5..cc1324ce05c7 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -60,7 +60,7 @@ enum {
- 	UFS_AH8_CFG				= 0xFC,
- 
- 	UFS_RD_REG_MCQ				= 0xD00,
--
-+	UFS_MEM_ICE				= 0x2600,
- 	REG_UFS_MEM_ICE_CONFIG			= 0x260C,
- 	REG_UFS_MEM_ICE_NUM_CORE		= 0x2664,
- 
--- 
-2.34.1
+> =C2=A0static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
+> axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
+> =C2=A0static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
+> peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
+> =C2=A0static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
+> 0x204, BIT(19), 0);
 
 
