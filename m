@@ -1,473 +1,291 @@
-Return-Path: <linux-kernel+bounces-765250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37373B22DB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86891B22DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D986832FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAAF91883521
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAF52FA0D9;
-	Tue, 12 Aug 2025 16:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A262FA0C4;
+	Tue, 12 Aug 2025 16:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gwk1t/QB"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XK5e7/n/"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359A52F90D0;
-	Tue, 12 Aug 2025 16:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA1A2F8BFE;
+	Tue, 12 Aug 2025 16:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755015921; cv=none; b=ceJrFWC3gWGazjPgFSgs6AToULYsYjiI6dyugg/UEdVB1cbS8wDJBOSMipV/qGUypKHyJ/qswnRlZBmasODVBplQGhLNNFkziSRZB2vMEQOv2fkrDeL1YY4HD1qxzLGRhIfvwyU5GrIZAgJ34+PtC8PzunuFaro0pzVvOiAJwts=
+	t=1755015977; cv=none; b=bwWZcpDvbtvqlxf2P8R1sy7a6YvpLAgz3FyTbH01DrohFLEvY9vIxHMut2A+3t1nMARRnSo2lzu3JWKK/ecKrZKU+kBGByCHOh2R4bb4DMBD0xE957rWSg+icj1Rkz/GFSys8G/phoUv6vU9CmxykHU6Kiaq4na1+Lzio4DMY/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755015921; c=relaxed/simple;
-	bh=DDBon0ScIikXiRTcEln0ruENPAfY187owsdbxWZxE7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NZpMzV0/ANxrUYu4fNnJV9x3uXCoCpBJZjAwvb2R4aRAyp8v0G8LUuLlGE8sL34dUncfoqNSlN5kVzEmdcB9AKT9/pPam2hwFV7mqMb8Xo1TSmKnHA94un0SmDveRkfEYNCg6kT7MlDB3WhxGiwzka0gRRPGGu3VDBlnjuCrrmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gwk1t/QB; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso37882745e9.3;
-        Tue, 12 Aug 2025 09:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755015917; x=1755620717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l54bXCSQ2N1WCwc3yA5CAnPI3s4L8oTQr7q8YqSeHxE=;
-        b=Gwk1t/QBYmjZKmCWmJJAkimCM8CT5GLAgto6UvDWSupg1sO2Stf6ZD/j1f3emyIv5w
-         EpgwHZV9V3u86oMpvbAivzUIzQKZ5nYICn3LVYFREAzlB13zJjMJaIjX44pbU1i/2pyk
-         VXp5dNbe2Q7B2PLrW+4lM/siiPPOW0TO0G0HgQr7tn7+ddCk8152JVl6DPKoth7XyeDG
-         O8WKrqu1wTXjLVE67x41HuFMBE2iwIPrPkl93OK7pkI7a/N6LgXtmnwo6N1/ZPTY3klu
-         UWb/ojs/F1NJ5b7u/aVbypj9f3qyxSy6SoEMNrqL66tueva70vRxMkcHuGYVJRnE+gwM
-         tnMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755015917; x=1755620717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l54bXCSQ2N1WCwc3yA5CAnPI3s4L8oTQr7q8YqSeHxE=;
-        b=ZymYDc+8wMjGYoURlYa/fI1877iKnjWrMarWxqQLzTpdw6U6+0epA79xJySjTNik8a
-         7PdDceHICYe0IIWmpEsSZfsAnNo8cP2ZGixctnMrguus032NZL9plq96CODJ5oWbuM/X
-         1SnbgiClYM6QxLZ9HeAI0ZkUSXYonA3p9TatwQBVqApnmZeQ+PPI1CgeZYKcIGKb/Co6
-         KO7M9Mt0S+AiMjow/L/R5rF3z3lmG/saS195gCnumM6SfVsdVjVIY9mFfHnX/IjpC9f9
-         TyCI92iwRE2KegZLPgSQHAp2jA8hkIzhBytYkABfbytZ5Sg3wUFO8GxlU08YNtYr5r2N
-         kxwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHpRwMrO0eWAE1EAspruYm+0tBA0Xz2+acqF7om77NLlH+YyfBc1XnM26P1LIYhN9TCWTHEu+CNfKhcbAo@vger.kernel.org, AJvYcCWNI2mUY423LcXeIYSO2Fo0U6HuotFnTi+Q9Oq4bscLhGdFOKhvOjFgvZ+jKuIkf0yJH9wvWLx4GuuK@vger.kernel.org, AJvYcCX+SFZIW6cjxDqX2vpkrSPXnLTkhE7orpxmT+ziWtVpkbDn5xJVmF4/YlbQ1EVj999xiffAnN9xa5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4ZGBPL6g4Y5S3dLavi3G/HhgF+MnzXVwhfsGOsuJlUEpXe1da
-	akXCO5xs0vi15piRJTZ2HOUZgZToQUQaZKCuyBxbnDIewMTiFJ3oVRgM7a1SqNvj9GJqc7tX0u8
-	LE0f0FgV7cjUUSTvoX6rE8WMFFCMKRQQ=
-X-Gm-Gg: ASbGncvZzJEOJyPmiIMdr5gAjFJhV7wrMgCVsquGxxYv/3TsuKefNUWTf13L0M+DpGE
-	D+8VkPmW8ak4OTN9LDUsSaouR7i92t/Fh74pGM4Wii/TdeowGDxwPhLR9quV5tFbQHufxOH0Vxg
-	WBfWr1S4+4ruUntPGCtmdx3D/5nOe4Qp93Za98sTaqy7Wws+CIK/cTDKPMfBRVHAYnF5IZzADnW
-	WmwKkBAmA==
-X-Google-Smtp-Source: AGHT+IEO/ebtLytO3+gzax+bQ48WGSY9jQ2PI+BH3b16Ceok+c7sqVLxabYPw0NXmuXDwNr7yF9uSwRiesUbNbf7dL4=
-X-Received: by 2002:a05:600c:4692:b0:456:475b:7af6 with SMTP id
- 5b1f17b1804b1-45a15b0bf05mr4355835e9.7.1755015917114; Tue, 12 Aug 2025
- 09:25:17 -0700 (PDT)
+	s=arc-20240116; t=1755015977; c=relaxed/simple;
+	bh=mERfh/S4RUDhW5Z1CFSz/aH4PfqzLX4p+kfBZfUrQrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JzSvtRZoK3TqhJ+MSRTlLBYKb9cphmWmyv4S/sAAfhZ3sI02rncL9zq6Fy02ru58xpe7keHtUxULG4SM8hU07URHWYmL49SqbYoJRyEF+1EsosMNuk0T2S2jELd+iASv7qX8T3gzvRa6TJTqKh0tf1xBJ71vCJPqssuXuhyE1TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XK5e7/n/; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57CGPNAj1947279;
+	Tue, 12 Aug 2025 11:25:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755015923;
+	bh=0svE4w2w2DMu3Hngj9bv0Qop7RXmrRjLkTtIJIaYnvQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XK5e7/n/Sl6c6Y0Jy8DL+HixLNzbUwJ1hXPvzRo6xQ+8olG/dqg25LkKflPBVfN9T
+	 9lzlGxBoX0WI5lbjJJTq/g0RrvAQx6ghhJnsVkBsHnlpTWyPfssCK6F6L2zTe4o1pV
+	 Wfa4ocY4q4f5qlXUrxK48G24bILqV7oauRTFTOwA=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57CGPMXw3939979
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 12 Aug 2025 11:25:22 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 12
+ Aug 2025 11:25:22 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 12 Aug 2025 11:25:22 -0500
+Received: from [10.249.130.61] ([10.249.130.61])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57CGPBC3631375;
+	Tue, 12 Aug 2025 11:25:12 -0500
+Message-ID: <d77189ec-b1ee-4718-9212-c7208da40814@ti.com>
+Date: Tue, 12 Aug 2025 21:55:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811173626.1878783-1-yeoreum.yun@arm.com> <20250811173626.1878783-2-yeoreum.yun@arm.com>
-In-Reply-To: <20250811173626.1878783-2-yeoreum.yun@arm.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 12 Aug 2025 18:25:03 +0200
-X-Gm-Features: Ac12FXyXZGDJqhGX1iCy4SWWpZA7ZwLA8x1I9FgM3lq8ZOVHVmywuvVz0HAZZV0
-Message-ID: <CA+fCnZe6F9dn8qGbNsgWXkQ_3e8oSQ80sd3X=aHFa-AUy_7kjg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kasan/hw-tags: introduce store only mode
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
-	vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com, 
-	will@kernel.org, akpm@linux-foundation.org, scott@os.amperecomputing.com, 
-	jhubbard@nvidia.com, pankaj.gupta@amd.com, leitao@debian.org, 
-	kaleshsingh@google.com, maz@kernel.org, broonie@kernel.org, 
-	oliver.upton@linux.dev, james.morse@arm.com, ardb@kernel.org, 
-	hardevsinh.palaniya@siliconsignals.io, david@redhat.com, 
-	yang@os.amperecomputing.com, kasan-dev@googlegroups.com, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] net: rnpgbe: Add n500/n210 chip support
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <danishanwar@ti.com>, <lee@trager.us>, <gongfan1@huawei.com>,
+        <lorenzo@kernel.org>, <geert+renesas@glider.be>,
+        <Parthiban.Veerasooran@microchip.com>, <lukas.bulwahn@redhat.com>,
+        <alexanderduyck@fb.com>, <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-3-dong100@mucse.com>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <20250812093937.882045-3-dong100@mucse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Aug 11, 2025 at 7:36=E2=80=AFPM Yeoreum Yun <yeoreum.yun@arm.com> w=
-rote:
->
-> Since Armv8.9, FEATURE_MTE_STORE_ONLY feature is introduced to restrict
-> raise of tag check fault on store operation only.
 
-To clarify: this feature is independent on the sync/async/asymm modes?
-So any mode can be used together with FEATURE_MTE_STORE_ONLY?
 
-> Introcude KASAN store only mode based on this feature.
->
-> KASAN store only mode restricts KASAN checks operation for store only and
-> omits the checks for fetch/read operation when accessing memory.
-> So it might be used not only debugging enviroment but also normal
-> enviroment to check memory safty.
->
-> This features can be controlled with "kasan.stonly" arguments.
-> When "kasan.stonly=3Don", KASAN checks store only mode otherwise
-> KASAN checks all operations.
-
-"stonly" looks cryptic, how about "kasan.store_only"?
-
-Also, are there any existing/planned modes/extensions of the feature?
-E.g. read only? Knowing this will allow to better plan the
-command-line parameter format.
-
->
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+On 8/12/2025 3:09 PM, Dong Yibo wrote:
+> Initialize n500/n210 chip bar resource map and
+> dma, eth, mbx ... info for future use.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
 > ---
->  Documentation/dev-tools/kasan.rst  |  3 ++
->  arch/arm64/include/asm/memory.h    |  1 +
->  arch/arm64/include/asm/mte-kasan.h |  6 +++
->  arch/arm64/kernel/cpufeature.c     |  6 +++
->  arch/arm64/kernel/mte.c            | 14 ++++++
->  include/linux/kasan.h              |  2 +
->  mm/kasan/hw_tags.c                 | 76 +++++++++++++++++++++++++++++-
->  mm/kasan/kasan.h                   | 10 ++++
->  8 files changed, 116 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/=
-kasan.rst
-> index 0a1418ab72fd..7567a2ca0e39 100644
-> --- a/Documentation/dev-tools/kasan.rst
-> +++ b/Documentation/dev-tools/kasan.rst
-> @@ -163,6 +163,9 @@ disabling KASAN altogether or controlling its feature=
-s:
->    This parameter is intended to allow sampling only large page_alloc
->    allocations, which is the biggest source of the performance overhead.
->
-> +- ``kasan.stonly=3Doff`` or ``kasan.stonly=3Don`` controls whether KASAN=
- checks
-> +  store operation only or all operation.
-
-How about:
-
-``kasan.store_only=3Doff`` or ``=3Don`` controls whether KASAN checks only
-the store (write) accesses only or all accesses (default: ``off``).
-
-And let's put this next to kasan.mode, as the new parameter is related.
-
+>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  60 +++++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  88 ++++++++++++++
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  12 ++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 115 ++++++++++++++++++
+>  5 files changed, 277 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> 
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> index 9df536f0d04c..42c359f459d9 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> @@ -5,4 +5,5 @@
+>  #
+>  
+>  obj-$(CONFIG_MGBE) += rnpgbe.o
+> -rnpgbe-objs := rnpgbe_main.o
+> +rnpgbe-objs := rnpgbe_main.o\
+> +	       rnpgbe_chip.o
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 23c84454e7c7..0dd3d3cb2a4d 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -4,18 +4,78 @@
+>  #ifndef _RNPGBE_H
+>  #define _RNPGBE_H
+>  
+> +#include <linux/types.h>
 > +
->  Error reports
->  ~~~~~~~~~~~~~
->
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/mem=
-ory.h
-> index 5213248e081b..9d8c72c9c91f 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -308,6 +308,7 @@ static inline const void *__tag_set(const void *addr,=
- u8 tag)
->  #define arch_enable_tag_checks_sync()          mte_enable_kernel_sync()
->  #define arch_enable_tag_checks_async()         mte_enable_kernel_async()
->  #define arch_enable_tag_checks_asymm()         mte_enable_kernel_asymm()
-> +#define arch_enable_tag_checks_stonly()        mte_enable_kernel_stonly(=
-)
->  #define arch_suppress_tag_checks_start()       mte_enable_tco()
->  #define arch_suppress_tag_checks_stop()                mte_disable_tco()
->  #define arch_force_async_tag_fault()           mte_check_tfsr_exit()
-> diff --git a/arch/arm64/include/asm/mte-kasan.h b/arch/arm64/include/asm/=
-mte-kasan.h
-> index 2e98028c1965..d75908ed9d0f 100644
-> --- a/arch/arm64/include/asm/mte-kasan.h
-> +++ b/arch/arm64/include/asm/mte-kasan.h
-> @@ -200,6 +200,7 @@ static inline void mte_set_mem_tag_range(void *addr, =
-size_t size, u8 tag,
->  void mte_enable_kernel_sync(void);
->  void mte_enable_kernel_async(void);
->  void mte_enable_kernel_asymm(void);
-> +int mte_enable_kernel_stonly(void);
->
->  #else /* CONFIG_ARM64_MTE */
->
-> @@ -251,6 +252,11 @@ static inline void mte_enable_kernel_asymm(void)
->  {
->  }
->
-> +static inline int mte_enable_kenrel_stonly(void)
-> +{
-> +       return -EINVAL;
-> +}
+> +extern const struct rnpgbe_info rnpgbe_n500_info;
+> +extern const struct rnpgbe_info rnpgbe_n210_info;
+> +extern const struct rnpgbe_info rnpgbe_n210L_info;
 > +
->  #endif /* CONFIG_ARM64_MTE */
->
->  #endif /* __ASSEMBLY__ */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeatur=
-e.c
-> index 9ad065f15f1d..fdc510fe0187 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2404,6 +2404,11 @@ static void cpu_enable_mte(struct arm64_cpu_capabi=
-lities const *cap)
->
->         kasan_init_hw_tags_cpu();
->  }
-> +
-> +static void cpu_enable_mte_stonly(struct arm64_cpu_capabilities const *c=
-ap)
-> +{
-> +       kasan_late_init_hw_tags_cpu();
-> +}
->  #endif /* CONFIG_ARM64_MTE */
->
->  static void user_feature_fixup(void)
-> @@ -2922,6 +2927,7 @@ static const struct arm64_cpu_capabilities arm64_fe=
-atures[] =3D {
->                 .capability =3D ARM64_MTE_STORE_ONLY,
->                 .type =3D ARM64_CPUCAP_SYSTEM_FEATURE,
->                 .matches =3D has_cpuid_feature,
-> +               .cpu_enable =3D cpu_enable_mte_stonly,
->                 ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTESTOREONLY, IMP)
->         },
->  #endif /* CONFIG_ARM64_MTE */
-> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-> index e5e773844889..a1cb2a8a79a1 100644
-> --- a/arch/arm64/kernel/mte.c
-> +++ b/arch/arm64/kernel/mte.c
-> @@ -157,6 +157,20 @@ void mte_enable_kernel_asymm(void)
->                 mte_enable_kernel_sync();
->         }
->  }
-> +
-> +int mte_enable_kernel_stonly(void)
-> +{
-> +       if (!cpus_have_cap(ARM64_MTE_STORE_ONLY))
-> +               return -EINVAL;
-> +
-> +       sysreg_clear_set(sctlr_el1, SCTLR_EL1_TCSO_MASK,
-> +                        SYS_FIELD_PREP(SCTLR_EL1, TCSO, 1));
-> +       isb();
-> +
-> +       pr_info_once("MTE: enabled stonly mode at EL1\n");
-> +
-> +       return 0;
-> +}
->  #endif
->
->  #ifdef CONFIG_KASAN_HW_TAGS
-> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> index 890011071f2b..28951b29c593 100644
-> --- a/include/linux/kasan.h
-> +++ b/include/linux/kasan.h
-> @@ -552,9 +552,11 @@ static inline void kasan_init_sw_tags(void) { }
->  #ifdef CONFIG_KASAN_HW_TAGS
->  void kasan_init_hw_tags_cpu(void);
->  void __init kasan_init_hw_tags(void);
-> +void kasan_late_init_hw_tags_cpu(void);
-
-Why do we need a separate late init function? Can we not enable
-store-only at the same place where we enable async/asymm?
-
-
->  #else
->  static inline void kasan_init_hw_tags_cpu(void) { }
->  static inline void kasan_init_hw_tags(void) { }
-> +static inline void kasan_late_init_hw_tags_cpu(void) { }
->  #endif
->
->  #ifdef CONFIG_KASAN_VMALLOC
-> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
-> index 9a6927394b54..2caa6fe5ed47 100644
-> --- a/mm/kasan/hw_tags.c
-> +++ b/mm/kasan/hw_tags.c
-> @@ -41,9 +41,16 @@ enum kasan_arg_vmalloc {
->         KASAN_ARG_VMALLOC_ON,
+>  enum rnpgbe_boards {
+>  	board_n500,
+>  	board_n210,
+>  	board_n210L,
 >  };
->
-> +enum kasan_arg_stonly {
-> +       KASAN_ARG_STONLY_DEFAULT,
-> +       KASAN_ARG_STONLY_OFF,
-> +       KASAN_ARG_STONLY_ON,
+>  
+> +enum rnpgbe_hw_type {
+> +	rnpgbe_hw_n500 = 0,
+> +	rnpgbe_hw_n210,
+> +	rnpgbe_hw_n210L,
+> +	rnpgbe_hw_unknow
+> +};
+
+
+The enum value name should be "rnpgbe_hw_unknown" not "rnpgbe_hw_unknow"
+(missing 'n').
+
+> +
+> +struct mucse_dma_info {
+> +	void __iomem *dma_base_addr;
+> +	void __iomem *dma_ring_addr;
+> +	void *back;
+> +	u32 dma_version;
 > +};
 > +
->  static enum kasan_arg kasan_arg __ro_after_init;
->  static enum kasan_arg_mode kasan_arg_mode __ro_after_init;
->  static enum kasan_arg_vmalloc kasan_arg_vmalloc __initdata;
-> +static enum kasan_arg_stonly kasan_arg_stonly __ro_after_init;
->
->  /*
->   * Whether KASAN is enabled at all.
-> @@ -67,6 +74,9 @@ DEFINE_STATIC_KEY_FALSE(kasan_flag_vmalloc);
->  #endif
->  EXPORT_SYMBOL_GPL(kasan_flag_vmalloc);
->
-> +DEFINE_STATIC_KEY_FALSE(kasan_flag_stonly);
-> +EXPORT_SYMBOL_GPL(kasan_flag_stonly);
+> +struct mucse_eth_info {
+> +	void __iomem *eth_base_addr;
+> +	void *back;
+> +};
 > +
->  #define PAGE_ALLOC_SAMPLE_DEFAULT      1
->  #define PAGE_ALLOC_SAMPLE_ORDER_DEFAULT        3
->
-> @@ -141,6 +151,23 @@ static int __init early_kasan_flag_vmalloc(char *arg=
-)
->  }
->  early_param("kasan.vmalloc", early_kasan_flag_vmalloc);
->
-> +/* kasan.stonly=3Doff/on */
-> +static int __init early_kasan_flag_stonly(char *arg)
+> +struct mucse_mac_info {
+> +	void __iomem *mac_addr;
+> +	void *back;
+> +};
+> +
+> +struct mucse_mbx_info {
+> +	/* fw <--> pf mbx */
+> +	u32 fw_pf_shm_base;
+> +	u32 pf2fw_mbox_ctrl;
+> +	u32 pf2fw_mbox_mask;
+> +	u32 fw_pf_mbox_mask;
+> +	u32 fw2pf_mbox_vec;
+> +};
+> +
+> +struct mucse_hw {
+> +	void *back;
+> +	void __iomem *hw_addr;
+> +	void __iomem *ring_msix_base;
+> +	struct pci_dev *pdev;
+> +	enum rnpgbe_hw_type hw_type;
+> +	struct mucse_dma_info dma;
+> +	struct mucse_eth_info eth;
+> +	struct mucse_mac_info mac;
+> +	struct mucse_mbx_info mbx;
+> +	u32 driver_version;
+> +	u16 usecstocount;
+> +};
+> +
+>  struct mucse {
+>  	struct net_device *netdev;
+>  	struct pci_dev *pdev;
+> +	struct mucse_hw hw;
+>  	u16 bd_number;
+>  };
+>  
+> +struct rnpgbe_info {
+> +	int total_queue_pair_cnts;
+> +	enum rnpgbe_hw_type hw_type;
+> +	void (*init)(struct mucse_hw *hw);
+> +};
+> +
+>  /* Device IDs */
+>  #define PCI_VENDOR_ID_MUCSE 0x8848
+>  #define PCI_DEVICE_ID_N500_QUAD_PORT 0x8308
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> new file mode 100644
+> index 000000000000..20ec67c9391e
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> +
+> +#include "rnpgbe.h"
+> +#include "rnpgbe_hw.h"
+> +
+> +/**
+> + * rnpgbe_init_common - Setup common attribute
+> + * @hw: hw information structure
+> + **/
+> +static void rnpgbe_init_common(struct mucse_hw *hw)
 > +{
-> +       if (!arg)
-> +               return -EINVAL;
+> +	struct mucse_dma_info *dma = &hw->dma;
+> +	struct mucse_eth_info *eth = &hw->eth;
+> +	struct mucse_mac_info *mac = &hw->mac;
 > +
-> +       if (!strcmp(arg, "off"))
-> +               kasan_arg_stonly =3D KASAN_ARG_STONLY_OFF;
-> +       else if (!strcmp(arg, "on"))
-> +               kasan_arg_stonly =3D KASAN_ARG_STONLY_ON;
-> +       else
-> +               return -EINVAL;
+> +	dma->dma_base_addr = hw->hw_addr;
+> +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
+> +	dma->back = hw;
 > +
-> +       return 0;
-> +}
-> +early_param("kasan.stonly", early_kasan_flag_stonly);
+> +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
+> +	eth->back = hw;
 > +
->  static inline const char *kasan_mode_info(void)
->  {
->         if (kasan_mode =3D=3D KASAN_MODE_ASYNC)
-> @@ -219,6 +246,20 @@ void kasan_init_hw_tags_cpu(void)
->         kasan_enable_hw_tags();
->  }
->
-> +/*
-> + * kasan_late_init_hw_tags_cpu_post() is called for each CPU after
-> + * all cpus are bring-up at boot.
-> + * Not marked as __init as a CPU can be hot-plugged after boot.
-> + */
-> +void kasan_late_init_hw_tags_cpu(void)
-> +{
-> +       /*
-> +        * Enable stonly mode only when explicitly requested through the =
-command line.
-> +        * If system doesn't support, kasan checks all operation.
-> +        */
-> +       kasan_enable_stonly();
-> +}
-> +
->  /* kasan_init_hw_tags() is called once on boot CPU. */
->  void __init kasan_init_hw_tags(void)
->  {
-> @@ -257,15 +298,28 @@ void __init kasan_init_hw_tags(void)
->                 break;
->         }
->
-> +       switch (kasan_arg_stonly) {
-> +       case KASAN_ARG_STONLY_DEFAULT:
-> +               /* Default is specified by kasan_flag_stonly definition. =
-*/
-> +               break;
-> +       case KASAN_ARG_STONLY_OFF:
-> +               static_branch_disable(&kasan_flag_stonly);
-> +               break;
-> +       case KASAN_ARG_STONLY_ON:
-> +               static_branch_enable(&kasan_flag_stonly);
-> +               break;
-> +       }
-> +
->         kasan_init_tags();
->
->         /* KASAN is now initialized, enable it. */
->         static_branch_enable(&kasan_flag_enabled);
->
-> -       pr_info("KernelAddressSanitizer initialized (hw-tags, mode=3D%s, =
-vmalloc=3D%s, stacktrace=3D%s)\n",
-> +       pr_info("KernelAddressSanitizer initialized (hw-tags, mode=3D%s, =
-vmalloc=3D%s, stacktrace=3D%s stonly=3D%s\n",
->                 kasan_mode_info(),
->                 str_on_off(kasan_vmalloc_enabled()),
-> -               str_on_off(kasan_stack_collection_enabled()));
-> +               str_on_off(kasan_stack_collection_enabled()),
-> +               str_on_off(kasan_stonly_enabled()));
->  }
->
->  #ifdef CONFIG_KASAN_VMALLOC
-> @@ -394,6 +448,22 @@ void kasan_enable_hw_tags(void)
->                 hw_enable_tag_checks_sync();
->  }
->
-> +void kasan_enable_stonly(void)
-> +{
-> +       if (kasan_arg_stonly =3D=3D KASAN_ARG_STONLY_ON) {
-> +               if (hw_enable_tag_checks_stonly()) {
-> +                       static_branch_disable(&kasan_flag_stonly);
-> +                       kasan_arg_stonly =3D KASAN_ARG_STONLY_OFF;
-> +                       pr_warn_once("KernelAddressSanitizer: store only =
-mode isn't supported (hw-tags)\n");
-> +               }
-> +       }
+> +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
+> +	mac->back = hw;
 > +}
 > +
-> +bool kasan_stonly_enabled(void)
+> +/**
+> + * rnpgbe_init_n500 - Setup n500 hw info
+> + * @hw: hw information structure
+> + *
+> + * rnpgbe_init_n500 initializes all private
+> + * structure, such as dma, eth, mac and mbx base on
+> + * hw->addr for n500
+> + **/
+> +static void rnpgbe_init_n500(struct mucse_hw *hw)
 > +{
-> +       return static_branch_unlikely(&kasan_flag_stonly);
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	rnpgbe_init_common(hw);
+> +
+> +	mbx->fw2pf_mbox_vec = 0x28b00;
+> +	mbx->fw_pf_shm_base = 0x2d000;
+> +	mbx->pf2fw_mbox_ctrl = 0x2e000;
+> +	mbx->fw_pf_mbox_mask = 0x2e200;
+> +	hw->ring_msix_base = hw->hw_addr + 0x28700;
+> +	hw->usecstocount = 125;
 > +}
 > +
->  #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
->
->  EXPORT_SYMBOL_IF_KUNIT(kasan_enable_hw_tags);
-> @@ -404,4 +474,6 @@ VISIBLE_IF_KUNIT void kasan_force_async_fault(void)
->  }
->  EXPORT_SYMBOL_IF_KUNIT(kasan_force_async_fault);
->
-> +EXPORT_SYMBOL_IF_KUNIT(kasan_stonly_enabled);
-> +
->  #endif
-> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-> index 129178be5e64..cfbcebdbcbec 100644
-> --- a/mm/kasan/kasan.h
-> +++ b/mm/kasan/kasan.h
-> @@ -33,6 +33,7 @@ static inline bool kasan_stack_collection_enabled(void)
->  #include "../slab.h"
->
->  DECLARE_STATIC_KEY_TRUE(kasan_flag_vmalloc);
-> +DECLARE_STATIC_KEY_FALSE(kasan_flag_stonly);
->
->  enum kasan_mode {
->         KASAN_MODE_SYNC,
-> @@ -428,6 +429,7 @@ static inline const void *arch_kasan_set_tag(const vo=
-id *addr, u8 tag)
->  #define hw_enable_tag_checks_sync()            arch_enable_tag_checks_sy=
-nc()
->  #define hw_enable_tag_checks_async()           arch_enable_tag_checks_as=
-ync()
->  #define hw_enable_tag_checks_asymm()           arch_enable_tag_checks_as=
-ymm()
-> +#define hw_enable_tag_checks_stonly()          arch_enable_tag_checks_st=
-only()
->  #define hw_suppress_tag_checks_start()         arch_suppress_tag_checks_=
-start()
->  #define hw_suppress_tag_checks_stop()          arch_suppress_tag_checks_=
-stop()
->  #define hw_force_async_tag_fault()             arch_force_async_tag_faul=
-t()
-> @@ -437,10 +439,18 @@ static inline const void *arch_kasan_set_tag(const =
-void *addr, u8 tag)
->                         arch_set_mem_tag_range((addr), (size), (tag), (in=
-it))
->
->  void kasan_enable_hw_tags(void);
-> +void kasan_enable_stonly(void);
-> +bool kasan_stonly_enabled(void);
->
->  #else /* CONFIG_KASAN_HW_TAGS */
->
->  static inline void kasan_enable_hw_tags(void) { }
-> +static inline void kasan_enable_stonly(void) { }
-> +
-> +static inline bool kasan_stonly_enabled(void)
+> +/**
+> + * rnpgbe_init_n210 - Setup n210 hw info
+> + * @hw: hw information structure
+> + *
+> + * rnpgbe_init_n210 initializes all private
+> + * structure, such as dma, eth, mac and mbx base on
+> + * hw->addr for n210
+> + **/
+> +static void rnpgbe_init_n210(struct mucse_hw *hw)
 > +{
-> +       return false;
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	rnpgbe_init_common(hw);
+> +
+> +	mbx->fw2pf_mbox_vec = 0x29400;
+> +	mbx->fw_pf_shm_base = 0x2d900;
+> +	mbx->pf2fw_mbox_ctrl = 0x2e900;
+> +	mbx->fw_pf_mbox_mask = 0x2eb00;
+> +	hw->ring_msix_base = hw->hw_addr + 0x29000;
+> +	hw->usecstocount = 62;
 > +}
->
->  #endif /* CONFIG_KASAN_HW_TAGS */
->
-> --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
->
+
+I don't see pf2fw_mbox_mask getting initialized anywhere. Is that not
+needed?
+
+> +
+> +const struct rnpgbe_info rnpgbe_n500_info = {
+
+
+-- 
+Thanks and Regards,
+Md Danish Anwar
+
 
