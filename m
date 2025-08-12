@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-764828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14497B227BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160F7B227A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D461BC23C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:58:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36DF03AF40C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D452B27FD72;
-	Tue, 12 Aug 2025 12:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFFC27F195;
+	Tue, 12 Aug 2025 12:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7T2AW5q"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OszGWezo"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD0F275B19;
-	Tue, 12 Aug 2025 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D0127A107;
+	Tue, 12 Aug 2025 12:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003410; cv=none; b=hHlGhihHVpiNDdhiRNMCh4anZalh7DmDhSokniB19wUIXcYQEinY/QI8gKIRrvV15n6X6/NTBguZPtLoWa61svdZvQWKJYhWf+GFDQcQmo5Yhw8Y4Xl8NcZ96B1g4EivbwYGnbGX1kOtWj8tqYXj1g9qmxAg0fC/71r/b8Tcwno=
+	t=1755003409; cv=none; b=sE4jgAMt21w4YHBsp85zO/NPKsCBNYyaXFfqpb5pDPcYLivLdnFHIIInQPsvwD7GPeH8PzryB+/s54HHh0qFLcI+vLd6CGrH/+8fPqzySMueuYeqSy4ZZH9tXJoeB+PjP4qavK7EDF0MTtqmGg0STWfBbVUCFHEd54TchHuZgTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003410; c=relaxed/simple;
-	bh=C3ybyQQGIbjc8NQlG8BH+g0H2+qjw24oDoZwNCvf59o=;
+	s=arc-20240116; t=1755003409; c=relaxed/simple;
+	bh=fEVl6dr/OTv7oiBvGgjw4LMV8VYApwKCRV0uvvNPm9M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bYRItpNv3ZFIRs3VNmquWn3AL47uESJ+67/ZfnaIZ8axaIQE4VO6Fmw2FWBRi9dzYClA5NMUV3QF7/iVEwmsgxKqbkn8h8njl3lu3udyOWu0v5O6/7yb2JyRCRJboYtSn1g/+huMXihuuyQGAlbci8KtG7cwlW6y4LB5cGC9T+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7T2AW5q; arc=none smtp.client-ip=209.85.208.46
+	 MIME-Version:Content-Type; b=HWqovJikWEs9AVr3sX5S9bEBEJVUffeVw3b3ZVg2DIs1KYlKHSnWiA4CxsQYff/sSLKSmlYUGXGxPj52Og+Ghr+A3cnzmGo3bsEHQrRvDYeEdQ0lEsrmn9Ua6WQvOkjB6F+CSEqQ9+9AGjq2mIRQ+80T9DmFHkey11/sOLja5lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OszGWezo; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6157c81ff9eso8301551a12.3;
-        Tue, 12 Aug 2025 05:56:45 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af98b77d2f0so1010648366b.3;
+        Tue, 12 Aug 2025 05:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755003404; x=1755608204; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755003405; x=1755608205; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qvIkb7cGEb/Ghy2S086B7ZlGAa89IXzdViRuKJif9Po=;
-        b=d7T2AW5q2nOonpxXZI2kKJC+G1KZVfU9VUBgxvBy5GEv+gJvHtWxpubZ6F6gcwg2oB
-         8AdQnwSf29jPChKd72PD9XM8fMKZqXyq3cw+1Bt9MCedN4+SyoBb3sXO/HdRF/OhPPfr
-         i44AVVZ3+Qiyg9TdBbuQCY8pMGZt8XHRPNg2hGZVzOlRwh7rgIvvmq/tAWEcaACN5f2f
-         M6WbS2tWfycNDQ5hnafZ2YQbIVGwPGTPb0NqM52rCRbGO6QUFfKCX7HQGWJET1PgiI8+
-         NUjuyVIZNZfq91fIVcMEsgfI5Ay5eI+0WOyF9tIB3gDKu1Nps2wb2/DQL39R+9Ny20Tp
-         0aIw==
+        bh=fg0v+2hv5mjXiI0Fnsf0f/fkTLS5cbrfyLOw8faegMY=;
+        b=OszGWezoa8YKKcMikncSd1BnEwMTUtx6sf//udkGdnB50bRRs5szbt3vX3LSnRKZEP
+         8NoOlMIQzlHK7rtt4p5aIOs2+HgqUTWfK7dm1cnpKY7rWhDjgqfpTEYS3LXw8TZOZPeQ
+         09dAZEOXkEJa/Jbf3V9wDj74s9IF1wSwgpFT3rX4mN1dKXMsywX+g8Clzdb+IJAJ8RiT
+         r8NcnSK1NuhvWUv2wuTYh7qTSqm25oSGQkB49iNNdbxNdgQy7ZsvymE4joXhG5r0EEli
+         UZHxGUP0GmM/hltrYAo9ahofGVplocOYWHULZujteiaeQSbi5h2COX9uQAhLAhvKbUmB
+         O/lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755003404; x=1755608204;
+        d=1e100.net; s=20230601; t=1755003405; x=1755608205;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qvIkb7cGEb/Ghy2S086B7ZlGAa89IXzdViRuKJif9Po=;
-        b=v8AJl70gKu+I2xreBbNFtgM6M2EhPKSoxbQfHkW+UTZMdQaMWeWHjYbjQFdn23pJhl
-         lU0Dt8ZlT+Pi48xYPfVeed+LqgR9CooEAk4WSQJwy9gOWg8NhfvyUddKf95dJBQO68U0
-         3eyTJK/K09nwlNoimlWkwWvPSEyaYLlTGnOt6acF1mjmP9gQ/fTljFvKnYBVS/ZJY2cy
-         0QI5DspmkAaJ5fGib2a3KRiUMly/KUBFkBIkRfNNGsbsYaBhdo6vAElp9WN1bobodSQR
-         2KrF9Gs4SudQFVNTZQcldjhwG435USAR4oAFbvKLU35EmjvpBVuJPhRJao/aj0x9oCYY
-         RKtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH5f3C44ghPPZ4Xsws2rAjZgnrS15JJlyTJhFxXs/6vSBA3C8MZ5XJaRMDDqxj2WRBmIjLyGv97aAqPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyOS4435HC+X+lk0dqvlJUavg13bxmc7RK0z7rO3eyT/gToO+o
-	Xu5QVwrl9opv1U3wSx2RCvdMXpII9t/dp54rpr4UkUh0phD4K0W6QLzt
-X-Gm-Gg: ASbGncvQ+3Q2QXPsrspl+vJGMZBgHyhRPVeCfjvrmZS3NxFjZWSinQcu+aeWdb5vjJT
-	kl6LU/63T0jgCGolmXqCoz/EfJFzRudZISfOTJqfE4UHORKQM90Sb1IoxNAQdsLbBJ2cNugS7t/
-	hH3lIXXaKj1cZ8ebqaPgEAPfYKurC5WBKa0kLcJgH1k+7YK3yX4HBVU+XWi63nsX5tX4esXj11P
-	tIfwrdZB3fhA0cpEdYntlC/NzyboiBVY/QPsVeuKGiqZOOhDZ/E8Rr/sbfY3sbzLIs5IOhHTpHb
-	+s4q4+88aG0HH26jUK06gkYsnNTOPc6OEWV+ZL0g8XyUCkoKJdtN8bpoZry7r3sgMi0CVnlSEYD
-	gH40pcmoKufP2j0wtEBvzi4HPEV7b59MMYIrDNQH42c/WY4loSryEYobtZErWroFwstWuwoUWBV
-	rL5RWXTQ==
-X-Google-Smtp-Source: AGHT+IFdDxIAvPitjR+NjXl60GB508wiWw7vazW/44MbzpGGkWcy+9le05z2UliSNKyETLqjXXJ9dw==
-X-Received: by 2002:a17:907:9287:b0:ae0:68a8:bd6a with SMTP id a640c23a62f3a-afa1dfea07dmr319834766b.15.1755003403221;
-        Tue, 12 Aug 2025 05:56:43 -0700 (PDT)
+        bh=fg0v+2hv5mjXiI0Fnsf0f/fkTLS5cbrfyLOw8faegMY=;
+        b=eyUcl4bRTA2EDSvIEjOMX/fiuskpWbDH1kNXjz+IaBcJrXvHx9Vopndvd24AmOUVV6
+         wmDual5wikmSM1kSuq+uBYSbVP7t5tjOvJBjfHVYB8VWHqXucYZb0teposSSATFxl6TL
+         XLhWRWVkDWI4b7156BA3FHzO+hVBWFLt/Fk0ECEURABTyQGWP/2EHPsfBVqGpJkjIYHk
+         RxU1w6jYeVyvP5dTNCyYDfwxDg/zvWUgsNicyAmH2sL8eSTtGmdPl9ZqRb929nPgr4Dk
+         OyhoHlfeOBSdQ31rDKfdBCeTh8JZL5Nl5iz87Qug+EH3595gvd44Zcea5uzsBe/mIh1e
+         kpaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQZur5QwlJFJSCgrDLAv0XVfTy2IMNNMf5nxFlYWnshH/k5TY4X+M4F4O7hLX5fJFNs3C6f2JpBuanbw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm29hnldkqoXFLy5gac6/FJsAnAu1Mp2cYiCHDGOlJj2hlOP8O
+	9qoIm0p7t4iUYw5TpUBlFOyL0iDRzhnnxsSATVOKZ2AXKvGBeTORV+Dt
+X-Gm-Gg: ASbGncuwAs90YFXy6/DhqDuOQ5UvYTWL8BJtz3A4u+Fc+2hMILK3SlVIYl+11B2NrHi
+	fy/TlNqfxtdmL5J9X8ozvSaniwCe4QSdKN9bDxU9OYnWSE70cZZu+vu4Mbdbe3zPBvrlK+ylsg/
+	furbL3bQ5pA3EoD5z9H7R37jI3ZhXpBZpiyw7xcl4D6pA0TYda62YNyWMGEC0ZliYgNIUsj0kRN
+	67ulaaYHLO75K7zLCg8jboeNSatSEalgUq0pptdS9CnO9W3gk8CmhSNmUdNlqJeUhctjmPO2uw1
+	gzoRCymtTQ14Yf2eP2PswdWFDA3MN2lGJ5B2xRCztbvJn+8yt1DCEj+gIn9bz+KyDIYCBopZKY2
+	jePwUUjIKtFWl/h1zpHEefJQMZ1AhbaZh/Hw9O8SpOgyH/2ksV5UHOkQF4+GBiMNGi6sKjT3mZu
+	EwPBADrA==
+X-Google-Smtp-Source: AGHT+IH4FpzbActkwiCSIa1u3lmCoTream+ryG18f0vT8/a8YyoiLT2zoJE+15kYOYiydXKbaSA4kA==
+X-Received: by 2002:a17:907:3d4b:b0:ae0:c441:d54b with SMTP id a640c23a62f3a-af9c63b09a5mr1585867166b.9.1755003404318;
+        Tue, 12 Aug 2025 05:56:44 -0700 (PDT)
 Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3361sm2199158266b.39.2025.08.12.05.56.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3361sm2199158266b.39.2025.08.12.05.56.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 05:56:42 -0700 (PDT)
+        Tue, 12 Aug 2025 05:56:43 -0700 (PDT)
 From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>
 Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH v2 4/6] ALSA: usb-audio: us144mkii: Add MIDI support and mixer controls
-Date: Tue, 12 Aug 2025 14:56:27 +0200
-Message-Id: <20250812125633.79270-8-ramiserifpersia@gmail.com>
+Subject: [PATCH v2 4/7] ALSA: usb-audio: us144mkii: Implement audio capture and decoding
+Date: Tue, 12 Aug 2025 14:56:28 +0200
+Message-Id: <20250812125633.79270-9-ramiserifpersia@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250812125633.79270-1-ramiserifpersia@gmail.com>
 References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
@@ -95,1622 +95,651 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch adds the remaining features to the driver: MIDI I/O and
-ALSA mixer controls.
+This patch adds the full audio capture data path. It allocates and
+manages bulk URBs to receive audio data from the device.
 
-A raw MIDI device is created, supporting one input and one output port.
-The implementation handles the device-specific 9-byte packet format for
-both sending and receiving MIDI data, using bulk URBs and workqueues for
-processing.
+The incoming data is in a custom multiplexed format. A workqueue is
+used to offload the decoding process from the interrupt context. The
+`capture_urb_complete` handler copies raw data into a ring buffer and
+schedules the work. The `tascam_capture_work_handler` then reads from
+this buffer, decodes the data into standard S32_LE samples, and copies
+it to the ALSA capture buffer.
 
-ALSA kcontrols are added to the mixer interface, allowing user-space
-control over the audio routing matrix (e.g., selecting analog/digital
-sources for capture channels, and routing playback streams to different
-outputs). A read-only control to display the current sample rate is
-also included.
-
-Finally, the stub routing functions are replaced with the full logic
-to apply the user-selected mixer settings to the audio streams.
-
-With this commit, the driver is feature-complete.
+The PCM trigger is updated to manage the submission of capture URBs,
+and the feedback handler now also advances the capture stream pointer
+to keep it synchronized with playback.
 
 Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
 ---
- sound/usb/usx2y/us144mkii.c          | 303 ++++++++++++------
- sound/usb/usx2y/us144mkii.h          | 126 +++++++-
- sound/usb/usx2y/us144mkii_controls.c | 444 +++++++++++++++++++++++++++
- sound/usb/usx2y/us144mkii_midi.c     | 401 ++++++++++++++++++++++++
- sound/usb/usx2y/us144mkii_pcm.c      |  57 +++-
- 5 files changed, 1219 insertions(+), 112 deletions(-)
- create mode 100644 sound/usb/usx2y/us144mkii_controls.c
- create mode 100644 sound/usb/usx2y/us144mkii_midi.c
+ sound/usb/usx2y/us144mkii.c         |  73 ++++++++++
+ sound/usb/usx2y/us144mkii.h         |  44 +++++-
+ sound/usb/usx2y/us144mkii_capture.c | 218 +++++++++++++++++++++++++++-
+ sound/usb/usx2y/us144mkii_pcm.c     |  30 ++++
+ sound/usb/usx2y/us144mkii_pcm.h     |  35 ++++-
+ 5 files changed, 392 insertions(+), 8 deletions(-)
 
 diff --git a/sound/usb/usx2y/us144mkii.c b/sound/usb/usx2y/us144mkii.c
-index 7a114e64fb1f..f7944eb2fb93 100644
+index 3a147fba873e..7a114e64fb1f 100644
 --- a/sound/usb/usx2y/us144mkii.c
 +++ b/sound/usb/usx2y/us144mkii.c
-@@ -75,6 +75,30 @@ void tascam_free_urbs(struct tascam_card *tascam)
+@@ -62,6 +62,27 @@ void tascam_free_urbs(struct tascam_card *tascam)
+ 			tascam->feedback_urbs[i] = NULL;
  		}
  	}
- 
-+	usb_kill_anchored_urbs(&tascam->midi_in_anchor);
-+	for (i = 0; i < NUM_MIDI_IN_URBS; i++) {
-+		if (tascam->midi_in_urbs[i]) {
-+			usb_free_coherent(
-+				tascam->dev, MIDI_IN_BUF_SIZE,
-+				tascam->midi_in_urbs[i]->transfer_buffer,
-+				tascam->midi_in_urbs[i]->transfer_dma);
-+			usb_free_urb(tascam->midi_in_urbs[i]);
-+			tascam->midi_in_urbs[i] = NULL;
-+		}
-+	}
 +
-+	usb_kill_anchored_urbs(&tascam->midi_out_anchor);
-+	for (i = 0; i < NUM_MIDI_OUT_URBS; i++) {
-+		if (tascam->midi_out_urbs[i]) {
-+			usb_free_coherent(
-+				tascam->dev, MIDI_OUT_BUF_SIZE,
-+				tascam->midi_out_urbs[i]->transfer_buffer,
-+				tascam->midi_out_urbs[i]->transfer_dma);
-+			usb_free_urb(tascam->midi_out_urbs[i]);
-+			tascam->midi_out_urbs[i] = NULL;
-+		}
-+	}
-+
- 	kfree(tascam->capture_routing_buffer);
- 	tascam->capture_routing_buffer = NULL;
- 	kfree(tascam->capture_decode_dst_block);
-@@ -164,6 +188,44 @@ int tascam_alloc_urbs(struct tascam_card *tascam)
- 		c_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
- 	}
- 
-+	/* MIDI URB and buffer allocation */
-+	for (i = 0; i < NUM_MIDI_IN_URBS; i++) {
-+		struct urb *m_urb = usb_alloc_urb(0, GFP_KERNEL);
-+
-+		if (!m_urb)
-+			goto error;
-+		tascam->midi_in_urbs[i] = m_urb;
-+		m_urb->transfer_buffer =
-+			usb_alloc_coherent(tascam->dev, MIDI_IN_BUF_SIZE,
-+					   GFP_KERNEL, &m_urb->transfer_dma);
-+		if (!m_urb->transfer_buffer)
-+			goto error;
-+		usb_fill_bulk_urb(m_urb, tascam->dev,
-+				  usb_rcvbulkpipe(tascam->dev, EP_MIDI_IN),
-+				  m_urb->transfer_buffer, MIDI_IN_BUF_SIZE,
-+				  tascam_midi_in_urb_complete, tascam);
-+		m_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-+	}
-+
-+	for (i = 0; i < NUM_MIDI_OUT_URBS; i++) {
-+		struct urb *m_urb = usb_alloc_urb(0, GFP_KERNEL);
-+
-+		if (!m_urb)
-+			goto error;
-+		tascam->midi_out_urbs[i] = m_urb;
-+		m_urb->transfer_buffer =
-+			usb_alloc_coherent(tascam->dev, MIDI_OUT_BUF_SIZE,
-+					   GFP_KERNEL, &m_urb->transfer_dma);
-+		if (!m_urb->transfer_buffer)
-+			goto error;
-+		usb_fill_bulk_urb(m_urb, tascam->dev,
-+				  usb_sndbulkpipe(tascam->dev, EP_MIDI_OUT),
-+				  m_urb->transfer_buffer,
-+				  0, /* length set later */
-+				  tascam_midi_out_urb_complete, tascam);
-+		m_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-+	}
-+
- 	tascam->capture_ring_buffer =
- 		kmalloc(CAPTURE_RING_BUFFER_SIZE, GFP_KERNEL);
- 	if (!tascam->capture_ring_buffer)
-@@ -213,16 +275,112 @@ void tascam_stop_work_handler(struct work_struct *work)
-  * @card: Pointer to the ALSA sound card instance.
-  *
-  * This function is called when the sound card is being freed. It releases
-- * the reference to the USB device.
-+ * resources allocated for the tascam_card structure, including the MIDI
-+ * input FIFO and decrements the USB device reference count.
-  */
- static void tascam_card_private_free(struct snd_card *card)
- {
- 	struct tascam_card *tascam = card->private_data;
- 
--	if (tascam && tascam->dev) {
--		usb_put_dev(tascam->dev);
--		tascam->dev = NULL;
-+	if (tascam) {
-+		kfifo_free(&tascam->midi_in_fifo);
-+		if (tascam->dev) {
-+			usb_put_dev(tascam->dev);
-+			tascam->dev = NULL;
-+		}
-+	}
-+}
-+
-+/**
-+ * tascam_suspend() - Handles device suspension.
-+ * @intf: The USB interface being suspended.
-+ * @message: Power management message.
-+ *
-+ * This function is called when the device is suspended. It stops all active
-+ * streams, kills all URBs, and sends a vendor-specific deep sleep command
-+ * to the device to ensure a stable low-power state.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_suspend(struct usb_interface *intf, pm_message_t message)
-+{
-+	struct tascam_card *tascam = usb_get_intfdata(intf);
-+
-+	if (!tascam)
-+		return 0;
-+
-+	snd_pcm_suspend_all(tascam->pcm);
-+
-+	cancel_work_sync(&tascam->stop_work);
-+	cancel_work_sync(&tascam->capture_work);
-+	cancel_work_sync(&tascam->midi_in_work);
-+	cancel_work_sync(&tascam->midi_out_work);
-+	cancel_work_sync(&tascam->stop_pcm_work);
-+	usb_kill_anchored_urbs(&tascam->playback_anchor);
 +	usb_kill_anchored_urbs(&tascam->capture_anchor);
-+	usb_kill_anchored_urbs(&tascam->feedback_anchor);
-+	usb_kill_anchored_urbs(&tascam->midi_in_anchor);
-+	usb_kill_anchored_urbs(&tascam->midi_out_anchor);
-+
-+	return 0;
-+}
-+
-+/**
-+ * tascam_resume() - Handles device resumption from suspend.
-+ * @intf: The USB interface being resumed.
-+ *
-+ * This function is called when the device resumes from suspend. It
-+ * re-establishes the active USB interface settings and re-configures the sample
-+ * rate if it was previously active.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
-+static int tascam_resume(struct usb_interface *intf)
-+{
-+	struct tascam_card *tascam = usb_get_intfdata(intf);
-+	int err;
-+
-+	if (!tascam)
-+		return 0;
-+
-+	dev_info(&intf->dev, "resuming TASCAM US-144MKII\n");
-+
-+	/*
-+	 * The device requires a full re-initialization sequence upon resume.
-+	 * First, re-establish the active USB interface settings.
-+	 */
-+	err = usb_set_interface(tascam->dev, 0, 1);
-+	if (err < 0) {
-+		dev_err(&intf->dev,
-+			"resume: failed to set alt setting on intf 0: %d\n",
-+			err);
-+		return err;
- 	}
-+	err = usb_set_interface(tascam->dev, 1, 1);
-+	if (err < 0) {
-+		dev_err(&intf->dev,
-+			"resume: failed to set alt setting on intf 1: %d\n",
-+			err);
-+		return err;
++	for (i = 0; i < NUM_CAPTURE_URBS; i++) {
++		if (tascam->capture_urbs[i]) {
++			usb_free_coherent(
++				tascam->dev, tascam->capture_urb_alloc_size,
++				tascam->capture_urbs[i]->transfer_buffer,
++				tascam->capture_urbs[i]->transfer_dma);
++			usb_free_urb(tascam->capture_urbs[i]);
++			tascam->capture_urbs[i] = NULL;
++		}
 +	}
 +
-+	/* Re-configure the sample rate if one was previously active */
-+	if (tascam->current_rate > 0)
-+		us144mkii_configure_device_for_rate(tascam,
-+						    tascam->current_rate);
-+
-+	return 0;
-+}
-+
-+static void tascam_error_timer(struct timer_list *t)
-+{
-+	struct tascam_card *tascam =
-+		container_of(t, struct tascam_card, error_timer);
-+
-+	if (atomic_read(&tascam->midi_in_active))
-+		schedule_work(&tascam->midi_in_work);
-+	if (atomic_read(&tascam->midi_out_active))
-+		schedule_work(&tascam->midi_out_work);
++	kfree(tascam->capture_routing_buffer);
++	tascam->capture_routing_buffer = NULL;
++	kfree(tascam->capture_decode_dst_block);
++	tascam->capture_decode_dst_block = NULL;
++	kfree(tascam->capture_decode_raw_block);
++	tascam->capture_decode_raw_block = NULL;
++	kfree(tascam->capture_ring_buffer);
++	tascam->capture_ring_buffer = NULL;
  }
  
- /**
-@@ -235,8 +393,8 @@ static void tascam_card_private_free(struct snd_card *card)
-  * - Checking for the second interface (MIDI) and associating it.
-  * - Performing a vendor-specific handshake with the device.
-  * - Setting alternate settings for USB interfaces.
-- * - Creating and registering the ALSA sound card and PCM device.
-- * - Allocating and initializing URBs for audio transfers.
-+ * - Creating and registering the ALSA sound card, PCM device, and MIDI device.
-+ * - Allocating and initializing URBs for audio and MIDI transfers.
-  *
-  * Return: 0 on success, or a negative error code on failure.
-  */
-@@ -326,27 +484,25 @@ static int tascam_probe(struct usb_interface *intf,
- 	tascam->iface0 = intf;
+ int tascam_alloc_urbs(struct tascam_card *tascam)
+@@ -121,6 +142,52 @@ int tascam_alloc_urbs(struct tascam_card *tascam)
+ 		f_urb->complete = feedback_urb_complete;
+ 	}
+ 
++	tascam->capture_urb_alloc_size = CAPTURE_URB_SIZE;
++	for (i = 0; i < NUM_CAPTURE_URBS; i++) {
++		struct urb *c_urb = usb_alloc_urb(0, GFP_KERNEL);
++
++		if (!c_urb)
++			goto error;
++		tascam->capture_urbs[i] = c_urb;
++
++		c_urb->transfer_buffer = usb_alloc_coherent(
++			tascam->dev, tascam->capture_urb_alloc_size, GFP_KERNEL,
++			&c_urb->transfer_dma);
++		if (!c_urb->transfer_buffer)
++			goto error;
++
++		usb_fill_bulk_urb(c_urb, tascam->dev,
++				  usb_rcvbulkpipe(tascam->dev, EP_AUDIO_IN),
++				  c_urb->transfer_buffer,
++				  tascam->capture_urb_alloc_size,
++				  capture_urb_complete, tascam);
++		c_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
++	}
++
++	tascam->capture_ring_buffer =
++		kmalloc(CAPTURE_RING_BUFFER_SIZE, GFP_KERNEL);
++	if (!tascam->capture_ring_buffer)
++		goto error;
++
++	tascam->capture_decode_raw_block =
++		kmalloc(RAW_BYTES_PER_DECODE_BLOCK, GFP_KERNEL);
++	if (!tascam->capture_decode_raw_block)
++		goto error;
++
++	tascam->capture_decode_dst_block =
++		kmalloc(FRAMES_PER_DECODE_BLOCK * DECODED_CHANNELS_PER_FRAME *
++				DECODED_SAMPLE_SIZE,
++			GFP_KERNEL);
++	if (!tascam->capture_decode_dst_block)
++		goto error;
++
++	tascam->capture_routing_buffer =
++		kmalloc(FRAMES_PER_DECODE_BLOCK * DECODED_CHANNELS_PER_FRAME *
++				DECODED_SAMPLE_SIZE,
++			GFP_KERNEL);
++	if (!tascam->capture_routing_buffer)
++		goto error;
++
+ 	return 0;
+ 
+ error:
+@@ -136,6 +203,7 @@ void tascam_stop_work_handler(struct work_struct *work)
+ 
+ 	usb_kill_anchored_urbs(&tascam->playback_anchor);
+ 	usb_kill_anchored_urbs(&tascam->feedback_anchor);
++	usb_kill_anchored_urbs(&tascam->capture_anchor);
+ 	atomic_set(&tascam->active_urbs, 0);
+ }
+ 
+@@ -259,10 +327,12 @@ static int tascam_probe(struct usb_interface *intf,
  
  	spin_lock_init(&tascam->lock);
-+	spin_lock_init(&tascam->midi_in_lock);
-+	spin_lock_init(&tascam->midi_out_lock);
  	init_usb_anchor(&tascam->playback_anchor);
- 	init_usb_anchor(&tascam->capture_anchor);
++	init_usb_anchor(&tascam->capture_anchor);
  	init_usb_anchor(&tascam->feedback_anchor);
-+	init_usb_anchor(&tascam->midi_in_anchor);
-+	init_usb_anchor(&tascam->midi_out_anchor);
-+
-+	timer_setup(&tascam->error_timer, tascam_error_timer, 0);
  
  	INIT_WORK(&tascam->stop_work, tascam_stop_work_handler);
  	INIT_WORK(&tascam->stop_pcm_work, tascam_stop_pcm_work_handler);
- 	INIT_WORK(&tascam->capture_work, tascam_capture_work_handler);
-+	init_completion(&tascam->midi_out_drain_completion);
++	INIT_WORK(&tascam->capture_work, tascam_capture_work_handler);
  
--	err = snd_pcm_new(card, "US144MKII PCM", 0, 1, 1, &tascam->pcm);
--	if (err < 0)
--		goto free_card;
--	tascam->pcm->private_data = tascam;
--	strscpy(tascam->pcm->name, "US144MKII PCM", sizeof(tascam->pcm->name));
--
--	err = tascam_init_pcm(tascam->pcm);
--	if (err < 0)
--		goto free_card;
--
--	err = tascam_alloc_urbs(tascam);
--	if (err < 0)
--		goto free_card;
-+	if (kfifo_alloc(&tascam->midi_in_fifo, MIDI_IN_FIFO_SIZE, GFP_KERNEL)) {
-+		snd_card_free(card);
-+		return -ENOMEM;
-+	}
- 
- 	strscpy(card->driver, DRIVER_NAME, sizeof(card->driver));
- 	if (dev->descriptor.idProduct == USB_PID_TASCAM_US144) {
-@@ -363,6 +519,28 @@ static int tascam_probe(struct usb_interface *intf,
- 		 card->shortname, USB_VID_TASCAM, dev->descriptor.idProduct,
- 		 dev_name(&dev->dev));
- 
-+	err = snd_pcm_new(card, "US144MKII PCM", 0, 1, 1, &tascam->pcm);
-+	if (err < 0)
-+		goto free_card;
-+	tascam->pcm->private_data = tascam;
-+	strscpy(tascam->pcm->name, "US144MKII PCM", sizeof(tascam->pcm->name));
-+
-+	err = tascam_init_pcm(tascam->pcm);
-+	if (err < 0)
-+		goto free_card;
-+
-+	err = tascam_create_midi(tascam);
-+	if (err < 0)
-+		goto free_card;
-+
-+	err = tascam_create_controls(tascam);
-+	if (err < 0)
-+		goto free_card;
-+
-+	err = tascam_alloc_urbs(tascam);
-+	if (err < 0)
-+		goto free_card;
-+
- 	err = snd_card_register(card);
+ 	err = snd_pcm_new(card, "US144MKII PCM", 0, 1, 1, &tascam->pcm);
  	if (err < 0)
- 		goto free_card;
-@@ -383,8 +561,8 @@ static int tascam_probe(struct usb_interface *intf,
-  * @intf: The USB interface being disconnected.
-  *
-  * This function is called when the device is disconnected from the system.
-- * It cleans up all allocated resources by freeing the sound card, which in
-- * turn triggers freeing of URBs and other resources.
-+ * It cleans up all allocated resources, including killing URBs, freeing
-+ * the sound card, and releasing memory.
-  */
- static void tascam_disconnect(struct usb_interface *intf)
- {
-@@ -394,89 +572,26 @@ static void tascam_disconnect(struct usb_interface *intf)
- 		return;
- 
+@@ -326,6 +396,7 @@ static void tascam_disconnect(struct usb_interface *intf)
  	if (intf->cur_altsetting->desc.bInterfaceNumber == 0) {
-+		/* Ensure all deferred work is complete before freeing resources */
  		snd_card_disconnect(tascam->card);
  		cancel_work_sync(&tascam->stop_work);
- 		cancel_work_sync(&tascam->capture_work);
-+		cancel_work_sync(&tascam->midi_in_work);
-+		cancel_work_sync(&tascam->midi_out_work);
++		cancel_work_sync(&tascam->capture_work);
  		cancel_work_sync(&tascam->stop_pcm_work);
-+
-+		usb_kill_anchored_urbs(&tascam->playback_anchor);
-+		usb_kill_anchored_urbs(&tascam->capture_anchor);
-+		usb_kill_anchored_urbs(&tascam->feedback_anchor);
-+		usb_kill_anchored_urbs(&tascam->midi_in_anchor);
-+		usb_kill_anchored_urbs(&tascam->midi_out_anchor);
-+		timer_delete_sync(&tascam->error_timer);
  		tascam_free_urbs(tascam);
  		snd_card_free(tascam->card);
- 		dev_idx--;
- 	}
- }
+@@ -353,8 +424,10 @@ static int tascam_suspend(struct usb_interface *intf, pm_message_t message)
+ 	snd_pcm_suspend_all(tascam->pcm);
  
--/**
-- * tascam_suspend() - Handles device suspension.
-- * @intf: The USB interface being suspended.
-- * @message: Power management message.
-- *
-- * This function is called when the device is suspended. It stops all active
-- * streams and kills all URBs.
-- *
-- * Return: 0 on success.
-- */
--static int tascam_suspend(struct usb_interface *intf, pm_message_t message)
--{
--	struct tascam_card *tascam = usb_get_intfdata(intf);
--
--	if (!tascam)
--		return 0;
--
--	snd_pcm_suspend_all(tascam->pcm);
--
--	cancel_work_sync(&tascam->stop_work);
--	cancel_work_sync(&tascam->capture_work);
--	cancel_work_sync(&tascam->stop_pcm_work);
--	usb_kill_anchored_urbs(&tascam->playback_anchor);
--	usb_kill_anchored_urbs(&tascam->capture_anchor);
--	usb_kill_anchored_urbs(&tascam->feedback_anchor);
--
--	return 0;
--}
--
--/**
-- * tascam_resume() - Handles device resumption from suspend.
-- * @intf: The USB interface being resumed.
-- *
-- * This function is called when the device resumes from suspend. It
-- * re-establishes the active USB interface settings and re-configures the sample
-- * rate if it was previously active.
-- *
-- * Return: 0 on success, or a negative error code on failure.
-- */
--static int tascam_resume(struct usb_interface *intf)
--{
--	struct tascam_card *tascam = usb_get_intfdata(intf);
--	int err;
--
--	if (!tascam)
--		return 0;
--
--	dev_info(&intf->dev, "resuming TASCAM US-144MKII\n");
--
--	/* Re-establish the active USB interface settings. */
--	err = usb_set_interface(tascam->dev, 0, 1);
--	if (err < 0) {
--		dev_err(&intf->dev,
--			"resume: failed to set alt setting on intf 0: %d\n",
--			err);
--		return err;
--	}
--	err = usb_set_interface(tascam->dev, 1, 1);
--	if (err < 0) {
--		dev_err(&intf->dev,
--			"resume: failed to set alt setting on intf 1: %d\n",
--			err);
--		return err;
--	}
--
--	/* Re-configure the sample rate if one was previously active */
--	if (tascam->current_rate > 0)
--		us144mkii_configure_device_for_rate(tascam,
--						    tascam->current_rate);
--
--	return 0;
--}
--
- static const struct usb_device_id tascam_usb_ids[] = {
- 	{ USB_DEVICE(USB_VID_TASCAM, USB_PID_TASCAM_US144) },
- 	{ USB_DEVICE(USB_VID_TASCAM, USB_PID_TASCAM_US144MKII) },
+ 	cancel_work_sync(&tascam->stop_work);
++	cancel_work_sync(&tascam->capture_work);
+ 	cancel_work_sync(&tascam->stop_pcm_work);
+ 	usb_kill_anchored_urbs(&tascam->playback_anchor);
++	usb_kill_anchored_urbs(&tascam->capture_anchor);
+ 	usb_kill_anchored_urbs(&tascam->feedback_anchor);
+ 
+ 	return 0;
 diff --git a/sound/usb/usx2y/us144mkii.h b/sound/usb/usx2y/us144mkii.h
-index 34b9b275b905..c740a0b5a0ea 100644
+index 257ab22dafc1..34b9b275b905 100644
 --- a/sound/usb/usx2y/us144mkii.h
 +++ b/sound/usb/usx2y/us144mkii.h
-@@ -4,13 +4,18 @@
- #ifndef __US144MKII_H
- #define __US144MKII_H
- 
-+#include <linux/kfifo.h>
-+#include <linux/timer.h>
- #include <linux/usb.h>
- #include <linux/workqueue.h>
-+#include <sound/control.h>
- #include <sound/core.h>
- #include <sound/initval.h>
- #include <sound/pcm.h>
-+#include <sound/rawmidi.h>
- 
- #define DRIVER_NAME "us144mkii"
-+#define DRIVER_VERSION "1.7.6"
- 
- /* --- USB Device Identification --- */
- #define USB_VID_TASCAM 0x0644
-@@ -20,13 +25,15 @@
+@@ -20,14 +20,17 @@
  /* --- USB Endpoints (Alternate Setting 1) --- */
  #define EP_PLAYBACK_FEEDBACK 0x81
  #define EP_AUDIO_OUT 0x02
-+#define EP_MIDI_IN 0x83
-+#define EP_MIDI_OUT 0x04
- #define EP_AUDIO_IN 0x86
++#define EP_AUDIO_IN 0x86
  
  /* --- USB Control Message Protocol --- */
  #define RT_H2D_CLASS_EP (USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_ENDPOINT)
- #define RT_D2H_CLASS_EP (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_ENDPOINT)
--#define RT_D2H_VENDOR_DEV (USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE)
++#define RT_D2H_CLASS_EP (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_ENDPOINT)
+ #define RT_D2H_VENDOR_DEV (USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE)
  #define RT_H2D_VENDOR_DEV (USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE)
-+#define RT_D2H_VENDOR_DEV (USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE)
  
  enum uac_request {
  	UAC_SET_CUR = 0x01,
-@@ -48,6 +55,8 @@ enum tascam_mode_value {
- 	MODE_VAL_STREAM_START = 0x0030,
++	UAC_GET_CUR = 0x81,
  };
  
-+#define HANDSHAKE_SUCCESS_VAL 0x12
-+
- enum tascam_register {
- 	REG_ADDR_UNKNOWN_0D = 0x0d04,
- 	REG_ADDR_UNKNOWN_0E = 0x0e00,
-@@ -70,6 +79,11 @@ enum tascam_register {
- #define NUM_CAPTURE_URBS 8
- #define CAPTURE_URB_SIZE 512
- #define CAPTURE_RING_BUFFER_SIZE (CAPTURE_URB_SIZE * NUM_CAPTURE_URBS * 4)
-+#define NUM_MIDI_IN_URBS 4
-+#define MIDI_IN_BUF_SIZE 64
-+#define MIDI_IN_FIFO_SIZE (MIDI_IN_BUF_SIZE * NUM_MIDI_IN_URBS)
-+#define MIDI_OUT_BUF_SIZE 64
-+#define NUM_MIDI_OUT_URBS 4
+ enum uac_control_selector {
+@@ -64,6 +67,9 @@ enum tascam_register {
+ #define NUM_FEEDBACK_URBS 4
+ #define FEEDBACK_URB_PACKETS 1
+ #define FEEDBACK_PACKET_SIZE 3
++#define NUM_CAPTURE_URBS 8
++#define CAPTURE_URB_SIZE 512
++#define CAPTURE_RING_BUFFER_SIZE (CAPTURE_URB_SIZE * NUM_CAPTURE_URBS * 4)
  #define USB_CTRL_TIMEOUT_MS 1000
  #define FEEDBACK_SYNC_LOSS_THRESHOLD 41
  
-@@ -85,10 +99,6 @@ enum tascam_register {
- #define FRAMES_PER_DECODE_BLOCK 8
- #define RAW_BYTES_PER_DECODE_BLOCK 512
+@@ -73,6 +79,12 @@ enum tascam_register {
+ #define BYTES_PER_FRAME (NUM_CHANNELS * BYTES_PER_SAMPLE)
+ #define FEEDBACK_ACCUMULATOR_SIZE 128
  
--struct tascam_card;
--
--#include "us144mkii_pcm.h"
--
- /**
-  * struct us144mkii_frame_pattern_observer - State for dynamic feedback
-  * patterns.
-@@ -117,6 +127,7 @@ struct us144mkii_frame_pattern_observer {
-  * @iface1: Pointer to USB interface 1 (MIDI).
-  * @card: Pointer to the ALSA sound card instance.
-  * @pcm: Pointer to the ALSA PCM device.
-+ * @rmidi: Pointer to the ALSA rawmidi device.
++/* --- Capture Decoding Defines --- */
++#define DECODED_CHANNELS_PER_FRAME 4
++#define DECODED_SAMPLE_SIZE 4
++#define FRAMES_PER_DECODE_BLOCK 8
++#define RAW_BYTES_PER_DECODE_BLOCK 512
++
+ struct tascam_card;
+ 
+ #include "us144mkii_pcm.h"
+@@ -117,10 +129,19 @@ struct us144mkii_frame_pattern_observer {
+  * @last_period_pos: Last reported period position for playback.
   *
-  * @playback_substream: Pointer to the active playback PCM substream.
-  * @playback_urbs: Array of URBs for playback.
-@@ -142,14 +153,35 @@ struct us144mkii_frame_pattern_observer {
-  * @capture_decode_dst_block: Buffer for decoded 32-bit capture samples.
-  * @capture_routing_buffer: Intermediate buffer for capture routing.
-  * @capture_work: Work struct for deferred capture processing.
-- *
+  * @capture_substream: Pointer to the active capture PCM substream.
++ * @capture_urbs: Array of URBs for capture.
++ * @capture_urb_alloc_size: Size of allocated buffer for each capture URB.
+  * @capture_active: Atomic flag indicating if capture is active.
+  * @driver_capture_pos: Current position in the ALSA capture buffer (frames).
+  * @capture_frames_processed: Total frames processed for capture.
+  * @last_capture_period_pos: Last reported period position for capture.
++ * @capture_ring_buffer: Ring buffer for raw capture data from USB.
++ * @capture_ring_buffer_read_ptr: Read pointer for the capture ring buffer.
++ * @capture_ring_buffer_write_ptr: Write pointer for the capture ring buffer.
++ * @capture_decode_raw_block: Buffer for a raw 512-byte capture block.
++ * @capture_decode_dst_block: Buffer for decoded 32-bit capture samples.
++ * @capture_routing_buffer: Intermediate buffer for capture routing.
++ * @capture_work: Work struct for deferred capture processing.
+  *
   * @stop_work: Work struct for deferred stream stopping.
   * @stop_pcm_work: Work struct for stopping PCM due to a fatal error (e.g.
-  * xrun).
+@@ -141,6 +162,7 @@ struct us144mkii_frame_pattern_observer {
+  * @fpo: Holds the state for the dynamic feedback pattern generation.
   *
-+ * @midi_in_substream: Pointer to the active MIDI input substream.
-+ * @midi_out_substream: Pointer to the active MIDI output substream.
-+ * @midi_in_urbs: Array of URBs for MIDI input.
-+ * @midi_out_urbs: Array of URBs for MIDI output.
-+ * @midi_in_active: Atomic flag indicating if MIDI input is active.
-+ * @midi_out_active: Atomic flag indicating if MIDI output is active.
-+ * @midi_in_fifo: FIFO for raw MIDI input data.
-+ * @midi_in_work: Work struct for deferred MIDI input processing.
-+ * @midi_out_work: Work struct for deferred MIDI output processing.
-+ * @midi_in_lock: Spinlock for MIDI input FIFO.
-+ * @midi_out_lock: Spinlock for MIDI output.
-+ * @midi_out_urbs_in_flight: Bitmap of MIDI output URBs currently in flight.
-+ * @midi_running_status: Stores the last MIDI status byte for running status.
-+ * @error_timer: Timer for MIDI error retry logic.
-+ *
-  * @lock: Main spinlock for protecting shared driver state.
-  * @active_urbs: Atomic counter for active URBs.
-  * @current_rate: Currently configured sample rate of the device.
-+ * @line_out_source: Source for Line Outputs (0: Playback 1-2, 1: Playback 3-4).
-+ * @digital_out_source: Source for Digital Outputs (0: Playback 1-2, 1: Playback
-+ * 3-4).
-+ * @capture_12_source: Source for Capture channels 1-2 (0: Analog In, 1: Digital
-+ * In).
-+ * @capture_34_source: Source for Capture channels 3-4 (0: Analog In, 1: Digital
-+ * In).
-  *
-  * @feedback_accumulator_pattern: Stores the calculated frames per packet for
-  * feedback.
-@@ -164,6 +196,8 @@ struct us144mkii_frame_pattern_observer {
   * @playback_anchor: USB anchor for playback URBs.
-  * @capture_anchor: USB anchor for capture URBs.
++ * @capture_anchor: USB anchor for capture URBs.
   * @feedback_anchor: USB anchor for feedback URBs.
-+ * @midi_in_anchor: USB anchor for MIDI input URBs.
-+ * @midi_out_anchor: USB anchor for MIDI output URBs.
   */
  struct tascam_card {
- 	/* --- Core device pointers --- */
-@@ -172,6 +206,7 @@ struct tascam_card {
- 	struct usb_interface *iface1;
- 	struct snd_card *card;
- 	struct snd_pcm *pcm;
-+	struct snd_rawmidi *rmidi;
- 
- 	/* --- PCM Substreams --- */
- 	struct snd_pcm_substream *playback_substream;
-@@ -184,9 +219,13 @@ struct tascam_card {
+@@ -160,7 +182,10 @@ struct tascam_card {
+ 	size_t playback_urb_alloc_size;
+ 	struct urb *feedback_urbs[NUM_FEEDBACK_URBS];
  	size_t feedback_urb_alloc_size;
- 	struct urb *capture_urbs[NUM_CAPTURE_URBS];
- 	size_t capture_urb_alloc_size;
-+	struct urb *midi_in_urbs[NUM_MIDI_IN_URBS];
-+	struct urb *midi_out_urbs[NUM_MIDI_OUT_URBS];
++	struct urb *capture_urbs[NUM_CAPTURE_URBS];
++	size_t capture_urb_alloc_size;
  	struct usb_anchor playback_anchor;
- 	struct usb_anchor capture_anchor;
++	struct usb_anchor capture_anchor;
  	struct usb_anchor feedback_anchor;
-+	struct usb_anchor midi_in_anchor;
-+	struct usb_anchor midi_out_anchor;
  
  	/* --- Stream State --- */
- 	spinlock_t lock;
-@@ -211,6 +250,19 @@ struct tascam_card {
- 	s32 *capture_decode_dst_block;
- 	s32 *capture_routing_buffer;
+@@ -179,6 +204,12 @@ struct tascam_card {
+ 	u64 capture_frames_processed;
+ 	snd_pcm_uframes_t driver_capture_pos;
+ 	u64 last_capture_period_pos;
++	u8 *capture_ring_buffer;
++	size_t capture_ring_buffer_read_ptr;
++	size_t capture_ring_buffer_write_ptr;
++	u8 *capture_decode_raw_block;
++	s32 *capture_decode_dst_block;
++	s32 *capture_routing_buffer;
  
-+	/* --- MIDI State --- */
-+	struct snd_rawmidi_substream *midi_in_substream;
-+	struct snd_rawmidi_substream *midi_out_substream;
-+	atomic_t midi_in_active;
-+	atomic_t midi_out_active;
-+	struct kfifo midi_in_fifo;
-+	spinlock_t midi_in_lock;
-+	spinlock_t midi_out_lock;
-+	unsigned long midi_out_urbs_in_flight;
-+	u8 midi_running_status;
-+	struct timer_list error_timer;
-+	struct completion midi_out_drain_completion;
-+
  	/* --- Feedback Sync State --- */
  	unsigned int feedback_accumulator_pattern[FEEDBACK_ACCUMULATOR_SIZE];
- 	unsigned int feedback_pattern_out_idx;
-@@ -224,14 +276,23 @@ struct tascam_card {
+@@ -192,14 +223,16 @@ struct tascam_card {
+ 	/* --- Workqueues --- */
  	struct work_struct stop_work;
  	struct work_struct stop_pcm_work;
- 	struct work_struct capture_work;
-+	struct work_struct midi_in_work;
-+	struct work_struct midi_out_work;
-+
-+	/* --- Mixer/Routing State --- */
-+	unsigned int line_out_source;
-+	unsigned int digital_out_source;
-+	unsigned int capture_12_source;
-+	unsigned int capture_34_source;
++	struct work_struct capture_work;
  };
  
-+/* main.c */
  /**
   * tascam_free_urbs() - Free all allocated URBs and associated buffers.
   * @tascam: the tascam_card instance
   *
-- * This function kills, unlinks, and frees all playback, feedback, and
-- * capture URBs, along with their transfer buffers and the capture
-+ * This function kills, unlinks, and frees all playback, feedback, capture,
-+ * and MIDI URBs, along with their transfer buffers and the capture
-  * ring/decode buffers.
+- * This function kills, unlinks, and frees all playback and feedback URBs,
+- * along with their transfer buffers.
++ * This function kills, unlinks, and frees all playback, feedback, and
++ * capture URBs, along with their transfer buffers and the capture
++ * ring/decode buffers.
   */
  void tascam_free_urbs(struct tascam_card *tascam);
-@@ -241,7 +302,7 @@ void tascam_free_urbs(struct tascam_card *tascam);
+ 
+@@ -207,7 +240,8 @@ void tascam_free_urbs(struct tascam_card *tascam);
+  * tascam_alloc_urbs() - Allocate all URBs and associated buffers.
   * @tascam: the tascam_card instance
   *
-  * This function allocates and initializes all URBs for playback, feedback,
-- * and capture, as well as the necessary buffers for data processing.
-+ * capture, and MIDI, as well as the necessary buffers for data processing.
+- * This function allocates and initializes all URBs for playback and feedback.
++ * This function allocates and initializes all URBs for playback, feedback,
++ * and capture, as well as the necessary buffers for data processing.
   *
   * Return: 0 on success, or a negative error code on failure.
   */
-@@ -256,4 +317,51 @@ int tascam_alloc_urbs(struct tascam_card *tascam);
+@@ -217,8 +251,8 @@ int tascam_alloc_urbs(struct tascam_card *tascam);
+  * tascam_stop_work_handler() - Work handler to stop all active streams.
+  * @work: Pointer to the work_struct.
+  *
+- * This function is scheduled to stop all active URBs (playback, feedback)
+- * and reset the active_urbs counter.
++ * This function is scheduled to stop all active URBs (playback, feedback,
++ * capture) and reset the active_urbs counter.
   */
  void tascam_stop_work_handler(struct work_struct *work);
  
-+/* us144mkii_pcm.h */
-+#include "us144mkii_pcm.h"
-+
-+/* us144mkii_midi.c */
-+/**
-+ * tascam_midi_in_urb_complete() - Completion handler for MIDI IN URBs
-+ * @urb: The completed URB.
-+ *
-+ * This function runs in interrupt context. It places the raw data from the
-+ * USB endpoint into a kfifo and schedules a work item to process it later,
-+ * ensuring the interrupt handler remains fast.
-+ */
-+void tascam_midi_in_urb_complete(struct urb *urb);
-+
-+/**
-+ * tascam_midi_out_urb_complete() - Completion handler for MIDI OUT bulk URB.
-+ * @urb: The completed URB.
-+ *
-+ * This function runs in interrupt context. It marks the output URB as no
-+ * longer in-flight. It then re-schedules the work handler to check for and
-+ * send any more data waiting in the ALSA buffer. This is a safe, non-blocking
-+ * way to continue the data transmission chain.
-+ */
-+void tascam_midi_out_urb_complete(struct urb *urb);
-+
-+/**
-+ * tascam_create_midi() - Create and initialize the ALSA rawmidi device.
-+ * @tascam: The driver instance.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
-+int tascam_create_midi(struct tascam_card *tascam);
-+
-+/* us144mkii_controls.c */
-+/**
-+ * tascam_create_controls() - Creates and adds ALSA mixer controls for the
-+ * device.
-+ * @tascam: The driver instance.
-+ *
-+ * This function registers custom ALSA controls for managing audio routing
-+ * (line out source, digital out source, capture 1-2 source, capture 3-4 source)
-+ * and displaying the current sample rate.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
-+int tascam_create_controls(struct tascam_card *tascam);
-+
- #endif /* __US144MKII_H */
-diff --git a/sound/usb/usx2y/us144mkii_controls.c b/sound/usb/usx2y/us144mkii_controls.c
-new file mode 100644
-index 000000000000..b6ad1b5a4bf5
---- /dev/null
-+++ b/sound/usb/usx2y/us144mkii_controls.c
-@@ -0,0 +1,444 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (c) 2025 Šerif Rami <ramiserifpersia@gmail.com>
-+
-+#include "us144mkii.h"
+diff --git a/sound/usb/usx2y/us144mkii_capture.c b/sound/usb/usx2y/us144mkii_capture.c
+index 22b8faa9bbe8..68ff07d7e441 100644
+--- a/sound/usb/usx2y/us144mkii_capture.c
++++ b/sound/usb/usx2y/us144mkii_capture.c
+@@ -45,7 +45,7 @@ static int tascam_capture_close(struct snd_pcm_substream *substream)
+  * tascam_capture_prepare() - Prepares the PCM capture substream for use.
+  * @substream: The ALSA PCM substream to prepare.
+  *
+- * This function initializes capture-related counters.
++ * This function initializes capture-related counters and ring buffer pointers.
+  *
+  * Return: 0 on success.
+  */
+@@ -56,6 +56,8 @@ static int tascam_capture_prepare(struct snd_pcm_substream *substream)
+ 	tascam->driver_capture_pos = 0;
+ 	tascam->capture_frames_processed = 0;
+ 	tascam->last_capture_period_pos = 0;
++	tascam->capture_ring_buffer_read_ptr = 0;
++	tascam->capture_ring_buffer_write_ptr = 0;
+ 
+ 	return 0;
+ }
+@@ -107,3 +109,217 @@ const struct snd_pcm_ops tascam_capture_ops = {
+ 	.trigger = tascam_pcm_trigger,
+ 	.pointer = tascam_capture_pointer,
+ };
 +
 +/**
-+ * @brief Text descriptions for playback output source options.
++ * decode_tascam_capture_block() - Decodes a raw 512-byte block from the device.
++ * @src_block: Pointer to the 512-byte raw source block.
++ * @dst_block: Pointer to the destination buffer for decoded audio frames.
 + *
-+ * Used by ALSA kcontrol elements to provide user-friendly names for
-+ * the playback routing options (e.g., "Playback 1-2", "Playback 3-4").
++ * The device sends audio data in a complex, multiplexed format. This function
++ * demultiplexes the bits from the raw block into 8 frames of 4-channel,
++ * 24-bit audio (stored in 32-bit containers).
 + */
-+static const char *const playback_source_texts[] = { "Playback 1-2",
-+						     "Playback 3-4" };
-+
-+/**
-+ * @brief Text descriptions for capture input source options.
-+ *
-+ * Used by ALSA kcontrol elements to provide user-friendly names for
-+ * the capture routing options (e.g., "Analog In", "Digital In").
-+ */
-+static const char *const capture_source_texts[] = { "Analog In", "Digital In" };
-+
-+/**
-+ * tascam_playback_source_info() - ALSA control info callback for playback
-+ * source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @uinfo: The ALSA control element info structure to fill.
-+ *
-+ * This function provides information about the enumerated playback source
-+ * control, including its type, count, and available items (Playback 1-2,
-+ * Playback 3-4).
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_playback_source_info(struct snd_kcontrol *kcontrol,
-+				       struct snd_ctl_elem_info *uinfo)
++static void decode_tascam_capture_block(const u8 *src_block, s32 *dst_block)
 +{
-+	return snd_ctl_enum_info(uinfo, 1, 2, playback_source_texts);
-+}
++	int frame, bit;
 +
-+/**
-+ * tascam_line_out_get() - ALSA control get callback for Line Outputs Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure to fill.
-+ *
-+ * This function retrieves the current selection for the Line Outputs source
-+ * (Playback 1-2 or Playback 3-4) from the driver's private data and populates
-+ * the ALSA control element value.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_line_out_get(struct snd_kcontrol *kcontrol,
-+			       struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int val;
++	memset(dst_block, 0,
++	       FRAMES_PER_DECODE_BLOCK * DECODED_CHANNELS_PER_FRAME *
++		       DECODED_SAMPLE_SIZE);
 +
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	val = tascam->line_out_source;
-+	ucontrol->value.enumerated.item[0] = val;
-+	return 0;
-+}
++	for (frame = 0; frame < FRAMES_PER_DECODE_BLOCK; ++frame) {
++		const u8 *p_src_frame_base = src_block + frame * 64;
++		s32 *p_dst_frame = dst_block + frame * 4;
 +
-+/**
-+ * tascam_line_out_put() - ALSA control put callback for Line Outputs Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure containing the new value.
-+ *
-+ * This function sets the Line Outputs source (Playback 1-2 or Playback 3-4)
-+ * based on the user's selection from the ALSA control element. It validates
-+ * the input and updates the driver's private data.
-+ *
-+ * Return: 1 if the value was changed, 0 if unchanged, or a negative error code.
-+ */
-+static int tascam_line_out_put(struct snd_kcontrol *kcontrol,
-+			       struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int changed = 0;
++		s32 ch[4] = { 0 };
 +
-+	if (ucontrol->value.enumerated.item[0] > 1)
-+		return -EINVAL;
++		for (bit = 0; bit < 24; ++bit) {
++			u8 byte1 = p_src_frame_base[bit];
++			u8 byte2 = p_src_frame_base[bit + 32];
 +
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	if (tascam->line_out_source != ucontrol->value.enumerated.item[0]) {
-+		tascam->line_out_source = ucontrol->value.enumerated.item[0];
-+		changed = 1;
-+	}
-+	return changed;
-+}
++			ch[0] = (ch[0] << 1) | (byte1 & 1);
++			ch[2] = (ch[2] << 1) | ((byte1 >> 1) & 1);
 +
-+/**
-+ * tascam_line_out_control - ALSA kcontrol definition for Line Outputs Source.
-+ *
-+ * This defines a new ALSA mixer control named "Line OUTPUTS Source" that allows
-+ * the user to select between "Playback 1-2" and "Playback 3-4" for the analog
-+ * line outputs of the device. It uses the `tascam_playback_source_info` for
-+ * information and `tascam_line_out_get`/`tascam_line_out_put` for value
-+ * handling.
-+ */
-+static const struct snd_kcontrol_new tascam_line_out_control = {
-+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+	.name = "Line Playback Source",
-+	.info = tascam_playback_source_info,
-+	.get = tascam_line_out_get,
-+	.put = tascam_line_out_put,
-+};
-+
-+/**
-+ * tascam_digital_out_get() - ALSA control get callback for Digital Outputs
-+ * Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure to fill.
-+ *
-+ * This function retrieves the current selection for the Digital Outputs source
-+ * (Playback 1-2 or Playback 3-4) from the driver's private data and populates
-+ * the ALSA control element value.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_digital_out_get(struct snd_kcontrol *kcontrol,
-+				  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int val;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	val = tascam->digital_out_source;
-+	ucontrol->value.enumerated.item[0] = val;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_digital_out_put() - ALSA control put callback for Digital Outputs
-+ * Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure containing the new value.
-+ *
-+ * This function sets the Digital Outputs source (Playback 1-2 or Playback 3-4)
-+ * based on the user's selection from the ALSA control element. It validates
-+ * the input and updates the driver's private data.
-+ *
-+ * Return: 1 if the value was changed, 0 if unchanged, or a negative error code.
-+ */
-+static int tascam_digital_out_put(struct snd_kcontrol *kcontrol,
-+				  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int changed = 0;
-+
-+	if (ucontrol->value.enumerated.item[0] > 1)
-+		return -EINVAL;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	if (tascam->digital_out_source != ucontrol->value.enumerated.item[0]) {
-+		tascam->digital_out_source = ucontrol->value.enumerated.item[0];
-+		changed = 1;
-+	}
-+	return changed;
-+}
-+
-+/**
-+ * tascam_digital_out_control - ALSA kcontrol definition for Digital Outputs
-+ * Source.
-+ *
-+ * This defines a new ALSA mixer control named "Digital OUTPUTS Source" that
-+ * allows the user to select between "Playback 1-2" and "Playback 3-4" for the
-+ * digital outputs of the device. It uses the `tascam_playback_source_info` for
-+ * information and `tascam_digital_out_get`/`tascam_digital_out_put` for value
-+ * handling.
-+ */
-+static const struct snd_kcontrol_new tascam_digital_out_control = {
-+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+	.name = "Digital Playback Source",
-+	.info = tascam_playback_source_info,
-+	.get = tascam_digital_out_get,
-+	.put = tascam_digital_out_put,
-+};
-+
-+/**
-+ * tascam_capture_source_info() - ALSA control info callback for capture source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @uinfo: The ALSA control element info structure to fill.
-+ *
-+ * This function provides information about the enumerated capture source
-+ * control, including its type, count, and available items (Analog In, Digital
-+ * In).
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_capture_source_info(struct snd_kcontrol *kcontrol,
-+				      struct snd_ctl_elem_info *uinfo)
-+{
-+	return snd_ctl_enum_info(uinfo, 1, 2, capture_source_texts);
-+}
-+
-+/**
-+ * tascam_capture_12_get() - ALSA control get callback for Capture channels 1
-+ * and 2 Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure to fill.
-+ *
-+ * This function retrieves the current selection for the Capture channels 1 and
-+ * 2 source (Analog In or Digital In) from the driver's private data and
-+ * populates the ALSA control element value.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_capture_12_get(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int val;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	val = tascam->capture_12_source;
-+	ucontrol->value.enumerated.item[0] = val;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_capture_12_put() - ALSA control put callback for Capture channels 1
-+ * and 2 Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure containing the new value.
-+ *
-+ * This function sets the Capture channels 1 and 2 source (Analog In or Digital
-+ * In) based on the user's selection from the ALSA control element. It validates
-+ * the input and updates the driver's private data.
-+ *
-+ * Return: 1 if the value was changed, 0 if unchanged, or a negative error code.
-+ */
-+static int tascam_capture_12_put(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int changed = 0;
-+
-+	if (ucontrol->value.enumerated.item[0] > 1)
-+		return -EINVAL;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	if (tascam->capture_12_source != ucontrol->value.enumerated.item[0]) {
-+		tascam->capture_12_source = ucontrol->value.enumerated.item[0];
-+		changed = 1;
-+	}
-+	return changed;
-+}
-+
-+/**
-+ * tascam_capture_12_control - ALSA kcontrol definition for Capture channels 1
-+ * and 2 Source.
-+ *
-+ * This defines a new ALSA mixer control named "ch1 and ch2 Source" that allows
-+ * the user to select between "Analog In" and "Digital In" for the first two
-+ * capture channels of the device. It uses the `tascam_capture_source_info` for
-+ * information and `tascam_capture_12_get`/`tascam_capture_12_put` for value
-+ * handling.
-+ */
-+static const struct snd_kcontrol_new tascam_capture_12_control = {
-+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+	.name = "Ch1/2 Capture Source",
-+	.info = tascam_capture_source_info,
-+	.get = tascam_capture_12_get,
-+	.put = tascam_capture_12_put,
-+};
-+
-+/**
-+ * tascam_capture_34_get() - ALSA control get callback for Capture channels 3
-+ * and 4 Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure to fill.
-+ *
-+ * This function retrieves the current selection for the Capture channels 3 and
-+ * 4 source (Analog In or Digital In) from the driver's private data and
-+ * populates the ALSA control element value.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_capture_34_get(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int val;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	val = tascam->capture_34_source;
-+	ucontrol->value.enumerated.item[0] = val;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_capture_34_put() - ALSA control put callback for Capture channels 3
-+ * and 4 Source.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure containing the new value.
-+ *
-+ * This function sets the Capture channels 3 and 4 source (Analog In or Digital
-+ * In) based on the user's selection from the ALSA control element. It validates
-+ * the input and updates the driver's private data.
-+ *
-+ * Return: 1 if the value was changed, 0 if unchanged, or a negative error code.
-+ */
-+static int tascam_capture_34_put(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam = snd_kcontrol_chip(kcontrol);
-+	int changed = 0;
-+
-+	if (ucontrol->value.enumerated.item[0] > 1)
-+		return -EINVAL;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	if (tascam->capture_34_source != ucontrol->value.enumerated.item[0]) {
-+		tascam->capture_34_source = ucontrol->value.enumerated.item[0];
-+		changed = 1;
-+	}
-+	return changed;
-+}
-+
-+/**
-+ * tascam_capture_34_control - ALSA kcontrol definition for Capture channels 3
-+ * and 4 Source.
-+ *
-+ * This defines a new ALSA mixer control named "ch3 and ch4 Source" that allows
-+ * the user to select between "Analog In" and "Digital In" for the third and
-+ * fourth capture channels of the device. It uses the
-+ * `tascam_capture_source_info` for information and
-+ * `tascam_capture_34_get`/`tascam_capture_34_put` for value handling.
-+ */
-+static const struct snd_kcontrol_new tascam_capture_34_control = {
-+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+	.name = "Ch3/4 Capture Source",
-+	.info = tascam_capture_source_info,
-+	.get = tascam_capture_34_get,
-+	.put = tascam_capture_34_put,
-+};
-+
-+/**
-+ * tascam_samplerate_info() - ALSA control info callback for Sample Rate.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @uinfo: The ALSA control element info structure to fill.
-+ *
-+ * This function provides information about the Sample Rate control, defining
-+ * it as an integer type with a minimum value of 0 and a maximum of 96000.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_samplerate_info(struct snd_kcontrol *kcontrol,
-+				  struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-+	uinfo->count = 1;
-+	uinfo->value.integer.min = 0;
-+	uinfo->value.integer.max = 96000;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_samplerate_get() - ALSA control get callback for Sample Rate.
-+ * @kcontrol: The ALSA kcontrol instance.
-+ * @ucontrol: The ALSA control element value structure to fill.
-+ *
-+ * This function retrieves the current sample rate from the device via a USB
-+ * control message and populates the ALSA control element value. If the rate
-+ * is already known (i.e., `current_rate` is set), it returns that value
-+ * directly.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
-+static int tascam_samplerate_get(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct tascam_card *tascam =
-+		(struct tascam_card *)snd_kcontrol_chip(kcontrol);
-+	u8 *buf __free(kfree) = NULL;
-+	int err;
-+	u32 rate = 0;
-+
-+	guard(spinlock_irqsave)(&tascam->lock);
-+	if (tascam->current_rate > 0) {
-+		ucontrol->value.integer.value[0] = tascam->current_rate;
-+		return 0;
-+	}
-+	// Lock is released here before kmalloc and usb_control_msg
-+
-+	buf = kmalloc(3, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	err = usb_control_msg(tascam->dev, usb_rcvctrlpipe(tascam->dev, 0),
-+			      UAC_GET_CUR, RT_D2H_CLASS_EP,
-+			      UAC_SAMPLING_FREQ_CONTROL, EP_AUDIO_IN, buf, 3,
-+			      USB_CTRL_TIMEOUT_MS);
-+
-+	if (err >= 3)
-+		rate = buf[0] | (buf[1] << 8) | (buf[2] << 16);
-+
-+	ucontrol->value.integer.value[0] = rate;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_samplerate_control - ALSA kcontrol definition for Sample Rate.
-+ *
-+ * This defines a new ALSA mixer control named "Sample Rate" that displays
-+ * the current sample rate of the device. It is a read-only control.
-+ */
-+static const struct snd_kcontrol_new tascam_samplerate_control = {
-+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+	.name = "Sample Rate",
-+	.info = tascam_samplerate_info,
-+	.get = tascam_samplerate_get,
-+	.access = SNDRV_CTL_ELEM_ACCESS_READ,
-+};
-+
-+int tascam_create_controls(struct tascam_card *tascam)
-+{
-+	int err;
-+
-+	err = snd_ctl_add(tascam->card,
-+			  snd_ctl_new1(&tascam_line_out_control, tascam));
-+	if (err < 0)
-+		return err;
-+	err = snd_ctl_add(tascam->card,
-+			  snd_ctl_new1(&tascam_digital_out_control, tascam));
-+	if (err < 0)
-+		return err;
-+	err = snd_ctl_add(tascam->card,
-+			  snd_ctl_new1(&tascam_capture_12_control, tascam));
-+	if (err < 0)
-+		return err;
-+	err = snd_ctl_add(tascam->card,
-+			  snd_ctl_new1(&tascam_capture_34_control, tascam));
-+	if (err < 0)
-+		return err;
-+
-+	err = snd_ctl_add(tascam->card,
-+			  snd_ctl_new1(&tascam_samplerate_control, tascam));
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-diff --git a/sound/usb/usx2y/us144mkii_midi.c b/sound/usb/usx2y/us144mkii_midi.c
-new file mode 100644
-index 000000000000..36a05d52a8c8
---- /dev/null
-+++ b/sound/usb/usx2y/us144mkii_midi.c
-@@ -0,0 +1,401 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (c) 2025 Šerif Rami <ramiserifpersia@gmail.com>
-+
-+#include "us144mkii.h"
-+
-+/**
-+ * tascam_midi_in_work_handler() - Deferred work for processing MIDI input.
-+ * @work: The work_struct instance.
-+ *
-+ * This function runs in a thread context. It safely reads raw USB data from
-+ * the kfifo, processes it by stripping protocol-specific padding bytes, and
-+ * passes the clean MIDI data to the ALSA rawmidi subsystem.
-+ */
-+static void tascam_midi_in_work_handler(struct work_struct *work)
-+{
-+	struct tascam_card *tascam =
-+		container_of(work, struct tascam_card, midi_in_work);
-+	u8 buf[9];
-+	u8 clean_buf[8];
-+	unsigned int count, clean_count;
-+
-+	if (!tascam->midi_in_substream)
-+		return;
-+
-+	while (kfifo_out_spinlocked(&tascam->midi_in_fifo, buf, sizeof(buf),
-+				    &tascam->midi_in_lock) == sizeof(buf)) {
-+		clean_count = 0;
-+		for (count = 0; count < 8; ++count) {
-+			if (buf[count] != 0xfd)
-+				clean_buf[clean_count++] = buf[count];
++			ch[1] = (ch[1] << 1) | (byte2 & 1);
++			ch[3] = (ch[3] << 1) | ((byte2 >> 1) & 1);
 +		}
 +
-+		if (clean_count > 0)
-+			snd_rawmidi_receive(tascam->midi_in_substream,
-+					    clean_buf, clean_count);
++		/*
++		 * The result is a 24-bit sample. Shift left by 8 to align it to
++		 * the most significant bits of a 32-bit integer (S32_LE format).
++		 */
++		p_dst_frame[0] = ch[0] << 8;
++		p_dst_frame[1] = ch[1] << 8;
++		p_dst_frame[2] = ch[2] << 8;
++		p_dst_frame[3] = ch[3] << 8;
 +	}
 +}
 +
-+void tascam_midi_in_urb_complete(struct urb *urb)
++void tascam_capture_work_handler(struct work_struct *work)
++{
++	struct tascam_card *tascam =
++		container_of(work, struct tascam_card, capture_work);
++	struct snd_pcm_substream *substream = tascam->capture_substream;
++	struct snd_pcm_runtime *runtime;
++	u8 *raw_block = tascam->capture_decode_raw_block;
++	s32 *decoded_block = tascam->capture_decode_dst_block;
++	s32 *routed_block = tascam->capture_routing_buffer;
++
++	if (!substream || !substream->runtime)
++		return;
++	runtime = substream->runtime;
++
++	if (!raw_block || !decoded_block || !routed_block) {
++		dev_err(tascam->card->dev,
++			"Capture decode/routing buffers not allocated!\n");
++		return;
++	}
++
++	while (atomic_read(&tascam->capture_active)) {
++		size_t write_ptr, read_ptr, available_data;
++		bool can_process;
++
++		{
++			guard(spinlock_irqsave)(&tascam->lock);
++			write_ptr = tascam->capture_ring_buffer_write_ptr;
++			read_ptr = tascam->capture_ring_buffer_read_ptr;
++			available_data = (write_ptr >= read_ptr) ?
++						 (write_ptr - read_ptr) :
++						 (CAPTURE_RING_BUFFER_SIZE -
++						  read_ptr + write_ptr);
++			can_process =
++				(available_data >= RAW_BYTES_PER_DECODE_BLOCK);
++
++			if (can_process) {
++				size_t bytes_to_end =
++					CAPTURE_RING_BUFFER_SIZE - read_ptr;
++				if (bytes_to_end >=
++				    RAW_BYTES_PER_DECODE_BLOCK) {
++					memcpy(raw_block,
++					       tascam->capture_ring_buffer +
++						       read_ptr,
++					       RAW_BYTES_PER_DECODE_BLOCK);
++				} else {
++					memcpy(raw_block,
++					       tascam->capture_ring_buffer +
++						       read_ptr,
++					       bytes_to_end);
++					memcpy(raw_block + bytes_to_end,
++					       tascam->capture_ring_buffer,
++					       RAW_BYTES_PER_DECODE_BLOCK -
++						       bytes_to_end);
++				}
++				tascam->capture_ring_buffer_read_ptr =
++					(read_ptr +
++					 RAW_BYTES_PER_DECODE_BLOCK) %
++					CAPTURE_RING_BUFFER_SIZE;
++			}
++		}
++
++		if (!can_process)
++			break;
++
++		decode_tascam_capture_block(raw_block, decoded_block);
++		process_capture_routing_us144mkii(tascam, decoded_block,
++						  routed_block);
++
++		{
++			guard(spinlock_irqsave)(&tascam->lock);
++			if (atomic_read(&tascam->capture_active)) {
++				int f;
++
++				for (f = 0; f < FRAMES_PER_DECODE_BLOCK; ++f) {
++					u8 *dst_frame_start =
++						runtime->dma_area +
++						frames_to_bytes(
++							runtime,
++							tascam->driver_capture_pos);
++					s32 *routed_frame_start =
++						routed_block +
++						(f * NUM_CHANNELS);
++					int c;
++
++					for (c = 0; c < NUM_CHANNELS; c++) {
++						u8 *dst_channel =
++							dst_frame_start +
++							(c * BYTES_PER_SAMPLE);
++						s32 *src_channel_s32 =
++							routed_frame_start + c;
++
++						memcpy(dst_channel,
++						       ((char *)src_channel_s32) +
++							       1,
++						       3);
++					}
++
++					tascam->driver_capture_pos =
++						(tascam->driver_capture_pos +
++						 1) %
++						runtime->buffer_size;
++				}
++			}
++		}
++	}
++}
++
++void capture_urb_complete(struct urb *urb)
 +{
 +	struct tascam_card *tascam = urb->context;
 +	int ret;
 +
 +	if (urb->status) {
 +		if (urb->status != -ENOENT && urb->status != -ECONNRESET &&
-+		    urb->status != -ESHUTDOWN && urb->status != -EPROTO) {
++		    urb->status != -ESHUTDOWN && urb->status != -ENODEV &&
++		    urb->status != -EPROTO)
 +			dev_err_ratelimited(tascam->card->dev,
-+					    "MIDI IN URB failed: status %d\n",
++					    "Capture URB failed: %d\n",
 +					    urb->status);
-+		}
 +		goto out;
 +	}
++	if (!tascam || !atomic_read(&tascam->capture_active))
++		goto out;
 +
-+	if (tascam && atomic_read(&tascam->midi_in_active) &&
-+	    urb->actual_length > 0) {
-+		kfifo_in_spinlocked(&tascam->midi_in_fifo, urb->transfer_buffer,
-+				    urb->actual_length, &tascam->midi_in_lock);
-+		schedule_work(&tascam->midi_in_work);
++	if (urb->actual_length > 0) {
++		size_t write_ptr;
++		size_t bytes_to_end;
++
++		{
++			guard(spinlock_irqsave)(&tascam->lock);
++			write_ptr = tascam->capture_ring_buffer_write_ptr;
++			bytes_to_end = CAPTURE_RING_BUFFER_SIZE - write_ptr;
++
++			if (urb->actual_length > bytes_to_end) {
++				memcpy(tascam->capture_ring_buffer + write_ptr,
++				       urb->transfer_buffer, bytes_to_end);
++				memcpy(tascam->capture_ring_buffer,
++				       urb->transfer_buffer + bytes_to_end,
++				       urb->actual_length - bytes_to_end);
++			} else {
++				memcpy(tascam->capture_ring_buffer + write_ptr,
++				       urb->transfer_buffer,
++				       urb->actual_length);
++			}
++
++			tascam->capture_ring_buffer_write_ptr =
++				(write_ptr + urb->actual_length) %
++				CAPTURE_RING_BUFFER_SIZE;
++		}
++
++		schedule_work(&tascam->capture_work);
 +	}
 +
 +	usb_get_urb(urb);
-+	usb_anchor_urb(urb, &tascam->midi_in_anchor);
++	usb_anchor_urb(urb, &tascam->capture_anchor);
 +	ret = usb_submit_urb(urb, GFP_ATOMIC);
 +	if (ret < 0) {
-+		dev_err(tascam->card->dev,
-+			"Failed to resubmit MIDI IN URB: error %d\n", ret);
++		dev_err_ratelimited(tascam->card->dev,
++				    "Failed to resubmit capture URB: %d\n",
++				    ret);
 +		usb_unanchor_urb(urb);
 +		usb_put_urb(urb);
++		atomic_dec(
++			&tascam->active_urbs); /* Decrement on failed resubmission */
 +	}
 +out:
 +	usb_put_urb(urb);
-+}
-+
-+/**
-+ * tascam_midi_in_open() - Opens the MIDI input substream.
-+ * @substream: The ALSA rawmidi substream to open.
-+ *
-+ * This function stores a reference to the MIDI input substream in the
-+ * driver's private data.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_midi_in_open(struct snd_rawmidi_substream *substream)
-+{
-+	struct tascam_card *tascam = substream->rmidi->private_data;
-+
-+	tascam->midi_in_substream = substream;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_midi_in_close() - Closes the MIDI input substream.
-+ * @substream: The ALSA rawmidi substream to close.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_midi_in_close(struct snd_rawmidi_substream *substream)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * tascam_midi_in_trigger() - Triggers MIDI input stream activity.
-+ * @substream: The ALSA rawmidi substream.
-+ * @up: Boolean indicating whether to start (1) or stop (0) the stream.
-+ *
-+ * This function starts or stops the MIDI input URBs based on the 'up'
-+ * parameter. When starting, it resets the kfifo and submits all MIDI input
-+ * URBs. When stopping, it kills all anchored MIDI input URBs and cancels the
-+ * associated workqueue.
-+ */
-+static void tascam_midi_in_trigger(struct snd_rawmidi_substream *substream,
-+				   int up)
-+{
-+	struct tascam_card *tascam = substream->rmidi->private_data;
-+	int i, err;
-+
-+	if (up) {
-+		if (atomic_xchg(&tascam->midi_in_active, 1) == 0) {
-+			{
-+				guard(spinlock_irqsave)(&tascam->midi_in_lock);
-+				kfifo_reset(&tascam->midi_in_fifo);
-+			}
-+
-+			for (i = 0; i < NUM_MIDI_IN_URBS; i++) {
-+				usb_get_urb(tascam->midi_in_urbs[i]);
-+				usb_anchor_urb(tascam->midi_in_urbs[i],
-+					       &tascam->midi_in_anchor);
-+				err = usb_submit_urb(tascam->midi_in_urbs[i],
-+						     GFP_KERNEL);
-+				if (err < 0) {
-+					dev_err(tascam->card->dev,
-+						"Failed to submit MIDI IN URB %d: %d\n",
-+						i, err);
-+					usb_unanchor_urb(
-+						tascam->midi_in_urbs[i]);
-+					usb_put_urb(tascam->midi_in_urbs[i]);
-+				}
-+			}
-+		}
-+	} else {
-+		if (atomic_xchg(&tascam->midi_in_active, 0) == 1) {
-+			usb_kill_anchored_urbs(&tascam->midi_in_anchor);
-+			cancel_work_sync(&tascam->midi_in_work);
-+		}
-+	}
-+}
-+
-+/**
-+ * tascam_midi_in_ops - ALSA rawmidi operations for MIDI input.
-+ *
-+ * This structure defines the callback functions for MIDI input stream
-+ * operations, including open, close, and trigger.
-+ */
-+static const struct snd_rawmidi_ops tascam_midi_in_ops = {
-+	.open = tascam_midi_in_open,
-+	.close = tascam_midi_in_close,
-+	.trigger = tascam_midi_in_trigger,
-+};
-+
-+void tascam_midi_out_urb_complete(struct urb *urb)
-+{
-+	struct tascam_card *tascam = urb->context;
-+	int i, urb_index = -1;
-+
-+	if (urb->status) {
-+		if (urb->status != -ENOENT && urb->status != -ECONNRESET &&
-+		    urb->status != -ESHUTDOWN) {
-+			dev_err_ratelimited(tascam->card->dev,
-+					    "MIDI OUT URB failed: %d\n",
-+					    urb->status);
-+		}
-+		goto out;
-+	}
-+
-+	if (!tascam)
-+		goto out;
-+
-+	for (i = 0; i < NUM_MIDI_OUT_URBS; i++) {
-+		if (tascam->midi_out_urbs[i] == urb) {
-+			urb_index = i;
-+			break;
-+		}
-+	}
-+
-+	if (urb_index < 0) {
-+		dev_err_ratelimited(tascam->card->dev,
-+				    "Unknown MIDI OUT URB completed!\n");
-+		goto out;
-+	}
-+
-+	{
-+		guard(spinlock_irqsave)(&tascam->midi_out_lock);
-+		clear_bit(urb_index, &tascam->midi_out_urbs_in_flight);
-+	}
-+
-+	if (atomic_read(&tascam->midi_out_active))
-+		schedule_work(&tascam->midi_out_work);
-+
-+out:
-+	usb_put_urb(urb);
-+}
-+
-+/**
-+ * tascam_midi_out_work_handler() - Deferred work for sending MIDI data
-+ * @work: The work_struct instance.
-+ *
-+ * This function handles the proprietary output protocol: take the raw MIDI
-+ * message bytes from the application, place them at the start of a 9-byte
-+ * buffer, pad the rest with 0xFD, and add a terminator byte (0x00).
-+ * This function pulls as many bytes as will fit into one packet from the
-+ * ALSA buffer and sends them.
-+ */
-+static void tascam_midi_out_work_handler(struct work_struct *work)
-+{
-+	struct tascam_card *tascam =
-+		container_of(work, struct tascam_card, midi_out_work);
-+	struct snd_rawmidi_substream *substream = tascam->midi_out_substream;
-+	int i;
-+
-+	if (!substream || !atomic_read(&tascam->midi_out_active))
-+		return;
-+
-+	while (snd_rawmidi_transmit_peek(substream, (u8[]){ 0 }, 1) == 1) {
-+		int urb_index;
-+		struct urb *urb;
-+		u8 *buf;
-+		int bytes_to_send;
-+
-+		{
-+			guard(spinlock_irqsave)(&tascam->midi_out_lock);
-+
-+			urb_index = -1;
-+			for (i = 0; i < NUM_MIDI_OUT_URBS; i++) {
-+				if (!test_bit(
-+					    i,
-+					    &tascam->midi_out_urbs_in_flight)) {
-+					urb_index = i;
-+					break;
-+				}
-+			}
-+
-+			if (urb_index < 0)
-+				return; /* No free URBs, will be rescheduled by
-+					 * completion handler
-+					 */
-+
-+			urb = tascam->midi_out_urbs[urb_index];
-+			buf = urb->transfer_buffer;
-+			bytes_to_send = snd_rawmidi_transmit(substream, buf, 8);
-+
-+			if (bytes_to_send <= 0)
-+				break; /* No more data */
-+
-+			if (bytes_to_send < 9)
-+				memset(buf + bytes_to_send, 0xfd,
-+				       9 - bytes_to_send);
-+			buf[8] = 0x00;
-+
-+			set_bit(urb_index, &tascam->midi_out_urbs_in_flight);
-+			urb->transfer_buffer_length = 9;
-+		}
-+
-+		usb_get_urb(urb);
-+		usb_anchor_urb(urb, &tascam->midi_out_anchor);
-+		if (usb_submit_urb(urb, GFP_KERNEL) < 0) {
-+			dev_err_ratelimited(
-+				tascam->card->dev,
-+				"Failed to submit MIDI OUT URB %d\n",
-+				urb_index);
-+			{
-+				guard(spinlock_irqsave)(&tascam->midi_out_lock);
-+				clear_bit(urb_index,
-+					  &tascam->midi_out_urbs_in_flight);
-+			}
-+			usb_unanchor_urb(urb);
-+			usb_put_urb(urb);
-+			break; /* Stop on error */
-+		}
-+	}
-+}
-+
-+/**
-+ * tascam_midi_out_open() - Opens the MIDI output substream.
-+ * @substream: The ALSA rawmidi substream to open.
-+ *
-+ * This function stores a reference to the MIDI output substream in the
-+ * driver's private data and initializes the MIDI running status.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_midi_out_open(struct snd_rawmidi_substream *substream)
-+{
-+	struct tascam_card *tascam = substream->rmidi->private_data;
-+
-+	tascam->midi_out_substream = substream;
-+	/* Initialize the running status state for the packet packer. */
-+	tascam->midi_running_status = 0;
-+	return 0;
-+}
-+
-+/**
-+ * tascam_midi_out_close() - Closes the MIDI output substream.
-+ * @substream: The ALSA rawmidi substream to close.
-+ *
-+ * Return: 0 on success.
-+ */
-+static int tascam_midi_out_close(struct snd_rawmidi_substream *substream)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * tascam_midi_out_drain() - Drains the MIDI output stream.
-+ * @substream: The ALSA rawmidi substream.
-+ *
-+ * This function cancels any pending MIDI output work and kills all
-+ * anchored MIDI output URBs, ensuring all data is sent or discarded.
-+ */
-+static void tascam_midi_out_drain(struct snd_rawmidi_substream *substream)
-+{
-+	struct tascam_card *tascam = substream->rmidi->private_data;
-+	bool in_flight = true;
-+
-+	while (in_flight) {
-+		in_flight = false;
-+		for (int i = 0; i < NUM_MIDI_OUT_URBS; i++) {
-+			if (test_bit(i, &tascam->midi_out_urbs_in_flight)) {
-+				in_flight = true;
-+				break;
-+			}
-+		}
-+		if (in_flight)
-+			schedule_timeout_uninterruptible(1);
-+	}
-+
-+	cancel_work_sync(&tascam->midi_out_work);
-+	usb_kill_anchored_urbs(&tascam->midi_out_anchor);
-+}
-+
-+/**
-+ * tascam_midi_out_trigger() - Triggers MIDI output stream activity.
-+ * @substream: The ALSA rawmidi substream.
-+ * @up: Boolean indicating whether to start (1) or stop (0) the stream.
-+ *
-+ * This function starts or stops the MIDI output workqueue based on the
-+ * 'up' parameter.
-+ */
-+static void tascam_midi_out_trigger(struct snd_rawmidi_substream *substream,
-+				    int up)
-+{
-+	struct tascam_card *tascam = substream->rmidi->private_data;
-+
-+	if (up) {
-+		atomic_set(&tascam->midi_out_active, 1);
-+		schedule_work(&tascam->midi_out_work);
-+	} else {
-+		atomic_set(&tascam->midi_out_active, 0);
-+	}
-+}
-+
-+/**
-+ * tascam_midi_out_ops - ALSA rawmidi operations for MIDI output.
-+ *
-+ * This structure defines the callback functions for MIDI output stream
-+ * operations, including open, close, trigger, and drain.
-+ */
-+static const struct snd_rawmidi_ops tascam_midi_out_ops = {
-+	.open = tascam_midi_out_open,
-+	.close = tascam_midi_out_close,
-+	.trigger = tascam_midi_out_trigger,
-+	.drain = tascam_midi_out_drain,
-+};
-+
-+int tascam_create_midi(struct tascam_card *tascam)
-+{
-+	int err;
-+
-+	err = snd_rawmidi_new(tascam->card, "US144MKII MIDI", 0, 1, 1,
-+			      &tascam->rmidi);
-+	if (err < 0)
-+		return err;
-+
-+	strscpy(tascam->rmidi->name, "US144MKII MIDI",
-+		sizeof(tascam->rmidi->name));
-+	tascam->rmidi->private_data = tascam;
-+
-+	snd_rawmidi_set_ops(tascam->rmidi, SNDRV_RAWMIDI_STREAM_INPUT,
-+			    &tascam_midi_in_ops);
-+	snd_rawmidi_set_ops(tascam->rmidi, SNDRV_RAWMIDI_STREAM_OUTPUT,
-+			    &tascam_midi_out_ops);
-+
-+	tascam->rmidi->info_flags |= SNDRV_RAWMIDI_INFO_INPUT |
-+				     SNDRV_RAWMIDI_INFO_OUTPUT |
-+				     SNDRV_RAWMIDI_INFO_DUPLEX;
-+
-+	INIT_WORK(&tascam->midi_in_work, tascam_midi_in_work_handler);
-+	INIT_WORK(&tascam->midi_out_work, tascam_midi_out_work_handler);
-+
-+	return 0;
 +}
 diff --git a/sound/usb/usx2y/us144mkii_pcm.c b/sound/usb/usx2y/us144mkii_pcm.c
-index 7bee8b4210a6..61d776b4a04e 100644
+index 7d1bbd547504..7bee8b4210a6 100644
 --- a/sound/usb/usx2y/us144mkii_pcm.c
 +++ b/sound/usb/usx2y/us144mkii_pcm.c
-@@ -56,19 +56,60 @@ void process_playback_routing_us144mkii(struct tascam_card *tascam,
- 					const u8 *src_buffer, u8 *dst_buffer,
- 					size_t frames)
- {
--	/* This is a stub. Routing will be added in a later commit. */
--	if (src_buffer != dst_buffer)
--		memcpy(dst_buffer, src_buffer, frames * BYTES_PER_FRAME);
-+	size_t f;
-+	const u8 *src_12, *src_34;
-+	u8 *dst_line, *dst_digital;
-+
-+	for (f = 0; f < frames; ++f) {
-+		src_12 = src_buffer + f * BYTES_PER_FRAME;
-+		src_34 = src_12 + (2 * BYTES_PER_SAMPLE);
-+		dst_line = dst_buffer + f * BYTES_PER_FRAME;
-+		dst_digital = dst_line + (2 * BYTES_PER_SAMPLE);
-+
-+		/* LINE OUTPUTS (ch1/2 on device) */
-+		if (tascam->line_out_source == 0) /* "ch1 and ch2" */
-+			memcpy(dst_line, src_12, 2 * BYTES_PER_SAMPLE);
-+		else /* "ch3 and ch4" */
-+			memcpy(dst_line, src_34, 2 * BYTES_PER_SAMPLE);
-+
-+		/* DIGITAL OUTPUTS (ch3/4 on device) */
-+		if (tascam->digital_out_source == 0) /* "ch1 and ch2" */
-+			memcpy(dst_digital, src_12, 2 * BYTES_PER_SAMPLE);
-+		else /* "ch3 and ch4" */
-+			memcpy(dst_digital, src_34, 2 * BYTES_PER_SAMPLE);
-+	}
+@@ -61,6 +61,16 @@ void process_playback_routing_us144mkii(struct tascam_card *tascam,
+ 		memcpy(dst_buffer, src_buffer, frames * BYTES_PER_FRAME);
  }
  
- void process_capture_routing_us144mkii(struct tascam_card *tascam,
- 				       const s32 *decoded_block,
- 				       s32 *routed_block)
- {
--	/* This is a stub. Routing will be added in a later commit. */
--	memcpy(routed_block, decoded_block,
--	       FRAMES_PER_DECODE_BLOCK * DECODED_CHANNELS_PER_FRAME *
--		       DECODED_SAMPLE_SIZE);
-+	int f;
-+	const s32 *src_frame;
-+	s32 *dst_frame;
++void process_capture_routing_us144mkii(struct tascam_card *tascam,
++				       const s32 *decoded_block,
++				       s32 *routed_block)
++{
++	/* This is a stub. Routing will be added in a later commit. */
++	memcpy(routed_block, decoded_block,
++	       FRAMES_PER_DECODE_BLOCK * DECODED_CHANNELS_PER_FRAME *
++		       DECODED_SAMPLE_SIZE);
++}
 +
-+	for (f = 0; f < FRAMES_PER_DECODE_BLOCK; f++) {
-+		src_frame = decoded_block + (f * DECODED_CHANNELS_PER_FRAME);
-+		dst_frame = routed_block + (f * DECODED_CHANNELS_PER_FRAME);
-+
-+		/* ch1 and ch2 Source */
-+		if (tascam->capture_12_source == 0) { /* analog inputs */
-+			dst_frame[0] = src_frame[0]; /* Analog L */
-+			dst_frame[1] = src_frame[1]; /* Analog R */
-+		} else { /* digital inputs */
-+			dst_frame[0] = src_frame[2]; /* Digital L */
-+			dst_frame[1] = src_frame[3]; /* Digital R */
-+		}
-+
-+		/* ch3 and ch4 Source */
-+		if (tascam->capture_34_source == 0) { /* analog inputs */
-+			dst_frame[2] = src_frame[0]; /* Analog L (Duplicate) */
-+			dst_frame[3] = src_frame[1]; /* Analog R (Duplicate) */
-+		} else { /* digital inputs */
-+			dst_frame[2] = src_frame[2]; /* Digital L */
-+			dst_frame[3] = src_frame[3]; /* Digital R */
-+		}
-+	}
- }
- 
  int us144mkii_configure_device_for_rate(struct tascam_card *tascam, int rate)
-@@ -169,14 +210,12 @@ int us144mkii_configure_device_for_rate(struct tascam_card *tascam, int rate)
+ {
+ 	struct usb_device *dev = tascam->dev;
+@@ -110,6 +120,12 @@ int us144mkii_configure_device_for_rate(struct tascam_card *tascam, int rate)
+ 			      USB_CTRL_TIMEOUT_MS);
  	if (err < 0)
  		goto fail;
++	err = usb_control_msg(dev, usb_sndctrlpipe(dev, 0), UAC_SET_CUR,
++			      RT_H2D_CLASS_EP, UAC_SAMPLING_FREQ_CONTROL,
++			      EP_AUDIO_IN, rate_payload_buf, 3,
++			      USB_CTRL_TIMEOUT_MS);
++	if (err < 0)
++		goto fail;
+ 	err = usb_control_msg(dev, usb_sndctrlpipe(dev, 0), UAC_SET_CUR,
+ 			      RT_H2D_CLASS_EP, UAC_SAMPLING_FREQ_CONTROL,
+ 			      EP_AUDIO_OUT, rate_payload_buf, 3,
+@@ -274,6 +290,20 @@ int tascam_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+ 			}
+ 			atomic_inc(&tascam->active_urbs);
+ 		}
++		for (i = 0; i < NUM_CAPTURE_URBS; i++) {
++			usb_get_urb(tascam->capture_urbs[i]);
++			usb_anchor_urb(tascam->capture_urbs[i],
++				       &tascam->capture_anchor);
++			err = usb_submit_urb(tascam->capture_urbs[i],
++					     GFP_ATOMIC);
++			if (err < 0) {
++				usb_unanchor_urb(tascam->capture_urbs[i]);
++				usb_put_urb(tascam->capture_urbs[i]);
++				atomic_dec(&tascam->active_urbs);
++				goto start_rollback;
++			}
++			atomic_inc(&tascam->active_urbs);
++		}
  
--	kfree(rate_payload_buf);
- 	return 0;
+ 		return 0;
+ start_rollback:
+diff --git a/sound/usb/usx2y/us144mkii_pcm.h b/sound/usb/usx2y/us144mkii_pcm.h
+index 6ca00c3ce53d..74da8564431b 100644
+--- a/sound/usb/usx2y/us144mkii_pcm.h
++++ b/sound/usb/usx2y/us144mkii_pcm.h
+@@ -51,6 +51,16 @@ void playback_urb_complete(struct urb *urb);
+  */
+ void feedback_urb_complete(struct urb *urb);
  
- fail:
- 	dev_err(&dev->dev,
- 		"Device configuration failed at rate %d with error %d\n", rate,
- 		err);
--	kfree(rate_payload_buf);
- 	return err;
- }
++/**
++ * capture_urb_complete() - Completion handler for capture bulk URBs.
++ * @urb: the completed URB
++ *
++ * This function runs in interrupt context. It copies the received raw data
++ * into an intermediate ring buffer and then schedules the workqueue to process
++ * it. It then resubmits the URB to receive more data.
++ */
++void capture_urb_complete(struct urb *urb);
++
+ /**
+  * tascam_stop_pcm_work_handler() - Work handler to stop PCM streams.
+  * @work: Pointer to the work_struct.
+@@ -64,8 +74,8 @@ void tascam_stop_pcm_work_handler(struct work_struct *work);
+  * tascam_init_pcm() - Initializes the ALSA PCM device.
+  * @pcm: Pointer to the ALSA PCM device to initialize.
+  *
+- * This function sets up the PCM operations and preallocates pages for the
+- * PCM buffer.
++ * This function sets up the PCM operations, adds ALSA controls for routing
++ * and sample rate, and preallocates pages for the PCM buffer.
+  *
+  * Return: 0 on success, or a negative error code on failure.
+  */
+@@ -94,6 +104,16 @@ void process_playback_routing_us144mkii(struct tascam_card *tascam,
+ 					const u8 *src_buffer, u8 *dst_buffer,
+ 					size_t frames);
  
++/**
++ * process_capture_routing_us144mkii() - Apply capture routing matrix
++ * @tascam: The driver instance.
++ * @decoded_block: Buffer containing 4 channels of S32LE decoded audio.
++ * @routed_block: Buffer to be filled for ALSA.
++ */
++void process_capture_routing_us144mkii(struct tascam_card *tascam,
++				       const s32 *decoded_block,
++				       s32 *routed_block);
++
+ /**
+  * tascam_pcm_hw_params() - Configures hardware parameters for PCM streams.
+  * @substream: The ALSA PCM substream.
+@@ -131,4 +151,15 @@ int tascam_pcm_hw_free(struct snd_pcm_substream *substream);
+  */
+ int tascam_pcm_trigger(struct snd_pcm_substream *substream, int cmd);
+ 
++/**
++ * tascam_capture_work_handler() - Deferred work for processing capture data.
++ * @work: the work_struct instance
++ *
++ * This function runs in a kernel thread context, not an IRQ context. It reads
++ * raw data from the capture ring buffer, decodes it, applies routing, and
++ * copies the final audio data into the ALSA capture ring buffer. This offloads
++ * the CPU-intensive decoding from the time-sensitive URB completion handlers.
++ */
++void tascam_capture_work_handler(struct work_struct *work);
++
+ #endif /* __US144MKII_PCM_H */
 -- 
 2.39.5
 
