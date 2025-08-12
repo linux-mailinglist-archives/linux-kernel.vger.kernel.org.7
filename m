@@ -1,194 +1,148 @@
-Return-Path: <linux-kernel+bounces-764199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D17B21FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D64BB21FC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851AD1AA6BEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 039BA4E3D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F6E2DE71D;
-	Tue, 12 Aug 2025 07:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B752D8375;
+	Tue, 12 Aug 2025 07:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia5ubWtV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpHolMAn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B941A9F99;
-	Tue, 12 Aug 2025 07:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23F82D7803;
+	Tue, 12 Aug 2025 07:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984581; cv=none; b=hX5pf39nrtGKRGqeDFH2J9STxopW3wv7kO3B/3zsUsPlHXXxrjaHoiFAbxIHLNi3WMohSqRwDQEYFxVeYgWE38UKkNCUMU+JpCFq/dc5DRhmhNttN4zxJDYowPsr1te7Iv2q4+QAztQk8zUyrgbPk+KNH4JehrLwaCt1MBipyx0=
+	t=1754984586; cv=none; b=gwOI4QpJNMfkb8GnOkrGxeiLu6T9bK5FqyjU07xkZ/LpvBftGPnm733bkcmRjjkx430oDQJDf2Bqp1vet0auATUUHyyoOsGzWuOINphozaog8lWehOdoas1kGJV3lfyct+nEHAng81QvbY4Yy3CrRVVhNo9RjyMHDFkBf6egB6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984581; c=relaxed/simple;
-	bh=6SKWaPVqjTRIWpOZveIQwPd0ps/h4mv/dHVafQ5rf1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPcM08muv8FJRQpDMxVwvpdKEZu3KpyMY1YOLWOe9nqSlOkv/ktCrtYBKn3Sl6VmCnZKPgRrzPyomeuibKEzkg0bduqgFkuz10KFb8uN9ktkP7lHNUdX9b+Z2wP0SEBT0Nay11plc249XjbKNc5xwDj8MklIkCdTXcUtEHf6/mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia5ubWtV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70771C4CEF1;
-	Tue, 12 Aug 2025 07:42:59 +0000 (UTC)
+	s=arc-20240116; t=1754984586; c=relaxed/simple;
+	bh=1cRnQersqcQvz+yWOTCBkCExWQMW2QB2FBbOUQAleYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Np7n/U2tzM1wQhGZEZYIxTFqgiA/d27/DHCh36eQ6BT7WBdsaK3u9j22ivkoe+QaqEjcXg8t2S+FoqGVknxVPk5RiAUMIGo73B9z9Fc8P4sYyHbHXg5RanBdcBMlp5S5xS0Egxxd8Zfu5Vp+auly/r1wfT3Fw9LHY0/HtkkWjm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpHolMAn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DDCC4CEF8;
+	Tue, 12 Aug 2025 07:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754984581;
-	bh=6SKWaPVqjTRIWpOZveIQwPd0ps/h4mv/dHVafQ5rf1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ia5ubWtVGD9uVI3I8+5zJjfn5jo+rAqrnjPtJRuoKlVkGWvBn7HTITZtou7V86NDm
-	 rhPZlsgE0bfc9mD67yD25137PElf64vB0iM+6LjWdl+xZk1KIAP4Id9O7ew2MdXL8J
-	 dLe57ix9tVdX0HBN9Aj0lLkUS1/oQ6XF6kgULY3v8b7MK882keB3ap2aKOJV1GZNRI
-	 xd8HK0azfyFomH467KeyqfvUg0lxqsyJ1u0/3c+gSp2FaOvz1IZATaf7xPsk8m0gFa
-	 kowtk8luLibYGppdFeu+cIToyVBAVUI9VlvqQ7Xf6UiyAEt4CPnsYebr+KtwXIlIgr
-	 52ooBM728L7LA==
-Date: Tue, 12 Aug 2025 09:42:56 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: Rob Herring <robh@kernel.org>, maz@kernel.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Issues with OF_DYNAMIC PCI bridge node generation
- (kmemleak/interrupt-map IC reg property)
-Message-ID: <aJrwgKUNh68Dx1Fo@lpieralisi>
-References: <aJms+YT8TnpzpCY8@lpieralisi>
- <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
+	s=k20201202; t=1754984585;
+	bh=1cRnQersqcQvz+yWOTCBkCExWQMW2QB2FBbOUQAleYk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gpHolMAnHPF7LJ36a+KOSpg9bK2tULx1gTw9Kz4IGRaE3cipeer8Z+OO0QnqbneBE
+	 tCVp8cPmeu3MjYJVVmUI5IjdoSvQG5Od0U0wI9rQTTwD8oXTRRUmG1jJu8KIMqewkz
+	 Hee+SkmRZ0gWZ+HGo1rWbFVb4NXwqs4nppkOwuz4AIMfkJKrXIn5D8jJIi2pGHLkQb
+	 GAwPK7FUybpeqZ0aKbtYXRK10I+gDB3rcAWDWUJZVxnfVy7+w9+qGzyBfen6cg75s9
+	 j9RevmP1FsAr2FL/Jgn2CxU0raY0OYX138sx4aqnJmBVC6LuZDJVC1UBf+frC78Gg6
+	 kHlPQY/6D0ljg==
+Message-ID: <1400fece-db6c-45b3-831d-f653d28eb192@kernel.org>
+Date: Tue, 12 Aug 2025 09:42:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] ASoC: dt-bindings: nau8825: Document routing strings
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drake@endlessm.com,
+ katsuhiro@katsuster.net, matteomartelli3@gmail.com, zhoubinbin@loongson.cn,
+ KCHSU0@nuvoton.com, patches@opensource.cirrus.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
+References: <20250809151853.47562-1-jihed.chaibi.dev@gmail.com>
+ <20250809151853.47562-3-jihed.chaibi.dev@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250809151853.47562-3-jihed.chaibi.dev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 08:26:11PM -0700, Lizhi Hou wrote:
-> On 8/11/25 01:42, Lorenzo Pieralisi wrote:
+On 09/08/2025 17:18, Jihed Chaibi wrote:
+> The nau8825 driver defines several DAPM widget names that are used for
+> audio routing in the Device Tree. However, these strings are not
+> documented in the binding file.
 > 
-> > Hi Lizhi, Rob,
-> > 
-> > while debugging something unrelated I noticed two issues
-> > (related) caused by the automatic generation of device nodes
-> > for PCI bridges.
-> > 
-> > GICv5 interrupt controller DT top level node [1] does not have a "reg"
-> > property, because it represents the top level node, children (IRSes and ITSs)
-> > are nested.
-> > 
-> > It does provide #address-cells since it has child nodes, so it has to
-> > have a "ranges" property as well.
-> > 
-> > You have added code to automatically generate properties for PCI bridges
-> > and in particular this code [2] creates an interrupt-map property for
-> > the PCI bridges (other than the host bridge if it has got an OF node
-> > already).
-> > 
-> > That code fails on GICv5, because the interrupt controller node does not
-> > have a "reg" property (and AFAIU it does not have to - as a matter of
-> > fact, INTx mapping works on GICv5 with the interrupt-map in the
-> > host bridge node containing zeros in the parent unit interrupt
-> > specifier #address-cells).
-> Does GICv5 have 'interrupt-controller' but not 'interrupt-map'? I think
-> of_irq_parse_raw will not check its parent in this case.
+> This forces developers to read the C source to discover the valid
+> names, which can be inefficient and error-prone.
 
-But that's not the problem. GICv5 does not have an interrupt-map,
-the issue here is that GICv5 _is_ the parent and does not have
-a "reg" property. Why does the code in [2] check the reg property
-for the parent node while building the interrupt-map property for
-the PCI bridge ?
-
-> > It is not clear to me why, to create an interrupt-map property, we
-> > are reading the "reg" value of the parent IC node to create the
-> > interrupt-map unit interrupt specifier address bits (could not we
-> > just copy the address in the parent unit interrupt specifier reported
-> > in the host bridge interrupt-map property ?).
-> > 
-> > - #address-cells of the parent describes the number of address cells of
-> >    parent's child nodes not the parent itself, again, AFAIK, so parsing "reg"
-> >    using #address-cells of the parent node is not entirely correct, is it ?
-> > - It is unclear to me, from an OF spec perspective what the address value
-> >    in the parent unit interrupt specifier ought to be. I think that, at
-> >    least for dts including a GICv3 IC, the address values are always 0,
-> >    regardless of the GICv3 reg property.
-> > 
-> > I need your feedback on this because the automatic generation must
-> > work seamlessly for GICv5 as well (as well as all other ICs with no "reg"
-> > property) and I could not find anything in the OF specs describing
-> > how the address cells in the unit interrupt specifier must be computed.
-> 
-> Please see: https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html
-> 
-> 2.4.3.1 mentions:
-> 
-> "Both the child node and the interrupt parent node are required to have
-> #address-cells and #interrupt-cells properties defined. If a unit address
-> component is not required, #address-cells shall be explicitly defined to be
-> zero."
-
-Yes, but again, that's not what I am asking. GICv5 requires
-#address-cells (2.3.5 - link above - it has child nodes and it
-has to define "ranges") but it does not require a "reg" property,
-code in [2] fails.
-
-That boils down to what does "a unit address component is not required"
-means.
-
-Why does the code in [2] read "reg" to build the parent unit interrupt
-specifier (with #address-cells size of the parent, which, again, I
-don't think it is correct) ?
-
-> > I found this [3] link where in section 7 there is an interrupt mapping
-> > algorithm; I don't understand it fully and I think it is possibly misleading.
-> > 
-> > Now, the failure in [2] (caused by the lack of a "reg" property in the
-> > IC node) triggers an interrupt-map property generation failure for PCI
-> > bridges that are upstream devices that need INTx swizzling.
-> > 
-> > In turn, that leads to a kmemleak detection:
-> > 
-> > unreferenced object 0xffff000800368780 (size 128):
-> >    comm "swapper/0", pid 1, jiffies 4294892824
-> >    hex dump (first 32 bytes):
-> >      f0 b8 34 00 08 00 ff ff 04 00 00 00 00 00 00 00  ..4.............
-> >      70 c2 30 00 08 00 ff ff 00 00 00 00 00 00 00 00  p.0.............
-> >    backtrace (crc 1652b62a):
-> >      kmemleak_alloc+0x30/0x3c
-> >      __kmalloc_cache_noprof+0x1fc/0x360
-> >      __of_prop_dup+0x68/0x110
-> >      of_changeset_add_prop_helper+0x28/0xac
-> >      of_changeset_add_prop_string+0x74/0xa4
-> >      of_pci_add_properties+0xa0/0x4e0
-> >      of_pci_make_dev_node+0x198/0x230
-> >      pci_bus_add_device+0x44/0x13c
-> >      pci_bus_add_devices+0x40/0x80
-> >      pci_host_probe+0x138/0x1b0
-> >      pci_host_common_probe+0x8c/0xb0
-> >      platform_probe+0x5c/0x9c
-> >      really_probe+0x134/0x2d8
-> >      __driver_probe_device+0x98/0xd0
-> >      driver_probe_device+0x3c/0x1f8
-> >      __driver_attach+0xd8/0x1a0
-> > 
-> > I have not grokked it yet but it seems genuine, so whatever we decide
-> > in relation to "reg" above, this ought to be addressed too, if it
-> > is indeed a memleak.
-> 
-> Not sure what is the leak. I will look into more.
-
-Thanks,
-Lorenzo
+Reading snd_soc_dapm_route can be automatize/scripted, so I don't
+consider it error prone or difficult, comparing to reading free form
+text in any documentation.
 
 > 
+> Add a list of the input and output widget names to the binding's
+> description to make it self-contained and improve the user
+> experience for board bring-up.
 > 
-> Lizhi
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> ---
+>  .../devicetree/bindings/sound/nuvoton,nau8825.yaml   | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> > 
-> > Please let me know if something is unclear I can provide further
-> > details.
-> > 
-> > Thanks,
-> > Lorenzo
-> > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml?h=v6.17-rc1
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/of_property.c?h=v6.17-rc1#n283
-> > [3] https://www.devicetree.org/open-firmware/practice/imap/imap0_9d.html
+> diff --git a/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml b/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
+> index a54f194a0..cb1c82aa3 100644
+> --- a/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nuvoton,nau8825.yaml
+> @@ -9,6 +9,18 @@ title: NAU8825 audio CODEC
+>  maintainers:
+>    - John Hsu <KCHSU0@nuvoton.com>
+>  
+> +description: |
+> +  NAU8825 audio CODEC
+> +
+> +  Valid routing names defined in the driver for this codec include:
+Describe pins on the device or device properties instead.
+
+Best regards,
+Krzysztof
 
