@@ -1,81 +1,132 @@
-Return-Path: <linux-kernel+bounces-765377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3054DB230ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:58:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9443FB23105
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00EDC567189
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CA0685411
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49EC268C73;
-	Tue, 12 Aug 2025 17:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054242FE569;
+	Tue, 12 Aug 2025 17:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="ofFm2+Kj"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="uDK9qv6e"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17CF2FAC02;
-	Tue, 12 Aug 2025 17:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245F02F8BE7
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755021430; cv=none; b=aygC/08PzUYbO4FEiMQMPSkJquZfdyMJbXH9bZrqKuKZ2sK2/sDqMbyibHmonYjZUCExb8iKpYyI3YhYKOtTaEPMcF3ED60b65rzDNPCXFSF6mXUexj2R25Sljs1k013v/IOOrzQlMoQqjs+grKNA9fpsEd6kNzDEjfAkgdl3Rk=
+	t=1755021480; cv=none; b=DeH8Ytz8+rzSAZK/QWezjhwmQbfV8MfHxJirs8UMr4lUetXbjBR2hKBNNY1YodmndTJSx/5JqerGtOkuLs02eEoC/6a704b+ZYhpGAPeBE1M5T0/RqpHlvzK9GNHIkXJ8VKlsTpNbjJ/7UB6K+J0Y3tV7KUd78I0tvXmh7Yd42E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755021430; c=relaxed/simple;
-	bh=1Z+U2DJlMAuCw1lLwAJpxBKenOLT+M23V2k2PAUX/N4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OWX7dkvLesWtOfug5jlYlCq4uVuuaAo8DIMXGsfdlX/UzLK0LuT/yO8FWJngcY9MtVEaEjPubmMpudlVJQEphKdoYxNUyJX1vJETojBb6v+Ox5xdsmIMsndRjUNreiobPJsNvbbem0dqY7YV+6pC8Vir+quzo09i6jlGLKT2Z18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=ofFm2+Kj; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:1aa8:0:640:56c3:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 02B8DC155E;
-	Tue, 12 Aug 2025 20:56:57 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id tuOFsvIM14Y0-jyHhrPpY;
-	Tue, 12 Aug 2025 20:56:56 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1755021416; bh=MAVwawUlLgCHpxdh35P/HleysPyy+xhHuOJcxMhmnSQ=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=ofFm2+Kjrq2J1SYDJpKgMUPpMyoQfpv1IitwJazcQadpjSjrVHbVvVIoS33OeK/lS
-	 YbsWRq4ugUdDW2ESetorV/XTzDY26cv7lp6qI0Qf3TdtmrFFdC+VIFWww8+U5p/azJ
-	 Ch9MF6Rs++ptPjtWoB1bZ/nzELxDrqQzatzbNSME=
-Authentication-Results: mail-nwsmtp-smtp-production-main-89.sas.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <d51317d4-92da-4617-970d-6a63236aec30@0upti.me>
-Date: Tue, 12 Aug 2025 20:56:55 +0300
+	s=arc-20240116; t=1755021480; c=relaxed/simple;
+	bh=hPrGuxrOLQ9ipBeDFWhoJK1vM+KGW1+i9S6rdpPe8xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcaDwwnfFir7WaKeMftzjXJMGhYcaWwBCHL/KO9iQJ3iziRR0kF00x5BDBbFHx1FfdKWlGw6JCaxFZIBpnhji4ny7o0lD1MVRb5MWskRyVsbeG5Sultox513qHT9m4/Bbl2JUmqgsYbJHxfzE1On/sNRcDoqAKJlQ6lszs2pSZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=uDK9qv6e; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bd7676e60so4975894b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1755021478; x=1755626278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qc+A4jnBK4EPdKh66angrNfmE3qm0EXV6FaKJ1CugA4=;
+        b=uDK9qv6eTp2PMd3L4a8hShsQcjDB5jf48FIhmNfWH2VcfmiteLxvDDlGaLdwujL5D9
+         lHNURWLvSFtiaBpw/FL2Js9X7ifwtQQeSvS+DyF63YdqEH7EcBZmOIGjh1WXRsqfubqJ
+         g/L1LzJ0Ub5shHfn8f1IlHGjlE+ja+bc++unIogu9YN9F+4Ig9vrIOX9pN+ofxd+f3Gw
+         QIHvTWG25ZxIDouRkxvn+6YYlmhBVXT2XrQthUuT8JUhKS/oDbtCM3e0lxa2gKEoKq/7
+         SOAwT9+yY57Jqg0t3NMnCMJJn60oqoppI4DjRVwiLT62c8lhBA1A6+2Ebh3n8jvZDRXE
+         zm7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755021478; x=1755626278;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qc+A4jnBK4EPdKh66angrNfmE3qm0EXV6FaKJ1CugA4=;
+        b=R/KVqazuvr43Z8AQORJeu21mIupmrpAnk97tYzgBVEDdwXF3BvG1DAnBHqktPCsk2d
+         NkudBVpmE3K413uq5PTOfN45+b/JF8Q/MEpurCjnZ2TuUq6MRDIAOknUhL/IUqB5EXja
+         hmQr9tVW2chJhSWID7GLY2VsPPRL8rZgBphtqvug+ruzWbcoQDs4aziZiR+J0s72oMjo
+         4c0OisuvhnA3chQmZVo+4QugxrGN3Qb3TNh2xr0yzcR5xd02wDwRRZXhNnV9P85Ynjxl
+         w61pLD40t3DHikyXCckdWEPJVahKvkfH17MlxqlnKiMkZGiOH4oo1pLyaIwLDC1H7Aw0
+         1pwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNloQCmDc5Q1QQZSMkiPBJNf0+CplKEL9kofcaQ613gL+23uff4WPI8UBeI3369JnGZ4occ7pmy8HmouI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7ML0lPvvyXQ6dQVFZpnuDD+7vauMriOhtWAQUS0WSuoj6n/F
+	Blj2FYs52xWhNg2EqNpAuidpc4mzQEl6XUNm/IdUGmasr09yJYt6DCXJ/xg3s+v4F2E=
+X-Gm-Gg: ASbGncv5k7lj51U389Suc4Dhqrhl3+OQbm4A5YCsDhW5RZ2abOPFYWZRUvN8hC/5ROF
+	m+YtuKJ8qEL3bbovujt2F91cVITeGm1G25pUaS0od2/PUJZ0JX2bahuwvpVAn2PLRsY4rAseip6
+	otHOlV4slXo2Ex3vxlb0/dnKNk1nioc5IHpKZ57P6BX74DJGV/0VcEe7LvNwnANXv3Nt1x91r7N
+	NoMYFxQInSV8VNchfazqacFxSmu7IBKxAsxCL+q3/aoQeAN2BwAc986Uzmhd4WdUdELCUbq3uvR
+	ocIDm6AhWr5w59QNLCP6OYqgcSh1SXfrj01Oh4POmBValLevL99L6lUpzYOxjQU16LLmIq3w+dV
+	dqSJpdmJmA0MTYeIGxZG1fuZv42CYH1T7h7QJRqiDBYk+Y2kICSfHjujY4O6+UEh2c2++ryeyCB
+	P9WALLMfA=
+X-Google-Smtp-Source: AGHT+IHxi2HOW8bSGkAzQGQAd8ZqXnSd+5ht/WWbBZm7UBPBn7pRtc+d0H/ulq4tQ+TrYx/lPWqfGA==
+X-Received: by 2002:a05:6a00:b55:b0:748:fe3a:49f2 with SMTP id d2e1a72fcca58-76e20f900d8mr126425b3a.21.1755021478408;
+        Tue, 12 Aug 2025 10:57:58 -0700 (PDT)
+Received: from MacBook-Air.local (c-73-222-201-58.hsd1.ca.comcast.net. [73.222.201.58])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfcf523sm29950265b3a.90.2025.08.12.10.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 10:57:58 -0700 (PDT)
+Date: Tue, 12 Aug 2025 10:57:55 -0700
+From: Joe Damato <joe@dama.to>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
+	jlayton@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, neil@brown.name,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	horms@kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sunrpc: fix "occurence"->"occurrence"
+Message-ID: <aJuAo3lfY9lRB-Oo@MacBook-Air.local>
+Mail-Followup-To: Joe Damato <joe@dama.to>,
+	Xichao Zhao <zhao.xichao@vivo.com>, trondmy@kernel.org,
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, horms@kernel.org,
+	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20250812113359.178412-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Greg KH <gregkh@linuxfoundation.org>, Armin Wolf <W_Armin@gmx.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250729062038.303734-1-W_Armin@gmx.de>
- <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
- <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
- <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
- <2025081246-raft-tattle-642c@gregkh>
- <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
- <2025081227-humpback-garden-7a4b@gregkh>
-Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <2025081227-humpback-garden-7a4b@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812113359.178412-1-zhao.xichao@vivo.com>
 
-On 2025-08-12 20:10, Greg KH wrote:
+On Tue, Aug 12, 2025 at 07:33:59PM +0800, Xichao Zhao wrote:
+> Trivial fix to spelling mistake in comment text.
 > 
-> Please read the above link for the full details on how to do this (hint,
-> Fixes: will not do it.)
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  net/sunrpc/sysfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/net/sunrpc/sysfs.c b/net/sunrpc/sysfs.c
+> index 09434e1143c5..8b01b7ae2690 100644
+> --- a/net/sunrpc/sysfs.c
+> +++ b/net/sunrpc/sysfs.c
+> @@ -389,7 +389,7 @@ static ssize_t rpc_sysfs_xprt_dstaddr_store(struct kobject *kobj,
+>  	saddr = (struct sockaddr *)&xprt->addr;
+>  	port = rpc_get_port(saddr);
+>  
+> -	/* buf_len is the len until the first occurence of either
+> +	/* buf_len is the len until the first occurrence of either
+>  	 * '\n' or '\0'
+>  	 */
+>  	buf_len = strcspn(buf, "\n");
 
-I might be missing something, but doesn't that just tell you to CC stable@?
-Or do you have to specifically have the CC on the initial patch submission, not anywhere in the thread?
+In the future probably a good idea to add net-next to the subject line so it
+is clear which tree you are targeting (e.g. [PATCH net-next]).
+
+Reviewed-by: Joe Damato <joe@dama.to>
 
