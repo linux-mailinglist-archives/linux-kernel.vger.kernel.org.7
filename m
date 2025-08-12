@@ -1,124 +1,159 @@
-Return-Path: <linux-kernel+bounces-765484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C23B238F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CB1B23903
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46D41BC227C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2D13B5BB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9C829BD9D;
-	Tue, 12 Aug 2025 19:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB742E11BF;
+	Tue, 12 Aug 2025 19:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MKw5MZi3"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jswZA5S3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507D27FB35
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BAF21C187;
+	Tue, 12 Aug 2025 19:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026879; cv=none; b=aZIif6ysW6LzvYrhMK7NCKxVbd/p1axl5wydojzPHqv/4BbRcasoSACIbCs/Wpl/3bN5wJZcO/CK1K67f/P4H3KIQCC5zBdA1otP5vHIegfg6GzorTsgSb+njCluONprhEYvy+AUXYYddzXLzZ0mgbkCzJqanxGCKdwpxeb6cMU=
+	t=1755026938; cv=none; b=SImpiKgxiP9bIiXETY+YZHW+gm7X+x0AIredANyDX84QQY60fill7p98OA5Kb8GN69xroeCCZY7piZ1q7oX7hWrzYqp057v5hIVPC92WDEtdi2J7lsFBaoQSTp+gY72XW0GhUYKYTINudWfKMPjx/0d0FE51GNXqVNn5S8Bl2Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026879; c=relaxed/simple;
-	bh=y0y2N5LIeyP8xsy0Qa63fgrKE/mH0tt08exbUT5h0jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s9wATamclzkZ/F54gyXkYViDFe4xCAL3nXMFA8rM0VLzntq9e8yVtSVo6so0vIjcm9ZDUNR8ISqcwdUkhGiUusg1nQ41/gKEXUkOyocO4YDsiPAsiFIKzmdNIOpehx9Jl5PjEqTo2HtqU9v9l0WVAdrK+W5j22OGIxNqHhqzFYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MKw5MZi3; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3e51dc20af6so56009595ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1755026876; x=1755631676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1RNO+JaaEkY/OEdHDihqn21pputuGs/yjSpDhvuKLeI=;
-        b=MKw5MZi3KtfJao50CyvdDDxaC1iTr9aQBbAxreZa5wqvXsnrufo+0bv785xkygUEKK
-         MvxfAMbgbqRc6dKLUkOQCzN8cwqn3DJ2/4XwfqbhBLHaiJDsvEw1iF07CgXn0gAoBXdU
-         cJRVZKvScZtLLZ/+moSJAQ1/ZTY7z17FUw7i4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755026876; x=1755631676;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RNO+JaaEkY/OEdHDihqn21pputuGs/yjSpDhvuKLeI=;
-        b=kLcwpAVH/3sXmvwMOvtgGDiIiTFGEQWSEzy2VC/y6F9Vmd9ktlYB0M1WciyFF3At5+
-         0DJXcjRekkALookhLkWiYzWRoSfsj8CoLgqcTNEnv/7aJl87Bo97FaY1loGDpdWQkM69
-         qUuMhnqexpT9a9DP8G0YNWBpVaTR6m0//qs9e6TwmH68Id/+Sz20asJqTPdPSx7HZ3cm
-         GeuMGn2zG+KfBIAyYBVpEGEGE6NkuDF3YEALDW1hZPrDZABwawHs3GZplceon7jjCCad
-         Bs2jtFdLWstAkLRST4DvyyP07Y0IlHtbagvzjhPNuKfdz+2b4XobyyjNHdDdstVBXs8n
-         ckRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2g/imQ8xFBirrT1Kdy1Kr9mwkd0DGk/udbXIymU279m88+YRtdG4qeikfG2Jk/kDHMiaKrlTHYcOHku0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2wbs6yoKjjcrt/4d65td6kk9BxqArONIOG2LO10KadD14rfBe
-	Qh9rWC2wPrXyyTdvkNeuCNEeLCnsvzv53niqSeiBk4APP37QXjrDCWPbmBFNPG235fk=
-X-Gm-Gg: ASbGncvG7ox8F1YsIA5Y17zsn2KFLzc6dICKWoA9Fb4pj1jw3RvXgioiUYy+Ocf6DQD
-	KfUaYBbDvitpCLPqWD2HOhPxw2DVHMDtiQozbWHDbTsPzBaE5n+JlEyCv5NTL9lrWYTskdIQlUB
-	XuQ3REp1iFtaVfFWff1xJCI7ZlBsD3DPax5XKb90JSq4R60+n1tXhZuDmez7F4mipGhH9VA4CDG
-	9Kq/hOyDh1yOPtgyIF/+4cW8S/QzBpSv/iupfXNvsuIR5ernPbfEFSOSJh+qD4XU635fQWHrK0N
-	A6hb33PsYtGAWl9AILbWmApePZsAcCoi+bCzmZP6d6Z7eBz31quLSGh+SDp4dLkW1oKjDKC1cHV
-	gUjGkHhs3Ou8W9maO4X04tU4pBiBQz6z6YQ==
-X-Google-Smtp-Source: AGHT+IEUCGZnLw63tW0KNVTQOiNtoNzl7gbeEHojoAK0DgCBv29G2cLC+KWOONDi4CrPrrCxgtRIBw==
-X-Received: by 2002:a05:6e02:2147:b0:3e5:3520:4a76 with SMTP id e9e14a558f8ab-3e5674e77f6mr4612365ab.24.1755026876188;
-        Tue, 12 Aug 2025 12:27:56 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e546358251sm31477615ab.54.2025.08.12.12.27.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 12:27:55 -0700 (PDT)
-Message-ID: <ba9f7752-ceb2-4fcd-acaa-b5afa77eecda@linuxfoundation.org>
-Date: Tue, 12 Aug 2025 13:27:55 -0600
+	s=arc-20240116; t=1755026938; c=relaxed/simple;
+	bh=RmKMxHvtucfT9XVmSilfkkitPMsLboGkWPfSdC24ks8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tv/MPQmD118H5A+2BHI6xSvBRmJkyrn6jf3xCSxOHuCB9jYKODqPENbTDiUFtF5MNNoRuG3DYsO+AY2WbfPsEUeawVxtCZjA7ciTUJvG0eiTgpocuwlSenv/PVUxZD9kR5GmqdGrZLJunwZ8hn82ikwiaTCCX6NvAB3kjrpmjWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jswZA5S3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E0AC4CEF0;
+	Tue, 12 Aug 2025 19:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755026938;
+	bh=RmKMxHvtucfT9XVmSilfkkitPMsLboGkWPfSdC24ks8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jswZA5S3fwK1RCXv7aVUJcFz5bk33POYw2hRgUHf8S44yYJZSFGILwLc4LjuvdnlN
+	 uLhluGryK0OlERm99OAQYFlbn+YkxFh1OX1bAvSXGzjqUapOmQUw2x7PzIy26+oqzO
+	 CYXaGuEwW85zsiCkRpvlwKKLrSINc9b5lvLXvgJimDsuGV87Inlqmtk/vLsrEyzBBR
+	 z88omrrJydEXYCK75f9X0p1eEUdl+D1mc+qQbaBUDYPX0nNMjBiPmdEbIqUOYO/ni6
+	 uwddlN/K40fK2kIsVuP9smX+8MXAssCUxwF7Snan0MTHU9mRzvMGP9FuC/HpKOtkdt
+	 CYceAnSlvfedA==
+Date: Tue, 12 Aug 2025 12:28:57 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250812192857.GI7942@frogsfrogsfrogs>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <87freddbcf.fsf@igalia.com>
+ <20250731-diamant-kringeln-7f16e5e96173@brauner>
+ <20250731172946.GK2672070@frogsfrogsfrogs>
+ <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog-test.c: Remove unused variable in main
-To: bajing <bajing@cmss.chinamobile.com>, shuah@kernel.org
-Cc: lizhijian@fujitsu.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250812075345.872-1-bajing@cmss.chinamobile.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250812075345.872-1-bajing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
 
-On 8/12/25 01:53, bajing wrote:
-> Since $optind is not used in the subsequent code, the variable
-> should be removed.
+On Mon, Aug 04, 2025 at 10:45:44AM +0200, Christian Brauner wrote:
+> On Thu, Jul 31, 2025 at 10:29:46AM -0700, Darrick J. Wong wrote:
+> > On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
+> > > On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+> > > > Hi Darrick,
+> > > > 
+> > > > On Tue, Jul 29 2025, Darrick J. Wong wrote:
+> > > > 
+> > > > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+> > > > >> Hi!
+> > > > >> 
+> > > > >> I know this has been discussed several times in several places, and the
+> > > > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
+> > > > >> able to restart a user-space FUSE server.
+> > > > >> 
+> > > > >> While looking at how to restart a server that uses the libfuse lowlevel
+> > > > >> API, I've created an RFC pull request [1] to understand whether adding
+> > > > >> support for this operation would be something acceptable in the project.
+> > > > >
+> > > > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> > > > > could restart itself.  It's unclear if doing so will actually enable us
+> > > > > to clear the condition that caused the failure in the first place, but I
+> > > > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> > > > > aren't totally crazy.
+> > > > 
+> > > > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
+> > > > the restart itself.  Instead, it simply adds some visibility into the
+> > > > opaque data structures so that a FUSE server could re-initialise a session
+> > > > without having to go through a full remount.
+> > > > 
+> > > > But sure, there are other things that could be added to the library as
+> > > > well.  For example, in my current experiments, the FUSE server needs start
+> > > > some sort of "file descriptor server" to keep the fd alive for the
+> > > > restart.  This daemon could be optionally provided in libfuse itself,
+> > > > which could also be used to store all sorts of blobs needed by the file
+> > > > system after recovery is done.
+> > > 
+> > > Fwiw, for most use-cases you really just want to use systemd's file
+> > > descriptor store to persist the /dev/fuse connection:
+> > > https://systemd.io/FILE_DESCRIPTOR_STORE/
+> > 
+> > Very nice!  This is exactly what I was looking for to handle the initial
+> > setup, so I'm glad I don't have to go design a protocol around that.
+> > 
+> > > > 
+> > > > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
+> > > > >> libfuse data structures so that a server could set some of the sessions'
+> > > > >> fields.
+> > > > >> 
+> > > > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+> > > > >> pass it to libfuse while recovering, after a restart or a crash.  The
+> > > > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
+> > > > >> course.  And there are probably other data structures that user-space file
+> > > > >> systems will have to keep track as well, so that everything can be
+> > > > >> restored.  (The parameters set in the INIT phase, for example.)
+> > > > >
+> > > > > Yeah, I don't know how that would work in practice.  Would the kernel
+> > > > > send back the old connection flags and whatnot via some sort of
+> > > > > FUSE_REINIT request, and the fuse server can either decide that it will
+> > > > > try to recover, or just bail out?
+> > > > 
+> > > > That would be an option.  But my current idea would be that the server
+> > > > would need to store those somewhere and simply assume they are still OK
+> > > 
+> > > The fdstore currently allows to associate a name with a file descriptor
+> > > in the fdstore. That name would allow you to associate the options with
+> > > the fuse connection. However, I would not rule it out that additional
+> > > metadata could be attached to file descriptors in the fdstore if that's
+> > > something that's needed.
+> > 
+> > Names are useful, I'd at least want "fusedev", "fsopen", and "device".
+> > 
+> > If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
+> > be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
+> > the store as 'journal_dev'?" Then it just has to wait until the fd shows
+> > up, and it can continue with the mount process.
+> > 
+> > Though the "device" argument needn't be a path, so to be fully general
+> > mountfsd and the fuse server would have to handshake that as well.
 > 
-> Signed-off-by: bajing <bajing@cmss.chinamobile.com>
-> ---
->   tools/testing/selftests/watchdog/watchdog-test.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> index a1f506ba5578..837001a9e3a0 100644
-> --- a/tools/testing/selftests/watchdog/watchdog-test.c
-> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> @@ -209,8 +209,6 @@ int main(int argc, char *argv[])
->   		exit(ret);
->   	}
->   
-> -	optind = 0;
+> Fwiw, to attach arbitrary metadata to a file descriptor the easiest
+> thing to do would be to stash both a (fuse server) file descriptor and
+> then also a memfd via memfd_create() that e.g., can contain all the
+> server options that you want to store.
 
-Removing the assignment soles based on looking at the subsequent
-is incorrect.
+<nod> I'll keep that in mind when I get to designing those components.
+Thanks for the input!
 
-Explain why this needs to be removed? Did you happen to check
-getopt_long() and how it uses optind before making this change?
+(I'm still working on stabiling the new fuse4fs server, it's probably
+going to be a while yet...)
 
-> -
->   	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
->   		switch (c) {
->   		case 'b':
-
-thanks,
--- Shuah
+--D
 
