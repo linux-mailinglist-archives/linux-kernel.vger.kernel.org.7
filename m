@@ -1,97 +1,145 @@
-Return-Path: <linux-kernel+bounces-764213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F88B21FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:54:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D4FB22009
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44561171757
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174AB188E32D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DE72DECB7;
-	Tue, 12 Aug 2025 07:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22972E0B59;
+	Tue, 12 Aug 2025 07:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jh3uStF3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kli0Bg4i"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFB02DEA7E;
-	Tue, 12 Aug 2025 07:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89D82D838F;
+	Tue, 12 Aug 2025 07:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985239; cv=none; b=b+VkrowRwHxAnt5gPWTV17oIZWKUp+K8j0/vdrd9ua5u/nYalXMIOtnwbHtfTOh40KJySg77JNPfVu5sOe9NEo0jwEDGjcVrRhCuvKA2RoHCl6Fo4080EcOrXjKryAb5vPS6BARiM05PndPDyfUjsiNjPiQeNyhYGlBN9TwkdOE=
+	t=1754985291; cv=none; b=jDM07rnATqJc+k1pwBccxhnV7sx95RjUtNw5r6WkRgOFiC1Qyf03238muNVVuIE3s68NkFqndaCW3Q/pQJhHXGaNrD7l+seLdVZQYeWUW3AusrhpwASvNDcUJFHGiJ5Nfse+sXKc6R154nikiJq4NyukS2qHfUwxghfzCbaKDhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985239; c=relaxed/simple;
-	bh=sw8wLAIZdKxUOMDtddxEFYfkLyHWxf/hNcZfBt9jddc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cJ2PDMOiukMMiREvCC00uR6G7dwvM9VYKim5ywz/jKlqUPHlmBv5hoFB7rkamJMNmLWxOgpzeFgpflZLGnEwILMKJWyhZSupby+1DN7aADANRKQsXtycCxqB5MZJnJndTMDBQVmPe54hW1Wrpu2HocwQSPrVCIIKr3MLkczaj5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jh3uStF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B358C4CEF0;
-	Tue, 12 Aug 2025 07:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754985239;
-	bh=sw8wLAIZdKxUOMDtddxEFYfkLyHWxf/hNcZfBt9jddc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=jh3uStF3r13oKRFs0sLYrM2446Mi+VB8hpHKE9Zh83l99O+usPogtPFDkMn9Q5GM1
-	 ulEPEVxJhe/iJdSxhpCcEs7THsZMAfxFmWt0cASdTay3BP6NgUC5bXq3e2Rj5NUrH3
-	 AGUweTGCW+hwhMuQ9gFmRjR9UW5kyJq9d1bhq5qBCtDVf150CeQW15gSD+CjZxwgWg
-	 U4heXQ0DgqonUyh78GfP/hhONpJOUWjPBxp1Gl0afR5DNOMx7QCTJT0ecG+2n5k9EB
-	 zJS5Y+vwsB//qSKw/W1Zb4OfmVnzGQiXWwtqp5AciGajSdR1iXRJwT6y+ZMP7hxh/Q
-	 DEBA8uRrQMeEQ==
-Message-ID: <dec5b832-53f1-4274-902c-418f01df9458@kernel.org>
-Date: Tue, 12 Aug 2025 15:53:54 +0800
+	s=arc-20240116; t=1754985291; c=relaxed/simple;
+	bh=EWPWYnWnHYNW1g5JfQN/w40C+sjy6Y24SNdmuDQ0iic=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=u7Bj+Ea5RMwktYxvq6qk/F8Kt/TW0ccAXMeGzLEfh681Fiqmul3E8yR5sicCgfHJRug3BlEhkdnUvHploPYH8Nv69XJK1BErf9Qif1yfUCTsRp+ailLMB6wQWjiLZPdT0OaOF5riWLVZoPMDkqd8j9nJiiIk8EBvp6015m3I574=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kli0Bg4i; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4siQK013175;
+	Tue, 12 Aug 2025 07:54:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BImLLIYXXRXdi8dtPDwTFksWlfP73Z4KuiGBXSwH71w=; b=kli0Bg4iuk+ncJJn
+	zsInfJidnM4B6tbpDDD8osV7CnoI6ZU2cOTzJrt/Puu2r8+NmuwOld9IZd7SeYc1
+	tJ0aWCng73qwBbB80iACMTgRcd+soj0UC4PxgGwchbCP4mTyiYCU214mDjitqPCL
+	gYnbmrETBQQpz31uavtrOI+1QsbdT/sS3krEc8ORYR+UDEMKYyMJovgdHUKb21fV
+	ePQofWGGZFVb3xuMFCQ5MkkWF3gIfi0vdLrPnSKY2ehDewtdBIRMCFQ31isgwlfV
+	MLYp7hrFqoed4xkVNKngam/otIE+D1U93Ctw7l6ZX14Ka9J2U7XA5aeg+T0c83MO
+	w+WMjQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmqe21-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 07:54:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57C7sebb008998
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 07:54:40 GMT
+Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 12 Aug
+ 2025 00:54:36 -0700
+Message-ID: <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
+Date: Tue, 12 Aug 2025 13:24:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org
-Subject: Re: [PATCH v3] f2fs: introduce flush_policy sysfs entry
-To: Christoph Hellwig <hch@infradead.org>
-References: <20250807034838.3829794-1-chao@kernel.org>
- <aJnLXmepVBD4V2QH@infradead.org>
- <c5195d5c-5f71-4057-9522-228b48e4cd90@kernel.org>
- <aJruCTOjcj1nEk-S@infradead.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
+ video codec
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <aJruCTOjcj1nEk-S@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689af341 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=ueHH_9SqZEcs-A8xbiIA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: chaJrTlKVHfHcWcPQ_sIa7aBv7myAUVJ
+X-Proofpoint-ORIG-GUID: chaJrTlKVHfHcWcPQ_sIa7aBv7myAUVJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfXyv09ztrw/mP6
+ zT6N3HPupRvrmbvcx+5UlcDYTfAZBysTNu1NTw6Tj90PLvzdkXkQWVgrU+zUm35B8bjjwQnCLKd
+ h+uUfo4uzpSZ9H9zQpU9OLT38t+u5dRbMYSjV2haQWi4wiOPO8ZZBxzU41QAM20TukZaP4uLoHw
+ 86D5QB7Ce3/SDwRplJYdYabWoYGXQJX3cpZiEKJa7YNQ0rDj8QLV4GLaWofhrsAI4p3LNRALS4v
+ gxFS3etjl6jmTlkFgxpV8k5EsLVw1ZlDXI86SdDubv39KucM4zGqi7FoD9y36TwKGglu01FTugq
+ qV+eY+trlFfN6FVNqTdINzZCtFZ6LOzRGpFcqZxwh8tYmTaiWNv6nZULwM0aAkxu96d3c4lRwsX
+ UXNvB3qb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090000
 
-On 8/12/25 15:32, Christoph Hellwig wrote:
-> On Tue, Aug 12, 2025 at 02:28:46PM +0800, Chao Yu wrote:
->> BTW, I suffered extremely long latency of checkpoint which may block every
->> update operations when testing generic/299 w/ mode=lfs mount option in qemu,
->> then I propose to use PREFLUSH instead of FUA to resolve this issue.
->>
->> "F2FS-fs (vdc): checkpoint was blocked for 24495 ms"
->>
->> I just realize that using cache=directsync option in qemu can avoid FUA hang
->> issue, anyway, let me test more w/ this option.
+
+
+On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
+> Add binding for Qualcom SM8750 Iris video codec, which comes with
+> significantly different powering up sequence than previous SM8650, thus
+> different clocks and resets.  For consistency keep existing clock and
+> clock-names naming, so the list shares common part.
 > 
-> Well, for decent qemu performance you always want to use DIRECT I/O.
-> directsync is generally not a very good idea as it forces every write
-> to be synchronous and will give you very bad performance.
-
-Yeah, I think that may hurt the performance too, at least, I don't see
-any obvious change for time cost of generic/299 testcases, but still I
-need to run all my testcase to see what will happen. :)
-
-generic/299 115s ...  113s
-
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
+>  1 file changed, 186 insertions(+)
 > 
-> What did you use before?  At least for older qemu the default was
-> buffered I/O, which can lead to very expensive fua or flush calls.
 
-Previously, I didn't use any cache= option, as manual described, it
-should equal to cache=wrteback.
+Query:
+Can the additional reset and clocks be accommodated in existing 8550-iris
+binding by extending it conditionally for SM8750 similar to what was done
+for SM8650 [1].
+
+[1]:
+https://lore.kernel.org/linux-media/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
 
 Thanks,
-
+Dikshita
 
