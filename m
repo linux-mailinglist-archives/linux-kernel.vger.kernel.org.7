@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-764291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBACB22118
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA87CB22144
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B8A1B6291F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65AAD500D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C412E92B1;
-	Tue, 12 Aug 2025 08:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDEE2E5437;
+	Tue, 12 Aug 2025 08:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eMTt1x/n"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VKpG62E/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F69D2E283F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D412E1C64;
+	Tue, 12 Aug 2025 08:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754987260; cv=none; b=cc2TUVxXNzU0WXuN49/tA4b27M7wiLjHLJl88WmPAnl+GVSBLpz7JpE84VDQqoLOxkEVxK2HxWuJDmgy3zu0F2kPeBRcucLtBtRkqBVmSJ0A0i9L7mRCFpFN7Gdp487YQBVvXma38n6ibq82s+fHX1V/aQ0HpyNu/KvdOqNf1Xk=
+	t=1754987286; cv=none; b=bdDX5eFO+Lv3+Yri6l2fOW31L1mbjD3DC6+1wMEy3ZVjLFurWbtogsgnxRTy1BkZOni+KKR0EKn0zR+DEWAHZ1zFHRP0fnuIM8nadfRdGhAIYJviiahUvNoprWn7nWdO6dNLkahLiX6qrD6Iw0d9cpck0m9kLc/KSAaG1ggy0/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754987260; c=relaxed/simple;
-	bh=RFujl0Cr/YaORxwURfe0zTKDzCwOsKiOevFTrddSrvg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GD2strGFnfjeM6mwbsiaA1GBvsfqtuKIjfY7THxsWOmOdzxikzCZ+IUV8wgZUXC4yxQTP+/gS9kXL1D09vNq5bF31iCToqYWSX2C/Q1T9O0uLQJ+PMPilWv8XBxJeulxJ1dnOKJJF2aDrHPF0/FWr0vuMJuD5fkJwr3lJQW3Wq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eMTt1x/n; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b7920354f9so4249589f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754987254; x=1755592054; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jAO2WeXDFkbtwkjKyd1xrqU98u0EGyjojmTyXcAuE7w=;
-        b=eMTt1x/n1qgzpLXyHDo6MeIY4+ABzJ1/h6XwcjcSjBY8i4oEErGGJvm96NP7ZKL1ZE
-         RXo41IishSEJjQGnZyqdFwr2Ely5coNK7Sonl7CW/iQjuQJwWPA/5ulSPkzbJREn3Tgn
-         ItP1zxFMSppYm2uvC74UwX0VSbNhStsWMwGqI7rgRjSrpeluaqVqufJtLf6aNyqWqN6T
-         +qESXRX5qhzM/4BacuWQuWpoAjMVhEcDFmg2Gk4bCOlb2H2m4b+QE5pXYY/IrHUeBDCZ
-         gzVgkNBfVDNYUpv+pU165as8TndN+xeoIb5EPhLXMkb38ad31ptnJ4kIw7c14EqsKkmJ
-         8n2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754987254; x=1755592054;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jAO2WeXDFkbtwkjKyd1xrqU98u0EGyjojmTyXcAuE7w=;
-        b=rczhFWxRrPJjPKoGDC37GQokHEJfaur2wFmdN0fV/5YQqKjTD+41+b0yEMQaAwRZXl
-         RmfevWAHQQzYBfiGOGpWMgJ9hE0j9jFcG8aj/u9HHsOPMqzb9va2DfuCAEmI79QoccrU
-         FKFeAg2Zt2sez5908taePn6NanZbOS5V9ryG1AWL4mB+kp3pXOIXJVKjKLKppcBu8j4d
-         lrEHmAs6VN88t/maST5+QEYnnwZWyNmO4xhhPjYdeM8nGjvJUQeDQhUxvSxBfTGa5Pti
-         CbduocLUJjHFJpOgGsmUatmh5Er6nj2tzY+u9P2CEyfMx1rV1OA9hZ6VxLu3Y72mxPwR
-         HwQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpmjCMd5VpVkLilZB7LLM4wPJz9/mH05CWbAt4AODX9bbQPxjKC1nXWkure43GbRx/lbR/+U/5FgMkHio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwELirU6CvI1eT6MOgF4NwIbqZtui3SOo883cawGSQFMB0AUHvS
-	FpblS+mQKtBxsxosOgR2X5KgQskErVwBs3YUFNNH1dhWDX8iIX2qzZA6QtefDuMNNwg=
-X-Gm-Gg: ASbGncsL9LQ7Cc0k0kjkJxNN5r1WSd2/ftaEucfC4VVkkdW0V0G2XfKvlTcEySZTjEW
-	XnPsJbLpkIyflt/GxjhZUydRQrCUR5WGH+9uGCoqWy6Yd14a+p2zybuunS8YXSFAIWAE+hnHb8S
-	PUt0SVa0hA4Diy6HcBDy+Xk1rh5RDxixkDslysY/0oii1uWgDmxO8WMFW41jljYvDJyIjIUjz4e
-	QXJ9f3FLmWsNuOiJn68gtcqACoqZDZDXIAeh/3o4IxJX1JowzhObQFMPRRpjBgPc5RKXaoi6JC3
-	EEQf5yz3eK6LnY4YZ9kGnlTFWpFMkaVUKcsLag1EkzN+8Dr4tOcRvylnx8vXdq0lKoG57eylvC1
-	hNxJsnJW5KWKvIso=
-X-Google-Smtp-Source: AGHT+IEIkGK210eX4oaAWTvIndQdBKgODaVv89WdHuLZ5yZCYfAUy5DwGLKFKR8W9EpKo9YtXUOSDA==
-X-Received: by 2002:a05:6000:2501:b0:3b7:7904:58e1 with SMTP id ffacd0b85a97d-3b910fd9b5bmr1926776f8f.18.1754987253948;
-        Tue, 12 Aug 2025 01:27:33 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:16c8:50:27fe:4d94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm43549423f8f.18.2025.08.12.01.27.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 01:27:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 12 Aug 2025 10:27:14 +0200
-Subject: [PATCH v4 15/15] pinctrl: qcom: make the pinmuxing strict
+	s=arc-20240116; t=1754987286; c=relaxed/simple;
+	bh=evdZCpKMinNJEdPnry5D9ypsZUNp562Cq4fO09qNdiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZBjLuNzjSkN5kQbIkAEfPMHkJkvon10kIH4MBiiObby0uQceJWad07tK3vSDqNpl+knOpf9OGBhG0C44Xjc9UccrE94CHIE1hMDAw2RsK3k8uwfRkaKCMHquQKUBSuQIgjT9mCrhIgM+zj0OI7uuUAqh1qsWcgRdlC9z9mveR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VKpG62E/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF96C4CEF7;
+	Tue, 12 Aug 2025 08:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754987285;
+	bh=evdZCpKMinNJEdPnry5D9ypsZUNp562Cq4fO09qNdiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VKpG62E/aOxA/V9fAEf5VL1TsT+S1MR09ortTRbjMOIgLan4TBq3b/JQp7LPJPYm0
+	 nnzKsDVruLd/66g2z6EaMnLUuzlAoyVhJmcg3/mGLVZdtRuxPVaWNEM0TEY4NDU+Rm
+	 wlMMUMiv0jJcLuRSY08V2RLGe3GHxm2/o9iTusPU=
+Date: Tue, 12 Aug 2025 10:27:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abhinav Ananthu <abhinav.ogl@gmail.com>
+Cc: david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	dakr@kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: auxiliary: Use `c_` types from prelude instead of
+Message-ID: <2025081245-chubby-strep-1181@gregkh>
+References: <20250812075109.4099-1-abhinav.ogl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-pinctrl-gpio-pinfuncs-v4-15-bb3906c55e64@linaro.org>
-References: <20250812-pinctrl-gpio-pinfuncs-v4-0-bb3906c55e64@linaro.org>
-In-Reply-To: <20250812-pinctrl-gpio-pinfuncs-v4-0-bb3906c55e64@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Alexey Klimov <alexey.klimov@linaro.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
- Andy Shevchenko <andy@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
- Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- NXP S32 Linux Team <s32@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Tony Lindgren <tony@atomide.com>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
- linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
- linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1142;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=M6AAfE1ZYIqFZsBoDZ4O1bJllvK/6bMXFJ6Zryc+i/E=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomvrZaBmeISpiHCVh1NKR4JJvKfvoR7+4TGM34
- qACMSZiq0aJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJr62QAKCRARpy6gFHHX
- ci+8EACxohGvZiGTBr0Y9QxyJzsEN0JDEuMPPP2/XSq+kOTHcKkmHErEtvBcohO7KLJzJuDM92q
- Iw3+IzM052WTxd4daM2zpMgweo/2dwzZfR5YEUer3WEroEGm+Bj1fVPmMiit7p1Urk63XsoIjrL
- iIqOXmtlteGyRTKCzz3k/xmfTyEyU7VBHczMECuT5uEu155Bu8nJCumD+wzbe8mmIlfgHaOMDUI
- EhNzoSXVeYCY0FHD/wqktUBCPUxVj3EGM965wJpVDJiroVIyzBPsjcH9gW4ZMI3gsrpLkKSn7/b
- B1DQKX5Md99KuFnktDMJfMeRA9VTUveqdFKrzKWO4O1PCOiNZYTlwh/00gXu8zMpM4AK1/xeHy6
- xv2CMDqxOQQE9pNYsgFWdMK5+GZYlQTAYrjZncSo6RYTzLN9weKlo0cKuhBe3wUVAZQntaTYy8i
- k/Zxwl8sT/axdwTsi8ewRtM0DJYHR7QWCXofS6dAiEDIgSKdzkZJ4mIec2cmwKInyd1Ja38qeyo
- BaUmY5FfX7ADJQDEVQD8b/C/oeUP+bk/MkxTefH5hvrw5RZW6Rm5jF7NwkotqyJwbEKJFZVea+T
- cJiJ5bAYHdIENT0OWfDZvACcGaK8OCdLW3UJoLXH1IZbWn2imkJ1JInadg5ZknF41i/olNLfmrS
- vdUH6mCryqoAAIg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812075109.4099-1-abhinav.ogl@gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Aug 12, 2025 at 01:21:10PM +0530, Abhinav Ananthu wrote:
+> Update auxiliary FFI callback signatures to reference the `c_` types
+> provided by the kernel prelude, rather than accessing them via
+> `kernel::ffi::`.
+> 
+> Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+> ---
+>  rust/kernel/auxiliary.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+> index d2cfe1eeefb6..030e31333689 100644
+> --- a/rust/kernel/auxiliary.rs
+> +++ b/rust/kernel/auxiliary.rs
+> @@ -56,7 +56,7 @@ impl<T: Driver + 'static> Adapter<T> {
+>      extern "C" fn probe_callback(
+>          adev: *mut bindings::auxiliary_device,
+>          id: *const bindings::auxiliary_device_id,
+> -    ) -> kernel::ffi::c_int {
+> +    ) -> c_int {
+>          // SAFETY: The auxiliary bus only ever calls the probe callback with a valid pointer to a
+>          // `struct auxiliary_device`.
+>          //
+> -- 
+> 2.34.1
+> 
+> 
 
-The strict flag in struct pinmux_ops disallows the usage of the same pin
-as a GPIO and for another function. Without it, a rouge user-space
-process with enough privileges (or even a buggy driver) can request a
-used pin as GPIO and drive it, potentially confusing devices or even
-crashing the system. Set it globally for all pinctrl-msm users.
+Hi,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 1 +
- 1 file changed, 1 insertion(+)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index a5f69464827119dfe2a7781b558094b283fca215..1751d838ce95d6138c824b90098f74891dec7656 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -268,6 +268,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
- 	.function_is_gpio	= pinmux_generic_function_is_gpio,
- 	.gpio_request_enable	= msm_pinmux_request_gpio,
- 	.set_mux		= msm_pinmux_set_mux,
-+	.strict			= true,
- };
- 
- static int msm_config_reg(struct msm_pinctrl *pctrl,
+You are receiving this message because of the following common error(s)
+as indicated below:
 
--- 
-2.48.1
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
