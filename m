@@ -1,96 +1,93 @@
-Return-Path: <linux-kernel+bounces-765428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6F2B23493
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6935AB2348A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4968358528E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A09584A22
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BCA2FF171;
-	Tue, 12 Aug 2025 18:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87CC2FE57E;
+	Tue, 12 Aug 2025 18:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpAgImkj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ur1wgBXu"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8F2FF15F;
-	Tue, 12 Aug 2025 18:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BABD2FDC55;
+	Tue, 12 Aug 2025 18:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755023948; cv=none; b=jjRk8sWKjhqU6XcWubPYxIAS8f++hHfsg1E0R2gWTAv/1FE+43r53qI+OUb3PoJhDD1muyPpp9FqvtEJN/h1T6kP2Nk31gCpd+Lw7t58UwBp7ZNKh5aRRDJKuLjAnNSpyRqNKZIW4m0ghcPW2EH2zTIzTulqNipTklDD30NDOUw=
+	t=1755023945; cv=none; b=nL7MGgRRec2B1bqk/sVpKsDyV7twCopq08YbB2y4O2o+KQWuPejueqsEqeysV/fIyhVrcbcx1EoW5SqtqlAGtn0KkgzXVPHLAwL4L2W6Z0Go+lINnhjTje1p8i+eJPYqT3GiYGDG/Yj7Ry28cTut75P2mXEE0jsMBpU2KmYJbow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755023948; c=relaxed/simple;
-	bh=h4IHvbxF8k2yAG7hbE3pb3p+/1nKFYweLsVeG1iW4xA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JEHUbcfVgkrcaVqtPiyHaUNDBDWU50ZDSJPQmDUeaMvDRwkB4zBhAZkIG5+rcn6oMpZQ1Y8YWW0DrTNZoQG28QRzuJgbxukgc4PpuHDgt3yzjnMXjlYDIS1hL949KIgpLS3WNL6GGgmaAD16KU6rxhy8T181j54SUo+zrwMDp/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpAgImkj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE732C4CEF0;
-	Tue, 12 Aug 2025 18:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755023947;
-	bh=h4IHvbxF8k2yAG7hbE3pb3p+/1nKFYweLsVeG1iW4xA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KpAgImkjUFtX3a2kVXvOBbn3oky0F+wwimDMqPbVbMoe6zbUofrAtN3YNkUL8Xi8u
-	 RyQjUgrQjlgSBPFP+DaRHQZF0baEQW/aCMXa0wHLITIJITpO5wTrJzYyqHlUbMxIWd
-	 C3Ky268oWBY9NBLdzjdaOTmMWZoD8PlKSGyMvZYibx1xzsp6dLui21Xu2P8RcWCsZ7
-	 Ya3kYLD/AorhcPcr6kHBnNN01BnfWuHtM7oEDTbUwA/FdZH3ya9H44vYmEBz70UiPZ
-	 CighVNowSaWmQFE9/np8rn/ZN9qKY+tSgS+1IFKkVtCXS5/B6dlhlSwe/lfaOjrVVH
-	 nHFcr4xul1fxA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61bc52fd7a4so104281eaf.0;
-        Tue, 12 Aug 2025 11:39:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvfJRQkpkxyW5uu1t4WXKREAdUd3ThCtq3LQLLp54HKBUuSYgIvC4OzyQ5ijDrRx3eHAXsBw8OXzoW@vger.kernel.org, AJvYcCX4XMb4FP/GtS9x2gkLp1EvspjoXU+BdxYrfu+WWfu7zwMcaaUUrs0WSbBTNGtIOFM0735Ze0BM@vger.kernel.org, AJvYcCXz9vwWqEPlCQjkHmPfmWJ2wvfKux+BiJAMzo+EC848szHi9vIIGdK21zYOZKawS9ATbROz9Er36vYdEapq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt4RhV1eZJaOJnTW3L9Ijnc4XhUqORnty4Tci/6AgmsmtnQk/L
-	v0ETcCw4m8n7s3oEni7Y1IjbhOQRKNaDeOHBHZR0vgPz58AyaUP97vYFa8uWMTZELxKjSvZJCUz
-	6Gy1kqGrUxDr0PmI/XHtZEFFTiw63xy0=
-X-Google-Smtp-Source: AGHT+IF7F7E6Q/yD4mAd/nmxOeXMAZ9gG5D9aCHWydD1kXkZKoLffiBxSjbg30syn9qXivZlss/Bunm8AuD75hlQt1Q=
-X-Received: by 2002:a05:6871:8217:b0:30b:b4cb:936c with SMTP id
- 586e51a60fabf-30cb383108emr507207fac.5.1755023947056; Tue, 12 Aug 2025
- 11:39:07 -0700 (PDT)
+	s=arc-20240116; t=1755023945; c=relaxed/simple;
+	bh=K4zcpvodHKRtUTgq0qJbR0c9lCKU6kpCp0Kmpo5DY30=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Hq8JI0K1XyugcQY/L1//HyK+WrTvJIopeYO4nS7WJMU/KJLXaYFsPD4UCYpUoIpQJ2BsBoOMUoDhZw5ujZkvJ3pgeVp/Td38F9FXMtTTKWtQkY1RO2pPyWS6IFbKZ6gUOx6kM5EmINQDJO3la/QrbVOPBrCKDxikVl4quwTpl80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ur1wgBXu; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E1E3B40AD9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755023943; bh=rHDn941Sg/eSk0bmpOyy2XNxu/PzRvDqOKXRQlNFv1s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ur1wgBXuom2nwAqVqx7OUtkP9XmJ4h+IMVcCbdXeQ3n/bpwqB7c5kWvgJmeFtx2VB
+	 f5f5Yj4G1x42XGImUnF1UCqD9fllUl9o9DJciCp3h6tSSWduQUj4bzqhOps9xruetz
+	 32YWH0SNa9ZvsfV5Eb9T2Fgu03F2lW3+dbeuN1WVI2bgssZMVFMD36oTnuiBUlTvsT
+	 +l5Hr8Z1wc8NgMY+sHsKlt4DNiu2PtoF4yn+piYiUOk7phnreDmnolSPXxkB6YB+rN
+	 Je6MDOkgKNOAJth7VlhiDgL3gBrfO8Y0yNF8LQlGARUkWW98xMtd+c2OKxMN6b3nU1
+	 RkcCsQMDvSe9w==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id E1E3B40AD9;
+	Tue, 12 Aug 2025 18:39:02 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>
+Cc: linux-doc@vger.kernel.org, alexs@kernel.org, si.yanteng@linux.dev,
+ dzm91@hust.edu.cn, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add File entry for
+ scripts/checktransupdate.py to DOCUMENTATION
+In-Reply-To: <20250812050711.2515173-1-dzm91@hust.edu.cn>
+References: <20250812050711.2515173-1-dzm91@hust.edu.cn>
+Date: Tue, 12 Aug 2025 12:39:02 -0600
+Message-ID: <878qjofkqh.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729062038.303734-1-W_Armin@gmx.de> <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
- <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
- <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me> <2025081246-raft-tattle-642c@gregkh>
- <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de> <2025081227-humpback-garden-7a4b@gregkh>
- <d51317d4-92da-4617-970d-6a63236aec30@0upti.me>
-In-Reply-To: <d51317d4-92da-4617-970d-6a63236aec30@0upti.me>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Aug 2025 20:38:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iNYh5=0e+rdDPOfSMNH1P=g+NWWHa28ajf4_Mr6e26VA@mail.gmail.com>
-X-Gm-Features: Ac12FXxx2IsAmOw1yEab040KAvsDdaQ8JpCQ8ZtH9-S3fKCFYLA2zQDDIB50YYI
-Message-ID: <CAJZ5v0iNYh5=0e+rdDPOfSMNH1P=g+NWWHa28ajf4_Mr6e26VA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Ilya K <me@0upti.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Armin Wolf <W_Armin@gmx.de>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Aug 12, 2025 at 7:57=E2=80=AFPM Ilya K <me@0upti.me> wrote:
+Dongliang Mu <dzm91@hust.edu.cn> writes:
+
+> As suggested by Nathan, add a File entry for scripts/checktransupdate.py
+> to the DOCUMENTATION section to maintain this script.
 >
-> On 2025-08-12 20:10, Greg KH wrote:
-> >
-> > Please read the above link for the full details on how to do this (hint=
-,
-> > Fixes: will not do it.)
-> >
+> Link: https://lore.kernel.org/all/20250811212446.GA924610@ax162/
 >
-> I might be missing something, but doesn't that just tell you to CC stable=
-@?
-> Or do you have to specifically have the CC on the initial patch submissio=
-n, not anywhere in the thread?
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..b7e3a8c8832e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7302,6 +7302,7 @@ P:	Documentation/doc-guide/maintainer-profile.rst
+>  T:	git git://git.lwn.net/linux.git docs-next
+>  F:	Documentation/
+>  F:	scripts/check-variable-fonts.sh
+> +F:	scripts/checktransupdate.py
+>  F:	scripts/documentation-file-ref-check
 
-A Cc: stable in a patch (or elsewhere in the thread following it) is
-just a hint for the maintainer anyway.
+Applied, thanks.
 
-But no worries, I've added Cc: stable to the commit.
+jon
 
