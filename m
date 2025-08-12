@@ -1,163 +1,317 @@
-Return-Path: <linux-kernel+bounces-764108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB94B21E0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:15:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD071B21E1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674701903B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:15:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E229C502BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BAF2E2DF4;
-	Tue, 12 Aug 2025 06:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FA32DEA90;
+	Tue, 12 Aug 2025 06:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="KlxyIJFT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="VOm5I74O"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mb3H/tVW"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FD82DF3F8;
-	Tue, 12 Aug 2025 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7AD20C001
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754979282; cv=none; b=rQfnXpAMHiv8WgCaHpBl7EioKwFNWBa8oeH3JIWFf0fDj8nJAKIHJ24gsUnLSS35yJQrF140LT21GtVHmjfvatNitLsuQ4siYT5ryZrzElPoq7BAcTRArPmX4+eO3VzF/R3XwvIv/+dncR7d7+If/CymrPL6LD2KidWDhQuNC+c=
+	t=1754979365; cv=none; b=n7Dvux2RLDIYlIwcwMcQC9IM142jNau4iWWjeXEbSyD/qvbqn0CDpRrJspb05C3fIoSu7hpcvapNH1jK+1o6N9jUIZxx0po5VEy6MWUmJVzdRFRqvqkFZAdOTjD5xcDnjImTsP2S+j+NOpqiyLFKNE1IS4OvCkuDscsCLkkTByo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754979282; c=relaxed/simple;
-	bh=4n7r1OIpw6fzOoFrlrKeD7qcewHqoXmWCm7O/kfW/KA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KhCFmeRiukZAWYQn28KAdaGSHRhag7A/DMCWXqPShYf31woIqLh1OR2NB/LYqSrehucvpT88h+CH2YVor7M+6jkG66Qznanrf2JzTpz+wyH/ZtuxXh+rFEn0PdL1G7AhCiUfSA2lmWBQsLqRRNmH+xzvqS/kPKAYt2seByV7rkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=KlxyIJFT; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=VOm5I74O reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754979279; x=1786515279;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7kDMXkiqwspte3OFxiCO5uJIctYbcK6fSwBNuY8L+04=;
-  b=KlxyIJFTDi8jkKZ96RCseLFLY+6kx8l9LbtZmWglSXEM/6ABSGiWab7k
-   DArQ6Buart7k/y5qx55d8bJxE2Hh0+eYyaR6ZmNE37wkDuqTtQZekTG9E
-   gJmqalSsajXSOB3WTljXubGE91yMaGIPYewTtytz+kRyOAxCw/dQWTH2+
-   q5TKMZ7PFkSgWxlt1csosldTpMGn/54icmBLxvb+oEfHpVwSDMM5Bb+IJ
-   yH3SPYtpjRgGV2hjWCgK462Y59PP3LG6WKGKsufH6T8B4M5XYOmmdgZKj
-   k98CQ//gwbaDnebmXd+7iuFwNyeLN4aSypbhFDvlrZoo8507Vc1CCxrSW
-   w==;
-X-CSE-ConnectionGUID: B4ffp1ALSjKWb0uJfw2sUg==
-X-CSE-MsgGUID: 0MqoVO07Ql6hiYkpsM+9JA==
-X-IronPort-AV: E=Sophos;i="6.17,284,1747692000"; 
-   d="scan'208";a="45692356"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 12 Aug 2025 08:14:30 +0200
-X-CheckPoint: {689ADBC6-33-AD8F5F64-F0EACAA5}
-X-MAIL-CPID: 742ED08D02BE758A2A1B26C8759E02E3_1
-X-Control-Analysis: str=0001.0A002104.689ADBC7.002A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2AFFA16835C;
-	Tue, 12 Aug 2025 08:14:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754979266;
+	s=arc-20240116; t=1754979365; c=relaxed/simple;
+	bh=UBgZc0gbbIXVBiFZNdSDMzCIkXeE7fHrfF7LLYhV3gQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MzaxWbwAPqsH0pdTEP9P0kQ7NGto9h6KoG4zoyCPnXzvPW+yDggry0vIwGawa8vR50TanEt8p4e1ghP+ZSd5MX8LLLEeZysouG6GvipRWAL8N5zLVX93UyClI7JXi21gNYGdmOYyU9DJiv/PH3bCrnUCPiUB2YEkCDNggAgXI80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mb3H/tVW; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6de97571-7ef0-4bbd-b55f-5ad41898a6ec@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754979359;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7kDMXkiqwspte3OFxiCO5uJIctYbcK6fSwBNuY8L+04=;
-	b=VOm5I74Oo5znWlaXmN6u8OJRm5q/YOa+tu/QK1DPY5JPD+J7KZGpK5JP+DU17ptUV0Hb3E
-	zH0KCm5pUcm6jc+JsrDLMmMdfbkLdqmuDZgGcNI/xvacXZt35YOmrj5rS/9qA01yQEkhMJ
-	qehK313US2ohYsMtXl+5cbLNmpe9CNMuB0qhy/HsC7aaAqu2XMQP6PVnkDcsIvmCJYaCfC
-	WjOI/fho5sWWLpFhNWOR9IAwC/vgZ4/7MJ2OQsWnx0gS9ILCSyIHS9ec+va7ZwIFDbnqM0
-	D2KA/TaS1pwf8V1K4T/3Ax/ptch+2mCRXDQ/5g5cJwC/31mROSUCp/lNkZNCXQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] dt-bindings: fsl: fsl,
- rcpm: Add #power-domain-cells
-Date: Tue, 12 Aug 2025 08:14:24 +0200
-Message-ID: <2799138.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <aIv+CgkePusUoT6Q@lizhi-Precision-Tower-5810>
-References:
- <20250731055806.2265628-1-alexander.stein@ew.tq-group.com>
- <20250731-funky-crab-of-defense-7cd658@kuoka>
- <aIv+CgkePusUoT6Q@lizhi-Precision-Tower-5810>
+	bh=v2gTpUJPUXvo+zC/3w7+1UJ07KaE1bkVttXQvFeeqeY=;
+	b=mb3H/tVWq//a1igtQxsEAHJWv0y+bRdUerzjxr+nURYRzjnt5c7SfShRJdAdoGDZCO+Uso
+	TchAHi4rro/RURbAc3ZGxGD0H1bHztQwxm5TrGW0Pt8xFFN+WYXw27ME5nc6lulfMn0zzK
+	VgcyHFGUDauKxBSbIv7kWOF92P9rCUs=
+Date: Tue, 12 Aug 2025 14:15:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
+To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-3-youling.tang@linux.dev> <aJojDiHWi8cgvA2W@pie>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <aJojDiHWi8cgvA2W@pie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Frank,
+Hi, Yao
+On 2025/8/12 01:06, Yao Zi wrote:
+> On Mon, Aug 11, 2025 at 05:26:55PM +0800, Youling Tang wrote:
+>> From: Youling Tang <tangyouling@kylinos.cn>
+>>
+>> This patch adds support for kexec_file on LoongArch.
+>>
+>> The image_load() as two parts:
+>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+>> - the second part loads other segments (eg: initrd, cmdline)
+>>
+>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
+>> but ELF format is not supported.
+>>
+>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> ---
+>>   arch/loongarch/Kconfig                     |   8 ++
+>>   arch/loongarch/include/asm/image.h         |  18 ++++
+>>   arch/loongarch/include/asm/kexec.h         |  12 +++
+>>   arch/loongarch/kernel/Makefile             |   1 +
+>>   arch/loongarch/kernel/kexec_image.c        | 112 +++++++++++++++++++++
+>>   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>>   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
+>>   7 files changed, 219 insertions(+), 11 deletions(-)
+>>   create mode 100644 arch/loongarch/kernel/kexec_image.c
+>>   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+> ...
+>
+>> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
+>> index 1f090736e71d..829e1ecb1f5d 100644
+>> --- a/arch/loongarch/include/asm/image.h
+>> +++ b/arch/loongarch/include/asm/image.h
+>> @@ -36,5 +36,23 @@ struct loongarch_image_header {
+>>   	uint32_t pe_header;
+>>   };
+>>   
+>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+>> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 0x0, 0x64, 0x62};
+> loongarch_pe_machtype isn't used at all.
+It will be removed.
+>
+>> +
+>> +/**
+>> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
+>> + *
+>> + * Returns non-zero if 'MZ' signature is found.
+>> + */
+>> +
+>> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
+>> +{
+>> +	if (!h)
+>> +		return 0;
+>> +
+>> +	return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+>> +		&& h->pe_sig[1] == loongarch_image_pe_sig[1]);
+> This could be simplified with a memcmp(). Also, this check isn't strict
+> enough: PE files for any architectures, and even legacy MS-DOS COM
+> executables all start with "MZ".
+>
+>> +}
+>> +
+>>   #endif /* __ASSEMBLY__ */
+>>   #endif /* __ASM_IMAGE_H */
+> ...
+>
+>> diff --git a/arch/loongarch/kernel/kexec_image.c b/arch/loongarch/kernel/kexec_image.c
+>> new file mode 100644
+>> index 000000000000..fdd1845b4e2e
+>> --- /dev/null
+>> +++ b/arch/loongarch/kernel/kexec_image.c
+>> @@ -0,0 +1,112 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Kexec image loader for LoongArch
+>> +
+>> + * Author: Youling Tang <tangyouling@kylinos.cn>
+>> + * Copyright (C) 2025 KylinSoft Corporation.
+>> + */
+>> +
+>> +#define pr_fmt(fmt)	"kexec_file(Image): " fmt
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/kexec.h>
+>> +#include <linux/pe.h>
+>> +#include <linux/string.h>
+>> +#include <asm/byteorder.h>
+>> +#include <asm/cpufeature.h>
+>> +#include <asm/image.h>
+>> +
+>> +static int image_probe(const char *kernel_buf, unsigned long kernel_len)
+>> +{
+>> +	const struct loongarch_image_header *h =
+>> +		(const struct loongarch_image_header *)(kernel_buf);
+> Parentheses around "kernel_buf" are unnecessary.
+It will be removed.
+>
+>> +	if (!h || (kernel_len < sizeof(*h))) {
+> Comparisons have higher priority than logic operations, so this pair of
+> parentheses is redundant, too.
+Yes, but the parentheses will be retained for greater readability.
+>
+>> +		pr_err("No loongarch image header.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (!loongarch_header_check_pe_sig(h)) {
+>> +		pr_err("Bad loongarch PE image header.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void *image_load(struct kimage *image,
+>> +				char *kernel, unsigned long kernel_len,
+>> +				char *initrd, unsigned long initrd_len,
+>> +				char *cmdline, unsigned long cmdline_len)
+>> +{
+>> +	struct loongarch_image_header *h;
+>> +	struct kexec_buf kbuf;
+>> +	unsigned long text_offset, kernel_segment_number;
+>> +	struct kexec_segment *kernel_segment;
+>> +	int ret;
+>> +
+>> +	h = (struct loongarch_image_header *)kernel;
+>> +	if (!h->image_size)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	/* Load the kernel */
+>> +	kbuf.image = image;
+>> +	kbuf.buf_min = 0;
+>> +	kbuf.buf_max = ULONG_MAX;
+>> +	kbuf.top_down = false;
+>> +
+>> +	kbuf.buffer = kernel;
+>> +	kbuf.bufsz = kernel_len;
+>> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +	kbuf.memsz = le64_to_cpu(h->image_size);
+>> +	text_offset = le64_to_cpu(h->text_offset);
+>> +	kbuf.buf_align = SZ_2M;
+> I think this aligment is unnecessary for relocatable LoongArch kernels:
+> it should be enough to align to the page size. See also my comments
+> below.
+>
+>> +	kernel_segment_number = image->nr_segments;
+>> +
+>> +	/*
+>> +	 * The location of the kernel segment may make it impossible to satisfy
+>> +	 * the other segment requirements, so we try repeatedly to find a
+>> +	 * location that will work.
+>> +	 */
+>> +	while ((ret = kexec_add_buffer(&kbuf)) == 0) {
+>> +		/* Try to load additional data */
+>> +		kernel_segment = &image->segment[kernel_segment_number];
+>> +		ret = load_other_segments(image, kernel_segment->mem,
+>> +					  kernel_segment->memsz, initrd,
+>> +					  initrd_len, cmdline, cmdline_len);
+>> +		if (!ret)
+>> +			break;
+>> +
+>> +		/*
+>> +		 * We couldn't find space for the other segments; erase the
+>> +		 * kernel segment and try the next available hole.
+>> +		 */
+>> +		image->nr_segments -= 1;
+>> +		kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
+>> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>> +	}
+>> +
+>> +	if (ret) {
+>> +		pr_err("Could not find any suitable kernel location!");
+>> +		return ERR_PTR(ret);
+>> +	}
+>> +
+>> +	kernel_segment = &image->segment[kernel_segment_number];
+>> +
+>> +	/* Make sure the second kernel jumps to the correct "kernel_entry". */
+>> +	image->start = kernel_segment->mem + h->kernel_entry - text_offset;
+> A non-relocatable loongarch kernel cannot be loaded to arbitrary
+> address. Thus this loading function seems to only work for relocatable
+> kernels, maybe it's better to leave a comment indicating the limitation.
+>
+> For now, we don't seem to have a way to find out whether the kernel is
+> relocatable (for example, a flag in kernel image header), so it's
+> impossible to point out whether the loaded kernel boots fine with
+> arbitrary loading address...
+LoongArch enables the relocation of the kernel when the kdump
+feature is enabled.
 
-Am Freitag, 1. August 2025, 01:36:42 CEST schrieb Frank Li:
-> On Thu, Jul 31, 2025 at 08:32:57AM +0200, Krzysztof Kozlowski wrote:
-> > On Thu, Jul 31, 2025 at 07:58:04AM +0200, Alexander Stein wrote:
-> > > dtbs_check for ls1021.dtsi warns about unsupported property:
-> > >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' d=
-oes not match any of the regexes: '^pinctrl-[0-9]+$'
-> > >
-> > > But if removed the check warns about missing property:
-> > >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' i=
-s a required property
-> >
-> >
-> > And if any other warning says something, are you going to do that as
-> > well?
-> >
-> > >
-> > > Given commit 8bcf67b8d893b ("ARM: dts: ls1021a: add #power-domain-cel=
-ls
-> > > for power-controller node") explicitly added that property, add it
-> > > to the expected property list as well.
-> >
-> > No, commit does not explain why! It's one of this NXP commits without
-> > explanation, doing random things.
-> >
-> > No, explain why do you think this is a power domain provider - fast
-> > look told me that it is NOT.
->=20
-> It is not power controller. rcpm controller enable wakeup source.
->=20
-> In arm64, use below patch to fix warning
->=20
-> commit e39f567e1c38c29629962ab327f0ad1a288dcab2
-> Author: Frank Li <Frank.Li@nxp.com>
-> Date:   Mon Jul 29 14:59:24 2024 -0400
->=20
->     arm64: dts: layerscape: rename rcpm as wakeup-control from power-cont=
-rol
->=20
->     Invoke power-domain.yaml if node name as 'power-control'.
->=20
->     Rcpm actually are not power domain controller. It just control wakeup
->     capability. So rename it as wakeup-control. Fix below CHECK_DTBS warn=
-ing.
->=20
->     power-controller@1ee2140: '#power-domain-cells' is a required property
->             from schema $id: http://devicetree.org/schemas/power/power-do=
-main.yaml#
->=20
->     Signed-off-by: Frank Li <Frank.Li@nxp.com>
->     Signed-off-by: Shawn Guo <shawnguo@kernel.org>
->=20
+config ARCH_SELECTS_CRASH_DUMP
+         def_bool y
+         depends on CRASH_DUMP
+         select RELOCATABLE
 
-Thanks for the link. I've applied a similar change to ls1021 instead of thi=
-s patch.
+After enabling the relocation, LoongArch is the PIE kernel. For
+more details, please refer to commit d8da19fbdedd ("LoongArch:
+Add support for kernel relocation")
+>> +	kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>> +		      kernel_segment->mem, kbuf.bufsz,
+>> +		      kernel_segment->memsz);
+>> +
+>> +	return NULL;
+>> +}
+>> +
+>> +const struct kexec_file_ops kexec_image_ops = {
+>> +	.probe = image_probe,
+>> +	.load = image_load,
+>> +};
+>> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kernel/machine_kexec.c
+>> index f9381800e291..008f43e26120 100644
+>> --- a/arch/loongarch/kernel/machine_kexec.c
+>> +++ b/arch/loongarch/kernel/machine_kexec.c
+>> @@ -70,18 +70,28 @@ int machine_kexec_prepare(struct kimage *kimage)
+> ...
+>
+>> -	if (!kimage->arch.cmdline_ptr) {
+>> -		pr_err("Command line not included in the provided image\n");
+>> -		return -EINVAL;
+>> +		if (!kimage->arch.cmdline_ptr) {
+>> +			pr_err("Command line not included in the provided image\n");
+>> +			return -EINVAL;
+>> +		}
+>>   	}
+>>   
+>>   	/* kexec/kdump need a safe page to save reboot_code_buffer */
+>> @@ -288,7 +298,8 @@ void machine_kexec(struct kimage *image)
+>>   	local_irq_disable();
+>>   
+>>   	pr_notice("EFI boot flag 0x%lx\n", efi_boot);
+>> -	pr_notice("Command line at 0x%lx\n", cmdline_ptr);
+>> +	pr_notice("Command line addr at 0x%lx\n", cmdline_ptr);
+>> +	pr_notice("Command line at %s\n", (char *)cmdline_ptr);
+> The printed message doesn't match meaning of the pointer: you're
+> printing the content of cmdline_ptr, instead of its address, thus
+> "Command line at" sounds confusing to me.
+I will correct it.
 
-Thanks and best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Thanks,
+Youling.
+>
+> Furthermore, this chunk isn't related to "support for kexec_file", I
+> think it's better to separate it into another patch (or even another
+> series).
+>
+>>   	pr_notice("System table at 0x%lx\n", systable_ptr);
+>>   	pr_notice("We will call new kernel at 0x%lx\n", start_addr);
+>>   	pr_notice("Bye ...\n");
+> Best regards,
+> Yao Zi
 
