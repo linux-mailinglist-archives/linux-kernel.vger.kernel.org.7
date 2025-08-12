@@ -1,167 +1,155 @@
-Return-Path: <linux-kernel+bounces-765204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B3EB22CA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:05:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63678B22C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F39227A9A5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:02:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 475B94E3B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9313D305E3A;
-	Tue, 12 Aug 2025 15:53:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98C52F7445;
+	Tue, 12 Aug 2025 15:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q92L41Zr"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399AB305E3D;
-	Tue, 12 Aug 2025 15:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B98305E3D;
+	Tue, 12 Aug 2025 15:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755014033; cv=none; b=spLygUvNLU+/y6At2EX1SIFDwDk42zoaomPJrfBdqhozTo77jQglAK6KV5Btxbw10pl5JayfTBkiEQIdNLb4WGxn0DjlcVsIYBdg0wDQIsWVf5rzGtCjp7UgfY6xOuW9J7MzkL3FrMc8tAbbr3vLU6OWxJa13llOSUgu3z5V6z4=
+	t=1755014053; cv=none; b=QigxcuSnfRLO1FzATOpjXNGn1iBymi4g+MnMOKUH1Nx9bIMk+mj/jLvgkO0iUqFgWZakS+CCHFiUQ5ag2r7zXdWpTOyj1S/xhq+gAlRLHtY+0gl9I/GdtZB0mhh/kGzUHMBujp+/60OcmW1zMjlxeWgh4R3QxNbnRobtrdM3gOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755014033; c=relaxed/simple;
-	bh=BBheX8sbWCgYegYhKcL7467b7LoL9F8LRRRwdBxBPuo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZSx4VbEIwDpTul6y/VnQ5dYv20zxFVLHly/2cisuCDICQQ0fpbHfVXbHIBKQuMy1bi00+KkY1lNOPxcOSUS4+ZKXZC0XLCmq1fU3Hnx4YnFCtyXB1gZHYcFTOmN6fU0dR5NUi8/lLMSjTHtw9ABMEqxwuf2dOyUAIbfy0MvUJ98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c1bbV6Zzlz6M4bb;
-	Tue, 12 Aug 2025 23:51:50 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5929F1401DC;
-	Tue, 12 Aug 2025 23:53:47 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 12 Aug
- 2025 17:53:46 +0200
-Date: Tue, 12 Aug 2025 16:53:45 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Primoz Fiser <primoz.fiser@norik.com>
-CC: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	<linux-iio@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"upstream@lists.phytec.de" <upstream@lists.phytec.de>
-Subject: Re: [PATCH v2 2/2] iio: adc: imx93_adc: load calibrated values even
- calibration failed
-Message-ID: <20250812165345.000002a4@huawei.com>
-In-Reply-To: <ffafc9d6-2cfe-4e3f-a610-9bddc7eb49f4@norik.com>
-References: <20250812-adc-v2-0-0260833f13b8@nxp.com>
-	<20250812-adc-v2-2-0260833f13b8@nxp.com>
-	<ffafc9d6-2cfe-4e3f-a610-9bddc7eb49f4@norik.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755014053; c=relaxed/simple;
+	bh=LnSL/I4TDJTGUKy/9MU9LngUaRGtkr4yj5O7VSL9eso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b7ykKj/eEIUU1iY9Ona7M/y2rvqbJEe2Kv5zRiKqZWc+SPN5FRaXbZTPtHSSxjinSKXtBT8BPJIfr9tgc8VEpakUQ1oXTF8s19mdVsOZPnJ+HNBOfcY+Zy8oO8IdDtEWgsVkWEWDREhMbrWToqa1jZ/z/ZYXFdrICHFoq3OIe9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q92L41Zr; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-747e41d5469so6345122b3a.3;
+        Tue, 12 Aug 2025 08:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755014051; x=1755618851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0XGUKeIytn27uH12AB55KaSCGBl+m42SQlOGJHqsv6A=;
+        b=Q92L41ZrfAZsHFuMAlKkn0YAiwqGH/SHDtjW5aqF7iTlYS/MhUdCxNMAD+sO5RX9TM
+         vml2F+p39ONAAp3r8GqVhpQept6vLf5DVLX6BwJ2iDwohOt/nnnnJHBcsVLMbvR8p4H9
+         z3dOIg4B4huEiNZkFnW45YInIsNHs7KU0aLwwJs44Sm8wQMo5pZgIgmYF3wQ9AvbCoZs
+         RZBeoQmRg2N6VSBMgzXrt4R0fUUxtLtQpRJZlFLXe/mE7bYlwaGEF4MEu+EBepJ/vGxz
+         F8EkRCkUY4eIGb9BkZJPc7BYhPMqtjZp4qYUV50TlRMYOA9WU4y7M5ezfi19ne8hxOcn
+         5wZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755014051; x=1755618851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XGUKeIytn27uH12AB55KaSCGBl+m42SQlOGJHqsv6A=;
+        b=Bt0ORmO2uMMS3fttopVlYIBHpwud6s8oOGbhM+IVU9JRhyGFrHv+R5ECNAMNHDeTng
+         DSQamv8snhgew+EnWJ7uGpisrJIAZVY1lwCG8zY1Ksc6qvfmfewTALp8FuVJYCS2OM/K
+         7akD/QUge5omPCQHDuEtjce5hp1Wd+1UaBvvo+X9w08UIE5mSi0VrfAplFHPp8hxm16+
+         8A25Jh62n4ARLiQWE6NCRCzph/q6fgPu82yy1MrBScHQV76Pn78tYQMmqHv411gOfX9l
+         W0CF+EI9I74CgIbFU2piZd3lilwGzgaspgzyq/sECkM/SNP4EmxBn5pzc8SI8QBFQMBx
+         erQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzZAOB6sz5DUVHAPnwjp2VyF4ZsaZzMzC/Kd8UU34znx/UEtqUAySLJO26O3nOwMUjBzxscXE9DstLrg==@vger.kernel.org, AJvYcCVSr5af9d8QvW6gUPwBKMG12K0CunFecfZEvyhNjJzVeFnZNJe7j5HRjmy53MLQd84OrKVLFQy64oDqPd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuTYs72KUcPBTnQd1nYUevEBtKdLbiqEQZx4d3EvNuQHfAhOLZ
+	5xTE7oce2Q21COHtSOsNfiWVbFYruv2y3rgOcOtX/k8HpyllATISNkpH
+X-Gm-Gg: ASbGncvRrg1IzgSGtIM5XN2fOWkt2Kb/dPOQzbBXKBQQJOKzjUdRuR0cYXajkcl6SHU
+	nG8cGRFFM53C4rxK58k7NyVVOh1HC8Z/bSo0JM1C44Epq0dZVpj2sW200ampvNASIUV0UVbGH4G
+	Hy1omaHAK/hd2Sw5X61H3bBURIIFvUtA4K0YqsWtFwD/gbFxFBHzW2oWGvRZDw5rjeuLiXY+Bhh
+	8tJMaDUk0JTOCQxeRgxTUDweNaVH1gAJ1OW+3vQGJW1dtFj7JaZ3DiLbI/+IifnPduJH1GvH/9Z
+	yqYQ/VREw3uFnaMEc1z2VKHQxqvGbcg6YJZ3qnqvKOxG2qdzdMSee/wU4NnF9r+drWkXxxi4ofN
+	34CnlZTrcWqi/NExcu5ewucEqgkQowiTyxM2u1W46tb0IBhhPaDGeadyaC6GrrEam6BTxcO4jcG
+	SqGPEhFo2zZLc=
+X-Google-Smtp-Source: AGHT+IFLqFHsJ/JQ/5sC88VOK4z7IOEAGPfo9DDCHF6jNVPKl4dgKGPZixbMByjSwwABeaYTRyniew==
+X-Received: by 2002:a05:6a00:66ce:b0:748:2ac2:f8c3 with SMTP id d2e1a72fcca58-76e1fe1f6e5mr47541b3a.24.1755014050666;
+        Tue, 12 Aug 2025 08:54:10 -0700 (PDT)
+Received: from [192.168.11.3] (FL1-125-195-176-151.tky.mesh.ad.jp. [125.195.176.151])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd026dsm29748464b3a.95.2025.08.12.08.54.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 08:54:10 -0700 (PDT)
+Message-ID: <6dbc1383-0c9f-4648-ae8d-4219e89589f4@gmail.com>
+Date: Wed, 13 Aug 2025 00:54:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rdma_rxe: call comp_handler without holding cq->cq_lock
+To: Zhu Yanjun <yanjun.zhu@linux.dev>,
+ Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806123921.633410-1-philipp.reisner@linbit.com>
+ <5a31f3ef-358f-4382-8ad1-8050569a2a23@linux.dev>
+ <CADGDV=UgDb51nEtdide7k8==urCdrWcig8kBAY6k0PryR0c7xw@mail.gmail.com>
+ <2b593684-4409-485b-9edf-e44a402ecf3a@linux.dev>
+Content-Language: en-US
+From: Daisuke Matsuda <dskmtsd@gmail.com>
+In-Reply-To: <2b593684-4409-485b-9edf-e44a402ecf3a@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Aug 2025 10:45:48 +0200
-Primoz Fiser <primoz.fiser@norik.com> wrote:
-
-> Hi Haibo,
+On 2025/08/11 22:48, Zhu Yanjun wrote:
+> 在 2025/8/10 22:26, Philipp Reisner 写道:
+>> On Thu, Aug 7, 2025 at 3:09 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
+>>>
+>>> 在 2025/8/6 5:39, Philipp Reisner 写道:
+>>>> Allow the comp_handler callback implementation to call ib_poll_cq().
+>>>> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
+>>>> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+>>>>
+>>>> The Mellanox and Intel drivers allow a comp_handler callback
+>>>> implementation to call ib_poll_cq().
+>>>>
+>>>> Avoid the deadlock by calling the comp_handler callback without
+>>>> holding cq->cw_lock.
+>>>>
+>>>> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+>>>
+>>> ERROR: test_resize_cq (tests.test_cq.CQTest.test_resize_cq)
+>>> Test resize CQ, start with specific value and then increase and decrease
+>>> ----------------------------------------------------------------------
+>>> Traceback (most recent call last):
+>>>     File "/root/deb/rdma-core/tests/test_cq.py", line 135, in test_resize_cq
+>>>       u.poll_cq(self.client.cq)
+>>>     File "/root/deb/rdma-core/tests/utils.py", line 687, in poll_cq
+>>>       wcs = _poll_cq(cq, count, data)
+>>>             ^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>     File "/root/deb/rdma-core/tests/utils.py", line 669, in _poll_cq
+>>>       raise PyverbsError(f'Got timeout on polling ({count} CQEs remaining)')
+>>> pyverbs.pyverbs_error.PyverbsError: Got timeout on polling (1 CQEs
+>>> remaining)
+>>>
+>>> After I applied your patch in kervel v6.16, I got the above errors.
+>>>
+>>> Zhu Yanjun
+>>>
+>>
+>> Hello Zhu,
+>>
+>> When I run the test_resize_cq test in a loop (100 runs each) on the
+>> original code and with my patch, I get about the same failure rate.
 > 
-> On 12. 08. 25 10:04, Haibo Chen wrote:
-> > ADC calibration might fail because of the noise on reference voltage.
-> > To avoid calibration fail, need to meet the following requirement:
-> >     ADC reference voltage Noise < 1.8V * 1/2^ENOB
-> > 
-> > For the case which the ADC reference voltage on board do not meet
-> > the requirement, still load the calibrated values, so ADC can also
-> > work but maybe not that accurate.  
+> Add Daisuke Matsuda
 > 
-> Reviewed-by: Primoz Fiser <primoz.fiser@norik.com>
-> 
-> Thanks for fixing this.
-> 
-> BR,
-> Primoz
-> 
-> > 
-> > Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> > ---
-> >  drivers/iio/adc/imx93_adc.c | 18 +++++++++++++++---
-> >  1 file changed, 15 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
-> > index 8471737ac04a2bac0417a6397f20865f6a2c01ca..17b0a2548b0a3614ac537b01e28bc3144d17d6fc 100644
-> > --- a/drivers/iio/adc/imx93_adc.c
-> > +++ b/drivers/iio/adc/imx93_adc.c
-> > @@ -38,6 +38,7 @@
-> >  #define IMX93_ADC_PCDR6		0x118
-> >  #define IMX93_ADC_PCDR7		0x11C
-> >  #define IMX93_ADC_CALSTAT	0x39C
-> > +#define IMX93_ADC_CALCFG0	0x3A0
-> >  
-> >  /* ADC bit shift */
-> >  #define IMX93_ADC_MCR_MODE_MASK			BIT(29)
-> > @@ -58,6 +59,8 @@
-> >  #define IMX93_ADC_IMR_ECH_MASK			BIT(0)
-> >  #define IMX93_ADC_PCDR_CDATA_MASK		GENMASK(11, 0)
-> >  
-> > +#define IMX93_ADC_CALCFG0_LDFAIL_MASK		BIT(4)
-> > +
-> >  /* ADC status */
-> >  #define IMX93_ADC_MSR_ADCSTATUS_IDLE			0
-> >  #define IMX93_ADC_MSR_ADCSTATUS_POWER_DOWN		1
-> > @@ -145,7 +148,7 @@ static void imx93_adc_config_ad_clk(struct imx93_adc *adc)
-> >  
-> >  static int imx93_adc_calibration(struct imx93_adc *adc)
-> >  {
-> > -	u32 mcr, msr;
-> > +	u32 mcr, msr, calcfg;
-> >  	int ret;
-> >  
-> >  	/* make sure ADC in power down mode */
-> > @@ -158,6 +161,11 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
-> >  
-> >  	imx93_adc_power_up(adc);
-> >  
-> > +	/* Enable loading of calibrated values even in fail condition */
-> > +	calcfg = readl(adc->regs + IMX93_ADC_CALCFG0);
-> > +	calcfg |= IMX93_ADC_CALCFG0_LDFAIL_MASK;
-> > +	writel(calcfg, adc->regs + IMX93_ADC_CALCFG0);
-> > +
-> >  	/*
-> >  	 * TODO: we use the default TSAMP/NRSMPL/AVGEN in MCR,
-> >  	 * can add the setting of these bit if need in future.
-> > @@ -180,9 +188,13 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
-> >  	/* check whether calbration is success or not */
-> >  	msr = readl(adc->regs + IMX93_ADC_MSR);
-> >  	if (msr & IMX93_ADC_MSR_CALFAIL_MASK) {
-> > +		/*
-> > +		 * Only give warning here, this means the noise of the
-> > +		 * reference voltage do not meet the requirement:
-> > +		 *     ADC reference voltage Noise < 1.8V * 1/2^ENOB
-> > +		 * And the resault of ADC is not that accurate.
+> If I remember it correctly, when Daisuke and I discussed ODP patches, we both made tests with rxe, from our tests results, it seems that this test_resize_cq error does not occur.
 
-result
+Hi Zhu and Philipp,
 
-If nothing else comes up I'll probably just fix that whilst applying.
+As far as I know, this error has been present for some time.
+It might be possible to investigate further by capturing a memory dump while the polling is stuck, but I have not had time to do that yet.
+At least, I can confirm that this is not a regression caused by Philipp's patch.
 
-Jonathan
-
-
-> > +		 */
-> >  		dev_warn(adc->dev, "ADC calibration failed!\n");
-> > -		imx93_adc_power_down(adc);
-> > -		return -EAGAIN;
-> >  	}
-> >  
-> >  	return 0;
-> >   
-> 
+Thanks,
+Daisuke
 
 
