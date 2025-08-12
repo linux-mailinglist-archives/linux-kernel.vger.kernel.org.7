@@ -1,232 +1,188 @@
-Return-Path: <linux-kernel+bounces-763976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF9FB21C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089CFB21C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7B63BD91F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050A81A26D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3C32DA753;
-	Tue, 12 Aug 2025 04:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9892DA753;
+	Tue, 12 Aug 2025 04:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fOnAaO7L"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2054.outbound.protection.outlook.com [40.107.236.54])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jBvPM3Vu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2045C1E47AD;
-	Tue, 12 Aug 2025 04:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754974274; cv=fail; b=OvdWGn8bTJOlTc5N5eGnYCKbiL1xNelvrz6EuIg7EoPrlLUDVhWK8vIoOT4od/Fh0imgg7R3bbiBa6iCX5zvQodkU0X2x8x8IleWKUeABkwiU6oRl+2EzdQhJwW2NlRUhDIbnHpD4qBEkpoObUDgrTfTfbeRlKQyQBrP02wKm/I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754974274; c=relaxed/simple;
-	bh=YytZt8IoAzHWLPH/+HxpSFiOpY5vYNuxCqflYXscHss=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cp8CB/LzYBX+riaBxQa1io5c2XxGpwsQ//j3KyjEgKTlnxUVyU9uWMwQ20r0JwsR+7DF1Nu3JBa6Kf6wm+Mvi2psld7teOigpBlda+uh+iOM/A0bOpQUSBtEYMGFiRKXLjcScxTemHMY99Pvgvk4736vcVFRappcuTXx1sVaQGg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fOnAaO7L; arc=fail smtp.client-ip=40.107.236.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Go9zOU2qtwXqAY0tIddYQMD8MqnOUEHrZZ6GDQZDzrh4WbgFUiUqyTC98kVi31qqHcLcg8AAGaGvuzKNuk7vk3Y3z7hjB/ENehkuchoEZuBw5UAziZsX0BjME1pFl5UVTjr7vUlrvAf7htvtC9wpzxCgYJKusMEZ+o5GVnsYIbZQxZIptH+wDf1mAHg/q8tg7GNBEIgKDA6CJaABYsHC9xq52xhVuoUx0ztjo4IeAwelp6ta0DYnjKeqdeAzEzm86qI9O0pzYIGSJZ8RuWlcdwMVtURF+495aMTGH5v+uxnxEmKyQg5Ep3tetZ2s+9s14zHFytX9IBB/Kuowu/u17Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GHEeQqSC4jlgMfu96eMuP+VLvYYaCRIEbt88wY9p+gQ=;
- b=kGXv405w9NwKM7SuTql7C34YQJAxnZlAVcIx7lFYeCB4vVQLJvkdlqn5rNUc6eUCsjjn3jDiDN/UFb7rplvO8P3MO/KVF4YjpILLvAcjJJsJ+FC9FpO7DVZ6Y5wSreQEZ+bzvdjLiQhBH63zPXf8KaOTVqBycLJHcwKvWDNHe5aIjFmQKfPbfMkawujrjMea2bbHyjn1hAngqQN5rVobYJnqSS5GH3LQqBLOdHIKQ6U2/DP4+NU0iLdYPfhdiS1gi0yUO68L9H1a37VAWkvmi5ndbF5sacJTw/qe4pjq+ZIdP15ap6eID+gTyYQrc98jnUN2Ou+8MjaGrLd49lNRDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GHEeQqSC4jlgMfu96eMuP+VLvYYaCRIEbt88wY9p+gQ=;
- b=fOnAaO7LOHvEWqC9A0daxMhhV6JZ/km9HR4bDFBAkwboLyqtMMAbfvNNib6ixoCmvpk0ooNaYR8NIlYjUY7gyBPyrBtRv493kQRmQwwjfe8knE4pi5DCtzuNIb4jNAX8DXJHS89pzVh/1B9WbhdWfpY+SJoDC3UfXatK3JNOVpQ=
-Received: from BN9PR03CA0279.namprd03.prod.outlook.com (2603:10b6:408:f5::14)
- by MN0PR12MB5979.namprd12.prod.outlook.com (2603:10b6:208:37e::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
- 2025 04:51:07 +0000
-Received: from BN2PEPF000044AA.namprd04.prod.outlook.com
- (2603:10b6:408:f5:cafe::e6) by BN9PR03CA0279.outlook.office365.com
- (2603:10b6:408:f5::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.18 via Frontend Transport; Tue,
- 12 Aug 2025 04:51:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000044AA.mail.protection.outlook.com (10.167.243.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 04:51:07 +0000
-Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Aug
- 2025 23:51:02 -0500
-From: Vishal Badole <Vishal.Badole@amd.com>
-To: <Shyam-sundar.S-k@amd.com>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Vishal Badole <Vishal.Badole@amd.com>
-Subject: [PATCH v2 net-next] amd-xgbe: Configure and retrieve 'tx-usecs' for Tx coalescing
-Date: Tue, 12 Aug 2025 10:20:35 +0530
-Message-ID: <20250812045035.3376179-1-Vishal.Badole@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062F51E47AD
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754974346; cv=none; b=AZQwmVPOQB0GdHuyAV22UbqEyptV0/hiBPX0/a0hKdGF9I5lHAfkAUXvWrvQ1sgZ2QDuF+/b2ytYI0j8qkoKZlCLo611/afd8FmxMmfMeu7NUt33lzZGuQKkCeZvY3BQrdiipRm58ETUUoNHQ6D6U9S1CppbwSITJDaF+F8+REc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754974346; c=relaxed/simple;
+	bh=keOPTciquSA4p02WljqtBMUoteLbhLVc28UUhuCOfQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Rdhw/zhnLUjUYBVs7L1QO7BuE3VYXQLPora+LINewUKZs2vsPkyl9iIjC844Y1lrrLpoNJ380caZxrxAAbhPGtRJTmGXPULqT2YdBF7zVVBHBr/WOnU6Bh2tDzY3HaydaSR/B027wlOCjjQ5ajzwAgHRfUoUVKiZYzPb3kw9+0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jBvPM3Vu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C3VQa1004800
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:52:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+v4I7Q97HUADgUFEs7f+Pr
+	vptjZ+glS7epDTdSXOiqg=; b=jBvPM3Vu1VjtJdQobzKFG7MI/v9r+tEpgbwJ39
+	4QurPij0Bgg4x//SHrPCOGWEPkBFhnI7irTVKeg+EoQ2UnrK5X+4xlc0XDLM5x39
+	lxgLucTfNJ6/2Slc1b2T8c1N/mOtU3RZSG5yit1Ho5XTngpcPwTOznfhyeO0Xf3Q
+	VQCnpXYn+sAIuy54iTPyz9c0oaV2HjUdiiPAD7pIg1hnRkItQVupoZWD9saQmAFw
+	IYiw/IEbVw7waIdsFxSiMWOVGXZ4w41V19qusjkq6oULlRFMhajGzhr2MYZu0Tks
+	RM5ayBIOPXmFwoqf41qfuOSI501PEYcHNW1N5i0Q4mvjLFfg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxb9x68-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:52:24 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2400499ab2fso45670715ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:52:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754974343; x=1755579143;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+v4I7Q97HUADgUFEs7f+PrvptjZ+glS7epDTdSXOiqg=;
+        b=t88HxJgxphFpPy9m2AEdbMpT0UacLsmnPY5QDO/sXYmVhtWePhzU1b597sOE4js9SK
+         2qg5StjQD53/sjoReiwnhJalQIQnIbmhvU9ukoYlppJJdOem+xDqk4oVDh5WyBZOiplY
+         cGV6QoF7mJ6zf9C+zURhSZhzHsefrAXyiYen4bue9tWtGW8MXU8VqMkoCTrqAvwAZu+Q
+         txE3+05H50PGHqv3IEkRqLHJU2cKWgHKHGI8NPE6tg3NeKlfU/0VrsWwh6uMFkHR4kY5
+         PjDeOwEvsD/4voDUw1TcJcl/4Wgo0x89KHj/oAqQigcPGlAT15h5L2q50Wx8A3kmm/0m
+         +4Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7v5978SA4ZXJjrzyTnw+Y+457uo6kUuPSP/MDaD/y6hnfN6HE9o8pc47eGyJW+SHdP+GN5WNVUnDTW18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPYiF4KTRJrRRgYdQwjbYbXVduARxqxt5nlftLYQdHCW/Gt0UJ
+	EDkK/sVtlGndSrYa6x3PcpK6s3rBNLpkOu1KJu2Ers91QF4k3Se1GhNKMwHC2wHOSiesk/vFt5Y
+	nKy5cWBsRPdN/cQDOVkEp0jfcjP4nrd6xvJbY3Qa1efR8N/eKrEqXFCZ4XE+A4jxRkJo=
+X-Gm-Gg: ASbGncuSGS8j3XAHkHo3Tv3qXFnB7FED+i71EbQmOjQiW6dDrdvNC0GjxWo8W/IoMdr
+	7YVnmwA8Lvm6QmQ4ENd6mzcEIZGYXk8U32jud4YlIICXsxXSPWhlOoTqgsUCTYSSpH9HbreERur
+	2u/IyIxBp5KEtcfg6YtbhpRN+/UvJFdO4wwphbOzP/pyv82iNPq9A5p0cUGSQ2TZ19hJY20v128
+	532hqAOD+IdIOh3CUiiep/UeLyZaVAo63UMBDKXxWeaKofQRHL0vwJlTDFl2KugaKvAdmC0jPs6
+	BG5C5BTObRJ3e7RKH9D/0jU0bm2p1XIFGr98xe9MFIHqWJp5jx0syqrKZLtW3ZQEUQ11yrsHSMt
+	VNFv1AOSmWl/yF+X5vaP3zMCZiWXZpHf1BCmbViyAffBaptKoUgmJptudVIstlhxU3Fns75IJPS
+	0=
+X-Received: by 2002:a17:902:f68d:b0:242:bfdd:4100 with SMTP id d9443c01a7336-242fc360a3emr32943415ad.47.1754974343234;
+        Mon, 11 Aug 2025 21:52:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqjilSokN8Xz2NAcRSfcsKgGxkpfgvqLlIxZzpG/SVEk/p7hxnKUIR/MkpuiGK/RhwX+PDog==
+X-Received: by 2002:a17:902:f68d:b0:242:bfdd:4100 with SMTP id d9443c01a7336-242fc360a3emr32943185ad.47.1754974342791;
+        Mon, 11 Aug 2025 21:52:22 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0fb4asm285629825ad.60.2025.08.11.21.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 21:52:22 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 10:22:12 +0530
+Subject: [PATCH v2] arm64: dts: qcom: ipq5424: Add reserved memory for TF-A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044AA:EE_|MN0PR12MB5979:EE_
-X-MS-Office365-Filtering-Correlation-Id: 837176fc-0fa1-4625-8105-08ddd95bd9c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TFSoz5S10UhFtIKhBBFC8LWCJ/hk3CPLyo83T9h7O7xme5OcxC1b9RB2PUBG?=
- =?us-ascii?Q?N6WaB1bbvqBhr3OhILBD4lPmfhLMrsaRxQAYalNV43WqzA5koCRbNgt9nLeh?=
- =?us-ascii?Q?LEc21AOt9kPUwzkvusA22AfMPjh6/exK9pWQR440wKQSuk96Lr55zqsKbbBh?=
- =?us-ascii?Q?XkrWXBGgaNpHhEyn5EKNr0t8/+e5a2q/zlf471nIsmxQ5v0AEuPfY/eyiLXI?=
- =?us-ascii?Q?cOtccr5IHW0z3vTpNeAs9XC42lKW/0l7vpR3H7rwRyEMI4eUG8kd77cd27C0?=
- =?us-ascii?Q?u2sB/VAxhEgDPxbO8k1T8fQXV/X/l2wFuIYZuLgZODzu+b1w2r5XNWAxiz55?=
- =?us-ascii?Q?mJZomvG9QvlN/rCHVbVTiqeMi8sVCzcd7lN1jUFTDIT6n5w92JyNHL0vMqQF?=
- =?us-ascii?Q?Og6F58pMZjzYsbnYLnriz66bD+xFzwyGAekv5iPMUtnZtK1gCZodayuufCts?=
- =?us-ascii?Q?csIhfSs+zdM3hUZvFjc6S6A82w5buDgJq1UGgAr3ljiR+jsn84FVxB10saSj?=
- =?us-ascii?Q?E+8wXwOd3rh/kfQ5W8gmjw8pUx5U9QXCXEONKExbulB0A+PJdHUlTau9DySf?=
- =?us-ascii?Q?vks4Pcv+2wbpgRBdpFuPMroUZYq9avm299Uf3Kql3lZC6W7wYn/wwAKOx2vD?=
- =?us-ascii?Q?MCDr+Ntw8c0s8q7++QZNSspKeyD4sUmrw2LyYFtOMe5GTvHnYD5Y7glehTt1?=
- =?us-ascii?Q?dndNttHYpAY/YjxAcHpWDlRWFg1t9w6710ic2NArNcRfmGWC0fo6i+SDCq7e?=
- =?us-ascii?Q?uIOXKOwLUC4mB5eeshTIQhao/jk2swvEXwz83yet86+HShP0Uy6ToX+85uxo?=
- =?us-ascii?Q?mQfdrKy3C7d8a2JZYK0CmPNesf+SrNzgef0pZvkETEQbEzairBnsqQpOGLw3?=
- =?us-ascii?Q?RKKBdGszL3iTKxDNd6DNEwTAttIuDUGWp/rwW0VAU+5AG5ygofODkfGAKcTo?=
- =?us-ascii?Q?w1/CFl+bEp8tT3Hpw/q5/F61xjlCA7NDls/RQUoReL9k7QIcTmaDkxyiD8cc?=
- =?us-ascii?Q?hmWsRwmC3Swb9L5K7gS/uAdf9NH9zzKUzCe5nESSxPNIgK4fY42BMr0Tug77?=
- =?us-ascii?Q?WUSjsZZwJJUbfZla3XgDdVHdS0v1N7yfr1Mrwzj4TxW4G+cr9XYQwS2WiJOf?=
- =?us-ascii?Q?t2yso8JsDqWPildlOavQWQELcRPBsk09h2Pe+ez6TdvUF1h/uhVUyk4p0zmV?=
- =?us-ascii?Q?XLbWTf162VVpuX+KaxEkHkmOipWPNXvXCzI1+XpP81TQOriCuHqh42+JOOgU?=
- =?us-ascii?Q?ftxBW2LAjz8mqZXFmoMHyDqiOp3PTHb/N+7/vyJOd8DBFu9O8t2GR0ydMBcg?=
- =?us-ascii?Q?sdKcPNEJUKUgFp0DGHn66/tXcoX97hsHFLzHKe/imSPQRi2ghT3JtxtBobgy?=
- =?us-ascii?Q?5Qy0DNy2bfLu81l6BshhOJQbVvOvtoSjSLM9bsvaN613d5n3B9tcGihUSW7m?=
- =?us-ascii?Q?kzSBFTcR0r1tv54XsVS4F5g2X7MLDyLDGj48uGTSAqdUfOPbfsSpg3L2ZnGC?=
- =?us-ascii?Q?/nxQjCxJA49J55zCZIMjwZfc9g870h+OaI6e?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 04:51:07.4710
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 837176fc-0fa1-4625-8105-08ddd95bd9c2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044AA.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5979
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250812-atf-reserved-mem-v2-1-1adb94a998c1@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAHvImmgC/2WMSwrCMBQAr1Le2lfya4yuvIe4SNsXGzBNTWoQS
+ u9ucOPCzcAsZjbIlDxlODcbJCo++zhXEYcGhsnOd0I/VgfBRMcMF2hXh4lqVWjEQAF7J40hqbU
+ 7dlCzJZHz7+/yeqvuUgy4Tonsb6SF+h8VjhyV7PlJMRKmk5eYc/t82ccQQ2grYN8/4gxa/bEAA
+ AA=
+X-Change-ID: 20250812-atf-reserved-mem-bf388e366f75
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vignesh Viswanathan <quic_viswanat@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754974339; l=1582;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=DowvsxMqe7mQ1mJ78TGuzzaLzFMh0ArYDeyQ3gsV86g=;
+ b=Us7HCWkCJWg1rKiAlWkEPrhYZ3A0uFb62a2GPp7wbYMVnT2K0mPgrk6ElVKisAxiKueMPmGDV
+ umvXTqIw5+kDzHGQVsGxxoidUXkrp+81ix+Oz2p8wVOUu2/iirh/Mql
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689ac888 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=LHHpOU43DGDhQHPplI0A:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX6aTbmnacTuWm
+ RVRtvK+UaGo2Y1QQe/C3MIQfeBbJL5kseCRn0fmAnEQAqb7nOwBLesvdh7/5m16AO9wbp2yXgFj
+ K6MUVDoRWqMWm3IMtsexvM171bn0Rpr5urr4OpBrT+wMogatsQISkdpGnwGlq6rpLhm8G6Vp6Pg
+ YHGupgbjUvbrehPKZ2WehVxqCyXh5GjWHoxlxNkbrJvFvGKwxmbZf1URA1PcBXKLxV3oHzppDRZ
+ x14cJqgKUvnOv6u7MrAub6SK+bFuuJaf4cvz/jizq5UNO7d+UOVLIsAn9g/sTSLxc1O/3mvopvX
+ MBrkDCj8yQY2S34Z4AYLkU2UOS5Ogi3Usg8jWrgMdE6JmsDRkRTnhpgJL2hUr7BafoS9YAsCB+p
+ BRHZwdaW
+X-Proofpoint-ORIG-GUID: r73pqSGNOXH9075d46PyD-Yn0Vth_3qy
+X-Proofpoint-GUID: r73pqSGNOXH9075d46PyD-Yn0Vth_3qy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
 
-Ethtool has advanced with additional configurable options, but the
-current driver does not support tx-usecs configuration.
+From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
 
-Add support to configure and retrieve 'tx-usecs' using ethtool, which
-specifies the wait time before servicing an interrupt for Tx coalescing.
+IPQ5424 supports both TZ and TF-A as secure software options and various
+DDR sizes. In most cases, TF-A or TZ is loaded at the same memory
+location, but in the 256MB DDR configuration TF-A is loaded at a different
+region.
 
-Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
-Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+So, add the reserved memory node for TF-A and keep it disabled by default.
+During bootup, U-Boot will detect which secure software is running and
+enable or disable the node accordingly.
 
+Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 ---
-v1 -> v2:
-    * Replace netdev_err() with extack interface for user error reporting.
+- Rebased on next-20250812
+- Picked up R-b tag
+- Link to v1:
+  https://lore.kernel.org/linux-arm-msm/20250624-atf-reserved-mem-v1-1-43b1940e2853@oss.qualcomm.com/
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
- drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-index 12395428ffe1..19cb1e2b7d92 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
-@@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device *netdev,
- 	ec->rx_coalesce_usecs = pdata->rx_usecs;
- 	ec->rx_max_coalesced_frames = pdata->rx_frames;
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index 2eea8a078595103ca2d3912f41e3594820b52771..e31e328bdf0e9aaaec3019e5a7bd71c7126e5fa8 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -163,6 +163,12 @@ smem@8a800000 {
  
-+	ec->tx_coalesce_usecs = pdata->tx_usecs;
- 	ec->tx_max_coalesced_frames = pdata->tx_frames;
- 
- 	return 0;
-@@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
- 	struct xgbe_prv_data *pdata = netdev_priv(netdev);
- 	struct xgbe_hw_if *hw_if = &pdata->hw_if;
- 	unsigned int rx_frames, rx_riwt, rx_usecs;
--	unsigned int tx_frames;
-+	unsigned int tx_frames, tx_usecs;
- 
- 	rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
- 	rx_usecs = ec->rx_coalesce_usecs;
-@@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device *netdev,
- 		return -EINVAL;
- 	}
- 
-+	tx_usecs = ec->tx_coalesce_usecs;
- 	tx_frames = ec->tx_max_coalesced_frames;
- 
-+	/* Check if both tx_usecs and tx_frames are set to 0 simultaneously */
-+	if (!tx_usecs && !tx_frames) {
-+		NL_SET_ERR_MSG_FMT_MOD(extack,
-+				       "tx_usecs and tx_frames must not be 0 together");
-+		return -EINVAL;
-+	}
+ 			hwlocks = <&tcsr_mutex 3>;
+ 		};
 +
- 	/* Check the bounds of values for Tx */
-+	if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
-+		NL_SET_ERR_MSG_FMT_MOD(extack, "tx-usecs is limited to %d usec",
-+				       XGMAC_MAX_COAL_TX_TICK);
-+		return -EINVAL;
-+	}
- 	if (tx_frames > pdata->tx_desc_count) {
- 		netdev_err(netdev, "tx-frames is limited to %d frames\n",
- 			   pdata->tx_desc_count);
-@@ -499,6 +513,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
- 	pdata->rx_frames = rx_frames;
- 	hw_if->config_rx_coalesce(pdata);
++		tfa@8a832000 {
++			reg = <0x0 0x8a832000 0x0 0x7d000>;
++			no-map;
++			status = "disabled";
++		};
+ 	};
  
-+	pdata->tx_usecs = tx_usecs;
- 	pdata->tx_frames = tx_frames;
- 	hw_if->config_tx_coalesce(pdata);
- 
-@@ -830,7 +845,7 @@ static int xgbe_set_channels(struct net_device *netdev,
- }
- 
- static const struct ethtool_ops xgbe_ethtool_ops = {
--	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
-+	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
- 				     ETHTOOL_COALESCE_MAX_FRAMES,
- 	.get_drvinfo = xgbe_get_drvinfo,
- 	.get_msglevel = xgbe_get_msglevel,
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
-index 42fa4f84ff01..e330ae9ea685 100755
---- a/drivers/net/ethernet/amd/xgbe/xgbe.h
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
-@@ -272,6 +272,7 @@
- /* Default coalescing parameters */
- #define XGMAC_INIT_DMA_TX_USECS		1000
- #define XGMAC_INIT_DMA_TX_FRAMES	25
-+#define XGMAC_MAX_COAL_TX_TICK		100000
- 
- #define XGMAC_MAX_DMA_RIWT		0xff
- #define XGMAC_INIT_DMA_RX_USECS		30
+ 	soc@0 {
+
+---
+base-commit: 2674d1eadaa2fd3a918dfcdb6d0bb49efe8a8bb9
+change-id: 20250812-atf-reserved-mem-bf388e366f75
+
+Best regards,
 -- 
-2.34.1
+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 
 
