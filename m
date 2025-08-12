@@ -1,236 +1,141 @@
-Return-Path: <linux-kernel+bounces-764879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9287AB2284D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:24:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5E3B2283D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549CF18871EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F6327AAF05
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FE427A446;
-	Tue, 12 Aug 2025 13:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UtgZG6G5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EA6BljAq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UtgZG6G5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EA6BljAq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8718727A455;
+	Tue, 12 Aug 2025 13:21:19 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90BE279323
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B87C276022
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004729; cv=none; b=kKvBr67tIeUwT7w7+wru8lvPgRPQCDWYfua2n+5VrIC9yq3qW0FRbnwHid0k1WCLqv7Wnk/rW38Uv19pgrUGrd+zv0z6Tyq8B5gZna6vm3C93Xe0yAewf/bwFC5D9tCW9k3sJW1bpQ0P9cd2W855dxcSACn+Y4psFVbmzcbHv44=
+	t=1755004879; cv=none; b=DhkovVQMKbUBrONrxfmmyeO26KCa5MIsfZCMVCi2oEKctVSs5hBXTcOnzc6aNejxnmd/2Aoh1HRIqzm3ZaGZTLcFAeubyTuPmwObGN9foi2h9NubVDHpOLIBgIkoqwQWZusLaN5uE5pqOkrYqOV0/BaYU/eNgM0yK2j4kDtaNtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004729; c=relaxed/simple;
-	bh=7r5yJWSv8nIJo/KHCyiI1Nv92QtpWaQb9h6xnyk8548=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeh6hMYJJOnm4993MFs7/SdWuzKfUIj3iZPpfc9XjC61gCLW0Z7OytNhOTUsKKxfwpfBRUwjr9bBjV+w6WW/9+jH+TdiDT7bl/WxbkysG7RMKiTImibANay4DfnhCB5bHAmS/hng8hxrh8jx4i8o97tkyL7jz3MjjJrsXBLavrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UtgZG6G5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EA6BljAq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UtgZG6G5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EA6BljAq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CC4501F45B;
-	Tue, 12 Aug 2025 13:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755004725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QRs3Lbu/CyqX1NOfs/4bvgoB0mLNEji8vX3OaJ0mTX4=;
-	b=UtgZG6G5F8rqx8Eco59BNijBiVIzfrqtFnvstXMUCNL+8EFQbibfyUQ9pZRxJxcnxp59u2
-	aS5wl8OE2RrAvVXODJXnueVN1XstL9/3O9eMGqcdZb3ep4JMMJRZ14iDr5vgbTibmNL9He
-	Tsd4CeE998lnUXFTk6ZQU3cmCm9Q/pA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755004725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QRs3Lbu/CyqX1NOfs/4bvgoB0mLNEji8vX3OaJ0mTX4=;
-	b=EA6BljAqZc1barv1BCS9HXZcaH+ZI3vv7ku4o303GZb+vY9WXLnxZsjsvTVnoI+m8GbtsR
-	ODaMLDHlGkQI8+Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755004725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QRs3Lbu/CyqX1NOfs/4bvgoB0mLNEji8vX3OaJ0mTX4=;
-	b=UtgZG6G5F8rqx8Eco59BNijBiVIzfrqtFnvstXMUCNL+8EFQbibfyUQ9pZRxJxcnxp59u2
-	aS5wl8OE2RrAvVXODJXnueVN1XstL9/3O9eMGqcdZb3ep4JMMJRZ14iDr5vgbTibmNL9He
-	Tsd4CeE998lnUXFTk6ZQU3cmCm9Q/pA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755004725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QRs3Lbu/CyqX1NOfs/4bvgoB0mLNEji8vX3OaJ0mTX4=;
-	b=EA6BljAqZc1barv1BCS9HXZcaH+ZI3vv7ku4o303GZb+vY9WXLnxZsjsvTVnoI+m8GbtsR
-	ODaMLDHlGkQI8+Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5AC67136C7;
-	Tue, 12 Aug 2025 13:18:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nf37FDU/m2jgOgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 12 Aug 2025 13:18:45 +0000
-Message-ID: <3fad47e3-c1e7-4f37-8341-402d2756ea20@suse.de>
-Date: Tue, 12 Aug 2025 15:18:45 +0200
+	s=arc-20240116; t=1755004879; c=relaxed/simple;
+	bh=4qJyuXcJg81aDQXhfDxMPElcejduzJ0mAO9OKRd6Niw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PsvfiT7ClkhUb5s+LK41Q0lkltouGCuvqD/bnnnbLWa8ui+i/AwL0lpofUiSUKL1OCl7nPAfwoKe/TNyrt49Y8ieVbOqwThJU3zHWbKePP7ss66BR6qmPA0KmQRBFLbtr4s6l5RwkFJmh4Fvw6x3kfKeq1mp49ed03uajYjbNz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4c1XFT51GXzYkxsh;
+	Tue, 12 Aug 2025 21:21:01 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 12 Aug
+ 2025 21:21:08 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 12 Aug
+ 2025 21:21:07 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <tglx@linutronix.de>
+CC: <akpm@linux-foundation.org>, <andrealmeid@igalia.com>,
+	<dave@stgolabs.net>, <dvhart@infradead.org>, <feng.han@honor.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
+	<mhocko@suse.com>, <mingo@redhat.com>, <npache@redhat.com>,
+	<peterz@infradead.org>, <rientjes@google.com>, <shakeel.butt@linux.dev>,
+	<zhongjinji@honor.com>
+Subject: Re: [[PATCH v2] 1/2] futex: Add check_robust_futex to verify process usage of robust_futex
+Date: Tue, 12 Aug 2025 21:21:03 +0800
+Message-ID: <20250812132103.9910-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <87cy99g3k6.ffs@tglx>
+References: <87cy99g3k6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
-To: Rob Herring <robh@kernel.org>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org>
- <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
- <8a872e48-0743-43b0-8259-70d6b8e4c221@suse.de>
- <CAL_JsqJL5sy7Otzo7R8mYW_-7s+ajggjtuW7tYBnVxYPaJHs+w@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAL_JsqJL5sy7Otzo7R8mYW_-7s+ajggjtuW7tYBnVxYPaJHs+w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[tomeuvizoso.net,kernel.org,linux.intel.com,gmail.com,ffwll.ch,linaro.org,amd.com,arm.com,vger.kernel.org,lists.freedesktop.org,lists.linaro.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[dt];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Type: text/plain
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a018.hihonor.com
+ (10.68.17.250)
 
-Hi
+> Please use foo() notation for functions in subject and change log.
+> 
+> > The check_robust_futex function is added to detect whether a process uses
+> > robust_futex.
+> 
+> Explain the problem first and do not start with what the patch is doing.
+> 
+> > According to the patch discussion
+> > (https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u),
+> 
+> Can you properly describe what you are trying to solve as part of the
+> change log? A link can be provided for further information, but not
+> instead of a proper explanation.
+> 
+> > executing the OOM reaper too early on processes using robust_futex may cause
+> > the lock holder to wait indefinitely.
+> >
+> > Therefore, this patch introduces check_robust_futex to identify such
+> 
+> # git grep 'This patch' Documentation/process/
+> 
+> See also:
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
+> 
+> > +bool __check_robust_futex(struct task_struct *p)
+> > +{
+> > +	struct task_struct *t;
+> > +
+> > +	for_each_thread(p, t) {
+> > +		if (unlikely(t->robust_list))
+> 
+> This is a racy access as the thread might concurrently write to it. So
+> it has to be annotated with data_race().
+> 
+> > +			return true;
+> > +#ifdef CONFIG_COMPAT
+> > +		if (unlikely(t->compat_robust_list))
+> > +			return true;
+> > +#endif
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> > +bool check_robust_futex(struct task_struct *p)
+> 
+> The name sucks. Public futex functions are prefixed with
+> futex.
+> 
+> But this is about checking a process, no? So something like
+> process_has_robust_futex() makes it clear what this is about.
+> 
+> > +{
+> > +	bool has_robust;
+> > +
+> > +	rcu_read_lock();
+> > +	has_robust = __check_robust_futex(p);
+> > +	rcu_read_unlock();
+> > +	return has_robust;
+> > +}
+> 
+> Why do you need two functions here?
+> 
+> If the OOM killer is invoked, then saving a rcu_read_lock()/unlock() is
+> just a pointless optimization with zero value. rcu_read_lock() nests
+> nicely.
+> 
+> But I'm not convinced yet, that this is actually a sane approach.
+> 
+> Thanks,
+> 
+>         tglx
 
-Am 12.08.25 um 14:56 schrieb Rob Herring:
-> On Tue, Aug 12, 2025 at 6:01 AM Thomas Zimmermann <tzimmermann@suse.de> wrote:
->> Hi
->>
->> Am 11.08.25 um 23:05 schrieb Rob Herring (Arm):
->>> Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
->>> relatively simple interface with single command stream to describe
->>> buffers, operation settings, and network operations. It supports up to 8
->>> memory regions (though no h/w bounds on a region). The Ethos NPUs
->>> are designed to use an SRAM for scratch memory. Region 2 is reserved
->>> for SRAM (like the downstream driver stack and compiler). Userspace
->>> doesn't need access to the SRAM.
->>>
->>> The h/w has no MMU nor external IOMMU and is a DMA engine which can
->>> read and write anywhere in memory without h/w bounds checks. The user
->>> submitted command streams must be validated against the bounds of the
->>> GEM BOs. This is similar to the VC4 design which validates shaders.
->>>
->>> The job submit is based on the rocket driver for the Rockchip NPU
->>> utilizing the GPU scheduler. It is simpler as there's only 1 core rather
->>> than 3.
->>>
->>> Tested on i.MX93 platform (U65) with WIP Mesa Teflon support.
->>>
->>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->> I've looked over this patch and it looks good to me. There's a
->> dev_info() in ethos_init() of which I think it should become drm_dbg().
->> Anyway
-> I prefer to print out what h/w we've discovered. That's a fairly
-> common pattern for drivers (and more useful than announcing drivers
-> that only loaded).
->
->> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Thanks!
->
->> Side note: I noticed that there's buffer-allocation code here that
->> reinvents dumb buffers. We've ocationally talked about creating a better
->> dumb-buffers ioctl interface and this drivers could be another use case.
-> Yeah. In the past I got told don't use dumb buffers APIs for anything
-> but dumb scanout buffers. I guess with enough copies opinions
-> change...
-
-That advice wasn't wrong. But the current dumb-buffer ioctls don't 
-support scanout buffers well either. If we build something new, we can 
-try to cover additional use cases as well.
-
-Best regards
-Thomas
-
->
-> Rob
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Thank you very much for your review. I will fix them in the next version.
 
 
