@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-765287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DE1B22E12
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FDBB22E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CF0188AB69
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8352A62222F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D203A2FD1C6;
-	Tue, 12 Aug 2025 16:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E2F2FD1CE;
+	Tue, 12 Aug 2025 16:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSpQX7Xq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7Td/XYS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CCB2FA0EA;
-	Tue, 12 Aug 2025 16:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D52FA0EA
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 16:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755016892; cv=none; b=L0oNVGaPJ4Mwos2iY2SpMxMVBC3qa/3S66LKcEVqPk//o5SuE22nHhGyLmEkwdM0/FzdoXHd3Ujv9c9XWM/Acamz1ZTxRqv6TbwRgw8fyU+MoMD5gXhUWptL4fqBdBYw07xsQjcOOZ7SJVEwLxCitjSLnn3ULpGs/3E4kGZy+qk=
+	t=1755016895; cv=none; b=Q2Eb8pFMFB0HvIH/9uKxSG2S/ag333Cdx5Pf4OoLbdA234Fnvwsjz58gp7c0UFK7sXRlyjBN6xq4a5pn7hBXgenbLucEjr2amPnaxbvZh2XvuQwc/2u35ETZBWraWGXzOzUmw/nmiLMrffgANGiluqJxtpGowpCsmiHRDpQNUQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755016892; c=relaxed/simple;
-	bh=RpDjRJiLb5VsAKP90NEwluXA2g+8CuZTXLDSu6vFNqQ=;
+	s=arc-20240116; t=1755016895; c=relaxed/simple;
+	bh=Cz71HGZiV10OArJiGd1SueEwh2yw/h1hDPVhk8eQoqU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=q18bxwQe5BzfV04rgUoDtqLL7HiioGHtFS1M7Sbsl8HrzRJdB2c6WmsO7iZumxS7DhyAkAPjG0DNPw1CA19CYcHBpCMiVGE/HiA+Ds1+BYnk86QS0MOy+mQMVIILu6MQx5PFqbWoptxaJttQth17Qyj0SVjvTKE+Yl46U4GvBnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSpQX7Xq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4A5C4CEF1;
-	Tue, 12 Aug 2025 16:41:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=OBxDDvHSf9daxiLcnGKitJWomonssUlS1hirMB78V0VQs0YtjTNI7brWTZBnMD2q0acXPiG9r8Zq8IYKGJLltZ5LRgoCRzksBoNoAuR7rNlyBzRnLM2/s+5GJ58704fwSLm/HS7fgxM0wRBLAveby+kFmegHbvTNS54CLGhhTEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7Td/XYS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A91C4CEF0;
+	Tue, 12 Aug 2025 16:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755016891;
-	bh=RpDjRJiLb5VsAKP90NEwluXA2g+8CuZTXLDSu6vFNqQ=;
+	s=k20201202; t=1755016895;
+	bh=Cz71HGZiV10OArJiGd1SueEwh2yw/h1hDPVhk8eQoqU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=sSpQX7Xqp3Ga/zn5ks20ncAR+XkGXgnA4nm1swQ99t9DNtzMQOHvN76Q19gay/zVQ
-	 C2iEI3Ufb1kU58Ox0VUh/MrFNdKvSyHCTCS4s442NkDAcD4Ci99ML5WVRGfCtXszzn
-	 7TdgajRF6rJQqnEauVPpNpRluXlM+Z3bAhEfq5KLRi8FyflnSY2ARCWVS+LYHxP6tm
-	 VL2dXpiXliH+I+s8u6HK3mJiLqqnMvEdpr+IXHzOe51srWLJff6HgeGK6VmgkkUz0O
-	 Yp6THY57GW3zSm7XUWmJ04nYK5O7WsVfaLZbv/ehptzPhnPsp9BtH7hk7+nmmU3NsP
-	 RDlbB5ihTZ7jw==
+	b=A7Td/XYS7kBFYP4p5YSjKxxvUHupGJ4gpMnTI1ZhtBf1+KXExRfczfZWjfvjbSjlf
+	 AUnD4z/FKP7v5FlPuUKjyIyPYPIlHVsYDv57/SKPvPFRUCLmBHMickl70bMweLF0RO
+	 9iHamuSPiDIpTGfMRFPevWyUHzXhN/guR/43BT0HT9UAU2Q6JFXc/KzTZUdRTGF+VM
+	 P+IwLZNi0wHySQjH4Zs9ePNWLzYYRYx+9nDI7hb9NV+wT/IuYbJFN01kiALOpaG8zC
+	 wZdnod1gMWoewwbRg2fz0wX/AZskl1G9z1ebDtFOBCS2Zk2qhPL6QEiJoXlsZ4cBbH
+	 xv0KLpuV9hLLw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Vincent Knecht <vincent.knecht@mailoo.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20250811-dt-bindings-db-v1-0-457301523bb5@linaro.org>
-References: <20250811-dt-bindings-db-v1-0-457301523bb5@linaro.org>
-Subject: Re: (subset) [PATCH RESEND 0/2] dt-bindings: Drop 'db' suffix
- duplicating dtschema
-Message-Id: <175501688581.633310.2083661450340253592.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 22:11:25 +0530
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Parth Pancholi <parth.pancholi@toradex.com>, 
+ Devarsh Thakkar <devarsht@ti.com>, Francesco Dolcini <francesco@dolcini.it>, 
+ Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
+ Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
+References: <20250723-cdns-dphy-hs-clk-rate-fix-v1-0-d4539d44cbe7@ideasonboard.com>
+Subject: Re: [PATCH 0/2] phy: cdns-dphy: hs-clk improvement and a cleanup
+Message-Id: <175501689198.633310.10908708738197218310.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 22:11:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,20 +64,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 11 Aug 2025 15:54:02 +0200, Krzysztof Kozlowski wrote:
-> Resending because all dependencies are merged.
+On Wed, 23 Jul 2025 13:01:27 +0300, Tomi Valkeinen wrote:
+> A cdns-dphy improvement to return the actual hs clock rate, and a
+> cleanup to remove leftover code.
 > 
-> Please take individual patches via respective subsystems (phy, leds).
+> These were part of a Cadence DSI series:
 > 
-> Previously:
-> - Link to v1: https://lore.kernel.org/r/20250627-dt-bindings-db-v1-0-d5c7072acbee@linaro.org
+> https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02%40ideasonboard.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[2/2] dt-bindings: phy: fsl,imx8mq-usb: Drop 'db' suffix duplicating dtschema
-      commit: 78a474b5a31a25e0a77e50df42be925f7cb575e6
+[1/2] phy: cdns-dphy: Store hs_clk_rate and return it
+      commit: 7ac3644d1e82ae6c7ad3767a3f2594faffd12264
+[2/2] phy: cdns-dphy: Remove leftover code
+      commit: b659c5cc993767a42ad1a712dd357522099c5c37
 
 Best regards,
 -- 
