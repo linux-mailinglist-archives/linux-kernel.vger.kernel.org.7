@@ -1,231 +1,108 @@
-Return-Path: <linux-kernel+bounces-764188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FB2B21F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:30:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC03B21F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B767B2844
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8EF50257F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593862DEA62;
-	Tue, 12 Aug 2025 07:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276762DCF45;
+	Tue, 12 Aug 2025 07:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vVekZk5b"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADi5A/zb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D022D97AB;
-	Tue, 12 Aug 2025 07:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9901EA6F;
+	Tue, 12 Aug 2025 07:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983803; cv=none; b=bue+IXP/O3m0NtBg3NnIBfSRF1txJY+tL44/u72bSyQw8DywciVlraNQErSl3vbhjgx5cXNFEQufPYQ4xQIQ3BrKSucLim50urWVwh24tyDis+wBCnkDAdPD6jEMnFcO3Wl34p5O7Qw7w2tt5uP+pyUnh6zJ8cpC4ENEBG/oNnw=
+	t=1754983678; cv=none; b=SlR6vQrvpcS3OGPEwp5j+XrhsdGl7DI8SEG7iWuwIqy+sFTzFFAuun2icrkm79e6zKH2rNB6f7/VXtna0BndvZ/CEHCWm95x23IvFmPT9YSkWk/zjDgXzQYEODIzSZC/ouectP7t90qcw0tgbmOnGb8SHwAxHJw3G25iZ014q3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983803; c=relaxed/simple;
-	bh=H/1SbOyexPBj9Bv/6npMpKQzxX7AGDhdqrw0e036Orw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ssE2nn/uRXT6LNJm5zF04pT/V9Brqm0cL85nLVtrqB4hBqmG8U3Xw6IH6gVUraQ+/UMSD55t9ga69HS3osez8w+0+1P0ZtsrENBv6cfm+agd847yh0+krCS6YD0RHnrIW/GMkvRttIMQFgk7pngZVCtJ9qQZQDJI1boQ0JzOiAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vVekZk5b; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C77Ixb008709;
-	Tue, 12 Aug 2025 09:29:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=Cp7r1Pmui13ce0yd2WoGg4
-	CTlzmUVA1zRtsH2JGzcI0=; b=vVekZk5bOMRlZvE26VjQ2Yr++ES4xrg3cBO55c
-	weKa/WiS4g349kfQYgl1EmoqTc6QMmYm1kDT6euQc/B3Y3luTQGi1r7EHUOgEXMC
-	5iWP1ApFKHtagHbuO3KmdwE2VW/oR6THRrJoDv6QTxHLudTtvk5ld/p6hkY3d/tp
-	rIHqjOjBZQVCSWURTBcSkm/SETr3uNlPDH25QF8H59ZnQ0aPS/TZM1L8hiMWGUe9
-	ssBbaiig5E61wyruSFojEo/cCvYTXXgzdnvDOKqc9YsA1y38Umk8ddDLRWWCke+W
-	JIFQNgUCoSwwh5SbdsCjVDqNJb4FMlCS/7uupAbuM3ePHHzA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48eh9n6urr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Aug 2025 09:29:21 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DC28940044;
-	Tue, 12 Aug 2025 09:28:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3BFC7747A63;
-	Tue, 12 Aug 2025 09:27:24 +0200 (CEST)
-Received: from localhost (10.48.87.65) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
- 2025 09:27:23 +0200
-From: Christophe Kerello <christophe.kerello@foss.st.com>
-Date: Tue, 12 Aug 2025 09:26:58 +0200
-Subject: [PATCH] mtd: rawnand: stm32_fmc2: avoid overlapping mappings on
- ECC buffer
+	s=arc-20240116; t=1754983678; c=relaxed/simple;
+	bh=3e0EXaa+An4prh17FZN5+ByIUcZFPT//X78WqBkRjrY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qBrnSd7u4ORnj93QHCk6RejjDudb0+ae2agRxy6iyvSbC1x/wF72ho03XjfzA5vMFccKCrARPp/TFHbxIRYEyj/5iydhFrtGU+dwfFp9bPYd64GAwQI24NxJSgCc6nH0SaEpZIfXoDZ52L+JkKXCuSVN8EVh4R3I6pt2Z0B4Nvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADi5A/zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438C0C4CEF0;
+	Tue, 12 Aug 2025 07:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754983677;
+	bh=3e0EXaa+An4prh17FZN5+ByIUcZFPT//X78WqBkRjrY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ADi5A/zbstIaLYuBH0MTxYxne9ur5CQ2iequZ+CAXyFnCcb/2ic9J6DnI1XC4vWex
+	 v/gv+N/UdkEmGTu9fCmOkmkb/XUifU4YWi+MT/Bwf3N66P3h6WAGzFkUHKyvuOGbh3
+	 Logyl9qcydOUXpnql7kE7GlSIeUNP3CI9XPm961PipTEGXQeNZep5CaQmn4QY9kiYZ
+	 eNLBA+WqrKvr1kh/mKjosvOESVoHAOc30J66z9Nwq9UEJgO5YERbKUH6RkxalZY5SU
+	 Sp4W/qU24KkmNvm8arjN3ntDqtXkR6kTWxPSTWJqTeVssecbs8K30accLFTZBS2cfX
+	 F5NglqnIC/yeg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250812-fix-dma-overlapping-v1-1-c3bf81d79de7@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIAMHsmmgC/x2MQQqAIBAAvxJ7bsENIusr0cFytYUyUYgg/HvSc
- WBmXsichDNMzQuJb8lyhQrUNrDtJnhGsZWhU12vNBE6edCeBq+b02FilOCRNu1WMzjb0wi1jIm
- r9l/npZQPMcSg1WUAAAA=
-X-Change-ID: 20250811-fix-dma-overlapping-1c8fba7fd519
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger
-	<richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Christophe Kerello
-	<christophe.kerello@st.com>
-CC: <linux-mtd@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        <stable@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 09:27:50 +0200
+Message-Id: <DC09SG6IXEOG.3Q8DMJF5E7QBO@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <llvm@lists.linux.dev>
+Subject: Re: [PATCH v14 2/3] rust: support formatting of foreign types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
+ <russ.weight@linux.dev>, "Peter Zijlstra" <peterz@infradead.org>, "Ingo
+ Molnar" <mingo@redhat.com>, "Will Deacon" <will@kernel.org>, "Waiman Long"
+ <longman@redhat.com>, "Nathan Chancellor" <nathan@kernel.org>, "Nick
+ Desaulniers" <nick.desaulniers+lkml@gmail.com>, "Bill Wendling"
+ <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>, "Christian
+ Brauner" <brauner@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com>
+ <20250710-cstr-core-v14-2-ca7e0ca82c82@gmail.com>
+In-Reply-To: <20250710-cstr-core-v14-2-ca7e0ca82c82@gmail.com>
 
-Avoid below overlapping mappings by using a contiguous
-non-cacheable buffer.
+On Thu Jul 10, 2025 at 4:53 PM CEST, Tamir Duberstein wrote:
+> Introduce a `fmt!` macro which wraps all arguments in
+> `kernel::fmt::Adapter` and a `kernel::fmt::Display` trait. This enables
+> formatting of foreign types (like `core::ffi::CStr`) that do not
+> implement `core::fmt::Display` due to concerns around lossy conversions
+> which do not apply in the kernel.
+>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General=
+/topic/Custom.20formatting/with/516476467
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-[    4.077708] DMA-API: stm32_fmc2_nfc 48810000.nand-controller: cacheline tracking EEXIST,
-overlapping mappings aren't supported
-[    4.089103] WARNING: CPU: 1 PID: 44 at kernel/dma/debug.c:568 add_dma_entry+0x23c/0x300
-[    4.097071] Modules linked in:
-[    4.100101] CPU: 1 PID: 44 Comm: kworker/u4:2 Not tainted 6.1.82 #1
-[    4.106346] Hardware name: STMicroelectronics STM32MP257F VALID1 SNOR / MB1704 (LPDDR4 Power discrete) + MB1703 + MB1708 (SNOR MB1730) (DT)
-[    4.118824] Workqueue: events_unbound deferred_probe_work_func
-[    4.124674] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    4.131624] pc : add_dma_entry+0x23c/0x300
-[    4.135658] lr : add_dma_entry+0x23c/0x300
-[    4.139792] sp : ffff800009dbb490
-[    4.143016] x29: ffff800009dbb4a0 x28: 0000000004008022 x27: ffff8000098a6000
-[    4.150174] x26: 0000000000000000 x25: ffff8000099e7000 x24: ffff8000099e7de8
-[    4.157231] x23: 00000000ffffffff x22: 0000000000000000 x21: ffff8000098a6a20
-[    4.164388] x20: ffff000080964180 x19: ffff800009819ba0 x18: 0000000000000006
-[    4.171545] x17: 6361727420656e69 x16: 6c6568636163203a x15: 72656c6c6f72746e
-[    4.178602] x14: 6f632d646e616e2e x13: ffff800009832f58 x12: 00000000000004ec
-[    4.185759] x11: 00000000000001a4 x10: ffff80000988af58 x9 : ffff800009832f58
-[    4.192916] x8 : 00000000ffffefff x7 : ffff80000988af58 x6 : 80000000fffff000
-[    4.199972] x5 : 000000000000bff4 x4 : 0000000000000000 x3 : 0000000000000000
-[    4.207128] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000812d2c40
-[    4.214185] Call trace:
-[    4.216605]  add_dma_entry+0x23c/0x300
-[    4.220338]  debug_dma_map_sg+0x198/0x350
-[    4.224373]  __dma_map_sg_attrs+0xa0/0x110
-[    4.228411]  dma_map_sg_attrs+0x10/0x2c
-[    4.232247]  stm32_fmc2_nfc_xfer.isra.0+0x1c8/0x3fc
-[    4.237088]  stm32_fmc2_nfc_seq_read_page+0xc8/0x174
-[    4.242127]  nand_read_oob+0x1d4/0x8e0
-[    4.245861]  mtd_read_oob_std+0x58/0x84
-[    4.249596]  mtd_read_oob+0x90/0x150
-[    4.253231]  mtd_read+0x68/0xac
+I'm not 100% sure we need to always use `first_span`, but it's probably
+fine.
 
-Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
-Cc: stable@vger.kernel.org
-Fixes: 2cd457f328c1 ("mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash controller driver")
----
- drivers/mtd/nand/raw/stm32_fmc2_nand.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index a960403081f11091837b73b8610231fe421d0c05..222c3c3b684841879a55835e802dcf9983860c28 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -272,6 +272,7 @@ struct stm32_fmc2_nfc {
- 	struct sg_table dma_data_sg;
- 	struct sg_table dma_ecc_sg;
- 	u8 *ecc_buf;
-+	dma_addr_t dma_ecc_addr;
- 	int dma_ecc_len;
- 	u32 tx_dma_max_burst;
- 	u32 rx_dma_max_burst;
-@@ -902,17 +903,10 @@ static int stm32_fmc2_nfc_xfer(struct nand_chip *chip, const u8 *buf,
- 
- 	if (!write_data && !raw) {
- 		/* Configure DMA ECC status */
--		p = nfc->ecc_buf;
- 		for_each_sg(nfc->dma_ecc_sg.sgl, sg, eccsteps, s) {
--			sg_set_buf(sg, p, nfc->dma_ecc_len);
--			p += nfc->dma_ecc_len;
--		}
--
--		ret = dma_map_sg(nfc->dev, nfc->dma_ecc_sg.sgl,
--				 eccsteps, dma_data_dir);
--		if (!ret) {
--			ret = -EIO;
--			goto err_unmap_data;
-+			sg_dma_address(sg) = nfc->dma_ecc_addr +
-+					     s * nfc->dma_ecc_len;
-+			sg_dma_len(sg) = nfc->dma_ecc_len;
- 		}
- 
- 		desc_ecc = dmaengine_prep_slave_sg(nfc->dma_ecc_ch,
-@@ -921,7 +915,7 @@ static int stm32_fmc2_nfc_xfer(struct nand_chip *chip, const u8 *buf,
- 						   DMA_PREP_INTERRUPT);
- 		if (!desc_ecc) {
- 			ret = -ENOMEM;
--			goto err_unmap_ecc;
-+			goto err_unmap_data;
- 		}
- 
- 		reinit_completion(&nfc->dma_ecc_complete);
-@@ -929,7 +923,7 @@ static int stm32_fmc2_nfc_xfer(struct nand_chip *chip, const u8 *buf,
- 		desc_ecc->callback_param = &nfc->dma_ecc_complete;
- 		ret = dma_submit_error(dmaengine_submit(desc_ecc));
- 		if (ret)
--			goto err_unmap_ecc;
-+			goto err_unmap_data;
- 
- 		dma_async_issue_pending(nfc->dma_ecc_ch);
- 	}
-@@ -949,7 +943,7 @@ static int stm32_fmc2_nfc_xfer(struct nand_chip *chip, const u8 *buf,
- 		if (!write_data && !raw)
- 			dmaengine_terminate_all(nfc->dma_ecc_ch);
- 		ret = -ETIMEDOUT;
--		goto err_unmap_ecc;
-+		goto err_unmap_data;
- 	}
- 
- 	/* Wait DMA data transfer completion */
-@@ -969,11 +963,6 @@ static int stm32_fmc2_nfc_xfer(struct nand_chip *chip, const u8 *buf,
- 		}
- 	}
- 
--err_unmap_ecc:
--	if (!write_data && !raw)
--		dma_unmap_sg(nfc->dev, nfc->dma_ecc_sg.sgl,
--			     eccsteps, dma_data_dir);
--
- err_unmap_data:
- 	dma_unmap_sg(nfc->dev, nfc->dma_data_sg.sgl, eccsteps, dma_data_dir);
- 
-@@ -1610,7 +1599,8 @@ static int stm32_fmc2_nfc_dma_setup(struct stm32_fmc2_nfc *nfc)
- 		return ret;
- 
- 	/* Allocate a buffer to store ECC status registers */
--	nfc->ecc_buf = devm_kzalloc(nfc->dev, FMC2_MAX_ECC_BUF_LEN, GFP_KERNEL);
-+	nfc->ecc_buf = dmam_alloc_coherent(nfc->dev, FMC2_MAX_ECC_BUF_LEN,
-+					   &nfc->dma_ecc_addr, GFP_KERNEL);
- 	if (!nfc->ecc_buf)
- 		return -ENOMEM;
- 
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
 ---
-base-commit: fb2fae70e7e985c4acb1ad96110d8b98bb64a87c
-change-id: 20250811-fix-dma-overlapping-1c8fba7fd519
+Cheers,
+Benno
 
-Best regards,
--- 
-Christophe Kerello <christophe.kerello@foss.st.com>
-
+> ---
+>  rust/kernel/fmt.rs     | 87 ++++++++++++++++++++++++++++++++++++++++++++=
++-
+>  rust/kernel/prelude.rs |  3 +-
+>  rust/macros/fmt.rs     | 94 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  rust/macros/lib.rs     | 19 ++++++++++
+>  rust/macros/quote.rs   |  7 ++++
+>  5 files changed, 207 insertions(+), 3 deletions(-)
 
