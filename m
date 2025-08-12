@@ -1,101 +1,162 @@
-Return-Path: <linux-kernel+bounces-765504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A69B23945
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2015BB23946
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D4318904B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9271B66FAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697C12FA0DB;
-	Tue, 12 Aug 2025 19:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD23E2FA0DB;
+	Tue, 12 Aug 2025 19:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH+HZvs4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="eMaxHeqi"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5E212C499;
-	Tue, 12 Aug 2025 19:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755028194; cv=none; b=e9kOhIVhN1og8Y4suXz3OjwHMCNjK43WAJ1VrYQtmlztlS7UA0GB7qUETstYZoKsdbOjWDE9Mn5zFQvLYs0N4l/1WaGEEaBeEmEOuM13ud/xknJLTy3+eEK6ke30f+c5Jr8OfPB3//dSepQnZcsquaSnNzwhBrf5sqL9grQ6Q8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755028194; c=relaxed/simple;
-	bh=s2p/sTnK+HKS1ffdbIHQ+H3N8RmwFvpmZuRncBeoMsI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vEqxRTnlQrQr6iIj8swwMc3haL7LXWyeNMqhTD0lx6ySSnvTlpnkrWVBwBhrP/o1FwTX5uGpSMQEht64yKJNrfzOU1mI8TLr02n/6rle/gb5KfUsAvd2J/J36IT9/ZFbOGaEl6/fqwzjOqfSpPJo6uS1rY5Eg3r8B6mFSOz8W/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nH+HZvs4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FBE1C4CEF1;
-	Tue, 12 Aug 2025 19:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755028194;
-	bh=s2p/sTnK+HKS1ffdbIHQ+H3N8RmwFvpmZuRncBeoMsI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nH+HZvs40t/5ZzKOB3aWkbE3LcJgniwXOBMzJ6tCwbLFcv9RCubuuJgmLe7y5EPTI
-	 9+q8ota5JEbbzDju/P33lGBq5kHt8HjNf5MI00bL+fuIgEf7to7E2vzchSdCCc1+HX
-	 OEyxvnWg+OzGFVxp9CtpsYdCJ5WfF7Kvh9VERiK3l5DH4daiBv/SBNFynOf0QdJNYK
-	 +cbAoY5wNd8QU9Z+QEiXIz2lj7LkpjqsM7sTv5hCyBObiU8P3Gj3TdSTtaf9m4CwI6
-	 08+DEfRRPTS3MCzT8N+07q+B5LMyCtoPKaLHFD9x8vOcr4/eE3ZIyKGP9axbAXMmsl
-	 fK31TojnPqY4Q==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6199bd72532so3553336eaf.2;
-        Tue, 12 Aug 2025 12:49:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUd1kCFGjye1M0RVoA1HLTFbciN1RTxu1s3T6PaI6spbZ/u6tiqzoq8ssaq6aYFyE7v8p+7OZG8@vger.kernel.org, AJvYcCW/8MYHfK+iE5GZvIG78TEdqEcZWRwJ6VQqg/fjxSzcMNmTSp4pjoC4Z/+6N2XrxR6kGtPxQ3X30D3Z@vger.kernel.org, AJvYcCWViIU4Vtpi2+ltHCqn5KOACgrwDYbiB/SbLqt8j8fk6s4l2C8OUdwQjtDyEQSPlUMWAkFLOuPTvTHcslsn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzypSxn++XT9y9yxuwq+YGQqMIeoN2BRZSvQldhkFepRbkLF5Z1
-	Cgo1JB4v7P3hsG0ADHmhTImbOcuE4d4vgWhB6PNxezoQzZ1CW3PZqIz+GiLCe0cw3kvei8P60Xu
-	fmIvuyDzt8CgOFhs5Na1GNdgPgEjLNLY=
-X-Google-Smtp-Source: AGHT+IGQ9RJLQno5xCPQDue/Pm9p95NKW7jlFbnxFgVcGsyQ6lYFx1UCrgMfuj55E6cwZf7OJ93eny6Tqc8E5QXmgNQ=
-X-Received: by 2002:a05:6820:1504:b0:61b:931a:a9a5 with SMTP id
- 006d021491bc7-61bc74fd3cfmr116337eaf.4.1755028193608; Tue, 12 Aug 2025
- 12:49:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DFE12C499;
+	Tue, 12 Aug 2025 19:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755028269; cv=pass; b=D/bR9gEFdTv6LWxe3a1WckPEEWS1yo8WOV6o1t/oEWSKwHn7DA0Tzwq2zFY2c/jM47mVocMy9c+/bb87KQr1KTU2ktRK5g2rXvtHbyvMcR76NMUjtZwzn5JB6nc6cCUqqR8Ymu5P8Za5EpktIkwbQIdXXSHslAZa/I3KaViSJEk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755028269; c=relaxed/simple;
+	bh=zxtnfHjBmtD/lxeHHqZiSVIbM/qGuG4divGdFW2qdi4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ezv7L9Gz0i0SsH2LUCdU9pM9/kUlJcazBIDcytQqT1rED859n1/P8GikcpUA2I9EkmW5j1F7OCjou1OWA41OVDk54hS6hTUZvArG6RVdD8+E7T4TWk4SeacDsLk1ybxTw+Gr9aQyCDzLRo3K6fiwf6/2Ex1PXha9CiUYB1ONmGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=eMaxHeqi; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755028251; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Yu2uMhrYNyWUaUAxeXazZGYnC3OQ+fFsVVXyioRB4l3zGU87q0jdihf0lF8RdXAatkxjDYHB5wzC0tAYBK26tHxrMoyOU7lZSgBQTaHo1WPpicRM7U+0CnN1VZUdGnY9uJL7OVhDraYf+wgtD6ZdLOW6pBMaYi+3wMab5Mvo7ww=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755028251; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zxtnfHjBmtD/lxeHHqZiSVIbM/qGuG4divGdFW2qdi4=; 
+	b=LBV1vkfZBkH5KA+5yDrt9f1dGHl+GXtTUACqb/JLXqH7xqcffzywwLe6Lnpnz/zwWRMYrIHd9MuRmeZN8n1x4upmZYjCPKAEr0941g2YNhVWp1qcpNSX0X1Aiw1K+RJPrl2EkHsN7YMYh6z63vCmdKDeEv96ODvyCN0LxGAPjmk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755028251;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=zxtnfHjBmtD/lxeHHqZiSVIbM/qGuG4divGdFW2qdi4=;
+	b=eMaxHeqi/xXZKL/Enk0BfHNra7ug75xEgLch8DA1wWP6u7eVWwiu5R+SWQcTjwdW
+	hSWxMzgRAu4b8Q6pvL9yLpf9TC9+imJfrVMH7pWoZEMiNh4fYl7U+lc3cKuIwTO9Pav
+	98dsHfouGehJ/S1QgxIm6qmpkgiT4JFFiOwtNN0fmjMS/jcBW1gBO/vfXaZ2K/l6agb
+	eOSh36HYmKFdkGjrHHa50R+Fq5I4npRJQrBfMwtBslImpci1f2wMWH9ayCaW6PIs0/Z
+	Kf2NczJdEpkPu7Af5XlSlCJA9kOq2CwyMAg3rDxmbOhmFBtVoAJjuW73GYTfkZj1M1r
+	uqHlEasbIA==
+Received: by mx.zohomail.com with SMTPS id 175502824888099.24369588420063;
+	Tue, 12 Aug 2025 12:50:48 -0700 (PDT)
+Message-ID: <5909560f051cb17bcbdcad4142cf99b03e1a4c3a.camel@icenowy.me>
+Subject: Re: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michal
+ Wilczynski <m.wilczynski@samsung.com>, linux-riscv@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 13 Aug 2025 03:50:45 +0800
+In-Reply-To: <aJtqrz9y4/hR8fEu@x1>
+References: <20250812054258.1968351-1-uwu@icenowy.me>
+	 <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
+	 <aJtqrz9y4/hR8fEu@x1>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729062038.303734-1-W_Armin@gmx.de> <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
- <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
- <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me> <2025081246-raft-tattle-642c@gregkh>
- <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de> <2025081227-humpback-garden-7a4b@gregkh>
- <d51317d4-92da-4617-970d-6a63236aec30@0upti.me> <2025081250-subsoil-tropics-91a7@gregkh>
-In-Reply-To: <2025081250-subsoil-tropics-91a7@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 12 Aug 2025 21:49:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j4FLDqpQytS5H0OGWwZtdgbAppRwyGfrfyKzzbDqvH6A@mail.gmail.com>
-X-Gm-Features: Ac12FXxD7CI2bT0l7PwES-qRCiVwUZDreIeNyj5BS_IcK0vTEg9G29sE83O_G0Q
-Message-ID: <CAJZ5v0j4FLDqpQytS5H0OGWwZtdgbAppRwyGfrfyKzzbDqvH6A@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Ilya K <me@0upti.me>, Armin Wolf <W_Armin@gmx.de>, "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On Tue, Aug 12, 2025 at 9:33=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Tue, Aug 12, 2025 at 08:56:55PM +0300, Ilya K wrote:
-> > On 2025-08-12 20:10, Greg KH wrote:
-> > >
-> > > Please read the above link for the full details on how to do this (hi=
-nt,
-> > > Fixes: will not do it.)
-> > >
-> >
-> > I might be missing something, but doesn't that just tell you to CC stab=
-le@?
->
-> It must be in the patch itself, in the signed-off-by area.
+=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 09:24 -0700=EF=BC=
+=8CDrew Fustini=E5=86=99=E9=81=93=EF=BC=9A
+> On Tue, Aug 12, 2025 at 09:42:23PM +0800, Icenowy Zheng wrote:
+> > =E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 13:42 +0800=EF=
+=BC=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> > > This patchset is my changes to the TH1520 clock driver, mainly
+> > > for
+> > > supporting the display controller (the first 3).
+> > >=20
+> > > The first two are functionality additions, with the first one
+> > > adding
+> > > support for enabling/disabling PLLs (for DPU PLL) and the second
+> > > one
+> > > adding support for changing DPU dividers.
+> > >=20
+> > > The 3rd one is to address hang issues met when testing the DPU
+> > > driver
+> > > w/o clk_ignore_unused command line option.
+> > >=20
+> > > The 4th one has no relationship to display, and only exists for
+> > > my
+> > > need
+> > > to change an arbitrary GPIO (well, GPIO3_3, the one controlling
+> > > the
+> > > fan
+> > > on Lichee Pi 4A) with gpioset.
+> > >=20
+> > > This patchset has a dependency (a 0th one) [1].
+> > >=20
+> > > [1]
+> > > https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v=
+1-1-299c33d7a593@samsung.com/
+> > >=20
+> >=20
+> > Oops, looks like this patchset deserves a new revision now...
+>=20
+> Thanks, that does make it easier to apply with 'b4 shazam'.
+>=20
+> > PATCH 2/4 has a round_rate() implementation, which is considered
+> > out-
+> > of-date and determine_rate() will replace it.
+>=20
+> I saw your reply over in the big patchset from Brian Masney. That's
+> good
+> that we will be able to skip adding round_rate() to the driver.
+>=20
+> > PATCH 3/4 was broken during rebasing.
+> >=20
+> > PATCH 4/4 is found to be not working (and even makes padctrl0 an
+> > orphan
+> > clock). Yao Zi told me that I need to first do some changes to
+> > ccu_gate
+> > code.
+>=20
+> Is there a way to test the functionality without additional patches
+> from
+> your branch?
 
-Well, to be precise, it must be present in the mainline commit of that
-patch and whether or not it will be there is entirely up to the
-committer.
+To be honest I know about little...
 
-So adding a Cc: stable tag to a patch is a hint, which usually is
-appreciated as long as it is accurate, but the committer may still
-decide to not include it in the commit.
+The 4th patch is the only one easy to test, but it's broken... (A
+refactor must come with it to make it work).
+
+For patch 1~3, if you are brave enough, in file drivers/clk/clk.c,
+change the line `#undef CLOCK_ALLOW_WRITE_DEBUGFS` 's `#undef` to
+`#define` may give you some testing facility in debugfs -- writing some
+clock rate (e.g. 148500000) to /sys/kernel/debug/clk/dpu1-
+pixelclk/clk_rate and then 1 to /sys/kernel/debug/clk/dpu1-
+pixelclk/clk_prepare_enable in this situation could mimic what the DC
+driver does -- I believe in /sys/kernel/debug/clk/clk_summary the
+effect can be shown (dpu1-pll hardware enable becomes Y and dpu1-
+pixelclk shows the expected rate.
+
+WARNING: THE PARAGRAPH ABOVE IS ONLY BASED ON MY READING OF CODE, NOT
+VERIFIED, CAN GET A DRAGON TO BURN YOUR HOUSE.
+
+>=20
+> I look forward to v2. Thanks for working on the display.=20
+>=20
+> -Drew
+
 
