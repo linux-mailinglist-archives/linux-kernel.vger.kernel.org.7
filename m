@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-764632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C89B22556
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:08:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355EAB22557
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F723A5A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC471B6677B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C432EF66C;
-	Tue, 12 Aug 2025 11:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D2B2EFDA1;
+	Tue, 12 Aug 2025 11:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTfoyzgO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8vYU/q0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424BE2ED151
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ECD2EFD8C;
+	Tue, 12 Aug 2025 11:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996740; cv=none; b=I/pnhTQjfgqVzaNsqICdToKpFSGIbakUds/kIj3rPgxebjsmIBPsJQcrv5UZrH066farNAZQWkppnAIMAlZqYEdlhF8lV9vYxHqyp5UGM6evqWfjItlZbXH1nOQWD6sLmqeCeynyQ0gp30zrKdtaBqZn1F54nscF2ckNV8xCSL8=
+	t=1754996742; cv=none; b=hr/d7n8063eSEEju+knQyiVTdVZeKj9Mj8fbcWBdX2YfZ7toyQGW1B0FtC1dyBT8ua4mMMggMYnte2KaoJMmMxOId54LMY6xxofnBhteOLBX8fTHHYyiRQJ3HKkmGWJsNzOsyDpjUooJY1Bf5xcWEe3nAhzZRveXBkmZLh/BGVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996740; c=relaxed/simple;
-	bh=2cUFhLna+InO0Uo3BDah2CW0KE/A0VIzKG0Q/8MMW/M=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=syMJPsMUzcUsyIiYVlvpAo2d7U6zaDefS14+UxmjT8p92IzAo1ZXxFy4bBS0NAsZLSjzZI/9eQRRmZ+SGpVNttgSKpUQdPQHogm68PpqwsY9grnd5avXLBKAbLvpZcGDwLlaTvySNqDUylelbRY3x7CJPwd1vfzZE6Pp+P+cgC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTfoyzgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7492AC4CEF4;
-	Tue, 12 Aug 2025 11:05:39 +0000 (UTC)
+	s=arc-20240116; t=1754996742; c=relaxed/simple;
+	bh=jxTjEnHMPmG/BlK3tUeUzJ7ztWZxZ6PlYKzdAUEeXPs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cW9a8SiJwCidM3k1pn7SZTUPVCs5YaJ1tuMX9IJUB70WxvWJ6o9cwAG0U4EsRGiWbQlGSvKwWFoXxH1O480urvcTfCyjb6Q3Qy1u0fd37yLHPB/q0kUqTAOvoJUKZaHcJ+rZMH4rYNgyytx0TonlfATBXTxVPYjS5jdnzPuR02Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8vYU/q0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853C4C4CEF4;
+	Tue, 12 Aug 2025 11:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996740;
-	bh=2cUFhLna+InO0Uo3BDah2CW0KE/A0VIzKG0Q/8MMW/M=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=ZTfoyzgO9p1vOajz4E6JjxxItDTgsm6YIT3G/KJv9XlHRPmI/OM2GyjuXJ67+ysg3
-	 IY+YoSi9dyRKYmdCyLuiVCQ2UBmNhp0JXKjr1vlq+ISeGQi5gi3CPpcDmhF/SxxYl5
-	 3Jh6aeIYrqOVzkA0YglT/fmA2OcWTecq7mYu+sJp9x81gvn8syQkUQIbBMmFQVAa3i
-	 sOJHPlVuABzkl8jQdW5A4poGwCBj5VRvN1pwj526HkLmNvHwSoz9j8Uo9GJZeqspNc
-	 L5SsNWAyb1JQ23cfyz/LY4qfyW9HfO3eoCUIbuJVstbbgMD25RmkZjf2Z0XrKPPMKt
-	 Q1Ash7abK5yGg==
+	s=k20201202; t=1754996742;
+	bh=jxTjEnHMPmG/BlK3tUeUzJ7ztWZxZ6PlYKzdAUEeXPs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=P8vYU/q0NEUim5xP4qaa7JJH6ed2uJcE0DvoTEx+DYq17cfY8JeAY3YZrF1MruKuo
+	 jc9L88hfparqYQth3xaLv//o0sLtxi9Jmp8HRLYh+uuTaBzHnlTp2O694si6apnOhs
+	 I2Z2B9iB1YS2WmT8TU7YUaASrlDNQrktlcoTjK+QdmrygNJ78AHVFyRor4hlaRSqbu
+	 B1C63NqZgQ0Ra4W9TVrmVTWU4ueIMFA88Ls6dzLOuLFzK3vtqTe0b5ABpv3xTnn9VD
+	 2nEa2QO+TsvsjfnN5mYhOFdqwnimL++x+uycDnQpVgEH0clp+h7j4lODHVKqQq2nXi
+	 ZAjILq64EkUeA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
- Liao Yuanhong <liaoyuanhong@vivo.com>
-In-Reply-To: <20250807123949.495193-1-liaoyuanhong@vivo.com>
-References: <20250807123949.495193-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] regulator: Remove unnecessary memset
-Message-Id: <175499673922.16220.2125715399762886540.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:39 +0100
+To: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org
+In-Reply-To: <20250807214459.4173892-1-robh@kernel.org>
+References: <20250807214459.4173892-1-robh@kernel.org>
+Subject: Re: [PATCH] regulator: dt-bindings: Clean-up active-semi,act8945a
+ duplication
+Message-Id: <175499674028.16220.7731759072204819862.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,11 +63,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 07 Aug 2025 20:39:49 +0800, Liao Yuanhong wrote:
-> devm_kzalloc() has already been initialized to full 0 space, there is no
-> need to use memset() to initialize again.
+On Thu, 07 Aug 2025 16:44:57 -0500, Rob Herring (Arm) wrote:
+> The active-semi,act8945a binding is documented in multiple places. The
+> charger child node is documented in regulator/active-semi,act8945a.yaml
+> and power/supply/active-semi,act8945a-charger.yaml. An old text binding
+> is in mfd/act8945a.txt.
 > 
+> Update the regulator/active-semi,act8945a.yaml with the additional
+> descriptions and constraints from
+> power/supply/active-semi,act8945a-charger.yaml, and then remove it and
+> mfd/act8945a.txt.
 > 
+> [...]
 
 Applied to
 
@@ -70,8 +82,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: Remove unnecessary memset
-      commit: f6cc4140e161831e5796f099f5abc3af953ae2b8
+[1/1] regulator: dt-bindings: Clean-up active-semi,act8945a duplication
+      commit: a54ef14188519a0994d0264f701f5771815fa11e
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
