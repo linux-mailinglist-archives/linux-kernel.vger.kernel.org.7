@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-764189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AFBB21F82
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:32:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19056B21F87
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D971862126F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424DA502944
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473102641FB;
-	Tue, 12 Aug 2025 07:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C35C2DF3CF;
+	Tue, 12 Aug 2025 07:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b="VQPG+mGb"
-Received: from out28-83.mail.aliyun.com (out28-83.mail.aliyun.com [115.124.28.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqUtyZCn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E181A9F99;
-	Tue, 12 Aug 2025 07:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500AF2D8375;
+	Tue, 12 Aug 2025 07:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754983930; cv=none; b=KYOB9rGqbM8kJUliGsmmXeRfgEab5Sb8CRt49U2HJzQa74qHlB5lY4M8XBHjpP9yQ7HNmIG0y/UNpXUheQgh6vrgFVY1keQP98FfyveTiPNT28BtVEHWyo/Gvov+/I3juh8zTtT/OXVKo+QNfNzrvwPFn3hAxnTGJGYQXBzWa/A=
+	t=1754983932; cv=none; b=Wfkk2j2ZHh27VIiR30Oo1juzj6zzgrLpWkMMKMyNyUp45SQzQErTnc6Deejt5zDHii0cg19MjCspGWV5iUjSpFihZ51nQK1ZkaUmauZorf+ge2eoisRLFgD2qAFFqEY2nMHOrlb+eAfLmH9yxwTVtWW4eW2s7kCiOQXicRvedwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754983930; c=relaxed/simple;
-	bh=CCa9Ci3J5QHDFddhdCFeCywPPj7C95oJwqOE6D7d/3w=;
+	s=arc-20240116; t=1754983932; c=relaxed/simple;
+	bh=O+0/mMzcYBzAXr5xY2ybwh3+r//NqA3Z+JWUeLP3lH4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HmwKwV3ss5yI6zSZloEUyT4l/eUz6etXRGKMBXnccAHEI2WvEVDww+e3X+SZ9vCBhSnSkkaniy8Gt4jB8eDyyffQCU9XTB2Kn4M86hcjVMkKEoQQ2bunW7XELSZHIBjgvxk21Itwzp2Pk0l7bUFxsJhI3gS7tSaSs3CvlGd5OoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net; spf=pass smtp.mailfrom=pascal-lab.net; dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b=VQPG+mGb; arc=none smtp.client-ip=115.124.28.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pascal-lab.net
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=pascal-lab.net; s=default;
-	t=1754983916; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=j3T37CffnhSQE5FtkbQoa66mwv8d5798OrQGY72RZOw=;
-	b=VQPG+mGbqnhsxNzwTXCEbSLMO8Y6Eh6SF7FNWqHaWXV/FR9nlT76lG/WYzIcEMxobJzFmtBaQLTbCUXVUTRiH6J8NR6m5DjyRC2X8JAW/Lqk9ipSFKa2WLwqzmrpZO7CEdKzv3Ihg11hAK7ms08BdBkZ0M4YCljt5rAOMijbb8A=
-Received: from 192.168.0.105(mailfrom:yujundong@pascal-lab.net fp:SMTPD_---.eDV-wna_1754983914 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Aug 2025 15:31:55 +0800
-Message-ID: <1f73657c-74b3-44a7-bee4-b7cda1a75a02@pascal-lab.net>
-Date: Tue, 12 Aug 2025 15:31:54 +0800
+	 In-Reply-To:Content-Type; b=pCPXulXJwFjnMX0/LTaFnMabiREJkhKHXBSwPfzRLjw03b8MKDZmOgV3RUjjGafficgJGBEtkIu4ENPMEpSPw0ufZNyDWEYcHbbn4+LvpEW4YQl+5n1P+xaIxMxuTgRQcmiucWACt1GSuUzuIU07OkQwu33qeScURtcefhc2CWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqUtyZCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E05C4CEF0;
+	Tue, 12 Aug 2025 07:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754983931;
+	bh=O+0/mMzcYBzAXr5xY2ybwh3+r//NqA3Z+JWUeLP3lH4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jqUtyZCnXk+znDbQjnFeGQOxKcz2AIPqI60/CZMZjjVL9St8LUuPHFepgL2ODH7Ve
+	 R7obL8/R2LFEiuafdIg0vPBB01R6gCyFyC0OGFJ80ZiB5iAFUoqiu99lD3qKJ6s7YM
+	 BUHD9b5IME2vAdrMcXwkOxGCJ7UxXd0PXx7MgdhaU4K6p7KY4vM1PaYKy73BYGIPQ9
+	 /1bD1fHuQK5srVVFWb9lluTLfm5V0alCUm/M8g+91BcVSw3YXzxNaViXF0g6AWjfDA
+	 wdyayNd14vwOZ2wM4jlUzeaRhkB0bmbdViN2v1lJ0f4Vjl67cTMEeTijj/accEY/7R
+	 7BkAoveiQrjJA==
+Message-ID: <c44c9aad-b08e-4be8-b135-258305b1f950@kernel.org>
+Date: Tue, 12 Aug 2025 09:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,96 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf branch: Fix heap out-of-bounds write in
- branch_type_count()
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-perf-users@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
-References: <20250809093812.308027-1-yujundong@pascal-lab.net>
- <17bdc644-329a-42fb-aba2-d7f80f2a1037@arm.com>
+Subject: Re: [PATCH v13 04/25] virt: geniezone: Add GenieZone hypervisor
+ driver
+To: =?UTF-8?B?TGlqdS1jbHIgQ2hlbiAo6Zmz6bqX5aaCKQ==?=
+ <Liju-clr.Chen@mediatek.com>, "corbet@lwn.net" <corbet@lwn.net>,
+ "mhiramat@kernel.org" <mhiramat@kernel.org>,
+ =?UTF-8?B?WWluZ3NoaXVhbiBQYW4gKOa9mOepjui7kik=?=
+ <Yingshiuan.Pan@mediatek.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "richardcochran@gmail.com" <richardcochran@gmail.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WmUteXUgV2FuZyAo546L5r6k5a6HKQ==?= <Ze-yu.Wang@mediatek.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?UTF-8?B?S2V2ZW5ueSBIc2llaCAo6Kyd5a6c6Iq4KQ==?=
+ <Kevenny.Hsieh@mediatek.com>, =?UTF-8?B?U2hhd24gSHNpYW8gKOiVreW/l+elpSk=?=
+ <shawn.hsiao@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?UGVpTHVuIFN1ZWkgKOmai+WfueWAqyk=?= <PeiLun.Suei@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+ =?UTF-8?B?Q2hpLXNoZW4gWWVoICjokYnlpYfou5Ip?= <Chi-shen.Yeh@mediatek.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
+ <20241114100802.4116-5-liju-clr.chen@mediatek.com>
+ <7b79d4b5-ba91-41a0-90d1-c64bcab53cec@kernel.org>
+ <cb84d8d87a67516f9b92a89f81fe4efc088f7617.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Yujun Dong <yujundong@pascal-lab.net>
-In-Reply-To: <17bdc644-329a-42fb-aba2-d7f80f2a1037@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <cb84d8d87a67516f9b92a89f81fe4efc088f7617.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2025/8/11 15:03, Anshuman Khandual wrote:
- > On 09/08/25 3:08 PM, Yujun Dong wrote:
- > > The branch_type_count() function writes to 
-st->new_counts[flags->new_type]
- > > when flags->type is PERF_BR_EXTEND_ABI. However, while the array
- > > st->new_counts is sized for PERF_BR_NEW_MAX (8) entries, the field
- > > flags->new_type is a 4-bit unsigned value and may hold values up to 15.
- > >
- > > This mismatch allows crafted perf data to trigger a heap out-of-bounds
- > > write when flags->new_type >= 8, leading to memory corruption.
- >
- > Crafted ? How could flags->new_type >= 8 when PERF_BR_NEW_MAX is 
-capped at 8.
- > Is this a real scenario that happened on a system ?
- >
+On 12/08/2025 09:04, Liju-clr Chen (陳麗如) wrote:
+> we have guarded the gzvm driver with the CONFIG_MTK_GZVM Kconfig
+> option. This ensures the code is only compiled and active on selected
+> platforms, and will not affect other users or systems.
 
-Thanks for your review and for raising that question. The new_type field
-in struct branch_flags is declared as a 4-bit bitfield (u64 new_type:4),
-meaning it can hold values from 0 to 15, even though PERF_BR_NEW_MAX is
-defined as 8. So, it's entirely possible for flags->new_type to be >= 8.
+That is simply not true, since it will be enabled in defconfig in EVERY
+platform. Look up approach of single kernel and single image.
 
-In fact, I've observed such cases when running real-world perf record/top,
-where perf.data produced contains invalid new_type values, likely due to
-other bugs or unexpected data corruption. Additionally, a maliciously
-crafted perf.data file can also force this out-of-bounds write.
-
- > >
- > > Add a bounds check to ensure flags->new_type is less than
- > > PERF_BR_NEW_MAX before accessing the new_counts array.
- >
- > But it might make sense to add this check just to be on the safer side.
- >
-
-Notably, new_type is only used in two places:
-1. In branch_new_type_name(), where the bounds are already validated.
-2. In branch_type_count(), where the current patch now adds the
-necessary check.
-
-Admittedly, the mismatch between the bit-field width (0-15) and
-PERF_BR_NEW_MAX (8) is the root cause. While adjusting the bit-field
-to match PERF_BR_NEW_MAX would also resolve the mismatch, that risks
-breaking existing compatibility. Therefore, adding a bounds check at
-the use site is the least disruptive correction.
-
- > >
- > > Fixes: 0ddea8e2a0c2 ("perf branch: Extend branch type classification")
- > > Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
- > > ---
- > >  tools/perf/util/branch.c | 8 +++++---
- > >  1 file changed, 5 insertions(+), 3 deletions(-)
- > >
- > > diff --git a/tools/perf/util/branch.c b/tools/perf/util/branch.c
- > > index 3712be067464..8ea6628c7735 100644
- > > --- a/tools/perf/util/branch.c
- > > +++ b/tools/perf/util/branch.c
- > > @@ -21,10 +21,12 @@ void branch_type_count(struct branch_type_stat 
-*st, struct branch_flags *flags,
- > >      if (flags->type == PERF_BR_UNKNOWN || from == 0)
- > >          return;
- > >
- > > -    if (flags->type == PERF_BR_EXTEND_ABI)
- > > -        st->new_counts[flags->new_type]++;
- > > -    else
- > > +    if (flags->type == PERF_BR_EXTEND_ABI) {
- > > +        if (flags->new_type < PERF_BR_NEW_MAX)
- > > +            st->new_counts[flags->new_type]++;
- > > +    } else {
- > >          st->counts[flags->type]++;
- > > +    }
- > >
- > >      if (flags->type == PERF_BR_COND) {
- > >          if (to > from)
- >
+Best regards,
+Krzysztof
 
