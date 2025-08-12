@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-765595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CA4B23A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:20:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32883B23A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 240DA7B2C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006CD17A511
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FA02D47EE;
-	Tue, 12 Aug 2025 21:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63542D73B0;
+	Tue, 12 Aug 2025 21:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+6srMj6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qd/tIrio"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369F1E5B7A;
-	Tue, 12 Aug 2025 21:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1732D73A3;
+	Tue, 12 Aug 2025 21:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755033614; cv=none; b=IpaZXjr60ePwWHKF9TCLrr+S2DacETsjWBnzSRe5uvy+CAoHJffCcdrpb4+0+Pm1yqyVXJUXlC2Yy0JrKBO+8Qag78VRI+COtuH3jyJkF3MLngjXZNT2ZsczePslcQlH6HlrSab9P55Y7xyu0cz/1tuUxllRGNZDIobtLIFfosw=
+	t=1755033617; cv=none; b=kY+tWlmIEjvW1puXzXzE5GgkWzAYl7Rq77tU3SCcMzs26YuuQDKeKYhXcfWceYR0GNrkkH8RsL4ErVyIjpKY4bpvRUPNiwU76UJBa5M/Q/SSP1cKLvTaLM01dyH4tVptQnRsFwVJ0cwQrq0rjfDLn6ptkP+QRJsyJmKaOYoyLso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755033614; c=relaxed/simple;
-	bh=coaleDkEw2ri40zMf0iBd5QOXvs/OQOHQ7AAZgHkX3g=;
+	s=arc-20240116; t=1755033617; c=relaxed/simple;
+	bh=25WwL4LrJpis9hco0B4caLuaAxQo/y+rJqKFWMzRRmY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HH3lLIXAfWvuI3OxQcunBpy+Y+r5+cZVJNEsx8F+09iJ82ah6EtBzV8IkpKfAqNTFoTUcNrra/HqsSZ+1Ld3u/P5CZgPlzuyTa6eOgd4VBSWH66aEvrBqO8TB+2zp8VPV35Uz6tovihmNSt3VVa1Hru07Y/Pt1gi7AL3vIUq0co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+6srMj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F4CC4CEF0;
-	Tue, 12 Aug 2025 21:20:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=I64itHtHe8vbOjSeBQjrUM22/MW07DlsmawekD3Sit1YXhB1Ada8XZ6aSeE91g5uO2HGmnRDBXY+5EsvF34b1UGSlQHCX5ZYL56NCZcN8oensRtrQ9XENsZARfRvy9kuQlCv2FEjdK+ejbLnbT1ZAXWF4MuAlHLJY6+6mzXgiEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qd/tIrio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04FB0C4CEF5;
+	Tue, 12 Aug 2025 21:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755033614;
-	bh=coaleDkEw2ri40zMf0iBd5QOXvs/OQOHQ7AAZgHkX3g=;
+	s=k20201202; t=1755033617;
+	bh=25WwL4LrJpis9hco0B4caLuaAxQo/y+rJqKFWMzRRmY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=D+6srMj6RQUdBm/eEwEuvGo5CanVDw95qZeJkB2llEU87IEDO7Ufes75U15DWr1kL
-	 xno7pVgUhvpqg5pezP0yKUZ4k02aDrAyVKslLrXTxiFJzrejnE+iisSuLfiNM+cHap
-	 bM3JtTtZtPtvYT6uF6zNhI/4AiVBpRCuACoJbWj+9Lj4obeREh7F2d/BIC7CjxPStK
-	 p7M7ujXf8RgO1tmSaLrLGsQFUgnURx23151+WWFzJcx8RfhpYGGULadM4pXvinZIT8
-	 htQRSCaKGz2IPPZsGR3a8RJmZ4EEKPsPAO9Qa+W9b0Ew8lfBjZ5RZR0NUGM5BelP04
-	 6BwyEvJkXEO0Q==
+	b=Qd/tIrio0yBy/a9usKZYtEIHYbb6LBXAxcZoYQuMIeGQyWQ5uFpS/9Dzq9wBmr2vE
+	 Qx/tO0GBATqQRBwdcgxSXtWc2mQ282q2+KkNfESE5tWmQdr6e0/r1/30DHaplfb3vN
+	 wavBOArDo49ZDHrLiycMQ8g3bNLrBzYX2w6kmBVHfdUq2q5zD4DV+kIQcV25F4K94+
+	 stSuIf6P1kpzP0SPpzwcj+inwysUxorm3y2qVwUV3iMKrL8DsIpJEH4bT+tJuNlnW2
+	 4TbxJooE52bEVjn4TbvyenoiXxlIKPPHVsCJ4Qgh97WbGiQHRNPKFKD/GkoBMAMZV+
+	 loEyKDOt1GOqg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DC1383BF51;
-	Tue, 12 Aug 2025 21:20:27 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D09383BF51;
+	Tue, 12 Aug 2025 21:20:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,19 +51,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: stmmac: make variable data a u32
+Subject: Re: [PATCH net-next] caif: Replace memset(0) + strscpy() with
+ strscpy_pad()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175503362599.2827924.4642075233156887123.git-patchwork-notify@kernel.org>
-Date: Tue, 12 Aug 2025 21:20:25 +0000
-References: <20250811111211.1646600-1-colin.i.king@gmail.com>
-In-Reply-To: <20250811111211.1646600-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ <175503362874.2827924.7880375273804759284.git-patchwork-notify@kernel.org>
+Date: Tue, 12 Aug 2025 21:20:28 +0000
+References: <20250811093442.5075-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250811093442.5075-2-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, arnd@arndb.de, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
@@ -71,20 +69,19 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 11 Aug 2025 12:12:11 +0100 you wrote:
-> Make data a u32 instead of an unsigned long, this way it is
-> explicitly the same width as the operations performed on it
-> and the same width as a writel store, and it cleans up sign
-> extention warnings when 64 bit static analysis is performed
-> on the code.
+On Mon, 11 Aug 2025 11:34:40 +0200 you wrote:
+> Replace memset(0) followed by strscpy() with strscpy_pad() to improve
+> cfctrl_linkup_request(). This avoids zeroing the memory before copying
+> the string and ensures the destination buffer is only written to once,
+> simplifying the code and improving efficiency.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > 
 > [...]
 
 Here is the summary with links:
-  - net: stmmac: make variable data a u32
-    https://git.kernel.org/netdev/net-next/c/11b99886d194
+  - [net-next] caif: Replace memset(0) + strscpy() with strscpy_pad()
+    https://git.kernel.org/netdev/net-next/c/63fe077c21d3
 
 You are awesome, thank you!
 -- 
