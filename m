@@ -1,207 +1,240 @@
-Return-Path: <linux-kernel+bounces-763956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9475B21C01
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:06:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9990B21BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D732682F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D81D16EA68
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E070C2D5C91;
-	Tue, 12 Aug 2025 04:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351FD2DECD6;
+	Tue, 12 Aug 2025 04:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qhuHlinE"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YCQyUwCo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F02DB665
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4089B665
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754971585; cv=none; b=Qz4SOWsCP1LMs7OmJrBGxMSdzDiYU3kieQ2tdSQH6iFW0VwJl44MdetZW9xuw+ZD/CA1f3E69NMYBlCis6RM81fxskwSr5OQTN8QXcWUtfY8SmjAmfO4xUpUdiublvL2GeM/STiEmTRpP40B0NCOJ1feRqeUbHAUw0Le594HbbM=
+	t=1754971561; cv=none; b=aGwKgnRI08rSSJhpRQGDob0CIQuowsMXzLhXtIffcZhwoL7aX2CdlcmgRJZuSOasAxbixtdNNP40q7e92pUCvOnijkIlKPLnolJFUIMAdpEpzr/LG8VPzIpvxr8ZC/06Ao01w6MdbSQo5LAHI8kfcjtGFs4EcwLpPo5rFAaZ7iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754971585; c=relaxed/simple;
-	bh=p8t6k+6GXovC5uDxdFfBS/FvVWKNaHn6GXxjO/8jQDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3xxchsS30RXvYQRbDcKS0C12kHC05gWel+MQOY4hkWjkA7zQyyuO4hmyMGlpFZ6cST8/qUGKIVKOGpXeOkpwZmOCmI3N0xXt4+CegVuKTBZtdStfgHp9z0mDjZP9bLwBgDQpa1mPLlCR8Taa7rafiQpEv2TPgIYKqrOc5C0yI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qhuHlinE; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0767b8fe-7c04-4e73-9235-ee326ee058cc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754971570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBKYKsRpkFn4IgKj6ShKVJvxeOJHa9l2mWxrzZCMV7Q=;
-	b=qhuHlinEYuRlBDjMI4MbGx0/KxiYdhdqOPfLP0oqsPpOj0jhFjA54EiI3M8GXC6Pk8EVb2
-	/qR3qQmpSiB5bweQlDPHRe22e6PYfTC+EImtk1BWutMGnco8opavqMnN7zPSLplYoArMLo
-	oySeWvOUlkHDpU7+xZL/bAN7td1TSM8=
-Date: Tue, 12 Aug 2025 12:05:30 +0800
+	s=arc-20240116; t=1754971561; c=relaxed/simple;
+	bh=WC3xKRFbFoIyAD+juOEawzsXMLiazvMDa0Q3SLNHV/E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=k4f54+JkDX9mrjogOfKjdEG+JAg394HQQrgegPl5NI/hGPX9qQgwAOGpEco1wDI2OSLnrM5c6q0opODfifZBBKfwv2FoSfAK8JLufrD+0mKOoNsMv1Vxnnuysi8SJ/SiVf9ZaAurzV5dEFBtpNYO9BXpT1PZ+pK55wqi7Sn8X5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YCQyUwCo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C452Uw013107
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:05:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TVdaV7O5QbbmRET9jFm6kPgE4pGSGAvlJcTe/DiS6tc=; b=YCQyUwCo8ud3Hlpb
+	Z+pLydzPldhjjQuanYvej4qNij+OKrtrtcINy6rdFrCDiN1i4Fn/QYRB1X2Odbww
+	CbtafMcIIQaP8KN/nogqHFaKbqiyhnv2sAc0p2iwRakDEtt7pqO1yZAHGoIM41Mv
+	RfRj4MToOyady+6MqfAxuf+Xu6UIvP57D9MV4t0cu5QWrWXPZguHZj2RYuEbSUDf
+	6rbFHera3SLa1IKluTBqmiFa/5NvyzqNrsu1RcF8UMpyG6IPsbaBJWXhelvooHt6
+	TR+l5nn+1zjJFqLw61eTxoucAUpi9Nh3DJ7Digt8dIHh2UU24ekPxAzCmiUyLC9d
+	6u1AVg==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmpun3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:05:58 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b46fa1ba6fcso139847a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 21:05:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754971557; x=1755576357;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TVdaV7O5QbbmRET9jFm6kPgE4pGSGAvlJcTe/DiS6tc=;
+        b=uY3ViYCR0VECtbL9BdyuJV8cTSm/QgW3htVTCSH8EaPEKW742cnqK00W2ZaiVwvMfA
+         vuPmUFmI08oy7PC0kncsMPIMGCbfTIo6JfPe3SV4Ev5rZzL9h8FQBuu0Ml6Qjy7d2hw1
+         qWbwbjy8qLWUc/QrBdzyIVkKTRMx3XsAASbU9vscUrKaAmE1FA0YkUx2/FFXh0biKEgB
+         v9rR4l2w74vpiN3q/Wv32nWQIMxTFJ5j6wdyBj8eJaSQYPa2Q2fdAtq1ys6phEZ85HM0
+         gtFWFxX45GNkZjIBKA6f4Nfi2ma4dmIyEyo6ARYvbBRZ3rb66aT6oVIqlER2x5CFeMHQ
+         NP+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCDnULXLl4p5QYKd89cANcIPq11CYR15cglHp4cBobLnF6Tzr+xxsMyPtbVL0zH98Kou7oGoN7B2fIah8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvAcQX6HO0dhFaVnNhEqLXMN8pw7/O/FmsFByrm+qtjzx5ujmi
+	FTPXkjlzu/LrQXSFmRF2Pbs+A/RO3vrFkvph6dMYjmCF8f0zJ2FuSqGua4LjICQW5u6oMh/TReh
+	yaav755r2B1eWqm+0SgvUvnl161TJl0n6TMdn6qPiYzuhGz6WTUcGUV72/xxMDvS4gz8=
+X-Gm-Gg: ASbGncsYkcEvn/zu7iQ+ZEZnh8UmrU3bfhuUJTgcdNjGIXm2ch+odEvFJ9445/hnzPG
+	sccD9HShMASanEDfb129omk4r4iVD1Pe9eSQEuwureHi3VaAxkUuzBWAst/bIPMxlOo+w3VoFaz
+	ZiIrdzCEBtVkFq51loUfbeo85rvlqJY29PiKhZd7Qv4npSBgXe7vXh8NJC73hPk2U6CwGw3UYVI
+	A48CF8GcJFQU1ym6QUvotn/VmfjNQer+10CbZi15esx6zM5sIH52ZIb6zGTM8VDtWa5uHtqsb1s
+	PzGdTffQpwPuwuEYcGwzESgiQVkp7PuuPyalDT7v3iLxUp7Zdl0LvdgNLICMHjLipQx20VY79w=
+	=
+X-Received: by 2002:a17:903:2985:b0:240:640a:c576 with SMTP id d9443c01a7336-242fc232fa2mr27392835ad.15.1754971557490;
+        Mon, 11 Aug 2025 21:05:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWpOgn5/oSzjBCGtryF075Bdr0I0B0VxEDiPRvky8kDJfG/nc/HyC5WphsedOMXvkIvnZC7g==
+X-Received: by 2002:a17:903:2985:b0:240:640a:c576 with SMTP id d9443c01a7336-242fc232fa2mr27392415ad.15.1754971557017;
+        Mon, 11 Aug 2025 21:05:57 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef67aesm288305795ad.6.2025.08.11.21.05.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 21:05:56 -0700 (PDT)
+Message-ID: <68a78904-e2c7-4d4d-853d-d9cd6413760e@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 09:35:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/6] LoongArch/kexec_file: Add initrd loading
-To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
- kexec@lists.infradead.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
- <20250811092659.14903-4-youling.tang@linux.dev> <aJovKIKFqX6xi9ra@pie>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
+ before & after link re-training
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <20250711213602.GA2307197@bhelgaas>
+ <55fc3ae6-ba04-4739-9b89-0356c3e0930c@oss.qualcomm.com>
+ <d4078b6c-1921-4195-9022-755845cdb432@oss.qualcomm.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <aJovKIKFqX6xi9ra@pie>
+In-Reply-To: <d4078b6c-1921-4195-9022-755845cdb432@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-
-Hi, Yao
-On 2025/8/12 01:58, Yao Zi wrote:
-> On Mon, Aug 11, 2025 at 05:26:56PM +0800, Youling Tang wrote:
->> From: Youling Tang <tangyouling@kylinos.cn>
->>
->> Add inird loading support and pass it to the second kernel via the
->> cmdline 'initrd=start,size'.
-> I think This won't work if the exec'ed kernel enables
-> CONFIG_CMDLINE_FORCE. Is it possible to mimic libstub's behavior of
-> installing a configuration table LINUX_EFI_INITRD_MEDIA_GUID?
-The command line passed by kexec to the second kernel has no effect if
-CONFIG_CMDLINE_FORCE is enabled, which is not quite suitable for the
-kexec scenario.
-
-Currently, the initrd, elfcorehdr, and mem parameters will all be passed
-through the command line to maintain consistency with the implementation
-behavior of kexec-tools. It is possible that the content of systab will
-be modified in the future and some parts will be integrated into systab
-(the current cmdline mode will be better compatible with the elf kernel).
->
->> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->> ---
->>   arch/loongarch/kernel/machine_kexec_file.c | 71 ++++++++++++++++++++++
->>   1 file changed, 71 insertions(+)
->>
->> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
->> index bc91ae0afa4c..e1240644f529 100644
->> --- a/arch/loongarch/kernel/machine_kexec_file.c
->> +++ b/arch/loongarch/kernel/machine_kexec_file.c
->> @@ -34,13 +34,84 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
->>   	return kexec_image_post_load_cleanup_default(image);
->>   }
->>   
->> +/* Adds the "initrd=start,size" command line parameter to command line. */
->> +static void cmdline_add_initrd(struct kimage *image, unsigned long *cmdline_tmplen,
->> +				char *modified_cmdline, unsigned long initrd)
->> +{
->> +	int initrd_strlen;
->> +
->> +	initrd_strlen = sprintf(modified_cmdline + (*cmdline_tmplen), "initrd=0x%lx,0x%lx ",
-> modified_cmdline is allocated as COMMAND_LINE_SIZE bytes, thus I think
-> it's possible to overflow the buffer.
-At this point, modified_cmdline can clearly know that it only stores
-the additional commands we add (initrd,mem,elfcorehdr), and will not
-exceed COMMAND_LINE_SIZE.
->
->> +		initrd, image->initrd_buf_len);
->> +	*cmdline_tmplen += initrd_strlen;
->> +}
->> +
->> +/*
->> + * Tries to add the initrd to the image. If it is not possible to find
->> + * valid locations, this function will undo changes to the image and return non
->> + * zero.
->> + */
->>   int load_other_segments(struct kimage *image,
->>   			unsigned long kernel_load_addr,
->>   			unsigned long kernel_size,
->>   			char *initrd, unsigned long initrd_len,
->>   			char *cmdline, unsigned long cmdline_len)
->>   {
->> +	struct kexec_buf kbuf;
->> +	unsigned long orig_segments = image->nr_segments;
->> +	char *modified_cmdline = NULL;
->> +	unsigned long cmdline_tmplen = 0;
->> +	unsigned long initrd_load_addr = 0;
->> +	int ret = 0;
->> +
->> +
->> +	kbuf.image = image;
->> +	/* not allocate anything below the kernel */
->> +	kbuf.buf_min = kernel_load_addr + kernel_size;
->> +
->> +	modified_cmdline = kzalloc(COMMAND_LINE_SIZE, GFP_KERNEL);
->> +	if (!modified_cmdline)
->> +		return -EINVAL;
->> +
->> +	/* Ensure it's nul terminated */
->> +	modified_cmdline[COMMAND_LINE_SIZE - 1] = '\0';
->> +
->> +	/* load initrd */
->> +	if (initrd) {
->> +		kbuf.buffer = initrd;
->> +		kbuf.bufsz = initrd_len;
->> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->> +		kbuf.memsz = initrd_len;
->> +		kbuf.buf_align = 0;
->> +		/* within 1GB-aligned window of up to 32GB in size */
->> +		kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
->> +						+ (unsigned long)SZ_1G * 32;
->> +		kbuf.top_down = false;
->> +
->> +		ret = kexec_add_buffer(&kbuf);
->> +		if (ret)
->> +			goto out_err;
->> +		initrd_load_addr = kbuf.mem;
->> +
->> +		kexec_dprintk("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
->> +			      initrd_load_addr, kbuf.bufsz, kbuf.memsz);
->> +
->> +		/* Add the initrd=start,size parameter to the command line */
->> +		cmdline_add_initrd(image, &cmdline_tmplen, modified_cmdline, initrd_load_addr);
->> +	}
->> +
->> +	if (cmdline_len + cmdline_tmplen > COMMAND_LINE_SIZE) {
-> It's too later to check for overflowing here, where the data after
-> modified_cmdline may already be overwritten.
-At this point, we append the original command line to modified_cmdline,
-so it is appropriate to determine whether the command line length exceeds
-the limit.
->
->> +		pr_err("Appending kdump cmdline exceeds cmdline size\n");
-> I think load_other_segments could be invoked without kdump involved. If
-> that's correct, this message is inaccurate.
-Yes, it should be corrected.
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689abda6 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=uIe58MKiAmNDZ2YlfJsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: 49A-49qVRer93bHU9ozj_r1bkeSIIf3z
+X-Proofpoint-ORIG-GUID: 49A-49qVRer93bHU9ozj_r1bkeSIIf3z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfX8npwRu/MZu8z
+ iK8swX6QAprJFBfvUACE6gAecz3SxxnVCDjRFuGF9I5h9qrRwSpPaNt/TZm6HpezTOOHTW/G/lO
+ ZVjwpY+7mNbWc0t6PiaG0KEE0ymrbYirTgwJ75QFhD785DGZ196TYraIXk9eqdwgypD4RyJh1lE
+ xn1yNSFoNmJqf2j8zUcTEDUKjBCjHpM39W1ov8lupu3tA1L35UcCd15+scJxhVBWM6TdynyK8HT
+ u0dq0xhcXBFd4In22o+6GvfBvGNb8q3IKAQKofBlNxQKQb7+jBoFR6wBY3JIy0gPCMbgZ9bAUGu
+ fdFepSO++KLdNITJ6LRn/+NNdu8Me0vvt93uL0CrIW8xDvj+DDmQ8QL0rtSxCHa2PfDgWzb9Pn6
+ 78oxtyMn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090000
 
 
-Thanks,
-Youling.
->
->> +		ret = -EINVAL;
->> +		goto out_err;
->> +	}
-> Regards,
-> Yao Zi
->
->> +	memcpy(modified_cmdline + cmdline_tmplen, cmdline, cmdline_len);
->> +	cmdline = modified_cmdline;
->>   	image->arch.cmdline_ptr = (unsigned long)cmdline;
->>   
->>   	return 0;
->> +
->> +out_err:
->> +	image->nr_segments = orig_segments;
->> +	kfree(modified_cmdline);
->> +	return ret;
->>   }
->> -- 
->> 2.34.1
+
+On 7/22/2025 4:33 PM, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 7/12/2025 4:36 AM, Krishna Chaitanya Chundru wrote:
 >>
 >>
+>> On 7/12/2025 3:06 AM, Bjorn Helgaas wrote:
+>>> On Mon, Jun 09, 2025 at 04:21:23PM +0530, Krishna Chaitanya Chundru 
+>>> wrote:
+>>>> If the driver wants to move to higher data rate/speed than the 
+>>>> current data
+>>>> rate then the controller driver may need to change certain votes so 
+>>>> that
+>>>> link may come up at requested data rate/speed like QCOM PCIe 
+>>>> controllers
+>>>> need to change their RPMh (Resource Power Manager-hardened) state. Once
+>>>> link retraining is done controller drivers needs to adjust their votes
+>>>> based on the final data rate.
+>>>>
+>>>> Some controllers also may need to update their bandwidth voting like
+>>>> ICC BW votings etc.
+>>>>
+>>>> So, add pre_link_speed_change() & post_link_speed_change() op to call
+>>>> before & after the link re-train. There is no explicit locking 
+>>>> mechanisms
+>>>> as these are called by a single client Endpoint driver.
+>>>>
+>>>> In case of PCIe switch, if there is a request to change target speed 
+>>>> for a
+>>>> downstream port then no need to call these function ops as these are
+>>>> outside the scope of the controller drivers.
+>>>
+>>>> +++ b/include/linux/pci.h
+>>>> @@ -599,6 +599,24 @@ struct pci_host_bridge {
+>>>>       void (*release_fn)(struct pci_host_bridge *);
+>>>>       int (*enable_device)(struct pci_host_bridge *bridge, struct 
+>>>> pci_dev *dev);
+>>>>       void (*disable_device)(struct pci_host_bridge *bridge, struct 
+>>>> pci_dev *dev);
+>>>> +    /*
+>>>> +     * Callback to the host bridge drivers to update ICC BW votes, 
+>>>> clock
+>>>> +     * frequencies etc.. for the link re-train to come up in 
+>>>> targeted speed.
+>>>> +     * These are intended to be called by devices directly attached 
+>>>> to the
+>>>> +     * Root Port. These are called by a single client Endpoint 
+>>>> driver, so
+>>>> +     * there is no need for explicit locking mechanisms.
+>>>> +     */
+>>>> +    int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
+>>>> +                     struct pci_dev *dev, int speed);
+>>>> +    /*
+>>>> +     * Callback to the host bridge drivers to adjust ICC BW votes, 
+>>>> clock
+>>>> +     * frequencies etc.. to the updated speed after link re-train. 
+>>>> These
+>>>> +     * are intended to be called by devices directly attached to the
+>>>> +     * Root Port. These are called by a single client Endpoint driver,
+>>>> +     * so there is no need for explicit locking mechanisms.
+>>>
+>>> No need to repeat the entire comment.  s/.././
+>>>
+>>> These pointers feel awfully specific for being in struct
+>>> pci_host_bridge, since we only need them for a questionable QCOM
+>>> controller.  I think this needs to be pushed down into qcom somehow as
+>>> some kind of quirk.
+>>>
+>> Currently these are needed by QCOM controllers, but it may also needed
+>> by other controllers may also need these for updating ICC votes, any
+>> system level votes, clock frequencies etc.
+>> QCOM controllers is also doing one extra step in these functions to
+>> disable and enable ASPM only as it cannot link speed change support
+>> with ASPM enabled.
+>>
+> Bjorn, can you check this.
+> 
+> For QCOM devices we need to update the RPMh vote i.e a power source
+> votes for the link to come up in required speed. and also we need
+> to update interconnect votes also. This will be applicable for
+> other vendors also.
+> 
+> If this is not correct place I can add them in the pci_ops.
+Bjorn,
+
+Can you please comment on this.
+
+Is this fine to move these to the pci_ops of the bridge.
+Again these are not specific to QCOM, any controller driver which
+needs to change their clock rates, ICC bw votes etc needs to have
+these.
+
+- Krishna Chaitanya.
+> - Krishna Chaitanya.
+>> - Krishna Chaitanya.
+>>>> +     */
+>>>> +    void (*post_link_speed_change)(struct pci_host_bridge *bridge,
+>>>> +                       struct pci_dev *dev, int speed);
 
