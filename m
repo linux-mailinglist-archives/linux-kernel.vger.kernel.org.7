@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-765338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4D3B22EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:20:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418A7B22EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772B53B030D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:20:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332135601D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF232FD1AA;
-	Tue, 12 Aug 2025 17:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692AD2FDC52;
+	Tue, 12 Aug 2025 17:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM6qhym/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQs/QBfg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED6221C160;
-	Tue, 12 Aug 2025 17:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5A82FD1D3;
+	Tue, 12 Aug 2025 17:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755019204; cv=none; b=J1jnOVIER83hiZXzvojiW39pgRGl4T76+E9OIXjQloASqK8sRJFejFZPjbvmDn6BgdIsq2r7Y6GPx6Tploc9lMQPiRYLzMeXa+1Y8iinpj+P5uA33Di6rcGzwGZ7BCq1Lb2HDe42Sv0zb48uzFNx7ltYN6e2GyClKCZlaDTGH9Y=
+	t=1755019210; cv=none; b=C4xlYGLf3rEWNsGwutlfx0Kzq5Xxa9G/ERkVOYFmrwk8PUqMpOFelGU1Dp6o3LHv+o0UXEfq7ZWRJFTu3yGi+QtAAo4kxLy9GERYoOauhdvshxJcsF5ODMMjEUsvfDa07vAsTSfX/cBdowGGODT1n7rzRrA+thxL/9ToxSwpIEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755019204; c=relaxed/simple;
-	bh=mAC0HElfoi9Vm0ysz8JFlbF2hmtehTuzsx2QwPcA3lw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ofDhWb1iBBUb7xNkFmtTH84w7SMqUfeVA2qcL5A+mnSjNM2sAOJhkERo5h1LC469bmtPOD7Lfgly/g1ol25Vdm4eme/b7je9rrA3BwpFYSUAzEXyXVc+Np2zZ3dY2Y90WKnZzELddWM88CcrzBwibRj5DcDUzzr/ZwPg3UnVceY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM6qhym/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFC5C4CEF0;
-	Tue, 12 Aug 2025 17:20:03 +0000 (UTC)
+	s=arc-20240116; t=1755019210; c=relaxed/simple;
+	bh=GVVr9x4BliJpzmi2+FHAJNSzN7cSTvVQiXWiA4/3q1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sg1oSTY8tb2bMvsgzHxzBzwhXwoc0VAmOBFSDTvKRXBAVesEUpdtgfToujkwXA/JEuDemH/5Gq14xkzwOyjsEIVLm9e5ORyR8+UH2jnv4voX695YIl1P4tzvAXzEsPULQtDPM7NGPz/lN3MO/65E7t3i4CVXUVNi5WRi4IjbQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQs/QBfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430C1C4CEF0;
+	Tue, 12 Aug 2025 17:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755019203;
-	bh=mAC0HElfoi9Vm0ysz8JFlbF2hmtehTuzsx2QwPcA3lw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gM6qhym/4a3Wazw/nb45u6yf19ToNI2AupnrQWSMRSud2rXFjWscjBM03GnmGuaLC
-	 EsSxGSxYbn6bxLR4A2ABjxDsa+pL4ZQhGqWV2JTXluMQdvNFq8NiSxxMtND5gTwRzu
-	 /DCJj7O5o5G9jFdLQ4APf0J10q1OuZDvhbtv2qaNCwxZni62qKDkKYUKeAtL4Ntygo
-	 2GE778oQcigzTGsrra/5sdbfnFvQWrDutwQCehovhpDQS2bzt+lr/jH/3RezA9e+eI
-	 SRpDHftSUOViKMiuPwCw9CW9uD00n3W1C88LhfSiOfeftXXkcznJQN+SXh6ZICgtQT
-	 cT+O7nxy008Ag==
-From: SeongJae Park <sj@kernel.org>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Enze Li <lienze@kylinos.cn>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/damon: fix damon selftests by installing _common.sh
-Date: Tue, 12 Aug 2025 10:20:01 -0700
-Message-Id: <20250812172001.57104-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CABFDxMEQYx7fdx4T7meUb01FoqJaHcW_2RoYnBwJ8GzmJTexzQ@mail.gmail.com>
-References: 
+	s=k20201202; t=1755019210;
+	bh=GVVr9x4BliJpzmi2+FHAJNSzN7cSTvVQiXWiA4/3q1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SQs/QBfg8+iZxCYJQm/cheH2U6e5R9dPnq83S4n3PZ5SZ9Wd4W7eSapOM06sexH2f
+	 8yRzmO58b9gvhaYgsXJfE86DSNibscKzwd/d7i2vtyYuyAeycF0miGvLLQMgz2ezx6
+	 YJgVk9XPfXQYpNrvbspB4ZCrtgTk12qSwXv5EHBA0WYZCTFyXRibARAMrzhUqvQ8r7
+	 qArn8sew5MHL+zzxUlcFV+6n4Px+YtbfUoCPPKuvpTIsWOXJV4/YzUBhdhR/aj2nMh
+	 J5dru2He9zMMvjN044S26WsgS57RvOpnXo0OGa3ZCpAJ+eIl8WRxs1J0RzhoNd93xo
+	 oqGBmUN9js0Cg==
+Date: Tue, 12 Aug 2025 10:20:09 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Baolin Liu <liubaolin12138@163.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Baolin Liu <liubaolin@kylinos.cn>
+Subject: Re: [PATCH v1] ext4: fix incorrect function name in comment
+Message-ID: <20250812172009.GE7938@frogsfrogsfrogs>
+References: <20250812021709.1120716-1-liubaolin12138@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812021709.1120716-1-liubaolin12138@163.com>
 
-On Tue, 12 Aug 2025 22:27:00 +0900 Sang-Heon Jeon <ekffu200098@gmail.com> wrote:
-
-> Hello, Alexandre
+On Tue, Aug 12, 2025 at 10:17:09AM +0800, Baolin Liu wrote:
+> From: Baolin Liu <liubaolin@kylinos.cn>
 > 
-> On Tue, Aug 12, 2025 at 9:32 PM Sang-Heon Jeon <ekffu200098@gmail.com> wrote:
-> >
-> > Hello, Alexandre
-> >
-> > On Tue, Aug 12, 2025 at 5:13 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
-> > >
-> > > _common.sh was recently introduced but is not installed and then
-> > > triggers an error when trying to run the damon selftests:
-> > >
-> > > selftests: damon: sysfs.sh
-> > > ./sysfs.sh: line 4: _common.sh: No such file or directory
-> > >
-> > > Install this file to avoid this error.
-> >
-> > I tried to reproduce those error with my vm environment but I failed;
-> > with my workaround test method, it doesn't exist.
-> > If you're okay, could you please tell me line by line how you execute
-> > tests in what environment?
-> > I'm also struggling with the test environment, as well.
+> The comment mentions block_write_begin(), but the actual function
+> called is ext4_block_write_begin().
+> Fix the comment to match the real function name.
 > 
-> I succeeded to reproduce and also check that this patch removes those errors.
+> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+
+Heh, that comment was copy-pasted too :/
+
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/ext4/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > > Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host shared function")
-> > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > ---
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index ed54c4d0f2f9..b0e3814f8502 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3155,7 +3155,7 @@ static int ext4_da_write_begin(const struct kiocb *iocb,
+>  		folio_unlock(folio);
+>  		folio_put(folio);
+>  		/*
+> -		 * block_write_begin may have instantiated a few blocks
+> +		 * ext4_block_write_begin may have instantiated a few blocks
+>  		 * outside i_size.  Trim these off again. Don't need
+>  		 * i_size_read because we hold inode lock.
+>  		 */
+> -- 
+> 2.39.2
 > 
-> Tested-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-
-Thank you, Sang-Heon :)
-
-[...]
-> > > ---
-> > > base-commit: 2754d549af31f8f029f02d02cd8e574676229b3d
-> >
-> > Does this commit exist in `mm-new` or `damon-next`?  I failed to setup
-> > the same base-commit environment.
 > 
-> However, I'm still not sure that this patch is in the correct
-> baseline. maybe it will not cause any problems with the merge
-> though... but I'm not sure. So I didn't add a reviewed-by tag.
-
-I think unclear baseline of a patch shouldn't be a blocker of Reviewed-by tags.
-Since most DAMON patches are recommended to use mm-new[1], as long as the patch
-can cleanly applied on latest mm-new and you don't see anything wrong, I think
-you can assume it is based on mm-new.
-
-[1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
-
-
-Thanks,
-SJ
-
-[...]
 
