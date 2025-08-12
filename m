@@ -1,224 +1,98 @@
-Return-Path: <linux-kernel+bounces-765386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5676B2318F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:06:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FE0B231AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6D01898C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED116E0DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74112FF143;
-	Tue, 12 Aug 2025 18:03:17 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC3B2FF170;
+	Tue, 12 Aug 2025 18:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oc1fu6CX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628DE1C84C7;
-	Tue, 12 Aug 2025 18:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D902BEC2F;
+	Tue, 12 Aug 2025 18:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755021797; cv=none; b=f7zff5UqPe7/DhXKSYnhS50ejcOgRMykS9MfT6AWHXHaG5FbMctffY4QlFWundnqNSwOuaBpG82o1ZU/k6K+F8Z7nqamccR36Vwd5gsKgBOS6MzQwmXod6s+xrBslAmINk2SaG4Fv6UVmfkQheXDhxoZ1ttC9+0i6c35BYh5MPQ=
+	t=1755021863; cv=none; b=V8c9ZVy4KMjsGfy0BYvKUgOXiutGTERRTHVvtZv9O/P6Sn4D4HQmc+StsI/a/hrOYuuCs9JN+XgvzOYA4kYUAYWDa2JRffrJFgkvWpHpTuHLvg8TxLjcXrPatqvwgFilH9MRyxn51NDZKnr56sameKriBHETr0yCCpBdVl0x9iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755021797; c=relaxed/simple;
-	bh=uoE5dWMT1rbqa37q/SivFeXKyXJu/a/1HAMw6FnM4ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TvMm3XEJLXkSyXrAF6MpthQBnMZVgr06uQT4TDS5nK1awahWK+e6xAXcfPvzpselvfLg1e3FEvId1ufRTiY01NFUUbyN6FV0fyJPJyvcXvRFmO48p9u0dePsC2V3m1P1ukfpQI/Vkm/OT4xdqqQmAj0wN8HVZpc+WKQn+LoJ0YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id D90E0135974;
-	Tue, 12 Aug 2025 18:03:13 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id 05A2A2002F;
-	Tue, 12 Aug 2025 18:03:11 +0000 (UTC)
-Date: Tue, 12 Aug 2025 14:03:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ryan Chung <seokwoo.chung130@gmail.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyer@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] trace/trace_fprobe.c: TODO: handle filter, nofilter or
- symbol list
-Message-ID: <20250812140357.65d19062@gandalf.local.home>
-In-Reply-To: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
-References: <20250812162101.5981-1-seokwoo.chung130@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755021863; c=relaxed/simple;
+	bh=M+Z0eS10SwonwtWVyijlh48EzuFQRgyP4fZWIjEAAMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bd7BzTxr3t+xVvgPaZKvwhRtb4Mpd9anbl4HTDQsVpQl81ohPTpFzOo8NuyWNNtGaqWtSLVCWYKN6v8jiGAUKTID78LQMWnW4HgY4aVPr1IaRigr/7LKF6yg705B+y/s+oyhwMnKkpbCrIHt3L6pkFcW3+eTUgmk36TYs2+YJlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oc1fu6CX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A847C4CEF0;
+	Tue, 12 Aug 2025 18:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755021862;
+	bh=M+Z0eS10SwonwtWVyijlh48EzuFQRgyP4fZWIjEAAMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oc1fu6CXkSQrsq1WR6782QF+WDcM+p89+zlSRfEwIdUSKZo59f9H4UvhKs4FkNkxU
+	 xfHPSEM6Qf7OCL3hrqLovnBOHHEKUuBrtHYaE9IQNuPsH5WvJpjlpOhCg7B6KtGoGs
+	 wJRVp91pZblP+IBQ9IoScDQ0vP641HQ+upYYzAwiqBV08+Q3Ay/KZBUsf/tM3fvKIm
+	 ed3XaDx1B35Rk+XqMaQhcF9ecUxHe25Hnx5Xs+w9TsQKmEYjzFd2hUsRJgqPOgLGQw
+	 bX97o1vGQreeCMhawLcDqPgqQ9l11NIagMuayYsiEOGE4vQRwLVbDlM0yz34jgwMh1
+	 /WL1mN2166Amw==
+Date: Tue, 12 Aug 2025 19:04:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: adi,axi-clkgen: add
+ clock-output-names property
+Message-ID: <20250812-hedge-cohesive-24d38a57ea43@spud>
+References: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 05A2A2002F
-X-Stat-Signature: aqcdbrt1erm5365tnao8mx9yhbaosjwf
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18LYCTa3MKLGobOeCISNikzJOsZFzw7P0w=
-X-HE-Tag: 1755021791-302747
-X-HE-Meta: U2FsdGVkX19fo64gy4Zmd7lQ16RmDJ/YSTaXubJq5K4RC4Zl3Fj+PmlGAwrI5d9YWCmiVpt+GNLS0pc5F3/b8ohogMxg8jgLuIrv/pJVuV576eu9E9O/koFqgL1+4CtvQV2Gvd4tmxxTr0RJ/azgWNkR0qW57WvUWVR26/eUEwZ2mOCKFTy/XIDt5BZUvh0QrNiK6aop/q+jP4o72eYA0snS7rWtjH8LMhdwigiMHIH3xvU9VVKCZvLjUZB0RyZibbc6YDwInO1RG1NV2VmbF5iZ8AX7oS9KU6PzJ8RRLZhxMn7z4KH7fhuNhZHffFlcvGVfVmPKejDIcirricTTZKibU4vUpZNep0W+oGL4rZYMap8mUEL9US24BlQQlEstXtm6812xpnU=
-
-On Wed, 13 Aug 2025 01:21:01 +0900
-Ryan Chung <seokwoo.chung130@gmail.com> wrote:
-
-> Resolve TODO in `__register_trace_fprobe()`: 
-> parse `tf->symbol` robustly (support `sym!filter` and comma-separated lists), trim tokens, ignore empties, deduplicate symbols, use bulk registration for lists, return `-EEXIST` if already registered, and preserve lockdown/tracepoint deferral semantics.
-
-Hi Ryan,
-
-Please read the Submitting Patches document to have proper format.
-
- https://docs.kernel.org/process/submitting-patches.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mGfDyCaNb20uxoLU"
+Content-Disposition: inline
+In-Reply-To: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
 
 
-For example, the change long should have a max column of 74 (with the
-exception of cut and paste commands or output)
+--mGfDyCaNb20uxoLU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Please note that this was my personal interpretation of what TODO
-> required here. Welcoming any feedback. 
-> 
-> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> ---
->  kernel/trace/trace_fprobe.c | 102 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 100 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-> index b40fa59159ac..37d4260b9012 100644
-> --- a/kernel/trace/trace_fprobe.c
-> +++ b/kernel/trace/trace_fprobe.c
-> @@ -12,6 +12,8 @@
->  #include <linux/security.h>
->  #include <linux/tracepoint.h>
->  #include <linux/uaccess.h>
-> +#include <linux/string.h>
-> +#include <linux/slab.h>
->  
->  #include "trace_dynevent.h"
->  #include "trace_probe.h"
-> @@ -762,8 +764,104 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
->  		return __regsiter_tracepoint_fprobe(tf);
->  	}
->  
-> -	/* TODO: handle filter, nofilter or symbol list */
-> -	return register_fprobe(&tf->fp, tf->symbol, NULL);
-> +    /* Parse tf->symbol */
-> +    {
+On Mon, Aug 11, 2025 at 05:17:01PM -0500, David Lechner wrote:
+> Add an optional `clock-output-names` property to the ADI AXI Clock
+> Generator binding. This is already being used in the Linux driver and
+> real-world dtbs, so we should document it to allow for correct binding
+> validation.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Code does not add random blocks.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> +        char *spec, *bang, *p;
-> +        int n = 0, w = 0, j, rc;
+--mGfDyCaNb20uxoLU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Indentation is always 8 byte tabs (not spaces).
+-----BEGIN PGP SIGNATURE-----
 
-> +        char **syms = NULL;
-> +
-> +        spec = kstrdup(tf->symbol, GFP_KERNEL);
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJuCIQAKCRB4tDGHoIJi
+0ni0AP9gIxv/QtLhCt7M7e2LAxaqBAWctbmrbHVuFf5oX7RexwD+O28wmxVF0n9x
+tDrgsnv+ItDXcA9WrVn6IXKXvfUVxg4=
+=PPvg
+-----END PGP SIGNATURE-----
 
-Why did you declare spec as "char **" when you use it as "char *"?
-
-> +        if (!spec)
-> +            return -ENOMEM;
-> +
-> +        /* If a '!' exists, treat it as single symbol + filter */
-> +        bang = strchr(spec, '!');
-> +        if (bang) {
-> +            char *sym, *flt;
-> +
-> +            *bang = '\0';
-> +            sym = strim(spec);
-> +            flt = strim(bang + 1);
-> +
-> +            if (!*sym || !*flt) {
-> +                kfree(spec);
-> +                return -EINVAL; /* reject empty symbol/filter */
-> +            }
-> +
-> +            rc = register_fprobe(&tf->fp, sym, flt);
-> +            kfree(spec);
-> +            return rc;
-> +        }
-> +
-> +        /* Comma list (or single symbol without '!') */
-> +        /* First pass: count non-empty tokens */
-
-Strange comments. Did you use AI to help you write this?
-
--- Steve
-
-> +        p = spec;
-> +        while (p) {
-> +            char *tok = strsep(&p, ",");
-> +            if (tok && *strim(tok))
-> +                n++;
-> +        }
-> +
-> +        if (n == 0){
-> +            kfree(spec);
-> +            return -EINVAL;
-> +        }
-> +
-> +        /* Allocate array for pointers into spec (callee copies/consumes) */
-> +        syms = kcalloc(n, sizeof(*syms), GFP_KERNEL);
-> +        if (!syms) {
-> +            kfree(spec);
-> +            return -ENOMEM;
-> +        }
-> +
-> +        /* Second pass: fill, skipping empties */
-> +        p = spec;
-> +        while (p) {
-> +            char *tok = strsep(&p, ",");
-> +            char *s;
-> +
-> +            if (!tok)
-> +                break;
-> +            s = strim(tok);
-> +            if (!*s)
-> +                continue;
-> +            syms[w++] = s; 
-> +        }
-> +        
-> +        /* Dedup in-place */
-> +        for (i = 0; i < w; i++){
-> +            if (!syms[i])
-> +                continue;
-> +            for (j = i + 1; j < w; j++) {
-> +                if (syms[j] && !strcmp(syms[i], syms[j]))
-> +                    syms[j] = NULL;
-> +            }
-> +        }
-> +
-> +        /* Compact */
-> +        for (i = 0, j = 0; i < w; i++) {
-> +            if (syms[i])
-> +                syms[j++] = syms[i];
-> +        }
-> +        w = j;
-> +
-> +        /* After dedup, ensure we still have at least one symbol */
-> +        if (w == 0){
-> +            kfree(syms);
-> +            kfree(spec);
-> +            return -EINVAL;
-> +        }
-> +
-> +        /* Register list or single symbol, using the existing bulk API */
-> +        if (w == 1)
-> +            rc = register_fprobe(&tf->fp, syms[0], NULL);
-> +        else
-> +            rc = register_fprobe_syms(&tf->fp, (const char **)syms, w);
-> +
-> +        kfree(syms);
-> +        kfree(spec);
-> +        return rc;
-> +    }
->  }
->  
->  /* Internal unregister function - just handle fprobe and flags */
-
+--mGfDyCaNb20uxoLU--
 
