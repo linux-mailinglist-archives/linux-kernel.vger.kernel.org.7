@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-764549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B6DB2245C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E72B22353
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514B13A4376
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:16:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C3D3B11ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B93B2E3B17;
-	Tue, 12 Aug 2025 10:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9152E92B8;
+	Tue, 12 Aug 2025 09:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="jH69zRxe"
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuiuK4aK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA612E401
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693CD1A9F84
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754993782; cv=none; b=qODPzLp2sSPay+c6o45o1vJwVtFw/lMaSHwPj59lcDE0gJalAXzfWcefU8iaovHugaXY4UbFQ+Vyv4suEoOrNQbxehyhwHDEZfFOn3TwzWsr9ZjW/LUwoIKCUWXVcf7MItil4CNUhmEIzSIwKF+YOmT66/WG75c1ANL8DkNJLww=
+	t=1754991276; cv=none; b=WgGm83zTDawyrZi3rJv+TRiTHchMnAOFovslczsty3p2On57pzP2/ugfioVkHxzVqWuBQwYNJqx7QygpnLh4bxmK0UY2u6XeSsvhSNxEnY1cOO22lsJD35qRK2dhoHaTQ1vePQjC/oJoMc1pH5ICSIPZuQKlvUo//FM9P3djJhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754993782; c=relaxed/simple;
-	bh=c4RWPv8ififaKqYqXU2CPR+8HAaQjUtL3HLdGTmVQPc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l5Y//vlXZExlFUtk2AQR5TbMmcgKzRtIQb6ZdFD30ef77guNshfHWweUYYmry9e5iQC9rgaBkqlPj90IV1fkjW/T3vDnpn+iQfxdEc0fW+2ai2Ly7U70CvUnQGi1sITGZfpYyy1TmQMAfNR7A+pJH64zuT8dr7sa6A0hgyT2Vxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=jH69zRxe; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 57C9YFv2048334
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:34:15 +0800 (+08)
-	(envelope-from Xuewen.Yan@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 57C9XwwO046915;
-	Tue, 12 Aug 2025 17:33:58 +0800 (+08)
-	(envelope-from Xuewen.Yan@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4c1RCD5g57z2KqZt3;
-	Tue, 12 Aug 2025 17:33:44 +0800 (CST)
-Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Tue, 12 Aug 2025 17:33:56 +0800
-From: Xuewen Yan <xuewen.yan@unisoc.com>
-To: <dietmar.eggemann@arm.com>, <mingo@redhat.com>, <peterz@infradead.org>,
-        <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
-CC: <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>, <vdonnefort@google.com>, <ke.wang@unisoc.com>,
-        <xuewen.yan94@gmail.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
-Date: Tue, 12 Aug 2025 17:33:39 +0800
-Message-ID: <20250812093339.8895-1-xuewen.yan@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754991276; c=relaxed/simple;
+	bh=rNnsFwnGuu3gIqHdcbwoQsioWMOhv8l1bRy1GjfYvg0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=EGZZhQs8PDBPDkcfZ1f/C6AbyOVEBhyzy8+OjGbnct1IeQ6GUzpJrStYOjvrxkHn/8W6+BKFug2XCHrP34oZjjmPJOy2WjTJFmG84m84mIzolHdyNrLnuPTtAhTbMmM8Dg663fZi7Eya/Iwt4JPtGHqU9IXA7ZFIaF60tpUomuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuiuK4aK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754991273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kx0dhTCfyhMeyKByQPSUuP5rLf1cHUcwMzM5kaQhu9E=;
+	b=OuiuK4aKCCrcv4OJA9CQNAb4QWzZIOkiEUxyEsaTuMfug1x9AcTxddM9mmM9Hj51EK2M5F
+	rPoQRjrY582hiuF3aESSlipiIWYqSTQQr4jvDm+QfTygmN01fje+Ailig3VN9x+/Ae12nj
+	VMLXg2dVpIn8F7lDmXRNTgGJLe9wpOc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-396-7TGlF5EEN_6FfCwsb3F6Bw-1; Tue,
+ 12 Aug 2025 05:34:32 -0400
+X-MC-Unique: 7TGlF5EEN_6FfCwsb3F6Bw-1
+X-Mimecast-MFC-AGG-ID: 7TGlF5EEN_6FfCwsb3F6Bw_1754991270
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6CAA19560AA;
+	Tue, 12 Aug 2025 09:34:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 19283180028A;
+	Tue, 12 Aug 2025 09:34:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aJpipiVk0zneTxXl@codewreck.org>
+References: <aJpipiVk0zneTxXl@codewreck.org> <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org> <20250811-iot_iter_folio-v1-0-d9c223adf93c@codewreck.org> <385673.1754923063@warthog.procyon.org.uk>
+To: asmadeus@codewreck.org
+Cc: dhowells@redhat.com, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Maximilian Bosch <maximilian@mbosch.me>, Ryan Lahfa <ryan@lahfa.xyz>,
+    Christian Theune <ct@flyingcircus.io>,
+    Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+    linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >= folio size
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 57C9XwwO046915
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
-	s=default; t=1754991246;
-	bh=UWY2mKEvTa0wnX/pEG6AEYZML7JMB29Bm63BdbxkT9E=;
-	h=From:To:CC:Subject:Date;
-	b=jH69zRxe/Hv7o2TAXFIzXY3+oMctOVLoZeNh0B3ai4ga+LZEvEDvW9i2eqWI/tWXi
-	 Vpvlr90QO1k233NpaDOqo/1DwWKXP1o8vZ+NnB9jQpztc2c0JWYPuxOPt4yYBM6pBG
-	 Pvd34QDS8rzxyCTv0EdijGdnkGt22kmKFmUF0ulRPZ4Ud0UCooBoFkv3ZH1ic+iC6b
-	 jgGQexOwYiXYZzIFvV1oVhj8IO/5T+CtwWPUb0Eu/XUGHnyCxKaSvbzwy43itwfZQj
-	 9Wn5gkIvPOql5dWVMUK7d4uKugRNNCbCr94Z8gCsu5zh8rThUBuk0xE1TyKi97Xyf0
-	 xO9eaGLNHncSg==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <650268.1754991257.1@warthog.procyon.org.uk>
+Date: Tue, 12 Aug 2025 10:34:17 +0100
+Message-ID: <650269.1754991257@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Now we use for_each_cpu() to traversal all pd's cpus,
-it is in order to compute the pd_cap. This approach may
-result in some unnecessary judgments.
-We can simply calculate pd_cap as follows:
+asmadeus@codewreck.org wrote:
 
-pd_cap = cpu_actual_cap * cpumask_weight(pd_cpus);
+> There should be a `if (slot == folioq_nr_slots(folioq)) break` check
+> somewhere as well? Or is the iov_iter guaranteed to always 1/ have some
+> data and 2/ either be big enough or have remaining data in a step?
 
-Then we can AND pd'scpus, sd's cpus and task's cpus_ptr
-before traversing, which can save some unnecessary judgment.
+We should handle both cases.  I think the other iteration functions
+will. iov_iter_extractg_folioq_pages(), for example, wraps it in a
+conditional:
 
-Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
----
- kernel/sched/fair.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+		if (offset < fsize) {
+			part = umin(part, umin(maxsize - extracted, fsize - offset));
+			i->count -= part;
+			i->iov_offset += part;
+			extracted += part;
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..e47fe94d6889 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8330,18 +8330,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 		cpu_actual_cap = get_actual_cpu_capacity(cpu);
- 
- 		eenv.cpu_cap = cpu_actual_cap;
--		eenv.pd_cap = 0;
-+		eenv.pd_cap = cpu_actual_cap * cpumask_weight(cpus);
- 
--		for_each_cpu(cpu, cpus) {
--			struct rq *rq = cpu_rq(cpu);
--
--			eenv.pd_cap += cpu_actual_cap;
--
--			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
--				continue;
-+		cpumask_and(cpus, cpus, sched_domain_span(sd));
- 
--			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
--				continue;
-+		for_each_cpu_and(cpu, cpus, p->cpus_ptr) {
-+			struct rq *rq = cpu_rq(cpu);
- 
- 			util = cpu_util(cpu, p, cpu, 0);
- 			cpu_cap = capacity_of(cpu);
--- 
-2.25.1
+			p[nr++] = folio_page(folio, offset / PAGE_SIZE);
+		}
+
+David
 
 
