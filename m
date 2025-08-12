@@ -1,42 +1,54 @@
-Return-Path: <linux-kernel+bounces-764438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDBFB22315
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF13B2231F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2542F3BB400
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9FC6E254F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD3A2E8DF1;
-	Tue, 12 Aug 2025 09:22:59 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB002E972D;
+	Tue, 12 Aug 2025 09:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="etulDBWh"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ADA2E7F1D;
-	Tue, 12 Aug 2025 09:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7441D2E8DEF;
+	Tue, 12 Aug 2025 09:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990579; cv=none; b=jiMT2Se+5fFTrJUMVshZJODhp0rgGuY2pNDg4XZP6xJLrKOLbsaainViqwyQR/1mUwUWGcPNA6cTs+jy52UwrHrsJpPi472mYus7U7Eqg/41vON2HsFlL/dtXYU0lODxClXdEatRU6fyf0vVeY5RKfmjWEU2bljWdMgH3CkyulQ=
+	t=1754990598; cv=none; b=JytYUZQ1EajFyqBsaNkh752GhqgdBz321Bb+gKIwhZFJEeofzkYg1I4BmCDJ2pKAXnc8RqcqLo8+F2sYj3qLaJwlMy5EQsxI+8MET1RcXpvPqQb5hLW+ryzRzN5yNksivxRdi94BbzIAndBAr4w6C5jOU3y6BVeQ6RX/OcIA9XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990579; c=relaxed/simple;
-	bh=BvsZ0k0PbkyGqn8TkG/C/Ho4zobrlBEj7ZSvG/qpFTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T3MgjNIRb8D08KovCfVTwrz2W3QLxkTfut4CdK3URs/J+qk31FUbigAkoK92kDFGLuTxhdX8qixjMRvdi5WkZwcZjZPg98wNy7JTt9biv4nsbZ4ZT/ARWxJ3y/P1SSr9M5ajtCpOvZPoK9ieduJpKbPtjuJmsvVaMPBvBpayaUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0B11861E647BA;
-	Tue, 12 Aug 2025 11:22:25 +0200 (CEST)
-Message-ID: <1775d473-a77f-4ac8-8195-8547dd48d754@molgen.mpg.de>
-Date: Tue, 12 Aug 2025 11:22:24 +0200
+	s=arc-20240116; t=1754990598; c=relaxed/simple;
+	bh=F0JCsvxp2KSiNsqw+e6p8pqMJjyP4dxWClz/SZQ4STg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kZdIPZ0gMCq0gx77nzn0SYFRHqj8xh3O5nRU2EOuj+EaVDdTVSMDJoWqWrBoAMjaHJR5OIZ3UamPVyR5f+2dctBUffxvMoYLOXsUZt/cVIGFpmiqQ6a1zoTD8ArfCynbiQguW0P81OKTaLMRoRbFdj1FIaNYIj3Q7lFPxlIvrMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=etulDBWh; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754990570; x=1755595370; i=markus.elfring@web.de;
+	bh=DlQ74IAYyuXXvfkcXZAxGgtcU70uGcbNe3fwcVohW3w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=etulDBWhaVEtgSmEWvcqJI3Fz51dCkQzup1mBNOovot4AQELy3+bMJPqJ5IvdeHo
+	 0yU3qJH2z8exkF/7PiCX1VNK4uJ1RyRLjIuCDP+6LzjXlo1/X4B9eiHcKLa/S1eT0
+	 VD0RTPVgC6ADnX0tUzLfmp87uIi6q0+RPmFqUdF0o/d+jiuFo78m+/3QyF/8KeQtt
+	 JfP2q7RYvmfXLSsSBdtfl+kIQjIr0YUnhMXlVecfRtp3qYY3QG8ImsdFatyuzNVMa
+	 nPajrgMy07l7QX1wPUUqCLZAC5E06ClXplEZmuXls4IcZTWyGsbCPn8cpKN3xLxmM
+	 Qvjn4zX1UXX3izKPZw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4bUg-1umIuq3RmI-008SPM; Tue, 12
+ Aug 2025 11:22:50 +0200
+Message-ID: <2d1c8222-cfc6-40e1-b26e-9cb1adc90202@web.de>
+Date: Tue, 12 Aug 2025 11:22:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,117 +56,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] md: fix sync_action incorrect display during
- resync
-To: Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: song@kernel.org, yukuai3@huawei.com, linan122@huawei.com,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com
-References: <20250812021738.3722569-1-zhengqixing@huaweicloud.com>
- <20250812021738.3722569-3-zhengqixing@huaweicloud.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250812021738.3722569-3-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: GuoHan Zhao <zhaoguohan@kylinos.cn>, linux-perf-users@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Falcon <thomas.falcon@intel.com>
+References: <20250812085941.19982-1-zhaoguohan@kylinos.cn>
+Subject: Re: [PATCH] perf parse-events: Fix potential null pointer dereference
+ in __add_event()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250812085941.19982-1-zhaoguohan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:repsrdyvNaflICgSBMKjor80pa66cCn/EuIVK/eEt3ah92dd/Nw
+ AtlXS++diGmWc9ISY5OB1/tcBv8lqo/Z6pyi+9sPUp0loRSz4RBkuQrU9rv8tfCiK9QSqWd
+ mniYnpeA44tRL+6F1ECsLwdfMDoAFEcFZHBX2eyDmCCOHeLOMoXePKC/w3eZIPCkPO9kxzn
+ 4j19NyqG5f3j+ez6FxrgQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L27j632a4xU=;KW2w6k2bvCahaEqkvDx+yBK6RMe
+ 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
 
-Dear Zheng,
+=E2=80=A6
+> Add a null check before accessing evsel members in the error path.
 
+* Please extend the goto chain instead for better exception handling.
+  You may reorder jump targets accordingly.
 
-Thank you for your patch.
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
 
-Am 12.08.25 um 04:17 schrieb Zheng Qixing:
-> From: Zheng Qixing <zhengqixing@huawei.com>
-> 
-> During raid resync, if a disk becomes faulty, the operation is
-> briefly interrupted. The MD_RECOVERY_RECOVER flag triggered by
-> the disk failure causes sync_action to incorrectly show "recover"
-> instead of "resync". The same issue affects reshape operations.
-> 
-> Reproduction steps:
->    mdadm -Cv /dev/md1 -l1 -n4 -e1.2 /dev/sd{a..d} // -> resync happended
->    mdadm -f /dev/md1 /dev/sda                     // -> resync interrupted
->    cat sync_action
->    -> recover
-> 
-> Add progress checks in md_sync_action() for resync/recover/reshape
-> to ensure the interface correctly reports the actual operation type.
-> 
-> Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-> ---
->   drivers/md/md.c | 38 ++++++++++++++++++++++++++++++++++++--
->   1 file changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 4ea956a80343..798428d0870b 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -4845,9 +4845,34 @@ static bool rdev_needs_recovery(struct md_rdev *rdev, sector_t sectors)
->   	return false;
->   }
->   
-> +static enum sync_action md_get_active_sync_action(struct mddev *mddev)
-> +{
-> +	struct md_rdev *rdev;
-> +	bool is_recover = false;
-
-`is_recover` sounds strange to me, but I am not an expert with the code. 
-Maybe `needs_recovery`?
-
-> +
-> +	if (mddev->resync_offset < MaxSector)
-> +		return ACTION_RESYNC;
-> +
-> +	if (mddev->reshape_position != MaxSector)
-> +		return ACTION_RESHAPE;
-> +
-> +	rcu_read_lock();
-> +	rdev_for_each_rcu(rdev, mddev) {
-> +		if (rdev->raid_disk >= 0 &&
-> +		    rdev_needs_recovery(rdev, MaxSector)) {
-> +			is_recover = true;
-> +			break;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return is_recover ? ACTION_RECOVER : ACTION_IDLE;
-> +}
-> +
->   enum sync_action md_sync_action(struct mddev *mddev)
->   {
->   	unsigned long recovery = mddev->recovery;
-> +	enum sync_action active_action;
->   
->   	/*
->   	 * frozen has the highest priority, means running sync_thread will be
-> @@ -4871,8 +4896,17 @@ enum sync_action md_sync_action(struct mddev *mddev)
->   	    !test_bit(MD_RECOVERY_NEEDED, &recovery))
->   		return ACTION_IDLE;
->   
-> -	if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
-> -	    mddev->reshape_position != MaxSector)
-> +	/*
-> +	 * Check if any sync operation (resync/recover/reshape) is
-> +	 * currently active. This ensures that only one sync operation
-> +	 * can run at a time. Returns the type of active operation, or
-> +	 * ACTION_IDLE if none are active.
-> +	 */
-> +	active_action = md_get_active_sync_action(mddev);
-> +	if (active_action != ACTION_IDLE)
-> +		return active_action;
-> +
-> +	if (test_bit(MD_RECOVERY_RESHAPE, &recovery))
->   		return ACTION_RESHAPE;
->   
->   	if (test_bit(MD_RECOVERY_RECOVER, &recovery))
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+* Would a summary phrase like =E2=80=9CPrevent null pointer dereference in=
+ __add_event()=E2=80=9D
+  be nicer?
 
 
-Kind regards,
-
-Paul
+Regards,
+Markus
 
