@@ -1,274 +1,312 @@
-Return-Path: <linux-kernel+bounces-764131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A18B21E69
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A4B21E6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0671A21324
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808961A22BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 06:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ACD257451;
-	Tue, 12 Aug 2025 06:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC93248880;
+	Tue, 12 Aug 2025 06:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="opWj6ns3"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2059.outbound.protection.outlook.com [40.107.100.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="t46mUl2b"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F5E311C18;
-	Tue, 12 Aug 2025 06:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754980461; cv=fail; b=poOnDep43B9K8iAJE4ZDm3DfLPkrMAvZdEPRRV5l5uUG/eszPhb0mhoc2kQ8Zz41+5FFZaPS2Avwq+AmilVCa8NirjIMCHx/hveqIcW5E1TjO5msKfHGWFN6JrQFQTPkjpYQBbyVq2VdOymhevscQgTEXN+7FfRoGMUyM7Q0VV0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754980461; c=relaxed/simple;
-	bh=XqdLs7LyVOvLkCM3Br1FgnJZMTuaHrqS7awH93kuNFo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=g9IaYCP7PgduJupHODqszB/EHjmg9eN60Tng2gY5pslzXGokAkZ21WoqUANU87CS7I1buL5+wZOCKYVGMx+QIwVs/Gt/o1jyr6fYnEi5cVWaoPhkICWvqGiEk/na0IVFJm4Fh0XrHwYtaHgzjknF+59YST0Lg9DIhkgwrhngca4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=opWj6ns3; arc=fail smtp.client-ip=40.107.100.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SegkHnutv66FPxSLGQTPR6iyG7r0IGxy5iZuqheSU94eEs7SKYfJBpsJVklW0PBp5ChYW6Ln5jMgMa3Ok2cU+lrYIMYRTZNBiCwCuE5l0u/JvWZGUbaYUzm4qxnXLdW30fQfNs2na6FY8AWNKeTGQNIwRU25NSoDCTg1REIyCx5P2s2WaWC8NoH7QRt+Bj50/sj1Sb4f7eKB4SYYUfWtwXwgiQVgDY3tRdlcRZNcpPnOBdCa/R0QPq7+1ovt09V0ES3YrPlaM3fXUtae5k8ua4UK9MOf4DFxNFGc3LOVuxmf+jDx3m3cfhprMtMXEKxg0kQMsDwF7gicsBp81culug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rQ+xldP1msu7JYldBsj1/3HQSlG1jOw6ARLMLlyajcg=;
- b=XXcANKQv8hdMYwIwePf1XKFYjVMp1+U8/hVz6251xipfhEemOzOjCQjxkuu+gRMODBbgxO3g6TcFafJLHp+9bAIQbXxPZf7bGv9OiJD/w9eytxwwBGucdtpo/nLtTIinTyTMreIeiAEftjPnqUWvnU6QXj2skrY8x7XpPHmd06pSRtq61FhgvCOcnbNtagf47k2mfsXePERlMqj3Xki8M+Vrh8vHK6ew7YBLfYgAbn7KDf88K5bKal3R7ownXm50f3N4oY2eoHWVbyab/wqg0erJ4BITGK5qZYxR/P2zVdyXSMqHSy9jqUrMtIbowDLAb7npb9wUBdZdlCu82yI1WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rQ+xldP1msu7JYldBsj1/3HQSlG1jOw6ARLMLlyajcg=;
- b=opWj6ns3y4BTkGYx94KZq1E/I+PymqHu5psLHMxjTgyIZPCrYs1FQtmye+RI6C9d0ojuSONZLmB4TJBQOoIjRiOAdkduk4ebxCFDuX4XJY2JA1jwrVvz0RBwSJtPzcXWnA+x0ZOVfreG9xRxCz9t4ckzZMpajlv9dC/gp5WQsIs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by CYYPR12MB8729.namprd12.prod.outlook.com (2603:10b6:930:c2::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Tue, 12 Aug
- 2025 06:34:15 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9009.016; Tue, 12 Aug 2025
- 06:34:07 +0000
-Message-ID: <1a2e9233-4914-4d27-ae9f-51ca28adf568@amd.com>
-Date: Tue, 12 Aug 2025 14:33:53 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] media: platform: amd: isp4 video node and buffers
- handling added
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- Mario Limonciello <mario.limonciello@amd.com>, Richard.Gong@amd.com,
- anson.tsao@amd.com
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-7-Bin.Du@amd.com> <aIchBRdmy48BHl2k@sultan-box>
- <7a422602-7a99-4b49-b994-cddd9730cb20@amd.com> <aIq6DpV_cMJWKfhn@sultan-box>
- <aJmHWQMsk6Pdniap@sultan-box> <5500a71a-68bd-4dd1-99cb-6523281f0c7d@amd.com>
- <aJrWb1LfwXf5PGUf@sultan-box>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aJrWb1LfwXf5PGUf@sultan-box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0023.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::17) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885B322F77E
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754980543; cv=none; b=rlK6QEQECxK/szdH2KIs6uPm79SvhyA8gkKFPQUKOFwhsmAnqVjOKw2GsTyUKNiyX5yxD2FqZt5oiVqoquGI7xMyt3GH2BM+7Chl4fqKcZcneMlyRyy9b5yrEuONiMS/o8nTTolnMPmPrUriolgQgETZKRaoCYe5Dy990bCp5KE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754980543; c=relaxed/simple;
+	bh=8IGcH37krJMcd6ju4P5mxL5uQpiGfD5DCRH3oE5mjxk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TezIguo2d2NYnU1KKzk02oUELaJ3KnuxEnECpDeaB6K/Hs2pxLtsZwV8l1+2JrEqcZpSL4nin/EDFHrwpX3h+DzBECkv9GACoHfIrYXRDw77YVFvRbG4CTcZai8zctW0hD8eXtytCwlYyymtBJllsEBK4rHvQ97yAFicz0wmO8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=t46mUl2b; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57C6ZQvM42002758, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1754980526; bh=Em9LpjkLJ86Th6qejHYnNPAJAtPlLrN0zZ9pza8JlhM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	b=t46mUl2bCRuKo6WPZgkM8hF5re24oBeLwHNy+AYw0rvPiMgo9oME5vx7cJwXus1R/
+	 gSUwuYDmSe1Arx0syddN3ykfd0DpxMS3BhF0X+jVwPJU7dQbKM8mHrBgQSsqGxXola
+	 qE6vdyKW5DRyf6zockEPvz4xgp8x901deF9qY80W/7SYUnyEkczlA0grIA4vmYQD3C
+	 L+EpEO62VE+PsDCtlMDb81OntHHKeCJOOKUWaF5JLHOLLXdZ3JwzCIyhhTwoCMwOPW
+	 AejxWlxx3Mfd4EdT/kp5y+yQgVZ69GHkANA5zqQ6l4A3kIF9Mm6/XWBDeAAdH138O8
+	 qCVsx7In0kKXA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57C6ZQvM42002758
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Aug 2025 14:35:26 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Aug 2025 14:35:24 +0800
+Received: from RTEXH36506.realtek.com.tw (172.21.6.27) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Aug 2025 14:35:23 +0800
+Received: from localhost (172.22.144.1) by RTEXH36506.realtek.com.tw
+ (172.21.6.27) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 12 Aug 2025 14:35:23 +0800
+From: Ricky Wu <ricky_wu@realtek.com>
+To: <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <ricky_wu@realtek.com>
+Subject: [PATCH] misc: rtsx_pci: Add separate CD/WP pin polarity reversal support
+Date: Tue, 12 Aug 2025 14:35:21 +0800
+Message-ID: <20250812063521.2427696-1-ricky_wu@realtek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|CYYPR12MB8729:EE_
-X-MS-Office365-Filtering-Correlation-Id: b43a0370-8f3f-48d5-5481-08ddd96a3ab0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWpwelpYa3Z3UEVzVnRHRytEdjFFb2VSL3pmRGJzeDlXODFJdXVzWWJqcmpO?=
- =?utf-8?B?YTBKKzU3K0dkYnhLS1dEcE92d08yQk1paTR0c2hRUVU2VGxXSERJNjdkRlVm?=
- =?utf-8?B?QjdabFhVaFJkbkNYMGhTTlBwUGlWeTMxS3pKbTh4Q1NyWjdjbHc0WmpHYjh3?=
- =?utf-8?B?NGNhWkxGc3RkWS9uQ2swSm5HV09KemVSZVRhSG9PV0lvaEdJUlZza1l6b2t5?=
- =?utf-8?B?K2tCZnhNKzEySGc3T3FOaHQvNi9OTkxackhRVHlQWWk4VFdQZ2FuazBKd2Np?=
- =?utf-8?B?MmsxUVJSd09ab1lZbVdPQi9pQjNTRHAxR01MVEJWdUI3aTBnWTZybkJBKzlq?=
- =?utf-8?B?YUZIdkVlTi8zZkdvU0VRM0Z6K3ZiT01DNDRzeUJHdGc5SEJjcXBha291SEdG?=
- =?utf-8?B?WXdxcENFQ2FzaE9jbnlVQmpicS9MSjA0bDBQZExsb3R2ZjN1TTNGUEVIb3RS?=
- =?utf-8?B?cGVJNWcrZXpwOWdJM01nTE5yK0VxclA1TFpra2F0R0M2TmJ3bjZUUWdDMGhy?=
- =?utf-8?B?a09VcFFmRUU3dHZ2bldmeldETElJK2x4TTUyWkVkRFlmUkFNRFg4cEpGY0lq?=
- =?utf-8?B?b0dNbGp6a0dmYndpb0ZISDRJQlFLSE9mSHVmZ1R4U3o2VVZQd3VKNDFlUlFG?=
- =?utf-8?B?N2cyczlDTnpqRGJPU3JoK091R2w3RXVDV1hjWG9uOWYvTFhvWUJobzZJMlQ3?=
- =?utf-8?B?Y1BXbkEvMWJFVnJ3WnRXUmJWVG8vZXlqTGRqbzJ2b1dYSDJBRUJiK3Z2WTNa?=
- =?utf-8?B?TWRHbDZaQ2NFWkduemlwbmxWa0xERU43KzVYMVhGRC96dEVZSVhpN1BrMUJM?=
- =?utf-8?B?L3R3c2l4a1VHN3BsQVNsaXViOFllQi8zcC90blMvOTdWRlNDbDd5YnNPT2hP?=
- =?utf-8?B?cUc2ekdhVW4wallPUFJHSHhsdEE4TWVUUmF2YzFBUjVNZWh4Q01nWmFabitz?=
- =?utf-8?B?M3NHeWZqSHVBbnlHb2dPSjhINTAvNUFTTXdtZzd3bFFmV3RGTENSVmtwYnFD?=
- =?utf-8?B?UUpYOXJ0ZUpUSmxoMmtrR2Jpb1JVZzZxQWVEcHM4TW1RVmd3K01uSzlNdThn?=
- =?utf-8?B?bEVkN1ovUk5oWmtGVFk4Wm1STkVUZTdFNkIwaFZ1SldOMkNlRTdCcVYxOFlW?=
- =?utf-8?B?ckJ5VnRKdnU0dzB5R2gyUVdvV1pxKzVicGk0czYxMVhTZGk4MGRneGRkWUNZ?=
- =?utf-8?B?a2p3WkVKL3UwNUdJN3NMUzkrMlltdm95YjUwU2FFd1NrbUd2QzcxK2xhZUZ6?=
- =?utf-8?B?UW5RWHJKR3VmTDRteVA0ZzNWaUp5YUxISUkzMEs0SEVsaWh3QzdiVnNNc3Vp?=
- =?utf-8?B?VmR2clcyNHF3aGxtYVRGc1RWUzVWWkhObEpOeTNzZTRieDNzVDNZY2pEYVQw?=
- =?utf-8?B?dnpFdzRqQ0gvbWxOTVVvTnBXT2pTLzVDMDVZOGhzTzBNWU13RC9IbXAwbVVr?=
- =?utf-8?B?Q0dPL3U1M1hISFllRVd0TVFiQlVjSHRDcU4xVEVPSGN3TGY5eWZmZzBJUkFq?=
- =?utf-8?B?LzI0VnNEeFVTNHZLbVlJbUxnQnVxWkFNTU9HMWhxK282aDg4WE5KUEtPTkg4?=
- =?utf-8?B?YmdsWUEzNTVZQjVFeERLZ3hzeFp6TURPbHhjdktZT3I0RW8zaFpIbkpra2F5?=
- =?utf-8?B?SGlRVWlucXd2K0p6Rk9nbVcwOWNGVzlRTW94c2pmZWg5SHVMNDBXRW5BQVpS?=
- =?utf-8?B?bm52YmhUcXBjbVhFTEdJQ09yTWJUWkdoVStmRkZjeWRDY3ArL09IL2lkbzZj?=
- =?utf-8?B?UWNibzJnTFQyc2xEeVM5TEY5QkVDZVY1eTNTb2N0T1N0bFpLOExFcnRpWW1u?=
- =?utf-8?B?RWdGVFVOdXJMUjA0a1B4bU13Qy91TXVHbWp5UGVXRlhwM3lZNVpuTVVvejl2?=
- =?utf-8?B?QmQ3b3FzbWkzdkNNdGFadXIyZCs0VGhvd3VsOURhM2hFZE8wM2haWUYvMUVT?=
- =?utf-8?Q?ajAJ/6wC0wk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aUMvL3dqY0ZEbDhhNzAwSmRsMmMrNHJtb3lWdU44RTlBUzdwalJYbHdIU0Fh?=
- =?utf-8?B?MFRZbURRVmlZR0ZsbDlMUnNRbjNpU1dUVkpMK0ErOGdDRCt0czcyR2lLcjNJ?=
- =?utf-8?B?M1FhVFJqN1I1UWQ3bkhqYjNybVJGNmNjUXpmcjNyM05JakN2SDlnWmtiYmlS?=
- =?utf-8?B?M3pnOGdRNzgzY1B1cTZRaFVzb0I0TE5NeldvdmZzc0wwMDgxQno1MnpQK3VM?=
- =?utf-8?B?VVp6eXREdWM4enBaazRRQmk5M3A3TG5tM2phN2JGZHpYMEFNR0V2bDRGd0dp?=
- =?utf-8?B?L1J6SU5keVJJNG02bXMzTjdXenQ3KzJnNWtlb1hSSElwQWg4Y1JoaEpWQmtS?=
- =?utf-8?B?eW1ycko1K0c5UmhlTEJ6YkRVQkcxVngzS1VldHZHOFg4b2NxUUg2NWkxRFJ3?=
- =?utf-8?B?bzhmVzUySHhUMDhxVVllTHVJdERwSmxHeHJVS3VZR2pMSitnV2FWUkhQcGJH?=
- =?utf-8?B?WC9vNFZVSHplN0FLQzdBeVQ0OXg5Ny9UbTlQdzBCeEdJRWZONnNiakJvSko4?=
- =?utf-8?B?Tkt0TjY1UDJISVcxQjNFVlg2YUtDRFgrTjduT04vNFd3ZjdnWWJkbm0vcjZI?=
- =?utf-8?B?V1A4d2hNUTg1bVJrZm0yenJGMm9oMHpMcVFMZ24yTmhrZHFjeUkzZUo1TG43?=
- =?utf-8?B?cFB0TGlTcjlmOFNHQ0ZkQmJqSHBtWWdRSVNIdkYvMEpISHF0eXBHdW52SHdT?=
- =?utf-8?B?MDZmZ2NPYk91allmMm1TM1laeWMyNTJkeEFOYi9YL0Z1MGVyWUlRaEpONjli?=
- =?utf-8?B?WkxzcFhrTk11Q0x0cXZlcExraDNzOGZkVnVaQklTTENWbDNrMEdSK00rOXhm?=
- =?utf-8?B?RFl2Z1hOUkJscyt1TTFBcGp1Wk9wVEdWMTYzVHJ5OGMxTnp6YlprQ3Y2dEFU?=
- =?utf-8?B?Wk5xaEtQUm9kYnVlcWJ6UVJSaEJXczZDT1hpYVMwK0RwM3R5em5yYjN3Z3NP?=
- =?utf-8?B?L0krYmFPRUkxVkxlSFZMQWRtRGl1Q0NBZWJjZjJWYlpHa1BHekI2TTJFNzJ3?=
- =?utf-8?B?Ty9JWk0wVkIva0hrWms1QWFJTlpFU2Z4SFVkakJmaUhsemgzSWE0eCs3UFNH?=
- =?utf-8?B?YzdnSXl2eWlaY0d3UXhlUldFUTBRelVHR1RqTTNzT28rTWQyajVIcm9wQ0hC?=
- =?utf-8?B?Q1VmS1VQRU81UmI2MGRLWDNYaVRlWjlpN1FXcE8zOEppMVpYWG81ekcyUVg5?=
- =?utf-8?B?U250NTNYV09NazFyWGFtbVZIa05FT0ErRzZqZklUMzIzUFY0Wm43NmVIdkdk?=
- =?utf-8?B?bEN2SDNHNG1MdnVOMVM3L01DMUZsbzRlcTE3Q05iRGFIMjUxZGJUVUpLSDRy?=
- =?utf-8?B?NlViYXYxS2pIdUVaSWVtenB3WkpVS3JCdFo2d2NlTkdFNHJORjdzREtTSm5X?=
- =?utf-8?B?VDVjQWZJNGhXek5ObDNtZUZFMXROWEhyYzRocXcwZUk0MUdGdWtadW5La2tX?=
- =?utf-8?B?UUJtcFJrSWVhTXU1dkJDNFhtbFc4bUNldVJhaThkUDFtWFFFRGFBdUZUcTl5?=
- =?utf-8?B?b0hsV1NIUWJrV0VXTEplYWU5NjQ1VlRCT3gzVlo4bUF1Zm1JbHUzemZScElQ?=
- =?utf-8?B?YUdMWFR6RjJZRDU4Ymd3ZU1xMmo0L0J0OUQvdG1aV3dEc1pORVBKa2xYYnpH?=
- =?utf-8?B?dmVtM1hNalFyVXVxZTRkTC82SVUybjJxRnJROExwTSsrWVhSZzdaSjJkZTlk?=
- =?utf-8?B?Yi9QMkUvTzlyZnJkWVl3NDJpV1djUi9MRDB2SDNrTXlDbXpvRE4rYkgwTFBJ?=
- =?utf-8?B?aHlDYU05WXFQTjJRTFpkWHZQMWtjUENQcVcyeXJjb3JadElyL1NOUHpma1o4?=
- =?utf-8?B?NkVibE9PdDJXTUxxQVp2SldWZFl5bEt0OFQ3UExPSEJ2UEF2cjE5RjFsNXBE?=
- =?utf-8?B?ZnBSYUd3S3BZVzNGV3N1Q1p5RUt3ekdnQ3dMdWpodERWbEpOY0p0ODNlYlhv?=
- =?utf-8?B?ZUhqOEdUSFpDQTg3ek1Jd2h6SzRJSDBlc3RjVzJmTjFTd3hYNkVid3RVa1FD?=
- =?utf-8?B?djl0WmhsaW5lNlIxODE4bWxwL1BScmZPN29VZWFTV0tHclhvYVJDamNQVVNX?=
- =?utf-8?B?ekNieFVYb0hZcGp4dDkxVDl2N3hqRTFoN1hMeDVzNXBGOXRGTUFiZmF0V1ht?=
- =?utf-8?Q?ob4U=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b43a0370-8f3f-48d5-5481-08ddd96a3ab0
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 06:34:07.6542
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8oZp+pTLaFgeCv4hmc2sAr+GI4vUhu1zn5IOhs3BJAdKWD+V0j0Wn0qcLEEyVTMS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8729
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Many thanks, Sultan.
+Previously, the Card Detect (CD) and Write Protect (WP) pins shared the
+same reverse polarity setting in the configuration space. This meant both
+signals were reversed together, without the ability to configure them
+individually.
 
-On 8/12/2025 1:51 PM, Sultan Alsawaf wrote:
-> On Mon, Aug 11, 2025 at 05:05:39PM +0800, Du, Bin wrote:
->>>> [ old quotes trimmed out ]
->>>
->>> Following up on this: there were several more issues hiding in the driver that
->>> needed to be fixed unfortunately. I ended up making a lot of changes to fix all
->>> of the buffer lifetime issues, and I created individual commits for this work
->>> because it was getting hard to keep track of all the changes.
->>>
->>> I think I'll have this completed tomorrow and will provide a link to my tree
->>> with my commits. Hopefully your internal branch hasn't diverged too much from
->>> this patchset submission, otherwise there may be some conflicts to resolve.
->>>
->>> Sultan
->>
->> Really appreciate your time and effort. Yes, big code changes happen in our
->> internal branch to address upstream comments, but i believe your commits
->> will be extremely valuable. We can check and test after fixing possbile
->> conflict.
-> 
-> I've pushed my work here:
-> 
->    https://github.com/kerneltoast/kernel_x86_laptop.git v6.16-drm-tip-isp4-for-amd
-> 
-> Please see my changes since commit 48d18b6e58c6dadbc79374773736924d2f532da5 on
-> that branch, up to commit 5cdacf4ff108d83869414a00465e7a612bcd04b1.
-> 
-> There are 29 patches:
-> 
-> Sultan Alsawaf (29):
->        media: amd: isp4: Use amdgpu helper functions for ISP buffers
->        media: amd: isp4: Remove -mpreferred-stack-boundary=4 cflag
->        media: amd: isp4: Remove -DCONFIG_COMPAT from ccflags-y
->        media: amd: isp4: Remove the myriad of redundant ccflags includes
->        media: amd: isp4: Pass warning flags through cc-option
->        media: amd: isp4: Clean up amd_capture-objs formatting
->        media: amd: isp4: Don't set CONFIG_AMD_ISP4 to y by default
->        media: amd: isp4: Clean up AMD_ISP4 Kconfig dependencies
->        media: amd: Fix Kconfig/Makefile directory structure
->        media: amd: isp4: Remove superfluous NULL pointer checks
->        media: amd: isp4: Remove superfluous void pointer casts
->        media: amd: isp4: Remove superfluous memset in isp4vid_vb2_map_dmabuf()
->        media: amd: isp4: Don't read refcount counter directly
->        media: amd: isp4: Add missing refcount tracking to mmap memop
->        media: amd: isp4: Don't put or unmap the dmabuf when detaching
->        media: amd: isp4: Don't increment refcount when dmabuf export fails
->        media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
->        media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
->        media: amd: isp4: Fix implicit dmabuf lifetime tracking
->        media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
->        media: amd: isp4: Remove 'refcount > 0' warning in isp4vid_vb2_put()
->        media: amd: isp4: Fix comment in isp4vid_vb2_dmabuf_ops_release()
->        media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
->        media: amd: isp4: Add comment to CONFIG_HAS_DMA #endif
->        media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
->        media: amd: isp4: Remove unused userptr memops
->        media: amd: isp4: Make isp4vid_vb2_memops static
->        media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
->        media: amd: isp4: Release queued buffers on error in start_streaming
-> 
->   drivers/media/platform/amd/Kconfig               |  18 +-
->   drivers/media/platform/amd/Makefile              |   6 +-
->   drivers/media/platform/amd/isp4/Kconfig          |  14 ++
->   drivers/media/platform/amd/isp4/Makefile         |  42 +---
->   drivers/media/platform/amd/isp4/isp4.c           |   9 +-
->   drivers/media/platform/amd/isp4/isp4.h           |  11 -
->   drivers/media/platform/amd/isp4/isp4_debug.c     |   4 +-
->   drivers/media/platform/amd/isp4/isp4_interface.c |  46 +---
->   drivers/media/platform/amd/isp4/isp4_interface.h |   6 +-
->   drivers/media/platform/amd/isp4/isp4_subdev.c    |   8 +-
->   drivers/media/platform/amd/isp4/isp4_subdev.h    |   4 +-
->   drivers/media/platform/amd/isp4/isp4_video.c     | 297 ++++++-----------------
->   drivers/media/platform/amd/isp4/isp4_video.h     |   4 +-
->   13 files changed, 122 insertions(+), 347 deletions(-)
-> 
-> At least 1 of them should be redundant for your internal branch (9f394a7af2cf
-> "media: amd: isp4: Use amdgpu helper functions for ISP buffers").
-> 
-> Cheers,
-> Sultan
+This patch introduces two new parameters:
+sd_cd_reverse_en – enable reverse polarity for the CD pin.
+sd_wp_reverse_en – enable reverse polarity for the WP pin.
 
-Wow, amazing, fantastic work. Will compare to our latest internal branch 
-to see what might be missing and try to merge, then have some test. Will 
-let you know the result, it might cost some time. Thanks again.
+With this change, the controller can now support:
+1.Reversing both CD and WP pins together (original behavior).
+2.Reversing CD and WP pins separately (newly added behavior), if
+supported by the configuration space.
 
+This provides greater flexibility when dealing with devices that have
+independent polarity requirements for CD and WP pins.
+
+Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+---
+ drivers/misc/cardreader/rts5227.c  | 13 ++++++++++---
+ drivers/misc/cardreader/rts5228.c  | 12 ++++++++++--
+ drivers/misc/cardreader/rts5249.c  | 16 +++++++++++++---
+ drivers/misc/cardreader/rts5264.c  | 20 ++++++++++++++++----
+ drivers/misc/cardreader/rts5264.h  |  1 +
+ drivers/misc/cardreader/rtsx_pcr.h |  2 ++
+ include/linux/rtsx_pci.h           |  2 ++
+ 7 files changed, 54 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/misc/cardreader/rts5227.c b/drivers/misc/cardreader/rts5227.c
+index cd512284bfb3..46444bb47f65 100644
+--- a/drivers/misc/cardreader/rts5227.c
++++ b/drivers/misc/cardreader/rts5227.c
+@@ -79,6 +79,10 @@ static void rts5227_fetch_vendor_settings(struct rtsx_pcr *pcr)
+ 	pcr->sd30_drive_sel_3v3 = rtsx_reg_to_sd30_drive_sel_3v3(reg);
+ 	if (rtsx_reg_check_reverse_socket(reg))
+ 		pcr->flags |= PCR_REVERSE_SOCKET;
++	if (rtsx_reg_check_cd_reverse(reg))
++		pcr->option.sd_cd_reverse_en = 1;
++	if (rtsx_reg_check_wp_reverse(reg))
++		pcr->option.sd_wp_reverse_en = 1;
+ }
+ 
+ static void rts5227_init_from_cfg(struct rtsx_pcr *pcr)
+@@ -127,8 +131,10 @@ static int rts5227_extra_init_hw(struct rtsx_pcr *pcr)
+ 	/* Configure force_clock_req */
+ 	if (pcr->flags & PCR_REVERSE_SOCKET)
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x30, 0x30);
+-	else
+-		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x30, 0x00);
++	else {
++		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x20, option->sd_cd_reverse_en << 5);
++		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x10, option->sd_wp_reverse_en << 4);
++	}
+ 
+ 	if (CHK_PCI_PID(pcr, 0x522A))
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, RTS522A_AUTOLOAD_CFG1,
+@@ -350,6 +356,8 @@ void rts5227_init_params(struct rtsx_pcr *pcr)
+ 	pcr->ms_pull_ctl_disable_tbl = rts5227_ms_pull_ctl_disable_tbl;
+ 
+ 	pcr->reg_pm_ctrl3 = PM_CTRL3;
++	pcr->option.sd_cd_reverse_en = 0;
++	pcr->option.sd_wp_reverse_en = 0;
+ }
+ 
+ static int rts522a_optimize_phy(struct rtsx_pcr *pcr)
+@@ -508,5 +516,4 @@ void rts522a_init_params(struct rtsx_pcr *pcr)
+ 		pcr->hw_param.interrupt_en |= SD_OC_INT_EN;
+ 	pcr->hw_param.ocp_glitch = SD_OCP_GLITCH_10M;
+ 	pcr->option.sd_800mA_ocp_thd = RTS522A_OCP_THD_800;
+-
+ }
+diff --git a/drivers/misc/cardreader/rts5228.c b/drivers/misc/cardreader/rts5228.c
+index 0c7f10bcf6f1..db7e735ac24f 100644
+--- a/drivers/misc/cardreader/rts5228.c
++++ b/drivers/misc/cardreader/rts5228.c
+@@ -84,6 +84,10 @@ static void rtsx5228_fetch_vendor_settings(struct rtsx_pcr *pcr)
+ 	pcr->sd30_drive_sel_3v3 = rtsx_reg_to_sd30_drive_sel_3v3(reg);
+ 	if (rtsx_reg_check_reverse_socket(reg))
+ 		pcr->flags |= PCR_REVERSE_SOCKET;
++	if (rtsx_reg_check_cd_reverse(reg))
++		pcr->option.sd_cd_reverse_en = 1;
++	if (rtsx_reg_check_wp_reverse(reg))
++		pcr->option.sd_wp_reverse_en = 1;
+ }
+ 
+ static int rts5228_optimize_phy(struct rtsx_pcr *pcr)
+@@ -432,8 +436,10 @@ static int rts5228_extra_init_hw(struct rtsx_pcr *pcr)
+ 
+ 	if (pcr->flags & PCR_REVERSE_SOCKET)
+ 		rtsx_pci_write_register(pcr, PETXCFG, 0x30, 0x30);
+-	else
+-		rtsx_pci_write_register(pcr, PETXCFG, 0x30, 0x00);
++	else {
++		rtsx_pci_write_register(pcr, PETXCFG, 0x20, option->sd_cd_reverse_en << 5);
++		rtsx_pci_write_register(pcr, PETXCFG, 0x10, option->sd_wp_reverse_en << 4);
++	}
+ 
+ 	/*
+ 	 * If u_force_clkreq_0 is enabled, CLKREQ# PIN will be forced
+@@ -720,4 +726,6 @@ void rts5228_init_params(struct rtsx_pcr *pcr)
+ 	hw_param->interrupt_en |= SD_OC_INT_EN;
+ 	hw_param->ocp_glitch =  SD_OCP_GLITCH_800U;
+ 	option->sd_800mA_ocp_thd =  RTS5228_LDO1_OCP_THD_930;
++	option->sd_cd_reverse_en = 0;
++	option->sd_wp_reverse_en = 0;
+ }
+diff --git a/drivers/misc/cardreader/rts5249.c b/drivers/misc/cardreader/rts5249.c
+index 6c81040e18be..38aefd8db452 100644
+--- a/drivers/misc/cardreader/rts5249.c
++++ b/drivers/misc/cardreader/rts5249.c
+@@ -60,6 +60,7 @@ static void rtsx_base_fetch_vendor_settings(struct rtsx_pcr *pcr)
+ 
+ 	pci_read_config_dword(pdev, PCR_SETTING_REG1, &reg);
+ 	pcr_dbg(pcr, "Cfg 0x%x: 0x%x\n", PCR_SETTING_REG1, reg);
++	pci_write_config_dword(pdev, 0x718, 0x0007C000);
+ 
+ 	if (!rtsx_vendor_setting_valid(reg)) {
+ 		pcr_dbg(pcr, "skip fetch vendor setting\n");
+@@ -82,6 +83,10 @@ static void rtsx_base_fetch_vendor_settings(struct rtsx_pcr *pcr)
+ 	pcr->sd30_drive_sel_3v3 = rtsx_reg_to_sd30_drive_sel_3v3(reg);
+ 	if (rtsx_reg_check_reverse_socket(reg))
+ 		pcr->flags |= PCR_REVERSE_SOCKET;
++	if (rtsx_reg_check_cd_reverse(reg))
++		pcr->option.sd_cd_reverse_en = 1;
++	if (rtsx_reg_check_wp_reverse(reg))
++		pcr->option.sd_wp_reverse_en = 1;
+ }
+ 
+ static void rts5249_init_from_cfg(struct rtsx_pcr *pcr)
+@@ -254,9 +259,11 @@ static int rts5249_extra_init_hw(struct rtsx_pcr *pcr)
+ 	/* Configure driving */
+ 	rts5249_fill_driving(pcr, OUTPUT_3V3);
+ 	if (pcr->flags & PCR_REVERSE_SOCKET)
+-		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0xB0, 0xB0);
+-	else
+-		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0xB0, 0x80);
++		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x30, 0x30);
++	else {
++		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x20, option->sd_cd_reverse_en << 5);
++		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, PETXCFG, 0x10, option->sd_wp_reverse_en << 4);
++	}
+ 
+ 	rtsx_pci_send_cmd(pcr, CMD_TIMEOUT_DEF);
+ 
+@@ -572,6 +579,9 @@ void rts5249_init_params(struct rtsx_pcr *pcr)
+ 	option->ltr_l1off_sspwrgate = LTR_L1OFF_SSPWRGATE_5249_DEF;
+ 	option->ltr_l1off_snooze_sspwrgate =
+ 		LTR_L1OFF_SNOOZE_SSPWRGATE_5249_DEF;
++
++	option->sd_cd_reverse_en = 0;
++	option->sd_wp_reverse_en = 0;
+ }
+ 
+ static int rts524a_write_phy(struct rtsx_pcr *pcr, u8 addr, u16 val)
+diff --git a/drivers/misc/cardreader/rts5264.c b/drivers/misc/cardreader/rts5264.c
+index d050c9fff7ac..99a2d5ea6421 100644
+--- a/drivers/misc/cardreader/rts5264.c
++++ b/drivers/misc/cardreader/rts5264.c
+@@ -527,8 +527,16 @@ static void rts5264_init_from_hw(struct rtsx_pcr *pcr)
+ 
+ 	pcr->rtd3_en = rts5264_reg_to_rtd3(lval2);
+ 
+-	if (rts5264_reg_check_reverse_socket(lval2))
+-		pcr->flags |= PCR_REVERSE_SOCKET;
++	if (rts5264_reg_check_reverse_socket(lval2)) {
++		if (is_version_higher_than(pcr, PID_5264, RTS5264_IC_VER_B))
++			pcr->option.sd_cd_reverse_en = 1;
++		else
++			pcr->flags |= PCR_REVERSE_SOCKET;
++	}
++
++	if (rts5264_reg_check_wp_reverse(lval2) &&
++		is_version_higher_than(pcr, PID_5264, RTS5264_IC_VER_B))
++		pcr->option.sd_wp_reverse_en = 1;
+ 
+ 	pci_read_config_dword(pdev, setting_reg1, &lval1);
+ 	pcr_dbg(pcr, "Cfg 0x%x: 0x%x\n", setting_reg1, lval1);
+@@ -622,8 +630,10 @@ static int rts5264_extra_init_hw(struct rtsx_pcr *pcr)
+ 
+ 	if (pcr->flags & PCR_REVERSE_SOCKET)
+ 		rtsx_pci_write_register(pcr, PETXCFG, 0x30, 0x30);
+-	else
+-		rtsx_pci_write_register(pcr, PETXCFG, 0x30, 0x00);
++	else {
++		rtsx_pci_write_register(pcr, PETXCFG, 0x20, option->sd_cd_reverse_en << 5);
++		rtsx_pci_write_register(pcr, PETXCFG, 0x10, option->sd_wp_reverse_en << 4);
++	}
+ 
+ 	/*
+ 	 * If u_force_clkreq_0 is enabled, CLKREQ# PIN will be forced
+@@ -957,4 +967,6 @@ void rts5264_init_params(struct rtsx_pcr *pcr)
+ 	hw_param->interrupt_en |= (SD_OC_INT_EN | SD_OVP_INT_EN);
+ 	hw_param->ocp_glitch =  SD_OCP_GLITCH_800U | SDVIO_OCP_GLITCH_800U;
+ 	option->sd_800mA_ocp_thd =  RTS5264_LDO1_OCP_THD_1150;
++	option->sd_cd_reverse_en = 0;
++	option->sd_wp_reverse_en = 0;
+ }
+diff --git a/drivers/misc/cardreader/rts5264.h b/drivers/misc/cardreader/rts5264.h
+index f3e81daa708d..611ee253367c 100644
+--- a/drivers/misc/cardreader/rts5264.h
++++ b/drivers/misc/cardreader/rts5264.h
+@@ -14,6 +14,7 @@
+ #define rts5264_reg_to_aspm(reg) \
+ 	(((~(reg) >> 28) & 0x02) | (((reg) >> 28) & 0x01))
+ #define rts5264_reg_check_reverse_socket(reg)	((reg) & 0x04)
++#define rts5264_reg_check_wp_reverse(reg)		((reg) & 0x8000)
+ #define rts5264_reg_to_sd30_drive_sel_1v8(reg)	(((reg) >> 22) & 0x03)
+ #define rts5264_reg_to_sd30_drive_sel_3v3(reg)	(((reg) >> 16) & 0x03)
+ #define rts5264_reg_to_rtd3(reg)		((reg) & 0x08)
+diff --git a/drivers/misc/cardreader/rtsx_pcr.h b/drivers/misc/cardreader/rtsx_pcr.h
+index 8e5951b61143..40562ff2be13 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.h
++++ b/drivers/misc/cardreader/rtsx_pcr.h
+@@ -100,6 +100,8 @@ static inline u8 map_sd_drive(int idx)
+ #define rtsx_reg_to_sd30_drive_sel_3v3(reg)	(((reg) >> 5) & 0x03)
+ #define rtsx_reg_to_card_drive_sel(reg)		((((reg) >> 25) & 0x01) << 6)
+ #define rtsx_reg_check_reverse_socket(reg)	((reg) & 0x4000)
++#define rtsx_reg_check_cd_reverse(reg)		((reg) & 0x800000)
++#define rtsx_reg_check_wp_reverse(reg)		((reg) & 0x400000)
+ #define rts5209_reg_to_aspm(reg)		(((reg) >> 5) & 0x03)
+ #define rts5209_reg_check_ms_pmos(reg)		(!((reg) & 0x08))
+ #define rts5209_reg_to_sd30_drive_sel_1v8(reg)	(((reg) >> 3) & 0x07)
+diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+index 3b4c36705a9b..3c5689356004 100644
+--- a/include/linux/rtsx_pci.h
++++ b/include/linux/rtsx_pci.h
+@@ -1160,6 +1160,8 @@ struct rtsx_cr_option {
+ 	bool ocp_en;
+ 	u8 sd_400mA_ocp_thd;
+ 	u8 sd_800mA_ocp_thd;
++	u8 sd_cd_reverse_en;
++	u8 sd_wp_reverse_en;
+ };
+ 
+ /*
 -- 
-Regards,
-Bin
+2.25.1
 
 
