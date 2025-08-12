@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-765408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B8AB232D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424F2B23349
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E902A2512
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1F71A238BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34E72FD1DA;
-	Tue, 12 Aug 2025 18:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED932DFA3E;
+	Tue, 12 Aug 2025 18:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="fouCeRSm"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UsGNFw9D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342DC2F5E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445252FA0F9
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022645; cv=none; b=GQKd5BBpqD9c15OJv5TkrBzgWsd3y1g63/yUH2+xF9hLjE70F2sW/SWnP7H8xoXbb27H6otQE4HSnNR1NGXRwTfexVgKt/b7GCXAR/DQ8Z4yObQEJkl/NKa9XbpLvSmsNOgqf2hqve+I99w4DRVKp4N/+wAmw2m5+oasNM28h6U=
+	t=1755022913; cv=none; b=OUmVb7lXjP0cATupHGCxf+r1V3jnmDamSJWHf+K+7OfhKMG9IrsZnzfsPpY1pOLvBlGOeKbhO5YqnwqR+pBiNva0cOvEuxz4G2VefuST180bPYWNmD40J3YakockHyT9yES5/mnujfkIPDn6gPKKfyBJGXz10NLqGDAhxImbDpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022645; c=relaxed/simple;
-	bh=EMvQd3d1WlKkMgyYl6nmwZf21rQLaUhdMd88yyw2ml8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyY3TD+EvlKpxBz76FbnKmGBB5zyhFqO+yXl3T84ZCkEbrN4gLG1ZC8+XxQ0GHK+E+juYEA0n58nuzjuXvrRPKHU4xehetBr4Y7h2BFZNOsMiPu8UgVW7znrVRq0E3MCAiHcYdSG581+la87wbt7cXlS4Mns9gfnXgfC0kBfKuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=fouCeRSm; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso6325370a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1755022642; x=1755627442; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SMsriY29YvNF5zAGx23oTqCNdYx68Xnkyo51DYe24q0=;
-        b=fouCeRSmU+GOlJn8FNDilWLnfH4F6mxza0lezZWMPGB/kPLWaBpYhnh1u5OMBBnyrC
-         UvMfkIjQ+sgcCT3ekSgl0l7RgQCTCzLV885GoptsH3ObVJq3jlwR3MUdtVuRYuJw3h4T
-         QXFbRSU9OxxnGxM7OT4xpbLvlajZ5rW+n+i6qk2/IbkumwKuoVdfPH5k5JZtrMYsR4N+
-         CWkusqUSJ4xmNedT+Tgx2RrOyFT7KHxXi//2pCV+1MaiFtefF1L3Zv2YBsxNWm1PMZXH
-         YrwAUUdewgs+cGFE99k9uOMZbs8aonzq2uUiGEf9lc5J5vj0FFC1JBWqsW5ozcS/nhgD
-         dHWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755022642; x=1755627442;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SMsriY29YvNF5zAGx23oTqCNdYx68Xnkyo51DYe24q0=;
-        b=M1yb0/bRvo8q8bihGVrQ7kARcviRKuriW3u4paLpmQ2+xN2BGoXb5WksZpk1BACuxc
-         hHJgWEREvETH++9BV6D0BOInNxLmWMxaAmIQAIG5rffpV3VEnnp7VpesfKtmfk+UjCTB
-         mAApEE28IgYh+D/iheyDq2FRPDcO/GCS4eWZF+GSJq+11xPQyiHjBMw/yAlATUC3Nkv4
-         ULaNHB05VXnpVpqmA2BBvXI2ef1trUN2Vp9gaqlB3dXzn1dD5NKebHkV5igCxRuAcqMV
-         ZRpIDYuh9YKdmIv4vzsmN1qA8iJ5OLI24EBcfqy05DKNAtgiFx2L9yc/CV45A4lJ3GIF
-         ox4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXOTc/TmHkRhIFrUU804fD2svfQF00i9U0LS5z+xhMjMyxYmCJ0RNtDYv9VWMAHzorq7mFo11KRy2T3E1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQFF1tqo5K4ao97WUhBHRu7A8SuTfOjHLDgTqgZiqRy2uv1JVL
-	qWSG3trT8xCytBKrlkZBOW2dnlWOv7yw18Fm4irnU2j09zRGC5P8jX5otx4p7mtB/c4=
-X-Gm-Gg: ASbGncvIe6i0GML5eiz9kSjbgPWuVDxkjqSiK0kIsxbr/ETZrSG+utSP13LJ7FJiKZn
-	/fqNhi6C0lU4xkuxVG7ZJsgjjBM22/dVHWiQV3N1WiL8jGbb/JKUSpvcmZVBjv1Yjrpupjz9i4v
-	luPZr6IiugMIW66zVJPbSXq4ZgSU8FY76Wkm5I+6QOIx+pAViuPiOIPIn0F54hdjLfhExkQtLPm
-	0suHx2bVSw6uTaecuNYKKYHTZ/DFhCtuExVGIoq1kyhadrMoS6jHWx21YlOqykDFYTuND599sPh
-	QKO7eIuDFW0E3S/gg/5JEnV+oEp9RgDx1IKg0dLFBsUD4uCSxMAtORrhHFOK3JK7PlT7/hG+vHf
-	uL8vWQS2gw2xhA6p6sshoKH9D1qKGkxP8jJ7FtckOzCpAOoqXTMQB31G5wxkwIJVimWuQ5R4f
-X-Google-Smtp-Source: AGHT+IHNhWzWkwRf4t4T8nX0GvXq0IE7nZzVv4i5678hX4iND6uqFIFh5YX2G/IUawi7Y4lWCYrvwA==
-X-Received: by 2002:a17:90b:1a88:b0:31e:ec58:62e2 with SMTP id 98e67ed59e1d1-321d0e6d0famr45436a91.19.1755022642311;
-        Tue, 12 Aug 2025 11:17:22 -0700 (PDT)
-Received: from MacBook-Air.local (c-73-222-201-58.hsd1.ca.comcast.net. [73.222.201.58])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321611dd694sm17922432a91.1.2025.08.12.11.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 11:17:21 -0700 (PDT)
-Date: Tue, 12 Aug 2025 11:17:19 -0700
-From: Joe Damato <joe@dama.to>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@axis.com, imx@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND net-next v2] net: enetc: Remove error print for
- devm_add_action_or_reset()
-Message-ID: <aJuFL__jLySvTNIp@MacBook-Air.local>
-Mail-Followup-To: Joe Damato <joe@dama.to>,
-	Waqar Hameed <waqar.hameed@axis.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@axis.com, imx@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <pnd1ppghh4p.a.out@axis.com>
+	s=arc-20240116; t=1755022913; c=relaxed/simple;
+	bh=K9tpoL5adIqtnZpXwWu+5W81l2VWsI03IA9jighcrGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dLUV7kcWteUL4pp6Pu/ah13yX1EVO5CU5kMnT/CzwgWoiwmJUc+acNqPN73rP0YgzraQQz/3RHAc+//Xof7JzqMd3Pv85Y1AxqV28O1vs6iTL0uyF76UHGYap8rNARfsP3VSwMigYtKeG3TtZwQZWvs1yBuV7cd0WCXotNHbPK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UsGNFw9D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CCCoLP023786;
+	Tue, 12 Aug 2025 18:21:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BhnJXJ
+	E+d2mDNDDlQFrlbM73+vFIf5rSe9uOzme4lvs=; b=UsGNFw9DsNDJfFhoDkffq/
+	X7HjIfVxQ7WRU3NmhCCJiSZsiEMVp42I7+KydiE+f3z/ltSDEo7vE/1UvutdF2U1
+	pOILs5277q1BfJjHpn3XrQxQvqc9eC5XGvG6EZ0lSF4d1c9LyFwIJqUROcXPhV66
+	DHU1TcFEaSgP4Uxe4vTTSwxlAtlDtGaTixDIx4mV/XrMnlALCFWokSMxUN59NXvd
+	p078z7oGJlhFjD0/Rz8tXMYZrg2ujmbXNIA/B2lbfIrRONyOq+AszVILxqvBvLpe
+	GjyWeXPJjlDp/2GqVnwWhHUYGFmvg5FO9T9ccj+0kjGYD+FENVdkQs0FLWyD9swA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48duru854w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 18:21:17 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57CFdDio017612;
+	Tue, 12 Aug 2025 18:21:17 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3kd5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 18:21:16 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57CILDRj53412110
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Aug 2025 18:21:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2679620043;
+	Tue, 12 Aug 2025 18:21:13 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 07D4E20040;
+	Tue, 12 Aug 2025 18:21:11 +0000 (GMT)
+Received: from [9.39.29.151] (unknown [9.39.29.151])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 12 Aug 2025 18:21:10 +0000 (GMT)
+Message-ID: <7c70fac4-3cc7-4bf1-a3f1-aa1c61f67425@linux.ibm.com>
+Date: Tue, 12 Aug 2025 23:51:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pnd1ppghh4p.a.out@axis.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] sched: preempt: Move dynamic keys into
+ kernel/sched
+To: mingo@redhat.com, peterz@infradead.org
+Cc: mark.rutland@arm.com, bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, venkat88@linux.ibm.com,
+        tglx@linutronix.de, maddy@linux.ibm.com, will@kernel.org
+References: <20250716094745.2232041-1-sshegde@linux.ibm.com>
+ <20250716094745.2232041-2-sshegde@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250716094745.2232041-2-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: haSnYq1kEpJqLZg92sejXHgMCJiOT0xe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE3NiBTYWx0ZWRfX2uUAJz+sPSMt
+ fzHrOb3+ZPGeateZtJF+Rn1YzjqF4st42vzyk59+7uBs+hxuTrRcxv3bE/Ae+ZpUK79eUkfVomS
+ rpoRY02k/6a9HDeXaSlF0HNI5wEvaSyDbBhl9rbL1W0q6aYa3DF8JbG3gtk6M7PMh0W9NYqOCHK
+ rzGSUkZvysZ+0m+9vQJfyKPrNl+CdO21VKcB1antFsN8iZU1tAQEd/eDizUVMh0qrFDNPQuEdLV
+ szNaG5gyhhKXuLx639vevO0JABMaAmSdqSQjbnMVFwGHSEtvhtFUfzZ8Kbkt5dN7YJYg5HozPVJ
+ 4E3q8XI9zew7V1Yat7WxnRWvLxNGPsmy0i89/9Qdohf+hcMsxZgU8VotHxbeH/k0dnPZgQVFh33
+ SdctTqgYbVgYI80EYWQJvrnAxiX4yumyKNLQHZke20CONR0UyLT6FU9hxrg+XLCaNB8MBei6
+X-Authority-Analysis: v=2.4 cv=QtNe3Uyd c=1 sm=1 tr=0 ts=689b861d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=7CQSdrXTAAAA:8
+ a=VwQbUJbxAAAA:8 a=a-Bos3NDH3Xla9YzJLIA:9 a=QEXdDO2ut3YA:10
+ a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-ORIG-GUID: haSnYq1kEpJqLZg92sejXHgMCJiOT0xe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ mlxlogscore=876 impostorscore=0 suspectscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120176
 
-On Tue, Aug 12, 2025 at 02:13:58PM +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+
+
+On 7/16/25 15:17, Shrikanth Hegde wrote:
+> Dynamic preemption can be static key or static call based.
+> Static key is used to check kernel preemption depending on
+> the current preemption model. i.e enable for lazy, full.
 > 
-> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> Code is currently spread across entry/common.c, arm64 and latest being
+> powerpc. There is little arch specific to it. arm64, powerpc have the
+> same code. It is better to move it into kernel/sched since preemption
+> is more closely associated with scheduler.
+> 
+> Plus, Any new arch that wants dynamic preemption enabled need to have
+> only HAVE_PREEMPT_DYNAMIC_KEY.
+> 
+> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> Acked-by: Will Deacon <will@kernel.org>
+> Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
 > ---
-> Changes in v2:
+>   arch/arm64/include/asm/preempt.h   |  1 -
+>   arch/arm64/kernel/entry-common.c   |  8 --------
+>   arch/powerpc/include/asm/preempt.h | 16 ----------------
+>   arch/powerpc/kernel/interrupt.c    |  4 ----
+>   include/linux/irq-entry-common.h   |  1 -
+>   include/linux/sched.h              |  8 ++++++++
+>   kernel/entry/common.c              |  1 -
+>   kernel/sched/core.c                |  4 ++++
+>   8 files changed, 12 insertions(+), 31 deletions(-)
+>   delete mode 100644 arch/powerpc/include/asm/preempt.h
 > 
-> * Split the patch to one seperate patch for each sub-system.
-> 
-> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
-> 
->  drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> index b3dc1afeefd1..38fb81db48c2 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> @@ -1016,8 +1016,7 @@ static int enetc4_pf_probe(struct pci_dev *pdev,
->  
->  	err = devm_add_action_or_reset(dev, enetc4_pci_remove, pdev);
->  	if (err)
-> -		return dev_err_probe(dev, err,
-> -				     "Add enetc4_pci_remove() action failed\n");
-> +		return err;
 
-I looked at a couple other drivers that use devm_add_action_or_reset and most
-follow the pattern proposed by this change.
+Hi Ingo, Peter.
 
-Reviewed-by: Joe Damato <joe@dama.to>
+Does this change makes sense? Are there any further concerns that you see?
+Also can it go via tip tree?
+
+Patch applies on 6.17-rc1 (at commit ca76508b9352e8c770b58213cc6c4700e459b7c2)
 
