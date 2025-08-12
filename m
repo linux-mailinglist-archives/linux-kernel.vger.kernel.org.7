@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-764625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2682B22540
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E844FB22542
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08073BDA17
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 501C11666BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8AF2ED17C;
-	Tue, 12 Aug 2025 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6342E2ED867;
+	Tue, 12 Aug 2025 11:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyNLwKgH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJ2VPTqw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752C2ED168;
-	Tue, 12 Aug 2025 11:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB82ED84A;
+	Tue, 12 Aug 2025 11:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996715; cv=none; b=IsF+owjQPh3ckbw3HWX9U9GzJ1FMj7yqaTmXAwbSfPLqP5ERIlmMBiL1aI57QPS33atIFD13OkNWnMGTKU1rplu928mrOCQw4GZINrufCOFnhJbQT8ZyhSWr42skTssxL35f6G2b0CJXTeXZBJQSgoP40/anUFawqAZu0Ps9gNw=
+	t=1754996716; cv=none; b=tob2W4elrWJ9/jeZhhJ8HTepS2PJS6rpQn/G8IYLelkkfzfyomwBmq0v/TNTkaZgbflM4DO21rkfDafgO1e54Us3YqpnQBnDv3VGntdDDN/B8JcXUdQBuuR5CLZhzcpVVEtCrrl7pQ+fMpTcnn5o+bmpXrIQzI7CigZ12odAK78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996715; c=relaxed/simple;
-	bh=ZtB0xbJwwLQJziWmx00hAhoKzJKKlE5OcUVMmZEcRUs=;
+	s=arc-20240116; t=1754996716; c=relaxed/simple;
+	bh=monQS/bBsO+zloi354aBN64+Vd/5AGOSf1IPrG09B3k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZniWT6cJ8tGjmy6EbK5PvwD4VEHzWGOIn40BRY6Ef+yQkz0OIvYGWRF6XGlVRTSsmRZqWJ50pa16cLK5utXFq39mMY4YeIDCfYPrn4m8BaYRnb1Bc2Vls5luMy7TAYMwgnEKmhnZu6AXW/ijo/C5Vj1tgdHWNk7o4X4RfJiCqfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyNLwKgH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A32C4CEF6;
-	Tue, 12 Aug 2025 11:05:12 +0000 (UTC)
+	 MIME-Version:Content-Type; b=P0+8rCa6Hj+m53I4dYzhDmm+CzdFNcCgfk1eGYQXqzGGcSdfWesnRhLORR6P3FOezS93DR1cfiecuk8fKI+DYYZD8vchzGDhgv0wH36Uh4We2E5d9TLiuaTbwCKyhC6B3xcBe/My8GXwUIHVz+X6yXNSeLQmtnDBKLgwqOLK02I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJ2VPTqw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9BDC4CEF4;
+	Tue, 12 Aug 2025 11:05:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996714;
-	bh=ZtB0xbJwwLQJziWmx00hAhoKzJKKlE5OcUVMmZEcRUs=;
+	s=k20201202; t=1754996716;
+	bh=monQS/bBsO+zloi354aBN64+Vd/5AGOSf1IPrG09B3k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AyNLwKgH8aj3QeUFtKubNi5cEt6PbYcL51a/7lZsMRr8eEO0+tkKUyLKdZUV5lj0n
-	 REJ4H4Wk8++tYDu7q7LFoCtrp2a9mDuZHSGFbZSBiYLzZDUFF7P9rm/whSfBxDiZbT
-	 NkvxcaHi/riZpo2jSxGvwMAVeLwaV6yBuW5clzsOTD8UP0ELK1GSl0Gq6LyAxZA7DB
-	 HjKTZzmG2i9J4q40sVijXi7D/jub5y0u74g7707SOxtUv/lY/zTN3qOOzAVHfpaAtz
-	 Xjaw8uv7O+nTv0AJT6blI6yl+6TmAEdvYrvc4hYqf+zvUHafbey5Ypx5ria9Mz1NTB
-	 +KQikEMQnHYLg==
+	b=tJ2VPTqwYVSum/d78kBYM9Fjjws8h3KKjTa+BCj3mGHsAbHYTl0sElXUakVZqEwUX
+	 kJTw+0GwvEpJl7fjGQxF57TSvcTreWPv2egKoQGaKD92CZqNi/uANQEj6s/q18Karu
+	 MbKbblxCJ5o4E7je0ee85lFDfN+b4vnacRP9oH/PrbtoA6moQYFxH+9E8S4tEaK915
+	 GbfhGVUNq/5LZN1FECLWQYJ4iL3rYKAv9t3kY5uxMJtgIyZ9U7BVNEl6htJnYWrN+j
+	 0jlrENfXsKF+VgPzocVWLriYiC7YEiDIP5wewuVv6BPS1vycy6+5siyvXlA4dRRGq2
+	 AAHDbqW96SPwg==
 From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+To: Kiseok Jo <kiseok.jo@irondevice.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250808104943.829668-1-colin.i.king@gmail.com>
-References: <20250808104943.829668-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: tas2781: Fix spelling mistake "dismatch"
- -> "mismatch"
-Message-Id: <175499671247.16031.5935271982543013461.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:12 +0100
+In-Reply-To: <20250808105324.829883-1-colin.i.king@gmail.com>
+References: <20250808105324.829883-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: codec: sma1307: replace spelling mistake
+ with new error message
+Message-Id: <175499671464.16031.7233223998422787112.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,9 +62,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Fri, 08 Aug 2025 11:49:43 +0100, Colin Ian King wrote:
-> There is a spelling mistake (or neologism of dis and match) in a
-> dev_err message. Fix it.
+On Fri, 08 Aug 2025 11:53:24 +0100, Colin Ian King wrote:
+> There is a spelling mistake in a failure message, replace the
+> message with something a little more meaningful.
 > 
 > 
 
@@ -74,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: tas2781: Fix spelling mistake "dismatch" -> "mismatch"
-      commit: b11f2a9745401d9ccc51c91b5482044d2ea936e8
+[1/1] ASoC: codec: sma1307: replace spelling mistake with new error message
+      commit: 7cdadac0d2b3614d04651be7104a89a1998efec0
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
