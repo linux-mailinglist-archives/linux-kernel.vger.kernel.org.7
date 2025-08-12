@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-764743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BF7B226B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAAC5B226AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 663785632F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F0D1886A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9697218827;
-	Tue, 12 Aug 2025 12:20:57 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CC11F0E3E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8881A1B6CE9;
+	Tue, 12 Aug 2025 12:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QS1qhtkv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01B1137750;
+	Tue, 12 Aug 2025 12:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755001257; cv=none; b=APfeXZsJ1cMfwPYyha2ghFemuA5V6ym8FiqwkT0ef01DSvMVt9jzLCADbL69OAJ3DWtB4BmEse69io1zq1aAUjak8x3up83HBpn/o/dA4FZ0HzJLx7Q2CsfTHqVD5qr0lOEHFj/v4OmFqwsZNliew+GXGLboQ6QE++7B/ASjgis=
+	t=1755001250; cv=none; b=LFq6WzjLZbpxwy6WpID4nruF/V65OofLC7xZnJY1N+dfDLtD0LiypyoqjQM97KcuR/1Le/tkP2KXUUP6dCmx1odQp7LwO0W57aKD5+naC59AA2kP/m6uIrve6O1pyaRuT16h9EtcF/MBYNslk5A3bjlLHZ9LgO4bF0vyPy3ag3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755001257; c=relaxed/simple;
-	bh=sH4/kzqznZkqHgl6zkPOskLZcdIa83+yau5+ni0pqww=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VL0rI4LnyRcS1w2jO+1K45hsfKrF7C43QE9J8VJGuH4tLERjhPj4exHW2P38dOhV8p3nu4vuwW0YU9K6TPNqr7FWIBV701guqA/hj055pKxWD9tHzQkG1Na4hacYhedbvEgZWgwlif+jaJ36Rrt0qE0UbISkJRl7/gLRDHawJKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.207.111.194])
-	by gateway (Coremail) with SMTP id _____8Bx63GjMZto3_M+AQ--.53955S3;
-	Tue, 12 Aug 2025 20:20:51 +0800 (CST)
-Received: from ubuntu.. (unknown [111.207.111.194])
-	by front1 (Coremail) with SMTP id qMiowJCxH8KeMZtoQ5dGAA--.16281S2;
-	Tue, 12 Aug 2025 20:20:47 +0800 (CST)
-From: Ming Wang <wangming01@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Ming Wang <wangming01@loongson.cn>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: lixuefeng@loongson.cn,
-	chenhuacai@loongson.cn,
-	Huang Cun <cunhuang@tencent.com>
-Subject: [PATCH] LoongArch: Increase COMMAND_LINE_SIZE to 4096
-Date: Tue, 12 Aug 2025 20:20:43 +0800
-Message-ID: <20250812122043.2462836-1-wangming01@loongson.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755001250; c=relaxed/simple;
+	bh=p4SoCy+5Wp2hINd3FOD7sAZrv3yA75uzRqso2UHx+Vg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3tmOThaYR+r2aXH/WOFA0hIW3rE5l3WBZVy0rIrQPn11hKrou4WXji5wbw1D+I1nGkEDd3eiT6uv01QrEUbh7JQ0jAf6kWEmdY7tSYzjG7O8TxZfaAhNkZZ8Md6q8guHsdeLYEAuMRZTH6AApg1Oo4Tejx2KYIUjX+E9YvVZ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QS1qhtkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944F5C4CEF0;
+	Tue, 12 Aug 2025 12:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755001250;
+	bh=p4SoCy+5Wp2hINd3FOD7sAZrv3yA75uzRqso2UHx+Vg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QS1qhtkvxxgtFmWZXpwUOz7C2w+Xg/fdeRkUqsEjcPIJz6Ja95Qq3GPCVqJjIUGue
+	 NOP4lqdZr0y/nmGvlTvg/4d2RdFWrvwh/3xlvAhEgjBHvoMSdwDEmr9OEaowdx3NvD
+	 zF0oh9EE9B8I5ammwpc+o3ck81zVsa86T7lDtSmLKm3njatFJuGki/QlYgTGJQ0asH
+	 AgfJx1r9i9AnJU3Iog3zm3nTTsyDKoaEco/MUmgd4P8dRxycszS33ZEjvuttK+8OhR
+	 GOzBATQOrry/OkVmkQ/FP+rA+wQpldftccJ/EcvN278Gpadf3A68pVdvazvQJH9+pT
+	 ivkSbKuE+TpTQ==
+Message-ID: <a6b063a2-2b99-4de4-a3b3-876f6b778bc6@kernel.org>
+Date: Tue, 12 Aug 2025 14:20:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxH8KeMZtoQ5dGAA--.16281S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAQEMEmia16IHHwAAsB
-X-Coremail-Antispam: 1Uk129KBj93XoW7uw1kZry3trWktF13Kw47KFX_yoW8Ar13pF
-	98ursrGa1rCr1fCrWSqa4xur1Fka97Ww1Yya4Ig3y8KFnaq34vkr4vgFZIkFyUXw47X348
-	Z3ZYg34j9F1UX3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20x
-	vEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jY0PfUUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/3] arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY
+ device tree
+To: jens.glathe@oldschoolsolutions.biz, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250810-tb16-dt-v10-0-0bfed6d75c69@oldschoolsolutions.biz>
+ <20250810-tb16-dt-v10-3-0bfed6d75c69@oldschoolsolutions.biz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250810-tb16-dt-v10-3-0bfed6d75c69@oldschoolsolutions.biz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The default COMMAND_LINE_SIZE of 512, inherited from asm-generic, is
-too small for modern use cases. For example, kdump configurations or
-extensive debugging parameters can easily exceed this limit.
+On 10/08/2025 19:37, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> Device tree for the Lenovo Thinkbook 16 G7 QOY
+> 
+> The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
+> 
+> Supported features:
+> 
+> - USB type-c and type-a ports
+> - Keyboard
+> - Touchpad (all that are described in the dsdt)
+> - Touchscreen (described in the dsdt, no known SKUss)
+> - Display including PWM backlight control
+> - PCIe devices
+> - nvme
+> - SDHC card reader
+> - ath12k WCN7850 Wifi and Bluetooth
+> - ADSP and CDSP
+> - GPIO keys (Lid switch)
+> - Sound via internal speakers / DMIC / USB / headphone jack
+> - DP Altmode with 2 lanes (as all of these still do)
+> - Integrated fingerprint reader (FPC)
+> - Integrated UVC camera
+> - X1-45 GPU
+> 
+> Not supported yet:
+> 
+> - HDMI port.
+> - EC and some fn hotkeys.
+> 
+> Limited support yet:
+> 
+> - SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+> the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+> but not UHS-I (SD104) and UHS-II.
+> 
+> This work was done without any schematics or non-public knowledge of the device.
+> So, it is based on the existing x1e device trees, dsdt analysis, using HWInfo
+> ARM64, and pure guesswork. It has been confirmed, however, that the device really
+> has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+> @43).
+> 
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Co-developed by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 
-Therefore, increase the command line size to 4096 bytes, aligning
-LoongArch with the MIPS architecture. This change follows a broader
-trend among architectures to raise this limit to support modern needs;
-for instance, PowerPC increased its value for similar reasons in
-commit a5980d064fe2 ("powerpc: Bump COMMAND_LINE_SIZE to 2048").
 
-Similar to the change made for RISC-V in commit 61fc1ee8be26
-("riscv: Bump COMMAND_LINE_SIZE value to 1024"), this is considered
-a safe change. The broader kernel community has reached a consensus
-that modifying COMMAND_LINE_SIZE from UAPI headers does not
-constitute a uABI breakage, as well-behaved userspace applications
-should not rely on this macro.
+Incorrect SoB chain. Please look at submitting patches which describe
+exactly that case.
 
-Suggested-by: Huang Cun <cunhuang@tencent.com>
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
----
- arch/loongarch/include/uapi/asm/setup.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
- create mode 100644 arch/loongarch/include/uapi/asm/setup.h
 
-diff --git a/arch/loongarch/include/uapi/asm/setup.h b/arch/loongarch/include/uapi/asm/setup.h
-new file mode 100644
-index 000000000000..d46363ce3e02
---- /dev/null
-+++ b/arch/loongarch/include/uapi/asm/setup.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+#ifndef _UAPI_ASM_LOONGARCH_SETUP_H
-+#define _UAPI_ASM_LOONGARCH_SETUP_H
-+
-+#define COMMAND_LINE_SIZE	4096
-+
-+#endif /* _UAPI_ASM_LOONGARCH_SETUP_H */
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
