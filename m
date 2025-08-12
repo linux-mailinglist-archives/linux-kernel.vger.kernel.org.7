@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-765657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967EEB23C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:52:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891D0B23C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F257B678F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772B63B2457
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9CE2D979B;
-	Tue, 12 Aug 2025 22:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1062D7396;
+	Tue, 12 Aug 2025 22:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a+VJflJa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctnzpVbX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E1C2F0661;
-	Tue, 12 Aug 2025 22:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F8D19D880;
+	Tue, 12 Aug 2025 22:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755039153; cv=none; b=dFaudrFafl1wQgmpGfDv89FmmwjapiuG+fRtET02D+x9MEiZGQHg/slplTuoN8fQSrOfI/IX351g2KK4hcGYmRTgiJq80XQ8vzqFTvG32WzFd+FKzBJaZSdApcRm9oXyVhf4jFvQU8kggJ5lM/zOrmQwR9Hq4JW3egIPtrCSejs=
+	t=1755039219; cv=none; b=ArvD7d3OPNAvMtS4t3ea3ICEkl+Js5b0Yz+UP2jTrQ0diFQpGouW834J74+21vDT0hbbQNW7Yfy7KtQWf7/2hn9XgGLoqmTidWaZN+eNmS+u1QcXV0ureGvCJzqdOQpsipOeCslr7xwfmkz2xAuqJB51b/Ny8SkiDRw8V2y2Rfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755039153; c=relaxed/simple;
-	bh=4QcopLUUVGIVRRCSZ4jv8Sl09V42iH0FB+VA3/a1kZI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=UMbJjJOw6feHKJGPiblFVbMUd80U79UIYm461AxmxQNrIX9MEnFsIu5gruIHsmOk84tbnuu/rlO+z3dt5GgvXUx/ET6Pvcu0ZOT6GwNOcnPcootQ+qXUW7I1E9JaflxGnxnVoMrhWEyUHeW8oJEqoPpkBcMSIbvHLWGbNQ5Sd1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a+VJflJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B46C4CEF0;
-	Tue, 12 Aug 2025 22:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755039153;
-	bh=4QcopLUUVGIVRRCSZ4jv8Sl09V42iH0FB+VA3/a1kZI=;
+	s=arc-20240116; t=1755039219; c=relaxed/simple;
+	bh=c+XUIxg3sUqAKz4dc24+y98/2s7vOcaQJ8wyf8BG8Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qd8HtnGcrU1CjxIApdSlD+nAPaLqYQPtQMdwUiATIqT9MK/vom44ZP2iSiCaLO0KerlRFbGU2NENiadBRvdnCIgW1PIYqod++/xG9FQoOa9+GVDZFhOdGPBBRiPprQKi+A/K3CqmoXerUb2jZ8OWcEhePq+SNikUw8IsW+xvhpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctnzpVbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A76C4CEF0;
+	Tue, 12 Aug 2025 22:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755039219;
+	bh=c+XUIxg3sUqAKz4dc24+y98/2s7vOcaQJ8wyf8BG8Cg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a+VJflJavF7yIMQioCGtFvNcvBDFfTx45hCKkTusYA2BdnqZ4kWT38UBmlbg+oIZ8
-	 J7h9f7rapCJ5U4FK5B6scoDK/gC4UcmFx7+jCF9mS1b8IzhQgiAFmp5Exg01cPkPBS
-	 9/DB97qAo9nryrBGFF/USiAc3gsuzO/6GNmoq6vM=
-Date: Tue, 12 Aug 2025 15:52:30 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- "David S . Miller" <davem@davemloft.net>, Andreas Larsson
- <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy
- Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Kees Cook <kees@kernel.org>, David Hildenbrand
- <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, David Rientjes <rientjes@google.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jason
- Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
- <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, Mateusz Guzik
- <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
-Message-Id: <20250812155230.f955c6470db223bb371ac683@linux-foundation.org>
-In-Reply-To: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
-	<1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=ctnzpVbXnJ372oGY4sC4AUjPwQsWRojQI5/Jm0Y+Et1A/TTtpI8hbusnLeppyyKTm
+	 Pulrd3AKlsLLNkkOeAreGenLXXMNNd4H2fnFvzE/vPy32TUxeARfOW5s2mFQHxj4Ro
+	 UM0ZPkAlnLt2iotbkS5bdGGRZ59giPY10YCzvtbTpGJQu6CzOUmbIhE7q/nZ67xksU
+	 OgHgognmSoi8HWWMHwD4Ea3VewKqLxJBCxuCYxTiS6jgU7ZNI6I3Svem1eSY806BPD
+	 mPFNf5venvjPKz5jZUNyiXfo/0lxsNsntSxPDp3N7joGGVAEJJKoZecv3lEVaYfnIe
+	 lTNaYqUU6hV6w==
+Date: Wed, 13 Aug 2025 00:53:34 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 5/7] docs: kdoc: tighten up the array-of-pointers case
+Message-ID: <20250813005334.31db20b0@foz.lan>
+In-Reply-To: <20250812195748.124402-6-corbet@lwn.net>
+References: <20250812195748.124402-1-corbet@lwn.net>
+	<20250812195748.124402-6-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Aug 2025 16:44:11 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Tue, 12 Aug 2025 13:57:46 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-> As part of the effort to move to mm->flags becoming a bitmap field, convert
-> existing users to making use of the mm_flags_*() accessors which will, when
-> the conversion is complete, be the only means of accessing mm_struct flags.
+> Simplify one gnarly regex and remove another altogether; add a comment
+> describing what is going on.
 > 
-> This will result in the debug output being that of a bitmap output, which
-> will result in a minor change here, but since this is for debug only, this
-> should have no bearing.
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
 > 
-> Otherwise, no functional changes intended.
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 36c4035343dc..d7fb79a64487 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -527,23 +527,19 @@ class KernelDoc:
+>                  dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+>                  self.push_parameter(ln, decl_type, param, dtype,
+>                                      arg, declaration_name)
+> -
+> +            #
+> +            # The array-of-pointers case.  Dig the parameter name out from the middle
+> +            # of the declaration.
+> +            #
+>              elif KernRe(r'\(.+\)\s*\[').search(arg):
+> -                # Array-of-pointers
+> -
+> -                arg = arg.replace('#', ',')
 
-Code is obviously buggy - you cannot possibly have tested it.
+Hmm... if I'm not mistaken, there is(was?) a previous code that replaced
+commas by "#". Such statement is needed to catch some corner case.
 
---- a/mm/khugepaged.c~mm-convert-core-mm-to-mm_flags_-accessors-fix
-+++ a/mm/khugepaged.c
-@@ -1459,7 +1459,7 @@ static void collect_mm_slot(struct khuge
- 		/*
- 		 * Not strictly needed because the mm exited already.
- 		 *
--		 * mm_clear(mm, MMF_VM_HUGEPAGE);
-+		 * mm_flags_clear(MMF_VM_HUGEPAGE, mm);
- 		 */
- 
- 		/* khugepaged_mm_lock actually not necessary for the below */
+This like here is(was?) needed to restore the original arg string.
 
-there, fixed.
+> -                r = KernRe(r'[^\(]+\(\s*\*\s*([\w\[\].]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
+> +                r = KernRe(r'[^\(]+\(\s*\*\s*' r'([\w.]*?)' r'\s*(\[\s*\w+\s*\]\s*)*\)')
 
-I applied the series to mm-new, thanks.  Emails were suppressed out of
-kindness.
+As mentioned on patch 6/7, IMHO doing concats like that at the same line
+IMO makes it harder to understand. This works best:
 
+                r = KernRe(r'[^\(]+\(\s*\*\s*'
+			   r'([\w.]*?)'
+			   r'\s*(\[\s*\w+\s*\]\s*)*\)')
+
+
+>                  if r.match(arg):
+>                      param = r.group(1)
+>                  else:
+>                      self.emit_msg(ln, f"Invalid param: {arg}")
+>                      param = arg
+> -
+> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+> -
+> -                self.push_parameter(ln, decl_type, param, dtype,
+> -                                    arg, declaration_name)
+> -
+> +                dtype = arg.replace(param, '')
+> +                self.push_parameter(ln, decl_type, param, dtype, arg, declaration_name)
+>              elif arg:
+>                  #
+>                  # Clean up extraneous spaces and split the string at commas; the first
+
+
+
+Thanks,
+Mauro
 
