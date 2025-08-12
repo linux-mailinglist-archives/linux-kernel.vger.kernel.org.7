@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-763773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81375B21A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F23B21A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 03:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C53427639
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49E0190742F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D302D8361;
-	Tue, 12 Aug 2025 01:27:43 +0000 (UTC)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6852D8360;
+	Tue, 12 Aug 2025 01:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="frvUwLRQ"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C954722332E;
-	Tue, 12 Aug 2025 01:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942941D54FE;
+	Tue, 12 Aug 2025 01:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754962063; cv=none; b=OoUkLoaEN6f+j7in768ggIllZf7CGAmhaU2F06QxrH1187QX9cqWLeNcSaEWeNJs1ZSNeTYcRLX0A4+Q5/k7px9hgzgYovxwXGdJ6tOLCgvR9jvq5WmwKEkpdHD37v/2yP6eu9hiTWxA4tY7lWu5w3vQ4jQLK/Fpj3y2owxU5tE=
+	t=1754962216; cv=none; b=Rk8DzF5pH80Ft5c2I4jki6O7j4GF8D8ioZVgrrQb7L3hPogZw/TlpjG0IWlXTiM/6ksm6zFi04VRjy9pBd1Pn0iQcT7+c208kTMgsLll2mZGYTDqBUdHGLOTZVwTSwEOTVXUh1Mp1x85xSxBIqdO8QkqgPF7Nn/QDQ2C1AuKDZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754962063; c=relaxed/simple;
-	bh=RoxD1aG1RWQxFWWsFZz7qapdHfFLS3SnVyou3HTXxZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afwJACBR2ITEW65HN2/5MIJcwbSP8Z2YPTi5j+18aa38qtcaXXMzFF8QIh6PKdRqIa+kTV3WXSP8M24c3ellkHMbkNwEhtEaD1fI2kNU517WD3L0nBne+1UNF28J9cgfQOlIo6A9lM/mmkMMZd7u/RaZkEgl2f6E75KHNTwvxRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-31f5ed172daso931382a91.2;
-        Mon, 11 Aug 2025 18:27:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754962061; x=1755566861;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JVuTHpo8HlQXIpXQibhEcFczkCHN73jjtQMy1pV6lPk=;
-        b=W8n4FHZkoWDVBY7Mo8aL5wrkIwKR/fDjSC56MuLLgdypYJJD1nfZM6kzOphZcsYUps
-         ZiMtp6x1o9WxbHn0yI7JJcNUPelGB6R3TmC9K8rJljemaY+kGS3DUSWbJPK8TEfyoSo5
-         DPPMYaaal+AMAQryeNg72eyY6NCd+Y9shlB5rSTh03xaisPGJyf5d2w3fnCneR2YxaIv
-         rUpCngI2qOIC2ogl6hS9Dz0SqK5T52AZ994EMVNMRW1zP3PVjJOLpc2kdisyXw8Q9Cnj
-         frJ2aPdnWDGnQUkS5uZJjNyqYW7hP7NAXioZSdlT5V9ZsTXTuJH0UIpu1I+l46DyWTD2
-         eg7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVmPTE4LwuDG/tlygFqVkNVGKlPKkVzZrmcz0KReh81Yj+exklCoSDhdrC1dsEB1wqG6V/p4nz6N24/Mm2D+MsMBw==@vger.kernel.org, AJvYcCXSt/l+u/+FxSliO2fTOc6KMXODSJyZ6RV1n5q2wqI5kUiyi3xWcIXSRu6lFWaHjVF6NeQXTP5CeB3w1VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0TBahUTMgEMpDsOHolX/Iw1pOJRHvKrkcMA0eJDZ4wJnOYRcj
-	naloqRnykXQxcpYY3SSRmPd+rfzGLJRtPhwou6CRxvjp8ybdinqyKS2ELBPFpX1W
-X-Gm-Gg: ASbGncsflX/NYGxXygqDfwj/Sz/9qso1cWI4Vg0E/Bp7bkjOEnwl4IQox6nGP/L/32o
-	SUN5maST2LuH8T4pAybbHT6k7BswBsewIpRrlH7rIzC3E0dksaxAQm3WfQHOST7rolOvfbrKme8
-	VS4OE1pLzsTOWn2QcteRkIG+DbbeEbeGeO6BIi4gwYyK72xBK1rUTeVbUvL7gdJJGmTOpBbOjqf
-	6Qo/dy2e5X2xziu6O8DMwicEsPAh0e68JwiPYONk3Be9hx1T+17dYSDZr4Yjr/JqYMKnGTqbWvy
-	cUlwBSHlV3yEawEaxQpcyQFF0FB2HEM6IWPgj/XJrU9WhlnUiRZx9qhels5HAfbDrTQMPdq/yzj
-	OxHPsivlBF3O0
-X-Google-Smtp-Source: AGHT+IH+sHU+p6EE9tLJ69xDjRQjSaP6OQiHInaa4IyLnxW+9kjONfmq9qED3fS22qoiduoFsDg71w==
-X-Received: by 2002:a05:6a20:914a:b0:235:5818:66a3 with SMTP id adf61e73a8af0-2409aaf5c23mr1286557637.8.1754962061095;
-        Mon, 11 Aug 2025 18:27:41 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b424ca987desm19134173a12.40.2025.08.11.18.27.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 18:27:40 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Austin Kim <austindh.kim@gmail.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH v2] perf: Avoid undefined behavior from stopping/starting inactive events
-Date: Tue, 12 Aug 2025 01:27:22 +0000
-Message-ID: <20250812012722.127646-1-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1754962216; c=relaxed/simple;
+	bh=5VapdnES7ub01fEzwLbmifK+dKN+v5agxO17nHqVte8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SCDaSH2WL9qEQtT1aOt+3ZGMrBYhfShrdyQacXQnpvmcmdxQI4XtTCxXX0fhGJQ+NUXZMvniUY1ehBmocBBi8AHvonsoZkuPJclRcfY6Q8Q57xvkZrYX8ypFApu4IMN1W9rle+oASyo1VFO2SF/py3OnmqpHOlbC4tQ1IytI0Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=frvUwLRQ; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754962211; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=djZxdkbYS5ABjJh5vZ+OSyzqxKEA12clHOn12k1eFBw=;
+	b=frvUwLRQLX0H2asuzYyXjungyRzbjcqgz05Uzou8O9sYyKpjxyIoCkyOeNcebZqP3+WpAHzwUeWLqG9X/qe9unx2FyE1diCLrrSXMjh2Rvke5WmTPRhiTzhj5VXAM1R7Y/LmArvgpwAFZ5FVHnAosG4OoMeHPme5/OvjXAKZ5bA=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WlYvemQ_1754962181 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Aug 2025 09:30:08 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
+  linuxppc-dev@lists.ozlabs.org,  virtualization@lists.linux.dev,
+  linux-fsdevel@vger.kernel.org,  linux-aio@kvack.org,
+  linux-btrfs@vger.kernel.org,  jfs-discussion@lists.sourceforge.net,
+  Andrew Morton <akpm@linux-foundation.org>,  Madhavan Srinivasan
+ <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>,  Nicholas
+ Piggin <npiggin@gmail.com>,  Christophe Leroy
+ <christophe.leroy@csgroup.eu>,  Jerrin Shaji George
+ <jerrin.shaji-george@broadcom.com>,  Arnd Bergmann <arnd@arndb.de>,  Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,  "Michael S. Tsirkin"
+ <mst@redhat.com>,  Jason Wang <jasowang@redhat.com>,  Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>,  Eugenio =?utf-8?Q?P=C3=A9rez?=
+ <eperezma@redhat.com>,
+  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Benjamin LaHaise
+ <bcrl@kvack.org>,  Chris Mason <clm@fb.com>,  Josef Bacik
+ <josef@toxicpanda.com>,  David Sterba <dsterba@suse.com>,  Muchun Song
+ <muchun.song@linux.dev>,  Oscar Salvador <osalvador@suse.de>,  Dave
+ Kleikamp <shaggy@kernel.org>,  Zi Yan <ziy@nvidia.com>,  Matthew Brost
+ <matthew.brost@intel.com>,  Joshua Hahn <joshua.hahnjy@gmail.com>,  Rakie
+ Kim <rakie.kim@sk.com>,  Byungchul Park <byungchul@sk.com>,  Gregory Price
+ <gourry@gourry.net>,  Alistair Popple <apopple@nvidia.com>,  Minchan Kim
+ <minchan@kernel.org>,  Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v1 0/2] mm: remove MIGRATEPAGE_*
+In-Reply-To: <20250811143949.1117439-1-david@redhat.com> (David Hildenbrand's
+	message of "Mon, 11 Aug 2025 16:39:46 +0200")
+References: <20250811143949.1117439-1-david@redhat.com>
+Date: Tue, 12 Aug 2025 09:29:40 +0800
+Message-ID: <87bjolgwe3.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Calling pmu->start()/stop() on events in PERF_EVENT_STATE_OFF can leave
-event->hw.idx at -1, which may lead to UBSAN shift-out-of-bounds reports
-when the PMU code later shifts by a negative exponent.
+Hi, David,
 
-Move the state check into perf_event_throttle()/perf_event_unthrottle() so
-that inactive events are skipped entirely. This ensures only active events
-with a valid hw.idx are processed, preventing undefined behavior and
-silencing UBSAN warnings.
+David Hildenbrand <david@redhat.com> writes:
 
-The problem can be reproduced with the syzkaller reproducer:
-Link: https://lore.kernel.org/lkml/714b7ba2-693e-42e4-bce4-feef2a5e7613@kzalloc.com/
+> This is against mm/mm-new.
+>
+> This series gets rid of MIGRATEPAGE_UNMAP, to then convert the remaining
+> MIGRATEPAGE_SUCCESS usage to simply use 0 instead.
+>
+> Not sure if it makes sense to split the second patch up, a treewide
+> cleanup felt more reasonable for this simple change in an area where
+> I don't expect a lot of churn.
+>
+> Briefly tested with virtio-mem in a VM, making sure that basic
+> page migration keeps working.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Jerrin Shaji George <jerrin.shaji-george@broadcom.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Cc: "Eugenio P=C3=A9rez" <eperezma@redhat.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Benjamin LaHaise <bcrl@kvack.org>
+> Cc: Chris Mason <clm@fb.com>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Dave Kleikamp <shaggy@kernel.org>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+>
+> David Hildenbrand (2):
+>   mm/migrate: remove MIGRATEPAGE_UNMAP
+>   treewide: remove MIGRATEPAGE_SUCCESS
 
-Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+LGTM.  Feel free to add my
+
+Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
+
+for the whole series in the future versions.
+
+>  arch/powerpc/platforms/pseries/cmm.c |  2 +-
+>  drivers/misc/vmw_balloon.c           |  4 +-
+>  drivers/virtio/virtio_balloon.c      |  2 +-
+>  fs/aio.c                             |  2 +-
+>  fs/btrfs/inode.c                     |  4 +-
+>  fs/hugetlbfs/inode.c                 |  4 +-
+>  fs/jfs/jfs_metapage.c                |  8 +--
+>  include/linux/migrate.h              | 11 +---
+>  mm/migrate.c                         | 80 ++++++++++++++--------------
+>  mm/migrate_device.c                  |  2 +-
+>  mm/zsmalloc.c                        |  4 +-
+>  11 files changed, 56 insertions(+), 67 deletions(-)
+>
+>
+> base-commit: 53c448023185717d0ed56b5546dc2be405da92ff
+
 ---
- kernel/events/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8060c2857bb2..c9322029a8ae 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2665,6 +2665,9 @@ static void perf_log_itrace_start(struct perf_event *event);
- 
- static void perf_event_unthrottle(struct perf_event *event, bool start)
- {
-+	if (event->state <= PERF_EVENT_STATE_OFF)
-+		return;
-+
- 	event->hw.interrupts = 0;
- 	if (start)
- 		event->pmu->start(event, 0);
-@@ -2674,6 +2677,9 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
- 
- static void perf_event_throttle(struct perf_event *event)
- {
-+	if (event->state <= PERF_EVENT_STATE_OFF)
-+		return;
-+
- 	event->hw.interrupts = MAX_INTERRUPTS;
- 	event->pmu->stop(event, 0);
- 	if (event == event->group_leader)
--- 
-2.50.0
-
+Best Regards,
+Huang, Ying
 
