@@ -1,79 +1,39 @@
-Return-Path: <linux-kernel+bounces-765605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB98B23AB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A28B23AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D887B5DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B8B1A21D82
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13E22D738E;
-	Tue, 12 Aug 2025 21:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k35LF33q"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E84A2F067A;
-	Tue, 12 Aug 2025 21:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993CA2D739F;
+	Tue, 12 Aug 2025 21:29:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACEA2D7386
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 21:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755034161; cv=none; b=Ivd4AkQ0KeKXRDpjycTN32t1b2D7JYOkELml/reowM86tipPRbbZxute10a3t66jeRX+91/0BSB+JmCoTvIbIYdUrLKShyUp4dWGeNmjXkSbw1d9tISlZNLip/QwJcd+kcH4IxOUx0BoBmwtwBrKhnZJa6f3ZQEzjLrqF18bux8=
+	t=1755034162; cv=none; b=BkffrxA9cKLnSSSpNF2SoTt/T2xU/ZsMApJUKcCChk85/LyaK8JwVktfvvcifMuCW/UKF+jGqmvFMbR4TrdPy9/FcTTPIbr6VXV0vifQoG82zdQvQGxv8mWOc+QkR+STiF0KmDVx6UJincd2ZhsSYCbMYt1rY6A2ZkdfbB/B/y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755034161; c=relaxed/simple;
-	bh=eGqZCroda2wJopOF3l+REjl4tR5Yq9+2gAley7tEEew=;
+	s=arc-20240116; t=1755034162; c=relaxed/simple;
+	bh=bOpoyvu/ZWbO47SQ5CoC25RHHvk18Ll/nfEeXHS47qY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ipv3OdC166EhujEBta0etoSs8vaEADPLc9J0oaMA2YE4NOYNUycAjuDQCP2cxA0biyyaaPBOwhYeybXsbeP7zzaBxvijLNLA3fjaWkHXQE9aykGLYkGL8IWG4bEodtIr+CbDtbriTit3CcNZbj60mPsxZBir69aZLIb2XBWDsBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k35LF33q; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-433f1cc2719so3933829b6e.1;
-        Tue, 12 Aug 2025 14:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755034159; x=1755638959; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLeohoAGJ+hVylKDxkihOkXHb1E9F0dH5sp5SD+x3pc=;
-        b=k35LF33qQU1t2VktkrQb+UOc4wU5mqvglxKcnUxM6eU8pBOiY0dQlfvgzoySy/0zrO
-         xTVouWq2++I/6E8wk3CjHrn82IUYanuhLEO61azPNi+vvDc74DBkn6Of59UljDeaKXrY
-         CjtwRcDxlLykahh8SIZ7JmrvaFhR7wTdXB7txighdnkfT5qc00Lx0H8r7eUQUaLmpqeu
-         Guw0maEvE/IcJU2pT9DHsO4kKnQoq04IiIggwJo2eY/3XLH5lnfKvaXZl0p7G1RwDRu9
-         hKfTiHNzm7jfJ/eqg00LQFu+yU/d6xxF9zVIhc8rMjLv/xOlqxoqwJXTV1HUWjowmIUH
-         pAUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755034159; x=1755638959;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLeohoAGJ+hVylKDxkihOkXHb1E9F0dH5sp5SD+x3pc=;
-        b=MI+A3cp/DElJSyzQDV9a+ehW1IuxVQTEyHjGClmfeeSPUz6nSEjYTnFRV5wNsSZmms
-         C3H8bthHJbxlUBA5GweO67HI5MsdyKySM5TKcDjlKjCDWO8Q/FGCcmSgI6OmFZC9iQEi
-         WY++TelO2SXSoFk4a2dAAIYCOXeCOZiDP+/Vx9HvT19JPHMd4PVZtzy23iXL0cfqRHM3
-         WtDMjFI2vz8GkVqp6FE+SHglGe7obEvYyFIQ1PkzDY05HQjXSkATohn9ikPKYEW5HMkr
-         13gyknIYlbwrtyFl5qKIBzFNBHmxRTDix/H1/aGVSRnw/AFZQYjtk9H0VWGLL/WzZIHN
-         KfMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUa2af4elsqaPOiXclaw7lE2e+rbaB1LNStgAYjD/X0KSrjyF/tkPIA5UtCwanlLkLpsQj6WQypAGBXquU=@vger.kernel.org, AJvYcCUpRx9KkNeVK1dQbVGXX2NK0AUhTRU4By6Oj3hI7+P9Tfrz9VDp9RASjfObgSnhZzUEtakq1Rmf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Vlk7BG6ToHBlx9qrEz/SmyyGbiilDzeXNqrjOg4GwtlCw2VC
-	siiim/ZJr4Aby1v4GoupE1RhnhCFBcTG7ChbrFXRL3fW3kMgCjQHVR/dSSW7aNhY
-X-Gm-Gg: ASbGncsRRcI1FhPBanPX1k9k4vTreUveVPJ5Alfyn4PdZC5NnTXMr2//CbUIIQhFp9b
-	Z2VnCg5qq9WLWb9HHJP2jLj3kuTxGbdljUnKmGM9Bel/nV6mWVR1e1WWU+0SQ624DrgF1KNxU2F
-	t7JaoaM6tDDJ8bv3cmGFa/h1w62TBN0F8MuYoVKMgrbqQNYMJKAZ9GrPhfHZizBe6VgrG8O3opb
-	CshLUfzQ7qUkEk7dpYOkEJZ4I+1uZBSJ4yXX3mk46gPEp65vfM0bGJM/IyahBB2nbNCOhuFbJw8
-	F1a0NT0GmxDtx4+ALSV2E02CVGhOccaf2DScEuViM8CvltmNCwjQ+Uc3QPWJU5gSZS/iicmIVnp
-	BMlJE3I0W632UJA///iam92nhSVfQEGr/dmWW8DMGp1kEJO79VyH5qVM=
-X-Google-Smtp-Source: AGHT+IGWVbUN21tmOA5DQIBW20HuNxcOZHa+8f5mkd53ppc4gWWw8N7yD+V3DBAFt9EaMmDWFFrpww==
-X-Received: by 2002:a05:6808:1781:b0:420:81f1:32fb with SMTP id 5614622812f47-435d4275049mr530209b6e.38.1755034158685;
-        Tue, 12 Aug 2025 14:29:18 -0700 (PDT)
-Received: from [10.236.102.133] ([108.147.189.97])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce85683dsm365938b6e.20.2025.08.12.14.29.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 14:29:17 -0700 (PDT)
-Message-ID: <f86afb24-a328-4b20-ad4c-e8f5b56eeb24@gmail.com>
-Date: Tue, 12 Aug 2025 14:29:13 -0700
+	 In-Reply-To:Content-Type; b=f0u5VnxOpOCqhJH6RCf8NYZjOOiAIF2Fi2FPUZJSyRWKekwvwBEm/GkN9nzvjzrPoJ7HssrFXWFJzSJdzVM/yJ1nkSGLb9bmiTjb0aKYufQjiS1oPcTIQzZPdwA/v+zUoPuf4w/Ud41XfMwzjyP0j8pg5vqDABRy/PqB9syFWSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D1C31758;
+	Tue, 12 Aug 2025 14:29:11 -0700 (PDT)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 218793F63F;
+	Tue, 12 Aug 2025 14:29:15 -0700 (PDT)
+Message-ID: <b16979c4-47cf-4a9f-8f67-30f784933c05@arm.com>
+Date: Tue, 12 Aug 2025 22:29:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,47 +41,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/262] 6.6.102-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250812172952.959106058@linuxfoundation.org>
+Subject: Re: [RFC PATCH] sched/feec: Simplify the traversal of pd'cpus
+To: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, vdonnefort@google.com, ke.wang@unisoc.com,
+ xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
+References: <20250812093339.8895-1-xuewen.yan@unisoc.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20250812172952.959106058@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250812093339.8895-1-xuewen.yan@unisoc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 8/12/2025 10:26 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.102 release.
-> There are 262 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 8/12/25 10:33, Xuewen Yan wrote:
+> Now we use for_each_cpu() to traversal all pd's cpus,
+> it is in order to compute the pd_cap. This approach may
+> result in some unnecessary judgments.
+> We can simply calculate pd_cap as follows:
 > 
-> Responses should be made by Thu, 14 Aug 2025 17:27:08 +0000.
-> Anything received after that time might be too late.
+> pd_cap = cpu_actual_cap * cpumask_weight(pd_cpus);
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.102-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Then we can AND pd'scpus, sd's cpus and task's cpus_ptr
+> before traversing, which can save some unnecessary judgment.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+IMO this would be clearer if it's:
+Calculate pd_cap as follows:
+...
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+instead of traversing ...
+
+Other than that LGTM.
+
+> 
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+>  kernel/sched/fair.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..e47fe94d6889 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8330,18 +8330,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+>  		cpu_actual_cap = get_actual_cpu_capacity(cpu);
+>  
+>  		eenv.cpu_cap = cpu_actual_cap;
+> -		eenv.pd_cap = 0;
+> +		eenv.pd_cap = cpu_actual_cap * cpumask_weight(cpus);
+>  
+> -		for_each_cpu(cpu, cpus) {
+> -			struct rq *rq = cpu_rq(cpu);
+> -
+> -			eenv.pd_cap += cpu_actual_cap;
+> -
+> -			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+> -				continue;
+> +		cpumask_and(cpus, cpus, sched_domain_span(sd));
+>  
+> -			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+> -				continue;
+> +		for_each_cpu_and(cpu, cpus, p->cpus_ptr) {
+> +			struct rq *rq = cpu_rq(cpu);
+>  
+>  			util = cpu_util(cpu, p, cpu, 0);
+>  			cpu_cap = capacity_of(cpu);
 
 
