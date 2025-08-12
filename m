@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-764197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446FEB21FB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:40:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3740B21FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4BCE6203A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A09504C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7AD2DE6F7;
-	Tue, 12 Aug 2025 07:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB812D7803;
+	Tue, 12 Aug 2025 07:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKV6/h+e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB48C4KB"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F841A9F99;
-	Tue, 12 Aug 2025 07:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86381A9F99
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 07:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754984426; cv=none; b=phBo9mHCFroehRnuOCDD64AS5/Hz7WfYbUXYdOufveJ/TG62lZZ8knIgahkSv6sHTDa9BbqzxU3hW2lG41v8GobsyQPxV7dCWytRS5xzAca0uF5LsAmdDs9hqv2PEtg4Z3eKeQinQo/T0r1XtvD3S2kU/XBaHuXVc2JZ21HZJCo=
+	t=1754984524; cv=none; b=ejk6sB9Ql0S3cNGtkr+Z969Aq9ovPlXAWtIQEC+WP3CjDfAQqrEtws1d9sGknCWpXLNcv8VS6JJ0To4QKinTd/O+wTe5VWMXgoGU2+v8MENxLn9+AVk046aWecR1OoD75mSaHmeeVN9w54FkAVxDY1e44Vi1Xs/3TtqOEqNSFwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754984426; c=relaxed/simple;
-	bh=wfjGcl31LN8RT0HnE6qlAX5V1ZOh3Ia0Y/31tNz9kKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toznbd1gFh3nx6zZVQ6CPzXr1RbRk3luA59O4rQadJnMWPwq2qr7dfZXr4vgpAhh2GrSJ4LiFWcva5urlDDtQXD2wNctn24c7cxycjNVAmO04ymTgkzWOUkUp/Yh7qx+x9ktcxOnDqx/WUl6eMhMsWtTGQocmbCe6fdDVPOakt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKV6/h+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581A7C4CEF1;
-	Tue, 12 Aug 2025 07:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754984425;
-	bh=wfjGcl31LN8RT0HnE6qlAX5V1ZOh3Ia0Y/31tNz9kKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hKV6/h+eBdhrGOR8LWo2tUnD1ifH3Wq1YtGrBb6JHh6uQ1buxuoWe6QbWqArRuRb9
-	 GD8Rh+IGPTCxcCTB3c9/9SWXmhuWUlJT55gaGF9GMKQFNrqBn5ogTQIiKhmgfT26OC
-	 uz0rOg9BW292o9M+5Fel25c9L9bEL34TpN8otEYXNXJkH3BZb4v9301FlHTvcUZDTe
-	 kx1VCGUaUvfXwAgoyaZRLQajIHezn+wNVE0J2OZsZn6HQKvcr9S+1JYIReM7x69v16
-	 jRtln5FTv7R+EZbLyRllsMTXjwFB7KNjQYTUD6y6TFcwDQytgWAtDdxfWQOmo5BXZI
-	 1IObiCZTNBUuw==
-Message-ID: <d5d0133f-1b42-4ad0-a3e0-2a2bdeb67484@kernel.org>
-Date: Tue, 12 Aug 2025 09:40:20 +0200
+	s=arc-20240116; t=1754984524; c=relaxed/simple;
+	bh=+49DWXrfhN657dha6xI2fqhhRcYzq0kFnIT7YL3Gtew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R+122+AioXOvxZHJN06vB4lc87MDU5gMj9hTnrP1ZrXCUTYsRrUXV1LLuPiUm6Tm+HfmeWJvK+lTEEWANjUmob0GuH9gkhQ/rb8u5P7sw+er2Et/JBiZ7jY+J0Eh+ach9wb8MuYiR3lslIKJCU7IuSVoM2VPrOWNROW57KHwroI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gB48C4KB; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-321a5d6d301so1480106a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 00:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754984522; x=1755589322; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2usP4TJRBl0R4HFxzOwnETO15gJ9qQezUfLPVB9501c=;
+        b=gB48C4KBzIwvnmu2Ixjxqi+F1icgSou54MWnOnxOHfE7cw6OS/P+HFqY0rtoKLNZwM
+         h2iGXjGBOgKQDSEkbgvtIFA6sPns0QU43R7J684xgwQRpke6O2EWH72bTDUXJH2x3acF
+         CoqynaHP5icDHds1RYBKOlmquqsfaVF5l66lDM05nOiizmc9Tm0AmsC9Q/nJdg0xEFxi
+         5JNE/DWYQq3yWLwIXXJND4W3SzKstCDNPp3AbB6A/yGCBKjU3DUnfFjo57X9BX73319b
+         7cD9BpVza80rhfklAiHP9+wGdoHZLbbc+FwVITsQoSxwC++iHfB1PrO+XqfyScEkBhW+
+         1URA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754984522; x=1755589322;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2usP4TJRBl0R4HFxzOwnETO15gJ9qQezUfLPVB9501c=;
+        b=goyk9H/WqbeJotOfNujfNswdDvW736vZDMKIjbLOcI6CNJbDONvHkUzikIajZTdPLz
+         hjxiDNy0z6f1zm2c2mV6QlKaZJyJDoAroBTpyJTsdTwjsRmawvd/Tun3IqOqhig2CXea
+         m5S1SZTC1VeTOK9m1oRrmov8VjOUqRs5hXL5empG6T3msu5L16Yt/43NtICjOPOzcUng
+         IecrEHn4Rq1M4ofXuCUzna4vQRNoFqCT4BJh9PGRQiWA/mfvtJnw35sBK6/nG8R10IxX
+         jniuivJkhuGq1NGWkaZazPLC748nzeSEMxZipy+hlCyE+6lD4ffMEU9dGfkOh84u5crT
+         yu7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8yOBkHaf1/5VnfB0tpGtsCr0IamRTPLQD85edvzBnExvaBLljMyERpGNqKiApd9eKGtBUIo14NluEVD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKXOXIbclkiNXR87RH79VlD3pY+YMBLK7KTgNV3x+JTuFz/qF+
+	thZcwulXGT657tqiY+praGtkeApBheXWXiV5x6GWLPbeyz4KyhN2gyDY
+X-Gm-Gg: ASbGncvOfChWaQ2r5HwsLDGfQ18OHP52j+g9qJix+fxpM5O74cm0YnQJMuc9lVyqT8K
+	A2hXkgMLOn3Ek0MU/M/RLHqymcimGdnB6Y3zuJRRx9YbH3KJ/kgF2YIOPtrxeW9+iTlqiSNrgDy
+	ERh/INKqLNmZcSgu2nsgSEh1G/T3ubvcBYpSuBmJSNUow9JpSt7i/I0geNTZKCOizcuemXzxFGG
+	eBOUpkjvdmSbpTVVteQ1r+RTuTdmL2jVzsEFzbikKGM3xA8/P5AotMq2Ryuo6b+3tEqmRE/WACP
+	zF1Lc0fZPntg/hIXqDFQ3gOa25tHwpDgXBFB36IDMsp9qWPnE9R6MylvcOGKVv7gn0HqroWGsvZ
+	BBpq0+lFZeA9FyK4li2tQZnJ8Wyq6xLIwBM4XD/belQ==
+X-Google-Smtp-Source: AGHT+IFG26EXpuER/wCjLeHOwcnArS39F+L5FUFGkrr1EOswZWiAUtIlDmGAln1pS7Xn+ypZt9hzxQ==
+X-Received: by 2002:a17:90a:d603:b0:321:1680:e056 with SMTP id 98e67ed59e1d1-321839ec009mr23028178a91.9.1754984521824;
+        Tue, 12 Aug 2025 00:42:01 -0700 (PDT)
+Received: from localhost.localdomain ([2408:80e0:41fc:0:fe29:0:2:4699])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-321c25f3063sm1234347a91.32.2025.08.12.00.41.55
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 12 Aug 2025 00:42:01 -0700 (PDT)
+From: yaozhenguo <yaozhenguo1@gmail.com>
+X-Google-Original-From: yaozhenguo <yaozhenguo@jd.com>
+To: tglx@linutronix.de,
+	yaoma@linux.alibaba.com,
+	akpm@linux-foundation.org
+Cc: max.kellermann@ionos.com,
+	lihuafei1@huawei.com,
+	yaozhenguo@jd.com,
+	linux-kernel@vger.kernel.org,
+	ZhenguoYao <yaozhenguo1@gmail.com>
+Subject: [PATCH] watchdog/softlockup: fix wrong output when watchdog_thresh < 3
+Date: Tue, 12 Aug 2025 15:41:32 +0800
+Message-Id: <20250812074132.27810-1-yaozhenguo@jd.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: everest,es8316: Document routing
- strings
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drake@endlessm.com,
- katsuhiro@katsuster.net, matteomartelli3@gmail.com, zhoubinbin@loongson.cn,
- KCHSU0@nuvoton.com, patches@opensource.cirrus.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
-References: <20250809151853.47562-1-jihed.chaibi.dev@gmail.com>
- <20250809151853.47562-2-jihed.chaibi.dev@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250809151853.47562-2-jihed.chaibi.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/08/2025 17:18, Jihed Chaibi wrote:
-> The es8316 driver defines several DAPM widget names that are used for
-> audio routing in the device tree. However, these strings are not
-> documented in the binding file.
-> 
-> This forces developers to read the C source to discover the valid
-> names, which can be inefficient and error-prone.
+From: ZhenguoYao <yaozhenguo1@gmail.com>
 
-Reading free form text is as inefficient and error-prone as reading the
-driver.
+When watchdog_thresh is below 3, sample_period will be less than 1 second.
+So the following output will print when softlockup:
 
-> 
-> Add a list of the input and output widget names to the binding's
-> description to make it self-contained and improve the user
-> experience for board bring-up.
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> ---
->  .../devicetree/bindings/sound/everest,es8316.yaml  | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.yaml b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> index e4b2eb5fa..cd073dd0c 100644
-> --- a/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> +++ b/Documentation/devicetree/bindings/sound/everest,es8316.yaml
-> @@ -12,6 +12,20 @@ maintainers:
->    - Matteo Martelli <matteomartelli3@gmail.com>
->    - Binbin Zhou <zhoubinbin@loongson.cn>
->  
-> +description: |
-> +  Everest ES8311, ES8316 and ES8323 audio CODECs
-> +
-> +  Valid routing names defined in the driver for this codec include:
+CPU#3 Utilization every 0s during lockup
 
-Anyway, don't describe drivers but hardware.
+Fix this by changing time unit from seconds to milliseconds.
 
-Best regards,
-Krzysztof
+Signed-off-by: ZhenguoYao <yaozhenguo1@gmail.com>
+---
+ kernel/watchdog.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 80b56c002c7f..9c7134f7d2c4 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -455,17 +455,17 @@ static void print_cpustat(void)
+ {
+ 	int i, group;
+ 	u8 tail = __this_cpu_read(cpustat_tail);
+-	u64 sample_period_second = sample_period;
++	u64 sample_period_msecond = sample_period;
+ 
+-	do_div(sample_period_second, NSEC_PER_SEC);
++	do_div(sample_period_msecond, NSEC_PER_MSEC);
+ 
+ 	/*
+ 	 * Outputting the "watchdog" prefix on every line is redundant and not
+ 	 * concise, and the original alarm information is sufficient for
+ 	 * positioning in logs, hence here printk() is used instead of pr_crit().
+ 	 */
+-	printk(KERN_CRIT "CPU#%d Utilization every %llus during lockup:\n",
+-	       smp_processor_id(), sample_period_second);
++	printk(KERN_CRIT "CPU#%d Utilization every %llums during lockup:\n",
++	       smp_processor_id(), sample_period_msecond);
+ 
+ 	for (i = 0; i < NUM_SAMPLE_PERIODS; i++) {
+ 		group = (tail + i) % NUM_SAMPLE_PERIODS;
+-- 
+2.43.5
+
 
