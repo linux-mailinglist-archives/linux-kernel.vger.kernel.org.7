@@ -1,111 +1,193 @@
-Return-Path: <linux-kernel+bounces-763824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD53B21AB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:24:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC51BB23C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9FB82A4C38
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588826280DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 23:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB58D2E264F;
-	Tue, 12 Aug 2025 02:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPaIDJLG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427122E62B0;
+	Tue, 12 Aug 2025 23:53:05 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABDB2D8365;
-	Tue, 12 Aug 2025 02:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D46B2DAFCE;
+	Tue, 12 Aug 2025 23:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754965449; cv=none; b=QRx6EuoRCCqazW8rw2xFKUSvjTZeVKp7s0BtKENAUir1LMNnbXDR6+hqKYJIuQzvkWX0nOMQeetLNqQJZ2PfE+BF+K7/lNla97dbHY2QH1LgedfefdeqGc/xuBBbwoboGLmBVdxz9N4+k3nDT6RdqbVTqlK0n9hz6KgYhSUJAuw=
+	t=1755042784; cv=none; b=qaD+ynXvSLH3xtSxD0AEqeyO/GzZDmpIPFvgh64IUR86OXISxzaXxxJkUnFLoFC3UNxCdBxeYfiClfrCnGxjRKw6ISULmcsEUBWDxtdRM6ubXAoyj67nVS9hdvnAmrAz2kgfPhGcvHfhbfmtV/+CBCNCdUZrExu96/nIq9mts/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754965449; c=relaxed/simple;
-	bh=asvWv2bSNLXLGWE7FVWYNqw9ZydiOrnVs4ABf4yoFN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWK5DsqnAF0X6MRAbeRlVQPzH/ik/XO27twr2TkULxYGBIoruAbJPzfNgy8ornP94lZg1Aw6AZjWg4BSHlD75D5P6vzzoSPKeld9hzh84FaT3VngdKQFXsVOVCZ1y14p8U3ua5zFqbK+/bPtKqty/LEMdp8yglQPKA+Yy3c5lUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPaIDJLG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E597FC4CEED;
-	Tue, 12 Aug 2025 02:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754965448;
-	bh=asvWv2bSNLXLGWE7FVWYNqw9ZydiOrnVs4ABf4yoFN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mPaIDJLGYLmEv2EsWT+mb1K0/93aktw5DRUhh+JmzXo8Q1fZl8FHcNpQZMeyU03KZ
-	 QkFdwU7k6DmPjlsNI+R2reM+EwblwHQy324uoZ7WhfB+gbH3ortN567kcIRikOdcRN
-	 DkTytLZXs6dNjPgSN46bfWoWtEcQGnI7ueFr+B2cxHnux2lHuviH6cSsjCcxtvZZxq
-	 YR2SUsHKCX2EqJspBW6WON+obvsxk4V5K+aI0kdOzAIh4UQRXzbfX/0BDqvqIOHE5P
-	 KA5dPgITJopVyLiQ9hv+ednY6dnRB7HRXUwp1p8BaFU/qlnH2FLe7dxnA9SYqwO+dj
-	 CwG++Rp9dHrtg==
-Date: Mon, 11 Aug 2025 21:24:06 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
-Subject: Re: [PATCH v3 0/2] Enable audio on qcs9075-evk board
-Message-ID: <l7kwna7lebazoaqxz3zdkv325kw4ohsuidfzltdy3msfiburb6@iz4atympejdx>
-References: <20250724155632.236675-1-mohammad.rafi.shaik@oss.qualcomm.com>
+	s=arc-20240116; t=1755042784; c=relaxed/simple;
+	bh=gn54IA1/q/Cn2j1DUaCUAMg4l43QdpVX0r604C6RKaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCDw1VF2S9Abc2JQPlRxAHaZtQqIS8HoQm2Iav8kVbIFb4Ssio3zWCX1WvMMGEfRgj4/mHt5qJDVMhbKJtzzXTqulEjLs2e9a5/aaOPgggn7A0r7grVEbmbNDd5UOXFUHTWpd+rZJudamba+eYGim4VhUA/rVciF8KDX5IG5ubw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1ulynI-005Y1s-6o;
+	Tue, 12 Aug 2025 23:52:41 +0000
+From: NeilBrown <neil@brown.name>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org,
+	ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] VFS: prepare for changes to directory locking
+Date: Tue, 12 Aug 2025 12:25:03 +1000
+Message-ID: <20250812235228.3072318-1-neil@brown.name>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724155632.236675-1-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 09:26:30PM +0530, Mohammad Rafi Shaik wrote:
-> Enable audio support on qcs9075-evk board.
-> 
-> Introduce HS (High-Speed) MI2S pin control support.
-> The I2S max98357a speaker amplifier is connected via HS0 and I2S
-> microphones utilize the HS2 interface.
-> 
-> DT-Binding link for sound compatible:
-> https://lore.kernel.org/linux-sound/20250519083244.4070689-3-mohammad.rafi.shaik@oss.qualcomm.com/
-> 
-> ---
-> This patch series depends on patch series:
-> https://lore.kernel.org/linux-arm-msm/20250530092850.631831-1-quic_wasimn@quicinc.com/
+This is the first of 3 sets of patches which, together, allow
+filesystems to opt-out of having the directory inode lock held over
+directory operations (except readdir).
+- This set creates some new APIs in the VFS and makes a few changes in
+  callers either because they are trivial (patch 08) or because they
+  involve a flag-day change (patches 06, 07, and 09).
+- The second set rolls the new APIs out to all non-VFS code which 
+  invokes directory operations.
+- The third (which isn't yet bug-free) changes the implementation
+  of these APIs to make the use of inode_lock() optional.
 
-Please resubmit once this is tested on a clean upstream branch.
+I imagine these three set landing in three different merge windows,
+though some of the second set could get in the same window as the first.
+
+The patches are listed below and are available at 
+   https://github.com/neilbrown/linux
+in branch pdirops.
+
+This first set adds and updates APIs with three particular goals:
+1/ centralising all lookup and locking for directory ops.  This
+  includes a variety of dentry_lookup() calls with done_dentry_lookup(),
+  and rename_lookup() with done_rename_lookup().
+2/ Removing the use of d_drop() during a directory operation (it is
+   OK for d_drop to happen at the end).  As the goal is for locks
+   to be based on the dentry, a dropped dentry will no longer protect the name.
+   The only change in this patch set is 08 which changes d_splice_alias()
+   and d_add() to not require a preceding d_drop(), and then removes
+   the unnecessary d_drop()s.
+3/ No blocking in d_alloc_parallel() within readdir() (iterate_shared()) requests.
+   We will need to invert the ordering between d_alloc_parallel() and
+   inode_lock(), so blocking in d_alloc_parallel() to, e.g., prime the
+   dcache during readdir must be avoided.  The last patch introduces
+   new interfaces that can be used instead and explains them.
+   Patches 9 and 10 prepare for this.
+
+Please review and consider for 6.18.
 
 Thanks,
-Bjorn
+NeilBrown
 
-> ---
-> 
-> changes in [v3]:
-> 	- Updated link-name from HS0 MI2S to HS1 MI2S and sorted nodes in order.
-> 	- Link to V2 : https://lore.kernel.org/linux-arm-msm/20250616070405.4113564-1-mohammad.rafi.shaik@oss.qualcomm.com/
-> 
-> changes in [v2]:
-> 	- Updated commit message as suggested by Dmitry Baryshkov.
-> 	- Link to V1 : https://lore.kernel.org/linux-arm-msm/20250525155356.2081362-1-mohammad.rafi.shaik@oss.qualcomm.com/
-> 
-> Mohammad Rafi Shaik (2):
->   arm64: dts: qcom: sa8775p: Add gpr node
->   arm64: dts: qcom: qcs9075-evk: Add sound card
-> 
->  .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 52 ++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 54 +++++++++++++++++++
->  2 files changed, 106 insertions(+)
-> 
-> 
-> base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-> prerequisite-patch-id: 853eaf437b81f6fa9bd6d36e6ed5350acaf73017
-> prerequisite-patch-id: 6d9fd3e0257f120cff342c287774454aad2be2e8
-> prerequisite-patch-id: 736cbcd47d5e7cfcc53fcaa7da920eac757ce487
-> prerequisite-patch-id: 4eddce6daeaa125f14380586c759f8cb8997c601
-> prerequisite-patch-id: baac180e8715b5cf2922f79346440d92569704f6
-> prerequisite-patch-id: 65730290d31f18e66e2ba0dfdeb1844d7442c272
-> -- 
-> 2.34.1
-> 
+ [PATCH 01/11] VFS: discard err2 in filename_create()
+ [PATCH 02/11] VFS: introduce dentry_lookup() and friends
+ [PATCH 03/11] VFS: add dentry_lookup_killable()
+ [PATCH 04/11] VFS: introduce dentry_lookup_continue()
+ [PATCH 05/11] VFS: add rename_lookup()
+ [PATCH 06/11] VFS: unify old_mnt_idmap and new_mnt_idmap in
+ [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
+ [PATCH 08/11] VFS: allow d_splice_alias() and d_add() to work on
+ [PATCH 09/11] VFS: use global wait-queue table for d_alloc_parallel()
+ [PATCH 10/11] VFS: use d_alloc_parallel() in lookup_one_qstr_excl().
+ [PATCH 11/11] VFS: introduce d_alloc_noblock() and d_alloc_locked()
+
+Future patches:
+
+set 2:
+ devtmpfs: use new dentry locking APIs
+ audit: use new dentry locking APIs
+ debugfs: use new dentry locking APIs.
+ binderfs: use new dentry locking APIs.
+ binfmt_misc: use new dentry locking APIs.
+ kernel/bpf: use new dentry locking APIs.
+ devpts: use new dentry locking APIs.
+ ipc/mqueue: use new dentry locking APIs.
+ s390/hypfs: use new dentry locking APIs.
+ security: use new dentry locking APIs.
+ tracefs: use new dentry locking APIs.
+
+ ecryptfs: use dentry_lookup_continue() in lock_parent()
+ ecryptfs: use rename_lookup()
+
+ fs/proc: Don't look root inode when creating "self" and "thread-self"
+ proc: use d_alloc_locked() and lock_lookup()
+
+ bcachefs: use new dentry locking APIs
+ exfat: use d_splice_alias(), don't d_drop()
+ coda: don't d_drop() early.
+ smb/server: use new dentry locking APIs.
+ nfsd: use new dentry locking APIs.
+ cachefiles: use new dentry locking APIs.
+ btrfs: use dentry_lookup_killable()
+ fuse: use new dentry locking APIs.
+ sunrpc/rpc_pipe: use new dentry locking APIs.
+ xfs: use new dentry locking APIs.
+
+ ovl: use is_subdir() for testing if one thing is a subdir of another
+ ovl: introduce ovl_upper_dentry_lookup() and use it.
+ ovl: switch from parent_lock() to dentry_lookup_continue() except for rename.
+ ovl: use dentry_lookup_killable() in ovl_check_whiteouts()
+ ovl: split ovl_tempname() out from ovl_lookup_temp().
+ ovl: Change ovl_lookup_temp() to use ovl_upper_dentry_lookup()
+ ovl: Change all rename code to use rename_lookup_noperm()
+ ovl: don't dget_parent() in ovl_lookup_real_one()
+ ovl: use new APIs in ovl_lookup_real_one()
+ ovl: use new dir apis in ovl_cache_update()
+
+ NFS: remove d_drop() from nfs_atomic_open()
+ nfs: use d_alloc_noblock() in silly-rename
+
+ afs: use d_splice_alias() in afs_vnode_new_inode()
+ afs: use d_time instead of d_fsdata
+ afs: don't unhash/rehash dentries during unlink/rename
+ AFS: use new dir access APIs.
+
+set 3:
+ VFS: make various namei.c functions static.
+ VFS: Remove lookup_one() and lookup_noperm()
+ VFS: Introduce S_DYING which warns that S_DEAD might follow.
+ VFS: lift d_alloc_parallel above inode_lock
+ VFS: provide alternative to s_vfs_rename_mutex
+ VFS: Add ability to exclusively lock a dentry
+ VFS: use new dentry locking for open/create/remove/rename
+ VFS: allow a filesystem to opt out of directory locking.
+ NFS: allow concurrent dir ops.
+
 
