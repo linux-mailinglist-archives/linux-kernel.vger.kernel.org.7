@@ -1,239 +1,144 @@
-Return-Path: <linux-kernel+bounces-764705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8771FB2263C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8A3B2263A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0431AA5127
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D697425383
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3886F2EF656;
-	Tue, 12 Aug 2025 11:59:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20F52EBBB0
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14352EE61D;
+	Tue, 12 Aug 2025 11:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QUga3taB"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189252E716C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754999997; cv=none; b=JyJUhzcgJ11LVIzmr6zkcDtoa+4UAw8BYlCT52V01anWQm4A8vPGCQXavrUo30J+QSKVaF+09n4seCg0AZGAxVPn4D/sTQHuTC/Z4fPfQZTuyD2DKdgfQ/UEhb6tBaeUI6JhVK3aFy0VKADpS9lMFWrZwdAQZjx7qCADa6/XdCU=
+	t=1754999978; cv=none; b=VkH5yD12APxwq+SwB4wobf3buTKD7bB+OPUgYMM9eHtdtdEEY+liCkKPNoKY4HBH1cpYakq/usQ04Y+6m+JGUW6lj2qwxm47mvzil15+HToZ7F1RBaRbXSI0o54alYPxs6SusUztFzg5DitA7uvBw6Z+pSm/lRlq9McMwv8KP+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754999997; c=relaxed/simple;
-	bh=03z7Cyoq9SDJzbs2BPUxa3foPXw00v94rt7eOwqmcxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePAnpHE+n0mltma7cK544RGAt8rq3PWnZrebXECk1QzR3t3CPOas77vqc5dzbMhSB5jrEHwnt4bUHuULIStZK5g1JbpuhVyy6hOtOKsGlGsEEh/QQEN2MX12O//v4y6e61VNY8f4MmCRLWG5HB+qSrlD8GDf0x3527QTxs1pARM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8Bx22q3LJtof_I+AQ--.18926S3;
-	Tue, 12 Aug 2025 19:59:51 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJDx_8OvLJtodotGAA--.3774S2;
-	Tue, 12 Aug 2025 19:59:46 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Lee Jones <lee@kernel.org>,
-	Corey Minyard <minyard@acm.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	jeffbai@aosc.io,
-	kexybiscuit@aosc.io,
-	wangyao@lemote.com,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH v9 0/3] LoongArch: Add Loongson-2K BMC support
-Date: Tue, 12 Aug 2025 19:59:32 +0800
-Message-ID: <cover.1754999365.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1754999978; c=relaxed/simple;
+	bh=JZZNGG31V3kJLzMHEUF6/xniPr6gR5xv179L5PweeAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kjj06YKdwCPq9VcH9Xt2XTswMX2l4qS/p0kU1p6Z2oOtd2N4ir1ptqdRY9Cw85jI5txl2s5o1of9RPNvFv+r5SAKlvD8r5nhk2ml9jWMEwYSA8U2X47KFK3zdwKmap0skp36n/30V18Gevk2yW7thsymRbbYttCq0UIJiX+z6Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QUga3taB; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61568fbed16so8411190a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 04:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754999974; x=1755604774; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=67A9vrkSTXv7oh0rsvEOh9ZvdiV8B/o1XgYa59BiXUA=;
+        b=QUga3taBkJpU2q5SHIQ+X33MRKLSUUs/+kpjvH2JwR28O8nHPJKUv84F4BzwFo1v32
+         a8yNN2IwKFR6ePUYr8u5zVLByYw9aopDdm8MRMMqcmSP7iQz0iKl1VV3xKpi1D2KPW3e
+         pzzI8TEKZcUBChrWP8nHU8+QIVMxO2NlQMjdmsnAyqGUYnHxT5GrUwuZGJJLi4WtA2wY
+         zt4PTENygXtPOwUOHjiGrDb/uBeaVUtdq9uQNd24Oc45mkzKvzuQsGWqAP8stHSDu8IS
+         2+UsLoAjLGL4kiv0m0nnAWPTG1p6y4vn9WQLKRlAp43q8EA06+SUeP7BcKKCLZLNrlDm
+         NA8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754999974; x=1755604774;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=67A9vrkSTXv7oh0rsvEOh9ZvdiV8B/o1XgYa59BiXUA=;
+        b=WDTcyo2SkdVxvxcf/4xpFseK5S3sUoEs9+133UCMkeL6STVqImg3AfCIB4aaAsTNgu
+         OUrCEFI5z0p1TOCyumupR+WA+DC6VjFZGmgQaQAXIC8DOsBpaK7ZN9X3NKYBqGpPQF2X
+         tz1Tc5i4CcQ+W3npTcJeDz9VdQB3wV6wqM8D08NasYDP+Qlb24v0cWnQYNMHl8lvxU5G
+         rgABUBzkCv78lpGLxikbAbIAKIIFfV5rLWTJnfON7G3MhpxkqOwEyTK3hOvMdHWWOEc2
+         I6oAXL1GBvZtWG+zCcOqypGOKl4KAQBcluf/AhNWNGY+vVeucwRjdbIFOPJ+6O/Ii0Jp
+         YDZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsdPbo1Fb5jJdHBwDHpc0xgTLqp3Aw4YZIvGyyMWmF68XwdCdnHmROINMhyyPUPGZEdV6/uSom/gT1A64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxVucb3HnZvY/qBmrpducMYj8P3lf2aKHaLtLa5Ku0cuJyRgZB
+	GE2A3t/vBNbLpY2M4irY8QLeHnO0uyPKiaPM5E515MDH23K8fy4VfM2bIIRLFfN4t4U=
+X-Gm-Gg: ASbGncsjAP53zRNV3VbJtk67tEYGyaRIIdk8O7lS6pb7CtjSJvrni6+cz7g7ndnhb8S
+	SMOOC6hL9WHfRGGOzQAsbQYiEjQRT+a3Z4fedk50SNis0Kl0mw9tLGwEmuk4GzMNlUZ3fBeERY8
+	7KAfhwFKlWYakJP0ASRfSYCouJYHh1vPjwrsd/jA6WqCxQNzcXJQh9RZUhN5EaVIXP18nPrpoNP
+	k2a8o8fNO5Wl/E81olHFBd5qqtXqXnaSO4zjSAYbbfb/XSfyfTPK1E8I9DPf6EZF9Z05bjChJRz
+	W07vwVme5GNQNkl/hiVWZICrsSZSbobiZY2Jdpqzqw+X/LBzsADrrQdCRRQaQfqsSSuewkIf6nM
+	CFAprZ1ea9jbLpokTWhKZkTKT
+X-Google-Smtp-Source: AGHT+IEYdnO36bGTRDTE6/ceFvXjPdeqww/IObB1oCT0gIweSh44S6QYfyjia7Z2A5fVkG27oSR3PA==
+X-Received: by 2002:a05:6402:40d3:b0:612:bd30:d326 with SMTP id 4fb4d7f45d1cf-617e2c4d76fmr13177873a12.22.1754999974271;
+        Tue, 12 Aug 2025 04:59:34 -0700 (PDT)
+Received: from pathway ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8feaf2fsm19866798a12.38.2025.08.12.04.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 04:59:33 -0700 (PDT)
+Date: Tue, 12 Aug 2025 13:59:32 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, akpm <akpm@linux-foundation.org>,
+	corbet <corbet@lwn.net>, "john.ogness" <john.ogness@linutronix.de>,
+	"lance.yang" <lance.yang@linux.dev>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	paulmck <paulmck@kernel.org>, rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 1/5] panic: clean up code for console replay
+Message-ID: <aJsspG0JdxyRLNte@pathway>
+References: <20250703021004.42328-2-feng.tang@linux.alibaba.com>
+ <20250714210940.12-1-safinaskar@zohomail.com>
+ <aHWliJhyIZnq97Mm@U-2FWC9VHC-2323.local>
+ <1980ba9224c.11f5e5a9635585.8635674808464045994@zohomail.com>
+ <aHWwL7TdabnGna3D@U-2FWC9VHC-2323.local>
+ <1980bfc17f1.122b80ffe36544.5266293070616137570@zohomail.com>
+ <aHXKuiqELS1tmchE@U-2FWC9VHC-2323.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDx_8OvLJtodotGAA--.3774S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxuFyxtFyxZF1fuF47Wr15Awc_yoW7Ar1Upa
-	15ursxCr1DKF1xJrZ3Aw1fuFyYga95Ja4SgF17A345ZF4UCa40yryFka13XFy7AF4kKryI
-	qrsayF1Ska45u3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHXKuiqELS1tmchE@U-2FWC9VHC-2323.local>
 
-Hi all:
+On Tue 2025-07-15 11:27:54, Feng Tang wrote:
+> On Tue, Jul 15, 2025 at 06:48:47AM +0400, Askar Safin wrote:
+> > 
+> >  ---- On Tue, 15 Jul 2025 05:34:39 +0400  Feng Tang <feng.tang@linux.alibaba.com> wrote --- 
+> >  > I see. How about changing the patch to: 
+> >  > 
+> >  > -            bit 5: print all printk messages in buffer
+> >  > +            bit 5: replay all kernel messages on consoles at the end of panic
+> > 
+> > Yes, I agree!
+> 
+> Hi Andrew,
+> 
+> Could you help to squash below patch to 1/5 patch "panic: clean up code
+> for console replay" in the nonmmu-unstable branch? Thanks!
+> 
+> - Feng
+> 
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f34de9978a91..a84d3f7f5bbf 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4533,7 +4533,7 @@
+>  			bit 2: print timer info
+>  			bit 3: print locks info if CONFIG_LOCKDEP is on
+>  			bit 4: print ftrace buffer
+> -			bit 5: replay all messages on consoles at the end of panic
+> +			bit 5: replay all kernel messages on consoles at the end of panic
+>  			bit 6: print all CPUs backtrace (if available in the arch)
+>  			bit 7: print only tasks in uninterruptible (blocked) state
+>  			*Be aware* that this option may print a _lot_ of lines,
 
-This patchset introduces the Loongson-2K BMC.
+Yes, this looks better.
 
-It is a PCIe device present on servers similar to the Loongson-3 CPUs.
-And it is a multifunctional device (MFD), such as display as a sub-function
-of it.
+It sees that this change is missing in the mainline.
+Fang, could you please send it as a followup fix, please?
 
-For IPMI, according to the existing design, we use software simulation to
-implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
-
-Also since both host side and BMC side read and write kcs status, we use
-fifo pointer to ensure data consistency.
-
-For the display, based on simpledrm, the resolution is read from a fixed
-position in the BMC since the hardware does not support auto-detection
-of the resolution. Of course, we will try to support multiple
-resolutions later, through a vbios-like approach.
-
-Especially, for the BMC reset function, since the display will be
-disconnected when BMC reset, we made a special treatment of re-push.
-
-Based on this, I will present it in four patches:
-patch-1: BMC device PCI resource allocation.
-patch-2: BMC reset function support
-patch-3: IPMI implementation
-
-Thanks.
-
--------
-V9:
-Patch (2/3):
- - PCIE -> PCI-E in dev_err();
- - Separate the read from the write;
-
-Link to V8:
-https://lore.kernel.org/all/cover.1752548073.git.zhoubinbin@loongson.cn/
-
-V8:
-Patch (1/3):
- - Similar to as3711_subdevs, identify elements in ls2k_bmc_cells.
-
-Patch (2/3):
- - Rename variables using usual names, such as `priv` -> `ddata`;
- - Use if statements instead of #ifery;
- - Rewrite the error message to ensure it is easy to understand;
- - ls2k_bmc_pdata_initial(dev, priv); -> ls2k_bmc_pdata_initial(priv);
-
-Link to V7:
-https://lore.kernel.org/all/cover.1751617911.git.zhoubinbin@loongson.cn/
-
-V7:
-Patch (1/3):
-  - Fix build warning by lkp: Add depend on ACPI_GENERIC_GSI
-    - https://lore.kernel.org/all/202507021011.sDAHGinj-lkp@intel.com/
-
-Link to V6:
-https://lore.kernel.org/all/cover.1750939357.git.zhoubinbin@loongson.cn/
-
-V6:
-- Add Acked-by tag from Corey, thanks;
-Patch (1/3):
-  - Fix build warning by lkp: Add depend on PCI
-    - https://lore.kernel.org/all/202506210204.LVZc2VG2-lkp@intel.com/
-    - https://lore.kernel.org/all/202506210231.ZWWNhofU-lkp@intel.com/
-    - https://lore.kernel.org/all/202506210652.ipUFDU5B-lkp@intel.com/
-    - https://lore.kernel.org/all/202506210343.XCHkzorp-lkp@intel.com/
-
-Link to V5:
-https://lore.kernel.org/all/cover.1750301674.git.zhoubinbin@loongson.cn/
-
-V5:
-Patch (1/3):
- - Rename ls2kbmc-mfd.c to ls2k-bmc-core.c;
- - Rename MFD_LS2K_BMC to MFD_LS2K_BMC_CORE and update its help text.
-Patch (3/3):
- - Add an IPMI_LS2K config in the IPMI section that enables the IPMI
-   interface and selects MFD_LS2K_BMC_CORE.
-
-Link to V4:
-https://lore.kernel.org/all/cover.1749731531.git.zhoubinbin@loongson.cn/
-
-V4:
-- Add Reviewed-by tag;
-- Change the order of the patches.
-Patch (1/3):
-  - Fix build warning by lkp: Kconfig tristate -> bool
-    - https://lore.kernel.org/all/202505312022.QmFmGE1F-lkp@intel.com/
- - Update commit message;
- - Move MFD_LS2K_BMC after MFD_INTEL_M10_BMC_PMCI in Kconfig and
-   Makefile.
-Patch (2/3):
-  - Remove unnecessary newlines;
-  - Rename ls2k_bmc_check_pcie_connected() to
-    ls2k_bmc_pcie_is_connected();
-  - Update comment message.
-Patch (3/3):
-  - Remove unnecessary newlines.
-
-Link to V3:
-https://lore.kernel.org/all/cover.1748505446.git.zhoubinbin@loongson.cn/
-
-V3:
-Patch (1/3):
- - Drop "MFD" in title and comment;
- - Fromatting code;
- - Add clearer comments.
-Patch (2/3):
- - Rebase linux-ipmi/next tree;
- - Use readx()/writex() to read and write IPMI data instead of structure
-   pointer references;
- - CONFIG_LOONGARCH -> MFD_LS2K_BMC;
- - Drop unused output.
-Patch (3/3):
- - Inline the ls2k_bmc_gpio_reset_handler() function to ls2k_bmc_pdata_initial();
- - Add clearer comments.
- - Use proper multi-line commentary as per the Coding Style documentation;
- - Define all magic numbers.
-
-Link to V2:
-https://lore.kernel.org/all/cover.1747276047.git.zhoubinbin@loongson.cn/
-
-V2:
-- Drop ls2kdrm, use simpledrm instead.
-Patch (1/3):
- - Use DEFINE_RES_MEM_NAMED/MFD_CELL_RES simplified code;
- - Add resolution fetching due to replacing the original display
-   solution with simpledrm; 
- - Add aperture_remove_conflicting_devices() to avoid efifb
-   conflict with simpledrm.
-Patch (3/3):
- - This part of the function, moved from the original ls2kdrm to mfd;
- - Use set_console to implement the Re-push display function.
-
-Link to V1:
-https://lore.kernel.org/all/cover.1735550269.git.zhoubinbin@loongson.cn/
-
-Binbin Zhou (3):
-  mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
-  mfd: ls2kbmc: Add Loongson-2K BMC reset function support
-  ipmi: Add Loongson-2K BMC support
-
- MAINTAINERS                      |   7 +
- drivers/char/ipmi/Kconfig        |   7 +
- drivers/char/ipmi/Makefile       |   1 +
- drivers/char/ipmi/ipmi_si.h      |   7 +
- drivers/char/ipmi/ipmi_si_intf.c |   4 +
- drivers/char/ipmi/ipmi_si_ls2k.c | 189 +++++++++++
- drivers/mfd/Kconfig              |  13 +
- drivers/mfd/Makefile             |   2 +
- drivers/mfd/ls2k-bmc-core.c      | 525 +++++++++++++++++++++++++++++++
- 9 files changed, 755 insertions(+)
- create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
- create mode 100644 drivers/mfd/ls2k-bmc-core.c
-
-
-base-commit: 006aa8f57f55dd5bf68c4ada1e0d3f4e59027d71
--- 
-2.47.3
-
+Best Regards,
+Petr
 
