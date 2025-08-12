@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-764624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D6AB2253C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2682B22540
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB02504748
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08073BDA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFCA2ED15D;
-	Tue, 12 Aug 2025 11:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8AF2ED17C;
+	Tue, 12 Aug 2025 11:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6QwRGWm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyNLwKgH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6324A2ED141;
-	Tue, 12 Aug 2025 11:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752C2ED168;
+	Tue, 12 Aug 2025 11:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996712; cv=none; b=dB9eRb8dG2eRBjdf6BwsHMWVjnhnB0WnOG+MyqkIG11LaZTh/r2fBRJdmXwoffOiLIJfDNpFHxgtM6CzN+9H6DVGOtSu2pIvwRT4pWWZ0Vrq+XbdGlzLGfsSHvPCGlk09z9C45xB2YrshJGUeAwr7I7x3g4J8YX9LC4e/qkeytE=
+	t=1754996715; cv=none; b=IsF+owjQPh3ckbw3HWX9U9GzJ1FMj7yqaTmXAwbSfPLqP5ERIlmMBiL1aI57QPS33atIFD13OkNWnMGTKU1rplu928mrOCQw4GZINrufCOFnhJbQT8ZyhSWr42skTssxL35f6G2b0CJXTeXZBJQSgoP40/anUFawqAZu0Ps9gNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996712; c=relaxed/simple;
-	bh=NbG/dlAMBbcennAPv/FIC5IAuzcBiFtNf8p2K2/4H70=;
+	s=arc-20240116; t=1754996715; c=relaxed/simple;
+	bh=ZtB0xbJwwLQJziWmx00hAhoKzJKKlE5OcUVMmZEcRUs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tfgY/C9d4gkR40+YBZSPhPwdwW8IfQ07y2EeFgMuB90GmX7tpbrllVyBHlRQLLX/nZYMQjkPf1vBXcHVhUfAduQRQ8WrE73qC/mZEDEG9BLErm0nZwjjdEZMi6z9udTDW7z2EgiiU16Xag3RS1VICBWuEEOYOtyD5WFZwS1DTR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6QwRGWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8035CC4CEF6;
-	Tue, 12 Aug 2025 11:05:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZniWT6cJ8tGjmy6EbK5PvwD4VEHzWGOIn40BRY6Ef+yQkz0OIvYGWRF6XGlVRTSsmRZqWJ50pa16cLK5utXFq39mMY4YeIDCfYPrn4m8BaYRnb1Bc2Vls5luMy7TAYMwgnEKmhnZu6AXW/ijo/C5Vj1tgdHWNk7o4X4RfJiCqfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyNLwKgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A32C4CEF6;
+	Tue, 12 Aug 2025 11:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996712;
-	bh=NbG/dlAMBbcennAPv/FIC5IAuzcBiFtNf8p2K2/4H70=;
+	s=k20201202; t=1754996714;
+	bh=ZtB0xbJwwLQJziWmx00hAhoKzJKKlE5OcUVMmZEcRUs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c6QwRGWmx8TDXhl97WGGhkLLG7F2WcfRKNik+10cNQOjIu7PeBUl/aRAPKDkWXYol
-	 hS7OzGzYfR5JlN3xxWCQ70pcibnuKSmGXq/XOnugeZRrn7Hl7LLOCK5Ev4e/HVcX7o
-	 55lQOL3BaJVoL6r3sfgYvphXBLn0ZGJOHh0jyhbxRxmmUJtBgH9T9hQr4+msVVUNnt
-	 e/37uQv1mtL3jebcp2pSkSZtQKhlp82LZnvJPshiKokXCzKcifQ/fkd83D9zH/tKDd
-	 eGxNMjem6BaonsZ0OAzyoD6OZqEiREfaEJZVjxOUSmZAFkxpvIvjBBiQXxPj4bccAZ
-	 wvM0Z3ULjU6jg==
+	b=AyNLwKgH8aj3QeUFtKubNi5cEt6PbYcL51a/7lZsMRr8eEO0+tkKUyLKdZUV5lj0n
+	 REJ4H4Wk8++tYDu7q7LFoCtrp2a9mDuZHSGFbZSBiYLzZDUFF7P9rm/whSfBxDiZbT
+	 NkvxcaHi/riZpo2jSxGvwMAVeLwaV6yBuW5clzsOTD8UP0ELK1GSl0Gq6LyAxZA7DB
+	 HjKTZzmG2i9J4q40sVijXi7D/jub5y0u74g7707SOxtUv/lY/zTN3qOOzAVHfpaAtz
+	 Xjaw8uv7O+nTv0AJT6blI6yl+6TmAEdvYrvc4hYqf+zvUHafbey5Ypx5ria9Mz1NTB
+	 +KQikEMQnHYLg==
 From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, srini@kernel.org, lgirdwood@gmail.com, 
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: perex@perex.cz, tiwai@suse.com, neil.armstrong@linaro.org, 
- linux-arm-msm@vger.kernel.org, krzysztof.kozlowski@linaro.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250806140030.691477-1-alexey.klimov@linaro.org>
-References: <20250806140030.691477-1-alexey.klimov@linaro.org>
-Subject: Re: [PATCH v2] ASoC: codecs: tx-macro: correct
- tx_macro_component_drv name
-Message-Id: <175499671026.16031.5383052594222916199.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:10 +0100
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250808104943.829668-1-colin.i.king@gmail.com>
+References: <20250808104943.829668-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: tas2781: Fix spelling mistake "dismatch"
+ -> "mismatch"
+Message-Id: <175499671247.16031.5935271982543013461.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,10 +62,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Wed, 06 Aug 2025 15:00:30 +0100, Alexey Klimov wrote:
-> We already have a component driver named "RX-MACRO", which is
-> lpass-rx-macro.c. The tx macro component driver's name should
-> be "TX-MACRO" accordingly. Fix it.
+On Fri, 08 Aug 2025 11:49:43 +0100, Colin Ian King wrote:
+> There is a spelling mistake (or neologism of dis and match) in a
+> dev_err message. Fix it.
 > 
 > 
 
@@ -75,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: tx-macro: correct tx_macro_component_drv name
-      commit: 43e0da37d5cfb23eec6aeee9422f84d86621ce2b
+[1/1] ASoC: tas2781: Fix spelling mistake "dismatch" -> "mismatch"
+      commit: b11f2a9745401d9ccc51c91b5482044d2ea936e8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
