@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-764843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D74B227C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:09:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A38B227EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE5C68221A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:02:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6878B176325
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75E8281358;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7390281357;
 	Tue, 12 Aug 2025 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCARbBi5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4PmvtAS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1E3280024;
-	Tue, 12 Aug 2025 13:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A10328000B;
+	Tue, 12 Aug 2025 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003641; cv=none; b=s+kMXnhUPc9NIRS7tCQ0C/847AH2+jpK9lpUJRrF5kaEdiX+/dpZ5nLtVBYd+bjFH6ei0mzm0+6WK7fpKrEzyTM2hVmXm1R2RMJoIhCB0v7MtvvSv1JI3bAmBoSdNX86NN8OtHCBP+GzETu+isXIANbDUIeHHjCM55e6/9dWFgM=
+	t=1755003641; cv=none; b=f7wRZdOhZzORf+Sj0USgEh5LLgqC1En0v+/JMOjF6Fb5eCFUAG3WZUy1gOOjM+WjiH90M3a95v1q32fhJw14SuBzOI4AIt6cVvJlmaDSwgf2SnVJFtCytXudFqoDyMSyV01CNOzpgDxzmLvcIJD+6CA608k12XWyhnnatyA92Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755003641; c=relaxed/simple;
-	bh=zYGMtM8fuI4HHjVC9uIuljEjH+ZKKu6iq7sDJh5FxKw=;
+	bh=qEfGEH6TN3t5lb3uqMXrBy+umm7qijcK9imic70APas=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RF9Xn9ys7rEICWWzF/JgyjgN02Bgqn+7Hr0oIbdmAUQF9VXjkKi0gp3r8uIB3G5uiEzczt6rtOeQ+fgxVNDx9JkREy9+sqn26Nc6G5Kqw6xArDG7WKirplorTUy2EtH0NCxpzmuqVy39fC7G61XIgIPORjFcLnqf5qpgqx+9R7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCARbBi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C54B9C4CEF8;
+	 In-Reply-To:To:Cc; b=mfquWkhv9zIQTz1lvk9bvXShUlWtbQUGu2o03lih1DYZZFfJXjD+pR3XgA9IeV98N6Dqs/U0zbsXtxxxj2283jznyFmgPxNBUKt3/z6U3YQ/fVP6q85gisbqWLP0OPRwSVaJ86zozI2VKSyGld+6M+/ZtQyFu92mTY6b73zAqQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4PmvtAS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CD333C4CEF6;
 	Tue, 12 Aug 2025 13:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755003640;
-	bh=zYGMtM8fuI4HHjVC9uIuljEjH+ZKKu6iq7sDJh5FxKw=;
+	bh=qEfGEH6TN3t5lb3uqMXrBy+umm7qijcK9imic70APas=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OCARbBi5fDhVrI5gh48ZwbcyJPTmd7ZYq6ACUYR6eRo50RRcsnYWn0OKCVUFMYgQe
-	 lI3i/LBennckxP2h5Q6s+dZvpT1uArqFGGlqFSqjsgiOdcd0leiTbk1PTjoAcpCfIn
-	 WkzWOv54Hherjw58iVOmlsMd0N6DiQTydA/D6ao579TFkmrXPAB+cIRaJV4xEuYh8o
-	 as74LtbmgH8FcjW807rLFa7OyMC+WAaf3l4zXE3vZ96avRvvYq3z5rQJJVrbej8VdZ
-	 zpYYV9AXOi+iGt7E/61dUmQozlL78V0Dc6AAvht4CQQ1exkeUxF7pLRX4a0MHQbaxx
-	 Omxjmvngh9Dmw==
+	b=U4PmvtASICJxX96G89lxOIizL4ltkh6K7NI0K40PBCWby+fHmCmY8SrModbDYrNV7
+	 o6mKq/O56/liJPYlcNi7CyTu/znLGZ4RoM2RjNdFPyGCbhiWufuKHWu6oZrtXRY3Xg
+	 ybcdzPXym35aLIJdWQHYrEtDDmvGtQBk+pycVU51MuAsZ5rPuWkZ6PjmIJ496J0Pev
+	 nqHKARX94qZnws34SbXegDX60oBnDMpzoHjW0AT2YWftU1v5JxugZQEOG26nivXDYk
+	 ZfNEY24jomAgv/sXVnXADM/xTxjGTJEpLQ66c/UyCzYDnV8qllaxJ1Xu5righAbITQ
+	 dmQblDlxwozrg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AE4CA0EDB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D41CA0EC4;
 	Tue, 12 Aug 2025 13:00:40 +0000 (UTC)
 From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Tue, 12 Aug 2025 20:59:25 +0800
-Subject: [PATCH RESEND v2 2/4] dts: stratix10: Add support for SDM mailbox
- interrupt for Intel Stratix10 SoC FPGA.
+Date: Tue, 12 Aug 2025 20:59:26 +0800
+Subject: [PATCH RESEND v2 3/4] dts: agilex: Add support for SDM mailbox
+ interrupt for Intel Agilex SoC FPGA.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,19 +55,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-sip_svc_irq-v2-2-53098e11705a@altera.com>
+Message-Id: <20250812-sip_svc_irq-v2-3-53098e11705a@altera.com>
 References: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
 In-Reply-To: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mahesh Rao <mahesh.rao@altera.com>
+ Mahesh Rao <mahesh.rao@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755003637; l=1326;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755003637; l=956;
  i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=3ob8k9A6zIADp0lruGxd1g5augXf3tZBlKtdVmhWZZI=;
- b=QDmzUwun/xgQqFFN4+DuH+uiOuoF/QBmwrB90Uyrqg31EOzLm47xWbWs1AquzPkOhYYYBlrb+
- Do7ujBn5v7oC7qYfktIzQV2w4CYgPU7Xt5Huxw3qs5BbgYHOb1c9pXE
+ bh=kTWn6GvwTe/xGzLhUbTFDEIXbzJ45fZ902gWQA8lOkM=;
+ b=e5LrUNd0bULmIlviqmFxaoO/8SP95VX4DsDCBH3fqKIB6Dur2nzJiKnCGldefsvimolevV7YQ
+ 55Mb+Vi4SqkCQOPlrkPd75kz6MYl1eXd2f+qz4Opm56QdHlZlRO+TL+
 X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
  pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
 X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
@@ -78,41 +79,28 @@ Reply-To: mahesh.rao@altera.com
 From: Mahesh Rao <mahesh.rao@altera.com>
 
 Add support for Secure Device Manager (SDM) mailbox
-doorbell interrupt on Stratix10 SoC FPGA for
-supporting asynchronous transactions.
+doorbell interrupt on Agilex SoC FPGA for supporting
+asynchronous transactions.
 
 Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index effd242f6bf709a53659b4de2a2da728052d086f..9e8b3b07dde3ff57382044f528c34bd52f8df123 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -1,11 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-  * Copyright Altera Corporation (C) 2015. All rights reserved.
-+ * Copyright (C) 2025, Altera Corporation
-  */
- 
- /dts-v1/;
- #include <dt-bindings/reset/altr,rst-mgr-s10.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/stratix10-clock.h>
- 
- / {
-@@ -74,6 +76,8 @@ svc {
- 			compatible = "intel,stratix10-svc";
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+index c1e66db0f4c524809d4334b86ef741f834a9b896..c3c72e8c1c10fcff818dcc934a36e2ffaa0bd347 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+@@ -65,6 +65,8 @@ svc {
+ 			compatible = "intel,agilex-svc";
  			method = "smc";
  			memory-region = <&service_reserved>;
 +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
 +			interrupt-parent = <&intc>;
  
  			fpga_mgr: fpga-mgr {
- 				compatible = "intel,stratix10-soc-fpga-mgr";
+ 				compatible = "intel,agilex-soc-fpga-mgr";
 
 -- 
 2.35.3
