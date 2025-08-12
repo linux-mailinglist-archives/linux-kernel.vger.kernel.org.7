@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-764847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD0CB227EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B01B8B227F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392C1179126
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0C9D17C44E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8944A238142;
-	Tue, 12 Aug 2025 13:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA2E26E6FF;
+	Tue, 12 Aug 2025 13:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G96g/vXF"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="oKY5UMkr";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="gXIwkCQ1"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94041178372;
-	Tue, 12 Aug 2025 13:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B119ADA2;
+	Tue, 12 Aug 2025 13:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755003726; cv=none; b=GQ98l2q5SU4KWz/cbVvqi42O86OohsgeKxh1XzlUyXXKd7cnZ77OB77zG0hYG6zkS0bLCj48COimtySOrJmqrITojKS5q9M+AFN5+bMk2ixgiQkC0S/6u45Rp7DTcGQvRvI42VkoJ31OtQ254u4T+KmgEr5fXr09EWxXwO9vCWg=
+	t=1755003765; cv=none; b=XPCL+JIsyMStx0WNtHemGhmDR/EchNP1Xs3OsXN8nwvziqWiZmR98k4Bsbk88ca6WbCRDak3BrTTkKx7ARriyixRlHdZsyQnD56HS4HyHncZCkjwSV8EfGuM+uZLriATjXLKSoUm/XfYvbMhkyY8xK+lRt4L2QDq5JzfvEJsJHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755003726; c=relaxed/simple;
-	bh=Od72EQBv4JGDTn0Y2Ei/6o5RTBJu3gYZKCJLW7yYpAY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eYbToWNBKROkGyh3OhKgY55n5G8lp3R6iOkbDCFU6bX4XYO2VSzZKr/zzBhhq3tqc1bWb/ubdb/41Ne/n6y2cQ1A/ASeVPwNjyn28FytRJSwU4mNcKLXPx0w24jXzU5RaZqdiUepLgGOc67Fg3z7Rhy/CWdgLwPVInbqQzj13Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G96g/vXF; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76b8d289f73so5024511b3a.1;
-        Tue, 12 Aug 2025 06:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755003724; x=1755608524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hTXlWUWgmGkbw6/R3L/8BNWjTwh9g+hdulCTYEuUKJU=;
-        b=G96g/vXFgmqMl5+tzeYquBHSb7xixKnTe36mgsE3BqSMjx5Q4jOrazEaKnw/g69mMe
-         GG2gTzZTRIUBwwJ33gyEbrNo3wuEdoqY7jXp2TZVzD2fspS9s0HCtvWlYYqqW7LhvOwx
-         LCbuUrUwKoQPMVty0AG2937VC1ye97cM88d59mb5s6arJHYmnWEPoepEvI1QCd8pnutd
-         Jcdc2dtGM4x6In28L5dKuZktkgkhI12E9bsNtH7SSc5y8Dm9OUnz+0siWQIteQdBIGvx
-         gIuxgK8vc/7xX/799Vu9fl8/e/Z2Bkyk+tbKbKUOj/akh/jeocCDUGyTADjPqi+2atGU
-         AzKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755003724; x=1755608524;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hTXlWUWgmGkbw6/R3L/8BNWjTwh9g+hdulCTYEuUKJU=;
-        b=vILTGiyrShFA7UCudaaf/OKxNwdpsecxtPdNzHhDwZuInWwVDe51jKwOtZFbI4EfLz
-         tyBUWQ7TK9Br2DQwntLTIPJreNciH3iKOBJyQ/422jFr0unjix1WdBYsI9ygTIzWzFg8
-         csHxcS3OBXM8CrUEJhyRfhTyF6JqQJR5xayYydjWbRDb3KjGQy9ysGm5gnPstN8OQWUL
-         WqxNiM7uL4WlFteaFnVl4023h3bZKt1wgorhYA3gT7lTzTW5NsakxZKmH4zFIMz6g548
-         qDcMkcpKIt/gGaLnil+cQsHnqScEsQw6c/2cYYsdVGSbdXKVCtn/DEdK9rLCrugIhbon
-         TIhg==
-X-Forwarded-Encrypted: i=1; AJvYcCULyoW2qje+xsh796R8zkMtorDHrSMMBFtvXh+20oQCDklIouXUOP2o4gF1pzMhEMWHg0YrfS2DrxyK@vger.kernel.org, AJvYcCUzpWsmo8oS3e1dSQgK5jfivNGeBikyh43KBIy5ADTLT1cQo6qj8mOGab/Ei4VdVAeX7TdbEZwqDB40yAm8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwfjIIpyfQIP5W7OkOEgf+FrO/nhaUVWHqLQa4hLN7orBbpnhq
-	S6oN/i4fGVoZ2krcvoTeyBWVEqjqITb9gSyi/V4/22WuqkyprYQTVc7T
-X-Gm-Gg: ASbGncuGEwTmwEe0EluR0LVMdHi6AuTFOJ6YztaxP4UU0P98vRNb38Yp1W70la+q4Ce
-	9RXoPTv2hyNdF4LYy34GhGZSQmORQ7lZxoaZDlcxhahUzHssfKBwrKyfBnDoUnTq/xKgl5r1i7e
-	r7n0VL3LqtTy8KFHT6RCRNsiV4r3NrLHfLsYPXo7/B82jQ+KskA/7YXO248zm8AKbOwM5i2Ondk
-	8bUEY5m+nsa/qfDA7Pi1yon/MhWwZ7hA8QsicWl1os9BY9h0UFfKabs7UpYMReOwWM5lvHQQly1
-	ZAA+gdf796byErI97WTlrVi26/sMMia/vOgjTRcGTYe2tYdQnQUT8RZ3k3oXtDvxfao2nSuR5Sj
-	+99m8Ig6TPENFdCqxmQQJ3y7XL3eKb7hnjW0KgsJ2/kR+cp8g
-X-Google-Smtp-Source: AGHT+IEfj3f4ctl/apnhfqtH5DFUARmiRo+9eePYi9dZvWb7zWEVyJBVpYHA+kDolCUljLpGVlr4pg==
-X-Received: by 2002:a17:902:ec82:b0:23d:fa9a:80ac with SMTP id d9443c01a7336-242fc2c9e78mr45597505ad.16.1755003723081;
-        Tue, 12 Aug 2025 06:02:03 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:8898:77ef:d42e:3af1:d5eb:7170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899b5f2sm299105125ad.125.2025.08.12.06.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 06:02:02 -0700 (PDT)
-From: darshanrathod475@gmail.com
-To: bp@alien8.de,
-	tony.luck@intel.com
-Cc: james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH] edac/amd76x: Remove assignment from if condition in amd76x_remove_one()
-Date: Tue, 12 Aug 2025 18:31:54 +0530
-Message-Id: <20250812130154.2220684-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755003765; c=relaxed/simple;
+	bh=hF4N0ur3iJ8jD2s2cmdeDWXctMqDSnF4apK66vD/nQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLTFAOF42lkXV9YpGqb4yKXhnOwCQRogflN7s8Dk+Doj5zVkGEj4dp/+qF9HBLBCigq4qjpEk+aahSErCxLIAuvgc4proInN1exoYoIABWKCsB6PPj+n2Ux4vLJoRGOQMvQM6X5ToJN+SV40YN+kONjRIl+R10lceYGfWi4WZs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=oKY5UMkr; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=gXIwkCQ1; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 2824E606FC; Tue, 12 Aug 2025 15:02:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1755003761;
+	bh=evoH9a8QCOaR7pv6eWp+7tmYBWdbldvMsHMUrW2jCVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oKY5UMkrnyeA2SeEorRyk9mEs7SHjXbd7Tb1xNEkkRr2wXL5M6Bu99+V7PapIOFO2
+	 Z/EhzIRls6e+pbNcJuhguVFVR+shSLnNo6/w8LCCEoscDILEayBIMgt91dbv8vwirY
+	 6xtzvap503KI5lM8ClTZV6ULZydgk0sYk8valh01byQ+HopCXKrHMkYBrzY5lsjtpM
+	 3TNiTMrkb3jFYFD5RqGRtaVASyDEdMsIc0eoOmntK2zbgj3ibgh+iPshhsu2U5OINo
+	 l7U0cxKmZJQn0jWQTZyaJo6vGtfVpowRYwqdpYMdrme8OFyYCYkH8Us66re76+T3R5
+	 5nvwGQXOJB8Eg==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id B614A606FC;
+	Tue, 12 Aug 2025 15:02:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1755003758;
+	bh=evoH9a8QCOaR7pv6eWp+7tmYBWdbldvMsHMUrW2jCVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gXIwkCQ1uYAnGRGAPS+tUxNiGkuBwClHbgrCcxL6V7x5Zw7J5JuivP6EFIzT/KY7J
+	 ZQxVm0GA8FueH9ZFdZOUd5xX5irkvrihTxHpUq0AOtF+5R14Yj0GUPRPolmpVJVNks
+	 1PTmTGRtAWzcteGFmEP1bTeJKSoeQDZXja00Oqx19K42szRgWJ1I8i+U9LsfJ0CZ9d
+	 ELFB9VlcHJEnfOuiENkO4V5CHmaek8BTxWlKCzqU8cHN7lrM3kRC8dCJXzRzqdcFZu
+	 qPFG2MWKGDSHnWtxyifUtW1udgxIZ4vkeljM1iABPjxnV9eefPUjfL1in/LyyhMONH
+	 tfApuC6OLLLLg==
+Date: Tue, 12 Aug 2025 15:02:35 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Felix Fietkau <nbd@nbd.name>, linux-ppp@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] ppp: fix race conditions in ppp_fill_forward_path
+Message-ID: <aJs7az9VnJ6aUwQT@calendula>
+References: <20250811084427.178739-1-dqfext@gmail.com>
+ <CANn89iLEMss3VGiJCo=XGVFBSA12bz0y01vVdmBN7WysBLtoUA@mail.gmail.com>
+ <CALW65jZ-uBWOkxPVMQc3Yg-KEoVRdPQYVC3+q5MiQbvpDZBKTQ@mail.gmail.com>
+ <CALW65jYNMNArwzmpHhYj3fpfL0Oz2fRYsJz0JMDUnyByu-8z3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALW65jYNMNArwzmpHhYj3fpfL0Oz2fRYsJz0JMDUnyByu-8z3w@mail.gmail.com>
 
-From: Darshan Rathod <darshanrathod475@gmail.com>
+On Tue, Aug 12, 2025 at 05:38:02PM +0800, Qingfang Deng wrote:
+> On Mon, Aug 11, 2025 at 5:35 PM Qingfang Deng <dqfext@gmail.com> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 5:19 PM Eric Dumazet <edumazet@google.com> wrote:
+> > >
+> > > On Mon, Aug 11, 2025 at 1:44 AM Qingfang Deng <dqfext@gmail.com> wrote:
+> > > It is unclear if rcu_read_lock() is held at this point.
+> > >
+> > > list_first_or_null_rcu() does not have a builtin __list_check_rcu()
+> >
+> > ndo_fill_forward_path() is called by nf_tables chains, which is inside
+> > an RCU critical section.
+> 
+> Update: mtk_flow_get_wdma_info() in mtk_ppe_offload.c calls
+> dev_fill_forward_path() in process context without RCU, so
+> ppp_fill_forward_path() can be called from two different contexts.
+> Should I add rcu_read_lock() to mtk_flow_get_wdma_info() or
+> ppp_fill_forward_path()?
 
-The code was performing an assignment inside the if condition:
-
-    if ((mci = edac_mc_del_mc(&pdev->dev)) == NULL)
-
-This triggers a checkpatch.pl warning. Split the assignment and the
-check into separate statements to improve readability and comply with
-kernel coding style.
-
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/edac/amd76x_edac.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/edac/amd76x_edac.c b/drivers/edac/amd76x_edac.c
-index 2a49f68a7cf9..4937d8728cf0 100644
---- a/drivers/edac/amd76x_edac.c
-+++ b/drivers/edac/amd76x_edac.c
-@@ -324,7 +324,8 @@ static void amd76x_remove_one(struct pci_dev *pdev)
- 	if (amd76x_pci)
- 		edac_pci_release_generic_ctl(amd76x_pci);
- 
--	if ((mci = edac_mc_del_mc(&pdev->dev)) == NULL)
-+	mci = edac_mc_del_mc(&pdev->dev);
-+	if (mci == NULL)
- 		return;
- 
- 	edac_mc_free(mci);
--- 
-2.25.1
-
+mtk_flow_get_wdma_info() seems to be the exception at this point, so
+I'm inclined to add rcu_read_lock() to mtk_flow_get_wdma_info().
 
