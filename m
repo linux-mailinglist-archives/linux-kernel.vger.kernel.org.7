@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-764342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1B3B221D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:53:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A32B22311
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BA5720BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3F26E7C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88712E5427;
-	Tue, 12 Aug 2025 08:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10AA2E973F;
+	Tue, 12 Aug 2025 09:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fWENvyt6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=buserror.net header.i=@buserror.net header.b="Vn4Mjsv0"
+Received: from baldur.buserror.net (baldur.buserror.net [165.227.176.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F915ADB4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821D42E1C53;
+	Tue, 12 Aug 2025 09:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.176.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988151; cv=none; b=J59kahzp07ZayApM1ECTzDW9EaDt/4KbywevtwysSH6tUO5eoFrqnFWkKEi73ycSr5xXqntOmoQaq4wwII97uzGgGgr1VuuaBRI8dMyF1lAT1UU1dFLqvp9LU6l2bQbZ/cjGez2s0ZwuTBwalco2xermEjfYqib+bjZMn1cqYrY=
+	t=1754990471; cv=none; b=Jtbag2VqtQ3vLYyi1LEA2NhB3LXNx37e4PBSYdgtF7ohDcr94GbXvCjFRXy5+Q6zCqtPgeWZMUkbo6nyIe62MjsfF4IRKy5eKRPCMUUB8iyEo3Rek/ccU6olSZPIb5W1FRJZ96yxeH6mPjZpsT+CzlgHHeizS/5l7SX+QQYCSS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988151; c=relaxed/simple;
-	bh=dtp145XFdvvxFdz1VPHRgGRMPeqyDu9XOfP84PjCvW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qrt9r4W/1OdAEfj8eGB5GabF8N+sehP+/I7txSxR50FIot6Bgo1Ac/WnyAX+VeeK/bPDBOAezOYe93lOGTlx9QPIQZx5R+VIu92rEX5nDBlKF+fw5ztQgVOgBKgQ22NXt1t9VCMlmHRd92b23+MjZGkz1DO8eI2+LKi7fYCQgHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fWENvyt6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754988148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rccHfIlp6zESJik0ZhO9CP4dAeru0VA0eRlmjizRq6k=;
-	b=fWENvyt6dmF5FT2Tv8I54QIjAwc0EeaK4QQqCp5lbI2RuGVHnCvuk1nS5T5cQR0VIc27R0
-	DYk5M+p2aG8WprNmLMnu1AKMSQ2y6rd/RJx5KA+0+L53CzDJEI4t9x0jfbC0EStN5Vn60R
-	qtIXOZg/itIXWMXulBjazstFyaGLf+U=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-_pdD8OkTPxSILJdr-WC2FA-1; Tue, 12 Aug 2025 04:42:27 -0400
-X-MC-Unique: _pdD8OkTPxSILJdr-WC2FA-1
-X-Mimecast-MFC-AGG-ID: _pdD8OkTPxSILJdr-WC2FA_1754988146
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b07b90d5cdso65763321cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 01:42:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754988146; x=1755592946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rccHfIlp6zESJik0ZhO9CP4dAeru0VA0eRlmjizRq6k=;
-        b=DzV6Ea+6FWM9DDgX8n5mCq/SfJW3/nmD3EZo3QFsKLitkh0tOQHOOQoLYlK6x+xxy8
-         JQkprRkQeK3+ca/4xByitxe+B7ExUzLzdQFK8YSXruG3IrVah9FUoKb/I6zgQNyJd174
-         znn5X67SxCOkCSwyLx1oiOi/b/VC9pDjlFpGWkXvYEwfVQGgH7FMUuxycMJS4YXtPgju
-         jXPWLqEjsfQhhpNB4VetnxQqLuqviFDE3V4MAyN9Gj2+C1tJR2r1WYbyh/ZfQCXU+kDC
-         fJV713eBeD5E9J2Z3GMWTStHJjjDt+NBGRfEl4pMtjhBBIgS3d9kr4TOnlZkappOz7vj
-         bbWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm0wMeG0WKB7yRpEen9Xl0SOFEmY7kPHSV0yOfhFds81lxdzrSWwYaJlZAl0+ufkJertycB9TFOElD+DU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7M9rNTNCxGKqKPxkuR1R3DWYVMVjsKFFbQI91pMelAUpqIMr3
-	qzUcMR+hsj6fhOW7MxxHStoMliKTeENv75tw5+42zk+eiMwhwsgllAWiCNa3xkab2A109r27xGX
-	B4op++yO3gTZGKyW2lbzMhOQNscF0BgG90RbuoEY+JC8rujqv/Ki7v7ocVWNbgisJpg==
-X-Gm-Gg: ASbGncueNK++vCy8NOKrpDtG1qlo122szdk5oHnTCjQN0mysRPUg6PrLxMp1OVQE5hZ
-	gczvwEP6hVRZA1+Db6GVbB6Vwu9Zf5CLTnMNv7D+y0aTpD5CTvDR0dxaAgpybpQJhbO1EiWHgqU
-	AKCD0gsJD0vQ9XiQiSv8Z0uiwr6SvBXi5fyc9GqRvJjkHYARImtXJyTiX2d1uQvQHXJYubKAeUR
-	NcOddD5+8mle3O28jC0+JK+G3tyk6/vuLxJmYKPzczg3Vvqpu1jwM9xRNg2ANzySEBWAjNAhcDu
-	pbkrTpNeYf9/MZtBG9NCOuOXM/t5R/H9H7cRiZep2J4=
-X-Received: by 2002:a05:622a:59c5:b0:4ae:6ac4:69dd with SMTP id d75a77b69052e-4b0eccc774cmr33426471cf.45.1754988146484;
-        Tue, 12 Aug 2025 01:42:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5D94N3cCmDOj4r29T+dIrmG4oDYTtzUGD5bS0Osxk18qa6XeZXwujzAQBdPNy9e3tgUet9w==
-X-Received: by 2002:a05:622a:59c5:b0:4ae:6ac4:69dd with SMTP id d75a77b69052e-4b0eccc774cmr33426331cf.45.1754988146093;
-        Tue, 12 Aug 2025 01:42:26 -0700 (PDT)
-Received: from [192.168.0.115] ([212.105.149.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e85d4f5ff4sm74216085a.3.2025.08.12.01.42.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 01:42:25 -0700 (PDT)
-Message-ID: <83bef808-8f50-4aaa-912e-6ccdb072918f@redhat.com>
-Date: Tue, 12 Aug 2025 10:42:22 +0200
+	s=arc-20240116; t=1754990471; c=relaxed/simple;
+	bh=AnsoN753ge3fmuKp53nHcJSnJoOlNZBteerwlF/iPZU=;
+	h=Date:From:To:Cc:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Subject; b=RCS1WBXec+0lwYuYxG3dP4D/CjiLH+OEmHEpfI+Ylhi4YwjHowuS9ms4A7D7RD2Btjo2s/6y8Yl41bxtGp+qoGKZUjVoDja9gkXu13r8E5Pbyon+3IfGqN6ngv6hnBO+RkuGuWLJtnuY6rqiLkiffm0HgNUzAWBxibD8HraG/OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buserror.net; spf=pass smtp.mailfrom=buserror.net; dkim=pass (2048-bit key) header.d=buserror.net header.i=@buserror.net header.b=Vn4Mjsv0; arc=none smtp.client-ip=165.227.176.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buserror.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buserror.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=buserror.net; s=rsa_sel; h=Subject:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description;
+	bh=1b80/fGhciNryFEEkQZ7Y1tSDQ+Qxdwq3vTaXU1pxJ4=; b=Vn4Mjsv0raTVizLSzp3/p6IUdO
+	/Fh0rQqfGm8lyNmfkgG9+wRETY3SStSH5NrT4bagU58vBJfXASE3pRpGjraEMO4xHcXsfLARTencf
+	mejhQxfu3581k/ZwhzaXMlnSRkpVeGgO4xdJ9t526l1EoryLeFBUv84vWuul9mPMYKd4VewBdFG8d
+	2RArV0HGZsk2y2Oi1cJ+6CurwfH7rrSRKlPgHh3IHRnFZJjaRV9kyHVXYeIKc5K7uqB6z1axCIaLb
+	Y9K7Y/jhmTo+3P6czyAXVxcxF9FfTeqD8BdGNRcFiD3/ABtIbQOPa5+AsMxb6RR/d0d1sW9zlxec6
+	FEwBx1Iw==;
+Received: from oss by baldur.buserror.net with local (Exim 4.96)
+	(envelope-from <oss@buserror.net>)
+	id 1ulkaV-00AoyK-24;
+	Tue, 12 Aug 2025 03:42:32 -0500
+Date: Tue, 12 Aug 2025 03:42:31 -0500
+From: Crystal Wood <oss@buserror.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Message-ID: <aJr-d1tZREOY6U5a@buserror.net>
+References: <20250807214432.4173273-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net] bonding: fix multicast MAC address synchronization
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- Liang Li <liali@redhat.com>
-References: <20250805080936.39830-1-liuhangbin@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250805080936.39830-1-liuhangbin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807214432.4173273-1-robh@kernel.org>
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: robh@kernel.org, tglx@linutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org, maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Level: 
+X-Spam-Report: 
+	*  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
+	* -0.0 NO_RELAYS Informational: message was not relayed via SMTP
+Subject: Re: [PATCH] dt-bindings: powerpc: Drop duplicate fsl/mpic.txt
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 
-On 8/5/25 10:09 AM, Hangbin Liu wrote:
-> There is a corner case where the NS (Neighbor Solicitation) target is set to
-> an invalid or unreachable address. In such cases, all the slave links are
-> marked as down and set to *backup*. This causes the bond to add multicast MAC
-> addresses to all slaves. The ARP monitor then cycles through each slave to
-> probe them, temporarily marking as *active*.
+On Thu, Aug 07, 2025 at 04:44:30PM -0500, Rob Herring (Arm) wrote:
+> The chrp,open-pic binding schema already supports the "fsl,mpic"
+> compatible. A couple of properties are missing, so add them and remove
+> fsl/mpic.txt.
 > 
-> Later, if the NS target is changed or cleared during this probe cycle, the
-> *active* slave will fail to remove its NS multicast address because
-> bond_slave_ns_maddrs_del() only removes addresses from backup slaves.
-> This leaves stale multicast MACs on the interface.
-> 
-> To fix this, we move the NS multicast MAC address handling into
-> bond_set_slave_state(), so every slave state transition consistently
-> adds/removes NS multicast addresses as needed.
-> 
-> We also ensure this logic is only active when arp_interval is configured,
-> to prevent misconfiguration or accidental behavior in unsupported modes.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-As noted by Jay in the previous revision, moving the handling into
-bond_set_slave_state() could possibly impact a lot of scenarios, and
-it's not obvious to me that restricting to arp_interval != 0 would be
-sufficient.
+What about the 4-cell interrupt specifiers?
 
-I'm wondering if the issue could/should instead addressed explicitly
-handling the mac swap for the active slave at NS target change time. WDYT?
+> -                  0 = external or normal SoC device interrupt
+> -
+> -                      The interrupt-number cell contains
+> -                      the SoC device interrupt number.  The
+> -                      type-specific cell is undefined.  The
+> -                      interrupt-number is derived from the
+> -                      MPIC a block of registers referred to as
+> -                      the "Interrupt Source Configuration Registers".
+> -                      Each source has 32-bytes of registers
+> -                      (vector/priority and destination) in this
+> -                      region.   So interrupt 0 is at offset 0x0,
+> -                      interrupt 1 is at offset 0x20, and so on.
 
-Thanks,
+FWIW, while this description may seem unnecessarily verbose, it's because
+it's different from how Freescale hardware docs numbered the IRQs
+(IRQ 16 was "internal IRQ 0", etc).
 
-Paolo
-
+-Crystal
 
