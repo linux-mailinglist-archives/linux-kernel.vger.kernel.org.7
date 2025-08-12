@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-765474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CADB23831
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:21:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE24B23858
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51E314E5153
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:21:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3615A189D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33E2D781B;
-	Tue, 12 Aug 2025 19:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0oJD0Zf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DD2D6E6F;
+	Tue, 12 Aug 2025 19:22:09 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C07244660;
-	Tue, 12 Aug 2025 19:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19F03D994;
+	Tue, 12 Aug 2025 19:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026484; cv=none; b=IwfVgX12FLzebKAWw6LeJ9YSv0HBH5MfITL8UzQflxMzjKrHwVRCi09osZjJdZvHLyEYkaGget9hhKxoqkCuA5APJmKoQRp7/ETQSnb/acRzTLs5bVgDMi1OtODcMKYJldBLE1UWd9ZlpH0WHDoYF+iPT7sEz/m3adnOtnjR4X0=
+	t=1755026529; cv=none; b=ZMSMWRi/uotPp5jrofhQDtOnIfyrgrR0Y+WXZOkJj9WET3ssrk5eHS+0m3KNkU/F+ZNeMvh0eUTcMzWYiLDJr8fqF9HKWfQdWG5g15hptG3s1iBdGTCwFturM1oeybR90iXq9XG4AbcMroqgMjrZU+uDE3OY9liA4C00xVikrAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026484; c=relaxed/simple;
-	bh=D+gYZj1lBSNCCwoYxhFDp8oExLhgt2+HjzzPuX6D0Dw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=eh8Onhv2swPezZXuMSgkpZVsEsI776rL8kypxGHRXTurMT8J7I1762eSJX/L/cFwvjixbyYQi6qAHEwqmm+h4J0zpOpE0O3bpjOV0yaAy8U1gcwsC1iznLejNHNNQ4rP5XFCQpC5aEpqf6JEZQXnRVZXZ1UahffHmXPtngZ6wjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0oJD0Zf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B429EC4CEF0;
-	Tue, 12 Aug 2025 19:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755026483;
-	bh=D+gYZj1lBSNCCwoYxhFDp8oExLhgt2+HjzzPuX6D0Dw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=U0oJD0ZfxmgPskdra+AZU38LN3OBGgNhc/JwSepreZpGGS0TG2PzRmTXsFoVdi0ca
-	 OAqEhYFoGK4ltAgg3GTjlVJwwKBUSvCcmuE6p96ZIxvLTgSt6LIUMDR+E6XgjFuPyh
-	 Igr8YlNVlV+h4oUcs1/EKpkkHlXBZzaAXvGESdeirHtgo0i6uZ+9Lf8Q5dE6pAfpZO
-	 1wkZ/HYK7hbR+on9K/RgCyEuk/tttcAJ2WF0lGVBdD47U75EOyaNkxK+VyZfeHTCnb
-	 E79WKBwHJomQjfn/vxfOPsd0ceCBFHSha+Rpt/Rdk+xtxR5bJztqh/lyP9CzvoVpTo
-	 e0V38FSQTLzwQ==
+	s=arc-20240116; t=1755026529; c=relaxed/simple;
+	bh=J3/WbnaWz9/+22dEjF6XblnKlT4Ye6mKeo014jzrCO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AejZRtDUHe+vBNM9EhDAOKBJwKI3fv3uqSjr0fUbk0u2S2t/UiRiUqJqMo6w1uchs0E0vPOwy9s+ZuryjmNABlPJXoRWPiZC6hkhd9Shm5IehiRZYd03aSySG8Vvt7mxqAqf5gTU6wtSKA+H9bftSHT+F5tg990qP5TeEiPUu38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id A25B01A0199;
+	Tue, 12 Aug 2025 19:22:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 9D0A220014;
+	Tue, 12 Aug 2025 19:22:01 +0000 (UTC)
+Date: Tue, 12 Aug 2025 15:22:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Douglas Raillard <douglas.raillard@arm.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Tom
+ Zanussi <zanussi@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
+ Rogers <irogers@google.com>, aahringo@redhat.com
+Subject: Re: [PATCH 2/7] tracing: Have syscall trace events show "0x" for
+ values greater than 10
+Message-ID: <20250812152247.6a5a4ed1@gandalf.local.home>
+In-Reply-To: <8ec3ecea-a830-4de2-8191-e3a78b4427f0@arm.com>
+References: <20250805192646.328291790@kernel.org>
+	<20250805193234.915257520@kernel.org>
+	<c4f1b8d4-774f-42c1-a828-42c79756503d@arm.com>
+	<20250806083944.036de894@batman.local.home>
+	<8ec3ecea-a830-4de2-8191-e3a78b4427f0@arm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 21:21:17 +0200
-Message-Id: <DC0OYPGIYPZA.39IG8YRUZMOTO@kernel.org>
-Subject: Re: [PATCH v9 0/7] rust: add support for request_irq
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Dirk Behme" <dirk.behme@de.bosch.com>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com> <DC0OOFT2RTO7.2PCAP981HCCN3@kernel.org> <6B887813-8FA6-4627-9527-76547508E66A@collabora.com>
-In-Reply-To: <6B887813-8FA6-4627-9527-76547508E66A@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: e1g8dufjfgr1edgaw1s9z7n3fm9wh9cg
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 9D0A220014
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+DUAyjDeHUuDNt55k7ulkWz18COHNqojI=
+X-HE-Tag: 1755026521-325833
+X-HE-Meta: U2FsdGVkX186S8LxTduugok1CwWbPZmVVEBHkoxR+eV1p45F6a5ZqMSZEQOt2pzGcmsZZCpe1gxz5O0I45C85HkENDw/mRAU2HFDEEHrREVmvXFcgoaaQmwluj+xh/mregDHK6JMkv6ooRGiEh/DzrQnLuQJ+9jCUsesbLncGQvSmlguwAyyCkUjvujnWcY3XW7RjGpjGriox7okly6+HhcqfpC+0cLYwyYsF54VSNCSVJW6V/hKK53LShAvORAiM3LJjQSEx6Z3fV+VOTgNiA9CnvQ2/BDHiDor/xVAtXk0xX39MIIxgikOL1uaX2hlvuKBIqMav21jdPQDfW8B0d7Vy8m9x8wRxaABkfq3BPFI8WaUS2oDMtWrBJDfZv4uMqUqHGjgKKyvwDRMHxAqDA==
 
-On Tue Aug 12, 2025 at 9:17 PM CEST, Daniel Almeida wrote:
-> How? rustfmt doesn=E2=80=99t format this, so I assume that you just manua=
-lly
-> wrapped the lines in a suitable way?
+On Wed, 6 Aug 2025 17:42:38 +0100
+Douglas Raillard <douglas.raillard@arm.com> wrote:
 
-Yes, exactly.
+> 
+> AFAIK to this day, there is no tool providing a simple script/SQL interface
+> to a trace.dat file beyond basic filtering like trace-cmd report. I've had this
+
+
+Well, I did have this patch that I never applied:
+
+https://lore.kernel.org/all/20200116104804.5d2f71e2@gandalf.local.home/
+
+-- Steve
+
 
