@@ -1,164 +1,171 @@
-Return-Path: <linux-kernel+bounces-764485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1339B223AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:49:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC53B223A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADF43B0A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEE4500854
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874F42EA466;
-	Tue, 12 Aug 2025 09:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54B82D5A1C;
+	Tue, 12 Aug 2025 09:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZcl5DJE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMCL0zbH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBEC2EA162;
-	Tue, 12 Aug 2025 09:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA3928850F;
+	Tue, 12 Aug 2025 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754992073; cv=none; b=lls+LcrT/2m1h5P7n/hG+Pdic2YQoswEO1VxT+9ALU61Dc0TBoi3Ktgnef4CuIVyUN9k/c1LiDRhh1PoZIPHwLybzRy8wypJVrrUGLuu8iNBt+HlBU9cEbzdvKXMCVys2Vfz7HLDohqwEA2PDUrsKos1DaeD0JzkGkMBuI/g09E=
+	t=1754992070; cv=none; b=tfy4dQFzUyxNjepb9Rledhk92BrOFaOMP2zJ3ZP6luT7cZ0reoc4f3J25Uct3C+YvPj0j1D9VLiLnfaezeMP0tSYfexm4tTkX/SVC2Cvqbegz+XD+yZy84KEuieWyYDpVq2Z8Plp3+8hT07jemMql/jhiLklUUzCqSy4FM4PoBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754992073; c=relaxed/simple;
-	bh=gBGz6JJ6cRgbUBJIFDCaSAVfdTTaWH+QXuZPhWp/Rkc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VgjijW6bKmu43y+m/WZwaadd3g24PD+FYKiW02fkRdfFooKKj25aJI1/jp0N0/0toVsajvCcJns+LZMrpPRNBdQ/W1ei8fVYKqXyekDVhtXUr0Ls6t/lGf9k9hIqtjaI8QHwcPoOrJbToMqWZDbwVOPxBsOSclQVQoFXrFalD9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZcl5DJE; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754992071; x=1786528071;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=gBGz6JJ6cRgbUBJIFDCaSAVfdTTaWH+QXuZPhWp/Rkc=;
-  b=nZcl5DJE7ULEKlCUgOyrFZ/PRFyQTFA8er9Gq7u9thsVCXMFtYrvqroB
-   QOeI37vGOM1+fdefAqwiBwJqTF9vUywxjDSNijr5LCe5P3RxzyQp7PNNh
-   VESxt5P2HJRliNA+y+NMnCYcZoNHwyLof19U/keB8d3WBUYJGKJZ4t5yu
-   7qcA9RyKkhqkopC4ODkH7EymrXltIn2Zpb5dDtXKOnLCrd4mPFFzNaF+m
-   ohPHDfOsR6TbVXroTsbgqUTwrBEN61WgP82dR5Rw3Ywc7llYlK1rEoHW+
-   rgWaVjId0U90ERef74SnkmKvSzfv154TX32cZeHYJljJkFa38W/i8swbH
-   A==;
-X-CSE-ConnectionGUID: dCE2AO5qSs228Z43RnnPHg==
-X-CSE-MsgGUID: HHe3XKF6RsaemJNn6EDcUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67525923"
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="67525923"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:47:51 -0700
-X-CSE-ConnectionGUID: b3huImeqR1O4Dn2mjiUvdA==
-X-CSE-MsgGUID: B1BW/SVmRVOa19rSNi1MAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
-   d="scan'208";a="165342077"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.96])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 02:47:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 12 Aug 2025 12:47:44 +0300 (EEST)
-To: Ron Li <xiangrongl@nvidia.com>
-cc: Hans de Goede <hdegoede@redhat.com>, vadimp@nvidia.com, 
-    alok.a.tiwari@oracle.com, kblaiech@nvidia.com, davthompson@nvidia.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] platform/mellanox/mlxbf_pka: add __free(kfree)
- to handle memory allocation
-In-Reply-To: <20250811153934.671070-5-xiangrongl@nvidia.com>
-Message-ID: <d4c48d92-e064-c050-d275-2d03f320c98b@linux.intel.com>
-References: <20250811153934.671070-1-xiangrongl@nvidia.com> <20250811153934.671070-5-xiangrongl@nvidia.com>
+	s=arc-20240116; t=1754992070; c=relaxed/simple;
+	bh=3UY+sCVDqlbC3OtzdZ1SlVDYHNKowdCDEMTvCrXyyfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etcz9tWCVLlJF4ln43Xr4hO7cv6cy+Syq9vsb1lCsw7CiQBisbl/44dFLkQxddWLLPcm+UwJIo8Wlkc/RhPYzrmi7+q/xdiJ/ai9HIy0WIZ70ElNmQuD0GbEKOgQoy+NUbx/ba33nNeVU4x0mV3SJbiVGyEitIAM9ongHO6Xs8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMCL0zbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DB0C4CEF0;
+	Tue, 12 Aug 2025 09:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754992069;
+	bh=3UY+sCVDqlbC3OtzdZ1SlVDYHNKowdCDEMTvCrXyyfg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mMCL0zbHUULQgEoPO5Br04YtZIFgfmIiUyolXq4jd7CjoO/+fyZIiA5cFnHXdWsuh
+	 cR1auQHDEzl48wGSiEwG00deaWkG8IAWaE+3R1gAHfRh2c57iVmSAgwKir0wUV7s9Q
+	 r5AUFv0RIxzKGyXgHJsKFEiwfXLS3JlgT+joVm2CjzHM9aojkrPu8RvRyXLEGMlSHY
+	 jDSkIQ9Yv8RpkQuNFNBlWAW2NJODdsnaI4OAGXwiE2m2LaXjAgA/lp7m2zuIShZa6t
+	 OJyAJ2i3vXhy51O13l3gM3x7uQ/dv+fQX217YMK9tKD7EYs5Y0qTCNLnHu37jdAriD
+	 +saCltarsZeSQ==
+Message-ID: <ae657b82-acd3-4a1f-ba21-3ce394531819@kernel.org>
+Date: Tue, 12 Aug 2025 11:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
+ gpio-leds/keys
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
+ Peter Korsgaard <peter.korsgaard@barco.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
+ <aJnlnx2qF6P61jJN@smile.fi.intel.com>
+ <7c2d08e3-d1e2-433e-b726-307246ab17e9@kernel.org>
+ <aJoQE2CQv3nzaSqc@smile.fi.intel.com>
+ <uakyig6sp2sfuwtt2aq7ds5dcbsjrgcijenunefqzc46inpees@xc6bfr4mjnan>
+ <c60ccef1-7213-4dd7-8c10-e8ef03675bd8@kernel.org>
+ <4151a14f-8427-41a9-84cf-e901080d0eb1@kernel.org>
+ <7bylxufp3r5qzf5axqrtytamkveaw5dpsidmdyiany4wkexbpd@s4yremtvct4a>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <7bylxufp3r5qzf5axqrtytamkveaw5dpsidmdyiany4wkexbpd@s4yremtvct4a>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Aug 2025, Ron Li wrote:
+Hi,
 
-> Used __free(kfree) attribute to call kzalloc for allocating the 'data'
-
-Hi Ron,
-
-Grammar problems, but this patch won't be necessary, see below.
-
-> variable in mlxbf_pka_drv_ring_ioctl(). So that the variable can be
-> released automatically.
+On 11-Aug-25 7:59 PM, Dmitry Torokhov wrote:
+> On Mon, Aug 11, 2025 at 07:44:01PM +0200, Hans de Goede wrote:
+>> On 11-Aug-25 7:40 PM, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 11-Aug-25 5:49 PM, Dmitry Torokhov wrote:
+>>>> On Mon, Aug 11, 2025 at 06:45:23PM +0300, Andy Shevchenko wrote:
+>>>>> On Mon, Aug 11, 2025 at 04:20:33PM +0200, Hans de Goede wrote:
+>>>>>> On 11-Aug-25 2:44 PM, Andy Shevchenko wrote:
+>>>>>>> On Sun, Aug 10, 2025 at 09:31:37PM -0700, Dmitry Torokhov wrote:
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>>> Otherwise LGTM as here it looks like we establish platform device ourselves and
+>>>>>>> hence no need some additional magic Hans mentioned in the other series.
+>>>>>>
+>>>>>> Not entirely like with the x86-android-tablets patches this
+>>>>>> declares a software-node for the gpiochip:
+>>>>>>
+>>>>>> static const struct software_node gpiochip_node = {
+>>>>>> 	.name = DRIVER_NAME,
+>>>>>> };
+>>>>>>
+>>>>>> and registers that node, but nowhere does it actually
+>>>>>> get assigned to the gpiochip.
+>>>>>>
+>>>>>> This is going to need a line like this added to probe():
+>>>>>>
+>>>>>> 	p50->gc.fwnode = software_node_fwnode(&gpiochip_node);
+>>>>>>
+>>>>>> note the software_node_fwnode() call MUST be made after
+>>>>>> registering the software-nodes (group).
+>>>>>>
+>>>>>> Other then needing this single line things are indeed
+>>>>>> much easier when the code containing the software
+>>>>>> properties / nodes is the same code as which is
+>>>>>> registering the gpiochip.
+>>>>>
+>>>>> Ah, good point!
+>>>>
+>>>> This is wrong though, the software node need not be attached to the
+>>>> gpiochip (and I wonder if it is even safe to do so). It simply provides
+>>>> a name by which gpiochip is looked up in swnode_get_gpio_device().
+>>>
+>>> Ah interesting. This is very different from how fwnodes generally
+>>> work though. Generally speaking when a PROPERTY_ENTRY_REF() is used
+>>> like PROPERTY_ENTRY_GPIO() does then the lookup is done by matching
+>>> the reference to the fwnode of the type of device to which the
+>>> reference points.
+>>>
+>>> IOW the standard way how this works for most other subsystems
+>>> is that gpiolib-swnode.c: swnode_get_gpio_device() would call
+>>> gpio_device_find() with a compare function which uses
+>>> device_match_fwnode().
+>>>
+>>> I see that instead it uses the swnode name and passes that to
+>>> gpio_device_find_by_label().
+>>>
+>>> I must say that AFAIK this is not how swnodes are supposed to
+>>> be used the swnode name field is supposed to only be there
+>>> for debugging use and may normally be left empty all together.
 > 
-> Reviewed-by: David Thompson <davthompson@nvidia.com>
-> Reviewed-by: Khalil Blaiech <kblaiech@nvidia.com>
-> Signed-off-by: Ron Li <xiangrongl@nvidia.com>
-> ---
->  drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+> Hmm, given that I wrote both the references support for software nodes
+> and gpiolib-swnode.c they work exactly as I wanted them ;) Yes, in
+> general name is optional, but for GPIOs it is needed.
 > 
-> diff --git a/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c b/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
-> index 0f93c1aa7130..2dd773ec1dc3 100644
-> --- a/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
-> +++ b/drivers/platform/mellanox/mlxbf_pka/mlxbf_pka_drv.c
-> @@ -3,12 +3,14 @@
->  
->  #include <linux/acpi.h>
->  #include <linux/cdev.h>
-> +#include <linux/cleanup.h>
->  #include <linux/device.h>
->  #include <linux/hw_random.h>
->  #include <linux/idr.h>
->  #include <linux/interrupt.h>
->  #include <linux/iommu.h>
->  #include <linux/ioport.h>
-> +#include <linux/kdev_t.h>
->  #include <linux/kernel.h>
->  #include <linux/miscdevice.h>
->  #include <linux/module.h>
-> @@ -438,7 +440,6 @@ static long mlxbf_pka_drv_ring_ioctl(void *device_data, unsigned int cmd, unsign
->  		struct mlxbf_pka_dev_shim_s *shim;
->  		bool trng_present;
->  		u32 byte_cnt;
-> -		u32 *data;
->  		int ret;
->  
->  		shim = ring_dev->ring->shim;
-> @@ -456,25 +457,21 @@ static long mlxbf_pka_drv_ring_ioctl(void *device_data, unsigned int cmd, unsign
->  		 */
->  		byte_cnt = round_up(trng_data.count, MLXBF_PKA_TRNG_OUTPUT_CNT);
->  
-> -		data = kzalloc(byte_cnt, GFP_KERNEL);
-> +		u32 *data __free(kfree) = kzalloc(byte_cnt, GFP_KERNEL);
->  		if (!data)
->  			return -ENOMEM;
->  
->  		trng_present = mlxbf_pka_dev_has_trng(shim);
-> -		if (!trng_present) {
-> -			kfree(data);
-> +		if (!trng_present)
->  			return -EAGAIN;
-> -		}
->  
->  		ret = mlxbf_pka_dev_trng_read(shim, data, byte_cnt);
->  		if (ret) {
->  			dev_dbg(ring_dev->device, "TRNG failed %d\n", ret);
-> -			kfree(data);
->  			return ret;
->  		}
->  
->  		ret = copy_to_user((void __user *)(trng_data.data), data, trng_data.count);
-> -		kfree(data);
->  		return ret ? -EFAULT : 0;
->  	}
+>>>
+>>> I guess using the swnode-name + gpio_device_find_by_label()
+>>> works but it goes against the design of how fw-nodes
+>>> and especially fwnode-references are supposed to be used...
+>>>
+>>> Having a fwnode reference pointing to what is in essence
+>>> a dangling (not attached to any device) fwnode is weird.
+> 
+> I agree it is a bit weird, but this allows to disconnect the board file
+> from the GPIO driver and makes it easier to convert to device tree down
+> the road as it can be done in a piecemeal fashion. If you want fwnode
+> actually attached to the gpiochip then:
+> 
+> 1. You can't really have static/const initializers in most of the cases
+> 2. Fishing it out from an unrelated subsystem is much harder than
+> matching on a name.
 
-Please make the code to use the up-to-date conventions right from the 
-start. We try to avoid changing same lines back and forth within the same 
-series.
+Ok lets keep using the current swnode.name based approach then.
 
-In general, anything newly introduced should use the most recent 
-conventions. I might occassionally allow exceptions to this rule for 
-a pre-existing file to remain consistent within that file but that
-won't apply here.
+That certainly makes things easier for the x86-android-tablets
+code.
 
--- 
- i.
+Regards,
+
+Hans
+
 
 
