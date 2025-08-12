@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-763815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA81B21A9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE289B21A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 04:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2AC163684
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF65E1895629
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 02:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A622E0915;
-	Tue, 12 Aug 2025 02:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2842E2DE0;
+	Tue, 12 Aug 2025 02:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="VEMmeo4C"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bzteO4hH"
 Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012006.outbound.protection.outlook.com [40.107.75.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC412DCBFC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFFA2DEA6F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754964627; cv=fail; b=plMP6dKIp+Lg4gMsZbQgSLzT3yaTimQGiVlrr/j4n5e28gYjWptf89d91k946D55yjZUVuYr6cJY0Nm2StcVLlgM6ZgKOhy92YsMQCGuxWFAIBgduFGKgvoz/EjjFm5GMMh1PJNizraPl7+71lmYrphcA+3ErOpjmhgCoAXCNUY=
+	t=1754964629; cv=fail; b=Nk10Bq6wL5RoDHr94uZ9yjThp7feYAKyYvI8df+IDQRcI/FJFd4qHxZPBnpKSIQxQbIMbU58t+30P/RX12CvQUB/xo9COAmXHk2eujhi+aRET7XjjvHMIJxA9XROAkasIIOOK8/ct4tBaO5IiwEwC9m95Bu6v/XBdA9wgchvtFA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754964627; c=relaxed/simple;
-	bh=bKz92CPN5gNcYKUR8G97yVahkTDGJQ/b86isqxYiyxw=;
+	s=arc-20240116; t=1754964629; c=relaxed/simple;
+	bh=aKXxxKIHMXYDYJPXqlfdFiSTUrJB42EX9UTD7bY0a8Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UVzfA7Mb8dkVF7JchrqgibooSafTD2bKG7BXoWnpUoDiPFHhOgZeKCU6q+VHafrC/fl+A9f1svubm3Dy3e+bcMBxbiUJGMC5LGHHYhednNHtEnGifPA4JEHUtwX8KR+go5NRZLAjDDVSji4W4dK3i9WckAlB26U3vJ2Ep0Q4UOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=VEMmeo4C; arc=fail smtp.client-ip=40.107.75.6
+	 Content-Type:MIME-Version; b=RAaqGPX8j4Qe6hOsUauwvpbh6YyTtTtYIPpDEz4xKh0cykc+5NP+Uof1igP18VPdhPT1aPbOHxbAmHv9tEswn5mIQMXt5yNQBn2zecrV7JBcr5YAW4fNkuigd9rqWPYb/ZIbE5SGe0Wnvz5Tpb6l8JhvckVG11L3TePzPVIbnu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bzteO4hH; arc=fail smtp.client-ip=40.107.75.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LUrWF9cMOnZTRoCpRxuU89hduI3a4vy1j0+2krMS3mRhjjxkmq5NWPWLV4Fq/+UbIaOifw0fG9EjUWA5BbVeCsCQecNPF+owfT7RY6hRQ9PDIoT3MFA4KLrBt+6tclvLeyMoGCbTBtGM78zu0JZu1dsKx4FafAGFPLfxgxKg4swin64NIC5Tqyi8TygEETXPhyCz26V2WbOvjPBz7muL6WQIywSHa6wEcj/Gf/F90q33EhYABOIGT1DzCe2X2mBzyvZ2aB/oph+9H/CZqXsTvuEPNwlmzlkkcWL+oPEFeFfOT1Hf8/ayjEGhEgP9/+sSp9gbdIlfvXu2v7HIMlqXfw==
+ b=s0MHXuV/3nndpbwDxZtFSPML1wuGtzzqh50a5TXzJuVHHvA5Ru16fhjysrV8uxFBMKZY/iVtoQlK7hvw6GmpqEHmC09of75oqXAl2uM6vlh6OjKyObod5ArOozXATp3ae7V0o646QdfSFk/QM8CAnHAdYCvHtOzSaT9x/iw2zztQFzcW2ns557XDHIaVUCRYn60u76KGtMBC0iukIsFECD4H8a4hvlE+kat67tLJf0U22WRuXNsbR/TAe5ggNq/tsGgUg0Nioonh7/t0oupSA+Xo3McOYjotXNJrLMFGSzi2jIVgpJ8gqqs4cVyTHR7E6vO3oY7uVCs+xF92GsC0Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JvSdhWyzwaosbp0Z5y14WgHgPUsAZv2q/RkuUb57lGs=;
- b=HsxY13LowGDGUG0ZzuJ70XtqL3in4jE+JGxoj1SbQEBQefSSXE9cmY3Trc7ok1AQJJnnJuXHKP3WkG/21gD7Zh2JwORttWA3v3q//K+URHtMeBxSbo/mP/r58uhVcKlrGtQHNuLfUo030TNOKxV/01F2FWAA8btn2hU0xdOs8g2CGUMrNb9VPtcGbEnFRGVwtsg8wfliVYJ850BlaIs2LvUzhVQkQg+mmLPgFau2c4z5BmUh45j6MsCim77ZIuB94NcsSUOFfcPcNxVkOSD+DF/qiFY0wNR9ook6fgnYr1sBrUbyAvUH49+mQMZyB4JTK2J6NFXH9v+hnm/GCqS1rw==
+ bh=gDu8STYElf8M1xLTrj3SAudrPYVC2osmJ+TAx26Lzbw=;
+ b=pT4COylHyl2l3UTcab2VLTkEtfkH7NIXG8L8miKLbYzZfXchdaak5J7gRLDS9Qe8Sk8+DEMxHZePsfqOc5M8Rv9ecGN2w/wFHA+O5c26pdLXtgewA/jpV+B8+Z2FcEj1IC+vutnb6GYSlKyKFIwh0YYN5AzeISLwGamy6ChjS1gq0iyRkKoTGtCe0i6hIKP+7Y0hJvYKTct/ljHItC9fdyuBoAWnIuavF65fByUH5C1Rhr0aBGpItGQLVSO63baedk/mRHxWSK7HAfhAtf4N34JUchX/Wt6Vvi6F5een52P4K0ZJXCDCdy8CQFmKLxLz0bqyjF9LxjDL/2Ny3v+vLQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvSdhWyzwaosbp0Z5y14WgHgPUsAZv2q/RkuUb57lGs=;
- b=VEMmeo4CkE8MLMAvhWx2WmHGqmKTbleIeI0SfY/7f8DE8+c2R2+VIYvl8MAq6KkT1VuDxJUB8N0FowTrHT3YLY3vXcfbRfjIjo6+5HUN9LPpzEaNwVl9RnSt2kP3BjmMIyZ6vX+hL90Do/a/SNvmiYCg9eqVRlfMXCYvMnwsM+k/GE09xlXFF07iVN968DnQrPtj7rTxgc2F6kNX764UIYGHVvMnk1fBktFp5+r5wGxKWkuLEjlBhqgsHbhpWp94sQ4TQCu5VO3X5wUhqNDv33WWo9LE/mj8seZZXPMoJa/U+aZ8BVSB85xAphC7rHWES5NXKB4z+mmAJOhrEU6c6g==
+ bh=gDu8STYElf8M1xLTrj3SAudrPYVC2osmJ+TAx26Lzbw=;
+ b=bzteO4hHSpjNsX5/QmOQxkPeb2xlNatTV0ND/Ti9rSnEQJbjY6IOzLYf5cxJbifyf9KUXFHz9/ckUM10cpOcT8o30QEGmSAAz/smYl6D/gFqfxU+d1FtPUGulcZBf4uj7jN6inmxh5tJoAkpilkE08LTBcRfAl4FR63Llatfk3v0ADV1H2iqD/I9ySDzpwWxoOxw9um1Ld9OXmxAHbFsB4479ko6fiAmhPaFGXujbA3wPeajXe60995l8/T7D/jAveunET5qB6S/rKSlrUU4nWEdV2EJq7nE4I1sNt4/5Bavys/YqueyNGCgyfIqRKoNTMkKdHgkBZNRrP/iLobxQg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
  by KL1PR06MB6733.apcprd06.prod.outlook.com (2603:1096:820:fe::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
- 2025 02:10:20 +0000
+ 2025 02:10:22 +0000
 Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
  ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
  ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9009.018; Tue, 12 Aug 2025
- 02:10:20 +0000
+ 02:10:22 +0000
 From: Xichao Zhao <zhao.xichao@vivo.com>
 To: Richard Weinberger <richard@nod.at>,
 	Zhihao Cheng <chengzhihao1@huawei.com>,
 	linux-mtd@lists.infradead.org (open list:UBI FILE SYSTEM (UBIFS)),
 	linux-kernel@vger.kernel.org (open list)
 Cc: Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH v2 1/2] ubifs: Remove unnecessary parameters '*c'
-Date: Tue, 12 Aug 2025 10:10:07 +0800
-Message-Id: <20250812021009.414756-2-zhao.xichao@vivo.com>
+Subject: [PATCH v2 2/2] ubifs: Simplify the code using ubifs_crc_node
+Date: Tue, 12 Aug 2025 10:10:08 +0800
+Message-Id: <20250812021009.414756-3-zhao.xichao@vivo.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250812021009.414756-1-zhao.xichao@vivo.com>
 References: <20250812021009.414756-1-zhao.xichao@vivo.com>
@@ -80,124 +80,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|KL1PR06MB6733:EE_
-X-MS-Office365-Filtering-Correlation-Id: d419e124-aa6b-4096-25f0-08ddd94563b6
+X-MS-Office365-Filtering-Correlation-Id: 5c829d5f-f8df-443b-6eb9-08ddd945648e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pmCets/qFjqEttV+hsv/vb0MwUNeZJbj+877SawArKEZYAV6pcBJ1ENylmy6?=
- =?us-ascii?Q?NLl4WIRyaV8mMdjWsHsJpe+a5Cepe54cFkYpCQx0FDC1dowmK1/IrUusD/hO?=
- =?us-ascii?Q?oC5JLlmOrOfBMEB8Pvnjln+yV9j5+3O/WVZ+0m9QJm5X41Wqw5LLoiEp0c4R?=
- =?us-ascii?Q?8vT18iLX7GN5FSEhbkXWuKKmDH+yhS4Lbf69BffKNEq5N3n9/B2JrPXSNAGP?=
- =?us-ascii?Q?tUdUqLZyKzvoYLe0g9Ve3gYYR4WS/7VRe6MyfkIQGT79kj+94Bs3iDm9Gp0t?=
- =?us-ascii?Q?GmJ8t1ViNXPtP3ki8kQGoPRk/hHmwW2a/jUr1R3XfPY+V5GxkDzLVkb6TCEr?=
- =?us-ascii?Q?2QePVIUU8jIIl+GbU43RZdQn+yxMF6mHGzdzktyfy0k+5lnOhs5jk6tKUV72?=
- =?us-ascii?Q?/jibBGVP7TmxfKdM+SdaWudX/gOACHm03lXLKRsZGQWnUEdjfLp5ub5j4b2m?=
- =?us-ascii?Q?YS2QKMKBsxRtbFiYOtTAapsL8dZE/mQ0HrypGlVWTQc9Ahkd4OM3sWxA71SL?=
- =?us-ascii?Q?brKEQQE8dExtRs2z4dfmPRP4qMzwhUqWxyQ2YRZlfZNN5oe4CJ3p3q6xOz3t?=
- =?us-ascii?Q?PpxsspNfPnTh91T2YPtU2yVYK0sGhsGC/+A+3/PCtoRCTRIPq5tXJ6z7baID?=
- =?us-ascii?Q?71LaaFFqBTcZ6gezBusGK/8cW1nSQtDaAHKd9uc6LSsyerMS/jQ7h53EQXF4?=
- =?us-ascii?Q?aIgOTkKuKLOqcoW0pmYtRiewO/yuHsTQf127Hi8z6o7pwj6FQ3ZXGCBv5OOg?=
- =?us-ascii?Q?dLMKtohdYd6DQlt81eDnxc0+RmPpXW4IRr+HARvR9cLi+5NDwgYUlVPrLKip?=
- =?us-ascii?Q?1dJANwFltx+AiJrKviz73B4GdIJ7PO59gTKCW/sD8e+UPeLk2PFYUfwZMUsK?=
- =?us-ascii?Q?Pd+2r1d+yyXJU5YiG5xmv+MuPGhPArt6/bRi69wsoLJAPovp4rT2rNnM0fIq?=
- =?us-ascii?Q?mYBzGuwLr7JqGbpn+bQGUiCbBCl4T6HhU7BnfBcfmdeV9KLliTlau+imhl45?=
- =?us-ascii?Q?vtgN2sY2SimFlEZ8FRCdXq0rYKTmYSbMW5MKBEeFhnidYORx8onVj09m7Bye?=
- =?us-ascii?Q?b9uKNaY+EvCxoh0FHpFkSKuf2HS66yn2In7HyIFd5UZ2T2zaeX90iUuvj8Wh?=
- =?us-ascii?Q?NA7dcoMy9qhfziDQ/8BLWFA25kJMkqud+hPJPkVI/KdwkJJiu5PaYCnEc0En?=
- =?us-ascii?Q?QMIsdPkrDiGRXL5IGqMG55vw3kopr+N6VUs1QlydbAh6rr+BeoYb+BGR4jdz?=
- =?us-ascii?Q?b+QvdY+qYdW25ZHghy+upi9u6wAKzEcc5NW/uX1ExNin09Jr/Uhll+BQTS4c?=
- =?us-ascii?Q?70UT67EM0LEa1iJIGErH/bw8hWY5xQ0GZVSpKjslmjafXDgSmHrWGp2090QM?=
- =?us-ascii?Q?E9cg27mXWo9UkdNep1sTqwgjv4ifd9Or9taDv/Ai74RRfv1kWnwsOWcetsJG?=
- =?us-ascii?Q?HUwAmDbvBfaHp9xPEF9WDNG60+SSenfhfcXsj9orbrgw/2VJpr64kQ=3D=3D?=
+	=?us-ascii?Q?LY2mcn1Y2E2qsjQTEEcYqmQCXR3+d7y2Z6Vc8NxgtMcGm48nHb0GZHpeNExj?=
+ =?us-ascii?Q?18gknXk3dQA5CGxZdlBgMijMtomeuBVWZ2NzjC5nzXd0QIGYg1x5eHbmsrWo?=
+ =?us-ascii?Q?aJ0Nvwanbn8R+VZ7K0PQhkuyrjNGgnZ9lRV7VJMX96zpNYiIs4D20opMGz7s?=
+ =?us-ascii?Q?iKXdn6RRzUtNTcm1zjy0PbmGDSztOjPoB/RO+Q3iWm/Hvc8EA0nxi2z+NW0f?=
+ =?us-ascii?Q?Cp/ugYWj79htNbFoQED9UvPOhIuN0Pow//o8ibvd4vOjE43IWNYsQ/AbSxrp?=
+ =?us-ascii?Q?McCyVCydOjyEjYGqtjPMK7R7tQexhzbTmhVAJYRyyUSXVYMql4XP+L7GAPfl?=
+ =?us-ascii?Q?QDrs89j7HlBZ/KfmXTnBwb9u6yeDYjeln/utS3i/yretLaKT/jpERVQ49mI+?=
+ =?us-ascii?Q?J5KlOEuYmrS49sh3L5nnm7Bc4+Y5F464r2F0FL44ztFTCROhiGIsUo2RwIXu?=
+ =?us-ascii?Q?wnLw7Sk+AaC4SyedbjTx8W8jtexXcERV9F3D4N8TeZUHf7kqJ2LvCsNQnJ63?=
+ =?us-ascii?Q?lgsAcm0jVtCjM/6Uj9uEK5NpNa4iT07l+U40vBTPrqINsLlXyI0GquGL3sOp?=
+ =?us-ascii?Q?GDIMDAS6rp6GEDce17V0UuPMo43gtnCxIiJ7R+ZICTbz+CTHxu//sY6oAyhh?=
+ =?us-ascii?Q?UAb/1jmPPdtkbzo60akWy7nNtCA2OjxrygHm7yKqlSC28BEBEa9Cs/LosXDl?=
+ =?us-ascii?Q?+BcXtJkfhq7+Mef0Voztg58M8OvcU5cuNaYPYqi5IQV8Nt8jROeRqlg5RWUY?=
+ =?us-ascii?Q?Do4bEgX43W3ybFOYcj7deML1x6RNfJe1h9hEeDnaj/4TkawjXsK7byEwbM/y?=
+ =?us-ascii?Q?N041Hv7m+a0SxjgMIVhMDqxN/nV87pe2yaJ9yCrFidIWexgOvgi3R2UC36Gd?=
+ =?us-ascii?Q?SE+qJHKKKWSEWSd7utXF9Pa3rHEaqgIuFFlqj1N2ijXCQ8Ostcue/8nrbX83?=
+ =?us-ascii?Q?iutmzwg7hWocvx2qqqIs5D59BbaO1rVyjLHTM4ya3WCXt2tu5/UTnpd6jF+r?=
+ =?us-ascii?Q?NtxYJ6jK+gsjs8wxVOo2JYVe5KcK4TDSC/KI5pM1RXoft/wfWWSWGO30hCFT?=
+ =?us-ascii?Q?hqZmpUqSvwH8zVedyF3cBYJID3ufVevQa1p1aNvKP28sKntD86cVpSXay1Q+?=
+ =?us-ascii?Q?YBmGR3/fcUAfznysMaBwZBrz63yRArs00wMWvi/+MGf77bd0h2FmzXAaTKh0?=
+ =?us-ascii?Q?JNbl7vxDV+qA8rLt/RhWh/vfsS+2jPuJ8olzYix+n4JlKTccFgm5tWCc5kb+?=
+ =?us-ascii?Q?nfw9EXml6GRqFyKhRl5wOUcb247qVbtn4yQZAt8ineA05/7KKvh4u3X1xuG6?=
+ =?us-ascii?Q?D72OTO/L1i0mspaz+YvrOhdDmng3yuc4cbpjqqfTu3POe9y4q6y+AnT+8RI8?=
+ =?us-ascii?Q?IHD4qClSU8XAWISZlFFZGt1ptmvo74zeQTtyUKeGR2HXOMkJcNebBkYFnfC6?=
+ =?us-ascii?Q?j6+8euWwPt06S9R3oCxDufGb/w3PvZxAA0wacpN8D2pPrb/R+rqAxw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OVjUO658I9MwG5TGAoV1A3+sEOWSntMiibKuktH85uqmTPDyiq3JA79kHYDx?=
- =?us-ascii?Q?OAlvFUfU4+yi5892e+dQtztFGbYeJwAPoeD6gmeUShYUcD7eBDx/MHCMLWhQ?=
- =?us-ascii?Q?Jsj7beez7YV54RzlxOaBJ6PAetZqGvD7d75sR2RuFcnbnAMSba7JD03UItYl?=
- =?us-ascii?Q?K8Md+fMEjb6Teufsk58TUoRPD5rPhhUUsJOogPIC8AEIYLm4X272pzX9vpgz?=
- =?us-ascii?Q?kdSmq6KijxR6E/onnaMfYDUCaNSlGHHgZarAqVcGvHQ1bF+qz3iv/Y4eoq/Z?=
- =?us-ascii?Q?3LIBQ0YC6N9HMeZDw7YLh6bvVHVqA/MoI4cSs59AD+ZvQtgzdFUYpqR/BJFn?=
- =?us-ascii?Q?NF5m+P/I0AoRqY59tjSlj86W7uizZN748pVrE8ORLDIQpPIeG/ix3Vj+u0kl?=
- =?us-ascii?Q?62DJgeRhzm9Hk/I72tW5cULCMqgE3ThPQMjPZST2518TRjctZEfRT5td70K5?=
- =?us-ascii?Q?nu5irP6J6guqjiRhLfCGcR1gYakgC5N3s5rg4q9nT84FmnoFz2kvVKzg1sn5?=
- =?us-ascii?Q?0soCBLh/uQ22DUux7SPSBmpYhibDf3APLZEOH4vT36s4Jw2Y6VyQAT9d5spu?=
- =?us-ascii?Q?1gT0cpncffQYZmHmi1kN5ocSU6KIgbsz5t87IYWxRncn3MvDObZXP21jfhPJ?=
- =?us-ascii?Q?VG9BG0MI3Znk01JSr14Q6ut6ED8HUAU4qpL5n7xC3zvQ06ojG44G9vFiTvMm?=
- =?us-ascii?Q?SKe6ko4xJaSbgfccdJk/RDVqTei0KD8ldYyzJyyrUGL1qOmVUxoGpRMeCbmP?=
- =?us-ascii?Q?GNPcB0CrzLftMMIqu2+ZytF0W2cQdj+VmVe7+cPno22kaPU82xvWlpCcG4gb?=
- =?us-ascii?Q?Vr6CLCjPO5SMwIWSuXNhbhFzrMvDySo8GyRxlzSRLNjHzrgVz3hC4XzKjLiw?=
- =?us-ascii?Q?VAfJn1Xu4lECf9FVAmGc9Ti/lbxm5+uKVYJ74iEa9F9MzHeglB+eBoi7j7Cm?=
- =?us-ascii?Q?SCYms3iFZnxKOj23adguJKzTnbQZWQGh0qnn4a4jVZ9fPNo6jPxRlr6afF03?=
- =?us-ascii?Q?XF9bjIR2uvPIyUvqGXQypw2lZ73mDzybenz18fG5dezhotL5TYxNdS5DVoTi?=
- =?us-ascii?Q?jcUCss3JZcl2wzRTr2ubSIQJ4Eh9Q2LDDpwDJYIKgBB3kupCMqgvxE374oq1?=
- =?us-ascii?Q?SNFS/Z/avBN3TPUapOj5UtfWmzbxMiyWU1TxS99fnVbFqP73O+ISTcX88WMZ?=
- =?us-ascii?Q?2nUVcgAhLPOWUz3cPxENb9OEyiQJTcPTvp0Rpkpioi26rNCThZPxiKmj+LGn?=
- =?us-ascii?Q?qc3OdcD5uSJgxlOOHNTaS9UHpYIgKAj5eFAcgYE87YEOM18ydKI1vs693q4U?=
- =?us-ascii?Q?8Ex4KFILKu9O7kRCiivC74A1C4clM0rBv642hHPYItm0TIKKQoejDlDxODiX?=
- =?us-ascii?Q?LbOTIuoFU2IhyNL5XuKvV4mhgleGtGkGrv0dMqu+JoOW2f5BKjuc86Q1T4Ws?=
- =?us-ascii?Q?13Fa0oaeJgmuBwWIwpLneVxvx0HMUcsMMTbfR5B0JiNjjjj9F8TH/j9JuVUY?=
- =?us-ascii?Q?ExL61bRdJ9beSM7IUG+c9wbqgYZINaYg7640cbAab/JqXKURA0HlKm9WzsZt?=
- =?us-ascii?Q?K474ui/inVfIDo3mh4u4J6JM8eiafKUZx/i+KX0n?=
+	=?us-ascii?Q?lpOqzEFhVX/ZZQbOx8E28wcUoC+75C50Yyzae6Vm3GoejRs0m5UZw+wwqH6I?=
+ =?us-ascii?Q?ghU9fSzgD7PApQw0NRxrLHjTJS8ls3f7OvUu3iOwyCRknOXqeKRzy5RnLzjh?=
+ =?us-ascii?Q?PF2woAO6EDfczPQU2FabbpvJTZu+sn0MWnZL6bB/TiHumlUuikDd+/UHaVjz?=
+ =?us-ascii?Q?6eFP2TTKK80yZ8HKPY3Q1vBcDFFpbg6S9WSUu+DROJolmBYtqbVUkxzd4aB+?=
+ =?us-ascii?Q?rC4BhXxacRgQhsIjXW3kX4FMLi9mAnfzOWcVlQ3tpdnWq4OQp6IJoAjE5uBO?=
+ =?us-ascii?Q?lOQ9Mk5nrHlmfHQE0s7xicgaXq4rAgIG/W+Vf27RvzHwhLAMaFXyzZjqnIVN?=
+ =?us-ascii?Q?aWTjJO66HyamflZ1lcC9VRWujC7cxJvC3OSe4i3Ke3kUdbv6gC7+68l75J7S?=
+ =?us-ascii?Q?Q+V322S2gOndeAx90KOuYXen5YTzN7LAw8Z86cN8AQgcv8UBgEBp/lJNC2Fa?=
+ =?us-ascii?Q?42O51O/Y5eejX3J0AfQusW0iGGBYZorC0mafPK/vRtpFMAXy22NhQeCoMI0J?=
+ =?us-ascii?Q?cC37wGN0moXGlLvAxwFAFNjJVeXbgCpVYfbv+fKAgYxAXZfyTaSPlkRQswE0?=
+ =?us-ascii?Q?sKXRzZnletdL33JrnFOcqxeAXU2Z5+ltr1NleE0SQi0BWexXkGGSeeWfElYP?=
+ =?us-ascii?Q?Lf3Fdmw8/SR9XxXLmz/q1s4JqGCdlrf5WYL/8Uci4XGJq1fKFtd3C9TLFlP7?=
+ =?us-ascii?Q?BUkDQnDt5nYMnbjuVTap6kO7fWWK8Rog4vx9BR2SjFbpMRCicQFCH9965JFU?=
+ =?us-ascii?Q?B4aqbTdXTQhhwHLSMySKWlsN7fxc2djS6KqqJWoUVDCedhkGYtXAsos0uxI2?=
+ =?us-ascii?Q?DM6WvwtN7Uj5ZUm/lTsgNzsbafBvytb7NreDP4zmLjZI/be6B2vfoKu/mMgp?=
+ =?us-ascii?Q?XPRu67W0qila+F2e5bdoge9/GvXjyyAjmzE4/kB0StUJkzStDZ8ffPiaR/J+?=
+ =?us-ascii?Q?vnhKkttMFrxkGrc2DLIlENAlp0OH8ChwdfWKxMlJDYFENIDix4K356C6Rp3P?=
+ =?us-ascii?Q?fL83GgaWaV/e5O3+8Hw4ur6oYwdIMYlXyx6wUP/FumoSmY6i6fOxwe4KbrRG?=
+ =?us-ascii?Q?gCUZy7EHAetAtmomGZzMnqfLcocLxzcDMa0eZ7Cfqg5cYvEkO9n+O3IGiNkJ?=
+ =?us-ascii?Q?+6YG2Fr9DjsypG29ge8zXP/0Hk7VccDv0nu/8Ekzl1MrHiCLoRu6wbTXDrCJ?=
+ =?us-ascii?Q?uAGydoY2ZmWIWSh3g4ojAk1WBRUuKHanw7WYeWCg/Xdxjz/QDlC1pammVdUz?=
+ =?us-ascii?Q?M8jCg99qbUhFK558gMeQn2hlhSQLCGaopgdhHtc3ClkH6ugHXmFbYbzQtCrv?=
+ =?us-ascii?Q?qAhxz0oQQMl17sytRPkA7vJBKHYohv1bRqdkWJGWW1rSKWF3+zfZMQzt+SBI?=
+ =?us-ascii?Q?XXVtKV/kuhhZ7S3jtkIxeMFaVUnrb0z+aAB3E8r1cZtQCPMsc7FWgxytq2/j?=
+ =?us-ascii?Q?yv9YouOr7LScbdatpCD35tOP7vLxGIL1D323m59qIh3dTzydi6YCFqjrpuJB?=
+ =?us-ascii?Q?ly5JavHBip7zpzioujdJBLcIfxwkfua7UqVmt+cOywj3x/mjFKpoRzgHoEa8?=
+ =?us-ascii?Q?fP4ewHBrRd+21S+RKwdaaq6qaXjHpXOspCjrt/I1?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d419e124-aa6b-4096-25f0-08ddd94563b6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c829d5f-f8df-443b-6eb9-08ddd945648e
 X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 02:10:20.7139
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 02:10:22.2015
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RYRIOXwPAekRL7uyRn/0UVdHTgJMVkpSAtYE05kjyJQ35pn2NdK3rGWYxYoZ4UvVVoIXG4qSkn78gwmdLtOy9g==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 68ZNNgWMb7ZLRKjbQdVLlWnf/1COy+3VlAzd9upHQcVlmWyCQpZEnIgeXRFO+PCI/ULoiCOjCEF11/aFDwS0Tw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6733
 
-Because the variable *c is not used within the function,
-remove it from the ubifs_crc_node function.
+Replace part of the code using ubifs_crc_node.
 
 Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 ---
- fs/ubifs/io.c    | 4 ++--
- fs/ubifs/ubifs.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ fs/ubifs/io.c       | 9 ++-------
+ fs/ubifs/recovery.c | 4 +---
+ 2 files changed, 3 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ubifs/io.c b/fs/ubifs/io.c
-index a79f229df475..e0dfe6827d65 100644
+index e0dfe6827d65..6c6d68242779 100644
 --- a/fs/ubifs/io.c
 +++ b/fs/ubifs/io.c
-@@ -395,7 +395,7 @@ void ubifs_init_node(struct ubifs_info *c, void *node, int len, int pad)
- 	}
- }
- 
--void ubifs_crc_node(struct ubifs_info *c, void *node, int len)
-+void ubifs_crc_node(void *node, int len)
+@@ -327,8 +327,6 @@ int ubifs_check_node(const struct ubifs_info *c, const void *buf, int len,
+  */
+ void ubifs_pad(const struct ubifs_info *c, void *buf, int pad)
  {
+-	uint32_t crc;
+-
+ 	ubifs_assert(c, pad >= 0);
+ 
+ 	if (pad >= UBIFS_PAD_NODE_SZ) {
+@@ -343,8 +341,7 @@ void ubifs_pad(const struct ubifs_info *c, void *buf, int pad)
+ 		ch->len = cpu_to_le32(UBIFS_PAD_NODE_SZ);
+ 		pad -= UBIFS_PAD_NODE_SZ;
+ 		pad_node->pad_len = cpu_to_le32(pad);
+-		crc = crc32(UBIFS_CRC32_INIT, buf + 8, UBIFS_PAD_NODE_SZ - 8);
+-		ch->crc = cpu_to_le32(crc);
++		ubifs_crc_node(buf, UBIFS_PAD_NODE_SZ);
+ 		memset(buf + UBIFS_PAD_NODE_SZ, 0, pad);
+ 	} else if (pad > 0)
+ 		/* Too little space, padding node won't fit */
+@@ -469,7 +466,6 @@ void ubifs_prepare_node(struct ubifs_info *c, void *node, int len, int pad)
+  */
+ void ubifs_prep_grp_node(struct ubifs_info *c, void *node, int len, int last)
+ {
+-	uint32_t crc;
  	struct ubifs_ch *ch = node;
- 	uint32_t crc;
-@@ -432,7 +432,7 @@ int ubifs_prepare_node_hmac(struct ubifs_info *c, void *node, int len,
- 			return err;
- 	}
+ 	unsigned long long sqnum = next_sqnum(c);
  
--	ubifs_crc_node(c, node, len);
+@@ -483,8 +479,7 @@ void ubifs_prep_grp_node(struct ubifs_info *c, void *node, int len, int last)
+ 		ch->group_type = UBIFS_IN_NODE_GROUP;
+ 	ch->sqnum = cpu_to_le64(sqnum);
+ 	ch->padding[0] = ch->padding[1] = 0;
+-	crc = crc32(UBIFS_CRC32_INIT, node + 8, len - 8);
+-	ch->crc = cpu_to_le32(crc);
 +	ubifs_crc_node(node, len);
- 
- 	return 0;
  }
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 5db45c9e26ee..5d172509091a 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -1743,7 +1743,7 @@ int ubifs_write_node_hmac(struct ubifs_info *c, void *buf, int len, int lnum,
- int ubifs_check_node(const struct ubifs_info *c, const void *buf, int len,
- 		     int lnum, int offs, int quiet, int must_chk_crc);
- void ubifs_init_node(struct ubifs_info *c, void *buf, int len, int pad);
--void ubifs_crc_node(struct ubifs_info *c, void *buf, int len);
-+void ubifs_crc_node(void *buf, int len);
- void ubifs_prepare_node(struct ubifs_info *c, void *buf, int len, int pad);
- int ubifs_prepare_node_hmac(struct ubifs_info *c, void *node, int len,
- 			    int hmac_offs, int pad);
+ 
+ /**
+diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
+index f0d51dd21c9e..b36dc9b032f4 100644
+--- a/fs/ubifs/recovery.c
++++ b/fs/ubifs/recovery.c
+@@ -1406,7 +1406,6 @@ static int fix_size_in_place(struct ubifs_info *c, struct size_entry *e)
+ 	union ubifs_key key;
+ 	int err, lnum, offs, len;
+ 	loff_t i_size;
+-	uint32_t crc;
+ 
+ 	/* Locate the inode node LEB number and offset */
+ 	ino_key_init(c, &key, e->inum);
+@@ -1428,8 +1427,7 @@ static int fix_size_in_place(struct ubifs_info *c, struct size_entry *e)
+ 	ino = c->sbuf + offs;
+ 	ino->size = cpu_to_le64(e->d_size);
+ 	len = le32_to_cpu(ino->ch.len);
+-	crc = crc32(UBIFS_CRC32_INIT, (void *)ino + 8, len - 8);
+-	ino->ch.crc = cpu_to_le32(crc);
++	ubifs_crc_node((void *)ino, len);
+ 	/* Work out where data in the LEB ends and free space begins */
+ 	p = c->sbuf;
+ 	len = c->leb_size - 1;
 -- 
 2.34.1
 
