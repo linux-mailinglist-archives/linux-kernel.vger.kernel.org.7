@@ -1,115 +1,150 @@
-Return-Path: <linux-kernel+bounces-765555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841E2B239E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56540B239F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197187B1A3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B871A268C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9D92D0620;
-	Tue, 12 Aug 2025 20:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4D9202C3A;
+	Tue, 12 Aug 2025 20:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="EB+EpUxX"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135662D0618;
-	Tue, 12 Aug 2025 20:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PKBYSynD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950C52F0693;
+	Tue, 12 Aug 2025 20:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030168; cv=none; b=APlv78AiT4FsroeiKwtr1aFetysPJzEPQCYoEgGd9WoVe32RJzuarCwIDecyl+g0J/4P+S3l3c6pi9s99akWHWzH474lXGdMbjqrNhF8aoZKW/2UyyLCoqkYY/oGXZ+et7AfWiqIfr3yq2fOMy3xq/FQA9cG8ffTKIDfVeK4e0I=
+	t=1755030617; cv=none; b=rFTL6Oqq7HUaMnJKxOJ/gZofcyZpaPrS5cbMOG+zYvgwXMF89AJake5PHE7WdwnhrO+xfE+XW95ss4P93gYKQOBf40va4oOjqut/4Wm8mmjCTnSfzLSEkaa1MiCrDh7Pho0dSG5cr2szi68lnRBkwY61RNOuAQS9WWWr3W4pc0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030168; c=relaxed/simple;
-	bh=3ZLVNIPZknH6xE/O18dL51v7xcqk+GTu+1PLDI35s7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bRPKttce6qnAZPyUan4dKTXOM1HixRbL5sslwCQzfBAgCRsIlHoxcN+/6HsTPipqBEkWVvwLOXm17pZshyaIztQUXNLcaCJiHCC+JqOIeOojgjF1xGkeralKf0FIA5VpFDxGgJFX2wxD7jYMoarjxZRWTxhGfQRiRPhmHr/z2oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=EB+EpUxX; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4BF001038C11C;
-	Tue, 12 Aug 2025 22:22:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1755030164; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=guGyo4crm5Pm+IRKfIYVBTbQlB37VOD5LVHd/0CVvUM=;
-	b=EB+EpUxXvoJJ1xIs9qZ3Auu1kSjEbrh1HILdHwO/w30YOr6Z+Qeh6MBdlJWHbq64nnEitz
-	HJ0lh8FEsYwUklBW47OL1x+10ltBzUFEWq0wnEJDyjBZ3iCQBbXBj2WoxQMaMX5+EscNdv
-	hEat06oXmqGztAm0Rjgkgt+6OvPtWBww43dy6YLssZ3FIAbjl2JHS/qryGeRln4V9ToJLC
-	0j8qsl4KiF1IWQgnHdWlI4/5UCZHibEPY6yUN0n7MGL5Td4JgIyrs3JRVD+ZMC5rciOqXd
-	pQgw6Lur8gXo9j8zbogKRtZRGPe9bVWK6oDd2eSnLe659Y8yLUqyJ8kVQk2M9Q==
-Date: Tue, 12 Aug 2025 22:22:36 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
-Message-ID: <aJuijKhZeT7c8bOw@duo.ucw.cz>
-References: <20250812174357.281828096@linuxfoundation.org>
+	s=arc-20240116; t=1755030617; c=relaxed/simple;
+	bh=lIpmLMAiZ52nvcInx8bvEbyXOzEr2wlgUxL4u7rKJSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kXpzusDJZbCv8u8SzMZwbiOJIkFQaBch6VYGDn9/vMOlDw15WVkg9ku7yaxo7SHrl27p63Xl5ejfwPXA+uYQZpeD1Jfw2FVAP8qb14RRqgHQ3BivIHZ+4dP15bHeiNs4j/JitVAn9d/iEbonTsV+E6WkLQUAaNf//oyUeVrOIDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PKBYSynD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.217.112] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B2CF12119397;
+	Tue, 12 Aug 2025 13:30:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2CF12119397
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755030610;
+	bh=+dHVx0X/rHhwboPhpxe6uj0DRnhjEIQ93tWrA66yv4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PKBYSynDYXtU/TJg3NA96rNjFkJZ+BiZm3j0+wonLvW9BUELLe1TbHZF02STc9V9F
+	 XHHVR+ZKShNMz9eiockA85kJQLyUGBf7abLJCelacEzn7JkaTxi80R+aCZuLNzgMCh
+	 KuDhH3p6pHlLfarL2AJSbGHfYUWDEPrK94voDwsA=
+Message-ID: <2c1fcdbb-5b50-4a41-9adf-f3b815624f81@linux.microsoft.com>
+Date: Tue, 12 Aug 2025 13:30:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Iv9mjVfxKa14wEGP"
-Content-Disposition: inline
-In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clocksource: hyper-v: Skip unnecessary checks for the
+ root partition
+To: Wei Liu <wei.liu@kernel.org>,
+ Linux on Hyper-V List <linux-hyperv@vger.kernel.org>
+Cc: mhklinux@outlook.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>
+References: <20250812194846.2647201-1-wei.liu@kernel.org>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250812194846.2647201-1-wei.liu@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/12/2025 2:48 PM, Wei Liu wrote:
+> The HV_ACCESS_TSC_INVARIANT bit is always zero when Linux runs as the
+> root partition. The root partition will see directly what the hardware
+> provides.
+> 
+> The old logic in ms_hyperv_init_platform caused the native TSC clock
+> source to be incorrectly marked as unstable on x86. Fix it.
+> 
+> Skip the unnecessary checks in code for the root partition. Add one
+> extra comment in code to clarify the behavior.
+> 
+> Signed-off-by: Wei Liu <wei.liu@kernel.org>
+> ---
+> v2: update the commit message and comments
+> ---
+>  arch/x86/kernel/cpu/mshyperv.c     | 11 ++++++++++-
+>  drivers/clocksource/hyperv_timer.c | 10 +++++++++-
+>  2 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index c78f860419d6..25773af116bc 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -565,6 +565,11 @@ static void __init ms_hyperv_init_platform(void)
+>  	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
+>  #endif
+>  #endif
+> +	/*
+> +	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. Root
+> +	 * partition doesn't need to write to synthetic MSR to enable invariant
+> +	 * TSC feature. It sees what the hardware provides.
+> +	 */
+>  	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
+>  		/*
+>  		 * Writing to synthetic MSR 0x40000118 updates/changes the
+> @@ -636,8 +641,12 @@ static void __init ms_hyperv_init_platform(void)
+>  	 * TSC should be marked as unstable only after Hyper-V
+>  	 * clocksource has been initialized. This ensures that the
+>  	 * stability of the sched_clock is not altered.
+> +	 *
+> +	 * HV_ACCESS_TSC_INVARIANT is always zero for the root partition. No
+> +	 * need to check for it.
+>  	 */
+> -	if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
+> +	if (!hv_root_partition() &&
+> +	    !(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
+>  		mark_tsc_unstable("running on Hyper-V");
+>  
+>  	hardlockup_detector_disable();
+> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+> index 2edc13ca184e..ca39044a4a60 100644
+> --- a/drivers/clocksource/hyperv_timer.c
+> +++ b/drivers/clocksource/hyperv_timer.c
+> @@ -549,14 +549,22 @@ static void __init hv_init_tsc_clocksource(void)
+>  	union hv_reference_tsc_msr tsc_msr;
+>  
+>  	/*
+> +	 * When running as a guest partition:
+> +	 *
+>  	 * If Hyper-V offers TSC_INVARIANT, then the virtualized TSC correctly
+>  	 * handles frequency and offset changes due to live migration,
+>  	 * pause/resume, and other VM management operations.  So lower the
+>  	 * Hyper-V Reference TSC rating, causing the generic TSC to be used.
+>  	 * TSC_INVARIANT is not offered on ARM64, so the Hyper-V Reference
+>  	 * TSC will be preferred over the virtualized ARM64 arch counter.
+> +	 *
+> +	 * When running as the root partition:
+> +	 *
+> +	 * There is no HV_ACCESS_TSC_INVARIANT feature. Skip the unnecessary
+> +	 * check.
+>  	 */
+> -	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
+> +	if ((ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) ||
+> +	    hv_root_partition()) {
+>  		hyperv_cs_tsc.rating = 250;
+>  		hyperv_cs_msr.rating = 245;
+>  	}
 
---Iv9mjVfxKa14wEGP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> This is the start of the stable review cycle for the 6.15.10 release.
-> There are 480 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
-> Anything received after that time might be too late.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.15.y
-
-6.6 passes our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
-
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Iv9mjVfxKa14wEGP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaJuijAAKCRAw5/Bqldv6
-8srVAJ48e2YST4geeh7RZiaZnSes6el9twCgo/W7s6p4TxE9BS2O/gBQvSg4WjQ=
-=maAb
------END PGP SIGNATURE-----
-
---Iv9mjVfxKa14wEGP--
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
