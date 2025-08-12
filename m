@@ -1,172 +1,230 @@
-Return-Path: <linux-kernel+bounces-764888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED15FB22866
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673C9B22876
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BDE71AA0CF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:23:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D5A2A1866
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23268280CEA;
-	Tue, 12 Aug 2025 13:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3530627FB18;
+	Tue, 12 Aug 2025 13:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je9PcbM0"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="S0IPvs3h"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE4727FD46;
-	Tue, 12 Aug 2025 13:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755004941; cv=none; b=gXmFqIFl0COFMrJb3XkzLLiXV7DoU7mnmUfhRDiwW44hQlxjN5F5gGRAIIooVQ600Ybb4GammHlk41b4drfiSiemAg5yRyIiGAuLWwjZ8aENiMOmdti0iOh7g6vduqO7Nps4VDVzryssLgvxaCrOWD1GTe9wCdRhyqnZJMNJLHI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755004941; c=relaxed/simple;
-	bh=XXEWb42qJiWZo4Du0CRE6Yam0gPdSTS3/b8BYir1sbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b4qfwJEdgrCcyWLR0VuY3Q7QkVgX2NC6ur7ej/coqJzZ+XzJLZNFP1GmZncavDsy1R2wjn2Y4XFe+IhU9pbefj1LLRzF6JeS5iZXq2cw2SDPtXBZJtBwpGRFkWgMpe8+B+dcQuZNImRzaUOLiiejvyrlY9pa7VrpGlyHmA/S4Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Je9PcbM0; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61580eb7995so11044335a12.0;
-        Tue, 12 Aug 2025 06:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755004938; x=1755609738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=Je9PcbM0qCMQ2GnNN/mhnIu2EDVNYSIQAfjyFb1T9JsmdsoTDjaHe59LNf14WizB7q
-         dB8KC8pihjmLgfUAhf6ANqI54br5I6pG8lmwu1+3AsLqAzExa3It0K1sQKBe1b7mmw+N
-         E4a8LHUjGwnW7C0Z4lYKZRX1xRAQ6uFSQCaBUR78FAPpC3Fv2IhlNT6fKgo0LLVn/WCi
-         /Ao/cPOA2od1grV0jxB8/A3n5GnUtXDTAGDSr6LMURVv86SpmfOXilyT10gE9+HrwP6g
-         RsoB+39xuUrMISAqqgvB0zZAFxPeU+1AQCY1ntx2fogou7Q6Ql/Kk7mvEGnXL8sd7EO8
-         U6wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755004938; x=1755609738;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=uVUn28trHy9nSnkOh5H7GX9CF6NdRck2bn0nPCPFYovlDnmssrrUOTFGZExvCRdcQu
-         kuO5pvyVxRmKelFIENI/NllcNhfRl6V+7uOo2VfFAoMF0/ATo6EpS5z1y7zAdS/O/1EP
-         ocAfXcp8QOVIsZZ7ZoL8RRNvR34e0a1t2Jw9xNvsAuN1cVyaWKamcFZXivlNzL+YmlUA
-         yVqqJNZGAltnkLWBBdDVPLw+9JX1OrciXYtzImb7U7f3i8Fi1X5InxjfJnD2J6C/GQXK
-         ZAC5nf6zRSlPkIJXAr6apC9MN7qocMb/WDEljBi66TfL+/RxOh2vDlrpef32ISKTCctp
-         CagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhQ07pdD4D6BfgHEZklSIa6JjvCQqM7EUSFhK+nQZgRDpncUhPKkmumljKr0joxQXdYhzvnzpgpm0e6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYOh15L1YIBeWD27Zs7xT+mDRX3AyIBVRMST5hZBzVrmceBNyn
-	51y36RGV/PDBHbgtMdMEebsVREcxhJvRvGYeXTT8wFOLJkEA0eS3+GmM
-X-Gm-Gg: ASbGnctqPHC3E1pO3x0QBj0UYxNONg9D1IpzOMqqhdjgL7iefp+w+fmeeRMe+Wk858f
-	GBKLDAhVOlxHfmRPQiy/WaBBLKSpfyAJB1RZQC0gYijjuLd927k6pddxP8YJqs5NAvWC8XfNrRs
-	iUdQdbuf5xTs7KCsUSyDziyLG1/53N5kijaRNYg1cOlPJ/7h+zVTiOMIBFW74fO1p0EIIoRre9C
-	fUnMzsht5+jTE3t7qRXB4xzXejKPH9fratsL+muqL6c2U+cAJLNoOUkAJ33tWtJIhy6MpxeUZcq
-	J95/AqQ4CCERiRF6Bn69yWf8Yh6zTRkFhpiStVVLcf2AQp8PNVn1UFVd0bB4LvJdeRL1k3+T4FW
-	YPwr4HdsMMYEV8PNR5OOb2MaUIu+lbL2vT7rxyX8rXfTjeQmtMRdiQzQPUo4+G0Kb3udlvVA0o7
-	1Eaq8dbQ==
-X-Google-Smtp-Source: AGHT+IGw6dl48kxurr+D+3byaRM8uZg+6+5OVG90W9kalsUW0FaaXTZZI5P+y9cu21RtZnlXvU5GTA==
-X-Received: by 2002:a05:6402:704:b0:615:4a9e:af11 with SMTP id 4fb4d7f45d1cf-6184d8475acmr2291269a12.3.1755004937637;
-        Tue, 12 Aug 2025 06:22:17 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61850794509sm1315511a12.31.2025.08.12.06.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 06:22:17 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH v3 7/7] ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
-Date: Tue, 12 Aug 2025 15:22:09 +0200
-Message-Id: <20250812132209.83728-8-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250812132209.83728-1-ramiserifpersia@gmail.com>
-References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
- <20250812132209.83728-1-ramiserifpersia@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D1242D89;
+	Tue, 12 Aug 2025 13:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755004971; cv=pass; b=RDjfNmB0b60YT9evoOsSb9hOAuNbDlvgmy1G6wODhWBg12hyHs01b96yvFo+x2nX3dTHIp4eeKOse0bxQfyWYlMv/klwvSCgI/5you+LlQQ/4+DuWGBpCdgL6exeOGDNc0uJVKApkPN+drX8UMnZrJ8RDApU/M91LVFEkTGERl4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755004971; c=relaxed/simple;
+	bh=wJEfiacmZ8Ss+iACIHgAUWVIOd/2EX7Osuvbw/khPDw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YX+mnwGhk4jfwu74L+wssL5KwWWrfbo/papSgRNjpT+sgz40V+ymf78H5ZjND236kN0oJAxxJFoLguCRgwVxGuzTPAu+p+vAT6g5lATvjLcAprJSdrLLHT9ohjTSOLWNxZ67yeVCaonCTwpGQeNnkYKRMNSDJJk3Knitw9WLBCc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=S0IPvs3h; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755004954; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=La9rNnpxJ56VoQJYi9cgAr00sVVAd9KVKWw3AX9aiBiCkVliwesHuXpedEm+oXx/ASjt/wwwzQygeqiUjJkSw9p83Qd6tr6+dwHcDNUpt68V2Gr5i7ambqWOMsQh4PKmzKUFeNCm5lDgAbS1VkHRpbhb0X8Ad1J9w+Rju9JlCus=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755004954; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wJEfiacmZ8Ss+iACIHgAUWVIOd/2EX7Osuvbw/khPDw=; 
+	b=RM4rjl9FNm1c5fSr6t5+PCicAzpMXy01f2TLKBM/0w19LSxMznwjn8g/gUoEX0ZdQQCLzGBFE8mBJX+W7R5BzduEK7/KUJxB/U77mXHCuK0S3S9VrpzStRIAx8djyMKa56HxQ4dxf6S9F6S+NZu+fr5w97IcMt+efdYcefyHjrM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755004954;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=wJEfiacmZ8Ss+iACIHgAUWVIOd/2EX7Osuvbw/khPDw=;
+	b=S0IPvs3hV1oG33m+/zAgpt7WDsyHb1lAThCFUNtCNLSfc4BKh/VpeJA0gjuAgTxB
+	FA9judP92pd0Xs+IEgjxMGJCSHPW0RkTOg+LMYh+677AsPqDFnWI+cYXyj+cftxu8JR
+	B3eeBuP8uFYBaIZS1z2z04bJqhBv2gNHzMFz1Lus=
+Received: by mx.zohomail.com with SMTPS id 1755004951949796.0813368240631;
+	Tue, 12 Aug 2025 06:22:31 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 1/3] device: rust: expand documentation for
+ DeviceContext
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250722150110.23565-2-dakr@kernel.org>
+Date: Tue, 12 Aug 2025 10:22:16 -0300
+Cc: gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A56A6D46-68FF-4579-AD34-B18B804841E2@collabora.com>
+References: <20250722150110.23565-1-dakr@kernel.org>
+ <20250722150110.23565-2-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-This commit adds Kconfig and Makefile entries for TASCAM US-144MKII
-USB audio/MIDI interface support. It includes the configuration option
-and links new driver files.
+Hi Danilo,
 
-The Kconfig entry for US-144MKII is added. The Makefile is updated to
-compile new driver components.
+> On 22 Jul 2025, at 11:59, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> Expand the documentation around DeviceContext states and types, in =
+order
+> to provide detailed information about their purpose and relationship
+> with each other.
+>=20
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> rust/kernel/device.rs | 69 ++++++++++++++++++++++++++++++++++++-------
+> 1 file changed, 58 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index ca82926fd67f..f5d1db568f00 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -311,28 +311,75 @@ unsafe impl Send for Device {}
+> // synchronization in `struct device`.
+> unsafe impl Sync for Device {}
+>=20
+> -/// Marker trait for the context of a bus specific device.
+> +/// Marker trait for the context or scope of a bus specific device.
+> ///
+> -/// Some functions of a bus specific device should only be called =
+from a certain context, i.e. bus
+> -/// callbacks, such as `probe()`.
+> +/// [`DeviceContext`] is a marker trait for types representing the =
+context of a bus specific
+> +/// [`Device`].
+> ///
+> -/// This is the marker trait for structures representing the context =
+of a bus specific device.
+> +/// The specific device context types are: [`CoreInternal`], =
+[`Core`], [`Bound`] and [`Normal`].
+> +///
+> +/// [`DeviceContext`] types are hierarchical, which means that there =
+is a strict hierarchy that
+> +/// defines which [`DeviceContext`] type can be derived from another. =
+For instance, any
+> +/// [`Device<Core>`] can dereference to a [`Device<Bound>`].
+> +///
+> +/// The following enunumeration illustrates the dereference hierarchy =
+of [`DeviceContext`] types.
+> +///
+> +/// - [`CoreInternal`] =3D> [`Core`] =3D> [`Bound`] =3D> [`Normal`]
+> +///
+> +/// Bus devices can automatically implement the dereference hierarchy =
+by using
+> +/// [`impl_device_context_deref`].
+> +///
+> +/// Note that the guarantee for a [`Device`] reference to have a =
+certain [`DeviceContext`] comes
+> +/// from the specific scope the [`Device`] reference is valid in.
+> +///
+> +/// [`impl_device_context_deref`]: kernel::impl_device_context_deref
+> pub trait DeviceContext: private::Sealed {}
+>=20
+> -/// The [`Normal`] context is the context of a bus specific device =
+when it is not an argument of
+> -/// any bus callback.
+> +/// The [`Normal`] context is the default [`DeviceContext`] of any =
+[`Device`].
+> +///
+> +/// The normal context does not indicate any specific context. Any =
+`Device<Ctx>` is also a valid
+> +/// [`Device<Normal>`]. It is the only [`DeviceContext`] for which it =
+is valid to implement
+> +/// [`AlwaysRefCounted`] for.
+> +///
+> +/// [`AlwaysRefCounted`]: kernel::types::AlwaysRefCounted
+> pub struct Normal;
+>=20
+> -/// The [`Core`] context is the context of a bus specific device when =
+it is supplied as argument of
+> -/// any of the bus callbacks, such as `probe()`.
+> +/// The [`Core`] context is the context of a bus specific device when =
+it appears as argument of
+> +/// any bus specific callback, such as `probe()`.
+> +///
+> +/// The core context indicates that the [`Device<Core>`] reference's =
+scope is limited to the bus
+> +/// callback it appears in. It is intended to be used for =
+synchronization purposes. Bus device
+> +/// implementations can implement methods for [`Device<Core>`], such =
+that they can only be called
+> +/// from bus callbacks.
+> pub struct Core;
+>=20
+> -/// Semantically the same as [`Core`] but reserved for internal usage =
+of the corresponding bus
+> +/// Semantically the same as [`Core`], but reserved for internal =
+usage of the corresponding bus
+> +/// abstraction.
+> +///
+> +/// The internal core context is intended to be used in exactly the =
+same way as the [Core] context,
+> +/// with the difference that this [`DeviceContext`] is internal to =
+the corresponding bus
+> /// abstraction.
+> +///
+> +/// This context mainly exists to share generic [`Device`] =
+infrastructure that should only be called
+> +/// from bus callbacks with bus abstractions, but without making them =
+accessible for drivers.
+> pub struct CoreInternal;
+>=20
+> -/// The [`Bound`] context is the context of a bus specific device =
+reference when it is guaranteed to
+> -/// be bound for the duration of its lifetime.
+> +/// The [`Bound`] context is the [`DeviceContext`] of a bus specific =
+device when it is guaranteed to
+> +/// be bound to a driver.
+> +///
+> +/// The bound context indicates that for the entire duration of the =
+lifetime of a [`Device<Bound>`]
+> +/// reference, the [`Device`] is guaranteed to be bound to a driver.
+> +///
+> +/// Some APIs, such as [`dma::CoherentAllocation`] or [`Devres`] rely =
+on the [`Device`] to be bound,
+> +/// which can be proven with the [`Bound`] device context.
+> +///
+> +/// Any abstraction that can guarantee a scope where the =
+corresponding bus device is bound, should
+> +/// provide a [`Device<Bound>`] reference to its users for this =
+scope. This allows users to benefit
+> +/// from optimizations for accessing device resources, see also =
+[`Devres::access`].
+> +///
+> +/// [`Devres`]: kernel::devres::Devres
+> +/// [`Devres::access`]: kernel::devres::Devres::access
+> +/// [`dma::CoherentAllocation`]: kernel::dma::CoherentAllocation
+> pub struct Bound;
+>=20
+> mod private {
+> --=20
+> 2.50.0
+>=20
+>=20
 
-The US-122L driver's device ID table is adjusted to remove the US-144MKII
-entry, as it will now be handled by its dedicated driver.
-
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
----
- sound/usb/Kconfig        | 12 ++++++++++++
- sound/usb/usx2y/Makefile |  2 ++
- sound/usb/usx2y/us122l.c |  6 ------
- 3 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
-index 41c47301bc19..9b890abd96d3 100644
---- a/sound/usb/Kconfig
-+++ b/sound/usb/Kconfig
-@@ -117,6 +117,18 @@ config SND_USB_US122L
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-usb-us122l.
- 
-+config SND_USB_US144MKII
-+	tristate "Tascam US-144MKII USB driver"
-+	depends on X86 || COMPILE_TEST
-+	select SND_RAWMIDI
-+	select SND_PCM
-+	help
-+	  Say Y here to include support for Tascam US-144MKII USB Audio/MIDI
-+	  interface.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called snd-usb-us144mkii.
-+
- config SND_USB_6FIRE
- 	tristate "TerraTec DMX 6Fire USB"
- 	select FW_LOADER
-diff --git a/sound/usb/usx2y/Makefile b/sound/usb/usx2y/Makefile
-index fc033aba03a4..9db87ae39ee9 100644
---- a/sound/usb/usx2y/Makefile
-+++ b/sound/usb/usx2y/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- snd-usb-usx2y-y := usbusx2y.o usX2Yhwdep.o usx2yhwdeppcm.o
- snd-usb-us122l-y := us122l.o
-+snd-usb-us144mkii-y := us144mkii.o us144mkii_pcm.o us144mkii_playback.o us144mkii_capture.o us144mkii_midi.o us144mkii_controls.o
- 
- obj-$(CONFIG_SND_USB_USX2Y) += snd-usb-usx2y.o
- obj-$(CONFIG_SND_USB_US122L) += snd-usb-us122l.o
-+obj-$(CONFIG_SND_USB_US144MKII) += snd-usb-us144mkii.o
-\ No newline at end of file
-diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
-index 2ace3ba46091..8dbbefe3e730 100644
---- a/sound/usb/usx2y/us122l.c
-+++ b/sound/usb/usx2y/us122l.c
-@@ -686,12 +686,6 @@ static const struct usb_device_id snd_us122l_usb_id_table[] = {
- 		.idVendor =	0x0644,
- 		.idProduct =	USB_ID_US122MKII
- 	},
--	{
--		.match_flags =	USB_DEVICE_ID_MATCH_DEVICE,
--		.idVendor =	0x0644,
--		.idProduct =	USB_ID_US144MKII,
--		.driver_info =	US122L_FLAG_US144
--	},
- 	{ /* terminator */ }
- };
- MODULE_DEVICE_TABLE(usb, snd_us122l_usb_id_table);
--- 
-2.39.5
-
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
