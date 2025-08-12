@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-764417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F7AB222B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EBAB222CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246A37AA725
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747A05057BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6BA2EA463;
-	Tue, 12 Aug 2025 09:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB71E2EA473;
+	Tue, 12 Aug 2025 09:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XOwnmq1c"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VW56nI3+"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA32E9738
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5363C2E8DF1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990200; cv=none; b=OLEIKCf5fbxhRPhEAlT/4tqIMUxmmQhj7tRhPe1sII8T/BLYoKivl0d02T0TzllJLJgLCaeazhpiLnBF8B1+nMENFBCUUjaew3Ni4EPQdNQqcQQqfXkT2OS6FFOX49n8haRNZh8gLI/xJ3YcvgK9HPE+qyciGfuAh5Zy/efERFM=
+	t=1754990201; cv=none; b=Wn6t3509CYgwYiHes3zUcpsv2c0Gzs6iA7GTGB9H3Z/4UdYKV2H1jnjyXDFQawSGqtSTt1GbiCzNglT93SPRlBIC6uBWH9AabN4XuV3+BZELZ5YFFx3f9V6h/v1c6JkJZI1tUAnd2eLuuU5A+69Bos4VJxmAp/ECDMrGGrwA3pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990200; c=relaxed/simple;
-	bh=OPrdV/kq3oQ4NMu6+ZP/Aox16FucBvf0qyM2mttIasw=;
+	s=arc-20240116; t=1754990201; c=relaxed/simple;
+	bh=us/rMp3k23RwZc1Qh9H3phEU99cwVMWCdJeqp4TweV0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YUskuzU/uneg9UARr+lvAgtWKw8OwBBGmx4rBLE/wV1WVVmKQ3qL/rCJL1uGZOeHSNwL/1Fb63+oGwf/C05J1sY23xeZAuVErxZZoHrBqvR9YTEJqyrw9ENdso+qT/VFPNWIoiTl3YLXy/Jfcaiw+CPgeyls2Cwc6qW9tJThK+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XOwnmq1c; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:To:Cc; b=i0AsSdPCBA1bDp2IZ6mw05AVhPQAP1sTRJz9yG2Vt0RgRC84dTeqsSz6yU5sPnrf+XB3Z0yxt/2RSqYJ7L6KeTLtXQUCVxH2sBtrVCFmnLqPl3fAb1JJm+wthJsFu2K5m13+WBTAWCAcfNefktEOa6e4ReAAV5G+MUcystaTASk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VW56nI3+; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so931365566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:16:37 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af922ab4849so789431466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754990196; x=1755594996; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754990197; x=1755594997; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UcUtzC99ftVpjJ1J3VgzsG5YR1VSr0yd8VomMVp9if8=;
-        b=XOwnmq1cDjxpCh5cWAisZZKkev1FvSjX+VnmYACgDbF92JNQvg44gfP0kEJXvuHVBO
-         Ajl0VerYIvDdixNNLiUBzBFVP+/ZQstZN3BtJZcR+Zf3wp3wnzxMW1oFSxrusO+uFyOD
-         EiYRvQbQ5Q44MzmW8/KUt98TqNSqpxn3Xs5aETtXN9TdckKIjwlmKupnDCFzItPzpbIJ
-         mdIhHbgFrXt8vzbpkUYViNh2AMI81hn2Sa4Ikdt+DY+j3mD/iwjraw9yseQsp9qW2xxA
-         kKc5jUFqGBSwjqRyhA3Iaz9PVblaCOiUTUY2z0CwUq8M92ZCEymsTo+4vjYl34AIARsY
-         S0Wg==
+        bh=tKKPbk2zjLmByP+VE7hKfl8sJvKaWXdOt8nmsyt9BjM=;
+        b=VW56nI3+bH4hH/P+GRr+ji+usxIlIkp1Nmm65A55ihJDoBW0NfBXQCIpjwZUMvetqO
+         LCBc8Pjs+DX7gcsHBbz3x+5lv4nYEt0It3NxXT5Smq6W53Q2M/DhWhXVsLSXPObPFJyj
+         fxPiZMpdZfVw0ZZBYlED61Ku4A6A2RywhVAB9FTF6RIBAI2DpEBVF1yfjayfQbBWr8lx
+         +is/h6wtsqtK8DiGgjLBiaLkmn4tvno9mYT/CLX3tMvPMUtcvZJv+aFu7fpb4vWtx1Wx
+         mKcr1B+V+92nTHO1dDw5Z1o7weITIYdIVBYuMW6Y9P1Y0Ggr6NugJwx4KYeUcLD2fq9M
+         Q6hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990196; x=1755594996;
+        d=1e100.net; s=20230601; t=1754990197; x=1755594997;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UcUtzC99ftVpjJ1J3VgzsG5YR1VSr0yd8VomMVp9if8=;
-        b=YJvkSB6LcefiQo7Mbw89L+Lg5uhaAclmjIme1JG6y0rs1plZIpMT88rZHPBn2TpqMw
-         /ABnnuoDJtwfXClgjmcmD+gpCSwEeK4Uj5OrHyiY8qX1oC7R5We0jcJ8Fq85b2lMULEC
-         XdRpIMEiCRHY/RPydKSLcJ4/4zoeZ+6ihoxEI3tMk3e1ycD/4ocIJAVEXdBv1TBdgdd2
-         ZQgtAQ5O3cKP7+odfF4tMbVsmuLvvwSj6dF2xvBFPaFTGvHq7lsnw0owGbi0ywO+Hll2
-         cMDc7bzirrzz2kgzPG4BSWObcH9V/jSycfdQcmQjcMx/QoojTT0yEAWxdAADMJnrVh56
-         5beA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX/TFtefjxWar2qfhbmqds4LJui2OK15Rd5hlViNhb7V4Y+ZSLHN4V/rGgnI18QErpfFjavT1OtIdh3uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzmeFXn1fuUrl4PXZh3dtfA8iqJKTNEjSosrdBkRqS1XZktw7O
-	KeYeg2c8ccv9k6FXNLxE60QOL5j/lOin7uy+fSWhpcGhQ0ghNa2zT34xbtSii2C24kw=
-X-Gm-Gg: ASbGncshqXcsuXwFVbyvaDSZ5uwvLjF3xb/+HRO86ucp7S1aWmYyEYwPNrr+QZjkh5A
-	d5fwbysFRUEPNTyl36VDsyFV9ROveYvt8Kt5wNw9/JLJa4MkprGzVF648dd/9oMhuOtJ/7jBPxq
-	6GQrHqChfej921eCq1Sl46QaiIUhBsF6mZvdne0dwkCC1Hfz8L7Wx0nUqvdcfHiwGGJ//pTXQLY
-	b7uGejV97IQFD3fuufDEfqa6oHjd7aVY8+1d621XaU5V6jFeL1BouWY5BR6+Ki26dEEB16OnjIv
-	C2HCOJoEF47UocS14tnvSe5bGEQ4yTslJjrBGKeVeULPmZ7qoCyP3dJsTSGaiEuK3/Bq/N3a0Mu
-	Gf/ohOx8M+5lugXTFkQ==
-X-Google-Smtp-Source: AGHT+IGjmqCb8DEPLnwSyiS2QWeezAQQ+KKWlCxBysNRgGnNSYGKAawEo108hymrlXQ0G//GA/rI2w==
-X-Received: by 2002:a17:907:980a:b0:af7:37d1:93b6 with SMTP id a640c23a62f3a-afa1dff7b28mr245132966b.15.1754990196377;
-        Tue, 12 Aug 2025 02:16:36 -0700 (PDT)
+        bh=tKKPbk2zjLmByP+VE7hKfl8sJvKaWXdOt8nmsyt9BjM=;
+        b=Fh4nKFPRNqAIQljTAHDj1DpH6XEEkvQAOmP68KhwKbSPkaMMg5JbdffHZo1zEDgoO5
+         zv4EZwiFcpaRqwcPPaNEEE8VyubLvj09Ug8QBwVzrI9pO/cOWbppMV4LZRN/wubCEVDm
+         tvXIVR50e/XaTgBc6jOnoZBOGZwx3biCLiLomDp2es5H4mCNd7CBckPAoaNfc+9Yl0sR
+         8lvEp8SAA7Xpyt6egSfuAOypwV3uOjSC0iEUORRol/7VqxFE0sFzuQ4w0gIbsAiCgIf9
+         SfpFd0G0k6VyRcDuBF2ra4YT7XZKTzeSjqOTyw8kSlhKW532JOIj3IL0Tv4JQHH9CczU
+         yBhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVypfieweCAkGnxaZp79clZ7ZnZ+6MQm1nvYjX8Qlu26lsig6qbfWjnaGEQjL54NPfXyj7e9bKr2YEC7xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyQ8YlJIYMm4DJodzcGJsSG1T/8K384S3PaOTdl7Bv/v+oME1E
+	aANu22nFv1owpGAHeBNcM3AgPQEMgYN6El3Ph+/n+zGmqQd5+7Ion323Ji/z0QvS0nk=
+X-Gm-Gg: ASbGncsiB2tf64DOPmPRTNLt3AlWDrafzTFHtt0VKOd5VlQz+PvXaTkLFaBrPDdsi1X
+	78WR+1BflpetQChipZZdLTmh0qnxPxK7ad2q0GCF5M+e4YXNIWu6t11/KHz8duUQxeeaPYZhreP
+	U7vtsqmjgKM7MUhzbbmrWXQQJV1tbLXYvNdTTUNWte6Mm9OUU0JQNsm/XMrHAHDDiN/xRvKc16E
+	F3+uWEPytaN6ziQMBQTMfRwPs5R2SliOE9ZkhkiNcDmT0P5tfy08As2fK/dfLfycEpur/K0Wk7C
+	tG5dYP5TG0tnB+HXaqnidQbcTfaI5DJ1coofuCVq1g0ye4/ZnuEpm312NWpen21sxJ1N9aE901f
+	AYDx1rY/6cEgXfTJWIw==
+X-Google-Smtp-Source: AGHT+IEgkIjROZI/Yz+CBqPaPHop4dqppzi0LKkPjz7/zfImtMWZEtkEpTDytLSR1EZwKCTNbupqMA==
+X-Received: by 2002:a17:906:794a:b0:af3:7645:43e1 with SMTP id a640c23a62f3a-afa1df5e53fmr257639366b.17.1754990197493;
+        Tue, 12 Aug 2025 02:16:37 -0700 (PDT)
 Received: from localhost ([2001:4090:a244:8691:4b7a:7bbd:bac:c56e])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af91a23fec4sm2174076666b.121.2025.08.12.02.16.35
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af91a0a37a8sm2181325866b.40.2025.08.12.02.16.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:16:35 -0700 (PDT)
+        Tue, 12 Aug 2025 02:16:37 -0700 (PDT)
 From: Markus Schneider-Pargmann <msp@baylibre.com>
-Date: Tue, 12 Aug 2025 11:15:24 +0200
-Subject: [PATCH v2 5/7] arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source
+Date: Tue, 12 Aug 2025 11:15:25 +0200
+Subject: [PATCH v2 6/7] arm64: dts: ti: k3-am62a7-sk: Set wakeup-source
  system-states
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-topic-am62-dt-partialio-v6-15-v2-5-25352364a0ac@baylibre.com>
+Message-Id: <20250812-topic-am62-dt-partialio-v6-15-v2-6-25352364a0ac@baylibre.com>
 References: <20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com>
 In-Reply-To: <20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
@@ -98,12 +98,12 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  Akashdeep Kaur <a-kaur@ti.com>, 
  Markus Schneider-Pargmann <msp@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2943; i=msp@baylibre.com;
- h=from:subject:message-id; bh=OPrdV/kq3oQ4NMu6+ZP/Aox16FucBvf0qyM2mttIasw=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhozZbHFznnLvnFN71nNa7RbZsizHJx1t1zdy/vpZ8oNZu
- 1byWd3OjlIWBjEuBlkxRZbOxNC0//I7jyUvWrYZZg4rE8gQBi5OAZhIqwvDPz3xjKeuj+amsZ6Z
- 8Wwms9bqXUxJXnxrhVQ4lIu2LE0K/sfI8OH83Eklmz5P9pN5tudYSuKFIF+Oym6dbf6NAfIzTzg
- e4AIA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3528; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=us/rMp3k23RwZc1Qh9H3phEU99cwVMWCdJeqp4TweV0=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhozZbElvJ4dv3vD162bNiPfXcv6vSzKoYDvBoiQQ3HS4e
+ 3HFeUnZjlIWBjEuBlkxRZbOxNC0//I7jyUvWrYZZg4rE8gQBi5OAZjIpVcM//QaP0od4jj67HkJ
+ 77x78qH/AxdUxy+/8yXNW/VIf/oWi1ZGhpns8zijFqz8IX83+uV/ZicR7RdXmAur7ype7dsvPfH
+ iLk4A
 X-Developer-Key: i=msp@baylibre.com; a=openpgp;
  fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
@@ -113,49 +113,38 @@ system in these states. Specify the states in which these units can do a
 wakeup on this board.
 
 Note that the UARTs are not capable of wakeup in Partial-IO because of
-of a UART mux on the board not being powered during Partial-IO. As
-IO+DDR is not supported on am62, the UARTs are not added in this patch.
+of a UART mux on the board not being powered during Partial-IO.
 
 Add pincontrol definitions for mcu_mcan0 and mcu_mcan1 for wakeup from
 Partial-IO. Add these as wakeup pinctrl entries for both devices.
 
 Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
- arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 60 ++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-index 4609f366006e4cdf0c162f72634ce90623f60a90..0314f857ea05acc4ffc62bccb5184e58d19a6103 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-@@ -268,3 +268,63 @@ &main_gpio1 {
- &gpmc0 {
- 	ranges = <0 0 0x00 0x51000000 0x01000000>; /* CS0 space. Min partition = 16MB */
+- Combine k3-am62a7-sk.dts devicetree nodes
+---
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 71 +++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+index bceead5e288e6d78c671baf0afabd1a9aa23fbee..55cab49f26382f08e2cc93d17afc424af8c59caa 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+@@ -257,6 +257,10 @@ AM62AX_MCU_IOPAD(0x0030, PIN_OUTPUT, 0) /* (C8) WKUP_UART0_RTSn */
+ &wkup_uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&wkup_uart0_pins_default>;
++	wakeup-source = <&system_io_ddr>,
++			<&system_deep_sleep>,
++			<&system_mcu_only>,
++			<&system_standby>;
+ 	status = "reserved";
  };
+ 
+@@ -450,6 +454,42 @@ pmic_irq_pins_default: pmic-irq-default-pins {
+ 			AM62AX_MCU_IOPAD(0x000, PIN_INPUT, 7) /* (E11) MCU_GPIO0_0 */
+ 		>;
+ 	};
 +
-+&mcu_mcan0 {
-+	pinctrl-names = "default", "wakeup";
-+	pinctrl-0 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_default>;
-+	pinctrl-1 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_wakeup>;
-+	wakeup-source = <&system_partial_io>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
-+	status = "okay";
-+};
-+
-+&mcu_mcan1 {
-+	pinctrl-names = "default", "wakeup";
-+	pinctrl-0 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_default>;
-+	pinctrl-1 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_wakeup>;
-+	wakeup-source = <&system_partial_io>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
-+	status = "okay";
-+};
-+
-+&mcu_pmx0 {
 +	mcu_mcan0_tx_pins_default: mcu-mcan0-tx-default-pins {
 +		pinctrl-single,pins = <
 +			AM62X_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
@@ -191,6 +180,43 @@ index 4609f366006e4cdf0c162f72634ce90623f60a90..0314f857ea05acc4ffc62bccb5184e58
 +			AM62X_IOPAD(0x040, PIN_INPUT | WKUP_EN, 0) /* (D4) MCU_MCAN1_RX */
 +		>;
 +	};
+ };
+ 
+ &mcu_gpio0 {
+@@ -935,3 +975,34 @@ AM62AX_IOPAD(0x008, PIN_INPUT, 0) /* (J24) OSPI0_DQS */
+ 		>;
+ 	};
+ };
++
++&mcu_mcan0 {
++	pinctrl-names = "default", "wakeup";
++	pinctrl-0 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_default>;
++	pinctrl-1 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_wakeup>;
++	wakeup-source = <&system_partial_io>,
++			<&system_io_ddr>,
++			<&system_deep_sleep>,
++			<&system_mcu_only>,
++			<&system_standby>;
++	status = "okay";
++};
++
++&mcu_mcan1 {
++	pinctrl-names = "default", "wakeup";
++	pinctrl-0 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_default>;
++	pinctrl-1 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_wakeup>;
++	wakeup-source = <&system_partial_io>,
++			<&system_io_ddr>,
++			<&system_deep_sleep>,
++			<&system_mcu_only>,
++			<&system_standby>;
++	status = "okay";
++};
++
++&mcu_uart0 {
++	wakeup-source = <&system_io_ddr>,
++			<&system_deep_sleep>,
++			<&system_mcu_only>,
++			<&system_standby>;
 +};
 
 -- 
