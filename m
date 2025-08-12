@@ -1,113 +1,360 @@
-Return-Path: <linux-kernel+bounces-765247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EBBB22DAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF05B22DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2867A3A9050
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:25:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED4C3AE0EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 16:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA3B2F8BDF;
-	Tue, 12 Aug 2025 16:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C93A2F90F5;
+	Tue, 12 Aug 2025 16:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFQjCpvX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVaBBEQ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED682F8BC7;
-	Tue, 12 Aug 2025 16:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5143A2F8BF1;
+	Tue, 12 Aug 2025 16:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755015857; cv=none; b=iatycsiwkCePOWpl925NI536O9PWB4PrqFlbU0bs+nueWHLrbdNQBQswGASt2lW9sc5oCv67SewkO7FK2ayuuf4TGR9q5fUDqe2DJhoN/uAWWVl2vRo+8GY8XKSLQuXtUK7nxOWkAxfTDiaja5ZsoOgCHiksL12tauGiUgO1oNA=
+	t=1755015888; cv=none; b=hgrUzyuFV5jquRPWTGovo1NNAUJn6FzHjLPQYAi6bXKmE/7tY5vpjn1iQffV3k5FYYwkGakQPruARHiM9Mzqj8IvRNg3qfhR0pK2z4SHBqVZVziZF1FIf36xpkJpn1FipKB5x4qnf7Y2fLT8T9HY2jmNJO4vwpaZtL1r2DLSYmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755015857; c=relaxed/simple;
-	bh=30o4U4tFe32XjiNz5Xqo8vYYR40fKkKwC8cxKxV1ldA=;
+	s=arc-20240116; t=1755015888; c=relaxed/simple;
+	bh=aZf6SP2fk9Djm2JEb1vAUDTmysjNgRoO5cPDEc6gIhI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtaJ5oOHz+sgENDKxW/97PCNjwhGxRC4LTBj1BHPeksj8gXmlPvOtq0OhsjKp7FuGv4H+s+vi1ATo4XLAMrZ+8gTmoBKmjPdKgatMgkfUhi2yr/gyGAKwWhkEhK1esuCy6FYK7/Sjuu9c38QWN4YgWeXBAEdYl237twETzMabl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFQjCpvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E94C4CEF0;
-	Tue, 12 Aug 2025 16:24:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDP7oKvmpVhX6nl1DG4323V+TDx5m4tDOfvA5W5wknlFYisui/XlTkOV4iqAeXqEA2A0jJ/7Mw89aS9Xz113LccqS1ICjC5g3IOqDp8Fwu275Qj/rO9NvOa8X88HlxDX8pGKeaFFdaOFW7/hX2T3VZ+wJKHW88P/ldqCqagRAhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVaBBEQ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F0CC4CEF0;
+	Tue, 12 Aug 2025 16:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755015857;
-	bh=30o4U4tFe32XjiNz5Xqo8vYYR40fKkKwC8cxKxV1ldA=;
+	s=k20201202; t=1755015888;
+	bh=aZf6SP2fk9Djm2JEb1vAUDTmysjNgRoO5cPDEc6gIhI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFQjCpvXvmuacmrZpk3++l3tgWJKfZp7c8w8aiWkYwkC668QD+n2jTqaJ+WTySpEB
-	 0CbOP2Hae2Oblck1IaZGYo3urSxA5DUxKbTkyvaVbPIv2Z0u+vxQbnnxqePAk2sLc+
-	 LAJpLiC6o/7K8d2m058b5PZ8ld+nNAcb1cnzL2UVbdnO0kICxaHuPCvK7DfbDmtBLW
-	 MgAOMmgnVAV7Z9LxsJETuxHKtKinze/1gWW1FLhOVK8fTWIbjzGPdRCXtiKA0Yxl/j
-	 cBVkzpL7l3m11RYSVECb4JkI8aYgAAtTX4gzoW08HwUDOHkUC/Eg0IuN6f2eAeYmph
-	 O3JQr1YZlmnTA==
-Date: Tue, 12 Aug 2025 09:24:15 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	b=aVaBBEQ54NxI83W8wN4P4JMJvaHj6wRBM027q0s1VMCycp+POTlYqLc7lQxE7U1yx
+	 oOGBdyfc+p8GVlitSJhayra05ja8advCgNEM6R+5vhVrRQgyp572KywP07Js98Emjy
+	 h03xZHtgB4QszRf8Rp2Fd5/n62kEXrh3DIlsvz9wau6TsSINhJz5Cx/i3njx/fUtby
+	 kdTxygLtHwuj6A2DzB4BXajhbm6qE4HybpprrfINJrxhUBVaY6/PqALmJsx9k4Jn/6
+	 lpqePaVamIjjQn35lXbYw/gBsqOBUZ6sagWrqrpkTFz9EnVkImFwOZnwuVOxvvpPn9
+	 ky8dW6srw0wUw==
+Date: Tue, 12 Aug 2025 19:24:44 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
-Message-ID: <aJtqrz9y4/hR8fEu@x1>
-References: <20250812054258.1968351-1-uwu@icenowy.me>
- <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
+Subject: Re: [PATCH v2 3/3] KEYS: trusted_tpm1: Move private functionality
+ out of public header
+Message-ID: <aJtqzCubWsVXqWgS@kernel.org>
+References: <20250809171941.5497-1-ebiggers@kernel.org>
+ <20250809171941.5497-4-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
+In-Reply-To: <20250809171941.5497-4-ebiggers@kernel.org>
 
-On Tue, Aug 12, 2025 at 09:42:23PM +0800, Icenowy Zheng wrote:
-> 在 2025-08-12星期二的 13:42 +0800，Icenowy Zheng写道：
-> > This patchset is my changes to the TH1520 clock driver, mainly for
-> > supporting the display controller (the first 3).
-> > 
-> > The first two are functionality additions, with the first one adding
-> > support for enabling/disabling PLLs (for DPU PLL) and the second one
-> > adding support for changing DPU dividers.
-> > 
-> > The 3rd one is to address hang issues met when testing the DPU driver
-> > w/o clk_ignore_unused command line option.
-> > 
-> > The 4th one has no relationship to display, and only exists for my
-> > need
-> > to change an arbitrary GPIO (well, GPIO3_3, the one controlling the
-> > fan
-> > on Lichee Pi 4A) with gpioset.
-> > 
-> > This patchset has a dependency (a 0th one) [1].
-> > 
-> > [1]
-> > https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v1-1-299c33d7a593@samsung.com/
-> > 
+On Sat, Aug 09, 2025 at 10:19:41AM -0700, Eric Biggers wrote:
+> Move functionality used only by trusted_tpm1.c out of the public header
+> <keys/trusted_tpm.h>.  Specifically, change the exported functions into
+> static functions, since they are not used outside trusted_tpm1.c, and
+> move various other definitions and inline functions to trusted_tpm1.c.
 > 
-> Oops, looks like this patchset deserves a new revision now...
-
-Thanks, that does make it easier to apply with 'b4 shazam'.
-
-> PATCH 2/4 has a round_rate() implementation, which is considered out-
-> of-date and determine_rate() will replace it.
-
-I saw your reply over in the big patchset from Brian Masney. That's good
-that we will be able to skip adding round_rate() to the driver.
-
-> PATCH 3/4 was broken during rebasing.
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  include/keys/trusted_tpm.h                | 79 ----------------------
+>  security/keys/trusted-keys/trusted_tpm1.c | 80 ++++++++++++++++++++---
+>  2 files changed, 72 insertions(+), 87 deletions(-)
 > 
-> PATCH 4/4 is found to be not working (and even makes padctrl0 an orphan
-> clock). Yao Zi told me that I need to first do some changes to ccu_gate
-> code.
+> diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
+> index a088b33fd0e3b..0fadc6a4f1663 100644
+> --- a/include/keys/trusted_tpm.h
+> +++ b/include/keys/trusted_tpm.h
+> @@ -3,94 +3,15 @@
+>  #define __TRUSTED_TPM_H
+>  
+>  #include <keys/trusted-type.h>
+>  #include <linux/tpm_command.h>
+>  
+> -/* implementation specific TPM constants */
+> -#define TPM_SIZE_OFFSET			2
+> -#define TPM_RETURN_OFFSET		6
+> -#define TPM_DATA_OFFSET			10
+> -
+> -#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
+> -#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
+> -#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
+> -
+>  extern struct trusted_key_ops trusted_key_tpm_ops;
+>  
+> -struct osapsess {
+> -	uint32_t handle;
+> -	unsigned char secret[SHA1_DIGEST_SIZE];
+> -	unsigned char enonce[TPM_NONCE_SIZE];
+> -};
+> -
+> -/* discrete values, but have to store in uint16_t for TPM use */
+> -enum {
+> -	SEAL_keytype = 1,
+> -	SRK_keytype = 4
+> -};
+> -
+> -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+> -			unsigned int keylen, unsigned char *h1,
+> -			unsigned char *h2, unsigned int h3, ...);
+> -int TSS_checkhmac1(unsigned char *buffer,
+> -			  const uint32_t command,
+> -			  const unsigned char *ononce,
+> -			  const unsigned char *key,
+> -			  unsigned int keylen, ...);
+> -
+> -int trusted_tpm_send(unsigned char *cmd, size_t buflen);
+> -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
+> -
+>  int tpm2_seal_trusted(struct tpm_chip *chip,
+>  		      struct trusted_key_payload *payload,
+>  		      struct trusted_key_options *options);
+>  int tpm2_unseal_trusted(struct tpm_chip *chip,
+>  			struct trusted_key_payload *payload,
+>  			struct trusted_key_options *options);
+>  
+> -#define TPM_DEBUG 0
+> -
+> -#if TPM_DEBUG
+> -static inline void dump_options(struct trusted_key_options *o)
+> -{
+> -	pr_info("sealing key type %d\n", o->keytype);
+> -	pr_info("sealing key handle %0X\n", o->keyhandle);
+> -	pr_info("pcrlock %d\n", o->pcrlock);
+> -	pr_info("pcrinfo %d\n", o->pcrinfo_len);
+> -	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
+> -		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
+> -}
+> -
+> -static inline void dump_sess(struct osapsess *s)
+> -{
+> -	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
+> -		       16, 1, &s->handle, 4, 0);
+> -	pr_info("secret:\n");
+> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+> -		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
+> -	pr_info("trusted-key: enonce:\n");
+> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+> -		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
+> -}
+> -
+> -static inline void dump_tpm_buf(unsigned char *buf)
+> -{
+> -	int len;
+> -
+> -	pr_info("\ntpm buffer\n");
+> -	len = LOAD32(buf, TPM_SIZE_OFFSET);
+> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
+> -}
+> -#else
+> -static inline void dump_options(struct trusted_key_options *o)
+> -{
+> -}
+> -
+> -static inline void dump_sess(struct osapsess *s)
+> -{
+> -}
+> -
+> -static inline void dump_tpm_buf(unsigned char *buf)
+> -{
+> -}
+> -#endif
+>  #endif
+> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> index 126437459a74d..636acb66a4f69 100644
+> --- a/security/keys/trusted-keys/trusted_tpm1.c
+> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> @@ -22,10 +22,78 @@
+>  #include <keys/trusted_tpm.h>
+>  
+>  static struct tpm_chip *chip;
+>  static struct tpm_digest *digests;
+>  
+> +/* implementation specific TPM constants */
+> +#define TPM_SIZE_OFFSET			2
+> +#define TPM_RETURN_OFFSET		6
+> +#define TPM_DATA_OFFSET			10
+> +
+> +#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
+> +#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
+> +#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
+> +
+> +struct osapsess {
+> +	uint32_t handle;
+> +	unsigned char secret[SHA1_DIGEST_SIZE];
+> +	unsigned char enonce[TPM_NONCE_SIZE];
+> +};
+> +
+> +/* discrete values, but have to store in uint16_t for TPM use */
+> +enum {
+> +	SEAL_keytype = 1,
+> +	SRK_keytype = 4
+> +};
+> +
+> +#define TPM_DEBUG 0
+> +
+> +#if TPM_DEBUG
+> +static inline void dump_options(struct trusted_key_options *o)
+> +{
+> +	pr_info("sealing key type %d\n", o->keytype);
+> +	pr_info("sealing key handle %0X\n", o->keyhandle);
+> +	pr_info("pcrlock %d\n", o->pcrlock);
+> +	pr_info("pcrinfo %d\n", o->pcrinfo_len);
+> +	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
+> +		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
+> +}
+> +
+> +static inline void dump_sess(struct osapsess *s)
+> +{
+> +	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
+> +		       16, 1, &s->handle, 4, 0);
+> +	pr_info("secret:\n");
+> +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+> +		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
+> +	pr_info("trusted-key: enonce:\n");
+> +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+> +		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
+> +}
+> +
+> +static inline void dump_tpm_buf(unsigned char *buf)
+> +{
+> +	int len;
+> +
+> +	pr_info("\ntpm buffer\n");
+> +	len = LOAD32(buf, TPM_SIZE_OFFSET);
+> +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
+> +}
+> +#else
+> +static inline void dump_options(struct trusted_key_options *o)
+> +{
+> +}
+> +
+> +static inline void dump_sess(struct osapsess *s)
+> +{
+> +}
+> +
+> +static inline void dump_tpm_buf(unsigned char *buf)
+> +{
+> +}
+> +#endif
+> +
+>  static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+>  		       unsigned int keylen, ...)
+>  {
+>  	struct hmac_sha1_ctx hmac_ctx;
+>  	va_list argp;
+> @@ -54,11 +122,11 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+>  }
+>  
+>  /*
+>   * calculate authorization info fields to send to TPM
+>   */
+> -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+> +static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+>  			unsigned int keylen, unsigned char *h1,
+>  			unsigned char *h2, unsigned int h3, ...)
+>  {
+>  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+>  	struct sha1_ctx sha_ctx;
+> @@ -92,16 +160,15 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+>  		ret = TSS_rawhmac(digest, key, keylen, SHA1_DIGEST_SIZE,
+>  				  paramdigest, TPM_NONCE_SIZE, h1,
+>  				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(TSS_authhmac);
+>  
+>  /*
+>   * verify the AUTH1_COMMAND (Seal) result from TPM
+>   */
+> -int TSS_checkhmac1(unsigned char *buffer,
+> +static int TSS_checkhmac1(unsigned char *buffer,
+>  			  const uint32_t command,
+>  			  const unsigned char *ononce,
+>  			  const unsigned char *key,
+>  			  unsigned int keylen, ...)
+>  {
+> @@ -157,11 +224,10 @@ int TSS_checkhmac1(unsigned char *buffer,
+>  
+>  	if (crypto_memneq(testhmac, authdata, SHA1_DIGEST_SIZE))
+>  		return -EINVAL;
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(TSS_checkhmac1);
+>  
+>  /*
+>   * verify the AUTH2_COMMAND (unseal) result from TPM
+>   */
+>  static int TSS_checkhmac2(unsigned char *buffer,
+> @@ -242,11 +308,11 @@ static int TSS_checkhmac2(unsigned char *buffer,
+>  
+>  /*
+>   * For key specific tpm requests, we will generate and send our
+>   * own TPM command packets using the drivers send function.
+>   */
+> -int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> +static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+>  {
+>  	struct tpm_buf buf;
+>  	int rc;
+>  
+>  	if (!chip)
+> @@ -268,11 +334,10 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+>  		rc = -EPERM;
+>  
+>  	tpm_put_ops(chip);
+>  	return rc;
+>  }
+> -EXPORT_SYMBOL_GPL(trusted_tpm_send);
+>  
+>  /*
+>   * Lock a trusted key, by extending a selected PCR.
+>   *
+>   * Prevents a trusted key that is sealed to PCRs from being accessed.
+> @@ -322,11 +387,11 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+>  }
+>  
+>  /*
+>   * Create an object independent authorisation protocol (oiap) session
+>   */
+> -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
+> +static int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
+>  {
+>  	int ret;
+>  
+>  	if (!chip)
+>  		return -ENODEV;
+> @@ -339,11 +404,10 @@ int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
+>  	*handle = LOAD32(tb->data, TPM_DATA_OFFSET);
+>  	memcpy(nonce, &tb->data[TPM_DATA_OFFSET + sizeof(uint32_t)],
+>  	       TPM_NONCE_SIZE);
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(oiap);
+>  
+>  struct tpm_digests {
+>  	unsigned char encauth[SHA1_DIGEST_SIZE];
+>  	unsigned char pubauth[SHA1_DIGEST_SIZE];
+>  	unsigned char xorwork[SHA1_DIGEST_SIZE * 2];
+> -- 
+> 2.50.1
+> 
 
-Is there a way to test the functionality without additional patches from
-your branch?
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I look forward to v2. Thanks for working on the display. 
-
--Drew
+BR, Jarkko
 
