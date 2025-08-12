@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-765562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A41B239FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:32:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D35EB23A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DF43B6635
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:32:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A217B35F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FF3202C3A;
-	Tue, 12 Aug 2025 20:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511BE2D0627;
+	Tue, 12 Aug 2025 20:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="moLBKbop"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4SQ4e4b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16134262FF1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 20:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB5202C3A;
+	Tue, 12 Aug 2025 20:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755030723; cv=none; b=Zjub/Ol+Cwu8Vz+8FSrtycDTAz7ZC2y9/ljdMGUcVwmsnIY8MpUSG6CUHivscYpNVrNY9dc1WzjWtG5yhl4FQv81AJC18tP2sR6IS/XMdXP3ukaTn72V/Hfl/ZidpuTPwjzrDAsb9+e6mL+Z29CB6TcdXnBa+/Gqlp7xAEU5Rxg=
+	t=1755030785; cv=none; b=eChGLUy/xq3XwknEsgxQT9nFkrHsCQkz+0xJunxCZKhghzoIa9zmcGsqLn0s8jhHDzdy/Mo/VoU4aDYOVLN/0mHSLdUMcrNsQvexH/Eyy7P0Cs1IWdqdjqoXukwWbZoBnVkfV8wPLWvroaFCSB8cB1nDJAqP8TwT+QWryAu+4yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755030723; c=relaxed/simple;
-	bh=A0E3re4OxSsNyH/917C1ISM9f6PnIu5USAeGZnSPvks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NI6ryNzE0Sh1x85szrM6wvrBaFelDZWPK4KDEFXBqTA8AvII3ahDP36KHMG4GTAHIg63lLEmkIRYxWgYYkCdjx5RCnKYmWLBkoCtUi68sg9hnayyVBuw9ldruDD4hRDb7iI/WC8ARLBDi1rhEMHEB3rYRUeKx4aLOyil8X6sRro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=moLBKbop; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 12 Aug 2025 16:31:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755030720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Px0hXJV0GCZwN6JekkRra0x47OWZbHLlKDve7KBBNCU=;
-	b=moLBKbopM42dWCyZ78hsxsO5r60H2ctKgREkZbEdk/ea3GrMztV9b1uewoDxC72GibTc7s
-	AeyGQN+um+/zg/hmsgfC8KkYe9h7g5FZ/BRX3SFdsyHW/XwCFlO8VDb9zmKAyToQHotx7s
-	8mV+Kli5qoKrrB+3vVVxK/LsxUTmGTI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Konstantin Shelekhin <k.shelekhin@ftml.net>, admin@aquinas.su, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	list-bcachefs@carlthompson.net, malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <46cndpjyrg3ygqyjpg4oaxzodte7uu7uclbubw4jtrzcsfnzgs@sornyndalbvb>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <aJuXnOmDgnb_9ZPc@kbusch-mbp>
- <htfkbxsxhdmojyr736qqsofghprpewentqzpatrvy4pytwublc@32aqisx4dlwj>
- <aJukdHj1CSzo6PmX@kbusch-mbp>
+	s=arc-20240116; t=1755030785; c=relaxed/simple;
+	bh=1zQDwv+c+2f8PAjLjmyAUalogDJhgfoJjuw8TmC5/fQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u8aiU5gmZw5Q7dehR1AdsRN/a2mUekZmUGSDNcsUpXN3fdU0znGgtckesZ11KK28P1ECH0e59tUoXVjfD4m/DxDtp/t9+sshC5IwAsYxYWvPVPGj63YzdJFVgIVAJgy48h0LVnP85j4SOogfBWgpeKE1haxOSgGG6UwGXTZ1H68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4SQ4e4b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF141C4CEF0;
+	Tue, 12 Aug 2025 20:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755030785;
+	bh=1zQDwv+c+2f8PAjLjmyAUalogDJhgfoJjuw8TmC5/fQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P4SQ4e4bFLupR3TzUMp1am/GwXfw7JyeJPr1ysMR7ki4SP6VkCE8A2g61LTrM2EXK
+	 U7EkuaZzgMPLghKkZ39zoTCNjwuvFy4kiWmsfLigXy69Rt5aSjURab/QVf8bdBtFCs
+	 OQuvaicDLsuPHbIJ67Ismm+KPGF4wABSCYOU0s3U9V2Mux7sBuytZ5XviXM5YYuUfO
+	 6fCi2TE5gkH/bfXFBgTLZGkVZ1d9/qsTVE1s6PriULIM7rrfxIgr0LKRm3hb6w2tk3
+	 v+T9buWsTsJQMVj/SsWeiv0rWIZjYQ5MIPFsrxMVQkTxYfhILlfWjY+9IILhES4unh
+	 KYCHaMbNWHnqQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: watchdog: Convert marvell,armada-3700-wdt to DT schema
+Date: Tue, 12 Aug 2025 15:32:57 -0500
+Message-ID: <20250812203301.726374-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJukdHj1CSzo6PmX@kbusch-mbp>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 02:30:44PM -0600, Keith Busch wrote:
-> On Tue, Aug 12, 2025 at 04:03:17PM -0400, Kent Overstreet wrote:
-> > On Tue, Aug 12, 2025 at 01:35:56PM -0600, Keith Busch wrote:
-> > > On Mon, Aug 11, 2025 at 10:26:03AM -0400, Kent Overstreet wrote:
-> > > > On the other hand, for the only incidences I can remotely refer to in
-> > > > the past year and a half, there has been:
-> > > ...
-> > > 
-> > > > - the block layer developer who went on a four email rant where he,
-> > > >   charitably, misread the spec or the patchset or both; all this over a
-> > > >   patch to simply bring a warning in line with the actual NVME and SCSI
-> > > >   specs.
-> > > 
-> > > Are you talking about this thread?
-> > > 
-> > >   https://lore.kernel.org/linux-block/20250311201518.3573009-14-kent.overstreet@linux.dev/
-> > > 
-> > > I try to closely follow those lists, and that's the only thread I recall
-> > > that even slightly rings a bell from your description, however it's not
-> > > an accurate description (you were the one who misread the specs there; I
-> > > tried to help bridge the gap). I recall the interaction was pretty tame
-> > > though, so maybe you're talking about something else. Perhaps a link for
-> > > context if I got it wrong?
-> > 
-> > I've since seen a lot of actual test data from SCSI hard drives - fua
-> > reads are definitely not cached, without exception across manufacturers.
-> > 
-> > On NVME the situation is much murkier.
-> 
-> Okay, I take it I got the right thread then. I just wanted to get the
-> context. For the record, all the specs align with what read fua does
-> (anyone interested can visit the linked thread, I don't want to hijack
-> this one for it).
+Convert the Marvell Armada 3700 watchdog binding to DT schema format.
+It's a straight-forward conversion.
 
-If you're interested, is it time to do some spec quoting and language
-lawyering?
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/watchdog/armada-37xx-wdt.txt     | 23 -----------
+ .../watchdog/marvell,armada-3700-wdt.yaml     | 41 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 42 insertions(+), 24 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
+
+diff --git a/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt b/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
+deleted file mode 100644
+index a8d00c31a1d8..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-* Armada 37xx CPU Watchdog Timer Controller
+-
+-Required properties:
+-- compatible : must be "marvell,armada-3700-wdt"
+-- reg : base physical address of the controller and length of memory mapped
+-	region.
+-- clocks : the clock feeding the watchdog timer. See clock-bindings.txt
+-- marvell,system-controller : reference to syscon node for the CPU Miscellaneous
+-	Registers
+-
+-Example:
+-
+-	cpu_misc: system-controller@d000 {
+-		compatible = "marvell,armada-3700-cpu-misc", "syscon";
+-		reg = <0xd000 0x1000>;
+-	};
+-
+-	wdt: watchdog@8300 {
+-		compatible = "marvell,armada-3700-wdt";
+-		reg = <0x8300 0x40>;
+-		marvell,system-controller = <&cpu_misc>;
+-		clocks = <&xtalclk>;
+-	};
+diff --git a/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml b/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
+new file mode 100644
+index 000000000000..60d44d642fb5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/marvell,armada-3700-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Armada 37xx CPU Watchdog Timer Controller
++
++maintainers:
++  - Marek Behún <kabel@kernel.org>
++
++properties:
++  compatible:
++    const: marvell,armada-3700-wdt
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  marvell,system-controller:
++    description: Reference to syscon node for the CPU Miscellaneous Registers
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - marvell,system-controller
++
++additionalProperties: false
++
++examples:
++  - |
++    watchdog@8300 {
++        compatible = "marvell,armada-3700-wdt";
++        reg = <0x8300 0x40>;
++        marvell,system-controller = <&cpu_misc>;
++        clocks = <&xtalclk>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 06a4cde222bd..6a2de9638c08 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2623,7 +2623,7 @@ F:	Documentation/devicetree/bindings/firmware/cznic,turris-mox-rwtm.txt
+ F:	Documentation/devicetree/bindings/firmware/cznic,turris-omnia-mcu.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/marvell,mpic.yaml
+ F:	Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml
+-F:	Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
++F:	Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
+ F:	drivers/bus/moxtet.c
+ F:	drivers/firmware/turris-mox-rwtm.c
+ F:	drivers/gpio/gpio-moxtet.c
+-- 
+2.47.2
+
 
