@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-765374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DD2B23017
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219DFB23096
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544E51AA12C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C895262512D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C4A2FE57E;
-	Tue, 12 Aug 2025 17:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1329E2FDC57;
+	Tue, 12 Aug 2025 17:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="vURs3HD2"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDf+4lx4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6B9221FAC
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AB9268C73;
+	Tue, 12 Aug 2025 17:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755020762; cv=none; b=YbH4+i6EQ6nf45oWU9Et8her9ztYZCUj7P+q8BzVBzP0YVqp2IsDSKib4vALqQy6U3G6cWERiwgAHt41s4OYG9Q3zAAhlxGlFds9bgn7EMgr1SD9kAWaIP0ddt68yFwHpR0+H9GPL+U3HWpjLIAzWKFLzuFplLhTd51K8fmdSNE=
+	t=1755021160; cv=none; b=tesbhR5ps+9sP8Tj/V2l4lpouSMa95qIwoXZ2LwUfyhJjO7jJLYjGNJHkRFILeCm1CoQR01nwdv2UbuHBYNO0gGbr70eXKcXEumE+tPcUWCXkTTkYMh7ftZxzatYiGwMuv6J2YTSUudmziVIjTegeptapVrQIWLuVVDl4Z9h+Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755020762; c=relaxed/simple;
-	bh=sLBrvqqsZtV1FCVTCMrMgsMw93cY6+eaaOKrjSt2vBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBuSu72nrCZSwBgMFWRvCENF2vYEprYG9kO6kbBSDDmr91Mv57lIzlMTjk0vKcs34bzMc0oMVtX9x3LfTR7lmXI7unEjHTOGOnrZE3yrR1YioUNsAasZvbMZNFHI4j0QVWChNJY7m/2PrQzFwUW28JFixWfL1SF9j7gxseqF1bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=vURs3HD2; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76bddb92dc1so7248258b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 10:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1755020759; x=1755625559; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M+evhD+loaePWkAdN54jiK6XfwBYZ051YhjuuP6S/D8=;
-        b=vURs3HD2b/w3D5YTLmIJm33a9nM+AfVR3qJA1SBZM1Os4tmxY7mXTgVImWKAIvkEpd
-         /3iIRwTnpG16K1lvibI20YJA1bVFOGsCUuTTkBUVE6SQwj8VO3tG2FBtvlr9Az2ufb23
-         VmHIDTeJKfy+q2zhD4oc3tF9+AzfKJAYKd7Bkt7Ocf+TEEtl/UKWUCQemzdpWIjbXbHd
-         2lqYxJ0zd0UWekzeUcPzjJVPjGaCUCSKzndBHyDjeSGYR9CHkrnCjPc4kuSCBoQgHMiF
-         GKcXNxMqYATdAcrWmy23Hj/qFrp+bcd/sld5+WrRtkvbZHN7Ore/LtYsKcqAaFOS8e1m
-         AtIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755020759; x=1755625559;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+evhD+loaePWkAdN54jiK6XfwBYZ051YhjuuP6S/D8=;
-        b=SVKEbIX+DWbefuBEzPL64P2gEynepS1NcaumdlKlCucIcTELfQjkgNP1EkNC2Jq4oP
-         WKz0T9NkYnnFDh8Eulpt16XlprlNM4dZJ22gg8Qx5bTaeNcqo2i9OPkXrL2aczTr4Fax
-         sCuP0duHko9EbCz/IMGj1iT8IY2cHyQ3UIiTqpzhllCGlj6nLXf7oj+lqNjbM/EiefQt
-         a1yfr02lMkjTEJTZzp7u7GXGXMyTJeDXd2ionQI4nYizKFK0Dq7U/B6OHuKH5v03zYgG
-         T/U9jCdf+f4ti9y1Bq1bvtDqScwNeu9+Bhitfe+uxxRqHCtMhYvqAfKFbIQz0/6tVm7X
-         YZJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlV8+/LKTB3Ul5Xj80905VH9I/iX0LyD9Vun0ivYg+FuCxO0MCCV66cpg15HblLsMTW1iScLwC082HkpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRlswxumRA0zxF2wRSFyQJl4NncCK3achqboy4D5hVO4wl7WQQ
-	UlgcsJP9NHXDmibQ32sIYh80gDabcyIXeNxfcwtf3aDO8D0yZkbMJcpjjWh6Om/ptHHRD5HaHmC
-	NIcFhV6c=
-X-Gm-Gg: ASbGncsMsRFTLjArPnI9s2WoWwWtNat9K7IC2NGoKLbw/sK4DE2JWnDXvTVBik+8lCW
-	Hu2OcK29z3QmElpxK+Ro88h9nPSw5M0HXCDqQg1VXFRN8V1CS//mNMwNqVD1oh37zV169hRkYFM
-	v83y1Q3mLNAxIHntln3qdRpkFqCIMoJ7f0gpPZSvYcPitxiBg9E5mFYZk36AxX8Krf4Mu6hM3Su
-	Pska2/swR+ehQWw9gGXMmPFlLx6Jsrul3VvHJqA0TgmchAy1bpGGUg0+jWNj344RNr8gsFd1b8A
-	x7b7rWqupqjWd5tFevFtKPF4ue6inTEktdirf+mgLeUJSU5l/WQhQd5GskJ7Y6W2Vv3yK1hoqbC
-	N0SRNIOF97jeAxoFfa0uXwRUP1WXrTFI407dvdYCmDOWnIgF/SV3ey7tZ4MpeidZCaWzs7HaA
-X-Google-Smtp-Source: AGHT+IHgeepKUmWcRSt+K6fwtVExxF9zuRBGrYePdQX+VK6gDgBfVe8guzcU2VXIutR11ypHY64Xyg==
-X-Received: by 2002:a05:6a00:8d4:b0:76b:ffd1:7737 with SMTP id d2e1a72fcca58-76e20fb980dmr68959b3a.22.1755020759568;
-        Tue, 12 Aug 2025 10:45:59 -0700 (PDT)
-Received: from MacBook-Air.local (c-73-222-201-58.hsd1.ca.comcast.net. [73.222.201.58])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c61dd2ce7sm8965276b3a.41.2025.08.12.10.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 10:45:59 -0700 (PDT)
-Date: Tue, 12 Aug 2025 10:45:57 -0700
-From: Joe Damato <joe@dama.to>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Shkolnyy <kshk@linux.ibm.com>,
-	"open list:VM SOCKETS (AF_VSOCK)" <virtualization@lists.linux.dev>,
-	"open list:VM SOCKETS (AF_VSOCK)" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vsock/test: Remove redundant semicolons
-Message-ID: <aJt91SSkBO486bg5@MacBook-Air.local>
-Mail-Followup-To: Joe Damato <joe@dama.to>,
-	Liao Yuanhong <liaoyuanhong@vivo.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Shkolnyy <kshk@linux.ibm.com>,
-	"open list:VM SOCKETS (AF_VSOCK)" <virtualization@lists.linux.dev>,
-	"open list:VM SOCKETS (AF_VSOCK)" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20250812040115.502956-1-liaoyuanhong@vivo.com>
+	s=arc-20240116; t=1755021160; c=relaxed/simple;
+	bh=HrWt7KsFmQFhR+gbni5exLfgmFjQs3b24up4/s6MmUg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=a0IaZD9hXM/rswVsx0XKBPR7gWadtHkRCNx7gmNUI1arpPyFU49if6jp6VmXUaAIxPsLBj/IOkmAPqRyJyE0Z+A+00KO/5NWKu6O+VQnWjQ17ICBcKkOW/ewBu7G/fahdPBQua01CYCjkpVslvn2XoT6yC2WEEx1uY1t1hvMpYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDf+4lx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48EFC4CEF6;
+	Tue, 12 Aug 2025 17:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755021159;
+	bh=HrWt7KsFmQFhR+gbni5exLfgmFjQs3b24up4/s6MmUg=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=EDf+4lx4IuM9rw8qi4wI1aL1fFeQH/N1+zaWTH51ERi8hnA7G07qo26tb3konaG7C
+	 sMqCLR2++PPj/UJzbowqN3eJHrxckicnDUjnrPXqS426jZIuJuQqTnQwV7+9TTKNpE
+	 ryRfutW6sZyjUFRqYcRpiY5mugzhPWIbv2HC0Ivbe/4zPfeFBzg/BxKlcDHdK9+Slp
+	 aXAMyKg+rbnfEmYb8gKgzuIHKc/kha6hu4YVSfA6suInHQO2SDLrrzMRDsnYmIb+u7
+	 Rt1ask5T+OWQCX0BGHsZr+mkNLbQV54y60NM2DEWzXbKR4NJl1weaKKPE8+JQy5wAq
+	 iMpJ232uW+npg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812040115.502956-1-liaoyuanhong@vivo.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Aug 2025 19:52:35 +0200
+Message-Id: <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Matthew Wilcox" <willy@infradead.org>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of
+ each allocator
+References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+ <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
+In-Reply-To: <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
 
-On Tue, Aug 12, 2025 at 12:01:15PM +0800, Liao Yuanhong wrote:
-> Remove unnecessary semicolons.
-> 
-> Fixes: 86814d8ffd55f ("vsock/test: verify socket options after setting them")
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  tools/testing/vsock/util.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-> index 7b861a8e997a..d843643ced6b 100644
-> --- a/tools/testing/vsock/util.c
-> +++ b/tools/testing/vsock/util.c
-> @@ -756,7 +756,6 @@ void setsockopt_ull_check(int fd, int level, int optname,
->  fail:
->  	fprintf(stderr, "%s  val %llu\n", errmsg, val);
->  	exit(EXIT_FAILURE);
-> -;
->  }
+On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
+> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator=
+.rs
+> index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d77130=
+b374bd1397f7384 100644
+> --- a/rust/kernel/alloc/allocator.rs
+> +++ b/rust/kernel/alloc/allocator.rs
+> @@ -17,6 +17,8 @@
+>  use crate::bindings;
+>  use crate::pr_warn;
+> =20
+> +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN a=
+s usize;
 
-This isn't a fixes since it doesn't fix a bug; it's cleanup so I'd probably
-target net-next and drop the fixes tag.
+I think this needs the following diff:
+
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helpe=
+r.h
+index 84d60635e8a9..4ad9add117ea 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -84,6 +84,7 @@
+
+ /* `bindgen` gets confused at certain things. */
+ const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINALIGN;
++const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN =3D ARCH_KMALLOC_MINA=
+LIGN;
+ const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
+ const gfp_t RUST_CONST_HELPER_GFP_ATOMIC =3D GFP_ATOMIC;
+ const gfp_t RUST_CONST_HELPER_GFP_KERNEL =3D GFP_KERNEL;
+diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.r=
+s
+index 25fc9f9ae3b4..5003907f0240 100644
+--- a/rust/kernel/alloc/allocator.rs
++++ b/rust/kernel/alloc/allocator.rs
+@@ -17,7 +17,7 @@
+ use crate::bindings;
+ use crate::pr_warn;
+
+-const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN as =
+usize;
++const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIGN;
+
+ /// The contiguous kernel allocator.
+ ///
+
+
+No need to resend I can fix it up when applying the patch.
 
