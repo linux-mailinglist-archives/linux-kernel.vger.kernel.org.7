@@ -1,242 +1,319 @@
-Return-Path: <linux-kernel+bounces-764894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15149B22875
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:30:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0D0B228DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7CD423CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387423BE673
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52A127F187;
-	Tue, 12 Aug 2025 13:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="snffIGnN"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608E928689B;
+	Tue, 12 Aug 2025 13:32:40 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167C027E1B1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273142820B7;
+	Tue, 12 Aug 2025 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005094; cv=none; b=f5riYxcFsQgwd79wnwhxwNUELhJ/ASt6vuqA47ZTMJ/zanH1xu8pxfBc4cAr1DyMr8eRvDsj8OkEKFS/Ekeu5yAZ6SZK1vnwsAUNNjikexlBsJ/jct+2S6Xjo6vXbvRCq3RuJ1o7i5Q5fpOm5Q1D+l1+NNCjB8yHEbwgtdMkUXM=
+	t=1755005559; cv=none; b=Mg/AkgDnBU9zu1MIiojDcAcShbs/OpkCbfCxmhtuWaZyqJt6bOplJflIw/GHcfT1C4l//963JnHgwd3QeUcpxPSDmyYg6Rwy7eX464IkIFeAPkEJ6u761W2UdxCHPFwHRo3uSkpiBpE0BQlcvURdqMrbhlIbEkXvOSwFiQanu6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005094; c=relaxed/simple;
-	bh=Gf90/pHp5CpXSUGL2hjNMT/bBSAS8DnZpsS3Yd0qYoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DXtYZ+7y8aVJc/KHgcCagd4ZN2GVsQ20cmY30bGhXG7LlN7UkU6Gog+aOdJVB+zB9eIp25bBvLT7QkM9MIXyKtbwcnj1Chx+lBQU3d3Br5LPJ6dCIg4BTJ49uAIXlUY4Vded20ByFjm7sSVBI5wkcDiIIyYscEd/IYI/wio7JBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=snffIGnN; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af95a5989a2so71174366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 06:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755005090; x=1755609890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8RI+MamHncx3o1Ahq5d696tmTBIcFmRxxxMBZrqMbs=;
-        b=snffIGnN0R22OEyqekU+W9Kd7HuKmerYXVz84QSaM8mCGf4sklNmngS2zaV2DHbe5m
-         YUA77+M6zR6Ey2kS6yNCxFCtWsvowSvJFBTH/pxiCVD7Gz8Wgk/T27VU1OXaed7oiXH6
-         Ps4hWvg9z118CkMpiD2iRhtQD71Zgl18PCVNNhbOjQ2m/P3eK9iZfdgNLxkb+SlBcQDM
-         vuonm14w8KFHRhGWVsRI8ZeHsTDIyzYFQO9Nsw7wLCP8vV1jSZuPCr3K2xbM0iX6UsZm
-         U4+HoV5wAjGbxfgTBkLGaEUybbgSuGBbQzcALov9t+c8CYIWV4wiFRD6DuK/XDN3qcpQ
-         zUkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755005090; x=1755609890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F8RI+MamHncx3o1Ahq5d696tmTBIcFmRxxxMBZrqMbs=;
-        b=wGT7CzDEt76kRcNIuquLLCkO6rzwroqcvcr5WNS5PfBKMQ7jN2lhNQyy/A/Ydo3mS1
-         XBDx6fKtjTN674TGNxHvD47cTVl8eWiiJh8ANQJVGIpoOr1C0piui6ZCOQCYUZbu0aJJ
-         mgkh6OyDzPOQmF0Zk1x8z7C+JWtUUQpUhFWZw5d0bhVhUdIkrMVr8fZAuaY2rB0GR7x8
-         mH7yMkQgOff+INOfy+Rx8j7xfo8fG1FAc45Yjry4g725/sGv6Ip9nDBNxJcPhNY1pCXZ
-         NkFz1RUDsoZQtcE8UWsbIAapp5vu/fj8PXSKc1G88sy4O76rTujF9BlPK46oAmairXgw
-         f5XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhAH9YtejXBfh6dfUwfFsXaBkJEG4/xVO1I3Ww6UX2YTDakvvpUoFKqIsEvNWOXyDtTJYX0McqIpZTS1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWHlhEclFGpIwXX3x2XNqU3dnchhvKoVOqM90RKqwqkADCS1bx
-	NTKuZKYQIf8bfs9fkp+17R/wAVTKmJb5ZSNnoa25cXepY6uJkV6JjOeIja3jfsNohcY=
-X-Gm-Gg: ASbGnctLLAPo/XJsrBlLHM7cnJ2Pe+dFB2K7TsRtO+MjmOYhQCrrLh6GNkdG++mVzn8
-	XGNvooJ0qFSQ3dwi9wVS1qtT6lpeFaZseI6tY3ddbOfEa4yIktWDLgqu+/E3ng/mtiiSS7I9iX/
-	tVorJpaaAX9u6iryGOLOHnRZPmiOFO29HIPxc9Kpt9qJQvmeq3cnJxYbSGV1FG/l4TdILmQBwbm
-	PoFufm6yUBPWJdrm4bEwrxR4Mii+/w5mQC9bQH/XpaGw8bXIYpxz3/lhgeQrrGhwUyc4Lk91Kgw
-	0lqjZw0OS8JeUXzKnn68WqNME4StsajDIFbTfm+WGofZeYrt1HWoM+XZI6pcQ8dWZImEGA8/IKI
-	RBSnQu5VFZ2Iw4qqq5A7UcNhN4X3HDgJqxRR9r+7Sm8JV
-X-Google-Smtp-Source: AGHT+IEbGag45vPX20LYB1WfopE+qzWBntuEjRkdvpr5wWxVk98Pkdq2jfNu+AIQodZOnj6MJXuypQ==
-X-Received: by 2002:a17:907:a44:b0:af9:6666:4acb with SMTP id a640c23a62f3a-afb8d2889e9mr47673066b.10.1755005090215;
-        Tue, 12 Aug 2025 06:24:50 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0a4sm2209111666b.109.2025.08.12.06.24.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 06:24:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] dt-bindings: iio: Replace bouncing Analog emails
-Date: Tue, 12 Aug 2025 15:24:46 +0200
-Message-ID: <20250812132445.75398-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1755005559; c=relaxed/simple;
+	bh=l+N9XNOVXzNBhGXWdPf+WmOpKmREMBi+ktV9EGe52sU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XP90r4VN8GvgySA/7HKX0/7RX8zeABTtFrdvftOcImkalAmBmMkl1RtTc3zYr2fPaKZ9M+4pfwgzHH6Ayv5pVuCgW8Nd/Cusk4uC7TWA2wkZbLAsxeUOlIBnfCGn+ta+9eycDVsFhM4W3yYR7wLfMfdkZL7Pqnf3i0BedeI6rpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1XVn44TYzYQvGY;
+	Tue, 12 Aug 2025 21:32:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 307991A07BB;
+	Tue, 12 Aug 2025 21:32:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBFuQptoIpTCDQ--.9726S4;
+	Tue, 12 Aug 2025 21:32:32 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	pc@manguebit.org
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect
+Date: Tue, 12 Aug 2025 21:24:52 +0800
+Message-Id: <20250812132452.2974950-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5871; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=Gf90/pHp5CpXSUGL2hjNMT/bBSAS8DnZpsS3Yd0qYoQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBom0CdLawzbdg5SHABJ9mkeI0NywQinQuUswts5
- DApnJGmm+CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaJtAnQAKCRDBN2bmhouD
- 12WbD/wKouB7wmK4OxH3waJb/3ZCqzLwwlhmFpjI4NuB+iQo5Fid4ueRvVHHg9NxUFXWSSK2VDg
- vGYLlAVkVQ+U6p2FxaXymZ5xEzJo4p6pvy81RWQ2x73nYMixgb+oVaarh37iQclF9HIBVI52gXc
- y8GuXHyLe6VVpvPkditS/yYIBqEEmU+RUode2LqB2F9uZbw68c7VR280C6P8PD0GIwEEtV90I4x
- 5bnWwrR+BUUFw9APBMBIMg7ZGmT/H6m+UxuQErTykTCTnJVmnucXGL+EpoUjC3nW7Fy+i9gpgWa
- kYlrBTANxawQY/RTxkqtJAfz96sYlmB2SJa5sOFy0zGxt2AsxHe62yjsp8JCHdhHXdQ8zBxYce6
- 3btPxFq7ZvEfIWhRB3waHQ+JK6Vz4AXdKI3uREoo9Kg9htXOJN4yZ0iYbQhkHqGHIfMBF6OxwDj
- 07HDx/HGk0VHD3sQSkkn0lCMh+Gm/eD+AlM5gI4ipO4XXf/WDEf/sLOMgq1NkmflvEfCmIJUlnT
- r3BfLAmhYFbWsFqV8j5xRDP+feRfMq0DW5vBfkDqekDZ68aaIGprL9PusGpNupUOHyAvkUG5yvM
- 7Cjq43BklNsp4bpUb7hDHTDxdQPDrqWcAnqoYfr4qdgWUsbNq5a5rv72EVz48qKRBE4wi99r13/ WdHa7GH2Nq+Ofcw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBFuQptoIpTCDQ--.9726S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3XrWUuF4fWrWktFyxZrb_yoW3XFykpF
+	ySy3yfWr48Gr1UWws7JF4ku34F9348CFy5Cr4xGa4vqayDZrWIgFWqkF1j9FySyayDt3s3
+	Gr4qq3y29F18uFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
-permanently:
+An AA deadlock occurs when network interruption during mount triggers
+DFS reconnection logic that calls iterate_supers_type().
 
-  Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
+The detailed call process is as follows:
 
-so replace them with Marcelo Schmitt and Nuno Sá (listed alphabetically
-by first name) from Analog where appropriate.
+      mount.cifs
+-------------------------
+path_mount
+  vfs_get_tree
+    smb3_get_tree
+      cifs_smb3_do_mount
+        sget
+          alloc_super
+            down_write_nested(&s->s_umount, ..);  // Hold lock
+        cifs_root_iget
+          cifs_get_inode_info
+            smb2_query_path_info
+              smb2_compound_op
+                SMB2_open_init
+                  smb2_plain_req_init
+                    smb2_reconnect           // Trigger reconnection
+                      cifs_tree_connect
+                        cifs_get_dfs_tcon_super
+                          __cifs_get_super
+                            iterate_supers_type
+                              down_read(&sb->s_umount); // Deadlock
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+During mount phase, if reconnection is triggered, the foreground mount
+process may enter smb2_reconnect prior to the reconnect worker being
+scheduled, leading to a deadlock when subsequent DFS tree connect
+attempts reacquire the s_umount lock.
+
+The essential condition for triggering the issue is that the API
+iterate_supers_type() reacquires the s_umount lock. Therefore, one
+possible solution is to avoid using iterate_supers_type() and instead
+directly access the superblock through internal data structures.
+
+This patch fixes the problem by:
+- Add vfs_sb back-pointer to cifs_sb_info for direct access
+- Protect list traversal with existing tcon->sb_list_lock
+- Use atomic operations to safely manage super block references
+- Remove complex callback-based iteration in favor of simple loop
+- Rename cifs_put_tcp_super() to cifs_put_super() to avoid confusion
+
+Fixes: 3ae872de4107 ("smb: client: fix shared DFS root mounts with different prefixes")
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
 ---
+ fs/smb/client/cifs_fs_sb.h |  1 +
+ fs/smb/client/cifsfs.c     |  1 +
+ fs/smb/client/cifsproto.h  |  2 +-
+ fs/smb/client/dfs.c        |  2 +-
+ fs/smb/client/misc.c       | 84 ++++++++++++++------------------------
+ 5 files changed, 34 insertions(+), 56 deletions(-)
 
-Changes in v2:
-1. Add Nuno, based on discussions on the list.
-2. Add Rob's Ack.
-
-This change got agreement on the list, but still would be nice if you
-folks Ack it formally.
----
- Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml | 3 ++-
- Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml   | 3 ++-
- Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml      | 3 ++-
- Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 1 -
- Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml     | 3 ++-
- Documentation/devicetree/bindings/iio/frequency/adf4371.yaml   | 3 ++-
- Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml   | 3 ++-
- 7 files changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-index 3dc973b98f81..a92e153705f3 100644
---- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-+++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: ADIS16240 Programmable Impact Sensor and Recorder driver
+diff --git a/fs/smb/client/cifs_fs_sb.h b/fs/smb/client/cifs_fs_sb.h
+index 5e8d163cb5f8..8c513e4c0efe 100644
+--- a/fs/smb/client/cifs_fs_sb.h
++++ b/fs/smb/client/cifs_fs_sb.h
+@@ -49,10 +49,11 @@
  
- maintainers:
--  - Alexandru Tachici <alexandru.tachici@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+ struct cifs_sb_info {
+ 	struct rb_root tlink_tree;
+ 	struct list_head tcon_sb_link;
+ 	spinlock_t tlink_tree_lock;
++	struct super_block *vfs_sb;
+ 	struct tcon_link *master_tlink;
+ 	struct nls_table *local_nls;
+ 	struct smb3_fs_context *ctx;
+ 	atomic_t active;
+ 	unsigned int mnt_cifs_flags;
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 3bd85ab2deb1..383f651eb43f 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -939,10 +939,11 @@ cifs_get_root(struct smb3_fs_context *ctx, struct super_block *sb)
  
- description: |
-   ADIS16240 Programmable Impact Sensor and Recorder driver that supports
-diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-index 88aa67bf2280..0ba0df46c3a9 100644
---- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-+++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer
+ static int cifs_set_super(struct super_block *sb, void *data)
+ {
+ 	struct cifs_mnt_data *mnt_data = data;
+ 	sb->s_fs_info = mnt_data->cifs_sb;
++	mnt_data->cifs_sb->vfs_sb = sb;
+ 	return set_anon_super(sb, NULL);
+ }
  
- maintainers:
--  - Stefan Popa <stefan.popa@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+ struct dentry *
+ cifs_smb3_do_mount(struct file_system_type *fs_type,
+diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+index c34c533b2efa..6415bb961c1e 100644
+--- a/fs/smb/client/cifsproto.h
++++ b/fs/smb/client/cifsproto.h
+@@ -678,11 +678,11 @@ int copy_path_name(char *dst, const char *src);
+ int smb2_parse_query_directory(struct cifs_tcon *tcon, struct kvec *rsp_iov,
+ 			       int resp_buftype,
+ 			       struct cifs_search_info *srch_inf);
  
- description: |
-   Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer that supports
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-index 7146a654ae38..4dd5395730c1 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-@@ -8,7 +8,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Analog Devices AD7124 ADC device driver
+ struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon);
+-void cifs_put_tcp_super(struct super_block *sb);
++void cifs_put_super(struct super_block *sb);
+ int cifs_update_super_prepath(struct cifs_sb_info *cifs_sb, char *prefix);
+ char *extract_hostname(const char *unc);
+ char *extract_sharename(const char *unc);
+ int parse_reparse_point(struct reparse_data_buffer *buf,
+ 			u32 plen, struct cifs_sb_info *cifs_sb,
+diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
+index f65a8a90ba27..55bcdde4fe26 100644
+--- a/fs/smb/client/dfs.c
++++ b/fs/smb/client/dfs.c
+@@ -446,11 +446,11 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
+ 				     &tl);
+ 	free_dfs_info_param(&ref);
  
- maintainers:
--  - Stefan Popa <stefan.popa@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+ out:
+ 	kfree(tree);
+-	cifs_put_tcp_super(sb);
++	cifs_put_super(sb);
  
- description: |
-   Bindings for the Analog Devices AD7124 ADC device. Datasheet can be
-diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-index 5207c919abe0..eac48166fe72 100644
---- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-@@ -9,7 +9,6 @@ title: Linear Technology / Analog Devices LTC2496 ADC
- maintainers:
-   - Lars-Peter Clausen <lars@metafoo.de>
-   - Michael Hennerich <Michael.Hennerich@analog.com>
--  - Stefan Popa <stefan.popa@analog.com>
+ 	if (rc) {
+ 		spin_lock(&tcon->tc_lock);
+ 		if (tcon->status == TID_IN_TCON)
+ 			tcon->status = TID_NEED_TCON;
+diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+index da23cc12a52c..3b6920a52daa 100644
+--- a/fs/smb/client/misc.c
++++ b/fs/smb/client/misc.c
+@@ -1108,84 +1108,60 @@ int copy_path_name(char *dst, const char *src)
+ 	/* we count the trailing nul */
+ 	name_len++;
+ 	return name_len;
+ }
  
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-index 82b0eed6a7b7..091cc93f1f90 100644
---- a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-+++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-@@ -8,7 +8,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Analog Devices AD5770R DAC device driver
+-struct super_cb_data {
+-	void *data;
+-	struct super_block *sb;
+-};
+-
+-static void tcon_super_cb(struct super_block *sb, void *arg)
++static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+ {
+-	struct super_cb_data *sd = arg;
++	struct super_block *sb;
+ 	struct cifs_sb_info *cifs_sb;
+-	struct cifs_tcon *t1 = sd->data, *t2;
  
- maintainers:
--  - Alexandru Tachici <alexandru.tachici@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+-	if (sd->sb)
+-		return;
++	if (!tcon)
++		return NULL;
  
- description: |
-   Bindings for the Analog Devices AD5770R current DAC device. Datasheet can be
-diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-index 53d607441612..2e1ff77fd1de 100644
---- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-+++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Analog Devices ADF4371/ADF4372 Wideband Synthesizers
+-	cifs_sb = CIFS_SB(sb);
+-	t2 = cifs_sb_master_tcon(cifs_sb);
+-
+-	spin_lock(&t2->tc_lock);
+-	if ((t1->ses == t2->ses ||
+-	     t1->ses->dfs_root_ses == t2->ses->dfs_root_ses) &&
+-	    t1->ses->server == t2->ses->server &&
+-	    t2->origin_fullpath &&
+-	    dfs_src_pathname_equal(t2->origin_fullpath, t1->origin_fullpath))
+-		sd->sb = sb;
+-	spin_unlock(&t2->tc_lock);
+-}
++	spin_lock(&tcon->sb_list_lock);
++	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
  
- maintainers:
--  - Popa Stefan <stefan.popa@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+-static struct super_block *__cifs_get_super(void (*f)(struct super_block *, void *),
+-					    void *data)
+-{
+-	struct super_cb_data sd = {
+-		.data = data,
+-		.sb = NULL,
+-	};
+-	struct file_system_type **fs_type = (struct file_system_type *[]) {
+-		&cifs_fs_type, &smb3_fs_type, NULL,
+-	};
+-
+-	for (; *fs_type; fs_type++) {
+-		iterate_supers_type(*fs_type, f, &sd);
+-		if (sd.sb) {
+-			/*
+-			 * Grab an active reference in order to prevent automounts (DFS links)
+-			 * of expiring and then freeing up our cifs superblock pointer while
+-			 * we're doing failover.
+-			 */
+-			cifs_sb_active(sd.sb);
+-			return sd.sb;
+-		}
++		if (!cifs_sb->vfs_sb)
++			continue;
++
++		sb = cifs_sb->vfs_sb;
++
++		/* Safely increment s_active only if it's not zero.
++		 *
++		 * When s_active == 0, the super block is being deactivated
++		 * and should not be used. This prevents UAF scenarios
++		 * where we might grab a reference to a super block that's
++		 * in the middle of destruction.
++		 */
++		if (!atomic_add_unless(&sb->s_active, 1, 0))
++			continue;
++
++		spin_unlock(&tcon->sb_list_lock);
++		return sb;
+ 	}
+-	pr_warn_once("%s: could not find dfs superblock\n", __func__);
+-	return ERR_PTR(-EINVAL);
+-}
++	spin_unlock(&tcon->sb_list_lock);
  
- description: |
-   Analog Devices ADF4371/ADF4372 SPI Wideband Synthesizers
-diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-index 7a1a74fec281..43ecf46e9c20 100644
---- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-+++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Analog Devices ADIS16480 and similar IMUs
+-static void __cifs_put_super(struct super_block *sb)
+-{
+-	if (!IS_ERR_OR_NULL(sb))
+-		cifs_sb_deactive(sb);
++	return NULL;
+ }
  
- maintainers:
--  - Alexandru Tachici <alexandru.tachici@analog.com>
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+  - Nuno Sá <nuno.sa@analog.com>
+ struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+ {
+ 	spin_lock(&tcon->tc_lock);
+ 	if (!tcon->origin_fullpath) {
+ 		spin_unlock(&tcon->tc_lock);
+ 		return ERR_PTR(-ENOENT);
+ 	}
+ 	spin_unlock(&tcon->tc_lock);
+-	return __cifs_get_super(tcon_super_cb, tcon);
++
++	return cifs_get_tcon_super(tcon);
+ }
  
- properties:
-   compatible:
+-void cifs_put_tcp_super(struct super_block *sb)
++void cifs_put_super(struct super_block *sb)
+ {
+-	__cifs_put_super(sb);
++	if (!IS_ERR_OR_NULL(sb))
++		deactivate_super(sb);
+ }
+ 
+ #ifdef CONFIG_CIFS_DFS_UPCALL
+ int match_target_ip(struct TCP_Server_Info *server,
+ 		    const char *host, size_t hostlen,
 -- 
-2.48.1
+2.39.2
 
 
