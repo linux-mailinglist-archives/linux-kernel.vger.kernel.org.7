@@ -1,178 +1,111 @@
-Return-Path: <linux-kernel+bounces-764732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C70B22696
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:18:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE5DB22694
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90801B66351
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B152624EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B4E2F0C48;
-	Tue, 12 Aug 2025 12:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CD81519AC;
+	Tue, 12 Aug 2025 12:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="ElG2aRWm"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011008.outbound.protection.outlook.com [40.107.130.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mH2zg6im"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C5B2EF675;
-	Tue, 12 Aug 2025 12:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755000846; cv=fail; b=knHBwVY9isruzmml4n20DjuiG5PqHwU2Vd1bb3i9XllClQl42tEg2q4kcnG+beKyIowIhIJFMM+P/cameQwfFHrc5i0g+aqmCHLfqJ4ISVnyl+VUa1xHF+6wc77nG/25mWpSffsC1Z1sTvOlCxX3kvqB5nf3nbopx9TWb0ZC6xY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755000846; c=relaxed/simple;
-	bh=rwyxdZnBNThELnhBCYD2Mez6zrxdB8pVJjjc7UTpVGU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eY7CVtJcA04hELd8PbmSVq8oMXirHwYkIEFztJSSF3AvU5dOZC6wmc0/YEn/OFVXz2K+ZeIUJZFrtP9TG/Y+4vqzAcbTjbim68coU5YtlAma958bta2eCsqXSVkuRqKmJSf6lPo6yzJ8OySCHi3iqNXuwdEzOXxfvUbVm8I5ok8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=ElG2aRWm; arc=fail smtp.client-ip=40.107.130.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j0B9UnD1vOrTj/A0umdkiU1z0JiWzSQlks78qDKU8maK33a+G11Jwzgh5amYAXKKPelawcnd19kHy/GVogDVQMFNPKTULSl4G6ju5Q/SibiH1Ns1AQgSUyBpE2xzwczfTlwB4fM2vDbbjVd3HGLnq1RqQ52tboUKSyV6YsXiMHnOg9Dv3FbbGL1/RhpQnN38xB9KxnkHRy/3wTPXyO960p+2P1AfYZZJ5q9e7WIYqA3GZe7EJeHb0IuLyBthtXBdLpDk+2O+fXlOKwWZuG7BPhjkBLe4cs1rT0u5ON+uGJdSblewYsKtkljJqAifo2wi7YnNoarYXcBeeHRgTpCmKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k3noDpYBHWQRuOPtqI9Ni5m1WQ49HIJ39bw6kOFRUEA=;
- b=yiRfUNkvSdecw36cJjZTiQiX7TFncXacGYM9zhXNAvsTrxtw/BHuCfKxl5i4SW2PLVFJBYs7mbhToFvzF56CaeHMiRObvBGle+Q3J7FEU+9Yhy8kE4FYaZA38lMWNNj6p1okzBmv45IbqJc7jWUa/l0xw3GmBOk9hiEfZD9/biWyWEQwuG1qo+vvpVQPUs/QpiNfx/frhM9nAELT/XTgE3i5OJX2pmruwXl+wxgxtczYim8b5djzydARmouLuFLzqlpg3eT9VTA7rLIluhZEKFXziEH7l5rChR65pN4Z5sPpfI+1/xaizEgJiggx79Im2N3SbvrgRESTKcH/sla3rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k3noDpYBHWQRuOPtqI9Ni5m1WQ49HIJ39bw6kOFRUEA=;
- b=ElG2aRWmQNyOYtTWAHB7iedQha7iIufaOuVvTzt3i+i82inVaKgMH2NbZ4+5cGv/yGFLVwXo9Z9yktVORLFIYS0O6oqIxk1eJVLRdq+2Xva9HO2nthy+yjksmODMlHxQP52Rtbn4Il1SERKF8WsqjzttijojUM/Fy5jdkDLidUs=
-Received: from AS9PR06CA0654.eurprd06.prod.outlook.com (2603:10a6:20b:46f::30)
- by GV1PR02MB10718.eurprd02.prod.outlook.com (2603:10a6:150:16a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Tue, 12 Aug
- 2025 12:14:00 +0000
-Received: from AM3PEPF0000A790.eurprd04.prod.outlook.com
- (2603:10a6:20b:46f:cafe::67) by AS9PR06CA0654.outlook.office365.com
- (2603:10a6:20b:46f::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.14 via Frontend Transport; Tue,
- 12 Aug 2025 12:13:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM3PEPF0000A790.mail.protection.outlook.com (10.167.16.119) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 12:13:59 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 12 Aug
- 2025 14:13:58 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: <kernel@axis.com>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND net-next v2] net: enetc: Remove error print for
- devm_add_action_or_reset()
-User-Agent: a.out
-Date: Tue, 12 Aug 2025 14:13:58 +0200
-Message-ID: <pnd1ppghh4p.a.out@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C6BA930
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755000909; cv=none; b=P2MoALEbVKXvE1CZpcBExs7pVxigxC8DcaPKDSJOhIuuJzvZem7NBpF8WliFOncHJmZdNfkLzIM2eeok9BEcvGCA4EM6j9CDeRi1UgSCj3fIQhrRbEieHGsJsqW4WxGpIFu7AwZ/1hr1meFphElF0knpGlwvj4+cCXvvpMUFZyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755000909; c=relaxed/simple;
+	bh=i2sB+0qnCRMPqW1KShGcR8PsF4cV+J4Rx38KY04/XIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KMwDTy3AJTmGwrGPH4QoKJCuQhFRqu+hsEinXhMBbfjF0xhbKnopY/uY3P6lols/DFIcoPUpAzdf+6ZpNQ9xC5UAiodKUH42GMlsApOzpoXgi09e4kLnF8b49dkmdNhhtsd94li/sCMDyttFhEvs62nJjUHJiV5muLAsgewIDio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mH2zg6im; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2401b855980so39247765ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755000907; x=1755605707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2sB+0qnCRMPqW1KShGcR8PsF4cV+J4Rx38KY04/XIE=;
+        b=mH2zg6imnTwealhirDV/4vMaQ3B0HQ1gGR0/LpDWos7NjXo+VrgJD5hKcGOfeuSeqO
+         XbLyWd7pBfkz+mZZ3UUoClOdz383p+dquGuv5lnu51HjVLGVcawOkE3K1F9ra0l2cWH1
+         n4eOJmeWmbON7oTAPtKvzeJoawON7ZPjzBnsbZK4D13xMq6alHfMYULaqLj2/GXkHUaG
+         5qf5ECJdK+jx6jpTnFSR9BL6pdHbojBxOm8VpkFhwde9x3FSIP6xu4J0Rvh48DXKnkwb
+         LM8/0nCbv4GXirXcpDhYhd3FTuv7xtZNB1rrB5U+gtNXeCIpwL0ePoEUr4VSwTYm/WLq
+         ixXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755000907; x=1755605707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i2sB+0qnCRMPqW1KShGcR8PsF4cV+J4Rx38KY04/XIE=;
+        b=ktnn0Vly7LHg2zXVL98BSyz4yJ+ZtFuN4vZLJoaW9uQIpeid1CmRXs2eg372ggHgiW
+         YspX+P0dy68Ic5voUAmH5s4vs7SG6rEocxQ/6WaQAqIT+XDiOOCiSmG21rVVZmuA/Q3D
+         zJW/X9LResbUWhcj+Sxr3V1HzH/GuPzmTaLgpyT8OFy3nGpZZ5SFHgbnu7YZHqnXnNls
+         oDohOarDveUNoKgLUCEwvBsqpbF9Kqz1+bLCB53n0a2c2pajbhEDp0vGA4LkuWdgRD74
+         DwMRlB0agf92nMUVUVx+d2cbCobxR/awdjz38PQNdLsdwP/loLubD7AWant1EElPJdOF
+         +FWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uzlTqgsGS3KcS9E6aATTEDAtIbcc8nVe0uG1OB0ok7c4iwcaUZunydvpfEnLtoD5J/KeS9CXn+Pbfms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOBzp/fFf5WMl/7Y/h4z9+E+F7l9SWdzs5Dw4uJM59aH8qr+CV
+	ZDootPK/uT8QR7fdT0kMNOwdBLSuImm5vOU6Z38HAcraLj0YPJTfDPMdd5M0JPV8fBcE2iCp8FQ
+	LC/BpXW/O6BCR++MQAPJhWbotLvZc5c4NQw8n7ujCAg==
+X-Gm-Gg: ASbGncvEPY8B6aYEPehRTvJQmF8o2rVV7nhWVM7Yab//lhi0c4702t44z4Z5Rg+b4Z9
+	AfjyNlq3zbG3OzNwcobp3NsZt8k58RPVuaPLIsHN8Xuvz3nehsw4TY1GXcQoFHeqpVq4uoxa8ft
+	na2kObyEgp8G+fxU8TFOFd0b7BeWIsMGdU3Nvj93kT0AFxXGkMbiZrJZJqb9BJJ7JE/Lq7lbimu
+	8vE6RNO1k4FuvB4fT4D7VUxFmRLJ0HXweFa
+X-Google-Smtp-Source: AGHT+IEzociZzudTWGhuGdHHssA6mcTMWmh60p7KNfXRPqNC0sHerO7a3+ET+ENTi1aHgD3VUTer3FIsMhpz3v4Tov8=
+X-Received: by 2002:a17:903:2408:b0:234:914b:3841 with SMTP id
+ d9443c01a7336-242fc340444mr49380405ad.39.1755000906805; Tue, 12 Aug 2025
+ 05:15:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A790:EE_|GV1PR02MB10718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23e0d6e9-6c3f-4fbf-5842-08ddd999b813
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|82310400026|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nyxrkiP6GVYP7nzB7hP2hRBw0IzcZqBkpH1i2IslYvLhkb/v+ViIgbfe/BnJ?=
- =?us-ascii?Q?v9uogVX5Ymj6vnbNPQwywz6Vj/MeX5SmTV17Ipy5g6xV3oD4DikPZpVqlSYO?=
- =?us-ascii?Q?AjQeqeszecL0M9SWoi6eps9iGbyJCGZ4vHsBU9jEzY/YvcsJtR0LDKy9UfUm?=
- =?us-ascii?Q?/hrWvD7hSKpkRXAm9hbGtH/u/2YHv/Kmovep4cGminum7Pai1a7K6IdYZ4Nx?=
- =?us-ascii?Q?2bEBX9cZh+jNlkgqX7O7rjfL25BDtjlbvcrNIKWJ4JkZK43x15+v/ICLYW0P?=
- =?us-ascii?Q?nnCaV0lMG6VGzlZ3lb/ec29Uir/veYihH/oMDkqz+i/y0aO/EnZtTDdD3rc7?=
- =?us-ascii?Q?x+xqXou3uexnXBptwYBIK5abBZZfasypYDFpfrmR8RQHELko01psBR0aWgtT?=
- =?us-ascii?Q?lrCUz4/v+7xlKLoPcG88S5s6Lornno4uCclul8d3X29xoY9R3mqqkWEGT5a0?=
- =?us-ascii?Q?oJNYIHE8dvUrKjGuGSGZEp7DBThSi8XYM1GRX3gS9TRKZQykofIPa85UEF5C?=
- =?us-ascii?Q?/Rh947D71ZtKNItBK5EWRAiZmaDAvdV6ImhCXROCeN0t141926Iyw/Z/wOqf?=
- =?us-ascii?Q?4ZnyCIYwDV02L+MuaYcc3rGcAKNrQcZtybnAOSQat4klFnpcJ9wiYSkNAO+a?=
- =?us-ascii?Q?Ij9kCql/QcsEjd56dcjoo0GXnsswB82jHXF7idPZjSCBm0R2LgyE/VrT8dFf?=
- =?us-ascii?Q?dI8O1nNDlkZsqFZjNkJHGCmGx7WxmFW+KDHv381Q/CpaPqRkmr0QwGuc4ogr?=
- =?us-ascii?Q?kMgO7TpqX3fJv5fuTYC/c+J2Qs7UKrMI5ul9nnPqeiwXrHJ6OQu7k/RZl2px?=
- =?us-ascii?Q?KQF9TZPYrXOhso7rmEbxR3PgeUXug+pQ86VCBtMCq6aEJ4jk4HyDHVK/4INf?=
- =?us-ascii?Q?5ux9E2Grjk9yCZkR9MXoEsXCLvo3V9ckdU7DUdc0Jh3Fw5HjPHTKR59jHmXj?=
- =?us-ascii?Q?TRKbFWR0De20YM3w9J1vkOqOoWWDtDI8UHnBKmoDya6QKpzcGLlueF/Flv2g?=
- =?us-ascii?Q?sunu5OWK8RvFOaRDSsPknraHWqwL1X+H9OKSdqmCZpPuhA9B8+QF/ce4BSJn?=
- =?us-ascii?Q?QhCJ3elZ9tyzWbvugbGYVnK7RDghcFpsSowVLd410s29O+WVqxyF9Q9vXpne?=
- =?us-ascii?Q?cubjlBXR5V1dLQ1NfnTFAecwvyQtqnQP57whDFpChjBLFiWmR76GE5xtrFM/?=
- =?us-ascii?Q?E9aRIbC7eXa6KoknV/XsZ+cKFJroc6N/LpxNAHJPVx1k+CBioKf6ITHFl71o?=
- =?us-ascii?Q?MV3rnXNPald9VLSo8hiUZw9/BbYtBU8f+CR6Kj0axXsOP+HLjusPixJSdy6J?=
- =?us-ascii?Q?QzeblErmrcmJMNkw143LRdHCZm8LlMA0dFHAAos9z8ZvRBmuOhvqZpt7ystz?=
- =?us-ascii?Q?8s48CDaSb0vMGr10VNdGCz1DCUPFQ0RkNZXfs2GQpLypUVbZnsrG/AbzZAuZ?=
- =?us-ascii?Q?0D0KCZJgwD8u/tBzrdSzYC7Vsz/AxtCtgh/guvU1fA4HfM1z7qzonZebX+Dl?=
- =?us-ascii?Q?41amdlDtPhk7ZL3QrQfPFzi7ZN0DcEF2Llvp?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 12:13:59.7556
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23e0d6e9-6c3f-4fbf-5842-08ddd999b813
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A790.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR02MB10718
+References: <20250812-gpio-mmio-gpio-conv-v1-0-aac41d656979@linaro.org>
+In-Reply-To: <20250812-gpio-mmio-gpio-conv-v1-0-aac41d656979@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 12 Aug 2025 14:14:50 +0200
+X-Gm-Features: Ac12FXxLWlDkhK2ok2zf7fTots4VGX5EbCJBNgP5nS_eF-e5_DRefiW9dEXgJdo
+Message-ID: <CAMRc=Mfwz7yD0rUKw+n8eOczrg6E0n=bPJ+ng32D=r-rUgp4TQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND 00/14] gpio: replace legacy bgpio_init() with its
+ modernized alternative
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Hoan Tran <hoan@os.amperecomputing.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Yang Shen <shenyang39@huawei.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When `devm_add_action_or_reset()` fails, it is due to a failed memory
-allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-anything when error is `-ENOMEM`. Therefore, remove the useless call to
-`dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-return the value instead.
+On Tue, Aug 12, 2025 at 2:12=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> I hit a network error when sending for the first one, retrying now.
+>
+> This is the first round of GPIO driver conversions to using the
+> modernized variant of the gpio-mmio API.
+>
+> While at it: sprinkle in some additional tweaks and refactoring.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
----
-Changes in v2:
+FYI: This is the correct thread for reviews, I was finally able to
+send out the patches.
 
-* Split the patch to one seperate patch for each sub-system.
-
-Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
-
- drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-index b3dc1afeefd1..38fb81db48c2 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-@@ -1016,8 +1016,7 @@ static int enetc4_pf_probe(struct pci_dev *pdev,
- 
- 	err = devm_add_action_or_reset(dev, enetc4_pci_remove, pdev);
- 	if (err)
--		return dev_err_probe(dev, err,
--				     "Add enetc4_pci_remove() action failed\n");
-+		return err;
- 
- 	/* si is the private data. */
- 	si = pci_get_drvdata(pdev);
-
-base-commit: 53e760d8949895390e256e723e7ee46618310361
--- 
-2.39.5
-
+Bart
 
