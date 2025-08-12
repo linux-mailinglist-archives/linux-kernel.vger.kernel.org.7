@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-764228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6360CB22027
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61ACB2202D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD64A6E0884
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CE0504F49
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14B02E093F;
-	Tue, 12 Aug 2025 08:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2761C2E03E8;
+	Tue, 12 Aug 2025 08:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1NZAJHd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QYv3BjJp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498F1311C3B;
-	Tue, 12 Aug 2025 08:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F922DE6F7
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985663; cv=none; b=aOwjerLQ9XOri8h9Lm2dlnAZwJoDqnGSwWxRcTLxXbvlSRV7fVpGtQ99fSH6Hw3iEuflRoU2tM8VCtrXclmlzXQf11jocTlQ3zHzqb8n/TL/ryvNwJnspjyZdOtDYbM/Ybz05lCnPMdkId3lT5Vn8Sn3rmqekPd/cwiVlky60vg=
+	t=1754985803; cv=none; b=RZkrvS4gLm3c656bVd4Jz681RiRuamyl3RaSk2CwgMn0qJzosYVBvrfujubNQihpKTmPLBshfdZUSrDObA8jc39fqV7/K9rgqEduzPFOtVOaq4IqJxRAflYlriaHN1t6mJDH3gKr1fAQZJDLUIANMG/5Rgz6zs9HUzhH01ttbho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985663; c=relaxed/simple;
-	bh=Qz5rVNLv9JvrQB+FK58nkzEJzkYI9AFUBSjceIHbWTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UO5dYUnV5f3V+oepRA7jVFn4SDp3Ldp1v1khd8HoZwF5iM6e8Jdlxnjn9Jqlr8hc/eBPuTvqMNWFxv/Cxi9w+x0C6CirfQ8dQLLmTcwuilNRKUxrm0C/gQXcpgdz4BTew7zM6cUblJoXxnYta8082yBYqrNJrNFGTlPo6s7bSuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1NZAJHd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E95C4CEF4;
-	Tue, 12 Aug 2025 08:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754985662;
-	bh=Qz5rVNLv9JvrQB+FK58nkzEJzkYI9AFUBSjceIHbWTY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R1NZAJHdrQE8ELLxJtSEPOn5EJepDr1Pr6ive+2JtpZazE4JGXu8T/3RVijwhP9am
-	 jXSx6AvJOCXjp0Js0w/jkipA3dfKdRWNltbKL4+6MLHSwZ4pdtaRJcvMDuEoyyFSh6
-	 TVa1WukLM9tYO5bdbcKEF4RkfWntddCuWLSKxenTR2WwDwxfxkO1iWDaZ6XDtqsCea
-	 DuVnjoUQJOEdqIv5XMELAOFFRAqJHK5mdDjzJvxc5qBDmuXyZfrbXcPkj+btcRmGq+
-	 /NZrfyKCwHDvVNMRm+ScC9M+ciVj/nsd7bb1/HTWqNydVAO1mFGRQGq9DMTkzZVPGS
-	 vzCprcrrzeOkw==
-Message-ID: <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
-Date: Tue, 12 Aug 2025 10:00:58 +0200
+	s=arc-20240116; t=1754985803; c=relaxed/simple;
+	bh=LUta36O8tyb9I3juJj/3J8ZXHJlT2V/rHRSAu5LOqgM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PtvAdYMTYvrKPDEl2pbPTMrFixVmRvmTsGVkc33cin+Gg9MfmlUFKhfk73PqGuXMbV/0s8tdxXEuGPLuAQ2MF6k4WVsjB86e+rKqiv9tdeRjSbq/bVgBNt5g7UMNWL5OPmPVhlSaa/DFDHmmx/O7RZPliTRO2Ass9fmdYY99SCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QYv3BjJp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754985800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPD2NvE044yYaRiCB49zIx8of/z3CQOyIqI9hVU1DHo=;
+	b=QYv3BjJpQZxyNtGiH3pFCktF8FmcjimoZr3j5YCSwkoUv9T77ZBQMKBoZDZCzdWEgct6mK
+	w0JSLU5tNvb7+IvN0tUaq5CZlsRCKFCPW5DwHWklsVaGNUWtWuYrKo+5ZBjSAZ4INd7WBT
+	oLRNe8K5PcO6Ba5lvYpVPRKVVmrtsZ4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-seZebHSoN5OZopFtpsAsRQ-1; Tue,
+ 12 Aug 2025 04:03:14 -0400
+X-MC-Unique: seZebHSoN5OZopFtpsAsRQ-1
+X-Mimecast-MFC-AGG-ID: seZebHSoN5OZopFtpsAsRQ_1754985793
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83DD31800340;
+	Tue, 12 Aug 2025 08:03:12 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.207])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE4B61800280;
+	Tue, 12 Aug 2025 08:03:08 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt
+ <palmer@dabbelt.com>,  Alexandre Ghiti <alex@ghiti.fr>,  Samuel Holland
+ <samuel.holland@sifive.com>,  =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>,  Andy Chiu
+ <andybnac@gmail.com>,  Conor Dooley <conor.dooley@microchip.com>,
+  linux-riscv@lists.infradead.org,  linux-kernel@vger.kernel.org,  Drew
+ Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH v2] riscv: Add sysctl to control discard of vstate
+ during syscall
+In-Reply-To: <aJpUWnYEL18dk4aC@x1> (Drew Fustini's message of "Mon, 11 Aug
+	2025 13:36:42 -0700")
+References: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
+	<lhuo6so7ur5.fsf@oldenburg.str.redhat.com> <aJe8ZW5LEtBK7Jmj@x1>
+	<lhuqzxjy5zq.fsf@oldenburg.str.redhat.com> <aJpUWnYEL18dk4aC@x1>
+Date: Tue, 12 Aug 2025 10:03:05 +0200
+Message-ID: <lhua545dl1i.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
- video codec
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
- <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
- <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 12/08/2025 09:54, Dikshita Agarwal wrote:
-> 
-> 
-> On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
->> Add binding for Qualcom SM8750 Iris video codec, which comes with
->> significantly different powering up sequence than previous SM8650, thus
->> different clocks and resets.  For consistency keep existing clock and
->> clock-names naming, so the list shares common part.
->>
->> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
->>  1 file changed, 186 insertions(+)
->>
-> 
-> Query:
-> Can the additional reset and clocks be accommodated in existing 8550-iris
+* Drew Fustini:
 
-No, different hardware. Although it is hardware from your domain and
-your company, so I would assume you know the answer.
+>> I'm confused.  Current glibc assumes that vector registers are preserved
+>> across system calls because the assembler clobbers do not mention them.
+>> Similar inline assembly probably has ended up in other projects, too.
+>> It works by accident if glibc is compiled for a non-vector target, or if
+>> it so happens that GCC never keeps vector registers alive across system
+>> calls.
+>
+> I wasn't trying to make any ABI changes with this sysctl patch. The
+> riscv kernel documentation states vector state is not preserved across
+> syscalls. I am not trying to change that policy.
 
-Best regards,
-Krzysztof
+Oh, then glibc is just buggy in this area.  I had no idea.  If the
+vector state is already clobbered, than the sysctl for experimentation
+is fine.
+
+Thanks,
+Florian
+
 
