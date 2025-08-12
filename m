@@ -1,162 +1,90 @@
-Return-Path: <linux-kernel+bounces-765325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADFCB22EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17328B22EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021431A25236
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44561A260FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B724729994A;
-	Tue, 12 Aug 2025 17:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082272FD1DA;
+	Tue, 12 Aug 2025 17:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXx9gseD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJEUzrGT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF72286D61;
-	Tue, 12 Aug 2025 17:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0F92FD1BD;
+	Tue, 12 Aug 2025 17:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755018748; cv=none; b=GoK7lavrVcrPZ1McQ/GQPpP+i0P9YbjSeo3GtPSKyaP1iHkUr5azqC2cLmpTcU6+lxkHaFvOrtdm1lFkQ0n3OUvbayoaStn7VtpaRHlcX+LqaLkWEqZuZsu2g3XBFmBb3MBR9G9/hbUF/jzhz8l1mrnx1/MWx7ytFCqV/m5Ffrc=
+	t=1755018804; cv=none; b=luJAhwF66aTtntup8I1CSLYKUxtqE7DqIN7QYFPm4STYBaPfL2L6DIkmw/i5QcBK8NnFTDQPpnmz+gnFyRCdYf2apw8/GDXlDiINTKIY87uTwGiUGd+fdtdZjNfeSVF7Zaupjg0pmD3oj4VytjRvALGBjtr4He5fdOUX6Bz7UeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755018748; c=relaxed/simple;
-	bh=sbkCPKwftTrUkZdiXc/EE3AJ3jJBcpouENbdl33Fz34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqP1T4AcejwfOEHWbQIcFtST9FsaVABNxY3lL/lZLMAYuAxJtGPEpwYnmppoCC9C2L+pZOXmJS8FNvNk5QFZ6vIoo2vm1FILHHa63OZBPmn7ksS2dvy2tZmcy8opVX1bIBMaXA06Czlp7NaMPTXNH+ANoDN22h//hKdUavg4jpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXx9gseD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B54C4CEF0;
-	Tue, 12 Aug 2025 17:12:22 +0000 (UTC)
+	s=arc-20240116; t=1755018804; c=relaxed/simple;
+	bh=DDL2bVmixo4qjz0buf9nt8YEqAI27C4kZ9s1B7RDXaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TiLzqqeT2iOIisJOQbrnD06AGw1K4ouJvUEAuXBbdihRDpRLx3Vu+hXMBkkwvitSsfPe5hihpS/HWc7Gnr3BGrXTywgB2CXR/oqjwYWGY91/kIVs/HNMJwYj6s2s6KAvw+5j+kiaNMc92/xbycG3s2ug586ix7sHYEGZPgf+4eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJEUzrGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7793C4CEF0;
+	Tue, 12 Aug 2025 17:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755018747;
-	bh=sbkCPKwftTrUkZdiXc/EE3AJ3jJBcpouENbdl33Fz34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oXx9gseDXKIuFwtIIhveZDwIf2HCNERDvQcwjBm11f0IoKqQfl16vACxSWboPJ2vT
-	 ZmlgdaRgw2T11JvWC+MrugfTSEOKkcNF6de6dcUu4+7+L2XiA8dzz/DTpkF2wbxSA8
-	 lkFScCz4E8iTgYebg9Uvan5h7Z/NOnpSGCtwdsN1BDbSHMdaCbpCpJjwICJEJ4llkX
-	 EJhhnU+PAyYoGwX31zZaNUjgy+DQ15n0nZ014YLlUciPnPdD39h5neAMEZfxyd2jQU
-	 Q1BvJaIxYpI3gnnUvezXBXr07frMKY7rYXSIBnp81Og5N/djbx+PnhKikvjnmYK88/
-	 LeHLfMA/8TgsA==
-Date: Tue, 12 Aug 2025 22:42:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	s=k20201202; t=1755018803;
+	bh=DDL2bVmixo4qjz0buf9nt8YEqAI27C4kZ9s1B7RDXaM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OJEUzrGT8Q8Oh2evCaX+1T6cWfuLAh9FOBdhc8w07mZxOzdNxo1oTkevmWUDr9NVE
+	 ee+TsJCI1KznM+XK6CcNEQRSjuBlr3H/WwyN+htOlPeU1zJxfGqsayu7cbQvsM1w5s
+	 zAmVArfjMl7wl8fZEK6x46X54FImdWpETPXFzhPEzMIdrNEdxUuU9Wq6nrjV5bI0KU
+	 P+ISMBm7Q2iAbJnHDXSB47/SC2hnDQikyXvTxwAjTeJFC3I0nERpgt+5YBatl/aOHL
+	 FZOtaArV6oiOdeMkvkyzeIkdXnX7Iu/Y7b+Z/IUrYPGCNp2J8OaIJvVAuczk6uRkgP
+	 SV4//JL7FbqCw==
+From: SeongJae Park <sj@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Enze Li <lienze@kylinos.cn>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: imx6: Enable the vpcie regulator when fetch it
-Message-ID: <zl6ie74kyeen2oudt3l2hv6ba5fwjsuiqlpdgaao5l7al7zjwu@bsj3agyukypn>
-References: <20250619072438.125921-1-hongxing.zhu@nxp.com>
+Subject: Re: [PATCH] selftests/damon: fix damon selftests by installing _common.sh
+Date: Tue, 12 Aug 2025 10:13:21 -0700
+Message-Id: <20250812171321.56978-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250812-alex-fixes_manual-v1-1-c4e99b1f80e4@rivosinc.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250619072438.125921-1-hongxing.zhu@nxp.com>
 
-On Thu, Jun 19, 2025 at 03:24:38PM GMT, Richard Zhu wrote:
-> Enable the vpcie regulator at probe time and keep it enabled for the
-> entire PCIe controller lifecycle. This ensures support for outbound
-> wake-up mechanism such as WAKE# signaling.
+On Tue, 12 Aug 2025 08:12:11 +0000 Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
 
-I'm not sure about this part. For supporting WAKE#, Vaux supply has to be
-supplied to the endpoint. But here, 'vpcie' looks like the main 3.3V supply. So
-keeping it always on to support WAKE#, sounds to me that the component never
-enters the D3Cold state. So no WAKE# is required.
-
-- Mani
-
+> _common.sh was recently introduced but is not installed and then
+> triggers an error when trying to run the damon selftests:
 > 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 27 ++++-----------------------
->  1 file changed, 4 insertions(+), 23 deletions(-)
+> selftests: damon: sysfs.sh
+> ./sysfs.sh: line 4: _common.sh: No such file or directory
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 5a38cfaf989b..7cab4bcfae56 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -159,7 +159,6 @@ struct imx_pcie {
->  	u32			tx_deemph_gen2_6db;
->  	u32			tx_swing_full;
->  	u32			tx_swing_low;
-> -	struct regulator	*vpcie;
->  	struct regulator	*vph;
->  	void __iomem		*phy_base;
->  
-> @@ -1198,15 +1197,6 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp)
->  	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
->  	int ret;
->  
-> -	if (imx_pcie->vpcie) {
-> -		ret = regulator_enable(imx_pcie->vpcie);
-> -		if (ret) {
-> -			dev_err(dev, "failed to enable vpcie regulator: %d\n",
-> -				ret);
-> -			return ret;
-> -		}
-> -	}
-> -
->  	if (pp->bridge && imx_check_flag(imx_pcie, IMX_PCIE_FLAG_HAS_LUT)) {
->  		pp->bridge->enable_device = imx_pcie_enable_device;
->  		pp->bridge->disable_device = imx_pcie_disable_device;
-> @@ -1222,7 +1212,7 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp)
->  	ret = imx_pcie_clk_enable(imx_pcie);
->  	if (ret) {
->  		dev_err(dev, "unable to enable pcie clocks: %d\n", ret);
-> -		goto err_reg_disable;
-> +		return ret;
->  	}
->  
->  	if (imx_pcie->phy) {
-> @@ -1269,9 +1259,6 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp)
->  	phy_exit(imx_pcie->phy);
->  err_clk_disable:
->  	imx_pcie_clk_disable(imx_pcie);
-> -err_reg_disable:
-> -	if (imx_pcie->vpcie)
-> -		regulator_disable(imx_pcie->vpcie);
->  	return ret;
->  }
->  
-> @@ -1286,9 +1273,6 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
->  		phy_exit(imx_pcie->phy);
->  	}
->  	imx_pcie_clk_disable(imx_pcie);
-> -
-> -	if (imx_pcie->vpcie)
-> -		regulator_disable(imx_pcie->vpcie);
->  }
->  
->  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
-> @@ -1739,12 +1723,9 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	pci->max_link_speed = 1;
->  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
->  
-> -	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
-> -	if (IS_ERR(imx_pcie->vpcie)) {
-> -		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV)
-> -			return PTR_ERR(imx_pcie->vpcie);
-> -		imx_pcie->vpcie = NULL;
-> -	}
-> +	ret = devm_regulator_get_enable_optional(&pdev->dev, "vpcie");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(dev, ret, "failed to enable vpcie");
->  
->  	imx_pcie->vph = devm_regulator_get_optional(&pdev->dev, "vph");
->  	if (IS_ERR(imx_pcie->vph)) {
-> -- 
-> 2.37.1
+> Install this file to avoid this error.
 > 
+> Fixes: 511914506d19 ("selftests/damon: introduce _common.sh to host shared function")
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thank you for catching and fixing this!
+
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
