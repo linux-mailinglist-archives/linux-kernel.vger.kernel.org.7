@@ -1,155 +1,224 @@
-Return-Path: <linux-kernel+bounces-764078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F74B21DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:58:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F6EB21DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E776418860DC
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D2E16E4D0
 	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 05:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720282E3709;
-	Tue, 12 Aug 2025 05:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F5D2C21D4;
+	Tue, 12 Aug 2025 05:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IayR9ZM0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eiG/uEgG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3722E2DE8
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4EA311C19
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754978164; cv=none; b=t0TIlmD0aIt9ih9fDyWHwTCRcn6Ju6b+K7K3zPb8eBlbMfxsakfeU/tvCnzEB1PQ4gFJBcjyFIFxHj+OGjnRXM4qVvZ0RhrovBtzKptbEnt+fSIg9AoA0J7qGabY9yNJtBsR0oxxxLnb5Lo02Ew/sqI5JEd4L8p8GIBNhIZlnhk=
+	t=1754978199; cv=none; b=O5IddZaNJrhHSc5g2+DUjwKGs5p6x1UC2zA7GZFox24WV2LHZLCinjiF7V6wsZfk3G5ggBm92VYpMybC681cfS22YXxFu0XPEbZnClzpCXHXbsNhzmo+nzpsFSkg5N1rO1IiVY9p6RtQpr3egvQCydUpgVwhLLNglctQbIDNhKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754978164; c=relaxed/simple;
-	bh=7C5wlqfUGlNAOlcMWP3UIoJSoU7F5CfXh7HAySLy7vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BMY/ut3whosegf2Gk2utWhWQrvkbE03sVNzY7euCYUqZePUBKJEIAo7RQFD/nRs3fNQiJNiyY3Ul9bPV+evpX1NNF5GrSQdw+l4YD5AataMoI9b+wwDIupeAapGyesawv+xPfC0j6tz2fPyvCo7wHzoQfpaQx23erN9x6I8n6uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IayR9ZM0; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1754978199; c=relaxed/simple;
+	bh=N/kGy5+Rvl5NkLVtYUZMJPPcbHTjJ6Zdxnfsjdb3SsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EEHokvo8+YAj7J2zgpR5IRatBk0Mey0bqKqfA96nXWE041cuCqrOEdLJZcxUsfi2VjDhMsxmwJ8rzBfZQqQMlYf0p7OQP5OAkfpyoPrBgOVdunl6XGelXhBD7NJmIFQtjM4kWLEO22BurHzwaXNVivIX7e9V7WKUhTMyyYkuz08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eiG/uEgG; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4sVYf029557
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:02 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4ggDT019164
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=B19nWzff1hv
-	gEWIyyHXO3w1PVc/KbOyGfSQee+KWYZs=; b=IayR9ZM0ZasSV6SoP4/tcbHneSA
-	CVzONprqFBAFD6bBAkrxYqFEfh4bGnVflf2uM08l9ltjaPyn00a89SiO5QsHMEv9
-	C3ouXICSo8JfKqDPRJIXTf/ZWxKRin1rDGfsKYItEHzbCC7OxF3yQ4QvyHL/06+c
-	yxP7rNht9+3msR9KNWbDRYr36NakZrH5fcweXekorA8WeNdtsOBe/wuj4Pd/zIYH
-	u1RLUOOhnNNjQbTDw/bUBQ7mcJBFIL6J3nqsfcBUVhv2T+y1xBcYH7P/o35y66N0
-	u2Ddo/J5Hp7VL6wgnJCEgzMP9tFjJRVjMm/DrIjPtaa5T0dGQBoWPUbVVoQ==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9sq4wy-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iO3FGVGfT/Y62Gvgar24D6JfUYtCte/97RHmCrhAXvc=; b=eiG/uEgGVyrbsO3+
+	Cv1XZ9Mer3nCiMBO/p61JD6OuBveJMJ4+tj09BN98MHk7OvIHz74bVLWgv5tjNMs
+	O5mgMe00qPMNNvVxFvilcWxg5/XThXGzlcfP+DCKRF87Ec+Rtnv72479019NeY5V
+	+x3vUhob012fGcMD5ucywKYf2X4smkpgWPC0XlNQO7BuFxc++DrysRWXnU93Hg1x
+	Mboc7E1YoDLlGKqr2iQkE5f92WFOyuRwQ1+b/+bxFdNK8FFv4PhQRqkzVztsnyr9
+	RaISbD+Enz2ytDG9IKRmWL/KFcBImLVPiGz92y5SToTOjTIKvoEq1hSH2QlYp9FA
+	GXw48Q==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxduxyg0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:02 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3215b3229c7so5422268a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:56:02 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:56:36 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b42218e4a59so3781660a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:56:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754978161; x=1755582961;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B19nWzff1hvgEWIyyHXO3w1PVc/KbOyGfSQee+KWYZs=;
-        b=n+0ep9qMxYpcGjyFjCf6ejbdRBhp9N4YOND9WF/aBDS733ysTY8MBygLVaqhxZ/bxx
-         DjelmLrEfocu6uzzgITHNe2C3pkHoESXkvcemMEV5lrK+yX8sE/GvObHrYsnHTdA21zr
-         KHc7J4C10a8XFAqoqcM6CKd3cNuEk4gVEylp5/61X4c9pCXYsSJiQBfO2qfHDjau+ton
-         N+wZ4MFrmz+eVUKyOU4Rc6bjqrmlwLMtsvqiDyZuI6/7Hwqr7YxDmHp/qw4pBDe2hw2y
-         4B9wrBC+AhRHa5Zxx5zEaF14zQPcEcPIeZg4RvFJQfQ1TfvkBzIkox6OVZirNV1liI5B
-         5ajQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhFeXPnUafTKQ2NysY8OMD4uBjNiXeCfzoVIb10wDDiG+18/SCbLRnriwx9BI6kjYxGAxmGDtiZw4C4Zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGTSrmnlhT6q4QPzp1rg4TK8kEGv4mslum7qtVF4+Eb1sG5suu
-	dAw1sBPbuvZpHF4jKUswthElKfXukhKhl+hfXeOKucZoHG3K9TeT/FLticg8tjGgMneNfDVsHOQ
-	Ieb0vf76pzfod/MU3D3m7A0VghkqqQk2GC1Fz4SBMiIVCj9iGcyhwcJxwyj6S3jgEQS4=
-X-Gm-Gg: ASbGncsycZiJDfud1B4AuwznkBTQ020CO6W1goitR6IEXkQ86GmuQADTuczitmFBG9z
-	TQHppQYpPmBstrQrZ0BCTvE4k4tByEBqKP3Y+s85wTGpc6ARAIuQ2G08CBgNK72Nd0s20tqeMQs
-	PbxdE9tFA33x2bov8C4jgB9cPLt0uKwd5DeONWJ4sRphkNorQlZsDcmixVfsoxZofr73GgUlpGB
-	pVGmpxrSvkhrOYFSxnfd3oneMhfXU4dqnTk38GqlMXCxh7bGLaDjcwCwEjAzwxQuxL9aAJCjNk4
-	Nfevazjp0rz1kE9gpU8nFQu4qNxStzru94F7EmSa1a9Hjorbmjpi7D40od8RyTlug0Bp8VP55eo
-	pOg==
-X-Received: by 2002:a17:903:b0e:b0:242:e0f1:f4b9 with SMTP id d9443c01a7336-242fc28758cmr25282675ad.20.1754978161575;
-        Mon, 11 Aug 2025 22:56:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4e8kQp0IrRtj31bzCgS5V3rsipa7Z4QR1lRYTKeX+/QFVw7wAbbooXEt16J/B1HRK7sYNcw==
-X-Received: by 2002:a17:903:b0e:b0:242:e0f1:f4b9 with SMTP id d9443c01a7336-242fc28758cmr25282425ad.20.1754978161106;
-        Mon, 11 Aug 2025 22:56:01 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e585sm288585985ad.40.2025.08.11.22.55.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 22:56:00 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH v4 3/3] usb: xhci: plat: Facilitate using autosuspend for xhci plat devices
-Date: Tue, 12 Aug 2025 11:25:42 +0530
-Message-Id: <20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com>
-References: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1754978195; x=1755582995;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iO3FGVGfT/Y62Gvgar24D6JfUYtCte/97RHmCrhAXvc=;
+        b=XpzJe693SyJsz+zL1A2YhzK1SHzpO98hlPuwquOLHyZqiBnbpMYjWO8zmG4wMImgM4
+         6559atUV4L8dSjZRHGEAFm9Y4wmJgoFwS4Q4+In6OvJPMr8hQ8BBM2ANW4bsZJeaK0O1
+         zPEBxRm50qNFE4cQk5DfTugL2DBM81s2lft6pEXuFu8VczB6x8dwiDeqHtuz/d5PoWmZ
+         MWdM8Ol85ytYzBXePCk178h6lhZV+f+mCFe/rdhiQEj9BvsgmHNmGwrKvdhxnBnMUdvt
+         tHvtgW80jtDf+FNvrMwwm4Lm+sgcIRjhUMl0xmtOCRafdfR+tbPEPr9wovV69OQam5Ip
+         V2KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPhIx5qkTthwfgZEgrWftb9gU5pZ/KvDf0N/WeBPyteg0TFqkjeeH8xQ762K3oVMJhnrSuHltmhbeTcaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv1s/mv4wYtNqnP1o6PFTG1PIrHYhdv0o2SjvN56xhHyVJ2r6J
+	LKCxasM3JWZxSyL9fRZVvJBClXpq90yrWIOXDjyTak5RadV+WrDttfFxcWarIrfPb2n778Gbm0u
+	OPXfhawV3VQFSQp9cVkvvg8/2Iz+Y36b003V+Cn0c3LBlg8vUeYDz0tH8EU9pnwbbpNEVP5rlPG
+	E=
+X-Gm-Gg: ASbGncuf27MCtWWMldNkTI2LEe9ZeLkK0NKHZryNlsg9hyb4fS3MqWQMnn1/7Rhgv5B
+	J1Say2ZgvofOrZmh49Bb9KNt18Cb3Y6SZjgvKjIBhsqMZii3vVmL9rwAvXBe+sVQglQ34DdDnOR
+	okfNXh8yBfKtPu8I4b7cvMf/msmd43FPpjmkCgIg4WkSotTbEY6ekQJ+oHEGKhkktzjdgzY85nz
+	xA3L/lvzGG4184dAXmMYLAnrOrxeYAWcttQWfn8zCQHm9XutJTCGoPazweXdDtzyG90B3H5Lq/S
+	UGWXbb7sNHQLBqNbnHh/zU83TCEvy5JF1NwHzt/o0oL0Hu5P4j1+jwXCGIHU7GIBGI/6H7E=
+X-Received: by 2002:a17:903:1c2:b0:236:6fbb:a5f3 with SMTP id d9443c01a7336-242fc390846mr36339135ad.40.1754978195112;
+        Mon, 11 Aug 2025 22:56:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvQs0243cIKK62HPDyRoRpP+MCHl59jbXme4sVvLLXF1a/UdtW7iKiK6yuH3frFPHTDJLThw==
+X-Received: by 2002:a17:903:1c2:b0:236:6fbb:a5f3 with SMTP id d9443c01a7336-242fc390846mr36338665ad.40.1754978194654;
+        Mon, 11 Aug 2025 22:56:34 -0700 (PDT)
+Received: from [10.206.107.125] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8975cf9sm292027175ad.110.2025.08.11.22.56.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 22:56:34 -0700 (PDT)
+Message-ID: <881fe12b-b2b1-4135-b0e8-f8222293871d@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 11:26:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689ad772 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=dywq_Bg9ifu0WOeA0n0A:9
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-ORIG-GUID: tRT3pfp0QSPth8MGClumZEpIrNgbPRqz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX8+C/UwHksB+f
- jqLNCKTMLAIQexz9OTLEmAmURay+p11UfYy2RZkuWj+KhAt3/RqocdFxHUHC+KFH29GtgUUxFSa
- 4audkBcmjA85yYM8EjNHMLsD0He+wCDey48o2A3TAN4sUsqiyoYNZCymUbw4EOxsPJtb71xouxb
- zDs9QcYSkio+kiYne9qujNtHUw4luFvqxvkFSq2uqiwbZy2xWap/kBlxpYXyOHwaKX2O+FZzjJ+
- G8GLT9+oU6AGgobuGAzR1vXTsGLOk0oOGvtfVi/q7cm/JB6sc1FuDEoPENebvaW03jMKZ6mh+LP
- 2YSCcMxi9VDkDsbHquZjtglPom70Q7IVvvtF8iAYlkTNi3nHE876C2e2CHFp1fLNOAWpd74LF7T
- jdYTGuix
-X-Proofpoint-GUID: tRT3pfp0QSPth8MGClumZEpIrNgbPRqz
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/5] arm64: dts: qcom: sa8775p: add GDSP
+ fastrpc-compute-cb nodes
+To: Ling Xu <quic_lxu5@quicinc.com>, srini@kernel.org,
+        amahesh@qti.qualcomm.com, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+        arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: quic_kuiw@quicinc.com, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250716132836.1008119-1-quic_lxu5@quicinc.com>
+ <20250716132836.1008119-3-quic_lxu5@quicinc.com>
+Content-Language: en-US
+From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+In-Reply-To: <20250716132836.1008119-3-quic_lxu5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689ad794 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=2Ucg9gNHWiGhv-ArepgA:9 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: wQkZFeV9yY1dF8SEf54VvXj_cvKzxkub
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX64CWutnkbo22
+ c1/syhA/37tapBLZnsJj/7tIW7obrv8NuP1psGN/FD23gvzMsnFc7lqT6BwDtCe65ssgbZykCQM
+ PS1xTI7HtG/CjQLiewGeVTSUDD2MhGZ/kbsfP9PPUY0QNvWHqh0FAaCHjHSaFZpIbWykpWSad6e
+ Hs9U3Vm09JP/vjYv1sWxnFWyxNRkXWgGuSzFeqeMl0GOv5tMTV/ep48NyNselakZT/TyT925QcS
+ BOkf/MsWjvR0rZBWuRPLOH0WrmMsPJdcdhQ18lK0KyM9HuTnOcRq+2Njj3i9pKE5QdRb3qMHQxW
+ MHrh/8k147gxDQocHIJ5IPtCsXv6th87g7FdMUg8S2E4m9mF1OotR5Qw/LEZRq80gJMP/D7goIJ
+ RyGUq4Je
+X-Proofpoint-GUID: wQkZFeV9yY1dF8SEf54VvXj_cvKzxkub
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-12_02,2025-08-11_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
+ engine=8.19.0-2507300000 definitions=main-2508090025
 
-Allow autosuspend to be used by xhci plat device. For Qualcomm SoCs,
-when in host mode, it is intended that the controller goes to suspend
-state to save power and wait for interrupts from connected peripheral
-to wake it up. This is particularly used in cases where a HID or Audio
-device is connected. In such scenarios, the usb controller can enter
-auto suspend and resume action after getting interrupts from the
-connected device.
 
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
----
- drivers/usb/host/xhci-plat.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 5eb51797de32..dd57ffedcaa2 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -171,6 +171,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
- 		return ret;
- 
- 	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_noresume(&pdev->dev);
- 
--- 
-2.34.1
+On 7/16/2025 6:58 PM, Ling Xu wrote:
+> Add GDSP0 and GDSP1 fastrpc compute-cb nodes for sa8775p SoC.
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 57 +++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index fed34717460f..5ebc058931ad 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -6080,6 +6080,34 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
+>  
+>  				label = "gpdsp0";
+>  				qcom,remote-pid = <17>;
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "gdsp0";
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@1 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <1>;
+> +						iommus = <&apps_smmu 0x38a1 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@2 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <2>;
+> +						iommus = <&apps_smmu 0x38a2 0x0>;
+> +						dma-coherent;
+> +					};
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x38a3 0x0>;
+> +						dma-coherent;
+> +					};
+> +				};
+>  			};
+>  		};
+>  
+> @@ -6123,6 +6151,35 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
+>  
+>  				label = "gpdsp1";
+>  				qcom,remote-pid = <18>;
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "gdsp1";
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@1 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <1>;
+> +						iommus = <&apps_smmu 0x38c1 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@2 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <2>;
+> +						iommus = <&apps_smmu 0x38c2 0x0>;
+> +						dma-coherent;
+> +					};
+> +
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x38c3 0x0>;
+> +						dma-coherent;
+> +					};
+> +				};
+>  			};
+
+You might have to rebase this change onto lemans.dtsi
+
+>  		};
+>  
 
 
