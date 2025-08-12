@@ -1,106 +1,178 @@
-Return-Path: <linux-kernel+bounces-764215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13570B22004
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:57:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3518B21FFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A51B188AA11
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E2A7A8582
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 07:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9C52E03F2;
-	Tue, 12 Aug 2025 07:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AA32E03EE;
+	Tue, 12 Aug 2025 07:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sttdIgbX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mRV72NiK"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012035.outbound.protection.outlook.com [40.107.75.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697D42DECD8;
-	Tue, 12 Aug 2025 07:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754985290; cv=none; b=q4yPMCL6E/GvA9RH2h24GAN80HofkFlZNMOaqcrSOmhx7eXVqVsxo0PPcqDsREprZsrRVkeJIpM2h5z6syF/J38vR7hFGVIGVeCQe42fHmeK/ckoP3X29J5e8GTjZJlLZ7QEBTwu/ldq3o7G7wI/QE7uqMp/mvYOGtdnujUQxKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754985290; c=relaxed/simple;
-	bh=BHJ5xoJPn+2ti329G2SFM29twFzww1ODA9PMzU7W59c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fUOtMMqwny8zIPt1P+xARONvwJPkDrwdlC6nZ8DbSqTtgUBbZ6ZNcuJj9uDbaM4PSXoKfSKMuSM7gw3VSdXK7BBglduZXztdvE+rqZ5l2EL55tCYib5XtHnlXBXEsOhzTD6jV44WiKm+2bWWfYPtSzRjeoKGQmwIF4Sp87CISiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sttdIgbX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898A8C4CEF0;
-	Tue, 12 Aug 2025 07:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754985290;
-	bh=BHJ5xoJPn+2ti329G2SFM29twFzww1ODA9PMzU7W59c=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sttdIgbXR/zMpPwtYWo9tEDHWkvxHIdzXx4mCkeZC+beUlUKcpCZHJHLA8UKGtUse
-	 yb61P5jo64FxKOsWma+2ENRYP7aOwn8dcUSn1EaHfRaFvY+CZDfAhBMmUwD9Q5/NDA
-	 mc4tJ2CZKRlm+O0uN6BAwWKU/EO6xaJ9LDzdN8a2qIcWUe4wYiLIhTHeGFkrmWGZ0j
-	 Tntx4Wm5aFLBOAdaAFK/dtBOppsl0dVHBU4rFIGEE/KhS94frwCgrXD71bU+LtCWzc
-	 AJrNZ2UeB+z+55FmgDLu8XmYLXt9yb4i2dcnFthLY6Q6S8ybAiL+zqRxMjgEy+5auA
-	 RCM7cnbm584vQ==
-Message-ID: <2472a139-064c-4381-bc6e-a69245be01df@kernel.org>
-Date: Tue, 12 Aug 2025 09:54:43 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B92DFA2F;
+	Tue, 12 Aug 2025 07:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754985299; cv=fail; b=HLGvxhzCnDDhfQn6xYOPGWlwL4NuernOMPmedHrOQXwpVeFktKwqaIzGhLCUFFYnXgHFR9JklfC4byueyYdWnKdx7zPbSB5EC7iuMfnhiWrACsN/JuRSTJr3lvoLc6JXn2qOB7OCkqAaNaOtpdDBwQtmB+iFtrNL/87Nr1NQIeM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754985299; c=relaxed/simple;
+	bh=XsiOp5Z5D/mxAuADscuX4hK3Yk1NiPWmKY2NhRVOaIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ggItKVPhTlPOPaCGCmqHqH6Z44gTGG8h6HendPK4Im1/VOYbgqjjsZFAoJKW8ZHR7B4gHVEodiuM7sN+vl8k8Z+kpFuhRHuXBrwmTB9qXYmsmTXa7b6hNHNmZAItBmS2iXtWt7Jr6ddoQNS0z/szHgkZuJAuAcqeqPP4uwL4cmk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mRV72NiK; arc=fail smtp.client-ip=40.107.75.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h+y5CMbf4PS0RMrdft9gp6aKgyUSkzhMLH8I7Liq3CncfsqVisBR6nVTUmkcsS026jafq10EaxMBzJPIgsEclVO+cdXHFs0Y7GL3pAOphubFOHgKuJ3ZG+q1I7qIDQzjpLKK1fzh5/IdtIfUVdX5kXNcfKqSV67aE590OKC0aI756etfzoao0gcFdmF0gOKcgTluiF04duQwU33fEfaDdxhsXha+mizyUECIcPUSggkN+VAu5IAzA3xVcjuQyMiQYILsiIXEQ0/I8lpGIx3nGXaXz7yO9GGeVRJCAS+VvV17ute2OhwRvvv6HW4igXySbY7O5eafE8RSFEnaH6hr8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AGVKkSJ9UgUDhfoUmPFvfv6z7FnbLf9xMosbGqJn3es=;
+ b=rGX8RN4uHjfWjcn1kntyGkY6bdJDYAnOSaJldRiiNLUD/+ZnfDLmkWUmD8wr8SKuazVhrn4r1u71UhXgn2RTtIKdp7qMeSZPdOiPDkSnHS8IVDBGKcWw7pZ3y9lXiEKVXX+rFu8Mgo+2bJP7ab3+z5LALAi+NoXi23SO1HrVQmJ+2uXxTAXMQ3JtOiD+Ooqkxp5eKGxwNM1OScSpKx9/6x3S70BMMBty9uGas/pdnpv/shKnvQOQlsQChZtWZVIUrUkXwpwGgS39YxORU219Mxukh9m/1//c36wROjaCS6nJJQZPAs479TVaxSCrw89vk7xsFPpFxwxACaudQnhHlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AGVKkSJ9UgUDhfoUmPFvfv6z7FnbLf9xMosbGqJn3es=;
+ b=mRV72NiKBbFvqMgn0ljUVb+0rRPz9iadZB9XqDHRln/nXIQ6u05Szxl626QqCcnxCWNA8q9wDRWql5t9vHxZlovU05r69weBB0bFsucwhH9s2MaOMM7xnNMSzEmej894HifyOfSYVwyKNNZD4yUJUpyq2xwCgxntCcdwpwVAzPFmDyCUXFVXMea3IpL5Zju3nTEbiT7sQpKykRIzeZbRCcVdNhPBOWJa7VfvPeePI4NKggmt9Xe7BfgFA9icno8rL5l2hoyuU/7BSiaY5AchOFEO4jpbxwnttdCJ0q9sBU6oojqSq8QC0H01ZSSeXKoFgGxkOrvrQbd2RoPZBSvZKg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEZPR06MB7263.apcprd06.prod.outlook.com (2603:1096:101:22b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
+ 2025 07:54:54 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.021; Tue, 12 Aug 2025
+ 07:54:54 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] pinctrl: equilibrium: Remove redundant semicolons
+Date: Tue, 12 Aug 2025 15:54:44 +0800
+Message-Id: <20250812075444.8310-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYBP286CA0014.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:ce::26) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-To: Christian Brauner <brauner@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Shivank Garg <shivankg@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Daniel Gomez <da.gomez@samsung.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
- <20250811-wachen-formel-29492e81ee59@brauner>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250811-wachen-formel-29492e81ee59@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB7263:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6c3601f-4497-42e3-a5c4-08ddd975864d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZajPnSfb0K59JjWcFP388LBsVaIbSZuk+aaNCyQM+WiY4MHfpEfTVDg2Fwnm?=
+ =?us-ascii?Q?D9CqCVhHClRPbjKmoideujsFQgxWcNT6AM3Nv5A0wRHFn3E+uiv4tSXfGCZj?=
+ =?us-ascii?Q?lrXzq8ds7mqVHlUmJZF2flAmI8HnFqVmI7D483ir0p/ipBgcMPIZ5bIHFQYw?=
+ =?us-ascii?Q?V5lvw+bYK5Zf3qxzHv1dv4ZusiMZov+bG6hnVBcvsjR/yVUfnVTJFGCgYxt3?=
+ =?us-ascii?Q?4PCvW+JOEz+zeV4KLSUqWmf4lujVwTIa+e+lSQnva3Slb70ehf0nDgK9o74V?=
+ =?us-ascii?Q?2crH9e3gc33vA/OPZQlY7ppIYoa+n9yTB7dWz58PmSlu2VnexBQCLvZy+wNp?=
+ =?us-ascii?Q?IBalBZe+NrwA5t+dYmGLDpk6rgRhhtY32zL4pKsn36GW9tkwn/YsTNJhikZg?=
+ =?us-ascii?Q?TdiMnxxv38QvJ+PH+aZ2ef1oBCCZohS4DUegDtrCf+sWfCESYIr/WzgF0we6?=
+ =?us-ascii?Q?ZOjbsPo0Na0WUKndU7W9L/KNCAyUXsGqJyH0SKU9Nac6y86m+fFFVJ4cWmoD?=
+ =?us-ascii?Q?jfxULABaflirQOjipFvdjvQ+Pfpv6b2RPTGZRyNodSOtz5JkbITTKN0taopp?=
+ =?us-ascii?Q?geV8/595Gl51oQPMN6fS+tCDzDwhIyFK3rXrn053svVlAN/YwYkGCQuCIGyv?=
+ =?us-ascii?Q?IOi0pxLXKAgCiaTgmlSoO5VmP7ZMDQN2g1KyUZvHNbsERMQpGSlWdftDfHJ2?=
+ =?us-ascii?Q?Ny+X4Y6o3CKopzSH4rhIJet3jefxF+dFJsh6hIN43SNBBB/a0uL0nwP99IG1?=
+ =?us-ascii?Q?987DgJDjJyEiDHacX2Hsgnq11aVOUiroagllEKWY0cIZOMlWnETtPv3rzT6Q?=
+ =?us-ascii?Q?4wCUKiBMoUhiE65ljABGA47BYu1q7HdrqugOWR3PcftCpYtAd5IVAPXClUVT?=
+ =?us-ascii?Q?+r7NYuL22bLzbQCCm7GYH+/DK5mF2FB+uQKh1EoHEzDR5ySSqM2p5VDJn0Vy?=
+ =?us-ascii?Q?jy7Yn2ZXeiyXmZAwnVwew65VZlGMOftHk5cCiwWP5zKNkoRllDDxzLQis8hk?=
+ =?us-ascii?Q?KrnCaI22mEw6XN3xQsj/Wdy0K01ukbfDnMVTmUeuHJMIEHKM9A9qLtxu29ea?=
+ =?us-ascii?Q?xKUvcyhRTxiHEgfOF7VuRg1DrNPHgMnJQSLQgBaWxvp1xrsF9aRHatre9xHk?=
+ =?us-ascii?Q?ByP2aQgs1Wy0GCatv8tl2y+5UyHad2sEz3DNF85eZY0rUfvOB8UT1Q6kKQ8u?=
+ =?us-ascii?Q?TR+LGJtkTWAzMYXuC9QZX3USD8y+kIOtJxz+BFp1mNdZdGophDg2i2BKL1f0?=
+ =?us-ascii?Q?7rHsRq05PHKU+dZPq3hutxgl8iTxbiow2NPIuVMu+tVsj3Em0DcK8/0PTet+?=
+ =?us-ascii?Q?vQTHvpiAnOQpJIpkN1m9StnwEfgvzxLMBDLTUolnZ8G53mKrJBrA4MW6sSsd?=
+ =?us-ascii?Q?t+dbFuuilUa5DY6WVqkJKPMR4to81nBxPN1Q11+SXqxv+biVRbjSZq5eqHmU?=
+ =?us-ascii?Q?yHRmq4tpkiTcuDWlvproou4Fp6/Q7fmIdX2cdIqJfAh1v5avvMtKBQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CJlHidWP9Hfm7fdE3HJ6j5b+1S7xPASHO0FrTyIQOBm2biP0AXi55i0E8nlP?=
+ =?us-ascii?Q?bJ7gYyxqab5pSKQWiyAl5vs7ebOU7V0/UqSbHbyHf64R/elfEq/Yx4PB48lE?=
+ =?us-ascii?Q?ovwcu+jkpJFx9ULvct1aOkUxqAKr3QYmdUjeVYBRXDOTLTMqa0ohV6iM8p8J?=
+ =?us-ascii?Q?DS7CIlwuUQOS2KNy4FBSoqBbXtlHCoqNZaW9aqJZSvfuYvcib4Sh3MTpeiZP?=
+ =?us-ascii?Q?LAoTjdjjomEGc2j4vLui5770IhrxlIdd+jFjdfFSMdImLXkr8m/WRSTw7vmN?=
+ =?us-ascii?Q?TAfxhFK5HTivTAn2hsMUecd/n/4+udC16FQXX6bmp4CwusgJ/MSf2HmxtZSO?=
+ =?us-ascii?Q?xfTQb4rOZfSM8UTrcYCiddGltJDnAuLguiXJqzyIfPFhj4JY5H9kJflQazcN?=
+ =?us-ascii?Q?cejh2TgBaQbaxOLb2sCsVi7KvfTZa8FmBWPTtxpA1mOotwL/H8f6Vy2ggJEc?=
+ =?us-ascii?Q?UXNCNy9kgtbm6O4J6SM8Qejdee57RfLqBt9GUZxzxwUZGM/sQc553AobQ4fh?=
+ =?us-ascii?Q?QBkPZ7fOK/7wybZN2RDrFaFMMmVmihMl1E7V3bXgk4RYPUKmo4i5aclEJPhg?=
+ =?us-ascii?Q?Gu5cZMaKL2i/TQ/YmmgODQC8fuTwEXeVIOv+nR9ZZkR8SLCPG2ihXrcjU5xd?=
+ =?us-ascii?Q?L0vmtvFUwTzmjCDV62m/l1jF268Il7hzxHV7olDbPkUG6/9GJVGnzmTb29St?=
+ =?us-ascii?Q?g2ieoPLhjGMPI5cam3iQ7ZRrbGHZSfmxKXTIGz4liEuzf+odTEB4k6NKX/+p?=
+ =?us-ascii?Q?r0ot38Bp9RUWVAKS72EVHc5LKgCTTEGwnZu/Zc0pWI6x0lxj7rR16J4XC5Vr?=
+ =?us-ascii?Q?UkHSwfM/LG/+Gp27PjDg5jJxU7Owj/7DH1h2+qfbKSO4j00kSqgsYU/TL+j/?=
+ =?us-ascii?Q?rOVf9kIN62vbC0Za5fRnNi7nPbgRRhte/duRvWTkvprWHVImLz+NfBc+/CUB?=
+ =?us-ascii?Q?rEthJABAFMaIH63mEeEQ4tbYpdkPBgct+MgL5T06eU8fM/0G7BlCIFk/r8hW?=
+ =?us-ascii?Q?t9hZpI1N3AORasQ+Cic9RFNfglbUGSrWnmnW4W/JDOenjD9UR6J2tncyPvWx?=
+ =?us-ascii?Q?N1tevOCqIEK0J7sj7vn34YFDCJv+AYKtL86ryzPTs3B0Vs3lp7fohcdZ1ldd?=
+ =?us-ascii?Q?rU5ZZqIxpEe8+CBh9mCNY/J5hnwk+mIdmFx9cnMrWjIMv7E3nk914wj4QAOA?=
+ =?us-ascii?Q?BDgWGLfSmunQXWqARldqffnIDCnSIo8HKHF4MKczx2CkV57D48F5qBmsPt/+?=
+ =?us-ascii?Q?X0qbXYovJFqcaWoDckJTmusYzFrFO31+BK/sRGDhSp1TiiMyX7jfDmJOyJz0?=
+ =?us-ascii?Q?Qsa8cT5f31/5zTbj5xT+YEtVFsW4GAo4pqQIc4z5pTtZQO0bDiJ8ykgo2Ptb?=
+ =?us-ascii?Q?4zsNO8dpDNuaUeZAMjWwc0m0wpztj7MW3yLusvNsvjPIYUzmVfPiHPkim8u7?=
+ =?us-ascii?Q?+IxpzEEu0ntCIbxqKLXIp+yPXxMY8KtwhtyIM2zEw7IglpKWThZqmWRGAtKN?=
+ =?us-ascii?Q?LomlCCy5M92vQo4MIJ6TS9l0JZFs5Bv5RxIJNw9Nv4JbL9+oEy2aPDfj/9V0?=
+ =?us-ascii?Q?bprylKgkidsyfoLeQWysyGmvRtldbClmuArXroFw?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6c3601f-4497-42e3-a5c4-08ddd975864d
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 07:54:54.6421
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Qy6qnl10otTezTDWrNgE4rqK3nVWAIZf4/I2g0ySSN2W1zw7MayVrJsBWtFqC4IQCXcQ2rN4KT5FLO9tZ6Vmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7263
 
-On 11/08/2025 07.18, Christian Brauner wrote:
-> On Fri, 08 Aug 2025 15:28:47 +0200, Vlastimil Babka wrote:
->> Christoph suggested that the explicit _GPL_ can be dropped from the
->> module namespace export macro, as it's intended for in-tree modules
->> only. It would be possible to restrict it technically, but it was
->> pointed out [2] that some cases of using an out-of-tree build of an
->> in-tree module with the same name are legitimate. But in that case those
->> also have to be GPL anyway so it's unnecessary to spell it out in the
->> macro name.
->>
->> [...]
-> 
-> Ok, so last I remember we said that this is going upstream rather sooner
-> than later before we keep piling on users. If that's still the case I'll
-> take it via vfs.fixes unless I hear objections.
+Remove unnecessary semicolons.
 
-This used to go through Masahiro's kbuild tree. However, since he is not
-available anymore [1] I think it makes sense that this goes through the modules
-tree. The only reason we waited until rc1 was released was because of Greg's
-advise [2]. Let me know if that makes sense to you and if so, I'll merge this
-ASAP.
+Fixes: 1948d5c51dba4 ("pinctrl: Add pinmux & GPIO controller driver for a new SoC")
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/pinctrl/pinctrl-equilibrium.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Link: https://lore.kernel.org/all/CAK7LNAQW8b_HEQhWBzaQSPy=qDmKkqz6URtpJ+BYG8eq-sWRwA@mail.gmail.com/ [1]
-Link: https://lore.kernel.org/all/2025072219-dollhouse-margarita-de67@gregkh/ [2]
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index fce804d42e7d..f449576488d9 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -439,7 +439,6 @@ static int eqbr_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	}
+ 	raw_spin_unlock_irqrestore(&pctl->lock, flags);
+ 	*config = pinconf_to_config_packed(param, val);
+-;
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
 
