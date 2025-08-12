@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-764683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A20FB225F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:35:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02113B225FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17EE3A8BE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217E17B22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A742ECD1D;
-	Tue, 12 Aug 2025 11:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="EgOy6/UK"
-Received: from r3-23.sinamail.sina.com.cn (r3-23.sinamail.sina.com.cn [202.108.3.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E442ED867;
+	Tue, 12 Aug 2025 11:37:24 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8422EA17E
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682041A9FB8;
+	Tue, 12 Aug 2025 11:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754998539; cv=none; b=RyyCY0oemUYcv16ijtPVh9cX5GLJ2C164ysNJgQIbyDb7435cKGPtwwvCQh5vTmWmdSctURvXNGOlGHwRdBiU9vQST01cICJ1b1bO4Vn0Q9WJMAfi0XL8SIU0JF8w4k67CemcjLRqkZF4hEWFTiU8xHI8+2Tsv3fT+HyqEA5V24=
+	t=1754998644; cv=none; b=l9x4UcDOKGW7RaFYVxFSiE1y77GtwSfdAJj0jbtWul//jDmIA5K5rERPa1JXSnEU3syQZ+wF0q9tTrLbQeUfjOQhQXzQ/f98ODPRtEGUwvYo06E1oob3lx4U/L04J7uyd1P8GE7zDqmqzwr8pigBs/lZoffAzQqJ0lH0TKsV2fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754998539; c=relaxed/simple;
-	bh=S4OSf4OLLnPhrS+9baEzL6auKKSYIeSwYGF5FSLs7NM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k/AB767dCbWAITQbhicFxYlhGTRCjEfzrDMhclfXAFtubYkBC2F1UbFdEfIt7aT8WKKvPVFSKdIl3mXx0jBfcpOJ3r8SP7FAt2upCqT69QoLMsHeKSlBQHs4xMbU5ATmF9EnCqM+6+/PAS1rjQNc8blu3CDBRfDXAohzvUpT8hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=EgOy6/UK; arc=none smtp.client-ip=202.108.3.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754998533;
-	bh=cY5FNKG+dp2iGkvjxWjeNL1KFSRXetyAlo9/faOlXlw=;
-	h=From:Subject:Date:Message-ID;
-	b=EgOy6/UKPOkpx0+hovhBs1599QnBi70G9m3SNH9xbnSpAFvZaYCh4A5NuPhipPumm
-	 ZCbifWjWNyxAbxCypEjFGtaagmU+SHPjTkLD8kHx2L3gHvDV0MiGeMl6um3N6DIoJi
-	 MwVcN+1pDg/5aHN7AHnZeCaPL2PxkLTBbvGnnPz8=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 689B27000000390F; Tue, 12 Aug 2025 19:35:29 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6305256816260
-X-SMAIL-UIID: F0CDF043CC1A4D4F8B98E50C1C0F75C2-20250812-193529-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
-Date: Tue, 12 Aug 2025 19:35:17 +0800
-Message-ID: <20250812113518.4238-1-hdanton@sina.com>
-In-Reply-To: <689b1044.050a0220.7f033.011b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1754998644; c=relaxed/simple;
+	bh=XlM/RUVI+Jg9aI65pMmHBvuvy9C0U8zH8a4AW1mwCtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdqUiPBlzznIxQmzPPrP7MOHcvNFW0ABgoQ0Y9OxB82PL4VnTcbLAVk3G76U2tkxUpdozA2qpsnAGrk5L3mkUwWCQDUwslB0FE9ZhG/hJKDkWJ/MOzYtnxwgF+994pp2igkQGNduPv2Fwo13cqArHhvxyh5FnOV1QSYytXzjEL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4911841C06;
+	Tue, 12 Aug 2025 11:37:16 +0000 (UTC)
+Message-ID: <1fdaa939-d26c-454a-a722-7d0a590557b7@ghiti.fr>
+Date: Tue, 12 Aug 2025 13:37:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] riscv, bpf: fix reads of thread_info.cpu
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
+ bpf@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Pu Lehui <pulehui@huawei.com>,
+ Puranjay Mohan <puranjay@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeehvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemjedtudgumeekugguugemsgekrgdtmedvjehfsgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemjedtudgumeekugguugemsgekrgdtmedvjehfsgdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemjedtudgumeekugguugemsgekrgdtmedvjehfsggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprhhkrhgtmhgrrhesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ egrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-> Date: Tue, 12 Aug 2025 02:58:28 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c415a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa80c6232008f7b957d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151be9a2580000
+Hi Radim,
 
-#syz test
+On 8/12/25 11:02, Radim Krčmář wrote:
+> Hello,
+>
+> These patches are related to a recently queued series [1] that fixes the
+> same bugs in normal code.  That series finishes with a patch that would
+> have exposed the BPF bugs, but luckily it won't get merged until v6.18.
+>
+> I don't know enough about BPF to verify that it emits the correct code
+> now, so any pointers are welcome.
+>
+> 1: https://lore.kernel.org/linux-riscv/20250725165410.2896641-3-rkrcmar@ventanamicro.com/
+>
+> Radim Krčmář (2):
+>    riscv, bpf: use lw when reading int cpu in BPF_MOV64_PERCPU_REG
+>    riscv, bpf: use lw when reading int cpu in bpf_get_smp_processor_id
+>
+>   arch/riscv/net/bpf_jit_comp64.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
 
---- x/drivers/net/netdevsim/netdev.c
-+++ y/drivers/net/netdevsim/netdev.c
-@@ -981,6 +981,7 @@ err_free_prev:
- 	while (i--)
- 		kfree(ns->rq[i]);
- 	kfree(ns->rq);
-+	ns->rq = NULL;
- 	return -ENOMEM;
- }
- 
-@@ -989,6 +990,8 @@ static void nsim_queue_uninit(struct net
- 	struct net_device *dev = ns->netdev;
- 	int i;
- 
-+	if (!ns->rq)
-+		return;
- 	for (i = 0; i < dev->num_rx_queues; i++)
- 		nsim_queue_free(dev, ns->rq[i]);
- 
---
+Both patches look good so:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Since this only touches riscv and I have a bunch of fixes pending, I 
+propose to take those patches through the riscv tree, I'll just wait for 
+Björn to confirm it is correct.
+
+@Radim: This is the third similar bug, did you check all assembly code 
+(and bpf) to make sure we don't have anymore left or should I?
+
+Thanks,
+
+Alex
+
 
