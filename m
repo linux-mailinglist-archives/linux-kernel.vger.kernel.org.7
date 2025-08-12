@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-765516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC940B23965
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:58:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFFDB23967
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2A11B60AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E041B67151
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D772FFDC8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB792FFDCB;
 	Tue, 12 Aug 2025 19:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DqXh31bh"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CEhG2j8O"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE652FE594;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D6D2FD1D1;
 	Tue, 12 Aug 2025 19:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755028679; cv=none; b=fTQajLsdV0j3jdKk9AB1gUxXMECsGtCudGnzC4j95JaMlTTm+/VTgvjyJtRSqqnNEJm1OnInJs5BZPfvnAGHx5l9ONtvUZvY7V8VfZVkDe52JcJTXRwbpo5SQQauo9cWKgA1FoEP0A/RYERr75jcZUwkzNNfV8zxFkGZAA044eY=
+	t=1755028680; cv=none; b=WbJEBSoUXQDQHoa8O/aWMBSKjKIgoH2uACFlVhdZRmsNe4qAX/QYJcym3Wh4/b72lVKldF4eOEC9DeYbs2/NZhxDGg5xgTT5F6RWozdCUDNLvJNV8SxRHSsE0AdjMlE8ZXkwSOFO/UxtDSe1UIOi16AVsPzg+N56pXDrRJHW9qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755028679; c=relaxed/simple;
-	bh=4DU+J+rTTiyKivCXoJcHXntfdgk2NjPRT4WF82XNoM0=;
+	s=arc-20240116; t=1755028680; c=relaxed/simple;
+	bh=JvmLJDhjDkB39xb5xa2t2x70gtWreP21qkHEz5iz6ks=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j6KiJmvgiOSRSty8BVYNGjAFdtZChQBVHZ2/IDaf7teyI7ug7fyDhmOGkUu8oZOudHYgqmMQXXzhVHYy94B5LIufJtrR89qcVyA2z8fnBZ3XJF2IoZggdQRb5RvU8zhrayDZt0OJj47vVP+8sRmtrdm8L2vXql3jm36gP4zCGpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DqXh31bh; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=VDwh8UjX4PcssfMJkiABJNkDe36YO543/i5DDAdDwgerRKTtV70p8u4Nx8W4WoBdYBpyzqivQa9QNJKBIDVHZfasCwzYf2rqwHwQsahuIIzv/tK28NCa+evzF/qMo+bwH8JzEqn7Fhxdz0TFx43yi8P7mZk6H0TTUUo8zy9I9ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CEhG2j8O; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 70BB640ADC
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0658840AF2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755028677; bh=JFF0dVs9V9DAAxQ+F/q3H9i8XQ3gen8VksquAovDBzk=;
+	t=1755028678; bh=KMPgBSRi3GGUx39cwLfxSPIMnecJC+f5rFtqbGJHi2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DqXh31bhIN7HXdtjAmSEKs2343cRTulew2dAG2lGie+JDZE69azM/ZusYVblZlvZi
-	 oNrnLyJI4OnmE0zGm+zVEo57gtPSWZPmOBZHNn8ZlJ4btlOhGaIozUCwsKEOl1R8PM
-	 rqNi/Oj+xpIyPkZ8oYfNM0JsFohpS5W5mUy+mAZbDYWranE25WF6IFTILWGPCRJVzl
-	 Dxk+WWUXCYUfeCUJNkh7aSp4dtidJKPJnoE6i2wNgrl40e3BlvZ/ASkdKrpgXRaMFC
-	 ZYWQFLiz1BRy6e/+sHMcPdyj9PXIRWMWhFpV8W8r9HXH6xrXej3j8+fYWlTtbwVAx0
-	 6JLQVPdFouZjw==
+	b=CEhG2j8Oc7Gwysox55CrDtRNmoEusNauZPHgXjyw4usw7lPU0TyDGBZh3wSPZDPGO
+	 aVDq4F4yJuGBTQzCra0sBiae9U1hGjFqAinItr3HMcRUhcA9zgeGksiKk4iYL57V7X
+	 oxUYi0T3mVxZjfjuV0jq2Hwv0LYNihjdAzxDa05JhvC9Ax6fIC41krFS8Mei6pxV7o
+	 UZoA4axFb1/1fJzE2syG8inbbW05qFkF3WLHRjnSGrQQUOR/jH9ohbvKtKqLxUe1ax
+	 OET60SK1m5aIXk8ai1i19/jMiRpm3KZfSJjf04kB/1/AA5WyfyLPMnV5+eLnLCrwbm
+	 cVCM5nMqxFDHA==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 70BB640ADC;
+	by ms.lwn.net (Postfix) with ESMTPA id 0658840AF2;
 	Tue, 12 Aug 2025 19:57:57 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 1/7] docs: kdoc: remove dead code
-Date: Tue, 12 Aug 2025 13:57:42 -0600
-Message-ID: <20250812195748.124402-2-corbet@lwn.net>
+Subject: [PATCH 2/7] docs: kdoc: tidy up space removal in create_parameter_list()
+Date: Tue, 12 Aug 2025 13:57:43 -0600
+Message-ID: <20250812195748.124402-3-corbet@lwn.net>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250812195748.124402-1-corbet@lwn.net>
 References: <20250812195748.124402-1-corbet@lwn.net>
@@ -63,54 +63,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-create_parameter_list() tests an argument against the same regex twice, in
-two different locations; remove the pointless extra tests and the
-never-executed error cases that go with them.
+Remove a redundant test and add a comment describing what the space removal
+is doing.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 9e65948f8254..96e3fe4ec431 100644
+index 96e3fe4ec431..53051ce831ba 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -564,28 +564,18 @@ class KernelDoc:
-                 args.insert(0, first_arg.pop())
-                 dtype = ' '.join(first_arg)
+@@ -545,12 +545,14 @@ class KernelDoc:
+                                     arg, declaration_name)
  
-+                bitfield_re = KernRe(r'(.*?):(\w+)')
-                 for param in args:
--                    if KernRe(r'^(\*+)\s*(.*)').match(param):
--                        r = KernRe(r'^(\*+)\s*(.*)')
--                        if not r.match(param):
--                            self.emit_msg(ln, f"Invalid param: {param}")
--                            continue
+             elif arg:
++                #
++                # Clean up extraneous spaces and split the string at commas; the first
++                # element of the resulting list will also include the type information.
++                #
+                 arg = KernRe(r'\s*:\s*').sub(":", arg)
+                 arg = KernRe(r'\s*\[').sub('[', arg)
 -
--                        param = r.group(1)
--
-+                    r = KernRe(r'^(\*+)\s*(.*)')
-+                    if r.match(param):
-                         self.push_parameter(ln, decl_type, r.group(2),
-                                             f"{dtype} {r.group(1)}",
-                                             arg, declaration_name)
+                 args = KernRe(r'\s*,\s*').split(arg)
+-                if args[0] and '*' in args[0]:
+-                    args[0] = re.sub(r'(\*+)\s*', r' \1', args[0])
++                args[0] = re.sub(r'(\*+)\s*', r' \1', args[0])
  
--                    elif KernRe(r'(.*?):(\w+)').search(param):
--                        r = KernRe(r'(.*?):(\w+)')
--                        if not r.match(param):
--                            self.emit_msg(ln, f"Invalid param: {param}")
--                            continue
--
-+                    elif bitfield_re.search(param):
-                         if dtype != "":  # Skip unnamed bit-fields
--                            self.push_parameter(ln, decl_type, r.group(1),
--                                                f"{dtype}:{r.group(2)}",
-+                            self.push_parameter(ln, decl_type, bitfield_re.group(1),
-+                                                f"{dtype}:{bitfield_re.group(2)}",
-                                                 arg, declaration_name)
-                     else:
-                         self.push_parameter(ln, decl_type, param, dtype,
+                 first_arg = []
+                 r = KernRe(r'^(.*\s+)(.*?\[.*\].*)$')
 -- 
 2.50.1
 
