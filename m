@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-765430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6232FB234E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:44:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4489B234C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5863AE569
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69413166342
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C371E2FF157;
-	Tue, 12 Aug 2025 18:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A532FD1AD;
+	Tue, 12 Aug 2025 18:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qr1/vcov"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2058.outbound.protection.outlook.com [40.107.94.58])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K6c+3NAM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EE22FD1AD;
-	Tue, 12 Aug 2025 18:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755024023; cv=fail; b=Hh/0nXjOFjRU/o/SX+tJYXp6dfsC3TttMp03RvqtGNHy0vb6vxdHJMv4dAgjrR3i5FmABMRUCZAu31ICbfgDhzewjasEItPcSDSBAoSbpqEhIdKVvBAucWaU2cx+Uz2r4NmvT69Ig+cdayWqDi2Sb0KBu1mG6RB5EGVP8q/mhfE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755024023; c=relaxed/simple;
-	bh=achMz8D6QeR2l0ydNYjAHBALzyvn7kI7+L08PVdZftM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NbZuR8L3JViGCrULrKfr0sicBXGyf5vERDn3Wi6d0eEp8hQ0XxSxA8JicnoqmOJNppfI1Hy3ju/KA3/t/4Z/6Uvix+chIE+DZ7VCQwkWfsOmgNCV98EK3Ia1Isr+gA0gTFMXEk323I8Xzby1ypBWXA8JnmRahP5V52Q7qwxDiIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qr1/vcov; arc=fail smtp.client-ip=40.107.94.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M1j0UGUl/PjW204CWlfa1+o0ks/UKPR2oBhZ+BPWfFZPeUsiClpkPnOhO1MjkFHRUUjArmNyRU93ys045cVH4crZnQ1Cpfun1BGKGw7YHX2/S2Hw2d4utwxzrg956uvSkufVHon9U3YWQYGbTnCtLi683C7YfmKmr4ab6LMm5cX34UnbicVxVuqforPAQE4Il60Vd0/LNgXt3fwhVDbBqEurIvOWZzlh1OgxGtgSLfBa+6vBPNslc9Se7WyDCh7H2SclXWPN+w2ZFUNmLHGeSMBH6rfKRqdsQvda2sVUWlxS8EKc1RbJsMSdj9ghf7XQh8RtQFrBwdPEgmAIxI9fGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hi49HjYht3VdRzedYQdw5Rfxd2KL7qE4My2LjFtAii8=;
- b=Hgvpm19l0MgY4NmO7b+lseszol+7HftNBDXQ5LqxKq0OobCa3udqebu/hArtgz6WSMFjo9nDM5jBmB7govjrD8sdWugFm75+DZAK5pnBbK9E/TbnKopqApr5ZTtLvPtWF3s2o9wyNOA6Iys/Umo2FhaFTvA8nEg3dNsFN6NugnpTGymzuuVTBIHmf3YmX0DYVOh0nE1E5sJSc3dQ/5KW7xR/vGpMysoFxzG+CK9z75vcG6UxcublAORZt4TpgIiq34dKbZ5S/D51w/FZLWBBmEbH2jt3U9PFd+FMQg2P/CGQDerVjLn+3SIWJp1D0B7W+bttv/5j9wbTeAoy3G/soA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hi49HjYht3VdRzedYQdw5Rfxd2KL7qE4My2LjFtAii8=;
- b=qr1/vcovgprsTMtBPiVK2dkacJRKUhKh05VnCmL+EASXeMiD7JC6xGDKd8cXvZDeaNdi/Kh7Nhq9np1p4HysUt/rbpCSYgYpPX7FnHKcMzv05aHdffB4+mZfyYPjpmvMj78Bn+Icv/eAXgGMqEbyHeYJR0jheoSN5GEgdoK7FCg=
-Received: from SN7P220CA0022.NAMP220.PROD.OUTLOOK.COM (2603:10b6:806:123::27)
- by LV2PR12MB5750.namprd12.prod.outlook.com (2603:10b6:408:17e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 12 Aug
- 2025 18:40:16 +0000
-Received: from SA2PEPF00003F64.namprd04.prod.outlook.com
- (2603:10b6:806:123:cafe::10) by SN7P220CA0022.outlook.office365.com
- (2603:10b6:806:123::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Tue,
- 12 Aug 2025 18:40:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F64.mail.protection.outlook.com (10.167.248.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 18:40:15 +0000
-Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 Aug
- 2025 13:40:13 -0500
-Message-ID: <96022875-5a6f-4192-b1eb-40f389b4859f@amd.com>
-Date: Tue, 12 Aug 2025 13:40:13 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93436BB5B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755024053; cv=none; b=OeSAftvwU0i1tlCqKSIj/HlMJlviAh/aiSDS8a0V1IYRNUjrEeylwYiuZvlG+/5MMbF74XDIkm1g8d4NDFrCdoanLPp44Ivs2F9XmOfhzFBJ3WLNinSJ5o0M7Y+ZRuxtAg5mbE9+gahA1bRrQPb3SzSvldSL/vRTCmUxbElSkdQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755024053; c=relaxed/simple;
+	bh=YkPo5aHD6fCOxXmD/Bn+jmGsw2joPbXTcYHK3EUx6Mc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEFoOEW9gKY0Xyd/Hg2YZBXG5nWfh4BuzIBCxCznfBSqT//XrlzY2YMdFGWJJBHc6wiEkKkUtd1IEaa1L6o7wNLHOhCFJZyt7wmv6ifby1yJ/eCEz43KQLM4X6+JNna9nj1nxNnbe97th1TdLXxbh4lPlWUrL8rO37EJftCNTZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K6c+3NAM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CGbbAH032042;
+	Tue, 12 Aug 2025 18:40:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Dwdw7e
+	y5fRL5qqeZFjdhC9YXXZ9B60w7oqkX7t2MDb4=; b=K6c+3NAMiSEvIo7vs29dRX
+	2OaDmcT4iif8dSxgnC4+IuP6ZvE3/l0PnK+bEs3SHPsRGAM6Rw8HhnhPDWCIUzkP
+	+rns66F+UMQo5aJtRb2g5Dohm7vx5+EGb+luaQNTHoXEkNzvv1Jjkhah5sReHJYo
+	JP/EFOw7E6qhRkUXcEuOn+DiSDwdn9ujVx6DmPuDUKjj2BHU0WquQF2f3tSVbsof
+	tF1z/IFArzCrinymQpddzWiApo22TEsgvJ6JpEIO8kJkk4mVb/4p2WB8CaGhsr99
+	Jy1iZMnLXc388rMZICjtvgPLXepKXf4EUMemIw5GtVlafqoS4I5CaJN23Ridcmwg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp0305-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 18:40:33 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57CIeJWK008152;
+	Tue, 12 Aug 2025 18:40:32 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp02yy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 18:40:32 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57CIUiDo025638;
+	Tue, 12 Aug 2025 18:40:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvmbkvf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Aug 2025 18:40:31 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57CIeRJU17695028
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Aug 2025 18:40:28 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DDA602004B;
+	Tue, 12 Aug 2025 18:40:27 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 709D120040;
+	Tue, 12 Aug 2025 18:40:24 +0000 (GMT)
+Received: from [9.39.29.151] (unknown [9.39.29.151])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 12 Aug 2025 18:40:24 +0000 (GMT)
+Message-ID: <d87c4b4f-959b-4726-9b4b-4ddeb7488b37@linux.ibm.com>
+Date: Wed, 13 Aug 2025 00:10:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,203 +83,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/7] KVM: SEV: Add SEV-SNP CipherTextHiding support
-To: "Kalra, Ashish" <ashish.kalra@amd.com>, Tom Lendacky
-	<thomas.lendacky@amd.com>, <corbet@lwn.net>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <john.allen@amd.com>, <herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>, <akpm@linux-foundation.org>, <rostedt@goodmis.org>,
-	<paulmck@kernel.org>
-CC: <nikunj@amd.com>, <Neeraj.Upadhyay@amd.com>, <aik@amd.com>,
-	<ardb@kernel.org>, <michael.roth@amd.com>, <arnd@arndb.de>,
-	<linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <cover.1752869333.git.ashish.kalra@amd.com>
- <44866a07107f2b43d99ab640680eec8a08e66ee1.1752869333.git.ashish.kalra@amd.com>
- <9132edc0-1bc2-440a-ac90-64ed13d3c30c@amd.com>
- <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
- <b063801d-af60-461d-8112-2614ebb3ac26@amd.com>
- <29bff13f-5926-49bb-af54-d4966ff3be96@amd.com>
- <5a207fe7-9553-4458-b702-ab34b21861da@amd.com>
- <a6864a2c-b88f-4639-bf66-0b0cfbc5b20c@amd.com>
- <9b0f1a56-7b8f-45ce-9219-3489faedb06c@amd.com>
-From: Kim Phillips <kim.phillips@amd.com>
+Subject: Re: [RFC v2 6/9] sched/core: Push current task out if CPU is marked
+ as avoid
+To: yury.norov@gmail.com
+Cc: vschneid@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+        mingo@redhat.com, peterz@infradead.org, kprateek.nayak@amd.com,
+        huschle@linux.ibm.com, srikar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, christophe.leroy@csgroup.eu,
+        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org,
+        maddy@linux.ibm.com, tglx@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org
+References: <20250625191108.1646208-1-sshegde@linux.ibm.com>
+ <20250625191108.1646208-7-sshegde@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
 Content-Language: en-US
-In-Reply-To: <9b0f1a56-7b8f-45ce-9219-3489faedb06c@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F64:EE_|LV2PR12MB5750:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8803186-5972-444e-33c2-08ddd9cfadfa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R1dkcnFGMTZYdDNNRVJDSzg4dExoaHk4cVFjWnhnRXVmZk1iODRYRVZraTlu?=
- =?utf-8?B?ak9RTEtsQWJrT1BxVCtndVE0aTBFbHIwZDg2OVBIaktQTzhZODhhWEhQcVR4?=
- =?utf-8?B?UmFLMFRtby9sVCsvM2F4VXZ1VExzbFprbzJod1pqeEhva0RndlF6cm1Scjl5?=
- =?utf-8?B?VzhpKzJCTzRIOVhKbHFhaDdWSzR2WlgrRGRNZGhYQ3RCT3kwRFlHU20xSkMx?=
- =?utf-8?B?K3Q0YVlqSU1PMERZOTVodVdEVlRPWXVPSXo2NzdETTJCcG5NSGFXZFA3dDBC?=
- =?utf-8?B?Y2JuWTN6SFlvb2x4UUtLL2ZMQXZzTUY5MmVpQmZBVERLRzEzTU4vblZDbWMr?=
- =?utf-8?B?dGV2MTduVEZkZDNCQkNCVk5GcER6ZGFKeDN5M1d4WENqQkI5UHBkN2tNemZB?=
- =?utf-8?B?MzBDb25CbWJwL0srTjQvcXJYd3k0bUwraEovbCt6amlhZFB3QXJnTUp1Tit4?=
- =?utf-8?B?YlE1amVCR2dqYnJ4WktGYzVNUm81UU1HeXNNTi9nQUNsOGFPMjVsVlRoQ1VW?=
- =?utf-8?B?blROaDV2VEpCeEJ2Z2UrRm8zOEtjQUVmamlzYVB0TmRkYWRLREpuZDlNVHl3?=
- =?utf-8?B?WnlvS3VxZTcyeC9NbEJCZnBocmc0d1ZxNGtoeTZvZW9jbFBvNWtSRmw4ci9Z?=
- =?utf-8?B?aU95aFlodWZWVzdRUzUzWTZTNWpETTFGWmJaZ2JtN3dZT05zOGsweEcySGNG?=
- =?utf-8?B?ZnhpQXRscUVkNjZvU3NKNG8yNXlpcjNlZVJ4eVIrZ3VLQkwwR0lwYXE0NWVQ?=
- =?utf-8?B?ZnhvTXd4M3BSTkVGU1phU09EdFE5WWwxbkZid0dpQXQwODdzOGI4Tkl2UGds?=
- =?utf-8?B?azBlUjhBTTA1WjVMQnJReDFuUlcwOElhNUY3ZWljMWp3Qm93RzV0Z1dqTUZL?=
- =?utf-8?B?ZDZYTVVjdG4rL25VMi9ZeEFjZU5STWdBcmo3RVJpbE9hUzlCYnpRazRkRWl2?=
- =?utf-8?B?MHNZaVhrTGlXOUVvTlRweThuU0ljYVp2Yko5WWk2aEE4TExMUnRqK29PVkdt?=
- =?utf-8?B?WEFEL2pWNFhxUCtpVUoyaDhEQWZkUmR0Wk9oK3pBNzBqdm5kKzBwY0NqREl0?=
- =?utf-8?B?c1lxLzYxaUNUTnZCT3Q2WnNDNi9LYjE5VnQ4bDJSdmVHd0dsYUxKLzAwL05T?=
- =?utf-8?B?WmYyVzM2U2dIc3ZHbU1RTjl3bG5EZVZpNlhiSG9BWmwrcWc5VVFRY2NoenFp?=
- =?utf-8?B?OXFpUnE1Tkl2WDYwWGQzNEhoWEhLeEhMeU1yYlZpMitXdzhxU1U2MEtuaE9r?=
- =?utf-8?B?cURoWXFwUkJYaTBQTU5UdkpUdm9vYnJXK2FrWHFRNXQ1b3diZVhkYTg0aURz?=
- =?utf-8?B?UzFuaGJaMXJYblRxM1k1NzJSVi8zNHNTT2xONVJBc3NhcGM3ZmpIaUwxcUx2?=
- =?utf-8?B?SVIzY1hWTVpZOHU0Nkp0TTBoTFpWQmpXQ3JjaEk4TlBaZDZHTzB3SXdzS3Zu?=
- =?utf-8?B?YTJHTnhoM2pieVQvN00vRlU2ejU0ZzV5VWsxTDZ1eWVhbGFwdmg5TGFWM3dV?=
- =?utf-8?B?THdpU2JKbHpPNG1DdkE5bWp3ZlI4QkJvV3NkNzM5cVVOemticHdMQnQ1djFS?=
- =?utf-8?B?SEp2V3pyVVRQTW5ub1liR0pzclNkN0E1NGhId2Fzcm9SbWo3dkRiVHM2eUVS?=
- =?utf-8?B?bnovbyt5NUlsdVMyYklUNDI4c2c4RTN2ZGg4RGsybHp1cXNSZks2OTVqVUxT?=
- =?utf-8?B?WVF3THZuV3UydENlVG9mVmxiRXQ0bFBQdFlObFZ3aUdLN05PVVQxdkV2UTlr?=
- =?utf-8?B?S0RZQ3FMK0phd29vSHVHekRBMmYxNWU5UWZLTE1jdzhET2VWcjlCbkxQMlZ2?=
- =?utf-8?B?RnZEYXJjV1pWWlllQ1dxQVF3SFp4UEl3czlnYkR2OUZvU3pLa2RXRllLc25O?=
- =?utf-8?B?ZjBEbFREdzBvencvNW41VWg3c0l2NXZWZnVnV2hIWHVOQlQzbFpHeDdGb1Rr?=
- =?utf-8?B?UUZhVGJTMlRjWktaQno2OUR2SmdlTExjMUVVM0xacjlQcGJtVFdIOGc4cnNN?=
- =?utf-8?B?Zkl0WGxPSmdMQy80TzNUS0ZLc2dBRXJJWDJQTVkvOERvb0xQRFptU2lwMFdZ?=
- =?utf-8?B?UStvQVB4TGxSdjYyWm9KNm9hV2RoNmNFQXhwQT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 18:40:15.6068
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8803186-5972-444e-33c2-08ddd9cfadfa
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F64.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5750
+In-Reply-To: <20250625191108.1646208-7-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE3NiBTYWx0ZWRfXw8+z2SX9DDiz
+ EG041ZhTJJ52b/zAzS+T8BIrNS1sPAym/RCB2jmHtPeDMkL0pkq0iPiKNAebCq01T0M4m93NkF5
+ ert2vyO/qXtqECBN3cvtpjxoOQwRe8dXjjqieAw6grHmS1paA/3lD8CgOpfzQHBA8zoagQO8SE1
+ LizaCpPzY/irZ5inva/v17+5GtjZ2SEX4oaLiAZGcNiNbcZe4PRSwfrpZr1EdgIaQAiE3RrjGDu
+ xjb6geiGRT6/2476xcVg/CBiXgxgY6X2sA5XuC3lPbs5HORr4TMBDOpGkyNAtQa6DXGpu4RHhn3
+ v901tOozmbAVFwMOnIZIh0Bu90BA9AZLpopW27zwQRuh9sMbRgenituXTJOnoMDmtaI/M4AxuH1
+ E/dAztjnfc8CKYdMTz+QsdZPmrKB8g6S/3cgwdxPmeLCjxbVcOGOe9tFrGj4SbXBm4EVynxT
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689b8aa1 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=0SY00xeoSHbpX606VFoA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: ufIpwGsGi6HRf-h28LZjALTD051XfJxN
+X-Proofpoint-ORIG-GUID: CsJOBVsWmIyZ2A5EZ0OhOgkYFABvy75L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_07,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 clxscore=1015 adultscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120176
 
-On 8/12/25 1:29 PM, Kalra, Ashish wrote:
->
-> On 8/12/2025 11:45 AM, Kim Phillips wrote:
->> On 8/12/25 9:40 AM, Kalra, Ashish wrote:
->>> On 8/12/2025 7:06 AM, Kim Phillips wrote:
->>>>    arch/x86/kvm/svm/sev.c | 47 ++++++++++++++++++-----------------------------
->>>>    1 file changed, 18 insertions(+), 29 deletions(-)
->>>>
->>>> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
->>>> index 7ac0f0f25e68..57c6e4717e51 100644
->>>> --- a/arch/x86/kvm/svm/sev.c
->>>> +++ b/arch/x86/kvm/svm/sev.c
->>>> @@ -2970,42 +2970,29 @@ static bool is_sev_snp_initialized(void)
->>>>
->>>>    static bool check_and_enable_sev_snp_ciphertext_hiding(void)
->>>>    {
->>>> -       unsigned int ciphertext_hiding_asid_nr = 0;
->>>> -
->>>> -       if (!ciphertext_hiding_asids[0])
->>>> -               return false;
->>>> -
->>>> -       if (!sev_is_snp_ciphertext_hiding_supported()) {
->>>> +       if (ciphertext_hiding_asids[0] && !sev_is_snp_ciphertext_hiding_supported()) {
->>>>                   pr_warn("Module parameter ciphertext_hiding_asids specified but ciphertext hiding not supported\n");
->>>>                   return false;
->>>>           }
->>>>
->>> This is incorrect, if ciphertext_hiding_asids module parameter is never specified, user will always
->>> get a warning of an invalid ciphertext_hiding_asids module parameter.
->>>
->>> When this module parameter is optional why should the user get a warning about an invalid module parameter.
->> Ack, sorry, new diff below that fixes this.
->>
->>> Again, why do we want to do all these checks below if this module parameter has not been specified by
->>> the user ?
->> Not sure what you mean by 'below' here (assuming in the resulting code), but, in general, there are less checks with this diff than the original v7 code.
->>
->>>> -       if (isdigit(ciphertext_hiding_asids[0])) {
->>>> -               if (kstrtoint(ciphertext_hiding_asids, 10, &ciphertext_hiding_asid_nr))
->>>> -                       goto invalid_parameter;
->>>> -
->>>> -               /* Do sanity check on user-defined ciphertext_hiding_asids */
->>>> -               if (ciphertext_hiding_asid_nr >= min_sev_asid) {
->>>> -                       pr_warn("Module parameter ciphertext_hiding_asids (%u) exceeds or equals minimum SEV ASID (%u)\n",
->>>> -                               ciphertext_hiding_asid_nr, min_sev_asid);
->>> A *combined* error message such as this:
->>> "invalid ciphertext_hiding_asids XXX or !(0 < XXX < minimum SEV ASID 100)"
->>>
->>> is going to be really confusing to the user.
->>>
->>> It is much simpler for user to understand if the error/warning is:
->>> "Module parameter ciphertext_hiding_asids XXX exceeds or equals minimum SEV ASID YYY"
->>> OR
->>> "Module parameter ciphertext_hiding_asids XXX invalid"
->> I tend to disagree. If, e.g., the user sets ciphertext_hiding_asids=100, they see:
->>
->>       kvm_amd: invalid ciphertext_hiding_asids "100" or !(0 < 100 < minimum SEV ASID 100)
->>
->> which the user can easily unmistakably and quickly deduce that the problem is the latter - not the former - condition that has the problem.
->>
->> The original v7 code in that same case would emit:
->>
->> kvm_amd: Module parameter ciphertext_hiding_asids (100) exceeds or equals minimum SEV ASID (100)
->>
->> ...to which the user would ask themselves "What's wrong with equalling the minimum SEV ASID (100)"?
-> I disagree, the documentation mentions clearly that:
-> For SEV-ES/SEV-SNP guests the maximum ASID available is MIN_SEV_ASID - 1.
->
-> Which the above message conveys quite clearly.
 
-The point of clear error messaging is to avoid the user having to 
-(re-)read the documentation.
+Sorry for the delay in response to bloat-o-meter report. Since stop_one_cpu_nowait needs protection
+against race, need to add a field in rq. So ifdef check of CONFIG_PARAVIRT makes sense.
 
->
->> It's not as immediately obvious that it needs to (0 < x < minimum SEV ASID 100).
->> OTOH, if the user inputs "ciphertext_hiding_asids=0x1", they now see:
->>
->>       kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum SEV ASID 100)
->>
->> which - unlike the original v7 code - shows the user that the '0x1' was not interpreted as a number at all: thus the 99 in the latter condition.
-> This is incorrect, as 0 < 99 < minimum SEV ASID 100 is a valid condition!
+> 
+> Since the task is running, need to use the stopper class to push the
+> task out. Use __balance_push_cpu_stop to achieve that.
+> 
+> This currently works only CFS and RT.
+> 
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> ---
+>   kernel/sched/core.c  | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>   kernel/sched/sched.h |  1 +
+>   2 files changed, 45 insertions(+)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 13e44d7a0b90..aea4232e3ec4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5577,6 +5577,10 @@ void sched_tick(void)
+>   
+>   	sched_clock_tick();
+>   
+> +	/* push the current task out if cpu is marked as avoid */
+> +	if (cpu_avoid(cpu))
+> +		push_current_task(rq);
+> +
+>   	rq_lock(rq, &rf);
+>   	donor = rq->donor;
+>   
+> @@ -8028,6 +8032,43 @@ static void balance_hotplug_wait(void)
+>   			   TASK_UNINTERRUPTIBLE);
+>   }
+>   
+> +static DEFINE_PER_CPU(struct cpu_stop_work, push_task_work);
+> +
+> +/* A CPU is marked as Avoid when there is contention for underlying
+> + * physical CPU and using this CPU will lead to hypervisor preemptions.
+> + * It is better not to use this CPU.
+> + *
+> + * In case any task is scheduled on such CPU, move it out. In
+> + * select_fallback_rq a non_avoid CPU will be chosen and henceforth
+> + * task shouldn't come back to this CPU
+> + */
+> +void push_current_task(struct rq *rq)
+> +{
+> +	struct task_struct *push_task = rq->curr;
+> +	unsigned long flags;
+> +
+> +	/* idle task can't be pused out */
+> +	if (rq->curr == rq->idle || !cpu_avoid(rq->cpu))
+> +		return;
+> +
+> +	/* Do for only SCHED_NORMAL AND RT for now */
+> +	if (push_task->sched_class != &fair_sched_class &&
+> +	    push_task->sched_class != &rt_sched_class)
+> +		return;
+> +
+> +	if (kthread_is_per_cpu(push_task) ||
+> +	    is_migration_disabled(push_task))
+> +		return;
+> +
+> +	local_irq_save(flags);
+> +	get_task_struct(push_task);
+> +	preempt_disable();
+> +
+> +	stop_one_cpu_nowait(rq->cpu, __balance_push_cpu_stop, push_task,
+> +			    this_cpu_ptr(&push_task_work));
 
-Precisely, meaning it's the '0x' in '0x1' that's the "invalid" part.
+Doing a perf record occasionally caused the crash. This happens because stop_one_cpu_nowait
+expects the callers to sync and push_task_work should be untouched until the stopper executes.
 
-> And how can user input of 0x1, result in max_snp_asid == 99 ?
+So, i had to do something similar to whats done in active_balance.
+Add a field in rq and set/unset accordingly.
 
-It doesn't, again, the 0x is the invalid part.
+Using this field in __balance_push_cpu_stop is also hacky. I have to do something like below,
+	if (rq->balance_callback != &balance_push_callback)
+		rq->push_task_work_pending = 0;
+or i have to copy __balance_push_cpu_stop and do the above.
 
-> This is the issue with combining the checks and emitting a combined error message:
->
-> Here, kstroint(0x1) fails with -EINVAL and so, max_snp_asid remains set to 99 and then the combined error conveys a wrong information :
-> !(0 < 99 < minimum SEV ASID 100)
+After this, it makes sense to put all this under CONFIG_PARAVIRT.
 
-It's not, it says it's *OR* that condition.
 
-> The original message is much simpler to understand and correct too:
-> Module parameter ciphertext_hiding_asids (-1) invalid
+(Also, i did explore using stop_one_cpu variant, got to it via scheduling a work and then execute it at
+preemptible context. That occasionally ends up in deadlock. due to some issues at my end, haven't debugged that
+further. a backup option for nowait)
 
-Which is wildly different from any possible derivation of 0x1.
+> +	preempt_enable();
+> +	local_irq_restore(flags);
+> +}
+>   #else /* !CONFIG_HOTPLUG_CPU: */
+>   
+>   static inline void balance_push(struct rq *rq)
+> @@ -8042,6 +8083,9 @@ static inline void balance_hotplug_wait(void)
+>   {
+>   }
+>   
+> +void push_current_task(struct rq *rq)
+> +{
+> +}
+>   #endif /* !CONFIG_HOTPLUG_CPU */
+>   
+>   void set_rq_online(struct rq *rq)
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 105190b18020..b9614873762e 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1709,6 +1709,7 @@ struct rq_flags {
+>   };
+>   
+>   extern struct balance_callback balance_push_callback;
+> +void push_current_task(struct rq *rq);
+>   
+>   #ifdef CONFIG_SCHED_CLASS_EXT
+>   extern const struct sched_class ext_sched_class;
 
->> But all this is nothing compared to the added simplicity resulting from making the change to the original v7 code.
-> I disagree, combining checks and emitting a combined error message is going to be more confusing to the user as the above case of (ciphertext_hiding_asids=0x1) shows.
+Hopefully i should be able to send out v3 soon addressing the comments.
 
-I don't, but nevertheless, it can still be differentiated and still be 
-cleaner code than the original v7...
-
-> Thanks,
-> Ashish
-
-Thanks,
-
-Kim
+Namewise, going to keep it cpu_paravirt_mask and cpu_paravirt(cpu).
 
 
