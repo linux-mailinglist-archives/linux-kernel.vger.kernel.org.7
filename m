@@ -1,245 +1,263 @@
-Return-Path: <linux-kernel+bounces-764392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C39B2227A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329C6B2227C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAFA1882D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0EB5162E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35852E7BB8;
-	Tue, 12 Aug 2025 09:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8480F2E7F1C;
+	Tue, 12 Aug 2025 09:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kIwVq140"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nhqI5Kcq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB2E2E7BB1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8DE2E63F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754989778; cv=none; b=pnwYXDslsSkPActd0oZFGD0iVu77LfGlvei3LgnzhZGT1Qf3PptwS1bGnDpenKWYFoWZXjq5Cf3iStKcH2i0J8DeoTmRIK+zh+DXdixECgKm72+CbIc1HNZBjV7m54U1DAU61yrMpDCqeeK0zdqRGOS+ixmQOKtZUulqcDSevqg=
+	t=1754989883; cv=none; b=GqUAq4t8wCX08Ia+AitNSe4m+L2AhiMfPUM7JPO+uo23VF5BhxDIzS3hmbjzELTNLxxWRxHzam0HR4Iu0I7/v9Op+xzsi6m4OE/YvnbjmOJbv3xdJFkhwsrz00V+Pb2jOZo7yuAtbX4JAqcr3v2pVdyf+IRe4uMoRrFwgPlnT80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754989778; c=relaxed/simple;
-	bh=bcRgZxxZm5dMTAv+MCHtXygXGg1jBllmgGGPnkWK5iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MA943hurB1QH0fgMYSf2X7UDSllpmbwottiCFEdqgXULRzZBIcQfmy3uqnSY3+Glum5VXAC7uJAAW3WOOehtSI+EZP8BLLix69xS7W9MVlPYJ70iq986s7mPPu2hTdgE59rXhA16BUIWwRJ5YOlxwrJbN1p1OZinGraowppLExU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kIwVq140; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C4PvNl013093
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:09:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uIMbl48QKb7Q2ta6KgDRhn0gdecz7ce+OLsivdgtlLw=; b=kIwVq140wOMCsZ/z
-	38lqGTNdR63fGKjcY7b78+ZEEDMcooa3bn3nYqN66SAobsFaFp7j22xvkcOEID5N
-	esrY/i6JljwMLbXo53oQtgWvXolzpBpKk2wpFcokiY8Z+7RohabcybKBOqJA5P5q
-	rLfEtzgE9tB0NM/CLrNC5ARxKSEsja6fRmYQhZil0Omopt4lP5bsu/ByOhJRrvC8
-	QP6UUmHhXmxtXaLUdWEvbQnLX1Ev04je/QJdgku/fcrglaiQP80rTXsgOoLfEDPa
-	hgKXD3kxxpFYjxC3Qqgnc9EKyX4tIGBSoi764UbTvF3biClN+bqURxuj5IonwfcY
-	8Eqlaw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmqnhu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:09:35 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e7f74bb018so98195885a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:09:35 -0700 (PDT)
+	s=arc-20240116; t=1754989883; c=relaxed/simple;
+	bh=wJRcB9iKJfhnbb2n63x+d/ZeHBTTHljaUJ5xihZ5lds=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IKqZQEY3bTt1n1+N4WRooat6IGMH5c/lxAfPRHg2sfhcwhhXz5cZrQoddRKjlNq6yCkQlE+IHKwGB41eno6UQ9Q+rOqHRzJo/kjezAzBQFFtIHTVti9Dm0g2Y6iPGzeVrdrbXuIOa+QsYt9B0TYBRv8tVXdXyuCkvxiIgz0yCk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nhqI5Kcq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af91a6b7a06so881351666b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754989879; x=1755594679; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u3YK1wgh0Xaudz6PXgONh4lyUuda9f4BVBUrVFzVbPk=;
+        b=nhqI5KcqtxaxnRSkymtNAWnJFsq2qdSKmkAhIJdtL0SJyLwvykjEWDs+yGNCdMN12x
+         2RmK8uSNx7LP47f829jHl+7ObtC+xJ5rLwvCh5V2/cKFvAAni/37fBYfg0PVlyeGz1qo
+         9+uDGyJp6fSgFKsEXJ7soRYxeaQ4ci6OMPafFKTZ+qp7LFz6rq+imIvvGSWoUumg7MfA
+         aJoaRt/LbJRBouCegvHpsgTzxPb+04YBWrYUmUFiOiroVRPqWNmqc4JHKMGdq1bwfuAF
+         26ey6w2KCMgLzs/5EhrEnMlZz8gi7P/yvp1P6xnDEAPQU2oOYE0QeDSmmbd7WwTVn9qJ
+         enwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754989774; x=1755594574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uIMbl48QKb7Q2ta6KgDRhn0gdecz7ce+OLsivdgtlLw=;
-        b=f6mmfKE4T8WZrNBmIVZAtHvoJuVGL2l3eLyIhI5zLC+h+CL1wyrHotpvFzT5W1lb3f
-         b2lpn3OnVCuHGhGOdZKXeZfqU65N1oHTJB4NcGKY61emuoEtpaavCfRsWiLPNx+2p4O8
-         GgtmZ70S6FOJWcOJvrGhL4fEAjM9J3n+TfbTKJucJnNmCxSOaZTPYWTSpVr7di4d/tn4
-         gjvbXWUXIbYcdiGyS+gNfs7rM9sAByMeHodAPYwZkyIdkznnyr5z0kj1dYaRdNzoWQmr
-         jHqEqxuu12CwdZfXEbt4WYt3MJiEGGwVHIIFf2vycg4Y9APpPiLLgw5Xl5CUcmQh0s15
-         Yj9w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+I+/E6ltTcDayq9jUnd7SO20K+j85cFJEbNFzrVifhJOQ89BziNsRCFAb0VgTo7ias9Fp33Z5J6yATZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmZIwSwjtI1eKEX9u1mD8r/SYw3fIeNMr8a05NzKa/RK6ofAKv
-	0LCGN+25x+lc8yPIxfIcQsEQciv12SF0faGuUGIDzALpIcVsXsL7zWwaLmxUN902nXFqyvbtgVK
-	ByVrQalGe1Y1Qj7KBKSw18yQ3gVxm5y4BD/e52gFtND8fA4nawL8HCck5IIsU843AVdk=
-X-Gm-Gg: ASbGncs5BS9Umgx2Br8hP5IJVLFjj4WNVo7QmfeeaJEwN2bLSG0ZMSoeoBh8hpLPYWE
-	LynipdnVUZXKlCuVRUSSVX+QqySk1MtPdxWvmEOZ5dQUj5dxzU/5cV7hSM+WOKbzvxMren9ZpHJ
-	68MAQdT4B6chZW3Pr/MLx5LStmd9IUXImIzb/pw1g3725Qeoqtve/xoMbkfLC09VY+Ra47HF7kM
-	eBkwBFWqXUtYAsHtLZF3859c5Lfi3l75WOcCKvnI4rbseDphYLEayYAv0t5UTfDXeBe8RU7yNEv
-	H7wJxi7YcygTgTxyEqX7BJeAul9RGiAXy1NRqJ7bP9hzCWFZP+2y4LmujYKXMnltu30rX3zPxvE
-	onBOw1c4qMecS+qBE+Q==
-X-Received: by 2002:a05:620a:17a5:b0:7e6:5598:1fc6 with SMTP id af79cd13be357-7e860356a6fmr22572085a.8.1754989774424;
-        Tue, 12 Aug 2025 02:09:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnlXnf/YbCuLIOKn9HG8+7RKUuvqXBGNTEXyk2OzW1YhsoxvxHMG/eUXzv5HDAXMbcSY96LA==
-X-Received: by 2002:a05:620a:17a5:b0:7e6:5598:1fc6 with SMTP id af79cd13be357-7e860356a6fmr22571485a.8.1754989773890;
-        Tue, 12 Aug 2025 02:09:33 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615cc38aeccsm18158600a12.2.2025.08.12.02.09.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 02:09:33 -0700 (PDT)
-Message-ID: <575c80d1-5f68-4863-8ba3-9769a5047b8d@oss.qualcomm.com>
-Date: Tue, 12 Aug 2025 11:09:31 +0200
+        d=1e100.net; s=20230601; t=1754989879; x=1755594679;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u3YK1wgh0Xaudz6PXgONh4lyUuda9f4BVBUrVFzVbPk=;
+        b=Er+L8KKOQzCmkKY8xUm5b/HscjeGiXONlcBToHVI2xyQqN3o30UpjvmicdwGbaKOAh
+         E6ba26z5zgpyvv7XtwKEk6ZbA/gMih3+PYqaknqV1ge80jRNn+B4QFmduO1Ie3zSHeOy
+         TyOyWR+yD5DIsSCMUpPzFkaDpD+qPIzOiFWGXdEOYPHPFG18LvsXUWsCIbYo0c/4+GU6
+         M+ajqkdNsCvPX9ZaEJyZw3Nh98gTT7ap6ns1mvMbHXI/rnobtTDi8DI4PDFjuF3GuKee
+         UprlO9bwCkmIOT7/6Llv39xPwQyfwrpnJ3e5d1imV8xi/+hKbP4UJ5o8gt0VqKm9avXZ
+         YL1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXHx/WJh2MaA7kSTamtBpZU70weGC3BpTVpPtyPYkrHT4uet04qcyzr3AldkqzgrgI/ynPXEpzEMOyW6C4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQb+9JyATuO3aPAlhkGPn3I2BAG7rEmEpmc4AGXaUb3jQzmPsG
+	kugAk9tBLMzgajAPtYsc1qxtegaZmy76lYUJxxAb9NT2l7GBTCThUukFBRTJ5FQn1MQ=
+X-Gm-Gg: ASbGncuoPTArIn5xVFOPTWYtKOJISoVnVxrPAy5/KVfHWohR/JJuK5oPkHnHCJFO5Tt
+	PWzS98Jt+YMFIMmgdXEatmTvAoT7nJWrtTCpheoeqaPWKr27ZBlgl1WR5FTAkvE0aIVXdVTD5jI
+	2rqTZLOpQByNt1FIyrsrmLkmKxruX8lkoQsQ0xwgd7Ob9DmM9BeKLbig5+OwUVJxwGSN1kCf3iR
+	XSJAKE11e7IS+d77NagKEMLAqh+snDO69a4BcQ8R7n/73N+cNi8UtTKPJuSK0oZVPQD/RSp1zHS
+	pwp5xbHMIKJLhYEtteii4SGf6lA9su4QfT4M+K4njzynTQiVKfbfJGAKC6qBY3y8yQdZdJVWFyB
+	Gy7X+3c7H907XObK2vQ==
+X-Google-Smtp-Source: AGHT+IHC6ducbDviao5cWzKPIMr1D56B/HQY8RrexDTYgUoZog0Pr4PqbNwo2llWarBSzzZxONTPFg==
+X-Received: by 2002:a17:907:1c0f:b0:ade:9b6d:779f with SMTP id a640c23a62f3a-afa1e12ec39mr223705566b.32.1754989879094;
+        Tue, 12 Aug 2025 02:11:19 -0700 (PDT)
+Received: from localhost ([2001:4090:a244:8691:4b7a:7bbd:bac:c56e])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af91a0766f9sm2214188166b.24.2025.08.12.02.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:11:18 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH v8 0/4] can: m_can: Add am62 wakeup support
+Date: Tue, 12 Aug 2025 11:10:21 +0200
+Message-Id: <20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] usb: dwc3: qcom: Implement glue callbacks to
- facilitate runtime suspend
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com>
- <20250812055542.1588528-3-krishna.kurapati@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250812055542.1588528-3-krishna.kurapati@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689b04cf cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=t7pkRBm_AtVa8SjYk78A:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: AaCY2InaeWZlJKr6m9srLw6uCcxQm7WK
-X-Proofpoint-ORIG-GUID: AaCY2InaeWZlJKr6m9srLw6uCcxQm7WK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfXxK7r0loi4HS0
- DGngfSakprXQviApFh9hfUemTDWhfzOxlXpETZYOfo5mFN9DnlAThpKwz1le4IIjxxKEHBgd+NG
- bSe9Lh92MuNHOyL1gYsY7/y96g4pGj30Ko4wn+iqYyYgilgL2fhzQ/vTIbF6IgB4KBr3oHos2JQ
- NjGFTkOht5yHcOKDiqtLmSOvID+dWKXlyQS33KZWCyx8XKQPnKa/cvBWhgxqsHdm8lco02lxtEj
- SUyKsIfOrt1bOGb951mkbxXN8VRpcHWseoTNwCMtnjrKy15cpSmDN+8H1fRIhwKrI0RyQmix1Me
- x/d+mWe03DSlzywwpCXJHptsY7427YefzMgDpmEYieLVeMYmbuqwoOKebO5COb1U6y59a2Ohvnq
- NSOHwUyc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090000
+X-B4-Tracking: v=1; b=H4sIAP0Em2gC/4XQwWrDMAwG4FcpPk/DsmM73mnvMXawZWc1W+Pgt
+ GlLybvPKRsrI5CL4Nfhk/hvbIwlxZG97G6sxCmNKfc1tE87RnvXf0RIoWYmuGiQcwvHPCSCA7k
+ ezu4zngYY86lQhEkDCmgJg7ZWog8tq8hQYpcu9wNv7zXv03jM5Xq/N8ll+0MjbtGTBA7WKEEGG
+ xdQvHp3/Uq+xGfKB7boU/Moqk2xqWIXXP0Zo3FOr4jqQRTtpqiqKGUMxJ13WtgVUf+JAjcLrZM
+ DSqXJdIbqsyui+RUVb8R2j2YRvfEWNdlW/u9xnudveWipBxcCAAA=
+X-Change-ID: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+ Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Markus Schneider-Pargmann <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6503; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=wJRcB9iKJfhnbb2n63x+d/ZeHBTTHljaUJ5xihZ5lds=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhozZrJKfnyvM1t0S/ZBn7u6n4Qw9mlPWV/55MX3+AjHWr
+ 5nNzpNcOkpZGMS4GGTFFFk6E0PT/svvPJa8aNlmmDmsTCBDGLg4BWAi59QZ/ulMjFms9OzPiQMO
+ 7i5d9m1feb8ardg9N2/tzT9rzsql31nL8D9uu6/u3UKvZv1FPtxrNuQ7/HGeVr1lR/QG5scz2Bw
+ 8I3kA
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-On 8/12/25 7:55 AM, Krishna Kurapati wrote:
-> On Qualcomm DWC3 dual-role controllers, the conndone/disconnect events in
-> device mode are generated by controller when software writes to QSCRATCH
-> registers in Qualcomm Glue layer rather than the vbus line being routed to
-> dwc3 core IP for it to recognize and generate these events.
-> 
-> UTMI_OTG_VBUS_VALID  bit of QSCRATCH_HS_PHY_CTRL register needs to be set
-> to generate a connection done event and to be cleared for the controller to
-> generate a disconnect event during cable removal. When the disconnect is
-> not generated upon cable removal, the "connected" flag of dwc3 is left
-> marked as "true" and it blocks suspend routines and for that to happen upon
-> cable removal, the cable disconnect notification coming in via set_role
-> call need to be provided to the Qualcomm glue layer as well.
-> 
-> Currently, the way DWC3 core and Qualcomm legacy glue driver are designed,
-> there is no mechanism through which the DWC3 core can notify the Qualcomm
-> glue layer of any role changes which it receives via role switch. To
-> register these glue callbacks at probe time, for enabling core to notify
-> glue layer, the legacy Qualcomm driver has no way to find out when the
-> child driver probe was successful since it does not check for the same
-> during of_platform_populate.
+Hi,
 
-[...]
+This series adds support for wakeup capabilities to the m_can driver, which 
+is necessary for enabling Partial-IO functionality on am62, am62a, and am62p 
+SoCs. It implements the wake-on-lan interface for m_can devices and handles 
+the pinctrl states needed for wakeup functionality.
 
-> +	if (qcom->current_role == USB_ROLE_DEVICE)
+am62, am62a and am62p support Partial-IO, a low power system state in which 
+nearly everything is turned off except the pins of the CANUART group. This group
+contains mcu_mcan0, mcu_mcan1, wkup_uart0 and mcu_uart0 devices.
 
-I think it makes more sense to check for next_role here (we know
-it'll be the opposite of current_role, but this is confusing to read)
+To support mcu_mcan0 and mcu_mcan1 wakeup for the mentioned SoCs, the
+series introduces a notion of wake-on-lan for m_can. If the user decides
+to enable wake-on-lan for a m_can device, the device is set to wakeup
+enabled. A 'wakeup' pinctrl state is selected to enable wakeup flags for
+the relevant pins. If wake-on-lan is disabled the default pinctrl is
+selected.
 
-> +		dwc3_qcom_vbus_override_enable(qcom, false);
-> +	else if (qcom->current_role != USB_ROLE_DEVICE)
-> +		dwc3_qcom_vbus_override_enable(qcom, true);
+Partial-IO Overview
+------------------
+Partial-IO is a low power system state in which nearly everything is
+turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1, 
+wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the system 
+on pin activity. Note that this does not resume the system as the DDR is 
+off as well. So this state can be considered a power-off state with wakeup 
+capabilities.
 
-I think the formerly proposed inline comparison grew on me..
-or at least drop the 'else' condition, '==' only goes two ways
+A documentation can also be found in section 6.2.4 in the TRM:
+  https://www.ti.com/lit/pdf/spruiv7
 
-> +
-> +	pm_runtime_mark_last_busy(qcom->dev);
-> +	pm_runtime_put_sync(qcom->dev);
-> +
-> +	/*
-> +	 * Current role changes via usb_role_switch_set_role callback protected
-> +	 * internally by mutex lock.
-> +	 */
-> +	qcom->current_role = next_role;
-> +}
-> +
-> +static void dwc3_qcom_run_stop_notifier(struct dwc3 *dwc, bool is_on)
-> +{
-> +	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
-> +
-> +	/*
-> +	 * When autosuspend is enabled and controller goes to suspend
-> +	 * after removing UDC from userspace, the next UDC write needs
-> +	 * setting of QSCRATCH VBUS_VALID to "1" to generate a connect
-> +	 * done event.
-> +	 */
-> +	if (!is_on)
-> +		return;
-> +
-> +	dwc3_qcom_vbus_override_enable(qcom, true);
-> +	pm_runtime_mark_last_busy(qcom->dev);
-> +}
-> +
-> +struct dwc3_glue_ops dwc3_qcom_glue_ops = {
-> +	.pre_set_role	= dwc3_qcom_set_role_notifier,
-> +	.pre_run_stop	= dwc3_qcom_run_stop_notifier,
-> +};
-> +
->  static int dwc3_qcom_probe(struct platform_device *pdev)
->  {
->  	struct dwc3_probe_data	probe_data = {};
-> @@ -636,6 +683,23 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
->  	if (ignore_pipe_clk)
->  		dwc3_qcom_select_utmi_clk(qcom);
->  
-> +	qcom->mode = usb_get_dr_mode(dev);
-> +
-> +	if (qcom->mode == USB_DR_MODE_HOST) {
-> +		qcom->current_role = USB_ROLE_HOST;
+Implementation Details
+----------------------
+The complete Partial-IO feature requires three coordinated series, each handling
+a different aspect of the implementation:
 
-Should we explicitly clear the VBUS override in this and the last branch?
+1. This series (m_can driver): Implements device-specific wakeup functionality
+   for m_can devices, allowing them to be set as wakeup sources.
 
-Konrad
+2. Devicetree series: Defines system states and wakeup sources in the
+   devicetree for am62, am62a and am62p.
+   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/am62-dt-partialio/v6.17?ref_type=heads
 
-> +	} else if (qcom->mode == USB_DR_MODE_PERIPHERAL) {
-> +		qcom->current_role = USB_ROLE_DEVICE;
-> +		dwc3_qcom_vbus_override_enable(qcom, true);
-> +	} else {
-> +		if ((device_property_read_bool(dev, "usb-role-switch")) &&
-> +		    (usb_get_role_switch_default_mode(dev) == USB_DR_MODE_HOST))
-> +			qcom->current_role = USB_ROLE_HOST;
-> +		else
-> +			qcom->current_role = USB_ROLE_DEVICE;
-> +	}
-> +
-> +	qcom->dwc.glue_ops = &dwc3_qcom_glue_ops;
-> +
->  	qcom->dwc.dev = dev;
->  	probe_data.dwc = &qcom->dwc;
->  	probe_data.res = &res;
-> @@ -650,12 +714,6 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto remove_core;
->  
-> -	qcom->mode = usb_get_dr_mode(dev);
-> -
-> -	/* enable vbus override for device mode */
-> -	if (qcom->mode != USB_DR_MODE_HOST)
-> -		dwc3_qcom_vbus_override_enable(qcom, true);
-> -
->  	wakeup_source = of_property_read_bool(dev->of_node, "wakeup-source");
->  	device_init_wakeup(&pdev->dev, wakeup_source);
->  
+3. TI-SCI firmware series: Implements the firmware interface to enter Partial-IO
+   mode when appropriate wakeup sources are enabled.
+   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/tisci-partialio/v6.17?ref_type=heads
+
+Devicetree Bindings
+-------------------
+The wakeup-source property is used with references to
+system-idle-states. This depends on the dt-schema pull request that adds
+bindings for system-idle-states and updates the binding for wakeup-source:
+  https://github.com/devicetree-org/dt-schema/pull/150
+
+This is merged now and upstream in dt-schema.
+
+Testing
+-------
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-partialio/v6.17?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Previous versions:
+ v1: https://lore.kernel.org/lkml/20240523075347.1282395-1-msp@baylibre.com/
+ v2: https://lore.kernel.org/lkml/20240729074135.3850634-1-msp@baylibre.com/
+ v3: https://lore.kernel.org/lkml/20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com
+ v4: https://lore.kernel.org/r/20241015-topic-mcan-wakeup-source-v6-12-v4-0-fdac1d1e7aa6@baylibre.com
+ v5: https://lore.kernel.org/r/20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com
+ v6: https://lore.kernel.org/r/20241219-topic-mcan-wakeup-source-v6-12-v6-0-1356c7f7cfda@baylibre.com
+ v7: https://lore.kernel.org/r/20250421-topic-mcan-wakeup-source-v6-12-v7-0-1b7b916c9832@baylibre.com
+
+Changes in v8:
+ - Rebase to v6.17-rc1
+
+Changes in v7:
+ - Separate this series from "firmware: ti_sci: Partial-IO support"
+   again as was requested internally
+ - All DT changes are now in their own series to avoid conflicts
+ - wakeup-source definition in the m_can binding is now only an
+   extension to the dt-schema binding and a pull request was created
+
+Changes in v6:
+ - Rebased to v6.13-rc1
+ - After feedback of the other Partial-IO series, I updated this series
+   and removed all use of regulator-related patches.
+ - wakeup-source is now not only a boolean property but can also be a
+   list of power states in which the device is wakeup capable.
+
+Changes in v5:
+ - Make the check of wol options nicer to read
+
+Changes in v4:
+ - Remove leftover testing code that always returned -EIO in a specific
+ - Redesign pincontrol setup to be easier understandable and less nested
+ - Fix missing parantheses around wol_enable expression
+ - Remove | from binding description
+
+Changes in v3:
+ - Rebase to v6.12-rc1
+ - Change 'wakeup-source' to only 'true'
+ - Simplify m_can_set_wol by returning early on error
+ - Add vio-suuply binding and handling of this optional property.
+   vio-supply is used to reflect the SoC architecture and which power
+   line powers the m_can unit. This is important as some units are
+   powered in special low power modes.
+
+Changes in v2:
+ - Rebase to v6.11-rc1
+ - Squash these two patches for the binding into one:
+   dt-bindings: can: m_can: Add wakeup-source property
+   dt-bindings: can: m_can: Add wakeup pinctrl state
+ - Add error handling to multiple patches of the m_can driver
+ - Add error handling in m_can_class_allocate_dev(). This also required
+   to add a new patch to return error pointers from
+   m_can_class_allocate_dev().
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+---
+Markus Schneider-Pargmann (4):
+      dt-bindings: can: m_can: Add wakeup properties
+      can: m_can: Map WoL to device_set_wakeup_enable
+      can: m_can: Return ERR_PTR on error in allocation
+      can: m_can: Support pinctrl wakeup state
+
+ .../devicetree/bindings/net/can/bosch,m_can.yaml   |  22 ++++
+ drivers/net/can/m_can/m_can.c                      | 111 ++++++++++++++++++++-
+ drivers/net/can/m_can/m_can.h                      |   4 +
+ drivers/net/can/m_can/m_can_pci.c                  |   4 +-
+ drivers/net/can/m_can/m_can_platform.c             |   4 +-
+ drivers/net/can/m_can/tcan4x5x-core.c              |   4 +-
+ 6 files changed, 140 insertions(+), 9 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8
+
+Best regards,
+-- 
+Markus Schneider-Pargmann <msp@baylibre.com>
+
 
