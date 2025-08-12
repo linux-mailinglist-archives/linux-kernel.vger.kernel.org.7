@@ -1,219 +1,248 @@
-Return-Path: <linux-kernel+bounces-764462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFAA6B2234C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB3B2234B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02BF1AA049A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:33:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50790171F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 09:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAC22E7BB1;
-	Tue, 12 Aug 2025 09:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E957F2E92DD;
+	Tue, 12 Aug 2025 09:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E/7GW/RO"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VRwOt31B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DA12E88A2
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3FB2E4256
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991194; cv=none; b=c+GcgSMGqjsBZMWvUvNfZtCwzXjDEQ+z0aBVhfGHKHCStEXH5hx9fvVJDXfDTmz5HBCMbY9BETFLEFvHqHfoVc/PyW5N4oEEiWyhix56HO2eTwp2ffsyuMsUzovM+4nn6urzr81P6Qh5Pox6/EE5ewx6CG3Fx1pclr6uslpFEWI=
+	t=1754991154; cv=none; b=I++L0dudQQE4UpxTH/0aR4a4CnAXqcAe58Ar2q8HVSeOszZmcD8ex+6nzmT8WpaWnsEMxzKR7HUCqB5rCI18vZ7ahxifJWtqg13YgSeq17P5eNZy7yjBX2kyIhLA/JB4zMHleqctbY8hWfOz10SSbCK4D91NsxYQdFv0+nvvn2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991194; c=relaxed/simple;
-	bh=45UEym4ypBzRwCttExpHYuZEvNg4l/GdXxzZbyZJX3U=;
+	s=arc-20240116; t=1754991154; c=relaxed/simple;
+	bh=KBltDy1VlOm6vly3kEqikeo37kbO/rgKlf8mjUJGwKc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nlp2e6+11Vwfb58laTtei4jhfrdjrkuiDPmcYXZoF2cUqSYLhEFIoqEEMHRWNa97cIuVZk8wpHEcc95SgSH8yL+dL7q5vjPkhQVRujJbu4GmG9Iw8bUNzHvTtKA/xNto/g66S/eoedTTEu9tY11e6c2Yf7w3bS2rkmYTptPYwWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E/7GW/RO; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef249b61-f37e-4b72-9610-7f114564988a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754991175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UB0EMZuXYKOyyxldrdbQ63aHyFJ+9vuYs0ibMI6aTWo=;
-	b=E/7GW/RORpntKNSzjue4zCvcXnS3P+iV9m+YlyMAyxJYVmthvQH5CSENyWcj+IciXmG/d8
-	Fl2CnYA7F7MrOurBihPqvmoUaPJbWhXzUKEDAoRKFDxHOAP8piIvc5AHVNfPuQlEQPHA7G
-	9ZfTya60lIenlfgcBWsgcrnQzAHsqlo=
-Date: Tue, 12 Aug 2025 17:32:15 +0800
+	 In-Reply-To:Content-Type; b=FoOmmMt2g0KkDd3gp4BfIWjhD60MmdTXiidj97PecZW1B7tu4v7PHj8Qql7lOqEt3OvzB5XLTIF8zxZAFnethbAR/sAfmi/p9nP184khKB6LzwCq/rclNwpSvRpjTU4Mwj2csFDcLlOEV3QHzN1/C1pUx5yvXVeCocDDEDUVS88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VRwOt31B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5XIIC021319
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:32:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7n24b5y09554bTu/Veo3VDRFW4pPHKlo+XBhAE2yofU=; b=VRwOt31B+kdwV4Lc
+	HbCkN4bGsdbKDoq6E9J/tAgN+Siin1Fd5VRPjlzYzVehmkdAJsl4h6iSzOSXrgo9
+	fVmKvsD1M38R6Cf/xtch0CCyZiiUg2QfsrfigToFbGgw99XNnMb2lT1A5/5ZiSF1
+	bkzG7EqGv0nNhebOYPUwO1otY1USFEl06+cs+uTGRl0vvmjaGjPvkO+oSivykrk4
+	GTaJgm1F7gaVZBYrDbOgrPrP7SzmpiM9tSizkHUmxlQiR5mJrmmaeF6YMPeYe5w2
+	3TYEikwPLlve3n2zyT8jNU3143grbvJyoQau1KqR3zY6vB84F442EBSE4RSfu6ia
+	ZvSSGw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vjfvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 09:32:31 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-240607653f4so46819365ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 02:32:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754991150; x=1755595950;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7n24b5y09554bTu/Veo3VDRFW4pPHKlo+XBhAE2yofU=;
+        b=oW7lC3uV6wREyKlN9VGp6XV17huJQUs7Grahx33+kvbKc37C/FUoa6z+fccfiBpBHZ
+         FijP1eBqCcSyW6Ia249v1QR1vflUu65d3p27l+1irLRKZIFRjPmntZ6pADjbyB7uM77O
+         KPgMcAYUucJ7EjPVNS98mPBe5qeKEA1Kz6p2HIh0k6IOD6S19+xLwVqbGSCMsaN+c3oL
+         rbnXUTdUPO4I3R02rqGXq8cHYVmaBTol2YNcZmN7xWakmampLCIUllBj9aGucFI3vL7R
+         nNLyQc0tUagaffvgNzHuco2TjVjo7DTavtP21iruZwa5IRFopW2fLnX4DhOZxKrNRmGw
+         KXvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqM85v+M/0U7m4Esuaq9cdjScD8fMqVM0VUpsPFbmcG/bdeWo1Jh2XB7pSTctosuc/etCq2UWXKCr7+5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+HynV3t+0jNxRwU6fxFIlWW4rXjYMzl88Nu19N20+eA5zWQlD
+	PmzIJw/1Xab3PsbPSXHW569wrCMcw3bj2L1Cj7OGnq8wHY/042VwakvZ8b/G5ABvY0C7j/dXTEx
+	bVHFXSo5ti1q7tcjh24L9Dwixkn0bBrp1QJIVuXoTi0WPIs/TfK2BmcSr3yVzqJksxyk=
+X-Gm-Gg: ASbGncsntM2rgQJsGsDq9iNRNssO2yuT7GxqUurKAtCFn4AVo5qM0nWGsiG6jSxQOda
+	TUpvTj7C+WcaAGpb3cpmduWzzJw3zvvqdjTZ5HPxr0SNZgmQpA1VaF1oex9me2Sqlrop6dl+QnJ
+	59qllAOKWc9xxNa1/4wshEBpok0+miP3+auYN1HflASNH0V55PLVilfyTQoH/oFn4CD7g8hH5OF
+	CLYF+2wY20P5fv4ap8c0LuYKd8h6KkyxcVICQlNZgbsSY3khzurWOdHZqFdnnHSI7PubNyX5ikj
+	6GiEhhzMIqx5L971MFGkJpYxGDeViVeCIomod4Z/si86V+FCCL/4y9YOESktknzuXDCGqKj3oA=
+	=
+X-Received: by 2002:a17:902:ef07:b0:243:485:269d with SMTP id d9443c01a7336-24304852b18mr13228315ad.31.1754991150182;
+        Tue, 12 Aug 2025 02:32:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9kdodTnnV+PESNDgF1+JEyc7nLGF4AcUeaMfke5Rq0BxrIP5ikbInr31f30kDeqp4lDDApQ==
+X-Received: by 2002:a17:902:ef07:b0:243:485:269d with SMTP id d9443c01a7336-24304852b18mr13227695ad.31.1754991149647;
+        Tue, 12 Aug 2025 02:32:29 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aa9055sm296829815ad.150.2025.08.12.02.32.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 02:32:29 -0700 (PDT)
+Message-ID: <5dbd782a-1d52-4614-9e7e-3b7d9dfd099f@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 15:02:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
-To: Yanteng Si <si.yanteng@linux.dev>, Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
- kexec@lists.infradead.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
- <20250811092659.14903-3-youling.tang@linux.dev>
- <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
- <9760e574-3eb0-46b2-bccd-916f73b9c39e@linux.dev>
- <ce63aa14-11a5-4b2c-bfbc-8465b7065197@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
+ before & after link re-training
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <20250711213602.GA2307197@bhelgaas>
+ <55fc3ae6-ba04-4739-9b89-0356c3e0930c@oss.qualcomm.com>
+ <d4078b6c-1921-4195-9022-755845cdb432@oss.qualcomm.com>
+ <68a78904-e2c7-4d4d-853d-d9cd6413760e@oss.qualcomm.com>
+ <3939605c-7335-4401-ba32-b88ee900f1d5@oss.qualcomm.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <ce63aa14-11a5-4b2c-bfbc-8465b7065197@linux.dev>
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <3939605c-7335-4401-ba32-b88ee900f1d5@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX7lrf0nsFulkW
+ VfZD/XYHGsvmOreKi3iIstFoBBWdTl0aVLcHIq1YR7Zl0UuGSGGWSGOYQTymrWsWNic0akUtaNP
+ ZamZtbrNkhMRC4KQSwM2VD9OxdDeY8VhFy9d+yx3NXnrd3nRSQxElBADd39QAMiyR3VbHw47oca
+ gXjpovyN0MUNqLqqF0XidcrF9ykv0WvWOoYCL0yu+q3PwQ4nbSL8hHAVW8W9JTeiDb/cbAhRQrg
+ MzDnLl2eAeyg1iXUh9K29yA3JSaP1c17zdeepp3NVHNssi+WmE8ked4590SO7ev67sSZblZDgYO
+ 56ERkJMRANeaEUAuEW9KLjwodTygn6rLHqI50mlogxq/trShxB21isPfmEOrxzpu+3++/wGg9ce
+ qxV2KMss
+X-Proofpoint-GUID: 4NKAn7IroUCsF2-iECxTlB8w0TTu9kyE
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689b0a2f cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=Jnfc8Lo_MkJUCzdN-ZEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: 4NKAn7IroUCsF2-iECxTlB8w0TTu9kyE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-Hi, Yanteng
-On 2025/8/12 09:53, Yanteng Si wrote:
-> 在 8/12/25 9:21 AM, Youling Tang 写道:
->> Hi, Huacai
->> On 2025/8/11 22:07, Huacai Chen wrote:
->>> Hi, Youling,
->>>
->>> On Mon, Aug 11, 2025 at 5:28 PM Youling Tang 
->>> <youling.tang@linux.dev> wrote:
->>>> From: Youling Tang <tangyouling@kylinos.cn>
->>>>
->>>> This patch adds support for kexec_file on LoongArch.
->>>>
->>>> The image_load() as two parts:
->>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
->>>> - the second part loads other segments (eg: initrd, cmdline)
->>>>
->>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are 
->>>> supported,
->>>> but ELF format is not supported.
->>>>
->>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->>>> ---
->>>>   arch/loongarch/Kconfig                     |   8 ++
->>>>   arch/loongarch/include/asm/image.h         |  18 ++++
->>>>   arch/loongarch/include/asm/kexec.h         |  12 +++
->>>>   arch/loongarch/kernel/Makefile             |   1 +
->>>>   arch/loongarch/kernel/kexec_image.c        | 112 
->>>> +++++++++++++++++++++
->>>>   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
->>>>   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
->>>>   7 files changed, 219 insertions(+), 11 deletions(-)
->>>>   create mode 100644 arch/loongarch/kernel/kexec_image.c
->>>>   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
->>>>
->>>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->>>> index f0abc38c40ac..fd50c83f7827 100644
->>>> --- a/arch/loongarch/Kconfig
->>>> +++ b/arch/loongarch/Kconfig
->>>> @@ -625,6 +625,14 @@ config CPU_HAS_PREFETCH
->>>>   config ARCH_SUPPORTS_KEXEC
->>>>          def_bool y
->>>>
->>>> +config ARCH_SUPPORTS_KEXEC_FILE
->>>> +       def_bool 64BIT
->>>> +
->>>> +config ARCH_SELECTS_KEXEC_FILE
->>>> +       def_bool y
->>>> +       depends on KEXEC_FILE
->>>> +       select HAVE_IMA_KEXEC if IMA
->>>> +
->>>>   config ARCH_SUPPORTS_CRASH_DUMP
->>>>          def_bool y
->>>>
->>>> diff --git a/arch/loongarch/include/asm/image.h 
->>>> b/arch/loongarch/include/asm/image.h
->>>> index 1f090736e71d..829e1ecb1f5d 100644
->>>> --- a/arch/loongarch/include/asm/image.h
->>>> +++ b/arch/loongarch/include/asm/image.h
->>>> @@ -36,5 +36,23 @@ struct loongarch_image_header {
->>>>          uint32_t pe_header;
->>>>   };
->>>>
->>>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
->>>> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 
->>>> 0x0, 0x64, 0x62};
->>>> +
->>>> +/**
->>>> + * loongarch_header_check_pe_sig - Helper to check the loongarch 
->>>> image header.
->>>> + *
->>>> + * Returns non-zero if 'MZ' signature is found.
->>>> + */
->>>> +
->>>> +static inline int loongarch_header_check_pe_sig(const struct 
->>>> loongarch_image_header *h)
->>>> +{
->>>> +       if (!h)
->>>> +               return 0;
->>>> +
->>>> +       return (h->pe_sig[0] == loongarch_image_pe_sig[0]
->>>> +               && h->pe_sig[1] == loongarch_image_pe_sig[1]);
->>>> +}
->>>> +
->>>>   #endif /* __ASSEMBLY__ */
->>>>   #endif /* __ASM_IMAGE_H */
->>>> diff --git a/arch/loongarch/include/asm/kexec.h 
->>>> b/arch/loongarch/include/asm/kexec.h
->>>> index cf95cd3eb2de..3ef8517a3670 100644
->>>> --- a/arch/loongarch/include/asm/kexec.h
->>>> +++ b/arch/loongarch/include/asm/kexec.h
->>>> @@ -41,6 +41,18 @@ struct kimage_arch {
->>>>          unsigned long systable_ptr;
->>>>   };
->>>>
->>>> +#ifdef CONFIG_KEXEC_FILE
->>>> +extern const struct kexec_file_ops kexec_image_ops;
->>>> +
->>>> +int arch_kimage_file_post_load_cleanup(struct kimage *image);
->>>> +#define arch_kimage_file_post_load_cleanup 
->>>> arch_kimage_file_post_load_cleanup
->>>> +
->>>> +extern int load_other_segments(struct kimage *image,
->>>> +               unsigned long kernel_load_addr, unsigned long 
->>>> kernel_size,
->>>> +               char *initrd, unsigned long initrd_len,
->>>> +               char *cmdline, unsigned long cmdline_len);
->>> I think the RISC-V naming "load_extra_segments" is better.
->> This name is also fine, but I prefer it to be consistent with
->> that in kexec-tools.
-> I have looked at the code of kexec-tools, and it seems that you 
-> referenced a great deal of ARM code when implementing the LoongArch part.
->
->
->>>
->>>> +#endif
->>>> +
->>>>   typedef void (*do_kexec_t)(unsigned long efi_boot,
->>>>                             unsigned long cmdline_ptr,
->>>>                             unsigned long systable_ptr,
->>>> diff --git a/arch/loongarch/kernel/Makefile 
->>>> b/arch/loongarch/kernel/Makefile
->>>> index 6f5a4574a911..bd9405ee3888 100644
->>>> --- a/arch/loongarch/kernel/Makefile
->>>> +++ b/arch/loongarch/kernel/Makefile
->>>> @@ -62,6 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)     += sysrq.o
->>>>   obj-$(CONFIG_RELOCATABLE)      += relocate.o
->>>>
->>>>   obj-$(CONFIG_KEXEC_CORE)       += machine_kexec.o relocate_kernel.o
->>>> +obj-$(CONFIG_KEXEC_FILE)       += machine_kexec_file.o kexec_image.o
->>> We only support the efi format, so we don't need to split a
->>> kexec_image.c like RISC-V, just put everything into
->>> machine_kexec_file.c is OK.
->> I hope it is separated and consistent with other architectures.
->> For instance, arm64 only supports one type.
-> The ARM64 architecture has a long history, and we shouldn't be 
-> constrained by it.
-Support for kexec_elf.c in ELF format may be considered for
-addition in the future.
 
-Thanks,
-Youling.
->
->
-> Thanks,
-> Yanteng
+
+On 8/12/2025 2:57 PM, Konrad Dybcio wrote:
+> On 8/12/25 6:05 AM, Krishna Chaitanya Chundru wrote:
 >>
->> Youling.
+>>
+>> On 7/22/2025 4:33 PM, Krishna Chaitanya Chundru wrote:
 >>>
->>> Huacai
+>>>
+>>> On 7/12/2025 4:36 AM, Krishna Chaitanya Chundru wrote:
+>>>>
+>>>>
+>>>> On 7/12/2025 3:06 AM, Bjorn Helgaas wrote:
+>>>>> On Mon, Jun 09, 2025 at 04:21:23PM +0530, Krishna Chaitanya Chundru wrote:
+>>>>>> If the driver wants to move to higher data rate/speed than the current data
+>>>>>> rate then the controller driver may need to change certain votes so that
+>>>>>> link may come up at requested data rate/speed like QCOM PCIe controllers
+>>>>>> need to change their RPMh (Resource Power Manager-hardened) state. Once
+>>>>>> link retraining is done controller drivers needs to adjust their votes
+>>>>>> based on the final data rate.
+>>>>>>
+>>>>>> Some controllers also may need to update their bandwidth voting like
+>>>>>> ICC BW votings etc.
+>>>>>>
+>>>>>> So, add pre_link_speed_change() & post_link_speed_change() op to call
+>>>>>> before & after the link re-train. There is no explicit locking mechanisms
+>>>>>> as these are called by a single client Endpoint driver.
+>>>>>>
+>>>>>> In case of PCIe switch, if there is a request to change target speed for a
+>>>>>> downstream port then no need to call these function ops as these are
+>>>>>> outside the scope of the controller drivers.
+>>>>>
+>>>>>> +++ b/include/linux/pci.h
+>>>>>> @@ -599,6 +599,24 @@ struct pci_host_bridge {
+>>>>>>        void (*release_fn)(struct pci_host_bridge *);
+>>>>>>        int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>>>>>>        void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>>>>>> +    /*
+>>>>>> +     * Callback to the host bridge drivers to update ICC BW votes, clock
+>>>>>> +     * frequencies etc.. for the link re-train to come up in targeted speed.
+>>>>>> +     * These are intended to be called by devices directly attached to the
+>>>>>> +     * Root Port. These are called by a single client Endpoint driver, so
+>>>>>> +     * there is no need for explicit locking mechanisms.
+>>>>>> +     */
+>>>>>> +    int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
+>>>>>> +                     struct pci_dev *dev, int speed);
+>>>>>> +    /*
+>>>>>> +     * Callback to the host bridge drivers to adjust ICC BW votes, clock
+>>>>>> +     * frequencies etc.. to the updated speed after link re-train. These
+>>>>>> +     * are intended to be called by devices directly attached to the
+>>>>>> +     * Root Port. These are called by a single client Endpoint driver,
+>>>>>> +     * so there is no need for explicit locking mechanisms.
+>>>>>
+>>>>> No need to repeat the entire comment.  s/.././
+>>>>>
+>>>>> These pointers feel awfully specific for being in struct
+>>>>> pci_host_bridge, since we only need them for a questionable QCOM
+>>>>> controller.  I think this needs to be pushed down into qcom somehow as
+>>>>> some kind of quirk.
+>>>>>
+>>>> Currently these are needed by QCOM controllers, but it may also needed
+>>>> by other controllers may also need these for updating ICC votes, any
+>>>> system level votes, clock frequencies etc.
+>>>> QCOM controllers is also doing one extra step in these functions to
+>>>> disable and enable ASPM only as it cannot link speed change support
+>>>> with ASPM enabled.
+>>>>
+>>> Bjorn, can you check this.
+>>>
+>>> For QCOM devices we need to update the RPMh vote i.e a power source
+>>> votes for the link to come up in required speed. and also we need
+>>> to update interconnect votes also. This will be applicable for
+>>> other vendors also.
+>>>
+>>> If this is not correct place I can add them in the pci_ops.
+>> Bjorn,
+>>
+>> Can you please comment on this.
+>>
+>> Is this fine to move these to the pci_ops of the bridge.
+>> Again these are not specific to QCOM, any controller driver which
+>> needs to change their clock rates, ICC bw votes etc needs to have
+>> these.
+> 
+> Do you even need to set the OPP explicitly? The global irq handler
+> already does so on linkup, and you seem to toggle the link state in
+> the newly introduced helpers
+> 
+> Now not all DTs currently have a global interrupt, but that's a mass
+> fixup to be done anyway..
+> 
+Konrad,
+
+global IRQ in the qcom controllers will only come in only on initial
+linkup, and later on link speed change through bwctrl driver we will
+not get global IRQ.
+
+For QCOM controllers we need to change the RPMH vote for example if
+we want to update the PCIe data rate from 5 GT/s to 8 GT/s we might
+need to update the RPMh vote from low_svs to NOM corner before we
+initiate link up. for that reason we are introducing pre & post
+link_speed_change function pointer.
+
+- Krishna Chaitanya.
+> Konrad
 
