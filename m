@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-764322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9162B221A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:47:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4286B22194
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 10:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4854E6E5CD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45F301886EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 08:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7D520298D;
-	Tue, 12 Aug 2025 08:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64032E7F3B;
+	Tue, 12 Aug 2025 08:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hkd2yKo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iFIhx3q7"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958292E7BD4;
-	Tue, 12 Aug 2025 08:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341E92E7F33
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 08:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754987700; cv=none; b=O6iWzPh43vQA/nAg1qmsOPDHIlymp0e3bkv3Ac3BDFyurHpTF1PdruWWMYhOKlWqi5wS5PkgZsGzuTR+y4+oqvio6nTf6WLAl62vN9xMBRjuIrORXgsDAu4jkIOxrGcbreyz1qNgkD+Y0X1RUeyboyEHNI8YFrDPH3jbC1AsylQ=
+	t=1754987728; cv=none; b=ZLHQXcQTDlmu3PEJqd02F9IVj4rsmpPriyU4AT5VAXiZU8razYXgYqyEzAr24dRJjCi3wT1mTIU2bENn40DVCMVocGtJoLIddUgYbeVdaPzNi/OBe+kJ9odUsg7tyhZX2VMC+j/LWyKqrLgbwA9ZNQSBfDTG/UIr4+KO3PlCz0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754987700; c=relaxed/simple;
-	bh=xTdISAyT0Kzubsk+Rx8mfxAyPYBnzZHTr/cxp81IiDg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=c/a1MK95UztSAp92zzG41/5KY/0T+rZp+4fv6aUb1lNlwHPpJzNqNf9o0u4gTLG0pieEa6inXwEBfEN0BiSwD2zE6RjKviCijHryOTv9/cKAK9JjbAnLvffukxbi4rLq4EHay2f+ShrrjD44LaRiOn+v3dI7+DX3SFtPxyDzSNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hkd2yKo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CAF6C4CEF4;
-	Tue, 12 Aug 2025 08:34:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754987700;
-	bh=xTdISAyT0Kzubsk+Rx8mfxAyPYBnzZHTr/cxp81IiDg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Hkd2yKo/gVbX3VsamhkYHbKRttvNnisB93+cA9XGxZfcrtke2QmefE7w9fBcu4aNx
-	 lCl9WtvZPEtgJMy/Q3qMk/jM6jAsOLWjY0SFwp4ZEwYfsw5G5vadd5n7V5sGU/XH9X
-	 QGbzBfaj+bmwgJVQ3LdJGOqjubLphcJeRxq8Vto1fro5FFQEIBWnwLNgd9vpT6N0lY
-	 fk+ySHit55c3ow/+ej6DSWoP1cMnk4bWASbJq8BOG5de7YIWjNc1jLGKJrqt04m8Ym
-	 2lzpPsSfJsTLsxYEJ8eypyTAYB39tq8GEWkL0FfXapB7IILpjYrvJg2WJMElCk86b6
-	 oDhIwd0yKqweA==
+	s=arc-20240116; t=1754987728; c=relaxed/simple;
+	bh=WwpEBk5j928XDlaW3MQpspA17zNKZTuUg+N3L2P5Q8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eGijoKp4AKmJpV1vdzFzeeC+E8LxkfSn8WxrtMIXMhh768OPQJ1TNlgMD52hQjxkHs8UZkDQoaTdCTBqSRVsYga50Y+Te+IO14QFelYWBzAHYeavoQ/CCDQDY7q/yKiqg8q4j2Fl8nmpoP311eUMGlhUjf75JoBpiHmQXuY5V9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iFIhx3q7; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754987717; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=E5UCujp6LpemgWNTAHmJG6DMzWeh3JLe/fdx68Wjim8=;
+	b=iFIhx3q7/TOwY80SWB6gCTVw7uRUReuL/v75ogGJJF1dnPDCWUUuRM7CFL0876Zz+T1jfjeMhjZ4qsJsz7amC+/J6jUoGG9jQYbFB80FWwI1FgB4uS4YvskDq/d911sPZsbiIaF61ikUUuDaavFC9b6TqEZJgiFkYD2tgVscjVg=
+Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WlaOJEW_1754987715 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Aug 2025 16:35:15 +0800
+Message-ID: <e6898dca-d6c6-465c-a373-8298858839ab@linux.alibaba.com>
+Date: Tue, 12 Aug 2025 16:35:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Aug 2025 10:34:56 +0200
-Message-Id: <DC0B7TRVRFMY.29LDRJOU3WJY2@kernel.org>
-Cc: "Caleb Sander Mateos" <csander@purestorage.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Jens Axboe"
- <axboe@kernel.dk>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Sidong Yang" <sidong.yang@furiosa.ai>, "Daniel Almeida"
- <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.20.1
-References: <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
- <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
- <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
- <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
- <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
- <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
- <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
- <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
- <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
- <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
- <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
-In-Reply-To: <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm: shmem: fix the strategy for the tmpfs 'huge='
+ options
+To: akpm@linux-foundation.org, hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ ziy@nvidia.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <701271092af74c2d969b195321c2c22e15e3c694.1753863013.git.baolin.wang@linux.alibaba.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <701271092af74c2d969b195321c2c22e15e3c694.1753863013.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon Aug 11, 2025 at 4:50 PM CEST, Sidong Yang wrote:
-> On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
->> > There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut=
- IoUringCmd>`
->> > would be create in the callback function. But the callback function co=
-uld be
->> > called repeatedly with same `io_uring_cmd` instance as far as I know.
->> >=20
->> > But in c side, there is initialization step `io_uring_cmd_prep()`.
->> > How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign =
-a byte
->> > as flag in pdu for checking initialized also we should provide 31 byte=
-s except
->> > a byte for the flag.
->> >=20
->>=20
->> That was a follow-up question of mine. Can=C2=B4t we enforce zero-initia=
-lization
->> in C to get rid of this MaybeUninit? Uninitialized data is just bad in g=
-eneral.
->>=20
->> Hopefully this can be done as you've described above, but I don't want t=
-o over
->> extend my opinion on something I know nothing about.
->
-> I need to add a commit that initialize pdu in prep step in next version.=
-=20
-> I'd like to get a comment from io_uring maintainer Jens. Thanks.
->
-> If we could initialize (filling zero) in prep step, How about casting iss=
-ue?
-> Driver still needs to cast array to its private struct in unsafe?
 
-We still would have the casting issue.
 
-Can't we do the following:
+On 2025/7/30 16:14, Baolin Wang wrote:
+> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
+> we have extended tmpfs to allow any sized large folios, rather than just
+> PMD-sized large folios.
+> 
+> The strategy discussed previously was:
+> 
+> "
+> Considering that tmpfs already has the 'huge=' option to control the
+> PMD-sized large folios allocation, we can extend the 'huge=' option to
+> allow any sized large folios.  The semantics of the 'huge=' mount option
+> are:
+> 
+>      huge=never: no any sized large folios
+>      huge=always: any sized large folios
+>      huge=within_size: like 'always' but respect the i_size
+>      huge=advise: like 'always' if requested with madvise()
+> 
+> Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
+> allocate the PMD-sized huge folios if huge=always/within_size/advise is
+> set.
+> 
+> Moreover, the 'deny' and 'force' testing options controlled by
+> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
+> semantics.  The 'deny' can disable any sized large folios for tmpfs, while
+> the 'force' can enable PMD sized large folios for tmpfs.
+> "
+> 
+> This means that when tmpfs is mounted with 'huge=always' or 'huge=within_size',
+> tmpfs will allow getting a highest order hint based on the size of write() and
+> fallocate() paths. It will then try each allowable large order, rather than
+> continually attempting to allocate PMD-sized large folios as before.
+> 
+> However, this might break some user scenarios for those who want to use
+> PMD-sized large folios, such as the i915 driver which did not supply a write
+> size hint when allocating shmem [1].
+> 
+> Moreover, Hugh also complained that this will cause a regression in userspace
+> with 'huge=always' or 'huge=within_size'.
+> 
+> So, let's revisit the strategy for tmpfs large page allocation. A simple fix
+> would be to always try PMD-sized large folios first, and if that fails, fall
+> back to smaller large folios. However, this approach differs from the strategy
+> for large folio allocation used by other file systems. Is this acceptable?
+> 
+> [1] https://lore.kernel.org/lkml/0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com/
+> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+> Note: this is just an RFC patch. I would like to hear others' opinions or
+> see if there is a better way to address Hugh's concern.
+> ---
 
-* Add a new associated type to `MiscDevice` called `IoUringPdu` that
-  has to implement `Default` and have a size of at most 32 bytes.
-* make `IoUringCmd` generic
-* make `MiscDevice::uring_cmd` take `Pin<&mut IoUringCmd<Self::IoUringPdu>>=
-`
-* initialize the private data to be `IoUringPdu::default()` when we
-  create the `IoUringCmd` object.
-* provide a `fn pdu(&mut self) -> &mut Pdu` on `IoUringPdu<Pdu>`.
+Hi Hugh,
 
-Any thoughts? If we don't want to add a new associated type to
-`MiscDevice` (because not everyone has to declare the `IoUringCmd`
-data), I have a small trait dance that we can do to avoid that:
-
-    pub trait IoUringMiscDevice: MiscDevice {
-        type IoUringPdu: Default; // missing the 32 byte constraint
-    }
-
-and then in MiscDevice we still add this function:
-
-        fn uring_cmd(
-            _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-            _io_uring_cmd: Pin<&mut IoUringCmd<Self::IoUringPdu>>,
-            _issue_flags: u32,
-        ) -> Result<i32>
-        where
-            Self: IoUringMiscDevice,
-        {
-            build_error!(VTABLE_DEFAULT_ERROR)
-        }
-
-It can only be called when the user also implements `IoUringMiscDevice`.
-
----
-Cheers,
-Benno
+If we use this approach to fix the PMD large folio regression, should we 
+also change tmpfs mmap() to allow allocating any sized large folios, but 
+always try to allocate PMD-sized large folios first? What do you think? 
+Thanks.
 
