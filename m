@@ -1,192 +1,148 @@
-Return-Path: <linux-kernel+bounces-765481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7BBB23891
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFC4B238AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 21:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E72018919C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11A9722582
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 19:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520882FFDFF;
-	Tue, 12 Aug 2025 19:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB5C302CD7;
+	Tue, 12 Aug 2025 19:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+cQE4Hc"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj+eHPKz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F342FFDEF;
-	Tue, 12 Aug 2025 19:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9257F2F8BC3;
+	Tue, 12 Aug 2025 19:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755026638; cv=none; b=YDoPP2jTcy9hBBRPns0o2GKs99TrBSGwQzc3TOSGLyIPaG+R0pcaXYXe+T70PcgAfTlP2EYzht9AGR6zsz674IcGOEBEC9I4GKyhgb3is/tzyspx/pAp0bTgB56A5MtdgaB2oSpt2M6Ok9wlq0EmdwSUCUnJwwEOS54KzLdDbC4=
+	t=1755026647; cv=none; b=G9+5V4vNRVBnqzEobmg3Wewz1GCI0azNTBw8vL0J/h9M2C9KEAmecdoi7Yii+fJQpTf0xmZrytRcY+A2t0yltKyAMoMw5lQyC6fd9aW028WoNz899pWqieWzarWe3PprZGwJCZUxHS3cF/FtVFEF3hU+kagMh0fUm1S+yvNetPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755026638; c=relaxed/simple;
-	bh=JU3dr+Crf9Xb9K7UG3kzrtxsMTafuGut+zNbA4vOTaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D+P57sV4EhdKrfoDSD87+wWrbjdeXbDg6RcT3LfMzP4oQrNPR0w+R7xsHM+yfGOfVUFbRgzGWeytzdQV6cPOhd0mGyOz8y2nZL629/2lltR5rdmTx3vBHo+3jlA4O1KJPYFK88hJEAN9tryOFgSLGCVwANjpRRjiE+JA8LsrDU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+cQE4Hc; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b06d162789so67940231cf.2;
-        Tue, 12 Aug 2025 12:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755026636; x=1755631436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAMPXkeC97be5vrkWMOP6D7jQs9OWhWX6Txvw9DQCp0=;
-        b=c+cQE4HcZpS4O6Mk3zc0DIf4QUD90xmE2jIgSgKL0g6Qedcdt9J/sPXaA9heiH3TIl
-         gEdiclqB4ohQmXrMxcSvOJSfoX1OM43Wz8XA2yRKGSJTcLLXc7qDVoJMXtto1yzpL/e1
-         TisdCITkkzfMoqHS0fesljyCg1NTTO5FfyFiWZuptkvlaCbsMNDSEpllFPziNwd4yuUA
-         0ZFwIugz5VWlTltunLSR2QHfGpURu6jdUfWB/IycYbxHrqCBYfGzUUn85e10qxjL5AFc
-         jHZNyz3YuZDKl3oHNzy5xRG9ufkD4kV4BGEWC2lzsFh5wy/47ubqYd7utpKnqQg+Q8on
-         Rihw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755026636; x=1755631436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cAMPXkeC97be5vrkWMOP6D7jQs9OWhWX6Txvw9DQCp0=;
-        b=dlWRg8M+tx89rK+NjVPLh1ZIZk7ar29wevqWfLC1Zh8psNO/EGVHHjVEGGiV11NHaR
-         FaWt9P+Rzsds8KHHhl6s10S3WmttKODOaODPv5B22sJCNJed0TZdyH55ZVfe3L2wlyr0
-         XNBOQPsIuib4jvWbmlp6Y+TKEUyHLFNgqRcFSH5xAveB2rt8jaVCuRrk5bAr05NPVUQy
-         rq1OwXjxH43EO/xiSatC+N5bRXP1Yw7aBCaof1o/Hx3EMO4Ewfx9SNKZKGcXXJaIx67V
-         hTeWYKgwlRqevM4hcNIcgDcngrQEoBJ/LUkgq0lYtIxxwUG0HjdCkN823Ff6NSi/63lG
-         HtEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8TArwcAL1SulfUbD2h96YXj4BHiLBakblc+FukgjkrZNp420GEyCtddfajD1Pg/q1kdUYvvAAEFBTfQ==@vger.kernel.org, AJvYcCVrivJcV3v1oeoANlkcDKCpCgnm+/2+P96MaRVQwcbD2PoxuNdZIydenNOzyL2ZEqyyhMcXx1wVw14F7x0P@vger.kernel.org, AJvYcCXuvbFlUzMCWIxY8yIT6OanCm4pvYhITbFX0Vy27DtBn0XBJ6T9fQJL79sBGY71aHgs6/PI4yg6L+3g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+nk8EfMJFcDisLO2+xPISnXPNjZ9B2huWJ0WN+F1aHYc04zKR
-	ppW8sz6WpjFbFc8SFgzSggWNmcMOGuRw57Ze7VZpsSx2YjZF+bbq1StNCZXzYA==
-X-Gm-Gg: ASbGncuyYQpxsqBlOx9ru81Yq28J6mOkfZDKHas4hHmYLj0UO5eOtAkHRmWWMF/1jY1
-	3NEGPs/Jxyws0cO/RUkDZc1c9nXRNgMVD6p7vFgQ8dsRIOdJ4mQp14Gn881EM1vp/ILwdNz0qwu
-	Hh8zzxtFnOdnfxm1v1x2srK5VrjIPHYePZVYoDHknS4d3oJpDCanVDvYmyywKICSlIHdBPZ9T14
-	b4AV+6TvOBA8h6DONw5+bL2m4SfjZ2YdeYsnlo9OquoTEw39rnLELXpBWK+bBAef7GfKeH/CBks
-	km3HDvVA65SMg2EPm5almPKaCEne3snYLmIhSaQ1E/kIhK/pk/yCCacC6vLv+9nS7rnbKTCTUrI
-	JJnE=
-X-Google-Smtp-Source: AGHT+IEONCf7cWEXdiNlOm7qpzqCXEN0am4gWgDXvIBizpWxDhCHrQn63WlDGoi1E/X4jo9p75CUwQ==
-X-Received: by 2002:ac8:6f15:0:b0:4ab:80e0:955f with SMTP id d75a77b69052e-4b0fc7d2796mr2792511cf.34.1755026635733;
-        Tue, 12 Aug 2025 12:23:55 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7097e906c3csm101471076d6.65.2025.08.12.12.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 12:23:55 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:MIPS)
-Subject: [PATCHv2 3/3] mips: qca: use led-sources for WMAC LED
-Date: Tue, 12 Aug 2025 12:23:34 -0700
-Message-ID: <20250812192334.11651-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250812192334.11651-1-rosenp@gmail.com>
-References: <20250812192334.11651-1-rosenp@gmail.com>
+	s=arc-20240116; t=1755026647; c=relaxed/simple;
+	bh=xJKYOxUWkPZ3nmqmyRsauTD2N7Zyq6ecCwpko7Jpu+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FdWACO5yKKCxoA3Yrk5Au7wd7D3SILyZZB8ZADOz/GTQkSqmMFkBSxfGW/WqPXrG065ow40w2haRV2M+VS/Vo5LuTy+BhnQP5XAUGF8Fabm/sE8JpPOP577mCXsvcjYKQGDbPaOteF8YsmmawXe6tmO4QeO3r8Ps6yI0HV1XifE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj+eHPKz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E2F2C4CEF4;
+	Tue, 12 Aug 2025 19:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755026647;
+	bh=xJKYOxUWkPZ3nmqmyRsauTD2N7Zyq6ecCwpko7Jpu+M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sj+eHPKzi4lnxnUtytBWZa/RjWt4wpZFiMhFmH2pPKmFPN+YoZmS1qpvmckNGaXPK
+	 z/lYmJezGczjR7PCuMnfx+GOrZ+u2Echk6c74OdP72tFXkA5X1gTgFFwHTsK++PcXW
+	 XmGdGPq8bs5EuO8ZcxXZq9Fs8dWHOtHTzovR2ZataMdtcTmiwWUeogufJXY9ZSYMZV
+	 HXltP0AlX48QSPX8JEI3gXJPuGOnKuT+9UbJjsHYYk9lRlsMY0ZZUjeiOURnu/JMCG
+	 XafKqyl7h/RUgreakPkdEXipd7z+vWcHyDUQdth3astZeQ6m61hOfW7kW0lcmPdYAd
+	 G4iPa2hjmcZUA==
+Date: Tue, 12 Aug 2025 21:23:59 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>, EDAC
+ Mailing List <linux-edac@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, Akira Yokosawa <akiyks@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Ignacio Encinas Rubio
+ <ignacio@iencinas.com>, Marco Elver <elver@google.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, Donald Hunter <donald.hunter@gmail.com>, Eric
+ Dumazet <edumazet@google.com>, Jan Stancek <jstancek@redhat.com>, Paolo
+ Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
+ joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
+ lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
+ stern@rowland.harvard.edu, Breno Leitao <leitao@debian.org>, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [GIT PULL for v6.17-rc2] add a generic yaml parser integrated
+ with Netlink specs generation
+Message-ID: <20250812212359.6e905337@foz.lan>
+In-Reply-To: <e8731f6f-9057-46f0-8df0-7ece500c0928@infradead.org>
+References: <20250812113329.356c93c2@foz.lan>
+	<87h5ycfl3s.fsf@trenco.lwn.net>
+	<e8731f6f-9057-46f0-8df0-7ece500c0928@infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The ath9k driver creates an LED unconditionally being driven with
-sometimes the wrong pin. Not only that, the current dts definitions have
-LEDs for the WMAC that do not behave in response to it. Fix both issues.
+On Tue, 12 Aug 2025 11:41:58 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 10 +++++-----
- arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts   | 10 ++++------
- arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts      | 10 ++++------
- 3 files changed, 13 insertions(+), 17 deletions(-)
+> On 8/12/25 11:31 AM, Jonathan Corbet wrote:
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> >   
+> >> Hi Jon/Jakub,
+> >>
+> >> In case you both prefer to merge from a stable tag, please pull from:
+> >>
+> >> 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git docs/v6.17-1
+> >>
+> >> For:
+> >>
+> >> - An YAML parser Sphinx plugin, integrated with Netlink YAML doc
+> >>   parser.  
+> > 
+> > OK, I have done that.  I will note that it adds a warning:
+> >   
+> >> Documentation/networking/netlink_spec/index.rst: WARNING: document isn't included in any toctree  
+> > ...it might be nice to get that straightened out.  
+> 
+> I see it, at least in linux-next. However, its format is
+> "different," so that may have confused whatever printed
+> that message:
+> 
+> from Documentation/networking/index.rst:
+> 
+>    filter
+>    generic-hdlc
+>    generic_netlink
+>    netlink_spec/index
+>    gen_stats
+>    gtp
+>    ila
 
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index a7901bb040ce..344e1a2ee6ea 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -56,11 +56,6 @@ led-2 {
- 			label = "tp-link:green:qss";
- 			gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
- 		};
--
--		led-3 {
--			label = "tp-link:green:wlan";
--			gpios = <&gpio 9 GPIO_ACTIVE_LOW>;
--		};
- 	};
- };
- 
-@@ -111,4 +106,9 @@ partition@2 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <9>;
-+		led-active-low;
-+	};
- };
-diff --git a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-index 37a74aabe4b4..573ca7752698 100644
---- a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-@@ -22,12 +22,6 @@ memory@0 {
- 	leds {
- 		compatible = "gpio-leds";
- 
--		led-wlan {
--			label = "dragino2:red:wlan";
--			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--		};
--
- 		led-lan {
- 			label = "dragino2:red:lan";
- 			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-@@ -101,4 +95,8 @@ spiflash: w25q128@0 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <0>;
-+	};
- };
-diff --git a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-index a7108c803eb3..6891d9589b68 100644
---- a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-@@ -22,12 +22,6 @@ memory@0 {
- 	leds {
- 		compatible = "gpio-leds";
- 
--		led-wlan {
--			label = "tp-link:green:wlan";
--			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--		};
--
- 		led-lan {
- 			label = "tp-link:green:lan";
- 			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-@@ -117,4 +111,8 @@ spiflash: s25sl032p@0 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <0>;
-+	};
- };
--- 
-2.50.1
+Maybe some merge conflict/merge issue, as this was renamed:
 
+$ git show 1ce4da3dd99e98bd4a8b396c291041080e0fe85e Documentation/networking/index.rst
+commit 1ce4da3dd99e98bd4a8b396c291041080e0fe85e
+Author: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date:   Thu Jun 12 10:34:30 2025 +0200
+
+    docs: use parser_yaml extension to handle Netlink specs
+    
+    Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
+    This way, no .rst files would be written to the Kernel source
+    directories.
+    
+    We are using here a toctree with :glob: property. This way, there
+    is no need to touch the netlink/specs/index.rst file every time
+    a new Netlink spec is added/renamed/removed.
+    
+    Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+    Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+
+diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
+index ac90b82f3ce9..b7a4969e9bc9 100644
+--- a/Documentation/networking/index.rst
++++ b/Documentation/networking/index.rst
+@@ -57,7 +57,7 @@ Contents:
+    filter
+    generic-hdlc
+    generic_netlink
+-   netlink_spec/index
++   ../netlink/specs/index
+    gen_stats
+    gtp
+    ila
+
+Thanks,
+Mauro
 
