@@ -1,244 +1,163 @@
-Return-Path: <linux-kernel+bounces-765397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6DB23265
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:17:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E589B2324B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 20:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D71A2495B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:12:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43EA2A1BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 18:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B01EF38C;
-	Tue, 12 Aug 2025 18:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EBtlOOjj"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3AC2FA0DF;
+	Tue, 12 Aug 2025 18:11:52 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF63B305E08;
-	Tue, 12 Aug 2025 18:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7464282E1;
+	Tue, 12 Aug 2025 18:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755022293; cv=none; b=GP1itCRFbUROK63L4FFdfZJi+UMp5C011iunxUEpTylsdL4PM4kWJXPCPyxtXRdQv2ziQY+3h3grGBJzBg1JoBQLJnfpJh4U/LGWGCrtQzxDys07SkHJoPvh3goPTpByW9+++OT/cyFtjgyGrNtg/ohbsT0npwatlTsjh7l24z4=
+	t=1755022312; cv=none; b=OCbAmL+c9L6NadqO6JZI3HrxaPEmc7RKPWAz9bAMzRh02AtWZurOWtHDhKGFl9P7ptm6qUXZlwGT5vneV/sijMfdEw1QzzreEAs5E0szPQPqrLy4e1DCzZnrSbRqmRis4qSH5O7f4pv0Ao4JDcV+d6IlGsELyqXpvf5HqYKq5ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755022293; c=relaxed/simple;
-	bh=vY/psp6pRM7f5gUdmAuJdPrf6i+r2OHtDbxkIHicgkE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Apx38sbNEd/pKUS0mmEbGSaeUFPZYoQjBjxeVfEWIsP4HgYBUramIkxJcz/6vYh7CXjSOXtgfWl+vaTTSZmUCWq2MUCEY98ZBohl5PfZIShuFsNu3IaLYZXZNYAsslQgpU/95351fvsChQW7K8KYifScH1ZiwQjtFTwrkngU8to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EBtlOOjj; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57CIAhtT1896346;
-	Tue, 12 Aug 2025 13:10:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755022243;
-	bh=DTRGSr/sFqz08xTFK9XBf9uPAWALzcXmf8DmSzCh0us=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=EBtlOOjj5xK3wwwMUOSHbhUYClQTKWCZlZlNuSgsm74hVSgN+8Qh0tM1Wx+mcmiE2
-	 Qr7esoVUrjGZ22kSvHng8LlxowAAtE6h06JA3wfMoxui/8e3CvvKwV9+QYGzMdxV/Q
-	 CYvOR1aR78/xQBLTVbetN7CLtUYbRT6bzmCh7mtQ=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57CIAhPi3655268
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 12 Aug 2025 13:10:43 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 12
- Aug 2025 13:10:42 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 12 Aug 2025 13:10:42 -0500
-Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57CIAZNH1066109;
-	Tue, 12 Aug 2025 13:10:36 -0500
-Message-ID: <02920114-b86b-47ad-945d-1905b9117518@ti.com>
-Date: Tue, 12 Aug 2025 23:40:35 +0530
+	s=arc-20240116; t=1755022312; c=relaxed/simple;
+	bh=IPuyGTmGXMHr2tPOmZNLid39cwl5Ro+vwFkF52X02UU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oZEDyeG2bZQXwH615QRIwmDXDhN/B9xAQxO6ze27gG1grhuAkZS+M6mAKB2GL6nr/+i4hR7HuKqw6AARP+4W8Q48rp0tcS8T6wvX0+TnkyxxFRxIzW/7G/lK++4kKhF0lRCptGSRKu8PXT502UresJsErPlKW4rQDAzPRuelbuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76ba6200813so495883b3a.0;
+        Tue, 12 Aug 2025 11:11:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755022310; x=1755627110;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Sc0iVOrEVFOByaHU7AVFmw7/jwWHw2s7ViclReSH2Q=;
+        b=V0V5T3ZLquqogwp3KiqYZX4mY3suSloKcaxZTD5BR3fcdweRP9pBUaXmUchIp4p+jd
+         Y0suiyZrKjAxpDFYHqT/3/wRANaidSNKvCtOiS2hHo1fmKwbkBEqXrBdUeXvwIU+bwmW
+         VEoDzN3vrS4xGQKzfIvEifovoZe234LPCHFlVV6fsD+aQndz1/GfUDV1IuqrRh4cv+Kw
+         4xAkpe77Ic7+UN7GlUuVhe7U5nFgcs3J4fELnLVTgOQVB36WouALHeNANb6DMuZVnkrQ
+         LJMgSOrjQE/388E77eUlUrjHUd39MiS5/jl8FlFsKcCxyvDdqwjxsV5Eg18TqrqbWpWG
+         qCmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkcTWfzL/ZYiXIqjGEMfaAb3MoNIHi3oa/4iR8o2p9IPh63JKk+/d/dcXdfHdObsJYiGbAfDfWUkL20B4=@vger.kernel.org, AJvYcCX55PWVzA4LaO/H7avyoLUMQzX2KGWgwXvy8YAPphTg+wgHk10+hXzo8IQ+yPhvcnhqU7qIQMvzRmZskXhi1SGj+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwckHC3xP70Hwf4ibsn5vyiMB7+beR6s15SdLZeYaUMadXKQpHV
+	E5+ysYHTstpMm67IK91WPUJQwWD9yJhCk6rneF+BrBASF6mc8NCPC6pr
+X-Gm-Gg: ASbGncttuNLcPOjiGjQDML8RPFvTwOdfOFsOyWryMoL/0FKWUQaSDEhd7/3zJgN5xOO
+	5HfkIM6e8FvdOz4hDMDGgp7LUNR3vf+YNmIebRWed1Uweuk9mX1qzyhWSrsvZV/iEbBYpLUb0nA
+	OMssX9F32Su2fDFL6Tuq0kg61VEyT+McZDa8qkUf7QwBfAeje2RBwQn1N0Vh1AYPJ/CtncyDGeS
+	LeKD7natmL01ad14NZD7Cmj+LXA8Mgd369g0yAlP5FgeHKhEs7qWfkpQ55jE8pqLVwr+W/zdFON
+	Jy9g3SdRSrkUp+RGUGMD2AqWMwn/4E6Ke5ItkDrf9vPYGb4yyGVCpGKzKtwQ21RFZoPQxzvrU+3
+	LZMuqlHPh0O7iQKSypmZXBbU=
+X-Google-Smtp-Source: AGHT+IGjJiOgFGABGQ9x06XkqaQHRFpKGeWGp1hYW0cDylnclyQZGbxcp9GEIjL1o/o42pInwYYYEw==
+X-Received: by 2002:a05:6a20:7d86:b0:23d:da6d:b050 with SMTP id adf61e73a8af0-240a8b4fda3mr131209637.6.1755022310014;
+        Tue, 12 Aug 2025 11:11:50 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bb1133fsm26177530a12.56.2025.08.12.11.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 11:11:49 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	Yunseong Kim <ysk@kzalloc.com>
+Subject: [PATCH v3] perf: Avoid undefined behavior from stopping/starting inactive events
+Date: Tue, 12 Aug 2025 18:10:47 +0000
+Message-ID: <20250812181046.292382-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] drm/tidss: Fix sampling edge configuration
-From: Swamil Jain <s-jain1@ti.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>, devarsh <devarsht@ti.com>,
-        "Jyri Sarha" <jyri.sarha@iki.fi>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Sam
- Ravnborg <sam@ravnborg.org>,
-        Benoit Parrot <bparrot@ti.com>, Lee Jones
-	<lee@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <thomas.petazzoni@bootlin.com>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ti.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>
-References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
- <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
- <71ef3203-e11d-4244-8d2d-8e47e8ba6140@ti.com>
- <f15779ad-788a-4dc6-b5a6-4187b9a9c986@ti.com>
- <e9df67f0-8fce-4fbf-8fff-c499c4a2efaf@bootlin.com>
- <86cf7d99-1295-42ab-acda-88a8212ec4d4@ti.com>
-Content-Language: en-US
-In-Reply-To: <86cf7d99-1295-42ab-acda-88a8212ec4d4@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Calling pmu->start()/stop() on perf events in PERF_EVENT_STATE_OFF can
+leave event->hw.idx at -1. When PMU drivers later attempt to use this
+negative index as a shift exponent in bitwise operations, it leads to UBSAN
+shift-out-of-bounds reports.
 
+The issue is a logical flaw in how event groups handle throttling when some
+members are intentionally disabled. Based on the analysis and the
+reproducer provided by Mark Rutland (this issue on both arm64 and x86-64).
 
-On 8/12/25 23:32, Swamil Jain wrote:
-> 
-> 
-> On 8/11/25 15:26, Louis Chauvet wrote:
->>
->>
->> Le 08/08/2025 à 18:26, Swamil Jain a écrit :
->>>
->>>
->>> On 8/8/25 19:16, devarsh wrote:
->>>> Hi Louis,
->>>>
->>>> Thanks for the patch.
->>>>
->>>> On 30/07/25 22:32, Louis Chauvet wrote:
->>>>> As stated in the AM62x Technical Reference Manual (SPRUIV7B), the data
->>>>> sampling edge needs to be configured in two distinct registers: one 
->>>>> in the
->>>>> TIDSS IP and another in the memory-mapped control register modules.
->>>>
->>>> I don't think AM62x is thee only one which requires this and on the
->>>> contrary not all SoCs require this extra setting. We had been 
->>>> waiting on
->>>> confirmations from hardware team and very recently they gave a list of
->>>> SoCs which require this, as per that I think we need to limit this to
->>>> AM62x and AM62A per current supported SoCs.
->>>>
->>>> Swamil,
->>>> Please confirm on this and share if any additional details required 
->>>> here.
->>>>
->>>
->>> Yeah Devarsh, as you mentioned, this is valid for AM62X, AM62A and
->>> AM62P. We would have upstreamed this feature, but there are some
->>> corrections in Technical Reference Manual for these SoCs regarding
->>> programming CTRL_MMR_DPI_CLK_CTRL register fields, we are in loop with
->>> H/W team, waiting for their official confirmation regarding this issue.
->>>
->>> Thanks Louis for working on this patch, but we should wait for H/W
->>> team's confirmation.
->>
->> Hello all,
->>
->> Thanks for the feedback. I was not aware of this current work.
->> Do you plan to send the fix yourself? Should I wait your HW team 
->> feedback and send a v2?
->>
-> Hi Louis, H/W team confirmed that, CTRL_MMR_DPI0_CLK_CTRL.bit[8] should 
-> be programmed same as DSS_VP1_POL_FREQ.bit[14](IPC) and 
-> CTRL_MMR_DPI0_CLK_CTRL.bit[9] should be programmed same as 
-> DSS_VP1_POL_FREQ.bit[16](RF). Please continue with you patches.
-> 
-Please go ahead and send v2.
-We are working with the documentation team to get the Technical 
-Reference Manual updated in parallel.
+The scenario unfolds as follows:
 
-Regards,
-Swamil.
+ 1. A group leader event is configured with a very aggressive sampling
+    period (e.g., sample_period = 1). This causes frequent interrupts and
+    triggers the throttling mechanism.
+ 2. A child event in the same group is created in a disabled state
+    (.disabled = 1). This event remains in PERF_EVENT_STATE_OFF.
+    Since it hasn't been scheduled onto the PMU, its event->hw.idx remains
+    initialized at -1.
+ 3. When throttling occurs, perf_event_throttle_group() and later
+    perf_event_unthrottle_group() iterate through all siblings, including
+    the disabled child event.
+ 4. perf_event_throttle()/unthrottle() are called on this inactive child
+    event, which then call event->pmu->start()/stop().
+ 5. The PMU driver receives the event with hw.idx == -1 and attempts to
+    use it as a shift exponent. e.g., in macros like PMCNTENSET(idx),
+    leading to the UBSAN report.
 
->> I also have a very similar patch ready for u-boot (depending on the 
->> same DT modifications), do you plan to fix u-boot too?
->>
-> Please fix u-boot also.
-> 
-> Thanks and regards,
-> Swamil.
-> 
->> Thanks,
->> Louis Chauvet
->>
->>
->>> Regards,
->>> Swamil.
->>>
->>>> Regards
->>>> Devarsh
->>>>
->>>>    Since
->>>>> the latter is not within the same address range, a phandle to a syscon
->>>>> device is used to access the regmap.
->>>>>
->>>>> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone 
->>>>> platform Display SubSystem")
->>>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>>>>
->>>>> ---
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>> ---
->>>>>    drivers/gpu/drm/tidss/tidss_dispc.c | 14 ++++++++++++++
->>>>>    1 file changed, 14 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c 
->>>>> b/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>> index 
->>>>> c0277fa36425ee1f966dccecf2b69a2d01794899..65ca7629a2e75437023bf58f8a1bddc24db5e3da 100644
->>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>> @@ -498,6 +498,7 @@ struct dispc_device {
->>>>>        const struct dispc_features *feat;
->>>>>        struct clk *fclk;
->>>>> +    struct regmap *clk_ctrl;
->>>>>        bool is_enabled;
->>>>> @@ -1267,6 +1268,11 @@ void dispc_vp_enable(struct dispc_device 
->>>>> *dispc, u32 hw_videoport,
->>>>>                   FLD_VAL(mode->vdisplay - 1, 27, 16));
->>>>>        VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1, 0, 0);
->>>>> +
->>>>> +    if (dispc->clk_ctrl) {
->>>>> +        regmap_update_bits(dispc->clk_ctrl, 0, 0x100, ipc ? 0x100 
->>>>> : 0x000);
->>>>> +        regmap_update_bits(dispc->clk_ctrl, 0, 0x200, rf ? 0x200 : 
->>>>> 0x000);
->>>>> +    }
->>>>>    }
->>>>>    void dispc_vp_disable(struct dispc_device *dispc, u32 hw_videoport)
->>>>> @@ -3012,6 +3018,14 @@ int dispc_init(struct tidss_device *tidss)
->>>>>        dispc_init_errata(dispc);
->>>>> +    dispc->clk_ctrl = 
->>>>> syscon_regmap_lookup_by_phandle_optional(tidss->dev->of_node,
->>>>> +                                   "ti,clk-ctrl");
->>>>> +    if (IS_ERR(dispc->clk_ctrl)) {
->>>>> +        r = dev_err_probe(dispc->dev, PTR_ERR(dispc->clk_ctrl),
->>>>> +                  "DISPC: syscon_regmap_lookup_by_phandle 
->>>>> failed.\n");
->>>>> +        return r;
->>>>> +    }
->>>>> +
->>>>>        dispc->fourccs = devm_kcalloc(dev, 
->>>>> ARRAY_SIZE(dispc_color_formats),
->>>>>                          sizeof(*dispc->fourccs), GFP_KERNEL);
->>>>>        if (!dispc->fourccs)
->>>>>
->>>>
->>
-> 
+The throttling mechanism attempts to start/stop events that are not
+actively scheduled on the hardware.
+
+Move the state check into perf_event_throttle()/perf_event_unthrottle() so
+that inactive events are skipped entirely. This ensures only active events
+with a valid hw.idx are processed, preventing undefined behavior and
+silencing UBSAN warnings. The corrected check ensures true before
+proceeding with PMU operations.
+
+The problem can be reproduced with the syzkaller reproducer:
+Link: https://lore.kernel.org/lkml/714b7ba2-693e-42e4-bce4-feef2a5e7613@kzalloc.com/
+
+Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+---
+ kernel/events/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8060c2857bb2..872122e074e5 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2665,6 +2665,9 @@ static void perf_log_itrace_start(struct perf_event *event);
+ 
+ static void perf_event_unthrottle(struct perf_event *event, bool start)
+ {
++	if (event->state != PERF_EVENT_STATE_ACTIVE)
++		return;
++
+ 	event->hw.interrupts = 0;
+ 	if (start)
+ 		event->pmu->start(event, 0);
+@@ -2674,6 +2677,9 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
+ 
+ static void perf_event_throttle(struct perf_event *event)
+ {
++	if (event->state != PERF_EVENT_STATE_ACTIVE)
++		return;
++
+ 	event->hw.interrupts = MAX_INTERRUPTS;
+ 	event->pmu->stop(event, 0);
+ 	if (event == event->group_leader)
+-- 
+2.50.0
+
 
