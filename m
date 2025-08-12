@@ -1,182 +1,400 @@
-Return-Path: <linux-kernel+bounces-764777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FE3B22716
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C0B22735
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 14:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57B594E3251
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40FB53B1C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 12:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1B11F4CA0;
-	Tue, 12 Aug 2025 12:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491031E500C;
+	Tue, 12 Aug 2025 12:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I/VkShnr"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LqXo3FVC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711EE1A8412
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0861B661;
+	Tue, 12 Aug 2025 12:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755002236; cv=none; b=HMRspA7De0bHEMKodWIUBi8HwsFYpl8vh/mKKVDORg3+G5LhiIvBA0e6oJVUpvxlnr6Z8nvziQjEP5gbxGNeUfvuKDvI0xeWPqTt2qqRxsBrAO7bmBKUT6ZYOSUiNyTqeJ+xFJSmd1Pf70qok+3P8V4VtQ0hI1UwVNqZIzwk5hk=
+	t=1755002339; cv=none; b=YxzlUKoHHTwo1NRFusrjK20xBmPkOarS6pY83pK72ipNAVC7+ajb9VNVqFcWz0BZ+lcGYvbqdE44/MZCB3dxdXDGzyvMxWm+8+CYCaBanfnSCmkf4fUYLdSNjRdhLsxPxBXWz1Ii2nJHsbIyWHMRwG74wlRO4zlVHlTyj2RacT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755002236; c=relaxed/simple;
-	bh=6+vPV+bK6DJ6nXeb3jB5k6SS93vCnToxb34PAPFuCJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ombjy1KTjlqPo54E6JM9wVVtwhcFeF8Dqf7bynVlEmVi7zFeBazGBTf01WFChdoTb2ME5D2Iyg5PbGrJ7/ugMTc47DMdlhaWNEP7lfA3laftrr98vQUBmaSwHBDqF28IagOWOvTYUbYm2rdxCiy3cngHLMGs+zsm5xWL6LGrzQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I/VkShnr; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so65005e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 05:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755002233; x=1755607033; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PtQo1+YnKpPyJJuFIk2dQE6YfNoW6wyzVP6JiM6d+x0=;
-        b=I/VkShnr3w0k6l8zw/7hv23zNnpnawZ/+HPWVHhDrDMcegbpRAHRMW4ZeGn6k5u/Sb
-         QJ+L728yhb5ZjGQCCYWCqProXFrcwPRRkosOpXjV25UMg/sJUTHmSC+AZU6HvuNDjmKg
-         v2EbtoGYn5As7nPU4g4mFOCJNWoAdA5YLXtbPhwV6S8WbPjF4+2oMSXxsq1qU3LB7rr0
-         TdQdd/xjIoH5UfnOk2X8U8DkIa/Fma10Tf4wJTkMZ/yB7pTnpaA9htapVzGoai+5tkm/
-         qi0hKW4bGpsSk0aqwDL9lD904HHzatK0lHZCJmXuiHOv7wYFZoolnVxEnutvHl9YxqN2
-         FmWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755002233; x=1755607033;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtQo1+YnKpPyJJuFIk2dQE6YfNoW6wyzVP6JiM6d+x0=;
-        b=oBc/nF/KA+ShNAeCeWGusYxQ0YjE12Bdd/9RgOZtB/JK6/0aIlYNvuOR3bTGzsgRdW
-         kFSLuLqDD4EtTHQK5aD00ZOC15poECIsoBswdwbxfc70GI1E5KYjZsqJtDOn3EJGW+T7
-         DjkpiCOadEHuhm4NhdqUIq5CumItw+9jdcTFdX3D+AHf9LK11nf+b55ge9y6KoDeuXH4
-         Oad1Zjk9eDsKuPfMxa71y9MkADnjoSSo00Y46H2Gsu2n5hxkjVA/8l/Jss1fzxrwD16S
-         WVzSJC025bm0aq+xyucmMRgRRK9AVsaonwWuKa6+bnlOH5AsjFatCuEOj+s6abtzf173
-         2niQ==
-X-Gm-Message-State: AOJu0YzETU41N5JS5ztLrQzgMdnzW8G24zCbCtchjvjYMz8LgGNboMgO
-	L11AG27kz9OQ5GKPT2cB+3+JmsjSvEDvm6QJ6uV8YywBPg/8gyHM2CsFxykxaNhuyg==
-X-Gm-Gg: ASbGncubKYgSbwbo0E1wce1SWR6A5C9sXfs3sc0oojdTzPaY5MkHnUft/Y2LAdEMcrA
-	1L9oc3xxvLBaaDCvQ5pVaxmdyOeEHPvoQRKi4oVwuQIeDeuqYyV+ckr8IygTp9vjnflGnbzclpL
-	4Ewp7/g1QMURsJPTraLYnmz0xsY/VUT7bChfTsyJFu9BUUQI4yDefVMR3x8T3YNHtRvCz1G7ezq
-	m+qG0TDmIRA0sHiPtZdRuTlqE7UNbKe/+MyHia9zaH3gIwQBd69dplHkv7S4pTHYUDpghhpMgBI
-	mW57pZdNe8okw6UgKb3l4IUdy8IIbvefIo/2UV6iu3l8Vmfgcsv//kCg6yOxqnV6G0oNDNLUqxj
-	486rL4FiZbDUD9pFfweauvw0wlf6ABGcEXAxO2w+dZi149btkOYeNrlpRtSfkHcKBsg==
-X-Google-Smtp-Source: AGHT+IFFzsEa9cITaRrgMdyauTFUB3XSIIAjCGeM6bXsRwPoXP8edKN4pm8dt4hrGOEGeaKzytXWkQ==
-X-Received: by 2002:a05:600c:1c16:b0:442:feea:622d with SMTP id 5b1f17b1804b1-45a118c8a81mr1414775e9.1.1755002232511;
-        Tue, 12 Aug 2025 05:37:12 -0700 (PDT)
-Received: from google.com (110.121.148.146.bc.googleusercontent.com. [146.148.121.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm317915135e9.1.2025.08.12.05.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 05:37:11 -0700 (PDT)
-Date: Tue, 12 Aug 2025 12:37:08 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
-Message-ID: <aJs1dMiomjtxVwl4@google.com>
-References: <aIt67bOzp6XS_yO-@google.com>
- <20250731165757.GZ26511@ziepe.ca>
- <aIurlx5QzEtjpFLd@google.com>
- <20250801185930.GH26511@ziepe.ca>
- <aJDGm02ihZyrBalY@google.com>
- <20250805175753.GY26511@ziepe.ca>
- <aJNiW48DdXIAFz8r@google.com>
- <20250811185523.GG377696@ziepe.ca>
- <aJsXkidmcSl3jUJP@google.com>
- <20250812121056.GB599331@ziepe.ca>
+	s=arc-20240116; t=1755002339; c=relaxed/simple;
+	bh=+pQCHA/YsiEN5buh66ENdiaOQ0VW42HN2VHXd8WE5AE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IckFZaXGTl9PasCfDDKy1iSFHefwVCoN7aefA0eHTyglDYabCBPGQ1e6t0pU205/okeL6spzs9rMjrGnFOJDaqnJcx4uVGXdu/7NAmk/Jol9NNM1boaVWD35dVyZYBHDQE5S6fib/5gL6Bx63Pj0KHyakSjnp00VIV4Y+gMuBqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LqXo3FVC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755002328;
+	bh=+pQCHA/YsiEN5buh66ENdiaOQ0VW42HN2VHXd8WE5AE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=LqXo3FVCvi56pSCatk45+XDdD0H9nsBEu4cQnmgSPNlZsurhAOhL3au8AE9973u8m
+	 ZU26p1z6Dlzp0xut2qhShM1UREY3grrRRjxQP+pXBvwZebHrAZiexJSgwHyct6rrui
+	 2rNaSTofBo160/0a7J/M85bM8w9OSnK7P5cYFPcNOZnRj4CKwSGbT9m9jtEBx1ojAi
+	 wdBHk3DA34bM5KGxQ46eFL8lx8cW/eONz1V+otJnplnOVFAemoZk1bEUa3pgXkZxcT
+	 ClW5Pe+4kil70/qGEREbEdtl5m8GwX/X4wFkpxHN/8FAq4EOpJ9Gr/oNJCIwedegB1
+	 w+sx5Gq4poMNQ==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7920917E00A3;
+	Tue, 12 Aug 2025 14:38:47 +0200 (CEST)
+Message-ID: <91864a1c047d2bdfce202b070716a694ede47d5e.camel@collabora.com>
+Subject: Re: [PATCH v2 0/7] media: rkvdec: Add HEVC backend
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Alex Bee <knaerzche@gmail.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, 	linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, 	devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 08:38:45 -0400
+In-Reply-To: <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+References: <20250810212454.3237486-1-jonas@kwiboo.se>
+	 <50162371fd54fc976a84fcf57c9b69112a892c46.camel@collabora.com>
+	 <1dd29158-0660-4254-ac00-1316768d9b82@kwiboo.se>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-vqPfCzXk6jLqVbkdE40Z"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250812121056.GB599331@ziepe.ca>
 
-On Tue, Aug 12, 2025 at 09:10:56AM -0300, Jason Gunthorpe wrote:
-> On Tue, Aug 12, 2025 at 10:29:38AM +0000, Mostafa Saleh wrote:
-> > On Mon, Aug 11, 2025 at 03:55:23PM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Aug 06, 2025 at 02:10:35PM +0000, Mostafa Saleh wrote:
-> > > > I am not sure I understand, the SMMU driver will register its IOMMU
-> > > > ops to probe the devices
-> > > 
-> > > You couldn't do this. But why do you need the iommu subsystem to help
-> > > you do probing for the pKVM driver? Today SMMU starts all devices in
-> > > ABORT mode except for some it scans manually from the fw tables.
-> > > 
-> > > They switch to identity when the iommu subsystem attaches devices, you
-> > > can continue to do that by having the paravirt driver tell pkvm when
-> > > it attaches.
-> > > 
-> > > What is wrong with this approach?
-> > > 
-> > 
-> > My confusion is that in this proposal we have 2 drivers:
-> > - arm-smmu-v3-kvm: Register arm_smmu_ops? binds to the SMMUs
-> 
-> No, I don't mean two iommu subsystem drivers. You have only the
-> pkvm-iommu driver. Whatever you bind to the arm-smmu does not register
-> with the iommu subsystem.
 
-I see.
+--=-vqPfCzXk6jLqVbkdE40Z
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > I am almost done with v4, which relies on a single driver, I don’t think
-> > it’s that complicated, it adds a few impl_ops + some few re-works.
-> > 
-> > I think that is much simpler than having 3 drivers.
-> > Also better for the current SMMUv3 driver maintainability to have the KVM driver
-> > as mode, where all the KVM logic is implemented in a new file which relies on few
-> > ops, similar to “tegra241-cmdqv.c”
-> 
-> I don't understand how you can do this, it is fundamentally not an
-> iommu subsystem driver if pkvm is in control of the HW.
-> 
-> And I still strongly do not want to see a para virt iommu driver hidden
-> inside the smmu driver. It should be its own thing.
-> 
-> The tegra ops were for customizing the iommu subsystem behavior of the
-> arm iommu driver, not to turn it into a wrapper for a different
-> paravirt driver!!
+Le mardi 12 ao=C3=BBt 2025 =C3=A0 02:00 +0200, Jonas Karlman a =C3=A9crit=
+=C2=A0:
+> Hi Nicolas,
+>=20
+> On 8/11/2025 11:52 PM, Nicolas Dufresne wrote:
+> > Le dimanche 10 ao=C3=BBt 2025 =C3=A0 21:24 +0000, Jonas Karlman a =C3=
+=A9crit=C2=A0:
+> > > This series add a HEVC backend to the Rockchip Video Decoder driver.
+> > >=20
+> > > With the dependent H.264 High 10 and 4:2:2 profile support series
+> > > finally merged there is finally time to send a v2 with minor changes =
+and
+> > > a suggested code style fix of this series. v1 of this series has been
+> > > fully functional up until recent unstaging of the rkvdec driver.
+> > >=20
+> > > A version of this HEVC backend has been in use by the LibreELEC distr=
+o
+> > > for the past 5+ years [1]. It was initially created based on a copy o=
+f
+> > > the H264 backend, unstable HEVC uAPI controls and a cabac table + sca=
+ling
+> > > matrix functions shamelessly copied 1:1 from the Rockchip mpp library=
+.
+> > >=20
+> > > It has since then been extended to use the stable HEVC uAPI controls =
+and
+> > > improved opon e.g. to include support for rk3288 and fix decoding iss=
+ues
+> > > by Alex Bee and Nicolas Dufresne.
+> > >=20
+> > > The version submitted in this series is based on the code currently u=
+sed
+> > > by the LibreELEC distro, excluding hard/soft reset, and with cabac ta=
+ble
+> > > and scaling matrix functions picked from Sebastian Fricke prior serie=
+s
+> > > to add a HEVC backend [2].
+> > >=20
+> > > Big thanks to Alex Bee, Nicolas Dufresne and Sebastian Fricke for mak=
+ing
+> > > this series possible!
+> > >=20
+> > > Patch 1 add the new HEVC backend.
+> > > Patch 2-3 add variants support to the driver.
+> > > Patch 4 add support for a rk3288 variant.
+> > > Patch 5 add a rk3328 variant to work around hw quirks.
+> > > Patch 6-7 add device tree node for rk3288.
+> > >=20
+> > > This was tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+> > >=20
+> > > =C2=A0 v4l2-compliance 1.30.1, 64 bits, 64-bit time_t
+> > > =C2=A0 ...
+> > > =C2=A0 Total for rkvdec device /dev/video1: 49, Succeeded: 49, Failed=
+: 0, Warnings:
+> > > 0
+> > >=20
+> > > =C2=A0 Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4=
+l2request
+> > > =C2=A0 ...
+> > > =C2=A0 Ran 137/147 tests successfully
+> >=20
+> > I've also tested RK3399 using Renegade Elite from Libre Computer, thoug=
+h with
+> > GStreamer. My results for this suite is 134/147, with failing tests bei=
+ng:
+> >=20
+> > - DBLK_D_VIXS_2
+> > - DSLICE_A_HHI_5
+> > - DELTAQP_A_BRCM_4
+> > - EXT_A_ericsson_4
+> > - PICSIZE_A_Bossen_1 (expected)
+> > - PICSIZE_B_Bossen_1 (expected)
+> > - PICSIZE_C_Bossen_1 (expected)
+> > - PICSIZE_D_Bossen_1 (expected)
+> > - SAODBLK_A_MainConcept_4
+> > - SAODBLK_B_MainConcept_4
+> > - TSUNEQBD_A_MAIN10_Technicolor_2 (expected)
+> > - WPP_D_ericsson_MAIN10_2
+> > - WPP_D_ericsson_MAIN_2
+> >=20
+> > Please share your list, this seems big enough difference to be worth ma=
+king sure
+> > we did not diverge somewhere between both interpretation of the V4L2 sp=
+ec.
+> > GStreamer has been mostly tested with MTK driver so far. Can you also s=
+hare a
+> > link to the latest ffmpeg tree you are using (since its not upstream FF=
+MPEG) ?
+>=20
+> As mentioned in this cover letter the full fluster report can be found
+> at [3], and has links to the trees used to produce the raw report data,
+> have now also added some more details of versions used.
 
-I see, but most of the code in KVM mode is exactly the same as in the
-current driver, as the driver is not HW agnostic (unlike virtio-iommu).
-In fact it does almost everything, and just delegates
-attach_identity/blocked to the hypervisor.
+Missed that, sorry.
 
-IMO, having a full fledged KVM IOMMU driver + faux devices + moving
-all shared SMMUv3 code, just for this driver to implement a handful
-lines of code, is an over-kill, especially since most of this logic
-won’t be needed in the future.
+>=20
+> The tests from the report was running on a RK3399 Rock Pi 4B v1.5.
+>=20
+> - Linux: 6.17-rc1 + patches
+> - fluster: 0.4.1 + patch
+> - FFmpeg: 7.1.1 + patches
+> - GStreamer: 1.27.1
+>=20
+> JCT-VC-HEVC_V1 on GStreamer-H.265-V4L2SL-Gst1.0:
+>=20
+> - DBLK_D_VIXS_2 (fail)
+> - DSLICE_A_HHI_5 (fail)
+> - EXT_A_ericsson_4 (fail)
+> - PICSIZE_A_Bossen_1 (error)
+> - PICSIZE_B_Bossen_1 (error)
+> - PICSIZE_C_Bossen_1 (error)
+> - PICSIZE_D_Bossen_1 (error)
+> - SAODBLK_A_MainConcept_4 (fail)
+> - SAODBLK_B_MainConcept_4 (fail)
+> - TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+>=20
+> JCT-VC-HEVC_V1 on FFmpeg-H.265-v4l2request:
+>=20
+> - CONFWIN_A_Sony_1 (fail)
+> - EXT_A_ericsson_4 (fail)
+> - PICSIZE_A_Bossen_1 (error)
+> - PICSIZE_B_Bossen_1 (error)
+> - PICSIZE_C_Bossen_1 (error)
+> - PICSIZE_D_Bossen_1 (error)
+> - SAODBLK_A_MainConcept_4 (fail)
+> - SAODBLK_B_MainConcept_4 (fail)
+> - TSUNEQBD_A_MAIN10_Technicolor_2 (error)
+> - VPSSPSPPS_A_MainConcept_1 (error)
+>=20
+> The WPP_*_ericsson_MAIN* samples get a mixed Fail/Success when running
+> the full test suite for FFmpeg-H.265-v4l2request, however retrying them
+> individually they will eventually report Success. Not sure this is an
+> issue with FFmpeg or the driver, since they pass with GStreamer.
+>=20
+> Interesting that DBLK_D_VIXS_2, DSLICE_A_HHI_5 and CONFWIN_A_Sony_1
+> consistently differs between GStreamer and FFmpeg.
 
-In addition, with no standard iommu-binding, this driver has to be
-enlightened somehow about how to deal with device operations.
+Indeed, let's identify the differences in parameters. For CONFWIN though,
+Benjamin implemented pretty much a hack in GStreamer to support it. This vi=
+deo
+utilize the x,y coordinate of the conformance window, while maintaining the=
+ same
+resolution during playback. This x/y coordinate is rarely used in real worl=
+d, so
+this shouldn't be a priority.
 
-As mentioned before, when nesting is added, many of the hooks will be
-removed anyway as KVM would rely on trap and emulate instead of HVCs.
+I think for both GStreamer and FFMPEG, the right way would be to signal the=
+ crop
+over the padded area and leave it to some render filter handle it. For flak=
+e,
+that's something to check, but also not really a blocker.
 
-Otherwise, we can skip this series and I can post nesting directly
-(which would be a relatively bigger one), that probably would rely
-on the same concept of the driver bootstrapping the hypervisor driver.
+>=20
+> [3] https://gist.github.com/Kwiboo/bedf1f447b50921ffbe26cb99579582d
+>=20
+> >=20
+> > Detlev reports 146/147 on newer hardware using GStreamer, failing
+> > TSUNEQBD_A_MAIN10_Technicolor_2 (9bit chroma) only. On Detlev side, it =
+will we
+> > important to check why 8K videos (PICSIZE*) passes with a single core, =
+perhaps
+> > we accidently use both cores ?
+> >=20
+> > Note, also expected, we failt JCT-VC-SCC, JCT-VC-MV-HEVC, and JCT-VC-RE=
+xt passes
+> > 2/49. This last suite is pretty new in fluster.
+>=20
+> Following is the FFmpeg-H.265-v4l2request result with this:
+>=20
+> - JCT-VC-MV-HEVC 9/9
+> - JCT-VC-RExt 2/49
+> - JCT-VC-SCC 0/15
+> - JCT-VC-3D-HEVC 27/27
 
-I am generally open to any path to move this forward, as Robin and
-Will originally suggested the KVM mode in the upstream driver approach,
-what do you think?
+Nice we have the same for RExt, and glad we can do MVC and 3D without addit=
+ional
+control. These last two are simply not implemented in GStreamer. For SCC, w=
+e are
+missing some information, and the hardware probably does not handle it.
 
-Thank,
-Mostafa
+cheers,
+Nicolas
 
-> 
-> Jason
+> - JCT-VC-SHVC 1/69
+>=20
+> Regards,
+> Jonas
+>=20
+> >=20
+> > regards,
+> > Nicolas
+> >=20
+> > >=20
+> > > =C2=A0 Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4=
+l2request
+> > > =C2=A0 ...
+> > > =C2=A0 Ran 9/9 tests successfully
+> > >=20
+> > > And on a TinkerBoard (RK3288):
+> > >=20
+> > > =C2=A0 v4l2-compliance 1.30.1, 32 bits, 32-bit time_t
+> > > =C2=A0 ...
+> > > =C2=A0 Total for rkvdec device /dev/video3: 49, Succeeded: 49, Failed=
+: 0, Warnings:
+> > > 0
+> > >=20
+> > > =C2=A0 Running test suite JCT-VC-HEVC_V1 with decoder FFmpeg-H.265-v4=
+l2request
+> > > =C2=A0 ...
+> > > =C2=A0 Ran 137/147 tests successfully
+> > >=20
+> > > =C2=A0 Running test suite JCT-VC-MV-HEVC with decoder FFmpeg-H.265-v4=
+l2request
+> > > =C2=A0 ...
+> > > =C2=A0 Ran 9/9 tests successfully
+> > >=20
+> > > The WPP_x_ericsson tests from test suite JCT-VC-HEVC_V1 has been show=
+ing
+> > > a mix of both Success and/or Fail result for FFmpeg-H.265-v4l2request=
+.
+> > >=20
+> > > Full summary of fluster run can be found at [3].
+> > >=20
+> > > Please note that there is a known issue with concurrent decoding,
+> > > decoding errors in one decode session may affect a separate session.
+> > > The only known mitigation to this is to pause decoding for some time
+> > > and/or do a full HW reset, something to handle in future series.
+> > >=20
+> > > Changes in v2:
+> > > - Rabase after h264 high10/422 merge and unstaging of rkvdec driver
+> > > - Use new_value in transpose_and_flatten_matrices()
+> > > - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
+> > > - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
+> > > - Adjust code style in rkvdec_enum_coded_fmt_desc()
+> > > - Collect a-b tag
+> > > - Drop merged vdec node reg size patches
+> > > Link to v1:
+> > > https://lore.kernel.org/linux-media/20231105233630.3927502-1-jonas@kw=
+iboo.se
+> > >=20
+> > > [1]
+> > > https://github.com/LibreELEC/LibreELEC.tv/blob/master/projects/Rockch=
+ip/patches/linux/default/linux-2000-v4l2-wip-rkvdec-hevc.patch
+> > > [2]
+> > > https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-=
+v2-0-fa1897efac14@collabora.com/
+> > > [3] https://gist.github.com/Kwiboo/bedf1f447b50921ffbe26cb99579582d
+> > >=20
+> > > Alex Bee (4):
+> > > =C2=A0 media: rkvdec: Add variants support
+> > > =C2=A0 media: rkvdec: Add RK3288 variant
+> > > =C2=A0 media: rkvdec: Disable QoS for HEVC and VP9 on RK3328
+> > > =C2=A0 ARM: dts: rockchip: Add vdec node for RK3288
+> > >=20
+> > > Jonas Karlman (3):
+> > > =C2=A0 media: rkvdec: Add HEVC backend
+> > > =C2=A0 media: rkvdec: Implement capability filtering
+> > > =C2=A0 media: dt-bindings: rockchip,vdec: Add RK3288 compatible
+> > >=20
+> > > =C2=A0.../bindings/media/rockchip,vdec.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> > > =C2=A0arch/arm/boot/dts/rockchip/rk3288.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 17 +-
+> > > =C2=A0.../media/platform/rockchip/rkvdec/Makefile=C2=A0=C2=A0 |=C2=A0=
+=C2=A0=C2=A0 2 +-
+> > > =C2=A0.../rockchip/rkvdec/rkvdec-hevc-data.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 1848 +++++++++++++++++
+> > > =C2=A0.../platform/rockchip/rkvdec/rkvdec-hevc.c=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 826 ++++++++
+> > > =C2=A0.../platform/rockchip/rkvdec/rkvdec-regs.h=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0=C2=A0 4 +
+> > > =C2=A0.../platform/rockchip/rkvdec/rkvdec-vp9.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 10 +
+> > > =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.c=C2=A0=C2=A0 |=C2=A0=
+ 184 +-
+> > > =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.h=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 15 +
+> > > =C2=A09 files changed, 2886 insertions(+), 21 deletions(-)
+> > > =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvde=
+c-hevc-data.c
+> > > =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvde=
+c-hevc.c
+
+--=-vqPfCzXk6jLqVbkdE40Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJs11QAKCRBxUwItrAao
+HJraAJ9RWJiqcdTXpMPzVUTHjbhWCSPcoQCgzWL4+J+5Uu9C72+SfPXoB41afJg=
+=+8qk
+-----END PGP SIGNATURE-----
+
+--=-vqPfCzXk6jLqVbkdE40Z--
 
