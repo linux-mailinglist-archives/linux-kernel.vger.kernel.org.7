@@ -1,127 +1,82 @@
-Return-Path: <linux-kernel+bounces-765152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F8B22C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A70B22C4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 17:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219957B32C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7026B62402A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8972F8BD8;
-	Tue, 12 Aug 2025 15:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02652F7473;
+	Tue, 12 Aug 2025 15:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJlRx9R2"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3qr45cZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD1A2F8BCB;
-	Tue, 12 Aug 2025 15:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B952F8BF5;
+	Tue, 12 Aug 2025 15:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013914; cv=none; b=PN9pv3pFeT1wwBsq/0LiLHtTpX3ZzLWApFspcprC1peTKWruigVWe58CwG2144nhTsFEHGArBvhQLccwpm90wVIhUgTCjh/FOt8T1aP+FIjtxO00rAbpjhYVlp26Kp8sAp5ax8LwxPeSGeykFINQkuYpg1TiiGceMtg9o3qOahg=
+	t=1755013972; cv=none; b=cBJw/fEixrU6LFnwUQQBp/hr/ABS2IGyLmlwYT0AbRG8XN7ZFP42QENCV1eQeZ0odg9vmClv2WaBrKHM3Kl6em/OE0VlOueH2bDje5EyhfDwl9NkDjk2olDGzDlPtu6SlCtDFX8WWFhCjmZjLMlSwg8tiQoCEhvtwMTVOkYKYW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013914; c=relaxed/simple;
-	bh=xMCwuIZXVqr3pYATgAGr2Th9xURbQEyIDdYRcSuW+Y8=;
+	s=arc-20240116; t=1755013972; c=relaxed/simple;
+	bh=xGqRUdnbzPC+ihtI7x1CKaRb+bb/xRHekZu9g4Xe/HU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwjcyNMxBFQT0VykIyc2rLetB1HmwTBF1nJkOx6pTFVlqbBGoMvqW9d5ubePfp6z3x9hyd5RQT9cEXPC2fKmW66Md74p/7vK4eDl/vske8PlVrutPxV77KgjoS0Rq9iCGvp26WshI9uGF/OVTVXHnbM9fgIOD8zIp6HSkw97Ovw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJlRx9R2; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70767eef931so69539886d6.3;
-        Tue, 12 Aug 2025 08:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755013912; x=1755618712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A4ZuKp5BburffZpG4VhtILlaFyYFoR3RrvoPkGvrCS0=;
-        b=GJlRx9R2/bP0gsTCXgpOEVQw92p/uFbe/NhgYM6O5/wnYYPeqh5nXGnqi7KaaL5KMR
-         k6O+fKo9jb4BLoaIn651FyBR5tg9Ytds7aMk0YpSjtKoTDXefwnyyRklNlNroE3K11as
-         pE+m3VyyDrJBfr+pCRFBcrG41T58aN0A67Z7ri+prM3Z2VL9PsvEJLj/zObQitd78tVV
-         k+nplQ0I/VCQaJ9qhbYBefDc4+WMq547hxCxAAat/nk66cRM5sXxzJvfCbq2lcOq1NR6
-         j8IF7xJlZ1slu9O80xAKhht/XPgk9bTpo6qI8uiD6jLot31O8+O4pApKNT29Kc87RiOW
-         pbcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755013912; x=1755618712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A4ZuKp5BburffZpG4VhtILlaFyYFoR3RrvoPkGvrCS0=;
-        b=CUqGvt8SWZJysfi12iwWJDMR82vulCImI1uvZj41RPZ8GTS6kh/l0nm6jaLN3sycY1
-         xvPwFxZPp/fxHetzcUjCDc8awmQAPqFcnPjPVIwrziMt9h8fEWfT3Zo4DFNBJTpeuvse
-         qvoOHrMNkzHcl8mu5Gls2NYHSdykHbhjIVLBUTDp2FKskPDQdYRUDix4mbpiA7Fnc8ZZ
-         izGxm9BkfaaDf8wFJjnJg1RH38GGj11WFmRg7EpMZXgUYTw2UIsVc5CprudH90USasb7
-         xtSeimfCsv2ASNkRI1e67uEyK/6TsWZ13dQb+zrs3R2UMuNZS+Luu4QOXXbLGaRO/4sN
-         B4pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeIX0jlv3GiuIyhGr30D00dlctxrK6NgngtCjQNB658KZexmj5mTjTTu7eIXi8NkLZm+auR6HmTbPRvwk=@vger.kernel.org, AJvYcCXmqafaMFK7d6h63IMQv+GuG2xYFuNzF/gPZew2gwioyg+gipMKtnVqEHgcDKpghLlZdsdfyCbWNAYv35ggnxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzawVgub7yXp84YMvG+/5ssu9trvfL1ion8RFMKy8EFm8BJF6qp
-	Tek9XomavNwKWLnuWwnw84FXEXzHa0ErBIwHvX9AGkL5CxjYlkVSfnlq
-X-Gm-Gg: ASbGnct20+iI0J8d8CCPvyStCnP8BDiM8DgdbrVNenXotOhPT62Np0oD7n5NJLupZPp
-	ksGBUPl4mWbyZuhxg+YGFwKkRRwXbRvjphUhPugL+NsHeDwqdBqnYx7Gvr2NHl/6Q4XwPzvq/JJ
-	N6rNCN0tXMUUYb0HgL0CsBYoNxHX/Cts9YiHbyhxWkGS70Pd4XsWIeKvcZlIZ5cd8r+FSCIeJb4
-	EuVG12B58lXTgGsPVEa4WtT+eX+tWc6R+x1spS/1pKh7ciDw0CjAKsRicUzH+baGGz4GelWJLp+
-	UBzIC3Y9HxKYKno5zPUxEUdgVLaU+k70fyHMJRsJ74lZ34CFZSty6Gk3NvsaVZy9KGoEUBmx+1w
-	13CSw58wwui8aQphA4F9nsKeebeIbNokleRd8coyYYwTDUdjq/odoRTDukbrXsyjrLfQJ7kPm6L
-	ad5D25B34h72z9nS5xjyMmzXSoiuZ8J7jx2Q==
-X-Google-Smtp-Source: AGHT+IEVx3wh4zZowpo3HwoI+1tx7QAqw485tAw3eCOBWwKBSMBY1fBJnuAlB57+DrUTICVqklgj0A==
-X-Received: by 2002:a05:6214:2aa8:b0:709:799e:5bf3 with SMTP id 6a1803df08f44-709e6b89b8bmr2897396d6.23.1755013911548;
-        Tue, 12 Aug 2025 08:51:51 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce44849sm178464306d6.84.2025.08.12.08.51.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 08:51:51 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C809BF40067;
-	Tue, 12 Aug 2025 11:51:50 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 12 Aug 2025 11:51:50 -0400
-X-ME-Sender: <xms:FmObaNmN3NjhKHnSq9yioHd9i-8ZcwdlcSjb1u3lWyN8LhRnwcYFxw>
-    <xme:FmObaOXx77VRTPdfI1suAiorRdnCvxVZffm8uUXY2Q7MoMsST3doOcpSSjs-nsMHN
-    ZZBDgRzejUwsy7m2Q>
-X-ME-Received: <xmr:FmObaCuOmMoEYfjsrZnyIfSm94vOxciU9QG7GI7fLFt23kjQCNWyB3Plcg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeehjeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeekteeuvdeuhfdvvedvgfehfffhleefueehlefgleevfeekfedvffeukeejgeff
-    ffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpddujedqrhgtuddrqdhlihhnkhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehojhgvuggr
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvth
-    dprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgt
-    phhtthhopehlohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprgdrhhhinh
-    gusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtmhhgrhhoshhssehumhhi
-    tghhrdgvughupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopegurghnihgvlhdrrghlmhgvihgurgestgholhhlrggsohhrrgdrtghomh
-X-ME-Proxy: <xmx:FmObaB447HX0DCG3BgZ8ZakFkDRYvFQvLw7xexs1MKQwd63bX7RM5g>
-    <xmx:FmObaFRXEYIJWPu7MzwRrfaK1sCKfjQ1g8rAFZbZA3I_4NQGiErA5w>
-    <xmx:FmObaEvIN8yKgRXH-C6twtO8tQjshOOEse7rSL7y7Qie99zInkhc3Q>
-    <xmx:FmObaH9JRSaya9ZEg1VhED0N3h4znzcWTKVONqH41-KOH22aLoXXSA>
-    <xmx:FmObaNxvhgcYHU7E9ctkm1ZWEqP2WbwAPhi795oKD-ZN6c6JCYDOj8KX>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Aug 2025 11:51:50 -0400 (EDT)
-Date: Tue, 12 Aug 2025 08:51:49 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBSWgdDuXL7eSIcqLss0KI0Zh66uCsA18vxIcAs30KRSFLHdhB00tNHo7ccgsJljOIoZ/OEicwbNR6Ji/Tu/nEtLsdA0WvsaAbhXEyN5C/Sy3a74sDWVcFxOQ63oSWHrqOsz32FGcvY+qF3hUP8UEcSimVovDxEQYKs7UlQbxiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3qr45cZ; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755013970; x=1786549970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xGqRUdnbzPC+ihtI7x1CKaRb+bb/xRHekZu9g4Xe/HU=;
+  b=W3qr45cZt+XTIzsSuTquVJ2sLeT8YtZkSJehEYO4ob7WDhE/2zUbH6VZ
+   phJHgz6cK8ucgPJKvH3jO1YU+gnwSjQAaC8bdFck7xHH1nwYhLO6y4KtV
+   S947u/nNGs2KNO951XgtO/6oT27JIZZpDvD26u+qlzStxqqIew3iwEjDn
+   i6PYye1MkVBKZkGplz+IXA/sIcQqNkZAh0hnelSLhRseWZb3CzOikcIOI
+   XiZL+hX97qVniXPnctSdJiMB33hwK+xzhMghUw1y4QvdnhCVMBl/2UkID
+   YtZPiRRyD36PEuU2eVFY7L93FwW+kgn88FWpdSt4jIdaN0nxqR0uyRmmy
+   w==;
+X-CSE-ConnectionGUID: j5lM1hjyR2mh1T9IFvE+nA==
+X-CSE-MsgGUID: q7frcN9mT+Gk2R+pxZ5uOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57214438"
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="57214438"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 08:52:49 -0700
+X-CSE-ConnectionGUID: 0bsw4FC6RT6UhF2rBBn1Xw==
+X-CSE-MsgGUID: V+pW2tW4R/SxfVbWnVAIWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,284,1747724400"; 
+   d="scan'208";a="165862736"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 12 Aug 2025 08:52:46 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ulrIp-0006wd-2S;
+	Tue, 12 Aug 2025 15:52:43 +0000
+Date: Tue, 12 Aug 2025 23:52:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ritvik Gupta <ritvikfoss@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
 	Benno Lossin <lossin@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Clean up Rust LockClassKey
-Message-ID: <aJtjFRn0QKUJT-fX@Mac.home>
-References: <20250811-lock-class-key-cleanup-v3-0-b12967ee1ca2@google.com>
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4] rust: kernel: introduce `unsafe_precondition_assert!`
+ macro
+Message-ID: <202508122341.rb7U1Q2P-lkp@intel.com>
+References: <20250808192005.209188-1-ritvikfoss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -130,53 +85,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811-lock-class-key-cleanup-v3-0-b12967ee1ca2@google.com>
+In-Reply-To: <20250808192005.209188-1-ritvikfoss@gmail.com>
 
-On Mon, Aug 11, 2025 at 12:14:40PM +0000, Alice Ryhl wrote:
-> This series applies the suggestion from Benno [1] and various other
-> improvements I found when looking over the LockClassKey implementation.
-> 
-> Based on rust-next.
-> 
-> [1]: https://lore.kernel.org/all/DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org/
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Hi Ritvik,
 
-Queued in rust-locking:
+kernel test robot noticed the following build errors:
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git rust-locking
+[auto build test ERROR on 37816488247ddddbc3de113c78c83572274b1e2e]
 
-For further testing and reviewing. Thanks!
+url:    https://github.com/intel-lab-lkp/linux/commits/Ritvik-Gupta/rust-kernel-introduce-unsafe_precondition_assert-macro/20250809-032122
+base:   37816488247ddddbc3de113c78c83572274b1e2e
+patch link:    https://lore.kernel.org/r/20250808192005.209188-1-ritvikfoss%40gmail.com
+patch subject: [PATCH v4] rust: kernel: introduce `unsafe_precondition_assert!` macro
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250812/202508122341.rb7U1Q2P-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508122341.rb7U1Q2P-lkp@intel.com/reproduce)
 
-Regards,
-Boqun
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508122341.rb7U1Q2P-lkp@intel.com/
 
-> ---
-> Changes in v3:
-> - Fix duplicated "require" in commit message.
-> - Mention pinning in macro safety comment.
-> - Rebase on v6.17-rc1.
-> - Link to v2: https://lore.kernel.org/r/20250728-lock-class-key-cleanup-v2-0-ad02b80c69e1@google.com
-> 
-> Changes in v2:
-> - Change safety comment to require a static object. Adjust commit
->   message accordingly.
-> - Add Reviewed-by.
-> - Link to v1: https://lore.kernel.org/r/20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com
-> 
-> ---
-> Alice Ryhl (2):
->       rust: sync: refactor static_lock_class!() macro
->       rust: sync: clean up LockClassKey and its docs
-> 
->  rust/kernel/sync.rs | 78 +++++++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 58 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250723-lock-class-key-cleanup-a3baf53b123a
-> 
-> Best regards,
-> -- 
-> Alice Ryhl <aliceryhl@google.com>
-> 
+All errors (new ones prefixed by >>):
+
+>> error[E0423]: cannot initialize a tuple struct which contains private fields
+   --> rust/doctests_kernel_generated.rs:8841:5
+   |
+   8841 |     CpuId(id)
+   |     ^^^^^
+   |
+   note: constructor is not visible here due to private fields
+   --> rust/kernel/cpu.rs:47:18
+   |
+   47   | pub struct CpuId(u32);
+   |                  ^^^ private field
+   help: you might have meant to use an associated function to build this type
+   |
+   8841 -     CpuId(id)
+   8841 +     CpuId::from_i32_unchecked(_)
+   |
+   8841 -     CpuId(id)
+   8841 +     CpuId::from_u32_unchecked(_)
+   |
+   8841 -     CpuId(id)
+   8841 +     CpuId::current()
+   |
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
