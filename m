@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-764913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A86B228E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:42:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C39B22902
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 15:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777F4583E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014E7565B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D2127FB2D;
-	Tue, 12 Aug 2025 13:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ECA28541F;
+	Tue, 12 Aug 2025 13:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mM3yubK/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="0StdiRm/"
+Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A5F27FD43;
-	Tue, 12 Aug 2025 13:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FDD284B37
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 13:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755005348; cv=none; b=JpWadvTc8lY4m+1AYGDKgeT8JO/wgefKgsmP6pw0mqPY5vJEp8JTlINfnWulLi3fKZ9jPHD2ywkaJefAgLaIFWmRBUFYr23WC2AIE/1aY7V+yC5TWdxGWt2s1OYfgm1gnaf9A02OLsXJ4lNlbfUXuZBNfXNJCF7Aw88qmk5Dz6s=
+	t=1755005502; cv=none; b=Bf8pV31dmIAwd/OfdceJuRQv0Pd9noQRaEaukgAJWkjwuO9lvOjZ0CUkYq5rSR0DbYjO44eAOscUcRhR8z9SuPAywdDfq6f0IFnBw0rR0ftXUEZZVQjhhhK0CFTrlkY349d+JXqoHypUzBQ5lkCLdzhDHv1mRS2L/FjITsaszd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755005348; c=relaxed/simple;
-	bh=GMMGDDvmy7/b2xlgQxi4X/T90SQPEHldSBlyZttmxGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N1u9hXQ+VdlHeFFMnfrRP/e+om1a2EPdwhZ9IOb3YRl9/3rTUsnmwFWRWvq+vlyGzauxyDKbeFiJgEKQaSxEQBSJNYbTUDdGqNkbKsYV9CsgQgCkZ/O61jKvd2xV7JXpL10nAcGelm10FVPe9bMGX3442qEOSCU8rWqBo7M4lV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mM3yubK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A957C4CEF9;
-	Tue, 12 Aug 2025 13:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755005348;
-	bh=GMMGDDvmy7/b2xlgQxi4X/T90SQPEHldSBlyZttmxGE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mM3yubK/lLObJpIvrrD0Z8M/KPVOdrEcMP3Igh2O1y4EMgBv7flQJ3R84zjPdpE6A
-	 lkWqQ/9iYehUJCAIa4TttzatnPapFLqNzr/e5Sdc84WioG5wYYvt4GgadNPt7Mf4Me
-	 VDEkGEa8N4bjYUZ2N2A4IJaX63H1355tLSbByPqnTlsn56Jh+MabZuXdN18JKRA1+f
-	 MxXBBj4XtJn5OM6fqNkkuISWBjz7dYJv1W+zXA85XENNWEt5mruU92p0g46LNK0S03
-	 M2qjpYk/aM24DUvmeI8h5IwOsyPPmirAU6DajST3wTrgW3xIlcanCMQZF0Wtmc22Li
-	 CB8B1LrrLCfJA==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-adfb562266cso745545266b.0;
-        Tue, 12 Aug 2025 06:29:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVgK4tVOJeYxnCHBR6QOl0llPImMnPZG+EUX05L4EhPTDitPDqsxars8N1yuECAazZxaA6K3wIPDDK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotGhB2XXipkpPBpVkPKF9gVoSG2BOPupK+Ue5i8eMkYMWrnEA
-	oC/0SU0EO7+/K7fs7oHuj0UVsDvEyKr3jioDKM3j4ut1SfoY5ItNjiFHv/9JE/Svc1wn0Z6v6OJ
-	UCXAFcyhPyBsgNDsuu/2Lb2NjEvLHsQ==
-X-Google-Smtp-Source: AGHT+IF7GHeMWGqSVBOM1gStPy48v5sXvDsBL4TjWEX2CXWZdGbz6C+H2e2r4/C3oWTX5oWbCwqx0GQUgijlu7ioPnk=
-X-Received: by 2002:a17:907:dac:b0:af9:5da0:adde with SMTP id
- a640c23a62f3a-afa1e155119mr344130866b.45.1755005346908; Tue, 12 Aug 2025
- 06:29:06 -0700 (PDT)
+	s=arc-20240116; t=1755005502; c=relaxed/simple;
+	bh=DTJytrEsyDmsQYsQJfiriaENM+W5ULsMd/TN0GOJtX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EmmLsCjnofA4iFKVaOkJPqeGGoQGFSTEO8FpFXzqqOLqR6ijt29lYpGgV7yqmyoSFHUUgUFp7bptiqXfYy8vGzAEQrjlEiVAPlqXU4qnGII3Z8MrETOPjWKYqPNi8Vz1KF4Qly2Y0ijGMhKPdvKZudBIwu2pbbgspPWXPpi8qeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=0StdiRm/; arc=none smtp.client-ip=61.135.153.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755005492;
+	bh=YSL2GbgZMuZHJHKS6ymYjeXnaBje9y1R+MqEd0xyjtk=;
+	h=From:Subject:Date:Message-ID;
+	b=0StdiRm/1c40OTM/vVgRnTKHRwL3B9BYeO6I2l5HU4DbDQ1eyPwCIob5kvpUMGnFL
+	 Pt252qc6j9Isw6lOMaDwBO8BfqlnKUQz8I8rlPyMKI6TUOHUBJnvFswa5E2Pb+yH0n
+	 WPjD7nsE/P+dfS2ek2gL7SbUBAkV6DhGihKdzoa4=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 689B422800003FC3; Tue, 12 Aug 2025 21:31:22 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3400736816239
+X-SMAIL-UIID: D08979147C2B45BA81D82C6E8CE65BEC-20250812-213122-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
+Date: Tue, 12 Aug 2025 21:31:10 +0800
+Message-ID: <20250812133111.4277-1-hdanton@sina.com>
+In-Reply-To: <689b1044.050a0220.7f033.011b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753865268.git.viresh.kumar@linaro.org> <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
- <20250812094955.fdyil4cbxr3bx4bo@vireshk-i7>
-In-Reply-To: <20250812094955.fdyil4cbxr3bx4bo@vireshk-i7>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 12 Aug 2025 08:28:53 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKHGFPF-2d-cH4KhxFQ-KA1WO+TuDn722vYbs4Jyx8iYw@mail.gmail.com>
-X-Gm-Features: Ac12FXzhhmuReoPQBliN29Av2MDBr7ZwnqPE5KVpcSyLcTFZhNi2n8hmWiHskf8
-Message-ID: <CAL_JsqKHGFPF-2d-cH4KhxFQ-KA1WO+TuDn722vYbs4Jyx8iYw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/6] virtio: Add support for Virtio message transport
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Arnd Bergmann <arnd@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Bill Mills <bill.mills@linaro.org>, devicetree@vger.kernel.org, 
-	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>, 
-	Bertrand Marquis <bertrand.marquis@arm.com>, "Edgar E . Iglesias" <edgar.iglesias@amd.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 4:50=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> Hi Rob,
->
-> On 30-07-25, 08:39, Rob Herring wrote:
-> > On Wed, Jul 30, 2025 at 4:29=E2=80=AFAM Viresh Kumar <viresh.kumar@lina=
-ro.org> wrote:
-> > > ### Memory Mapping and Reserved Memory Usage
-> > >
-> > > The first two patches enhance the reserved-memory subsystem to suppor=
-t attaching
-> > > struct device`s that do not originate from DT nodes =E2=80=94 essenti=
-al for virtual or
-> > > dynamically discovered devices like the FF-A or loopback buses.
-> >
-> > We support creating devices from reserved-memory nodes.
->
-> I didn't know about this.
->
-> > Just add a
-> > compatible which you should do anyways because node names are not
-> > supposed to be that specific or an ABI.
->
-> Yeah, I already knew that the node-names thing isn't going to fly as
-> you and Krzysztof rightly pointed out. I just wanted inputs from you
-> guys and so did that as a first implementation to get the discussion
-> started.
->
-> I tried something like this now:
->
->       reserved-memory {
->         #address-cells =3D <2>;
->         #size-cells   =3D <2>;
->         ranges;
->
->         rmem@100000000 {
->           compatible =3D "restricted-dma-pool", "virtio-msg,loopback";
+> Date: Tue, 12 Aug 2025 02:58:28 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16c415a2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa80c6232008f7b957d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151be9a2580000
 
-The order is wrong here. The 2nd one seems more specific to me. But is
-"restricted-dma-pool" useful? Should an OS that only understands that
-and not "virtio-msg,loopback" use it?
+#syz test
 
-The format of compatibles is <vendor>,<device/block/interface> and
-"virtio-msg" is not a vendor.
-
->           reg =3D <0x00000001 0x00000000  0x0 0x00400000>; /* 4 MiB */
->         };
->       };
->
-> and this works fine. I am adding two compatibles for virtio-msg:
-> "virtio-msg,loopback" and "virtio-msg,ffa". Yes I will properly
-> document them in the next version.
-
-Why do you need 2 compatibles? Can't you discover what the remote end
-is with some message? We only define "virtio-mmio" in DT for example,
-not that the device is a console, rng, etc.
-
-Rob
+--- x/drivers/net/netdevsim/netdev.c
++++ y/drivers/net/netdevsim/netdev.c
+@@ -709,10 +709,14 @@ static struct nsim_rq *nsim_queue_alloc(
+ 
+ static void nsim_queue_free(struct net_device *dev, struct nsim_rq *rq)
+ {
++	struct netdevsim *ns = netdev_priv(dev);
++
+ 	hrtimer_cancel(&rq->napi_timer);
+-	local_bh_disable();
+-	dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
+-	local_bh_enable();
++	if (ns->registed) {
++		local_bh_disable();
++		dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
++		local_bh_enable();
++	}
+ 	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
+ 	kfree(rq);
+ }
+@@ -981,6 +985,7 @@ err_free_prev:
+ 	while (i--)
+ 		kfree(ns->rq[i]);
+ 	kfree(ns->rq);
++	ns->rq = NULL;
+ 	return -ENOMEM;
+ }
+ 
+@@ -989,6 +994,8 @@ static void nsim_queue_uninit(struct net
+ 	struct net_device *dev = ns->netdev;
+ 	int i;
+ 
++	if (!ns->rq)
++		return;
+ 	for (i = 0; i < dev->num_rx_queues; i++)
+ 		nsim_queue_free(dev, ns->rq[i]);
+ 
+@@ -1001,6 +1008,7 @@ static int nsim_init_netdevsim(struct ne
+ 	struct mock_phc *phc;
+ 	int err;
+ 
++	ns->registed = 0;
+ 	phc = mock_phc_create(&ns->nsim_bus_dev->dev);
+ 	if (IS_ERR(phc))
+ 		return PTR_ERR(phc);
+@@ -1038,6 +1046,7 @@ static int nsim_init_netdevsim(struct ne
+ 							&ns->nn))
+ 			ns->nb.notifier_call = NULL;
+ 	}
++	ns->registed = 1;
+ 
+ 	return 0;
+ 
+--- x/drivers/net/netdevsim/netdevsim.h
++++ y/drivers/net/netdevsim/netdevsim.h
+@@ -106,6 +106,7 @@ struct netdevsim {
+ 	struct mock_phc *phc;
+ 	struct nsim_rq **rq;
+ 
++	int registed;
+ 	int rq_reset_mode;
+ 
+ 	struct nsim_bus_dev *nsim_bus_dev;
+--
 
