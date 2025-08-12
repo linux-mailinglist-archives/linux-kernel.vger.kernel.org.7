@@ -1,222 +1,172 @@
-Return-Path: <linux-kernel+bounces-765649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA27AB23BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:24:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18600B23BE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4461AA8782
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:24:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED8944E25AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 22:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770DA1A9F9A;
-	Tue, 12 Aug 2025 22:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A392D46DA;
+	Tue, 12 Aug 2025 22:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UsgG2lN0"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="gdlUCr3b"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB21280308;
-	Tue, 12 Aug 2025 22:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F308A2F0693;
+	Tue, 12 Aug 2025 22:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755037465; cv=none; b=FafWQNMUOkHNwyBeXjLd8tOUr8mbvTSAHi1xhr+bQkVmqAI3EhOc+7SIp+fzYm0A2CcvuTONwK0yK4nobXUTb1t7isctUlmOjJPZ+ysV7GtirP/9VDF/9DZzOdzt9sexOQNlsXyF8HMQpjw6tzcQbVZDAd/HQTs0yNEe99C5HQc=
+	t=1755037634; cv=none; b=dyArimnlXGDIgKUwwROhcYquWZsaHj4ljctnju+8Md60IZmLvWHj7iryJS940An0BmmU4nQqH0c5RDS+LJ+Cl3W/irQSN+Bh4HRL6DTQpoRXf9f1pG/JquukdlYEjXzFQUfOlDcE0PKoj3jE6TdWlsnuP0hV2o8Vi5wwC2goOiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755037465; c=relaxed/simple;
-	bh=VTu1YlP6cbBxPd8KlY7/RgMoLKQvCZlYMTO6Lr73lws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kJ/8AtMQ1kRi/7mVZBGK3giJque5zDKQdno4k0N21paFr0WTaXk4yLMSlP1szm2li/NweLdK3UcPAp6f5fDr8kiLhKiJVCRfvdEyatFLmc98qHxXCTWB92KEweCzWnY4ErSvtYj8MxpfCINtdcCKOZIv2WvOHJlxfX1LkZ6+cq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UsgG2lN0; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b783ea502eso203346f8f.1;
-        Tue, 12 Aug 2025 15:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755037462; x=1755642262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rtjUK0AZOjm4eF0vnry/hWr4fc/ZinEdNV9kmjIXNAY=;
-        b=UsgG2lN0/dfvuiGD/r5glWiHVrG4l89saV+mlnzWnKFzmWWfFufR+ttIQPnxpwoTuK
-         Xz4/VHGXDCCFZyoxXOcsYB36Wck3M0v2TzVxKzI87M58bJOrsPvDXPyeOWtigvfp6TPC
-         k/i5ilA+ePGDSKJBp5IlTI+TBe7n7OwSdW43/bhUaxk65sB35FhSxL5R64J0myrBFMdp
-         /ODx6S+LIoVfKqg+CuMxydF+3BvqxaxvF/Rh6oO8FuF8uMsGZqat9TbZXUciQZ+2aO5r
-         6blGBtVOavLwBOkRZhfE5gQ+4/exWFbt8EHIpPZ6VgTWGkPy0yks4wtnvR4RryW0PCxh
-         XVtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755037462; x=1755642262;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rtjUK0AZOjm4eF0vnry/hWr4fc/ZinEdNV9kmjIXNAY=;
-        b=Jy0kVZOLv6cZgF/rd+Xje4arfcQAK1N3xFlktuQBFrlHo+khivCawW9kSMisB+eZKe
-         sGReooHIRzrftzvEsl5pJHPeijr1ZnKvEqGm7/gq1nFpAqwKmx1C5lMW+cDBvM5XSutR
-         w/UTeqs19NoSdvNhdIjnA6eGeSSL1kpYy3m6+jhXv3SceJxsEeI2SZmg8ub5AiuBeaJD
-         z/MdcSbZDmmiQLwAhia2RUQcumLXzMWvZV0mVBrGw9pAU+C/lRphYwnm+ZHDICHh6iqe
-         uR1LG/x6qwsfp807Q834F+nZ+tiaCBrvAiBLOtHqGT3VECYye3UnXsXLTe+REImts6MY
-         evwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU26KLfefZxtdrid992cL40r7mUKF/drLukWXnbj4vXvSNeqql/R0l7VnecEZjwUGC5KWw=@vger.kernel.org, AJvYcCVBTCaX7FMNyorDmaboS17h084f8ea8YKVqjlnJJZRVYZQ7GvAtA6nz1oSgFdLCash3GiDHLQuyPf/m@vger.kernel.org, AJvYcCWI3mGJrhAHMFlAZlaS29x5jOfEMts4K+loweGnVBW9gZn5cJwfPp37Oo25gsud7CRu4biFZd315jMkkvog@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE8e5Zu+HfDuK5YSHgaEhirWFNHt+39FGQjR9tuXmjPFU3gBp8
-	yX2XTnstzG3jetGIt6MUHCCDdCluiYQVVNI1tYH7jw3h6qR8WJHWm9YdKBIZM3LB
-X-Gm-Gg: ASbGncsu4O/9fpdBv2cLXQ4wM4DcddjS01qpGSD6eLEVhmVPoGfF1Kwzw3M0x6onJrL
-	ZscYl2Ej+VSA2P3CLZ+McaG4tP5eQoykP9xgKTeAsGkgmQvavgoD//V2sZ1CBoWBL8ngYWBgErn
-	6ex2HsjtwTmdzuiQ1fKAGKk4D9wYk3t1cB5U0cdzEGuup/lcM7x3A+LzdGhMKdEUn/4wdb9pnPg
-	ipk+EC0D7gQYy/EvCH8IhsCWKu0FzmC8NobtWo+BUalXaSQH/FYomO55FEeaOOIVlHReVz6EsTA
-	aMN+VcQvvYaeIu7SPQ1qtyM/L9Rsk4kqKsX+53FXC+8zkdFwEILYZxzaBdFLmaIrCgWgeuWzIv5
-	KfSCjIa6SD12uZ31sDUfKHH45jKRwv80Vf88=
-X-Google-Smtp-Source: AGHT+IHJr9x4tPHQB488BcmKjtF7JFP/uv+eKfUyu+Ss45vTGSVkFV0Ahpktarr49m9/oxGrmVivog==
-X-Received: by 2002:a05:6000:3107:b0:3b9:16e5:bd38 with SMTP id ffacd0b85a97d-3b918c4cebcmr138431f8f.4.1755037461620;
-        Tue, 12 Aug 2025 15:24:21 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:2::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abedesm46018339f8f.3.2025.08.12.15.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 15:24:19 -0700 (PDT)
-From: Mohsin Bashir <mohsin.bashr@gmail.com>
-To: netdev@vger.kernel.org
-Cc: aleksander.lobakin@intel.com,
-	alexanderduyck@fb.com,
-	andrew+netdev@lunn.ch,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	corbet@lwn.net,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	hawk@kernel.org,
-	horms@kernel.org,
-	john.fastabend@gmail.com,
-	kernel-team@meta.com,
-	kuba@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mohsin.bashr@gmail.com,
-	pabeni@redhat.com,
-	sdf@fomichev.me,
-	vadim.fedorenko@linux.dev
-Subject: [PATCH net-next V3 9/9] eth: fbnic: Report XDP stats via ethtool
-Date: Tue, 12 Aug 2025 15:24:17 -0700
-Message-ID: <20250812222417.268420-1-mohsin.bashr@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250812220150.161848-1-mohsin.bashr@gmail.com>
-References: <20250812220150.161848-1-mohsin.bashr@gmail.com>
+	s=arc-20240116; t=1755037634; c=relaxed/simple;
+	bh=VY5Ka5lKFTywN1joTNL4CpA9sajHibbkhU+nf4Nd58Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XR2B5FCdH0rTkT5SgNzgMYZghF+qR6a05O8JFutbRThYsVFVUky924Qrf0y1TBsDtip1lZEXdEShEz5qDjW1CAQJasnPTT1D5E0SffhdG9RwYD0MccZ5hvteuOpOWaxQQq8n9BaAWuqxJN3NdMwj+x/jImFF6rptMWFwaHoWD78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=gdlUCr3b; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1755037629; x=1755642429; i=w_armin@gmx.de;
+	bh=Yo83TFZryGsnrgCIpOREWBxoCr1jDrR7cTvv7FC/rog=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=gdlUCr3b6ehbTxWu/onnomcGps346w3/HYKOquxASqSuXAexWBfztSTndpqsH7F7
+	 /vOx6yhAtjbBouahNsw8K5BSYmfMGnxGOepGvVPGSdxfnbn48OQSCm0PhsL8ZTHKa
+	 plJTfSTZyQYujPkZ8kANsZTNftxPPZgFuYIvwwCe48X9xMowV4hmGrPFUfoE/cwSl
+	 FEAS1wYNpUYZsDxa8JEbGWLqCKk9hxVtcbwUZ8JWm0gz88ZM7DZbMS7B30JSC4xQD
+	 63KEoNeiTmSZ0scqqFuLLqtsG5/tEV0mhEqlIL0pWvwssf48170uO6LMb6VNWiKvR
+	 42oPL2hKNXlX+nVF7Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([91.14.231.131]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbAcs-1uAPiP0v6m-00dQxo; Wed, 13
+ Aug 2025 00:27:09 +0200
+Message-ID: <f4de859e-3cbc-403b-b9da-12a426ba6a74@gmx.de>
+Date: Wed, 13 Aug 2025 00:27:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Ilya K <me@0upti.me>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250729062038.303734-1-W_Armin@gmx.de>
+ <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
+ <CAJZ5v0g0vjP_ST2xnDnFAmDXKR9oPn5t0sfQqamDCNwUjJt-xg@mail.gmail.com>
+ <d8c3432f-dfb7-4263-a556-2d93f22e618e@0upti.me>
+ <2025081246-raft-tattle-642c@gregkh>
+ <4e610854-d84c-4a59-9f83-422eafb40d6e@gmx.de>
+ <2025081227-humpback-garden-7a4b@gregkh>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <2025081227-humpback-garden-7a4b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:yXmBsPSJEVg1N3/Ko18xp0wSy9HGuahKqkrItLUPFjtzZ698fY7
+ IDYH+poOERKD6AclGlMvvpphA4/MuRAFo6FRXvIiRlNnWEieSFyqy5yYf/D0WJ9CGkLLwi/
+ VXcn/bzIk62sYPqzvc62b7q+XpxaPPSKCwTT4e4kaxpDEFO8kKFi36f4Iubjqj0bTKDEFeE
+ V5NWBBJDryWgkwVOjjxMw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WArHKKeKQNg=;TjMIHUYIY/8xW+d5p1g72XGq07H
+ 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
+ VKGeAIYCA8u14aIZrAkA==
 
-Add support to collect XDP stats via ethtool API. We record
-packets and bytes sent, and packets dropped on the XDP_TX path.
+Am 12.08.25 um 19:10 schrieb Greg KH:
 
-ethtool -S eth0 | grep xdp | grep -v "0"
-     xdp_tx_queue_13_packets: 2
-     xdp_tx_queue_13_bytes: 16126
+> On Tue, Aug 12, 2025 at 06:54:39PM +0200, Armin Wolf wrote:
+>> Am 12.08.25 um 18:40 schrieb Greg KH:
+>>
+>>> On Tue, Aug 12, 2025 at 06:51:10PM +0300, Ilya K wrote:
+>>>> On 2025-08-12 16:32, Rafael J. Wysocki wrote:
+>>>>> Applied as 6.17-rc material and sorry for the delay (I was offline).
+>>>>>
+>>>>> Thanks!
+>>>> Thanks!
+>>>>
+>>>> Tagging stable@ so we're hopefully in time for 6.16.1.
+>>> <formletter>
+>>>
+>>> This is not the correct way to submit patches for inclusion in the
+>>> stable kernel tree.  Please read:
+>>>       https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+>>> for how to do this properly.
+>>>
+>>> </formletter>
+>> Agree.
+>>
+>> AFAIK the Fixes: tag should be enough to ensure that this patch gets included
+>> in the affected stable kernels.
+> Not at all!
+>
+> Please read the above link for the full details on how to do this (hint,
+> Fixes: will not do it.)
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mohsin Bashir <mohsin.bashr@gmail.com>
----
- .../net/ethernet/meta/fbnic/fbnic_ethtool.c   | 50 ++++++++++++++++++-
- 1 file changed, 49 insertions(+), 1 deletion(-)
+Oops, seems that i missed something rather significant about the stable kernels.
+I will give keep that in mind when sending future patches.
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c b/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-index 742b557d0e56..ceb8f88ae41c 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-@@ -112,6 +112,20 @@ static const struct fbnic_stat fbnic_gstrings_hw_q_stats[] = {
- 	 FBNIC_HW_RXB_DEQUEUE_STATS_LEN * FBNIC_RXB_DEQUEUE_INDICES + \
- 	 FBNIC_HW_Q_STATS_LEN * FBNIC_MAX_QUEUES)
- 
-+#define FBNIC_QUEUE_STAT(name, stat) \
-+	FBNIC_STAT_FIELDS(fbnic_ring, name, stat)
-+
-+static const struct fbnic_stat fbnic_gstrings_xdp_stats[] = {
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_packets", stats.packets),
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_bytes", stats.bytes),
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_dropped", stats.dropped),
-+};
-+
-+#define FBNIC_XDP_STATS_LEN ARRAY_SIZE(fbnic_gstrings_xdp_stats)
-+
-+#define FBNIC_STATS_LEN \
-+	(FBNIC_HW_STATS_LEN + FBNIC_XDP_STATS_LEN * FBNIC_MAX_XDPQS)
-+
- static void
- fbnic_get_drvinfo(struct net_device *netdev, struct ethtool_drvinfo *drvinfo)
- {
-@@ -422,6 +436,16 @@ static void fbnic_get_rxb_dequeue_strings(u8 **data, unsigned int idx)
- 		ethtool_sprintf(data, stat->string, idx);
- }
- 
-+static void fbnic_get_xdp_queue_strings(u8 **data, unsigned int idx)
-+{
-+	const struct fbnic_stat *stat;
-+	int i;
-+
-+	stat = fbnic_gstrings_xdp_stats;
-+	for (i = 0; i < FBNIC_XDP_STATS_LEN; i++, stat++)
-+		ethtool_sprintf(data, stat->string, idx);
-+}
-+
- static void fbnic_get_strings(struct net_device *dev, u32 sset, u8 *data)
- {
- 	const struct fbnic_stat *stat;
-@@ -447,6 +471,9 @@ static void fbnic_get_strings(struct net_device *dev, u32 sset, u8 *data)
- 			for (i = 0; i < FBNIC_HW_Q_STATS_LEN; i++, stat++)
- 				ethtool_sprintf(&data, stat->string, idx);
- 		}
-+
-+		for (i = 0; i < FBNIC_MAX_XDPQS; i++)
-+			fbnic_get_xdp_queue_strings(&data, i);
- 		break;
- 	}
- }
-@@ -464,6 +491,24 @@ static void fbnic_report_hw_stats(const struct fbnic_stat *stat,
- 	}
- }
- 
-+static void fbnic_get_xdp_queue_stats(struct fbnic_ring *ring, u64 **data)
-+{
-+	const struct fbnic_stat *stat;
-+	int i;
-+
-+	if (!ring) {
-+		*data += FBNIC_XDP_STATS_LEN;
-+		return;
-+	}
-+
-+	stat = fbnic_gstrings_xdp_stats;
-+	for (i = 0; i < FBNIC_XDP_STATS_LEN; i++, stat++, (*data)++) {
-+		u8 *p = (u8 *)ring + stat->offset;
-+
-+		**data = *(u64 *)p;
-+	}
-+}
-+
- static void fbnic_get_ethtool_stats(struct net_device *dev,
- 				    struct ethtool_stats *stats, u64 *data)
- {
-@@ -511,13 +556,16 @@ static void fbnic_get_ethtool_stats(struct net_device *dev,
- 				      FBNIC_HW_Q_STATS_LEN, &data);
- 	}
- 	spin_unlock(&fbd->hw_stats_lock);
-+
-+	for (i = 0; i < FBNIC_MAX_XDPQS; i++)
-+		fbnic_get_xdp_queue_stats(fbn->tx[i + FBNIC_MAX_TXQS], &data);
- }
- 
- static int fbnic_get_sset_count(struct net_device *dev, int sset)
- {
- 	switch (sset) {
- 	case ETH_SS_STATS:
--		return FBNIC_HW_STATS_LEN;
-+		return FBNIC_STATS_LEN;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
--- 
-2.47.3
+Thanks,
+Armin Wolf
 
 
