@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-764628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-764629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2F8B22545
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5F0B22548
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 13:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28ECF1687A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631FA3A7981
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 11:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619FB2ECE99;
-	Tue, 12 Aug 2025 11:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF7C2ECEAB;
+	Tue, 12 Aug 2025 11:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKoo5LFt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1i+n0YY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF55F2ECD18;
-	Tue, 12 Aug 2025 11:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A242EAD15
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 11:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754996724; cv=none; b=SBGu1Ha/WYKQ+g9hgWI5J5F1JYNVWUe5JbP56tRg8amlDvbNOOJX+mAyQ+Gtay9WdfZK3w5vZeCNw1ein/4ykvC8LZ3e8JpNPJYPaHBgs0hm/AtGEvemXLNdn3ykVcCur1XpxFL4YWBigILqp87ZGOpoWAJyL7DKoKDZOnRnuXA=
+	t=1754996735; cv=none; b=ZFzgvaC20yDBdUBAEs/RDHGNugJJYJRh+2ArEfdSacbSR9UGCEMxMAe5oSRXcs3S0spdPqT8MUjdZQDztKUiBg3u6fzaZUDlpQtQfrN5NiO3DkcPJcVni/ADlZ5U+hUNLfqZWniflD5I78fiO16/EvSYQGaDDlze+ADPOBa0xfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754996724; c=relaxed/simple;
-	bh=QfGgwTzP83ZX04O2sV0iEiI+g52ltK9raJ2JLLA7n6c=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=seqfimU6boO463wKTFw4wH5KIb5SZ+bfi6ITjYCm93PJ0z5fyer63omQfwR+paN5X9/t0+aT/D8hOGf2Z/iaSqbx3EvR8UWZGLa6DA4L9DYYiMZi0N16fr0Zb4+3a4bJ0oBYbdbWbRzy2BLMX4TavlQOnwDx9FABq3Gn7fofcuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKoo5LFt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F5EC4CEF4;
-	Tue, 12 Aug 2025 11:05:22 +0000 (UTC)
+	s=arc-20240116; t=1754996735; c=relaxed/simple;
+	bh=4VaPQoHsWXcEiOpRJA2JQF87eLMjQnHxmWEApyDB4cc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oSXXjkq9AhBVEaQ+Mg9Nt13NV2pymrlD98/S82Z+wJ1R8W7rDLCa+ZU/YAbtgeAVSwG36B5Uxw3MKKvV4Qdj9It5Ekzomf3up82TfNRfiTC9bXfqwqSAIsCRYpiXw5uFNDOAV6E5rLEvmh7vT1YYtgMlQR1YLR0JMCmVJw8AQvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1i+n0YY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1A2C4CEF0;
+	Tue, 12 Aug 2025 11:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754996724;
-	bh=QfGgwTzP83ZX04O2sV0iEiI+g52ltK9raJ2JLLA7n6c=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=OKoo5LFt7ltr5FV+pV7UyR42ShOPI8Ic5Yn9CJi0KnCNJfc8tXbMo9gDd+oxupQvw
-	 6x4sJCPT9/27njkbVxz9otEaW4ybmtLyC45UqBeDqn3EJUSxDolDru+4khIBWaPTm/
-	 330cfYJeAgbhmOOLenE6cENtUq09pXrPizmLwG1tg9tD9KnNKxqkgnY7o8ii6lCYJY
-	 Y6H0tikWV3jD9GwoI4TSiiNZ9csAG+YsIWE+t6+ZIdlzp7kuEtR266wTzCqIQqAtQu
-	 COYWYI1JBsC1lQAi7W+AWY9s3LYYVXyOYx+eTFCALcPPPO8PUJMXvL5lOLqLRaid+k
-	 N+8jb1/f9v7MQ==
+	s=k20201202; t=1754996734;
+	bh=4VaPQoHsWXcEiOpRJA2JQF87eLMjQnHxmWEApyDB4cc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=P1i+n0YYdLsyDKAppkkIPsk6B9SrzsUSPluIiTT/YEzeSY0+wFz/2fDanvCjA+Bas
+	 3ORPHPRPuqWqe4UiJu66vbtjtGTPVb86GVdCUQTeoJNCG25DpOV5jm4AGJTJrqXUZ2
+	 RmCVE4io7Ku1TqI+Ti12mXVTQdM58TQPpgIRQHcME1l2DOie9IhQv+O4ROGQpUpRCF
+	 NUnWf5NK5oE+v+Pc6NCMTntraBKYUf1AHbCY0viXSIpwteL6B5yfVdLN53QYLFQycn
+	 Vl29B95bJEOx9KkV6wJsup2BDCawB/6Kn9wShQRdPO9IjjXO0ZUvqz4bnkO0weQ9vK
+	 oCsjXplO8YkFg==
 From: Mark Brown <broonie@kernel.org>
-To: lars@metafoo.de, perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Chancel Liu <chancel.liu@nxp.com>
-In-Reply-To: <20250808061741.187414-1-chancel.liu@nxp.com>
-References: <20250808061741.187414-1-chancel.liu@nxp.com>
-Subject: Re: [PATCH] ASoC: dmaengine_pcm: Add port_window_size to DAI dma
- data struct
-Message-Id: <175499672288.16031.6836246064105850327.b4-ty@kernel.org>
-Date: Tue, 12 Aug 2025 12:05:22 +0100
+To: lgirdwood@gmail.com, Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250729040044.1851988-1-nichen@iscas.ac.cn>
+References: <20250729040044.1851988-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] regulator: tps6594-regulator: Remove unneeded
+ semicolon
+Message-Id: <175499673371.16220.14953721190197929965.b4-ty@kernel.org>
+Date: Tue, 12 Aug 2025 12:05:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,26 +59,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Fri, 08 Aug 2025 15:17:41 +0900, Chancel Liu wrote:
-> The port_window_size is a struct member of dma slave channel runtime
-> config. It's the length of the register area in words the data need to
-> be accessed on the device side. It is only used for devices which is
-> using an area instead of a single register to send or receive the data.
-> Typically the DMA loops in this area in order to transfer the data.
+On Tue, 29 Jul 2025 12:00:44 +0800, Chen Ni wrote:
+> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 > 
-> It's useful for cases that reading/writing multiple registers in DMA
-> transactions.
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: dmaengine_pcm: Add port_window_size to DAI dma data struct
-      commit: 32dffd4c3e3129e3d9bb378af8d80bb57dc3038b
+[1/1] regulator: tps6594-regulator: Remove unneeded semicolon
+      commit: c6871d56b52ec177b8b8bd891fa0cbbd004b646d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
