@@ -1,282 +1,143 @@
-Return-Path: <linux-kernel+bounces-765830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C90B23EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:14:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A791B23EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAE31AA19C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0454C175746
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD81226C398;
-	Wed, 13 Aug 2025 03:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CFA26E6E1;
+	Wed, 13 Aug 2025 03:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7qnOZXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mmxTTExi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BAA271450
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031758836;
+	Wed, 13 Aug 2025 03:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755054833; cv=none; b=eojZTFxtarHYSA0vAdtxWRI/aZoviTFrnGdxjAtZVsQLVxpUJNrTGpbVrQF2b37+09ywv0H0yqY4I/peK+LyjQPPSe36RaxkS5S3Lv9RMYokxCnmJCuN08ZhGo60eWsgxuNTbSiDcxWFrcB7OutNcvgB3LWE4H/zEbx+qN6No/Y=
+	t=1755054974; cv=none; b=R8zj5U5cQiWJGxgmEWquKbrjIKhBENu7pFuxO9taZ/xrZ+Gyr/1XuvmX76YurYXUpJUsmvjZZBfnMum2VyJyzfvAtCAK48QltCSY5pTqRkTel/oUYi22iOl/D+EBPFFgnlZti4nsM4Xprcv53USYbOdUW7v+1m1OdqprtUGZFcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755054833; c=relaxed/simple;
-	bh=to93wvGgdB2JumL5bq5nj5QU70pcOgN2KZVHuFT6VLo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vc07ceJDj4CzfjRdRHCyyoxoLjRTKZG3ABFiT6Qoa4xFbecMNzmq/H3AmfZL/qPIMBDNnNLgWikpZOzY/XKcexcGF6pos6YxD4nJ2r6gB8vliyDf7mvrYlg0GRcUKMRH+fazLE6ql5a8BMfwQ7azq9qbhDTKDOjL7yRxGBdbj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7qnOZXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE85C4AF0B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755054832;
-	bh=to93wvGgdB2JumL5bq5nj5QU70pcOgN2KZVHuFT6VLo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y7qnOZXgdriwSkd6iEpRJuONcYfnPCPZX3DLbofh9MbetvOLnSXOaMj8Gu3fguNj/
-	 0EXKoQ3MTIzr9B53AR2uhHbwwqXStj0Pi7//yyEssxPDNLnL7JygjUsBM7wMrLl92Z
-	 0z5tvRP7ZJZUg+t7RNjiykJE8BMsSNGWrXPMbLlh2e80xLrYvqj4DUHSB/QltlA0Az
-	 DmkGD9HXxbZ2eMmGWftmm7QZGUKzK+0BrQLXec2vWwl53bia4ESLdTeTK97xxfErsn
-	 vIk+ZpW228O7iMI693C9Mn8WefGzmSDl2aJFpDLnHkv7IoaC8QrJA2kAxzT/WdkZC+
-	 HN1Tcd5meV5Tg==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af922ab4849so936249666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 20:13:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXodE7RI5HNpKpVz5wesrAmMQA5dBVoTWy7C2OrvmsFYBmb3DXLhnTnSvAiJY7FFk82TfRx3q9zt/uAGsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+YjQGA7MrwMeVcPZpScKMPDkLQkJ6AkSQQhQYnBeo+L6WzBDY
-	PAlszullTJe4+ZhXVa9KmHgnn9DD5ERqC4+S+ImOweTF9mA7cU/nzfCHq0lGuNCQC5Om6msl9Ui
-	zaSYuTD4Li/sUbsa0xY2ibGAHi+3luC0=
-X-Google-Smtp-Source: AGHT+IEBMr0Yr+5+m8zRBSt5Nfl2BWrRavF5q9eWLpCJJbH3XJlbHLHLFXp61Wnsi4jraXxbw6BnPgknNZ+J3Jt41lA=
-X-Received: by 2002:a17:907:7f23:b0:af9:61b1:e180 with SMTP id
- a640c23a62f3a-afca4e3e022mr129547866b.41.1755054831245; Tue, 12 Aug 2025
- 20:13:51 -0700 (PDT)
+	s=arc-20240116; t=1755054974; c=relaxed/simple;
+	bh=Q3CAbHLCBVDyiOb5ExsJtxT9sJ3zARgcXcaVYKZzXvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AIqfsMFP47RSzJ7xt1PfaSMzjJGNgRmn2Bco9/KUqbeL0VqT+6Wea0tp7FZSkZW1iz/cfcKvBEaGRhd4MH5T54+LSoWGGdvN+lykdSf+wxUyT/eee1G7LC52/6Vk3SReEBEkMS5bCQ7m5xKogmBC2VkjaN5SfVGw6fCFPYkjbV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mmxTTExi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CLve0u006378;
+	Wed, 13 Aug 2025 03:16:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=TyQ8V+iTVg28IwajxsYPxQLlMjOJohRSq+X
+	yP8tZTpk=; b=mmxTTExijIFQYsicbL8lvgnQMkPEPCdEMoEeq5a4yw/WZykM3Wd
+	7MiaYPhO+NM2x6HQ8sCFYsNJc+g4Bnv1C2ZKYH9IpvBMUvFWjlIDTrmN3PQw6q1e
+	ziDHegvsV2V5lO/U4yhTzSSgslyOWps1KIKPFDvr6aEbLRTIqeSa1LkxoiEhwkWk
+	bQTLGc5jXqKZVf7gm7P5YVVQ4REnZVjREuSfhIlEN2G3wjY+LiZh+2MSXJji0092
+	qkAdUcgMgFn1TbWE0prHuns9Yo74g7nvBiZxbhHchjBnQOuXJJTYKZ1yEfczq0VZ
+	xcPlxaL2dHazuU8z0DnJo/VXfZ0v+Va9NzQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffhjp2yc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 03:16:11 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D3G9ik023766;
+	Wed, 13 Aug 2025 03:16:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 48dydm0d2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 03:16:09 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57D3G9c4023763;
+	Wed, 13 Aug 2025 03:16:09 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 57D3G85a023760
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 03:16:09 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id AAFCE228FA; Wed, 13 Aug 2025 11:16:07 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: quic_shuaz@quicinc.com
+Cc: linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Fix SSR(SubSystem Restart) issues caused by BT_EN being pulled up by hardware
+Date: Wed, 13 Aug 2025 11:16:00 +0800
+Message-Id: <20250813031604.3824329-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812090056.771379-1-lixianglai@loongson.cn>
- <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
- <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn> <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
- <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn> <61c858da-8c5e-7652-e580-fc51c211ebb0@loongson.cn>
-In-Reply-To: <61c858da-8c5e-7652-e580-fc51c211ebb0@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 13 Aug 2025 11:13:39 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6P3Ld_-3kf=fTyptpNGnHE8svzQWveKfZTZm8oH795VQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzWVAS30dTCeDz6CwYlHV75Fuheb0lW1B1iqio4mK6xSAlXZzAwZ53ojUU
-Message-ID: <CAAhV-H6P3Ld_-3kf=fTyptpNGnHE8svzQWveKfZTZm8oH795VQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
- threads in virtual machines
-To: lixianglai <lixianglai@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>, 
-	Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NCBTYWx0ZWRfX9vt1EYBN4Y8q
+ eXMQXo2AgGxHfz7bzGjTduxDmlL+nmfzk/YUuTqZsvvdsayeoJfS6+qphutbjJHqi5KaDXLmsfw
+ CcQFU2OHmJArV4Gfr4QiwoJJ+rJj28XHhRzqZSxGbi97waVf65c23Yo23uF/RwoJtNGpd/4OHbi
+ k0RkQaEZx0u9aMdEoe1/1ptNbQD+Ysx8lDhug0V4HZq3bqEJf1YSNWcRzbbyJBwX3re02k+OmEX
+ Iayd72ffGFsa/FXeEE9Hm8+ol5cLDQLEJoTysPHS9W+1R18XK7U3p5G8Em/jn2UFNq89YE+OZna
+ x5/uWdNh9eYpaVH636nUW2l17orWQwVSA2m3DMqE6Xvnbj86i+Y0xVzINEkOHOfmYl4x93VM+f2
+ PDwkNTyo
+X-Proofpoint-GUID: 11e1wfYqZpUlL31j0zHJi_Uyr9t1APnV
+X-Authority-Analysis: v=2.4 cv=TJFFS0la c=1 sm=1 tr=0 ts=689c037b cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Dei6p5SHAAAA:8
+ a=pGLkceISAAAA:8 a=CVKY41Y29sSDTK7O-P4A:9 a=TjNXssC_j7lpFel5tvFf:22
+ a=M-Yerj1wOn-OpK7r_3ei:22
+X-Proofpoint-ORIG-GUID: 11e1wfYqZpUlL31j0zHJi_Uyr9t1APnV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 clxscore=1011 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110074
 
-On Wed, Aug 13, 2025 at 10:27=E2=80=AFAM lixianglai <lixianglai@loongson.cn=
-> wrote:
->
-> Hi Huacai Chen:
-> >> On Tue, Aug 12, 2025 at 8:50=E2=80=AFPM lixianglai <lixianglai@loongso=
-n.cn>
-> >> wrote:
-> >>>
-> >>>
-> >>> Hi Huacai Chen:
-> >>>> Hi, Xianglai,
-> >>>>
-> >>>> There is something that can be improved.
-> >>>>
-> >>>> On Tue, Aug 12, 2025 at 5:24=E2=80=AFPM Xianglai Li
-> >>>> <lixianglai@loongson.cn> wrote:
-> >>>>> When the cpu is offline, the timer under loongarch is not
-> >>>>> correctly closed,
-> >>>>> resulting in an excessively high cpu usage rate of the offline
-> >>>>> vcpu thread
-> >>>>> in the virtual machine.
-> >>>>>
-> >>>>> To correctly close the timer, we have made the following
-> >>>>> modifications:
-> >>>>>
-> >>>>> Register the cpu hotplug timer start event for loongarch.This
-> >>>>> event will
-> >>>>> be called to close the timer when the cpu is offline.
-> >>>>>
-> >>>>> Clear the timer interrupt when the timer is turned off
-> >>>>>
-> >>>>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-> >>>>> ---
-> >>>>>    arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
-> >>>>>    include/linux/cpuhotplug.h   |  1 +
-> >>>>>    2 files changed, 21 insertions(+)
-> >>>>>
-> >>>>> diff --git a/arch/loongarch/kernel/time.c
-> >>>>> b/arch/loongarch/kernel/time.c
-> >>>>> index 367906b10f81..4daa11512eba 100644
-> >>>>> --- a/arch/loongarch/kernel/time.c
-> >>>>> +++ b/arch/loongarch/kernel/time.c
-> >>>>> @@ -12,6 +12,7 @@
-> >>>>>    #include <linux/kernel.h>
-> >>>>>    #include <linux/sched_clock.h>
-> >>>>>    #include <linux/spinlock.h>
-> >>>>> +#include <linux/cpu.h>
-> >>>>>
-> >>>>>    #include <asm/cpu-features.h>
-> >>>>>    #include <asm/loongarch.h>
-> >>>>> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct
-> >>>>> clock_event_device *evt)
-> >>>>>           timer_config &=3D ~CSR_TCFG_EN;
-> >>>>>           csr_write64(timer_config, LOONGARCH_CSR_TCFG);
-> >>>>>
-> >>>>> +       /* Clear Timer Interrupt */
-> >>>>> +       write_csr_tintclear(CSR_TINTCLR_TI);
-> >>>>> +
-> >>>>>           raw_spin_unlock(&state_lock);
-> >>>>>
-> >>>>>           return 0;
-> >>>>> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
-> >>>>>           return res;
-> >>>>>    }
-> >>>>>
-> >>>>> +static int arch_timer_dying_cpu(unsigned int cpu)
-> >>>> We can use arch_timer_dying() for short. And then add an
-> >>>> arch_timer_starting() like this:
-> >>>>
-> >>>> static int arch_timer_starting(unsigned int cpu)
-> >>>> {
-> >>>>           set_csr_ecfg(ECFGF_TIMER);
-> >>>>
-> >>>>           return 0;
-> >>>> }
-> >>>>
-> >>>> Though ECFGF_TIMER may be enabled in other places, for syntax we
-> >>>> need it here.
-> >>>>
-> >>>>> +{
-> >>>>> +       constant_set_state_shutdown(NULL);
-> >>>>> +
-> >>>>> +       return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>>    void __init time_init(void)
-> >>>>>    {
-> >>>>> +       int err;
-> >>>>> +
-> >>>>>           if (!cpu_has_cpucfg)
-> >>>>>                   const_clock_freq =3D cpu_clock_freq;
-> >>>>>           else
-> >>>>> @@ -220,4 +233,11 @@ void __init time_init(void)
-> >>>>>           constant_clockevent_init();
-> >>>>>           constant_clocksource_init();
-> >>>>>           pv_time_init();
-> >>>>> +
-> >>>>> +       err =3D
-> >>>>> cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
-> >>>>> + "loongarch/timer:starting",
-> >>>>> +                                       NULL, arch_timer_dying_cpu)=
-;
-> >>>> Then we need use cpuhp_setup_state() here, because we have a startup
-> >>>> function now.
-> >>>>
-> >>>> And "loongarch/timer:starting" should be
-> >>>> "clockevents/loongarch/timer:starting" like others.
-> >>>>
-> >>>> And the whole should be moved to the last of
-> >>>> constant_clockevent_init() because it is clockevent specific.
-> >>> like this?
-> >>>
-> >>> @@ -164,6 +182,10 @@ int constant_clockevent_init(void)
-> >>>
-> >>>           timer_irq_installed =3D 1;
-> >>>
-> >>> + cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
-> >>> + "clockevents/loongarch/timer:starting",
-> >>> +                         arch_timer_starting, arch_timer_dying_cpu);
-> >>> +
-> >>>           sync_counter();
-> >>>
-> >>>
-> >>> I was wondering whether it should be placed before or after the
-> >>> "timer_irq_installed" judgment
-> >> Should be after "timer_irq_installed" because we only need to run once=
-.
-> >>
-> >> The best place is after pr_info("Constant clock event device
-> >> register\n");
-> >
-> > Got it!
-> >> And there is another question:
-> >> Should we move "write_csr_tintclear(CSR_TINTCLR_TI)" from
-> >> constant_set_state_shutdown() to arch_timer_dying()?
-> >
-> > We may not need to do this. If the context in which the timer is
-> > turned off is to disable interrupts, and the last timing period just
-> > arrives during this process, when the interrupt is re-enabled,
-> > an additional interrupt will be triggered and the next timing expiratio=
-n
-> > time will be filled. This is not in line with expectations.
-> > Isn't it more reasonable to clean up the interrupt flag after turning o=
-ff
-> > the timer instead of just doing so cpu offline context cleaning.
-> >
->
-> This is my personal opinion, but I just trace the process of cpu offline
-> and need to clear the timer interrupt.
-> Because is not particularly proficient in of the overall system
-> architecture, I might have a one-sided view.
-> Do you have a better suggestion?
-Without this patch constant_set_state_shutdown() seems work well, so I
-think clearing interrupt may only needed by cpuhotplug. The reason is
-that the timer interrupt handler doesn't work when the cpu is offline,
-but not in other cases.
+This patch series addresses issues encountered during SSR when
+the BT_EN pin is pulled up by hardware. The main issues fixed are:
 
-However, whether the clearing is in constant_set_state_shutdown() or
-not are both OK for me.
+1. Timeout when sending reset command.
+2. IBS state of host and controller not being synchronized.
+3. Multiple triggers of SSR generating only one coredump file.
+4. SSR process failed due to tx_idle_timer timeout
 
-Huacai
+Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+---
+To: Marcel Holtmann <marcel@holtmann.org>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
->
-> Thanks!
-> Xianglai.
->
-> > Thanks!
-> > Xianglai.
-> >
-> >>
-> >> Huacai
-> >>
-> >>>
-> >>>>> +       if (err)
-> >>>>> +               pr_info("cpu hotplug event register failed");
-> >>>> This is not so useful, because the error isn't fatal.
-> >>>>
-> >>>>
-> >>>> Huacai
-> >>>>
-> >>>>> +
-> >>>>>    }
-> >>>>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.=
-h
-> >>>>> index edfa61d80702..6606c1546afc 100644
-> >>>>> --- a/include/linux/cpuhotplug.h
-> >>>>> +++ b/include/linux/cpuhotplug.h
-> >>>>> @@ -159,6 +159,7 @@ enum cpuhp_state {
-> >>>>>           CPUHP_AP_PERF_ARM_STARTING,
-> >>>>>           CPUHP_AP_PERF_RISCV_STARTING,
-> >>>>>           CPUHP_AP_ARM_L2X0_STARTING,
-> >>>>> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
-> >>>>>           CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
-> >>>>>           CPUHP_AP_ARM_ARCH_TIMER_STARTING,
-> >>>>>           CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
-> >>>>>
-> >>>>> base-commit: 53e760d8949895390e256e723e7ee46618310361
-> >>>>> --
-> >>>>> 2.39.1
-> >>>>>
-> >>>
-> >
->
+---
+Changes in v2:
+- Update commit messages.
+- Add new change to fix Idle_timer timeout.
+- Link to v1: https://lore.kernel.org/all/20250715051618.724475-1-quic_shuaz@quicinc.com/
+---
+
+Shuai Zhang (4):
+  driver: bluetooth: hci_qca: fix ssr fail when BT_EN is pulled up by hw
+  driver: bluetooth: hci_qca: fix host IBS state after SSR
+  driver: bluetooth: hci_qca: Multiple triggers of SSR only generate one
+    coredump file
+  driver: bluetooth: hci_qca: SSR(SubSystem Restart)process failed due
+    to tx_idle_timer timeout
+
+ drivers/bluetooth/hci_qca.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+-- 
+2.34.1
+
 
