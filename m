@@ -1,163 +1,112 @@
-Return-Path: <linux-kernel+bounces-766495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F271B2473A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2374B2472E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5585665C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47B03B7D7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C759B2F5306;
-	Wed, 13 Aug 2025 10:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35622F3C0D;
+	Wed, 13 Aug 2025 10:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZWM9EUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HCmlWVyZ"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2401D212571;
-	Wed, 13 Aug 2025 10:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB842EFDA9;
+	Wed, 13 Aug 2025 10:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081032; cv=none; b=CxYcYUoCcgqTFqzYGssHIpAFvHdG5DHYm3EGhfwCFZ3aFMt4DZSknEHibWDzOEGkbpQtYe08qmCCNplFOBIaOJ4o8wS1CS5tPY4/Z+cRFUg3I8wuBGuH3xaUYHJXUr0QES1J75Q0qaRlyKEgHqwsKTZC1eAtNoKmgjretLz3lX8=
+	t=1755080853; cv=none; b=POvuFkW+yh4h99seeeB0DKomsBHNqHApJDKsCm3mzWHeozzDV8t95iIltTXn8ZAY2Knrb1kAxSHNg5MoTmxWf+X12+/BaIoiPAtvgZbE7/1/ZGf3Px8mAFcIVIOkq5XfTLZl/bkDtvEQUbOb+Gqz4/25q/Vic6VENc4EsYK43kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081032; c=relaxed/simple;
-	bh=V6sdFzKvrJKraeJ9IEPdOHZgCdgzOGqx1ymqb6IrMg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p2tPsYSCijrXAys6uB87/zdl2cxAiZm65UeqeSxFVcoIHz4ZWaAYIRXgON3HC+rSKG7oHA+DVBWw6JBZ/4DZ0f1rDp7Xc+efTgkW53guuBxxBzdAY2vdvdw1WyrIUhVRSl3zLn5WBiPw/cCabHN3W4uz1ajjo8g2vNyFJmopdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZWM9EUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF4D7C4CEEB;
-	Wed, 13 Aug 2025 10:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755081031;
-	bh=V6sdFzKvrJKraeJ9IEPdOHZgCdgzOGqx1ymqb6IrMg4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UZWM9EUAIN03F8InYrZ/c8Yey+pp8uMrCyi4sVnzrtFrOA5ZyBD/I1hKzysTFbQyo
-	 iI3poOPgKStK4msU/SgZTNobQ5f+6tW1gq5FvL+SEXli0va2x5ZMHXH0NIstkyCkdg
-	 sEOgaggtstHBMxsiZM64yuT1HmYuEEYIFGyP1bFHD7FHrHYfUHHzAfnr88wCxKtLL0
-	 KXgInkeC3oouyJT/rraWDp6FY3Fx7nmN6qHlSZyVg2SLfI8VJ6fBRvHzN8khTlpeUI
-	 DWctk6VtepRdTsE55cd39KvDaBBKAu9HeFNQZqygcYsgj36FEBSZU9GzGeNdoXdLej
-	 C9sDXj4K0tMxg==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [PATCH v1 2/3] cpuidle: governors: menu: Rearrange main loop in menu_select()
-Date: Wed, 13 Aug 2025 12:26:35 +0200
-Message-ID: <2389215.ElGaqSPkdT@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <2804546.mvXUDI8C0e@rafael.j.wysocki>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+	s=arc-20240116; t=1755080853; c=relaxed/simple;
+	bh=raAUt700aF4iEiVGZZ0EI59rwZJovsb5RsBpfTUdZ+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bcvac8dcr1m8E1pfrMemGrUIu4sRQQB8sAfp/6vKBRavN4se0XgUnseso6TqxUheWUzPwTOn7eBFJQCuttHq7psJGkEadPptv34UpU4yac6+B+vBZzJlq/UqDGKT6oQkBHmeZv6gggPaUMiCCWfUwammZ6IbEhYebkSaJXqxdtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HCmlWVyZ; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gYwoVXG6EVtDNB7BQEDc+4ji6UVSTCEFJFvpf+ftEnk=; b=HCmlWVyZpwxvhNFdFqNNQ1MltH
+	tzABBEfLYpc9Z9qWBJh1OgVAO9NfXYc9RUKHPbVQcDbgjfxUeGjIc+gLalwrT0cICox6QAd+0AAJj
+	W419et1dlc7204Vkn3KBNChVJGqHaErmA1/acfm+Q8ZXv3qGtLy1uD0jplLJqg2xAcUY1Skt61mK7
+	Wu382QfV2GCUkSm7ikgYakGa771LzswGReNsFAuf8bsCFK+1TZ78hHBk5aMakoWa15EphPruqzssP
+	CKEJAIcrh0JWCeAnACZV73MgzabyydXmM8NL2zPDk9mI/Wac8wrfGNNnfLSrtJvhalc2IYDJpxAha
+	h3NB4vIg==;
+Received: from [223.233.74.188] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1um8hZ-00Dchg-7i; Wed, 13 Aug 2025 12:27:25 +0200
+Message-ID: <b6e63336-aa39-dcf3-3f7c-ac90dea127b7@igalia.com>
+Date: Wed, 13 Aug 2025 15:57:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Reduce the indentation level in the main loop of menu_select() by
-rearranging some checks and assignments in it.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpuidle/governors/menu.c |   72 ++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 35 deletions(-)
-
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -314,45 +314,47 @@
- 		if (s->exit_latency_ns > latency_req)
- 			break;
- 
--		if (s->target_residency_ns > predicted_ns) {
--			/*
--			 * Use a physical idle state, not busy polling, unless
--			 * a timer is going to trigger soon enough.
--			 */
--			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--			    s->target_residency_ns <= data->next_timer_ns) {
--				predicted_ns = s->target_residency_ns;
--				idx = i;
--				break;
--			}
--			if (predicted_ns < TICK_NSEC)
--				break;
--
--			if (!tick_nohz_tick_stopped()) {
--				/*
--				 * If the state selected so far is shallow,
--				 * waking up early won't hurt, so retain the
--				 * tick in that case and let the governor run
--				 * again in the next iteration of the loop.
--				 */
--				predicted_ns = drv->states[idx].target_residency_ns;
--				break;
--			}
-+		if (s->target_residency_ns <= predicted_ns) {
-+			idx = i;
-+			continue;
-+		}
-+
-+		/*
-+		 * Use a physical idle state, not busy polling, unless a timer
-+		 * is going to trigger soon enough.
-+		 */
-+		if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-+		    s->target_residency_ns <= data->next_timer_ns) {
-+			predicted_ns = s->target_residency_ns;
-+			idx = i;
-+			break;
-+		}
- 
-+		if (predicted_ns < TICK_NSEC)
-+			break;
-+
-+		if (!tick_nohz_tick_stopped()) {
- 			/*
--			 * If the state selected so far is shallow and this
--			 * state's target residency matches the time till the
--			 * closest timer event, select this one to avoid getting
--			 * stuck in the shallow one for too long.
-+			 * If the state selected so far is shallow, waking up
-+			 * early won't hurt, so retain the tick in that case and
-+			 * let the governor run again in the next iteration of
-+			 * the idle loop.
- 			 */
--			if (drv->states[idx].target_residency_ns < TICK_NSEC &&
--			    s->target_residency_ns <= delta_tick)
--				idx = i;
--
--			return idx;
-+			predicted_ns = drv->states[idx].target_residency_ns;
-+			break;
- 		}
- 
--		idx = i;
-+		/*
-+		 * If the state selected so far is shallow and this state's
-+		 * target residency matches the time till the closest timer
-+		 * event, select this one to avoid getting stuck in the shallow
-+		 * one for too long.
-+		 */
-+		if (drv->states[idx].target_residency_ns < TICK_NSEC &&
-+		    s->target_residency_ns <= delta_tick)
-+			idx = i;
-+
-+		return idx;
- 	}
- 
- 	if (idx == -1)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
+ 'strscpy_pad()'
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, linux-trace-kernel@vger.kernel.org, kees@kernel.org,
+ torvalds@linux-foundation.org
+References: <20250811064609.918593-1-bhupesh@igalia.com>
+ <20250811064609.918593-4-bhupesh@igalia.com>
+ <aJoGvv5TEfl1liSm@black.igk.intel.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <aJoGvv5TEfl1liSm@black.igk.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
+On 8/11/25 8:35 PM, Andy Shevchenko wrote:
+> On Mon, Aug 11, 2025 at 12:16:08PM +0530, Bhupesh wrote:
+>> As Linus mentioned in [1], we should get rid of 'get_task_comm()'
+>> entirely and replace it with 'strscpy_pad()' implementation.
+>>
+>> 'strscpy_pad()' will already make sure comm is NUL-terminated, so
+>> we won't need the explicit final byte termination done in
+>> 'get_task_comm()'.
+>>
+>> The relevant 'get_task_comm()' users were identified using the
+>> following search pattern:
+>>   $ git grep 'get_task_comm*'
+>> [1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+> Make that a Link tag?
+>
+>    Link: https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/ #1
+>    Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>
+
+Sure, will include it in next version. Waiting for further reviews on 
+this v7.
+
+Thanks.
 
