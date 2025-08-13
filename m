@@ -1,120 +1,134 @@
-Return-Path: <linux-kernel+bounces-766492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3914FB24733
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF10DB24748
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B484565968
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFC71AA79DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9582F3C36;
-	Wed, 13 Aug 2025 10:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6E2F533C;
+	Wed, 13 Aug 2025 10:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUFJxWfG"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FEk74iKb"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1E72F3C11
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A380C2F3C36
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081010; cv=none; b=kQPGfjT7Y5fL8BS6lgaieaFnBRJu1KjkMYLvEp9JC0F88xhsHZ/kxnknjK075KBSDLcyIgeVVxK7yMC9l7rfp+zcj4IE95rfKDF/DCT4sNiL/f2fBAlPVY7emZ9p7aKUe6lV7n+EhfmOI174Hy9ilJBSQ4N7oSPWalzTrZGBFJs=
+	t=1755081058; cv=none; b=DTnUZOly+BknMRGacA1SAXIpzO1rHYPiAswMLdo40Wc2YGDQIkp2HGF3bZyXFARNOggHba5AxNiJC4XFLyiA3mlcYGtJzZo1hmcBt5/IZn/6IvYRCzjQ5KH4bKcEHedd00EqglaZxtGaLbJXIBFeyDTHCGN7c72YjRzZuUbxwSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081010; c=relaxed/simple;
-	bh=j9nZfVw6WNDy8P2NhYDYq7yIvlQTGbMyRsqF99spDPg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UwqyZAQJN/qGVD6P3JZyDrMatvNv0uwyJpf9eU9LuI4p3ho9/d0D6ow8zu7XCwRmc2R/dgyNr7VfKKjWFr0am3O7EVZO3bBbxoRJG0A91pB/9DJVWvziH9bB89mJh++MfaP4JyGv238sM3c4AmCzlUno9UqHCrjRnyGyJANIQuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUFJxWfG; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6180ee20f36so460983a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755081007; x=1755685807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
-        b=WUFJxWfG4eSFGdYuIruhFLprBSs3OYy9j9FabWpGTd7q2ocK54xvxHDEJJ1dfFkvlJ
-         hfUJ61RLp3OIyhZEbcFzLm2DRUtlY6/mISgI6pBwd+ybA1+wEZJst4mMyCPvK8IScmTD
-         oaZnS4AJ6/4tNpulm0OZ6wgoG1TBNPrinTktb3mqvDIJFD4ioqQfE8FIcFTHcisfuI6a
-         9FHDWjmkdUKbu32XA5vhCw47pfv6dez5Tx9ZD7tPUfezjnxaVPEy0LqVY4QX2mZdvfmx
-         ShAzh2JXgqwyFVS/rwYZNY1uDrx9iVfw1JD3YdxkjDDQzfWN4Ub5x/Djy3f+6EKA4ntR
-         p9vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755081007; x=1755685807;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
-        b=WkJao/8I3qvFGtenoQywFmBdy+WYODcO6v5+CzIVriDVl1+h7/E7NyaaLTkYINPpuE
-         GsRob+uK35gexQw5mMXVec3n5FhroIeuLqh5ai7KDyzB3lKVN2Y7jXcU8WSTL7KmJlqo
-         wQRNLBxQH6AMLU/hm1uYm1F/k5IzcynBommhXQxrsDn5luXqm4oTCqEBayiUOhC15cpr
-         lMZouojK6UsteNkGd7Bmz5Wb4+vCr+kds6saupPXcdGXSamDarY/CW2UzRZ8IQ0WEvs0
-         DMqoevsnFWYtECOSkuOZPnxOYw9YwZILFTsRxV3m0Irr+iVRVrxnV/cY4JCmBxfGNm8w
-         Mijw==
-X-Gm-Message-State: AOJu0YyISkBQntSfiPiTLcMasY+kixGPB5lRV+EXYFDOOVqkIWpB53z8
-	hdnL7qbOkVRsSzsPSMJ3Lu/7re5aU+GH4EXEncpTxyYzb+0WugkeRDUC8xdwZTaDY3ptYraM+8Z
-	o3OT9
-X-Gm-Gg: ASbGnctAPpa2nmzV3+gqfgR3KDPwgmL1upYSedCtEVrW8H22s6R9GW9Ut6WRN2uSHZP
-	KzvW9GCUp1u9567qp9/wkOqBCd+HmaUmlfW3D8kPzzLF/g0LkAgHFdUQllGd62u0+TJaKEJ8+01
-	GL6xqaxU8lLws6BNTi9e7pcwVGXKBk/NGErmiPB3T11TBcbo8L7X6FRYTr9GA5Cx216oQ2jGOzf
-	9dQpS8fkREpKurbixznDuzxeo1Vp8MDbKBPjcdEWaf4DaWbOQu6Me3f1NzCpGDHDNhWc+AxZTtJ
-	/QJucBIEjrIvYLequyO3p+eXdaGb5u615SMYgKIXDzl9WYoda2L62B+/8ld33sbY7Isid7xUMLm
-	HwQhL81L5HBcjySjenSYzW3cHMymJUTV0XNti8jA=
-X-Google-Smtp-Source: AGHT+IF29cdNPOBhCMcj9Obj9AvGdSJsCml5B5sk74SLW18u0La5OP66JPcnqGI8eEVOZWoaJs2nkg==
-X-Received: by 2002:a05:6402:1ecc:b0:612:f2fc:2b9b with SMTP id 4fb4d7f45d1cf-6186bf79c06mr842428a12.1.1755081006695;
-        Wed, 13 Aug 2025 03:30:06 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15d9fsm21466335a12.17.2025.08.13.03.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 03:30:05 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, alim.akhtar@samsung.com, 
- Zhen Ni <zhen.ni@easystack.cn>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250806025538.306593-1-zhen.ni@easystack.cn>
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
- <20250806025538.306593-1-zhen.ni@easystack.cn>
-Subject: Re: [PATCH v2] memory: samsung: exynos-srom: Fix of_iomap leak in
- exynos_srom_probe
-Message-Id: <175508100520.39785.3470511038407039138.b4-ty@linaro.org>
-Date: Wed, 13 Aug 2025 12:30:05 +0200
+	s=arc-20240116; t=1755081058; c=relaxed/simple;
+	bh=88L1CJbf9J5QYs1PCbsDjO/XEPjvFmRO+j6a788D7XM=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To:Cc:Content-Type:
+	 References; b=Cr7tZEFjRcabek7E/ZlUZ9Zo1qiEUPDZLfivvkKtvHxsg7UHM7j6pWhJyVo6pc7oiL81iZptF8KpwEQpgyCk4gikctQnC6Ic1OcnMfPcHoc5sxDp2ZmreqD88w90F5n/zco5ayOAeoucdK11IMTCo7k+0k95HPhR4++av6At648=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FEk74iKb; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250813103053epoutp01eb398ff51fc56a237c92d5498d7ad283~bTOthaiYQ1536715367epoutp01v
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250813103053epoutp01eb398ff51fc56a237c92d5498d7ad283~bTOthaiYQ1536715367epoutp01v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755081053;
+	bh=0ByLM1B2U+T0XpDIvRDmM2xeFlGFmAEMmQAwzKw/9jM=;
+	h=From:Date:Subject:To:Cc:References:From;
+	b=FEk74iKbm08dHapnSWxIJAQQrrrhulG+ICWe9VtczXKFv1cbiY1T43r2ZI+EuKHM6
+	 Uy1fazOs69miPGrN2a+OpFKQbWj9XXWMDH7gKLXnpqMyhZwPF/u8JrHOkp2WeK84b5
+	 3es/nWXt0AVDrBq0Uwax48TDjcR5kOElDoF7XVfc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250813103052epcas1p481e94a2a01ca32381def3ed0153e7fdd~bTOsaOnNZ1233412334epcas1p4I;
+	Wed, 13 Aug 2025 10:30:52 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.38.250]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c24Qh2SGZz2SSKZ; Wed, 13 Aug
+	2025 10:30:52 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2~bTOrtCpbi0772707727epcas1p3G;
+	Wed, 13 Aug 2025 10:30:51 +0000 (GMT)
+Received: from [127.0.1.1] (unknown [10.252.69.135]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250813103051epsmtip1aa51be842b3d4948e368acd5c3ba3905~bTOrq-PID2477424774epsmtip1N;
+	Wed, 13 Aug 2025 10:30:51 +0000 (GMT)
+From: Minjong Kim <minbell.kim@samsung.com>
+Date: Wed, 13 Aug 2025 19:30:22 +0900
+Subject: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
+ ntrig_report_version()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAD1pnGgC/42NTQ6CMBCFr0Jm7RimFCquvIdh0fQHJpFCWiAaw
+	t2tnMDl972893ZILrJLcC92iG7jxFPIIC4FmEGH3iHbzCBKUZeKFA5sMSyRe5x1Tr1eXwt6fqO
+	lysjW3BqpKsj1Obqsz+lnl3ngtEzxcz5t9LN/jG6EhG3jNclaU6X8I+kxraG/mmmE7jiOL4DLy
+	h/CAAAA
+X-Change-ID: 20250717-hid-ntrig-page-fault-fix-d13c49c86473
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,  Minjong Kim
+	<minbell.kim@samsung.com>
 X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755081051; l=1243;
+	i=minbell.kim@samsung.com; s=20250717; h=from:subject:message-id;
+	bh=88L1CJbf9J5QYs1PCbsDjO/XEPjvFmRO+j6a788D7XM=;
+	b=jMHjWJxU86Xc94TU6HK6OHNbaxiZxZs6SE7jElNqp6dKdYJMLMocwviTFht8i3xWF6XzJGX5r
+	6+TKp264I7nDk1mexrwlaMiE46ci/urpbwETiPS0/XjFVfe4++M6ow3
+X-Developer-Key: i=minbell.kim@samsung.com; a=ed25519;
+	pk=Uz8SoYyLUgGaB/6pPi6XMhiR2WD14yYYdQ57KyXYtBY=
+X-CMS-MailID: 20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2
+References: <CGME20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2@epcas1p3.samsung.com>
 
+in ntrig_report_version(), hdev parameter passed from hid_probe().
+sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
+if hdev->dev.parent->parent is null, usb_dev has
+invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
+when usb_rcvctrlpipe() use usb_dev,it trigger
+page fault error for address(0xffffffffffffff58)
 
-On Wed, 06 Aug 2025 10:55:38 +0800, Zhen Ni wrote:
-> The of_platform_populate() call at the end of the function has a
-> possible failure path, causing a resource leak.
-> 
-> Replace of_iomap() with devm_platform_ioremap_resource() to ensure
-> automatic cleanup of srom->reg_base.
-> 
-> This issue was detected by smatch static analysis:
-> drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()warn:
-> 'srom->reg_base' from of_iomap() not released on lines: 155.
-> 
-> [...]
+add null check logic to ntrig_report_version()
+before calling hid_to_usb_dev()
 
-Applied, thanks!
+Signed-off-by: Minjong Kim <minbell.kim@samsung.com>
+---
+ drivers/hid/hid-ntrig.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1/1] memory: samsung: exynos-srom: Fix of_iomap leak in exynos_srom_probe
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/6744085079e785dae5f7a2239456135407c58b25
+diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
+index 2738ce947434f904f32e9a1979b1681c66972ff9..0f76e241e0afb4adb38885a008a05edb24169ea9 100644
+--- a/drivers/hid/hid-ntrig.c
++++ b/drivers/hid/hid-ntrig.c
+@@ -144,6 +144,9 @@ static void ntrig_report_version(struct hid_device *hdev)
+ 	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
+ 	unsigned char *data = kmalloc(8, GFP_KERNEL);
+ 
++	if (!hid_is_usb(hdev))
++		return;
++
+ 	if (!data)
+ 		goto err_free;
+ 
+
+---
+base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
+change-id: 20250717-hid-ntrig-page-fault-fix-d13c49c86473
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Minjong Kim <minbell.kim@samsung.com>
 
 
