@@ -1,212 +1,136 @@
-Return-Path: <linux-kernel+bounces-766173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE382B24347
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67F6B2434B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BFE9188A534
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C771893750
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680D82E36FA;
-	Wed, 13 Aug 2025 07:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1352EA155;
+	Wed, 13 Aug 2025 07:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IPi8sKZV"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z6rea7jY"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ABE27E05E;
-	Wed, 13 Aug 2025 07:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFCA2E8DF8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071560; cv=none; b=Vd5kQjthUJyfrhbLGHW3mCXps/OtqnHj3Y8+bgGF+cXJzUgwCdbQcdVODSVwsh3o4DnONNO+G3VeiNRba7RAvgRN2x7NCYsQCKxWUQiC5Oyz9LpXToZq7kB8/2fAUayNnHYosngQVXHxJNLEx13CC/XehH5E3P6Ey+ABt5MO2/Q=
+	t=1755071565; cv=none; b=j92rCCfhc+kiT38SKdpZPt6oBbjsIKMoohRPALkTwotqFpgkqRGKx0nnnWPejD25hwfXcNByjtAuexZOo0JOGEDLT2rfoQSoPKRbFnxtrnz+fdt5g1zmYpeDHyqrPS7SsQDPOQl3cn5I3Bn9yY9PK6TykQpeJFhwLhoZ+jCF6Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071560; c=relaxed/simple;
-	bh=XlFq4Sgus3oQVPGHzXvXgTDE9t8jmHYL6F+kNSEKiPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mj253TP4du5Az44TCiqpcIV+fcTgUj53lgzRtDTZ5l7WgyzqW5EaTWkDSSV2z3whOMmp6DITp0Wzmuh0D3e9IyMII19dHG6pWilYdMG6tlxslZ65k4xXyCBghyqgfv+oNQGmaFLwMYDMGsVAsaE1Iluof5qYEaKe4or4tuh9YoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IPi8sKZV; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57D7pYMT1600946;
-	Wed, 13 Aug 2025 02:51:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755071494;
-	bh=rJa4YbPLmwHtQ5vYaRplxOBKhYAcebYKOd1/PHvF9Rw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=IPi8sKZVyBFUyA1jBcIN7qegHeqU4NgvB0m7TW8js9bv4wlWetdgTtpDMzvTU7G+X
-	 Rvv4dHysOQwh2JPhPemQJtnCFFJHqbU7z6KnB7mISjp1dc5jZcUx8CxxVck+7sKizM
-	 mi/T+sC/kQs0SKyCJlqPjaI6SuxhxrUgbH8h+oR4=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57D7pYZK4090251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 02:51:34 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 02:51:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 02:51:33 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57D7pRPs1978735;
-	Wed, 13 Aug 2025 02:51:27 -0500
-Message-ID: <d0c2fcb1-578d-443c-949f-860c94824ac9@ti.com>
-Date: Wed, 13 Aug 2025 13:21:26 +0530
+	s=arc-20240116; t=1755071565; c=relaxed/simple;
+	bh=wTHkbolkWVsr/NVVpXeCQCswoJSODOIqqyaUV2Gnosc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=k/mFjOvdJy05y2Pb0l4LRG24tlRm51mgedMTNYZ6N0iysndduiRS1jxcK8NdCrF7PsQQL6zmLeDqFgauzeNYuTzsSRhlLOcRvty0QCUVZoYnuJNqcDbWk+/h19968mfx+ns1jVlud1R+23hJK5KJ+8Q0u+24+IA7ricCB05jd9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z6rea7jY; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b78a034d25so3233582f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755071561; x=1755676361; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=02qDuB/EcGaJVS8+Q8TL27euIcDkVRhwVcM5c3itE0g=;
+        b=Z6rea7jYeCtyCSFwOyVUAQIaHXdyS0VCOlSr3MtzNu9Ypcd4ywiMu6dsxcp0n5pOgZ
+         nXpKZ4I1T/ERUEBULOdifeV3JwtOTnXLKRyar86NkCfW2q2Pk3ZNKvxaCaFUNnaWmxgp
+         2IQLbW28wSCax7DqjUwyF48ZuAlsm3+kSGs/+szAZpfB57PIEPOwk7re6nrX52rdC2Sn
+         82EIr2hLkGVnVIWkqgmhCHG1iz3OA5C/HhOaggfDlHfkjkEuecEW1247fROHZdIAaxQd
+         KS4dewOSWkS0VcTdyjTJK+xkNcNVRqpN/A9XQCeHiBKgZMRd17j+hP2ApmtsTZzUP9z1
+         fjng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755071561; x=1755676361;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=02qDuB/EcGaJVS8+Q8TL27euIcDkVRhwVcM5c3itE0g=;
+        b=CBL+qTVdIEuQFNPzk42NmksPFDqWnQHM9sPK8AWU/Sn4Hg6SbIAQONRP91DBMUAvhg
+         zoFXKFCgxLes8N/Ohu8Hcdn/JKkYb79Sw9jJPKd9fQ6oJSa6Q/WCkuQuX08Xd5lBiyEo
+         Ntdhaz8+qoqVH2Cq+BuUau5v9svBVv7gAqrLOaix1LIvVysVco0AfNIDbbKTI/ptMdBI
+         t8xlIuI7FBmEURWLmTtI4rVQ+0wHZAfHWKZIsb+RXtz0laKcMh3slBUdkibFIveRKn3u
+         vUpqbVKNKkyZjQwpRMQRxYGxknr1K6NaDndE/lqPj1dKaBHBn2818jKQtU1pfA8iwaUF
+         OrxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuCjagQ4ThXG2WED5nyQcJ4zz7CFTKFxvJvSHkl+Vp4SVMuLtrqKODh5yICr1o84SSwKq9oGcoBqQ9ops=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsM5NYXbOBAq25LS3yofWo/1pPNEpSyyE7UGPDY2KzWAzzXWHX
+	FQUEk4763s7C8FxzugNwWiGBv/UqrCQQdRuStghMtc9vQ+moEetcHwfMLnQrAwM2G+vMQhVNRs0
+	drdKNIzjR2vFWMGEIzQ==
+X-Google-Smtp-Source: AGHT+IFQOnB3WTKhyHtvWJmH83iA6/rYttG73Tf1N82jwPFXufEqb0tOp/a1EyEQXFyeHLXn1qK53ixfr0QTKsU=
+X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:458:a7ae:4acf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5d85:0:b0:3b7:61e5:a8a5 with SMTP id ffacd0b85a97d-3b917eb5b43mr1445076f8f.47.1755071560984;
+ Wed, 13 Aug 2025 00:52:40 -0700 (PDT)
+Date: Wed, 13 Aug 2025 07:52:40 +0000
+In-Reply-To: <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] net: rnpgbe: Add build support for rnpgbe
-To: Yibo Dong <dong100@mucse.com>, "Anwar, Md Danish" <a0501179@ti.com>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-        <corbet@lwn.net>, <gur.stavi@huawei.com>, <maddy@linux.ibm.com>,
-        <mpe@ellerman.id.au>, <lee@trager.us>, <gongfan1@huawei.com>,
-        <lorenzo@kernel.org>, <geert+renesas@glider.be>,
-        <Parthiban.Veerasooran@microchip.com>, <lukas.bulwahn@redhat.com>,
-        <alexanderduyck@fb.com>, <richardcochran@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-2-dong100@mucse.com>
- <5528c38b-0405-4d3b-924a-2bed769f314d@ti.com>
- <F9D5358C994A229C+20250813064441.GB944516@nic-Precision-5820-Tower>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <F9D5358C994A229C+20250813064441.GB944516@nic-Precision-5820-Tower>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+ <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com> <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
+Message-ID: <aJxESG0l4-kyUHXg@google.com>
+Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of each allocator
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-
-
-On 13/08/25 12:14 pm, Yibo Dong wrote:
-> On Tue, Aug 12, 2025 at 09:48:07PM +0530, Anwar, Md Danish wrote:
->> On 8/12/2025 3:09 PM, Dong Yibo wrote:
->>> Add build options and doc for mucse.
->>> Initialize pci device access for MUCSE devices.
->>>
->>> Signed-off-by: Dong Yibo <dong100@mucse.com>
->>> ---
->>>  .../device_drivers/ethernet/index.rst         |   1 +
->>>  .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 +++
->>>  MAINTAINERS                                   |   8 +
->>>  drivers/net/ethernet/Kconfig                  |   1 +
->>>  drivers/net/ethernet/Makefile                 |   1 +
->>>  drivers/net/ethernet/mucse/Kconfig            |  34 ++++
->>>  drivers/net/ethernet/mucse/Makefile           |   7 +
->>>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   8 +
->>>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  25 +++
->>>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 161 ++++++++++++++++++
->>>  10 files changed, 267 insertions(+)
->>>  create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
->>>  create mode 100644 drivers/net/ethernet/mucse/Kconfig
->>>  create mode 100644 drivers/net/ethernet/mucse/Makefile
->>>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
->>>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
->>>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
->>
->> [ ... ]
->>
->>> + **/
->>> +static int __init rnpgbe_init_module(void)
->>> +{
->>> +	int ret;
->>> +
->>> +	ret = pci_register_driver(&rnpgbe_driver);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	return 0;
->>> +}
->>
->> Unnecessary code - can be simplified to just `return
->> pci_register_driver(&rnpgbe_driver);`
->>
+On Tue, Aug 12, 2025 at 07:52:35PM +0200, Danilo Krummrich wrote:
+> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
+> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+> > index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d77130b374bd1397f7384 100644
+> > --- a/rust/kernel/alloc/allocator.rs
+> > +++ b/rust/kernel/alloc/allocator.rs
+> > @@ -17,6 +17,8 @@
+> >  use crate::bindings;
+> >  use crate::pr_warn;
+> >  
+> > +const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN as usize;
 > 
-> Yes, but if I add some new codes which need some free after
-> pci_register_driver failed, the new patch will be like this:
+> I think this needs the following diff:
 > 
-> -return pci_register_driver(&rnpgbe_driver);
-> +int ret:
-> +wq = create_singlethread_workqueue(rnpgbe_driver_name);
-> +ret = pci_register_driver(&rnpgbe_driver);
-> +if (ret) {
-> +	destroy_workqueue(wq);
-> +	return ret;
-> +}
-> +return 0;
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 84d60635e8a9..4ad9add117ea 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -84,6 +84,7 @@
 > 
-> Is this ok? Maybe not good to delete code for adding new feature?
-> This is what Andrew suggested not to do.
+>  /* `bindgen` gets confused at certain things. */
+>  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
+> +const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN = ARCH_KMALLOC_MINALIGN;
+>  const size_t RUST_CONST_HELPER_PAGE_SIZE = PAGE_SIZE;
+>  const gfp_t RUST_CONST_HELPER_GFP_ATOMIC = GFP_ATOMIC;
+>  const gfp_t RUST_CONST_HELPER_GFP_KERNEL = GFP_KERNEL;
+> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+> index 25fc9f9ae3b4..5003907f0240 100644
+> --- a/rust/kernel/alloc/allocator.rs
+> +++ b/rust/kernel/alloc/allocator.rs
+> @@ -17,7 +17,7 @@
+>  use crate::bindings;
+>  use crate::pr_warn;
 > 
-
-In this patch series you are not modifying rnpgbe_init_module() again.
-If you define a function as something in one patch and in later patches
-you change it to something else - That is not encouraged, you should not
-remove the code that you added in previous patches.
-
-However here throughout your series you are not modifying this function.
-Now the diff that you are showing, I don't know when you plan to post
-that but as far as this series is concerned this diff is not part of the
-series.
-
-static int __init rnpgbe_init_module(void)
-{
-	int ret;
-
-	ret = pci_register_driver(&rnpgbe_driver);
-	if (ret)
-		return ret;
-
-	return 0;
-}
-
-This to me just seems unnecessary. You can just return
-pci_register_driver() now and in future whenever you add other code you
-can modify the function.
-
-It would have  made sense for you to keep it as it is if some later
-patch in your series would have modified it.
-
->>> +
->>> +module_init(rnpgbe_init_module);
->>> +
->>> +/**
->>> + * rnpgbe_exit_module - Driver remove routine
->>> + *
->>> + * rnpgbe_exit_module is called when driver is removed
->>> + **/
->>> +static void __exit rnpgbe_exit_module(void)
->>> +{
->>> +	pci_unregister_driver(&rnpgbe_driver);
->>> +}
->>> +
->>> +module_exit(rnpgbe_exit_module);
->>> +
->>> +MODULE_DEVICE_TABLE(pci, rnpgbe_pci_tbl);
->>> +MODULE_AUTHOR("Mucse Corporation, <techsupport@mucse.com>");
->>> +MODULE_DESCRIPTION("Mucse(R) 1 Gigabit PCI Express Network Driver");
->>> +MODULE_LICENSE("GPL");
->>
->> -- 
->> Thanks and Regards,
->> Md Danish Anwar
->>
->>
+> -const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN as usize;
+> +const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN;
 > 
-> Thanks for your feedback.
+>  /// The contiguous kernel allocator.
+>  ///
+> 
+> 
+> No need to resend I can fix it up when applying the patch.
 
--- 
-Thanks and Regards,
-Danish
+Hmm. Maybe that depends on the configuration? The constant was generated
+for me. Either way, happy with the suggested change.
 
+Alice
 
