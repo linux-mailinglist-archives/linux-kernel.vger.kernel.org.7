@@ -1,109 +1,220 @@
-Return-Path: <linux-kernel+bounces-767350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83196B2532D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928ECB25331
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A96B7B529C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB518845B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC7F2E9EB3;
-	Wed, 13 Aug 2025 18:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6672E92A6;
+	Wed, 13 Aug 2025 18:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V4xn0GSu"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m7ElGGFV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8E281368;
-	Wed, 13 Aug 2025 18:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FFC28B3F3
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755110573; cv=none; b=RV/5RdUfrz20i3UiU75kFfvJg0+FOdWQp+ag2KbYJbtD1e2Lxm5kzXd8ZE14zYR7Wai7R7j54EQB5Q68BzQVqkzTBKgGJTCOP70ykd8dnOJXpH1FZtIJXShNgtpsgrNuGV49i6RMLSYMGAeTsI/jCpdSMhglZ8ZyiZ1AzDClJsY=
+	t=1755110654; cv=none; b=Mqg1aK35ALjuKhVbJxRCpxAhhWuDyBQtBia1DCUHBkncd5nAF7EYQLWfAbp8dk8TRjIOo5k/uzlqqYy29WSI+LqP7OsibWT0aFXbx0FS8WpPTp0DTNLrjxORCFu0H6L0j/Y5aLOCJjT5+fGLR1VCwJ3y/e0oqAhfYhPaiojmKRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755110573; c=relaxed/simple;
-	bh=3vKay5gKg19Kq2chPg/SuX+gjp1J9MnBwzhkOq/r3TY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXQElDvjxZnJLpRbq4CeFL1lJOj7JCf4sQczrfFL/D0/SASWPC/0KDT8gN5YiCCx3JfKTWTIx8KJvg/Vh0V2OQ9fpidR8cXD4Gvqv5XMiXWrSvJzPyEs0qRpIFIQsfKFjxbvQSK0iw2p/i3hj4SDdnNsnYUyvthUIaCX0nXjsLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V4xn0GSu; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DIgTiZ2135662;
-	Wed, 13 Aug 2025 13:42:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755110549;
-	bh=qszVEd2EhaYW8OmOJGC6rnTOzggaCtkQFOIJf3q1+Ps=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=V4xn0GSuS7+ZpaLAJ4RtxHYRSx/+9PUTZvNos9KBTLeImQLktx2GgBOiUWznS+jXG
-	 aQK2WgxeVFJTGepVuG/vTb5l6BOqRnh01AXrzIrtvrKxvB+//6HTg0pLWl5Wf/aWzN
-	 xpEB3K+ntOA3PbAKitLWd4ZEx+3KKvS/OPHpnyIM=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DIgTpo261105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 13:42:29 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 13:42:29 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 13:42:29 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DIgTcG2728072;
-	Wed, 13 Aug 2025 13:42:29 -0500
-Date: Wed, 13 Aug 2025 13:42:29 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Randolph Sapp <rs@ti.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d-gole@ti.com>,
-        <afd@ti.com>, <bb@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <detheridge@ti.com>, <matt.coster@imgtec.com>,
-        Michael Walle
-	<mwalle@kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62p-j722s: enable the bxs-4-64
-Message-ID: <20250813184229.dhgpqvi3b6aat46g@managing>
-References: <20250808232522.1296240-1-rs@ti.com>
- <20250808232522.1296240-2-rs@ti.com>
- <20250813151721.nc5fr3qmro5grlda@steam>
- <DC1HS8D8KLIF.2MN7D9EXGQQ45@ti.com>
+	s=arc-20240116; t=1755110654; c=relaxed/simple;
+	bh=mJD2BkbvjxgDrwFljlBtr6w24VM0830IIP3Zd1UGqAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QoyAwtwCh8+DSgB9Enm0gQEewvVMCLeYB9KzuSylA2FMFmassJ+zqGfmH2aJ0V+TuLUlGmQj26pKy+MMiztDSGPzF9hafm1fsdKAckNDm/jqWxVvqmoZP1YrHxkFPM2nwIqnKSw6lR3AzNZFTjm/+YujLOQ9AYMf/CRpE8lFZKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m7ElGGFV; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755110653; x=1786646653;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mJD2BkbvjxgDrwFljlBtr6w24VM0830IIP3Zd1UGqAk=;
+  b=m7ElGGFV6EMoQib6fix1cxVySMlPl+icIa8OdG8TbxYBMUGCb32uYWC9
+   BpXagqyrB0iabEPxjsPLaEbMgGHnfEbhrEI0H+SIe0pr3WF+EWVhQhI/o
+   b5uAs7tCiY9wAeMsiD7HzMUSYlbDjK2JuS6zipXUfJxTYZwJUSmbo2KEw
+   xrrR6IqWiItVZr/x3lsSFSOh41Sd+V9hTXLU17d5VqROxUyrY73XMWhIb
+   us4kSwiqaG+VqzBEQ5x86PZX87CXZZdrOPEXVPaEozj3D11x0uT062AgT
+   LkMDmCieEtK7z6ndy7sc6ZyDV9msiPkVI+IhfnWyrK7IeK6tUnhXBlYqq
+   g==;
+X-CSE-ConnectionGUID: FiwJMMAwTcSBub73OET8rA==
+X-CSE-MsgGUID: grKCm1HbRcmlbdXLIxLXiA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61036321"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="61036321"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 11:44:12 -0700
+X-CSE-ConnectionGUID: nPlv+xR0QyeNLDSIv7VDtA==
+X-CSE-MsgGUID: pwdLbm0tR/uzvY8p6z/jIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="171880376"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 11:44:12 -0700
+Message-ID: <002f259d-2f20-4428-add3-a02650bc728b@intel.com>
+Date: Wed, 13 Aug 2025 11:44:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <DC1HS8D8KLIF.2MN7D9EXGQQ45@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] x86/microcode/intel: Implement staging handler
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, colinmitchell@google.com, chao.gao@intel.com,
+ abusse@amazon.de, linux-kernel@vger.kernel.org
+References: <20250409232713.4536-1-chang.seok.bae@intel.com>
+ <20250813172649.15474-1-chang.seok.bae@intel.com>
+ <20250813172649.15474-5-chang.seok.bae@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250813172649.15474-5-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12:56-20250813, Randolph Sapp wrote:
-[...]
+> +/*
+> + * Determine if the next data chunk can be sent. Each chunk is typically
+> + * one page unless the remaining data is smaller. If the total
+> + * transmitted data exceeds the defined limit, a timeout occurs.
+> + */
 
-> >> +		reg = <0x00 0x0fd80000 0x00 0x80000>;
-> >> +		clocks = <&k3_clks 237 1>;
-> >> +		clock-names = "core";
-> >> +		assigned-clocks = <&k3_clks 237 1>;
-> >> +		assigned-clock-rates = <800000000>;
+This comment isn't really telling the whole story. It's not just
+determining if the chunk can be sent, it's calculating it and filling it in.
 
-btw, as per https://www.ti.com/lit/ds/symlink/tda4aen-q1.pdf (page 86)
-720MHz when vdd_core is 0.75v (default)
-and 800MHz when vdd_core is 0.85v
+> +static bool can_send_next_chunk(struct staging_state *ss)
+> +{
+> +	WARN_ON_ONCE(ss->ucode_len < ss->offset);
 
-0.85v is set in the board dts and higher OPPs are enabled depending on
-board capability.
+Please don't WARN_ON() they can be fatal because of panic_on_warn. Also
+I think this is the wrong spot for this. We should enforce this at the
+time ss->offset is _established_ which is oddly enough in the next patch.
 
-You might want to check the assigned-clock-rates based on data sheet,
-default should'nt need a assigned-clock-rate.
+	ss->offset = read_mbox_dword(ss->mmio_base);
+	if (ss->offset > ss->ucode_len)
+		// error out
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+
+> +	ss->chunk_size = min(MBOX_XACTION_SIZE, ss->ucode_len - ss->offset);
+
+It's a _little_ non-obvious that "can_send_next_chunk()" is also setting
+->chunk_size. It would be easier to grok if it was something like:
+
+	ok = calc_next_chunk_size(&ss);
+	if (!ok)
+		// error out
+
+> +	if (ss->bytes_sent + ss->chunk_size > MBOX_XACTION_MAX(ss->ucode_len)) {
+> +		ss->state = UCODE_TIMEOUT;
+> +		return false;
+> +	}
+
+"TIMEOUT" seems like an odd thing to call this failure. Can you explain
+the choice of this error code a bit, please?
+
+> +/*
+> + * Handle the staging process using the mailbox MMIO interface. The
+> + * microcode image is transferred in chunks until completion. Return the
+> + * result state.
+>   */
+>  static enum ucode_state do_stage(u64 mmio_pa)
+>  {
+> -	pr_debug_once("Staging implementation is pending.\n");
+> -	return UCODE_ERROR;
+> +	struct staging_state ss = {};
+> +
+> +	ss.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
+> +	if (WARN_ON_ONCE(!ss.mmio_base))
+> +		return UCODE_ERROR;
+> +
+> +	init_stage(&ss);
+> +
+> +	/* Perform the staging process while within the retry limit */
+> +	while (!is_stage_complete(ss.offset) && can_send_next_chunk(&ss)) {
+> +		/* Send a chunk of microcode each time: */
+> +		if (!send_data_chunk(&ss))
+> +			break;
+> +		/*
+> +		 * Then, ask the hardware which piece of the image it
+> +		 * needs next. The same piece may be sent more than once.
+> +		 */
+> +		if (!fetch_next_offset(&ss))
+> +			break;
+> +	}
+
+The return types here are a _bit_ wonky. The 'bool' returns make sense
+for things like is_stage_complete(). But they don't look right for:
+
+	if (!send_data_chunk(&ss))
+		break;
+
+where we'd typically use an -ERRNO and where 0 mean success. It would
+look something like this:
+
+	while (!staging_is_complete(&ss)) {
+		err = send_data_chunk(&ss);
+		if (err)
+			break;
+
+		err = fetch_next_offset(&ss);
+		if (err)
+			break;
+	}
+
+That's utterly unambiguous about the intent and what types the send and
+fetch function _must_ have.
+
+Note I also moved the can_send_next_chunk() call into
+staging_is_complete(). I think that makes sense as well for the
+top-level loop.
 
