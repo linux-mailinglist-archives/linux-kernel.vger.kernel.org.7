@@ -1,96 +1,77 @@
-Return-Path: <linux-kernel+bounces-767168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA2EB24FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE704B24FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06465A4AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:36:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88BCA5A0400
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01836288C32;
-	Wed, 13 Aug 2025 16:31:28 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A9F28B7D7;
+	Wed, 13 Aug 2025 16:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpB4CbJ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEC2281368
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9DE281368;
+	Wed, 13 Aug 2025 16:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102687; cv=none; b=Lg7/N9UaVITbFUEA9rYm4RRcZHXime1PmxU+KVB4hnhjgXxzpHN1TecULQ273c1HB6NV1h3CWuUBfgr5iD/6nbalOD0AUobpAAsM9C/6UeFNi1K9C0vBk/kYoLoStzZw6rQCRVstPpXSVhsL8+8pPGINmgotBg7bauFHgj0PmSY=
+	t=1755102704; cv=none; b=JoZaMKhHRATK9G1/Y0XW5q71M7Ww0Dw3gXqe8lMfQnJqWjz7k2tilmQxS+DAxZyGnG3EvpxVV/OUHRn1b8FqUy2+hf9WjuvOSub7572s5PDqOxoeaeclwjNh20lX3nXGADKkUR9fX/bH3T033OHxMUH3RBcZqkRJen/ejdjcsYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102687; c=relaxed/simple;
-	bh=WfHSUQEY3ZJrnUPJmAiL0Ymo8VhyVozArfR/PvCIpA0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ErjPbBnQFHQN2AQqGf2ZvbJmVXK8nJnK2zXTx/Yneun3lA/Wfr011012lzUjRdOCHcd9HLeaOb3NLT/ZXJ5TxRFnfOSOO5p+C3+eZc5iXTy6NUbYrt/Ywe19keyJeVbLkVTPCMB4o4UlNQjintvoIWT0e93eNfvtZqIUXQFpBLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88432e64477so1554339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:31:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755102685; x=1755707485;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h3v2PBlw8KMNjlaA5Jr0Slsgw7HOK1MZVmucbZxBQSY=;
-        b=A1Sedy2z27hJYxBJ9TMxXACbBQCx8pz7mUDV0J8mipPd5z2jRlc5pDnY96Pfkuyxef
-         vCH+RJLG3CHUgpwBOJs1dCGK2oMlx02RYa9v6e88h5ifamk+agGX5vjJBTcHBp+r+QP7
-         jf8GXwn14taJJXbQQHHOLu5CssJX5ZmLkdtCZXUHho+HSaxiWPp1zhlnyQLdZSIEpvGA
-         4qNnehfslzWKN+wFlMhI2PNAku1kaFDGyriKk4m+WSZm2jZN2AMvGCaAn5dB9OIU5fsB
-         LnboK9q64q8yOrJIdPV8wFyCdJ7eRPg68tqeN8YkWHtPy4rLWTZpfM+OchgqdTs3NJac
-         Bc9A==
-X-Gm-Message-State: AOJu0YxQM31unUZ0JNmNVObQrqd6u/+DRcoPJqsj1SuJmu/oCvE80nQT
-	7RZQi16xq7TJruFwf5aqSSvawnsuVGi/RpvtZWpTwldHAA2pa8tsGXXrxso0F5JLQsRRKgUa4nA
-	6Xz3pb+C2OIbNUKE4hlcPfdEA9PYTTZbN5cUwjvaH5N8GF+33HkAdNsH9H04=
-X-Google-Smtp-Source: AGHT+IEUYCz+//JqQ3XHe16BxK77aWOwwCT1SRTItHt+P9jmDk1uZza+1vSdXNDJW+lGCbqgnO9ACgn43tTEEI09LbnQdXQoDx8s
+	s=arc-20240116; t=1755102704; c=relaxed/simple;
+	bh=r681/UoqQ77m/rJhh7Rim7rhRtBmAr5NpXSkVeeo1Fw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ZgagrZEsQdi4ydLeQU2VVLaij+WSBYOVdP2XteBuf2zZnn4A6DedlPiVPDYFWfjjciRAZyKoJ18yzrL4KidRZN1qwNd0Qj0eAj+bfPSc4PhfmnOLcIkuZ2RT9Zym78R6XMKUv6oQZNYCuov+CC7EjoGKsHNovWEuGHgWiLrdDvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpB4CbJ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8787DC4CEEB;
+	Wed, 13 Aug 2025 16:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755102703;
+	bh=r681/UoqQ77m/rJhh7Rim7rhRtBmAr5NpXSkVeeo1Fw=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=IpB4CbJ7gK0ezAOWJVESoy62k5C58j4Ml0ESZxa07gHhycK+BOQOvOQ1hDfGf9EYU
+	 pWK7b6BeDvQQz8X9/3s9SQN4px4u24wmiv1Nfm0I4pIvpTPsr/vIvVAD28edA3QbNg
+	 +hjODPTOvZO5+9PsHmPujpIAj1EXjo7x0zRNFZKl0O9iBHSfx+kB5cHukCp3pEwidT
+	 4CSrlvZhJu7DLUHn91oTEeF8OyociqpQpQDWwfK/Kf934Vvokhz0k35wj3jXIIYUIZ
+	 U1kojyydubopD6Tfy8tkDyJjzi6Dfkly7DgdksS909FVdQQByeBz2fpYArCPd7tGB5
+	 xJRTaJW78fyxQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2cc4:b0:884:1d69:f1a9 with SMTP id
- ca18e2360f4ac-8842963a7abmr720433739f.4.1755102685260; Wed, 13 Aug 2025
- 09:31:25 -0700 (PDT)
-Date: Wed, 13 Aug 2025 09:31:25 -0700
-In-Reply-To: <689a3d92.050a0220.7f033.00ff.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689cbddd.050a0220.7f033.0153.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 18:31:38 +0200
+Message-Id: <DC1FZCZFDPV6.2TODOFP4YKJQR@kernel.org>
+Subject: Re: "Re: [PATCH 2/7] rust: gpu: update ARef and AlwaysRefCounted
+ imports from sync::aref"
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
+To: "Shankari Anand" <shankari.ak0208@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <DBQYD7G5SOZA.2MSKKQWXTPCBB@kernel.org>
+ <20250813142814.31576-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250813142814.31576-1-shankari.ak0208@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed Aug 13, 2025 at 4:28 PM CEST, Shankari Anand wrote:
+>  This particular patch in the series is restricted to inclusion of only g=
+pu driver files.
+>  Can this be picked up separately or should I be merging it with any othe=
+r driver?
 
-***
-
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-Author: mst@redhat.com
-
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 94cc4705e91d..3b5695ad3714 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -686,6 +686,11 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
- 		if (refs)
- 			page_ref_sub(last_head, refs);
- 	}
-+
-+	/* Fail if we couldn't get all requested data, like linear copy does */
-+	if (length > 0)
-+		return -EFAULT;
-+
- 	return 0;
- }
- 
-
+This specific one is fine, I'll pick it up soon.
 
