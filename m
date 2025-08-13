@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-766467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6731FB246F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730E5B24704
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8C21A261FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E1B3B4A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD3E2D63F9;
-	Wed, 13 Aug 2025 10:13:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C18A212541;
-	Wed, 13 Aug 2025 10:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CF72777E8;
+	Wed, 13 Aug 2025 10:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nvUDsrfR"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D842D1F7E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755079989; cv=none; b=g0LsyXRY8QODtav16EwE9Og11Y0m4mYtMQD1JQOj7fpL7i0hWR4S5GAZrSFyrCYnYjAdRQO1H7Z9Os+/xFPsgsuX7ut3aQcJdgf0ssjqsjoQruaeDOOqM1rSHM4i+vzb2NLomV9DXE9q3UrmNClpik2v0E9hX3rQ79wiAN+zfOI=
+	t=1755080043; cv=none; b=Mo+x/GLE3UkUG7BEPuxodmsk0EuPt5o0fgerpJSwFThN7za1cVXdMqUNbHhqWBux+bWDgWZUi5lPoMiufyi2aPqcerBxRqtmvIAFA8xe/eiOrHf9DXO8CIeao8E+wMN3jM2YUk4SpXatMSseKYSnUpexaHvM4BwR7TRxAOn2V8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755079989; c=relaxed/simple;
-	bh=+xvILMHL32EhZ50Fy4U37GodG1a5YsmYb0EwVO6M4uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pmXuGhaPR0glcBfe/fRjJ3bpaLNBjsCd9kPv6u+IP+c64jtA56BxXqKDRAWAf29MDsIyrvHM2qdPcFAT8PfeZUSKByasQ3HWsMTjw5wp2HcWnU9Zuay65cI65ompjjOnck3GPxOxtbIFQpmDX1k7Z3rQULPBT7TSaac7WqFmXlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3059112FC;
-	Wed, 13 Aug 2025 03:12:59 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 459E53F5A1;
-	Wed, 13 Aug 2025 03:13:03 -0700 (PDT)
-Date: Wed, 13 Aug 2025 12:12:39 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Prashant Malani <pmalani@google.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jie Zhan <zhanjie9@hisilicon.com>,
-	Ionela Voinescu <ionela.voinescu@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-Message-ID: <aJxlF882pPDy5uf9@arm.com>
-References: <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7>
- <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
- <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
- <aIso4kLtChiQkBjH@arm.com>
- <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
- <aIvQvLL34br6haQi@arm.com>
- <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
- <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
- <20250811060551.ylc6uutni4x6jqtg@vireshk-i7>
- <aJo5vP_mfBn_vxSF@google.com>
+	s=arc-20240116; t=1755080043; c=relaxed/simple;
+	bh=U/6z9EuFW5yuEe5BDIjFeLvVI0kXMK2Jf0kmaFK/5dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F2SM55JNPT8f5hHB5RJoQSjT2aMYYPOgbtyU90XxhVfaeeXUmA9AFS+Lx6/hxsiwh5ifl45tH2TUeueEc9fePs9tnvnY9fE/P9xwzWG1J9PpFmpuCsxtbcMM2fd7Wixohn+JCIpeKgWXtYzplYxEPaWagAv1jeljvU4EeCws39c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nvUDsrfR; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755080029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aSS/JGql2rVWBGs/YfOqn5/C1ygBaFsXRhS+TJXTsnI=;
+	b=nvUDsrfRBIvLA6GbHYTMNZTvKvne99xTN0deJDIk3MqMAwcttE8u1IkKq41ksqlFYOkGWU
+	emT7OE2lORgS+ophQ5s28KCGEtX1kSKd0Cc5/dpUjutuWni6i0XSvwavCS9PdPNUBNaY5d
+	9Qjg2+aJsXEUrlnxsIVu4NLsVFDI6aY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] usb: storage: realtek_cr: Improve function parameter data types
+Date: Wed, 13 Aug 2025 12:12:47 +0200
+Message-ID: <20250813101249.158270-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJo5vP_mfBn_vxSF@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 11, 2025 at 06:43:08PM +0000, Prashant Malani wrote:
-> On Aug 11 11:35, Viresh Kumar wrote:
-> > On 06-08-25, 17:19, Prashant Malani wrote:
-> > > So, do we have consensus that the idle check is acceptable as proposed?
-> > > (Just want to make sure this thread doesn't get lost given another thread
-> > > has forked off in this conversation).
-> > 
-> > I don't have any objections to this or a better solution to this.
-> 
-> Thanks Viresh! Beata, can we kindly move ahead with the idle
-> optimization (which is this series), while we continue discussions for
-> the "under load" scenarios on the other thread?
-> 
-> BR,
-I'd say yes, as long as you get a green light on exporting `idle_cpu`.
+In rts51x_bulk_transport() and rts51x_read_status(), change the function
+parameters 'buf_len' and 'len' from 'int' to 'unsigned int' because
+their values cannot be negative.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
-BR
-Beata
+ drivers/usb/storage/realtek_cr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
+index 7dea28c2b8ee..d2c3e3a39693 100644
+--- a/drivers/usb/storage/realtek_cr.c
++++ b/drivers/usb/storage/realtek_cr.c
+@@ -199,7 +199,8 @@ static const struct us_unusual_dev realtek_cr_unusual_dev_list[] = {
+ #undef UNUSUAL_DEV
+ 
+ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
+-				 u8 *cmd, int cmd_len, u8 *buf, int buf_len,
++				 u8 *cmd, int cmd_len, u8 *buf,
++				 unsigned int buf_len,
+ 				 enum dma_data_direction dir, int *act_len)
+ {
+ 	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *)us->iobuf;
+@@ -417,7 +418,7 @@ static int rts51x_write_mem(struct us_data *us, u16 addr, u8 *data, u16 len)
+ }
+ 
+ static int rts51x_read_status(struct us_data *us,
+-			      u8 lun, u8 *status, int len, int *actlen)
++			      u8 lun, u8 *status, unsigned int len, int *actlen)
+ {
+ 	int retval;
+ 	u8 cmnd[12] = { 0 };
+-- 
+2.50.1
+
 
