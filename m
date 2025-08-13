@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-766603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A330B248E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B61C9B248DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118B2564017
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54EA561E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FD02FAC0A;
-	Wed, 13 Aug 2025 11:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889852EF667;
+	Wed, 13 Aug 2025 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="15NOOiAC"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8yXtjeB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7029B2F8BED;
-	Wed, 13 Aug 2025 11:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36C42D0C96;
+	Wed, 13 Aug 2025 11:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086143; cv=none; b=NR525lawoTlUtHeelf2QCie7C/AqcrV/uAe2MzWQ1pnYH9BvXYhprsTLWrJVhodBRe2d5iVmugWBJV8E/13io/uPnq7jJ0CRzfVI0C1KITZJzLAjW3Hom6MCGO20KqARvPfJ3tQVLcvoRLVaGmvRBXirTylYNy4QiGpjXge0ss0=
+	t=1755086019; cv=none; b=cT5DDusNGQAwd4abnJR98ZHAzgiv3/VFj1/r4UmWDJu/QBdmBDOeqPbF+YmES0W8Yfceu/u0GT+0dj+vyWq8mRn/htE/vaT2zsuijcfXNP0YwtboUXRUa2Jqwn9U0apMlwGM8ue35C4AbEkn2a5tu6ahYQiLTI6QnJyyTvHFI2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086143; c=relaxed/simple;
-	bh=gN1Bc0kZQonA2fSSUxvrABAaMJdLWsTnw+YGHmRaGuY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rXk2TmKKn9nxoARciQkQfxlRJLiDCQEzZUy76bzlqL0x1YAmVGS6lx1YaKdk9z6p5ecXxJW2No7QsQOTWYYayeG2D6iDiwrlw9h1kRtYYLX66JbZNPZnuOAZtzHdYeW8Yp5ualqzKCnfDW4hTv/1ljA++xYhZ4DMsJ9Y8+Mqge4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=15NOOiAC; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBn5Bn008281;
-	Wed, 13 Aug 2025 13:55:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=PFZKPQG+k1gfjsY3a1ZAOk
-	Yj+KM4A3F6NxUPB1WMPvo=; b=15NOOiACV8P2LRL/T3X7nWZjJ2DyJJTPufMbmy
-	0tVJpCRAlu0UdNJV1KWcgrIuxrzGI6HfioEEaReCJkrNEjkCyjiHPECc2r++KA1f
-	SU514XoFEogWxO9wmVEa8zAlEqrKImNsr3aYFJI4YEzC877HS4G1szBlj4X7ZiZo
-	NcBpjxyo9U86COA4KQEIwnNAwiwxhycVmn9pY9VgLlveBz1/eP1wd+yCS3zdx9oJ
-	ySJv3LqK9CoUs1UOC9Jbrnk+F9ArQ+hsR7BbO2L/24nGzHVA5VGFw9NFhO1KaxVr
-	4IwgjNz2Jm4qVL70aZGStpHmdd0Z1ehOxXhCoLd6Wm9JbN8g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48duf8xsg8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 13:55:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C20314002D;
-	Wed, 13 Aug 2025 13:54:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0A72073FE23;
-	Wed, 13 Aug 2025 13:53:32 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Aug
- 2025 13:53:31 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>
-CC: <linux-pci@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: [PATCH v1] PCI: stm32: use pinctrl_pm_select_init_state() in stm32_pcie_resume_noirq()
-Date: Wed, 13 Aug 2025 13:53:19 +0200
-Message-ID: <20250813115319.212721-1-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755086019; c=relaxed/simple;
+	bh=evw2RJ3cEyt+soVXm8eE1TcVcHjaMDXk7/89m7+7DCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrMCTzSZGRltqs6RlTEhgDExQCSvoVDVy4WUewQBIzQ5V0KuehAvpF1M1dN5mflLT1QUpaY6LeV0n1NPB5xzM4PSPo2ZlXe64ly42oObQUPx4DCwrYD1tIewhbg/fC8bxQgEly3278PxA6QNyUtIXybSBB94yYuwt8NuxAsid4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8yXtjeB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C611EC4CEEB;
+	Wed, 13 Aug 2025 11:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755086015;
+	bh=evw2RJ3cEyt+soVXm8eE1TcVcHjaMDXk7/89m7+7DCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j8yXtjeBH22ivW2qPdxKBx0E8AZE89hBnCIyegabVdB8zsyZOWqWqcYuIruhws3sj
+	 KTTojhrqJt18BTy1o1H9AlTJ59a5XLDKQ2HJT9KqRpSEwhr5zLbY8na6Iw54s5gcKE
+	 LtKHL/gbtgPs8OdXD3cb2LULRVtw2GHBZjiF8FCGLHiZ2vgbg3udWB8DbFleUg/Dee
+	 ubdhjTe5JFTBf/kjo9KOKP6itzx/c+QcW3xycRIWWaHv8VCtJcr39f+7UYmqBeJVKF
+	 3Db2xFFDqHwgiliQheN2+NTItYDbC0safwnoyxgaA2fFX2dba9IZSKxsU2+hw08Pxk
+	 O0K8lZRDy8x+g==
+Date: Wed, 13 Aug 2025 12:53:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
+Message-ID: <55070b66-0994-4064-9afa-de1e53d06631@sirena.org.uk>
+References: <20250812173014.736537091@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="naKEERq1eg+hPBfh"
+Content-Disposition: inline
+In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
+X-Cookie: Turn the other cheek.
 
-Replace direct access to dev->pins->init_state with the new helper
-pinctrl_pm_select_init_state() to select the init pinctrl state.
-This fixes build issues when CONFIG_PINCTRL is not defined.
 
-Depends-on: <20250813081139.93201-3-christian.bruel@foss.st.com>
-Reported-by: Bjorn Helgaas <bhelgaas@google.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
-Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
-Changes in v1:
- - pinctrl_pm_select_init_state() return 0 if the state is not defined.
-   No need to test as pinctrl_pm_select_default_state() is called.
----
- drivers/pci/controller/dwc/pcie-stm32.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+--naKEERq1eg+hPBfh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
-index 50fae5f5ced2..8501b9ed0633 100644
---- a/drivers/pci/controller/dwc/pcie-stm32.c
-+++ b/drivers/pci/controller/dwc/pcie-stm32.c
-@@ -90,14 +90,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
- 
- 	/*
- 	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
--	 * thus if no device is present, must force it low with an init pinmux
--	 * to be able to access the DBI registers.
-+	 * thus if no device is present, must deassert it with a GPIO from
-+	 * pinctrl pinmux before accessing the DBI registers.
- 	 */
--	if (!IS_ERR(dev->pins->init_state))
--		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
--	else
--		ret = pinctrl_pm_select_default_state(dev);
--
-+	ret = pinctrl_pm_select_init_state(dev);
- 	if (ret) {
- 		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
- 		return ret;
--- 
-2.34.1
+On Tue, Aug 12, 2025 at 07:24:57PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.42 release.
+> There are 369 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--naKEERq1eg+hPBfh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmicfLgACgkQJNaLcl1U
+h9Dqxgf7BMGFlUnWJpeScLywEetujfk8HGzrSYrJLNEYj91Yrp92lGW/OCWC+rcc
+Fc6h82In5dI1FFP92ahZIADcYtW33Sfg0C4eDQFvJr2WYIbJcLJ9pgVUk/JfsvW2
+XwrW+AsajQEHQX+X3GgHQjNIZjbVu0QqsFPwSS01RJJgPzqaSLQcN/S08VS6iBsH
+In/pVPI2LO+XyR4gDRCDqFvAfPFITNzLwHexn5eFr+QJ9EC2v2tCYVlf2d5GtB7O
+KGazLLqgZ7u64FtfL6F9eS/7ul6z3Hqg3WUXtr6eUhrtaZSCGtN5p8XT+YvvDTsc
+V02fDxAWMN0gsdAnY0dNI2Bn8cZx/w==
+=p2Kl
+-----END PGP SIGNATURE-----
+
+--naKEERq1eg+hPBfh--
 
