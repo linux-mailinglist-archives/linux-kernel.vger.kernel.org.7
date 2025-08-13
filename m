@@ -1,208 +1,173 @@
-Return-Path: <linux-kernel+bounces-766527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835CDB247B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:50:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEEAB247BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3717F726308
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F30B177481
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A52F5308;
-	Wed, 13 Aug 2025 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3554B2F6564;
+	Wed, 13 Aug 2025 10:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw/Ep4/Z"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Wry3IkpT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB428F4;
-	Wed, 13 Aug 2025 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319892F5322
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755082240; cv=none; b=BB6/BuBhooqkKqRBUh9oiSBP2XKHv1Vt0SpqbbTTs1ujzCHUo+vMxvySyR0CbbtbeXgFR4s02nlb6kUhI99dnpqU1P87rBSLSp0pCr0GPVF6knwvy38vZNuSJZw7Twkgk/Fo3phWGbaM3S2+bCmdeMR4eOtoWQh/hDzzCiWlJ8k=
+	t=1755082436; cv=none; b=S3qB7n+X1bURJ+A0N70fCH0EDKt7mssqHNzcT0pL1qnXdjlUbv5kK4T8KXAMSq4G3TH6fHeTyAQVAYvhEtu+tHHEOjq9+x0FRt13BOI0SAShQ3sGstIofqYfDkCkPBUgA2oc0nKd9zzydGT1XC09hCW4yTHOd81EWBuj14Wp1Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755082240; c=relaxed/simple;
-	bh=QdJHHA/5Te0Xa4HimQXd431V5eEGjN4FPvBE6vvCYDU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Tn024y9UneuCBBlyges5vXK1r35EYmWZzUXbmX0fIABkC6v/HzAWkG38WRIAXMapgWZ8wRdkgdlleqL9aBb0fB2F+DXjO6+4/XtML0UuZpLX/FMuawS30Qt1GtIwVMkJf+wPJIb25KvXyv7i2rJR8UTREASBYyJ+o2l3S3yePYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zw/Ep4/Z; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so62339075e9.3;
-        Wed, 13 Aug 2025 03:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755082237; x=1755687037; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gXWzRkiMkta7AXQW3GKZoQIEt3iuhCo3P5z2A+Zulxc=;
-        b=Zw/Ep4/ZfwUVU21UfnKJda+jjYxZTwJMEYkwD/LtiBFB2Yt+y8oq0JlEbyoyTu9dsH
-         qy267i9xQJ+FHGC2EC+G6ovDr1OK13alaQ2Iq6wmvkeaYvt7rRFqVi0HEWNIgSMLVUgm
-         zWGV32/rScV8WU/M6tZ8XygcUse7JkvSJDxJWklekf/WM4gfIspz7e3EL/yM3nOAruU1
-         uW4/EGMcdHTo8pIfK42tSMRGP5XcQSeFVSc4X1yWrS91UFzLVMJI8vM4SoqkQAOc5exT
-         caINqRV7l+oZSY/fqaAR5ZFXOnO+sToa6h1pm2lsA1TsTTwgKQ6fF7L/Pzf3wzRhGEJ8
-         QjNQ==
+	s=arc-20240116; t=1755082436; c=relaxed/simple;
+	bh=f6bhPAzulpBZBm8eJyq3oHN2cBWm1w6sm+gYxZ6GADI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ia9M+2jrUB5HZSaCWtn+W6YF6pl3OseuOWfbNcpCeVDDixQfI1rbYzFrfqCUHXoM/1wKAQvTbJgYslBEyhvXcaecVRy+fjW2Fy+a+KcZ4dlU0KpthvPslN4Mgmnpc+sEw5a374/at4opK0clmMW8ieUr6v4XpuUPgNZS4hnRAxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Wry3IkpT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mRF6030142
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:53:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=nqjEsIPEIdyvYPIHu3yUYsmv
+	aNWq7Oi2Q3FARabnu8Q=; b=Wry3IkpTmLqnFn5XCZAfTOZ4dxGvi/Bi7lu0m9ps
+	UczuTeUESdL22YOVck+NxtW5pQbgJaYZT3iKiDgBN4AiYuDwqpj7f5N6LD4MT6Cm
+	C8a62VFRHxX4RsXk2tFq14hsXuuT9zkmEC8lk1WjX7WV7G2TGcfaMyej5m1KYbtn
+	CUiNbah/LtHsCJ6oqxf5+UJRbCPFu9R7bfh1tlkiVYUXoSX7Ws/2zGrAgIxA1v8E
+	dVYSEf3jJQKVCYS9yccnlMLOBiYMi7djtEo8wqiXxUu4+BAmWRz1ikxdtMjUSccK
+	WkjyO/axBAlQ0QiGyIKyPU+N6lOpb08BMpnI59MhXPy2Aw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3gbfm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:53:54 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-709dda08151so19123376d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:53:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755082237; x=1755687037;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXWzRkiMkta7AXQW3GKZoQIEt3iuhCo3P5z2A+Zulxc=;
-        b=dggp70zR8zwaKsgP4hTKXgGtyG7mL83C+GtbUQMSURmUQOKenVhX/6bPqu64r9wYHf
-         HW/itD+aNGUiK9RBvvg1cx8S1UosxXqT+9aRBeRPEJVdwmUNSmD1dVzy2noA6dkL1dvR
-         uaBBdWV6BvzXEAZpnsMr1QSe8ZLY4mkZ3zO0RszN53Nu/bsD8NHRTjnJLibVibf/4n1I
-         Mn8NxNhodtzI7rQEWLJgRrJmG69K87hULhSTJBIyOUGDGwaSdQ15/KSGtBgCt/7qbOn4
-         Yq4bFPy/149HL9tKE0U4DpbUD0al+GvXqDMqbgKyoiecb+Eb0oi1JxlmJMlXpCYfKPSI
-         97mA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3jeA05YNnjE3vKeTt4/n7kb994fcBZI/7mGlPin5AzMDBxtH4DOGZnIP1VPQbe79XChAJO1drpik=@vger.kernel.org, AJvYcCV7LV2WiPyXvNtxcoXB5Ly8AXf2KnBoiMHdCCT1rMeBDIyThEnD5pkebu0jdByeNDlukwq+7LYpKB3CEmTm@vger.kernel.org, AJvYcCVUyQAx+BqfHgOLJRWLN0AwkFxOZdI3eIwdvg1b25piQTgXKHTk+Z0drg1DLakEBfbm5BZ8NhAu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/cGGNMGipmLM11dgz4PHZrj9R+dPPpSATqHzj7NID3BoKgrDK
-	NV+WQT+2dKxQVHDzhjtzD1FbtMHVw8IT4Is6Pq8mGPQerMHot0jKLS7F
-X-Gm-Gg: ASbGncuepeKHMZDmmdsOAECEcJkVFhgjK4sqxYbS1HSE2MVMiIIZ4c28GhagjYgQRmG
-	XZcaO0ZW+E9r0updAxcFJyg3YJ/+Mh3govQ2zPTxYBB4AYhzVfoOuSQ4SwRwb+ZOWg9/+rEmsyb
-	0QR26FYooiHyVyvOQfrVgRGHuVCgCUfJFBbZGE1U3HVDbBmIC9nBRuemXgXj1HHtLA5BbcDZuRp
-	tFfGj9IMAT5GTw+Sc7bAZr3qqUQaGvitean8VF89f++8k13Qw/xzsC4y+F8QqxgP1C6r3/uorCX
-	fjyc4hAF8QD/hALd4ecHgqqDrdmqOH5tf6G8bPABMTQLRmo8PwqaDFm0CejBXgEtnMbHEWQMnnq
-	YbRPgk4iktZVGF6dHSsLAjowjMc6+ShlxnI/t+acFNC9uoDBU8C21el1iaKSwaYiM2VI5rxtLJQ
-	==
-X-Google-Smtp-Source: AGHT+IFfeNVkXHJUpoFaQ8q/KLnyc90CUdhzECYGMjZz7MgoGX4gYx9MY3J94IfFsD95TsIwFrL/DA==
-X-Received: by 2002:a05:600c:4e93:b0:456:19be:5cc with SMTP id 5b1f17b1804b1-45a165ce311mr21270095e9.14.1755082236778;
-        Wed, 13 Aug 2025 03:50:36 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c338c7dsm47505136f8f.0.2025.08.13.03.50.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 03:50:36 -0700 (PDT)
-Message-ID: <27906f7b-b137-4af2-aa87-49519495a34d@gmail.com>
-Date: Wed, 13 Aug 2025 12:50:35 +0200
+        d=1e100.net; s=20230601; t=1755082433; x=1755687233;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nqjEsIPEIdyvYPIHu3yUYsmvaNWq7Oi2Q3FARabnu8Q=;
+        b=gk180QJtol22LKQC4/ke1YDEaMNn7JG5RU/Thl25DDSgvIWx/Ccn7x9E6inSk+Q2nS
+         eebC8sTsTkDFA9XWadYJd0IT5imLiN7/r00j/CHpYuPmyX3s73z4mNnAbalPRUWSyKhJ
+         Kn0j7Z/1O2302buBPo1HZse2fw4BUZGSAor2ncpJBqyLwT+/P26qPvksh9CjPOTT1eXT
+         vbF9O1J5mg4SLAYalFiHsrl+W6cWqb0DOIvwRZLv9trice3e/NdGDm9xB0KIXOPctRqJ
+         mnzXFiBrKaje9aagaDdwP7TFlmWlTvhP532xJX0qTemqNSTry9oC2fbul9KEvt7nP27U
+         ApSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3eTMGdHeiWmElGM4lpAiOgo7KVpeGKonmrBV51wv2J2hf1+xHwP68Y7XIYUgXs1Zi41J8MbTY1uqcxJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2EMu1W2mYMQHqCiSc7HH7F48FlGmYc7cXd364WSYIk8zo1pEI
+	IXjWS6Afs7O7W6FiwgrVqF1T7B6kbh3bfQrfgI5QYDhcl/r9rKJiwrln4EJypDVX/KJBtazKwsO
+	xXOBtktitWQ1bPORmH7Mslve1bRV5bduEgUPqOyiREXGhsSCqpjo/HMwsQfI0bIuYsQ8=
+X-Gm-Gg: ASbGncs+Ps6mFqr5IwOEZOVlsWyBxiSkLjn3A/Rr5qYESQUx7Jsa3MUDqZrnGpUe8p/
+	eG9V9oY/6L4BbM6AxDoxGygm3roVyQG/KO98QJjGiJj/UgrfAaSX2dAr3fYeEBs4h4HBmLCod8U
+	vWal7nPK69yUgqkakQC4rg4THSuQPZ8lCgW1LJVlVD+qgvdxSj49xBS1xi1EF7RLRX/TYwgyBza
+	Am6OVyaVe0G/g/4vb3bS3ziwN2Rwtr9Gn4MrdHnRH0FscyR6yS0Si+IzpcLe3YVvRem1aPVVVjf
+	LZtvnrIOgpUlwY2PluAuz+zHPLP3ZD2Zk6mx5CENGVi0hXKze6pm4xNVZe7tCfqDn3AHGw==
+X-Received: by 2002:a05:6214:2aa8:b0:707:4b47:9b72 with SMTP id 6a1803df08f44-709e8834e1dmr29971376d6.12.1755082432833;
+        Wed, 13 Aug 2025 03:53:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH47b+mJ0uCpko6VXGUy7LfVcwVFUNwuMG6iAYYnK7TgjODRvBwuaRlczEPmStrUd3npamlaQ==
+X-Received: by 2002:a05:6214:2aa8:b0:707:4b47:9b72 with SMTP id 6a1803df08f44-709e8834e1dmr29971036d6.12.1755082432198;
+        Wed, 13 Aug 2025 03:53:52 -0700 (PDT)
+Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a16deeb9asm25383705e9.19.2025.08.13.03.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 03:53:51 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Wed, 13 Aug 2025 12:53:50 +0200
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        Vedang Nagar <quic_vnagar@quicinc.com>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+Subject: Re: [PATCH v2 02/24] media: iris: Report unreleased PERSIST buffers
+ on session close
+Message-ID: <aJxuvm456i1PWOIM@trex>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-2-c725ff673078@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Gabor Juhos <j4g8y7@gmail.com>
-Subject: Re: [PATCH v2 3/3] i2c: pxa: handle 'Early Bus Busy' condition on
- Armada 3700
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andi Shyti <andi.shyti@kernel.org>, Russell King
- <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
- Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
- Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
-References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
- <20250811-i2c-pxa-fix-i2c-communication-v2-3-ca42ea818dc9@gmail.com>
- <aJpTHKbLbTz-Z3bo@smile.fi.intel.com>
-Content-Language: hu
-In-Reply-To: <aJpTHKbLbTz-Z3bo@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813-iris-video-encoder-v2-2-c725ff673078@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689c6ec2 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=RE2RRPQ2WZmwf3aAuCMA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfXxSgVSXH2kgL2
+ OUQE9pqr0pgxQ/LUdZDKJrzfmgUz4Zb4enshs46VfoNdXhTeFXg/IB6T6HxcPRSw6+leA3uanbr
+ TDt459vyJN6qbHcnAUsrP4WHGSdAx5bMYtX1M9t74K2P2iUbejBS7muxCfUT4hMSPvNqhyY3JFM
+ OWWqwFZHVuiZ3tTM2J1C8a8R7KLWiUmgI9KcxTlQNWU5opsc3gz7oI98EwmFy+ajS2+LbLtFiEP
+ rkyBo8HIEjKYiKtmG7kY6no8YDIdpCH/J8giKI4YH78DPcgwtglnrYjYOGWx54jg9NINWOXFFQ3
+ FfM9bsAT9k+pDd8+HamR9Gobbt6qnWbTVqnvGywplupCRvciAN0RXfUPIwlMFDbwzXq2mUK48q1
+ LCostQC3
+X-Proofpoint-GUID: IaK7axpTRo3Rj2dW3RAodvuA3bF0sAXE
+X-Proofpoint-ORIG-GUID: IaK7axpTRo3Rj2dW3RAodvuA3bF0sAXE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090031
 
-2025. 08. 11. 22:31 keltezéssel, Andy Shevchenko írta:
-> On Mon, Aug 11, 2025 at 09:49:57PM +0200, Gabor Juhos wrote:
->> Under some circumstances I2C recovery fails on Armada 3700. At least
->> on the Methode uDPU board, removing and replugging an SFP module fails
->> often, like this:
->>
->>   [   36.953127] sfp sfp-eth1: module removed
->>   [   38.468549] i2c i2c-1: i2c_pxa: timeout waiting for bus free
->>   [   38.486960] sfp sfp-eth1: module MENTECHOPTO      POS22-LDCC-KR    rev 1.0  sn MNC208U90009     dc 200828
->>   [   38.496867] mvneta d0040000.ethernet eth1: unsupported SFP module: no common interface modes
->>   [   38.521448] hwmon hwmon2: temp1_input not attached to any thermal zone
->>   [   39.249196] sfp sfp-eth1: module removed
->>   ...
->>   [  292.568799] sfp sfp-eth1: please wait, module slow to respond
->>   ...
->>   [  625.208814] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
->>
->> Note that the 'unsupported SFP module' messages are not relevant. The
->> module is used only for testing the I2C recovery funcionality, because
->> the error can be triggered easily with this specific one.
->>
->> Enabling debug in the i2c-pxa driver reveals the following:
->>
->>   [   82.034678] sfp sfp-eth1: module removed
->>   [   90.008654] i2c i2c-1: slave_0x50 error: timeout with active message
->>   [   90.015112] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
->>   [   90.020464] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
->>   [   90.027906] i2c i2c-1: log:
->>   [   90.030787]
->>
->> This continues until the retries are exhausted ...
->>
->>   [  110.192489] i2c i2c-1: slave_0x50 error: exhausted retries
->>   [  110.198012] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
->>   [  110.203323] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
->>   [  110.210810] i2c i2c-1: log:
->>   [  110.213633]
->>
->> ... then the whole sequence starts again ...
->>
->>   [  115.368641] i2c i2c-1: slave_0x50 error: timeout with active message
->>
->> ... while finally the SFP core gives up:
->>
->>   [  671.975258] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
->>
->> When we analyze the log, it can be seen that bit 1 and 11 is set in the
->> ISR (Interface Status Register). Bit 1 indicates the ACK/NACK status, but
->> the purpose of bit 11 is not documented in the driver code unfortunately.
->>
->> The 'Functional Specification' document of the Armada 3700 SoCs family
->> however says that this bit indicates an 'Early Bus Busy' condition. The
->> document also notes that whenever this bit is set, it is not possible to
->> initiate a transaction on the I2C bus. The observed behaviour corresponds
->> to this statement.
->>
->> Unfortunately, I2C recovery does not help as it never runs in this
->> special case. Although the driver checks the busyness of the bus at
->> several places, but since it does not consider the A3700 specific bit
->> in these checks it can't determine the actual status of the bus correctly
->> which results in the errors above.
->>
->> In order to fix the problem, add a new member to struct 'i2c_pxa' to
->> store a controller specific bitmask containing the bits indicating the
->> busy status, and use that in the code while checking the actual status
->> of the bus. This ensures that the correct status can be determined on
->> the Armada 3700 based devices without causing functional changes on
->> devices based on other SoCs.
->>
->> With the change applied, the driver detects the busy condition, and runs
->> the recovery process:
->>
->>   [  742.617312] i2c i2c-1: state:i2c_pxa_wait_bus_not_busy:449: ISR=00000802, ICR=000007e0, IBMR=03
->>   [  742.626099] i2c i2c-1: i2c_pxa: timeout waiting for bus free
->>   [  742.631933] i2c i2c-1: recovery: resetting controller, ISR=0x00000802
->>   [  742.638421] i2c i2c-1: recovery: IBMR 0x00000003 ISR 0x00000000
->>
->> This clears the EBB bit in the ISR register, so it makes it possible to
->> initiate transactions on the I2C bus again.
->>
->> After this patch, the SFP module used for testing can be removed and
->> replugged numerous times without causing the error described at the
->> beginning. Previously, the error happened after a few such attempts.
->>
->> The patch has been tested also with the following kernel versions:
->> 5.10.237, 5.15.182, 6.1.138, 6.6.90, 6.12.28, 6.14.6. It improves
->> recoverabilty on all of them.
+On 13/08/25 15:07:52, Dikshita Agarwal wrote:
+> Add error reporting for unreleased PERSIST internal buffers in
+> iris_check_num_queued_internal_buffers(). This ensures all buffer types
+> are checked and logged if not freed during session close, helping to
+> detect memory leaks and improve driver robustness. No change to buffer
+> lifecycle or allocation logic.
 > 
-> ...
+> Fixes: d2abb1ff5a3c ("media: iris: Verify internal buffer release on close")
+> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_vidc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
->> Note: the patch is included in this series for completeness however
->> it can be applied independently from the preceding patches. On kernels
->> 6.3+, it restores I2C functionality even in itself because it recovers
->> the controller from the bad state described in the previous patch.
-> 
-> Sounds to me like this one should be applied first independently on the
-> discussion / conclusion on the patch 1.
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index 8285bdaf9466d4bea0f89a3b1943ed7d6c014b7d..96313856a026efaff40da97eaaa63e847172cd57 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -247,6 +247,14 @@ static void iris_check_num_queued_internal_buffers(struct iris_inst *inst, u32 p
+>  			dev_err(inst->core->dev, "%d buffer of type %d not released",
+>  				count, internal_buf_type[i]);
+>  	}
+> +
+> +	buffers = &inst->buffers[BUF_PERSIST];
+> +
+> +	count = 0;
+> +	list_for_each_entry_safe(buf, next, &buffers->list, list)
+> +		count++;
 
-Yes. At least the users would have a working although not optimal solution in
-the meantime.
+I believe at this point is not safe to dereference buf
 
-Regards,
-Gabor
+> +	if (count)
+> +		dev_err(inst->core->dev, "%d buffer of type %d not released", count, buf->type);
+>  }
+>  
+>  int iris_close(struct file *filp)
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
