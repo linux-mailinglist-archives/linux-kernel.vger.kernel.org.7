@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-766137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C912B242BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8F4B242C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD46816B679
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3142F171648
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C072D8363;
-	Wed, 13 Aug 2025 07:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183F92DCF55;
+	Wed, 13 Aug 2025 07:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="QAIiYdQk"
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="OtUN4/IU"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014A92D3209;
-	Wed, 13 Aug 2025 07:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835852D7392;
+	Wed, 13 Aug 2025 07:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070082; cv=pass; b=khTSZU4qqKypqo4J7fD9n0hlE3E2gF2uOtlk4AENFRYoZrzY412veBl48JiTlYKYVquLPmXAMPDtsyyPkfgMR5SelpOf3djLGi1i9zYzRjq74+KP4+UetOKpOY9goQMq3ZK7SgWYHunklQaCXZLfu8hqM31H31kMR0h2JEyn6LM=
+	t=1755070100; cv=pass; b=TX/LOiR++DeZf/Jukk7/NTtBsmUo3K7ZaWgDXBIIR0gQZveO+N3t25ZpUUSNy90pzY5qIFRiBgy4tn0lZG/Zf8/HsnkfoN/3/czK8z8Lhm9Did6Qx+mvk0skri2V1Vvy9RDz9aT5GNguWqCFveLeTyEAbhIFUVs727LySR8UaDA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070082; c=relaxed/simple;
-	bh=R6r7z1JaPCFbycjugyKgKfj2inaFHaxk/9ypGbKQBOU=;
+	s=arc-20240116; t=1755070100; c=relaxed/simple;
+	bh=WfQGwG6AIli5tQ5UgzKBGZ+liVCl83y9idSDc8vSJfc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j2BK4a+ZNIlBsWC2NSpNWuBtr/jkoRge4wwfTkS2AIoH9vp6+5SXMY+H9qKxP9Y8HySnCHYqZFy8hPj3wV5+J3qgjz/ct7DwSuWyoplhQf0LaKpB5HVsHZUl2Qtomakfpkbts08a8LCJgXcxuaVYvYDCKUSAADi6c1hqMq3DX0s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=QAIiYdQk; arc=pass smtp.client-ip=136.143.188.15
+	 MIME-Version; b=DLoGmWM0UtOF8RuA5vBaAF6WgMNUf7i7LyWoW45hpFFJ+HE4//Xat+ow+umJGrjnKqV9hr1ujnf0s4MPWZ4yn1ZBuiY+K+kant8zwCkm7wcrbp3V820l4WaeMQDwDBKfUG7dAB5RcTRC59teFn6IpnNPSAQ2puCBwYhK49POZmg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=OtUN4/IU; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1755070065; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1755070084; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=G3nmuitR1k/Ow+Rf2lxeSTk1D5Ws5XFFafRcdVzZZxbBmByt2QO3Uc9vgAdLhWtnvU/8cHDTMKAeTeOoKUJhDlCdoq9A2E4xxCE9TSJpUTSwBMUbIsItyDnliuXnJONV/IiQYne4kw+9h1DVyiheXXQ0Ajl5Q0h8YeJIqw1/KdM=
+	b=GaLTEOdq/Oq83qq10mXn+lrKHQWfpr/HxYEsyqcyCjj6p6aT9dwmTNZoJ90Egzc0egVTuH03UlWxRY9A2BqJSO1ozgENXMvVzSr7lXTi+K7ySl8uAyIQL/Z02ajPN3jjNM0qcqE5qlIT+O8qDJKA51DbT6paQRhLOC4lpC3O3Tc=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755070065; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qwCeVmGEu53ejk/m7Jpzmrjz6RmDqpItk7zrX+KeOYM=; 
-	b=R5LIf2uZW6hBdwFn8P55OwqeCgIoPTMWDpjUm+vEcbSnw8YarAE+MF6GVi31cj3qDvbxNOItGlSnd2dTqf940btpCi52CMWRLUOve/LSgO1MrO3TCgkC3U0S99/Sfta3fhKYV2DXyy2xYBPqDmrJ6Vgzs8KtmYli+ve/s+EcqS8=
+	t=1755070084; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YA5K1QeOw6QZSnl5vIgv8mS6MWi8kYtpfARcgg+9RII=; 
+	b=lDupjT7fl9ieLaDG0nZj2TP65OhHp5iAp8P0ZlkXdFnidb/pzq+40ct0HeEbDmBrSBFmzgrFrEsGtXYeDMKO9kViB9ldGgvDrVxBrSDMpGG2okeDcd92oGBW8IVj7JkLHHWM/Phf5TH7VT0rwPXbWla3efeSDrYM4b+kKvtny4E=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=icenowy.me;
 	spf=pass  smtp.mailfrom=uwu@icenowy.me;
 	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755070065;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755070083;
 	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=qwCeVmGEu53ejk/m7Jpzmrjz6RmDqpItk7zrX+KeOYM=;
-	b=QAIiYdQk+dKpOA7XIhab9I69BaBfapHnhsFfLXGIQFXq5MJdw7DefEvIRsCiRVQl
-	JRlfhVO3OKv8EcWZ6ap5FbXzljY1/ApslUtPdpddE0L8Tla5fFXiID0miXsUq9/8gCE
-	AHi8BMBlWutfYhidxBcaMppQqwOQzi984RK1MYuKRsqapE+TCMQYpa5Nj/P6UOKnxvI
-	PatPAo2j88neRvOJgJ4XRhs5I3b4crYKnDnTTJ1P+vdfYforHOMi5lq66DiL/hDLRyc
-	9+lHf5PZ8UZmaTdXuhFR2pfl7L2uRI6OIKTlij8wAoK417RUUN7mQpvYJdjdDkZ7p0k
-	LX1aZyXskA==
-Received: by mx.zohomail.com with SMTPS id 1755070064343777.9781912401827;
-	Wed, 13 Aug 2025 00:27:44 -0700 (PDT)
+	bh=YA5K1QeOw6QZSnl5vIgv8mS6MWi8kYtpfARcgg+9RII=;
+	b=OtUN4/IUDTl5mOf48S5cbtEXIHeaV7f5g2Fwkdqnm4jguZji/hWbgD4SUwqNZzl7
+	8y2974zLP8LwaxnKoBTuVDqWMGnR/UOws9pGrN2l4XjXFgkoDvkyZzivtjwiI+ClJK2
+	3UY93l81raR56nwDYKiownGWsHql+wVz1dVGdTL2yFY0jabQnxT2qI15fo1gKogSKdm
+	mDWNwtLmYEnZ4CaDIWxK3HSSJUU51oa6CcRXMa87bFKIBCNy9fUW+riZdvlO0Pez7yY
+	BOOeWXDwIIP/DzmNPM2zwqWJ24jCydgQmwcJtCpOi12F/cxY3oSoq6cmB3zd6OJYOGe
+	3UEq7vQKKw==
+Received: by mx.zohomail.com with SMTPS id 1755070081771781.9115436334819;
+	Wed, 13 Aug 2025 00:28:01 -0700 (PDT)
 From: Icenowy Zheng <uwu@icenowy.me>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -66,9 +66,9 @@ Cc: Yao Zi <ziyao@disroot.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2 2/3] clk: thead: support changing DPU pixel clock rate
-Date: Wed, 13 Aug 2025 15:27:01 +0800
-Message-ID: <20250813072702.2176993-3-uwu@icenowy.me>
+Subject: [PATCH v2 3/3] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+Date: Wed, 13 Aug 2025 15:27:02 +0800
+Message-ID: <20250813072702.2176993-4-uwu@icenowy.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250813072702.2176993-1-uwu@icenowy.me>
 References: <20250813072702.2176993-1-uwu@icenowy.me>
@@ -81,149 +81,155 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-The DPU pixel clock rate corresponds to the required dot clock of the
-display mode, so it needs to be tweakable.
+The AXI crossbar of TH1520 has no proper timeout handling, which means
+gating AXI clocks can easily lead to bus timeout and thus system hang.
 
-Add support to change it, by adding generic divider setting code,
-arming the code to the dpu0/dpu1 clocks, and setting the pixel clock
-connected to the DPU (after a gate) to CLK_SET_RATE_PARENT to propagate
-it to the dividers.
+Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
+ungated by default on system reset.
+
+In addition, convert all current CLK_IGNORE_UNUSED usage to
+CLK_IS_CRITICAL to prevent unwanted clock gating.
 
 Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 ---
-Changes in v2:
-- Dropped round_rate() because of deprecation.
-- Changed the logic of determine_rate() to early return if the divider
-  could be changed.
+No changes in v2 except for rebasing error fixes (which I sent as FIXED
+patches in v1).
 
- drivers/clk/thead/clk-th1520-ap.c | 64 ++++++++++++++++++++++++++++---
- 1 file changed, 59 insertions(+), 5 deletions(-)
+ drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 0b5458af8c550..b220a8ed22607 100644
+index b220a8ed22607..0224f2dde0f63 100644
 --- a/drivers/clk/thead/clk-th1520-ap.c
 +++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -55,6 +55,7 @@ struct ccu_gate {
- 
- struct ccu_div {
- 	u32			enable;
-+	u32			div_en;
- 	struct ccu_div_internal	div;
- 	struct ccu_internal	mux;
- 	struct ccu_common	common;
-@@ -198,6 +199,56 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
-+static int ccu_div_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	unsigned int val;
-+
-+	if (cd->div_en)
-+		return divider_determine_rate(hw, req, NULL,
-+					      cd->div.width, cd->div.flags);
-+
-+	regmap_read(cd->common.map, cd->common.cfg0, &val);
-+	val = val >> cd->div.shift;
-+	val &= GENMASK(cd->div.width - 1, 0);
-+	return divider_ro_determine_rate(hw, req, NULL, cd->div.width,
-+					 cd->div.flags, val);
-+}
-+
-+static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+	int val = divider_get_val(rate, parent_rate, NULL,
-+				  cd->div.width, cd->div.flags);
-+	unsigned int curr_val, reg_val;
-+
-+	if (val < 0)
-+		return val;
-+
-+	regmap_read(cd->common.map, cd->common.cfg0, &reg_val);
-+	curr_val = reg_val;
-+	curr_val = curr_val >> cd->div.shift;
-+	curr_val &= GENMASK(cd->div.width - 1, 0);
-+
-+	if (!cd->div_en && curr_val != val)
-+		return -EINVAL;
-+
-+	reg_val &= ~cd->div_en;
-+	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-+	udelay(1);
-+
-+	reg_val &= ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-+	reg_val |= val << cd->div.shift;
-+	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-+
-+	reg_val |= cd->div_en;
-+	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-+
-+	return 0;
-+}
-+
- static u8 ccu_div_get_parent(struct clk_hw *hw)
- {
- 	struct ccu_div *cd = hw_to_ccu_div(hw);
-@@ -240,7 +291,8 @@ static const struct clk_ops ccu_div_ops = {
- 	.get_parent	= ccu_div_get_parent,
- 	.set_parent	= ccu_div_set_parent,
- 	.recalc_rate	= ccu_div_recalc_rate,
--	.determine_rate	= clk_hw_determine_rate_no_reparent,
-+	.set_rate	= ccu_div_set_rate,
-+	.determine_rate = ccu_div_determine_rate,
- };
- 
- static void ccu_pll_disable(struct clk_hw *hw)
-@@ -784,6 +836,7 @@ static struct ccu_div venc_clk = {
- };
- 
- static struct ccu_div dpu0_clk = {
-+	.div_en		= BIT(8),
- 	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
- 	.common		= {
- 		.clkid          = CLK_DPU0,
-@@ -791,7 +844,7 @@ static struct ccu_div dpu0_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu0",
- 					      dpu0_pll_clk_parent,
+@@ -566,7 +566,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
+ 					      gmac_pll_clk_parent,
  					      &ccu_div_ops,
 -					      0),
-+					      CLK_SET_RATE_UNGATE),
++					      CLK_IS_CRITICAL),
  	},
  };
  
-@@ -800,6 +853,7 @@ static const struct clk_parent_data dpu0_clk_pd[] = {
- };
- 
- static struct ccu_div dpu1_clk = {
-+	.div_en		= BIT(8),
- 	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
- 	.common		= {
- 		.clkid          = CLK_DPU1,
-@@ -807,7 +861,7 @@ static struct ccu_div dpu1_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu1",
- 					      dpu1_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_SET_RATE_UNGATE),
+@@ -588,7 +588,7 @@ static struct ccu_div axi_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
+ 						      axi_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IS_CRITICAL),
  	},
  };
  
-@@ -891,9 +945,9 @@ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
+@@ -737,7 +737,7 @@ static struct ccu_div apb_pclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
+ 						      apb_parents,
+ 						      &ccu_div_ops,
+-						      CLK_IGNORE_UNUSED),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -768,7 +768,7 @@ static struct ccu_div vi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -793,7 +793,7 @@ static struct ccu_div vo_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -818,7 +818,7 @@ static struct ccu_div vp_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      CLK_IGNORE_UNUSED),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -879,23 +879,23 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
+ static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
+ static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
+ static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
+-		0x134, BIT(8), 0);
++		0x134, BIT(8), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
+-		0x134, BIT(7), 0);
++		0x134, BIT(7), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
+-		0x138, BIT(8), CLK_IGNORE_UNUSED);
++		0x138, BIT(8), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
+-		0x140, BIT(9), CLK_IGNORE_UNUSED);
++		0x140, BIT(9), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(9), CLK_IGNORE_UNUSED);
++		0x150, BIT(9), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(10), CLK_IGNORE_UNUSED);
++		0x150, BIT(10), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(11), CLK_IGNORE_UNUSED);
++		0x150, BIT(11), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+ 		0x150, BIT(12), 0);
+-static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
+-static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
++static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), CLK_IS_CRITICAL);
++static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+ static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
+ static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+@@ -939,11 +939,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, BIT(2), 0);
+ static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, BIT(1), 0);
+ 
+ static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
+-		video_pll_clk_pd, 0x0, BIT(0), 0);
++		video_pll_clk_pd, 0x0, BIT(0), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
+ 		0x0, BIT(3), 0);
  static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
- 		video_pll_clk_pd, 0x0, BIT(4), 0);
+-		video_pll_clk_pd, 0x0, BIT(4), 0);
++		video_pll_clk_pd, 0x0, BIT(4), CLK_IS_CRITICAL);
  static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
--		dpu0_clk_pd, 0x0, BIT(5), 0);
-+		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
+ 		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
  static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
--		dpu1_clk_pd, 0x0, BIT(6), 0);
-+		dpu1_clk_pd, 0x0, BIT(6), CLK_SET_RATE_PARENT);
- static CCU_GATE(CLK_DPU_HCLK, dpu_hclk, "dpu-hclk", video_pll_clk_pd, 0x0,
- 		BIT(7), 0);
- static CCU_GATE(CLK_DPU_ACLK, dpu_aclk, "dpu-aclk", video_pll_clk_pd, 0x0,
+@@ -975,9 +975,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
+ static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
+ 		0x0, BIT(19), 0);
+ static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, BIT(20), 0);
++		video_pll_clk_pd, 0x0, BIT(20), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(21), 0);
++		video_pll_clk_pd, 0x0, BIT(21), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
+ 		video_pll_clk_pd, 0x0, BIT(22), 0);
+ static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
+@@ -987,11 +987,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
+ static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
+ 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, BIT(25), 0);
+ static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, BIT(27), 0);
++		video_pll_clk_pd, 0x0, BIT(27), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(28), 0);
++		video_pll_clk_pd, 0x0, BIT(28), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(29), 0);
++		video_pll_clk_pd, 0x0, BIT(29), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
+ 		video_pll_clk_pd, 0x0, BIT(30), 0);
+ static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
 -- 
 2.50.1
 
