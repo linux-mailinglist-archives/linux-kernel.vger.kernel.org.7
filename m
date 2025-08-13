@@ -1,130 +1,215 @@
-Return-Path: <linux-kernel+bounces-767558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261F8B255F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:51:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5D3B255E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD621B66D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D165A3EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5EA2F0C66;
-	Wed, 13 Aug 2025 21:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C62F2F39A2;
+	Wed, 13 Aug 2025 21:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Ebus4ILb"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMKXxF1h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298883009C6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858212ED15A;
+	Wed, 13 Aug 2025 21:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121780; cv=none; b=ble7xCmip4+pcWwEfcpfJSFW7uEPLNxXLFda+V3cmtkVSB4GGNOI+EZ4xwmp/FifTgk+Pdu9tX0GDw8ihyS8clLvdYPFlovRl5Jsrz/gXvCfTqX9XA9Y+WMqJ7paW5gPaWFSEice0LWnwaWJ7xAhvdWJWN3tFRGlJYgT3W0XdeM=
+	t=1755121780; cv=none; b=DUZOWz+aOWi9wp/3SWrX32D/0BjSbjCNma+peH1ZifXhKW7He1V3nXB79dxh9BQwbTRKDYJgeeg20LVUFvVfIyEUwV3iClhRVdnBXsg5s8GseMfmFitzHW+fFfQtLXI5TWkmDvFKN/7SiiuVbk4j21Al44OE1Ht8jgeMP/ik4Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755121780; c=relaxed/simple;
-	bh=wnB5f2lNcXuWVMEtwXSEyjhFXiesKaIFnLomWIiQQ48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mfC2enf3Su83yXWjpuGanBJSSrtlQhxv2xrQ59IuyxqfOXbyXln/rTTryXoLsXsDKm9nMs4O0i12fdJklbZ5j6chYfFL+YU2DQmClSGHHgsh5EpP+d8Ufz86UAr3883EySu5x3vlv46QcIqR6NNkqNrHtD7KNuSKoD4HPP08pVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Ebus4ILb; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6005b.ext.cloudfilter.net ([10.0.30.162])
-	by cmsmtp with ESMTPS
-	id mFEkuxqgO5wATmJLkuTPML; Wed, 13 Aug 2025 21:49:37 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id mJLkuWyKkgahDmJLkuwbIb; Wed, 13 Aug 2025 21:49:36 +0000
-X-Authority-Analysis: v=2.4 cv=faKty1QF c=1 sm=1 tr=0 ts=689d0870
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=odtVgXAzkc1_0mDZNXMA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IF5PjUtDVtCA7at8MAkEA2XoX8G7yVHJ9KEVkdZu7ME=; b=Ebus4ILbPwpaC1vZH1Hst0NsfN
-	U+IwqAAYAWhXismvtlamZcRTVBdoK5UVBpn1oj7AWqFweytWUT2qITvcKjlk5c+owPzJKEYYB6t6D
-	0rviQDxo3c4/mJ3x1eBTnrmfvtL9fYT36chguuGUh3wIA/6fvgJ4zEEymQR0hM3BB5y3tmU5JR07K
-	WX63NJyjONMAz5gKN4qRlqsIOq23BagFJJHkASLnnXgy/X/syWZNAVwSTfAZOifkTkBn1HER57Seb
-	LXkE0iBE7PV2pEJUyA370IPwP2Okyly9HO4z+NpPFkv9nKWEq0xtMYjfKr44aKe4VE+5di9s9yZ5R
-	vyc1zrgg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38516 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1umJLj-00000001zqQ-10Xb;
-	Wed, 13 Aug 2025 15:49:35 -0600
-Message-ID: <be2ca70e-9ba9-445b-86f2-196e6b68958c@w6rz.net>
-Date: Wed, 13 Aug 2025 14:49:32 -0700
+	bh=NclLB94FEads0s4wh/ojsqj8Dq8b0xrIiaxPQNruk1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AMeYElZbGTVgs0ArVIrBSfZxRXsNT1MhnursEb8dkTCPuiZVXTlcKw/Mtkb8Lh7IxTfmHzic9XtwywU2nKoszjdaCjNjAWXv5EWZwKVGGdEoSgcD/K01AVpSpAoFsNu4geYjZNRRJauHYusBORaeUFM8/tRJwwzmp18aiWVKR9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMKXxF1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38AEC4CEED;
+	Wed, 13 Aug 2025 21:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755121780;
+	bh=NclLB94FEads0s4wh/ojsqj8Dq8b0xrIiaxPQNruk1g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bMKXxF1hFhVnUL6Dcj0fqhs2g+ajhAFtv9QdVA4QyOQaRp+Q+ilC/aDYYFyj6zj3a
+	 m9elP7www1VkNZunGrBSI8TXMHp0KJWBGH3PjFpa6P7IOZgq5DixpGJQSz8Bx0SOx/
+	 3VnYXfDdXUQVtCNL5oVplDxlBogjQ2Rcn444E/dmXvlwkyVgTodNP6rSHLMNjJqfFR
+	 zvoPVymioIggCrdawoBz6BWbM5rCzfb6lFR53tPHXUV8PlHCFB+5QUgZ7JInhLiFEg
+	 vKKzRO1rD6uhlsdHsH+Auztfj30L+CsMAD5PTx1DNfMdt9vCmJPz8Nd6+0N8Ca633O
+	 GtUiiwv2M5RsA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ath11k@lists.infradead.org
+Subject: [PATCH v3] wifi: ath: Use of_reserved_mem_region_to_resource() for "memory-region"
+Date: Wed, 13 Aug 2025 16:49:32 -0500
+Message-ID: <20250813214933.897486-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/262] 6.6.102-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250812172952.959106058@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250812172952.959106058@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1umJLj-00000001zqQ-10Xb
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:38516
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 77
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBennnAcch+4ipLebXsdqpZxm8HLKHxKM5EXXWHdUWkZkxayEXnclNHV0G3dl45f76JFyYF0XmmoGHMB8ybigQvEj4VTa2KqM9ojFv9koLskgkCf3hBt
- g5b/91+RlrzsNizXMAioICADdQ6/YjrWL6SdVvR3UaW4rXKG7ltiRF5G9IFRyshjijkvsqlRsSI03igGKztA3elejp/yGIAEXZg=
+Content-Transfer-Encoding: 8bit
 
-On 8/12/25 10:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.102 release.
-> There are 262 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Aug 2025 17:27:08 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.102-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Use the newly added of_reserved_mem_region_to_resource() function to
+handle "memory-region" properties.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+The error handling is a bit different for ath10k. "memory-region" is
+optional, so failed lookup is not an error. But then an error in
+of_address_to_resource() is treated as an error. However, that
+distinction is not really important. Either the region is available
+and usable or it is not. So now, it is just
+of_reserved_mem_region_to_resource() which is checked for an error.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v3:
+ - Rebase on v6.17-rc1
+
+v2:
+  - Split to separate patch
+---
+ drivers/net/wireless/ath/ath10k/snoc.c | 14 +++-----------
+ drivers/net/wireless/ath/ath11k/ahb.c  | 17 +++--------------
+ drivers/net/wireless/ath/ath11k/qmi.c  | 17 ++++-------------
+ 3 files changed, 10 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+index f0713bd36173..b3f6424c17d3 100644
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -13,7 +13,7 @@
+ #include <linux/property.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc/qcom_rproc.h>
+-#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/iommu.h>
+ 
+ #include "ce.h"
+@@ -1559,19 +1559,11 @@ static void ath10k_modem_deinit(struct ath10k *ar)
+ static int ath10k_setup_msa_resources(struct ath10k *ar, u32 msa_size)
+ {
+ 	struct device *dev = ar->dev;
+-	struct device_node *node;
+ 	struct resource r;
+ 	int ret;
+ 
+-	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+-	if (node) {
+-		ret = of_address_to_resource(node, 0, &r);
+-		of_node_put(node);
+-		if (ret) {
+-			dev_err(dev, "failed to resolve msa fixed region\n");
+-			return ret;
+-		}
+-
++	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &r);
++	if (!ret) {
+ 		ar->msa.paddr = r.start;
+ 		ar->msa.mem_size = resource_size(&r);
+ 		ar->msa.vaddr = devm_memremap(dev, ar->msa.paddr,
+diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
+index 50809cc1dad4..8dfe9b40c126 100644
+--- a/drivers/net/wireless/ath/ath11k/ahb.c
++++ b/drivers/net/wireless/ath/ath11k/ahb.c
+@@ -9,8 +9,8 @@
+ #include <linux/property.h>
+ #include <linux/of_device.h>
+ #include <linux/of.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/dma-mapping.h>
+-#include <linux/of_address.h>
+ #include <linux/iommu.h>
+ #include "ahb.h"
+ #include "debug.h"
+@@ -919,16 +919,10 @@ static int ath11k_ahb_setup_msa_resources(struct ath11k_base *ab)
+ {
+ 	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
+ 	struct device *dev = ab->dev;
+-	struct device_node *node;
+ 	struct resource r;
+ 	int ret;
+ 
+-	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+-	if (!node)
+-		return -ENOENT;
+-
+-	ret = of_address_to_resource(node, 0, &r);
+-	of_node_put(node);
++	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &r);
+ 	if (ret) {
+ 		dev_err(dev, "failed to resolve msa fixed region\n");
+ 		return ret;
+@@ -937,12 +931,7 @@ static int ath11k_ahb_setup_msa_resources(struct ath11k_base *ab)
+ 	ab_ahb->fw.msa_paddr = r.start;
+ 	ab_ahb->fw.msa_size = resource_size(&r);
+ 
+-	node = of_parse_phandle(dev->of_node, "memory-region", 1);
+-	if (!node)
+-		return -ENOENT;
+-
+-	ret = of_address_to_resource(node, 0, &r);
+-	of_node_put(node);
++	ret = of_reserved_mem_region_to_resource(dev->of_node, 1, &r);
+ 	if (ret) {
+ 		dev_err(dev, "failed to resolve ce fixed region\n");
+ 		return ret;
+diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+index 378ac96b861b..2b547b26ed20 100644
+--- a/drivers/net/wireless/ath/ath11k/qmi.c
++++ b/drivers/net/wireless/ath/ath11k/qmi.c
+@@ -13,7 +13,7 @@
+ #include "debug.h"
+ #include "hif.h"
+ #include <linux/of.h>
+-#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/ioport.h>
+ #include <linux/firmware.h>
+ #include <linux/of_irq.h>
+@@ -2040,23 +2040,14 @@ static int ath11k_qmi_alloc_target_mem_chunk(struct ath11k_base *ab)
+ static int ath11k_qmi_assign_target_mem_chunk(struct ath11k_base *ab)
+ {
+ 	struct device *dev = ab->dev;
+-	struct device_node *hremote_node = NULL;
+-	struct resource res;
++	struct resource res = {};
+ 	u32 host_ddr_sz;
+ 	int i, idx, ret;
+ 
+ 	for (i = 0, idx = 0; i < ab->qmi.mem_seg_count; i++) {
+ 		switch (ab->qmi.target_mem[i].type) {
+ 		case HOST_DDR_REGION_TYPE:
+-			hremote_node = of_parse_phandle(dev->of_node, "memory-region", 0);
+-			if (!hremote_node) {
+-				ath11k_dbg(ab, ATH11K_DBG_QMI,
+-					   "fail to get hremote_node\n");
+-				return -ENODEV;
+-			}
+-
+-			ret = of_address_to_resource(hremote_node, 0, &res);
+-			of_node_put(hremote_node);
++			ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
+ 			if (ret) {
+ 				ath11k_dbg(ab, ATH11K_DBG_QMI,
+ 					   "fail to get reg from hremote\n");
+@@ -2095,7 +2086,7 @@ static int ath11k_qmi_assign_target_mem_chunk(struct ath11k_base *ab)
+ 			}
+ 
+ 			if (ath11k_core_coldboot_cal_support(ab)) {
+-				if (hremote_node) {
++				if (resource_size(&res)) {
+ 					ab->qmi.target_mem[idx].paddr =
+ 							res.start + host_ddr_sz;
+ 					ab->qmi.target_mem[idx].iaddr =
+-- 
+2.47.2
 
 
