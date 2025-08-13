@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-766699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF11CB24A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13032B24A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1742B722759
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DAE584081
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2102E7173;
-	Wed, 13 Aug 2025 13:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218812E613C;
+	Wed, 13 Aug 2025 13:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbaSs9qy"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9Hiyi55"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A012E6136;
-	Wed, 13 Aug 2025 13:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AF424DCE9;
+	Wed, 13 Aug 2025 13:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090371; cv=none; b=H4YFzUH20p9TwxHMFEydMeDz9p4e5QZuWZ0VT4k1xvOisD/QhFyRg2ZNXea9YcSMAHlmCL7onjUfrAsB+PGeh5xNC31rhISEnJfdeYZEQ9Gp1rv1C+78sYDiROHyl2+4rO764PLcLLflfpTulUgUHdt5nbNsC0eSGh3cNcyfOlo=
+	t=1755090399; cv=none; b=IgBWG1EYihSMyNSbTwTE+qKB2WLyzYG/bV4SI46vXHhG6meWzkGq745MzuvXdEWD+qxGuPsnatsta2a8JUD1lKlH++SsR7sqJkIk8f/e2otW2nMk4akNJOcoHTLDPUMllss8xc19RC+UsfayaxdHfLDMHmVqhvQ+q/rqEcAWfIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090371; c=relaxed/simple;
-	bh=r+IGYqrvJJjZmyKpusqgdcFNQmtdoepMkDAxfPj8LiE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=su+zGcNEbsWvRE269gZvHdrWAB5C/qaDEAy8M5aA5VUQTUEy1I5j79SOzHNamqqbIfy0d6Ld9mwwaDcJZJUJdaoKXQIA9vmXj5M71o1QfLfAnbbmD9SjL9kyfB5SUySt0mM8UjInQNAUUsDFryGvcPvnehRU3rcf0i2pi45EHx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbaSs9qy; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4af027d966eso77952321cf.3;
-        Wed, 13 Aug 2025 06:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755090368; x=1755695168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kOBiwAHY8I7CRdoG3Ej9jT6nAiy55atfze8yFZhgSw=;
-        b=jbaSs9qycy8i3UqY9We/jBMh8FOGp0b+pRd5re8JEv8Aok/oW+iaH+hgyP5/zd0bjJ
-         pgdonDeGn9XR+7mYALs8G3gKX3LDUOZbgjZe8Pxs3IbE/XdyCBmGfhkwF/tudKD0IreJ
-         GhP+4708/8DWuA+681JdPYF7hgEXfnQXGiUNDutBUJ5+gBcOCUfHtTK7QDSbHKqwpz+h
-         eZ69JtAvtZ1pmaoZeROAOX+Yw/HEHSH6J1xG4nFWNCZwzsruGwbwScgRIaEcVqRi4P8O
-         w3dYgEIVwQnpFcnp7LlOhanX0Gk5wqZApRqiqDV/Coz0nEzfFZIClAB2IDK+AQLepD/2
-         FWRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090368; x=1755695168;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9kOBiwAHY8I7CRdoG3Ej9jT6nAiy55atfze8yFZhgSw=;
-        b=mwJvO+bNgeOA8jGwdoVxCN6LGNpTSqO4Gt8hrOBnhGxpbeEL5rN933sfNU3Ox3YFoV
-         7KLSLsLGTGvdH2LxFvKlPzNWJEjMh0FHUaMvYIbgSlnBrEDKwmpIxUnTbfqehLC0NCpk
-         Tyt2lOF9FfB/EPl/vJyawPVTfq7FCu2EHMoIKil1lQn9mB4D8d5ZeDmDWHnJIw4Vtc3Y
-         t6lpUayTcPfRUmvDvgK1FHeA8WbRO9TTdIbVEYYqZKuFocTCAFy66NPnL6YvkymiHJYg
-         7RYI5Nlq2QgqPsqLNigdHsxfFO2qRUgmVhPn5gSMie9tsQVQvgxMWHbF9gjGgyudXeqD
-         IT1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVYVoWC0Kb8UF+zbGc+6SAPfLNpEgnBgcLH+qvGH4Itqk/XT5qKcbK1d9oWppL1q4m1rIqF5TU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwROKIQhChScF+wWOlVp8+ozB49oWafpIDuORx+2K/5Cfgf5nog
-	RfOAnFwE3gVTO5D1UZ6keaPxoQ9hFmh892dDpHcSZJxdVARHzcUb1mOnB5opOi/t
-X-Gm-Gg: ASbGnctob5AhXVu8X7EBxjKF+VC6YkqNXdSxTP3vQKatWdLxP1NZKVVmKxl7Hr7V0Q3
-	ToWj+G6QOIaYGFAkUgKDI1CyiyHf16DMdvt7igSfFjc0THi8ea+WnLdadnlJgbAOVono0BHFeSA
-	0e9bEGsSuE5ys50B40eZFhxT6aA6FTB5FCjCb3bxCGKjvxaijcS+pUP53pLceXtOmkRdcVZC4zF
-	ZFaGqH61/AqXYzx1bmErY3jI/SpvGiM47s3R73MLwDV1PhxVAEnUz4iO6KPJfjT2f7G+ZWuCv0z
-	NlVTLGXaPuPp0uKbq0khp9hnwiQd4xN0sBAC6BDWwvdofYDkpLMXaX7fasy2iKzLjUClZa7zoHc
-	NbNKqNqEDOFJuRB37r0rGOtaNUHLUrrj3bW+Eed1KG8NTCb0QbV1xp7wkM6nalF8TvfyzpQ==
-X-Google-Smtp-Source: AGHT+IFlCSL9NVKYRT9MMUQ7J4HVQO1dCBWU1ZOM7+9VzfwOV4/qNiB8HhpnJYW31G3/H/rP16/cKA==
-X-Received: by 2002:a05:622a:cb:b0:4b0:b5ba:bb9 with SMTP id d75a77b69052e-4b0fc8924aamr38950371cf.56.1755090367779;
-        Wed, 13 Aug 2025 06:06:07 -0700 (PDT)
-Received: from localhost (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b0f28b7422sm26605721cf.59.2025.08.13.06.06.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 06:06:07 -0700 (PDT)
-Date: Wed, 13 Aug 2025 09:06:06 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: =?UTF-8?B?TWlndWVsIEdhcmPDrWE=?= <miguelgarciaroman8@gmail.com>, 
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, 
- willemdebruijn.kernel@gmail.com, 
- jasowang@redhat.com, 
- andrew+netdev@lunn.ch, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- skhan@linuxfoundation.org, 
- =?UTF-8?B?TWlndWVsIEdhcmPDrWE=?= <miguelgarciaroman8@gmail.com>
-Message-ID: <689c8dbe91cf3_125e46294ae@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250812082244.60240-1-miguelgarciaroman8@gmail.com>
-References: <20250812082244.60240-1-miguelgarciaroman8@gmail.com>
-Subject: Re: [PATCH net-next v2] tun: replace strcpy with strscpy for ifr_name
+	s=arc-20240116; t=1755090399; c=relaxed/simple;
+	bh=cRZd5t149Cj/63+HodENGqLUU8711RdMcrqet0Uojk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQoJVK36AL2C/eBzbC+0jS/QQg33Dym2wTikqPujB7o29qvyzrSj1/XtuYEBKazQqpEr4cJG/KTd3N/6XiWRPwqy2WpPDc/qXllRlyVCA2XAw9Fj1f9qz89242q7UIWQXma896AFRCSYsjo9702DskkV720wefbbOBBXv2tx8ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9Hiyi55; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755090398; x=1786626398;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=cRZd5t149Cj/63+HodENGqLUU8711RdMcrqet0Uojk0=;
+  b=L9Hiyi55cnI4KJACG4OPZvhN3g6ePubzLSGM/srSfjUwoLjM/Ru3xuSU
+   NFcLQHObjcw7VUt20N78FqHBwHnomdLFTaMZY6VzcrDp0qci5TIqVfFGM
+   +KUDjwrxezjuckz1tNZEOiEtzinelfaH/eZ+lBd7rYKDhIlF3DfEGf9Dn
+   v7sGWg5vTRUm8GG5Mv7H4l+rvsr2DoWnI52V0V2L3C1ofsLwTUkB2gN9y
+   Kh5XFmVibr/GIC94Gf4TpoTmAHlZn+wVyfiR3AaJsPs+Xe6rucwZzJM3w
+   zG/M6szzp/CEBqUY3E22k3+Z3PjZqCR5eoeVyQXlE9zOnpUdSy/OoiEJs
+   A==;
+X-CSE-ConnectionGUID: sNC0acXGTQCBXF38srz1PA==
+X-CSE-MsgGUID: 4FWw5nh/RjyL6eAYCdnTwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74959653"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="74959653"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:06:37 -0700
+X-CSE-ConnectionGUID: FWTQedAvQjCEPjDDCDuanQ==
+X-CSE-MsgGUID: /zQqES/kR5idr7cSacS7sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170673829"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:06:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1umBBX-00000005RN2-0SOW;
+	Wed, 13 Aug 2025 16:06:31 +0300
+Date: Wed, 13 Aug 2025 16:06:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] i2c: add init_recovery() callback
+Message-ID: <aJyN1uX60BJQYDHj@smile.fi.intel.com>
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-1-ca42ea818dc9@gmail.com>
+ <aJpP5eABTYnQRV82@smile.fi.intel.com>
+ <27cc9ae5-1c13-4ec9-ab10-ae95d6339116@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <27cc9ae5-1c13-4ec9-ab10-ae95d6339116@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Miguel Garc=C3=ADa wrote:
-> Replace the strcpy() calls that copy the device name into ifr->ifr_name=
+On Wed, Aug 13, 2025 at 12:24:22PM +0200, Gabor Juhos wrote:
+> 2025. 08. 11. 22:17 keltezéssel, Andy Shevchenko írta:
+> > On Mon, Aug 11, 2025 at 09:49:55PM +0200, Gabor Juhos wrote:
 
-> with strscpy() to avoid potential overflows and guarantee NULL terminat=
-ion.
-> =
+...
 
-> Destination is ifr->ifr_name (size IFNAMSIZ).
-> =
+> >> This is needed for the 'i2c-pxa' driver in order to be able to fix
+> >> a long standing bug for which the fix will be implemented in a
 
-> Tested in QEMU (BusyBox rootfs):
->  - Created TUN devices via TUNSETIFF helper
->  - Set addresses and brought links up
->  - Verified long interface names are safely truncated (IFNAMSIZ-1)
-> =
+The above left for some context for the below discussion.
 
-> Signed-off-by: Miguel Garc=C3=ADa <miguelgarciaroman8@gmail.com>
+...
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+> > The first traditional question is why the generic recovery is not working.
+> 
+> The details are in the driver specific patches. Should I write it all down here too?
+
+Instead of the above paragraph, give a summary of your use case to answer 'why'
+it can not be done differently.
+
+...
+
+> >> -	if (i2c_gpio_init_recovery(adap) == -EPROBE_DEFER)
+> >> +	if (bri->init_recovery) {
+> >> +		ret = bri->init_recovery(adap);
+> >> +		if (ret)
+> >> +			return ret;
+> > 
+> >> +	} else if (i2c_gpio_init_recovery(adap) == -EPROBE_DEFER) {
+> >>  		return -EPROBE_DEFER;
+> >> +	}
+> > 
+> > If the above stays, I think we would drop the last and always have
+> > init_recovery to be assigned.
+> 
+> In that case we would have something like this:
+> 
+>     if (!bri->init_recovery)
+>         bri->init_recovery = i2c_gpio_init_recovery;
+> 
+>     ret = bri->init_recovery(adap);
+>     if (ret)
+>         return ret;
+> 
+> Since the callback is used only once, and within the same fuction where it is
+> assigned, I don't really see the advantage of the assignment. Although it
+> definitely looks cleaner as far as error handling is concerned.
+> 
+> Originally, I have used the following solution:
+> 
+>     if (bri->init_recovery)
+>         ret = bri->init_recovery(adap);
+>     else
+>         ret = i2c_gpio_init_recovery(adap);
+
+> 
+
+Without this blank line...
+
+>     if (ret)
+>         return ret;
+
+...this looks like the best compromise among proposed implementations.
+
+> However the existing code ignores errors from i2c_gpio_init_recovery() except
+> EPROBE_DEFER, so I changed this to the code proposed in the patch in order to
+> keep the existing behaviour.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
