@@ -1,77 +1,311 @@
-Return-Path: <linux-kernel+bounces-767169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE704B24FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD62B24FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88BCA5A0400
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:36:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2F47A59FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A9F28B7D7;
-	Wed, 13 Aug 2025 16:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpB4CbJ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB0D2877E3;
+	Wed, 13 Aug 2025 16:33:28 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9DE281368;
-	Wed, 13 Aug 2025 16:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709E9286D5E;
+	Wed, 13 Aug 2025 16:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102704; cv=none; b=JoZaMKhHRATK9G1/Y0XW5q71M7Ww0Dw3gXqe8lMfQnJqWjz7k2tilmQxS+DAxZyGnG3EvpxVV/OUHRn1b8FqUy2+hf9WjuvOSub7572s5PDqOxoeaeclwjNh20lX3nXGADKkUR9fX/bH3T033OHxMUH3RBcZqkRJen/ejdjcsYM=
+	t=1755102808; cv=none; b=T77l/Xu8/X8DDsNcBiEHcletYP0mI1dyM/OUxFMsICHuaMMesDz5KWe8FzW4MUaYzJvFDMzyMWUSTUOipETbMN8Uf1TWdT3t6bydmxZqiKIJyhEi0bUHgUx6jUE9bzUNLX7L5esn+Fu1CC6V9zrXyfxPvJMqGMFrenfFA/iFJxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102704; c=relaxed/simple;
-	bh=r681/UoqQ77m/rJhh7Rim7rhRtBmAr5NpXSkVeeo1Fw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=ZgagrZEsQdi4ydLeQU2VVLaij+WSBYOVdP2XteBuf2zZnn4A6DedlPiVPDYFWfjjciRAZyKoJ18yzrL4KidRZN1qwNd0Qj0eAj+bfPSc4PhfmnOLcIkuZ2RT9Zym78R6XMKUv6oQZNYCuov+CC7EjoGKsHNovWEuGHgWiLrdDvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpB4CbJ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8787DC4CEEB;
-	Wed, 13 Aug 2025 16:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755102703;
-	bh=r681/UoqQ77m/rJhh7Rim7rhRtBmAr5NpXSkVeeo1Fw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=IpB4CbJ7gK0ezAOWJVESoy62k5C58j4Ml0ESZxa07gHhycK+BOQOvOQ1hDfGf9EYU
-	 pWK7b6BeDvQQz8X9/3s9SQN4px4u24wmiv1Nfm0I4pIvpTPsr/vIvVAD28edA3QbNg
-	 +hjODPTOvZO5+9PsHmPujpIAj1EXjo7x0zRNFZKl0O9iBHSfx+kB5cHukCp3pEwidT
-	 4CSrlvZhJu7DLUHn91oTEeF8OyociqpQpQDWwfK/Kf934Vvokhz0k35wj3jXIIYUIZ
-	 U1kojyydubopD6Tfy8tkDyJjzi6Dfkly7DgdksS909FVdQQByeBz2fpYArCPd7tGB5
-	 xJRTaJW78fyxQ==
+	s=arc-20240116; t=1755102808; c=relaxed/simple;
+	bh=x1ZKOZTYJGF/U2kjdvtZsaZAne1mqWiZ05vJsY4xHOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WVsOcEre/a6xoqLOdzkVIAyzIc6dAyBFqJbBiQvIBOle2SRB49eHVkEsqg7oNyrZQRhUmGSUjWTxAL1xwxSJbkzYd7/AAZQOybJ1ufdf4RQ8GP0c3IMDtxmxMOACNptachcpB/SeHO9qxR4yngjESq/sSaWOjFOLtdw6D7GE+aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2ead79b5so8379b3a.3;
+        Wed, 13 Aug 2025 09:33:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755102806; x=1755707606;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AAxyR26sD/UmhZtDKgGa8VSqHxpVk6CfvVa4/B4m1GI=;
+        b=peYtGTO0GSwqtuKojFgX84qYGwua6po1nat/1aQuMBhekJ8rDuz9MqG3Pe+Yr+oOwh
+         USAeIRDAMbXkrqrScrxslJuZjtjtimn86eX8xBGnXEOlhQM5SAWKd48XUheKzRWwAb7H
+         wQhtilb5PeF5id6o8IY0iQqW1FLL1DoWZJAlfHkzEJq/mlS/ujPOBvs12DGMLocveevD
+         ltsdBtaUeKMBSQ1n8Bf4V3TJk9AvgBz+f5n3WhZ9U3V2vNFCgEMq0mF0KskuRHuHOEUn
+         6olJK95oMori4JZckuvRXohbRW3LpuM+7tnOtk68Bd4fuwwdyahN3utlADnbPCiv/cya
+         48Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+K7v3xGCbbESLXTKtcftqAxF04WKqT7x4jc8FUOixFPdcKo676XAACZl06/9AVj2ka25PNg2QKR6cD9Z6aTr5dg==@vger.kernel.org, AJvYcCWAjIKB5mOjwYgvD3qJpfUlVlgdSHBXOP9Asv4xpySKApEzlpVNZpJqkIDeCIMMTkmwrgFaOMLYdhX7FD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnhepjIeVXPnfug7b7BeKsWLq+vUrQgCeDUdmu6Qn0eu+6oGXV
+	nnu8SMKRzmdzHq0nqUf7CENYpamQ1l7R1qkahre9CzeUqBfVFqWMHvdh
+X-Gm-Gg: ASbGncvo170/oR6L+lC9iYxxE4r7w6bJBBstjz1/6O1tDLFcDccQEmaTASv3HY+cpIA
+	a+cXUvTdV0+0zOLP4/JsV4eLL+M5hlKbnD+OjyznYARmnz0Ycxui4KNbXFstfts7r1eO/sPidCV
+	JLIKqNoXZpmFXB8sCrALRqSebEqq1UXKIyB7Nw3MCyEKK7ebiT4HTk+HwgLyaQwgjSglX9bQqm2
+	vWrr6innf2L8XhjOAZ9mHxGBbe7xphYqJ9IwHE6RZDpr29RDZ0bzadFLCDjhkXYNYP4BgnLbzEe
+	Vc3a8f2liPBzc5wRLvdc1Cs5wHYV4Jmq5SGdOGvA4uvRRIv1nAHI+o2d+rK5ofm6C/5uPM99lFM
+	pzyCw283fCJ0j
+X-Google-Smtp-Source: AGHT+IFd3ois8abXh2r0TeOVO5d30+2A5zCsUiP9wARw2gZzASwYYVLMa1p6/doAC9ierLEznR1A5g==
+X-Received: by 2002:a05:6a00:b82:b0:76b:cdf5:f4ba with SMTP id d2e1a72fcca58-76e20f8c3b9mr2347472b3a.4.1755102805573;
+        Wed, 13 Aug 2025 09:33:25 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccd45dffsm32483556b3a.0.2025.08.13.09.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 09:33:25 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>
+Subject: [PATCH] perf test: Add test case for event group throttling with inactive events
+Date: Wed, 13 Aug 2025 16:32:52 +0000
+Message-ID: <20250813163251.490451-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Aug 2025 18:31:38 +0200
-Message-Id: <DC1FZCZFDPV6.2TODOFP4YKJQR@kernel.org>
-Subject: Re: "Re: [PATCH 2/7] rust: gpu: update ARef and AlwaysRefCounted
- imports from sync::aref"
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
-To: "Shankari Anand" <shankari.ak0208@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <DBQYD7G5SOZA.2MSKKQWXTPCBB@kernel.org>
- <20250813142814.31576-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250813142814.31576-1-shankari.ak0208@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Aug 13, 2025 at 4:28 PM CEST, Shankari Anand wrote:
->  This particular patch in the series is restricted to inclusion of only g=
-pu driver files.
->  Can this be picked up separately or should I be merging it with any othe=
-r driver?
+A recent UBSAN shift-out-of-bounds report was identified when throttling
+event groups that included inactive (PERF_EVENT_STATE_OFF) events.
+This occurred because pmu->start()/stop() could be called on these events,
+potentially leaving event->hw.idx at -1. This leads to undefined behavior
+when PMU code later uses this negative index as a shift exponent.
 
-This specific one is fine, I'll pick it up soon.
+The issue need to ensuring perf_event_throttle() and
+perf_event_unthrottle() skip inactive events entirely.
+
+Introduce a new perf test suite, "event group throttle", to verify this
+fix and prevent regressions.
+
+The test sets up a scenario designed to trigger frequent throttling:
+1. A parent event (leader) is created with sample_period = 1.
+2. A child event is created in the same group but initialized with
+   disabled = 1 (inactive).
+
+A process opens these events and runs in a tight loop. The frequent
+sampling of the leader causes the entire group, including the inactive
+child event, to be rapidly throttled and unthrottled by the kernel.
+
+The test monitors /dev/kmsg during execution, looking for "UBSAN",
+"Invalid PMEV" "WARNING:", or "BUG:" messages.
+
+To ensure robustness and avoid false positives from unrelated prior kernel
+messages, the test opens /dev/kmsg and uses lseek(SEEK_END) to skip all
+existing log entries before starting the test loop. If /dev/kmsg cannot be
+accessed or seeked (e.g., lack of CAP_SYSLOG), the test handles it
+appropriately by skipping or failing.
+
+Related Reproducer by Mark Rutland
+Link: https://lore.kernel.org/lkml/aIEePonPatjNrJVk@J2N7QTR9R3/
+
+Related Kernel Fix
+Link: https://lore.kernel.org/lkml/20250812012722.127646-1-ysk@kzalloc.com/
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+---
+ tools/perf/tests/Build                  |   1 +
+ tools/perf/tests/builtin-test.c         |   1 +
+ tools/perf/tests/event_group_throttle.c | 132 ++++++++++++++++++++++++
+ tools/perf/tests/tests.h                |   1 +
+ 4 files changed, 135 insertions(+)
+ create mode 100644 tools/perf/tests/event_group_throttle.c
+
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 3e8394be15ae..e22e2f285500 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -70,6 +70,7 @@ perf-test-y += util.o
+ perf-test-y += hwmon_pmu.o
+ perf-test-y += tool_pmu.o
+ perf-test-y += subcmd-help.o
++perf-test-y += event_group_throttle.o
+ 
+ ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
+ perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 85142dfb3e01..d302bf9d1535 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -141,6 +141,7 @@ static struct test_suite *generic_tests[] = {
+ 	&suite__symbols,
+ 	&suite__util,
+ 	&suite__subcmd_help,
++	&suite__event_group_throttle,
+ 	NULL,
+ };
+ 
+diff --git a/tools/perf/tests/event_group_throttle.c b/tools/perf/tests/event_group_throttle.c
+new file mode 100644
+index 000000000000..7d5191d7e812
+--- /dev/null
++++ b/tools/perf/tests/event_group_throttle.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <stdlib.h>
++#include <unistd.h>
++#include <time.h>
++#include <sys/wait.h>
++#include <signal.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <string.h>
++#include <stdio.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <errno.h>
++#include <linux/perf_event.h>
++#include "perf-sys.h"
++#include "tests.h"
++#include "debug.h"
++
++static struct perf_event_attr attr_parent = {
++	.type = PERF_TYPE_HARDWARE,
++	.size = sizeof(attr_parent),
++	.config = PERF_COUNT_HW_CPU_CYCLES,
++	.sample_period = 1,
++	.exclude_kernel = 1,
++};
++
++static struct perf_event_attr attr_child = {
++	.type = PERF_TYPE_HARDWARE,
++	.size = sizeof(attr_child),
++	.config = PERF_COUNT_HW_CPU_CYCLES,
++	.exclude_kernel = 1,
++	.disabled = 1,
++};
++
++static pid_t run_event_group_throttle(void)
++{
++	pid_t pid = fork();
++
++	if (pid == 0) {
++		int parent, child;
++
++		parent = sys_perf_event_open(&attr_parent, 0, -1, -1, 0);
++		if (parent < 0) {
++			pr_debug("Unable to create event: %d\n", parent);
++			exit(-1);
++		}
++
++		child = sys_perf_event_open(&attr_child, 0, -1, parent, 0);
++		if (child < 0) {
++			pr_debug("Unable to create event: %d\n", child);
++			exit(-1);
++		}
++
++		for (;;)
++			asm("" ::: "memory");
++
++		_exit(0);
++	}
++	return pid;
++}
++
++static bool is_kmsg_err(int fd)
++{
++	char buf[1024];
++	ssize_t len;
++
++	while ((len = read(fd, buf, sizeof(buf) - 1)) > 0) {
++		buf[len] = '\0';
++
++		if (strstr(buf, "UBSAN") || strstr(buf, "WARNING:") ||
++		    strstr(buf, "BUG:") || strstr(buf, "Invalid PMEV")) {
++			pr_debug("Kernel log error detected: %s", buf);
++			return true;
++		}
++	}
++
++	if (len < 0 && errno != EAGAIN) {
++		pr_debug("Error reading /dev/kmsg: %s\n", strerror(errno));
++		return true;
++	}
++
++	return false;
++}
++
++static int test__event_group_throttle(struct test_suite *test __maybe_unused,
++				int subtest __maybe_unused)
++{
++	time_t start;
++	pid_t pid;
++	int fd;
++
++	fd = open("/dev/kmsg", O_RDONLY | O_NONBLOCK);
++	if (fd < 0) {
++		/*
++		 * If /dev/kmsg cannot be opened (e.g. permission denied), skip the test
++		 * as we cannot verify the absence of kernel errors.
++		 */
++		pr_debug("Failed to open /dev/kmsg: %s. Skipping test.\n", strerror(errno));
++		return TEST_SKIP;
++	}
++
++	/*
++	 * Seek to the end to ignore past events (like EFI boot warnings).
++	 * This typically requires CAP_SYSLOG.
++	 */
++	if (lseek(fd, 0, SEEK_END) < 0) {
++		pr_debug("Failed to seek to end of /dev/kmsg: %s\n", strerror(errno));
++		return TEST_FAIL;
++	}
++
++	start = time(NULL);
++	do {
++		pr_debug("Starting event group throttling...\n");
++		pid = run_event_group_throttle();
++
++		sleep(8);
++
++		pr_debug("event group throttler(PID=%d)\n", pid);
++		kill(pid, SIGKILL);
++		waitpid(pid, NULL, 0);
++
++		/* Check for errors during the run */
++		if (is_kmsg_err(fd)) {
++			close(fd);
++			return TEST_FAIL;
++		}
++	} while (time(NULL) - start < 10);
++
++	return TEST_OK;
++}
++
++DEFINE_SUITE("event group throttle", event_group_throttle);
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index 97e62db8764a..031856a710b2 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -179,6 +179,7 @@ DECLARE_SUITE(event_groups);
+ DECLARE_SUITE(symbols);
+ DECLARE_SUITE(util);
+ DECLARE_SUITE(subcmd_help);
++DECLARE_SUITE(event_group_throttle);
+ 
+ /*
+  * PowerPC and S390 do not support creation of instruction breakpoints using the
+-- 
+2.50.0
+
 
