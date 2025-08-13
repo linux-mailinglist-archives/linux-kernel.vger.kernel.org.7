@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-766223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEF9B24415
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:20:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B1FB24401
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892293B4AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271B21B664A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656382BEC2F;
-	Wed, 13 Aug 2025 08:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D522C15BF;
+	Wed, 13 Aug 2025 08:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t3ZaanvF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E1zvWv48"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORDi55VV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C2B22425B;
-	Wed, 13 Aug 2025 08:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5331E2D3720
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072968; cv=none; b=Up/Vi/MQ2ic8h02iuhgbVoZceW6WCbuIerErgpv+6k8tlE7W5f4B4mIvDbkIyZcfWGDYptbH8RWOy2wBdQW+xDvTCVTn4bo5KuGPVFwFTrWZJOVdGZhYpffriyAQT1aRSbNPWFBtp1O4sCu3i53B85XICY6+rrXfZzLZ0+z+tXo=
+	t=1755072996; cv=none; b=tCRUYgKb50b93Eo63PrOxoGvQEdNsUcNIcILL8Sp8pwjRQuoEwhdXtJeoLICFJURGu6fO2k+U2wQS0li+TvANZQFNGAeHzSJHmUhsoLqUB8q5QqUE9qtgMhfIBwG6433quh4HDBy0S64QEB7zLh/Hya/9vRrNOVFXOql71m9UeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072968; c=relaxed/simple;
-	bh=qLk7KTbjb9ze2aC5zK7QVoAdhOj3IvIDiRP14d2KdAE=;
+	s=arc-20240116; t=1755072996; c=relaxed/simple;
+	bh=HpmLvrPHn4sb+82i2lRKMP37vraziwdZWtrOQHjkRDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hortiraxeFtIBlhaLKLKfEEzJn3lu3DeetG23uNMPdOO8cbXhdV4KclU4IZaxZBingC4SRmO50Cf+QsWjAX16zsTtfK2gONBVaienq6IIPmDrbjgs4tT8XIPgoXW9LMw9Ub3ijyCwSfUDwW2dn4wZJUG3s9sXzutk8xNnqA9FO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t3ZaanvF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E1zvWv48; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Aug 2025 10:16:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755072965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vgBW8b/WLrVQq0BHMU+zEk/Lyyfrm6a/mGbcYhX7PWw=;
-	b=t3ZaanvFJHTW1l1H2nSwoa1VFh8EVFo/BJn0UMRG7bq78PXYOpzqMO9UGefI5UiLZP7nNe
-	J1FX1/E5cqcFOVpKvUjolk1j8zY71ykS0B7X6UJ1jM73mZGhOMT+2RFDhdp4Y1WmHG3lB8
-	fhvgGlk/PFabS5Cn+w3uMjkgmqVzkQuRRvX4xJrjg/8hJ+0j7jOT/qLXJIWkp6a9jfxObj
-	LUOs4JziO5PF87uDbwzJHBzRMHIM1CkGRGPGIwWfVdP7ckTLMMlHtUDzc+O5vxoBEjlmG7
-	1skI/bKKNj/R2CTmQujVy01wAp2WhS97QfxNvozWzsRXygdxqvZz7+ZCEZyixQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755072965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vgBW8b/WLrVQq0BHMU+zEk/Lyyfrm6a/mGbcYhX7PWw=;
-	b=E1zvWv48KJJ+SOu4RstGU/Hts0jpCLaRVEpYFntAu8DSCAbOKCuCF3vYrHswu5Uo/Nk8OK
-	GMt5eI9bpKssCIDA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-mm@kvack.org, linux-um@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-s390@vger.kernel.org, linux-mips@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Jan Stancek <jstancek@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: Re: [PATCH v4 00/24] vdso: Reject absolute relocations during build
-Message-ID: <20250813101305-04911850-2375-4be5-9a06-ced21de3ca22@linutronix.de>
-References: <20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de>
- <CANiq72nV62c8cVBzke73OH-sfLdgerDBGrLKTmT83+OQtK6PjA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5MZpHtPWGO2falz9S6QoNzWvMIZYbyEBIfwhqwObm1s0zA4he3kRa6m1cf3P7bLUhGIh5puhwtHwbHOYFdROCt9GKK0cdlHy7wuFl4JZhetlfbC0WhMc+Y8IzMVrfb/YNe89QLXshLTt2FiPH3OreSlYV2BuZSGv23fFBgqYl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORDi55VV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAB9C4CEF6;
+	Wed, 13 Aug 2025 08:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755072995;
+	bh=HpmLvrPHn4sb+82i2lRKMP37vraziwdZWtrOQHjkRDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ORDi55VV/ZNVcO+BDDBbUNdPDQ4dvpheQjVmcfEoVuZlTKAsigwAuFe3aK6iiojvE
+	 4e7yBXbOSuInEvU3DZzOnHgmxyidkpd2fR1VedyKCLy/2M9YJm5g6+zM/3YVUzi/3s
+	 ZTQNPd7940qOSAzTD/feGOR1giEHSdtN6r9j/rPGIG9z1EHCPml0PIqlj1XwUQHUxB
+	 fMQRknDzG0KYY+ZvA2Zkq9nyfPFHEwwKcb9WX1fY/l7eme1JwAk2pAybgO0cxx6R9v
+	 kLR5dNVPkTIfndpDdllDqMqsO8U2lzNmiOaKLRumseLrlYimGz5JhohWMNFrvUXxn4
+	 tBUUPgExX1p2A==
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B8421F40067;
+	Wed, 13 Aug 2025 04:16:32 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 13 Aug 2025 04:16:32 -0400
+X-ME-Sender: <xms:4EmcaJ9bYlqpENhWu9ZM3b1rkWpwlG0ejAGfN5hl5gpmWDsXJZb2dg>
+    <xme:4EmcaENOzt1tVLSLCMXrultW8L17ql7E4FM4HK4IpxV0IwbEtdp1obf0VUusmmMyw
+    IcwitAMdbROBw4JosY>
+X-ME-Received: <xmr:4EmcaFQ0k6CLoJc_wiBIEX78Ie8QrsLWwJlSGdc_NpJQrnqaDtOjJI6MFkkG>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepudejvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepmhgrtghivghjrdifihgvtgiiohhrqdhrvghtmhgrnhesihhnthgvlhdrtghomh
+    dprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghr
+    nhgusegrrhhnuggsrdguvgdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhr
+    tghpthhtohepuhhrvgiikhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepfihilhhlse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghlvghshhhsihhnghhhsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:4EmcaG8rQsE8nkO8Pw7BXFUXXd-RiXJNyqApIZXatEwUdlY2ztWfjA>
+    <xmx:4EmcaP1k2sWKIPsVnixXMBMnZq2BC4N6nxNUox2x8df5vJ19bCsHAA>
+    <xmx:4EmcaIKL7gUAWTyNuo8HT5jw93fJosAdbDIZuVFUt4IZ5EQd4puIQA>
+    <xmx:4EmcaN73ABzTnA_tXNVpp2lcwvZwZx0hbVCFteVB1zox2VpbNSuCPA>
+    <xmx:4EmcaEjpfrJQy1TacPbbA7uC_HvJWGEvLn3o1pPc_tSJJSAJSSn_V_gA>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Aug 2025 04:16:31 -0400 (EDT)
+Date: Wed, 13 Aug 2025 09:16:29 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
+ 	Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
+ kaleshsingh@google.com, 	rppt@kernel.org, leitao@debian.org,
+ coxu@redhat.com, surenb@google.com, 	akpm@linux-foundation.org,
+ luto@kernel.org, jpoimboe@kernel.org, changyuanl@google.com,
+ 	hpa@zytor.com, dvyukov@google.com, corbet@lwn.net,
+ vincenzo.frascino@arm.com, 	smostafa@google.com,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, 	andreyknvl@gmail.com,
+ alexander.shishkin@linux.intel.com, thiago.bauermann@linaro.org,
+ 	catalin.marinas@arm.com, ryabinin.a.a@gmail.com, jan.kiszka@siemens.com,
+ jbohac@suse.cz, 	dan.j.williams@intel.com, joel.granados@kernel.org,
+ baohua@kernel.org, 	kevin.brodsky@arm.com, nicolas.schier@linux.dev,
+ pcc@google.com, 	andriy.shevchenko@linux.intel.com, wei.liu@kernel.org,
+ bp@alien8.de, ada.coupriediaz@arm.com, 	xin@zytor.com,
+ pankaj.gupta@amd.com, vbabka@suse.cz, glider@google.com,
+ 	jgross@suse.com, kees@kernel.org, jhubbard@nvidia.com,
+ joey.gouly@arm.com, 	ardb@kernel.org, thuth@redhat.com,
+ pasha.tatashin@soleen.com, 	kristina.martsenko@arm.com,
+ bigeasy@linutronix.de, lorenzo.stoakes@oracle.com,
+ 	jason.andryuk@amd.com, david@redhat.com, graf@amazon.com,
+ wangkefeng.wang@huawei.com, 	ziy@nvidia.com, mark.rutland@arm.com,
+ dave.hansen@linux.intel.com, 	samuel.holland@sifive.com,
+ kbingham@kernel.org, trintaeoitogc@gmail.com,
+ 	scott@os.amperecomputing.com, justinstitt@google.com,
+ kuan-ying.lee@canonical.com, 	maz@kernel.org, tglx@linutronix.de,
+ samitolvanen@google.com, mhocko@suse.com,
+ 	nunodasneves@linux.microsoft.com, brgerst@gmail.com,
+ willy@infradead.org, ubizjak@gmail.com, 	peterz@infradead.org,
+ mingo@redhat.com, sohil.mehta@intel.com, linux-mm@kvack.org,
+ 	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ x86@kernel.org, 	llvm@lists.linux.dev, kasan-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/18] kasan: x86: arm64: KASAN tag-based mode for x86
+Message-ID: <mt3agowg6ghwhvcjqfgqgua3m3al566ewmvwvqkkenxfkbslhq@eun5r3quvcqq>
+References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nV62c8cVBzke73OH-sfLdgerDBGrLKTmT83+OQtK6PjA@mail.gmail.com>
+In-Reply-To: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
 
-On Tue, Aug 12, 2025 at 01:07:34PM +0200, Miguel Ojeda wrote:
-> On Tue, Aug 12, 2025 at 7:44 AM Thomas Weißschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > Kbuild and Rust folks: This contains custom definitions of hostprog
-> > bindgen and rust library commands.
-> > These are currently only defined inside the subsystem directory.
-> > Let me know if they should go into scripts/Makefile.host.
-> 
-> Glad to see more Rust host progs :)
-> 
-> Keeping them local may be a bit easier initially to land, I guess
-> (e.g. no docs), and then we can generalize when needed later.
+On Tue, Aug 12, 2025 at 03:23:36PM +0200, Maciej Wieczor-Retman wrote:
+> Compilation time comparison (10 cores):
+> * 7:27 for clean kernel
+> * 8:21/7:44 for generic KASAN (inline/outline)
+> * 8:20/7:41 for tag-based KASAN (inline/outline)
 
-I'm happy to do the docs etc. I only wanted to avoid doing all that work,
-only for it to stay a subsystem-local solution.
+It is not clear if it is compilation time of a kernel with different
+config options or compilation time of the same kernel running on machine
+with different kernels (KASAN-off/KASAN-generic/KASAN-tagged).
 
-Also it would be nice to have a Kconfig symbol, RUSTC_CAN_LINK or similar,
-which indicates that the rust compiler can build host programs.
-
-> By the way, for consistency with elsewhere, probably we want
-> `HOSTRUSTLIB` -> `HOSTRUSTC L`. Though I am thinking to remove the `L`
-> anyway since eventually a lot of code will be "lib".
-
-Ack.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
