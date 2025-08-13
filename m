@@ -1,169 +1,302 @@
-Return-Path: <linux-kernel+bounces-767537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E68B255B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:42:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D170B255B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B03A3B91B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359C4169FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B489C3009D8;
-	Wed, 13 Aug 2025 21:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577863009E2;
+	Wed, 13 Aug 2025 21:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RcAurwXz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7wa5hKn"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966873009D2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915703009D1;
+	Wed, 13 Aug 2025 21:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121202; cv=none; b=eVq9ux+O2D8GxBpY18tDHjPt3yAhuHy0kOZzyttZ/KW7adEYn8ffZQQ7R2g5kxFTKxj2l0xivR4qx9RYWnk0066ezXMljwSEARdqDcJbQOdwjOewB3p2o2PRpwdi1HBZDA7TOCrHgrBipS1hGgLxAs+qaOlb5BFzqEeDE0+in5U=
+	t=1755121277; cv=none; b=r3Vubi+ASwtH2QPSaEvUo62f5Y8j4JtQS8Bwn/z97/IBZgjMNrXyi11pwCbf/JeAPHJsZjIwrBkm+naFSFTfsvECnA3ETANyrNF/bnGUQwF9RMHVCJxLbUdnvMj3P/Nl1piqDEC6k8LABsuG9q7G7t93jnPoaulu63ClIcN5bhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121202; c=relaxed/simple;
-	bh=823prMjoJg1j0sL2l7SI77tJcgvJxm1hdEbc8+qPckg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYvjpvNrUDfsJ+ZLeguAboguMtMID1072yxSzRBdCZCMwNFRTyrA0ARsmjwThdOVi3H3Koe4xiOhpIMjU86o6KUU5L/JkvgydQaMv2YkCHdMi5sWutiZYLkAyCz9wjIqIcBYeNLjaIWno0Ek5KekHy/2JpU7/I3UrfbFo6WqahM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RcAurwXz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLcsC011176
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:40:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jsHqObljI/QrkzM/zyszZAc8Qk56TEyRi+eNAb+o/hY=; b=RcAurwXzpAKXEdOG
-	TRd+OlbzSSziHs0RursQXpp6noZ1157tRtAJB1a5hc9wHvfkGroPDG5dHp6Ljypn
-	0aGqE0F1t/d4Dd/mfibRk26WeUDnSxgtKX7y79C0/MDYNtUcq3TDGcV16JO8hlh3
-	EENDO3rjpsi6Fv4IkkzTUAbvjJFcSsf3esTAVx3EujYoEznwzY0vrFdvvyYIM3fF
-	hp20v9KwXZodHbcdfQgLfrzVbfsHbsUYycnGxFau+RMrcBfutST5fj8gPHEt+BcQ
-	c3KdObkbzELN7QXHZYBC1VwYb+avioqwBX3p7DKrFP7aFYobmjX3ivPskkahobja
-	vmWFOQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxbggf7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:40:00 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2445823e49fso2146845ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:40:00 -0700 (PDT)
+	s=arc-20240116; t=1755121277; c=relaxed/simple;
+	bh=+beRL9pekUCgXaNNPhQ6lnwnrHCXUVj5tTp5O8otNWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pOOVdZGmQygiUACCicgKDpirdPnJ7StQkp5YGm09trPtHoU+J6N05lKdiy+zTbv8tySY+4s6Yjkh7KwXBmj+E2FHyRX/uNxmrcewQNrkvQrchmDT3JQIoAAFyktXpmEDRX1heYNLl750YmQ5Ex2GFWIQfkliOYPnOEu0DJQq1h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7wa5hKn; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7a2befdso47470066b.2;
+        Wed, 13 Aug 2025 14:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755121273; x=1755726073; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xw6h3XbW9SZjmv3VMhGxMmuRXeauHMpSfMMYghs+t1M=;
+        b=b7wa5hKnmTxUKmRh7C0XWbfmxywEMq0zqr1t4Zk5V09wyN0wUi6wabJZJ0HbHlml6w
+         GnjEwID4GgN5WMSYwDqKPjZtpp8V4fZDnHYeLR5czIKIchPCfSk+C9fsE7nzC7hqTgy1
+         IuComqYhJOarf86CzSiszE4Km17Ccr+NlTjzZcVI3J9NhLGfWTbP6GZiRAjNM584EZzN
+         zd3re6nCX+8BbZ059DRE52IGRvbatVYS/JXP8y6NpdYy6uWDmci5HTUkdlZvsYebFBQg
+         yE4dq5fg4CjqOytlFc1DYz2GUzlA6Ia0s5Wf0eqKb5bNEiUXVUrxKNXanb5OxF0rQJkY
+         XdjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755121199; x=1755725999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jsHqObljI/QrkzM/zyszZAc8Qk56TEyRi+eNAb+o/hY=;
-        b=Jpo5kdMdR0AsJTJNDRU09xRxpJ7o8LtOh3vwK53rKBwojZP4VOmVWGTM/+4p+D2B98
-         aJtBfKqk1ytuMWjqQUMJ5B3zyFOjePPwysbfRAXisLxGKftsKqePpq0J39a4sED0tnWf
-         Lnn7F5d9c6T11nOOOXpLMVN5x0f0bV95QmJC9h02EGzG7ly5jhMWa6MVgJC6jqUBlPuS
-         /7B1B20r+M5MiVPRiJ8LhbKHIDdYKQgwD2AQej+aeBqKGvvqmoFL1Oi3W7TRIKGC28+V
-         /kBGn/RXBvPCw+Ky/bwmkXSrKAXE7aLDgZBrxVM1xFjdt6DOW571201f1dyX1gTn9Bbz
-         gIrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHi80VXk9757HwoFY5d2VugfiUUlAYk9tXBMve99ElAv3He434v7fbTCoZJhez4kpRt6MgcdtlDnUXip8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIMoCtxhdBZf/9JSg+sYBvrwKBcwPJY5FBpSWprehWh5iNUPS4
-	RggP18vW9FyDhF/Al9UHKJ6RoZYCWHoEkcltzhLeAmaH8L5A67gXdU5iC+QQXr2Br8744wY6wFh
-	qLOTQNXdTaQ3Yn1nQqfb7Ql9826LqZkXjZXWNqxc8jsO3JNQoCfwY8EokDZAoAgzOmA==
-X-Gm-Gg: ASbGncuON73EYd83h1cBLPN11NwNRGFh0QbgonMmwbFfWq2NP6N8FVlghvOA0UV6aXf
-	tAcBL/5/vULBx/BXdGQ9X48xV9tHdVd3Y4ZIY8Spyy0EN3fE+9lSYMHQyxJHjrb5zDTsgSE0o8S
-	3y8NBoeI9FNy7w85D80dFYrjmULzuPAZb2Chr+mPaiFNcpzPG785Mr3vlYvPmjqym+QghbqVi89
-	zHJYh8eG/TZALstL/fTXVblDEqor8jwcNzNA+9KOI69qk5t2YEHunCShsiBmAA57q7eQmds2YYE
-	rwQO8XCspDD0OuqkhSaDRmi4GdYPKtoU1SO0s+riIRnqMgTJmm36HWmyBwBrPnbR1ui/Ms++0/J
-	f89Th/vdPuXUZeOmBcRl1Hl5dTPtZxSk2tQcP7A==
-X-Received: by 2002:a17:902:e5d1:b0:240:7181:8287 with SMTP id d9443c01a7336-2445867ec8emr8191345ad.26.1755121199162;
-        Wed, 13 Aug 2025 14:39:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCxnQfRjpH03Kj/5q/5ynChdc9Gz8ERDFxOMx6F+r9zzLYTor/b2ISAK2vcBWx9FA/ouTeDg==
-X-Received: by 2002:a17:902:e5d1:b0:240:7181:8287 with SMTP id d9443c01a7336-2445867ec8emr8190975ad.26.1755121198721;
-        Wed, 13 Aug 2025 14:39:58 -0700 (PDT)
-Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aa9055sm336495925ad.150.2025.08.13.14.39.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:39:58 -0700 (PDT)
-Message-ID: <d1009d7a-b675-4af0-a149-4856bca29140@oss.qualcomm.com>
-Date: Thu, 14 Aug 2025 07:39:50 +1000
+        d=1e100.net; s=20230601; t=1755121273; x=1755726073;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xw6h3XbW9SZjmv3VMhGxMmuRXeauHMpSfMMYghs+t1M=;
+        b=F0hmyo6RvLVkfWLJT8YJKsZST57RLGv0Ku3N6atxrMewkNxddfJ5nzehBPzTpfuXl/
+         HEZu97bVVuZlnRdqZ29hR+SvCOpeY0JQbIt18c/4ZwPr7gZnqvrfP745TNlfFMA0nlzG
+         btjetbu0w44m11vleNQ8ttao4nADx+sxI52EAbm3BtsmaDuXiqqrSNDqBo2+FWZ2habM
+         iBYyQ8yOV7LNMhj0ADeUpAKLzF7DA5gIt1FeH8zhqvkOaVWTpsjUSR4AAgKZuJkg/mP1
+         rGc40LHZLGCs+PhbEc/xG5onf8I9rx/rNND3c+YXYNbJWedOsRv5AwXgkk0TqJB8LNW+
+         0LGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwswxebR51PvMbgetLLQXIKQpUn29Ly889HhpbqhglERWLC2Mw22OS/O8uRVrcOwLiG8crIMid3EwlP2k=@vger.kernel.org, AJvYcCX+ixBoM3M/dZem7WPHOMS4MgKxii03J5GfLrT/K5iVv+INKrPqiBD3yO6upzxArgpPI2zZuR+kYTpgVPH2c3R9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6eFEEiE4Ed6HdWgrZP99HRzHtNxizL6GI/PMYPrUKvjGPAyjc
+	r0QiQEMlQqGi3uptGukz2QZy5qQW8ZTf+H7pzOZ6gieUMEcZ+LhVvUrM
+X-Gm-Gg: ASbGnctJtHOvdbpWOuimwwh0vLxyVwbfqQGilc7pwzSNjmWfNDnGrgN0o1r3Tf4GsDn
+	2z//zCF+UQthUMOMTzzhBQb5n7Lq2LDi7GjmLlwZB1w3PMvWVJ+331yngYyYD4hO12sj+HNznX1
+	Qgifj/yTPdirBP7vNNpyEOwp+4HPfQwraAWIdcgXkN0vXIxTRLhcsPL+CJYmgNA29IxRUsKGWPP
+	kITV5Si4vi/KbX0dzjJQgRddLwnwSk0aHCMocMB6mv4NGb3QEQOuLBEqL5A5RTS/gJLE/yMZjv7
+	X1nJfiiySjFB2IMI4z/bX5F8a5nUgCesiUT8PlRb1s5JU1tyH60sW9iR2Mir5xQaI8pih0n+lAo
+	Hu/Qj/jrt8IlF4Ul5UHX61Q==
+X-Google-Smtp-Source: AGHT+IGEVnxz9gbuq2Cd6iX98Y9+6sIOZ0bQIY85rrbIp58Ufb1dYCYBY4a3jiTNaFQchFh0O+qVCA==
+X-Received: by 2002:a17:906:c152:b0:af9:610e:343e with SMTP id a640c23a62f3a-afcb93988f4mr55549066b.11.1755121273407;
+        Wed, 13 Aug 2025 14:41:13 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a076409sm2480136966b.12.2025.08.13.14.41.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Aug 2025 14:41:13 -0700 (PDT)
+Date: Wed, 13 Aug 2025 21:41:12 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] selftests/mm: reimplement is_backed_by_thp() with
+ more precise check
+Message-ID: <20250813214112.tarr5rbamtc6cmie@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250812155512.926011-1-ziy@nvidia.com>
+ <20250812155512.926011-4-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/11] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Sumit Garg <sumit.garg@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
- <CAHUa44FJ9iRMyDHffRBwgxxX27vTwsAwNiCCEGQ8fMQPZS_D+g@mail.gmail.com>
-Content-Language: en-US
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-In-Reply-To: <CAHUa44FJ9iRMyDHffRBwgxxX27vTwsAwNiCCEGQ8fMQPZS_D+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689d0630 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=21D8NHQQAAAA:8 a=EUspDBNiAAAA:8
- a=tfL3YIuboUik3C6ywHYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=324X-CrmTo6CU4MGRt3R:22 a=aE7_2WBlPvBBVsBbSUWX:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfX5bRkfMwHyXim
- 1VwwRex83qF1G5JJlMwaZwLK4eSZq4xVQpbnHWN3YScLswjHKbh8QCw/HRAdhXU2LxpI86caKjk
- g28kdMtInO0z9RkAtLrtlIvzCuT+YPw7cXgQkrT5Gclv9XadkKosVFxdFlRwpmzsGv1doh9IGxj
- 0TFyu+I2NbS7fKFeha82n91SNC7bwRaalp87Zpfpjtc7uZl5D95VCzCUC898+fxsbsJ1iN3ZCiT
- G9eazb/NNOCRfcE4WRbHZlYhotkVtuIn24PLPk431RG+p5A98c+CLgGwoNL8Z6ujWrbE/VH2KTB
- 7XFp1yQ+SpQdECE+J5xE8XTmjNbyO+LYL0lG3e3I550iYvv2OGhd9mceQQ21nfH2v7r48Jzggbe
- drc1sN9p
-X-Proofpoint-ORIG-GUID: mdlHCtXqlOVxzLgOKs8BcLJrq6bnQ9gD
-X-Proofpoint-GUID: mdlHCtXqlOVxzLgOKs8BcLJrq6bnQ9gD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812155512.926011-4-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hi Jens,
-
-On 8/13/2025 5:49 PM, Jens Wiklander wrote:
-> Hi Amir,
+On Tue, Aug 12, 2025 at 11:55:11AM -0400, Zi Yan wrote:
+>and rename it to is_backed_by_folio().
+>
+>is_backed_by_folio() checks if the given vaddr is backed a folio with
+>a given order. It does so by:
+>1. getting the pfn of the vaddr;
+>2. checking kpageflags of the pfn;
+>
+>if order is greater than 0:
+>3. checking kpageflags of the head pfn;
+>4. checking kpageflags of all tail pfns.
+>
+>pmd_order is added to split_huge_page_test.c and replaces max_order.
+>
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
+>---
+> .../selftests/mm/split_huge_page_test.c       | 67 +++++++++++++------
+> tools/testing/selftests/mm/vm_util.c          |  2 +-
+> tools/testing/selftests/mm/vm_util.h          |  1 +
+> 3 files changed, 48 insertions(+), 22 deletions(-)
+>
+>diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+>index 63ac82f0b9e0..3aaf783f339f 100644
+>--- a/tools/testing/selftests/mm/split_huge_page_test.c
+>+++ b/tools/testing/selftests/mm/split_huge_page_test.c
+>@@ -25,6 +25,7 @@
+> uint64_t pagesize;
+> unsigned int pageshift;
+> uint64_t pmd_pagesize;
+>+unsigned int pmd_order;
 > 
-> On Wed, Aug 13, 2025 at 2:37 AM Amirreza Zarrabi
-> <amirreza.zarrabi@oss.qualcomm.com> wrote:
->>
->> This patch series introduces a Trusted Execution Environment (TEE)
->> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
->> and services to run securely. It uses an object-based interface, where
->> each service is an object with sets of operations. Clients can invoke
->> these operations on objects, which can generate results, including other
->> objects. For example, an object can load a TA and return another object
->> that represents the loaded TA, allowing access to its services.
->>
+> #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
+> #define SMAP_PATH "/proc/self/smaps"
+>@@ -36,23 +37,48 @@ uint64_t pmd_pagesize;
 > 
-> There are some build errors/warnings for arm and x86_64, see
-> https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/jens/plans/31DmCOn1pF2JGVDk3otBOXOL6kV
+> #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
 > 
+>-int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+>+int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd)
+> {
+>-	uint64_t paddr;
+>-	uint64_t page_flags;
+>+	unsigned long pfn_head;
+>+	uint64_t pfn_flags;
+>+	unsigned long pfn;
+>+	unsigned long i;
+> 
+>-	if (pagemap_file) {
+>-		pread(pagemap_file, &paddr, sizeof(paddr),
+>-			((long)vaddr >> pageshift) * sizeof(paddr));
+>+	if (!pagemap_fd || !kpageflags_fd)
+>+		return 0;
 
-I'll fix it.
+The same in patch 2.
 
-Regards,
-Amir
+> 
+>-		if (kpageflags_file) {
+>-			pread(kpageflags_file, &page_flags, sizeof(page_flags),
+>-				PAGEMAP_PFN(paddr) * sizeof(page_flags));
+>+	pfn = pagemap_get_pfn(pagemap_fd, vaddr);
+> 
+>-			return !!(page_flags & KPF_THP);
+>-		}
+>+	if (pfn == -1UL)
+>+		return 0;
+>+
+>+	if (get_pfn_flags(pfn, kpageflags_fd, &pfn_flags))
+>+		return 0;
+>+
+>+	if (!order) {
+>+		if (pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))
+>+			return 0;
+>+		return 1;
+> 	}
+>-	return 0;
+>+
+>+	if (!(pfn_flags & KPF_THP))
+>+		return 0;
+>+
+>+	pfn_head = pfn & ~((1 << order) - 1);
+>+
+>+	if (get_pfn_flags(pfn_head, kpageflags_fd, &pfn_flags))
+>+		return 0;
+>+
+>+	if (!(pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD)))
+>+		return 0;
+>+
+>+	for (i = 1; i < (1UL << order) - 1; i++) {
 
-> Thanks,
-> Jens
+Do we miss the last tail?
 
+>+		if (get_pfn_flags(pfn_head + i, kpageflags_fd, &pfn_flags))
+>+			return 0;
+>+		if (!(pfn_flags & (KPF_THP | KPF_COMPOUND_TAIL)))
+>+			return 0;
+>+	}
+
+If this folio is larger than order, would it still return 1?
+
+>+	return 1;
+> }
+> 
+> static void write_file(const char *path, const char *buf, size_t buflen)
+>@@ -233,7 +259,7 @@ void split_pte_mapped_thp(void)
+> 	thp_size = 0;
+> 	for (i = 0; i < pagesize * 4; i++)
+> 		if (i % pagesize == 0 &&
+>-		    is_backed_by_thp(&pte_mapped[i], pagemap_fd, kpageflags_fd))
+>+		    is_backed_by_folio(&pte_mapped[i], pmd_order, pagemap_fd, kpageflags_fd))
+> 			thp_size++;
+> 
+> 	if (thp_size != 4)
+>@@ -250,7 +276,7 @@ void split_pte_mapped_thp(void)
+> 			ksft_exit_fail_msg("%ld byte corrupted\n", i);
+> 
+> 		if (i % pagesize == 0 &&
+>-		    is_backed_by_thp(&pte_mapped[i], pagemap_fd, kpageflags_fd))
+>+		    !is_backed_by_folio(&pte_mapped[i], 0, pagemap_fd, kpageflags_fd))
+> 			thp_size++;
+> 	}
+> 
+>@@ -522,7 +548,6 @@ int main(int argc, char **argv)
+> 	const char *fs_loc;
+> 	bool created_tmp;
+> 	int offset;
+>-	unsigned int max_order;
+> 	unsigned int nr_pages;
+> 	unsigned int tests;
+> 
+>@@ -543,28 +568,28 @@ int main(int argc, char **argv)
+> 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
+> 
+> 	nr_pages = pmd_pagesize / pagesize;
+>-	max_order = GET_ORDER(nr_pages);
+>-	tests = 2 + (max_order - 1) + (2 * max_order) + (max_order - 1) * 4 + 2;
+>+	pmd_order = GET_ORDER(nr_pages);
+>+	tests = 2 + (pmd_order - 1) + (2 * pmd_order) + (pmd_order - 1) * 4 + 2;
+> 	ksft_set_plan(tests);
+> 
+> 	fd_size = 2 * pmd_pagesize;
+> 
+> 	split_pmd_zero_pages();
+> 
+>-	for (i = 0; i < max_order; i++)
+>+	for (i = 0; i < pmd_order; i++)
+> 		if (i != 1)
+> 			split_pmd_thp_to_order(i);
+> 
+> 	split_pte_mapped_thp();
+>-	for (i = 0; i < max_order; i++)
+>+	for (i = 0; i < pmd_order; i++)
+> 		split_file_backed_thp(i);
+> 
+> 	created_tmp = prepare_thp_fs(optional_xfs_path, fs_loc_template,
+> 			&fs_loc);
+>-	for (i = max_order - 1; i >= 0; i--)
+>+	for (i = pmd_order - 1; i >= 0; i--)
+> 		split_thp_in_pagecache_to_order_at(fd_size, fs_loc, i, -1);
+> 
+>-	for (i = 0; i < max_order; i++)
+>+	for (i = 0; i < pmd_order; i++)
+> 		for (offset = 0;
+> 		     offset < nr_pages;
+> 		     offset += MAX(nr_pages / 4, 1 << i))
+>diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+>index 4d952d1bc96d..193ba1a1a3cc 100644
+>--- a/tools/testing/selftests/mm/vm_util.c
+>+++ b/tools/testing/selftests/mm/vm_util.c
+>@@ -338,7 +338,7 @@ int detect_hugetlb_page_sizes(size_t sizes[], int max)
+> 	return count;
+> }
+> 
+>-static int get_pfn_flags(unsigned long pfn, int kpageflags_fd, uint64_t *flags)
+>+int get_pfn_flags(unsigned long pfn, int kpageflags_fd, uint64_t *flags)
+> {
+> 	size_t count;
+> 
+>diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+>index 02e3f1e7065b..148b792cff0f 100644
+>--- a/tools/testing/selftests/mm/vm_util.h
+>+++ b/tools/testing/selftests/mm/vm_util.h
+>@@ -92,6 +92,7 @@ unsigned long default_huge_page_size(void);
+> int detect_hugetlb_page_sizes(size_t sizes[], int max);
+> int check_folio_orders(char *vaddr_start, size_t len, int pagemap_file,
+> 			int kpageflags_file, int orders[], int nr_orders);
+>+int get_pfn_flags(unsigned long pfn, int kpageflags_fd, uint64_t *flags);
+> 
+> int uffd_register(int uffd, void *addr, uint64_t len,
+> 		  bool miss, bool wp, bool minor);
+>-- 
+>2.47.2
+
+-- 
+Wei Yang
+Help you, Help me
 
