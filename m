@@ -1,63 +1,80 @@
-Return-Path: <linux-kernel+bounces-766633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE72AB24946
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:13:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D8AB2494C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383DB1BC10F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:14:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0AA585ECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D172FE59D;
-	Wed, 13 Aug 2025 12:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EDD2FF16B;
+	Wed, 13 Aug 2025 12:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ffRGwOX0"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rujDt7ws"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B062EA46D
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336AC2D542A;
+	Wed, 13 Aug 2025 12:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087229; cv=none; b=oSHmsDx3OlklFn+bXmpllmsYLJ4mIE58ouoyA6X4zRwbvsNpaViFHDhIl7RRWQyxecx6SKVb4wpqdy7lb/jvWjykYgnAo2zcYlfXf16ZFQPxSohEZZxm/kxOSsSILz0Pk0jkR12+S7dMIfrTYVFAADys38uYbs5m+As2y+yA4WE=
+	t=1755087267; cv=none; b=oKpagVfGkvbN/nEFyn7MFDQiOQ2tLNbUGw17nIymGLRMCOmAUTuG9Hk1rgf5ba3ChVztaoRQBPAT3ZW63V9zyFfqce8NMoVRm3tm7h/Pl+S6tzhJgaj6c+lTR8LCOPY+UJiCa7vXI471aUXX3vOgb4N1DRG24cmqUM+Ze+Bo7B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087229; c=relaxed/simple;
-	bh=YRMUZMdrCI81xQhP38eNlaRhIFU7sGuS/mHAU4lyajc=;
+	s=arc-20240116; t=1755087267; c=relaxed/simple;
+	bh=tLOV7MuxuGZuAFjpe/xUc874h2DrbSyeczMhXjDQFOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cdD7eMk0yvKFbjcapmnrQ7CmGIWfOTHlUmetAcW76LJC2N275fFWSFxb59aSnrO5XkSJkgbHnJ5WSD493cX6+z/Mh9u7dvb5KplYcZgZhSWZ9i07zLSGVVaNeKL7uoITXzAC29NAol08Nqsn4X7J10jZe0qPDNwqM3WM4/cLQW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ffRGwOX0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE0CC4CEEB;
-	Wed, 13 Aug 2025 12:13:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1Zz3YQTOvBcgvmlyoV7fO7mWB+/fELDoT8B301O3eGHOXbywcaY7YqlQQSWFj+8zlpfrQhrxj0xnnU+4Tmf3Iezk6a5ahPosAcajHZ4drGkESfEepioCEHsFHax/cYyFyL3m8SgRQPsV9pb+bbL4JGO8DkfNTsNTsu1Ymqra3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rujDt7ws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A10ECC4CEEB;
+	Wed, 13 Aug 2025 12:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755087228;
-	bh=YRMUZMdrCI81xQhP38eNlaRhIFU7sGuS/mHAU4lyajc=;
+	s=korg; t=1755087266;
+	bh=tLOV7MuxuGZuAFjpe/xUc874h2DrbSyeczMhXjDQFOI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ffRGwOX0TD4yG5vj6NulVxBtbSeY6X+Bvb+sEgzMZG22pu8ZRpzLgnZ/d6j+08wXM
-	 H4lhClcV1AUW6Nk+Szf+irIaKOVkTWkR8z5Q3mTku2AeGFYPiiGAyyWuHtB0kHfWGq
-	 UMhdavpW86dCHzkCdvh1/ifFSRZ6gJLHlGrg8bc0=
-Date: Wed, 13 Aug 2025 14:13:45 +0200
+	b=rujDt7wsKQqVTbCwQrtiVRdM2aH76LameWGzvTdZ5npEBlrG95aNQxa3fQpNRodhk
+	 QJbxh/7YOXP2RZlRsBQ3Euf+xwHlnxbyvDua1jB4H6D5yGcYFwDUM1uYw6W6cryK3z
+	 Pug/jEnZ7mb8BeSzL61ybm0Sudo+Z5LhYzcQFvOs=
+Date: Wed, 13 Aug 2025 14:14:23 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: "Nilawar, Badal" <badal.nilawar@intel.com>
-Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Ceraolo Spurio, Daniele" <daniele.ceraolospurio@intel.com>,
-	"Gupta, Anshuman" <anshuman.gupta@intel.com>
-Subject: Re: [PATCH 2/9] mei: late_bind: add late binding component driver
-Message-ID: <2025081346-shrank-wish-e85d@gregkh>
-References: <20250710150831.3018674-11-rodrigo.vivi@intel.com>
- <20250710150831.3018674-13-rodrigo.vivi@intel.com>
- <2025071611-decode-hastiness-df63@gregkh>
- <CY5PR11MB63666310C54B48FB3624D9E0ED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
- <2025071603-guide-definite-70e3@gregkh>
- <CY5PR11MB636646E936C800D689BFBEEBED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
- <2025071619-sterile-skiing-e64b@gregkh>
- <CY5PR11MB6366AF03A73910CED71C7E37ED5BA@CY5PR11MB6366.namprd11.prod.outlook.com>
- <7aa74159-a9a8-4ca7-9635-a806c57bf7f4@intel.com>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Vipin Sharma <vipinsh@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+Message-ID: <2025081351-tinsel-sprinkler-af77@gregkh>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com>
+ <20250813063407.GA3182745.vipinsh@google.com>
+ <2025081310-custodian-ashamed-3104@gregkh>
+ <mafs01ppfxwe8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,20 +83,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7aa74159-a9a8-4ca7-9635-a806c57bf7f4@intel.com>
+In-Reply-To: <mafs01ppfxwe8.fsf@kernel.org>
 
-On Wed, Aug 13, 2025 at 03:21:09PM +0530, Nilawar, Badal wrote:
-> Hi Greg,
+On Wed, Aug 13, 2025 at 02:02:07PM +0200, Pratyush Yadav wrote:
+> On Wed, Aug 13 2025, Greg KH wrote:
+> 
+> > On Tue, Aug 12, 2025 at 11:34:37PM -0700, Vipin Sharma wrote:
+> >> On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+> >> > From: Pratyush Yadav <ptyadav@amazon.de>
+> >> > +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+> >> > +					unsigned int nr_folios)
+> >> > +{
+> >> > +	unsigned int i;
+> >> > +
+> >> > +	for (i = 0; i < nr_folios; i++) {
+> >> > +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+> >> > +		struct folio *folio;
+> >> > +
+> >> > +		if (!pfolio->foliodesc)
+> >> > +			continue;
+> >> > +
+> >> > +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+> >> > +
+> >> > +		kho_unpreserve_folio(folio);
+> >> 
+> >> This one is missing WARN_ON_ONCE() similar to the one in
+> >> memfd_luo_preserve_folios().
+> >
+> > So you really want to cause a machine to reboot and get a CVE issued for
+> > this, if it could be triggered?  That's bold :)
+> >
+> > Please don't.  If that can happen, handle the issue and move on, don't
+> > crash boxes.
+> 
+> Why would a WARN() crash the machine? That is what BUG() does, not
+> WARN().
 
-<snip>
-
-For some reason this was in html format :(
-
-Also, please follow the rules that Intel kernel developers must follow,
-which means not using me as your first-line of review.  Please work with
-your internal developers on this first, before resubmitting.
-
-thanks,
-
-greg k-h
+See 'panic_on_warn' which is enabled in a few billion Linux systems
+these days :(
 
