@@ -1,164 +1,108 @@
-Return-Path: <linux-kernel+bounces-766044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B172B2418E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F07AB241A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3177A9F59
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAB73AE4AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F72D29D7;
-	Wed, 13 Aug 2025 06:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lve0QVUU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bRlmOQr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD742D29D7;
+	Wed, 13 Aug 2025 06:33:06 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C9D256C84;
-	Wed, 13 Aug 2025 06:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E7293C5C;
+	Wed, 13 Aug 2025 06:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066743; cv=none; b=sFXyGB0ExigcMrCkJklIdKvwVkO5Od/EvIdKs12N89meCe6cdqNJjGSn5wTmRvuiJhO7YhfoWxik1MzF+/PA56tBh7YZpFlDjDV7ZASm7MxbP2i7y6GHea4npwcHd2hMNTf1D431pm8gRV9KJIM1NmrostagNWvmslk77fkL1Wk=
+	t=1755066786; cv=none; b=iyRavxt3eLa7GJ5ZlItZLpI+4+PU6yTuaeVFHXrMV0Gw21aG78a977Tk47UDTdw5MuOP6VBGB/6ykRXd77xa2JdgqJajV87L7X38j3xPtDscAn3yBsbGa/IHNrtoGpLHbRuD+YYNFynJRIgFp1FzGVZT1SSV5wQu8lcT2JGFbz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755066743; c=relaxed/simple;
-	bh=5qg032v9a3VDlMiDWU0b9ctfLGVw/7YohIMQc/Hgbaw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uFdNexxvFlf9IQGm+kJCEI94DT9X5i+74dq8w05fKTDgcF2a+kDCdTtNGNR0RYRClvGfNrT0AtNWqMrcUtclzaeA7/IU2dIzfGLIUS3lCCaaSjDyLYKo/Zmj4GF1YeOUTYPWUJ2g7qfTwxbxJMJE9k/oJ9bBmgaxvkFv3PaEKkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lve0QVUU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bRlmOQr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755066739;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SRqTyhe3RKI3LCkCiYUFb5eBsIQ7LFFUOTaaEf4vnww=;
-	b=lve0QVUUx69R4nGes8O0ZOkEYnaE7NAhiUjDtUO86+yk69JnEq9FLwqdlPCPENJ17DSIt8
-	EhC+SQjMS9aeTDNFcTf8jkgM/rPQLaIjVGHonLboMcjoxkRxX8m/0Vo+KDmjwiI5PanuGM
-	+B9yqynWGSu6N1Qqov9ZyofDZUGuSUE211nZd3DFPJRlt3/x+WYK7VWxU7564BQ0Mmf9R5
-	M3W66lLk27qVTR1D0c11QD1/g6dbnblael5KoRq7HsvcMi3c6nv5yPvmrk1jUimAKumj/r
-	/TxywK7oMTRlMCC17TcynL6vEFob8ZWTtS6eY4fbYsfqkiXSvI6D43nJLwT2UA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755066739;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SRqTyhe3RKI3LCkCiYUFb5eBsIQ7LFFUOTaaEf4vnww=;
-	b=0bRlmOQrarTM210wv1wND0+XTXworEuIQZTdcYChDAq++pUPjap215u2/blmqPmMatF+Ks
-	31+2AOCdpxJBmxBw==
-Date: Wed, 13 Aug 2025 08:32:13 +0200
-Subject: [PATCH] kunit: tool: Parse skipped tests from kselftest.h
+	s=arc-20240116; t=1755066786; c=relaxed/simple;
+	bh=RSgauVDnKP7beFc0uda4hrGRgYoMAjulOowiUnwWYgY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R6tpvxKW4uHRuhHV6e54ilJbdgc1Zu28njXI1+A+g2tq7g2D7Z5scTvbLNSea/vAunvJYPYJY3XJE9Js7lVdi0ElZQCpGLNm0AyPr9jpDZ4ymesPjW5tYewP3pECpQS4PfHlmN0XHXiiXoUfjbsWt1dD283xjJ4+RXBDSoFCD2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
+ 2025 14:33:01 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 13 Aug 2025 14:33:01 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>
+CC: Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Po-Yu
+ Chuang <ratbert@faraday-tech.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<taoren@meta.com>, <bmc-sw2@aspeedtech.com>
+Subject: [net-next v2 0/4] Add AST2600 RGMII delay into ftgmac100
+Date: Wed, 13 Aug 2025 14:32:57 +0800
+Message-ID: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250813-kunit-kselftesth-skip-v1-1-57ae3de4f109@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAGwxnGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0Nj3ezSvMwS3ezi1Jy0ktTikgzd4uzMAt1UIwvLpNTkFEtzEzMloN6
- CotS0zAqwudGxtbUAQuGMqmcAAAA=
-X-Change-ID: 20250813-kunit-kselftesth-skip-e289becd9746
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- kunit-dev@googlegroups.com, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755066737; l=3393;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=5qg032v9a3VDlMiDWU0b9ctfLGVw/7YohIMQc/Hgbaw=;
- b=s25+IgYMvwjdHBJLxkuySfqGzpUgC10XDKa9CGQ5d8hekmUOJFVZznQ8toi90LJQvcwNqxmGF
- 5Jy2FOghyhaAtTqFJTw4AAjFiytk0Ptl5lk9KYFg8qLV1fd1fqIihiv
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
 
-Skipped tests reported by kselftest.h use a different format than KTAP,
-there is no explicit test name. Normally the test name is part of the
-free-form string after the SKIP keyword:
+This patch series adds support for configuring RGMII internal delays for the 
+Aspeed AST2600 FTGMAC100 Ethernet MACs. It introduces new compatible strings to 
+distinguish between MAC0/1 and MAC2/3, as their delay chains and configuration 
+units differ.
+The device tree bindings are updated to restrict the allowed phy-mode and delay 
+properties for each MAC type. Corresponding changes are made to the device tree 
+source files and the FTGMAC100 driver to support the new delay configuration.
 
-	ok 3 # SKIP test: some reason
+Summary of changes:
+- dt-bindings: net: ftgmac100: Add conditional schema for AST2600 MAC0/1 and 
+  MAC2/3, restrict phy-mode and delay properties, and require SCU phandle.
+- ARM: dts: aspeed-g6: Add ethernet aliases, update MAC compatibles, and add 
+  SCU phandle for delay configuration.
+- ARM: dts: aspeed-ast2600-evb: Add rx/tx-internal-delay-ps properties and 
+  update phy-mode for MACs.
+- net: ftgmac100: Add driver support for configuring RGMII delay for AST2600 
+  MACs via SCU.
 
-Extend the parser to handle those correctly. Use the free-form string as
-test name instead.
+This enables precise RGMII timing configuration for AST2600-based platforms, 
+improving interoperability with various PHYs.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: David Gow <davidgow@google.com>
----
-These patches where originally part of my series "kunit: Introduce UAPI
-testing framework" [0], but that isn't going anywhere right now and the
-patches are useful on their own.
-Both series would go in through the KUnit tree in any case, so there is
-no potential for conflicts.
-    
-[0] https://lore.kernel.org/lkml/20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de/
----
- tools/testing/kunit/kunit_parser.py                             | 8 +++++---
- tools/testing/kunit/test_data/test_is_test_passed-kselftest.log | 3 ++-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+Jacky Chou (4):
+  dt-bindings: net: ftgmac100: Restrict phy-mode and delay properties
+    for AST2600
+  ARM: dts: aspeed-g6: Add ethernet alise and update MAC compatible
+  ARM: dts: aspeed: ast2600evb: Add delay setting for MAC
+  net: ftgmac100: Add RGMII delay configuration for AST2600
 
-diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-index c176487356e6c94882046b19ea696d750905b8d5..333cd3a4a56b6f26c10aa1a5ecec9858bc57fbd7 100644
---- a/tools/testing/kunit/kunit_parser.py
-+++ b/tools/testing/kunit/kunit_parser.py
-@@ -352,9 +352,9 @@ def parse_test_plan(lines: LineStream, test: Test) -> bool:
- 	lines.pop()
- 	return True
- 
--TEST_RESULT = re.compile(r'^\s*(ok|not ok) ([0-9]+) (- )?([^#]*)( # .*)?$')
-+TEST_RESULT = re.compile(r'^\s*(ok|not ok) ([0-9]+) ?(- )?([^#]*)( # .*)?$')
- 
--TEST_RESULT_SKIP = re.compile(r'^\s*(ok|not ok) ([0-9]+) (- )?(.*) # SKIP(.*)$')
-+TEST_RESULT_SKIP = re.compile(r'^\s*(ok|not ok) ([0-9]+) ?(- )?(.*) # SKIP ?(.*)$')
- 
- def peek_test_name_match(lines: LineStream, test: Test) -> bool:
- 	"""
-@@ -379,6 +379,8 @@ def peek_test_name_match(lines: LineStream, test: Test) -> bool:
- 	if not match:
- 		return False
- 	name = match.group(4)
-+	if not name:
-+		return False
- 	return name == test.name
- 
- def parse_test_result(lines: LineStream, test: Test,
-@@ -416,7 +418,7 @@ def parse_test_result(lines: LineStream, test: Test,
- 
- 	# Set name of test object
- 	if skip_match:
--		test.name = skip_match.group(4)
-+		test.name = skip_match.group(4) or skip_match.group(5)
- 	else:
- 		test.name = match.group(4)
- 
-diff --git a/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log b/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
-index 65d3f27feaf22a3f47ed831c4c24f6f11c625a92..30d9ef18bcec177067288d5242771236f29b7d56 100644
---- a/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
-+++ b/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
-@@ -1,5 +1,5 @@
- TAP version 13
--1..2
-+1..3
- # selftests: membarrier: membarrier_test_single_thread
- # TAP version 13
- # 1..2
-@@ -12,3 +12,4 @@ ok 1 selftests: membarrier: membarrier_test_single_thread
- # ok 1 sys_membarrier available
- # ok 2 sys membarrier invalid command test: command = -1, flags = 0, errno = 22. Failed as expected
- ok 2 selftests: membarrier: membarrier_test_multi_thread
-+ok 3 # SKIP selftests: membarrier: membarrier_test_multi_thread
+ .../bindings/net/faraday,ftgmac100.yaml       | 50 ++++++++++-
+ .../boot/dts/aspeed/aspeed-ast2600-evb.dts    | 16 +++-
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       | 24 +++++-
+ drivers/net/ethernet/faraday/ftgmac100.c      | 86 +++++++++++++++++++
+ drivers/net/ethernet/faraday/ftgmac100.h      | 12 +++
+ 5 files changed, 179 insertions(+), 9 deletions(-)
 
 ---
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250813-kunit-kselftesth-skip-e289becd9746
+v2:
+ - added new compatible strings for MAC0/1 and MAC2/3
+ - updated device tree bindings to restrict phy-mode and delay properties
+ - refactored driver code to handle rgmii delay configuration
+---
 
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.43.0
 
 
