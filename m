@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-767541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F952B255C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867FDB255CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177113B9579
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C04882BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC533009F6;
-	Wed, 13 Aug 2025 21:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943D3009E9;
+	Wed, 13 Aug 2025 21:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Iiehth8m"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U1HO0dmy"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BD93009D9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFCF3009D9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121342; cv=none; b=HrR+nYIqwkQk9Qb+Zzhpb7oaKWhxP4SFTzh2qMFRJ3sTAB69maLvpQkld9tWAObLoQI2Ofx5XyMJoxySigEYPYsskYXuuYeheIhZdMwrZUAiUPyHCh7MXlIa3d3uP8Ujh/Zn7Rg8IC5u+ccXKuvhH77n9Cts8MpsfBtGsfi6J2c=
+	t=1755121350; cv=none; b=mrZyw89ma1bcS65c6xc+Drl9wQPaESKRcBY1KENgyjkjxhr+cRE33hNx78MpoW1fzpZNwcrrxujg8FfV5l/jA56AmoBBkYgwwvzyTyRb2/rDLOgzW3J8IPAZf2KT8W/59VVF5uCogw1EGGzcpdjll8OjsdqAhkZIJe/3bzCyX30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121342; c=relaxed/simple;
-	bh=IE/5ghTTVAVOQUmeBefk5+bh3lKIZz3fQ/j0z0yCEPg=;
+	s=arc-20240116; t=1755121350; c=relaxed/simple;
+	bh=kyXSBWiFdYPFqweaGhIbkdYM031irDeSYqCA6GS2Dc4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i3ahXs3Dg+njSfkqFgO7wHUdhxPmRJd0ucziAG07fM1nP+JQVgOYQnsAJxAgN+UTgPreubtHsTI48FcK1gTwOoBHSn+N2O9oJGUx8Lj4fACGvrNLEl4zOALvex1KiFFgtlHquGNAn5/+xE4o/tFlnt6Fyn6XfvSemZGE0OWcasY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Iiehth8m; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=ruzV74PfIJJvo2ydHkSrPgdUXMLR88g2pbgKlUIPqX56Z/w7QjVK5TYcLrIDr0s0S8Vh6eBUvBl9nSbag0Ull/dtEGvSMamK930wYCO5DxhDhFUDXN2Ko/JZBaxn0D8h3h1VmWC8vcFHjBCWoq3TrXLhW1Pajg1GMPp2WTHTJks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U1HO0dmy; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DLfffA1788741;
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DLffL42163419;
 	Wed, 13 Aug 2025 16:41:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1755121301;
-	bh=kTbVVjSoROXPn4Xu4layLkxNIqGNzrm2kx+jdejNJ9M=;
+	bh=Sy3YdWqFJNy5sq/10GkOJns1Ey6MZ1hFJo9OWJ642IY=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Iiehth8m/X0TJpR/V3cdN0vn47nZSceK3Zt2k0G4Vhn197OGr7C2z/57+h70aDR3j
-	 gjhm3U9XtutYStd4Bk2asboJJIrjXKB/mWQvtsmP758rpPl0O8O9GwkbIxu2pGiy6/
-	 yHIOpcKyNKcyXcwP3UAMToeKET/YGjXIfh/UX/pY=
+	b=U1HO0dmyEYwzxhovy+KOhdLitTxaFYBnevJmW0unu5e72iliHDh44gU+PxiD6AuyQ
+	 zBV59VfcqfKo+Df24XE33qB4PXEu2PC4SYUkxoj9ewn8o7kGo9c6M1AYghCp5TKRhC
+	 Sdk4i0VY528fg8BKpzMyhc2IBjlP2j6yBrKSNplI=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DLffcl1253252
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DLffcm1253252
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Wed, 13 Aug 2025 16:41:41 -0500
 Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 16:41:40 -0500
+ Aug 2025 16:41:41 -0500
 Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE108.ent.ti.com
  (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 16:41:40 -0500
+ Frontend Transport; Wed, 13 Aug 2025 16:41:41 -0500
 Received: from fllvem-mr07.itg.ti.com ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DLfdNH2611079;
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DLfdNI2611079;
 	Wed, 13 Aug 2025 16:41:40 -0500
 From: Andrew Davis <afd@ti.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Zapolskiy <vz@mleia.com>,
@@ -62,9 +62,9 @@ To: Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Zapolskiy <vz@mleia.com>,
  Jian <qinjian@cqplus1.com>
 CC: <openbmc@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 2/6] reset: intel: Use devm_register_restart_handler()
-Date: Wed, 13 Aug 2025 16:41:34 -0500
-Message-ID: <20250813214138.477659-3-afd@ti.com>
+Subject: [PATCH 3/6] reset: lpc18xx: Use devm_register_sys_off_handler()
+Date: Wed, 13 Aug 2025 16:41:35 -0500
+Message-ID: <20250813214138.477659-4-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20250813214138.477659-1-afd@ti.com>
 References: <20250813214138.477659-1-afd@ti.com>
@@ -84,47 +84,47 @@ later unregister the handler.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/reset/reset-intel-gw.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/reset/reset-lpc18xx.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/reset/reset-intel-gw.c b/drivers/reset/reset-intel-gw.c
-index a5a01388ae7fa..97671b99f565a 100644
---- a/drivers/reset/reset-intel-gw.c
-+++ b/drivers/reset/reset-intel-gw.c
-@@ -28,7 +28,6 @@ struct intel_reset_soc {
+diff --git a/drivers/reset/reset-lpc18xx.c b/drivers/reset/reset-lpc18xx.c
+index e42b2f24a93da..8ac9f237e1ceb 100644
+--- a/drivers/reset/reset-lpc18xx.c
++++ b/drivers/reset/reset-lpc18xx.c
+@@ -31,7 +31,6 @@
  
- struct intel_reset_data {
+ struct lpc18xx_rgu_data {
  	struct reset_controller_dev rcdev;
 -	struct notifier_block restart_nb;
- 	const struct intel_reset_soc *soc_data;
- 	struct regmap *regmap;
- 	struct device *dev;
-@@ -154,12 +153,10 @@ static int intel_reset_xlate(struct reset_controller_dev *rcdev,
- 	return id;
- }
+ 	struct clk *clk_delay;
+ 	struct clk *clk_reg;
+ 	void __iomem *base;
+@@ -41,11 +40,9 @@ struct lpc18xx_rgu_data {
  
--static int intel_reset_restart_handler(struct notifier_block *nb,
--				       unsigned long action, void *data)
-+static int intel_reset_restart_handler(struct sys_off_data *data)
+ #define to_rgu_data(p) container_of(p, struct lpc18xx_rgu_data, rcdev)
+ 
+-static int lpc18xx_rgu_restart(struct notifier_block *nb, unsigned long mode,
+-			       void *cmd)
++static int lpc18xx_rgu_restart(struct sys_off_data *data)
  {
--	struct intel_reset_data *reset_data;
-+	struct intel_reset_data *reset_data = data->cb_data;
+-	struct lpc18xx_rgu_data *rc = container_of(nb, struct lpc18xx_rgu_data,
+-						   restart_nb);
++	struct lpc18xx_rgu_data *rc = data->cb_data;
  
--	reset_data = container_of(nb, struct intel_reset_data, restart_nb);
- 	intel_assert_device(&reset_data->rcdev, reset_data->reboot_id);
+ 	writel(BIT(LPC18XX_RGU_CORE_RST), rc->base + LPC18XX_RGU_CTRL0);
+ 	mdelay(2000);
+@@ -178,9 +175,8 @@ static int lpc18xx_rgu_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret, "unable to register device\n");
  
- 	return NOTIFY_DONE;
-@@ -216,9 +213,7 @@ static int intel_reset_probe(struct platform_device *pdev)
- 	if (data->soc_data->legacy)
- 		data->reboot_id |= FIELD_PREP(STAT_BIT_OFFSET_MASK, rb_id[2]);
+-	rc->restart_nb.priority = 192,
+-	rc->restart_nb.notifier_call = lpc18xx_rgu_restart,
+-	ret = register_restart_handler(&rc->restart_nb);
++	ret = devm_register_sys_off_handler(&pdev->dev, SYS_OFF_MODE_RESTART, 192,
++					    lpc18xx_rgu_restart, rc);
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "failed to register restart handler\n");
  
--	data->restart_nb.notifier_call =	intel_reset_restart_handler;
--	data->restart_nb.priority =		128;
--	register_restart_handler(&data->restart_nb);
-+	devm_register_restart_handler(&pdev->dev, intel_reset_restart_handler, data);
- 
- 	return 0;
- }
 -- 
 2.39.2
 
