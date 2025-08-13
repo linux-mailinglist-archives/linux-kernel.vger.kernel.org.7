@@ -1,66 +1,73 @@
-Return-Path: <linux-kernel+bounces-766972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC42B24D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:27:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2063FB24D3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5F23B2702
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:21:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A43547A48DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E6226D0C;
-	Wed, 13 Aug 2025 15:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4402264B9;
+	Wed, 13 Aug 2025 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ep9sWrKE"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ueO7nrZ2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63586212561;
-	Wed, 13 Aug 2025 15:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FCD22DA1F;
+	Wed, 13 Aug 2025 15:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098511; cv=none; b=eYN6qiz7iuF9r987SFW4H7kJJkk7nUdVuMeyXwDFrKF5keAtXVIhGlGV69MeK4U0kwONOVgYSyBJViPOyW8cfm1gKqVbU9op9H2w2X85TrnkT4/mmP/5tXuUp4diOk7x6nt5OMVtpORnMj+MBDMdYVf5dJOQqWkhSNvfLopeiY8=
+	t=1755098602; cv=none; b=mpZdpn6guj/olDUO05KvPA3r7r5kGVAs/nJYggNUtc48Dh9P/1MTDRhi9BAAqDwKaj8N8xjD43/KUN2RdJM5saActr0EJVK5XQfcc5gwWVfv/l5aHZZsYv8gNz0kqCYSyvnqgyIdoVYHjaqi5NdehiTVZg7+pyBMf+uNwmgEEIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098511; c=relaxed/simple;
-	bh=8LFrW3guuwb2IcNJ2od7+Q/ZDwWj+qQtQTeJhnHJbPc=;
+	s=arc-20240116; t=1755098602; c=relaxed/simple;
+	bh=1W/jBAvKti3QVwNodsrbkeO+Jug6BJyCRaos5hCVLKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGo1cBS9xuWsGKY+6Y5SwmK6/MyTjRiJYhzVrVkRtRVkLfk92ebymlEpT1x0I/lNk7AcorqvLL6t/F+Tuvq8hOiLGW7BST+TkNDcDgV0GvO/ZmXkOU+5Cakp8KNaqmHl5LjL2RSDnBECWyfaMb3rMJHIEUWge9liHmz/x9h88c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ep9sWrKE; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPmrPpjXG14KerhKTZcWk3PNDYusQNXZiev2vQtre70AH3a1jdJJ5J1iQj+GRSM1336l9+jY77nOOKIV9xRicHjQWbGvBIHDY5P0ZvrUcdvA0KGrlzvkdNR/U3zM65HJ3Ako3C8S9p/M1sRECjefCkoa6SWrZeQWRs985RU9zV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ueO7nrZ2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZOEO7stEQhTzUvpam5wL1tINe++TmhY1cYaUmWqJbJI=; b=ep9sWrKEaBcboMvP8t6KrBMbiG
-	Rvq1a4SFNX9ql54appDo6JJkGIDn9UzuedYYeMW5Ghjm+LF7ikI8hE5m7rp6PdwApVN/fCEdMBIyi
-	DmEpj7j1vuvlkIIC/2rUK32sH21Bx0bXik+Kzf6dmVoErfFWKj/hG+PZPY4v33Mq9PG1PH07z1xXa
-	AN5mQll187H41RLYoxd5Abs+vizYon73+bWM94VovPUUZmWQtybf05enSkyqJHyJh97HQ8N4ADYjN
-	MhyPZrI7+jKAPV5jH0fQ9Rp1X7NVEjLXRXJ5VHObufD/N1s1Eqv5/akfMNzOF3lyJw1irvkG/GLf3
-	OnqN7how==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umDIO-0000000G7RG-1DQw;
-	Wed, 13 Aug 2025 15:21:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 28C303001D6; Wed, 13 Aug 2025 17:21:43 +0200 (CEST)
-Date: Wed, 13 Aug 2025 17:21:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>, dave.jiang@intel.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH] cleanup: Fix unused guard error function with
- DEFINE_CLASS_IS_COND_GUARD
-Message-ID: <20250813152142.GP4067720@noisy.programming.kicks-ass.net>
-References: <20250804220955.1453135-1-dan.j.williams@intel.com>
- <20250813141346.GM4067720@noisy.programming.kicks-ass.net>
- <CAHk-=whiz9EY5CCHPtRkAuX0wMHwqwa4=GhKUee83mMsU9R0rA@mail.gmail.com>
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JBcqfJDDEAhoW2q4sP2fhRolkVFvahCE6bvX49j/3VE=; b=ueO7nrZ228+3Tvd9WzNQKL1z0D
+	QzQ0zAtn5PQKi4jxkXd8wNQyy7s6D9P4MVsy92WbkTEy2tISUR4BPodvO9rLPM58DZiDSMxuSL192
+	VIXIx0iAUFheAdZ5JRH2jlygHMd/W8/kqzebo7ziTsphlx+V6TGgU0IHlL8bvwkB3PI5uzM8wB6Ar
+	HY9Rw+Z7i+Jj3qSB8lhBnhQlrYugLHzVC6y/pGOD1CIa3bI4C524tXX/zMPzPOb6l6Uzx9uWr4o0/
+	HoBmm9Y7KTl1gAzUSNFgG7McMmQiVAG020uIdhyr1q2Voy/aNUnsvHDEQ4W05X8lAZ7h1n1szOUBa
+	YkMvxD0w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46702)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1umDJk-0006vX-1U;
+	Wed, 13 Aug 2025 16:23:08 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1umDJg-0005rb-1m;
+	Wed, 13 Aug 2025 16:23:04 +0100
+Date: Wed, 13 Aug 2025 16:23:04 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Gabor Juhos <j4g8y7@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Hanna Hawa <hhhawa@amazon.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] i2c: add init_recovery() callback
+Message-ID: <aJyt2I1w6VYo1PPD@shell.armlinux.org.uk>
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-1-ca42ea818dc9@gmail.com>
+ <aJpP5eABTYnQRV82@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,45 +76,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whiz9EY5CCHPtRkAuX0wMHwqwa4=GhKUee83mMsU9R0rA@mail.gmail.com>
+In-Reply-To: <aJpP5eABTYnQRV82@smile.fi.intel.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Aug 13, 2025 at 08:14:59AM -0700, Linus Torvalds wrote:
-> On Wed, 13 Aug 2025 at 07:13, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Aug 04, 2025 at 03:09:54PM -0700, Dan Williams wrote:
-> > >
-> > > ...with a clang W=1 build. Per Nathan, clang catches unused "static inline"
-> > > functions in C files since commit 6863f5643dd7 ("kbuild: allow Clang to
-> > > find unused static inline functions for W=1 build").
-> >
-> > I so loathe that warning :/
+On Mon, Aug 11, 2025 at 11:17:41PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 11, 2025 at 09:49:55PM +0200, Gabor Juhos wrote:
+> > Add a new init_recovery() callback to struct 'i2c_bus_recovery_info'
+> > and modify the i2c_init_recovery() function to call that if specified
+> > instead of the generic i2c_gpio_init_recovery() function.
+> > 
+> > This allows controller drivers to skip calling the generic code by
+> > implementing a dummy callback function, or alternatively to run a
+> > fine tuned custom implementation.
+> > 
+> > This is needed for the 'i2c-pxa' driver in order to be able to fix
+> > a long standing bug for which the fix will be implemented in a
 > 
-> So I entirely ignore W=1 issues, because I think so many of the extra
-> warnings are bogus.
+> > followup patch.
 > 
-> But if this one in particular is causing more problems than most -
-> some teams do seem to use W=1 as part of their test builds - it's fine
-> to send me a patch that just moves bad warnings to W=2.
+> "...next change."
 > 
-> And if anybody uses W=2 for their test builds, that's THEIR problem..
+> ...
+> 
+> The first traditional question is why the generic recovery is not working.
 
-Right, so I've had patches that added extra #ifdef gunk because of this,
-and we've sprinked __maybe_unused in a few places just to shut this up.
+I opposed the conversion of my recovery code to generic recovery when
+it was first mooted for this driver, and was over-ruled. Lo and behold,
+as I predicted, generic recovery fails with i2c-pxa. I now don't
+remember the details, but there has been a regression reported...
 
-I think something like the below will do... totally untested and all
-that.
+Given that I was over-ruled, I am not minded to go back and try and
+find either the previous discussion (google can be exceedingly
+difficult now to find such history) nor to try and work it out again
+(I've other things, including meetings today.)
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 16755431fc11..12b8b5d81459 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -253,7 +253,7 @@ struct ftrace_likely_data {
-  * for W=1 build. This will allow clang to find unused functions. Remove the
-  * __inline_maybe_unused entirely after fixing most of -Wunused-function warnings.
-  */
--#ifdef KBUILD_EXTRA_WARN1
-+#ifdef KBUILD_EXTRA_WARN2
- #define __inline_maybe_unused
- #else
- #define __inline_maybe_unused __maybe_unused
+Nevertheless, all I now remember is that generic recovery breaks
+i2c-pxa, whereas my recovery works.
+
+If I had to guess, I suspect it's something to do with how careful I
+was to ensure a glitchless transition between i2c mode and GPIO mode
+on the pinmux, and the generic recovery probably isn't as careful, but
+I could be wrong there.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
