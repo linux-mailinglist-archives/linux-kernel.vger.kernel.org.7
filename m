@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-767603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3934B2569B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:27:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4659B256A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276257AA60A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:25:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A26744E1B41
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E153930276A;
-	Wed, 13 Aug 2025 22:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D487302769;
+	Wed, 13 Aug 2025 22:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK/mLLOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIYExKi2"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7AE302750;
-	Wed, 13 Aug 2025 22:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD503302756
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755124011; cv=none; b=EqzNkjhwuc2xpZgaXggZ4dyO0XClu2VWGvwJcJjctYv3Za5BRCLbmU1F5BOeikWI8qIUr3lFMRoxCyeMrC7wq6C/fH4Cu0OLS5Ql6QTG1c0WJuqM5qr90KttU+6XHW2ZR99j2uam9TJSbEuZA/of7vJWnW1VV55F26IWflRi0eY=
+	t=1755124130; cv=none; b=AlP/mmDotqqxfnpnofgXZXd6EYMkd2SZZqD7i/EDO38uzBrUVi8vQVxaD0a7yzUaaO9ydBmiPjtD+nkoPlFJoFbxOM9d4yor/L6MFE1+HU0HRPxvAftYCWn6czE7mhsMqfNJiHhoU0+kDHtqdY7jrLJMN3q41DbBlzmjMu+MPso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755124011; c=relaxed/simple;
-	bh=QJzjfAhMjPNiT7D9rCxtV6m7EGIjZSpX3sIJXmN1Zks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=muOGJa4r9H/3VoRKLRrsA8AtxeG8gOz6JEJaC5sHc7aN6pZUT9V5Q7GnpFnOzBmUQUPJoIkfo5QBRTf21/YMFXS/908WuGxCmLkb+C24Zpp5CMUnHW+emzJK8bwUBzTpSD0CSqhLkttjGJS1oViPT0i77tgmuescw0iP9P4kHwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK/mLLOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C019C4CEEB;
-	Wed, 13 Aug 2025 22:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755124010;
-	bh=QJzjfAhMjPNiT7D9rCxtV6m7EGIjZSpX3sIJXmN1Zks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YK/mLLOnoWfT+EjdQpsYmfc5UbbS9SA1NX+iBZjKN/t4m40Bgd65y7p8bQ5+zV6KG
-	 zBl6/uI3gZW1yNQavyxxXecJ9vtVKHkloa928GywP3h2VuhtC5lQXfo42MF/sU2pqX
-	 Fy+ogiERV4ohJc/MkK2rXIC2kmVSf1A+62+WSJfs7e1e0iA5zbiG5f4tVJOQuYVcyZ
-	 +5wujWgdjkiaS0WvGODQ7/Cp3OkU7hTJMkUiwplVNRuo+kjrrRzHHWFvr87dfBlnBu
-	 8reE1TysvUa/3dsS9EL4AblkoJtlFyCBVG2+lnypgVqLkyrhfcO58DxRxwSCYze9UZ
-	 95MhaUdDM71VQ==
-Date: Wed, 13 Aug 2025 17:26:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	kernel test robot <lkp@intel.com>, Peng Fan <peng.fan@nxp.com>,
-	Koichiro Den <koichiro.den@canonical.com>,
-	Lee Jones <lee@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Yixun Lan <dlan@gentoo.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
-Message-ID: <20250813222649.GA965895-robh@kernel.org>
-References: <20250726211053.2226857-1-arnd@kernel.org>
+	s=arc-20240116; t=1755124130; c=relaxed/simple;
+	bh=GTN+5WirIPVzvLSwAv3/9YAKlkgOlUeRjCYAsj/rpzw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=jA/Qy+f0k2JxVMeYMzkedltk2JVkgtLb+muG9I1M0BzrmMogqZ493g3Ln7Y0aQ35j691gjFKDjtUC1I5uG0LViAt/afNkuIlqWnMhegRyavCrWRd0juaDxQabflFih2fin+LZ7BD+HbuknrhbavNjCweSer7OXPzXXrZSQjBYwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIYExKi2; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso245006f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755124127; x=1755728927; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sloit53e7whTsQFAQynr7aVEZzM4yMZh+xfD4/W9sqg=;
+        b=OIYExKi2Kt17S9SHvoPHNIXnCbSXM+5Ql6yGxlpWrkVEYJ7ptqeMjR1/EBjQvmyqps
+         Wsaf/uswP2XByKaRfrx+iPEJDXBy1eh0qE0a1RwtPbCx5fBg4wo+hggEmgPEAVO9C6pi
+         q3ckgc8l9yhIXzf7x2z2jyH8+N/GqGSXF9sX6GaXnbIRTOApxe9cn9Y9hhnmd18M60bl
+         hYWIDQ/TMVj/ERzAkj0fDCQZY4cRYZqwP2j70IYe48DHwEP804QYT2JFDir3UVjbvg1F
+         /YAxI5fgszeYOOp4cV8K+PM4ZgKQmmwWPLjFSOyOVVTANwZXyEbF5KNgh8ZzARK2Z35H
+         LYbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755124127; x=1755728927;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Sloit53e7whTsQFAQynr7aVEZzM4yMZh+xfD4/W9sqg=;
+        b=M+I9ZhAL4cH1CfR76yP3q6c1wUBKsC2/O6hEL3569LCuQba++KXSxIgKY032vNYMki
+         OqFa5mwpiqRZC+z+XtueEnYsieAu6RxqOxuxvZcGHtMealhyarrDrCqIqIOWwzhgIO/b
+         jIkoB1kpOuOpRcGTNjm2DHCnDVd5+ssNHzzKLO6xdaSKfTEXsUaBWEBJJHEaefB8RhnI
+         4A0yZQchiUkuF7NBYA+I4nCzeiu/Ft4jARJ1GCEdgFxOJr9YTH87Ihpc8Dpu4077YnBb
+         UG2U8gM8LXkwiilpGt8c32fip7NXJSIfwlCfwBTQil5kgMAAPjYRApyLSuwBQGLw3QM0
+         9iPA==
+X-Forwarded-Encrypted: i=1; AJvYcCURIwXSGC9du9V2L/Q+RCYaHXHnz4xfZCch1Lj81L8h2J8tUryg9/s73wfPP+QgkPUXYWIJ+RJHCl3Jb6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSjPgzSvDrVR5aY0avY6NdnA5p43kQxjroiUcJSbtEsPk7khlj
+	ghqz0i96T9/BWHrX2C5Ydgf5MN5ByM8/tSupQUnNWk+sg2CtuQOF/mSD0vOeUn1hwxw=
+X-Gm-Gg: ASbGnctZvpItEZofJHUiG+7ZIChrNi2wTp9Ri7ZVHypaAJFBNhJkSCINpqg7I3dbeot
+	PHmXYtwGwG3zLx6uUmnSJd+c5IYwg0v0HiB+/AuTdQRwJiYtH+UPS7AFYsOZopWmJma1rEuqOJJ
+	WwrV2cOsfVQMRpyPLjA4wMHLCtCDeyuarOk7zH8Ro43NrKBnPbXk+fzo+V0vgjvYDbYC/pJEVzA
+	fl7x9W65csMPtDXJbeQmcNqKVoxWpo1ycxaKAB5TNgp8P8EdnBZiAQ/e9w47EAF5GLf4m8pHjSO
+	l0R7kbYUuL4fna6GGEMyjF3MHuzu3aBAZ0mElq/y69j2+GQogLUEx7QLZJMx1nmte151WxrGNM9
+	rQra0r1L0z6NcUAPxB7GgtDaIDrk=
+X-Google-Smtp-Source: AGHT+IFaVC8EcfmFnezsgQds3hcWeHYfy6YLXuZiaXqv+d9hK1doPUatpRJ57+lgFQ8CFRK3tCcYgw==
+X-Received: by 2002:a05:6000:2dc1:b0:3b6:d0d:79c1 with SMTP id ffacd0b85a97d-3ba5067fcd2mr272072f8f.10.1755124127183;
+        Wed, 13 Aug 2025 15:28:47 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:7f3a:5ab2:26aa:831f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b1db885sm4014715e9.0.2025.08.13.15.28.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 15:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250726211053.2226857-1-arnd@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 23:28:46 +0100
+Message-Id: <DC1NKSHIXLHX.21F0AXCTRNINS@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>
+Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
+ <srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: sound: add bindings for pm4125
+ audio codec
+X-Mailer: aerc 0.20.0
+References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
+ <20250711-pm4125_audio_codec_v1-v2-1-13e6f835677a@linaro.org>
+ <20250718134334.GF11056@google.com> <DBKDVB96ZC98.NOF39E05HZ8H@linaro.org>
+ <7b012ae4-32b8-4de8-97a5-9b73cced2e4c@kernel.org>
+In-Reply-To: <7b012ae4-32b8-4de8-97a5-9b73cced2e4c@kernel.org>
 
-On Sat, Jul 26, 2025 at 11:10:43PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A few drivers that use the legacy GPIOLIB interfaces can be enabled
-> even when GPIOLIB is disabled entirely. With my previous patch this
-> now causes build failures like:
-> 
->    drivers/nfc/s3fwrn5/uart.c: In function 's3fwrn82_uart_parse_dt':
->         drivers/nfc/s3fwrn5/uart.c:100:14: error: implicit declaration of function 'gpio_is_valid'; did you mean 'uuid_is_valid'? [-Werror=implicit-function-declaration]
-> 
-> These did not show up in my randconfig tests because randconfig almost
-> always has GPIOLIB selected by some other driver, and I did most
-> of the testing with follow-up patches that address the failures
-> properly.
-> 
-> Move the symbol outside of the 'if CONFIG_GPIOLIB' block for the moment
-> to avoid the build failures. It can be moved back and turned off by
-> default once all the driver specific changes are merged.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507261934.yIHeUuEQ-lkp@intel.com/
-> Fixes: 678bae2eaa81 ("gpiolib: make legacy interfaces optional")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpio/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu Jul 24, 2025 at 4:48 PM BST, Krzysztof Kozlowski wrote:
+> On 24/07/2025 17:17, Alexey Klimov wrote:
+>> On Fri Jul 18, 2025 at 2:43 PM BST, Lee Jones wrote:
+>>> On Fri, 11 Jul 2025, Alexey Klimov wrote:
+>>>
+>>>> The audio codec IC is found on Qualcomm PM4125/PM2250 PMIC.
+>>>> It has TX and RX soundwire slave devices hence two files are added.
+>>>>
+>>>> While at this, also add pattern for respecive node in mfd
+>>>> qcom,spmi-pmic schema so the devicetree for this audio block of
+>>>> PMIC can be validated properly.
+>>>>
+>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>>> ---
+>>>>  .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |   4 +-
+>>>>  .../bindings/sound/qcom,pm4125-codec.yaml          | 134 ++++++++++++=
++++++++++
+>>>>  .../devicetree/bindings/sound/qcom,pm4125-sdw.yaml |  79 ++++++++++++
+>>>
+>>> Do you have to submit these all in a single patch?
+>>=20
+>> qcom,pm4125-codec.yaml and qcom,pm4125-sdw.yaml describe one device (sub=
+-device)
+>> and change for qcom,spmi-pmic.yaml is needed to avoid failing dtbs check=
+.
+>
+> Preferred way to solve this is to just list compatibles, instead of
+> other schema, just like all qcom display bindings are doing.
 
-This change causes all of the GPIO submenu to show up directly in the 
-already way too long 'Device Drivers' menu.
+Ok, thanks. I reimplemented it for next version. Couldn't say that I've got=
+ it correctly though.
 
-> 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 8bda3c9d47b4..c48f9badb513 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -12,11 +12,11 @@ menuconfig GPIOLIB
->  
->  	  If unsure, say N.
->  
-> -if GPIOLIB
-> -
->  config GPIOLIB_LEGACY
->  	def_bool y
+Best regards,
+Alexey
 
-Perhaps this has to be before "menuconfig GPIOLIB"?
-
->  
-> +if GPIOLIB
-> +
->  config GPIOLIB_FASTPATH_LIMIT
->  	int "Maximum number of GPIOs for fast path"
->  	range 32 512
-> -- 
-> 2.39.5
-> 
 
