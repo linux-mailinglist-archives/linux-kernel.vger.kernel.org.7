@@ -1,97 +1,82 @@
-Return-Path: <linux-kernel+bounces-766600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61C9B248DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F975B248DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54EA561E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:53:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE13189329B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889852EF667;
-	Wed, 13 Aug 2025 11:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF4C2FD1B1;
+	Wed, 13 Aug 2025 11:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8yXtjeB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzfVHWRT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36C42D0C96;
-	Wed, 13 Aug 2025 11:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1E22FAC0B;
+	Wed, 13 Aug 2025 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086019; cv=none; b=cT5DDusNGQAwd4abnJR98ZHAzgiv3/VFj1/r4UmWDJu/QBdmBDOeqPbF+YmES0W8Yfceu/u0GT+0dj+vyWq8mRn/htE/vaT2zsuijcfXNP0YwtboUXRUa2Jqwn9U0apMlwGM8ue35C4AbEkn2a5tu6ahYQiLTI6QnJyyTvHFI2U=
+	t=1755086020; cv=none; b=Kj1BqNAvG+2rKcoPPkUJENYtLTFb1BX1h2HVhinkwGBJ8/pOhKn09aS4k0JdGcJ1oUTXdkQKyS1JetFJkhVtGZh4HJnWqUBJTphygq3YQz6hWVpetO/YFwvsu+koJ9Bs8mhZIa4q1K8C/RhJJ3Bx0GOgOiyqscGvAx9UUqIePEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086019; c=relaxed/simple;
-	bh=evw2RJ3cEyt+soVXm8eE1TcVcHjaMDXk7/89m7+7DCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MrMCTzSZGRltqs6RlTEhgDExQCSvoVDVy4WUewQBIzQ5V0KuehAvpF1M1dN5mflLT1QUpaY6LeV0n1NPB5xzM4PSPo2ZlXe64ly42oObQUPx4DCwrYD1tIewhbg/fC8bxQgEly3278PxA6QNyUtIXybSBB94yYuwt8NuxAsid4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8yXtjeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C611EC4CEEB;
-	Wed, 13 Aug 2025 11:53:31 +0000 (UTC)
+	s=arc-20240116; t=1755086020; c=relaxed/simple;
+	bh=99v3Uwoa/nOwJ1hZoHDKKGH9HyS5tXk1KKaE58BxJAE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SzpUcRZ4SBxAj5bQ9dvBRQ86ZvGlFcRK7hLJ29Jg1Kw25TWPdyU1XfXu1VlqAvwZvSHCPsJgQNP8eYHcvbd0qI7IpsdMtim2d6i2HZ1Bi9yL8h16lhR0YGKcfvU8LkvFh8t/adG/TYhydlrvXxyMkpt5t0K2TvA2NwI+ugyjV+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzfVHWRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508F2C4CEF5;
+	Wed, 13 Aug 2025 11:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755086015;
-	bh=evw2RJ3cEyt+soVXm8eE1TcVcHjaMDXk7/89m7+7DCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j8yXtjeBH22ivW2qPdxKBx0E8AZE89hBnCIyegabVdB8zsyZOWqWqcYuIruhws3sj
-	 KTTojhrqJt18BTy1o1H9AlTJ59a5XLDKQ2HJT9KqRpSEwhr5zLbY8na6Iw54s5gcKE
-	 LtKHL/gbtgPs8OdXD3cb2LULRVtw2GHBZjiF8FCGLHiZ2vgbg3udWB8DbFleUg/Dee
-	 ubdhjTe5JFTBf/kjo9KOKP6itzx/c+QcW3xycRIWWaHv8VCtJcr39f+7UYmqBeJVKF
-	 3Db2xFFDqHwgiliQheN2+NTItYDbC0safwnoyxgaA2fFX2dba9IZSKxsU2+hw08Pxk
-	 O0K8lZRDy8x+g==
-Date: Wed, 13 Aug 2025 12:53:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
-Message-ID: <55070b66-0994-4064-9afa-de1e53d06631@sirena.org.uk>
-References: <20250812173014.736537091@linuxfoundation.org>
+	s=k20201202; t=1755086019;
+	bh=99v3Uwoa/nOwJ1hZoHDKKGH9HyS5tXk1KKaE58BxJAE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tzfVHWRTIjwki9AmMkTJnGUsgE9HZOKt+TtVoK09Nsgwpuqh6rc1KIS83QBcrhRDh
+	 qXiO1tQSolkA9S63vjuRPHSnHdVY0d8ju8sOSDMOwHOv5h51GiradBkbh1C5RpxCXP
+	 SsZ3dNOjbYDhDO/81z5edEkdd89l+pgPtRo5gkQybngVFy42Be8Iw2Pjss7E0ATqbR
+	 dN+6/gzPAMbZgfdTMGBFOAqvLOc24gD5GB9qLi5ckDQnJwQeBg9SARhnxdT3YtFXQ7
+	 D1adyhMHba20PRBk/dofCQ2Mz+4pokFHt+VK4YTm94txKr4niiW6vXYhl492VMmaDn
+	 qXJZzlF5JCpnQ==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, Minjong Kim <minbell.kim@samsung.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
+References: <CGME20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2@epcas1p3.samsung.com>
+ <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
+Subject: Re: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
+ ntrig_report_version()
+Message-Id: <175508601806.12409.17351034009690656147.b4-ty@kernel.org>
+Date: Wed, 13 Aug 2025 13:53:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="naKEERq1eg+hPBfh"
-Content-Disposition: inline
-In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
-X-Cookie: Turn the other cheek.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
+On Wed, 13 Aug 2025 19:30:22 +0900, Minjong Kim wrote:
+> in ntrig_report_version(), hdev parameter passed from hid_probe().
+> sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
+> if hdev->dev.parent->parent is null, usb_dev has
+> invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
+> when usb_rcvctrlpipe() use usb_dev,it trigger
+> page fault error for address(0xffffffffffffff58)
+> 
+> [...]
 
---naKEERq1eg+hPBfh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to hid/hid.git (for-6.17/upstream-fixes), thanks!
 
-On Tue, Aug 12, 2025 at 07:24:57PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.42 release.
-> There are 369 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+[1/1] HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()
+      https://git.kernel.org/hid/hid/c/185c926283da
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
 
---naKEERq1eg+hPBfh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmicfLgACgkQJNaLcl1U
-h9Dqxgf7BMGFlUnWJpeScLywEetujfk8HGzrSYrJLNEYj91Yrp92lGW/OCWC+rcc
-Fc6h82In5dI1FFP92ahZIADcYtW33Sfg0C4eDQFvJr2WYIbJcLJ9pgVUk/JfsvW2
-XwrW+AsajQEHQX+X3GgHQjNIZjbVu0QqsFPwSS01RJJgPzqaSLQcN/S08VS6iBsH
-In/pVPI2LO+XyR4gDRCDqFvAfPFITNzLwHexn5eFr+QJ9EC2v2tCYVlf2d5GtB7O
-KGazLLqgZ7u64FtfL6F9eS/7ul6z3Hqg3WUXtr6eUhrtaZSCGtN5p8XT+YvvDTsc
-V02fDxAWMN0gsdAnY0dNI2Bn8cZx/w==
-=p2Kl
------END PGP SIGNATURE-----
-
---naKEERq1eg+hPBfh--
 
