@@ -1,245 +1,188 @@
-Return-Path: <linux-kernel+bounces-766063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A10B241C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:44:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C672B241D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0116258096E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:44:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7DED7A5D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D1C2D3EFA;
-	Wed, 13 Aug 2025 06:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D252D46B3;
+	Wed, 13 Aug 2025 06:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PbP84mgz"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vt6VckGn"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418272D3EDF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89DF2D2397;
+	Wed, 13 Aug 2025 06:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067452; cv=none; b=rZkjyH4zIpvKS9QqRdwOI1OMU7f8nwMVgixe+OMT+7rQpOYLH1vij58C9V2VW6VBFhi6tWAqrK/UbHU2DSgdWU5dFpqUgdIvRakgWvJwAWrtQEo8BHgPY4elTC0H1HTlSVPUijfmVdaxU/Dzl8Rl5Jfg1Zyy96vi3LFIdS6gb7A=
+	t=1755067487; cv=none; b=RzY8CcZHBdqH5x3KwZTb8S3DtNRPn6zJFsRr6xnQQpjMQ4X2maxuzhT8H9eAzIO1giOFFJz+y5OcrfBDFjgN8JrjTu1r+sQ3GxtYmUYk72PrR54y5A42GwI1tmZOiEmVePZdQSaxemKizJrI8R7b5AayzUZtp/MqzE09zeEFmGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067452; c=relaxed/simple;
-	bh=Ntbu4TME5th/Z7sHM0FyWRCc2KPoc/Bn/1D8r1hHyTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amH1qBsb25Oo/5QqH3s2Wlj/wGOIFQIk8XxlvjADodaw6qQZIX2f/q3KSNpgBXS9q0fZfWQpkiH29vAFxZefxDcOAuVynVEnh9Dz47rxAeNU7gg3Lvtk9MSkk7D4LBUZZTaBo0RN4lymgzDum1Ky6q5l6BluZFeI6EJwpr9rLhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PbP84mgz; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7430835ec28so4192176a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1755067449; x=1755672249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kN4SWWkhP+H9aW8tQSuXufONqI8/WS93SoimYt/qVpo=;
-        b=PbP84mgzhPB7Uc+xt5PaKIQfmfLe3TdIo9089ZTK+rKUEU/sxQ0eyEvo67mHsiea8O
-         92ooMsmQ4xRDD+sbgGaEzTWABJB5PSpZZe+adHEb8R0Bvi9VoaTjvw/gecSyQxwem+4W
-         Ty5Y4qVJT+q2mXKsFFX7SLpvXX1nrQ4bUPZ0MvK34u5TDo7YlNoJKousB7OfPJBDgAnz
-         N3ltHpkCl3u7YGFYSYMS9MdZ8jBDEVntz4BKIzIxGSUVrfYwPioAIYoSsGP6+dMsegwl
-         52kHN+J1jXLdhSEiktT9HiXi5WZv3APuDSz3jU/5Znw+HhSeecQ9f+sF0wZVQcxApVIK
-         v9Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755067449; x=1755672249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kN4SWWkhP+H9aW8tQSuXufONqI8/WS93SoimYt/qVpo=;
-        b=ldN5Pq00WrB+fDfjL8j134AULjxvqHt0benuO0zOblgIUsnM0AXRBF+OuwhGAab6eg
-         ZwqWW4rHMvYUQlfoovwTx+EUy+/8g3P8Qf2vEPYcJ43mgpKMe2NLQbYyirDbcU7d8mF1
-         yJnknP3Ov9xHW2VM2ks2yiOUoc7iEzUi66VDD2hl694n+k+Ufkr9c0wHYyuUvlEPWkSl
-         6Kb09c8/C+HCcQmndofDKe3qayRyqLuwZ5E19sM974PEqV7ifVA+lVgEeX4jS5Y9EUAO
-         ZwkO90ZypktWcPbt86o/CvYGG+SK+3E70Egv8N51LvYM0dPEJl1kZ+F9SeK9sgYv7jlQ
-         yjSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkweGX0Ms+jlidwm+rQGfTcSnN1wsY7hofcskl9Hy0Ft/FM0B7MrECsEOAgaVXoijVhJkh0z6ZNFXx/og=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywIkJADP/GMZ393yNQvzb9Xvy4m1IYhvQGiJBlURwSrmmKX0dU
-	HFilmWOglTRlGVS/NHNksiAbAnCudUZQWiFO4lxApu3wVLOWGucGQvelfY6TO4/KmrA8Xx6K+zI
-	eVALH/RWfHD8TCxjQA3JvIYAEWswrxbUdnyMCxwzL1Q==
-X-Gm-Gg: ASbGnctm6m4hilgSnewg25LrWs+hNpLzNdjk7YDV3MmS21tm9aR7+jgSK3YQcCu6xPd
-	4ezhoreSdBG/Q8gvXmvLUzEedquCuJDP0YhTv2jr1uhrAdSMLusSEHSJp2zboteNNpPT/bwGkm0
-	ztCAhCsdo18WoUlVF8EFvDRc4tkohCKme/f5PKIXqFCN4al83ApK7mO4x7UcCYzypzep8Rph9Gd
-	0h0InDTV7K3RM6iS6wRnpX5
-X-Google-Smtp-Source: AGHT+IE1kH655r3yAN3e42gjKNXI3YeADBZSD3EwRPhXTz20ecAS64Pguy13srIYgyLsWKp0VZhzjHp56BATXuR+FCg=
-X-Received: by 2002:a05:6808:1818:b0:434:3f2:4d05 with SMTP id
- 5614622812f47-435d4211298mr1290082b6e.20.1755067449027; Tue, 12 Aug 2025
- 23:44:09 -0700 (PDT)
+	s=arc-20240116; t=1755067487; c=relaxed/simple;
+	bh=bquKFG0kbBHJUv82BQCZOUnkm2velApg2/ANEduHk8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsBYi47RM2dIaJiEGr4coIsATYTSPfCVkQTIKylt3iFNdzgt8+AHJnJ3AKYd64SDqv3qWC43EHT5EK74zI8pzPyT+JvPs3qkQYJfm1AlGfQtkRLsGaWJm6qA30BDa076BoxpSMw6G+/qutpOlX1t3CG+MK2gQ+ECuM9VEjuzQBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vt6VckGn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0SNIdZiTJR/nPW1SdNBX7/DJYyYBUtTTIadH/4Y1HCg=; b=vt6VckGnfO/bRRiyFxmXG9ogQn
+	sU3C5xi4iIp5tuRc34S9kxl5tNaRl9AtTgEm+7SWGAGEbW4/p/dK1U9ns6ca+6XQpjKnsL6WwqfPv
+	IiWYMQMqYj6y3NQs1sn1zJub+2HYiOP4yyFS8U9o0DSMHmZUwO0/Xd42zILkkvfEL7P/0vayh8GHw
+	tQcul4hTNmy+uZj/vdV/WA6o58XjgJCGKYJTITnQenOcJRPIwOFEIqfpTy/8WEpgr1Hp+0+EilJ92
+	68d+GTcpetaDTVjn8KbX7NpVPzyNwIFk0u7npkiQcDSDEbOy7Xsl3S+yIvv1gjeukl5q9naab7Bqn
+	xPYjpGFw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um5Dr-00000006iOl-1FbN;
+	Wed, 13 Aug 2025 06:44:31 +0000
+Date: Wed, 13 Aug 2025 07:44:31 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] VFS: use global wait-queue table for
+ d_alloc_parallel()
+Message-ID: <20250813064431.GF222315@ZenIV>
+References: <20250812235228.3072318-1-neil@brown.name>
+ <20250812235228.3072318-10-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
- <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
- <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
- <aJtKZhvNX0p3obFw@sunil-laptop> <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
- <aJwiXKWXik8BmpL8@sunil-laptop>
-In-Reply-To: <aJwiXKWXik8BmpL8@sunil-laptop>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Wed, 13 Aug 2025 14:43:58 +0800
-X-Gm-Features: Ac12FXyGVnizD6EyhuBpve20mgaqlAC7Lqkjh6Jm18br-KgPX42SL0ncGyqGwNM
-Message-ID: <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: rafael@kernel.org, lenb@kernel.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, juwenlong@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812235228.3072318-10-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Sunil,
+On Tue, Aug 12, 2025 at 12:25:12PM +1000, NeilBrown wrote:
 
-On Wed, Aug 13, 2025 at 1:28=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
->
-> Hi Yunhui,
->
-> On Wed, Aug 13, 2025 at 11:23:39AM +0800, yunhui cui wrote:
-> > Hi Sunil,
-> >
-> > On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@ventanamicr=
-o.com> wrote:
-> > >
-> [...]
-> > > > > >
-> > > > > > The purpose of cppc_ffh_csr_read() is to calculate the actual
-> > > > > > frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX.
-> > > > > >
-> > > > > > CSR_XXX should be a reference clock and does not count during W=
-FI
-> > > > > > (Wait For Interrupt).
-> > > > > >
-> > > > > > Similar solutions include: x86's aperf/mperf, and ARM64's AMU w=
-ith
-> > > > > > registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
-> > > > > >
-> > > > > > However, we know that CSR_TIME in the current code does count d=
-uring
-> > > > > > WFI. So, is this design unreasonable?
-> > > > > >
-> > > > > > Should we consider proposing an extension to support such a ded=
-icated
-> > > > > > counter (a reference clock that does not count during WFI)? Thi=
-s way,
-> > > > > > the value can be obtained directly in S-mode without trapping t=
-o
-> > > > > > M-mode, especially since reading this counter is very frequent.
-> > > > > >
-> > > > > Hi Yunhui,
-> > > > >
-> > > > > Yes, but we anticipated that vendors might define their own custo=
-m CSRs.
-> > > > > So, we introduced FFH encoding to accommodate such cases.
-> > > > >
-> > > > > Thanks,
-> > > > > Sunil
-> > > >
-> > > > As mentioned earlier, it is best to directly read CSR_XXX (a refere=
-nce
-> > > > clock that does not count during WFI) and CSR_CYCLE in S-mode, rath=
-er
-> > > > than trapping to SBI.
-> > > >
-> > > No. I meant direct CSR access itself not SBI. Please take a look at
-> > > Table 6 of RISC-V FFH spec.
-> > >
-> > > > drivers/acpi/riscv/cppc.c is a generic driver that is not specific =
-to
-> > > > any vendor. Currently, the upstream code already uses CSR_TIME, and
-> > > > the logic of CSR_TIME is incorrect.
-> > > >
-> ACPI spec for "Reference Performance Register" says,
->
-> "The Reference Performance Counter Register counts at a fixed rate any
-> time the processor is active. It is not affected by changes to Desired
-> Performance, processor throttling, etc."
->
-> > > CSR_TIME is just an example. It is upto the vendor how _CPC objects a=
-re
-> > > encoded using FFH. The linux code doesn't mean one should use CSR_TIM=
-E
-> > > always.
-> >
-> > First, the example of CSR_TIME is incorrect. What is needed is a
-> > CSR_XXX (a reference clock that does not count during WFI).
-> >
-> > Second, you mentioned that each vendor can customize their own
-> > implementations. But should all vendors' CSR_XXX/YYY/... be added to
-> > drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/cppc.c =
-fall
-> > under the scope defined by the RISC-V architecture?
-> >
-> No. One can implement similar to csr_read_num() in opensbi. We didn't
-> add it since there was no HW implementing such thing. What I am
-> saying is we have FFH encoding to support such case.
->
-> > >
-> > > > It would be best to promote a specification to support CSR_XXX, jus=
-t
-> > > > like what has been done for x86 and arm64. What do you think?
-> > > >
-> > > Wouldn't above work? For a standard extension, you may have to provid=
-e
-> > > more data with actual HW.
-> >
-> > This won=E2=80=99t work. May I ask how the current upstream code can ca=
-lculate
-> > the actual CPU frequency using CSR_TIME without trapping to SBI?
-> > This is a theoretical logical issue. Why is data needed here?
-> >
-> As I mentioned above, one can implement a generic CSR read without
-> trapping to SBI.
->
-> > Could you take a look at the "AMU events and event numbers" chapter in
-> > the ARM64 manual?
-> >
-> As-per ACPI spec reference performance counter is not affected by CPU
-> state. The RISC-V FFH encoding is sufficiently generic to support this
-> requirement, even if the standard CSR_TIME cannot be used. In such
-> cases, an alternative CSR can be encodeded, accessed via an OS-level
-> abstraction such as csr_read_num().
+> +** mandatory**
+> +
+> +d_alloc_parallel() no longer requires a waitqueue_head.  It uses one
+> +from an internal table when needed.
 
-So what you're saying is that we should submit a patch like this, right?
+Misleading, IMO - that sounds like "giving it a wq is optional, it will
+pick one if needed" when reality is "calling conventions have changed,
+no more passing it a waitqueue at all".
 
-diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-index 440cf9fb91aab..953c259d46c69 100644
---- a/drivers/acpi/riscv/cppc.c
-+++ b/drivers/acpi/riscv/cppc.c
-@@ -66,16 +66,8 @@ static void cppc_ffh_csr_read(void *read_data)
- {
-        struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
+> +#define	PAR_LOOKUP_WQ_BITS	8
+> +#define PAR_LOOKUP_WQS (1 << PAR_LOOKUP_WQ_BITS)
+> +static wait_queue_head_t par_wait_table[PAR_LOOKUP_WQS] __cacheline_aligned;
 
--       switch (data->reg) {
--       /* Support only TIME CSR for now */
--       case CSR_TIME:
--               data->ret.value =3D csr_read(CSR_TIME);
--               data->ret.error =3D 0;
--               break;
--       default:
--               data->ret.error =3D -EINVAL;
--               break;
--       }
-+       data->ret.value =3D csr_read_num(data->reg);
-+       data->ret.error =3D 0;
- }
+I wonder how hot these cachelines will be...
 
-If that's the case, the robustness of the code cannot be guaranteed,
-because the range of CSRs from different vendors is unknown.
+> +static int __init par_wait_init(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < PAR_LOOKUP_WQS; i++)
+> +		init_waitqueue_head(&par_wait_table[i]);
+> +	return 0;
+> +}
+> +fs_initcall(par_wait_init);
 
-Since each vendor will define their own CSRs, why not formalize them
-into a specification?
+Let's not open _that_ can of worms; just call it from dcache_init().
 
->
-> Thanks,
-> Sunil
+> +static inline void d_wake_waiters(struct wait_queue_head *d_wait,
+> +				  struct dentry *dentry)
+> +{
+> +	/* ->d_wait is only set if some thread is actually waiting.
+> +	 * If we find it is NULL - the common case - then there was no
+> +	 * contention and there are no waiters to be woken.
+> +	 */
+> +	if (d_wait)
+> +		__wake_up(d_wait, TASK_NORMAL, 0, dentry);
 
-Thanks,
-Yunhui
+Might be worth a note re "this is wake_up_all(), except that key is dentry
+rather than NULL" - or a helper in wait.h to that effect, for that matter.
+I see several other places where we have the same thing (do_notify_pidfd(),
+nfs4_callback_notify_lock(), etc.), so...
+
+
+> +		struct wait_queue_head *wq;
+> +		if (!dentry->d_wait)
+> +			dentry->d_wait = &par_wait_table[hash_ptr(dentry,
+> +								  PAR_LOOKUP_WQ_BITS)];
+> +		wq = dentry->d_wait;
+
+Yecchhh...  Cosmetic change: take
+	&par_wait_table[hash_ptr(dentry, PAR_LOOKUP_WQ_BITS)];
+into an inlined helper, please.
+
+BTW, while we are at it - one change I have for that function is
+(in the current form)
+static bool d_wait_lookup(struct dentry *dentry,
+			  struct dentry *parent,
+			  const struct qstr *name)
+{
+	bool valid = true;
+	spin_lock(&dentry->d_lock);
+        if (d_in_lookup(dentry)) {
+		DECLARE_WAITQUEUE(wait, current);
+		add_wait_queue(dentry->d_wait, &wait);
+		do {   
+			set_current_state(TASK_UNINTERRUPTIBLE);
+			spin_unlock(&dentry->d_lock);
+			schedule();
+			spin_lock(&dentry->d_lock);
+		} while (d_in_lookup(dentry));
+	}
+	/*
+	 * it's not in-lookup anymore; in principle the caller should repeat
+	 * everything from dcache lookup, but it's likely to be what
+	 * d_lookup() would've found anyway.  If so, they can use it as-is.
+	 */
+	if (unlikely(dentry->d_name.hash != name->hash ||
+		     dentry->d_parent != parent ||
+		     d_unhashed(dentry) ||
+		     !d_same_name(dentry, parent, name)))
+		valid = false;
+	spin_unlock(&dentry->d_lock);
+	return valid;
+}
+
+with
+	if (unlikely(d_wait_lookup(dentry, parent, name))) {
+                dput(dentry);
+		goto retry;
+	}
+	dput(new);
+	return dentry;
+in the caller (d_alloc_parallel()).  Caller easier to follow and fewer functions
+that are not neutral wrt ->d_lock...  I'm not suggesting to fold that with
+yours - just a heads-up on needing to coordinate.
+
+Anyway, modulo fs_initcall() thing it's all cosmetical; I certainly like
+the simplified callers, if nothing else.
+
+That's another patch I'd like to see pulled in front of the queue.
 
