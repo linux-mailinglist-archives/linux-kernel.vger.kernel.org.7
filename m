@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-765717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B17BB23D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3C1B23D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF066868DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7933B0345
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C5B19E96A;
-	Wed, 13 Aug 2025 00:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5D027472;
+	Wed, 13 Aug 2025 00:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GtM8w6SE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BrUGe7uu"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59202E401;
-	Wed, 13 Aug 2025 00:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31770143C69
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755045508; cv=none; b=fq7k6zY1C05xWSwl37b8r/xx6rK9wNKjz/3c+fvEMeLFEvyLYntvHcrQ+RFDKQYzf8roDZvha5H2SLEEAPT6m9AY24GAvu5m+t8nwEE5Sq7x+Z/G1ESmoRkOVLkBCAcPeQWVNx7iVV9Q2uQ7CxtrD6G/5nmTJ3RUCNMBTxoHwKY=
+	t=1755045586; cv=none; b=L2pOXggFh0Tc5Zrv4DoJTjENKdApSeYdfdUe9yEu+d9rgnWZNGYE0kHKBDaKT/s2Qpmx4AtXGBWfcw3rMaU04dsUUufHWbGQhE/UcOBzuzPKHo9X66mu5oqdqH6xolf7GTCipIif8czwTcwy32US2nrYEiEkQTd9JpxnX3LpSl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755045508; c=relaxed/simple;
-	bh=AGIFgPFIdpDcXzqv5jwEFMWlufYl1iRhk7eGFq1nUco=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CVoFzokvpWsF8yl3ViCkTljF4pf/1V9wJwBoom5sBx+renBmm7maVKX9KbqFEeWP9ui6Y8Yybxo/yuWYE9W9vJzEPHe0gewbelr2J+z8GKyyj+J0PZ4ahf+FO4isN916JSTFvXlA/B5DSdjv7KdFNqkkWCtZjET/FfRCE9ULryk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GtM8w6SE; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755045507; x=1786581507;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AGIFgPFIdpDcXzqv5jwEFMWlufYl1iRhk7eGFq1nUco=;
-  b=GtM8w6SE/Zm5uu9t+y+CtXSyZ8hd8nEq0Zm3bH6zt/zQE4Q7nKM5FNT/
-   +Lt9En0417Bu6+iylmFiztzeYgaee/VemIFVczYw0NiZ4zOKQMcFd2fFk
-   +wsUxxC9M/a4lI/zIONBoQo7KE8Y2EKiHiQ23VYoPP0UJXkxq/GZIjgxR
-   uu+oamzdt9pUZF6+iXH1wbPYn4mFVBg0pY4gNJBtDb4PzZ6Fj08lffBWC
-   RaeOWARkllLFlOhVvsqEtSb1V2hgFt8pjFq7Ph3R4VfnBU3gnStLBEvhR
-   euPelprpfpkAHYrFQHQOEHzUf6hLzaxy9g63l7oW69aZeS4C9pNhx8v4e
-   w==;
-X-CSE-ConnectionGUID: Z3hMTZICQmGdTHOXbzG3JA==
-X-CSE-MsgGUID: o37MIK5DSAeZ8p987if17g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57452325"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57452325"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 17:38:26 -0700
-X-CSE-ConnectionGUID: QApbMwKwQESigLaAT1eUeQ==
-X-CSE-MsgGUID: oUw13QiJTKmQ9mgzv609dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="166700299"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO localhost) ([10.124.222.85])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 17:38:25 -0700
-From: alison.schofield@intel.com
-To: Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] checkpatch: allow an assignment in if condition for ACQUIRE_ERR()
-Date: Tue, 12 Aug 2025 17:38:19 -0700
-Message-ID: <20250813003821.2891532-1-alison.schofield@intel.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1755045586; c=relaxed/simple;
+	bh=Jj73x4d2mEt/x/uax+byA1rOVGHDc6va2nX8OEb1lc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYEcfEFm9t48gtwfFyn08Pyq9swbJrjEUt4B+0KQW1lZMd3vjLGR85KGiZqH5PMTXPXI/0gHj07nuncVuMxP4JCfv5oVR6DIbLPVmJWwphpq79UNTnpfX4hBU1BYZJr4xb4QR7K8LshKVcyxcDwUYkAQZCtqIFFezGKWRCrfrGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BrUGe7uu; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755045579; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=VBE96bo12oToz+D1FLxpOMcPOl48/oNNWdgyR8Bt6/4=;
+	b=BrUGe7uuj16zuP7YtdqJa33mDc3FUa46JwPES9ooD8ZKWG70HcWiaJZmKmGybdeSveAuSZwF13+D+qtapBnBL4ukw3m4pfiyvaAKiTJhUnSQDXOHwQu/0VNRpmJDZRNL/thBz/QUope8QTZQp+1dG0wSozgnci7pSzeA05sbVO4=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WldHvLC_1755045578 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 13 Aug 2025 08:39:38 +0800
+Date: Wed, 13 Aug 2025 08:39:37 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	john.ogness@linutronix.de
+Subject: Re: [PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human
+ readable string parameter
+Message-ID: <aJveydkcbT7NxvQx@U-2FWC9VHC-2323.local>
+References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
+ <20250703021004.42328-4-feng.tang@linux.alibaba.com>
+ <aJsWCxc42f2Qjbs3@pathway>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aJsWCxc42f2Qjbs3@pathway>
 
-From: Alison Schofield <alison.schofield@intel.com>
+On Tue, Aug 12, 2025 at 12:23:07PM +0200, Petr Mladek wrote:
+> On Thu 2025-07-03 10:10:02, Feng Tang wrote:
+> > Bitmap definition for 'panic_print' is hard to remember and decode.
+> > Add 'panic_sys_info='sysctl to take human readable string like
+> > "tasks,mem,timers,locks,ftrace,..." and translate it into bitmap.
+> > 
+> > The detailed mapping is:
+> > 	SYS_INFO_TASKS		"tasks"
+> > 	SYS_INFO_MEM		"mem"
+> > 	SYS_INFO_TIMERS		"timers"
+> > 	SYS_INFO_LOCKS		"locks"
+> > 	SYS_INFO_FTRACE		"ftrace"
+> > 	SYS_INFO_ALL_CPU_BT	"all_bt"
+> > 	SYS_INFO_BLOCKED_TASKS	"blocked_tasks"
+> > 
+> > --- a/lib/sys_info.c
+> > +++ b/lib/sys_info.c
+> > +static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+> > +
+> > +int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+> > +					  void *buffer, size_t *lenp,
+> > +					  loff_t *ppos)
+> > +{
+> > +	char names[sizeof(sys_info_avail) + 1];
+> 
+> The "+ 1" looks superfluous.
+> 
+> I guess that it is for the trailing '\0'. But sys_info_avail[] already
+> includes the trailing '\0' so it should be already counted by the sizeof().
+> 
+> Note that it would be needed with strlen(). But it should not be
+> needed with sizeof().
 
-New helpers, ACQUIRE() and ACQUIRE_ERR(), were recently introduced to
-clean up conditional locking paths [1].
+Yes, you are right. Will remove it.
 
-That led to checkpatch ERRORS:
-        ERROR: do not use assignment in if condition
+> > +	struct ctl_table table;
+> > +	unsigned long *si_bits_global;
+> > +
+> > +	si_bits_global = ro_table->data;
+> > +
+> > +	if (write) {
+> > +		unsigned long si_bits;
+> > +		int ret;
+> > +
+> > +		table = *ro_table;
+> > +		table.data = names;
+> > +		table.maxlen = sizeof(names);
+> > +		ret = proc_dostring(&table, write, buffer, lenp, ppos);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		si_bits = sys_info_parse_param(names);
+> > +		/* The access to the global value is not synchronized. */
+> > +		WRITE_ONCE(*si_bits_global, si_bits);
+> > +		return 0;
+> > +	} else {
+> > +		/* for 'read' operation */
+> > +		char *delim = "";
+> > +		int i, len = 0;
+> > +
+> 
+> It looks to me that names[] can later be used non-initialized when
+> *si_bits_global == 0. We should initialized it here, something like:
+> 
+> 		names[0] = '\0';
 
-on usages like this:
-        ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
-        if ((rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem)))
-                return rc;
+Good catch! Will add this.
 
-That compact format was a deliberate choice by the authors. By making
-this a checkpatch exception, existing ERRORs are quieted, and future
-users of the macro will not be dissuaded by checkpatch from using the
-preferred compact format.
-
-[1] Commit d03fcf50ba56 ("cxl: Convert to ACQUIRE() for conditional rwsem locking")
-
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
----
- scripts/checkpatch.pl | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index e722dd6fa8ef..150f355c632e 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5696,7 +5696,14 @@ sub process {
- 			my ($s, $c) = ($stat, $cond);
- 			my $fixed_assign_in_if = 0;
+> > +		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
+> > +			if (*si_bits_global & si_names[i].bit) {
+> > +				len += scnprintf(names + len, sizeof(names) - len,
+> > +					"%s%s", delim, si_names[i].name);
+> > +				delim = ",";
+> > +			}
+> > +		}
+> > +
+> > +		table = *ro_table;
+> > +		table.data = names;
+> > +		table.maxlen = sizeof(names);
+> > +		return proc_dostring(&table, write, buffer, lenp, ppos);
+> > +	}
+> > +}
+> > +#endif
+> 
+> Otherwise, it looks good.
  
--			if ($c =~ /\bif\s*\(.*[^<>!=]=[^=].*/s) {
-+			if ($c =~ /\bif\s*\((.*[^<>!=]=[^=].*)\)/s) {
-+				my $expr = $1;
-+
-+				# Allow ACQUIRE_ERR() macro syntax
-+				if ($expr =~ /\w+\s*=\s*ACQUIRE_ERR\s*\(/) {
-+					next;
-+				}
-+
- 				if (ERROR("ASSIGN_IN_IF",
- 					  "do not use assignment in if condition\n" . $herecurr) &&
- 				    $fix && $perl_version_ok) {
--- 
-2.37.3
+Thanks for reviewing the patchset!
 
+- Feng
+
+> Best Regards,
+> Petr
 
