@@ -1,145 +1,93 @@
-Return-Path: <linux-kernel+bounces-765927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64742B24015
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F48AB2401F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC446207AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7C37221A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143D29C323;
-	Wed, 13 Aug 2025 05:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464A82BE7CB;
+	Wed, 13 Aug 2025 05:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vkRMB/3n"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iTDCL4fx"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579E8322A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB022110E;
+	Wed, 13 Aug 2025 05:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755062288; cv=none; b=KUUMVhVJmYZ62LQd/kyw/ueWiJJF0D5wxK5i7TlquaRc8eb9yRcAL+1W6gK00sQbuq9opvABhwOPs1vHW4BGerLCMQqfc4mpw6ZHfm9WI9DLS2YI/kzLr5DuQCg56R+OFseTxkJMfR1GkM5pmfXLjwHCrDKb8vp//jKQ6zljq5Y=
+	t=1755062408; cv=none; b=tK8NlR7/Lvu9GEPrb0bx75QaB8FlYwA+ZOFwygQOavxQlVuMy+2kZhKwrD2Tax1wpMpUdXol4HKfZ7+TIyGAf9ZQkhXYlfOrc6ipVl6XlU7/Xzp8ICZ0RYYEWsbJ9utsjbTZNmFRsNENBYG3PMJ3J2h2bdLOhtP+NARJDKe2sqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755062288; c=relaxed/simple;
-	bh=pqt4TowKaairXtxotzS9GcjIWm2v0xycJVC1daM6Wcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=QpBiW5j0vaofbDmO+a6pE4yY+09TY1KonNnADvJpeN0BstxgqpWZrkCl6ZC2CuZznlBbEkJTME36fpzvNAMScDgxChK/2/O3ZWWwWpyEGIAGuBunlWUa93EX8Noo0QMffdC6eF4A/cFCzVxi2oW9HJGzzXExd0lVoGyqFDZZJgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vkRMB/3n; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250813051756epoutp0137287740f33baf3481750f5a1f750620~bO9eEHqkm2356223562epoutp01B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:17:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250813051756epoutp0137287740f33baf3481750f5a1f750620~bO9eEHqkm2356223562epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755062276;
-	bh=hpvD0dypGmFLQDWc1pQmIUIu7vdT6qLoNn3MqbTtnAI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vkRMB/3nXFf3vwqavr8qfI3S3nkrU/2WWw03joEBz3q2cJ+3DGG7Z+NJt3mwYcSkD
-	 F5A9AKim8GcJR4GBCCroL+tqLtubYgRoaNrlXp2AJsKiwGsiKGUx+q54mBXfWsxwFg
-	 eL1YC3IghX4cKBl5YtGxQAivqDRUoVHPSVP0pHVo=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250813051756epcas1p3e7124ac6418c2c4cc1ccdc02502771bf~bO9dwl2A30069800698epcas1p3Z;
-	Wed, 13 Aug 2025 05:17:56 +0000 (GMT)
-Received: from epcas1p2.samsung.com (unknown [182.195.38.248]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c1xTc1GB3z3hhT3; Wed, 13 Aug
-	2025 05:17:56 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250813051755epcas1p2afddf98d4639ee15a3f8aa72b8e99c14~bO9c3s-9u1089710897epcas1p2N;
-	Wed, 13 Aug 2025 05:17:55 +0000 (GMT)
-Received: from minbellkim-500TGA-500SGA (unknown [10.252.69.135]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250813051755epsmtip24ce12ffd36354bf7a8233c95ee9e4ff6~bO9c1tNxW1683016830epsmtip2C;
-	Wed, 13 Aug 2025 05:17:55 +0000 (GMT)
-Date: Wed, 13 Aug 2025 14:17:51 +0900
-From: Minjong Kim <minbell.kim@samsung.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
- ntrig_report_version()
-Message-ID: <20250813051751.z6vxd6tvrfelmxou@minbellkim-500TGA-500SGA>
+	s=arc-20240116; t=1755062408; c=relaxed/simple;
+	bh=pCg5tUn3Jxoz1Rz+ldIsZRcCH30DqmzroJThlBQBMOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDGndwLHcPb3Fzqrub4sQhBkdNgT4g1y2LP2JheSxUvgq2TeuzEgjMTYRA5ELSoN6kGRpSYSdbreghcEs34qA5eXVkcHhCDZoUE1Q0K2uCLpdrwKVV8UCzxoVb//Ht5YLCrgfQgEt06lNKwbg/464iP5eXsxXnHcOYV6eR8v/is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iTDCL4fx; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KjOxKUPYOtNCnCd/lus2iP6rL3ZLot/rSauSdHj7XKM=; b=iTDCL4fxLjR1WN6UEkahPvC+Y2
+	GNjJps5E4fZouWLRmdQbBwPPH1mCH8GZuT1VtFvidzQL9pFIjrGIy8ger7QFw7qUyB6DSxBFMCmOF
+	LWPLns4WENW88IC5y4vnenhiTfcrGz8QaFmiqlZW4dgt3+6URBn25Y2dWP0fnObUcRYE8u8S8Js5y
+	356r4/zM5bVk/SCK07iXGFW/ISD/v++GRjYnfAAg17BYdfFru3K+z/kofWvdZPtyUz04rBR64zWhV
+	xRBFvJ9qCQ9oZR61+VgVm7T7iOng5g5A6eo9EhDBsPuoLLKcGhLWYsTuqHrwQk8XzDEDDy/1Shto+
+	7gs0hgMg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um3u1-000000060h7-0Shj;
+	Wed, 13 Aug 2025 05:19:57 +0000
+Date: Wed, 13 Aug 2025 06:19:57 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] VFS: use d_alloc_parallel() in
+ lookup_one_qstr_excl().
+Message-ID: <20250813051957.GE222315@ZenIV>
+References: <20250812235228.3072318-1-neil@brown.name>
+ <20250812235228.3072318-11-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <rqo85n88-82s2-30s6-qn80-r4r943p4q59o@xreary.bet>
-X-CMS-MailID: 20250813051755epcas1p2afddf98d4639ee15a3f8aa72b8e99c14
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----TQfym8SLV53j68Oh-Z7X3icTIQ_pywbqltYHDPsxVxR0HChE=_226c20_"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250717061154epcas1p329022ab54ed143d2a8d5b3f8b7554b38
-References: <CGME20250717061154epcas1p329022ab54ed143d2a8d5b3f8b7554b38@epcas1p3.samsung.com>
-	<20250717-hid-ntrig-page-fault-fix-v1-1-96fa145a137f@samsung.com>
-	<rqo85n88-82s2-30s6-qn80-r4r943p4q59o@xreary.bet>
-
-------TQfym8SLV53j68Oh-Z7X3icTIQ_pywbqltYHDPsxVxR0HChE=_226c20_
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250812235228.3072318-11-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Aug 12, 2025 at 02:46:24PM +0200, Jiri Kosina wrote:
-> 
-> I know that mixing declarations and code is fine these days, but we 
-> haven't been progressive enough to switch to that coding style in HID 
-> subsystem yet :) Would you be willing to move it below the declarations?
->  
+On Tue, Aug 12, 2025 at 12:25:13PM +1000, NeilBrown wrote:
 
-From 75e52defd4b2fd138285c5ad953942e2e6cf2fbb Mon Sep 17 00:00:00 2001
-From: Minjong Kim <minbell.kim@samsung.com>
-Date: Thu, 17 Jul 2025 14:37:47 +0900
-Subject: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
- ntrig_report_version()
+> + * If it is d_in_lookup() then these conditions can only be checked by the
+> + * file system when carrying out the intent (create or rename).
 
-in ntrig_report_version(), hdev parameter passed from hid_probe().
-sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
-if hdev->dev.parent->parent is null, usb_dev has
-invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
-when usb_rcvctrlpipe() use usb_dev,it trigger
-page fault error for address(0xffffffffffffff58)
-
-add null check logic to ntrig_report_version()
-before calling hid_to_usb_dev()
-
-Signed-off-by: Minjong Kim <minbell.kim@samsung.com>
----
- drivers/hid/hid-ntrig.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-index 2738ce947434..fa948d9e236c 100644
---- a/drivers/hid/hid-ntrig.c
-+++ b/drivers/hid/hid-ntrig.c
-@@ -144,6 +144,9 @@ static void ntrig_report_version(struct hid_device *hdev)
- 	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
- 	unsigned char *data = kmalloc(8, GFP_KERNEL);
-
-+	if (!hdev->dev.parent->parent)
-+		return;
-+
- 	if (!data)
- 		goto err_free;
-
---
-2.34.1
-
-I move it below the declarations.
-
-Best regards,
-
-
-------TQfym8SLV53j68Oh-Z7X3icTIQ_pywbqltYHDPsxVxR0HChE=_226c20_
-Content-Type: text/plain; charset="utf-8"
-
-
-------TQfym8SLV53j68Oh-Z7X3icTIQ_pywbqltYHDPsxVxR0HChE=_226c20_--
+I do not understand.  In which cases would that happen and what would happen
+prior to that patch in the same cases?
 
