@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-767682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828BDB257A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F88B257A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3878F3AB274
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AB83AA35E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A272B19D082;
-	Wed, 13 Aug 2025 23:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FD21E9B31;
+	Wed, 13 Aug 2025 23:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KriPv9+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRgka6Jw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A79C2F60B3;
-	Wed, 13 Aug 2025 23:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F276C2F60A8;
+	Wed, 13 Aug 2025 23:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755128038; cv=none; b=RQ9uyNul5e4q0l0+U9fg/6OV1Agr2yWPfUOLD4e57+AVLldcP9moELzCvaPt70UD5V7lzvvLxThJRhZtN9F+B1GSvRUenXvog8eCdxXTgDfQlEMYQWfG5k2a31aySngHc6tvtaaY19X6+r+5X9AMAZjbrNCZkE5kh0DQy/pyPWE=
+	t=1755128165; cv=none; b=tYSdCmzv0roTO5nppChLQrsA4f7w8I3OQQQ92IDpWmpFV/Kj9T/h6M/1qEZzLe+YC/c5Mq18IBhKgvDkzm6DdemIAk6jE1TaBVh7ZxbX/xgNvgJ/vq2v/DD4E6wJ1At0zGuiXJS7CDqngVtTdppy21Ce641ICMdICqLU98OMpU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755128038; c=relaxed/simple;
-	bh=/fqav50fh/UHsLl/cNli+s8eynjv05qGf9V1vrShBpY=;
+	s=arc-20240116; t=1755128165; c=relaxed/simple;
+	bh=8zhFXpsHd98eql76I1Av4JyKXvUbV4GS0f9cdokT8Ys=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N0aMpQED+119oadwLjS5db3nn07+sHVJymLmLNKphUS4k4YtqNU9pXeaNdQhcCxKgBcWInttI9+igZpZEbeCpIu5AI4oDY7xCXvucm/uuwjsMFIausuyuaYpIo23qapDu20TSUIQlxHKyY8G7wVpZ4g32yBWf0lP0cRE14s9gqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KriPv9+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFC5C4CEEB;
-	Wed, 13 Aug 2025 23:33:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DTm+z2sSeNvySFCpwRdbRyVDrt7d7UfM+o/0oxPgVLPYpQUuWq8FjJn4cMufpt5WuSe9vrsVUlJxJCk2EMh1AYmhsAHeL3uW1ThZ3kdrryB3N+z5rl6KMtEDDsUutuBVSSdxkfMdkne6IKuMV1l24pU4KTMMJPmy3raGmwZt3dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRgka6Jw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8CAC4CEEB;
+	Wed, 13 Aug 2025 23:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755128037;
-	bh=/fqav50fh/UHsLl/cNli+s8eynjv05qGf9V1vrShBpY=;
+	s=k20201202; t=1755128164;
+	bh=8zhFXpsHd98eql76I1Av4JyKXvUbV4GS0f9cdokT8Ys=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KriPv9+YVV0HN+uI0MISCd02QP6gQHWFzIz4C8HmiHUs1OQsMJEwtfkS0YaQ6ULrq
-	 VD/w0o/1WkG6iY+f1h7o4nTLRoO+vaKilRasx9/ZgKfkl2jB+cnLKbNSgHTkWN5BR2
-	 AbOCv8UjtDZs2ORCB/WRYrM1imX9qjG5jloGM0q3/DJIsKnRI8JyupaQVn41Y2Ycd5
-	 sJi69ZAKFuq4ERaVhjM6qtSkuiuWo+02YONXDKVvkBNtMIy69fn2wNo0XqCReIHQTJ
-	 1kzHESaLqJaKRdCmmC9zfPsbRsa6IIZu69Ll1T9jZAZh9feIqQ/BATLEbmo1AT1ly4
-	 b2jMLJ1tV0dag==
-Date: Thu, 14 Aug 2025 01:33:53 +0200
+	b=aRgka6JwTOZZVXxIYH+IWFDHWrEEr7XH+NzOxjzZcbrLisw0xudqmKpui2/a4o4mz
+	 Nb0PVAE9JZXUsSmdYOlC2woQkeiFz21l50rLe/GPuTknY1GzSMpNYSKz+7dgE/K0Hl
+	 9vYAJ0xlqn21Yj2ussqEEtXfvZyquvuvzQgP/TfgxSJzdyCmDTJ3/3MpXNx4AjKEDr
+	 3CH9qPPEFlEB9cLO6V3jK87c4nkU+nYP8+CbgdIRZX1gKTpeCDKztxr1z8cPZPdgAb
+	 q6Tt71nsGP5xEwDmWBvsVj5hxXJdOPeo/PinhS598XBfJceBkr+j8GzxOau82nepAH
+	 VfV/S3ChK47ew==
+Date: Thu, 14 Aug 2025 01:36:00 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 10/13] docs: move kernel-doc to tools/doc
-Message-ID: <20250814013353.623b20c8@foz.lan>
-In-Reply-To: <20250813213218.198582-11-corbet@lwn.net>
+Subject: Re: [PATCH 07/13] docs: move sphinx-pre-install to tools/doc
+Message-ID: <20250814013600.5aec0521@foz.lan>
+In-Reply-To: <20250813213218.198582-8-corbet@lwn.net>
 References: <20250813213218.198582-1-corbet@lwn.net>
-	<20250813213218.198582-11-corbet@lwn.net>
+	<20250813213218.198582-8-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,428 +60,255 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 13 Aug 2025 15:32:09 -0600
+Em Wed, 13 Aug 2025 15:32:06 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> Move kernel-doc to join the rest of the tools, and update references
-> throughout the tree.
+> Put this tool with the other documentation-related scripts.
+
+This one will be painful, as it will cause conflicts with my series
+that clean up the docs Makefile.
+
 >=20
-
-LGTM.
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-
 > Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 > ---
->  Documentation/conf.py                                |  2 +-
->  Documentation/doc-guide/kernel-doc.rst               | 12 ++++++------
->  Documentation/kbuild/kbuild.rst                      |  2 +-
->  Documentation/process/coding-style.rst               |  2 +-
->  .../translations/it_IT/doc-guide/kernel-doc.rst      |  8 ++++----
->  .../translations/sp_SP/process/coding-style.rst      |  2 +-
->  .../translations/zh_CN/doc-guide/kernel-doc.rst      | 10 +++++-----
->  Documentation/translations/zh_CN/kbuild/kbuild.rst   |  2 +-
->  .../translations/zh_CN/process/coding-style.rst      |  2 +-
->  .../translations/zh_TW/process/coding-style.rst      |  2 +-
->  MAINTAINERS                                          |  1 -
->  Makefile                                             |  2 +-
->  drivers/gpu/drm/i915/Makefile                        |  2 +-
->  scripts/find-unused-docs.sh                          |  2 +-
->  scripts/kernel-doc                                   |  1 -
->  scripts/kernel-doc.py =3D> tools/doc/kernel-doc        |  0
->  16 files changed, 25 insertions(+), 27 deletions(-)
->  delete mode 120000 scripts/kernel-doc
->  rename scripts/kernel-doc.py =3D> tools/doc/kernel-doc (100%)
+>  Documentation/Makefile                             | 14 +++++++-------
+>  Documentation/doc-guide/sphinx.rst                 |  4 ++--
+>  Documentation/sphinx/kerneldoc-preamble.sty        |  2 +-
+>  .../translations/it_IT/doc-guide/sphinx.rst        |  4 ++--
+>  .../translations/zh_CN/doc-guide/sphinx.rst        |  4 ++--
+>  Documentation/translations/zh_CN/how-to.rst        |  2 +-
+>  MAINTAINERS                                        |  2 --
+>  {scripts =3D> tools/doc}/sphinx-pre-install          |  0
+>  8 files changed, 15 insertions(+), 17 deletions(-)
+>  rename {scripts =3D> tools/doc}/sphinx-pre-install (100%)
 >=20
-> diff --git a/Documentation/conf.py b/Documentation/conf.py
-> index f9828f3862f9..600cf5d32af8 100644
-> --- a/Documentation/conf.py
-> +++ b/Documentation/conf.py
-> @@ -564,7 +564,7 @@ pdf_documents =3D [
->  # kernel-doc extension configuration for running Sphinx directly (e.g. b=
-y Read
->  # the Docs). In a normal build, these are supplied from the Makefile via=
- command
->  # line arguments.
-> -kerneldoc_bin =3D "../scripts/kernel-doc.py"
-> +kerneldoc_bin =3D "../tools/doc/kernel-doc.py"
->  kerneldoc_srctree =3D ".."
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index eef5decb79b8..818d866756b0 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -46,7 +46,7 @@ ifeq ($(HAVE_SPHINX),0)
+>  .DEFAULT:
+>  	$(warning The '$(SPHINXBUILD)' command was not found. Make sure you hav=
+e Sphinx installed and in PATH, or set the SPHINXBUILD make variable to poi=
+nt to the full path of the '$(SPHINXBUILD)' executable.)
+>  	@echo
+> -	@$(srctree)/scripts/sphinx-pre-install
+> +	@$(srctree)/tools/doc/sphinx-pre-install
+>  	@echo "  SKIP    Sphinx $@ target."
 > =20
->  # ----------------------------------------------------------------------=
---------
-> diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-g=
-uide/kernel-doc.rst
-> index af9697e60165..6fc89d444ada 100644
-> --- a/Documentation/doc-guide/kernel-doc.rst
-> +++ b/Documentation/doc-guide/kernel-doc.rst
-> @@ -54,7 +54,7 @@ Running the ``kernel-doc`` tool with increased verbosit=
-y and without actual
->  output generation may be used to verify proper formatting of the
->  documentation comments. For example::
+>  else # HAVE_SPHINX
+> @@ -105,7 +105,7 @@ quiet_cmd_sphinx =3D SPHINX  $@ --> file://$(abspath =
+$(BUILDDIR)/$3/$4)
+>  	fi
 > =20
-> -	scripts/kernel-doc -v -none drivers/foo/bar.c
-> +	tools/doc/kernel-doc -v -none drivers/foo/bar.c
+>  htmldocs:
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var=
+)))
 > =20
->  The documentation format is verified by the kernel build when it is
->  requested to perform extra gcc checks::
-> @@ -349,7 +349,7 @@ differentiated by whether the macro name is immediate=
-ly followed by a
->  left parenthesis ('(') for function-like macros or not followed by one
->  for object-like macros.
+>  # If Rust support is available and .config exists, add rustdoc generated=
+ contents.
+> @@ -119,7 +119,7 @@ endif
+>  endif
 > =20
-> -Function-like macros are handled like functions by ``scripts/kernel-doc`=
-`.
-> +Function-like macros are handled like functions by ``tools/doc/kernel-do=
-c``.
->  They may have a parameter list. Object-like macros have do not have a
->  parameter list.
+>  texinfodocs:
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,texinfo,$(var),tex=
+info,$(var)))
 > =20
-> @@ -571,7 +571,7 @@ from the source file.
+>  # Note: the 'info' Make target is generated by sphinx itself when
+> @@ -131,7 +131,7 @@ linkcheckdocs:
+>  	@$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,linkcheck,$(var),,$=
+(var)))
 > =20
->  The kernel-doc extension is included in the kernel source tree, at
->  ``Documentation/sphinx/kerneldoc.py``. Internally, it uses the
-> -``scripts/kernel-doc`` script to extract the documentation comments from=
- the
-> +``tools/doc/kernel-doc`` script to extract the documentation comments fr=
-om the
->  source.
+>  latexdocs:
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,latex,$(var),latex=
+,$(var)))
 > =20
->  .. _kernel_doc:
-> @@ -582,17 +582,17 @@ How to use kernel-doc to generate man pages
->  If you just want to use kernel-doc to generate man pages you can do this
->  from the kernel git tree::
+>  ifeq ($(HAVE_PDFLATEX),0)
+> @@ -144,7 +144,7 @@ else # HAVE_PDFLATEX
 > =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- :^Documentation :^tools) \
->      | scripts/split-man.pl /tmp/man
+>  pdfdocs: DENY_VF =3D XDG_CONFIG_HOME=3D$(FONTS_CONF_DENY_VF)
+>  pdfdocs: latexdocs
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	$(foreach var,$(SPHINXDIRS), \
+>  	   $(MAKE) PDFLATEX=3D"$(PDFLATEX)" LATEXOPTS=3D"$(LATEXOPTS)" $(DENY_V=
+F) -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/tools/doc/check-variable-fo=
+nts.sh || exit; \
+>  	   mkdir -p $(BUILDDIR)/$(var)/pdf; \
+> @@ -154,11 +154,11 @@ pdfdocs: latexdocs
+>  endif # HAVE_PDFLATEX
 > =20
->  Some older versions of git do not support some of the variants of syntax=
- for
->  path exclusion.  One of the following commands may work for those versio=
-ns::
+>  epubdocs:
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,epub,$(var),epub,$=
+(var)))
 > =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
->      | scripts/split-man.pl /tmp/man
+>  xmldocs:
+> -	@$(srctree)/scripts/sphinx-pre-install --version-check
+> +	@$(srctree)/tools/doc/sphinx-pre-install --version-check
+>  	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,xml,$(var),xml,$(v=
+ar)))
 > =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tool=
-s") \
->      | scripts/split-man.pl /tmp/man
-> diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuil=
-d.rst
-> index 3388a10f2dcc..ae7b0669e3ec 100644
-> --- a/Documentation/kbuild/kbuild.rst
-> +++ b/Documentation/kbuild/kbuild.rst
-> @@ -180,7 +180,7 @@ architecture.
->  KDOCFLAGS
->  ---------
->  Specify extra (warning/error) flags for kernel-doc checks during the bui=
-ld,
-> -see scripts/kernel-doc for which flags are supported. Note that this doe=
-sn't
-> +see tools/doc/kernel-doc for which flags are supported. Note that this d=
-oesn't
->  (currently) apply to documentation builds.
+>  endif # HAVE_SPHINX
+> diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide=
+/sphinx.rst
+> index 607589592bfb..2a0fc6c39cf4 100644
+> --- a/Documentation/doc-guide/sphinx.rst
+> +++ b/Documentation/doc-guide/sphinx.rst
+> @@ -106,7 +106,7 @@ There's a script that automatically checks for Sphinx=
+ dependencies. If it can
+>  recognize your distribution, it will also give a hint about the install
+>  command line options for your distro::
 > =20
->  ARCH
-> diff --git a/Documentation/process/coding-style.rst b/Documentation/proce=
-ss/coding-style.rst
-> index d1a8e5465ed9..b2d16449a27b 100644
-> --- a/Documentation/process/coding-style.rst
-> +++ b/Documentation/process/coding-style.rst
-> @@ -614,7 +614,7 @@ it.
+> -	$ ./scripts/sphinx-pre-install
+> +	$ ./tools/doc/sphinx-pre-install
+>  	Checking if the needed tools for Fedora release 26 (Twenty Six) are ava=
+ilable
+>  	Warning: better to also install "texlive-luatex85".
+>  	You should run:
+> @@ -116,7 +116,7 @@ command line options for your distro::
+>  		. sphinx_2.4.4/bin/activate
+>  		pip install -r Documentation/sphinx/requirements.txt
 > =20
->  When commenting the kernel API functions, please use the kernel-doc form=
-at.
->  See the files at :ref:`Documentation/doc-guide/ <doc_guide>` and
-> -``scripts/kernel-doc`` for details. Note that the danger of over-comment=
+> -	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pr=
+e-install line 468.
+> +	Can't build as 1 mandatory dependency is missing at ./tools/doc/sphinx-=
+pre-install line 468.
+> =20
+>  By default, it checks all the requirements for both html and PDF, includ=
 ing
-> +``tools/doc/kernel-doc`` for details. Note that the danger of over-comme=
-nting
->  applies to kernel-doc comments all the same. Do not add boilerplate
->  kernel-doc which simply reiterates what's obvious from the signature
->  of the function.
-> diff --git a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst b/=
-Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-> index aa0e31d353d6..05ea0f03c80b 100644
-> --- a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-> +++ b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-> @@ -80,7 +80,7 @@ Al fine di verificare che i commenti siano formattati c=
-orrettamente, potete
->  eseguire il programma ``kernel-doc`` con un livello di verbosit=C3=A0 al=
-to e senza
->  che questo produca alcuna documentazione. Per esempio::
+>  the requirements for images, math expressions and LaTeX build, and assum=
+es
+> diff --git a/Documentation/sphinx/kerneldoc-preamble.sty b/Documentation/=
+sphinx/kerneldoc-preamble.sty
+> index 5d68395539fe..736c2568377e 100644
+> --- a/Documentation/sphinx/kerneldoc-preamble.sty
+> +++ b/Documentation/sphinx/kerneldoc-preamble.sty
+> @@ -220,7 +220,7 @@
+>  	    If you want them, please install non-variable ``Noto Sans CJK''
+>  	    font families along with the texlive-xecjk package by following
+>  	    instructions from
+> -	    \sphinxcode{./scripts/sphinx-pre-install}.
+> +	    \sphinxcode{./tools/doc/sphinx-pre-install}.
+>  	    Having optional non-variable ``Noto Serif CJK'' font families will
+>  	    improve the looks of those translations.
+>  	\end{sphinxadmonition}}
+> diff --git a/Documentation/translations/it_IT/doc-guide/sphinx.rst b/Docu=
+mentation/translations/it_IT/doc-guide/sphinx.rst
+> index 1f513bc33618..104aa159c1ce 100644
+> --- a/Documentation/translations/it_IT/doc-guide/sphinx.rst
+> +++ b/Documentation/translations/it_IT/doc-guide/sphinx.rst
+> @@ -109,7 +109,7 @@ Sphinx. Se lo script riesce a riconoscere la vostra d=
+istribuzione, allora
+>  sar=C3=A0 in grado di darvi dei suggerimenti su come procedere per compl=
+etare
+>  l'installazione::
 > =20
-> -	scripts/kernel-doc -v -none drivers/foo/bar.c
-> +	tools/doc/kernel-doc -v -none drivers/foo/bar.c
+> -	$ ./scripts/sphinx-pre-install
+> +	$ ./tools/doc/sphinx-pre-install
+>  	Checking if the needed tools for Fedora release 26 (Twenty Six) are ava=
+ilable
+>  	Warning: better to also install "texlive-luatex85".
+>  	You should run:
+> @@ -119,7 +119,7 @@ l'installazione::
+>  		. sphinx_2.4.4/bin/activate
+>  		pip install -r Documentation/sphinx/requirements.txt
 > =20
->  Il formato della documentazione =C3=A8 verificato della procedura di gen=
+> -	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pr=
+e-install line 468.
+> +	Can't build as 1 mandatory dependency is missing at ./tools/doc/sphinx-=
+pre-install line 468.
+> =20
+>  L'impostazione predefinita prevede il controllo dei requisiti per la gen=
 erazione
->  del kernel quando viene richiesto di effettuare dei controlli extra con =
-GCC::
-> @@ -378,7 +378,7 @@ distinguono in base al fatto che il nome della macro =
-simile a funzione sia
->  immediatamente seguito da una parentesi sinistra ('(') mentre in quelle =
-simili a
->  oggetti no.
+>  di documenti html e PDF, includendo anche il supporto per le immagini, le
+> diff --git a/Documentation/translations/zh_CN/doc-guide/sphinx.rst b/Docu=
+mentation/translations/zh_CN/doc-guide/sphinx.rst
+> index 23eac67fbc30..3d2c4e262bb5 100644
+> --- a/Documentation/translations/zh_CN/doc-guide/sphinx.rst
+> +++ b/Documentation/translations/zh_CN/doc-guide/sphinx.rst
+> @@ -84,7 +84,7 @@ PDF=E5=92=8CLaTeX=E6=9E=84=E5=BB=BA
+>  =E8=BF=99=E6=9C=89=E4=B8=80=E4=B8=AA=E8=84=9A=E6=9C=AC=E5=8F=AF=E4=BB=A5=
+=E8=87=AA=E5=8A=A8=E6=A3=80=E6=9F=A5Sphinx=E4=BE=9D=E8=B5=96=E9=A1=B9=E3=80=
+=82=E5=A6=82=E6=9E=9C=E5=AE=83=E8=AE=A4=E5=BE=97=E6=82=A8=E7=9A=84=E5=8F=91=
+=E8=A1=8C=E7=89=88=EF=BC=8C=E8=BF=98=E4=BC=9A=E6=8F=90=E7=A4=BA=E6=82=A8=E6=
+=89=80=E7=94=A8=E5=8F=91=E8=A1=8C
+>  =E7=89=88=E7=9A=84=E5=AE=89=E8=A3=85=E5=91=BD=E4=BB=A4::
 > =20
-> -Le macro simili a funzioni sono gestite come funzioni da ``scripts/kerne=
-l-doc``.
-> +Le macro simili a funzioni sono gestite come funzioni da ``tools/doc/ker=
-nel-doc``.
->  Possono avere un elenco di parametri. Le macro simili a oggetti non hann=
-o un
->  elenco di parametri.
+> -	$ ./scripts/sphinx-pre-install
+> +	$ ./tools/doc/sphinx-pre-install
+>  	Checking if the needed tools for Fedora release 26 (Twenty Six) are ava=
+ilable
+>  	Warning: better to also install "texlive-luatex85".
+>  	You should run:
+> @@ -94,7 +94,7 @@ PDF=E5=92=8CLaTeX=E6=9E=84=E5=BB=BA
+>  		. sphinx_2.4.4/bin/activate
+>  		pip install -r Documentation/sphinx/requirements.txt
 > =20
-> @@ -595,7 +595,7 @@ documentazione presenti nel file sorgente (*source*).
+> -	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pr=
+e-install line 468.
+> +	Can't build as 1 mandatory dependency is missing at ./tools/doc/sphinx-=
+pre-install line 468.
 > =20
->  L'estensione kernel-doc fa parte dei sorgenti del kernel, la si pu=C3=B2=
- trovare
->  in ``Documentation/sphinx/kerneldoc.py``. Internamente, viene utilizzato
-> -lo script ``scripts/kernel-doc`` per estrarre i commenti di documentazio=
-ne
-> +lo script ``tools/doc/kernel-doc`` per estrarre i commenti di documentaz=
-ione
->  dai file sorgenti.
+>  =E9=BB=98=E8=AE=A4=E6=83=85=E5=86=B5=E4=B8=8B=EF=BC=8C=E5=AE=83=E4=BC=9A=
+=E6=A3=80=E6=9F=A5html=E5=92=8CPDF=E7=9A=84=E6=89=80=E6=9C=89=E4=BE=9D=E8=
+=B5=96=E9=A1=B9=EF=BC=8C=E5=8C=85=E6=8B=AC=E5=9B=BE=E5=83=8F=E3=80=81=E6=95=
+=B0=E5=AD=A6=E8=A1=A8=E8=BE=BE=E5=BC=8F=E5=92=8CLaTeX=E6=9E=84=E5=BB=BA=E7=
+=9A=84
+>  =E9=9C=80=E6=B1=82=EF=BC=8C=E5=B9=B6=E5=81=87=E8=AE=BE=E5=B0=86=E4=BD=BF=
+=E7=94=A8=E8=99=9A=E6=8B=9FPython=E7=8E=AF=E5=A2=83=E3=80=82html=E6=9E=84=
+=E5=BB=BA=E6=89=80=E9=9C=80=E7=9A=84=E4=BE=9D=E8=B5=96=E9=A1=B9=E8=A2=AB=E8=
+=AE=A4=E4=B8=BA=E6=98=AF=E5=BF=85=E9=9C=80=E7=9A=84=EF=BC=8C=E5=85=B6=E4=BB=
+=96=E4=BE=9D
+> diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/=
+translations/zh_CN/how-to.rst
+> index cf66c72ee0c5..77da507d29cf 100644
+> --- a/Documentation/translations/zh_CN/how-to.rst
+> +++ b/Documentation/translations/zh_CN/how-to.rst
+> @@ -64,7 +64,7 @@ Linux =E5=8F=91=E8=A1=8C=E7=89=88=E5=92=8C=E7=AE=80=E5=
+=8D=95=E5=9C=B0=E4=BD=BF=E7=94=A8 Linux =E5=91=BD=E4=BB=A4=E8=A1=8C=EF=BC=
+=8C=E9=82=A3=E4=B9=88=E5=8F=AF=E4=BB=A5=E8=BF=85=E9=80=9F=E5=BC=80=E5=A7=8B=
+=E4=BA=86
+>  ::
 > =20
->  Come utilizzare kernel-doc per generare pagine man
-> @@ -604,4 +604,4 @@ Come utilizzare kernel-doc per generare pagine man
->  Se volete utilizzare kernel-doc solo per generare delle pagine man, pote=
-te
->  farlo direttamente dai sorgenti del kernel::
+>  	cd linux
+> -	./scripts/sphinx-pre-install
+> +	./tools/doc/sphinx-pre-install
 > =20
-> -  $ scripts/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^t=
-ools) | scripts/split-man.pl /tmp/man
-> +  $ tools/doc/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :=
-^tools) | scripts/split-man.pl /tmp/man
-> diff --git a/Documentation/translations/sp_SP/process/coding-style.rst b/=
-Documentation/translations/sp_SP/process/coding-style.rst
-> index 025223be9706..73c43b49480f 100644
-> --- a/Documentation/translations/sp_SP/process/coding-style.rst
-> +++ b/Documentation/translations/sp_SP/process/coding-style.rst
-> @@ -633,7 +633,7 @@ posiblemente POR QU=C3=89 hace esto.
-> =20
->  Al comentar las funciones de la API del kernel, utilice el formato
->  kernel-doc. Consulte los archivos en :ref:`Documentation/doc-guide/ <doc=
-_guide>`
-> -y ``scripts/kernel-doc`` para m=C3=A1s detalles.
-> +y ``tools/doc/kernel-doc`` para m=C3=A1s detalles.
-> =20
->  El estilo preferido para comentarios largos (de varias l=C3=ADneas) es:
-> =20
-> diff --git a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst b/=
-Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-> index ccfb9b8329c2..b242e52f911c 100644
-> --- a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-> +++ b/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-> @@ -43,7 +43,7 @@ kernel-doc=E6=B3=A8=E9=87=8A=E7=94=A8 ``/**`` =E4=BD=9C=
-=E4=B8=BA=E5=BC=80=E5=A7=8B=E6=A0=87=E8=AE=B0=E3=80=82 ``kernel-doc`` =E5=
-=B7=A5=E5=85=B7=E5=B0=86=E6=8F=90=E5=8F=96
->  =E7=94=A8=E8=AF=A6=E7=BB=86=E6=A8=A1=E5=BC=8F=E5=92=8C=E4=B8=8D=E7=94=9F=
-=E6=88=90=E5=AE=9E=E9=99=85=E8=BE=93=E5=87=BA=E6=9D=A5=E8=BF=90=E8=A1=8C ``=
-kernel-doc`` =E5=B7=A5=E5=85=B7=EF=BC=8C=E5=8F=AF=E4=BB=A5=E9=AA=8C=E8=AF=
-=81=E6=96=87=E6=A1=A3=E6=B3=A8=E9=87=8A=E7=9A=84=E6=A0=BC=E5=BC=8F
->  =E6=98=AF=E5=90=A6=E6=AD=A3=E7=A1=AE=E3=80=82=E4=BE=8B=E5=A6=82::
-> =20
-> -	scripts/kernel-doc -v -none drivers/foo/bar.c
-> +	tools/doc/kernel-doc -v -none drivers/foo/bar.c
-> =20
->  =E5=BD=93=E8=AF=B7=E6=B1=82=E6=89=A7=E8=A1=8C=E9=A2=9D=E5=A4=96=E7=9A=84=
-gcc=E6=A3=80=E6=9F=A5=E6=97=B6=EF=BC=8C=E5=86=85=E6=A0=B8=E6=9E=84=E5=BB=BA=
-=E5=B0=86=E9=AA=8C=E8=AF=81=E6=96=87=E6=A1=A3=E6=A0=BC=E5=BC=8F::
-> =20
-> @@ -473,7 +473,7 @@ doc: *title*
->  =E5=A6=82=E6=9E=9C=E6=B2=A1=E6=9C=89=E9=80=89=E9=A1=B9=EF=BC=8Ckernel-do=
-c=E6=8C=87=E4=BB=A4=E5=B0=86=E5=8C=85=E5=90=AB=E6=BA=90=E6=96=87=E4=BB=B6=
-=E4=B8=AD=E7=9A=84=E6=89=80=E6=9C=89=E6=96=87=E6=A1=A3=E6=B3=A8=E9=87=8A=E3=
-=80=82
-> =20
->  kernel-doc=E6=89=A9=E5=B1=95=E5=8C=85=E5=90=AB=E5=9C=A8=E5=86=85=E6=A0=
-=B8=E6=BA=90=E4=BB=A3=E7=A0=81=E6=A0=91=E4=B8=AD=EF=BC=8C=E4=BD=8D=E4=BA=8E=
- ``Documentation/sphinx/kerneldoc.py`` =E3=80=82
-> -=E5=9C=A8=E5=86=85=E9=83=A8=EF=BC=8C=E5=AE=83=E4=BD=BF=E7=94=A8 ``script=
-s/kernel-doc`` =E8=84=9A=E6=9C=AC=E4=BB=8E=E6=BA=90=E4=BB=A3=E7=A0=81=E4=B8=
-=AD=E6=8F=90=E5=8F=96=E6=96=87=E6=A1=A3=E6=B3=A8=E9=87=8A=E3=80=82
-> +=E5=9C=A8=E5=86=85=E9=83=A8=EF=BC=8C=E5=AE=83=E4=BD=BF=E7=94=A8 ``tools/=
-doc/kernel-doc`` =E8=84=9A=E6=9C=AC=E4=BB=8E=E6=BA=90=E4=BB=A3=E7=A0=81=E4=
-=B8=AD=E6=8F=90=E5=8F=96=E6=96=87=E6=A1=A3=E6=B3=A8=E9=87=8A=E3=80=82
-> =20
->  .. _kernel_doc_zh:
-> =20
-> @@ -482,18 +482,18 @@ kernel-doc=E6=89=A9=E5=B1=95=E5=8C=85=E5=90=AB=E5=
-=9C=A8=E5=86=85=E6=A0=B8=E6=BA=90=E4=BB=A3=E7=A0=81=E6=A0=91=E4=B8=AD=EF=BC=
-=8C=E4=BD=8D=E4=BA=8E ``Documentation/sphinx/k
-> =20
->  =E5=A6=82=E6=9E=9C=E6=82=A8=E5=8F=AA=E6=83=B3=E4=BD=BF=E7=94=A8kernel-do=
-c=E7=94=9F=E6=88=90=E6=89=8B=E5=86=8C=E9=A1=B5=EF=BC=8C=E5=8F=AF=E4=BB=A5=
-=E4=BB=8E=E5=86=85=E6=A0=B8git=E6=A0=91=E8=BF=99=E6=A0=B7=E5=81=9A::
-> =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- :^Documentation :^tools) \
->      | scripts/split-man.pl /tmp/man
-> =20
->  =E4=B8=80=E4=BA=9B=E6=97=A7=E7=89=88=E6=9C=AC=E7=9A=84git=E4=B8=8D=E6=94=
-=AF=E6=8C=81=E8=B7=AF=E5=BE=84=E6=8E=92=E9=99=A4=E8=AF=AD=E6=B3=95=E7=9A=84=
-=E6=9F=90=E4=BA=9B=E5=8F=98=E4=BD=93=E3=80=82
->  =E4=BB=A5=E4=B8=8B=E5=91=BD=E4=BB=A4=E4=B9=8B=E4=B8=80=E5=8F=AF=E8=83=BD=
-=E9=80=82=E7=94=A8=E4=BA=8E=E8=BF=99=E4=BA=9B=E7=89=88=E6=9C=AC::
-> =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
->      | scripts/split-man.pl /tmp/man
-> =20
-> -  $ scripts/kernel-doc -man \
-> +  $ tools/doc/kernel-doc -man \
->      $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tool=
-s") \
->      | scripts/split-man.pl /tmp/man
-> =20
-> diff --git a/Documentation/translations/zh_CN/kbuild/kbuild.rst b/Documen=
-tation/translations/zh_CN/kbuild/kbuild.rst
-> index e5e2aebe1ebc..3650a48a8db6 100644
-> --- a/Documentation/translations/zh_CN/kbuild/kbuild.rst
-> +++ b/Documentation/translations/zh_CN/kbuild/kbuild.rst
-> @@ -158,7 +158,7 @@ UTS_MACHINE =E5=8F=98=E9=87=8F=EF=BC=88=E5=9C=A8=E6=
-=9F=90=E4=BA=9B=E6=9E=B6=E6=9E=84=E4=B8=AD=E8=BF=98=E5=8C=85=E6=8B=AC=E5=86=
-=85=E6=A0=B8=E9=85=8D=E7=BD=AE=EF=BC=89=E6=9D=A5=E7=8C=9C=E6=B5=8B=E6=AD=A3=
-=E7=A1=AE
->  KDOCFLAGS
->  ---------
->  =E6=8C=87=E5=AE=9A=E5=9C=A8=E6=9E=84=E5=BB=BA=E8=BF=87=E7=A8=8B=E4=B8=AD=
-=E7=94=A8=E4=BA=8E kernel-doc =E6=A3=80=E6=9F=A5=E7=9A=84=E9=A2=9D=E5=A4=96=
-=EF=BC=88=E8=AD=A6=E5=91=8A/=E9=94=99=E8=AF=AF=EF=BC=89=E6=A0=87=E5=BF=97=
-=EF=BC=8C=E6=9F=A5=E7=9C=8B
-> -scripts/kernel-doc =E4=BA=86=E8=A7=A3=E6=94=AF=E6=8C=81=E7=9A=84=E6=A0=
-=87=E5=BF=97=E3=80=82=E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8C=E8=BF=99=E7=9B=AE=
-=E5=89=8D=E4=B8=8D=E9=80=82=E7=94=A8=E4=BA=8E=E6=96=87=E6=A1=A3=E6=9E=84=E5=
-=BB=BA=E3=80=82
-> +tools/doc/kernel-doc =E4=BA=86=E8=A7=A3=E6=94=AF=E6=8C=81=E7=9A=84=E6=A0=
-=87=E5=BF=97=E3=80=82=E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8C=E8=BF=99=E7=9B=AE=
-=E5=89=8D=E4=B8=8D=E9=80=82=E7=94=A8=E4=BA=8E=E6=96=87=E6=A1=A3=E6=9E=84=E5=
-=BB=BA=E3=80=82
-> =20
->  ARCH
->  ----
-> diff --git a/Documentation/translations/zh_CN/process/coding-style.rst b/=
-Documentation/translations/zh_CN/process/coding-style.rst
-> index 0484d0c65c25..64f0c13ff831 100644
-> --- a/Documentation/translations/zh_CN/process/coding-style.rst
-> +++ b/Documentation/translations/zh_CN/process/coding-style.rst
-> @@ -545,7 +545,7 @@ Linux =E9=87=8C=E8=BF=99=E6=98=AF=E6=8F=90=E5=80=A1=
-=E7=9A=84=E5=81=9A=E6=B3=95=EF=BC=8C=E5=9B=A0=E4=B8=BA=E8=BF=99=E6=A0=B7=E5=
-=8F=AF=E4=BB=A5=E5=BE=88=E7=AE=80=E5=8D=95=E7=9A=84=E7=BB=99=E8=AF=BB=E8=80=
-=85=E6=8F=90=E4=BE=9B
->  =E4=B9=9F=E5=8F=AF=E4=BB=A5=E5=8A=A0=E4=B8=8A=E5=AE=83=E5=81=9A=E8=BF=99=
-=E4=BA=9B=E4=BA=8B=E6=83=85=E7=9A=84=E5=8E=9F=E5=9B=A0=E3=80=82
-> =20
->  =E5=BD=93=E6=B3=A8=E9=87=8A=E5=86=85=E6=A0=B8 API =E5=87=BD=E6=95=B0=E6=
-=97=B6=EF=BC=8C=E8=AF=B7=E4=BD=BF=E7=94=A8 kernel-doc =E6=A0=BC=E5=BC=8F=E3=
-=80=82=E8=AF=A6=E8=A7=81
-> -Documentation/translations/zh_CN/doc-guide/index.rst =E5=92=8C scripts/k=
-ernel-doc =E3=80=82
-> +Documentation/translations/zh_CN/doc-guide/index.rst =E5=92=8C tools/doc=
-/kernel-doc =E3=80=82
-> =20
->  =E9=95=BF (=E5=A4=9A=E8=A1=8C) =E6=B3=A8=E9=87=8A=E7=9A=84=E9=A6=96=E9=
-=80=89=E9=A3=8E=E6=A0=BC=E6=98=AF=EF=BC=9A
-> =20
-> diff --git a/Documentation/translations/zh_TW/process/coding-style.rst b/=
-Documentation/translations/zh_TW/process/coding-style.rst
-> index 311c6f6bad0b..1e9dee6bbdd0 100644
-> --- a/Documentation/translations/zh_TW/process/coding-style.rst
-> +++ b/Documentation/translations/zh_TW/process/coding-style.rst
-> @@ -548,7 +548,7 @@ Linux =E8=A3=8F=E9=80=99=E6=98=AF=E6=8F=90=E5=80=A1=
-=E7=9A=84=E5=81=9A=E6=B3=95=EF=BC=8C=E5=9B=A0=E7=88=B2=E9=80=99=E6=A8=A3=E5=
-=8F=AF=E4=BB=A5=E5=BE=88=E7=B0=A1=E5=96=AE=E7=9A=84=E7=B5=A6=E8=AE=80=E8=80=
-=85=E6=8F=90=E4=BE=9B
->  =E4=B9=9F=E5=8F=AF=E4=BB=A5=E5=8A=A0=E4=B8=8A=E5=AE=83=E5=81=9A=E9=80=99=
-=E4=BA=9B=E4=BA=8B=E6=83=85=E7=9A=84=E5=8E=9F=E5=9B=A0=E3=80=82
-> =20
->  =E7=95=B6=E8=A8=BB=E9=87=8B=E5=85=A7=E6=A0=B8 API =E5=87=BD=E6=95=B8=E6=
-=99=82=EF=BC=8C=E8=AB=8B=E4=BD=BF=E7=94=A8 kernel-doc =E6=A0=BC=E5=BC=8F=E3=
-=80=82=E8=A9=B3=E8=A6=8B
-> -Documentation/translations/zh_CN/doc-guide/index.rst =E5=92=8C scripts/k=
-ernel-doc =E3=80=82
-> +Documentation/translations/zh_CN/doc-guide/index.rst =E5=92=8C tools/doc=
-/kernel-doc =E3=80=82
-> =20
->  =E9=95=B7 (=E5=A4=9A=E8=A1=8C) =E8=A8=BB=E9=87=8B=E7=9A=84=E9=A6=96=E9=
-=81=B8=E9=A2=A8=E6=A0=BC=E6=98=AF=EF=BC=9A
+>  =E4=BB=A5 Fedora =E4=B8=BA=E4=BE=8B=EF=BC=8C=E5=AE=83=E7=9A=84=E8=BE=93=
+=E5=87=BA=E6=98=AF=E8=BF=99=E6=A0=B7=E7=9A=84::
 > =20
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index c2d2ce92bf79..0fa427577f15 100644
+> index b41b78215035..2f1374130240 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -7302,7 +7302,6 @@ P:	Documentation/doc-guide/maintainer-profile.rst
->  T:	git git://git.lwn.net/linux.git docs-next
->  F:	Documentation/
->  F:	tools/doc/
-> -F:	scripts/kernel-doc*
+> @@ -7306,7 +7306,6 @@ F:	scripts/kernel-doc*
 >  F:	scripts/lib/abi/*
 >  F:	scripts/lib/kdoc/*
 >  F:	tools/net/ynl/pyynl/lib/doc_generator.py
-> diff --git a/Makefile b/Makefile
-> index 6bfe776bf3c5..44577bd357bb 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -460,7 +460,7 @@ HOSTPKG_CONFIG	=3D pkg-config
+> -F:	scripts/sphinx-pre-install
+>  X:	Documentation/ABI/
+>  X:	Documentation/admin-guide/media/
+>  X:	Documentation/devicetree/
+> @@ -7341,7 +7340,6 @@ L:	linux-doc@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/sphinx/parse-headers.pl
+>  F:	tools/doc/
+> -F:	scripts/sphinx-pre-install
 > =20
->  # the KERNELDOC macro needs to be exported, as scripts/Makefile.build
->  # has a logic to call it
-> -KERNELDOC       =3D $(srctree)/scripts/kernel-doc.py
-> +KERNELDOC       =3D $(srctree)/tools/doc/kernel-doc.py
->  export KERNELDOC
-> =20
->  KBUILD_USERHOSTCFLAGS :=3D -Wall -Wmissing-prototypes -Wstrict-prototype=
-s \
-> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> index 853543443072..6e732e0079c1 100644
-> --- a/drivers/gpu/drm/i915/Makefile
-> +++ b/drivers/gpu/drm/i915/Makefile
-> @@ -426,7 +426,7 @@ always-$(CONFIG_DRM_I915_WERROR) +=3D \
-> =20
->  quiet_cmd_hdrtest =3D HDRTEST $(patsubst %.hdrtest,%.h,$@)
->        cmd_hdrtest =3D $(CC) $(filter-out $(CFLAGS_GCOV), $(c_flags)) -S =
--o /dev/null -x c /dev/null -include $<; \
-> -		$(srctree)/scripts/kernel-doc -none -Werror $<; touch $@
-> +		$(srctree)/tools/doc/kernel-doc -none -Werror $<; touch $@
-> =20
->  $(obj)/%.hdrtest: $(src)/%.h FORCE
->  	$(call if_changed_dep,hdrtest)
-> diff --git a/scripts/find-unused-docs.sh b/scripts/find-unused-docs.sh
-> index d6d397fbf917..0ae445dec2e4 100755
-> --- a/scripts/find-unused-docs.sh
-> +++ b/scripts/find-unused-docs.sh
-> @@ -54,7 +54,7 @@ for file in `find $1 -name '*.c'`; do
->  	if [[ ${FILES_INCLUDED[$file]+_} ]]; then
->  	continue;
->  	fi
-> -	str=3D$(PYTHONDONTWRITEBYTECODE=3D1 scripts/kernel-doc -export "$file" =
-2>/dev/null)
-> +	str=3D$(PYTHONDONTWRITEBYTECODE=3D1 tools/doc/kernel-doc -export "$file=
-" 2>/dev/null)
->  	if [[ -n "$str" ]]; then
->  	echo "$file"
->  	fi
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> deleted file mode 120000
-> index 3b6ef807791a..000000000000
-> --- a/scripts/kernel-doc
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -kernel-doc.py
-> \ No newline at end of file
-> diff --git a/scripts/kernel-doc.py b/tools/doc/kernel-doc
+>  DOCUMENTATION/ITALIAN
+>  M:	Federico Vaga <federico.vaga@vaga.pv.it>
+> diff --git a/scripts/sphinx-pre-install b/tools/doc/sphinx-pre-install
 > similarity index 100%
-> rename from scripts/kernel-doc.py
-> rename to tools/doc/kernel-doc
+> rename from scripts/sphinx-pre-install
+> rename to tools/doc/sphinx-pre-install
 
 
 
