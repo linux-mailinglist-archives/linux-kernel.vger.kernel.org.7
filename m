@@ -1,163 +1,444 @@
-Return-Path: <linux-kernel+bounces-767137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CC6B24FD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:32:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2D9B24F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82F42A1A82
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:21:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1545F7A1F81
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B37288CB5;
-	Wed, 13 Aug 2025 16:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FC5286417;
+	Wed, 13 Aug 2025 16:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0S2YRBz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hjfjjjTU"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5045C288C34;
-	Wed, 13 Aug 2025 16:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9991326E6FE
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101980; cv=none; b=rI97LJ8FVIVBZSZuL/oTBHgfi7Uoh4PJgR0FDJcnZ+OXHvlte7wZZ0rmSK7koYesvmqXQYf1kedvIIGyASkY0KlbzYv2nOs2hj0BlGXq3g8UIvlZJMs9RdnoNYTBD4MMt9SJBeo3TcsuFhP2mB/pMJGjVcG8U5G3ivnKRceNPug=
+	t=1755102123; cv=none; b=dl7UNCRa8Oxar6+GLySaKEmsvx9oiUiFQoL5efiOnj/g7OHzfJOSdpiK0Q2stirrkA87FaxNvby+dBuj8eCJ0jnsbcu9cg97AmycgNoFxLg48ynjle6kXhS+4P9yGgoeTGCiU1BLrlqhInE701RpNOtqaGh3WmZ4jUSmsBL8CvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101980; c=relaxed/simple;
-	bh=zktYY27yEtPifC5oo8BefdXqq2I5u3RdgBI9sbeT2qI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ut8BC6OE+argAHrX2LEvcPCyDe4qkd/FhVJ0XHR2Vmgv3TPfgvVdf4N1D40CIxOZuFrTlj5pdSLiVNNq77nz2Grpg0sKk/tRyCz4LTwpkHO5iko50TS8PiY36eao89XW00qeP4BJToa0GpzD7ZxSULZ5zdySLSgvmLUUY/75oDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0S2YRBz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3822BC4CEEB;
-	Wed, 13 Aug 2025 16:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755101978;
-	bh=zktYY27yEtPifC5oo8BefdXqq2I5u3RdgBI9sbeT2qI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y0S2YRBzfti9YauFJtc0246BQaU8Vz4CII8FiOkOv1smqtWTMZvDlNtwRLlpz6Z2i
-	 lMSMvi5S/qe+VDAdrCLvRj81AE7F4qPPQ9DP5DmSKUWv4yPlmvnsWgt76mVofMB/FN
-	 86tSaObspWlM0FZ2jFZegEzS+8e0uPn151PUrl24VNgYDCqKFzYOZ+rco7qP8j/1y7
-	 d1qUhzP74UlJfN8lrP3o465itcMvtYOMAdjhkrDApbtaUAPXhIzR7z4+aqhM3g9b8x
-	 Pw0vwX6LObtKhrGCN1ieH7uB16pru91AcfI5uCRkcJ1E7OQHmfi21dWdjaWgAN/BHz
-	 4y7tyUcz7JeDg==
-Message-ID: <017a4d15-286d-4e0a-89ff-f658009a6de6@kernel.org>
-Date: Wed, 13 Aug 2025 18:19:34 +0200
+	s=arc-20240116; t=1755102123; c=relaxed/simple;
+	bh=FCtBWS7G7QSfGS21fNpnoOvL2XzwY20HFRw2SobIDWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EOcm/qplsmwfK0w0gA21+RM3+JYIw0BYS7lbkBlnqb+sNdrCPUX8qR359oEXdb0sDSA6I9V22wQow+VjbUhRh8wT7pjCk36mWqNsCEB9EfCB2kd3LKBH85JVU2C0728FslbHwY9vWx24+uoBrz0FZ1MoAfiHeJAINyrxKmNvujI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hjfjjjTU; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b0bf04716aso343931cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755102119; x=1755706919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4QinmQQFXomCWAaJH8CKN0I0il8aAmJNtIteVH369jE=;
+        b=hjfjjjTUXhEx74ETrH26k53+U9I45rcNMOqNAot3nLQdCc1C2ebG1u60Q+j6AVYxEq
+         o4fYN+V+2rbZdn7xM16NFlWL/195RPaTKYyzUCzECK9Xr15ZzHcNcK19Q4QvWi52F3Qk
+         JPToC2+Cd2MXhKkfpR1aY787na+MLSz2IY84myNPxQ3NFUJ2+473c9K+R0H7LW5e8lFD
+         pTAqL3H+NJJp44WOfNLejv2vPhhFXZbWe2h8j8HccQKO86dEZQWGoVcXlMM13bW4gOl+
+         luwYpmPJ0X6RVk7zCqJL0bP9FFxweSVyg+KChB90SFf812c/J9C0rrvsSB4aviuzVF5R
+         3sNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755102119; x=1755706919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4QinmQQFXomCWAaJH8CKN0I0il8aAmJNtIteVH369jE=;
+        b=n87+r2/d+Q3igh2pzbSNAFx3dCdR2D1y+hfzPzeXm9bPvkFrOYKsIA8NSVTLAG03Ph
+         oMfkpIZ5nyU8KSQOOMY05p9Q2CGngWzQ8Nj0KAKxWpmc/5cqGlYGzvV66r670wgmJhZp
+         v7N9nGVkfNiHkAMLd8cjvoHR3a595/g3qCSyZQcCiDbLZPjCq7twVeM+/FXx/NKmJlRE
+         OLFnpM2nC/iNkcguY7kpRcD4iQq/xPOPm5SJ7JV4OTV0Sq700u65OsYhcCEPJkCcbg3C
+         Mm+O3LeUCnWg/v66x0/pm+41Y1p+se4Dky3RlvC85kf71Yi2SzNmzf0p8v68gHvEMwfc
+         9G7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjqBO5xrBUm8ul4bsXGe/g00HrpqhSv4Wz8yX4WPX9oj2g4nb5LDxL6tpO8t9r1h4qnwzLgGgdHb7ciCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyclF9ZyiUDlbV39wwK6EtbLwAXzC0KRNStqmJASxwVbH35qiz5
+	x43t5HEkAeauSEDbdbltSDQUoqxf+wDa5baLACLzgNVaOzVWHKwJU1An3qKPm1O3UnSv+kXQvxz
+	++bnQi+N0uXVrotAk1wwX6n6pNThmatDmkBRAyS2D
+X-Gm-Gg: ASbGnctTW0JJKR08HZPN6hpceiRec1wA4ronp7h3XVJuK7YPkbGZKNTWYeV60QdcwDK
+	F6lI/lUPVejkGoDymB3euibd4vC6UnHyYodwtjMzvsV+zET13z32tfa5PW183T32OqLW9H5Adu0
+	SOo1uMwXj6c1SYK8/sL2ft5LuAQ8gPpfT347bTFaSzcGSEgmgvGBuN1plPAXwiblL50VouAs4ae
+	1z9UI3uy0nOPL9+2cCr4ER36FKq4uhSEpOoCrgyFOTGDc1V0sTs4EfA
+X-Google-Smtp-Source: AGHT+IGGAjAQlJAs/6fOMgvF3DcusMKTQOaQbjz9ZrFKQ1wo0Qm87n6yg3dhd+rsJGWsOVYpbpOk1wnlAHiH0dZ6fyQ=
+X-Received: by 2002:ac8:7f92:0:b0:4b0:83a3:9bac with SMTP id
+ d75a77b69052e-4b0fdbc7fc6mr3865131cf.17.1755102118775; Wed, 13 Aug 2025
+ 09:21:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] spi: dt-bindings: add doc for Amlogic A113L2 SFC
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>,
- Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-References: <20250808-spifc-v1-0-ff4e30e26a6b@amlogic.com>
- <20250808-spifc-v1-1-ff4e30e26a6b@amlogic.com>
- <20250808-adamant-fat-raven-38c8b3@kuoka>
- <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
- <5cc336bc-f071-41d2-b59a-af0df23af00b@kernel.org>
- <d872a711-7442-4e2e-bc59-0d6f4f656fde@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <d872a711-7442-4e2e-bc59-0d6f4f656fde@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250808152850.2580887-1-surenb@google.com> <20250808152850.2580887-2-surenb@google.com>
+ <7d3b4b0c-f905-4622-95a8-e4d076dc71d4@lucifer.local>
+In-Reply-To: <7d3b4b0c-f905-4622-95a8-e4d076dc71d4@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 13 Aug 2025 16:21:47 +0000
+X-Gm-Features: Ac12FXycH4KgQhHe2VKUKoPE6OrMOaMbLer1JM-gxVxQlhmfWUD7HLZEVfP2gtE
+Message-ID: <CAJuCfpH+Mg7P--sP7LmhhUgGSU0AwmoJLYGyvft5fPC0Mz1P6w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] selftests/proc: test PROCMAP_QUERY ioctl while vma
+ is concurrently modified
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	SeongJae Park <sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/08/2025 11:34, Xianwei Zhao wrote:
-> Hi Krzysztof,
->     Thanks  for your reply.
-> 
-> On 2025/8/13 15:36, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On 13/08/2025 08:13, Xianwei Zhao wrote:
->>>>> +allOf:
->>>>> +  - $ref: /schemas/spi/spi-controller.yaml#
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: amlogic,a4-spifc
->>>>> +
->>>>> +  reg:
->>>>> +    items:
->>>>> +      - description: core registers
->>>>> +      - description: parent clk control registers
->>>>
->>>> Why are you poking to parent node or to clock registers? This looks like
->>>> mixing up device address spaces.
->>>>
->>>
->>> The SPIFC bus clock multiplexes EMMC modules, so the corresponding
->>> frequency division register is also in EMMC module. The SPIFC and the
->>> EMMC modules cannot be used simultaneously.
->>
->> Then obviously you cannot put here EMMC or parent registers.
->>
->> It looks really like you miss proper hardware representation.
->>
-> 
-> It does seem a bit unusual. However, in our hardware design, EMMC and 
-> SFC modules are integrated, and they share common resources such as the 
-> clock and I/O pins .They are mutually exclusive.
-> 
+On Wed, Aug 13, 2025 at 1:39=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Aug 08, 2025 at 08:28:47AM -0700, Suren Baghdasaryan wrote:
+> > Extend /proc/pid/maps tearing tests to verify PROCMAP_QUERY ioctl opera=
+tion
+> > correctness while the vma is being concurrently modified.
+> >
+>
+> General comment, but I really feel like this stuff is mm-specific. Yes it=
+ uses
+> proc, but it's using it to check for mm functionality.
+>
+> I mean I'd love for these to be in the mm self tests but I get obviously =
+why
+> they're in the proc ones...
+>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Tested-by: SeongJae Park <sj@kernel.org>
+> > Acked-by: SeongJae Park <sj@kernel.org>
+>
+> The tests themselves look good, had a good look through. But I've given y=
+ou
+> some nice ASCII diagrams to sprinkle liberally around :)
 
-How did you express it in DT? This looks similar to serial engines and
-such are not implemented independently.
+Thanks for the commentary, Lorenzo, it is great! I think I'll post
+them as a follow-up patch since they do not change the functionality
+of the test.
 
-> Here, I'll modify the register description. Do you think it's feasible
+>
+> Anyway for tests themselves:
+>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-No, because it changes nothing... Clock provider pokes clock divider
-registers. Not clock consumer.
+Thanks!
 
-Best regards,
-Krzysztof
+>
+> > ---
+> >  tools/testing/selftests/proc/proc-maps-race.c | 65 +++++++++++++++++++
+> >  1 file changed, 65 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/test=
+ing/selftests/proc/proc-maps-race.c
+> > index 94bba4553130..a546475db550 100644
+> > --- a/tools/testing/selftests/proc/proc-maps-race.c
+> > +++ b/tools/testing/selftests/proc/proc-maps-race.c
+> > @@ -32,6 +32,8 @@
+> >  #include <stdlib.h>
+> >  #include <string.h>
+> >  #include <unistd.h>
+> > +#include <linux/fs.h>
+> > +#include <sys/ioctl.h>
+> >  #include <sys/mman.h>
+> >  #include <sys/stat.h>
+> >  #include <sys/types.h>
+> > @@ -317,6 +319,25 @@ static bool capture_mod_pattern(FIXTURE_DATA(proc_=
+maps_race) *self,
+> >              strcmp(restored_first_line->text, self->first_line.text) =
+=3D=3D 0;
+> >  }
+> >
+> > +static bool query_addr_at(int maps_fd, void *addr,
+> > +                       unsigned long *vma_start, unsigned long *vma_en=
+d)
+> > +{
+> > +     struct procmap_query q;
+> > +
+> > +     memset(&q, 0, sizeof(q));
+> > +     q.size =3D sizeof(q);
+> > +     /* Find the VMA at the split address */
+> > +     q.query_addr =3D (unsigned long long)addr;
+> > +     q.query_flags =3D 0;
+> > +     if (ioctl(maps_fd, PROCMAP_QUERY, &q))
+> > +             return false;
+> > +
+> > +     *vma_start =3D q.vma_start;
+> > +     *vma_end =3D q.vma_end;
+> > +
+> > +     return true;
+> > +}
+> > +
+> >  static inline bool split_vma(FIXTURE_DATA(proc_maps_race) *self)
+> >  {
+> >       return mmap(self->mod_info->addr, self->page_size, self->mod_info=
+->prot | PROT_EXEC,
+> > @@ -559,6 +580,8 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split=
+)
+> >       do {
+> >               bool last_line_changed;
+> >               bool first_line_changed;
+> > +             unsigned long vma_start;
+> > +             unsigned long vma_end;
+> >
+> >               ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &ne=
+w_first_line));
+> >
+> > @@ -595,6 +618,19 @@ TEST_F(proc_maps_race, test_maps_tearing_from_spli=
+t)
+> >               first_line_changed =3D strcmp(new_first_line.text, self->=
+first_line.text) !=3D 0;
+> >               ASSERT_EQ(last_line_changed, first_line_changed);
+> >
+> > +             /* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+>
+> Typo ioclt -> ioctl.
+>
+> I think a little misleading, we're just testing whether we find a VMA at
+> mod_info->addr + self->page_size.
+>
+>
+> > +             ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr +=
+ self->page_size,
+> > +                                       &vma_start, &vma_end));
+> > +             /*
+> > +              * The vma at the split address can be either the same as
+> > +              * original one (if read before the split) or the same as=
+ the
+> > +              * first line in the second page (if read after the split=
+).
+> > +              */
+> > +             ASSERT_TRUE((vma_start =3D=3D self->last_line.start_addr =
+&&
+> > +                          vma_end =3D=3D self->last_line.end_addr) ||
+> > +                         (vma_start =3D=3D split_first_line.start_addr=
+ &&
+> > +                          vma_end =3D=3D split_first_line.end_addr));
+> > +
+>
+> So I'd make things clearer here with a comment like:
+>
+>         We are mmap()'ing a distinct VMA over the start of a 3 page
+>         mapping, which will cause the first page to be unmapped, and we c=
+an
+>         observe two states:
+>
+>                 read
+>                   |
+>                   v
+>         |---------|------------------|
+>         |         |                  |
+>         |    A    |         B        | or:
+>         |         |                  |
+>         |---------|------------------|
+>
+>                   |
+>                   v
+>         |----------------------------|
+>         |                            |
+>         |              A             |
+>         |                            |
+>         |----------------------------|
+>
+>         If we see entries in /proc/$pid/maps it'll be:
+>
+>         7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A)
+>         7fa86aa16000-7fa86aa18000 rw-p 00000000 00:00 0  (B)
+>
+>         Or:
+>
+>         7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+>
+>         So we assert that the reported range is equivalent to one of thes=
+e.
+>
+> Obviously you can mix this in where you feel it makes sense.
+>
+> >               clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+> >               end_test_iteration(&end_ts, self->verbose);
+> >       } while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> > @@ -636,6 +672,9 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resiz=
+e)
+> >       clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
+> >       start_test_loop(&start_ts, self->verbose);
+> >       do {
+> > +             unsigned long vma_start;
+> > +             unsigned long vma_end;
+> > +
+> >               ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &ne=
+w_first_line));
+> >
+> >               /* Check if we read vmas after shrinking it */
+> > @@ -662,6 +701,16 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resi=
+ze)
+> >                                       "Expand result invalid", self));
+> >               }
+> >
+> > +             /* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+> > +             ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr, =
+&vma_start, &vma_end));
+>
+> Same comments as above.
+>
+> > +             /*
+> > +              * The vma should stay at the same address and have eithe=
+r the
+> > +              * original size of 3 pages or 1 page if read after shrin=
+king.
+> > +              */
+> > +             ASSERT_TRUE(vma_start =3D=3D self->last_line.start_addr &=
+&
+> > +                         (vma_end - vma_start =3D=3D self->page_size *=
+ 3 ||
+> > +                          vma_end - vma_start =3D=3D self->page_size))=
+;
+>
+>
+> So I'd make things clearer here with a comment like:
+>
+>         We are shrinking and expanding a VMA from 1 page to 3 pages:
+>
+>        read
+>         |
+>         v
+>         |---------|
+>         |         |
+>         |    A    |
+>         |         |
+>         |---------|
+>
+>         |
+>         v
+>         |----------------------------|
+>         |                            |
+>         |              A             |
+>         |                            |
+>         |----------------------------|
+>
+>         If we see entries in /proc/$pid/maps it'll be:
+>
+>         7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A)
+>
+>         Or:
+>
+>         7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+>
+>         So we assert that the reported range is equivalent to one of thes=
+e.
+>
+>
+> > +
+> >               clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+> >               end_test_iteration(&end_ts, self->verbose);
+> >       } while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> > @@ -703,6 +752,9 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap=
+)
+> >       clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
+> >       start_test_loop(&start_ts, self->verbose);
+> >       do {
+> > +             unsigned long vma_start;
+> > +             unsigned long vma_end;
+> > +
+> >               ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &ne=
+w_first_line));
+> >
+> >               /* Check if we read vmas after remapping it */
+> > @@ -729,6 +781,19 @@ TEST_F(proc_maps_race, test_maps_tearing_from_rema=
+p)
+> >                                       "Remap restore result invalid", s=
+elf));
+> >               }
+> >
+> > +             /* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+> > +             ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr +=
+ self->page_size,
+> > +                                       &vma_start, &vma_end));
+>
+> Same comments as above.
+>
+>
+> > +             /*
+> > +              * The vma should either stay at the same address and hav=
+e the
+> > +              * original size of 3 pages or we should find the remappe=
+d vma
+> > +              * at the remap destination address with size of 1 page.
+> > +              */
+> > +             ASSERT_TRUE((vma_start =3D=3D self->last_line.start_addr =
+&&
+> > +                          vma_end - vma_start =3D=3D self->page_size *=
+ 3) ||
+> > +                         (vma_start =3D=3D self->last_line.start_addr =
++ self->page_size &&
+> > +                          vma_end - vma_start =3D=3D self->page_size))=
+;
+> > +
+>
+> Again be good to have more explanation here, similar comments to abov.
+>
+>         We are mremap()'ing the last page of the next VMA (B) into the
+>         midle of the current one (A) (using MREMAP_DONTUNMAP leaving the
+>         last page of the original VMA zapped but in place:
+>
+>       read
+>         |
+>         v             R/W                            R/O
+>         |----------------------------| |------------------.---------|
+>         |                            | |                  .         |
+>         |              A             | |              B   .         |
+>         |                            | |                  .         |
+>         |----------------------------| |------------------.---------|
+>
+>         This will unmap the middle of A, splitting it in two, before
+>         placing a copy of B there (Which has different prot bits than A):
+>
+>         |
+>         v   R/W       R/O      R/W                   R/O
+>         |---------|---------|--------| |----------------------------|
+>         |         |         |        | |                            |
+>         |    A1   |    B2   |   A2   | |              B             |
+>         |         |         |        | |                            |
+>         |---------|---------|--------| |----------------------------|
+>
+>         But then we 'patch' B2 back to R/W prot bits, causing B2 to get
+>         merged:
+>
+>         |
+>         v             R/W                            R/O
+>         |----------------------------| |----------------------------|
+>         |                            | |                            |
+>         |              A             | |              B             |
+>         |                            | |                            |
+>         |----------------------------| |----------------------------|
+>
+>         If we see entries in /proc/$pid/maps it'll be:
+>
+>         7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+>         7fa86aa19000-7fa86aa20000 r--p 00000000 00:00 0  (B)
+>
+>         Or:
+>
+>         7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A1)
+>         7fa86aa16000-7fa86aa17000 r--p 00000000 00:00 0  (B2)
+>         7fa86aa17000-7fa86aa18000 rw-p 00000000 00:00 0  (A3)
+>         7fa86aa19000-7fa86aa20000 r--p 00000000 00:00 0  (B)
+>
+>         We are always examining the first line, so we simply assert that
+>         this remains in place and we observe 1 page or 3 pages.
+>
+> >               clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+> >               end_test_iteration(&end_ts, self->verbose);
+> >       } while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> > --
+> > 2.50.1.703.g449372360f-goog
+> >
 
