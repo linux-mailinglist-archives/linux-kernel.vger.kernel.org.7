@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-765732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB066B23D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:05:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DA0B23D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F686856CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:05:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8180456871C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D4545009;
-	Wed, 13 Aug 2025 01:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE09C136E37;
+	Wed, 13 Aug 2025 01:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HMHuFpmJ"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l2uHuSvO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809972C0F87
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F16BA42;
+	Wed, 13 Aug 2025 01:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755047137; cv=none; b=WwsFMipgE5IFqd0ruC2HJSKo4FqjVW/guWqF5A+h7ZVMTe3DB8ooW1CiLRo9b8s46pWA6R8tZc/jc9ygDZmMQka6UvGjuDPPLmnduoyDy5pArCEAq8DCuSbU4PtzmAC6S+QG8HIDqBIOBEd5eq/3HaqaqEtP9hPDc0ltfP0b60Y=
+	t=1755047248; cv=none; b=a3EU/C2N/ahhg3XkFRqJ6OQG3lm7pwnYwsyeYsdG++loUjxfD/lB/7Ytx3m1xD9W6huQ4Q5NGQ1fvfGQE+cxSPZyRnGUNbvRh9pw/IYfkZF+kuGXXUV08H4lon8kJvkFMjt09ILK5ByRj7GffuIy4yUGsYimHkAXoAM0MNEZiYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755047137; c=relaxed/simple;
-	bh=coueRxZDBbI2c+4uGY3Fvbd/3LDl4+NdeitMlGgrRO0=;
+	s=arc-20240116; t=1755047248; c=relaxed/simple;
+	bh=YOqgCET3sgCMudSdk7vjfyd62U6KchjYeSESnAN8BC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m0vjqWCnsJ4ZpfimpQwMgQvOWPRDf8LQQ/jn1+JU23Mne+ulpFdX4mJvFD5HCw9Y2YcZOMD+3CzMdbFhGP3g39+vVsLdnsTXoMjz9XnxG9in3ld6a7WxwplugfKfH7SSWP/EvEYyEGNVMeSqG97hm+JpOGjt0mb8U5XteZVY8Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HMHuFpmJ; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755047132; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=tZT7E1BHgVXlaH4RRgjdlwUpFmZn01djhpWNdtzrIJo=;
-	b=HMHuFpmJSRGgF22T1EA3RgfS+SSEYoReBrQiyWh8djkiStULEHWwPH8qs2PXvlRZnJsnqjbD0h1ZkkixYPTNXX9a0/a4DGEcjbWXr+POy9gb00wUb8W8guVopABlVz6FbdLIDAYfs0nHs5zgaOamTdSMyB6fsiD90vHSH1Qq280=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wld9SGn_1755047131 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 13 Aug 2025 09:05:31 +0800
-Date: Wed, 13 Aug 2025 09:05:30 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH v3 5/5] panic: add note that panic_print sysctl interface
- is deprecated
-Message-ID: <aJvk2ti-D3t3EUsX@U-2FWC9VHC-2323.local>
-References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
- <20250703021004.42328-6-feng.tang@linux.alibaba.com>
- <aJsrGgTYxtEhZ7jX@pathway>
+	 Content-Type:Content-Disposition:In-Reply-To; b=REu3YoQdsGSZIp26jYHbuV/idXQLCdC+CiZJrlqpSmALgCeQnzfr0QUKKPwvLBoCDFhyjGJlE2Bdv7jDdgDzZ5QA+5+NfLRKNg9cA8SUAkz7NwNhSGChvsF+86hOprzUa3Pq3LnahPp2FodPJf5fn34vZNBmTWEcCGsLk8LvhVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l2uHuSvO; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755047247; x=1786583247;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YOqgCET3sgCMudSdk7vjfyd62U6KchjYeSESnAN8BC0=;
+  b=l2uHuSvOLiEnfeAuRsNBG7Zu441yDxJCNiwErVkrs1iw3Ehr+6tj+ORf
+   KPqOmuKcgIxFD37Mr9cVXPTeB+VTeJKUrFxmvrysP4+EzggVbPbavlcOa
+   5iS9AqHzFoX7Dv3693vO5tPvJuJXdA1AapVj50IJgmqdW5pZ6AKjtgDqM
+   Y8zfz8XJJ0Pq7Kog0yCVDV4U9TaeiIMM69xuM3yNQdxGxJTThAUPXVWwm
+   5H6rRvB+LT73MSYl/FXX/hFLxISfhefOKMmrAU3KFm63do0I7m3IF/HO4
+   pPCO99+EYPtatFskwGgpd4/GqQkoBwPIX08pHFgBx4mLcc/dszm7NPdST
+   Q==;
+X-CSE-ConnectionGUID: U1V79hlUSuqD5Ex9lWGWPA==
+X-CSE-MsgGUID: WxfHVP6HRayN6xcD5gKmGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57395803"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="57395803"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 18:07:26 -0700
+X-CSE-ConnectionGUID: QqUNkE64T/KB9wIQ+rDQBg==
+X-CSE-MsgGUID: rc0OWkRKTpm2ZDmsjmHVfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170540166"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2025 18:07:22 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ulzxP-0009Qi-32;
+	Wed, 13 Aug 2025 01:07:12 +0000
+Date: Wed, 13 Aug 2025 09:06:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Christian S. Lima" <christiansantoslima21@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
+	richard120310@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v9] rust: transmute: Add methods for FromBytes trait
+Message-ID: <202508130702.MtRUndHU-lkp@intel.com>
+References: <20250811213851.65644-1-christiansantoslima21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJsrGgTYxtEhZ7jX@pathway>
+In-Reply-To: <20250811213851.65644-1-christiansantoslima21@gmail.com>
 
-On Tue, Aug 12, 2025 at 01:52:58PM +0200, Petr Mladek wrote:
-> On Thu 2025-07-03 10:10:04, Feng Tang wrote:
-> > Add a dedicated core parameter 'panic_console_replay' for controlling
-> > console replay, and add note that 'panic_print' sysctl interface  will
-> > be obsoleted by 'panic_sys_info' and 'panic_console_replay'.  When it
-> > happens, the SYS_INFO_PANIC_CONSOLE_REPLAY can be removed as well.
-> > 
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -77,6 +78,13 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
-> >  EXPORT_SYMBOL(panic_notifier_list);
-> >  
-> >  #ifdef CONFIG_SYSCTL
-> > +static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
-> > +			   void *buffer, size_t *lenp, loff_t *ppos)
-> > +{
-> > +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-> > +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
-> > +}
-> 
-> This warning is printed "only" when the value is accessed via the
-> procfs. It would be great to print it also when it is set
-> via the command line parameter.
+Hi Christian,
 
-Yes, this is indeed a remaining issue to be solved, as mentioned in
-the cover letter.
+kernel test robot noticed the following build errors:
 
-> 
-> It would require replacing
-> 
-> core_param(panic_print, panic_print, ulong, 0644);
-> 
-> with
-> 
-> core_param_cb(panic_print, &panic_print_ops, &panic_print, 0644);
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on linus/master v6.17-rc1 next-20250812]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-When testing the change, I found  a problem:  'core_param_cb' is not
-the real counterpart of 'core_param', that it is a module parameter
-instead of kernel/core parameter, and adds the module.prefix to the
-parameter, say, the effective cmdline parameter is changed to
-'panic.panic_print=' instead of 'panic_print='.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-S-Lima/rust-transmute-Add-methods-for-FromBytes-trait/20250812-054010
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20250811213851.65644-1-christiansantoslima21%40gmail.com
+patch subject: [PATCH v9] rust: transmute: Add methods for FromBytes trait
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250813/202508130702.MtRUndHU-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250813/202508130702.MtRUndHU-lkp@intel.com/reproduce)
 
-While below patch of adding a new 'kernel_param_cb' can work without
-the "panic" prefix, but I'm not sure if it is worth the change:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508130702.MtRUndHU-lkp@intel.com/
 
----
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index bfb85fd13e1f..71053d078cea 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -194,6 +194,9 @@ struct kparam_array
- #define core_param_cb(name, ops, arg, perm)		\
- 	__level_param_cb(name, ops, arg, perm, 1)
- 
-+#define kernel_param_cb(name, ops, arg, perm) \
-+	__module_param_call("", name, ops, arg, perm, -1, 0)
-+
- /**
-  * postcore_param_cb - general callback for a module/cmdline parameter
-  *                     to be evaluated before postcore initcall level
+All errors (new ones prefixed by >>):
 
-Thanks,
-Feng
+>> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
+   --> rust/doctests_kernel_generated.rs:4749:1
+   |
+   4749 | unsafe impl kernel::transmute::FromBytes for MyStruct{};
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
+   |
+   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
+   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
+--
+>> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
+   --> rust/doctests_kernel_generated.rs:4814:1
+   |
+   4814 | unsafe impl kernel::transmute::FromBytes for MyStruct{};
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
+   |
+   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
+   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
+--
+>> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
+   --> samples/rust/rust_dma.rs:42:1
+   |
+   42 | unsafe impl kernel::transmute::FromBytes for MyStruct {}
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
+   |
+   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
+   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
