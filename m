@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-767062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E54B24E89
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:00:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6820B24EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78AEC7B39F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C800D9A2107
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D58B287256;
-	Wed, 13 Aug 2025 15:56:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE20126E14C;
+	Wed, 13 Aug 2025 15:56:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B3227B50F;
-	Wed, 13 Aug 2025 15:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474671D54D8;
+	Wed, 13 Aug 2025 15:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100561; cv=none; b=kSxmw1XRbBekRXPPpSpKMIurJXkhMrFRwcnYhJ/l49bVxbdTLxJ3cAdNFBObmj5J6dCBvmKLZznhmMFZ1rShNEcjJrIdwNaBCDglgDPAyrrAPosDX2fNhzkGnnr97Xko58kW4jMxD4TBsCXYTntdxY9YBW3sKzyit1HwcDLAlhk=
+	t=1755100591; cv=none; b=I4hTgjmsjI6oKFFw9rKq3ORUttl5BPLODvY40tBul6X554dJw9k59d1DPEfCjvSN7F5bMom10wnBRGufwHxpSum6XLJvAPkyFu1EezoV6O35Qh9lucI8kmUaTyHYkDuGS9Xg5a7Zcf0r4oLVLeJEJbBAyRMYJcGeqeN+KlPvNl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100561; c=relaxed/simple;
-	bh=xzBNb/50mbyLTPm5Suj2K7W5uV4Vxpn9qpduAfvNPgI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZt0Su4r5L7vUPZf51KTIEElFwAILS/K0ujmla+xivP5KAjcqY6AKwceet5Aq7Q/+U/PIU3Vz5R+eRuRvJ5XxPszmohpTSc4QdyEo9R0BfRIniceP3Gnpw1YHtGbNAJ89M+2TAQaNhnHx5VE4pzGZzuBCzzrMb3QjSILSysnb3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2CbT6hPTz6GFlc;
-	Wed, 13 Aug 2025 23:53:57 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DB3361404D8;
-	Wed, 13 Aug 2025 23:55:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 17:55:55 +0200
-Date: Wed, 13 Aug 2025 16:55:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 12/20] nvdimm/namespace_label: Skip region label
- during namespace creation
-Message-ID: <20250813165554.00002dea@huawei.com>
-In-Reply-To: <20250730121209.303202-13-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121238epcas5p212dcce5cc5713173913ee154d5098a2c@epcas5p2.samsung.com>
-	<20250730121209.303202-13-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755100591; c=relaxed/simple;
+	bh=KCcXnOzbpwKx4bDDi38YHUJKX43M5rzAEuIjn1wdJNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xa+n9LKMMDjwOc2Uzr1yihQeKrrCF6iebJdsfon0Q9RRNw541I9zTQSHg9EA16U6NS2scY1mjYyDG+9lepFA+7XouvCtlVj7P/tiL/T820Guklmqi4Q2bEZkSWh7zLXEb0L+jLFlOD6WmWlLn+8y1C8SfnTr39W/PywVVAhVebA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5A8C4CEEB;
+	Wed, 13 Aug 2025 15:56:28 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2] PCI/pwrctrl: Fix double cleanup on devm_add_action_or_reset() failure
+Date: Wed, 13 Aug 2025 17:56:25 +0200
+Message-ID: <7b1386e6162e70e6d631c87f6323d2ab971bc1c5.1755100324.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Jul 2025 17:42:01 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+When devm_add_action_or_reset() fails, it calls the passed cleanup
+function.  Hence the caller must not repeat that cleanup.
 
-> During namespace creation skip presence of region label if present.
+Replace the "goto err_regulator_free" by the actual freeing, as there
+will never be a need again for a second user of this label.
 
-Confusing description.  What does skipping presence mean?
-Reword.
+Fixes: 75996c92f4de309f ("PCI/pwrctrl: Add pwrctrl driver for PCI slots")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # V4H Sparrow Hawk
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Compile-tested only.
 
-During namespace creation, skip any region labels found.
+v2:
+  - Add Reviewed-by, Tested-by, Acked-by.
+---
+ drivers/pci/pwrctrl/slot.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-
-> Also preserve region label into labels list if present.
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/namespace_devs.c | 50 +++++++++++++++++++++++++++++----
->  1 file changed, 45 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index e5c2f78ca7dd..8edd26407939 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -1985,6 +1985,10 @@ static struct device **scan_labels(struct nd_region *nd_region)
->  		if (!lsa_label)
->  			continue;
->  
-> +		/* skip region labels if present */
-
-This is kind of obvious comment. I'd drop it.
-
-> +		if (is_region_label(ndd, lsa_label))
-> +			continue;
-> +
->  		nd_label = &lsa_label->ns_label;
->  
+diff --git a/drivers/pci/pwrctrl/slot.c b/drivers/pci/pwrctrl/slot.c
+index 6e138310b45b9f7e..3320494b62d890ff 100644
+--- a/drivers/pci/pwrctrl/slot.c
++++ b/drivers/pci/pwrctrl/slot.c
+@@ -49,13 +49,14 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+ 	ret = regulator_bulk_enable(slot->num_supplies, slot->supplies);
+ 	if (ret < 0) {
+ 		dev_err_probe(dev, ret, "Failed to enable slot regulators\n");
+-		goto err_regulator_free;
++		regulator_bulk_free(slot->num_supplies, slot->supplies);
++		return ret;
+ 	}
+ 
+ 	ret = devm_add_action_or_reset(dev, devm_pci_pwrctrl_slot_power_off,
+ 				       slot);
+ 	if (ret)
+-		goto err_regulator_disable;
++		return ret;
+ 
+ 	clk = devm_clk_get_optional_enabled(dev, NULL);
+ 	if (IS_ERR(clk)) {
+@@ -70,13 +71,6 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, ret, "Failed to register pwrctrl driver\n");
+ 
+ 	return 0;
+-
+-err_regulator_disable:
+-	regulator_bulk_disable(slot->num_supplies, slot->supplies);
+-err_regulator_free:
+-	regulator_bulk_free(slot->num_supplies, slot->supplies);
+-
+-	return ret;
+ }
+ 
+ static const struct of_device_id pci_pwrctrl_slot_of_match[] = {
+-- 
+2.43.0
 
 
