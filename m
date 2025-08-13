@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-767439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1074CB2543A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D179AB25438
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F481C84607
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2A909A1CFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D47311C3D;
-	Wed, 13 Aug 2025 20:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE52FC236;
+	Wed, 13 Aug 2025 20:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GoyJcAh/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgcarzCu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E855230E843;
-	Wed, 13 Aug 2025 20:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005502FC224;
+	Wed, 13 Aug 2025 20:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115546; cv=none; b=VHFfLSosVHKa+feJYGH5Py1uNHu2AF0yl7nt/cKlciK+YTd6eu3vrH2gl5pNv+Rq2C6r8B1NXimJOyrlELn6hNOa2MgOXCF4fbUaxy7xzPWrqXucUa2I3xBZdGE5lzPv1v0BmzxG2KO7X8P79KYQgocB4zQhYcx6OmLgRrbHfmg=
+	t=1755115547; cv=none; b=MWAMNhKmvs/AidkG9OM41bMVteMV8qgXCi+jg2BIyhce68sYSzVgCMXBEcIsEx539yY5qbnG1TBc5rHJnssh3dAtuQ8ubMHGa55esDDLWtcVKE2kaIVt0lxtCfs6k0KGbLedWB07Zym8585msPBoqpZuZ8lelzl8jdDYW+nCLNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115546; c=relaxed/simple;
-	bh=N0xi8nYgm663/xQ2wfrZjB2ENBpA9WDnFgva3oeVG5M=;
+	s=arc-20240116; t=1755115547; c=relaxed/simple;
+	bh=j1QC4N9+5u44LDovSKAMF0Yz7QCpk/1J/EbNdodHWbw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AHbzqWtsa6DtvgxPvi1qHisGRq0X7cp094odwRkEQkxa99BHIDekEsAUf6yN+ukKp/gvZC8co/7/pCM+NWu21XuCd3oUGTbd/lZu0NRc01Xcm411r8rZMN/QYpoPdtu553twjbvzG7egk5FXNOldX6GyuFw6sGM7sNceaGgm8Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GoyJcAh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E816C4CEEF;
-	Wed, 13 Aug 2025 20:05:45 +0000 (UTC)
+	 MIME-Version; b=Cs8slI9LoFVauyNCH4/jcatG4Hf0OYe0H+WsJ2ItTryKwdCCDYgB3F1Zg83Q2UJ9sE6Yh0zxSAO5r7wjnPhCcBgzhZ6lYkzuKizAiMAswNby6JOvAnULR2/BT62UGXcJkx7xhu+a9nnzpAxYRAhnGPDiO4/oz/rS78pvVrKJraU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgcarzCu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B433AC4CEF8;
+	Wed, 13 Aug 2025 20:05:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755115545;
-	bh=N0xi8nYgm663/xQ2wfrZjB2ENBpA9WDnFgva3oeVG5M=;
+	s=k20201202; t=1755115546;
+	bh=j1QC4N9+5u44LDovSKAMF0Yz7QCpk/1J/EbNdodHWbw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GoyJcAh/ek2y48mu/TJ1Hus27wtTTpw77luWIJrVhT/AWfgP5dOJoiJgxT1T9fi9o
-	 orKkdRCEtESM+RZI5sf+E1ISn3vbCnkrQuKFxt4Is+meGIDCk237sAMlcd1yZONqmd
-	 i4ehkzNfQYlMaUoxOInYGdfMWDEDViDb7sQTYm3l8IeV2prvV3u0MJJqSZ7Y02ppEF
-	 TCIbjJpBouUPdjEGULUaeewS1jMUhBvQbU4/Zu6GkArp+Rs6ZoVfkDeYZ6rh1+x4hX
-	 5xEIFCI0+hGN3+kNXzaSAVVayGFHmKVA1T6Ip40LKvTQfs4HIQqESIrkVaB14flLsN
-	 mP31zZWcvHZVQ==
+	b=GgcarzCuafm0RtaxuKO2IbC4QLig8bSSea8d+/RbdRWKfZdTK+MvemL5Rydr8CV2e
+	 pfZk0Y4WpCv7oxxlffN/RWze3leS/sPqAnM0SD4xvPBGwkTCdgyK+UhvPUSuOO+h79
+	 cyAWItvF2N+D0BkyfLEtnriqBpP/AWPTiukcDH6Dvp3DuB9fLOvlEV39d3rIZ2/okY
+	 9gAaUgOALJeRn5qNO6I9OVJdyU4B6JFLikVKMFhYNLnqrSnLhwrk4IrOxpWs/mG8aD
+	 sezzN0eBrqyeoyhnw/M+ZZ7o31OdAXqXtV1ReR7BQ2V8VtCupCcla/J4HGCV3gaAKb
+	 yMUrT/i0ypeNQ==
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Randy Dunlap <rdunlap@infradead.org>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 6/9] Documentation: Fix networking typos
-Date: Wed, 13 Aug 2025 15:05:02 -0500
-Message-ID: <20250813200526.290420-7-helgaas@kernel.org>
+Subject: [PATCH 7/9] Documentation: Fix power typos
+Date: Wed, 13 Aug 2025 15:05:03 -0500
+Message-ID: <20250813200526.290420-8-helgaas@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250813200526.290420-1-helgaas@kernel.org>
 References: <20250813200526.290420-1-helgaas@kernel.org>
@@ -67,64 +67,45 @@ Fix typos.
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- Documentation/networking/can.rst                                | 2 +-
- .../device_drivers/ethernet/ti/am65_nuss_cpsw_switchdev.rst     | 2 +-
- .../networking/device_drivers/ethernet/ti/cpsw_switchdev.rst    | 2 +-
- Documentation/networking/rds.rst                                | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ Documentation/power/pci.rst                    | 4 ++--
+ Documentation/power/suspend-and-cpuhotplug.rst | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
-index bc1b585355f7..680dc7451493 100644
---- a/Documentation/networking/can.rst
-+++ b/Documentation/networking/can.rst
-@@ -539,7 +539,7 @@ CAN Filter Usage Optimisation
- The CAN filters are processed in per-device filter lists at CAN frame
- reception time. To reduce the number of checks that need to be performed
- while walking through the filter lists the CAN core provides an optimized
--filter handling when the filter subscription focusses on a single CAN ID.
-+filter handling when the filter subscription focuses on a single CAN ID.
+diff --git a/Documentation/power/pci.rst b/Documentation/power/pci.rst
+index 9ebecb7b00b2..38e614d92a4a 100644
+--- a/Documentation/power/pci.rst
++++ b/Documentation/power/pci.rst
+@@ -472,7 +472,7 @@ in the device tree from the root bridge to a leaf device contains both of them).
+ The pci_pm_suspend_noirq() routine is executed after suspend_device_irqs() has
+ been called, which means that the device driver's interrupt handler won't be
+ invoked while this routine is running.  It first checks if the device's driver
+-implements legacy PCI suspends routines (Section 3), in which case the legacy
++implements legacy PCI suspend routines (Section 3), in which case the legacy
+ late suspend routine is called and its result is returned (the standard
+ configuration registers of the device are saved if the driver's callback hasn't
+ done that).  Second, if the device driver's struct dev_pm_ops object is not
+@@ -544,7 +544,7 @@ result is then returned).
+ The resume phase is carried out asynchronously for PCI devices, like the
+ suspend phase described above, which means that if two PCI devices don't depend
+ on each other in a known way, the pci_pm_resume() routine may be executed for
+-the both of them in parallel.
++both of them in parallel.
  
- For the possible 2048 SFF CAN identifiers the identifier is used as an index
- to access the corresponding subscription list without any further checks.
-diff --git a/Documentation/networking/device_drivers/ethernet/ti/am65_nuss_cpsw_switchdev.rst b/Documentation/networking/device_drivers/ethernet/ti/am65_nuss_cpsw_switchdev.rst
-index 25fd9aa284e2..f0424597aac1 100644
---- a/Documentation/networking/device_drivers/ethernet/ti/am65_nuss_cpsw_switchdev.rst
-+++ b/Documentation/networking/device_drivers/ethernet/ti/am65_nuss_cpsw_switchdev.rst
-@@ -42,7 +42,7 @@ Port's netdev devices have to be in UP before joining to the bridge to avoid
- overwriting of bridge configuration as CPSW switch driver completely reloads its
- configuration when first port changes its state to UP.
+ The pci_pm_complete() routine only executes the device driver's pm->complete()
+ callback, if defined.
+diff --git a/Documentation/power/suspend-and-cpuhotplug.rst b/Documentation/power/suspend-and-cpuhotplug.rst
+index ebedb6c75db9..641d09a6546b 100644
+--- a/Documentation/power/suspend-and-cpuhotplug.rst
++++ b/Documentation/power/suspend-and-cpuhotplug.rst
+@@ -13,7 +13,7 @@ infrastructure uses it internally? And where do they share common code?
  
--When the both interfaces joined the bridge - CPSW switch driver will enable
-+When both interfaces have joined the bridge - CPSW switch driver will enable
- marking packets with offload_fwd_mark flag.
+ Well, a picture is worth a thousand words... So ASCII art follows :-)
  
- All configuration is implemented via switchdev API.
-diff --git a/Documentation/networking/device_drivers/ethernet/ti/cpsw_switchdev.rst b/Documentation/networking/device_drivers/ethernet/ti/cpsw_switchdev.rst
-index 464dce938ed1..2f3c43a32bfc 100644
---- a/Documentation/networking/device_drivers/ethernet/ti/cpsw_switchdev.rst
-+++ b/Documentation/networking/device_drivers/ethernet/ti/cpsw_switchdev.rst
-@@ -92,7 +92,7 @@ Port's netdev devices have to be in UP before joining to the bridge to avoid
- overwriting of bridge configuration as CPSW switch driver copletly reloads its
- configuration when first Port changes its state to UP.
- 
--When the both interfaces joined the bridge - CPSW switch driver will enable
-+When both interfaces have joined the bridge - CPSW switch driver will enable
- marking packets with offload_fwd_mark flag unless "ale_bypass=0"
- 
- All configuration is implemented via switchdev API.
-diff --git a/Documentation/networking/rds.rst b/Documentation/networking/rds.rst
-index 41b0a6182fe4..4261146e9d92 100644
---- a/Documentation/networking/rds.rst
-+++ b/Documentation/networking/rds.rst
-@@ -339,7 +339,7 @@ The send path
-   rds_sendmsg()
-     - struct rds_message built from incoming data
-     - CMSGs parsed (e.g. RDMA ops)
--    - transport connection alloced and connected if not already
-+    - transport connection allocated and connected if not already
-     - rds_message placed on send queue
-     - send worker awoken
- 
+-[This depicts the current design in the kernel, and focusses only on the
++[This depicts the current design in the kernel, and focuses only on the
+ interactions involving the freezer and CPU hotplug and also tries to explain
+ the locking involved. It outlines the notifications involved as well.
+ But please note that here, only the call paths are illustrated, with the aim
 -- 
 2.43.0
 
