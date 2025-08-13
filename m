@@ -1,92 +1,108 @@
-Return-Path: <linux-kernel+bounces-766508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D6B24768
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B332B2476A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69288722367
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD146721ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1AD2F4A0A;
-	Wed, 13 Aug 2025 10:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22802F4A0A;
+	Wed, 13 Aug 2025 10:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zfu/jMNB"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m45fT3KK"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0502B2F3C11
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C182D12EF;
+	Wed, 13 Aug 2025 10:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081274; cv=none; b=B++7U4a7c7/5U4kyLHgNdvIxTap9XPlmgs3KKvp+DkwqCuKaxGXQ9SNqs4xToMUCUjCbmbGSxZ+slBTOP0qdycDuDebmaRkBWDKpNdkVZZP4P/Z4XZjnkJz1TqOnlCrF7TxgNuxkxWx1NwWMnamZ0kkvfSU/GuK2hkveNZ/o2Nc=
+	t=1755081312; cv=none; b=jWS8lTFFDKzq20Ir7PwD43KHZtegXYqhPG6mtLIqe/AE5fU9Tp05qYE/iLGdV0eqbOSTT/64VenChfOtbIf3FhZ42kxmAHdRiT7xWeJbzmeFwl8GBT930mctv76QAxptK6EK1gfJfx464bamJ2yyk825cXS+gAdHzvmqeZDbluo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081274; c=relaxed/simple;
-	bh=QXJYmvp9wTnfWapEMv31m/YZSzt1bIS663ZhNyaG61I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uB2GbNaJXDQPwippaBFuO8cMS8d3j2CEbIZIm4dYegeTxYhY/jPgjVMTwEA53oRe/Bfsq95u9r1+1M4SNrGmEsnQT3GKwixVj/9jeJ8IQoXJ8gZFtyt1jU2/Ph31V8EqMbnqj/cJLZce9JgD+5thS3fQz/0Y5zBuMss84sSBdno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zfu/jMNB; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755081270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+08CHwlWRZjXBglaG84EamhIdGb2S4rweM3TvNniamM=;
-	b=Zfu/jMNBmvtBR3uSfU1TufjdalJ4OMSpnDlD3jv0aUrH35FzZ2sQbicg4G2qZIv9DF4Sid
-	onnfemZ6cu/fCJ7Qsy9eX/u47W7Kg+LMrkaMbAajEjoONjQzLrKrlQZO/FWxE130fYoYPa
-	tlF8LszLzm2MV5s/SdHOltuDfRejcW0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Wentao Liang <vulab@iscas.ac.cn>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: hda: Improve local variable data type in snd_hda_get_num_devices()
-Date: Wed, 13 Aug 2025 12:34:16 +0200
-Message-ID: <20250813103418.164110-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755081312; c=relaxed/simple;
+	bh=DYdN5fQPZeUp+czZnPk87jd1+aveSqzRLTyqFtCf5lY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f+X6yY8/aO2p5cpF36UUDTGKxlQa+YD8qzak4cZb56i+KGDXeu+Y0E1ynJW4d4v6jlTMDraaTW1PIZwcit2NWBfD0rxp7JwbXX+kioIDsrEojGaXxEwQoOd/Fdv/2W1qyyQ7sfkexicHRD8M6zRL8tfi0XNHRZRMBethoXjmP/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m45fT3KK; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af96d097df5so1172753366b.3;
+        Wed, 13 Aug 2025 03:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755081309; x=1755686109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYdN5fQPZeUp+czZnPk87jd1+aveSqzRLTyqFtCf5lY=;
+        b=m45fT3KK6rq7lHaaANl7EVcAl9bBfoCKPN3x/HlYx6cy8ovGKue/uSP5sRpVihjZCz
+         /A5RIoP7F6BAIhM5AtCcdUkz/oyJqUMgt3UV/t3EN3B57wf+7CbmmmbUK/SI+P6HyH42
+         UHAD0RpTFWhYpXZXovwcz0vg46xqnGPi9sqO4FPK3iDyz34i6l/8bRQOITaYgSkfL3/x
+         dF7Zn+dMbUgVKEm5DsCJlrahFMqFdpDoWpNxmA0T+4yHfGr9fqpBeA5rlOwl+PfD7dfP
+         fLY88J6uDInRRNvIAVhX9by9enHH64A/2cnRmXHVgp7vs/s54K2eETKWCPkCQZC721HB
+         Du1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755081309; x=1755686109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DYdN5fQPZeUp+czZnPk87jd1+aveSqzRLTyqFtCf5lY=;
+        b=h7jmF4qNkur+cO6UlAcrcaPfNqLmRN2apQ7LnZB2hBqFyQR29HtYxUSnXiwddwjCMa
+         0U+n5uNzHDb7NAPf6qtNUq7tRlWOvG1sNfmCDWiHVzH1qlJHniKvp69OlSKUMp6a9EJ/
+         dmUhn56t2lcTZ2WLZDHggBJNUAzHerofzkFUP0L+L+WxF2rNNdg8AVDkG+hAB7WBGYyH
+         VQv8JuxJhnWB82fx1SwH5488HmuzpfogQXhqQB/iPecj/Nbf1zTd937fb+Fu3UpIN0vi
+         cZCRuM5V8aDT36Ct3JR7KJLBbkT2aC1f605ILJ5rCWOoBlsgKX/2M36GZbHutJBbOPN0
+         Lbyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW7K0KlYSMOIgtwE4ezscumr3cMWEBNrNrEiyN3tPTU5woJamuJqSgqGQa2+7MVLFOe6o/gqiloc0=@vger.kernel.org, AJvYcCWYb3WQUKPv/46CFYzeWY94KXKQyXIrQ9/jA0/XPY0k4eo4isEapObLI0IrUurhpeECDMEq3q6iXFbbKkBz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMtrP+yIMAk4WYzEDBstWkrwzmcvhzq667zJzAKcS99wXS5XDl
+	W58ugXhI8Cf7CGv58DgK/9jre0gb8/Zh5YuHTs20b6vD+wzyH9GI5iBev1lZyULTjkqOrLliw0/
+	nc4u889ZoOBQJsgDirxEVvSGsh/rWARk=
+X-Gm-Gg: ASbGncu7w/AC4GA0GFma5FmSG5HRSVulxi+jQH63SwNFwczUboEpsshMFluZvioUnWE
+	y7wHBBNaLcBZrokslHu/FgeUb0Y0sBOIXMu9SZXA4ogO89LHUaPa0DCIfueEqKamTfXSoCFjLJX
+	94c60nnmjsbZ482hYteWAoxGDkOC3kv6MIQsXSTCwcn62cXpmV2KDDS9HwYHUGExCXbHZieYx5H
+	mlaeumHZw==
+X-Google-Smtp-Source: AGHT+IEo+49wmPczX9jlQXC2dDHCUVf/lSEuT8Q7I82/hWtLzqfzzrVMbtr0vDiq2TQh9hcqZmf37kbH4dMG+SMGaGk=
+X-Received: by 2002:a17:907:6094:b0:af9:acc3:823f with SMTP id
+ a640c23a62f3a-afca4ea0801mr249216566b.58.1755081308449; Wed, 13 Aug 2025
+ 03:35:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250813075556.466872-1-zhao.xichao@vivo.com>
+In-Reply-To: <20250813075556.466872-1-zhao.xichao@vivo.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 13 Aug 2025 12:34:32 +0200
+X-Gm-Features: Ac12FXy1V183PyG2P7KY2Mxjty-lInCZOOuCaRiEGNiQi8KltmLgYwehprr8yZA
+Message-ID: <CAHp75VeRb6HV80P1B60sr4=-pdWW+GS1dQDYUbO0PWLhkKZsGA@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: ti-tsc2046: use us_to_ktime() where appropriate
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: o.rempel@pengutronix.de, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use 'int' instead of 'unsigned int' because the local variable 'parm'
-can be negative.
+On Wed, Aug 13, 2025 at 9:56=E2=80=AFAM Xichao Zhao <zhao.xichao@vivo.com> =
+wrote:
+>
+> The scan_interval_us and time_per_scan_us are more suitable for
+> using the us_to_ktime(). This can make the code more concise and
 
-While an unsigned integer is harmless in practice due to the implicit
-type conversion, it's safer and more idiomatic to use a signed integer
-to properly check for -1.
+This makes....
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- sound/hda/common/codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> enhance readability. Therefore, replace ns_to_ktime() with us_to_ktime().
 
-diff --git a/sound/hda/common/codec.c b/sound/hda/common/codec.c
-index eb268d442201..cab479111603 100644
---- a/sound/hda/common/codec.c
-+++ b/sound/hda/common/codec.c
-@@ -300,7 +300,7 @@ EXPORT_SYMBOL_GPL(snd_hda_get_conn_index);
- unsigned int snd_hda_get_num_devices(struct hda_codec *codec, hda_nid_t nid)
- {
- 	unsigned int wcaps = get_wcaps(codec, nid);
--	unsigned int parm;
-+	int parm;
- 
- 	if (!codec->dp_mst || !(wcaps & AC_WCAP_DIGITAL) ||
- 	    get_wcaps_type(wcaps) != AC_WID_PIN)
--- 
-2.50.1
+Perhaps Jonathan may tweak the commit message to be more English, but
+code wise I agree with you.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
