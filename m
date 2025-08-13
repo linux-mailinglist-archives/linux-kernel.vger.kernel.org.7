@@ -1,197 +1,236 @@
-Return-Path: <linux-kernel+bounces-766244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED898B2444A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:28:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C46DB24454
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F34E18992EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6E03BD22A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36372ED15A;
-	Wed, 13 Aug 2025 08:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0832EF64B;
+	Wed, 13 Aug 2025 08:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="joLvFMKU"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E/KL4qn/"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709F22D321F;
-	Wed, 13 Aug 2025 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEB2ECD3C;
+	Wed, 13 Aug 2025 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073631; cv=none; b=TYLv0OHNehoP1ebCzgYQOrxlxQN+tTxY2u4Bcms8hsJkSbZqC7+fu1Cu/ewvPfRj/Ncy92QDWgtESCbbaYiuE109E4v3umr/yDtFcQjcXzVRL98HrlZ1eLzvEfklsASh9wH6XipxG983Tp14OwsNqRbMRxRXkU89ddaGNuAaHFE=
+	t=1755073641; cv=none; b=b1Voi1QTt/hI3xNJEy1Z1LWLD0jniImLhStgCwnLKG5b13XtLCcEoiggfFlOjDnJC2NFHYveKesD44XY+gMGxkEaZu60+K5AB88hOQvIt62byEcJ7Tu4vgGGfI6hAvWvFLewaLAdu7IzYGuFjNZEAdn1Znr7WFRMXwzhn+0UBm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073631; c=relaxed/simple;
-	bh=8grarISrrran4HsmVRztqDZfJzOAy0nLtF3rxQKJvkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gnT6bUfzDpUO3QjZXHdbZlgOi25gQEeeFjtY5scIfbeWt+APjj9Zoey58odPk8cIbdKymSikh0Db1QxoPTVWsuqbLANH0fUVoA1cCUpqHNOUZeuBuVbNxAE1RX0PdxOBG5Rndx0Eyv/qt8rKKyYidgCb88Dg1Tx+gVMWR2dgtog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=joLvFMKU; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755073569;
-	bh=zJ0hZ2py5pjtVoXQv0PDAz0XznKZrLsvelnbnYWAbCk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=joLvFMKUIo7JVpRcyfSsH4b1zHZVCD3rV5e9ioXEuRtUaTMY+cezXEeC1Sin/7syW
-	 cxD+ezMKEy0wTxj6ethL/9LIxnyHOlpvNHxR76oALadwOaf35IZ7txHIhFQ9z9LkZj
-	 LyeHYrKw64pYdtYaD22UJcgEmRYRLV0WPlOLHwSE=
-X-QQ-mid: zesmtpsz6t1755073566t0d2cf4d6
-X-QQ-Originating-IP: ehoTC6TvF9jhdhuMPH9TGp/slVsmOkyosadz0faF+GE=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 13 Aug 2025 16:26:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8202150046870958779
-EX-QQ-RecipientCnt: 20
-Date: Wed, 13 Aug 2025 16:26:04 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Guodong Xu <guodong@riscstar.com>, Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alex Elder <elder@riscstar.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v3 0/8] dmaengine: mmp_pdma: Add SpacemiT K1 SoC support
- with 64-bit addressing
-Message-ID: <268633D49B18C3E7+aJxMHPhItPq9ioto@LT-Guozexi>
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
+	s=arc-20240116; t=1755073641; c=relaxed/simple;
+	bh=EETb+mATWoalC/jIg1GxMzaFPbxxVYn4Baz6WzC73Pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BoCvVS02QRM+FyLCFVFCB7KQrKwNHkRxKmkCu4KPUUApCcT2Y/gZe0Ef//MfKCjVHagIZybVEZd/2odG7kw6MK/pOhHNXunIVQoaZ6pVaZ2I7HTTXraauDX1yNdTERrCq/QiZUD5Y0rHyfMHZhWZtu2/lFIBrTgB3DVFhnZC4Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E/KL4qn/; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57D8QFrq1659217;
+	Wed, 13 Aug 2025 03:26:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755073575;
+	bh=LxxC+vWL+dBv0jeH8xTa33bVZ4qWYF8YDuV31GextYQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=E/KL4qn/ZvseqzCjyaciE6Wvi42lnHNKpBZuHekmdtnS5MVfb7PcteyB6elY2DZ6Y
+	 X2j8RCKYqEPZKYn+lwzuDS/HWSeOgHzKz9eoDP/1ZAQ9U+39k1ttU6KWWDz5IhTF+m
+	 h64B6kZ4GqwYH3BEOIAA7XOQtCkFe+v5oiEPHzHM=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57D8QFKo257229
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 03:26:15 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 03:26:14 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 03:26:14 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57D8Q8Xc1721088;
+	Wed, 13 Aug 2025 03:26:08 -0500
+Message-ID: <94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com>
+Date: Wed, 13 Aug 2025 13:56:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MX+1SEN3H+wAVyQ2gorrg3gEUJlHKLxoVpWqDTRbemWGIGDqidTyZGFB
-	tY7WabTIrDRIkcVBl3uOD+y0oDpESE3o8mTAdRcqMNKvZZde7uYwmk/8eyQFsqZ60qmrg5Z
-	eoUi/dXRwB5zO1SQWPNZf6YYYiWqjWd1SJCNK3zq3Pq7xs2/FSQCRjU3+anfO0CKXPq9DQ+
-	1Ex+wM4/sjaSV73skhB0oqQoA7pxL613GBX+0XnBsOwp1CB3sjOL7QdqGr6HIvgaVxZpE+9
-	RJDT9cWuTRmrHS2LlYzY2ZHmCgFY79ehRvFXBy+3GQhMwTFtfM8mQTvhihhS7FX9H1mGEUL
-	QQ8Nq/lyRw5qgMP7UbIWfINGHNWT7DL5Z5Ox9bn1hhDGCY9YqjIkhMvsmZzs4qTEDPH2+l2
-	Y4XNSN2ZM0PAJWjUJtjlPcNZzme4L22F/Q2Gjdo1eBADKaCmw4ySsHZT7xHytNOTJEh/qHP
-	vStkp5d2ouXG2t66GB+75kqkrnjA0uTSaKhse8jFosRQ91+bUJikkHxMXD6i97224XHRgPx
-	rFUDHOaVsEUBfzYtGA+KcMKxWHogsWGx0CcUeF3Wkw8bAbvKXj+2e6A7AQwAZnSqucA6TYF
-	3wPMOG9yXVZ67eRgd9YJfIUWv/rCXq/ytGJrRNH7yEkElo6Zl47EbAQB0VulI2IQki5JPYB
-	YXTdBg1+xwkjiLbxzk3rVEm3AE/yRhDB9dX2trAB1/Xbz/7T+Kkt6gOYOIlVPTy6INMPNVP
-	uZRwsfrBiIXmxDo6QXWpok2WL6xf1kyEpURCkUNj+VwF7KiTrlMBfWvBVgdo6b1on8Q3ubD
-	7hS6WhjZijGglN/inrYqcPSR8gYhfKo7sDCDYPf2xmZzcDm0GJTo3T9C/XLa3lPh+0IKx7U
-	wgazmlJJ7mZu7/TFHyFJRGP2HCzV1sUWmok7BZLT8FTVxUsH9U+Pu+MkZJ3C6b+94azzEKg
-	Tp8kiWpQJPCMyeaRRAHS34kt4laNjuZXi2hoskTfOX7avEGmaG5mvAOlmm9NFAq8LrupacZ
-	PdcAY2mfo7ZOfvpXnaLUhYi32JZXte5DbCtLNuTlnySSO+GlrvzL3b9TBNYapQn2XJxOvIF
-	A==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] net: rnpgbe: Add register_netdev
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-6-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250812093937.882045-6-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Guodong, thanks for your patches!
 
-I have tested it using i2s and dma-tetst.
 
-Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-
-                - Troy
-
-On Mon, Jul 14, 2025 at 05:39:27PM +0800, Guodong Xu wrote:
-> This patchset adds support for SpacemiT K1 PDMA controller to the existing
-> mmp_pdma driver. The K1 PDMA controller is compatible with Marvell MMP PDMA
-> but extends it with 64-bit addressing capabilities through LPAE (Long
-> Physical Address Extension) bit and higher 32-bit address registers (DDADRH,
-> DSADRH and DTADRH).
+On 12/08/25 3:09 pm, Dong Yibo wrote:
+> Initialize get mac from hw, register the netdev.
 > 
-> In v3, the major change is creating a separate yaml binding schema for
-> SpacemiT K1 PDMA, per Krzysztof's suggestion. By doing this, the binding
-> schema got simplified a lot. Deprecated property (ie. #dma-channels) and
-> unused values for backward compatibility (#dma-cells const 2) can be
-> removed.
-> 
-> Other changes involve placing pdma0 node in k1.dtsi and in board specific
-> dts files with proper ordering.
-> 
-> The patchset has been tested on BananaPi F3 board.
-> 
-> This patchset is based on SpacemiT linux (for-next) [1] with Patch 8
-> depending on:
-> - riscv: defconfig: run savedefconfig to reorder it
->     It has been merged into riscv/linux.git (for-next)
->     Link: https://git.kernel.org/riscv/c/d958097bdf88
-> 
-> [1] https://github.com/spacemit-com/linux.git (for-next)
-> 
-> All of these patches are available here:
-> https://github.com/docularxu/linux/tree/working_dma_0714_v3
-> 
-> Changes in v3:
-> - Created separated yaml binding for Spacemit K1 PDMA controller
-> - Updated pdma0 node properties according to the new yaml binding
-> - Put pdma0 node in k1.dtsi according to its device address
-> - Put pdma0 node in board dts files according to alphabetic order
-> 
-> Link to v2:
-> https://lore.kernel.org/r/20250701-working_dma_0701_v2-v2-0-ab6ee9171d26@riscstar.com
-> 
-> Changes in v2:
-> - Tag the series as "damengine".
-> - Used more specific compatible string "spacemit,k1-pdma"
-> - Enhanced DT bindings with conditional constraints:
->    - clocks/resets properties only required for SpacemiT K1
->    - #dma-cells set to 2 for marvell,pdma-1.0 and spacemit,k1-pdma
->    - #dma-cells set to 1 for other variants
-> - Split mmp_pdma driver changes per maintainer feedback:
->    - First patch (4/8) adds ops abstraction layer and 32-bit support
->    - Second patch (5/8) adds K1-specific 64-bit support
-> - Merged Kconfig changes into the dmaengine: mmp_pdma driver patch (5/8)
-> - Enabled pdma0 on both BPI-F3 and Milk-V Jupiter
-> 
-> Link to v1:
-> https://lore.kernel.org/all/20250611125723.181711-1-guodong@riscstar.com/
-> 
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
 > ---
-> Guodong Xu (8):
->       dt-bindings: dma: Add SpacemiT K1 PDMA controller
->       dmaengine: mmp_pdma: Add optional clock support
->       dmaengine: mmp_pdma: Add optional reset controller support
->       dmaengine: mmp_pdma: Add operations structure for controller abstraction
->       dmaengine: mmp_pdma: Add SpacemiT K1 PDMA support with 64-bit addressing
->       riscv: dts: spacemit: Add PDMA0 node for K1 SoC
->       riscv: dts: spacemit: Enable PDMA0 on Banana Pi F3 and Milkv Jupiter
->       riscv: defconfig: Enable MMP_PDMA support for SpacemiT K1 SoC
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 22 ++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 76 +++++++++++++++++++
+>  4 files changed, 172 insertions(+)
 > 
->  .../devicetree/bindings/dma/spacemit,k1-pdma.yaml  |  68 +++++
->  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |   4 +
->  arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts  |   4 +
->  arch/riscv/boot/dts/spacemit/k1.dtsi               |  11 +
->  arch/riscv/configs/defconfig                       |   1 +
->  drivers/dma/Kconfig                                |   2 +-
->  drivers/dma/mmp_pdma.c                             | 281 ++++++++++++++++++---
->  7 files changed, 339 insertions(+), 32 deletions(-)
-> ---
-> base-commit: 6be7a5a768aafcb07d177bd2ae36ab84e4e0acde
-> change-id: 20250701-working_dma_0701_v2-7d2cf506aad7
-> prerequisite-change-id: 20250611-01-riscv-defconfig-7f90f73d283d:v1
-> prerequisite-patch-id: 53bda77e089023a09152a7d5403e1a738355c5d3
-> 
-> Best regards,
-> -- 
-> Guodong Xu <guodong@riscstar.com>
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 6cb14b79cbfe..644b8c85c29d 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/mutex.h>
+> +#include <linux/netdevice.h>
+>  
+>  extern const struct rnpgbe_info rnpgbe_n500_info;
+>  extern const struct rnpgbe_info rnpgbe_n210_info;
+> @@ -86,6 +87,18 @@ struct mucse_mbx_info {
+>  	u32 fw2pf_mbox_vec;
+>  };
+>  
+> +struct mucse_hw_operations {
+> +	int (*init_hw)(struct mucse_hw *hw);
+> +	int (*reset_hw)(struct mucse_hw *hw);
+> +	void (*start_hw)(struct mucse_hw *hw);
+> +	void (*init_rx_addrs)(struct mucse_hw *hw);
+> +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
+> +};
+
+You define functions init_hw, start_hw, and init_rx_addrs in this
+structure but they aren't implemented in this patch. Either implement
+them or remove them if not needed yet.
+
+
+> +
+> +enum {
+> +	mucse_driver_insmod,
+> +};
+> +
+>  struct mucse_hw {
+>  	void *back;
+>  	u8 pfvfnum;
+> @@ -96,12 +109,18 @@ struct mucse_hw {
+>  	u32 axi_mhz;
+>  	u32 bd_uid;
+>  	enum rnpgbe_hw_type hw_type;
+> +	const struct mucse_hw_operations *ops;
+>  	struct mucse_dma_info dma;
+>  	struct mucse_eth_info eth;
+>  	struct mucse_mac_info mac;
+>  	struct mucse_mbx_info mbx;
+> +	u32 flags;
+> +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
+>  	u32 driver_version;
+>  	u16 usecstocount;
+> +	int lane;
+> +	u8 addr[ETH_ALEN];
+> +	u8 perm_addr[ETH_ALEN];
+>  };
+>  
+>  struct mucse {
+> @@ -123,4 +142,7 @@ struct rnpgbe_info {
+>  #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+>  #define PCI_DEVICE_ID_N210 0x8208
+>  #define PCI_DEVICE_ID_N210L 0x820a
+> +
+> +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
+> +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
+>  #endif /* _RNPGBE_H */
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> index 16d0a76114b5..3eaa0257f3bb 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -2,10 +2,82 @@
+>  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+>  
+>  #include <linux/string.h>
+> +#include <linux/etherdevice.h>
+>  
+>  #include "rnpgbe.h"
+>  #include "rnpgbe_hw.h"
+>  #include "rnpgbe_mbx.h"
+> +#include "rnpgbe_mbx_fw.h"
+> +
+> +/**
+> + * rnpgbe_get_permanent_mac - Get permanent mac
+> + * @hw: hw information structure
+> + * @mac_addr: pointer to store mac
+> + *
+> + * rnpgbe_get_permanent_mac tries to get mac from hw.
+> + * It use eth_random_addr if failed.
+> + **/
+> +static void rnpgbe_get_permanent_mac(struct mucse_hw *hw,
+> +				     u8 *mac_addr)
+> +{
+> +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->lane)) {
+> +		eth_random_addr(mac_addr);
+> +	} else {
+> +		if (!is_valid_ether_addr(mac_addr))
+> +			eth_random_addr(mac_addr);
+> +	}
+> +
+
+The function should log a warning when falling back to a random MAC
+address, especially in the second case where the hardware returned an
+invalid MAC.
+
+> +	hw->flags |= M_FLAGS_INIT_MAC_ADDRESS;
+> +}
+> +
+
+> +/**
+> + * rnpgbe_xmit_frame - Send a skb to driver
+> + * @skb: skb structure to be sent
+> + * @netdev: network interface device structure
+> + *
+> + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
+> + **/
+> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> +				     struct net_device *netdev)
+> +{
+> +		dev_kfree_skb_any(skb);
+> +		return NETDEV_TX_OK;
+> +}
+
+Extra indentation on these two lines. Also, the function just drops all
+packets without any actual transmission. This should at least increment
+the drop counter statistics.
+
+> +
+> +static const struct net_device_ops rnpgbe_netdev_ops = {
+> +	.ndo_open = rnpgbe_open,
+> +	.ndo_stop = rnpgbe_close,
+> +	.ndo_start_xmit = rnpgbe_xmit_frame,
+> +};
+
+
+-- 
+Thanks and Regards,
+Danish
+
 
