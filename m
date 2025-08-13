@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-766518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E471FB24783
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0586DB24788
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDD723E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD2A720580
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6F52F0C47;
-	Wed, 13 Aug 2025 10:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6422F657E;
+	Wed, 13 Aug 2025 10:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlP/e8YE"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="W73EH2mf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604412F28F4;
-	Wed, 13 Aug 2025 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C812F0C47;
+	Wed, 13 Aug 2025 10:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081502; cv=none; b=GBJIg7tMC3cbK1FX+XVNQGmeniNL0VQ+4FDCn2bYHCPa7Qlrh1m3YT2CyyDzeAB3xZ7a1ZQuiVnoOIJlyPF7P5bPGWW4+1pLd2Bbw8BAzwoCmD+YZ8LTDwI/cooxGgWXKSX66nSU6H5I8fCcOjNdXNAkCfks6Ab5iSZXxBQY0KM=
+	t=1755081551; cv=none; b=a4phtlB1M8NQwoyNRLfmI6zw9Twk1RrxDZrAvlVYKNTfpOJJkk2Nk6gmeeyc2RLsAfkapYDAsI7lWdfuzthOiQ9fYvAaIwN8HoEhRK5ZWl29TNgY0BxJbWrWj0zrIDY7/xQ9sH+ZTkK9VuQ8yQ50zIKESG2A/wwlyoVIvlOSb4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081502; c=relaxed/simple;
-	bh=QY7qr0I6LgMrOyOYt+AMt+NPx5uOUbX04ftyQkj6SWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r7L2ZVzKQbZhUkubV4PQBdvf4unjDoRfzf98R8snZr44UwKufFOcCIFDRX9m/4Qa5xtdN6Nfvbc/0Sb4gZgxUN4pMbWXtqwoY6zKezall3kV2b7En5lblE6nx0ufALqkfDQk3VkTFVOdLtLXMtnRDUzgm/hE167fdSKlMcpXz6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlP/e8YE; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af97c0290dcso1121671566b.0;
-        Wed, 13 Aug 2025 03:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755081499; x=1755686299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T35sU1adLWCvhuxOUIoOZX8UAkanpK4deZEokYRD1p4=;
-        b=jlP/e8YEkoqbkjAD+3GVhhTid0waijHh6DKxGoT8wsl2UuOdcCgPbUsgyzpqpxkxFP
-         Fg9O0S81r3a+JPrwDgMGhH/G6bV4V1360hdEnMP9ggeawhBb4G+x603vfLq60k1t/Hsl
-         gY+tgKQU0FnxvdGl6bftGRvQd+mwZ8HpgTqz4H8z1RqIuv2IeUxwtWUL+XDQ7E9QIOHU
-         ITKnmxKDRPcA4tG57/jztLz3n9mTcSwvOOwdqMyW4wXYD7tQaJe647ToKtIZMuWx72/r
-         +7/Xo9JBUfdWqacIIKOGvtzukDJ0gCs0D6JGeSW1mgSKouAoSc3a5O8eRSVhzeRtqRr6
-         kXSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755081499; x=1755686299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T35sU1adLWCvhuxOUIoOZX8UAkanpK4deZEokYRD1p4=;
-        b=TpNXwiFoe7vjEXM4De14Zi6g9IC6/beA+3KF1Y0CFEvKRWLI/pOgbFls+SfN39H6ax
-         0qeyu8HDiw1PWjy8Eqg2ZI+KCBgj+DZBsyILXpg1ML2jp783td3cl+k9buCcnQeCERVV
-         cuuAEbg1hWc0yLCWH5eVMP2WWtqMFMHdtqch9ONvJKaGEK5ICyUbO7dIv4fO+2c1884r
-         GTeUSg4WSV4la3aybf9J4b7DNj/EtomzfWomAUDksKdjYbNjFyfN0heIPHSnQ/xvt5qX
-         ddTGkMb5Jif3eM+3jJjcp2FO5CZeoSazQ/OEggr68de2PvYmfB+w1TUGTN44Sguj3yTq
-         w2PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjPa5sXSFkiXqX6M7UhtwTHpUR5Sq3SVJrl9/RRiFzlf28Lh9Fj/Y2p6cioP6GxKQBzaLSsHFyZsiemyo@vger.kernel.org, AJvYcCXexlExl3DXVMFI2JmE2/wfd1coP48b1uxeqyV+2yasYdunC03G7JMBHOKLx3UgpzR1YlqItpEhOMow@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqg8uAhNfFMhqNz6SxFGRenw0AlU6I+O1arOka2L9YZVp4bvnP
-	fmUjbT3IOf0MuJUg6kkAhA3Lxd0ZpXn6/b5AmI5ahRlXXNPkbZONiw+FehBOoc81smu9leX0HUk
-	BF+E+sS9Sc4xmwqpTX57xLQyMYTD8NbI=
-X-Gm-Gg: ASbGncvaLXxNybZ7QCMtj/0JGi1xwYxbXCeWeRXI9sM0gRxba+FdSJX6NwMiprD6XK3
-	Kk7aiMtCTDtbw6bWzzoCSQ5ZzKU+CdrpEiSTX2KCR+fXtf7LnfnbE+QF+TiMWOVdQRgBq/blRua
-	ddV4/uLQ9bTGco1gVycFpmPhS1Ewh1OZGM5R42e8WI+Yc7eH6FLeq2eCNKeemPnZ63BtFTI0QWC
-	j6wlsiv4g==
-X-Google-Smtp-Source: AGHT+IFzY2SW1tfom/cbI5ohrcUDZwwmQTP7hgfgfJHhKN0DKqqhI7h6V16OuwW9LzO1uU/N7vK5gq7VS7+RrZmw0I0=
-X-Received: by 2002:a17:907:7f0b:b0:afa:1453:662c with SMTP id
- a640c23a62f3a-afca4cca53dmr209419366b.8.1755081498439; Wed, 13 Aug 2025
- 03:38:18 -0700 (PDT)
+	s=arc-20240116; t=1755081551; c=relaxed/simple;
+	bh=vU58AEtLJER2N7ec3MAyo8uq9Cj5lDoJ2STD9420TSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDpq2OYNspWQXoWU745tohNuzpTXQ6KgjKrlu6oGyPME8PFxiv/LYdAYWf+K4iBJwZ9Wk00lbe0+pCsred7F3TZ8VVKARyNgPmreGTUgooGd8CwTSJRLwU6YF559zzy3Il01/9nLdWgjRP+QRnyt/2oV/9F2Br9OaCNDVYgKOGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=W73EH2mf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A757E2EC;
+	Wed, 13 Aug 2025 12:38:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755081494;
+	bh=vU58AEtLJER2N7ec3MAyo8uq9Cj5lDoJ2STD9420TSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W73EH2mfLixrI4zkDbTPT/GxQm87PFg9RFPqcG0UwK8NKtlbdyAwEUxc3ZLEuMWmR
+	 kCXKyZo0f3XdfcSbgPE9UGFi6ENyh4vQDSsGWHhmzW38MwwtPXQCOR/Kl1jt1x+4fU
+	 QVwiYIwCVarvK2b/u7cE5MTbVz/7vArpq49FiEFU=
+Date: Wed, 13 Aug 2025 13:38:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] media: imx296: Remove redundant semicolons
+Message-ID: <20250813103849.GC6440@pendragon.ideasonboard.com>
+References: <20250813094746.557013-1-liaoyuanhong@vivo.com>
+ <175508029630.560048.7835285687538106544@ping.linuxembedded.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754617360.git.Jonathan.Santos@analog.com> <22ea35425827176a842ea0e523040acd20e27bcc.1754617360.git.Jonathan.Santos@analog.com>
-In-Reply-To: <22ea35425827176a842ea0e523040acd20e27bcc.1754617360.git.Jonathan.Santos@analog.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 13 Aug 2025 12:37:42 +0200
-X-Gm-Features: Ac12FXziAOSc3nNSdGsiq8kv16tCP1EIJfQsHqVPui1mj9F3XklHBlI4OKk26wE
-Message-ID: <CAHp75VcArEre81Yhy9NcXwHGXUZkuTWxrQ=q2Kbs4KX_22s3Ug@mail.gmail.com>
-Subject: Re: [PATCH 2/4] iio: adc: ad7768-1: introduce chip info for future
- multidevice support
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, jonath4nns@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175508029630.560048.7835285687538106544@ping.linuxembedded.co.uk>
 
-On Wed, Aug 13, 2025 at 4:49=E2=80=AFAM Jonathan Santos
-<Jonathan.Santos@analog.com> wrote:
->
-> Add Chip info struct in SPI device to store channel information for
-> each supported part.
+On Wed, Aug 13, 2025 at 11:18:16AM +0100, Kieran Bingham wrote:
+> Quoting Liao Yuanhong (2025-08-13 10:47:46)
+> > Remove unnecessary semicolons.
+> 
+> Well ... there's only one so it's not plural ;-) but indeed this is very
+> redundant!
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-...
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> +static const unsigned long ad7768_channel_masks[] =3D {
-> +       BIT(0),
+> > 
+> > Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> > ---
+> >  drivers/media/i2c/imx296.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
+> > index f3bec16b527c..cbbe0e7a37a9 100644
+> > --- a/drivers/media/i2c/imx296.c
+> > +++ b/drivers/media/i2c/imx296.c
+> > @@ -922,7 +922,7 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
+> >  
+> >         tmdout &= IMX296_TMDOUT_MASK;
+> >  
+> > -       /* T(��C) = 246.312 - 0.304 * TMDOUT */;
+> > +       /* T(��C) = 246.312 - 0.304 * TMDOUT */
+> >         *temp = 246312 - 304 * tmdout;
+> >  
+> >         return imx296_write(sensor, IMX296_TMDCTRL, 0, NULL);
 
-> +       0,
+-- 
+Regards,
 
-Please, drop the trailing comma. This '0' is a terminator, nothing
-should go after it.
-
-> +};
-
---=20
-With Best Regards,
-Andy Shevchenko
+Laurent Pinchart
 
