@@ -1,161 +1,115 @@
-Return-Path: <linux-kernel+bounces-766385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278C0B245FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:49:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0D5B245E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4B2722F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170A97B64ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3662F28E5;
-	Wed, 13 Aug 2025 09:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EAF2F6593;
+	Wed, 13 Aug 2025 09:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hMuMMVzg"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="IyetmWSN"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2022F548E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4362F28E0
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755078024; cv=none; b=A3EC3z0GjM4cNe6vGja/LKFj6nE5+cb5flyRxeiW/0rPdB25xyGNojqRQHbnEb1hk/rWUtjpEMXkM17GY5N3GtM0PL6ovrN9a3hHPSyqRW9J89gbCxOmXayLsng/XBjQKnqAunp0Wgvx37nTLCP/jnXtiCNMyONV/XYGSPQO6zI=
+	t=1755078055; cv=none; b=lG2he5pMkw5GNIMeyj0lrZqsn+WjeVrS+9/F2RJa8YCYqT7Odj6Vh+Ar5lLeJQunFDyd/V4Yb2ETlDNUAsofg/9KcywP1tXzjgYpSE2pURgZeyUNzTLtvnCveVMfGC1OA8QsTwQq0ySQ/6+jFZ3U7QAqzRrDl72bNayRg4ElUBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755078024; c=relaxed/simple;
-	bh=Bzl1fTy5zn3FKPpn8SCij3fXaOSeVZvede8RiBegfvw=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mh/Bf6wu/dtEBRCGgORFY+gN9KIjEitDzWuuWQ0wb4jY/ZdrE7raRY68vbckY0E++uYNncMa7Pbixd/AL/1oyM277ogSi7m7DNGpfQAwSCg107bIpOOrjrleiSwz/tmoJhrxfU2WGjuH2+rr3XDgSkIUSTU7hIHOokN0u+fg88c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hMuMMVzg; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-556fd896c99so5405956e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755078020; x=1755682820; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCLr2/gBgA535ijZwC7LDnHGKufszujGdP3EdKtVNas=;
-        b=hMuMMVzgJw6F4GsH9IWakin6qXABGRo96PjIRDCQ0T10OkS6zyjG0RJHvwuBtBQeHS
-         /EVORnMIHLtwDoQd/bCfVGyrNldQSq9+vvVmU4EdZDeCw2Xj05TLVenDyhizDbyBsqeU
-         TSDucsiVSCVlf7Rko+6APRn2qaPPaE+HfJUxfwtXCmCMVtCfBSeVO5UfMaHD0O6yQ1Uo
-         fZ0NHBS7Znrq0194PKLjvTdoyePViM/e7D+OUZj9cSSF37/l+LNoW4m0TeKFB/KTd3Nc
-         hlzrtx8V4cPzCmCIV7HY01JWGfMuWASlJ7Au2cuNlBZ0GumyVDGR9ninWw15ZEjU2f/N
-         Z/Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755078020; x=1755682820;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCLr2/gBgA535ijZwC7LDnHGKufszujGdP3EdKtVNas=;
-        b=MotEl+rxmh3BTptaAEqRzKo22Zs+Ak63hl3b6Ry/bdbNpj7DSc/lrav1U0GVjzQ215
-         GdGc/Z+wv0LVoWxXeTobVG5QhxuZFmSuFt9U9RrTd/f4VqXmsXvRPe9Fex2I80pxB+a0
-         Xcrw1R/6jUD4XpdZSKXkD0qqxeoC3oiCIW95zAwoRv7n+yo3vZ4FnD1F3owMvJzliMwJ
-         aXsNw4qOYyPzUTYMJwBSIERxdT2o2j6bQ7iP4Xodzgond+x3Gg1ye46FldLd+Pp7oPio
-         I3hkLhj8bhNyWJoE7YVGXBhFtysdqJfdzZiZbsiryRY90bDt1aZhOyRd5aIBdGZQ2azo
-         WMhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Bg3rRvArpAqH52o3C/I8xwv9L2m5P8k2faPm1awlwocGTvZ+rQI9ikIwAvd6MvCCvGH/0RqypmEFutM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDcGqcyQNyGjPe6MpAuO/GM1N0sUNDSxydi19hne9TvrVyfJ9r
-	SfP2NsYxfZbTOKXSmxuZA1xVaLgT4XRpqsm61TrKVZQC5FmSXOsT+le/CY/0NFrkZQ+1fHcKGzJ
-	+XXrjsd2z0G6h/Bvy9eNd8nO1FGlmW0HqEph1K6gpIQ==
-X-Gm-Gg: ASbGncsfiGIHCJdfozvnqMvIAbo2A6FUXSoGigkptbDhYGCj0jeDNsX7JU02UdBAbpa
-	gOfer6UGBR4ku6hR84D0xHWRNXlbFCMr0u/hX7xoaz9J8NGFvMR7ffsmSqoA7KttlB/lqisJTxp
-	DoXGi9UT1/UuEs5JR3ubyTfcANbDflPSx5RIqz44NlKT7/ioXn6wR6fktEH0te32btUxdWTr/yW
-	Gmao4K2ETl/p6G7qA0g4t3rJZzvsY4H50nXLdI=
-X-Google-Smtp-Source: AGHT+IGRkmCRYjQdB/zuZeZqz/1pbYUJ5kWF1/Fnvca1BsseHJzKEkX+Ipcliv5kgaQGrHnHPdceKTRbNuzvOMwZtj4=
-X-Received: by 2002:a05:6512:1396:b0:55b:8863:2b64 with SMTP id
- 2adb3069b0e04-55ce03c7c16mr795502e87.57.1755078020190; Wed, 13 Aug 2025
- 02:40:20 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 13 Aug 2025 05:40:19 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 13 Aug 2025 05:40:19 -0400
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1755078055; c=relaxed/simple;
+	bh=r+ogwS6zQjeSBn776QngYtEOAsPLDZQTut3nCmVuv68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hktg41JpLDFkCcbTa+C8JmLA2YxIyt0EB2u4rfmMHPFoPVbUktRZB62oiZdqXFgiXQwZXK18LFuzvGKZWMjZO59uB2vTpTjRGjIwpYgkZkqgNVDz6J+7JYHq+3uztYyBhne3LQjddsoN3slrnynTV1qGXyC6VzpY+OLdYPJkL9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=IyetmWSN; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 43721101A45A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:10:40 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 43721101A45A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755078040; bh=r+ogwS6zQjeSBn776QngYtEOAsPLDZQTut3nCmVuv68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IyetmWSNH5XjFey2IDSYKVEigxqx3gDpa5bLTgukMmsNTuq/baR797OGe64wgJvnh
+	 86PusgIi7sM06AAnsdRRKyr/U6ucVcXi9rzCpArAXE9GlkEKGjBrG6MvvMQmQXfPH/
+	 yIPX9lEaowlan08qPAikjA8vxKeYQydRq4fJlUJg=
+Received: (qmail 14228 invoked by uid 510); 13 Aug 2025 15:10:40 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.40343 secs; 13 Aug 2025 15:10:40 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 13 Aug 2025 15:10:36 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 0093E3414ED;
+	Wed, 13 Aug 2025 15:10:36 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 49F7F1E8132B;
+	Wed, 13 Aug 2025 15:10:35 +0530 (IST)
+Date: Wed, 13 Aug 2025 15:10:30 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Jonathan Corbet <corbet@lwn.net>, Christoph Hellwig <hch@lst.de>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] Docs: admin-guide: Correct spelling mistake
+Message-ID: <aJxdjoALgYkPJ61Y@bhairav-test.ee.iitb.ac.in>
+References: <20250813071837.668613-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
-Date: Wed, 13 Aug 2025 05:40:19 -0400
-X-Gm-Features: Ac12FXxS1Ph05y4YxBBe16rtMjc9WlhA3zcIzqCoM52YkPZ7kk1KgpF7Zpp__fk
-Message-ID: <CAMRc=Mf75cangdeg7T4E0nAhJs_BTdLyCu6GcrCL8vJzzAkFWg@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: bd79124: Add GPIOLIB dependency
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
-	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813071837.668613-1-karanja99erick@gmail.com>
 
-On Wed, 13 Aug 2025 11:16:06 +0200, Matti Vaittinen
-<mazziesaccount@gmail.com> said:
-> The bd79124 has ADC inputs which can be muxed to be GPIOs. The driver
-> supports this by registering a GPIO-chip for channels which aren't used
-> as ADC.
->
-> The Kconfig entry does not handle the dependency to GPIOLIB, which
-> causes errors:
->
-> ERROR: modpost: "devm_gpiochip_add_data_with_key" [drivers/iio/adc/rohm-bd79124.ko] undefined!
-> ERROR: modpost: "gpiochip_get_data" [drivers/iio/adc/rohm-bd79124.ko] undefined!
->
-> at linking phase if GPIOLIB is not configured to be used.
->
-> Fix this by adding dependency to the GPIOLIB.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508131533.5sSkq80B-lkp@intel.com/
-> Fixes: 3f57a3b9ab74 ("iio: adc: Support ROHM BD79124 ADC")
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->
+On Wed, Aug 13, 2025 at 10:18:36AM +0300, Erick Karanja wrote:
+> Fix spelling mistake directoy to directory
+ Fix spelling mistake directoy --> directory
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
+> 
+> Reported-by: codespell
+> 
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
 > ---
->
-> I am somewhat curious why the failure occurs only at the linking phase?
-> Wouldn't it either be better to have these functions
-> devm_gpiochip_add_data_with_key() and gpiochip_get_data() only declared
-> when the CONFIG_GPIOLIB is y/m, to get errors already during
-> compilation, or provide stubs?
-
-Providing stubs is not correct for sure - a GPIO provider must always pull
-in the relevant infrastructure over Kconfig. As for the former: it seems it's
-a common pattern for the headers containing the "provider" part of the
-subystem API, you'd get the same issue with regulators or pinctrl.
-
-I don't have a good answer, I'd just apply this as it's not a common issue
-from what I can tell.
-
-Bartosz
-
-> ---
->  drivers/iio/adc/Kconfig | 2 +-
+>  Documentation/admin-guide/blockdev/zoned_loop.rst | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 6de2abad0197..24f2572c487e 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1300,7 +1300,7 @@ config RN5T618_ADC
->
->  config ROHM_BD79124
->  	tristate "Rohm BD79124 ADC driver"
-> -	depends on I2C
-> +	depends on I2C && GPIOLIB
->  	select REGMAP_I2C
->  	select IIO_ADC_HELPER
->  	help
-> --
-> 2.50.1
->
->
+> 
+> diff --git a/Documentation/admin-guide/blockdev/zoned_loop.rst b/Documentation/admin-guide/blockdev/zoned_loop.rst
+> index 9c7aa3b482f3..64dcfde7450a 100644
+> --- a/Documentation/admin-guide/blockdev/zoned_loop.rst
+> +++ b/Documentation/admin-guide/blockdev/zoned_loop.rst
+> @@ -79,7 +79,7 @@ zone_capacity_mb   Device zone capacity (must always be equal to or lower than
+>                     the zone size. Default: zone size.
+>  conv_zones         Total number of conventioanl zones starting from sector 0.
+>                     Default: 8.
+> -base_dir           Path to the base directoy where to create the directory
+> +base_dir           Path to the base directory where to create the directory
+>                     containing the zone files of the device.
+>                     Default=/var/local/zloop.
+>                     The device directory containing the zone files is always
+> -- 
+> 2.43.0
+> 
+> 
 
