@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-765863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6439BB23F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9431B24007
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D2D1B61FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E101B63EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E02D0C81;
-	Wed, 13 Aug 2025 03:52:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7862BE63A;
+	Wed, 13 Aug 2025 05:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="un83pMT3"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2AC2C158E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F513A1D2;
+	Wed, 13 Aug 2025 05:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755057165; cv=none; b=Syb03YgYrh9ut4pTnt77gijfG765QcxWeuqQ2SEoj9WrzDU2AXO5y9t+0pXmInPUxkwOaOJ84Faf8Kmu+/ywhUjfTlJuj4hR8ooEoadQWIXcc49tJHbpNLItXAjMw5PdxkCHC6aq+A4GyjeAxCDELspQZyUzARQIEFE75sW2now=
+	t=1755061650; cv=none; b=hPTLbHo48C8WgKX0TlwlgHf/e2+v34N2UXAnSwH0Vp+X7Stqx37fwxTUV6ZXboQeB8XfiDopqD77Th6q95x0+T8Iz9kTGY50qq1zT0nFh7UFnUsDuZGlqq/fYZP6uw9JO4APdkEQ1lyWEGrCPEXQ2xEU0sVbRDj5F4u7/mdYFOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755057165; c=relaxed/simple;
-	bh=+TtvvtkfcdQbySxJLg/HYRDdGbJtc9HKEZuMK+x1i0Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jxyZ239K3cqgG88+WjTG3elSDENvWDMSEv4im+A81Wl7PaH8yIWBfvTkm/qFu77ZcIeOZAYQWYG1S91zH1XbG4F4Sku6Nm8Nvs3SluAJx31QtcGsn7AQpaJoSZW6EGpwE40xouh1flQxj8E+8qAolE9JeZdFBkC5gyuLeJyk66w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c1vVG0VLFz2Cg7V;
-	Wed, 13 Aug 2025 11:48:22 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 92E2A14027A;
-	Wed, 13 Aug 2025 11:52:41 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by dggpemf200018.china.huawei.com
- (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 11:52:40 +0800
-From: Quanmin Yan <yanquanmin1@huawei.com>
-To: <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [RFC PATCH -next 16/16] mm/damon/core: handle quota->esz overflow issues
-Date: Wed, 13 Aug 2025 13:07:06 +0800
-Message-ID: <20250813050706.1564229-17-yanquanmin1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813050706.1564229-1-yanquanmin1@huawei.com>
-References: <20250813050706.1564229-1-yanquanmin1@huawei.com>
+	s=arc-20240116; t=1755061650; c=relaxed/simple;
+	bh=JKTQA9qH82HV2H1Eq1113FuCQKbjc3L96FALVs8Fb0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdbma1CS1Fe5XFSpWy4Z4jzWNAQOxHawTTyks6BuAfW1caQ+Ddt1T9EWN58lJRFLo48Ns9iS4fVViVNWznbrbptVNl8myrGvhT1Chdn/UhZoFMwawCiaXYkhmkH0s3q1o9bc1e7WS0fGC+PTrYdFZVLjo52G/gRdLOjFgjtbgWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=un83pMT3; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=e5U3Jru4QvSh+gZ04F1oAlS7nb9ho9LY7nJhfMe2Y4U=; b=un83pMT3ThYrtWrTPu0bibcpbE
+	BhUC6V5s+qnM99OgBU47KW2hMWIdhipx/U9SZn/PdD5iZY3ahTAcXwq0aIxkt/cJakChWWNFTKPg4
+	KUV08pYtA3kYj7Qi54yRbxc1ShhWm0mwXMUg8spwnTkBA2O2czkBvvncj4SlMtbpXBh8ZbIJnzhaV
+	t3TqAeoDG9jd597x8lKORHvF0/SM6VIUE3IYa0LtNhsmUiE7+0UUNaiBptlPyw+SYYRdhm7rHe2x4
+	clE/Z7F1jUQIcL3U0LQCMV7ZGPCCaw1nVh4wbA+er1lwdT2MMj5YKE8J7LmoK82NbdHuiQOaxtcEk
+	RoN1I42w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um3hl-00000005txc-0wPb;
+	Wed, 13 Aug 2025 05:07:17 +0000
+Date: Wed, 13 Aug 2025 06:07:17 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neil@brown.name>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] VFS: allow d_splice_alias() and d_add() to work on
+ hashed dentries.
+Message-ID: <20250813050717.GD222315@ZenIV>
+References: <20250812235228.3072318-1-neil@brown.name>
+ <20250812235228.3072318-9-neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812235228.3072318-9-neil@brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-In the original quota enforcement implementation, the traffic
-calculation multiplied A by 1000000 due to time unit conversion,
-making it highly prone to overflow on 32-bit systems:
+On Tue, Aug 12, 2025 at 12:25:11PM +1000, NeilBrown wrote:
+> Proposed locking changes will require a dentry to remain hashed during
+> all directory operations which are currently protected by i_rwsem, or
+> for there to be a controlled transition from one hashed dentry to
+> another which maintains the lock - which will then be on the dentry.
+> 
+> The current practice of dropping (unhashing) a dentry before calling
+> d_splice_alias() and d_add() defeats this need.
+> 
+> This patch changes d_splice_alias() and d_add() to accept a hashed
+> dentry and to only drop it when necessary immediately before an
+> alternate dentry is hashed.  These functions will, in a subsequent patch,
+> transfer the dentry locking across so that the name remains locked in
+> the directory.
 
-damos_set_effective_quota
-  if (quota->total_charged_ns)
-    throughput = quota->total_charged_sz * 1000000 /
-		quota->total_charged_ns;
+The problem I have with that is the loss of information.  That is to
+say, "is it hashed here" is hard to deduce from code.  I would rather
+add d_splice_alias_hashed() and d_add_hashed(), and then see what's
+going on in specific callers.  
 
-Requiring total_charged_sz to be less than 4GB/1000000 is unreasonable.
-Additionally, when overflow occurs and causes quota->esz to become
-extremely small, the subsequent damos_apply_scheme logic permanently
-sets sz to 0, while quota stop updating, ultimately leading to complete
-functional failure:
+And yes, it requires analysis of places where we have d_drop()+d_add() -
+better have it done upfront than repeat it on every code audit *for*
+*each* *single* *call* *of* d_add(), including the ones that are currently
+obviously meant to be called for unhashed dentries.
 
-damos_apply_scheme
-  if (quota->esz && quota->charged_sz + sz > quota->esz)
-    sz = ALIGN_DOWN(quota->esz - quota->charged_sz, DAMON_MIN_REGION);
+I realize that it's no fun at all - in particular, I'd never been able
+to get ceph folks to explain what is and what is not possible there.
 
-Total charged stats use the unsigned long long data type to reduce
-overflow risk, with data reset capability after overflow occurs.
-
-Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
----
- include/linux/damon.h |  4 ++--
- mm/damon/core.c       | 18 ++++++++++++------
- 2 files changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index d85850cf06c5..45aab331dfb7 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -247,8 +247,8 @@ struct damos_quota {
- 
- /* private: */
- 	/* For throughput estimation */
--	unsigned long total_charged_sz;
--	unsigned long total_charged_ns;
-+	unsigned long long total_charged_sz;
-+	unsigned long long total_charged_ns;
- 
- 	/* For charging the quota */
- 	unsigned long charged_sz;
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index bc764f9dc5c5..5e05fdd91c12 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -15,6 +15,7 @@
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/string_choices.h>
-+#include <linux/math64.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/damon.h>
-@@ -2059,8 +2060,8 @@ static unsigned long damos_quota_score(struct damos_quota *quota)
-  */
- static void damos_set_effective_quota(struct damos_quota *quota)
- {
--	unsigned long throughput;
--	unsigned long esz = ULONG_MAX;
-+	unsigned long long throughput;
-+	unsigned long long esz = ULLONG_MAX;
- 
- 	if (!quota->ms && list_empty(&quota->goals)) {
- 		quota->esz = quota->sz;
-@@ -2077,11 +2078,16 @@ static void damos_set_effective_quota(struct damos_quota *quota)
- 	}
- 
- 	if (quota->ms) {
--		if (quota->total_charged_ns)
--			throughput = quota->total_charged_sz * 1000000 /
--				quota->total_charged_ns;
--		else
-+		if (quota->total_charged_ns &&
-+			likely(quota->total_charged_sz < ULLONG_MAX / 1000000)) {
-+			throughput = div64_u64(quota->total_charged_sz * 1000000,
-+					quota->total_charged_ns);
-+		} else {
- 			throughput = PAGE_SIZE * 1024;
-+			/* Reset the variable when an overflow occurs */
-+			quota->total_charged_ns = 0;
-+			quota->total_charged_sz = 0;
-+		}
- 		esz = min(throughput * quota->ms, esz);
- 	}
- 
--- 
-2.34.1
-
+I would really hate to have that expand by order of magnitude - in
+effect, you make *all* calls of d_splice_alias() and d_add() similar
+mysteries.
 
