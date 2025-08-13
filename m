@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-766689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FFBB249FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D778B24A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2BC581F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E77D582477
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFB62E610E;
-	Wed, 13 Aug 2025 12:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD932E5B23;
+	Wed, 13 Aug 2025 12:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7U5EG5i"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Icnrw6NI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64E272802;
-	Wed, 13 Aug 2025 12:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C952D8DA9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089974; cv=none; b=qpNiI9Pta1Z/Zakf6ggtH+5AI4E/UwcbzJDsaZon22HTIragU05b98T3+IcpUuWLZrNTvjNZ1RZpzvCILFSPmIzDqqu3gPG7lwUxwtugsKodEvgMC7SG/TrmfAbRhHOycfRpBVkyY/ubP6oTlx84Hk69QMXVbT4gsIAK6YlyCOU=
+	t=1755089981; cv=none; b=kRFsJayTeUDIXjY7tVLeLgd17doB5g5mTz4eF50oPSZGAx0ty51xUT5c9rw/FD7F6nBbo22fn45d6jTLreLy0VDO221m64E/ICj60SeXXmiUxZu0fYWGTJJAuri2lp9LDbXnBLw9HJmKgCLYbzMWn8Q6aOQ9IPZVOpAtZW7V3To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089974; c=relaxed/simple;
-	bh=dTFc3E1aiCdvJZfZClo+9DpCtgXt5pJR4Sj5C5YOZao=;
+	s=arc-20240116; t=1755089981; c=relaxed/simple;
+	bh=f/sy9Epmv6cLrpeHy0zJxZ/3Him4Xj3h0F/cywhbhT0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VC1vE1cJwg7O0M1ihE6VCLofZNeMnbUonDBIlqFY0ypNpkxmaLxZlBHTs+8mHFOyvaQx3TmyFrXeVdYgTLskTtkG3VfyZkmvWsJ7H2ENFJF1zHtUCoGono3lisPYxfj7TmPm1UX1vmUrtPLAvRRV1J4fqFKoUjgyCfNnwC817ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7U5EG5i; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76b8d289f73so6189535b3a.1;
-        Wed, 13 Aug 2025 05:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755089972; x=1755694772; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQPvd+zVqzXDcaRE1Milhvn1ALxIOqrbSOg9v32q6ts=;
-        b=j7U5EG5if3bS+Hpnhm91ukDzE3uC1p+77ijHtyMZVE8nzQqeJkzZlpaYdkghwVWWyV
-         mdBO9lw6VjakRwGGw2HuwuYNasY9CqqWAPpgF/tkdsxD/KZU6LrZ664+4Gtt0zUDYVmd
-         jDrL8iAFXskSGWlmJdXDHFqJK0p7fnuVoP+3gvIHVk6emVsP5tzJvodYw8kVqvkwlROv
-         bGvOhA9vdbpH4SzIQOj2snvIi3hDmv7m4axImxHIlF0icl1Pz530LMjsCuZu9oe/X1R4
-         Pkv7drkD38K0ijbaumBfd/7ffRlbpJdPa5X7OOVH3GXBDbsLXEoPPTlv3HH4XL4uqSY1
-         ThwQ==
+	 Content-Type:Content-Disposition:In-Reply-To; b=AeMevMQlgYmr8wewVDV6W0eVtnpjSWEcPEABv9W4u7NrcVe0hRWsrvvHxksu/l1hUU5Cdw6tWswzWeWuBT3DiRGtjKGRaKzCx8KWuOlnuHQJirA3PsfQ2EuBHtkJyvKU0JjueB2X3Sph3J3Zmx8LSUpLENjQO/U1NoQ/DdNnrcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Icnrw6NI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBMHSb012161
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:59:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=89undOGSCm/t00epashw1SYp
+	cyoRiHj2yOfvXPYa4Gc=; b=Icnrw6NI3VZBRsPQEIn3O/rHU03NXKW8iaSfsR+W
+	xjm7lwQianwOHArGJIew0ymKsdw9+Zge40Fb4e8ZLrR8Q9RagIh4Od+Dv4Ft/Q/9
+	Jfl9uTN3Wzx4Py6BSiOWqUv3FofupRi3rpIQLOJNalPZjAecOXpH4nw3nVm3Au60
+	zsnrA1agm0TRClxCLwdBJKvoJ6cI3pDHm4FUbpX2XDSdz9+3Y8PObwl3JIxWkcjw
+	du/Ctlu/TQiWN5yPHz1m6Jl2VY3caVdz28/kPIlJe1+RPcLNLRD9KWYBdvukpll7
+	2UbWeqFFAY3a5zp7XdjzCDbIRSumaBVsYnix3ODCBnfB0g==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g9q9tw46-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:59:38 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b06228c36aso86358041cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:59:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755089972; x=1755694772;
+        d=1e100.net; s=20230601; t=1755089977; x=1755694777;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UQPvd+zVqzXDcaRE1Milhvn1ALxIOqrbSOg9v32q6ts=;
-        b=qCTiTt/3koNY1fxCjYeD36EQPVBU/sI9vQYlz5CPPXFU29vUISaKYgQQOjv6Ll4N68
-         RBidAydgel24V0EgIQJIzyBP9V9s9HQOXdwVJlSynUEmUsNaOHy8EEUONWmMlBrYgy/F
-         BNfeR8i5uO61Up2klWrMifmEalAVunbx+vWB0141O0BQWd/5yTjq/od5YXiYd6EIpWEZ
-         j1b/9kjqFMvbrJAxmihcw2wXWX63F5XzANDuctNrnyaYG2mHfHOoPM3XZW+uxyN37OPK
-         3jGeSnHx0AoaNPJE9OsEI395cCtsiOawJ0U6v828p6EvJHMOOfuRrT80DBw50Bddz7kZ
-         pQWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsS+uWWFdXIndgafp9x28wXr74pnazGPDAv22070kWONRyvAt8X2jV23E8MKWsUt8LSugYij35jJuuVSc=@vger.kernel.org, AJvYcCXgpeRR+l0o2TcOGhEBmNE16x5y77oVlafw0TqanDQXCa8prBnJaQg50Bga5HyyJUpgVSwzmzGEAKs=@vger.kernel.org, AJvYcCXnvaguchyZHlNd5rQzmvQ20C0V1G8LKblt7T3YqaK7fgpe3xNdNoUGDSNJLO36BbmBh9jUk9X+l9cqZvHrgwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywitqf7THuftADi3oJfC2ZzbolSuACoqkEkRc0ekU1z1csXqg1s
-	cP92Pt5ZwAD0DGS6pt32r7Vn25i1Ph6kZARmPW/rCOiZIqzA9wgDLo6n
-X-Gm-Gg: ASbGncslESGP/kMTN9Um5h7w0hR5oDedP/ZmXs9Fv5gL5lOJjGajglWOs3ieE6kwBlz
-	GywgJJjk58tdSIJJJQdMnFiKvC2nCFKBk4VptwVgYE7oRm5PEVheQrg9b5izwCbq4kyUk7XdO+f
-	ayQNKU7miSHA9Jfh8jxslXLq571jebitIJtOcuVJYbi9UxxRP8ew4RKiCznesjNnFHvIxeXnBCQ
-	Sl6zslN2qg4RCp/63gsALYxJvuavetw1hLmSs8MQvcfYJyfF/LZGMQN+R3tow+x9Rgo15dmqyjN
-	HYVsMNeClVnKOy0LrI9HDAaKFCeyej758Vek1xvSh1eYgg8FWc4BcdZIQOv1o4U8MsGDYL3XNra
-	TsK6FYiGsrKYy7Az15M/qtWprh6itBYA1
-X-Google-Smtp-Source: AGHT+IG8R4qt6TnQdln39ZZIqnhdZLG0VHnFzmJud0A0EvI8YMeFg2UdOWBhjzl16urJ2PjbWhG34A==
-X-Received: by 2002:a17:903:1a70:b0:242:9bc5:31a1 with SMTP id d9443c01a7336-2430d2c841fmr48188895ad.57.1755089972062;
-        Wed, 13 Aug 2025 05:59:32 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899adc3sm326538625ad.118.2025.08.13.05.59.31
+        bh=89undOGSCm/t00epashw1SYpcyoRiHj2yOfvXPYa4Gc=;
+        b=bCIIyfchzBN4ic26L2+T2PTTM5ciOpGLqqFUBc2sROyviMERzgnyXoiFAjTxJnmeYw
+         RleAJZPqA0houMd8znLschXhm9UgZy6yaqv3k+EaoJz4kOWUu5a+FiiaCy8pnzdbFVAE
+         dximQ1vwCm3hCySwLkrxEylI+h3+2rJ1GC8VAzPVvcg9MxFnCZplGwQsGs9b0aIgczGV
+         6OF8WVxos5OGHd2BRPTy1WUA3smgcsQsgfoXTKmDTsZwoYTMCOOhB39eiRS2Yw6tw+82
+         gJgRxl3EJ/Y4G+VluHtn9YLlm8UxiwqFg18arQEUoOCXjFj5s+PuxVyn87p8j/tIsoQP
+         9H/w==
+X-Forwarded-Encrypted: i=1; AJvYcCURFjraDN91679CUsfIWpzxr1WHtMetC077ZLe5VdCvNPPMH2GSFYaYQebcuk0HIPrcG+GixY2blOBkcAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM/c73sn6MvZHjIpUj3c0sEnvo8gr0KxT9gPM570Q1d2C1MRYR
+	q++do6iz1yzgiO7zz9UVo5DbNcqMky0HPVOthYUnHHkpAXBKe1HDROSS3vv5DeOjbPTIE5uWbjm
+	OgQcwPnxUGrPMSonoF2Jmj2xN9fqMnDdyi2uENnFOfsKkDgwjDKStr/TVg9GRy4r3sPY=
+X-Gm-Gg: ASbGnctO8Y0S7up1vDdP9olU/qr7DYwvMefsX5OUNvq/DJ4t6qsxH2yGRXMfqcWxU6w
+	yBjVFgOGf1yFmcrYrCP7A1dvbSXNfp342YQcXpI847JsckNL3dJOX4JtRd5AiyZWSzJTKCnmnKA
+	KeH+EjLOOSg+w55M77wFbZtvcL0a2KeZ1axAgEiU8TlR7lsQtn5Sl0WKeOxCFgLsWg4ogeh+byi
+	hYlFgYnEBvn3lb8uHB1MdodOKK2CEtINQn02vf7OIguCngifTSpvXwDMB0U7sTs72vgw2qUJE6t
+	zmsdLvJ8RG2JSDBv7k3Z0V9lnv6nvTpkfmLXICrtcE4qHMhcB0VQdO7vUCeDfWh1AGlCGGY/U0T
+	3bhYREi0C8VdJ2BytIDpG2LsJjM1vZx2hLzDmImlF4aCCFaU02iiA
+X-Received: by 2002:a05:622a:590b:b0:4ab:5277:a5ab with SMTP id d75a77b69052e-4b0fc6f1fc4mr43132691cf.6.1755089977096;
+        Wed, 13 Aug 2025 05:59:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYZUZcRFNXr1nwU79ordj5X3vkd99gbFsAKVm6AbEVLEEMy/o0VEZaEaiD7x9HvcpYcqpeHA==
+X-Received: by 2002:a05:622a:590b:b0:4ab:5277:a5ab with SMTP id d75a77b69052e-4b0fc6f1fc4mr43132151cf.6.1755089976524;
+        Wed, 13 Aug 2025 05:59:36 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332388fef31sm49861901fa.70.2025.08.13.05.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 05:59:31 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:59:29 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: cpumask: rename CpumaskVar::as[_mut]_ref to
- from_raw[_mut]
-Message-ID: <aJyMMc-nd2wOBZ4g@yury>
-References: <20250813-cpumask-asref-v1-1-1242aa8e0cfc@google.com>
+        Wed, 13 Aug 2025 05:59:35 -0700 (PDT)
+Date: Wed, 13 Aug 2025 15:59:33 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH v2 03/38] drm/msm/dp: break up dp_display_enable into two
+ parts
+Message-ID: <ftlaxwogzz72rg4plguaet4wi64pmdfmd62qve4xffamxq4fsu@ytd4edwv6ixm>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-3-a54d8902a23d@quicinc.com>
+ <gwib6zcvkxsxcz222cno5jbvsnt2abdoqfnymlxq7e6c6wdfvn@nlplodnco2sw>
+ <48c61bce-21e6-488a-b976-da53004b6226@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,65 +106,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250813-cpumask-asref-v1-1-1242aa8e0cfc@google.com>
+In-Reply-To: <48c61bce-21e6-488a-b976-da53004b6226@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=CNMqXQrD c=1 sm=1 tr=0 ts=689c8c3a cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=bAkpl6uDeKY4ZaPGbNUA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: W4LT61dSfvZdKEm7Zlzmt1SjlgRXk-d-
+X-Proofpoint-ORIG-GUID: W4LT61dSfvZdKEm7Zlzmt1SjlgRXk-d-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE2NCBTYWx0ZWRfX8eyap/K+k5lc
+ frBS3R1wIH4ZqbN0jyicHAdFpw4GbwuFsTbv9JElXNIxTvSZR5PC15+qe1/taIcGdEZWYj45fQx
+ HdJSr+BozVDNC/E2wHrpwLiimjiLQufP9OBpXxnedfQe6Gjq6NlwsdWEar+hFMZUQBptfsTn5BO
+ GswTiz/QcyAt1btnVYK18ecLKKqKH1IzXDgjYzC0q/Onm/euSl1au2UG4MrpuEQHfy62WIq7gW8
+ 8FggeDmEh8VmN9xAASrMLbhg04gBa9oOgeAbBB13BWTTrizPpdDvenkm5Bo86XD3zIEZea008mX
+ +imDqDMHJusmqvEdDBl3qilZshgn/oCBpQB/yVBzav+DobtgfDqxMKMfxQcNH0PiN0n+OojFjfC
+ j5i2rfkc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120164
 
-On Wed, Aug 13, 2025 at 07:54:31AM +0000, Alice Ryhl wrote:
-> The prefix as_* shouldn't be used for constructors. For further
-> motivation, see commit 2f5606afa4c2 ("device: rust: rename
-> Device::as_ref() to Device::from_raw()").
+On Wed, Aug 13, 2025 at 05:36:10PM +0800, Yongxing Mou wrote:
 > 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> 
+> On 2025/6/9 20:59, Dmitry Baryshkov wrote:
+> > On Mon, Jun 09, 2025 at 08:21:22PM +0800, Yongxing Mou wrote:
+> > > From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > > 
+> > > dp_display_enable() currently re-trains the link if needed
+> > > and then enables the pixel clock, programs the controller to
+> > > start sending the pixel stream. Splite these two parts into
+> > > prepare/enable APIs, to support MST bridges_enable inserte
+> > 
+> > typos
+> > 
+> > > the MST payloads funcs between enable stream_clks and programe
+> > > register.
+> > > 
+> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> > > ---
+> > >   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 57 +++++++++++++--------
+> > >   drivers/gpu/drm/msm/dp/dp_ctrl.h    |  3 +-
+> > >   drivers/gpu/drm/msm/dp/dp_display.c | 99 +++++++++++++++++++++++++++----------
+> > >   drivers/gpu/drm/msm/dp/dp_display.h |  1 +
+> > >   4 files changed, 111 insertions(+), 49 deletions(-)
+> > > 
 
-Would be nice to describe this rule in Documentation, but anyways:
+> > > @@ -831,7 +831,37 @@ static int msm_dp_display_set_mode(struct msm_dp *msm_dp_display,
+> > >   	return 0;
+> > >   }
+> > > -static int msm_dp_display_enable(struct msm_dp_display_private *dp, bool force_link_train)
+> > > +static int msm_dp_display_prepare(struct msm_dp_display_private *dp)
+> > > +{
+> > > +	int rc = 0;
+> > > +	struct msm_dp *msm_dp_display = &dp->msm_dp_display;
+> > > +	bool force_link_train = false;
+> > > +
+> > > +	drm_dbg_dp(dp->drm_dev, "sink_count=%d\n", dp->link->sink_count);
+> > > +	if (msm_dp_display->prepared) {
+> > > +		drm_dbg_dp(dp->drm_dev, "Link already setup, return\n");
+> > > +		return 0;
+> > > +	}
+> > 
+> > How can it be prepared here? It is called at the beginning of the
+> > .atomic_enable() only, so there is no way this can be true.
+> > 
+> Emm, sorry for forget this case.. Whern MST enabled,
+> msm_dp_display_prepare() will be called from mst_bridge_atomic_pre_enable,
+> that means, when second stream called this func, it already prepared, so we
+> should skip here. so this condition will really hit in MST case..
 
+Then it should be refcounted. And, ideally, this should come later as a
+part of one of MST-enablement patches, when it actually makes sense
 
-Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->  rust/kernel/cpufreq.rs | 2 +-
->  rust/kernel/cpumask.rs | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-> index afc15e72a7c37ac781f25a8a6edd804fa4c9658a..eea57ba95f241dc06218e2d65a0986a1f9c1415c 100644
-> --- a/rust/kernel/cpufreq.rs
-> +++ b/rust/kernel/cpufreq.rs
-> @@ -543,7 +543,7 @@ pub fn register_em_opp(&mut self) {
->      pub fn cpus(&mut self) -> &mut cpumask::Cpumask {
->          // SAFETY: The pointer to `cpus` is valid for writing and remains valid for the lifetime of
->          // the returned reference.
-> -        unsafe { cpumask::CpumaskVar::as_mut_ref(&mut self.as_mut_ref().cpus) }
-> +        unsafe { cpumask::CpumaskVar::from_raw_mut(&mut self.as_mut_ref().cpus) }
->      }
->  
->      /// Sets clock for the [`Policy`].
-> diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-> index 3fcbff4386705490b73360e3108fa447e63b7b34..e311ab9038dfdac01cdbfe5a7303caf5922813fd 100644
-> --- a/rust/kernel/cpumask.rs
-> +++ b/rust/kernel/cpumask.rs
-> @@ -270,7 +270,7 @@ pub unsafe fn new(_flags: Flags) -> Result<Self, AllocError> {
->      ///
->      /// The caller must ensure that `ptr` is valid for writing and remains valid for the lifetime
->      /// of the returned reference.
-> -    pub unsafe fn as_mut_ref<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self {
-> +    pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self {
->          // SAFETY: Guaranteed by the safety requirements of the function.
->          //
->          // INVARIANT: The caller ensures that `ptr` is valid for writing and remains valid for the
-> @@ -284,7 +284,7 @@ pub unsafe fn as_mut_ref<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self
->      ///
->      /// The caller must ensure that `ptr` is valid for reading and remains valid for the lifetime
->      /// of the returned reference.
-> -    pub unsafe fn as_ref<'a>(ptr: *const bindings::cpumask_var_t) -> &'a Self {
-> +    pub unsafe fn from_raw<'a>(ptr: *const bindings::cpumask_var_t) -> &'a Self {
->          // SAFETY: Guaranteed by the safety requirements of the function.
->          //
->          // INVARIANT: The caller ensures that `ptr` is valid for reading and remains valid for the
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250813-cpumask-asref-1054bd96742d
-> 
-> Best regards,
-> -- 
-> Alice Ryhl <aliceryhl@google.com>
+> > > +
+> > > +	rc = pm_runtime_resume_and_get(&msm_dp_display->pdev->dev);
+> > > +	if (rc) {
+> > > +		DRM_ERROR("failed to pm_runtime_resume\n");
+> > > +		return rc;
+> > > +	}
+> > > +
+> > > +	if (dp->hpd_state == ST_CONNECTED && !msm_dp_display->power_on) {
+> > > +		msm_dp_display_host_phy_init(dp);
+> > > +		force_link_train = true;
+> > > +	}
+> > > +
+
+-- 
+With best wishes
+Dmitry
 
