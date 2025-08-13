@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-766611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375BFB24905
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140EAB2490C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0E13AE9A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DFA717FDBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400DD2FE56E;
-	Wed, 13 Aug 2025 12:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rOg9wUHI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C92FAC1D;
-	Wed, 13 Aug 2025 12:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB3E2FE576;
+	Wed, 13 Aug 2025 12:01:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753C32F83D4;
+	Wed, 13 Aug 2025 12:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086451; cv=none; b=HkE8L/eJMZpZSVpRfn2lYWa46hDqRZ/5hAs75wkq2/K/PwNmpG+iH2ai9OuKG3pubXaT3MErvYVMOTjH33kKYjmQtWEj0vYK7tTlRv0rY1vtApDcS8FRqoOFXbfTrHRDFZvUsCRgvp/d4uY5w3DzFkdQ8DpJTQK2S5ut1q3ptpU=
+	t=1755086485; cv=none; b=qdMjvofROpYjTzMvsjOXqab8W0eekQ8vZI18d/Zos8X2AXJsVon9sW5vFaKxYlidz0NxzsKIqJASMR+99vvP4piP4OOBN7bgM4eACpgMnYI9irkJaMK4O15brYWKHcDdApxdLQOWAf+NuTWVotWu2wULitfMEhsKwCMzFCaVP0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086451; c=relaxed/simple;
-	bh=Z0Wd8Ul5IDIWW8lxpyrGHrFqOEXZiZV2mDebB4u5iE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+rJInLHndCbyizAP8Fmt9+EwB/eWWh9BnSS5HUFsbSSbxCRW4lukDd5Vy63Ls6q9gmfvam3PHbw3dxw4S78ud9dQEYi66R7GvqXKywU9Xbk6LzixLMbwn5+XyzayjAaopBNiU3k5KtVLLvMCSa50cGYzjhFSL3FyRTTDUuRZFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rOg9wUHI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5AE853D5;
-	Wed, 13 Aug 2025 13:59:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755086394;
-	bh=Z0Wd8Ul5IDIWW8lxpyrGHrFqOEXZiZV2mDebB4u5iE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOg9wUHIbPEf8oD+S/HQgLiT+Ai8eRs5plN7KfY2BBIY0wfkrzEz3ag5dCeEf2/i3
-	 RF6xNPKTXbUbsF/QoBV6L8GEne60I13yX3l803DuYWioasayslSxglfN+k9p0fzG/W
-	 FevitONufT6X9SIEpJrGUMhPwvU+lq60Z0MZc1tI=
-Date: Wed, 13 Aug 2025 15:00:29 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Kandpal, Suraj" <suraj.kandpal@intel.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
-	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
-	"Murthy, Arun R" <arun.r.murthy@intel.com>,
-	"Shankar, Uma" <uma.shankar@intel.com>,
-	"Nikula, Jani" <jani.nikula@intel.com>,
-	"harry.wentland@amd.com" <harry.wentland@amd.com>,
-	"siqueira@igalia.com" <siqueira@igalia.com>,
-	"alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"liviu.dudau@arm.com" <liviu.dudau@arm.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
-	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>,
-	"sean@poorly.run" <sean@poorly.run>,
-	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>,
-	"mcanal@igalia.com" <mcanal@igalia.com>,
-	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>,
-	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>,
-	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>,
-	"louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <20250813120029.GE20174@pendragon.ideasonboard.com>
-References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
- <20250811092707.3986802-2-suraj.kandpal@intel.com>
- <20250811094429.GE21313@pendragon.ideasonboard.com>
- <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
- <20250811111546.GA30760@pendragon.ideasonboard.com>
- <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
- <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1755086485; c=relaxed/simple;
+	bh=7X0lOn0jm5SLVm1tSVI75ZjHHupmSPGXDMqpMw7DGRQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hjVjj+BADnNeLgbUxzjb5O14z6/k0AEbUk9IXgq62uF8GwdQWim+/Epy/xkCEhOWVpNTVYov4f9w3J5uxMdCNfnDPK0XMrO634fiNl8vk5LIRZVSRzjP5tx/JsSQUe+anukOQymQRPjgPZrjfYD8PbHkbJ4m/rzXCEsIkjLvRzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2C8912FC;
+	Wed, 13 Aug 2025 05:01:15 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 781B93F5A1;
+	Wed, 13 Aug 2025 05:01:20 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	anshuman.khandual@arm.com,
+	robh@kernel.org,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	Dave.Martin@arm.com,
+	ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	mbenes@suse.cz,
+	james.clark@linaro.org,
+	frederic@kernel.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	ryan.roberts@arm.com,
+	suzuki.poulose@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v3 0/5] initialize SCTRL2_ELx
+Date: Wed, 13 Aug 2025 13:01:13 +0100
+Message-Id: <20250813120118.3953541-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
-> > > > };
-> > >
-> > > I still don't like that. This really doesn't belong here. If anything,
-> > > the drm_connector for writeback belongs to drm_crtc.
-> > 
-> > Why? We already have generic HDMI field inside drm_connector. I am really
-> > hoping to be able to land DP parts next to it. In theory we can have a DVI-
-> > specific entry there (e.g. with the subconnector type).
-> > The idea is not to limit how the drivers subclass those structures.
-> > 
-> > I don't see a good case why WB should deviate from that design.
-> > 
-> > > If the issue is that some drivers need a custom drm_connector
-> > > subclass, then I'd rather turn the connector field of
-> > > drm_writeback_connector into a pointer.
-> > 
-> > Having a pointer requires additional ops in order to get drm_connector from
-> > WB code and vice versa. Having drm_connector_wb inside drm_connector
-> > saves us from those ops (which don't manifest for any other kind of structure).
-> > Nor will it take any more space since union will reuse space already taken up by
-> > HDMI part.
-> 
-> Seems like this thread has died. We need to get a conclusion on the design.
-> Laurent do you have any issue with the design given Dmitry's explanation as to why this
-> Design is good for drm_writeback_connector.
+This series introduces initial support for the SCTLR2_ELx registers in Linux.
+The feature is optional starting from ARMv8.8/ARMv9.3,
+and becomes mandatory from ARMv8.9/ARMv9.4.
 
-I'm busy, I'll try to reply in the next few days.
+Currently, Linux has no strict need to modify SCTLR2_ELx—
+at least assuming that firmware initializes
+these registers to reasonable defaults.
 
-> > > > I plan to add drm_connector_dp in a similar way, covering DP needs
-> > > > (currently WIP).
+However, several upcoming architectural features will require configuring
+control bits in these registers.
+Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
 
--- 
-Regards,
+Patch History
+==============
+from v2 to v3:
+  - rewrite commit messages.
+  - fix missing SCTLR2_EL2 synchonization at boot.
+  - https://lore.kernel.org/all/20250811163340.1561893-1-yeoreum.yun@arm.com/
 
-Laurent Pinchart
+from v1 to v2:
+  - rebase to v6.17-rc1
+  - https://lore.kernel.org/all/20250804121724.3681531-1-yeoreum.yun@arm.com/
+
+Yeoreum Yun (5):
+  arm64: make SCTLR2_EL1 accessible
+  arm64: initialise SCTLR2_ELx register at boot time
+  arm64: save/restore SCTLR2_EL1 when cpu_suspend()/resume()
+  arm64: initialise SCTLR2_EL1 at cpu_soft_restart()
+  arm64: make the per-task SCTLR2_EL1
+
+ arch/arm64/include/asm/assembler.h   | 22 ++++++++++++++++++++++
+ arch/arm64/include/asm/el2_setup.h   | 14 +++++++++++++-
+ arch/arm64/include/asm/processor.h   |  5 +++++
+ arch/arm64/include/asm/suspend.h     |  2 +-
+ arch/arm64/include/asm/sysreg.h      |  5 +++++
+ arch/arm64/kernel/cpu-reset.S        |  6 ++++++
+ arch/arm64/kernel/head.S             |  5 +++++
+ arch/arm64/kernel/hyp-stub.S         | 10 ++++++++++
+ arch/arm64/kernel/process.c          |  9 +++++++++
+ arch/arm64/kvm/hyp/nvhe/psci-relay.c |  3 +++
+ arch/arm64/mm/proc.S                 | 26 ++++++++++++++++++--------
+ 11 files changed, 97 insertions(+), 10 deletions(-)
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
