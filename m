@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-766665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1ED5B249B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3DCB249BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666877AF3AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF4E882F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA8C2E282F;
-	Wed, 13 Aug 2025 12:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYls+iQY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92752E2657;
+	Wed, 13 Aug 2025 12:44:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4E32E1C69;
-	Wed, 13 Aug 2025 12:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CB226CE3C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089054; cv=none; b=qSJf2l7WCpDrKXTigH8Z/RAmZss9NF3Ox4Yp22x+osJyf3K980dgI4xtUJEotQddRA8djlmdvnSNvU6rNDxLUjtnL9QS68mv3CJGIVh6qGhRLf7rWvfca6CeT0gdsLDEkmbbEX8U4gifrpk5y+cwKtVfS5WCeWepFVV9ts6LEQA=
+	t=1755089080; cv=none; b=nO6bOpMXSSDHWZTbb4E8HTLkhy8FmBg6m9rBgc/lMVeI7Zfv6L0VsDIK0vHRES1eG4C05jF9mjqBlQw5Zb/Gv8aIHgrYf6AuWfx1t+6rEpJTg4ZaDeiJZlQOierX9oNl+IIQwroEUA6yAx/8rnDQVH5eV6Qqf8AW184a4iH3s1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089054; c=relaxed/simple;
-	bh=DDRdKzPeZcrqxhyOyBHNrCzLGb9zvR9HWqXptkScBTI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gdY/Ju0zfsrh2Yd55m05hZSeTy7kbBzTZrzacX9yq5obT5PchtZPudtFiJZgl4YUy1n5Ygd+Ai2PP8b73dCIDCzwkFYt2KYfr4qY67KieUaRLSf/gWvwvgDTPCicVP5kX422fEFgSmwb11DNpTd5o5JzUWggNZ1bqf6StSzsAJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYls+iQY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A6DC4CEEB;
-	Wed, 13 Aug 2025 12:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755089053;
-	bh=DDRdKzPeZcrqxhyOyBHNrCzLGb9zvR9HWqXptkScBTI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gYls+iQY+eTb+KNGGeRqRwXWo8twVx/emg3S4y0UYygbM5zO9NqHkKOoMf8oqlqlP
-	 i5BoF7JCGyiO+dNBV43VNf06FoblMmDnfeIMsiezUIzZfEQos0MK5yNU6enaGQAXPc
-	 tCsL8SK1kvYsw8aimFXHiMMAwSGXX7LDT6+1+LkNShDaUxJ3nYokKDBO3d9YFW2t7o
-	 c9QlpPdguBGmx0nGMIzgIleVjk+S5361TxR74ppc2b/6EXawl7CJnZvFXZFEEbfHCx
-	 gh4FPANJ/YJ8GX/Ep0bKAQ87CTUUl2M23ZDqJXJIS3hCTlslAYG8KhB50nLC1O2H22
-	 coJJM4BNYO67w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  jrhilke@google.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-In-Reply-To: <CA+CK2bAP-PWkYtZbw8ofhTgDaW3qoQkNob30wWSjidxEUTV4pg@mail.gmail.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
-	<CA+CK2bAP-PWkYtZbw8ofhTgDaW3qoQkNob30wWSjidxEUTV4pg@mail.gmail.com>
-Date: Wed, 13 Aug 2025 14:44:03 +0200
-Message-ID: <mafs0o6sjwfvw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1755089080; c=relaxed/simple;
+	bh=jR6dXCBHCycpp6tXXaFEalzyWUvL8750GHQGErf0GcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVm82keiwPyfl4s1A5ST3GRq5K9Rs40bshpdtEvYSeZxxsvDqu01pdHZaoIGu32tezZhxt0AnIWrDnvPfEoOd+GSUC/FZhg9w6M0eqDvoI8G5HVzTlprM+YROubxfJgOe3ykz0RP0NKf31+UFAOF9uWnBbhOJe0s1sMMb4PORts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAqC-00066E-Ae; Wed, 13 Aug 2025 14:44:28 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAqB-0005ki-1i;
+	Wed, 13 Aug 2025 14:44:27 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAqB-00954v-1L;
+	Wed, 13 Aug 2025 14:44:27 +0200
+Date: Wed, 13 Aug 2025 14:44:27 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	Kyle Swenson <kyle.swenson@est.tech>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ethtool v2 3/3] ethtool: pse-pd: Add PSE event monitoring
+ support
+Message-ID: <aJyIqz4T1MWuI-p9@pengutronix.de>
+References: <20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com>
+ <20250813-b4-feature_poe_pw_budget-v2-3-0bef6bfcc708@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813-b4-feature_poe_pw_budget-v2-3-0bef6bfcc708@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Aug 08 2025, Pasha Tatashin wrote:
+On Wed, Aug 13, 2025 at 10:57:52AM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+.... 
+> diff --git a/netlink/pse-pd.c b/netlink/pse-pd.c
+> index 5bde176..3fb0616 100644
+> --- a/netlink/pse-pd.c
+> +++ b/netlink/pse-pd.c
+> @@ -475,6 +475,64 @@ int nl_gpse(struct cmd_context *ctx)
+>  	return ret;
+>  }
+>  
+> +static const char *pse_events_name(u64 val)
+> +{
+> +	switch (val) {
+> +	case ETHTOOL_PSE_EVENT_OVER_CURRENT:
+> +		return "over-current";
+> +	case ETHTOOL_PSE_EVENT_OVER_TEMP:
+> +		return "over-temperature";
+> +	case ETHTOOL_C33_PSE_EVENT_DETECTION:
+> +		return "detection";
+> +	case ETHTOOL_C33_PSE_EVENT_CLASSIFICATION:
+> +		return "classification";
+> +	case ETHTOOL_C33_PSE_EVENT_DISCONNECTION:
+> +		return "disconnection";
+> +	case ETHTOOL_PSE_EVENT_OVER_BUDGET:
+> +		return "over-budget";
+> +	case ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR:
+> +		return "software power control error";
+> +	default:
+> +		return "unknown";
+> +	}
+> +}
+> +
+> +int pse_ntf_cb(const struct nlmsghdr *nlhdr, void *data)
+> +{
+> +	const struct nlattr *tb[ETHTOOL_A_PSE_MAX + 1] = {};
 
->> +static int memfd_luo_preserve_folios(struct memfd_luo_preserved_folio *pfolios,
->> +                                    struct folio **folios,
->> +                                    unsigned int nr_folios)
->> +{
->> +       unsigned int i;
->
-> Should be 'long i'
->
-> Otherwise in err_unpreserve we get into an infinite loop. Thank you
-> Josh Hilke for noticing this.
+s/ETHTOOL_A_PSE_MAX/ETHTOOL_A_PSE_NTF_MAX ?
 
-Good catch! Will fix.
->
->> +       int err;
->> +
->> +       for (i = 0; i < nr_folios; i++) {
->> +               struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
->> +               struct folio *folio = folios[i];
->> +               unsigned int flags = 0;
->> +               unsigned long pfn;
->> +
->> +               err = kho_preserve_folio(folio);
->> +               if (err)
->> +                       goto err_unpreserve;
->> +
->> +               pfn = folio_pfn(folio);
->> +               if (folio_test_dirty(folio))
->> +                       flags |= PRESERVED_FLAG_DIRTY;
->> +               if (folio_test_uptodate(folio))
->> +                       flags |= PRESERVED_FLAG_UPTODATE;
->> +
->> +               pfolio->foliodesc = PRESERVED_FOLIO_MKDESC(pfn, flags);
->> +               pfolio->index = folio->index;
->> +       }
->> +
->> +       return 0;
->> +
->> +err_unpreserve:
->> +       i--;
->> +       for (; i >= 0; i--)
->> +               WARN_ON_ONCE(kho_unpreserve_folio(folios[i]));
->> +       return err;
->> +}
->> +
+> +	struct nl_context *nlctx = data;
+> +	DECLARE_ATTR_TB_INFO(tb);
+> +	u64 val;
+> +	int ret, i;
+> +
+> +	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
+> +	if (ret < 0)
+> +		return MNL_CB_OK;
+> +
+> +	if (!tb[ETHTOOL_A_PSE_NTF_EVENTS])
+> +		return MNL_CB_OK;
+> +
+> +	nlctx->devname = get_dev_name(tb[ETHTOOL_A_PSE_HEADER]);
 
+s/ETHTOOL_A_PSE_HEADER/ETHTOOL_A_PSE_NTF_HEADER ?
+
+> +	if (!dev_ok(nlctx))
+> +		return MNL_CB_OK;
+> +
+> +	open_json_object(NULL);
+> +	print_string(PRINT_ANY, "ifname", "PSE event for %s:\n",
+> +		     nlctx->devname);
+> +	open_json_array("events", "Events:");
+> +	val = attr_get_uint(tb[ETHTOOL_A_PSE_NTF_EVENTS]);
+
+we have here uint but val is u64, is it as expected?
+
+> +	for (i = 0; 1 << i <= ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR; i++)
+> +		if (val & 1 << i)
+> +			print_string(PRINT_ANY, NULL, " %s",
+> +				     pse_events_name(val & 1 << i));
+
+Hm, may be it is better to not limit to ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR
+and report unknow numeric value. It will keep even old ethtool at least
+partially usable.
 -- 
-Regards,
-Pratyush Yadav
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
