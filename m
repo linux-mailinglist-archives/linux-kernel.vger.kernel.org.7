@@ -1,86 +1,51 @@
-Return-Path: <linux-kernel+bounces-766267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C3DB2447A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAF6B244A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD97A1899C5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD191A2794F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8072D781B;
-	Wed, 13 Aug 2025 08:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dxXDoQFz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C82EFD98;
+	Wed, 13 Aug 2025 08:45:36 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7985C2D8377
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5EA2E5411
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074197; cv=none; b=GST9IhpkxzkXTTn9fV9tnI6i7AOuQScujqta72kjFrriIIbdn9+Q1qWfsQAho7K+ZYUiLjizJP6d02OsYZir2+fJESD3/DBFTT0fVdxEbWEOAxdKqNpeE0qmAxXEW/NjxPs3Rw/6gUTfKEuUga0Rh+QjCMQvUBbKRHcEWPvmkVQ=
+	t=1755074736; cv=none; b=j1nTKOVG5Q77Losuv6FleeOw3DNYu9OLq2nwhd8eDlV+P+8N8tGqgD3ppVUQDUpdVXYVWs00kfWiTOAC68TWpYZ2v+gh0TRniQzkK3RwKZpZ50zCi44rg5qXHIEJmTkVXd4J+8+zmoC5ujJw8SaOgHe/bWzsYJAmpHAcBiPVhAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074197; c=relaxed/simple;
-	bh=2CKVRdemxHDDhnWNqTaAtbQxtL/RQiETHYNOnHMt6xI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ch+kCLreU+1Djn4oPPjF/ud6xyvg7fWddwlZeqF7g5OLeX3SjUGyaLnGwn0H5S9mBSLZQ2vavqq9LzjGKDU/SEV0gepmt4pXhXxQGBj34sL/Wr2S0M7E7yy6bSxawlw51S/18B0m/HmXyrCdi+9HefjE+cfHkHEbVgn8jPwFzAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dxXDoQFz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mKOk020490
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:36:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CQKOqPn4stGn50V72VGH4by1OgDoWiB79n0LyosLssI=; b=dxXDoQFzbFYp95Gb
-	7qvXPwnhepfea9s8H93Y5p0XfFFhnMysJa9yr5WU246qe1w2Gj3bdE795JYujXJy
-	4bzSvDFoqFGAkZnSqsyWq6+Xb14qDe0jasm7hCTRKI60JseHri5xCSUbYNJzGObp
-	VfFXEYuv675HFiIBTWN8LmQkEwMOWjdmPxlmP+jWAd7EeyAskFSTeRs2pixW3szA
-	ea2xWCjTrJ2wYKWCg6TZhzV4ylkTYmjL2PTcvTbIXWVaKife16pyhcuyBjesurdP
-	ks6xEI9N/on5jX9Fqpu0E+I4GDHGgML/V56zFRpCxgD9ourObH8gqLCQDLuFPhZt
-	LWUO/w==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhx986x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:36:34 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76bf73032abso6388319b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:36:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755074193; x=1755678993;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQKOqPn4stGn50V72VGH4by1OgDoWiB79n0LyosLssI=;
-        b=jXTa0XM3yfrGWd3Ky9G6s7bSwp6ASsjurl81FyVZepRzBpashYSS7J5h28NJmqSITM
-         l69At5Xh3l11Y2PelJmPkDBPhJ6RsnYf6S6eslCH51cALKjYl106UcnKXTaPWf1asFjf
-         uoGjyf53E+8djibOg2QZMUseUjEiZ9AiRBi+d7rEKjbTv88422+WqWRpERo7lNwSMcLi
-         2Br4mavpD63dbZ3xTHYXn0iEXVkaH1bGvqwRV8Z+duIEsqbtv7vyyyUCYmdhGgnhO6r0
-         GzHXQT9N8W7/y0yTDISoA+MilbC2DdQ9GmX4HLyGk7otJFt83bbhDALF0dEZkzRrPUDU
-         xuSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqkm5ey7XGuS8On0Dz1dV7E4gq3Cd+BAZ6fzSdifqP30XYcEPoL2sE5GNmIDWgB95VXZxVAPK8jqmBtfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZXq9JpNARQmWClbJhD8RGfkXAx6oHecminVVn4ndtyO8ZDksZ
-	fOlgdEz55ul2H1mxWObbZqr+0y78Ka+gDMdgODbqNkUPrF2JFDMdZW3VK+smugVrOIm/5KPI59y
-	ir+cDDMLKcx6Iqnfz5ZVhe7Kgw3XErCGVZ2LBaltpFQQZmRO3laWL1iAnXMCLJQKOnRo=
-X-Gm-Gg: ASbGnctG7DZsYzN0YfvzsU9ylrxJLjkaN9nnQLCAx5GzRKh4xbPjOJz618eLEjjqDSb
-	Y9pwcCMFmH7iOAYXJ5eijCdJxMCJ5Hkjqt+bSHAZP5Df+UTWtwdJS7ucPs8kCtq2AYhfvlx+w4U
-	BavIU37lc7KGO7q3qp21Y6NAP5gJkBENpMN7/K7BvtYM6WfTno1k3QwqgpUR1GdEs0+ngobDMDy
-	EU2wbhKYEGAyILcsF2iCFNNgymTEIDoWIqxCIkh56IWkvxbvLxasnHjcP5m2PSIobIh2LEhlhhN
-	4f3FuMuOG8vFsyeRrS8hIuFXC2xEjDEfmNTyBEJOI66FyxZKjd3Ob3Zt3sqygqS8q5jP6qc=
-X-Received: by 2002:a05:6a21:32aa:b0:23f:fbe2:c212 with SMTP id adf61e73a8af0-240a8b0c473mr3889568637.23.1755074192936;
-        Wed, 13 Aug 2025 01:36:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEICpPeEcX9FHh2K8fbGGrwZV61Cc8VFekfAlP5BaQVSsk3pjIElUOwyc5IKvo9ORk6/74N9g==
-X-Received: by 2002:a05:6a21:32aa:b0:23f:fbe2:c212 with SMTP id adf61e73a8af0-240a8b0c473mr3889527637.23.1755074192453;
-        Wed, 13 Aug 2025 01:36:32 -0700 (PDT)
-Received: from [10.92.180.108] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdf61d182sm28438065b3a.119.2025.08.13.01.36.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 01:36:32 -0700 (PDT)
-Message-ID: <32f60af9-7475-48b1-98ef-82962485acb9@oss.qualcomm.com>
-Date: Wed, 13 Aug 2025 14:06:27 +0530
+	s=arc-20240116; t=1755074736; c=relaxed/simple;
+	bh=Ldh16fh8fFa2OPBjVcPdSLU3OlKaSqrsIvKxgPe106A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Oab9adg5aKj4qJ+eQR6d0VtLxSkdqE5HHFXeT6/m+a3x4+jI3S2KwSkS+tV4QFSHzjwXDl02XOCuCE+SOapb+jQ5UK/v6KCjInEfHKA1Hgi3OwBlmfpXUuhvDDR4yCAaweMsMD+PtE/85v0cS8V7TNnqggRaJLiprHVyRsi3JDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1755074720-086e2329551d6fb0001-xx1T2L
+Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id hEfWBgoDxOb7YNE1 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 13 Aug 2025 16:45:21 +0800 (CST)
+X-Barracuda-Envelope-From: EwanHai-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX2.zhaoxin.com
+ (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 13 Aug
+ 2025 16:45:20 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
+ ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
+ 15.01.2507.044; Wed, 13 Aug 2025 16:45:20 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from [10.28.24.128] (10.28.24.128) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 13 Aug
+ 2025 16:38:39 +0800
+Message-ID: <ed29e030-63f2-493f-af74-d1d0e1fb09e4@zhaoxin.com>
+Date: Wed, 13 Aug 2025 04:38:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,95 +53,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8450: Fix address for usb controller
- node
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-References: <20250813063840.2158792-1-krishna.kurapati@oss.qualcomm.com>
- <b98f8d3b-e45b-4889-b498-adeeb4a3e058@kernel.org>
+Subject: Re: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai"
+ vendor
+To: Sean Christopherson <seanjc@google.com>
+X-ASG-Orig-Subj: Re: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai"
+ vendor
+CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<x86@kernel.org>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <leoliu@zhaoxin.com>,
+	<lyleli@zhaoxin.com>
+References: <20250811013558.332940-1-ewanhai-oc@zhaoxin.com>
+ <aJtYlfuBSWhXS3dW@google.com>
+From: Ewan Hai <ewanhai-oc@zhaoxin.com>
 Content-Language: en-US
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <b98f8d3b-e45b-4889-b498-adeeb4a3e058@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <aJtYlfuBSWhXS3dW@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfXzB4pkbp/Dow0
- /TzqEhEdhqQGR1CsMj1I9LX1ktRi9eJPQfH0en0ueMyoVTfGLjdVbKpbtRccYirETF3jZ9gcpHM
- RtcROi4sDH1JsRYeXcIhdUXP3lrZI771TjX4GK7zves0OdTDl2kt/blhER8y5sw7NSi7Z2i4e2Y
- GolO3ji+izUWb1DW7S3Q4/UqXN0gQbTVmQvgKzbKdM3GACW+vRVKzzks+NYR8IlXxH1IloUjqux
- 0Ks9ssrD/IxsrzvABi+AQQt9azE0BbwEtW8hI8KEB8UVf0hT4GF+ftOQqIXO83IgK0KRSyY9zNj
- XBcMluejm+AvoEbg/FuqyW4VSz0YRvA3ymrTyMq4EvFQPwsvEcqH1iovcv1CiAFYj18GoUgc7ag
- 9yjDppd6
-X-Proofpoint-GUID: 1AcD7VgF1noPkRebc0tgmedUwPdOwrdt
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689c4e92 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
- a=EUspDBNiAAAA:8 a=-uJ0XW9AK0pjk_nks4cA:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-ORIG-GUID: 1AcD7VgF1noPkRebc0tgmedUwPdOwrdt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
+X-Moderation-Data: 8/13/2025 4:45:19 PM
+X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Barracuda-Start-Time: 1755074721
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 4987
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145685
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
 
 
-On 8/13/2025 12:56 PM, Krzysztof Kozlowski wrote:
-> On 13/08/2025 08:38, Krishna Kurapati wrote:
->> Correct the address in usb controller node to fix the following warning:
+On 8/12/25 11:07, Sean Christopherson wrote:
+> On Sun, Aug 10, 2025, Ewan Hai wrote:
+>> rename the local constant CENTAUR_CPUID_SIGNATURE to ZHAOXIN_CPUID_SIGNATURE.
+> Why?  I'm not inclined to rename any of the Centaur references, as I don't see
+> any point in effectively rewriting history.  If we elect to rename things, then
+> it needs to be done in a separate patch, there needs to be proper justification,
+> and _all_ references should be converted, e.g. converting just this one macro
+> creates discrepancies even with cpuid.c, as there are multiple comments that
+> specifically talk about Centaur CPUID leaves.
+>
+Okay, it seems I oversimplified the situation.
+
+My initial thought was that, since there will no longer be separate handling for
+"Centaurhauls," nearly all new software and hardware features will be applied to
+both "Centaurhauls" and "  Shanghai  " vendors in parallel. This would gradually
+lead to more and more occurrences of if (vendor == centaur || vendor ==
+shanghai) in the kernel code. In that case, introducing an is_zhaoxin_vendor()
+helper could significantly reduce the number of repetitive if (xx || yy) checks.
+
+However, it appears that this "duplication issue" is not a real concern for now.
+We can revisit it later when it becomes a practical problem.
+
+For the current matter, there are two possible approaches. Which one do you
+prefer? Or, if you have other suggestions, please let me know and I will
+incorporate your recommendation into the v2 patch.
+
+## Version 1 ##
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -1820,7 +1820,8 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+         int r;
+
+         if (func == CENTAUR_CPUID_SIGNATURE &&
+-           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
++           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
++           boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
+                 return 0;
+
+         r = do_cpuid_func(array, func, type);
+
+## Version 2 ##
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -1812,6 +1812,7 @@ static int do_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+  }
+
+  #define CENTAUR_CPUID_SIGNATURE 0xC0000000
++#define ZHAOXIN_CPUID_SIGNATURE 0xC0000000
+
+  static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+                           unsigned int type)
+@@ -1819,8 +1820,10 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+         u32 limit;
+         int r;
+
+-       if (func == CENTAUR_CPUID_SIGNATURE &&
+-           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
++       if ((func == CENTAUR_CPUID_SIGNATURE &&
++            boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR) ||
++           (func == ZHAOXIN_CPUID_SIGNATURE &&
++            boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN))
+                 return 0;
+
+         r = do_cpuid_func(array, func, type);
+
+>> The constant is used only inside cpuid.c, so the rename is NFC outside this
+>> file.
 >>
->> Warning (simple_bus_reg): /soc@0/usb@a6f8800: simple-bus unit address
->> format error, expected "a600000"
->>
->> Fixes: c015f76c23ac ("arm64: dts: qcom: sm8450: Fix address for usb controller node")
-> 
-> There is no such commit in recent next... And how is that you fix commit
-> WITH THE SAME title?
-> 
-
-I sent it on top of latest linux next.
-
-My bad. Will send a v2. I mentioned wrong title, but the correct SHA.
-
-Thanks for pointing it out.
-
-Regards,
-Krishna,
-
->> Cc: stable@vger.kernel.org
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202508121834.953Mvah2-lkp@intel.com/
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> Signed-off-by: Ewan Hai <ewanhai-oc@zhaoxin.com>
 >> ---
->>   arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>   arch/x86/kvm/cpuid.c | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
->> index 2baef6869ed7..38c91c3ec787 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
->> @@ -5417,7 +5417,7 @@ opp-202000000 {
->>   			};
->>   		};
->>   
->> -		usb_1: usb@a6f8800 {
->> +		usb_1: usb@a600000 {
-> 
-> There is no such code either...
-> 
->>   			compatible = "qcom,sm8450-dwc3", "qcom,snps-dwc3";
->>   			reg = <0 0x0a600000 0 0xfc100>;
->>   			status = "disabled";
-> 
-> 
-> Best regards,
-> Krzysztof
+>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+>> index e2836a255b16..beb83eaa1868 100644
+>> --- a/arch/x86/kvm/cpuid.c
+>> +++ b/arch/x86/kvm/cpuid.c
+>> @@ -1811,7 +1811,7 @@ static int do_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+>>        return __do_cpuid_func(array, func);
+>>   }
+>>
+>> -#define CENTAUR_CPUID_SIGNATURE 0xC0000000
+>> +#define ZHAOXIN_CPUID_SIGNATURE 0xC0000000
+>>
+>>   static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+>>                          unsigned int type)
+>> @@ -1819,8 +1819,9 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
+>>        u32 limit;
+>>        int r;
+>>
+>> -     if (func == CENTAUR_CPUID_SIGNATURE &&
+>> -         boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
+>> +     if (func == ZHAOXIN_CPUID_SIGNATURE &&
+>> +             boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
+>> +             boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
+> Align indentation.
+
+Will fix in v2.
+
+>
+>          if (func == CENTAUR_CPUID_SIGNATURE &&
+>              boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
+>              boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
+>                  return 0;
+>
+>>                return 0;
+>>
+>>        r = do_cpuid_func(array, func, type);
+>> @@ -1869,7 +1870,7 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
+>>                            unsigned int type)
+>>   {
+>>        static const u32 funcs[] = {
+>> -             0, 0x80000000, CENTAUR_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
+>> +             0, 0x80000000, ZHAOXIN_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
+>>        };
+>>
+>>        struct kvm_cpuid_array array = {
+>> --
+>> 2.34.1
+>>
+
 
