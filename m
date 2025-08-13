@@ -1,118 +1,77 @@
-Return-Path: <linux-kernel+bounces-766778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42986B24AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:48:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAA4B24AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D195A78F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EAA885C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F39A2ECD2F;
-	Wed, 13 Aug 2025 13:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UmI0TM+L"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D532EACE1;
+	Wed, 13 Aug 2025 13:44:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCBB2EACFB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7902E7F39;
+	Wed, 13 Aug 2025 13:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092651; cv=none; b=BZmgJllX2+xfRm5CVC5fcEDe8cc4NKPnGQpvBGzYhaFx0VpUjYZwLG4Z1Euph/3FZ50wdYCgPLIwszjeQ8+C3SrQ7btwMnSoLjcVf6Q4WsMiDuZ/gE+KQY+HbcNuscXpxHl3DkPzZVSbDVQAYOzNGvWoYjR6DTmke7CscKR1Dww=
+	t=1755092649; cv=none; b=tgtZhZv9eOCb02NMel+v3hyEfCEjJgUGef814Jyr7L3XZQu0mHZnV0rl2za1aC6ow3zYPTdsScCFOnRhFE3scPq0PBeJzRxlNiUKxe8hWfHR0/2nQ/vvDWTXOm667Li4uqmguzayUF3hMnLKjvc1BGDVCHAhCjNCtjYstTDA2Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092651; c=relaxed/simple;
-	bh=pHojtpD3YB3bImqUFSr8KZ9T2OCJ8IHdeXOjUzwksWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MDNxJh0dujAO9NR7KbyjJkRiGxQ9jh57jR9qHBVGph8r6/ZKnvY9Zks2zeUmPZx9KwrNwAi2CGmlkg9mMDDf7wEiBGStqxXi49cVz+GqT4SCDTjS/MFXpsfixaHHToGGXMOnOLm0TIs+BZOaRTlz/ZuIg+i3NCzAm98QFgEwdhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UmI0TM+L; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30ca7436450so2068755fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755092649; x=1755697449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eihVYJrWZXZh50n0+ltviNDHEcxJdrJFasVcbGTuMaM=;
-        b=UmI0TM+LryQ18vaonvGnmaUUUfgrK+nuO1Lhso/Ch3ka0+7cIqkVh9q1m39A3bKnG8
-         +PlZ3rD0d5nvmv2KANAdT71OFKxHUb9vrjBEoyOoVnv85aIoVVInZ8bn7mFtF+g2LdLA
-         C5RGrGgUmw6yhjMf4HHulMK94a2zoUeT1obfO7S7Asc9qDOvRap+gTrZTRdNzOFEFAYB
-         TbSFnNPtV4YoGwQvl4CLs3xmaWwFcyNmSlnoYatF4hc+bjfe6MwkFVYEo+wuXxFzSaI2
-         eWX0Q/MhCB+6XSyTdnhz8113QOvDp2kM5MLv9AeH5izABWNNToNRCLhW63h/x+aFNHh2
-         lzQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755092649; x=1755697449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eihVYJrWZXZh50n0+ltviNDHEcxJdrJFasVcbGTuMaM=;
-        b=ump8akelqHaOSN/i1iMfoZ1nsxh7TaApBFnzVYrKsIlProLLOYc0AmYviMl8zxjLkr
-         pJGtZ+CuInc2An7zeevvAWYry5vVgqLAG9OxIRO3mmyhxvVEAkVS3mghbi294ftUh8uG
-         0HzAkhhKnLbI2koRQjcFWPhR9nuMqoRZHybkcz8GPj3vRS8DrSM7mi4Zy5ugwqocHKmr
-         jkzyoMjbkGxFlQ5ib99SRk+KSa9q0ARWNIjf3YtR3nkVo3Ki2GDS1cmoFZF7CFefv5qO
-         EYeBeepWpMeYuzPNTC7ofAROjOeSS7M50Dn+Y0L9UFX5QU5t22xo48KsTDPPATjiX1z2
-         rulQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJHc89M+4PmmRjwflNzu9gRlTJ7OLctHxXWiXy9WSXnIFaoeiV2KdTHjHGC+r9HRmEtSJ3VnkYGaOynr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCy74KBbLZHtEDq/3gRbhjFdwMoVkojz02MzM6O7erjVcmGNfL
-	iI33yoXmQwUgAbICRVuY7WvFnJijGubv71q3NCdAnbtMeXJ6/5klycW108/fJ9elIYLiNyJcYJ6
-	On5vfcKOidpKJxm77bwWdqxXQlSEYRigVT07P4d/EgTeNqujuUb9/6qE=
-X-Gm-Gg: ASbGncvUkbHgsOhPEJBMAHlYgxsM5KCoRY3B9q2+t5AOZtRFiZdUJU19MOB48wC8zk3
-	4WOMjfXeOlTvyfrynhex8QrVZ9DJlQQvUWw/BH3HRJtO467WMQQjPNS2j3vYsAIzclpJjP6RhrI
-	J/bAuzZVCFt74IZ9rs6qG4ceNq1VJwrAAEPs+yDGqkSEquvx3xOxajzOLTJNxECvwtBe1xH1D+M
-	hZi5LNQSH4BjK8IbcA=
-X-Google-Smtp-Source: AGHT+IFU/NdbN7AcOZEv17USCBNw7GfCExUxIp81La73W0v9orSy0kbUcXLAKbnNYawjG6YyllhAALem09uD1POoEws=
-X-Received: by 2002:a05:6870:9a1c:b0:2cc:3e39:7352 with SMTP id
- 586e51a60fabf-30cb5bf9975mr1878664fac.18.1755092648901; Wed, 13 Aug 2025
- 06:44:08 -0700 (PDT)
+	s=arc-20240116; t=1755092649; c=relaxed/simple;
+	bh=sE9wor2MDjeQ3trquLM+Zf1b94PQN3zD7QdmGEn/D84=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kaqd0I8ImNUhsmL/tHFRHNES/BctFdN1ZK+X2obb82gXQWFGjOrEZr4yqtE1X4oUQM7KKVliOCK4Nozb6DDYeyglLjy++bxpokWP4y4bqQNI6EDaMJuROjK6PogvXNwEmOWp3jOAca61nDX31tcg8Uwo8ro8yEB+qY9EHcbmaN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c28by4WsHz6L52K;
+	Wed, 13 Aug 2025 21:39:10 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F2051400D4;
+	Wed, 13 Aug 2025 21:44:03 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 15:44:02 +0200
+Date: Wed, 13 Aug 2025 14:44:01 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 04/20] nvdimm/label: CXL labels skip the need for
+ 'interleave-set cookie'
+Message-ID: <20250813144401.00004fee@huawei.com>
+In-Reply-To: <20250730121209.303202-5-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e@epcas5p4.samsung.com>
+	<20250730121209.303202-5-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801235541.14050-1-ebiggers@kernel.org> <aJmKDyD4weX9bR0U@sumit-X1>
-In-Reply-To: <aJmKDyD4weX9bR0U@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 13 Aug 2025 15:43:57 +0200
-X-Gm-Features: Ac12FXw5rXcIObB1VY8YLwwvPYahf_MM_W0QzWG6bpFq_kd5MWctpI_dBq2BBok
-Message-ID: <CAHUa44H1V0qR7omO8KpNxaW_bkXZAbaka=8r-zp+f6vdYs6fQQ@mail.gmail.com>
-Subject: Re: [PATCH] tee: Use SHA-1 library instead of crypto_shash
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, op-tee@lists.trustedfirmware.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Aug 11, 2025 at 8:13=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
-wrote:
->
-> On Fri, Aug 01, 2025 at 04:55:41PM -0700, Eric Biggers wrote:
-> > Use the SHA-1 library functions instead of crypto_shash.  This is
-> > simpler and faster.
-> >
-> > Change uuid_v5() to return void, since it can no longer fail.
-> >
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > ---
-> >
-> > Note: this patch depends on the SHA-1 library functions that were merge=
-d
-> > in v6.17-rc1.
-> >
-> >  drivers/tee/Kconfig    |  3 +--
-> >  drivers/tee/tee_core.c | 55 +++++++-----------------------------------
-> >  2 files changed, 10 insertions(+), 48 deletions(-)
->
-> Nice cleanup, FWIW:
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+On Wed, 30 Jul 2025 17:41:53 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-Looks good. I'm picking up this.
+> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
+> set configuration instead of interleave-set cookie used in previous LSA
+> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
+> so skip its usage for CXL LSA 2.1 format
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 
-Thanks,
-Jens
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
