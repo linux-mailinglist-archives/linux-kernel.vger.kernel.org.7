@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-767602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4006FB2569D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:27:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3934B2569B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2BB587BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276257AA60A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4920830275F;
-	Wed, 13 Aug 2025 22:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E153930276A;
+	Wed, 13 Aug 2025 22:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3zLf7FNh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rxun207m"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK/mLLOn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E71302757;
-	Wed, 13 Aug 2025 22:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7AE302750;
+	Wed, 13 Aug 2025 22:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755123965; cv=none; b=SH52luYu3Ty4jBDwL7174GnmegXqa1Hnqve4D8FONq3AcQGUwWepKpOu8OIm99p+I+ZuFRtn14G6LXo1rL+nVB8ZynjcC72FtXR0pN7uQ7RJFNA4OJohXXjCG3lHuCvGH+TzGjuvmR/tICgBO1AcHUKXtVsI9WcpNjtru72WVcA=
+	t=1755124011; cv=none; b=EqzNkjhwuc2xpZgaXggZ4dyO0XClu2VWGvwJcJjctYv3Za5BRCLbmU1F5BOeikWI8qIUr3lFMRoxCyeMrC7wq6C/fH4Cu0OLS5Ql6QTG1c0WJuqM5qr90KttU+6XHW2ZR99j2uam9TJSbEuZA/of7vJWnW1VV55F26IWflRi0eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755123965; c=relaxed/simple;
-	bh=BrPCcmjKhf8d9y1X9Ox1/DAv0yGeZsWKFoYHl6kSsuw=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=J2Nnqv5BsyR32PTg/kEXp/vsMLvCJo9TKDE/dWBD2m/t58TH5JDpAYOaPIjQWCQi1oQMDIXNUfnFip8fB2gju9IZTk2KR3C2KZbzG5MlE444BR1BBlhcLOgYBOukHwwmatoydf0+LG2rzUw3Cfu2SgEhW2bK3gE9KwCxTZ2RF5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3zLf7FNh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rxun207m; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Aug 2025 22:25:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755123960;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=OJK/j3+YiOOOgIkVonGCrljvtxPXA8dKqJzzDQRtHiU=;
-	b=3zLf7FNhduzER9V0PDn8NMfGeD2+MplYmfqqjwzhpECPthKQ12XuJZrxLP53h6y13HCjdw
-	zMkcm/BcRf/oUzg5zJ87vOdIH2MklAannfYZqNcqT61Mie0WlZ3W1SG7Z//qGV1boJgf6a
-	41G5/TpT7UQ/ynGcXvnmKnfQDaohXH6lLxvo3Xl7kY/aN0+HIa0kIBAY0+sKMmGvw+AFg/
-	c6/l9ZRGsuZdkmfO6rff03YHlTbPaxNp3KJlqcVpIkFA0Hz1I2e+hkqILByerM+eKUR1Ub
-	4x40vtSD+j3y8rpwzOAuWQnizLtPRpGR97jr8jZbqHSx2ua5CfcDD2yJ8gdIag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755123960;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=OJK/j3+YiOOOgIkVonGCrljvtxPXA8dKqJzzDQRtHiU=;
-	b=rxun207m8i1OYP55ihJfxcDdV1uAxVeO9eVAr4Uov8L982ICecaOiRZ5Na4HjEPEgQe090
-	rlCCvkwVkSCAilBg==
-From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] x86/fred: Remove ENDBR64 from FRED entry points
-Cc: "Xin Li (Intel)" <xin@zytor.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin (Intel)" <hpa@zytor.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1755124011; c=relaxed/simple;
+	bh=QJzjfAhMjPNiT7D9rCxtV6m7EGIjZSpX3sIJXmN1Zks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muOGJa4r9H/3VoRKLRrsA8AtxeG8gOz6JEJaC5sHc7aN6pZUT9V5Q7GnpFnOzBmUQUPJoIkfo5QBRTf21/YMFXS/908WuGxCmLkb+C24Zpp5CMUnHW+emzJK8bwUBzTpSD0CSqhLkttjGJS1oViPT0i77tgmuescw0iP9P4kHwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK/mLLOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C019C4CEEB;
+	Wed, 13 Aug 2025 22:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755124010;
+	bh=QJzjfAhMjPNiT7D9rCxtV6m7EGIjZSpX3sIJXmN1Zks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YK/mLLOnoWfT+EjdQpsYmfc5UbbS9SA1NX+iBZjKN/t4m40Bgd65y7p8bQ5+zV6KG
+	 zBl6/uI3gZW1yNQavyxxXecJ9vtVKHkloa928GywP3h2VuhtC5lQXfo42MF/sU2pqX
+	 Fy+ogiERV4ohJc/MkK2rXIC2kmVSf1A+62+WSJfs7e1e0iA5zbiG5f4tVJOQuYVcyZ
+	 +5wujWgdjkiaS0WvGODQ7/Cp3OkU7hTJMkUiwplVNRuo+kjrrRzHHWFvr87dfBlnBu
+	 8reE1TysvUa/3dsS9EL4AblkoJtlFyCBVG2+lnypgVqLkyrhfcO58DxRxwSCYze9UZ
+	 95MhaUdDM71VQ==
+Date: Wed, 13 Aug 2025 17:26:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	kernel test robot <lkp@intel.com>, Peng Fan <peng.fan@nxp.com>,
+	Koichiro Den <koichiro.den@canonical.com>,
+	Lee Jones <lee@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Yixun Lan <dlan@gentoo.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
+Message-ID: <20250813222649.GA965895-robh@kernel.org>
+References: <20250726211053.2226857-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175512395928.1420.9293489818194067558.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726211053.2226857-1-arnd@kernel.org>
 
-The following commit has been merged into the x86/entry branch of tip:
+On Sat, Jul 26, 2025 at 11:10:43PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> A few drivers that use the legacy GPIOLIB interfaces can be enabled
+> even when GPIOLIB is disabled entirely. With my previous patch this
+> now causes build failures like:
+> 
+>    drivers/nfc/s3fwrn5/uart.c: In function 's3fwrn82_uart_parse_dt':
+>         drivers/nfc/s3fwrn5/uart.c:100:14: error: implicit declaration of function 'gpio_is_valid'; did you mean 'uuid_is_valid'? [-Werror=implicit-function-declaration]
+> 
+> These did not show up in my randconfig tests because randconfig almost
+> always has GPIOLIB selected by some other driver, and I did most
+> of the testing with follow-up patches that address the failures
+> properly.
+> 
+> Move the symbol outside of the 'if CONFIG_GPIOLIB' block for the moment
+> to avoid the build failures. It can be moved back and turned off by
+> default once all the driver specific changes are merged.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507261934.yIHeUuEQ-lkp@intel.com/
+> Fixes: 678bae2eaa81 ("gpiolib: make legacy interfaces optional")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpio/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Commit-ID:     3da01ffe1aeaa0d427ab5235ba735226670a80d9
-Gitweb:        https://git.kernel.org/tip/3da01ffe1aeaa0d427ab5235ba735226670=
-a80d9
-Author:        Xin Li (Intel) <xin@zytor.com>
-AuthorDate:    Tue, 15 Jul 2025 23:33:20 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Wed, 13 Aug 2025 15:05:32 -07:00
+This change causes all of the GPIO submenu to show up directly in the 
+already way too long 'Device Drivers' menu.
 
-x86/fred: Remove ENDBR64 from FRED entry points
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 8bda3c9d47b4..c48f9badb513 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -12,11 +12,11 @@ menuconfig GPIOLIB
+>  
+>  	  If unsure, say N.
+>  
+> -if GPIOLIB
+> -
+>  config GPIOLIB_LEGACY
+>  	def_bool y
 
-The FRED specification has been changed in v9.0 to state that there
-is no need for FRED event handlers to begin with ENDBR64, because
-in the presence of supervisor indirect branch tracking, FRED event
-delivery does not enter the WAIT_FOR_ENDBRANCH state.
+Perhaps this has to be before "menuconfig GPIOLIB"?
 
-As a result, remove ENDBR64 from FRED entry points.
-
-Then add ANNOTATE_NOENDBR to indicate that FRED entry points will
-never be used for indirect calls to suppress an objtool warning.
-
-This change implies that any indirect CALL/JMP to FRED entry points
-causes #CP in the presence of supervisor indirect branch tracking.
-
-Credit goes to Jennifer Miller <jmill@asu.edu> and other contributors
-from Arizona State University whose research shows that placing ENDBR
-at entry points has negative value thus led to this change.
-
-Note: This is obviously an incompatible change to the FRED
-architecture.  But, it's OK because there no FRED systems out in the
-wild today. All production hardware and late pre-production hardware
-will follow the FRED v9 spec and be compatible with this approach.
-
-[ dhansen: add note to changelog about incompatibility ]
-
-Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Link: https://lore.kernel.org/linux-hardening/Z60NwR4w%2F28Z7XUa@ubun/
-Cc:stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20250716063320.1337818-1-xin%40zytor.com
----
- arch/x86/entry/entry_64_fred.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-index 29c5c32..907bd23 100644
---- a/arch/x86/entry/entry_64_fred.S
-+++ b/arch/x86/entry/entry_64_fred.S
-@@ -16,7 +16,7 @@
-=20
- .macro FRED_ENTER
- 	UNWIND_HINT_END_OF_STACK
--	ENDBR
-+	ANNOTATE_NOENDBR
- 	PUSH_AND_CLEAR_REGS
- 	movq	%rsp, %rdi	/* %rdi -> pt_regs */
- .endm
+>  
+> +if GPIOLIB
+> +
+>  config GPIOLIB_FASTPATH_LIMIT
+>  	int "Maximum number of GPIOs for fast path"
+>  	range 32 512
+> -- 
+> 2.39.5
+> 
 
