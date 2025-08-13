@@ -1,158 +1,220 @@
-Return-Path: <linux-kernel+bounces-765955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10876B24086
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE57B2408C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D95586CA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:46:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD91817E962
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEAA2BF3E0;
-	Wed, 13 Aug 2025 05:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C792BEC5A;
+	Wed, 13 Aug 2025 05:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E5swJDKA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IWQxD9eg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF7D27D780
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D2021C160;
+	Wed, 13 Aug 2025 05:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755063947; cv=none; b=JASi485BKN6/AB4BQIMwolEFXu4+X9XwDtqo6hrt5IFJpJvqTzhXKZYmYJ0JpRe1AxGZ/W+iKerOzGZdq2oLYBhxr/qz1NFUV/SyeE4A0cm2IxHBata+iZNyXhtVf53PuRNntcMeyNbY0qFT2ZFYZuJI+Rdfyeu/EMCyarI3E44=
+	t=1755063977; cv=none; b=Qw3Q75YWyfNOXlQYqT6q4VndBOBXb5gGLcLrZWgjQzNQ+wRBM41sDzTgErl2+Ue1VcOwz7FiUkfM4s7R9pwTn7XEqMER92XlQCxjDjTZagQ9H17bTRusAATHCQAQkxS5Ebl7js302Y5Tq1jPUVpXuRafjNUIWWRAWG5QgLzFWqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755063947; c=relaxed/simple;
-	bh=zGwOTcUsz1xirDMHVrkdX/vvxQbHA7GU3AGFpslLXF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gzmnn8mqmv83wr6xrWBTsKWlZf+B/SVml1Oz+jI0734C2L8D3etdEDIV72JPvn7k3ULr3pbwxOoh02p+SWHRtQtRyZk1i9BO5TdSqYqUtTo8vrF8niwTPVWUm4Zc1zsnUPNQge0gfmIbUP7VT2IodQSRk3WmL+zngo5BqmFFopM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E5swJDKA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D3nf6Q029467
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:45:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Don7/I9Uj7z5dTSOT5GELdMDcLUsYu7/Ujb3hm5duA0=; b=E5swJDKAH1uztF3G
-	lhdB7KhgUNjRtjT0vfqGP4EW5tfyQXb90bo8ttURhP7m5PCr8GhE+nv5695XNviu
-	zfP76HrSLq3E2bITYiGck0fyfcen8joBvJzgorzFTQbfJy+PRaJ7bs4eriJsUyqj
-	kgmRAz2ADTxUFbiDtE2KgfVakZudUdInTwq1imnO9HsJ+d0T0abxgt9Ry2+nd46M
-	u/ZYVzH34R4u9ZtikKyVEY7H31YArJGDrkqRcs0mtVDgBMV1y1/485Yoy1m+bOXv
-	KdnnnGmY6ZwQgHs0HUS/3z1XkgnoiHDZKNpx3GkqNl4k5nOIQBmxvRIV72kD886w
-	S6q2Xg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhx8qy0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:45:44 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fe26e5a33so94540715ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:45:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755063943; x=1755668743;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Don7/I9Uj7z5dTSOT5GELdMDcLUsYu7/Ujb3hm5duA0=;
-        b=am7quAWZD+vJCMEpnnVV2u9Os4Iyq8AuPoBYOzK9GJb2mcnX4m4p5LtV9m4VGhwFu6
-         Hc9SQneLctfLtG6cJppvfOfwVs5PX2ApMQ0FAldbxDJhqpEUGO0F2THJtgeri+VZW+OG
-         8Lh7NQ6z5F3rnd1nfmzGhFb3I9X7ZBPBwrNxil4ymdfSmb3XB2G+LZX87NZP5p2CwoSC
-         Q1siNi0G5wUttZ9vpfEnUeb1ZZ8zW2HgfdpBuSjBl1vfZV1tPsS54O6kzzw0kGWmURgm
-         D6RdUDVf2foeRBq9yl45Dn33zVNH8K7MI/LRFu+EHk1xLBzPanx6M9rGCykDYTP85cHD
-         z3gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBZcdIMGfIPVkDDfdQ2QVgBizCzeqb6J3p+w95Ta8Q3N1Ktzh037ipQcscLjVJ0XSJ4mGjWbm6PlcTgl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylYmp9KjF7N/zklsSJ+Fpdwo1NXqD8kCjQxvco7XefT8yQ7+ov
-	wm0jdAnS7Cp2G3uyn2d75KrdRdYkj3LGQVt1zs1bc+07snz9D5qnojqBGoWfF16IXjRxqEgcMMp
-	3ee12fJ40b561h3aMB1eaJhIsCLUSn3cNNlKJgxIpFraZ4N6aDwLOpqaK5q7e4Rhd5EE=
-X-Gm-Gg: ASbGncuK2jL7vOF60shPqP9nqfKsHqHVAMUjmzZqhoib2aepMdTQrFl/gh5iHnD4+Yi
-	b7tzYAu6mvpxpYYtxl57wyDEL1ckv0wqwFYEMml2J83T/k5vJOMINjxAJAnNdeQTxSkwUxliMjQ
-	Px9077M2Vrg1IJMUeTb9FwYUEvaPl9cRBjwWMqVf56RVQ6kVSZ1ys2O5qXM+ZZp8bTNLSDodfno
-	t18qqMpd+cgDnXYn4eWRT5CnHswroXGxTCQlxTJmkLQ47rzpuzTcxrQQB3VGe7FHve3vO9ZyWSi
-	ODe6BiBnPS3KIgAwuLgVolf+TtWB9VrG+7+clNcUFJjhEzF3dy77VDNOQW0OLPwo3VWc8dI=
-X-Received: by 2002:a17:903:2f8f:b0:240:8262:1a46 with SMTP id d9443c01a7336-2430d10f333mr24296915ad.25.1755063943179;
-        Tue, 12 Aug 2025 22:45:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKxGK3btWcsA2MMJlDGujnyNgU79WdDiyIV0PIuwBRiNdl1y38tWiB/pb09bnsoSZftYKpXw==
-X-Received: by 2002:a17:903:2f8f:b0:240:8262:1a46 with SMTP id d9443c01a7336-2430d10f333mr24296635ad.25.1755063942755;
-        Tue, 12 Aug 2025 22:45:42 -0700 (PDT)
-Received: from [192.168.1.7] ([223.230.83.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a51esm317556405ad.115.2025.08.12.22.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 22:45:42 -0700 (PDT)
-Message-ID: <7c96f881-23ae-484c-82b8-d388a5c637ca@oss.qualcomm.com>
-Date: Wed, 13 Aug 2025 11:15:34 +0530
+	s=arc-20240116; t=1755063977; c=relaxed/simple;
+	bh=F5ejs7PCAjdrIaJsScvOkU6qaLMxBCogfGgSUrWA7gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ph3agY9HcPQ6kMJ9tJJI1dzlaEj1ahLWZV2+1sjoJxzpFHOAjQuBa8dX0wZf3N1WlaGzhPC4vPPtcYRMw9NJxi08/JBs/d5i12x0r0eHRCfYshN+DZJhPbi2QCoD6m6V0wxXTHTuwFhsNeOd2X03vVu4HijixojYJ9+0Sz8r8lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IWQxD9eg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D1vZTL031959;
+	Wed, 13 Aug 2025 05:46:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=pmK0MDvZJDpy2ZmMNZUCeu3OaJx1zX
+	1XfLeoIGqrbeU=; b=IWQxD9ege2uG0zc0YVX3TudVWjPU0CMn8HJIR+gVHwlMST
+	iu5iEjvCFQxKoJCXNj26NaRKGmeK1+CMz544ivJmG6Swb4DrMcQUlftiDr0ZNNb7
+	9EiI3ZSgzt1OmLyyTSfjPSuu1jlJw6RCDn9HWcUYx49I86EH4mMhpZN6w6DiY9Bz
+	00deTVGCMuXd709kwwhZvssAbgZAgb8cmLg5fNmqkMnnsIabg+p/+Ecl0lfmrds+
+	kOlm0sfq7idAh0xj4jdahrXOoqEhgDA7RIODJRHjE7fYD8Dq44StdRUh3/y8SQiO
+	1Epl1r/FZ8VU3XkcvNPufX0WuFF43Z9o2HIhDGwg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp2har-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 05:46:02 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57D5k2SL012699;
+	Wed, 13 Aug 2025 05:46:02 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp2hap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 05:46:02 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D30Hs7028571;
+	Wed, 13 Aug 2025 05:46:01 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5n5sa5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 05:46:01 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57D5jx4r20906272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 05:45:59 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4F7642004E;
+	Wed, 13 Aug 2025 05:45:59 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5763A20040;
+	Wed, 13 Aug 2025 05:45:57 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.214.209])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 13 Aug 2025 05:45:57 +0000 (GMT)
+Date: Wed, 13 Aug 2025 11:15:51 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 11/11] ext4: Atomic write test for extent split across
+ leaf nodes
+Message-ID: <aJwmj39fLohMyNj_@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <2c241ea2ede39914d29aa59cd06acfc951aed160.1754833177.git.ojaswin@linux.ibm.com>
+ <20250812171935.GD7938@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add clocks for QoS
- configuration
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Tipton <mike.tipton@oss.qualcomm.com>
-References: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
- <20250808140300.14784-4-odelu.kukatla@oss.qualcomm.com>
- <857f56a9-0fe7-4c10-a55d-b00740a8be02@oss.qualcomm.com>
-Content-Language: en-US
-From: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
-In-Reply-To: <857f56a9-0fe7-4c10-a55d-b00740a8be02@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX/69es9V4cAEe
- RB5K0XPFdXru5fUMKR6XVOJwypTH6afa+tw62JABxdPe1uqZJEBHqCrFbeKbQSh5N+xxOOMOEIM
- HJyjbxw3mWi66G4l8jA817MUm/thoEoO1rriHQ50I/cOrx+zcsngASDkA8gzsh2JNET/kDxUCQj
- HWvGmlMOowMj8Y+7GeEK9u7WKemL7qCzeyd2OayInTFyY7lanBANCGBm3UClG20PyLv6JDfsLDL
- uNQZZxjnsdy6R5br6jQ0Bs+26zUnaT551r9uXvlhQpe8CFBrOfW/JBczC1uF9u1ygwhd+VFT93w
- K4w+4IwUpsCw8Jx0hxFqjT7dKO/cUED9qvVfMrzgwgbiKSl4P3v3aEZWsb+2Yo+dtMlkIvSu0Sk
- 3QpbKqKO
-X-Proofpoint-GUID: r4e97djYL5QovaKBL7NJyY42zuRe89r2
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689c2688 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=SiMmawhtwnuHYgKqZ0PRSA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=XLPuD3OmIq6EDVKOuGgA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: r4e97djYL5QovaKBL7NJyY42zuRe89r2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812171935.GD7938@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIxOSBTYWx0ZWRfX6qXXTdQEi3xL
+ BFJw8lkX//bg+KaqJWyDRou/WoASlN10aHNmxYaQVzB01CmptbPhFIX7aT6WXiUSq6FuGMlJ8j1
+ Knih5VDe37yLtALyhHwvizbJUHm1CkT2QWNOCxrFL+QVArqpTxCqPKj7fYHGY5qCmC9lT4fnJfu
+ 4qSJiE+P4RRkj333IX1KxSauvXSykDwf/0XAMyKdCWHNz8qXFX83GiA78CEfwKooQfXizwc7T3J
+ PpMah9SBdS/f00EXV9h4OAOS+7lm0nQ9ankRNKlXTCDHQEle34nG4TdZwB3fnBGzrH8utXW9kD3
+ H8gESbRtaV4VH0dMaaqkwPvWigP/zNuyDdBTt9MBbVYTC4ratOlDd+fBZF5W7OknRIiuvrc0Dmz
+ mMj8Qyty
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689c269a cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+ a=cf2efhwwC3tEVx3DY7MA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: RdzLNblkjjG5TtlpZQcoI8TwF7UP2cEm
+X-Proofpoint-ORIG-GUID: GVE1BxqP3PER5VaCwosVJajQkJKyu3W9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ clxscore=1015 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120219
 
+On Tue, Aug 12, 2025 at 10:19:35AM -0700, Darrick J. Wong wrote:
+> On Sun, Aug 10, 2025 at 07:12:02PM +0530, Ojaswin Mujoo wrote:
+> > In ext4, even if an allocated range is physically and logically
+> > contiguous, it can still be split into 2 extents. This is because ext4
+> > does not merge extents across leaf nodes. This is an issue for atomic
+> > writes since even for a continuous extent the map block could (in rare
+> > cases) return a shorter map, hence tearning the write. This test creates
+> > such a file and ensures that the atomic write handles this case
+> > correctly
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >  tests/ext4/063     | 129 +++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/ext4/063.out |   2 +
+> >  2 files changed, 131 insertions(+)
+> >  create mode 100755 tests/ext4/063
+> >  create mode 100644 tests/ext4/063.out
+> > 
+> > diff --git a/tests/ext4/063 b/tests/ext4/063
+> > new file mode 100755
+> > index 00000000..40867acb
+> > --- /dev/null
+> > +++ b/tests/ext4/063
+> > @@ -0,0 +1,129 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> > +#
+> > +# In ext4, even if an allocated range is physically and logically contiguous,
+> > +# it can still be split into 2 extents. This is because ext4 does not merge
+> > +# extents across leaf nodes. This is an issue for atomic writes since even for
+> > +# a continuous extent the map block could (in rare cases) return a shorter map,
+> > +# hence tearning the write. This test creates such a file and ensures that the
+> > +# atomic write handles this case correctly
+> > +#
+> > +. ./common/preamble
+> > +. ./common/atomicwrites
+> > +_begin_fstest auto atomicwrites
+> > +
+> > +_require_scratch_write_atomic_multi_fsblock
+> > +_require_atomic_write_test_commands
+> > +_require_command "$DEBUGFS_PROG" debugfs
+> > +
+> > +prep() {
+> > +	local bs=`_get_block_size $SCRATCH_MNT`
+> > +	local ex_hdr_bytes=12
+> > +	local ex_entry_bytes=12
+> > +	local entries_per_blk=$(( (bs - ex_hdr_bytes) / ex_entry_bytes ))
+> > +
+> > +	# fill the extent tree leaf with bs len extents at alternate offsets.
+> > +	# The tree should look as follows
+> > +	#
+> > +	#                    +---------+---------+
+> > +	#                    | index 1 | index 2 |
+> > +	#                    +-----+---+-----+---+
+> > +	#                   +------+         +-----------+
+> > +	#                   |                            |
+> > +	#      +-------+-------+---+---------+     +-----+----+
+> > +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1  |
+> > +	#      | off:0 | off:2 |...| off:678 |     |  off:680 |
+> > +	#      | len:1 | len:1 |   |  len:1  |     |   len:1  |
+> > +	#      +-------+-------+---+---------+     +----------+
+> > +	#
+> > +	for i in $(seq 0 $entries_per_blk)
+> > +	do
+> > +		$XFS_IO_PROG -fc "pwrite -b $bs $((i * 2 * bs)) $bs" $testfile > /dev/null
+> > +	done
+> > +	sync $testfile
+> > +
+> > +	echo >> $seqres.full
+> > +	echo "Create file with extents spanning 2 leaves. Extents:">> $seqres.full
+> > +	echo "...">> $seqres.full
+> > +	$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
+> > +
+> > +	# Now try to insert a new extent ex(new) between ex(n) and ex(n+1).
+> > +	# Since this is a new FS the allocator would find continuous blocks
+> > +	# such that ex(n) ex(new) ex(n+1) are physically(and logically)
+> > +	# contiguous. However, since we dont merge extents across leaf we will
+> > +	# end up with a tree as:
+> > +	#
+> > +	#                    +---------+---------+
+> > +	#                    | index 1 | index 2 |
+> > +	#                    +-----+---+-----+---+
+> > +	#                   +------+         +------------+
+> > +	#                   |                             |
+> > +	#      +-------+-------+---+---------+     +------+-----------+
+> > +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1 (merged) |
+> > +	#      | off:0 | off:2 |...| off:678 |     |      off:679     |
+> > +	#      | len:1 | len:1 |   |  len:1  |     |      len:2       |
+> > +	#      +-------+-------+---+---------+     +------------------+
+> > +	#
+> 
+> Thanks for the nice picture demonstrating what you're trying to test!
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
+Sure, thanks for the suggestions and review!
 
-On 8/12/2025 3:21 PM, Konrad Dybcio wrote:
-> On 8/8/25 4:03 PM, Odelu Kukatla wrote:
->> Add register addresses and clocks which need to be enabled for
->> configuring QoS on sa8775p SoC.
->>
->> Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->> +		system_noc: interconnect@01680000 {
-> 
-> stray leading zero
-> 
-Thanks for the review, i will address this in next revision.> I also see there's a camera noc.. are these controlled internally
-> by Titan nowadays?
-> 
-Yes, camera NoC is controlled internally.
-> Konrad
-
+Regards,
+ojaswin
 
