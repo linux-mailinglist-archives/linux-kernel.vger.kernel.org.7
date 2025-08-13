@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-767697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AD0B257C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7683FB257CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F26467B4006
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225553B3733
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94DF2FC898;
-	Wed, 13 Aug 2025 23:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677CC2FC89F;
+	Wed, 13 Aug 2025 23:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXKVK3yU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTAuFPbG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75B92F60A6;
-	Wed, 13 Aug 2025 23:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B096E2F60DC;
+	Wed, 13 Aug 2025 23:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755129045; cv=none; b=RAcrzqrYc36Js+TTM3BC9XG6YjntCYXHgxYtHuhLFmcsDLa8gmqkRDj+MDywYx8an9KTQ+4wGYaLUrmIJRDpMvwhPOjvuWfMDjD9Dhq7ZgLdkNFcyOLEQU+dAFHUqDHWMNZRiiCJgk1o+KnpjUIfMRQzbo81aa2jMu3yfS4XWR8=
+	t=1755129070; cv=none; b=g7Y/N2GNz9UOlEEHJtuGqxvEyIe8pTnS5xJqSJG1M5uiCej0xsnW4iIgR+rERCo+1vc1LuQMlvwdviiNyVUOgYIZZ1aQF3D2bkCsfYE4HHFR+yziXtT733/7xBueyEMPZQZpzqqI5gmVD+ySkahQtLuZVmjpW8TX022fKj3mxUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755129045; c=relaxed/simple;
-	bh=V8NGTu6nVm3ohtX2JeGDiq1FMx/+4PB7zIAIRxX49yM=;
+	s=arc-20240116; t=1755129070; c=relaxed/simple;
+	bh=rpY2NW9ov2yVQk0j9eopj/8vPRHm/mRuzvT2FDOUZr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gxf3nbe7EjHsc+QzqYx1g2kJ5sd3c9j1ew/W10qpKCK1JOyTBalN6cN9Vyi9pvxTigDf6Lwv8PYeX4UlKo/sB8KZ41gW4LzRsyICBTLoyjlIAo8+YjQV1hdnTjkhs30IrHsUqo+CueZI2/yG0RJqbtLaVg5ag17OjXnCc52nVaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXKVK3yU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89585C4CEEB;
-	Wed, 13 Aug 2025 23:50:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Lz1B2HBR76xpyYDONKak5pqpxZ8N+D+pH//bEzYzf1hvKFvFRbruKXBs7BTMilvwq3SaBH/v93Pk8FGkbLKddMLH11KZAGouTyWHlhmAGwYDWP13sDFy9+2QOBvZaMlfJOjmEUEssPgDMVtXHOtO1yr7BlMa0iNnYKdWv7sR6vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTAuFPbG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DB7C4CEEB;
+	Wed, 13 Aug 2025 23:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755129044;
-	bh=V8NGTu6nVm3ohtX2JeGDiq1FMx/+4PB7zIAIRxX49yM=;
+	s=k20201202; t=1755129070;
+	bh=rpY2NW9ov2yVQk0j9eopj/8vPRHm/mRuzvT2FDOUZr0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QXKVK3yUA2IeBNFkLFJNoz/wxOnaIhyVJ4nb0g0DbGOPfbmcCeBIZMS1qx+v7P1vg
-	 IhzBAQukl/v8hFqdlivGUkj9vqnS3K5FHzHRD14xHQGG66bvT80MWsZI5xVv793jov
-	 MOQ2uoVOmTL3XLM4HaPlI2it+ozz/TGDEqVqbxZ3Fpp5ximwwqunfsMFWMme6Vwinj
-	 5IK+0rUoj70pvyn3krKPU4I1RNh2kEQGS0RZZKNaIKheBvRPkg2aCFZlgadvaJBAsM
-	 wmaTVW8B/ZUoB88khtp+UkVAuHkzAGWGMwbynuJhZovx5uIU8IqfCuGZXIgMjFuSmT
-	 4GwiBVvRWwENg==
-Date: Thu, 14 Aug 2025 01:50:40 +0200
+	b=dTAuFPbGC0ifswIMz7jlq6o9S8frtwR4FQFaWstqoeSKm9yYjK0JKVcALM6EZacf+
+	 782nphC6cQdE3ujXEwSCgXwQghBJfei6gH2OhmHuBj05kUa5qi5pnFFujGuvuNz7mk
+	 Hh2h01WhN9UoEGJM0bu61z3LbLsPm6Kd5i6S1kzrvLslSTkWIsCnTIJ+y164+NpFaQ
+	 uXX6sdZsSf9FIUh85fhQC9ULeoA1mv8y5usNgFoQThjDGjHyuy/RnWOb4dZrjP23OT
+	 CVoQt0AmcljDdNRy4s9MgiYGpIxNPqC1tqVDzZ61LTu63NKf1RVYnKtoWmCwPv7h3m
+	 /MjxpK0yYvtzA==
+Date: Thu, 14 Aug 2025 01:51:06 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 12/13] docs: move find-unused-docs.sh to tools/doc
-Message-ID: <20250814015040.09db5b0c@foz.lan>
-In-Reply-To: <20250813213218.198582-13-corbet@lwn.net>
+Subject: Re: [PATCH 02/13] docs: move checktransupdate.py to tools/doc
+Message-ID: <20250814015106.2d7d0bf7@foz.lan>
+In-Reply-To: <20250813213218.198582-3-corbet@lwn.net>
 References: <20250813213218.198582-1-corbet@lwn.net>
-	<20250813213218.198582-13-corbet@lwn.net>
+	<20250813213218.198582-3-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,106 +60,164 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 13 Aug 2025 15:32:11 -0600
+Em Wed, 13 Aug 2025 15:32:01 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> ...and update references accordingly.
+> The checktranslate.py tool currently languishes in scripts/; move it to
+> tools/doc and update references accordingly.
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
 >=20
 > Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 > ---
->  Documentation/doc-guide/contributing.rst                    | 2 +-
->  Documentation/translations/zh_CN/doc-guide/contributing.rst | 2 +-
->  {scripts =3D> tools/doc}/find-unused-docs.sh                  | 6 +++---
->  3 files changed, 5 insertions(+), 5 deletions(-)
->  rename {scripts =3D> tools/doc}/find-unused-docs.sh (85%)
+>  Documentation/doc-guide/checktransupdate.rst              | 6 +++---
+>  .../translations/zh_CN/doc-guide/checktransupdate.rst     | 6 +++---
+>  Documentation/translations/zh_CN/how-to.rst               | 2 +-
+>  MAINTAINERS                                               | 2 +-
+>  {scripts =3D> tools/doc}/checktransupdate.py                | 8 ++++----
+>  5 files changed, 12 insertions(+), 12 deletions(-)
+>  rename {scripts =3D> tools/doc}/checktransupdate.py (98%)
 >=20
-> diff --git a/Documentation/doc-guide/contributing.rst b/Documentation/doc=
--guide/contributing.rst
-> index 662c7a840cd5..81633c6c6c11 100644
-> --- a/Documentation/doc-guide/contributing.rst
-> +++ b/Documentation/doc-guide/contributing.rst
-> @@ -152,7 +152,7 @@ generate links to that documentation.  Adding ``kerne=
-l-doc`` directives to
->  the documentation to bring those comments in can help the community deri=
-ve
->  the full value of the work that has gone into creating them.
+> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation=
+/doc-guide/checktransupdate.rst
+> index dfaf9d373747..48bf1ee9a62e 100644
+> --- a/Documentation/doc-guide/checktransupdate.rst
+> +++ b/Documentation/doc-guide/checktransupdate.rst
+> @@ -27,15 +27,15 @@ Usage
 > =20
-> -The ``scripts/find-unused-docs.sh`` tool can be used to find these
-> +The ``tools/doc/find-unused-docs.sh`` tool can be used to find these
->  overlooked comments.
+>  ::
 > =20
->  Note that the most value comes from pulling in the documentation for
-> diff --git a/Documentation/translations/zh_CN/doc-guide/contributing.rst =
-b/Documentation/translations/zh_CN/doc-guide/contributing.rst
-> index 394a13b438b0..d205f8ed9fce 100644
-> --- a/Documentation/translations/zh_CN/doc-guide/contributing.rst
-> +++ b/Documentation/translations/zh_CN/doc-guide/contributing.rst
-> @@ -124,7 +124,7 @@ C=E4=BB=A3=E7=A0=81=E7=BC=96=E8=AF=91=E5=99=A8=E5=8F=
-=91=E5=87=BA=E7=9A=84=E8=AD=A6=E5=91=8A=E5=B8=B8=E5=B8=B8=E4=BC=9A=E8=A2=AB=
-=E8=A7=86=E4=B8=BA=E8=AF=AF=E6=8A=A5=EF=BC=8C=E4=BB=8E=E8=80=8C=E5=AF=BC=E8=
-=87=B4=E5=87=BA=E7=8E=B0=E4=BA=86
->  =E8=BF=99=E4=BD=BF=E5=BE=97=E8=BF=99=E4=BA=9B=E4=BF=A1=E6=81=AF=E6=9B=B4=
-=E9=9A=BE=E6=89=BE=E5=88=B0=EF=BC=8C=E4=BE=8B=E5=A6=82=E4=BD=BFSphinx=E6=97=
-=A0=E6=B3=95=E7=94=9F=E6=88=90=E6=8C=87=E5=90=91=E8=AF=A5=E6=96=87=E6=A1=A3=
-=E7=9A=84=E9=93=BE=E6=8E=A5=E3=80=82=E5=B0=86 ``kernel-doc``
->  =E6=8C=87=E4=BB=A4=E6=B7=BB=E5=8A=A0=E5=88=B0=E6=96=87=E6=A1=A3=E4=B8=AD=
-=E4=BB=A5=E5=BC=95=E5=85=A5=E8=BF=99=E4=BA=9B=E6=B3=A8=E9=87=8A=E5=8F=AF=E4=
-=BB=A5=E5=B8=AE=E5=8A=A9=E7=A4=BE=E5=8C=BA=E8=8E=B7=E5=BE=97=E4=B8=BA=E7=BC=
-=96=E5=86=99=E6=B3=A8=E9=87=8A=E6=89=80=E5=81=9A=E5=B7=A5=E4=BD=9C=E7=9A=84=
-=E5=85=A8=E9=83=A8=E4=BB=B7=E5=80=BC=E3=80=82
+> -   ./scripts/checktransupdate.py --help
+> +   tools/doc/checktransupdate.py --help
 > =20
-> -``scripts/find-unused-docs.sh`` =E5=B7=A5=E5=85=B7=E5=8F=AF=E4=BB=A5=E7=
-=94=A8=E6=9D=A5=E6=89=BE=E5=88=B0=E8=BF=99=E4=BA=9B=E8=A2=AB=E5=BF=BD=E7=95=
-=A5=E7=9A=84=E8=AF=84=E8=AE=BA=E3=80=82
-> +``tools/doc/find-unused-docs.sh`` =E5=B7=A5=E5=85=B7=E5=8F=AF=E4=BB=A5=
-=E7=94=A8=E6=9D=A5=E6=89=BE=E5=88=B0=E8=BF=99=E4=BA=9B=E8=A2=AB=E5=BF=BD=E7=
-=95=A5=E7=9A=84=E8=AF=84=E8=AE=BA=E3=80=82
+>  Please refer to the output of argument parser for usage details.
 > =20
->  =E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8C=E5=B0=86=E5=AF=BC=E5=87=BA=E7=9A=84=
-=E5=87=BD=E6=95=B0=E5=92=8C=E6=95=B0=E6=8D=AE=E7=BB=93=E6=9E=84=E5=BC=95=E5=
-=85=A5=E6=96=87=E6=A1=A3=E6=98=AF=E6=9C=80=E6=9C=89=E4=BB=B7=E5=80=BC=E7=9A=
-=84=E3=80=82=E8=AE=B8=E5=A4=9A=E5=AD=90=E7=B3=BB=E7=BB=9F=E8=BF=98=E5=85=B7=
-=E6=9C=89=E4=BE=9B=E5=86=85=E9=83=A8
->  =E4=BD=BF=E7=94=A8=E7=9A=84kernel-doc=E6=B3=A8=E9=87=8A=EF=BC=9B=E9=99=
-=A4=E9=9D=9E=E8=BF=99=E4=BA=9B=E6=B3=A8=E9=87=8A=E6=94=BE=E5=9C=A8=E4=B8=93=
-=E9=97=A8=E9=92=88=E5=AF=B9=E7=9B=B8=E5=85=B3=E5=AD=90=E7=B3=BB=E7=BB=9F=E5=
-=BC=80=E5=8F=91=E4=BA=BA=E5=91=98=E7=9A=84=E6=96=87=E6=A1=A3=E4=B8=AD=EF=BC=
-=8C
-> diff --git a/scripts/find-unused-docs.sh b/tools/doc/find-unused-docs.sh
-> similarity index 85%
-> rename from scripts/find-unused-docs.sh
-> rename to tools/doc/find-unused-docs.sh
-> index 0ae445dec2e4..a64389a15f09 100755
-> --- a/scripts/find-unused-docs.sh
-> +++ b/tools/doc/find-unused-docs.sh
-> @@ -5,10 +5,10 @@
->  # This script detects files with kernel-doc comments for exported functi=
-ons
->  # that are not included in documentation.
->  #
-> -# usage: Run 'scripts/find-unused-docs.sh directory' from top level of k=
-ernel
-> +# usage: Run 'tools/doc/find-unused-docs.sh directory' from top level of=
- kernel
->  # 	 tree.
->  #
-> -# example: $scripts/find-unused-docs.sh drivers/scsi
-> +# example: $tools/doc/find-unused-docs.sh drivers/scsi
->  #
->  # Licensed under the terms of the GNU GPL License
+>  Samples
 > =20
-> @@ -18,7 +18,7 @@ if ! [ -d "Documentation" ]; then
->  fi
+> --  ``./scripts/checktransupdate.py -l zh_CN``
+> +-  ``tools/doc/checktransupdate.py -l zh_CN``
+>     This will print all the files that need to be updated in the zh_CN lo=
+cale.
+> --  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-=
+tools/testing-overview.rst``
+> +-  ``tools/doc/checktransupdate.py Documentation/translations/zh_CN/dev-=
+tools/testing-overview.rst``
+>     This will only print the status of the specified file.
 > =20
->  if [ "$#" -ne 1 ]; then
-> -	echo "Usage: scripts/find-unused-docs.sh directory"
-> +	echo "Usage: tools/doc/find-unused-docs.sh directory"
->  	exit 1
->  fi
+>  Then the output is something like:
+> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.=
+rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> index d20b4ce66b9f..165e25155084 100644
+> --- a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+> @@ -28,15 +28,15 @@
 > =20
+>  ::
+> =20
+> -    ./scripts/checktransupdate.py --help
+> +    tools/doc/checktransupdate.py --help
+> =20
+>  =E5=85=B7=E4=BD=93=E7=94=A8=E6=B3=95=E8=AF=B7=E5=8F=82=E8=80=83=E5=8F=82=
+=E6=95=B0=E8=A7=A3=E6=9E=90=E5=99=A8=E7=9A=84=E8=BE=93=E5=87=BA
+> =20
+>  =E7=A4=BA=E4=BE=8B
+> =20
+> --  ``./scripts/checktransupdate.py -l zh_CN``
+> +-  ``tools/doc/checktransupdate.py -l zh_CN``
+>     =E8=BF=99=E5=B0=86=E6=89=93=E5=8D=B0 zh_CN =E8=AF=AD=E8=A8=80=E4=B8=
+=AD=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=89=80=E6=9C=89=E6=96=87=
+=E4=BB=B6=E3=80=82
+> --  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-=
+tools/testing-overview.rst``
+> +-  ``tools/doc/checktransupdate.py Documentation/translations/zh_CN/dev-=
+tools/testing-overview.rst``
+>     =E8=BF=99=E5=B0=86=E5=8F=AA=E6=89=93=E5=8D=B0=E6=8C=87=E5=AE=9A=E6=96=
+=87=E4=BB=B6=E7=9A=84=E7=8A=B6=E6=80=81=E3=80=82
+> =20
+>  =E7=84=B6=E5=90=8E=E8=BE=93=E5=87=BA=E7=B1=BB=E4=BC=BC=E5=A6=82=E4=B8=8B=
+=E7=9A=84=E5=86=85=E5=AE=B9=EF=BC=9A
+> diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/=
+translations/zh_CN/how-to.rst
+> index ddd99c0f9b4d..cf66c72ee0c5 100644
+> --- a/Documentation/translations/zh_CN/how-to.rst
+> +++ b/Documentation/translations/zh_CN/how-to.rst
+> @@ -437,7 +437,7 @@ git email =E9=BB=98=E8=AE=A4=E4=BC=9A=E6=8A=84=E9=80=
+=81=E7=BB=99=E6=82=A8=E4=B8=80=E4=BB=BD=EF=BC=8C=E6=89=80=E4=BB=A5=E6=82=A8=
+=E5=8F=AF=E4=BB=A5=E5=88=87=E6=8D=A2=E4=B8=BA=E5=AE=A1=E9=98=85=E8=80=85=E7=
+=9A=84=E8=A7=92
+>  =E5=AF=B9=E4=BA=8E=E9=A6=96=E6=AC=A1=E5=8F=82=E4=B8=8E Linux =E5=86=85=
+=E6=A0=B8=E4=B8=AD=E6=96=87=E6=96=87=E6=A1=A3=E7=BF=BB=E8=AF=91=E7=9A=84=E6=
+=96=B0=E6=89=8B=EF=BC=8C=E5=BB=BA=E8=AE=AE=E6=82=A8=E5=9C=A8 linux =E7=9B=
+=AE=E5=BD=95=E4=B8=AD=E8=BF=90=E8=A1=8C=E4=BB=A5=E4=B8=8B=E5=91=BD=E4=BB=A4=
+=EF=BC=9A
+>  ::
+> =20
+> -	./script/checktransupdate.py -l zh_CN``
+> +	tools/doc/checktransupdate.py -l zh_CN``
+> =20
+>  =E8=AF=A5=E5=91=BD=E4=BB=A4=E4=BC=9A=E5=88=97=E5=87=BA=E9=9C=80=E8=A6=81=
+=E7=BF=BB=E8=AF=91=E6=88=96=E6=9B=B4=E6=96=B0=E7=9A=84=E8=8B=B1=E6=96=87=E6=
+=96=87=E6=A1=A3=EF=BC=8C=E7=BB=93=E6=9E=9C=E5=90=8C=E6=97=B6=E4=BF=9D=E5=AD=
+=98=E5=9C=A8 checktransupdate.log =E4=B8=AD=E3=80=82
+> =20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index dafc11712544..a3a396fc1c3f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7301,8 +7301,8 @@ S:	Maintained
+>  P:	Documentation/doc-guide/maintainer-profile.rst
+>  T:	git git://git.lwn.net/linux.git docs-next
+>  F:	Documentation/
+> +F:	tools/doc/
+>  F:	scripts/check-variable-fonts.sh
+> -F:	scripts/checktransupdate.py
+>  F:	scripts/documentation-file-ref-check
+>  F:	scripts/get_abi.py
+>  F:	scripts/kernel-doc*
+> diff --git a/scripts/checktransupdate.py b/tools/doc/checktransupdate.py
+> similarity index 98%
+> rename from scripts/checktransupdate.py
+> rename to tools/doc/checktransupdate.py
+> index e39529e46c3d..61bd7b02ca55 100755
+> --- a/scripts/checktransupdate.py
+> +++ b/tools/doc/checktransupdate.py
+> @@ -9,9 +9,9 @@ commit to find the latest english commit from the transla=
+tion commit
+>  differences occur, report the file and commits that need to be updated.
+> =20
+>  The usage is as follows:
+> -- ./scripts/checktransupdate.py -l zh_CN
+> +- tools/doc/checktransupdate.py -l zh_CN
+>  This will print all the files that need to be updated or translated in t=
+he zh_CN locale.
+> -- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-too=
+ls/testing-overview.rst
+> +- tools/doc/checktransupdate.py Documentation/translations/zh_CN/dev-too=
+ls/testing-overview.rst
+>  This will only print the status of the specified file.
+> =20
+>  The output is something like:
+> @@ -168,7 +168,7 @@ def check_per_file(file_path):
+>  def valid_locales(locale):
+>      """Check if the locale is valid or not"""
+>      script_path =3D os.path.dirname(os.path.abspath(__file__))
+> -    linux_path =3D os.path.join(script_path, "..")
+> +    linux_path =3D os.path.join(script_path, "../..")
+>      if not os.path.isdir(f"{linux_path}/Documentation/translations/{loca=
+le}"):
+>          raise ArgumentTypeError("Invalid locale: {locale}")
+>      return locale
+> @@ -232,7 +232,7 @@ def config_logging(log_level, log_file=3D"checktransu=
+pdate.log"):
+>  def main():
+>      """Main function of the script"""
+>      script_path =3D os.path.dirname(os.path.abspath(__file__))
+> -    linux_path =3D os.path.join(script_path, "..")
+> +    linux_path =3D os.path.join(script_path, "../..")
+> =20
+>      parser =3D ArgumentParser(description=3D"Check the translation updat=
+e")
+>      parser.add_argument(
 
 
 
