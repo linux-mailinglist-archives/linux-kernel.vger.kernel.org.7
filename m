@@ -1,343 +1,714 @@
-Return-Path: <linux-kernel+bounces-766161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CC0B2430B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:47:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6C5B2430A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D40A6856DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 784807B1DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E602DEA8C;
-	Wed, 13 Aug 2025 07:47:36 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491DD2D8364;
+	Wed, 13 Aug 2025 07:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dLFj+9rb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD031519A0;
-	Wed, 13 Aug 2025 07:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B721D2BF019
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071255; cv=none; b=EjY7N+n+9Vc11o2Sz1u/ILAcapiXBjnH89nZarS/ufiUZ32Xs0U2saB1w8C2GHScIMH5Wpzx7fOumjOr+1NQF6EKn1n1dt/yEXBSCwqS/jVmfVNDgaRPu2tr6kv7BrFnDLjGh2jjyo9jmdcTR89PNM80cKOMlvS6F0BJ2L2Uq94=
+	t=1755071253; cv=none; b=GZyGITqXrVTOhoJTZpxFuIM7QzGQHPCnjT+fI9pUix98L2nIYYNs7EyMdFtxnFx8xrF3iWIiLcl5/3RdO9l+yvHH6SYrMtRZYx+NVkXsVVWv9tHS4d3vlfZteSRVEBaSE6Ftssu6YAUOMxgtJpklgXXEzgFzhrAb1tcusQJruPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071255; c=relaxed/simple;
-	bh=5jeiwACZJC//91sUyzWvft1D13hiN2I8Ag/Y/4S2LY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXsjngiGtvtuHUJlpnc3lNLXwHeVW1L9WRTYTwDMM+BdEy9nJW7dshpdpJVQHf4owtvi9ahT4L4JClWt5aLk1Qgk6Tb65JagYErNgMkVqYyjtwAYnDsyh9SQajoEAPG9Mg3wi4OmOm4QSKGN5o3H2I4mzNW2u47X2BnlXvLsrzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz15t1755071184tbd45f04d
-X-QQ-Originating-IP: D7wXgoZcnfh+Jsc+bkk1zhuO/ETlXGRMU4Iq6dxlGcI=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 13 Aug 2025 15:46:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10667824770877014471
-Date: Wed, 13 Aug 2025 15:46:22 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: "Anwar, Md Danish" <a0501179@ti.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <C5DDDB438F5F4EF9+20250813074622.GE944516@nic-Precision-5820-Tower>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-4-dong100@mucse.com>
- <4f8d678a-8b72-449e-9809-bed912f26e59@ti.com>
+	s=arc-20240116; t=1755071253; c=relaxed/simple;
+	bh=awFNGMlN2X64hkwWj8xl/xwBt2TFhkAw9jKo42o03FQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IRbRLhNcGs6sctDCkPnw88hV/9mqsHOv+ImH/FuDLJV0piTdss4YO45CamkIJILmLVfA9nNOB7mjXDDGAhNrHJLGDEqPBXUwuL+uaRrpDOp7WlCPRjwB8XylYdKBG14UroGz3oC6hkxAJ/ZGN4kH3zHvKwNDgqKZndlTcHCmkzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dLFj+9rb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755071250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6X1QZTCr0YATDHf0cQKpOItz1U3gPuKBBWWk+1JO1pU=;
+	b=dLFj+9rbKwsng2WFfQREqpdjnU2PGslWPflA+ftnUi793bXuqeltJX9R971/LvlYA09HSj
+	bj4qCk9Eq2ZoONstqvTJ0eGWLvy9E05Iy0oa9BkmuJNRSbPFGLtlZv3Rt/y5+uQoG97ZjJ
+	n62FKspvykxg8/hRk9ofG83SHEumuDc=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-211-4UWPewbBMi-un9pz7s9nkw-1; Wed, 13 Aug 2025 03:47:29 -0400
+X-MC-Unique: 4UWPewbBMi-un9pz7s9nkw-1
+X-Mimecast-MFC-AGG-ID: 4UWPewbBMi-un9pz7s9nkw_1755071248
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31f3b65ce07so11234347a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:47:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755071248; x=1755676048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6X1QZTCr0YATDHf0cQKpOItz1U3gPuKBBWWk+1JO1pU=;
+        b=SC/AYycJ685q1u70uOOZFOU0oaYPWYljtczfPv84/iAMPlG8GiKN9OzUKaiPxBRDI6
+         sfvzjKn1gbfQsYFH6AB1jLThUShjx4pWUkxkT2VsV5SaCtS7wtA+ELpbkCORWqTx0Wyr
+         KePU2FD2TK7IgEPP/2onSliEGtcrBBtLyj3YMu3NQuofZpsys6zqb96ehVlaYOBuekUR
+         o7OAjAzATFKfvH2IT5nbvtCsV033AoBwJ3L5g3vKoNlvfiLSb1NlznG/NXCg9usEB9rP
+         78CmazojCBBeazzDSYxtBiJMvJfBbINLRIbU6+bx8H7lodOEOtns71wBHXrO/f2lcao7
+         J28w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkDg8M2U31P23j5r1BRFr7rzcQjAIoWv7DnTJX9uoZ91AJJUlrj09ovxYD5nHfRIDNRcdQMepDD6ReU4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1n6xpHjP+vcrhqqRhHDkxzv+55kN5CHeyD/m1I8vQxdMRunCp
+	e+GT1E+foUfjfo40y3BLG1ssS+h2syEUkw78vOZLpBsAQuAYVP+FdTGpvXGmCtGdwk/ojRghgWa
+	j5OUCLcvsSlFYU4v6qpXCcEQUbX4iKzNMHL3PDmrEiQZvjOx8Yq1GS3T3HnY1f6NGreAeoaEqcD
+	vr/XLs53CU2QTG3wAGjs+NGAZ4oALNyCnIB43tKxdv
+X-Gm-Gg: ASbGncsWrvXTuAHXc4jBfYKu6cFNOVkaPgvGG7VvQUbpkqkEFERLZLrsduRp8+O8erG
+	77lGfUB3mL7yMt+HI+3dZmROhDD3zGl1sDen3na03kidy34LjySfvsgQTyIcco6N0nrOPBzQ2XW
+	LZFYoIWJJTVFTS54YVxINUW1Rvs0h4cKGW3WAtz6El7TLVrBsKTprzL4k=
+X-Received: by 2002:a17:90b:2808:b0:311:a4d6:30f8 with SMTP id 98e67ed59e1d1-321d0da48c2mr2553631a91.13.1755071247874;
+        Wed, 13 Aug 2025 00:47:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYPbfrJ4gxqwP3tRK1Ty4iiu6KwUGUHk10YDp3Q+T9uZFbgHP9WTBCLlN3uFTf/zfgXFMxaJCEM6a3LvON80U=
+X-Received: by 2002:a17:90b:2808:b0:311:a4d6:30f8 with SMTP id
+ 98e67ed59e1d1-321d0da48c2mr2553612a91.13.1755071247274; Wed, 13 Aug 2025
+ 00:47:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f8d678a-8b72-449e-9809-bed912f26e59@ti.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NUR2MO5QdLbj1hPL96v8wPoeC0g8wA3J66OFzQe3kAeAAxtBsHb4MlRK
-	ETCD/GkXSIuq2sIJzG1wjSXydu+2opAGM+E8naF2PRTPwNfecbjmkM2nJUVUFf1yqlqn9ng
-	S05p2Z/wlzEoH3jZYLFwm8dZSo3e6OyFB3/wWl8sadVik4Qx7GjLgYH3xrYAeF7p0cyTrZL
-	axkTqg75aMd2BD4ELlNekP8thFlWkeVLTv7gK3l42ZqXsbrCaEhWkrAUyzvmEYcwl2vq2Wp
-	+jIndiSa9VK1Jl7tujQ6XcOUPB5eKIT5iW0z386EEJtG22KUxMRUkUKyeERB1a4Xzt+UEhJ
-	Cn5+j5FR0hsSsiuhAWngzYdVDVb22KH0uRygapAUlKsWVcuellKQOvWu9vEPK/r5jwAgimi
-	yNEAtq5HwGrsZy9g0HaDFyY24CBQwdzf+uPNo0d/4ijvT0II6lUkLBakqpMkkG2kkZh++FV
-	lVkccfBc2gNtr9vOFhru+W5970IJyn7kaaTYbHpT2yhOW5r32OVPx+ijjsswsjO1O3QUHDb
-	fzEC240BaXt8/KY3g9+AaWMi9RzKkwnOzQp87t6a6sU0r+7f9aiOqeQNOF2juaCziWN/K2b
-	Ur+Du7WO1ox4SPeKrl6/QGSv8E9P0xcZ+3IyXTUY+W5GI7OFrircAyxaiykGmswCZIcIvt9
-	+r4lwt1M7SC8QdYk6jXRIGFjoyNQQLGfQzBNEDLf4luwbCtsr+Zi63dUUqBKR0BNH1YBG4h
-	xRFddCRF3t+DxPloCFiquwF+Dkmjiz1hO65yCdUSr9wM1YGTwtdVnnCoE2N3by5fedsWQp6
-	BCwZhWoqCQrbZ/xLgds3QazOH+kIfwOF0KenEIdComtE1ToZwlON7Wc4CvDplkRbvH6fWGA
-	sGdjdN7joXD59792dNxClZcy1qv8TJbzWJe1/n9QbncZf23xmcQabT/tmuJ19XFJmRqrfr4
-	qk+FMELSiUcSewEKXEZllUde3l1Fa6wQmZH8rh1mFNXqxlNHkq2teMN0i+ZwrZMo+uRukpz
-	9gvu/8SEzHuEA1bS47BEawGglqh8wfFuP85l0tktG04HMNPjygfHetQ6C4u5H1iSHWEqOHk
-	Nm3i17vfv7K07nK0LBSN4Q5F6Tob11Ik1bgKRdJKML+
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+References: <20250813054831.25865-1-jasowang@redhat.com> <20250813054831.25865-5-jasowang@redhat.com>
+In-Reply-To: <20250813054831.25865-5-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 13 Aug 2025 09:46:51 +0200
+X-Gm-Features: Ac12FXwzn-XJcr3MgloPhq-zNX8LGG-5_NBmsGd-cx-XhIx8Tum72PVlqG-wFj4
+Message-ID: <CAJaqyWdrQTXDBC4tTLsMhVng5NdJp7_CbJf25BrMu+nW6U0isw@mail.gmail.com>
+Subject: Re: [PATCH V5 4/9] virtio: introduce vring_mapping_token
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 10:00:57PM +0530, Anwar, Md Danish wrote:
-> On 8/12/2025 3:09 PM, Dong Yibo wrote:
-> > Initialize basic mbx function.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  37 ++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   5 +
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 443 ++++++++++++++++++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  31 ++
-> >  6 files changed, 520 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
-> > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > index 42c359f459d9..5fc878ada4b1 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > @@ -6,4 +6,5 @@
-> >  
-> >  obj-$(CONFIG_MGBE) += rnpgbe.o
-> >  rnpgbe-objs := rnpgbe_main.o\
-> > -	       rnpgbe_chip.o
-> > +	       rnpgbe_chip.o\
-> > +	       rnpgbe_mbx.o
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > index 0dd3d3cb2a4d..05830bb73d3e 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -5,6 +5,7 @@
-> >  #define _RNPGBE_H
-> >  
-> >  #include <linux/types.h>
-> > +#include <linux/mutex.h>
-> >  
-> >  extern const struct rnpgbe_info rnpgbe_n500_info;
-> >  extern const struct rnpgbe_info rnpgbe_n210_info;
-> > @@ -40,7 +41,43 @@ struct mucse_mac_info {
-> >  	void *back;
-> >  };
-> >  
-> > +struct mucse_hw;
-> > +
-> > +struct mucse_mbx_operations {
-> > +	void (*init_params)(struct mucse_hw *hw);
-> > +	int (*read)(struct mucse_hw *hw, u32 *msg,
-> > +		    u16 size);
-> > +	int (*write)(struct mucse_hw *hw, u32 *msg,
-> > +		     u16 size);
-> > +	int (*read_posted)(struct mucse_hw *hw, u32 *msg,
-> > +			   u16 size);
-> > +	int (*write_posted)(struct mucse_hw *hw, u32 *msg,
-> > +			    u16 size);
-> > +	int (*check_for_msg)(struct mucse_hw *hw);
-> > +	int (*check_for_ack)(struct mucse_hw *hw);
-> > +	void (*configure)(struct mucse_hw *hw, int num_vec,
-> > +			  bool enable);
-> > +};
-> > +
-> > +struct mucse_mbx_stats {
-> > +	u32 msgs_tx;
-> > +	u32 msgs_rx;
-> > +	u32 acks;
-> > +	u32 reqs;
-> > +	u32 rsts;
-> > +};
-> > +
-> >  struct mucse_mbx_info {
-> > +	const struct mucse_mbx_operations *ops;
-> > +	struct mucse_mbx_stats stats;
-> > +	u32 timeout;
-> > +	u32 usec_delay;
-> > +	u16 size;
-> > +	u16 fw_req;
-> > +	u16 fw_ack;
-> > +	/* lock for only one use mbx */
-> > +	struct mutex lock;
-> > +	bool irq_enabled;
-> >  	/* fw <--> pf mbx */
-> >  	u32 fw_pf_shm_base;
-> >  	u32 pf2fw_mbox_ctrl;
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > index 20ec67c9391e..16d0a76114b5 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > @@ -1,8 +1,11 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> >  
-> > +#include <linux/string.h>
-> > +
-> >  #include "rnpgbe.h"
-> >  #include "rnpgbe_hw.h"
-> > +#include "rnpgbe_mbx.h"
-> >  
-> >  /**
-> >   * rnpgbe_init_common - Setup common attribute
-> > @@ -23,6 +26,8 @@ static void rnpgbe_init_common(struct mucse_hw *hw)
-> >  
-> >  	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
-> >  	mac->back = hw;
-> > +
-> > +	hw->mbx.ops = &mucse_mbx_ops_generic;
-> >  }
-> >  
-> >  /**
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > index fc57258537cf..aee037e3219d 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > @@ -7,6 +7,8 @@
-> >  #define RNPGBE_RING_BASE 0x1000
-> >  #define RNPGBE_MAC_BASE 0x20000
-> >  #define RNPGBE_ETH_BASE 0x10000
-> > +/**************** DMA Registers ****************************/
-> > +#define RNPGBE_DMA_DUMY 0x000c
-> >  /**************** CHIP Resource ****************************/
-> >  #define RNPGBE_MAX_QUEUES 8
-> >  #endif /* _RNPGBE_HW_H */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> > new file mode 100644
-> > index 000000000000..1195cf945ad1
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> > @@ -0,0 +1,443 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2022 - 2025 Mucse Corporation. */
-> > +
-> > +#include <linux/pci.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/iopoll.h>
-> > +
-> > +#include "rnpgbe.h"
-> > +#include "rnpgbe_mbx.h"
-> > +#include "rnpgbe_hw.h"
-> > +
-> > +/**
-> > + * mucse_read_mbx - Reads a message from the mailbox
-> > + * @hw: pointer to the HW structure
-> > + * @msg: the message buffer
-> > + * @size: length of buffer
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +	/* limit read size */
-> > +	min(size, mbx->size);
-> > +	return mbx->ops->read(hw, msg, size);
-> > +}
-> 
-> What's the purpose of min() here if you are anyways passing size to read()?
-> 
-> The min() call needs to be assigned to size, e.g.: size = min(size,
-> mbx->size);
-> 
+On Wed, Aug 13, 2025 at 7:49=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> Following patch will introduce the mapping operations for virtio
+> device. In order to achieve this, besides the dma device, virtio core
+> needs to support a transport or device specific mapping token as well.
+> So this patch introduces a union container of a dma device and opaque
+> mapping token. The idea is the allow the transport layer to pass
+> device specific mapping token which will be used as a parameter for
+> the virtio mapping operations. For the transport or device that is
+> using DMA, dma device is still being used.
+>
 
-Yes, I will fix this error.
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-> > +
-> > +/**
-> > + * mucse_write_mbx - Write a message to the mailbox
-> > + * @hw: pointer to the HW structure
-> > + * @msg: the message buffer
-> > + * @size: length of buffer
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> 
-> > +
-> > +/**
-> > + * mucse_mbx_reset - Reset mbx info, sync info from regs
-> > + * @hw: pointer to the HW structure
-> > + *
-> > + * This function reset all mbx variables to default.
-> > + **/
-> > +static void mucse_mbx_reset(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +	int v;
-> > +
-> 
-> Variable 'v' should be declared as u32 to match the register read.
-> 
+But some nits:
 
-Got it, I will fix it.
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 110 ++++++++++++++++++-----------------
+>  drivers/virtio/virtio_vdpa.c |   6 +-
+>  include/linux/virtio.h       |   7 +++
+>  include/linux/virtio_ring.h  |   7 ++-
+>  4 files changed, 72 insertions(+), 58 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 482a268af851..fb1d407d5f1b 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -210,8 +210,7 @@ struct vring_virtqueue {
+>         /* DMA, allocation, and size information */
+>         bool we_own_ring;
+>
+> -       /* Device used for doing DMA */
+> -       struct device *dma_dev;
+> +       union vring_mapping_token mapping_token;
+>
+>  #ifdef DEBUG
+>         /* They're supposed to lock for us. */
+> @@ -307,10 +306,10 @@ EXPORT_SYMBOL_GPL(virtio_max_dma_size);
+>
+>  static void *vring_alloc_queue(struct virtio_device *vdev, size_t size,
+>                                dma_addr_t *dma_handle, gfp_t flag,
+> -                              struct device *dma_dev)
+> +                              union vring_mapping_token *mapping_token)
 
-> > +	v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
-> > +	hw->mbx.fw_req = v & GENMASK(15, 0);
-> > +	hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
-> > +	mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +	mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_configure_pf - Configure mbx to use nr_vec interrupt
-> > + * @hw: pointer to the HW structure
-> > + * @nr_vec: vector number for mbx
-> > + * @enable: TRUE for enable, FALSE for disable
-> > + *
-> > + * This function configure mbx to use interrupt nr_vec.
-> > + **/
-> > +static void mucse_mbx_configure_pf(struct mucse_hw *hw, int nr_vec,
-> > +				   bool enable)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +	u32 v;
-> > +
-> > +	if (enable) {
-> > +		v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
-> > +		hw->mbx.fw_req = v & GENMASK(15, 0);
-> > +		hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
-> > +		mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +		mbx_wr32(hw, FW2PF_MBOX_VEC(mbx), nr_vec);
-> > +		mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
-> > +	} else {
-> > +		mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), 0xfffffffe);
-> > +		mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +		mbx_wr32(hw, RNPGBE_DMA_DUMY, 0);
-> > +	}
-> > +}
-> > +
-> > +/**
-> > + * mucse_init_mbx_params_pf - Set initial values for pf mailbox
-> > + * @hw: pointer to the HW structure
-> > + *
-> > + * Initializes the hw->mbx struct to correct values for pf mailbox
-> > + */
-> > +static void mucse_init_mbx_params_pf(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +	mbx->usec_delay = 100;
-> > +	mbx->timeout = (4 * 1000 * 1000) / mbx->usec_delay;
-> 
-> Use appropriate constants like USEC_PER_SEC instead of hardcoded values.
-> 
+I think the compiler will omit it but we're adding another pointer
+indirection here.
 
-Ok, I will update it.
+>  {
+>         if (vring_use_map_api(vdev)) {
+> -               return dma_alloc_coherent(dma_dev, size,
+> +               return dma_alloc_coherent(mapping_token->dma_dev, size,
+>                                           dma_handle, flag);
+>         } else {
+>                 void *queue =3D alloc_pages_exact(PAGE_ALIGN(size), flag)=
+;
+> @@ -341,22 +340,22 @@ static void *vring_alloc_queue(struct virtio_device=
+ *vdev, size_t size,
+>
+>  static void vring_free_queue(struct virtio_device *vdev, size_t size,
+>                              void *queue, dma_addr_t dma_handle,
+> -                            struct device *dma_dev)
+> +                            union vring_mapping_token *mapping_token)
+>  {
+>         if (vring_use_map_api(vdev))
+> -               dma_free_coherent(dma_dev, size, queue, dma_handle);
+> +               dma_free_coherent(mapping_token->dma_dev, size, queue, dm=
+a_handle);
+>         else
+>                 free_pages_exact(queue, PAGE_ALIGN(size));
+>  }
+>
+>  /*
+> - * The DMA ops on various arches are rather gnarly right now, and
+> - * making all of the arch DMA ops work on the vring device itself
+> + * The map ops on various arches are rather gnarly right now, and
+> + * making all of the arch map ops work on the vring device itself
+>   * is a mess.
+>   */
+>  static struct device *vring_dma_dev(const struct vring_virtqueue *vq)
+>  {
+> -       return vq->dma_dev;
+> +       return vq->mapping_token.dma_dev;
+>  }
+>
+>  /* Map one sg entry. */
+> @@ -1056,12 +1055,13 @@ static int vring_alloc_state_extra_split(struct v=
+ring_virtqueue_split *vring_spl
+>  }
+>
+>  static void vring_free_split(struct vring_virtqueue_split *vring_split,
+> -                            struct virtio_device *vdev, struct device *d=
+ma_dev)
+> +                            struct virtio_device *vdev,
+> +                            union vring_mapping_token *mapping_token)
+>  {
+>         vring_free_queue(vdev, vring_split->queue_size_in_bytes,
+>                          vring_split->vring.desc,
+>                          vring_split->queue_dma_addr,
+> -                        dma_dev);
+> +                        mapping_token);
+>
+>         kfree(vring_split->desc_state);
+>         kfree(vring_split->desc_extra);
+> @@ -1072,7 +1072,7 @@ static int vring_alloc_queue_split(struct vring_vir=
+tqueue_split *vring_split,
+>                                    u32 num,
+>                                    unsigned int vring_align,
+>                                    bool may_reduce_num,
+> -                                  struct device *dma_dev)
+> +                                  union vring_mapping_token *mapping_tok=
+en)
+>  {
+>         void *queue =3D NULL;
+>         dma_addr_t dma_addr;
+> @@ -1088,7 +1088,7 @@ static int vring_alloc_queue_split(struct vring_vir=
+tqueue_split *vring_split,
+>                 queue =3D vring_alloc_queue(vdev, vring_size(num, vring_a=
+lign),
+>                                           &dma_addr,
+>                                           GFP_KERNEL | __GFP_NOWARN | __G=
+FP_ZERO,
+> -                                         dma_dev);
+> +                                         mapping_token);
+>                 if (queue)
+>                         break;
+>                 if (!may_reduce_num)
+> @@ -1102,7 +1102,7 @@ static int vring_alloc_queue_split(struct vring_vir=
+tqueue_split *vring_split,
+>                 /* Try to get a single page. You are my only hope! */
+>                 queue =3D vring_alloc_queue(vdev, vring_size(num, vring_a=
+lign),
+>                                           &dma_addr, GFP_KERNEL | __GFP_Z=
+ERO,
+> -                                         dma_dev);
+> +                                         mapping_token);
+>         }
+>         if (!queue)
+>                 return -ENOMEM;
+> @@ -1126,7 +1126,7 @@ static struct virtqueue *__vring_new_virtqueue_spli=
+t(unsigned int index,
+>                                                bool (*notify)(struct virt=
+queue *),
+>                                                void (*callback)(struct vi=
+rtqueue *),
+>                                                const char *name,
+> -                                              struct device *dma_dev)
+> +                                              union vring_mapping_token =
+*mapping_token)
+>  {
+>         struct vring_virtqueue *vq;
+>         int err;
+> @@ -1149,7 +1149,7 @@ static struct virtqueue *__vring_new_virtqueue_spli=
+t(unsigned int index,
+>  #else
+>         vq->broken =3D false;
+>  #endif
+> -       vq->dma_dev =3D dma_dev;
+> +       vq->mapping_token =3D *mapping_token;
+>         vq->use_map_api =3D vring_use_map_api(vdev);
+>
+>         vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_=
+DESC) &&
+> @@ -1187,21 +1187,21 @@ static struct virtqueue *vring_create_virtqueue_s=
+plit(
+>         bool (*notify)(struct virtqueue *),
+>         void (*callback)(struct virtqueue *),
+>         const char *name,
+> -       struct device *dma_dev)
+> +       union vring_mapping_token *mapping_token)
+>  {
+>         struct vring_virtqueue_split vring_split =3D {};
+>         struct virtqueue *vq;
+>         int err;
+>
+>         err =3D vring_alloc_queue_split(&vring_split, vdev, num, vring_al=
+ign,
+> -                                     may_reduce_num, dma_dev);
+> +                                     may_reduce_num, mapping_token);
+>         if (err)
+>                 return NULL;
+>
+>         vq =3D __vring_new_virtqueue_split(index, &vring_split, vdev, wea=
+k_barriers,
+> -                                  context, notify, callback, name, dma_d=
+ev);
+> +                                  context, notify, callback, name, mappi=
+ng_token);
+>         if (!vq) {
+> -               vring_free_split(&vring_split, vdev, dma_dev);
+> +               vring_free_split(&vring_split, vdev, mapping_token);
+>                 return NULL;
+>         }
+>
+> @@ -1220,7 +1220,7 @@ static int virtqueue_resize_split(struct virtqueue =
+*_vq, u32 num)
+>         err =3D vring_alloc_queue_split(&vring_split, vdev, num,
+>                                       vq->split.vring_align,
+>                                       vq->split.may_reduce_num,
+> -                                     vring_dma_dev(vq));
+> +                                     &vq->mapping_token);
+>         if (err)
+>                 goto err;
+>
+> @@ -1238,7 +1238,7 @@ static int virtqueue_resize_split(struct virtqueue =
+*_vq, u32 num)
+>         return 0;
+>
+>  err_state_extra:
+> -       vring_free_split(&vring_split, vdev, vring_dma_dev(vq));
+> +       vring_free_split(&vring_split, vdev, &vq->mapping_token);
+>  err:
+>         virtqueue_reinit_split(vq);
+>         return -ENOMEM;
+> @@ -1947,25 +1947,25 @@ static struct vring_desc_extra *vring_alloc_desc_=
+extra(unsigned int num)
+>
+>  static void vring_free_packed(struct vring_virtqueue_packed *vring_packe=
+d,
+>                               struct virtio_device *vdev,
+> -                             struct device *dma_dev)
+> +                             union vring_mapping_token *mapping_token)
+>  {
+>         if (vring_packed->vring.desc)
+>                 vring_free_queue(vdev, vring_packed->ring_size_in_bytes,
+>                                  vring_packed->vring.desc,
+>                                  vring_packed->ring_dma_addr,
+> -                                dma_dev);
+> +                                mapping_token);
+>
+>         if (vring_packed->vring.driver)
+>                 vring_free_queue(vdev, vring_packed->event_size_in_bytes,
+>                                  vring_packed->vring.driver,
+>                                  vring_packed->driver_event_dma_addr,
+> -                                dma_dev);
+> +                                mapping_token);
+>
+>         if (vring_packed->vring.device)
+>                 vring_free_queue(vdev, vring_packed->event_size_in_bytes,
+>                                  vring_packed->vring.device,
+>                                  vring_packed->device_event_dma_addr,
+> -                                dma_dev);
+> +                                mapping_token);
+>
+>         kfree(vring_packed->desc_state);
+>         kfree(vring_packed->desc_extra);
+> @@ -1973,7 +1973,7 @@ static void vring_free_packed(struct vring_virtqueu=
+e_packed *vring_packed,
+>
+>  static int vring_alloc_queue_packed(struct vring_virtqueue_packed *vring=
+_packed,
+>                                     struct virtio_device *vdev,
+> -                                   u32 num, struct device *dma_dev)
+> +                                   u32 num, union vring_mapping_token *m=
+apping_token)
+>  {
+>         struct vring_packed_desc *ring;
+>         struct vring_packed_desc_event *driver, *device;
+> @@ -1985,7 +1985,7 @@ static int vring_alloc_queue_packed(struct vring_vi=
+rtqueue_packed *vring_packed,
+>         ring =3D vring_alloc_queue(vdev, ring_size_in_bytes,
+>                                  &ring_dma_addr,
+>                                  GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO,
+> -                                dma_dev);
+> +                                mapping_token);
+>         if (!ring)
+>                 goto err;
+>
+> @@ -1998,7 +1998,7 @@ static int vring_alloc_queue_packed(struct vring_vi=
+rtqueue_packed *vring_packed,
+>         driver =3D vring_alloc_queue(vdev, event_size_in_bytes,
+>                                    &driver_event_dma_addr,
+>                                    GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO=
+,
+> -                                  dma_dev);
+> +                                  mapping_token);
+>         if (!driver)
+>                 goto err;
+>
+> @@ -2009,7 +2009,7 @@ static int vring_alloc_queue_packed(struct vring_vi=
+rtqueue_packed *vring_packed,
+>         device =3D vring_alloc_queue(vdev, event_size_in_bytes,
+>                                    &device_event_dma_addr,
+>                                    GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO=
+,
+> -                                  dma_dev);
+> +                                  mapping_token);
+>         if (!device)
+>                 goto err;
+>
+> @@ -2021,7 +2021,7 @@ static int vring_alloc_queue_packed(struct vring_vi=
+rtqueue_packed *vring_packed,
+>         return 0;
+>
+>  err:
+> -       vring_free_packed(vring_packed, vdev, dma_dev);
+> +       vring_free_packed(vring_packed, vdev, mapping_token);
+>         return -ENOMEM;
+>  }
+>
+> @@ -2097,7 +2097,7 @@ static struct virtqueue *__vring_new_virtqueue_pack=
+ed(unsigned int index,
+>                                                bool (*notify)(struct virt=
+queue *),
+>                                                void (*callback)(struct vi=
+rtqueue *),
+>                                                const char *name,
+> -                                              struct device *dma_dev)
+> +                                              union vring_mapping_token =
+*mapping_token)
+>  {
+>         struct vring_virtqueue *vq;
+>         int err;
+> @@ -2120,7 +2120,7 @@ static struct virtqueue *__vring_new_virtqueue_pack=
+ed(unsigned int index,
+>         vq->broken =3D false;
+>  #endif
+>         vq->packed_ring =3D true;
+> -       vq->dma_dev =3D dma_dev;
+> +       vq->mapping_token =3D *mapping_token;
+>         vq->use_map_api =3D vring_use_map_api(vdev);
+>
+>         vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_=
+DESC) &&
+> @@ -2158,18 +2158,18 @@ static struct virtqueue *vring_create_virtqueue_p=
+acked(
+>         bool (*notify)(struct virtqueue *),
+>         void (*callback)(struct virtqueue *),
+>         const char *name,
+> -       struct device *dma_dev)
+> +       union vring_mapping_token *mapping_token)
+>  {
+>         struct vring_virtqueue_packed vring_packed =3D {};
+>         struct virtqueue *vq;
+>
+> -       if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
+> +       if (vring_alloc_queue_packed(&vring_packed, vdev, num, mapping_to=
+ken))
+>                 return NULL;
+>
+>         vq =3D __vring_new_virtqueue_packed(index, &vring_packed, vdev, w=
+eak_barriers,
+> -                                       context, notify, callback, name, =
+dma_dev);
+> +                                       context, notify, callback, name, =
+mapping_token);
+>         if (!vq) {
+> -               vring_free_packed(&vring_packed, vdev, dma_dev);
+> +               vring_free_packed(&vring_packed, vdev, mapping_token);
+>                 return NULL;
+>         }
+>
+> @@ -2185,7 +2185,8 @@ static int virtqueue_resize_packed(struct virtqueue=
+ *_vq, u32 num)
+>         struct virtio_device *vdev =3D _vq->vdev;
+>         int err;
+>
+> -       if (vring_alloc_queue_packed(&vring_packed, vdev, num, vring_dma_=
+dev(vq)))
+> +       if (vring_alloc_queue_packed(&vring_packed, vdev,
+> +                                    num, &vq->mapping_token))
+>                 goto err_ring;
+>
+>         err =3D vring_alloc_state_extra_packed(&vring_packed);
+> @@ -2202,7 +2203,7 @@ static int virtqueue_resize_packed(struct virtqueue=
+ *_vq, u32 num)
+>         return 0;
+>
+>  err_state_extra:
+> -       vring_free_packed(&vring_packed, vdev, vring_dma_dev(vq));
+> +       vring_free_packed(&vring_packed, vdev, &vq->mapping_token);
+>  err_ring:
+>         virtqueue_reinit_packed(vq);
+>         return -ENOMEM;
+> @@ -2423,6 +2424,7 @@ int virtqueue_add_inbuf_premapped(struct virtqueue =
+*vq,
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_add_inbuf_premapped);
+>
+> +
+>  /**
+>   * virtqueue_dma_dev - get the dma dev
+>   * @_vq: the struct virtqueue we're talking about.
+> @@ -2434,7 +2436,7 @@ struct device *virtqueue_dma_dev(struct virtqueue *=
+_vq)
+>         struct vring_virtqueue *vq =3D to_vvq(_vq);
+>
+>         if (vq->use_map_api)
+> -               return vring_dma_dev(vq);
+> +               return vq->mapping_token.dma_dev;
+>         else
+>                 return NULL;
+>  }
+> @@ -2719,19 +2721,20 @@ struct virtqueue *vring_create_virtqueue(
+>         void (*callback)(struct virtqueue *),
+>         const char *name)
+>  {
+> +       union vring_mapping_token mapping_token =3D {.dma_dev =3D vdev->d=
+ev.parent};
+>
+>         if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+>                 return vring_create_virtqueue_packed(index, num, vring_al=
+ign,
+>                                 vdev, weak_barriers, may_reduce_num,
+> -                               context, notify, callback, name, vdev->de=
+v.parent);
+> +                               context, notify, callback, name, &mapping=
+_token);
+>
+>         return vring_create_virtqueue_split(index, num, vring_align,
+>                         vdev, weak_barriers, may_reduce_num,
+> -                       context, notify, callback, name, vdev->dev.parent=
+);
+> +                       context, notify, callback, name, &mapping_token);
+>  }
+>  EXPORT_SYMBOL_GPL(vring_create_virtqueue);
+>
+> -struct virtqueue *vring_create_virtqueue_dma(
+> +struct virtqueue *vring_create_virtqueue_map(
+>         unsigned int index,
+>         unsigned int num,
+>         unsigned int vring_align,
+> @@ -2742,19 +2745,19 @@ struct virtqueue *vring_create_virtqueue_dma(
+>         bool (*notify)(struct virtqueue *),
+>         void (*callback)(struct virtqueue *),
+>         const char *name,
+> -       struct device *dma_dev)
+> +       union vring_mapping_token *mapping_token)
+>  {
+>
+>         if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+>                 return vring_create_virtqueue_packed(index, num, vring_al=
+ign,
+>                                 vdev, weak_barriers, may_reduce_num,
+> -                               context, notify, callback, name, dma_dev)=
+;
+> +                               context, notify, callback, name, mapping_=
+token);
+>
+>         return vring_create_virtqueue_split(index, num, vring_align,
+>                         vdev, weak_barriers, may_reduce_num,
+> -                       context, notify, callback, name, dma_dev);
+> +                       context, notify, callback, name, mapping_token);
+>  }
+> -EXPORT_SYMBOL_GPL(vring_create_virtqueue_dma);
+> +EXPORT_SYMBOL_GPL(vring_create_virtqueue_map);
+>
+>  /**
+>   * virtqueue_resize - resize the vring of vq
+> @@ -2865,6 +2868,7 @@ struct virtqueue *vring_new_virtqueue(unsigned int =
+index,
+>                                       const char *name)
+>  {
+>         struct vring_virtqueue_split vring_split =3D {};
+> +       union vring_mapping_token mapping_token =3D {.dma_dev =3D vdev->d=
+ev.parent};
+>
+>         if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED)) {
+>                 struct vring_virtqueue_packed vring_packed =3D {};
+> @@ -2874,13 +2878,13 @@ struct virtqueue *vring_new_virtqueue(unsigned in=
+t index,
+>                 return __vring_new_virtqueue_packed(index, &vring_packed,
+>                                                     vdev, weak_barriers,
+>                                                     context, notify, call=
+back,
+> -                                                   name, vdev->dev.paren=
+t);
+> +                                                   name, &mapping_token)=
+;
+>         }
+>
+>         vring_init(&vring_split.vring, num, pages, vring_align);
+>         return __vring_new_virtqueue_split(index, &vring_split, vdev, wea=
+k_barriers,
+>                                      context, notify, callback, name,
+> -                                    vdev->dev.parent);
+> +                                    &mapping_token);
+>  }
+>  EXPORT_SYMBOL_GPL(vring_new_virtqueue);
+>
+> @@ -2894,19 +2898,19 @@ static void vring_free(struct virtqueue *_vq)
+>                                          vq->packed.ring_size_in_bytes,
+>                                          vq->packed.vring.desc,
+>                                          vq->packed.ring_dma_addr,
+> -                                        vring_dma_dev(vq));
+> +                                        &vq->mapping_token);
+>
+>                         vring_free_queue(vq->vq.vdev,
+>                                          vq->packed.event_size_in_bytes,
+>                                          vq->packed.vring.driver,
+>                                          vq->packed.driver_event_dma_addr=
+,
+> -                                        vring_dma_dev(vq));
+> +                                        &vq->mapping_token);
+>
+>                         vring_free_queue(vq->vq.vdev,
+>                                          vq->packed.event_size_in_bytes,
+>                                          vq->packed.vring.device,
+>                                          vq->packed.device_event_dma_addr=
+,
+> -                                        vring_dma_dev(vq));
+> +                                        &vq->mapping_token);
+>
+>                         kfree(vq->packed.desc_state);
+>                         kfree(vq->packed.desc_extra);
+> @@ -2915,7 +2919,7 @@ static void vring_free(struct virtqueue *_vq)
+>                                          vq->split.queue_size_in_bytes,
+>                                          vq->split.vring.desc,
+>                                          vq->split.queue_dma_addr,
+> -                                        vring_dma_dev(vq));
+> +                                        &vq->mapping_token);
+>                 }
+>         }
+>         if (!vq->packed_ring) {
+> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+> index e25610e3393a..acea98ab08ee 100644
+> --- a/drivers/virtio/virtio_vdpa.c
+> +++ b/drivers/virtio/virtio_vdpa.c
+> @@ -139,6 +139,7 @@ virtio_vdpa_setup_vq(struct virtio_device *vdev, unsi=
+gned int index,
+>         struct vdpa_callback cb;
+>         struct virtqueue *vq;
+>         u64 desc_addr, driver_addr, device_addr;
+> +       union vring_mapping_token mapping_token =3D {0};
+>         /* Assume split virtqueue, switch to packed if necessary */
+>         struct vdpa_vq_state state =3D {0};
+>         u32 align, max_num, min_num =3D 1;
+> @@ -185,9 +186,10 @@ virtio_vdpa_setup_vq(struct virtio_device *vdev, uns=
+igned int index,
+>                 dma_dev =3D ops->get_vq_dma_dev(vdpa, index);
+>         else
+>                 dma_dev =3D vdpa_get_dma_dev(vdpa);
+> -       vq =3D vring_create_virtqueue_dma(index, max_num, align, vdev,
+> +       mapping_token.dma_dev =3D dma_dev;
+> +       vq =3D vring_create_virtqueue_map(index, max_num, align, vdev,
+>                                         true, may_reduce_num, ctx,
+> -                                       notify, callback, name, dma_dev);
+> +                                       notify, callback, name, &mapping_=
+token);
+>         if (!vq) {
+>                 err =3D -ENOMEM;
+>                 goto error_new_virtqueue;
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index addbc209275a..37029df94aaf 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -40,6 +40,13 @@ struct virtqueue {
+>         void *priv;
+>  };
+>
 
-> > +	mbx->stats.msgs_tx = 0;
-> > +	mbx->stats.msgs_rx = 0;
-> 
-> 
-> -- 
-> Thanks and Regards,
-> Md Danish Anwar
-> 
-> 
+I would add some doc here like "vq uses dma_dev if vq->use_map_api,
+opaque is used otherwise". Maybe we can move use_map_api here
+actually, like:
 
-Thanks for your feedback.
+struct vring_mapping_token {
+  bool use_map_api;
+  union {
+    struct device *dma_dev;
+    void *opaque;
+  };
+}
+
+What do you think?
+
+> +union vring_mapping_token {
+> +       /* Device that performs DMA */
+> +       struct device *dma_dev;
+> +       /* Transport specific token used for doing map */
+> +       void *opaque;
+> +};
+> +
+>  int virtqueue_add_outbuf(struct virtqueue *vq,
+>                          struct scatterlist sg[], unsigned int num,
+>                          void *data,
+> diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
+> index 9b33df741b63..fd997178da2a 100644
+> --- a/include/linux/virtio_ring.h
+> +++ b/include/linux/virtio_ring.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_VIRTIO_RING_H
+>
+>  #include <asm/barrier.h>
+> +#include <linux/virtio.h>
+>  #include <linux/irqreturn.h>
+>  #include <uapi/linux/virtio_ring.h>
+>
+> @@ -79,9 +80,9 @@ struct virtqueue *vring_create_virtqueue(unsigned int i=
+ndex,
+>
+>  /*
+>   * Creates a virtqueue and allocates the descriptor ring with per
+> - * virtqueue DMA device.
+> + * virtqueue mapping operations.
+>   */
+> -struct virtqueue *vring_create_virtqueue_dma(unsigned int index,
+> +struct virtqueue *vring_create_virtqueue_map(unsigned int index,
+>                                              unsigned int num,
+>                                              unsigned int vring_align,
+>                                              struct virtio_device *vdev,
+> @@ -91,7 +92,7 @@ struct virtqueue *vring_create_virtqueue_dma(unsigned i=
+nt index,
+>                                              bool (*notify)(struct virtqu=
+eue *vq),
+>                                              void (*callback)(struct virt=
+queue *vq),
+>                                              const char *name,
+> -                                            struct device *dma_dev);
+> +                                            union vring_mapping_token *m=
+apping_token);
+>
+>  /*
+>   * Creates a virtqueue with a standard layout but a caller-allocated
+> --
+> 2.31.1
+>
+
 
