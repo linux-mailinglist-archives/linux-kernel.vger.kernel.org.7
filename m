@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-766838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39142B24BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A560B24BCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E0797B1962
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE421BC0CC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBAA2EACE0;
-	Wed, 13 Aug 2025 14:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD0F2EF64A;
+	Wed, 13 Aug 2025 14:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeoIYhiQ"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W1KgWOWd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BDC21256F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D152EAB95;
+	Wed, 13 Aug 2025 14:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755094949; cv=none; b=kQPKRIADLLxBXH5y/4dFtj3Tp3xjg7wVacFCOP2f8q42x0fHEfXk8F0Rp0xKOE82iXwpEZptlWLNg1ueu38rfmyUVC9xOEaGgPtOSureXtDXR7S8pJ+KxttC1R2zK1O43aToNmSUNk1YVURAi7oL1McByPWN1c4DwNgqSL1ZnsE=
+	t=1755095022; cv=none; b=fm6U2krXTmnM5szfBpSfXAk9Y4Bh+IqfqN4mfeCcgmlj4Xi/xnZWapl1/Lx3wHEtFWiRLueE9pgDFtEe3TiA4JiSrRyurpkCD2CV6WAPymfTH+eyRRWIIJjzRp2BSKQNTzYt0Z8nZz6BdUAhI7nYWu5B9umONNCdz2ImiNNdWIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755094949; c=relaxed/simple;
-	bh=I3zhKnPXVCN+rDGHqaiHVdYKoNhXl4LMIQEhK5RIz3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mjyWQ3J0ysv27jWro54agT3XtEaAKseZT7XayMd1uHFB2NcmS0+tGYN4UYybSF2h1BrzgthMDjk13wuhCuoxoKROFJeULzU+erIiPnQAETEB5gJXqbvsjamC10YKlB51foioWWLXUQK/xIf3w+LBiCQDteHlicVnrskSwEmzpAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeoIYhiQ; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61867b0238bso2045781a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755094946; x=1755699746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3zhKnPXVCN+rDGHqaiHVdYKoNhXl4LMIQEhK5RIz3g=;
-        b=GeoIYhiQUSJ679Vhh9x+5/U7yI7P/uP+f56Qf9XFb1Ir6eqESl2XR4hPGbK+aZHSM8
-         yW3Hw6hYJ1VqNaqsVYuynufWE7FiMVnfHORD/bZtgxmuTeEQ20BTLn2Z+NJNnkjfABAl
-         cBAMCFWzldh+Jb6SgUbMHptOtU1OUetXK4m6tvk/cCDX/BCkWYW0uIkW2Y6L3vEfUJMd
-         UPda5pGF8JANLEB5sM0k0qL29PC7Kwc8iQu8E98nzkCNq8rlnhQhKkFq0B5b/sPJaRdv
-         ias1BccROXJkf5MA7qgB1Nfa7iFjntvfB4sCvEcZfcj9Km28LvreulmyvL/EL4ghYspS
-         HZbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755094946; x=1755699746;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I3zhKnPXVCN+rDGHqaiHVdYKoNhXl4LMIQEhK5RIz3g=;
-        b=phkXqnZdmk5bKcw6I3/HOZOzeyrZafmvlJyf1BTlWsNnZCKL/CXrpgUA/TSEwc4mBx
-         kssWa/9DW+Q+GlUGj8FHPiNsL/b3CkmLVdPj6/+iu1gTC/oIaE/IM8RA927Gs/VYQyfd
-         4nRdnuCcYkfiJM7xepKd+7B90rPEAwZAeAeWErhoFOTcNVjX/2sIV+qTqv/wJVr0aXBU
-         dbj2Piw0ujoDEcB+hrErfVcy3i7kAlFa2t5px/9JmlHARZGJ1mDfj3XxWyvZB0Pml3wJ
-         AA6zZaNEkfvTz1Abhm2eMjasLT6VTsZKUDsmDBD2xWxADY928/JuUf8NuSlqjyO6SZ1a
-         ZboQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI932kLFMUTWnYEWAf0igqQHzSNDPzhC8JBXVKCD1JGyROdIVuAamdFk5bt4wZhpQ68G8Fb8G3CPOX4aE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Xu8cBbQhyxdyZY0/juKYmFgr3cjthTZh1evolZYyLs3d4Q/i
-	yw0nx5FwWjqpmTEiWWvGPbAll4M4pWf0kisxkFjzRS+TbrhCqWk7ckcE
-X-Gm-Gg: ASbGnctCR2CgudIDixjz4mraBFZgy1wHCXPEAVDUZk/MrGeC2hS7/37YJxxjMvPBjK2
-	2BMITb9hcUbmUB+WH/G5RhkST76ITbkFbq/JW1VfapJVfg+uKTQjkSsml2JqyqkU0O7gPdtzaaQ
-	A4RFlPhy35JLcsTMaZeTPcq0wSLlJEreCwh9EF2lmq/u/NR60759AnhA9tUwq2TfDh88uuXVU+u
-	27akq7fL7qwLon8Omx2zpSy67f2oryCB6CnnjdzMLBRtq39qgKJi/W0mFQK2Se4+ac6/efas0z9
-	V+G9FueaksTyQ2oR8y4c4efx3OChvEBu6p5rgYKy/bnmqNhFPkM0YTq8j7lFIRBCiRmoTV/W5Qy
-	gscUrkxukBWGrxhk+5X78NJyAIpQ2EQ9aitXyBi6KOOA/itkrvM6hdXy5oQtzdsljj1sKPI0e1a
-	3P6p5vnZ9aP3FPrX/ac6xO1A==
-X-Google-Smtp-Source: AGHT+IHkXtBylUaHsaOMTkc9f78w42rpUDkiXVnMpYMEZCIbdmmZT1W2KxX3ov9gPJY3ufrbfqKVeA==
-X-Received: by 2002:a05:6402:35c5:b0:617:d155:bc9d with SMTP id 4fb4d7f45d1cf-6186bfd2c9bmr2388609a12.21.1755094945947;
-        Wed, 13 Aug 2025 07:22:25 -0700 (PDT)
-Received: from yuri-laptop.homenet.telecomitalia.it (host-79-13-129-3.retail.telecomitalia.it. [79.13.129.3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6186bfee29csm1503811a12.15.2025.08.13.07.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 07:22:15 -0700 (PDT)
-From: Yuri Andriaccio <yurand2000@gmail.com>
-To: juri.lelli@redhat.com
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	linux-kernel@vger.kernel.org,
-	luca.abeni@santannapisa.it,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	yuri.andriaccio@santannapisa.it
-Subject: Re: [RFC PATCH v2 00/25]  Hierarchical Constant Bandwidth Server
-Date: Wed, 13 Aug 2025 16:22:10 +0200
-Message-ID: <20250813142210.45530-1-yurand2000@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <aJyb143HTlGqCBeo@jlelli-thinkpadt14gen4.remote.csb>
-References: <aJyb143HTlGqCBeo@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1755095022; c=relaxed/simple;
+	bh=GMAv65E0fbu3mZ2Cwk6jBHTvtVN1ckfOjo+F09TLXOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jw3jV9GlxYwKXUx5VjLTbOLr4W4KHxpQlI+mtGE9SqtuXr6wlIiP3Ha9zHMjAI8M600GzP4X9FXdMi5AMMEh9i2D5he5DmZTEl3+h6gr3sNzl+cvpiNmX1BAjTH6kPI7AZchx1K8V2EJAeSp5/aR22Uw9TevvPtbfwiX0eMiyo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W1KgWOWd; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755095021; x=1786631021;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GMAv65E0fbu3mZ2Cwk6jBHTvtVN1ckfOjo+F09TLXOQ=;
+  b=W1KgWOWdZddSoJ4m9eFXmMUlUO4bqPI+wB7bo9gB+trzyuTmFAzB9LhK
+   RNyBqFrE/rBfWODEnIUYWWhi7+RL3ZH/qTBHyga/g7OXOrfFrJfRGdBEV
+   7YPB/GLwtW6xyKKqXnq0Zo7yj3QR6lV8R08b3/oAaxKH3eY7exXV93pwB
+   85p6PPMBS5U+fJPoa55AZ7Jb1368TkEfIBDSmfTpf9m1R5Rd+vd0eySAF
+   dIYRJ85H6kjoWjmHvCg8WNWuFaiV+X1KzFN9vBanIKB/1Dr2MZde+EjEz
+   IMD16c7aH0QVGRwF8lXLS8WX2Jsk4/86HlCFmCgx7KCvzgaWNGK54CZiE
+   g==;
+X-CSE-ConnectionGUID: s7sRPlZuT5SwIIAO7TSJSQ==
+X-CSE-MsgGUID: TUPUPiU+RkaB+Icx3FYnrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61195640"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="61195640"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 07:23:40 -0700
+X-CSE-ConnectionGUID: hS+VJUoMRA6r0hGrM6DEgg==
+X-CSE-MsgGUID: O89vXnKMRLW02LYkxfw68g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170696176"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 07:23:40 -0700
+Message-ID: <a79307f2-e6be-4e59-a74e-16e09ed69e8f@intel.com>
+Date: Wed, 13 Aug 2025 07:23:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND^2] x86/paravirt: add backoff mechanism to
+ virt_spin_lock
+To: Wangyang Guo <wangyang.guo@intel.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Tianyou Li <tianyou.li@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>
+References: <20250813005043.1528541-1-wangyang.guo@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250813005043.1528541-1-wangyang.guo@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 8/12/25 17:50, Wangyang Guo wrote:
+> The optimization can improves SpecCPU2017 502.gcc_r benchmark by ~4% for
+> 288 cores VM on Intel Xeon 6 E-cores platform.
 
-> Would you mind sharing the baseline sha this set applies to? It looks
-> like it doesn't apply cleanly anymore.
-
-The patchset should apply cleanly on top of commit "Merge tag 'sysctl-6.17-rc1'
-of git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl", with sha
-4b290aae788e06561754b28c6842e4080957d3f7 .
-
-Have a nice day,
-Yuri
+Which specific locks are getting contended?
 
